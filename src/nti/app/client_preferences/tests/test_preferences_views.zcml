@@ -1,0 +1,40 @@
+<!-- -*- mode: nxml -*- -->
+<configure	xmlns="http://namespaces.zope.org/zope"
+			xmlns:i18n="http://namespaces.zope.org/i18n"
+			xmlns:zcml="http://namespaces.zope.org/zcml"
+			i18n_domain='nti.dataserver'>
+
+	<include package="zope.component" file="meta.zcml" />
+	<include package="zope.security" file="meta.zcml" />
+	<include package="zope.component" />
+	<include package="zope.security" />
+	<include package="zope.security" file="permissions.zcml"/>
+	<include package="zope.preference" file="meta.zcml" />
+	<include package="zope.preference" />
+
+	<include package="nti.app.client_preferences" />
+
+	<preferenceGroup
+		id='ZMISettings'
+		title='ZMI Settings'
+		schema='nti.app.client_preferences.tests.test_externalization.IZMIUserSettings'
+		category='true' />
+	<preferenceGroup
+		id='ZMISettings.Folder'
+		title='ZMI Settings'
+		schema='nti.app.client_preferences.tests.test_externalization.IFolderSettings'
+		category='true' />
+
+	<preferenceGroup
+		id='ZMISettings.ReadOnly'
+		title='Read Only Settings'
+		schema='nti.app.client_preferences.tests.test_externalization.IReadOnlySettings'
+		/>
+
+	<preferenceGroup
+		id='ZMISettings.Hidden'
+		title='Hidden Settings'
+		schema='nti.app.client_preferences.tests.test_externalization.IHiddenSettings'
+		/>
+
+</configure>

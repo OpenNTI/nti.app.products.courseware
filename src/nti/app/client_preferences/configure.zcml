@@ -1,0 +1,92 @@
+<!-- -*- mode: nxml -*- -->
+<configure xmlns="http://namespaces.zope.org/zope"
+		   xmlns:zcml="http://namespaces.zope.org/zcml"
+		   xmlns:i18n="http://namespaces.zope.org/i18n"
+		   i18n_domain='nti.app.client_preferences'
+		   i18n:domain='nti.app.client_preferences'>
+	<include package="zope.component" />
+	<include package="zope.annotation" />
+	<include package="zope.security" />
+	<include package="zope.preference" file="meta.zcml" />
+	<include package="zope.preference" />
+	<include package="zope.i18n" file="meta.zcml" />
+	<include package="zope.i18n" />
+
+	<!--
+	FIXME: Right now, it is loading us, but we should be including it
+	-->
+
+	<include package="nti.externalization" />
+	<i18n:registerTranslations directory="locales" />
+	<!-- Preferences -->
+	<adapter for="zope.preference.interfaces.IPreferenceGroup"
+			 factory=".externalization.PreferenceGroupObjectIO" />
+
+
+	<include package="zope.component" file="meta.zcml" />
+	<include package="zope.security" file="meta.zcml" />
+	<include package="zope.component" />
+	<include package="zope.security" />
+	<include package="zope.security" file="permissions.zcml"/>
+	<include package="zope.preference" file="meta.zcml" />
+	<include package="zope.preference" />
+
+	<!-- Set up our evolution support. -->
+	<include package="zope.generations" />
+    <include package="zope.generations" file="subscriber.zcml" />
+	<!--
+	Because we use dataserver objects like IUser,
+	we need to run after it runs in case the dataserver
+	code changed, so our name must sort after it.
+	-->
+	<utility factory=".generations.install.SchemaManager"
+			 name="nti.dataserver:nti.app.client_preferences" />
+
+	<!--
+	The root preference group for the "webapp."
+	Right now there is only one webapp, and it is monolithic,
+	so we're claiming the name WebApp. New comers can choose
+	something different. Remember, this is part of the URL,
+	and defines the hierarchy, with 'WebApp.Foo' defining the
+	/WebApp/Foo URL and the Foo pref group being serialized as a
+	child of WebApp.
+	-->
+	<preferenceGroup
+		id='WebApp'
+		title='WebApp Settings'
+		schema='.interfaces.IWebAppUserSettings'
+		category='true' />
+
+	<!-- The chat tree -->
+
+	<preferenceGroup
+		id='ChatPresence'
+		title='Chat Presence Settings'
+		schema='.interfaces.IChatPresenceSettings'
+		/>
+	<preferenceGroup
+		id="ChatPresence.Active"
+		title="The Default Presence"
+		description="The presence to use when a user enters the application, potentially copied from another option or updated when the user updates"
+		schema="nti.chatserver.interfaces.IUnattachedPresenceInfo"
+		/>
+
+	<preferenceGroup
+		id="ChatPresence.Available"
+		title="Available"
+		schema=".interfaces..IAvailableChatPresenceSettings"
+		/>
+
+	<preferenceGroup
+		id="ChatPresence.Away"
+		title="Away"
+		schema=".interfaces.IAwayChatPresenceSettings"
+		/>
+
+	<preferenceGroup
+		id="ChatPresence.DND"
+		title="Do Not Disturb"
+		schema=".interfaces.IDNDChatPresenceSettings"
+		/>
+
+</configure>
