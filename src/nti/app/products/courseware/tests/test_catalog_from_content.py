@@ -20,7 +20,7 @@ from hamcrest import is_
 from hamcrest import is_not
 from hamcrest import none
 from hamcrest import has_key
-from hamcrest import has_entry
+from hamcrest import has_entries
 
 from nti.testing import base
 from nti.testing import matchers
@@ -31,13 +31,15 @@ from zope import component
 from nti.app.testing.application_webtest import SharedApplicationTestBase
 
 from nti.contentlibrary.interfaces import IContentPackageLibrary
-from nti.contentlibrary.filesystem import StaticFilesystemLibrary
+from nti.contentlibrary.filesystem import CachedNotifyingStaticFilesystemLibrary as Library
+
+from .. import legacy
 
 class TestApplicationCatalogFromContent(SharedApplicationTestBase):
 
 	@classmethod
 	def _setup_library( cls, *args, **kwargs ):
-		return StaticFilesystemLibrary(
+		return Library(
 					paths=(os.path.join(
 						os.path.dirname(__file__),
 						'Library',
@@ -50,3 +52,7 @@ class TestApplicationCatalogFromContent(SharedApplicationTestBase):
 
 		assert_that( lib.pathToNTIID('tag:nextthought.com,2011-10:OU-HTML-ENGR1510_Intro_to_Water.engr_1510_901_introduction_to_water'),
 					 is_not( none() ) )
+
+		assert_that( legacy._last_json_dict,
+					 has_entries( 'id', 'ENGR 1510-901',
+								  'title', 'Introduction to Water' ) )

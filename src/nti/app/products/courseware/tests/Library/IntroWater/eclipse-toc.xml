@@ -9,19 +9,19 @@
 	 levelnum="0"
 	 ntiid="tag:nextthought.com,2011-10:OU-HTML-ENGR1510_Intro_to_Water.engr_1510_901_introduction_to_water"
 	 renderVersion="2">
-    <topic NTIRelativeScrollHeight="592"
+	<topic NTIRelativeScrollHeight="592"
 		   href="tag_nextthought_com_2011-10_OU-HTML-ENGR1510_Intro_to_Water_course_info.html"
 		   label="Course Info"
 		   level="part"
 		   levelnum="1"
 		   ntiid="tag:nextthought.com,2011-10:OU-HTML-ENGR1510_Intro_to_Water.course_info">
-       <topic
+	   <topic
 		   href="tag_nextthought_com_2011-10_OU-HTML-ENGR1510_Intro_to_Water_course_info.html#a0000000002"
 		   label="Course Summary"
 		   level="chapter"
 		   levelnum="2"
 		   ntiid="tag:nextthought.com,2011-10:OU-HTML-ENGR1510_Intro_to_Water.course_summary"/>
-    </topic>
+	</topic>
 	<course
 		courseInfo="tag:nextthought.com,2011-10:OU-HTML-ENGR1510_Intro_to_Water.course_info"
 		courseName="ENGR 1510-901"

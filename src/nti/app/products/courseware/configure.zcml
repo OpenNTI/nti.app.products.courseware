@@ -8,4 +8,6 @@
 	<include package="zope.security" file="meta.zcml" />
 	<include package="zope.component" />
 
+	<subscriber handler=".legacy._content_package_registered" />
+
 </configure>
