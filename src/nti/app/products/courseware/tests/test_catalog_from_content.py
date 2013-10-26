@@ -41,9 +41,14 @@ class TestApplicationCatalogFromContent(SharedApplicationTestBase):
 	def _setup_library( cls, *args, **kwargs ):
 		return Library(
 					paths=(os.path.join(
-						os.path.dirname(__file__),
-						'Library',
-						'IntroWater'), ))
+									os.path.dirname(__file__),
+									'Library',
+									'IntroWater'),
+						   os.path.join(
+								   os.path.dirname(__file__),
+								   'Library',
+								   'CLC3403_LawAndJustice')
+				   ))
 
 	def test_content(self):
 		"basic test to be sure we got the content we need"
@@ -51,6 +56,8 @@ class TestApplicationCatalogFromContent(SharedApplicationTestBase):
 		lib = component.getUtility(IContentPackageLibrary)
 
 		assert_that( lib.pathToNTIID('tag:nextthought.com,2011-10:OU-HTML-ENGR1510_Intro_to_Water.engr_1510_901_introduction_to_water'),
+					 is_not( none() ) )
+		assert_that( lib.pathToNTIID("tag:nextthought.com,2011-10:OU-HTML-CLC3403_LawAndJustice.clc_3403_law_and_justice"),
 					 is_not( none() ) )
 
 		assert_that( legacy._last_json_dict,
