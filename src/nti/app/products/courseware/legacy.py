@@ -13,12 +13,16 @@ logger = __import__('logging').getLogger(__name__)
 
 from zope import component
 
-import anyjson as json
+import simplejson as json
+import isodate
+import datetime
 
 from nti.contentlibrary import interfaces as lib_interfaces
 from zope.lifecycleevent import IObjectAddedEvent
 
-_last_json_dict = None
+from .catalog import CourseCatalogInstructorInfo
+from .catalog import CourseCatalogEntry
+from .interfaces import ICourseCatalog
 
 @component.adapter(lib_interfaces.ILegacyCourseConflatedContentPackage, IObjectAddedEvent)
 def _content_package_registered( package, event ):
@@ -39,7 +43,7 @@ def _content_package_registered( package, event ):
 	# Featured			N				N					Y
 	# Instructors		Y				N					Y (author,freeform text)
 	# --> This is structured data in CourseInfo, incl photo and username,
-	#     realname and title
+	#     realname and jobtitle
 	# Communities		N				Y (scope,many)		Y
 	# Big Icon			N (toc)			N (diff)			Y (used "promo")
 	# --> This is used in the main Library view
@@ -68,7 +72,30 @@ def _content_package_registered( package, event ):
 		logger.debug("No course info for %s", package )
 		return
 	info_json_string = package.read_contents_of_sibling_entry( package.courseInfoSrc )
+	# Ensure we get unicode values for strings (simplejson would return bytestrings
+	# if they are ASCII encodable)
+	info_json_string = unicode(info_json_string, 'utf-8')
 	info_json_dict = json.loads( info_json_string )
 
-	global _last_json_dict # Temp testing
-	_last_json_dict = info_json_dict
+	catalog_entry = CourseCatalogEntry()
+	catalog_entry.Description = info_json_dict['description']
+	catalog_entry.ContentPackageNTIID = package.ntiid
+	catalog_entry.Title = info_json_dict['title']
+	catalog_entry.ProviderUniqueID = info_json_dict['id']
+	catalog_entry.ProviderDepartmentTitle = info_json_dict['school']
+	catalog_entry.StartDate = isodate.parse_date(info_json_dict['startDate'])
+	duration_number, duration_kind = info_json_dict['duration'].split()
+	catalog_entry.Duration = datetime.timedelta(**{duration_kind.lower():int(duration_number)})
+
+	instructors = []
+	for inst in info_json_dict['instructors']:
+		instructor = CourseCatalogInstructorInfo( Name=inst['name'],
+												  JobTitle=inst['title'] )
+		instructors.append( instructor )
+
+	catalog_entry.Instructors = instructors
+
+	catalog_entry.Communities = [unicode(x, 'utf-8')
+								 for x in package._v_toc_node.xpath('//course/scope[@type="public"]/entry/text()')]
+
+	component.getUtility(ICourseCatalog).addCatalogEntry( catalog_entry )

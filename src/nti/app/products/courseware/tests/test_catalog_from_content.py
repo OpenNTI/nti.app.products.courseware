@@ -21,6 +21,8 @@ from hamcrest import is_not
 from hamcrest import none
 from hamcrest import has_key
 from hamcrest import has_entries
+from hamcrest import has_length
+from hamcrest import has_properties
 
 from nti.testing import base
 from nti.testing import matchers
@@ -34,6 +36,7 @@ from nti.contentlibrary.interfaces import IContentPackageLibrary
 from nti.contentlibrary.filesystem import CachedNotifyingStaticFilesystemLibrary as Library
 
 from .. import legacy
+from ..interfaces import ICourseCatalog
 
 class TestApplicationCatalogFromContent(SharedApplicationTestBase):
 
@@ -60,6 +63,11 @@ class TestApplicationCatalogFromContent(SharedApplicationTestBase):
 		assert_that( lib.pathToNTIID("tag:nextthought.com,2011-10:OU-HTML-CLC3403_LawAndJustice.clc_3403_law_and_justice"),
 					 is_not( none() ) )
 
-		assert_that( legacy._last_json_dict,
-					 has_entries( 'id', 'ENGR 1510-901',
-								  'title', 'Introduction to Water' ) )
+		catalog = component.getUtility( ICourseCatalog )
+		assert_that( catalog, has_length( 1 ) )
+		entry = catalog[0]
+
+		assert_that( entry,
+					 has_properties( 'ProviderUniqueID', 'ENGR 1510-901',
+									 'Title', 'Introduction to Water',
+									 'Communities', ['ENGR1510.ou.nextthought.com'] ) )

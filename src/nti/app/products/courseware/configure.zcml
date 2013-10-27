@@ -8,6 +8,9 @@
 	<include package="zope.security" file="meta.zcml" />
 	<include package="zope.component" />
 
-	<subscriber handler=".legacy._content_package_registered" />
+	<configure zcml:condition="have testmode">
+		<utility factory=".catalog.CourseCatalog" />
+		<subscriber handler=".legacy._content_package_registered" />
+	</configure>
 
 </configure>
