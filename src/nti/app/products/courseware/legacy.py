@@ -86,6 +86,8 @@ def _content_package_registered( package, event ):
 	catalog_entry.StartDate = isodate.parse_date(info_json_dict['startDate'])
 	duration_number, duration_kind = info_json_dict['duration'].split()
 	catalog_entry.Duration = datetime.timedelta(**{duration_kind.lower():int(duration_number)})
+	# For the convenience of others
+	catalog_entry.legacy_content_package = package
 
 	instructors = []
 	for inst in info_json_dict['instructors']:
