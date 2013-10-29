@@ -56,8 +56,10 @@ class ICourseCatalogEntry(interface.Interface):
 	Title = schema.TextLine(title="The provider's descriptive title")
 	Description = schema.Text(title="The provider's paragraph-length description")
 
-	StartDate = schema.Date(title="The date on which the course begins")
-	Duration = schema.Timedelta(title="The length of the course")
+	StartDate = schema.Date(title="The date on which the course begins",
+							description="Currently optional; a missing value means the course already started")
+	Duration = schema.Timedelta(title="The length of the course",
+								description="Currently optional")
 
 	# Legacy, will go away given a more full description of the
 	# course.

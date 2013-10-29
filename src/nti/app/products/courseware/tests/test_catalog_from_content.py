@@ -23,6 +23,7 @@ from hamcrest import has_key
 from hamcrest import has_entries
 from hamcrest import has_length
 from hamcrest import has_properties
+from hamcrest import has_items
 
 from nti.testing import base
 from nti.testing import matchers
@@ -58,16 +59,22 @@ class TestApplicationCatalogFromContent(SharedApplicationTestBase):
 
 		lib = component.getUtility(IContentPackageLibrary)
 
+		# This one has a <info> tag
 		assert_that( lib.pathToNTIID('tag:nextthought.com,2011-10:OU-HTML-ENGR1510_Intro_to_Water.engr_1510_901_introduction_to_water'),
 					 is_not( none() ) )
+		# This one just has the file, which is simplified as an already running
+		# course.
 		assert_that( lib.pathToNTIID("tag:nextthought.com,2011-10:OU-HTML-CLC3403_LawAndJustice.clc_3403_law_and_justice"),
 					 is_not( none() ) )
 
 		catalog = component.getUtility( ICourseCatalog )
-		assert_that( catalog, has_length( 1 ) )
-		entry = catalog[0]
-
-		assert_that( entry,
-					 has_properties( 'ProviderUniqueID', 'ENGR 1510-901',
-									 'Title', 'Introduction to Water',
-									 'Communities', ['ENGR1510.ou.nextthought.com'] ) )
+		# Both get picked up
+		assert_that( catalog, has_length( 2 ) )
+		assert_that( catalog,
+					 has_items(
+							 has_properties( 'ProviderUniqueID', 'ENGR 1510-901',
+											 'Title', 'Introduction to Water',
+											 'Communities', ['ENGR1510.ou.nextthought.com'] ),
+							 has_properties( 'ProviderUniqueID', 'CLC 3403',
+											 'Title', 'Law and Justice',
+											 'Communities', ['CLC3403.ou.nextthought.com'] ) ) )

@@ -51,16 +51,19 @@ def _content_package_registered( package, event ):
 	# Background		N (toc)			Y					N
 	# Icon				N				Y (icon)			N (diff)
 	# --> This is used in the hover menu for enrolled students
-	# StartDate			Y				N					Y
-	# Duration			Y				N					N
-	# Schedule			Y				N					N
+	# StartDate			Y (opt)			N					Y
+	# Duration			Y (opt)			N					N
+	# Schedule			Y (opt)			N					N
 	# Email Sig			N				N					Y
-	# Credit/Enroll		Y				N					N
-	# Promo Video		Y				N					N
+	# Credit/Enroll		Y (opt)			N					N
+	# Promo Video		Y (opt)			N					N
 	# Prereqs			Y				N					N
 
 	# Everything in the CourseInfo is also copied statically to a
 	# data file used to render the landing page.
+
+	# Older course info renderings are missing some of the optional
+	# elements.
 
 	# For packages with a CourseInfo, almost everything needed to
 	# construct a purchasable can come from the courseinfo
@@ -83,9 +86,14 @@ def _content_package_registered( package, event ):
 	catalog_entry.Title = info_json_dict['title']
 	catalog_entry.ProviderUniqueID = info_json_dict['id']
 	catalog_entry.ProviderDepartmentTitle = info_json_dict['school']
-	catalog_entry.StartDate = isodate.parse_date(info_json_dict['startDate'])
-	duration_number, duration_kind = info_json_dict['duration'].split()
-	catalog_entry.Duration = datetime.timedelta(**{duration_kind.lower():int(duration_number)})
+	if 'startDate' in info_json_dict:
+			catalog_entry.StartDate = isodate.parse_date(info_json_dict['startDate'])
+	if 'duration' in info_json_dict:
+			# We have durations as strings like "16 weeks"
+			duration_number, duration_kind = info_json_dict['duration'].split()
+			# Turn those into keywords for timedelta.
+			catalog_entry.Duration = datetime.timedelta(**{duration_kind.lower():int(duration_number)})
+
 	# For the convenience of others
 	catalog_entry.legacy_content_package = package
 
