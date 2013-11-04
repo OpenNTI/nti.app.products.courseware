@@ -19,14 +19,15 @@ from hamcrest import assert_that
 from hamcrest import is_
 from hamcrest import is_not
 from hamcrest import none
-from hamcrest import has_key
 from hamcrest import has_entries
+from hamcrest import has_entry
 from hamcrest import has_length
 from hamcrest import has_properties
 from hamcrest import has_items
 
 from nti.testing import base
 from nti.testing import matchers
+from nti.testing.matchers import verifiably_provides
 
 import os
 from zope import component
@@ -38,6 +39,9 @@ from nti.contentlibrary.filesystem import CachedNotifyingStaticFilesystemLibrary
 
 from .. import legacy
 from ..interfaces import ICourseCatalog
+from ..interfaces import ICourseCatalogLegacyEntry
+
+from nti.externalization.tests import externalizes
 
 class TestApplicationCatalogFromContent(SharedApplicationTestBase):
 
@@ -70,6 +74,8 @@ class TestApplicationCatalogFromContent(SharedApplicationTestBase):
 		catalog = component.getUtility( ICourseCatalog )
 		# Both get picked up
 		assert_that( catalog, has_length( 2 ) )
+		assert_that( catalog, has_items( verifiably_provides(ICourseCatalogLegacyEntry),
+										 verifiably_provides(ICourseCatalogLegacyEntry) ))
 		assert_that( catalog,
 					 has_items(
 							 has_properties( 'ProviderUniqueID', 'ENGR 1510-901',
@@ -78,3 +84,11 @@ class TestApplicationCatalogFromContent(SharedApplicationTestBase):
 							 has_properties( 'ProviderUniqueID', 'CLC 3403',
 											 'Title', 'Law and Justice',
 											 'Communities', ['CLC3403.ou.nextthought.com'] ) ) )
+
+		# Externalization
+		assert_that( list(catalog), has_items(
+			externalizes( has_entry('Class', 'CourseCatalogLegacyEntry')),
+			externalizes( has_entries(
+				'MimeType', 'application/vnd.nextthought.courseware.coursecataloglegacyentry',
+				'Duration', 'P112D',
+				'StartDate', '2014-01-13'))))

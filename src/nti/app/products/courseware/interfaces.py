@@ -44,6 +44,19 @@ class ICourseCatalogInstructorInfo(interface.Interface):
 	Suffix = schema.TextLine(title="The instructor's suffix such as PhD or Jr",
 							 required=False)
 
+class ICourseCreditLegacyInfo(interface.Interface):
+	"""
+	Describes how academic credit can be obtained
+	for this course.
+
+	"""
+
+	Hours = schema.Int(title="The number of hours that can be earned.",
+					   min=1)
+	Enrollment = schema.Dict(title="Information about how to enroll. This is not modeled.",
+							 key_type=schema.TextLine(title="A key"),
+							 value_type=schema.TextLine(title="A value"))
+
 class ICourseCatalogEntry(interface.Interface):
 	"""
 	An entry in the course catalog containing metadata
@@ -61,6 +74,18 @@ class ICourseCatalogEntry(interface.Interface):
 	Duration = schema.Timedelta(title="The length of the course",
 								description="Currently optional")
 
+
+	ProviderUniqueID = schema.TextLine(title="The unique id assigned by the provider")
+	ProviderDepartmentTitle = schema.TextLine(title="The string assigned to the provider's department offering the course")
+
+	Instructors = schema.ListOrTuple(title="The instuctors. Order might matter",
+									 value_type=schema.Object(ICourseCatalogInstructorInfo) )
+
+class ICourseCatalogLegacyEntry(ICourseCatalogEntry):
+	"""
+	Adds information used by or provided from legacy sources.
+	"""
+
 	# Legacy, will go away given a more full description of the
 	# course.
 	ContentPackageNTIID = ValidNTIID(title="The NTIID of the root content package")
@@ -70,8 +95,17 @@ class ICourseCatalogEntry(interface.Interface):
 									 title="Course communities",
 									 required=False)
 
-	ProviderUniqueID = schema.TextLine(title="The unique id assigned by the provider")
-	ProviderDepartmentTitle = schema.TextLine(title="The string assigned to the provider's department offering the course")
+	# While this might be a valid part of the course catalog, this
+	# representation of it isn't very informative or flexible
+	Credit = schema.List(value_type=schema.Object(ICourseCreditLegacyInfo),
+						 title="Either missing or an array with one entry.",
+						 required=False)
 
-	Instructors = schema.ListOrTuple(title="The instuctors. Order might matter",
-									 value_type=schema.Object(ICourseCatalogInstructorInfo) )
+	Video = schema.ValidURI(title="A URL-like string, possibly using private-but-un-prefixed schemes, or the empty string or missing.",
+							required=False)
+
+	Schedule = schema.Dict(title="An unmodeled dictionary, possibly useful for presentation.")
+
+	Prerequisites = schema.List(title="A list of dictionaries suitable for presentation. Expect a `title` key.",
+								value_type=schema.Dict(key_type=schema.TextLine(),
+													   value_type=schema.TextLine()))

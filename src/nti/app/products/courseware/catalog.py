@@ -41,6 +41,9 @@ class CourseCatalog(object):
 		return True
 	__nonzero__ = __bool__
 
+	def __iter__(self):
+		return iter(self._entries)
+
 	def __getitem__(self,ix):
 		return self._entries[ix]
 

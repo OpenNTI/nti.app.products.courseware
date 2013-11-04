@@ -11,6 +11,7 @@ __docformat__ = "restructuredtext en"
 
 logger = __import__('logging').getLogger(__name__)
 
+from zope import interface
 from zope import component
 
 import simplejson as json
@@ -20,9 +21,25 @@ import datetime
 from nti.contentlibrary import interfaces as lib_interfaces
 from zope.lifecycleevent import IObjectAddedEvent
 
+from nti.utils.schema import PermissiveSchemaConfigured as SchemaConfigured
+from nti.utils.schema import createDirectFieldProperties
+
 from .catalog import CourseCatalogInstructorInfo
 from .catalog import CourseCatalogEntry
-from .interfaces import ICourseCatalog
+from . import interfaces
+
+@interface.implementer(interfaces.ICourseCreditLegacyInfo)
+class CourseCreditLegacyInfo(SchemaConfigured):
+	createDirectFieldProperties(interfaces.ICourseCreditLegacyInfo)
+
+@interface.implementer(interfaces.ICourseCatalogLegacyEntry)
+class CourseCatalogLegacyEntry(CourseCatalogEntry):
+	createDirectFieldProperties(interfaces.ICourseCatalogLegacyEntry)
+
+	#: For legacy catalog entries created from a content package,
+	#: this will be that package (an implementation of
+	#: :class:`.ILegacyCourseConflatedContentPackage`)
+	legacy_content_package = None
 
 @component.adapter(lib_interfaces.ILegacyCourseConflatedContentPackage, IObjectAddedEvent)
 def _content_package_registered( package, event ):
@@ -80,19 +97,19 @@ def _content_package_registered( package, event ):
 	info_json_string = unicode(info_json_string, 'utf-8')
 	info_json_dict = json.loads( info_json_string )
 
-	catalog_entry = CourseCatalogEntry()
+	catalog_entry = CourseCatalogLegacyEntry()
 	catalog_entry.Description = info_json_dict['description']
 	catalog_entry.ContentPackageNTIID = package.ntiid
 	catalog_entry.Title = info_json_dict['title']
 	catalog_entry.ProviderUniqueID = info_json_dict['id']
 	catalog_entry.ProviderDepartmentTitle = info_json_dict['school']
 	if 'startDate' in info_json_dict:
-			catalog_entry.StartDate = isodate.parse_date(info_json_dict['startDate'])
+		catalog_entry.StartDate = isodate.parse_date(info_json_dict['startDate'])
 	if 'duration' in info_json_dict:
-			# We have durations as strings like "16 weeks"
-			duration_number, duration_kind = info_json_dict['duration'].split()
-			# Turn those into keywords for timedelta.
-			catalog_entry.Duration = datetime.timedelta(**{duration_kind.lower():int(duration_number)})
+		# We have durations as strings like "16 weeks"
+		duration_number, duration_kind = info_json_dict['duration'].split()
+		# Turn those into keywords for timedelta.
+		catalog_entry.Duration = datetime.timedelta(**{duration_kind.lower():int(duration_number)})
 
 	# For the convenience of others
 	catalog_entry.legacy_content_package = package
@@ -108,4 +125,11 @@ def _content_package_registered( package, event ):
 	catalog_entry.Communities = [unicode(x, 'utf-8')
 								 for x in package._v_toc_node.xpath('//course/scope[@type="public"]/entry/text()')]
 
-	component.getUtility(ICourseCatalog).addCatalogEntry( catalog_entry )
+	if info_json_dict.get('video'):
+		catalog_entry.Video = info_json_dict.get('video').encode('utf-8')
+	catalog_entry.Credit = [CourseCreditLegacyInfo(Hours=d['hours'],Enrollment=d['enrollment'])
+							for d in info_json_dict.get('credit', [])]
+	catalog_entry.Schedule = info_json_dict.get('Schedule', {})
+	catalog_entry.Prerequisites = info_json_dict.get('prerequisites')
+
+	component.getUtility(interfaces.ICourseCatalog).addCatalogEntry( catalog_entry )

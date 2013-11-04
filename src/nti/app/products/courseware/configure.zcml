@@ -11,4 +11,16 @@
 	<utility factory=".catalog.CourseCatalog" />
 	<subscriber handler=".legacy._content_package_registered" />
 
+	<!-- Externalization -->
+	<adapter factory=".externalization._CoursewareObjectIO"
+			 for=".interfaces.ICourseCatalogEntry" />
+	<adapter factory=".externalization._CoursewareObjectIO"
+			 for=".interfaces.ICourseCatalogInstructorInfo" />
+	<adapter factory=".externalization._CoursewareObjectIO"
+			 for=".interfaces.ICourseCreditLegacyInfo" />
+	<include package="nti.externalization" file="meta.zcml" />
+	<include package="nti.externalization" />
+	<ext:registerMimeFactories module=".catalog" />
+	<ext:registerMimeFactories module=".legacy" />
+
 </configure>
