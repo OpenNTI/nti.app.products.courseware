@@ -14,7 +14,7 @@ logger = __import__('logging').getLogger(__name__)
 
 from zope import interface
 from zope import component
-from zope import location
+from zope.container import contained
 
 from . import interfaces
 from nti.appserver import interfaces as app_interfaces
@@ -22,14 +22,15 @@ from nti.appserver import interfaces as app_interfaces
 from nti.utils.property import alias
 
 @interface.implementer(interfaces.ICoursesWorkspace)
-class _CoursesWorkspace(location.Location):
+class _CoursesWorkspace(contained.Contained):
 
 	__name__ = 'Courses'
 	name = alias('__name__')
 
-	def __init__(self, user_service):
+	def __init__(self, user_service, catalog):
 		self.context = user_service
 		self.user = user_service.user
+		self.catalog = catalog
 
 	@property
 	def collections(self):
@@ -49,30 +50,32 @@ def CoursesWorkspace( user_service ):
 	catalog = component.queryUtility( interfaces.ICourseCatalog )
 	if catalog:
 		# Ok, patch up the parent relationship
-		workspace = _CoursesWorkspace( user_service )
+		workspace = _CoursesWorkspace( user_service, catalog )
 		workspace.__parent__ = workspace.user
 		return workspace
 
-@interface.implementer(app_interfaces.ICollection)
-class AllCoursesCollection(location.Location):
+@interface.implementer(app_interfaces.IContainerCollection)
+class AllCoursesCollection(contained.Contained):
 
 	__name__ = 'AllCourses'
 	name = alias('__name__')
 
 	def __init__(self, parent):
 		self.__parent__ = parent
+		self.container = parent.catalog
 
 	accepts = ()
 
-@interface.implementer(app_interfaces.ICollection)
-class EnrolledCoursesCollection(location.Location):
+@interface.implementer(app_interfaces.IContainerCollection)
+class EnrolledCoursesCollection(contained.Contained):
 
 	__name__ = 'EnrolledCourses'
 	name = alias('__name__')
 
 	def __init__(self, parent):
 		self.__parent__ = parent
+		self.container = ()
 
 	accepts = ()
-	# TODO: Enroll by pasting to this collection?
+	# TODO: Enroll by POSTing to this collection?
 	# Or some href on the course info itself?

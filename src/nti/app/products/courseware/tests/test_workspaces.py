@@ -21,6 +21,10 @@ from hamcrest import contains
 from hamcrest import has_item
 from hamcrest import has_items
 from hamcrest import has_property
+from hamcrest import has_length
+from hamcrest import has_entry
+from hamcrest import all_of
+from hamcrest import has_entries
 
 from nti.testing import base
 from nti.testing import matchers
@@ -56,16 +60,7 @@ class TestWorkspace(SharedApplicationTestBase):
 								   'Library',
 								   'CLC3403_LawAndJustice')
 				   ))
-		if not lib.contentPackages:
-			# Access the content packages *now* instead of lazily
-			# so that they get enumerated at a time we control.
-			# If we don't do this and wait until we are in a transaction
-			# in a site, products.ou.legacy will try to register
-			# purchasables in that site, and purchasables can't be persisted
-			# in the DS's persistent site manager.
-			# It's depatable if the purchasable registration should be in the
-			# current site or a fixed site anyway.
-			raise ValueError()
+		return lib
 
 	@WithSharedApplicationMockDS
 	def test_workspace_links_in_service(self):
@@ -92,3 +87,19 @@ class TestWorkspace(SharedApplicationTestBase):
 			assert_that( [traversal.resource_path(c) for c in workspace.collections],
 						 has_items( course_path + '/AllCourses',
 									course_path + '/EnrolledCourses' ))
+
+
+	@WithSharedApplicationMockDS(users=True,testapp=True)
+	def test_fetch_all_courses(self):
+		res = self.testapp.get( '/dataserver2/users/sjohnson@nextthought.com/Courses/AllCourses' )
+
+
+		assert_that( res.json_body, has_entry( 'Items', has_length( 2 )) )
+
+		assert_that( res.json_body['Items'],
+					 has_items(
+						 all_of( has_entries( 'Duration', 'P112D',
+											  'Title', 'Introduction to Water',
+											  'StartDate', '2014-01-13')),
+						 all_of( has_entries( 'Duration', None,
+											  'Title', 'Law and Justice' )) ) )

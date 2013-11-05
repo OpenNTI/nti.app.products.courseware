@@ -17,6 +17,7 @@ from zope import component
 import simplejson as json
 import isodate
 import datetime
+import os
 
 from nti.contentlibrary import interfaces as lib_interfaces
 from zope.lifecycleevent import IObjectAddedEvent
@@ -92,12 +93,17 @@ def _content_package_registered( package, event ):
 		logger.debug("No course info for %s", package )
 		return
 	info_json_string = package.read_contents_of_sibling_entry( package.courseInfoSrc )
+	info_json_key = package.make_sibling_key( package.courseInfoSrc )
 	# Ensure we get unicode values for strings (simplejson would return bytestrings
 	# if they are ASCII encodable)
 	info_json_string = unicode(info_json_string, 'utf-8')
 	info_json_dict = json.loads( info_json_string )
 
 	catalog_entry = CourseCatalogLegacyEntry()
+	if lib_interfaces.IFilesystemKey.providedBy( info_json_key ):
+		catalog_entry.lastModified = os.stat(info_json_key.absolute_path).st_mtime
+	else:
+		raise ValueError("Unsupported key", info_json_key )
 	catalog_entry.Description = info_json_dict['description']
 	catalog_entry.ContentPackageNTIID = package.ntiid
 	catalog_entry.Title = info_json_dict['title']
@@ -129,7 +135,7 @@ def _content_package_registered( package, event ):
 		catalog_entry.Video = info_json_dict.get('video').encode('utf-8')
 	catalog_entry.Credit = [CourseCreditLegacyInfo(Hours=d['hours'],Enrollment=d['enrollment'])
 							for d in info_json_dict.get('credit', [])]
-	catalog_entry.Schedule = info_json_dict.get('Schedule', {})
+	catalog_entry.Schedule = info_json_dict.get('schedule', {})
 	catalog_entry.Prerequisites = info_json_dict.get('prerequisites', [])
 
 	component.getUtility(interfaces.ICourseCatalog).addCatalogEntry( catalog_entry )

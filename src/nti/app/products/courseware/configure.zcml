@@ -8,12 +8,19 @@
 	<include package="zope.security" file="meta.zcml" />
 	<include package="zope.component" />
 
-	<utility factory=".catalog.CourseCatalog" />
+	<utility factory=".catalog.CourseCatalog"
+			 provides=".interfaces.ICourseCatalog" />
 	<subscriber handler=".legacy._content_package_registered" />
 
 	<!-- Workspaces -->
+	<!-- A subscriber for enumeration -->
 	<subscriber factory=".workspaces.CoursesWorkspace"
-				provides=".interfaces.ICoursesWorkspace"/>
+				provides=".interfaces.ICoursesWorkspace" />
+	<!-- And an adapter for direct access -->
+	<adapter factory=".workspaces.CoursesWorkspace"
+			 provides=".interfaces.ICoursesWorkspace" />
+	<adapter name="Courses"
+			 factory=".catalog_views.CoursesPathAdapter" />
 
 	<!-- Externalization -->
 	<adapter factory=".externalization._CoursewareObjectIO"

@@ -6,4 +6,6 @@
 
 	<include package="pyramid_zcml" />
 
+	<pyramid:scan package=".catalog_views" />
+
 </configure>

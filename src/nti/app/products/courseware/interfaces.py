@@ -14,6 +14,7 @@ logger = __import__('logging').getLogger(__name__)
 
 from zope import interface
 
+from zope.location.interfaces import ILocation
 from nti.appserver import interfaces as app_interfaces
 
 from nti.utils import schema
@@ -58,7 +59,7 @@ class ICourseCreditLegacyInfo(interface.Interface):
 							 key_type=schema.TextLine(title="A key"),
 							 value_type=schema.TextLine(title="A value"))
 
-class ICourseCatalogEntry(interface.Interface):
+class ICourseCatalogEntry(ILocation):
 	"""
 	An entry in the course catalog containing metadata
 	and presentation data about the course.

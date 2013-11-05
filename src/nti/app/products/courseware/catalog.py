@@ -13,6 +13,7 @@ logger = __import__('logging').getLogger(__name__)
 
 from zope import interface
 from zope import lifecycleevent
+from zope.container.contained import Contained
 
 from . import interfaces
 
@@ -21,7 +22,9 @@ from nti.utils.schema import createDirectFieldProperties
 from nti.utils.property import alias
 
 @interface.implementer(interfaces.ICourseCatalog)
-class CourseCatalog(object):
+class CourseCatalog(Contained):
+
+	lastModified = 0
 
 	def __init__( self ):
 		self._entries = list()
@@ -30,6 +33,7 @@ class CourseCatalog(object):
 	def addCatalogEntry(self,entry):
 		self._entries.append( entry )
 		entry.__parent__ = self
+		self.lastModified = max( self.lastModified, entry.lastModified )
 		lifecycleevent.added( entry )
 
 	append = addCatalogEntry
