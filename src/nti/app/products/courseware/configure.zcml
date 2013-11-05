@@ -11,7 +11,7 @@
 	<utility factory=".catalog.CourseCatalog" />
 	<subscriber handler=".legacy._content_package_registered" />
 
-	<!-- Externalization 
+	<!-- Externalization -->
 	<adapter factory=".externalization._CoursewareObjectIO"
 			 for=".interfaces.ICourseCatalogEntry" />
 	<adapter factory=".externalization._CoursewareObjectIO"
@@ -22,5 +22,5 @@
 	<include package="nti.externalization" />
 	<ext:registerMimeFactories module=".catalog" />
 	<ext:registerMimeFactories module=".legacy" />
-	-->
+
 </configure>
