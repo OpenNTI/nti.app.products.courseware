@@ -14,8 +14,9 @@ logger = __import__('logging').getLogger(__name__)
 
 from zope import interface
 
+from nti.appserver import interfaces as app_interfaces
+
 from nti.utils import schema
-from zope.configuration import fields
 from nti.ntiids.schema import ValidNTIID
 
 class ICourseCatalog(interface.Interface):
@@ -109,3 +110,8 @@ class ICourseCatalogLegacyEntry(ICourseCatalogEntry):
 	Prerequisites = schema.List(title="A list of dictionaries suitable for presentation. Expect a `title` key.",
 								value_type=schema.Dict(key_type=schema.TextLine(),
 													   value_type=schema.TextLine()))
+
+class ICoursesWorkspace(app_interfaces.IWorkspace):
+	"""
+	A workspace containing data for courses.
+	"""

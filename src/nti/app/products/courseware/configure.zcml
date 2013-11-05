@@ -11,6 +11,10 @@
 	<utility factory=".catalog.CourseCatalog" />
 	<subscriber handler=".legacy._content_package_registered" />
 
+	<!-- Workspaces -->
+	<subscriber factory=".workspaces.CoursesWorkspace"
+				provides=".interfaces.ICoursesWorkspace"/>
+
 	<!-- Externalization -->
 	<adapter factory=".externalization._CoursewareObjectIO"
 			 for=".interfaces.ICourseCatalogEntry" />
