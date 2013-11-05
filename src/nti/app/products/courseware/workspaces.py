@@ -66,6 +66,7 @@ class AllCoursesCollection(contained.Contained):
 
 	accepts = ()
 
+from nti.dataserver.datastructures import LastModifiedCopyingUserList
 @interface.implementer(app_interfaces.IContainerCollection)
 class EnrolledCoursesCollection(contained.Contained):
 
@@ -74,7 +75,9 @@ class EnrolledCoursesCollection(contained.Contained):
 
 	def __init__(self, parent):
 		self.__parent__ = parent
-		self.container = ()
+		self.container = LastModifiedCopyingUserList()
+		for catalog in component.subscribers( (parent.user,), interfaces.IPrincipalEnrollmentCatalog ):
+			self.container.extend( catalog.iter_enrollments() )
 
 	accepts = ()
 	# TODO: Enroll by POSTing to this collection?

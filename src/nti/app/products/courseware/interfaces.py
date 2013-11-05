@@ -16,6 +16,7 @@ from zope import interface
 
 from zope.location.interfaces import ILocation
 from nti.appserver import interfaces as app_interfaces
+from nti.contenttypes.courses.interfaces import IPrincipalEnrollments
 
 from nti.utils import schema
 from nti.ntiids.schema import ValidNTIID
@@ -116,3 +117,13 @@ class ICoursesWorkspace(app_interfaces.IWorkspace):
 	"""
 	A workspace containing data for courses.
 	"""
+
+class IPrincipalEnrollmentCatalog(IPrincipalEnrollments):
+	"""
+	Extends the base enrollments interface to be in terms
+	of the :class:`.ICourseCatalogEntry` objects defined
+	in this module.
+	"""
+
+	def iter_enrollments():
+		"Iterate across :class:`.ICourseCatalogEntry` objects. "

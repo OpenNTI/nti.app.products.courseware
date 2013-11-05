@@ -25,6 +25,9 @@ from hamcrest import has_length
 from hamcrest import has_entry
 from hamcrest import all_of
 from hamcrest import has_entries
+from hamcrest import empty
+from hamcrest import not_none
+from hamcrest import greater_than
 
 from nti.testing import base
 from nti.testing import matchers
@@ -93,7 +96,6 @@ class TestWorkspace(SharedApplicationTestBase):
 	def test_fetch_all_courses(self):
 		res = self.testapp.get( '/dataserver2/users/sjohnson@nextthought.com/Courses/AllCourses' )
 
-
 		assert_that( res.json_body, has_entry( 'Items', has_length( 2 )) )
 
 		assert_that( res.json_body['Items'],
@@ -103,3 +105,38 @@ class TestWorkspace(SharedApplicationTestBase):
 											  'StartDate', '2014-01-13')),
 						 all_of( has_entries( 'Duration', None,
 											  'Title', 'Law and Justice' )) ) )
+
+	@WithSharedApplicationMockDS(users=True,testapp=True)
+	def test_fetch_enrolled_courses_legacy(self):
+		# This is almost an integration test, checking that
+		# our interfaces are properly implemented by nti.app.products.ou
+
+		# First, we are enrolled in nothing
+		res = self.testapp.get( '/dataserver2/users/sjohnson@nextthought.com/Courses/EnrolledCourses' )
+
+		assert_that( res.json_body, has_entry( 'Items', is_(empty()) ) )
+
+
+		# enroll in the course using its purchasable id
+		courseId = 'tag:nextthought.com,2011-10:OU-course-CLC3403LawAndJustice'
+		environ = self._make_extra_environ()
+		environ[b'HTTP_ORIGIN'] = b'http://platform.ou.edu'
+
+
+		path = '/dataserver2/store/enroll_course'
+		data = {'courseId': courseId}
+		res = self.testapp.post_json(path, data, extra_environ=environ)
+		assert_that(res.status_int, is_(204))
+
+		# Now it should show up in our workspace
+		res = self.testapp.get( '/dataserver2/users/sjohnson@nextthought.com/Courses/EnrolledCourses' )
+
+
+		assert_that( res.json_body, has_entry( 'Items', has_length( 1 ) ) )
+		assert_that( res.json_body['Items'],
+					 has_items(
+						 all_of( has_entries( 'Duration', None,
+											  'Title', 'Law and Justice' )) ) )
+		# With proper modification times
+		assert_that( res, has_property( 'last_modified', not_none() ))
+		assert_that( res.json_body, has_entry( 'Last Modified', greater_than( 0 )))
