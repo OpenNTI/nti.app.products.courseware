@@ -130,6 +130,6 @@ def _content_package_registered( package, event ):
 	catalog_entry.Credit = [CourseCreditLegacyInfo(Hours=d['hours'],Enrollment=d['enrollment'])
 							for d in info_json_dict.get('credit', [])]
 	catalog_entry.Schedule = info_json_dict.get('Schedule', {})
-	catalog_entry.Prerequisites = info_json_dict.get('prerequisites')
+	catalog_entry.Prerequisites = info_json_dict.get('prerequisites', [])
 
 	component.getUtility(interfaces.ICourseCatalog).addCatalogEntry( catalog_entry )
