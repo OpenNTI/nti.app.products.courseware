@@ -77,7 +77,10 @@ class EnrolledCoursesCollection(contained.Contained):
 		self.__parent__ = parent
 		self.container = LastModifiedCopyingUserList()
 		for catalog in component.subscribers( (parent.user,), interfaces.IPrincipalEnrollmentCatalog ):
-			self.container.extend( catalog.iter_enrollments() )
+			enrolled = catalog.iter_enrollments()
+			self.container.updateLastModIfGreater( getattr( enrolled, 'lastModified', 0) )
+			self.container.extend( [interfaces.ICourseCatalogEntry(x)
+									for x in enrolled] )
 
 	accepts = ()
 	# TODO: Enroll by POSTing to this collection?

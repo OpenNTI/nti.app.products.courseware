@@ -67,6 +67,11 @@ class ICourseCatalogEntry(ILocation):
 
 	Much of this is poorly modeled and a conglomeration of things
 	found in several previous places.
+
+	In general, these objects should be adaptable to their
+	corresponding :class:`.ICourseInstance`, and the
+	course instance should be adaptable back to its corresponding
+	entry.
 	"""
 
 	Title = schema.TextLine(title="The provider's descriptive title")
@@ -126,4 +131,7 @@ class IPrincipalEnrollmentCatalog(IPrincipalEnrollments):
 	"""
 
 	def iter_enrollments():
-		"Iterate across :class:`.ICourseCatalogEntry` objects. "
+		"""
+		Iterate across :class:`.ICourseCatalogEntry` objects, or at least
+		something that can be adapted to them.
+		"""
