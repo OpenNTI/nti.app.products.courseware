@@ -21,6 +21,9 @@
 			 provides=".interfaces.ICoursesWorkspace" />
 	<adapter name="Courses"
 			 factory=".catalog_views.CoursesPathAdapter" />
+	<!-- Traversal paths -->
+	<!-- This may go away -->
+	<adapter factory=".workspaces.CatalogEntryLocationInfo" />
 
 	<!-- Externalization -->
 	<include package="nti.externalization" file="meta.zcml" />
@@ -31,5 +34,8 @@
 						 .interfaces.ICourseCatalogInstructorInfo
 						 .interfaces.ICourseCreditLegacyInfo"
 		modules=".catalog .legacy" />
+
+	<subscriber factory=".catalog._CourseInstanceLinkDecorator"
+				provides="nti.externalization.interfaces.IExternalMappingDecorator" />
 
 </configure>
