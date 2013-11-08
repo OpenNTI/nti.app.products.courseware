@@ -42,6 +42,13 @@ class _CoursesWorkspace(contained.Contained):
 		return (AllCoursesCollection(self),
 				EnrolledCoursesCollection(self))
 
+	def __getitem__(self, key):
+		"Make us traversable to collections."
+		for i in self.collections:
+			if i.__name__ == key:
+				return i
+		raise KeyError(key)
+
 @interface.implementer(interfaces.ICoursesWorkspace)
 @component.adapter(app_interfaces.IUserService)
 def CoursesWorkspace( user_service ):
@@ -66,6 +73,12 @@ class AllCoursesCollection(contained.Contained):
 		self.container = parent.catalog
 
 	accepts = ()
+
+	def __getitem__(self, key):
+		"We can be traversed to the CourseCatalog."
+		if key == self.container.__name__:
+			return self.container
+		raise KeyError(key)
 
 from nti.dataserver.datastructures import LastModifiedCopyingUserList
 @interface.implementer(app_interfaces.IContainerCollection)

@@ -131,14 +131,19 @@ class TestWorkspace(SharedApplicationTestBase):
 		# Now it should show up in our workspace
 		res = self.testapp.get( '/dataserver2/users/sjohnson@nextthought.com/Courses/EnrolledCourses' )
 
-
+		entry_href = '/dataserver2/users/sjohnson%40nextthought.com/Courses/AllCourses/CourseCatalog/CLC%203403'
 		assert_that( res.json_body, has_entry( 'Items', has_length( 1 ) ) )
 		assert_that( res.json_body['Items'],
 					 has_items(
 						 all_of( has_entries( 'Class', 'CourseInstance',
 											  'href', '/dataserver2/users/CLC3403.ou.nextthought.com/LegacyCourses/CLC3403',
 											  'Links', has_item( has_entries( 'rel', 'CourseCatalogEntry',
-																			  'href', '/dataserver2/users/sjohnson%40nextthought.com/Courses/AllCourses/CourseCatalog/CLC%203403' )) )) ) )
+																			  'href', entry_href  )) )) ) )
 		# With proper modification times
 		assert_that( res, has_property( 'last_modified', not_none() ))
 		assert_that( res.json_body, has_entry( 'Last Modified', greater_than( 0 )))
+
+		# The entry can be fetched too
+		res = self.testapp.get( entry_href )
+		assert_that( res.json_body, has_entries( 'Class', 'CourseCatalogLegacyEntry',
+												 'Title', 'Law and Justice' ))

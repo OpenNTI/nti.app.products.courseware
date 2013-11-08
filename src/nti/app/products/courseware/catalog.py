@@ -24,6 +24,12 @@ from nti.utils.schema import createDirectFieldProperties
 from nti.utils.property import alias
 
 from nti.dataserver.links import Link
+from nti.dataserver.interfaces import AUTHENTICATED_GROUP_NAME
+from nti.dataserver.authorization import ACT_READ
+from nti.utils.property import LazyOnClass
+from nti.dataserver.authorization_acl import acl_from_aces
+from nti.dataserver.authorization_acl import ace_allowing
+
 
 @interface.implementer(interfaces.ICourseCatalog)
 class CourseCatalog(Contained):
@@ -36,6 +42,14 @@ class CourseCatalog(Contained):
 	# This is all provisional API, not part of the interface
 
 	__name__ = 'CourseCatalog'
+
+	@LazyOnClass
+	def __acl__( self ):
+		# Got to be here after the components are registered
+		return acl_from_aces(
+			# Everyone logged in has read and search access to the catalog
+			ace_allowing( AUTHENTICATED_GROUP_NAME, ACT_READ, CourseCatalog ) )
+
 
 	def addCatalogEntry(self,entry):
 		self._entries.append( entry )
@@ -56,7 +70,17 @@ class CourseCatalog(Contained):
 		return iter(self._entries)
 
 	def __getitem__(self,ix):
-		return self._entries[ix]
+		try:
+			return self._entries[ix]
+		except TypeError:
+			# Ok, is it asking by name, during traversal?
+			# TODO: This will need to be cleaned up when/if
+			# we have multiple providers and potentially overlapping
+			# names...not to mention different semesters
+			for entry in self._entries:
+				if entry.__name__ == ix:
+					return entry
+			raise
 
 @interface.implementer(interfaces.ICourseCatalogInstructorInfo)
 class CourseCatalogInstructorInfo(SchemaConfigured):

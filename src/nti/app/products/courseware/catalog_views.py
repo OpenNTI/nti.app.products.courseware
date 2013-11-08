@@ -24,11 +24,10 @@ from nti.dataserver.interfaces import IUser
 from pyramid.interfaces import IRequest
 from nti.appserver.interfaces import IUserService
 from .interfaces import ICoursesWorkspace
+from .interfaces import ICourseCatalogEntry
 
-from pyramid.view import view_defaults
 from pyramid.view import view_config
-from nti.dataserver import authorization as nauth
-from nti.appserver.httpexceptions import HTTPNotFound
+from nti.appserver.dataserver_pyramid_views import GenericGetView
 
 @interface.implementer(IPathAdapter)
 @component.adapter(IUser, IRequest)
@@ -38,21 +37,7 @@ def CoursesPathAdapter(context, request):
 
 	return workspace
 
-@view_config(name='AllCourses')
-@view_config(name='EnrolledCourses')
-@view_defaults(route_name="objects.generic.traversal",
-			   context=ICoursesWorkspace,
-			   request_method='GET',
-			   permission=nauth.ACT_READ,
-			   renderer='rest')
-class NamedCourseTypeView(object):
 
-	def __init__(self, context, request):
-		self.context = context
-		self.request = request
-
-	def __call__(self):
-		for collection in self.context.collections:
-			if collection.name == self.request.view_name:
-				return collection
-		raise HTTPNotFound()
+@view_config(context=ICourseCatalogEntry)
+class CatalogGenericGetView(GenericGetView):
+	pass
