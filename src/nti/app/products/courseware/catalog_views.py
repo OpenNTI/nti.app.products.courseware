@@ -28,9 +28,11 @@ from .interfaces import ICoursesWorkspace
 from .interfaces import ICourseCatalogEntry
 from .interfaces import ICourseCatalog
 from .interfaces import IEnrolledCoursesCollection
+from .interfaces import ICourseInstanceEnrollment
 from nti.contenttypes.courses.interfaces import ICourseInstance
 from nti.contenttypes.courses.interfaces import ICourseEnrollmentManager
 
+from pyramid import httpexceptions as hexc
 from pyramid.view import view_config
 from nti.appserver.dataserver_pyramid_views import GenericGetView
 from nti.appserver._view_utils  import AbstractAuthenticatedView
@@ -90,16 +92,28 @@ class enroll_course_view(AbstractAuthenticatedView,
 		return course_instance
 
 
-# @view_config( route_name='objects.generic.traversal',
-# 			  context=IEnrolledCoursesCollection,
-# 			  request_method='DELETE',
-# 			  permission=nauth.ACT_CREATE,
-# 			  renderer='rest' )
-# class drop_course_view(AbstractAuthenticatedView):
-# 	"""
-# 	Dropping a course consists of DELETEing its appearance
-# 	in your enrolled courses view.
+@view_config( route_name='objects.generic.traversal',
+			  context=ICourseInstanceEnrollment,
+			  request_method='DELETE',
+			  permission=nauth.ACT_DELETE,
+			  renderer='rest' )
+class drop_course_view(AbstractAuthenticatedView):
+	"""
+	Dropping a course consists of DELETEing its appearance
+	in your enrolled courses view.
 
-# 	For this to work, it requires that the IEnrolledCoursesCollection
-# 	is not itself traversable to children.
-# 	"""
+	For this to work, it requires that the IEnrolledCoursesCollection
+	is not itself traversable to children.
+	"""
+
+	def __call__(self):
+
+		course_instance = self.request.context.CourseInstance
+		try:
+			enrollments = component.getMultiAdapter( (course_instance, self.request),
+													 ICourseEnrollmentManager )
+		except LookupError:
+			enrollments = ICourseEnrollmentManager(course_instance)
+		enrollments.drop( self.remoteUser )
+
+		return hexc.HTTPNoContent()

@@ -17,6 +17,7 @@ from zope import interface
 from zope.location.interfaces import ILocation
 from nti.appserver import interfaces as app_interfaces
 from nti.contenttypes.courses.interfaces import IPrincipalEnrollments
+from nti.contenttypes.courses.interfaces import ICourseInstance
 
 from nti.utils import schema
 from nti.ntiids.schema import ValidNTIID
@@ -125,8 +126,17 @@ class ICoursesWorkspace(app_interfaces.IWorkspace):
 
 class IEnrolledCoursesCollection(app_interfaces.IContainerCollection):
 	"""
-	A collection (local to a user) of courses he is enrolled in.
-	)"""
+	A collection (local to a user) of courses he is enrolled in
+	(:class:`.ICourseInstanceEnrollment`)
+	"""
+
+class ICourseInstanceEnrollment(interface.Interface):
+	"""
+	An object representing a principal's enrollment in a course
+	instance.
+	"""
+
+	CourseInstance = schema.Object(ICourseInstance)
 
 class IPrincipalEnrollmentCatalog(IPrincipalEnrollments):
 	"""
@@ -139,4 +149,6 @@ class IPrincipalEnrollmentCatalog(IPrincipalEnrollments):
 		"""
 		Iterate across :class:`.ICourseCatalogEntry` objects, or at least
 		something that can be adapted to them.
+
+		Commonly, this will return actual :class:`.ICourseInstance` objects.
 		"""

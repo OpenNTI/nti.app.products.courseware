@@ -19,8 +19,14 @@ from zope.location.traversing import LocationPhysicallyLocatable
 
 from . import interfaces
 from nti.appserver import interfaces as app_interfaces
+from nti.contenttypes.courses.interfaces import ICourseInstance
 
 from nti.utils.property import alias
+
+from nti.dataserver.authorization import ACT_DELETE
+from nti.dataserver.authorization_acl import acl_from_aces
+from nti.dataserver.authorization_acl import ace_allowing
+
 
 @interface.implementer(interfaces.ICoursesWorkspace)
 class _CoursesWorkspace(contained.Contained):
@@ -80,6 +86,19 @@ class AllCoursesCollection(contained.Contained):
 			return self.container
 		raise KeyError(key)
 
+@interface.implementer(interfaces.ICourseInstanceEnrollment)
+@component.adapter(ICourseInstance)
+class CourseInstanceEnrollment(contained.Contained):
+	__acl__ = ()
+	def __init__(self, context):
+		self.CourseInstance = context
+		self.__name__ = context.__name__
+
+@interface.implementer(interfaces.ICourseCatalogEntry)
+@component.adapter(interfaces.ICourseInstanceEnrollment)
+def wrapper_to_catalog(wrapper):
+	return interfaces.ICourseCatalogEntry(wrapper.CourseInstance)
+
 from nti.dataserver.datastructures import LastModifiedCopyingUserList
 @interface.implementer(interfaces.IEnrolledCoursesCollection)
 class EnrolledCoursesCollection(contained.Contained):
@@ -93,14 +112,25 @@ class EnrolledCoursesCollection(contained.Contained):
 		for catalog in component.subscribers( (parent.user,), interfaces.IPrincipalEnrollmentCatalog ):
 			enrolled = catalog.iter_enrollments()
 			self.container.extend( enrolled )
+		# Now that we've got the courses, turn them into enrollment records;
+		# using extend above or the direct lists return by the iterator
+		# preserves modification dates
+		self.container[:] = [interfaces.ICourseInstanceEnrollment(x) for x in self.container]
+		for enrollment in self.container:
+			enrollment.__acl__ = acl_from_aces(ace_allowing(self.__parent__.__parent__, # the user
+															ACT_DELETE,
+															EnrolledCoursesCollection))
+			enrollment.__parent__ = self
 
 	# TODO: Need to add an accepts for what the
 	# POST-to-enroll takes
 	accepts = ()
 
-	#def __getitem__(self,key):
-	#	"our children are our enrolled courses"
-	#	return self.__parent__.catalog[key]
+	def __getitem__(self,key):
+		for enrollment in self.container:
+			if enrollment.__name__ == key or interfaces.ICourseCatalogEntry(enrollment).__name__ == key:
+				return enrollment
+		raise KeyError(key)
 
 from pyramid.threadlocal import get_current_request
 from pyramid.security import authenticated_userid
