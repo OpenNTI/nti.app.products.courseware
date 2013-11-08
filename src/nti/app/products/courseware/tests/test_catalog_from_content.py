@@ -33,6 +33,8 @@ import os
 from zope import component
 
 from nti.app.testing.application_webtest import SharedApplicationTestBase
+from nti.app.testing.decorators import WithSharedApplicationMockDS
+from nti.dataserver.tests import mock_dataserver
 
 from nti.contentlibrary.interfaces import IContentPackageLibrary
 from nti.contentlibrary.filesystem import CachedNotifyingStaticFilesystemLibrary as Library
@@ -58,6 +60,7 @@ class TestApplicationCatalogFromContent(SharedApplicationTestBase):
 								   'CLC3403_LawAndJustice')
 				   ))
 
+	@WithSharedApplicationMockDS
 	def test_content(self):
 		"basic test to be sure we got the content we need"
 
@@ -86,9 +89,10 @@ class TestApplicationCatalogFromContent(SharedApplicationTestBase):
 											 'Communities', ['CLC3403.ou.nextthought.com'] ) ) )
 
 		# Externalization
-		assert_that( list(catalog), has_items(
-			externalizes( has_entry('Class', 'CourseCatalogLegacyEntry')),
-			externalizes( has_entries(
-				'MimeType', 'application/vnd.nextthought.courseware.coursecataloglegacyentry',
-				'Duration', 'P112D',
-				'StartDate', '2014-01-13'))))
+		with mock_dataserver.mock_db_trans(self.ds):
+			assert_that( list(catalog), has_items(
+				externalizes( has_entry('Class', 'CourseCatalogLegacyEntry')),
+				externalizes( has_entries(
+					'MimeType', 'application/vnd.nextthought.courseware.coursecataloglegacyentry',
+					'Duration', 'P112D',
+					'StartDate', '2014-01-13'))))
