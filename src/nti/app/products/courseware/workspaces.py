@@ -81,7 +81,7 @@ class AllCoursesCollection(contained.Contained):
 		raise KeyError(key)
 
 from nti.dataserver.datastructures import LastModifiedCopyingUserList
-@interface.implementer(app_interfaces.IContainerCollection)
+@interface.implementer(interfaces.IEnrolledCoursesCollection)
 class EnrolledCoursesCollection(contained.Contained):
 
 	__name__ = 'EnrolledCourses'
@@ -94,9 +94,13 @@ class EnrolledCoursesCollection(contained.Contained):
 			enrolled = catalog.iter_enrollments()
 			self.container.extend( enrolled )
 
+	# TODO: Need to add an accepts for what the
+	# POST-to-enroll takes
 	accepts = ()
-	# TODO: Enroll by POSTing to this collection?
-	# Or some href on the course info itself?
+
+	#def __getitem__(self,key):
+	#	"our children are our enrolled courses"
+	#	return self.__parent__.catalog[key]
 
 from pyramid.threadlocal import get_current_request
 from pyramid.security import authenticated_userid

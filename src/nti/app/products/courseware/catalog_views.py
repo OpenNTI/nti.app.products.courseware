@@ -23,11 +23,21 @@ from zope.traversing.interfaces import IPathAdapter
 from nti.dataserver.interfaces import IUser
 from pyramid.interfaces import IRequest
 from nti.appserver.interfaces import IUserService
+
 from .interfaces import ICoursesWorkspace
 from .interfaces import ICourseCatalogEntry
+from .interfaces import ICourseCatalog
+from .interfaces import IEnrolledCoursesCollection
+from nti.contenttypes.courses.interfaces import ICourseInstance
+from nti.contenttypes.courses.interfaces import ICourseEnrollmentManager
 
 from pyramid.view import view_config
 from nti.appserver.dataserver_pyramid_views import GenericGetView
+from nti.appserver._view_utils  import AbstractAuthenticatedView
+from nti.appserver._view_utils  import ModeledContentUploadRequestUtilsMixin
+
+from nti.dataserver import authorization as nauth
+from nti.dataserver import traversal
 
 @interface.implementer(IPathAdapter)
 @component.adapter(IUser, IRequest)
@@ -41,3 +51,55 @@ def CoursesPathAdapter(context, request):
 @view_config(context=ICourseCatalogEntry)
 class CatalogGenericGetView(GenericGetView):
 	pass
+
+
+@view_config( route_name='objects.generic.traversal',
+			  context=IEnrolledCoursesCollection,
+			  request_method='POST',
+			  permission=nauth.ACT_CREATE,
+			  renderer='rest' )
+class enroll_course_view(AbstractAuthenticatedView,
+						 ModeledContentUploadRequestUtilsMixin):
+	"""
+	POSTing a course identifier to the enrolled courses
+	collection enrolls you in it.
+
+	At this writing, anyone is allowed to enroll in any course,
+	so the only security on this is that the remote user
+	has write permissions to the collection (which implies
+	either its his collection or he's an admin).
+	"""
+
+	inputClass = object
+
+	def __call__(self):
+		catalog = component.getUtility(ICourseCatalog)
+		identifier = self.readInput()
+		catalog_entry = catalog[identifier]
+
+		course_instance = ICourseInstance(catalog_entry)
+		try:
+			enrollments = component.getMultiAdapter( (course_instance, self.request),
+													 ICourseEnrollmentManager )
+		except LookupError:
+			enrollments = ICourseEnrollmentManager(course_instance)
+		freshly_added = enrollments.enroll( self.remoteUser )
+		if freshly_added:
+			self.request.response.status_int = 201 # HTTPCreated
+			self.request.response.location = traversal.resource_path(course_instance)
+		return course_instance
+
+
+# @view_config( route_name='objects.generic.traversal',
+# 			  context=IEnrolledCoursesCollection,
+# 			  request_method='DELETE',
+# 			  permission=nauth.ACT_CREATE,
+# 			  renderer='rest' )
+# class drop_course_view(AbstractAuthenticatedView):
+# 	"""
+# 	Dropping a course consists of DELETEing its appearance
+# 	in your enrolled courses view.
+
+# 	For this to work, it requires that the IEnrolledCoursesCollection
+# 	is not itself traversable to children.
+# 	"""

@@ -147,3 +147,38 @@ class TestWorkspace(SharedApplicationTestBase):
 		res = self.testapp.get( entry_href )
 		assert_that( res.json_body, has_entries( 'Class', 'CourseCatalogLegacyEntry',
 												 'Title', 'Law and Justice' ))
+
+
+	@WithSharedApplicationMockDS(users=True,testapp=True)
+	def test_enroll_unenroll_using_workspace(self):
+
+		# First, we are enrolled in nothing
+		res = self.testapp.get( '/dataserver2/users/sjohnson@nextthought.com/Courses/EnrolledCourses' )
+		assert_that( res.json_body, has_entry( 'Items', is_(empty()) ) )
+
+		# We can POST to EnrolledCourses to add a course, assuming we're allowed
+		# Right now, we accept any value that the course catalog can accept;
+		# this will probably get stricter.
+
+		res = self.testapp.post_json( '/dataserver2/users/sjohnson@nextthought.com/Courses/EnrolledCourses',
+									  'CLC 3403',
+									  status=201 )
+
+		# The response is a 201 created, with the
+		# apparent effect of creating the course instance
+		instance_href = '/dataserver2/users/CLC3403.ou.nextthought.com/LegacyCourses/CLC3403'
+		entry_href = '/dataserver2/users/sjohnson%40nextthought.com/Courses/AllCourses/CourseCatalog/CLC%203403'
+		assert_that( res.json_body,
+					 has_entries( 'Class', 'CourseInstance',
+								  'href', instance_href,
+								  'Links', has_item( has_entries( 'rel', 'CourseCatalogEntry',
+																  'href', entry_href  )) ))
+		assert_that( res.location, is_( 'http://localhost' + instance_href ))
+
+		# Now it should show up in our workspace
+		res = self.testapp.get( '/dataserver2/users/sjohnson@nextthought.com/Courses/EnrolledCourses' )
+		assert_that( res.json_body, has_entry( 'Items', has_length( 1 ) ) )
+
+		# We can delete to drop it
+		#res = self.testapp.delete( '/dataserver2/users/sjohnson@nextthought.com/Courses/EnrolledCourses/CLC%203403',
+		#						   status=204)

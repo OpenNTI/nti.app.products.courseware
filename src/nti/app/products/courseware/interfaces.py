@@ -123,6 +123,11 @@ class ICoursesWorkspace(app_interfaces.IWorkspace):
 	A workspace containing data for courses.
 	"""
 
+class IEnrolledCoursesCollection(app_interfaces.IContainerCollection):
+	"""
+	A collection (local to a user) of courses he is enrolled in.
+	)"""
+
 class IPrincipalEnrollmentCatalog(IPrincipalEnrollments):
 	"""
 	Extends the base enrollments interface to be in terms
