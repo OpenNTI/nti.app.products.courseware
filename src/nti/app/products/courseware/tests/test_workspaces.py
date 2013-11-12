@@ -157,7 +157,7 @@ class TestWorkspace(SharedApplicationTestBase):
 		# First, we are enrolled in nothing
 		res = self.testapp.get( '/dataserver2/users/sjohnson@nextthought.com/Courses/EnrolledCourses' )
 		assert_that( res.json_body, has_entry( 'Items', is_(empty()) ) )
-
+		assert_that( res.json_body, has_entry( 'accepts', contains('application/json')))
 		# We can POST to EnrolledCourses to add a course, assuming we're allowed
 		# Right now, we accept any value that the course catalog can accept;
 		# this will probably get stricter.

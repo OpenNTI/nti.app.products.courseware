@@ -123,8 +123,8 @@ class EnrolledCoursesCollection(contained.Contained):
 			enrollment.__parent__ = self
 
 	# TODO: Need to add an accepts for what the
-	# POST-to-enroll takes
-	accepts = ()
+	# POST-to-enroll takes. For now, just generic
+	accepts = ("application/json",)
 
 	def __getitem__(self,key):
 		for enrollment in self.container:
