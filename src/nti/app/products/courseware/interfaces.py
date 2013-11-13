@@ -48,6 +48,14 @@ class ICourseCatalogInstructorInfo(interface.Interface):
 	Suffix = schema.TextLine(title="The instructor's suffix such as PhD or Jr",
 							 required=False)
 
+class ICourseCatalogInstructorLegacyInfo(ICourseCatalogInstructorInfo):
+	"""
+	Additional legacy info about course instructors.
+	"""
+
+	defaultphoto = schema.DataURI(title="An extra copy of the instructor's photo",
+								  required=False)
+
 class ICourseCreditLegacyInfo(interface.Interface):
 	"""
 	Describes how academic credit can be obtained

@@ -24,6 +24,7 @@ from zope.lifecycleevent import IObjectAddedEvent
 
 from nti.utils.schema import PermissiveSchemaConfigured as SchemaConfigured
 from nti.utils.schema import createDirectFieldProperties
+from nti.utils import dataurl
 
 from .catalog import CourseCatalogInstructorInfo
 from .catalog import CourseCatalogEntry
@@ -41,6 +42,10 @@ class CourseCatalogLegacyEntry(CourseCatalogEntry):
 	#: this will be that package (an implementation of
 	#: :class:`.ILegacyCourseConflatedContentPackage`)
 	legacy_content_package = None
+
+@interface.implementer(interfaces.ICourseCatalogInstructorLegacyInfo)
+class CourseCatalogInstructorLegacyInfo(CourseCatalogInstructorInfo):
+	createDirectFieldProperties(interfaces.ICourseCatalogInstructorLegacyInfo)
 
 @component.adapter(lib_interfaces.ILegacyCourseConflatedContentPackage, IObjectAddedEvent)
 def _content_package_registered( package, event ):
@@ -122,8 +127,12 @@ def _content_package_registered( package, event ):
 
 	instructors = []
 	for inst in info_json_dict['instructors']:
-		instructor = CourseCatalogInstructorInfo( Name=inst['name'],
-												  JobTitle=inst['title'] )
+		instructor = CourseCatalogInstructorLegacyInfo( Name=inst['name'],
+														JobTitle=inst['title'] )
+		if inst.get('defaultphoto'):
+			photo_name = inst['defaultphoto']
+			photo = package.read_contents_of_sibling_entry( photo_name )
+			instructor.defaultphoto = dataurl.encode(photo, mime_type=b'image/png' if photo_name.endswith('.png') else b'image/jpeg' )
 		instructors.append( instructor )
 
 	catalog_entry.Instructors = instructors
