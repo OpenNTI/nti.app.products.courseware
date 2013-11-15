@@ -127,6 +127,16 @@ class ICourseCatalogLegacyEntry(ICourseCatalogEntry):
 								value_type=schema.Dict(key_type=schema.TextLine(),
 													   value_type=schema.TextLine()))
 
+	### These are being replaced with presentation specific asset bundles
+	# (one path is insufficient to handle things like retina displays
+	# and the various platforms).
+	LegacyPurchasableIcon = schema.TextLine(title="A URL or path of indeterminate type or meaning",
+											required=False)
+
+	LegacyPurchasableThumbnail = schema.TextLine(title="A URL or path of indeterminate type or meaning",
+												 required=False)
+
+
 class ICoursesWorkspace(app_interfaces.IWorkspace):
 	"""
 	A workspace containing data for courses.

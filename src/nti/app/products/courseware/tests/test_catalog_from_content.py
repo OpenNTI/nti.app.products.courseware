@@ -83,7 +83,8 @@ class TestApplicationCatalogFromContent(SharedApplicationTestBase):
 					 has_items(
 							 has_properties( 'ProviderUniqueID', 'ENGR 1510-901',
 											 'Title', 'Introduction to Water',
-											 'Communities', ['ENGR1510.ou.nextthought.com'] ),
+											 'Communities', ['ENGR1510.ou.nextthought.com'],
+											 'LegacyPurchasableIcon', '/IntroWater/images/ENGR1510_promo.png'),
 							 has_properties( 'ProviderUniqueID', 'CLC 3403',
 											 'Title', 'Law and Justice',
 											 'Communities', ['CLC3403.ou.nextthought.com'] ) ) )
@@ -95,4 +96,5 @@ class TestApplicationCatalogFromContent(SharedApplicationTestBase):
 				externalizes( has_entries(
 					'MimeType', 'application/vnd.nextthought.courseware.coursecataloglegacyentry',
 					'Duration', 'P112D',
-					'StartDate', '2014-01-13'))))
+					'StartDate', '2014-01-13',
+					'LegacyPurchasableIcon', '/IntroWater/images/ENGR1510_promo.png'))))
