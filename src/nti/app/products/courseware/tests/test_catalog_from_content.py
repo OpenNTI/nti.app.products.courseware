@@ -24,6 +24,7 @@ from hamcrest import has_entry
 from hamcrest import has_length
 from hamcrest import has_properties
 from hamcrest import has_items
+from hamcrest import has_property
 
 from nti.testing import base
 from nti.testing import matchers
@@ -42,6 +43,7 @@ from nti.contentlibrary.filesystem import CachedNotifyingStaticFilesystemLibrary
 from .. import legacy
 from ..interfaces import ICourseCatalog
 from ..interfaces import ICourseCatalogLegacyEntry
+from ..interfaces import ICourseCatalogInstructorLegacyInfo
 
 from nti.externalization.tests import externalizes
 
@@ -79,6 +81,12 @@ class TestApplicationCatalogFromContent(SharedApplicationTestBase):
 		assert_that( catalog, has_length( 2 ) )
 		assert_that( catalog, has_items( verifiably_provides(ICourseCatalogLegacyEntry),
 										 verifiably_provides(ICourseCatalogLegacyEntry) ))
+		water = catalog[0] if catalog[0].Title == 'Introduction to Water' else catalog[1]
+		assert_that( water.Instructors, has_items( verifiably_provides(ICourseCatalogInstructorLegacyInfo),
+												   verifiably_provides(ICourseCatalogInstructorLegacyInfo)))
+		assert_that( water.Instructors, has_items( has_property('username', 'saba1234'),
+												   has_property('username', 'cham1234') ) )
+
 		assert_that( catalog,
 					 has_items(
 							 has_properties( 'ProviderUniqueID', 'ENGR 1510-901',

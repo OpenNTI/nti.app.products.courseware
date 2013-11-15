@@ -29,6 +29,8 @@ from hamcrest import empty
 from hamcrest import not_none
 from hamcrest import greater_than
 
+from zope import component
+
 from nti.testing import base
 from nti.testing import matchers
 from nti.testing.matchers import verifiably_provides
@@ -38,13 +40,14 @@ import os.path
 from nti.app.testing.application_webtest import SharedApplicationTestBase
 from nti.app.testing.decorators import WithSharedApplicationMockDS
 
-
+from nti.contentlibrary.interfaces import IContentPackageLibrary
 from nti.contentlibrary.filesystem import CachedNotifyingStaticFilesystemLibrary as Library
 
 from nti.appserver.interfaces import IUserService
 from nti.appserver.interfaces import ICollection
 from ..interfaces import ICoursesWorkspace
 from nti.dataserver import users
+
 
 from nti.dataserver.tests import mock_dataserver
 from nti.dataserver import traversal
@@ -106,10 +109,17 @@ class TestWorkspace(SharedApplicationTestBase):
 						 all_of( has_entries( 'Duration', None,
 											  'Title', 'Law and Justice' )) ) )
 
-	@WithSharedApplicationMockDS(users=True,testapp=True)
+	@WithSharedApplicationMockDS(users=('harp4162'),testapp=True,default_authenticate=True)
 	def test_fetch_enrolled_courses_legacy(self):
 		# This is almost an integration test, checking that
 		# our interfaces are properly implemented by nti.app.products.ou
+
+		# Now that we have created the instructor user, we need to re-enumerate
+		# the library so it gets noticed
+		with mock_dataserver.mock_db_trans(self.ds):
+			lib = component.getUtility(IContentPackageLibrary)
+			del lib.contentPackages
+			getattr(lib, 'contentPackages')
 
 		# First, we are enrolled in nothing
 		res = self.testapp.get( '/dataserver2/users/sjohnson@nextthought.com/Courses/EnrolledCourses' )
@@ -139,6 +149,7 @@ class TestWorkspace(SharedApplicationTestBase):
 		assert_that( res.json_body['Items'][0]['CourseInstance'],
 					 has_entries( 'Class', 'CourseInstance',
 								  'href', '/dataserver2/users/CLC3403.ou.nextthought.com/LegacyCourses/CLC3403',
+								  'instructors', has_item( has_entry('Username', 'harp4162')),
 								  'Links', has_item( has_entries( 'rel', 'CourseCatalogEntry',
 																  'href', entry_href  )) ))
 		# With proper modification times

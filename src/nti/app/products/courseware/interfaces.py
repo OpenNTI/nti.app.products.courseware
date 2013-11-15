@@ -13,8 +13,8 @@ __docformat__ = "restructuredtext en"
 logger = __import__('logging').getLogger(__name__)
 
 from zope import interface
-
 from zope.location.interfaces import ILocation
+
 from nti.appserver import interfaces as app_interfaces
 from nti.contenttypes.courses.interfaces import IPrincipalEnrollments
 from nti.contenttypes.courses.interfaces import ICourseInstance
@@ -55,6 +55,10 @@ class ICourseCatalogInstructorLegacyInfo(ICourseCatalogInstructorInfo):
 
 	defaultphoto = schema.DataURI(title="An extra copy of the instructor's photo",
 								  required=False)
+
+	username = schema.TextLine(title="A username string that may or may not refer to an actual account.",
+							   required=False)
+	username.setTaggedValue('_ext_excluded_out', True) # Internal use only
 
 class ICourseCreditLegacyInfo(interface.Interface):
 	"""
