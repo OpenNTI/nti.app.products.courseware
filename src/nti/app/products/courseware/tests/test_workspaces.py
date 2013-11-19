@@ -147,7 +147,7 @@ class TestWorkspace(SharedApplicationTestBase):
 								  'Links', has_item( has_entries( 'rel', 'CourseCatalogEntry',
 																  'href', entry_href  )) ))
 
-		assert_that(res.json_body['Items'][0], has_entry(u'LegacyEnrollmentStatus', u'ForCredit'))
+		assert_that(res.json_body['Items'][0], has_entry(u'LegacyEnrollmentStatus', u'Open'))
 
 		# With proper modification times
 		assert_that( res, has_property( 'last_modified', not_none() ))
@@ -194,3 +194,4 @@ class TestWorkspace(SharedApplicationTestBase):
 								   status=204)
 		res = self.testapp.get( '/dataserver2/users/sjohnson@nextthought.com/Courses/EnrolledCourses' )
 		assert_that( res.json_body, has_entry( 'Items', is_(empty()) ) )
+
