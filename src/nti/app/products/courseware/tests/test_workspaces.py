@@ -1,11 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
-
-
 $Id$
 """
-
 from __future__ import print_function, unicode_literals, absolute_import, division
 __docformat__ = "restructuredtext en"
 
@@ -31,8 +28,6 @@ from hamcrest import greater_than
 
 from zope import component
 
-from nti.testing import base
-from nti.testing import matchers
 from nti.testing.matchers import verifiably_provides
 
 import os.path
@@ -45,12 +40,11 @@ from nti.contentlibrary.filesystem import CachedNotifyingStaticFilesystemLibrary
 
 from nti.appserver.interfaces import IUserService
 from nti.appserver.interfaces import ICollection
-from ..interfaces import ICoursesWorkspace
-from nti.dataserver import users
-
 
 from nti.dataserver.tests import mock_dataserver
 from nti.dataserver import traversal
+
+from nti.app.products.courseware.interfaces import ICoursesWorkspace
 
 class TestWorkspace(SharedApplicationTestBase):
 
@@ -152,6 +146,9 @@ class TestWorkspace(SharedApplicationTestBase):
 								  'instructors', has_item( has_entry('Username', 'harp4162')),
 								  'Links', has_item( has_entries( 'rel', 'CourseCatalogEntry',
 																  'href', entry_href  )) ))
+
+		assert_that(res.json_body['Items'][0], has_entry(u'LegacyEnrollmentStatus', u'ForCredit'))
+
 		# With proper modification times
 		assert_that( res, has_property( 'last_modified', not_none() ))
 		assert_that( res.json_body, has_entry( 'Last Modified', greater_than( 0 )))
