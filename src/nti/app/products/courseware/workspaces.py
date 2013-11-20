@@ -17,6 +17,8 @@ from zope import component
 from zope.container import contained
 from zope.location.traversing import LocationPhysicallyLocatable
 
+from zope.cachedescriptors.property import Lazy
+
 from . import interfaces
 from nti.appserver import interfaces as app_interfaces
 from nti.contenttypes.courses.interfaces import ICourseInstance
@@ -39,7 +41,7 @@ class _CoursesWorkspace(contained.Contained):
 		self.user = user_service.user
 		self.catalog = catalog
 
-	@property
+	@Lazy
 	def collections(self):
 		"""
 		The collections in a course provide info about the enrolled and available
@@ -54,6 +56,9 @@ class _CoursesWorkspace(contained.Contained):
 			if i.__name__ == key:
 				return i
 		raise KeyError(key)
+
+	def __len__(self):
+		return len(self.collections)
 
 @interface.implementer(interfaces.ICoursesWorkspace)
 @component.adapter(app_interfaces.IUserService)
@@ -86,6 +91,9 @@ class AllCoursesCollection(contained.Contained):
 			return self.container
 		raise KeyError(key)
 
+	def __len__(self):
+		return 1
+
 @interface.implementer(interfaces.ICourseInstanceEnrollment)
 @component.adapter(ICourseInstance)
 class CourseInstanceEnrollment(contained.Contained):
@@ -93,6 +101,10 @@ class CourseInstanceEnrollment(contained.Contained):
 	def __init__(self, context):
 		self.CourseInstance = context
 		self.__name__ = context.__name__
+
+	def __conform__(self, iface):
+		if iface.isOrExtends(ICourseInstance):
+			return self.CourseInstance
 
 @interface.implementer(interfaces.ICourseCatalogEntry)
 @component.adapter(interfaces.ICourseInstanceEnrollment)
@@ -131,6 +143,9 @@ class EnrolledCoursesCollection(contained.Contained):
 			if enrollment.__name__ == key or interfaces.ICourseCatalogEntry(enrollment).__name__ == key:
 				return enrollment
 		raise KeyError(key)
+
+	def __len__(self):
+		return len(self.container)
 
 from pyramid.threadlocal import get_current_request
 from pyramid.security import authenticated_userid
