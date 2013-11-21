@@ -86,10 +86,16 @@ class enroll_course_view(AbstractAuthenticatedView,
 		except LookupError:
 			enrollments = ICourseEnrollmentManager(course_instance)
 		freshly_added = enrollments.enroll( self.remoteUser )
+		enrollment = ICourseInstanceEnrollment(course_instance)
+		if not enrollment.__parent__:
+			enrollment.__parent__ = self.request.context
+
 		if freshly_added:
 			self.request.response.status_int = 201 # HTTPCreated
-			self.request.response.location = traversal.resource_path(course_instance)
-		return course_instance
+			self.request.response.location = traversal.resource_path(enrollment)
+		# Return our enrollment, whether fresh or not
+		# TODO: This should probably be a multi-adapter
+		return enrollment
 
 
 @view_config( route_name='objects.generic.traversal',

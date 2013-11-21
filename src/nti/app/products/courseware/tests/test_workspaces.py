@@ -174,24 +174,25 @@ class TestWorkspace(SharedApplicationTestBase):
 									  'CLC 3403',
 									  status=201 )
 
-		# The response is a 201 created, with the
-		# apparent effect of creating the course instance
+		# The response is a 201 created for our enrollment status
+		enrollment_href = '/dataserver2/users/sjohnson%40nextthought.com/Courses/EnrolledCourses/CLC3403'
 		instance_href = '/dataserver2/users/CLC3403.ou.nextthought.com/LegacyCourses/CLC3403'
 		entry_href = '/dataserver2/users/sjohnson%40nextthought.com/Courses/AllCourses/CourseCatalog/CLC%203403'
 		assert_that( res.json_body,
-					 has_entries( 'Class', 'CourseInstance',
-								  'href', instance_href,
-								  'Links', has_item( has_entries( 'rel', 'CourseCatalogEntry',
-																  'href', entry_href  )) ))
-		assert_that( res.location, is_( 'http://localhost' + instance_href ))
+					 has_entries(
+						 'Class', 'CourseInstanceEnrollment',
+						 'CourseInstance', has_entries('Class', 'CourseInstance',
+													   'href', instance_href,
+													   'Links', has_item( has_entries( 'rel', 'CourseCatalogEntry',
+																					   'href', entry_href  )) )))
+		assert_that( res.location, is_( 'http://localhost' + enrollment_href ))
 
 		# Now it should show up in our workspace
 		res = self.testapp.get( '/dataserver2/users/sjohnson@nextthought.com/Courses/EnrolledCourses' )
 		assert_that( res.json_body, has_entry( 'Items', has_length( 1 ) ) )
 
 		# We can delete to drop it
-		res = self.testapp.delete( '/dataserver2/users/sjohnson@nextthought.com/Courses/EnrolledCourses/CLC%203403',
+		res = self.testapp.delete( enrollment_href,
 								   status=204)
 		res = self.testapp.get( '/dataserver2/users/sjohnson@nextthought.com/Courses/EnrolledCourses' )
 		assert_that( res.json_body, has_entry( 'Items', is_(empty()) ) )
-
