@@ -29,6 +29,9 @@
 			 provides=".interfaces.ICourseInstanceEnrollment" />
 	<adapter factory=".workspaces.wrapper_to_catalog" />
 
+	<adapter factory=".traversal.CourseTraversable" />
+	<adapter factory=".traversal.CourseEnrollmentTraversable" />
+
 	<!-- Externalization -->
 	<include package="nti.externalization" file="meta.zcml" />
 	<include package="nti.externalization" />
