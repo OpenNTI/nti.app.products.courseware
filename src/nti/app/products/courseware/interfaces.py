@@ -18,6 +18,7 @@ from zope.location.interfaces import ILocation
 from nti.appserver import interfaces as app_interfaces
 from nti.contenttypes.courses.interfaces import IPrincipalEnrollments
 from nti.contenttypes.courses.interfaces import ICourseInstance
+from nti.dataserver.interfaces import IShouldHaveTraversablePath
 
 from nti.utils import schema
 from nti.ntiids.schema import ValidNTIID
@@ -152,7 +153,7 @@ class IEnrolledCoursesCollection(app_interfaces.IContainerCollection):
 	(:class:`.ICourseInstanceEnrollment`)
 	"""
 
-class ICourseInstanceEnrollment(interface.Interface):
+class ICourseInstanceEnrollment(IShouldHaveTraversablePath):
 	"""
 	An object representing a principal's enrollment in a course
 	instance.

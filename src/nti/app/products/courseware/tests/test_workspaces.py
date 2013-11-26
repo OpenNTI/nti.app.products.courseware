@@ -181,6 +181,7 @@ class TestWorkspace(SharedApplicationTestBase):
 		assert_that( res.json_body,
 					 has_entries(
 						 'Class', 'CourseInstanceEnrollment',
+						 'href', enrollment_href,
 						 'CourseInstance', has_entries('Class', 'CourseInstance',
 													   'href', instance_href,
 													   'Links', has_item( has_entries( 'rel', 'CourseCatalogEntry',
@@ -190,6 +191,7 @@ class TestWorkspace(SharedApplicationTestBase):
 		# Now it should show up in our workspace
 		res = self.testapp.get( '/dataserver2/users/sjohnson@nextthought.com/Courses/EnrolledCourses' )
 		assert_that( res.json_body, has_entry( 'Items', has_length( 1 ) ) )
+		assert_that( res.json_body['Items'][0], has_entry( 'href', enrollment_href ) )
 
 		# We can delete to drop it
 		res = self.testapp.delete( enrollment_href,
