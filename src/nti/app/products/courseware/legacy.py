@@ -45,6 +45,7 @@ class CourseCatalogLegacyEntry(CourseCatalogEntry):
 
 @interface.implementer(interfaces.ICourseCatalogInstructorLegacyInfo)
 class CourseCatalogInstructorLegacyInfo(CourseCatalogInstructorInfo):
+	defaultphoto = None
 	createDirectFieldProperties(interfaces.ICourseCatalogInstructorLegacyInfo)
 
 @component.adapter(lib_interfaces.ILegacyCourseConflatedContentPackage, IObjectAddedEvent)
@@ -82,13 +83,13 @@ def _content_package_registered( package, event ):
 	# Promo Video		Y (opt)			N					N
 	# Prereqs			Y				N					N
 
-	# Everything in the CourseInfo is also copied statically to a
+	# Everything in the course-info.json is also copied statically to a
 	# data file used to render the landing page.
 
 	# Older course info renderings are missing some of the optional
 	# elements.
 
-	# For packages with a CourseInfo, almost everything needed to
+	# For packages with a course-info.json, almost everything needed to
 	# construct a purchasable can come from the courseinfo
 	# or the ToC or convention (Big Icon) or be derived
 	# (Preview and email sig).
