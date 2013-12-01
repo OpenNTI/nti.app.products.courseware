@@ -116,37 +116,3 @@ class CourseCatalogEntry(SchemaConfigured):
 			result.append( Link( instance, rel="CourseInstance" ) )
 
 		return result
-
-
-from nti.externalization.interfaces import IExternalMappingDecorator
-from nti.externalization.interfaces import StandardExternalFields
-from nti.externalization.singleton import SingletonDecorator
-from nti.dataserver.interfaces import ILinkExternalHrefOnly
-
-@interface.implementer(IExternalMappingDecorator)
-@component.adapter(ICourseInstance)
-class _CourseInstanceLinkDecorator(object):
-	"""
-	If a course instance can find its catalog entry, return that as a link.
-	Also make it return an href, even if it isn't top-level.
-	"""
-
-	__metaclass__ = SingletonDecorator
-
-	def decorateExternalMapping( self, context, result ):
-		# We have no way to know what order these will be
-		# called in, so we must preserve anything that exists
-		orig_links = result.get( StandardExternalFields.LINKS, () )
-		entry = interfaces.ICourseCatalogEntry(context, None)
-		_links = None
-		if entry:
-			_links = [ Link( entry, rel="CourseCatalogEntry" ) ]
-
-		if _links:
-			_links.extend( orig_links )
-			result[StandardExternalFields.LINKS] = _links
-
-		if 'href' not in result:
-			link = Link(context)
-			interface.alsoProvides( link, ILinkExternalHrefOnly )
-			result['href'] = link

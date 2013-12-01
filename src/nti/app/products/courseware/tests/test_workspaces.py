@@ -31,6 +31,8 @@ from zope import component
 from nti.testing.matchers import verifiably_provides
 
 import os.path
+import datetime
+import webob.datetime_utils
 
 from nti.app.testing.application_webtest import SharedApplicationTestBase
 from nti.app.testing.decorators import WithSharedApplicationMockDS
@@ -140,9 +142,11 @@ class TestWorkspace(SharedApplicationTestBase):
 		assert_that( res.json_body['Items'], has_item( has_entries( 'Class', 'CourseInstanceEnrollment',
 																	'href', '/dataserver2/users/sjohnson%40nextthought.com/Courses/EnrolledCourses/CLC3403')) )
 
-		assert_that( res.json_body['Items'][0]['CourseInstance'],
+		course_instance = res.json_body['Items'][0]['CourseInstance']
+		assert_that( course_instance,
 					 has_entries( 'Class', 'CourseInstance',
 								  'href', '/dataserver2/users/CLC3403.ou.nextthought.com/LegacyCourses/CLC3403',
+								  'Outline', has_entry( 'Links', has_item( has_entry( 'rel', 'contents' ))),
 								  'instructors', has_item( has_entry('Username', 'harp4162')),
 								  'Links', has_item( has_entries( 'rel', 'CourseCatalogEntry',
 																  'href', entry_href  )) ))
@@ -153,10 +157,20 @@ class TestWorkspace(SharedApplicationTestBase):
 		assert_that( res, has_property( 'last_modified', not_none() ))
 		assert_that( res.json_body, has_entry( 'Last Modified', greater_than( 0 )))
 
-		# The entry can be fetched too
+		# The catalog entry can be fetched too
 		res = self.testapp.get( entry_href )
 		assert_that( res.json_body, has_entries( 'Class', 'CourseCatalogLegacyEntry',
 												 'Title', 'Law and Justice' ))
+
+		# The outline contents can be fetched too
+		outline_content_href = self.require_link_href_with_rel( course_instance['Outline'], 'contents' )
+		assert_that( outline_content_href, is_('/dataserver2/users/CLC3403.ou.nextthought.com/LegacyCourses/CLC3403/Outline/contents'))
+		res = self.testapp.get( outline_content_href )
+		assert_that( res.last_modified, is_( datetime.datetime(2013, 10, 26, 19, 8, 15, 0, webob.datetime_utils.UTC) ))
+		assert_that( res.json_body, has_length(6))
+		assert_that( res.json_body[0], has_entry('title', 'Introduction'))
+		assert_that( res.json_body[0], has_entry('contents', has_length(2)))
+
 
 
 	@WithSharedApplicationMockDS(users=True,testapp=True)
