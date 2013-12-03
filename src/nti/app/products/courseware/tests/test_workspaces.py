@@ -144,7 +144,7 @@ class TestWorkspace(SharedApplicationTestBase):
 
 		course_instance = res.json_body['Items'][0]['CourseInstance']
 		assert_that( course_instance,
-					 has_entries( 'Class', 'CourseInstance',
+					 has_entries( 'Class', 'LegacyCommunityBasedCourseInstance',
 								  'href', '/dataserver2/users/CLC3403.ou.nextthought.com/LegacyCourses/CLC3403',
 								  'Outline', has_entry( 'Links', has_item( has_entry( 'rel', 'contents' ))),
 								  'instructors', has_item( has_entry('Username', 'harp4162')),
@@ -196,7 +196,7 @@ class TestWorkspace(SharedApplicationTestBase):
 					 has_entries(
 						 'Class', 'CourseInstanceEnrollment',
 						 'href', enrollment_href,
-						 'CourseInstance', has_entries('Class', 'CourseInstance',
+						 'CourseInstance', has_entries('Class', 'LegacyCommunityBasedCourseInstance',
 													   'href', instance_href,
 													   'Links', has_item( has_entries( 'rel', 'CourseCatalogEntry',
 																					   'href', entry_href  )) )))
