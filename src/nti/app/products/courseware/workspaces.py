@@ -17,12 +17,11 @@ from zope import component
 from zope.container import contained
 from zope.location.traversing import LocationPhysicallyLocatable
 
-from zope.cachedescriptors.property import Lazy
-
 from . import interfaces
 from nti.appserver import interfaces as app_interfaces
 from nti.contenttypes.courses.interfaces import ICourseInstance
 
+from nti.utils.property import Lazy
 from nti.utils.property import alias
 
 from nti.dataserver.authorization import ACT_DELETE
@@ -33,8 +32,9 @@ from nti.dataserver.authorization_acl import ace_allowing
 @interface.implementer(interfaces.ICoursesWorkspace)
 class _CoursesWorkspace(contained.Contained):
 
+	#: Our name, part of our URL
 	__name__ = 'Courses'
-	name = alias('__name__')
+	name = alias('__name__', __name__)
 
 	def __init__(self, user_service, catalog):
 		self.context = user_service
@@ -76,8 +76,10 @@ def CoursesWorkspace( user_service ):
 @interface.implementer(app_interfaces.IContainerCollection)
 class AllCoursesCollection(contained.Contained):
 
+	#: Our name, part of our URL.
 	__name__ = 'AllCourses'
-	name = alias('__name__')
+
+	name = alias('__name__',__name__)
 
 	def __init__(self, parent):
 		self.__parent__ = parent
@@ -115,8 +117,9 @@ from nti.dataserver.datastructures import LastModifiedCopyingUserList
 @interface.implementer(interfaces.IEnrolledCoursesCollection)
 class EnrolledCoursesCollection(contained.Contained):
 
+	#: Our name, part of our URL.
 	__name__ = 'EnrolledCourses'
-	name = alias('__name__')
+	name = alias('__name__',__name__)
 
 	def __init__(self, parent):
 		self.__parent__ = parent
