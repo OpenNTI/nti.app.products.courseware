@@ -21,13 +21,22 @@
 			 provides=".interfaces.ICoursesWorkspace" />
 	<adapter name="Courses"
 			 factory=".catalog_views.CoursesPathAdapter" />
+
+	<!-- A subscriber for getting admin roles -->
+	<subscriber factory=".workspaces._DefaultPrincipalAdministrativeRoleCatalog"
+				provides=".interfaces.IPrincipalAdministrativeRoleCatalog" />
+
 	<!-- Traversal paths -->
 	<!-- This may go away -->
 	<adapter factory=".workspaces.CatalogEntryLocationInfo" />
 
 	<adapter factory=".workspaces.CourseInstanceEnrollment"
 			 provides=".interfaces.ICourseInstanceEnrollment" />
-	<adapter factory=".workspaces.wrapper_to_catalog" />
+	<adapter factory=".workspaces.wrapper_to_catalog"
+			 for=".interfaces.ICourseInstanceEnrollment"/>
+	<adapter factory=".workspaces.wrapper_to_catalog"
+			 for=".interfaces.ICourseInstanceAdministrativeRole"/>
+
 
 	<adapter factory=".traversal.CourseTraversable" />
 	<adapter factory=".traversal.CourseEnrollmentTraversable" />
@@ -40,7 +49,8 @@
 		root_interfaces=".interfaces.ICourseCatalogEntry
 						 .interfaces.ICourseCatalogInstructorInfo
 						 .interfaces.ICourseCreditLegacyInfo
-						 .interfaces.ICourseInstanceEnrollment"
+						 .interfaces.ICourseInstanceEnrollment
+						 .interfaces.ICourseInstanceAdministrativeRole"
 		modules=".catalog .legacy .workspaces" />
 
 	<subscriber factory=".decorators._CourseInstanceLinkDecorator"

@@ -36,11 +36,12 @@ class ICourseCatalog(interface.Interface):
 class ICourseCatalogInstructorInfo(interface.Interface):
 	"""
 	Information about a course instructor.
+
+	.. note:: Almost all of this could/should
+		come from a user profile. That way the user
+		can be in charge of it. Pictures would come from
+		the user's avatar URL.
 	"""
-	# TODO: Almost all of this could/should
-	# come from a user profile. That way the user
-	# can be in charge of it. Pictures would come from
-	# the user's avatar URL.
 
 	Name = schema.TextLine(title="The instructor's name")
 	Title = schema.TextLine(title="The instructor's title of address such as Dr.",
@@ -157,21 +158,73 @@ class ICourseInstanceEnrollment(IShouldHaveTraversablePath):
 	"""
 	An object representing a principal's enrollment in a course
 	instance.
+
+	Implementations should be adaptable to their course instance
+	and the corresponding catalog entry.
 	"""
+
+	__name__ = interface.Attribute("The name of the enrollment is the same as the CourseInstance.")
 
 	CourseInstance = schema.Object(ICourseInstance)
 
 class IPrincipalEnrollmentCatalog(IPrincipalEnrollments):
 	"""
 	Extends the base enrollments interface to be in terms
-	of the :class:`.ICourseCatalogEntry` objects defined
+	of the :class:`.ICourseInstanceEnrollment` objects defined
 	in this module.
+
+	There can be multiple catalogs of enrollments for courses
+	that are managed in different ways. Therefore, commonly
+	implementations will be registered as subscription adapters
+	from the user.
 	"""
 
 	def iter_enrollments():
 		"""
-		Iterate across :class:`.ICourseCatalogEntry` objects, or at least
-		something that can be adapted to them.
-
-		Commonly, this will return actual :class:`.ICourseInstance` objects.
+		Iterate across :class:`.ICourseInstanceEnrollment` objects, or at
+		least something that can be adapted to that interface.
+		(Commonly, this will return actual :class:`.ICourseInstance`
+		objects; we provide an adapter from that to the enrollment.)
 		"""
+
+class ICourseInstanceAdministrativeRole(IShouldHaveTraversablePath):
+	"""
+	An object representing a principal's administrative
+	role within a course instance.
+
+	Currently, the only supported role is that of instructor, and that
+	role is static; thus, this object cannot be deleted or altered
+	externally.) In the future as there are more roles (such as TA)
+	and those roles are made dynamic, instances of this
+	object may be able to be DELETEd or POSTd.
+
+	Implementations should be adaptable to their course instance
+	and the corresponding catalog entry.
+	"""
+
+	__name__ = interface.Attribute("The name of the administration is the same as the CourseInstance.")
+
+	RoleName = schema.Choice(title="The name of the role this principal holds",
+							 values=('instructor',))
+	CourseInstance = schema.Object(ICourseInstance)
+
+class IPrincipalAdministrativeRoleCatalog(interface.Interface):
+	"""
+	Something that can provide information about all courses
+	administered by the principal.
+
+	There can be multiple catalogs for courses that are managed in
+	different ways. Therefore, commonly implementations will be
+	registered as subscription adapters from the user.
+	"""
+
+	def iter_administrations():
+		"""
+		Iterate across :class:`.ICourseInstanceAdministrativeRole` objects, or at
+		least something that can be adapted to that interface.
+		"""
+class IAdministeredCoursesCollection(app_interfaces.IContainerCollection):
+	"""
+	A collection (local to a user) of courses he is enrolled in
+	(:class:`.ICourseInstanceAdministrativeRole`)
+	"""

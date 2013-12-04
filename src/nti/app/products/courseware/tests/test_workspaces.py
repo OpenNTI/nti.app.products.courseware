@@ -47,6 +47,7 @@ from nti.dataserver.tests import mock_dataserver
 from nti.dataserver import traversal
 
 from nti.app.products.courseware.interfaces import ICoursesWorkspace
+from nti.app.products.courseware.interfaces import ICourseCatalog
 
 class TestWorkspace(SharedApplicationTestBase):
 
@@ -81,14 +82,17 @@ class TestWorkspace(SharedApplicationTestBase):
 						 is_( course_path ) )
 
 			assert_that( workspace.collections, contains( verifiably_provides( ICollection ),
+														  verifiably_provides( ICollection ),
 														  verifiably_provides( ICollection )))
 
 			assert_that( workspace.collections, has_items( has_property( 'name', 'AllCourses'),
-														   has_property( 'name', 'EnrolledCourses' )) )
+														   has_property( 'name', 'EnrolledCourses' ),
+														   has_property( 'name', 'AdministeredCourses' )) )
 
 			assert_that( [traversal.resource_path(c) for c in workspace.collections],
 						 has_items( course_path + '/AllCourses',
-									course_path + '/EnrolledCourses' ))
+									course_path + '/EnrolledCourses' ,
+									course_path + '/AdministeredCourses' ))
 
 
 	@WithSharedApplicationMockDS(users=True,testapp=True)
@@ -119,7 +123,10 @@ class TestWorkspace(SharedApplicationTestBase):
 
 		# First, we are enrolled in nothing
 		res = self.testapp.get( '/dataserver2/users/sjohnson@nextthought.com/Courses/EnrolledCourses' )
+		assert_that( res.json_body, has_entry( 'Items', is_(empty()) ) )
 
+		# (we also admin nothing)
+		res = self.testapp.get( '/dataserver2/users/sjohnson@nextthought.com/Courses/AdministeredCourses' )
 		assert_that( res.json_body, has_entry( 'Items', is_(empty()) ) )
 
 
@@ -171,6 +178,33 @@ class TestWorkspace(SharedApplicationTestBase):
 		assert_that( res.json_body[0], has_entry('title', 'Introduction'))
 		assert_that( res.json_body[0], has_entry('contents', has_length(2)))
 
+	@WithSharedApplicationMockDS(users=('harp4162'),testapp=True,default_authenticate=True)
+	def test_fetch_administered_courses(self):
+		# Now that we have created the instructor user, we need to re-enumerate
+		# the library so it gets noticed. We must also remove
+		# a previous entry in the catalog if there is one
+		with mock_dataserver.mock_db_trans(self.ds):
+			lib = component.getUtility(IContentPackageLibrary)
+			del lib.contentPackages
+			catalog = component.getUtility(ICourseCatalog)
+			del catalog._entries[:] # XXX
+			getattr(lib, 'contentPackages')
+
+
+		res = self.testapp.get( '/dataserver2/users/harp4162/Courses/AdministeredCourses',
+								extra_environ=self._make_extra_environ('harp4162'))
+		assert_that( res.json_body, has_entry( 'Items', has_length(1) ) )
+
+		role = res.json_body['Items'][0]
+		assert_that( role, has_entry('RoleName', 'instructor'))
+		course_instance = role['CourseInstance']
+		assert_that( course_instance,
+					 has_entries( 'Class', 'LegacyCommunityBasedCourseInstance',
+								  'href', '/dataserver2/users/CLC3403.ou.nextthought.com/LegacyCourses/CLC3403',
+								  'Outline', has_entry( 'Links', has_item( has_entry( 'rel', 'contents' ))),
+								  'instructors', has_item( has_entry('Username', 'harp4162')),
+								  'Links', has_item( has_entries( 'rel', 'CourseCatalogEntry',
+																    )) ))
 
 
 	@WithSharedApplicationMockDS(users=True,testapp=True)
