@@ -32,8 +32,6 @@ setup(
 	namespace_packages=['nti', 'nti.app', 'nti.app.products'],
 	install_requires=[
 		'setuptools',
-		'nti.app.testing',
-		'nti.testing',
 		# Undeclared dep on parts of nti.dataserver
 	],
 	entry_points=entry_points
