@@ -232,6 +232,7 @@ class TestWorkspace(SharedApplicationTestBase):
 						 'href', enrollment_href,
 						 'CourseInstance', has_entries('Class', 'LegacyCommunityBasedCourseInstance',
 													   'href', instance_href,
+													   'Outline', has_entry('Class', 'CourseOutline'),
 													   'Links', has_item( has_entries( 'rel', 'CourseCatalogEntry',
 																					   'href', entry_href  )) )))
 		assert_that( res.location, is_( 'http://localhost' + enrollment_href ))

@@ -8,6 +8,8 @@
 	<include package="zope.security" file="meta.zcml" />
 	<include package="zope.component" />
 
+	<include package="nti.contenttypes.courses" />
+
 	<utility factory=".catalog.CourseCatalog"
 			 provides=".interfaces.ICourseCatalog" />
 	<subscriber handler=".legacy._content_package_registered" />
