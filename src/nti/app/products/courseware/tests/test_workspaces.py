@@ -111,9 +111,6 @@ class TestWorkspace(SharedApplicationTestBase):
 
 	@WithSharedApplicationMockDS(users=('harp4162'),testapp=True,default_authenticate=True)
 	def test_fetch_enrolled_courses_legacy(self):
-		# This is almost an integration test, checking that
-		# our interfaces are properly implemented by nti.app.products.ou
-
 		# Now that we have created the instructor user, we need to re-enumerate
 		# the library so it gets noticed
 		with mock_dataserver.mock_db_trans(self.ds):

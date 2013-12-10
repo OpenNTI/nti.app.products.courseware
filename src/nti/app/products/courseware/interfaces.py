@@ -143,6 +143,17 @@ class ICourseCatalogLegacyEntry(ICourseCatalogEntry):
 												 required=False)
 
 
+class ILegacyCommunityBasedCourseInstance(ICourseInstance):
+	"""
+	Marker interface for a legacy course instance
+	"""
+
+	LegacyScopes = schema.Dict(title="'public' and 'restricted' entity ids",
+							   readonly=True)
+	LegacyInstructorForums = schema.ValidTextLine(title='A space separated list of forum NTIIDs',
+												  readonly=True)
+
+
 class ICoursesWorkspace(app_interfaces.IWorkspace):
 	"""
 	A workspace containing data for courses.

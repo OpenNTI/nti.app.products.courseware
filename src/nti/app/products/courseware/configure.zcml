@@ -12,7 +12,39 @@
 
 	<utility factory=".catalog.CourseCatalog"
 			 provides=".interfaces.ICourseCatalog" />
-	<subscriber handler=".legacy._content_package_registered" />
+	<subscriber handler=".legacy_catalog._content_package_registered" />
+
+	<!-- Auto-gen course purchasables from content -->
+	<!-- This must be a global subscriber as that's where
+	the library is -->
+	<subscriber
+		handler=".legacy_course._register_course_purchasable_from_catalog_entry" />
+	<!-- This subscriber reverses the process. Could be local, global
+	for symmetry -->
+	<subscriber
+		factory=".legacy_course._PurchaseHistoryEnrollmentStatus"
+		provides="nti.app.products.courseware.interfaces.IPrincipalEnrollmentCatalog"/>
+	<adapter factory=".legacy_course._LegacyCommunityBasedCourseAdministrativeLevelFactory"
+			 provides="nti.contenttypes.courses.interfaces.ICourseAdministrativeLevel"/>
+	<adapter factory=".legacy_course._LegacyCourseInstanceEnrollmentManager" />
+	<adapter factory=".legacy_course._LegacyCourseInstanceACLProvider" />
+
+	<!-- Turn catalog entries into their course instance -->
+	<adapter factory=".legacy_course._course_instance_for_catalog_entry" />
+	<!-- And vice versa -->
+	<adapter factory=".legacy_course._legacy_course_instance_to_catalog_entry" />
+	<!-- And the content packages to the course instance -->
+	<adapter factory=".legacy_course._course_content_package_to_course" />
+
+	<subscriber factory=".legacy_course._EnrollmentStatusDecorator"
+				for="nti.app.products.courseware.interfaces.ICourseInstanceEnrollment"
+				provides="nti.externalization.interfaces.IExternalObjectDecorator"/>
+	<!-- Allow traversing to the 'LegacyCourses' key of communities -->
+	<adapter name="LegacyCourses"
+			 for="nti.dataserver.interfaces.ICommunity"
+			 provides="zope.traversing.interfaces.IPathAdapter"
+			 factory=".legacy_course._LegacyCommunityBasedCourseAdministrativeLevelFactory" />
+
 
 	<!-- Workspaces -->
 	<!-- A subscriber for enumeration -->
@@ -52,8 +84,9 @@
 						 .interfaces.ICourseCatalogInstructorInfo
 						 .interfaces.ICourseCreditLegacyInfo
 						 .interfaces.ICourseInstanceEnrollment
-						 .interfaces.ICourseInstanceAdministrativeRole"
-		modules=".catalog .legacy .workspaces" />
+						 .interfaces.ICourseInstanceAdministrativeRole
+						 .interfaces.ILegacyCommunityBasedCourseInstance"
+		modules=".catalog .legacy_catalog .legacy_course .workspaces" />
 
 	<subscriber factory=".decorators._CourseInstanceLinkDecorator"
 				provides="nti.externalization.interfaces.IExternalMappingDecorator" />
