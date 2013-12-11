@@ -227,7 +227,6 @@ class AdministeredCoursesCollection(_AbstractQueryBasedCoursesCollection):
 
 
 from pyramid.threadlocal import get_current_request
-from pyramid.security import authenticated_userid
 from nti.dataserver.users import User
 from nti.dataserver.interfaces import IDataserver
 from zope.location.interfaces import IRoot
@@ -248,7 +247,7 @@ class CatalogEntryLocationInfo(LocationPhysicallyLocatable):
 		parents = [catalog]
 
 		request = get_current_request()
-		userid = authenticated_userid(request)
+		userid = request.authenticated_userid if request else None
 
 		if userid:
 

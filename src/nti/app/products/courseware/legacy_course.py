@@ -34,7 +34,6 @@ from zope.cachedescriptors.property import Lazy
 
 from BTrees import OOBTree
 
-from pyramid.security import authenticated_userid
 from pyramid.threadlocal import get_current_request
 
 from nti.contentlibrary.interfaces import ILegacyCourseConflatedContentPackage
@@ -561,7 +560,7 @@ class _EnrollmentStatusDecorator(object):
 			user = ec_collection.__parent__.__parent__
 		else:
 			request = get_current_request()
-			user = authenticated_userid(request) if request else None
+			user = request.authenticated_userid if request else None
 			user = users.User.get_user(user) if user else None
 
 		# get restricted scope entity from TOC
