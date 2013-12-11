@@ -508,6 +508,27 @@ def _legacy_course_instance_to_catalog_entry(instance):
 		if ntiid == instance.ContentPackageNTIID:
 			return entry
 
+from nti.contenttypes.courses.interfaces import ICourseEnrollments
+from nti.dataserver.interfaces import IEntityContainer
+from nti.dataserver.interfaces import IDataserver
+
+@interface.implementer(ICourseEnrollments)
+@component.adapter(_LegacyCommunityBasedCourseInstance)
+class _LegacyCourseInstanceEnrollments(object):
+
+	def __init__( self, context ):
+		self.context = context
+
+	def iter_enrollments(self):
+		# XXX: This is incredibly inefficient, waking
+		# all known users in the system
+		community = self.context.legacy_community
+		container = IEntityContainer(community)
+		ds = component.getUtility(IDataserver)
+		for user in ds.users_folder.values():
+			if user in container:
+				yield user
+
 from nti.contenttypes.courses.interfaces import ICourseEnrollmentManager
 from pyramid.interfaces import IRequest
 
