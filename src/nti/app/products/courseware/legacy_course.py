@@ -103,6 +103,9 @@ class ICourseCatalogLegacyEntryInstancePolicy(interface.Interface):
 	def extend_signature_for_instructor(inst, sig_lines):
 		"Optionally add any additional signature lines for the instructor."
 
+	def department_title_for_entry(entry):
+		"""Optionally modify the purchasable's title; otherwise this comes from the catalog's
+		``ProviderDepartmentTitle``, which ultimately currently comes from the ``school`` value."""
 
 def _purch_id_for_entry(policy, entry):
 	impl = getattr(policy, 'purch_id_for_entry', None)
@@ -124,6 +127,11 @@ def _purch_id_for_entry(policy, entry):
 
 	return purch_id
 
+def _department_title_for_entry(policy, entry):
+	try:
+		return policy.department_title_for_entry(entry)
+	except AttributeError:
+		return entry.ProviderDepartmentTitle
 
 @component.adapter(ICourseCatalogLegacyEntry,IObjectAddedEvent)
 def _register_course_purchasable_from_catalog_entry( entry, event ):
@@ -206,7 +214,7 @@ def _register_course_purchasable_from_catalog_entry( entry, event ):
 									   thumbnail=thumbnail, # Not used
 									   communities=entry.Communities,
 									   featured=False,
-									   department=entry.ProviderDepartmentTitle,
+									   department=_department_title_for_entry(policy, entry),
 									   signature=signature,
 									   startdate=startdate,
 									   # Things ignored
