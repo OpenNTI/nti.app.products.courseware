@@ -96,8 +96,6 @@ class ICourseCatalogLegacyEntryInstancePolicy(interface.Interface):
 
 		This becomes part of the purchasables NTIID, and the picture
 		names, and should match the community.
-
-		Optional.
 		"""
 
 	def extend_signature_for_instructor(inst, sig_lines):
@@ -107,31 +105,38 @@ class ICourseCatalogLegacyEntryInstancePolicy(interface.Interface):
 		"""Optionally modify the purchasable's title; otherwise this comes from the catalog's
 		``ProviderDepartmentTitle``, which ultimately currently comes from the ``school`` value."""
 
-def _purch_id_for_entry(policy, entry):
-	impl = getattr(policy, 'purch_id_for_entry', None)
-	if impl is not None:
-		return impl(entry)
+@interface.implementer(ICourseCatalogLegacyEntryInstancePolicy)
+class DefaultCourseCatalogLegacyEntryInstancePolicy(object):
+	"""
+	Default implementation of a policy. Can be extended or directly
+	registered for a provider.
+	"""
 
-	# The condensed identifier is the provider's unique
-	# ID, with all spaces stripped and no section number
-	# "ENGR 1515-900" -> "ENGR1515"
+	unregister_courses_from_components_named = ()
 
-	# This becomes part of the purchasables NTIID,
-	# and the picture names, and should match the community.
+	def purch_id_for_entry(self, entry):
+		"""
+		By default, the condensed identifier is the provider's unique
+		 ID, with all spaces stripped and no section number
+		"ENGR 1515-900" -> "ENGR1515"
 
-	purch_id = entry.ProviderUniqueID.replace(' ','').split('-')[0]
+		This becomes part of the purchasables NTIID,
+		and the picture names, and should match the community.
+		"""
 
-	if not entry.Communities or not entry.Communities[0].startswith( purch_id ):
-		__traceback_info__ = purch_id, entry
-		raise ValueError("Community name not as expected")
+		purch_id = entry.ProviderUniqueID.replace(' ','').split('-')[0]
 
-	return purch_id
+		if not entry.Communities or not entry.Communities[0].startswith( purch_id ):
+			__traceback_info__ = purch_id, entry
+			raise ValueError("Community name not as expected")
 
-def _department_title_for_entry(policy, entry):
-	try:
-		return policy.department_title_for_entry(entry)
-	except AttributeError:
+		return purch_id
+
+	def department_title_for_entry(self, entry):
 		return entry.ProviderDepartmentTitle
+
+	def extend_signature_for_instructor(self, instructor, sig_lines):
+		return
 
 @component.adapter(ICourseCatalogLegacyEntry,IObjectAddedEvent)
 def _register_course_purchasable_from_catalog_entry( entry, event ):
@@ -150,7 +155,7 @@ def _register_course_purchasable_from_catalog_entry( entry, event ):
 		return
 
 	assert len(entry.Communities) == 1
-	purch_id = _purch_id_for_entry( policy, entry )
+	purch_id = policy.purch_id_for_entry( entry )
 
 	# We have to externalize the package to get correct URLs
 	# to the course. They need to be absolute because there is no context
@@ -180,8 +185,7 @@ def _register_course_purchasable_from_catalog_entry( entry, event ):
 	for inst in entry.Instructors:
 		sig_lines.append( inst.Name )
 		sig_lines.append( inst.JobTitle )
-		if hasattr(policy, 'extend_signature_for_instructor'):
-			policy.extend_signature_for_instructor( inst, sig_lines )
+		policy.extend_signature_for_instructor( inst, sig_lines )
 
 		sig_lines.append( "" )
 	del sig_lines[-1] # always at least one instructor. take off the last trailing line
@@ -214,7 +218,7 @@ def _register_course_purchasable_from_catalog_entry( entry, event ):
 									   thumbnail=thumbnail, # Not used
 									   communities=entry.Communities,
 									   featured=False,
-									   department=_department_title_for_entry(policy, entry),
+									   department=policy.department_title_for_entry(entry),
 									   signature=signature,
 									   startdate=startdate,
 									   # Things ignored
@@ -225,7 +229,7 @@ def _register_course_purchasable_from_catalog_entry( entry, event ):
 									   discountable=False,
 									   bulk_purchase=False )
 
-	if getattr( policy, 'unregister_courses_from_components_named', None):
+	if policy.unregister_courses_from_components_named:
 		OU = component.getGlobalSiteManager().getUtility(IComponents, name=policy.unregister_courses_from_components_named)
 		if OU.queryUtility( ICourse, name=purch_ntiid ):
 			logger.warn( "Found existing ZCML course for %s; replacing", purch_ntiid )
@@ -264,7 +268,7 @@ def _course_instance_for_catalog_entry(entry):
 	provider = get_provider(entry.ContentPackageNTIID)
 	policy = component.queryUtility(ICourseCatalogLegacyEntryInstancePolicy, name=provider)
 
-	purch_id = _purch_id_for_entry(policy, entry)
+	purch_id = policy.purch_id_for_entry(entry)
 	community = Entity.get_entity( entry.Communities[0] )
 	if community is None:
 		community = Community.create_community( username=entry.Communities[0] )
