@@ -50,6 +50,7 @@ from nti.app.products.courseware.interfaces import ICoursesWorkspace
 from nti.app.products.courseware.interfaces import ICourseCatalog
 
 class TestWorkspace(SharedApplicationTestBase):
+	testapp = None
 
 	@classmethod
 	def _setup_library( cls, *args, **kwargs ):
@@ -170,6 +171,7 @@ class TestWorkspace(SharedApplicationTestBase):
 		outline_content_href = self.require_link_href_with_rel( course_instance['Outline'], 'contents' )
 		assert_that( outline_content_href, is_('/dataserver2/users/CLC3403.ou.nextthought.com/LegacyCourses/CLC3403/Outline/contents'))
 		res = self.testapp.get( outline_content_href )
+		# Last mod comes from the file on disk
 		assert_that( res.last_modified, is_( datetime.datetime(2013, 10, 26, 19, 8, 15, 0, webob.datetime_utils.UTC) ))
 		assert_that( res.json_body, has_length(6))
 		assert_that( res.json_body[0], has_entry('title', 'Introduction'))
@@ -213,7 +215,7 @@ class TestWorkspace(SharedApplicationTestBase):
 		assert_that( res.json_body, has_entry( 'accepts', contains('application/json')))
 		# We can POST to EnrolledCourses to add a course, assuming we're allowed
 		# Right now, we accept any value that the course catalog can accept;
-		# this will probably get stricter.
+		# this will probably get stricter. Raw strings are allowed but not preferred.
 
 		res = self.testapp.post_json( '/dataserver2/users/sjohnson@nextthought.com/Courses/EnrolledCourses',
 									  'CLC 3403',
@@ -244,3 +246,13 @@ class TestWorkspace(SharedApplicationTestBase):
 								   status=204)
 		res = self.testapp.get( '/dataserver2/users/sjohnson@nextthought.com/Courses/EnrolledCourses' )
 		assert_that( res.json_body, has_entry( 'Items', is_(empty()) ) )
+
+		# If we post a non-existant class, it fails gracefully
+		res = self.testapp.post_json( '/dataserver2/users/sjohnson@nextthought.com/Courses/EnrolledCourses',
+									  'This Class Does Not Exist',
+									  status=404 )
+
+		# For convenience, we can use a dictionary
+		self.testapp.post_json( '/dataserver2/users/sjohnson@nextthought.com/Courses/EnrolledCourses',
+								{'ProviderUniqueID': 'CLC 3403'},
+								status=201 )

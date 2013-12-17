@@ -80,7 +80,7 @@ class CourseCatalog(Contained):
 			for entry in self._entries:
 				if entry.__name__ == ix:
 					return entry
-			raise
+			raise KeyError(ix)
 
 @interface.implementer(interfaces.ICourseCatalogInstructorInfo)
 class CourseCatalogInstructorInfo(SchemaConfigured):

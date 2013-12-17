@@ -67,7 +67,8 @@ class enroll_course_view(AbstractAuthenticatedView,
 						 ModeledContentUploadRequestUtilsMixin):
 	"""
 	POSTing a course identifier to the enrolled courses
-	collection enrolls you in it.
+	collection enrolls you in it. You can simply post the
+	course catalog entry to this view as the identifier.
 
 	At this writing, anyone is allowed to enroll in any course,
 	so the only security on this is that the remote user
@@ -77,10 +78,21 @@ class enroll_course_view(AbstractAuthenticatedView,
 
 	inputClass = object
 
-	def __call__(self):
+	def _do_call(self):
 		catalog = component.getUtility(ICourseCatalog)
 		identifier = self.readInput()
-		catalog_entry = catalog[identifier]
+		# We accept either a raw string or a dict with
+		# 'ProviderUniqueID', as per the catalog entry;
+		# that's the preferred form.
+		try:
+			identifier = identifier['ProviderUniqueID']
+		except (AttributeError,KeyError,TypeError):
+			pass
+
+		try:
+			catalog_entry = catalog[identifier]
+		except KeyError:
+			return hexc.HTTPNotFound("There is no course by that name")
 
 		course_instance = ICourseInstance(catalog_entry)
 		try:
