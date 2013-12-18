@@ -153,6 +153,22 @@ class ILegacyCommunityBasedCourseInstance(ICourseInstance):
 	LegacyInstructorForums = schema.ValidTextLine(title='A space separated list of forum NTIIDs',
 												  readonly=True)
 
+from zope.interface.interfaces import IObjectEvent
+from zope.interface.interfaces import ObjectEvent
+
+class ICourseInstanceAvailableEvent(IObjectEvent):
+	"""
+	An event that is sent, usually during startup, to notify that a
+	course instance has been setup by this package. This is a hook for
+	additional packages to perform any setup they need to do,
+	such as synchronizing database state with course content state.
+	"""
+
+@interface.implementer(ICourseInstanceAvailableEvent)
+class CourseInstanceAvailableEvent(ObjectEvent):
+	pass
+
+
 
 class ICoursesWorkspace(app_interfaces.IWorkspace):
 	"""

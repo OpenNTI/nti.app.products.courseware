@@ -28,6 +28,9 @@ from zope.component.interfaces import IComponents
 from nti.utils import schema
 
 from zope.lifecycleevent import IObjectAddedEvent
+from zope.event import notify
+from .interfaces import CourseInstanceAvailableEvent
+
 from zope.security.interfaces import IPrincipal
 
 from zope.cachedescriptors.property import Lazy
@@ -138,7 +141,7 @@ class DefaultCourseCatalogLegacyEntryInstancePolicy(object):
 	def extend_signature_for_instructor(self, instructor, sig_lines):
 		return
 
-@component.adapter(ICourseCatalogLegacyEntry,IObjectAddedEvent)
+@component.adapter(ICourseCatalogLegacyEntry, IObjectAddedEvent)
 def _register_course_purchasable_from_catalog_entry( entry, event ):
 	"""
 	When a catalog entry is added to the course catalog,
@@ -254,9 +257,13 @@ def _register_course_purchasable_from_catalog_entry( entry, event ):
 
 	# NOTE: This requires that we are operating in a transaction
 	# with a real database.
-	the_course = _course_instance_for_catalog_entry( entry )
+	the_course = _course_instance_for_catalog_entry( entry ) # MAY send IObjectAdded if new
 	the_course.updateInstructors( entry )
 
+	# Always let people know it's available so they can do any
+	# synchronization work that needs to pull from the external
+	# content into the database
+	notify(CourseInstanceAvailableEvent(the_course))
 
 from nti.store.purchasable import get_all_purchasables
 from nti.store.enrollment import get_enrollment
