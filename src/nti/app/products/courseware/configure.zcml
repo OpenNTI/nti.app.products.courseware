@@ -72,9 +72,20 @@
 	<adapter factory=".workspaces.wrapper_to_catalog"
 			 for=".interfaces.ICourseInstanceAdministrativeRole"/>
 
+	<!--
+		Application (request) specific traversal for course instances and enrollments, etc.
+		Primarily, we want to bring the usual automatic-conversion to path adapters into
+		play for ease of extension by other packages. (Hmm, perhaps we ought to make that
+		part of the default traversal).
+	-->
+	<adapter factory="nti.dataserver.traversal.ContainerAdapterTraversable"
+			 for="nti.contenttypes.courses.interfaces.ICourseInstance pyramid.interfaces.IRequest"
+			 provides="zope.traversing.interfaces.ITraversable" />
 
-	<adapter factory=".traversal.CourseTraversable" />
-	<adapter factory=".traversal.CourseEnrollmentTraversable" />
+	<adapter factory="nti.dataserver.traversal.DefaultAdapterTraversable"
+			 for=".interfaces.ICourseInstanceEnrollment pyramid.interfaces.IRequest"
+			 provides="zope.traversing.interfaces.ITraversable" />
+
 
 	<!-- Externalization -->
 	<include package="nti.externalization" file="meta.zcml" />
