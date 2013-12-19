@@ -548,6 +548,20 @@ class _LegacyCourseInstanceEnrollments(object):
 			if user in container:
 				yield user
 
+	def count_enrollments(self):
+		# XXX: Same performance characteristics
+		# as above, but called relatively frequently,
+		# so worse
+		i = 0
+		for _ in self.iter_enrollments():
+			i += 1
+
+		# Now, in legacy courses, the instructors appear
+		# enrolled because they are also a community
+		# member. So account for that.
+		i -= len(self.context.instructors)
+		return i
+
 from nti.contenttypes.courses.interfaces import ICourseEnrollmentManager
 from pyramid.interfaces import IRequest
 

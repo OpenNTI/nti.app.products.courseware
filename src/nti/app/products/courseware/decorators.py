@@ -23,6 +23,7 @@ from nti.dataserver.interfaces import ILinkExternalHrefOnly
 
 from nti.contenttypes.courses.interfaces import ICourseInstance
 from nti.contenttypes.courses.interfaces import ICourseOutline
+from nti.contenttypes.courses.interfaces import ICourseEnrollments
 from .interfaces import ICourseCatalogEntry
 
 from nti.dataserver.links import Link
@@ -37,7 +38,8 @@ from . import VIEW_CONTENTS
 class _CourseInstanceLinkDecorator(object):
 	"""
 	If a course instance can find its catalog entry, return that as a link.
-	Also make it return an href, even if it isn't top-level.
+	Also make it return an href, even if it isn't top-level,
+	and adds the enrollment stats (XXX That may be really slow.)
 	"""
 
 	__metaclass__ = SingletonDecorator
@@ -59,6 +61,8 @@ class _CourseInstanceLinkDecorator(object):
 			link = Link(context)
 			interface.alsoProvides( link, ILinkExternalHrefOnly )
 			result['href'] = link
+
+		result['TotalEnrolledCount'] = ICourseEnrollments(context).count_enrollments()
 
 @interface.implementer(IExternalMappingDecorator)
 @component.adapter(ICourseOutline)
