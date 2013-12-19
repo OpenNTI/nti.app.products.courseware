@@ -166,7 +166,13 @@ class _AbstractInstanceWrapper(contained.Contained):
 @interface.implementer(interfaces.ICourseInstanceEnrollment)
 @component.adapter(ICourseInstance)
 class CourseInstanceEnrollment(_AbstractInstanceWrapper):
-	pass
+
+	Username = None
+
+	def __init__(self, course, user=None):
+		super(CourseInstanceEnrollment,self).__init__(course)
+		if user:
+			self.Username = user.username
 
 @interface.implementer(interfaces.ICourseCatalogEntry)
 def wrapper_to_catalog(wrapper):

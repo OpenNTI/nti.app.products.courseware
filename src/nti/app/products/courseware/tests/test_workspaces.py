@@ -202,8 +202,22 @@ class TestWorkspace(SharedApplicationTestBase):
 								  'href', '/dataserver2/users/CLC3403.ou.nextthought.com/LegacyCourses/CLC3403',
 								  'Outline', has_entry( 'Links', has_item( has_entry( 'rel', 'contents' ))),
 								  'instructors', has_item( has_entry('Username', 'harp4162')),
-								  'Links', has_item( has_entries( 'rel', 'CourseCatalogEntry',
-																    )) ))
+								  'Links', has_item( has_entries( 'rel', 'CourseCatalogEntry', )),
+								  'Links', has_item( has_entries( 'rel', 'CourseEnrollmentRoster'))))
+
+
+		roster_link = self.require_link_href_with_rel( course_instance, 'CourseEnrollmentRoster')
+
+		# Put someone in the roster
+		res = self.testapp.post_json( '/dataserver2/users/sjohnson@nextthought.com/Courses/EnrolledCourses',
+									  'CLC 3403',
+									  status=201 )
+
+		# fetch the roster as the instructor
+		res = self.testapp.get( roster_link, extra_environ=self._make_extra_environ('harp4162') )
+
+		assert_that( res.json_body, has_entry( 'Items', contains( has_entries('Class', 'CourseInstanceEnrollment',
+																			  'Username', self.extra_environ_default_user.lower()) ) ) )
 
 
 	@WithSharedApplicationMockDS(users=True,testapp=True)

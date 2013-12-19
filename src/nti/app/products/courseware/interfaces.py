@@ -194,6 +194,10 @@ class ICourseInstanceEnrollment(IShouldHaveTraversablePath):
 
 	CourseInstance = schema.Object(ICourseInstance)
 
+	Username = schema.TextLine(title="The user this is about",
+							   required=False,
+							   readonly=True)
+
 class IPrincipalEnrollmentCatalog(IPrincipalEnrollments):
 	"""
 	Extends the base enrollments interface to be in terms

@@ -24,10 +24,13 @@ from nti.dataserver.interfaces import ILinkExternalHrefOnly
 from nti.contenttypes.courses.interfaces import ICourseInstance
 from nti.contenttypes.courses.interfaces import ICourseOutline
 from nti.contenttypes.courses.interfaces import ICourseEnrollments
+from nti.contenttypes.courses.interfaces import is_instructed_by_name
+
 from .interfaces import ICourseCatalogEntry
 
 from nti.dataserver.links import Link
 
+from pyramid.threadlocal import get_current_request
 
 LINKS = StandardExternalFields.LINKS
 from . import VIEW_CONTENTS
@@ -47,15 +50,20 @@ class _CourseInstanceLinkDecorator(object):
 	def decorateExternalMapping( self, context, result ):
 		# We have no way to know what order these will be
 		# called in, so we must preserve anything that exists
-		orig_links = result.get( LINKS, () )
+		_links = result.setdefault( LINKS, [] )
 		entry = ICourseCatalogEntry(context, None)
-		_links = None
 		if entry:
-			_links = [ Link( entry, rel="CourseCatalogEntry" ) ]
+			_links.append( Link( entry, rel="CourseCatalogEntry" )  )
 
-		if _links:
-			_links.extend( orig_links )
-			result[LINKS] = _links
+		username = None
+		request = get_current_request()
+		if request:
+			username = request.authenticated_userid
+		if is_instructed_by_name(context, username):
+			# Give instructors the enrollment roster
+			_links.append( Link( context,
+								 rel="CourseEnrollmentRoster",
+								 elements=("CourseEnrollmentRoster",) ) )
 
 		if 'href' not in result:
 			link = Link(context)

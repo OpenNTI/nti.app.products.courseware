@@ -28,6 +28,7 @@
 			 provides="nti.contenttypes.courses.interfaces.ICourseAdministrativeLevel"/>
 	<adapter factory=".legacy_course._LegacyCourseInstanceEnrollmentManager" />
 	<adapter factory=".legacy_course._LegacyCourseInstanceACLProvider" />
+
 	<adapter factory=".legacy_course._LegacyCourseInstanceEnrollments" />
 
 	<!-- Turn catalog entries into their course instance -->
@@ -67,6 +68,10 @@
 
 	<adapter factory=".workspaces.CourseInstanceEnrollment"
 			 provides=".interfaces.ICourseInstanceEnrollment" />
+	<adapter factory=".workspaces.CourseInstanceEnrollment"
+			 for="nti.contenttypes.courses.interfaces.ICourseInstance nti.dataserver.interfaces.IUser"
+			 provides=".interfaces.ICourseInstanceEnrollment" />
+
 	<adapter factory=".workspaces.wrapper_to_catalog"
 			 for=".interfaces.ICourseInstanceEnrollment"/>
 	<adapter factory=".workspaces.wrapper_to_catalog"

@@ -179,3 +179,35 @@ class course_outline_contents_view(AbstractAuthenticatedView):
 		result.__parent__ = self.request.context
 		self.request.response.last_modified = self.request.context.lastModified
 		return result
+
+
+from nti.contenttypes.courses.interfaces import is_instructed_by_name
+from nti.contenttypes.courses.interfaces import ICourseEnrollments
+from nti.externalization.interfaces import LocatedExternalDict
+
+@view_config(route_name='objects.generic.traversal',
+			 renderer='rest',
+			 request_method='GET',
+			 context=ICourseInstance,
+			 permission=nauth.ACT_READ,
+			 name='CourseEnrollmentRoster')
+class CourseEnrollmentRosterGetView(AbstractAuthenticatedView):
+
+	def __call__(self):
+		request = self.request
+		context = request.context
+		username = request.authenticated_userid
+		course = context
+
+		if not is_instructed_by_name(course, username):
+			raise hexc.HTTPForbidden()
+
+		result = LocatedExternalDict()
+		result.__name__ = request.view_name
+		result.__parent__ = course
+		items = result['Items'] = []
+		items.extend((component.getMultiAdapter( (course, x),
+												 ICourseInstanceEnrollment )
+					  for x in ICourseEnrollments(course).iter_enrollments()))
+		# TODO: We have no last modified for this
+		return result
