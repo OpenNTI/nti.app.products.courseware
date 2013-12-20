@@ -133,6 +133,7 @@ class _AbstractQueryBasedCoursesCollection(contained.Contained):
 		for enrollment in container:
 			enrollment.__parent__ = self
 			if self.user_extra_auth:
+				enrollment._user = parent.user
 				enrollment.__acl__ = acl_from_aces(ace_allowing(parent.user,
 																self.user_extra_auth,
 																type(self)))
@@ -159,7 +160,7 @@ class _AbstractInstanceWrapper(contained.Contained):
 		return self.CourseInstance.__name__
 
 	def __conform__(self, iface):
-		if iface.isOrExtends(ICourseInstance):
+		if ICourseInstance.isOrExtends(iface):
 			return self.CourseInstance
 
 
@@ -168,11 +169,18 @@ class _AbstractInstanceWrapper(contained.Contained):
 class CourseInstanceEnrollment(_AbstractInstanceWrapper):
 
 	Username = None
+	_user = None
 
 	def __init__(self, course, user=None):
 		super(CourseInstanceEnrollment,self).__init__(course)
 		if user:
 			self.Username = user.username
+			self._user = user
+
+	def __conform__(self, iface):
+		if IUser.isOrExtends(iface):
+			return self._user
+		return super(CourseInstanceEnrollment, self).__conform__(iface)
 
 @interface.implementer(interfaces.ICourseCatalogEntry)
 def wrapper_to_catalog(wrapper):
