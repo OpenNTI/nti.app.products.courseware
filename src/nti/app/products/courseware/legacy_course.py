@@ -440,24 +440,30 @@ class _LegacyCommunityBasedCourseInstance(CourseInstance):
 		course_element = self._course_toc_element
 		# TODO: Why do units in the toc have an NTIID?
 		# and then, why do lessons NOT have an NTIID?
+		def _handle_node(parent_lxml, parent_node):
+			for lesson in parent_lxml.iterchildren(tag='lesson'):
+				lesson_node = CourseOutlineContentNode()
+				lesson_node.ContentNTIID = lesson.get('topic-ntiid').decode('utf-8')
+				parent_node.append(lesson_node)
+				# Sigh. It looks like date is optionally a comma-separated
+				# list of datetimes. If there is only one, that looks like
+				# the end date, not the beginning date.
+				dates = lesson.get('date', ())
+				if dates:
+					dates = dates.split(',')
+				if len(dates) == 1:
+					lesson_node.AvailableEnding = dates[0]
+				elif len(dates) == 2:
+					lesson_node.AvailableBeginning = dates[0]
+					lesson_node.AvailableEnding = dates[1]
+				_handle_node(lesson, lesson_node)
+
 		for unit in course_element.iterchildren(tag='unit'):
 			# lxml returns attributes as bytestrings
 			unit_node = CourseOutlineNode()
 			unit_node.title = unit.get('label').decode('utf-8')
 			outline.append(unit_node)
-			for lesson in unit.iterchildren(tag='lesson'):
-				lesson_node = CourseOutlineContentNode()
-				lesson_node.ContentNTIID = lesson.get('topic-ntiid').decode('utf-8')
-				unit_node.append(lesson_node)
-				# Sigh. It looks like date is optionally a comma-separated
-				# list of datetimes. If there is only one, that looks like
-				# the end date, not the beginning date.
-				dates = lesson.get('date').split(',')
-				if len(dates) == 1:
-					lesson_node.AvailableEnding = dates[0]
-				else:
-					lesson_node.AvailableBeginning = dates[0]
-					lesson_node.AvailableEnding = dates[1]
+			_handle_node( unit, unit_node )
 
 		# Finally, after all the children have been added (which
 		# changes lastModified), set the lastModified to the ToC date.
