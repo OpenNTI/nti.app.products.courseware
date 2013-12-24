@@ -34,6 +34,9 @@ from pyramid.threadlocal import get_current_request
 
 LINKS = StandardExternalFields.LINKS
 from . import VIEW_CONTENTS
+from . import VIEW_CATALOG_ENTRY
+from . import VIEW_COURSE_ENROLLMENT_ROSTER
+from . import VIEW_COURSE_ACTIVITY
 
 
 @interface.implementer(IExternalMappingDecorator)
@@ -53,7 +56,7 @@ class _CourseInstanceLinkDecorator(object):
 		_links = result.setdefault( LINKS, [] )
 		entry = ICourseCatalogEntry(context, None)
 		if entry:
-			_links.append( Link( entry, rel="CourseCatalogEntry" )  )
+			_links.append( Link( entry, rel=VIEW_CATALOG_ENTRY )  )
 
 		username = None
 		request = get_current_request()
@@ -61,9 +64,11 @@ class _CourseInstanceLinkDecorator(object):
 			username = request.authenticated_userid
 		if is_instructed_by_name(context, username):
 			# Give instructors the enrollment roster
-			_links.append( Link( context,
-								 rel="CourseEnrollmentRoster",
-								 elements=("CourseEnrollmentRoster",) ) )
+			# and activity
+			for rel in VIEW_COURSE_ENROLLMENT_ROSTER, VIEW_COURSE_ACTIVITY:
+				_links.append( Link( context,
+									 rel=rel,
+									 elements=(rel,) ) )
 
 		if 'href' not in result:
 			link = Link(context)

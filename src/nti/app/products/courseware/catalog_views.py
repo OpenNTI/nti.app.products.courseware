@@ -30,7 +30,6 @@ from .interfaces import ICourseCatalog
 from .interfaces import IEnrolledCoursesCollection
 from .interfaces import ICourseInstanceEnrollment
 from nti.contenttypes.courses.interfaces import ICourseInstance
-from nti.contenttypes.courses.interfaces import ICourseOutline
 from nti.contenttypes.courses.interfaces import ICourseEnrollmentManager
 
 from pyramid import httpexceptions as hexc
@@ -41,8 +40,6 @@ from nti.appserver._view_utils  import ModeledContentUploadRequestUtilsMixin
 
 from nti.dataserver import authorization as nauth
 from nti.dataserver import traversal
-
-from . import VIEW_CONTENTS
 
 @interface.implementer(IPathAdapter)
 @component.adapter(IUser, IRequest)
@@ -138,76 +135,3 @@ class drop_course_view(AbstractAuthenticatedView):
 		enrollments.drop( self.remoteUser )
 
 		return hexc.HTTPNoContent()
-
-from nti.externalization.interfaces import ILocatedExternalSequence
-from nti.externalization.externalization import to_external_object
-
-@view_config( route_name='objects.generic.traversal',
-			  context=ICourseOutline,
-			  request_method='GET',
-			  permission=nauth.ACT_READ,
-			  renderer='rest',
-			  name=VIEW_CONTENTS)
-class course_outline_contents_view(AbstractAuthenticatedView):
-	"""
-	The view to get the actual contents of a course outline.
-
-	We flatten all the children directly into the returned nodes at
-	this level because the default externalization does not.
-	"""
-	# XXX: These are small, so we're not too concerned about rendering
-	# time. Thus we don't do anything fancy with PreRenderResponseCacheController.
-	# We also aren't doing anything user specific yet so we don't
-	# do anything with tokens in the URL
-
-	def __call__(self):
-		values = self.request.context.values()
-		result = ILocatedExternalSequence([])
-		def _recur(the_list, the_nodes):
-			for node in the_nodes:
-				ext_node = to_external_object(node)
-				ext_node['contents'] = _recur([], node.values() )
-				# Pretty pointless to send these
-				ext_node.pop('NTIID', None)
-				ext_node.pop('OID', None)
-
-				the_list.append( ext_node )
-			return the_list
-
-		_recur(result, values)
-		result.__name__ = self.request.view_name
-		result.__parent__ = self.request.context
-		self.request.response.last_modified = self.request.context.lastModified
-		return result
-
-
-from nti.contenttypes.courses.interfaces import is_instructed_by_name
-from nti.contenttypes.courses.interfaces import ICourseEnrollments
-from nti.externalization.interfaces import LocatedExternalDict
-
-@view_config(route_name='objects.generic.traversal',
-			 renderer='rest',
-			 request_method='GET',
-			 context=ICourseInstance,
-			 permission=nauth.ACT_READ,
-			 name='CourseEnrollmentRoster')
-class CourseEnrollmentRosterGetView(AbstractAuthenticatedView):
-
-	def __call__(self):
-		request = self.request
-		context = request.context
-		username = request.authenticated_userid
-		course = context
-
-		if not is_instructed_by_name(course, username):
-			raise hexc.HTTPForbidden()
-
-		result = LocatedExternalDict()
-		result.__name__ = request.view_name
-		result.__parent__ = course
-		items = result['Items'] = []
-		items.extend((component.getMultiAdapter( (course, x),
-												 ICourseInstanceEnrollment )
-					  for x in ICourseEnrollments(course).iter_enrollments()))
-		# TODO: We have no last modified for this
-		return result

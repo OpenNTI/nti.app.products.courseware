@@ -47,6 +47,8 @@
 			 provides="zope.traversing.interfaces.IPathAdapter"
 			 factory=".legacy_course._LegacyCommunityBasedCourseAdministrativeLevelFactory" />
 
+	<!-- Let the course instance have activity -->
+	<adapter factory=".activity._DefaultCourseActivityFactory" />
 
 	<!-- Workspaces -->
 	<!-- A subscriber for enumeration -->

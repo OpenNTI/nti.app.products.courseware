@@ -153,6 +153,45 @@ class ILegacyCommunityBasedCourseInstance(ICourseInstance):
 	LegacyInstructorForums = schema.ValidTextLine(title='A space separated list of forum NTIIDs',
 												  readonly=True)
 
+class ICourseInstanceActivity(ILocation):
+	"""
+	A firehose implementation of activity relating
+	to a course and typically expected to be visible to
+	instructors/administrators of the course.
+
+	An implementation of this interface will be available
+	by adapting a course to it.
+	"""
+
+	def __len__():
+		"How many items are in this collection."
+
+	def append(activity):
+		"""
+		Note that the ``activity`` relevant to this course
+		has happened. The ``activity`` object must have an intid,
+		and it will be stored along with an approximate timestamp
+		of when it occurred. Note that if activity is happening on multiple
+		machines, relative times will only be as good as clock
+		synchronization.
+		"""
+
+	def remove(activity):
+		"""
+		Remove the activity from the list for this course.
+		Note that this may be very expensive.
+		"""
+
+	def items(min=None,max=None,excludemin=False,excludemax=False):
+		"""
+		Return an iterator over the activity items stored for this
+		course. The iterator is returned in sorted order, with
+		most recent items first.
+
+		:keyword min: If given, a timestamp.
+		:keyword max: If given, a timestamp.
+		"""
+
 from zope.interface.interfaces import IObjectEvent
 from zope.interface.interfaces import ObjectEvent
 
