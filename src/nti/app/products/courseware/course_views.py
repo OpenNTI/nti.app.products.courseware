@@ -12,6 +12,7 @@ __docformat__ = "restructuredtext en"
 logger = __import__('logging').getLogger(__name__)
 
 from zope import component
+from zope import interface
 
 from .interfaces import ICourseInstanceActivity
 from .interfaces import ICourseInstanceEnrollment
@@ -105,13 +106,21 @@ class CourseEnrollmentRosterGetView(AbstractAuthenticatedView):
 		# TODO: We have no last modified for this
 		return result
 
+from zope.traversing.interfaces import IPathAdapter
+from pyramid.interfaces import IRequest
+
+@interface.implementer(IPathAdapter)
+@component.adapter(ICourseInstance, IRequest)
+def CourseActivityPathAdapter(context, request):
+	return ICourseInstanceActivity(context)
+
+from nti.externalization.externalization import decorate_external_mapping
 
 @view_config(route_name='objects.generic.traversal',
 			 renderer='rest',
 			 request_method='GET',
-			 context=ICourseInstance,
-			 permission=nauth.ACT_READ,
-			 name=VIEW_COURSE_ACTIVITY)
+			 context=ICourseInstanceActivity,
+			 permission=nauth.ACT_READ)
 class CourseActivityGetView(AbstractAuthenticatedView):
 
 	def __call__(self):
@@ -121,6 +130,7 @@ class CourseActivityGetView(AbstractAuthenticatedView):
 		course = context
 
 		if not is_instructed_by_name(course, username):
+			# Precondition may not be needed anymore, we can put an ACL on the activity
 			raise hexc.HTTPForbidden()
 
 		activity = ICourseInstanceActivity(course)
@@ -131,8 +141,6 @@ class CourseActivityGetView(AbstractAuthenticatedView):
 		result.__name__ = VIEW_COURSE_ACTIVITY
 		result['TotalItemCount'] = total_item_count = len(activity)
 
-		result.lastModified = activity.lastModified
-		result['Last Modified'] = result.lastModified
 
 		# NOTE: We could be more efficient by paging around
 		# the timestamp rather than a size
@@ -146,4 +154,92 @@ class CourseActivityGetView(AbstractAuthenticatedView):
 								   number_items_needed,
 								   batch_size, batch_start)
 
+		decorate_external_mapping(activity, result)
+
+		last_modified = max(activity.lastModified, result['lastViewed'])
+		result.lastModified = last_modified
+		result['Last Modified'] = last_modified
+
 		return result
+
+from pyramid.threadlocal import get_current_request
+
+from numbers import Number
+
+
+from zope.annotation.interfaces import IAnnotations
+
+from nti.zodb.containers import time_to_64bit_int
+from nti.zodb.containers import bit64_int_to_time
+
+import BTrees
+
+from nti.appserver._view_utils import ModeledContentUploadRequestUtilsMixin
+
+@view_config(route_name='objects.generic.traversal',
+			 renderer='rest',
+			 request_method='PUT',
+			 context=ICourseInstanceActivity,
+			 permission=nauth.ACT_READ,
+			 name='lastViewed')
+class CourseActivityLastViewedDecorator(AbstractAuthenticatedView,
+										ModeledContentUploadRequestUtilsMixin):
+	"""
+	Because multiple administrators might have access to the course
+	activity, we maintain a per-user lastViewed timestamp as an
+	annotation on the activity object.
+
+	The annotation itself is a :class:`BTrees.OLBTree`, with usernames as
+	keys and the values being int-encoded time values.
+
+	This object is both a view callable for updating that value,
+	and a decorator for putting that value in the object.
+	"""
+
+	inputClass = Number
+
+	KEY = 'nti.app.products.courseware.decorators._CourseInstanceActivityLastViewedDecorator'
+
+	def __init__(self, request=None):
+		if IRequest.providedBy(request): # as a view
+			super(CourseActivityLastViewedDecorator,self).__init__(request)
+		# otherwise, we're a decorator and no args are passed
+
+
+	def _precondition(self, context, request):
+		username = None
+		if request:
+			username = request.authenticated_userid
+		if not is_instructed_by_name(context, username):
+			return False
+		return username
+
+
+	def decorateExternalMapping(self, context, result):
+		username = self._precondition(context, get_current_request())
+		if not username:
+			return
+
+		annot = IAnnotations(context)
+		mapping = annot.get(self.KEY)
+		if mapping is None or username not in mapping:
+			result['lastViewed'] = 0
+		else:
+			result['lastViewed'] = bit64_int_to_time(mapping[username])
+
+	def __call__(self):
+		context = self.request.context
+		username = self._precondition(context, self.request)
+		# Precondition may not be needed anymore, we can put an ACL on the activity
+		if not username:
+			raise hexc.HTTPForbidden()
+
+		annot = IAnnotations(context)
+		mapping = annot.get(self.KEY)
+		if mapping is None:
+			mapping = BTrees.OLBTree.BTree()
+			annot[self.KEY] = mapping
+
+		now = self.readInput()
+		mapping[username] = time_to_64bit_int(now)
+		return now

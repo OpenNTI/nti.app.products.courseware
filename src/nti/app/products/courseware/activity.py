@@ -45,6 +45,11 @@ class _DefaultCourseActivity(Persistent):
 
 	family = BTrees.family64
 
+	__name__ = None
+	__parent__ = None
+
+	createdTime = 0 # pretty useless, here for ILastModified
+
 	def __init__(self):
 		pass
 

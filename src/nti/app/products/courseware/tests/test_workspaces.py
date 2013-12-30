@@ -224,7 +224,12 @@ class TestWorkspace(SharedApplicationTestBase):
 		res = self.testapp.get( activity_link, extra_environ=self._make_extra_environ('harp4162') )
 
 		assert_that( res.json_body, has_entry( 'TotalItemCount', 0 ) )
+		assert_that( res.json_body, has_entry( 'lastViewed', 0 ) )
 
+		# update our viewed date
+		self.testapp.put_json(activity_link + '/lastViewed', 1234, extra_environ=self._make_extra_environ('harp4162') )
+		res = self.testapp.get( activity_link, extra_environ=self._make_extra_environ('harp4162') )
+		assert_that( res.json_body, has_entry( 'lastViewed', 1234 ) )
 
 	@WithSharedApplicationMockDS(users=True,testapp=True)
 	def test_enroll_unenroll_using_workspace(self):

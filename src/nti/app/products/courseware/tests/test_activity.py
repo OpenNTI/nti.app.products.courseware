@@ -26,6 +26,7 @@ from hamcrest import has_property
 from nti.testing import base
 from nti.testing.time import time_monotonically_increases
 from nti.testing.matchers import is_empty
+from nti.testing.matchers import validly_provides
 
 setUpModule = lambda: base.module_setup(set_up_packages=(__name__,))
 tearDownModule = base.module_teardown
@@ -33,12 +34,14 @@ tearDownModule = base.module_teardown
 from nti.dataserver.tests.mock_dataserver import WithMockDSTrans
 
 from ..activity import _DefaultCourseActivity
+from ..interfaces import ICourseInstanceActivity
 
 @WithMockDSTrans
 @time_monotonically_increases
 def test_activity():
 
 	activity = _DefaultCourseActivity()
+	assert_that( activity, validly_provides(ICourseInstanceActivity))
 
 	assert_that( list(activity.items()), is_empty() )
 	assert_that( activity, has_length(0) )

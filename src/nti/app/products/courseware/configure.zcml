@@ -49,6 +49,12 @@
 
 	<!-- Let the course instance have activity -->
 	<adapter factory=".activity._DefaultCourseActivityFactory" />
+	<!-- and let it be annotatable -->
+	<class class=".activity._DefaultCourseActivity">
+		<implements interface="zope.annotation.interfaces.IAttributeAnnotatable" />
+	</class>
+	<adapter name="CourseActivity"
+			 factory=".course_views.CourseActivityPathAdapter" />
 
 	<!-- Workspaces -->
 	<!-- A subscriber for enumeration -->
@@ -110,6 +116,9 @@
 	<subscriber factory=".decorators._CourseInstanceLinkDecorator"
 				provides="nti.externalization.interfaces.IExternalMappingDecorator" />
 	<subscriber factory=".decorators._CourseOutlineContentsLinkDecorator"
+				provides="nti.externalization.interfaces.IExternalMappingDecorator" />
+	<subscriber factory=".course_views.CourseActivityLastViewedDecorator"
+				for=".interfaces.ICourseInstanceActivity"
 				provides="nti.externalization.interfaces.IExternalMappingDecorator" />
 
 </configure>

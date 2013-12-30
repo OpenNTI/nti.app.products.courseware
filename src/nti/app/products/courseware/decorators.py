@@ -77,6 +77,8 @@ class _CourseInstanceLinkDecorator(object):
 
 		result['TotalEnrolledCount'] = ICourseEnrollments(context).count_enrollments()
 
+
+
 @interface.implementer(IExternalMappingDecorator)
 @component.adapter(ICourseOutline)
 class _CourseOutlineContentsLinkDecorator(object):

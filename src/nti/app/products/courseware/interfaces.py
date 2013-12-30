@@ -14,11 +14,13 @@ logger = __import__('logging').getLogger(__name__)
 
 from zope import interface
 from zope.location.interfaces import ILocation
+from zope.container.interfaces import IContained
 
 from nti.appserver import interfaces as app_interfaces
 from nti.contenttypes.courses.interfaces import IPrincipalEnrollments
 from nti.contenttypes.courses.interfaces import ICourseInstance
 from nti.dataserver.interfaces import IShouldHaveTraversablePath
+from nti.dataserver.interfaces import ILastModified
 
 from nti.utils import schema
 from nti.ntiids.schema import ValidNTIID
@@ -153,7 +155,7 @@ class ILegacyCommunityBasedCourseInstance(ICourseInstance):
 	LegacyInstructorForums = schema.ValidTextLine(title='A space separated list of forum NTIIDs',
 												  readonly=True)
 
-class ICourseInstanceActivity(ILocation):
+class ICourseInstanceActivity(IContained,ILastModified):
 	"""
 	A firehose implementation of activity relating
 	to a course and typically expected to be visible to
