@@ -106,6 +106,75 @@ class CourseEnrollmentRosterGetView(AbstractAuthenticatedView):
 		# TODO: We have no last modified for this
 		return result
 
+
+from .interfaces import ICourseCatalog
+from nti.dataserver.interfaces import IDataserverFolder
+from nti.dataserver.users.interfaces import IUserProfile
+
+import collections
+from nti.externalization.interfaces import LocatedExternalList
+from cStringIO import StringIO
+import csv
+
+@view_config(route_name='objects.generic.traversal',
+			 renderer='rest',
+			 request_method='GET',
+			 context=IDataserverFolder,
+			 permission=nauth.ACT_COPPA_ADMIN, # TODO: Better perm. This is generally used for admin
+			 name='AllEnrollments')
+class AllCourseEnrollmentRosterDownloadView(AbstractAuthenticatedView):
+	"""
+	Provides a downloadable table of all the enrollments
+	present in the system. The table has columns
+	for username, email address, and enrolled courses.
+	"""
+
+
+	def __call__(self):
+		# Our approach is to find all the courses,
+		# and get the enrollments in each course,
+		# accumulating users as we go.
+		# (NOTE: This winds up being an O(n^2) approach
+		# due to the poor implementation of enrollments
+		# for legacy courses.)
+
+		user_to_coursenames = collections.defaultdict(set)
+
+		catalog = component.getUtility(ICourseCatalog)
+
+		for catalog_entry in catalog:
+			course_name = catalog_entry.ProviderUniqueID
+
+			course = ICourseInstance(catalog_entry)
+
+			enrollments = ICourseEnrollments(course)
+
+			for user in enrollments.iter_enrollments():
+				user_to_coursenames[user].add( course_name )
+
+		rows = LocatedExternalList()
+		rows.__name__ = self.request.view_name
+		rows.__parent__ = self.request.context
+
+		for user, enrolled_course_names in user_to_coursenames.items():
+			row = [user.username,
+				   getattr(IUserProfile(user), 'email', None),
+				   ','.join(sorted(list(enrolled_course_names)))]
+			rows.append( row )
+
+		# Convert to CSV
+		# In the future, we might switch based on the accept header
+		# and provide it as json alternately
+		buf = StringIO()
+		writer = csv.writer(buf)
+		writer.writerows(rows)
+
+		self.request.response.body = buf.getvalue()
+		self.request.response.content_disposition = b'attachment; filename="enrollments.csv"'
+
+		return self.request.response
+
+
 from zope.traversing.interfaces import IPathAdapter
 from pyramid.interfaces import IRequest
 

@@ -267,11 +267,28 @@ class TestWorkspace(SharedApplicationTestBase):
 		assert_that( res.json_body, has_entry( 'Items', has_length( 1 ) ) )
 		assert_that( res.json_body['Items'][0], has_entry( 'href', enrollment_href ) )
 
+		# Because we are an admin, we can also access the global roster that will show us in it
+		res = self.testapp.get('/dataserver2/@@AllEnrollments')
+		# We have no email address at this point
+		assert_that( res.text, is_('sjohnson@nextthought.com,,CLC 3403\r\n'))
+
+		# give us one
+		self.testapp.put_json( '/dataserver2/users/sjohnson@nextthought.com/++fields++email',
+							   'jason.madden@nextthought.com' )
+		res = self.testapp.get('/dataserver2/@@AllEnrollments')
+		assert_that( res.text, is_('sjohnson@nextthought.com,jason.madden@nextthought.com,CLC 3403\r\n'))
+
+
 		# We can delete to drop it
 		res = self.testapp.delete( enrollment_href,
 								   status=204)
 		res = self.testapp.get( '/dataserver2/users/sjohnson@nextthought.com/Courses/EnrolledCourses' )
 		assert_that( res.json_body, has_entry( 'Items', is_(empty()) ) )
+
+		# No longer in the enrolled list
+		res = self.testapp.get('/dataserver2/@@AllEnrollments')
+		assert_that( res.text, is_('') )
+
 
 		# If we post a non-existant class, it fails gracefully
 		res = self.testapp.post_json( '/dataserver2/users/sjohnson@nextthought.com/Courses/EnrolledCourses',
