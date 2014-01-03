@@ -259,6 +259,10 @@ def _register_course_purchasable_from_catalog_entry( entry, event ):
 	# with a real database.
 	the_course = _course_instance_for_catalog_entry( entry ) # MAY send IObjectAdded if new
 	the_course.updateInstructors( entry )
+	# Ensure we can parse the outline (this is not an optimization, to pre
+	# cache before forking, as the volatile attributes are likely to get
+	# ghosted)
+	getattr( the_course, 'Outline' )
 
 	# Always let people know it's available so they can do any
 	# synchronization work that needs to pull from the external
@@ -443,7 +447,15 @@ class _LegacyCommunityBasedCourseInstance(CourseInstance):
 		def _handle_node(parent_lxml, parent_node):
 			for lesson in parent_lxml.iterchildren(tag='lesson'):
 				lesson_node = CourseOutlineContentNode()
-				lesson_node.ContentNTIID = lesson.get('topic-ntiid').decode('utf-8')
+				topic_ntiid = lesson.get(b'topic-ntiid')
+				# Under Py2, lxml will produce byte strings if it is
+				# ascii text, otherwise it will already decode it
+				# to using utf-8. Because decoding a unicode object first
+				# *encodes* it to bytes (using the default encoding, often ascii),
+				# exotic chars would throw a UnicodeEncodeError...so watch for that
+				# https://mailman-mail5.webfaction.com/pipermail/lxml/2011-December/006239.html
+				topic_ntiid = topic_ntiid.decode('utf-8') if isinstance(topic_ntiid,bytes) else topic_ntiid
+				lesson_node.ContentNTIID = topic_ntiid
 				parent_node.append(lesson_node)
 				# Sigh. It looks like date is optionally a comma-separated
 				# list of datetimes. If there is only one, that looks like
