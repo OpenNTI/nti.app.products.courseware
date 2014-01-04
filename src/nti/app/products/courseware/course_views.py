@@ -245,6 +245,11 @@ import BTrees
 
 from nti.appserver._view_utils import ModeledContentUploadRequestUtilsMixin
 
+from nti.externalization.interfaces import StandardExternalFields
+LINKS = StandardExternalFields.LINKS
+from nti.dataserver.links import Link
+
+
 @view_config(route_name='objects.generic.traversal',
 			 renderer='rest',
 			 request_method='PUT',
@@ -295,6 +300,14 @@ class CourseActivityLastViewedDecorator(AbstractAuthenticatedView,
 			result['lastViewed'] = 0
 		else:
 			result['lastViewed'] = bit64_int_to_time(mapping[username])
+
+		# And tell them where to PUT it :)
+		links = result.setdefault( LINKS, [] )
+		links.append( Link( context,
+							rel='lastViewed',
+							elements=('lastViewed',),
+							method='PUT' ) )
+
 
 	def __call__(self):
 		context = self.request.context
