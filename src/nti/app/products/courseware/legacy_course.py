@@ -37,6 +37,7 @@ from zope.security.interfaces import IPrincipal
 from zope.cachedescriptors.property import Lazy
 
 from BTrees import OOBTree
+from persistent import Persistent
 
 from pyramid.threadlocal import get_current_request
 
@@ -90,7 +91,10 @@ class ICourseCatalogLegacyEntryInstancePolicy(interface.Interface):
 	Some of these are optional and can be unimplemented.
 	"""
 
-	unregister_courses_from_components_named = schema.TextLine(title="If given, we will unregister ICourse objects found in this component")
+	register_courses_in_components_named = schema.TextLine(
+		title="If given, the ICourse objects will be registered in this components",
+		description="A non-persistent IComponents utility that will hold the courses."
+		" Any matching courses will be unregistered from it.")
 
 	def purch_id_for_entry(entry):
 		"""
@@ -116,7 +120,15 @@ class DefaultCourseCatalogLegacyEntryInstancePolicy(object):
 	registered for a provider.
 	"""
 
-	unregister_courses_from_components_named = ()
+	register_courses_in_components_named = None
+
+	def __init__(self):
+		if hasattr(self, 'unregister_courses_from_components_named') and self.register_courses_in_components_named is None:
+			self.register_courses_in_components_named = getattr(self, 'unregister_courses_from_components_named')
+			logger.warn("Deprecated usage of unregister_courses_from_components_named in %s", self)
+		if not self.register_courses_in_components_named:
+			logger.warn("Courses for %s will be registered globally", self)
+
 
 	def purch_id_for_entry(self, entry):
 		"""
@@ -237,24 +249,33 @@ def _register_course_purchasable_from_catalog_entry( entry, event ):
 									   discountable=False,
 									   bulk_purchase=False )
 
-	if policy.unregister_courses_from_components_named:
-		OU = component.getGlobalSiteManager().getUtility(IComponents, name=policy.unregister_courses_from_components_named)
-		if OU.queryUtility( ICourse, name=purch_ntiid ):
-			logger.warn( "Found existing ZCML course for %s; replacing", purch_ntiid )
-			old_course = OU.getUtility( ICourse, name=purch_ntiid )
-			OU.unregisterUtility( old_course, provided=ICourse, name=purch_ntiid )
-
 	# Be careful what site we stick these in. Ideally we'd want to stick them in
 	# site the library is loaded in in case we are configuring multiple libraries
 	# for multiple sites. But in tests especially the current site might be a persistent
 	# site, and purchasables aren't meant to be persisted (depending on when the added
 	# events are fired).
-	# Registering just in the non-persistent site may be a decent compromise, but it's also a
-	# change from what we were doing.
+	#
 	# Because library setup happens in the dataserver's site, so that
-	# we can make persistent changes, we explicitly use the global site
-	component.getGlobalSiteManager().registerUtility( the_course, ICourse,
-													  name=purch_ntiid )
+	# we can make persistent changes, we explicitly use the global site, unless
+	# some other IComponents is defined (which should be the non-persistent baseregistery.BaseComponents)
+	if not policy.register_courses_in_components_named:
+		components = component.getGlobalSiteManager()
+		logger.info('Registering course %s globally for all sites', purch_ntiid)
+	else:
+		components = component.getGlobalSiteManager().getUtility(IComponents,
+																 name=policy.register_courses_in_components_named)
+		logger.info('Registering course %s in site %s',
+					purch_ntiid, policy.register_courses_in_components_named)
+		# If they give us one, it MUST be non-persistent (programming error
+		# otherwise). And anything we derive overrides what may have
+		# been statically registered.
+		assert not isinstance(components, Persistent)
+		if components.queryUtility( ICourse, name=purch_ntiid ):
+			logger.warn( "Found existing ZCML course for %s; replacing", purch_ntiid )
+			old_course = components.getUtility( ICourse, name=purch_ntiid )
+			components.unregisterUtility( old_course, provided=ICourse, name=purch_ntiid )
+
+	components.registerUtility( the_course, ICourse, name=purch_ntiid )
 
 
 	# Ensure the referenced community exists if it doesn't, and
@@ -401,6 +422,8 @@ class _LegacyCommunityBasedCourseInstance(CourseInstance):
 
 	@property
 	def legacy_purchasable(self):
+		# purchasables aren't persistent so could be cached,
+		# but only if we find one, because it depends on the site policy
 		for the_purchasable in get_all_purchasables():
 			if not ICourse.providedBy(the_purchasable):
 				continue
@@ -587,6 +610,7 @@ class _LegacyCourseInstanceEnrollments(object):
 
 from nti.contenttypes.courses.interfaces import ICourseEnrollmentManager
 from pyramid.interfaces import IRequest
+from nti.appserver.httpexceptions import HTTPNotFound
 
 @interface.implementer(ICourseEnrollmentManager)
 @component.adapter(_LegacyCommunityBasedCourseInstance, IRequest)
@@ -601,7 +625,11 @@ class _LegacyCourseInstanceEnrollmentManager(object):
 		self.context = context
 		self.request = request
 
-	def _make_subrequest(self, path, body):
+	def _make_subrequest(self, path):
+		if self.context.legacy_purchasable is None:
+			raise HTTPNotFound("No such course in this site")
+
+		body = {'courseID': self.context.legacy_purchasable.NTIID}
 		subrequest = self.request.blank(path)
 		subrequest.method = b'POST'
 		subrequest.json = body
@@ -611,13 +639,11 @@ class _LegacyCourseInstanceEnrollmentManager(object):
 		return self.request.invoke_subrequest( subrequest )
 
 	def enroll(self, user):
-		self._make_subrequest( '/dataserver2/store/enroll_course',
-							   {'courseID': self.context.legacy_purchasable.NTIID})
+		self._make_subrequest( '/dataserver2/store/enroll_course' )
 		return True
 
 	def drop(self, user):
-		self._make_subrequest( '/dataserver2/store/unenroll_course',
-							   {'courseID': self.context.legacy_purchasable.NTIID})
+		self._make_subrequest( '/dataserver2/store/unenroll_course' )
 		return True
 
 

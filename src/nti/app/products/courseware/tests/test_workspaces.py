@@ -112,6 +112,11 @@ class TestWorkspace(SharedApplicationTestBase):
 
 	@WithSharedApplicationMockDS(users=('harp4162'),testapp=True,default_authenticate=True)
 	def test_fetch_enrolled_courses_legacy(self):
+		# This only works in the OU environment because that's where the purchasables are
+		extra_env = self.testapp.extra_environ or {}
+		extra_env.update( {b'HTTP_ORIGIN': b'http://janux.ou.edu'} )
+		self.testapp.extra_environ = extra_env
+
 		# Now that we have created the instructor user, we need to re-enumerate
 		# the library so it gets noticed
 		with mock_dataserver.mock_db_trans(self.ds):
@@ -179,6 +184,11 @@ class TestWorkspace(SharedApplicationTestBase):
 
 	@WithSharedApplicationMockDS(users=('harp4162'),testapp=True,default_authenticate=True)
 	def test_fetch_administered_courses(self):
+		# This only works in the OU environment because that's where the purchasables are
+		extra_env = self.testapp.extra_environ or {}
+		extra_env.update( {b'HTTP_ORIGIN': b'http://janux.ou.edu'} )
+		self.testapp.extra_environ = extra_env
+
 		# Now that we have created the instructor user, we need to re-enumerate
 		# the library so it gets noticed. We must also remove
 		# a previous entry in the catalog if there is one
@@ -235,6 +245,10 @@ class TestWorkspace(SharedApplicationTestBase):
 
 	@WithSharedApplicationMockDS(users=True,testapp=True)
 	def test_enroll_unenroll_using_workspace(self):
+		# This only works in the OU environment because that's where the purchasables are
+		extra_env = self.testapp.extra_environ or {}
+		extra_env.update( {b'HTTP_ORIGIN': b'http://janux.ou.edu'} )
+		self.testapp.extra_environ = extra_env
 
 		# First, we are enrolled in nothing
 		res = self.testapp.get( '/dataserver2/users/sjohnson@nextthought.com/Courses/EnrolledCourses' )
