@@ -97,7 +97,9 @@ class ICourseCatalogEntry(ILocation):
 	StartDate = schema.Date(title="The date on which the course begins",
 							description="Currently optional; a missing value means the course already started")
 	Duration = schema.Timedelta(title="The length of the course",
-								description="Currently optional")
+								description="Currently optional, may be None")
+	EndDate = schema.Date( title="The date on which the course ends",
+						   description="Currently optional; a missing value means the course has no defined end date.")
 
 
 	ProviderUniqueID = schema.TextLine(title="The unique id assigned by the provider")

@@ -21,6 +21,7 @@ logger = __import__('logging').getLogger(__name__)
 
 from urlparse import urljoin
 import isodate
+import datetime
 
 from zope import interface
 from zope import component
@@ -174,15 +175,19 @@ def _register_course_purchasable_from_catalog_entry( entry, event ):
 	entry.LegacyPurchasableThumbnail = thumbnail
 
 	author = ' and '.join( [x.Name for x in entry.Instructors] )
-	# ATM, we only have this data for preview classes; currently
-	# running classes have no startdate.
-	# Obviously this will change soon
-	startdate = entry.StartDate
-	if startdate:
-		preview = True
-		startdate = unicode(isodate.date_isoformat(startdate))
+
+	preview = False
+	startdate = None
+	if not entry.StartDate or not entry.EndDate:
+		# Hmm...something very fishy about this one...ancient legacy?
+		logger.warn("Course info has no start date and/or duration: %s", entry)
 	else:
-		preview = False
+		# We can probably do better with this. Plus we probably need a schedule
+		# to update without restarting the server...
+		now = datetime.date.today()
+		if now < entry.EndDate:
+			preview = True
+		startdate = unicode(isodate.date_isoformat(entry.StartDate))
 
 	sig_lines = []
 	for inst in entry.Instructors:

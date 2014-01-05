@@ -43,6 +43,16 @@ class CourseCatalogLegacyEntry(CourseCatalogEntry):
 	#: :class:`.ILegacyCourseConflatedContentPackage`)
 	legacy_content_package = None
 
+	@property
+	def EndDate(self):
+		"""
+		We calculate the end date based on the duration and the start
+		date, if possible. Otherwise, None.
+		"""
+		if self.StartDate is not None and self.Duration is not None:
+			return self.StartDate + self.Duration
+
+
 @interface.implementer(interfaces.ICourseCatalogInstructorLegacyInfo)
 class CourseCatalogInstructorLegacyInfo(CourseCatalogInstructorInfo):
 	defaultphoto = None
