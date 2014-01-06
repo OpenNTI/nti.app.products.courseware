@@ -219,9 +219,7 @@ def _register_course_purchasable_from_catalog_entry( entry, event ):
 	# NTIID based simply on the provider's unique id. But the old renderings
 	# use an NTIID containing the title as well, and we can't change that...
 	# except for social stats
-	if entry.ProviderUniqueID == 'PHIL 1203': # This one has a typo
-		purch_ntiid = "tag:nextthought.com,2011-10:OU-HTML-PHIL1203_HumanDestiny.phil_1203__philosophy_and_human_destiny,_east_and_west"
-	elif old_rendering and purch_id != 'SOC3123': # with one exception
+	if old_rendering and purch_id != 'SOC3123': # with one exception
 		# Old style is the title, minus whitespace and puncctuation, each word capitalized.
 		# we could delegate this to the policy, but it shouldn't be
 		# happening anymore
@@ -230,15 +228,25 @@ def _register_course_purchasable_from_catalog_entry( entry, event ):
 
 		specific = purch_id + ntiid_title
 		purch_ntiid = make_ntiid( provider=provider, nttype='course', specific=specific )
+
+		items = (entry.ContentPackageNTIID,)
+		if entry.ProviderUniqueID == 'PHIL 1203':
+			# This one has a typo. Now, the server can deal with
+			# multiple items for the purchasable, but it's not clear the
+			# webapp can. so we HACK. Both of these can go away at the same time.
+			entry._v_LegacyHackItemNTIID = "tag:nextthought.com,2011-10:OU-HTML-PHIL1203_HumanDestiny.phil_1203__philosophy_and_human_destiny,_east_and_west"
 	else:
 		purch_ntiid = make_ntiid( provider=provider, nttype='course', specific=purch_id )
+		items = (entry.ContentPackageNTIID,)
+
+
 
 	the_course = course.create_course( ntiid=purch_ntiid,
 									   title=entry.Title,
 									   author=author,
 									   name=entry.ProviderUniqueID,
 									   description=entry.Description,
-									   items=(entry.ContentPackageNTIID,),
+									   items=items,
 									   icon=icon,
 									   preview=preview,
 									   thumbnail=thumbnail, # Not used
@@ -354,7 +362,11 @@ class _PurchaseHistoryEnrollmentStatus(object):
 		course_catalog = component.getUtility(ICourseCatalog)
 		item_ntiid_to_entry = dict()
 		for entry in course_catalog:
-			ntiid = getattr( entry, 'ContentPackageNTIID', None)
+			ntiid = getattr(entry, 'ContentPackageNTIID', None)
+			if ntiid:
+				item_ntiid_to_entry[ntiid] = entry
+			# XXX HACK for PHIL1203
+			ntiid = getattr(entry, '_v_LegacyHackItemNTIID', None)
 			if ntiid:
 				item_ntiid_to_entry[ntiid] = entry
 
