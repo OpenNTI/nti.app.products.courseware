@@ -474,7 +474,6 @@ class _LegacyCommunityBasedCourseInstance(CourseInstance):
 		from the content, and its modification dates come
 		from there.
 		"""
-		package = self.legacy_content_package
 
 		outline = CourseOutline()
 		outline.__name__ = 'Outline'
@@ -488,20 +487,43 @@ class _LegacyCommunityBasedCourseInstance(CourseInstance):
 		outline.__parent__ = self
 
 		course_element = self._course_toc_element
+
+		library = component.getUtility(IContentPackageLibrary)
+
 		# TODO: Why do units in the toc have an NTIID?
 		# and then, why do lessons NOT have an NTIID?
+
+		def _attr_val(node, name):
+			# Under Py2, lxml will produce byte strings if it is
+			# ascii text, otherwise it will already decode it
+			# to using utf-8. Because decoding a unicode object first
+			# *encodes* it to bytes (using the default encoding, often ascii),
+			# exotic chars would throw a UnicodeEncodeError...so watch for that
+			# https://mailman-mail5.webfaction.com/pipermail/lxml/2011-December/006239.html
+			val = node.get(bytes(name))
+			return val.decode('utf-8') if isinstance(val, bytes) else val
+
 		def _handle_node(parent_lxml, parent_node):
 			for lesson in parent_lxml.iterchildren(tag='lesson'):
 				lesson_node = CourseOutlineContentNode()
-				topic_ntiid = lesson.get(b'topic-ntiid')
-				# Under Py2, lxml will produce byte strings if it is
-				# ascii text, otherwise it will already decode it
-				# to using utf-8. Because decoding a unicode object first
-				# *encodes* it to bytes (using the default encoding, often ascii),
-				# exotic chars would throw a UnicodeEncodeError...so watch for that
-				# https://mailman-mail5.webfaction.com/pipermail/lxml/2011-December/006239.html
-				topic_ntiid = topic_ntiid.decode('utf-8') if isinstance(topic_ntiid,bytes) else topic_ntiid
+				topic_ntiid = _attr_val(lesson, b'topic-ntiid')
+
+				__traceback_info__ = topic_ntiid
+
+				# Now give it the title and description of the content node,
+				# if they have them (they may not, but we require them, even if blank)
 				lesson_node.ContentNTIID = topic_ntiid
+
+				content_units = library.pathToNTIID(topic_ntiid)
+				if not content_units:
+					logger.warn("Unable to find referenced course node %s", topic_ntiid)
+				else:
+					content_unit = content_units[-1]
+					for attr in 'title', 'description':
+						val = getattr(content_unit, attr)
+						if val:
+							setattr(lesson_node, attr, val)
+
 				parent_node.append(lesson_node)
 				# Sigh. It looks like date is optionally a comma-separated
 				# list of datetimes. If there is only one, that looks like
@@ -517,14 +539,14 @@ class _LegacyCommunityBasedCourseInstance(CourseInstance):
 				_handle_node(lesson, lesson_node)
 
 		for unit in course_element.iterchildren(tag='unit'):
-			# lxml returns attributes as bytestrings
 			unit_node = CourseOutlineNode()
-			unit_node.title = unit.get('label').decode('utf-8')
+			unit_node.title = _attr_val(unit, b'label')
 			outline.append(unit_node)
 			_handle_node( unit, unit_node )
 
 		# Finally, after all the children have been added (which
 		# changes lastModified), set the lastModified to the ToC date.
+		package = self.legacy_content_package
 		outline.lastModified = package.index_last_modified
 		return outline
 

@@ -140,11 +140,17 @@ class TestApplicationCatalogFromContent(SharedApplicationTestBase):
 					assert_that( inst.instructors, has_length( 1 ))
 					assert_that( acl, has_item(has_item(inst.instructors[0])))
 					assert_that( inst.Outline, has_length(6)) # Units
-					assert_that( inst.Outline["0"], has_property('title', 'Introduction'))
-					assert_that( inst.Outline["0"]["0"].AvailableBeginning, is_(not_none()))
-					assert_that( inst.Outline["0"]["0"].AvailableEnding, is_(not_none()))
-					assert_that( inst.Outline["0"]["0"], externalizes(has_entry('AvailableEnding',
-																				'2013-08-22T04:59:59Z')))
+
+					unit_1 = inst.Outline['0']
+					assert_that( unit_1, has_property('title', 'Introduction'))
+
+					lesson_1 = unit_1["0"]
+					assert_that( lesson_1.AvailableBeginning, is_(not_none()))
+					assert_that( lesson_1.AvailableEnding, is_(not_none()))
+					assert_that( lesson_1, has_property( 'title', '1. Defining Law and Justice' ) )
+					assert_that( lesson_1, externalizes(has_entries('AvailableEnding', '2013-08-22T04:59:59Z',
+																	'title', '1. Defining Law and Justice',
+																	'description', '')))
 					# Sub-lessons
-					assert_that( inst.Outline["0"]["0"], has_length(1) )
-					assert_that( inst.Outline["0"]["0"]["0"], has_property('ContentNTIID', "tag:nextthought.com,2011-10:OU-HTML-DNE" ) )
+					assert_that( lesson_1, has_length(1) )
+					assert_that( lesson_1["0"], has_property('ContentNTIID', "tag:nextthought.com,2011-10:OU-HTML-DNE" ) )
