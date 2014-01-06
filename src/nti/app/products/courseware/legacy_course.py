@@ -190,9 +190,11 @@ def _register_course_purchasable_from_catalog_entry( entry, event ):
 
 	preview = False
 	startdate = None
+	old_rendering = False # Some things were different with the courses produced for Fall 2013
 	if not entry.StartDate or not entry.EndDate:
 		# Hmm...something very fishy about this one...ancient legacy?
 		logger.warn("Course info has no start date and/or duration: %s", entry)
+		old_rendering = True
 	else:
 		# We can probably do better with this. Plus we probably need a schedule
 		# to update without restarting the server...
@@ -200,6 +202,8 @@ def _register_course_purchasable_from_catalog_entry( entry, event ):
 		if now < entry.EndDate:
 			preview = True
 		startdate = unicode(isodate.date_isoformat(entry.StartDate))
+
+		old_rendering = entry.StartDate.year == 2013
 
 	sig_lines = []
 	for inst in entry.Instructors:
@@ -215,9 +219,9 @@ def _register_course_purchasable_from_catalog_entry( entry, event ):
 	# NTIID based simply on the provider's unique id. But the old renderings
 	# use an NTIID containing the title as well, and we can't change that...
 	# except for social stats
-	if preview or purch_id == 'SOC3123' or provider != 'OU':
-		purch_ntiid = make_ntiid( provider=provider, nttype='course', specific=purch_id )
-	else:
+	if entry.ProviderUniqueID == 'PHIL 1203': # This one has a typo
+		purch_ntiid = "tag:nextthought.com,2011-10:OU-HTML-PHIL1203_HumanDestiny.phil_1203__philosophy_and_human_destiny,_east_and_west"
+	elif old_rendering and purch_id != 'SOC3123': # with one exception
 		# Old style is the title, minus whitespace and puncctuation, each word capitalized.
 		# we could delegate this to the policy, but it shouldn't be
 		# happening anymore
@@ -226,6 +230,8 @@ def _register_course_purchasable_from_catalog_entry( entry, event ):
 
 		specific = purch_id + ntiid_title
 		purch_ntiid = make_ntiid( provider=provider, nttype='course', specific=specific )
+	else:
+		purch_ntiid = make_ntiid( provider=provider, nttype='course', specific=purch_id )
 
 	the_course = course.create_course( ntiid=purch_ntiid,
 									   title=entry.Title,
