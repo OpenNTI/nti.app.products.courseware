@@ -18,6 +18,7 @@ logger = __import__('logging').getLogger(__name__)
 from hamcrest import assert_that
 from hamcrest import is_
 from hamcrest import is_not
+does_not = is_not
 from hamcrest import none
 from hamcrest import not_none
 from hamcrest import has_entries
@@ -27,9 +28,9 @@ from hamcrest import has_properties
 from hamcrest import has_items
 from hamcrest import has_item
 from hamcrest import has_property
+from hamcrest import has_key
+from hamcrest import all_of
 
-from nti.testing import base
-from nti.testing import matchers
 from nti.testing.matchers import verifiably_provides, validly_provides
 
 import os
@@ -154,3 +155,11 @@ class TestApplicationCatalogFromContent(SharedApplicationTestBase):
 					# Sub-lessons
 					assert_that( lesson_1, has_length(1) )
 					assert_that( lesson_1["0"], has_property('ContentNTIID', "tag:nextthought.com,2011-10:OU-HTML-DNE" ) )
+
+					# This one is a stub
+					lesson_2 = unit_1["1"]
+					assert_that( lesson_2,
+								 externalizes(
+									 all_of(
+										 does_not(has_key('ContentNTIID')),
+										 has_entry('Class', 'CourseOutlineCalendarNode'))))

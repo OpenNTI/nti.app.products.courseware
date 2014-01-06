@@ -1676,8 +1676,9 @@
 		  topic-ntiid="tag:nextthought.com,2011-10:OU-HTML-CLC3403_LawAndJustice.lec:01_LESSON">
 		  <lesson topic-ntiid="tag:nextthought.com,2011-10:OU-HTML-DNE" />
 	  </lesson>
-	  <lesson date="2013-08-21T05:00:00+00:00,2013-08-27T04:59:59.999999+00:00" topic-ntiid="tag:nextthought.com,2011-10:OU-HTML-CLC3403_LawAndJustice.lec:02_LESSON"/>
+	  <lesson isOutlineStubOnly='true' date="2013-08-21T05:00:00+00:00,2013-08-27T04:59:59.999999+00:00" topic-ntiid="tag:nextthought.com,2011-10:OU-HTML-CLC3403_LawAndJustice.lec:02_LESSON"/>
     </unit>
+
     <unit label="The Age of Polis" ntiid="tag:nextthought.com,2011-10:OU-NTICourseUnit-CLC3403_LawAndJustice.course.unit.2">
       <lesson date="2013-08-26T05:00:00+00:00,2013-08-29T04:59:59.999999+00:00" topic-ntiid="tag:nextthought.com,2011-10:OU-HTML-CLC3403_LawAndJustice.lec:03_LESSON"/>
       <lesson date="2013-08-28T05:00:00+00:00,2013-09-03T04:59:59.999999+00:00" topic-ntiid="tag:nextthought.com,2011-10:OU-HTML-CLC3403_LawAndJustice.lec:04_LESSON"/>

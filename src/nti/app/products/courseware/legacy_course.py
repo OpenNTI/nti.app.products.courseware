@@ -51,6 +51,7 @@ from nti.contenttypes.courses.interfaces import ICourseAdministrativeLevel
 
 from nti.contenttypes.courses.outlines import CourseOutline
 from nti.contenttypes.courses.outlines import CourseOutlineNode
+from nti.contenttypes.courses.outlines import CourseOutlineCalendarNode
 from nti.contenttypes.courses.outlines import CourseOutlineContentNode
 
 from nti.app.products.courseware.interfaces import ICourseCatalog
@@ -505,15 +506,27 @@ class _LegacyCommunityBasedCourseInstance(CourseInstance):
 
 		def _handle_node(parent_lxml, parent_node):
 			for lesson in parent_lxml.iterchildren(tag='lesson'):
-				lesson_node = CourseOutlineContentNode()
+				node_factory = CourseOutlineContentNode
+				# We want to begin divorcing the syllabus/structure of a course
+				# from the content that is available. We currently do this
+				# by stubbing out the content, and setting flags to be extracted
+				# to the ToC so that we don't give the UI back the NTIID.
+				if lesson.get(b'isOutlineStubOnly') == 'true':
+					# We query for the node factory we use to "hide"
+					# content from the UI so that we can enable/disable
+					# hiding in certain site policies.
+					# (TODO: Be sure this works as expected with the caching)
+					node_factory = component.queryUtility(component.IFactory,
+														  name='course outline stub node', # not valid Class or MimeType value
+														  default=CourseOutlineCalendarNode )
+
+				lesson_node = node_factory()
 				topic_ntiid = _attr_val(lesson, b'topic-ntiid')
 
 				__traceback_info__ = topic_ntiid
 
 				# Now give it the title and description of the content node,
 				# if they have them (they may not, but we require them, even if blank)
-				lesson_node.ContentNTIID = topic_ntiid
-
 				content_units = library.pathToNTIID(topic_ntiid)
 				if not content_units:
 					logger.warn("Unable to find referenced course node %s", topic_ntiid)
@@ -523,6 +536,12 @@ class _LegacyCommunityBasedCourseInstance(CourseInstance):
 						val = getattr(content_unit, attr)
 						if val:
 							setattr(lesson_node, attr, val)
+
+				# Now, if our node is supposed to have the NTIID, expose it
+				# (this is only for efficiency; if it isn't supposed to have the
+				# NTIID it won't be in the interface and wouldn't be externalized)
+				if hasattr(lesson_node, 'ContentNTIID'):
+					lesson_node.ContentNTIID = topic_ntiid
 
 				parent_node.append(lesson_node)
 				# Sigh. It looks like date is optionally a comma-separated
