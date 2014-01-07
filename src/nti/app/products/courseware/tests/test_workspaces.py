@@ -192,7 +192,7 @@ class TestWorkspace(SharedApplicationTestBase):
 		assert_that( outline_content_href, is_('/dataserver2/users/CLC3403.ou.nextthought.com/LegacyCourses/CLC3403/Outline/contents'))
 		res = self.testapp.get( outline_content_href )
 		# Last mod comes from the file on disk
-		assert_that( res.last_modified, is_( datetime.datetime(2014, 1, 6, 23, 16, 37, 0, webob.datetime_utils.UTC) ))
+		assert_that( res.last_modified, is_( datetime.datetime(2014, 1, 6, 23, 20, 39, 0, webob.datetime_utils.UTC) ))
 		assert_that( res.json_body, has_length(6))
 		assert_that( res.json_body[0], has_entry('title', 'Introduction'))
 		assert_that( res.json_body[0], has_entry('contents', has_length(2)))

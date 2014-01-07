@@ -306,7 +306,7 @@ def _register_course_purchasable_from_catalog_entry( entry, event ):
 		try:
 			local_catalog.addCatalogEntry(entry, event=False)
 		except ValueError: # A re-enumeration; typically tests
-			logger.info("Found duplicate local course catalog entry %s", entry)
+			logger.info("Found duplicate local course catalog entry %s", entry.ProviderUniqueID)
 			local_catalog.removeCatalogEntry(entry, event=False)
 			local_catalog.addCatalogEntry(entry, event=False)
 		assert entry not in global_catalog
