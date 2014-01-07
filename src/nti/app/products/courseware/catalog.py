@@ -12,7 +12,6 @@ __docformat__ = "restructuredtext en"
 logger = __import__('logging').getLogger(__name__)
 
 from zope import interface
-from zope import component
 from zope import lifecycleevent
 from zope.container.contained import Contained
 
@@ -30,6 +29,7 @@ from nti.utils.property import LazyOnClass
 from nti.dataserver.authorization_acl import acl_from_aces
 from nti.dataserver.authorization_acl import ace_allowing
 
+from nti.externalization.externalization import make_repr
 
 @interface.implementer(interfaces.ICourseCatalog)
 class CourseCatalog(Contained):
@@ -51,13 +51,35 @@ class CourseCatalog(Contained):
 			ace_allowing( AUTHENTICATED_GROUP_NAME, ACT_READ, CourseCatalog ) )
 
 
-	def addCatalogEntry(self,entry):
+	def addCatalogEntry(self, entry, event=True):
+		"""
+		Adds an entry to this catalog.
+
+		:keyword bool event: If true (the default), we broadcast
+			the object added event.
+		"""
+		if entry in self._entries:
+			if entry.__parent__ is self:
+				return
+			raise ValueError("Adding duplicate entry %s", entry)
 		self._entries.append( entry )
 		entry.__parent__ = self
 		self.lastModified = max( self.lastModified, entry.lastModified )
-		lifecycleevent.added( entry )
+		if event:
+			lifecycleevent.added( entry )
 
 	append = addCatalogEntry
+
+	def removeCatalogEntry(self, entry, event=True):
+		"""
+		Remove an entry from this catalog.
+
+		:keyword bool event: If true (the default), we broadcast
+			the object removed event.
+		"""
+		self._entries.remove(entry)
+		if event:
+			lifecycleevent.removed(entry)
 
 	def __len__( self ):
 		return len(self._entries)
@@ -86,8 +108,7 @@ class CourseCatalog(Contained):
 class CourseCatalogInstructorInfo(SchemaConfigured):
 	createDirectFieldProperties(interfaces.ICourseCatalogInstructorInfo)
 
-	def __repr__(self):
-		return "%s(%r)" % (self.__class__.__name__, self.__dict__)
+	__repr__ = make_repr()
 
 @interface.implementer(interfaces.ICourseCatalogEntry)
 class CourseCatalogEntry(SchemaConfigured):
@@ -95,9 +116,15 @@ class CourseCatalogEntry(SchemaConfigured):
 
 	__name__ = alias('ProviderUniqueID') # This is probably wrong
 	__parent__ = None
-	def __repr__(self):
-		return "%s(%r)" % (self.__class__.__name__, self.__dict__)
 
+	__repr__ = make_repr()
+
+	def __eq__(self, other):
+		try:
+			# NOTE: This is not very good until we have a better notion of 'provider'
+			return self is other or self.ProviderUniqueID == other.ProviderUniqueID
+		except AttributeError:
+			return NotImplemented
 
 	@property
 	def links(self):

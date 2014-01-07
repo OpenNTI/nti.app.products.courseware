@@ -92,7 +92,14 @@ class TestApplicationCatalogFromContent(SharedApplicationTestBase):
 		assert_that( lib.pathToNTIID("tag:nextthought.com,2011-10:OU-HTML-CLC3403_LawAndJustice.clc_3403_law_and_justice"),
 					 is_not( none() ) )
 
-		catalog = component.getUtility( ICourseCatalog )
+		from zope.component.interfaces import IComponents
+		components = component.getUtility(IComponents, name='platform.ou.edu')
+		catalog = components.getUtility( ICourseCatalog )
+		# XXX
+		# This test is unclean, we re-register globally
+		global_catalog = component.getUtility(ICourseCatalog)
+		global_catalog._entries[:] = catalog._entries
+
 		# Both get picked up
 		assert_that( catalog, has_length( 2 ) )
 		assert_that( catalog, has_items( verifiably_provides(ICourseCatalogLegacyEntry),

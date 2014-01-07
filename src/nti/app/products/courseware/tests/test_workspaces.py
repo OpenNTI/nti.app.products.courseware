@@ -99,9 +99,16 @@ class TestWorkspace(SharedApplicationTestBase):
 	@WithSharedApplicationMockDS(users=True,testapp=True)
 	def test_fetch_all_courses(self):
 		res = self.testapp.get( '/dataserver2/users/sjohnson@nextthought.com/Courses/AllCourses' )
+		# Nothing by default
+		assert_that( res.json_body, has_entry( 'Items', has_length( 0 )) )
 
+		# have to be in the site.
+		extra_env = self.testapp.extra_environ or {}
+		extra_env.update( {b'HTTP_ORIGIN': b'http://janux.ou.edu'} )
+		self.testapp.extra_environ = extra_env
+
+		res = self.testapp.get( '/dataserver2/users/sjohnson@nextthought.com/Courses/AllCourses' )
 		assert_that( res.json_body, has_entry( 'Items', has_length( 2 )) )
-
 		assert_that( res.json_body['Items'],
 					 has_items(
 						 all_of( has_entries( 'Duration', 'P112D',
@@ -120,6 +127,8 @@ class TestWorkspace(SharedApplicationTestBase):
 		# Now that we have created the instructor user, we need to re-enumerate
 		# the library so it gets noticed
 		with mock_dataserver.mock_db_trans(self.ds):
+			cat = component.getUtility(ICourseCatalog)
+			del cat._entries[:]
 			lib = component.getUtility(IContentPackageLibrary)
 			del lib.contentPackages
 			getattr(lib, 'contentPackages')
@@ -189,6 +198,9 @@ class TestWorkspace(SharedApplicationTestBase):
 		extra_env.update( {b'HTTP_ORIGIN': b'http://janux.ou.edu'} )
 		self.testapp.extra_environ = extra_env
 
+		instructor_env = self._make_extra_environ('harp4162')
+		instructor_env.update( {b'HTTP_ORIGIN': b'http://janux.ou.edu'} )
+
 		# Now that we have created the instructor user, we need to re-enumerate
 		# the library so it gets noticed. We must also remove
 		# a previous entry in the catalog if there is one
@@ -201,7 +213,7 @@ class TestWorkspace(SharedApplicationTestBase):
 
 
 		res = self.testapp.get( '/dataserver2/users/harp4162/Courses/AdministeredCourses',
-								extra_environ=self._make_extra_environ('harp4162'))
+								extra_environ=instructor_env)
 		assert_that( res.json_body, has_entry( 'Items', has_length(1) ) )
 
 		role = res.json_body['Items'][0]
@@ -225,13 +237,13 @@ class TestWorkspace(SharedApplicationTestBase):
 									  status=201 )
 
 		# fetch the roster as the instructor
-		res = self.testapp.get( roster_link, extra_environ=self._make_extra_environ('harp4162') )
+		res = self.testapp.get( roster_link, extra_environ=instructor_env)
 
 		assert_that( res.json_body, has_entry( 'Items', contains( has_entries('Class', 'CourseInstanceEnrollment',
 																			  'Username', self.extra_environ_default_user.lower()) ) ) )
 
 		# fetch the activity as the instructor
-		res = self.testapp.get( activity_link, extra_environ=self._make_extra_environ('harp4162') )
+		res = self.testapp.get( activity_link, extra_environ=instructor_env)
 
 		assert_that( res.json_body, has_entry( 'TotalItemCount', 0 ) )
 		assert_that( res.json_body, has_entry( 'lastViewed', 0 ) )
@@ -239,8 +251,8 @@ class TestWorkspace(SharedApplicationTestBase):
 		last_viewed_href = self.require_link_href_with_rel( res.json_body, 'lastViewed')
 
 		# update our viewed date
-		self.testapp.put_json(last_viewed_href, 1234, extra_environ=self._make_extra_environ('harp4162') )
-		res = self.testapp.get( activity_link, extra_environ=self._make_extra_environ('harp4162') )
+		self.testapp.put_json(last_viewed_href, 1234, extra_environ=instructor_env)
+		res = self.testapp.get( activity_link, extra_environ=instructor_env)
 		assert_that( res.json_body, has_entry( 'lastViewed', 1234 ) )
 
 	@WithSharedApplicationMockDS(users=True,testapp=True)

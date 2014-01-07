@@ -10,6 +10,12 @@
 
 	<include package="nti.contenttypes.courses" />
 
+	<!--
+	We provide one global catalog,
+	but every site that registers its own courses
+	will also register its own catalog.
+	Right now, these are *not* hierachacal.
+	-->
 	<utility factory=".catalog.CourseCatalog"
 			 provides=".interfaces.ICourseCatalog" />
 	<subscriber handler=".legacy_catalog._content_package_registered" />

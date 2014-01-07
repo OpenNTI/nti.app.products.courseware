@@ -290,6 +290,26 @@ def _register_course_purchasable_from_catalog_entry( entry, event ):
 			old_course = components.getUtility( ICourse, name=purch_ntiid )
 			components.unregisterUtility( old_course, provided=ICourse, name=purch_ntiid )
 
+		# Now move the catalog entry down to this level too.
+		# It gets added by default globally but we need them to match
+		global_catalog = component.getGlobalSiteManager().getUtility(ICourseCatalog)
+		local_catalog = components.queryUtility(ICourseCatalog)
+		if local_catalog is None or local_catalog is global_catalog:
+			local_catalog = type(global_catalog)()
+			components.registerUtility(local_catalog, ICourseCatalog)
+
+		# By definition it is in the global
+		global_catalog.removeCatalogEntry(entry, event=False)
+		entry.__parent__ = None
+		try:
+			local_catalog.addCatalogEntry(entry, event=False)
+		except ValueError: # A re-enumeration; typically tests
+			logger.info("Found duplicate local course catalog entry %s", entry)
+			local_catalog.removeCatalogEntry(entry, event=False)
+			local_catalog.addCatalogEntry(entry, event=False)
+		assert entry not in global_catalog
+		assert entry.__parent__ is local_catalog
+
 	components.registerUtility( the_course, ICourse, name=purch_ntiid )
 
 
@@ -299,6 +319,12 @@ def _register_course_purchasable_from_catalog_entry( entry, event ):
 	# NOTE: This requires that we are operating in a transaction
 	# with a real database.
 	the_course = _course_instance_for_catalog_entry( entry ) # MAY send IObjectAdded if new
+
+	# Defend against content package IDs changing
+	if the_course.ContentPackageNTIID != entry.ContentPackageNTIID:
+		__traceback_info__ = entry, the_course
+		raise ValueError("The root NTIID for course %s has changed!", the_course)
+
 	the_course.updateInstructors( entry )
 	# Ensure we can parse the outline (this is not an optimization, to pre
 	# cache before forking, as the volatile attributes are likely to get
