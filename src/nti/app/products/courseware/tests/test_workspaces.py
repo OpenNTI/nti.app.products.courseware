@@ -114,7 +114,7 @@ class TestWorkspace(SharedApplicationTestBase):
 						 all_of( has_entries( 'Duration', 'P112D',
 											  'Title', 'Introduction to Water',
 											  'StartDate', '2014-01-13')),
-						 all_of( has_entries( 'Duration', None,
+						 all_of( has_entries( 'Duration', 'P112D',
 											  'Title', 'Law and Justice' )) ) )
 
 	@WithSharedApplicationMockDS(users=('harp4162'),testapp=True,default_authenticate=True)
@@ -147,11 +147,17 @@ class TestWorkspace(SharedApplicationTestBase):
 		environ = self._make_extra_environ()
 		environ[b'HTTP_ORIGIN'] = b'http://platform.ou.edu'
 
+		purch_res = self.testapp.get('/dataserver2/store/get_purchasables')
+		assert_that( purch_res.json_body, has_entry( 'Items', has_item( has_entries( 'NTIID', courseId,
+																					 'StartDate', '2013-08-13',
+																					 'EndDate', '2013-12-03',
+																					 'Duration', 'P112D') ) ) )
 
 		path = '/dataserver2/store/enroll_course'
 		data = {'courseId': courseId}
 		res = self.testapp.post_json(path, data, extra_environ=environ)
 		assert_that(res.status_int, is_(204))
+
 
 		# Now it should show up in our workspace
 		res = self.testapp.get( '/dataserver2/users/sjohnson@nextthought.com/Courses/EnrolledCourses' )

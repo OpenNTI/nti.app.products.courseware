@@ -255,7 +255,9 @@ def _register_course_purchasable_from_catalog_entry( entry, event ):
 									   featured=False,
 									   department=policy.department_title_for_entry(entry),
 									   signature=signature,
-									   startdate=startdate,
+									   startdate=startdate,     # Legacy
+									   EndDate=entry.EndDate,   # New
+									   Duration=entry.Duration, # New
 									   # Things ignored
 									   amount=None,
 									   currency=None,

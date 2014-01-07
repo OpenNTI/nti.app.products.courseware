@@ -104,11 +104,19 @@ class CourseCatalog(Contained):
 					return entry
 			raise KeyError(ix)
 
+	def __reduce__(self): # Not persistent!
+		raise TypeError()
+
+
 @interface.implementer(interfaces.ICourseCatalogInstructorInfo)
 class CourseCatalogInstructorInfo(SchemaConfigured):
 	createDirectFieldProperties(interfaces.ICourseCatalogInstructorInfo)
 
 	__repr__ = make_repr()
+
+	def __reduce__(self): # Not persistent!
+		raise TypeError()
+
 
 @interface.implementer(interfaces.ICourseCatalogEntry)
 class CourseCatalogEntry(SchemaConfigured):
@@ -125,6 +133,9 @@ class CourseCatalogEntry(SchemaConfigured):
 			return self is other or self.ProviderUniqueID == other.ProviderUniqueID
 		except AttributeError:
 			return NotImplemented
+
+	def __reduce__(self): # Not persistent!
+		raise TypeError()
 
 	@property
 	def links(self):
