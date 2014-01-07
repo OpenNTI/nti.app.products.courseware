@@ -661,6 +661,7 @@ def _legacy_course_instance_to_catalog_entry(instance):
 from nti.contenttypes.courses.interfaces import ICourseEnrollments
 from nti.dataserver.interfaces import IEntityContainer
 from nti.dataserver.interfaces import IDataserver
+from ZODB.POSException import POSKeyError
 
 @interface.implementer(ICourseEnrollments)
 @component.adapter(_LegacyCommunityBasedCourseInstance)
@@ -675,9 +676,15 @@ class _LegacyCourseInstanceEnrollments(object):
 		community = self.context.legacy_community
 		container = IEntityContainer(community)
 		ds = component.getUtility(IDataserver)
-		for user in ds.users_folder.values():
-			if user in container:
-				yield user
+		for username, user in ds.users_folder.items():
+			try:
+				if user in container:
+					yield user
+			except POSKeyError:
+				# Some of those users may not be valid anymore, for
+				# unknown reasons. Clearly they're not enrolled
+				logger.exception("Failed to check enrollment status in %s for %s using community %s",
+								 self.context, username, community)
 
 	def count_enrollments(self):
 		# XXX: Same performance characteristics
