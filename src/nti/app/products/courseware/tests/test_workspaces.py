@@ -333,3 +333,59 @@ class TestWorkspace(SharedApplicationTestBase):
 		self.testapp.post_json( '/dataserver2/users/sjohnson@nextthought.com/Courses/EnrolledCourses',
 								{'ProviderUniqueID': 'CLC 3403'},
 								status=201 )
+
+
+class TestRestrictedWorkspace(SharedApplicationTestBase):
+	testapp = None
+
+	@classmethod
+	def _setup_library( cls, *args, **kwargs ):
+		lib = Library(
+					paths=(os.path.join(
+									os.path.dirname(__file__),
+									'RestrictedLibrary',
+									'IntroWater'),
+						   os.path.join(
+								   os.path.dirname(__file__),
+								   'RestrictedLibrary',
+								   'CLC3403_LawAndJustice')
+				   ))
+		return lib
+
+	@WithSharedApplicationMockDS(users=True,testapp=True)
+	def test_fetch_all_courses(self):
+		res = self.testapp.get( '/dataserver2/users/sjohnson@nextthought.com/Courses/AllCourses' )
+		# Nothing by default
+		assert_that( res.json_body, has_entry( 'Items', has_length( 0 )) )
+
+		# have to be in the site.
+		extra_env = self.testapp.extra_environ or {}
+		extra_env.update( {b'HTTP_ORIGIN': b'http://janux.ou.edu'} )
+		self.testapp.extra_environ = extra_env
+
+		res = self.testapp.get( '/dataserver2/users/sjohnson@nextthought.com/Courses/AllCourses' )
+		assert_that( res.json_body, has_entry( 'Items', has_length( 1 )) )
+		assert_that( res.json_body['Items'],
+					 has_items(
+						 all_of( has_entries( 'Duration', 'P112D',
+											  'Title', 'Introduction to Water',
+											  'StartDate', '2014-01-13')) ) )
+
+
+	@WithSharedApplicationMockDS(users=True,testapp=True)
+	def test_enroll_unenroll_using_workspace(self):
+		# This only works in the OU environment because that's where the purchasables are
+		extra_env = self.testapp.extra_environ or {}
+		extra_env.update( {b'HTTP_ORIGIN': b'http://janux.ou.edu'} )
+		self.testapp.extra_environ = extra_env
+
+		# First, we are enrolled in nothing
+		res = self.testapp.get( '/dataserver2/users/sjohnson@nextthought.com/Courses/EnrolledCourses' )
+		assert_that( res.json_body, has_entry( 'Items', is_(empty()) ) )
+		assert_that( res.json_body, has_entry( 'accepts', contains('application/json')))
+
+		# Enrolling in this one is not allowed
+
+		self.testapp.post_json( '/dataserver2/users/sjohnson@nextthought.com/Courses/EnrolledCourses',
+								'CLC 3403',
+								status=403 )

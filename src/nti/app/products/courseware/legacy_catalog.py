@@ -52,6 +52,43 @@ class CourseCatalogLegacyEntry(CourseCatalogEntry):
 		if self.StartDate is not None and self.Duration is not None:
 			return self.StartDate + self.Duration
 
+	@property
+	def __acl__(self):
+		"we have no opinion on acls"
+		return ()
+
+from nti.contenttypes.courses.interfaces import ICourseInstance
+from nti.dataserver.interfaces import IPrincipal
+from nti.dataserver.users import Entity
+
+from nti.dataserver.interfaces import ACE_DENY_ALL
+from nti.dataserver.authorization_acl import acl_from_aces
+from nti.dataserver.authorization_acl import ace_allowing
+from nti.dataserver.authorization import ACT_READ
+
+class CourseCatalogLegacyNonPublicEntry(CourseCatalogLegacyEntry):
+	"""
+	This entry has an ACL that provides access only to those people that
+	are 'enrolled' in the course according to the 'restricted' legacy scrope.
+	"""
+
+	@property
+	def __acl__(self):
+		course = ICourseInstance(self, None)
+		if course is None: # No course instance yet, which is where the scopes are.
+			return [ACE_DENY_ALL]
+
+		restricted_id = course.LegacyScopes['restricted']
+		restricted = Entity.get_entity(restricted_id) if restricted_id else None
+
+		if restricted is None: # No community yet
+			return [ACE_DENY_ALL]
+
+		return acl_from_aces(
+			ace_allowing( IPrincipal(restricted), ACT_READ, CourseCatalogLegacyNonPublicEntry ),
+			ACE_DENY_ALL )
+
+
 
 @interface.implementer(interfaces.ICourseCatalogInstructorLegacyInfo)
 class CourseCatalogInstructorLegacyInfo(CourseCatalogInstructorInfo):
@@ -105,6 +142,10 @@ def _content_package_registered( package, event ):
 	# (Preview and email sig).
 	# The only thing missing is the 'featured' flag.
 
+	# Things we add to the course info json file:
+	# Name            Type     Default   Description
+	# is_non_public   bool     False     Only (OU) enrolled students can see it; no one else can join it
+
 	if not package.courseInfoSrc:
 		logger.debug("No course info for %s", package )
 		return
@@ -115,7 +156,11 @@ def _content_package_registered( package, event ):
 	info_json_string = unicode(info_json_string, 'utf-8')
 	info_json_dict = json.loads( info_json_string )
 
-	catalog_entry = CourseCatalogLegacyEntry()
+	factory = CourseCatalogLegacyEntry
+	if info_json_dict.get('is_non_public'):
+		factory = CourseCatalogLegacyNonPublicEntry
+
+	catalog_entry = factory()
 	if lib_interfaces.IFilesystemKey.providedBy( info_json_key ):
 		catalog_entry.lastModified = os.stat(info_json_key.absolute_path).st_mtime
 	else:

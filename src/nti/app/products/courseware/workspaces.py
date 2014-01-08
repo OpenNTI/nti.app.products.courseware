@@ -78,6 +78,9 @@ def CoursesWorkspace( user_service ):
 		workspace.__parent__ = workspace.user
 		return workspace
 
+from nti.dataserver.authorization_acl import has_permission
+from nti.dataserver.authorization import ACT_READ
+
 @interface.implementer(app_interfaces.IContainerCollection)
 class AllCoursesCollection(contained.Contained):
 
@@ -88,7 +91,14 @@ class AllCoursesCollection(contained.Contained):
 
 	def __init__(self, parent):
 		self.__parent__ = parent
-		self.container = parent.catalog
+		# To support ACLs limiting the available parts of the catalog,
+		# we filter out here.
+		# we could do this with a proxy, but it's easier right now
+		# just to copy. This is highly dependent on implementation
+		self.container = type(parent.catalog)()
+		self.container.__name__ = parent.catalog.__name__
+		self.container.__parent__ = parent.catalog.__parent__
+		self.container._entries = [x for x in parent.catalog if has_permission(ACT_READ, x, parent.user)]
 
 	accepts = ()
 

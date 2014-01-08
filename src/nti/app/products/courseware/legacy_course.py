@@ -764,7 +764,7 @@ class _EnrollmentStatusDecorator(object):
 		restricted_id = course_inst.LegacyScopes['restricted']
 		restricted = users.Entity.get_entity(restricted_id) if restricted_id else None
 		# check user belongs to restricted entity
-		for_credit = restricted in tuple(getattr(user, 'dynamic_memberships', ()))
+		for_credit = user in IEntityContainer(restricted, ())
 		external["LegacyEnrollmentStatus"] = "ForCredit" if for_credit else "Open"
 
 from nti.dataserver.interfaces import IACLProvider
