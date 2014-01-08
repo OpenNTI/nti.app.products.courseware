@@ -159,4 +159,13 @@ def _content_package_registered( package, event ):
 	catalog_entry.Schedule = info_json_dict.get('schedule', {})
 	catalog_entry.Prerequisites = info_json_dict.get('prerequisites', [])
 
-	component.getUtility(interfaces.ICourseCatalog).addCatalogEntry( catalog_entry )
+
+	catalog = component.getUtility(interfaces.ICourseCatalog)
+	try:
+		catalog.addCatalogEntry( catalog_entry )
+	except ValueError:
+		# XXX Test cases move catalog entries around
+		# to deal better with sites. Fix them, then remove this.
+		logger.exception("This should only happen in test cases")
+		catalog.removeCatalogEntry( catalog_entry, event=False )
+		catalog.addCatalogEntry(catalog_entry)
