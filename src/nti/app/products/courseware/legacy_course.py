@@ -740,33 +740,6 @@ class _LegacyCourseInstanceEnrollmentManager(object):
 		self._make_subrequest( '/dataserver2/store/unenroll_course' )
 		return True
 
-
-@component.adapter(ICourseInstanceEnrollment)
-@interface.implementer(ext_interfaces.IExternalObjectDecorator)
-class _EnrollmentStatusDecorator(object):
-
-	__metaclass__ = SingletonDecorator
-
-	def decorateExternalObject(self, original, external):
-		course_inst = original.CourseInstance
-		if not ILegacyCommunityBasedCourseInstance.providedBy(course_inst):
-			return
-
-		if IEnrolledCoursesCollection.providedBy(getattr(original, '__parent__', None)):
-			ec_collection = original.__parent__
-			user = ec_collection.__parent__.__parent__
-		else:
-			request = get_current_request()
-			user = request.authenticated_userid if request else None
-			user = users.User.get_user(user) if user else None
-
-		# get restricted scope entity from TOC
-		restricted_id = course_inst.LegacyScopes['restricted']
-		restricted = users.Entity.get_entity(restricted_id) if restricted_id else None
-		# check user belongs to restricted entity
-		for_credit = user in IEntityContainer(restricted, ())
-		external["LegacyEnrollmentStatus"] = "ForCredit" if for_credit else "Open"
-
 from nti.dataserver.interfaces import IACLProvider
 from nti.dataserver.authorization_acl import ace_allowing
 from nti.dataserver.authorization_acl import acl_from_aces

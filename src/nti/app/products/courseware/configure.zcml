@@ -44,9 +44,6 @@
 	<!-- And the content packages to the course instance -->
 	<adapter factory=".legacy_course._course_content_package_to_course" />
 
-	<subscriber factory=".legacy_course._EnrollmentStatusDecorator"
-				for="nti.app.products.courseware.interfaces.ICourseInstanceEnrollment"
-				provides="nti.externalization.interfaces.IExternalObjectDecorator"/>
 	<!-- Allow traversing to the 'LegacyCourses' key of communities -->
 	<adapter name="LegacyCourses"
 			 for="nti.dataserver.interfaces.ICommunity"
@@ -83,8 +80,17 @@
 	<adapter factory=".workspaces.CourseInstanceEnrollment"
 			 provides=".interfaces.ICourseInstanceEnrollment" />
 	<adapter factory=".workspaces.CourseInstanceEnrollment"
-			 for="nti.contenttypes.courses.interfaces.ICourseInstance nti.dataserver.interfaces.IUser"
+			 for="nti.contenttypes.courses.interfaces.ICourseInstance
+				  nti.dataserver.interfaces.IUser"
 			 provides=".interfaces.ICourseInstanceEnrollment" />
+
+	<adapter factory=".workspaces.LegacyCourseInstanceEnrollment"
+			 provides=".interfaces.ICourseInstanceEnrollment" />
+	<adapter factory=".workspaces.LegacyCourseInstanceEnrollment"
+			 for=".interfaces.ILegacyCommunityBasedCourseInstance
+				  nti.dataserver.interfaces.IUser"
+			 provides=".interfaces.ILegacyCourseInstanceEnrollment" />
+
 
 	<adapter factory=".workspaces.wrapper_to_catalog"
 			 for=".interfaces.ICourseInstanceEnrollment"/>

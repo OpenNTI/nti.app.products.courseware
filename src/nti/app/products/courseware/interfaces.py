@@ -241,6 +241,16 @@ class ICourseInstanceEnrollment(IShouldHaveTraversablePath):
 							   required=False,
 							   readonly=True)
 
+class ILegacyCourseInstanceEnrollment(ICourseInstanceEnrollment):
+	"""
+	An object with information about enrollment in a legacy course.
+	"""
+
+	LegacyEnrollmentStatus = schema.TextLine(title="The type of enrollment, ForCredit or Open",
+											 required=True,
+											 readonly=True,
+											 default='Open')
+
 class IPrincipalEnrollmentCatalog(IPrincipalEnrollments):
 	"""
 	Extends the base enrollments interface to be in terms

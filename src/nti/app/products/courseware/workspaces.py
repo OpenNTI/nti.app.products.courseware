@@ -177,7 +177,7 @@ class _AbstractInstanceWrapper(contained.Contained):
 @interface.implementer(interfaces.ICourseInstanceEnrollment)
 @component.adapter(ICourseInstance)
 class CourseInstanceEnrollment(_AbstractInstanceWrapper):
-
+	__external_can_create__ = False
 	Username = None
 	_user = None
 
@@ -191,6 +191,26 @@ class CourseInstanceEnrollment(_AbstractInstanceWrapper):
 		if IUser.isOrExtends(iface):
 			return self._user
 		return super(CourseInstanceEnrollment, self).__conform__(iface)
+
+from .interfaces import ILegacyCommunityBasedCourseInstance
+from nti.dataserver import users
+from nti.dataserver.interfaces import IEntityContainer
+
+@interface.implementer(interfaces.ILegacyCourseInstanceEnrollment)
+@component.adapter(ILegacyCommunityBasedCourseInstance)
+class LegacyCourseInstanceEnrollment(CourseInstanceEnrollment):
+	__external_class_name__ = 'CourseInstanceEnrollment'
+
+	@property
+	def LegacyEnrollmentStatus(self):
+		course_inst = self.CourseInstance
+		# get restricted scope entity from TOC
+		restricted_id = course_inst.LegacyScopes['restricted']
+		restricted = users.Entity.get_entity(restricted_id) if restricted_id else None
+		# check user belongs to restricted entity
+		for_credit = self._user in IEntityContainer(restricted, ())
+		return "ForCredit" if for_credit else "Open"
+
 
 @interface.implementer(interfaces.ICourseCatalogEntry)
 def wrapper_to_catalog(wrapper):
