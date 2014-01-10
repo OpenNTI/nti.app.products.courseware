@@ -111,6 +111,7 @@ class CourseEnrollmentRosterGetView(AbstractAuthenticatedView):
 
 
 from .interfaces import ICourseCatalog
+from .interfaces import ICourseCatalogEntry
 from nti.dataserver.interfaces import IDataserverFolder
 from nti.dataserver.users.interfaces import IUserProfile
 
@@ -124,7 +125,7 @@ import csv
 			 request_method='GET',
 			 context=IDataserverFolder,
 			 permission=nauth.ACT_COPPA_ADMIN, # TODO: Better perm. This is generally used for admin
-			 name='AllEnrollments')
+			 name='AllEnrollments.csv')
 class AllCourseEnrollmentRosterDownloadView(AbstractAuthenticatedView):
 	"""
 	Provides a downloadable table of all the enrollments
@@ -132,6 +133,12 @@ class AllCourseEnrollmentRosterDownloadView(AbstractAuthenticatedView):
 	for username, email address, and enrolled courses.
 	"""
 
+	def _iter_catalog_entries(self):
+		"""
+		Returns something that can be used to iterate across the
+		:class:`.ICourseCatalogEntry` objects of interest.
+		"""
+		return component.getUtility(ICourseCatalog)
 
 	def __call__(self):
 		# Our approach is to find all the courses,
@@ -143,9 +150,7 @@ class AllCourseEnrollmentRosterDownloadView(AbstractAuthenticatedView):
 
 		user_to_coursenames = collections.defaultdict(set)
 
-		catalog = component.getUtility(ICourseCatalog)
-
-		for catalog_entry in catalog:
+		for catalog_entry in self._iter_catalog_entries():
 			course_name = catalog_entry.Title
 
 			course = ICourseInstance(catalog_entry)
@@ -181,6 +186,20 @@ class AllCourseEnrollmentRosterDownloadView(AbstractAuthenticatedView):
 
 		return self.request.response
 
+@view_config(route_name='objects.generic.traversal',
+			 renderer='rest',
+			 request_method='GET',
+			 context=ICourseInstance,
+			 permission=nauth.ACT_COPPA_ADMIN, # TODO: Better perm. This is generally used for admin
+			 name='Enrollments.csv')
+class CourseEnrollmentsRosterDownloadView(AllCourseEnrollmentRosterDownloadView):
+	"""
+	Provides a downloadable table of the enrollments for
+	a single course instance in the same format as :class:`AllCourseEnrollmentRosterDownloadView`.
+	"""
+
+	def _iter_catalog_entries(self):
+		return ( ICourseCatalogEntry(self.request.context), )
 
 from zope.traversing.interfaces import IPathAdapter
 from pyramid.interfaces import IRequest

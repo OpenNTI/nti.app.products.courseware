@@ -302,7 +302,7 @@ class TestWorkspace(SharedApplicationTestBase):
 		assert_that( res.json_body['Items'][0], has_entry( 'href', enrollment_href ) )
 
 		# Because we are an admin, we can also access the global roster that will show us in it
-		res = self.testapp.get('/dataserver2/@@AllEnrollments')
+		res = self.testapp.get('/dataserver2/@@AllEnrollments.csv')
 		# We have no email address at this point
 		assert_that( res.text, is_('sjohnson@nextthought.com,,,,Law and Justice\r\n'))
 
@@ -312,8 +312,11 @@ class TestWorkspace(SharedApplicationTestBase):
 		# Along with a non-ascii alias
 		self.testapp.put_json( '/dataserver2/users/sjohnson@nextthought.com/++fields++alias',
 							   'Gr\xe8y')
-		res = self.testapp.get('/dataserver2/@@AllEnrollments')
-		assert_that( res.text, is_('sjohnson@nextthought.com,Gr\xe8y,,jason.madden@nextthought.com,Law and Justice\r\n'))
+
+		# We find this both in the global list, and in the specific list
+		for url in '/dataserver2/@@AllEnrollments.csv', instance_href + '/Enrollments.csv':
+			res = self.testapp.get(url)
+			assert_that( res.text, is_('sjohnson@nextthought.com,Gr\xe8y,,jason.madden@nextthought.com,Law and Justice\r\n'))
 
 
 		# We can delete to drop it
@@ -323,7 +326,7 @@ class TestWorkspace(SharedApplicationTestBase):
 		assert_that( res.json_body, has_entry( 'Items', is_(empty()) ) )
 
 		# No longer in the enrolled list
-		res = self.testapp.get('/dataserver2/@@AllEnrollments')
+		res = self.testapp.get('/dataserver2/@@AllEnrollments.csv')
 		assert_that( res.text, is_('') )
 
 
