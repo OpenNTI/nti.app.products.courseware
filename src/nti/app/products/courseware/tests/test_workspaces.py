@@ -309,8 +309,11 @@ class TestWorkspace(SharedApplicationTestBase):
 		# give us one
 		self.testapp.put_json( '/dataserver2/users/sjohnson@nextthought.com/++fields++email',
 							   'jason.madden@nextthought.com' )
+		# Along with a non-ascii alias
+		self.testapp.put_json( '/dataserver2/users/sjohnson@nextthought.com/++fields++alias',
+							   'Gr\xe8y')
 		res = self.testapp.get('/dataserver2/@@AllEnrollments')
-		assert_that( res.text, is_('sjohnson@nextthought.com,,,jason.madden@nextthought.com,CLC 3403\r\n'))
+		assert_that( res.text, is_('sjohnson@nextthought.com,Gr\xe8y,,jason.madden@nextthought.com,CLC 3403\r\n'))
 
 
 		# We can delete to drop it

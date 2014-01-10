@@ -158,13 +158,14 @@ class AllCourseEnrollmentRosterDownloadView(AbstractAuthenticatedView):
 		rows = LocatedExternalList()
 		rows.__name__ = self.request.view_name
 		rows.__parent__ = self.request.context
-
+		def _e(s):
+			return s.encode('utf-8') if s else s
 		for user, enrolled_course_names in user_to_coursenames.items():
 			profile = IUserProfile(user)
 			row = [user.username,
-				   getattr(profile, 'alias', None),
-				   getattr(profile, 'realname', None),
-				   getattr(profile, 'email', None),
+				   _e(getattr(profile, 'alias', None)),
+				   _e(getattr(profile, 'realname', None)),
+				   _e(getattr(profile, 'email', None)),
 				   ','.join(sorted(list(enrolled_course_names)))]
 			rows.append( row )
 
