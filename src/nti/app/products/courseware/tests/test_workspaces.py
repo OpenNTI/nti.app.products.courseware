@@ -304,7 +304,7 @@ class TestWorkspace(SharedApplicationTestBase):
 		# Because we are an admin, we can also access the global roster that will show us in it
 		res = self.testapp.get('/dataserver2/@@AllEnrollments')
 		# We have no email address at this point
-		assert_that( res.text, is_('sjohnson@nextthought.com,,,,CLC 3403\r\n'))
+		assert_that( res.text, is_('sjohnson@nextthought.com,,,,Law and Justice\r\n'))
 
 		# give us one
 		self.testapp.put_json( '/dataserver2/users/sjohnson@nextthought.com/++fields++email',
@@ -313,7 +313,7 @@ class TestWorkspace(SharedApplicationTestBase):
 		self.testapp.put_json( '/dataserver2/users/sjohnson@nextthought.com/++fields++alias',
 							   'Gr\xe8y')
 		res = self.testapp.get('/dataserver2/@@AllEnrollments')
-		assert_that( res.text, is_('sjohnson@nextthought.com,Gr\xe8y,,jason.madden@nextthought.com,CLC 3403\r\n'))
+		assert_that( res.text, is_('sjohnson@nextthought.com,Gr\xe8y,,jason.madden@nextthought.com,Law and Justice\r\n'))
 
 
 		# We can delete to drop it

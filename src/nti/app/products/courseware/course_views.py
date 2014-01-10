@@ -146,7 +146,7 @@ class AllCourseEnrollmentRosterDownloadView(AbstractAuthenticatedView):
 		catalog = component.getUtility(ICourseCatalog)
 
 		for catalog_entry in catalog:
-			course_name = catalog_entry.ProviderUniqueID
+			course_name = catalog_entry.Title
 
 			course = ICourseInstance(catalog_entry)
 
