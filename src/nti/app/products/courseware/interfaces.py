@@ -157,6 +157,8 @@ class ILegacyCommunityBasedCourseInstance(ICourseInstance):
 	LegacyInstructorForums = schema.ValidTextLine(title='A space separated list of forum NTIIDs',
 												  readonly=True)
 
+	LegacyCourseNTIID = schema.ValidTextLine(title='Course [Purchasable] NTIID', required=False)
+
 class ICourseInstanceActivity(IContained,ILastModified):
 	"""
 	A firehose implementation of activity relating

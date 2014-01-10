@@ -327,6 +327,8 @@ def _register_course_purchasable_from_catalog_entry( entry, event ):
 		__traceback_info__ = entry, the_course
 		raise ValueError("The root NTIID for course %s has changed!", the_course)
 
+	# save the course purchasable
+	the_course.LegacyCourseNTIID = purch_ntiid
 	the_course.updateInstructors( entry )
 	# Ensure we can parse the outline (this is not an optimization, to pre
 	# cache before forking, as the volatile attributes are likely to get
