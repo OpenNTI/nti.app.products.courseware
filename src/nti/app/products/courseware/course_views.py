@@ -160,8 +160,11 @@ class AllCourseEnrollmentRosterDownloadView(AbstractAuthenticatedView):
 		rows.__parent__ = self.request.context
 
 		for user, enrolled_course_names in user_to_coursenames.items():
+			profile = IUserProfile(user)
 			row = [user.username,
-				   getattr(IUserProfile(user), 'email', None),
+				   getattr(profile, 'alias', None),
+				   getattr(profile, 'realname', None),
+				   getattr(profile, 'email', None),
 				   ','.join(sorted(list(enrolled_course_names)))]
 			rows.append( row )
 
