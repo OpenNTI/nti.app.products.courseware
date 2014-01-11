@@ -94,19 +94,20 @@ class ICourseCatalogEntry(ILocation):
 	Title = schema.TextLine(title="The provider's descriptive title")
 	Description = schema.Text(title="The provider's paragraph-length description")
 
-	StartDate = schema.Date(title="The date on which the course begins",
-							description="Currently optional; a missing value means the course already started")
-	Duration = schema.Timedelta(title="The length of the course",
-								description="Currently optional, may be None")
-	EndDate = schema.Date( title="The date on which the course ends",
-						   description="Currently optional; a missing value means the course has no defined end date.")
-
-
 	ProviderUniqueID = schema.TextLine(title="The unique id assigned by the provider")
 	ProviderDepartmentTitle = schema.TextLine(title="The string assigned to the provider's department offering the course")
 
 	Instructors = schema.ListOrTuple(title="The instuctors. Order might matter",
 									 value_type=schema.Object(ICourseCatalogInstructorInfo) )
+
+	### Things related to the availability of the course
+	StartDate = schema.Datetime(title="The date on which the course begins",
+								description="Currently optional; a missing value means the course already started")
+	Duration = schema.Timedelta(title="The length of the course",
+								description="Currently optional, may be None")
+	EndDate = schema.Datetime( title="The date on which the course ends",
+							   description="Currently optional; a missing value means the course has no defined end date.")
+
 
 class ICourseCatalogLegacyEntry(ICourseCatalogEntry):
 	"""
@@ -136,6 +137,10 @@ class ICourseCatalogLegacyEntry(ICourseCatalogEntry):
 	Prerequisites = schema.List(title="A list of dictionaries suitable for presentation. Expect a `title` key.",
 								value_type=schema.Dict(key_type=schema.TextLine(),
 													   value_type=schema.TextLine()))
+
+	Preview = schema.Bool(title="Is this entry for a course that is upcoming?",
+						  description="This course should be considered an advertising preview"
+						  " and not yet have its content accessed.")
 
 	### These are being replaced with presentation specific asset bundles
 	# (one path is insufficient to handle things like retina displays

@@ -199,9 +199,7 @@ def _register_course_purchasable_from_catalog_entry( entry, event ):
 	else:
 		# We can probably do better with this. Plus we probably need a schedule
 		# to update without restarting the server...
-		now = datetime.date.today()
-		if now < entry.EndDate:
-			preview = True
+		preview = entry.Preview
 		startdate = unicode(isodate.date_isoformat(entry.StartDate))
 
 		old_rendering = entry.StartDate.year == 2013

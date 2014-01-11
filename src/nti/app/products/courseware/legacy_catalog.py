@@ -17,7 +17,10 @@ from zope import component
 import simplejson as json
 import isodate
 import datetime
+import pytz
 import os
+
+from zope.cachedescriptors.property import readproperty
 
 from nti.contentlibrary import interfaces as lib_interfaces
 from zope.lifecycleevent import IObjectAddedEvent
@@ -51,6 +54,16 @@ class CourseCatalogLegacyEntry(CourseCatalogEntry):
 		"""
 		if self.StartDate is not None and self.Duration is not None:
 			return self.StartDate + self.Duration
+
+	@readproperty
+	def Preview(self):
+		"""
+		If a preview hasn't been specifically set, we derive it
+		if possible.
+		"""
+		if self.StartDate is not None:
+			return self.StartDate > datetime.datetime.utcnow()
+
 
 	@property
 	def __acl__(self):
@@ -171,12 +184,24 @@ def _content_package_registered( package, event ):
 	catalog_entry.ProviderUniqueID = info_json_dict['id']
 	catalog_entry.ProviderDepartmentTitle = info_json_dict['school']
 	if 'startDate' in info_json_dict:
-		catalog_entry.StartDate = isodate.parse_date(info_json_dict['startDate'])
+		catalog_entry.StartDate = isodate.parse_datetime(info_json_dict['startDate'])
+		# Convert to UTC if needed
+		if catalog_entry.StartDate.tzinfo is not None:
+			catalog_entry.StartDate = catalog_entry.StartDate.astimezone(pytz.UTC).replace(tzinfo=None)
 	if 'duration' in info_json_dict:
 		# We have durations as strings like "16 weeks"
 		duration_number, duration_kind = info_json_dict['duration'].split()
 		# Turn those into keywords for timedelta.
 		catalog_entry.Duration = datetime.timedelta(**{duration_kind.lower():int(duration_number)})
+		# Ensure the end date is derived properly
+		assert catalog_entry.StartDate is None or catalog_entry.EndDate
+
+	# derive preview information if not provided.
+	if 'isPreview' in info_json_dict:
+		catalog_entry.Preview = info_json_dict['isPreview']
+	else:
+		if catalog_entry.StartDate and datetime.datetime.utcnow() < catalog_entry.StartDate:
+			assert catalog_entry.Preview
 
 	# For the convenience of others
 	catalog_entry.legacy_content_package = package

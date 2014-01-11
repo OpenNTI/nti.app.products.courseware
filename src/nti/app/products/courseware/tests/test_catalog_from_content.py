@@ -127,7 +127,7 @@ class TestApplicationCatalogFromContent(SharedApplicationTestBase):
 				externalizes( has_entries(
 					'MimeType', 'application/vnd.nextthought.courseware.coursecataloglegacyentry',
 					'Duration', 'P112D',
-					'StartDate', '2014-01-13',
+					'StartDate', '2014-01-13T06:00:00',
 					'LegacyPurchasableIcon', '/IntroWater/images/ENGR1510_promo.png'))))
 
 		# These content units can be adapted to course instances
