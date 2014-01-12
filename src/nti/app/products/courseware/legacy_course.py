@@ -372,6 +372,16 @@ def _course_content_package_to_course(package):
 		if getattr(entry, 'ContentPackageNTIID', None) == package.ntiid:
 			return ICourseInstance(entry)
 
+from pyramid.traversal import find_interface
+from nti.contentlibrary.interfaces import IContentUnit
+
+@interface.implementer(ICourseInstance)
+@component.adapter(IContentUnit)
+def _content_unit_to_course(unit):
+	package = find_interface(unit,ILegacyCourseConflatedContentPackage)
+	if package is not None:
+		return ICourseInstance(package)
+
 @interface.implementer(IPrincipalEnrollmentCatalog)
 @component.adapter(IUser)
 class _PurchaseHistoryEnrollmentStatus(object):
