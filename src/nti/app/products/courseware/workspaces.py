@@ -201,9 +201,17 @@ from nti.dataserver.interfaces import IEntityContainer
 class LegacyCourseInstanceEnrollment(CourseInstanceEnrollment):
 	__external_class_name__ = 'CourseInstanceEnrollment'
 
-	@property
+
+	def __init__(self, *args, **kwargs):
+		super(LegacyCourseInstanceEnrollment,self).__init__(*args, **kwargs)
+
+		# Sometimes the course instance goes away for externalization purposes,
+		# so capture a private copy now
+		self.__course_inst = self.CourseInstance
+
+	@Lazy
 	def LegacyEnrollmentStatus(self):
-		course_inst = self.CourseInstance
+		course_inst = self.__course_inst
 		# get restricted scope entity from TOC
 		restricted_id = course_inst.LegacyScopes['restricted']
 		restricted = users.Entity.get_entity(restricted_id) if restricted_id else None

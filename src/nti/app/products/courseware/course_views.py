@@ -100,12 +100,16 @@ class CourseEnrollmentRosterGetView(AbstractAuthenticatedView):
 		result.__name__ = request.view_name
 		result.__parent__ = course
 		items = result['Items'] = []
-		# NOTE: These items do not get __parent__ set, so
-		# we get a lot of logging about not being able to render
-		# links...sigh.
 		items.extend((component.getMultiAdapter( (course, x),
 												 ICourseInstanceEnrollment )
 					  for x in ICourseEnrollments(course).iter_enrollments()))
+
+		# NOTE: Rendering the same CourseInstance over and over is hugely
+		# expensive, and massively bloats the response...77 students
+		# can generate 12MB of response. So we don't include the course instance
+		for i in items:
+			i.CourseInstance = None
+
 		# TODO: We have no last modified for this
 		return result
 

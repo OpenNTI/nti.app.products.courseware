@@ -246,7 +246,8 @@ class TestWorkspace(SharedApplicationTestBase):
 		res = self.testapp.get( roster_link, extra_environ=instructor_env)
 
 		assert_that( res.json_body, has_entry( 'Items', contains( has_entries('Class', 'CourseInstanceEnrollment',
-																			  'Username', self.extra_environ_default_user.lower()) ) ) )
+																			  'Username', self.extra_environ_default_user.lower(),
+																			  'CourseInstance', None) ) ) )
 
 		# fetch the activity as the instructor
 		res = self.testapp.get( activity_link, extra_environ=instructor_env)
