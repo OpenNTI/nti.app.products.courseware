@@ -214,7 +214,10 @@ def _content_package_registered( package, event ):
 		if inst.get('defaultphoto'):
 			photo_name = inst['defaultphoto']
 			photo = package.read_contents_of_sibling_entry( photo_name )
-			instructor.defaultphoto = dataurl.encode(photo, mime_type=b'image/png' if photo_name.endswith('.png') else b'image/jpeg' )
+			try:
+				instructor.defaultphoto = dataurl.encode(photo, mime_type=b'image/png' if photo_name.endswith('.png') else b'image/jpeg' )
+			except TypeError:
+				logger.warn("Invalid photo %s in %s", photo_name, inst, exc_info=True)
 		instructors.append( instructor )
 
 	catalog_entry.Instructors = instructors

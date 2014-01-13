@@ -48,6 +48,7 @@ from nti.ntiids import ntiids
 
 from nti.dataserver.contenttypes.forums.ace import ForumACE
 
+from nti.dataserver.interfaces import IDefaultPublished
 from nti.dataserver.contenttypes.forums.interfaces import IACLCommunityBoard
 from nti.dataserver.contenttypes.forums.interfaces import IACLCommunityForum
 from nti.dataserver.contenttypes.forums.forum import ACLCommunityForum
@@ -99,7 +100,7 @@ class CourseTopicCreationView(AbstractAuthenticatedView,UploadRequestUtilsMixin)
 
 		catalog = component.getUtility(ICourseCatalog)
 
-		def _create_forum(instance, forum_name, forum_readable):
+		def _create_forum(instance, forum_name, forum_readable, forum_owner):
 			try:
 				instructor = instance.instructors[0]
 			except IndexError:
@@ -118,6 +119,7 @@ class CourseTopicCreationView(AbstractAuthenticatedView,UploadRequestUtilsMixin)
 					   ForumACE(Permissions=("Read",),Entities=[forum_readable],Action='Allow')]
 				discussions.ACL = acl
 			name = ntiids.make_specific_safe(forum_name)
+			creator = Entity.get_entity(forum_owner)
 			try:
 				forum = discussions[name]
 				logger.debug("Found existing forum %s", forum_name)
@@ -127,9 +129,12 @@ class CourseTopicCreationView(AbstractAuthenticatedView,UploadRequestUtilsMixin)
 						   ForumACE(Permissions=("Read",),Entities=[forum_readable],Action='Allow')]
 					forum.ACL = acl
 					logger.debug("Added ACL support to existing forum %s", name)
+				if forum.creator is not creator:
+					forum.creator = creator
 			except KeyError:
 				forum = ACLCommunityForum()
-				forum.creator = instructor if 'Open' not in forum_name else Entity.get_entity(forum_readable)
+				#forum.creator = instructor if 'Open' not in forum_name else Entity.get_entity(forum_readable)
+				forum.creator = Entity.get_entity(forum_owner)
 				acl = [ForumACE(Permissions=("All",), Entities=[i.username for i in instructors],Action='Allow'),
 					   ForumACE(Permissions=("Read",),Entities=[forum_readable],Action='Allow')]
 				forum.ACL = acl
@@ -149,7 +154,7 @@ class CourseTopicCreationView(AbstractAuthenticatedView,UploadRequestUtilsMixin)
 			for forum_name, forum_readable  in (('Open Announcements', unicode(instance.LegacyScopes['public'])),
 												('In-Class Announcements', unicode(instance.LegacyScopes['restricted']))):
 
-				created_ntiid = _create_forum(instance, forum_name, forum_readable)
+				created_ntiid = _create_forum(instance, forum_name, forum_readable, unicode(instance.LegacyScopes['public']))
 				if created_ntiid:
 					created_ntiids.append(created_ntiid)
 
@@ -175,7 +180,7 @@ class CourseTopicCreationView(AbstractAuthenticatedView,UploadRequestUtilsMixin)
 
 			for forum_name, forum_readable  in (('Open Discussions', unicode(instance.LegacyScopes['public'])),
 												('In-Class Discussions', unicode(instance.LegacyScopes['restricted']))):
-				created_ntiid = _create_forum(instance, forum_name, forum_readable)
+				created_ntiid = _create_forum(instance, forum_name, forum_readable, unicode(instance.LegacyScopes['public']))
 				if created_ntiid:
 					created_ntiids.append(created_ntiid)
 
@@ -188,7 +193,9 @@ class CourseTopicCreationView(AbstractAuthenticatedView,UploadRequestUtilsMixin)
 					logger.debug("Looking for %s in %s in %s", name, forum, instance)
 					if name in forum:
 						logger.debug("Found existing topic %s", title)
-
+						topic = forum[name]
+						if not IDefaultPublished.providedBy(topic):
+							interface.alsoProvides(topic, IDefaultPublished)
 					else:
 						post = CommunityHeadlinePost()
 						post.title = title
@@ -208,7 +215,7 @@ class CourseTopicCreationView(AbstractAuthenticatedView,UploadRequestUtilsMixin)
 
 						lifecycleevent.created(post)
 						lifecycleevent.added(post)
-
+						interface.alsoProvides(topic, IDefaultPublished)
 						created_ntiids.append(topic.NTIID)
 						logger.debug('Created topic %s with NTIID %s', topic, topic.NTIID)
 		return created_ntiids

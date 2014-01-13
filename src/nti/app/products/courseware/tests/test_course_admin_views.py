@@ -93,9 +93,13 @@ class TestCreateForums(SharedApplicationTestBase):
 
 		assert_that( res.json_body, is_([u'tag:nextthought.com,2011-10:CLC3403.ou.nextthought.com-Forum:GeneralCommunity-Open_Discussions',
 										 u'tag:nextthought.com,2011-10:CLC3403.ou.nextthought.com-Topic:GeneralCommunity-Open_Discussions.A_clc_discussion',
-										 u'tag:nextthought.com,2011-10:harp4162-Forum:GeneralCommunity-In_Class_Discussions',
-										 u'tag:nextthought.com,2011-10:harp4162-Topic:GeneralCommunity-In_Class_Discussions.A_clc_discussion'] ) )
+										 u'tag:nextthought.com,2011-10:CLC3403.ou.nextthought.com-Forum:GeneralCommunity-In_Class_Discussions',
+										 u'tag:nextthought.com,2011-10:CLC3403.ou.nextthought.com-Topic:GeneralCommunity-In_Class_Discussions.A_clc_discussion'] ) )
 
+		inst_env = self._make_extra_environ(username='harp4162')
+		inst_env.update( {b'HTTP_ORIGIN': b'http://janux.ou.edu'} )
+		for i in res.json_body:
+			self.fetch_by_ntiid(i, extra_environ=inst_env)
 
 		# And again does nothing
 		res = self.testapp.post('/dataserver2/@@LegacyCourseTopicCreator', upload_files=[('ignored', 'foo.csv', csv)])
