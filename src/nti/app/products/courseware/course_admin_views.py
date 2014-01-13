@@ -110,6 +110,11 @@ class CourseTopicCreationView(AbstractAuthenticatedView,UploadRequestUtilsMixin)
 
 			if not IACLCommunityBoard.providedBy(discussions):
 				interface.alsoProvides(discussions, IACLCommunityBoard)
+
+			if not hasattr(discussions, 'ACL'):
+				acl = [ForumACE(Permissions=("All",), Entities=[instructor.username],Action='Allow'),
+					   ForumACE(Permissions=("Read",),Entities=[forum_readable],Action='Allow')]
+				discussions.ACL = acl
 			name = ntiids.make_specific_safe(forum_name)
 			try:
 				forum = discussions[name]
@@ -162,8 +167,8 @@ class CourseTopicCreationView(AbstractAuthenticatedView,UploadRequestUtilsMixin)
 
 				forum = discussions[ntiids.make_specific_safe(forum_name)]
 				for row in course_instance_ids_to_rows[course_instance_id]:
-					title = unicode(row[1], 'utf-8')
-					content = unicode(row[2], 'utf-8')
+					title = row[1].decode('utf-8', 'ignore')
+					content = row[2].decode('utf-8', 'ignore')
 					if title in forum:
 						logger.debug("Found existing topic %s", title)
 
