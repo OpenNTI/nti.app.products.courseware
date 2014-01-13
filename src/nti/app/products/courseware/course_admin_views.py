@@ -160,7 +160,13 @@ class CourseTopicCreationView(AbstractAuthenticatedView,UploadRequestUtilsMixin)
 			__traceback_info__ = catalog_entry
 
 			instance = ICourseInstance(catalog_entry)
-			instructor = instance.instructors[0]
+			__traceback_info__ = instance, catalog_entry
+			try:
+				instructor = instance.instructors[0]
+			except IndexError:
+				logger.debug("Course %s has no instructors", instance)
+				return
+
 			instructor = instructor.context # XXX implementation detail
 			discussions = instance.Discussions
 
