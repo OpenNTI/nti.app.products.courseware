@@ -86,6 +86,7 @@ class CourseCatalogLegacyNonPublicEntry(CourseCatalogLegacyEntry):
 	"""
 
 	__external_class_name__ = 'CourseCatalogLegacyEntry'
+	__external_can_create__ = False
 
 	@property
 	def __acl__(self):
