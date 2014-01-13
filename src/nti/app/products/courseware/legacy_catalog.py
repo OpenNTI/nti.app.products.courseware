@@ -85,6 +85,8 @@ class CourseCatalogLegacyNonPublicEntry(CourseCatalogLegacyEntry):
 	are 'enrolled' in the course according to the 'restricted' legacy scrope.
 	"""
 
+	__external_class_name__ = 'CourseCatalogLegacyEntry'
+
 	@property
 	def __acl__(self):
 		course = ICourseInstance(self, None)
