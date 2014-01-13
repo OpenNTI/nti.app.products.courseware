@@ -165,7 +165,7 @@ class CourseTopicCreationView(AbstractAuthenticatedView,UploadRequestUtilsMixin)
 				instructor = instance.instructors[0]
 			except IndexError:
 				logger.debug("Course %s has no instructors", instance)
-				return
+				continue
 
 			instructor = instructor.context # XXX implementation detail
 			discussions = instance.Discussions
