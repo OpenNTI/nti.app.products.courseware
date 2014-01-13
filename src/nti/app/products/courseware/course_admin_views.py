@@ -106,14 +106,15 @@ class CourseTopicCreationView(AbstractAuthenticatedView,UploadRequestUtilsMixin)
 				logger.debug("Course %s has no instructors, not creating %s", instance, forum_name)
 				return
 
-			instructor = instructor.context # XXX implementation detail
+			instructors = [instructor.context for instructor in instance.instructors] # XXX implementation detail
+			instructor = instructor.context
 			discussions = instance.Discussions
 
 			if not IACLCommunityBoard.providedBy(discussions):
 				interface.alsoProvides(discussions, IACLCommunityBoard)
 
 			if not hasattr(discussions, 'ACL'):
-				acl = [ForumACE(Permissions=("All",), Entities=[instructor.username],Action='Allow'),
+				acl = [ForumACE(Permissions=("All",), Entities=[i.username for i in instructors],Action='Allow'),
 					   ForumACE(Permissions=("Read",),Entities=[forum_readable],Action='Allow')]
 				discussions.ACL = acl
 			name = ntiids.make_specific_safe(forum_name)
@@ -122,14 +123,14 @@ class CourseTopicCreationView(AbstractAuthenticatedView,UploadRequestUtilsMixin)
 				logger.debug("Found existing forum %s", forum_name)
 				if not IACLCommunityForum.providedBy(forum):
 					interface.alsoProvides(forum, IACLCommunityForum)
-					acl = [ForumACE(Permissions=("All",), Entities=[instructor.username],Action='Allow'),
+					acl = [ForumACE(Permissions=("All",), Entities=[i.username for i in instructors],Action='Allow'),
 						   ForumACE(Permissions=("Read",),Entities=[forum_readable],Action='Allow')]
 					forum.ACL = acl
 					logger.debug("Added ACL support to existing forum %s", name)
 			except KeyError:
 				forum = ACLCommunityForum()
 				forum.creator = instructor if 'Open' not in forum_name else Entity.get_entity(forum_readable)
-				acl = [ForumACE(Permissions=("All",), Entities=[instructor.username],Action='Allow'),
+				acl = [ForumACE(Permissions=("All",), Entities=[i.username for i in instructors],Action='Allow'),
 					   ForumACE(Permissions=("Read",),Entities=[forum_readable],Action='Allow')]
 				forum.ACL = acl
 				forum.title = forum_name
