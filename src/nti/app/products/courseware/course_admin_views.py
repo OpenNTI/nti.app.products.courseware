@@ -49,6 +49,7 @@ from nti.ntiids import ntiids
 from nti.dataserver.contenttypes.forums.ace import ForumACE
 
 from nti.dataserver.contenttypes.forums.interfaces import IACLCommunityBoard
+from nti.dataserver.contenttypes.forums.interfaces import IACLCommunityForum
 from nti.dataserver.contenttypes.forums.forum import ACLCommunityForum
 
 from nti.dataserver.contenttypes.forums.post import CommunityHeadlinePost
@@ -119,6 +120,12 @@ class CourseTopicCreationView(AbstractAuthenticatedView,UploadRequestUtilsMixin)
 			try:
 				forum = discussions[name]
 				logger.debug("Found existing forum %s", forum_name)
+				if not IACLCommunityForum.providedBy(forum):
+					interface.alsoProvides(forum, IACLCommunityForum)
+					acl = [ForumACE(Permissions=("All",), Entities=[instructor.username],Action='Allow'),
+						   ForumACE(Permissions=("Read",),Entities=[forum_readable],Action='Allow')]
+					forum.ACL = acl
+					logger.debug("Added ACL support to existing forum %s", name)
 			except KeyError:
 				forum = ACLCommunityForum()
 				forum.creator = instructor if 'Open' not in forum_name else Entity.get_entity(forum_readable)
