@@ -82,9 +82,9 @@ class CourseTopicCreationView(AbstractAuthenticatedView,UploadRequestUtilsMixin)
 
 	def __call__(self):
 
-		body_content = self._get_body_content().split('\n')
+		body_content = self._get_body_content().split(b'\n')
 		if len(body_content) == 1:
-			body_content = body_content[0].split('\r')
+			body_content = body_content[0].split(b'\r')
 		__traceback_info__ = body_content
 		reader = csv.reader(body_content)
 		rows = list(reader)
