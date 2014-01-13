@@ -97,9 +97,12 @@ class CourseCatalogLegacyNonPublicEntry(CourseCatalogLegacyEntry):
 		if restricted is None: # No community yet
 			return [ACE_DENY_ALL]
 
-		return acl_from_aces(
-			ace_allowing( IPrincipal(restricted), ACT_READ, CourseCatalogLegacyNonPublicEntry ),
-			ACE_DENY_ALL )
+		acl = acl_from_aces(
+			ace_allowing( IPrincipal(restricted), ACT_READ, CourseCatalogLegacyNonPublicEntry )
+			)
+		acl.extend( (ace_allowing( i, ACT_READ, CourseCatalogLegacyNonPublicEntry)
+					 for i in course.instructors) )
+		acl.append( ACE_DENY_ALL )
 
 
 	def HACK_make_acl(self):
