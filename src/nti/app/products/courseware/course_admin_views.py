@@ -133,8 +133,7 @@ class CourseTopicCreationView(AbstractAuthenticatedView,UploadRequestUtilsMixin)
 					forum.creator = creator
 			except KeyError:
 				forum = ACLCommunityForum()
-				#forum.creator = instructor if 'Open' not in forum_name else Entity.get_entity(forum_readable)
-				forum.creator = Entity.get_entity(forum_owner)
+				forum.creator = creator
 				acl = [ForumACE(Permissions=("All",), Entities=[i.username for i in instructors],Action='Allow'),
 					   ForumACE(Permissions=("Read",),Entities=[forum_readable],Action='Allow')]
 				forum.ACL = acl
@@ -142,6 +141,14 @@ class CourseTopicCreationView(AbstractAuthenticatedView,UploadRequestUtilsMixin)
 				discussions[name] = forum
 				logger.debug('Created forum %s', forum)
 				return forum.NTIID
+
+		def _main_instructor(entry):
+			for info in entry.Instructors:
+				if info.JobTitle != "Teaching Assistant":
+					instructor = Entity.get_entity(info.username)
+					if instructor is not None:
+						logger.debug("Using %s for %s", instructor, entry)
+						return instructor
 
 
 		created_ntiids = list()
@@ -172,7 +179,7 @@ class CourseTopicCreationView(AbstractAuthenticatedView,UploadRequestUtilsMixin)
 				logger.debug("Course %s has no instructors", instance)
 				continue
 
-			instructor = instructor.context # XXX implementation detail
+			instructor = _main_instructor(catalog_entry) or instructor.context # XXX implementation detail
 			discussions = instance.Discussions
 
 			if not IACLCommunityBoard.providedBy(discussions):
@@ -196,6 +203,10 @@ class CourseTopicCreationView(AbstractAuthenticatedView,UploadRequestUtilsMixin)
 						topic = forum[name]
 						if not IDefaultPublished.providedBy(topic):
 							interface.alsoProvides(topic, IDefaultPublished)
+						if topic.creator != instructor:
+							topic.creator = instructor
+						if topic.headline is not None and topic.headline.creator != instructor:
+							topic.headline.creator = instructor
 					else:
 						post = CommunityHeadlinePost()
 						post.title = title
