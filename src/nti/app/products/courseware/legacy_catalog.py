@@ -102,6 +102,9 @@ class CourseCatalogLegacyNonPublicEntry(CourseCatalogLegacyEntry):
 			ACE_DENY_ALL )
 
 
+	def HACK_make_acl(self):
+		return self.__acl__
+
 
 @interface.implementer(interfaces.ICourseCatalogInstructorLegacyInfo)
 class CourseCatalogInstructorLegacyInfo(CourseCatalogInstructorInfo):

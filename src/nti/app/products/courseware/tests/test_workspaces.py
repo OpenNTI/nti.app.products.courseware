@@ -378,6 +378,8 @@ class TestRestrictedWorkspace(SharedApplicationTestBase):
 											  'Title', 'Introduction to Water',
 											  'StartDate', '2014-01-13T06:00:00')) ) )
 
+		purch_res = self.testapp.get('/dataserver2/store/get_purchasables')
+		assert_that( purch_res.json_body['Items'], has_length(6) ) # TODO: Really verify that it's the CLC missing
 
 	@WithSharedApplicationMockDS(users=True,testapp=True)
 	def test_enroll_unenroll_using_workspace(self):

@@ -263,6 +263,11 @@ def _register_course_purchasable_from_catalog_entry( entry, event ):
 									   license_=None,
 									   discountable=False,
 									   bulk_purchase=False )
+	try:
+		the_course.HACK_make_acl = entry.HACK_make_acl
+		logger.warn("Installing hack for course purchasable %s", the_course)
+	except AttributeError:
+		pass
 
 	# Be careful what site we stick these in. Ideally we'd want to stick them in
 	# site the library is loaded in in case we are configuring multiple libraries
