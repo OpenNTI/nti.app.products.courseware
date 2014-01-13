@@ -8,5 +8,6 @@
 
 	<pyramid:scan package=".catalog_views" />
 	<pyramid:scan package=".course_views" />
+	<pyramid:scan package=".course_admin_views" />
 
 </configure>
