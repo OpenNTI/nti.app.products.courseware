@@ -75,7 +75,8 @@ class _CourseInstanceLinkDecorator(object):
 			interface.alsoProvides( link, ILinkExternalHrefOnly )
 			result['href'] = link
 
-		result['TotalEnrolledCount'] = ICourseEnrollments(context).count_enrollments()
+		# XXX: SLOW!
+		#result['TotalEnrolledCount'] = ICourseEnrollments(context).count_enrollments()
 
 
 
