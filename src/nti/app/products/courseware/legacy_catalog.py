@@ -103,7 +103,7 @@ class CourseCatalogLegacyNonPublicEntry(CourseCatalogLegacyEntry):
 		acl.extend( (ace_allowing( i, ACT_READ, CourseCatalogLegacyNonPublicEntry)
 					 for i in course.instructors) )
 		acl.append( ACE_DENY_ALL )
-		return
+		return acl
 
 
 	def HACK_make_acl(self):
