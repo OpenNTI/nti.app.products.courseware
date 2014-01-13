@@ -169,13 +169,13 @@ class CourseTopicCreationView(AbstractAuthenticatedView,UploadRequestUtilsMixin)
 				for row in course_instance_ids_to_rows[course_instance_id]:
 					title = row[1].decode('utf-8', 'ignore')
 					content = row[2].decode('utf-8', 'ignore')
-					if title in forum:
-						logger.debug("Found existing topic %s", title)
 
 					name = ntiids.make_specific_safe(title)
+					logger.debug("Looking for %s in %s in %s", name, forum, instance)
+					if name in forum:
+						logger.debug("Found existing topic %s", title)
 
-
-					if name not in forum:
+					else:
 						post = CommunityHeadlinePost()
 						post.title = title
 						post.body = [content]
