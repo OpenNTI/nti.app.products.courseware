@@ -111,33 +111,35 @@ class CourseTopicCreationView(AbstractAuthenticatedView,UploadRequestUtilsMixin)
 			instructor = instructor.context
 			discussions = instance.Discussions
 
-			if not IACLCommunityBoard.providedBy(discussions):
-				interface.alsoProvides(discussions, IACLCommunityBoard)
+			acl = [ForumACE(Permissions=("All",), Entities=[i.username for i in instructors],Action='Allow'),
+				   ForumACE(Permissions=("Read",),Entities=[forum_readable],Action='Allow')]
 
-			if not hasattr(discussions, 'ACL'):
-				acl = [ForumACE(Permissions=("All",), Entities=[i.username for i in instructors],Action='Allow'),
-					   ForumACE(Permissions=("Read",),Entities=[forum_readable],Action='Allow')]
-				discussions.ACL = acl
+			def _assign_acl(obj, iface):
+				action = False
+				if not iface.providedBy(obj):
+					interface.alsoProvides(obj, iface)
+					action = True
+				if not hasattr(obj, 'ACL') or obj.ACL != acl:
+					obj.ACL = acl
+					action = True
+				if action:
+					logger.debug("Added/set ACL on existing object %s to %s", obj, acl)
+
+			_assign_acl(discussions, IACLCommunityBoard)
+
 			name = ntiids.make_specific_safe(forum_name)
 			creator = Entity.get_entity(forum_owner)
 			try:
 				forum = discussions[name]
 				logger.debug("Found existing forum %s", forum_name)
-				if not IACLCommunityForum.providedBy(forum):
-					interface.alsoProvides(forum, IACLCommunityForum)
-					acl = [ForumACE(Permissions=("All",), Entities=[i.username for i in instructors],Action='Allow'),
-						   ForumACE(Permissions=("Read",),Entities=[forum_readable],Action='Allow')]
-					forum.ACL = acl
-					logger.debug("Added ACL support to existing forum %s", name)
+				_assign_acl(forum, IACLCommunityForum)
 				if forum.creator is not creator:
 					forum.creator = creator
 			except KeyError:
 				forum = ACLCommunityForum()
 				forum.creator = creator
-				acl = [ForumACE(Permissions=("All",), Entities=[i.username for i in instructors],Action='Allow'),
-					   ForumACE(Permissions=("Read",),Entities=[forum_readable],Action='Allow')]
-				forum.ACL = acl
 				forum.title = forum_name
+				_assign_acl(forum,IACLCommunityForum)
 				discussions[name] = forum
 				logger.debug('Created forum %s', forum)
 				return forum.NTIID
@@ -182,9 +184,6 @@ class CourseTopicCreationView(AbstractAuthenticatedView,UploadRequestUtilsMixin)
 			instructor = _main_instructor(catalog_entry) or instructor.context # XXX implementation detail
 			discussions = instance.Discussions
 
-			if not IACLCommunityBoard.providedBy(discussions):
-				interface.alsoProvides(discussions, IACLCommunityBoard)
-
 			for forum_name, forum_readable  in (('Open Discussions', unicode(instance.LegacyScopes['public'])),
 												('In-Class Discussions', unicode(instance.LegacyScopes['restricted']))):
 				created_ntiid = _create_forum(instance, forum_name, forum_readable, unicode(instance.LegacyScopes['public']))
@@ -198,11 +197,10 @@ class CourseTopicCreationView(AbstractAuthenticatedView,UploadRequestUtilsMixin)
 
 					name = ntiids.make_specific_safe(title)
 					logger.debug("Looking for %s in %s in %s", name, forum, instance)
+					topic = None
 					if name in forum:
 						logger.debug("Found existing topic %s", title)
 						topic = forum[name]
-						if not IDefaultPublished.providedBy(topic):
-							interface.alsoProvides(topic, IDefaultPublished)
 						if topic.creator != instructor:
 							topic.creator = instructor
 						if topic.headline is not None and topic.headline.creator != instructor:
@@ -226,7 +224,9 @@ class CourseTopicCreationView(AbstractAuthenticatedView,UploadRequestUtilsMixin)
 
 						lifecycleevent.created(post)
 						lifecycleevent.added(post)
-						interface.alsoProvides(topic, IDefaultPublished)
 						created_ntiids.append(topic.NTIID)
 						logger.debug('Created topic %s with NTIID %s', topic, topic.NTIID)
+
+					topic.publish()
+
 		return created_ntiids
