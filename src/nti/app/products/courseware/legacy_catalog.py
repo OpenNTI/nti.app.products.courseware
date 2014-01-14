@@ -79,6 +79,8 @@ from nti.dataserver.authorization_acl import acl_from_aces
 from nti.dataserver.authorization_acl import ace_allowing
 from nti.dataserver.authorization import ACT_READ
 
+from zope.cachedescriptors.property import readproperty
+
 class CourseCatalogLegacyNonPublicEntry(CourseCatalogLegacyEntry):
 	"""
 	This entry has an ACL that provides access only to those people that
@@ -88,7 +90,7 @@ class CourseCatalogLegacyNonPublicEntry(CourseCatalogLegacyEntry):
 	__external_class_name__ = 'CourseCatalogLegacyEntry'
 	__external_can_create__ = False
 
-	@property
+	@readproperty
 	def __acl__(self):
 		course = ICourseInstance(self, None)
 		if course is None: # No course instance yet, which is where the scopes are.
@@ -98,14 +100,15 @@ class CourseCatalogLegacyNonPublicEntry(CourseCatalogLegacyEntry):
 		restricted = Entity.get_entity(restricted_id) if restricted_id else None
 
 		if restricted is None: # No community yet
-			return [ACE_DENY_ALL]
-
-		acl = acl_from_aces(
-			ace_allowing( IPrincipal(restricted), ACT_READ, CourseCatalogLegacyNonPublicEntry )
-			)
-		acl.extend( (ace_allowing( i, ACT_READ, CourseCatalogLegacyNonPublicEntry)
-					 for i in course.instructors) )
-		acl.append( ACE_DENY_ALL )
+			acl= [ACE_DENY_ALL]
+		else:
+			acl = acl_from_aces(
+				ace_allowing( IPrincipal(restricted), ACT_READ, CourseCatalogLegacyNonPublicEntry )
+				)
+			acl.extend( (ace_allowing( i, ACT_READ, CourseCatalogLegacyNonPublicEntry)
+						 for i in course.instructors) )
+			acl.append( ACE_DENY_ALL )
+		self.__acl__ = acl # cache
 		return acl
 
 
@@ -173,6 +176,10 @@ def _content_package_registered( package, event ):
 		logger.debug("No course info for %s", package )
 		return
 	info_json_string = package.read_contents_of_sibling_entry( package.courseInfoSrc )
+	if not info_json_string:
+		logger.warn("The package at %s claims to be a course but has no file at %s",
+					package, package.courseInfoSrc )
+		return
 	info_json_key = package.make_sibling_key( package.courseInfoSrc )
 	# Ensure we get unicode values for strings (simplejson would return bytestrings
 	# if they are ASCII encodable)
