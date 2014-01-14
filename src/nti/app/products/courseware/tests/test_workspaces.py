@@ -25,6 +25,9 @@ from hamcrest import has_entries
 from hamcrest import empty
 from hamcrest import not_none
 from hamcrest import greater_than
+from hamcrest import is_not
+does_not = is_not
+from hamcrest import has_key
 
 from zope import component
 
@@ -172,7 +175,13 @@ class TestWorkspace(SharedApplicationTestBase):
 					 has_entries( 'Class', 'LegacyCommunityBasedCourseInstance',
 								  'href', '/dataserver2/users/CLC3403.ou.nextthought.com/LegacyCourses/CLC3403',
 								  'Outline', has_entry( 'Links', has_item( has_entry( 'rel', 'contents' ))),
-								  'instructors', has_item( has_entry('Username', 'harp4162')),
+								  'instructors', has_item( all_of(has_entry('Username', 'harp4162'),
+																  does_not(has_key('AvatorURLChoices')),
+																  does_not(has_key('following')),
+																  does_not(has_key('ignoring')),
+																  does_not(has_key('DynamicMemberships')),
+																  does_not(has_key('opt_in_email_communication')),
+																  does_not(has_key('NotificationCount'))) ),
 								  'Links', has_item( has_entries( 'rel', 'CourseCatalogEntry',
 																  'href', entry_href  )) ))
 
