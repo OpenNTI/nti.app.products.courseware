@@ -144,6 +144,17 @@ class AllCourseEnrollmentRosterDownloadView(AbstractAuthenticatedView):
 		"""
 		return component.getUtility(ICourseCatalog)
 
+	def _make_enrollment_predicate(self):
+		status_filter = self.request.GET.get('LegacyEnrollmentStatus')
+		if not status_filter:
+			return lambda course, user: True
+
+		def f(course,user):
+			enrollment = component.getMultiAdapter((course, user),
+												   ICourseInstanceEnrollment)
+			return getattr(enrollment, 'LegacyEnrolllmentStatus', 'Open') == status_filter
+		return f
+
 	def __call__(self):
 		# Our approach is to find all the courses,
 		# and get the enrollments in each course,
@@ -151,6 +162,8 @@ class AllCourseEnrollmentRosterDownloadView(AbstractAuthenticatedView):
 		# (NOTE: This winds up being an O(n^2) approach
 		# due to the poor implementation of enrollments
 		# for legacy courses.)
+
+		enrollment_predicate = self._make_enrollment_predicate()
 
 		user_to_coursenames = collections.defaultdict(set)
 
@@ -162,7 +175,8 @@ class AllCourseEnrollmentRosterDownloadView(AbstractAuthenticatedView):
 			enrollments = ICourseEnrollments(course)
 
 			for user in enrollments.iter_enrollments():
-				user_to_coursenames[user].add( course_name )
+				if enrollment_predicate(course, user):
+					user_to_coursenames[user].add( course_name )
 
 		rows = LocatedExternalList()
 		rows.__name__ = self.request.view_name

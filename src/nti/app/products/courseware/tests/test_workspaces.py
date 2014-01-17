@@ -324,10 +324,15 @@ class TestWorkspace(SharedApplicationTestBase):
 							   'Gr\xe8y')
 
 		# We find this both in the global list, and in the specific list
-		for url in '/dataserver2/@@AllEnrollments.csv', instance_href + '/Enrollments.csv':
+		# if we filter to open enrollments
+		for url in '/dataserver2/@@AllEnrollments.csv?LegacyEnrollmentStatus=Open', instance_href + '/Enrollments.csv?LegacyEnrollmentStatus=Open':
 			res = self.testapp.get(url)
 			assert_that( res.text, is_('sjohnson@nextthought.com,Gr\xe8y,,jason.madden@nextthought.com,Law and Justice\r\n'))
 
+		# And we find nothing if we filter to for credit enrollments
+		for url in '/dataserver2/@@AllEnrollments.csv?LegacyEnrollmentStatus=ForCredit', instance_href + '/Enrollments.csv?LegacyEnrollmentStatus=ForCredit':
+			res = self.testapp.get(url)
+			assert_that( res.text, is_('') )
 
 		# We can delete to drop it
 		res = self.testapp.delete( enrollment_href,
