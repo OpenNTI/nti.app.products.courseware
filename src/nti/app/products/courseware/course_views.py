@@ -152,7 +152,7 @@ class AllCourseEnrollmentRosterDownloadView(AbstractAuthenticatedView):
 		def f(course,user):
 			enrollment = component.getMultiAdapter((course, user),
 												   ICourseInstanceEnrollment)
-			return getattr(enrollment, 'LegacyEnrolllmentStatus', 'Open') == status_filter
+			return enrollment.LegacyEnrollmentStatus == status_filter # Let this blow up when this goes away
 		return f
 
 	def __call__(self):
