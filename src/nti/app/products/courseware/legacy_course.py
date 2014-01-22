@@ -686,20 +686,8 @@ class _LegacyCourseInstanceEnrollments(object):
 		self.context = context
 
 	def iter_enrollments(self):
-		# XXX: This is incredibly inefficient, waking
-		# all known users in the system
 		community = self.context.legacy_community
-		container = IEntityContainer(community)
-		ds = component.getUtility(IDataserver)
-		for username, user in ds.users_folder.items():
-			try:
-				if user in container:
-					yield user
-			except POSKeyError:
-				# Some of those users may not be valid anymore, for
-				# unknown reasons. Clearly they're not enrolled
-				logger.exception("Failed to check enrollment status in %s for %s using community %s",
-								 self.context, username, community)
+		return community.iter_members()
 
 	def count_enrollments(self):
 		# XXX: Same performance characteristics
