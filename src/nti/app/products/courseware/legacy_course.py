@@ -21,7 +21,6 @@ logger = __import__('logging').getLogger(__name__)
 
 from urlparse import urljoin
 import isodate
-import datetime
 
 from zope import interface
 from zope import component
@@ -39,8 +38,6 @@ from zope.cachedescriptors.property import Lazy
 from BTrees import OOBTree
 from persistent import Persistent
 
-from pyramid.threadlocal import get_current_request
-
 from nti.contentlibrary.interfaces import ILegacyCourseConflatedContentPackage
 from nti.contentlibrary.interfaces import IContentPackageLibrary
 
@@ -55,13 +52,10 @@ from nti.contenttypes.courses.outlines import CourseOutlineCalendarNode
 from nti.contenttypes.courses.outlines import CourseOutlineContentNode
 
 from nti.app.products.courseware.interfaces import ICourseCatalog
-from nti.app.products.courseware.interfaces import ICourseInstanceEnrollment
 from nti.app.products.courseware.interfaces import ICourseCatalogLegacyEntry
-from nti.app.products.courseware.interfaces import IEnrolledCoursesCollection
 from nti.app.products.courseware.interfaces import IPrincipalEnrollmentCatalog
 from .interfaces import ILegacyCommunityBasedCourseInstance
 
-from nti.dataserver import users
 from nti.dataserver.interfaces import IUser
 from nti.dataserver.interfaces import ICommunity
 from nti.dataserver.users.interfaces import IFriendlyNamed
@@ -77,8 +71,6 @@ from nti.dataserver.users import Community
 from nti.ntiids.ntiids import make_ntiid
 from nti.ntiids.ntiids import get_provider
 
-from nti.externalization.singleton import SingletonDecorator
-from nti.externalization import interfaces as ext_interfaces
 from nti.externalization.externalization import to_external_object
 
 from nti.store import course
@@ -674,9 +666,6 @@ def _legacy_course_instance_to_catalog_entry(instance):
 			return entry
 
 from nti.contenttypes.courses.interfaces import ICourseEnrollments
-from nti.dataserver.interfaces import IEntityContainer
-from nti.dataserver.interfaces import IDataserver
-from ZODB.POSException import POSKeyError
 
 @interface.implementer(ICourseEnrollments)
 @component.adapter(_LegacyCommunityBasedCourseInstance)
