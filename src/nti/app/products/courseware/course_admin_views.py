@@ -17,30 +17,13 @@ from zope import interface
 from zope import lifecycleevent
 
 from nti.contenttypes.courses.interfaces import ICourseInstance
-from nti.contenttypes.courses.interfaces import ICourseOutline
 
-
-from pyramid import httpexceptions as hexc
 from pyramid.view import view_config
 from nti.appserver._view_utils  import AbstractAuthenticatedView
 
 from nti.dataserver import authorization as nauth
 
-from . import VIEW_CONTENTS
-from . import VIEW_COURSE_ENROLLMENT_ROSTER
-from . import VIEW_COURSE_ACTIVITY
-
-
-
-from nti.contenttypes.courses.interfaces import is_instructed_by_name
-from nti.contenttypes.courses.interfaces import ICourseInstance
 from .interfaces import ICourseCatalog
-from nti.externalization.interfaces import LocatedExternalDict
-
-from nti.externalization.interfaces import ILocatedExternalSequence
-from nti.externalization.externalization import to_external_object
-
-
 
 import csv
 
@@ -48,7 +31,6 @@ from nti.ntiids import ntiids
 
 from nti.dataserver.contenttypes.forums.ace import ForumACE
 
-from nti.dataserver.interfaces import IDefaultPublished
 from nti.dataserver.contenttypes.forums.interfaces import IACLCommunityBoard
 from nti.dataserver.contenttypes.forums.interfaces import IACLCommunityForum
 from nti.dataserver.contenttypes.forums.forum import ACLCommunityForum
@@ -102,7 +84,7 @@ class CourseTopicCreationView(AbstractAuthenticatedView,UploadRequestUtilsMixin)
 
 		def _create_forum(instance, forum_name, forum_readable, forum_owner):
 			try:
-				instructor = instance.instructors[0]
+				_ = instance.instructors[0]
 			except IndexError:
 				logger.debug("Course %s has no instructors, not creating %s", instance, forum_name)
 				return

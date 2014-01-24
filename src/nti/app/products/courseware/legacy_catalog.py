@@ -79,8 +79,6 @@ from nti.dataserver.authorization_acl import acl_from_aces
 from nti.dataserver.authorization_acl import ace_allowing
 from nti.dataserver.authorization import ACT_READ
 
-from zope.cachedescriptors.property import readproperty
-
 class CourseCatalogLegacyNonPublicEntry(CourseCatalogLegacyEntry):
 	"""
 	This entry has an ACL that provides access only to those people that

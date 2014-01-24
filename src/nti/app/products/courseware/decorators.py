@@ -23,7 +23,6 @@ from nti.dataserver.interfaces import ILinkExternalHrefOnly
 
 from nti.contenttypes.courses.interfaces import ICourseInstance
 from nti.contenttypes.courses.interfaces import ICourseOutline
-from nti.contenttypes.courses.interfaces import ICourseEnrollments
 from nti.contenttypes.courses.interfaces import is_instructed_by_name
 
 from .interfaces import ICourseCatalogEntry
@@ -77,8 +76,6 @@ class _CourseInstanceLinkDecorator(object):
 
 		# XXX: SLOW!
 		#result['TotalEnrolledCount'] = ICourseEnrollments(context).count_enrollments()
-
-
 
 @interface.implementer(IExternalMappingDecorator)
 @component.adapter(ICourseOutline)
