@@ -22,7 +22,19 @@ from nti.contenttypes.courses.interfaces import ICourseInstance
 from nti.dataserver.interfaces import IShouldHaveTraversablePath
 from nti.dataserver.interfaces import ILastModified
 
-from nti.utils import schema
+from nti.utils.schema import Bool
+from nti.utils.schema import Choice
+from nti.utils.schema import Dict
+from nti.utils.schema import Int
+from nti.utils.schema import List
+from nti.utils.schema import ListOrTuple
+from nti.utils.schema import Object
+from nti.utils.schema import Timedelta
+from nti.utils.schema import ValidDatetime as Datetime
+from nti.utils.schema import ValidText as Text
+from nti.utils.schema import ValidTextLine as TextLine
+from nti.utils.schema import ValidURI
+
 from nti.ntiids.schema import ValidNTIID
 
 class ICourseCatalog(interface.Interface):
@@ -45,11 +57,11 @@ class ICourseCatalogInstructorInfo(interface.Interface):
 		the user's avatar URL.
 	"""
 
-	Name = schema.TextLine(title="The instructor's name")
-	Title = schema.TextLine(title="The instructor's title of address such as Dr.",
+	Name = TextLine(title="The instructor's name")
+	Title = TextLine(title="The instructor's title of address such as Dr.",
 							required=False)
-	JobTitle = schema.TextLine(title="The instructor's academic job title")
-	Suffix = schema.TextLine(title="The instructor's suffix such as PhD or Jr",
+	JobTitle = TextLine(title="The instructor's academic job title")
+	Suffix = TextLine(title="The instructor's suffix such as PhD or Jr",
 							 required=False)
 
 class ICourseCatalogInstructorLegacyInfo(ICourseCatalogInstructorInfo):
@@ -57,10 +69,11 @@ class ICourseCatalogInstructorLegacyInfo(ICourseCatalogInstructorInfo):
 	Additional legacy info about course instructors.
 	"""
 
-	defaultphoto = schema.DataURI(title="An extra copy of the instructor's photo",
-								  required=False)
+	defaultphoto = TextLine(title="A URL path for an extra copy of the instructor's photo",
+							description="ideally this should be the profile photo",
+							required=False) # TODO: We need a schema field for this
 
-	username = schema.TextLine(title="A username string that may or may not refer to an actual account.",
+	username = TextLine(title="A username string that may or may not refer to an actual account.",
 							   required=False)
 	username.setTaggedValue('_ext_excluded_out', True) # Internal use only
 
@@ -71,11 +84,11 @@ class ICourseCreditLegacyInfo(interface.Interface):
 
 	"""
 
-	Hours = schema.Int(title="The number of hours that can be earned.",
+	Hours = Int(title="The number of hours that can be earned.",
 					   min=1)
-	Enrollment = schema.Dict(title="Information about how to enroll. This is not modeled.",
-							 key_type=schema.TextLine(title="A key"),
-							 value_type=schema.TextLine(title="A value"))
+	Enrollment = Dict(title="Information about how to enroll. This is not modeled.",
+							 key_type=TextLine(title="A key"),
+							 value_type=TextLine(title="A value"))
 
 class ICourseCatalogEntry(ILocation):
 	"""
@@ -91,21 +104,21 @@ class ICourseCatalogEntry(ILocation):
 	entry.
 	"""
 
-	Title = schema.TextLine(title="The provider's descriptive title")
-	Description = schema.Text(title="The provider's paragraph-length description")
+	Title = TextLine(title="The provider's descriptive title")
+	Description = Text(title="The provider's paragraph-length description")
 
-	ProviderUniqueID = schema.TextLine(title="The unique id assigned by the provider")
-	ProviderDepartmentTitle = schema.TextLine(title="The string assigned to the provider's department offering the course")
+	ProviderUniqueID = TextLine(title="The unique id assigned by the provider")
+	ProviderDepartmentTitle = TextLine(title="The string assigned to the provider's department offering the course")
 
-	Instructors = schema.ListOrTuple(title="The instuctors. Order might matter",
-									 value_type=schema.Object(ICourseCatalogInstructorInfo) )
+	Instructors = ListOrTuple(title="The instuctors. Order might matter",
+									 value_type=Object(ICourseCatalogInstructorInfo) )
 
 	### Things related to the availability of the course
-	StartDate = schema.Datetime(title="The date on which the course begins",
+	StartDate = Datetime(title="The date on which the course begins",
 								description="Currently optional; a missing value means the course already started")
-	Duration = schema.Timedelta(title="The length of the course",
+	Duration = Timedelta(title="The length of the course",
 								description="Currently optional, may be None")
-	EndDate = schema.Datetime( title="The date on which the course ends",
+	EndDate = Datetime( title="The date on which the course ends",
 							   description="Currently optional; a missing value means the course has no defined end date.")
 
 
@@ -119,36 +132,36 @@ class ICourseCatalogLegacyEntry(ICourseCatalogEntry):
 	ContentPackageNTIID = ValidNTIID(title="The NTIID of the root content package")
 
 	# Legacy. This isn't really part of the course catalog.
-	Communities = schema.ListOrTuple(value_type=schema.TextLine(title='The community'),
+	Communities = ListOrTuple(value_type=TextLine(title='The community'),
 									 title="Course communities",
 									 required=False)
 
 	# While this might be a valid part of the course catalog, this
 	# representation of it isn't very informative or flexible
-	Credit = schema.List(value_type=schema.Object(ICourseCreditLegacyInfo),
+	Credit = List(value_type=Object(ICourseCreditLegacyInfo),
 						 title="Either missing or an array with one entry.",
 						 required=False)
 
-	Video = schema.ValidURI(title="A URL-like string, possibly using private-but-un-prefixed schemes, or the empty string or missing.",
+	Video = ValidURI(title="A URL-like string, possibly using private-but-un-prefixed schemes, or the empty string or missing.",
 							required=False)
 
-	Schedule = schema.Dict(title="An unmodeled dictionary, possibly useful for presentation.")
+	Schedule = Dict(title="An unmodeled dictionary, possibly useful for presentation.")
 
-	Prerequisites = schema.List(title="A list of dictionaries suitable for presentation. Expect a `title` key.",
-								value_type=schema.Dict(key_type=schema.TextLine(),
-													   value_type=schema.TextLine()))
+	Prerequisites = List(title="A list of dictionaries suitable for presentation. Expect a `title` key.",
+								value_type=Dict(key_type=TextLine(),
+													   value_type=TextLine()))
 
-	Preview = schema.Bool(title="Is this entry for a course that is upcoming?",
+	Preview = Bool(title="Is this entry for a course that is upcoming?",
 						  description="This course should be considered an advertising preview"
 						  " and not yet have its content accessed.")
 
 	### These are being replaced with presentation specific asset bundles
 	# (one path is insufficient to handle things like retina displays
 	# and the various platforms).
-	LegacyPurchasableIcon = schema.TextLine(title="A URL or path of indeterminate type or meaning",
+	LegacyPurchasableIcon = TextLine(title="A URL or path of indeterminate type or meaning",
 											required=False)
 
-	LegacyPurchasableThumbnail = schema.TextLine(title="A URL or path of indeterminate type or meaning",
+	LegacyPurchasableThumbnail = TextLine(title="A URL or path of indeterminate type or meaning",
 												 required=False)
 
 
@@ -157,10 +170,10 @@ class ILegacyCommunityBasedCourseInstance(ICourseInstance):
 	Marker interface for a legacy course instance
 	"""
 
-	LegacyScopes = schema.Dict(title="'public' and 'restricted' entity ids",
+	LegacyScopes = Dict(title="'public' and 'restricted' entity ids",
 							   readonly=True)
-	LegacyInstructorForums = schema.ValidTextLine(title='A space separated list of forum NTIIDs',
-												  readonly=True)
+	LegacyInstructorForums = TextLine(title='A space separated list of forum NTIIDs',
+									  readonly=True)
 
 class ICourseInstanceActivity(IContained,ILastModified):
 	"""
@@ -240,9 +253,9 @@ class ICourseInstanceEnrollment(IShouldHaveTraversablePath):
 
 	__name__ = interface.Attribute("The name of the enrollment is the same as the CourseInstance.")
 
-	CourseInstance = schema.Object(ICourseInstance)
+	CourseInstance = Object(ICourseInstance)
 
-	Username = schema.TextLine(title="The user this is about",
+	Username = TextLine(title="The user this is about",
 							   required=False,
 							   readonly=True)
 
@@ -251,7 +264,7 @@ class ILegacyCourseInstanceEnrollment(ICourseInstanceEnrollment):
 	An object with information about enrollment in a legacy course.
 	"""
 
-	LegacyEnrollmentStatus = schema.TextLine(title="The type of enrollment, ForCredit or Open",
+	LegacyEnrollmentStatus = TextLine(title="The type of enrollment, ForCredit or Open",
 											 required=True,
 											 readonly=True,
 											 default='Open')
@@ -293,9 +306,9 @@ class ICourseInstanceAdministrativeRole(IShouldHaveTraversablePath):
 
 	__name__ = interface.Attribute("The name of the administration is the same as the CourseInstance.")
 
-	RoleName = schema.Choice(title="The name of the role this principal holds",
+	RoleName = Choice(title="The name of the role this principal holds",
 							 values=('instructor',))
-	CourseInstance = schema.Object(ICourseInstance)
+	CourseInstance = Object(ICourseInstance)
 
 class IPrincipalAdministrativeRoleCatalog(interface.Interface):
 	"""

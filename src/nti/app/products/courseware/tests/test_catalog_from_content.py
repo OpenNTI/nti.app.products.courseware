@@ -120,6 +120,10 @@ class TestApplicationCatalogFromContent(SharedApplicationTestBase):
 											 'Title', 'Law and Justice',
 											 'Communities', ['CLC3403.ou.nextthought.com'] ) ) )
 
+		clc = catalog['CLC 3403']
+		assert_that( clc, has_property('Instructors', has_length(1)))
+		assert_that( clc.Instructors[0], has_property('defaultphoto', '/CLC3403_LawAndJustice/images/Harper.png'))
+
 		# Externalization
 		with mock_dataserver.mock_db_trans(self.ds):
 			assert_that( list(catalog), has_items(

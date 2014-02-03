@@ -27,7 +27,9 @@ from zope.lifecycleevent import IObjectAddedEvent
 
 from nti.utils.schema import PermissiveSchemaConfigured as SchemaConfigured
 from nti.utils.schema import createDirectFieldProperties
-from nti.utils import dataurl
+from urlparse import urljoin
+
+from nti.externalization.externalization import to_external_object
 
 from .catalog import CourseCatalogInstructorInfo
 from .catalog import CourseCatalogEntry
@@ -222,17 +224,22 @@ def _content_package_registered( package, event ):
 	catalog_entry.legacy_content_package = package
 
 	instructors = []
+	# For externalizing the photo URLs, we need
+	# to make them absolute, and we do that by making
+	# the package absolute
+	ext_package_href = to_external_object( package )['href']
+
 	for inst in info_json_dict['instructors']:
 		instructor = CourseCatalogInstructorLegacyInfo( Name=inst['name'],
 														JobTitle=inst['title'],
 														username=inst.get('username'))
 		if inst.get('defaultphoto'):
 			photo_name = inst['defaultphoto']
-			photo = package.read_contents_of_sibling_entry( photo_name )
-			try:
-				instructor.defaultphoto = dataurl.encode(photo, mime_type=b'image/png' if photo_name.endswith('.png') else b'image/jpeg' )
-			except TypeError:
-				logger.warn("Invalid photo %s in %s", photo_name, inst, exc_info=True)
+			photo_data = package.read_contents_of_sibling_entry( photo_name )
+			if photo_data:
+				# Ensure it exists and is readable before we advertise it
+				instructor.defaultphoto = urljoin(ext_package_href, photo_name)
+
 		instructors.append( instructor )
 
 	catalog_entry.Instructors = instructors

@@ -32,6 +32,7 @@ from nti.dataserver.authorization import ACT_DELETE
 from nti.dataserver.authorization_acl import acl_from_aces
 from nti.dataserver.authorization_acl import ace_allowing
 
+import operator
 
 @interface.implementer(interfaces.ICoursesWorkspace)
 class _CoursesWorkspace(contained.Contained):
@@ -99,6 +100,9 @@ class AllCoursesCollection(contained.Contained):
 		self.container.__name__ = parent.catalog.__name__
 		self.container.__parent__ = parent.catalog.__parent__
 		self.container._entries = [x for x in parent.catalog if has_permission(ACT_READ, x, parent.user)]
+		# We sort the entries to be sure that we get consistent order
+		# across machines and restarts. This helps the ETag be more reliable
+		self.container._entries.sort(key=operator.attrgetter('__name__'))
 
 	accepts = ()
 
