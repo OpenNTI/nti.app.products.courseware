@@ -367,7 +367,7 @@ def _course_content_package_to_course(package):
 	course_catalog = component.getUtility(ICourseCatalog)
 	for entry in course_catalog:
 		if getattr(entry, 'ContentPackageNTIID', None) == package.ntiid:
-			return ICourseInstance(entry)
+			return ICourseInstance(entry, None)
 
 from pyramid.traversal import find_interface
 from nti.contentlibrary.interfaces import IContentUnit
@@ -377,7 +377,7 @@ from nti.contentlibrary.interfaces import IContentUnit
 def _content_unit_to_course(unit):
 	package = find_interface(unit,ILegacyCourseConflatedContentPackage)
 	if package is not None:
-		return ICourseInstance(package)
+		return ICourseInstance(package, None)
 
 @interface.implementer(IPrincipalEnrollmentCatalog)
 @component.adapter(IUser)
