@@ -31,7 +31,8 @@ def get_collection_root(ntiid):
 def get_node(outline, ntiid):
 	ntiid = ntiid.lower()
 	def _recur(node):
-		if getattr(node, 'ContentNTIID', u'').lower() == ntiid:
+		content_ntiid = getattr(node, 'ContentNTIID', None) or u''
+		if content_ntiid.lower() == ntiid:
 			return node
 		result = None
 		for child in node.values():
@@ -39,7 +40,6 @@ def get_node(outline, ntiid):
 			if result is not None:
 				break
 		return result
-
 	result = _recur(outline)
 	return result
 
