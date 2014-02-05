@@ -136,13 +136,17 @@
 
 	<!-- Content Search -->
 	
-	<subscriber factory=".content_search._ContentHitPredicate"
-				provides="nti.contentsearch.interfaces.ISearchHitPredicate"
-				for="nti.contentsearch.interfaces.IBookContent" 
-				zcml:condition="have devmode" />
-	
-	<subscriber factory=".content_search._VideoContentHitPredicate"
-				provides="nti.contentsearch.interfaces.ISearchHitPredicate"
-				for="nti.contentsearch.interfaces.IVideoTranscriptContent"
-				zcml:condition="have devmode" />
+	<configure zcml:condition="have devmode">
+		<subscriber factory=".content_search._ContentHitPredicate"
+					provides="nti.contentsearch.interfaces.ISearchHitPredicate"
+					for="nti.contentsearch.interfaces.IBookContent" />
+		
+		<subscriber factory=".content_search._VideoContentHitPredicate"
+					provides="nti.contentsearch.interfaces.ISearchHitPredicate"
+					for="nti.contentsearch.interfaces.IVideoTranscriptContent" />
+			
+		<subscriber factory=".content_search._NTICardContentHitPredicate"
+					provides="nti.contentsearch.interfaces.ISearchHitPredicate"
+					for="nti.contentsearch.interfaces.INTICardContent" />
+	</configure>
 </configure>

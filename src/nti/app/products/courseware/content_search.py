@@ -24,7 +24,7 @@ from . import interfaces as course_interfaces
 
 def get_collection_root(ntiid):
 	library = component.queryUtility(lib_interfaces.IContentPackageLibrary)
-	paths = library.pathToNTIID(ntiid) if library else None
+	paths = library.pathToNTIID(ntiid) if library and ntiid else None
 	result = paths[0] if paths else None
 	return result
 
@@ -78,3 +78,15 @@ class _VideoContentHitPredicate(object):
 
 	def allow(self, item, score):
 		return is_allowed(item.containerId)
+
+@interface.implementer(search_interfaces.ISearchHitPredicate)
+@component.adapter(search_interfaces.INTICardContent)
+class _NTICardContentHitPredicate(object):
+
+	__slots__ = ()
+
+	def __init__(self, *args):
+		pass
+
+	def allow(self, item, score):
+		return is_allowed(item.containerId) and is_allowed(item.target_ntiid)
