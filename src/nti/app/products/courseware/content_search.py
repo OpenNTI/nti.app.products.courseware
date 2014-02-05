@@ -8,6 +8,7 @@ __docformat__ = "restructuredtext en"
 
 logger = __import__('logging').getLogger(__name__)
 
+from time import mktime
 from datetime import datetime
 
 from zope import component
@@ -24,10 +25,11 @@ from . import interfaces as course_interfaces
 def get_collection_root(ntiid):
 	library = component.queryUtility(lib_interfaces.IContentPackageLibrary)
 	paths = library.pathToNTIID(ntiid) if library else None
-	return paths[0] if paths else None
+	result = paths[0] if paths else None
+	return result
 
 def get_node(outline, ntiid):
-
+	ntiid = ntiid.lower()
 	def _recur(node):
 		if getattr(node, 'ContentNTIID', u'').lower() == ntiid:
 			return node
@@ -38,18 +40,19 @@ def get_node(outline, ntiid):
 				break
 		return result
 
-	return _recur(outline)
+	result = _recur(outline)
+	return result
 
 @repoze.lru.lru_cache(500)
 def is_allowed(ntiid, now=None):
-	ntiid = ntiid.lower()
-	now = now or datetime.now()
+	now = now or datetime.utcnow()
 	root = get_collection_root(ntiid)
 	course = course_interfaces.ICourseInstance(root, None)
 	if course is not None:
 		outline_node = get_node(course.Outline, ntiid)
 		if outline_node is not None:
-			return now >= getattr(outline_node, 'AvailableBeginning', now)
+			beginning = getattr(outline_node, 'AvailableBeginning', None) or now
+			return mktime(now.timetuple()) >= mktime(beginning.timetuple())
 	return True
 
 @interface.implementer(search_interfaces.ISearchHitPredicate)
@@ -62,8 +65,7 @@ class _ContentHitPredicate(object):
 		pass
 
 	def allow(self, item, score):
-		return is_allowed(item.ntiid, datetime.now())
-
+		return is_allowed(item.ntiid)
 
 @interface.implementer(search_interfaces.ISearchHitPredicate)
 @component.adapter(search_interfaces.IVideoTranscriptContent)
@@ -75,4 +77,4 @@ class _VideoContentHitPredicate(object):
 		pass
 
 	def allow(self, item, score):
-		return is_allowed(item.containerId, datetime.now())
+		return is_allowed(item.containerId)

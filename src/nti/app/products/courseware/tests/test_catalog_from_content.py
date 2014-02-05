@@ -34,6 +34,8 @@ from hamcrest import all_of
 from nti.testing.matchers import verifiably_provides, validly_provides
 
 import os
+from datetime import datetime
+
 from zope import component
 
 from nti.app.testing.application_webtest import SharedApplicationTestBase
@@ -43,7 +45,7 @@ from nti.dataserver.tests import mock_dataserver
 from nti.contentlibrary.interfaces import IContentPackageLibrary
 from nti.contentlibrary.filesystem import CachedNotifyingStaticFilesystemLibrary as Library
 
-
+from ..content_search import is_allowed
 from ..interfaces import ICourseCatalog
 from ..interfaces import ICourseCatalogLegacyEntry
 from ..interfaces import ICourseCatalogInstructorLegacyInfo
@@ -69,20 +71,33 @@ class TestApplicationCatalogFromContent(SharedApplicationTestBase):
 								   'CLC3403_LawAndJustice')
 				   ))
 
-	@WithSharedApplicationMockDS(users='harp4162')
-	def test_content(self):
-		"basic test to be sure we got the content we need"
-
-		lib = component.getUtility(IContentPackageLibrary)
+	def _reenumerate_lib(self):
 		# Now that we have created the instructor user, we need to re-enumerate
 		# the library so it gets noticed
 		with mock_dataserver.mock_db_trans(self.ds):
 			lib = component.getUtility(IContentPackageLibrary)
 			del lib.contentPackages
 			catalog = component.getUtility(ICourseCatalog)
-			del catalog._entries[:] # XXX
-
+			del catalog._entries[:]  # XXX
 			getattr(lib, 'contentPackages')
+			return lib
+		
+	@classmethod
+	def _reregister_globally(self):
+		from zope.component.interfaces import IComponents
+		components = component.getUtility(IComponents, name='platform.ou.edu')
+		catalog = components.getUtility(ICourseCatalog)
+		# XXX
+		# This test is unclean, we re-register globally
+		global_catalog = component.getUtility(ICourseCatalog)
+		global_catalog._entries[:] = catalog._entries
+		return catalog
+
+	@WithSharedApplicationMockDS(users='harp4162')
+	def test_content(self):
+		"basic test to be sure we got the content we need"
+
+		lib = self._reenumerate_lib()
 
 		# This one has a <info> tag
 		assert_that( lib.pathToNTIID('tag:nextthought.com,2011-10:OU-HTML-ENGR1510_Intro_to_Water.engr_1510_901_introduction_to_water'),
@@ -92,13 +107,7 @@ class TestApplicationCatalogFromContent(SharedApplicationTestBase):
 		assert_that( lib.pathToNTIID("tag:nextthought.com,2011-10:OU-HTML-CLC3403_LawAndJustice.clc_3403_law_and_justice"),
 					 is_not( none() ) )
 
-		from zope.component.interfaces import IComponents
-		components = component.getUtility(IComponents, name='platform.ou.edu')
-		catalog = components.getUtility( ICourseCatalog )
-		# XXX
-		# This test is unclean, we re-register globally
-		global_catalog = component.getUtility(ICourseCatalog)
-		global_catalog._entries[:] = catalog._entries
+		catalog = self._reregister_globally()
 
 		# Both get picked up
 		assert_that( catalog, has_length( 2 ) )
@@ -174,3 +183,15 @@ class TestApplicationCatalogFromContent(SharedApplicationTestBase):
 									 all_of(
 										 does_not(has_key('ContentNTIID')),
 										 has_entry('Class', 'CourseOutlineCalendarNode'))))
+
+	@WithSharedApplicationMockDS(users='harp4162')
+	def test_content_search(self):
+		self._reenumerate_lib()
+		self._reregister_globally()
+		with mock_dataserver.mock_db_trans(self.ds):
+			b = is_allowed('tag:nextthought.com,2011-10:OU-HTML-CLC3403_LawAndJustice.lec:03_LESSON')
+			assert_that(b, is_(True))
+			
+			now = datetime.fromtimestamp(100)
+			b = is_allowed('tag:nextthought.com,2011-10:OU-HTML-CLC3403_LawAndJustice.lec:03_LESSON', now)
+			assert_that(b, is_(False))
