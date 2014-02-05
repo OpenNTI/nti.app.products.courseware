@@ -50,7 +50,6 @@ from nti.contenttypes.courses.interfaces import ICourseInstance
 from nti.externalization.tests import externalizes
 from nti.dataserver.authorization_acl import ACL
 
-
 class TestApplicationCatalogFromContent(SharedApplicationTestBase):
 
 	@classmethod
@@ -181,9 +180,10 @@ class TestApplicationCatalogFromContent(SharedApplicationTestBase):
 
 		# Test content search
 		with mock_dataserver.mock_db_trans(self.ds):
-			b = is_allowed('tag:nextthought.com,2011-10:OU-HTML-CLC3403_LawAndJustice.lec:03_LESSON')
+			ntiid = u'tag:nextthought.com,2011-10:OU-HTML-CLC3403_LawAndJustice.lec:03_LESSON'
+			b = is_allowed(ntiid)
 			assert_that(b, is_(True))
 			
 			now = datetime.fromtimestamp(100)
-			b = is_allowed('tag:nextthought.com,2011-10:OU-HTML-CLC3403_LawAndJustice.lec:03_LESSON', now)
+			b = is_allowed(ntiid, now=now)
 			assert_that(b, is_(False))
