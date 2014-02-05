@@ -14,6 +14,8 @@ from datetime import datetime
 from zope import component
 from zope import interface
 
+from pyramid.traversal import find_interface
+
 import repoze.lru
 
 from nti.contentlibrary import interfaces as lib_interfaces
@@ -24,9 +26,13 @@ from nti.contentsearch import interfaces as search_interfaces
 
 from . import interfaces as course_interfaces
 
-def get_collection_root(ntiid):
+def get_paths(ntiid):
 	library = component.queryUtility(lib_interfaces.IContentPackageLibrary)
 	paths = library.pathToNTIID(ntiid) if library and ntiid else None
+	return paths
+
+def get_collection_root(ntiid):
+	paths = get_paths(ntiid)
 	result = paths[0] if paths else None
 	return result
 
@@ -45,17 +51,23 @@ def get_node(outline, ntiid):
 	result = _recur(outline)
 	return result
 
-@repoze.lru.lru_cache(1000)
-def is_allowed(ntiid, now=None):
-	now = now or datetime.utcnow()
-	root = get_collection_root(ntiid)
-	course = course_interfaces.ICourseInstance(root, None)
+def _is_allowed(ntiid, course=None, now=None):
 	if course is not None:
-		outline_node = get_node(course.Outline, ntiid)
-		if outline_node is not None:
-			beginning = getattr(outline_node, 'AvailableBeginning', None) or now
-			return mktime(now.timetuple()) >= mktime(beginning.timetuple())
+		now = now or datetime.utcnow()
+		node = get_node(course.Outline, ntiid)
+		if node is not None:
+			beginning = getattr(node, 'AvailableBeginning', None) or now
+			is_outline_stub_only = getattr(node, 'is_outline_stub_only', False)
+			return  not is_outline_stub_only and \
+					mktime(now.timetuple()) >= mktime(beginning.timetuple())  # TODO: Check this
 	return True
+
+@repoze.lru.lru_cache(1000)
+def is_allowed(ntiid, course=None, now=None):
+	if course is None:
+		root = get_collection_root(ntiid)
+		course = course_interfaces.ICourseInstance(root, None)
+	return _is_allowed(ntiid, course, now)
 
 class _BasePredicate(object):
 	__slots__ = ()
@@ -98,4 +110,13 @@ class _ModeledContentHitPredicate(_BasePredicate):
 	def allow(self, item, score):
 		resolver = search_interfaces.IContainerIDResolver(item, None)
 		containerId = resolver.containerId if resolver is not None else None
-		return not containerId or is_allowed(containerId)
+		if not containerId:
+			return True
+
+		# try walk up the tree to see if it gets us to either a CourseInstance
+		# or a ContentPackage.
+		found = find_interface(item, course_interfaces.ICourseInstance) or \
+				find_interface(item, lib_interfaces.IContentPackage)
+		course = course_interfaces.ICourseInstance(found, None)
+		result = is_allowed(containerId, course=course)
+		return result
