@@ -575,6 +575,9 @@ class _LegacyCommunityBasedCourseInstance(CourseInstance):
 				# NTIID it won't be in the interface and wouldn't be externalized)
 				if hasattr(lesson_node, 'ContentNTIID'):
 					lesson_node.ContentNTIID = topic_ntiid
+				else:
+					# Quick hack to make this available for use elsewhere
+					lesson_node._v_ContentNTIID = topic_ntiid
 
 				parent_node.append(lesson_node)
 				# Sigh. It looks like date is optionally a comma-separated
