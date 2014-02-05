@@ -116,5 +116,5 @@ class _ModeledContentHitPredicate(_BasePredicate):
 		found = find_interface(item, course_interfaces.ICourseInstance) or \
 				find_interface(item, lib_interfaces.IContentPackage)
 		course = course_interfaces.ICourseInstance(found, None)
-		result = is_allowed(containerId, course=course)
+		result = is_allowed(containerId, course)
 		return result
