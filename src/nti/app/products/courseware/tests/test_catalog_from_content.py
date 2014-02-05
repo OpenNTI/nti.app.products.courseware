@@ -186,5 +186,5 @@ class TestApplicationCatalogFromContent(SharedApplicationTestBase):
 			assert_that(b, is_(True))
 
 			now = datetime.fromtimestamp(100)
-			b = is_allowed(ntiid, now=now)
+			b = is_allowed(ntiid, None, now)
 			assert_that(b, is_(False))
