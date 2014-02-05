@@ -8,7 +8,6 @@ __docformat__ = "restructuredtext en"
 
 logger = __import__('logging').getLogger(__name__)
 
-from time import mktime
 from datetime import datetime
 
 from zope import component
@@ -58,8 +57,7 @@ def _is_allowed(ntiid, course=None, now=None):
 		if node is not None:
 			beginning = getattr(node, 'AvailableBeginning', None) or now
 			is_outline_stub_only = getattr(node, 'is_outline_stub_only', False)
-			return  not is_outline_stub_only and \
-					mktime(now.timetuple()) >= mktime(beginning.timetuple())  # TODO: Check this
+			return not is_outline_stub_only and now >= beginning
 	return True
 
 @repoze.lru.lru_cache(1000)
