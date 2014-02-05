@@ -1,15 +1,10 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
-
-
 $Id$
 """
-
 from __future__ import print_function, unicode_literals, absolute_import, division
 __docformat__ = "restructuredtext en"
-
-logger = __import__('logging').getLogger(__name__)
 
 #disable: accessing protected members, too many methods
 #pylint: disable=W0212,R0904
@@ -184,10 +179,7 @@ class TestApplicationCatalogFromContent(SharedApplicationTestBase):
 										 does_not(has_key('ContentNTIID')),
 										 has_entry('Class', 'CourseOutlineCalendarNode'))))
 
-	@WithSharedApplicationMockDS(users='harp4162')
-	def test_content_search(self):
-		self._reenumerate_lib()
-		self._reregister_globally()
+		# Test content search
 		with mock_dataserver.mock_db_trans(self.ds):
 			b = is_allowed('tag:nextthought.com,2011-10:OU-HTML-CLC3403_LawAndJustice.lec:03_LESSON')
 			assert_that(b, is_(True))
