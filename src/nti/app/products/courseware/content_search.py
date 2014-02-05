@@ -18,6 +18,8 @@ import repoze.lru
 
 from nti.contentlibrary import interfaces as lib_interfaces
 
+from nti.dataserver import interfaces as nti_interfaces
+
 from nti.contentsearch import interfaces as search_interfaces
 
 from . import interfaces as course_interfaces
@@ -43,7 +45,7 @@ def get_node(outline, ntiid):
 	result = _recur(outline)
 	return result
 
-@repoze.lru.lru_cache(500)
+@repoze.lru.lru_cache(1000)
 def is_allowed(ntiid, now=None):
 	now = now or datetime.utcnow()
 	root = get_collection_root(ntiid)
@@ -55,38 +57,45 @@ def is_allowed(ntiid, now=None):
 			return mktime(now.timetuple()) >= mktime(beginning.timetuple())
 	return True
 
-@interface.implementer(search_interfaces.ISearchHitPredicate)
-@component.adapter(search_interfaces.IBookContent)
-class _ContentHitPredicate(object):
-	
+class _BasePredicate(object):
 	__slots__ = ()
-
 	def __init__(self, *args):
 		pass
+
+@interface.implementer(search_interfaces.ISearchHitPredicate)
+@component.adapter(search_interfaces.IBookContent)
+class _ContentHitPredicate(_BasePredicate):
+	
+	__slots__ = ()
 
 	def allow(self, item, score):
 		return is_allowed(item.ntiid)
 
 @interface.implementer(search_interfaces.ISearchHitPredicate)
 @component.adapter(search_interfaces.IVideoTranscriptContent)
-class _VideoContentHitPredicate(object):
+class _VideoContentHitPredicate(_BasePredicate):
 
 	__slots__ = ()
-
-	def __init__(self, *args):
-		pass
 
 	def allow(self, item, score):
 		return is_allowed(item.containerId)
 
 @interface.implementer(search_interfaces.ISearchHitPredicate)
 @component.adapter(search_interfaces.INTICardContent)
-class _NTICardContentHitPredicate(object):
+class _NTICardContentHitPredicate(_BasePredicate):
 
 	__slots__ = ()
 
-	def __init__(self, *args):
-		pass
-
 	def allow(self, item, score):
 		return is_allowed(item.containerId) and is_allowed(item.target_ntiid)
+
+@interface.implementer(search_interfaces.ISearchHitPredicate)
+@component.adapter(nti_interfaces.IModeledContent)
+class _ModeledContentHitPredicate(_BasePredicate):
+
+	__slots__ = ()
+
+	def allow(self, item, score):
+		resolver = search_interfaces.IContainerIDResolver(item, None)
+		containerId = resolver.containerId if resolver is not None else None
+		return not containerId or is_allowed(containerId)
