@@ -77,6 +77,10 @@ class CourseTopicCreationView(AbstractAuthenticatedView,UploadRequestUtilsMixin)
 		course_instance_ids = set()
 		course_instance_ids_to_rows = defaultdict(list)
 		for row in rows:
+			if not row[0]:
+				logger.warn("Ignoring row with no course ID: %s", row)
+				continue
+
 			course_instance_ids.add(row[0])
 			course_instance_ids_to_rows[row[0]].append(row)
 
