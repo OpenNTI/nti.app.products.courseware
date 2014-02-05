@@ -75,7 +75,7 @@ class TestApplicationCatalogFromContent(SharedApplicationTestBase):
 			del catalog._entries[:]  # XXX
 			getattr(lib, 'contentPackages')
 			return lib
-		
+
 	@classmethod
 	def _reregister_globally(self):
 		from zope.component.interfaces import IComponents
@@ -134,7 +134,7 @@ class TestApplicationCatalogFromContent(SharedApplicationTestBase):
 				externalizes( has_entries(
 					'MimeType', 'application/vnd.nextthought.courseware.coursecataloglegacyentry',
 					'Duration', 'P112D',
-					'StartDate', '2014-01-13T06:00:00',
+					'StartDate', '2014-01-13T06:00:00Z',
 					'LegacyPurchasableIcon', '/IntroWater/images/ENGR1510_promo.png'))))
 
 		# These content units can be adapted to course instances
@@ -163,6 +163,7 @@ class TestApplicationCatalogFromContent(SharedApplicationTestBase):
 					assert_that( lesson_1.AvailableBeginning, is_(not_none()))
 					assert_that( lesson_1.AvailableEnding, is_(not_none()))
 					assert_that( lesson_1, has_property( 'title', '1. Defining Law and Justice' ) )
+					assert_that( lesson_1, has_property('AvailableEnding', has_property('tzinfo', none())))
 					assert_that( lesson_1, externalizes(has_entries('AvailableEnding', '2013-08-22T04:59:59Z',
 																	'title', '1. Defining Law and Justice',
 																	'description', '')))
@@ -183,7 +184,7 @@ class TestApplicationCatalogFromContent(SharedApplicationTestBase):
 			ntiid = u'tag:nextthought.com,2011-10:OU-HTML-CLC3403_LawAndJustice.lec:03_LESSON'
 			b = is_allowed(ntiid)
 			assert_that(b, is_(True))
-			
+
 			now = datetime.fromtimestamp(100)
 			b = is_allowed(ntiid, now=now)
 			assert_that(b, is_(False))
