@@ -116,7 +116,7 @@ class TestWorkspace(SharedApplicationTestBase):
 					 has_items(
 						 all_of( has_entries( 'Duration', 'P112D',
 											  'Title', 'Introduction to Water',
-											  'StartDate', '2014-01-13T06:00:00')),
+											  'StartDate', '2014-01-13T06:00:00Z')),
 						 all_of( has_entries( 'Duration', 'P112D',
 											  'Title', 'Law and Justice' )) ) )
 
@@ -153,7 +153,7 @@ class TestWorkspace(SharedApplicationTestBase):
 		purch_res = self.testapp.get('/dataserver2/store/get_purchasables')
 		assert_that( purch_res.json_body, has_entry( 'Items', has_item( has_entries( 'NTIID', courseId,
 																					 'StartDate', '2013-08-13',
-																					 'EndDate', '2013-12-03T06:00:00',
+																					 'EndDate', '2013-12-03T06:00:00Z',
 																					 'Duration', 'P112D') ) ) )
 
 		path = '/dataserver2/store/enroll_course'
@@ -390,7 +390,7 @@ class TestRestrictedWorkspace(SharedApplicationTestBase):
 					 has_items(
 						 all_of( has_entries( 'Duration', 'P112D',
 											  'Title', 'Introduction to Water',
-											  'StartDate', '2014-01-13T06:00:00')) ) )
+											  'StartDate', '2014-01-13T06:00:00Z')) ) )
 
 		purch_res = self.testapp.get('/dataserver2/store/get_purchasables')
 		assert_that( purch_res.json_body['Items'], has_length(6) ) # TODO: Really verify that it's the CLC missing
