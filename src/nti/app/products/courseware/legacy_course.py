@@ -669,6 +669,7 @@ def _legacy_course_instance_to_catalog_entry(instance):
 			return entry
 
 from nti.contenttypes.courses.interfaces import ICourseEnrollments
+from nti.dataserver.interfaces import ILengthEnumerableEntityContainer
 
 @interface.implementer(ICourseEnrollments)
 @component.adapter(_LegacyCommunityBasedCourseInstance)
@@ -682,12 +683,9 @@ class _LegacyCourseInstanceEnrollments(object):
 		return community.iter_members()
 
 	def count_enrollments(self):
-		# XXX: Same performance characteristics
-		# as above, but called relatively frequently,
-		# so worse
-		i = 0
-		for _ in self.iter_enrollments():
-			i += 1
+		community = self.context.legacy_community
+		container = ILengthEnumerableEntityContainer(community)
+		i = len(container)
 
 		# Now, in legacy courses, the instructors appear
 		# enrolled because they are also a community
