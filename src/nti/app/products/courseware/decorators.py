@@ -22,6 +22,7 @@ from nti.externalization.singleton import SingletonDecorator
 from nti.dataserver.interfaces import ILinkExternalHrefOnly
 
 from nti.contenttypes.courses.interfaces import ICourseInstance
+from nti.contenttypes.courses.interfaces import ICourseEnrollments
 from nti.contenttypes.courses.interfaces import ICourseOutline
 from nti.contenttypes.courses.interfaces import is_instructed_by_name
 
@@ -74,8 +75,7 @@ class _CourseInstanceLinkDecorator(object):
 			interface.alsoProvides( link, ILinkExternalHrefOnly )
 			result['href'] = link
 
-		# XXX: SLOW!
-		#result['TotalEnrolledCount'] = ICourseEnrollments(context).count_enrollments()
+		result['TotalEnrolledCount'] = ICourseEnrollments(context).count_enrollments()
 
 @interface.implementer(IExternalMappingDecorator)
 @component.adapter(ICourseOutline)
