@@ -197,8 +197,6 @@ class CourseInstanceEnrollment(_AbstractInstanceWrapper):
 		return super(CourseInstanceEnrollment, self).__conform__(iface)
 
 from .interfaces import ILegacyCommunityBasedCourseInstance
-from nti.dataserver import users
-from nti.dataserver.interfaces import IEntityContainer
 
 @interface.implementer(interfaces.ILegacyCourseInstanceEnrollment)
 @component.adapter(ILegacyCommunityBasedCourseInstance)
@@ -216,11 +214,8 @@ class LegacyCourseInstanceEnrollment(CourseInstanceEnrollment):
 	@Lazy
 	def LegacyEnrollmentStatus(self):
 		course_inst = self.__course_inst
-		# get restricted scope entity from TOC
-		restricted_id = course_inst.LegacyScopes['restricted']
-		restricted = users.Entity.get_entity(restricted_id) if restricted_id else None
 		# check user belongs to restricted entity
-		for_credit = self._user in IEntityContainer(restricted, ())
+		for_credit = self._user in course_inst.restricted_scope_entity_container
 		return "ForCredit" if for_credit else "Open"
 
 

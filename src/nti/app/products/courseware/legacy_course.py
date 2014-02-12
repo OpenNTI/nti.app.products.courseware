@@ -440,6 +440,7 @@ _LegacyCommunityBasedCourseAdministrativeLevelFactory = an_factory(_LegacyCommun
 																   key='LegacyCourses')
 
 from nti.dataserver.contenttypes.forums.interfaces import ICommunityBoard
+from nti.dataserver.interfaces import IEntityContainer
 
 @interface.implementer(ILegacyCommunityBasedCourseInstance)
 class _LegacyCommunityBasedCourseInstance(CourseInstance):
@@ -468,9 +469,20 @@ class _LegacyCommunityBasedCourseInstance(CourseInstance):
 
 		self.ContentPackageNTIID = content_package_ntiid
 
-	@property
+	@CachedProperty
 	def legacy_community(self):
 		return Entity.get_entity( self.__legacy_community_name )
+
+	@CachedProperty
+	def restricted_scope_entity(self):
+		restricted_id = self.LegacyScopes.get('restricted')
+		restricted = Entity.get_entity(restricted_id) if restricted_id else None
+		return restricted
+
+	@CachedProperty
+	def restricted_scope_entity_container(self):
+		"checking membership in this is pretty common, so caching it has measurable benefits"
+		return IEntityContainer(self.restricted_scope_entity, ())
 
 	@property
 	def legacy_purchasable(self):
