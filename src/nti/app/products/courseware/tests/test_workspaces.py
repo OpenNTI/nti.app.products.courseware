@@ -15,6 +15,7 @@ logger = __import__('logging').getLogger(__name__)
 from hamcrest import assert_that
 from hamcrest import is_
 from hamcrest import contains
+from hamcrest import contains_inanyorder
 from hamcrest import has_item
 from hamcrest import has_items
 from hamcrest import has_property
@@ -206,7 +207,9 @@ class TestWorkspace(SharedApplicationTestBase):
 		assert_that( res.json_body[0], has_entry('title', 'Introduction'))
 		assert_that( res.json_body[0], has_entry('contents', has_length(2)))
 
-	@WithSharedApplicationMockDS(users=('harp4162'),testapp=True,default_authenticate=True)
+	@WithSharedApplicationMockDS(users=('harp4162', 'aaa@nextthought.com'),
+								 testapp=True,
+								 default_authenticate=True)
 	def test_fetch_administered_courses(self):
 		# This only works in the OU environment because that's where the purchasables are
 		extra_env = self.testapp.extra_environ or {}
@@ -215,6 +218,11 @@ class TestWorkspace(SharedApplicationTestBase):
 
 		instructor_env = self._make_extra_environ('harp4162')
 		instructor_env.update( {b'HTTP_ORIGIN': b'http://janux.ou.edu'} )
+
+		# Note that our username comes first, but our realname (Madden Jason) comes
+		# after (Johnson Steve) so we can test sorting by name
+		jmadden_environ = self._make_extra_environ(username='aaa@nextthought.com')
+		jmadden_environ[b'HTTP_ORIGIN'] = b'http://janux.ou.edu'
 
 		# Now that we have created the instructor user, we need to re-enumerate
 		# the library so it gets noticed. We must also remove
@@ -225,6 +233,12 @@ class TestWorkspace(SharedApplicationTestBase):
 			catalog = component.getUtility(ICourseCatalog)
 			del catalog._entries[:] # XXX
 			getattr(lib, 'contentPackages')
+
+			from nti.dataserver.users.interfaces import IFriendlyNamed
+			from nti.dataserver.users import User
+			IFriendlyNamed(User.get_user('sjohnson@nextthought.com')).realname = 'Steve Johnson'
+			IFriendlyNamed(User.get_user('aaa@nextthought.com')).realname = 'Jason Madden'
+
 
 
 		res = self.testapp.get( '/dataserver2/users/harp4162/Courses/AdministeredCourses',
@@ -246,17 +260,74 @@ class TestWorkspace(SharedApplicationTestBase):
 		roster_link = self.require_link_href_with_rel( course_instance, 'CourseEnrollmentRoster')
 		activity_link = self.require_link_href_with_rel( course_instance, 'CourseActivity')
 
-		# Put someone in the roster
-		res = self.testapp.post_json( '/dataserver2/users/sjohnson@nextthought.com/Courses/EnrolledCourses',
-									  'CLC 3403',
-									  status=201 )
+		# Put everyone in the roster
+		self.testapp.post_json( '/dataserver2/users/sjohnson@nextthought.com/Courses/EnrolledCourses',
+								'CLC 3403',
+								status=201 )
+
+		self.testapp.post_json( '/dataserver2/users/aaa@nextthought.com/Courses/EnrolledCourses',
+								'CLC 3403',
+								extra_environ=jmadden_environ,
+								status=201 )
 
 		# fetch the roster as the instructor
-		res = self.testapp.get( roster_link, extra_environ=instructor_env)
+		res = self.testapp.get( roster_link,
+								extra_environ=instructor_env)
 
-		assert_that( res.json_body, has_entry( 'Items', contains( has_entries('Class', 'CourseInstanceEnrollment',
-																			  'Username', self.extra_environ_default_user.lower(),
-																			  'CourseInstance', None) ) ) )
+		assert_that( res.json_body, has_entry( 'Items',
+											   contains_inanyorder(
+												   has_entries('Class', 'CourseInstanceEnrollment',
+															   'Username', self.extra_environ_default_user.lower(),
+															   'UserProfile', has_entries( 'realname', 'Steve Johnson',
+																						   'NonI18NFirstName', 'Steve'),
+															   'CourseInstance', None),
+												   has_entries('Class', 'CourseInstanceEnrollment',
+															   'Username', 'aaa@nextthought.com',
+															   'CourseInstance', None)) ) )
+		# Sort by realname, ascending default
+		res = self.testapp.get( roster_link,
+								{'sortOn': 'realname'},
+								extra_environ=instructor_env)
+		assert_that( res.json_body, has_entry( 'TotalItemCount', 2))
+		assert_that( res.json_body, has_entry( 'Items',
+											   contains(
+												   has_entries('Username', self.extra_environ_default_user.lower()),
+												   has_entries('Username', 'aaa@nextthought.com') ) ) )
+		res = self.testapp.get( roster_link,
+								{'sortOn': 'realname', 'sortOrder': 'descending'},
+								extra_environ=instructor_env)
+		assert_that( res.json_body, has_entry( 'TotalItemCount', 2))
+		assert_that( res.json_body, has_entry( 'Items',
+											   contains(
+												   has_entries('Username', 'aaa@nextthought.com'),
+												   has_entries('Username', self.extra_environ_default_user.lower()) ) ) )
+		res = self.testapp.get( roster_link,
+								{'sortOn': 'realname', 'sortOrder': 'descending',
+								 'batchSize': 1, 'batchStart': 0},
+								extra_environ=instructor_env)
+		assert_that( res.json_body, has_entry( 'TotalItemCount', 2))
+		assert_that( res.json_body, has_entry( 'Items', has_length( 1 )))
+		assert_that( res.json_body, has_entry( 'Items',
+											   contains(
+												   has_entries('Username', 'aaa@nextthought.com') ) ) )
+
+		# Sort by username
+		res = self.testapp.get( roster_link,
+								{'sortOn': 'username', 'sortOrder': 'descending'},
+								extra_environ=instructor_env)
+		assert_that( res.json_body, has_entry( 'TotalItemCount', 2))
+		assert_that( res.json_body, has_entry( 'Items',
+											   contains(
+												   has_entries('Username', self.extra_environ_default_user.lower()),
+												   has_entries('Username', 'aaa@nextthought.com') ) ) )
+		res = self.testapp.get( roster_link,
+								{'sortOn': 'username', 'sortOrder': 'ascending'},
+								extra_environ=instructor_env)
+		assert_that( res.json_body, has_entry( 'TotalItemCount', 2))
+		assert_that( res.json_body, has_entry( 'Items',
+											   contains(
+												   has_entries('Username', 'aaa@nextthought.com'),
+												   has_entries('Username', self.extra_environ_default_user.lower()) ) ) )
 
 		# fetch the activity as the instructor
 		res = self.testapp.get( activity_link, extra_environ=instructor_env)

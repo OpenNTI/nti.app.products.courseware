@@ -77,7 +77,8 @@ class course_outline_contents_view(AbstractAuthenticatedView):
 		self.request.response.last_modified = self.request.context.lastModified
 		return result
 
-
+import operator
+from nti.dataserver.users.interfaces import IFriendlyNamed
 
 @view_config(route_name='objects.generic.traversal',
 			 renderer='rest',
@@ -100,14 +101,51 @@ class CourseEnrollmentRosterGetView(AbstractAuthenticatedView):
 		result.__name__ = request.view_name
 		result.__parent__ = course
 		items = result['Items'] = []
+
+		enrollments_iter = ICourseEnrollments(course).iter_enrollments()
+		sort_name = self.request.params.get('sortOn')
+		sort_reverse = self.request.params.get('sortOrder', 'ascending') == 'descending'
+
+		if sort_name == 'realname':
+			# An alternative way to do this would be to get the
+			# intids of the users (available from the EntityContainer)
+			# and then have an index on the reverse name in the entity
+			# catalog (we have the name parts, but keyword indexes are
+			# not sortable)
+			def _key(user):
+				parts = IFriendlyNamed(user).get_searchable_realname_parts()
+				if not parts:
+					return ''
+				parts.reverse() # last name first
+				return ' '.join(parts).lower()
+
+			enrollments_iter = sorted(enrollments_iter,
+									  key=_key,
+									  reverse=sort_reverse)
+		elif sort_name == 'username':
+			_key = operator.attrgetter('username')
+			enrollments_iter = sorted(enrollments_iter,
+									  key=_key,
+									  reverse=sort_reverse)
+		elif sort_name: # pragma: no cover
+			# We're not silently ignoring because in the past
+			# we've had clients send in the wrong value for a long time
+			# before anybody noticed
+			raise hexc.HTTPBadRequest("Unsupported sort option")
+
 		items.extend((component.getMultiAdapter( (course, x),
 												 ICourseInstanceEnrollment )
-					  for x in ICourseEnrollments(course).iter_enrollments()))
+					  for x in enrollments_iter))
+
+		result['TotalItemCount'] = len(result['Items'])
+		self._batch_tuple_iterable(result, items,
+								   selector=lambda x: x)
+
 
 		# NOTE: Rendering the same CourseInstance over and over is hugely
 		# expensive, and massively bloats the response...77 students
 		# can generate 12MB of response. So we don't include the course instance
-		for i in items:
+		for i in result['Items']:
 			i.CourseInstance = None
 
 		# TODO: We have no last modified for this

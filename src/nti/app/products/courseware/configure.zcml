@@ -128,29 +128,32 @@
 
 	<subscriber factory=".decorators._CourseInstanceLinkDecorator"
 				provides="nti.externalization.interfaces.IExternalMappingDecorator" />
-				
+
 	<subscriber factory=".decorators._CourseOutlineContentsLinkDecorator"
 				provides="nti.externalization.interfaces.IExternalMappingDecorator" />
-				
+
+	<subscriber factory=".decorators._CourseEnrollmentUserProfileDetailsDecorator"
+				provides="nti.externalization.interfaces.IExternalMappingDecorator" />
+
 	<subscriber factory=".course_views.CourseActivityLastViewedDecorator"
 				for=".interfaces.ICourseInstanceActivity"
 				provides="nti.externalization.interfaces.IExternalMappingDecorator" />
 
 	<!-- Content Search -->
-	
+
 	<configure zcml:condition="have devmode">
 		<subscriber factory=".content_search._ContentHitPredicate"
 					provides="nti.contentsearch.interfaces.ISearchHitPredicate"
 					for="nti.contentsearch.interfaces.IBookContent" />
-		
+
 		<subscriber factory=".content_search._VideoContentHitPredicate"
 					provides="nti.contentsearch.interfaces.ISearchHitPredicate"
 					for="nti.contentsearch.interfaces.IVideoTranscriptContent" />
-			
+
 		<subscriber factory=".content_search._NTICardContentHitPredicate"
 					provides="nti.contentsearch.interfaces.ISearchHitPredicate"
 					for="nti.contentsearch.interfaces.INTICardContent" />
-					
+
 		<subscriber factory=".content_search._ModeledContentHitPredicate"
 					provides="nti.contentsearch.interfaces.ISearchHitPredicate"
 					for="nti.dataserver.interfaces.IModeledContent" />

@@ -19,6 +19,8 @@ from zope.location.interfaces import ILocation
 from nti.externalization.interfaces import IExternalMappingDecorator
 from nti.externalization.interfaces import StandardExternalFields
 from nti.externalization.singleton import SingletonDecorator
+from nti.externalization.externalization import to_external_object
+
 from nti.dataserver.interfaces import ILinkExternalHrefOnly
 
 from nti.contenttypes.courses.interfaces import ICourseInstance
@@ -26,7 +28,10 @@ from nti.contenttypes.courses.interfaces import ICourseEnrollments
 from nti.contenttypes.courses.interfaces import ICourseOutline
 from nti.contenttypes.courses.interfaces import is_instructed_by_name
 
+from nti.dataserver.interfaces import IUser
+
 from .interfaces import ICourseCatalogEntry
+from .interfaces import ICourseInstanceEnrollment
 
 from nti.dataserver.links import Link
 
@@ -94,3 +99,21 @@ class _CourseOutlineContentsLinkDecorator(object):
 		link.__name__ = ''
 		link.__parent__ = context
 		_links.append(link)
+
+@interface.implementer(IExternalMappingDecorator)
+@component.adapter(ICourseInstanceEnrollment)
+class _CourseEnrollmentUserProfileDetailsDecorator(object):
+	"""
+	Because we are now typically waking up the user profile from the
+	database *anyway* when we request enrollment rosters (to sort on),
+	it's relatively cheap and useful to the (current) UI to send back
+	some extra details.
+	"""
+
+	__metaclass__ = SingletonDecorator
+
+	def decorateExternalMapping(self, context, result):
+		user = IUser(context)
+		ext_profile = to_external_object(user, name='summary')
+
+		result['UserProfile'] = ext_profile

@@ -102,7 +102,8 @@ class enroll_course_view(AbstractAuthenticatedView,
 		except LookupError:
 			enrollments = ICourseEnrollmentManager(course_instance)
 		freshly_added = enrollments.enroll( self.remoteUser )
-		enrollment = ICourseInstanceEnrollment(course_instance)
+		enrollment = component.getMultiAdapter( (course_instance, self.remoteUser),
+												ICourseInstanceEnrollment )
 		if not enrollment.__parent__:
 			enrollment.__parent__ = self.request.context
 
