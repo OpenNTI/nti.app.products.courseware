@@ -329,6 +329,22 @@ class TestWorkspace(SharedApplicationTestBase):
 												   has_entries('Username', 'aaa@nextthought.com'),
 												   has_entries('Username', self.extra_environ_default_user.lower()) ) ) )
 
+		# Filter
+		res = self.testapp.get( roster_link,
+								{'filter': 'LegacyEnrollmentStatusForCredit'},
+								extra_environ=instructor_env)
+		assert_that( res.json_body, has_entry( 'TotalItemCount', 2))
+		assert_that( res.json_body, has_entry( 'FilteredTotalItemCount', 0))
+		assert_that( res.json_body, has_entry( 'Items', has_length( 0 )))
+
+		res = self.testapp.get( roster_link,
+								{'filter': 'LegacyEnrollmentStatusOpen'},
+								extra_environ=instructor_env)
+		assert_that( res.json_body, has_entry( 'TotalItemCount', 2))
+		assert_that( res.json_body, has_entry( 'FilteredTotalItemCount', 2))
+		assert_that( res.json_body, has_entry( 'Items', has_length( 2 )))
+
+
 		# fetch the activity as the instructor
 		res = self.testapp.get( activity_link, extra_environ=instructor_env)
 

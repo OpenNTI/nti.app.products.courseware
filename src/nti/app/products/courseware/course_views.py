@@ -87,7 +87,64 @@ from nti.dataserver.users.interfaces import IFriendlyNamed
 			 permission=nauth.ACT_READ,
 			 name=VIEW_COURSE_ENROLLMENT_ROSTER)
 class CourseEnrollmentRosterGetView(AbstractAuthenticatedView):
+	"""
+	Support retrieving the enrollment status of members of the class.
 
+	The return dictionary will have the following entries:
+
+	Items
+		A list of enrollment objects.
+
+	FilteredTotalItemCount
+		The total number of items that match the filter, if specified;
+		identical to TotalItemCount if there is no filter.
+
+	TotalItemCount
+		How many total enrollments there are. If any filter, sorting
+		or paging options are specified, this will be the same as the
+		number of enrolled students in the class (because we will
+		ultimately return that many rows due to the presence of null
+		rows for non-submitted students).
+
+	The following query parameters are supported:
+
+	sortOn
+		The field to sort on. Options are ``realname`` to sort on the parts
+		of the user's realname (\"lastname\" first; note that this is
+		imprecise and likely to sort non-English names incorrectly.);
+		username``.
+
+	sortOrder
+		The sort direction. Options are ``ascending`` and
+		``descending``. If you do not specify, a value that makes the
+		most sense for the ``sortOn`` parameter will be used by
+		default.
+
+	filter
+		Whether to filter the returned data in some fashion. Several
+		values are defined:
+
+		* ``LegacyEnrollmentStatusForCredit``: Only students that are
+		  enrolled for credit are returned. An entry in the dictionary is
+		  returned for each such student, even if they haven't submitted;
+		  the value for students that haven't submitted is null.
+
+		* ``LegacyEnrollmentStatusOpen``: Only students that are
+		  enrolled NOT for credit are returned. An entry in the dictionary is
+		  returned for each such student, even if they haven't submitted;
+		  the value for students that haven't submitted is null.
+
+	batchSize
+		Integer giving the page size. Must be greater than zero.
+		Paging only happens when this is supplied together with
+		``batchStart`` (or ``batchAround`` for those views that support it).
+
+	batchStart
+		Integer giving the index of the first object to return,
+		starting with zero. Paging only happens when this is
+		supplied together with ``batchSize``.
+
+	"""
 	def __call__(self):
 		request = self.request
 		context = request.context
@@ -103,6 +160,8 @@ class CourseEnrollmentRosterGetView(AbstractAuthenticatedView):
 		items = result['Items'] = []
 
 		enrollments_iter = ICourseEnrollments(course).iter_enrollments()
+
+		filter_name = self.request.params.get('filter')
 		sort_name = self.request.params.get('sortOn')
 		sort_reverse = self.request.params.get('sortOrder', 'ascending') == 'descending'
 
@@ -136,8 +195,23 @@ class CourseEnrollmentRosterGetView(AbstractAuthenticatedView):
 		items.extend((component.getMultiAdapter( (course, x),
 												 ICourseInstanceEnrollment )
 					  for x in enrollments_iter))
+		result['FilteredTotalItemCount'] = result['TotalItemCount'] = len(result['Items'])
 
-		result['TotalItemCount'] = len(result['Items'])
+		# We could theoretically be more efficient with the user of the IEnumerableEntity
+		# container and the scopes, especially if we did that FIRST, before
+		# getting the enrollments, and paging that range of usernames.
+		# However, this is good enough for now. Sorting is maintained
+		# from above. Note that it will
+		# blow up once we have non-legacy courses.
+		if filter_name == 'LegacyEnrollmentStatusForCredit':
+			items = [x for x in items if x.LegacyEnrollmentStatus == 'ForCredit']
+			result['FilteredTotalItemCount'] = len(items)
+		elif filter_name == 'LegacyEnrollmentStatusOpen':
+			items = [x for x in items if x.LegacyEnrollmentStatus == 'Open']
+			result['FilteredTotalItemCount'] = len(items)
+		elif filter_name: # pragma: no cover
+			raise hexc.HTTPBadRequest("Unsupported filteroption")
+
 		self._batch_tuple_iterable(result, items,
 								   selector=lambda x: x)
 
