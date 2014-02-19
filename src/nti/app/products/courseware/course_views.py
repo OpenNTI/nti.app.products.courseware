@@ -79,6 +79,9 @@ class course_outline_contents_view(AbstractAuthenticatedView):
 
 import operator
 from nti.dataserver.users.interfaces import IFriendlyNamed
+from nti.appserver.interfaces import IIntIdUserSearchPolicy
+from zope.intid.interfaces import IIntIds
+from nti.dataserver.interfaces import IUser
 
 @view_config(route_name='objects.generic.traversal',
 			 renderer='rest',
@@ -134,6 +137,13 @@ class CourseEnrollmentRosterGetView(AbstractAuthenticatedView):
 		  returned for each such student, even if they haven't submitted;
 		  the value for students that haven't submitted is null.
 
+	usernameSearchTerm
+		If provided, only users that match this search term
+		will be returned. This search is based on the username and
+		realname and alias, and does prefix matching, the same as
+		the normal search algorithm for users. This is independent
+		of filtering.
+
 	batchSize
 		Integer giving the page size. Must be greater than zero.
 		Paging only happens when this is supplied together with
@@ -164,6 +174,7 @@ class CourseEnrollmentRosterGetView(AbstractAuthenticatedView):
 		filter_name = self.request.params.get('filter')
 		sort_name = self.request.params.get('sortOn')
 		sort_reverse = self.request.params.get('sortOrder', 'ascending') == 'descending'
+		username_search_term = self.request.params.get('usernameSearchTerm')
 
 		if sort_name == 'realname':
 			# An alternative way to do this would be to get the
@@ -199,7 +210,8 @@ class CourseEnrollmentRosterGetView(AbstractAuthenticatedView):
 
 		# We could theoretically be more efficient with the user of the IEnumerableEntity
 		# container and the scopes, especially if we did that FIRST, before
-		# getting the enrollments, and paging that range of usernames.
+		# getting the enrollments, and paging that range of usernames, and
+		# doing the entity username search on the intid set it returns.
 		# However, this is good enough for now. Sorting is maintained
 		# from above. Note that it will
 		# blow up once we have non-legacy courses.
@@ -211,6 +223,13 @@ class CourseEnrollmentRosterGetView(AbstractAuthenticatedView):
 			result['FilteredTotalItemCount'] = len(items)
 		elif filter_name: # pragma: no cover
 			raise hexc.HTTPBadRequest("Unsupported filteroption")
+
+		if username_search_term:
+			policy = component.getAdapter(self.remoteUser, IIntIdUserSearchPolicy, name='comprehensive')
+			id_util = component.getUtility(IIntIds)
+			matched_ids = policy.query_intids(username_search_term.lower())
+			items = [x for x in items if id_util.getId(IUser(x)) in matched_ids]
+			result['FilteredTotalItemCount'] = len(items)
 
 		self._batch_tuple_iterable(result, items,
 								   selector=lambda x: x)

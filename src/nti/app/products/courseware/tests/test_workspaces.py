@@ -31,6 +31,7 @@ does_not = is_not
 from hamcrest import has_key
 
 from zope import component
+from zope import lifecycleevent
 
 from nti.testing.matchers import verifiably_provides
 
@@ -238,7 +239,9 @@ class TestWorkspace(SharedApplicationTestBase):
 			from nti.dataserver.users import User
 			IFriendlyNamed(User.get_user('sjohnson@nextthought.com')).realname = 'Steve Johnson'
 			IFriendlyNamed(User.get_user('aaa@nextthought.com')).realname = 'Jason Madden'
-
+			# Fire events so they get indexed
+			lifecycleevent.modified(User.get_user('sjohnson@nextthought.com'))
+			lifecycleevent.modified(User.get_user('aaa@nextthought.com'))
 
 
 		res = self.testapp.get( '/dataserver2/users/harp4162/Courses/AdministeredCourses',
@@ -343,6 +346,25 @@ class TestWorkspace(SharedApplicationTestBase):
 		assert_that( res.json_body, has_entry( 'TotalItemCount', 2))
 		assert_that( res.json_body, has_entry( 'FilteredTotalItemCount', 2))
 		assert_that( res.json_body, has_entry( 'Items', has_length( 2 )))
+
+		res = self.testapp.get( roster_link,
+								{'usernameSearchTerm': 'aaa'}, # username
+								extra_environ=instructor_env)
+		assert_that( res.json_body, has_entry( 'TotalItemCount', 2))
+		assert_that( res.json_body, has_entry( 'FilteredTotalItemCount', 1))
+		assert_that( res.json_body, has_entry( 'Items', has_length( 1 )))
+		assert_that( res.json_body, has_entry( 'Items',
+											   contains(
+												   has_entries('Username', 'aaa@nextthought.com') ) ) )
+		res = self.testapp.get( roster_link,
+								{'usernameSearchTerm': 'Steve'}, # realname
+								extra_environ=instructor_env)
+		assert_that( res.json_body, has_entry( 'TotalItemCount', 2))
+		assert_that( res.json_body, has_entry( 'FilteredTotalItemCount', 1))
+		assert_that( res.json_body, has_entry( 'Items', has_length( 1 )))
+		assert_that( res.json_body, has_entry( 'Items',
+											   contains(
+												   has_entries('Username', self.extra_environ_default_user.lower() ) ) ) )
 
 
 		# fetch the activity as the instructor
