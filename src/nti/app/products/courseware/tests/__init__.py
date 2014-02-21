@@ -81,8 +81,18 @@ class InstructedCourseApplicationTestLayer(ApplicationTestLayer):
 	@classmethod
 	def tearDown(cls):
 		# Must implement!
-		component.provideUtility(cls.__old_library, IContentPackageLibrary)
-		_do_then_enumerate_library(lambda: None)
+		# Clean up any side effects of these content packages being
+		# registered
+		def cleanup():
+			del component.getUtility(IContentPackageLibrary).contentPackages
+			try:
+				del cls.__old_library.contentPackages
+			except AttributeError:
+				pass
+			component.provideUtility(cls.__old_library, IContentPackageLibrary)
+
+		_do_then_enumerate_library(cleanup)
+		del cls.__old_library
 
 
 
@@ -100,5 +110,15 @@ class RestrictedInstructedCourseApplicationTestLayer(InstructedCourseApplication
 	@classmethod
 	def tearDown(cls):
 		# Must implement!
-		component.provideUtility(cls.__old_library, IContentPackageLibrary)
-		_do_then_enumerate_library(lambda: None)
+		# Clean up any side effects of these content packages being
+		# registered
+		def cleanup():
+			del component.getUtility(IContentPackageLibrary).contentPackages
+			try:
+				del cls.__old_library.contentPackages
+			except AttributeError:
+				pass
+			component.provideUtility(cls.__old_library, IContentPackageLibrary)
+
+		_do_then_enumerate_library(cleanup)
+		del cls.__old_library
