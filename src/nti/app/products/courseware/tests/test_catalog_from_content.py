@@ -28,20 +28,18 @@ from hamcrest import all_of
 
 from nti.testing.matchers import verifiably_provides, validly_provides
 
-import os
-from datetime import datetime
-
 from zope import component
 
-from nti.app.testing.application_webtest import SharedApplicationTestBase
+from datetime import datetime
+
 from nti.app.testing.decorators import WithSharedApplicationMockDS
 from nti.dataserver.tests import mock_dataserver
 
 from nti.contentlibrary.interfaces import IContentPackageLibrary
-from nti.contentlibrary.filesystem import CachedNotifyingStaticFilesystemLibrary as Library
 
-from ..content_search import is_allowed
 from ..interfaces import ICourseCatalog
+from ..content_search import is_allowed
+
 from ..interfaces import ICourseCatalogLegacyEntry
 from ..interfaces import ICourseCatalogInstructorLegacyInfo
 from ..interfaces import ILegacyCommunityBasedCourseInstance
@@ -49,49 +47,19 @@ from nti.contenttypes.courses.interfaces import ICourseInstance
 
 from nti.externalization.tests import externalizes
 from nti.dataserver.authorization_acl import ACL
+from nti.app.testing.application_webtest import ApplicationLayerTest
+from . import InstructedCourseApplicationTestLayer
 
-class TestApplicationCatalogFromContent(SharedApplicationTestBase):
 
-	@classmethod
-	def _setup_library( cls, *args, **kwargs ):
-		return Library(
-					paths=(os.path.join(
-									os.path.dirname(__file__),
-									'Library',
-									'IntroWater'),
-						   os.path.join(
-								   os.path.dirname(__file__),
-								   'Library',
-								   'CLC3403_LawAndJustice')
-				   ))
+class TestApplicationCatalogFromContent(ApplicationLayerTest):
+	layer = InstructedCourseApplicationTestLayer
 
-	def _reenumerate_lib(self):
-		# Now that we have created the instructor user, we need to re-enumerate
-		# the library so it gets noticed
-		with mock_dataserver.mock_db_trans(self.ds):
-			lib = component.getUtility(IContentPackageLibrary)
-			del lib.contentPackages
-			catalog = component.getUtility(ICourseCatalog)
-			del catalog._entries[:]  # XXX
-			getattr(lib, 'contentPackages')
-			return lib
-
-	@classmethod
-	def _reregister_globally(self):
-		from zope.component.interfaces import IComponents
-		components = component.getUtility(IComponents, name='platform.ou.edu')
-		catalog = components.getUtility(ICourseCatalog)
-		# XXX
-		# This test is unclean, we re-register globally
-		global_catalog = component.getUtility(ICourseCatalog)
-		global_catalog._entries[:] = catalog._entries
-		return catalog
-
-	@WithSharedApplicationMockDS(users='harp4162')
+	@WithSharedApplicationMockDS(users=True)
 	def test_content(self):
-		"basic test to be sure we got the content we need"
+		#"basic test to be sure we got the content we need"
 
-		lib = self._reenumerate_lib()
+		lib = component.getUtility(IContentPackageLibrary)
+
 
 		# This one has a <info> tag
 		assert_that( lib.pathToNTIID('tag:nextthought.com,2011-10:OU-HTML-ENGR1510_Intro_to_Water.engr_1510_901_introduction_to_water'),
@@ -101,7 +69,9 @@ class TestApplicationCatalogFromContent(SharedApplicationTestBase):
 		assert_that( lib.pathToNTIID("tag:nextthought.com,2011-10:OU-HTML-CLC3403_LawAndJustice.clc_3403_law_and_justice"),
 					 is_not( none() ) )
 
-		catalog = self._reregister_globally()
+		from zope.component.interfaces import IComponents
+		components = component.getUtility(IComponents, name='platform.ou.edu')
+		catalog = components.getUtility(ICourseCatalog)
 
 		# Both get picked up
 		assert_that( catalog, has_length( 2 ) )

@@ -39,7 +39,7 @@ import os.path
 import datetime
 import webob.datetime_utils
 
-from nti.app.testing.application_webtest import SharedApplicationTestBase
+from nti.app.testing.application_webtest import ApplicationLayerTest
 from nti.app.testing.decorators import WithSharedApplicationMockDS
 
 from nti.contentlibrary.interfaces import IContentPackageLibrary
@@ -54,22 +54,12 @@ from nti.dataserver import traversal
 from nti.app.products.courseware.interfaces import ICoursesWorkspace
 from nti.app.products.courseware.interfaces import ICourseCatalog
 
-class TestWorkspace(SharedApplicationTestBase):
-	testapp = None
+from . import InstructedCourseApplicationTestLayer
+from . import RestrictedInstructedCourseApplicationTestLayer
 
-	@classmethod
-	def _setup_library( cls, *args, **kwargs ):
-		lib = Library(
-					paths=(os.path.join(
-									os.path.dirname(__file__),
-									'Library',
-									'IntroWater'),
-						   os.path.join(
-								   os.path.dirname(__file__),
-								   'Library',
-								   'CLC3403_LawAndJustice')
-				   ))
-		return lib
+class TestWorkspace(ApplicationLayerTest):
+	layer = InstructedCourseApplicationTestLayer
+	testapp = None
 
 	@WithSharedApplicationMockDS
 	def test_workspace_links_in_service(self):
@@ -103,9 +93,10 @@ class TestWorkspace(SharedApplicationTestBase):
 
 	@WithSharedApplicationMockDS(users=True,testapp=True)
 	def test_fetch_all_courses(self):
-		res = self.testapp.get( '/dataserver2/users/sjohnson@nextthought.com/Courses/AllCourses' )
+		# XXX: Our layer is registering these globally...
+		#res = self.testapp.get( '/dataserver2/users/sjohnson@nextthought.com/Courses/AllCourses' )
 		# Nothing by default
-		assert_that( res.json_body, has_entry( 'Items', has_length( 0 )) )
+		#assert_that( res.json_body, has_entry( 'Items', has_length( 0 )) )
 
 		# have to be in the site.
 		extra_env = self.testapp.extra_environ or {}
@@ -122,21 +113,14 @@ class TestWorkspace(SharedApplicationTestBase):
 						 all_of( has_entries( 'Duration', 'P112D',
 											  'Title', 'Law and Justice' )) ) )
 
-	@WithSharedApplicationMockDS(users=('harp4162'),testapp=True,default_authenticate=True)
+	@WithSharedApplicationMockDS(users=True,testapp=True,default_authenticate=True)
 	def test_fetch_enrolled_courses_legacy(self):
 		# This only works in the OU environment because that's where the purchasables are
 		extra_env = self.testapp.extra_environ or {}
 		extra_env.update( {b'HTTP_ORIGIN': b'http://janux.ou.edu'} )
 		self.testapp.extra_environ = extra_env
 
-		# Now that we have created the instructor user, we need to re-enumerate
-		# the library so it gets noticed
-		with mock_dataserver.mock_db_trans(self.ds):
-			cat = component.getUtility(ICourseCatalog)
-			del cat._entries[:]
-			lib = component.getUtility(IContentPackageLibrary)
-			del lib.contentPackages
-			getattr(lib, 'contentPackages')
+
 
 		# First, we are enrolled in nothing
 		res = self.testapp.get( '/dataserver2/users/sjohnson@nextthought.com/Courses/EnrolledCourses' )
@@ -208,7 +192,7 @@ class TestWorkspace(SharedApplicationTestBase):
 		assert_that( res.json_body[0], has_entry('title', 'Introduction'))
 		assert_that( res.json_body[0], has_entry('contents', has_length(2)))
 
-	@WithSharedApplicationMockDS(users=('harp4162', 'aaa@nextthought.com'),
+	@WithSharedApplicationMockDS(users=('aaa@nextthought.com',),
 								 testapp=True,
 								 default_authenticate=True)
 	def test_fetch_administered_courses(self):
@@ -225,16 +209,7 @@ class TestWorkspace(SharedApplicationTestBase):
 		jmadden_environ = self._make_extra_environ(username='aaa@nextthought.com')
 		jmadden_environ[b'HTTP_ORIGIN'] = b'http://janux.ou.edu'
 
-		# Now that we have created the instructor user, we need to re-enumerate
-		# the library so it gets noticed. We must also remove
-		# a previous entry in the catalog if there is one
 		with mock_dataserver.mock_db_trans(self.ds):
-			lib = component.getUtility(IContentPackageLibrary)
-			del lib.contentPackages
-			catalog = component.getUtility(ICourseCatalog)
-			del catalog._entries[:] # XXX
-			getattr(lib, 'contentPackages')
-
 			from nti.dataserver.users.interfaces import IFriendlyNamed
 			from nti.dataserver.users import User
 			IFriendlyNamed(User.get_user('sjohnson@nextthought.com')).realname = 'Steve Johnson'
@@ -465,28 +440,16 @@ class TestWorkspace(SharedApplicationTestBase):
 								status=201 )
 
 
-class TestRestrictedWorkspace(SharedApplicationTestBase):
+class TestRestrictedWorkspace(ApplicationLayerTest):
+	layer = RestrictedInstructedCourseApplicationTestLayer
 	testapp = None
-
-	@classmethod
-	def _setup_library( cls, *args, **kwargs ):
-		lib = Library(
-					paths=(os.path.join(
-									os.path.dirname(__file__),
-									'RestrictedLibrary',
-									'IntroWater'),
-						   os.path.join(
-								   os.path.dirname(__file__),
-								   'RestrictedLibrary',
-								   'CLC3403_LawAndJustice')
-				   ))
-		return lib
 
 	@WithSharedApplicationMockDS(users=True,testapp=True)
 	def test_fetch_all_courses(self):
-		res = self.testapp.get( '/dataserver2/users/sjohnson@nextthought.com/Courses/AllCourses' )
+		# XXX: Our layer is registering these globally
+		#res = self.testapp.get( '/dataserver2/users/sjohnson@nextthought.com/Courses/AllCourses' )
 		# Nothing by default
-		assert_that( res.json_body, has_entry( 'Items', has_length( 0 )) )
+		#assert_that( res.json_body, has_entry( 'Items', has_length( 0 )) )
 
 		# have to be in the site.
 		extra_env = self.testapp.extra_environ or {}

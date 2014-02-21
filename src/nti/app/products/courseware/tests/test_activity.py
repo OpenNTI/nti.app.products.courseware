@@ -22,53 +22,54 @@ from hamcrest import is_
 from hamcrest import has_length
 from hamcrest import has_property
 
-
-from nti.testing import base
 from nti.testing.time import time_monotonically_increases
 from nti.testing.matchers import is_empty
 from nti.testing.matchers import validly_provides
-
-setUpModule = lambda: base.module_setup(set_up_packages=(__name__,))
-tearDownModule = base.module_teardown
 
 from nti.dataserver.tests.mock_dataserver import WithMockDSTrans
 
 from ..activity import _DefaultCourseActivity
 from ..interfaces import ICourseInstanceActivity
 
-@WithMockDSTrans
-@time_monotonically_increases
-def test_activity():
+from nti.app.testing.application_webtest import ApplicationLayerTest
 
-	activity = _DefaultCourseActivity()
-	assert_that( activity, validly_provides(ICourseInstanceActivity))
+class TestActivity(ApplicationLayerTest):
+	# Note: we don't really need everything in this layer, it's just
+	# faster to reuse it
 
-	assert_that( list(activity.items()), is_empty() )
-	assert_that( activity, has_length(0) )
-	assert_that( activity, has_property('lastModified', 0))
-	class Item(object):
-		pass
+	@WithMockDSTrans
+	@time_monotonically_increases
+	def test_activity(self):
 
-	item1 = Item()
-	item2 = Item()
+		activity = _DefaultCourseActivity()
+		assert_that( activity, validly_provides(ICourseInstanceActivity))
 
-	iids = component.getUtility(IIntIds)
-	iids.register(item1)
-	iids.register(item2)
+		assert_that( list(activity.items()), is_empty() )
+		assert_that( activity, has_length(0) )
+		assert_that( activity, has_property('lastModified', 0))
+		class Item(object):
+			pass
 
-	activity.append(item1)
-	activity.append(item2)
+		item1 = Item()
+		item2 = Item()
 
-	assert_that( activity, has_length(2))
-	assert_that( activity, has_property('lastModified', 3.0))
-	assert_that( list(activity.items()),
-				 is_( [(3.0, item2),
-					   (2.0, item1)] ))
+		iids = component.getUtility(IIntIds)
+		iids.register(item1)
+		iids.register(item2)
 
-	activity.remove(item1)
-	assert_that( list(activity.items()),
-				 is_( [(3.0, item2)] ) )
+		activity.append(item1)
+		activity.append(item2)
 
-	del activity._storage # let the transaction commit
-	iids.unregister(item1)
-	iids.unregister(item2)
+		assert_that( activity, has_length(2))
+		assert_that( activity, has_property('lastModified', 3.0))
+		assert_that( list(activity.items()),
+					 is_( [(3.0, item2),
+						   (2.0, item1)] ))
+
+		activity.remove(item1)
+		assert_that( list(activity.items()),
+					 is_( [(3.0, item2)] ) )
+
+		del activity._storage # let the transaction commit
+		iids.unregister(item1)
+		iids.unregister(item2)
