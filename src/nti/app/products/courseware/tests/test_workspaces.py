@@ -42,9 +42,6 @@ import webob.datetime_utils
 from nti.app.testing.application_webtest import ApplicationLayerTest
 from nti.app.testing.decorators import WithSharedApplicationMockDS
 
-from nti.contentlibrary.interfaces import IContentPackageLibrary
-from nti.contentlibrary.filesystem import CachedNotifyingStaticFilesystemLibrary as Library
-
 from nti.appserver.interfaces import IUserService
 from nti.appserver.interfaces import ICollection
 
@@ -52,7 +49,7 @@ from nti.dataserver.tests import mock_dataserver
 from nti.dataserver import traversal
 
 from nti.app.products.courseware.interfaces import ICoursesWorkspace
-from nti.app.products.courseware.interfaces import ICourseCatalog
+
 
 from . import InstructedCourseApplicationTestLayer
 from . import RestrictedInstructedCourseApplicationTestLayer

@@ -21,8 +21,6 @@ from hamcrest import is_
 
 from nti.app.testing.decorators import WithSharedApplicationMockDS
 from nti.app.testing.application_webtest import ApplicationLayerTest
-
-
 from . import InstructedCourseApplicationTestLayer
 
 
