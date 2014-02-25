@@ -92,6 +92,9 @@ from nti.dataserver.interfaces import IUser
 class CourseEnrollmentRosterGetView(AbstractAuthenticatedView):
 	"""
 	Support retrieving the enrollment status of members of the class.
+	Any extra path is taken as the username to lookup and only that
+	user's record is returned (or a 404 if the user is not found
+	enrolled); query parameters are ignored.
 
 	The return dictionary will have the following entries:
 
@@ -208,13 +211,28 @@ class CourseEnrollmentRosterGetView(AbstractAuthenticatedView):
 					  for x in enrollments_iter))
 		result['FilteredTotalItemCount'] = result['TotalItemCount'] = len(result['Items'])
 
-		# We could theoretically be more efficient with the user of the IEnumerableEntity
-		# container and the scopes, especially if we did that FIRST, before
-		# getting the enrollments, and paging that range of usernames, and
-		# doing the entity username search on the intid set it returns.
-		# However, this is good enough for now. Sorting is maintained
-		# from above. Note that it will
-		# blow up once we have non-legacy courses.
+		# We could theoretically be more efficient with the user of
+		# the IEnumerableEntity container and the scopes, especially
+		# if we did that FIRST, before getting the enrollments, and
+		# paging that range of usernames, and doing the entity
+		# username search on the intid set it returns. However, this
+		# is good enough for now. Sorting is maintained from above.
+		# Note that it will blow up once we have non-legacy courses.
+
+		if request.subpath:
+			exact_match_username = request.subpath[0].lower()
+			for item in items:
+				if item.Username.lower() == exact_match_username:
+					if item.__parent__ is None:
+						# Typically it will be, lets give it the right
+						# place
+						item.xxx_fill_in_parent()
+						item.CourseInstance = None
+					return item
+			# No match, not enrolled, the URL doesn't exist
+			raise hexc.HTTPNotFound("Not an enrolled user")
+
+
 		if filter_name == 'LegacyEnrollmentStatusForCredit':
 			items = [x for x in items if x.LegacyEnrollmentStatus == 'ForCredit']
 			result['FilteredTotalItemCount'] = len(items)

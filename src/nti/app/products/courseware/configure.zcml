@@ -139,6 +139,16 @@
 				for=".interfaces.ICourseInstanceActivity"
 				provides="nti.externalization.interfaces.IExternalMappingDecorator" />
 
+	<!--
+		 Get an href here to the real location, since we return these beneath Roster as well.
+		 Notice this is currently a very specific registration.
+	-->
+	<subscriber factory="nti.appserver.pyramid_renderers_edit_link_decorator.EditLinkDecorator"
+				provides="nti.externalization.interfaces.IExternalMappingDecorator"
+				for=".workspaces.CourseInstanceEnrollment
+					 pyramid.interfaces.IRequest" />
+
+
 	<!-- Content Search -->
 
 	<configure zcml:condition="have devmode">

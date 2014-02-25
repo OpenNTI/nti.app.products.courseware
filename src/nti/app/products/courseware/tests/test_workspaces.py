@@ -245,6 +245,23 @@ class TestWorkspace(ApplicationLayerTest):
 								extra_environ=jmadden_environ,
 								status=201 )
 
+		# The instructor can fetch the enrollment records directly at their usual
+		# location...
+		enrollment_href = '/dataserver2/users/sjohnson%40nextthought.com/Courses/EnrolledCourses/CLC3403'
+		self.testapp.get(enrollment_href, extra_environ=instructor_env)
+		# ...or at a location within the roster...
+		res = self.testapp.get(roster_link + '/sjohnson@nextthought.com', extra_environ=instructor_env)
+		assert_that( res.json_body, has_entries('Class', 'CourseInstanceEnrollment',
+												'Username', self.extra_environ_default_user.lower(),
+												'UserProfile', has_entries( 'realname', 'Steve Johnson',
+																			'NonI18NFirstName', 'Steve'),
+												'CourseInstance', None,
+												'href', enrollment_href))
+		# ... attempting to access someone not enrolled fails
+		self.testapp.get(roster_link + '/not_enrolled',
+						 status=404,
+						 extra_environ=instructor_env )
+
 		# fetch the roster as the instructor
 		res = self.testapp.get( roster_link,
 								extra_environ=instructor_env)

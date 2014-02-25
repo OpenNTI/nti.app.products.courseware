@@ -147,10 +147,13 @@ class _AbstractQueryBasedCoursesCollection(contained.Contained):
 		for enrollment in container:
 			enrollment.__parent__ = self
 			if self.user_extra_auth:
+				course = ICourseInstance(enrollment)
 				enrollment._user = parent.user
 				enrollment.__acl__ = acl_from_aces(ace_allowing(parent.user,
 																self.user_extra_auth,
 																type(self)))
+				enrollment.__acl__.extend((ace_allowing( i, ACT_READ, type(self))
+										   for i in course.instructors) )
 
 		return container
 
@@ -169,7 +172,7 @@ class _AbstractInstanceWrapper(contained.Contained):
 	def __init__(self, context):
 		self.CourseInstance = context
 
-	@property
+	@Lazy
 	def __name__(self):
 		return self.CourseInstance.__name__
 
@@ -190,6 +193,13 @@ class CourseInstanceEnrollment(_AbstractInstanceWrapper):
 		if user:
 			self.Username = user.username
 			self._user = user
+
+	def xxx_fill_in_parent(self):
+		service = app_interfaces.IUserService(self._user)
+		ws = interfaces.ICoursesWorkspace(service)
+		enr_coll = EnrolledCoursesCollection(ws)
+		self.__parent__ = enr_coll
+		getattr(self, '__name__') # ensure we have this
 
 	def __conform__(self, iface):
 		if IUser.isOrExtends(iface):
