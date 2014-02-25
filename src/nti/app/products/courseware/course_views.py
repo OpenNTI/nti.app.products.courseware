@@ -186,7 +186,7 @@ class CourseEnrollmentRosterGetView(AbstractAuthenticatedView):
 				parts = IFriendlyNamed(user).get_searchable_realname_parts()
 				if not parts:
 					return ''
-				parts.reverse() # last name first
+				parts = reversed(parts) # last name first
 				return ' '.join(parts).lower()
 
 			enrollments_iter = sorted(enrollments_iter,
