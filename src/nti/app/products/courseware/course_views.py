@@ -82,6 +82,7 @@ from nti.dataserver.users.interfaces import IFriendlyNamed
 from nti.appserver.interfaces import IIntIdUserSearchPolicy
 from zope.intid.interfaces import IIntIds
 from nti.dataserver.interfaces import IUser
+from nti.app.externalization.view_mixins import BatchingUtilsMixin
 
 @view_config(route_name='objects.generic.traversal',
 			 renderer='rest',
@@ -89,7 +90,8 @@ from nti.dataserver.interfaces import IUser
 			 context=ICourseInstance,
 			 permission=nauth.ACT_READ,
 			 name=VIEW_COURSE_ENROLLMENT_ROSTER)
-class CourseEnrollmentRosterGetView(AbstractAuthenticatedView):
+class CourseEnrollmentRosterGetView(AbstractAuthenticatedView,
+									BatchingUtilsMixin):
 	"""
 	Support retrieving the enrollment status of members of the class.
 	Any extra path is taken as the username to lookup and only that
@@ -383,7 +385,8 @@ from nti.externalization.externalization import decorate_external_mapping
 			 request_method='GET',
 			 context=ICourseInstanceActivity,
 			 permission=nauth.ACT_READ)
-class CourseActivityGetView(AbstractAuthenticatedView):
+class CourseActivityGetView(AbstractAuthenticatedView,
+							BatchingUtilsMixin):
 
 	def __call__(self):
 		request = self.request
