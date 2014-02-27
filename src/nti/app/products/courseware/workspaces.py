@@ -331,3 +331,25 @@ class CatalogEntryLocationInfo(LocationPhysicallyLocatable):
 			raise TypeError("Not enough context to get all parents")
 
 		return parents
+
+
+from nti.appserver.interfaces import IUserPresentationPriorityCreators
+
+@interface.implementer(IUserPresentationPriorityCreators)
+@component.adapter(IUser, interface.Interface)
+class _UserInstructorsPresentationPriorityCreators(object):
+	"""
+	The instructors of the classes a user is enrolled in are
+	given priority.
+	"""
+
+	def __init__(self, user, request):
+		self.context = user
+
+	def iter_priority_creator_usernames(self):
+		for enrollments in component.subscribers( (self.context,),
+												  interfaces.IPrincipalEnrollmentCatalog):
+			for enrollment in enrollments.iter_enrollments():
+				course = ICourseInstance(enrollment)
+				for instructor in course.instructors:
+					yield instructor.id

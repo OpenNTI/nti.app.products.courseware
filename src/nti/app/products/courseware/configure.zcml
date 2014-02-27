@@ -74,6 +74,10 @@
 	<subscriber factory=".workspaces._DefaultPrincipalAdministrativeRoleCatalog"
 				provides=".interfaces.IPrincipalAdministrativeRoleCatalog" />
 
+	<!-- A subscriber for important principals -->
+	<subscriber factory=".workspaces._UserInstructorsPresentationPriorityCreators"
+				provides="nti.appserver.interfaces.IUserPresentationPriorityCreators"/>
+
 	<!-- Traversal paths -->
 	<!-- This may go away -->
 	<adapter factory=".workspaces.CatalogEntryLocationInfo" />
