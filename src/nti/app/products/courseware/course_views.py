@@ -439,7 +439,7 @@ from nti.zodb.containers import bit64_int_to_time
 
 import BTrees
 
-from nti.appserver._view_utils import ModeledContentUploadRequestUtilsMixin
+from nti.app.externalization.view_mixins import ModeledContentUploadRequestUtilsMixin
 
 from nti.externalization.interfaces import StandardExternalFields
 LINKS = StandardExternalFields.LINKS
