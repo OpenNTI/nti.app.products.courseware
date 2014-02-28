@@ -37,7 +37,7 @@ from pyramid.view import view_config
 from nti.appserver.dataserver_pyramid_views import GenericGetView
 from nti.appserver.pyramid_authorization import is_readable
 from nti.appserver._view_utils  import AbstractAuthenticatedView
-from nti.appserver._view_utils  import ModeledContentUploadRequestUtilsMixin
+from nti.app.externalization.view_mixins import ModeledContentUploadRequestUtilsMixin
 
 from nti.dataserver import authorization as nauth
 from nti.dataserver import traversal
