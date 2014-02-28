@@ -3,8 +3,7 @@
 """
 Views related to administration of courses.
 
-
-.. $Id$
+$Id$
 """
 
 from __future__ import print_function, unicode_literals, absolute_import, division
@@ -38,7 +37,7 @@ from nti.dataserver.contenttypes.forums.forum import ACLCommunityForum
 from nti.dataserver.contenttypes.forums.post import CommunityHeadlinePost
 from nti.dataserver.contenttypes.forums.topic import CommunityHeadlineTopic
 
-from nti.appserver._view_utils import UploadRequestUtilsMixin
+from nti.app.externalization.view_mixins import UploadRequestUtilsMixin
 
 from nti.dataserver.users import Entity
 
