@@ -398,7 +398,9 @@ class TestWorkspace(ApplicationLayerTest):
 						 'href', enrollment_href,
 						 'CourseInstance', has_entries('Class', 'LegacyCommunityBasedCourseInstance',
 													   'href', instance_href,
-													   #'TotalEnrolledCount', 1,
+													   'TotalEnrolledCount', 1,
+													   'TotalLegacyOpenEnrolledCount', 1,
+													   'TotalLegacyForCreditEnrolledCount', 0,
 													   'Outline', has_entry('Class', 'CourseOutline'),
 													   'Links', has_item( has_entries( 'rel', 'CourseCatalogEntry',
 																					   'href', entry_href  )) )))

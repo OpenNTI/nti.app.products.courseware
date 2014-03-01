@@ -80,7 +80,14 @@ class _CourseInstanceLinkDecorator(object):
 			interface.alsoProvides( link, ILinkExternalHrefOnly )
 			result['href'] = link
 
-		result['TotalEnrolledCount'] = ICourseEnrollments(context).count_enrollments()
+		enrollments = ICourseEnrollments(context)
+		result['TotalEnrolledCount'] = enrollments.count_enrollments()
+		# Legacy, non-interface methods
+		try:
+			result['TotalLegacyForCreditEnrolledCount'] = enrollments.count_legacy_forcredit_enrollments()
+			result['TotalLegacyOpenEnrolledCount'] = enrollments.count_legacy_open_enrollments()
+		except AttributeError:
+			pass
 
 @interface.implementer(IExternalMappingDecorator)
 @component.adapter(ICourseOutline)

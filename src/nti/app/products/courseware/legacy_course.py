@@ -652,10 +652,15 @@ class _LegacyCommunityBasedCourseInstance(CourseInstance):
 		"""
 
 		found_instructors = set()
+		community = self.legacy_community
 		for i in catalog_entry.Instructors:
 			user = User.get_user(i.username) if i.username else None
 			if user:
 				found_instructors.add( user )
+				# TODO: We should probably be adding the instructor
+				# to the correct scopes automatically?
+				#user.record_dynamic_membership(community)
+
 
 		if found_instructors:
 			storage = self._instructor_storage
@@ -701,8 +706,21 @@ class _LegacyCourseInstanceEnrollments(object):
 
 		# Now, in legacy courses, the instructors appear
 		# enrolled because they are also a community
-		# member. So account for that.
-		i -= len(self.context.instructors)
+		# member. So account for that?
+		#i -= len(self.context.instructors)
+		return i
+
+	# Non-interface methods
+	def count_legacy_open_enrollments(self):
+		all_enrollments = self.count_enrollments()
+		credit_enrollments = self.count_legacy_forcredit_enrollments()
+		return all_enrollments - credit_enrollments
+
+	def count_legacy_forcredit_enrollments(self):
+		forcredit = self.context.restricted_scope_entity
+		container = ILengthEnumerableEntityContainer(forcredit, ())
+		i = len(container)
+		# Off by owner maybe?
 		return i
 
 from nti.contenttypes.courses.interfaces import ICourseEnrollmentManager
