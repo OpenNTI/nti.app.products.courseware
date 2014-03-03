@@ -657,9 +657,7 @@ class _LegacyCommunityBasedCourseInstance(CourseInstance):
 			user = User.get_user(i.username) if i.username else None
 			if user:
 				found_instructors.add( user )
-				# TODO: We should probably be adding the instructor
-				# to the correct scopes automatically?
-				#user.record_dynamic_membership(community)
+				user.record_dynamic_membership(community)
 
 
 		if found_instructors:
@@ -697,7 +695,11 @@ class _LegacyCourseInstanceEnrollments(object):
 
 	def iter_enrollments(self):
 		community = self.context.legacy_community
-		return community.iter_members()
+		instructor_usernames = {x.username for x in self.context.instructors}
+		for member in community.iter_members():
+			if member.username in instructor_usernames:
+				continue
+			yield member
 
 	def count_enrollments(self):
 		community = self.context.legacy_community
@@ -707,7 +709,7 @@ class _LegacyCourseInstanceEnrollments(object):
 		# Now, in legacy courses, the instructors appear
 		# enrolled because they are also a community
 		# member. So account for that?
-		#i -= len(self.context.instructors)
+		i -= len(self.context.instructors)
 		return i
 
 	# Non-interface methods
