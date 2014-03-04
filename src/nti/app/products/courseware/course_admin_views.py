@@ -18,7 +18,7 @@ from zope import lifecycleevent
 from nti.contenttypes.courses.interfaces import ICourseInstance
 
 from pyramid.view import view_config
-from nti.appserver._view_utils  import AbstractAuthenticatedView
+from nti.app.base.abstract_views import AbstractAuthenticatedView
 
 from nti.dataserver import authorization as nauth
 
