@@ -116,9 +116,6 @@ class DefaultCourseCatalogLegacyEntryInstancePolicy(object):
 	register_courses_in_components_named = None
 
 	def __init__(self):
-		if hasattr(self, 'unregister_courses_from_components_named') and self.register_courses_in_components_named is None:
-			self.register_courses_in_components_named = getattr(self, 'unregister_courses_from_components_named')
-			logger.warn("Deprecated usage of unregister_courses_from_components_named in %s", self)
 		if not self.register_courses_in_components_named:
 			logger.warn("Courses for %s will be registered globally", self)
 
