@@ -100,8 +100,8 @@ class _NTICardContentHitPredicate(_BasePredicate):
 		return is_allowed(item.containerId) and is_allowed(item.target_ntiid)
 
 @interface.implementer(search_interfaces.ISearchHitPredicate)
-@component.adapter(nti_interfaces.IModeledContent)
-class _ModeledContentHitPredicate(_BasePredicate):
+@component.adapter(nti_interfaces.ICreated)
+class _CreatedContentHitPredicate(_BasePredicate):
 
 	__slots__ = ()
 
