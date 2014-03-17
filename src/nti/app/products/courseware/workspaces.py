@@ -146,6 +146,14 @@ class _AbstractQueryBasedCoursesCollection(contained.Contained):
 		container[:] = [self.contained_interface(x) for x in container]
 		for enrollment in container:
 			enrollment.__parent__ = self
+			# The adapter (contained_interface) rarely sets these
+			# because it may not have them, so provide them ourself
+			# TODO: Change the calling conventions so we don't have to do this
+			if getattr(enrollment, 'Username', self) is None:
+				enrollment.Username = parent.user.username
+			if getattr(enrollment, '_user', self) is None:
+				enrollment._user = parent.user
+
 			if self.user_extra_auth:
 				course = ICourseInstance(enrollment)
 				enrollment._user = parent.user
