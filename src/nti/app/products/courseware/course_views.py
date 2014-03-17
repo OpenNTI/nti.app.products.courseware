@@ -32,7 +32,8 @@ from . import VIEW_CONTENTS
 from . import VIEW_COURSE_ENROLLMENT_ROSTER
 from . import VIEW_COURSE_ACTIVITY
 
-
+from zope.traversing.interfaces import IPathAdapter
+from pyramid.interfaces import IRequest
 
 from nti.contenttypes.courses.interfaces import is_instructed_by_name
 from nti.contenttypes.courses.interfaces import ICourseEnrollments
@@ -85,13 +86,47 @@ from nti.appserver.interfaces import IIntIdUserSearchPolicy
 from zope.intid.interfaces import IIntIds
 from nti.dataserver.interfaces import IUser
 from nti.app.externalization.view_mixins import BatchingUtilsMixin
+from zope.container.contained import Contained
+from nti.utils.property import alias
+
+@interface.implementer(IPathAdapter)
+@component.adapter(ICourseInstance, IRequest)
+class CourseEnrollmentRosterPathAdapter(Contained):
+	"""
+	We use a path adapter for the enrollment object so that we
+	can traverse to actual course enrollment objects for enrolled users,
+	thus letting us have named views or further traversing
+	for those objects.
+	"""
+
+	def __init__(self, course, request):
+		self.__parent__ = course
+		self.__name__ = VIEW_COURSE_ENROLLMENT_ROSTER
+
+	course = alias('__parent__')
+
+	def __getitem__(self, username):
+		username = username.lower()
+		enrollments_iter = ICourseEnrollments(self.__parent__).iter_enrollments()
+
+		for item in enrollments_iter:
+			if item.username.lower() == username:
+				enrollment = component.getMultiAdapter( (self.__parent__, item),
+														ICourseInstanceEnrollment )
+				if enrollment.__parent__ is None:
+					# Typically it will be, lets give it the right
+					# place
+					enrollment.xxx_fill_in_parent()
+					enrollment.CourseInstance = None
+				return enrollment
+
+		raise KeyError(username)
 
 @view_config(route_name='objects.generic.traversal',
 			 renderer='rest',
 			 request_method='GET',
-			 context=ICourseInstance,
-			 permission=nauth.ACT_READ,
-			 name=VIEW_COURSE_ENROLLMENT_ROSTER)
+			 context=CourseEnrollmentRosterPathAdapter,
+			 permission=nauth.ACT_READ)
 class CourseEnrollmentRosterGetView(AbstractAuthenticatedView,
 									BatchingUtilsMixin):
 	"""
@@ -164,7 +199,7 @@ class CourseEnrollmentRosterGetView(AbstractAuthenticatedView,
 	"""
 	def __call__(self):
 		request = self.request
-		context = request.context
+		context = request.context.course
 		username = request.authenticated_userid
 		course = context
 
@@ -222,20 +257,6 @@ class CourseEnrollmentRosterGetView(AbstractAuthenticatedView,
 		# username search on the intid set it returns. However, this
 		# is good enough for now. Sorting is maintained from above.
 		# Note that it will blow up once we have non-legacy courses.
-
-		if request.subpath:
-			exact_match_username = request.subpath[0].lower()
-			for item in items:
-				if item.Username.lower() == exact_match_username:
-					if item.__parent__ is None:
-						# Typically it will be, lets give it the right
-						# place
-						item.xxx_fill_in_parent()
-						item.CourseInstance = None
-					return item
-			# No match, not enrolled, the URL doesn't exist
-			raise hexc.HTTPNotFound(_("Not an enrolled user"))
-
 
 		if filter_name == 'LegacyEnrollmentStatusForCredit':
 			items = [x for x in items if x.LegacyEnrollmentStatus == 'ForCredit']
@@ -376,8 +397,6 @@ class CourseEnrollmentsRosterDownloadView(AllCourseEnrollmentRosterDownloadView)
 	def _iter_catalog_entries(self):
 		return ( ICourseCatalogEntry(self.request.context), )
 
-from zope.traversing.interfaces import IPathAdapter
-from pyramid.interfaces import IRequest
 
 @interface.implementer(IPathAdapter)
 @component.adapter(ICourseInstance, IRequest)

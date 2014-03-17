@@ -60,6 +60,11 @@
 	<adapter name="CourseActivity"
 			 factory=".course_views.CourseActivityPathAdapter" />
 
+	<!-- Let us get to the roster -->
+	<adapter name="CourseEnrollmentRoster"
+			 factory=".course_views.CourseEnrollmentRosterPathAdapter"
+			 provides="zope.traversing.interfaces.IPathAdapter" />
+
 	<!-- Workspaces -->
 	<!-- A subscriber for enumeration -->
 	<subscriber factory=".workspaces.CoursesWorkspace"
