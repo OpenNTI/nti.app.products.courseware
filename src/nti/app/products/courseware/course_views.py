@@ -14,6 +14,8 @@ logger = __import__('logging').getLogger(__name__)
 from zope import component
 from zope import interface
 
+from . import MessageFactory as _
+
 from .interfaces import ICourseInstanceActivity
 from .interfaces import ICourseInstanceEnrollment
 from nti.contenttypes.courses.interfaces import ICourseInstance
@@ -232,7 +234,7 @@ class CourseEnrollmentRosterGetView(AbstractAuthenticatedView,
 						item.CourseInstance = None
 					return item
 			# No match, not enrolled, the URL doesn't exist
-			raise hexc.HTTPNotFound("Not an enrolled user")
+			raise hexc.HTTPNotFound(_("Not an enrolled user"))
 
 
 		if filter_name == 'LegacyEnrollmentStatusForCredit':
@@ -259,6 +261,10 @@ class CourseEnrollmentRosterGetView(AbstractAuthenticatedView,
 		# expensive, and massively bloats the response...77 students
 		# can generate 12MB of response. So we don't include the course instance
 		for i in result['Items']:
+			if i.__parent__ is None:
+				# Typically it will be, lets give it the right
+				# place
+				i.xxx_fill_in_parent()
 			i.CourseInstance = None
 
 		# TODO: We have no last modified for this
