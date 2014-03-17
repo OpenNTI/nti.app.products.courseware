@@ -171,14 +171,17 @@ class _AbstractInstanceWrapper(contained.Contained):
 	__acl__ = ()
 	def __init__(self, context):
 		self.CourseInstance = context
+		# Sometimes the CourseInstance object goes away
+		# for externalization, so capture an extra copy
+		self._private_course_instance = context
 
 	@Lazy
 	def __name__(self):
-		return self.CourseInstance.__name__
+		return self._private_course_instance.__name__
 
 	def __conform__(self, iface):
 		if ICourseInstance.isOrExtends(iface):
-			return self.CourseInstance
+			return self._private_course_instance
 
 
 @interface.implementer(interfaces.ICourseInstanceEnrollment)
@@ -217,13 +220,9 @@ class LegacyCourseInstanceEnrollment(CourseInstanceEnrollment):
 	def __init__(self, *args, **kwargs):
 		super(LegacyCourseInstanceEnrollment,self).__init__(*args, **kwargs)
 
-		# Sometimes the course instance goes away for externalization purposes,
-		# so capture a private copy now
-		self.__course_inst = self.CourseInstance
-
 	@Lazy
 	def LegacyEnrollmentStatus(self):
-		course_inst = self.__course_inst
+		course_inst = self._private_course_instance
 		# check user belongs to restricted entity
 		for_credit = self._user in course_inst.restricted_scope_entity_container
 		return "ForCredit" if for_credit else "Open"
@@ -253,6 +252,11 @@ class EnrolledCoursesCollection(_AbstractQueryBasedCoursesCollection):
 class CourseInstanceAdministrativeRole(SchemaConfigured,
 									   _AbstractInstanceWrapper):
 	createDirectFieldProperties(interfaces.ICourseInstanceAdministrativeRole)
+
+	def __init__(self, CourseInstance=None, RoleName=None):
+		# SchemaConfigured is not cooperative
+		SchemaConfigured.__init__(self, RoleName=RoleName)
+		_AbstractInstanceWrapper.__init__(self, CourseInstance)
 
 @interface.implementer(interfaces.IPrincipalAdministrativeRoleCatalog)
 @component.adapter(IUser)
