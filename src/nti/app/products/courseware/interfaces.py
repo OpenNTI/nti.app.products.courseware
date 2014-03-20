@@ -10,6 +10,8 @@ $Id$
 from __future__ import print_function, unicode_literals, absolute_import, division
 __docformat__ = "restructuredtext en"
 
+from . import MessageFactory as _
+
 logger = __import__('logging').getLogger(__name__)
 
 from zope import interface
@@ -57,11 +59,11 @@ class ICourseCatalogInstructorInfo(interface.Interface):
 		the user's avatar URL.
 	"""
 
-	Name = TextLine(title="The instructor's name")
-	Title = TextLine(title="The instructor's title of address such as Dr.",
+	Name = TextLine(title=_("The instructor's name"))
+	Title = TextLine(title=_("The instructor's title of address such as Dr."),
 							required=False)
-	JobTitle = TextLine(title="The instructor's academic job title")
-	Suffix = TextLine(title="The instructor's suffix such as PhD or Jr",
+	JobTitle = TextLine(title=_("The instructor's academic job title"))
+	Suffix = TextLine(title=_("The instructor's suffix such as PhD or Jr"),
 							 required=False)
 
 class ICourseCatalogInstructorLegacyInfo(ICourseCatalogInstructorInfo):
@@ -69,11 +71,11 @@ class ICourseCatalogInstructorLegacyInfo(ICourseCatalogInstructorInfo):
 	Additional legacy info about course instructors.
 	"""
 
-	defaultphoto = TextLine(title="A URL path for an extra copy of the instructor's photo",
-							description="ideally this should be the profile photo",
+	defaultphoto = TextLine(title=_("A URL path for an extra copy of the instructor's photo"),
+							description=_("ideally this should be the profile photo"),
 							required=False) # TODO: We need a schema field for this
 
-	username = TextLine(title="A username string that may or may not refer to an actual account.",
+	username = TextLine(title=_("A username string that may or may not refer to an actual account."),
 							   required=False)
 	username.setTaggedValue('_ext_excluded_out', True) # Internal use only
 
@@ -84,9 +86,9 @@ class ICourseCreditLegacyInfo(interface.Interface):
 
 	"""
 
-	Hours = Int(title="The number of hours that can be earned.",
+	Hours = Int(title=_("The number of hours that can be earned."),
 					   min=1)
-	Enrollment = Dict(title="Information about how to enroll. This is not modeled.",
+	Enrollment = Dict(title=_("Information about how to enroll. This is not modeled."),
 							 key_type=TextLine(title="A key"),
 							 value_type=TextLine(title="A value"))
 
@@ -104,22 +106,22 @@ class ICourseCatalogEntry(ILocation):
 	entry.
 	"""
 
-	Title = TextLine(title="The provider's descriptive title")
-	Description = Text(title="The provider's paragraph-length description")
+	Title = TextLine(title=_("The provider's descriptive title"))
+	Description = Text(title=_("The provider's paragraph-length description"))
 
-	ProviderUniqueID = TextLine(title="The unique id assigned by the provider")
-	ProviderDepartmentTitle = TextLine(title="The string assigned to the provider's department offering the course")
+	ProviderUniqueID = TextLine(title=_("The unique id assigned by the provider"))
+	ProviderDepartmentTitle = TextLine(title=_("The string assigned to the provider's department offering the course"))
 
-	Instructors = ListOrTuple(title="The instuctors. Order might matter",
+	Instructors = ListOrTuple(title=_("The instuctors. Order might matter"),
 									 value_type=Object(ICourseCatalogInstructorInfo) )
 
 	### Things related to the availability of the course
-	StartDate = Datetime(title="The date on which the course begins",
-								description="Currently optional; a missing value means the course already started")
-	Duration = Timedelta(title="The length of the course",
-								description="Currently optional, may be None")
-	EndDate = Datetime( title="The date on which the course ends",
-							   description="Currently optional; a missing value means the course has no defined end date.")
+	StartDate = Datetime(title=_("The date on which the course begins"),
+								description=_("Currently optional; a missing value means the course already started"))
+	Duration = Timedelta(title=_("The length of the course"),
+								description=_("Currently optional, may be None"))
+	EndDate = Datetime( title=_("The date on which the course ends"),
+							   description=_("Currently optional; a missing value means the course has no defined end date."))
 
 
 class ICourseCatalogLegacyEntry(ICourseCatalogEntry):
@@ -129,39 +131,39 @@ class ICourseCatalogLegacyEntry(ICourseCatalogEntry):
 
 	# Legacy, will go away given a more full description of the
 	# course.
-	ContentPackageNTIID = ValidNTIID(title="The NTIID of the root content package")
+	ContentPackageNTIID = ValidNTIID(title=_("The NTIID of the root content package"))
 
 	# Legacy. This isn't really part of the course catalog.
-	Communities = ListOrTuple(value_type=TextLine(title='The community'),
-									 title="Course communities",
+	Communities = ListOrTuple(value_type=TextLine(title=_('The community')),
+									 title=_("Course communities"),
 									 required=False)
 
 	# While this might be a valid part of the course catalog, this
 	# representation of it isn't very informative or flexible
 	Credit = List(value_type=Object(ICourseCreditLegacyInfo),
-						 title="Either missing or an array with one entry.",
+						 title=_("Either missing or an array with one entry."),
 						 required=False)
 
-	Video = ValidURI(title="A URL-like string, possibly using private-but-un-prefixed schemes, or the empty string or missing.",
+	Video = ValidURI(title=_("A URL-like string, possibly using private-but-un-prefixed schemes, or the empty string or missing."),
 							required=False)
 
-	Schedule = Dict(title="An unmodeled dictionary, possibly useful for presentation.")
+	Schedule = Dict(title=_("An unmodeled dictionary, possibly useful for presentation."))
 
-	Prerequisites = List(title="A list of dictionaries suitable for presentation. Expect a `title` key.",
+	Prerequisites = List(title=_("A list of dictionaries suitable for presentation. Expect a `title` key."),
 								value_type=Dict(key_type=TextLine(),
 													   value_type=TextLine()))
 
-	Preview = Bool(title="Is this entry for a course that is upcoming?",
-						  description="This course should be considered an advertising preview"
-						  " and not yet have its content accessed.")
+	Preview = Bool(title=_("Is this entry for a course that is upcoming?"),
+						  description=_("This course should be considered an advertising preview"
+						  " and not yet have its content accessed."))
 
 	### These are being replaced with presentation specific asset bundles
 	# (one path is insufficient to handle things like retina displays
 	# and the various platforms).
-	LegacyPurchasableIcon = TextLine(title="A URL or path of indeterminate type or meaning",
+	LegacyPurchasableIcon = TextLine(title=_("A URL or path of indeterminate type or meaning"),
 											required=False)
 
-	LegacyPurchasableThumbnail = TextLine(title="A URL or path of indeterminate type or meaning",
+	LegacyPurchasableThumbnail = TextLine(title=_("A URL or path of indeterminate type or meaning"),
 												 required=False)
 
 
@@ -170,9 +172,9 @@ class ILegacyCommunityBasedCourseInstance(ICourseInstance):
 	Marker interface for a legacy course instance
 	"""
 
-	LegacyScopes = Dict(title="'public' and 'restricted' entity ids",
+	LegacyScopes = Dict(title=_("'public' and 'restricted' entity ids"),
 							   readonly=True)
-	LegacyInstructorForums = TextLine(title='A space separated list of forum NTIIDs',
+	LegacyInstructorForums = TextLine(title=_('A space separated list of forum NTIIDs'),
 									  readonly=True)
 
 class ICourseInstanceActivity(IContained,ILastModified):
@@ -251,11 +253,11 @@ class ICourseInstanceEnrollment(IShouldHaveTraversablePath):
 	and the corresponding catalog entry.
 	"""
 
-	__name__ = interface.Attribute("The name of the enrollment is the same as the CourseInstance.")
+	__name__ = interface.Attribute( _("The name of the enrollment is the same as the CourseInstance."))
 
 	CourseInstance = Object(ICourseInstance)
 
-	Username = TextLine(title="The user this is about",
+	Username = TextLine(title=_("The user this is about"),
 							   required=False,
 							   readonly=True)
 
@@ -264,7 +266,7 @@ class ILegacyCourseInstanceEnrollment(ICourseInstanceEnrollment):
 	An object with information about enrollment in a legacy course.
 	"""
 
-	LegacyEnrollmentStatus = TextLine(title="The type of enrollment, ForCredit or Open",
+	LegacyEnrollmentStatus = TextLine(title=_("The type of enrollment, ForCredit or Open"),
 											 required=True,
 											 readonly=True,
 											 default='Open')
@@ -304,9 +306,9 @@ class ICourseInstanceAdministrativeRole(IShouldHaveTraversablePath):
 	and the corresponding catalog entry.
 	"""
 
-	__name__ = interface.Attribute("The name of the administration is the same as the CourseInstance.")
+	__name__ = interface.Attribute( _("The name of the administration is the same as the CourseInstance."))
 
-	RoleName = Choice(title="The name of the role this principal holds",
+	RoleName = Choice(title=_("The name of the role this principal holds"),
 							 values=('instructor',))
 	CourseInstance = Object(ICourseInstance)
 

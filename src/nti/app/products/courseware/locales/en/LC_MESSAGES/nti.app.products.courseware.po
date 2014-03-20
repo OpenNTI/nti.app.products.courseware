@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2014-03-20 15:22-0500\n"
+"POT-Creation-Date: 2014-03-20 16:08-0500\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: en <LL@li.org>\n"
@@ -27,5 +27,160 @@ msgstr ""
 
 #: src/nti/app/products/courseware/course_views.py:268
 msgid "Unsupported filteroption"
+msgstr ""
+
+#: src/nti/app/products/courseware/interfaces.py:62
+msgid "The instructor's name"
+msgstr ""
+
+#: src/nti/app/products/courseware/interfaces.py:63
+msgid "The instructor's title of address such as Dr."
+msgstr ""
+
+#: src/nti/app/products/courseware/interfaces.py:65
+msgid "The instructor's academic job title"
+msgstr ""
+
+#: src/nti/app/products/courseware/interfaces.py:66
+msgid "The instructor's suffix such as PhD or Jr"
+msgstr ""
+
+#: src/nti/app/products/courseware/interfaces.py:74
+msgid "A URL path for an extra copy of the instructor's photo"
+msgstr ""
+
+#: src/nti/app/products/courseware/interfaces.py:75
+msgid "ideally this should be the profile photo"
+msgstr ""
+
+#: src/nti/app/products/courseware/interfaces.py:78
+msgid "A username string that may or may not refer to an actual account."
+msgstr ""
+
+#: src/nti/app/products/courseware/interfaces.py:89
+msgid "The number of hours that can be earned."
+msgstr ""
+
+#: src/nti/app/products/courseware/interfaces.py:91
+msgid "Information about how to enroll. This is not modeled."
+msgstr ""
+
+#: src/nti/app/products/courseware/interfaces.py:109
+msgid "The provider's descriptive title"
+msgstr ""
+
+#: src/nti/app/products/courseware/interfaces.py:110
+msgid "The provider's paragraph-length description"
+msgstr ""
+
+#: src/nti/app/products/courseware/interfaces.py:112
+msgid "The unique id assigned by the provider"
+msgstr ""
+
+#: src/nti/app/products/courseware/interfaces.py:113
+msgid "The string assigned to the provider's department offering the course"
+msgstr ""
+
+#: src/nti/app/products/courseware/interfaces.py:115
+msgid "The instuctors. Order might matter"
+msgstr ""
+
+#: src/nti/app/products/courseware/interfaces.py:119
+msgid "The date on which the course begins"
+msgstr ""
+
+#: src/nti/app/products/courseware/interfaces.py:120
+msgid "Currently optional; a missing value means the course already started"
+msgstr ""
+
+#: src/nti/app/products/courseware/interfaces.py:121
+msgid "The length of the course"
+msgstr ""
+
+#: src/nti/app/products/courseware/interfaces.py:122
+msgid "Currently optional, may be None"
+msgstr ""
+
+#: src/nti/app/products/courseware/interfaces.py:123
+msgid "The date on which the course ends"
+msgstr ""
+
+#: src/nti/app/products/courseware/interfaces.py:124
+msgid ""
+"Currently optional; a missing value means the course has no defined end "
+"date."
+msgstr ""
+
+#: src/nti/app/products/courseware/interfaces.py:134
+msgid "The NTIID of the root content package"
+msgstr ""
+
+#: src/nti/app/products/courseware/interfaces.py:137
+msgid "The community"
+msgstr ""
+
+#: src/nti/app/products/courseware/interfaces.py:138
+msgid "Course communities"
+msgstr ""
+
+#: src/nti/app/products/courseware/interfaces.py:144
+msgid "Either missing or an array with one entry."
+msgstr ""
+
+#: src/nti/app/products/courseware/interfaces.py:147
+msgid ""
+"A URL-like string, possibly using private-but-un-prefixed schemes, or the"
+" empty string or missing."
+msgstr ""
+
+#: src/nti/app/products/courseware/interfaces.py:150
+msgid "An unmodeled dictionary, possibly useful for presentation."
+msgstr ""
+
+#: src/nti/app/products/courseware/interfaces.py:152
+msgid "A list of dictionaries suitable for presentation. Expect a `title` key."
+msgstr ""
+
+#: src/nti/app/products/courseware/interfaces.py:156
+msgid "Is this entry for a course that is upcoming?"
+msgstr ""
+
+#: src/nti/app/products/courseware/interfaces.py:157
+msgid ""
+"This course should be considered an advertising preview and not yet have "
+"its content accessed."
+msgstr ""
+
+#: src/nti/app/products/courseware/interfaces.py:163
+#: src/nti/app/products/courseware/interfaces.py:166
+msgid "A URL or path of indeterminate type or meaning"
+msgstr ""
+
+#: src/nti/app/products/courseware/interfaces.py:175
+msgid "'public' and 'restricted' entity ids"
+msgstr ""
+
+#: src/nti/app/products/courseware/interfaces.py:177
+msgid "A space separated list of forum NTIIDs"
+msgstr ""
+
+#: src/nti/app/products/courseware/interfaces.py:256
+msgid "The name of the enrollment is the same as the CourseInstance."
+msgstr ""
+
+#: src/nti/app/products/courseware/interfaces.py:260
+msgid "The user this is about"
+msgstr ""
+
+#: src/nti/app/products/courseware/interfaces.py:269
+msgid "The type of enrollment, ForCredit or Open"
+msgstr ""
+
+#: src/nti/app/products/courseware/interfaces.py:309
+msgid "The name of the administration is the same as the CourseInstance."
+msgstr ""
+
+#: src/nti/app/products/courseware/interfaces.py:311
+msgid "The name of the role this principal holds"
 msgstr ""
 
