@@ -14,6 +14,8 @@ $Id$
 from __future__ import print_function, unicode_literals, absolute_import, division
 __docformat__ = "restructuredtext en"
 
+from . import MessageFactory as _
+
 logger = __import__('logging').getLogger(__name__)
 
 from zope import interface
@@ -90,7 +92,7 @@ class enroll_course_view(AbstractAuthenticatedView,
 		try:
 			catalog_entry = catalog[identifier]
 		except KeyError:
-			return hexc.HTTPNotFound("There is no course by that name")
+			return hexc.HTTPNotFound( _("There is no course by that name") )
 
 		if not is_readable(catalog_entry, request=self.request):
 			raise hexc.HTTPForbidden()

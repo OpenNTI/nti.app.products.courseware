@@ -9,12 +9,12 @@ Views directly related to individual courses and course sub-objects.
 from __future__ import print_function, unicode_literals, absolute_import, division
 __docformat__ = "restructuredtext en"
 
+from . import MessageFactory as _
+
 logger = __import__('logging').getLogger(__name__)
 
 from zope import component
 from zope import interface
-
-from . import MessageFactory as _
 
 from .interfaces import ICourseInstanceActivity
 from .interfaces import ICourseInstanceEnrollment
@@ -243,7 +243,7 @@ class CourseEnrollmentRosterGetView(AbstractAuthenticatedView,
 			# We're not silently ignoring because in the past
 			# we've had clients send in the wrong value for a long time
 			# before anybody noticed
-			raise hexc.HTTPBadRequest("Unsupported sort option")
+			raise hexc.HTTPBadRequest( _("Unsupported sort option") )
 
 		items.extend((component.getMultiAdapter( (course, x),
 												 ICourseInstanceEnrollment )
@@ -265,7 +265,7 @@ class CourseEnrollmentRosterGetView(AbstractAuthenticatedView,
 			items = [x for x in items if x.LegacyEnrollmentStatus == 'Open']
 			result['FilteredTotalItemCount'] = len(items)
 		elif filter_name: # pragma: no cover
-			raise hexc.HTTPBadRequest("Unsupported filteroption")
+			raise hexc.HTTPBadRequest( _("Unsupported filteroption") )
 
 		if username_search_term:
 			policy = component.getAdapter(self.remoteUser, IIntIdUserSearchPolicy, name='comprehensive')
