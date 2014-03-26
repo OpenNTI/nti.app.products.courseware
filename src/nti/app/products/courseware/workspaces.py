@@ -345,7 +345,7 @@ class CatalogEntryLocationInfo(LocationPhysicallyLocatable):
 		return parents
 
 
-from nti.appserver.interfaces import IUserPresentationPriorityCreators
+from nti.app.notabledata.interfaces import IUserPresentationPriorityCreators
 
 @interface.implementer(IUserPresentationPriorityCreators)
 @component.adapter(IUser, interface.Interface)
