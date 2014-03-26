@@ -10,6 +10,10 @@
 
 	<include package="nti.contenttypes.courses" />
 
+	<!-- I18N -->
+	<i18n:registerTranslations directory="locales" />
+
+
 	<!--
 	We provide one global catalog,
 	but every site that registers its own courses
