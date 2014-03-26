@@ -85,7 +85,7 @@
 
 	<!-- A subscriber for important principals -->
 	<subscriber factory=".workspaces._UserInstructorsPresentationPriorityCreators"
-				provides="nti.appserver.interfaces.IUserPresentationPriorityCreators"/>
+				provides="nti.app.notabledata.interfaces.IUserPresentationPriorityCreators"/>
 
 	<!-- Traversal paths -->
 	<!-- This may go away -->
