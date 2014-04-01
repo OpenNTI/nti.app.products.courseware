@@ -11,7 +11,7 @@ the following:
 * Enrollment status is managed via a shop (store) purchasable
 
 
-$Id$
+.. $Id$
 """
 
 from __future__ import print_function, unicode_literals, absolute_import, division
@@ -54,7 +54,6 @@ from nti.contenttypes.courses.outlines import CourseOutlineContentNode
 from nti.app.products.courseware.interfaces import ICourseCatalog
 from nti.app.products.courseware.interfaces import ICourseCatalogLegacyEntry
 from nti.app.products.courseware.interfaces import IPrincipalEnrollmentCatalog
-from .interfaces import ILegacyCommunityBasedCourseInstance
 
 from nti.dataserver.interfaces import IUser
 from nti.dataserver.interfaces import ICommunity
@@ -75,6 +74,8 @@ from nti.externalization.externalization import to_external_object
 
 from nti.store import course
 from nti.store.interfaces import ICourse
+
+from .interfaces import ILegacyCommunityBasedCourseInstance
 
 class ICourseCatalogLegacyEntryInstancePolicy(interface.Interface):
 	"""
@@ -227,8 +228,6 @@ def _register_course_purchasable_from_catalog_entry( entry, event ):
 		purch_ntiid = make_ntiid( provider=provider, nttype='course', specific=purch_id )
 		items = (entry.ContentPackageNTIID,)
 
-
-
 	the_course = course.create_course( ntiid=purch_ntiid,
 									   title=entry.Title,
 									   author=author,
@@ -306,7 +305,6 @@ def _register_course_purchasable_from_catalog_entry( entry, event ):
 
 	components.registerUtility( the_course, ICourse, name=purch_ntiid )
 
-
 	# Ensure the referenced community exists if it doesn't, and
 	# give it a course instance.
 
@@ -330,8 +328,8 @@ def _register_course_purchasable_from_catalog_entry( entry, event ):
 	# content into the database
 	notify(CourseInstanceAvailableEvent(the_course))
 
-from nti.store.purchasable import get_all_purchasables
 from nti.store.enrollment import get_enrollment
+from nti.store.purchasable import get_all_purchasables
 from nti.dataserver.datastructures import LastModifiedCopyingUserList
 
 @interface.implementer(ICourseInstance)
@@ -362,6 +360,17 @@ def _course_instance_for_catalog_entry(entry):
 def _course_content_package_to_course(package):
 	# We go via the defined adapter from the catalog entry
 	course_catalog = component.getUtility(ICourseCatalog)
+	if course_catalog.isEmpty():
+		# check local catalog
+		provider = get_provider(package.ntiid)
+		policy = component.queryUtility(ICourseCatalogLegacyEntryInstancePolicy,
+										name=provider)
+		if policy is not None:
+			name = policy.register_courses_in_components_named
+			components = component.getGlobalSiteManager() \
+							 	  .getUtility(IComponents, name=name)
+			course_catalog = components.getUtility(ICourseCatalog)
+
 	for entry in course_catalog:
 		if getattr(entry, 'ContentPackageNTIID', None) == package.ntiid:
 			return ICourseInstance(entry, None)

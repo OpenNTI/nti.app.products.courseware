@@ -80,6 +80,9 @@ class CourseCatalog(Contained):
 		if event:
 			lifecycleevent.removed(entry)
 
+	def isEmpty(self):
+		return len(self) == 0
+
 	def __len__( self ):
 		return len(self._entries)
 

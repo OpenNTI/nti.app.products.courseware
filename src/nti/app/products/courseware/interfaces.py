@@ -5,24 +5,27 @@ Integrated courseware-related interfaces. This
 is a high-level package built mostly upon the low-level
 datastructures defined in :mod:`nti.app.products.courses`.
 
-$Id$
+.. $Id$
 """
 from __future__ import print_function, unicode_literals, absolute_import, division
 __docformat__ = "restructuredtext en"
 
-from . import MessageFactory as _
-
 logger = __import__('logging').getLogger(__name__)
 
 from zope import interface
+from zope.interface.common import sequence
 from zope.location.interfaces import ILocation
 from zope.container.interfaces import IContained
 
+from dolmen.builtins import IIterable
+
 from nti.appserver import interfaces as app_interfaces
-from nti.contenttypes.courses.interfaces import IPrincipalEnrollments
+
 from nti.contenttypes.courses.interfaces import ICourseInstance
-from nti.dataserver.interfaces import IShouldHaveTraversablePath
+from nti.contenttypes.courses.interfaces import IPrincipalEnrollments
+
 from nti.dataserver.interfaces import ILastModified
+from nti.dataserver.interfaces import IShouldHaveTraversablePath
 
 from nti.utils.schema import Bool
 from nti.utils.schema import Choice
@@ -36,16 +39,20 @@ from nti.utils.schema import ValidDatetime as Datetime
 from nti.utils.schema import ValidText as Text
 from nti.utils.schema import ValidTextLine as TextLine
 from nti.utils.schema import ValidURI
-
 from nti.ntiids.schema import ValidNTIID
 
-class ICourseCatalog(interface.Interface):
+class ICourseCatalog(IIterable, sequence.IFiniteSequence):
 	"""
 	Something that manages the set of courses
 	available in the system and provides
 	ways to query for courses and find
 	out information about them.
 	"""
+	
+	def isEmpty():
+		"""
+		return if this catalog is empty
+		"""
 
 	# TODO: What is this a specialization of, anything?
 
