@@ -360,17 +360,6 @@ def _course_instance_for_catalog_entry(entry):
 def _course_content_package_to_course(package):
 	# We go via the defined adapter from the catalog entry
 	course_catalog = component.getUtility(ICourseCatalog)
-	if course_catalog.isEmpty():
-		# check local catalog
-		provider = get_provider(package.ntiid)
-		policy = component.queryUtility(ICourseCatalogLegacyEntryInstancePolicy,
-										name=provider)
-		if policy is not None:
-			name = policy.register_courses_in_components_named
-			components = component.getGlobalSiteManager() \
-							 	  .getUtility(IComponents, name=name)
-			course_catalog = components.getUtility(ICourseCatalog)
-
 	for entry in course_catalog:
 		if getattr(entry, 'ContentPackageNTIID', None) == package.ntiid:
 			return ICourseInstance(entry, None)
