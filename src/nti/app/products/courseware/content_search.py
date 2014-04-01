@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
-$Id$
+.. $Id$
 """
 from __future__ import print_function, unicode_literals, absolute_import, division
 __docformat__ = "restructuredtext en"
@@ -37,8 +37,8 @@ def get_collection_root(ntiid):
 
 def get_node(outline, ntiids=()):
 	def _recur(node):
-		content_ntiid = getattr(node, 'ContentNTIID', None) or u''
-		if content_ntiid in ntiids:
+		content_ntiid = getattr(node, 'ContentNTIID', None)
+		if content_ntiid and content_ntiid in ntiids:
 			return node
 		result = None
 		for child in node.values():
@@ -54,7 +54,7 @@ def get_ntiid_path(ntiid):
 	library = component.queryUtility(lib_interfaces.IContentPackageLibrary)
 	if library and ntiid:
 		paths = library.pathToNTIID(ntiid)
-		result = {p.ntiid for p in paths} if paths else ()
+		result = (p.ntiid for p in paths) if paths else ()
 	return result
 
 def _is_allowed(ntiid, course=None, now=None):

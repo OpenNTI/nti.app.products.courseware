@@ -110,7 +110,7 @@ class _DefaultCourseActivity(Persistent):
 			del self._storage[k]
 		l.change(-len(keys))
 
-	def items(self,min=None,max=None,excludemin=False,excludemax=False):
+	def items(self, min=None, max=None, excludemin=False, excludemax=False):
 		min = time_to_64bit_int(min) if min is not None else None
 		max = time_to_64bit_int(max) if max is not None else None
 
