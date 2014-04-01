@@ -39,6 +39,7 @@ def get_node(outline, ntiid):
 	ntiid = ntiid.lower()
 	def _recur(node):
 		content_ntiid = getattr(node, 'ContentNTIID', None) or u''
+
 		if content_ntiid.lower() == ntiid:
 			return node
 		result = None
@@ -59,8 +60,6 @@ def _is_allowed(ntiid, course=None, now=None):
 			beginning = getattr(node, 'AvailableBeginning', None) or now
 			is_outline_stub_only = getattr(node, 'is_outline_stub_only', False)
 			result = not is_outline_stub_only and now >= beginning
-		else:  # course but the outline was not found
-			result = False
 	return result
 
 @repoze.lru.lru_cache(1000)
