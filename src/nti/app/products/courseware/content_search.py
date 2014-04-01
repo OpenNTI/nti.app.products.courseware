@@ -51,14 +51,17 @@ def get_node(outline, ntiid):
 	return result
 
 def _is_allowed(ntiid, course=None, now=None):
+	result = True
 	if course is not None:
-		now = now or datetime.utcnow()
 		node = get_node(course.Outline, ntiid)
 		if node is not None:
+			now = now or datetime.utcnow()
 			beginning = getattr(node, 'AvailableBeginning', None) or now
 			is_outline_stub_only = getattr(node, 'is_outline_stub_only', False)
-			return not is_outline_stub_only and now >= beginning
-	return True
+			result = not is_outline_stub_only and now >= beginning
+		else:  # course but the outline was not found
+			result = False
+	return result
 
 @repoze.lru.lru_cache(1000)
 def is_allowed(ntiid, course=None, now=None):
@@ -68,7 +71,9 @@ def is_allowed(ntiid, course=None, now=None):
 	return _is_allowed(ntiid, course, now)
 
 class _BasePredicate(object):
+
 	__slots__ = ()
+
 	def __init__(self, *args):
 		pass
 
