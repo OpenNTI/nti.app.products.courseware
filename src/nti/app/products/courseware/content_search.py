@@ -54,7 +54,7 @@ def get_ntiid_path(ntiid):
 	library = component.queryUtility(lib_interfaces.IContentPackageLibrary)
 	if library and ntiid:
 		paths = library.pathToNTIID(ntiid)
-		result = (p.ntiid for p in paths) if paths else ()
+		result = tuple(p.ntiid for p in paths) if paths else ()
 	return result
 
 def _is_allowed(ntiid, course=None, now=None):
