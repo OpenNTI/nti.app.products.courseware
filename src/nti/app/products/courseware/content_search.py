@@ -35,12 +35,10 @@ def get_collection_root(ntiid):
 	result = paths[0] if paths else None
 	return result
 
-def get_node(outline, ntiid):
-	ntiid = ntiid.lower()
+def get_node(outline, ntiids=()):
 	def _recur(node):
 		content_ntiid = getattr(node, 'ContentNTIID', None) or u''
-
-		if content_ntiid.lower() == ntiid:
+		if content_ntiid in ntiids:
 			return node
 		result = None
 		for child in node.values():
@@ -51,10 +49,18 @@ def get_node(outline, ntiid):
 	result = _recur(outline)
 	return result
 
+def get_ntiid_path(ntiid):
+	result = ()
+	library = component.queryUtility(lib_interfaces.IContentPackageLibrary)
+	if library and ntiid:
+		paths = library.pathToNTIID(ntiid)
+		result = {p.ntiid for p in paths} if paths else ()
+	return result
+
 def _is_allowed(ntiid, course=None, now=None):
 	result = True
 	if course is not None:
-		node = get_node(course.Outline, ntiid)
+		node = get_node(course.Outline, get_ntiid_path(ntiid))
 		if node is not None:
 			now = now or datetime.utcnow()
 			beginning = getattr(node, 'AvailableBeginning', None) or now
