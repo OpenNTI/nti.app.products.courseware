@@ -3,7 +3,7 @@
 """
 Implementations of course catalogs.
 
-$Id$
+.. $Id$
 """
 
 from __future__ import print_function, unicode_literals, absolute_import, division
@@ -49,7 +49,6 @@ class CourseCatalog(Contained):
 		return acl_from_aces(
 			# Everyone logged in has read and search access to the catalog
 			ace_allowing( AUTHENTICATED_GROUP_NAME, ACT_READ, CourseCatalog ) )
-
 
 	def addCatalogEntry(self, entry, event=True):
 		"""
@@ -107,6 +106,11 @@ class CourseCatalog(Contained):
 	def __reduce__(self): # Not persistent!
 		raise TypeError()
 
+	def __str__(self):
+		return str(len(self))
+
+	def __repr__(self):
+		return "%s(%s)" % (self.__class__.__name__, len(self))
 
 @interface.implementer(interfaces.ICourseCatalogInstructorInfo)
 class CourseCatalogInstructorInfo(SchemaConfigured):
