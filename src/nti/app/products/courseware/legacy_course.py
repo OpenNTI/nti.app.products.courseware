@@ -317,6 +317,7 @@ def _register_course_purchasable_from_catalog_entry( entry, event ):
 		__traceback_info__ = entry, the_course
 		raise ValueError("The root NTIID for course %s has changed!", the_course)
 
+	the_course.setCatalogEntry(entry)
 	the_course.updateInstructors( entry )
 	# Ensure we can parse the outline (this is not an optimization, to pre
 	# cache before forking, as the volatile attributes are likely to get
@@ -662,6 +663,20 @@ class _LegacyCommunityBasedCourseInstance(CourseInstance):
 		elif '_instructor_storage' in self.__dict__:
 			# Clear it, but only if we had it
 			self._instructor_storage.clear()
+
+	_v_catalog_entry = None
+
+	def setCatalogEntry(self, entry):
+		self._v_catalog_entry = entry
+
+	@property
+	def legacy_catalog_entry(self):
+		"""
+		Because of a mismatch in names, it's hard to get the
+		catalog entry for the course. This provides direct
+		access.
+		"""
+		return self._v_catalog_entry
 
 	@property
 	def instructors(self):
