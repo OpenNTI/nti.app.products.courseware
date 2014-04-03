@@ -676,6 +676,12 @@ class _LegacyCommunityBasedCourseInstance(CourseInstance):
 		catalog entry for the course. This provides direct
 		access.
 		"""
+		if self._v_catalog_entry is None:
+			catalog = component.getUtility(ICourseCatalog)
+			for entry in catalog:
+				if entry.ContentPackageNTIID == self.ContentPackageNTIID:
+					self._v_catalog_entry = entry
+					break
 		return self._v_catalog_entry
 
 	@property
