@@ -209,11 +209,15 @@ class TestWorkspace(ApplicationLayerTest):
 		with mock_dataserver.mock_db_trans(self.ds):
 			from nti.dataserver.users.interfaces import IFriendlyNamed
 			from nti.dataserver.users import User
-			IFriendlyNamed(User.get_user('sjohnson@nextthought.com')).realname = 'Steve Johnson'
-			IFriendlyNamed(User.get_user('aaa@nextthought.com')).realname = 'Jason Madden'
+			steve = User.get_user('sjohnson@nextthought.com')
+			jason = User.get_user('aaa@nextthought.com')
+			IFriendlyNamed(steve).realname = 'Steve Johnson'
+			IFriendlyNamed(jason).realname = 'Jason Madden'
 			# Fire events so they get indexed
-			lifecycleevent.modified(User.get_user('sjohnson@nextthought.com'))
-			lifecycleevent.modified(User.get_user('aaa@nextthought.com'))
+			lifecycleevent.modified(steve)
+			lifecycleevent.modified(jason)
+			lifecycleevent.modified(IFriendlyNamed(steve))
+			lifecycleevent.modified(IFriendlyNamed(jason))
 
 
 		res = self.testapp.get( '/dataserver2/users/harp4162/Courses/AdministeredCourses',

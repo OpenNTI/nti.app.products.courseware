@@ -766,7 +766,7 @@ class _LegacyCourseInstanceEnrollmentManager(object):
 		subrequest = self.request.blank(path)
 		subrequest.method = b'POST'
 		subrequest.json = body
-		subrequest.possible_site_names = getattr(self.request, 'possible_site_names', ())
+		subrequest.possible_site_names = self.request.possible_site_names
 		subrequest.environ[b'REMOTE_USER'] = self.request.environ['REMOTE_USER']
 		subrequest.environ[b'repoze.who.identity'] = self.request.environ['repoze.who.identity'].copy()
 
