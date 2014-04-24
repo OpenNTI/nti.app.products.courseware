@@ -19,17 +19,15 @@ __docformat__ = "restructuredtext en"
 
 logger = __import__('logging').getLogger(__name__)
 
-from urlparse import urljoin
 import isodate
+from urlparse import urljoin
 
 from zope import interface
 from zope import component
 from zope.component.interfaces import IComponents
-from nti.utils import schema
 
 from zope.lifecycleevent import IObjectAddedEvent
 from zope.event import notify
-from .interfaces import CourseInstanceAvailableEvent
 
 from zope.security.interfaces import IPrincipal
 
@@ -67,14 +65,17 @@ from nti.dataserver.users import User
 from nti.dataserver.users import Entity
 from nti.dataserver.users import Community
 
+from nti.externalization.externalization import to_external_object
+
 from nti.ntiids.ntiids import make_ntiid
 from nti.ntiids.ntiids import get_provider
-
-from nti.externalization.externalization import to_external_object
 
 from nti.store import course
 from nti.store.interfaces import ICourse
 
+from nti.utils import schema
+
+from .interfaces import CourseInstanceAvailableEvent
 from .interfaces import ILegacyCommunityBasedCourseInstance
 
 class ICourseCatalogLegacyEntryInstancePolicy(interface.Interface):
@@ -698,6 +699,20 @@ def _legacy_course_instance_to_catalog_entry(instance):
 		ntiid = getattr( entry, 'ContentPackageNTIID', None)
 		if ntiid == instance.ContentPackageNTIID:
 			return entry
+
+from nti.dataserver.contenttypes.forums.interfaces import IForum
+
+@interface.implementer(ILegacyCommunityBasedCourseInstance)
+@component.adapter(IForum)
+def _legacy_course_from_forum(forum):
+	board = forum.__parent__
+	community = board.__parent__
+	courses = ICourseAdministrativeLevel(community, None)
+	if courses:
+		# Assuming only one
+		course = list(courses.values())[0]
+		assert course.Discussions == board
+		return course
 
 from nti.contenttypes.courses.interfaces import ICourseEnrollments
 from nti.dataserver.interfaces import ILengthEnumerableEntityContainer
