@@ -700,20 +700,6 @@ def _legacy_course_instance_to_catalog_entry(instance):
 		if ntiid == instance.ContentPackageNTIID:
 			return entry
 
-from nti.dataserver.contenttypes.forums.interfaces import IForum
-
-@interface.implementer(ILegacyCommunityBasedCourseInstance)
-@component.adapter(IForum)
-def _legacy_course_from_forum(forum):
-	board = forum.__parent__
-	community = board.__parent__
-	courses = ICourseAdministrativeLevel(community, None)
-	if courses:
-		# Assuming only one
-		course = list(courses.values())[0]
-		assert course.Discussions == board
-		return course
-
 from nti.contenttypes.courses.interfaces import ICourseEnrollments
 from nti.dataserver.interfaces import ILengthEnumerableEntityContainer
 
