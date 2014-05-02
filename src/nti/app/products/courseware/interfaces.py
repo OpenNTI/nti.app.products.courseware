@@ -173,6 +173,7 @@ class ICourseCatalogLegacyEntry(ICourseCatalogEntry):
 	LegacyPurchasableThumbnail = TextLine(title="A URL or path of indeterminate type or meaning",
 										  required=False)
 
+	Term = TextLine(title="course term", required=False, default='')
 
 class ILegacyCommunityBasedCourseInstance(ICourseInstance):
 	"""

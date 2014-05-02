@@ -200,6 +200,8 @@ def _content_package_registered( package, event ):
 	catalog_entry.Title = info_json_dict['title']
 	catalog_entry.ProviderUniqueID = info_json_dict['id']
 	catalog_entry.ProviderDepartmentTitle = info_json_dict['school']
+	catalog_entry.Term = info_json_dict.get('term', '')
+
 	if 'startDate' in info_json_dict:
 		catalog_entry.StartDate = isodate.parse_datetime(info_json_dict['startDate'])
 		# Convert to UTC if needed
