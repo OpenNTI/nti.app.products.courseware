@@ -553,7 +553,7 @@ class _LegacyCommunityBasedCourseInstance(CourseInstance):
 				# from the content that is available. We currently do this
 				# by stubbing out the content, and setting flags to be extracted
 				# to the ToC so that we don't give the UI back the NTIID.
-				if lesson.get(b'isOutlineStubOnly') == 'true':
+				if lesson.get( str( 'isOutlineStubOnly' ) ) == 'true':
 					# We query for the node factory we use to "hide"
 					# content from the UI so that we can enable/disable
 					# hiding in certain site policies.
@@ -563,7 +563,7 @@ class _LegacyCommunityBasedCourseInstance(CourseInstance):
 														  default=CourseOutlineCalendarNode )
 
 				lesson_node = node_factory()
-				topic_ntiid = _attr_val(lesson, b'topic-ntiid')
+				topic_ntiid = _attr_val(lesson, str('topic-ntiid'))
 
 				__traceback_info__ = topic_ntiid
 
@@ -588,6 +588,8 @@ class _LegacyCommunityBasedCourseInstance(CourseInstance):
 					# Quick hack to make this available for use elsewhere
 					lesson_node._v_ContentNTIID = topic_ntiid
 
+				lesson_node.src = _attr_val(lesson, str( 'src' ) )
+
 				parent_node.append(lesson_node)
 				# Sigh. It looks like date is optionally a comma-separated
 				# list of datetimes. If there is only one, that looks like
@@ -604,7 +606,8 @@ class _LegacyCommunityBasedCourseInstance(CourseInstance):
 
 		for unit in course_element.iterchildren(tag='unit'):
 			unit_node = CourseOutlineNode()
-			unit_node.title = _attr_val(unit, b'label')
+			unit_node.title = _attr_val(unit, str( 'label' ) )
+			unit_node.src = _attr_val(unit, str( 'src' ) )
 			outline.append(unit_node)
 			_handle_node( unit, unit_node )
 
