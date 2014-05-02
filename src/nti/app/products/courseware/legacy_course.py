@@ -227,6 +227,8 @@ def _register_course_purchasable_from_catalog_entry( entry, event ):
 			entry._v_LegacyHackItemNTIID = "tag:nextthought.com,2011-10:OU-HTML-PHIL1203_HumanDestiny.phil_1203__philosophy_and_human_destiny,_east_and_west"
 	else:
 		purch_ntiid = make_ntiid( provider=provider, nttype='course', specific=purch_id )
+		logger.info("purchasable id %s for course %s was created",
+					purch_ntiid, entry.ContentPackageNTIID)
 		items = (entry.ContentPackageNTIID,)
 
 	the_course = course.create_course( ntiid=purch_ntiid,
