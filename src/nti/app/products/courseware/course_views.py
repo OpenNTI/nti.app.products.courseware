@@ -9,8 +9,6 @@ Views directly related to individual courses and course sub-objects.
 from __future__ import print_function, unicode_literals, absolute_import, division
 __docformat__ = "restructuredtext en"
 
-from . import MessageFactory as _
-
 logger = __import__('logging').getLogger(__name__)
 
 from zope import component
@@ -20,7 +18,6 @@ from .interfaces import ICourseInstanceActivity
 from .interfaces import ICourseInstanceEnrollment
 from nti.contenttypes.courses.interfaces import ICourseInstance
 from nti.contenttypes.courses.interfaces import ICourseOutline
-
 
 from pyramid import httpexceptions as hexc
 from pyramid.view import view_config
@@ -456,7 +453,6 @@ from pyramid.threadlocal import get_current_request
 
 from numbers import Number
 
-
 from zope.annotation.interfaces import IAnnotations
 
 from nti.zodb.containers import time_to_64bit_int
@@ -469,7 +465,6 @@ from nti.app.externalization.view_mixins import ModeledContentUploadRequestUtils
 from nti.externalization.interfaces import StandardExternalFields
 LINKS = StandardExternalFields.LINKS
 from nti.dataserver.links import Link
-
 
 @view_config(route_name='objects.generic.traversal',
 			 renderer='rest',
