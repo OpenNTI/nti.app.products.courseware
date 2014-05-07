@@ -17,7 +17,7 @@ logger = __import__('logging').getLogger(__name__)
 
 from hamcrest import assert_that
 from hamcrest import is_
-
+from hamcrest import has_entry
 
 from nti.app.testing.decorators import WithSharedApplicationMockDS
 from nti.app.testing.application_webtest import ApplicationLayerTest
@@ -53,3 +53,17 @@ class TestCreateForums(ApplicationLayerTest):
 		res = self.testapp.post('/dataserver2/@@LegacyCourseTopicCreator', upload_files=[('ignored', 'foo.csv', csv)])
 
 		assert_that( res.json_body, is_([] ) )
+
+
+		# If a student (who first enrolls)...
+		res = self.testapp.post_json( '/dataserver2/users/sjohnson@nextthought.com/Courses/EnrolledCourses',
+									  'CLC 3403',
+									  status=201 )
+
+		# ... makes a comment in one of those discussions...
+		self.testapp.post_json('/dataserver2/users/CLC3403.ou.nextthought.com/DiscussionBoard/Open_Discussions/A_clc_discussion',
+							   {'Class': 'Post', 'body': ['A comment']},
+							   status=201)
+		# ...it is not notable for the instructor
+		res = self.fetch_user_recursive_notable_ugd(username='harp4162', extra_environ=inst_env )
+		assert_that( res.json_body, has_entry( 'TotalItemCount', 0))

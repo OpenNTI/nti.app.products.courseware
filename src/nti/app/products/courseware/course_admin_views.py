@@ -23,6 +23,7 @@ from nti.app.base.abstract_views import AbstractAuthenticatedView
 from nti.dataserver import authorization as nauth
 
 from .interfaces import ICourseCatalog
+from nti.app.notabledata.interfaces import IUserNotableData
 
 import csv
 
@@ -213,5 +214,10 @@ class CourseTopicCreationView(AbstractAuthenticatedView,UploadRequestUtilsMixin)
 						logger.debug('Created topic %s with NTIID %s', topic, topic.NTIID)
 
 					topic.publish()
+					# Also make sure it's not considered notable for the instructor
+					if topic.creator:
+						notable = component.getMultiAdapter((topic.creator, self.request),
+															IUserNotableData)
+						notable.object_is_not_notable(topic)
 
 		return created_ntiids
