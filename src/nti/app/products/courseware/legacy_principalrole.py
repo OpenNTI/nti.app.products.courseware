@@ -22,7 +22,6 @@ from .interfaces import ICourseCatalogEntry
 
 from zope.securitypolicy.interfaces import IPrincipalRoleMap
 
-
 from nti.contenttypes.courses.principalrole import CourseInstancePrincipalRoleMap
 
 from nti.utils.property import CachedProperty
@@ -34,7 +33,14 @@ class LegacyCourseInstancePrincipalRoleMap(CourseInstancePrincipalRoleMap):
 
 	@CachedProperty
 	def _mapped_principals(self):
-		entry = ICourseCatalogEntry(self.context)
+		# Sometimes we might be hit in a site that doesn't have
+		# courses registered in the catalog (e.g., decorating some
+		# object in the stream of a user who can use multiple sites).
+		# In that case, no one has any roles or access to data.
+		# This should only happen in test environments.
+		entry = ICourseCatalogEntry(self.context, None)
+		if entry is None:
+			return ()
 		# We prefer to iterate across the Instructors
 		# in the entry, as that's a list, possibly where
 		# order matters
