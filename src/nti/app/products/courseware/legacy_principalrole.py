@@ -47,7 +47,11 @@ class LegacyCourseInstancePrincipalRoleMap(CourseInstancePrincipalRoleMap):
 		principals = {x.id.lower(): x for x in self.context.instructors}
 		result = []
 		for info in entry.Instructors:
-			if info.username.lower() in principals:
+			username = getattr(info, 'username', u'') or u''
+			if not username:
+				logger.warn("empty username in entry instructors %s", entry.Instructors)
+				continue
+			if username.lower() in principals:
 				result.append( (principals[info.username.lower()],
 								RID_TA if info.JobTitle == 'Teaching Assistant' else RID_INSTRUCTOR) )
 		return result
