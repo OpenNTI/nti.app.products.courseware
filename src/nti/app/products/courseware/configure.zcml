@@ -21,7 +21,7 @@
 	-->
 	<utility factory=".catalog.CourseCatalog"
 			 provides=".interfaces.ICourseCatalog" />
-			 
+
 	<subscriber handler=".legacy_catalog._content_package_registered" />
 
 	<!-- Auto-gen course purchasables from content -->
@@ -29,7 +29,7 @@
 	the library is -->
 	<subscriber
 		handler=".legacy_course._register_course_purchasable_from_catalog_entry" />
-		
+
 	<!-- This subscriber reverses the process. Could be local, global
 	for symmetry -->
 	<subscriber
@@ -37,19 +37,19 @@
 		provides="nti.app.products.courseware.interfaces.IPrincipalEnrollmentCatalog"/>
 	<adapter factory=".legacy_course._LegacyCommunityBasedCourseAdministrativeLevelFactory"
 			 provides="nti.contenttypes.courses.interfaces.ICourseAdministrativeLevel"/>
-			 
+
 	<adapter factory=".legacy_course._LegacyCourseInstanceEnrollmentManager" />
-	
+
 	<adapter factory=".legacy_course._LegacyCourseInstanceACLProvider" />
 
 	<adapter factory=".legacy_course._LegacyCourseInstanceEnrollments" />
-	
+
 	<!-- Turn catalog entries into their course instance -->
 	<adapter factory=".legacy_course._course_instance_for_catalog_entry" />
-	
+
 	<!-- And vice versa -->
 	<adapter factory=".legacy_course._legacy_course_instance_to_catalog_entry" />
-	
+
 	<!-- And the content packages to the course instance -->
 	<adapter factory=".legacy_course._course_content_package_to_course" />
 	<adapter factory=".legacy_course._content_unit_to_course" />
@@ -62,7 +62,7 @@
 
 	<!-- Let the course instance have activity -->
 	<adapter factory=".activity._DefaultCourseActivityFactory" />
-	
+
 	<!-- and let it be annotatable -->
 	<class class=".activity._DefaultCourseActivity">
 		<implements interface="zope.annotation.interfaces.IAttributeAnnotatable" />
@@ -79,17 +79,19 @@
 	<!-- A subscriber for enumeration -->
 	<subscriber factory=".workspaces.CoursesWorkspace"
 				provides=".interfaces.ICoursesWorkspace" />
-				
+
 	<!-- And an adapter for direct access -->
 	<adapter factory=".workspaces.CoursesWorkspace"
 			 provides=".interfaces.ICoursesWorkspace" />
-			 
+
 	<adapter name="Courses"
 			 factory=".catalog_views.CoursesPathAdapter" />
 
 	<!-- A subscriber for getting admin roles -->
 	<subscriber factory=".workspaces._DefaultPrincipalAdministrativeRoleCatalog"
 				provides=".interfaces.IPrincipalAdministrativeRoleCatalog" />
+	<!-- And an adapter for security purposes -->
+	<adapter factory=".legacy_principalrole.LegacyCourseInstancePrincipalRoleMap" />
 
 	<!-- A subscriber for important principals -->
 	<subscriber factory=".workspaces._UserInstructorsPresentationPriorityCreators"
@@ -101,7 +103,7 @@
 
 	<adapter factory=".workspaces.CourseInstanceEnrollment"
 			 provides=".interfaces.ICourseInstanceEnrollment" />
-			 
+
 	<adapter factory=".workspaces.CourseInstanceEnrollment"
 			 for="nti.contenttypes.courses.interfaces.ICourseInstance
 				  nti.dataserver.interfaces.IUser"
@@ -109,7 +111,7 @@
 
 	<adapter factory=".workspaces.LegacyCourseInstanceEnrollment"
 			 provides=".interfaces.ICourseInstanceEnrollment" />
-			 
+
 	<adapter factory=".workspaces.LegacyCourseInstanceEnrollment"
 			 for=".interfaces.ILegacyCommunityBasedCourseInstance
 				  nti.dataserver.interfaces.IUser"
@@ -117,7 +119,7 @@
 
 	<adapter factory=".workspaces.wrapper_to_catalog"
 			 for=".interfaces.ICourseInstanceEnrollment"/>
-			 
+
 	<adapter factory=".workspaces.wrapper_to_catalog"
 			 for=".interfaces.ICourseInstanceAdministrativeRole"/>
 

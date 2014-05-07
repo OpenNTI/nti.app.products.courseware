@@ -48,7 +48,7 @@ class ICourseCatalog(IIterable, sequence.IFiniteSequence):
 	ways to query for courses and find
 	out information about them.
 	"""
-	
+
 	def isEmpty():
 		"""
 		return if this catalog is empty
@@ -317,7 +317,7 @@ class ICourseInstanceAdministrativeRole(IShouldHaveTraversablePath):
 	__name__ = interface.Attribute("The name of the administration is the same as the CourseInstance.")
 
 	RoleName = Choice(title="The name of the role this principal holds",
-					  values=('instructor',))
+					  values=('instructor','teaching assistant'))
 	CourseInstance = Object(ICourseInstance)
 
 class IPrincipalAdministrativeRoleCatalog(interface.Interface):
@@ -337,6 +337,6 @@ class IPrincipalAdministrativeRoleCatalog(interface.Interface):
 		"""
 class IAdministeredCoursesCollection(app_interfaces.IContainerCollection):
 	"""
-	A collection (local to a user) of courses he is enrolled in
+	A collection (local to a user) of courses he administers
 	(:class:`.ICourseInstanceAdministrativeRole`)
 	"""

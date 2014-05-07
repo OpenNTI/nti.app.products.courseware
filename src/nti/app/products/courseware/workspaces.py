@@ -17,6 +17,12 @@ from zope import component
 from zope.container import contained
 from zope.location.traversing import LocationPhysicallyLocatable
 
+from nti.contenttypes.courses.interfaces import RID_INSTRUCTOR
+
+from zope.securitypolicy.interfaces import IPrincipalRoleMap
+from zope.securitypolicy.interfaces import Allow
+
+
 from . import interfaces
 from nti.appserver import interfaces as app_interfaces
 from nti.contenttypes.courses.interfaces import ICourseInstance
@@ -283,7 +289,11 @@ class _DefaultPrincipalAdministrativeRoleCatalog(object):
 			for entry in catalog:
 				instance = ICourseInstance(entry)
 				if self.user in instance.instructors:
-					yield CourseInstanceAdministrativeRole(RoleName='instructor',
+					roles = IPrincipalRoleMap(instance)
+					role = 'teaching assistant'
+					if roles.getSetting(RID_INSTRUCTOR, self.user.id) is Allow:
+						role = 'instructor'
+					yield CourseInstanceAdministrativeRole(RoleName=role,
 														   CourseInstance=instance )
 
 @interface.implementer(interfaces.IAdministeredCoursesCollection)
