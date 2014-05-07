@@ -234,7 +234,7 @@ def _content_package_registered( package, event ):
 	for inst in info_json_dict['instructors']:
 		instructor = CourseCatalogInstructorLegacyInfo( Name=inst['name'],
 														JobTitle=inst['title'],
-														username=inst.get('username'))
+														username=inst.get('username',''))
 		if inst.get('defaultphoto'):
 			photo_name = inst['defaultphoto']
 			photo_data = package.read_contents_of_sibling_entry( photo_name )

@@ -80,10 +80,12 @@ class ICourseCatalogInstructorLegacyInfo(ICourseCatalogInstructorInfo):
 
 	defaultphoto = TextLine(title="A URL path for an extra copy of the instructor's photo",
 							description="ideally this should be the profile photo",
+							default='',
 							required=False) # TODO: We need a schema field for this
 
 	username = TextLine(title="A username string that may or may not refer to an actual account.",
-							   required=False)
+						default='',
+						required=True)
 	username.setTaggedValue('_ext_excluded_out', True) # Internal use only
 
 class ICourseCreditLegacyInfo(interface.Interface):
