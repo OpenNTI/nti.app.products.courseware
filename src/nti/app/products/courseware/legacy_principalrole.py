@@ -30,7 +30,6 @@ from nti.utils.property import CachedProperty
 @component.adapter(ILegacyCommunityBasedCourseInstance)
 class LegacyCourseInstancePrincipalRoleMap(CourseInstancePrincipalRoleMap):
 
-
 	@CachedProperty
 	def _mapped_principals(self):
 		# Sometimes we might be hit in a site that doesn't have
@@ -47,13 +46,10 @@ class LegacyCourseInstancePrincipalRoleMap(CourseInstancePrincipalRoleMap):
 		principals = {x.id.lower(): x for x in self.context.instructors}
 		result = []
 		for info in entry.Instructors:
-			username = getattr(info, 'username', u'') or u''
-			if not username:
-				logger.warn("empty username in entry instructors %s", entry.Instructors)
-				continue
-			if username.lower() in principals:
-				result.append( (principals[info.username.lower()],
-								RID_TA if info.JobTitle == 'Teaching Assistant' else RID_INSTRUCTOR) )
+			username = info.username.lower()
+			if username in principals:
+				result.append((principals[username],
+							   RID_TA if info.JobTitle == 'Teaching Assistant' else RID_INSTRUCTOR))
 		return result
 
 	def _principals_for_ta(self):
