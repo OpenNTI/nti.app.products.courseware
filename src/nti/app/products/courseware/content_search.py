@@ -92,6 +92,15 @@ class _ContentHitPredicate(_BasePredicate):
 		return is_allowed(item.ntiid)
 
 @interface.implementer(search_interfaces.ISearchHitPredicate)
+@component.adapter(search_interfaces.IAudioTranscriptContent)
+class _AudioContentHitPredicate(_BasePredicate):
+
+	__slots__ = ()
+
+	def allow(self, item, score):
+		return is_allowed(item.containerId)
+
+@interface.implementer(search_interfaces.ISearchHitPredicate)
 @component.adapter(search_interfaces.IVideoTranscriptContent)
 class _VideoContentHitPredicate(_BasePredicate):
 

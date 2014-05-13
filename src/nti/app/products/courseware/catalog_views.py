@@ -8,7 +8,7 @@ return something that isn't traversable (in this case, the Courses
 workspace). Named views will be registered based on that to implement
 the workspace collections.
 
-$Id$
+.. $Id$
 """
 
 from __future__ import print_function, unicode_literals, absolute_import, division
@@ -49,14 +49,19 @@ from nti.dataserver import traversal
 def CoursesPathAdapter(context, request):
 	service = IUserService(context)
 	workspace = ICoursesWorkspace(service)
-
 	return workspace
-
 
 @view_config(context=ICourseCatalogEntry)
 class CatalogGenericGetView(GenericGetView):
 	pass
 
+def get_enrollments(course_instance, request):
+	try:
+		enrollments = component.getMultiAdapter((course_instance, request),
+												ICourseEnrollmentManager)
+	except LookupError:
+		enrollments = ICourseEnrollmentManager(course_instance)
+	return enrollments
 
 @view_config( route_name='objects.generic.traversal',
 			  context=IEnrolledCoursesCollection,
@@ -98,11 +103,7 @@ class enroll_course_view(AbstractAuthenticatedView,
 			raise hexc.HTTPForbidden()
 
 		course_instance = ICourseInstance(catalog_entry)
-		try:
-			enrollments = component.getMultiAdapter( (course_instance, self.request),
-													 ICourseEnrollmentManager )
-		except LookupError:
-			enrollments = ICourseEnrollmentManager(course_instance)
+		enrollments = get_enrollments(course_instance, self.request)
 		freshly_added = enrollments.enroll( self.remoteUser )
 		enrollment = component.getMultiAdapter( (course_instance, self.remoteUser),
 												ICourseInstanceEnrollment )
@@ -115,7 +116,6 @@ class enroll_course_view(AbstractAuthenticatedView,
 		# Return our enrollment, whether fresh or not
 		# TODO: This should probably be a multi-adapter
 		return enrollment
-
 
 @view_config( route_name='objects.generic.traversal',
 			  context=ICourseInstanceEnrollment,
@@ -132,13 +132,7 @@ class drop_course_view(AbstractAuthenticatedView):
 	"""
 
 	def __call__(self):
-
 		course_instance = self.request.context.CourseInstance
-		try:
-			enrollments = component.getMultiAdapter( (course_instance, self.request),
-													 ICourseEnrollmentManager )
-		except LookupError:
-			enrollments = ICourseEnrollmentManager(course_instance)
+		enrollments = get_enrollments(course_instance, self.request)
 		enrollments.drop( self.remoteUser )
-
 		return hexc.HTTPNoContent()

@@ -180,6 +180,10 @@
 				provides="nti.contentsearch.interfaces.ISearchHitPredicate"
 				for="nti.contentsearch.interfaces.IBookContent" />
 
+	<subscriber factory=".content_search._AudioContentHitPredicate"
+				provides="nti.contentsearch.interfaces.ISearchHitPredicate"
+				for="nti.contentsearch.interfaces.IAudioTranscriptContent" />
+				
 	<subscriber factory=".content_search._VideoContentHitPredicate"
 				provides="nti.contentsearch.interfaces.ISearchHitPredicate"
 				for="nti.contentsearch.interfaces.IVideoTranscriptContent" />
