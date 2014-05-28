@@ -356,7 +356,8 @@ def _course_instance_for_catalog_entry(entry):
 	community_courses = ICourseAdministrativeLevel( community )
 	if purch_id not in community_courses:
 		community_courses[purch_id] = _LegacyCommunityBasedCourseInstance(community.username,
-																		  entry.ContentPackageNTIID)
+																		  entry.ContentPackageNTIID,
+																		  entry.Badges)
 
 	result = community_courses[purch_id]
 	return result
@@ -457,7 +458,7 @@ class _LegacyCommunityBasedCourseInstance(CourseInstance):
 	# Mime type is location independent ATM
 	mime_type = 'application/vnd.nextthought.courses.legacycommunitybasedcourseinstance'
 
-	def __init__(self, community_name, content_package_ntiid ):
+	def __init__(self, community_name, content_package_ntiid, badges=None):
 		"""
 		Create a new instance. We will look up the ``community_name``
 		on demand.
@@ -468,6 +469,7 @@ class _LegacyCommunityBasedCourseInstance(CourseInstance):
 		if self.legacy_community is None:
 			raise ValueError("The community doesn't exist", community_name)
 
+		self.__badges = badges or {}
 		self.ContentPackageNTIID = content_package_ntiid
 
 	@CachedProperty
@@ -639,6 +641,10 @@ class _LegacyCommunityBasedCourseInstance(CourseInstance):
 		# TODO: We should be the one creating these and ignoring what's in the ToC
 		result = unicode(self._course_toc_element.get(b'instructorForum', ''))
 		return result
+
+	@property
+	def LegacyBadges(self):
+		return dict(self.__badges)
 
 	@Lazy
 	def _instructor_storage(self):

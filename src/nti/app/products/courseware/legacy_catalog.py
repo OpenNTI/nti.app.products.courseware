@@ -195,12 +195,14 @@ def _content_package_registered( package, event ):
 		catalog_entry.lastModified = os.stat(info_json_key.absolute_path).st_mtime
 	else:
 		raise ValueError("Unsupported key", info_json_key )
+
 	catalog_entry.Description = info_json_dict['description']
 	catalog_entry.ContentPackageNTIID = package.ntiid
 	catalog_entry.Title = info_json_dict['title']
 	catalog_entry.ProviderUniqueID = info_json_dict['id']
 	catalog_entry.ProviderDepartmentTitle = info_json_dict['school']
 	catalog_entry.Term = info_json_dict.get('term', '')
+	catalog_entry.Badges = info_json_dict.get('badges', {})
 
 	if 'startDate' in info_json_dict:
 		catalog_entry.StartDate = isodate.parse_datetime(info_json_dict['startDate'])
@@ -255,7 +257,6 @@ def _content_package_registered( package, event ):
 							for d in info_json_dict.get('credit', [])]
 	catalog_entry.Schedule = info_json_dict.get('schedule', {})
 	catalog_entry.Prerequisites = info_json_dict.get('prerequisites', [])
-
 
 	catalog = component.getUtility(interfaces.ICourseCatalog)
 	try:
