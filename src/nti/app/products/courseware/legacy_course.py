@@ -455,8 +455,11 @@ class _LegacyCommunityBasedCourseInstance(CourseInstance):
 	"""
 
 	__external_class_name__ = 'LegacyCommunityBasedCourseInstance'
+
 	# Mime type is location independent ATM
 	mime_type = 'application/vnd.nextthought.courses.legacycommunitybasedcourseinstance'
+
+	_badges = {}
 
 	def __init__(self, community_name, content_package_ntiid, badges=None):
 		"""
@@ -469,7 +472,7 @@ class _LegacyCommunityBasedCourseInstance(CourseInstance):
 		if self.legacy_community is None:
 			raise ValueError("The community doesn't exist", community_name)
 
-		self.__badges = badges or {}
+		self._badges = badges or {}
 		self.ContentPackageNTIID = content_package_ntiid
 
 	@CachedProperty
@@ -644,7 +647,7 @@ class _LegacyCommunityBasedCourseInstance(CourseInstance):
 
 	@property
 	def LegacyBadges(self):
-		return dict(self.__badges)
+		return dict(self._badges)
 
 	@Lazy
 	def _instructor_storage(self):
