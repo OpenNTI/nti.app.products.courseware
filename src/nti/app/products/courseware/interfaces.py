@@ -176,16 +176,11 @@ class ICourseCatalogLegacyEntry(ICourseCatalogEntry):
 										  required=False)
 
 	Term = TextLine(title="course term", required=False, default='')
-	
-	Badges = Dict(title="Badge map", required=False)
 
 class ILegacyCommunityBasedCourseInstance(ICourseInstance):
 	"""
 	Marker interface for a legacy course instance
 	"""
-
-	LegacyBadges = Dict(title="Badges map",
-						readonly=True)
 		
 	LegacyScopes = Dict(title="'public' and 'restricted' entity ids",
 						readonly=True)
