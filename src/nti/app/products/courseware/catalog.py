@@ -15,21 +15,23 @@ from zope import interface
 from zope import lifecycleevent
 from zope.container.contained import Contained
 
-from . import interfaces
 from nti.contenttypes.courses.interfaces import ICourseInstance
 
-from nti.utils.schema import PermissiveSchemaConfigured as SchemaConfigured
-from nti.utils.schema import createDirectFieldProperties
-from nti.utils.property import alias
-
 from nti.dataserver.links import Link
-from nti.dataserver.interfaces import AUTHENTICATED_GROUP_NAME
 from nti.dataserver.authorization import ACT_READ
-from nti.utils.property import LazyOnClass
-from nti.dataserver.authorization_acl import acl_from_aces
 from nti.dataserver.authorization_acl import ace_allowing
+from nti.dataserver.authorization_acl import acl_from_aces
+from nti.dataserver.interfaces import AUTHENTICATED_GROUP_NAME
 
 from nti.externalization.externalization import make_repr
+
+from nti.schema.fieldproperty import createDirectFieldProperties
+from nti.schema.schema import PermissiveSchemaConfigured as SchemaConfigured
+
+from nti.utils.property import alias
+from nti.utils.property import LazyOnClass
+
+from . import interfaces
 
 @interface.implementer(interfaces.ICourseCatalog)
 class CourseCatalog(Contained):

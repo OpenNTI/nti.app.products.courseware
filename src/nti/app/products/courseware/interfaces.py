@@ -27,19 +27,20 @@ from nti.contenttypes.courses.interfaces import IPrincipalEnrollments
 from nti.dataserver.interfaces import ILastModified
 from nti.dataserver.interfaces import IShouldHaveTraversablePath
 
-from nti.utils.schema import Bool
-from nti.utils.schema import Choice
-from nti.utils.schema import Dict
-from nti.utils.schema import Int
-from nti.utils.schema import List
-from nti.utils.schema import ListOrTuple
-from nti.utils.schema import Object
-from nti.utils.schema import Timedelta
-from nti.utils.schema import ValidDatetime as Datetime
-from nti.utils.schema import ValidText as Text
-from nti.utils.schema import ValidTextLine as TextLine
-from nti.utils.schema import ValidURI
 from nti.ntiids.schema import ValidNTIID
+
+from nti.schema.field import Int
+from nti.schema.field import Bool
+from nti.schema.field import Dict
+from nti.schema.field import List
+from nti.schema.field import Choice
+from nti.schema.field import Object
+from nti.schema.field import ValidURI
+from nti.schema.field import Timedelta
+from nti.schema.field import ListOrTuple
+from nti.schema.field import ValidText as Text
+from nti.schema.field import ValidDatetime as Datetime
+from nti.schema.field import ValidTextLine as TextLine
 
 class ICourseCatalog(IIterable, sequence.IFiniteSequence):
 	"""

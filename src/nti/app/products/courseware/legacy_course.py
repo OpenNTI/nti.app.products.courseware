@@ -73,7 +73,7 @@ from nti.ntiids.ntiids import get_provider
 from nti.store import course
 from nti.store.interfaces import ICourse
 
-from nti.utils import schema
+from nti.schema.field import TextLine
 
 from .interfaces import CourseInstanceAvailableEvent
 from .interfaces import ILegacyCommunityBasedCourseInstance
@@ -86,7 +86,7 @@ class ICourseCatalogLegacyEntryInstancePolicy(interface.Interface):
 	Some of these are optional and can be unimplemented.
 	"""
 
-	register_courses_in_components_named = schema.TextLine(
+	register_courses_in_components_named = TextLine(
 		title="If given, the ICourse objects will be registered in this components",
 		description="A non-persistent IComponents utility that will hold the courses."
 		" Any matching courses will be unregistered from it.")

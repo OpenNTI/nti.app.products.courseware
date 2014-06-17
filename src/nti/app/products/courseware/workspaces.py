@@ -31,8 +31,8 @@ from nti.dataserver.interfaces import IUser
 from nti.utils.property import Lazy
 from nti.utils.property import alias
 
-from nti.utils.schema import SchemaConfigured
-from nti.utils.schema import createDirectFieldProperties
+from nti.schema.field import SchemaConfigured
+from nti.schema.fieldproperty import createDirectFieldProperties
 
 from nti.dataserver.authorization import ACT_DELETE
 from nti.dataserver.authorization_acl import acl_from_aces
