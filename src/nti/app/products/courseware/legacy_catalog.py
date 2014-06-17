@@ -25,8 +25,9 @@ from zope.cachedescriptors.property import readproperty
 from nti.contentlibrary import interfaces as lib_interfaces
 from zope.lifecycleevent import IObjectAddedEvent
 
-from nti.utils.schema import PermissiveSchemaConfigured as SchemaConfigured
-from nti.utils.schema import createDirectFieldProperties
+from nti.schema.fieldproperty import createDirectFieldProperties
+from nti.schema.schema import PermissiveSchemaConfigured as SchemaConfigured
+
 from urlparse import urljoin
 
 from nti.externalization.externalization import to_external_object
