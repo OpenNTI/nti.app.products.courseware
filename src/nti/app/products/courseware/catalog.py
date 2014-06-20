@@ -23,7 +23,8 @@ from nti.dataserver.authorization_acl import ace_allowing
 from nti.dataserver.authorization_acl import acl_from_aces
 from nti.dataserver.interfaces import AUTHENTICATED_GROUP_NAME
 
-from nti.externalization.externalization import make_repr
+from nti.externalization.persistence import NoPickle
+from nti.externalization.externalization import WithRepr
 
 from nti.schema.fieldproperty import createDirectFieldProperties
 from nti.schema.schema import PermissiveSchemaConfigured as SchemaConfigured
@@ -118,23 +119,19 @@ class CourseCatalog(Contained):
 		return "%s(%s)" % (self.__class__.__name__, len(self))
 
 @interface.implementer(interfaces.ICourseCatalogInstructorInfo)
+@WithRepr
+@NoPickle
 class CourseCatalogInstructorInfo(SchemaConfigured):
 	createDirectFieldProperties(interfaces.ICourseCatalogInstructorInfo)
 
-	__repr__ = make_repr()
-
-	def __reduce__(self): # Not persistent!
-		raise TypeError()
-
-
 @interface.implementer(interfaces.ICourseCatalogEntry)
+@WithRepr
+@NoPickle
 class CourseCatalogEntry(SchemaConfigured):
 	createDirectFieldProperties(interfaces.ICourseCatalogEntry)
 
 	__name__ = alias('ProviderUniqueID') # This is probably wrong
 	__parent__ = None
-
-	__repr__ = make_repr()
 
 	def __eq__(self, other):
 		try:
@@ -142,9 +139,6 @@ class CourseCatalogEntry(SchemaConfigured):
 			return self is other or self.ProviderUniqueID == other.ProviderUniqueID
 		except AttributeError:
 			return NotImplemented
-
-	def __reduce__(self): # Not persistent!
-		raise TypeError()
 
 	@property
 	def links(self):

@@ -3,7 +3,7 @@
 """
 Decorators for providing access to the various course pieces.
 
-$Id$
+.. $Id$
 """
 
 from __future__ import print_function, unicode_literals, absolute_import, division
@@ -37,12 +37,12 @@ from nti.dataserver.links import Link
 
 from pyramid.threadlocal import get_current_request
 
-LINKS = StandardExternalFields.LINKS
 from . import VIEW_CONTENTS
 from . import VIEW_CATALOG_ENTRY
 from . import VIEW_COURSE_ENROLLMENT_ROSTER
 from . import VIEW_COURSE_ACTIVITY
 
+LINKS = StandardExternalFields.LINKS
 
 @interface.implementer(IExternalMappingDecorator)
 @component.adapter(ICourseInstance)
@@ -122,5 +122,4 @@ class _CourseEnrollmentUserProfileDetailsDecorator(object):
 	def decorateExternalMapping(self, context, result):
 		user = IUser(context)
 		ext_profile = to_external_object(user, name='summary')
-
 		result['UserProfile'] = ext_profile

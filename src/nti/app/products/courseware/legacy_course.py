@@ -622,7 +622,6 @@ class _LegacyCommunityBasedCourseInstance(CourseInstance):
 		outline.lastModified = package.index_last_modified
 		return outline
 
-
 	@CachedProperty
 	def LegacyScopes(self):
 		result = {'public': None, 'restricted': None}

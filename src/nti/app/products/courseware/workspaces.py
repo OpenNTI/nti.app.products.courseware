@@ -4,7 +4,7 @@
 Implementation of an Atom/OData workspace and collection
 for courses.
 
-$Id$
+.. $Id$
 """
 
 from __future__ import print_function, unicode_literals, absolute_import, division
@@ -21,7 +21,6 @@ from nti.contenttypes.courses.interfaces import RID_INSTRUCTOR
 
 from zope.securitypolicy.interfaces import IPrincipalRoleMap
 from zope.securitypolicy.interfaces import Allow
-
 
 from . import interfaces
 from nti.appserver import interfaces as app_interfaces
@@ -197,7 +196,6 @@ class _AbstractInstanceWrapper(contained.Contained):
 		if ICourseInstance.isOrExtends(iface):
 			return self._private_course_instance
 
-
 @interface.implementer(interfaces.ICourseInstanceEnrollment)
 @component.adapter(ICourseInstance)
 class CourseInstanceEnrollment(_AbstractInstanceWrapper):
@@ -307,8 +305,6 @@ class AdministeredCoursesCollection(_AbstractQueryBasedCoursesCollection):
 	query_attr = 'iter_administrations'
 	contained_interface = interfaces.ICourseInstanceAdministrativeRole
 
-
-
 from pyramid.threadlocal import get_current_request
 from nti.dataserver.users import User
 from nti.dataserver.interfaces import IDataserver
@@ -353,7 +349,6 @@ class CatalogEntryLocationInfo(LocationPhysicallyLocatable):
 			raise TypeError("Not enough context to get all parents")
 
 		return parents
-
 
 from nti.app.notabledata.interfaces import IUserPresentationPriorityCreators
 
