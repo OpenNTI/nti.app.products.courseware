@@ -361,13 +361,13 @@ def _course_instance_for_catalog_entry(entry):
 	result = community_courses[purch_id]
 	return result
 
-@interface.implementer(ICourseInstance)
+@interface.implementer(ILegacyCommunityBasedCourseInstance)
 @component.adapter(ICommunity)
 def _course_instance_for_community( community ):
 	course_catalog = component.getUtility(ICourseCatalog)
 	for entry in course_catalog:
 		course = ICourseInstance( entry )
-		if course.legacy_community == community:
+		if getattr(course, 'legacy_community', None) == community:
 			return course
 
 @interface.implementer(ICourseInstance)
