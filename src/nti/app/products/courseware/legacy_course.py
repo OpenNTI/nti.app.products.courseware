@@ -362,6 +362,15 @@ def _course_instance_for_catalog_entry(entry):
 	return result
 
 @interface.implementer(ICourseInstance)
+@component.adapter(ICommunity)
+def _course_instance_for_community( community ):
+	course_catalog = component.getUtility(ICourseCatalog)
+	for entry in course_catalog:
+		course = ICourseInstance( entry )
+		if course.legacy_community == community:
+			return course
+
+@interface.implementer(ICourseInstance)
 @component.adapter(ILegacyCourseConflatedContentPackage)
 def _course_content_package_to_course(package):
 	# We go via the defined adapter from the catalog entry

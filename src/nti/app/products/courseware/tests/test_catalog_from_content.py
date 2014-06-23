@@ -96,7 +96,7 @@ class TestApplicationCatalogFromContent(ApplicationLayerTest):
 		clc = catalog['CLC 3403']
 		assert_that( clc, has_property('Instructors', has_length(1)))
 		assert_that( clc.Instructors[0], has_property('defaultphoto', '/CLC3403_LawAndJustice/images/Harper.png'))
-
+		
 		# Externalization
 		with mock_dataserver.mock_db_trans(self.ds):
 			assert_that( list(catalog), has_items(
@@ -117,6 +117,12 @@ class TestApplicationCatalogFromContent(ApplicationLayerTest):
 															  'LegacyInstructorForums', not_none(),
 															  'LegacyScopes', has_entries('restricted', not_none(),
 																						  'public', not_none() ) ) ) )
+
+				# Test community adapter
+				community = inst.legacy_community
+				adapted_course = ICourseInstance( community )
+				assert_that( adapted_course, not_none() )
+				assert_that( adapted_course, has_property('legacy_community', community ) )
 
 				acl = ACL(inst, None)
 				assert_that( acl, is_( not_none() ))
