@@ -14,8 +14,6 @@ logger = __import__('logging').getLogger(__name__)
 from functools import total_ordering
 
 from zope import interface
-from zope import lifecycleevent
-from zope.container.contained import Contained
 
 from nti.contenttypes.courses.interfaces import ICourseInstance
 
@@ -24,16 +22,14 @@ from nti.dataserver.authorization import ACT_READ
 from nti.dataserver.authorization_acl import ace_allowing
 from nti.dataserver.authorization_acl import acl_from_aces
 from nti.dataserver.interfaces import AUTHENTICATED_GROUP_NAME
-
-
 from nti.dataserver.containers import CheckingLastModifiedBTreeContainer
 
 from nti.externalization.persistence import NoPickle
 from nti.externalization.externalization import WithRepr
 
+from nti.schema.schema import EqHash
 from nti.schema.fieldproperty import createDirectFieldProperties
 from nti.schema.schema import PermissiveSchemaConfigured as SchemaConfigured
-from nti.schema.schema import EqHash
 
 from nti.utils.property import alias
 from nti.utils.property import LazyOnClass
@@ -54,7 +50,7 @@ class CourseCatalog(CheckingLastModifiedBTreeContainer):
 		# Got to be here after the components are registered
 		return acl_from_aces(
 			# Everyone logged in has read and search access to the catalog
-			ace_allowing( AUTHENTICATED_GROUP_NAME, ACT_READ, CourseCatalog ) )
+			ace_allowing(AUTHENTICATED_GROUP_NAME, ACT_READ, CourseCatalog ) )
 
 	def addCatalogEntry(self, entry, event=True):
 		"""
