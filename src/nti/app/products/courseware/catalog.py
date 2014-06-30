@@ -11,6 +11,8 @@ __docformat__ = "restructuredtext en"
 
 logger = __import__('logging').getLogger(__name__)
 
+from functools import total_ordering
+
 from zope import interface
 from zope import lifecycleevent
 from zope.container.contained import Contained
@@ -23,11 +25,15 @@ from nti.dataserver.authorization_acl import ace_allowing
 from nti.dataserver.authorization_acl import acl_from_aces
 from nti.dataserver.interfaces import AUTHENTICATED_GROUP_NAME
 
+
+from nti.dataserver.containers import CheckingLastModifiedBTreeContainer
+
 from nti.externalization.persistence import NoPickle
 from nti.externalization.externalization import WithRepr
 
 from nti.schema.fieldproperty import createDirectFieldProperties
 from nti.schema.schema import PermissiveSchemaConfigured as SchemaConfigured
+from nti.schema.schema import EqHash
 
 from nti.utils.property import alias
 from nti.utils.property import LazyOnClass
@@ -35,16 +41,13 @@ from nti.utils.property import LazyOnClass
 from . import interfaces
 
 @interface.implementer(interfaces.ICourseCatalog)
-class CourseCatalog(Contained):
+@NoPickle
+@WithRepr
+class CourseCatalog(CheckingLastModifiedBTreeContainer):
 
 	lastModified = 0
-
-	def __init__( self ):
-		self._entries = list()
-
-	# This is all provisional API, not part of the interface
-
 	__name__ = 'CourseCatalog'
+
 
 	@LazyOnClass
 	def __acl__( self ):
@@ -60,15 +63,21 @@ class CourseCatalog(Contained):
 		:keyword bool event: If true (the default), we broadcast
 			the object added event.
 		"""
-		if entry in self._entries:
+		if not entry.__name__:
+			raise ValueError(entry)
+		if entry.__name__ in self:
 			if entry.__parent__ is self:
 				return
 			raise ValueError("Adding duplicate entry %s", entry)
-		self._entries.append( entry )
-		entry.__parent__ = self
-		self.lastModified = max( self.lastModified, entry.lastModified )
+
 		if event:
-			lifecycleevent.added( entry )
+			self[entry.__name__] = entry
+		else:
+			self._setitemf(entry.__name__, entry)
+			entry.__parent__ = self
+
+		self.lastModified = max( self.lastModified, entry.lastModified )
+
 
 	append = addCatalogEntry
 
@@ -79,44 +88,58 @@ class CourseCatalog(Contained):
 		:keyword bool event: If true (the default), we broadcast
 			the object removed event.
 		"""
-		self._entries.remove(entry)
-		if event:
-			lifecycleevent.removed(entry)
+
+		if not event:
+			l = self._BTreeContainer__len
+			try:
+				entry = self._SampleContainer__data[entry.__name__]
+				del self._SampleContainer__data[entry.__name__]
+				l.change(-1)
+				entry.__parent__ = None
+			except KeyError:
+				pass
+		else:
+			if entry.__name__ in self:
+				del self[entry.__name__]
+
 
 	def isEmpty(self):
 		return len(self) == 0
 
-	def __len__( self ):
-		return len(self._entries)
+	def clear(self):
+		for i in list(self):
+			self.removeCatalogEntry(i, event=False)
 
 	def __bool__(self):
 		return True
 	__nonzero__ = __bool__
 
 	def __iter__(self):
-		return iter(self._entries)
+		return iter(self.values())
+
+	def __contains__(self, ix):
+		if CheckingLastModifiedBTreeContainer.__contains__(self, ix):
+			return True
+
+		try:
+			return self[ix] is not None
+		except KeyError:
+			return False
+
 
 	def __getitem__(self,ix):
 		try:
-			return self._entries[ix]
-		except TypeError:
+			return CheckingLastModifiedBTreeContainer.__getitem__(self, ix)
+		except KeyError:
 			# Ok, is it asking by name, during traversal?
-			# TODO: This will need to be cleaned up when/if
-			# we have multiple providers and potentially overlapping
-			# names...not to mention different semesters
-			for entry in self._entries:
-				if entry.__name__ == ix:
+			# This is a legacy case that shouldn't be hit anymore,
+			# except during tests that are hardcoded.
+			for entry in self:
+				if entry.ProviderUniqueID == ix:
+					logger.warning("Using legacy ProviderUniqueID to match %s to %s",
+								   ix, entry)
 					return entry
 			raise KeyError(ix)
-
-	def __reduce__(self): # Not persistent!
-		raise TypeError()
-
-	def __str__(self):
-		return str(len(self))
-
-	def __repr__(self):
-		return "%s(%s)" % (self.__class__.__name__, len(self))
 
 @interface.implementer(interfaces.ICourseCatalogInstructorInfo)
 @WithRepr
@@ -127,18 +150,16 @@ class CourseCatalogInstructorInfo(SchemaConfigured):
 @interface.implementer(interfaces.ICourseCatalogEntry)
 @WithRepr
 @NoPickle
+@total_ordering
+@EqHash('ntiid')
 class CourseCatalogEntry(SchemaConfigured):
 	createDirectFieldProperties(interfaces.ICourseCatalogEntry)
 
-	__name__ = alias('ProviderUniqueID') # This is probably wrong
+	__name__ = alias('ntiid')
 	__parent__ = None
 
-	def __eq__(self, other):
-		try:
-			# NOTE: This is not very good until we have a better notion of 'provider'
-			return self is other or self.ProviderUniqueID == other.ProviderUniqueID
-		except AttributeError:
-			return NotImplemented
+	def __lt__(self, other):
+		return self.ntiid < other.ntiid
 
 	@property
 	def links(self):

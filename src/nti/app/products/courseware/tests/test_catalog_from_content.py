@@ -77,7 +77,7 @@ class TestApplicationCatalogFromContent(ApplicationLayerTest):
 		assert_that( catalog, has_length( 2 ) )
 		assert_that( catalog, has_items( verifiably_provides(ICourseCatalogLegacyEntry),
 										 verifiably_provides(ICourseCatalogLegacyEntry) ))
-		water = catalog[0] if catalog[0].Title == 'Introduction to Water' else catalog[1]
+		water = catalog["tag:nextthought.com,2011-10:OU-HTML-ENGR1510_Intro_to_Water.course_info"]
 		assert_that( water.Instructors, has_items( verifiably_provides(ICourseCatalogInstructorLegacyInfo),
 												   verifiably_provides(ICourseCatalogInstructorLegacyInfo)))
 		assert_that( water.Instructors, has_items( has_property('username', 'saba1234'),
@@ -96,7 +96,7 @@ class TestApplicationCatalogFromContent(ApplicationLayerTest):
 		clc = catalog['CLC 3403']
 		assert_that( clc, has_property('Instructors', has_length(1)))
 		assert_that( clc.Instructors[0], has_property('defaultphoto', '/CLC3403_LawAndJustice/images/Harper.png'))
-		
+
 		# Externalization
 		with mock_dataserver.mock_db_trans(self.ds):
 			assert_that( list(catalog), has_items(
@@ -105,6 +105,7 @@ class TestApplicationCatalogFromContent(ApplicationLayerTest):
 					'MimeType', 'application/vnd.nextthought.courseware.coursecataloglegacyentry',
 					'Duration', 'P112D',
 					'StartDate', '2014-01-13T06:00:00Z',
+					'NTIID', None,
 					'LegacyPurchasableIcon', '/IntroWater/images/ENGR1510_promo.png'))))
 
 		# These content units can be adapted to course instances

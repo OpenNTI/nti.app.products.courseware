@@ -202,10 +202,11 @@ def _content_package_registered( package, event ):
 	catalog_entry.Title = info_json_dict['title']
 	catalog_entry.ProviderUniqueID = info_json_dict['id']
 	catalog_entry.ProviderDepartmentTitle = info_json_dict['school']
-	catalog_entry.Term = info_json_dict.get('term', '')
-	if catalog_entry.Term:
-		catalog_entry.ProviderUniqueID += '-%s' % catalog_entry.Term
-		
+	catalog_entry.ntiid = info_json_dict['ntiid']
+	catalog_entry.Term = info_json_dict.get('term', '') # XXX: Non-interface
+	#if catalog_entry.Term:
+	#	catalog_entry.ProviderUniqueID += '-%s' % catalog_entry.Term
+
 	if 'startDate' in info_json_dict:
 		catalog_entry.StartDate = isodate.parse_datetime(info_json_dict['startDate'])
 		# Convert to UTC if needed

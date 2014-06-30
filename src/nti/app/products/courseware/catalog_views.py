@@ -87,12 +87,14 @@ class enroll_course_view(AbstractAuthenticatedView,
 		catalog = component.getUtility(ICourseCatalog)
 		identifier = self.readInput()
 		# We accept either a raw string or a dict with
-		# 'ProviderUniqueID', as per the catalog entry;
+		# 'ntiid' or 'ProviderUniqueID', as per the catalog entry;
 		# that's the preferred form.
-		try:
-			identifier = identifier['ProviderUniqueID']
-		except (AttributeError,KeyError,TypeError):
-			pass
+		for k in 'NTIID', 'ntiid', 'ProviderUniqueID':
+			try:
+				identifier = identifier[k]
+				break
+			except (AttributeError,KeyError,TypeError):
+				pass
 
 		try:
 			catalog_entry = catalog[identifier]

@@ -25,6 +25,28 @@ from zope.component.interfaces import IComponents
 from nti.app.products.courseware.interfaces import ICourseCatalog
 from nti.contentlibrary.interfaces import IContentPackageLibrary
 
+def publish_ou_course_entries():
+	lib = component.getUtility(IContentPackageLibrary)
+	try:
+		del lib.contentPackages
+	except AttributeError:
+		pass
+
+	lib.syncContentPackages()
+
+	components = component.getUtility(IComponents, name='platform.ou.edu')
+	catalog = components.getUtility( ICourseCatalog )
+
+	# re-register globally
+	global_catalog = component.getUtility(ICourseCatalog)
+	for k, v in catalog.items():
+		global_catalog._SampleContainer__data[k] = v
+
+	try:
+		del global_catalog._BTreeContainer__len
+	except AttributeError:
+		pass
+
 def _do_then_enumerate_library(do):
 
 	database = ZODB.DB( ApplicationTestLayer._storage_base,
@@ -33,21 +55,7 @@ def _do_then_enumerate_library(do):
 	def _create():
 		with mock_db_trans():
 			do()
-
-			lib = component.getUtility(IContentPackageLibrary)
-			try:
-				del lib.contentPackages
-			except AttributeError:
-				pass
-
-			getattr(lib, 'contentPackages')
-
-			components = component.getUtility(IComponents, name='platform.ou.edu')
-			catalog = components.getUtility( ICourseCatalog )
-
-			# re-register globally
-			global_catalog = component.getUtility(ICourseCatalog)
-			global_catalog._entries[:] = catalog._entries
+			publish_ou_course_entries()
 
 	_create()
 

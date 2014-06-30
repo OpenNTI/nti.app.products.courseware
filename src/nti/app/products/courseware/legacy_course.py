@@ -305,7 +305,7 @@ def _register_course_purchasable_from_catalog_entry( entry, event ):
 			logger.info("Found duplicate local course catalog entry %s", entry.ProviderUniqueID)
 			local_catalog.removeCatalogEntry(entry, event=False)
 			local_catalog.addCatalogEntry(entry, event=False)
-		assert entry not in global_catalog
+		assert entry.__name__ not in global_catalog
 		assert entry.__parent__ is local_catalog
 
 	components.registerUtility( the_course, ICourse, name=purch_ntiid )

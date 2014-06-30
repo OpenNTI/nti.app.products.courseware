@@ -104,10 +104,10 @@ class AllCoursesCollection(contained.Contained):
 		self.container = type(parent.catalog)()
 		self.container.__name__ = parent.catalog.__name__
 		self.container.__parent__ = parent.catalog.__parent__
-		self.container._entries = [x for x in parent.catalog if has_permission(ACT_READ, x, parent.user)]
-		# We sort the entries to be sure that we get consistent order
-		# across machines and restarts. This helps the ETag be more reliable
-		self.container._entries.sort(key=operator.attrgetter('__name__'))
+		self.container._v_container_ext_as_list = True
+		for x in parent.catalog:
+			if has_permission(ACT_READ, x, parent.user):
+				self.container._SampleContainer__data[x.__name__] = x
 
 	accepts = ()
 
@@ -174,6 +174,12 @@ class _AbstractQueryBasedCoursesCollection(contained.Contained):
 		for o in self.container:
 			if o.__name__ == key or interfaces.ICourseCatalogEntry(o).__name__ == key:
 				return o
+
+		# No actual match. Legacy ProviderUniqueID?
+		for o in self.container:
+			if interfaces.ICourseCatalogEntry(o).ProviderUniqueID == key:
+				logger.warning("Using legacy provider ID to match %s to %s", key, o)
+				return o
 		raise KeyError(key)
 
 	def __len__(self):
@@ -190,7 +196,7 @@ class _AbstractInstanceWrapper(contained.Contained):
 
 	@Lazy
 	def __name__(self):
-		return self._private_course_instance.__name__
+		return interfaces.ICourseCatalogEntry(self._private_course_instance).__name__
 
 	def __conform__(self, iface):
 		if ICourseInstance.isOrExtends(iface):

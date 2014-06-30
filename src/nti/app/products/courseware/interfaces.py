@@ -13,11 +13,11 @@ __docformat__ = "restructuredtext en"
 logger = __import__('logging').getLogger(__name__)
 
 from zope import interface
-from zope.interface.common import sequence
-from zope.location.interfaces import ILocation
-from zope.container.interfaces import IContained
 
-from dolmen.builtins import IIterable
+from zope.container.interfaces import IContained
+from zope.container.interfaces import IContentContainer
+
+from zope.container.constraints import contains, containers
 
 from nti.appserver import interfaces as app_interfaces
 
@@ -42,7 +42,7 @@ from nti.schema.field import ValidText as Text
 from nti.schema.field import ValidDatetime as Datetime
 from nti.schema.field import ValidTextLine as TextLine
 
-class ICourseCatalog(IIterable, sequence.IFiniteSequence):
+class ICourseCatalog(IContentContainer):
 	"""
 	Something that manages the set of courses
 	available in the system and provides
@@ -50,9 +50,32 @@ class ICourseCatalog(IIterable, sequence.IFiniteSequence):
 	out information about them.
 	"""
 
+	contains(b'.ICourseCatalogEntry')
+
+	def addCatalogEntry(entry, event=True):
+		"""
+		Adds an entry to this catalog.
+
+		:keyword bool event: If true (the default), we broadcast
+			the object added event.
+		"""
+
+	def removeCatalogEntry(self, entry, event=True):
+		"""
+		Remove an entry from this catalog.
+
+		:keyword bool event: If true (the default), we broadcast
+			the object removed event.
+		"""
+
 	def isEmpty():
 		"""
 		return if this catalog is empty
+		"""
+
+	def __iter__():
+		"""
+		For legacy compatibility, this yields the catalog items.
 		"""
 
 	# TODO: What is this a specialization of, anything?
@@ -102,7 +125,8 @@ class ICourseCreditLegacyInfo(interface.Interface):
 					  key_type=TextLine(title="A key"),
 					  value_type=TextLine(title="A value"))
 
-class ICourseCatalogEntry(ILocation):
+class ICourseCatalogEntry(IContained,
+						  IShouldHaveTraversablePath):
 	"""
 	An entry in the course catalog containing metadata
 	and presentation data about the course.
@@ -115,6 +139,9 @@ class ICourseCatalogEntry(ILocation):
 	course instance should be adaptable back to its corresponding
 	entry.
 	"""
+
+	containers(ICourseCatalog)
+	__parent__.required = False
 
 	Title = TextLine(title="The provider's descriptive title")
 	Description = Text(title="The provider's paragraph-length description")
@@ -176,16 +203,15 @@ class ICourseCatalogLegacyEntry(ICourseCatalogEntry):
 	LegacyPurchasableThumbnail = TextLine(title="A URL or path of indeterminate type or meaning",
 										  required=False)
 
-	Term = TextLine(title="course term", required=False, default='')
 
 class ILegacyCommunityBasedCourseInstance(ICourseInstance):
 	"""
 	Marker interface for a legacy course instance
 	"""
-		
+
 	LegacyScopes = Dict(title="'public' and 'restricted' entity ids",
 						readonly=True)
-	
+
 	LegacyInstructorForums = TextLine(title='A space separated list of forum NTIIDs',
 									  readonly=True)
 
