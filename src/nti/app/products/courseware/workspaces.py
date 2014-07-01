@@ -196,7 +196,13 @@ class _AbstractInstanceWrapper(contained.Contained):
 
 	@Lazy
 	def __name__(self):
-		return interfaces.ICourseCatalogEntry(self._private_course_instance).__name__
+		try:
+			# We probably want a better value than `name`? Human readable?
+			# or is this supposed to be traversable?
+			return interfaces.ICourseCatalogEntry(self._private_course_instance).__name__
+		except TypeError: # Hmm, the catalog entry is gone, something doesn't match. What?
+			logger.warning("Failed to get name from catalog for %s", self._private_course_instance)
+			return self._private_course_instance.__name__
 
 	def __conform__(self, iface):
 		if ICourseInstance.isOrExtends(iface):
