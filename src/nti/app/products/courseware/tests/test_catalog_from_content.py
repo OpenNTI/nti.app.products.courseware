@@ -105,7 +105,7 @@ class TestApplicationCatalogFromContent(ApplicationLayerTest):
 					'MimeType', 'application/vnd.nextthought.courseware.coursecataloglegacyentry',
 					'Duration', 'P112D',
 					'StartDate', '2014-01-13T06:00:00Z',
-					'NTIID', None,
+					'NTIID', 'tag:nextthought.com,2011-10:OU-HTML-ENGR1510_Intro_to_Water.course_info',
 					'LegacyPurchasableIcon', '/IntroWater/images/ENGR1510_promo.png'))))
 
 		# These content units can be adapted to course instances
