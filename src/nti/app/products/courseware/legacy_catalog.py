@@ -237,9 +237,14 @@ def _content_package_registered( package, event ):
 	ext_package_href = to_external_object( package )['href']
 
 	for inst in info_json_dict['instructors']:
+		username = inst.get('username','')
+		userid = inst.get('userid','') # e.g legacy OU userid
+		if Entity.get_entity(username) is None and Entity.get_entity(userid) is not None:
+			username = userid
+		
 		instructor = CourseCatalogInstructorLegacyInfo( Name=inst['name'],
 														JobTitle=inst['title'],
-														username=inst.get('username',''))
+														username=username)
 		if inst.get('defaultphoto'):
 			photo_name = inst['defaultphoto']
 			photo_data = package.read_contents_of_sibling_entry( photo_name )
