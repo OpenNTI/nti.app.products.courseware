@@ -761,8 +761,6 @@ class _LegacyCourseInstanceEnrollments(object):
 from nti.contenttypes.courses.interfaces import ICourseEnrollmentManager
 from pyramid.interfaces import IRequest
 from nti.appserver.httpexceptions import HTTPNotFound
-from .interfaces import UserCourseDropEvent
-from .interfaces import UserCourseEnrollEvent
 
 @interface.implementer(ICourseEnrollmentManager)
 @component.adapter(_LegacyCommunityBasedCourseInstance, IRequest)
@@ -806,12 +804,10 @@ class _LegacyCourseInstanceEnrollmentManager(object):
 
 	def enroll(self, user):
 		self._make_subrequest( '/dataserver2/store/enroll_course' )
-		notify(UserCourseEnrollEvent(self.user, self.context))
 		return True
 
 	def drop(self, user):
 		self._make_subrequest( '/dataserver2/store/unenroll_course' )
-		notify(UserCourseDropEvent(self.user, self.context))
 		return True
 
 from nti.dataserver.interfaces import IACLProvider
