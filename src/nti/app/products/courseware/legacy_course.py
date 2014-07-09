@@ -761,6 +761,8 @@ class _LegacyCourseInstanceEnrollments(object):
 from nti.contenttypes.courses.interfaces import ICourseEnrollmentManager
 from pyramid.interfaces import IRequest
 from nti.appserver.httpexceptions import HTTPNotFound
+from .interfaces import UserCourseDropEvent
+from .interfaces import UserCourseEnrollEvent
 
 @interface.implementer(ICourseEnrollmentManager)
 @component.adapter(_LegacyCommunityBasedCourseInstance, IRequest)
@@ -774,28 +776,42 @@ class _LegacyCourseInstanceEnrollmentManager(object):
 	def __init__(self, context, request):
 		self.context = context
 		self.request = request
+	
+	@property
+	def courseID(self):
+		return self.context.legacy_purchasable.NTIID
+	
+	@property
+	def username(self):
+		return self.request.environ['REMOTE_USER']
 
+	@property
+	def user(self):
+		return User.get_user(self.username)
+		
 	def _make_subrequest(self, path):
 		if self.context.legacy_purchasable is None:
 			raise HTTPNotFound("No such course in this site")
 
-		body = {'courseID': self.context.legacy_purchasable.NTIID}
+		body = {'courseID': self.courseID}
 		subrequest = self.request.blank(path)
 		subrequest.method = b'POST'
 		subrequest.json = body
 		subrequest.content_type = 'application/json'
 		subrequest.possible_site_names = self.request.possible_site_names
-		subrequest.environ[b'REMOTE_USER'] = self.request.environ['REMOTE_USER']
+		subrequest.environ[b'REMOTE_USER'] = self.username
 		subrequest.environ[b'repoze.who.identity'] = self.request.environ['repoze.who.identity'].copy()
 
 		return self.request.invoke_subrequest( subrequest )
 
 	def enroll(self, user):
 		self._make_subrequest( '/dataserver2/store/enroll_course' )
+		notify(UserCourseEnrollEvent(self.user, self.context))
 		return True
 
 	def drop(self, user):
 		self._make_subrequest( '/dataserver2/store/unenroll_course' )
+		notify(UserCourseDropEvent(self.user, self.context))
 		return True
 
 from nti.dataserver.interfaces import IACLProvider
