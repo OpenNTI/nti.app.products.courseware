@@ -12,6 +12,9 @@ __docformat__ = "restructuredtext en"
 
 logger = __import__('logging').getLogger(__name__)
 
+# disable missing self
+#pylint:disable=I0011,E0213,E0211
+
 from zope import interface
 
 from zope.container.interfaces import IContained
