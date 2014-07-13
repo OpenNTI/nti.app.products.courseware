@@ -32,8 +32,8 @@ from urlparse import urljoin
 
 from nti.externalization.externalization import to_external_object
 
-from .catalog import CourseCatalogInstructorInfo
-from .catalog import CourseCatalogEntry
+from nti.contenttypes.courses.catalog import CourseCatalogInstructorInfo
+from nti.contenttypes.courses.catalog import CourseCatalogEntry
 from . import interfaces
 
 @interface.implementer(interfaces.ICourseCreditLegacyInfo)
@@ -241,7 +241,7 @@ def _content_package_registered( package, event ):
 		userid = inst.get('userid','') # e.g legacy OU userid
 		if Entity.get_entity(username) is None and Entity.get_entity(userid) is not None:
 			username = userid
-		
+
 		instructor = CourseCatalogInstructorLegacyInfo( Name=inst['name'],
 														JobTitle=inst['title'],
 														username=username)

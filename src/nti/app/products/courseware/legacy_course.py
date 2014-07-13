@@ -365,7 +365,7 @@ def _course_instance_for_catalog_entry(entry):
 @component.adapter(ICommunity)
 def _course_instance_for_community( community ):
 	course_catalog = component.getUtility(ICourseCatalog)
-	for entry in course_catalog:
+	for entry in course_catalog.iterCatalogEntries():
 		course = ICourseInstance( entry )
 		if getattr(course, 'legacy_community', None) == community:
 			return course
@@ -375,7 +375,7 @@ def _course_instance_for_community( community ):
 def _course_content_package_to_course(package):
 	# We go via the defined adapter from the catalog entry
 	course_catalog = component.getUtility(ICourseCatalog)
-	for entry in course_catalog:
+	for entry in course_catalog.iterCatalogEntries():
 		if getattr(entry, 'ContentPackageNTIID', None) == package.ntiid:
 			return ICourseInstance(entry, None)
 
@@ -405,7 +405,7 @@ class _PurchaseHistoryEnrollmentStatus(object):
 		# First, map the catalog content package NTIIDs to the catalog entry
 		course_catalog = component.getUtility(ICourseCatalog)
 		item_ntiid_to_entry = dict()
-		for entry in course_catalog:
+		for entry in course_catalog.iterCatalogEntries():
 			ntiid = getattr(entry, 'ContentPackageNTIID', None)
 			if ntiid:
 				item_ntiid_to_entry[ntiid] = entry
@@ -695,8 +695,10 @@ class _LegacyCommunityBasedCourseInstance(CourseInstance):
 		"""
 		if self._v_catalog_entry is None:
 			catalog = component.getUtility(ICourseCatalog)
-			for entry in catalog:
-				if entry.ContentPackageNTIID == self.ContentPackageNTIID:
+			my_ntiid = self.ContentPackageNTIID
+			for entry in catalog.iterCatalogEntries():
+				ntiid = getattr( entry, 'ContentPackageNTIID', None)
+				if ntiid == my_ntiid:
 					self._v_catalog_entry = entry
 					break
 		return self._v_catalog_entry
@@ -710,11 +712,7 @@ class _LegacyCommunityBasedCourseInstance(CourseInstance):
 @interface.implementer(ICourseCatalogLegacyEntry)
 @component.adapter(_LegacyCommunityBasedCourseInstance)
 def _legacy_course_instance_to_catalog_entry(instance):
-	course_catalog = component.getUtility(ICourseCatalog)
-	for entry in course_catalog:
-		ntiid = getattr( entry, 'ContentPackageNTIID', None)
-		if ntiid == instance.ContentPackageNTIID:
-			return entry
+	return instance.legacy_catalog_entry
 
 from nti.contenttypes.courses.interfaces import ICourseEnrollments
 from nti.dataserver.interfaces import ILengthEnumerableEntityContainer
@@ -759,6 +757,7 @@ class _LegacyCourseInstanceEnrollments(object):
 		return i
 
 from nti.contenttypes.courses.interfaces import ICourseEnrollmentManager
+from nti.contenttypes.courses.interfaces import ES_PUBLIC
 from pyramid.interfaces import IRequest
 from nti.appserver.httpexceptions import HTTPNotFound
 
@@ -774,11 +773,11 @@ class _LegacyCourseInstanceEnrollmentManager(object):
 	def __init__(self, context, request):
 		self.context = context
 		self.request = request
-	
+
 	@property
 	def courseID(self):
 		return self.context.legacy_purchasable.NTIID
-	
+
 	@property
 	def username(self):
 		return self.request.environ['REMOTE_USER']
@@ -786,7 +785,7 @@ class _LegacyCourseInstanceEnrollmentManager(object):
 	@property
 	def user(self):
 		return User.get_user(self.username)
-		
+
 	def _make_subrequest(self, path):
 		if self.context.legacy_purchasable is None:
 			raise HTTPNotFound("No such course in this site")
@@ -802,7 +801,7 @@ class _LegacyCourseInstanceEnrollmentManager(object):
 
 		return self.request.invoke_subrequest( subrequest )
 
-	def enroll(self, user):
+	def enroll(self, user, scope=ES_PUBLIC):
 		self._make_subrequest( '/dataserver2/store/enroll_course' )
 		return True
 

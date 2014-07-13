@@ -18,9 +18,7 @@ logger = __import__('logging').getLogger(__name__)
 from zope import interface
 
 from zope.container.interfaces import IContained
-from zope.container.interfaces import IContentContainer
 
-from zope.container.constraints import contains, containers
 
 from nti.appserver import interfaces as app_interfaces
 
@@ -39,68 +37,26 @@ from nti.schema.field import List
 from nti.schema.field import Choice
 from nti.schema.field import Object
 from nti.schema.field import ValidURI
-from nti.schema.field import Timedelta
 from nti.schema.field import ListOrTuple
-from nti.schema.field import ValidText as Text
-from nti.schema.field import ValidDatetime as Datetime
 from nti.schema.field import ValidTextLine as TextLine
 
-class ICourseCatalog(IContentContainer):
-	"""
-	Something that manages the set of courses
-	available in the system and provides
-	ways to query for courses and find
-	out information about them.
-	"""
+import zope.deferredimport
+zope.deferredimport.initialize()
+zope.deferredimport.deprecatedFrom(
+	"Moved to nti.contenttypes.courses",
+	"nti.contenttypes.courses.interfaces",
+	"ICourseCatalogEntry",
+	"ICourseCatalogInstructorInfo")
 
-	contains(b'.ICourseCatalogEntry')
+zope.deferredimport.deprecated(
+	"Moved to nti.contenttypes.courses",
+	ICourseCatalog="nti.contenttypes.courses.interfaces:IWritableCourseCatalog")
 
-	def addCatalogEntry(entry, event=True):
-		"""
-		Adds an entry to this catalog.
 
-		:keyword bool event: If true (the default), we broadcast
-			the object added event.
-		"""
+from nti.contenttypes.courses.interfaces import ICourseCatalogInstructorInfo as _ICourseCatalogInstructorInfo
+from nti.contenttypes.courses.interfaces import ICourseCatalogEntry as _ICourseCatalogEntry
 
-	def removeCatalogEntry(self, entry, event=True):
-		"""
-		Remove an entry from this catalog.
-
-		:keyword bool event: If true (the default), we broadcast
-			the object removed event.
-		"""
-
-	def isEmpty():
-		"""
-		return if this catalog is empty
-		"""
-
-	def __iter__():
-		"""
-		For legacy compatibility, this yields the catalog items.
-		"""
-
-	# TODO: What is this a specialization of, anything?
-
-class ICourseCatalogInstructorInfo(interface.Interface):
-	"""
-	Information about a course instructor.
-
-	.. note:: Almost all of this could/should
-		come from a user profile. That way the user
-		can be in charge of it. Pictures would come from
-		the user's avatar URL.
-	"""
-
-	Name = TextLine(title="The instructor's name")
-	Title = TextLine(title="The instructor's title of address such as Dr.",
-							required=False)
-	JobTitle = TextLine(title="The instructor's academic job title")
-	Suffix = TextLine(title="The instructor's suffix such as PhD or Jr",
-							 required=False)
-
-class ICourseCatalogInstructorLegacyInfo(ICourseCatalogInstructorInfo):
+class ICourseCatalogInstructorLegacyInfo(_ICourseCatalogInstructorInfo):
 	"""
 	Additional legacy info about course instructors.
 	"""
@@ -128,43 +84,9 @@ class ICourseCreditLegacyInfo(interface.Interface):
 					  key_type=TextLine(title="A key"),
 					  value_type=TextLine(title="A value"))
 
-class ICourseCatalogEntry(IContained,
-						  IShouldHaveTraversablePath):
-	"""
-	An entry in the course catalog containing metadata
-	and presentation data about the course.
-
-	Much of this is poorly modeled and a conglomeration of things
-	found in several previous places.
-
-	In general, these objects should be adaptable to their
-	corresponding :class:`.ICourseInstance`, and the
-	course instance should be adaptable back to its corresponding
-	entry.
-	"""
-
-	containers(ICourseCatalog)
-	__parent__.required = False
-
-	Title = TextLine(title="The provider's descriptive title")
-	Description = Text(title="The provider's paragraph-length description")
-
-	ProviderUniqueID = TextLine(title="The unique id assigned by the provider")
-	ProviderDepartmentTitle = TextLine(title="The string assigned to the provider's department offering the course")
-
-	Instructors = ListOrTuple(title="The instuctors. Order might matter",
-									 value_type=Object(ICourseCatalogInstructorInfo) )
-
-	### Things related to the availability of the course
-	StartDate = Datetime(title="The date on which the course begins",
-						 description="Currently optional; a missing value means the course already started")
-	Duration = Timedelta(title="The length of the course",
-						 description="Currently optional, may be None")
-	EndDate = Datetime(title="The date on which the course ends",
-					   description="Currently optional; a missing value means the course has no defined end date.")
 
 
-class ICourseCatalogLegacyEntry(ICourseCatalogEntry):
+class ICourseCatalogLegacyEntry(_ICourseCatalogEntry):
 	"""
 	Adds information used by or provided from legacy sources.
 	"""

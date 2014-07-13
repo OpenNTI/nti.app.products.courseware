@@ -75,15 +75,15 @@ class TestApplicationCatalogFromContent(ApplicationLayerTest):
 
 		# Both get picked up
 		assert_that( catalog, has_length( 2 ) )
-		assert_that( catalog, has_items( verifiably_provides(ICourseCatalogLegacyEntry),
-										 verifiably_provides(ICourseCatalogLegacyEntry) ))
+		assert_that( catalog.iterCatalogEntries(), has_items( verifiably_provides(ICourseCatalogLegacyEntry),
+															  verifiably_provides(ICourseCatalogLegacyEntry) ))
 		water = catalog["tag:nextthought.com,2011-10:OU-HTML-ENGR1510_Intro_to_Water.course_info"]
 		assert_that( water.Instructors, has_items( verifiably_provides(ICourseCatalogInstructorLegacyInfo),
 												   verifiably_provides(ICourseCatalogInstructorLegacyInfo)))
 		assert_that( water.Instructors, has_items( has_property('username', 'saba1234'),
 												   has_property('username', 'cham1234') ) )
 
-		assert_that( catalog,
+		assert_that( catalog.iterCatalogEntries(),
 					 has_items(
 							 has_properties( 'ProviderUniqueID', 'ENGR 1510-901',
 											 'Title', 'Introduction to Water',
@@ -99,14 +99,15 @@ class TestApplicationCatalogFromContent(ApplicationLayerTest):
 
 		# Externalization
 		with mock_dataserver.mock_db_trans(self.ds):
-			assert_that( list(catalog), has_items(
-				externalizes( has_entry('Class', 'CourseCatalogLegacyEntry')),
-				externalizes( has_entries(
-					'MimeType', 'application/vnd.nextthought.courseware.coursecataloglegacyentry',
-					'Duration', 'P112D',
-					'StartDate', '2014-01-13T06:00:00Z',
-					'NTIID', 'tag:nextthought.com,2011-10:OU-HTML-ENGR1510_Intro_to_Water.course_info',
-					'LegacyPurchasableIcon', '/IntroWater/images/ENGR1510_promo.png'))))
+			assert_that( water,
+						 externalizes( has_entries(
+							 "Class", "CourseCatalogLegacyEntry",
+							 'MimeType', 'application/vnd.nextthought.courseware.coursecataloglegacyentry',
+							 'Duration', 'P112D',
+							 'StartDate', '2014-01-13T06:00:00Z',
+							 'NTIID', 'tag:nextthought.com,2011-10:OU-HTML-ENGR1510_Intro_to_Water.course_info',
+							 'LegacyPurchasableIcon', '/IntroWater/images/ENGR1510_promo.png')))
+
 
 		# These content units can be adapted to course instances
 		with mock_dataserver.mock_db_trans(self.ds):

@@ -30,7 +30,7 @@ from nti.contenttypes.courses.interfaces import is_instructed_by_name
 
 from nti.dataserver.interfaces import IUser
 
-from .interfaces import ICourseCatalogEntry
+from nti.contenttypes.courses.interfaces import ICourseCatalogEntry
 from .interfaces import ICourseInstanceEnrollment
 
 from nti.dataserver.links import Link
@@ -123,3 +123,16 @@ class _CourseEnrollmentUserProfileDetailsDecorator(object):
 		user = IUser(context)
 		ext_profile = to_external_object(user, name='summary')
 		result['UserProfile'] = ext_profile
+
+@interface.implementer(IExternalMappingDecorator)
+@component.adapter(ICourseCatalogEntry)
+class _CourseCatalogEntryLegacyDecorator(object):
+	"""
+	Restore some legacy fields used by existing applications.
+	"""
+
+	__metaclass__ = SingletonDecorator
+
+	def decorateExternalMapping(self, context, result):
+		result['Title'] = context.title
+		result['Description'] = context.description

@@ -140,7 +140,7 @@ class CourseTopicCreationView(AbstractAuthenticatedView,UploadRequestUtilsMixin)
 
 
 		created_ntiids = list()
-		for catalog_entry in catalog:
+		for catalog_entry in catalog.iterCatalogEntries():
 			if catalog_entry.StartDate.year != 2014:
 				continue
 			instance = ICourseInstance(catalog_entry)

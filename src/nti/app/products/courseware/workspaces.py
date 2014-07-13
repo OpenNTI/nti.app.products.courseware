@@ -86,6 +86,7 @@ def CoursesWorkspace( user_service ):
 
 from nti.dataserver.authorization_acl import has_permission
 from nti.dataserver.authorization import ACT_READ
+from nti.externalization.interfaces import LocatedExternalDict
 
 @interface.implementer(app_interfaces.IContainerCollection)
 class AllCoursesCollection(contained.Contained):
@@ -95,19 +96,27 @@ class AllCoursesCollection(contained.Contained):
 
 	name = alias('__name__',__name__)
 
+	class _IteratingDict(LocatedExternalDict):
+		# BWC : act like a dict, but iterate like a list
+
+		_v_container_ext_as_list = True
+		def __iter__(self):
+			return iter(self.values())
+
 	def __init__(self, parent):
 		self.__parent__ = parent
 		# To support ACLs limiting the available parts of the catalog,
 		# we filter out here.
 		# we could do this with a proxy, but it's easier right now
 		# just to copy. This is highly dependent on implementation
-		self.container = type(parent.catalog)()
+		self.container = self._IteratingDict()
 		self.container.__name__ = parent.catalog.__name__
 		self.container.__parent__ = parent.catalog.__parent__
-		self.container._v_container_ext_as_list = True
-		for x in parent.catalog:
+		self.container.lastModified = parent.catalog.lastModified
+
+		for x in parent.catalog.iterCatalogEntries():
 			if has_permission(ACT_READ, x, parent.user):
-				self.container._SampleContainer__data[x.__name__] = x
+				self.container[x.__name__] = x
 
 	accepts = ()
 
@@ -295,16 +304,15 @@ class _DefaultPrincipalAdministrativeRoleCatalog(object):
 
 	def iter_administrations(self):
 		catalog = component.queryUtility( interfaces.ICourseCatalog )
-		if catalog:
-			for entry in catalog:
-				instance = ICourseInstance(entry)
-				if self.user in instance.instructors:
-					roles = IPrincipalRoleMap(instance)
-					role = 'teaching assistant'
-					if roles.getSetting(RID_INSTRUCTOR, self.user.id) is Allow:
-						role = 'instructor'
-					yield CourseInstanceAdministrativeRole(RoleName=role,
-														   CourseInstance=instance )
+		for entry in catalog.iterCatalogEntries():
+			instance = ICourseInstance(entry)
+			if self.user in instance.instructors:
+				roles = IPrincipalRoleMap(instance)
+				role = 'teaching assistant'
+				if roles.getSetting(RID_INSTRUCTOR, self.user.id) is Allow:
+					role = 'instructor'
+				yield CourseInstanceAdministrativeRole(RoleName=role,
+													   CourseInstance=instance )
 
 @interface.implementer(interfaces.IAdministeredCoursesCollection)
 class AdministeredCoursesCollection(_AbstractQueryBasedCoursesCollection):

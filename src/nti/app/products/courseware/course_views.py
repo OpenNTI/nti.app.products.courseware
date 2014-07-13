@@ -317,7 +317,7 @@ class AllCourseEnrollmentRosterDownloadView(AbstractAuthenticatedView):
 		Returns something that can be used to iterate across the
 		:class:`.ICourseCatalogEntry` objects of interest.
 		"""
-		return component.getUtility(ICourseCatalog)
+		return component.getUtility(ICourseCatalog).iterCatalogEntries()
 
 	def _make_enrollment_predicate(self):
 		status_filter = self.request.GET.get('LegacyEnrollmentStatus')
