@@ -73,6 +73,13 @@ class CourseCatalogLegacyEntry(CourseCatalogEntry):
 		"we have no opinion on acls"
 		return ()
 
+	@property
+	def PlatformPresentationResources(self):
+		try:
+			return self.legacy_content_package.PlatformPresentationResources
+		except AttributeError:
+			return None
+
 from nti.contenttypes.courses.interfaces import ICourseInstance
 from nti.dataserver.interfaces import IPrincipal
 from nti.dataserver.users import Entity

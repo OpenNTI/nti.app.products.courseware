@@ -37,7 +37,7 @@ from nti.dataserver.tests import mock_dataserver
 
 from nti.contentlibrary.interfaces import IContentPackageLibrary
 
-from ..interfaces import ICourseCatalog
+from nti.contenttypes.courses.interfaces import ICourseCatalog
 from ..content_search import is_allowed
 
 from ..interfaces import ICourseCatalogLegacyEntry
@@ -106,7 +106,12 @@ class TestApplicationCatalogFromContent(ApplicationLayerTest):
 							 'Duration', 'P112D',
 							 'StartDate', '2014-01-13T06:00:00Z',
 							 'NTIID', 'tag:nextthought.com,2011-10:OU-HTML-ENGR1510_Intro_to_Water.course_info',
-							 'LegacyPurchasableIcon', '/IntroWater/images/ENGR1510_promo.png')))
+							 'LegacyPurchasableIcon', '/IntroWater/images/ENGR1510_promo.png',
+							 'PlatformPresentationResources', has_item(
+								 has_entries('Class', 'DisplayablePlatformPresentationResources',
+											 'PlatformName', 'iPad',
+											 'Version', 1,
+											 'href', '/IntroWater/presentation-assets/iPad/v1/')))))
 
 
 		# These content units can be adapted to course instances
