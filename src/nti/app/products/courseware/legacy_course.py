@@ -522,114 +522,23 @@ class _LegacyCommunityBasedCourseInstance(CourseInstance):
 		course_element = next(self.legacy_content_package._v_toc_node.iterchildren(tag='course'))
 		return course_element
 
+	@Lazy
+	def _LegacyOutline(self):
+		return self._make_Outline()
+
 	@CachedProperty
 	def Outline(self):
-		"""
-		Parses the outline from the ToC on demand.
-
-		This is not a persistent value, it is loaded directly
-		from the content, and its modification dates come
-		from there.
-		"""
-
-		outline = CourseOutline()
-		outline.__name__ = 'Outline'
-		# TODO: Storing this persistent ref shouldn't work
-		# across connections, since we're caching this object.
-		# however, it might just be squeaking through because
-		# we're caching it in a non-persistent property, and
-		# objects are cached per-connection? The tests pass anyway.
-		# If something breaks later, we could cache the list of
-		# top-level units and copy those to a new Outline
-		outline.__parent__ = self
-
-		course_element = self._course_toc_element
-
-		library = component.getUtility(IContentPackageLibrary)
-
-		# TODO: Why do units in the toc have an NTIID?
-		# and then, why do lessons NOT have an NTIID?
-
-		def _attr_val(node, name):
-			# Under Py2, lxml will produce byte strings if it is
-			# ascii text, otherwise it will already decode it
-			# to using utf-8. Because decoding a unicode object first
-			# *encodes* it to bytes (using the default encoding, often ascii),
-			# exotic chars would throw a UnicodeEncodeError...so watch for that
-			# https://mailman-mail5.webfaction.com/pipermail/lxml/2011-December/006239.html
-			val = node.get(bytes(name))
-			return val.decode('utf-8') if isinstance(val, bytes) else val
-
-		def _handle_node(parent_lxml, parent_node):
-			for lesson in parent_lxml.iterchildren(tag='lesson'):
-				node_factory = CourseOutlineContentNode
-				# We want to begin divorcing the syllabus/structure of a course
-				# from the content that is available. We currently do this
-				# by stubbing out the content, and setting flags to be extracted
-				# to the ToC so that we don't give the UI back the NTIID.
-				if lesson.get( str( 'isOutlineStubOnly' ) ) == 'true':
-					# We query for the node factory we use to "hide"
-					# content from the UI so that we can enable/disable
-					# hiding in certain site policies.
-					# (TODO: Be sure this works as expected with the caching)
-					node_factory = component.queryUtility(component.IFactory,
-														  name='course outline stub node', # not valid Class or MimeType value
-														  default=CourseOutlineCalendarNode )
-
-				lesson_node = node_factory()
-				topic_ntiid = _attr_val(lesson, str('topic-ntiid'))
-
-				__traceback_info__ = topic_ntiid
-
-				# Now give it the title and description of the content node,
-				# if they have them (they may not, but we require them, even if blank)
-				content_units = library.pathToNTIID(topic_ntiid)
-				if not content_units:
-					logger.warn("Unable to find referenced course node %s", topic_ntiid)
-				else:
-					content_unit = content_units[-1]
-					for attr in 'title', 'description':
-						val = getattr(content_unit, attr)
-						if val:
-							setattr(lesson_node, attr, val)
-
-				# Now, if our node is supposed to have the NTIID, expose it
-				# (this is only for efficiency; if it isn't supposed to have the
-				# NTIID it won't be in the interface and wouldn't be externalized)
-				if hasattr(lesson_node, 'ContentNTIID'):
-					lesson_node.ContentNTIID = topic_ntiid
-				else:
-					# Quick hack to make this available for use elsewhere
-					lesson_node._v_ContentNTIID = topic_ntiid
-
-				lesson_node.src = _attr_val(lesson, str( 'src' ) )
-
-				parent_node.append(lesson_node)
-				# Sigh. It looks like date is optionally a comma-separated
-				# list of datetimes. If there is only one, that looks like
-				# the end date, not the beginning date.
-				dates = lesson.get('date', ())
-				if dates:
-					dates = dates.split(',')
-				if len(dates) == 1:
-					lesson_node.AvailableEnding = dates[0]
-				elif len(dates) == 2:
-					lesson_node.AvailableBeginning = dates[0]
-					lesson_node.AvailableEnding = dates[1]
-				_handle_node(lesson, lesson_node)
-
-		for unit in course_element.iterchildren(tag='unit'):
-			unit_node = CourseOutlineNode()
-			unit_node.title = _attr_val(unit, str( 'label' ) )
-			unit_node.src = _attr_val(unit, str( 'src' ) )
-			outline.append(unit_node)
-			_handle_node( unit, unit_node )
-
-		# Finally, after all the children have been added (which
-		# changes lastModified), set the lastModified to the ToC date.
+		from nti.contenttypes.courses._outline_parser import fill_outline_from_key
+		# In the past, we used the non-persistent version and parsed it
+		# from a cached ETree node each time a thread needed it.
+		# However, now that we have reliable modification date tracking
+		# everywhere, and a function that checks modification dates before
+		# parsing, we can store a persistent version, simply
+		# checking the date on each access as needed (the _v_toc_node didn't change,
+		# though, ever, could that be an issue?)
 		package = self.legacy_content_package
-		outline.lastModified = package.index_last_modified
-		return outline
+		fill_outline_from_key(self._LegacyOutline, package.index, xml_parent_name='course')
+		return self._LegacyOutline
 
 	@CachedProperty
 	def LegacyScopes(self):
