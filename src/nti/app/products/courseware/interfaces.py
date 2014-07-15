@@ -30,14 +30,10 @@ from nti.dataserver.interfaces import IShouldHaveTraversablePath
 
 from nti.ntiids.schema import ValidNTIID
 
-from nti.schema.field import Int
-from nti.schema.field import Bool
+
 from nti.schema.field import Dict
-from nti.schema.field import List
 from nti.schema.field import Choice
 from nti.schema.field import Object
-from nti.schema.field import ValidURI
-from nti.schema.field import ListOrTuple
 from nti.schema.field import ValidTextLine as TextLine
 
 import zope.deferredimport
@@ -47,86 +43,22 @@ zope.deferredimport.deprecatedFrom(
 	"nti.contenttypes.courses.interfaces",
 	"ICourseCatalogEntry",
 	"ICourseCatalogInstructorInfo")
+zope.deferredimport.deprecatedFrom(
+	"Moved to nti.contenttypes.courses",
+	"nti.contenttypes.courses.legacy_catalog",
+	"ICourseCatalogInstructorLegacyInfo",
+	"ICourseCreditLegacyInfo",
+	'ICourseCatalogLegacyEntry')
 
 zope.deferredimport.deprecated(
 	"Moved to nti.contenttypes.courses",
 	ICourseCatalog="nti.contenttypes.courses.interfaces:IWritableCourseCatalog")
 
 
-from nti.contenttypes.courses.interfaces import ICourseCatalogInstructorInfo as _ICourseCatalogInstructorInfo
-from nti.contenttypes.courses.interfaces import ICourseCatalogEntry as _ICourseCatalogEntry
+from nti.contenttypes.courses.legacy_catalog import ICourseCatalogLegacyEntry as _ICourseCatalogLegacyEntry
 
-class ICourseCatalogInstructorLegacyInfo(_ICourseCatalogInstructorInfo):
-	"""
-	Additional legacy info about course instructors.
-	"""
-
-	defaultphoto = TextLine(title="A URL path for an extra copy of the instructor's photo",
-							description="ideally this should be the profile photo",
-							default='',
-							required=False) # TODO: We need a schema field for this
-
-	username = TextLine(title="A username string that may or may not refer to an actual account.",
-						default='',
-						required=True)
-	username.setTaggedValue('_ext_excluded_out', True) # Internal use only
-
-class ICourseCreditLegacyInfo(interface.Interface):
-	"""
-	Describes how academic credit can be obtained
-	for this course.
-
-	"""
-
-	Hours = Int(title="The number of hours that can be earned.",
-					   min=1)
-	Enrollment = Dict(title="Information about how to enroll. This is not modeled.",
-					  key_type=TextLine(title="A key"),
-					  value_type=TextLine(title="A value"))
-
-
-
-class ICourseCatalogLegacyEntry(_ICourseCatalogEntry):
-	"""
-	Adds information used by or provided from legacy sources.
-	"""
-
-	# Legacy, will go away given a more full description of the
-	# course.
+class ICourseCatalogLegacyContentEntry(_ICourseCatalogLegacyEntry):
 	ContentPackageNTIID = ValidNTIID(title="The NTIID of the root content package")
-
-	# Legacy. This isn't really part of the course catalog.
-	Communities = ListOrTuple(value_type=TextLine(title='The community'),
-							  title="Course communities",
-							  required=False)
-
-	# While this might be a valid part of the course catalog, this
-	# representation of it isn't very informative or flexible
-	Credit = List(value_type=Object(ICourseCreditLegacyInfo),
-				  title="Either missing or an array with one entry.",
-				  required=False)
-
-	Video = ValidURI(title="A URL-like string, possibly using private-but-un-prefixed schemes, or the empty string or missing.",
-					 required=False)
-
-	Schedule = Dict(title="An unmodeled dictionary, possibly useful for presentation.")
-
-	Prerequisites = List(title="A list of dictionaries suitable for presentation. Expect a `title` key.",
-						 value_type=Dict(key_type=TextLine(),
-										 value_type=TextLine()))
-
-	Preview = Bool(title="Is this entry for a course that is upcoming?",
-				   description="This course should be considered an advertising preview"
-				   " and not yet have its content accessed.")
-
-	### These are being replaced with presentation specific asset bundles
-	# (one path is insufficient to handle things like retina displays
-	# and the various platforms).
-	LegacyPurchasableIcon = TextLine(title="A URL or path of indeterminate type or meaning",
-									 required=False)
-
-	LegacyPurchasableThumbnail = TextLine(title="A URL or path of indeterminate type or meaning",
-										  required=False)
 
 
 class ILegacyCommunityBasedCourseInstance(ICourseInstance):

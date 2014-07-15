@@ -43,14 +43,9 @@ from nti.contenttypes.courses.courses import CourseInstance
 from nti.contenttypes.courses.interfaces import ICourseInstance
 from nti.contenttypes.courses.courses import CourseAdministrativeLevel
 from nti.contenttypes.courses.interfaces import ICourseAdministrativeLevel
+from nti.contenttypes.courses.interfaces import ICourseCatalog
 
-from nti.contenttypes.courses.outlines import CourseOutline
-from nti.contenttypes.courses.outlines import CourseOutlineNode
-from nti.contenttypes.courses.outlines import CourseOutlineCalendarNode
-from nti.contenttypes.courses.outlines import CourseOutlineContentNode
-
-from nti.app.products.courseware.interfaces import ICourseCatalog
-from nti.app.products.courseware.interfaces import ICourseCatalogLegacyEntry
+from nti.app.products.courseware.interfaces import ICourseCatalogLegacyContentEntry
 from nti.app.products.courseware.interfaces import IPrincipalEnrollmentCatalog
 
 from nti.dataserver.interfaces import IUser
@@ -148,7 +143,7 @@ class DefaultCourseCatalogLegacyEntryInstancePolicy(object):
 	def extend_signature_for_instructor(self, instructor, sig_lines):
 		return
 
-@component.adapter(ICourseCatalogLegacyEntry, IObjectAddedEvent)
+@component.adapter(ICourseCatalogLegacyContentEntry, IObjectAddedEvent)
 def _register_course_purchasable_from_catalog_entry( entry, event ):
 	"""
 	When a catalog entry is added to the course catalog,
@@ -156,7 +151,6 @@ def _register_course_purchasable_from_catalog_entry( entry, event ):
 	legacy policy for its provider, we will create and update
 	a legacy course instance.
 	"""
-
 	provider = get_provider(entry.ContentPackageNTIID)
 	policy = component.queryUtility(ICourseCatalogLegacyEntryInstancePolicy, name=provider)
 	if policy is None:
@@ -256,11 +250,6 @@ def _register_course_purchasable_from_catalog_entry( entry, event ):
 									   license_=None,
 									   discountable=False,
 									   bulk_purchase=False )
-	try:
-		the_course.HACK_make_acl = entry.HACK_make_acl
-		logger.warn("Installing hack for course purchasable %s", the_course)
-	except AttributeError:
-		pass
 
 	# Be careful what site we stick these in. Ideally we'd want to stick them in
 	# site the library is loaded in in case we are configuring multiple libraries
@@ -338,11 +327,18 @@ from nti.store.enrollment import get_enrollment
 from nti.store.purchasable import get_all_purchasables
 from nti.dataserver.datastructures import LastModifiedCopyingUserList
 
+from .interfaces import ICourseCatalogLegacyContentEntry
+
 @interface.implementer(ICourseInstance)
-@component.adapter(ICourseCatalogLegacyEntry)
+@component.adapter(ICourseCatalogLegacyContentEntry)
 def _course_instance_for_catalog_entry(entry):
+	if not entry.ContentPackageNTIID:
+		return None
+
 	provider = get_provider(entry.ContentPackageNTIID)
 	policy = component.queryUtility(ICourseCatalogLegacyEntryInstancePolicy, name=provider)
+	if policy is None:
+		return None
 
 	purch_id = policy.purch_id_for_entry(entry)
 	community = Entity.get_entity( entry.Communities[0] )
@@ -618,7 +614,7 @@ class _LegacyCommunityBasedCourseInstance(CourseInstance):
 			return [IPrincipal(x()) for x in self._instructor_storage if x()]
 		return ()
 
-@interface.implementer(ICourseCatalogLegacyEntry)
+@interface.implementer(ICourseCatalogLegacyContentEntry)
 @component.adapter(_LegacyCommunityBasedCourseInstance)
 def _legacy_course_instance_to_catalog_entry(instance):
 	return instance.legacy_catalog_entry

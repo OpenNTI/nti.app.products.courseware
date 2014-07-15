@@ -138,8 +138,7 @@
 	<include package="nti.externalization" />
 
 	<ext:registerAutoPackageIO
-		root_interfaces=".interfaces.ICourseCreditLegacyInfo
-						 .interfaces.ICourseCatalogLegacyEntry
+		root_interfaces=".interfaces.ICourseCatalogLegacyContentEntry
 						 .interfaces.ICourseInstanceEnrollment
 						 .interfaces.ICourseInstanceAdministrativeRole
 						 .interfaces.ILegacyCommunityBasedCourseInstance"

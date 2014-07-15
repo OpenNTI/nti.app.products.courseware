@@ -27,17 +27,18 @@ from pyramid.interfaces import IRequest
 from nti.appserver.interfaces import IUserService
 
 from .interfaces import ICoursesWorkspace
-from .interfaces import ICourseCatalogEntry
-from .interfaces import ICourseCatalog
 from .interfaces import IEnrolledCoursesCollection
 from .interfaces import ICourseInstanceEnrollment
+
+from nti.contenttypes.courses.interfaces import ICourseCatalogEntry
+from nti.contenttypes.courses.interfaces import ICourseCatalog
 from nti.contenttypes.courses.interfaces import ICourseInstance
 from nti.contenttypes.courses.interfaces import ICourseEnrollmentManager
 
 from pyramid import httpexceptions as hexc
 from pyramid.view import view_config
 from nti.appserver.dataserver_pyramid_views import GenericGetView
-from nti.appserver.pyramid_authorization import is_readable
+from nti.appserver.pyramid_authorization import can_create
 from nti.app.base.abstract_views import AbstractAuthenticatedView
 from nti.app.externalization.view_mixins import ModeledContentUploadRequestUtilsMixin
 
@@ -101,7 +102,7 @@ class enroll_course_view(AbstractAuthenticatedView,
 		except KeyError:
 			return hexc.HTTPNotFound( _("There is no course by that name") )
 
-		if not is_readable(catalog_entry, request=self.request):
+		if not can_create(catalog_entry, request=self.request):
 			raise hexc.HTTPForbidden()
 
 		course_instance = ICourseInstance(catalog_entry)

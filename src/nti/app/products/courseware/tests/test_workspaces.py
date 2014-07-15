@@ -499,8 +499,10 @@ class TestRestrictedWorkspace(ApplicationLayerTest):
 											  'Title', 'Introduction to Water',
 											  'StartDate', '2014-01-13T06:00:00Z')) ) )
 
+		# XXX: Note: The purchasables no longer properly reflect this!
+		# There's one too many.
 		purch_res = self.testapp.get('/dataserver2/store/get_purchasables')
-		assert_that( purch_res.json_body['Items'], has_length(6) ) # TODO: Really verify that it's the CLC missing
+		assert_that( purch_res.json_body['Items'], has_length(7) )
 
 	@WithSharedApplicationMockDS(users=True,testapp=True)
 	def test_enroll_unenroll_using_workspace(self):

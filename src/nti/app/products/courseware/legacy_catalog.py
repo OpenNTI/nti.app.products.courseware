@@ -14,120 +14,32 @@ logger = __import__('logging').getLogger(__name__)
 from zope import interface
 from zope import component
 
-import simplejson as json
-import isodate
-import datetime
-import pytz
-import os
-
-from zope.cachedescriptors.property import readproperty
-
 from nti.contentlibrary import interfaces as lib_interfaces
 from zope.lifecycleevent import IObjectAddedEvent
 
-from nti.schema.fieldproperty import createDirectFieldProperties
-from nti.schema.schema import PermissiveSchemaConfigured as SchemaConfigured
-
-from urlparse import urljoin
-
 from nti.externalization.externalization import to_external_object
+from nti.contenttypes.courses.legacy_catalog import CourseCatalogLegacyEntry
+from .interfaces import ICourseCatalogLegacyContentEntry
 
-from nti.contenttypes.courses.catalog import CourseCatalogInstructorInfo
-from nti.contenttypes.courses.catalog import CourseCatalogEntry
-from . import interfaces
+@interface.implementer(ICourseCatalogLegacyContentEntry)
+class CourseCatalogLegacyContentEntry(CourseCatalogLegacyEntry):
+	__external_class_name__ = 'CourseCatalogLegacyEntry'
 
-@interface.implementer(interfaces.ICourseCreditLegacyInfo)
-class CourseCreditLegacyInfo(SchemaConfigured):
-	createDirectFieldProperties(interfaces.ICourseCreditLegacyInfo)
-
-@interface.implementer(interfaces.ICourseCatalogLegacyEntry)
-class CourseCatalogLegacyEntry(CourseCatalogEntry):
-	createDirectFieldProperties(interfaces.ICourseCatalogLegacyEntry)
-
-	#: For legacy catalog entries created from a content package,
-	#: this will be that package (an implementation of
-	#: :class:`.ILegacyCourseConflatedContentPackage`)
+	ContentPackageNTIID = None
+	Communities = () # Unused externally, deprecated internally
+	Term = ''
 	legacy_content_package = None
-
-	@property
-	def EndDate(self):
-		"""
-		We calculate the end date based on the duration and the start
-		date, if possible. Otherwise, None.
-		"""
-		if self.StartDate is not None and self.Duration is not None:
-			return self.StartDate + self.Duration
-
-	@readproperty
-	def Preview(self):
-		"""
-		If a preview hasn't been specifically set, we derive it
-		if possible.
-		"""
-		if self.StartDate is not None:
-			return self.StartDate > datetime.datetime.utcnow()
-
-
-	@property
-	def __acl__(self):
-		"we have no opinion on acls"
-		return ()
 
 	@property
 	def PlatformPresentationResources(self):
 		try:
 			return self.legacy_content_package.PlatformPresentationResources
 		except AttributeError:
-			return None
+			return super(CourseCatalogLegacyContentEntry,self).PlatformPresentationResources
 
-from nti.contenttypes.courses.interfaces import ICourseInstance
-from nti.dataserver.interfaces import IPrincipal
-from nti.dataserver.users import Entity
+from nti.contenttypes.courses._catalog_entry_parser import fill_entry_from_legacy_key
+from nti.contenttypes.courses.interfaces import ICourseCatalog
 
-from nti.dataserver.interfaces import ACE_DENY_ALL
-from nti.dataserver.authorization_acl import acl_from_aces
-from nti.dataserver.authorization_acl import ace_allowing
-from nti.dataserver.authorization import ACT_READ
-
-class CourseCatalogLegacyNonPublicEntry(CourseCatalogLegacyEntry):
-	"""
-	This entry has an ACL that provides access only to those people that
-	are 'enrolled' in the course according to the 'restricted' legacy scrope.
-	"""
-
-	__external_class_name__ = 'CourseCatalogLegacyEntry'
-	__external_can_create__ = False
-
-	@readproperty
-	def __acl__(self):
-		course = ICourseInstance(self, None)
-		if course is None: # No course instance yet, which is where the scopes are.
-			return [ACE_DENY_ALL]
-
-		restricted_id = course.LegacyScopes['restricted']
-		restricted = Entity.get_entity(restricted_id) if restricted_id else None
-
-		if restricted is None: # No community yet
-			acl= [ACE_DENY_ALL]
-		else:
-			acl = acl_from_aces(
-				ace_allowing( IPrincipal(restricted), ACT_READ, CourseCatalogLegacyNonPublicEntry )
-				)
-			acl.extend( (ace_allowing( i, ACT_READ, CourseCatalogLegacyNonPublicEntry)
-						 for i in course.instructors) )
-			acl.append( ACE_DENY_ALL )
-		self.__acl__ = acl # cache
-		return acl
-
-
-	def HACK_make_acl(self):
-		return self.__acl__
-
-
-@interface.implementer(interfaces.ICourseCatalogInstructorLegacyInfo)
-class CourseCatalogInstructorLegacyInfo(CourseCatalogInstructorInfo):
-	defaultphoto = None
-	createDirectFieldProperties(interfaces.ICourseCatalogInstructorLegacyInfo)
 
 @component.adapter(lib_interfaces.ILegacyCourseConflatedContentPackage, IObjectAddedEvent)
 def _content_package_registered( package, event ):
@@ -183,97 +95,28 @@ def _content_package_registered( package, event ):
 	if not package.courseInfoSrc:
 		logger.debug("No course info for %s", package )
 		return
-	info_json_string = package.read_contents_of_sibling_entry( package.courseInfoSrc )
-	if not info_json_string:
-		logger.warn("The package at %s claims to be a course but has no file at %s",
-					package, package.courseInfoSrc )
-		return
-	info_json_key = package.make_sibling_key( package.courseInfoSrc )
-	# Ensure we get unicode values for strings (simplejson would return bytestrings
-	# if they are ASCII encodable)
-	info_json_string = unicode(info_json_string, 'utf-8')
-	info_json_dict = json.loads( info_json_string )
 
-	factory = CourseCatalogLegacyEntry
-	if info_json_dict.get('is_non_public'):
-		factory = CourseCatalogLegacyNonPublicEntry
+	info_json_key = package.make_sibling_key(package.courseInfoSrc)
+	catalog_entry = CourseCatalogLegacyContentEntry()
 
-	catalog_entry = factory()
-	if lib_interfaces.IFilesystemKey.providedBy( info_json_key ):
-		catalog_entry.lastModified = os.stat(info_json_key.absolute_path).st_mtime
-	else:
-		raise ValueError("Unsupported key", info_json_key )
-
-	catalog_entry.Description = info_json_dict['description']
-	catalog_entry.ContentPackageNTIID = package.ntiid
-	catalog_entry.Title = info_json_dict['title']
-	catalog_entry.ProviderUniqueID = info_json_dict['id']
-	catalog_entry.ProviderDepartmentTitle = info_json_dict['school']
-	catalog_entry.ntiid = info_json_dict['ntiid']
-	catalog_entry.Term = info_json_dict.get('term', '') # XXX: Non-interface
-	#if catalog_entry.Term:
-	#	catalog_entry.ProviderUniqueID += '-%s' % catalog_entry.Term
-
-	if 'startDate' in info_json_dict:
-		catalog_entry.StartDate = isodate.parse_datetime(info_json_dict['startDate'])
-		# Convert to UTC if needed
-		if catalog_entry.StartDate.tzinfo is not None:
-			catalog_entry.StartDate = catalog_entry.StartDate.astimezone(pytz.UTC).replace(tzinfo=None)
-	if 'duration' in info_json_dict:
-		# We have durations as strings like "16 weeks"
-		duration_number, duration_kind = info_json_dict['duration'].split()
-		# Turn those into keywords for timedelta.
-		catalog_entry.Duration = datetime.timedelta(**{duration_kind.lower():int(duration_number)})
-		# Ensure the end date is derived properly
-		assert catalog_entry.StartDate is None or catalog_entry.EndDate
-
-	# derive preview information if not provided.
-	if 'isPreview' in info_json_dict:
-		catalog_entry.Preview = info_json_dict['isPreview']
-	else:
-		if catalog_entry.StartDate and datetime.datetime.utcnow() < catalog_entry.StartDate:
-			assert catalog_entry.Preview
-
-	# For the convenience of others
-	catalog_entry.legacy_content_package = package
-
-	instructors = []
 	# For externalizing the photo URLs, we need
 	# to make them absolute, and we do that by making
 	# the package absolute
 	ext_package_href = to_external_object( package )['href']
 
-	for inst in info_json_dict['instructors']:
-		username = inst.get('username','')
-		userid = inst.get('userid','') # e.g legacy OU userid
-		if Entity.get_entity(username) is None and Entity.get_entity(userid) is not None:
-			username = userid
+	fill_entry_from_legacy_key(catalog_entry, info_json_key, base_href=ext_package_href)
 
-		instructor = CourseCatalogInstructorLegacyInfo( Name=inst['name'],
-														JobTitle=inst['title'],
-														username=username)
-		if inst.get('defaultphoto'):
-			photo_name = inst['defaultphoto']
-			photo_data = package.read_contents_of_sibling_entry( photo_name )
-			if photo_data:
-				# Ensure it exists and is readable before we advertise it
-				instructor.defaultphoto = urljoin(ext_package_href, photo_name)
+	# XXX still have to do this (need a decorator to actually output)
+	catalog_entry.ContentPackageNTIID = package.ntiid
 
-		instructors.append( instructor )
-
-	catalog_entry.Instructors = instructors
-
+	# For the convenience of others
+	# XXX: still have to do this?
+	catalog_entry.legacy_content_package = package
 	catalog_entry.Communities = [unicode(x, 'utf-8')
 								 for x in package._v_toc_node.xpath('//course/scope[@type="public"]/entry/text()')]
 
-	if info_json_dict.get('video'):
-		catalog_entry.Video = info_json_dict.get('video').encode('utf-8')
-	catalog_entry.Credit = [CourseCreditLegacyInfo(Hours=d['hours'],Enrollment=d['enrollment'])
-							for d in info_json_dict.get('credit', [])]
-	catalog_entry.Schedule = info_json_dict.get('schedule', {})
-	catalog_entry.Prerequisites = info_json_dict.get('prerequisites', [])
+	catalog = component.getUtility(ICourseCatalog)
 
-	catalog = component.getUtility(interfaces.ICourseCatalog)
 	try:
 		catalog.addCatalogEntry( catalog_entry )
 	except ValueError:

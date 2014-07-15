@@ -22,7 +22,7 @@ from nti.dataserver.tests.mock_dataserver import mock_db_trans
 
 from nti.dataserver import users
 from zope.component.interfaces import IComponents
-from nti.app.products.courseware.interfaces import ICourseCatalog
+from nti.contenttypes.courses.interfaces import ICourseCatalog
 from nti.contentlibrary.interfaces import IContentPackageLibrary
 
 def publish_ou_course_entries():
@@ -35,13 +35,23 @@ def publish_ou_course_entries():
 	lib.syncContentPackages()
 
 	components = component.getUtility(IComponents, name='platform.ou.edu')
-	catalog = components.getUtility( ICourseCatalog )
+	local_catalog = components.getUtility( ICourseCatalog )
 
 	# re-register globally
-	global_catalog = component.getUtility(ICourseCatalog)
-	for k, v in catalog.items():
-		global_catalog._SampleContainer__data[k] = v
+	global_catalog = component.getGlobalSiteManager().getUtility(ICourseCatalog)
+	assert local_catalog is not global_catalog
 
+	for k, v in local_catalog.items():
+		global_catalog._SampleContainer__data[k] = v
+		# Some tests expect to be able to find them in bath
+		# places, which is weird
+		#v.__parent__ = global_catalog
+
+	#local_catalog._SampleContainer__data.clear()
+	#try:
+	#	del local_catalog._BTreeContainer__len
+	#except AttributeEror:
+	#	pass
 	try:
 		del global_catalog._BTreeContainer__len
 	except AttributeError:
