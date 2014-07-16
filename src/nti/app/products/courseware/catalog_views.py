@@ -99,8 +99,8 @@ class enroll_course_view(AbstractAuthenticatedView,
 		else:
 			for k in 'NTIID', 'ntiid', 'ProviderUniqueID':
 				try:
-					identifier = identifier[k]
-					catalog_entry = catalog.getCatalogEntry(identifier)
+					entry = identifier[k]
+					catalog_entry = catalog.getCatalogEntry(entry)
 					break
 				except (AttributeError,KeyError,TypeError):
 					pass
