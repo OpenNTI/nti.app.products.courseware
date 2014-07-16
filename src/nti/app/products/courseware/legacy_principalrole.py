@@ -17,8 +17,8 @@ from zope import interface
 
 from nti.contenttypes.courses.interfaces import RID_TA
 from nti.contenttypes.courses.interfaces import RID_INSTRUCTOR
+from nti.contenttypes.courses.interfaces import ICourseCatalogEntry
 from .interfaces import ILegacyCommunityBasedCourseInstance
-from .interfaces import ICourseCatalogEntry
 
 from zope.securitypolicy.interfaces import IPrincipalRoleMap
 
