@@ -78,7 +78,7 @@ def CoursesWorkspace( user_service ):
 	The courses for a user reside at the path ``/users/$ME/Courses``.
 	"""
 	catalog = component.queryUtility( ICourseCatalog )
-	if catalog:
+	if catalog is not None:
 		# Ok, patch up the parent relationship
 		workspace = _CoursesWorkspace( user_service, catalog )
 		workspace.__parent__ = workspace.user
