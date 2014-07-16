@@ -22,7 +22,7 @@ from nti.app.base.abstract_views import AbstractAuthenticatedView
 
 from nti.dataserver import authorization as nauth
 
-from .interfaces import ICourseCatalog
+from nti.contenttypes.courses.interfaces import ICourseCatalog
 from nti.app.notabledata.interfaces import IUserNotableData
 
 import csv
