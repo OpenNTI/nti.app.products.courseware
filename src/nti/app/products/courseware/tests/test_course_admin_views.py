@@ -21,11 +21,11 @@ from hamcrest import has_entry
 
 from nti.app.testing.decorators import WithSharedApplicationMockDS
 from nti.app.testing.application_webtest import ApplicationLayerTest
-from . import InstructedCourseApplicationTestLayer
+from . import LegacyInstructedCourseApplicationTestLayer
 
 
 class TestCreateForums(ApplicationLayerTest):
-	layer = InstructedCourseApplicationTestLayer
+	layer = LegacyInstructedCourseApplicationTestLayer
 	testapp = None
 
 

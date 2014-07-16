@@ -48,11 +48,11 @@ from nti.contenttypes.courses.interfaces import ICourseInstance
 from nti.externalization.tests import externalizes
 from nti.dataserver.authorization_acl import ACL
 from nti.app.testing.application_webtest import ApplicationLayerTest
-from . import InstructedCourseApplicationTestLayer
+from . import LegacyInstructedCourseApplicationTestLayer
 
 
 class TestApplicationCatalogFromContent(ApplicationLayerTest):
-	layer = InstructedCourseApplicationTestLayer
+	layer = LegacyInstructedCourseApplicationTestLayer
 
 	@WithSharedApplicationMockDS(users=True)
 	def test_content(self):

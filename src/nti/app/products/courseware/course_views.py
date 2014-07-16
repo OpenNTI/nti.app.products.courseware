@@ -104,12 +104,15 @@ class CourseEnrollmentRosterPathAdapter(Contained):
 
 	def __getitem__(self, username):
 		username = username.lower()
+		# XXX: We can do better than this interface now
 		enrollments_iter = ICourseEnrollments(self.__parent__).iter_enrollments()
 
-		for item in enrollments_iter:
-			if item.username.lower() == username:
-				enrollment = component.getMultiAdapter( (self.__parent__, item),
+		for record in enrollments_iter:
+			user = IUser(record)
+			if user.username.lower() == username:
+				enrollment = component.getMultiAdapter( (self.__parent__, record),
 														ICourseInstanceEnrollment )
+
 				if enrollment.__parent__ is None:
 					# Typically it will be, lets give it the right
 					# place
@@ -123,7 +126,7 @@ class CourseEnrollmentRosterPathAdapter(Contained):
 			 renderer='rest',
 			 request_method='GET',
 			 context=CourseEnrollmentRosterPathAdapter,
-			 permission=nauth.ACT_READ)
+			 permission='nti.actions.courseware.view_roster')
 class CourseEnrollmentRosterGetView(AbstractAuthenticatedView,
 									BatchingUtilsMixin):
 	"""
@@ -200,9 +203,6 @@ class CourseEnrollmentRosterGetView(AbstractAuthenticatedView,
 		username = request.authenticated_userid
 		course = context
 
-		if not is_instructed_by_name(course, username):
-			raise hexc.HTTPForbidden()
-
 		result = LocatedExternalDict()
 		result.__name__ = request.view_name
 		result.__parent__ = course
@@ -221,7 +221,8 @@ class CourseEnrollmentRosterGetView(AbstractAuthenticatedView,
 			# and then have an index on the reverse name in the entity
 			# catalog (we have the name parts, but keyword indexes are
 			# not sortable)
-			def _key(user):
+			def _key(record):
+				user = IUser(record)
 				parts = IFriendlyNamed(user).get_searchable_realname_parts()
 				if not parts:
 					return ''
@@ -232,7 +233,7 @@ class CourseEnrollmentRosterGetView(AbstractAuthenticatedView,
 									  key=_key,
 									  reverse=sort_reverse)
 		elif sort_name == 'username':
-			_key = operator.attrgetter('username')
+			_key = lambda x: IUser(x).username
 			enrollments_iter = sorted(enrollments_iter,
 									  key=_key,
 									  reverse=sort_reverse)
@@ -327,7 +328,9 @@ class AllCourseEnrollmentRosterDownloadView(AbstractAuthenticatedView):
 		def f(course,user):
 			enrollment = component.getMultiAdapter((course, user),
 												   ICourseInstanceEnrollment)
+
 			return enrollment.LegacyEnrollmentStatus == status_filter # Let this blow up when this goes away
+
 		return f
 
 	def __call__(self):
@@ -349,8 +352,9 @@ class AllCourseEnrollmentRosterDownloadView(AbstractAuthenticatedView):
 
 			enrollments = ICourseEnrollments(course)
 
-			for user in enrollments.iter_enrollments():
-				if enrollment_predicate(course, user):
+			for record in enrollments.iter_enrollments():
+				user = IUser(record)
+				if enrollment_predicate(course, record):
 					user_to_coursenames[user].add( course_name )
 
 		rows = LocatedExternalList()

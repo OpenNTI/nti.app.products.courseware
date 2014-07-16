@@ -27,6 +27,7 @@ from nti.appserver import interfaces as app_interfaces
 from nti.contenttypes.courses.interfaces import ICourseInstance
 from nti.contenttypes.courses.interfaces import ICourseCatalog
 from nti.contenttypes.courses.interfaces import ICourseCatalogEntry
+from nti.contenttypes.courses.interfaces import IPrincipalEnrollments
 from nti.dataserver.interfaces import IUser
 
 from nti.utils.property import Lazy
@@ -206,9 +207,9 @@ class _AbstractInstanceWrapper(contained.Contained):
 	@Lazy
 	def __name__(self):
 		try:
-			# We probably want a better value than `name`? Human readable?
+			# We probably want a better value than `ntiid`? Human readable?
 			# or is this supposed to be traversable?
-			return ICourseCatalogEntry(self._private_course_instance).__name__
+			return ICourseCatalogEntry(self._private_course_instance).ntiid
 		except TypeError: # Hmm, the catalog entry is gone, something doesn't match. What?
 			logger.warning("Failed to get name from catalog for %s", self._private_course_instance)
 			return self._private_course_instance.__name__
@@ -260,6 +261,27 @@ class LegacyCourseInstanceEnrollment(CourseInstanceEnrollment):
 		for_credit = self._user in course_inst.restricted_scope_entity_container
 		return "ForCredit" if for_credit else "Open"
 
+from nti.contenttypes.courses.interfaces import ICourseInstanceEnrollmentRecord
+
+@interface.implementer(interfaces.ICourseInstanceEnrollment)
+@component.adapter(ICourseInstanceEnrollmentRecord)
+class DefaultCourseInstanceEnrollment(CourseInstanceEnrollment):
+	__external_class_name__ = 'CourseInstanceEnrollment'
+	def __init__(self, record, user=None):
+		CourseInstanceEnrollment.__init__(self, record.CourseInstance, record.Principal)
+		self._record = record
+		self.lastModified = self._record.lastModified
+		self.createdTime = self._record.createdTime
+
+	@Lazy
+	def LegacyEnrollmentStatus(self):
+		# XXX Can do better
+		if self._record.Scope == 'Public':
+			return 'Open'
+		return 'ForCredit'
+
+def enrollment_from_record(course, record):
+	return DefaultCourseInstanceEnrollment(record)
 
 @interface.implementer(ICourseCatalogEntry)
 def wrapper_to_catalog(wrapper):
@@ -276,7 +298,7 @@ class EnrolledCoursesCollection(_AbstractQueryBasedCoursesCollection):
 	# POST-to-enroll takes. For now, just generic
 	accepts = ("application/json",)
 
-	query_interface = interfaces.IPrincipalEnrollmentCatalog
+	query_interface = IPrincipalEnrollments
 	query_attr = 'iter_enrollments'
 	contained_interface = interfaces.ICourseInstanceEnrollment
 	user_extra_auth = ACT_DELETE
@@ -331,11 +353,16 @@ from nti.dataserver.interfaces import IDataserver
 from zope.location.interfaces import IRoot
 from zope.location.interfaces import ILocationInfo
 
-@component.adapter(ICourseCatalogEntry)
+from .interfaces import ICourseCatalogLegacyContentEntry
+
+@component.adapter(ICourseCatalogLegacyContentEntry)
 class CatalogEntryLocationInfo(LocationPhysicallyLocatable):
 	"""
 	We make catalog entries always appear relative to the
 	user if a request is in progress.
+
+	XXX: Why? We used do do this for everything, but now they have
+	nice paths...backing this down to the far legacy type
 	"""
 
 	def getParents(self):

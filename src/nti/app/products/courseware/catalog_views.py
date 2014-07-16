@@ -99,10 +99,11 @@ class enroll_course_view(AbstractAuthenticatedView,
 		else:
 			for k in 'NTIID', 'ntiid', 'ProviderUniqueID':
 				try:
-					entry = identifier[k]
-					catalog_entry = catalog.getCatalogEntry(entry)
-					if catalog_entry is not None:
-						break
+					k = identifier[k]
+					catalog_entry = catalog.getCatalogEntry(k)
+					# The above either finds the entry or throws a
+					# KeyError. NO NEED TO CHECK before breaking
+					break
 				except (AttributeError,KeyError,TypeError):
 					pass
 

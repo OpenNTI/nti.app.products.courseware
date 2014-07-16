@@ -35,7 +35,7 @@ def publish_ou_course_entries():
 	lib.syncContentPackages()
 
 
-def _do_then_enumerate_library(do):
+def _do_then_enumerate_library(do, sync_libs=False):
 
 	database = ZODB.DB( ApplicationTestLayer._storage_base,
 						database_name='Users')
@@ -44,14 +44,18 @@ def _do_then_enumerate_library(do):
 		with mock_db_trans():
 			do()
 			publish_ou_course_entries()
+			if sync_libs:
+				from nti.app.contentlibrary.admin_views import _SyncAllLibrariesView
+				_SyncAllLibrariesView(None)()
+
 
 	_create()
 
-class InstructedCourseApplicationTestLayer(ApplicationTestLayer):
+class LegacyInstructedCourseApplicationTestLayer(ApplicationTestLayer):
 
 	_library_path = 'Library'
 
-	@classmethod
+	@staticmethod
 	def _setup_library( cls, *args, **kwargs ):
 		from nti.contentlibrary.filesystem import CachedNotifyingStaticFilesystemLibrary as Library
 		lib = Library(
@@ -70,7 +74,7 @@ class InstructedCourseApplicationTestLayer(ApplicationTestLayer):
 	def setUp(cls):
 		# Must implement!
 		cls.__old_library = component.getUtility(IContentPackageLibrary)
-		component.provideUtility(cls._setup_library(), IContentPackageLibrary)
+		component.provideUtility(cls._setup_library(cls), IContentPackageLibrary)
 
 		_do_then_enumerate_library(lambda: users.User.create_user( username='harp4162', password='temp001') )
 
@@ -86,13 +90,16 @@ class InstructedCourseApplicationTestLayer(ApplicationTestLayer):
 			except AttributeError:
 				pass
 			component.provideUtility(cls.__old_library, IContentPackageLibrary)
+			users.User.delete_user('harp4162')
+			component.getGlobalSiteManager().getUtility(ICourseCatalog).clear()
+			component.getUtility(IComponents,name='platform.ou.edu').getUtility(ICourseCatalog).clear()
 
 		_do_then_enumerate_library(cleanup)
 		del cls.__old_library
 
 
 
-class RestrictedInstructedCourseApplicationTestLayer(InstructedCourseApplicationTestLayer):
+class RestrictedInstructedCourseApplicationTestLayer(ApplicationTestLayer):
 
 	_library_path = 'RestrictedLibrary'
 
@@ -100,8 +107,9 @@ class RestrictedInstructedCourseApplicationTestLayer(InstructedCourseApplication
 	def setUp(cls):
 		# Must implement!
 		cls.__old_library = component.getUtility(IContentPackageLibrary)
-		component.provideUtility(cls._setup_library(), IContentPackageLibrary)
-		_do_then_enumerate_library(lambda: None)
+		component.provideUtility(LegacyInstructedCourseApplicationTestLayer._setup_library(cls), IContentPackageLibrary)
+
+		_do_then_enumerate_library(lambda: users.User.create_user( username='harp4162', password='temp001') )
 
 	@classmethod
 	def tearDown(cls):
@@ -115,6 +123,46 @@ class RestrictedInstructedCourseApplicationTestLayer(InstructedCourseApplication
 			except AttributeError:
 				pass
 			component.provideUtility(cls.__old_library, IContentPackageLibrary)
+			users.User.delete_user('harp4162')
+			component.getGlobalSiteManager().getUtility(ICourseCatalog).clear()
+			component.getUtility(IComponents,name='platform.ou.edu').getUtility(ICourseCatalog).clear()
 
 		_do_then_enumerate_library(cleanup)
 		del cls.__old_library
+
+
+class PersistentInstructedCourseApplicationTestLayer(ApplicationTestLayer):
+	# A mix of new and old-style courses
+
+	_library_path = 'PersistentLibrary'
+
+	@classmethod
+	def setUp(cls):
+		# Must implement!
+		cls.__old_library = component.getUtility(IContentPackageLibrary)
+		component.provideUtility(LegacyInstructedCourseApplicationTestLayer._setup_library(cls), IContentPackageLibrary)
+		_do_then_enumerate_library(lambda: users.User.create_user( username='harp4162', password='temp001'),
+								   sync_libs=True)
+
+
+	@classmethod
+	def tearDown(cls):
+		# Must implement!
+		# Clean up any side effects of these content packages being
+		# registered
+		def cleanup():
+			del component.getUtility(IContentPackageLibrary).contentPackages
+			try:
+				del cls.__old_library.contentPackages
+			except AttributeError:
+				pass
+			component.provideUtility(cls.__old_library, IContentPackageLibrary)
+			users.User.delete_user('harp4162')
+			component.getGlobalSiteManager().getUtility(ICourseCatalog).clear()
+			component.getUtility(IComponents,name='platform.ou.edu').getUtility(ICourseCatalog).clear()
+
+		_do_then_enumerate_library(cleanup)
+		del cls.__old_library
+
+# Export the new-style stuff as default
+InstructedCourseApplicationTestLayer = PersistentInstructedCourseApplicationTestLayer

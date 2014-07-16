@@ -10,6 +10,23 @@
 
 	<include package="nti.contenttypes.courses" />
 
+    <permission
+        id="nti.actions.courseware.view_roster"
+        title="View roster" />
+    <!--
+        The instructors/TA of a course (locally added to this role
+        for the course) can view reports
+    -->
+    <grant
+        permission="nti.actions.courseware.view_roster"
+        role="nti.roles.course_instructor" />
+    <grant
+        permission="nti.actions.courseware.view_roster"
+        role="nti.roles.course_ta" />
+    <grant
+        permission="zope.View"
+        role="nti.roles.course_instructor" />
+
 	<!-- I18N -->
 	<i18n:registerTranslations directory="locales" />
 
@@ -27,6 +44,7 @@
 	<subscriber
 		factory=".legacy_course._PurchaseHistoryEnrollmentStatus"
 		provides="nti.app.products.courseware.interfaces.IPrincipalEnrollmentCatalog"/>
+
 	<adapter factory=".legacy_course._LegacyCommunityBasedCourseAdministrativeLevelFactory"
 			 provides="nti.contenttypes.courses.interfaces.ICourseAdministrativeLevel"/>
 
@@ -111,6 +129,14 @@
 			 for=".interfaces.ILegacyCommunityBasedCourseInstance
 				  nti.dataserver.interfaces.IUser"
 			 provides=".interfaces.ILegacyCourseInstanceEnrollment" />
+
+	<adapter factory=".workspaces.DefaultCourseInstanceEnrollment"
+			 provides=".interfaces.ICourseInstanceEnrollment" />
+
+	<adapter factory=".workspaces.enrollment_from_record"
+			 for="nti.contenttypes.courses.interfaces.ICourseInstance
+				  nti.contenttypes.courses.interfaces.ICourseInstanceEnrollmentRecord"
+			 provides=".interfaces.ICourseInstanceEnrollment" />
 
 	<adapter factory=".workspaces.wrapper_to_catalog"
 			 for=".interfaces.ICourseInstanceEnrollment"/>

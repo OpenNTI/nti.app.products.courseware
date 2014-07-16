@@ -24,6 +24,7 @@ from .interfaces import ICourseCatalogLegacyContentEntry
 @interface.implementer(ICourseCatalogLegacyContentEntry)
 class CourseCatalogLegacyContentEntry(CourseCatalogLegacyEntry):
 	__external_class_name__ = 'CourseCatalogLegacyEntry'
+	__external_can_create__ = False
 
 	ContentPackageNTIID = None
 	Communities = () # Unused externally, deprecated internally

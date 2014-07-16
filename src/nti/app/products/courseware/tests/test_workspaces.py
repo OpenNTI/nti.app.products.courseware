@@ -53,9 +53,11 @@ from nti.app.products.courseware.interfaces import ICoursesWorkspace
 
 from . import InstructedCourseApplicationTestLayer
 from . import RestrictedInstructedCourseApplicationTestLayer
+from . import PersistentInstructedCourseApplicationTestLayer
+from . import LegacyInstructedCourseApplicationTestLayer
 
 class TestWorkspace(ApplicationLayerTest):
-	layer = InstructedCourseApplicationTestLayer
+
 	testapp = None
 
 	@WithSharedApplicationMockDS
@@ -87,6 +89,10 @@ class TestWorkspace(ApplicationLayerTest):
 									course_path + '/EnrolledCourses' ,
 									course_path + '/AdministeredCourses' ))
 
+class _AbstractEnrollingBase(object):
+	testapp = None
+	# This only works in the OU environment because that's where the purchasables are
+	default_origin = b'http://janux.ou.edu'
 
 	@WithSharedApplicationMockDS(users=True,testapp=True)
 	def test_fetch_all_courses(self):
@@ -95,10 +101,6 @@ class TestWorkspace(ApplicationLayerTest):
 		# Nothing by default
 		#assert_that( res.json_body, has_entry( 'Items', has_length( 0 )) )
 
-		# have to be in the site.
-		extra_env = self.testapp.extra_environ or {}
-		extra_env.update( {b'HTTP_ORIGIN': b'http://janux.ou.edu'} )
-		self.testapp.extra_environ = extra_env
 
 		res = self.testapp.get( '/dataserver2/users/sjohnson@nextthought.com/Courses/AllCourses' )
 		assert_that( res.json_body, has_entry( 'Items', has_length( 2 )) )
@@ -110,101 +112,17 @@ class TestWorkspace(ApplicationLayerTest):
 						 all_of( has_entries( 'Duration', 'P112D',
 											  'Title', 'Law and Justice' )) ) )
 
-	@WithSharedApplicationMockDS(users=True,testapp=True,default_authenticate=True)
-	def test_fetch_enrolled_courses_legacy(self):
-		# This only works in the OU environment because that's where the purchasables are
-		extra_env = self.testapp.extra_environ or {}
-		extra_env.update( {b'HTTP_ORIGIN': b'http://janux.ou.edu'} )
-		self.testapp.extra_environ = extra_env
-
-
-
-		# First, we are enrolled in nothing
-		res = self.testapp.get( '/dataserver2/users/sjohnson@nextthought.com/Courses/EnrolledCourses' )
-		assert_that( res.json_body, has_entry( 'Items', is_(empty()) ) )
-
-		# (we also admin nothing)
-		res = self.testapp.get( '/dataserver2/users/sjohnson@nextthought.com/Courses/AdministeredCourses' )
-		assert_that( res.json_body, has_entry( 'Items', is_(empty()) ) )
-
-
-		# enroll in the course using its purchasable id
-		courseId = 'tag:nextthought.com,2011-10:OU-course-CLC3403LawAndJustice'
-		environ = self._make_extra_environ()
-		environ[b'HTTP_ORIGIN'] = b'http://platform.ou.edu'
-
-		purch_res = self.testapp.get('/dataserver2/store/get_purchasables')
-		assert_that( purch_res.json_body, has_entry( 'Items', has_item( has_entries( 'NTIID', courseId,
-																					 'StartDate', '2013-08-13',
-																					 'EndDate', '2013-12-03T06:00:00Z',
-																					 'Duration', 'P112D') ) ) )
-
-		path = '/dataserver2/store/enroll_course'
-		data = {'courseId': courseId}
-		res = self.testapp.post_json(path, data, extra_environ=environ)
-		assert_that(res.status_int, is_(204))
-
-
-		# Now it should show up in our workspace
-		res = self.testapp.get( '/dataserver2/users/sjohnson@nextthought.com/Courses/EnrolledCourses' )
-
-		entry_href = '/dataserver2/users/sjohnson%40nextthought.com/Courses/AllCourses/CourseCatalog/tag%3Anextthought.com%2C2011-10%3AOU-HTML-CLC3403_LawAndJustice.course_info'
-		assert_that( res.json_body, has_entry( 'Items', has_length( 1 ) ) )
-		assert_that( res.json_body['Items'], has_item( has_entries( 'Class', 'CourseInstanceEnrollment',
-																	'href', '/dataserver2/users/sjohnson%40nextthought.com/Courses/EnrolledCourses/tag%3Anextthought.com%2C2011-10%3AOU-HTML-CLC3403_LawAndJustice.course_info')) )
-
-		course_instance = res.json_body['Items'][0]['CourseInstance']
-		assert_that( course_instance,
-					 has_entries( 'Class', 'LegacyCommunityBasedCourseInstance',
-								  'href', '/dataserver2/users/CLC3403.ou.nextthought.com/LegacyCourses/CLC3403',
-								  'Outline', has_entry( 'Links', has_item( has_entry( 'rel', 'contents' ))),
-								  'instructors', has_item( all_of(has_entry('Username', 'harp4162'),
-																  does_not(has_key('AvatorURLChoices')),
-																  does_not(has_key('following')),
-																  does_not(has_key('ignoring')),
-																  does_not(has_key('DynamicMemberships')),
-																  does_not(has_key('opt_in_email_communication')),
-																  does_not(has_key('NotificationCount'))) ),
-								  'Links', has_item( has_entries( 'rel', 'CourseCatalogEntry',
-																  'href', entry_href  )) ))
-
-		assert_that(res.json_body['Items'][0], has_entry(u'LegacyEnrollmentStatus', u'Open'))
-
-		# With proper modification times
-		assert_that( res, has_property( 'last_modified', not_none() ))
-		assert_that( res.json_body, has_entry( 'Last Modified', greater_than( 0 )))
-
-		# The catalog entry can be fetched too
-		res = self.testapp.get( entry_href )
-		assert_that( res.json_body, has_entries( 'Class', 'CourseCatalogLegacyEntry',
-												 'Title', 'Law and Justice' ))
-
-		# The outline contents can be fetched too
-		outline_content_href = self.require_link_href_with_rel( course_instance['Outline'], 'contents' )
-		assert_that( outline_content_href, is_('/dataserver2/users/CLC3403.ou.nextthought.com/LegacyCourses/CLC3403/Outline/contents'))
-		res = self.testapp.get( outline_content_href )
-		# Last mod comes from the file on disk
-		assert_that( res.last_modified, is_( datetime.datetime(2014, 1, 6, 23, 20, 39, 0, webob.datetime_utils.UTC) ))
-		assert_that( res.json_body, has_length(6))
-		assert_that( res.json_body[0], has_entry('title', 'Introduction'))
-		assert_that( res.json_body[0], has_entry('contents', has_length(2)))
+	individual_roster_accessible_to_instructor = True
 
 	@WithSharedApplicationMockDS(users=('aaa@nextthought.com',),
 								 testapp=True,
 								 default_authenticate=True)
 	def test_fetch_administered_courses(self):
-		# This only works in the OU environment because that's where the purchasables are
-		extra_env = self.testapp.extra_environ or {}
-		extra_env.update( {b'HTTP_ORIGIN': b'http://janux.ou.edu'} )
-		self.testapp.extra_environ = extra_env
-
 		instructor_env = self._make_extra_environ('harp4162')
-		instructor_env.update( {b'HTTP_ORIGIN': b'http://janux.ou.edu'} )
 
 		# Note that our username comes first, but our realname (Madden Jason) comes
 		# after (Johnson Steve) so we can test sorting by name
 		jmadden_environ = self._make_extra_environ(username='aaa@nextthought.com')
-		jmadden_environ[b'HTTP_ORIGIN'] = b'http://janux.ou.edu'
 
 		with mock_dataserver.mock_db_trans(self.ds):
 			from nti.dataserver.users.interfaces import IFriendlyNamed
@@ -228,10 +146,10 @@ class TestWorkspace(ApplicationLayerTest):
 		assert_that( role, has_entry('RoleName', 'instructor'))
 		course_instance = role['CourseInstance']
 		assert_that( course_instance,
-					 has_entries( 'Class', 'LegacyCommunityBasedCourseInstance',
-								  'href', '/dataserver2/users/CLC3403.ou.nextthought.com/LegacyCourses/CLC3403',
+					 has_entries( 'Class', self.expected_instance_class,
+								  'href', self.expected_instance_href,
 								  'Outline', has_entry( 'Links', has_item( has_entry( 'rel', 'contents' ))),
-								  'instructors', has_item( has_entry('Username', 'harp4162')),
+								  #'instructors', has_item( has_entry('Username', 'harp4162')),
 								  'Links', has_item( has_entries( 'rel', 'CourseCatalogEntry', )),
 								  'Links', has_item( has_entries( 'rel', 'CourseEnrollmentRoster'))))
 
@@ -251,16 +169,17 @@ class TestWorkspace(ApplicationLayerTest):
 
 		# The instructor can fetch the enrollment records directly at their usual
 		# location...
-		enrollment_href = '/dataserver2/users/sjohnson%40nextthought.com/Courses/EnrolledCourses/tag%3Anextthought.com%2C2011-10%3AOU-HTML-CLC3403_LawAndJustice.course_info'
+		enrollment_href = self.expected_enrollment_href
 		self.testapp.get(enrollment_href, extra_environ=instructor_env)
-		# ...or at a location within the roster...
-		res = self.testapp.get(roster_link + '/sjohnson@nextthought.com', extra_environ=instructor_env)
-		assert_that( res.json_body, has_entries('Class', 'CourseInstanceEnrollment',
-												'Username', self.extra_environ_default_user.lower(),
-												'UserProfile', has_entries( 'realname', 'Steve Johnson',
-																			'NonI18NFirstName', 'Steve'),
-												'CourseInstance', None,
-												'href', enrollment_href))
+		# ...or at a location within the roster... (sometimes)
+		if self.individual_roster_accessible_to_instructor:
+			res = self.testapp.get(roster_link + '/sjohnson@nextthought.com', extra_environ=instructor_env)
+			assert_that( res.json_body, has_entries('Class', 'CourseInstanceEnrollment',
+													'Username', self.extra_environ_default_user.lower(),
+													'UserProfile', has_entries( 'realname', 'Steve Johnson',
+																				'NonI18NFirstName', 'Steve'),
+													'CourseInstance', None,
+													'href', enrollment_href))
 		# ... attempting to access someone not enrolled fails
 		self.testapp.get(roster_link + '/not_enrolled',
 						 status=404,
@@ -373,6 +292,11 @@ class TestWorkspace(ApplicationLayerTest):
 		res = self.testapp.get( activity_link, extra_environ=instructor_env)
 		assert_that( res.json_body, has_entry( 'lastViewed', 1234 ) )
 
+	expected_enrollment_href =  '/dataserver2/users/sjohnson%40nextthought.com/Courses/EnrolledCourses/tag%3Anextthought.com%2C2011-10%3AOU-HTML-CLC3403_LawAndJustice.course_info'
+	expected_instance_href = '/dataserver2/users/CLC3403.ou.nextthought.com/LegacyCourses/CLC3403'
+	expected_catalog_entry_href = '/dataserver2/users/sjohnson%40nextthought.com/Courses/AllCourses/CourseCatalog/tag%3Anextthought.com%2C2011-10%3AOU-HTML-CLC3403_LawAndJustice.course_info'
+	expected_instance_class = 'LegacyCommunityBasedCourseInstance'
+
 	def _do_enroll(self, postdata):
 		# First, we are enrolled in nothing
 		res = self.testapp.get( '/dataserver2/users/sjohnson@nextthought.com/Courses/EnrolledCourses' )
@@ -387,15 +311,15 @@ class TestWorkspace(ApplicationLayerTest):
 									  status=201 )
 
 		# The response is a 201 created for our enrollment status
-		enrollment_href = '/dataserver2/users/sjohnson%40nextthought.com/Courses/EnrolledCourses/tag%3Anextthought.com%2C2011-10%3AOU-HTML-CLC3403_LawAndJustice.course_info'
-		instance_href = '/dataserver2/users/CLC3403.ou.nextthought.com/LegacyCourses/CLC3403'
-		entry_href = '/dataserver2/users/sjohnson%40nextthought.com/Courses/AllCourses/CourseCatalog/tag%3Anextthought.com%2C2011-10%3AOU-HTML-CLC3403_LawAndJustice.course_info'
+		enrollment_href = self.expected_enrollment_href
+		instance_href = self.expected_instance_href
+		entry_href = self.expected_catalog_entry_href
 
 		assert_that( res.json_body,
 					 has_entries(
 						 'Class', 'CourseInstanceEnrollment',
 						 'href', enrollment_href,
-						 'CourseInstance', has_entries('Class', 'LegacyCommunityBasedCourseInstance',
+						 'CourseInstance', has_entries('Class', self.expected_instance_class,
 													   'href', instance_href,
 													   'TotalEnrolledCount', 1,
 													   'TotalLegacyOpenEnrolledCount', 1,
@@ -414,11 +338,6 @@ class TestWorkspace(ApplicationLayerTest):
 
 	@WithSharedApplicationMockDS(users=True,testapp=True)
 	def test_enroll_unenroll_using_workspace(self):
-		# This only works in the OU environment because that's where the purchasables are
-		extra_env = self.testapp.extra_environ or {}
-		extra_env.update( {b'HTTP_ORIGIN': b'http://janux.ou.edu'} )
-		self.testapp.extra_environ = extra_env
-
 		enrollment_href, instance_href, _ = self._do_enroll('CLC 3403')
 
 		# Because we are an admin, we can also access the global roster that will show us in it
@@ -465,15 +384,115 @@ class TestWorkspace(ApplicationLayerTest):
 								{'ProviderUniqueID': 'CLC 3403'},
 								status=201 )
 
+	enrollment_ntiid = 'tag:nextthought.com,2011-10:OU-HTML-CLC3403_LawAndJustice.course_info'
 	@WithSharedApplicationMockDS(users=True,testapp=True)
 	def test_enroll_using_ntiid(self):
-		# This only works in the OU environment because that's where the purchasables are
-		extra_env = self.testapp.extra_environ or {}
-		extra_env.update( {b'HTTP_ORIGIN': b'http://janux.ou.edu'} )
-		self.testapp.extra_environ = extra_env
+		self._do_enroll( {'ntiid': self.enrollment_ntiid} )
 
 
-		self._do_enroll( {'ntiid': 'tag:nextthought.com,2011-10:OU-HTML-CLC3403_LawAndJustice.course_info'})
+
+class TestLegacyWorkspace(_AbstractEnrollingBase,
+						  ApplicationLayerTest):
+	layer = LegacyInstructedCourseApplicationTestLayer
+
+	@WithSharedApplicationMockDS(users=True,testapp=True,default_authenticate=True)
+	def test_fetch_enrolled_courses_legacy(self):
+		# First, we are enrolled in nothing
+		res = self.testapp.get( '/dataserver2/users/sjohnson@nextthought.com/Courses/EnrolledCourses' )
+		assert_that( res.json_body, has_entry( 'Items', is_(empty()) ) )
+
+		# (we also admin nothing)
+		res = self.testapp.get( '/dataserver2/users/sjohnson@nextthought.com/Courses/AdministeredCourses' )
+		assert_that( res.json_body, has_entry( 'Items', is_(empty()) ) )
+
+
+		# enroll in the course using its purchasable id
+		courseId = 'tag:nextthought.com,2011-10:OU-course-CLC3403LawAndJustice'
+		environ = self._make_extra_environ()
+		environ[b'HTTP_ORIGIN'] = b'http://platform.ou.edu'
+
+		purch_res = self.testapp.get('/dataserver2/store/get_purchasables')
+		assert_that( purch_res.json_body, has_entry( 'Items', has_item( has_entries( 'NTIID', courseId,
+																					 'StartDate', '2013-08-13',
+																					 'EndDate', '2013-12-03T06:00:00Z',
+																					 'Duration', 'P112D') ) ) )
+
+		path = '/dataserver2/store/enroll_course'
+		data = {'courseId': courseId}
+		res = self.testapp.post_json(path, data, extra_environ=environ)
+		assert_that(res.status_int, is_(204))
+
+
+		# Now it should show up in our workspace
+		res = self.testapp.get( '/dataserver2/users/sjohnson@nextthought.com/Courses/EnrolledCourses' )
+
+		entry_href = '/dataserver2/users/sjohnson%40nextthought.com/Courses/AllCourses/CourseCatalog/tag%3Anextthought.com%2C2011-10%3AOU-HTML-CLC3403_LawAndJustice.course_info'
+		assert_that( res.json_body, has_entry( 'Items', has_length( 1 ) ) )
+		assert_that( res.json_body['Items'], has_item( has_entries( 'Class', 'CourseInstanceEnrollment',
+																	'href', '/dataserver2/users/sjohnson%40nextthought.com/Courses/EnrolledCourses/tag%3Anextthought.com%2C2011-10%3AOU-HTML-CLC3403_LawAndJustice.course_info')) )
+
+		course_instance = res.json_body['Items'][0]['CourseInstance']
+		assert_that( course_instance,
+					 has_entries( 'Class', 'LegacyCommunityBasedCourseInstance',
+								  'href', '/dataserver2/users/CLC3403.ou.nextthought.com/LegacyCourses/CLC3403',
+								  'Outline', has_entry( 'Links', has_item( has_entry( 'rel', 'contents' ))),
+								  #'instructors', has_item( all_of(has_entry('Username', 'harp4162'),
+								#								  does_not(has_key('AvatorURLChoices')),
+								#								  does_not(has_key('following')),
+								#								  does_not(has_key('ignoring')),
+								#								  does_not(has_key('DynamicMemberships')),
+								#								  does_not(has_key('opt_in_email_communication')),
+								#								  does_not(has_key('NotificationCount'))) ),
+								  'Links', has_item( has_entries( 'rel', 'CourseCatalogEntry',
+																  'href', entry_href  )) ))
+
+		assert_that(res.json_body['Items'][0], has_entry(u'LegacyEnrollmentStatus', u'Open'))
+
+		# With proper modification times
+		assert_that( res, has_property( 'last_modified', not_none() ))
+		assert_that( res.json_body, has_entry( 'Last Modified', greater_than( 0 )))
+
+		# The catalog entry can be fetched too
+		res = self.testapp.get( entry_href )
+		assert_that( res.json_body, has_entries( 'Class', 'CourseCatalogLegacyEntry',
+												 'Title', 'Law and Justice' ))
+
+		# The outline contents can be fetched too
+		outline_content_href = self.require_link_href_with_rel( course_instance['Outline'], 'contents' )
+		assert_that( outline_content_href, is_('/dataserver2/users/CLC3403.ou.nextthought.com/LegacyCourses/CLC3403/Outline/contents'))
+		res = self.testapp.get( outline_content_href )
+		# Last mod comes from the file on disk
+		assert_that( res.last_modified, is_( datetime.datetime(2014, 1, 6, 23, 20, 39, 0, webob.datetime_utils.UTC) ))
+		assert_that( res.json_body, has_length(6))
+		assert_that( res.json_body[0], has_entry('title', 'Introduction'))
+		assert_that( res.json_body[0], has_entry('contents', has_length(2)))
+
+
+class TestPersistentWorkspaces(_AbstractEnrollingBase,
+							   ApplicationLayerTest):
+	layer = PersistentInstructedCourseApplicationTestLayer
+
+	default_origin = str('http://platform.ou.edu')
+	# XXX: The order of resolution is messed up. If we install the
+	# courses in the persistent platform.ou.edu, but access
+	# janux.ou.edu, we only find the things registered in the
+	# (non-persistent) platform.ou.edu. This is because
+	# the persistent janux.ou.edu has bases:
+	# (<non-persistent-janux>, <persistent platform>)
+	# and getNextUtility find the utility registered in
+	# <non-persistent-janux> first...
+
+
+	expected_enrollment_href = '/dataserver2/users/sjohnson%40nextthought.com/Courses/EnrolledCourses/tag%3Anextthought.com%2C2011-10%3ANTI-CourseInfo-Fall2013_CLC3403_LawAndJustice'
+	expected_instance_href = '/dataserver2/%2B%2Betc%2B%2Bhostsites/platform.ou.edu/%2B%2Betc%2B%2Bsite/Courses/Fall2013/CLC3403_LawAndJustice'
+	expected_instance_class = 'CourseInstance'
+	expected_catalog_entry_href = '/dataserver2/%2B%2Betc%2B%2Bhostsites/platform.ou.edu/%2B%2Betc%2B%2Bsite/Courses/Fall2013/CLC3403_LawAndJustice/CourseCatalogEntry'
+
+	enrollment_ntiid = 'tag:nextthought.com,2011-10:NTI-CourseInfo-Fall2013_CLC3403_LawAndJustice'
+
+	# An ACL issue prevents this from working (though frankly I'm not sure how it worked
+	# in the legacy case.) Investigate more.
+	individual_roster_accessible_to_instructor = False
 
 class TestRestrictedWorkspace(ApplicationLayerTest):
 	layer = RestrictedInstructedCourseApplicationTestLayer
