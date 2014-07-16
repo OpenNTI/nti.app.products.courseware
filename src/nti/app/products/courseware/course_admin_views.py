@@ -156,7 +156,7 @@ class CourseTopicCreationView(AbstractAuthenticatedView,UploadRequestUtilsMixin)
 
 		for course_instance_id in course_instance_ids:
 			logger.debug("making entries for %s", course_instance_id)
-			catalog_entry = catalog[course_instance_id]
+			catalog_entry = catalog.getCatalogEntry(course_instance_id)
 			__traceback_info__ = catalog_entry
 
 			instance = ICourseInstance(catalog_entry)

@@ -289,8 +289,8 @@ class CourseEnrollmentRosterGetView(AbstractAuthenticatedView,
 		return result
 
 
-from .interfaces import ICourseCatalog
-from .interfaces import ICourseCatalogEntry
+from nti.contenttypes.courses.interfaces import ICourseCatalog
+from nti.contenttypes.courses.interfaces import ICourseCatalogEntry
 from nti.dataserver.interfaces import IDataserverFolder
 from nti.dataserver.users.interfaces import IUserProfile
 

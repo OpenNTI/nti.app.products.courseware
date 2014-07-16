@@ -87,19 +87,25 @@ class enroll_course_view(AbstractAuthenticatedView,
 	def _do_call(self):
 		catalog = component.getUtility(ICourseCatalog)
 		identifier = self.readInput()
+		catalog_entry = None
 		# We accept either a raw string or a dict with
 		# 'ntiid' or 'ProviderUniqueID', as per the catalog entry;
 		# that's the preferred form.
-		for k in 'NTIID', 'ntiid', 'ProviderUniqueID':
+		if isinstance(identifier, basestring):
 			try:
-				identifier = identifier[k]
-				break
-			except (AttributeError,KeyError,TypeError):
+				catalog_entry = catalog.getCatalogEntry(identifier)
+			except KeyError:
 				pass
+		else:
+			for k in 'NTIID', 'ntiid', 'ProviderUniqueID':
+				try:
+					identifier = identifier[k]
+					catalog_entry = catalog.getCatalogEntry(identifier)
+					break
+				except (AttributeError,KeyError,TypeError):
+					pass
 
-		try:
-			catalog_entry = catalog[identifier]
-		except KeyError:
+		if catalog_entry is None:
 			return hexc.HTTPNotFound( _("There is no course by that name") )
 
 		if not can_create(catalog_entry, request=self.request):
