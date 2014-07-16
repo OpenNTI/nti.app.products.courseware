@@ -78,7 +78,6 @@ def CoursesWorkspace( user_service ):
 	The courses for a user reside at the path ``/users/$ME/Courses``.
 	"""
 	catalog = component.queryUtility( ICourseCatalog )
-	from IPython.core.debugger import Tracer; Tracer()()
 	if catalog is not None:
 		# Ok, patch up the parent relationship
 		workspace = _CoursesWorkspace( user_service, catalog )
