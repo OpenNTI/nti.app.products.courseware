@@ -34,28 +34,6 @@ def publish_ou_course_entries():
 
 	lib.syncContentPackages()
 
-	components = component.getUtility(IComponents, name='platform.ou.edu')
-	local_catalog = components.getUtility( ICourseCatalog )
-
-	# re-register globally
-	global_catalog = component.getGlobalSiteManager().getUtility(ICourseCatalog)
-	assert local_catalog is not global_catalog
-
-	for k, v in local_catalog.items():
-		global_catalog._SampleContainer__data[k] = v
-		# Some tests expect to be able to find them in bath
-		# places, which is weird
-		#v.__parent__ = global_catalog
-
-	#local_catalog._SampleContainer__data.clear()
-	#try:
-	#	del local_catalog._BTreeContainer__len
-	#except AttributeEror:
-	#	pass
-	try:
-		del global_catalog._BTreeContainer__len
-	except AttributeError:
-		pass
 
 def _do_then_enumerate_library(do):
 
