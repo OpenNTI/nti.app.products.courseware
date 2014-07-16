@@ -101,7 +101,8 @@ class enroll_course_view(AbstractAuthenticatedView,
 				try:
 					entry = identifier[k]
 					catalog_entry = catalog.getCatalogEntry(entry)
-					break
+					if catalog_entry is not None:
+						break
 				except (AttributeError,KeyError,TypeError):
 					pass
 
