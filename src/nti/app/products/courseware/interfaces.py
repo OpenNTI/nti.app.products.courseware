@@ -52,6 +52,8 @@ zope.deferredimport.deprecatedFrom(
 
 zope.deferredimport.deprecated(
 	"Moved to nti.contenttypes.courses",
+	# XXX: Note the aliasing: This is somewhat dangerous if we
+	# attempt to register things by this interface!
 	ICourseCatalog="nti.contenttypes.courses.interfaces:IWritableCourseCatalog")
 
 

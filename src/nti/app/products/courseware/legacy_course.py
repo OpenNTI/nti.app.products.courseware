@@ -279,11 +279,13 @@ def _register_course_purchasable_from_catalog_entry( entry, event ):
 
 		# Now move the catalog entry down to this level too.
 		# It gets added by default globally but we need them to match
+		# XXX: NOTE: We actually require this to be IWritableCourseCatalog!
 		global_catalog = component.getGlobalSiteManager().getUtility(ICourseCatalog)
 		local_catalog = components.queryUtility(ICourseCatalog)
 		if local_catalog is None or local_catalog is global_catalog:
 			local_catalog = type(global_catalog)()
-			components.registerUtility(local_catalog, ICourseCatalog)
+			components.registerUtility(local_catalog, provided=ICourseCatalog)
+			assert components.getUtility(ICourseCatalog) is local_catalog
 
 		# By definition it is in the global
 		global_catalog.removeCatalogEntry(entry, event=False)

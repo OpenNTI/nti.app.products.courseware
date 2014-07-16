@@ -25,6 +25,8 @@ from zope.securitypolicy.interfaces import Allow
 from . import interfaces
 from nti.appserver import interfaces as app_interfaces
 from nti.contenttypes.courses.interfaces import ICourseInstance
+from nti.contenttypes.courses.interfaces import ICourseCatalog
+from nti.contenttypes.courses.interfaces import ICourseCatalogEntry
 from nti.dataserver.interfaces import IUser
 
 from nti.utils.property import Lazy
@@ -36,8 +38,6 @@ from nti.schema.fieldproperty import createDirectFieldProperties
 from nti.dataserver.authorization import ACT_DELETE
 from nti.dataserver.authorization_acl import acl_from_aces
 from nti.dataserver.authorization_acl import ace_allowing
-
-import operator
 
 @interface.implementer(interfaces.ICoursesWorkspace)
 class _CoursesWorkspace(contained.Contained):
@@ -77,7 +77,7 @@ def CoursesWorkspace( user_service ):
 	"""
 	The courses for a user reside at the path ``/users/$ME/Courses``.
 	"""
-	catalog = component.queryUtility( interfaces.ICourseCatalog )
+	catalog = component.queryUtility( ICourseCatalog )
 	if catalog:
 		# Ok, patch up the parent relationship
 		workspace = _CoursesWorkspace( user_service, catalog )
@@ -181,12 +181,12 @@ class _AbstractQueryBasedCoursesCollection(contained.Contained):
 
 	def __getitem__(self,key):
 		for o in self.container:
-			if o.__name__ == key or interfaces.ICourseCatalogEntry(o).__name__ == key:
+			if o.__name__ == key or ICourseCatalogEntry(o).__name__ == key:
 				return o
 
 		# No actual match. Legacy ProviderUniqueID?
 		for o in self.container:
-			if interfaces.ICourseCatalogEntry(o).ProviderUniqueID == key:
+			if ICourseCatalogEntry(o).ProviderUniqueID == key:
 				logger.warning("Using legacy provider ID to match %s to %s", key, o)
 				return o
 		raise KeyError(key)
@@ -208,7 +208,7 @@ class _AbstractInstanceWrapper(contained.Contained):
 		try:
 			# We probably want a better value than `name`? Human readable?
 			# or is this supposed to be traversable?
-			return interfaces.ICourseCatalogEntry(self._private_course_instance).__name__
+			return ICourseCatalogEntry(self._private_course_instance).__name__
 		except TypeError: # Hmm, the catalog entry is gone, something doesn't match. What?
 			logger.warning("Failed to get name from catalog for %s", self._private_course_instance)
 			return self._private_course_instance.__name__
@@ -261,9 +261,9 @@ class LegacyCourseInstanceEnrollment(CourseInstanceEnrollment):
 		return "ForCredit" if for_credit else "Open"
 
 
-@interface.implementer(interfaces.ICourseCatalogEntry)
+@interface.implementer(ICourseCatalogEntry)
 def wrapper_to_catalog(wrapper):
-	return interfaces.ICourseCatalogEntry(wrapper.CourseInstance)
+	return ICourseCatalogEntry(wrapper.CourseInstance)
 
 @interface.implementer(interfaces.IEnrolledCoursesCollection)
 class EnrolledCoursesCollection(_AbstractQueryBasedCoursesCollection):
@@ -303,7 +303,7 @@ class _DefaultPrincipalAdministrativeRoleCatalog(object):
 		self.user = user
 
 	def iter_administrations(self):
-		catalog = component.queryUtility( interfaces.ICourseCatalog )
+		catalog = component.queryUtility( ICourseCatalog )
 		for entry in catalog.iterCatalogEntries():
 			instance = ICourseInstance(entry)
 			if self.user in instance.instructors:
@@ -331,7 +331,7 @@ from nti.dataserver.interfaces import IDataserver
 from zope.location.interfaces import IRoot
 from zope.location.interfaces import ILocationInfo
 
-@component.adapter(interfaces.ICourseCatalogEntry)
+@component.adapter(ICourseCatalogEntry)
 class CatalogEntryLocationInfo(LocationPhysicallyLocatable):
 	"""
 	We make catalog entries always appear relative to the
