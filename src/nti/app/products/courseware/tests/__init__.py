@@ -161,6 +161,12 @@ class PersistentInstructedCourseApplicationTestLayer(ApplicationTestLayer):
 			component.getGlobalSiteManager().getUtility(ICourseCatalog).clear()
 			component.getUtility(IComponents,name='platform.ou.edu').getUtility(ICourseCatalog).clear()
 
+			from nti.site.site import get_site_for_site_names
+			site = get_site_for_site_names(('platform.ou.edu',))
+			cc = site.getSiteManager().getUtility(ICourseCatalog)
+			for x in list(cc):
+				del cc[x]
+
 		_do_then_enumerate_library(cleanup)
 		del cls.__old_library
 

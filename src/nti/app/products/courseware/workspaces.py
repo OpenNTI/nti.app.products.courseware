@@ -263,7 +263,7 @@ class LegacyCourseInstanceEnrollment(CourseInstanceEnrollment):
 
 from nti.contenttypes.courses.interfaces import ICourseInstanceEnrollmentRecord
 
-@interface.implementer(interfaces.ICourseInstanceEnrollment)
+@interface.implementer(interfaces.ILegacyCourseInstanceEnrollment)
 @component.adapter(ICourseInstanceEnrollmentRecord)
 class DefaultCourseInstanceEnrollment(CourseInstanceEnrollment):
 	__external_class_name__ = 'CourseInstanceEnrollment'
@@ -412,7 +412,7 @@ class _UserInstructorsPresentationPriorityCreators(object):
 
 	def iter_priority_creator_usernames(self):
 		for enrollments in component.subscribers( (self.context,),
-												  interfaces.IPrincipalEnrollmentCatalog):
+												  IPrincipalEnrollments):
 			for enrollment in enrollments.iter_enrollments():
 				course = ICourseInstance(enrollment)
 				for instructor in course.instructors:

@@ -497,6 +497,7 @@ class TestPersistentWorkspaces(_AbstractEnrollingBase,
 class TestRestrictedWorkspace(ApplicationLayerTest):
 	layer = RestrictedInstructedCourseApplicationTestLayer
 	testapp = None
+	default_origin = str('http://janux.ou.edu')
 
 	@WithSharedApplicationMockDS(users=True,testapp=True)
 	def test_fetch_all_courses(self):
@@ -504,11 +505,6 @@ class TestRestrictedWorkspace(ApplicationLayerTest):
 		#res = self.testapp.get( '/dataserver2/users/sjohnson@nextthought.com/Courses/AllCourses' )
 		# Nothing by default
 		#assert_that( res.json_body, has_entry( 'Items', has_length( 0 )) )
-
-		# have to be in the site.
-		extra_env = self.testapp.extra_environ or {}
-		extra_env.update( {b'HTTP_ORIGIN': b'http://janux.ou.edu'} )
-		self.testapp.extra_environ = extra_env
 
 		res = self.testapp.get( '/dataserver2/users/sjohnson@nextthought.com/Courses/AllCourses' )
 		assert_that( res.json_body, has_entry( 'Items', has_length( 1 )) )
@@ -525,10 +521,6 @@ class TestRestrictedWorkspace(ApplicationLayerTest):
 
 	@WithSharedApplicationMockDS(users=True,testapp=True)
 	def test_enroll_unenroll_using_workspace(self):
-		# This only works in the OU environment because that's where the purchasables are
-		extra_env = self.testapp.extra_environ or {}
-		extra_env.update( {b'HTTP_ORIGIN': b'http://janux.ou.edu'} )
-		self.testapp.extra_environ = extra_env
 
 		# First, we are enrolled in nothing
 		res = self.testapp.get( '/dataserver2/users/sjohnson@nextthought.com/Courses/EnrolledCourses' )

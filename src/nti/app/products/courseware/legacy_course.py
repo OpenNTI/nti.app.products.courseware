@@ -379,6 +379,7 @@ def _course_content_package_to_course(package):
 
 from pyramid.traversal import find_interface
 from nti.contentlibrary.interfaces import IContentUnit
+from nti.contentlibrary.interfaces import IContentPackage
 
 @interface.implementer(ICourseInstance)
 @component.adapter(IContentUnit)
@@ -386,6 +387,21 @@ def _content_unit_to_course(unit):
 	package = find_interface(unit,ILegacyCourseConflatedContentPackage)
 	if package is not None:
 		return ICourseInstance(package, None)
+
+	package = find_interface(unit, IContentPackage)
+	# XXX: We probably need to check and see who's enrolled
+	# to find the most specific course instance to return
+	# XXX: FIXME: This requires a one-to-one mapping
+	course_catalog = component.getUtility(ICourseCatalog)
+	for entry in course_catalog.iterCatalogEntries():
+		instance = ICourseInstance(entry)
+		try:
+			packages = instance.ContentPackageBundle.ContentPackages
+		except AttributeError:
+			packages = (instance.legacy_content_package,)
+
+		if package in packages:
+			return instance
 
 @interface.implementer(IPrincipalEnrollmentCatalog)
 @component.adapter(IUser)
