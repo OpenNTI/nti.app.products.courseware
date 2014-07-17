@@ -380,6 +380,7 @@ def _course_content_package_to_course(package):
 from pyramid.traversal import find_interface
 from nti.contentlibrary.interfaces import IContentUnit
 from nti.contentlibrary.interfaces import IContentPackage
+from nti.contenttypes.courses.interfaces import ICourseSubInstance
 
 @interface.implementer(ICourseInstance)
 @component.adapter(IContentUnit)
@@ -390,11 +391,16 @@ def _content_unit_to_course(unit):
 
 	package = find_interface(unit, IContentPackage)
 	# XXX: We probably need to check and see who's enrolled
-	# to find the most specific course instance to return
+	# to find the most specific course instance to return?
+	# As it stands, we promise to return only a root course,
+	# not a subinstance (section)
 	# XXX: FIXME: This requires a one-to-one mapping
 	course_catalog = component.getUtility(ICourseCatalog)
 	for entry in course_catalog.iterCatalogEntries():
 		instance = ICourseInstance(entry)
+		if ICourseSubInstance.providedBy(instance):
+			continue
+
 		try:
 			packages = instance.ContentPackageBundle.ContentPackages
 		except AttributeError:
@@ -465,6 +471,18 @@ _LegacyCommunityBasedCourseAdministrativeLevelFactory = an_factory(_LegacyCommun
 
 from nti.dataserver.contenttypes.forums.interfaces import ICommunityBoard
 from nti.dataserver.interfaces import IEntityContainer
+from nti.externalization.persistence import NoPickle
+
+@NoPickle
+class _LegacyCommunityBasedCourseInstanceFakeBundle(object):
+
+	def __init__(self, content_packages):
+		self.ContentPackages = content_packages
+
+	def toExternalObject(self, *args, **kwargs):
+		return {'ContentPackages': self.ContentPackages,
+				'Class': 'ContentPackageBundle'}
+
 
 @interface.implementer(ILegacyCommunityBasedCourseInstance)
 class _LegacyCommunityBasedCourseInstance(CourseInstance):
@@ -536,8 +554,20 @@ class _LegacyCommunityBasedCourseInstance(CourseInstance):
 	@property
 	def legacy_content_package(self):
 		library = component.getUtility(IContentPackageLibrary)
-		package = library[self.ContentPackageNTIID]
+		try:
+			package = library[self.ContentPackageNTIID]
+		except KeyError:
+			logger.exception('The content package for %s is gone', self)
 		return package
+
+	@property
+	def ContentPackageBundle(self):
+		package = self.legacy_content_package
+		if package is not None:
+			packages = (package,)
+		else:
+			packages = ()
+		return _LegacyCommunityBasedCourseInstanceFakeBundle(packages)
 
 	@property
 	def _course_toc_element(self):

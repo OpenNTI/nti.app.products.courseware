@@ -80,6 +80,8 @@ class ILegacyCommunityBasedCourseInstance(ICourseInstance):
 						 description='read-only emulation of the real thing',
 						 readonly=True)
 
+	ContentPackageBundle = interface.Attribute("A mock bundle, having a ContentPackages iterable")
+
 class ICourseInstanceActivity(IContained,ILastModified):
 	"""
 	A firehose implementation of activity relating
