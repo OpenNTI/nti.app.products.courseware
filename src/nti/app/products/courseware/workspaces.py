@@ -306,7 +306,10 @@ class EnrolledCoursesCollection(_AbstractQueryBasedCoursesCollection):
 @interface.implementer(interfaces.ICourseInstanceAdministrativeRole)
 class CourseInstanceAdministrativeRole(SchemaConfigured,
 									   _AbstractInstanceWrapper):
-	createDirectFieldProperties(interfaces.ICourseInstanceAdministrativeRole)
+	createDirectFieldProperties(interfaces.ICourseInstanceAdministrativeRole,
+								# Be flexible about what this is,
+								# the LegacyCommunityInstance doesn't fully comply
+								omit=('CourseInstance',))
 
 	def __init__(self, CourseInstance=None, RoleName=None):
 		# SchemaConfigured is not cooperative

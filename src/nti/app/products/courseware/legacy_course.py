@@ -70,7 +70,7 @@ from nti.store.interfaces import ICourse
 
 from nti.schema.field import TextLine
 
-from .interfaces import CourseInstanceAvailableEvent
+from nti.contenttypes.courses.interfaces import CourseInstanceAvailableEvent
 from .interfaces import ILegacyCommunityBasedCourseInstance
 
 class ICourseCatalogLegacyEntryInstancePolicy(interface.Interface):
@@ -508,6 +508,14 @@ class _LegacyCommunityBasedCourseInstance(CourseInstance):
 	def restricted_scope_entity_container(self):
 		"checking membership in this is pretty common, so caching it has measurable benefits"
 		return IEntityContainer(self.restricted_scope_entity, ())
+
+	@property
+	def SharingScopes(self):
+		"""
+		We fake the real sharing scopes interface. Read-only.
+		"""
+		return {'Public': self.legacy_community,
+				'ForCredit': self.restricted_scope_entity}
 
 	@property
 	def legacy_purchasable(self):
