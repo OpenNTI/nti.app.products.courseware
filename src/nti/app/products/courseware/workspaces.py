@@ -123,7 +123,10 @@ class AllCoursesCollection(contained.Contained):
 
 	def __getitem__(self, key):
 		"We can be traversed to the CourseCatalog."
-		if key == self.container.__name__:
+		# Due to a mismatch between the global course catalog name
+		# of 'CourseCatalog', and the local course catalog name of
+		# 'Courses', we accept either
+		if key == self.container.__name__ or key in ('Courses', 'CourseCatalog'):
 			return self.container
 		raise KeyError(key)
 

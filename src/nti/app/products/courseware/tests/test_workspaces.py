@@ -112,6 +112,10 @@ class _AbstractEnrollingBase(object):
 						 all_of( has_entries( 'Duration', 'P112D',
 											  'Title', 'Law and Justice' )) ) )
 
+		for item in res.json_body['Items']:
+			self.testapp.get(item['href'])
+
+
 	individual_roster_accessible_to_instructor = True
 
 	@WithSharedApplicationMockDS(users=('aaa@nextthought.com',),
