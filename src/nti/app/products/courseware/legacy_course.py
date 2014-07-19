@@ -65,7 +65,7 @@ from nti.externalization.externalization import to_external_object
 from nti.ntiids.ntiids import make_ntiid
 from nti.ntiids.ntiids import get_provider
 
-from nti.store import course
+from nti.store.course import create_course
 from nti.store.interfaces import ICourse
 
 from nti.schema.field import TextLine
@@ -227,29 +227,29 @@ def _register_course_purchasable_from_catalog_entry( entry, event ):
 					 purch_ntiid, entry.ContentPackageNTIID)
 		items = (entry.ContentPackageNTIID,)
 
-	the_course = course.create_course( ntiid=purch_ntiid,
-									   title=entry.Title,
-									   author=author,
-									   name=entry.ProviderUniqueID,
-									   description=entry.Description,
-									   items=items,
-									   icon=icon,
-									   preview=preview,
-									   thumbnail=thumbnail, # Not used
-									   communities=entry.Communities,
-									   featured=False,
-									   department=policy.department_title_for_entry(entry),
-									   signature=signature,
-									   startdate=startdate,     # Legacy
-									   EndDate=entry.EndDate,   # New
-									   Duration=entry.Duration, # New
-									   # Things ignored
-									   amount=None,
-									   currency=None,
-									   fee=None,
-									   license_=None,
-									   discountable=False,
-									   bulk_purchase=False )
+	the_course = create_course( ntiid=purch_ntiid,
+								title=entry.Title,
+								author=author,
+								name=entry.ProviderUniqueID,
+								description=entry.Description,
+								items=items,
+								icon=icon,
+								preview=preview,
+								thumbnail=thumbnail, # Not used
+								communities=entry.Communities,
+								featured=False,
+								department=policy.department_title_for_entry(entry),
+								signature=signature,
+								startdate=startdate,     # Legacy
+								EndDate=entry.EndDate,   # New
+								Duration=entry.Duration, # New
+								# Things ignored
+								amount=None,
+								currency=None,
+								fee=None,
+								license_=None,
+								discountable=False,
+								bulk_purchase=False )
 
 	# Be careful what site we stick these in. Ideally we'd want to stick them in
 	# site the library is loaded in in case we are configuring multiple libraries
@@ -319,6 +319,12 @@ def _register_course_purchasable_from_catalog_entry( entry, event ):
 	# cache before forking, as the volatile attributes are likely to get
 	# ghosted)
 	getattr( the_course, 'Outline' )
+
+	getattr( the_course, 'SharingScopes' )
+
+	# TODO: Look for and parse a vendor_info.json for these things
+	# so that their ICourseInstanceVendorInfo is correct;
+	# that would restore enrollment possibility
 
 	# Always let people know it's available so they can do any
 	# synchronization work that needs to pull from the external
@@ -484,6 +490,34 @@ class _LegacyCommunityBasedCourseInstanceFakeBundle(object):
 				'Class': 'ContentPackageBundle'}
 
 
+from nti.contenttypes.courses.interfaces import ES_CREDIT,ES_CREDIT_DEGREE, ES_CREDIT_NONDEGREE
+from nti.contenttypes.courses.interfaces import ICourseInstanceSharingScopes
+
+@interface.implementer(ICourseInstanceSharingScopes)
+@NoPickle
+class _LegacyCommunityBasedCourseInstanceFakeSharingScopes(dict):
+
+	__name__ = 'SharingScopes'
+	__external_class_name__ = 'CourseInstanceSharingScopes'
+
+	def __init__(self, course):
+		dict.__init__(self)
+		self.course = course
+		self.__parent__ = course
+		self[ES_PUBLIC] = course.legacy_community
+		self[ES_CREDIT] = course.restricted_scope_entity
+
+	def initScopes(self):
+		pass
+
+	def getAllScopesImpliedbyScope(self, scope_name):
+		if scope_name == ES_PUBLIC:
+			return self[ES_PUBLIC]
+		if scope_name in (ES_CREDIT, ES_CREDIT_DEGREE, ES_CREDIT_NONDEGREE):
+			return self[ES_CREDIT]
+
+
+
 @interface.implementer(ILegacyCommunityBasedCourseInstance)
 class _LegacyCommunityBasedCourseInstance(CourseInstance):
 	"""
@@ -527,13 +561,12 @@ class _LegacyCommunityBasedCourseInstance(CourseInstance):
 		"checking membership in this is pretty common, so caching it has measurable benefits"
 		return IEntityContainer(self.restricted_scope_entity, ())
 
-	@property
+	@CachedProperty
 	def SharingScopes(self):
 		"""
 		We fake the real sharing scopes interface. Read-only.
 		"""
-		return {'Public': self.legacy_community,
-				'ForCredit': self.restricted_scope_entity}
+		return _LegacyCommunityBasedCourseInstanceFakeSharingScopes(self)
 
 	@property
 	def legacy_purchasable(self):
@@ -677,6 +710,7 @@ def _legacy_course_instance_to_catalog_entry(instance):
 
 from nti.contenttypes.courses.interfaces import ICourseEnrollments
 from nti.dataserver.interfaces import ILengthEnumerableEntityContainer
+from nti.contenttypes.courses.enrollment import DefaultCourseInstanceEnrollmentRecord
 
 @interface.implementer(ICourseEnrollments)
 @component.adapter(_LegacyCommunityBasedCourseInstance)
@@ -684,14 +718,31 @@ class _LegacyCourseInstanceEnrollments(object):
 
 	def __init__( self, context ):
 		self.context = context
+		self.__parent__ = context
 
 	def iter_enrollments(self):
-		community = self.context.legacy_community
+		course = self.context
+		community = course.legacy_community
+		forcredit = course.restricted_scope_entity_container
 		instructor_usernames = {x.username for x in self.context.instructors}
 		for member in community.iter_members():
 			if member.username in instructor_usernames:
 				continue
-			yield member
+
+			record = DefaultCourseInstanceEnrollmentRecord(CourseInstance=course,
+														   Scope=(ES_PUBLIC if member not in forcredit else ES_CREDIT),
+														   Principal=member)
+			record.__parent__ = self
+			#record.__name__ = #?
+			# The default impl goes through its inheritance tree, rather
+			# than keeping a specific reference
+			assert record.CourseInstance is course
+			yield record
+
+	def get_enrollment_for_principal(self, principal):
+		for record in self.iter_enrollments:
+			if record.Principal == principal:
+				return record
 
 	def count_enrollments(self):
 		community = self.context.legacy_community
