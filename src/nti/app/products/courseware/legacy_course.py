@@ -315,21 +315,46 @@ def _register_course_purchasable_from_catalog_entry( entry, event ):
 
 	the_course.setCatalogEntry(entry)
 	the_course.updateInstructors( entry )
-	# Ensure we can parse the outline (this is not an optimization, to pre
-	# cache before forking, as the volatile attributes are likely to get
-	# ghosted)
+
+	# Cache some lazy attributes /now/ while we now we have
+	# access to the volatile parts of the content package:
+
+	# ...Ensure we can parse the outline...
 	getattr( the_course, 'Outline' )
 
+	# ...and get the sharing scopes...
+	# NOTE: The 'public' and restricted scopes must already exist,
+	# otherwise they will be automatically created (public by definition
+	# does)
 	getattr( the_course, 'SharingScopes' )
 
-	# TODO: Look for and parse a vendor_info.json for these things
-	# so that their ICourseInstanceVendorInfo is correct;
-	# that would restore enrollment possibility
+	getattr( the_course, 'LegacyScopes' )
+
+
+
+	_update_vendor_info(the_course, entry.legacy_content_package.root)
 
 	# Always let people know it's available so they can do any
 	# synchronization work that needs to pull from the external
 	# content into the database
 	notify(CourseInstanceAvailableEvent(the_course))
+
+from nti.contenttypes.courses.interfaces import ICourseInstanceVendorInfo
+
+def _update_vendor_info(course, bucket):
+	# See also nti.contenttypes.courses._synchronizer
+	vendor_json_key = bucket.getChildNamed('vendor_info.json')
+	vendor_info = ICourseInstanceVendorInfo(course)
+	if not vendor_json_key:
+		vendor_info.clear()
+		vendor_info.lastModified = 0
+		vendor_info.createdTime = 0
+	elif vendor_json_key.lastModified > vendor_info.lastModified:
+		vendor_info.clear()
+		vendor_info.update(vendor_json_key.readContentsAsJson())
+		vendor_info.lastModified = vendor_json_key.lastModified
+		vendor_info.createdTime = vendor_json_key.createdTime
+
 
 from nti.store.enrollment import get_enrollment
 from nti.store.purchasable import get_all_purchasables
@@ -359,8 +384,7 @@ def _course_instance_for_catalog_entry(entry):
 	# Course instances live inside ICourseAdminLevels
 	community_courses = ICourseAdministrativeLevel( community )
 	if purch_id not in community_courses:
-		community_courses[purch_id] = _LegacyCommunityBasedCourseInstance(community.username,
-																		  entry.ContentPackageNTIID)
+		community_courses[purch_id] = _LegacyCommunityBasedCourseInstance(entry.ContentPackageNTIID)
 
 	result = community_courses[purch_id]
 	return result
@@ -490,31 +514,27 @@ class _LegacyCommunityBasedCourseInstanceFakeBundle(object):
 				'Class': 'ContentPackageBundle'}
 
 
-from nti.contenttypes.courses.interfaces import ES_CREDIT,ES_CREDIT_DEGREE, ES_CREDIT_NONDEGREE
+from nti.contenttypes.courses.interfaces import ES_CREDIT, ES_PUBLIC
+from nti.contenttypes.courses.interfaces import ENROLLMENT_SCOPE_VOCABULARY
 from nti.contenttypes.courses.interfaces import ICourseInstanceSharingScopes
+from nti.contenttypes.courses.sharing import CourseInstanceSharingScopes
+from zope.schema.vocabulary import SimpleVocabulary
+
+_LEGACY_ENROLLMENT_SCOPE_VOCABULARY = SimpleVocabulary(
+	[ENROLLMENT_SCOPE_VOCABULARY.getTerm(ES_CREDIT),
+	 ENROLLMENT_SCOPE_VOCABULARY.getTerm(ES_PUBLIC)])
 
 @interface.implementer(ICourseInstanceSharingScopes)
 @NoPickle
-class _LegacyCommunityBasedCourseInstanceFakeSharingScopes(dict):
+class _LegacyCommunityBasedCourseInstanceFakeSharingScopes(CourseInstanceSharingScopes):
 
 	__name__ = 'SharingScopes'
 	__external_class_name__ = 'CourseInstanceSharingScopes'
 
-	def __init__(self, course):
-		dict.__init__(self)
-		self.course = course
-		self.__parent__ = course
-		self[ES_PUBLIC] = course.legacy_community
-		self[ES_CREDIT] = course.restricted_scope_entity
-
-	def initScopes(self):
-		pass
-
-	def getAllScopesImpliedbyScope(self, scope_name):
-		if scope_name == ES_PUBLIC:
-			return self[ES_PUBLIC]
-		if scope_name in (ES_CREDIT, ES_CREDIT_DEGREE, ES_CREDIT_NONDEGREE):
-			return self[ES_CREDIT]
+	def _vocabulary(self):
+		# override to return a subset, the only
+		# ones we support
+		return _LEGACY_ENROLLMENT_SCOPE_VOCABULARY
 
 
 
@@ -533,40 +553,58 @@ class _LegacyCommunityBasedCourseInstance(CourseInstance):
 	# Mime type is location independent ATM
 	mime_type = 'application/vnd.nextthought.courses.legacycommunitybasedcourseinstance'
 
-	def __init__(self, community_name, content_package_ntiid):
+	def __init__(self, content_package_ntiid):
 		"""
 		Create a new instance. We will look up the ``community_name``
 		on demand.
 		"""
 		super(_LegacyCommunityBasedCourseInstance,self).__init__()
-		self.__legacy_community_name = community_name
-
-		if self.legacy_community is None:
-			raise ValueError("The community doesn't exist", community_name)
 
 		self.ContentPackageNTIID = content_package_ntiid
 
 	@CachedProperty
 	def legacy_community(self):
-		return Entity.get_entity( self.__legacy_community_name )
+		return self.SharingScopes[ES_PUBLIC]
 
 	@CachedProperty
 	def restricted_scope_entity(self):
-		restricted_id = self.LegacyScopes.get('restricted')
-		restricted = Entity.get_entity(restricted_id) if restricted_id else None
-		return restricted
+		return self.SharingScopes[ES_CREDIT]
 
 	@CachedProperty
 	def restricted_scope_entity_container(self):
 		"checking membership in this is pretty common, so caching it has measurable benefits"
 		return IEntityContainer(self.restricted_scope_entity, ())
 
-	@CachedProperty
+	@Lazy
 	def SharingScopes(self):
 		"""
 		We fake the real sharing scopes interface. Read-only.
 		"""
-		return _LegacyCommunityBasedCourseInstanceFakeSharingScopes(self)
+
+		# Bypass the main setattr because we don't want to take ownership,
+		# and we're the wrong kind even if we tried
+		scopes = getattr(super(_LegacyCommunityBasedCourseInstance,self), 'SharingScopes')
+		scopes._SampleContainer__data[ES_PUBLIC] = find_interface(self, ICommunity)
+
+		legacy_scopes = {'public': None, 'restricted': None}
+		course_element = self._course_toc_element
+		for scope in course_element.xpath(b'scope'):
+			type_ = scope.get(b'type', '').lower()
+			entries = scope.xpath(b'entry')
+			entity_id = entries[0].text if entries else None
+			if type_ and entity_id:
+				legacy_scopes[type_] = entity_id
+
+		restricted_id = legacy_scopes['restricted']
+		restricted = Entity.get_entity(restricted_id) if restricted_id else None
+		if restricted is not None:
+			scopes._SampleContainer__data[ES_CREDIT] = restricted
+
+		scopes.initScopes()
+		return scopes
+
+	def _make_sharing_scopes(self):
+		return _LegacyCommunityBasedCourseInstanceFakeSharingScopes()
 
 	@property
 	def legacy_purchasable(self):
@@ -625,17 +663,11 @@ class _LegacyCommunityBasedCourseInstance(CourseInstance):
 		fill_outline_from_key(self._LegacyOutline, package.index, xml_parent_name='course')
 		return self._LegacyOutline
 
-	@CachedProperty
+	@Lazy
 	def LegacyScopes(self):
-		result = {'public': None, 'restricted': None}
-		course_element = self._course_toc_element
-		for scope in course_element.xpath(b'scope'):
-			type_ = scope.get(b'type', '').lower()
-			entries = scope.xpath(b'entry')
-			entity_id = entries[0].text if entries else None
-			if type_ and entity_id:
-				result[type_] = entity_id
-		return result
+		scopes = self.SharingScopes
+		return {'public': scopes[ES_PUBLIC].NTIID,
+				'restricted': scopes[ES_CREDIT].NTIID}
 
 	@CachedProperty
 	def LegacyInstructorForums(self):
@@ -740,7 +772,7 @@ class _LegacyCourseInstanceEnrollments(object):
 			yield record
 
 	def get_enrollment_for_principal(self, principal):
-		for record in self.iter_enrollments:
+		for record in self.iter_enrollments():
 			if record.Principal == principal:
 				return record
 

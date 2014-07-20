@@ -76,10 +76,6 @@ class ILegacyCommunityBasedCourseInstance(ICourseInstance):
 	LegacyInstructorForums = TextLine(title='A space separated list of forum NTIIDs',
 									  readonly=True)
 
-	SharingScopes = Dict(title='Public and ForCredit scopes',
-						 description='read-only emulation of the real thing',
-						 readonly=True)
-
 	ContentPackageBundle = interface.Attribute("A mock bundle, having a ContentPackages iterable")
 
 class ICourseInstanceActivity(IContained,ILastModified):
@@ -120,10 +116,6 @@ class ICourseInstanceActivity(IContained,ILastModified):
 		:keyword min: If given, a timestamp.
 		:keyword max: If given, a timestamp.
 		"""
-
-from zope.interface.interfaces import IObjectEvent
-from zope.interface.interfaces import ObjectEvent
-
 
 class ICoursesWorkspace(app_interfaces.IWorkspace):
 	"""
