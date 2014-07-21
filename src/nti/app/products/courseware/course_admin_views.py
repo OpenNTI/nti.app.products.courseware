@@ -45,6 +45,10 @@ from nti.dataserver.users import Entity
 from nti.dataserver.interfaces import IDataserverFolder
 from collections import defaultdict
 
+from zope.securitypolicy.interfaces import IPrincipalRoleManager
+from zope.securitypolicy.interfaces import Allow
+from nti.contenttypes.courses.interfaces import RID_INSTRUCTOR
+
 @view_config(route_name='objects.generic.traversal',
 			 renderer='rest',
 			 request_method='POST',
@@ -63,6 +67,135 @@ class CourseTopicCreationView(AbstractAuthenticatedView,UploadRequestUtilsMixin)
 	.. note:: this rips heavily from forum_admit_views
 		and simply forums.views.
 	"""
+
+
+	def _create_forum(self, instance, forum_name, forum_readable_ntiid, forum_owner_ntiid):
+		try:
+			_ = instance.instructors[0]
+		except IndexError:
+			logger.debug("Course %s has no instructors, not creating %s", instance, forum_name)
+			return
+
+		instructors = [instructor.context for instructor in instance.instructors] # XXX implementation detail
+		discussions = instance.Discussions
+
+		acl = [ForumACE(Permissions=("All",), Entities=[i.username for i in instructors],Action='Allow'),
+			   ForumACE(Permissions=("Read",),Entities=[forum_readable_ntiid],Action='Allow')]
+
+		def _assign_acl(obj, iface):
+			action = False
+			if not iface.providedBy(obj):
+				interface.alsoProvides(obj, iface)
+				action = True
+			if not hasattr(obj, 'ACL') or obj.ACL != acl:
+				obj.ACL = acl
+				action = True
+			if action:
+				logger.debug("Added/set ACL on existing object %s to %s", obj, acl)
+
+		_assign_acl(discussions, IACLCommunityBoard)
+
+		name = ntiids.make_specific_safe(forum_name)
+		creator = Entity.get_entity(forum_owner_ntiid)
+		try:
+			forum = discussions[name]
+			logger.debug("Found existing forum %s", forum_name)
+			_assign_acl(forum, IACLCommunityForum)
+			if forum.creator is not creator:
+				forum.creator = creator
+		except KeyError:
+			forum = ACLCommunityForum()
+			forum.creator = creator
+			forum.title = forum_name
+			_assign_acl(forum,IACLCommunityForum)
+			discussions[name] = forum
+			logger.debug('Created forum %s', forum)
+			return forum.NTIID
+
+	def _forums_for_instance(self, name, instance):
+		return (('Open ' + name, instance.SharingScopes['Public'].NTIID),
+				('In-Class ' + name, instance.SharingScopes['ForCredit'].NTIID))
+
+	def _main_instructor(self, instance):
+		roles = IPrincipalRoleManager(instance)
+		for pid, setting in roles.getPrincipalsForRole(RID_INSTRUCTOR):
+			if setting is Allow:
+				user = Entity.get_entity(pid)
+				if user is not None:
+					return user
+
+	def _create_topics_in_instance(self, instance, rows):
+		try:
+			instructor = instance.instructors[0]
+		except IndexError:
+			logger.debug("Course %s has no instructors", instance)
+			return ()
+
+		instructor = self._main_instructor(instance) or instructor.context # XXX implementation detail
+		discussions = instance.Discussions
+
+		created_ntiids = []
+		for forum_name, forum_readable in self._forums_for_instance('Discussions', instance):
+			created_ntiid = self._create_forum(instance, forum_name, forum_readable, instance.SharingScopes['Public'].NTIID)
+			if created_ntiid:
+				created_ntiids.append(created_ntiid)
+
+			forum = discussions[ntiids.make_specific_safe(forum_name)]
+			for row in rows:
+				title = row[1].decode('utf-8', 'ignore')
+				content = row[2].decode('utf-8', 'ignore')
+
+				name = ntiids.make_specific_safe(title)
+				logger.debug("Looking for %s in %s in %s", name, forum, instance)
+				topic = None
+				if name in forum:
+					logger.debug("Found existing topic %s", title)
+					topic = forum[name]
+					if topic.creator != instructor:
+						topic.creator = instructor
+					if topic.headline is not None and topic.headline.creator != instructor:
+						topic.headline.creator = instructor
+				else:
+					post = CommunityHeadlinePost()
+					post.title = title
+					post.body = [content]
+
+					topic = CommunityHeadlineTopic()
+					topic.title = title
+					topic.creator = instructor
+					topic.description = title
+
+					lifecycleevent.created(topic)
+					forum[name] = topic
+
+					post.__parent__ = topic
+					post.creator = topic.creator
+					topic.headline = post
+
+					lifecycleevent.created(post)
+					lifecycleevent.added(post)
+
+
+					ntiid = topic.NTIID
+					if ntiid is None:
+						# New-style courses cannot get correct NTIIDs
+						# This is a temp-fix for testing
+						topic._community = Entity.get_entity(forum_readable)
+						ntiid = topic.NTIID
+
+
+
+					created_ntiids.append(ntiid)
+					logger.debug('Created topic %s with NTIID %s', topic, ntiid)
+
+				topic.publish()
+				# Also make sure it's not considered notable for the instructor
+				if topic.creator:
+					notable = component.getMultiAdapter((topic.creator, self.request),
+														IUserNotableData)
+					notable.object_is_not_notable(topic)
+		return created_ntiids
+
 
 	def __call__(self):
 
@@ -86,59 +219,6 @@ class CourseTopicCreationView(AbstractAuthenticatedView,UploadRequestUtilsMixin)
 
 		catalog = component.getUtility(ICourseCatalog)
 
-		def _create_forum(instance, forum_name, forum_readable, forum_owner):
-			try:
-				_ = instance.instructors[0]
-			except IndexError:
-				logger.debug("Course %s has no instructors, not creating %s", instance, forum_name)
-				return
-
-			instructors = [instructor.context for instructor in instance.instructors] # XXX implementation detail
-			instructor = instructor.context
-			discussions = instance.Discussions
-
-			acl = [ForumACE(Permissions=("All",), Entities=[i.username for i in instructors],Action='Allow'),
-				   ForumACE(Permissions=("Read",),Entities=[forum_readable],Action='Allow')]
-
-			def _assign_acl(obj, iface):
-				action = False
-				if not iface.providedBy(obj):
-					interface.alsoProvides(obj, iface)
-					action = True
-				if not hasattr(obj, 'ACL') or obj.ACL != acl:
-					obj.ACL = acl
-					action = True
-				if action:
-					logger.debug("Added/set ACL on existing object %s to %s", obj, acl)
-
-			_assign_acl(discussions, IACLCommunityBoard)
-
-			name = ntiids.make_specific_safe(forum_name)
-			creator = Entity.get_entity(forum_owner)
-			try:
-				forum = discussions[name]
-				logger.debug("Found existing forum %s", forum_name)
-				_assign_acl(forum, IACLCommunityForum)
-				if forum.creator is not creator:
-					forum.creator = creator
-			except KeyError:
-				forum = ACLCommunityForum()
-				forum.creator = creator
-				forum.title = forum_name
-				_assign_acl(forum,IACLCommunityForum)
-				discussions[name] = forum
-				logger.debug('Created forum %s', forum)
-				return forum.NTIID
-
-		def _main_instructor(entry):
-			for info in entry.Instructors:
-				if info.JobTitle != "Teaching Assistant":
-					instructor = Entity.get_entity(info.username)
-					if instructor is not None:
-						logger.debug("Using %s for %s", instructor, entry)
-						return instructor
-
-
 		created_ntiids = list()
 		for catalog_entry in catalog.iterCatalogEntries():
 			if catalog_entry.StartDate.year != 2014:
@@ -146,10 +226,8 @@ class CourseTopicCreationView(AbstractAuthenticatedView,UploadRequestUtilsMixin)
 			instance = ICourseInstance(catalog_entry)
 
 			# Everybody should have announcements
-			for forum_name, forum_readable  in (('Open Announcements', unicode(instance.LegacyScopes['public'])),
-												('In-Class Announcements', unicode(instance.LegacyScopes['restricted']))):
-
-				created_ntiid = _create_forum(instance, forum_name, forum_readable, unicode(instance.LegacyScopes['public']))
+			for forum_name, forum_readable  in self._forums_for_instance('Announcements', instance):
+				created_ntiid = self._create_forum(instance, forum_name, forum_readable, instance.SharingScopes['Public'].NTIID)
 				if created_ntiid:
 					created_ntiids.append(created_ntiid)
 
@@ -161,63 +239,12 @@ class CourseTopicCreationView(AbstractAuthenticatedView,UploadRequestUtilsMixin)
 
 			instance = ICourseInstance(catalog_entry)
 			__traceback_info__ = instance, catalog_entry
-			try:
-				instructor = instance.instructors[0]
-			except IndexError:
-				logger.debug("Course %s has no instructors", instance)
-				continue
 
-			instructor = _main_instructor(catalog_entry) or instructor.context # XXX implementation detail
-			discussions = instance.Discussions
+			rows = course_instance_ids_to_rows[course_instance_id]
 
-			for forum_name, forum_readable  in (('Open Discussions', unicode(instance.LegacyScopes['public'])),
-												('In-Class Discussions', unicode(instance.LegacyScopes['restricted']))):
-				created_ntiid = _create_forum(instance, forum_name, forum_readable, unicode(instance.LegacyScopes['public']))
-				if created_ntiid:
-					created_ntiids.append(created_ntiid)
+			all_instances = (instance,) + tuple(instance.SubInstances.values())
+			for i in all_instances:
+				created_ntiids.extend(self._create_topics_in_instance(i, rows))
 
-				forum = discussions[ntiids.make_specific_safe(forum_name)]
-				for row in course_instance_ids_to_rows[course_instance_id]:
-					title = row[1].decode('utf-8', 'ignore')
-					content = row[2].decode('utf-8', 'ignore')
-
-					name = ntiids.make_specific_safe(title)
-					logger.debug("Looking for %s in %s in %s", name, forum, instance)
-					topic = None
-					if name in forum:
-						logger.debug("Found existing topic %s", title)
-						topic = forum[name]
-						if topic.creator != instructor:
-							topic.creator = instructor
-						if topic.headline is not None and topic.headline.creator != instructor:
-							topic.headline.creator = instructor
-					else:
-						post = CommunityHeadlinePost()
-						post.title = title
-						post.body = [content]
-
-						topic = CommunityHeadlineTopic()
-						topic.title = title
-						topic.creator = instructor
-						topic.description = title
-
-						lifecycleevent.created(topic)
-						forum[name] = topic
-
-						post.__parent__ = topic
-						post.creator = topic.creator
-						topic.headline = post
-
-						lifecycleevent.created(post)
-						lifecycleevent.added(post)
-						created_ntiids.append(topic.NTIID)
-						logger.debug('Created topic %s with NTIID %s', topic, topic.NTIID)
-
-					topic.publish()
-					# Also make sure it's not considered notable for the instructor
-					if topic.creator:
-						notable = component.getMultiAdapter((topic.creator, self.request),
-															IUserNotableData)
-						notable.object_is_not_notable(topic)
 
 		return created_ntiids
