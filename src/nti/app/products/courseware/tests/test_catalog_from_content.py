@@ -121,7 +121,7 @@ class TestApplicationCatalogFromContent(ApplicationLayerTest):
 				assert_that( inst, validly_provides(ILegacyCommunityBasedCourseInstance))
 				assert_that( inst, externalizes( has_entries( 'Class', 'LegacyCommunityBasedCourseInstance',
 															  'MimeType', 'application/vnd.nextthought.courses.legacycommunitybasedcourseinstance',
-															  'LegacyInstructorForums', not_none(),
+															  #'LegacyInstructorForums', not_none(),
 															  'LegacyScopes', has_entries('restricted', not_none(),
 																						  'public', not_none() ) ) ) )
 

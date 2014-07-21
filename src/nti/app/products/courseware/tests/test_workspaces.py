@@ -300,6 +300,7 @@ class _AbstractEnrollingBase(object):
 	expected_instance_href = '/dataserver2/users/CLC3403.ou.nextthought.com/LegacyCourses/CLC3403'
 	expected_catalog_entry_href = '/dataserver2/users/sjohnson%40nextthought.com/Courses/AllCourses/CourseCatalog/tag%3Anextthought.com%2C2011-10%3AOU-HTML-CLC3403_LawAndJustice.course_info'
 	expected_instance_class = 'LegacyCommunityBasedCourseInstance'
+	expected_for_credit_count = 0
 
 	def _do_enroll(self, postdata):
 		# First, we are enrolled in nothing
@@ -327,7 +328,7 @@ class _AbstractEnrollingBase(object):
 													   'href', instance_href,
 													   'TotalEnrolledCount', 1,
 													   'TotalLegacyOpenEnrolledCount', 1,
-													   'TotalLegacyForCreditEnrolledCount', 0,
+													   'TotalLegacyForCreditEnrolledCount', self.expected_for_credit_count,
 													   'Outline', has_entry('Class', 'CourseOutline'),
 													   'Links', has_item( has_entries( 'rel', 'CourseCatalogEntry',
 																					   'href', entry_href  )) )))
@@ -399,78 +400,6 @@ class TestLegacyWorkspace(_AbstractEnrollingBase,
 						  ApplicationLayerTest):
 	layer = LegacyInstructedCourseApplicationTestLayer
 
-	@WithSharedApplicationMockDS(users=True,testapp=True,default_authenticate=True)
-	def test_fetch_enrolled_courses_legacy(self):
-		# First, we are enrolled in nothing
-		res = self.testapp.get( '/dataserver2/users/sjohnson@nextthought.com/Courses/EnrolledCourses' )
-		assert_that( res.json_body, has_entry( 'Items', is_(empty()) ) )
-
-		# (we also admin nothing)
-		res = self.testapp.get( '/dataserver2/users/sjohnson@nextthought.com/Courses/AdministeredCourses' )
-		assert_that( res.json_body, has_entry( 'Items', is_(empty()) ) )
-
-
-		# enroll in the course using its purchasable id
-		courseId = 'tag:nextthought.com,2011-10:OU-course-CLC3403LawAndJustice'
-		environ = self._make_extra_environ()
-		environ[b'HTTP_ORIGIN'] = b'http://platform.ou.edu'
-
-		purch_res = self.testapp.get('/dataserver2/store/get_purchasables')
-		assert_that( purch_res.json_body, has_entry( 'Items', has_item( has_entries( 'NTIID', courseId,
-																					 'StartDate', '2013-08-13',
-																					 'EndDate', '2013-12-03T06:00:00Z',
-																					 'Duration', 'P112D') ) ) )
-
-		path = '/dataserver2/store/enroll_course'
-		data = {'courseId': courseId}
-		res = self.testapp.post_json(path, data, extra_environ=environ)
-		assert_that(res.status_int, is_(204))
-
-
-		# Now it should show up in our workspace
-		res = self.testapp.get( '/dataserver2/users/sjohnson@nextthought.com/Courses/EnrolledCourses' )
-
-		entry_href = '/dataserver2/users/sjohnson%40nextthought.com/Courses/AllCourses/CourseCatalog/tag%3Anextthought.com%2C2011-10%3AOU-HTML-CLC3403_LawAndJustice.course_info'
-		assert_that( res.json_body, has_entry( 'Items', has_length( 1 ) ) )
-		assert_that( res.json_body['Items'], has_item( has_entries( 'Class', 'CourseInstanceEnrollment',
-																	'href', '/dataserver2/users/sjohnson%40nextthought.com/Courses/EnrolledCourses/tag%3Anextthought.com%2C2011-10%3AOU-HTML-CLC3403_LawAndJustice.course_info')) )
-
-		course_instance = res.json_body['Items'][0]['CourseInstance']
-		assert_that( course_instance,
-					 has_entries( 'Class', 'LegacyCommunityBasedCourseInstance',
-								  'href', '/dataserver2/users/CLC3403.ou.nextthought.com/LegacyCourses/CLC3403',
-								  'Outline', has_entry( 'Links', has_item( has_entry( 'rel', 'contents' ))),
-								  #'instructors', has_item( all_of(has_entry('Username', 'harp4162'),
-								#								  does_not(has_key('AvatorURLChoices')),
-								#								  does_not(has_key('following')),
-								#								  does_not(has_key('ignoring')),
-								#								  does_not(has_key('DynamicMemberships')),
-								#								  does_not(has_key('opt_in_email_communication')),
-								#								  does_not(has_key('NotificationCount'))) ),
-								  'Links', has_item( has_entries( 'rel', 'CourseCatalogEntry',
-																  'href', entry_href  )) ))
-
-		assert_that(res.json_body['Items'][0], has_entry(u'LegacyEnrollmentStatus', u'Open'))
-
-		# With proper modification times
-		assert_that( res, has_property( 'last_modified', not_none() ))
-		assert_that( res.json_body, has_entry( 'Last Modified', greater_than( 0 )))
-
-		# The catalog entry can be fetched too
-		res = self.testapp.get( entry_href )
-		assert_that( res.json_body, has_entries( 'Class', 'CourseCatalogLegacyEntry',
-												 'Title', 'Law and Justice' ))
-
-		# The outline contents can be fetched too
-		outline_content_href = self.require_link_href_with_rel( course_instance['Outline'], 'contents' )
-		assert_that( outline_content_href, is_('/dataserver2/users/CLC3403.ou.nextthought.com/LegacyCourses/CLC3403/Outline/contents'))
-		res = self.testapp.get( outline_content_href )
-		# Last mod comes from the file on disk
-		assert_that( res.last_modified, is_( datetime.datetime(2014, 1, 6, 23, 20, 39, 0, webob.datetime_utils.UTC) ))
-		assert_that( res.json_body, has_length(6))
-		assert_that( res.json_body[0], has_entry('title', 'Introduction'))
-		assert_that( res.json_body[0], has_entry('contents', has_length(2)))
-
 
 class TestPersistentWorkspaces(_AbstractEnrollingBase,
 							   ApplicationLayerTest):
@@ -497,6 +426,8 @@ class TestPersistentWorkspaces(_AbstractEnrollingBase,
 	# An ACL issue prevents this from working (though frankly I'm not sure how it worked
 	# in the legacy case.) Investigate more.
 	individual_roster_accessible_to_instructor = False
+
+	expected_for_credit_count = 1 # instructor
 
 class TestRestrictedWorkspace(ApplicationLayerTest):
 	layer = RestrictedInstructedCourseApplicationTestLayer

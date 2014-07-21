@@ -46,9 +46,7 @@ from nti.contenttypes.courses.interfaces import ICourseAdministrativeLevel
 from nti.contenttypes.courses.interfaces import ICourseCatalog
 
 from nti.app.products.courseware.interfaces import ICourseCatalogLegacyContentEntry
-from nti.app.products.courseware.interfaces import IPrincipalEnrollmentCatalog
 
-from nti.dataserver.interfaces import IUser
 from nti.dataserver.interfaces import ICommunity
 from nti.dataserver.users.interfaces import IFriendlyNamed
 
@@ -314,7 +312,7 @@ def _register_course_purchasable_from_catalog_entry( entry, event ):
 		raise ValueError("The root NTIID for course %s has changed!", the_course)
 
 	the_course.setCatalogEntry(entry)
-	the_course.updateInstructors( entry )
+
 
 	# Cache some lazy attributes /now/ while we now we have
 	# access to the volatile parts of the content package:
@@ -326,11 +324,10 @@ def _register_course_purchasable_from_catalog_entry( entry, event ):
 	# NOTE: The 'public' and restricted scopes must already exist,
 	# otherwise they will be automatically created (public by definition
 	# does)
-	getattr( the_course, 'SharingScopes' )
-
-	getattr( the_course, 'LegacyScopes' )
+	_update_scopes(the_course, purch_ntiid, entry.legacy_content_package)
 
 
+	the_course.updateInstructors( entry )
 
 	_update_vendor_info(the_course, entry.legacy_content_package.root)
 
@@ -355,10 +352,32 @@ def _update_vendor_info(course, bucket):
 		vendor_info.lastModified = vendor_json_key.lastModified
 		vendor_info.createdTime = vendor_json_key.createdTime
 
+from .legacy_courses import get_scopes_for_purchasable_ntiid
+from .legacy_courses import get_scopes_from_course_element
 
-from nti.store.enrollment import get_enrollment
+def _update_scopes(course, purchsable_ntiid, package): #pylint:disable=I0011,W0212
+	scopes = course.SharingScopes
+	# Bypass __setitem__ because we already have parents,
+	# and we don't conform anyway
+	if ES_PUBLIC not in scopes:
+		scopes._SampleContainer__data[ES_PUBLIC] = find_interface(course, ICommunity)
+
+	if ES_CREDIT not in scopes:
+		legacy_scopes = get_scopes_for_purchasable_ntiid(purchsable_ntiid)
+		if legacy_scopes is None:
+			course_element = next(package._v_toc_node.iterchildren(tag='course'))
+			legacy_scopes = get_scopes_from_course_element(course_element)
+		if legacy_scopes is not None:
+			restricted_id = legacy_scopes['restricted']
+			restricted = Entity.get_entity(restricted_id) if restricted_id else None
+			if restricted is not None:
+				scopes._SampleContainer__data[ES_CREDIT] = restricted
+
+
+	scopes.initScopes()
+
+
 from nti.store.purchasable import get_all_purchasables
-from nti.dataserver.datastructures import LastModifiedCopyingUserList
 
 from .interfaces import ICourseCatalogLegacyContentEntry
 
@@ -392,11 +411,11 @@ def _course_instance_for_catalog_entry(entry):
 @interface.implementer(ILegacyCommunityBasedCourseInstance)
 @component.adapter(ICommunity)
 def _course_instance_for_community( community ):
-	course_catalog = component.getUtility(ICourseCatalog)
-	for entry in course_catalog.iterCatalogEntries():
-		course = ICourseInstance( entry )
-		if getattr(course, 'legacy_community', None) == community:
-			return course
+	courses_for_community = ICourseAdministrativeLevel(community)
+	assert len(courses_for_community) <= 1
+	if len(courses_for_community):
+		return list(courses_for_community.values())[0]
+
 
 @interface.implementer(ICourseInstance)
 @component.adapter(ILegacyCourseConflatedContentPackage)
@@ -438,49 +457,6 @@ def _content_unit_to_course(unit):
 
 		if package in packages:
 			return instance
-
-@interface.implementer(IPrincipalEnrollmentCatalog)
-@component.adapter(IUser)
-class _PurchaseHistoryEnrollmentStatus(object):
-	"""
-	Greps through the user's purchase history to find
-	courses he is enrolled in, and matches their items
-	to a an item in the course catalog and its course instance.
-	"""
-
-	def __init__( self, context ):
-		self.context = context
-
-	def iter_enrollments(self):
-		# First, map the catalog content package NTIIDs to the catalog entry
-		course_catalog = component.getUtility(ICourseCatalog)
-		item_ntiid_to_entry = dict()
-		for entry in course_catalog.iterCatalogEntries():
-			ntiid = getattr(entry, 'ContentPackageNTIID', None)
-			if ntiid:
-				item_ntiid_to_entry[ntiid] = entry
-			# XXX HACK for PHIL1203
-			ntiid = getattr(entry, '_v_LegacyHackItemNTIID', None)
-			if ntiid:
-				item_ntiid_to_entry[ntiid] = entry
-
-		# Now match up purchased things (enrolled courses) to these
-		# content packages
-
-		result = LastModifiedCopyingUserList()
-		for the_purchasable in get_all_purchasables():
-			enrollment = get_enrollment( self.context, the_purchasable.NTIID )
-			if enrollment is None:
-				continue
-
-			for item in the_purchasable.Items:
-				catalog_entry = item_ntiid_to_entry.get( item )
-				if catalog_entry:
-					result.append( ICourseInstance(catalog_entry) )
-					result.updateLastModIfGreater( catalog_entry.lastModified )
-
-		return result
-
 
 
 @interface.implementer(ICourseAdministrativeLevel)
@@ -575,34 +551,6 @@ class _LegacyCommunityBasedCourseInstance(CourseInstance):
 		"checking membership in this is pretty common, so caching it has measurable benefits"
 		return IEntityContainer(self.restricted_scope_entity, ())
 
-	@Lazy
-	def SharingScopes(self):
-		"""
-		We fake the real sharing scopes interface. Read-only.
-		"""
-
-		# Bypass the main setattr because we don't want to take ownership,
-		# and we're the wrong kind even if we tried
-		scopes = getattr(super(_LegacyCommunityBasedCourseInstance,self), 'SharingScopes')
-		scopes._SampleContainer__data[ES_PUBLIC] = find_interface(self, ICommunity)
-
-		legacy_scopes = {'public': None, 'restricted': None}
-		course_element = self._course_toc_element
-		for scope in course_element.xpath(b'scope'):
-			type_ = scope.get(b'type', '').lower()
-			entries = scope.xpath(b'entry')
-			entity_id = entries[0].text if entries else None
-			if type_ and entity_id:
-				legacy_scopes[type_] = entity_id
-
-		restricted_id = legacy_scopes['restricted']
-		restricted = Entity.get_entity(restricted_id) if restricted_id else None
-		if restricted is not None:
-			scopes._SampleContainer__data[ES_CREDIT] = restricted
-
-		scopes.initScopes()
-		return scopes
-
 	def _make_sharing_scopes(self):
 		return _LegacyCommunityBasedCourseInstanceFakeSharingScopes()
 
@@ -625,6 +573,7 @@ class _LegacyCommunityBasedCourseInstance(CourseInstance):
 	@property
 	def legacy_content_package(self):
 		library = component.getUtility(IContentPackageLibrary)
+		package = None
 		try:
 			package = library[self.ContentPackageNTIID]
 		except KeyError:
@@ -639,11 +588,6 @@ class _LegacyCommunityBasedCourseInstance(CourseInstance):
 		else:
 			packages = ()
 		return _LegacyCommunityBasedCourseInstanceFakeBundle(packages)
-
-	@property
-	def _course_toc_element(self):
-		course_element = next(self.legacy_content_package._v_toc_node.iterchildren(tag='course'))
-		return course_element
 
 	@Lazy
 	def _LegacyOutline(self):
@@ -668,12 +612,6 @@ class _LegacyCommunityBasedCourseInstance(CourseInstance):
 		scopes = self.SharingScopes
 		return {'public': scopes[ES_PUBLIC].NTIID,
 				'restricted': scopes[ES_CREDIT].NTIID}
-
-	@CachedProperty
-	def LegacyInstructorForums(self):
-		# TODO: We should be the one creating these and ignoring what's in the ToC
-		result = unicode(self._course_toc_element.get(b'instructorForum', ''))
-		return result
 
 	@Lazy
 	def _instructor_storage(self):
@@ -740,118 +678,6 @@ class _LegacyCommunityBasedCourseInstance(CourseInstance):
 def _legacy_course_instance_to_catalog_entry(instance):
 	return instance.legacy_catalog_entry
 
-from nti.contenttypes.courses.interfaces import ICourseEnrollments
-from nti.dataserver.interfaces import ILengthEnumerableEntityContainer
-from nti.contenttypes.courses.enrollment import DefaultCourseInstanceEnrollmentRecord
-
-@interface.implementer(ICourseEnrollments)
-@component.adapter(_LegacyCommunityBasedCourseInstance)
-class _LegacyCourseInstanceEnrollments(object):
-
-	def __init__( self, context ):
-		self.context = context
-		self.__parent__ = context
-
-	def iter_enrollments(self):
-		course = self.context
-		community = course.legacy_community
-		forcredit = course.restricted_scope_entity_container
-		instructor_usernames = {x.username for x in self.context.instructors}
-		for member in community.iter_members():
-			if member.username in instructor_usernames:
-				continue
-
-			record = DefaultCourseInstanceEnrollmentRecord(CourseInstance=course,
-														   Scope=(ES_PUBLIC if member not in forcredit else ES_CREDIT),
-														   Principal=member)
-			record.__parent__ = self
-			#record.__name__ = #?
-			# The default impl goes through its inheritance tree, rather
-			# than keeping a specific reference
-			assert record.CourseInstance is course
-			yield record
-
-	def get_enrollment_for_principal(self, principal):
-		for record in self.iter_enrollments():
-			if record.Principal == principal:
-				return record
-
-	def count_enrollments(self):
-		community = self.context.legacy_community
-		container = ILengthEnumerableEntityContainer(community)
-		i = len(container)
-
-		# Now, in legacy courses, the instructors appear
-		# enrolled because they are also a community
-		# member. So account for that?
-		i -= len(self.context.instructors)
-		return i
-
-	# Non-interface methods
-	def count_legacy_open_enrollments(self):
-		all_enrollments = self.count_enrollments()
-		credit_enrollments = self.count_legacy_forcredit_enrollments()
-		return all_enrollments - credit_enrollments
-
-	def count_legacy_forcredit_enrollments(self):
-		forcredit = self.context.restricted_scope_entity
-		container = ILengthEnumerableEntityContainer(forcredit, ())
-		i = len(container)
-		# Off by owner maybe?
-		return i
-
-from nti.contenttypes.courses.interfaces import ICourseEnrollmentManager
-from nti.contenttypes.courses.interfaces import ES_PUBLIC
-from pyramid.interfaces import IRequest
-from nti.appserver.httpexceptions import HTTPNotFound
-
-@interface.implementer(ICourseEnrollmentManager)
-@component.adapter(_LegacyCommunityBasedCourseInstance, IRequest)
-class _LegacyCourseInstanceEnrollmentManager(object):
-	"""
-	Uses the legacy views exactly as-is to ensure compatibility.
-
-	Note that our action indications are not correct; we always
-	return true.
-	"""
-	def __init__(self, context, request):
-		self.context = context
-		self.request = request
-
-	@property
-	def courseID(self):
-		return self.context.legacy_purchasable.NTIID
-
-	@property
-	def username(self):
-		return self.request.environ['REMOTE_USER']
-
-	@property
-	def user(self):
-		return User.get_user(self.username)
-
-	def _make_subrequest(self, path):
-		if self.context.legacy_purchasable is None:
-			raise HTTPNotFound("No such course in this site")
-
-		body = {'courseID': self.courseID}
-		subrequest = self.request.blank(path)
-		subrequest.method = b'POST'
-		subrequest.json = body
-		subrequest.content_type = 'application/json'
-		subrequest.possible_site_names = self.request.possible_site_names
-		subrequest.environ[b'REMOTE_USER'] = self.username
-		subrequest.environ[b'repoze.who.identity'] = self.request.environ['repoze.who.identity'].copy()
-
-		return self.request.invoke_subrequest( subrequest )
-
-	def enroll(self, user, scope=ES_PUBLIC):
-		self._make_subrequest( '/dataserver2/store/enroll_course' )
-		return True
-
-	def drop(self, user):
-		self._make_subrequest( '/dataserver2/store/unenroll_course' )
-		return True
 
 from nti.dataserver.interfaces import IACLProvider
 from nti.dataserver.authorization_acl import ace_allowing

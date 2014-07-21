@@ -40,20 +40,10 @@
 	<subscriber
 		handler=".legacy_course._register_course_purchasable_from_catalog_entry" />
 
-	<!-- This subscriber reverses the process. Could be local, global
-	for symmetry -->
-	<subscriber
-		factory=".legacy_course._PurchaseHistoryEnrollmentStatus"
-		provides="nti.app.products.courseware.interfaces.IPrincipalEnrollmentCatalog"/>
-
 	<adapter factory=".legacy_course._LegacyCommunityBasedCourseAdministrativeLevelFactory"
 			 provides="nti.contenttypes.courses.interfaces.ICourseAdministrativeLevel"/>
 
-	<adapter factory=".legacy_course._LegacyCourseInstanceEnrollmentManager" />
-
 	<adapter factory=".legacy_course._LegacyCourseInstanceACLProvider" />
-
-	<adapter factory=".legacy_course._LegacyCourseInstanceEnrollments" />
 
 	<!-- Turn catalog entries into their course instance -->
 	<adapter factory=".legacy_course._course_instance_for_catalog_entry" />

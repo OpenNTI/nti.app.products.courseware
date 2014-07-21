@@ -28,14 +28,11 @@ class TestCreateForums(ApplicationLayerTest):
 	layer = LegacyInstructedCourseApplicationTestLayer
 	testapp = None
 
+	# This only works in the OU environment because that's where the purchasables are
+	default_origin = str('http://janux.ou.edu')
 
 	@WithSharedApplicationMockDS(users=True,testapp=True,default_authenticate=True)
 	def test_post_csv_create_forums(self):
-		# This only works in the OU environment because that's where the purchasables are
-		extra_env = self.testapp.extra_environ or {}
-		extra_env.update( {b'HTTP_ORIGIN': b'http://janux.ou.edu'} )
-		self.testapp.extra_environ = extra_env
-
 		csv = b'CLC 3403,A clc discussion,Contents'
 		res = self.testapp.post('/dataserver2/@@LegacyCourseTopicCreator', upload_files=[('ignored', 'foo.csv', csv)])
 

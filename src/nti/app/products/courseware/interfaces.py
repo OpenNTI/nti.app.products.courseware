@@ -73,9 +73,6 @@ class ILegacyCommunityBasedCourseInstance(ICourseInstance):
 	LegacyScopes = Dict(title="'public' and 'restricted' entity ids",
 						readonly=True)
 
-	LegacyInstructorForums = TextLine(title='A space separated list of forum NTIIDs',
-									  readonly=True)
-
 	ContentPackageBundle = interface.Attribute("A mock bundle, having a ContentPackages iterable")
 
 class ICourseInstanceActivity(IContained,ILastModified):
