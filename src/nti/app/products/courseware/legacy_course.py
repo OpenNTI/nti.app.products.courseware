@@ -63,9 +63,6 @@ from nti.externalization.externalization import to_external_object
 from nti.ntiids.ntiids import make_ntiid
 from nti.ntiids.ntiids import get_provider
 
-from nti.store.course import create_course
-from nti.store.interfaces import ICourse
-
 from nti.schema.field import TextLine
 
 from nti.contenttypes.courses.interfaces import CourseInstanceAvailableEvent
@@ -174,18 +171,12 @@ def _register_course_purchasable_from_catalog_entry( entry, event ):
 
 	author = ' and '.join( [x.Name for x in entry.Instructors] )
 
-	preview = False
-	startdate = None
 	old_rendering = False # Some things were different with the courses produced for Fall 2013
 	if not entry.StartDate or not entry.EndDate:
 		# Hmm...something very fishy about this one...ancient legacy?
 		logger.warn("Course info has no start date and/or duration: %s", entry)
 		old_rendering = True
 	else:
-		# We can probably do better with this. Plus we probably need a schedule
-		# to update without restarting the server...
-		preview = entry.Preview
-		startdate = unicode(isodate.date_isoformat(entry.StartDate))
 
 		old_rendering = entry.StartDate.year == 2013
 
@@ -197,7 +188,9 @@ def _register_course_purchasable_from_catalog_entry( entry, event ):
 
 		sig_lines.append( "" )
 	del sig_lines[-1] # always at least one instructor. take off the last trailing line
-	signature = '\\n\n'.join( sig_lines )
+	signature = '\n'.join( sig_lines )
+	entry.InstructorsSignature = signature
+	entry.ProviderDepartmentTitle = policy.department_title_for_entry(entry)
 
 	# Now the NTIID of the purchasable. The "new" renderings use a consistent
 	# NTIID based simply on the provider's unique id. But the old renderings
@@ -214,40 +207,11 @@ def _register_course_purchasable_from_catalog_entry( entry, event ):
 		purch_ntiid = make_ntiid( provider=provider, nttype='course', specific=specific )
 
 		items = (entry.ContentPackageNTIID,)
-		if entry.ProviderUniqueID == 'PHIL 1203':
-			# This one has a typo. Now, the server can deal with
-			# multiple items for the purchasable, but it's not clear the
-			# webapp can. so we HACK. Both of these can go away at the same time.
-			entry._v_LegacyHackItemNTIID = "tag:nextthought.com,2011-10:OU-HTML-PHIL1203_HumanDestiny.phil_1203__philosophy_and_human_destiny,_east_and_west"
 	else:
 		purch_ntiid = make_ntiid( provider=provider, nttype='course', specific=purch_id )
 		logger.debug("Purchasable '%s' was created for course '%s'",
 					 purch_ntiid, entry.ContentPackageNTIID)
 		items = (entry.ContentPackageNTIID,)
-
-	the_course = create_course( ntiid=purch_ntiid,
-								title=entry.Title,
-								author=author,
-								name=entry.ProviderUniqueID,
-								description=entry.Description,
-								items=items,
-								icon=icon,
-								preview=preview,
-								thumbnail=thumbnail, # Not used
-								communities=entry.Communities,
-								featured=False,
-								department=policy.department_title_for_entry(entry),
-								signature=signature,
-								startdate=startdate,     # Legacy
-								EndDate=entry.EndDate,   # New
-								Duration=entry.Duration, # New
-								# Things ignored
-								amount=None,
-								currency=None,
-								fee=None,
-								license_=None,
-								discountable=False,
-								bulk_purchase=False )
 
 	# Be careful what site we stick these in. Ideally we'd want to stick them in
 	# site the library is loaded in in case we are configuring multiple libraries
@@ -270,10 +234,6 @@ def _register_course_purchasable_from_catalog_entry( entry, event ):
 		# otherwise). And anything we derive overrides what may have
 		# been statically registered.
 		assert not isinstance(components, Persistent)
-		if components.queryUtility( ICourse, name=purch_ntiid ):
-			logger.warn( "Found existing ZCML course for %s; replacing", purch_ntiid )
-			old_course = components.getUtility( ICourse, name=purch_ntiid )
-			components.unregisterUtility( old_course, provided=ICourse, name=purch_ntiid )
 
 		# Now move the catalog entry down to this level too.
 		# It gets added by default globally but we need them to match
@@ -296,8 +256,6 @@ def _register_course_purchasable_from_catalog_entry( entry, event ):
 			local_catalog.addCatalogEntry(entry, event=False)
 		assert entry.__name__ not in global_catalog
 		assert entry.__parent__ is local_catalog
-
-	components.registerUtility( the_course, ICourse, name=purch_ntiid )
 
 	# Ensure the referenced community exists if it doesn't, and
 	# give it a course instance.
@@ -375,9 +333,6 @@ def _update_scopes(course, purchsable_ntiid, package): #pylint:disable=I0011,W02
 
 
 	scopes.initScopes()
-
-
-from nti.store.purchasable import get_all_purchasables
 
 from .interfaces import ICourseCatalogLegacyContentEntry
 
@@ -553,18 +508,6 @@ class _LegacyCommunityBasedCourseInstance(CourseInstance):
 
 	def _make_sharing_scopes(self):
 		return _LegacyCommunityBasedCourseInstanceFakeSharingScopes()
-
-	@property
-	def legacy_purchasable(self):
-		# purchasables aren't persistent so could be cached,
-		# but only if we find one, because it depends on the site policy
-		for the_purchasable in get_all_purchasables():
-			if not ICourse.providedBy(the_purchasable):
-				continue
-
-			for item in the_purchasable.Items:
-				if item == self.ContentPackageNTIID:
-					return the_purchasable
 
 	@property
 	def Discussions(self):
