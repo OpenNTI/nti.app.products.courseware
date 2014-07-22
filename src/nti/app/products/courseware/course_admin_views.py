@@ -16,6 +16,7 @@ from zope import interface
 from zope import lifecycleevent
 
 from nti.contenttypes.courses.interfaces import ICourseInstance
+from .interfaces import NTIID_TYPE_COURSE_TOPIC
 
 from pyramid.view import view_config
 from nti.app.base.abstract_views import AbstractAuthenticatedView
@@ -37,6 +38,8 @@ from nti.dataserver.contenttypes.forums.forum import ACLCommunityForum
 
 from nti.dataserver.contenttypes.forums.post import CommunityHeadlinePost
 from nti.dataserver.contenttypes.forums.topic import CommunityHeadlineTopic
+
+from nti.externalization.oids import to_external_ntiid_oid
 
 from nti.app.externalization.view_mixins import UploadRequestUtilsMixin
 
@@ -124,7 +127,7 @@ class CourseTopicCreationView(AbstractAuthenticatedView,UploadRequestUtilsMixin)
 				if user is not None:
 					return user
 
-	def _create_topics_in_instance(self, instance, rows):
+	def _create_topics_in_instance(self, instance, rows, ntprovider):
 		try:
 			instructor = instance.instructors[0]
 		except IndexError:
@@ -179,9 +182,17 @@ class CourseTopicCreationView(AbstractAuthenticatedView,UploadRequestUtilsMixin)
 					ntiid = topic.NTIID
 					if ntiid is None:
 						# New-style courses cannot get correct NTIIDs
-						# This is a temp-fix for testing
+						# This is a temp-fix for testing.
+						# First, make them generate a normal "pretty" ntiid...
 						topic._community = Entity.get_entity(forum_readable)
 						ntiid = topic.NTIID
+						# ...then make it abstract for the course...
+						ntiid = ntiids.make_ntiid(provider=ntprovider, nttype=NTIID_TYPE_COURSE_TOPIC, base=ntiid)
+						# ...finally, from here on, we want to use its absolute
+						# identity, because it otherwise may not be resolvable
+						# (and its ntiid gets used as the container id of its children)
+						del topic._community
+						topic.NTIID = to_external_ntiid_oid(topic)
 
 
 
@@ -244,7 +255,7 @@ class CourseTopicCreationView(AbstractAuthenticatedView,UploadRequestUtilsMixin)
 
 			all_instances = (instance,) + tuple(instance.SubInstances.values())
 			for i in all_instances:
-				created_ntiids.extend(self._create_topics_in_instance(i, rows))
+				created_ntiids.extend(self._create_topics_in_instance(i, rows, catalog_entry.ProviderUniqueID))
 
 
 		return created_ntiids

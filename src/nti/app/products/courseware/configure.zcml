@@ -187,6 +187,9 @@
 				for=".workspaces.CourseInstanceEnrollment
 					 pyramid.interfaces.IRequest" />
 
+	<!-- NTIID support -->
+	<utility factory=".ntiids._EnrolledCourseTopicNTIIDResolver" />
+
 
 	<!-- Content Search -->
 

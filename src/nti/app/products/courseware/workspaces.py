@@ -341,6 +341,7 @@ class _DefaultPrincipalAdministrativeRoleCatalog(object):
 					role = 'instructor'
 				yield CourseInstanceAdministrativeRole(RoleName=role,
 													   CourseInstance=instance )
+	iter_enrollments = iter_administrations # for convenience
 
 @interface.implementer(interfaces.IAdministeredCoursesCollection)
 class AdministeredCoursesCollection(_AbstractQueryBasedCoursesCollection):

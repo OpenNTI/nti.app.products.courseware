@@ -213,3 +213,14 @@ class IAdministeredCoursesCollection(app_interfaces.IContainerCollection):
 	A collection (local to a user) of courses he administers
 	(:class:`.ICourseInstanceAdministrativeRole`)
 	"""
+
+
+#: A preliminary special type of NTIID that refers to an abstract
+#: notion of a topic within a particular abstract course. When
+#: resolved, we will find the specific course instance the user is
+#: enrolled in and return the closest matching topic. This type of
+#: NTIID is semi-suitable for use in content and other long-lived places.
+#:
+#: The `provider` field should be the value of the `ProviderUniqueID`
+#: from the course catalog for the top-level course (not section/subinstance).
+NTIID_TYPE_COURSE_TOPIC = 'Topic:EnrolledCourse'
