@@ -16,7 +16,7 @@ from zope import interface
 from zope import lifecycleevent
 
 from nti.contenttypes.courses.interfaces import ICourseInstance
-from .interfaces import NTIID_TYPE_COURSE_TOPIC
+from .interfaces import NTIID_TYPE_COURSE_SECTION_TOPIC
 
 from pyramid.view import view_config
 from nti.app.base.abstract_views import AbstractAuthenticatedView
@@ -187,7 +187,9 @@ class CourseTopicCreationView(AbstractAuthenticatedView,UploadRequestUtilsMixin)
 						topic._community = Entity.get_entity(forum_readable)
 						ntiid = topic.NTIID
 						# ...then make it abstract for the course...
-						ntiid = ntiids.make_ntiid(provider=ntprovider, nttype=NTIID_TYPE_COURSE_TOPIC, base=ntiid)
+						ntiid = ntiids.make_ntiid(provider=ntprovider,
+												  nttype=NTIID_TYPE_COURSE_SECTION_TOPIC,
+												  base=ntiid)
 						# ...finally, from here on, we want to use its absolute
 						# identity, because it otherwise may not be resolvable
 						# (and its ntiid gets used as the container id of its children)

@@ -188,7 +188,8 @@
 					 pyramid.interfaces.IRequest" />
 
 	<!-- NTIID support -->
-	<utility factory=".ntiids._EnrolledCourseTopicNTIIDResolver" />
+	<utility factory=".ntiids._EnrolledCourseSectionTopicNTIIDResolver" />
+	<utility factory=".ntiids._EnrolledCourseRootTopicNTIIDResolver" />
 
 
 	<!-- Content Search -->

@@ -102,9 +102,9 @@ class TestCreateForums(_AbstractMixin,
 	default_origin = str('http://janux.ou.edu')
 
 	body_matcher = [not_none(),
-					'tag:nextthought.com,2011-10:CLC_3403-Topic:EnrolledCourse-Open_Discussions.A_clc_discussion',
+					'tag:nextthought.com,2011-10:CLC_3403-Topic:EnrolledCourseSection-Open_Discussions.A_clc_discussion',
 					not_none(),
-					'tag:nextthought.com,2011-10:CLC_3403-Topic:EnrolledCourse-In_Class_Discussions.A_clc_discussion']
+					'tag:nextthought.com,2011-10:CLC_3403-Topic:EnrolledCourseSection-In_Class_Discussions.A_clc_discussion']
 
 
 	open_path = '/dataserver2/%2B%2Betc%2B%2Bhostsites/platform.ou.edu/%2B%2Betc%2B%2Bsite/Courses/Fall2013/CLC3403_LawAndJustice/Discussions/Open_Discussions/A_clc_discussion'
