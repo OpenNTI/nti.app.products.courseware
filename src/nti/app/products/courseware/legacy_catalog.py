@@ -44,6 +44,16 @@ from nti.contenttypes.courses.interfaces import ICourseCatalog
 
 @component.adapter(lib_interfaces.ILegacyCourseConflatedContentPackage, IObjectAddedEvent)
 def _content_package_registered( package, event ):
+	# We only do this in the global library; anything added in a
+	# persistent site-library should be handled by an actual course instance
+	# directory using this as a content bundle; if we register twice
+	# we could get duplicates.
+	if not lib_interfaces.IGlobalContentPackageLibrary.providedBy( package.__parent__ ):
+		logger.info("Ignoring legacy course-conflated content package %s; "
+					"library %s should have course instance directory for it",
+					package, package.__parent__)
+		return
+
 	# There are currently two types of renderings in the wild:
 	# Those with and without a 'course-info.json' file. Those
 	# without a JSON file have some extra info in their TOC.
