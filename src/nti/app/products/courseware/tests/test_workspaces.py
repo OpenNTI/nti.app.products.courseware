@@ -34,10 +34,8 @@ from zope import component
 from zope import lifecycleevent
 
 from nti.testing.matchers import verifiably_provides
+from nti.testing.matchers import is_empty
 
-import os.path
-import datetime
-import webob.datetime_utils
 
 from nti.app.testing.application_webtest import ApplicationLayerTest
 from nti.app.testing.decorators import WithSharedApplicationMockDS
@@ -51,7 +49,6 @@ from nti.dataserver import traversal
 from nti.app.products.courseware.interfaces import ICoursesWorkspace
 
 
-from . import InstructedCourseApplicationTestLayer
 from . import RestrictedInstructedCourseApplicationTestLayer
 from . import PersistentInstructedCourseApplicationTestLayer
 from . import LegacyInstructedCourseApplicationTestLayer
@@ -428,6 +425,21 @@ class TestPersistentWorkspaces(_AbstractEnrollingBase,
 	individual_roster_accessible_to_instructor = False
 
 	expected_for_credit_count = 1 # instructor
+
+
+	@WithSharedApplicationMockDS(users=True,testapp=True)
+	def test_search_for_scopes_when_enrolled(self):
+
+		res = self.search_users(username='CLC')
+		assert_that( res.json_body, has_entry('Items', is_empty()))
+
+		self._do_enroll({'ntiid': self.enrollment_ntiid})
+
+		res = self.search_users(username='CLC')
+		assert_that( res.json_body, has_entry('Items', contains(has_entry('alias',
+																		  'CLC 3403 - Public'))))
+
+
 
 class TestRestrictedWorkspace(ApplicationLayerTest):
 	layer = RestrictedInstructedCourseApplicationTestLayer
