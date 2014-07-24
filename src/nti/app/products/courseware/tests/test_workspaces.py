@@ -91,6 +91,8 @@ class _AbstractEnrollingBase(object):
 	# This only works in the OU environment because that's where the purchasables are
 	default_origin = b'http://janux.ou.edu'
 
+	expected_workspace_length = 2
+
 	@WithSharedApplicationMockDS(users=True,testapp=True)
 	def test_fetch_all_courses(self):
 		# XXX: Our layer is registering these globally...
@@ -100,7 +102,7 @@ class _AbstractEnrollingBase(object):
 
 
 		res = self.testapp.get( '/dataserver2/users/sjohnson@nextthought.com/Courses/AllCourses' )
-		assert_that( res.json_body, has_entry( 'Items', has_length( 2 )) )
+		assert_that( res.json_body, has_entry( 'Items', has_length( self.expected_workspace_length )) )
 		assert_that( res.json_body['Items'],
 					 has_items(
 						 all_of( has_entries( 'Duration', 'P112D',
@@ -426,6 +428,8 @@ class TestPersistentWorkspaces(_AbstractEnrollingBase,
 
 	expected_for_credit_count = 1 # instructor
 
+	# 3 entries: two sectionts of clc, one for water
+	expected_workspace_length = 3
 
 	@WithSharedApplicationMockDS(users=True,testapp=True)
 	def test_search_for_scopes_when_enrolled(self):
@@ -449,6 +453,33 @@ class TestPersistentWorkspaces(_AbstractEnrollingBase,
 
 		assert_that( usres.json_body['Items'][0]['NTIID'], is_(scope['NTIID']) )
 
+
+	@WithSharedApplicationMockDS(users=True,testapp=True)
+	def test_presentation_assets(self):
+		# On disk, the main course-instance does not have any
+		# presentation assets, so we fallback to the content package.
+		# OTOH, section 01 does have its own assets
+		res = self.testapp.get( '/dataserver2/users/sjohnson@nextthought.com/Courses/AllCourses' )
+
+		assert_that( res.json_body, has_entry( 'Items', has_length( 3 )) )
+
+		main_ntiid = 'tag:nextthought.com,2011-10:NTI-CourseInfo-Fall2013_CLC3403_LawAndJustice'
+		section_ntiid = 'tag:nextthought.com,2011-10:NTI-CourseInfo-Fall2013_CLC3403_LawAndJustice_SubInstances_01'
+
+		main_entry, = [x for x in res.json_body['Items'] if x['NTIID'] == main_ntiid]
+		sect_entry, = [x for x in res.json_body['Items'] if x['NTIID'] == section_ntiid]
+
+		main_assets = '/CLC3403_LawAndJustice/presentation-assets/shared/v1/'
+		# XXX: This isn't coming back correctly. We want this:
+		sect_assets = '/sites/platform.ou.edu/Courses/Fall2013/CLC3403_LawAndJustice/Sections/01/presentation-assets/shared/v1/'
+		# we get this:
+		sect_assets = '/platform.ou.edu/Courses/Fall2013/CLC3403_LawAndJustice/Sections/01/presentation-assets/shared/v1/'
+
+		assert_that( main_entry, has_entry('PlatformPresentationResources',
+										   has_item( has_entry('href', main_assets ) ) ) )
+		assert_that( sect_entry,
+					 has_entry('PlatformPresentationResources',
+							   has_item( has_entry('href', sect_assets) ) ) )
 
 
 

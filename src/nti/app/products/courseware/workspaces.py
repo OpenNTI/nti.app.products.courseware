@@ -117,7 +117,10 @@ class AllCoursesCollection(contained.Contained):
 
 		for x in parent.catalog.iterCatalogEntries():
 			if has_permission(ACT_READ, x, parent.user):
-				self.container[x.__name__] = x
+				# Note that we have to expose these by NTIID, not their
+				# __name__. Because the catalog can be reading from
+				# multiple different sources, the __names__ might overlap
+				self.container[x.ntiid] = x
 
 	accepts = ()
 
