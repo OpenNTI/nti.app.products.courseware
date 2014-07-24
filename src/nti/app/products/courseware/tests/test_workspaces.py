@@ -472,8 +472,6 @@ class TestPersistentWorkspaces(_AbstractEnrollingBase,
 		main_assets = '/CLC3403_LawAndJustice/presentation-assets/shared/v1/'
 		# XXX: This isn't coming back correctly. We want this:
 		sect_assets = '/sites/platform.ou.edu/Courses/Fall2013/CLC3403_LawAndJustice/Sections/01/presentation-assets/shared/v1/'
-		# we get this:
-		sect_assets = '/platform.ou.edu/Courses/Fall2013/CLC3403_LawAndJustice/Sections/01/presentation-assets/shared/v1/'
 
 		assert_that( main_entry, has_entry('PlatformPresentationResources',
 										   has_item( has_entry('href', main_assets ) ) ) )
@@ -481,6 +479,25 @@ class TestPersistentWorkspaces(_AbstractEnrollingBase,
 					 has_entry('PlatformPresentationResources',
 							   has_item( has_entry('href', sect_assets) ) ) )
 
+		# If we give the global library a prefix, it manifests here too
+		from nti.contentlibrary.interfaces import IContentPackageLibrary
+		lib = component.getUtility(IContentPackageLibrary)
+		lib.url_prefix = 'content'
+
+		try:
+			res = self.testapp.get( '/dataserver2/users/sjohnson@nextthought.com/Courses/AllCourses' )
+			main_entry, = [x for x in res.json_body['Items'] if x['NTIID'] == main_ntiid]
+			sect_entry, = [x for x in res.json_body['Items'] if x['NTIID'] == section_ntiid]
+
+			assert_that( main_entry,
+						 has_entry('PlatformPresentationResources',
+								   has_item( has_entry('href', '/content' + main_assets ) ) ) )
+			assert_that( sect_entry,
+						 has_entry('PlatformPresentationResources',
+								   has_item( has_entry('href', '/content' + sect_assets) ) ) )
+
+		finally:
+			del lib.url_prefix
 
 
 
