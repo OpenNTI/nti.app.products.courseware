@@ -438,6 +438,19 @@ class TestPersistentWorkspaces(_AbstractEnrollingBase,
 		res = self.search_users(username='CLC')
 		assert_that( res.json_body, has_entry('Items', contains(has_entry('alias',
 																		  'CLC 3403 - Public'))))
+		scope = res.json_body['Items'][0]
+
+		# And we can fetch it by id...
+		ntres = self.fetch_by_ntiid(scope['NTIID'])
+		# ...and resolve it as a user
+		usres = self.resolve_user_response(username=scope['Username'])
+
+		assert_that( ntres.json_body['NTIID'], is_(scope['NTIID']) )
+
+		assert_that( usres.json_body['Items'][0]['NTIID'], is_(scope['NTIID']) )
+
+
+
 
 
 
