@@ -329,6 +329,8 @@ class _AbstractEnrollingBase(object):
 													   'TotalLegacyOpenEnrolledCount', 1,
 													   'TotalLegacyForCreditEnrolledCount', self.expected_for_credit_count,
 													   'Outline', has_entry('Class', 'CourseOutline'),
+													   'LegacyScopes', has_key('public'),
+													   'LegacyScopes', has_key('restricted'),
 													   'Links', has_item( has_entries( 'rel', 'CourseCatalogEntry',
 																					   'href', entry_href  )) )))
 		assert_that( res.location, is_( 'http://localhost' + enrollment_href ))
@@ -454,6 +456,16 @@ class TestPersistentWorkspaces(_AbstractEnrollingBase,
 		assert_that( usres.json_body['Items'][0]['NTIID'], is_(scope['NTIID']) )
 
 
+
+	main_ntiid = 'tag:nextthought.com,2011-10:NTI-CourseInfo-Fall2013_CLC3403_LawAndJustice'
+	section_ntiid = 'tag:nextthought.com,2011-10:NTI-CourseInfo-Fall2013_CLC3403_LawAndJustice_SubInstances_01'
+
+	def _get_main_and_sect_entries(self, res):
+		main_entry, = [x for x in res.json_body['Items'] if x['NTIID'] == self.main_ntiid]
+		sect_entry, = [x for x in res.json_body['Items'] if x['NTIID'] == self.section_ntiid]
+
+		return main_entry, sect_entry
+
 	@WithSharedApplicationMockDS(users=True,testapp=True)
 	def test_presentation_assets(self):
 		# On disk, the main course-instance does not have any
@@ -463,14 +475,9 @@ class TestPersistentWorkspaces(_AbstractEnrollingBase,
 
 		assert_that( res.json_body, has_entry( 'Items', has_length( 3 )) )
 
-		main_ntiid = 'tag:nextthought.com,2011-10:NTI-CourseInfo-Fall2013_CLC3403_LawAndJustice'
-		section_ntiid = 'tag:nextthought.com,2011-10:NTI-CourseInfo-Fall2013_CLC3403_LawAndJustice_SubInstances_01'
-
-		main_entry, = [x for x in res.json_body['Items'] if x['NTIID'] == main_ntiid]
-		sect_entry, = [x for x in res.json_body['Items'] if x['NTIID'] == section_ntiid]
+		main_entry, sect_entry = self._get_main_and_sect_entries(res)
 
 		main_assets = '/CLC3403_LawAndJustice/presentation-assets/shared/v1/'
-		# XXX: This isn't coming back correctly. We want this:
 		sect_assets = '/sites/platform.ou.edu/Courses/Fall2013/CLC3403_LawAndJustice/Sections/01/presentation-assets/shared/v1/'
 
 		assert_that( main_entry, has_entry('PlatformPresentationResources',
@@ -486,8 +493,7 @@ class TestPersistentWorkspaces(_AbstractEnrollingBase,
 
 		try:
 			res = self.testapp.get( '/dataserver2/users/sjohnson@nextthought.com/Courses/AllCourses' )
-			main_entry, = [x for x in res.json_body['Items'] if x['NTIID'] == main_ntiid]
-			sect_entry, = [x for x in res.json_body['Items'] if x['NTIID'] == section_ntiid]
+			main_entry, sect_entry = self._get_main_and_sect_entries(res)
 
 			assert_that( main_entry,
 						 has_entry('PlatformPresentationResources',
@@ -500,6 +506,20 @@ class TestPersistentWorkspaces(_AbstractEnrollingBase,
 			del lib.url_prefix
 
 
+	@WithSharedApplicationMockDS(users=True,testapp=True)
+	def test_legacy_fields(self):
+		res = self.testapp.get('/dataserver2/users/sjohnson@nextthought.com/Courses/AllCourses' )
+		main_entry, sect_entry = self._get_main_and_sect_entries(res)
+
+		assert_that( main_entry, has_entry('ContentPackageNTIID',
+										   'tag:nextthought.com,2011-10:OU-HTML-CLC3403_LawAndJustice.clc_3403_law_and_justice'))
+		assert_that( sect_entry, has_entry('ContentPackageNTIID',
+										   'tag:nextthought.com,2011-10:OU-HTML-CLC3403_LawAndJustice.clc_3403_law_and_justice'))
+
+		assert_that( main_entry, has_entry('LegacyPurchasableIcon',
+										   '/CLC3403_LawAndJustice/images/CLC3403_promo.png' ) )
+		assert_that( sect_entry, has_entry('LegacyPurchasableIcon',
+										   '/CLC3403_LawAndJustice/images/CLC3403_promo.png' ) )
 
 
 class TestRestrictedWorkspace(ApplicationLayerTest):
