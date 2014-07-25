@@ -85,6 +85,9 @@ def CoursesWorkspace( user_service ):
 		workspace.__parent__ = workspace.user
 		return workspace
 
+# XXX: We'd like to be able to use nti.appserver.pyramid_authorization:is_readable
+# here because of all the caching it can do, but we are passing in an
+# arbitrary user.
 from nti.dataserver.authorization_acl import has_permission
 from nti.dataserver.authorization import ACT_READ
 from nti.externalization.interfaces import LocatedExternalDict

@@ -92,6 +92,8 @@ class _AbstractEnrollingBase(object):
 	default_origin = b'http://janux.ou.edu'
 
 	expected_workspace_length = 2
+	all_courses_href = '/dataserver2/users/sjohnson@nextthought.com/Courses/AllCourses'
+	enrolled_courses_href = '/dataserver2/users/sjohnson@nextthought.com/Courses/EnrolledCourses'
 
 	@WithSharedApplicationMockDS(users=True,testapp=True)
 	def test_fetch_all_courses(self):
@@ -101,7 +103,7 @@ class _AbstractEnrollingBase(object):
 		#assert_that( res.json_body, has_entry( 'Items', has_length( 0 )) )
 
 
-		res = self.testapp.get( '/dataserver2/users/sjohnson@nextthought.com/Courses/AllCourses' )
+		res = self.testapp.get( self.all_courses_href )
 		assert_that( res.json_body, has_entry( 'Items', has_length( self.expected_workspace_length )) )
 		assert_that( res.json_body['Items'],
 					 has_items(
@@ -161,7 +163,7 @@ class _AbstractEnrollingBase(object):
 		activity_link = self.require_link_href_with_rel( course_instance, 'CourseActivity')
 
 		# Put everyone in the roster
-		self.testapp.post_json( '/dataserver2/users/sjohnson@nextthought.com/Courses/EnrolledCourses',
+		self.testapp.post_json( self.enrolled_courses_href,
 								'CLC 3403',
 								status=201 )
 
@@ -303,14 +305,14 @@ class _AbstractEnrollingBase(object):
 
 	def _do_enroll(self, postdata):
 		# First, we are enrolled in nothing
-		res = self.testapp.get( '/dataserver2/users/sjohnson@nextthought.com/Courses/EnrolledCourses' )
+		res = self.testapp.get( self.enrolled_courses_href )
 		assert_that( res.json_body, has_entry( 'Items', is_(empty()) ) )
 		assert_that( res.json_body, has_entry( 'accepts', contains('application/json')))
 		# We can POST to EnrolledCourses to add a course, assuming we're allowed
 		# Right now, we accept any value that the course catalog can accept;
 		# this will probably get stricter. Raw strings are allowed but not preferred.
 
-		res = self.testapp.post_json( '/dataserver2/users/sjohnson@nextthought.com/Courses/EnrolledCourses',
+		res = self.testapp.post_json( self.enrolled_courses_href,
 									  postdata,
 									  status=201 )
 
@@ -336,7 +338,7 @@ class _AbstractEnrollingBase(object):
 		assert_that( res.location, is_( 'http://localhost' + enrollment_href ))
 
 		# Now it should show up in our workspace
-		res = self.testapp.get( '/dataserver2/users/sjohnson@nextthought.com/Courses/EnrolledCourses' )
+		res = self.testapp.get( self.enrolled_courses_href )
 		assert_that( res.json_body, has_entry( 'Items', has_length( 1 ) ) )
 		assert_that( res.json_body['Items'][0], has_entry( 'href', enrollment_href ) )
 
@@ -430,7 +432,8 @@ class TestPersistentWorkspaces(_AbstractEnrollingBase,
 
 	expected_for_credit_count = 1 # instructor
 
-	# 3 entries: two sectionts of clc, one for water
+	# 3 entries: two sections of clc (main, 01), one for water
+	# The third CLC section is restricted to enrolled students only
 	expected_workspace_length = 3
 
 	@WithSharedApplicationMockDS(users=True,testapp=True)
@@ -471,9 +474,9 @@ class TestPersistentWorkspaces(_AbstractEnrollingBase,
 		# On disk, the main course-instance does not have any
 		# presentation assets, so we fallback to the content package.
 		# OTOH, section 01 does have its own assets
-		res = self.testapp.get( '/dataserver2/users/sjohnson@nextthought.com/Courses/AllCourses' )
+		res = self.testapp.get( self.all_courses_href )
 
-		assert_that( res.json_body, has_entry( 'Items', has_length( 3 )) )
+		assert_that( res.json_body, has_entry( 'Items', has_length( self.expected_workspace_length )) )
 
 		main_entry, sect_entry = self._get_main_and_sect_entries(res)
 
@@ -492,7 +495,7 @@ class TestPersistentWorkspaces(_AbstractEnrollingBase,
 		lib.url_prefix = 'content'
 
 		try:
-			res = self.testapp.get( '/dataserver2/users/sjohnson@nextthought.com/Courses/AllCourses' )
+			res = self.testapp.get( self.all_courses_href )
 			main_entry, sect_entry = self._get_main_and_sect_entries(res)
 
 			assert_that( main_entry,
@@ -508,7 +511,7 @@ class TestPersistentWorkspaces(_AbstractEnrollingBase,
 
 	@WithSharedApplicationMockDS(users=True,testapp=True)
 	def test_legacy_fields(self):
-		res = self.testapp.get('/dataserver2/users/sjohnson@nextthought.com/Courses/AllCourses' )
+		res = self.testapp.get(self.all_courses_href)
 		main_entry, sect_entry = self._get_main_and_sect_entries(res)
 
 		assert_that( main_entry, has_entry('ContentPackageNTIID',
@@ -520,6 +523,35 @@ class TestPersistentWorkspaces(_AbstractEnrollingBase,
 										   '/CLC3403_LawAndJustice/images/CLC3403_promo.png' ) )
 		assert_that( sect_entry, has_entry('LegacyPurchasableIcon',
 										   '/CLC3403_LawAndJustice/images/CLC3403_promo.png' ) )
+
+
+	@WithSharedApplicationMockDS(users=True,testapp=True)
+	def test_restricted_section(self):
+		# Enroll him
+		from nti.dataserver.users import User
+		from nti.contenttypes.courses.interfaces import ICourseCatalog
+		from nti.contenttypes.courses.interfaces import ICourseEnrollmentManager
+		with mock_dataserver.mock_db_trans(site_name='platform.ou.edu'):
+			user = User.get_user('sjohnson@nextthought.com')
+
+			cat = component.getUtility(ICourseCatalog)
+
+			course = cat['Fall2013']['CLC3403_LawAndJustice'].SubInstances['02-Restricted']
+
+			manager = ICourseEnrollmentManager(course)
+			manager.enroll(user, scope='ForCreditDegree')
+
+		# now our enrollment:
+		res = self.testapp.get( self.enrolled_courses_href )
+		assert_that( res.json_body, has_entry( 'Items',
+											   has_length( 1 ) ) )
+		enrollment_href = self.require_link_href_with_rel(res.json_body['Items'][0], 'edit' )
+		self.testapp.get(enrollment_href)
+
+		# and we can see it in the all courses list
+		res = self.testapp.get(self.all_courses_href)
+		assert_that( res.json_body, has_entry( 'Items',
+											   has_length( 1 + self.expected_workspace_length) ) )
 
 
 class TestRestrictedWorkspace(ApplicationLayerTest):
