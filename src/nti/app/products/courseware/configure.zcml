@@ -104,20 +104,8 @@
 	<!-- Traversal paths -->
 	<!-- This may go away -->
 	<adapter factory=".workspaces.CatalogEntryLocationInfo" />
-
-	<adapter factory=".workspaces.CourseInstanceEnrollment"
-			 provides=".interfaces.ICourseInstanceEnrollment" />
-
-	<adapter factory=".workspaces.CourseInstanceEnrollment"
+	<adapter factory=".workspaces.LegacyCourseInstanceEnrollment"
 			 for="nti.contenttypes.courses.interfaces.ICourseInstance
-				  nti.dataserver.interfaces.IUser"
-			 provides=".interfaces.ICourseInstanceEnrollment" />
-
-	<adapter factory=".workspaces.LegacyCourseInstanceEnrollment"
-			 provides=".interfaces.ICourseInstanceEnrollment" />
-
-	<adapter factory=".workspaces.LegacyCourseInstanceEnrollment"
-			 for=".interfaces.ILegacyCommunityBasedCourseInstance
 				  nti.dataserver.interfaces.IUser"
 			 provides=".interfaces.ILegacyCourseInstanceEnrollment" />
 

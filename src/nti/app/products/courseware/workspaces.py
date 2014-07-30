@@ -252,25 +252,14 @@ class CourseInstanceEnrollment(_AbstractInstanceWrapper):
 			return self._user
 		return super(CourseInstanceEnrollment, self).__conform__(iface)
 
-from .interfaces import ILegacyCommunityBasedCourseInstance
+from nti.contenttypes.courses.interfaces import ICourseEnrollments
 
-@interface.implementer(interfaces.ILegacyCourseInstanceEnrollment)
-@component.adapter(ILegacyCommunityBasedCourseInstance)
-class LegacyCourseInstanceEnrollment(CourseInstanceEnrollment):
-	__external_class_name__ = 'CourseInstanceEnrollment'
-
-
-	def __init__(self, *args, **kwargs):
-		super(LegacyCourseInstanceEnrollment,self).__init__(*args, **kwargs)
-
-	@Lazy
-	def LegacyEnrollmentStatus(self):
-		course_inst = self._private_course_instance
-		# check user belongs to restricted entity
-		for_credit = self._user in course_inst.restricted_scope_entity_container
-		return "ForCredit" if for_credit else "Open"
+def LegacyCourseInstanceEnrollment(course_instance, user):
+	record = ICourseEnrollments(course_instance).get_enrollment_for_principal(user)
+	return DefaultCourseInstanceEnrollment(record, user)
 
 from nti.contenttypes.courses.interfaces import ICourseInstanceEnrollmentRecord
+from nti.externalization.oids import to_external_ntiid_oid
 
 @interface.implementer(interfaces.ILegacyCourseInstanceEnrollment)
 @component.adapter(ICourseInstanceEnrollmentRecord)
@@ -281,6 +270,10 @@ class DefaultCourseInstanceEnrollment(CourseInstanceEnrollment):
 		self._record = record
 		self.lastModified = self._record.lastModified
 		self.createdTime = self._record.createdTime
+
+	@property
+	def ntiid(self):
+		return to_external_ntiid_oid(self._record)
 
 	@Lazy
 	def LegacyEnrollmentStatus(self):
