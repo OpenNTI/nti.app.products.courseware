@@ -26,6 +26,7 @@ from nti.utils.property import Lazy
 from nti.utils.property import CachedProperty
 
 from .interfaces import ICourseInstanceActivity
+from nti.dataserver.interfaces import ACE_DENY_ALL
 from nti.contenttypes.courses.interfaces import ICourseInstance
 
 from nti.zodb.containers import time_to_64bit_int
@@ -52,6 +53,10 @@ class _DefaultCourseActivity(Persistent):
 
 	def __init__(self):
 		pass
+
+	def __acl__(self):
+		# We want to get everything from the role map
+		return (ACE_DENY_ALL,)
 
 	@Lazy
 	def _storage(self):

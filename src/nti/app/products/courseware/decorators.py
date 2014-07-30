@@ -26,7 +26,7 @@ from nti.dataserver.interfaces import ILinkExternalHrefOnly
 from nti.contenttypes.courses.interfaces import ICourseInstance
 from nti.contenttypes.courses.interfaces import ICourseEnrollments
 from nti.contenttypes.courses.interfaces import ICourseOutline
-from nti.contenttypes.courses.interfaces import is_instructed_by_name
+
 
 from nti.dataserver.interfaces import IUser
 
@@ -43,6 +43,9 @@ from . import VIEW_COURSE_ENROLLMENT_ROSTER
 from . import VIEW_COURSE_ACTIVITY
 
 LINKS = StandardExternalFields.LINKS
+
+from .interfaces import ACT_VIEW_ACTIVITY
+from nti.appserver.pyramid_authorization import has_permission
 
 @interface.implementer(IExternalMappingDecorator)
 @component.adapter(ICourseInstance)
@@ -63,13 +66,12 @@ class _CourseInstanceLinkDecorator(object):
 		if entry:
 			_links.append( Link( entry, rel=VIEW_CATALOG_ENTRY )  )
 
-		username = None
 		request = get_current_request()
-		if request:
-			username = request.authenticated_userid
-		if is_instructed_by_name(context, username):
+		if request is not None and has_permission(ACT_VIEW_ACTIVITY, context, request):
 			# Give instructors the enrollment roster
-			# and activity
+			# and activity.
+			# NOTE: Assuming the two permissions are concordant; at worst this is a UI
+			# issue though, the actual views are protected with individual permissions
 			for rel in VIEW_COURSE_ENROLLMENT_ROSTER, VIEW_COURSE_ACTIVITY:
 				_links.append( Link( context,
 									 rel=rel,

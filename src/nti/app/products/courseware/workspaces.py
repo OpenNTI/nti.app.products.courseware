@@ -234,6 +234,8 @@ class CourseInstanceEnrollment(_AbstractInstanceWrapper):
 	Username = None
 	_user = None
 
+	# Recall that this objects must be mutable and non-persistent
+
 	def __init__(self, course, user=None):
 		super(CourseInstanceEnrollment,self).__init__(course)
 		if user:

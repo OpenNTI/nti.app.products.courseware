@@ -14,9 +14,13 @@
     <permission
         id="nti.actions.courseware.view_roster"
         title="View roster" />
+
+    <permission
+        id="nti.actions.courseware.view_activity"
+        title="View activity" />
     <!--
         The instructors/TA of a course (locally added to this role
-        for the course) can view reports
+        for the course) can view rosters, activity, ...
     -->
     <grant
         permission="nti.actions.courseware.view_roster"
@@ -24,6 +28,13 @@
     <grant
         permission="nti.actions.courseware.view_roster"
         role="nti.roles.course_ta" />
+    <grant
+        permission="nti.actions.courseware.view_activity"
+        role="nti.roles.course_instructor" />
+    <grant
+        permission="nti.actions.courseware.view_activity"
+        role="nti.roles.course_ta" />
+
     <grant
         permission="zope.View"
         role="nti.roles.course_instructor" />

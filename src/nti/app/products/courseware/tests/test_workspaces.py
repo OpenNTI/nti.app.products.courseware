@@ -119,7 +119,7 @@ class _AbstractEnrollingBase(object):
 
 	individual_roster_accessible_to_instructor = True
 
-	@WithSharedApplicationMockDS(users=('aaa@nextthought.com',),
+	@WithSharedApplicationMockDS(users=('aaa_nextthought_com',),
 								 testapp=True,
 								 default_authenticate=True)
 	def test_fetch_administered_courses(self):
@@ -127,13 +127,13 @@ class _AbstractEnrollingBase(object):
 
 		# Note that our username comes first, but our realname (Madden Jason) comes
 		# after (Johnson Steve) so we can test sorting by name
-		jmadden_environ = self._make_extra_environ(username='aaa@nextthought.com')
+		jmadden_environ = self._make_extra_environ(username='aaa_nextthought_com')
 
 		with mock_dataserver.mock_db_trans(self.ds):
 			from nti.dataserver.users.interfaces import IFriendlyNamed
 			from nti.dataserver.users import User
 			steve = User.get_user('sjohnson@nextthought.com')
-			jason = User.get_user('aaa@nextthought.com')
+			jason = User.get_user('aaa_nextthought_com')
 			IFriendlyNamed(steve).realname = 'Steve Johnson'
 			IFriendlyNamed(jason).realname = 'Jason Madden'
 			# Fire events so they get indexed
@@ -167,7 +167,7 @@ class _AbstractEnrollingBase(object):
 								'CLC 3403',
 								status=201 )
 
-		self.testapp.post_json( '/dataserver2/users/aaa@nextthought.com/Courses/EnrolledCourses',
+		self.testapp.post_json( '/dataserver2/users/aaa_nextthought_com/Courses/EnrolledCourses',
 								'CLC 3403',
 								extra_environ=jmadden_environ,
 								status=201 )
@@ -202,7 +202,7 @@ class _AbstractEnrollingBase(object):
 																						   'NonI18NFirstName', 'Steve'),
 															   'CourseInstance', None),
 												   has_entries('Class', 'CourseInstanceEnrollment',
-															   'Username', 'aaa@nextthought.com',
+															   'Username', 'aaa_nextthought_com',
 															   'CourseInstance', None)) ) )
 		# Sort by realname, ascending default
 		res = self.testapp.get( roster_link,
@@ -212,14 +212,14 @@ class _AbstractEnrollingBase(object):
 		assert_that( res.json_body, has_entry( 'Items',
 											   contains(
 												   has_entries('Username', self.extra_environ_default_user.lower()),
-												   has_entries('Username', 'aaa@nextthought.com') ) ) )
+												   has_entries('Username', 'aaa_nextthought_com') ) ) )
 		res = self.testapp.get( roster_link,
 								{'sortOn': 'realname', 'sortOrder': 'descending'},
 								extra_environ=instructor_env)
 		assert_that( res.json_body, has_entry( 'TotalItemCount', 2))
 		assert_that( res.json_body, has_entry( 'Items',
 											   contains(
-												   has_entries('Username', 'aaa@nextthought.com'),
+												   has_entries('Username', 'aaa_nextthought_com'),
 												   has_entries('Username', self.extra_environ_default_user.lower()) ) ) )
 		res = self.testapp.get( roster_link,
 								{'sortOn': 'realname', 'sortOrder': 'descending',
@@ -229,7 +229,7 @@ class _AbstractEnrollingBase(object):
 		assert_that( res.json_body, has_entry( 'Items', has_length( 1 )))
 		assert_that( res.json_body, has_entry( 'Items',
 											   contains(
-												   has_entries('Username', 'aaa@nextthought.com') ) ) )
+												   has_entries('Username', 'aaa_nextthought_com') ) ) )
 
 		# Sort by username
 		res = self.testapp.get( roster_link,
@@ -239,14 +239,14 @@ class _AbstractEnrollingBase(object):
 		assert_that( res.json_body, has_entry( 'Items',
 											   contains(
 												   has_entries('Username', self.extra_environ_default_user.lower()),
-												   has_entries('Username', 'aaa@nextthought.com') ) ) )
+												   has_entries('Username', 'aaa_nextthought_com') ) ) )
 		res = self.testapp.get( roster_link,
 								{'sortOn': 'username', 'sortOrder': 'ascending'},
 								extra_environ=instructor_env)
 		assert_that( res.json_body, has_entry( 'TotalItemCount', 2))
 		assert_that( res.json_body, has_entry( 'Items',
 											   contains(
-												   has_entries('Username', 'aaa@nextthought.com'),
+												   has_entries('Username', 'aaa_nextthought_com'),
 												   has_entries('Username', self.extra_environ_default_user.lower()) ) ) )
 
 		# Filter
@@ -272,7 +272,7 @@ class _AbstractEnrollingBase(object):
 		assert_that( res.json_body, has_entry( 'Items', has_length( 1 )))
 		assert_that( res.json_body, has_entry( 'Items',
 											   contains(
-												   has_entries('Username', 'aaa@nextthought.com') ) ) )
+												   has_entries('Username', 'aaa_nextthought_com') ) ) )
 		res = self.testapp.get( roster_link,
 								{'usernameSearchTerm': 'Steve'}, # realname
 								extra_environ=instructor_env)
@@ -296,6 +296,13 @@ class _AbstractEnrollingBase(object):
 		self.testapp.put_json(last_viewed_href, 1234, extra_environ=instructor_env)
 		res = self.testapp.get( activity_link, extra_environ=instructor_env)
 		assert_that( res.json_body, has_entry( 'lastViewed', 1234 ) )
+
+
+		# The normal guy can't do that
+		self.testapp.put_json(last_viewed_href, 5678, status=403,
+							  extra_environ=jmadden_environ)
+		self.testapp.get(activity_link, status=403,
+						 extra_environ=jmadden_environ)
 
 	expected_enrollment_href =  '/dataserver2/users/sjohnson%40nextthought.com/Courses/EnrolledCourses/tag%3Anextthought.com%2C2011-10%3AOU-HTML-CLC3403_LawAndJustice.course_info'
 	expected_instance_href = '/dataserver2/users/CLC3403.ou.nextthought.com/LegacyCourses/CLC3403'

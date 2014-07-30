@@ -18,7 +18,10 @@ logger = __import__('logging').getLogger(__name__)
 from zope import interface
 
 from zope.container.interfaces import IContained
+from zope.security.permission import Permission
 
+ACT_VIEW_ACTIVITY = Permission('nti.actions.courseware.view_activity')
+ACT_VIEW_ROSTER = Permission('nti.actions.courseware.view_roster')
 
 from nti.appserver import interfaces as app_interfaces
 
@@ -132,6 +135,10 @@ class ICourseInstanceEnrollment(IShouldHaveTraversablePath):
 
 	Implementations should be adaptable to their course instance
 	and the corresponding catalog entry.
+
+	These objects should be non-persistent and derived from the
+	underlying :class:`.ICourseInstanceEnrollmentRecord`, but
+	independently mutable.
 	"""
 
 	__name__ = interface.Attribute("The name of the enrollment is the same as the CourseInstance.")

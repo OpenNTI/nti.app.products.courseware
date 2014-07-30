@@ -16,6 +16,7 @@ from zope import interface
 
 from .interfaces import ICourseInstanceActivity
 from .interfaces import ICourseInstanceEnrollment
+from .interfaces import ACT_VIEW_ROSTER
 from nti.contenttypes.courses.interfaces import ICourseInstance
 from nti.contenttypes.courses.interfaces import ICourseOutline
 
@@ -32,7 +33,7 @@ from . import VIEW_COURSE_ACTIVITY
 from zope.traversing.interfaces import IPathAdapter
 from pyramid.interfaces import IRequest
 
-from nti.contenttypes.courses.interfaces import is_instructed_by_name
+from nti.appserver.pyramid_authorization import has_permission
 from nti.contenttypes.courses.interfaces import ICourseEnrollments
 from nti.externalization.interfaces import LocatedExternalDict
 
@@ -77,7 +78,6 @@ class course_outline_contents_view(AbstractAuthenticatedView):
 		self.request.response.last_modified = self.request.context.lastModified
 		return result
 
-import operator
 from nti.dataserver.users.interfaces import IFriendlyNamed
 from nti.appserver.interfaces import IIntIdUserSearchPolicy
 from zope.intid.interfaces import IIntIds
@@ -126,7 +126,7 @@ class CourseEnrollmentRosterPathAdapter(Contained):
 			 renderer='rest',
 			 request_method='GET',
 			 context=CourseEnrollmentRosterPathAdapter,
-			 permission='nti.actions.courseware.view_roster')
+			 permission=ACT_VIEW_ROSTER)
 class CourseEnrollmentRosterGetView(AbstractAuthenticatedView,
 									BatchingUtilsMixin):
 	"""
@@ -200,7 +200,6 @@ class CourseEnrollmentRosterGetView(AbstractAuthenticatedView,
 	def __call__(self):
 		request = self.request
 		context = request.context.course
-		username = request.authenticated_userid
 		course = context
 
 		result = LocatedExternalDict()
@@ -406,23 +405,20 @@ def CourseActivityPathAdapter(context, request):
 
 from nti.externalization.externalization import decorate_external_mapping
 
+from .interfaces import ACT_VIEW_ACTIVITY
+
 @view_config(route_name='objects.generic.traversal',
 			 renderer='rest',
 			 request_method='GET',
 			 context=ICourseInstanceActivity,
-			 permission=nauth.ACT_READ)
+			 permission=ACT_VIEW_ACTIVITY)
 class CourseActivityGetView(AbstractAuthenticatedView,
 							BatchingUtilsMixin):
 
 	def __call__(self):
 		request = self.request
 		context = request.context
-		username = request.authenticated_userid
 		course = context
-
-		if not is_instructed_by_name(course, username):
-			# Precondition may not be needed anymore, we can put an ACL on the activity
-			raise hexc.HTTPForbidden()
 
 		activity = ICourseInstanceActivity(course)
 		# TODO: Very similar to ugd_query_views
@@ -474,7 +470,7 @@ from nti.dataserver.links import Link
 			 renderer='rest',
 			 request_method='PUT',
 			 context=ICourseInstanceActivity,
-			 permission=nauth.ACT_READ,
+			 permission=ACT_VIEW_ACTIVITY,
 			 name='lastViewed')
 class CourseActivityLastViewedDecorator(AbstractAuthenticatedView,
 										ModeledContentUploadRequestUtilsMixin):
@@ -500,19 +496,15 @@ class CourseActivityLastViewedDecorator(AbstractAuthenticatedView,
 		# otherwise, we're a decorator and no args are passed
 
 
-	def _precondition(self, context, request):
-		username = None
-		if request:
-			username = request.authenticated_userid
-		if not is_instructed_by_name(context, username):
-			return False
-		return username
-
-
 	def decorateExternalMapping(self, context, result):
-		username = self._precondition(context, get_current_request())
-		if not username:
+		request = get_current_request()
+		if request is None or not request.authenticated_userid:
 			return
+
+		if not has_permission(ACT_VIEW_ACTIVITY, context, request):
+			return False
+
+		username = request.authenticated_userid
 
 		annot = IAnnotations(context)
 		mapping = annot.get(self.KEY)
@@ -531,10 +523,7 @@ class CourseActivityLastViewedDecorator(AbstractAuthenticatedView,
 
 	def __call__(self):
 		context = self.request.context
-		username = self._precondition(context, self.request)
-		# Precondition may not be needed anymore, we can put an ACL on the activity
-		if not username:
-			raise hexc.HTTPForbidden()
+		username = self.request.authenticated_userid
 
 		annot = IAnnotations(context)
 		mapping = annot.get(self.KEY)
