@@ -91,6 +91,8 @@ def CoursesWorkspace( user_service ):
 from nti.dataserver.authorization_acl import has_permission
 from nti.dataserver.authorization import ACT_READ
 from nti.externalization.interfaces import LocatedExternalDict
+from nti.contenttypes.courses.interfaces import ICourseEnrollments
+from nti.contenttypes.courses.interfaces import ICourseSubInstance
 
 @interface.implementer(app_interfaces.IContainerCollection)
 class AllCoursesCollection(contained.Contained):
@@ -109,21 +111,46 @@ class AllCoursesCollection(contained.Contained):
 
 	def __init__(self, parent):
 		self.__parent__ = parent
+		user = parent.user
 		# To support ACLs limiting the available parts of the catalog,
 		# we filter out here.
 		# we could do this with a proxy, but it's easier right now
-		# just to copy. This is highly dependent on implementation
-		self.container = self._IteratingDict()
-		self.container.__name__ = parent.catalog.__name__
-		self.container.__parent__ = parent.catalog.__parent__
-		self.container.lastModified = parent.catalog.lastModified
+		# just to copy. This is highly dependent on implementation.
+		# We also filter out sibling courses when we are already enrolled
+		# in one; this is probably inefficient
+		container = self.container = self._IteratingDict()
+		container.__name__ = parent.catalog.__name__
+		container.__parent__ = parent.catalog.__parent__
+		container.lastModified = parent.catalog.lastModified
 
+		my_enrollments = {}
 		for x in parent.catalog.iterCatalogEntries():
-			if has_permission(ACT_READ, x, parent.user):
+			if has_permission(ACT_READ, x, user):
 				# Note that we have to expose these by NTIID, not their
 				# __name__. Because the catalog can be reading from
 				# multiple different sources, the __names__ might overlap
-				self.container[x.ntiid] = x
+
+				course = ICourseInstance(x, None)
+				if course is not None:
+					enrollments = ICourseEnrollments(course)
+					if enrollments.get_enrollment_for_principal(user) is not None:
+						my_enrollments[x.ntiid] = course
+
+				container[x.ntiid] = x
+
+		courses_to_remove = []
+		for course in my_enrollments.values():
+			if ICourseSubInstance.providedBy(course):
+				# Look for parents and siblings to remove
+				courses_to_remove.extend( course.__parent__.values() )
+				courses_to_remove.append( course.__parent__.__parent__ )
+			else:
+				# Look for children to remove
+				courses_to_remove.extend(course.SubInstances.values())
+		for course in courses_to_remove:
+			ntiid = ICourseCatalogEntry(course).ntiid
+			if ntiid not in my_enrollments:
+				container.pop( ntiid, None )
 
 	accepts = ()
 
