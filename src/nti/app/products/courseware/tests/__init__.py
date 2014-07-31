@@ -46,7 +46,9 @@ def _do_then_enumerate_library(do, sync_libs=False):
 			publish_ou_course_entries()
 			if sync_libs:
 				from nti.app.contentlibrary.admin_views import _SyncAllLibrariesView
-				_SyncAllLibrariesView(None)()
+				view = _SyncAllLibrariesView(None)
+				view._SLEEP = False # see comments in the view class
+				view()
 
 
 	_create()
