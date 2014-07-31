@@ -520,7 +520,8 @@ class _LegacyCommunityBasedCourseInstance(CourseInstance):
 		try:
 			package = library[self.ContentPackageNTIID]
 		except KeyError:
-			logger.exception('The content package for %s is gone', self)
+			logger.exception('The content package for %s/%s is gone',
+							 self, self.ContentPackageNTIID)
 		return package
 
 	@property
@@ -547,7 +548,11 @@ class _LegacyCommunityBasedCourseInstance(CourseInstance):
 		# checking the date on each access as needed (the _v_toc_node didn't change,
 		# though, ever, could that be an issue?)
 		package = self.legacy_content_package
-		fill_outline_from_key(self._LegacyOutline, package.index, xml_parent_name='course')
+		if package is None:
+			logger.warn("No content package found for %s/%s; no outline and other bad things may happen",
+						self, self.ContentPackageNTIID)
+		else:
+			fill_outline_from_key(self._LegacyOutline, package.index, xml_parent_name='course')
 		return self._LegacyOutline
 
 	@Lazy
