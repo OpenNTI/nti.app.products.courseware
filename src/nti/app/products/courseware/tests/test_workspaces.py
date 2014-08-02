@@ -437,7 +437,6 @@ class TestPersistentWorkspaces(_AbstractEnrollingBase,
 	# in the legacy case.) Investigate more.
 	individual_roster_accessible_to_instructor = False
 
-	expected_for_credit_count = 1 # instructor
 
 	# 3 entries: two sections of clc (main, 01), one for water
 	# The third CLC section is restricted to enrolled students only
