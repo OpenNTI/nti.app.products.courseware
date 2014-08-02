@@ -70,6 +70,15 @@ class _AbstractMixin(object):
 		res = self.fetch_user_recursive_notable_ugd(username='harp4162', extra_environ=inst_env )
 		assert_that( res.json_body, has_entry( 'TotalItemCount', 0))
 
+
+		# The instructor can easily make a small edit to the topic
+
+		res = self.testapp.get(self.open_path, extra_environ=inst_env)
+		headline_url = self.require_link_href_with_rel( res.json_body['headline'], 'edit' )
+		self.testapp.put_json( headline_url,
+								{'title': 'A New Title'},
+							   extra_environ=inst_env)
+
 		self._extra_post_csv_create_forums()
 
 	def _extra_post_csv_create_forums(self):
