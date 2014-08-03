@@ -269,7 +269,7 @@ def _migrate_enrollments():
 
 					prin_enrollments = prin_storage.enrollments_for_id(principal_id, principal)
 					prin_enrollments._p_jar.add(record) # pick a database
-					prin_enrollments.append(record)
+					prin_enrollments.add(record)
 
 					# avoid firing an event...
 					record.__parent__ = modern_enrollment_storage
