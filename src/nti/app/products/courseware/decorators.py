@@ -14,8 +14,6 @@ logger = __import__('logging').getLogger(__name__)
 from zope import interface
 from zope import component
 
-from Acquisition import aq_acquire
-
 from zope.location.interfaces import ILocation
 
 from nti.externalization.interfaces import IExternalMappingDecorator
@@ -141,9 +139,9 @@ class _CourseCatalogEntryLegacyDecorator(object):
 		result['Title'] = context.title
 		result['Description'] = context.description
 		course = ICourseInstance(context, None)
-		if course is not None and ICourseSubInstance.providedBy(course):
-			try:
-				ParentNTIID = aq_acquire(course.__parent__, 'ntiid')
-				result['ParentCourseNTIID'] = ParentNTIID
-			except AttributeError:
-				pass
+		if ICourseSubInstance.providedBy(course):
+			main_course = course.__parent__.__parent__
+			main_entry = ICourseCatalogEntry(main_course, None)
+			# TODO: Compute NTTIID Directly
+			external = to_external_object(main_entry) if main_entry is not None else {}
+			result['CourseEntryNTIID'] = external.get('NTIID')
