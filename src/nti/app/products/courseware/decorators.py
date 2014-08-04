@@ -142,6 +142,7 @@ class _CourseCatalogEntryLegacyDecorator(object):
 		if ICourseSubInstance.providedBy(course):
 			main_course = course.__parent__.__parent__
 			main_entry = ICourseCatalogEntry(main_course, None)
-			# TODO: Compute NTTIID Directly
-			external = to_external_object(main_entry) if main_entry is not None else {}
-			result['CourseEntryNTIID'] = external.get('NTIID')
+			try:
+				result['CourseEntryNTIID'] = main_entry.ntiid
+			except AttributeError:
+				pass
