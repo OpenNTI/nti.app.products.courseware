@@ -144,6 +144,6 @@ class _CourseCatalogEntryLegacyDecorator(object):
 		if course is not None and ICourseSubInstance.providedBy(course):
 			try:
 				ParentNTIID = aq_acquire(course.__parent__, 'ntiid')
-				result['ParentNTIID'] = ParentNTIID
+				result['ParentCourseNTIID'] = ParentNTIID
 			except AttributeError:
 				pass
