@@ -138,11 +138,3 @@ class _CourseCatalogEntryLegacyDecorator(object):
 	def decorateExternalMapping(self, context, result):
 		result['Title'] = context.title
 		result['Description'] = context.description
-		course = ICourseInstance(context, None)
-		if ICourseSubInstance.providedBy(course):
-			main_course = course.__parent__.__parent__
-			main_entry = ICourseCatalogEntry(main_course, None)
-			try:
-				result['CourseEntryNTIID'] = main_entry.ntiid
-			except AttributeError:
-				pass
