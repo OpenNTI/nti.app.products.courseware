@@ -19,7 +19,6 @@ __docformat__ = "restructuredtext en"
 
 logger = __import__('logging').getLogger(__name__)
 
-import isodate
 from urlparse import urljoin
 
 from zope import interface
@@ -169,8 +168,6 @@ def _register_course_purchasable_from_catalog_entry( entry, event ):
 	entry.LegacyPurchasableIcon = icon
 	entry.LegacyPurchasableThumbnail = thumbnail
 
-	author = ' and '.join( [x.Name for x in entry.Instructors] )
-
 	old_rendering = False # Some things were different with the courses produced for Fall 2013
 	if not entry.StartDate or not entry.EndDate:
 		# Hmm...something very fishy about this one...ancient legacy?
@@ -206,12 +203,10 @@ def _register_course_purchasable_from_catalog_entry( entry, event ):
 		specific = purch_id + ntiid_title
 		purch_ntiid = make_ntiid( provider=provider, nttype='course', specific=specific )
 
-		items = (entry.ContentPackageNTIID,)
 	else:
 		purch_ntiid = make_ntiid( provider=provider, nttype='course', specific=purch_id )
 		logger.debug("Purchasable '%s' was created for course '%s'",
 					 purch_ntiid, entry.ContentPackageNTIID)
-		items = (entry.ContentPackageNTIID,)
 
 	# Be careful what site we stick these in. Ideally we'd want to stick them in
 	# site the library is loaded in in case we are configuring multiple libraries
