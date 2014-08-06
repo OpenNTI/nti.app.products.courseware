@@ -486,7 +486,7 @@ class TestPersistentWorkspaces(_AbstractEnrollingBase,
 
 		main_entry, sect_entry = self._get_main_and_sect_entries(res)
 
-		main_assets = '/CLC3403_LawAndJustice/presentation-assets/shared/v1/'
+		main_assets = '/sites/platform.ou.edu/CLC3403_LawAndJustice/presentation-assets/shared/v1/'
 		sect_assets = '/sites/platform.ou.edu/Courses/Fall2013/CLC3403_LawAndJustice/Sections/01/presentation-assets/shared/v1/'
 
 		assert_that( main_entry, has_entry('PlatformPresentationResources',
@@ -526,9 +526,9 @@ class TestPersistentWorkspaces(_AbstractEnrollingBase,
 										   'tag:nextthought.com,2011-10:OU-HTML-CLC3403_LawAndJustice.clc_3403_law_and_justice'))
 
 		assert_that( main_entry, has_entry('LegacyPurchasableIcon',
-										   '/CLC3403_LawAndJustice/images/CLC3403_promo.png' ) )
+										   '/sites/platform.ou.edu/CLC3403_LawAndJustice/images/CLC3403_promo.png' ) )
 		assert_that( sect_entry, has_entry('LegacyPurchasableIcon',
-										   '/CLC3403_LawAndJustice/images/CLC3403_promo.png' ) )
+										   '/sites/platform.ou.edu/CLC3403_LawAndJustice/images/CLC3403_promo.png' ) )
 
 
 	@WithSharedApplicationMockDS(users=True,testapp=True)
