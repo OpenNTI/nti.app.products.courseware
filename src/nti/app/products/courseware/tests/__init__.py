@@ -23,6 +23,7 @@ from nti.dataserver.tests.mock_dataserver import mock_db_trans
 from nti.dataserver import users
 from zope.component.interfaces import IComponents
 from nti.contenttypes.courses.interfaces import ICourseCatalog
+from nti.contenttypes.courses.interfaces import ICourseInstance
 from nti.contentlibrary.interfaces import IContentPackageLibrary
 
 def publish_ou_course_entries():
@@ -79,6 +80,21 @@ class LegacyInstructedCourseApplicationTestLayer(ApplicationTestLayer):
 		component.provideUtility(cls._setup_library(cls), IContentPackageLibrary)
 
 		_do_then_enumerate_library(lambda: users.User.create_user( username='harp4162', password='temp001') )
+
+		database = ZODB.DB( ApplicationTestLayer._storage_base,
+							database_name='Users')
+		@WithMockDS(database=database)
+		def _drop_any_direct_catalog_references():
+			with mock_db_trans(site_name='platform.ou.edu'):
+				# make sure they get looked up through the catalog
+				cat = component.getUtility(ICourseCatalog)
+				for i in cat.iterCatalogEntries():
+					course = ICourseInstance(i)
+					assert course.legacy_catalog_entry is not None
+					del course._v_catalog_entry
+
+		_drop_any_direct_catalog_references()
+
 
 	@classmethod
 	def tearDown(cls):

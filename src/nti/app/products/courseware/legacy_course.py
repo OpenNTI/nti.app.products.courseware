@@ -174,7 +174,6 @@ def _register_course_purchasable_from_catalog_entry( entry, event ):
 		logger.warn("Course info has no start date and/or duration: %s", entry)
 		old_rendering = True
 	else:
-
 		old_rendering = entry.StartDate.year == 2013
 
 	sig_lines = []
@@ -205,8 +204,9 @@ def _register_course_purchasable_from_catalog_entry( entry, event ):
 
 	else:
 		purch_ntiid = make_ntiid( provider=provider, nttype='course', specific=purch_id )
-		logger.debug("Purchasable '%s' was created for course '%s'",
-					 purch_ntiid, entry.ContentPackageNTIID)
+
+	logger.debug("Purchasable '%s' was created for course using content package'%s'",
+				 purch_ntiid, entry.ContentPackageNTIID)
 
 	# Be careful what site we stick these in. Ideally we'd want to stick them in
 	# site the library is loaded in in case we are configuring multiple libraries
@@ -223,8 +223,9 @@ def _register_course_purchasable_from_catalog_entry( entry, event ):
 	else:
 		components = component.getGlobalSiteManager().getUtility(IComponents,
 																 name=policy.register_courses_in_components_named)
-		logger.info('Registering course %s in site %s',
-					purch_ntiid, policy.register_courses_in_components_named)
+		logger.info('Registering course %s/%s in site %s',
+					purch_ntiid, entry.ContentPackageNTIID,
+					policy.register_courses_in_components_named)
 		# If they give us one, it MUST be non-persistent (programming error
 		# otherwise). And anything we derive overrides what may have
 		# been statically registered.
@@ -604,10 +605,13 @@ class _LegacyCommunityBasedCourseInstance(CourseInstance):
 			catalog = component.getUtility(ICourseCatalog)
 			my_ntiid = self.ContentPackageNTIID
 			for entry in catalog.iterCatalogEntries():
-				ntiid = getattr( entry, 'ContentPackageNTIID', None)
+				ntiid = getattr(entry, 'ContentPackageNTIID', None)
 				if ntiid == my_ntiid:
 					self._v_catalog_entry = entry
 					break
+			if self._v_catalog_entry is None:
+				logger.warn("Unable to find any catalog entry with ContentPackageNTIID %s",
+							my_ntiid)
 		return self._v_catalog_entry
 
 	@property
@@ -619,7 +623,11 @@ class _LegacyCommunityBasedCourseInstance(CourseInstance):
 @interface.implementer(ICourseCatalogLegacyContentEntry)
 @component.adapter(_LegacyCommunityBasedCourseInstance)
 def _legacy_course_instance_to_catalog_entry(instance):
-	return instance.legacy_catalog_entry
+	result = instance.legacy_catalog_entry
+	if result is None:
+		logger.warn("Failed to find any legacy course catalog entry claiming the package %s",
+					instance.ContentPackageNTIID)
+	return result
 
 
 from nti.dataserver.interfaces import IACLProvider

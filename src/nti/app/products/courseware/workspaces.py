@@ -247,7 +247,9 @@ class _AbstractInstanceWrapper(contained.Contained):
 			# or is this supposed to be traversable?
 			return ICourseCatalogEntry(self._private_course_instance).ntiid
 		except TypeError: # Hmm, the catalog entry is gone, something doesn't match. What?
-			logger.warning("Failed to get name from catalog for %s", self._private_course_instance)
+			logger.warning("Failed to get name from catalog for %s/%s",
+						   self._private_course_instance,
+						   self._private_course_instance.__name__)
 			return self._private_course_instance.__name__
 
 	def __conform__(self, iface):
@@ -281,7 +283,6 @@ class CourseInstanceEnrollment(_AbstractInstanceWrapper):
 			return self._user
 		return super(CourseInstanceEnrollment, self).__conform__(iface)
 
-from nti.contenttypes.courses.interfaces import ICourseEnrollments
 
 def LegacyCourseInstanceEnrollment(course_instance, user):
 	record = ICourseEnrollments(course_instance).get_enrollment_for_principal(user)
