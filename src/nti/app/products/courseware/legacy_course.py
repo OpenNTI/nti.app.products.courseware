@@ -389,10 +389,19 @@ from nti.contenttypes.courses.interfaces import ICourseSubInstance
 @interface.implementer(ICourseInstance)
 @component.adapter(IContentUnit)
 def _content_unit_to_course(unit):
+	# XXX JAM These heuristics aren't well tested.
+
+	# First, try the true legacy case. This involves
+	# a direct mapping between courses and a catalog entry. It may be
+	# slightly more reliable, but only works for true legacy cases.
 	package = find_interface(unit,ILegacyCourseConflatedContentPackage)
 	if package is not None:
-		return ICourseInstance(package, None)
+		result = ICourseInstance(package, None)
+		if result is not None:
+			return result
 
+	# Nothing true legacy. Take the first course that
+	# claims to use that package.
 	package = find_interface(unit, IContentPackage)
 	# XXX: We probably need to check and see who's enrolled
 	# to find the most specific course instance to return?
@@ -401,8 +410,8 @@ def _content_unit_to_course(unit):
 	# XXX: FIXME: This requires a one-to-one mapping
 	course_catalog = component.getUtility(ICourseCatalog)
 	for entry in course_catalog.iterCatalogEntries():
-		instance = ICourseInstance(entry)
-		if ICourseSubInstance.providedBy(instance):
+		instance = ICourseInstance(entry, None)
+		if instance is None or ICourseSubInstance.providedBy(instance):
 			continue
 
 		try:
