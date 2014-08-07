@@ -186,6 +186,12 @@
 				for=".workspaces.CourseInstanceEnrollment
 					 pyramid.interfaces.IRequest" />
 
+	<!-- 'raw' Course Enrollment Record externalization -->
+	<adapter factory=".workspaces.DefaultCourseInstanceEnrollment
+					  nti.externalization.interfaces.IExternalObject"
+			 provides="nti.externalization.interfaces.IExternalObject"
+			 for="nti.contenttypes.courses.interfaces.ICourseInstanceEnrollmentRecord" />
+
 	<!-- NTIID support -->
 	<utility factory=".ntiids._EnrolledCourseSectionTopicNTIIDResolver" />
 	<utility factory=".ntiids._EnrolledCourseRootTopicNTIIDResolver" />
@@ -196,7 +202,7 @@
 	<adapter factory=".adapters._entry_to_content_package_bundle" />
 	<adapter factory=".adapters._course_content_to_package_bundle" />
 	<adapter factory=".adapters._legacy_course_to_content_package_bundle" />
-	    
+
 	<subscriber factory=".content_search._ContentHitPredicate"
 				provides="nti.contentsearch.interfaces.ISearchHitPredicate"
 				for="nti.contentsearch.interfaces.IBookContent" />

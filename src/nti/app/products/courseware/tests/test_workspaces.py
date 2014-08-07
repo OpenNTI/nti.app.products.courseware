@@ -344,6 +344,14 @@ class _AbstractEnrollingBase(object):
 																					   'href', entry_href  )) )))
 		assert_that( res.location, is_( 'http://localhost' + enrollment_href ))
 
+		# We can resolve the record by NTIID/OID
+		record_ntiid = res.json_body['NTIID']
+		res = self.fetch_by_ntiid(record_ntiid)
+		assert_that( res.json_body,
+					 has_entries(
+						 'Class', 'CourseInstanceEnrollment',
+						 'NTIID', record_ntiid) )
+
 		# Now it should show up in our workspace
 		res = self.testapp.get( self.enrolled_courses_href )
 		assert_that( res.json_body, has_entry( 'Items', has_length( 1 ) ) )
