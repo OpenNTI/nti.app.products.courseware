@@ -47,6 +47,7 @@ from nti.contenttypes.courses.interfaces import ICourseCatalog
 from nti.app.products.courseware.interfaces import ICourseCatalogLegacyContentEntry
 
 from nti.dataserver.interfaces import ICommunity
+from nti.dataserver.interfaces import IUseNTIIDAsExternalUsername
 from nti.dataserver.users.interfaces import IFriendlyNamed
 
 from nti.wref.interfaces import IWeakRef
@@ -350,6 +351,9 @@ def _course_instance_for_catalog_entry(entry):
 		names = IFriendlyNamed(community)
 		names.realname = purch_id
 		names.alias = entry.Title
+
+	if not IUseNTIIDAsExternalUsername.providedBy(community):
+		interface.alsoProvides(community, IUseNTIIDAsExternalUsername)
 
 	# Course instances live inside ICourseAdminLevels
 	community_courses = ICourseAdministrativeLevel( community )
