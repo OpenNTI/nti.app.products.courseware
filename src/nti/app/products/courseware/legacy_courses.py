@@ -306,3 +306,35 @@ class _LegacyCourseInstanceEnrollments(object):
 														   Scope=scope,
 														   Principal=member)
 			yield record
+
+from zope.copypastemove.interfaces import IObjectMover
+from nti.contenttypes.courses.sharing import on_drop_exit_scope_membership
+from nti.contenttypes.courses.sharing import on_enroll_record_scope_membership
+
+def _migrate_enrollments_from_course_to_course(source, dest):
+	"""
+	Move all the enrollments from the ``source`` course to the ``dest``
+	course. Sharing will be updated, but no emails will be sent.
+
+	If someone is already enrolled in both courses: XXX---by default we fail?
+	It all depends on the name chooser.
+	"""
+
+	# All we need to do is use IObjectMover to transport the
+	# EnrollmentRecord objects; they find their course from
+	# where they are located, and the Storage object is a simple
+	# IContainer.
+
+	source_enrollments = IDefaultCourseInstanceEnrollmentStorage(source)
+	dest_enrollments = IDefaultCourseInstanceEnrollmentStorage(dest)
+
+	for source_enrollment in source_enrollments.values():
+		mover = IObjectMover(source_enrollment)
+
+		on_drop_exit_scope_membership(source_enrollment, None)
+
+		mover.moveTo(dest_enrollments)
+
+		# TODO: ObjectMovedEvent could be used to handle the sharing?
+
+		on_enroll_record_scope_membership(source_enrollment, None)
