@@ -89,7 +89,10 @@ class _ContentHitPredicate(_BasePredicate):
 	__slots__ = ()
 
 	def allow(self, item, score):
-		return is_allowed(item.ntiid)
+		result = is_allowed(item.ntiid)
+		if not result:
+			logger.debug("Content '%s' not allowed for search. %s", item.ntiid, item)
+		return result
 
 @interface.implementer(search_interfaces.ISearchHitPredicate)
 @component.adapter(search_interfaces.IAudioTranscriptContent)
@@ -98,7 +101,10 @@ class _AudioContentHitPredicate(_BasePredicate):
 	__slots__ = ()
 
 	def allow(self, item, score):
-		return is_allowed(item.containerId)
+		result = is_allowed(item.containerId)
+		if not result:
+			logger.debug("Content '%s' not allowed for search. %s", item.containerId, item)
+		return result
 
 @interface.implementer(search_interfaces.ISearchHitPredicate)
 @component.adapter(search_interfaces.IVideoTranscriptContent)
@@ -107,7 +113,10 @@ class _VideoContentHitPredicate(_BasePredicate):
 	__slots__ = ()
 
 	def allow(self, item, score):
-		return is_allowed(item.containerId)
+		result = is_allowed(item.containerId)
+		if not result:
+			logger.debug("Content '%s' not allowed for search. %s", item.containerId, item)
+		return result
 
 @interface.implementer(search_interfaces.ISearchHitPredicate)
 @component.adapter(search_interfaces.INTICardContent)
@@ -116,8 +125,11 @@ class _NTICardContentHitPredicate(_BasePredicate):
 	__slots__ = ()
 
 	def allow(self, item, score):
-		return is_allowed(item.containerId) and is_allowed(item.target_ntiid)
-
+		result = is_allowed(item.containerId) and is_allowed(item.target_ntiid)
+		if not result:
+			logger.debug("Content '%s' not allowed for search. %s", item.containerId, item)
+		return result
+	
 @interface.implementer(search_interfaces.ISearchHitPredicate)
 @component.adapter(nti_interfaces.ICreated)
 class _CreatedContentHitPredicate(_BasePredicate):
@@ -136,4 +148,7 @@ class _CreatedContentHitPredicate(_BasePredicate):
 				find_interface(item, lib_interfaces.IContentPackage)
 		course = course_interfaces.ICourseInstance(found, None)
 		result = is_allowed(containerId, course)
+		
+		if not result:
+			logger.debug("Content '%s' not allowed for search. %s", containerId, item)
 		return result
