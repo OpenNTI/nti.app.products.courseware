@@ -28,6 +28,7 @@ from . import LegacyInstructedCourseApplicationTestLayer
 from . import InstructedCourseApplicationTestLayer
 
 class _AbstractMixin(object):
+	default_origin = str('http://janux.ou.edu')
 
 	body_matcher = ()
 	open_path = None
@@ -42,7 +43,7 @@ class _AbstractMixin(object):
 		assert_that( res.json_body, contains(*self.body_matcher) )
 
 		inst_env = self._make_extra_environ(username='harp4162')
-		inst_env.update( {b'HTTP_ORIGIN': b'http://janux.ou.edu'} )
+
 
 		for i in self.body_matcher:
 			if not isinstance(i, basestring):
@@ -99,7 +100,9 @@ class TestCreateLegacyForums(_AbstractMixin,
 					'tag:nextthought.com,2011-10:CLC3403.ou.nextthought.com-Forum:GeneralCommunity-In_Class_Discussions',
 					'tag:nextthought.com,2011-10:CLC3403.ou.nextthought.com-Topic:GeneralCommunity-In_Class_Discussions.A_clc_discussion']
 
-	open_path = '/dataserver2/users/CLC3403.ou.nextthought.com/DiscussionBoard/Open_Discussions/A_clc_discussion'
+	open_forum_path = '/dataserver2/users/CLC3403.ou.nextthought.com/DiscussionBoard/Open_Discussions/'
+	open_topic_path = '/dataserver2/users/CLC3403.ou.nextthought.com/DiscussionBoard/Open_Discussions/A_clc_discussion'
+	open_path = open_topic_path
 
 
 class TestCreateForums(_AbstractMixin,
@@ -111,15 +114,35 @@ class TestCreateForums(_AbstractMixin,
 	default_origin = str('http://janux.ou.edu')
 
 	body_matcher = [not_none(),
-					'tag:nextthought.com,2011-10:CLC_3403-Topic:EnrolledCourseSection-Open_Discussions.A_clc_discussion',
+					starts_with('tag:nextthought.com,2011-10:unknown-OID-0x'),
 					not_none(),
-					'tag:nextthought.com,2011-10:CLC_3403-Topic:EnrolledCourseSection-In_Class_Discussions.A_clc_discussion']
+					starts_with('tag:nextthought.com,2011-10:unknown-OID-0x')]
+
 
 
 	open_path = '/dataserver2/%2B%2Betc%2B%2Bhostsites/platform.ou.edu/%2B%2Betc%2B%2Bsite/Courses/Fall2013/CLC3403_LawAndJustice/Discussions/Open_Discussions/A_clc_discussion'
+	default_path = '/dataserver2/%2B%2Betc%2B%2Bhostsites/platform.ou.edu/%2B%2Betc%2B%2Bsite/Courses/Fall2013/CLC3403_LawAndJustice/Discussions/Forum'
 
 	def _extra_post_csv_create_forums(self):
 		# We should have absolute NTIIDs for the containerid of posts in
 		# new-style topics
 		assert_that( self.comment_res.json_body['ContainerId'],
-					 starts_with('tag:nextthought.com,2011-10:harp4162-OID-0x') )
+					 starts_with('tag:nextthought.com,2011-10:unknown-OID-0x') )
+
+	@WithSharedApplicationMockDS(users=True,testapp=True,default_authenticate=True)
+	def test_create_topic_directly(self):
+		inst_env = self._make_extra_environ(username='harp4162')
+
+		topic_res = self.testapp.post_json(self.default_path,
+										   { 'Class': 'Post',
+											 'title': 'My New Blog',
+											 'description': "This is a description of the thing I'm creating",
+											 'body': ['My first thought'] },
+										   status=201,
+										   extra_environ=inst_env)
+		assert_that( topic_res.json_body,
+					 has_entry('NTIID',
+							   starts_with('tag:nextthought.com,2011-10:unknown-OID-0x') ) )
+		assert_that( topic_res.json_body,
+					 has_entry('ContainerId',
+							   starts_with('tag:nextthought.com,2011-10:unknown-OID-0x') ) )

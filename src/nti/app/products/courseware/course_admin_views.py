@@ -22,6 +22,7 @@ from pyramid.view import view_config
 from nti.app.base.abstract_views import AbstractAuthenticatedView
 
 from nti.dataserver import authorization as nauth
+from nti.dataserver.traversal import find_interface
 
 from nti.contenttypes.courses.interfaces import ICourseCatalog
 from nti.app.notabledata.interfaces import IUserNotableData
@@ -33,6 +34,7 @@ from nti.ntiids import ntiids
 from nti.dataserver.contenttypes.forums.ace import ForumACE
 
 from nti.dataserver.contenttypes.forums.interfaces import IACLCommunityBoard
+from nti.dataserver.contenttypes.forums.interfaces import IUseOIDForNTIID
 from nti.dataserver.contenttypes.forums.interfaces import IACLCommunityForum
 from nti.dataserver.contenttypes.forums.forum import ACLCommunityForum
 
@@ -180,24 +182,8 @@ class CourseTopicCreationView(AbstractAuthenticatedView,UploadRequestUtilsMixin)
 
 
 					ntiid = topic.NTIID
-					if ntiid is None:
-						# New-style courses cannot get correct NTIIDs
-						# This is a temp-fix for testing.
-						# First, make them generate a normal "pretty" ntiid...
-						topic._community = Entity.get_entity(forum_readable)
-						ntiid = topic.NTIID
-						# ...then make it abstract for the course...
-						ntiid = ntiids.make_ntiid(provider=ntprovider,
-												  nttype=NTIID_TYPE_COURSE_SECTION_TOPIC,
-												  base=ntiid)
-						# ...finally, from here on, we want to use its absolute
-						# identity, because it otherwise may not be resolvable
-						# (and its ntiid gets used as the container id of its children)
-						del topic._community
-						topic.NTIID = to_external_ntiid_oid(topic)
-
-
-
+					# TODO: For new-style courses, we'd like to generate a EnrolledCoursesSection
+					# ntiid, but the OID forcing is hard to override.
 					created_ntiids.append(ntiid)
 					logger.debug('Created topic %s with NTIID %s', topic, ntiid)
 
