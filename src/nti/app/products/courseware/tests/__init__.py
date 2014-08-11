@@ -65,7 +65,9 @@ def _reset_site_libs():
 		seen.append(lib)
 		lib.resetContentPackages()
 
-	d()
+	from zope.component import hooks
+	with hooks.site(None):
+		d()
 	run_job_in_all_host_sites(d)
 
 class LegacyInstructedCourseApplicationTestLayer(ApplicationTestLayer):
