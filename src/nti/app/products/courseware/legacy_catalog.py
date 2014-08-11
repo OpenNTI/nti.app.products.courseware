@@ -54,6 +54,13 @@ def _content_package_registered( package, event ):
 					package, package.__parent__)
 		return
 
+	catalog = component.getUtility(ICourseCatalog)
+	if not hasattr(catalog, 'addCatalogEntry'):
+		logger.info("Enumerated a global library (%s) while in a sub-site (%s); "
+					"you forgot to call syncContentPackages. Ignoring",
+					package, catalog)
+		return
+
 	# There are currently two types of renderings in the wild:
 	# Those with and without a 'course-info.json' file. Those
 	# without a JSON file have some extra info in their TOC.
@@ -125,8 +132,6 @@ def _content_package_registered( package, event ):
 	catalog_entry.legacy_content_package = package
 	catalog_entry.Communities = [unicode(x, 'utf-8')
 								 for x in package._v_toc_node.xpath('//course/scope[@type="public"]/entry/text()')]
-
-	catalog = component.getUtility(ICourseCatalog)
 
 	try:
 		catalog.addCatalogEntry( catalog_entry )

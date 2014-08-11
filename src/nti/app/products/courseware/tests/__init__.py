@@ -54,6 +54,20 @@ def _do_then_enumerate_library(do, sync_libs=False):
 
 	_create()
 
+from nti.site.hostpolicy import run_job_in_all_host_sites
+def _reset_site_libs():
+	seen = []
+
+	def d():
+		lib = component.getUtility(IContentPackageLibrary)
+		if lib in seen:
+			return
+		seen.append(lib)
+		lib.resetContentPackages()
+
+	d()
+	run_job_in_all_host_sites(d)
+
 class LegacyInstructedCourseApplicationTestLayer(ApplicationTestLayer):
 
 	_library_path = 'Library'
@@ -102,11 +116,8 @@ class LegacyInstructedCourseApplicationTestLayer(ApplicationTestLayer):
 		# Clean up any side effects of these content packages being
 		# registered
 		def cleanup():
-			del component.getUtility(IContentPackageLibrary).contentPackages
-			try:
-				del cls.__old_library.contentPackages
-			except AttributeError:
-				pass
+			_reset_site_libs()
+			cls.__old_library.resetContentPackages()
 			component.provideUtility(cls.__old_library, IContentPackageLibrary)
 			users.User.delete_user('harp4162')
 			component.getGlobalSiteManager().getUtility(ICourseCatalog).clear()
@@ -134,12 +145,10 @@ class RestrictedInstructedCourseApplicationTestLayer(ApplicationTestLayer):
 		# Must implement!
 		# Clean up any side effects of these content packages being
 		# registered
+		from nti.site.hostpolicy import run_job_in_all_host_sites
 		def cleanup():
-			del component.getUtility(IContentPackageLibrary).contentPackages
-			try:
-				del cls.__old_library.contentPackages
-			except AttributeError:
-				pass
+			_reset_site_libs()
+			cls.__old_library.resetContentPackages()
 			component.provideUtility(cls.__old_library, IContentPackageLibrary)
 			users.User.delete_user('harp4162')
 			component.getGlobalSiteManager().getUtility(ICourseCatalog).clear()
@@ -168,12 +177,11 @@ class PersistentInstructedCourseApplicationTestLayer(ApplicationTestLayer):
 		# Must implement!
 		# Clean up any side effects of these content packages being
 		# registered
+
 		def cleanup():
-			del component.getUtility(IContentPackageLibrary).contentPackages
-			try:
-				del cls.__old_library.contentPackages
-			except AttributeError:
-				pass
+			_reset_site_libs()
+			cls.__old_library.resetContentPackages()
+
 			component.provideUtility(cls.__old_library, IContentPackageLibrary)
 			users.User.delete_user('harp4162')
 			component.getGlobalSiteManager().getUtility(ICourseCatalog).clear()
