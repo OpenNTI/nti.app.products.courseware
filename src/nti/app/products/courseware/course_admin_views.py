@@ -16,13 +16,11 @@ from zope import interface
 from zope import lifecycleevent
 
 from nti.contenttypes.courses.interfaces import ICourseInstance
-from .interfaces import NTIID_TYPE_COURSE_SECTION_TOPIC
 
 from pyramid.view import view_config
 from nti.app.base.abstract_views import AbstractAuthenticatedView
 
 from nti.dataserver import authorization as nauth
-from nti.dataserver.traversal import find_interface
 
 from nti.contenttypes.courses.interfaces import ICourseCatalog
 from nti.app.notabledata.interfaces import IUserNotableData
@@ -34,14 +32,12 @@ from nti.ntiids import ntiids
 from nti.dataserver.contenttypes.forums.ace import ForumACE
 
 from nti.dataserver.contenttypes.forums.interfaces import IACLCommunityBoard
-from nti.dataserver.contenttypes.forums.interfaces import IUseOIDForNTIID
 from nti.dataserver.contenttypes.forums.interfaces import IACLCommunityForum
 from nti.dataserver.contenttypes.forums.forum import ACLCommunityForum
 
 from nti.dataserver.contenttypes.forums.post import CommunityHeadlinePost
 from nti.dataserver.contenttypes.forums.topic import CommunityHeadlineTopic
 
-from nti.externalization.oids import to_external_ntiid_oid
 
 from nti.app.externalization.view_mixins import UploadRequestUtilsMixin
 
@@ -247,3 +243,27 @@ class CourseTopicCreationView(AbstractAuthenticatedView,UploadRequestUtilsMixin)
 
 
 		return created_ntiids
+
+
+from .legacy_courses import _copy_enrollments_from_legacy_to_new
+
+@view_config(route_name='objects.generic.traversal',
+			 renderer='rest',
+			 context=IDataserverFolder,
+			 permission=nauth.ACT_COPPA_ADMIN, # XXX FIXME
+			 name='LegacyCourseEnrollmentMigrator')
+class CourseEnrollmentMigrationView(AbstractAuthenticatedView):
+	"""
+	Migrates the enrollments from legacy placeholder courses to
+	their new course instance. If any new course instance does not yet
+	exist, it is skipped.
+
+	Call this as a GET request for dry-run processing. POST to it
+	to do it for real.
+
+	Can be run as often as needed.
+	"""
+
+	def __call__(self):
+
+		return _copy_enrollments_from_legacy_to_new(self.request)

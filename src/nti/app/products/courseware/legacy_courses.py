@@ -13,7 +13,8 @@ logger = __import__('logging').getLogger(__name__)
 
 #: A map from site (IComponents) name
 #: to a list of tuples naming the course name, purchasable ID
-#: and the scopes
+#: and the scopes. finally, is a traversal path to get the course to move
+#: enrollments to (relative to the course catalog folder)
 KNOWN_LEGACY_COURSES_BY_SITE = {
 	'alibra.nextthought.com': [
 		('AlibraSC',
@@ -56,7 +57,8 @@ KNOWN_LEGACY_COURSES_BY_SITE = {
 		  'restricted': 'tag:nextthought.com,2011-10:lewi7532-MeetingRoom:Group-anth4970spring2014.ou.nextthought.com'}),
 		('BIOL2124F2014',
 		 'tag:nextthought.com,2011-10:OU-course-BIOL2124F2014',
-		 {'public': 'BIOL2124F2014.ou.nextthought.com', 'restricted': None}),
+		 {'public': 'BIOL2124F2014.ou.nextthought.com', 'restricted': None},
+		 'Fall2014/BIOL 2124'),
 		('CHEM1315',
 		 'tag:nextthought.com,2011-10:OU-course-CHEM1315GeneralChemistry',
 		 {'public': 'CHEM1315.ou.nextthought.com',
@@ -64,7 +66,8 @@ KNOWN_LEGACY_COURSES_BY_SITE = {
 		('CHEM1315F2014',
 		 'tag:nextthought.com,2011-10:OU-course-CHEM1315F2014',
 		 {'public': 'CHEM1315F2014.ou.nextthought.com',
-		  'restricted': 'CHEM1315Fall2014.ou.nextthought.com'}),
+		  'restricted': 'CHEM1315Fall2014.ou.nextthought.com'},
+		 'Fall2014/CHEM 1315'),
 		('CHEM4970',
 		 'tag:nextthought.com,2011-10:OU-course-CHEM4970',
 		 {'public': 'CHEM4970.ou.nextthought.com',
@@ -72,7 +75,8 @@ KNOWN_LEGACY_COURSES_BY_SITE = {
 		('CHEM4970F2014',
 		 'tag:nextthought.com,2011-10:OU-course-CHEM4970F2014',
 		 {'public': 'CHEM4970F2014.ou.nextthought.com',
-		  'restricted': 'tag:nextthought.com,2011-10:morv1533-MeetingRoom:Group-chem4970fall2014.ou.nextthought.com'}),
+		  'restricted': 'tag:nextthought.com,2011-10:morv1533-MeetingRoom:Group-chem4970fall2014.ou.nextthought.com'},
+		 'Fall2014/CHEM 4970/SubInstances/001'),
 		('CLC3403',
 		 'tag:nextthought.com,2011-10:OU-course-CLC3403LawAndJustice',
 		 {'public': 'CLC3403.ou.nextthought.com',
@@ -80,7 +84,8 @@ KNOWN_LEGACY_COURSES_BY_SITE = {
 		('CLC3403F2014',
 		 'tag:nextthought.com,2011-10:OU-course-CLC3403F2014',
 		 {'public': 'CLC3403F2014.ou.nextthought.com',
-		  'restricted': 'tag:nextthought.com,2011-10:harp4162-MeetingRoom:Group-clc3403fall2014.ou.nextthought.com'}),
+		  'restricted': 'tag:nextthought.com,2011-10:harp4162-MeetingRoom:Group-clc3403fall2014.ou.nextthought.com'},
+		 'Fall2014/CLC 3403'),
 		('COMM4970',
 		 'tag:nextthought.com,2011-10:OU-course-COMM4970',
 		 {'public': 'COMM4970.ou.nextthought.com',
@@ -128,7 +133,8 @@ KNOWN_LEGACY_COURSES_BY_SITE = {
 		('IAS2003F2014',
 		 'tag:nextthought.com,2011-10:OU-course-IAS2003F2014',
 		 {'public': 'IAS2003F2014.ou.nextthought.com',
-		  'restricted': 'tag:nextthought.com,2011-10:gril4990-MeetingRoom:Group-ias2003fall2014.ou.nextthought.com'}),
+		  'restricted': 'tag:nextthought.com,2011-10:gril4990-MeetingRoom:Group-ias2003fall2014.ou.nextthought.com'},
+		 'Fall2014/IAS 2003'),
 		('METR2603',
 		 'tag:nextthought.com,2011-10:OU-course-METR2603UnderstandingSevereAndUnusualWeather',
 		 {'public': 'METR2603.ou.nextthought.com',
@@ -140,11 +146,12 @@ KNOWN_LEGACY_COURSES_BY_SITE = {
 		('PHIL1203',
 		 'tag:nextthought.com,2011-10:OU-course-PHIL1203PhilosophyAndHumanDestinyEastAndWest',
 		 {'public': 'PHIL1203.ou.nextthought.com',
-		  'restricted': 'tag:nextthought.com,2011-10:judi5807-MeetingRoom:Group-phil1203fall2013.ou.nextthought.com'}),
+		  'restricted': 'tag:nextthought.com,2011-10:judi5807-MeetingRoom:Group-phil1203fall2013.ou.nextthought.com'},),
 		('PHIL1203F2014',
 		 'tag:nextthought.com,2011-10:OU-course-PHIL1203F2014',
 		 {'public': 'PHIL1203F2014.ou.nextthought.com',
-		  'restricted': 'tag:nextthought.com,2011-10:judi5807-MeetingRoom:Group-phil1203fall2014.ou.nextthought.com'}),
+		  'restricted': 'tag:nextthought.com,2011-10:judi5807-MeetingRoom:Group-phil1203fall2014.ou.nextthought.com'},
+		 'Fall2014/PHIL 1203'),
 		('PSC4283',
 		 'tag:nextthought.com,2011-10:OU-course-PSC4283',
 		 {'public': 'PSC4283.ou.nextthought.com',
@@ -156,14 +163,16 @@ KNOWN_LEGACY_COURSES_BY_SITE = {
 		('SOC1113F2014',
 		 'tag:nextthought.com,2011-10:OU-course-SOC1113F2014',
 		 {'public': 'SOC1113F2014.ou.nextthought.com',
-		  'restricted': 'tag:nextthought.com,2011-10:damp8528-MeetingRoom:Group-soc1113fall2014.ou.nextthought.com'}),
+		  'restricted': 'tag:nextthought.com,2011-10:damp8528-MeetingRoom:Group-soc1113fall2014.ou.nextthought.com'},
+		 'Fall2014/SOC 1113'),
 		('SOC3123',
 		 'tag:nextthought.com,2011-10:OU-course-SOC3123',
 		 {'public': 'SOC3123.ou.nextthought.com',
 		  'restricted': 'tag:nextthought.com,2011-10:peck6569-MeetingRoom:Group-soc3123fall2013.ou.nextthought.com'}),
 		('UCOL1002F2014',
 		 'tag:nextthought.com,2011-10:OU-course-UCOL1002F2014',
-		 {'public': 'UCOL1002F2014.ou.nextthought.com', 'restricted': None})],
+		 {'public': 'UCOL1002F2014.ou.nextthought.com', 'restricted': None},
+		 'Fall2014/UCOL 1002')],
 	'prmia.nextthought.com': [],
 	'rwanda.nextthought.com': [],
 	'symmys-alpha.nextthought.com': [],
@@ -218,7 +227,7 @@ def _migrate_enrollments():
 
 	intids  = component.getUtility(IIntIds)
 
-	for site_name, site_courses in KNOWN_LEGACY_COURSES_BY_SITE.items():
+	for site_name, site_courses in sorted(KNOWN_LEGACY_COURSES_BY_SITE.items()):
 		if not site_courses:
 			continue
 
@@ -233,7 +242,11 @@ def _migrate_enrollments():
 
 			prin_storage = global_course_catalog_enrollment_storage(None)
 
-			for course_name, course_id, scopes in site_courses:
+			for value in site_courses:
+				course_name = value[0]
+				course_id = value[1]
+				scopes = value[2]
+
 				community = Entity.get_entity(scopes['public'])
 				restricted = ()
 				if scopes.get('restricted'):
@@ -306,3 +319,71 @@ class _LegacyCourseInstanceEnrollments(object):
 														   Scope=scope,
 														   Principal=member)
 			yield record
+
+from zope.traversing.api import traverse
+from pyramid.threadlocal import get_current_request
+from nti.contenttypes.courses.enrollment import migrate_enrollments_from_course_to_course
+from nti.contenttypes.courses.interfaces import ICourseCatalog
+
+def _copy_enrollments_from_legacy_to_new(request=None):
+	"""
+	Returns an informative data structure..
+	"""
+
+	result = []
+	if request is None:
+		request = get_current_request()
+
+	for site_name, site_courses in sorted(KNOWN_LEGACY_COURSES_BY_SITE.items()):
+		if not site_courses:
+			result.append(("Nothing in site", site_name))
+			continue
+
+		site = get_site_for_site_names((site_name,))
+		if not IHostPolicyFolder.providedBy(site):
+			logger.warn("No persistent site %s, not migrating", site_name)
+			result.append(("No persistent site", site_name))
+			continue
+
+		with current_site(site):
+			# Must do this in the right site so the registration goes
+			# in the right catalog place
+
+			catalog = component.getUtility(ICourseCatalog)
+
+			for value in site_courses:
+				if len(value) < 4:
+					continue
+
+				course_name = value[0]
+				course_id = value[1]
+				scopes = value[2]
+				path_to_new_course = value[3]
+
+				community = Entity.get_entity(scopes['public'])
+				if community is None:
+					logger.warn("No community %s, not migrating course %s/%s",
+								scopes['public'], course_name, course_id)
+					result.append((path_to_new_course, 'No community', scopes))
+					continue
+
+				old_course = ILegacyCommunityBasedCourseInstance(community, None)
+				if old_course is None:
+					logger.warn("No course instance found for %s/%s, not migrating", course_name, course_id)
+					result.append((path_to_new_course, 'No legacy course'))
+					continue
+
+				new_course = traverse(catalog, path_to_new_course, request=request)
+				if new_course is None:
+					logger.warn("No new course instance found at %s, not migrating", path_to_new_course)
+					result.append((path_to_new_course, 'No new course', path_to_new_course))
+					continue
+
+				logger.info("Copying enrollments from %s/%s to %s",
+							course_name, course_id, path_to_new_course)
+
+				count = migrate_enrollments_from_course_to_course(old_course, new_course)
+				logger.info("Copied %d enrollments to %s", path_to_new_course)
+
+				result.append((path_to_new_course,count))
+	return result
