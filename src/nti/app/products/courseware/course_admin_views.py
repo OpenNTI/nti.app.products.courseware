@@ -23,6 +23,7 @@ from nti.app.base.abstract_views import AbstractAuthenticatedView
 from nti.dataserver import authorization as nauth
 
 from nti.contenttypes.courses.interfaces import ICourseCatalog
+from nti.contenttypes.courses.interfaces import ICourseInstanceVendorInfo
 from nti.app.notabledata.interfaces import IUserNotableData
 
 import csv
@@ -70,7 +71,8 @@ class CourseTopicCreationView(AbstractAuthenticatedView,UploadRequestUtilsMixin)
 	"""
 
 
-	def _create_forum(self, instance, forum_name, forum_readable_ntiid, forum_owner_ntiid):
+	def _create_forum(self, instance, forum_name, forum_readable_ntiid, forum_owner_ntiid,
+					  forum_display_name=None):
 		try:
 			_ = instance.instructors[0]
 		except IndexError:
@@ -107,15 +109,34 @@ class CourseTopicCreationView(AbstractAuthenticatedView,UploadRequestUtilsMixin)
 		except KeyError:
 			forum = ACLCommunityForum()
 			forum.creator = creator
-			forum.title = forum_name
+			forum.title = forum_display_name or forum_name
 			_assign_acl(forum,IACLCommunityForum)
+
 			discussions[name] = forum
 			logger.debug('Created forum %s', forum)
 			return forum.NTIID
 
 	def _forums_for_instance(self, name, instance):
-		return (('Open ' + name, instance.SharingScopes['Public'].NTIID),
-				('In-Class ' + name, instance.SharingScopes['ForCredit'].NTIID))
+		info = ICourseInstanceVendorInfo(instance)
+		forum_types = info.get('NTI', {}).get('Forums', {})
+
+		forums = []
+		for prefix, key_prefix, scope in (('Open', 'Open', 'Public'),
+										  ('In-Class', 'InClass', 'ForCredit')):
+			has_key = 'Has' + key_prefix + name
+			dpy_key = key_prefix + name + 'DisplayName'
+
+			if forum_types.get(has_key, True):
+				title = prefix + ' ' + name
+				forums.append( (
+					# This value CAN NOT CHANGE: Open Discussions,
+					# In-Class Discussions. NTIIDS depend on it. Hence
+					# the display name.
+					title,
+					instance.SharingScopes[scope].NTIID,
+					forum_types.get(dpy_key, title) ) )
+		return forums
+
 
 	def _main_instructor(self, instance):
 		roles = IPrincipalRoleManager(instance)
@@ -136,8 +157,9 @@ class CourseTopicCreationView(AbstractAuthenticatedView,UploadRequestUtilsMixin)
 		discussions = instance.Discussions
 
 		created_ntiids = []
-		for forum_name, forum_readable in self._forums_for_instance('Discussions', instance):
-			created_ntiid = self._create_forum(instance, forum_name, forum_readable, instance.SharingScopes['Public'].NTIID)
+		for forum_name, forum_readable, forum_display_name in self._forums_for_instance('Discussions', instance):
+			created_ntiid = self._create_forum(instance, forum_name, forum_readable, instance.SharingScopes['Public'].NTIID,
+											   forum_display_name=forum_display_name)
 			if created_ntiid:
 				created_ntiids.append(created_ntiid)
 
@@ -220,9 +242,11 @@ class CourseTopicCreationView(AbstractAuthenticatedView,UploadRequestUtilsMixin)
 				continue
 			instance = ICourseInstance(catalog_entry)
 
-			# Everybody should have announcements
-			for forum_name, forum_readable  in self._forums_for_instance('Announcements', instance):
-				created_ntiid = self._create_forum(instance, forum_name, forum_readable, instance.SharingScopes['Public'].NTIID)
+			# Everybody should have announcements, unless the vendor
+			# info says otherwise
+			for forum_name, forum_readable, forum_display_name  in self._forums_for_instance('Announcements', instance):
+				created_ntiid = self._create_forum(instance, forum_name, forum_readable, instance.SharingScopes['Public'].NTIID,
+												   forum_display_name=forum_display_name)
 				if created_ntiid:
 					created_ntiids.append(created_ntiid)
 
@@ -236,10 +260,10 @@ class CourseTopicCreationView(AbstractAuthenticatedView,UploadRequestUtilsMixin)
 			__traceback_info__ = instance, catalog_entry
 
 			rows = course_instance_ids_to_rows[course_instance_id]
-
-			all_instances = (instance,) + tuple(instance.SubInstances.values())
-			for i in all_instances:
-				created_ntiids.extend(self._create_topics_in_instance(i, rows, catalog_entry.ProviderUniqueID))
+			# Note that we do not try to do this in sub-instances (if
+			# any); administrators prefer to explicitly
+			# list each instance
+			created_ntiids.extend(self._create_topics_in_instance(instance, rows, catalog_entry.ProviderUniqueID))
 
 
 		return created_ntiids
