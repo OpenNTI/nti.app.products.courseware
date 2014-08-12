@@ -134,9 +134,9 @@ class TestCreateForums(_AbstractMixin,
 	default_origin = str('http://janux.ou.edu')
 
 	body_matcher = [not_none(),
-					starts_with('tag:nextthought.com,2011-10:unknown-OID-0x'),
+					'tag:nextthought.com,2011-10:CLC_3403-Topic:EnrolledCourseSection-Open_Discussions.A_clc_discussion',
 					not_none(),
-					starts_with('tag:nextthought.com,2011-10:unknown-OID-0x')]
+					'tag:nextthought.com,2011-10:CLC_3403-Topic:EnrolledCourseSection-In_Class_Discussions.A_clc_discussion']
 
 
 

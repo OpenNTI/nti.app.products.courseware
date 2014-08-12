@@ -23,6 +23,7 @@ from nti.app.base.abstract_views import AbstractAuthenticatedView
 from nti.dataserver import authorization as nauth
 
 from nti.contenttypes.courses.interfaces import ICourseCatalog
+from nti.contenttypes.courses.interfaces import ICourseCatalogEntry
 from nti.contenttypes.courses.interfaces import ICourseInstanceVendorInfo
 from nti.contenttypes.courses.interfaces import ICourseInstancePublicScopedForum
 from nti.contenttypes.courses.interfaces import ICourseInstanceForCreditScopedForum
@@ -52,6 +53,8 @@ from collections import defaultdict
 from zope.securitypolicy.interfaces import IPrincipalRoleManager
 from zope.securitypolicy.interfaces import Allow
 from nti.contenttypes.courses.interfaces import RID_INSTRUCTOR
+
+from .interfaces import NTIID_TYPE_COURSE_SECTION_TOPIC
 
 @view_config(route_name='objects.generic.traversal',
 			 renderer='rest',
@@ -229,8 +232,16 @@ class CourseTopicCreationView(AbstractAuthenticatedView,UploadRequestUtilsMixin)
 
 
 					ntiid = topic.NTIID
-					# TODO: For new-style courses, we'd like to generate a EnrolledCoursesSection
-					# ntiid, but the OID forcing is hard to override.
+					if ntiids.is_ntiid_of_type(ntiid, ntiids.TYPE_OID):
+						# Got a new style course. Convert this into a useful
+						# course relative reference. Of course, we have to pick
+						# either section or global for the type and the provider unique
+						# id may not really be the right thing depending on if we're creating
+						# at a course instance or subinstance...
+						# XXX: This is assumming quite a bit about the way these work.
+						ntiid = ntiids.make_ntiid(provider=ICourseCatalogEntry(instance).ProviderUniqueID,
+												  nttype=NTIID_TYPE_COURSE_SECTION_TOPIC,
+												  specific=topic._ntiid_specific_part)
 					created_ntiids.append(ntiid)
 					logger.debug('Created topic %s with NTIID %s', topic, ntiid)
 
