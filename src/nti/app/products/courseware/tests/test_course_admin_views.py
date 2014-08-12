@@ -35,12 +35,14 @@ class _AbstractMixin(object):
 
 	comment_res = None
 
+	scope = str('')
 
 	@WithSharedApplicationMockDS(users=True,testapp=True,default_authenticate=True)
 	def test_post_csv_create_forums(self):
-		csv = b'CLC 3403,A clc discussion,Contents'
+		csv = b'CLC 3403,A clc discussion,Contents' + self.scope
 		res = self.testapp.post('/dataserver2/@@LegacyCourseTopicCreator', upload_files=[('ignored', 'foo.csv', csv)])
 
+		__traceback_info__ = res.json_body
 		assert_that( res.json_body, contains(*self.body_matcher) )
 
 		inst_env = self._make_extra_environ(username='harp4162')
@@ -106,6 +108,15 @@ class TestCreateLegacyForums(_AbstractMixin,
 	open_path = open_topic_path
 
 
+class TestCreateLegacyForumsOpenOnly(TestCreateLegacyForums):
+
+	layer = LegacyInstructedCourseApplicationTestLayer
+	testapp = None
+
+	body_matcher = TestCreateLegacyForums.body_matcher[:3] # All three, because the in-class discussions still created, but not the topic
+
+	scope = str(',Open')
+
 class TestCreateForums(_AbstractMixin,
 					   ApplicationLayerTest):
 	layer = InstructedCourseApplicationTestLayer
@@ -147,6 +158,15 @@ class TestCreateForums(_AbstractMixin,
 		assert_that( topic_res.json_body,
 					 has_entry('ContainerId',
 							   starts_with('tag:nextthought.com,2011-10:unknown-OID-0x') ) )
+
+class TestCreateForumsOpenOnly(TestCreateForums):
+
+	layer = InstructedCourseApplicationTestLayer
+	testapp = None
+
+	body_matcher = TestCreateForums.body_matcher[:3] # All three, because the in-class discussions still created, but not the topic
+
+	scope = str(',Open')
 
 class TestMigrate(ApplicationLayerTest):
 

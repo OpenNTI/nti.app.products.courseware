@@ -61,10 +61,13 @@ class CourseTopicCreationView(AbstractAuthenticatedView,UploadRequestUtilsMixin)
 	"""
 	POST a CSV file to create topics::
 
-		course id, title, headline content
+		course id, title, headline content, scope
 
-	We create and permission also all the boards and forums,
-	one public and one private.
+	We create and permission also all the boards and forums, one
+	public and one private, if scope is missing or 'All'. If scope is
+	'Open' or 'In-Class', only topics in those scoped forums will be
+	created (assuming that the forum is allowed to be created at all; see
+	course-layout).
 
 	.. note:: this rips heavily from forum_admit_views
 		and simply forums.views.
@@ -167,8 +170,16 @@ class CourseTopicCreationView(AbstractAuthenticatedView,UploadRequestUtilsMixin)
 			for row in rows:
 				title = row[1].decode('utf-8', 'ignore')
 				content = row[2].decode('utf-8', 'ignore')
-
 				name = ntiids.make_specific_safe(title)
+
+				scope = row[3].decode('utf-8') if len(row) > 3 else 'All'
+				# Simplest thing to do is a prefix match on the forum_name, because
+				# those are fixed
+				if scope != 'All' and not forum_name.startswith(scope):
+					logger.debug("Ignoring %s in %s because of scope mismatch %s",
+								 name, forum, scope)
+					continue
+
 				logger.debug("Looking for %s in %s in %s", name, forum, instance)
 				topic = None
 				if name in forum:
