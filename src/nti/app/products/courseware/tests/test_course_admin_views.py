@@ -42,17 +42,25 @@ class _AbstractMixin(object):
 		csv = b'CLC 3403,A clc discussion,Contents' + self.scope
 		res = self.testapp.post('/dataserver2/@@LegacyCourseTopicCreator', upload_files=[('ignored', 'foo.csv', csv)])
 
-		__traceback_info__ = res.json_body
+		res_ntiids = __traceback_info__ = res.json_body
 		assert_that( res.json_body, contains(*self.body_matcher) )
 
 		inst_env = self._make_extra_environ(username='harp4162')
-
 
 		for i in self.body_matcher:
 			if not isinstance(i, basestring):
 				continue
 			self.fetch_by_ntiid(i, extra_environ=inst_env)
 
+		found_one = False
+		for i in res_ntiids:
+			if i:
+				res = self.fetch_by_ntiid(i, extra_environ=inst_env)
+				if res.json_body['Class'] == 'CommunityForum':
+					#  XXX: Fragile
+					found_one = True
+					assert_that( res.json_body, has_entry("SharingScopeName", not_none()))
+		assert found_one, "Need to check at least one board for the scope"
 
 		# And again does nothing
 		res = self.testapp.post('/dataserver2/@@LegacyCourseTopicCreator', upload_files=[('ignored', 'foo.csv', csv)])

@@ -24,6 +24,8 @@ from nti.dataserver import authorization as nauth
 
 from nti.contenttypes.courses.interfaces import ICourseCatalog
 from nti.contenttypes.courses.interfaces import ICourseInstanceVendorInfo
+from nti.contenttypes.courses.interfaces import ICourseInstancePublicScopedForum
+from nti.contenttypes.courses.interfaces import ICourseInstanceForCreditScopedForum
 from nti.app.notabledata.interfaces import IUserNotableData
 
 import csv
@@ -75,7 +77,8 @@ class CourseTopicCreationView(AbstractAuthenticatedView,UploadRequestUtilsMixin)
 
 
 	def _create_forum(self, instance, forum_name, forum_readable_ntiid, forum_owner_ntiid,
-					  forum_display_name=None):
+					  forum_display_name=None,
+					  forum_interface=interface.Interface):
 		try:
 			_ = instance.instructors[0]
 		except IndexError:
@@ -101,12 +104,20 @@ class CourseTopicCreationView(AbstractAuthenticatedView,UploadRequestUtilsMixin)
 
 		_assign_acl(discussions, IACLCommunityBoard)
 
+		def _assign_iface(obj, iface):
+			action = False
+			if not iface.providedBy(obj):
+				interface.alsoProvides(obj, iface)
+			if action:
+				logger.debug("Added interface to object %s %s", iface, obj)
+
 		name = ntiids.make_specific_safe(forum_name)
 		creator = Entity.get_entity(forum_owner_ntiid)
 		try:
 			forum = discussions[name]
 			logger.debug("Found existing forum %s", forum_name)
 			_assign_acl(forum, IACLCommunityForum)
+			_assign_iface(forum,forum_interface)
 			if forum.creator is not creator:
 				forum.creator = creator
 		except KeyError:
@@ -114,6 +125,7 @@ class CourseTopicCreationView(AbstractAuthenticatedView,UploadRequestUtilsMixin)
 			forum.creator = creator
 			forum.title = forum_display_name or forum_name
 			_assign_acl(forum,IACLCommunityForum)
+			_assign_iface(forum,forum_interface)
 
 			discussions[name] = forum
 			logger.debug('Created forum %s', forum)
@@ -124,8 +136,9 @@ class CourseTopicCreationView(AbstractAuthenticatedView,UploadRequestUtilsMixin)
 		forum_types = info.get('NTI', {}).get('Forums', {})
 
 		forums = []
-		for prefix, key_prefix, scope in (('Open', 'Open', 'Public'),
-										  ('In-Class', 'InClass', 'ForCredit')):
+		for prefix, key_prefix, scope, iface in (
+				('Open', 'Open', 'Public', ICourseInstancePublicScopedForum),
+				('In-Class', 'InClass', 'ForCredit', ICourseInstanceForCreditScopedForum)):
 			has_key = 'Has' + key_prefix + name
 			dpy_key = key_prefix + name + 'DisplayName'
 
@@ -137,7 +150,8 @@ class CourseTopicCreationView(AbstractAuthenticatedView,UploadRequestUtilsMixin)
 					# the display name.
 					title,
 					instance.SharingScopes[scope].NTIID,
-					forum_types.get(dpy_key, title) ) )
+					forum_types.get(dpy_key, title),
+					iface) )
 		return forums
 
 
@@ -160,9 +174,13 @@ class CourseTopicCreationView(AbstractAuthenticatedView,UploadRequestUtilsMixin)
 		discussions = instance.Discussions
 
 		created_ntiids = []
-		for forum_name, forum_readable, forum_display_name in self._forums_for_instance('Discussions', instance):
-			created_ntiid = self._create_forum(instance, forum_name, forum_readable, instance.SharingScopes['Public'].NTIID,
-											   forum_display_name=forum_display_name)
+		for forum_name, forum_readable, forum_display_name, iface in self._forums_for_instance('Discussions', instance):
+			created_ntiid = self._create_forum(instance, forum_name, forum_readable,
+											   # Always created by the public community
+											   # (because legacy courses might have a DFL for the non-public)
+											   instance.SharingScopes['Public'].NTIID,
+											   forum_display_name=forum_display_name,
+											   forum_interface=iface)
 			if created_ntiid:
 				created_ntiids.append(created_ntiid)
 
@@ -255,9 +273,11 @@ class CourseTopicCreationView(AbstractAuthenticatedView,UploadRequestUtilsMixin)
 
 			# Everybody should have announcements, unless the vendor
 			# info says otherwise
-			for forum_name, forum_readable, forum_display_name  in self._forums_for_instance('Announcements', instance):
-				created_ntiid = self._create_forum(instance, forum_name, forum_readable, instance.SharingScopes['Public'].NTIID,
-												   forum_display_name=forum_display_name)
+			for forum_name, forum_readable, forum_display_name, iface  in self._forums_for_instance('Announcements', instance):
+				created_ntiid = self._create_forum(instance, forum_name,
+												   forum_readable, instance.SharingScopes['Public'].NTIID,
+												   forum_display_name=forum_display_name,
+												   forum_interface=iface)
 				if created_ntiid:
 					created_ntiids.append(created_ntiid)
 
