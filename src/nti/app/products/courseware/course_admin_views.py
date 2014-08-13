@@ -155,33 +155,17 @@ class CourseTopicCreationView(AbstractAuthenticatedView,UploadRequestUtilsMixin)
 					# In-Class Discussions. NTIIDS depend on it. Hence
 					# the display name.
 					title,
-					instance.SharingScopes[scope].NTIID,
+					instance.SharingScopes[scope],
 					forum_types.get(dpy_key, title),
 					iface) )
 		return forums
 
-
-	def _main_instructor(self, instance):
-		roles = IPrincipalRoleManager(instance)
-		for pid, setting in roles.getPrincipalsForRole(RID_INSTRUCTOR):
-			if setting is Allow:
-				user = Entity.get_entity(pid)
-				if user is not None:
-					return user
-
 	def _create_topics_in_instance(self, instance, rows, ntprovider):
-		try:
-			instructor = instance.instructors[0]
-		except IndexError:
-			logger.debug("Course %s has no instructors", instance)
-			return ()
-
-		instructor = self._main_instructor(instance) or instructor.context # XXX implementation detail
 		discussions = instance.Discussions
 
 		created_ntiids = []
 		for forum_name, forum_readable, forum_display_name, iface in self._forums_for_instance('Discussions', instance):
-			created_ntiid = self._create_forum(instance, forum_name, forum_readable,
+			created_ntiid = self._create_forum(instance, forum_name, forum_readable.NTIID,
 											   # Always created by the public community
 											   # (because legacy courses might have a DFL for the non-public)
 											   instance.SharingScopes['Public'].NTIID,
@@ -214,10 +198,10 @@ class CourseTopicCreationView(AbstractAuthenticatedView,UploadRequestUtilsMixin)
 				if name in forum:
 					logger.debug("Found existing topic %s", title)
 					topic = forum[name]
-					if topic.creator != instructor:
-						topic.creator = instructor
-					if topic.headline is not None and topic.headline.creator != instructor:
-						topic.headline.creator = instructor
+					if topic.creator != forum_readable:
+						topic.creator = forum_readable
+					if topic.headline is not None and topic.headline.creator != forum_readable:
+						topic.headline.creator = forum_readable
 				else:
 					post = CommunityHeadlinePost()
 					post.title = title
@@ -225,7 +209,7 @@ class CourseTopicCreationView(AbstractAuthenticatedView,UploadRequestUtilsMixin)
 
 					topic = CommunityHeadlineTopic()
 					topic.title = title
-					topic.creator = instructor
+					topic.creator = forum_readable
 					topic.description = title
 
 					lifecycleevent.created(topic)
@@ -254,11 +238,7 @@ class CourseTopicCreationView(AbstractAuthenticatedView,UploadRequestUtilsMixin)
 					logger.debug('Created topic %s with NTIID %s', topic, ntiid)
 
 				topic.publish()
-				# Also make sure it's not considered notable for the instructor
-				if topic.creator:
-					notable = component.getMultiAdapter((topic.creator, self.request),
-														IUserNotableData)
-					notable.object_is_not_notable(topic)
+
 		return created_ntiids
 
 

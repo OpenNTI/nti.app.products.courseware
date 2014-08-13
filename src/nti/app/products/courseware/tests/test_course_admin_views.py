@@ -55,9 +55,9 @@ class _AbstractMixin(object):
 
 	@WithSharedApplicationMockDS(users=True,testapp=True,default_authenticate=True)
 	def test_post_csv_create_forums_mac(self):
-		self._do_test_post_csv_create_forums(self.mac_contents)
+		self._do_test_post_csv_create_forums(self.mac_contents,full=False)
 
-	def _do_test_post_csv_create_forums(self, contents):
+	def _do_test_post_csv_create_forums(self, contents, full=True):
 		sio = BytesIO()
 		csv_writer = csv.writer(sio)
 		row = ['CLC 3403', 'A clc discussion', contents]
@@ -87,7 +87,8 @@ class _AbstractMixin(object):
 				assert_that( res.json_body['headline']['body'][0],
 							 # Yes, the one with the newlines, never \r
 							 is_(self.contents.decode('windows-1252')) )
-
+		if not full:
+			return
 
 		found_one = False
 		for i in res_ntiids:
@@ -115,9 +116,12 @@ class _AbstractMixin(object):
 												  {'Class': 'Post', 'body': ['A comment']},
 												  status=201)
 
-		# ...it is not notable for the instructor
+		# ...it /is/ notable for the instructor
+		# (we previously tried to not make that so, but it only worked
+		# for the first instructor, it was notable to everyone else because they were
+		# explicitly listed in the ACL, which turns into direct-sharing)
 		res = self.fetch_user_recursive_notable_ugd(username='harp4162', extra_environ=inst_env )
-		assert_that( res.json_body, has_entry( 'TotalItemCount', 0))
+		assert_that( res.json_body, has_entry( 'TotalItemCount', 1))
 
 
 		# The instructor can easily make a small edit to the topic
