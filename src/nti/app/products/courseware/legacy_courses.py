@@ -204,6 +204,7 @@ def get_scopes_from_course_element(course_element):
 
 from nti.site.site import get_site_for_site_names
 from nti.site.interfaces import IHostPolicyFolder
+from zope.traversing.interfaces import IEtcNamespace
 
 from zope.security.interfaces import IPrincipal
 
@@ -325,6 +326,7 @@ from pyramid.threadlocal import get_current_request
 from nti.contenttypes.courses.enrollment import migrate_enrollments_from_course_to_course
 from nti.contenttypes.courses.interfaces import ICourseCatalog
 
+
 def _copy_enrollments_from_legacy_to_new(request=None):
 	"""
 	Returns an informative data structure..
@@ -334,14 +336,15 @@ def _copy_enrollments_from_legacy_to_new(request=None):
 	if request is None:
 		request = get_current_request()
 
+	hostsites = component.getUtility(IEtcNamespace,name='hostsites')
 	for site_name, site_courses in sorted(KNOWN_LEGACY_COURSES_BY_SITE.items()):
 		if not site_courses:
 			result.append(("Nothing in site", site_name))
 			continue
 
-		site = get_site_for_site_names((site_name,))
+		site = hostsites.get(site_name)
 		if not IHostPolicyFolder.providedBy(site):
-			logger.warn("No persistent site %s, not migrating", site_name)
+			logger.warn("No persistent site %s/%s, not migrating", site_name, site)
 			result.append(("No persistent site", site_name))
 			continue
 
