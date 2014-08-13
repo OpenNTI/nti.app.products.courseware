@@ -27,6 +27,9 @@ from nti.app.testing.application_webtest import ApplicationLayerTest
 from . import LegacyInstructedCourseApplicationTestLayer
 from . import InstructedCourseApplicationTestLayer
 
+from io import BytesIO
+import csv
+
 class _AbstractMixin(object):
 	default_origin = str('http://janux.ou.edu')
 
@@ -37,10 +40,39 @@ class _AbstractMixin(object):
 
 	scope = str('')
 
+	contents = """
+	This is the contents.
+	Of the headline post
+
+	Notice --- it has leading and trailing spaces, and even
+	commas and blank lines. You can\u2019t ignore the special apostrophe.""".encode('windows-1252')
+
+	mac_contents = contents.replace(b'\n', b'\r')
+
 	@WithSharedApplicationMockDS(users=True,testapp=True,default_authenticate=True)
 	def test_post_csv_create_forums(self):
-		csv = b'CLC 3403,A clc discussion,Contents' + self.scope
-		res = self.testapp.post('/dataserver2/@@LegacyCourseTopicCreator', upload_files=[('ignored', 'foo.csv', csv)])
+		self._do_test_post_csv_create_forums(self.contents)
+
+	@WithSharedApplicationMockDS(users=True,testapp=True,default_authenticate=True)
+	def test_post_csv_create_forums_mac(self):
+		self._do_test_post_csv_create_forums(self.mac_contents)
+
+	def _do_test_post_csv_create_forums(self, contents):
+		sio = BytesIO()
+		csv_writer = csv.writer(sio)
+		row = ['CLC 3403', 'A clc discussion', contents]
+		if self.scope:
+			row.append(self.scope)
+		csv_writer.writerow(row)
+		# a duplicate winds up completely ignored because everything was already
+		# created
+		csv_writer.writerow(row)
+		# so does a blank
+		csv_writer.writerow([''])
+
+		csv_str = sio.getvalue()
+		assert_that( csv.reader(BytesIO(csv_str)).next()[2], is_(contents) )
+		res = self.testapp.post('/dataserver2/@@LegacyCourseTopicCreator', upload_files=[('ignored', 'foo.csv', csv_str)])
 
 		res_ntiids = __traceback_info__ = res.json_body
 		assert_that( res.json_body, contains(*self.body_matcher) )
@@ -50,7 +82,12 @@ class _AbstractMixin(object):
 		for i in self.body_matcher:
 			if not isinstance(i, basestring):
 				continue
-			self.fetch_by_ntiid(i, extra_environ=inst_env)
+			res = self.fetch_by_ntiid(i, extra_environ=inst_env)
+			if 'Topic' in res.json_body['Class']:
+				assert_that( res.json_body['headline']['body'][0],
+							 # Yes, the one with the newlines, never \r
+							 is_(self.contents.decode('windows-1252')) )
+
 
 		found_one = False
 		for i in res_ntiids:
@@ -63,7 +100,7 @@ class _AbstractMixin(object):
 		assert found_one, "Need to check at least one board for the scope"
 
 		# And again does nothing
-		res = self.testapp.post('/dataserver2/@@LegacyCourseTopicCreator', upload_files=[('ignored', 'foo.csv', csv)])
+		res = self.testapp.post('/dataserver2/@@LegacyCourseTopicCreator', upload_files=[('ignored', 'foo.csv', csv_str)])
 
 		assert_that( res.json_body, is_([] ) )
 
@@ -123,7 +160,7 @@ class TestCreateLegacyForumsOpenOnly(TestCreateLegacyForums):
 
 	body_matcher = TestCreateLegacyForums.body_matcher[:3] # All three, because the in-class discussions still created, but not the topic
 
-	scope = str(',Open')
+	scope = str('Open')
 
 class TestCreateForums(_AbstractMixin,
 					   ApplicationLayerTest):
@@ -174,7 +211,7 @@ class TestCreateForumsOpenOnly(TestCreateForums):
 
 	body_matcher = TestCreateForums.body_matcher[:3] # All three, because the in-class discussions still created, but not the topic
 
-	scope = str(',Open')
+	scope = str('Open')
 
 class TestMigrate(ApplicationLayerTest):
 

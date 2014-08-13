@@ -22,6 +22,8 @@ from nti.app.base.abstract_views import AbstractAuthenticatedView
 
 from nti.dataserver import authorization as nauth
 
+from nti.contentfragments.interfaces import CensoredPlainTextContentFragment
+
 from nti.contenttypes.courses.interfaces import ICourseCatalog
 from nti.contenttypes.courses.interfaces import ICourseCatalogEntry
 from nti.contenttypes.courses.interfaces import ICourseInstanceVendorInfo
@@ -30,6 +32,7 @@ from nti.contenttypes.courses.interfaces import ICourseInstanceForCreditScopedFo
 from nti.app.notabledata.interfaces import IUserNotableData
 
 import csv
+import io
 
 from nti.ntiids import ntiids
 
@@ -191,6 +194,11 @@ class CourseTopicCreationView(AbstractAuthenticatedView,UploadRequestUtilsMixin)
 			for row in rows:
 				title = row[1].decode('utf-8', 'ignore')
 				content = row[2].decode('utf-8', 'ignore')
+				# If they were on a mac, we might have \r instead of \n
+				content = content.replace('\r', '\n')
+				# Avoid the automatic conversion that assumes the incoming
+				# is meant to be HTML
+				content = CensoredPlainTextContentFragment(content)
 				name = ntiids.make_specific_safe(title)
 
 				scope = row[3].decode('utf-8') if len(row) > 3 else 'All'
@@ -213,7 +221,7 @@ class CourseTopicCreationView(AbstractAuthenticatedView,UploadRequestUtilsMixin)
 				else:
 					post = CommunityHeadlinePost()
 					post.title = title
-					post.body = [content]
+					post.body = (content,)
 
 					topic = CommunityHeadlineTopic()
 					topic.title = title
@@ -255,11 +263,16 @@ class CourseTopicCreationView(AbstractAuthenticatedView,UploadRequestUtilsMixin)
 
 
 	def __call__(self):
-
-		body_content = self._get_body_content().split(b'\n')
-		if len(body_content) == 1:
-			body_content = body_content[0].split(b'\r')
+		body_content = self._get_body_content()
 		__traceback_info__ = body_content
+		# Use TextIOWrapper to try to get universal newline;
+		# unfortunately, it doesn't deal with the Mac \r\r, but the only consequence
+		# is that we get empty rows; sadly, we have to convert back to bytes for
+		# the reader to read it.
+		# Excel is going to be outputting in a windows encoding (also sadly)
+		body_content = io.TextIOWrapper(io.BytesIO(body_content),
+										encoding='windows-1252').read(None)
+		body_content = io.BytesIO(body_content.encode('utf-8'))
 		reader = csv.reader(body_content)
 		rows = list(reader)
 		__traceback_info__ = rows
