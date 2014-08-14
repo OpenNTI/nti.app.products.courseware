@@ -375,11 +375,25 @@ def _course_instance_for_community( community ):
 @interface.implementer(ICourseInstance)
 @component.adapter(ILegacyCourseConflatedContentPackage)
 def _course_content_package_to_course(package):
+	# Both the catalog entry and the content package are supposed to
+	# be non-persistent (in the case we actually get a course) or the
+	# course doesn't exist (in the case that the package is persistent
+	# and installed in a sub-site), so it should be safe to cache this
+	# on the package
+	cache_name = '_v_course_content_package_to_course'
+	course = getattr(package, cache_name, cache_name)
+	if course is not cache_name:
+		return course
+
 	# We go via the defined adapter from the catalog entry
 	course_catalog = component.getUtility(ICourseCatalog)
 	for entry in course_catalog.iterCatalogEntries():
 		if getattr(entry, 'ContentPackageNTIID', None) == package.ntiid:
-			return ICourseInstance(entry, None)
+			course = ICourseInstance(entry, None)
+			break
+
+	setattr(package, cache_name, course)
+	return course
 
 from pyramid.traversal import find_interface
 from nti.contentlibrary.interfaces import IContentUnit
