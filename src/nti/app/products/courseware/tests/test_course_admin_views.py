@@ -21,6 +21,7 @@ from hamcrest import has_entry
 from hamcrest import not_none
 from hamcrest import contains
 from hamcrest import starts_with
+from hamcrest import contains_string
 
 from nti.app.testing.decorators import WithSharedApplicationMockDS
 from nti.app.testing.application_webtest import ApplicationLayerTest
@@ -87,18 +88,37 @@ class _AbstractMixin(object):
 				assert_that( res.json_body['headline']['body'][0],
 							 # Yes, the one with the newlines, never \r
 							 is_(self.contents.decode('windows-1252')) )
+
 		if not full:
 			return
 
-		found_one = False
+		found_topic = False
+		found_forum = False
 		for i in res_ntiids:
 			if i:
 				res = self.fetch_by_ntiid(i, extra_environ=inst_env)
 				if res.json_body['Class'] == 'CommunityForum':
 					#  XXX: Fragile
-					found_one = True
+					found_forum = True
 					assert_that( res.json_body, has_entry("SharingScopeName", not_none()))
-		assert found_one, "Need to check at least one board for the scope"
+					# The instructor should have an 'add' href for the forum
+					self.require_link_href_with_rel(res.json_body, 'add')
+
+					board_res = self.fetch_by_ntiid(res.json_body['ContainerId'])
+					# The instructor should have an 'add' href for the board
+					assert_that( board_res.json_body['Class'], contains_string('Board'))
+					self.require_link_href_with_rel(board_res.json_body, 'add')
+
+				else:
+					found_topic = True
+					# The instructor should have an 'add' href for the forum
+					self.require_link_href_with_rel(res.json_body, 'add')
+
+					assert_that( res.json_body['Class'], contains_string('Topic'))
+
+
+		assert found_forum, "Need to check at least one forum for the scope"
+		assert found_topic, "Need to check at least one topic for the scope"
 
 		# And again does nothing
 		res = self.testapp.post('/dataserver2/@@LegacyCourseTopicCreator', upload_files=[('ignored', 'foo.csv', csv_str)])
