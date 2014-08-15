@@ -241,8 +241,6 @@ class CourseTopicCreationView(AbstractAuthenticatedView,UploadRequestUtilsMixin)
 				topic.publish()
 
 		return hexc.HTTPNoContent()
-		#return created_ntiids
-
 
 	def __call__(self):
 		body_content = self._get_body_content()
