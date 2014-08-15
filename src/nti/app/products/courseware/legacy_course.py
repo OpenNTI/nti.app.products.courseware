@@ -396,6 +396,7 @@ def _course_content_package_to_course(package):
 	if course is not cache_name:
 		return course
 
+	course = None
 	# We go via the defined adapter from the catalog entry
 	course_catalog = component.getUtility(ICourseCatalog)
 	for entry in course_catalog.iterCatalogEntries():
