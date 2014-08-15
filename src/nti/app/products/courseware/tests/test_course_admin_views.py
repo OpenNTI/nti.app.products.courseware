@@ -33,6 +33,7 @@ import csv
 
 class _AbstractMixin(object):
 	default_origin = str('http://janux.ou.edu')
+	default_username = 'normaluser'
 
 	body_matcher = ()
 	open_path = None
@@ -50,15 +51,18 @@ class _AbstractMixin(object):
 
 	mac_contents = contents.replace(b'\n', b'\r')
 
-	@WithSharedApplicationMockDS(users=True,testapp=True,default_authenticate=True)
+	@WithSharedApplicationMockDS(users=('sjohnson@nextthought.com',),testapp=True,default_authenticate=True)
 	def test_post_csv_create_forums(self):
 		self._do_test_post_csv_create_forums(self.contents)
 
-	@WithSharedApplicationMockDS(users=True,testapp=True,default_authenticate=True)
+	@WithSharedApplicationMockDS(users=('sjohnson@nextthought.com',),testapp=True,default_authenticate=True)
 	def test_post_csv_create_forums_mac(self):
 		self._do_test_post_csv_create_forums(self.mac_contents,full=False)
 
 	def _do_test_post_csv_create_forums(self, contents, full=True):
+		inst_env = self._make_extra_environ(username='harp4162')
+		admin_env = self._make_extra_environ(username='sjohnson@nextthought.com')
+
 		sio = BytesIO()
 		csv_writer = csv.writer(sio)
 		row = ['CLC 3403', 'A clc discussion', contents]
@@ -73,12 +77,15 @@ class _AbstractMixin(object):
 
 		csv_str = sio.getvalue()
 		assert_that( csv.reader(BytesIO(csv_str)).next()[2], is_(contents) )
-		res = self.testapp.post('/dataserver2/@@LegacyCourseTopicCreator', upload_files=[('ignored', 'foo.csv', csv_str)])
+
+		res = self.testapp.post('/dataserver2/@@LegacyCourseTopicCreator',
+								upload_files=[('ignored', 'foo.csv', csv_str)],
+								extra_environ=admin_env)
 
 		res_ntiids = __traceback_info__ = res.json_body
 		assert_that( res.json_body, contains(*self.body_matcher) )
 
-		inst_env = self._make_extra_environ(username='harp4162')
+
 
 		for i in self.body_matcher:
 			if not isinstance(i, basestring):
@@ -104,7 +111,7 @@ class _AbstractMixin(object):
 					# The instructor should have an 'add' href for the forum
 					self.require_link_href_with_rel(res.json_body, 'add')
 
-					board_res = self.fetch_by_ntiid(res.json_body['ContainerId'])
+					board_res = self.fetch_by_ntiid(res.json_body['ContainerId'], extra_environ=inst_env)
 					# The instructor should have an 'add' href for the board
 					assert_that( board_res.json_body['Class'], contains_string('Board'))
 					self.require_link_href_with_rel(board_res.json_body, 'add')
@@ -121,15 +128,17 @@ class _AbstractMixin(object):
 		assert found_topic, "Need to check at least one topic for the scope"
 
 		# And again does nothing
-		res = self.testapp.post('/dataserver2/@@LegacyCourseTopicCreator', upload_files=[('ignored', 'foo.csv', csv_str)])
+		res = self.testapp.post('/dataserver2/@@LegacyCourseTopicCreator',
+								upload_files=[('ignored', 'foo.csv', csv_str)],
+								extra_environ=admin_env)
 
 		assert_that( res.json_body, is_([] ) )
 
 
 		# If a student (who first enrolls)...
-		res = self.testapp.post_json( '/dataserver2/users/sjohnson@nextthought.com/Courses/EnrolledCourses',
-									  'CLC 3403',
-									  status=201 )
+		res = self.post_user_data('CLC 3403',
+								  extra_path='/Courses/EnrolledCourses',
+								  status=201 )
 
 		# ... makes a comment in one of those discussions...
 		self.comment_res = self.testapp.post_json(self.open_path,
@@ -144,13 +153,22 @@ class _AbstractMixin(object):
 		assert_that( res.json_body, has_entry( 'TotalItemCount', 1))
 
 
-		# The instructor can easily make a small edit to the topic
-
-		res = self.testapp.get(self.open_path, extra_environ=inst_env)
+		# The admin can easily make a small edit to the topic...
+		res = self.testapp.get(self.open_path, extra_environ=admin_env)
 		headline_url = self.require_link_href_with_rel( res.json_body['headline'], 'edit' )
 		self.testapp.put_json( headline_url,
 								{'title': 'A New Title'},
-							   extra_environ=inst_env)
+							   extra_environ=admin_env)
+
+		# ...though the student cannot
+		self.testapp.put_json( headline_url, {'title': 'From the student'},
+							   status=403 )
+
+		# XXX: The instructor should or should not be able to make an edit? At the moment,
+		# he cannot. (This way we could potentially use the creator to update)
+		self.testapp.put_json( headline_url, {'title': 'From the inst'},
+							   extra_environ=inst_env,
+							   status=403 )
 
 		self._extra_post_csv_create_forums()
 
