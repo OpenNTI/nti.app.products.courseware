@@ -18,7 +18,6 @@ from zope import lifecycleevent
 from nti.contenttypes.courses.interfaces import ICourseInstance
 
 from pyramid.view import view_config
-from pyramid import httpexceptions as hexc
 from nti.app.base.abstract_views import AbstractAuthenticatedView
 
 from nti.dataserver import authorization as nauth
@@ -30,7 +29,6 @@ from nti.contenttypes.courses.interfaces import ICourseCatalogEntry
 from nti.contenttypes.courses.interfaces import ICourseInstanceVendorInfo
 from nti.contenttypes.courses.interfaces import ICourseInstancePublicScopedForum
 from nti.contenttypes.courses.interfaces import ICourseInstanceForCreditScopedForum
-from nti.app.notabledata.interfaces import IUserNotableData
 
 import csv
 import io
@@ -53,10 +51,6 @@ from nti.dataserver.users import Entity
 
 from nti.dataserver.interfaces import IDataserverFolder
 from collections import defaultdict
-
-from zope.securitypolicy.interfaces import IPrincipalRoleManager
-from zope.securitypolicy.interfaces import Allow
-from nti.contenttypes.courses.interfaces import RID_INSTRUCTOR
 
 from .interfaces import NTIID_TYPE_COURSE_SECTION_TOPIC
 
@@ -91,7 +85,7 @@ class CourseTopicCreationView(AbstractAuthenticatedView,UploadRequestUtilsMixin)
 		except IndexError:
 			logger.debug("Course %s has no instructors, not creating %s", instance, forum_name)
 			return
-		
+
 		instructors = [instructor.context for instructor in instance.instructors] # XXX implementation detail
 		discussions = instance.Discussions
 
@@ -240,7 +234,7 @@ class CourseTopicCreationView(AbstractAuthenticatedView,UploadRequestUtilsMixin)
 
 				topic.publish()
 
-		return hexc.HTTPNoContent()
+		return created_ntiids
 
 	def __call__(self):
 		body_content = self._get_body_content()
