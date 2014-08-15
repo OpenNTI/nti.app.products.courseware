@@ -90,7 +90,7 @@ class CourseTopicCreationView(AbstractAuthenticatedView,UploadRequestUtilsMixin)
 		except IndexError:
 			logger.debug("Course %s has no instructors, not creating %s", instance, forum_name)
 			return
-
+		
 		instructors = [instructor.context for instructor in instance.instructors] # XXX implementation detail
 		discussions = instance.Discussions
 
@@ -244,6 +244,7 @@ class CourseTopicCreationView(AbstractAuthenticatedView,UploadRequestUtilsMixin)
 
 	def __call__(self):
 		body_content = self._get_body_content()
+
 		__traceback_info__ = body_content
 		# Use TextIOWrapper to try to get universal newline;
 		# unfortunately, it doesn't deal with the Mac \r\r, but the only consequence
@@ -279,7 +280,7 @@ class CourseTopicCreationView(AbstractAuthenticatedView,UploadRequestUtilsMixin)
 			# info says otherwise
 			for forum_name, forum_readable, forum_display_name, iface  in self._forums_for_instance('Announcements', instance):
 				created_ntiid = self._create_forum(instance, forum_name,
-												   forum_readable, instance.SharingScopes['Public'].NTIID,
+												   forum_readable.NTIID, instance.SharingScopes['Public'].NTIID,
 												   forum_display_name=forum_display_name,
 												   forum_interface=iface)
 				if created_ntiid:
