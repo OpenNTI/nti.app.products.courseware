@@ -460,7 +460,7 @@ class TestPersistentWorkspaces(_AbstractEnrollingBase,
 
 		res = self.search_users(username='CLC')
 		assert_that( res.json_body, has_entry('Items', contains(has_entry('alias',
-																		  'CLC 3403 - Public'))))
+																		  'CLC 3403 - Open'))))
 		scope = res.json_body['Items'][0]
 
 		# And we can fetch it by id...
