@@ -286,7 +286,8 @@ class CourseInstanceEnrollment(_AbstractInstanceWrapper):
 
 def LegacyCourseInstanceEnrollment(course_instance, user):
 	record = ICourseEnrollments(course_instance).get_enrollment_for_principal(user)
-	return DefaultCourseInstanceEnrollment(record, user)
+	if record is not None:
+		return DefaultCourseInstanceEnrollment(record, user)
 
 from nti.contenttypes.courses.interfaces import ICourseInstanceEnrollmentRecord
 from nti.externalization.oids import to_external_ntiid_oid
