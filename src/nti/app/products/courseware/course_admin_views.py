@@ -18,6 +18,7 @@ from zope import lifecycleevent
 from nti.contenttypes.courses.interfaces import ICourseInstance
 
 from pyramid.view import view_config
+from pyramid import httpexceptions as hexc
 from nti.app.base.abstract_views import AbstractAuthenticatedView
 
 from nti.dataserver import authorization as nauth
@@ -239,7 +240,8 @@ class CourseTopicCreationView(AbstractAuthenticatedView,UploadRequestUtilsMixin)
 
 				topic.publish()
 
-		return created_ntiids
+		return hexc.HTTPNoContent()
+		#return created_ntiids
 
 
 	def __call__(self):
