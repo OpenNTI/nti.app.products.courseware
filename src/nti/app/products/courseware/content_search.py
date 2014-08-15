@@ -17,16 +17,22 @@ from pyramid.traversal import find_interface
 
 import repoze.lru
 
-from nti.contentlibrary import interfaces as lib_interfaces
+from nti.contentlibrary.interfaces import IContentPackage
+from nti.contentlibrary.interfaces import IContentPackageLibrary
 
-from nti.dataserver import interfaces as nti_interfaces
+from nti.dataserver.interfaces import ICreated
 
-from nti.contentsearch import interfaces as search_interfaces
+from nti.contentsearch.interfaces import IBookContent
+from nti.contentsearch.interfaces import INTICardContent
+from nti.contentsearch.interfaces import ISearchHitPredicate
+from nti.contentsearch.interfaces import IContainerIDResolver
+from nti.contentsearch.interfaces import IAudioTranscriptContent
+from nti.contentsearch.interfaces import IVideoTranscriptContent
 
-from . import interfaces as course_interfaces
+from nti.contenttypes.courses.interfaces import ICourseInstance
 
 def get_paths(ntiid):
-	library = component.queryUtility(lib_interfaces.IContentPackageLibrary)
+	library = component.queryUtility(IContentPackageLibrary)
 	paths = library.pathToNTIID(ntiid) if library and ntiid else None
 	return paths
 
@@ -51,7 +57,7 @@ def get_node(outline, ntiids=()):
 
 def get_ntiid_path(ntiid):
 	result = ()
-	library = component.queryUtility(lib_interfaces.IContentPackageLibrary)
+	library = component.queryUtility(IContentPackageLibrary)
 	if library and ntiid:
 		paths = library.pathToNTIID(ntiid)
 		result = tuple(p.ntiid for p in paths) if paths else ()
@@ -59,7 +65,7 @@ def get_ntiid_path(ntiid):
 
 def _is_allowed(ntiid, course=None, now=None):
 	result = True
-	if course is not None:
+	if ICourseInstance.providedBy(course):
 		node = get_node(course.Outline, get_ntiid_path(ntiid))
 		if node is not None:
 			now = now or datetime.utcnow()
@@ -72,7 +78,7 @@ def _is_allowed(ntiid, course=None, now=None):
 def is_allowed(ntiid, course=None, now=None):
 	if course is None:
 		root = get_collection_root(ntiid)
-		course = course_interfaces.ICourseInstance(root, None)
+		course = ICourseInstance(root, None)
 	return _is_allowed(ntiid, course, now)
 
 class _BasePredicate(object):
@@ -82,8 +88,8 @@ class _BasePredicate(object):
 	def __init__(self, *args):
 		pass
 
-@interface.implementer(search_interfaces.ISearchHitPredicate)
-@component.adapter(search_interfaces.IBookContent)
+@interface.implementer(ISearchHitPredicate)
+@component.adapter(IBookContent)
 class _ContentHitPredicate(_BasePredicate):
 	
 	__slots__ = ()
@@ -94,8 +100,8 @@ class _ContentHitPredicate(_BasePredicate):
 			logger.debug("Content '%s' not allowed for search. %s", item.ntiid, item)
 		return result
 
-@interface.implementer(search_interfaces.ISearchHitPredicate)
-@component.adapter(search_interfaces.IAudioTranscriptContent)
+@interface.implementer(ISearchHitPredicate)
+@component.adapter(IAudioTranscriptContent)
 class _AudioContentHitPredicate(_BasePredicate):
 
 	__slots__ = ()
@@ -106,8 +112,8 @@ class _AudioContentHitPredicate(_BasePredicate):
 			logger.debug("Content '%s' not allowed for search. %s", item.containerId, item)
 		return result
 
-@interface.implementer(search_interfaces.ISearchHitPredicate)
-@component.adapter(search_interfaces.IVideoTranscriptContent)
+@interface.implementer(ISearchHitPredicate)
+@component.adapter(IVideoTranscriptContent)
 class _VideoContentHitPredicate(_BasePredicate):
 
 	__slots__ = ()
@@ -118,8 +124,8 @@ class _VideoContentHitPredicate(_BasePredicate):
 			logger.debug("Content '%s' not allowed for search. %s", item.containerId, item)
 		return result
 
-@interface.implementer(search_interfaces.ISearchHitPredicate)
-@component.adapter(search_interfaces.INTICardContent)
+@interface.implementer(ISearchHitPredicate)
+@component.adapter(INTICardContent)
 class _NTICardContentHitPredicate(_BasePredicate):
 
 	__slots__ = ()
@@ -130,24 +136,26 @@ class _NTICardContentHitPredicate(_BasePredicate):
 			logger.debug("Content '%s' not allowed for search. %s", item.containerId, item)
 		return result
 	
-@interface.implementer(search_interfaces.ISearchHitPredicate)
-@component.adapter(nti_interfaces.ICreated)
+@interface.implementer(ISearchHitPredicate)
+@component.adapter(ICreated)
 class _CreatedContentHitPredicate(_BasePredicate):
 
 	__slots__ = ()
 
 	def allow(self, item, score):
-		resolver = search_interfaces.IContainerIDResolver(item, None)
+		resolver = IContainerIDResolver(item, None)
 		containerId = resolver.containerId if resolver is not None else None
 		if not containerId:
 			return True
 
 		# try walk up the tree to see if it gets us to either a CourseInstance
 		# or a ContentPackage.
-		found = find_interface(item, course_interfaces.ICourseInstance) or \
-				find_interface(item, lib_interfaces.IContentPackage)
-		course = course_interfaces.ICourseInstance(found, None)
-		result = is_allowed(containerId, course)
+		found = find_interface(item, ICourseInstance) or \
+				find_interface(item, IContentPackage)
+		course = ICourseInstance(found, None)
+
+		result = _is_allowed(containerId, course) \
+				 if course is not None else is_allowed(containerId)
 		
 		if not result:
 			logger.debug("Content '%s' not allowed for search. %s", containerId, item)
