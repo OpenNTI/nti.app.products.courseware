@@ -22,6 +22,7 @@ from hamcrest import not_none
 from hamcrest import contains
 from hamcrest import starts_with
 from hamcrest import contains_string
+from hamcrest import has_entries
 
 from nti.app.testing.decorators import WithSharedApplicationMockDS
 from nti.app.testing.application_webtest import ApplicationLayerTest
@@ -98,6 +99,10 @@ class _AbstractMixin(object):
 				assert_that( res.json_body['headline']['body'][0],
 							 # Yes, the one with the newlines, never \r
 							 is_(self.contents.decode('windows-1252')) )
+				assert_that( res.json_body['headline']['body'][1],
+							 has_entries('Class', 'EmbeddedVideo',
+										 'type', 'kaltura',
+										 'embedURL', 'kaltura://1500101/1_vkxo2g66/') )
 
 		if not full:
 			return
