@@ -18,6 +18,7 @@ from zope import lifecycleevent
 from nti.contenttypes.courses.interfaces import ICourseInstance
 
 from pyramid.view import view_config
+from pyramid import httpexceptions as hexc
 from nti.app.base.abstract_views import AbstractAuthenticatedView
 
 from nti.dataserver import authorization as nauth
@@ -44,7 +45,7 @@ from nti.dataserver.contenttypes.forums.forum import ACLCommunityForum
 from nti.dataserver.contenttypes.forums.post import CommunityHeadlinePost
 from nti.dataserver.contenttypes.forums.topic import CommunityHeadlineTopic
 
-
+from nti.externalization.internalization import update_from_external_object
 from nti.app.externalization.view_mixins import UploadRequestUtilsMixin
 
 from nti.dataserver.users import Entity
@@ -62,17 +63,45 @@ from .interfaces import NTIID_TYPE_COURSE_SECTION_TOPIC
 			 name='LegacyCourseTopicCreator')
 class CourseTopicCreationView(AbstractAuthenticatedView,UploadRequestUtilsMixin):
 	"""
-	POST a CSV file to create topics::
+	POST a CSV file to create topics.
 
-		course id, title, headline content, scope
+	One header row is required, and then each row following
+	corresponds to a particular course instance that will get a copy
+	of that discussion. (Note that if both open and in-class
+	discussions for that course are enabled, one row may translate
+	into upto two discussions, depending on the ``scope`` argument.)
+	In the documentation that follows, optional columns have their
+	names surrounded by square brackets; those brackets should not be
+	in the actual CSV file. The columns can be in any order in the CSV::
 
-	We create and permission also all the boards and forums, one
-	public and one private, if scope is missing or 'All'. If scope is
-	'Open' or 'In-Class', only topics in those scoped forums will be
-	created (assuming that the forum is allowed to be created at all; see
-	course-layout).
+		NTIID, DiscussionTitle, [DiscussionScope], Body 1, [Body 2], ...
 
-	.. note:: this rips heavily from forum_admit_views
+
+	NTIID
+		The course catalog entry NTIID.
+	DiscussionTitle
+		The exact string that will make up the title of the discussion.
+	DiscussionScope
+		Optional columns. If it is missing or a row has the value
+		``All``, then we create and permission both open and in-class
+		versions of the discussion (if the course settings allow it).
+		Otherwise, if the scope is ``Open`` or ``In-Class``, only discussions
+		in the corresponding forum will be created (again, assuming the course
+		settings allow it.)
+	Body 1...Body n
+		A series of numbered columns (up to 9 )that will make up the body of the discussion
+		(the contents of the headline topic), in numeric order. At least one
+		column is required and is required to not be empty for each row.
+
+		If the column text starts with ``[ntivideo][TYPE]``, then the
+		remainder of the string gives a URL to embed as a video, for
+		example ``[ntivideo][kaltura]kaltura://1500101/1_vkxo2g66/``.
+		(In the special case of a kaltura URL, the ``[TYPE]``
+		specifier is optional.)
+
+		Otherwise, the column is interpreted exactly as given.
+
+	.. note:: this rips heavily from forum_admin_views
 		and simply forums.views.
 	"""
 
@@ -155,6 +184,43 @@ class CourseTopicCreationView(AbstractAuthenticatedView,UploadRequestUtilsMixin)
 					iface) )
 		return forums
 
+	def _extract_content(self, row):
+		# We expect 'Body 1', 'Body 2', etc.
+		# If we start getting more than 10, we need to use natsort
+		body_keys = [k for k in row if k.startswith('Body ')]
+		body_keys = sorted(body_keys)
+
+		body = list()
+		for k in body_keys:
+			content = row[k].decode('utf-8', 'ignore')
+			# If they were on a mac, we might have \r instead of \n
+			content = content.replace('\r', '\n')
+
+			# Should it be a video?
+			if content.startswith("[ntivideo]"):
+				content = content[len("[ntivideo]"):]
+				# A type, or kaltura?
+				# raise erros on malformed
+				if content[0] == '[':
+					vid_type_end = content.index(']')
+					vid_type = content[1:vid_type_end]
+					vid_url = content[vid_type_end:]
+				else:
+					vid_url = content
+					vid_type = 'kaltura'
+
+				video = component.getUtility(component.IFactory, name="application/vnd.nextthought.embeddedvideo")()
+				update_from_external_object(video, {'embedURL': vid_url, 'type': vid_type})
+				content = video
+			else:
+				# Avoid the automatic conversion that assumes the incoming
+				# is meant to be HTML
+				content = CensoredPlainTextContentFragment(content)
+
+			body.append(content)
+		return tuple(body)
+
+
 	def _create_topics_in_instance(self, instance, rows, ntprovider):
 		discussions = instance.Discussions
 
@@ -171,22 +237,18 @@ class CourseTopicCreationView(AbstractAuthenticatedView,UploadRequestUtilsMixin)
 
 			forum = discussions[ntiids.make_specific_safe(forum_name)]
 			for row in rows:
-				title = row[1].decode('utf-8', 'ignore')
-				content = row[2].decode('utf-8', 'ignore')
-				# If they were on a mac, we might have \r instead of \n
-				content = content.replace('\r', '\n')
-				# Avoid the automatic conversion that assumes the incoming
-				# is meant to be HTML
-				content = CensoredPlainTextContentFragment(content)
+				title = row['DiscussionTitle'].decode('utf-8', 'ignore')
 				name = ntiids.make_specific_safe(title)
-
-				scope = row[3].decode('utf-8') if len(row) > 3 else 'All'
+				content = self._extract_content(row)
+				scope = row['DiscussionScope'].decode('utf-8') if 'DiscussionScope' in row else 'All'
 				# Simplest thing to do is a prefix match on the forum_name, because
 				# those are fixed
 				if scope != 'All' and not forum_name.startswith(scope):
 					logger.debug("Ignoring %s in %s because of scope mismatch %s",
 								 name, forum, scope)
 					continue
+
+
 
 				logger.debug("Looking for %s in %s in %s", name, forum, instance)
 				topic = None
@@ -200,7 +262,7 @@ class CourseTopicCreationView(AbstractAuthenticatedView,UploadRequestUtilsMixin)
 				else:
 					post = CommunityHeadlinePost()
 					post.title = title
-					post.body = (content,)
+					post.body = content
 
 					topic = CommunityHeadlineTopic()
 					topic.title = title
@@ -248,19 +310,23 @@ class CourseTopicCreationView(AbstractAuthenticatedView,UploadRequestUtilsMixin)
 		body_content = io.TextIOWrapper(io.BytesIO(body_content),
 										encoding='windows-1252').read(None)
 		body_content = io.BytesIO(body_content.encode('utf-8'))
-		reader = csv.reader(body_content)
+
+		reader = csv.DictReader(body_content)
 		rows = list(reader)
 		__traceback_info__ = rows
+
+		if not rows:
+			return hexc.HTTPNoContent()
 
 		course_instance_ids = set()
 		course_instance_ids_to_rows = defaultdict(list)
 		for row in rows:
-			if not row or not row[0]:
-				logger.warn("Ignoring row with no course ID: %s", row)
+			if not row.get("NTIID"):
+				logger.debug("Ignoring row with no NTIID: %s", row)
 				continue
 
-			course_instance_ids.add(row[0])
-			course_instance_ids_to_rows[row[0]].append(row)
+			course_instance_ids.add(row['NTIID'])
+			course_instance_ids_to_rows[row['NTIID']].append(row)
 
 		catalog = component.getUtility(ICourseCatalog)
 

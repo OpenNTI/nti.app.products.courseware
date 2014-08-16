@@ -65,9 +65,12 @@ class _AbstractMixin(object):
 
 		sio = BytesIO()
 		csv_writer = csv.writer(sio)
-		row = ['CLC 3403', 'A clc discussion', contents]
+		header_row = ['NTIID', 'DiscussionTitle', 'Body 1', 'Body 2']
+		row = ['CLC 3403', 'A clc discussion', contents, '[ntivideo]kaltura://1500101/1_vkxo2g66/']
 		if self.scope:
+			header_row.append('DiscussionScope')
 			row.append(self.scope)
+		csv_writer.writerow(header_row)
 		csv_writer.writerow(row)
 		# a duplicate winds up completely ignored because everything was already
 		# created
@@ -76,7 +79,7 @@ class _AbstractMixin(object):
 		csv_writer.writerow([''])
 
 		csv_str = sio.getvalue()
-		assert_that( csv.reader(BytesIO(csv_str)).next()[2], is_(contents) )
+		assert_that( csv.DictReader(BytesIO(csv_str)).next()['Body 1'], is_(contents) )
 
 		res = self.testapp.post('/dataserver2/@@LegacyCourseTopicCreator',
 								upload_files=[('ignored', 'foo.csv', csv_str)],
