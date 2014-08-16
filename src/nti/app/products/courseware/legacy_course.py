@@ -420,9 +420,9 @@ def _content_unit_to_course(unit):
 	# First, try the true legacy case. This involves
 	# a direct mapping between courses and a catalog entry. It may be
 	# slightly more reliable, but only works for true legacy cases.
-	package = find_interface(unit,ILegacyCourseConflatedContentPackage)
+	package = find_interface(unit, ILegacyCourseConflatedContentPackage)
 	if package is not None:
-		result = ICourseInstance(package, None)
+		result = _course_content_package_to_course(package)
 		if result is not None:
 			return result
 
