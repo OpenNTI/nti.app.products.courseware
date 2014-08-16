@@ -17,8 +17,6 @@ from nti.contentlibrary.interfaces import IContentPackageLibrary
 from nti.contentlibrary.indexed_data.interfaces import IAudioIndexedDataContainer
 from nti.contentlibrary.indexed_data.interfaces import IVideoIndexedDataContainer
 
-from nti.dataserver.interfaces import ICreated
-
 from nti.contentsearch.interfaces import IBookContent
 from nti.contentsearch.interfaces import INTICardContent
 from nti.contentsearch.interfaces import ISearchHitPredicate
@@ -27,6 +25,8 @@ from nti.contentsearch.interfaces import IAudioTranscriptContent
 from nti.contentsearch.interfaces import IVideoTranscriptContent
 
 from nti.contenttypes.courses.interfaces import ICourseInstance
+
+from nti.dataserver.interfaces import ICreated
 
 def _get_content_path(ntiid):
 	result = ()
@@ -173,10 +173,7 @@ class _CreatedContentHitPredicate(_BasePredicate):
 	def allow(self, item, score):
 		resolver = IContainerIDResolver(item, None)
 		containerId = resolver.containerId if resolver is not None else None
-		if not containerId:
-			return True
-	
-		result = _is_allowed(containerId)
+		result = _is_allowed(containerId) if containerId else True
 		if not result:
 			logger.debug("Content '%s' not allowed for search. %s", containerId, item)
 		return result
