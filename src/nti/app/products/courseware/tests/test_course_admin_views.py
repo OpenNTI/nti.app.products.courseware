@@ -23,6 +23,7 @@ from hamcrest import contains
 from hamcrest import starts_with
 from hamcrest import contains_string
 from hamcrest import has_entries
+from hamcrest import has_item
 
 from nti.app.testing.decorators import WithSharedApplicationMockDS
 from nti.app.testing.application_webtest import ApplicationLayerTest
@@ -153,12 +154,29 @@ class _AbstractMixin(object):
 												  {'Class': 'Post', 'body': ['A comment']},
 												  status=201)
 
-		# ...it /is/ notable for the instructor
+		# ...it /is/ notable for the instructor...
 		# (we previously tried to not make that so, but it only worked
 		# for the first instructor, it was notable to everyone else because they were
 		# explicitly listed in the ACL, which turns into direct-sharing)
 		res = self.fetch_user_recursive_notable_ugd(username='harp4162', extra_environ=inst_env )
 		assert_that( res.json_body, has_entry( 'TotalItemCount', 1))
+
+		# ... it is also in the instructors stream (why?)...
+		res = self.fetch_user_root_rstream( username='harp4162', extra_environ=inst_env)
+		assert_that( res.json_body['Items'],
+					 has_item( has_entries('Creator', self.default_username,
+										   'Item', has_entries('Class', 'GeneralForumComment',
+															   'body', ['A comment']))) )
+
+		# ...Likewise, the discussions are in the stream for the instructor...
+		for username, env in (('harp4162', inst_env),
+							  #(self.default_username, None)
+						  ):
+			res = self.fetch_user_root_rstream( username=username, extra_environ=env )
+			assert_that( res.json_body['Items'],
+						 has_item( has_entries('ChangeType', 'Shared',
+											   'Item', has_entries('Class', 'CommunityHeadlineTopic',
+																   'title', 'A clc discussion'))) )
 
 
 		# The admin can easily make a small edit to the topic...
