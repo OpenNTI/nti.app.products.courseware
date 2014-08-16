@@ -38,7 +38,7 @@ from nti.dataserver.tests import mock_dataserver
 from nti.contentlibrary.interfaces import IContentPackageLibrary
 
 from nti.contenttypes.courses.interfaces import ICourseCatalog
-from ..content_search import is_allowed
+from ..content_search import _is_allowed
 
 from nti.contenttypes.courses.legacy_catalog import ICourseCatalogLegacyEntry
 from nti.contenttypes.courses.legacy_catalog import ICourseCatalogInstructorLegacyInfo
@@ -165,9 +165,9 @@ class TestApplicationCatalogFromContent(ApplicationLayerTest):
 		# Test content search
 		with mock_dataserver.mock_db_trans(self.ds, site_name='platform.ou.edu'):
 			ntiid = u'tag:nextthought.com,2011-10:OU-HTML-CLC3403_LawAndJustice.lec:03_LESSON'
-			b = is_allowed(ntiid)
+			b = _is_allowed(ntiid)
 			assert_that(b, is_(True))
 
 			now = datetime.fromtimestamp(100)
-			b = is_allowed(ntiid, None, now)
+			b = _is_allowed(ntiid, now)
 			assert_that(b, is_(False))

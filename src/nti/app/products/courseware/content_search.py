@@ -39,12 +39,12 @@ def _get_content_path(ntiid):
 def _get_outline_node(outline, ntiids=()):
 	if not ntiids:
 		return None
-	
+
 	def _recur(node):
 		content_ntiid = getattr(node, 'ContentNTIID', None)
 		if content_ntiid and content_ntiid in ntiids:
 			return node
-		
+
 		result = None
 		for child in node.values():
 			result = _recur(child)
@@ -59,7 +59,7 @@ def find_content_path_from_ntiid(name):
 	libray = component.queryUtility(IContentPackageLibrary)
 	if not libray or not name or not name.startswith('tag:'):
 		return None
-	
+
 	# find a content unit library
 	path = libray.pathToNTIID(name)
 	if path:
@@ -71,7 +71,7 @@ def find_content_path_from_ntiid(name):
 		for iface in ifaces:
 			if iface(unit).contains_data_item_with_ntiid(name):
 				return libray.pathToNTIID(unit.ntiid)
-		
+
 		for child in unit.children:
 			result = _search(child)
 			if result:
@@ -81,7 +81,7 @@ def find_content_path_from_ntiid(name):
 		result = _search(package)
 		if result:
 			return result
-		
+
 	# finally embedded nttiids
 	paths = libray.pathsToEmbeddedNTIID(name)
 	if paths:
@@ -102,11 +102,11 @@ def _find_course_and_unit_by_ntiid(name):
 
 def _is_allowed(ntiid, now=None):
 	# always allow
-	result = True 
-		
+	result = True
+
 	# find course and unit
 	course, unit = _find_course_and_unit_by_ntiid(ntiid)
-		
+
 	# if we found a course check its outline
 	if ICourseInstance.providedBy(course):
 		ntiids = _get_content_path(ntiid) if unit is None else (unit.ntiid,)
@@ -129,7 +129,7 @@ class _BasePredicate(object):
 
 @component.adapter(IBookContent)
 class _ContentHitPredicate(_BasePredicate):
-	
+
 	def allow(self, item, score):
 		result = _is_allowed(item.ntiid)
 		if not result:
@@ -165,7 +165,7 @@ class _NTICardContentHitPredicate(_BasePredicate):
 		if not result:
 			logger.debug("Content '%s' not allowed for search. %s", item.containerId, item)
 		return result
-	
+
 @interface.implementer(ISearchHitPredicate)
 @component.adapter(ICreated)
 class _CreatedContentHitPredicate(_BasePredicate):
