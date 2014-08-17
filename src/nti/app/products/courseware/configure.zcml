@@ -66,6 +66,7 @@
 	<adapter factory=".legacy_course._course_instance_for_community" />
 
 	<!-- And the content packages to the course instance -->
+	<adapter factory=".legacy_course._course_content_package_to_course" />
 	<adapter factory=".legacy_course._content_unit_to_course" />
 
 	<!-- Allow traversing to the 'LegacyCourses' key of communities -->

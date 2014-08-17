@@ -67,6 +67,7 @@ from nti.schema.field import TextLine
 
 from nti.contenttypes.courses.interfaces import CourseInstanceAvailableEvent
 from .interfaces import ILegacyCommunityBasedCourseInstance
+from .interfaces import ILegacyCourseConflatedContentPackageUsedAsCourse
 
 class ICourseCatalogLegacyEntryInstancePolicy(interface.Interface):
 	"""
@@ -374,14 +375,16 @@ def _course_instance_for_community( community ):
 from ZODB.POSException import ConnectionStateError
 
 @interface.implementer(ICourseInstance)
-@component.adapter(ILegacyCourseConflatedContentPackage)
+@component.adapter(ILegacyCourseConflatedContentPackageUsedAsCourse)
 def _course_content_package_to_course(package):
 	# Both the catalog entry and the content package are supposed to
 	# be non-persistent (in the case we actually get a course) or the
 	# course doesn't exist (in the case that the package is persistent
-	# and installed in a sub-site), so it should be safe to cache this
-	# on the package...except some unit tests violate that, so
-	# need to be a little careful
+	# and installed in a sub-site, which shouldn't happen with this
+	# registration, though could if we used a plain
+	# ConflatedContentPackage), so it should be safe to cache this on
+	# the package. Be extra careful though, just in case.
+
 	cache_name = '_v_course_content_package_to_course'
 	course = getattr(package, cache_name, cache_name)
 	if course is not cache_name:
@@ -397,12 +400,16 @@ def _course_content_package_to_course(package):
 		return course
 
 	course = None
-	# We go via the defined adapter from the catalog entry
-	course_catalog = component.getUtility(ICourseCatalog)
-	for entry in course_catalog.iterCatalogEntries():
-		if getattr(entry, 'ContentPackageNTIID', None) == package.ntiid:
-			course = ICourseInstance(entry, None)
-			break
+	# We go via the defined adapter from the catalog entry,
+	# which we should have directly cached
+	try:
+		entry = package._v_global_legacy_catalog_entry
+	except AttributeError:
+		logger.warn("Consistency issue? No attribute on global package %s",
+					package)
+		entry = None
+
+	course = ICourseInstance(entry, None)
 
 	setattr(package, cache_name, course)
 	return course
@@ -420,9 +427,9 @@ def _content_unit_to_course(unit):
 	# First, try the true legacy case. This involves
 	# a direct mapping between courses and a catalog entry. It may be
 	# slightly more reliable, but only works for true legacy cases.
-	package = find_interface(unit, ILegacyCourseConflatedContentPackage)
+	package = find_interface(unit, ILegacyCourseConflatedContentPackageUsedAsCourse)
 	if package is not None:
-		result = _course_content_package_to_course(package)
+		result = ICourseInstance(package, None)
 		if result is not None:
 			return result
 

@@ -20,6 +20,7 @@ from zope.lifecycleevent import IObjectAddedEvent
 from nti.externalization.externalization import to_external_object
 from nti.contenttypes.courses.legacy_catalog import CourseCatalogLegacyEntry
 from .interfaces import ICourseCatalogLegacyContentEntry
+from .interfaces import ILegacyCourseConflatedContentPackageUsedAsCourse
 
 @interface.implementer(ICourseCatalogLegacyContentEntry)
 class CourseCatalogLegacyContentEntry(CourseCatalogLegacyEntry):
@@ -132,6 +133,12 @@ def _content_package_registered( package, event ):
 	catalog_entry.legacy_content_package = package
 	catalog_entry.Communities = [unicode(x, 'utf-8')
 								 for x in package._v_toc_node.xpath('//course/scope[@type="public"]/entry/text()')]
+
+	# Now, mare this (global, non-persistent) content package as being associated
+	# directly with an active course/catalog
+	interface.alsoProvides(package, ILegacyCourseConflatedContentPackageUsedAsCourse)
+	# These shouldn't ever be persisted, but just in case...
+	package._v_global_legacy_catalog_entry = catalog_entry
 
 	try:
 		catalog.addCatalogEntry( catalog_entry )

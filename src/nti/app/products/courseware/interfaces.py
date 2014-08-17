@@ -221,6 +221,27 @@ class IAdministeredCoursesCollection(app_interfaces.IContainerCollection):
 	(:class:`.ICourseInstanceAdministrativeRole`)
 	"""
 
+from nti.contentlibrary.interfaces import ILegacyCourseConflatedContentPackage
+
+class ILegacyCourseConflatedContentPackageUsedAsCourse(ILegacyCourseConflatedContentPackage):
+	"""
+	A marker applied on top of a content package that was already
+	conflated when it is actually being used by a course.
+
+	Remember that this can only happen in the global library with non-persistent
+	content packages; the code in :mod:`legacy_catalog` will refuse to turn
+	any persistent content package in a site library into a course. Therefore this
+	marker interface can be used to distinguish things that are actually being
+	used as :class:`ILegacyCommunityBasedCourseInstance` and which are not.
+
+	When this marker is applied, instances should get access to
+	an attribute ``_v_global_legacy_catalog_entry`` that points to the catalog
+	entry, which should also be global and not persistent. Access this attribute
+	to get the catalog entry; yes, it will lead to warnings in your code about
+	a private attribute, but it will be easy to clean them up later, and we want
+	this ugliness to stand out.
+	"""
+
 
 #: A preliminary special type of NTIID that refers to an abstract
 #: notion of a topic within a particular abstract course. When
