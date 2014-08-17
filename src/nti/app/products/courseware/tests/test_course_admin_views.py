@@ -148,6 +148,7 @@ class _AbstractMixin(object):
 		res = self.post_user_data('CLC 3403',
 								  extra_path='/Courses/EnrolledCourses',
 								  status=201 )
+		self._extra_student_checks(res, inst_env)
 
 		# ... makes a comment in one of those discussions...
 		self.comment_res = self.testapp.post_json(self.open_path,
@@ -200,6 +201,20 @@ class _AbstractMixin(object):
 
 	def _extra_post_csv_create_forums(self):
 		pass
+
+	def _extra_student_checks(self, res, inst_env):
+		# everybody can be resolved by the student
+		# XXX: This test doesn't exactly belong here, but it's convenient
+		for o in res.json_body['CourseInstance']['SharingScopes']['Items'].values():
+
+			self.resolve_user(username=o['NTIID'])
+			self.resolve_user(username=o['Username'])
+			self.resolve_user(username=o['OID'])
+
+
+			self.resolve_user(username=o['NTIID'], extra_environ=inst_env)
+			self.resolve_user(username=o['Username'], extra_environ=inst_env)
+			self.resolve_user(username=o['OID'], extra_environ=inst_env)
 
 
 
