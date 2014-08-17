@@ -376,7 +376,7 @@ def _copy_enrollments_from_legacy_to_new(request=None):
 					result.append((path_to_new_course, 'No legacy course'))
 					continue
 
-				new_course = traverse(catalog, path_to_new_course, request=request)
+				new_course = traverse(catalog, path_to_new_course, default=None, request=request)
 				if new_course is None:
 					logger.warn("No new course instance found at %s, not migrating", path_to_new_course)
 					result.append((path_to_new_course, 'No new course', path_to_new_course))
