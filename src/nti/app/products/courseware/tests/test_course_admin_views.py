@@ -300,7 +300,7 @@ class TestMigrate(ApplicationLayerTest):
 			  'No community',
 			  {'public': 'CHEM1315F2014.ou.nextthought.com',
 			   'restricted': 'CHEM1315Fall2014.ou.nextthought.com'}],
-			 ['Fall2014/CHEM 4970/SubInstances/001',
+			 ['Fall2014/CHEM 4970/SubInstances/100',
 			  'No community',
 			  {'public': 'CHEM4970F2014.ou.nextthought.com',
 			   'restricted': 'tag:nextthought.com,2011-10:morv1533-MeetingRoom:Group-chem4970fall2014.ou.nextthought.com'}],

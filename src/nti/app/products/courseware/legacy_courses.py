@@ -76,7 +76,7 @@ KNOWN_LEGACY_COURSES_BY_SITE = {
 		 'tag:nextthought.com,2011-10:OU-course-CHEM4970F2014',
 		 {'public': 'CHEM4970F2014.ou.nextthought.com',
 		  'restricted': 'tag:nextthought.com,2011-10:morv1533-MeetingRoom:Group-chem4970fall2014.ou.nextthought.com'},
-		 'Fall2014/CHEM 4970/SubInstances/001'),
+		 'Fall2014/CHEM 4970/SubInstances/100'),
 		('CLC3403',
 		 'tag:nextthought.com,2011-10:OU-course-CLC3403LawAndJustice',
 		 {'public': 'CLC3403.ou.nextthought.com',
