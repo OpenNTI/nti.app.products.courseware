@@ -281,11 +281,29 @@ class TestCreateForums(_AbstractMixin,
 										   status=201,
 										   extra_environ=inst_env)
 		assert_that( topic_res.json_body,
+					 # notability depends on mimetype
+					 has_entry('MimeType', "application/vnd.nextthought.forums.communityheadlinetopic"))
+		assert_that( topic_res.json_body,
 					 has_entry('NTIID',
 							   starts_with('tag:nextthought.com,2011-10:unknown-OID-0x') ) )
 		assert_that( topic_res.json_body,
 					 has_entry('ContainerId',
 							   starts_with('tag:nextthought.com,2011-10:unknown-OID-0x') ) )
+
+		# It is notable to a student...
+		res = self.post_user_data('CLC 3403',
+								  extra_path='/Courses/EnrolledCourses',
+								  status=201 )
+		res = self.fetch_user_recursive_notable_ugd()
+		assert_that( res.json_body, has_entry( 'TotalItemCount', 0))
+
+		# ... but only once its published
+		self.testapp.post(self.require_link_href_with_rel(topic_res.json_body, 'publish'),
+						  extra_environ=inst_env)
+		res = self.fetch_user_recursive_notable_ugd()
+		assert_that( res.json_body, has_entry( 'TotalItemCount', 1))
+
+
 
 class TestCreateForumsOpenOnly(TestCreateForums):
 
