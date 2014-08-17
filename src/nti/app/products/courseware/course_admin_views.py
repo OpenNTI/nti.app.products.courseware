@@ -212,12 +212,14 @@ class CourseTopicCreationView(AbstractAuthenticatedView,UploadRequestUtilsMixin)
 				video = component.getUtility(component.IFactory, name="application/vnd.nextthought.embeddedvideo")()
 				update_from_external_object(video, {'embedURL': vid_url, 'type': vid_type})
 				content = video
-			else:
+			elif content:
 				# Avoid the automatic conversion that assumes the incoming
 				# is meant to be HTML
 				content = CensoredPlainTextContentFragment(content)
 
-			body.append(content)
+			if content:
+				# Let some columns be blank on some rows
+				body.append(content)
 		return tuple(body)
 
 
