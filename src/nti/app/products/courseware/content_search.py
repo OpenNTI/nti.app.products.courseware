@@ -102,6 +102,9 @@ def _find_course_and_unit_by_ntiid(name):
 
 def _is_allowed(ntiid, now=None):
 	# always allow
+	return True
+
+	# inital value
 	result = True
 
 	# find course and unit
