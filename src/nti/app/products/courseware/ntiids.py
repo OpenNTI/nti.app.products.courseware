@@ -11,6 +11,8 @@ __docformat__ = "restructuredtext en"
 
 logger = __import__('logging').getLogger(__name__)
 
+import calendar
+
 from zope import interface
 from zope import component
 
@@ -43,6 +45,45 @@ class _EnrolledCourseSectionTopicNTIIDResolver(object):
 	#: (the main course)
 	allow_section_match = True
 
+	def _sort_enrollments(self, enrollments):
+		# returns a list of (course, catalog_entry) objects,
+		# with any subinstances I'm enrolled in coming first
+		# if section matches are allowed, otherwise those are
+		# excluded. We also make sure the most recent things are first
+		records = []
+		for record in enrollments.iter_enrollments():
+			try:
+				course = ICourseInstance(record)
+			except TypeError:
+				# Never seen this, being proactive
+				logger.warn("User enrolled %s in stale course",
+							record)
+				continue
+
+			try:
+				catalog_entry = ICourseCatalogEntry(course)
+			except TypeError:
+				# Seen this is alpha, possible due to the early content
+				# shifting before enrollment cleanup was correct?
+				# maybe it can go away
+				logger.warn("User enrolled %r in course %r that no longer has CCE",
+							record, course)
+				continue
+
+			records.append( (course, catalog_entry, record))
+
+		# stable sort, the key will be the same for all the subinstances
+		# and then all the parent
+		def key(record):
+			return (0 if ICourseSubInstance.providedBy(record[0]) else 1,
+					# admin roles do not have created time, in that case
+					getattr(record[2], 'createdTime', 0) or (-calendar.timegm(catalog_entry.StartDate.utctimetuple())
+															 if catalog_entry is not None
+															 else 0))
+		records.sort( key=key )
+
+		return records
+
 	def resolve(self, ntiid):
 		user = get_remote_user()
 		if user is None:
@@ -52,25 +93,7 @@ class _EnrolledCourseSectionTopicNTIIDResolver(object):
 
 		for iface in IPrincipalEnrollments, IPrincipalAdministrativeRoleCatalog:
 			for enrollments in component.subscribers((user,), iface):
-				for record in enrollments.iter_enrollments():
-					try:
-						course = ICourseInstance(record)
-					except TypeError:
-						# Never seen this, being proactive
-						logger.warn("User enrolled %s in stale course",
-									record)
-						continue
-
-					try:
-						catalog_entry = ICourseCatalogEntry(course)
-					except TypeError:
-						# Seen this is alpha, possible due to the early content
-						# shifting before enrollment cleanup was correct?
-						# maybe it can go away
-						logger.warn("User enrolled %r in course %r that no longer has CCE",
-									record, course)
-						continue
-
+				for course, catalog_entry, _ in self._sort_enrollments(enrollments):
 					if escape_provider(catalog_entry.ProviderUniqueID) == provider_name:
 						return self._find_in_course(course, ntiid)
 
@@ -79,8 +102,8 @@ class _EnrolledCourseSectionTopicNTIIDResolver(object):
 					# discussions allowed (either our section or, if not allowed, the parent)
 					if ICourseSubInstance.providedBy(course):
 						main_course = course.__parent__.__parent__
-						main_cce = ICourseCatalogEntry(main_course)
-						if escape_provider(main_cce.ProviderUniqueID) == provider_name:
+						main_cce = ICourseCatalogEntry(main_course, None)
+						if main_cce and escape_provider(main_cce.ProviderUniqueID) == provider_name:
 							most_specific_course = course if self.allow_section_match else main_course
 							return self._find_in_course(most_specific_course, ntiid)
 

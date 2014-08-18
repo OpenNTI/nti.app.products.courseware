@@ -250,7 +250,7 @@ class CourseTopicCreationView(AbstractAuthenticatedView,UploadRequestUtilsMixin)
 			except KeyError:
 				logger.exception("No forum %s; no instructors?", forum_name)
 				created_ntiids.append("WARNING: Missing forum %s in %s. No instructors?" %
-									  forum_name, traversal.resource_path(discussions))
+									  (forum_name, traversal.resource_path(discussions)))
 				continue
 
 			for row in rows:
