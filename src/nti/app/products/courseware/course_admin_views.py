@@ -249,7 +249,7 @@ class CourseTopicCreationView(AbstractAuthenticatedView,UploadRequestUtilsMixin)
 				forum = discussions[ntiids.make_specific_safe(forum_name)]
 			except KeyError:
 				logger.exception("No forum %s; no instructors?", forum_name)
-				created_ntiids.append("WARNING: Missing forum %s in %s. No instructors?",
+				created_ntiids.append("WARNING: Missing forum %s in %s. No instructors?" %
 									  forum_name, traversal.resource_path(discussions))
 				continue
 
