@@ -51,6 +51,7 @@ from nti.app.externalization.view_mixins import UploadRequestUtilsMixin
 from nti.dataserver.users import Entity
 
 from nti.dataserver.interfaces import IDataserverFolder
+from nti.dataserver import traversal
 from collections import defaultdict
 
 from .interfaces import NTIID_TYPE_COURSE_SECTION_TOPIC
@@ -110,6 +111,10 @@ class CourseTopicCreationView(AbstractAuthenticatedView,UploadRequestUtilsMixin)
 					  forum_display_name=None,
 					  forum_interface=interface.Interface):
 		try:
+			# In the past we really had to have instructors because they
+			# were used as the creator; now we just require at least one so
+			# that the ACL is semi-right to start with (otherwise it would be
+			# totally wrong until the user ran the tool again)
 			_ = instance.instructors[0]
 		except IndexError:
 			logger.debug("Course %s has no instructors, not creating %s", instance, forum_name)
@@ -240,7 +245,13 @@ class CourseTopicCreationView(AbstractAuthenticatedView,UploadRequestUtilsMixin)
 			__traceback_info__ = {'known-forums': list(discussions),
 								  'forum name': forum_name,
 								  'forum display name': forum_display_name}
-			forum = discussions[ntiids.make_specific_safe(forum_name)]
+			try:
+				forum = discussions[ntiids.make_specific_safe(forum_name)]
+			except KeyError:
+				logger.exception("No forum %s; no instructors?", forum_name)
+				created_ntiids.append("WARNING: Missing forum %s in %s. No instructors?",
+									  forum_name, traversal.resource_path(discussions))
+				continue
 
 			for row in rows:
 				title = row['DiscussionTitle'].decode('utf-8', 'ignore')
