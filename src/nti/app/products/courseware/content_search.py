@@ -124,13 +124,13 @@ class _BasePredicate(object):
 	def __init__(self, *args):
 		pass
 
-	def allow(self, item, score):
+	def allow(self, item, score, query=None):
 		raise NotImplementedError()
 
 @component.adapter(IBookContent)
 class _ContentHitPredicate(_BasePredicate):
 
-	def allow(self, item, score):
+	def allow(self, item, score, query=None):
 		result = _is_allowed(item.ntiid)
 		if not result:
 			logger.debug("Content '%s' not allowed for search. %s", item.ntiid, item)
@@ -140,7 +140,7 @@ class _ContentHitPredicate(_BasePredicate):
 @component.adapter(IAudioTranscriptContent)
 class _AudioContentHitPredicate(_BasePredicate):
 
-	def allow(self, item, score):
+	def allow(self, item, score, query=None):
 		result = _is_allowed(item.containerId)
 		if not result:
 			logger.debug("Content '%s' not allowed for search. %s", item.containerId, item)
@@ -150,7 +150,7 @@ class _AudioContentHitPredicate(_BasePredicate):
 @component.adapter(IVideoTranscriptContent)
 class _VideoContentHitPredicate(_BasePredicate):
 
-	def allow(self, item, score):
+	def allow(self, item, score, query=None):
 		result = _is_allowed(item.containerId)
 		if not result:
 			logger.debug("Content '%s' not allowed for search. %s", item.containerId, item)
@@ -160,7 +160,7 @@ class _VideoContentHitPredicate(_BasePredicate):
 @component.adapter(INTICardContent)
 class _NTICardContentHitPredicate(_BasePredicate):
 
-	def allow(self, item, score):
+	def allow(self, item, score, query=None):
 		result = _is_allowed(item.containerId) and _is_allowed(item.target_ntiid)
 		if not result:
 			logger.debug("Content '%s' not allowed for search. %s", item.containerId, item)
@@ -170,7 +170,7 @@ class _NTICardContentHitPredicate(_BasePredicate):
 @component.adapter(ICreated)
 class _CreatedContentHitPredicate(_BasePredicate):
 
-	def allow(self, item, score):
+	def allow(self, item, score, query=None):
 		resolver = IContainerIDResolver(item, None)
 		containerId = resolver.containerId if resolver is not None else None
 		result = _is_allowed(containerId) if containerId else True
