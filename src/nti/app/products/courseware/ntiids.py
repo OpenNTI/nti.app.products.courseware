@@ -75,11 +75,16 @@ class _EnrolledCourseSectionTopicNTIIDResolver(object):
 		# stable sort, the key will be the same for all the subinstances
 		# and then all the parent
 		def key(record):
+			ts = 0
+			# admin roles do not have created time, in that case
+			if hasattr(record[2], 'createdTime'):
+				ts = -record[2].createdTime
+			if not ts and catalog_entry is None:
+				ts = -calendar.timegm(catalog_entry.StartDate.utctimetuple())
+
 			return (0 if ICourseSubInstance.providedBy(record[0]) else 1,
-					# admin roles do not have created time, in that case
-					getattr(record[2], 'createdTime', 0) or (-calendar.timegm(catalog_entry.StartDate.utctimetuple())
-															 if catalog_entry is not None
-															 else 0))
+					ts)
+
 		records.sort( key=key )
 
 		return records
