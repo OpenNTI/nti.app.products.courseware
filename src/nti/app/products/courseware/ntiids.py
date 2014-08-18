@@ -53,8 +53,23 @@ class _EnrolledCourseSectionTopicNTIIDResolver(object):
 		for iface in IPrincipalEnrollments, IPrincipalAdministrativeRoleCatalog:
 			for enrollments in component.subscribers((user,), iface):
 				for record in enrollments.iter_enrollments():
-					course = ICourseInstance(record)
-					catalog_entry = ICourseCatalogEntry(course)
+					try:
+						course = ICourseInstance(record)
+					except TypeError:
+						# Never seen this, being proactive
+						logger.warn("User enrolled %s in stale course",
+									record)
+						continue
+
+					try:
+						catalog_entry = ICourseCatalogEntry(course)
+					except TypeError:
+						# Seen this is alpha, possible due to the early content
+						# shifting before enrollment cleanup was correct?
+						# maybe it can go away
+						logger.warn("User enrolled %r in course %r that no longer has CCE",
+									record, course)
+						continue
 
 					if escape_provider(catalog_entry.ProviderUniqueID) == provider_name:
 						return self._find_in_course(course, ntiid)
