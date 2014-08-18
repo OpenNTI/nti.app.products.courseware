@@ -237,7 +237,11 @@ class CourseTopicCreationView(AbstractAuthenticatedView,UploadRequestUtilsMixin)
 			if created_ntiid:
 				created_ntiids.append(created_ntiid)
 
+			__traceback_info__ = {'known-forums': list(discussions),
+								  'forum name': forum_name,
+								  'forum display name': forum_display_name}
 			forum = discussions[ntiids.make_specific_safe(forum_name)]
+
 			for row in rows:
 				title = row['DiscussionTitle'].decode('utf-8', 'ignore')
 				name = ntiids.make_specific_safe(title)
@@ -249,8 +253,6 @@ class CourseTopicCreationView(AbstractAuthenticatedView,UploadRequestUtilsMixin)
 					logger.debug("Ignoring %s in %s because of scope mismatch %s",
 								 name, forum, scope)
 					continue
-
-
 
 				logger.debug("Looking for %s in %s in %s", name, forum, instance)
 				topic = None
@@ -265,6 +267,9 @@ class CourseTopicCreationView(AbstractAuthenticatedView,UploadRequestUtilsMixin)
 					post = CommunityHeadlinePost()
 					post.title = title
 					post.body = content
+					for i in post.body:
+						if hasattr(i, '__parent__'):
+							i.__parent__ = post
 
 					topic = CommunityHeadlineTopic()
 					topic.title = title
@@ -355,7 +360,7 @@ class CourseTopicCreationView(AbstractAuthenticatedView,UploadRequestUtilsMixin)
 			__traceback_info__ = catalog_entry
 
 			instance = ICourseInstance(catalog_entry)
-			__traceback_info__ = instance, catalog_entry
+			__traceback_info__ = instance, repr(catalog_entry)
 
 			rows = course_instance_ids_to_rows[course_instance_id]
 			# Note that we do not try to do this in sub-instances (if

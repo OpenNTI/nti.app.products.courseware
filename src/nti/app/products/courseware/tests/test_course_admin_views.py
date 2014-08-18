@@ -24,6 +24,7 @@ from hamcrest import starts_with
 from hamcrest import contains_string
 from hamcrest import has_entries
 from hamcrest import has_item
+from hamcrest import starts_with
 
 from nti.app.testing.decorators import WithSharedApplicationMockDS
 from nti.app.testing.application_webtest import ApplicationLayerTest
@@ -108,7 +109,8 @@ class _AbstractMixin(object):
 				assert_that( res.json_body['headline']['body'][1],
 							 has_entries('Class', 'EmbeddedVideo',
 										 'type', 'kaltura',
-										 'embedURL', 'kaltura://1500101/1_vkxo2g66/') )
+										 'embedURL', 'kaltura://1500101/1_vkxo2g66/',
+										 'href', starts_with('/dataserver2')) )
 
 		if not full:
 			return
