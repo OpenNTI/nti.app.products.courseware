@@ -58,17 +58,22 @@ class _AbstractMixin(object):
 		self._do_test_post_csv_create_forums(self.contents)
 
 	@WithSharedApplicationMockDS(users=('sjohnson@nextthought.com',),testapp=True,default_authenticate=True)
+	def test_post_csv_create_forums_alt_syntax(self):
+		self._do_test_post_csv_create_forums(self.contents, video='[ntivideo][kaltura]kaltura://1500101/1_vkxo2g66/')
+
+
+	@WithSharedApplicationMockDS(users=('sjohnson@nextthought.com',),testapp=True,default_authenticate=True)
 	def test_post_csv_create_forums_mac(self):
 		self._do_test_post_csv_create_forums(self.mac_contents,full=False)
 
-	def _do_test_post_csv_create_forums(self, contents, full=True):
+	def _do_test_post_csv_create_forums(self, contents, full=True, video='[ntivideo]kaltura://1500101/1_vkxo2g66/'):
 		inst_env = self._make_extra_environ(username='harp4162')
 		admin_env = self._make_extra_environ(username='sjohnson@nextthought.com')
 
 		sio = BytesIO()
 		csv_writer = csv.writer(sio)
 		header_row = ['NTIID', 'DiscussionTitle', 'Body 1', 'Body 2']
-		row = ['CLC 3403', 'A clc discussion', contents, '[ntivideo]kaltura://1500101/1_vkxo2g66/']
+		row = ['CLC 3403', 'A clc discussion', contents, video]
 		if self.scope:
 			header_row.append('DiscussionScope')
 			row.append(self.scope)

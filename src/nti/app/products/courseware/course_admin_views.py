@@ -204,7 +204,7 @@ class CourseTopicCreationView(AbstractAuthenticatedView,UploadRequestUtilsMixin)
 				if content[0] == '[':
 					vid_type_end = content.index(']')
 					vid_type = content[1:vid_type_end]
-					vid_url = content[vid_type_end:]
+					vid_url = content[vid_type_end + 1:]
 				else:
 					vid_url = content
 					vid_type = 'kaltura'
