@@ -510,6 +510,8 @@ from nti.dataserver.authorization import role_for_providers_content
 
 from nti.externalization.interfaces import LocatedExternalDict
 
+from .interfaces import ILegacyCommunityBasedCourseInstance
+
 @view_config(route_name='objects.generic.traversal',
 			 renderer='rest',
 			 request_method='GET',
@@ -559,8 +561,7 @@ class CourseMissingContentRolesView(AbstractCourseEnrollView):
 			if not course_roles: # no course roles
 				continue
 			
-			info = ICourseInstanceVendorInfo(course, {})
-			if not info: # filter out things that don't have vendor info
+			if ILegacyCommunityBasedCourseInstance.providedBy(course): 
 				continue
 		
 			enrollments = ICourseEnrollments(course)
