@@ -30,6 +30,7 @@ from .interfaces import ICoursesWorkspace
 from .interfaces import IEnrolledCoursesCollection
 from .interfaces import ICourseInstanceEnrollment
 
+from nti.contenttypes.courses.interfaces import ES_PUBLIC
 from nti.contenttypes.courses.interfaces import ICourseCatalogEntry
 from nti.contenttypes.courses.interfaces import ICourseCatalog
 from nti.contenttypes.courses.interfaces import ICourseInstance
@@ -63,6 +64,27 @@ def get_enrollments(course_instance, request):
 	except LookupError:
 		enrollments = ICourseEnrollmentManager(course_instance)
 	return enrollments
+
+def do_course_enrollment(catalog_entry, user, scope=ES_PUBLIC, parent=None,
+						 request=None):
+	course_instance = ICourseInstance(catalog_entry)
+	enrollments = get_enrollments(course_instance, request)
+	freshly_added = enrollments.enroll(user, scope=scope)
+	
+	# get an course instance enrollent
+	enrollment = component.getMultiAdapter( (course_instance, user),
+											ICourseInstanceEnrollment )
+	
+	if parent and not enrollment.__parent__:
+		enrollment.__parent__ = parent
+
+	if freshly_added and request:
+		request.response.status_int = 201
+		request.response.location = traversal.resource_path(enrollment)
+			
+	# Return our enrollment, whether fresh or not
+	# TODO: This should probably be a multi-adapter
+	return enrollment
 
 @view_config( route_name='objects.generic.traversal',
 			  context=IEnrolledCoursesCollection,
@@ -113,19 +135,10 @@ class enroll_course_view(AbstractAuthenticatedView,
 		if not can_create(catalog_entry, request=self.request):
 			raise hexc.HTTPForbidden()
 
-		course_instance = ICourseInstance(catalog_entry)
-		enrollments = get_enrollments(course_instance, self.request)
-		freshly_added = enrollments.enroll( self.remoteUser )
-		enrollment = component.getMultiAdapter( (course_instance, self.remoteUser),
-												ICourseInstanceEnrollment )
-		if not enrollment.__parent__:
-			enrollment.__parent__ = self.request.context
-
-		if freshly_added:
-			self.request.response.status_int = 201 # HTTPCreated
-			self.request.response.location = traversal.resource_path(enrollment)
-		# Return our enrollment, whether fresh or not
-		# TODO: This should probably be a multi-adapter
+		enrollment = do_course_enrollment(catalog_entry, 
+										  self.remoteUser,
+										  parent=self.request.context,
+										  request=self.request)
 		return enrollment
 
 @view_config( route_name='objects.generic.traversal',

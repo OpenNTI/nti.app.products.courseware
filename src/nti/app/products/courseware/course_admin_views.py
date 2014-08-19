@@ -382,7 +382,6 @@ class CourseTopicCreationView(AbstractAuthenticatedView,UploadRequestUtilsMixin)
 
 		return created_ntiids
 
-
 from .legacy_courses import _copy_enrollments_from_legacy_to_new
 
 @view_config(route_name='objects.generic.traversal',
@@ -403,5 +402,101 @@ class CourseEnrollmentMigrationView(AbstractAuthenticatedView):
 	"""
 
 	def __call__(self):
-
 		return _copy_enrollments_from_legacy_to_new(self.request)
+	
+# helper admin views
+
+from nti.app.externalization.view_mixins import ModeledContentUploadRequestUtilsMixin
+
+from nti.appserver.interfaces import IUserService
+
+from nti.contenttypes.courses.interfaces import ENROLLMENT_SCOPE_VOCABULARY
+
+from nti.dataserver.users import User 
+from nti.dataserver.interfaces import IUser 
+
+from nti.utils.maps import CaseInsensitiveDict
+
+from .interfaces import ICoursesWorkspace
+from .catalog_views import get_enrollments
+from .catalog_views import do_course_enrollment
+
+class AbstractCourseEnrollView(AbstractAuthenticatedView,
+							   ModeledContentUploadRequestUtilsMixin):
+
+	def readInput(self):
+		values = super(AbstractCourseEnrollView, self).readInput()
+		result = CaseInsensitiveDict(values)
+		return result
+	
+	def parseCommon(self, values):
+		# get / validate user
+		username = values.get('username') or values.get('user') 
+		if not username:
+			raise hexc.HTTPUnprocessableEntity(detail=_('No username'))
+		
+		user = User.get_user(username)
+		if not user or not IUser.providedBy(user):
+			raise hexc.HTTPNotFound(detail=_('User not found'))
+
+		# get validate course entry
+		ntiid = values.get('ntiid') or values.get('EntryNTIID') or \
+				values.get('CourseEntryNIID') or values.get('ProviderUniqueID')
+		if not ntiid:
+			raise hexc.HTTPUnprocessableEntity(detail=_('No course entry identifier'))
+		
+		# get catalog entry
+		try:
+			catalog = component.getUtility(ICourseCatalog)
+			catalog_entry = catalog.getCatalogEntry(ntiid)
+		except LookupError:
+			raise hexc.HTTPNotFound(detail=_('Catalog not found'))
+		except KeyError:
+			raise hexc.HTTPNotFound(detail=_('Course not found'))
+		
+		return (catalog_entry, user)
+
+@view_config(route_name='objects.generic.traversal',
+			 renderer='rest',
+			 request_method='POST',
+			 context=IDataserverFolder,
+			 permission=nauth.ACT_COPPA_ADMIN,
+			 name='AdminUserCourseEnroll')
+class AdminUserCourseEnrollView(AbstractCourseEnrollView):
+
+	def __call__(self):
+		values = self.readInput()
+		# get common
+		catalog_entry, user = self.parseCommon(values)
+		# get validate scope
+		scope = values.get('scope', 'Public')
+		if not scope or scope not in ENROLLMENT_SCOPE_VOCABULARY.by_token.keys():
+			raise hexc.HTTPUnprocessableEntity(detail=_('Invalid scope'))
+
+		service = IUserService(user)
+		workspace = ICoursesWorkspace(service)
+		parent = workspace['EnrolledCourses']
+	
+		# enroll
+		result = do_course_enrollment(catalog_entry, user, scope,
+									  parent=parent,
+									  request=self.request)
+		return result
+
+@view_config(route_name='objects.generic.traversal',
+			 renderer='rest',
+			 request_method='POST',
+			 context=IDataserverFolder,
+			 permission=nauth.ACT_COPPA_ADMIN,
+			 name='AdminUserCourseDrop')
+class AdminUserCourseDropView(AbstractCourseEnrollView):
+
+	def __call__(self):
+		values = self.readInput()
+		# get common
+		catalog_entry, user = self.parseCommon(values)
+		# get enrollments and drop
+		course_instance  = ICourseInstance(catalog_entry)
+		enrollments = get_enrollments(course_instance, self.request)
+		enrollments.drop(user)
+		return hexc.HTTPNoContent()
