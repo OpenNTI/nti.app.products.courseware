@@ -14,8 +14,10 @@ logger = __import__('logging').getLogger(__name__)
 from zope import component
 from zope import interface
 from zope import lifecycleevent
+from zope.security.interfaces import IPrincipal
 
 from nti.contenttypes.courses.interfaces import ICourseInstance
+from nti.contenttypes.courses.interfaces import ICourseEnrollments
 
 from pyramid.view import view_config
 from pyramid import httpexceptions as hexc
@@ -31,16 +33,16 @@ from nti.contenttypes.courses.interfaces import ICourseInstanceVendorInfo
 from nti.contenttypes.courses.interfaces import ICourseInstancePublicScopedForum
 from nti.contenttypes.courses.interfaces import ICourseInstanceForCreditScopedForum
 
-import csv
 import io
+import csv
 
 from nti.ntiids import ntiids
 
 from nti.dataserver.contenttypes.forums.ace import ForumACE
 
+from nti.dataserver.contenttypes.forums.forum import ACLCommunityForum
 from nti.dataserver.contenttypes.forums.interfaces import IACLCommunityBoard
 from nti.dataserver.contenttypes.forums.interfaces import IACLCommunityForum
-from nti.dataserver.contenttypes.forums.forum import ACLCommunityForum
 
 from nti.dataserver.contenttypes.forums.post import CommunityHeadlinePost
 from nti.dataserver.contenttypes.forums.topic import CommunityHeadlineTopic
@@ -500,3 +502,70 @@ class AdminUserCourseDropView(AbstractCourseEnrollView):
 		enrollments = get_enrollments(course_instance, self.request)
 		enrollments.drop(user)
 		return hexc.HTTPNoContent()
+
+from nti.dataserver.interfaces import IDataserver
+from nti.dataserver.interfaces import IShardLayout
+from nti.dataserver.interfaces import IMutableGroupMember
+from nti.dataserver.authorization import CONTENT_ROLE_PREFIX
+from nti.dataserver.authorization import role_for_providers_content
+
+from nti.externalization.interfaces import LocatedExternalDict
+
+@view_config(route_name='objects.generic.traversal',
+			 renderer='rest',
+			 request_method='GET',
+			 context=IDataserverFolder,
+			 permission=nauth.ACT_COPPA_ADMIN,
+			 name='CourseMissingContentRoles')
+class CourseMissingContentRolesView(AbstractCourseEnrollView):
+
+	def _content_roles_for_course_instance(self, course):
+		bundle = getattr(course, 'ContentPackageBundle', None)
+		packs = getattr(bundle, 'ContentPackages', ())
+		roles = []
+		for pack in packs:
+			ntiid = pack.ntiid
+			ntiid = ntiids.get_parts(ntiid)
+			provider = ntiid.provider
+			specific = ntiid.specific
+			roles.append(role_for_providers_content(provider, specific))
+		return set(roles)
+		
+	def __call__(self):
+		result = LocatedExternalDict()
+		items = result['Items'] = LocatedExternalDict()
+		
+		dataserver = component.getUtility(IDataserver)
+		
+		# get all content roles
+		user_info = {}
+		users_folder = IShardLayout(dataserver).users_folder
+		for user in users_folder.values():
+			if not IUser.providedBy(user):
+				continue
+			principal = IPrincipal(user)
+			membership = component.getAdapter(user, 
+											  IMutableGroupMember, 
+											  CONTENT_ROLE_PREFIX)
+			user_info[principal] = set(membership.groups)	
+			
+		# check catalogs
+		catalog = component.getUtility(ICourseCatalog)
+		for catalog_entry in catalog.iterCatalogEntries():
+			course = ICourseInstance(catalog_entry, None)
+			if course is None:
+				continue
+
+			enrollments = ICourseEnrollments(course)
+			course_roles = self._content_roles_for_course_instance(course)
+			
+			course_list = items[catalog_entry.ntiid] = []
+			for principal, roles in user_info.items():
+				record = enrollments.get_enrollment_for_principal(principal)
+				if record is None:
+					continue
+				# check if course roles are in user roles
+				if not all(map(lambda x: x in roles, course_roles)):
+					course_list.append(principal.id)
+		# return
+		return result
