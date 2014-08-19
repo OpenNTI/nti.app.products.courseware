@@ -16,9 +16,6 @@ from zope import interface
 from zope import lifecycleevent
 from zope.security.interfaces import IPrincipal
 
-from nti.contenttypes.courses.interfaces import ICourseInstance
-from nti.contenttypes.courses.interfaces import ICourseEnrollments
-
 from pyramid.view import view_config
 from pyramid import httpexceptions as hexc
 from nti.app.base.abstract_views import AbstractAuthenticatedView
@@ -28,7 +25,9 @@ from nti.dataserver import authorization as nauth
 from nti.contentfragments.interfaces import CensoredPlainTextContentFragment
 
 from nti.contenttypes.courses.interfaces import ICourseCatalog
+from nti.contenttypes.courses.interfaces import ICourseInstance
 from nti.contenttypes.courses.interfaces import ICourseCatalogEntry
+from nti.contenttypes.courses.interfaces import ICourseEnrollments
 from nti.contenttypes.courses.interfaces import ICourseInstanceVendorInfo
 from nti.contenttypes.courses.interfaces import ICourseInstancePublicScopedForum
 from nti.contenttypes.courses.interfaces import ICourseInstanceForCreditScopedForum
@@ -556,6 +555,10 @@ class CourseMissingContentRolesView(AbstractCourseEnrollView):
 			if course is None:
 				continue
 
+			info = ICourseInstanceVendorInfo(course, {})
+			if not info: # filter out things that don't have vendor info
+				continue
+		
 			enrollments = ICourseEnrollments(course)
 			course_roles = self._content_roles_for_course_instance(course)
 			
