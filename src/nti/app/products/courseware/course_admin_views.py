@@ -554,14 +554,16 @@ class CourseMissingContentRolesView(AbstractCourseEnrollView):
 			course = ICourseInstance(catalog_entry, None)
 			if course is None:
 				continue
-
+			
+			course_roles = self._content_roles_for_course_instance(course)
+			if not course_roles: # no course roles
+				continue
+			
 			info = ICourseInstanceVendorInfo(course, {})
 			if not info: # filter out things that don't have vendor info
 				continue
 		
 			enrollments = ICourseEnrollments(course)
-			course_roles = self._content_roles_for_course_instance(course)
-			
 			course_list = items[catalog_entry.ntiid] = []
 			for principal, roles in user_info.items():
 				record = enrollments.get_enrollment_for_principal(principal)
