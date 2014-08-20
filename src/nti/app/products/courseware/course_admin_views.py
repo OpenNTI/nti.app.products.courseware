@@ -601,6 +601,8 @@ from io import BytesIO
 from zope.securitypolicy.interfaces import IPrincipalRoleMap
 from nti.dataserver.users.interfaces import IUserProfile
 from nti.contenttypes.courses.interfaces import ICourseSubInstance
+from nti.app.assessment.interfaces import IUsersCourseAssignmentHistory
+from nti.app.products.gradebook.interfaces import IGrade
 
 @view_config(route_name='objects.generic.traversal',
 			 renderer='rest',
@@ -659,29 +661,55 @@ class CourseMultiEnrollView(AbstractAuthenticatedView,
 
 		bio = BytesIO()
 		csv_writer = csv.writer(bio)
-		csv_writer.writerow( ['Course', 'SubInstance', 'User', 'Email'] )
+		csv_writer.writerow( ['Course', 'SubInstance', 'User', 'Email', 'AssignmentId', 'Grade'] )
 
 		for catalog_entry in catalog.iterCatalogEntries():
 			course = ICourseInstance( catalog_entry )
 
 			if not ICourseSubInstance.providedBy( course ):
+				course_enroll_map = {}
+
 				course_enrollments = ICourseEnrollments( course )
 				course_enrollments = [x for x in course_enrollments.iter_enrollments()]
 				course_enrollees = [x.Principal for x in course_enrollments]
-				course_name = course.__name__
+				course_enroll_map[course] = set( course_enrollees )
 
 				for sub in course.SubInstances.values():
 					sub_enrollments = ICourseEnrollments( sub )
 					sub_enrollments = [x for x in sub_enrollments.iter_enrollments()]
 					sub_enrollees = [x.Principal for x in sub_enrollments]
+					course_enroll_map[sub] = set( sub_enrollees )
 
-					for user in sub_enrollees:
-						# Do we have to worry about multiple subinstance enrollments? (We don't)
-						if user in course_enrollees:
-							sub_name = sub.__name__
-		 					profile = IUserProfile( user, None )
-		 					email = getattr( profile, 'email', None )
-		 					csv_writer.writerow( [ course_name, sub_name, user.username, email ] )
+				user_map = {}
+
+				# Probably a better way to do this, but yea.
+				# Find our suspects.
+				for key, _list in course_enroll_map.items():
+					for _user in _list:
+						if _user not in user_map:
+							user_map[_user] = []
+						user_map[_user].append( key )
+
+				for _user, _list in user_map.items():
+					if len( _list ) > 1:
+
+						for _course in _list:
+							# Return for consumption
+							if ICourseSubInstance.providedBy( _course ):
+								course_name = _course.__parent__.__parent__.__name__
+								sub_name = _course.__name__
+							else:
+								course_name = _course.__name__
+								sub_name = ''
+
+							profile = IUserProfile( _user, None )
+							email = getattr( profile, 'email', None )
+							user_history = component.getMultiAdapter( ( _course, _user ), IUsersCourseAssignmentHistory )
+
+							for a_key, a_val in user_history.items():
+								grade = IGrade( a_val, None )
+								grade_val = grade.grade if grade else None
+								csv_writer.writerow( [ course_name, sub_name, _user.username, email, a_key, grade_val ] )
 
 		response = self.request.response
 		response.body = bio.getvalue()
