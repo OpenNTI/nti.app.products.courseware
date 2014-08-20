@@ -272,11 +272,12 @@ class CourseInstanceEnrollment(_AbstractInstanceWrapper):
 			self._user = user
 
 	def xxx_fill_in_parent(self):
-		service = app_interfaces.IUserService(self._user)
-		ws = interfaces.ICoursesWorkspace(service)
-		enr_coll = EnrolledCoursesCollection(ws)
-		self.__parent__ = enr_coll
-		getattr(self, '__name__') # ensure we have this
+		if self._user:
+			service = app_interfaces.IUserService(self._user)
+			ws = interfaces.ICoursesWorkspace(service)
+			enr_coll = EnrolledCoursesCollection(ws)
+			self.__parent__ = enr_coll
+			getattr(self, '__name__') # ensure we have this
 
 	def __conform__(self, iface):
 		if IUser.isOrExtends(iface):
