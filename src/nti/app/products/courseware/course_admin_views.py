@@ -404,7 +404,7 @@ class CourseEnrollmentMigrationView(AbstractAuthenticatedView):
 
 	def __call__(self):
 		return _copy_enrollments_from_legacy_to_new(self.request)
-	
+
 # helper admin views
 
 from nti.app.externalization.view_mixins import ModeledContentUploadRequestUtilsMixin
@@ -413,8 +413,8 @@ from nti.appserver.interfaces import IUserService
 
 from nti.contenttypes.courses.interfaces import ENROLLMENT_SCOPE_VOCABULARY
 
-from nti.dataserver.users import User 
-from nti.dataserver.interfaces import IUser 
+from nti.dataserver.users import User
+from nti.dataserver.interfaces import IUser
 
 from nti.utils.maps import CaseInsensitiveDict
 
@@ -429,13 +429,13 @@ class AbstractCourseEnrollView(AbstractAuthenticatedView,
 		values = super(AbstractCourseEnrollView, self).readInput()
 		result = CaseInsensitiveDict(values)
 		return result
-	
+
 	def parseCommon(self, values):
 		# get / validate user
-		username = values.get('username') or values.get('user') 
+		username = values.get('username') or values.get('user')
 		if not username:
 			raise hexc.HTTPUnprocessableEntity(detail=_('No username'))
-		
+
 		user = User.get_user(username)
 		if not user or not IUser.providedBy(user):
 			raise hexc.HTTPNotFound(detail=_('User not found'))
@@ -445,7 +445,7 @@ class AbstractCourseEnrollView(AbstractAuthenticatedView,
 				values.get('CourseEntryNIID') or values.get('ProviderUniqueID')
 		if not ntiid:
 			raise hexc.HTTPUnprocessableEntity(detail=_('No course entry identifier'))
-		
+
 		# get catalog entry
 		try:
 			catalog = component.getUtility(ICourseCatalog)
@@ -454,7 +454,7 @@ class AbstractCourseEnrollView(AbstractAuthenticatedView,
 			raise hexc.HTTPNotFound(detail=_('Catalog not found'))
 		except KeyError:
 			raise hexc.HTTPNotFound(detail=_('Course not found'))
-		
+
 		return (catalog_entry, user)
 
 @view_config(route_name='objects.generic.traversal',
@@ -477,7 +477,7 @@ class AdminUserCourseEnrollView(AbstractCourseEnrollView):
 		service = IUserService(user)
 		workspace = ICoursesWorkspace(service)
 		parent = workspace['EnrolledCourses']
-	
+
 		# enroll
 		result = do_course_enrollment(catalog_entry, user, scope,
 									  parent=parent,
@@ -538,9 +538,9 @@ class CourseMissingContentRolesView(AbstractAuthenticatedView):
 	def __call__(self):
 		result = LocatedExternalDict()
 		items = result['Items'] = LocatedExternalDict()
-		
+
 		dataserver = component.getUtility(IDataserver)
-		
+
 		# get all content roles
 		user_info = {}
 		users_folder = IShardLayout(dataserver).users_folder
@@ -548,25 +548,25 @@ class CourseMissingContentRolesView(AbstractAuthenticatedView):
 			if not IUser.providedBy(user):
 				continue
 			principal = IPrincipal(user)
-			membership = component.getAdapter(user, 
-											  IMutableGroupMember, 
+			membership = component.getAdapter(user,
+											  IMutableGroupMember,
 											  CONTENT_ROLE_PREFIX)
-			user_info[principal] = set(membership.groups)	
-			
+			user_info[principal] = set(membership.groups)
+
 		# check catalogs
 		catalog = component.getUtility(ICourseCatalog)
 		for catalog_entry in catalog.iterCatalogEntries():
 			course = ICourseInstance(catalog_entry, None)
 			if course is None:
 				continue
-			
+
 			course_roles = _content_roles_for_course_instance(course)
 			if not course_roles: # no course roles
 				continue
-			
-			if ILegacyCommunityBasedCourseInstance.providedBy(course): 
+
+			if ILegacyCommunityBasedCourseInstance.providedBy(course):
 				continue
-		
+
 			enrollments = ICourseEnrollments(course)
 			course_list = items[catalog_entry.ntiid] = []
 			for principal, roles in user_info.items():
@@ -596,3 +596,48 @@ class AssignContentRolesView(AbstractCourseEnrollView):
 		else:
 			raise hexc.HTTPUnprocessableEntity(detail=_('Invalid scope'))
 		return hexc.HTTPNoContent()
+
+from io import BytesIO
+from zope.securitypolicy.interfaces import IPrincipalRoleMap
+from nti.dataserver.users.interfaces import IUserProfile
+from nti.contenttypes.courses.interfaces import ICourseSubInstance
+
+@view_config(route_name='objects.generic.traversal',
+			 renderer='rest',
+			 context=IDataserverFolder,
+			 request_method='GET',
+			 permission=nauth.ACT_MODERATE,
+			 name='CourseRoles')
+class CourseRolesView(AbstractAuthenticatedView,
+					ModeledContentUploadRequestUtilsMixin):
+
+	def __call__(self):
+		catalog = component.getUtility(ICourseCatalog)
+
+		bio = BytesIO()
+		csv_writer = csv.writer(bio)
+		csv_writer.writerow( ['Course', 'SubInstance', 'Role', 'Setting', 'User', 'Email'] )
+
+		for catalog_entry in catalog.iterCatalogEntries():
+			course = ICourseInstance( catalog_entry )
+
+			if ICourseSubInstance.providedBy( course ):
+				sub_name = course.__name__
+				course_name = course.__parent__.__parent__.__name__
+			else:
+				course_name = course.__name__
+				sub_name = ''
+
+			roles = IPrincipalRoleMap( course, None )
+			if roles is not None:
+				for role_id, prin_id, setting in roles.getPrincipalsAndRoles():
+					user = User.get_user( prin_id )
+					profile = IUserProfile( user, None )
+					email = getattr( profile, 'email', None )
+					csv_writer.writerow( [ course_name, sub_name, role_id, setting, prin_id, email ] )
+
+		response = self.request.response
+		response.body = bio.getvalue()
+		response.content_disposition = b'attachment; filename="CourseRoles.csv"'
+
+		return response
