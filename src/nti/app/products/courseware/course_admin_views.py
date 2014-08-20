@@ -641,3 +641,47 @@ class CourseRolesView(AbstractAuthenticatedView,
 		response.content_disposition = b'attachment; filename="CourseRoles.csv"'
 
 		return response
+
+@view_config(route_name='objects.generic.traversal',
+			 renderer='rest',
+			 context=IDataserverFolder,
+			 request_method='GET',
+			 permission=nauth.ACT_MODERATE,
+			 name='CourseMultiEnrollView')
+class CourseMultiEnrollView(AbstractAuthenticatedView,
+							ModeledContentUploadRequestUtilsMixin):
+	"""
+	Check if any users are enrolled in multiple courses/subinstances.
+	"""
+
+	def __call__(self):
+		catalog = component.getUtility(ICourseCatalog)
+
+		bio = BytesIO()
+		csv_writer = csv.writer(bio)
+		csv_writer.writerow( ['Course', 'SubInstance', 'User', 'Email'] )
+
+		for catalog_entry in catalog.iterCatalogEntries():
+			course = ICourseInstance( catalog_entry )
+
+			if not ICourseSubInstance.providedBy( course ):
+				course_enrollments = ICourseEnrollments( course )
+				course_enrollments = [x for x in course_enrollments.iter_enrollments()]
+				course_name = course.__name__
+
+				for sub in course.SubInstances.values():
+					sub_enrollments = ICourseEnrollments( course )
+
+					for user in sub_enrollments.iter_enrollments():
+						# TODO Do we have to worry about multiple subinstance enrollments?
+						if user in course_enrollments:
+							sub_name = sub.__name__
+		 					profile = IUserProfile( user, None )
+		 					email = getattr( profile, 'email', None )
+		 					csv_writer.writerow( [ course_name, sub_name, user.username, email ] )
+
+		response = self.request.response
+		response.body = bio.getvalue()
+		response.content_disposition = b'attachment; filename="CourseMultiEnrollView.csv"'
+
+		return response
