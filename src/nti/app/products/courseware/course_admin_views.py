@@ -692,7 +692,6 @@ class CourseMultiEnrollView(AbstractAuthenticatedView,
 
 				for _user, _list in user_map.items():
 					if len( _list ) > 1:
-
 						for _course in _list:
 							# Return for consumption
 							if ICourseSubInstance.providedBy( _course ):
@@ -706,10 +705,13 @@ class CourseMultiEnrollView(AbstractAuthenticatedView,
 							email = getattr( profile, 'email', None )
 							user_history = component.getMultiAdapter( ( _course, _user ), IUsersCourseAssignmentHistory )
 
-							for a_key, a_val in user_history.items():
-								grade = IGrade( a_val, None )
-								grade_val = grade.grade if grade else None
-								csv_writer.writerow( [ course_name, sub_name, _user.username, email, a_key, grade_val ] )
+							if len( user_history ) > 0:
+								for a_key, a_val in user_history.items():
+									grade = IGrade( a_val, None )
+									grade_val = grade.grade if grade else None
+									csv_writer.writerow( [ course_name, sub_name, _user.username, email, a_key, grade_val ] )
+							else:
+								csv_writer.writerow( [ course_name, sub_name, _user.username, email, '', '' ] )
 
 		response = self.request.response
 		response.body = bio.getvalue()
