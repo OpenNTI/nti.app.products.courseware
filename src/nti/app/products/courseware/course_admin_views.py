@@ -667,14 +667,17 @@ class CourseMultiEnrollView(AbstractAuthenticatedView,
 			if not ICourseSubInstance.providedBy( course ):
 				course_enrollments = ICourseEnrollments( course )
 				course_enrollments = [x for x in course_enrollments.iter_enrollments()]
+				course_enrollees = [x.Principal for x in course_enrollments]
 				course_name = course.__name__
 
 				for sub in course.SubInstances.values():
-					sub_enrollments = ICourseEnrollments( course )
+					sub_enrollments = ICourseEnrollments( sub )
+					sub_enrollments = [x for x in sub_enrollments.iter_enrollments()]
+					sub_enrollees = [x.Principal for x in sub_enrollments]
 
-					for user in sub_enrollments.iter_enrollments():
-						# TODO Do we have to worry about multiple subinstance enrollments?
-						if user in course_enrollments:
+					for user in sub_enrollees:
+						# Do we have to worry about multiple subinstance enrollments? (We don't)
+						if user in course_enrollees:
 							sub_name = sub.__name__
 		 					profile = IUserProfile( user, None )
 		 					email = getattr( profile, 'email', None )
