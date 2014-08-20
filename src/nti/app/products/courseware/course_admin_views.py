@@ -603,6 +603,8 @@ from nti.dataserver.users.interfaces import IUserProfile
 from nti.contenttypes.courses.interfaces import ICourseSubInstance
 from nti.app.assessment.interfaces import IUsersCourseAssignmentHistory
 from nti.app.products.gradebook.interfaces import IGrade
+from nti.app.products.courseware.interfaces import ICourseInstanceEnrollment
+from datetime import datetime
 
 @view_config(route_name='objects.generic.traversal',
 			 renderer='rest',
@@ -661,7 +663,8 @@ class CourseMultiEnrollView(AbstractAuthenticatedView,
 
 		bio = BytesIO()
 		csv_writer = csv.writer(bio)
-		csv_writer.writerow( ['Course', 'SubInstance', 'User', 'Email', 'AssignmentId', 'Grade'] )
+		csv_writer.writerow( [	'Course', 'SubInstance', 'Enroll Date', 'Enroll Status',
+								'User', 'Email', 'AssignmentId', 'Grade', 'Submission Date'] )
 
 		for catalog_entry in catalog.iterCatalogEntries():
 			course = ICourseInstance( catalog_entry )
@@ -701,17 +704,35 @@ class CourseMultiEnrollView(AbstractAuthenticatedView,
 								course_name = _course.__name__
 								sub_name = ''
 
+							# Basic enrollment info
 							profile = IUserProfile( _user, None )
 							email = getattr( profile, 'email', None )
-							user_history = component.getMultiAdapter( ( _course, _user ), IUsersCourseAssignmentHistory )
+							user_history = component.getMultiAdapter(
+													( _course, _user ), IUsersCourseAssignmentHistory )
 
+							enrollment = component.getMultiAdapter(
+													( _course, _user), ICourseInstanceEnrollment )
+
+							enrolled_date = getattr( enrollment, 'createdTime', None )
+							if enrolled_date:
+								enrolled_date = datetime.utcfromtimestamp( enrolled_date )
+							enrollment_status = getattr( enrollment, 'LegacyEnrollmentStatus', None )
+
+							# Assignment info, if we have any.
 							if len( user_history ) > 0:
 								for a_key, a_val in user_history.items():
+									submit_date = getattr( a_val, 'createdTime', None )
+									if submit_date:
+										submit_date = datetime.utcfromtimestamp( submit_date )
+
 									grade = IGrade( a_val, None )
 									grade_val = grade.grade if grade else None
-									csv_writer.writerow( [ course_name, sub_name, _user.username, email, a_key, grade_val ] )
+									csv_writer.writerow( [ 	course_name, sub_name, enrolled_date, enrollment_status,
+															_user.username,
+															email, a_key, grade_val, submit_date ] )
 							else:
-								csv_writer.writerow( [ course_name, sub_name, _user.username, email, '', '' ] )
+								csv_writer.writerow( [ 	course_name, sub_name, enrolled_date, enrollment_status,
+														_user.username, email, '', '', '' ] )
 
 		response = self.request.response
 		response.body = bio.getvalue()
