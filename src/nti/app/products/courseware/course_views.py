@@ -395,7 +395,11 @@ class CourseEnrollmentsRosterDownloadView(AllCourseEnrollmentRosterDownloadView)
 	"""
 
 	def _iter_catalog_entries(self):
-		return ( ICourseCatalogEntry(self.request.context), )
+		try:
+			return ( ICourseCatalogEntry(self.request.context), )
+		except TypeError:
+			# A course instance that's no longer in the catalog
+			raise hexc.HTTPNotFound("Course instance not in catalog")
 
 
 @interface.implementer(IPathAdapter)
