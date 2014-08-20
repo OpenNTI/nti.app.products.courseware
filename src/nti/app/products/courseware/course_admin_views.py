@@ -502,6 +502,8 @@ class AdminUserCourseDropView(AbstractCourseEnrollView):
 		enrollments.drop(user)
 		return hexc.HTTPNoContent()
 
+from nti.contenttypes.courses.sharing import add_principal_to_course_content_roles
+
 from nti.dataserver.interfaces import IDataserver
 from nti.dataserver.interfaces import IShardLayout
 from nti.dataserver.interfaces import IMutableGroupMember
@@ -512,26 +514,27 @@ from nti.externalization.interfaces import LocatedExternalDict
 
 from .interfaces import ILegacyCommunityBasedCourseInstance
 
+def _content_roles_for_course_instance(course):
+	bundle = getattr(course, 'ContentPackageBundle', None)
+	packs = getattr(bundle, 'ContentPackages', ())
+	roles = []
+	for pack in packs:
+		ntiid = pack.ntiid
+		ntiid = ntiids.get_parts(ntiid)
+		provider = ntiid.provider
+		specific = ntiid.specific
+		roles.append(role_for_providers_content(provider, specific))
+	return set(roles)
+
 @view_config(route_name='objects.generic.traversal',
 			 renderer='rest',
 			 request_method='GET',
 			 context=IDataserverFolder,
 			 permission=nauth.ACT_COPPA_ADMIN,
 			 name='CourseMissingContentRoles')
-class CourseMissingContentRolesView(AbstractCourseEnrollView):
+class CourseMissingContentRolesView(AbstractAuthenticatedView):
 
-	def _content_roles_for_course_instance(self, course):
-		bundle = getattr(course, 'ContentPackageBundle', None)
-		packs = getattr(bundle, 'ContentPackages', ())
-		roles = []
-		for pack in packs:
-			ntiid = pack.ntiid
-			ntiid = ntiids.get_parts(ntiid)
-			provider = ntiid.provider
-			specific = ntiid.specific
-			roles.append(role_for_providers_content(provider, specific))
-		return set(roles)
-		
+
 	def __call__(self):
 		result = LocatedExternalDict()
 		items = result['Items'] = LocatedExternalDict()
@@ -557,7 +560,7 @@ class CourseMissingContentRolesView(AbstractCourseEnrollView):
 			if course is None:
 				continue
 			
-			course_roles = self._content_roles_for_course_instance(course)
+			course_roles = _content_roles_for_course_instance(course)
 			if not course_roles: # no course roles
 				continue
 			
@@ -575,3 +578,21 @@ class CourseMissingContentRolesView(AbstractCourseEnrollView):
 					course_list.append(principal.id)
 		# return
 		return result
+
+@view_config(route_name='objects.generic.traversal',
+			 renderer='rest',
+			 request_method='POST',
+			 context=IDataserverFolder,
+			 permission=nauth.ACT_COPPA_ADMIN,
+			 name='AssignContentRolesView')
+class AssignContentRolesView(AbstractCourseEnrollView):
+
+	def __call__(self):
+		values = self.readInput()
+		catalog_entry, user = self.parseCommon(values)
+		course = ICourseInstance(catalog_entry, None)
+		if course is not None:
+			add_principal_to_course_content_roles(user, course)
+		else:
+			raise hexc.HTTPUnprocessableEntity(detail=_('Invalid scope'))
+		return hexc.HTTPNoContent()
