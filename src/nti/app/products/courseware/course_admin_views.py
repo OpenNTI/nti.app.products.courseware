@@ -502,8 +502,6 @@ class AdminUserCourseDropView(AbstractCourseEnrollView):
 		enrollments.drop(user)
 		return hexc.HTTPNoContent()
 
-from nti.contenttypes.courses.sharing import add_principal_to_course_content_roles
-
 from nti.dataserver.interfaces import IDataserver
 from nti.dataserver.interfaces import IShardLayout
 from nti.dataserver.interfaces import IMutableGroupMember
@@ -578,24 +576,6 @@ class CourseMissingContentRolesView(AbstractAuthenticatedView):
 					course_list.append(principal.id)
 		# return
 		return result
-
-@view_config(route_name='objects.generic.traversal',
-			 renderer='rest',
-			 request_method='POST',
-			 context=IDataserverFolder,
-			 permission=nauth.ACT_COPPA_ADMIN,
-			 name='AssignContentRolesView')
-class AssignContentRolesView(AbstractCourseEnrollView):
-
-	def __call__(self):
-		values = self.readInput()
-		catalog_entry, user = self.parseCommon(values)
-		course = ICourseInstance(catalog_entry, None)
-		if course is not None:
-			add_principal_to_course_content_roles(user, course)
-		else:
-			raise hexc.HTTPUnprocessableEntity(detail=_('Invalid scope'))
-		return hexc.HTTPNoContent()
 
 from io import BytesIO
 from zope.securitypolicy.interfaces import IPrincipalRoleMap
