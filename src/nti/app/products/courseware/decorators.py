@@ -121,9 +121,13 @@ class _CourseEnrollmentUserProfileDetailsDecorator(object):
 	__metaclass__ = SingletonDecorator
 
 	def decorateExternalMapping(self, context, result):
-		user = IUser(context)
-		ext_profile = to_external_object(user, name='summary')
-		result['UserProfile'] = ext_profile
+		try:
+			user = IUser(context)
+		except TypeError:
+			pass
+		else:
+			ext_profile = to_external_object(user, name='summary')
+			result['UserProfile'] = ext_profile
 
 @interface.implementer(IExternalMappingDecorator)
 @component.adapter(ICourseCatalogEntry)
