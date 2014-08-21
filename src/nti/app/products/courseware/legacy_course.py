@@ -35,7 +35,6 @@ from zope.cachedescriptors.property import Lazy
 from BTrees import OOBTree
 from persistent import Persistent
 
-from nti.contentlibrary.interfaces import ILegacyCourseConflatedContentPackage
 from nti.contentlibrary.interfaces import IContentPackageLibrary
 
 from nti.contenttypes.courses.courses import CourseInstance
@@ -414,14 +413,22 @@ def _course_content_package_to_course(package):
 	setattr(package, cache_name, course)
 	return course
 
+from zope.securitypolicy.interfaces import Allow
+from zope.securitypolicy.interfaces import IPrincipalRoleMap
+
 from pyramid.traversal import find_interface
+
 from nti.contentlibrary.interfaces import IContentUnit
 from nti.contentlibrary.interfaces import IContentPackage
+
+from nti.contenttypes.courses.interfaces import RID_TA
+from nti.contenttypes.courses.interfaces import RID_INSTRUCTOR
+from nti.contenttypes.courses.interfaces import ICourseEnrollments
 from nti.contenttypes.courses.interfaces import ICourseSubInstance
 
-@interface.implementer(ICourseInstance)
-@component.adapter(IContentUnit)
-def _content_unit_to_course(unit):
+from nti.dataserver.interfaces import IUser
+
+def _content_unit_to_courses(unit, include_sub_instances=True):
 	# XXX JAM These heuristics aren't well tested.
 
 	# First, try the true legacy case. This involves
@@ -431,31 +438,67 @@ def _content_unit_to_course(unit):
 	if package is not None:
 		result = ICourseInstance(package, None)
 		if result is not None:
-			return result
+			return (result,)
 
-	# Nothing true legacy. Take the first course that
-	# claims to use that package.
+	# Nothing true legacy. find all courses that match this pacakge
+	result = []
 	package = find_interface(unit, IContentPackage)
-	# XXX: We probably need to check and see who's enrolled
-	# to find the most specific course instance to return?
-	# As it stands, we promise to return only a root course,
-	# not a subinstance (section)
-	# XXX: FIXME: This requires a one-to-one mapping
 	course_catalog = component.getUtility(ICourseCatalog)
 	for entry in course_catalog.iterCatalogEntries():
 		instance = ICourseInstance(entry, None)
-		if instance is None or ICourseSubInstance.providedBy(instance):
+		if instance is None:
 			continue
-
+		if not include_sub_instances and ICourseSubInstance.providedBy(instance):
+			continue
 		try:
 			packages = instance.ContentPackageBundle.ContentPackages
 		except AttributeError:
 			packages = (instance.legacy_content_package,)
 
 		if package in packages:
+			result.append(instance)
+	return result
+
+@interface.implementer(ICourseInstance)
+@component.adapter(IContentUnit)
+def _content_unit_to_course(unit):
+	## get all courses, don't include sections
+	courses = _content_unit_to_courses(unit, False)
+	
+	# XXX: We probably need to check and see who's enrolled
+	# to find the most specific course instance to return?
+	# As it stands, we promise to return only a root course,
+	# not a subinstance (section)
+	# XXX: FIXME: This requires a one-to-one mapping
+	return courses[0] if courses else None
+
+def is_instructor(course, user):
+	prin = IPrincipal(user)
+	roles = IPrincipalRoleMap(course, None)
+	if not roles:
+		return False
+	return Allow in (roles.getSetting(RID_TA, prin.id),
+					 roles.getSetting(RID_INSTRUCTOR, prin.id))
+			
+@interface.implementer(ICourseInstance)
+@component.adapter(IContentUnit, IUser)
+def _content_unit_and_user_to_course(unit, user):	
+	## get all courses
+	courses = _content_unit_to_courses(unit, True)
+	for instance in courses or ():
+		# check enrollment
+		enrollments = ICourseEnrollments(instance)
+		record = enrollments.get_enrollment_for_principal(user)
+		if record is not None:
 			return instance
-
-
+	
+		# check role
+		if is_instructor(instance, user):
+			return instance
+		
+	# nothing found return first course
+	return courses[0] if courses else None
+	
 @interface.implementer(ICourseAdministrativeLevel)
 @component.adapter(ICommunity)
 class _LegacyCommunityBasedCourseAdministrativeLevel(CourseAdministrativeLevel):
@@ -486,11 +529,11 @@ class _LegacyCommunityBasedCourseInstanceFakeBundle(object):
 		return {'ContentPackages': self.ContentPackages,
 				'Class': 'ContentPackageBundle'}
 
-
 from nti.contenttypes.courses.interfaces import ES_CREDIT, ES_PUBLIC
 from nti.contenttypes.courses.interfaces import ENROLLMENT_SCOPE_VOCABULARY
 from nti.contenttypes.courses.interfaces import ICourseInstanceSharingScopes
 from nti.contenttypes.courses.sharing import CourseInstanceSharingScopes
+
 from zope.schema.vocabulary import SimpleVocabulary
 
 _LEGACY_ENROLLMENT_SCOPE_VOCABULARY = SimpleVocabulary(
@@ -508,8 +551,6 @@ class _LegacyCommunityBasedCourseInstanceFakeSharingScopes(CourseInstanceSharing
 		# override to return a subset, the only
 		# ones we support
 		return _LEGACY_ENROLLMENT_SCOPE_VOCABULARY
-
-
 
 @interface.implementer(ILegacyCommunityBasedCourseInstance)
 class _LegacyCommunityBasedCourseInstance(CourseInstance):
