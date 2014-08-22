@@ -331,8 +331,6 @@ def _update_scopes(course, purchsable_ntiid, package): #pylint:disable=I0011,W02
 
 	scopes.initScopes()
 
-from .interfaces import ICourseCatalogLegacyContentEntry
-
 @interface.implementer(ICourseInstance)
 @component.adapter(ICourseCatalogLegacyContentEntry)
 def _course_instance_for_catalog_entry(entry):
