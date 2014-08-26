@@ -14,8 +14,6 @@ from zope import component
 from zope import interface
 
 from nti.contentlibrary.interfaces import IContentPackageLibrary
-from nti.contentlibrary.indexed_data.interfaces import IAudioIndexedDataContainer
-from nti.contentlibrary.indexed_data.interfaces import IVideoIndexedDataContainer
 
 from nti.contentsearch.interfaces import IBookContent
 from nti.contentsearch.interfaces import INTICardContent
@@ -27,6 +25,9 @@ from nti.contentsearch.interfaces import IVideoTranscriptContent
 from nti.contenttypes.courses.interfaces import ICourseInstance
 
 from nti.dataserver.interfaces import ICreated
+
+from nti.ntiids.ntiids import is_valid_ntiid_string
+from nti.ntiids.ntiids import find_object_with_ntiid
 
 def _get_content_path(ntiid):
 	result = ()
@@ -55,67 +56,27 @@ def _get_outline_node(outline, ntiids=()):
 	result = _recur(outline)
 	return result
 
-def find_content_path_from_ntiid(name):
-	libray = component.queryUtility(IContentPackageLibrary)
-	if not libray or not name or not name.startswith('tag:'):
-		return None
+def _is_allowed(ntiid, query=None, now=None):
+	if query is None:
+		return True # allow by default
 
-	# find a content unit library
-	path = libray.pathToNTIID(name)
-	if path:
-		return path
-
-	# search media containers
-	ifaces = (IAudioIndexedDataContainer, IVideoIndexedDataContainer)
-	def _search(unit):
-		for iface in ifaces:
-			if iface(unit).contains_data_item_with_ntiid(name):
-				return libray.pathToNTIID(unit.ntiid)
-
-		for child in unit.children:
-			result = _search(child)
-			if result:
-				return result
-
-	for package in libray.contentPackages:
-		result = _search(package)
-		if result:
-			return result
-
-	# finally embedded nttiids
-	paths = libray.pathsToEmbeddedNTIID(name)
-	if paths:
-		return paths[0]
-
-def _find_course_and_unit_by_ntiid(name):
-	"""
-	Return an arbitrary course associated with the content ntiid
-	"""
-	course = None
-	path = find_content_path_from_ntiid(name)
-	for unit in reversed(path or ()):
-		# The adapter function here is where the arbitraryness comes in
-		course = ICourseInstance(unit, None)
-		if course is not None:
-			return course, unit
-	return None, None
-
-def _is_allowed(ntiid, now=None):
-	# always allow
+	context = query.context or {}
+	course = context.get('course')
+	if not course or not is_valid_ntiid_string(course):
+		return True # allow by default
+	
+	course = find_object_with_ntiid(course)
+	if not course or not ICourseInstance.providedBy(course):
+		return True # allow by default
+		
 	result = True
-
-	# find course and unit
-	course, unit = _find_course_and_unit_by_ntiid(ntiid)
-
-	# if we found a course check its outline
-	if ICourseInstance.providedBy(course):
-		ntiids = _get_content_path(ntiid) if unit is None else (unit.ntiid,)
-		node = _get_outline_node(course.Outline, ntiids)
-		if node is not None:
-			now = now or datetime.utcnow()
-			beginning = getattr(node, 'AvailableBeginning', None) or now
-			is_outline_stub_only = getattr(node, 'is_outline_stub_only', False)
-			result = not is_outline_stub_only and now >= beginning
+	ntiids = _get_content_path(ntiid)
+	node = _get_outline_node(course.Outline, ntiids)
+	if node is not None:
+		now = now or datetime.utcnow()
+		beginning = getattr(node, 'AvailableBeginning', None) or now
+		is_outline_stub_only = getattr(node, 'is_outline_stub_only', False)
+		result = not is_outline_stub_only and now >= beginning
 	return result
 
 @interface.implementer(ISearchHitPredicate)
@@ -131,7 +92,7 @@ class _BasePredicate(object):
 class _ContentHitPredicate(_BasePredicate):
 
 	def allow(self, item, score, query=None):
-		result = _is_allowed(item.ntiid)
+		result = _is_allowed(item.ntiid, query)
 		if not result:
 			logger.debug("Content '%s' not allowed for search. %s", item.ntiid, item)
 		return result
@@ -141,7 +102,7 @@ class _ContentHitPredicate(_BasePredicate):
 class _AudioContentHitPredicate(_BasePredicate):
 
 	def allow(self, item, score, query=None):
-		result = _is_allowed(item.containerId)
+		result = _is_allowed(item.containerId, query)
 		if not result:
 			logger.debug("Content '%s' not allowed for search. %s", item.containerId, item)
 		return result
@@ -151,7 +112,7 @@ class _AudioContentHitPredicate(_BasePredicate):
 class _VideoContentHitPredicate(_BasePredicate):
 
 	def allow(self, item, score, query=None):
-		result = _is_allowed(item.containerId)
+		result = _is_allowed(item.containerId, query)
 		if not result:
 			logger.debug("Content '%s' not allowed for search. %s", item.containerId, item)
 		return result
@@ -161,7 +122,8 @@ class _VideoContentHitPredicate(_BasePredicate):
 class _NTICardContentHitPredicate(_BasePredicate):
 
 	def allow(self, item, score, query=None):
-		result = _is_allowed(item.containerId) and _is_allowed(item.target_ntiid)
+		result = _is_allowed(item.containerId, query) and \
+				 _is_allowed(item.target_ntiid, query)
 		if not result:
 			logger.debug("Content '%s' not allowed for search. %s", item.containerId, item)
 		return result
@@ -173,7 +135,7 @@ class _CreatedContentHitPredicate(_BasePredicate):
 	def allow(self, item, score, query=None):
 		resolver = IContainerIDResolver(item, None)
 		containerId = resolver.containerId if resolver is not None else None
-		result = _is_allowed(containerId) if containerId else True
+		result = _is_allowed(containerId, query) if containerId else True
 		if not result:
 			logger.debug("Content '%s' not allowed for search. %s", containerId, item)
 		return result
