@@ -14,7 +14,6 @@ logger = __import__('logging').getLogger(__name__)
 from zope import component
 from zope import interface
 from zope import lifecycleevent
-from zope.security.interfaces import IPrincipal
 
 from pyramid.view import view_config
 from pyramid import httpexceptions as hexc
@@ -467,9 +466,8 @@ class AdminUserCourseEnrollView(AbstractCourseEnrollView):
 
 	def __call__(self):
 		values = self.readInput()
-		# get common
 		catalog_entry, user = self.parseCommon(values)
-		# get validate scope
+		
 		scope = values.get('scope', 'Public')
 		if not scope or scope not in ENROLLMENT_SCOPE_VOCABULARY.by_token.keys():
 			raise hexc.HTTPUnprocessableEntity(detail=_('Invalid scope'))
@@ -478,7 +476,6 @@ class AdminUserCourseEnrollView(AbstractCourseEnrollView):
 		workspace = ICoursesWorkspace(service)
 		parent = workspace['EnrolledCourses']
 
-		# enroll
 		result = do_course_enrollment(catalog_entry, user, scope,
 									  parent=parent,
 									  request=self.request)
@@ -494,97 +491,26 @@ class AdminUserCourseDropView(AbstractCourseEnrollView):
 
 	def __call__(self):
 		values = self.readInput()
-		# get common
 		catalog_entry, user = self.parseCommon(values)
-		# get enrollments and drop
 		course_instance  = ICourseInstance(catalog_entry)
 		enrollments = get_enrollments(course_instance, self.request)
 		enrollments.drop(user)
 		return hexc.HTTPNoContent()
 
-from nti.dataserver.interfaces import IDataserver
-from nti.dataserver.interfaces import IShardLayout
-from nti.dataserver.interfaces import IMutableGroupMember
-from nti.dataserver.authorization import CONTENT_ROLE_PREFIX
-from nti.dataserver.authorization import role_for_providers_content
-
-from nti.externalization.interfaces import LocatedExternalDict
-
-from .interfaces import ILegacyCommunityBasedCourseInstance
-
-def _content_roles_for_course_instance(course):
-	bundle = getattr(course, 'ContentPackageBundle', None)
-	packs = getattr(bundle, 'ContentPackages', ())
-	roles = []
-	for pack in packs:
-		ntiid = pack.ntiid
-		ntiid = ntiids.get_parts(ntiid)
-		provider = ntiid.provider
-		specific = ntiid.specific
-		roles.append(role_for_providers_content(provider, specific))
-	return set(roles)
-
-@view_config(route_name='objects.generic.traversal',
-			 renderer='rest',
-			 request_method='GET',
-			 context=IDataserverFolder,
-			 permission=nauth.ACT_COPPA_ADMIN,
-			 name='CourseMissingContentRoles')
-class CourseMissingContentRolesView(AbstractAuthenticatedView):
-
-
-	def __call__(self):
-		result = LocatedExternalDict()
-		items = result['Items'] = LocatedExternalDict()
-
-		dataserver = component.getUtility(IDataserver)
-
-		# get all content roles
-		user_info = {}
-		users_folder = IShardLayout(dataserver).users_folder
-		for user in users_folder.values():
-			if not IUser.providedBy(user):
-				continue
-			principal = IPrincipal(user)
-			membership = component.getAdapter(user,
-											  IMutableGroupMember,
-											  CONTENT_ROLE_PREFIX)
-			user_info[principal] = set(membership.groups)
-
-		# check catalogs
-		catalog = component.getUtility(ICourseCatalog)
-		for catalog_entry in catalog.iterCatalogEntries():
-			course = ICourseInstance(catalog_entry, None)
-			if course is None:
-				continue
-
-			course_roles = _content_roles_for_course_instance(course)
-			if not course_roles: # no course roles
-				continue
-
-			if ILegacyCommunityBasedCourseInstance.providedBy(course):
-				continue
-
-			enrollments = ICourseEnrollments(course)
-			course_list = items[catalog_entry.ntiid] = []
-			for principal, roles in user_info.items():
-				record = enrollments.get_enrollment_for_principal(principal)
-				if record is None:
-					continue
-				# check if course roles are in user roles
-				if not all(map(lambda x: x in roles, course_roles)):
-					course_list.append(principal.id)
-		# return
-		return result
-
 from io import BytesIO
-from zope.securitypolicy.interfaces import IPrincipalRoleMap
-from nti.dataserver.users.interfaces import IUserProfile
-from nti.contenttypes.courses.interfaces import ICourseSubInstance
-from nti.app.assessment.interfaces import IUsersCourseAssignmentHistory
-from nti.app.products.gradebook.interfaces import IGrade
-from nti.app.products.courseware.interfaces import ICourseInstanceEnrollment
 from datetime import datetime
+
+from zope.securitypolicy.interfaces import IPrincipalRoleMap
+
+from nti.app.assessment.interfaces import IUsersCourseAssignmentHistory
+
+from nti.app.products.courseware.interfaces import ICourseInstanceEnrollment
+
+from nti.app.products.gradebook.interfaces import IGrade
+
+from nti.contenttypes.courses.interfaces import ICourseSubInstance
+
+from nti.dataserver.users.interfaces import IUserProfile
 
 @view_config(route_name='objects.generic.traversal',
 			 renderer='rest',
