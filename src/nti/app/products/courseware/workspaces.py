@@ -441,17 +441,27 @@ from nti.app.notabledata.interfaces import IUserPresentationPriorityCreators
 @component.adapter(IUser, interface.Interface)
 class _UserInstructorsPresentationPriorityCreators(object):
 	"""
-	The instructors of the classes a user is enrolled in are
-	given priority.
+	The instructors of the classes a user is enrolled in, and which
+	are not past their end date, given priority.
 	"""
 
 	def __init__(self, user, request):
 		self.context = user
 
 	def iter_priority_creator_usernames(self):
+		result = set()
+
 		for enrollments in component.subscribers( (self.context,),
 												  IPrincipalEnrollments):
 			for enrollment in enrollments.iter_enrollments():
-				course = ICourseInstance(enrollment)
+				course = ICourseInstance(enrollment, None)
+				catalog_entry = ICourseCatalogEntry(course, None)
+				if course is None or catalog_entry is None: # pragma: no cover
+					continue
+				if not catalog_entry.isCourseCurrentlyActive():
+					continue
+
 				for instructor in course.instructors:
-					yield instructor.id
+					result.add( instructor.id )
+
+		return result

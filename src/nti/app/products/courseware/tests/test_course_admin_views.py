@@ -26,6 +26,8 @@ from hamcrest import has_entries
 from hamcrest import has_item
 from hamcrest import starts_with
 
+import fudge
+
 from nti.app.testing.decorators import WithSharedApplicationMockDS
 from nti.app.testing.application_webtest import ApplicationLayerTest
 from . import LegacyInstructedCourseApplicationTestLayer
@@ -277,7 +279,11 @@ class TestCreateForums(_AbstractMixin,
 					 starts_with('tag:nextthought.com,2011-10:unknown-OID-0x') )
 
 	@WithSharedApplicationMockDS(users=True,testapp=True,default_authenticate=True)
-	def test_create_topic_directly(self):
+	@fudge.patch('nti.contenttypes.courses.catalog.CourseCatalogEntry.isCourseCurrentlyActive')
+	def test_create_topic_directly(self, fake_active):
+		# make it look like the course is in session
+		fake_active.is_callable().returns(True)
+
 		inst_env = self._make_extra_environ(username='harp4162')
 
 		topic_res = self.testapp.post_json(self.default_path,

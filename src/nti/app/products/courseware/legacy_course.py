@@ -462,7 +462,7 @@ def _content_unit_to_courses(unit, include_sub_instances=True):
 def _content_unit_to_course(unit):
 	## get all courses, don't include sections
 	courses = _content_unit_to_courses(unit, False)
-	
+
 	# XXX: We probably need to check and see who's enrolled
 	# to find the most specific course instance to return?
 	# As it stands, we promise to return only a root course,
@@ -477,10 +477,10 @@ def is_instructor(course, user):
 		return False
 	return Allow in (roles.getSetting(RID_TA, prin.id),
 					 roles.getSetting(RID_INSTRUCTOR, prin.id))
-			
+
 @interface.implementer(ICourseInstance)
 @component.adapter(IContentUnit, IUser)
-def _content_unit_and_user_to_course(unit, user):	
+def _content_unit_and_user_to_course(unit, user):
 	## get all courses
 	courses = _content_unit_to_courses(unit, True)
 	for instance in courses or ():
@@ -489,14 +489,14 @@ def _content_unit_and_user_to_course(unit, user):
 		record = enrollments.get_enrollment_for_principal(user)
 		if record is not None:
 			return instance
-	
+
 		# check role
 		if is_instructor(instance, user):
 			return instance
-		
+
 	# nothing found return first course
 	return courses[0] if courses else None
-	
+
 @interface.implementer(ICourseAdministrativeLevel)
 @component.adapter(ICommunity)
 class _LegacyCommunityBasedCourseAdministrativeLevel(CourseAdministrativeLevel):
