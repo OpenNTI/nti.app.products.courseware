@@ -11,48 +11,51 @@ __docformat__ = "restructuredtext en"
 
 logger = __import__('logging').getLogger(__name__)
 
+import io
+import csv
+from collections import defaultdict
+
 from zope import component
 from zope import interface
 from zope import lifecycleevent
+from zope.security.interfaces import IPrincipal
+from zope.securitypolicy.interfaces import IPrincipalRoleMap
+from zope.securitypolicy.interfaces import IPrincipalRoleManager
 
 from pyramid.view import view_config
 from pyramid import httpexceptions as hexc
-from nti.app.base.abstract_views import AbstractAuthenticatedView
 
-from nti.dataserver import authorization as nauth
+from nti.app.base.abstract_views import AbstractAuthenticatedView
+from nti.app.externalization.view_mixins import UploadRequestUtilsMixin
 
 from nti.contentfragments.interfaces import CensoredPlainTextContentFragment
 
+from nti.contenttypes.courses.interfaces import RID_TA
+from nti.contenttypes.courses.interfaces import RID_INSTRUCTOR
 from nti.contenttypes.courses.interfaces import ICourseCatalog
 from nti.contenttypes.courses.interfaces import ICourseInstance
-from nti.contenttypes.courses.interfaces import ICourseCatalogEntry
 from nti.contenttypes.courses.interfaces import ICourseEnrollments
+from nti.contenttypes.courses.interfaces import ICourseCatalogEntry
+from nti.contenttypes.courses.interfaces import ICourseEnrollmentManager
 from nti.contenttypes.courses.interfaces import ICourseInstanceVendorInfo
 from nti.contenttypes.courses.interfaces import ICourseInstancePublicScopedForum
 from nti.contenttypes.courses.interfaces import ICourseInstanceForCreditScopedForum
 
-import io
-import csv
-
-from nti.ntiids import ntiids
-
+from nti.dataserver import traversal
+from nti.dataserver.users import Entity
+from nti.dataserver import authorization as nauth
+from nti.dataserver.interfaces import IDataserverFolder
 from nti.dataserver.contenttypes.forums.ace import ForumACE
 
 from nti.dataserver.contenttypes.forums.forum import ACLCommunityForum
+from nti.dataserver.contenttypes.forums.post import CommunityHeadlinePost
+from nti.dataserver.contenttypes.forums.topic import CommunityHeadlineTopic
 from nti.dataserver.contenttypes.forums.interfaces import IACLCommunityBoard
 from nti.dataserver.contenttypes.forums.interfaces import IACLCommunityForum
 
-from nti.dataserver.contenttypes.forums.post import CommunityHeadlinePost
-from nti.dataserver.contenttypes.forums.topic import CommunityHeadlineTopic
-
 from nti.externalization.internalization import update_from_external_object
-from nti.app.externalization.view_mixins import UploadRequestUtilsMixin
 
-from nti.dataserver.users import Entity
-
-from nti.dataserver.interfaces import IDataserverFolder
-from nti.dataserver import traversal
-from collections import defaultdict
+from nti.ntiids import ntiids
 
 from .interfaces import NTIID_TYPE_COURSE_SECTION_TOPIC
 
@@ -418,6 +421,7 @@ from nti.dataserver.interfaces import IUser
 from nti.utils.maps import CaseInsensitiveDict
 
 from .interfaces import ICoursesWorkspace
+
 from .catalog_views import get_enrollments
 from .catalog_views import do_course_enrollment
 
@@ -464,6 +468,31 @@ class AbstractCourseEnrollView(AbstractAuthenticatedView,
 			 name='AdminUserCourseEnroll')
 class AdminUserCourseEnrollView(AbstractCourseEnrollView):
 
+	def drop_any_other_enrollments(self, course_entry, user):
+		course_ntiid = course_entry.ntiid
+		course = ICourseInstance(course_entry)
+			
+		if ICourseSubInstance.providedBy(course):
+			main_course = course.__parent__.__parent__
+		else:
+			main_course = course
+	
+		result = []
+		universe = [main_course] + list(main_course.SubInstances.values())
+		for instance in universe:
+			instance_entry = ICourseCatalogEntry(instance)
+			if course_ntiid == instance_entry.ntiid:
+				continue
+			enrollments = ICourseEnrollments(instance)
+			record = enrollments.get_enrollment_for_principal(user)
+			if record is not None:
+				enrollment_manager = ICourseEnrollmentManager(instance)
+				enrollment_manager.drop(user)
+				logger.warn("User %s dropped from course '%s' enrollment", user,
+							instance_entry.ProviderUniqueID)
+				result.append(instance_entry)
+		return result
+
 	def __call__(self):
 		values = self.readInput()
 		catalog_entry, user = self.parseCommon(values)
@@ -472,10 +501,11 @@ class AdminUserCourseEnrollView(AbstractCourseEnrollView):
 		if not scope or scope not in ENROLLMENT_SCOPE_VOCABULARY.by_token.keys():
 			raise hexc.HTTPUnprocessableEntity(detail=_('Invalid scope'))
 
+		self.drop_any_other_enrollments(catalog_entry, user)
+		
 		service = IUserService(user)
 		workspace = ICoursesWorkspace(service)
 		parent = workspace['EnrolledCourses']
-
 		result = do_course_enrollment(catalog_entry, user, scope,
 									  parent=parent,
 									  request=self.request)
@@ -497,10 +527,38 @@ class AdminUserCourseDropView(AbstractCourseEnrollView):
 		enrollments.drop(user)
 		return hexc.HTTPNoContent()
 
+@view_config(route_name='objects.generic.traversal',
+			 renderer='rest',
+			 request_method='POST',
+			 context=IDataserverFolder,
+			 permission=nauth.ACT_COPPA_ADMIN,
+			 name='AdminManageUserCourseRole')
+class AdminManageUserCourseRoleView(AbstractCourseEnrollView):
+
+	def __call__(self):
+		values = self.readInput()
+		catalog_entry, user = self.parseCommon(values)
+		
+		role = values.get('role', RID_INSTRUCTOR)
+		if not role or role not in (RID_INSTRUCTOR, RID_TA):
+			raise hexc.HTTPUnprocessableEntity(detail=_('Invalid role'))
+		
+		permission = values.get('permission', 'assign')
+		if not permission or permission not in ('assign', 'remove'):
+			raise hexc.HTTPUnprocessableEntity(detail=_('Invalid permission'))
+		
+		principal = IPrincipal(user)
+		course_instance  = ICourseInstance(catalog_entry)
+		manager = IPrincipalRoleManager(course_instance)
+		if permission == 'assign':
+			manager.assignRoleToPrincipal(role, principal.id)
+		else:
+			manager.removeRoleFromPrincipal(role, principal.id)
+			
+		return hexc.HTTPNoContent()
+	
 from io import BytesIO
 from datetime import datetime
-
-from zope.securitypolicy.interfaces import IPrincipalRoleMap
 
 from nti.app.assessment.interfaces import IUsersCourseAssignmentHistory
 
@@ -526,7 +584,10 @@ class CourseRolesView(AbstractAuthenticatedView,
 
 		bio = BytesIO()
 		csv_writer = csv.writer(bio)
-		csv_writer.writerow( ['Course', 'SubInstance', 'Role', 'Setting', 'User', 'Email'] )
+		
+		# header
+		header = ['Course', 'SubInstance', 'Role', 'Setting', 'User', 'Email'] 
+		csv_writer.writerow(header)
 
 		for catalog_entry in catalog.iterCatalogEntries():
 			course = ICourseInstance( catalog_entry )
@@ -544,7 +605,9 @@ class CourseRolesView(AbstractAuthenticatedView,
 					user = User.get_user( prin_id )
 					profile = IUserProfile( user, None )
 					email = getattr( profile, 'email', None )
-					csv_writer.writerow( [ course_name, sub_name, role_id, setting, prin_id, email ] )
+					# write data
+					row_data = [course_name, sub_name, role_id, setting, prin_id, email]
+					csv_writer.writerow(row_data)
 
 		response = self.request.response
 		response.body = bio.getvalue()
