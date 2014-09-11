@@ -1,0 +1,26 @@
+<!-- -*- mode: nxml -*- -->
+<configure	xmlns="http://namespaces.zope.org/zope"
+			xmlns:i18n="http://namespaces.zope.org/i18n"
+			xmlns:ext="http://nextthought.com/ntp/ext"
+			xmlns:zcml="http://namespaces.zope.org/zcml"
+			i18n_domain="zope">
+
+	<include package="zope.component" file="meta.zcml" />
+	<include package="zope.security" file="meta.zcml" />
+	<include package="zope.component" />
+	<include package="zope.security" />
+
+	<adapter name="CourseActivity"
+			 factory=".course_views.CourseActivityPathAdapter" />
+
+	<adapter name="CourseEnrollmentRoster"
+			 factory=".course_views.CourseEnrollmentRosterPathAdapter"
+			 provides="zope.traversing.interfaces.IPathAdapter" />
+			 
+	<adapter name="Courses" factory=".catalog_views.CoursesPathAdapter" />
+		
+	<subscriber factory=".course_views.CourseActivityLastViewedDecorator"
+				for="..interfaces.ICourseInstanceActivity"
+				provides="nti.externalization.interfaces.IExternalMappingDecorator" />
+
+</configure>

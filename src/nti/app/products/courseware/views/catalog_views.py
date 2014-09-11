@@ -22,29 +22,31 @@ from zope import interface
 from zope import component
 
 from zope.traversing.interfaces import IPathAdapter
-from nti.dataserver.interfaces import IUser
-from pyramid.interfaces import IRequest
-from nti.appserver.interfaces import IUserService
 
-from .interfaces import ICoursesWorkspace
-from .interfaces import IEnrolledCoursesCollection
-from .interfaces import ICourseInstanceEnrollment
-
-from nti.contenttypes.courses.interfaces import ES_PUBLIC
-from nti.contenttypes.courses.interfaces import ICourseCatalogEntry
-from nti.contenttypes.courses.interfaces import ICourseCatalog
-from nti.contenttypes.courses.interfaces import ICourseInstance
-from nti.contenttypes.courses.interfaces import ICourseEnrollmentManager
-
-from pyramid import httpexceptions as hexc
 from pyramid.view import view_config
-from nti.appserver.dataserver_pyramid_views import GenericGetView
-from nti.appserver.pyramid_authorization import can_create
+from pyramid.interfaces import IRequest
+from pyramid import httpexceptions as hexc
+
 from nti.app.base.abstract_views import AbstractAuthenticatedView
 from nti.app.externalization.view_mixins import ModeledContentUploadRequestUtilsMixin
 
-from nti.dataserver import authorization as nauth
+from nti.appserver.interfaces import IUserService
+from nti.appserver.pyramid_authorization import can_create
+from nti.appserver.dataserver_pyramid_views import GenericGetView
+
+from nti.contenttypes.courses.interfaces import ES_PUBLIC
+from nti.contenttypes.courses.interfaces import ICourseCatalog
+from nti.contenttypes.courses.interfaces import ICourseInstance
+from nti.contenttypes.courses.interfaces import ICourseCatalogEntry
+from nti.contenttypes.courses.interfaces import ICourseEnrollmentManager
+
 from nti.dataserver import traversal
+from nti.dataserver.interfaces import IUser
+from nti.dataserver import authorization as nauth
+
+from ..interfaces import ICoursesWorkspace
+from ..interfaces import ICourseInstanceEnrollment
+from ..interfaces import IEnrolledCoursesCollection
 
 @interface.implementer(IPathAdapter)
 @component.adapter(IUser, IRequest)

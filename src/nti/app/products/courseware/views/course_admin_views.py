@@ -53,7 +53,7 @@ from nti.externalization.internalization import update_from_external_object
 
 from nti.ntiids import ntiids
 
-from .interfaces import NTIID_TYPE_COURSE_SECTION_TOPIC
+from ..interfaces import NTIID_TYPE_COURSE_SECTION_TOPIC
 
 @view_config(route_name='objects.generic.traversal',
 			 renderer='rest',
@@ -381,7 +381,7 @@ class CourseTopicCreationView(AbstractAuthenticatedView,UploadRequestUtilsMixin)
 
 		return created_ntiids
 
-from .legacy_courses import _copy_enrollments_from_legacy_to_new
+from ..legacy_courses import _copy_enrollments_from_legacy_to_new
 
 @view_config(route_name='objects.generic.traversal',
 			 renderer='rest',
@@ -416,7 +416,7 @@ from nti.dataserver.interfaces import IUser
 
 from nti.utils.maps import CaseInsensitiveDict
 
-from .interfaces import ICoursesWorkspace
+from ..interfaces import ICoursesWorkspace
 
 from .catalog_views import get_enrollments
 from .catalog_views import do_course_enrollment

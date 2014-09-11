@@ -1,55 +1,55 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-"""
-$Id$
-"""
+
 from __future__ import print_function, unicode_literals, absolute_import, division
 __docformat__ = "restructuredtext en"
 
-#disable: accessing protected members, too many methods
-#pylint: disable=W0212,R0904
+# disable: accessing protected members, too many methods
+# pylint: disable=W0212,R0904
 
-
-from hamcrest import assert_that
 from hamcrest import is_
-from hamcrest import is_not
-does_not = is_not
 from hamcrest import none
+from hamcrest import all_of
+from hamcrest import is_not
+from hamcrest import has_key
+from hamcrest import has_item
 from hamcrest import not_none
-from hamcrest import has_entries
+from hamcrest import has_items
 from hamcrest import has_entry
 from hamcrest import has_length
-from hamcrest import has_properties
-from hamcrest import has_items
-from hamcrest import has_item
+from hamcrest import assert_that
+from hamcrest import has_entries
 from hamcrest import has_property
-from hamcrest import has_key
-from hamcrest import all_of
-
-from nti.testing.matchers import verifiably_provides, validly_provides
-
-from zope import component
+from hamcrest import has_properties
+does_not = is_not
 
 from datetime import datetime
 
-from nti.app.testing.decorators import WithSharedApplicationMockDS
-from nti.dataserver.tests import mock_dataserver
+from zope import component
 
 from nti.contentlibrary.interfaces import IContentPackageLibrary
 
 from nti.contenttypes.courses.interfaces import ICourseCatalog
-from ..content_search import _is_allowed
-
+from nti.contenttypes.courses.interfaces import ICourseInstance
 from nti.contenttypes.courses.legacy_catalog import ICourseCatalogLegacyEntry
 from nti.contenttypes.courses.legacy_catalog import ICourseCatalogInstructorLegacyInfo
+
+from nti.dataserver.authorization_acl import ACL
+
+from ..content_search import _is_allowed
 from ..interfaces import ILegacyCommunityBasedCourseInstance
-from nti.contenttypes.courses.interfaces import ICourseInstance
+
+from nti.app.testing.application_webtest import ApplicationLayerTest
+
+from nti.app.testing.decorators import WithSharedApplicationMockDS
+
+from nti.dataserver.tests import mock_dataserver
 
 from nti.externalization.tests import externalizes
-from nti.dataserver.authorization_acl import ACL
-from nti.app.testing.application_webtest import ApplicationLayerTest
-from . import LegacyInstructedCourseApplicationTestLayer
 
+from nti.testing.matchers import verifiably_provides, validly_provides
+
+from . import LegacyInstructedCourseApplicationTestLayer
 
 class TestApplicationCatalogFromContent(ApplicationLayerTest):
 	layer = LegacyInstructedCourseApplicationTestLayer
@@ -169,5 +169,5 @@ class TestApplicationCatalogFromContent(ApplicationLayerTest):
 			assert_that(b, is_(True))
 
 			now = datetime.fromtimestamp(100)
-			b = _is_allowed(ntiid, now)
-			assert_that(b, is_(False))
+			b = _is_allowed(ntiid, now=now)
+			assert_that(b, is_(True))

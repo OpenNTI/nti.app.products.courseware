@@ -13,32 +13,33 @@ logger = __import__('logging').getLogger(__name__)
 
 from zope import component
 from zope import interface
+from zope.traversing.interfaces import IPathAdapter
 
-from .interfaces import ICourseInstanceActivity
-from .interfaces import ICourseInstanceEnrollment
-from .interfaces import ACT_VIEW_ROSTER
-from nti.contenttypes.courses.interfaces import ICourseInstance
-from nti.contenttypes.courses.interfaces import ICourseOutline
-
-from pyramid import httpexceptions as hexc
 from pyramid.view import view_config
+from pyramid.interfaces import IRequest
+from pyramid import httpexceptions as hexc
+
 from nti.app.base.abstract_views import AbstractAuthenticatedView
+
+from nti.appserver.pyramid_authorization import has_permission
+
+from nti.contenttypes.courses.interfaces import ICourseOutline
+from nti.contenttypes.courses.interfaces import ICourseInstance
+from nti.contenttypes.courses.interfaces import ICourseEnrollments
 
 from nti.dataserver import authorization as nauth
 
-from . import VIEW_CONTENTS
-from . import VIEW_COURSE_ENROLLMENT_ROSTER
-from . import VIEW_COURSE_ACTIVITY
-
-from zope.traversing.interfaces import IPathAdapter
-from pyramid.interfaces import IRequest
-
-from nti.appserver.pyramid_authorization import has_permission
-from nti.contenttypes.courses.interfaces import ICourseEnrollments
 from nti.externalization.interfaces import LocatedExternalDict
-
-from nti.externalization.interfaces import ILocatedExternalSequence
 from nti.externalization.externalization import to_external_object
+from nti.externalization.interfaces import ILocatedExternalSequence
+
+from ..interfaces import ACT_VIEW_ROSTER
+from ..interfaces import ICourseInstanceActivity
+from ..interfaces import ICourseInstanceEnrollment
+
+from . import VIEW_CONTENTS
+from . import VIEW_COURSE_ACTIVITY
+from . import VIEW_COURSE_ENROLLMENT_ROSTER
 
 @view_config( route_name='objects.generic.traversal',
 			  context=ICourseOutline,
@@ -78,12 +79,17 @@ class course_outline_contents_view(AbstractAuthenticatedView):
 		self.request.response.last_modified = self.request.context.lastModified
 		return result
 
-from nti.dataserver.users.interfaces import IFriendlyNamed
-from nti.appserver.interfaces import IIntIdUserSearchPolicy
 from zope.intid.interfaces import IIntIds
-from nti.dataserver.interfaces import IUser
-from nti.app.externalization.view_mixins import BatchingUtilsMixin
 from zope.container.contained import Contained
+
+from nti.appserver.interfaces import IIntIdUserSearchPolicy
+
+from nti.app.externalization.view_mixins import BatchingUtilsMixin
+
+from nti.dataserver.users.interfaces import IFriendlyNamed
+
+from nti.dataserver.interfaces import IUser
+
 from nti.utils.property import alias
 
 @interface.implementer(IPathAdapter)
@@ -274,7 +280,6 @@ class CourseEnrollmentRosterGetView(AbstractAuthenticatedView,
 		self._batch_tuple_iterable(result, items,
 								   selector=lambda x: x)
 
-
 		# NOTE: Rendering the same CourseInstance over and over is hugely
 		# expensive, and massively bloats the response...77 students
 		# can generate 12MB of response. So we don't include the course instance
@@ -288,16 +293,17 @@ class CourseEnrollmentRosterGetView(AbstractAuthenticatedView,
 		# TODO: We have no last modified for this
 		return result
 
+import csv
+import collections
+from cStringIO import StringIO
 
 from nti.contenttypes.courses.interfaces import ICourseCatalog
 from nti.contenttypes.courses.interfaces import ICourseCatalogEntry
+
 from nti.dataserver.interfaces import IDataserverFolder
 from nti.dataserver.users.interfaces import IUserProfile
 
-import collections
 from nti.externalization.interfaces import LocatedExternalList
-from cStringIO import StringIO
-import csv
 
 @view_config(route_name='objects.generic.traversal',
 			 renderer='rest',
@@ -401,7 +407,6 @@ class CourseEnrollmentsRosterDownloadView(AllCourseEnrollmentRosterDownloadView)
 			# A course instance that's no longer in the catalog
 			raise hexc.HTTPNotFound("Course instance not in catalog")
 
-
 @interface.implementer(IPathAdapter)
 @component.adapter(ICourseInstance, IRequest)
 def CourseActivityPathAdapter(context, request):
@@ -409,7 +414,7 @@ def CourseActivityPathAdapter(context, request):
 
 from nti.externalization.externalization import decorate_external_mapping
 
-from .interfaces import ACT_VIEW_ACTIVITY
+from ..interfaces import ACT_VIEW_ACTIVITY
 
 @view_config(route_name='objects.generic.traversal',
 			 renderer='rest',
@@ -453,22 +458,24 @@ class CourseActivityGetView(AbstractAuthenticatedView,
 
 		return result
 
-from pyramid.threadlocal import get_current_request
+import BTrees
 
 from numbers import Number
 
 from zope.annotation.interfaces import IAnnotations
 
-from nti.zodb.containers import time_to_64bit_int
-from nti.zodb.containers import bit64_int_to_time
-
-import BTrees
+from pyramid.threadlocal import get_current_request
 
 from nti.app.externalization.view_mixins import ModeledContentUploadRequestUtilsMixin
 
-from nti.externalization.interfaces import StandardExternalFields
-LINKS = StandardExternalFields.LINKS
 from nti.dataserver.links import Link
+
+from nti.externalization.interfaces import StandardExternalFields
+
+from nti.zodb.containers import time_to_64bit_int
+from nti.zodb.containers import bit64_int_to_time
+
+LINKS = StandardExternalFields.LINKS
 
 @view_config(route_name='objects.generic.traversal',
 			 renderer='rest',

@@ -8,9 +8,10 @@
 	<include package="zope.component" file="meta.zcml" />
 	<include package="zope.security" file="meta.zcml" />
 	<include package="zope.component" />
+	<include package="zope.security" />
 
 	<include package="nti.contenttypes.courses" />
-
+		
     <permission
         id="nti.actions.courseware.view_roster"
         title="View roster" />
@@ -18,6 +19,7 @@
     <permission
         id="nti.actions.courseware.view_activity"
         title="View activity" />
+        
     <!--
         The instructors/TA of a course (locally added to this role
         for the course) can view rosters, activity, ...
@@ -25,12 +27,15 @@
     <grant
         permission="nti.actions.courseware.view_roster"
         role="nti.roles.course_instructor" />
+        
     <grant
         permission="nti.actions.courseware.view_roster"
         role="nti.roles.course_ta" />
+        
     <grant
         permission="nti.actions.courseware.view_activity"
         role="nti.roles.course_instructor" />
+        
     <grant
         permission="nti.actions.courseware.view_activity"
         role="nti.roles.course_ta" />
@@ -42,14 +47,12 @@
 	<!-- I18N -->
 	<i18n:registerTranslations directory="locales" />
 
-
 	<subscriber handler=".legacy_catalog._content_package_registered" />
 
 	<!-- Auto-gen course purchasables from content -->
 	<!-- This must be a global subscriber as that's where
 	the library is -->
-	<subscriber
-		handler=".legacy_course._register_course_purchasable_from_catalog_entry" />
+	<subscriber handler=".legacy_course._register_course_purchasable_from_catalog_entry" />
 
 	<adapter factory=".legacy_course._LegacyCommunityBasedCourseAdministrativeLevelFactory"
 			 provides="nti.contenttypes.courses.interfaces.ICourseAdministrativeLevel"/>
@@ -83,13 +86,6 @@
 	<class class=".activity._DefaultCourseActivity">
 		<implements interface="zope.annotation.interfaces.IAttributeAnnotatable" />
 	</class>
-	<adapter name="CourseActivity"
-			 factory=".course_views.CourseActivityPathAdapter" />
-
-	<!-- Let us get to the roster -->
-	<adapter name="CourseEnrollmentRoster"
-			 factory=".course_views.CourseEnrollmentRosterPathAdapter"
-			 provides="zope.traversing.interfaces.IPathAdapter" />
 
 	<!-- Workspaces -->
 	<!-- A subscriber for enumeration -->
@@ -99,9 +95,6 @@
 	<!-- And an adapter for direct access -->
 	<adapter factory=".workspaces.CoursesWorkspace"
 			 provides=".interfaces.ICoursesWorkspace" />
-
-	<adapter name="Courses"
-			 factory=".catalog_views.CoursesPathAdapter" />
 
 	<!-- A subscriber for getting admin roles -->
 	<subscriber factory=".workspaces._DefaultPrincipalAdministrativeRoleCatalog"
@@ -170,13 +163,8 @@
 	<subscriber factory=".decorators._CourseEnrollmentUserProfileDetailsDecorator"
 				provides="nti.externalization.interfaces.IExternalMappingDecorator" />
 
-	<subscriber factory=".course_views.CourseActivityLastViewedDecorator"
-				for=".interfaces.ICourseInstanceActivity"
-				provides="nti.externalization.interfaces.IExternalMappingDecorator" />
-
 	<subscriber factory=".decorators._CourseCatalogEntryLegacyDecorator"
 				provides="nti.externalization.interfaces.IExternalMappingDecorator" />
-
 
 	<!--
 		 Get an href here to the real location, since we return these beneath Roster as well.
@@ -197,9 +185,7 @@
 	<utility factory=".ntiids._EnrolledCourseSectionTopicNTIIDResolver" />
 	<utility factory=".ntiids._EnrolledCourseRootTopicNTIIDResolver" />
 
-
 	<!-- Content Search -->
-
 	<adapter factory=".adapters._entry_to_content_package_bundle" />
 	<adapter factory=".adapters._course_content_to_package_bundle" />
 	<adapter factory=".adapters._legacy_course_to_content_package_bundle" />
@@ -224,4 +210,7 @@
 				provides="nti.contentsearch.interfaces.ISearchHitPredicate"
 				for="nti.dataserver.interfaces.ICreated" />
 
+	<!-- Views -->
+	<include package=".views" />
+		
 </configure>
