@@ -29,54 +29,70 @@ from nti.dataserver.interfaces import ICreated
 from nti.ntiids.ntiids import is_valid_ntiid_string
 from nti.ntiids.ntiids import find_object_with_ntiid
 
+_package_path_cache = None
 def _get_content_path(ntiid):
-	result = ()
-	library = component.queryUtility(IContentPackageLibrary)
-	if library and ntiid:
-		paths = library.pathToNTIID(ntiid)
-		result = tuple(p.ntiid for p in paths) if paths else ()
+	global _package_path_cache
+	if _package_path_cache is None:
+		_package_path_cache = {}
+		
+	result = _package_path_cache.get(ntiid)
+	if result is None:
+		result = ()
+		library = component.queryUtility(IContentPackageLibrary)
+		if library and ntiid:
+			paths = library.pathToNTIID(ntiid)
+			result = tuple(p.ntiid for p in paths) if paths else ()
+		_package_path_cache[ntiid] = result
 	return result
 
-def _get_outline_node(outline, ntiids=()):
-	if not ntiids:
-		return None
-
-	def _recur(node):
+def _flatten_outline(outline):
+	result = {}
+	def _recur(node, result):
 		content_ntiid = getattr(node, 'ContentNTIID', None)
-		if content_ntiid and content_ntiid in ntiids:
-			return node
+		if content_ntiid:
+			beginning = getattr(node, 'AvailableBeginning', None) 
+			is_outline_stub_only = getattr(node, 'is_outline_stub_only', False)
+			result[content_ntiid] = (beginning, is_outline_stub_only)
 
-		result = None
 		for child in node.values():
-			result = _recur(child)
-			if result is not None:
-				break
-		return result
-
-	result = _recur(outline)
+			_recur(child, result)
+	_recur(outline, result)
 	return result
 
+_course_nodes_cache = None
+def _check_against_course_outline(course_id, ntiid, now=None): 
+	global _course_nodes_cache
+	if _course_nodes_cache is None:
+		_course_nodes_cache = {}
+		
+	nodes = _course_nodes_cache.get(course_id)
+	if nodes is None:
+		course = find_object_with_ntiid(course_id)
+		if not course or not ICourseInstance.providedBy(course):
+			return True
+		nodes = _flatten_outline(course.Outline)
+		_course_nodes_cache[course_id] = nodes
+		
+	now = now or datetime.utcnow()
+	ntiids = _get_content_path(ntiid)
+	for content_ntiid, data in nodes.items():
+		beginning = data[0] or now
+		is_outline_stub_only = data[1]
+		if content_ntiid in ntiids:
+			result = bool(not is_outline_stub_only and now >= beginning)
+			return result
+	return True
+		
 def _is_allowed(ntiid, query=None, now=None):
 	if query is None:
 		return True # allow by default
 
 	context = query.context or {}
-	course = context.get('course')
-	if not course or not is_valid_ntiid_string(course):
-		return True # allow by default
-	
-	course = find_object_with_ntiid(course)
-	if not course or not ICourseInstance.providedBy(course):
+	course_id = context.get('course')
+	if not course_id or not is_valid_ntiid_string(course_id):
 		return True # allow by default
 		
-	result = True
-	ntiids = _get_content_path(ntiid)
-	node = _get_outline_node(course.Outline, ntiids)
-	if node is not None:
-		now = now or datetime.utcnow()
-		beginning = getattr(node, 'AvailableBeginning', None) or now
-		is_outline_stub_only = getattr(node, 'is_outline_stub_only', False)
-		result = not is_outline_stub_only and now >= beginning
+	result = _check_against_course_outline(course_id, ntiid)
 	return result
 
 @interface.implementer(ISearchHitPredicate)
