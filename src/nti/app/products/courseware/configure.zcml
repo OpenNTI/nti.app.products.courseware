@@ -165,7 +165,10 @@
 
 	<subscriber factory=".decorators._CourseCatalogEntryLegacyDecorator"
 				provides="nti.externalization.interfaces.IExternalMappingDecorator" />
-
+				
+	<subscriber factory=".decorators._CourseOutlineContentNodeLinkDecorator"
+				provides="nti.externalization.interfaces.IExternalMappingDecorator" />
+				
 	<!--
 		 Get an href here to the real location, since we return these beneath Roster as well.
 		 Notice this is currently a very specific registration.

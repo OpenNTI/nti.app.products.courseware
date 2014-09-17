@@ -11,40 +11,44 @@ __docformat__ = "restructuredtext en"
 
 logger = __import__('logging').getLogger(__name__)
 
+from urlparse import urljoin
+
 from zope import interface
 from zope import component
-
 from zope.location.interfaces import ILocation
 
-from nti.externalization.interfaces import IExternalMappingDecorator
-from nti.externalization.interfaces import StandardExternalFields
-from nti.externalization.singleton import SingletonDecorator
-from nti.externalization.externalization import to_external_object
+from pyramid.threadlocal import get_current_request
+
+from nti.appserver.pyramid_authorization import has_permission
+
+from nti.contentlibrary.interfaces import IContentPackageLibrary
+from nti.contentlibrary.interfaces import IContentUnitHrefMapper
+
+from nti.contenttypes.courses.interfaces import ICourseOutline
+from nti.contenttypes.courses.interfaces import ICourseInstance
+from nti.contenttypes.courses.interfaces import ICourseEnrollments
+from nti.contenttypes.courses.interfaces import ICourseCatalogEntry
+from nti.contenttypes.courses.interfaces import ICourseOutlineContentNode
 
 from nti.dataserver.interfaces import ILinkExternalHrefOnly
 
-from nti.contenttypes.courses.interfaces import ICourseInstance
-from nti.contenttypes.courses.interfaces import ICourseEnrollments
-from nti.contenttypes.courses.interfaces import ICourseOutline
-
-from nti.dataserver.interfaces import IUser
-
-from nti.contenttypes.courses.interfaces import ICourseCatalogEntry
-from .interfaces import ICourseInstanceEnrollment
+from nti.externalization.singleton import SingletonDecorator
+from nti.externalization.interfaces import StandardExternalFields
+from nti.externalization.externalization import to_external_object
+from nti.externalization.interfaces import IExternalMappingDecorator
 
 from nti.dataserver.links import Link
-
-from pyramid.threadlocal import get_current_request
+from nti.dataserver.interfaces import IUser
 
 from . import VIEW_CONTENTS
 from . import VIEW_CATALOG_ENTRY
 from . import VIEW_COURSE_ENROLLMENT_ROSTER
 from . import VIEW_COURSE_ACTIVITY
 
-LINKS = StandardExternalFields.LINKS
-
 from .interfaces import ACT_VIEW_ACTIVITY
-from nti.appserver.pyramid_authorization import has_permission
+from .interfaces import ICourseInstanceEnrollment
+
+LINKS = StandardExternalFields.LINKS
 
 @interface.implementer(IExternalMappingDecorator)
 @component.adapter(ICourseInstance)
@@ -107,6 +111,27 @@ class _CourseOutlineContentsLinkDecorator(object):
 		link.__name__ = ''
 		link.__parent__ = context
 		_links.append(link)
+
+@interface.implementer(IExternalMappingDecorator)
+@component.adapter(ICourseOutlineContentNode)
+class _CourseOutlineContentNodeLinkDecorator(object):
+
+	__metaclass__ = SingletonDecorator
+
+	def decorateExternalMapping(self, context, result):
+		if context.src:
+			library = component.queryUtility(IContentPackageLibrary)
+			paths = library.pathToNTIID(context.ContentNTIID) if library else ()
+			if paths:
+				href = IContentUnitHrefMapper(paths[-1].key ).href
+				href = urljoin(href, context.src)
+				# set link for overview
+				links = result.setdefault(LINKS, [])
+				link = Link(href, rel="overview-content", ignore_properties_of_target=True)
+				interface.alsoProvides(link, ILocation)
+				link.__name__ = ''
+				link.__parent__ = context
+				links.append(link)
 
 @interface.implementer(IExternalMappingDecorator)
 @component.adapter(ICourseInstanceEnrollment)
