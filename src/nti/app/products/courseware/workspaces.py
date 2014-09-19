@@ -14,21 +14,25 @@ logger = __import__('logging').getLogger(__name__)
 
 from zope import interface
 from zope import component
-from zope.container import contained
+from zope.container.contained import Contained
+from zope.securitypolicy.interfaces import Allow
+from zope.securitypolicy.interfaces import IPrincipalRoleMap
 from zope.location.traversing import LocationPhysicallyLocatable
+
+from nti.appserver.interfaces import IUserService 
+from nti.appserver.interfaces import IContainerCollection
 
 from nti.contenttypes.courses.interfaces import RID_INSTRUCTOR
 
-from zope.securitypolicy.interfaces import IPrincipalRoleMap
-from zope.securitypolicy.interfaces import Allow
-
-from . import interfaces
-from nti.appserver import interfaces as app_interfaces
-from nti.contenttypes.courses.interfaces import ICourseInstance
 from nti.contenttypes.courses.interfaces import ICourseCatalog
+from nti.contenttypes.courses.interfaces import ICourseInstance
 from nti.contenttypes.courses.interfaces import ICourseCatalogEntry
 from nti.contenttypes.courses.interfaces import IPrincipalEnrollments
+
 from nti.dataserver.interfaces import IUser
+from nti.dataserver.authorization import ACT_DELETE
+from nti.dataserver.authorization_acl import acl_from_aces
+from nti.dataserver.authorization_acl import ace_allowing
 
 from nti.utils.property import Lazy
 from nti.utils.property import alias
@@ -36,12 +40,16 @@ from nti.utils.property import alias
 from nti.schema.field import SchemaConfigured
 from nti.schema.fieldproperty import createDirectFieldProperties
 
-from nti.dataserver.authorization import ACT_DELETE
-from nti.dataserver.authorization_acl import acl_from_aces
-from nti.dataserver.authorization_acl import ace_allowing
+from .interfaces import ICoursesWorkspace
+from .interfaces import ICourseInstanceEnrollment
+from .interfaces import IEnrolledCoursesCollection
+from .interfaces import IAdministeredCoursesCollection
+from .interfaces import ILegacyCourseInstanceEnrollment
+from .interfaces import ICourseInstanceAdministrativeRole
+from .interfaces import IPrincipalAdministrativeRoleCatalog
 
-@interface.implementer(interfaces.ICoursesWorkspace)
-class _CoursesWorkspace(contained.Contained):
+@interface.implementer(ICoursesWorkspace)
+class _CoursesWorkspace(Contained):
 
 	#: Our name, part of our URL
 	__name__ = 'Courses'
@@ -72,8 +80,8 @@ class _CoursesWorkspace(contained.Contained):
 	def __len__(self):
 		return len(self.collections)
 
-@interface.implementer(interfaces.ICoursesWorkspace)
-@component.adapter(app_interfaces.IUserService)
+@interface.implementer(ICoursesWorkspace)
+@component.adapter(IUserService)
 def CoursesWorkspace( user_service ):
 	"""
 	The courses for a user reside at the path ``/users/$ME/Courses``.
@@ -88,14 +96,17 @@ def CoursesWorkspace( user_service ):
 # XXX: We'd like to be able to use nti.appserver.pyramid_authorization:is_readable
 # here because of all the caching it can do, but we are passing in an
 # arbitrary user.
-from nti.dataserver.authorization_acl import has_permission
-from nti.dataserver.authorization import ACT_READ
-from nti.externalization.interfaces import LocatedExternalDict
+
 from nti.contenttypes.courses.interfaces import ICourseEnrollments
 from nti.contenttypes.courses.interfaces import ICourseSubInstance
 
-@interface.implementer(app_interfaces.IContainerCollection)
-class AllCoursesCollection(contained.Contained):
+from nti.dataserver.authorization import ACT_READ
+from nti.dataserver.authorization_acl import has_permission
+
+from nti.externalization.interfaces import LocatedExternalDict
+
+@interface.implementer(IContainerCollection)
+class AllCoursesCollection(Contained):
 
 	#: Our name, part of our URL.
 	__name__ = 'AllCourses'
@@ -168,7 +179,7 @@ class AllCoursesCollection(contained.Contained):
 
 from nti.dataserver.datastructures import LastModifiedCopyingUserList
 
-class _AbstractQueryBasedCoursesCollection(contained.Contained):
+class _AbstractQueryBasedCoursesCollection(Contained):
 	"""
 	Performs subscription-adapter based queries to find
 	the eligible objects.
@@ -231,7 +242,7 @@ class _AbstractQueryBasedCoursesCollection(contained.Contained):
 	def __len__(self):
 		return len(self.container)
 
-class _AbstractInstanceWrapper(contained.Contained):
+class _AbstractInstanceWrapper(Contained):
 
 	__acl__ = ()
 	def __init__(self, context):
@@ -256,7 +267,7 @@ class _AbstractInstanceWrapper(contained.Contained):
 		if ICourseInstance.isOrExtends(iface):
 			return self._private_course_instance
 
-@interface.implementer(interfaces.ICourseInstanceEnrollment)
+@interface.implementer(ICourseInstanceEnrollment)
 @component.adapter(ICourseInstance)
 class CourseInstanceEnrollment(_AbstractInstanceWrapper):
 	__external_can_create__ = False
@@ -273,8 +284,8 @@ class CourseInstanceEnrollment(_AbstractInstanceWrapper):
 
 	def xxx_fill_in_parent(self):
 		if self._user:
-			service = app_interfaces.IUserService(self._user)
-			ws = interfaces.ICoursesWorkspace(service)
+			service = IUserService(self._user)
+			ws = ICoursesWorkspace(service)
 			enr_coll = EnrolledCoursesCollection(ws)
 			self.__parent__ = enr_coll
 			getattr(self, '__name__') # ensure we have this
@@ -293,7 +304,7 @@ def LegacyCourseInstanceEnrollment(course_instance, user):
 from nti.contenttypes.courses.interfaces import ICourseInstanceEnrollmentRecord
 from nti.externalization.oids import to_external_ntiid_oid
 
-@interface.implementer(interfaces.ILegacyCourseInstanceEnrollment)
+@interface.implementer(ILegacyCourseInstanceEnrollment)
 @component.adapter(ICourseInstanceEnrollmentRecord)
 class DefaultCourseInstanceEnrollment(CourseInstanceEnrollment):
 	__external_class_name__ = 'CourseInstanceEnrollment'
@@ -321,7 +332,7 @@ def enrollment_from_record(course, record):
 def wrapper_to_catalog(wrapper):
 	return ICourseCatalogEntry(wrapper.CourseInstance)
 
-@interface.implementer(interfaces.IEnrolledCoursesCollection)
+@interface.implementer(IEnrolledCoursesCollection)
 class EnrolledCoursesCollection(_AbstractQueryBasedCoursesCollection):
 
 	#: Our name, part of our URL.
@@ -334,13 +345,13 @@ class EnrolledCoursesCollection(_AbstractQueryBasedCoursesCollection):
 
 	query_interface = IPrincipalEnrollments
 	query_attr = 'iter_enrollments'
-	contained_interface = interfaces.ICourseInstanceEnrollment
+	contained_interface = ICourseInstanceEnrollment
 	user_extra_auth = ACT_DELETE
 
-@interface.implementer(interfaces.ICourseInstanceAdministrativeRole)
+@interface.implementer(ICourseInstanceAdministrativeRole)
 class CourseInstanceAdministrativeRole(SchemaConfigured,
 									   _AbstractInstanceWrapper):
-	createDirectFieldProperties(interfaces.ICourseInstanceAdministrativeRole,
+	createDirectFieldProperties(ICourseInstanceAdministrativeRole,
 								# Be flexible about what this is,
 								# the LegacyCommunityInstance doesn't fully comply
 								omit=('CourseInstance',))
@@ -350,7 +361,7 @@ class CourseInstanceAdministrativeRole(SchemaConfigured,
 		SchemaConfigured.__init__(self, RoleName=RoleName)
 		_AbstractInstanceWrapper.__init__(self, CourseInstance)
 
-@interface.implementer(interfaces.IPrincipalAdministrativeRoleCatalog)
+@interface.implementer(IPrincipalAdministrativeRoleCatalog)
 @component.adapter(IUser)
 class _DefaultPrincipalAdministrativeRoleCatalog(object):
 	"""
@@ -374,22 +385,24 @@ class _DefaultPrincipalAdministrativeRoleCatalog(object):
 													   CourseInstance=instance )
 	iter_enrollments = iter_administrations # for convenience
 
-@interface.implementer(interfaces.IAdministeredCoursesCollection)
+@interface.implementer(IAdministeredCoursesCollection)
 class AdministeredCoursesCollection(_AbstractQueryBasedCoursesCollection):
 
 	#: Our name, part of our URL.
 	__name__ = 'AdministeredCourses'
 	name = alias('__name__',__name__)
 
-	query_interface = interfaces.IPrincipalAdministrativeRoleCatalog
+	query_interface = IPrincipalAdministrativeRoleCatalog
 	query_attr = 'iter_administrations'
-	contained_interface = interfaces.ICourseInstanceAdministrativeRole
+	contained_interface = ICourseInstanceAdministrativeRole
 
-from pyramid.threadlocal import get_current_request
-from nti.dataserver.users import User
-from nti.dataserver.interfaces import IDataserver
 from zope.location.interfaces import IRoot
 from zope.location.interfaces import ILocationInfo
+
+from pyramid.threadlocal import get_current_request
+
+from nti.dataserver.users import User
+from nti.dataserver.interfaces import IDataserver
 
 from .interfaces import ICourseCatalogLegacyContentEntry
 
@@ -414,9 +427,8 @@ class CatalogEntryLocationInfo(LocationPhysicallyLocatable):
 		userid = request.authenticated_userid if request else None
 
 		if userid:
-
 			user = User.get_user( userid, dataserver=ds )
-			service = app_interfaces.IUserService(user)
+			service = IUserService(user)
 			workspace = CoursesWorkspace(service)
 			all_courses = AllCoursesCollection(workspace)
 
