@@ -25,8 +25,8 @@ from zope import interface
 from zope import component
 from zope.component.interfaces import IComponents
 
-from zope.lifecycleevent import IObjectAddedEvent
 from zope.event import notify
+from zope.lifecycleevent import IObjectAddedEvent
 
 from zope.security.interfaces import IPrincipal
 
@@ -38,13 +38,15 @@ from persistent import Persistent
 from nti.contentlibrary.interfaces import IContentPackageLibrary
 
 from nti.contenttypes.courses.courses import CourseInstance
+from nti.contenttypes.courses.interfaces import ICourseCatalog
 from nti.contenttypes.courses.interfaces import ICourseInstance
 from nti.contenttypes.courses.courses import CourseAdministrativeLevel
 from nti.contenttypes.courses.interfaces import ICourseAdministrativeLevel
-from nti.contenttypes.courses.interfaces import ICourseCatalog
+from nti.contenttypes.courses.interfaces import CourseInstanceAvailableEvent
 
-from nti.app.products.courseware.interfaces import ICourseCatalogLegacyContentEntry
-
+from nti.dataserver.users import User
+from nti.dataserver.users import Entity
+from nti.dataserver.users import Community
 from nti.dataserver.interfaces import ICommunity
 from nti.dataserver.interfaces import IUseNTIIDAsExternalUsername
 from nti.dataserver.users.interfaces import IFriendlyNamed
@@ -53,10 +55,6 @@ from nti.wref.interfaces import IWeakRef
 
 from nti.utils.property import CachedProperty
 
-from nti.dataserver.users import User
-from nti.dataserver.users import Entity
-from nti.dataserver.users import Community
-
 from nti.externalization.externalization import to_external_object
 
 from nti.ntiids.ntiids import make_ntiid
@@ -64,9 +62,8 @@ from nti.ntiids.ntiids import get_provider
 
 from nti.schema.field import TextLine
 
-from nti.contenttypes.courses.interfaces import CourseInstanceAvailableEvent
+from .interfaces import ICourseCatalogLegacyContentEntry
 from .interfaces import ILegacyCommunityBasedCourseInstance
-from .interfaces import ILegacyCourseConflatedContentPackageUsedAsCourse
 
 class ICourseCatalogLegacyEntryInstancePolicy(interface.Interface):
 	"""
