@@ -307,8 +307,10 @@ def _update_vendor_info(course, bucket):
 		vendor_info.lastModified = vendor_json_key.lastModified
 		vendor_info.createdTime = vendor_json_key.createdTime
 
-from .legacy_courses import get_scopes_for_purchasable_ntiid
+from pyramid.traversal import find_interface
+
 from .legacy_courses import get_scopes_from_course_element
+from .legacy_courses import get_scopes_for_purchasable_ntiid
 
 def _update_scopes(course, purchsable_ntiid, package): #pylint:disable=I0011,W0212
 	scopes = course.SharingScopes
@@ -369,134 +371,6 @@ def _course_instance_for_community( community ):
 	if len(courses_for_community):
 		return list(courses_for_community.values())[0]
 
-from ZODB.POSException import ConnectionStateError
-
-@interface.implementer(ICourseInstance)
-@component.adapter(ILegacyCourseConflatedContentPackageUsedAsCourse)
-def _course_content_package_to_course(package):
-	# Both the catalog entry and the content package are supposed to
-	# be non-persistent (in the case we actually get a course) or the
-	# course doesn't exist (in the case that the package is persistent
-	# and installed in a sub-site, which shouldn't happen with this
-	# registration, though could if we used a plain
-	# ConflatedContentPackage), so it should be safe to cache this on
-	# the package. Be extra careful though, just in case.
-
-	cache_name = '_v_course_content_package_to_course'
-	course = getattr(package, cache_name, cache_name)
-	if course is not cache_name:
-		try:
-			course._p_activate() #pylint:disable=W0212
-		except ConnectionStateError:
-			course = cache_name
-			delattr(package, cache_name)
-		except AttributeError:
-			pass
-
-	if course is not cache_name:
-		return course
-
-	course = None
-	# We go via the defined adapter from the catalog entry,
-	# which we should have directly cached
-	try:
-		entry = package._v_global_legacy_catalog_entry
-	except AttributeError:
-		logger.warn("Consistency issue? No attribute on global package %s",
-					package)
-		entry = None
-
-	course = ICourseInstance(entry, None)
-
-	setattr(package, cache_name, course)
-	return course
-
-from zope.securitypolicy.interfaces import Allow
-from zope.securitypolicy.interfaces import IPrincipalRoleMap
-
-from pyramid.traversal import find_interface
-
-from nti.contentlibrary.interfaces import IContentUnit
-from nti.contentlibrary.interfaces import IContentPackage
-
-from nti.contenttypes.courses.interfaces import RID_TA
-from nti.contenttypes.courses.interfaces import RID_INSTRUCTOR
-from nti.contenttypes.courses.interfaces import ICourseEnrollments
-from nti.contenttypes.courses.interfaces import ICourseSubInstance
-
-from nti.dataserver.interfaces import IUser
-
-def _content_unit_to_courses(unit, include_sub_instances=True):
-	# XXX JAM These heuristics aren't well tested.
-
-	# First, try the true legacy case. This involves
-	# a direct mapping between courses and a catalog entry. It may be
-	# slightly more reliable, but only works for true legacy cases.
-	package = find_interface(unit, ILegacyCourseConflatedContentPackageUsedAsCourse)
-	if package is not None:
-		result = ICourseInstance(package, None)
-		if result is not None:
-			return (result,)
-
-	# Nothing true legacy. find all courses that match this pacakge
-	result = []
-	package = find_interface(unit, IContentPackage)
-	course_catalog = component.getUtility(ICourseCatalog)
-	for entry in course_catalog.iterCatalogEntries():
-		instance = ICourseInstance(entry, None)
-		if instance is None:
-			continue
-		if not include_sub_instances and ICourseSubInstance.providedBy(instance):
-			continue
-		try:
-			packages = instance.ContentPackageBundle.ContentPackages
-		except AttributeError:
-			packages = (instance.legacy_content_package,)
-
-		if package in packages:
-			result.append(instance)
-	return result
-
-@interface.implementer(ICourseInstance)
-@component.adapter(IContentUnit)
-def _content_unit_to_course(unit):
-	## get all courses, don't include sections
-	courses = _content_unit_to_courses(unit, False)
-
-	# XXX: We probably need to check and see who's enrolled
-	# to find the most specific course instance to return?
-	# As it stands, we promise to return only a root course,
-	# not a subinstance (section)
-	# XXX: FIXME: This requires a one-to-one mapping
-	return courses[0] if courses else None
-
-def is_instructor(course, user):
-	prin = IPrincipal(user)
-	roles = IPrincipalRoleMap(course, None)
-	if not roles:
-		return False
-	return Allow in (roles.getSetting(RID_TA, prin.id),
-					 roles.getSetting(RID_INSTRUCTOR, prin.id))
-
-@interface.implementer(ICourseInstance)
-@component.adapter(IContentUnit, IUser)
-def _content_unit_and_user_to_course(unit, user):
-	## get all courses
-	courses = _content_unit_to_courses(unit, True)
-	for instance in courses or ():
-		# check enrollment
-		enrollments = ICourseEnrollments(instance)
-		record = enrollments.get_enrollment_for_principal(user)
-		if record is not None:
-			return instance
-
-		# check role
-		if is_instructor(instance, user):
-			return instance
-
-	# nothing found return first course
-	return courses[0] if courses else None
-
 @interface.implementer(ICourseAdministrativeLevel)
 @component.adapter(ICommunity)
 class _LegacyCommunityBasedCourseAdministrativeLevel(CourseAdministrativeLevel):
@@ -513,8 +387,9 @@ from zope.annotation.factory import factory as an_factory
 _LegacyCommunityBasedCourseAdministrativeLevelFactory = an_factory(_LegacyCommunityBasedCourseAdministrativeLevel,
 																   key='LegacyCourses')
 
-from nti.dataserver.contenttypes.forums.interfaces import ICommunityBoard
 from nti.dataserver.interfaces import IEntityContainer
+from nti.dataserver.contenttypes.forums.interfaces import ICommunityBoard
+
 from nti.externalization.persistence import NoPickle
 
 @NoPickle
@@ -527,12 +402,14 @@ class _LegacyCommunityBasedCourseInstanceFakeBundle(object):
 		return {'ContentPackages': self.ContentPackages,
 				'Class': 'ContentPackageBundle'}
 
-from nti.contenttypes.courses.interfaces import ES_CREDIT, ES_PUBLIC
+from zope.schema.vocabulary import SimpleVocabulary
+
+from nti.contenttypes.courses.interfaces import ES_CREDIT
+from nti.contenttypes.courses.interfaces import ES_PUBLIC
+from nti.contenttypes.courses.sharing import CourseInstanceSharingScopes
 from nti.contenttypes.courses.interfaces import ENROLLMENT_SCOPE_VOCABULARY
 from nti.contenttypes.courses.interfaces import ICourseInstanceSharingScopes
-from nti.contenttypes.courses.sharing import CourseInstanceSharingScopes
 
-from zope.schema.vocabulary import SimpleVocabulary
 
 _LEGACY_ENROLLMENT_SCOPE_VOCABULARY = SimpleVocabulary(
 	[ENROLLMENT_SCOPE_VOCABULARY.getTerm(ES_CREDIT),
@@ -714,12 +591,12 @@ def _legacy_course_instance_to_catalog_entry(instance):
 					instance.ContentPackageNTIID)
 	return result
 
-
 from nti.dataserver.interfaces import IACLProvider
+from nti.dataserver.interfaces import ALL_PERMISSIONS
+
+from nti.dataserver.authorization import ACT_READ
 from nti.dataserver.authorization_acl import ace_allowing
 from nti.dataserver.authorization_acl import acl_from_aces
-from nti.dataserver.authorization import ACT_READ
-from nti.dataserver.interfaces import ALL_PERMISSIONS
 
 @interface.implementer(IACLProvider)
 @component.adapter(_LegacyCommunityBasedCourseInstance)

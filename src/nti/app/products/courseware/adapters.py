@@ -35,3 +35,135 @@ def _course_content_to_package_bundle(course):
 def _entry_to_content_package_bundle(entry):
     course = ICourseInstance(entry, None)
     return IContentPackageBundle(course, None)
+
+from zope.security.interfaces import IPrincipal
+from zope.securitypolicy.interfaces import Allow
+from zope.securitypolicy.interfaces import IPrincipalRoleMap
+
+from ZODB.POSException import ConnectionStateError
+
+from pyramid.traversal import find_interface
+
+from nti.contentlibrary.interfaces import IContentUnit
+from nti.contentlibrary.interfaces import IContentPackage
+
+from nti.contenttypes.courses.interfaces import RID_TA
+from nti.contenttypes.courses.interfaces import RID_INSTRUCTOR
+from nti.contenttypes.courses.interfaces import ICourseCatalog
+from nti.contenttypes.courses.interfaces import ICourseEnrollments
+from nti.contenttypes.courses.interfaces import ICourseSubInstance
+
+from nti.dataserver.interfaces import IUser
+
+from .interfaces import ILegacyCourseConflatedContentPackageUsedAsCourse
+
+@interface.implementer(ICourseInstance)
+@component.adapter(ILegacyCourseConflatedContentPackageUsedAsCourse)
+def _course_content_package_to_course(package):
+    # Both the catalog entry and the content package are supposed to
+    # be non-persistent (in the case we actually get a course) or the
+    # course doesn't exist (in the case that the package is persistent
+    # and installed in a sub-site, which shouldn't happen with this
+    # registration, though could if we used a plain
+    # ConflatedContentPackage), so it should be safe to cache this on
+    # the package. Be extra careful though, just in case.
+
+    cache_name = '_v_course_content_package_to_course'
+    course = getattr(package, cache_name, cache_name)
+    if course is not cache_name:
+        try:
+            course._p_activate() #pylint:disable=W0212
+        except ConnectionStateError:
+            course = cache_name
+            delattr(package, cache_name)
+        except AttributeError:
+            pass
+
+    if course is not cache_name:
+        return course
+
+    course = None
+    # We go via the defined adapter from the catalog entry,
+    # which we should have directly cached
+    try:
+        entry = package._v_global_legacy_catalog_entry
+    except AttributeError:
+        logger.warn("Consistency issue? No attribute on global package %s",
+                    package)
+        entry = None
+
+    course = ICourseInstance(entry, None)
+
+    setattr(package, cache_name, course)
+    return course
+
+def _content_unit_to_courses(unit, include_sub_instances=True):
+    # XXX JAM These heuristics aren't well tested.
+
+    # First, try the true legacy case. This involves
+    # a direct mapping between courses and a catalog entry. It may be
+    # slightly more reliable, but only works for true legacy cases.
+    package = find_interface(unit, ILegacyCourseConflatedContentPackageUsedAsCourse)
+    if package is not None:
+        result = ICourseInstance(package, None)
+        if result is not None:
+            return (result,)
+
+    # Nothing true legacy. find all courses that match this pacakge
+    result = []
+    package = find_interface(unit, IContentPackage)
+    course_catalog = component.getUtility(ICourseCatalog)
+    for entry in course_catalog.iterCatalogEntries():
+        instance = ICourseInstance(entry, None)
+        if instance is None:
+            continue
+        if not include_sub_instances and ICourseSubInstance.providedBy(instance):
+            continue
+        try:
+            packages = instance.ContentPackageBundle.ContentPackages
+        except AttributeError:
+            packages = (instance.legacy_content_package,)
+
+        if package in packages:
+            result.append(instance)
+    return result
+
+@interface.implementer(ICourseInstance)
+@component.adapter(IContentUnit)
+def _content_unit_to_course(unit):
+    ## get all courses, don't include sections
+    courses = _content_unit_to_courses(unit, False)
+
+    # XXX: We probably need to check and see who's enrolled
+    # to find the most specific course instance to return?
+    # As it stands, we promise to return only a root course,
+    # not a subinstance (section)
+    # XXX: FIXME: This requires a one-to-one mapping
+    return courses[0] if courses else None
+
+def is_instructor(course, user):
+    prin = IPrincipal(user)
+    roles = IPrincipalRoleMap(course, None)
+    if roles:
+        return Allow in (roles.getSetting(RID_TA, prin.id),
+                         roles.getSetting(RID_INSTRUCTOR, prin.id))
+    return False
+
+@interface.implementer(ICourseInstance)
+@component.adapter(IContentUnit, IUser)
+def _content_unit_and_user_to_course(unit, user):
+    ## get all courses
+    courses = _content_unit_to_courses(unit, True)
+    for instance in courses or ():
+        # check enrollment
+        enrollments = ICourseEnrollments(instance)
+        record = enrollments.get_enrollment_for_principal(user)
+        if record is not None:
+            return instance
+
+        # check role
+        if is_instructor(instance, user):
+            return instance
+
+    # nothing found return first course
+    return courses[0] if courses else None
