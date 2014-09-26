@@ -29,21 +29,7 @@ from nti.dataserver.interfaces import ICreated
 from nti.ntiids.ntiids import is_valid_ntiid_string
 from nti.ntiids.ntiids import find_object_with_ntiid
 
-_package_path_cache = None
-def _get_content_path(ntiid):
-	global _package_path_cache
-	if _package_path_cache is None:
-		_package_path_cache = {}
-		
-	result = _package_path_cache.get(ntiid)
-	if result is None:
-		result = ()
-		library = component.queryUtility(IContentPackageLibrary)
-		if library and ntiid:
-			paths = library.pathToNTIID(ntiid)
-			result = tuple(p.ntiid for p in paths) if paths else ()
-		_package_path_cache[ntiid] = result
-	return result
+from nti.utils.property import CachedProperty
 
 def _flatten_outline(outline):
 	result = {}
@@ -59,22 +45,48 @@ def _flatten_outline(outline):
 	_recur(outline, result)
 	return result
 
-_course_nodes_cache = None
+def _get_content_path(course, ntiid):
+	pacakge_paths_cache = course._v_csPackagePaths
+	result = pacakge_paths_cache.get(ntiid)
+	if result is None:
+		result = ()
+		library = component.queryUtility(IContentPackageLibrary)
+		if library and ntiid:
+			paths = library.pathToNTIID(ntiid)
+			result = tuple(p.ntiid for p in paths) if paths else ()
+		pacakge_paths_cache[ntiid] = result
+	return result
+	
+@property	
+def _v_csOutlineLastModififed(self):
+	return getattr(self.Outline, 'lastModified', 0)
+
+@CachedProperty('_v_csOutlineLastModififed')
+def _v_csPackagePaths(self):
+	return dict()
+
+@CachedProperty('_v_csOutlineLastModififed')
+def _v_csFlattenOutline(self):
+	nodes = _flatten_outline(self.Outline)
+	return nodes
+
+def _set_course_propeties(course):
+	clazz = course.__class__
+	if not hasattr(clazz, '_v_csOutlineLastModififed'):
+		clazz._v_csOutlineLastModififed = _v_csOutlineLastModififed
+	if not hasattr(clazz, '_v_csFlattenOutline'):
+		clazz._v_csFlattenOutline = _v_csFlattenOutline
+	if not hasattr(clazz, '_v_csPackagePaths'):
+		clazz._v_csPackagePaths = _v_csPackagePaths
+
 def _check_against_course_outline(course_id, ntiid, now=None): 
-	global _course_nodes_cache
-	if _course_nodes_cache is None:
-		_course_nodes_cache = {}
-		
-	nodes = _course_nodes_cache.get(course_id)
-	if nodes is None:
-		course = find_object_with_ntiid(course_id)
-		if not course or not ICourseInstance.providedBy(course):
-			return True
-		nodes = _flatten_outline(course.Outline)
-		_course_nodes_cache[course_id] = nodes
-		
+	course = find_object_with_ntiid(course_id)
+	if not ICourseInstance.providedBy(course):
+		return True
+	_set_course_propeties(course)
 	now = now or datetime.utcnow()
-	ntiids = _get_content_path(ntiid)
+	nodes = course._v_csFlattenOutline 
+	ntiids = _get_content_path(course, ntiid)
 	for content_ntiid, data in nodes.items():
 		beginning = data[0] or now
 		is_outline_stub_only = data[1]
