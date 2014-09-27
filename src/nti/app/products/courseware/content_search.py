@@ -70,7 +70,7 @@ def _v_csFlattenOutline(self):
 	nodes = _flatten_outline(self.Outline)
 	return nodes
 
-def _set_course_propeties(course):
+def _set_course_properties(course):
 	clazz = course.__class__
 	if not hasattr(clazz, '_v_csOutlineLastModififed'):
 		clazz._v_csOutlineLastModififed = _v_csOutlineLastModififed
@@ -83,7 +83,7 @@ def _check_against_course_outline(course_id, ntiid, now=None):
 	course = find_object_with_ntiid(course_id)
 	if not ICourseInstance.providedBy(course):
 		return True
-	_set_course_propeties(course)
+	_set_course_properties(course)
 	now = now or datetime.utcnow()
 	nodes = course._v_csFlattenOutline 
 	ntiids = _get_content_path(course, ntiid)
