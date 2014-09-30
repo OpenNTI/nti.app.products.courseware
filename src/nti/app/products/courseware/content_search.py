@@ -93,7 +93,7 @@ def _check_against_course_outline(course_id, ntiid, now=None):
 		if content_ntiid in ntiids:
 			result = bool(not is_outline_stub_only and now >= beginning)
 			return result
-	return True
+	return False
 		
 def _is_allowed(ntiid, query=None, now=None):
 	if query is None:
