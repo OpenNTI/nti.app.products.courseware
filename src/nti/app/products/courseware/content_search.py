@@ -81,8 +81,9 @@ def _set_course_properties(course):
 
 def _check_against_course_outline(course_id, ntiid, now=None): 
 	course = find_object_with_ntiid(course_id)
-	if not ICourseInstance.providedBy(course):
-		return True
+	course = ICourseInstance(course, None)
+	if course is None or not ICourseInstance.providedBy(course):
+		return False
 	_set_course_properties(course)
 	now = now or datetime.utcnow()
 	nodes = course._v_csFlattenOutline 
