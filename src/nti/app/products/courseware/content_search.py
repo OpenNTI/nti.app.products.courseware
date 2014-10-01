@@ -22,24 +22,69 @@ from nti.contentsearch.interfaces import IContainerIDResolver
 from nti.contentsearch.interfaces import IAudioTranscriptContent
 from nti.contentsearch.interfaces import IVideoTranscriptContent
 
+from nti.contentlibrary.indexed_data.interfaces import IAudioIndexedDataContainer
+from nti.contentlibrary.indexed_data.interfaces import IVideoIndexedDataContainer
+from nti.contentlibrary.indexed_data.interfaces import IRelatedContentIndexedDataContainer
+
 from nti.contenttypes.courses.interfaces import ICourseInstance
 
 from nti.dataserver.interfaces import ICreated
 
+from nti.ntiids.ntiids import TYPE_OID
+from nti.ntiids.ntiids import TYPE_UUID
+from nti.ntiids.ntiids import TYPE_INTID
+from nti.ntiids.ntiids import is_ntiid_of_types
 from nti.ntiids.ntiids import is_valid_ntiid_string
 from nti.ntiids.ntiids import find_object_with_ntiid
 
 from nti.utils.property import CachedProperty
 
+ZERO_DATE = datetime.utcfromtimestamp(0)
+
+CONTAINER_IFACES = (IRelatedContentIndexedDataContainer,
+					IVideoIndexedDataContainer,
+					IAudioIndexedDataContainer)
+
+def _has_content(ntiid, library):
+	result = bool(ntiid and \
+			 	  not is_ntiid_of_types(ntiid, (TYPE_OID, TYPE_UUID, TYPE_INTID)) and \
+			 	  library.pathToNTIID(ntiid))
+	return result
+
 def _flatten_outline(outline):
 	result = {}
+	library = component.queryUtility(IContentPackageLibrary)
+
+	def _indexed_data(iface, result, unit, beginning, is_outline_stub_only):
+		container = iface(unit, None)
+		if not container:
+			return
+		for item in container.get_data_items():
+			ntiid = item.get('target-ntiid') 
+			if not _has_content(ntiid, library):
+				continue
+			if ntiid not in result:	
+				result[ntiid] = (beginning, is_outline_stub_only)
+			else:
+				_begin, _stub = result[ntiid]
+				_begin = max(beginning, _begin) 		# max date
+				_stub = is_outline_stub_only or _stub	# stub true
+				result[ntiid] = (_begin, _stub)
+				
 	def _recur(node, result):
 		content_ntiid = getattr(node, 'ContentNTIID', None)
 		if content_ntiid:
-			beginning = getattr(node, 'AvailableBeginning', None) 
-			is_outline_stub_only = getattr(node, 'is_outline_stub_only', False)
+			beginning = getattr(node, 'AvailableBeginning', None) or ZERO_DATE
+			is_outline_stub_only = getattr(node, 'is_outline_stub_only', None) or False
 			result[content_ntiid] = (beginning, is_outline_stub_only)
-
+			# parse any container data
+			if library is not None:
+				paths = library.pathToNTIID(content_ntiid)
+				unit = paths[-1] if paths else None
+				for iface in CONTAINER_IFACES:
+					_indexed_data(iface, result, unit, beginning, is_outline_stub_only)
+					
+		# parse children
 		for child in node.values():
 			_recur(child, result)
 	_recur(outline, result)
@@ -89,8 +134,7 @@ def _check_against_course_outline(course_id, ntiid, now=None):
 	nodes = course._v_csFlattenOutline 
 	ntiids = _get_content_path(course, ntiid)
 	for content_ntiid, data in nodes.items():
-		beginning = data[0] or now
-		is_outline_stub_only = data[1]
+		beginning, is_outline_stub_only= data
 		if content_ntiid in ntiids:
 			result = bool(not is_outline_stub_only and now >= beginning)
 			return result
@@ -123,7 +167,8 @@ class _ContentHitPredicate(_BasePredicate):
 	def allow(self, item, score, query=None):
 		result = _is_allowed(item.ntiid, query)
 		if not result:
-			logger.debug("Content '%s' not allowed for search. %s", item.ntiid, item)
+			logger.debug("Content '%s' not allowed for search. %s",
+						 item.ntiid, item.title)
 		return result
 
 @interface.implementer(ISearchHitPredicate)
@@ -133,7 +178,8 @@ class _AudioContentHitPredicate(_BasePredicate):
 	def allow(self, item, score, query=None):
 		result = _is_allowed(item.containerId, query)
 		if not result:
-			logger.debug("Content '%s' not allowed for search. %s", item.containerId, item)
+			logger.debug("Content '%s' not allowed for search. %s",
+						 item.containerId, item.title)
 		return result
 
 @interface.implementer(ISearchHitPredicate)
@@ -143,7 +189,8 @@ class _VideoContentHitPredicate(_BasePredicate):
 	def allow(self, item, score, query=None):
 		result = _is_allowed(item.containerId, query)
 		if not result:
-			logger.debug("Content '%s' not allowed for search. %s", item.containerId, item)
+			logger.debug("Content '%s' not allowed for search. %s", 
+						 item.containerId, item.title)
 		return result
 
 @interface.implementer(ISearchHitPredicate)
@@ -154,7 +201,8 @@ class _NTICardContentHitPredicate(_BasePredicate):
 		result = _is_allowed(item.containerId, query) and \
 				 _is_allowed(item.target_ntiid, query)
 		if not result:
-			logger.debug("Content '%s' not allowed for search. %s", item.containerId, item)
+			logger.debug("Content '%s' not allowed for search. %s",
+						 item.containerId, item.title)
 		return result
 
 @interface.implementer(ISearchHitPredicate)
