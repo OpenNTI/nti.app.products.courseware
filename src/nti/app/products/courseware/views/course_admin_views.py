@@ -13,6 +13,7 @@ logger = __import__('logging').getLogger(__name__)
 
 import io
 import csv
+import urllib
 from io import BytesIO
 from datetime import datetime
 from collections import defaultdict
@@ -21,6 +22,7 @@ from zope import component
 from zope import interface
 from zope import lifecycleevent
 from zope.securitypolicy.interfaces import IPrincipalRoleMap
+from zope.security.management import endInteraction, restoreInteraction
 
 from pyramid.view import view_config
 from pyramid import httpexceptions as hexc
@@ -30,6 +32,7 @@ from nti.app.assessment.interfaces import IUsersCourseAssignmentHistory
 from nti.app.base.abstract_views import AbstractAuthenticatedView
 
 from nti.app.externalization.view_mixins import UploadRequestUtilsMixin
+from nti.app.externalization.internalization import read_body_as_external_object
 from nti.app.externalization.view_mixins import ModeledContentUploadRequestUtilsMixin
 
 from nti.app.products.gradebook.interfaces import IGrade
@@ -550,8 +553,7 @@ class AdminUserCourseDropView(AbstractCourseEnrollView):
 			 context=IDataserverFolder,
 			 permission=nauth.ACT_COPPA_ADMIN,
 			 name='CourseEnrollmentMigrator')
-class CourseEnrollmentMigrationView(AbstractAuthenticatedView,
-									ModeledContentUploadRequestUtilsMixin):
+class CourseEnrollmentMigrationView(AbstractAuthenticatedView):
 	"""
 	Migrates the enrollments from one course to antother
 
@@ -560,11 +562,14 @@ class CourseEnrollmentMigrationView(AbstractAuthenticatedView,
 	"""
 
 	def readInput(self):
-		values = super(CourseEnrollmentMigrationView, self).readInput()
+		if self.request.body or self.request.method == 'POST':
+			values = read_body_as_external_object(self.request)
+		else:
+			values = self.request.params
 		result = CaseInsensitiveDict(values)
 		return result
 	
-	def __call__(self):
+	def _do_call(self):
 		try:
 			catalog = component.getUtility(ICourseCatalog)
 		except LookupError:
@@ -577,8 +582,8 @@ class CourseEnrollmentMigrationView(AbstractAuthenticatedView,
 			if not ntiid:
 				msg = 'No %s course entry specified' % name
 				raise hexc.HTTPUnprocessableEntity(detail=_(msg))
-
 			try:
+				ntiid = urllib.unquote(ntiid)
 				entry = catalog.getCatalogEntry(ntiid)
 				params[name] = entry
 			except KeyError:
@@ -587,13 +592,25 @@ class CourseEnrollmentMigrationView(AbstractAuthenticatedView,
 		if params['source'] == params['target']:
 			raise hexc.HTTPUnprocessableEntity(detail=_('Source and target course are the same'))
 		
+		result = LocatedExternalDict()
+		users_moved = result['Users'] = list()
+		result['Source'] = params['source'].ntiid
+		result['Target'] = params['target'].ntiid
 		source = ICourseInstance(params['source'])
 		target = ICourseInstance(params['target'])
-		total = migrate_enrollments_from_course_to_course(source, target, verbose=True)
-		
-		result = LocatedExternalDict()
+		total = migrate_enrollments_from_course_to_course(source, target, verbose=True,
+														  result=users_moved)
 		result['Total'] = total
 		return result
+	
+	def __call__(self):
+		# Make sure we don't send enrollment email, etc, during this process
+		# by not having any interaction.
+		endInteraction()
+		try:
+			return self._do_call()
+		finally:
+			restoreInteraction()
 
 ## REPORT admin views
 
