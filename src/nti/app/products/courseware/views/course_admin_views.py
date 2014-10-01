@@ -13,6 +13,8 @@ logger = __import__('logging').getLogger(__name__)
 
 import io
 import csv
+from io import BytesIO
+from datetime import datetime
 from collections import defaultdict
 
 from zope import component
@@ -23,37 +25,65 @@ from zope.securitypolicy.interfaces import IPrincipalRoleMap
 from pyramid.view import view_config
 from pyramid import httpexceptions as hexc
 
+from nti.app.assessment.interfaces import IUsersCourseAssignmentHistory
+
 from nti.app.base.abstract_views import AbstractAuthenticatedView
+
 from nti.app.externalization.view_mixins import UploadRequestUtilsMixin
+from nti.app.externalization.view_mixins import ModeledContentUploadRequestUtilsMixin
+
+from nti.app.products.gradebook.interfaces import IGrade
+
+from nti.appserver.interfaces import IUserService
 
 from nti.contentfragments.interfaces import CensoredPlainTextContentFragment
 
 from nti.contenttypes.courses.interfaces import ICourseCatalog
 from nti.contenttypes.courses.interfaces import ICourseInstance
 from nti.contenttypes.courses.interfaces import ICourseEnrollments
+from nti.contenttypes.courses.interfaces import ICourseSubInstance
 from nti.contenttypes.courses.interfaces import ICourseCatalogEntry
 from nti.contenttypes.courses.interfaces import ICourseEnrollmentManager
 from nti.contenttypes.courses.interfaces import ICourseInstanceVendorInfo
+from nti.contenttypes.courses.interfaces import ENROLLMENT_SCOPE_VOCABULARY
 from nti.contenttypes.courses.interfaces import ICourseInstancePublicScopedForum
 from nti.contenttypes.courses.interfaces import ICourseInstanceForCreditScopedForum
+from nti.contenttypes.courses.enrollment import migrate_enrollments_from_course_to_course
 
 from nti.dataserver import traversal
-from nti.dataserver.users import Entity
-from nti.dataserver import authorization as nauth
+from nti.dataserver.interfaces import IUser
 from nti.dataserver.interfaces import IDataserverFolder
-from nti.dataserver.contenttypes.forums.ace import ForumACE
 
+from nti.dataserver import authorization as nauth
+
+from nti.dataserver.users import User
+from nti.dataserver.users import Entity
+from nti.dataserver.users.interfaces import IUserProfile
+
+from nti.dataserver.contenttypes.forums.ace import ForumACE
 from nti.dataserver.contenttypes.forums.forum import ACLCommunityForum
 from nti.dataserver.contenttypes.forums.post import CommunityHeadlinePost
 from nti.dataserver.contenttypes.forums.topic import CommunityHeadlineTopic
 from nti.dataserver.contenttypes.forums.interfaces import IACLCommunityBoard
 from nti.dataserver.contenttypes.forums.interfaces import IACLCommunityForum
 
+from nti.externalization.interfaces import LocatedExternalDict 
 from nti.externalization.internalization import update_from_external_object
 
 from nti.ntiids import ntiids
 
+from nti.utils.maps import CaseInsensitiveDict
+
+from ..interfaces import ICoursesWorkspace
+from ..interfaces import ICourseInstanceEnrollment
 from ..interfaces import NTIID_TYPE_COURSE_SECTION_TOPIC
+
+from ..legacy_courses import _copy_enrollments_from_legacy_to_new
+
+from .catalog_views import get_enrollments
+from .catalog_views import do_course_enrollment
+
+## LEGACY views
 
 @view_config(route_name='objects.generic.traversal',
 			 renderer='rest',
@@ -231,13 +261,17 @@ class CourseTopicCreationView(AbstractAuthenticatedView,UploadRequestUtilsMixin)
 		discussions = instance.Discussions
 
 		created_ntiids = []
-		for forum_name, forum_readable, forum_display_name, iface in self._forums_for_instance('Discussions', instance):
-			created_ntiid = self._create_forum(instance, forum_name, forum_readable.NTIID,
-											   # Always created by the public community
-											   # (because legacy courses might have a DFL for the non-public)
-											   instance.SharingScopes['Public'].NTIID,
-											   forum_display_name=forum_display_name,
-											   forum_interface=iface)
+		_discussions = self._forums_for_instance('Discussions', instance)
+		for forum_name, forum_readable, forum_display_name, iface in _discussions:
+			created_ntiid = \
+				self._create_forum(instance,
+								   forum_name,
+								   forum_readable.NTIID,
+								   # Always created by the public community
+								   # (because legacy courses might have a DFL for the non-public)
+								   instance.SharingScopes['Public'].NTIID,
+								   forum_display_name=forum_display_name,
+								   forum_interface=iface)
 			if created_ntiid:
 				created_ntiids.append(created_ntiid)
 
@@ -305,9 +339,10 @@ class CourseTopicCreationView(AbstractAuthenticatedView,UploadRequestUtilsMixin)
 						# id may not really be the right thing depending on if we're creating
 						# at a course instance or subinstance...
 						# XXX: This is assumming quite a bit about the way these work.
-						ntiid = ntiids.make_ntiid(provider=ICourseCatalogEntry(instance).ProviderUniqueID,
-												  nttype=NTIID_TYPE_COURSE_SECTION_TOPIC,
-												  specific=topic._ntiid_specific_part)
+						ntiid = ntiids.make_ntiid(
+									provider=ICourseCatalogEntry(instance).ProviderUniqueID,
+									nttype=NTIID_TYPE_COURSE_SECTION_TOPIC,
+									specific=topic._ntiid_specific_part)
 					created_ntiids.append(ntiid)
 					logger.debug('Created topic %s with NTIID %s', topic, ntiid)
 
@@ -353,13 +388,16 @@ class CourseTopicCreationView(AbstractAuthenticatedView,UploadRequestUtilsMixin)
 				continue
 			instance = ICourseInstance(catalog_entry)
 
-			# Everybody should have announcements, unless the vendor
-			# info says otherwise
-			for forum_name, forum_readable, forum_display_name, iface  in self._forums_for_instance('Announcements', instance):
-				created_ntiid = self._create_forum(instance, forum_name,
-												   forum_readable.NTIID, instance.SharingScopes['Public'].NTIID,
-												   forum_display_name=forum_display_name,
-												   forum_interface=iface)
+			# Everybody should have announcements, unless the vendor info says otherwise
+			_announcements = self._forums_for_instance('Announcements', instance)
+			for forum_name, forum_readable, forum_display_name, iface  in _announcements:
+				created_ntiid = \
+					self._create_forum(instance, 
+									   forum_name,
+									   forum_readable.NTIID, 
+									   instance.SharingScopes['Public'].NTIID,
+									   forum_display_name=forum_display_name,
+									   forum_interface=iface)
 				if created_ntiid:
 					created_ntiids.append(created_ntiid)
 
@@ -376,19 +414,19 @@ class CourseTopicCreationView(AbstractAuthenticatedView,UploadRequestUtilsMixin)
 			# Note that we do not try to do this in sub-instances (if
 			# any); administrators prefer to explicitly
 			# list each instance
-			created_ntiids.extend(self._create_topics_in_instance(instance, rows, catalog_entry.ProviderUniqueID))
+			topic_list = \
+				self._create_topics_in_instance(instance, rows, catalog_entry.ProviderUniqueID)
+			created_ntiids.extend(topic_list)
 
 
 		return created_ntiids
-
-from ..legacy_courses import _copy_enrollments_from_legacy_to_new
 
 @view_config(route_name='objects.generic.traversal',
 			 renderer='rest',
 			 context=IDataserverFolder,
 			 permission=nauth.ACT_COPPA_ADMIN, # XXX FIXME
 			 name='LegacyCourseEnrollmentMigrator')
-class CourseEnrollmentMigrationView(AbstractAuthenticatedView):
+class LegacyCourseEnrollmentMigrationView(AbstractAuthenticatedView):
 	"""
 	Migrates the enrollments from legacy placeholder courses to
 	their new course instance. If any new course instance does not yet
@@ -403,23 +441,7 @@ class CourseEnrollmentMigrationView(AbstractAuthenticatedView):
 	def __call__(self):
 		return _copy_enrollments_from_legacy_to_new(self.request)
 
-# helper admin views
-
-from nti.app.externalization.view_mixins import ModeledContentUploadRequestUtilsMixin
-
-from nti.appserver.interfaces import IUserService
-
-from nti.contenttypes.courses.interfaces import ENROLLMENT_SCOPE_VOCABULARY
-
-from nti.dataserver.users import User
-from nti.dataserver.interfaces import IUser
-
-from nti.utils.maps import CaseInsensitiveDict
-
-from ..interfaces import ICoursesWorkspace
-
-from .catalog_views import get_enrollments
-from .catalog_views import do_course_enrollment
+## HELPER admin views
 
 class AbstractCourseEnrollView(AbstractAuthenticatedView,
 							   ModeledContentUploadRequestUtilsMixin):
@@ -523,18 +545,57 @@ class AdminUserCourseDropView(AbstractCourseEnrollView):
 		enrollments.drop(user)
 		return hexc.HTTPNoContent()
 
-from io import BytesIO
-from datetime import datetime
+@view_config(route_name='objects.generic.traversal',
+			 renderer='rest',
+			 context=IDataserverFolder,
+			 permission=nauth.ACT_COPPA_ADMIN,
+			 name='CourseEnrollmentMigrator')
+class CourseEnrollmentMigrationView(AbstractAuthenticatedView,
+									ModeledContentUploadRequestUtilsMixin):
+	"""
+	Migrates the enrollments from one course to antother
 
-from nti.app.assessment.interfaces import IUsersCourseAssignmentHistory
+	Call this as a GET request for dry-run processing. POST to it
+	to do it for real.
+	"""
 
-from nti.app.products.courseware.interfaces import ICourseInstanceEnrollment
+	def readInput(self):
+		values = super(CourseEnrollmentMigrationView, self).readInput()
+		result = CaseInsensitiveDict(values)
+		return result
+	
+	def __call__(self):
+		try:
+			catalog = component.getUtility(ICourseCatalog)
+		except LookupError:
+			raise hexc.HTTPNotFound(detail=_('Catalog not found'))
+			
+		params = {}
+		values = self.readInput()
+		for name, alias in (('source', 'source'), ('target', 'dest')):
+			ntiid = values.get(name) or values.get(alias)
+			if not ntiid:
+				msg = 'No %s course entry specified' % name
+				raise hexc.HTTPUnprocessableEntity(detail=_(msg))
 
-from nti.app.products.gradebook.interfaces import IGrade
+			try:
+				entry = catalog.getCatalogEntry(ntiid)
+				params[name] = entry
+			except KeyError:
+				raise hexc.HTTPUnprocessableEntity(detail=_('Course not found'))
+			
+		if params['source'] == params['target']:
+			raise hexc.HTTPUnprocessableEntity(detail=_('Source and target course are the same'))
+		
+		source = ICourseInstance(params['source'])
+		target = ICourseInstance(params['target'])
+		total = migrate_enrollments_from_course_to_course(source, target, verbose=True)
+		
+		result = LocatedExternalDict()
+		result['Total'] = total
+		return result
 
-from nti.contenttypes.courses.interfaces import ICourseSubInstance
-
-from nti.dataserver.users.interfaces import IUserProfile
+## REPORT admin views
 
 @view_config(route_name='objects.generic.traversal',
 			 renderer='rest',
@@ -578,7 +639,6 @@ class CourseRolesView(AbstractAuthenticatedView,
 		response = self.request.response
 		response.body = bio.getvalue()
 		response.content_disposition = b'attachment; filename="CourseRoles.csv"'
-
 		return response
 
 @view_config(route_name='objects.generic.traversal',
@@ -672,5 +732,4 @@ class CourseMultiEnrollView(AbstractAuthenticatedView,
 		response = self.request.response
 		response.body = bio.getvalue()
 		response.content_disposition = b'attachment; filename="CourseMultiEnrollView.csv"'
-
 		return response
