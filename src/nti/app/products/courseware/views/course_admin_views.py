@@ -15,7 +15,6 @@ import io
 import csv
 import urllib
 from io import BytesIO
-from datetime import datetime
 from collections import defaultdict
 
 from zope import component
@@ -27,15 +26,11 @@ from zope.security.management import endInteraction, restoreInteraction
 from pyramid.view import view_config
 from pyramid import httpexceptions as hexc
 
-from nti.app.assessment.interfaces import IUsersCourseAssignmentHistory
-
 from nti.app.base.abstract_views import AbstractAuthenticatedView
 
 from nti.app.externalization.view_mixins import UploadRequestUtilsMixin
 from nti.app.externalization.internalization import read_body_as_external_object
 from nti.app.externalization.view_mixins import ModeledContentUploadRequestUtilsMixin
-
-from nti.app.products.gradebook.interfaces import IGrade
 
 from nti.appserver.interfaces import IUserService
 
@@ -78,7 +73,6 @@ from nti.ntiids import ntiids
 from nti.utils.maps import CaseInsensitiveDict
 
 from ..interfaces import ICoursesWorkspace
-from ..interfaces import ICourseInstanceEnrollment
 from ..interfaces import NTIID_TYPE_COURSE_SECTION_TOPIC
 
 from ..legacy_courses import _copy_enrollments_from_legacy_to_new
@@ -656,97 +650,4 @@ class CourseRolesView(AbstractAuthenticatedView,
 		response = self.request.response
 		response.body = bio.getvalue()
 		response.content_disposition = b'attachment; filename="CourseRoles.csv"'
-		return response
-
-@view_config(route_name='objects.generic.traversal',
-			 renderer='rest',
-			 context=IDataserverFolder,
-			 request_method='GET',
-			 permission=nauth.ACT_MODERATE,
-			 name='CourseMultiEnrollView')
-class CourseMultiEnrollView(AbstractAuthenticatedView,
-							ModeledContentUploadRequestUtilsMixin):
-	"""
-	Check if any users are enrolled in multiple courses/subinstances.
-	"""
-
-	def __call__(self):
-		catalog = component.getUtility(ICourseCatalog)
-
-		bio = BytesIO()
-		csv_writer = csv.writer(bio)
-		csv_writer.writerow( [	'Course', 'SubInstance', 'Enroll Date', 'Enroll Status',
-								'User', 'Email', 'AssignmentId', 'Grade', 'Submission Date'] )
-
-		for catalog_entry in catalog.iterCatalogEntries():
-			course = ICourseInstance( catalog_entry )
-
-			if not ICourseSubInstance.providedBy( course ):
-				course_enroll_map = {}
-
-				course_enrollments = ICourseEnrollments( course )
-				course_enrollments = [x for x in course_enrollments.iter_enrollments()]
-				course_enrollees = [x.Principal for x in course_enrollments]
-				course_enroll_map[course] = set( course_enrollees )
-
-				for sub in course.SubInstances.values():
-					sub_enrollments = ICourseEnrollments( sub )
-					sub_enrollments = [x for x in sub_enrollments.iter_enrollments()]
-					sub_enrollees = [x.Principal for x in sub_enrollments]
-					course_enroll_map[sub] = set( sub_enrollees )
-
-				user_map = {}
-
-				# Probably a better way to do this, but yea.
-				# Find our suspects.
-				for key, _list in course_enroll_map.items():
-					for _user in _list:
-						if _user not in user_map:
-							user_map[_user] = []
-						user_map[_user].append( key )
-
-				for _user, _list in user_map.items():
-					if len( _list ) > 1:
-						for _course in _list:
-							# Return for consumption
-							if ICourseSubInstance.providedBy( _course ):
-								course_name = _course.__parent__.__parent__.__name__
-								sub_name = _course.__name__
-							else:
-								course_name = _course.__name__
-								sub_name = ''
-
-							# Basic enrollment info
-							profile = IUserProfile( _user, None )
-							email = getattr( profile, 'email', None )
-							user_history = component.getMultiAdapter(
-													( _course, _user ), IUsersCourseAssignmentHistory )
-
-							enrollment = component.getMultiAdapter(
-													( _course, _user), ICourseInstanceEnrollment )
-
-							enrolled_date = getattr( enrollment, 'createdTime', None )
-							if enrolled_date:
-								enrolled_date = datetime.utcfromtimestamp( enrolled_date )
-							enrollment_status = getattr( enrollment, 'LegacyEnrollmentStatus', None )
-
-							# Assignment info, if we have any.
-							if len( user_history ) > 0:
-								for a_key, a_val in user_history.items():
-									submit_date = getattr( a_val, 'createdTime', None )
-									if submit_date:
-										submit_date = datetime.utcfromtimestamp( submit_date )
-
-									grade = IGrade( a_val, None )
-									grade_val = grade.grade if grade else None
-									csv_writer.writerow( [ 	course_name, sub_name, enrolled_date, enrollment_status,
-															_user.username,
-															email, a_key, grade_val, submit_date ] )
-							else:
-								csv_writer.writerow( [ 	course_name, sub_name, enrolled_date, enrollment_status,
-														_user.username, email, '', '', '' ] )
-
-		response = self.request.response
-		response.body = bio.getvalue()
-		response.content_disposition = b'attachment; filename="CourseMultiEnrollView.csv"'
 		return response
