@@ -1,40 +1,31 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-"""
-
-
-.. $Id$
-"""
 
 from __future__ import print_function, unicode_literals, absolute_import, division
 __docformat__ = "restructuredtext en"
 
-logger = __import__('logging').getLogger(__name__)
+# disable: accessing protected members, too many methods
+# pylint: disable=W0212,R0904
 
-#disable: accessing protected members, too many methods
-#pylint: disable=W0212,R0904
-
-
-from hamcrest import assert_that
 from hamcrest import is_
-from hamcrest import has_entry
-from hamcrest import not_none
+from hamcrest import has_item
 from hamcrest import contains
+from hamcrest import not_none
+from hamcrest import has_entry
+from hamcrest import assert_that
+from hamcrest import has_entries
 from hamcrest import starts_with
 from hamcrest import contains_string
-from hamcrest import has_entries
-from hamcrest import has_item
-from hamcrest import starts_with
 
+import csv
 import fudge
+from io import BytesIO
 
 from nti.app.testing.decorators import WithSharedApplicationMockDS
 from nti.app.testing.application_webtest import ApplicationLayerTest
-from . import LegacyInstructedCourseApplicationTestLayer
-from . import InstructedCourseApplicationTestLayer
 
-from io import BytesIO
-import csv
+from nti.app.products.courseware.tests import InstructedCourseApplicationTestLayer
+from nti.app.products.courseware.tests import LegacyInstructedCourseApplicationTestLayer
 
 class _AbstractMixin(object):
 	default_origin = str('http://janux.ou.edu')
@@ -188,7 +179,6 @@ class _AbstractMixin(object):
 											   'Item', has_entries('Class', 'CommunityHeadlineTopic',
 																   'title', 'A clc discussion'))) )
 
-
 		# The admin can easily make a small edit to the topic...
 		res = self.testapp.get(self.open_path, extra_environ=admin_env)
 		headline_url = self.require_link_href_with_rel( res.json_body['headline'], 'edit' )
@@ -225,8 +215,6 @@ class _AbstractMixin(object):
 			self.resolve_user(username=o['Username'], extra_environ=inst_env)
 			self.resolve_user(username=o['OID'], extra_environ=inst_env)
 
-
-
 class TestCreateLegacyForums(_AbstractMixin,
 							 ApplicationLayerTest):
 	layer = LegacyInstructedCourseApplicationTestLayer
@@ -244,14 +232,11 @@ class TestCreateLegacyForums(_AbstractMixin,
 	open_topic_path = '/dataserver2/users/CLC3403.ou.nextthought.com/DiscussionBoard/Open_Discussions/A_clc_discussion'
 	open_path = open_topic_path
 
-
 class TestCreateLegacyForumsOpenOnly(TestCreateLegacyForums):
 
 	layer = LegacyInstructedCourseApplicationTestLayer
 	testapp = None
-
 	body_matcher = TestCreateLegacyForums.body_matcher[:3] # All three, because the in-class discussions still created, but not the topic
-
 	scope = str('Open')
 
 class TestCreateForums(_AbstractMixin,
@@ -266,8 +251,6 @@ class TestCreateForums(_AbstractMixin,
 					'tag:nextthought.com,2011-10:CLC_3403-Topic:EnrolledCourseSection-Open_Discussions.A_clc_discussion',
 					not_none(),
 					'tag:nextthought.com,2011-10:CLC_3403-Topic:EnrolledCourseSection-In_Class_Discussions.A_clc_discussion']
-
-
 
 	open_path = '/dataserver2/%2B%2Betc%2B%2Bhostsites/platform.ou.edu/%2B%2Betc%2B%2Bsite/Courses/Fall2013/CLC3403_LawAndJustice/Discussions/Open_Discussions/A_clc_discussion'
 	default_path = '/dataserver2/%2B%2Betc%2B%2Bhostsites/platform.ou.edu/%2B%2Betc%2B%2Bsite/Courses/Fall2013/CLC3403_LawAndJustice/Discussions/Forum'
@@ -304,9 +287,9 @@ class TestCreateForums(_AbstractMixin,
 							   starts_with('tag:nextthought.com,2011-10:unknown-OID-0x') ) )
 
 		# It is notable to a student...
-		res = self.post_user_data('CLC 3403',
-								  extra_path='/Courses/EnrolledCourses',
-								  status=201 )
+		self.post_user_data('CLC 3403',
+							extra_path='/Courses/EnrolledCourses',
+							status=201 )
 		res = self.fetch_user_recursive_notable_ugd()
 		assert_that( res.json_body, has_entry( 'TotalItemCount', 0))
 
@@ -315,7 +298,6 @@ class TestCreateForums(_AbstractMixin,
 						  extra_environ=inst_env)
 		res = self.fetch_user_recursive_notable_ugd()
 		assert_that( res.json_body, has_entry( 'TotalItemCount', 1))
-
 
 
 class TestCreateForumsOpenOnly(TestCreateForums):
@@ -331,7 +313,7 @@ class TestMigrate(ApplicationLayerTest):
 
 	@WithSharedApplicationMockDS(users=True,testapp=True,default_authenticate=True)
 	def test_migrate_legacy_to_new(self):
-		res = self.testapp.post('/dataserver2/@@SyncAllLibraries')
+		self.testapp.post('/dataserver2/@@SyncAllLibraries')
 		res = self.testapp.get('/dataserver2/@@LegacyCourseEnrollmentMigrator')
 		assert_that( res.json_body, is_(
 			[['Nothing in site', 'demo.nextthought.com'],
