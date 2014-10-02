@@ -556,7 +556,7 @@ class CourseEnrollmentMigrationView(AbstractAuthenticatedView):
 	"""
 
 	def readInput(self):
-		if self.request.body or self.request.method == 'POST':
+		if self.request.body:
 			values = read_body_as_external_object(self.request)
 		else:
 			values = self.request.params
