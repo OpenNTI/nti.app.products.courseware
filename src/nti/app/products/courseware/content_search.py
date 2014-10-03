@@ -140,6 +140,15 @@ def _check_against_course_outline(course_id, ntiid, now=None):
 			return result
 	return False
 		
+def _get_context_course(query):
+	context = query.context or {}
+	course_id = context.get('course')
+	if course_id and is_valid_ntiid_string(course_id):
+		course = find_object_with_ntiid(course_id)
+		course = ICourseInstance(course, None)
+		return course
+	return None
+
 def _is_allowed(ntiid, query=None, now=None):
 	if query is None:
 		return True # allow by default
@@ -167,8 +176,8 @@ class _ContentHitPredicate(_BasePredicate):
 	def allow(self, item, score, query=None):
 		result = _is_allowed(item.ntiid, query)
 		if not result:
-			logger.debug("Content '%s' not allowed for search. %s",
-						 item.ntiid, item.title)
+			logger.debug("Content ('%s') in container '%s' not allowed for search.", 
+						 item.title, item.ntiid)
 		return result
 
 @interface.implementer(ISearchHitPredicate)
@@ -178,8 +187,8 @@ class _AudioContentHitPredicate(_BasePredicate):
 	def allow(self, item, score, query=None):
 		result = _is_allowed(item.containerId, query)
 		if not result:
-			logger.debug("Content '%s' not allowed for search. %s",
-						 item.containerId, item.title)
+			logger.debug("AudioContent ('%s') in container '%s' not allowed for search.", 
+						 item.title, item.containerId)
 		return result
 
 @interface.implementer(ISearchHitPredicate)
@@ -189,8 +198,8 @@ class _VideoContentHitPredicate(_BasePredicate):
 	def allow(self, item, score, query=None):
 		result = _is_allowed(item.containerId, query)
 		if not result:
-			logger.debug("Content '%s' not allowed for search. %s", 
-						 item.containerId, item.title)
+			logger.debug("VideoContent ('%s') in container '%s' not allowed for search.", 
+						 item.title, item.containerId)
 		return result
 
 @interface.implementer(ISearchHitPredicate)
@@ -201,18 +210,24 @@ class _NTICardContentHitPredicate(_BasePredicate):
 		result = _is_allowed(item.containerId, query) and \
 				 _is_allowed(item.target_ntiid, query)
 		if not result:
-			logger.debug("Content '%s' not allowed for search. %s",
-						 item.containerId, item.title)
+			logger.debug("NTICardContent ('%s') in container '%s' not allowed for search.",
+						 item.title, item.containerId)
 		return result
 
 @interface.implementer(ISearchHitPredicate)
 @component.adapter(ICreated)
 class _CreatedContentHitPredicate(_BasePredicate):
 
+	def _is_allowed(self, containerId, query):
+		return bool(not containerId or \
+					is_ntiid_of_types(containerId, (TYPE_OID,)) or \
+					_is_allowed(containerId, query))
+			
 	def allow(self, item, score, query=None):
 		resolver = IContainerIDResolver(item, None)
 		containerId = resolver.containerId if resolver is not None else None
-		result = _is_allowed(containerId, query) if containerId else True
+		result = self._is_allowed(containerId, query)
 		if not result:
-			logger.debug("Content '%s' not allowed for search. %s", containerId, item)
+			logger.debug("Object (%s) in container '%s' not allowed for search.",
+						 item, containerId)
 		return result
