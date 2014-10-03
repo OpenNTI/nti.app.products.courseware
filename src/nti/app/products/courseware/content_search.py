@@ -45,11 +45,9 @@ CONTAINER_IFACES = (IRelatedContentIndexedDataContainer,
 					IVideoIndexedDataContainer,
 					IAudioIndexedDataContainer)
 
-def _has_content(ntiid, library):
-	result = bool(ntiid and \
-			 	  not is_ntiid_of_types(ntiid, (TYPE_OID, TYPE_UUID, TYPE_INTID)) and \
-			 	  library.pathToNTIID(ntiid))
-	return result
+def _check_ntiid(ntiid):
+	result = ntiid and not is_ntiid_of_types(ntiid, (TYPE_OID, TYPE_UUID, TYPE_INTID))
+	return bool(result)
 
 def _flatten_outline(outline):
 	result = {}
@@ -60,8 +58,13 @@ def _flatten_outline(outline):
 		if not container:
 			return
 		for item in container.get_data_items():
-			ntiid = item.get('target-ntiid') 
-			if not _has_content(ntiid, library):
+			ntiid = None
+			for name in ('target-ntiid', 'ntiid'):
+				t_ntiid = item.get(name)
+				if _check_ntiid(t_ntiid):
+					ntiid = t_ntiid
+					break
+			if not ntiid:
 				continue
 			if ntiid not in result:	
 				result[ntiid] = (beginning, is_outline_stub_only)
@@ -128,7 +131,7 @@ def _check_against_course_outline(course, ntiid, now=None):
 	_set_course_properties(course)
 	now = now or datetime.utcnow()
 	nodes = course._v_csFlattenOutline 
-	ntiids = _get_content_path(course, ntiid)
+	ntiids = _get_content_path(course, ntiid) or (ntiid,)
 	for content_ntiid, data in nodes.items():
 		beginning, is_outline_stub_only= data
 		if content_ntiid in ntiids:
