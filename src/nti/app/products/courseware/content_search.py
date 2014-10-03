@@ -124,11 +124,7 @@ def _set_course_properties(course):
 	if not hasattr(clazz, '_v_csPackagePaths'):
 		clazz._v_csPackagePaths = _v_csPackagePaths
 
-def _check_against_course_outline(course_id, ntiid, now=None): 
-	course = find_object_with_ntiid(course_id)
-	course = ICourseInstance(course, None)
-	if course is None or not ICourseInstance.providedBy(course):
-		return False
+def _check_against_course_outline(course, ntiid, now=None): 
 	_set_course_properties(course)
 	now = now or datetime.utcnow()
 	nodes = course._v_csFlattenOutline 
@@ -153,12 +149,11 @@ def _is_allowed(ntiid, query=None, now=None):
 	if query is None:
 		return True # allow by default
 
-	context = query.context or {}
-	course_id = context.get('course')
-	if not course_id or not is_valid_ntiid_string(course_id):
+	course = _get_context_course(query)
+	if course is None:
 		return True # allow by default
-		
-	result = _check_against_course_outline(course_id, ntiid)
+
+	result = _check_against_course_outline(course, ntiid)
 	return result
 
 @interface.implementer(ISearchHitPredicate)
