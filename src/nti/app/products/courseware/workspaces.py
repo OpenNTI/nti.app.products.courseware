@@ -1,8 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
-Implementation of an Atom/OData workspace and collection
-for courses.
+Implementation of an Atom/OData workspace and collection for courses.
 
 .. $Id$
 """
@@ -323,6 +322,8 @@ class DefaultCourseInstanceEnrollment(CourseInstanceEnrollment):
 		# XXX Can do better
 		if self._record.Scope == 'Public':
 			return 'Open'
+		elif self._record.Scope == 'ForCreditNonDegree':
+			return 'ForCreditNonDegree'
 		return 'ForCredit'
 
 def enrollment_from_record(course, record):
