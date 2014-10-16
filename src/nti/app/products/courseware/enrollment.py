@@ -10,6 +10,7 @@ logger = __import__('logging').getLogger(__name__)
 
 from zope import component
 from zope import interface
+from zope.schema.fieldproperty import FieldPropertyStoredThroughField as FP
 
 from nti.contenttypes.courses.interfaces import ICourseCatalogEntry
 from nti.contenttypes.courses.interfaces import IDenyOpenEnrollment
@@ -22,6 +23,7 @@ from nti.externalization.externalization import to_external_object
 from nti.externalization.interfaces import IInternalObjectExternalizer
 
 from nti.schema.schema import EqHash
+from nti.schema.field import SchemaConfigured
 
 from .interfaces import IEnrollmentOption
 from .interfaces import IEnrollmentOptions
@@ -35,19 +37,23 @@ MIMETYPE = StandardExternalFields.MIMETYPE
 @WithRepr
 @NoPickle
 @EqHash('Name', 'Enabled')
-class OpenEnrollmentOption(object):
+class OpenEnrollmentOption(SchemaConfigured):
 
 	__parent__ = None
 	__external_can_create__ = False
 	__external_class_name__ = "OpenEnrollment"
 	mime_type = mimeType = 'application/vnd.nextthought.courseware.openenrollmentoption'
 
-	Enabled = True
+	Enabled = FP(IOpenEnrollmentOption['Enabled'])
 	
 	@property
 	def Name(self):
 		return 'OpenEnrollment'
 	__name__ = Name
+	
+	@Name.setter
+	def Name(self, value):
+		pass
 		
 @interface.implementer(IEnrollmentOptions, IInternalObjectExternalizer)
 @WithRepr
