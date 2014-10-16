@@ -1,30 +1,34 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-"""
-
-
-.. $Id$
-"""
 
 from __future__ import print_function, unicode_literals, absolute_import, division
 __docformat__ = "restructuredtext en"
 
-logger = __import__('logging').getLogger(__name__)
+# disable: accessing protected members, too many methods
+# pylint: disable=W0212,R0904
 
-from zope import component
-from nti.app.testing.application_webtest import ApplicationTestLayer
 import os
 import os.path
 
-import ZODB
-from nti.dataserver.tests.mock_dataserver import WithMockDS
-from nti.dataserver.tests.mock_dataserver import mock_db_trans
+from zope import component
 
-from nti.dataserver import users
+import ZODB
+
 from zope.component.interfaces import IComponents
+
+from nti.contentlibrary.interfaces import IContentPackageLibrary
+
 from nti.contenttypes.courses.interfaces import ICourseCatalog
 from nti.contenttypes.courses.interfaces import ICourseInstance
-from nti.contentlibrary.interfaces import IContentPackageLibrary
+
+from nti.dataserver import users
+
+from nti.site.hostpolicy import run_job_in_all_host_sites
+
+from nti.app.testing.application_webtest import ApplicationTestLayer
+
+from nti.dataserver.tests.mock_dataserver import WithMockDS
+from nti.dataserver.tests.mock_dataserver import mock_db_trans
 
 def publish_ou_course_entries():
 	lib = component.getUtility(IContentPackageLibrary)
@@ -34,7 +38,6 @@ def publish_ou_course_entries():
 		pass
 
 	lib.syncContentPackages()
-
 
 def _do_then_enumerate_library(do, sync_libs=False):
 
@@ -50,11 +53,8 @@ def _do_then_enumerate_library(do, sync_libs=False):
 				view = _SyncAllLibrariesView(None)
 				view._SLEEP = False # see comments in the view class
 				view()
-
-
 	_create()
 
-from nti.site.hostpolicy import run_job_in_all_host_sites
 def _reset_site_libs():
 	seen = []
 
@@ -128,8 +128,6 @@ class LegacyInstructedCourseApplicationTestLayer(ApplicationTestLayer):
 		_do_then_enumerate_library(cleanup)
 		del cls.__old_library
 
-
-
 class RestrictedInstructedCourseApplicationTestLayer(ApplicationTestLayer):
 
 	_library_path = 'RestrictedLibrary'
@@ -147,7 +145,6 @@ class RestrictedInstructedCourseApplicationTestLayer(ApplicationTestLayer):
 		# Must implement!
 		# Clean up any side effects of these content packages being
 		# registered
-		from nti.site.hostpolicy import run_job_in_all_host_sites
 		def cleanup():
 			_reset_site_libs()
 			cls.__old_library.resetContentPackages()
@@ -158,7 +155,6 @@ class RestrictedInstructedCourseApplicationTestLayer(ApplicationTestLayer):
 
 		_do_then_enumerate_library(cleanup)
 		del cls.__old_library
-
 
 class PersistentInstructedCourseApplicationTestLayer(ApplicationTestLayer):
 	# A mix of new and old-style courses
@@ -172,7 +168,6 @@ class PersistentInstructedCourseApplicationTestLayer(ApplicationTestLayer):
 		component.provideUtility(LegacyInstructedCourseApplicationTestLayer._setup_library(cls), IContentPackageLibrary)
 		_do_then_enumerate_library(lambda: users.User.create_user( username='harp4162', password='temp001'),
 								   sync_libs=True)
-
 
 	@classmethod
 	def tearDown(cls):
