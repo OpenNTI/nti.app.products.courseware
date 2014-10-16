@@ -13,15 +13,11 @@ __docformat__ = "restructuredtext en"
 logger = __import__('logging').getLogger(__name__)
 
 # disable missing self
-#pylint:disable=I0011,E0213,E0211
+# pylint:disable=I0011,E0213,E0211
 
 from zope import interface
-
-from zope.container.interfaces import IContained
 from zope.security.permission import Permission
-
-ACT_VIEW_ACTIVITY = Permission('nti.actions.courseware.view_activity')
-ACT_VIEW_ROSTER = Permission('nti.actions.courseware.view_roster')
+from zope.container.interfaces import IContained
 
 from nti.appserver import interfaces as app_interfaces
 
@@ -33,10 +29,10 @@ from nti.dataserver.interfaces import IShouldHaveTraversablePath
 
 from nti.ntiids.schema import ValidNTIID
 
-
 from nti.schema.field import Dict
 from nti.schema.field import Choice
 from nti.schema.field import Object
+from nti.schema.field import ListOrTuple
 from nti.schema.field import ValidTextLine as TextLine
 
 import zope.deferredimport
@@ -62,11 +58,13 @@ zope.deferredimport.deprecated(
 	ICourseCatalog="nti.contenttypes.courses.interfaces:IWritableCourseCatalog")
 
 
+ACT_VIEW_ROSTER = Permission('nti.actions.courseware.view_roster')
+ACT_VIEW_ACTIVITY = Permission('nti.actions.courseware.view_activity')
+
 from nti.contenttypes.courses.legacy_catalog import ICourseCatalogLegacyEntry as _ICourseCatalogLegacyEntry
 
 class ICourseCatalogLegacyContentEntry(_ICourseCatalogLegacyEntry):
 	ContentPackageNTIID = ValidNTIID(title="The NTIID of the root content package")
-
 
 class ILegacyCommunityBasedCourseInstance(ICourseInstance):
 	"""
@@ -215,6 +213,7 @@ class IPrincipalAdministrativeRoleCatalog(interface.Interface):
 		Iterate across :class:`.ICourseInstanceAdministrativeRole` objects, or at
 		least something that can be adapted to that interface.
 		"""
+
 class IAdministeredCoursesCollection(app_interfaces.IContainerCollection):
 	"""
 	A collection (local to a user) of courses he administers
@@ -242,7 +241,6 @@ class ILegacyCourseConflatedContentPackageUsedAsCourse(ILegacyCourseConflatedCon
 	this ugliness to stand out.
 	"""
 
-
 #: A preliminary special type of NTIID that refers to an abstract
 #: notion of a topic within a particular abstract course. When
 #: resolved, we will find the specific course (sub)instance the user is
@@ -257,3 +255,22 @@ NTIID_TYPE_COURSE_SECTION_TOPIC = 'Topic:EnrolledCourseSection'
 #: returns the top-level course topic, never the course topic
 #: for a subsection.
 NTIID_TYPE_COURSE_TOPIC = 'Topic:EnrolledCourseRoot'
+
+class IEnrollmentOption(interface.Interface):
+	"""
+	Marker interface for a course/entry enrollment option
+	"""
+	
+class IOpenEnrollmentOption(IEnrollmentOption):
+	"""
+	Marker interface for an open course/entry enrollment option
+	"""
+
+class IEnrollmentOptions(interface.Interface):
+	
+	"""
+	Marker interface for an object that hold :class:`.IEnrollmentOption` objects
+	"""
+	
+	options = ListOrTuple(Object(IEnrollmentOption, title="the option"),
+						  title="The enrollment options", required=False)

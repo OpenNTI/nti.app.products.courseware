@@ -8,10 +8,14 @@ __docformat__ = "restructuredtext en"
 
 logger = __import__('logging').getLogger(__name__)
 
+from zope import component
+
 from nti.contenttypes.courses.interfaces import ICourseEnrollments
 from nti.contenttypes.courses.interfaces import ICourseSubInstance
 from nti.contenttypes.courses.interfaces import ICourseCatalogEntry
 from nti.contenttypes.courses.interfaces import ICourseEnrollmentManager
+
+from .interfaces import IEnrollmentOption
 
 def drop_any_other_enrollments(course, user):
 	course_ntiid = ICourseCatalogEntry(course).ntiid
@@ -36,3 +40,8 @@ def drop_any_other_enrollments(course, user):
 						getattr(entry, 'ProviderUniqueID', None))
 			result.append(instance)
 	return result
+
+def get_enrollment_options(course):
+	entry = ICourseCatalogEntry(course)
+	options = component.subscribers((entry,), IEnrollmentOption)
+	return options
