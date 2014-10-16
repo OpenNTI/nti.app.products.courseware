@@ -12,12 +12,15 @@ from hamcrest import none
 from hamcrest import is_not
 from hamcrest import has_entry
 from hamcrest import assert_that
+from hamcrest import has_entries
 from hamcrest import has_property
 does_not = is_not
 
 from zope import component
 
 from nti.contenttypes.courses.interfaces import ICourseCatalog
+
+from nti.externalization.externalization import to_external_object
 
 from nti.app.products.courseware.utils import get_enrollment_options
 
@@ -48,3 +51,9 @@ class TestEnrollmentOptions(ApplicationLayerTest):
 			assert_that(options, is_not(none()))
 			assert_that(options, has_entry('OpenEnrollment',
 										   has_property('Enabled', is_(True))))
+
+			ext_obj = to_external_object(options)
+			assert_that(ext_obj, 
+				has_entry('OpenEnrollment',
+						   has_entries('Enabled', is_(True),
+									   'MimeType','application/vnd.nextthought.courseware.openenrollmentoption')))
