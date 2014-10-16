@@ -217,7 +217,8 @@
 
 	<!-- Enrollment Options -->
 	<subscriber	factory=".enrollment.OpenEnrollmentOptionProvider"
-				provides=".interfaces.IEnrollmentOptionProvider"/>
+				provides=".interfaces.IEnrollmentOptionProvider" 
+				for="nti.contenttypes.courses.interfaces.ICourseCatalogEntry"/>
 		
 	<!-- Views -->
 	<include package=".views" />

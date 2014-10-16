@@ -7,10 +7,12 @@ __docformat__ = "restructuredtext en"
 # disable: accessing protected members, too many methods
 # pylint: disable=W0212,R0904
 
+from hamcrest import is_
 from hamcrest import none
 from hamcrest import is_not
-from hamcrest import has_key
+from hamcrest import has_entry
 from hamcrest import assert_that
+from hamcrest import has_property
 does_not = is_not
 
 from zope import component
@@ -44,4 +46,5 @@ class TestEnrollmentOptions(ApplicationLayerTest):
 			entry = self.catalog_entry()
 			options = get_enrollment_options(entry)
 			assert_that(options, is_not(none()))
-			assert_that(options, has_key('OpenEnrollment'))
+			assert_that(options, has_entry('OpenEnrollment',
+										   has_property('Enabled', is_(True))))
