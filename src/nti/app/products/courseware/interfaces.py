@@ -18,6 +18,7 @@ logger = __import__('logging').getLogger(__name__)
 from zope import interface
 from zope.security.permission import Permission
 from zope.container.interfaces import IContained
+from zope.interface.common.mapping import IEnumerableMapping
 
 from nti.appserver import interfaces as app_interfaces
 
@@ -29,10 +30,10 @@ from nti.dataserver.interfaces import IShouldHaveTraversablePath
 
 from nti.ntiids.schema import ValidNTIID
 
+from nti.schema.field import Bool
 from nti.schema.field import Dict
 from nti.schema.field import Choice
 from nti.schema.field import Object
-from nti.schema.field import ListOrTuple
 from nti.schema.field import ValidTextLine as TextLine
 
 import zope.deferredimport
@@ -256,21 +257,41 @@ NTIID_TYPE_COURSE_SECTION_TOPIC = 'Topic:EnrolledCourseSection'
 #: for a subsection.
 NTIID_TYPE_COURSE_TOPIC = 'Topic:EnrolledCourseRoot'
 
-class IEnrollmentOption(interface.Interface):
+class IEnrollmentOption(IContained):
 	"""
 	Marker interface for a course/entry enrollment option
 	"""
 	
+	Name = TextLine(title="Enrollment option name", required=True)
+	Name.setTaggedValue('_ext_excluded_out', True)
+	
 class IOpenEnrollmentOption(IEnrollmentOption):
+	
 	"""
-	Marker interface for an open course/entry enrollment option
+	Open course/entry enrollment option
 	"""
 
-class IEnrollmentOptions(interface.Interface):
+	Enabled = Bool(title="If the course allows open enrollemnt", required=False, default=True)
+
+class IEnrollmentOptions(IEnumerableMapping):
 	
 	"""
 	Marker interface for an object that hold :class:`.IEnrollmentOption` objects
+	for a course.
 	"""
 	
-	options = ListOrTuple(Object(IEnrollmentOption, title="the option"),
-						  title="The enrollment options", required=False)
+	def append(option):
+		"""
+		add an enrollment option
+		"""
+
+class IEnrollmentOptionsProvider(interface.Interface):
+	
+	"""
+	subscriber for a course/entry enrollment options
+	"""
+	
+	def iter_options():
+		"""
+		return a iterable of :class:`.IEnrollmentOption` for the specified course
+		"""

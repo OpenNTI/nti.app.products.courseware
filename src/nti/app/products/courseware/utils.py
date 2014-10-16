@@ -15,7 +15,8 @@ from nti.contenttypes.courses.interfaces import ICourseSubInstance
 from nti.contenttypes.courses.interfaces import ICourseCatalogEntry
 from nti.contenttypes.courses.interfaces import ICourseEnrollmentManager
 
-from .interfaces import IEnrollmentOption
+from .enrollment import EnrollmentOptions
+from .interfaces import IEnrollmentOptionsProvider
 
 def drop_any_other_enrollments(course, user):
 	course_ntiid = ICourseCatalogEntry(course).ntiid
@@ -41,7 +42,10 @@ def drop_any_other_enrollments(course, user):
 			result.append(instance)
 	return result
 
-def get_enrollment_options(course):
-	entry = ICourseCatalogEntry(course)
-	options = component.subscribers((entry,), IEnrollmentOption)
-	return options
+def get_enrollment_options(context):
+	result = EnrollmentOptions()
+	entry = ICourseCatalogEntry(context)
+	for provider in component.subscribers((entry,), IEnrollmentOptionsProvider):
+		for option in provider.iter_options():
+			result.append(option)
+	return result
