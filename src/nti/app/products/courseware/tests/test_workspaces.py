@@ -24,8 +24,6 @@ from hamcrest import has_entry
 from hamcrest import all_of
 from hamcrest import has_entries
 from hamcrest import empty
-from hamcrest import not_none
-from hamcrest import greater_than
 from hamcrest import is_not
 does_not = is_not
 from hamcrest import has_key

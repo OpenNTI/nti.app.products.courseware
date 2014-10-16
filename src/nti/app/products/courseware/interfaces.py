@@ -285,7 +285,7 @@ class IEnrollmentOptions(IEnumerableMapping):
 		add an enrollment option
 		"""
 
-class IEnrollmentOptionsProvider(interface.Interface):
+class IEnrollmentOptionProvider(interface.Interface):
 	
 	"""
 	subscriber for a course/entry enrollment options

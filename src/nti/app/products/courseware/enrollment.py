@@ -8,7 +8,11 @@ __docformat__ = "restructuredtext en"
 
 logger = __import__('logging').getLogger(__name__)
 
+from zope import component
 from zope import interface
+
+from nti.contenttypes.courses.interfaces import ICourseCatalogEntry
+from nti.contenttypes.courses.interfaces import IDenyOpenEnrollment
 
 from nti.externalization.persistence import NoPickle
 from nti.externalization.representation import WithRepr
@@ -22,6 +26,7 @@ from nti.schema.schema import EqHash
 from .interfaces import IEnrollmentOption
 from .interfaces import IEnrollmentOptions
 from .interfaces import IOpenEnrollmentOption
+from .interfaces import IEnrollmentOptionProvider
 
 CLASS = StandardExternalFields.CLASS
 MIMETYPE = StandardExternalFields.MIMETYPE
@@ -29,7 +34,7 @@ MIMETYPE = StandardExternalFields.MIMETYPE
 @interface.implementer(IOpenEnrollmentOption)
 @WithRepr
 @NoPickle
-@EqHash('Name')
+@EqHash('Name', 'Enabled')
 class OpenEnrollmentOption(object):
 
 	__parent__ = None
@@ -37,6 +42,8 @@ class OpenEnrollmentOption(object):
 	__external_class_name__ = "OpenEnrollment"
 	mime_type = mimeType = 'application/vnd.nextthought.courseware.openenrollmentoption'
 
+	Enabled = True
+	
 	@property
 	def Name(self):
 		return 'OpenEnrollment'
@@ -67,3 +74,15 @@ class EnrollmentOptions(LocatedExternalDict):
 		for value in self.values():
 			result[value.Name] = to_external_object(value)
 		return result
+
+@component.adapter(ICourseCatalogEntry)
+@interface.implementer(IEnrollmentOptionProvider)
+class OpenEnrollmentOptionProvider(object):
+
+	def __init__(self, context):
+		self.context = context
+		
+	def iter_options(self):
+		result = OpenEnrollmentOption()
+		result.Enabled = not IDenyOpenEnrollment.providedBy(self.context)
+		return (result,)

@@ -215,6 +215,10 @@
 				provides="nti.contentsearch.interfaces.ISearchHitPredicate"
 				for="nti.dataserver.interfaces.ICreated" />
 
+	<!-- Enrollment Options -->
+	<subscriber	factory=".enrollment.OpenEnrollmentOptionProvider"
+				provides=".interfaces.IEnrollmentOptionProvider"/>
+		
 	<!-- Views -->
 	<include package=".views" />
 		
