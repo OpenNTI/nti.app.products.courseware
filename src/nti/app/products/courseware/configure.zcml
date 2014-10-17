@@ -220,6 +220,11 @@
 				provides=".interfaces.IEnrollmentOptionProvider" 
 				for="nti.contenttypes.courses.interfaces.ICourseCatalogEntry"/>
 		
+	<subscriber factory=".decorators._EnrollmentOptionsCourseEntryDecorator"
+				provides="nti.externalization.interfaces.IExternalMappingDecorator"
+				for="nti.contenttypes.courses.interfaces.ICourseCatalogEntry
+					 pyramid.interfaces.IRequest" />
+
 	<!-- Views -->
 	<include package=".views" />
 		

@@ -19,6 +19,8 @@ from zope.location.interfaces import ILocation
 
 from pyramid.threadlocal import get_current_request
 
+from nti.app.renderers.decorators import AbstractAuthenticatedRequestAwareDecorator
+
 from nti.appserver.pyramid_authorization import has_permission
 
 from nti.contentlibrary.interfaces import IContentPackageLibrary
@@ -44,6 +46,8 @@ from . import VIEW_CONTENTS
 from . import VIEW_CATALOG_ENTRY
 from . import VIEW_COURSE_ENROLLMENT_ROSTER
 from . import VIEW_COURSE_ACTIVITY
+
+from .utils import get_enrollment_options
 
 from .interfaces import ACT_VIEW_ACTIVITY
 from .interfaces import ICourseInstanceEnrollment
@@ -166,3 +170,15 @@ class _CourseCatalogEntryLegacyDecorator(object):
 	def decorateExternalMapping(self, context, result):
 		result['Title'] = context.title
 		result['Description'] = context.description
+
+@component.adapter(ICourseCatalogEntry)
+@interface.implementer(IExternalMappingDecorator)
+class _EnrollmentOptionsCourseEntryDecorator(AbstractAuthenticatedRequestAwareDecorator):
+
+	def _predicate(self, context, result):
+		return self._is_authenticated
+	
+	def _do_decorate_external(self, context, result):
+		options = get_enrollment_options(context)
+		if options:
+			result[u'EnrollmentOptions'] = to_external_object(options)
