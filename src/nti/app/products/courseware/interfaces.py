@@ -8,6 +8,7 @@ datastructures defined in :mod:`nti.app.products.courses`.
 .. $Id$
 """
 from __future__ import print_function, unicode_literals, absolute_import, division
+from nti.contenttypes.courses.catalog import CourseCatalogEntry
 __docformat__ = "restructuredtext en"
 
 logger = __import__('logging').getLogger(__name__)
@@ -264,6 +265,9 @@ class IEnrollmentOption(IContained):
 	
 	Name = TextLine(title="Enrollment option name", required=True)
 	Name.setTaggedValue('_ext_excluded_out', True)
+	
+	CatalogEntryNTIID = TextLine(title="Catalog entry NTIID", required=False)
+	CatalogEntryNTIID.setTaggedValue('_ext_excluded_out', True)
 	
 class IOpenEnrollmentOption(IEnrollmentOption):
 	

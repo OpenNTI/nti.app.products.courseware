@@ -33,27 +33,36 @@ from .interfaces import IEnrollmentOptionProvider
 CLASS = StandardExternalFields.CLASS
 MIMETYPE = StandardExternalFields.MIMETYPE
 
-@interface.implementer(IOpenEnrollmentOption)
+@interface.implementer(IEnrollmentOption)
 @WithRepr
 @NoPickle
-@EqHash('Name', 'Enabled')
-class OpenEnrollmentOption(SchemaConfigured):
+@EqHash('Name')
+class EnrollmentOption(SchemaConfigured):
 
 	__parent__ = None
 	__external_can_create__ = False
-	__external_class_name__ = "OpenEnrollment"
-	mime_type = mimeType = 'application/vnd.nextthought.courseware.openenrollmentoption'
+	__external_class_name__ = "EnrollmentOption"
+	mime_type = mimeType = 'application/vnd.nextthought.courseware.enrollmentoption'
 
-	Enabled = FP(IOpenEnrollmentOption['Enabled'])
+	CatalogEntryNTIID = FP(IEnrollmentOption['CatalogEntryNTIID'])
 	
 	@property
 	def Name(self):
-		return 'OpenEnrollment'
+		return self.__external_class_name__
 	__name__ = Name
 	
 	@Name.setter
 	def Name(self, value):
 		pass
+
+@interface.implementer(IOpenEnrollmentOption)
+@EqHash('Name', 'Enabled')
+class OpenEnrollmentOption(EnrollmentOption):
+
+	__external_class_name__ = "OpenEnrollment"
+	mime_type = mimeType = 'application/vnd.nextthought.courseware.openenrollmentoption'
+
+	Enabled = FP(IOpenEnrollmentOption['Enabled'])
 		
 @interface.implementer(IEnrollmentOptions, IInternalObjectExternalizer)
 @WithRepr
@@ -90,5 +99,6 @@ class OpenEnrollmentOptionProvider(object):
 		
 	def iter_options(self):
 		result = OpenEnrollmentOption()
+		result.CatalogEntryNTIID = self.context.ntiid
 		result.Enabled = not IDenyOpenEnrollment.providedBy(self.context)
 		return (result,)
