@@ -10,6 +10,7 @@ logger = __import__('logging').getLogger(__name__)
 
 from zope import component
 
+from nti.contenttypes.courses.interfaces import ICourseInstance
 from nti.contenttypes.courses.interfaces import ICourseEnrollments
 from nti.contenttypes.courses.interfaces import ICourseSubInstance
 from nti.contenttypes.courses.interfaces import ICourseCatalogEntry
@@ -18,8 +19,11 @@ from nti.contenttypes.courses.interfaces import ICourseEnrollmentManager
 from .enrollment import EnrollmentOptions
 from .interfaces import IEnrollmentOptionProvider
 
-def drop_any_other_enrollments(course, user):
-	course_ntiid = ICourseCatalogEntry(course).ntiid
+def drop_any_other_enrollments(context, user):
+	course = ICourseInstance(context)
+	entry = ICourseCatalogEntry(course)
+	
+	course_ntiid = entry.ntiid
 	if ICourseSubInstance.providedBy(course):
 		main_course = course.__parent__.__parent__
 	else:

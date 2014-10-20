@@ -38,10 +38,8 @@ from nti.contentfragments.interfaces import CensoredPlainTextContentFragment
 
 from nti.contenttypes.courses.interfaces import ICourseCatalog
 from nti.contenttypes.courses.interfaces import ICourseInstance
-from nti.contenttypes.courses.interfaces import ICourseEnrollments
 from nti.contenttypes.courses.interfaces import ICourseSubInstance
 from nti.contenttypes.courses.interfaces import ICourseCatalogEntry
-from nti.contenttypes.courses.interfaces import ICourseEnrollmentManager
 from nti.contenttypes.courses.interfaces import ICourseInstanceVendorInfo
 from nti.contenttypes.courses.interfaces import ENROLLMENT_SCOPE_VOCABULARY
 from nti.contenttypes.courses.interfaces import ICourseInstancePublicScopedForum
@@ -71,6 +69,8 @@ from nti.externalization.internalization import update_from_external_object
 from nti.ntiids import ntiids
 
 from nti.utils.maps import CaseInsensitiveDict
+
+from ..utils import drop_any_other_enrollments
 
 from ..interfaces import ICoursesWorkspace
 from ..interfaces import NTIID_TYPE_COURSE_SECTION_TOPIC
@@ -483,31 +483,6 @@ class AbstractCourseEnrollView(AbstractAuthenticatedView,
 			 name='AdminUserCourseEnroll')
 class AdminUserCourseEnrollView(AbstractCourseEnrollView):
 
-	def drop_any_other_enrollments(self, course_entry, user):
-		course_ntiid = course_entry.ntiid
-		course = ICourseInstance(course_entry)
-			
-		if ICourseSubInstance.providedBy(course):
-			main_course = course.__parent__.__parent__
-		else:
-			main_course = course
-	
-		result = []
-		universe = [main_course] + list(main_course.SubInstances.values())
-		for instance in universe:
-			instance_entry = ICourseCatalogEntry(instance)
-			if course_ntiid == instance_entry.ntiid:
-				continue
-			enrollments = ICourseEnrollments(instance)
-			record = enrollments.get_enrollment_for_principal(user)
-			if record is not None:
-				enrollment_manager = ICourseEnrollmentManager(instance)
-				enrollment_manager.drop(user)
-				logger.warn("User %s dropped from course '%s' enrollment", user,
-							instance_entry.ProviderUniqueID)
-				result.append(instance_entry)
-		return result
-
 	def __call__(self):
 		values = self.readInput()
 		catalog_entry, user = self.parseCommon(values)
@@ -516,7 +491,7 @@ class AdminUserCourseEnrollView(AbstractCourseEnrollView):
 		if not scope or scope not in ENROLLMENT_SCOPE_VOCABULARY.by_token.keys():
 			raise hexc.HTTPUnprocessableEntity(detail=_('Invalid scope'))
 
-		self.drop_any_other_enrollments(catalog_entry, user)
+		drop_any_other_enrollments(catalog_entry, user)
 		
 		service = IUserService(user)
 		workspace = ICoursesWorkspace(service)
