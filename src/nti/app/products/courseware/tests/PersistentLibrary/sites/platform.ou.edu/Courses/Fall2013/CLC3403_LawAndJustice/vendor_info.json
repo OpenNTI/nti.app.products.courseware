@@ -3,13 +3,15 @@
 		"5MAEP": {
 			"CRN": 34846,
 			"Term": 201410,
-			"EnrollmentCapable": true
+			"EnrollmentCapable": true,
+			"AllowVendorUpdates": true
 		},
 		"Purchasable": {
 			"Price": 599,
 			"Enabled": true,
 			"Currency": "USD",
-			"Provider": "Janux"
+			"Provider": "Janux",
+			"AllowVendorUpdates": true
 		}
 	},
 	"OU": {
