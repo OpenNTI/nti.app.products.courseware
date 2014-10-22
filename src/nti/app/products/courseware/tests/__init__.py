@@ -156,6 +156,39 @@ class RestrictedInstructedCourseApplicationTestLayer(ApplicationTestLayer):
 		_do_then_enumerate_library(cleanup)
 		del cls.__old_library
 
+class NotInstructedCourseApplicationTestLayer(ApplicationTestLayer):
+	
+	_library_path = 'PersistentLibrary'
+
+	@classmethod
+	def setUp(cls):
+		# Must implement!
+		cls.__old_library = component.getUtility(IContentPackageLibrary)
+		component.provideUtility(LegacyInstructedCourseApplicationTestLayer._setup_library(cls), IContentPackageLibrary)
+		_do_then_enumerate_library(lambda: lambda: True, sync_libs=True)
+
+	@classmethod
+	def tearDown(cls):
+		# Must implement!
+		# Clean up any side effects of these content packages being
+		# registered
+
+		def cleanup():
+			_reset_site_libs()
+			cls.__old_library.resetContentPackages()
+			component.provideUtility(cls.__old_library, IContentPackageLibrary)
+			component.getGlobalSiteManager().getUtility(ICourseCatalog).clear()
+			component.getUtility(IComponents,name='platform.ou.edu').getUtility(ICourseCatalog).clear()
+
+			from nti.site.site import get_site_for_site_names
+			site = get_site_for_site_names(('platform.ou.edu',))
+			cc = site.getSiteManager().getUtility(ICourseCatalog)
+			for x in list(cc):
+				del cc[x]
+
+		_do_then_enumerate_library(cleanup)
+		del cls.__old_library
+		
 class PersistentInstructedCourseApplicationTestLayer(ApplicationTestLayer):
 	# A mix of new and old-style courses
 
