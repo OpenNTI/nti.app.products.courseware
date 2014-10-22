@@ -108,12 +108,11 @@ class _AbstractEnrollingBase(object):
 						 all_of( has_entries( 'Duration', 'P112D',
 											  'Title', 'Introduction to Water',
 											  'StartDate', '2014-01-13T06:00:00Z')),
-						 all_of( has_entries( 'Duration', 'P112D',
+						 all_of( has_entries( 'StartDate', '2013-08-13T06:00:00Z',
 											  'Title', 'Law and Justice' )) ) )
 
 		for item in res.json_body['Items']:
 			self.testapp.get(item['href'])
-
 
 	individual_roster_accessible_to_instructor = True
 
