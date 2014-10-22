@@ -319,12 +319,9 @@ class DefaultCourseInstanceEnrollment(CourseInstanceEnrollment):
 
 	@Lazy
 	def LegacyEnrollmentStatus(self):
-		# XXX Can do better
 		if self._record.Scope == 'Public':
 			return 'Open'
-		elif self._record.Scope == 'ForCreditNonDegree':
-			return 'ForCreditNonDegree'
-		return 'ForCredit'
+		return self._record.Scope
 
 def enrollment_from_record(course, record):
 	return DefaultCourseInstanceEnrollment(record)
