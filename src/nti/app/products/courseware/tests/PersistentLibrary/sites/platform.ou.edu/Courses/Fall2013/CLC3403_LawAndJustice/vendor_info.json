@@ -20,7 +20,7 @@
 		"Price": 599,
 		"Currency": "USD",
 		"IMS": {"sourcedid": ["26235.20131", "SomeOtherID"]},
-		"DropCutOffDate": "2014-08-29T05:00:00+00:00",
-		"EnrollCutOffDate": "2014-08-23T04:59:00+00:00"
+		"DropCutOffDate": "2024-08-29T05:00:00+00:00",
+		"EnrollCutOffDate": "2024-08-23T04:59:00+00:00"
 	}
 }
