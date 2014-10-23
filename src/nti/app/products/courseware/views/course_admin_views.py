@@ -443,8 +443,8 @@ class LegacyCourseEnrollmentMigrationView(AbstractAuthenticatedView):
 class AbstractCourseEnrollView(AbstractAuthenticatedView,
 							   ModeledContentUploadRequestUtilsMixin):
 
-	def readInput(self):
-		values = super(AbstractCourseEnrollView, self).readInput()
+	def readInput(self, value=None):
+		values = super(AbstractCourseEnrollView, self).readInput(value=value)
 		result = CaseInsensitiveDict(values)
 		return result
 
@@ -486,19 +486,22 @@ class AdminUserCourseEnrollView(AbstractCourseEnrollView):
 	def __call__(self):
 		values = self.readInput()
 		catalog_entry, user = self.parseCommon(values)
-		
 		scope = values.get('scope', 'Public')
 		if not scope or scope not in ENROLLMENT_SCOPE_VOCABULARY.by_token.keys():
 			raise hexc.HTTPUnprocessableEntity(detail=_('Invalid scope'))
 
-		drop_any_other_enrollments(catalog_entry, user)
-		
-		service = IUserService(user)
-		workspace = ICoursesWorkspace(service)
-		parent = workspace['EnrolledCourses']
-		result = do_course_enrollment(catalog_entry, user, scope,
-									  parent=parent,
-									  request=self.request)
+		# Make sure we don't have any interaction.
+		endInteraction()
+		try:
+			drop_any_other_enrollments(catalog_entry, user)
+			service = IUserService(user)
+			workspace = ICoursesWorkspace(service)
+			parent = workspace['EnrolledCourses']
+			result = do_course_enrollment(catalog_entry, user, scope,
+										  parent=parent,
+										  request=self.request)
+		finally:
+			restoreInteraction()
 		return result
 
 @view_config(route_name='objects.generic.traversal',
@@ -512,9 +515,16 @@ class AdminUserCourseDropView(AbstractCourseEnrollView):
 	def __call__(self):
 		values = self.readInput()
 		catalog_entry, user = self.parseCommon(values)
-		course_instance  = ICourseInstance(catalog_entry)
-		enrollments = get_enrollments(course_instance, self.request)
-		enrollments.drop(user)
+		
+		# Make sure we don't have any interaction.
+		endInteraction()
+		try:
+			course_instance  = ICourseInstance(catalog_entry)
+			enrollments = get_enrollments(course_instance, self.request)
+			enrollments.drop(user)
+			
+		finally:
+			restoreInteraction()
 		return hexc.HTTPNoContent()
 
 @view_config(route_name='objects.generic.traversal',
