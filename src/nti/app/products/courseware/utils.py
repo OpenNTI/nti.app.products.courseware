@@ -9,7 +9,12 @@ __docformat__ = "restructuredtext en"
 logger = __import__('logging').getLogger(__name__)
 
 from zope import component
+from zope.security.interfaces import IPrincipal
+from zope.securitypolicy.interfaces import Allow
+from zope.securitypolicy.interfaces import IPrincipalRoleMap
 
+from nti.contenttypes.courses.interfaces import RID_TA
+from nti.contenttypes.courses.interfaces import RID_INSTRUCTOR
 from nti.contenttypes.courses.interfaces import ICourseInstance
 from nti.contenttypes.courses.interfaces import ICourseEnrollments
 from nti.contenttypes.courses.interfaces import ICourseSubInstance
@@ -53,3 +58,17 @@ def get_enrollment_options(context):
 		for option in provider.iter_options():
 			result.append(option)
 	return result
+
+def is_course_instructor(course, user):
+	result = False
+	prin = IPrincipal(user)
+	roles = IPrincipalRoleMap(course, None)
+	if not roles:
+		result = Allow in (roles.getSetting(RID_TA, prin.id),
+						   roles.getSetting(RID_INSTRUCTOR, prin.id))
+	return result
+			
+def is_enrolled(course, user):
+	enrollments = ICourseEnrollments(course)
+	record = enrollments.get_enrollment_for_principal(user)
+	return record is not None
