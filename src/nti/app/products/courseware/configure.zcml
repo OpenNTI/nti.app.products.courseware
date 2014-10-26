@@ -99,6 +99,7 @@
 	<!-- A subscriber for getting admin roles -->
 	<subscriber factory=".workspaces._DefaultPrincipalAdministrativeRoleCatalog"
 				provides=".interfaces.IPrincipalAdministrativeRoleCatalog" />
+
 	<!-- And an adapter for security purposes -->
 	<adapter factory=".legacy_principalrole.LegacyCourseInstancePrincipalRoleMap" />
 
@@ -225,6 +226,11 @@
 				for="nti.contenttypes.courses.interfaces.ICourseCatalogEntry
 					 pyramid.interfaces.IRequest" />
 
+	<subscriber factory=".decorators._OpenEnrollmentOptionLinkDecorator"
+				provides="nti.externalization.interfaces.IExternalObjectDecorator"
+				for=".interfaces.IOpenEnrollmentOption
+					 pyramid.interfaces.IRequest" />
+				
 	<!-- Views -->
 	<include package=".views" />
 		

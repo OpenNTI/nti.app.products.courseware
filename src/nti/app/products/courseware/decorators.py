@@ -37,6 +37,7 @@ from nti.dataserver.interfaces import ILinkExternalHrefOnly
 from nti.externalization.singleton import SingletonDecorator
 from nti.externalization.interfaces import StandardExternalFields
 from nti.externalization.externalization import to_external_object
+from nti.externalization.interfaces import IExternalObjectDecorator
 from nti.externalization.interfaces import IExternalMappingDecorator
 
 from nti.dataserver.links import Link
@@ -44,12 +45,13 @@ from nti.dataserver.interfaces import IUser
 
 from . import VIEW_CONTENTS
 from . import VIEW_CATALOG_ENTRY
-from . import VIEW_COURSE_ENROLLMENT_ROSTER
 from . import VIEW_COURSE_ACTIVITY
+from . import VIEW_COURSE_ENROLLMENT_ROSTER
 
 from .utils import get_enrollment_options
 
 from .interfaces import ACT_VIEW_ACTIVITY
+from .interfaces import IOpenEnrollmentOption
 from .interfaces import ICourseInstanceEnrollment
 
 LINKS = StandardExternalFields.LINKS
@@ -170,6 +172,16 @@ class _CourseCatalogEntryLegacyDecorator(object):
 	def decorateExternalMapping(self, context, result):
 		result['Title'] = context.title
 		result['Description'] = context.description
+
+@component.adapter(IOpenEnrollmentOption)
+@interface.implementer(IExternalObjectDecorator)
+class _OpenEnrollmentOptionLinkDecorator(AbstractAuthenticatedRequestAwareDecorator):
+
+	def _predicate(self, context, result):
+		return self._is_authenticated
+	
+	def _do_decorate_external(self, context, result):
+		result['IsAvailable'] = context.Enabled
 
 @component.adapter(ICourseCatalogEntry)
 @interface.implementer(IExternalMappingDecorator)
