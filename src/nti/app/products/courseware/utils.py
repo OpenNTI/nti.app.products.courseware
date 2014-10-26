@@ -67,8 +67,12 @@ def is_course_instructor(course, user):
 		result = Allow in (roles.getSetting(RID_TA, prin.id),
 						   roles.getSetting(RID_INSTRUCTOR, prin.id))
 	return result
-			
-def is_enrolled(course, user):
+
+def get_enrollment_record(course, user):
 	enrollments = ICourseEnrollments(course)
 	record = enrollments.get_enrollment_for_principal(user)
+	return record
+			
+def is_enrolled(course, user):
+	record = get_enrollment_record(course, user)
 	return record is not None
