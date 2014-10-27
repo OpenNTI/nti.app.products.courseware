@@ -63,7 +63,7 @@ def is_course_instructor(course, user):
 	result = False
 	prin = IPrincipal(user)
 	roles = IPrincipalRoleMap(course, None)
-	if not roles:
+	if roles:
 		result = Allow in (roles.getSetting(RID_TA, prin.id),
 						   roles.getSetting(RID_INSTRUCTOR, prin.id))
 	return result
