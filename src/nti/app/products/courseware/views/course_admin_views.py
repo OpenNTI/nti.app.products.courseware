@@ -115,6 +115,7 @@ class AdminUserCourseEnrollView(AbstractCourseEnrollView):
 			service = IUserService(user)
 			workspace = ICoursesWorkspace(service)
 			parent = workspace['EnrolledCourses']
+			logger.info("Enrolling %s in %s", user, catalog_entry.ntiid)
 			result = do_course_enrollment(catalog_entry, user, scope,
 										  parent=parent,
 										  request=self.request)
@@ -137,10 +138,10 @@ class AdminUserCourseDropView(AbstractCourseEnrollView):
 		# Make sure we don't have any interaction.
 		endInteraction()
 		try:
+			logger.info("Dropping %s from %s", user, catalog_entry.ntiid)
 			course_instance  = ICourseInstance(catalog_entry)
 			enrollments = get_enrollments(course_instance, self.request)
 			enrollments.drop(user)
-			
 		finally:
 			restoreInteraction()
 		return hexc.HTTPNoContent()
