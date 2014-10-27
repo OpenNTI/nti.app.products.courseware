@@ -23,6 +23,7 @@ from nti.appserver.interfaces import IContainerCollection
 
 from nti.contenttypes.courses.interfaces import RID_INSTRUCTOR
 
+from nti.contenttypes.courses.interfaces import ES_CREDIT
 from nti.contenttypes.courses.interfaces import ICourseCatalog
 from nti.contenttypes.courses.interfaces import ICourseInstance
 from nti.contenttypes.courses.interfaces import ICourseCatalogEntry
@@ -306,7 +307,9 @@ from nti.externalization.oids import to_external_ntiid_oid
 @interface.implementer(ILegacyCourseInstanceEnrollment)
 @component.adapter(ICourseInstanceEnrollmentRecord)
 class DefaultCourseInstanceEnrollment(CourseInstanceEnrollment):
-	__external_class_name__ = 'CourseInstanceEnrollment'
+	
+	__external_class_name__ = 'CourseInstanceEnrollment'	
+
 	def __init__(self, record, user=None):
 		CourseInstanceEnrollment.__init__(self, record.CourseInstance, record.Principal)
 		self._record = record
@@ -321,6 +324,10 @@ class DefaultCourseInstanceEnrollment(CourseInstanceEnrollment):
 	def LegacyEnrollmentStatus(self):
 		if self._record.Scope == 'Public':
 			return 'Open'
+		return ES_CREDIT
+	
+	@Lazy
+	def RealEnrollmentStatus(self):
 		return self._record.Scope
 
 def enrollment_from_record(course, record):

@@ -1,55 +1,50 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-"""
-$Id$
-"""
+
 from __future__ import print_function, unicode_literals, absolute_import, division
 __docformat__ = "restructuredtext en"
 
-logger = __import__('logging').getLogger(__name__)
+# disable: accessing protected members, too many methods
+# pylint: disable=W0212,R0904
 
-#disable: accessing protected members, too many methods
-#pylint: disable=W0212,R0904
-
-
-from hamcrest import assert_that
 from hamcrest import is_
-from hamcrest import contains
-from hamcrest import contains_inanyorder
-from hamcrest import has_item
-from hamcrest import has_items
-from hamcrest import has_property
-from hamcrest import has_length
-from hamcrest import has_entry
-from hamcrest import all_of
-from hamcrest import has_entries
+from hamcrest import none
 from hamcrest import empty
+from hamcrest import all_of
 from hamcrest import is_not
-does_not = is_not
 from hamcrest import has_key
+from hamcrest import contains
+from hamcrest import has_item
+from hamcrest import has_entry
+from hamcrest import has_items
+from hamcrest import has_length
+from hamcrest import assert_that
+from hamcrest import has_entries
+from hamcrest import has_property
+from hamcrest import contains_inanyorder
+does_not = is_not
 
 from zope import component
 from zope import lifecycleevent
 
-from nti.testing.matchers import verifiably_provides
-from nti.testing.matchers import is_empty
+from nti.appserver.interfaces import IUserService
+from nti.appserver.interfaces import ICollection
 
+from nti.app.products.courseware.interfaces import ICoursesWorkspace
+
+from nti.dataserver import traversal
 
 from nti.app.testing.application_webtest import ApplicationLayerTest
 from nti.app.testing.decorators import WithSharedApplicationMockDS
 
-from nti.appserver.interfaces import IUserService
-from nti.appserver.interfaces import ICollection
-
 from nti.dataserver.tests import mock_dataserver
-from nti.dataserver import traversal
 
-from nti.app.products.courseware.interfaces import ICoursesWorkspace
+from nti.testing.matchers import is_empty
+from nti.testing.matchers import verifiably_provides
 
-
-from . import RestrictedInstructedCourseApplicationTestLayer
-from . import PersistentInstructedCourseApplicationTestLayer
-from . import LegacyInstructedCourseApplicationTestLayer
+from nti.app.products.courseware.tests import LegacyInstructedCourseApplicationTestLayer
+from nti.app.products.courseware.tests import RestrictedInstructedCourseApplicationTestLayer
+from nti.app.products.courseware.tests import PersistentInstructedCourseApplicationTestLayer
 
 class TestWorkspace(ApplicationLayerTest):
 
@@ -353,6 +348,7 @@ class _AbstractEnrollingBase(object):
 		res = self.testapp.get( self.enrolled_courses_href )
 		assert_that( res.json_body, has_entry( 'Items', has_length( 1 ) ) )
 		assert_that( res.json_body['Items'][0], has_entry( 'href', enrollment_href ) )
+		assert_that( res.json_body['Items'][0], has_entry( 'RealEnrollmentStatus', is_not(none()) ) )
 
 		return enrollment_href, instance_href, entry_href
 

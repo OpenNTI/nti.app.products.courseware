@@ -158,6 +158,10 @@ class ILegacyCourseInstanceEnrollment(ICourseInstanceEnrollment):
 									  required=True,
 									  readonly=True,
 									  default='Open')
+	
+	RealEnrollmentStatus = TextLine(title="The type of enrollment (Scope)",
+									required=False,
+									readonly=True)
 
 class IPrincipalEnrollmentCatalog(IPrincipalEnrollments):
 	"""
