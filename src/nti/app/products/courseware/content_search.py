@@ -10,6 +10,8 @@ logger = __import__('logging').getLogger(__name__)
 
 from datetime import datetime
 
+from brownie.caching import LFUCache
+
 from zope import component
 from zope import interface
 
@@ -36,8 +38,6 @@ from nti.ntiids.ntiids import TYPE_INTID
 from nti.ntiids.ntiids import is_ntiid_of_types
 from nti.ntiids.ntiids import is_valid_ntiid_string
 from nti.ntiids.ntiids import find_object_with_ntiid
-
-from nti.utils.property import CachedProperty
 
 ZERO_DATE = datetime.utcfromtimestamp(0)
 
@@ -93,8 +93,7 @@ def _flatten_outline(outline):
 	_recur(outline, result)
 	return result
 
-def _get_content_path(course, ntiid):
-	pacakge_paths_cache = course._v_csPackagePaths
+def _get_content_path(pacakge_paths_cache, ntiid):
 	result = pacakge_paths_cache.get(ntiid)
 	if result is None:
 		result = ()
@@ -104,34 +103,57 @@ def _get_content_path(course, ntiid):
 			result = tuple(p.ntiid for p in paths) if paths else ()
 		pacakge_paths_cache[ntiid] = result
 	return result
+
+class _OutlineCacheEntry(object):
 	
-@property	
-def _v_csOutlineLastModififed(self):
-	return getattr(self.Outline, 'lastModified', 0)
+	__slots__ = ('ntiid', 'cPackagePaths', 'csFlattenOutline', 'lastModified')
+	
+	def __init__(self , ntiid, lastModified=0):
+		self.ntiid = ntiid
+		self.cPackagePaths = None
+		self.csFlattenOutline = None
+		self.lastModified = lastModified
 
-@CachedProperty('_v_csOutlineLastModififed')
-def _v_csPackagePaths(self):
-	return dict()
+	def _v_checkLastModified(self, outline):
+		outlineLastModified = getattr(outline, 'lastModified', None)
+		if self.lastModified != outlineLastModified:
+			self.cPackagePaths = None
+			self.csFlattenOutline = None
+			self.lastModified = outlineLastModified
+		
+	def _v_csPackagePaths(self, outline):
+		self._v_checkLastModified(outline)
+		if self.cPackagePaths is None:
+			self.cPackagePaths = dict()
+		return self.cPackagePaths
 
-@CachedProperty('_v_csOutlineLastModififed')
-def _v_csFlattenOutline(self):
-	nodes = _flatten_outline(self.Outline)
-	return nodes
+	def _v_csFlattenOutline(self, outline):
+		self._v_checkLastModified(outline)
+		if self.csFlattenOutline is None:
+			self.csFlattenOutline = _flatten_outline(outline)
+		return self.csFlattenOutline
+	
+## Cache size
+max_cache_size = 15
 
-def _set_course_properties(course):
-	clazz = course.__class__
-	if not hasattr(clazz, '_v_csOutlineLastModififed'):
-		clazz._v_csOutlineLastModififed = _v_csOutlineLastModififed
-	if not hasattr(clazz, '_v_csFlattenOutline'):
-		clazz._v_csFlattenOutline = _v_csFlattenOutline
-	if not hasattr(clazz, '_v_csPackagePaths'):
-		clazz._v_csPackagePaths = _v_csPackagePaths
+## CS: We cache the outline nodes item ntiids of a course
+## we only keep the [max_cache_size] most used items. 
+outline_cache = LFUCache(maxsize=max_cache_size)
 
-def _check_against_course_outline(course, ntiid, now=None): 
-	_set_course_properties(course)
+def _get_cached_entry(course_id):
+	entry = outline_cache.get(course_id)
+	if entry is None:
+		entry = outline_cache[course_id] = _OutlineCacheEntry(course_id)
+	return entry
+	
+def _check_against_course_outline(course_id, course, ntiid, now=None): 
 	now = now or datetime.utcnow()
-	nodes = course._v_csFlattenOutline 
-	ntiids = _get_content_path(course, ntiid) or (ntiid,)
+	# get/prepare cache entry
+	entry = _get_cached_entry(course_id)
+	nodes = entry._v_csFlattenOutline(course.Outline)
+	pacakge_paths_cache = entry._v_csPackagePaths(course.Outline)
+	ntiids = _get_content_path(pacakge_paths_cache, ntiid) or (ntiid,)
+	# perform checking
 	for content_ntiid, data in nodes.items():
 		beginning, is_outline_stub_only= data
 		if content_ntiid in ntiids:
@@ -145,18 +167,18 @@ def _get_context_course(query):
 	if course_id and is_valid_ntiid_string(course_id):
 		course = find_object_with_ntiid(course_id)
 		course = ICourseInstance(course, None)
-		return course
-	return None
+		return course, course_id
+	return None, None
 
 def _is_allowed(ntiid, query=None, now=None):
 	if query is None:
 		return True # allow by default
 
-	course = _get_context_course(query)
+	course, course_id = _get_context_course(query)
 	if course is None:
 		return True # allow by default
 
-	result = _check_against_course_outline(course, ntiid)
+	result = _check_against_course_outline(course_id, course, ntiid)
 	return result
 
 @interface.implementer(ISearchHitPredicate)
