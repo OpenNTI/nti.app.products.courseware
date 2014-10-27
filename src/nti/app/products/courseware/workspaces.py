@@ -322,12 +322,15 @@ class DefaultCourseInstanceEnrollment(CourseInstanceEnrollment):
 
 	@Lazy
 	def LegacyEnrollmentStatus(self):
+		## CS/JZ/JAM: For legacy purposes we need to always return either Open or ForCredit
+		## See interface ILegacyCourseInstanceEnrollment
 		if self._record.Scope == 'Public':
 			return 'Open'
 		return ES_CREDIT
 	
 	@Lazy
 	def RealEnrollmentStatus(self):
+		## CS: For display use the real scope
 		return self._record.Scope
 
 def enrollment_from_record(course, record):
