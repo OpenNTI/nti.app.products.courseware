@@ -295,13 +295,13 @@ class CourseInstanceEnrollment(_AbstractInstanceWrapper):
 			return self._user
 		return super(CourseInstanceEnrollment, self).__conform__(iface)
 
-
 def LegacyCourseInstanceEnrollment(course_instance, user):
 	record = ICourseEnrollments(course_instance).get_enrollment_for_principal(user)
 	if record is not None:
 		return DefaultCourseInstanceEnrollment(record, user)
 
 from nti.contenttypes.courses.interfaces import ICourseInstanceEnrollmentRecord
+
 from nti.externalization.oids import to_external_ntiid_oid
 
 @interface.implementer(ILegacyCourseInstanceEnrollment)
