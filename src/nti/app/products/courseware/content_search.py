@@ -30,8 +30,6 @@ from nti.contentlibrary.indexed_data.interfaces import IRelatedContentIndexedDat
 
 from nti.contenttypes.courses.interfaces import ICourseInstance
 
-from nti.dataserver.interfaces import ICreated
-
 from nti.ntiids.ntiids import TYPE_OID
 from nti.ntiids.ntiids import TYPE_UUID
 from nti.ntiids.ntiids import TYPE_INTID
@@ -235,7 +233,6 @@ class _NTICardContentHitPredicate(_BasePredicate):
 		return result
 
 @interface.implementer(ISearchHitPredicate)
-@component.adapter(ICreated)
 class _CreatedContentHitPredicate(_BasePredicate):
 
 	def _is_allowed(self, containerId, query):

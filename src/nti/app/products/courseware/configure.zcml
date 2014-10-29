@@ -214,8 +214,12 @@
 
 	<subscriber factory=".content_search._CreatedContentHitPredicate"
 				provides="nti.contentsearch.interfaces.ISearchHitPredicate"
-				for="nti.dataserver.interfaces.ICreated" />
+				for="nti.dataserver.interfaces.INote" />
 
+	<subscriber factory=".content_search._CreatedContentHitPredicate"
+				provides="nti.contentsearch.interfaces.ISearchHitPredicate"
+				for="nti.dataserver.interfaces.IHighlight" />
+				
 	<!-- Enrollment Options -->
 	<subscriber	factory=".enrollment.OpenEnrollmentOptionProvider"
 				provides=".interfaces.IEnrollmentOptionProvider" 
