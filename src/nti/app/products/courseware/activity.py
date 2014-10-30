@@ -15,6 +15,8 @@ from zope import interface
 from zope import component
 from zope.annotation import factory as an_factory
 
+from zope.intid.interfaces import IIntIds
+
 import time
 
 import BTrees
@@ -22,17 +24,17 @@ from BTrees.Length import Length
 
 from persistent import Persistent
 
+from nti.contenttypes.courses.interfaces import ICourseInstance
+
+from nti.dataserver.interfaces import ACE_DENY_ALL
+
 from nti.utils.property import Lazy
 from nti.utils.property import CachedProperty
-
-from .interfaces import ICourseInstanceActivity
-from nti.dataserver.interfaces import ACE_DENY_ALL
-from nti.contenttypes.courses.interfaces import ICourseInstance
 
 from nti.zodb.containers import time_to_64bit_int
 from nti.zodb.containers import bit64_int_to_time
 
-from zope.intid.interfaces import IIntIds
+from .interfaces import ICourseInstanceActivity
 
 @interface.implementer(ICourseInstanceActivity)
 @component.adapter(ICourseInstance)
