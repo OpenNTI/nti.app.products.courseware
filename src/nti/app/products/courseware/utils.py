@@ -14,7 +14,9 @@ from zope.securitypolicy.interfaces import Allow
 from zope.securitypolicy.interfaces import IPrincipalRoleMap
 
 from nti.contenttypes.courses.interfaces import RID_TA
+from nti.contenttypes.courses.interfaces import ES_PUBLIC
 from nti.contenttypes.courses.interfaces import RID_INSTRUCTOR
+
 from nti.contenttypes.courses.interfaces import ICourseInstance
 from nti.contenttypes.courses.interfaces import ICourseEnrollments
 from nti.contenttypes.courses.interfaces import ICourseSubInstance
@@ -23,6 +25,20 @@ from nti.contenttypes.courses.interfaces import ICourseEnrollmentManager
 
 from .enrollment import EnrollmentOptions
 from .interfaces import IEnrollmentOptionProvider
+
+def is_there_an_open_enrollment(course, user):
+	if ICourseSubInstance.providedBy(course):
+		main_course = course.__parent__.__parent__
+	else:
+		main_course = course
+
+	universe = [main_course] + list(main_course.SubInstances.values())
+	for instance in universe:
+		enrollments = ICourseEnrollments(instance)
+		record = enrollments.get_enrollment_for_principal(user)
+		if record is not None and record.Scope == ES_PUBLIC:
+			return True
+	return False
 
 def drop_any_other_enrollments(context, user):
 	course = ICourseInstance(context)
