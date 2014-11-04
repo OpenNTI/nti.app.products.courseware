@@ -1,0 +1,79 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+	 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	  xmlns:metal="http://xml.zope.org/namespaces/metal"
+	  xmlns:tal="http://xml.zope.org/namespaces/tal">
+	<head>
+		<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+		<title>Welcome To NextThought</title>
+		<style metal:use-macro="macro:style">
+		</style>
+	</head>
+	<body>
+		<div metal:use-macro="macro:header">
+		</div>
+
+		<p>Dear <span tal:content="options/informal_username" class="realname tterm">John</span>,</p>
+
+		<p>
+			Thank you for signing up for
+		&ldquo;<span tal:content="options/course/Title | default">my
+		course</span>,&rdquo; an open version of a popular course in the
+		<span tal:content="options/course/ProviderDepartmentTitle | default">Department
+			of Classics and Letters</span>.
+		</p>
+
+		<p>
+			You are about to embark on a one-of-a-kind learning
+			experience through
+			<a href="https://janux.ou.edu" title="Janux">Nextthought</a>.
+			More importantly, you are joining a true learning
+			community built to connect, engage, and inspire all who
+			wish to learn.
+		</p>
+
+		<p>
+			Feel free to spread the word around about the course by forwarding
+			this email or sharing about it through social media. Encourage your
+			friends to join, add them as a friend, and then form a study group on
+			the platform.
+		</p>
+		<p tal:condition="options/show_for_credit_option | nothing">
+			If you are a current OU student, you have the
+			option to enroll in this course for credit. Enroll at
+			<a href="https://ozone.ou.edu" alt="ozone">ozone.ou.edu</a> with the corresponding course number:
+			<span class="coursenumber"
+				  tal:content="options/course/ProviderUniqueID">CLC 3403</span>.
+		</p>
+
+		<p>
+			Expect more information soon as we get closer to the
+			course start date, <span tal:content="options/course_start_date | default">January 13, 2014</span>.
+			Looking forward to connecting soon!
+		</p>
+
+		<p>
+			All the Best,
+			<br />
+			<br />
+			<span tal:content="structure options/instructors_html_signature">
+				Dr. Kyle Harper<br />
+				Associate Professor of Classics<br />
+			</span>
+		</p>
+
+		<div id="logo-bar nti">
+			<img src="http://d2ixlfeu83tci.cloudfront.net/images/email_logo.png" width="177" height="25" alt="NextThought Logo" />
+		</div>
+
+		<p class="footer" style="font-size: smaller">
+			If you feel this email was sent in error, or this account was created
+			without your consent, you may email
+			<a href="mailto:support@nextthought.com"
+				tal:attributes="href options/support_email"
+				tal:content="options/support_email">support@nextthought.com</a>.
+		</p>
+
+
+	</body>
+</html>

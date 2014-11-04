@@ -1,0 +1,27 @@
+Dear ${informal_username},
+
+Thank you for signing up for "${course.Title}," an open version of a
+popular course in the ${course.ProviderDepartmentTitle}.
+
+You are about to embark on a one-of-a-kind learning experience through
+Janux. More importantly, you are joining a true learning community
+built to connect, engage, and inspire all who wish to learn.
+
+Feel free to spread the word around about the course by forwarding
+this email or sharing about it through social media. Encourage your
+friends to join, add them as a friend, and then form a study group on
+the platform.
+
+If you are a current OU student, you have the option to enroll in this
+course for credit. Enroll at ozone.ou.edu with the corresponding
+course number: ${course.ProviderUniqueID}.
+
+Expect more information soon as we get closer to the course start date,
+${course_start_date}. Looking forward to connecting soon.
+
+All the Best,
+
+${course.InstructorsSignature}
+
+If you feel this email was sent in error, or this account was created
+without your consent, you may email {support_email}.

@@ -18,7 +18,7 @@ from zope.securitypolicy.interfaces import Allow
 from zope.securitypolicy.interfaces import IPrincipalRoleMap
 from zope.location.traversing import LocationPhysicallyLocatable
 
-from nti.appserver.interfaces import IUserService 
+from nti.appserver.interfaces import IUserService
 from nti.appserver.interfaces import IContainerCollection
 
 from nti.contenttypes.courses.interfaces import RID_INSTRUCTOR
@@ -133,7 +133,6 @@ class AllCoursesCollection(Contained):
 		container.__name__ = parent.catalog.__name__
 		container.__parent__ = parent.catalog.__parent__
 		container.lastModified = parent.catalog.lastModified
-
 		my_enrollments = {}
 		for x in parent.catalog.iterCatalogEntries():
 			if has_permission(ACT_READ, x, user):
@@ -148,7 +147,6 @@ class AllCoursesCollection(Contained):
 						my_enrollments[x.ntiid] = course
 
 				container[x.ntiid] = x
-
 		courses_to_remove = []
 		for course in my_enrollments.values():
 			if ICourseSubInstance.providedBy(course):
@@ -470,7 +468,6 @@ class _UserInstructorsPresentationPriorityCreators(object):
 
 	def iter_priority_creator_usernames(self):
 		result = set()
-
 		for enrollments in component.subscribers( (self.context,),
 												  IPrincipalEnrollments):
 			for enrollment in enrollments.iter_enrollments():
