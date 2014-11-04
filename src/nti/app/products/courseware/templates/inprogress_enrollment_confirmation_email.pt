@@ -27,7 +27,7 @@
 			The course is currently in progress. You are welcome to join our
 			learning community and to experience the lectures and discussions on
 			 <a href="https://nextthought.com"
-				tal:attributes="href options/request/application_url"
+				tal:attributes="href request/application_url"
 				tal:content="options/brand">Nextthought</a>.
 		</p>
 
