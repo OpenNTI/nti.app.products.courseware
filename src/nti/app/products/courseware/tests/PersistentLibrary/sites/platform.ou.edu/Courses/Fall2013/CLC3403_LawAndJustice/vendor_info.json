@@ -9,6 +9,7 @@
 		"Purchasable": {
 			"Price": 599,
 			"Enabled": true,
+			"Giftable": true,
 			"Currency": "USD",
 			"Provider": "Janux",
 			"AllowVendorUpdates": true
