@@ -11,6 +11,7 @@
 			"Enabled": true,
 			"Giftable": true,
 			"Currency": "USD",
+			"Redeemable": true,
 			"Provider": "Janux",
 			"AllowVendorUpdates": true
 		}
