@@ -4,7 +4,7 @@ Thank you for signing up for "${course.Title}," an open version of a
 popular course in the ${course.ProviderDepartmentTitle}.
 
 You are about to embark on a one-of-a-kind learning experience through
-Janux. More importantly, you are joining a true learning community
+${brand}. More importantly, you are joining a true learning community
 built to connect, engage, and inspire all who wish to learn.
 
 Feel free to spread the word around about the course by forwarding

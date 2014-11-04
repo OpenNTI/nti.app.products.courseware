@@ -8,10 +8,10 @@ access to all course materials. These materials will be available to you
 indefinitely, as long as you are enrolled in the course. Please note,
 however, that this course is no longer monitored by the professor. You
 are welcome to join our learning community and to experience the lectures
-and discussions on Janux.
+and discussions on ${brand}.
 
 You are about to embark on a one-of-a-kind learning experience through
-Janux. More importantly, you are joining a true learning community
+${brand}. More importantly, you are joining a true learning community
 built to connect, engage, and inspire all who wish to learn.
 
 Feel free to spread the word around about the course by forwarding

@@ -77,6 +77,8 @@ def _send_enrollment_confirmation(event, user, profile, email, course):
 			'course': catalog_entry,
 			'support_email': support_email,
 			'show_for_credit_option': True,
+			'request': request,
+			'brand': policy.BRAND,
 			'course_start_date': course_start_date,
 			'instructors_html_signature': html_sig,
 			'today': isodate.date_isoformat(datetime.datetime.now()) }

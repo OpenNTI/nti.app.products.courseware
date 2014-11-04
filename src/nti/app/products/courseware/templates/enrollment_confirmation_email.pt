@@ -25,8 +25,9 @@
 
 		<p>
 			You are about to embark on a one-of-a-kind learning
-			experience through
-			<a href="https://janux.ou.edu" title="Janux">Nextthought</a>.
+			experience through <a href="https://nextthought.com"
+				tal:attributes="href options/request/application_url"
+				tal:content="options/brand">Nextthought</a>.
 			More importantly, you are joining a true learning
 			community built to connect, engage, and inspire all who
 			wish to learn.

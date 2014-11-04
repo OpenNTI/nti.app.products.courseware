@@ -26,12 +26,15 @@
 		<p>
 			The course is currently in progress. You are welcome to join our
 			learning community and to experience the lectures and discussions on
-			<a href="https://janux.ou.edu" title="Janux">Nextthought</a>.
+			 <a href="https://nextthought.com"
+				tal:attributes="href options/request/application_url"
+				tal:content="options/brand">Nextthought</a>.
 		</p>
 
 		<p>
 			You are about to embark on a one-of-a-kind learning experience through
-			Janux. More importantly, you are joining a true learning community
+			<span tal:content="options/brand">NextThought</span>. More importantly,
+			you are joining a true learning community
 			built to connect, engage, and inspire all who wish to
 			learn.
 		</p>

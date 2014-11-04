@@ -29,14 +29,13 @@
 			as long as you are enrolled in the course. Please note, however, that this
 			course is no longer monitored by the professor. You are welcome to join our
 			learning community and to experience the lectures and discussions on
-			<a href="https://janux.ou.edu" title="Janux">Nextthought</a>.
+			<span tal:content="options/brand">NextThought</span>.
 		</p>
 
 		<p>
 			You are about to embark on a one-of-a-kind learning experience through
-			Nextthought. More importantly, you are joining a true learning community
-			built to connect, engage, and inspire all who wish to
-			learn.
+			More importantly, you are joining a true learning community
+			built to connect, engage, and inspire all who wish to learn.
 		</p>
 
 		<p>
