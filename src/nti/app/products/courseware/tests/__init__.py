@@ -73,6 +73,13 @@ def _reset_site_libs():
 class LegacyInstructedCourseApplicationTestLayer(ApplicationTestLayer):
 
 	_library_path = 'Library'
+	_instructors = ('harp4162',)
+	_sites_names = ('platform.ou.edu',)
+	
+	@classmethod
+	def _user_creation(cls):
+		for username in cls._instructors:
+			users.User.create_user(username=username, password='temp001')
 
 	@staticmethod
 	def _setup_library( cls, *args, **kwargs ):
@@ -94,23 +101,22 @@ class LegacyInstructedCourseApplicationTestLayer(ApplicationTestLayer):
 		# Must implement!
 		cls.__old_library = component.getUtility(IContentPackageLibrary)
 		component.provideUtility(cls._setup_library(cls), IContentPackageLibrary)
+		_do_then_enumerate_library(cls._user_creation)
 
-		_do_then_enumerate_library(lambda: users.User.create_user( username='harp4162', password='temp001') )
-
-		database = ZODB.DB( ApplicationTestLayer._storage_base,
-							database_name='Users')
+		database = ZODB.DB(ApplicationTestLayer._storage_base, database_name='Users')
+		
 		@WithMockDS(database=database)
 		def _drop_any_direct_catalog_references():
-			with mock_db_trans(site_name='platform.ou.edu'):
-				# make sure they get looked up through the catalog
-				cat = component.getUtility(ICourseCatalog)
-				for i in cat.iterCatalogEntries():
-					course = ICourseInstance(i)
-					assert course.legacy_catalog_entry is not None
-					del course._v_catalog_entry
+			for name in cls._sites_names:
+				with mock_db_trans(site_name=name):
+					## make sure they get looked up through the catalog
+					cat = component.getUtility(ICourseCatalog)
+					for i in cat.iterCatalogEntries():
+						course = ICourseInstance(i)
+						assert course.legacy_catalog_entry is not None
+						del course._v_catalog_entry
 
 		_drop_any_direct_catalog_references()
-
 
 	@classmethod
 	def tearDown(cls):
@@ -121,9 +127,13 @@ class LegacyInstructedCourseApplicationTestLayer(ApplicationTestLayer):
 			_reset_site_libs()
 			cls.__old_library.resetContentPackages()
 			component.provideUtility(cls.__old_library, IContentPackageLibrary)
-			users.User.delete_user('harp4162')
+			
+			for username in cls._instructors:
+				users.User.delete_user(username)
+			
 			component.getGlobalSiteManager().getUtility(ICourseCatalog).clear()
-			component.getUtility(IComponents,name='platform.ou.edu').getUtility(ICourseCatalog).clear()
+			for name in cls._sites_names:
+				component.getUtility(IComponents,name=name).getUtility(ICourseCatalog).clear()
 
 		_do_then_enumerate_library(cleanup)
 		del cls.__old_library
@@ -131,14 +141,21 @@ class LegacyInstructedCourseApplicationTestLayer(ApplicationTestLayer):
 class RestrictedInstructedCourseApplicationTestLayer(ApplicationTestLayer):
 
 	_library_path = 'RestrictedLibrary'
-
+	_instructors = ('harp4162',)
+	_sites_names = ('platform.ou.edu',)
+	
+	@classmethod
+	def _user_creation(cls):
+		for username in cls._instructors:
+			users.User.create_user(username=username, password='temp001')
+	
 	@classmethod
 	def setUp(cls):
 		# Must implement!
 		cls.__old_library = component.getUtility(IContentPackageLibrary)
-		component.provideUtility(LegacyInstructedCourseApplicationTestLayer._setup_library(cls), IContentPackageLibrary)
-
-		_do_then_enumerate_library(lambda: users.User.create_user( username='harp4162', password='temp001') )
+		component.provideUtility(LegacyInstructedCourseApplicationTestLayer._setup_library(cls),
+								 IContentPackageLibrary)
+		_do_then_enumerate_library(cls._user_creation )
 
 	@classmethod
 	def tearDown(cls):
@@ -147,11 +164,14 @@ class RestrictedInstructedCourseApplicationTestLayer(ApplicationTestLayer):
 		# registered
 		def cleanup():
 			_reset_site_libs()
-			cls.__old_library.resetContentPackages()
+			cls.__old_library.resetContentPackages()	
 			component.provideUtility(cls.__old_library, IContentPackageLibrary)
-			users.User.delete_user('harp4162')
+			for username in cls._instructors:
+				users.User.delete_user(username)
+			
 			component.getGlobalSiteManager().getUtility(ICourseCatalog).clear()
-			component.getUtility(IComponents,name='platform.ou.edu').getUtility(ICourseCatalog).clear()
+			for name in cls._sites_names:
+				component.getUtility(IComponents,name=name).getUtility(ICourseCatalog).clear()
 
 		_do_then_enumerate_library(cleanup)
 		del cls.__old_library
@@ -159,12 +179,14 @@ class RestrictedInstructedCourseApplicationTestLayer(ApplicationTestLayer):
 class NotInstructedCourseApplicationTestLayer(ApplicationTestLayer):
 	
 	_library_path = 'PersistentLibrary'
-
+	_sites_names = ('platform.ou.edu',)
+	
 	@classmethod
 	def setUp(cls):
 		# Must implement!
 		cls.__old_library = component.getUtility(IContentPackageLibrary)
-		component.provideUtility(LegacyInstructedCourseApplicationTestLayer._setup_library(cls), IContentPackageLibrary)
+		component.provideUtility(LegacyInstructedCourseApplicationTestLayer._setup_library(cls),
+								 IContentPackageLibrary)
 		_do_then_enumerate_library(lambda: lambda: True, sync_libs=True)
 
 	@classmethod
@@ -177,14 +199,17 @@ class NotInstructedCourseApplicationTestLayer(ApplicationTestLayer):
 			_reset_site_libs()
 			cls.__old_library.resetContentPackages()
 			component.provideUtility(cls.__old_library, IContentPackageLibrary)
+										
 			component.getGlobalSiteManager().getUtility(ICourseCatalog).clear()
-			component.getUtility(IComponents,name='platform.ou.edu').getUtility(ICourseCatalog).clear()
+			for name in cls._sites_names:
+				component.getUtility(IComponents,name=name).getUtility(ICourseCatalog).clear()
 
 			from nti.site.site import get_site_for_site_names
-			site = get_site_for_site_names(('platform.ou.edu',))
-			cc = site.getSiteManager().getUtility(ICourseCatalog)
-			for x in list(cc):
-				del cc[x]
+			for name in cls._sites_names:
+				site = get_site_for_site_names((name,))
+				cc = site.getSiteManager().getUtility(ICourseCatalog)
+				for x in list(cc):
+					del cc[x]
 
 		_do_then_enumerate_library(cleanup)
 		del cls.__old_library
@@ -193,14 +218,21 @@ class PersistentInstructedCourseApplicationTestLayer(ApplicationTestLayer):
 	# A mix of new and old-style courses
 
 	_library_path = 'PersistentLibrary'
-
+	_instructors = ('harp4162', 'bailey.norwood@okstate.edu')
+	_sites_names = ('platform.ou.edu', 'okstate.nextthought.com')
+	
+	@classmethod
+	def _user_creation(cls):
+		for username in cls._instructors:
+			users.User.create_user(username=username, password='temp001')
+			
 	@classmethod
 	def setUp(cls):
 		# Must implement!
 		cls.__old_library = component.getUtility(IContentPackageLibrary)
-		component.provideUtility(LegacyInstructedCourseApplicationTestLayer._setup_library(cls), IContentPackageLibrary)
-		_do_then_enumerate_library(lambda: users.User.create_user( username='harp4162', password='temp001'),
-								   sync_libs=True)
+		component.provideUtility(LegacyInstructedCourseApplicationTestLayer._setup_library(cls),
+								 IContentPackageLibrary)
+		_do_then_enumerate_library(cls._user_creation, sync_libs=True)
 
 	@classmethod
 	def tearDown(cls):
@@ -213,15 +245,19 @@ class PersistentInstructedCourseApplicationTestLayer(ApplicationTestLayer):
 			cls.__old_library.resetContentPackages()
 
 			component.provideUtility(cls.__old_library, IContentPackageLibrary)
-			users.User.delete_user('harp4162')
+			for username in cls._instructors:
+				users.User.delete_user(username)
+			
 			component.getGlobalSiteManager().getUtility(ICourseCatalog).clear()
-			component.getUtility(IComponents,name='platform.ou.edu').getUtility(ICourseCatalog).clear()
+			for name in cls._sites_names:
+				component.getUtility(IComponents,name=name).getUtility(ICourseCatalog).clear()
 
 			from nti.site.site import get_site_for_site_names
-			site = get_site_for_site_names(('platform.ou.edu',))
-			cc = site.getSiteManager().getUtility(ICourseCatalog)
-			for x in list(cc):
-				del cc[x]
+			for name in cls._sites_names:
+				site = get_site_for_site_names((name,))
+				cc = site.getSiteManager().getUtility(ICourseCatalog)
+				for x in list(cc):
+					del cc[x]
 
 		_do_then_enumerate_library(cleanup)
 		del cls.__old_library
