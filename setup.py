@@ -1,10 +1,10 @@
-from setuptools import setup, find_packages
 import codecs
+from setuptools import setup, find_packages
 
 VERSION = '0.0.0'
 
 entry_points = {
-    "z3c.autoinclude.plugin": [
+	"z3c.autoinclude.plugin": [
 		'target = nti.app.products',
 	],
 }
@@ -18,7 +18,6 @@ setup(
 	long_description=codecs.open('README.rst', encoding='utf-8').read(),
 	license='Proprietary',
 	keywords='pyramid preference',
-	# url = 'https://github.com/NextThought/nti.nose_traceback_info',
 	classifiers=[
 		'Intended Audience :: Developers',
 		'Natural Language :: English',
@@ -29,13 +28,12 @@ setup(
 		'Programming Language :: Python :: 3.3',
 		'Topic :: Software Development :: Testing'
 		'Framework :: Pyramid',
-		],
+	],
 	packages=find_packages('src'),
 	package_dir={'': 'src'},
 	namespace_packages=['nti', 'nti.app', 'nti.app.products'],
 	install_requires=[
-		'setuptools',
-		# Undeclared dep on parts of nti.dataserver
+		'setuptools'
 	],
 	entry_points=entry_points
 )
