@@ -70,6 +70,23 @@ def _reset_site_libs():
 		d()
 	run_job_in_all_host_sites(d)
 
+def _delete_users(usernames=()):
+	for username in usernames or ():
+		users.User.delete_user(username)
+
+def _clear_catalogs(site_names=()):
+	component.getGlobalSiteManager().getUtility(ICourseCatalog).clear()
+	for name in site_names or ():
+		component.getUtility(IComponents,name=name).getUtility(ICourseCatalog).clear()
+
+def _delete_catalogs(site_names=()):
+	from nti.site.site import get_site_for_site_names
+	for name in site_names or ():
+		site = get_site_for_site_names((name,))
+		cc = site.getSiteManager().getUtility(ICourseCatalog)
+		for x in list(cc):
+			del cc[x]
+
 class LegacyInstructedCourseApplicationTestLayer(ApplicationTestLayer):
 
 	_library_path = 'Library'
@@ -127,13 +144,8 @@ class LegacyInstructedCourseApplicationTestLayer(ApplicationTestLayer):
 			_reset_site_libs()
 			cls.__old_library.resetContentPackages()
 			component.provideUtility(cls.__old_library, IContentPackageLibrary)
-			
-			for username in cls._instructors:
-				users.User.delete_user(username)
-			
-			component.getGlobalSiteManager().getUtility(ICourseCatalog).clear()
-			for name in cls._sites_names:
-				component.getUtility(IComponents,name=name).getUtility(ICourseCatalog).clear()
+			_delete_users(cls._instructors)
+			_clear_catalogs(cls._sites_names)
 
 		_do_then_enumerate_library(cleanup)
 		del cls.__old_library
@@ -166,12 +178,8 @@ class RestrictedInstructedCourseApplicationTestLayer(ApplicationTestLayer):
 			_reset_site_libs()
 			cls.__old_library.resetContentPackages()	
 			component.provideUtility(cls.__old_library, IContentPackageLibrary)
-			for username in cls._instructors:
-				users.User.delete_user(username)
-			
-			component.getGlobalSiteManager().getUtility(ICourseCatalog).clear()
-			for name in cls._sites_names:
-				component.getUtility(IComponents,name=name).getUtility(ICourseCatalog).clear()
+			_delete_users(cls._instructors)
+			_clear_catalogs(cls._sites_names)
 
 		_do_then_enumerate_library(cleanup)
 		del cls.__old_library
@@ -198,19 +206,10 @@ class NotInstructedCourseApplicationTestLayer(ApplicationTestLayer):
 		def cleanup():
 			_reset_site_libs()
 			cls.__old_library.resetContentPackages()
-			component.provideUtility(cls.__old_library, IContentPackageLibrary)
-										
-			component.getGlobalSiteManager().getUtility(ICourseCatalog).clear()
-			for name in cls._sites_names:
-				component.getUtility(IComponents,name=name).getUtility(ICourseCatalog).clear()
-
-			from nti.site.site import get_site_for_site_names
-			for name in cls._sites_names:
-				site = get_site_for_site_names((name,))
-				cc = site.getSiteManager().getUtility(ICourseCatalog)
-				for x in list(cc):
-					del cc[x]
-
+			component.provideUtility(cls.__old_library, IContentPackageLibrary)							
+			_clear_catalogs(cls._sites_names)
+			_delete_catalogs(cls._sites_names)
+			
 		_do_then_enumerate_library(cleanup)
 		del cls.__old_library
 		
@@ -243,21 +242,10 @@ class PersistentInstructedCourseApplicationTestLayer(ApplicationTestLayer):
 		def cleanup():
 			_reset_site_libs()
 			cls.__old_library.resetContentPackages()
-
 			component.provideUtility(cls.__old_library, IContentPackageLibrary)
-			for username in cls._instructors:
-				users.User.delete_user(username)
-			
-			component.getGlobalSiteManager().getUtility(ICourseCatalog).clear()
-			for name in cls._sites_names:
-				component.getUtility(IComponents,name=name).getUtility(ICourseCatalog).clear()
-
-			from nti.site.site import get_site_for_site_names
-			for name in cls._sites_names:
-				site = get_site_for_site_names((name,))
-				cc = site.getSiteManager().getUtility(ICourseCatalog)
-				for x in list(cc):
-					del cc[x]
+			_delete_users(cls._instructors)
+			_clear_catalogs(cls._sites_names)
+			_delete_catalogs(cls._sites_names)
 
 		_do_then_enumerate_library(cleanup)
 		del cls.__old_library
