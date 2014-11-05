@@ -1,0 +1,26 @@
+{
+	"id": "AGEC 3990",
+	"school": "Oklahoma State University",
+	"video": "vimeo://108803733",
+	"title": "Farm to Fork",
+	"credit": [
+		{
+			"hours":3,
+			"enrollment": {
+				"label":"Oklahoma State University",
+				"url":"http://prodosu.okstate.edu/"
+			}
+		}
+	],
+	"startDate": "2015-01-12T06:00:00+00:00",
+	"isPreview": false,
+	"duration": "16 Weeks",
+	"description": "This course teaches students the processes and procedures necessary to get food from farm to fork.",
+        "instructors": [
+		{
+			"defaultphoto": "images/01.png",
+			"name":"Dr. F. Bailey Norwood",
+			"title": "Professor of Agricultural Economics, Oklahoma State University"
+		}
+	]
+}
