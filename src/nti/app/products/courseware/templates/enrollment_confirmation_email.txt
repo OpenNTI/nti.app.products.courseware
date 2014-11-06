@@ -12,10 +12,6 @@ this email or sharing about it through social media. Encourage your
 friends to join, add them as a friend, and then form a study group on
 the platform.
 
-If you are a current OU student, you have the option to enroll in this
-course for credit. Enroll at ozone.ou.edu with the corresponding
-course number: ${course.ProviderUniqueID}.
-
 Expect more information soon as we get closer to the course start date,
 ${course_start_date}. Looking forward to connecting soon.
 

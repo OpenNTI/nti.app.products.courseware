@@ -39,13 +39,6 @@
 			friends to join, add them as a friend, and then form a study group on
 			the platform.
 		</p>
-		<p tal:condition="options/show_for_credit_option | nothing">
-			If you are a current OU student, you have the
-			option to enroll in this course for credit. Enroll at
-			<a href="https://ozone.ou.edu" alt="ozone">ozone.ou.edu</a> with the corresponding course number:
-			<span class="coursenumber"
-				  tal:content="options/course/ProviderUniqueID">CLC 3403</span>.
-		</p>
 
 		<p>
 			Expect more information soon as we get closer to the

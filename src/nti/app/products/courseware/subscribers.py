@@ -10,6 +10,7 @@ logger = __import__('logging').getLogger(__name__)
 
 from . import MessageFactory as _
 
+import os
 import isodate
 import datetime
 
@@ -19,6 +20,7 @@ from zope.security.interfaces import IPrincipal
 from zope.lifecycleevent import IObjectAddedEvent
 from zope.security.management import queryInteraction
 from zope.publisher.interfaces.browser import IBrowserRequest
+from zope.dottedname import resolve as dottedname
 
 from pyramid.threadlocal import get_current_request
 
@@ -106,6 +108,7 @@ def _send_enrollment_confirmation(event, user, profile, email, course):
 		template = prefix + template
 
 	package = getattr( policy, 'PACKAGE', 'nti.app.products.courseware' )
+	template = _get_template( catalog_entry, template, package )
 
 	component.getUtility(ITemplatedMailer).queue_simple_html_text_email(
 		template,
@@ -137,3 +140,13 @@ def _enrollment_added(record, event):
 	# Exactly one course at a time
 	course = record.CourseInstance
 	_send_enrollment_confirmation(event, creator, profile, email, course)
+
+def _get_template(catalog_entry, base_template, package):
+	"""Look for course-specific templates, if available."""
+	package = dottedname.resolve(package)
+	provider = catalog_entry.ProviderUniqueID.replace(' ', '').lower()
+	template = provider + "_" + base_template
+	path = os.path.join(os.path.dirname(package.__file__), 'templates')
+	if not os.path.exists(os.path.join(path, template + ".pt")):
+		template = base_template
+	return template
