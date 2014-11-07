@@ -75,20 +75,23 @@ def get_enrollment_options(context):
 			result.append(option)
 	return result
 
-def is_course_instructor(course, user):
+def is_course_instructor(context, user):
 	result = False
 	prin = IPrincipal(user)
+	course = ICourseInstance(context, None)
 	roles = IPrincipalRoleMap(course, None)
 	if roles:
 		result = Allow in (roles.getSetting(RID_TA, prin.id),
 						   roles.getSetting(RID_INSTRUCTOR, prin.id))
 	return result
 
-def get_enrollment_record(course, user):
-	enrollments = ICourseEnrollments(course)
-	record = enrollments.get_enrollment_for_principal(user)
+def get_enrollment_record(context, user):
+	course = ICourseInstance(context, None)
+	enrollments = ICourseEnrollments(course, None)
+	record = enrollments.get_enrollment_for_principal(user) \
+			 if enrollments is not None else None
 	return record
 			
-def is_enrolled(course, user):
-	record = get_enrollment_record(course, user)
+def is_enrolled(context, user):
+	record = get_enrollment_record(context, user)
 	return record is not None
