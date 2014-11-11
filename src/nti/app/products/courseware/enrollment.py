@@ -31,6 +31,7 @@ from .interfaces import IOpenEnrollmentOption
 from .interfaces import IEnrollmentOptionProvider
 
 CLASS = StandardExternalFields.CLASS
+ITEMS = StandardExternalFields.ITEMS
 MIMETYPE = StandardExternalFields.MIMETYPE
 
 @interface.implementer(IEnrollmentOption)
@@ -86,8 +87,9 @@ class EnrollmentOptions(LocatedExternalDict):
 		result = LocatedExternalDict()
 		result[CLASS] = self.__external_class_name__
 		result[MIMETYPE] = self.mimeType
+		items = result[ITEMS] = {}
 		for value in self.values():
-			result[value.Name] = to_external_object(value)
+			items[value.Name] = to_external_object(value)
 		return result
 
 @component.adapter(ICourseCatalogEntry)
