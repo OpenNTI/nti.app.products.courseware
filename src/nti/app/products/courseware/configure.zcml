@@ -143,7 +143,6 @@
 			 for=".interfaces.ICourseInstanceEnrollment pyramid.interfaces.IRequest"
 			 provides="zope.traversing.interfaces.ITraversable" />
 
-
 	<!-- Externalization -->
 	<include package="nti.externalization" file="meta.zcml" />
 	<include package="nti.externalization" />
@@ -237,5 +236,8 @@
 
 	<!-- Views -->
 	<include package=".views" />
+	
+	<!-- Subscribers -->
+	<subscriber handler=".subscribers._on_user_removed" />
 
 </configure>

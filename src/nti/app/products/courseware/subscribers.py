@@ -13,14 +13,31 @@ from . import MessageFactory as _
 import os
 import isodate
 import datetime
+from functools import partial
+from collections import defaultdict
+
+import gevent
+
+import transaction
 
 from zope import component
-from zope.i18n import translate
-from zope.security.interfaces import IPrincipal
-from zope.lifecycleevent import IObjectAddedEvent
-from zope.security.management import queryInteraction
-from zope.publisher.interfaces.browser import IBrowserRequest
+
+from zope.component.hooks import getSite
+from zope.component.hooks import site as current_site
+
+from zope.traversing.interfaces import IEtcNamespace
+
 from zope.dottedname import resolve as dottedname
+
+from zope.i18n import translate
+
+from zope.lifecycleevent import IObjectAddedEvent
+from zope.lifecycleevent import IObjectRemovedEvent
+
+from zope.publisher.interfaces.browser import IBrowserRequest
+
+from zope.security.interfaces import IPrincipal
+from zope.security.management import queryInteraction
 
 from pyramid.threadlocal import get_current_request
 
@@ -28,8 +45,16 @@ from nti.appserver.policies.interfaces import ISitePolicyUserEventListener
 
 from nti.contenttypes.courses.interfaces import ES_CREDIT_DEGREE
 from nti.contenttypes.courses.interfaces import ES_CREDIT_NONDEGREE
+
+from nti.contenttypes.courses.interfaces import ICourseCatalog
+from nti.contenttypes.courses.interfaces import ICourseInstance
 from nti.contenttypes.courses.interfaces import ICourseCatalogEntry
+from nti.contenttypes.courses.interfaces import IPrincipalEnrollments
+from nti.contenttypes.courses.interfaces import ICourseEnrollmentManager
 from nti.contenttypes.courses.interfaces import ICourseInstanceEnrollmentRecord
+
+from nti.dataserver.interfaces import IUser
+from nti.dataserver.interfaces import IDataserverTransactionRunner
 
 from nti.dataserver.users.interfaces import IUserProfile
 from nti.dataserver.users.interfaces import IEmailAddressable
@@ -37,6 +62,10 @@ from nti.dataserver.users.interfaces import IEmailAddressable
 from nti.externalization.externalization import to_external_object
 
 from nti.mailer.interfaces import ITemplatedMailer
+
+from nti.site.hostpolicy import run_job_in_all_host_sites
+
+## Email
 
 def _send_enrollment_confirmation(event, user, profile, email, course):
 	# Note that the `course` is an nti.contenttypes.courses.ICourseInstance
@@ -150,3 +179,66 @@ def _get_template(catalog_entry, base_template, package):
 	if not os.path.exists(os.path.join(path, template + ".pt")):
 		template = base_template
 	return template
+
+## Users
+
+def _delete_user_enrollment_data(username, enrollments=None):
+	logger.info("Removing enrollment data for user %s", username)
+	
+	result = defaultdict(list)
+	principal = IPrincipal(username)
+	sites = component.getUtility(IEtcNamespace, name='hostsites')
+	enrollments = {} if  enrollments is None else enrollments
+	for name, entries in enrollments.items():
+		if not entries:
+			continue
+		try:
+			site = sites[name]
+			with current_site(site):
+				catalog = component.getUtility(ICourseCatalog)
+				for ntiid in entries:
+					try:
+						entry = catalog.getCatalogEntry(ntiid)
+						course = ICourseInstance(entry, None)
+						enrollments = ICourseEnrollmentManager(course, None)
+						if enrollments is not None:
+							enrollments.drop(principal)
+							result[name].append(ntiid)
+					except KeyError:
+						pass
+		except KeyError:
+			pass
+	return result
+
+def _get_enrollment_data(user):
+	result = defaultdict(list)
+	def _collector():
+		name = getSite().__name__
+		for enrollments in component.subscribers( (user,), IPrincipalEnrollments):
+			for enrollment in enrollments.iter_enrollments():
+				course = ICourseInstance(enrollment, None)
+				entry = ICourseCatalogEntry(course, None)
+				if entry is not None:
+					result[name].append(entry.ntiid)
+	run_job_in_all_host_sites(_collector)
+	return result
+
+@component.adapter(IUser, IObjectRemovedEvent)
+def _on_user_removed(user, event):
+	username = user.username
+	
+	## get enrollments per site
+	enrollments = _get_enrollment_data(user)
+	
+	## remove all enrollments in an after commit hook
+	## in case some other event listeners require the enrollment data
+	def _process_event():
+		transaction_runner = component.getUtility(IDataserverTransactionRunner)
+		func = partial(_delete_user_enrollment_data,
+					   username=username,
+					   enrollments=enrollments)
+		transaction_runner(func)
+		return True
+
+	transaction.get().addAfterCommitHook(
+					lambda success: success and gevent.spawn(_process_event))
