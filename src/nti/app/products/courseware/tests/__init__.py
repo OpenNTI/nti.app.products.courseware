@@ -11,6 +11,7 @@ import os
 import os.path
 
 from zope import component
+from zope import interface
 
 import ZODB
 
@@ -22,6 +23,7 @@ from nti.contenttypes.courses.interfaces import ICourseCatalog
 from nti.contenttypes.courses.interfaces import ICourseInstance
 
 from nti.dataserver import users
+from nti.dataserver.users.interfaces import IRecreatableUser
 
 from nti.site.hostpolicy import run_job_in_all_host_sites
 
@@ -92,11 +94,12 @@ class LegacyInstructedCourseApplicationTestLayer(ApplicationTestLayer):
 	_library_path = 'Library'
 	_instructors = ('harp4162',)
 	_sites_names = ('platform.ou.edu',)
-	
+
 	@classmethod
 	def _user_creation(cls):
 		for username in cls._instructors:
-			users.User.create_user(username=username, password='temp001')
+			user = users.User.create_user(username=username, password='temp001')
+			interface.alsoProvides( user, IRecreatableUser )
 
 	@staticmethod
 	def _setup_library( cls, *args, **kwargs ):
@@ -121,7 +124,7 @@ class LegacyInstructedCourseApplicationTestLayer(ApplicationTestLayer):
 		_do_then_enumerate_library(cls._user_creation)
 
 		database = ZODB.DB(ApplicationTestLayer._storage_base, database_name='Users')
-		
+
 		@WithMockDS(database=database)
 		def _drop_any_direct_catalog_references():
 			for name in cls._sites_names:
@@ -155,12 +158,13 @@ class RestrictedInstructedCourseApplicationTestLayer(ApplicationTestLayer):
 	_library_path = 'RestrictedLibrary'
 	_instructors = ('harp4162',)
 	_sites_names = ('platform.ou.edu',)
-	
+
 	@classmethod
 	def _user_creation(cls):
 		for username in cls._instructors:
-			users.User.create_user(username=username, password='temp001')
-	
+			user = users.User.create_user(username=username, password='temp001')
+			interface.alsoProvides( user, IRecreatableUser )
+
 	@classmethod
 	def setUp(cls):
 		# Must implement!
@@ -176,7 +180,7 @@ class RestrictedInstructedCourseApplicationTestLayer(ApplicationTestLayer):
 		# registered
 		def cleanup():
 			_reset_site_libs()
-			cls.__old_library.resetContentPackages()	
+			cls.__old_library.resetContentPackages()
 			component.provideUtility(cls.__old_library, IContentPackageLibrary)
 			_delete_users(cls._instructors)
 			_clear_catalogs(cls._sites_names)
@@ -185,10 +189,10 @@ class RestrictedInstructedCourseApplicationTestLayer(ApplicationTestLayer):
 		del cls.__old_library
 
 class NotInstructedCourseApplicationTestLayer(ApplicationTestLayer):
-	
+
 	_library_path = 'PersistentLibrary'
 	_sites_names = ('platform.ou.edu',)
-	
+
 	@classmethod
 	def setUp(cls):
 		# Must implement!
@@ -206,25 +210,26 @@ class NotInstructedCourseApplicationTestLayer(ApplicationTestLayer):
 		def cleanup():
 			_reset_site_libs()
 			cls.__old_library.resetContentPackages()
-			component.provideUtility(cls.__old_library, IContentPackageLibrary)							
+			component.provideUtility(cls.__old_library, IContentPackageLibrary)
 			_clear_catalogs(cls._sites_names)
 			_delete_catalogs(cls._sites_names)
-			
+
 		_do_then_enumerate_library(cleanup)
 		del cls.__old_library
-		
+
 class PersistentInstructedCourseApplicationTestLayer(ApplicationTestLayer):
 	# A mix of new and old-style courses
 
 	_library_path = 'PersistentLibrary'
 	_instructors = ('harp4162', 'bailey.norwood@okstate.edu')
 	_sites_names = ('platform.ou.edu', 'okstate.nextthought.com')
-	
+
 	@classmethod
 	def _user_creation(cls):
 		for username in cls._instructors:
-			users.User.create_user(username=username, password='temp001')
-			
+			user = users.User.create_user(username=username, password='temp001')
+			interface.alsoProvides( user, IRecreatableUser )
+
 	@classmethod
 	def setUp(cls):
 		# Must implement!
