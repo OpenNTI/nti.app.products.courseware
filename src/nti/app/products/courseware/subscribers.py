@@ -100,6 +100,12 @@ def _send_enrollment_confirmation(event, user, profile, email, course):
 	html_sig = catalog_entry.InstructorsSignature.replace('\n', "<br />")
 
 	support_email = getattr( policy, 'SUPPORT_EMAIL', 'support@nextthought.com' )
+	course_end_date = catalog_entry.EndDate
+	course_preview = catalog_entry.Preview
+	course_archived = course_end_date and course_end_date < datetime.datetime.utcnow()
+
+	for_credit_url = getattr( policy, 'FOR_CREDIT_URL', '' )
+	site_alias = getattr( policy, 'COM_ALIAS', '' )
 
 	args = {'profile': profile,
 			'context': event,
@@ -107,36 +113,20 @@ def _send_enrollment_confirmation(event, user, profile, email, course):
 			'informal_username': informal_username,
 			'course': catalog_entry,
 			'support_email': support_email,
-			'show_for_credit_option': True,
+			'for_credit_url': for_credit_url,
+			'site_alias': site_alias,
 			'request': request,
 			'brand': policy.BRAND,
 			'course_start_date': course_start_date,
 			'instructors_html_signature': html_sig,
+			'course_preview': course_preview,
+			'course_archived': course_archived,
 			'today': isodate.date_isoformat(datetime.datetime.now()) }
 
 
-	course_end_date = catalog_entry.EndDate
-
-	if course_end_date and course_end_date < datetime.datetime.utcnow():
-		template = 'archived_enrollment_confirmation_email'
-	elif not catalog_entry.Preview:
-		template = 'inprogress_enrollment_confirmation_email'
-	else:
-		template = 'enrollment_confirmation_email'
-		####
-		## HACK
-		## The best way to do this would be with
-		## content providers and/or configured objects
-		## in the database and/or ZCA. However, this is faster
-		## Also OU specific, need to fix this.
-		####
-		template_map = {
-			"Gateway to College Learning": 'hack_gateway_'
-		}
-		prefix = template_map.get( catalog_entry.Title, '' )
-		template = prefix + template
-
 	package = getattr( policy, 'PACKAGE', 'nti.app.products.courseware' )
+
+	template = 'enrollment_confirmation_email'
 	template = _get_template( catalog_entry, template, package )
 
 	component.getUtility(ITemplatedMailer).queue_simple_html_text_email(
@@ -184,7 +174,7 @@ def _get_template(catalog_entry, base_template, package):
 
 def _delete_user_enrollment_data(username, enrollments=None):
 	logger.info("Removing enrollment data for user %s", username)
-	
+
 	result = defaultdict(list)
 	principal = IPrincipal(username)
 	sites = component.getUtility(IEtcNamespace, name='hostsites')
@@ -226,10 +216,10 @@ def _get_enrollment_data(user):
 @component.adapter(IUser, IObjectRemovedEvent)
 def _on_user_removed(user, event):
 	username = user.username
-	
+
 	## get enrollments per site
 	enrollments = _get_enrollment_data(user)
-	
+
 	## remove all enrollments in an after commit hook
 	## in case some other event listeners require the enrollment data
 	def _process_event():

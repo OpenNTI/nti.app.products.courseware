@@ -33,6 +33,25 @@
 			wish to learn.
 		</p>
 
+		<!-- Course in progress -->
+		<p tal:condition="python: not options['course_archived'] and not options['course_preview']">
+			The course is currently in progress. You are welcome to join our
+			learning community and to experience the lectures and discussions on
+			 <a href="https://nextthought.com"
+				tal:attributes="href request/application_url"
+				tal:content="options/brand">Nextthought</a>.
+		</p>
+
+		<!-- Course archived -->
+		<p tal:condition="options/course_archived">
+			Although the course has already formally concluded, you still have access to
+			all course materials. These materials will be available to you indefinitely,
+			as long as you are enrolled in the course. Please note, however, that this
+			course is no longer monitored by the professor. You are welcome to join our
+			learning community and to experience the lectures and discussions on
+			<span tal:content="options/brand">NextThought</span>.
+		</p>
+
 		<p>
 			Feel free to spread the word around about the course by forwarding
 			this email or sharing about it through social media. Encourage your
@@ -40,10 +59,23 @@
 			the platform.
 		</p>
 
-		<p>
+		<!-- For credit url if it exists and the class is current -->
+		<p tal:condition="python: options['for_credit_url'] and options['course_preview']">
+			If you are a current <span tal:content="options/site_alias"></span> student, you have the
+			option to enroll in this course for credit. Enroll at
+			<a href="" tal:attributes="href python: 'https://' + options['for_credit_url']" tal:content="options/for_credit_url">link</a>
+			with the corresponding course number:
+			<span class="coursenumber"
+				  tal:content="options/course/ProviderUniqueID">CLC 3403</span>.
+		</p>
+
+		<p tal:condition="options/course_preview">
 			Expect more information soon as we get closer to the
 			course start date, <span tal:content="options/course_start_date | default">January 13, 2014</span>.
-			Looking forward to connecting soon!
+		</p>
+
+		<p>
+			I look forward to seeing you in our community!
 		</p>
 
 		<p>
@@ -54,6 +86,8 @@
 				Dr. Kyle Harper<br />
 				Associate Professor of Classics<br />
 			</span>
+			<br />
+			<br />
 		</p>
 
 		<div id="logo-bar nti">
