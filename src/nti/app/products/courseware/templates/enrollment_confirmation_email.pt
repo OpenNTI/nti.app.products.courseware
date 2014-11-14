@@ -59,7 +59,7 @@
 			the platform.
 		</p>
 
-		<!-- For credit url if it exists and the class is current -->
+		<!-- For credit url if it exists and the class is not yet started. -->
 		<p tal:condition="python: options['for_credit_url'] and options['course_preview']">
 			If you are a current <span tal:content="options/site_alias"></span> student, you have the
 			option to enroll in this course for credit. Enroll at
