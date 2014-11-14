@@ -186,8 +186,7 @@ class _OpenEnrollmentOptionLinkDecorator(AbstractAuthenticatedRequestAwareDecora
 	@classmethod
 	def _get_enrollment_record(cls, context, remoteUser):
 		entry = get_catalog_entry(context.CatalogEntryNTIID)
-		course = ICourseInstance(entry, None)
-		return get_enrollment_record(course, remoteUser)
+		return get_enrollment_record(entry, remoteUser)
 	
 	def _do_decorate_external(self, context, result):
 		result['IsAvailable'] = context.Enabled
