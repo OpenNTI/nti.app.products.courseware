@@ -13,6 +13,8 @@
 			"Currency": "USD",
 			"Redeemable": true,
 			"Provider": "Janux",
+			"Name": "Law and Justice",
+			"Title": "Law and Justice",
 			"AllowVendorUpdates": true
 		}
 	},
