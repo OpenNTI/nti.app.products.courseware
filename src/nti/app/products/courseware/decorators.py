@@ -13,8 +13,8 @@ logger = __import__('logging').getLogger(__name__)
 
 from urlparse import urljoin
 
-from zope import interface
 from zope import component
+from zope import interface
 from zope.location.interfaces import ILocation
 
 from pyramid.threadlocal import get_current_request
@@ -26,6 +26,7 @@ from nti.appserver.pyramid_authorization import has_permission
 from nti.contentlibrary.interfaces import IContentPackageLibrary
 from nti.contentlibrary.interfaces import IContentUnitHrefMapper
 
+from nti.contenttypes.courses.interfaces import ES_PUBLIC
 from nti.contenttypes.courses.interfaces import ICourseOutline
 from nti.contenttypes.courses.interfaces import ICourseInstance
 from nti.contenttypes.courses.interfaces import ICourseEnrollments
@@ -48,6 +49,8 @@ from . import VIEW_CATALOG_ENTRY
 from . import VIEW_COURSE_ACTIVITY
 from . import VIEW_COURSE_ENROLLMENT_ROSTER
 
+from .utils import get_catalog_entry
+from .utils import get_enrollment_record
 from .utils import get_enrollment_options
 
 from .interfaces import ACT_VIEW_ACTIVITY
@@ -180,8 +183,16 @@ class _OpenEnrollmentOptionLinkDecorator(AbstractAuthenticatedRequestAwareDecora
 	def _predicate(self, context, result):
 		return self._is_authenticated
 	
+	@classmethod
+	def _get_enrollment_record(cls, context, remoteUser):
+		entry = get_catalog_entry(context.CatalogEntryNTIID)
+		course = ICourseInstance(entry, None)
+		return get_enrollment_record(course, remoteUser)
+	
 	def _do_decorate_external(self, context, result):
 		result['IsAvailable'] = context.Enabled
+		record = self._get_enrollment_record(context, self.remoteUser)
+		result['IsEnrolled'] = bool(record is not None and record.Scope == ES_PUBLIC)
 
 @component.adapter(ICourseCatalogEntry)
 @interface.implementer(IExternalMappingDecorator)

@@ -20,7 +20,8 @@ from zope.security.permission import Permission
 from zope.container.interfaces import IContained
 from zope.interface.common.mapping import IEnumerableMapping
 
-from nti.appserver import interfaces as app_interfaces
+from nti.appserver.interfaces import IWorkspace
+from nti.appserver.interfaces import IContainerCollection
 
 from nti.contenttypes.courses.interfaces import ICourseInstance
 from nti.contenttypes.courses.interfaces import IPrincipalEnrollments
@@ -77,7 +78,7 @@ class ILegacyCommunityBasedCourseInstance(ICourseInstance):
 
 	ContentPackageBundle = interface.Attribute("A mock bundle, having a ContentPackages iterable")
 
-class ICourseInstanceActivity(IContained,ILastModified):
+class ICourseInstanceActivity(IContained, ILastModified):
 	"""
 	A firehose implementation of activity relating
 	to a course and typically expected to be visible to
@@ -116,12 +117,12 @@ class ICourseInstanceActivity(IContained,ILastModified):
 		:keyword max: If given, a timestamp.
 		"""
 
-class ICoursesWorkspace(app_interfaces.IWorkspace):
+class ICoursesWorkspace(IWorkspace):
 	"""
 	A workspace containing data for courses.
 	"""
 
-class IEnrolledCoursesCollection(app_interfaces.IContainerCollection):
+class IEnrolledCoursesCollection(IContainerCollection):
 	"""
 	A collection (local to a user) of courses he is enrolled in
 	(:class:`.ICourseInstanceEnrollment`)
@@ -219,7 +220,7 @@ class IPrincipalAdministrativeRoleCatalog(interface.Interface):
 		least something that can be adapted to that interface.
 		"""
 
-class IAdministeredCoursesCollection(app_interfaces.IContainerCollection):
+class IAdministeredCoursesCollection(IContainerCollection):
 	"""
 	A collection (local to a user) of courses he administers
 	(:class:`.ICourseInstanceAdministrativeRole`)
@@ -278,7 +279,8 @@ class IOpenEnrollmentOption(IEnrollmentOption):
 	Open course/entry enrollment option
 	"""
 
-	Enabled = Bool(title="If the course allows open enrollemnt", required=False, default=True)
+	Enabled = Bool(title="If the course allows open enrollemnt", 
+				   required=False, default=True)
 
 class IEnrollmentOptions(IEnumerableMapping):
 	

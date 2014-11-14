@@ -17,6 +17,7 @@ from nti.contenttypes.courses.interfaces import RID_TA
 from nti.contenttypes.courses.interfaces import ES_PUBLIC
 from nti.contenttypes.courses.interfaces import RID_INSTRUCTOR
 
+from nti.contenttypes.courses.interfaces import ICourseCatalog
 from nti.contenttypes.courses.interfaces import ICourseInstance
 from nti.contenttypes.courses.interfaces import ICourseEnrollments
 from nti.contenttypes.courses.interfaces import ICourseSubInstance
@@ -85,11 +86,21 @@ def is_course_instructor(context, user):
 						   roles.getSetting(RID_INSTRUCTOR, prin.id))
 	return result
 
+def get_catalog_entry(ntiid, safe=True):
+	try:
+		catalog = component.getUtility(ICourseCatalog)
+		entry = catalog.getCatalogEntry(ntiid) if ntiid else None
+		return entry
+	except KeyError as e:
+		if not safe:
+			raise e
+	return None
+
 def get_enrollment_record(context, user):
 	course = ICourseInstance(context, None)
 	enrollments = ICourseEnrollments(course, None)
 	record = enrollments.get_enrollment_for_principal(user) \
-			 if enrollments is not None else None
+			 if user is not None and enrollments is not None else None
 	return record
 			
 def is_enrolled(context, user):

@@ -56,5 +56,5 @@ class TestEnrollmentOptions(ApplicationLayerTest):
 			assert_that(ext_obj, 
 				has_entry('Items',
 						has_entry('OpenEnrollment',
-						   has_entries('Enabled', is_(True),
-									   'MimeType','application/vnd.nextthought.courseware.openenrollmentoption'))))
+						   has_entries(	'Enabled', is_(True),
+									   	'MimeType','application/vnd.nextthought.courseware.openenrollmentoption'))))
