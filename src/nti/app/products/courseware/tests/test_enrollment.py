@@ -10,6 +10,7 @@ __docformat__ = "restructuredtext en"
 from hamcrest import is_
 from hamcrest import none
 from hamcrest import is_not
+from hamcrest import has_item
 from hamcrest import has_entry
 from hamcrest import assert_that
 from hamcrest import has_entries
@@ -19,8 +20,6 @@ does_not = is_not
 from zope import component
 
 from nti.contenttypes.courses.interfaces import ICourseCatalog
-
-from nti.externalization.externalization import to_external_object
 
 from nti.app.products.courseware.utils import get_enrollment_options
 
@@ -35,6 +34,10 @@ class TestEnrollmentOptions(ApplicationLayerTest):
 	
 	layer = InstructedCourseApplicationTestLayer
 
+	default_origin = b'http://janux.ou.edu'
+	
+	all_courses_href = '/dataserver2/users/sjohnson@nextthought.com/Courses/AllCourses'
+	enrolled_courses_href = '/dataserver2/users/sjohnson@nextthought.com/Courses/EnrolledCourses'
 	course_ntiid = 'tag:nextthought.com,2011-10:NTI-CourseInfo-Fall2013_CLC3403_LawAndJustice'
 	
 	def catalog_entry(self):
@@ -45,16 +48,41 @@ class TestEnrollmentOptions(ApplicationLayerTest):
 			
 	@WithSharedApplicationMockDS(testapp=True, users=True)
 	def test_get_enrollment_options(self):
+		
 		with mock_dataserver.mock_db_trans(self.ds, site_name='platform.ou.edu'):
 			entry = self.catalog_entry()
 			options = get_enrollment_options(entry)
 			assert_that(options, is_not(none()))
 			assert_that(options, has_entry('OpenEnrollment',
 										   has_property('Enabled', is_(True))))
-
-			ext_obj = to_external_object(options)
-			assert_that(ext_obj, 
-				has_entry('Items',
-						has_entry('OpenEnrollment',
-						   has_entries(	'Enabled', is_(True),
-									   	'MimeType','application/vnd.nextthought.courseware.openenrollmentoption'))))
+			
+		self.testapp.post_json( self.enrolled_courses_href,
+								'CLC 3403',
+								status=201 )
+		
+		res = self.testapp.get( self.all_courses_href )
+		assert_that
+		( 
+			res.json_body['Items'],
+			has_item
+			( 
+				has_entry
+				(	
+					'EnrollmentOptions', 
+					has_entry
+					(	
+						'Items', 
+						has_entry
+						(	
+							'OpenEnrollment', 
+							has_entries
+							(
+								'IsEnrolled', is_(True),
+								'IsAvailable', is_(True),
+ 								'MimeType', 'application/vnd.nextthought.courseware.openenrollmentoption'
+ 							) 
+						)
+					)
+				)
+			)
+		)
