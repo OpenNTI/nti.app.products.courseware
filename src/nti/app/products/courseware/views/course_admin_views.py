@@ -34,6 +34,7 @@ from nti.appserver.interfaces import IUserService
 from nti.contenttypes.courses.interfaces import ICourseCatalog
 from nti.contenttypes.courses.interfaces import ICourseInstance
 from nti.contenttypes.courses.interfaces import ICourseSubInstance
+from nti.contenttypes.courses.interfaces import IPrincipalEnrollments
 from nti.contenttypes.courses.interfaces import ENROLLMENT_SCOPE_VOCABULARY
 from nti.contenttypes.courses.enrollment import migrate_enrollments_from_course_to_course
 
@@ -46,6 +47,7 @@ from nti.dataserver.users import User
 from nti.dataserver.users.interfaces import IUserProfile
 
 from nti.externalization.interfaces import LocatedExternalDict 
+from nti.externalization.interfaces import StandardExternalFields 
 
 from nti.utils.maps import CaseInsensitiveDict
 
@@ -56,8 +58,21 @@ from ..interfaces import ICoursesWorkspace
 from .catalog_views import get_enrollments
 from .catalog_views import do_course_enrollment
 
+ITEMS = StandardExternalFields.ITEMS
+
 ## HELPER admin views
 
+def _parse_user(values):
+	username = values.get('username') or values.get('user')
+	if not username:
+		raise hexc.HTTPUnprocessableEntity(detail=_('No username'))
+
+	user = User.get_user(username)
+	if not user or not IUser.providedBy(user):
+		raise hexc.HTTPNotFound(detail=_('User not found'))
+	
+	return username, user
+		
 class AbstractCourseEnrollView(AbstractAuthenticatedView,
 							   ModeledContentUploadRequestUtilsMixin):
 
@@ -68,17 +83,13 @@ class AbstractCourseEnrollView(AbstractAuthenticatedView,
 
 	def parseCommon(self, values):
 		# get / validate user
-		username = values.get('username') or values.get('user')
-		if not username:
-			raise hexc.HTTPUnprocessableEntity(detail=_('No username'))
-
-		user = User.get_user(username)
-		if not user or not IUser.providedBy(user):
-			raise hexc.HTTPNotFound(detail=_('User not found'))
+		_, user = _parse_user(values)
 
 		# get validate course entry
-		ntiid = values.get('ntiid') or values.get('EntryNTIID') or \
-				values.get('CourseEntryNIID') or values.get('ProviderUniqueID')
+		ntiid = values.get('ntiid') or \
+				values.get('EntryNTIID') or \
+				values.get('CourseEntryNIID') or \
+				values.get('ProviderUniqueID')
 		if not ntiid:
 			raise hexc.HTTPUnprocessableEntity(detail=_('No course entry identifier'))
 
@@ -134,18 +145,34 @@ class AdminUserCourseDropView(AbstractCourseEnrollView):
 	def __call__(self):
 		values = self.readInput()
 		catalog_entry, user = self.parseCommon(values)
-		
-		# Make sure we don't have any interaction.
 		endInteraction()
 		try:
-			logger.info("Dropping %s from %s", user, catalog_entry.ntiid)
 			course_instance  = ICourseInstance(catalog_entry)
 			enrollments = get_enrollments(course_instance, self.request)
-			enrollments.drop(user)
+			if enrollments.drop(user):
+				logger.info("%s drop from %s", user, catalog_entry.ntiid)
 		finally:
 			restoreInteraction()
 		return hexc.HTTPNoContent()
 
+@view_config(route_name='objects.generic.traversal',
+			 renderer='rest',
+			 request_method='GET',
+			 context=IDataserverFolder,
+			 permission=nauth.ACT_COPPA_ADMIN,
+			 name='AdminUserCourseEnrollments')
+class AdminUserCourseEnrollmentsView(AbstractAuthenticatedView):
+
+	def __call__(self):
+		params = CaseInsensitiveDict(self.request.params)
+		_, user = _parse_user(params)
+		result = LocatedExternalDict()
+		items = result[ITEMS] = []
+		for enrollments in component.subscribers( (user,), IPrincipalEnrollments):
+			for enrollment in enrollments.iter_enrollments():
+				items.append(enrollment)
+		return result
+	
 @view_config(route_name='objects.generic.traversal',
 			 renderer='rest',
 			 context=IDataserverFolder,
@@ -219,7 +246,7 @@ class CourseEnrollmentMigrationView(AbstractAuthenticatedView):
 			 permission=nauth.ACT_MODERATE,
 			 name='CourseRoles')
 class CourseRolesView(AbstractAuthenticatedView,
-					ModeledContentUploadRequestUtilsMixin):
+					  ModeledContentUploadRequestUtilsMixin):
 
 	def __call__(self):
 		catalog = component.getUtility(ICourseCatalog)
