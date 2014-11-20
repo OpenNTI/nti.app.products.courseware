@@ -125,14 +125,28 @@ class AllCoursesCollection(Contained):
 	def __init__(self, parent):
 		self.__parent__ = parent
 		user = parent.user
-				
+		# To support ACLs limiting the available parts of the catalog,
+		# we filter out here.
+		# we could do this with a proxy, but it's easier right now
+		# just to copy. This is highly dependent on implementation.
+		# We also filter out sibling courses when we are already enrolled
+		# in one; this is probably inefficient
 		my_enrollments = {}
-		for enrollments in component.subscribers( (user,), IPrincipalEnrollments):
-			for enrollment in enrollments.iter_enrollments():
-				course = ICourseInstance(enrollment)
-				entry = ICourseCatalogEntry(course)
-				my_enrollments[entry.ntiid] = course
-				
+		container = self.container = self._IteratingDict()
+		container.__name__ = parent.catalog.__name__
+		container.__parent__ = parent.catalog.__parent__
+		container.lastModified = parent.catalog.lastModified
+		for x in parent.catalog.iterCatalogEntries():
+			if has_permission(ACT_READ, x, user):
+				# Note that we have to expose these by NTIID, not their
+				# __name__. Because the catalog can be reading from
+				# multiple different sources, the __names__ might overlap
+				course = ICourseInstance(x, None)
+				if course is not None:
+					enrollments = ICourseEnrollments(course)
+					if enrollments.get_enrollment_for_principal(user) is not None:
+						my_enrollments[x.ntiid] = course
+				container[x.ntiid] = x
 		courses_to_remove = []
 		for course in my_enrollments.values():
 			if ICourseSubInstance.providedBy(course):
@@ -142,22 +156,6 @@ class AllCoursesCollection(Contained):
 			else:
 				# Look for children to remove
 				courses_to_remove.extend(course.SubInstances.values())
-		
-		container = self.container = self._IteratingDict()
-		container.__name__ = parent.catalog.__name__
-		container.__parent__ = parent.catalog.__parent__
-		container.lastModified = parent.catalog.lastModified
-		
-		# To support ACLs limiting the available parts of the catalog,
-		# we filter out here. We could do this with a proxy, but it's easier
-		# right now  just to copy. This is highly dependent on implementation.
-		# We also filter out sibling courses when we are already enrolled
-		# in one; this is probably inefficient
-		for entry in parent.catalog.iterCatalogEntries():
-			if has_permission(ACT_READ, entry, user):
-				course = ICourseInstance(entry, None)
-				if course is not None:
-					container[entry.ntiid] = entry
 
 		for course in courses_to_remove:
 			ntiid = ICourseCatalogEntry(course).ntiid
