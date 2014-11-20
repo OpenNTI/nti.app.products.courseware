@@ -95,7 +95,6 @@ class _AbstractEnrollingBase(object):
 		# Nothing by default
 		#assert_that( res.json_body, has_entry( 'Items', has_length( 0 )) )
 
-
 		res = self.testapp.get( self.all_courses_href )
 		assert_that( res.json_body, has_entry( 'Items', has_length( self.expected_workspace_length )) )
 		assert_that( res.json_body['Items'],

@@ -30,9 +30,10 @@ from nti.contenttypes.courses.interfaces import ICourseCatalogEntry
 from nti.contenttypes.courses.interfaces import IPrincipalEnrollments
 
 from nti.dataserver.interfaces import IUser
+
 from nti.dataserver.authorization import ACT_DELETE
-from nti.dataserver.authorization_acl import acl_from_aces
 from nti.dataserver.authorization_acl import ace_allowing
+from nti.dataserver.authorization_acl import acl_from_aces
 
 from nti.utils.property import Lazy
 from nti.utils.property import alias
@@ -111,6 +112,7 @@ class AllCoursesCollection(Contained):
 	#: Our name, part of our URL.
 	__name__ = 'AllCourses'
 
+	accepts = ()
 	name = alias('__name__',__name__)
 
 	class _IteratingDict(LocatedExternalDict):
@@ -123,30 +125,14 @@ class AllCoursesCollection(Contained):
 	def __init__(self, parent):
 		self.__parent__ = parent
 		user = parent.user
-		# To support ACLs limiting the available parts of the catalog,
-		# we filter out here.
-		# we could do this with a proxy, but it's easier right now
-		# just to copy. This is highly dependent on implementation.
-		# We also filter out sibling courses when we are already enrolled
-		# in one; this is probably inefficient
-		container = self.container = self._IteratingDict()
-		container.__name__ = parent.catalog.__name__
-		container.__parent__ = parent.catalog.__parent__
-		container.lastModified = parent.catalog.lastModified
+				
 		my_enrollments = {}
-		for x in parent.catalog.iterCatalogEntries():
-			if has_permission(ACT_READ, x, user):
-				# Note that we have to expose these by NTIID, not their
-				# __name__. Because the catalog can be reading from
-				# multiple different sources, the __names__ might overlap
-
-				course = ICourseInstance(x, None)
-				if course is not None:
-					enrollments = ICourseEnrollments(course)
-					if enrollments.get_enrollment_for_principal(user) is not None:
-						my_enrollments[x.ntiid] = course
-
-				container[x.ntiid] = x
+		for enrollments in component.subscribers( (user,), IPrincipalEnrollments):
+			for enrollment in enrollments.iter_enrollments():
+				course = ICourseInstance(enrollment)
+				entry = ICourseCatalogEntry(course)
+				my_enrollments[entry.ntiid] = course
+				
 		courses_to_remove = []
 		for course in my_enrollments.values():
 			if ICourseSubInstance.providedBy(course):
@@ -156,15 +142,32 @@ class AllCoursesCollection(Contained):
 			else:
 				# Look for children to remove
 				courses_to_remove.extend(course.SubInstances.values())
+		
+		container = self.container = self._IteratingDict()
+		container.__name__ = parent.catalog.__name__
+		container.__parent__ = parent.catalog.__parent__
+		container.lastModified = parent.catalog.lastModified
+		
+		# To support ACLs limiting the available parts of the catalog,
+		# we filter out here. We could do this with a proxy, but it's easier
+		# right now  just to copy. This is highly dependent on implementation.
+		# We also filter out sibling courses when we are already enrolled
+		# in one; this is probably inefficient
+		for entry in parent.catalog.iterCatalogEntries():
+			if has_permission(ACT_READ, entry, user):
+				course = ICourseInstance(entry, None)
+				if course is not None:
+					container[entry.ntiid] = entry
+
 		for course in courses_to_remove:
 			ntiid = ICourseCatalogEntry(course).ntiid
 			if ntiid not in my_enrollments:
 				container.pop( ntiid, None )
-
-	accepts = ()
-
+		
 	def __getitem__(self, key):
-		"We can be traversed to the CourseCatalog."
+		"""
+		We can be traversed to the CourseCatalog.
+		"""
 		# Due to a mismatch between the global course catalog name
 		# of 'CourseCatalog', and the local course catalog name of
 		# 'Courses', we accept either
@@ -447,10 +450,8 @@ class CatalogEntryLocationInfo(LocationPhysicallyLocatable):
 			parents.append( ds.dataserver_folder )
 			parents.extend( ILocationInfo(ds.dataserver_folder).getParents() )
 
-
 		if not IRoot.providedBy(parents[-1]):
 			raise TypeError("Not enough context to get all parents")
-
 		return parents
 
 from nti.app.notabledata.interfaces import IUserPresentationPriorityCreators
@@ -480,5 +481,4 @@ class _UserInstructorsPresentationPriorityCreators(object):
 
 				for instructor in course.instructors:
 					result.add( instructor.id )
-
 		return result
