@@ -30,6 +30,7 @@ from nti.contenttypes.courses.interfaces import ICourseEnrollments
 from nti.dataserver import authorization as nauth
 
 from nti.externalization.interfaces import LocatedExternalDict
+from nti.externalization.interfaces import StandardExternalFields
 from nti.externalization.externalization import to_external_object
 from nti.externalization.interfaces import ILocatedExternalSequence
 
@@ -40,6 +41,8 @@ from ..interfaces import ICourseInstanceEnrollment
 from . import VIEW_CONTENTS
 from . import VIEW_COURSE_ACTIVITY
 from . import VIEW_COURSE_ENROLLMENT_ROSTER
+
+ITEMS = StandardExternalFields.ITEMS
 
 @view_config( route_name='objects.generic.traversal',
 			  context=ICourseOutline,
@@ -86,9 +89,8 @@ from nti.appserver.interfaces import IIntIdUserSearchPolicy
 
 from nti.app.externalization.view_mixins import BatchingUtilsMixin
 
-from nti.dataserver.users.interfaces import IFriendlyNamed
-
 from nti.dataserver.interfaces import IUser
+from nti.dataserver.users.interfaces import IFriendlyNamed
 
 from nti.utils.property import alias
 
@@ -211,7 +213,7 @@ class CourseEnrollmentRosterGetView(AbstractAuthenticatedView,
 		result = LocatedExternalDict()
 		result.__name__ = request.view_name
 		result.__parent__ = course
-		items = result['Items'] = []
+		items = result[ITEMS] = []
 
 		enrollments_iter = ICourseEnrollments(course).iter_enrollments()
 
@@ -283,7 +285,7 @@ class CourseEnrollmentRosterGetView(AbstractAuthenticatedView,
 		# NOTE: Rendering the same CourseInstance over and over is hugely
 		# expensive, and massively bloats the response...77 students
 		# can generate 12MB of response. So we don't include the course instance
-		for i in result['Items']:
+		for i in result[ITEMS]:
 			if i.__parent__ is None:
 				# Typically it will be, lets give it the right
 				# place
@@ -345,7 +347,6 @@ class AllCourseEnrollmentRosterDownloadView(AbstractAuthenticatedView):
 		# (NOTE: This winds up being an O(n^2) approach
 		# due to the poor implementation of enrollments
 		# for legacy courses.)
-
 		enrollment_predicate = self._make_enrollment_predicate()
 
 		user_to_coursenames = collections.defaultdict(set)
@@ -407,6 +408,17 @@ class CourseEnrollmentsRosterDownloadView(AllCourseEnrollmentRosterDownloadView)
 			# A course instance that's no longer in the catalog
 			raise hexc.HTTPNotFound("Course instance not in catalog")
 
+@view_config(route_name='objects.generic.traversal',
+			 renderer='rest',
+			 request_method='GET',
+			 context=ICourseCatalogEntry,
+			 permission=nauth.ACT_COPPA_ADMIN, # TODO: Better perm. This is generally used for admin
+			 name='Enrollments.csv')
+class CourseCatalogEntryEnrollmentsRosterDownloadView(AllCourseEnrollmentRosterDownloadView):
+
+	def _iter_catalog_entries(self):
+		return (self.request.context,)
+
 @interface.implementer(IPathAdapter)
 @component.adapter(ICourseInstance, IRequest)
 def CourseActivityPathAdapter(context, request):
@@ -436,7 +448,6 @@ class CourseActivityGetView(AbstractAuthenticatedView,
 		result.__parent__ = course
 		result.__name__ = VIEW_COURSE_ACTIVITY
 		result['TotalItemCount'] = total_item_count = len(activity)
-
 
 		# NOTE: We could be more efficient by paging around
 		# the timestamp rather than a size
@@ -469,8 +480,6 @@ from pyramid.threadlocal import get_current_request
 from nti.app.externalization.view_mixins import ModeledContentUploadRequestUtilsMixin
 
 from nti.dataserver.links import Link
-
-from nti.externalization.interfaces import StandardExternalFields
 
 from nti.zodb.containers import time_to_64bit_int
 from nti.zodb.containers import bit64_int_to_time
@@ -530,7 +539,6 @@ class CourseActivityLastViewedDecorator(AbstractAuthenticatedView,
 							rel='lastViewed',
 							elements=('lastViewed',),
 							method='PUT' ) )
-
 
 	def __call__(self):
 		context = self.request.context
