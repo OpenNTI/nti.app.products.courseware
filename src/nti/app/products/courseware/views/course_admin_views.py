@@ -14,7 +14,6 @@ logger = __import__('logging').getLogger(__name__)
 from . import MessageFactory as _
 
 import csv
-import urllib
 from io import BytesIO
 
 from zope import component
@@ -208,7 +207,6 @@ class CourseEnrollmentMigrationView(AbstractAuthenticatedView):
 				msg = 'No %s course entry specified' % name
 				raise hexc.HTTPUnprocessableEntity(detail=_(msg))
 			try:
-				ntiid = urllib.unquote(ntiid)
 				entry = catalog.getCatalogEntry(ntiid)
 				params[name] = entry
 			except KeyError:
