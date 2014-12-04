@@ -174,6 +174,7 @@ def _get_template(catalog_entry, base_template, package):
 def _delete_user_enrollment_data(username, enrollments=None):
 	logger.info("Removing enrollment data for user %s", username)
 
+	total = 0
 	result = defaultdict(list)
 	principal = IPrincipal(username)
 	sites = component.getUtility(IEtcNamespace, name='hostsites')
@@ -193,10 +194,12 @@ def _delete_user_enrollment_data(username, enrollments=None):
 						if enrollments is not None:
 							enrollments.drop(principal)
 							result[name].append(ntiid)
+							total += 1
 					except KeyError:
 						pass
 		except KeyError:
 			pass
+	logger.info("%s enrollment record(s) deleted for user %s", total, username)
 	return result
 
 def _get_enrollment_data(user):
