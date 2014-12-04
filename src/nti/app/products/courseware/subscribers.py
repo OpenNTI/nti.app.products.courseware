@@ -3,6 +3,7 @@
 """
 .. $Id$
 """
+
 from __future__ import print_function, unicode_literals, absolute_import, division
 __docformat__ = "restructuredtext en"
 
@@ -43,6 +44,7 @@ from pyramid.threadlocal import get_current_request
 
 from nti.appserver.policies.interfaces import ISitePolicyUserEventListener
 
+from nti.contenttypes.courses.interfaces import ES_PURCHASED
 from nti.contenttypes.courses.interfaces import ES_CREDIT_DEGREE
 from nti.contenttypes.courses.interfaces import ES_CREDIT_NONDEGREE
 
@@ -123,7 +125,6 @@ def _send_enrollment_confirmation(event, user, profile, email, course):
 			'course_archived': course_archived,
 			'today': isodate.date_isoformat(datetime.datetime.now()) }
 
-
 	package = getattr( policy, 'PACKAGE', 'nti.app.products.courseware' )
 
 	template = 'enrollment_confirmation_email'
@@ -138,7 +139,7 @@ def _send_enrollment_confirmation(event, user, profile, email, course):
 		request=request,
 		package=package,)
 
-@component.adapter(ICourseInstanceEnrollmentRecord,IObjectAddedEvent)
+@component.adapter(ICourseInstanceEnrollmentRecord, IObjectAddedEvent)
 def _enrollment_added(record, event):
 	# We only want to do this when the user initiated the event,
 	# not when it was done via automatic workflow.
@@ -149,7 +150,7 @@ def _enrollment_added(record, event):
 	# For now, the easiest way to detect that is to know that
 	# automatic workflow is the only way to enroll in ES_CREDIT_DEGREE.
 	# We also want a special email for 5-ME, so we avoid those as well.
-	if 	record.Scope in (ES_CREDIT_DEGREE, ES_CREDIT_NONDEGREE):
+	if record.Scope in (ES_CREDIT_DEGREE, ES_CREDIT_NONDEGREE, ES_PURCHASED):
 		return
 
 	creator = event.object.Principal
