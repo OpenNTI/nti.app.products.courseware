@@ -44,9 +44,7 @@ from pyramid.threadlocal import get_current_request
 
 from nti.appserver.policies.interfaces import ISitePolicyUserEventListener
 
-from nti.contenttypes.courses.interfaces import ES_PURCHASED
-from nti.contenttypes.courses.interfaces import ES_CREDIT_DEGREE
-from nti.contenttypes.courses.interfaces import ES_CREDIT_NONDEGREE
+from nti.contenttypes.courses.interfaces import ES_PUBLIC
 
 from nti.contenttypes.courses.interfaces import ICourseCatalog
 from nti.contenttypes.courses.interfaces import ICourseInstance
@@ -150,7 +148,7 @@ def _enrollment_added(record, event):
 	# For now, the easiest way to detect that is to know that
 	# automatic workflow is the only way to enroll in ES_CREDIT_DEGREE.
 	# We also want a special email for 5-ME, so we avoid those as well.
-	if record.Scope in (ES_CREDIT_DEGREE, ES_CREDIT_NONDEGREE, ES_PURCHASED):
+	if record.Scope != ES_PUBLIC:
 		return
 
 	creator = event.object.Principal
