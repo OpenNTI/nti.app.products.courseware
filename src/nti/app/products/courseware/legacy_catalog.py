@@ -13,12 +13,15 @@ logger = __import__('logging').getLogger(__name__)
 
 from zope import interface
 from zope import component
-
-from nti.contentlibrary import interfaces as lib_interfaces
 from zope.lifecycleevent import IObjectAddedEvent
 
-from nti.externalization.externalization import to_external_object
+from nti.contentlibrary.interfaces import IGlobalContentPackageLibrary
+from nti.contentlibrary.interfaces import ILegacyCourseConflatedContentPackage
+
 from nti.contenttypes.courses.legacy_catalog import CourseCatalogLegacyEntry
+
+from nti.externalization.externalization import to_external_object
+
 from .interfaces import ICourseCatalogLegacyContentEntry
 from .interfaces import ILegacyCourseConflatedContentPackageUsedAsCourse
 
@@ -43,13 +46,13 @@ from nti.contenttypes.courses._catalog_entry_parser import fill_entry_from_legac
 from nti.contenttypes.courses.interfaces import ICourseCatalog
 
 
-@component.adapter(lib_interfaces.ILegacyCourseConflatedContentPackage, IObjectAddedEvent)
+@component.adapter(ILegacyCourseConflatedContentPackage, IObjectAddedEvent)
 def _content_package_registered( package, event ):
 	# We only do this in the global library; anything added in a
 	# persistent site-library should be handled by an actual course instance
 	# directory using this as a content bundle; if we register twice
 	# we could get duplicates.
-	if not lib_interfaces.IGlobalContentPackageLibrary.providedBy( package.__parent__ ):
+	if not IGlobalContentPackageLibrary.providedBy( package.__parent__ ):
 		logger.info("Ignoring legacy course-conflated content package %s; "
 					"library %s should have course instance directory for it",
 					package, package.__parent__)
@@ -131,8 +134,9 @@ def _content_package_registered( package, event ):
 	# For the convenience of others
 	# XXX: still have to do this?
 	catalog_entry.legacy_content_package = package
-	catalog_entry.Communities = [unicode(x, 'utf-8')
-								 for x in package._v_toc_node.xpath('//course/scope[@type="public"]/entry/text()')]
+	catalog_entry.Communities = \
+			[unicode(x, 'utf-8')
+			 for x in package._v_toc_node.xpath('//course/scope[@type="public"]/entry/text()')]
 
 	# Now, mare this (global, non-persistent) content package as being associated
 	# directly with an active course/catalog

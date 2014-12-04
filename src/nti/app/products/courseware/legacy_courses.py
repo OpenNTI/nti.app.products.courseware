@@ -204,6 +204,7 @@ def get_scopes_from_course_element(course_element):
 
 from nti.site.site import get_site_for_site_names
 from nti.site.interfaces import IHostPolicyFolder
+
 from zope.traversing.interfaces import IEtcNamespace
 
 from zope.security.interfaces import IPrincipal
@@ -213,7 +214,6 @@ from zope.component.hooks import site as current_site
 from nti.contenttypes.courses.enrollment import IDefaultCourseInstanceEnrollmentStorage
 from nti.contenttypes.courses.enrollment import DefaultCourseInstanceEnrollmentRecord
 from nti.contenttypes.courses.enrollment import global_course_catalog_enrollment_storage
-
 
 from nti.dataserver.users import Entity
 from nti.dataserver.interfaces import IEntityContainer
