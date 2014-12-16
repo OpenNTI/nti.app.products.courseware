@@ -11,8 +11,6 @@ __docformat__ = "restructuredtext en"
 
 logger = __import__('logging').getLogger(__name__)
 
-from . import MessageFactory as _
-
 import csv
 from io import BytesIO
 
@@ -64,11 +62,11 @@ ITEMS = StandardExternalFields.ITEMS
 def _parse_user(values):
 	username = values.get('username') or values.get('user')
 	if not username:
-		raise hexc.HTTPUnprocessableEntity(detail=_('No username'))
+		raise hexc.HTTPUnprocessableEntity(detail='No username')
 
 	user = User.get_user(username)
 	if not user or not IUser.providedBy(user):
-		raise hexc.HTTPNotFound(detail=_('User not found'))
+		raise hexc.HTTPNotFound(detail='User not found')
 	
 	return username, user
 		
@@ -90,16 +88,16 @@ class AbstractCourseEnrollView(AbstractAuthenticatedView,
 				values.get('CourseEntryNIID') or \
 				values.get('ProviderUniqueID')
 		if not ntiid:
-			raise hexc.HTTPUnprocessableEntity(detail=_('No course entry identifier'))
+			raise hexc.HTTPUnprocessableEntity(detail='No course entry identifier')
 
 		# get catalog entry
 		try:
 			catalog = component.getUtility(ICourseCatalog)
 			catalog_entry = catalog.getCatalogEntry(ntiid)
 		except LookupError:
-			raise hexc.HTTPNotFound(detail=_('Catalog not found'))
+			raise hexc.HTTPNotFound(detail='Catalog not found')
 		except KeyError:
-			raise hexc.HTTPNotFound(detail=_('Course not found'))
+			raise hexc.HTTPNotFound(detail='Course not found')
 
 		return (catalog_entry, user)
 
@@ -116,7 +114,7 @@ class AdminUserCourseEnrollView(AbstractCourseEnrollView):
 		catalog_entry, user = self.parseCommon(values)
 		scope = values.get('scope', 'Public')
 		if not scope or scope not in ENROLLMENT_SCOPE_VOCABULARY.by_token.keys():
-			raise hexc.HTTPUnprocessableEntity(detail=_('Invalid scope'))
+			raise hexc.HTTPUnprocessableEntity(detail='Invalid scope')
 
 		# Make sure we don't have any interaction.
 		endInteraction()
@@ -197,7 +195,7 @@ class CourseEnrollmentMigrationView(AbstractAuthenticatedView):
 		try:
 			catalog = component.getUtility(ICourseCatalog)
 		except LookupError:
-			raise hexc.HTTPNotFound(detail=_('Catalog not found'))
+			raise hexc.HTTPNotFound(detail='Catalog not found')
 			
 		params = {}
 		values = self.readInput()
@@ -205,15 +203,16 @@ class CourseEnrollmentMigrationView(AbstractAuthenticatedView):
 			ntiid = values.get(name) or values.get(alias)
 			if not ntiid:
 				msg = 'No %s course entry specified' % name
-				raise hexc.HTTPUnprocessableEntity(detail=_(msg))
+				raise hexc.HTTPUnprocessableEntity(detail=msg)
 			try:
 				entry = catalog.getCatalogEntry(ntiid)
 				params[name] = entry
 			except KeyError:
-				raise hexc.HTTPUnprocessableEntity(detail=_('Course not found'))
+				raise hexc.HTTPUnprocessableEntity(detail='Course not found')
 			
 		if params['source'] == params['target']:
-			raise hexc.HTTPUnprocessableEntity(detail=_('Source and target course are the same'))
+			msg = 'Source and target course are the same'
+			raise hexc.HTTPUnprocessableEntity(detail=msg)
 		
 		result = LocatedExternalDict()
 		users_moved = result['Users'] = list()
