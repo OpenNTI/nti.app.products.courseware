@@ -358,7 +358,8 @@ class CourseTopicCreationView(AbstractAuthenticatedView,UploadRequestUtilsMixin)
 
 		created_ntiids = list()
 		for catalog_entry in catalog.iterCatalogEntries():
-			if catalog_entry.StartDate.year != 2014:
+			# FIXME Are we avoiding creating these for legacy 2013 courses?
+			if catalog_entry.StartDate.year < 2014:
 				continue
 			instance = ICourseInstance(catalog_entry)
 
@@ -366,9 +367,9 @@ class CourseTopicCreationView(AbstractAuthenticatedView,UploadRequestUtilsMixin)
 			_announcements = self._forums_for_instance('Announcements', instance)
 			for forum_name, forum_readable, forum_display_name, iface  in _announcements:
 				created_ntiid = \
-					self._create_forum(instance, 
+					self._create_forum(instance,
 									   forum_name,
-									   forum_readable.NTIID, 
+									   forum_readable.NTIID,
 									   instance.SharingScopes['Public'].NTIID,
 									   forum_display_name=forum_display_name,
 									   forum_interface=iface)
