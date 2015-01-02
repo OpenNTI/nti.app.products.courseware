@@ -3,6 +3,7 @@
 """
 .. $Id$
 """
+
 from __future__ import print_function, unicode_literals, absolute_import, division
 __docformat__ = "restructuredtext en"
 
@@ -104,35 +105,35 @@ def _get_content_path(pacakge_paths_cache, ntiid):
 
 class _OutlineCacheEntry(object):
 	
-	__slots__ = ('ntiid', 'cPackagePaths', 'csFlattenOutline', 'lastModified')
+	__slots__ = ('ntiid', 'cPackagePaths', 'csFlattenOutline', 'lastSynchronized')
 	
-	def __init__(self , ntiid, lastModified=0):
+	def __init__(self , ntiid, lastSynchronized=None):
 		self.ntiid = ntiid
 		self.cPackagePaths = None
 		self.csFlattenOutline = None
-		self.lastModified = lastModified
+		self.lastSynchronized = lastSynchronized
 
-	def _v_checkLastModified(self, outline):
-		outlineLastModified = getattr(outline, 'lastModified', None)
-		if self.lastModified != outlineLastModified:
+	def _v_checkLastSynchronized(self, course):
+		courseLastSynchronized = course.lastSynchronized
+		if self.lastSynchronized != courseLastSynchronized:
 			self.cPackagePaths = None
 			self.csFlattenOutline = None
-			self.lastModified = outlineLastModified
+			self.lastSynchronized = courseLastSynchronized
 		
-	def _v_csPackagePaths(self, outline):
-		self._v_checkLastModified(outline)
+	def _v_csPackagePaths(self, course):
+		self._v_checkLastSynchronized(course)
 		if self.cPackagePaths is None:
 			self.cPackagePaths = dict()
 		return self.cPackagePaths
 
-	def _v_csFlattenOutline(self, outline):
-		self._v_checkLastModified(outline)
+	def _v_csFlattenOutline(self, course):
+		self._v_checkLastSynchronized(course)
 		if self.csFlattenOutline is None:
-			self.csFlattenOutline = _flatten_outline(outline)
+			self.csFlattenOutline = _flatten_outline(course.Outline)
 		return self.csFlattenOutline
 	
 ## Cache size
-max_cache_size = 15
+max_cache_size = 10
 
 ## CS: We cache the outline nodes item ntiids of a course
 ## we only keep the [max_cache_size] most used items. 
@@ -147,8 +148,8 @@ def _get_cached_entry(course_id):
 def _check_against_course_outline(course_id, course, ntiid, now=None): 
 	# get/prepare cache entry
 	entry = _get_cached_entry(course_id)
-	nodes = entry._v_csFlattenOutline(course.Outline)
-	pacakge_paths_cache = entry._v_csPackagePaths(course.Outline)
+	nodes = entry._v_csFlattenOutline(course)
+	pacakge_paths_cache = entry._v_csPackagePaths(course)
 	ntiids = _get_content_path(pacakge_paths_cache, ntiid) or (ntiid,)
 	# perform checking
 	for content_ntiid, data in nodes.items():
