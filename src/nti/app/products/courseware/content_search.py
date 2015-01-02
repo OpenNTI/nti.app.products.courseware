@@ -145,7 +145,6 @@ def _get_cached_entry(course_id):
 	return entry
 	
 def _check_against_course_outline(course_id, course, ntiid, now=None): 
-	now = now or datetime.utcnow()
 	# get/prepare cache entry
 	entry = _get_cached_entry(course_id)
 	nodes = entry._v_csFlattenOutline(course.Outline)
@@ -153,9 +152,9 @@ def _check_against_course_outline(course_id, course, ntiid, now=None):
 	ntiids = _get_content_path(pacakge_paths_cache, ntiid) or (ntiid,)
 	# perform checking
 	for content_ntiid, data in nodes.items():
-		beginning, is_outline_stub_only= data
+		_, is_outline_stub_only= data
 		if content_ntiid in ntiids:
-			result = bool(not is_outline_stub_only and now >= beginning)
+			result = bool(not is_outline_stub_only)
 			return result
 	return False
 		
