@@ -27,6 +27,7 @@ from nti.contentsearch.interfaces import IVideoTranscriptContent
 
 from nti.contentlibrary.indexed_data.interfaces import IAudioIndexedDataContainer
 from nti.contentlibrary.indexed_data.interfaces import IVideoIndexedDataContainer
+from nti.contentlibrary.indexed_data.interfaces import ITimelineIndexedDataContainer
 from nti.contentlibrary.indexed_data.interfaces import IRelatedContentIndexedDataContainer
 
 from nti.contenttypes.courses.interfaces import ICourseInstance
@@ -41,6 +42,7 @@ from nti.ntiids.ntiids import find_object_with_ntiid
 ZERO_DATE = datetime.utcfromtimestamp(0)
 
 CONTAINER_IFACES = (IRelatedContentIndexedDataContainer,
+					ITimelineIndexedDataContainer,
 					IVideoIndexedDataContainer,
 					IAudioIndexedDataContainer)
 
