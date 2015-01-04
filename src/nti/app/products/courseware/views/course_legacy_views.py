@@ -120,13 +120,14 @@ class CourseTopicCreationView(AbstractAuthenticatedView,UploadRequestUtilsMixin)
 			# totally wrong until the user ran the tool again)
 			_ = instance.instructors[0]
 		except IndexError:
-			logger.debug("Course %s has no instructors, not creating %s", instance, forum_name)
+			logger.debug("Course %s has no instructors, not creating %s",
+						 instance, forum_name)
 			return
 
 		instructors = [instructor.context for instructor in instance.instructors] # XXX implementation detail
 		discussions = instance.Discussions
 
-		acl = [ForumACE(Permissions=("All",), Entities=[i.username for i in instructors],Action='Allow'),
+		acl = [ForumACE(Permissions=("All",), Entities=[i.username for i in instructors], Action='Allow'),
 			   ForumACE(Permissions=("Read",),Entities=[forum_readable_ntiid],Action='Allow')]
 
 		def _assign_acl(obj, iface):
@@ -216,9 +217,11 @@ class CourseTopicCreationView(AbstractAuthenticatedView,UploadRequestUtilsMixin)
 				else:
 					vid_url = content
 					vid_type = 'kaltura'
-
-				video = component.getUtility(component.IFactory, name="application/vnd.nextthought.embeddedvideo")()
-				update_from_external_object(video, {'embedURL': vid_url, 'type': vid_type})
+					
+				name = "application/vnd.nextthought.embeddedvideo"
+				video = component.getUtility(component.IFactory, name)()
+				update_from_external_object(video, 
+											{'embedURL': vid_url, 'type': vid_type})
 				content = video
 			elif content:
 				# Avoid the automatic conversion that assumes the incoming
@@ -242,7 +245,8 @@ class CourseTopicCreationView(AbstractAuthenticatedView,UploadRequestUtilsMixin)
 								   forum_name,
 								   forum_readable.NTIID,
 								   # Always created by the public community
-								   # (because legacy courses might have a DFL for the non-public)
+								   # (because legacy courses might have a DFL
+								   # for the non-public)
 								   instance.SharingScopes['Public'].NTIID,
 								   forum_display_name=forum_display_name,
 								   forum_interface=iface)
@@ -264,7 +268,8 @@ class CourseTopicCreationView(AbstractAuthenticatedView,UploadRequestUtilsMixin)
 				title = row['DiscussionTitle'].decode('utf-8', 'ignore')
 				name = ntiids.make_specific_safe(title)
 				content = self._extract_content(row)
-				scope = row['DiscussionScope'].decode('utf-8') if 'DiscussionScope' in row else 'All'
+				scope = row['DiscussionScope'].decode('utf-8') \
+						if 'DiscussionScope' in row else 'All'
 				# Simplest thing to do is a prefix match on the forum_name, because
 				# those are fixed
 				if scope != 'All' and not forum_name.startswith(scope):
@@ -310,13 +315,13 @@ class CourseTopicCreationView(AbstractAuthenticatedView,UploadRequestUtilsMixin)
 						# Got a new style course. Convert this into a useful
 						# course relative reference. Of course, we have to pick
 						# either section or global for the type and the provider unique
-						# id may not really be the right thing depending on if we're creating
-						# at a course instance or subinstance...
+						# id may not really be the right thing depending on if we're
+						# creating at a course instance or subinstance...
 						# XXX: This is assumming quite a bit about the way these work.
-						ntiid = ntiids.make_ntiid(
-									provider=ICourseCatalogEntry(instance).ProviderUniqueID,
-									nttype=NTIID_TYPE_COURSE_SECTION_TOPIC,
-									specific=topic._ntiid_specific_part)
+						entry = ICourseCatalogEntry(instance)
+						ntiid = ntiids.make_ntiid(provider=entry.ProviderUniqueID,
+												 nttype=NTIID_TYPE_COURSE_SECTION_TOPIC,
+												 specific=topic._ntiid_specific_part)
 					created_ntiids.append(ntiid)
 					logger.debug('Created topic %s with NTIID %s', topic, ntiid)
 
@@ -390,7 +395,8 @@ class CourseTopicCreationView(AbstractAuthenticatedView,UploadRequestUtilsMixin)
 			# any); administrators prefer to explicitly
 			# list each instance
 			topic_list = \
-				self._create_topics_in_instance(instance, rows, catalog_entry.ProviderUniqueID)
+				self._create_topics_in_instance(instance, rows,
+												catalog_entry.ProviderUniqueID)
 			created_ntiids.extend(topic_list)
 
 

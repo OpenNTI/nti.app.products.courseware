@@ -66,7 +66,7 @@ def _parse_user(values):
 
 	user = User.get_user(username)
 	if not user or not IUser.providedBy(user):
-		raise hexc.HTTPNotFound(detail='User not found')
+		raise hexc.HTTPUnprocessableEntity(detail='User not found')
 	
 	return username, user
 		
@@ -95,9 +95,9 @@ class AbstractCourseEnrollView(AbstractAuthenticatedView,
 			catalog = component.getUtility(ICourseCatalog)
 			catalog_entry = catalog.getCatalogEntry(ntiid)
 		except LookupError:
-			raise hexc.HTTPNotFound(detail='Catalog not found')
+			raise hexc.HTTPUnprocessableEntity(detail='Catalog not found')
 		except KeyError:
-			raise hexc.HTTPNotFound(detail='Course not found')
+			raise hexc.HTTPUnprocessableEntity(detail='Course not found')
 
 		return (catalog_entry, user)
 
