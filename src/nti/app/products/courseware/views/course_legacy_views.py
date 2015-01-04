@@ -219,7 +219,7 @@ class CourseTopicCreationView(AbstractAuthenticatedView,UploadRequestUtilsMixin)
 					vid_type = 'kaltura'
 					
 				name = "application/vnd.nextthought.embeddedvideo"
-				video = component.getUtility(component.IFactory, name)()
+				video = component.getUtility(component.IFactory, name=name)()
 				update_from_external_object(video, 
 											{'embedURL': vid_url, 'type': vid_type})
 				content = video
