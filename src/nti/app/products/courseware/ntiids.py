@@ -16,22 +16,22 @@ import calendar
 from zope import interface
 from zope import component
 
-from nti.ntiids.interfaces import INTIIDResolver
-from .interfaces import NTIID_TYPE_COURSE_SECTION_TOPIC
-from .interfaces import NTIID_TYPE_COURSE_TOPIC
-from .interfaces import IPrincipalAdministrativeRoleCatalog
+from nti.app.authentication import get_remote_user
 
-from nti.contenttypes.courses.interfaces import IPrincipalEnrollments
-from nti.contenttypes.courses.interfaces import ICourseCatalogEntry
-from nti.contenttypes.courses.interfaces import ICourseSubInstance
 from nti.contenttypes.courses.interfaces import ICourseInstance
+from nti.contenttypes.courses.interfaces import ICourseSubInstance
+from nti.contenttypes.courses.interfaces import ICourseCatalogEntry
+from nti.contenttypes.courses.interfaces import IPrincipalEnrollments
+
+from nti.dataserver.contenttypes.forums.ntiids import resolve_ntiid_in_board
 
 from nti.ntiids.ntiids import get_provider
 from nti.ntiids.ntiids import escape_provider
+from nti.ntiids.interfaces import INTIIDResolver
 
-from nti.app.authentication import get_remote_user
-
-from nti.dataserver.contenttypes.forums.ntiids import resolve_ntiid_in_board
+from .interfaces import NTIID_TYPE_COURSE_TOPIC
+from .interfaces import NTIID_TYPE_COURSE_SECTION_TOPIC
+from .interfaces import IPrincipalAdministrativeRoleCatalog
 
 @interface.implementer(INTIIDResolver)
 @interface.named(NTIID_TYPE_COURSE_SECTION_TOPIC)
@@ -79,41 +79,53 @@ class _EnrolledCourseSectionTopicNTIIDResolver(object):
 			# admin roles do not have created time, in that case
 			if hasattr(record[2], 'createdTime'):
 				ts = -record[2].createdTime
-			if not ts and catalog_entry is None:
+			if not ts and catalog_entry is not None:
 				ts = -calendar.timegm(catalog_entry.StartDate.utctimetuple())
 
-			return (0 if ICourseSubInstance.providedBy(record[0]) else 1,
-					ts)
+			return (0 if ICourseSubInstance.providedBy(record[0]) else 1, ts)
 
 		records.sort( key=key )
-
 		return records
 
+	def _escape_entry_provider(self, entry):
+		result = escape_provider(entry.ProviderUniqueID) if entry is not None else None
+		return result
+
+	def _solve_for_iface(self, ntiid, iface, provider_name, user):
+		for enrollments in component.subscribers((user,), iface):
+			for course, catalog_entry, _ in self._sort_enrollments(enrollments):
+				if self._escape_entry_provider(catalog_entry) == provider_name:
+					result = self._find_in_course(course, ntiid)
+					return result
+
+				# No? Is it a subcourse? Check the main course to see if it matches.
+				# If it does, we still want to return the most specific
+				# discussions allowed (either our section or, if not allowed, the parent)
+				if ICourseSubInstance.providedBy(course):
+					main_course = course.__parent__.__parent__
+					main_cce = ICourseCatalogEntry(main_course, None)
+					if self._escape_entry_provider(main_cce) == provider_name:
+						most_specific_course = course if self.allow_section_match else main_course
+						result = self._find_in_course(most_specific_course, ntiid)
+						return result
+		return None
+	
 	def resolve(self, ntiid):
 		user = get_remote_user()
 		if user is None:
 			return
 
 		provider_name = get_provider(ntiid)
-
-		for iface in IPrincipalEnrollments, IPrincipalAdministrativeRoleCatalog:
-			for enrollments in component.subscribers((user,), iface):
-				for course, catalog_entry, _ in self._sort_enrollments(enrollments):
-					if escape_provider(catalog_entry.ProviderUniqueID) == provider_name:
-						return self._find_in_course(course, ntiid)
-
-					# No? Is it a subcourse? Check the main course to see if it matches.
-					# If it does, we still want to return the most specific
-					# discussions allowed (either our section or, if not allowed, the parent)
-					if ICourseSubInstance.providedBy(course):
-						main_course = course.__parent__.__parent__
-						main_cce = ICourseCatalogEntry(main_course, None)
-						if main_cce and escape_provider(main_cce.ProviderUniqueID) == provider_name:
-							most_specific_course = course if self.allow_section_match else main_course
-							return self._find_in_course(most_specific_course, ntiid)
+		result = self._solve_for_iface(ntiid, IPrincipalAdministrativeRoleCatalog,
+									   provider_name, user)
+		if result is None:
+			result = self._solve_for_iface(	ntiid, IPrincipalEnrollments, 
+											provider_name, user)
+		return result
 
 	def _find_in_course(self, course, ntiid):
-		return resolve_ntiid_in_board(ntiid, course.Discussions)
+		result = resolve_ntiid_in_board(ntiid, course.Discussions)
+		return result
 
 @interface.implementer(INTIIDResolver)
 @interface.named(NTIID_TYPE_COURSE_TOPIC)
