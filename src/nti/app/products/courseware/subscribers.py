@@ -26,6 +26,9 @@ from zope import component
 from zope.component.hooks import getSite
 from zope.component.hooks import site as current_site
 
+from zope.security.management import endInteraction
+from zope.security.management import restoreInteraction
+
 from zope.traversing.interfaces import IEtcNamespace
 
 from zope.dottedname import resolve as dottedname
@@ -173,33 +176,36 @@ def _get_template(catalog_entry, base_template, package):
 
 def _delete_user_enrollment_data(username, enrollments=None):
 	logger.info("Removing enrollment data for user %s", username)
-
-	total = 0
-	result = defaultdict(list)
-	principal = IPrincipal(username)
-	sites = component.getUtility(IEtcNamespace, name='hostsites')
-	enrollments = {} if  enrollments is None else enrollments
-	for name, entries in enrollments.items():
-		if not entries:
-			continue
-		try:
-			site = sites[name]
-			with current_site(site):
-				catalog = component.getUtility(ICourseCatalog)
-				for ntiid in entries:
-					try:
-						entry = catalog.getCatalogEntry(ntiid)
-						course = ICourseInstance(entry, None)
-						enrollments = ICourseEnrollmentManager(course, None)
-						if enrollments is not None:
-							enrollments.drop(principal)
-							result[name].append(ntiid)
-							total += 1
-					except KeyError:
-						pass
-		except KeyError:
-			pass
-	logger.info("%s enrollment record(s) deleted for user %s", total, username)
+	endInteraction()
+	try:
+		total = 0
+		result = defaultdict(list)
+		principal = IPrincipal(username)
+		sites = component.getUtility(IEtcNamespace, name='hostsites')
+		enrollments = {} if  enrollments is None else enrollments
+		for name, entries in enrollments.items():
+			if not entries:
+				continue
+			try:
+				site = sites[name]
+				with current_site(site):
+					catalog = component.getUtility(ICourseCatalog)
+					for ntiid in entries:
+						try:
+							entry = catalog.getCatalogEntry(ntiid)
+							course = ICourseInstance(entry, None)
+							enrollments = ICourseEnrollmentManager(course, None)
+							if enrollments is not None:
+								enrollments.drop(principal)
+								result[name].append(ntiid)
+								total += 1
+						except KeyError:
+							pass
+			except KeyError:
+				pass
+		logger.info("%s enrollment record(s) deleted for user %s", total, username)
+	finally:
+		restoreInteraction()
 	return result
 
 def _get_enrollment_data(user):
