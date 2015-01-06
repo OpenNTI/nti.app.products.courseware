@@ -236,8 +236,5 @@
 
 	<!-- Views -->
 	<include package=".views" />
-	
-	<!-- Subscribers -->
-	<subscriber handler=".subscribers._on_user_removed" />
 
 </configure>
