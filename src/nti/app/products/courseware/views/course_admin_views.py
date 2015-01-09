@@ -12,9 +12,12 @@ __docformat__ = "restructuredtext en"
 logger = __import__('logging').getLogger(__name__)
 
 import csv
+import isodate
 from io import BytesIO
+from datetime import datetime
 
 from zope import component
+from zope.security.interfaces import IPrincipal
 from zope.securitypolicy.interfaces import IPrincipalRoleMap
 from zope.security.management import endInteraction, restoreInteraction
 
@@ -31,6 +34,7 @@ from nti.appserver.interfaces import IUserService
 from nti.contenttypes.courses.interfaces import ICourseCatalog
 from nti.contenttypes.courses.interfaces import ICourseInstance
 from nti.contenttypes.courses.interfaces import ICourseSubInstance
+from nti.contenttypes.courses.interfaces import ICourseEnrollments
 from nti.contenttypes.courses.interfaces import IPrincipalEnrollments
 from nti.contenttypes.courses.interfaces import ENROLLMENT_SCOPE_VOCABULARY
 from nti.contenttypes.courses.enrollment import migrate_enrollments_from_course_to_course
@@ -46,6 +50,9 @@ from nti.dataserver.users.interfaces import IUserProfile
 from nti.externalization.interfaces import LocatedExternalDict 
 from nti.externalization.interfaces import StandardExternalFields 
 
+from nti.ntiids.ntiids import find_object_with_ntiid
+
+from nti.utils.property import Lazy
 from nti.utils.maps import CaseInsensitiveDict
 
 from ..utils import drop_any_other_enrollments
@@ -58,6 +65,11 @@ from .catalog_views import do_course_enrollment
 ITEMS = StandardExternalFields.ITEMS
 
 ## HELPER admin views
+
+def _tx_string(s):
+	if s and isinstance(s, unicode):
+		s = s.encode('utf-8')
+	return s
 
 def _parse_user(values):
 	username = values.get('username') or values.get('user')
@@ -273,9 +285,81 @@ class CourseRolesView(AbstractAuthenticatedView,
 					email = getattr( profile, 'email', None )
 					# write data
 					row_data = [course_name, sub_name, role_id, setting, prin_id, email]
-					csv_writer.writerow(row_data)
+					csv_writer.writerow([_tx_string(x) for x in row_data])
 
 		response = self.request.response
 		response.body = bio.getvalue()
 		response.content_disposition = b'attachment; filename="CourseRoles.csv"'
+		return response
+
+@view_config(route_name='objects.generic.traversal',
+			 renderer='rest',
+			 request_method='GET',
+			 context=IDataserverFolder,
+			 permission=nauth.ACT_COPPA_ADMIN,
+			 name='CourseEnrollments')
+class CourseEnrollmentsView(AbstractAuthenticatedView):
+
+	@Lazy
+	def _substituter(self):
+		try:
+			from nti.app.products.gradebook.interfaces import IUsernameSortSubstitutionPolicy
+			return component.queryUtility(IUsernameSortSubstitutionPolicy)
+		except ImportError:
+			pass
+	
+	def _replace(self, username):
+		substituter = self._substituter
+		if substituter is None:
+			return username
+		result = substituter.replace(username) or username
+		return result
+		
+	def __call__(self):
+		params = CaseInsensitiveDict(self.request.params)
+		# get validate course entry
+		ntiid = params.get('ntiid') or \
+				params.get('entry') or \
+				params.get('course')
+		if not ntiid:
+			raise hexc.HTTPUnprocessableEntity(detail='No course entry identifier')
+		
+		context = find_object_with_ntiid(ntiid)
+		if context is None:
+			try:
+				catalog = component.getUtility(ICourseCatalog)
+				context = catalog.getCatalogEntry(ntiid)
+			except LookupError:
+				raise hexc.HTTPUnprocessableEntity(detail='Catalog not found')
+			except KeyError:
+				context = None
+		
+		course = ICourseInstance(context, None)
+		if course is None:
+			raise hexc.HTTPUnprocessableEntity(detail='Course not found')
+		
+		bio = BytesIO()
+		csv_writer = csv.writer(bio)
+		
+		# header
+		header = ['username', 'realname', 'email', 'scope', 'created'] 
+		csv_writer.writerow(header)
+
+		for record in ICourseEnrollments(course).iter_enrollments():
+			scope = record.Scope
+			pricipal = IPrincipal(record.Principal)
+			created = getattr(record, 'createdTime', None) or record.lastModified
+			created = isodate.datetime_isoformat(datetime.fromtimestamp(created or 0))
+			
+			user = User.get_user( pricipal.id )
+			profile = IUserProfile( user, None )
+			email = getattr( profile, 'email', None )
+			realname = getattr( profile, 'realname', None )
+					
+			row_data = [self._replace(user.username), realname, email, scope, created]
+			csv_writer.writerow([_tx_string(x) for x in row_data])
+
+		response = self.request.response
+		response.body = bio.getvalue()
+		response.content_disposition = b'attachment; filename="enrollments.csv"'
 		return response
