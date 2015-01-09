@@ -94,6 +94,8 @@ class _EnrolledCourseSectionTopicNTIIDResolver(object):
 	def _solve_for_iface(self, ntiid, iface, provider_name, user):
 		for enrollments in component.subscribers((user,), iface):
 			for course, catalog_entry, _ in self._sort_enrollments(enrollments):
+
+				# Is the ntiid pointing to a specific course we are enrolled in?
 				if self._escape_entry_provider(catalog_entry) == provider_name:
 					result = self._find_in_course(course, ntiid)
 					return result
@@ -105,11 +107,18 @@ class _EnrolledCourseSectionTopicNTIIDResolver(object):
 					main_course = course.__parent__.__parent__
 					main_cce = ICourseCatalogEntry(main_course, None)
 					if self._escape_entry_provider(main_cce) == provider_name:
-						most_specific_course = course if self.allow_section_match else main_course
-						result = self._find_in_course(most_specific_course, ntiid)
+						result = None
+						# First, check section
+						if self.allow_section_match:
+							result = self._find_in_course(course, ntiid)
+
+						# Check main course if we need to.
+						if result is None:
+							result = self._find_in_course(main_course, ntiid)
+
 						return result
 		return None
-	
+
 	def resolve(self, ntiid):
 		user = get_remote_user()
 		if user is None:
@@ -119,7 +128,7 @@ class _EnrolledCourseSectionTopicNTIIDResolver(object):
 		result = self._solve_for_iface(ntiid, IPrincipalAdministrativeRoleCatalog,
 									   provider_name, user)
 		if result is None:
-			result = self._solve_for_iface(	ntiid, IPrincipalEnrollments, 
+			result = self._solve_for_iface(	ntiid, IPrincipalEnrollments,
 											provider_name, user)
 		return result
 
