@@ -65,6 +65,7 @@ class course_outline_contents_view(AbstractAuthenticatedView):
 	def __call__(self):
 		values = self.request.context.values()
 		result = ILocatedExternalSequence([])
+
 		def _recur(the_list, the_nodes):
 			for node in the_nodes:
 				ext_node = to_external_object(node)
@@ -80,6 +81,7 @@ class course_outline_contents_view(AbstractAuthenticatedView):
 		result.__name__ = self.request.view_name
 		result.__parent__ = self.request.context
 		self.request.response.last_modified = self.request.context.lastModified
+
 		return result
 
 from zope.intid.interfaces import IIntIds
@@ -361,9 +363,9 @@ class AllCourseEnrollmentRosterDownloadView(AbstractAuthenticatedView):
 			for record in enrollments.iter_enrollments():
 				user = IUser(record, None)
 				if user is None:
-					logger.error("Could not adapt record %r to user. " + 
+					logger.error("Could not adapt record %r to user. " +
 								 "Deleted User? Bad Instance?", record)
-					continue 
+					continue
 				if enrollment_predicate(course, record):
 					user_to_coursenames[user].add( course_name )
 

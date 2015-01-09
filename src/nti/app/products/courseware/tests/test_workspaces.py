@@ -30,6 +30,8 @@ from zope import lifecycleevent
 from nti.appserver.interfaces import IUserService
 from nti.appserver.interfaces import ICollection
 
+from nti.app.products.courseware import VIEW_COURSE_RECURSIVE
+
 from nti.app.products.courseware.interfaces import ICoursesWorkspace
 
 from nti.dataserver import traversal
@@ -147,6 +149,7 @@ class _AbstractEnrollingBase(object):
 								  'Outline', has_entry( 'Links', has_item( has_entry( 'rel', 'contents' ))),
 								  #'instructors', has_item( has_entry('Username', 'harp4162')),
 								  'Links', has_item( has_entries( 'rel', 'CourseCatalogEntry', )),
+								  'Links', has_item( has_entries( 'rel', 'VIEW_COURSE_RECURSIVE', )),
 								  'Links', has_item( has_entries( 'rel', 'CourseEnrollmentRoster'))))
 
 

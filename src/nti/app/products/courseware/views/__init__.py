@@ -9,9 +9,10 @@ __docformat__ = "restructuredtext en"
 
 logger = __import__('logging').getLogger(__name__)
 
-from .. import MessageFactory 
+from .. import MessageFactory
 
 VIEW_CONTENTS = 'contents'
 VIEW_COURSE_ACTIVITY = 'CourseActivity'
 VIEW_CATALOG_ENTRY = 'CourseCatalogEntry'
 VIEW_COURSE_ENROLLMENT_ROSTER = 'CourseEnrollmentRoster'
+VIEW_COURSE_RECURSIVE = 'RecursiveStream'

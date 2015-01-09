@@ -47,6 +47,7 @@ from nti.dataserver.interfaces import IUser
 from . import VIEW_CONTENTS
 from . import VIEW_CATALOG_ENTRY
 from . import VIEW_COURSE_ACTIVITY
+from . import VIEW_COURSE_RECURSIVE
 from . import VIEW_COURSE_ENROLLMENT_ROSTER
 
 from .utils import get_catalog_entry
@@ -104,6 +105,23 @@ class _CourseInstanceLinkDecorator(object):
 			pass
 
 @interface.implementer(IExternalMappingDecorator)
+@component.adapter(ICourseInstance)
+class _CourseInstanceStreamLinkDecorator(object):
+	"""
+	Place a recursive stream link on the course.
+	"""
+
+	__metaclass__ = SingletonDecorator
+
+	def decorateExternalMapping( self, context, result ):
+		_links = result.setdefault(LINKS, [])
+		link = Link(context, rel=VIEW_COURSE_RECURSIVE, elements=(VIEW_COURSE_RECURSIVE,))
+		interface.alsoProvides(link, ILocation)
+		link.__name__ = ''
+		link.__parent__ = context
+		_links.append(link)
+
+@interface.implementer(IExternalMappingDecorator)
 @component.adapter(ICourseOutline)
 class _CourseOutlineContentsLinkDecorator(object):
 	"""
@@ -132,7 +150,7 @@ class _CourseOutlineContentNodeLinkDecorator(object):
 			library = component.queryUtility(IContentPackageLibrary)
 			paths = library.pathToNTIID(context.ContentNTIID) if library else ()
 			if paths:
-				href = IContentUnitHrefMapper(paths[-1].key ).href
+				href = IContentUnitHrefMapper( paths[-1].key ).href
 				href = urljoin(href, context.src)
 				# set link for overview
 				links = result.setdefault(LINKS, [])
@@ -182,12 +200,12 @@ class _OpenEnrollmentOptionLinkDecorator(AbstractAuthenticatedRequestAwareDecora
 
 	def _predicate(self, context, result):
 		return self._is_authenticated
-	
+
 	@classmethod
 	def _get_enrollment_record(cls, context, remoteUser):
 		entry = get_catalog_entry(context.CatalogEntryNTIID)
 		return get_enrollment_record(entry, remoteUser)
-	
+
 	def _do_decorate_external(self, context, result):
 		result['IsAvailable'] = context.Enabled
 		record = self._get_enrollment_record(context, self.remoteUser)
@@ -199,7 +217,7 @@ class _EnrollmentOptionsCourseEntryDecorator(AbstractAuthenticatedRequestAwareDe
 
 	def _predicate(self, context, result):
 		return self._is_authenticated
-	
+
 	def _do_decorate_external(self, context, result):
 		options = get_enrollment_options(context)
 		if options:
