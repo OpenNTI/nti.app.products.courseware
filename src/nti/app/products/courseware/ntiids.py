@@ -92,12 +92,36 @@ class _EnrolledCourseSectionTopicNTIIDResolver(object):
 		return result
 
 	def _solve_for_iface(self, ntiid, iface, provider_name, user):
+
+		def _get_ntiid_for_subinstance(ntiid, subinstance, main_course):
+			result = None
+			# First, check section if we do not force them to
+			# use the parent.
+			if self.allow_section_match:
+				result = self._find_in_course(subinstance, ntiid)
+
+			# Check main course if we need to.
+			if result is None:
+				result = self._find_in_course(main_course, ntiid)
+			return result
+
 		for enrollments in component.subscribers((user,), iface):
 			for course, catalog_entry, _ in self._sort_enrollments(enrollments):
 
-				# Is the ntiid pointing to a specific course we are enrolled in?
+				# The webapp is passing the course context here as the provider_name.
+				# This may be necessary to avoid topic name collisions; especially with
+				# instructors enrolled in many sections.
+				# Otherwise, the client will be passing the content specified
+				# section.
 				if self._escape_entry_provider(catalog_entry) == provider_name:
-					result = self._find_in_course(course, ntiid)
+					result = None
+					if ICourseSubInstance.providedBy(course):
+						main_course = course.__parent__.__parent__
+						main_cce = ICourseCatalogEntry(main_course, None)
+						result = _get_ntiid_for_subinstance(ntiid, course, main_course)
+					else:
+						# The ntiid references a top-level course.
+						result = self._find_in_course(course, ntiid)
 					return result
 
 				# No? Is it a subcourse? Check the main course to see if it matches.
@@ -107,16 +131,7 @@ class _EnrolledCourseSectionTopicNTIIDResolver(object):
 					main_course = course.__parent__.__parent__
 					main_cce = ICourseCatalogEntry(main_course, None)
 					if self._escape_entry_provider(main_cce) == provider_name:
-						result = None
-						# First, check section
-						if self.allow_section_match:
-							result = self._find_in_course(course, ntiid)
-
-						# Check main course if we need to.
-						if result is None:
-							result = self._find_in_course(main_course, ntiid)
-
-						return result
+						return _get_ntiid_for_subinstance( ntiid, course, main_course )
 		return None
 
 	def resolve(self, ntiid):
