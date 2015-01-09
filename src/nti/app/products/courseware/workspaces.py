@@ -23,7 +23,11 @@ from nti.appserver.interfaces import IContainerCollection
 
 from nti.contenttypes.courses.interfaces import RID_INSTRUCTOR
 
+from nti.contenttypes.courses.interfaces import ES_PUBLIC
 from nti.contenttypes.courses.interfaces import ES_CREDIT
+from nti.contenttypes.courses.interfaces import ES_CREDIT_DEGREE
+from nti.contenttypes.courses.interfaces import ES_CREDIT_NONDEGREE
+
 from nti.contenttypes.courses.interfaces import ICourseCatalog
 from nti.contenttypes.courses.interfaces import ICourseInstance
 from nti.contenttypes.courses.interfaces import ICourseCatalogEntry
@@ -323,10 +327,13 @@ class DefaultCourseInstanceEnrollment(CourseInstanceEnrollment):
 	def LegacyEnrollmentStatus(self):
 		## CS/JZ/JAM: For legacy purposes we need to always return either Open or ForCredit
 		## See interface ILegacyCourseInstanceEnrollment
-		if self._record.Scope == 'Public':
+		scope = self._record.Scope 
+		if scope == ES_PUBLIC:
 			return 'Open'
-		return ES_CREDIT
-	
+		elif scope in (ES_CREDIT, ES_CREDIT_DEGREE, ES_CREDIT_NONDEGREE):
+			return ES_CREDIT
+		return scope
+
 	@Lazy
 	def RealEnrollmentStatus(self):
 		## CS: For display use the real scope
