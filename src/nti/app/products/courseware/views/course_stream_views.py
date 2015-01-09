@@ -16,12 +16,11 @@ import BTrees
 from datetime import datetime
 
 from pyramid.view import view_config
+from pyramid.httpexceptions import HTTPBadRequest
 
 from zope import component
 from zope.catalog.interfaces import ICatalog
 from zope.intid.interfaces import IIntIds
-
-from nti.intid.interfaces import ObjectMissingError
 
 from nti.app.base.abstract_views import AbstractAuthenticatedView
 
@@ -42,6 +41,8 @@ from nti.externalization.interfaces import LocatedExternalDict
 from nti.externalization.interfaces import LocatedExternalList
 from nti.externalization.interfaces import StandardExternalFields
 
+from nti.intid.interfaces import ObjectMissingError
+
 from nti.utils.property import CachedProperty
 
 from . import VIEW_COURSE_RECURSIVE
@@ -58,7 +59,7 @@ LINKS = StandardExternalFields.LINKS
 class CourseRecursiveStreamView(AbstractAuthenticatedView, BatchingUtilsMixin):
 	"""
 	Stream the relevant course instance objects to the user. This includes
-	topics, top-level comments, and UGD shared with me.
+	topics, top-level comments, and UGD shared with the user.
 	"""
 
 	@CachedProperty
@@ -143,13 +144,21 @@ class CourseRecursiveStreamView(AbstractAuthenticatedView, BatchingUtilsMixin):
 	def batch_before(self):
 		pass
 
-	def __call__(self):
-		course = self.request.context
-		result = LocatedExternalDict()
+	def _get_intids(self, course):
+		"Get all intids for this course's stream."
+		results = self._get_top_level_board_objects( course )
+		return results
 
-		intermediate_results = self._get_top_level_board_objects( course )
+	def _get_items(self, temp_results):
+		"""
+		Given a collection of tuples( obj, timestamp), return
+		a sorted collection of objects.
+		"""
+		security_check = self._security_check()
+		items = LocatedExternalList()
+
 		def _intermediates_iter():
-			for uid in intermediate_results:
+			for uid in temp_results:
 				try:
 					obj = self._intids.getObject( uid )
 					timestamp = datetime.fromtimestamp( obj.createdTime )
@@ -157,18 +166,53 @@ class CourseRecursiveStreamView(AbstractAuthenticatedView, BatchingUtilsMixin):
 				except ObjectMissingError:
 					logger.warn( 'Object missing from course stream (id=%s)', uid )
 
-		security_check = self._security_check()
-		items = LocatedExternalList()
-
 		for object_timestamp in _intermediates_iter():
 			obj = object_timestamp[0]
 			if security_check( obj ):
 				items.append( object_timestamp )
 
-		result[ITEMS] = items
-		result['TotalItemCount'] = len(items)
+		items = sorted(items, key=lambda x: x[1])
+		return items
+
+	_DEFAULT_BATCH_SIZE = 100
+	_DEFAULT_BATCH_START = 0
+
+	def __call__(self):
+		# pre-flight the batch
+		batch_size, batch_start = self._get_batch_size_start()
+		limit = batch_start + batch_size + 2
+		batch_before = None
+		if self.request.params.get('batchBefore'):
+			try:
+				batch_before = float(self.request.params.get( 'batchBefore' ))
+			except ValueError: # pragma no cover
+				raise HTTPBadRequest()
+
+		course = self.request.context
+		result = LocatedExternalDict()
+
+		intermediate_results = self._get_intids( course )
+		items = self._get_items( intermediate_results )
+
+		# Does our batching, as well as placing a link in result.
+		self._batch_items_iterable(result, items,
+								   number_items_needed=limit,
+								   batch_size=batch_size,
+								   batch_start=batch_start)
+
+		#result[ITEMS] = items
+		result['TotalItemCount'] = len( result[ITEMS] )
 		result['Class'] = 'CourseRecursiveStream'
-		# TODO
+
+# 		view = _UGDView( self.request, self.request.remoteUser, None )
+# 		view._force_apply_security = True
+# 		view.ignore_broken = True
+# 		view._needs_filtered = False
+#
+# 		result_dict = view._sort_filter_batch_objects( items )
+# 		result_dict['Class'] = 'CourseRecursiveStream'
+
+			# TODO
 		# Sorting....
 		# Batching....
 		# Next-batch link...
