@@ -111,8 +111,11 @@ def _parse_course(values):
 class AbstractCourseEnrollView(AbstractAuthenticatedView,
 							   ModeledContentUploadRequestUtilsMixin):
 
-	def readInput(self, value=None):
-		values = super(AbstractCourseEnrollView, self).readInput(value=value)
+	def readInput(self):
+		if self.request.body:
+			values = read_body_as_external_object(self.request)
+		else:
+			values = self.request.params
 		result = CaseInsensitiveDict(values)
 		return result
 
@@ -162,6 +165,8 @@ class AdminUserCourseDropView(AbstractCourseEnrollView):
 	def __call__(self):
 		values = self.readInput()
 		catalog_entry, user = self.parseCommon(values)
+		
+		# Make sure we don't have any interaction.
 		endInteraction()
 		try:
 			course_instance  = ICourseInstance(catalog_entry)
@@ -170,11 +175,11 @@ class AdminUserCourseDropView(AbstractCourseEnrollView):
 				logger.info("%s drop from %s", user, catalog_entry.ntiid)
 		finally:
 			restoreInteraction()
+
 		return hexc.HTTPNoContent()
 
 @view_config(route_name='objects.generic.traversal',
 			 renderer='rest',
-			 request_method='POST',
 			 context=IDataserverFolder,
 			 permission=nauth.ACT_COPPA_ADMIN,
 			 name='DropAllCourseEnrollments')
@@ -182,17 +187,24 @@ class DropAllCourseEnrollmentsView(AbstractCourseEnrollView):
 
 	def __call__(self):
 		values = self.readInput()
+		result = LocatedExternalDict()
 		catalog_entry = _parse_course(values)
+		
+		# Make sure we don't have any interaction.
 		endInteraction()
 		try:
 			course_instance  = ICourseInstance(catalog_entry)
 			manager = ICourseEnrollmentManager(course_instance)
 			dropped_records = manager.drop_all()
+			items = result[ITEMS] = []
+			for record in dropped_records:
+				items.append ( {'Username': IPrincipal(record.Principal).id,
+								'Scope': record.Scope} )
 			logger.info("Dropped %d enrollment records of %s",
 						len(dropped_records), catalog_entry.ntiid)
 		finally:
 			restoreInteraction()
-		return hexc.HTTPNoContent()
+		return result
 
 @view_config(route_name='objects.generic.traversal',
 			 renderer='rest',
