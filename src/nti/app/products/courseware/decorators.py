@@ -48,6 +48,7 @@ from . import VIEW_CONTENTS
 from . import VIEW_CATALOG_ENTRY
 from . import VIEW_COURSE_ACTIVITY
 from . import VIEW_COURSE_RECURSIVE
+from . import VIEW_COURSE_RECURSIVE_BUCKET
 from . import VIEW_COURSE_ENROLLMENT_ROSTER
 
 from .utils import get_catalog_entry
@@ -108,18 +109,20 @@ class _CourseInstanceLinkDecorator(object):
 @component.adapter(ICourseInstance)
 class _CourseInstanceStreamLinkDecorator(object):
 	"""
-	Place a recursive stream link on the course.
+	Place the recursive stream links on the course.
 	"""
 
 	__metaclass__ = SingletonDecorator
 
 	def decorateExternalMapping( self, context, result ):
 		_links = result.setdefault(LINKS, [])
-		link = Link(context, rel=VIEW_COURSE_RECURSIVE, elements=(VIEW_COURSE_RECURSIVE,))
-		interface.alsoProvides(link, ILocation)
-		link.__name__ = ''
-		link.__parent__ = context
-		_links.append(link)
+
+		for name in (VIEW_COURSE_RECURSIVE, VIEW_COURSE_RECURSIVE_BUCKET):
+			link = Link(context, rel=name, elements=(name,))
+			interface.alsoProvides(link, ILocation)
+			link.__name__ = ''
+			link.__parent__ = context
+			_links.append(link)
 
 @interface.implementer(IExternalMappingDecorator)
 @component.adapter(ICourseOutline)
