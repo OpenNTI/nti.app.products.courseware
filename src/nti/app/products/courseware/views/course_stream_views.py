@@ -60,18 +60,18 @@ class CourseRecursiveStreamView(AbstractAuthenticatedView, BatchingUtilsMixin):
 	topics, top-level comments, and UGD shared with the user.
 
 	Using the following params, the client can request a window of objects
-	within a time range (batchAfter...batchBefore).
+	within a time range (Oldest...MostRecent).
 
-	batchBefore
+	MostRecent
 		If given, this is the timestamp (floating point number in fractional
 		unix seconds, as returned in ``Last Modified``) of the *youngest*
 		change to consider returning. Thus, the most efficient way to page through
-		this stream is to *not* use ``batchStart``, but instead to set ``batchBefore``
+		this stream is to *not* use ``batchStart``, but instead to set ``MostRecent``
 		to the timestamp of the *oldest* change in the previous batch (always leaving
 		``batchStart`` at zero). Effectively, this defaults to the current time.
 		(Note: the next/previous link relations do not currently take this into account.)
 
-	batchAfter
+	Oldest
 		If given, this is the timestamp (floating point number in fractional
 		unix seconds, as returned in ``Last Modified``) of the *oldest*
 		change to consider returning.
@@ -209,15 +209,15 @@ class CourseRecursiveStreamView(AbstractAuthenticatedView, BatchingUtilsMixin):
 		self.limit = self.batch_start + self.batch_size + 2
 		self.batch_before = None
 		self.batch_after = None
-		if self.request.params.get('batchBefore'):
+		if self.request.params.get('MostRecent'):
 			try:
-				self.batch_before = float(self.request.params.get( 'batchBefore' ))
+				self.batch_before = float(self.request.params.get( 'MostRecent' ))
 			except ValueError: # pragma no cover
 				raise HTTPBadRequest()
 
-		if self.request.params.get('batchAfter'):
+		if self.request.params.get('Oldest'):
 			try:
-				self.batch_after = float(self.request.params.get( 'batchAfter' ))
+				self.batch_after = float(self.request.params.get( 'Oldest' ))
 			except ValueError: # pragma no cover
 				raise HTTPBadRequest()
 
