@@ -13,8 +13,6 @@ logger = __import__('logging').getLogger(__name__)
 
 import BTrees
 
-from datetime import datetime
-
 from pyramid.view import view_config
 from pyramid.httpexceptions import HTTPBadRequest
 
@@ -60,6 +58,23 @@ class CourseRecursiveStreamView(AbstractAuthenticatedView, BatchingUtilsMixin):
 	"""
 	Stream the relevant course instance objects to the user. This includes
 	topics, top-level comments, and UGD shared with the user.
+
+	Using the following params, the client can request a window of objects
+	within a time range (batchAfter...batchBefore).
+
+	batchBefore
+		If given, this is the timestamp (floating point number in fractional
+		unix seconds, as returned in ``Last Modified``) of the *youngest*
+		change to consider returning. Thus, the most efficient way to page through
+		this stream is to *not* use ``batchStart``, but instead to set ``batchBefore``
+		to the timestamp of the *oldest* change in the previous batch (always leaving
+		``batchStart`` at zero). Effectively, this defaults to the current time.
+		(Note: the next/previous link relations do not currently take this into account.)
+
+	batchAfter
+		If given, this is the timestamp (floating point number in fractional
+		unix seconds, as returned in ``Last Modified``) of the *oldest*
+		change to consider returning.
 	"""
 
 	@CachedProperty
@@ -73,15 +88,6 @@ class CourseRecursiveStreamView(AbstractAuthenticatedView, BatchingUtilsMixin):
 	@property
 	def _family(self):
 		return BTrees.family64
-
-	def _intids_in_time_range(self):
-# 		min_created_time, max_created_time = self._time_range
-# 		if min_created_time is None and max_created_time is None:
-# 			return None
-#
-# 		intids_in_time_range = self._catalog['createdTime'].apply({'between': (min_created_time, max_created_time,)})
-# 		return intids_in_time_range
-		pass
 
 	def _get_topics(self, course):
 		"Return a tuple of topic intids and ntiids."
@@ -131,6 +137,7 @@ class CourseRecursiveStreamView(AbstractAuthenticatedView, BatchingUtilsMixin):
 		return result_intids
 
 	def _security_check(self):
+		"Make sure our user has permission on the object."
 		return self.make_sharing_security_check()
 
 	def filter_shared_with( self, obj ):
@@ -141,18 +148,33 @@ class CourseRecursiveStreamView(AbstractAuthenticatedView, BatchingUtilsMixin):
 	def _is_readable(self, obj):
 		return is_readable( obj, self.request, skip_cache=True)
 
-	def batch_before(self):
-		pass
+	def _do_include(self, create_time):
+		# We could use our catalog, but the 'between' query did not seem to work correctly.
+		min_created_time = self.batch_after
+		max_created_time = self.batch_before
+		result = True
+
+		# Have min and we are less than it
+		if 		min_created_time is not None \
+			and create_time < min_created_time:
+			result = False
+		# Have max and we are greater than it
+		elif 	max_created_time is not None \
+			and create_time > max_created_time:
+			result = False
+
+		return result
 
 	def _get_intids(self, course):
 		"Get all intids for this course's stream."
+		#catalog = self._catalog
 		results = self._get_top_level_board_objects( course )
 		return results
 
 	def _get_items(self, temp_results):
 		"""
 		Given a collection of tuples( obj, timestamp), return
-		a sorted collection of objects.
+		a sorted/filtered collection of objects.
 		"""
 		security_check = self._security_check()
 		items = LocatedExternalList()
@@ -161,8 +183,11 @@ class CourseRecursiveStreamView(AbstractAuthenticatedView, BatchingUtilsMixin):
 			for uid in temp_results:
 				try:
 					obj = self._intids.getObject( uid )
-					timestamp = datetime.fromtimestamp( obj.createdTime )
-					yield obj, timestamp
+					timestamp = obj.createdTime
+
+					# Do our filtering
+					if self._do_include( timestamp ):
+						yield obj, timestamp
 				except ObjectMissingError:
 					logger.warn( 'Object missing from course stream (id=%s)', uid )
 
@@ -171,23 +196,33 @@ class CourseRecursiveStreamView(AbstractAuthenticatedView, BatchingUtilsMixin):
 			if security_check( obj ):
 				items.append( object_timestamp )
 
-		items = sorted(items, key=lambda x: x[1])
+		# Filter/sort
+		items = sorted( items, key=lambda x: x[1], reverse=True)
 		return items
 
 	_DEFAULT_BATCH_SIZE = 100
 	_DEFAULT_BATCH_START = 0
 
-	def __call__(self):
-		# pre-flight the batch
-		batch_size, batch_start = self._get_batch_size_start()
-		limit = batch_start + batch_size + 2
-		batch_before = None
+	def _batch_params(self):
+		"Get our batch params."
+		self.batch_size, self.batch_start = self._get_batch_size_start()
+		self.limit = self.batch_start + self.batch_size + 2
+		self.batch_before = None
+		self.batch_after = None
 		if self.request.params.get('batchBefore'):
 			try:
-				batch_before = float(self.request.params.get( 'batchBefore' ))
+				self.batch_before = float(self.request.params.get( 'batchBefore' ))
 			except ValueError: # pragma no cover
 				raise HTTPBadRequest()
 
+		if self.request.params.get('batchAfter'):
+			try:
+				self.batch_after = float(self.request.params.get( 'batchAfter' ))
+			except ValueError: # pragma no cover
+				raise HTTPBadRequest()
+
+	def __call__(self):
+		self._batch_params()
 		course = self.request.context
 		result = LocatedExternalDict()
 
@@ -196,31 +231,16 @@ class CourseRecursiveStreamView(AbstractAuthenticatedView, BatchingUtilsMixin):
 
 		# Does our batching, as well as placing a link in result.
 		self._batch_items_iterable(result, items,
-								   number_items_needed=limit,
-								   batch_size=batch_size,
-								   batch_start=batch_start)
+								   number_items_needed=self.limit,
+								   batch_size=self.batch_size,
+								   batch_start=self.batch_start)
 
-		#result[ITEMS] = items
 		result['TotalItemCount'] = len( result[ITEMS] )
 		result['Class'] = 'CourseRecursiveStream'
 
-# 		view = _UGDView( self.request, self.request.remoteUser, None )
-# 		view._force_apply_security = True
-# 		view.ignore_broken = True
-# 		view._needs_filtered = False
-#
-# 		result_dict = view._sort_filter_batch_objects( items )
-# 		result_dict['Class'] = 'CourseRecursiveStream'
-
-			# TODO
-		# Sorting....
-		# Batching....
-		# Next-batch link...
-
-		# batchBefore
-		# batchAfter
-		# batchSize
+		# TODO
 		# mimetype filter
-
+		# sorting params
 		# last modified/etag support
+		# UGD
 		return result
