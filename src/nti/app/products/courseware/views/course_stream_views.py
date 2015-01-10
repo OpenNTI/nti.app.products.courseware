@@ -269,6 +269,20 @@ class CourseDashboardBucketingStreamView( CourseDashboardRecursiveStreamView ):
 	"""
 	A course recursive stream view that buckets according to params (currently
 	hard-coded to bucket by week starting each Monday at 12 AM).
+
+	MostRecent
+		If given, this is the timestamp (floating point number in fractional
+		unix seconds, as returned in ``Last Modified``) of the most recent
+		items to get.  This timestamp is also indicative of the first bucket
+		to be used.
+
+	NonEmptyBucketCount
+		If given, this is the number of non-empty buckets to return. It defaults
+		to 2.
+
+	BucketSize
+		If given, this is the number of objects to return per bucket. It defaults
+		to 100.
 	"""
 
 	_DEFAULT_BUCKET_COUNT = 2

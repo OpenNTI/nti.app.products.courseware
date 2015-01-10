@@ -30,7 +30,8 @@ from zope import lifecycleevent
 from nti.appserver.interfaces import IUserService
 from nti.appserver.interfaces import ICollection
 
-from nti.app.products.courseware import VIEW_COURSE_RECURSIVE
+from nti.app.products.courseware import VIEW_COURSE_RECURSIVE,\
+	VIEW_COURSE_RECURSIVE_BUCKET
 
 from nti.app.products.courseware.interfaces import ICoursesWorkspace
 
@@ -143,14 +144,16 @@ class _AbstractEnrollingBase(object):
 		role = res.json_body['Items'][0]
 		assert_that( role, has_entry('RoleName', 'instructor'))
 		course_instance = role['CourseInstance']
+
 		assert_that( course_instance,
 					 has_entries( 'Class', self.expected_instance_class,
 								  'href', self.expected_instance_href,
 								  'Outline', has_entry( 'Links', has_item( has_entry( 'rel', 'contents' ))),
 								  #'instructors', has_item( has_entry('Username', 'harp4162')),
-								  'Links', has_item( has_entries( 'rel', 'CourseCatalogEntry', )),
-								  'Links', has_item( has_entries( 'rel', 'VIEW_COURSE_RECURSIVE', )),
-								  'Links', has_item( has_entries( 'rel', 'CourseEnrollmentRoster'))))
+								  'Links', has_item( has_entry( 'rel', 'CourseCatalogEntry' ) ),
+								  'Links', has_item( has_entry( 'rel', VIEW_COURSE_RECURSIVE ) ),
+								  'Links', has_item( has_entry( 'rel', 'CourseEnrollmentRoster' ) ),
+								  'Links', has_item( has_entry( 'rel', VIEW_COURSE_RECURSIVE_BUCKET ) )))
 
 
 		roster_link = self.require_link_href_with_rel( course_instance, 'CourseEnrollmentRoster')

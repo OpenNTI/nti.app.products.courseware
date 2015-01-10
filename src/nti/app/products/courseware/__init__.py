@@ -14,7 +14,7 @@ VIEW_COURSE_CLASSMATES = 'Classmates'
 VIEW_COURSE_ACTIVITY = 'CourseActivity'
 VIEW_CATALOG_ENTRY = 'CourseCatalogEntry'
 VIEW_COURSE_RECURSIVE = 'RecursiveStream'
-VIEW_COURSE_RECURSIVE_BUCKET = 'RecursiveStreamByBucket'
+VIEW_COURSE_RECURSIVE_BUCKET = 'CourseRecursiveStreamByBucket'
 VIEW_COURSE_ENROLLMENT_ROSTER = 'CourseEnrollmentRoster'
 
 import zope.i18nmessageid
