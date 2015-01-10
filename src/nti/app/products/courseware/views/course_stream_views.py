@@ -89,6 +89,19 @@ class CourseRecursiveStreamView(AbstractAuthenticatedView, BatchingUtilsMixin):
 	def _family(self):
 		return BTrees.family64
 
+	def _intids_in_time_range(self):
+		# A few different ways to do this; let's use the catalog
+		# to awaken fewer objects.  Our timestamp normalizer
+		# normalizes to the minute, which should be fine.
+		min_created_time = self.batch_after
+		max_created_time = self.batch_before
+		if min_created_time is None and max_created_time is None:
+			return None
+
+		# None at boundaries should be ok.
+		intids_in_time_range = self._catalog['createdTime'].apply({'between': (min_created_time, max_created_time,)})
+		return intids_in_time_range
+
 	def _get_topics(self, course):
 		"Return a tuple of topic intids and ntiids."
 		topic_ntiids = set()
@@ -148,27 +161,14 @@ class CourseRecursiveStreamView(AbstractAuthenticatedView, BatchingUtilsMixin):
 	def _is_readable(self, obj):
 		return is_readable( obj, self.request, skip_cache=True)
 
-	def _do_include(self, create_time):
-		# We could use our catalog, but the 'between' query did not seem to work correctly.
-		min_created_time = self.batch_after
-		max_created_time = self.batch_before
-		result = True
-
-		# Have min and we are less than it
-		if 		min_created_time is not None \
-			and create_time < min_created_time:
-			result = False
-		# Have max and we are greater than it
-		elif 	max_created_time is not None \
-			and create_time > max_created_time:
-			result = False
-
-		return result
-
 	def _get_intids(self, course):
 		"Get all intids for this course's stream."
-		#catalog = self._catalog
+		catalog = self._catalog
 		results = self._get_top_level_board_objects( course )
+
+		time_range_intids = self._intids_in_time_range()
+		if time_range_intids is not None:
+			results = catalog.family.IF.intersection( time_range_intids, results )
 		return results
 
 	def _get_items(self, temp_results):
@@ -184,10 +184,7 @@ class CourseRecursiveStreamView(AbstractAuthenticatedView, BatchingUtilsMixin):
 				try:
 					obj = self._intids.getObject( uid )
 					timestamp = obj.createdTime
-
-					# Do our filtering
-					if self._do_include( timestamp ):
-						yield obj, timestamp
+					yield obj, timestamp
 				except ObjectMissingError:
 					logger.warn( 'Object missing from course stream (id=%s)', uid )
 
