@@ -59,3 +59,19 @@ class TestCourseAdminViews(ApplicationLayerTest):
 		res = self.testapp.get(enrollments_url, params, status=200 )
 		assert_that(res.json_body, 
 					has_entry( 'Items', has_length(0) ))
+		
+		# enroll again
+		data = {'username':student, 'ntiid': self.course_ntiid, 'scope':'ForCredit'}
+		res = self.testapp.post_json( enroll_url, data, status=201 )
+		assert_that( res.json_body, 
+					has_entries( 'MimeType', u'application/vnd.nextthought.courseware.courseinstanceenrollment',
+								 'Username', u'ichigo',
+								 'RealEnrollmentStatus','ForCredit' ))
+		
+		drop_all_enrolls_url = '/dataserver2/@@DropAllCourseEnrollments'
+		data = {'ntiid': self.course_ntiid}
+		res = self.testapp.post_json(drop_all_enrolls_url, data, status=204 )
+		
+		res = self.testapp.get(enrollments_url, params, status=200 )
+		assert_that(res.json_body, 
+					has_entry( 'Items', has_length(0) ))

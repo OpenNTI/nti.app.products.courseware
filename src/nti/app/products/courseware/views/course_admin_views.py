@@ -36,6 +36,7 @@ from nti.contenttypes.courses.interfaces import ICourseInstance
 from nti.contenttypes.courses.interfaces import ICourseSubInstance
 from nti.contenttypes.courses.interfaces import ICourseEnrollments
 from nti.contenttypes.courses.interfaces import IPrincipalEnrollments
+from nti.contenttypes.courses.interfaces import ICourseEnrollmentManager
 from nti.contenttypes.courses.interfaces import ENROLLMENT_SCOPE_VOCABULARY
 from nti.contenttypes.courses.enrollment import migrate_enrollments_from_course_to_course
 
@@ -81,7 +82,32 @@ def _parse_user(values):
 		raise hexc.HTTPUnprocessableEntity(detail='User not found')
 	
 	return username, user
+	
+def _parse_course(values):
+	# get validate course entry
+	ntiid = values.get('ntiid') or \
+			values.get('entry') or \
+			values.get('course') or \
+			values.get('EntryNTIID') or \
+			values.get('CourseEntryNIID')
+	if not ntiid:
+		raise hexc.HTTPUnprocessableEntity(detail='No course entry identifier')
+	
+	context = find_object_with_ntiid(ntiid)
+	if context is None:
+		try:
+			catalog = component.getUtility(ICourseCatalog)
+			context = catalog.getCatalogEntry(ntiid)
+		except LookupError:
+			raise hexc.HTTPUnprocessableEntity(detail='Catalog not found')
+		except KeyError:
+			context = None
 		
+	if context is None:
+		raise hexc.HTTPUnprocessableEntity(detail='Course not found')
+	
+	return context
+	
 class AbstractCourseEnrollView(AbstractAuthenticatedView,
 							   ModeledContentUploadRequestUtilsMixin):
 
@@ -91,26 +117,8 @@ class AbstractCourseEnrollView(AbstractAuthenticatedView,
 		return result
 
 	def parseCommon(self, values):
-		# get / validate user
 		_, user = _parse_user(values)
-
-		# get validate course entry
-		ntiid = values.get('ntiid') or \
-				values.get('EntryNTIID') or \
-				values.get('CourseEntryNIID') or \
-				values.get('ProviderUniqueID')
-		if not ntiid:
-			raise hexc.HTTPUnprocessableEntity(detail='No course entry identifier')
-
-		# get catalog entry
-		try:
-			catalog = component.getUtility(ICourseCatalog)
-			catalog_entry = catalog.getCatalogEntry(ntiid)
-		except LookupError:
-			raise hexc.HTTPUnprocessableEntity(detail='Catalog not found')
-		except KeyError:
-			raise hexc.HTTPUnprocessableEntity(detail='Course not found')
-
+		catalog_entry = _parse_course(values)
 		return (catalog_entry, user)
 
 @view_config(route_name='objects.generic.traversal',
@@ -160,6 +168,28 @@ class AdminUserCourseDropView(AbstractCourseEnrollView):
 			enrollments = get_enrollments(course_instance, self.request)
 			if enrollments.drop(user):
 				logger.info("%s drop from %s", user, catalog_entry.ntiid)
+		finally:
+			restoreInteraction()
+		return hexc.HTTPNoContent()
+
+@view_config(route_name='objects.generic.traversal',
+			 renderer='rest',
+			 request_method='POST',
+			 context=IDataserverFolder,
+			 permission=nauth.ACT_COPPA_ADMIN,
+			 name='DropAllCourseEnrollments')
+class DropAllCourseEnrollmentsView(AbstractCourseEnrollView):
+
+	def __call__(self):
+		values = self.readInput()
+		catalog_entry = _parse_course(values)
+		endInteraction()
+		try:
+			course_instance  = ICourseInstance(catalog_entry)
+			manager = ICourseEnrollmentManager(course_instance)
+			dropped_records = manager.drop_all()
+			logger.info("Dropped %d enrollment records of %s",
+						len(dropped_records), catalog_entry.ntiid)
 		finally:
 			restoreInteraction()
 		return hexc.HTTPNoContent()
@@ -317,23 +347,7 @@ class CourseEnrollmentsView(AbstractAuthenticatedView):
 		
 	def __call__(self):
 		params = CaseInsensitiveDict(self.request.params)
-		# get validate course entry
-		ntiid = params.get('ntiid') or \
-				params.get('entry') or \
-				params.get('course')
-		if not ntiid:
-			raise hexc.HTTPUnprocessableEntity(detail='No course entry identifier')
-		
-		context = find_object_with_ntiid(ntiid)
-		if context is None:
-			try:
-				catalog = component.getUtility(ICourseCatalog)
-				context = catalog.getCatalogEntry(ntiid)
-			except LookupError:
-				raise hexc.HTTPUnprocessableEntity(detail='Catalog not found')
-			except KeyError:
-				context = None
-		
+		context = _parse_course(params)
 		course = ICourseInstance(context, None)
 		if course is None:
 			raise hexc.HTTPUnprocessableEntity(detail='Course not found')
