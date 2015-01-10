@@ -204,7 +204,7 @@ class CourseRecursiveStreamView(AbstractAuthenticatedView, BatchingUtilsMixin):
 	_DEFAULT_BATCH_START = 0
 
 	def _batch_params(self):
-		"Get our batch params."
+		"Sets our batch params."
 		self.batch_size, self.batch_start = self._get_batch_size_start()
 		self.limit = self.batch_start + self.batch_size + 2
 		self.batch_before = None
@@ -220,6 +220,12 @@ class CourseRecursiveStreamView(AbstractAuthenticatedView, BatchingUtilsMixin):
 				self.batch_after = float(self.request.params.get( 'Oldest' ))
 			except ValueError: # pragma no cover
 				raise HTTPBadRequest()
+
+		if 		self.batch_before and self.batch_after \
+			and	self.batch_before < self.batch_after:
+			# This behavior is undefined.
+			logger.warn( 'MostRecent time is before Oldest time (MostRecent=%s) (Oldest=%s)',
+						self.batch_before, self.batch_after )
 
 	def __call__(self):
 		self._batch_params()
