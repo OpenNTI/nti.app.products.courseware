@@ -174,6 +174,16 @@
 	<subscriber factory=".decorators._CourseOutlineContentNodeLinkDecorator"
 				provides="nti.externalization.interfaces.IExternalMappingDecorator" />
 
+	<subscriber factory=".decorators._CourseClassmatesLinkDecorator"
+				provides="nti.externalization.interfaces.IExternalMappingDecorator" 
+				for=".interfaces.ICourseInstanceEnrollment 
+					 pyramid.interfaces.IRequest" />
+				
+	<subscriber factory=".decorators._CourseClassmatesLinkDecorator"
+				provides="nti.externalization.interfaces.IExternalMappingDecorator"
+				for="nti.contenttypes.courses.interfaces.ICourseInstance 
+					 pyramid.interfaces.IRequest" />
+
 	<!--
 		 Get an href here to the real location, since we return these beneath Roster as well.
 		 Notice this is currently a very specific registration.

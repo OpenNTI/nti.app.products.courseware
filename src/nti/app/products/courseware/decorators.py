@@ -48,9 +48,11 @@ from . import VIEW_CONTENTS
 from . import VIEW_CATALOG_ENTRY
 from . import VIEW_COURSE_ACTIVITY
 from . import VIEW_COURSE_RECURSIVE
+from . import VIEW_COURSE_CLASSMATES
 from . import VIEW_COURSE_RECURSIVE_BUCKET
 from . import VIEW_COURSE_ENROLLMENT_ROSTER
 
+from .utils import is_enrolled
 from .utils import get_catalog_entry
 from .utils import get_enrollment_record
 from .utils import get_enrollment_options
@@ -225,3 +227,18 @@ class _EnrollmentOptionsCourseEntryDecorator(AbstractAuthenticatedRequestAwareDe
 		options = get_enrollment_options(context)
 		if options:
 			result[u'EnrollmentOptions'] = to_external_object(options)
+
+@interface.implementer(IExternalMappingDecorator)
+class _CourseClassmatesLinkDecorator(AbstractAuthenticatedRequestAwareDecorator):
+
+	def _predicate(self, context, result):
+		result = bool(self._is_authenticated and is_enrolled(context, self.remoteUser))
+		return result
+	
+	def _do_decorate_external(self, context, result):
+		_links = result.setdefault(LINKS, [])
+		link = Link(context, rel=VIEW_COURSE_CLASSMATES, elements=(VIEW_COURSE_CLASSMATES,))
+		interface.alsoProvides(link, ILocation)
+		link.__name__ = ''
+		link.__parent__ = context
+		_links.append(link)

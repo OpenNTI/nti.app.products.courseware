@@ -8,6 +8,7 @@
 
 	<pyramid:scan package=".course_views" />
 	<pyramid:scan package=".catalog_views" />
+	<pyramid:scan package=".course_user_views" />
 	<pyramid:scan package=".course_admin_views" />
 	<pyramid:scan package=".course_legacy_views" />
 	<pyramid:scan package=".course_stream_views" />
