@@ -14,5 +14,5 @@ from .. import MessageFactory
 VIEW_CONTENTS = 'contents'
 VIEW_COURSE_ACTIVITY = 'CourseActivity'
 VIEW_CATALOG_ENTRY = 'CourseCatalogEntry'
-VIEW_COURSE_ENROLLMENT_ROSTER = 'CourseEnrollmentRoster'
 VIEW_COURSE_RECURSIVE = 'RecursiveStream'
+VIEW_COURSE_ENROLLMENT_ROSTER = 'CourseEnrollmentRoster'

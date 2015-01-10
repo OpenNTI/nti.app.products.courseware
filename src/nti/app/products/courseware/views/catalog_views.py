@@ -85,7 +85,7 @@ def do_course_enrollment(catalog_entry, user, scope=ES_PUBLIC, parent=None,
 		request.response.location = traversal.resource_path(enrollment)
 			
 	# Return our enrollment, whether fresh or not
-	# TODO: This should probably be a multi-adapter
+	# This should probably be a multi-adapter
 	return enrollment
 
 @view_config( route_name='objects.generic.traversal',
