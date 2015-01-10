@@ -278,10 +278,13 @@ class CourseDashboardBucketingStreamView( CourseDashboardRecursiveStreamView ):
 
 	_last_timestamp = None
 
-	# TODO Use params
-	def _get_first_time_range(self, start_time=None ):
+	def _get_first_time_range(self):
 		"Return tuple of start/end timestamps for the first week."
-		the_time = datetime.utcnow() if not start_time else start_time
+		most_recent_date = None
+		if self.batch_before is not None:
+			most_recent_date = datetime.utcfromtimestamp( self.batch_before )
+
+		the_time = datetime.utcnow() if not most_recent_date else most_recent_date
 		the_weekday = the_time.isoweekday() - 1 # Monday is our default start
 		start_of_week = the_time.date() - timedelta( days=the_weekday )
 		start_timestamp = time.mktime( start_of_week.timetuple() )
@@ -293,13 +296,13 @@ class CourseDashboardBucketingStreamView( CourseDashboardRecursiveStreamView ):
 		return start_timestamp, end_timestamp
 
 	def _get_next_time_range(self):
-		"After getting the first time range, this grabs the previous week."
+		"After getting the first time range, return a tuple of the previous week."
 		end_date = datetime.utcfromtimestamp( self._last_timestamp )
 		start_date = end_date - timedelta( days=7 )
 		start_timestamp = time.mktime( start_date.timetuple() )
 
 		end_timestamp = self._last_timestamp
-		# Set our next endcap,
+		# Set our next endcap.
 		self._last_timestamp = start_timestamp
 		return start_timestamp, end_timestamp
 
@@ -394,6 +397,7 @@ class CourseDashboardBucketingStreamView( CourseDashboardRecursiveStreamView ):
 		result = LocatedExternalDict()
 
 		items = self._get_bucketed_objects( course )
-		result[ ITEMS ] = items
+		result[ITEMS] = items
+		result['TotalBucketCount'] = len( items )
 		result['Class'] = 'CourseRecursiveStreamByBucket'
 		return result
