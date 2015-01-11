@@ -25,6 +25,9 @@ from zope import component
 from zope.catalog.interfaces import ICatalog
 from zope.intid.interfaces import IIntIds
 
+from ZODB.interfaces import IBroken
+from ZODB.POSException import POSError
+
 from nti.app.base.abstract_views import AbstractAuthenticatedView
 
 from nti.app.externalization.view_mixins import BatchingUtilsMixin
@@ -159,7 +162,7 @@ class CourseDashboardRecursiveStreamView(AbstractAuthenticatedView, BatchingUtil
 
 	def filter_shared_with( self, obj ):
 		# FIXME Need effective_principals?
-		x_sharedWith = getattr( obj, 'sharedWith', ())
+		getattr( obj, 'sharedWith', ())
 		##intids_shared_to_me = catalog['sharedWith'].apply({'all_of': (self.remoteUser.username,)})
 
 	def _is_readable(self, obj):
@@ -191,10 +194,13 @@ class CourseDashboardRecursiveStreamView(AbstractAuthenticatedView, BatchingUtil
 			for uid in temp_results:
 				try:
 					obj = self._intids.getObject( uid )
-					timestamp = obj.createdTime
-					yield obj, timestamp
-				except ObjectMissingError:
+					if not IBroken.providedBy(obj):
+						timestamp = obj.createdTime
+						yield obj, timestamp
+				except (KeyError, ObjectMissingError):
 					logger.warn( 'Object missing from course stream (id=%s)', uid )
+				except (TypeError, POSError):
+					logger.warn( 'Broken object missing from course stream (id=%s)', uid )
 
 		for object_timestamp in _intermediates_iter():
 			obj = object_timestamp[0]
