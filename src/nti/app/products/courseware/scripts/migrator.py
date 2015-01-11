@@ -36,6 +36,7 @@ from nti.contenttypes.courses.interfaces import ICourseEnrollments
 from nti.contenttypes.courses.enrollment import SectionSeat
 from nti.contenttypes.courses.enrollment import IDefaultCourseInstanceEnrollmentStorage
 
+from nti.dataserver.users import User
 from nti.dataserver.utils import run_with_dataserver
 
 from nti.site.site import get_site_for_site_names
@@ -87,6 +88,10 @@ def _migrate(ntiid, scope=ES_PUBLIC, max_seat_count=25, sections=(),
 
     for source_prin_id in list(source_enrollments):
     
+        if not source_prin_id or User.get_user(source_prin_id) is None:
+            ## dup enrollment
+            continue
+        
         source_enrollment = source_enrollments[source_prin_id]
         if source_enrollment.Scope != scope:
             continue
