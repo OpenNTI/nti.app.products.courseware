@@ -60,13 +60,13 @@ class ClassmatesView(AbstractAuthenticatedView):
 				break
 		
 		result = LocatedExternalDict()
-		items = result[ITEMS] = []
+		items = result[ITEMS] = {}
 		course = ICourseInstance(self.context)
 		for record in ICourseEnrollments(course).iter_enrollments():
 			if record.Scope in implies:
 				username = IPrincipal(record.Principal).id
 				user = User.get_user(username)
-				if user is not None:
+				if user is not None and self.remoteUser != user:
 					ext = to_external_object(user, name="summary")
-					items.append(ext)
+					items[username] = ext
 		return result
