@@ -101,12 +101,16 @@ def _migrate(ntiid, scope=ES_PUBLIC, max_seat_count=25, sections=(),
                 break
         
         if section is None:
+            index = 0
             items.sort()
             section_name = items[0].section_name
             section = parent.SubInstances[section_name]
             
-        if not dry_run:
-            dest_enrollments = IDefaultCourseInstanceEnrollmentStorage(section)
+        dest_enrollments = IDefaultCourseInstanceEnrollmentStorage(section)
+        if source_prin_id in dest_enrollments:
+            continue
+        
+        if not dry_run:   
             mover = IObjectMover(source_enrollment)
             mover.moveTo(dest_enrollments)
         
