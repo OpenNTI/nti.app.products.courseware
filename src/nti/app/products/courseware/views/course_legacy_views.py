@@ -36,9 +36,9 @@ from nti.contenttypes.courses.interfaces import ICourseInstancePublicScopedForum
 from nti.contenttypes.courses.interfaces import ICourseInstanceForCreditScopedForum
 
 from nti.dataserver import traversal
-from nti.dataserver.interfaces import IDataserverFolder
-
 from nti.dataserver import authorization as nauth
+
+from nti.dataserver.interfaces import IDataserverFolder
 
 from nti.dataserver.users import Entity
 
@@ -73,7 +73,7 @@ class CourseTopicCreationView(AbstractAuthenticatedView,UploadRequestUtilsMixin)
 	corresponds to a particular course instance that will get a copy
 	of that discussion. (Note that if both open and in-class
 	discussions for that course are enabled, one row may translate
-	into upto two discussions, depending on the ``scope`` argument.)
+	into up to two discussions, depending on the ``scope`` argument.)
 	In the documentation that follows, optional columns have their
 	names surrounded by square brackets; those brackets should not be
 	in the actual CSV file. The columns can be in any order in the CSV::
@@ -109,6 +109,18 @@ class CourseTopicCreationView(AbstractAuthenticatedView,UploadRequestUtilsMixin)
 		and simply forums.views.
 	"""
 
+	def _get_acl(self, instance, forum_readable_ntiid):
+		# Our instance instructors get all permissions.
+		instructors = [instructor.context for instructor in instance.instructors]
+		acl = [ForumACE(Permissions=("All",), Entities=[i.username for i in instructors], Action='Allow'),
+			   ForumACE(Permissions=("Read",), Entities=[forum_readable_ntiid], Action='Allow')]
+
+		# Subinstance instructors get the same permissions as their students.
+		for subinstance in instance.SubInstances.values():
+			instructors = [instructor.context for instructor in subinstance.instructors]
+			acl.append( ForumACE(Permissions=("Read",), Entities=[i.username for i in instructors], Action='Allow' ) )
+
+		return acl
 
 	def _create_forum(self, instance, forum_name, forum_readable_ntiid, forum_owner_ntiid,
 					  forum_display_name=None,
@@ -124,11 +136,8 @@ class CourseTopicCreationView(AbstractAuthenticatedView,UploadRequestUtilsMixin)
 						 instance, forum_name)
 			return
 
-		instructors = [instructor.context for instructor in instance.instructors] # XXX implementation detail
 		discussions = instance.Discussions
-
-		acl = [ForumACE(Permissions=("All",), Entities=[i.username for i in instructors], Action='Allow'),
-			   ForumACE(Permissions=("Read",),Entities=[forum_readable_ntiid],Action='Allow')]
+		acl = self._get_acl( instance, forum_readable_ntiid )
 
 		def _assign_acl(obj, iface):
 			action = False
@@ -217,10 +226,10 @@ class CourseTopicCreationView(AbstractAuthenticatedView,UploadRequestUtilsMixin)
 				else:
 					vid_url = content
 					vid_type = 'kaltura'
-					
+
 				name = "application/vnd.nextthought.embeddedvideo"
 				video = component.getUtility(component.IFactory, name=name)()
-				update_from_external_object(video, 
+				update_from_external_object(video,
 											{'embedURL': vid_url, 'type': vid_type})
 				content = video
 			elif content:
