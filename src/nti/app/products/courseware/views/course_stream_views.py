@@ -444,8 +444,8 @@ class CourseDashboardBucketingStreamView( CourseDashboardRecursiveStreamView ):
 
 				bucket_dict = self._do_batching( bucket_intids, start_ts, end_ts )
 
-				bucket_dict['StartTimestamp'] = start_ts
-				bucket_dict['EndTimestamp'] = end_ts
+				bucket_dict['OldestTimestamp'] = start_ts
+				bucket_dict['MostRecentTimestamp'] = end_ts
 				bucket_dict['BucketItemCount'] = len( bucket_dict[ITEMS] )
 				bucket_dict['Class'] = 'CourseRecursiveStreamBucket'
 				results.append( bucket_dict )
