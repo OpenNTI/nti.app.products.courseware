@@ -14,6 +14,7 @@ logger = __import__('logging').getLogger(__name__)
 
 import os
 import sys
+import random
 import argparse
 
 import zope.browserpage
@@ -58,6 +59,8 @@ def _migrate(ntiid, scope=ES_PUBLIC, max_seat_count=25, sections=(),
             raise ValueError("Unknown site name", site)
         hooks.setSite(new_site)
 
+    random.seed()
+    
     catalog = component.getUtility(ICourseCatalog)
     try:
         catalog_entry = catalog.getCatalogEntry(ntiid)
@@ -75,22 +78,23 @@ def _migrate(ntiid, scope=ES_PUBLIC, max_seat_count=25, sections=(),
     for section in sections:
         if section not in course.SubInstances:
             raise KeyError("Invalid section", section)
-        count = ICourseEnrollments(section).count_enrollments()
+        sub_instance = course.SubInstances[section]
+        count = ICourseEnrollments(sub_instance).count_enrollments()
         items.append(SectionSeat(section, count))
     
-    items.sort(reverse=True)
+    items.sort()
     source_enrollments = IDefaultCourseInstanceEnrollmentStorage(course)
     
     count = 0
     log = logger.warn if not verbose else logger.info
-            
+
     for source_prin_id in list(source_enrollments):
     
         source_enrollment = source_enrollments[source_prin_id]
         if source_enrollment.Scope != scope:
             continue
     
-        index = -1
+        index = 0
         section = None
         for idx, item in enumerate(items):
             section_name, estimated_seat_count = item.section_name, item.seat_count
@@ -100,8 +104,9 @@ def _migrate(ntiid, scope=ES_PUBLIC, max_seat_count=25, sections=(),
                 break
         
         if section is None:
-            index = -1
-            section_name = items[-1].section_name
+            items.sort()
+            index = random.randint(0, len(sections)-1)
+            section_name = items[index].section_name
             section = course.SubInstances[section_name]
             
         if not dry_run:
@@ -166,11 +171,10 @@ def main():
                              dest='dry_run',
                              action='store_true',
                              help="Dry run")
-    arg_parser.add_argument('s', '--scope',
+    arg_parser.add_argument('-s', '--scope',
                              dest='scope',
                              default=ES_PUBLIC,
                              help="Scope to migrate")
-     
     arg_parser.add_argument('--site',
                             dest='site',
                             help="Application SITE.")
@@ -182,6 +186,7 @@ def main():
 
     site = args.site
     ntiid = args.ntiid
+    scope = args.scope
     dry_run = args.dry_run
     sections = args.sections
     max_seat_count = args.max_seat_count
@@ -198,6 +203,7 @@ def main():
                          context=context,
                          function=lambda: _migrate(site=site,
                                                    ntiid=ntiid,
+                                                   scope=scope,
                                                    dry_run=dry_run,
                                                    sections=sections,
                                                    verbose=args.verbose,
