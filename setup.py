@@ -4,6 +4,9 @@ from setuptools import setup, find_packages
 VERSION = '0.0.0'
 
 entry_points = {
+	'console_scripts': [
+		"nti_course_migrator = nti.app.products.courseware.scripts.migrator:main"
+	],
 	"z3c.autoinclude.plugin": [
 		'target = nti.app.products',
 	],
