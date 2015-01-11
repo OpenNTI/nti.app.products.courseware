@@ -200,8 +200,9 @@ class DropAllCourseEnrollmentsView(AbstractCourseEnrollView):
 			dropped_records = manager.drop_all()
 			items = result[ITEMS] = []
 			for record in dropped_records:
-				items.append ( {'Username': IPrincipal(record.Principal).id,
-								'Scope': record.Scope} )
+				principal = IPrincipal(record.Principal, None)
+				username = principal.id if principal is not None else 'deleted'
+				items.append( {'Username': username, 'Scope': record.Scope} )
 			logger.info("Dropped %d enrollment records of %s",
 						len(dropped_records), catalog_entry.ntiid)
 		finally:
@@ -375,11 +376,15 @@ class CourseEnrollmentsView(AbstractAuthenticatedView):
 
 		for record in ICourseEnrollments(course).iter_enrollments():
 			scope = record.Scope
-			pricipal = IPrincipal(record.Principal)
+			
+			user = principal = IPrincipal(record.Principal, None)
+			username = principal.id if principal is not None else 'deleted'
+				
 			created = getattr(record, 'createdTime', None) or record.lastModified
 			created = isodate.datetime_isoformat(datetime.fromtimestamp(created or 0))
 			
-			user = User.get_user( pricipal.id )
+			if principal is not None:	
+				user = User.get_user( username )
 			profile = IUserProfile( user, None )
 			email = getattr( profile, 'email', None )
 			realname = getattr( profile, 'realname', None )
