@@ -169,8 +169,9 @@ class CourseDashboardRecursiveStreamView(AbstractAuthenticatedView, BatchingUtil
 	def _get_course_ugd(self, course):
 		"SharedWith me notes in my course."
 		catalog = self._catalog
-		# TODO Does this work for effective principals?
-		intids_shared_to_me = catalog['sharedWith'].apply({'all_of': (self.remoteUser.username,)})
+		# This gets our effective principals.
+		user_ids = [self.remoteUser.username] + [x.NTIID for x in self.remoteUser.dynamic_memberships]
+		intids_shared_to_me = catalog['sharedWith'].apply({'any_of': user_ids})
 
 		container_ntiids = _get_containers_in_course( course )
 		course_container_intids = catalog['containerId'].apply({'any_of': container_ntiids})
