@@ -39,6 +39,8 @@ from nti.contenttypes.courses.interfaces import ICourseInstance
 
 from nti.dataserver import authorization as nauth
 
+from nti.dataserver.links import Link
+
 from nti.dataserver.metadata_index import IX_TOPICS
 from nti.dataserver.metadata_index import TP_TOP_LEVEL_CONTENT
 from nti.dataserver.metadata_index import CATALOG_NAME as METADATA_CATALOG_NAME
@@ -169,12 +171,13 @@ class CourseDashboardRecursiveStreamView(AbstractAuthenticatedView, BatchingUtil
 		return is_readable( obj, self.request, skip_cache=True)
 
 	def _do_get_intids(self, course):
+		"Return all 'relevant' intids for this course."
 		results = self._get_top_level_board_objects( course )
 		return results
 
 	def _get_intids(self, course):
 		"Get all intids for this course's stream."
-		results = self._do_get_intids(self, course)
+		results = self._do_get_intids( course )
 
 		catalog = self._catalog
 		time_range_intids = self._intids_in_time_range( self.batch_after, self.batch_before )
@@ -184,7 +187,7 @@ class CourseDashboardRecursiveStreamView(AbstractAuthenticatedView, BatchingUtil
 
 	def _get_items(self, temp_results):
 		"""
-		Given a collection of tuples( obj, timestamp), return
+		Given a collection of tuples( obj, timestamp ), return
 		a sorted/filtered collection of objects.
 		"""
 		security_check = self._security_check()
@@ -274,7 +277,9 @@ class CourseDashboardRecursiveStreamView(AbstractAuthenticatedView, BatchingUtil
 class CourseDashboardBucketingStreamView( CourseDashboardRecursiveStreamView ):
 	"""
 	A course recursive stream view that buckets according to params (currently
-	hard-coded to bucket by week starting each Monday at 12 AM).
+	hard-coded to bucket by week starting each Monday at 12 AM).  This view
+	will start at the input timestamp and will travel backwards until it finds
+	'n' buckets of course objects.
 
 	MostRecent
 		If given, this is the timestamp (floating point number in fractional
@@ -288,15 +293,41 @@ class CourseDashboardBucketingStreamView( CourseDashboardRecursiveStreamView ):
 
 	BucketSize
 		If given, this is the number of objects to return per bucket. It defaults
-		to 100.
+		to 50.
 	"""
 
 	_DEFAULT_BUCKET_COUNT = 2
-	_DEFAULT_BUCKET_SIZE = 100
+	_DEFAULT_BUCKET_SIZE = 50
 	# How many buckets will we look in for results before quitting.
 	_MAX_BUCKET_CHECKS = 52
 
 	_last_timestamp = None
+
+	def _get_bucket_batch_link(self, result, start_ts, end_ts):
+		"""
+		Copied from BatchingUtilsMixin, returns a link to VIEW_COURSE_RECURSIVE
+		with params for this bucket.
+
+		"""
+		next_batch_start = self.bucket_size
+
+		batch_params = self.request.GET.copy()
+		# Pop some things that don't work
+		for n in self._BATCH_LINK_DROP_PARAMS:
+			batch_params.pop( n, None )
+			batch_params.pop( 'BucketSize', None )
+
+		batch_params['batchStart'] = next_batch_start
+		# Our bucket_size is the de-facto batchSize.
+		batch_params['batchSize'] = self.bucket_size
+		batch_params['MostRecent'] = end_ts
+		batch_params['Oldest'] = start_ts
+
+		link_next = Link( self.request.context,
+						rel='batch-next',
+						elements=(VIEW_COURSE_RECURSIVE,),
+						params=batch_params )
+		result.setdefault( 'Links', [] ).append( link_next )
 
 	def _get_first_time_range(self):
 		"Return tuple of start/end timestamps for the first week."
@@ -350,18 +381,24 @@ class CourseDashboardBucketingStreamView( CourseDashboardRecursiveStreamView ):
 		super( CourseDashboardBucketingStreamView,self )._set_params()
 		self._bucket_params()
 
-	def _do_batching( self, intids ):
+	def _do_batching( self, intids, start_ts, end_ts ):
 		"""
 		Resolve the intids into objects and batch them.
 		"""
 		result_dict = {}
 		objects = self._get_items( intids )
 
-		# TODO The next-batch links returned here are irrelevant.
 		self._batch_items_iterable(result_dict, objects,
 								   number_items_needed=self.limit,
 								   batch_size=self.batch_size,
 								   batch_start=self.batch_start)
+		# The next-batch links returned here are irrelevant.
+		result_dict.pop( 'Links' )
+
+		if len( objects ) > self.bucket_size:
+			# We have more objects; provide a meaningful paging link.
+			self._get_bucket_batch_link( result_dict, start_ts, end_ts )
+
 		return result_dict
 
 	def _do_bucketing(self, course_intids):
@@ -392,7 +429,7 @@ class CourseDashboardBucketingStreamView( CourseDashboardRecursiveStreamView ):
 				# Decrement our collection
 				course_intids = catalog.family.IF.difference( course_intids, bucket_intids )
 
-				bucket_dict = self._do_batching( bucket_intids )
+				bucket_dict = self._do_batching( bucket_intids, start_ts, end_ts )
 
 				bucket_dict['StartTimestamp'] = start_ts
 				bucket_dict['EndTimestamp'] = end_ts
