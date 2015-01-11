@@ -14,7 +14,6 @@ logger = __import__('logging').getLogger(__name__)
 
 import os
 import sys
-import random
 import argparse
 
 import zope.browserpage
@@ -59,8 +58,6 @@ def _migrate(ntiid, scope=ES_PUBLIC, max_seat_count=25, sections=(),
             raise ValueError("Unknown site name", site)
         hooks.setSite(new_site)
 
-    random.seed()
-    
     catalog = component.getUtility(ICourseCatalog)
     try:
         catalog_entry = catalog.getCatalogEntry(ntiid)
@@ -105,8 +102,7 @@ def _migrate(ntiid, scope=ES_PUBLIC, max_seat_count=25, sections=(),
         
         if section is None:
             items.sort()
-            index = random.randint(0, len(sections)-1)
-            section_name = items[index].section_name
+            section_name = items[0].section_name
             section = course.SubInstances[section_name]
             
         if not dry_run:
