@@ -187,8 +187,7 @@ class CourseDashboardRecursiveStreamView(AbstractAuthenticatedView, BatchingUtil
 
 	def _get_items(self, temp_results):
 		"""
-		Given a collection of tuples( obj, timestamp ), return
-		a sorted/filtered collection of objects.
+		Given a collection of intids, return a sorted/filtered/permissioned collection of objects.
 		"""
 		security_check = self._security_check()
 		items = LocatedExternalList()
@@ -198,20 +197,18 @@ class CourseDashboardRecursiveStreamView(AbstractAuthenticatedView, BatchingUtil
 				try:
 					obj = self._intids.getObject( uid )
 					if not IBroken.providedBy(obj):
-						timestamp = obj.createdTime
-						yield obj, timestamp
+						yield obj
 				except (KeyError, ObjectMissingError):
 					logger.warn( 'Object missing from course stream (id=%s)', uid )
 				except (TypeError, POSError):
 					logger.warn( 'Broken object missing from course stream (id=%s)', uid )
 
-		for object_timestamp in _intermediates_iter():
-			obj = object_timestamp[0]
+		for obj in _intermediates_iter():
 			if security_check( obj ):
-				items.append( object_timestamp )
+				items.append( obj )
 
 		# Filter/sort
-		items = sorted( items, key=lambda x: x[1], reverse=True)
+		items.sort( reverse=True, key=lambda x: getattr(x, 'createdTime', 0) )
 		return items
 
 	_DEFAULT_BATCH_SIZE = 100
@@ -306,7 +303,7 @@ class CourseDashboardBucketingStreamView( CourseDashboardRecursiveStreamView ):
 	def _get_bucket_batch_link(self, result, start_ts, end_ts):
 		"""
 		Copied from BatchingUtilsMixin, returns a link to VIEW_COURSE_RECURSIVE
-		with params for this bucket.
+		with params for this particular bucket.
 
 		"""
 		next_batch_start = self.bucket_size
