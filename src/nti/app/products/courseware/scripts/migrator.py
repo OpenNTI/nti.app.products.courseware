@@ -64,18 +64,18 @@ def _migrate(ntiid, scope=ES_PUBLIC, max_seat_count=25, sections=(),
     except KeyError:
         raise ValueError("Invalid course indentifier")
 
-    course = ICourseInstance(catalog_entry)
+    parent = course = ICourseInstance(catalog_entry)
     if ICourseSubInstance.providedBy(course):
-        raise TypeError("Course is a subinstance")
+        parent = course.__parent__.__parent__
         
     if not sections:
-        sections = list(course.SubInstances.keys())
+        sections = list(parent.SubInstances.keys())
     
     items = []
     for section in sections:
-        if section not in course.SubInstances:
+        if section not in parent.SubInstances:
             raise KeyError("Invalid section", section)
-        sub_instance = course.SubInstances[section]
+        sub_instance = parent.SubInstances[section]
         count = ICourseEnrollments(sub_instance).count_enrollments()
         items.append(SectionSeat(section, count))
     
@@ -97,13 +97,13 @@ def _migrate(ntiid, scope=ES_PUBLIC, max_seat_count=25, sections=(),
             section_name, estimated_seat_count = item.section_name, item.seat_count
             if estimated_seat_count < max_seat_count:
                 index = idx
-                section = course.SubInstances[section_name]
+                section = parent.SubInstances[section_name]
                 break
         
         if section is None:
             items.sort()
             section_name = items[0].section_name
-            section = course.SubInstances[section_name]
+            section = parent.SubInstances[section_name]
             
         if not dry_run:
             dest_enrollments = IDefaultCourseInstanceEnrollmentStorage(section)
