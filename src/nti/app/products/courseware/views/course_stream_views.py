@@ -56,8 +56,16 @@ from nti.utils.property import CachedProperty
 from . import VIEW_COURSE_RECURSIVE
 from . import VIEW_COURSE_RECURSIVE_BUCKET
 
+from ._utils import _get_containers_in_course
+
 ITEMS = StandardExternalFields.ITEMS
 LINKS = StandardExternalFields.LINKS
+
+# TODO
+# - mimetype filter
+# - sorting params
+# - caching
+# - last modified/etag support
 
 @view_config( route_name='objects.generic.traversal',
 			  context=ICourseInstance,
@@ -158,22 +166,34 @@ class CourseDashboardRecursiveStreamView(AbstractAuthenticatedView, BatchingUtil
 
 		return result_intids
 
+	def _get_course_ugd(self, course):
+		"SharedWith me notes in my course."
+		catalog = self._catalog
+		# TODO Does this work for effective principals?
+		intids_shared_to_me = catalog['sharedWith'].apply({'all_of': (self.remoteUser.username,)})
+
+		container_ntiids = _get_containers_in_course( course )
+		course_container_intids = catalog['containerId'].apply({'any_of': container_ntiids})
+		intids_of_notes = catalog['mimeType'].apply({'any_of': ('application/vnd.nextthought.note',)})
+
+		# Find collisions
+		shared_note_intids = catalog.family.IF.intersection( intids_shared_to_me, intids_of_notes )
+		results = catalog.family.IF.intersection( shared_note_intids, course_container_intids )
+		return results
+
 	def _security_check(self):
 		"Make sure our user has permission on the object."
 		return self.make_sharing_security_check()
-
-	def filter_shared_with( self, obj ):
-		# FIXME Need effective_principals?
-		getattr( obj, 'sharedWith', ())
-		##intids_shared_to_me = catalog['sharedWith'].apply({'all_of': (self.remoteUser.username,)})
 
 	def _is_readable(self, obj):
 		return is_readable( obj, self.request, skip_cache=True)
 
 	def _do_get_intids(self, course):
 		"Return all 'relevant' intids for this course."
-		results = self._get_top_level_board_objects( course )
-		return results
+		top_level_results = self._get_top_level_board_objects( course )
+		ugd_results = self._get_course_ugd( course )
+		relevant_intids = self._catalog.family.IF.multiunion( [ugd_results, top_level_results] )
+		return relevant_intids
 
 	def _get_intids(self, course):
 		"Get all intids for this course's stream."
@@ -258,11 +278,6 @@ class CourseDashboardRecursiveStreamView(AbstractAuthenticatedView, BatchingUtil
 		result['TotalItemCount'] = len( result[ITEMS] )
 		result['Class'] = 'CourseRecursiveStream'
 
-		# TODO
-		# mimetype filter
-		# sorting params
-		# last modified/etag support
-		# UGD
 		return result
 
 @view_config( route_name='objects.generic.traversal',
