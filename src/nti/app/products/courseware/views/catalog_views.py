@@ -68,17 +68,24 @@ def get_enrollments(course_instance, request):
 	return enrollments
 
 def do_course_enrollment(catalog_entry, user, scope=ES_PUBLIC, parent=None,
-						 request=None):
+						 request=None, safe=False):
 	course_instance = ICourseInstance(catalog_entry)
 	enrollments = get_enrollments(course_instance, request)
 	freshly_added = enrollments.enroll(user, scope=scope)
 	
 	# get an course instance enrollent
-	enrollment = component.getMultiAdapter( (course_instance, user),
-											ICourseInstanceEnrollment )
-	
-	if parent and not enrollment.__parent__:
-		enrollment.__parent__ = parent
+	if not safe:
+		enrollment = component.getMultiAdapter( (course_instance, user),
+												ICourseInstanceEnrollment )
+	else:
+		enrollment = component.queryMultiAdapter((course_instance, user),
+												 ICourseInstanceEnrollment )
+		
+	if enrollment is not None:
+		if parent and not enrollment.__parent__:
+			enrollment.__parent__ = parent
+	else:
+		enrollment = freshly_added
 
 	if freshly_added and request:
 		request.response.status_int = 201

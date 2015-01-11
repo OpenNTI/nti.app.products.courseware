@@ -146,9 +146,11 @@ class AdminUserCourseEnrollView(AbstractCourseEnrollView):
 			service = IUserService(user)
 			workspace = ICoursesWorkspace(service)
 			parent = workspace['EnrolledCourses']
+			
 			logger.info("Enrolling %s in %s", user, catalog_entry.ntiid)
 			result = do_course_enrollment(catalog_entry, user, scope,
 										  parent=parent,
+										  safe=True,
 										  request=self.request)
 		finally:
 			restoreInteraction()
