@@ -178,6 +178,10 @@ class _CourseEnrollmentUserProfileDetailsDecorator(object):
 	__metaclass__ = SingletonDecorator
 
 	def decorateExternalMapping(self, context, result):
+		entry = ICourseCatalogEntry(ICourseInstance(context, None), None)
+		if hasattr(entry, 'ntiid'):
+			result['CatalogEntryNTIID'] = entry.ntiid
+
 		try:
 			user = IUser(context)
 		except TypeError:

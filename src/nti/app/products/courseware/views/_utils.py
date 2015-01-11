@@ -11,8 +11,8 @@ __docformat__ = "restructuredtext en"
 
 logger = __import__('logging').getLogger(__name__)
 
-from nti.app.assessment.interfaces import ICourseAssessmentItemCatalog
 from nti.app.assessment.interfaces import ICourseAssignmentCatalog
+from nti.app.assessment.interfaces import ICourseAssessmentItemCatalog
 
 from nti.assessment.interfaces import IQAssignment
 from nti.assessment.interfaces import IQuestionSet
@@ -24,6 +24,7 @@ def _get_self_assessments_for_course(course):
 	defined as top-level question sets that are not used within an assignment
 	in the course.
 	"""
+
 	# NOTE: This is pretty tightly coupled to the implementation
 	# and the use of one content package (?). See NonAssignmentsByOutlineNodeDecorator
 	# (TODO: Find a way to unify this)
@@ -32,10 +33,8 @@ def _get_self_assessments_for_course(course):
 	# Not only must we filter out assignments, we must filter out the
 	# question sets that they refer to; we assume such sets are only
 	# used by the assignment.
-	# XXX FIXME not right.
 
 	result = list()
-
 	qsids_to_strip = set()
 
 	for item in catalog.iter_assessment_items():
@@ -62,11 +61,17 @@ def _get_containers_in_course( course ):
 		packages = (course.legacy_content_package,)
 
 	def _recur( node, accum ):
-		#Get our embedded ntiids and recursively fetch our children's ntiids
+		## Get our embedded ntiids and recursively 
+		## fetch our children's ntiids
 		ntiid = node.ntiid
-		accum.update( node.embeddedContainerNTIIDs )
+		try:
+			accum.update( node.embeddedContainerNTIIDs )
+		except AttributeError:
+			pass
+		
 		if ntiid:
 			accum.add( ntiid )
+
 		for n in node.children:
 			_recur( n, accum )
 
@@ -74,9 +79,10 @@ def _get_containers_in_course( course ):
 	for package in packages:
 		_recur( package, containers_in_course )
 
-	# Add in our self-assessments
+	## Add in our self-assessments
 	catalog = ICourseAssessmentItemCatalog(course)
-	containers_in_course = containers_in_course.union( [x.ntiid for x in catalog.iter_assessment_items()] )
+	ntiids = [x.ntiid for x in catalog.iter_assessment_items()]
+	containers_in_course = containers_in_course.union( ntiids )
 
 	self_assessments = _get_self_assessments_for_course(course)
 	self_assessment_containerids = {x.__parent__.ntiid for x in self_assessments}
@@ -84,9 +90,10 @@ def _get_containers_in_course( course ):
 	containers_in_course = containers_in_course.union( self_assessment_containerids )
 	containers_in_course = containers_in_course.union( self_assessment_qsids )
 
-	#Add in our assignments
+	## Add in our assignments
 	assignment_catalog = ICourseAssignmentCatalog( course )
-	containers_in_course = containers_in_course.union( ( asg.ntiid for asg in assignment_catalog.iter_assignments() ) )
+	assignment_ntiids =  [asg.ntiid for asg in assignment_catalog.iter_assignments() ]
+	containers_in_course = containers_in_course.union( assignment_ntiids )
 	containers_in_course.discard( None )
 
 	return containers_in_course

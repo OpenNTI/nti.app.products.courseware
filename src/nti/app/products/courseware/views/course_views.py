@@ -313,7 +313,7 @@ from nti.externalization.interfaces import LocatedExternalList
 			 renderer='rest',
 			 request_method='GET',
 			 context=IDataserverFolder,
-			 permission=nauth.ACT_COPPA_ADMIN, # TODO: Better perm. This is generally used for admin
+			 permission=nauth.ACT_NTI_ADMIN, # TODO: Better perm. This is generally used for admin
 			 name='AllEnrollments.csv')
 class AllCourseEnrollmentRosterDownloadView(AbstractAuthenticatedView):
 	"""
@@ -334,13 +334,13 @@ class AllCourseEnrollmentRosterDownloadView(AbstractAuthenticatedView):
 		if not status_filter:
 			return lambda course, user: True
 
-		def f(course,user):
+		def func(course,user):
 			enrollment = component.getMultiAdapter((course, user),
 												   ICourseInstanceEnrollment)
+			# Let this blow up when this goes away
+			return enrollment.LegacyEnrollmentStatus == status_filter 
 
-			return enrollment.LegacyEnrollmentStatus == status_filter # Let this blow up when this goes away
-
-		return f
+		return func
 
 	def __call__(self):
 		# Our approach is to find all the courses,
@@ -399,7 +399,7 @@ class AllCourseEnrollmentRosterDownloadView(AbstractAuthenticatedView):
 			 renderer='rest',
 			 request_method='GET',
 			 context=ICourseInstance,
-			 permission=nauth.ACT_COPPA_ADMIN, # TODO: Better perm. This is generally used for admin
+			 permission=nauth.ACT_NTI_ADMIN, 
 			 name='Enrollments.csv')
 class CourseEnrollmentsRosterDownloadView(AllCourseEnrollmentRosterDownloadView):
 	"""
@@ -418,7 +418,7 @@ class CourseEnrollmentsRosterDownloadView(AllCourseEnrollmentRosterDownloadView)
 			 renderer='rest',
 			 request_method='GET',
 			 context=ICourseCatalogEntry,
-			 permission=nauth.ACT_COPPA_ADMIN, # TODO: Better perm. This is generally used for admin
+			 permission=nauth.ACT_NTI_ADMIN,
 			 name='Enrollments.csv')
 class CourseCatalogEntryEnrollmentsRosterDownloadView(AllCourseEnrollmentRosterDownloadView):
 
@@ -448,7 +448,6 @@ class CourseActivityGetView(AbstractAuthenticatedView,
 		course = context
 
 		activity = ICourseInstanceActivity(course)
-		# TODO: Very similar to ugd_query_views
 
 		result = LocatedExternalDict()
 		result.__parent__ = course
@@ -472,7 +471,6 @@ class CourseActivityGetView(AbstractAuthenticatedView,
 		last_modified = max(activity.lastModified, result['lastViewed'])
 		result.lastModified = last_modified
 		result['Last Modified'] = last_modified
-
 		return result
 
 import BTrees
