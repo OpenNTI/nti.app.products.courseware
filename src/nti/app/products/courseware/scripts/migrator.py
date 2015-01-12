@@ -21,6 +21,7 @@ import zope.browserpage
 from zope import component 
 from zope.component import hooks
 from zope.container.contained import Contained
+from zope.security.interfaces import IPrincipal
 from zope.configuration import xmlconfig, config
 from zope.dottedname import resolve as dottedname
 from zope.copypastemove.interfaces import IObjectMover
@@ -93,9 +94,13 @@ def _migrate(ntiid, scope=ES_PUBLIC, max_seat_count=25, sections=(),
             continue
         
         source_enrollment = source_enrollments[source_prin_id]
-        if source_enrollment.Scope != scope:
+        if source_enrollment is None or source_enrollment.Scope != scope:
             continue
     
+        if IPrincipal(source_enrollment.Principal, None) is None:
+            logger.warn("Ignoring dup enrollment for %s", source_prin_id)
+            continue
+        
         index = 0
         section = None
         for idx, item in enumerate(items):
