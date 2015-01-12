@@ -38,6 +38,7 @@ from ..utils import get_enrollment_record
 from ..interfaces import ICourseInstanceEnrollment
 
 ITEMS = StandardExternalFields.ITEMS
+LINKS = StandardExternalFields.LINKS
 
 @view_config(context=ICourseInstance)
 @view_config(context=ICourseInstanceEnrollment)
@@ -68,5 +69,6 @@ class ClassmatesView(AbstractAuthenticatedView):
 				user = User.get_user(username)
 				if user is not None and self.remoteUser != user:
 					ext = to_external_object(user, name="summary")
+					ext.pop(LINKS, None)
 					items[username] = ext
 		return result
