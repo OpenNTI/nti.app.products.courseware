@@ -349,8 +349,8 @@ class CourseDashboardBucketingStreamView( CourseDashboardRecursiveStreamView ):
 			most_recent_date = datetime.utcfromtimestamp( self.batch_before )
 
 		the_time = datetime.utcnow() if not most_recent_date else most_recent_date
-		the_weekday = the_time.isoweekday() - 1 # Monday is our default start
-		start_of_week = the_time.date() - timedelta( days=the_weekday )
+		# Monday is our default start
+		start_of_week = the_time.date() - timedelta( days=the_time.weekday() )
 		start_timestamp = time.mktime( start_of_week.timetuple() )
 		end_timestamp = time.mktime( the_time.timetuple() )
 
@@ -406,7 +406,7 @@ class CourseDashboardBucketingStreamView( CourseDashboardRecursiveStreamView ):
 								   batch_size=self.bucket_size,
 								   batch_start=self.batch_start)
 		# The next-batch links returned here are irrelevant.
-		result_dict.pop('Links', None)
+		result_dict.pop( 'Links', None )
 
 		if len( objects ) > self.bucket_size:
 			# We have more objects; provide a meaningful paging link.
