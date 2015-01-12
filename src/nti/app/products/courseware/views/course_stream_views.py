@@ -403,7 +403,7 @@ class CourseDashboardBucketingStreamView( CourseDashboardRecursiveStreamView ):
 
 		self._batch_items_iterable(result_dict, objects,
 								   number_items_needed=self.limit,
-								   batch_size=self.batch_size,
+								   batch_size=self.bucket_size,
 								   batch_start=self.batch_start)
 		# The next-batch links returned here are irrelevant.
 		result_dict.pop( 'Links' )
