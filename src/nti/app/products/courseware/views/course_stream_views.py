@@ -67,6 +67,8 @@ LINKS = StandardExternalFields.LINKS
 # - caching
 # - last modified/etag support
 
+_DEFAULT_SORT_FIELD = 'lastModified'
+
 @view_config( route_name='objects.generic.traversal',
 			  context=ICourseInstance,
 			  request_method='GET',
@@ -116,7 +118,7 @@ class CourseDashboardRecursiveStreamView(AbstractAuthenticatedView, BatchingUtil
 			return None
 
 		# None at boundaries should be ok.
-		intids_in_time_range = self._catalog['createdTime'].apply({'between': (min_created_time, max_created_time,)})
+		intids_in_time_range = self._catalog[ _DEFAULT_SORT_FIELD ].apply({'between': (min_created_time, max_created_time,)})
 		return intids_in_time_range
 
 	def _get_topics(self, course):
@@ -229,7 +231,7 @@ class CourseDashboardRecursiveStreamView(AbstractAuthenticatedView, BatchingUtil
 				items.append( obj )
 
 		# Filter/sort
-		items.sort( reverse=True, key=lambda x: getattr(x, 'createdTime', 0) )
+		items.sort( reverse=True, key=lambda x: getattr(x, _DEFAULT_SORT_FIELD, 0) )
 		return items
 
 	_DEFAULT_BATCH_SIZE = 100
