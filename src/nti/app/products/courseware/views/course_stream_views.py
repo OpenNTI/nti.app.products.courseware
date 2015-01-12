@@ -406,7 +406,7 @@ class CourseDashboardBucketingStreamView( CourseDashboardRecursiveStreamView ):
 								   batch_size=self.bucket_size,
 								   batch_start=self.batch_start)
 		# The next-batch links returned here are irrelevant.
-		result_dict.pop( 'Links' )
+		result_dict.pop('Links', None)
 
 		if len( objects ) > self.bucket_size:
 			# We have more objects; provide a meaningful paging link.
