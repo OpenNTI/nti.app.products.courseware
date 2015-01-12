@@ -38,7 +38,7 @@ from nti.contenttypes.courses.interfaces import	ICourseSubInstance
 from nti.contenttypes.courses.interfaces import ICourseInstance
 
 from nti.dataserver import authorization as nauth
-
+from nti.dataserver.interfaces import IUser
 from nti.dataserver.links import Link
 
 from nti.dataserver.metadata_index import IX_TOPICS
@@ -121,6 +121,11 @@ class CourseDashboardRecursiveStreamView(AbstractAuthenticatedView, BatchingUtil
 		intids_in_time_range = self._catalog[ _DEFAULT_SORT_FIELD ].apply({'between': (min_created_time, max_created_time,)})
 		return intids_in_time_range
 
+	def _topic_is_relevant(self, topic):
+		"Determines if our is topic stream worthy."
+		creator = getattr( topic, 'creator', None )
+		return IUser.providedBy( creator )
+
 	def _get_topics(self, course):
 		"Return a tuple of topic intids and ntiids."
 		topic_ntiids = set()
@@ -132,7 +137,10 @@ class CourseDashboardRecursiveStreamView(AbstractAuthenticatedView, BatchingUtil
 				# Make sure we have access to our topic.
 				# We'll check comments elsewhere.
 				if self._is_readable( topic ):
-					topic_intids.add( intids.getId( topic ) )
+					# Return our topic if relevant, but make sure we
+					# always return the ntiid for its comments.
+					if self._topic_is_relevant( topic ):
+						topic_intids.add( intids.getId( topic ) )
 					topic_ntiids.add( topic.NTIID )
 		return topic_intids, topic_ntiids
 
@@ -342,7 +350,7 @@ class CourseDashboardBucketingStreamView( CourseDashboardRecursiveStreamView ):
 						rel='batch-next',
 						elements=(VIEW_COURSE_RECURSIVE,),
 						params=batch_params )
-		result.setdefault( 'Links', [] ).append( link_next )
+		result.setdefault( LINKS, [] ).append( link_next )
 
 	def _get_first_time_range(self):
 		"Return tuple of start/end timestamps for the first week."
@@ -408,7 +416,7 @@ class CourseDashboardBucketingStreamView( CourseDashboardRecursiveStreamView ):
 								   batch_size=self.bucket_size,
 								   batch_start=self.batch_start)
 		# The next-batch links returned here are irrelevant.
-		result_dict.pop( 'Links', None )
+		result_dict.pop( LINKS, None )
 
 		if len( objects ) > self.bucket_size:
 			# We have more objects; provide a meaningful paging link.
