@@ -389,7 +389,7 @@ class CourseEnrollmentsView(AbstractAuthenticatedView):
 			email = getattr( profile, 'email', None )
 			realname = getattr( profile, 'realname', None )
 					
-			row_data = [self._replace(user.username), realname, email, scope, created]
+			row_data = [self._replace(username), realname, email, scope, created]
 			csv_writer.writerow([_tx_string(x) for x in row_data])
 
 		response = self.request.response
