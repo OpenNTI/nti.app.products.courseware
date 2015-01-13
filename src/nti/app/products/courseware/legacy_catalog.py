@@ -42,9 +42,8 @@ class CourseCatalogLegacyContentEntry(CourseCatalogLegacyEntry):
 		except AttributeError:
 			return super(CourseCatalogLegacyContentEntry,self).PlatformPresentationResources
 
-from nti.contenttypes.courses._catalog_entry_parser import fill_entry_from_legacy_key
 from nti.contenttypes.courses.interfaces import ICourseCatalog
-
+from nti.contenttypes.courses._catalog_entry_parser import fill_entry_from_legacy_key
 
 @component.adapter(ILegacyCourseConflatedContentPackage, IObjectAddedEvent)
 def _content_package_registered( package, event ):

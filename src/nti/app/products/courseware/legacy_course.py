@@ -47,9 +47,10 @@ from nti.contenttypes.courses.interfaces import CourseInstanceAvailableEvent
 from nti.dataserver.users import User
 from nti.dataserver.users import Entity
 from nti.dataserver.users import Community
+from nti.dataserver.users.interfaces import IFriendlyNamed
+
 from nti.dataserver.interfaces import ICommunity
 from nti.dataserver.interfaces import IUseNTIIDAsExternalUsername
-from nti.dataserver.users.interfaces import IFriendlyNamed
 
 from nti.wref.interfaces import IWeakRef
 

@@ -322,10 +322,11 @@ class _LegacyCourseInstanceEnrollments(object):
 			yield record
 
 from zope.traversing.api import traverse
-from pyramid.threadlocal import get_current_request
-from nti.contenttypes.courses.enrollment import migrate_enrollments_from_course_to_course
-from nti.contenttypes.courses.interfaces import ICourseCatalog
 
+from pyramid.threadlocal import get_current_request
+
+from nti.contenttypes.courses.interfaces import ICourseCatalog
+from nti.contenttypes.courses.enrollment import migrate_enrollments_from_course_to_course
 
 def _copy_enrollments_from_legacy_to_new(request=None):
 	"""
