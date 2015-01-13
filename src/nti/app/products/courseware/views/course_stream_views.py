@@ -83,6 +83,8 @@ class CourseDashboardRecursiveStreamView(AbstractAuthenticatedView, BatchingUtil
 	Using the following params, the client can request a window of objects
 	within a time range (Oldest...MostRecent).
 
+	Note: This is becoming close to what the notables do.
+
 	MostRecent
 		If given, this is the timestamp (floating point number in fractional
 		unix seconds, as returned in ``Last Modified``) of the *youngest*
@@ -196,11 +198,12 @@ class CourseDashboardRecursiveStreamView(AbstractAuthenticatedView, BatchingUtil
 
 		return result_intids
 
-	def _get_top_level_board_objects(self, course):
+	def _get_top_level_board_objects(self):
 		"""
 		Get topic/top-level comment fetching for our course and
 		parent course, if necessary.
 		"""
+		course = self.course
 		result_intids = self._do_get_top_level_board_objects( course )
 
 		if ICourseSubInstance.providedBy( course ):
@@ -212,8 +215,9 @@ class CourseDashboardRecursiveStreamView(AbstractAuthenticatedView, BatchingUtil
 
 		return result_intids
 
-	def _get_course_ugd(self, course):
-		"SharedWith me notes in my course."
+	def _get_course_ugd(self):
+		"Top-level notes, shared with me, in my course."
+		course = self.course
 		catalog = self._catalog
 		# This gets our effective principals.
 		user_ids = [self.remoteUser.username] + [x.NTIID for x in self.remoteUser.dynamic_memberships]
@@ -241,9 +245,8 @@ class CourseDashboardRecursiveStreamView(AbstractAuthenticatedView, BatchingUtil
 
 	def _do_get_intids(self):
 		"Return all 'relevant' intids for this course."
-		course = self.course
-		top_level_results = self._get_top_level_board_objects( course )
-		ugd_results = self._get_course_ugd( course )
+		top_level_results = self._get_top_level_board_objects()
+		ugd_results = self._get_course_ugd()
 		relevant_intids = self._catalog.family.IF.multiunion( [ugd_results, top_level_results] )
 		return relevant_intids
 
@@ -442,11 +445,18 @@ class CourseDashboardBucketingStreamView( CourseDashboardRecursiveStreamView ):
 		bucket_checks = 0
 		found_buckets = 0
 		results = []
+		start_ts = None
 
-		# Now do our bucketing until we get our count or
-		# we bail or we are out of objects.
+		# Now do our bucketing until:
+		# 1. We get our count
+		# 2. We are out of objects
+		# 3. We reach our max number of buckets to check
+		# 4. We are checking a date before the requested oldest timestamp
 		while	found_buckets < self.non_empty_bucket_count \
 			and bucket_checks < self._MAX_BUCKET_CHECKS \
+			and (	start_ts is None
+				or 	self.batch_after is None
+				or 	start_ts > self.batch_after) \
 			and course_intids:
 
 			bucket_checks += 1
@@ -468,6 +478,13 @@ class CourseDashboardBucketingStreamView( CourseDashboardRecursiveStreamView ):
 				bucket_dict['BucketItemCount'] = len( bucket_dict[ITEMS] )
 				bucket_dict['Class'] = 'CourseRecursiveStreamBucket'
 				results.append( bucket_dict )
+
+		if found_buckets < self.non_empty_bucket_count:
+			logger.info( 'Only found %s buckets when asked for %s (buckets_checked=%s)',
+						found_buckets,
+						self.non_empty_bucket_count,
+						bucket_checks )
+
 		return results
 
 	def _get_bucketed_objects(self):
