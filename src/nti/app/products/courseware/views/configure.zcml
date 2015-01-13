@@ -10,6 +10,11 @@
 	<include package="zope.component" />
 	<include package="zope.security" />
 
+	<adapter name="CourseAdmin"
+			 for="nti.dataserver.interfaces.IDataserverFolder pyramid.interfaces.IRequest"
+			 factory=".CourseAdminPathAdapter"
+			 provides="zope.traversing.interfaces.IPathAdapter" />
+			 
 	<adapter name="CourseActivity"
 			 factory=".course_views.CourseActivityPathAdapter" />
 
