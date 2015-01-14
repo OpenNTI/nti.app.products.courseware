@@ -78,10 +78,10 @@ def get_enrollment_options(context):
 
 def is_course_instructor(context, user):
 	result = False
-	prin = IPrincipal(user)
+	prin = IPrincipal(user, None)
 	course = ICourseInstance(context, None)
 	roles = IPrincipalRoleMap(course, None)
-	if roles:
+	if roles and prin:
 		result = Allow in (roles.getSetting(RID_TA, prin.id),
 						   roles.getSetting(RID_INSTRUCTOR, prin.id))
 	return result

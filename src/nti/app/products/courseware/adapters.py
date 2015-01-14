@@ -36,10 +36,6 @@ def _entry_to_content_package_bundle(entry):
     course = ICourseInstance(entry, None)
     return IContentPackageBundle(course, None)
 
-from zope.security.interfaces import IPrincipal
-from zope.securitypolicy.interfaces import Allow
-from zope.securitypolicy.interfaces import IPrincipalRoleMap
-
 from ZODB.POSException import ConnectionStateError
 
 from pyramid.traversal import find_interface
@@ -47,8 +43,6 @@ from pyramid.traversal import find_interface
 from nti.contentlibrary.interfaces import IContentUnit
 from nti.contentlibrary.interfaces import IContentPackage
 
-from nti.contenttypes.courses.interfaces import RID_TA
-from nti.contenttypes.courses.interfaces import RID_INSTRUCTOR
 from nti.contenttypes.courses.interfaces import ICourseCatalog
 from nti.contenttypes.courses.interfaces import ICourseEnrollments
 from nti.contenttypes.courses.interfaces import ICourseSubInstance
@@ -141,13 +135,7 @@ def _content_unit_to_course(unit):
     # XXX: FIXME: This requires a one-to-one mapping
     return courses[0] if courses else None
 
-def is_instructor(course, user):
-    prin = IPrincipal(user)
-    roles = IPrincipalRoleMap(course, None)
-    if roles:
-        return Allow in (roles.getSetting(RID_TA, prin.id),
-                         roles.getSetting(RID_INSTRUCTOR, prin.id))
-    return False
+from .utils import is_course_instructor as is_instructor #BWC
 
 @interface.implementer(ICourseInstance)
 @component.adapter(IContentUnit, IUser)
