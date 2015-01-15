@@ -41,7 +41,6 @@ from nti.contenttypes.courses.interfaces import ENROLLMENT_SCOPE_VOCABULARY
 from nti.contenttypes.courses.enrollment import migrate_enrollments_from_course_to_course
 
 from nti.dataserver.interfaces import IUser
-from nti.dataserver.interfaces import IDataserverFolder
 
 from nti.dataserver import authorization as nauth
 
@@ -62,6 +61,8 @@ from ..interfaces import ICoursesWorkspace
 
 from .catalog_views import get_enrollments
 from .catalog_views import do_course_enrollment
+
+from . import CourseAdminPathAdapter
 
 ITEMS = StandardExternalFields.ITEMS
 
@@ -87,9 +88,7 @@ def _parse_course(values):
 	# get validate course entry
 	ntiid = values.get('ntiid') or \
 			values.get('entry') or \
-			values.get('course') or \
-			values.get('EntryNTIID') or \
-			values.get('CourseEntryNIID')
+			values.get('course')
 	if not ntiid:
 		raise hexc.HTTPUnprocessableEntity(detail='No course entry identifier')
 	
@@ -127,10 +126,10 @@ class AbstractCourseEnrollView(AbstractAuthenticatedView,
 @view_config(route_name='objects.generic.traversal',
 			 renderer='rest',
 			 request_method='POST',
-			 context=IDataserverFolder,
-			 permission=nauth.ACT_COPPA_ADMIN,
-			 name='AdminUserCourseEnroll')
-class AdminUserCourseEnrollView(AbstractCourseEnrollView):
+			 context=CourseAdminPathAdapter,
+			 permission=nauth.ACT_NTI_ADMIN,
+			 name='UserCourseEnroll')
+class UserCourseEnrollView(AbstractCourseEnrollView):
 
 	def __call__(self):
 		values = self.readInput()
@@ -159,10 +158,10 @@ class AdminUserCourseEnrollView(AbstractCourseEnrollView):
 @view_config(route_name='objects.generic.traversal',
 			 renderer='rest',
 			 request_method='POST',
-			 context=IDataserverFolder,
-			 permission=nauth.ACT_COPPA_ADMIN,
-			 name='AdminUserCourseDrop')
-class AdminUserCourseDropView(AbstractCourseEnrollView):
+			 context=CourseAdminPathAdapter,
+			 permission=nauth.ACT_NTI_ADMIN,
+			 name='UserCourseDrop')
+class UserCourseDropView(AbstractCourseEnrollView):
 
 	def __call__(self):
 		values = self.readInput()
@@ -182,8 +181,8 @@ class AdminUserCourseDropView(AbstractCourseEnrollView):
 
 @view_config(route_name='objects.generic.traversal',
 			 renderer='rest',
-			 context=IDataserverFolder,
-			 permission=nauth.ACT_COPPA_ADMIN,
+			 context=CourseAdminPathAdapter,
+			 permission=nauth.ACT_NTI_ADMIN,
 			 name='DropAllCourseEnrollments')
 class DropAllCourseEnrollmentsView(AbstractCourseEnrollView):
 
@@ -212,10 +211,10 @@ class DropAllCourseEnrollmentsView(AbstractCourseEnrollView):
 @view_config(route_name='objects.generic.traversal',
 			 renderer='rest',
 			 request_method='GET',
-			 context=IDataserverFolder,
-			 permission=nauth.ACT_COPPA_ADMIN,
-			 name='AdminUserCourseEnrollments')
-class AdminUserCourseEnrollmentsView(AbstractAuthenticatedView):
+			 context=CourseAdminPathAdapter,
+			 permission=nauth.ACT_NTI_ADMIN,
+			 name='UserCourseEnrollments')
+class UserCourseEnrollmentsView(AbstractAuthenticatedView):
 
 	def __call__(self):
 		params = CaseInsensitiveDict(self.request.params)
@@ -229,8 +228,8 @@ class AdminUserCourseEnrollmentsView(AbstractAuthenticatedView):
 	
 @view_config(route_name='objects.generic.traversal',
 			 renderer='rest',
-			 context=IDataserverFolder,
-			 permission=nauth.ACT_COPPA_ADMIN,
+			 context=CourseAdminPathAdapter,
+			 permission=nauth.ACT_NTI_ADMIN,
 			 name='CourseEnrollmentMigrator')
 class CourseEnrollmentMigrationView(AbstractAuthenticatedView):
 	"""
@@ -295,7 +294,7 @@ class CourseEnrollmentMigrationView(AbstractAuthenticatedView):
 
 @view_config(route_name='objects.generic.traversal',
 			 renderer='rest',
-			 context=IDataserverFolder,
+			 context=CourseAdminPathAdapter,
 			 request_method='GET',
 			 permission=nauth.ACT_MODERATE,
 			 name='CourseRoles')
@@ -340,8 +339,8 @@ class CourseRolesView(AbstractAuthenticatedView,
 @view_config(route_name='objects.generic.traversal',
 			 renderer='rest',
 			 request_method='GET',
-			 context=IDataserverFolder,
-			 permission=nauth.ACT_COPPA_ADMIN,
+			 context=CourseAdminPathAdapter,
+			 permission=nauth.ACT_NTI_ADMIN,
 			 name='CourseEnrollments')
 class CourseEnrollmentsView(AbstractAuthenticatedView):
 
