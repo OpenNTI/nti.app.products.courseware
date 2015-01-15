@@ -36,8 +36,8 @@ from nti.contenttypes.courses.legacy_catalog import ICourseCatalogInstructorLega
 
 from nti.dataserver.authorization_acl import ACL
 
-from ..content_search import _is_allowed
-from ..interfaces import ILegacyCommunityBasedCourseInstance
+from nti.app.products.courseware.search.interfaces import ICourseOutlineCache
+from nti.app.products.courseware.interfaces import ILegacyCommunityBasedCourseInstance
 
 from nti.app.testing.application_webtest import ApplicationLayerTest
 
@@ -164,10 +164,11 @@ class TestApplicationCatalogFromContent(ApplicationLayerTest):
 
 		# Test content search
 		with mock_dataserver.mock_db_trans(self.ds, site_name='platform.ou.edu'):
+			cache = component.getUtility(ICourseOutlineCache)
 			ntiid = u'tag:nextthought.com,2011-10:OU-HTML-CLC3403_LawAndJustice.lec:03_LESSON'
-			b = _is_allowed(ntiid)
+			b = cache.is_allowed(ntiid)
 			assert_that(b, is_(True))
 
 			now = datetime.fromtimestamp(100)
-			b = _is_allowed(ntiid, now=now)
+			b = cache.is_allowed(ntiid, now=now)
 			assert_that(b, is_(True))

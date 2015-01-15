@@ -122,7 +122,7 @@ class _OutlineCacheEntry(Contained):
 
 	@property
 	def lastSynchronized(self):
-		result = getattr(self.__parent__, 'lastSynchronized', 0)
+		result = self.__parent__.lastSynchronized
 		return result
 	
 	@property

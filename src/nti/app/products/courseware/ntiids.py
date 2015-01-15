@@ -61,7 +61,7 @@ class _EnrolledCourseSectionTopicNTIIDResolver(object):
 				continue
 
 			try:
-				catalog_entry = ICourseCatalogEntry(course)
+				catalog_entry = ICourseCatalogEntry(course, None)
 			except TypeError:
 				# Seen this is alpha, possible due to the early content
 				# shifting before enrollment cleanup was correct?
@@ -70,7 +70,8 @@ class _EnrolledCourseSectionTopicNTIIDResolver(object):
 							record, course)
 				continue
 
-			records.append( (course, catalog_entry, record))
+			if catalog_entry is not None:
+				records.append( (course, catalog_entry, record))
 
 		# stable sort, the key will be the same for all the subinstances
 		# and then all the parent
@@ -107,7 +108,6 @@ class _EnrolledCourseSectionTopicNTIIDResolver(object):
 
 		for enrollments in component.subscribers((user,), iface):
 			for course, catalog_entry, _ in self._sort_enrollments(enrollments):
-
 				# The webapp is passing the course context here as the provider_name.
 				# This may be necessary to avoid topic name collisions; especially with
 				# instructors enrolled in many sections.
@@ -123,7 +123,6 @@ class _EnrolledCourseSectionTopicNTIIDResolver(object):
 						# The ntiid references a top-level course.
 						result = self._find_in_course(course, ntiid)
 					return result
-
 				# No? Is it a subcourse? Check the main course to see if it matches.
 				# If it does, we still want to return the most specific
 				# discussions allowed (either our section or, if not allowed, the parent)
