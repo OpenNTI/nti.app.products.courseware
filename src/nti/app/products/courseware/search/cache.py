@@ -132,14 +132,13 @@ class _OutlineCacheEntry(Contained):
 		return course.Outline
 		
 	@CachedProperty('lastSynchronized')
-	def cPackagePaths(self):
+	def csPackagePaths(self):
 		return dict()
 
 	@CachedProperty('lastSynchronized')
 	def csFlattenOutline(self):
-		if self.csFlattenOutline is None:
-			self.csFlattenOutline = _flatten_outline(self.Outline)
-		return self.csFlattenOutline
+		result = _flatten_outline(self.Outline)
+		return result
 	
 @interface.implementer(ICourseOutlineCache)
 class _CourseOutlineCache(object):

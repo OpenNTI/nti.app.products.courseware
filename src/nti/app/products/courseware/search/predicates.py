@@ -38,7 +38,7 @@ class _BasePredicate(object):
 		return result
 	
 	def _is_allowed(self, ntiid, query=None, now=None):
-		result = self.cache._is_allowed(ntiid, query=query, now=now)
+		result = self.cache.is_allowed(ntiid, query=query, now=now)
 		return result
 
 	def allow(self, item, score, query=None):
