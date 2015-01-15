@@ -73,6 +73,11 @@
 	<adapter factory=".adapters._content_unit_and_user_to_course" />
 	<adapter factory=".adapters._course_content_package_to_course" />
 
+	<!-- And the course/entry instance  to content packages bundle -->
+	<adapter factory=".adapters._entry_to_content_package_bundle" />
+	<adapter factory=".adapters._course_content_to_package_bundle" />
+	<adapter factory=".adapters._legacy_course_to_content_package_bundle" />
+	
 	<!-- Allow traversing to the 'LegacyCourses' key of communities -->
 	<adapter name="LegacyCourses"
 			 for="nti.dataserver.interfaces.ICommunity"
@@ -205,35 +210,6 @@
 	<utility factory=".ntiids._EnrolledCourseSectionTopicNTIIDResolver" />
 	<utility factory=".ntiids._EnrolledCourseRootTopicNTIIDResolver" />
 
-	<!-- Content Search -->
-	<adapter factory=".adapters._entry_to_content_package_bundle" />
-	<adapter factory=".adapters._course_content_to_package_bundle" />
-	<adapter factory=".adapters._legacy_course_to_content_package_bundle" />
-
-	<subscriber factory=".content_search._ContentHitPredicate"
-				provides="nti.contentsearch.interfaces.ISearchHitPredicate"
-				for="nti.contentsearch.interfaces.IBookContent" />
-
-	<subscriber factory=".content_search._AudioContentHitPredicate"
-				provides="nti.contentsearch.interfaces.ISearchHitPredicate"
-				for="nti.contentsearch.interfaces.IAudioTranscriptContent" />
-
-	<subscriber factory=".content_search._VideoContentHitPredicate"
-				provides="nti.contentsearch.interfaces.ISearchHitPredicate"
-				for="nti.contentsearch.interfaces.IVideoTranscriptContent" />
-
-	<subscriber factory=".content_search._NTICardContentHitPredicate"
-				provides="nti.contentsearch.interfaces.ISearchHitPredicate"
-				for="nti.contentsearch.interfaces.INTICardContent" />
-
-	<subscriber factory=".content_search._CreatedContentHitPredicate"
-				provides="nti.contentsearch.interfaces.ISearchHitPredicate"
-				for="nti.dataserver.interfaces.INote" />
-
-	<subscriber factory=".content_search._CreatedContentHitPredicate"
-				provides="nti.contentsearch.interfaces.ISearchHitPredicate"
-				for="nti.dataserver.interfaces.IHighlight" />
-
 	<!-- Enrollment Options -->
 	<subscriber	factory=".enrollment.OpenEnrollmentOptionProvider"
 				provides=".interfaces.IEnrollmentOptionProvider"
@@ -249,6 +225,9 @@
 				for=".interfaces.IOpenEnrollmentOption
 					 pyramid.interfaces.IRequest" />
 
+	<!-- Content Search -->
+	<include package=".search" />
+	
 	<!-- Views -->
 	<include package=".views" />
 

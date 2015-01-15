@@ -15,6 +15,7 @@ from brownie.caching import LFUCache
 
 from zope import component
 from zope import interface
+from zope.container.contained import Contained
 
 from nti.contentlibrary.interfaces import IContentPackageLibrary
 
@@ -31,7 +32,8 @@ from nti.contentlibrary.indexed_data.interfaces import ITimelineIndexedDataConta
 from nti.contentlibrary.indexed_data.interfaces import IRelatedContentIndexedDataContainer
 
 from nti.contenttypes.courses.interfaces import ICourseInstance
-
+from nti.contenttypes.courses.interfaces import ICourseCatalogEntry
+	
 from nti.ntiids.ntiids import TYPE_OID
 from nti.ntiids.ntiids import TYPE_UUID
 from nti.ntiids.ntiids import TYPE_INTID
@@ -105,9 +107,7 @@ def _get_content_path(pacakge_paths_cache, ntiid):
 		pacakge_paths_cache[ntiid] = result
 	return result
 
-class _OutlineCacheEntry(object):
-	
-	__slots__ = ('ntiid', 'cPackagePaths', 'csFlattenOutline', 'lastSynchronized')
+class _OutlineCacheEntry(Contained):
 	
 	def __init__(self , ntiid, lastSynchronized=None):
 		self.ntiid = ntiid
@@ -167,6 +167,8 @@ def _get_context_course(query):
 	if course_id and is_valid_ntiid_string(course_id):
 		course = find_object_with_ntiid(course_id)
 		course = ICourseInstance(course, None)
+		entry = ICourseCatalogEntry(course, None)
+		course_id = getattr(entry, 'ntiid', None)
 		return course, course_id
 	return None, None
 
@@ -175,7 +177,7 @@ def _is_allowed(ntiid, query=None, now=None):
 		return True # allow by default
 
 	course, course_id = _get_context_course(query)
-	if course is None:
+	if course is None or course_id is None:
 		return True # allow by default
 
 	result = _check_against_course_outline(course_id, course, ntiid)
