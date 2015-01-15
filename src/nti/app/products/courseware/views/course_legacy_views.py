@@ -38,8 +38,6 @@ from nti.contenttypes.courses.interfaces import ICourseInstanceForCreditScopedFo
 from nti.dataserver import traversal
 from nti.dataserver import authorization as nauth
 
-from nti.dataserver.interfaces import IDataserverFolder
-
 from nti.dataserver.users import Entity
 
 from nti.dataserver.contenttypes.forums.ace import ForumACE
@@ -57,13 +55,15 @@ from ..interfaces import NTIID_TYPE_COURSE_SECTION_TOPIC
 
 from ..legacy_courses import _copy_enrollments_from_legacy_to_new
 
+from . import CourseAdminPathAdapter
+
 ## LEGACY views
 
 @view_config(route_name='objects.generic.traversal',
 			 renderer='rest',
 			 request_method='POST',
-			 context=IDataserverFolder,
-			 permission=nauth.ACT_COPPA_ADMIN, # XXX FIXME
+			 context=CourseAdminPathAdapter,
+			 permission=nauth.ACT_NTI_ADMIN,
 			 name='LegacyCourseTopicCreator')
 class CourseTopicCreationView(AbstractAuthenticatedView,UploadRequestUtilsMixin):
 	"""
@@ -413,8 +413,8 @@ class CourseTopicCreationView(AbstractAuthenticatedView,UploadRequestUtilsMixin)
 
 @view_config(route_name='objects.generic.traversal',
 			 renderer='rest',
-			 context=IDataserverFolder,
-			 permission=nauth.ACT_COPPA_ADMIN, # XXX FIXME
+			 context=CourseAdminPathAdapter,
+			 permission=nauth.ACT_NTI_ADMIN, # XXX FIXME
 			 name='LegacyCourseEnrollmentMigrator')
 class LegacyCourseEnrollmentMigrationView(AbstractAuthenticatedView):
 	"""

@@ -82,7 +82,7 @@ class _AbstractMixin(object):
 		csv_str = sio.getvalue()
 		assert_that( csv.DictReader(BytesIO(csv_str)).next()['Body 1'], is_(contents) )
 
-		res = self.testapp.post('/dataserver2/@@LegacyCourseTopicCreator',
+		res = self.testapp.post('/dataserver2/CourseAdmin/LegacyCourseTopicCreator',
 								upload_files=[('ignored', 'foo.csv', csv_str)],
 								extra_environ=admin_env)
 
@@ -137,7 +137,7 @@ class _AbstractMixin(object):
 		assert found_topic, "Need to check at least one topic for the scope"
 
 		# And again does nothing
-		res = self.testapp.post('/dataserver2/@@LegacyCourseTopicCreator',
+		res = self.testapp.post('/dataserver2/CourseAdmin/LegacyCourseTopicCreator',
 								upload_files=[('ignored', 'foo.csv', csv_str)],
 								extra_environ=admin_env)
 
@@ -314,7 +314,7 @@ class TestMigrate(ApplicationLayerTest):
 	@WithSharedApplicationMockDS(users=True,testapp=True,default_authenticate=True)
 	def test_migrate_legacy_to_new(self):
 		self.testapp.post('/dataserver2/@@SyncAllLibraries')
-		res = self.testapp.get('/dataserver2/@@LegacyCourseEnrollmentMigrator')
+		res = self.testapp.get('/dataserver2/CourseAdmin/LegacyCourseEnrollmentMigrator')
 		assert_that( res.json_body, is_(
 			[['Nothing in site', 'demo.nextthought.com'],
 			 ['Nothing in site', 'labs.symmys.com'],
