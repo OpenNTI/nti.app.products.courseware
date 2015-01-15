@@ -53,6 +53,8 @@ from nti.intid.interfaces import ObjectMissingError
 
 from nti.utils.property import CachedProperty
 
+from nti.app.products.courseware.stream_ranking import _DEFAULT_TIME_FIELD
+
 from . import VIEW_COURSE_RECURSIVE
 from . import VIEW_COURSE_RECURSIVE_BUCKET
 
@@ -66,8 +68,6 @@ LINKS = StandardExternalFields.LINKS
 # - sorting params
 # - caching (memcache?)
 # - last modified/etag support
-
-_DEFAULT_SORT_FIELD = 'lastModified'
 
 @view_config( route_name='objects.generic.traversal',
 			  context=ICourseInstance,
@@ -156,7 +156,7 @@ class CourseDashboardRecursiveStreamView(AbstractAuthenticatedView, BatchingUtil
 			return None
 
 		# None at boundaries should be ok.
-		intids_in_time_range = self._catalog[ _DEFAULT_SORT_FIELD ].apply({'between': (min_created_time, max_created_time,)})
+		intids_in_time_range = self._catalog[ _DEFAULT_TIME_FIELD ].apply({'between': (min_created_time, max_created_time,)})
 		return intids_in_time_range
 
 	def _topic_is_relevant(self, topic):
@@ -260,6 +260,11 @@ class CourseDashboardRecursiveStreamView(AbstractAuthenticatedView, BatchingUtil
 			results = catalog.family.IF.intersection( time_range_intids, results )
 		return results
 
+	def _rank_results(self, results):
+		"Given a set of results; rank them and return in sorted priority."
+		results = results.sort( reverse=True, key=lambda x: getattr(x, _DEFAULT_TIME_FIELD, 0) )
+		return results
+
 	def _get_items(self, temp_results):
 		"""
 		Given a collection of intids, return a sorted/filtered/permissioned collection of objects.
@@ -282,9 +287,8 @@ class CourseDashboardRecursiveStreamView(AbstractAuthenticatedView, BatchingUtil
 			if security_check( obj ):
 				items.append( obj )
 
-		# Filter/sort
-		items.sort( reverse=True, key=lambda x: getattr(x, _DEFAULT_SORT_FIELD, 0) )
-		return items
+		# Ra
+		return self._rank_results( items )
 
 	def __call__(self):
 		result = LocatedExternalDict()

@@ -159,7 +159,7 @@ class ILegacyCourseInstanceEnrollment(ICourseInstanceEnrollment):
 									  required=True,
 									  readonly=True,
 									  default='Open')
-	
+
 	RealEnrollmentStatus = TextLine(title="The type of enrollment (Scope)",
 									required=False,
 									readonly=True)
@@ -267,41 +267,51 @@ class IEnrollmentOption(IContained):
 	"""
 	Marker interface for a course/entry enrollment option
 	"""
-	
+
 	Name = TextLine(title="Enrollment option name", required=True)
 	Name.setTaggedValue('_ext_excluded_out', True)
-	
+
 	CatalogEntryNTIID = TextLine(title="Catalog entry NTIID", required=False)
 	CatalogEntryNTIID.setTaggedValue('_ext_excluded_out', True)
-	
+
 class IOpenEnrollmentOption(IEnrollmentOption):
-	
+
 	"""
 	Open course/entry enrollment option
 	"""
 
-	Enabled = Bool(title="If the course allows open enrollemnt", 
+	Enabled = Bool(title="If the course allows open enrollemnt",
 				   required=False, default=True)
 
 class IEnrollmentOptions(IEnumerableMapping):
-	
+
 	"""
 	Marker interface for an object that hold :class:`.IEnrollmentOption` objects
 	for a course.
 	"""
-	
+
 	def append(option):
 		"""
 		add an enrollment option
 		"""
 
 class IEnrollmentOptionProvider(interface.Interface):
-	
+
 	"""
 	subscriber for a course/entry enrollment options
 	"""
-	
+
 	def iter_options():
 		"""
 		return a iterable of :class:`.IEnrollmentOption` for the specified course
+		"""
+
+class IRanker(interface.Interface):
+	"""
+	Knows how to rank a disparate set of items.
+	"""
+
+	def rank(items):
+		"""
+		Returns the modified set of items, ranked according to an underlying algorithm.
 		"""
