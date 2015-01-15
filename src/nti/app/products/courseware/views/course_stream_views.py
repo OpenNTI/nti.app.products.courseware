@@ -262,7 +262,7 @@ class CourseDashboardRecursiveStreamView(AbstractAuthenticatedView, BatchingUtil
 
 	def _rank_results(self, results):
 		"Given a set of results; rank them and return in sorted priority."
-		results = results.sort( reverse=True, key=lambda x: getattr(x, _DEFAULT_TIME_FIELD, 0) )
+		results.sort( reverse=True, key=lambda x: getattr(x, _DEFAULT_TIME_FIELD, 0) )
 		return results
 
 	def _get_items(self, temp_results):
@@ -287,7 +287,7 @@ class CourseDashboardRecursiveStreamView(AbstractAuthenticatedView, BatchingUtil
 			if security_check( obj ):
 				items.append( obj )
 
-		# Ra
+		# Rank
 		return self._rank_results( items )
 
 	def __call__(self):
