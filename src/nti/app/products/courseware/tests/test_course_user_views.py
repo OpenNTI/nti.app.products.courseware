@@ -34,7 +34,7 @@ class TestCourseUserViews(ApplicationLayerTest):
 			
 	@WithSharedApplicationMockDS(testapp=True, users=True)
 	def test_classmates(self):
-		enroll_url = '/dataserver2/@@AdminUserCourseEnroll'
+		enroll_url = '/dataserver2/CourseAdmin/UserCourseEnroll'
 		course_href = None
 		
 		students = ("Ichigo", "Inoue", "Keigo", "Ishida")

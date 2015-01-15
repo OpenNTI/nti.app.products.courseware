@@ -1,42 +1,34 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-"""
-
-
-.. $Id$
-"""
 
 from __future__ import print_function, unicode_literals, absolute_import, division
 __docformat__ = "restructuredtext en"
 
-logger = __import__('logging').getLogger(__name__)
+# disable: accessing protected members, too many methods
+# pylint: disable=W0212,R0904
 
-#disable: accessing protected members, too many methods
-#pylint: disable=W0212,R0904
+from hamcrest import is_
+from hamcrest import has_length
+from hamcrest import assert_that
+from hamcrest import has_property
 
 from zope import component
 from zope.intid.interfaces import IIntIds
 
-from hamcrest import assert_that
-from hamcrest import is_
-from hamcrest import has_length
-from hamcrest import has_property
+from nti.app.products.courseware.activity import _DefaultCourseActivity
+from nti.app.products.courseware.interfaces import ICourseInstanceActivity
 
-from nti.testing.time import time_monotonically_increases
 from nti.testing.matchers import is_empty
 from nti.testing.matchers import validly_provides
+from nti.testing.time import time_monotonically_increases
 
 from nti.dataserver.tests.mock_dataserver import WithMockDSTrans
-
-from ..activity import _DefaultCourseActivity
-from ..interfaces import ICourseInstanceActivity
 
 from nti.app.testing.application_webtest import ApplicationLayerTest
 
 class TestActivity(ApplicationLayerTest):
 	# Note: we don't really need everything in this layer, it's just
 	# faster to reuse it
-
 	@WithMockDSTrans
 	@time_monotonically_increases
 	def test_activity(self):

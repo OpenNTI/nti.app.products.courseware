@@ -60,7 +60,6 @@ class TestApplicationCatalogFromContent(ApplicationLayerTest):
 
 		lib = component.getUtility(IContentPackageLibrary)
 
-
 		# This one has a <info> tag
 		assert_that( lib.pathToNTIID('tag:nextthought.com,2011-10:OU-HTML-ENGR1510_Intro_to_Water.engr_1510_901_introduction_to_water'),
 					 is_not( none() ) )

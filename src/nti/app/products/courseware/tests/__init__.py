@@ -38,7 +38,6 @@ def publish_ou_course_entries():
 		del lib.contentPackages
 	except AttributeError:
 		pass
-
 	lib.syncContentPackages()
 
 def _do_then_enumerate_library(do, sync_libs=False):
