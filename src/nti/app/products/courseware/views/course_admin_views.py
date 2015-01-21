@@ -336,6 +336,8 @@ class CourseRolesView(AbstractAuthenticatedView,
 		response.content_disposition = b'attachment; filename="CourseRoles.csv"'
 		return response
 
+from nti.dataserver.interfaces import IUsernameSubstitutionPolicy
+
 @view_config(route_name='objects.generic.traversal',
 			 renderer='rest',
 			 request_method='GET',
@@ -346,12 +348,8 @@ class CourseEnrollmentsView(AbstractAuthenticatedView):
 
 	@Lazy
 	def _substituter(self):
-		try:
-			from nti.app.products.gradebook.interfaces import IUsernameSortSubstitutionPolicy
-			return component.queryUtility(IUsernameSortSubstitutionPolicy)
-		except ImportError:
-			pass
-	
+		return component.queryUtility(IUsernameSubstitutionPolicy)
+		
 	def _replace(self, username):
 		substituter = self._substituter
 		if substituter is None:
