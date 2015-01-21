@@ -41,7 +41,9 @@ from nti.dataserver import authorization as nauth
 from nti.dataserver.interfaces import IUser
 from nti.dataserver.links import Link
 
+from nti.dataserver.metadata_index import IX_CREATOR
 from nti.dataserver.metadata_index import IX_TOPICS
+from nti.dataserver.metadata_index import TP_DELETED_PLACEHOLDER
 from nti.dataserver.metadata_index import TP_TOP_LEVEL_CONTENT
 from nti.dataserver.metadata_index import CATALOG_NAME as METADATA_CATALOG_NAME
 
@@ -194,7 +196,7 @@ class CourseDashboardRecursiveStreamView(AbstractAuthenticatedView, BatchingUtil
 		toplevel_comment_intids = toplevel_intids_extent.intersection( comment_intids )
 
 		result_intids = [toplevel_comment_intids, topic_intids]
-		result_intids = catalog.family.IF.multiunion(result_intids)
+		result_intids = catalog.family.IF.multiunion( result_intids )
 
 		return result_intids
 
@@ -245,9 +247,18 @@ class CourseDashboardRecursiveStreamView(AbstractAuthenticatedView, BatchingUtil
 
 	def _do_get_intids(self):
 		"Return all 'relevant' intids for this course."
+		catalog = self._catalog
 		top_level_results = self._get_top_level_board_objects()
 		ugd_results = self._get_course_ugd()
-		relevant_intids = self._catalog.family.IF.multiunion( [ugd_results, top_level_results] )
+		relevant_intids = catalog.family.IF.multiunion( [ugd_results, top_level_results] )
+
+		# Exclude things I created
+		created_by_me = self._catalog[IX_CREATOR].apply({'any_of': (self.remoteUser.username,)})
+		relevant_intids = catalog.family.IF.difference( relevant_intids, created_by_me )
+
+		# Exclude deleted items
+		deleted_intids_extent = catalog[IX_TOPICS][TP_DELETED_PLACEHOLDER].getExtent()
+		relevant_intids = relevant_intids - deleted_intids_extent
 		return relevant_intids
 
 	def _get_intids(self):
