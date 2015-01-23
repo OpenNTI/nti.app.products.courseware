@@ -22,6 +22,7 @@ from nti.contenttypes.courses.interfaces import ICourseInstance
 from nti.contenttypes.courses.interfaces import ICourseSubInstance
 from nti.contenttypes.courses.interfaces import ICourseCatalogEntry
 from nti.contenttypes.courses.interfaces import IPrincipalEnrollments
+from nti.contenttypes.courses.interfaces import INonPublicCourseInstance
 
 from nti.dataserver.contenttypes.forums.ntiids import resolve_ntiid_in_board
 
@@ -98,7 +99,8 @@ class _EnrolledCourseSectionTopicNTIIDResolver(object):
 			result = None
 			# First, check section if we do not force them to
 			# use the parent.
-			if self.allow_section_match:
+			if 	self.allow_section_match or \
+				INonPublicCourseInstance.providedBy(main_course):
 				result = self._find_in_course(subinstance, ntiid)
 
 			# Check main course if we need to.
