@@ -483,10 +483,10 @@ from pyramid.threadlocal import get_current_request
 
 from nti.app.externalization.view_mixins import ModeledContentUploadRequestUtilsMixin
 
-from nti.dataserver.links import Link
+from nti.common.time import time_to_64bit_int
+from nti.common.time import bit64_int_to_time
 
-from nti.zodb.containers import time_to_64bit_int
-from nti.zodb.containers import bit64_int_to_time
+from nti.dataserver.links import Link
 
 LINKS = StandardExternalFields.LINKS
 
