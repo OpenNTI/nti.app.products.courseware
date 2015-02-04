@@ -12,6 +12,8 @@ logger = __import__('logging').getLogger(__name__)
 from zope import component
 from zope import interface
 
+from nti.common.property import Lazy
+
 from nti.contentsearch.interfaces import IBookContent
 from nti.contentsearch.interfaces import INTICardContent
 from nti.contentsearch.interfaces import ISearchHitPredicate
@@ -21,8 +23,6 @@ from nti.contentsearch.interfaces import IVideoTranscriptContent
 
 from nti.ntiids.ntiids import TYPE_OID
 from nti.ntiids.ntiids import is_ntiid_of_types
-
-from nti.utils.property import Lazy
 
 from .interfaces import ICourseOutlineCache
 

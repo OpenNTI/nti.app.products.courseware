@@ -10,7 +10,6 @@ the following:
 
 * Enrollment status is managed via a shop (store) purchasable
 
-
 .. $Id$
 """
 
@@ -37,6 +36,8 @@ from persistent import Persistent
 
 from nti.contentlibrary.interfaces import IContentPackageLibrary
 
+from nti.common.property import CachedProperty
+
 from nti.contenttypes.courses.courses import CourseInstance
 from nti.contenttypes.courses.interfaces import ICourseCatalog
 from nti.contenttypes.courses.interfaces import ICourseInstance
@@ -52,16 +53,14 @@ from nti.dataserver.users.interfaces import IFriendlyNamed
 from nti.dataserver.interfaces import ICommunity
 from nti.dataserver.interfaces import IUseNTIIDAsExternalUsername
 
-from nti.wref.interfaces import IWeakRef
-
-from nti.utils.property import CachedProperty
-
 from nti.externalization.externalization import to_external_object
 
 from nti.ntiids.ntiids import make_ntiid
 from nti.ntiids.ntiids import get_provider
 
 from nti.schema.field import TextLine
+
+from nti.wref.interfaces import IWeakRef
 
 from .interfaces import ICourseCatalogLegacyContentEntry
 from .interfaces import ILegacyCommunityBasedCourseInstance

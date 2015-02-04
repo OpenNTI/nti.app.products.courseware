@@ -27,27 +27,27 @@ does_not = is_not
 from zope import component
 from zope import lifecycleevent
 
-from nti.appserver.interfaces import IUserService
 from nti.appserver.interfaces import ICollection
+from nti.appserver.interfaces import IUserService
 
-from nti.app.products.courseware import VIEW_COURSE_RECURSIVE,\
-	VIEW_COURSE_RECURSIVE_BUCKET
+from nti.app.products.courseware import VIEW_COURSE_RECURSIVE
+from nti.app.products.courseware import VIEW_COURSE_RECURSIVE_BUCKET
 
 from nti.app.products.courseware.interfaces import ICoursesWorkspace
 
 from nti.dataserver import traversal
 
-from nti.app.testing.application_webtest import ApplicationLayerTest
-from nti.app.testing.decorators import WithSharedApplicationMockDS
-
 from nti.dataserver.tests import mock_dataserver
 
-from nti.testing.matchers import is_empty
-from nti.testing.matchers import verifiably_provides
+from nti.app.testing.decorators import WithSharedApplicationMockDS
+from nti.app.testing.application_webtest import ApplicationLayerTest
 
 from nti.app.products.courseware.tests import LegacyInstructedCourseApplicationTestLayer
 from nti.app.products.courseware.tests import RestrictedInstructedCourseApplicationTestLayer
 from nti.app.products.courseware.tests import PersistentInstructedCourseApplicationTestLayer
+
+from nti.testing.matchers import is_empty
+from nti.testing.matchers import verifiably_provides
 
 class TestWorkspace(ApplicationLayerTest):
 

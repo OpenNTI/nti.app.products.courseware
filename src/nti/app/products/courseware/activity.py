@@ -24,15 +24,15 @@ from BTrees.Length import Length
 
 from persistent import Persistent
 
+from nti.common.property import Lazy
+from nti.common.property import CachedProperty
+
+from nti.common.time import time_to_64bit_int
+from nti.common.time import bit64_int_to_time
+
 from nti.contenttypes.courses.interfaces import ICourseInstance
 
 from nti.dataserver.interfaces import ACE_DENY_ALL
-
-from nti.utils.property import Lazy
-from nti.utils.property import CachedProperty
-
-from nti.zodb.containers import time_to_64bit_int
-from nti.zodb.containers import bit64_int_to_time
 
 from .interfaces import ICourseInstanceActivity
 

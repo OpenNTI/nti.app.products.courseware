@@ -34,12 +34,15 @@ from nti.app.externalization.view_mixins import BatchingUtilsMixin
 
 from nti.appserver.pyramid_authorization import is_readable
 
-from nti.contenttypes.courses.interfaces import	ICourseSubInstance
+from nti.common.property import CachedProperty
+
 from nti.contenttypes.courses.interfaces import ICourseInstance
+from nti.contenttypes.courses.interfaces import	ICourseSubInstance
+
+from nti.dataserver.links import Link
+from nti.dataserver.interfaces import IUser
 
 from nti.dataserver import authorization as nauth
-from nti.dataserver.interfaces import IUser
-from nti.dataserver.links import Link
 
 from nti.dataserver.metadata_index import IX_CREATOR
 from nti.dataserver.metadata_index import IX_TOPICS
@@ -53,9 +56,7 @@ from nti.externalization.interfaces import StandardExternalFields
 
 from nti.intid.interfaces import ObjectMissingError
 
-from nti.utils.property import CachedProperty
-
-from nti.app.products.courseware.stream_ranking import _DEFAULT_TIME_FIELD
+from ..stream_ranking import _DEFAULT_TIME_FIELD
 
 from . import VIEW_COURSE_RECURSIVE
 from . import VIEW_COURSE_RECURSIVE_BUCKET

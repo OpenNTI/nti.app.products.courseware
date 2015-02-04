@@ -18,6 +18,8 @@ from zope import interface
 from zope.container.contained import Contained
 from zope.traversing.interfaces import IEtcNamespace
 
+from nti.common.property import CachedProperty
+
 from nti.contentlibrary.interfaces import IContentPackageLibrary
 
 from nti.contentlibrary.indexed_data.interfaces import IAudioIndexedDataContainer
@@ -33,8 +35,6 @@ from nti.ntiids.ntiids import TYPE_UUID
 from nti.ntiids.ntiids import TYPE_INTID
 from nti.ntiids.ntiids import is_ntiid_of_types
 from nti.ntiids.ntiids import find_object_with_ntiid
-
-from nti.utils.property import CachedProperty
 
 from .interfaces import ICourseOutlineCache
 

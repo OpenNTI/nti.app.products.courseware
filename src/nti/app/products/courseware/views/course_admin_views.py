@@ -31,6 +31,9 @@ from nti.app.externalization.view_mixins import ModeledContentUploadRequestUtils
 
 from nti.appserver.interfaces import IUserService
 
+from nti.common.property import Lazy
+from nti.common.maps import CaseInsensitiveDict
+
 from nti.contenttypes.courses.interfaces import ICourseCatalog
 from nti.contenttypes.courses.interfaces import ICourseInstance
 from nti.contenttypes.courses.interfaces import ICourseSubInstance
@@ -51,9 +54,6 @@ from nti.externalization.interfaces import LocatedExternalDict
 from nti.externalization.interfaces import StandardExternalFields 
 
 from nti.ntiids.ntiids import find_object_with_ntiid
-
-from nti.utils.property import Lazy
-from nti.utils.maps import CaseInsensitiveDict
 
 from ..utils import drop_any_other_enrollments
 

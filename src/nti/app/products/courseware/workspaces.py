@@ -21,6 +21,9 @@ from zope.location.traversing import LocationPhysicallyLocatable
 from nti.appserver.interfaces import IUserService
 from nti.appserver.interfaces import IContainerCollection
 
+from nti.common.property import Lazy
+from nti.common.property import alias
+
 from nti.contenttypes.courses.interfaces import RID_INSTRUCTOR
 
 from nti.contenttypes.courses.interfaces import ES_CREDIT
@@ -37,9 +40,6 @@ from nti.dataserver.interfaces import IUser
 from nti.dataserver.authorization import ACT_DELETE
 from nti.dataserver.authorization_acl import ace_allowing
 from nti.dataserver.authorization_acl import acl_from_aces
-
-from nti.utils.property import Lazy
-from nti.utils.property import alias
 
 from nti.schema.field import SchemaConfigured
 from nti.schema.fieldproperty import createDirectFieldProperties

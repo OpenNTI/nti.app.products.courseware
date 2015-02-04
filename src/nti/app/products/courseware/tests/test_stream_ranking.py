@@ -1,37 +1,30 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-"""
-
-
-.. $Id$
-"""
 
 from __future__ import print_function, unicode_literals, absolute_import, division
 __docformat__ = "restructuredtext en"
 
-logger = __import__('logging').getLogger(__name__)
+# disable: accessing protected members, too many methods
+# pylint: disable=W0212,R0904
 
-#disable: accessing protected members, too many methods
-#pylint: disable=W0212,R0904
+from hamcrest import contains
+from hamcrest import has_length
+from hamcrest import assert_that
 
-import fudge
 import time
-
+import fudge
 from unittest import TestCase
 
-from hamcrest import assert_that
-from hamcrest import has_length
-from hamcrest import contains
+from nti.app.products.courseware.interfaces import IRanker
+
+from nti.app.products.courseware.stream_ranking import _DEFAULT_TIME_FIELD
+
+from nti.app.products.courseware.stream_ranking import LastModifiedRanker
+from nti.app.products.courseware.stream_ranking import StreamConfidenceRanker
 
 from nti.testing.time import time_monotonically_increases
 from nti.testing.matchers import is_empty
 from nti.testing.matchers import validly_provides
-
-from nti.app.products.courseware.interfaces import IRanker
-
-from nti.app.products.courseware.stream_ranking import LastModifiedRanker
-from nti.app.products.courseware.stream_ranking import StreamConfidenceRanker
-from nti.app.products.courseware.stream_ranking import _DEFAULT_TIME_FIELD
 
 class Object(object):
 	def __str__(self):

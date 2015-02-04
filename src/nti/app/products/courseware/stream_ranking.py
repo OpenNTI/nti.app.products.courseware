@@ -13,10 +13,10 @@ logger = __import__('logging').getLogger(__name__)
 
 from zope import interface
 
-from nti.app.products.courseware.interfaces import IRanker
-
 from nti.dataserver import rating
 from nti.dataserver import liking
+
+from .interfaces import IRanker
 
 _DEFAULT_TIME_FIELD = 'lastModified'
 

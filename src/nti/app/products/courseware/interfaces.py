@@ -38,29 +38,6 @@ from nti.schema.field import Choice
 from nti.schema.field import Object
 from nti.schema.field import ValidTextLine as TextLine
 
-import zope.deferredimport
-zope.deferredimport.initialize()
-zope.deferredimport.deprecatedFrom(
-	"Moved to nti.contenttypes.courses",
-	"nti.contenttypes.courses.interfaces",
-	"ICourseCatalogEntry",
-	"ICourseCatalogInstructorInfo",
-	"ICourseInstanceAvailableEvent",
-	"CourseInstanceAvailableEventg")
-zope.deferredimport.deprecatedFrom(
-	"Moved to nti.contenttypes.courses",
-	"nti.contenttypes.courses.legacy_catalog",
-	"ICourseCatalogInstructorLegacyInfo",
-	"ICourseCreditLegacyInfo",
-	'ICourseCatalogLegacyEntry')
-
-zope.deferredimport.deprecated(
-	"Moved to nti.contenttypes.courses",
-	# XXX: Note the aliasing: This is somewhat dangerous if we
-	# attempt to register things by this interface!
-	ICourseCatalog="nti.contenttypes.courses.interfaces:IWritableCourseCatalog")
-
-
 ACT_VIEW_ROSTER = Permission('nti.actions.courseware.view_roster')
 ACT_VIEW_ACTIVITY = Permission('nti.actions.courseware.view_activity')
 
@@ -315,3 +292,25 @@ class IRanker(interface.Interface):
 		"""
 		Returns the modified set of items, ranked according to an underlying algorithm.
 		"""
+
+import zope.deferredimport
+zope.deferredimport.initialize()
+zope.deferredimport.deprecatedFrom(
+	"Moved to nti.contenttypes.courses",
+	"nti.contenttypes.courses.interfaces",
+	"ICourseCatalogEntry",
+	"ICourseCatalogInstructorInfo",
+	"ICourseInstanceAvailableEvent",
+	"CourseInstanceAvailableEventg")
+zope.deferredimport.deprecatedFrom(
+	"Moved to nti.contenttypes.courses",
+	"nti.contenttypes.courses.legacy_catalog",
+	"ICourseCatalogInstructorLegacyInfo",
+	"ICourseCreditLegacyInfo",
+	'ICourseCatalogLegacyEntry')
+
+zope.deferredimport.deprecated(
+	"Moved to nti.contenttypes.courses",
+	# XXX: Note the aliasing: This is somewhat dangerous if we
+	# attempt to register things by this interface!
+	ICourseCatalog="nti.contenttypes.courses.interfaces:IWritableCourseCatalog")

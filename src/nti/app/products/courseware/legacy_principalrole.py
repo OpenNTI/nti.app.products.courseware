@@ -16,12 +16,12 @@ from zope import component
 from zope import interface
 from zope.securitypolicy.interfaces import IPrincipalRoleMap
 
+from nti.common.property import CachedProperty
+
 from nti.contenttypes.courses.interfaces import RID_TA
 from nti.contenttypes.courses.interfaces import RID_INSTRUCTOR
 from nti.contenttypes.courses.interfaces import ICourseCatalogEntry
 from nti.contenttypes.courses.principalrole import CourseInstancePrincipalRoleMap
-
-from nti.utils.property import CachedProperty
 
 from .interfaces import ILegacyCommunityBasedCourseInstance
 
