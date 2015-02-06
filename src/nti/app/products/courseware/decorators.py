@@ -246,3 +246,21 @@ class _CourseClassmatesLinkDecorator(AbstractAuthenticatedRequestAwareDecorator)
 		link.__name__ = ''
 		link.__parent__ = context
 		_links.append(link)
+
+from nti.dataserver.interfaces import IContained
+
+from nti.ntiids.ntiids import find_object_with_ntiid
+
+@component.adapter(IContained)
+@interface.implementer(IExternalMappingDecorator)
+class _ContainedCatalogEntryDecorator(AbstractAuthenticatedRequestAwareDecorator):
+
+	def _predicate(self, context, result):
+		return bool(self._is_authenticated)
+	
+	def _do_decorate_external(self, context, result):
+		containerId = context.containerId
+		container = find_object_with_ntiid(containerId) if containerId else None
+		entry = ICourseCatalogEntry(container, None)
+		if entry is not None:
+			result['CatalogEntryNTIID'] = entry.ntiid
