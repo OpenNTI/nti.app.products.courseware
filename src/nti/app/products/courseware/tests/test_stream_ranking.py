@@ -77,11 +77,11 @@ class TestStreamRanking( TestCase ):
 
 		# obj0 is totally empty
 		# obj1 small upvotes but good ratio
-		# obj2 upvotes but no views
+		# obj2 no upvotes
 		# obj3 lots of upvotes to views
 		fake_like = mock_like_count.is_callable().returns( 0 )
 		fake_like.next_call().returns( 0 )
-		fake_like.next_call().returns( 1 )
+		fake_like.next_call().returns( 0 )
 		fake_like.next_call().returns( 5 )
 
 		fake_rate = mock_rate_count.is_callable().returns( 0 )
@@ -91,7 +91,7 @@ class TestStreamRanking( TestCase ):
 
 		fake_view = mock_view_count.is_callable().returns( 0 )
 		fake_view.next_call().returns( 1 )
-		fake_view.next_call().returns( 0 )
+		fake_view.next_call().returns( 10 )
 		fake_view.next_call().returns( 10 )
 
 		ranker = StreamConfidenceRanker()
