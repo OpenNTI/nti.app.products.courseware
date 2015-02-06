@@ -293,6 +293,12 @@ class IRanker(interface.Interface):
 		Returns the modified set of items, ranked according to an underlying algorithm.
 		"""
 
+class IViewCount(interface.Interface):
+	"""
+	The count of how many times a user has viewed a particular item.
+	"""
+
+
 import zope.deferredimport
 zope.deferredimport.initialize()
 zope.deferredimport.deprecatedFrom(
