@@ -274,6 +274,7 @@ class CourseDashboardRecursiveStreamView(AbstractAuthenticatedView, BatchingUtil
 
 	def _rank_results(self, results):
 		"Given a set of results; rank them and return in sorted priority."
+		# TODO Use ranker
 		results.sort( reverse=True, key=lambda x: getattr(x, _DEFAULT_TIME_FIELD, 0) )
 		return results
 

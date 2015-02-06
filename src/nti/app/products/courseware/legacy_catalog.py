@@ -137,7 +137,7 @@ def _content_package_registered( package, event ):
 			[unicode(x, 'utf-8')
 			 for x in package._v_toc_node.xpath('//course/scope[@type="public"]/entry/text()')]
 
-	# Now, mare this (global, non-persistent) content package as being associated
+	# Now, mark this (global, non-persistent) content package as being associated
 	# directly with an active course/catalog
 	interface.alsoProvides(package, ILegacyCourseConflatedContentPackageUsedAsCourse)
 	# These shouldn't ever be persisted, but just in case...

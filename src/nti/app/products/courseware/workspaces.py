@@ -164,7 +164,7 @@ class AllCoursesCollection(Contained):
 			ntiid = ICourseCatalogEntry(course).ntiid
 			if ntiid not in my_enrollments:
 				container.pop( ntiid, None )
-		
+
 	def __getitem__(self, key):
 		"""
 		We can be traversed to the CourseCatalog.
@@ -309,8 +309,8 @@ from nti.externalization.oids import to_external_ntiid_oid
 @interface.implementer(ILegacyCourseInstanceEnrollment)
 @component.adapter(ICourseInstanceEnrollmentRecord)
 class DefaultCourseInstanceEnrollment(CourseInstanceEnrollment):
-	
-	__external_class_name__ = 'CourseInstanceEnrollment'	
+
+	__external_class_name__ = 'CourseInstanceEnrollment'
 
 	def __init__(self, record, user=None):
 		CourseInstanceEnrollment.__init__(self, record.CourseInstance, record.Principal)
@@ -326,7 +326,7 @@ class DefaultCourseInstanceEnrollment(CourseInstanceEnrollment):
 	def LegacyEnrollmentStatus(self):
 		## CS/JZ/JAM: For legacy purposes we need to always return either Open or ForCredit
 		## See interface ILegacyCourseInstanceEnrollment
-		scope = self._record.Scope 
+		scope = self._record.Scope
 		if scope in (ES_CREDIT, ES_CREDIT_DEGREE, ES_CREDIT_NONDEGREE):
 			return ES_CREDIT
 		return 'Open'

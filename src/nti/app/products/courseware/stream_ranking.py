@@ -17,6 +17,7 @@ from nti.dataserver import rating
 from nti.dataserver import liking
 
 from .interfaces import IRanker
+from .interfaces import IViewCount
 
 _DEFAULT_TIME_FIELD = 'lastModified'
 
@@ -43,6 +44,10 @@ def _get_ratings( obj ):
 def _get_time_field( obj ):
 	return getattr( obj, _DEFAULT_TIME_FIELD, 0 )
 
+def _get_view_count( obj ):
+	view_count = IViewCount( obj, None )
+	return view_count
+
 @interface.implementer( IRanker )
 class StreamConfidenceRanker( object ):
 	"""
@@ -52,30 +57,34 @@ class StreamConfidenceRanker( object ):
 	Since we do not currently have downvotes, we modify this to rank based
 	on the upvotes versus total number of votes on our items.
 
-	http://amix.dk/blog/post/19588
+	See: http://amix.dk/blog/post/19588
 	"""
-
-# 	def _obj_ranking(self, obj):
-# 		likes, favorites = get_ratings( obj )
-# 		total_count = likes + favorites
-#
-# 		if total_count == 0:
-# 			return 0
-#
-# 		z = 1.0 #1.0 = 85%, 1.6 = 95%
-# 		phat = float( likes + favorites ) / total_count
-# 		return sqrt(phat+z*z/(2*total_count)-z*((phat*(1-phat)+z*z/(4*total_count))/total_count)) \
-# 					/(1+z*z/total_count)
 
 	def _obj_ranking(self, obj):
 		"""
-		First rank based on total upvotes. Secondarily rank
-		based on time.
+		We rank on the ratio of upvotes to views, secondarily
+		on last modified.
 		"""
 		likes, favorites = _get_ratings( obj )
-		total_count = likes + favorites
+		upvotes = likes + favorites
 		obj_time = _get_time_field( obj )
-		return (total_count, obj_time)
+
+		# This algorithm does not work if we have objects without
+		# view counts. If so, those objects will end up
+		# on the bottom.
+		view_count = _get_view_count( obj )
+
+		# We should have a max of 2.0 (two possible upvotes per view)
+		score = ( upvotes * 1.0 ) / view_count if view_count else 0
+
+		# The actual algorithm logarithmically adjusts the upvotes
+		# (log10 makes votes 11-100 count as much as votes 1-10). For
+		# our current scale, the pure ratio may be enough.
+
+		# TODO We could move anything without views to the top of the list.
+		# It would either get views and drop, or it is worthless. So if we
+		# do so, we should have some sort of aging component.
+		return (score, obj_time)
 
 	def rank(self, items):
 		if items is None:
