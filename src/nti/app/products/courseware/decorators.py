@@ -260,7 +260,11 @@ class _ContainedCatalogEntryDecorator(AbstractAuthenticatedRequestAwareDecorator
 	
 	def _do_decorate_external(self, context, result):
 		containerId = context.containerId
-		container = find_object_with_ntiid(containerId) if containerId else None
-		entry = ICourseCatalogEntry(container, None)
-		if entry is not None:
-			result['CatalogEntryNTIID'] = entry.ntiid
+		entry = container = find_object_with_ntiid(containerId) if containerId else None
+		for iface in (ICourseInstance, ICourseCatalogEntry):
+			entry = iface(container, None)
+			if entry is not None:
+				entry = ICourseCatalogEntry(entry, None)
+				if entry is not None:
+					result['CatalogEntryNTIID'] = entry.ntiid
+				break
