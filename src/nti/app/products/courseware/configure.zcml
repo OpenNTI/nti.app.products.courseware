@@ -178,13 +178,13 @@
 
 	<subscriber factory=".decorators._CourseOutlineContentNodeLinkDecorator"
 				provides="nti.externalization.interfaces.IExternalMappingDecorator" />
-
-	<configure zcml:condition="have devmode">
-		<subscriber factory=".decorators._ContainedCatalogEntryDecorator"
+	
+	<subscriber factory=".decorators._ContainedCatalogEntryDecorator"
 				provides="nti.externalization.interfaces.IExternalMappingDecorator"
 				for="nti.dataserver.interfaces.IContained
 					pyramid.interfaces.IRequest" />
-
+					
+	<configure zcml:condition="have devmode">	
 		<subscriber factory=".decorators._CourseClassmatesLinkDecorator"
 					provides="nti.externalization.interfaces.IExternalMappingDecorator" 
 					for=".interfaces.ICourseInstanceEnrollment 
