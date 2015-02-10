@@ -25,6 +25,7 @@ from nti.contentlibrary.interfaces import IContentPackageLibrary
 from nti.contentlibrary.indexed_data.interfaces import IAudioIndexedDataContainer
 from nti.contentlibrary.indexed_data.interfaces import IVideoIndexedDataContainer
 from nti.contentlibrary.indexed_data.interfaces import ITimelineIndexedDataContainer
+from nti.contentlibrary.indexed_data.interfaces import ISlideDeckIndexedDataContainer
 from nti.contentlibrary.indexed_data.interfaces import IRelatedContentIndexedDataContainer
 
 from nti.contenttypes.courses.interfaces import ICourseInstance
@@ -41,6 +42,7 @@ from .interfaces import ICourseOutlineCache
 ZERO_DATE = datetime.utcfromtimestamp(0)
 
 CONTAINER_IFACES = (IRelatedContentIndexedDataContainer,
+					ISlideDeckIndexedDataContainer,
 					ITimelineIndexedDataContainer,
 					IVideoIndexedDataContainer,
 					IAudioIndexedDataContainer)
