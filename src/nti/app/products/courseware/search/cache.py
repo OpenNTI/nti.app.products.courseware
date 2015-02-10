@@ -90,7 +90,9 @@ def _flatten_outline(outline):
 		# parse children
 		for child in node.values():
 			_recur(child, result)
-	_recur(outline, result)
+	
+	if outline is not None:
+		_recur(outline, result)
 	return result
 
 def _get_content_path(pacakge_paths_cache, ntiid):
@@ -128,8 +130,8 @@ class _OutlineCacheEntry(Contained):
 	@property
 	def Outline(self):
 		context = find_object_with_ntiid(self.ntiid)
-		course = ICourseInstance(context)
-		return course.Outline
+		course = ICourseInstance(context, None)
+		return course.Outline if course is not None else None
 		
 	@CachedProperty('lastSynchronized')
 	def csPackagePaths(self):
