@@ -57,6 +57,7 @@ from nti.externalization.interfaces import StandardExternalFields
 from nti.intid.interfaces import ObjectMissingError
 
 from ..stream_ranking import _DEFAULT_TIME_FIELD
+from ..stream_ranking import StreamConfidenceRanker
 
 from . import VIEW_COURSE_RECURSIVE
 from . import VIEW_COURSE_RECURSIVE_BUCKET
@@ -111,6 +112,7 @@ class CourseDashboardRecursiveStreamView(AbstractAuthenticatedView, BatchingUtil
 		self.course = context
 		self.request = request
 		self._set_params()
+		self.ranker = StreamConfidenceRanker()
 
 	def _batch_params(self):
 		"Sets our batch params."
@@ -274,9 +276,7 @@ class CourseDashboardRecursiveStreamView(AbstractAuthenticatedView, BatchingUtil
 
 	def _rank_results(self, results):
 		"Given a set of results; rank them and return in sorted priority."
-		# TODO Use ranker
-		results.sort( reverse=True, key=lambda x: getattr(x, _DEFAULT_TIME_FIELD, 0) )
-		return results
+		return self.ranker.rank( results )
 
 	def _get_items(self, temp_results):
 		"""

@@ -75,7 +75,7 @@ class StreamConfidenceRanker( object ):
 		view_count = _get_view_count( obj )
 
 		# We should have a max of 2.0 (two possible upvotes per view)
-		score = ( upvotes * 1.0 ) / view_count if view_count else 0
+		score = ( upvotes * 1.0 ) / view_count if view_count else view_count
 
 		# The actual algorithm logarithmically adjusts the upvotes
 		# (log10 makes votes 11-100 count as much as votes 1-10). For
