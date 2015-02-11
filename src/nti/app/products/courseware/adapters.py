@@ -9,6 +9,7 @@ __docformat__ = "restructuredtext en"
 
 logger = __import__('logging').getLogger(__name__)
 
+import zope.intid
 from zope import interface
 from zope import component
 
@@ -36,8 +37,6 @@ def _entry_to_content_package_bundle(entry):
     course = ICourseInstance(entry, None)
     return IContentPackageBundle(course, None)
 
-from ZODB.POSException import ConnectionStateError
-
 from pyramid.traversal import find_interface
 
 from nti.contentlibrary.interfaces import IContentUnit
@@ -61,22 +60,17 @@ def _course_content_package_to_course(package):
     # registration, though could if we used a plain
     # ConflatedContentPackage), so it should be safe to cache this on
     # the package. Be extra careful though, just in case.
-
     cache_name = '_v_course_content_package_to_course'
-    course = getattr(package, cache_name, cache_name)
-    if course is not cache_name:
-        try:
-            course._p_activate() #pylint:disable=W0212
-        except ConnectionStateError:
-            course = cache_name
-            delattr(package, cache_name)
-        except AttributeError:
-            pass
+    course_intid = getattr(package, cache_name, cache_name)
+    course = None
+    intids = component.getUtility( zope.intid.IIntIds )
 
-    if course is not cache_name:
+    if course_intid is not cache_name:
+        course = intids.queryObject( course_intid )
+
+    if course is not None:
         return course
 
-    course = None
     # We go via the defined adapter from the catalog entry,
     # which we should have directly cached
     try:
@@ -87,8 +81,9 @@ def _course_content_package_to_course(package):
         entry = None
 
     course = ICourseInstance(entry, None)
+    course_intid = intids.queryId( course, None )
 
-    setattr(package, cache_name, course)
+    setattr(package, cache_name, course_intid)
     return course
 
 def _content_unit_to_courses(unit, include_sub_instances=True):
