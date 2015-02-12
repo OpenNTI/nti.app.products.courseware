@@ -16,6 +16,7 @@ from zope import interface
 from zope.traversing.interfaces import IPathAdapter
 
 from pyramid.view import view_config
+from pyramid.view import view_defaults
 from pyramid.interfaces import IRequest
 from pyramid import httpexceptions as hexc
 
@@ -309,12 +310,16 @@ from nti.dataserver.users.interfaces import IUserProfile
 
 from nti.externalization.interfaces import LocatedExternalList
 
-@view_config(route_name='objects.generic.traversal',
-			 renderer='rest',
-			 request_method='GET',
-			 context=IDataserverFolder,
-			 permission=nauth.ACT_NTI_ADMIN, # TODO: Better perm. This is generally used for admin
-			 name='AllEnrollments.csv')
+from . import CourseAdminPathAdapter
+
+@view_config(context=IDataserverFolder)
+@view_config(context=CourseAdminPathAdapter)
+@view_defaults(	route_name='objects.generic.traversal',
+			 	renderer='rest',
+				request_method='GET',
+			 	context=IDataserverFolder,
+				permission=nauth.ACT_NTI_ADMIN,
+			 	name='AllEnrollments.csv')
 class AllCourseEnrollmentRosterDownloadView(AbstractAuthenticatedView):
 	"""
 	Provides a downloadable table of all the enrollments
