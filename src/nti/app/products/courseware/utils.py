@@ -41,7 +41,7 @@ def is_there_an_open_enrollment(course, user):
 			return True
 	return False
 
-def drop_any_other_enrollments(context, user):
+def drop_any_other_enrollments(context, user, ignore_existing=True):
 	course = ICourseInstance(context)
 	entry = ICourseCatalogEntry(course)
 	
@@ -55,7 +55,7 @@ def drop_any_other_enrollments(context, user):
 	universe = [main_course] + list(main_course.SubInstances.values())
 	for instance in universe:
 		instance_entry = ICourseCatalogEntry(instance)
-		if course_ntiid == instance_entry.ntiid:
+		if ignore_existing and course_ntiid == instance_entry.ntiid:
 			continue
 		enrollments = ICourseEnrollments(instance)
 		enrollment = enrollments.get_enrollment_for_principal(user)
