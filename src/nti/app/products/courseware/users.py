@@ -9,7 +9,7 @@ __docformat__ = "restructuredtext en"
 
 logger = __import__('logging').getLogger(__name__)
 
-from collections import Mapping
+from datetime import datetime
 
 from zope import component
 from zope import interface
@@ -32,25 +32,25 @@ from .utils import get_enrollment_record
 
 from .interfaces import ISuggestedContactsProvider
 
+ZERO_DATETIME = datetime.utcfromtimestamp(0)
+
 class ClassmatesSuggestedContactRankingPolicy(SuggestedContactRankingPolicy):
 	
 	provider = alias('__parent__')
 		
 	def _skey(self, x):
-		return (x.entry.StartDate, x.username)
+		entry = getattr(x, 'entry', None)
+		startDate = getattr(entry, 'StartDate', None) or ZERO_DATETIME
+		return (startDate, x.username)
 	
 	def sort(self, data):
-		if isinstance(data, Mapping):
-			result = []
-			seen = set()
-			data = sorted(data.items(), key=lambda x: self._skey(x[1]), reversed=True)
-			for _, contacts in data:
-				for contact in contacts:
-					if contact not in seen:
-						contact.entry = None
-						result.append(contact)
-		else:
-			result = super(ClassmatesSuggestedContactRankingPolicy, self).sort(data)
+		result = []
+		seen = set()
+		data = sorted(data, key=lambda x: self._skey(x), reverse=True)
+		for contact in data:
+			if contact not in seen:
+				contact.entry = None
+				result.append(contact)
 		return result
 
 @interface.implementer(ISuggestedContactsProvider)
@@ -92,10 +92,9 @@ class ClassmatesSuggestedContactsProvider(SuggestedContactsProvider):
 		return result
 	
 	def suggestions(self, user):
-		data = {}
+		result = []
 		for course in self.iter_courses(user):
-			entry = ICourseCatalogEntry(course)
 			suggestions = self.suggestions_by_course(user, course)
-			data[entry.ntiid] = suggestions
-		result = self.ranking.sort(data)
+			result.extend(suggestions)
+		result = self.ranking.sort(result)
 		return result

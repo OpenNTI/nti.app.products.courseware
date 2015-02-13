@@ -7,15 +7,22 @@ __docformat__ = "restructuredtext en"
 # disable: accessing protected members, too many methods
 # pylint: disable=W0212,R0904
 
+from hamcrest import none
 from hamcrest import is_not
 from hamcrest import has_entry
 from hamcrest import has_length
 from hamcrest import assert_that
 does_not = is_not
 
+from zope import component
+
+from nti.app.products.courseware.interfaces import IClassmatesSuggestedContactsProvider
+
 from nti.contenttypes.courses.interfaces import ES_CREDIT
 from nti.contenttypes.courses.interfaces import ES_PUBLIC
 from nti.contenttypes.courses.interfaces import ES_CREDIT_DEGREE
+
+from nti.dataserver.users import User
 
 from nti.app.testing.decorators import WithSharedApplicationMockDS
 from nti.app.testing.application_webtest import ApplicationLayerTest
@@ -70,6 +77,9 @@ class TestCourseUserViews(ApplicationLayerTest):
 				data = {'username':captain, 'ntiid': self.course_ntiid, 'scope':ES_CREDIT_DEGREE}
 				self.testapp.post_json( enroll_url, data )
 
+		provider = component.queryUtility(IClassmatesSuggestedContactsProvider)
+		assert_that(provider, is_not(none()))
+			
 		classmates_href = course_href + '/Classmates'
 		
 		environ = self._make_extra_environ(username='ichigo')
@@ -89,3 +99,8 @@ class TestCourseUserViews(ApplicationLayerTest):
 		res = self.testapp.get(classmates_href, extra_environ=environ, status=200 )
 		assert_that(res.json_body, 
 					has_entry( 'Items', has_length(6) ))
+
+		with mock_dataserver.mock_db_trans(self.ds,  site_name='platform.ou.edu'):
+			ichigo = User.get_user('ichigo')
+			suggestions = provider.suggestions(ichigo)
+			assert_that(suggestions, has_length(3))
