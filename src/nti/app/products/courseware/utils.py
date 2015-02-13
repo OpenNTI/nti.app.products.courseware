@@ -9,6 +9,8 @@ __docformat__ = "restructuredtext en"
 
 logger = __import__('logging').getLogger(__name__)
 
+from datetime import datetime
+
 from zope import component
 from zope.security.interfaces import IPrincipal
 from zope.securitypolicy.interfaces import Allow
@@ -27,6 +29,8 @@ from nti.contenttypes.courses.interfaces import ICourseEnrollmentManager
 
 from .enrollment import EnrollmentOptions
 from .interfaces import IEnrollmentOptionProvider
+
+ZERO_DATETIME = datetime.utcfromtimestamp(0)
 
 def is_there_an_open_enrollment(course, user):
 	if ICourseSubInstance.providedBy(course):

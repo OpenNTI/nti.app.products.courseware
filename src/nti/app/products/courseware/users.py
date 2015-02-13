@@ -9,8 +9,6 @@ __docformat__ = "restructuredtext en"
 
 logger = __import__('logging').getLogger(__name__)
 
-from datetime import datetime
-
 from zope import component
 from zope import interface
 from zope.security.interfaces import IPrincipal
@@ -28,11 +26,10 @@ from nti.dataserver.users.suggested_contacts import SuggestedContact
 from nti.dataserver.users.suggested_contacts import SuggestedContactsProvider
 from nti.dataserver.users.suggested_contacts import SuggestedContactRankingPolicy
 
+from .utils import ZERO_DATETIME
 from .utils import get_enrollment_record
 
 from .interfaces import ISuggestedContactsProvider
-
-ZERO_DATETIME = datetime.utcfromtimestamp(0)
 
 class ClassmatesSuggestedContactRankingPolicy(SuggestedContactRankingPolicy):
 	

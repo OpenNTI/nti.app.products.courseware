@@ -9,8 +9,6 @@ __docformat__ = "restructuredtext en"
 
 logger = __import__('logging').getLogger(__name__)
 
-from datetime import datetime
-
 from brownie.caching import LFUCache
 
 from zope import component
@@ -37,9 +35,9 @@ from nti.ntiids.ntiids import TYPE_INTID
 from nti.ntiids.ntiids import is_ntiid_of_types
 from nti.ntiids.ntiids import find_object_with_ntiid
 
-from .interfaces import ICourseOutlineCache
+from ..utils import ZERO_DATETIME
 
-ZERO_DATE = datetime.utcfromtimestamp(0)
+from .interfaces import ICourseOutlineCache
 
 CONTAINER_IFACES = (IRelatedContentIndexedDataContainer,
 					ISlideDeckIndexedDataContainer,
@@ -79,7 +77,7 @@ def _flatten_outline(outline):
 	def _recur(node, result):
 		content_ntiid = getattr(node, 'ContentNTIID', None)
 		if content_ntiid:
-			beginning = getattr(node, 'AvailableBeginning', None) or ZERO_DATE
+			beginning = getattr(node, 'AvailableBeginning', None) or ZERO_DATETIME
 			is_outline_stub_only = getattr(node, 'is_outline_stub_only', None) or False
 			result[content_ntiid] = (beginning, is_outline_stub_only)
 			# parse any container data
