@@ -46,8 +46,11 @@ class ClassmatesSuggestedContactRankingPolicy(SuggestedContactRankingPolicy):
 		data = sorted(data, key=lambda x: self._skey(x), reverse=True)
 		for contact in data:
 			if contact not in seen:
-				contact.entry = None
 				result.append(contact)
+				try:
+					del contact.entry
+				except AttributeError:
+					pass
 		return result
 
 @interface.implementer(ISuggestedContactsProvider)
@@ -85,6 +88,7 @@ class ClassmatesSuggestedContactsProvider(SuggestedContactsProvider):
 				if principal is not None and IUser(principal) != user:
 					suggestion = SuggestedContact(username=principal.id, rank=1)
 					suggestion.entry = entry
+					suggestion.provider = self
 					result.append(suggestion)
 		return result
 	
