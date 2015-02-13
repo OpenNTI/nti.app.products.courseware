@@ -298,6 +298,18 @@ class IViewCount(interface.Interface):
 	The count of how many times a user has viewed a particular item.
 	"""
 
+# suggested contacts
+
+from nti.dataserver.users.interfaces import ISuggestedContactsProvider
+
+class IClassmatesSuggestedContactsProvider(ISuggestedContactsProvider):
+	
+	def suggestions_by_course(user, course):
+		"""
+		return classmates/contacts suggestions by course
+		"""
+
+# deprecations
 
 import zope.deferredimport
 zope.deferredimport.initialize()
