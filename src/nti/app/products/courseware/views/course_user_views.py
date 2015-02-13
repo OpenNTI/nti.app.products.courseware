@@ -11,7 +11,7 @@ logger = __import__('logging').getLogger(__name__)
 
 from . import MessageFactory as _
 
-from zope.security.interfaces import IPrincipal
+from zope import component
 
 from pyramid.view import view_config
 from pyramid.view import view_defaults
@@ -20,8 +20,6 @@ from pyramid import httpexceptions as hexc
 from nti.app.base.abstract_views import AbstractAuthenticatedView
 
 from nti.contenttypes.courses.interfaces import ICourseInstance
-from nti.contenttypes.courses.interfaces import ICourseEnrollments
-from nti.contenttypes.courses.interfaces import ENROLLMENT_SCOPE_VOCABULARY
 
 from nti.dataserver import authorization as nauth
 
@@ -36,6 +34,7 @@ from .. import VIEW_COURSE_CLASSMATES
 from ..utils import get_enrollment_record
 
 from ..interfaces import ICourseInstanceEnrollment
+from ..interfaces import IClassmatesSuggestedContactsProvider
 
 ITEMS = StandardExternalFields.ITEMS
 LINKS = StandardExternalFields.LINKS
@@ -54,21 +53,15 @@ class ClassmatesView(AbstractAuthenticatedView):
 		if record is None:
 			raise hexc.HTTPForbidden(_("Must be enrolled in course."))
 		
-		implies = set([record.Scope])
-		for term in ENROLLMENT_SCOPE_VOCABULARY:
-			if record.Scope == term.value:
-				implies.update(term.implies)
-				break
-		
 		result = LocatedExternalDict()
 		items = result[ITEMS] = {}
-		course = ICourseInstance(self.context)
-		for record in ICourseEnrollments(course).iter_enrollments():
-			if record.Scope in implies:
-				username = IPrincipal(record.Principal).id
-				user = User.get_user(username)
+		provider = component.queryUtility(IClassmatesSuggestedContactsProvider)
+		if provider is not None:
+			suggestions = provider.suggestions_by_course(self.remoteUser, self.context)
+			for contact in suggestions:
+				user = User.get_user(contact.username)
 				if user is not None and self.remoteUser != user:
 					ext = to_external_object(user, name="summary")
 					ext.pop(LINKS, None)
-					items[username] = ext
+					items[user.username] = ext
 		return result

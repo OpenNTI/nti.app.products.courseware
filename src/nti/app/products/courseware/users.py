@@ -23,6 +23,7 @@ from nti.contenttypes.courses.interfaces import ICourseCatalogEntry
 from nti.contenttypes.courses.interfaces import IPrincipalEnrollments
 from nti.contenttypes.courses.interfaces import ENROLLMENT_SCOPE_VOCABULARY
 
+from nti.dataserver.interfaces import IUser
 from nti.dataserver.users.suggested_contacts import SuggestedContact
 from nti.dataserver.users.suggested_contacts import SuggestedContactsProvider
 from nti.dataserver.users.suggested_contacts import SuggestedContactRankingPolicy
@@ -84,7 +85,7 @@ class ClassmatesSuggestedContactsProvider(SuggestedContactsProvider):
 		for record in ICourseEnrollments(course).iter_enrollments():
 			if record.Scope in implies:
 				principal = IPrincipal(record.Principal, None)
-				if principal is not None:
+				if principal is not None and IUser(principal) != user:
 					suggestion = SuggestedContact(username=principal.id, rank=1)
 					suggestion.entry = entry
 					result.append(suggestion)

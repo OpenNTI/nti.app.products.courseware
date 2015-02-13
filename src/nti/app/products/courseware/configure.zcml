@@ -233,6 +233,10 @@
 	<!-- Content Search -->
 	<include package=".search" />
 	
+	<!-- Suggested Contacts -->
+	<utility factory=".users.ClassmatesSuggestedContactsProvider" 
+			 provides=".interfaces.IClassmatesSuggestedContactsProvider" />
+	
 	<!-- Views -->
 	<include package=".views" />
 
