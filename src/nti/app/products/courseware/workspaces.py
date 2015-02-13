@@ -13,10 +13,13 @@ logger = __import__('logging').getLogger(__name__)
 
 from zope import interface
 from zope import component
+
 from zope.container.contained import Contained
+
+from zope.location.traversing import LocationPhysicallyLocatable
+
 from zope.securitypolicy.interfaces import Allow
 from zope.securitypolicy.interfaces import IPrincipalRoleMap
-from zope.location.traversing import LocationPhysicallyLocatable
 
 from nti.appserver.interfaces import IUserService
 from nti.appserver.interfaces import IContainerCollection
@@ -24,11 +27,11 @@ from nti.appserver.interfaces import IContainerCollection
 from nti.common.property import Lazy
 from nti.common.property import alias
 
-from nti.contenttypes.courses.interfaces import RID_INSTRUCTOR
-
 from nti.contenttypes.courses.interfaces import ES_CREDIT
 from nti.contenttypes.courses.interfaces import ES_CREDIT_DEGREE
 from nti.contenttypes.courses.interfaces import ES_CREDIT_NONDEGREE
+
+from nti.contenttypes.courses.interfaces import RID_INSTRUCTOR
 
 from nti.contenttypes.courses.interfaces import ICourseCatalog
 from nti.contenttypes.courses.interfaces import ICourseInstance

@@ -54,7 +54,7 @@ class ClassmatesView(AbstractAuthenticatedView):
 			raise hexc.HTTPForbidden(_("Must be enrolled in course."))
 		
 		result = LocatedExternalDict()
-		items = result[ITEMS] = {}
+		items = result[ITEMS] = []
 		provider = component.queryUtility(IClassmatesSuggestedContactsProvider)
 		if provider is not None:
 			suggestions = provider.suggestions_by_course(self.remoteUser, self.context)
@@ -63,5 +63,5 @@ class ClassmatesView(AbstractAuthenticatedView):
 				if user is not None and self.remoteUser != user:
 					ext = to_external_object(user, name="summary")
 					ext.pop(LINKS, None)
-					items[user.username] = ext
+					items.append(ext)
 		return result
