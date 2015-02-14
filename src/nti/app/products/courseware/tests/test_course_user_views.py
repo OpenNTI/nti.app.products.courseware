@@ -104,8 +104,7 @@ class TestCourseUserViews(ApplicationLayerTest):
 			ichigo = User.get_user('ichigo')
 			suggestions = provider.suggestions(ichigo)
 			assert_that(suggestions, has_length(3))
-			
-			
+
 		user_classmates_url = '/dataserver2/users/ichigo/Classmates'
 		environ = self._make_extra_environ(username='ichigo')
 		environ[b'HTTP_ORIGIN'] = b'http://platform.ou.edu'
