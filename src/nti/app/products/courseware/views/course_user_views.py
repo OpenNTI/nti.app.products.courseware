@@ -72,6 +72,7 @@ class CourseClassmatesView(BaseClassmatesView):
 			suggestions = provider.suggestions_by_course(self.remoteUser, self.context)
 			for ext in self.export_suggestions(suggestions):
 				items.append(ext)
+		result['Total'] = result['Count'] = len(items)
 		return result
 
 @view_config(context=IUser)
@@ -90,4 +91,5 @@ class ClassmatesView(BaseClassmatesView):
 			suggestions = provider.suggestions(self.remoteUser)
 			for ext in self.export_suggestions(suggestions):
 				items.append(ext)
+		result['Total'] = result['Count'] = len(items)
 		return result

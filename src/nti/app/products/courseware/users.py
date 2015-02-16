@@ -35,13 +35,19 @@ class ClassmatesSuggestedContactRankingPolicy(SuggestedContactRankingPolicy):
 	
 	provider = alias('__parent__')
 		
-	def _s_startDate(self, x):
+	def _e_provider(self, x):
+		entry = getattr(x, 'entry', None)
+		result = getattr(entry, 'ProviderUniqueID', None) or u''
+		return result
+	
+	def _e_startDate(self, x):
 		entry = getattr(x, 'entry', None)
 		startDate = getattr(entry, 'StartDate', None) or ZERO_DATETIME
 		return startDate
 
 	def _s_cmp(self, x, y):
-		result = cmp(self._s_startDate(y), self._s_startDate(x)) # reverse
+		result = cmp(self._e_startDate(y), self._e_startDate(x)) # reverse /recent first
+		result = cmp(self._e_provider(x), self._e_provider(y)) if result == 0 else result
 		result = cmp(x.username, y.username) if result == 0 else result
 		return result
 	
