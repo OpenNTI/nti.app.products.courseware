@@ -29,7 +29,7 @@ from nti.app.base.abstract_views import AbstractAuthenticatedView
 from nti.app.externalization.internalization import read_body_as_external_object
 from nti.app.externalization.view_mixins import ModeledContentUploadRequestUtilsMixin
 
-from nti.appserver.interfaces import IUserService
+from nti.appserver.workspaces.interfaces import IUserService
 
 from nti.common.property import Lazy
 from nti.common.maps import CaseInsensitiveDict
