@@ -11,17 +11,18 @@ logger = __import__('logging').getLogger(__name__)
 
 from zope import component
 from zope import interface
+
 from zope.security.interfaces import IPrincipal
 
 from nti.common.property import alias
 
-from nti.contenttypes.courses.interfaces import ICourseInstance, ES_PUBLIC
+from nti.contenttypes.courses.interfaces import ICourseInstance
 from nti.contenttypes.courses.interfaces import ICourseEnrollments
 from nti.contenttypes.courses.interfaces import ICourseCatalogEntry
 from nti.contenttypes.courses.interfaces import IPrincipalEnrollments
 from nti.contenttypes.courses.interfaces import ENROLLMENT_SCOPE_VOCABULARY
-from nti.contenttypes.courses.interfaces import ES_CREDIT, ES_CREDIT_DEGREE
-from nti.contenttypes.courses.interfaces import ES_CREDIT_NONDEGREE, ES_PURCHASED
+from nti.contenttypes.courses.interfaces import ES_CREDIT, ES_CREDIT_NONDEGREE
+from nti.contenttypes.courses.interfaces import ES_PURCHASED, ES_CREDIT_DEGREE, ES_PUBLIC
 
 from nti.dataserver.interfaces import IUser
 from nti.dataserver.users.suggested_contacts import SuggestedContact
