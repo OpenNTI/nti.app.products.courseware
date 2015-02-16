@@ -21,8 +21,8 @@ from zope.location.traversing import LocationPhysicallyLocatable
 from zope.securitypolicy.interfaces import Allow
 from zope.securitypolicy.interfaces import IPrincipalRoleMap
 
-from nti.appserver.interfaces import IUserService
-from nti.appserver.interfaces import IContainerCollection
+from nti.appserver.workspaces.interfaces import IUserService
+from nti.appserver.workspaces.interfaces import IContainerCollection
 
 from nti.common.property import Lazy
 from nti.common.property import alias

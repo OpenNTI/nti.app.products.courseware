@@ -5,6 +5,7 @@
 """
 
 from __future__ import print_function, unicode_literals, absolute_import, division
+from __builtin__ import True
 __docformat__ = "restructuredtext en"
 
 logger = __import__('logging').getLogger(__name__)
@@ -25,6 +26,7 @@ from nti.contenttypes.courses.interfaces import ICourseInstance
 from nti.contenttypes.courses.interfaces import ICourseEnrollments
 from nti.contenttypes.courses.interfaces import ICourseSubInstance
 from nti.contenttypes.courses.interfaces import ICourseCatalogEntry
+from nti.contenttypes.courses.interfaces import IPrincipalEnrollments
 from nti.contenttypes.courses.interfaces import ICourseEnrollmentManager
 
 from .enrollment import EnrollmentOptions
@@ -111,3 +113,9 @@ def get_enrollment_record(context, user):
 def is_enrolled(context, user):
 	record = get_enrollment_record(context, user)
 	return record is not None
+
+def has_enrollments(user):
+	for enrollments in component.subscribers( (user,), IPrincipalEnrollments):
+		if enrollments.count_enrollments():
+			return True
+	return False

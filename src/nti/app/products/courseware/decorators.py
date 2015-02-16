@@ -26,7 +26,7 @@ from nti.appserver.pyramid_authorization import has_permission
 from nti.contentlibrary.interfaces import IContentPackageLibrary
 from nti.contentlibrary.interfaces import IContentUnitHrefMapper
 
-from nti.contenttypes.courses.interfaces import ES_PUBLIC
+from nti.contenttypes.courses.interfaces import ES_PUBLIC, IPrincipalEnrollments
 from nti.contenttypes.courses.interfaces import ICourseOutline
 from nti.contenttypes.courses.interfaces import ICourseInstance
 from nti.contenttypes.courses.interfaces import ICourseEnrollments
@@ -53,6 +53,7 @@ from . import VIEW_COURSE_RECURSIVE_BUCKET
 from . import VIEW_COURSE_ENROLLMENT_ROSTER
 
 from .utils import is_enrolled
+from .utils import has_enrollments
 from .utils import get_catalog_entry
 from .utils import get_enrollment_record
 from .utils import get_enrollment_options
@@ -233,11 +234,7 @@ class _EnrollmentOptionsCourseEntryDecorator(AbstractAuthenticatedRequestAwareDe
 			result[u'EnrollmentOptions'] = to_external_object(options)
 
 @interface.implementer(IExternalMappingDecorator)
-class _CourseClassmatesLinkDecorator(AbstractAuthenticatedRequestAwareDecorator):
-
-	def _predicate(self, context, result):
-		result = bool(self._is_authenticated and is_enrolled(context, self.remoteUser))
-		return result
+class _BaseeClassmatesLinkDecorator(AbstractAuthenticatedRequestAwareDecorator):
 	
 	def _do_decorate_external(self, context, result):
 		_links = result.setdefault(LINKS, [])
@@ -247,6 +244,20 @@ class _CourseClassmatesLinkDecorator(AbstractAuthenticatedRequestAwareDecorator)
 		link.__parent__ = context
 		_links.append(link)
 
+@interface.implementer(IExternalMappingDecorator)
+class _CourseClassmatesLinkDecorator(_BaseeClassmatesLinkDecorator):
+
+	def _predicate(self, context, result):
+		result = bool(self._is_authenticated and is_enrolled(context, self.remoteUser))
+		return result
+
+@component.adapter(IUser)
+class _ClassmatesLinkDecorator(_BaseeClassmatesLinkDecorator):
+
+	def _predicate(self, context, result):
+		result = bool(self._is_authenticated and has_enrollments(self.remoteUser))
+		return result
+	
 from nti.dataserver.interfaces import IContained
 
 from nti.ntiids.ntiids import find_object_with_ntiid
@@ -268,3 +279,5 @@ class _ContainedCatalogEntryDecorator(AbstractAuthenticatedRequestAwareDecorator
 				if entry is not None:
 					result['CatalogEntryNTIID'] = entry.ntiid
 				break
+
+IPrincipalEnrollments
