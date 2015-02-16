@@ -399,6 +399,17 @@ class _DefaultPrincipalAdministrativeRoleCatalog(object):
 													   CourseInstance=instance )
 	iter_enrollments = iter_administrations # for convenience
 
+	def count_administrations(self):
+		result = 0
+		catalog = component.queryUtility( ICourseCatalog )
+		for entry in catalog.iterCatalogEntries():
+			instance = ICourseInstance(entry)
+			if self.user in instance.instructors:
+				result += 1
+		return result
+
+	count_enrollments = count_administrations
+	
 @interface.implementer(IAdministeredCoursesCollection)
 class AdministeredCoursesCollection(_AbstractQueryBasedCoursesCollection):
 

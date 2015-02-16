@@ -30,8 +30,8 @@ from pyramid import httpexceptions as hexc
 from nti.app.base.abstract_views import AbstractAuthenticatedView
 from nti.app.externalization.view_mixins import ModeledContentUploadRequestUtilsMixin
 
-from nti.appserver.interfaces import IUserService
 from nti.appserver.pyramid_authorization import can_create
+from nti.appserver.workspaces.interfaces import IUserService
 from nti.appserver.dataserver_pyramid_views import GenericGetView
 
 from nti.contenttypes.courses.interfaces import ES_PUBLIC

@@ -21,8 +21,8 @@ from zope.security.permission import Permission
 from zope.container.interfaces import IContained
 from zope.interface.common.mapping import IEnumerableMapping
 
-from nti.appserver.interfaces import IWorkspace
-from nti.appserver.interfaces import IContainerCollection
+from nti.appserver.workspaces.interfaces import IWorkspace
+from nti.appserver.workspaces.interfaces import IContainerCollection
 
 from nti.contenttypes.courses.interfaces import ICourseInstance
 from nti.contenttypes.courses.interfaces import IPrincipalEnrollments
@@ -196,6 +196,11 @@ class IPrincipalAdministrativeRoleCatalog(interface.Interface):
 		"""
 		Iterate across :class:`.ICourseInstanceAdministrativeRole` objects, or at
 		least something that can be adapted to that interface.
+		"""
+		
+	def count_administrations():
+		"""
+		return the count of administrator roles
 		"""
 
 class IAdministeredCoursesCollection(IContainerCollection):

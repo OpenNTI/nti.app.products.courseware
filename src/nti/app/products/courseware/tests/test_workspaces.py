@@ -27,8 +27,8 @@ does_not = is_not
 from zope import component
 from zope import lifecycleevent
 
-from nti.appserver.interfaces import ICollection
-from nti.appserver.interfaces import IUserService
+from nti.appserver.workspaces.interfaces import ICollection
+from nti.appserver.workspaces.interfaces import IUserService
 
 from nti.app.products.courseware import VIEW_COURSE_RECURSIVE
 from nti.app.products.courseware import VIEW_COURSE_RECURSIVE_BUCKET

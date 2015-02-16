@@ -35,15 +35,20 @@ class ClassmatesSuggestedContactRankingPolicy(SuggestedContactRankingPolicy):
 	
 	provider = alias('__parent__')
 		
-	def _skey(self, x):
+	def _s_startDate(self, x):
 		entry = getattr(x, 'entry', None)
 		startDate = getattr(entry, 'StartDate', None) or ZERO_DATETIME
-		return (startDate, x.username)
+		return startDate
+
+	def _s_cmp(self, x, y):
+		result = cmp(self._s_startDate(y), self._s_startDate(x)) # reverse
+		result = cmp(x.username, y.username) if result == 0 else result
+		return result
 	
 	def sort(self, data):
 		result = []
 		seen = set()
-		data = sorted(data, key=lambda x: self._skey(x), reverse=True)
+		data = sorted(data, cmp=self._s_cmp)
 		for contact in data:
 			if contact not in seen:
 				result.append(contact)
