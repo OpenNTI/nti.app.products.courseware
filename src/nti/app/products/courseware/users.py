@@ -15,11 +15,13 @@ from zope.security.interfaces import IPrincipal
 
 from nti.common.property import alias
 
-from nti.contenttypes.courses.interfaces import ICourseInstance
+from nti.contenttypes.courses.interfaces import ICourseInstance, ES_PUBLIC
 from nti.contenttypes.courses.interfaces import ICourseEnrollments
 from nti.contenttypes.courses.interfaces import ICourseCatalogEntry
 from nti.contenttypes.courses.interfaces import IPrincipalEnrollments
 from nti.contenttypes.courses.interfaces import ENROLLMENT_SCOPE_VOCABULARY
+from nti.contenttypes.courses.interfaces import ES_CREDIT, ES_CREDIT_DEGREE
+from nti.contenttypes.courses.interfaces import ES_CREDIT_NONDEGREE, ES_PURCHASED
 
 from nti.dataserver.interfaces import IUser
 from nti.dataserver.users.suggested_contacts import SuggestedContact
@@ -31,10 +33,21 @@ from .utils import get_enrollment_record
 
 from .interfaces import ISuggestedContactsProvider
 
+ES_ORDER = {ES_CREDIT_DEGREE: 15,
+			ES_CREDIT_NONDEGREE: 15,
+			ES_CREDIT: 10,
+			ES_PURCHASED: 10,
+			ES_PUBLIC: 0}
+
 class ClassmatesSuggestedContactRankingPolicy(SuggestedContactRankingPolicy):
 	
 	provider = alias('__parent__')
 		
+	def _r_order(self, x):
+		scope = getattr(x, 'Scope', None) or ES_PUBLIC
+		result = ES_ORDER.get(scope, 0)
+		return result
+	
 	def _e_provider(self, x):
 		entry = getattr(x, 'entry', None)
 		result = getattr(entry, 'ProviderUniqueID', None) or u''
@@ -48,6 +61,7 @@ class ClassmatesSuggestedContactRankingPolicy(SuggestedContactRankingPolicy):
 	def _s_cmp(self, x, y):
 		result = cmp(self._e_startDate(y), self._e_startDate(x)) # reverse /recent first
 		result = cmp(self._e_provider(x), self._e_provider(y)) if result == 0 else result
+		result = cmp(self._r_order(y), self._r_order(x)) if result == 0 else result # reverse
 		result = cmp(x.username, y.username) if result == 0 else result
 		return result
 	
@@ -100,7 +114,9 @@ class ClassmatesSuggestedContactsProvider(SuggestedContactsProvider):
 					suggestion = SuggestedContact(username=principal.id, rank=1)
 					suggestion.entry = entry
 					suggestion.provider = self
+					suggestion.Scope = record.Scope
 					result.append(suggestion)
+		result = self.ranking.sort(result)
 		return result
 	
 	def suggestions(self, user):
