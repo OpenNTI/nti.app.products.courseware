@@ -71,8 +71,9 @@ class ClassmatesSuggestedContactRankingPolicy(SuggestedContactRankingPolicy):
 		seen = set()
 		data = sorted(data, cmp=self._s_cmp)
 		for contact in data:
-			if contact not in seen:
+			if contact.username not in seen:
 				result.append(contact)
+				seen.add(contact.username)
 				try:
 					del contact.entry
 				except AttributeError:
