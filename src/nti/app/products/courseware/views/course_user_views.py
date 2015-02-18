@@ -18,6 +18,7 @@ from pyramid.view import view_defaults
 from pyramid import httpexceptions as hexc
 
 from nti.app.base.abstract_views import AbstractAuthenticatedView
+from nti.app.externalization.view_mixins import BatchingUtilsMixin
 
 from nti.contenttypes.courses.interfaces import ICourseInstance
 
@@ -41,16 +42,31 @@ from ..interfaces import IClassmatesSuggestedContactsProvider
 ITEMS = StandardExternalFields.ITEMS
 LINKS = StandardExternalFields.LINKS
 
-class BaseClassmatesView(AbstractAuthenticatedView):
+class BaseClassmatesView(AbstractAuthenticatedView, BatchingUtilsMixin):
+	"""
+	batchSize
+		The size of the batch.  Defaults to 50.
 
-	def export_suggestions(self, suggestions):
-		for contact in suggestions:
-			user = User.get_user(contact.username)
-			if user is not None and self.remoteUser != user:
-				ext = to_external_object(user, name="summary")
-				ext.pop(LINKS, None)
-				yield ext
+	batchStart
+		The starting batch index.  Defaults to 0.
+	"""
 	
+	_DEFAULT_BATCH_SIZE = 50
+	_DEFAULT_BATCH_START = 0
+	
+	def selector(self, contact):
+		user = User.get_user(contact.username)
+		if user is not None and self.remoteUser != user:
+			ext = to_external_object(user, name="summary")
+			ext.pop(LINKS, None)
+			return ext
+		return contact
+
+	def export_suggestions(self, result_dict, suggestions):
+		result_dict['TotalItemCount'] = len(suggestions)
+		self._batch_items_iterable(result_dict, suggestions, selector=self.selector)
+		result_dict['ItemCount'] = len(result_dict.get(ITEMS) or ())
+
 @view_config(context=ICourseInstance)
 @view_config(context=ICourseInstanceEnrollment)
 @view_defaults(route_name='objects.generic.traversal',
@@ -66,13 +82,9 @@ class CourseClassmatesView(BaseClassmatesView):
 			raise hexc.HTTPForbidden(_("Must be enrolled in course."))
 		
 		result = LocatedExternalDict()
-		items = result[ITEMS] = []
-		provider = component.queryUtility(IClassmatesSuggestedContactsProvider)
-		if provider is not None:
-			suggestions = provider.suggestions_by_course(self.remoteUser, self.context)
-			for ext in self.export_suggestions(suggestions):
-				items.append(ext)
-		result['Total'] = result['Count'] = len(items)
+		provider = component.getUtility(IClassmatesSuggestedContactsProvider)
+		suggestions = provider.suggestions_by_course(self.remoteUser, self.context)
+		self.export_suggestions(result, suggestions)
 		return result
 
 @view_config(context=IUser)
@@ -85,11 +97,7 @@ class ClassmatesView(BaseClassmatesView):
 
 	def __call__(self):
 		result = LocatedExternalDict()
-		items = result[ITEMS] = []
-		provider = component.queryUtility(IClassmatesSuggestedContactsProvider)
-		if provider is not None:
-			suggestions = provider.suggestions(self.remoteUser)
-			for ext in self.export_suggestions(suggestions):
-				items.append(ext)
-		result['Total'] = result['Count'] = len(items)
+		provider = component.getUtility(IClassmatesSuggestedContactsProvider)
+		suggestions = provider.suggestions(self.remoteUser)
+		self.export_suggestions(result, suggestions)
 		return result
