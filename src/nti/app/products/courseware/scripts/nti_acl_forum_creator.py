@@ -17,6 +17,8 @@ from zope import component
 from zope import interface 
 
 from zope.security.interfaces import IPrincipal
+
+from zope.securitypolicy.settings import Allow as ALLOW_PERM
 from zope.securitypolicy.interfaces import IPrincipalRoleMap
 
 from nti.contenttypes.courses.interfaces import RID_TA
@@ -50,14 +52,15 @@ from nti.ntiids.ntiids import make_specific_safe
 from nti.ntiids.ntiids import find_object_with_ntiid
 
 def _get_instructors(instance):
-	result = []
 	roles = IPrincipalRoleMap(instance, None)
 	if not roles:
-		result.extend(instance.instructors or ())
+		instructors = instance.instructors or ()
+		result = [IPrincipal(x).id for x in instructors if IPrincipal(x, None)]
 	else:
+		result = []
 		for role in (RID_TA, RID_INSTRUCTOR):
-			result.extend(roles.getPrincipalsForRole(role) or ())
-	result = [IPrincipal(x) for x in result if IPrincipal(x, None)]
+			settings = roles.getPrincipalsForRole(role) or ()
+			result.extend(x[0] for x in settings if x[1] == ALLOW_PERM)
 	return result
 
 def _get_acl(instance, permissions, ntiids):
@@ -65,7 +68,7 @@ def _get_acl(instance, permissions, ntiids):
 	
 	# Our instance instructors get all permissions.
 	acl = [ForumACE(Permissions=("All",), 
-					Entities=[i.id for i in instructors],
+					Entities=[i for i in instructors],
 					Action='Allow'),
 		   ForumACE(Permissions=permissions, 
 					Entities=list(ntiids),
@@ -107,7 +110,10 @@ def _creator(course, scope, name, title, permissions, site=None):
 			pass
 	if instance is None:
 		raise ValueError("Course cannot be found")
-
+	
+	# decode title
+	title = title.decode('utf-8', 'ignore')
+	
 	# Always created by the public community
 	# (because legacy courses might have a DFL
 	# for the non-public)
