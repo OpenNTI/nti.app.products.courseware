@@ -85,6 +85,7 @@ def _get_acl(instance, permissions, ntiids):
 	
 def _assign_iface(obj, iface=None):
 	if iface is not None and not iface.providedBy(obj):
+		interface.alsoProvides(obj, iface)
 		logger.info("Added interface to object %s %s", iface, obj)
 				
 def _assign_acl(obj, acl, iface=None):
