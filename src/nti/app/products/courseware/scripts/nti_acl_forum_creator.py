@@ -60,7 +60,7 @@ def _get_instructors(instance):
 	result = [IPrincipal(x) for x in result if IPrincipal(x, None)]
 	return result
 
-def _get_acl(instance, permissions, ntiid):
+def _get_acl(instance, permissions, ntiids):
 	instructors = _get_instructors(instance)
 	
 	# Our instance instructors get all permissions.
@@ -68,7 +68,7 @@ def _get_acl(instance, permissions, ntiid):
 					Entities=[i.id for i in instructors],
 					Action='Allow'),
 		   ForumACE(Permissions=permissions, 
-					Entities=[ntiid],
+					Entities=list(ntiids),
 					Action='Allow')]
 
 	# SubInstance instructors get the same permissions as their students.
@@ -93,7 +93,7 @@ def _assign_acl(obj, acl, iface=None):
 		obj.ACL = acl
 		logger.info("Set ACL on object %s to %s", obj, acl)
 				
-def _creator(course, ntiid, scope, name, title, permissions, site=None):
+def _creator(course, scope, name, title, permissions, site=None):
 	set_site(site)
 
 	context = find_object_with_ntiid(course)
@@ -123,7 +123,9 @@ def _creator(course, ntiid, scope, name, title, permissions, site=None):
 		forum_interface = ICourseInstanceForCreditScopedForum
 
 	discussions = instance.Discussions
-	acl = _get_acl(instance, ntiid )
+	
+	ntiid = instance.SharingScopes[scope].NTIID
+	acl = _get_acl(instance, permissions, (ntiid,))
 	
 	name = make_specific_safe(name)
 	try:
@@ -151,10 +153,7 @@ def main():
 	arg_parser.add_argument('-c', '--course',
 							dest='course',
 							help="Course entry identifier/ntiid")
-	arg_parser.add_argument('-n', '--ntiid',
-							dest='ntiid',
-							help="Forum NTIID")
-	arg_parser.add_argument('-m', '--name',
+	arg_parser.add_argument('-n', '--name',
 							dest='name',
 							help="Forum name")
 	arg_parser.add_argument('-t', '--title',
@@ -181,10 +180,6 @@ def main():
 	course = args.course
 	if not course:
 		raise ValueError("Please specify a course/catalog entry identifier")
-	
-	ntiid = args.ntiid
-	if not ntiid:
-		raise ValueError("Please specify a fourum identifier")
 	
 	scope = args.scope
 	if not scope:
@@ -214,7 +209,6 @@ def main():
 						 context=context,
 						 function=lambda: _creator(site=site,
 												   course=course,
-												   ntiid=ntiid,
 												   name=name,
 												   title=title,
 												   scope=scope,
