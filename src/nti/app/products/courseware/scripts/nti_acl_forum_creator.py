@@ -212,8 +212,7 @@ def main():
 												   name=name,
 												   title=title,
 												   scope=scope,
-												   permissions=permissions,
-												   verbose=args.verbose))
+												   permissions=permissions))
 	sys.exit( 0 )
 
 if __name__ == '__main__':
