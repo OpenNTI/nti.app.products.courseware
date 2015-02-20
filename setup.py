@@ -5,7 +5,8 @@ VERSION = '0.0.0'
 
 entry_points = {
 	'console_scripts': [
-		"nti_course_migrator = nti.app.products.courseware.scripts.migrator:main"
+		"nti_course_migrator = nti.app.products.courseware.scripts.nti_course_migrator:main"
+		"nti_acl_forum_creator = nti.app.products.courseware.scripts.nti_acl_forum_creator:main"
 	],
 	"z3c.autoinclude.plugin": [
 		'target = nti.app.products',
@@ -20,16 +21,13 @@ setup(
 	description="Umbrella product to support integrated courseware",
 	long_description=codecs.open('README.rst', encoding='utf-8').read(),
 	license='Proprietary',
-	keywords='pyramid preference',
+	keywords='pyramid course',
 	classifiers=[
 		'Intended Audience :: Developers',
 		'Natural Language :: English',
 		'Operating System :: OS Independent',
 		'Programming Language :: Python :: 2',
 		'Programming Language :: Python :: 2.7',
-		'Programming Language :: Python :: 3',
-		'Programming Language :: Python :: 3.3',
-		'Topic :: Software Development :: Testing'
 		'Framework :: Pyramid',
 	],
 	packages=find_packages('src'),
