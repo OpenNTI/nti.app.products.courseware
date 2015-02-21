@@ -63,7 +63,7 @@ class ClassmatesSuggestedContactRankingPolicy(SuggestedContactRankingPolicy):
 		result = cmp(self._e_startDate(y), self._e_startDate(x)) # reverse /recent first
 		result = cmp(self._e_provider(x), self._e_provider(y)) if result == 0 else result
 		result = cmp(self._r_order(y), self._r_order(x)) if result == 0 else result # reverse
-		result = cmp(x.username, y.username) if result == 0 else result
+		# result = cmp(x.username, y.username) if result == 0 else result
 		return result
 	
 	def sort(self, data):
