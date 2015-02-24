@@ -77,7 +77,7 @@
 	<adapter factory=".adapters._entry_to_content_package_bundle" />
 	<adapter factory=".adapters._course_content_to_package_bundle" />
 	<adapter factory=".adapters._legacy_course_to_content_package_bundle" />
-	
+
 	<!-- Allow traversing to the 'LegacyCourses' key of communities -->
 	<adapter name="LegacyCourses"
 			 for="nti.dataserver.interfaces.ICommunity"
@@ -178,25 +178,25 @@
 
 	<subscriber factory=".decorators._CourseOutlineContentNodeLinkDecorator"
 				provides="nti.externalization.interfaces.IExternalMappingDecorator" />
-	
+
 	<subscriber factory=".decorators._ContainedCatalogEntryDecorator"
 				provides="nti.externalization.interfaces.IExternalMappingDecorator"
 				for="nti.dataserver.interfaces.IContained
 					pyramid.interfaces.IRequest" />
-					
-	<subscriber factory=".decorators._CourseClassmatesLinkDecorator"
-				provides="nti.externalization.interfaces.IExternalMappingDecorator" 
-				for=".interfaces.ICourseInstanceEnrollment 
-					 pyramid.interfaces.IRequest" />
-					
+
 	<subscriber factory=".decorators._CourseClassmatesLinkDecorator"
 				provides="nti.externalization.interfaces.IExternalMappingDecorator"
-				for="nti.contenttypes.courses.interfaces.ICourseInstance 
+				for=".interfaces.ICourseInstanceEnrollment
+					 pyramid.interfaces.IRequest" />
+
+	<subscriber factory=".decorators._CourseClassmatesLinkDecorator"
+				provides="nti.externalization.interfaces.IExternalMappingDecorator"
+				for="nti.contenttypes.courses.interfaces.ICourseInstance
 					 pyramid.interfaces.IRequest" />
 
 	<subscriber factory=".decorators._ClassmatesLinkDecorator"
 				provides="nti.externalization.interfaces.IExternalMappingDecorator"
-				for="nti.dataserver.interfaces.IUser 
+				for="nti.dataserver.interfaces.IUser
 					 pyramid.interfaces.IRequest" />
 
 	<!--
@@ -217,6 +217,8 @@
 	<!-- NTIID support -->
 	<utility factory=".ntiids._EnrolledCourseSectionTopicNTIIDResolver" />
 	<utility factory=".ntiids._EnrolledCourseRootTopicNTIIDResolver" />
+	<utility factory=".ntiids._EnrolledCourseSectionForumNTIIDResolver" />
+	<utility factory=".ntiids._EnrolledCourseRootForumNTIIDResolver" />
 
 	<!-- Enrollment Options -->
 	<subscriber	factory=".enrollment.OpenEnrollmentOptionProvider"
@@ -235,11 +237,11 @@
 
 	<!-- Content Search -->
 	<include package=".search" />
-	
+
 	<!-- Suggested Contacts -->
-	<utility factory=".users.ClassmatesSuggestedContactsProvider" 
+	<utility factory=".users.ClassmatesSuggestedContactsProvider"
 			 provides=".interfaces.IClassmatesSuggestedContactsProvider" />
-	
+
 	<!-- Views -->
 	<include package=".views" />
 

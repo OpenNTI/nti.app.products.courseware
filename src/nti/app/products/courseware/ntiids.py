@@ -25,6 +25,7 @@ from nti.contenttypes.courses.interfaces import IPrincipalEnrollments
 from nti.contenttypes.courses.interfaces import INonPublicCourseInstance
 
 from nti.dataserver.contenttypes.forums.ntiids import resolve_ntiid_in_board
+from nti.dataserver.contenttypes.forums.ntiids import resolve_forum_ntiid_in_board
 
 from nti.ntiids.ntiids import get_provider
 from nti.ntiids.ntiids import escape_provider
@@ -32,6 +33,8 @@ from nti.ntiids.interfaces import INTIIDResolver
 
 from .interfaces import NTIID_TYPE_COURSE_TOPIC
 from .interfaces import NTIID_TYPE_COURSE_SECTION_TOPIC
+from .interfaces import NTIID_TYPE_COURSE_FORUM
+from .interfaces import NTIID_TYPE_COURSE_SECTION_FORUM
 from .interfaces import IPrincipalAdministrativeRoleCatalog
 
 @interface.implementer(INTIIDResolver)
@@ -155,5 +158,19 @@ class _EnrolledCourseSectionTopicNTIIDResolver(object):
 @interface.implementer(INTIIDResolver)
 @interface.named(NTIID_TYPE_COURSE_TOPIC)
 class _EnrolledCourseRootTopicNTIIDResolver(_EnrolledCourseSectionTopicNTIIDResolver):
+
+	allow_section_match = False # always the root
+
+@interface.implementer(INTIIDResolver)
+@interface.named(NTIID_TYPE_COURSE_SECTION_FORUM)
+class _EnrolledCourseSectionForumNTIIDResolver( _EnrolledCourseSectionTopicNTIIDResolver ):
+
+	def _find_in_course(self, course, ntiid):
+		result = resolve_forum_ntiid_in_board(ntiid, course.Discussions)
+		return result
+
+@interface.implementer(INTIIDResolver)
+@interface.named(NTIID_TYPE_COURSE_FORUM)
+class _EnrolledCourseRootForumNTIIDResolver( _EnrolledCourseSectionForumNTIIDResolver ):
 
 	allow_section_match = False # always the root

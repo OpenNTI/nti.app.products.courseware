@@ -197,7 +197,7 @@ class IPrincipalAdministrativeRoleCatalog(interface.Interface):
 		Iterate across :class:`.ICourseInstanceAdministrativeRole` objects, or at
 		least something that can be adapted to that interface.
 		"""
-		
+
 	def count_administrations():
 		"""
 		return the count of administrator roles
@@ -244,6 +244,11 @@ NTIID_TYPE_COURSE_SECTION_TOPIC = 'Topic:EnrolledCourseSection'
 #: returns the top-level course topic, never the course topic
 #: for a subsection.
 NTIID_TYPE_COURSE_TOPIC = 'Topic:EnrolledCourseRoot'
+
+# NTIIDs that look up named forums in courses.
+NTIID_TYPE_COURSE_SECTION_FORUM = 'Forum:EnrolledCourseSection'
+
+NTIID_TYPE_COURSE_FORUM = 'Forum:EnrolledCourseRoot'
 
 class IEnrollmentOption(IContained):
 	"""
@@ -308,7 +313,7 @@ class IViewCount(interface.Interface):
 from nti.dataserver.users.interfaces import ISuggestedContactsProvider
 
 class IClassmatesSuggestedContactsProvider(ISuggestedContactsProvider):
-	
+
 	def suggestions_by_course(user, course):
 		"""
 		return classmates/contacts suggestions by course
