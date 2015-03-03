@@ -491,7 +491,7 @@ from nti.app.externalization.view_mixins import ModeledContentUploadRequestUtils
 from nti.common.time import time_to_64bit_int
 from nti.common.time import bit64_int_to_time
 
-from nti.dataserver.links import Link
+from nti.links.links import Link
 
 LINKS = StandardExternalFields.LINKS
 
@@ -523,7 +523,6 @@ class CourseActivityLastViewedDecorator(AbstractAuthenticatedView,
 		if IRequest.providedBy(request): # as a view
 			super(CourseActivityLastViewedDecorator,self).__init__(request)
 		# otherwise, we're a decorator and no args are passed
-
 
 	def decorateExternalMapping(self, context, result):
 		request = get_current_request()

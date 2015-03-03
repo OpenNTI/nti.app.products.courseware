@@ -39,7 +39,6 @@ from nti.common.property import CachedProperty
 from nti.contenttypes.courses.interfaces import ICourseInstance
 from nti.contenttypes.courses.interfaces import	ICourseSubInstance
 
-from nti.dataserver.links import Link
 from nti.dataserver.interfaces import IUser
 
 from nti.dataserver import authorization as nauth
@@ -55,6 +54,8 @@ from nti.externalization.interfaces import LocatedExternalList
 from nti.externalization.interfaces import StandardExternalFields
 
 from nti.intid.interfaces import ObjectMissingError
+
+from nti.links.links import Link
 
 from ..stream_ranking import _DEFAULT_TIME_FIELD
 from ..stream_ranking import StreamConfidenceRanker

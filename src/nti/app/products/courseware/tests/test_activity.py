@@ -27,8 +27,7 @@ from nti.dataserver.tests.mock_dataserver import WithMockDSTrans
 from nti.app.testing.application_webtest import ApplicationLayerTest
 
 class TestActivity(ApplicationLayerTest):
-	# Note: we don't really need everything in this layer, it's just
-	# faster to reuse it
+	
 	@WithMockDSTrans
 	@time_monotonically_increases
 	def test_activity(self):

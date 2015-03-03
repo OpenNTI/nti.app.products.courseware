@@ -140,11 +140,11 @@
 		play for ease of extension by other packages. (Hmm, perhaps we ought to make that
 		part of the default traversal).
 	-->
-	<adapter factory="nti.dataserver.traversal.ContainerAdapterTraversable"
+	<adapter factory="nti.traversal.traversal.ContainerAdapterTraversable"
 			 for="nti.contenttypes.courses.interfaces.ICourseInstance pyramid.interfaces.IRequest"
 			 provides="zope.traversing.interfaces.ITraversable" />
 
-	<adapter factory="nti.dataserver.traversal.DefaultAdapterTraversable"
+	<adapter factory="nti.traversal.traversal.DefaultAdapterTraversable"
 			 for=".interfaces.ICourseInstanceEnrollment pyramid.interfaces.IRequest"
 			 provides="zope.traversing.interfaces.ITraversable" />
 

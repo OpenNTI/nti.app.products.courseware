@@ -40,9 +40,10 @@ from nti.contenttypes.courses.interfaces import ICourseInstance
 from nti.contenttypes.courses.interfaces import ICourseCatalogEntry
 from nti.contenttypes.courses.interfaces import ICourseEnrollmentManager
 
-from nti.dataserver import traversal
 from nti.dataserver.interfaces import IUser
 from nti.dataserver import authorization as nauth
+
+from nti.traversal import traversal
 
 from ..interfaces import ICoursesWorkspace
 from ..interfaces import ICourseInstanceEnrollment

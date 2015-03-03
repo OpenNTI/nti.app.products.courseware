@@ -35,7 +35,7 @@ from nti.app.products.courseware import VIEW_COURSE_RECURSIVE_BUCKET
 
 from nti.app.products.courseware.interfaces import ICoursesWorkspace
 
-from nti.dataserver import traversal
+from nti.traversal import traversal
 
 from nti.dataserver.tests import mock_dataserver
 
@@ -572,8 +572,6 @@ class TestPersistentWorkspaces(_AbstractEnrollingBase,
 		# ...and the remaining 'sibling' sections have vanished...
 		# we get just Water and restricted
 		assert_that( res.json_body, has_entry( 'Items', has_length(2) ) )
-
-
 
 class TestRestrictedWorkspace(ApplicationLayerTest):
 	layer = RestrictedInstructedCourseApplicationTestLayer

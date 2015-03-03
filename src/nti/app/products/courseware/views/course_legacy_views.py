@@ -35,7 +35,6 @@ from nti.contenttypes.courses.interfaces import ICourseInstanceVendorInfo
 from nti.contenttypes.courses.interfaces import ICourseInstancePublicScopedForum
 from nti.contenttypes.courses.interfaces import ICourseInstanceForCreditScopedForum
 
-from nti.dataserver import traversal
 from nti.dataserver import authorization as nauth
 
 from nti.dataserver.users import Entity
@@ -50,6 +49,8 @@ from nti.dataserver.contenttypes.forums.interfaces import IACLCommunityForum
 from nti.externalization.internalization import update_from_external_object
 
 from nti.ntiids import ntiids
+
+from nti.traversal import traversal
 
 from ..interfaces import NTIID_TYPE_COURSE_SECTION_TOPIC
 
