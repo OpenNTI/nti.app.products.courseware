@@ -41,8 +41,9 @@ from nti.externalization.externalization import to_external_object
 from nti.externalization.interfaces import IExternalObjectDecorator
 from nti.externalization.interfaces import IExternalMappingDecorator
 
-from nti.dataserver.links import Link
 from nti.dataserver.interfaces import IUser
+
+from nti.links.links import Link
 
 from . import VIEW_CONTENTS
 from . import VIEW_CATALOG_ENTRY
