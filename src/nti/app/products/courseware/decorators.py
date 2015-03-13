@@ -26,7 +26,7 @@ from nti.appserver.pyramid_authorization import has_permission
 from nti.contentlibrary.interfaces import IContentPackageLibrary
 from nti.contentlibrary.interfaces import IContentUnitHrefMapper
 
-from nti.contenttypes.courses.interfaces import ES_PUBLIC, IPrincipalEnrollments
+from nti.contenttypes.courses.interfaces import ES_PUBLIC
 from nti.contenttypes.courses.interfaces import ICourseOutline
 from nti.contenttypes.courses.interfaces import ICourseInstance
 from nti.contenttypes.courses.interfaces import ICourseEnrollments
@@ -218,8 +218,8 @@ class _OpenEnrollmentOptionLinkDecorator(AbstractAuthenticatedRequestAwareDecora
 		return get_enrollment_record(entry, remoteUser)
 
 	def _do_decorate_external(self, context, result):
-		result['IsAvailable'] = context.Enabled
 		record = self._get_enrollment_record(context, self.remoteUser)
+		result['IsAvailable'] = context.Enabled and record is None
 		result['IsEnrolled'] = bool(record is not None and record.Scope == ES_PUBLIC)
 
 @component.adapter(ICourseCatalogEntry)
@@ -280,5 +280,3 @@ class _ContainedCatalogEntryDecorator(AbstractAuthenticatedRequestAwareDecorator
 				if entry is not None:
 					result['CatalogEntryNTIID'] = entry.ntiid
 				break
-
-IPrincipalEnrollments
