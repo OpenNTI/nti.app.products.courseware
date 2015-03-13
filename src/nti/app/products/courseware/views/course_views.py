@@ -16,7 +16,6 @@ from zope import interface
 from zope.traversing.interfaces import IPathAdapter
 
 from pyramid.view import view_config
-from pyramid.view import view_defaults
 from pyramid.interfaces import IRequest
 from pyramid import httpexceptions as hexc
 
