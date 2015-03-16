@@ -224,12 +224,16 @@ class _OpenEnrollmentOptionLinkDecorator(AbstractAuthenticatedRequestAwareDecora
 
 @component.adapter(ICourseCatalogEntry)
 @interface.implementer(IExternalMappingDecorator)
-class _EnrollmentOptionsCourseEntryDecorator(AbstractAuthenticatedRequestAwareDecorator):
+class _CourseCatalogEntryDecorator(AbstractAuthenticatedRequestAwareDecorator):
 
 	def _predicate(self, context, result):
 		return self._is_authenticated
 
 	def _do_decorate_external(self, context, result):
+		record = get_enrollment_record(context, self.remoteUser)
+		if record is not None:
+			result['RealEnrollmentStatus'] = record.Scope
+			
 		options = get_enrollment_options(context)
 		if options:
 			result[u'EnrollmentOptions'] = to_external_object(options)
