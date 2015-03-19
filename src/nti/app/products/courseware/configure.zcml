@@ -176,9 +176,11 @@
 	<subscriber factory=".decorators._CourseCatalogEntryLegacyDecorator"
 				provides="nti.externalization.interfaces.IExternalMappingDecorator" />
 
-	<subscriber factory=".decorators._CourseOutlineContentNodeLinkDecorator"
-				provides="nti.externalization.interfaces.IExternalMappingDecorator" />
-
+	<configure zcml:condition="not-installed nti.app.contenttypes.presentation">
+		<subscriber factory=".decorators._CourseOutlineContentNodeLinkDecorator"
+					provides="nti.externalization.interfaces.IExternalMappingDecorator" />
+	</configure>
+	
 	<subscriber factory=".decorators._ContainedCatalogEntryDecorator"
 				provides="nti.externalization.interfaces.IExternalMappingDecorator"
 				for="nti.dataserver.interfaces.IContained
