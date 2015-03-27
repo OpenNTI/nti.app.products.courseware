@@ -21,6 +21,7 @@ from pyramid import httpexceptions as hexc
 
 from nti.app.base.abstract_views import AbstractAuthenticatedView
 
+from nti.appserver.ugd_edit_views import ContainerContextUGDPostView
 from nti.appserver.pyramid_authorization import has_permission
 
 from nti.contenttypes.courses.interfaces import ICourseOutline
@@ -31,8 +32,9 @@ from nti.dataserver import authorization as nauth
 
 from nti.externalization.interfaces import LocatedExternalDict
 from nti.externalization.interfaces import StandardExternalFields
-from nti.externalization.externalization import to_external_object
 from nti.externalization.interfaces import ILocatedExternalSequence
+
+from nti.externalization.externalization import to_external_object
 
 from ..interfaces import ACT_VIEW_ROSTER
 from ..interfaces import ICourseInstanceActivity
@@ -428,3 +430,20 @@ class CourseActivityLastViewedDecorator(AbstractAuthenticatedView,
 		now = self.readInput()
 		mapping[username] = time_to_64bit_int(now)
 		return now
+
+@view_config(route_name='objects.generic.traversal',
+			 renderer='rest',
+			 request_method='POST',
+			 context=ICourseInstance,
+			 permission=nauth.ACT_READ,
+			 name='Pages')
+class CoursePagesView( ContainerContextUGDPostView ):
+	"""
+	A pages view on the course.  We subclass ``ContainerContextUGDPostView`` in
+	order to intervene and annotate our ``IContainerContext``
+	object with the course context.
+
+	Reading/Editing/Deleting will remain the same.
+	"""
+
+

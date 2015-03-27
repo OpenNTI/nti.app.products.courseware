@@ -9,17 +9,27 @@ __docformat__ = "restructuredtext en"
 
 logger = __import__('logging').getLogger(__name__)
 
+from pyramid.traversal import find_interface
+
 import zope.intid
 from zope import interface
 from zope import component
 
+from nti.contentlibrary.interfaces import IContentUnit
+from nti.contentlibrary.interfaces import IContentPackage
 from nti.contentlibrary.interfaces import IContentPackageBundle
 
+from nti.contenttypes.courses.interfaces import ICourseCatalog
 from nti.contenttypes.courses.interfaces import ICourseInstance
+from nti.contenttypes.courses.interfaces import ICourseEnrollments
+from nti.contenttypes.courses.interfaces import ICourseSubInstance
 from nti.contenttypes.courses.interfaces import ICourseCatalogEntry
 from nti.contenttypes.courses.interfaces import IContentCourseInstance
 
+from nti.dataserver.interfaces import IUser
+
 from .interfaces import ILegacyCommunityBasedCourseInstance
+from .interfaces import ILegacyCourseConflatedContentPackageUsedAsCourse
 
 @interface.implementer(IContentPackageBundle)
 @component.adapter(ILegacyCommunityBasedCourseInstance)
@@ -36,19 +46,6 @@ def _course_content_to_package_bundle(course):
 def _entry_to_content_package_bundle(entry):
     course = ICourseInstance(entry, None)
     return IContentPackageBundle(course, None)
-
-from pyramid.traversal import find_interface
-
-from nti.contentlibrary.interfaces import IContentUnit
-from nti.contentlibrary.interfaces import IContentPackage
-
-from nti.contenttypes.courses.interfaces import ICourseCatalog
-from nti.contenttypes.courses.interfaces import ICourseEnrollments
-from nti.contenttypes.courses.interfaces import ICourseSubInstance
-
-from nti.dataserver.interfaces import IUser
-
-from .interfaces import ILegacyCourseConflatedContentPackageUsedAsCourse
 
 @interface.implementer(ICourseInstance)
 @component.adapter(ILegacyCourseConflatedContentPackageUsedAsCourse)
@@ -150,3 +147,4 @@ def _content_unit_and_user_to_course(unit, user):
 
     # nothing found return first course
     return courses[0] if courses else None
+

@@ -153,7 +153,8 @@ class _AbstractEnrollingBase(object):
 								  'Links', has_item( has_entry( 'rel', 'CourseCatalogEntry' ) ),
 								  'Links', has_item( has_entry( 'rel', VIEW_COURSE_RECURSIVE ) ),
 								  'Links', has_item( has_entry( 'rel', 'CourseEnrollmentRoster' ) ),
-								  'Links', has_item( has_entry( 'rel', VIEW_COURSE_RECURSIVE_BUCKET ) )))
+								  'Links', has_item( has_entry( 'rel', VIEW_COURSE_RECURSIVE_BUCKET ) ),
+								  'Links', has_item( has_entry( 'rel', 'Pages' ) )) )
 
 
 		roster_link = self.require_link_href_with_rel( course_instance, 'CourseEnrollmentRoster')

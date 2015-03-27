@@ -167,6 +167,9 @@
 	<subscriber factory=".decorators._CourseInstanceStreamLinkDecorator"
 				provides="nti.externalization.interfaces.IExternalMappingDecorator" />
 
+	<subscriber factory=".decorators._CourseInstancePagesLinkDecorator"
+				provides="nti.externalization.interfaces.IExternalMappingDecorator" />
+
 	<subscriber factory=".decorators._CourseOutlineContentsLinkDecorator"
 				provides="nti.externalization.interfaces.IExternalMappingDecorator" />
 
@@ -180,7 +183,7 @@
 		<subscriber factory=".decorators._CourseOutlineContentNodeLinkDecorator"
 					provides="nti.externalization.interfaces.IExternalMappingDecorator" />
 	</configure>
-	
+
 	<subscriber factory=".decorators._ContainedCatalogEntryDecorator"
 				provides="nti.externalization.interfaces.IExternalMappingDecorator"
 				for="nti.dataserver.interfaces.IContained

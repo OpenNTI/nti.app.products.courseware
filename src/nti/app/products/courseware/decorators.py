@@ -65,6 +65,8 @@ from .interfaces import ICourseInstanceEnrollment
 
 LINKS = StandardExternalFields.LINKS
 
+COURSE_CONTEXT_ANNOT_KEY = 'nti.app.products.course.context_key'
+
 @interface.implementer(IExternalMappingDecorator)
 @component.adapter(ICourseInstance)
 class _CourseInstanceLinkDecorator(object):
@@ -127,6 +129,24 @@ class _CourseInstanceStreamLinkDecorator(object):
 			link.__name__ = ''
 			link.__parent__ = context
 			_links.append(link)
+
+@interface.implementer(IExternalMappingDecorator)
+@component.adapter(ICourseInstance)
+class _CourseInstancePagesLinkDecorator(object):
+	"""
+	Places a link to the pages view of a course.
+	"""
+
+	__metaclass__ = SingletonDecorator
+
+	def decorateExternalMapping( self, context, result ):
+		_links = result.setdefault(LINKS, [])
+
+		link = Link(context, rel='Pages', elements=('Pages',))
+		interface.alsoProvides(link, ILocation)
+		link.__name__ = ''
+		link.__parent__ = context
+		_links.append(link)
 
 @interface.implementer(IExternalMappingDecorator)
 @component.adapter(ICourseOutline)
@@ -233,14 +253,14 @@ class _CourseCatalogEntryDecorator(AbstractAuthenticatedRequestAwareDecorator):
 		record = get_enrollment_record(context, self.remoteUser)
 		if record is not None:
 			result['RealEnrollmentStatus'] = record.Scope
-			
+
 		options = get_enrollment_options(context)
 		if options:
 			result[u'EnrollmentOptions'] = to_external_object(options)
 
 @interface.implementer(IExternalMappingDecorator)
 class _BaseeClassmatesLinkDecorator(AbstractAuthenticatedRequestAwareDecorator):
-	
+
 	def _do_decorate_external(self, context, result):
 		_links = result.setdefault(LINKS, [])
 		link = Link(context, rel=VIEW_COURSE_CLASSMATES, elements=(VIEW_COURSE_CLASSMATES,))
@@ -262,7 +282,7 @@ class _ClassmatesLinkDecorator(_BaseeClassmatesLinkDecorator):
 	def _predicate(self, context, result):
 		result = bool(self._is_authenticated and has_enrollments(self.remoteUser))
 		return result
-	
+
 from nti.dataserver.interfaces import IContained
 
 from nti.ntiids.ntiids import find_object_with_ntiid
@@ -273,7 +293,7 @@ class _ContainedCatalogEntryDecorator(AbstractAuthenticatedRequestAwareDecorator
 
 	def _predicate(self, context, result):
 		return bool(self._is_authenticated)
-	
+
 	def _do_decorate_external(self, context, result):
 		containerId = context.containerId
 		entry = container = find_object_with_ntiid(containerId) if containerId else None
