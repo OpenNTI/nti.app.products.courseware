@@ -8,6 +8,52 @@
 					"Items": {
 						"tag:nextthought.com,2011-10:OU-HTML-CLC3403_LawAndJustice.sec:QUIZ_01.01": {
 							"AssessmentItems": {
+								"tag:nextthought.com,2011-10:OU-NAQ-CLC3403_LawAndJustice.naq.pollid.aristotle.1": {
+									"Class": "Poll",
+									"MimeType": "application/vnd.nextthought.napoll",
+									"NTIID": "tag:nextthought.com,2011-10:OU-NAQ-CLC3403_LawAndJustice.naq.pollid.aristotle.1",
+									"content": "<a name=\"qid.aristotle.1\"></a>",
+									"parts": [
+										{
+											"Class": "MultipleChoicePart", 
+											"MimeType": "application/vnd.nextthought.assessment.nongradablemultiplechoicepart",
+											"choices": [
+												"<a name=\"1e5cd4b70d0ca146665b0073e3512f12\" ></a>\n\n<p class=\"par\" id=\"1e5cd4b70d0ca146665b0073e3512f12\">Distributive </p>",
+												"<a name=\"82a183f5bbcaf7607f1e0fb56399a565\" ></a>\n\n<p class=\"par\" id=\"82a183f5bbcaf7607f1e0fb56399a565\">Corrective </p>",
+												"<a name=\"d7140284ac92d169d24484726d8a2f10\" ></a>\n\n<p class=\"par\" id=\"d7140284ac92d169d24484726d8a2f10\">Transactional </p>"
+											],
+											"content": "I have a nice, hot apple pie to divide among my four friends. I have to decide how to split up the delicious dessert.",
+											"explanation": "",
+											"hints": []
+										}
+									]
+								},
+								"tag:nextthought.com,2011-10:OU-NAQ-CLC3403_LawAndJustice.naq.set.survey:KNOWING_aristotle": {
+									"Class": "Survey",
+									"MimeType": "application/vnd.nextthought.nasurvey",
+									"NTIID": "tag:nextthought.com,2011-10:OU-NAQ-CLC3403_LawAndJustice.naq.set.survey:KNOWING_aristotle",
+									"questions": [
+										{
+											"Class": "Poll",
+											"MimeType": "application/vnd.nextthought.napoll",
+											"NTIID": "tag:nextthought.com,2011-10:OU-NAQ-CLC3403_LawAndJustice.naq.pollid.aristotle.1",
+											"content": "<a name=\"qid.aristotle.1\"></a>",
+											"parts": [
+												{
+													"Class": "MultipleChoicePart",
+													"MimeType": "application/vnd.nextthought.assessment.nongradablemultiplechoicepart",
+													"choices": [
+														"<a name=\"1e5cd4b70d0ca146665b0073e3512f12\" ></a>\n\n<p class=\"par\" id=\"1e5cd4b70d0ca146665b0073e3512f12\">Distributive </p>",
+														"<a name=\"82a183f5bbcaf7607f1e0fb56399a565\" ></a>\n\n<p class=\"par\" id=\"82a183f5bbcaf7607f1e0fb56399a565\">Corrective </p>",
+														"<a name=\"d7140284ac92d169d24484726d8a2f10\" ></a>\n\n<p class=\"par\" id=\"d7140284ac92d169d24484726d8a2f10\">Transactional </p>"
+													],
+													"content": "I have a nice, hot apple pie to divide among my four friends. I have to decide how to split up the delicious dessert.",
+													"hints": []
+												}
+											]
+										}
+									]
+								},
 								"tag:nextthought.com,2011-10:OU-NAQ-CLC3403_LawAndJustice.naq.qid.aristotle.1": {
 									"Class": "Question",
 									"MimeType": "application/vnd.nextthought.naquestion",

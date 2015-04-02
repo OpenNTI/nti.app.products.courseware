@@ -296,14 +296,13 @@
 									"parts": [
 										{
 											"Class": "MultipleChoicePart",
-											"MimeType": "application/vnd.nextthought.assessment.multiplechoicepart",
+											"MimeType": "application/vnd.nextthought.assessment.nongradablemultiplechoicepart",
 											"choices": [
 												"<a name=\"1e5cd4b70d0ca146665b0073e3512f12\" ></a>\n\n<p class=\"par\" id=\"1e5cd4b70d0ca146665b0073e3512f12\">Distributive </p>",
 												"<a name=\"82a183f5bbcaf7607f1e0fb56399a565\" ></a>\n\n<p class=\"par\" id=\"82a183f5bbcaf7607f1e0fb56399a565\">Corrective </p>",
 												"<a name=\"d7140284ac92d169d24484726d8a2f10\" ></a>\n\n<p class=\"par\" id=\"d7140284ac92d169d24484726d8a2f10\">Transactional </p>"
 											],
 											"content": "I have a nice, hot apple pie to divide among my four friends. I have to decide how to split up the delicious dessert.",
-											"explanation": "",
 											"hints": []
 										}
 									]
@@ -321,14 +320,13 @@
 											"parts": [
 												{
 													"Class": "MultipleChoicePart",
-													"MimeType": "application/vnd.nextthought.assessment.multiplechoicepart",
+													"MimeType": "application/vnd.nextthought.assessment.nongradablemultiplechoicepart",
 													"choices": [
 														"<a name=\"1e5cd4b70d0ca146665b0073e3512f12\" ></a>\n\n<p class=\"par\" id=\"1e5cd4b70d0ca146665b0073e3512f12\">Distributive </p>",
 														"<a name=\"82a183f5bbcaf7607f1e0fb56399a565\" ></a>\n\n<p class=\"par\" id=\"82a183f5bbcaf7607f1e0fb56399a565\">Corrective </p>",
 														"<a name=\"d7140284ac92d169d24484726d8a2f10\" ></a>\n\n<p class=\"par\" id=\"d7140284ac92d169d24484726d8a2f10\">Transactional </p>"
 													],
 													"content": "I have a nice, hot apple pie to divide among my four friends. I have to decide how to split up the delicious dessert.",
-													"explanation": "",
 													"hints": []
 												}
 											]
