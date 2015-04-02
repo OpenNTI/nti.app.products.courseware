@@ -142,6 +142,7 @@ def _get_template(catalog_entry, base_template, package):
 	"""Look for course-specific templates, if available."""
 	package = dottedname.resolve(package)
 	provider = catalog_entry.ProviderUniqueID.replace(' ', '').lower()
+	provider = provider.replace('-', '')
 	template = provider + "_" + base_template
 	path = os.path.join(os.path.dirname(package.__file__), 'templates')
 	if not os.path.exists(os.path.join(path, template + ".pt")):
