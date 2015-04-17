@@ -86,8 +86,8 @@ class _EnrolledCourseSectionTopicNTIIDResolver(object):
 				ts = -record[2].createdTime
 			if not ts and catalog_entry is not None:
 				ts = -calendar.timegm(catalog_entry.StartDate.utctimetuple())
-
-			return (0 if ICourseSubInstance.providedBy(record[0]) else 1, ts)
+			result = (0 if ICourseSubInstance.providedBy(record[0]) else 1, ts)
+			return result
 
 		records.sort( key=key )
 		return records
