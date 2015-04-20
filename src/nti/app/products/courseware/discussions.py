@@ -21,13 +21,19 @@ from zope.security.interfaces import IPrincipal
 
 from nti.common.iterables import to_list
 
+from nti.contenttypes.courses.interfaces import ES_CREDIT 
+from nti.contenttypes.courses.interfaces import ES_PUBLIC 
+from nti.contenttypes.courses.interfaces import ES_PURCHASED
+from nti.contenttypes.courses.interfaces import ES_CREDIT_DEGREE
+from nti.contenttypes.courses.interfaces import ES_CREDIT_NONDEGREE
+#from nti.contenttypes.courses.interfaces import ENROLLMENT_SCOPE_NAMES
+
 from nti.contenttypes.courses.interfaces import ICourseInstance
-from nti.contenttypes.courses.interfaces import ENROLLMENT_SCOPE_NAMES
 from nti.contenttypes.courses.interfaces import ICourseInstanceVendorInfo
 from nti.contenttypes.courses.interfaces import ICourseInstancePublicScopedForum
 from nti.contenttypes.courses.interfaces import ICourseInstanceForCreditScopedForum
 
-from nti.contenttypes.courses.discussions.interfaces import ALL 
+#from nti.contenttypes.courses.discussions.interfaces import ALL 
 from nti.contenttypes.courses.discussions.interfaces import ICourseDiscussion 
 
 from nti.dataserver.users import Entity
@@ -41,9 +47,16 @@ from nti.externalization.internalization import update_from_external_object
 
 from nti.ntiids.ntiids import make_specific_safe
 
-NTI_FORUMS_PUBLIC = ('Open', 'Open', 'Public', ICourseInstancePublicScopedForum)
-NTI_FORUMS_INCLASS = ('In-Class', 'InClass', 'ForCredit', ICourseInstanceForCreditScopedForum)
+NTI_FORUMS_PUBLIC = ('Open', 'Open', ES_PUBLIC, ICourseInstancePublicScopedForum)
+NTI_FORUMS_FORCREDIT = ('In-Class', 'InClass', ES_CREDIT, ICourseInstanceForCreditScopedForum)
 
+ES_MAP = {
+	ES_PUBLIC: ES_PUBLIC,
+	ES_CREDIT: ES_CREDIT,
+	ES_PURCHASED: ES_CREDIT,
+	ES_CREDIT_DEGREE: ES_CREDIT,
+	ES_CREDIT_NONDEGREE: ES_CREDIT}
+			
 CourseForum = namedtuple('Forum', 'name scope display_name interface')
 
 def get_vendor_info(context):
@@ -69,7 +82,7 @@ def _forums_for_instance(context, name):
 		return forums
 
 	for prefix, key_prefix, scope, iface in ( NTI_FORUMS_PUBLIC,
-											  NTI_FORUMS_INCLASS):
+											  NTI_FORUMS_FORCREDIT):
 		has_key = 'Has' + key_prefix + name
 		displayname_key = key_prefix + name + 'DisplayName'
 		if forum_types.get(has_key, True):
@@ -159,10 +172,10 @@ def create_forum(course, name, owner, display_name=None, entities=None, implemen
 	return safe_name, forum
 
 def create_course_forums(context):
-	result = {}
+	result = {'discussions':{}, 'announcements':{}}
 	course = ICourseInstance(context)
 	
-	def _creator(forums=()):
+	def _creator(data, forums=()):
 		for forum in forums:
 			name, created = create_forum(course,
 										 name=forum.name,
@@ -171,10 +184,10 @@ def create_course_forums(context):
 										 implement=forum.interface,
 										 ## Always created by the public community
 										 owner=course.SharingScopes['Public'].NTIID)
-			result[name] = created
+			data[name] = (created, forum)
 		
-	_creator ( discussions_forums(course) )
-	_creator ( announcements_forums(course) )
+	_creator (result['discussions'], discussions_forums(course) )
+	_creator (result['announcements'], announcements_forums(course) )
 	return result
 
 @component.adapter(ICourseDiscussion, IObjectAddedEvent)
