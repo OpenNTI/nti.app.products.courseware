@@ -14,6 +14,7 @@ from collections import namedtuple
 from zope import component
 from zope import interface
 
+from zope import lifecycleevent
 from zope.lifecycleevent import IObjectAddedEvent
 from zope.lifecycleevent import IObjectModifiedEvent
 
@@ -26,14 +27,14 @@ from nti.contenttypes.courses.interfaces import ES_PUBLIC
 from nti.contenttypes.courses.interfaces import ES_PURCHASED
 from nti.contenttypes.courses.interfaces import ES_CREDIT_DEGREE
 from nti.contenttypes.courses.interfaces import ES_CREDIT_NONDEGREE
-#from nti.contenttypes.courses.interfaces import ENROLLMENT_SCOPE_NAMES
 
 from nti.contenttypes.courses.interfaces import ICourseInstance
+from nti.contenttypes.courses.interfaces import ICourseCatalogEntry
 from nti.contenttypes.courses.interfaces import ICourseInstanceVendorInfo
 from nti.contenttypes.courses.interfaces import ICourseInstancePublicScopedForum
 from nti.contenttypes.courses.interfaces import ICourseInstanceForCreditScopedForum
 
-#from nti.contenttypes.courses.discussions.interfaces import ALL 
+from nti.contenttypes.courses.discussions.interfaces import ALL 
 from nti.contenttypes.courses.discussions.interfaces import ICourseDiscussion 
 
 from nti.dataserver.users import Entity
@@ -42,20 +43,28 @@ from nti.dataserver.interfaces import ALL_PERMISSIONS
 from nti.dataserver.authorization_acl import ace_allowing
 from nti.dataserver.authorization_acl import acl_from_aces
 from nti.dataserver.contenttypes.forums.forum import CommunityForum
+from nti.dataserver.contenttypes.forums.post import CommunityHeadlinePost
+from nti.dataserver.contenttypes.forums.topic import CommunityHeadlineTopic
 
 from nti.externalization.internalization import update_from_external_object
 
+from nti.ntiids.ntiids import TYPE_OID
+from nti.ntiids.ntiids import make_ntiid
+from nti.ntiids.ntiids import is_ntiid_of_type
 from nti.ntiids.ntiids import make_specific_safe
+
+from .interfaces import NTIID_TYPE_COURSE_SECTION_TOPIC
 
 NTI_FORUMS_PUBLIC = ('Open', 'Open', ES_PUBLIC, ICourseInstancePublicScopedForum)
 NTI_FORUMS_FORCREDIT = ('In-Class', 'InClass', ES_CREDIT, ICourseInstanceForCreditScopedForum)
 
 ES_MAP = {
-	ES_PUBLIC: ES_PUBLIC,
-	ES_CREDIT: ES_CREDIT,
-	ES_PURCHASED: ES_CREDIT,
-	ES_CREDIT_DEGREE: ES_CREDIT,
-	ES_CREDIT_NONDEGREE: ES_CREDIT}
+	ALL: (ES_PUBLIC, ES_CREDIT),
+	ES_PUBLIC: (ES_PUBLIC,),
+	ES_CREDIT: (ES_CREDIT,),
+	ES_PURCHASED: (ES_CREDIT,),
+	ES_CREDIT_DEGREE: (ES_CREDIT,),
+	ES_CREDIT_NONDEGREE: (ES_CREDIT,)}
 			
 CourseForum = namedtuple('Forum', 'name scope display_name interface')
 
@@ -184,16 +193,98 @@ def create_course_forums(context):
 										 implement=forum.interface,
 										 ## Always created by the public community
 										 owner=course.SharingScopes['Public'].NTIID)
-			data[name] = (created, forum)
+			data[forum.scope.username] = (name, created)
 		
 	_creator (result['discussions'], discussions_forums(course) )
 	_creator (result['announcements'], announcements_forums(course) )
 	return result
 
+def create_topics(discussion):
+	course = ICourseInstance(discussion)
+	all_fourms = create_course_forums(course)
+	discussions = all_fourms['discussions']
+	
+	## get all scopes for topics
+	scopes = set()
+	for scope in discussion.scopes:
+		scopes.update(ES_MAP.get(scope) or ())
+	if not scopes:
+		logger.error("Cannot create discussions %s. Invalid scopes", discussion)
+		return ()
+	
+	## get/decode topic name
+	title = discussion.title 
+	title = title.decode('utf-8', 'ignore') if title else u''
+	name = make_specific_safe(discussion.id or title) # use id so title can be changed
+	
+	def _set_post(post, title, content):
+		post.title = title
+		post.body = content
+		for i in post.body:
+			if hasattr(i, '__parent__'):
+				i.__parent__ = post
+		
+	result = []
+	content = extract_content(discussion)
+	for scope in scopes:
+		data = discussions.get(scope)
+		if not data:
+			logger.error("No forum for scope %s was found", scope)
+		_, forum = data
+		
+		creator = course.SharingScopes[scope]
+		if name in forum:
+			logger.debug("Found existing topic %s", title)
+			topic = forum[name]
+			if topic.creator != creator:
+				topic.creator = creator
+			if topic.headline is not None and topic.headline.creator != creator:
+				topic.headline.creator = creator
+				
+			post = topic.headline
+			_set_post(post, title, content)
+			lifecycleevent.modified(post)
+		else:
+			post = CommunityHeadlinePost()
+			_set_post(post, title, content)
+
+			topic = CommunityHeadlineTopic()
+			topic.title = title
+			topic.creator = creator
+			topic.description = title
+
+			lifecycleevent.created(topic)
+			forum[name] = topic
+
+			post.__parent__ = topic
+			post.creator = topic.creator
+			topic.headline = post
+
+			lifecycleevent.created(post)
+			lifecycleevent.added(post)
+			
+			ntiid = topic.NTIID
+			if is_ntiid_of_type(ntiid, TYPE_OID):
+				# Got a new style course. Convert this into a useful
+				# course relative reference. Of course, we have to pick
+				# either section or global for the type and the provider unique
+				# id may not really be the right thing depending on if we're
+				# creating at a course instance or subinstance...
+				# XXX: This is assumming quite a bit about the way these work.
+				entry = ICourseCatalogEntry(course)
+				ntiid = make_ntiid(	provider=entry.ProviderUniqueID,
+									nttype=NTIID_TYPE_COURSE_SECTION_TOPIC,
+									specific=topic._ntiid_specific_part)
+				logger.debug('Created topic %s with NTIID %s', topic, ntiid)
+			result.append(ntiid)
+		## always publish		
+		topic.publish()
+	return result
+
 @component.adapter(ICourseDiscussion, IObjectAddedEvent)
 def _discussions_added(record, event):
-	pass
+	create_topics(record)
 	
 @component.adapter(ICourseDiscussion, IObjectModifiedEvent)
 def _discussions_modified(record, event):
-	pass
+	create_topics(record)
