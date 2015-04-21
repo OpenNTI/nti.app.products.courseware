@@ -83,7 +83,7 @@ def _forums_for_instance(context, name):
 											  NTI_FORUMS_FORCREDIT):
 		has_key = 'Has' + key_prefix + name
 		displayname_key = key_prefix + name + 'DisplayName'
-		if forum_types.get(has_key, True):
+		if forum_types.get(has_key):
 			title = prefix + ' ' + name
 			forum = CourseForum(title, 
 								instance.SharingScopes[scope],
@@ -120,7 +120,7 @@ def _extract_content(body=()):
 	return tuple(result)
 	
 def extract_content(discussion):
-	return extract_content(discussion.body)
+	return _extract_content(discussion.body)
 
 def announcements_forums(context):
 	return _forums_for_instance(context, 'Announcements')
