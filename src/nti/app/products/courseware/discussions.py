@@ -91,10 +91,11 @@ def _forums_for_instance(context, name):
 								iface)
 			forums.append( forum )
 	return forums
-	
-def extract_content(discussion):
-	body = list()
-	for content in discussion.body or ():
+
+def _extract_content(body=()):
+	result = list()
+	for content in body or ():
+		content = content.decode('utf-8', 'ignore')
 		content = content.replace('\r', '\n')
 		## Should it be a video?
 		if content.startswith("[ntivideo]"):
@@ -115,8 +116,11 @@ def extract_content(discussion):
 			content = video
 
 		if content:
-			body.append(content)
-	return tuple(body)
+			result.append(content)
+	return tuple(result)
+	
+def extract_content(discussion):
+	return extract_content(discussion.body)
 
 def announcements_forums(context):
 	return _forums_for_instance(context, 'Announcements')
@@ -272,8 +276,10 @@ def create_topics(discussion):
 
 @component.adapter(ICourseDiscussion, IObjectAddedEvent)
 def _discussions_added(record, event):
-	create_topics(record)
+	if _auto_create_forums(record):
+		create_topics(record)
 	
 @component.adapter(ICourseDiscussion, IObjectModifiedEvent)
 def _discussions_modified(record, event):
-	create_topics(record)
+	if _auto_create_forums(record):
+		create_topics(record)
