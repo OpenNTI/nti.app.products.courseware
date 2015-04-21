@@ -24,9 +24,7 @@ from nti.common.iterables import to_list
 
 from nti.contenttypes.courses.interfaces import ES_CREDIT 
 from nti.contenttypes.courses.interfaces import ES_PUBLIC 
-from nti.contenttypes.courses.interfaces import ES_PURCHASED
-from nti.contenttypes.courses.interfaces import ES_CREDIT_DEGREE
-from nti.contenttypes.courses.interfaces import ES_CREDIT_NONDEGREE
+from nti.contenttypes.courses.interfaces import ENROLLMENT_LINEAGE_MAP
 
 from nti.contenttypes.courses.interfaces import ICourseInstance
 from nti.contenttypes.courses.interfaces import ICourseCatalogEntry
@@ -34,7 +32,6 @@ from nti.contenttypes.courses.interfaces import ICourseInstanceVendorInfo
 from nti.contenttypes.courses.interfaces import ICourseInstancePublicScopedForum
 from nti.contenttypes.courses.interfaces import ICourseInstanceForCreditScopedForum
 
-from nti.contenttypes.courses.discussions.interfaces import ALL 
 from nti.contenttypes.courses.discussions.interfaces import ICourseDiscussion 
 
 from nti.dataserver.users import Entity
@@ -57,14 +54,6 @@ from .interfaces import NTIID_TYPE_COURSE_SECTION_TOPIC
 
 NTI_FORUMS_PUBLIC = ('Open', 'Open', ES_PUBLIC, ICourseInstancePublicScopedForum)
 NTI_FORUMS_FORCREDIT = ('In-Class', 'InClass', ES_CREDIT, ICourseInstanceForCreditScopedForum)
-
-ES_MAP = {
-	ALL: (ES_PUBLIC, ES_CREDIT),
-	ES_PUBLIC: (ES_PUBLIC,),
-	ES_CREDIT: (ES_CREDIT,),
-	ES_PURCHASED: (ES_CREDIT,),
-	ES_CREDIT_DEGREE: (ES_CREDIT,),
-	ES_CREDIT_NONDEGREE: (ES_CREDIT,)}
 			
 CourseForum = namedtuple('Forum', 'name scope display_name interface')
 
@@ -207,7 +196,7 @@ def create_topics(discussion):
 	## get all scopes for topics
 	scopes = set()
 	for scope in discussion.scopes:
-		scopes.update(ES_MAP.get(scope) or ())
+		scopes.update(ENROLLMENT_LINEAGE_MAP.get(scope) or ())
 	if not scopes:
 		logger.error("Cannot create discussions %s. Invalid scopes", discussion)
 		return ()
