@@ -9,6 +9,7 @@ __docformat__ = "restructuredtext en"
 
 logger = __import__('logging').getLogger(__name__)
 
+from itertools import chain
 from collections import namedtuple
 
 from zope import component
@@ -27,12 +28,15 @@ from nti.contenttypes.courses.interfaces import ES_PUBLIC
 from nti.contenttypes.courses.interfaces import ENROLLMENT_LINEAGE_MAP
 
 from nti.contenttypes.courses.interfaces import ICourseInstance
+from nti.contenttypes.courses.interfaces import ICourseSubInstance
 from nti.contenttypes.courses.interfaces import ICourseCatalogEntry
 from nti.contenttypes.courses.interfaces import ICourseInstanceVendorInfo
 from nti.contenttypes.courses.interfaces import ICourseInstancePublicScopedForum
 from nti.contenttypes.courses.interfaces import ICourseInstanceForCreditScopedForum
 
 from nti.contenttypes.courses.discussions.interfaces import ICourseDiscussion 
+from nti.contenttypes.courses.discussions.utils import get_discussion_provider
+from nti.contenttypes.courses.discussions.utils import get_entry_for_discussion
 
 from nti.dataserver.users import Entity
 from nti.dataserver.authorization import ACT_READ
@@ -127,6 +131,30 @@ def announcements_forums(context):
 
 def discussions_forums(context):
 	return _forums_for_instance(context, 'Discussions')
+
+def get_forums_for_discussions(discussion, context=None):
+	provider = get_discussion_provider(discussion)
+	context = context if context is not None else get_entry_for_discussion(discussion)
+	course = ICourseInstance(context, None)
+	if course is not None and provider is not None:
+		## find parent course
+		if ICourseSubInstance.providedBy(course):
+			parent = course.__parent__.__parent__
+		else:
+			parent = course
+		
+		## we want to find the correct course pointed by the discussion reference
+		## scan parent course and its subinstances
+		correct = None
+		for course in chain((parent,), parent.SubInstances.values()):
+			entry = ICourseCatalogEntry(course)
+			if entry.ProviderUniqueID == provider:
+				correct = course
+				break
+		if correct is not None:
+			pass
+		return ()
+	return None
 
 def get_acl(course, *entities):
 	## Our instance instructors get all permissions.
