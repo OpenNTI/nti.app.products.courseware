@@ -10,6 +10,7 @@ __docformat__ = "restructuredtext en"
 logger = __import__('logging').getLogger(__name__)
 
 from itertools import chain
+from urlparse import urlparse
 from collections import namedtuple
 
 from zope import component
@@ -25,7 +26,6 @@ from nti.common.iterables import to_list
 
 from nti.contenttypes.courses.interfaces import ES_CREDIT 
 from nti.contenttypes.courses.interfaces import ES_PUBLIC 
-from nti.contenttypes.courses.interfaces import ENROLLMENT_LINEAGE_MAP
 
 from nti.contenttypes.courses.interfaces import ICourseInstance
 from nti.contenttypes.courses.interfaces import ICourseSubInstance
@@ -35,14 +35,21 @@ from nti.contenttypes.courses.interfaces import ICourseInstancePublicScopedForum
 from nti.contenttypes.courses.interfaces import ICourseInstanceForCreditScopedForum
 
 from nti.contenttypes.courses.discussions.interfaces import ICourseDiscussion 
+
+from nti.contenttypes.courses.discussions.utils import is_nti_course_bundle
+from nti.contenttypes.courses.discussions.utils import get_discussion_scopes
 from nti.contenttypes.courses.discussions.utils import get_discussion_provider
 from nti.contenttypes.courses.discussions.utils import get_entry_for_discussion
 
 from nti.dataserver.users import Entity
-from nti.dataserver.authorization import ACT_READ
+
+from nti.dataserver.interfaces import ACE_ACT_ALLOW
 from nti.dataserver.interfaces import ALL_PERMISSIONS
+
+from nti.dataserver.authorization import ACT_READ
 from nti.dataserver.authorization_acl import ace_allowing
 from nti.dataserver.authorization_acl import acl_from_aces
+
 from nti.dataserver.contenttypes.forums.forum import CommunityForum
 from nti.dataserver.contenttypes.forums.post import CommunityHeadlinePost
 from nti.dataserver.contenttypes.forums.topic import CommunityHeadlineTopic
@@ -53,6 +60,8 @@ from nti.ntiids.ntiids import TYPE_OID
 from nti.ntiids.ntiids import make_ntiid
 from nti.ntiids.ntiids import is_ntiid_of_type
 from nti.ntiids.ntiids import make_specific_safe
+
+from nti.traversal.traversal import find_interface
 
 from .interfaces import NTIID_TYPE_COURSE_SECTION_TOPIC
 
@@ -132,7 +141,20 @@ def announcements_forums(context):
 def discussions_forums(context):
 	return _forums_for_instance(context, 'Discussions')
 
-def get_forums_for_discussions(discussion, context=None):
+def get_forum_scopes(forum):
+	result = None
+	course = find_interface(forum, ICourseInstance, strict=False)
+	m = {v.NTIID:k for k,v in course.SharingScopes.items()} if course else {}
+	if hasattr(forum, '__entities__'):
+		result = {m[k] for k,v in m.items() if k in forum.__entities__}
+	elif hasattr(forum, '__acl__'):
+		result = set()
+		for ace in forum.__acl__:
+			if IPrincipal(ace.actor).id in m and ace.action == ACE_ACT_ALLOW:
+				result.add(m[k])
+	return result or ()
+
+def get_forums_for_discussion(discussion, context=None):
 	provider = get_discussion_provider(discussion)
 	context = context if context is not None else get_entry_for_discussion(discussion)
 	course = ICourseInstance(context, None)
@@ -144,16 +166,23 @@ def get_forums_for_discussions(discussion, context=None):
 			parent = course
 		
 		## we want to find the correct course pointed by the discussion reference
-		## scan parent course and its subinstances
+		## scan course and its subinstances
 		correct = None
 		for course in chain((parent,), parent.SubInstances.values()):
 			entry = ICourseCatalogEntry(course)
 			if entry.ProviderUniqueID == provider:
 				correct = course
 				break
-		if correct is not None:
-			pass
-		return ()
+		result = {}
+		scopes = get_discussion_scopes(discussion)
+		if correct is not None and scopes:
+			from IPython.core.debugger import Tracer; Tracer()()
+			## find all forums for which the discussion has access
+			for k, v in correct.Discussions.items():
+				forum_scopes = get_forum_scopes(v)
+				if scopes.intersection(forum_scopes):
+					result[k] = v
+		return result
 	return None
 
 def get_acl(course, *entities):
@@ -197,6 +226,9 @@ def create_forum(course, name, owner, display_name=None, entities=None, implemen
 	old_acl = getattr(forum, '__acl__', None)
 	if old_acl != acl:
 		forum.__acl__ = acl
+	## save entities
+	forum.__entities__ = {str(x) for x in entities}
+	## update interface
 	if implement is not None:
 		interface.alsoProvides(forum, implement)
 	return safe_name, forum
@@ -226,9 +258,7 @@ def create_topics(discussion):
 	discussions = all_fourms['discussions']
 	
 	## get all scopes for topics
-	scopes = set()
-	for scope in discussion.scopes:
-		scopes.update(ENROLLMENT_LINEAGE_MAP.get(scope) or ())
+	scopes = get_discussion_scopes(discussion)
 	if not scopes:
 		logger.error("Cannot create discussions %s. Invalid scopes", discussion)
 		return ()
@@ -236,7 +266,10 @@ def create_topics(discussion):
 	## get/decode topic name
 	title = discussion.title 
 	title = title.decode('utf-8', 'ignore') if title else u''
-	name = make_specific_safe(discussion.id or title) # use id so title can be changed
+	name = discussion.id # use id so title can be changed
+	if is_nti_course_bundle(discussion):
+		name = urlparse(name).path
+	name = make_specific_safe(name or title)
 	
 	def _set_post(post, title, content):
 		post.title = title

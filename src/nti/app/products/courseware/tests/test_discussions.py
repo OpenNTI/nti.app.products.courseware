@@ -22,6 +22,7 @@ from hamcrest import contains_inanyorder
 does_not = is_not
 
 import fudge
+import urllib
 
 from zope import component
 
@@ -31,13 +32,16 @@ from nti.app.products.courseware.discussions import _extract_content
 from nti.app.products.courseware.discussions import discussions_forums
 from nti.app.products.courseware.discussions import create_course_forums
 from nti.app.products.courseware.discussions import announcements_forums
+from nti.app.products.courseware.discussions import get_forums_for_discussion
 
 from nti.contentfragments.interfaces import SanitizedHTMLContentFragment
 
 from nti.contenttypes.courses.interfaces import ES_ALL
 from nti.contenttypes.courses.interfaces import ICourseCatalog
 from nti.contenttypes.courses.interfaces import ICourseInstance
+
 from nti.contenttypes.courses.discussions.model import CourseDiscussion
+from nti.contenttypes.courses.discussions.interfaces import NTI_COURSE_BUNDLE
 from nti.contenttypes.courses.discussions.interfaces import ICourseDiscussions
 
 from nti.dataserver.contenttypes.media import EmbeddedVideo 
@@ -108,7 +112,8 @@ class TestDiscussions(ApplicationLayerTest):
 		discussion.body = (SanitizedHTMLContentFragment(content),)
 		discussion.scopes = (ES_ALL,)
 		discussion.title = 'title'
-		discussion.id = u'foo'
+		provider = urllib.quote('CLC 3403')
+		discussion.id = "%s://%s/%s" % (NTI_COURSE_BUNDLE, provider, 'foo')
 		
 		mock_gvi.is_callable().with_args().returns(self.vendor_info)
 		
@@ -134,9 +139,14 @@ class TestDiscussions(ApplicationLayerTest):
 			for t in discussions.values():
 				_, forum = t
 				assert_that(forum, has_property('__acl__', has_length(2)))
+				assert_that(forum, has_property('__entities__', has_length(1)))
 
 			result = create_topics(discussion)
-			assert_that(result, has_item('tag:nextthought.com,2011-10:CLC_3403-Topic:EnrolledCourseSection-Open_Discussions.foo'))
-			assert_that(result, has_item('tag:nextthought.com,2011-10:CLC_3403-Topic:EnrolledCourseSection-In_Class_Discussions.foo'))
+			assert_that(result, has_item('tag:nextthought.com,2011-10:CLC_3403-Topic:EnrolledCourseSection-In_Class_Discussions._foo'))
+			assert_that(result, has_item('tag:nextthought.com,2011-10:CLC_3403-Topic:EnrolledCourseSection-Open_Discussions._foo'))
 			
-			assert_that(forum, has_key('foo'))
+			assert_that(forum, has_key('_foo'))
+
+			f4ds = get_forums_for_discussion(discussion, course)
+			assert_that(f4ds, has_length(2))
+			
