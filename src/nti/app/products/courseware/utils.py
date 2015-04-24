@@ -5,11 +5,11 @@
 """
 
 from __future__ import print_function, unicode_literals, absolute_import, division
-from __builtin__ import True
 __docformat__ = "restructuredtext en"
 
 logger = __import__('logging').getLogger(__name__)
 
+from itertools import chain
 from datetime import datetime
 
 from zope import component
@@ -40,13 +40,25 @@ def is_there_an_open_enrollment(course, user):
 	else:
 		main_course = course
 
-	universe = [main_course] + list(main_course.SubInstances.values())
-	for instance in universe:
+	for instance in chain( (main_course,), main_course.SubInstances.values() ):
 		enrollments = ICourseEnrollments(instance)
 		record = enrollments.get_enrollment_for_principal(user)
 		if record is not None and record.Scope == ES_PUBLIC:
 			return True
 	return False
+
+def get_any_enrollment(course, user):
+	if ICourseSubInstance.providedBy(course):
+		main_course = course.__parent__.__parent__
+	else:
+		main_course = course
+
+	for instance in chain( (main_course,), main_course.SubInstances.values() ):
+		enrollments = ICourseEnrollments(instance)
+		record = enrollments.get_enrollment_for_principal(user)
+		if record is not None:
+			return record
+	return None
 
 def drop_any_other_enrollments(context, user, ignore_existing=True):
 	course = ICourseInstance(context)
@@ -59,8 +71,7 @@ def drop_any_other_enrollments(context, user, ignore_existing=True):
 		main_course = course
 			
 	result = []
-	universe = [main_course] + list(main_course.SubInstances.values())
-	for instance in universe:
+	for instance in chain((main_course,) , main_course.SubInstances.values()):
 		instance_entry = ICourseCatalogEntry(instance)
 		if ignore_existing and course_ntiid == instance_entry.ntiid:
 			continue
