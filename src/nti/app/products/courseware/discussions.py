@@ -176,7 +176,6 @@ def get_forums_for_discussion(discussion, context=None):
 		result = {}
 		scopes = get_discussion_scopes(discussion)
 		if correct is not None and scopes:
-			from IPython.core.debugger import Tracer; Tracer()()
 			## find all forums for which the discussion has access
 			for k, v in correct.Discussions.items():
 				forum_scopes = get_forum_scopes(v)
