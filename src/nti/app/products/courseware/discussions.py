@@ -141,6 +141,15 @@ def announcements_forums(context):
 def discussions_forums(context):
 	return _forums_for_instance(context, 'Discussions')
 
+def get_topic_key(discussion):
+	title = discussion.title 
+	title = title.decode('utf-8', 'ignore') if title else u''
+	name = discussion.id # use id so title can be changed
+	if is_nti_course_bundle(discussion):
+		name = urlparse(name).path
+	name = make_specific_safe(name or title)
+	return name
+
 def get_forum_scopes(forum):
 	result = None
 	course = find_interface(forum, ICourseInstance, strict=False)
@@ -263,13 +272,10 @@ def create_topics(discussion):
 		return ()
 	
 	## get/decode topic name
+	name = get_topic_key(discussion)
 	title = discussion.title 
 	title = title.decode('utf-8', 'ignore') if title else u''
-	name = discussion.id # use id so title can be changed
-	if is_nti_course_bundle(discussion):
-		name = urlparse(name).path
-	name = make_specific_safe(name or title)
-	
+
 	def _set_post(post, title, content):
 		post.title = title
 		post.body = content
