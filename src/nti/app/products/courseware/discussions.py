@@ -24,8 +24,11 @@ from zope.security.interfaces import IPrincipal
 
 from nti.common.iterables import to_list
 
+from nti.contenttypes.courses.interfaces import OPEN 
+from nti.contenttypes.courses.interfaces import IN_CLASS
 from nti.contenttypes.courses.interfaces import ES_CREDIT 
 from nti.contenttypes.courses.interfaces import ES_PUBLIC 
+from nti.contenttypes.courses.interfaces import IN_CLASS_PREFIX
 
 from nti.contenttypes.courses.interfaces import ICourseInstance
 from nti.contenttypes.courses.interfaces import ICourseSubInstance
@@ -65,8 +68,8 @@ from nti.traversal.traversal import find_interface
 
 from .interfaces import NTIID_TYPE_COURSE_SECTION_TOPIC
 
-NTI_FORUMS_PUBLIC = ('Open', 'Open', ES_PUBLIC, ICourseInstancePublicScopedForum)
-NTI_FORUMS_FORCREDIT = ('In-Class', 'InClass', ES_CREDIT, ICourseInstanceForCreditScopedForum)
+NTI_FORUMS_PUBLIC = (OPEN, OPEN, ES_PUBLIC, ICourseInstancePublicScopedForum)
+NTI_FORUMS_FORCREDIT = (IN_CLASS, IN_CLASS_PREFIX, ES_CREDIT, ICourseInstanceForCreditScopedForum)
 			
 CourseForum = namedtuple('Forum', 'name scope display_name interface')
 
