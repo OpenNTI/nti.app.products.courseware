@@ -17,11 +17,14 @@ from io import BytesIO
 from datetime import datetime
 
 from zope import component
+
 from zope.security.interfaces import IPrincipal
-from zope.securitypolicy.interfaces import IPrincipalRoleMap
 from zope.security.management import endInteraction, restoreInteraction
 
+from zope.securitypolicy.interfaces import IPrincipalRoleMap
+
 from pyramid.view import view_config
+from pyramid.view import view_defaults
 from pyramid import httpexceptions as hexc
 
 from nti.app.base.abstract_views import AbstractAuthenticatedView
@@ -123,12 +126,13 @@ class AbstractCourseEnrollView(AbstractAuthenticatedView,
 		catalog_entry = _parse_course(values)
 		return (catalog_entry, user)
 
-@view_config(route_name='objects.generic.traversal',
-			 renderer='rest',
-			 request_method='POST',
-			 context=CourseAdminPathAdapter,
-			 permission=nauth.ACT_NTI_ADMIN,
-			 name='UserCourseEnroll')
+@view_config(name='UserCourseEnroll')
+@view_config(name='user_course_enroll')
+@view_defaults(	route_name='objects.generic.traversal',
+				renderer='rest',
+				request_method='POST',
+				context=CourseAdminPathAdapter,
+				permission=nauth.ACT_NTI_ADMIN)
 class UserCourseEnrollView(AbstractCourseEnrollView):
 
 	def __call__(self):
@@ -155,12 +159,13 @@ class UserCourseEnrollView(AbstractCourseEnrollView):
 			restoreInteraction()
 		return result
 
-@view_config(route_name='objects.generic.traversal',
-			 renderer='rest',
-			 request_method='POST',
-			 context=CourseAdminPathAdapter,
-			 permission=nauth.ACT_NTI_ADMIN,
-			 name='UserCourseDrop')
+@view_config(name='UserCourseDrop')
+@view_config(name='user_course_drop')
+@view_defaults(	route_name='objects.generic.traversal',
+				renderer='rest',
+				request_method='POST',
+				context=CourseAdminPathAdapter,
+				permission=nauth.ACT_NTI_ADMIN)
 class UserCourseDropView(AbstractCourseEnrollView):
 
 	def __call__(self):
@@ -179,11 +184,13 @@ class UserCourseDropView(AbstractCourseEnrollView):
 
 		return hexc.HTTPNoContent()
 
-@view_config(route_name='objects.generic.traversal',
-			 renderer='rest',
-			 context=CourseAdminPathAdapter,
-			 permission=nauth.ACT_NTI_ADMIN,
-			 name='DropAllCourseEnrollments')
+@view_config(name='DropAllCourseEnrollments')
+@view_config(name='drop_all_course_enrollments')
+@view_defaults(	route_name='objects.generic.traversal',
+				renderer='rest',
+				context=CourseAdminPathAdapter,
+				permission=nauth.ACT_NTI_ADMIN,
+				name='DropAllCourseEnrollments')
 class DropAllCourseEnrollmentsView(AbstractCourseEnrollView):
 
 	def __call__(self):
@@ -208,12 +215,13 @@ class DropAllCourseEnrollmentsView(AbstractCourseEnrollView):
 			restoreInteraction()
 		return result
 
-@view_config(route_name='objects.generic.traversal',
-			 renderer='rest',
-			 request_method='GET',
-			 context=CourseAdminPathAdapter,
-			 permission=nauth.ACT_NTI_ADMIN,
-			 name='UserCourseEnrollments')
+@view_config(name='UserCourseEnrollments')
+@view_config(name='user_course_enrollments')
+@view_defaults(	route_name='objects.generic.traversal',
+			 	renderer='rest',
+			 	request_method='GET',
+			 	context=CourseAdminPathAdapter,
+			 	permission=nauth.ACT_NTI_ADMIN)
 class UserCourseEnrollmentsView(AbstractAuthenticatedView):
 
 	def __call__(self):
@@ -226,11 +234,12 @@ class UserCourseEnrollmentsView(AbstractAuthenticatedView):
 				items.append(enrollment)
 		return result
 	
-@view_config(route_name='objects.generic.traversal',
-			 renderer='rest',
-			 context=CourseAdminPathAdapter,
-			 permission=nauth.ACT_NTI_ADMIN,
-			 name='CourseEnrollmentMigrator')
+@view_config(name='CourseEnrollmentMigrator')
+@view_config(name='Course_enrollment_migrator')
+@view_defaults(	route_name='objects.generic.traversal',
+				renderer='rest',
+				context=CourseAdminPathAdapter,
+				permission=nauth.ACT_NTI_ADMIN)
 class CourseEnrollmentMigrationView(AbstractAuthenticatedView):
 	"""
 	Migrates the enrollments from one course to antother
@@ -292,12 +301,13 @@ class CourseEnrollmentMigrationView(AbstractAuthenticatedView):
 
 ## REPORT admin views
 
-@view_config(route_name='objects.generic.traversal',
-			 renderer='rest',
-			 context=CourseAdminPathAdapter,
-			 request_method='GET',
-			 permission=nauth.ACT_MODERATE,
-			 name='CourseRoles')
+@view_config(name='CourseRoles')
+@view_config(name='course_roles')
+@view_defaults(	route_name='objects.generic.traversal',
+				renderer='rest',
+				context=CourseAdminPathAdapter,
+				request_method='GET',
+				permission=nauth.ACT_MODERATE)
 class CourseRolesView(AbstractAuthenticatedView,
 					  ModeledContentUploadRequestUtilsMixin):
 
@@ -338,12 +348,13 @@ class CourseRolesView(AbstractAuthenticatedView,
 
 from nti.dataserver.interfaces import IUsernameSubstitutionPolicy
 
-@view_config(route_name='objects.generic.traversal',
-			 renderer='rest',
-			 request_method='GET',
-			 context=CourseAdminPathAdapter,
-			 permission=nauth.ACT_NTI_ADMIN,
-			 name='CourseEnrollments')
+@view_config(name='CourseEnrollments')
+@view_config(name='course_enrollments')
+@view_defaults(	route_name='objects.generic.traversal',
+				renderer='rest',
+				request_method='GET',
+				context=CourseAdminPathAdapter,
+				permission=nauth.ACT_NTI_ADMIN)
 class CourseEnrollmentsView(AbstractAuthenticatedView):
 
 	@Lazy
@@ -397,8 +408,6 @@ class CourseEnrollmentsView(AbstractAuthenticatedView):
 
 import collections
 from cStringIO import StringIO
-
-from pyramid.view import view_defaults
 
 from nti.contenttypes.courses.interfaces import ICourseCatalogEntry
 
@@ -496,12 +505,13 @@ class AllCourseEnrollmentRosterDownloadView(AbstractAuthenticatedView):
 
 		return self.request.response
 
-@view_config(route_name='objects.generic.traversal',
-			 renderer='rest',
-			 request_method='GET',
-			 context=ICourseInstance,
-			 permission=nauth.ACT_NTI_ADMIN, 
-			 name='Enrollments.csv')
+@view_config(name='Enrollments.csv')
+@view_config(name='enrollments.csv')
+@view_defaults(	route_name='objects.generic.traversal',
+				renderer='rest',
+				request_method='GET',
+				context=ICourseInstance,
+				permission=nauth.ACT_NTI_ADMIN)
 class CourseEnrollmentsRosterDownloadView(AllCourseEnrollmentRosterDownloadView):
 	"""
 	Provides a downloadable table of the enrollments for
@@ -515,12 +525,13 @@ class CourseEnrollmentsRosterDownloadView(AllCourseEnrollmentRosterDownloadView)
 			# A course instance that's no longer in the catalog
 			raise hexc.HTTPNotFound("Course instance not in catalog")
 
-@view_config(route_name='objects.generic.traversal',
-			 renderer='rest',
-			 request_method='GET',
-			 context=ICourseCatalogEntry,
-			 permission=nauth.ACT_NTI_ADMIN,
-			 name='Enrollments.csv')
+@view_config(name='Enrollments.csv')
+@view_config(name='enrollments.csv')
+@view_defaults(	route_name='objects.generic.traversal',
+				renderer='rest',
+				request_method='GET',
+				context=ICourseCatalogEntry,
+				permission=nauth.ACT_NTI_ADMIN)
 class CourseCatalogEntryEnrollmentsRosterDownloadView(AllCourseEnrollmentRosterDownloadView):
 
 	def _iter_catalog_entries(self):
