@@ -41,19 +41,19 @@ ES_ORDER = {ES_CREDIT_DEGREE: 15,
 			ES_PUBLIC: 0}
 
 class ClassmatesSuggestedContactRankingPolicy(SuggestedContactRankingPolicy):
-	
+
 	provider = alias('__parent__')
-		
+
 	def _r_order(self, x):
 		scope = getattr(x, 'Scope', None) or ES_PUBLIC
 		result = ES_ORDER.get(scope, 0)
 		return result
-	
+
 	def _e_provider(self, x):
 		entry = getattr(x, 'entry', None)
 		result = getattr(entry, 'ProviderUniqueID', None) or u''
 		return result
-	
+
 	def _e_startDate(self, x):
 		entry = getattr(x, 'entry', None)
 		startDate = getattr(entry, 'StartDate', None) or ZERO_DATETIME
@@ -65,7 +65,7 @@ class ClassmatesSuggestedContactRankingPolicy(SuggestedContactRankingPolicy):
 		result = cmp(self._r_order(y), self._r_order(x)) if result == 0 else result # reverse
 		# result = cmp(x.username, y.username) if result == 0 else result
 		return result
-	
+
 	def sort(self, data):
 		result = []
 		seen = set()
@@ -82,30 +82,30 @@ class ClassmatesSuggestedContactRankingPolicy(SuggestedContactRankingPolicy):
 
 @interface.implementer(ISuggestedContactsProvider)
 class ClassmatesSuggestedContactsProvider(SuggestedContactsProvider):
-	
+
 	def __init__(self, *args, **kwargs):
 		super(ClassmatesSuggestedContactsProvider, self).__init__(*args, **kwargs)
 		self.ranking = ClassmatesSuggestedContactRankingPolicy()
 		self.ranking.provider = self
-	
+
 	def iter_courses(self, user):
 		for enrollments in component.subscribers( (user,), IPrincipalEnrollments):
 			for enrollment in enrollments.iter_enrollments():
 				course = ICourseInstance(enrollment, None)
 				if course is not None:
 					yield course
-					
+
 	def suggestions_by_course(self, user, context):
 		record = get_enrollment_record(context, user)
 		if record is None:
 			return ()
-		
+
 		implies = set([record.Scope])
 		for term in ENROLLMENT_SCOPE_VOCABULARY:
 			if record.Scope == term.value:
 				implies.update(term.implies)
 				break
-	
+
 		result = []
 		course = ICourseInstance(context)
 		entry = ICourseCatalogEntry(context)
@@ -120,7 +120,7 @@ class ClassmatesSuggestedContactsProvider(SuggestedContactsProvider):
 					result.append(suggestion)
 		result = self.ranking.sort(result)
 		return result
-	
+
 	def suggestions(self, user):
 		result = []
 		for course in self.iter_courses(user):

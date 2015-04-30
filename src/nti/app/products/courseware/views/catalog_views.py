@@ -73,7 +73,7 @@ def do_course_enrollment(catalog_entry, user, scope=ES_PUBLIC, parent=None,
 	course_instance = ICourseInstance(catalog_entry)
 	enrollments = get_enrollments(course_instance, request)
 	freshly_added = enrollments.enroll(user, scope=scope)
-	
+
 	# get an course instance enrollent
 	if not safe:
 		enrollment = component.getMultiAdapter( (course_instance, user),
@@ -81,7 +81,7 @@ def do_course_enrollment(catalog_entry, user, scope=ES_PUBLIC, parent=None,
 	else:
 		enrollment = component.queryMultiAdapter((course_instance, user),
 												 ICourseInstanceEnrollment )
-		
+
 	if enrollment is not None:
 		if parent and not enrollment.__parent__:
 			enrollment.__parent__ = parent
@@ -91,7 +91,7 @@ def do_course_enrollment(catalog_entry, user, scope=ES_PUBLIC, parent=None,
 	if freshly_added and request:
 		request.response.status_int = 201
 		request.response.location = traversal.resource_path(enrollment)
-			
+
 	# Return our enrollment, whether fresh or not
 	# This should probably be a multi-adapter
 	return enrollment
@@ -145,7 +145,7 @@ class enroll_course_view(AbstractAuthenticatedView,
 		if not can_create(catalog_entry, request=self.request):
 			raise hexc.HTTPForbidden()
 
-		enrollment = do_course_enrollment(catalog_entry, 
+		enrollment = do_course_enrollment(catalog_entry,
 										  self.remoteUser,
 										  parent=self.request.context,
 										  request=self.request)

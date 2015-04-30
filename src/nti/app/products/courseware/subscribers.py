@@ -141,11 +141,16 @@ def _enrollment_added(record, event):
 def _get_template(catalog_entry, base_template, package):
 	"""Look for course-specific templates, if available."""
 	package = dottedname.resolve(package)
-	provider = catalog_entry.ProviderUniqueID.replace(' ', '').lower()
-	provider = provider.replace('-', '')
-	template = provider + "_" + base_template
+	provider_unique_id = catalog_entry.ProviderUniqueID.replace(' ', '').lower()
+	full_provider_id = provider_unique_id.replace('-', '')
+	template = full_provider_id + "_" + base_template
 	path = os.path.join(os.path.dirname(package.__file__), 'templates')
+
 	if not os.path.exists(os.path.join(path, template + ".pt")):
-		template = base_template
+		# Full path doesn't exist; Drop our specific id part and try that
+		provider_unique_prefix = provider_unique_id.split( '-' )[0]
+		template = provider_unique_prefix + "_" + base_template
+		if not os.path.exists(os.path.join(path, template + ".pt")):
+			template = base_template
 	return template
 
