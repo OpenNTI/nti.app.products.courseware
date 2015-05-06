@@ -40,9 +40,9 @@ from nti.contenttypes.courses.interfaces import ICourseInstanceForCreditScopedFo
 from nti.contenttypes.courses.discussions.interfaces import ICourseDiscussion 
 
 from nti.contenttypes.courses.discussions.utils import is_nti_course_bundle
-from nti.contenttypes.courses.discussions.utils import get_discussion_scopes
 from nti.contenttypes.courses.discussions.utils import get_discussion_provider
 from nti.contenttypes.courses.discussions.utils import get_entry_for_discussion
+from nti.contenttypes.courses.discussions.utils import get_discussion_mapped_scopes
 
 from nti.dataserver.users import Entity
 
@@ -269,7 +269,7 @@ def create_topics(discussion):
 	discussions = all_fourms['discussions']
 	
 	## get all scopes for topics
-	scopes = get_discussion_scopes(discussion)
+	scopes = get_discussion_mapped_scopes(discussion)
 	if not scopes:
 		logger.error("Cannot create discussions %s. Invalid scopes", discussion)
 		return ()
