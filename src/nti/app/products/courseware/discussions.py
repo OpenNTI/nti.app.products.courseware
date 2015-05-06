@@ -9,7 +9,6 @@ __docformat__ = "restructuredtext en"
 
 logger = __import__('logging').getLogger(__name__)
 
-from itertools import chain
 from urlparse import urlparse
 from collections import namedtuple
 
@@ -31,7 +30,6 @@ from nti.contenttypes.courses.interfaces import ES_PUBLIC
 from nti.contenttypes.courses.interfaces import IN_CLASS_PREFIX
 
 from nti.contenttypes.courses.interfaces import ICourseInstance
-from nti.contenttypes.courses.interfaces import ICourseSubInstance
 from nti.contenttypes.courses.interfaces import ICourseCatalogEntry
 from nti.contenttypes.courses.interfaces import ICourseInstanceVendorInfo
 from nti.contenttypes.courses.interfaces import ICourseInstancePublicScopedForum
@@ -40,8 +38,7 @@ from nti.contenttypes.courses.interfaces import ICourseInstanceForCreditScopedFo
 from nti.contenttypes.courses.discussions.interfaces import ICourseDiscussion 
 
 from nti.contenttypes.courses.discussions.utils import is_nti_course_bundle
-from nti.contenttypes.courses.discussions.utils import get_discussion_provider
-from nti.contenttypes.courses.discussions.utils import get_entry_for_discussion
+from nti.contenttypes.courses.discussions.utils import get_course_for_discussion
 from nti.contenttypes.courses.discussions.utils import get_discussion_mapped_scopes
 
 from nti.dataserver.users import Entity
@@ -167,34 +164,17 @@ def get_forum_scopes(forum):
 	return result or ()
 
 def get_forums_for_discussion(discussion, context=None):
-	provider = get_discussion_provider(discussion)
-	context = context if context is not None else get_entry_for_discussion(discussion)
-	course = ICourseInstance(context, None)
-	if course is not None and provider is not None:
-		## find parent course
-		if ICourseSubInstance.providedBy(course):
-			parent = course.__parent__.__parent__
-		else:
-			parent = course
-		
-		## we want to find the correct course pointed by the discussion reference
-		## scan course and its subinstances
-		correct = None
-		for course in chain((parent,), parent.SubInstances.values()):
-			entry = ICourseCatalogEntry(course)
-			if entry.ProviderUniqueID == provider:
-				correct = course
-				break
-		result = {}
-		scopes = get_discussion_mapped_scopes(discussion)
-		if correct is not None and scopes:
-			## find all forums for which the discussion has access
-			for k, v in correct.Discussions.items():
-				forum_scopes = get_forum_scopes(v)
-				if scopes.intersection(forum_scopes):
-					result[k] = v
+	result = {}
+	scopes = get_discussion_mapped_scopes(discussion)
+	course = get_course_for_discussion(discussion, context=context)
+	if course is not None and scopes:
+		## find all forums for which the discussion has access
+		for k, v in course.Discussions.items():
+			forum_scopes = get_forum_scopes(v)
+			if scopes.intersection(forum_scopes):
+				result[k] = v
 		return result
-	return None
+	return result
 
 def get_acl(course, *entities):
 	## Our instance instructors get all permissions.
