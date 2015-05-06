@@ -186,7 +186,7 @@ def get_forums_for_discussion(discussion, context=None):
 				correct = course
 				break
 		result = {}
-		scopes = get_discussion_scopes(discussion)
+		scopes = get_discussion_mapped_scopes(discussion)
 		if correct is not None and scopes:
 			## find all forums for which the discussion has access
 			for k, v in correct.Discussions.items():
