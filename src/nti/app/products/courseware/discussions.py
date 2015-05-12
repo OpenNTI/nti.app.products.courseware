@@ -323,7 +323,6 @@ def create_topics(discussion):
 
 @component.adapter(ICourseDiscussion, IObjectAddedEvent)
 def _discussions_added(record, event):
-	from IPython.core.debugger import Tracer; Tracer()()
 	if _auto_create_forums(record):
 		create_topics(record)
 	
