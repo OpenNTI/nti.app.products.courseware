@@ -17,7 +17,6 @@ from hamcrest import has_entry
 from hamcrest import has_length
 from hamcrest import assert_that
 from hamcrest import has_entries
-from hamcrest import contains_string
 from hamcrest import contains_inanyorder
 does_not = is_not
 
@@ -63,9 +62,7 @@ class TestDiscussions(ApplicationLayerTest):
 	Of the headline post
 
 	Notice --- it has leading and trailing spaces, and even
-	commas and blank lines. You can\u2019t ignore the special apostrophe.""".encode('windows-1252')
-
-	mac_contents = contents.replace(b'\n', b'\r')
+	commas and blank lines. You can\u2019t ignore the special apostrophe."""
 	
 	default_origin = b'http://janux.ou.edu'
 	
@@ -75,8 +72,8 @@ class TestDiscussions(ApplicationLayerTest):
 		"NTI": {
 			"Forums": {
 				"AutoCreate":True,
-			    "HasInClassDiscussions": True,
-			    "HasOpenDiscussions": True
+				"HasInClassDiscussions": True,
+				"HasOpenDiscussions": True
 			},
 		}
 	}
@@ -92,16 +89,7 @@ class TestDiscussions(ApplicationLayerTest):
 		content = _extract_content((self.contents, '[ntivideo][kaltura]kaltura://1500101/1_vkxo2g66/'))
 		assert_that(content, is_(not_none()))
 		assert_that(content, has_length(2))
-		assert_that(content[0], does_not(contains_string('\r')))
-		assert_that(content[0], has_length(168))
-		assert_that(content[1], is_(EmbeddedVideo))
-
-	def test_extract_content_mac(self):
-		content = _extract_content((self.mac_contents, '[ntivideo]kaltura://1500101/1_vkxo2g66/'))
-		assert_that(content, is_(not_none()))
-		assert_that(content, has_length(2))
-		assert_that(content[0], does_not(contains_string('\r')))
-		assert_that(content[0], has_length(168))
+		assert_that(content[0], has_length(169))
 		assert_that(content[1], is_(EmbeddedVideo))
 
 	@WithSharedApplicationMockDS(testapp=True, users=True)
@@ -149,4 +137,3 @@ class TestDiscussions(ApplicationLayerTest):
 
 			f4ds = get_forums_for_discussion(discussion, course)
 			assert_that(f4ds, has_length(2))
-			

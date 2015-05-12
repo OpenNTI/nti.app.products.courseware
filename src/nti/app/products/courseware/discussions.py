@@ -273,6 +273,7 @@ def create_topics(discussion):
 			continue
 		_, forum = data
 		
+		created = True
 		creator = course.SharingScopes[scope]
 		if name in forum:
 			logger.debug("Found existing topic %s", title)
@@ -285,6 +286,7 @@ def create_topics(discussion):
 			post = topic.headline
 			_set_post(post, title, content)
 			lifecycleevent.modified(post)
+			created = False
 		else:
 			post = CommunityHeadlinePost()
 			_set_post(post, title, content)
@@ -304,20 +306,21 @@ def create_topics(discussion):
 			lifecycleevent.created(post)
 			lifecycleevent.added(post)
 			
-			ntiid = topic.NTIID
-			if is_ntiid_of_type(ntiid, TYPE_OID):
-				# Got a new style course. Convert this into a useful
-				# course relative reference. Of course, we have to pick
-				# either section or global for the type and the provider unique
-				# id may not really be the right thing depending on if we're
-				# creating at a course instance or subinstance...
-				# XXX: This is assumming quite a bit about the way these work.
-				entry = ICourseCatalogEntry(course)
-				ntiid = make_ntiid(	provider=entry.ProviderUniqueID,
-									nttype=NTIID_TYPE_COURSE_SECTION_TOPIC,
-									specific=topic._ntiid_specific_part)
-				logger.debug('Created topic %s with NTIID %s', topic, ntiid)
-			result.append(ntiid)
+		ntiid = topic.NTIID
+		if is_ntiid_of_type(ntiid, TYPE_OID):
+			# Got a new style course. Convert this into a useful
+			# course relative reference. Of course, we have to pick
+			# either section or global for the type and the provider unique
+			# id may not really be the right thing depending on if we're
+			# creating at a course instance or subinstance...
+			# XXX: This is assumming quite a bit about the way these work.
+			entry = ICourseCatalogEntry(course)
+			ntiid = make_ntiid(	provider=entry.ProviderUniqueID,
+								nttype=NTIID_TYPE_COURSE_SECTION_TOPIC,
+								specific=topic._ntiid_specific_part)
+			logger.debug('%s topic %s with NTIID %s',
+						 ('Created' if created else 'Updated'), topic, ntiid)
+		result.append(ntiid)
 		## always publish		
 		topic.publish()
 	return result
