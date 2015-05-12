@@ -108,8 +108,6 @@ def _forums_for_instance(context, name):
 def _extract_content(body=()):
 	result = list()
 	for content in body or ():
-		content = content.decode('utf-8', 'ignore')
-		content = content.replace('\r', '\n')
 		## Should it be a video?
 		if content.startswith("[ntivideo]"):
 			content = content[len("[ntivideo]"):]
@@ -325,6 +323,7 @@ def create_topics(discussion):
 
 @component.adapter(ICourseDiscussion, IObjectAddedEvent)
 def _discussions_added(record, event):
+	from IPython.core.debugger import Tracer; Tracer()()
 	if _auto_create_forums(record):
 		create_topics(record)
 	
