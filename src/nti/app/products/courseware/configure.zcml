@@ -47,6 +47,8 @@
 	<!-- I18N -->
 	<i18n:registerTranslations directory="locales" />
 
+	<subscriber handler=".discussions._discussions_added" />
+	<subscriber handler=".discussions._discussions_modified" />
 	<subscriber handler=".legacy_catalog._content_package_registered" />
 
 	<!-- Auto-gen course purchasables from content -->
