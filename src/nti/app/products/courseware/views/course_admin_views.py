@@ -44,6 +44,7 @@ from nti.contenttypes.courses.interfaces import ICourseEnrollments
 from nti.contenttypes.courses.interfaces import IPrincipalEnrollments
 from nti.contenttypes.courses.interfaces import ICourseEnrollmentManager
 from nti.contenttypes.courses.interfaces import ENROLLMENT_SCOPE_VOCABULARY
+from nti.contenttypes.courses.discussions.interfaces import ICourseDiscussions
 from nti.contenttypes.courses.enrollment import migrate_enrollments_from_course_to_course
 
 from nti.dataserver.interfaces import IUser
@@ -405,7 +406,6 @@ class CourseEnrollmentsView(AbstractAuthenticatedView):
 		response.content_disposition = b'attachment; filename="enrollments.csv"'
 		return response
 
-
 import collections
 from cStringIO import StringIO
 
@@ -536,3 +536,35 @@ class CourseCatalogEntryEnrollmentsRosterDownloadView(AllCourseEnrollmentRosterD
 
 	def _iter_catalog_entries(self):
 		return (self.request.context,)
+
+@view_config(name='discussions')
+@view_defaults(	route_name='objects.generic.traversal',
+			 	renderer='rest',
+			 	request_method='GET',
+			 	context=ICourseInstance,
+			 	permission=nauth.ACT_NTI_ADMIN)
+class CourseDiscussionsView(AbstractAuthenticatedView):
+
+	def _course(self):
+		return self.request.Context
+		
+	def __call__(self):
+		result = LocatedExternalDict()
+		items = result[ITEMS] = {}
+		discussions = ICourseDiscussions(self._course(), None) or {}
+		for name, discussion in discussions.items():
+			name = discussion.id or name
+			items[name] = discussion
+		return result
+
+@view_config(name='discussions')
+@view_defaults(	route_name='objects.generic.traversal',
+			 	renderer='rest',
+			 	request_method='GET',
+			 	context=ICourseCatalogEntry,
+			 	permission=nauth.ACT_NTI_ADMIN)
+class CourseCatalogEntryDiscussionsView(CourseDiscussionsView):
+
+	def _course(self):
+		return ICourseInstance(self.request.context, None)
+	
