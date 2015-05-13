@@ -9,7 +9,6 @@ __docformat__ = "restructuredtext en"
 
 logger = __import__('logging').getLogger(__name__)
 
-from urlparse import urlparse
 from collections import namedtuple
 
 from zope import component
@@ -23,10 +22,10 @@ from zope.security.interfaces import IPrincipal
 
 from nti.common.iterables import to_list
 
-from nti.contenttypes.courses.interfaces import OPEN 
+from nti.contenttypes.courses.interfaces import OPEN
 from nti.contenttypes.courses.interfaces import IN_CLASS
-from nti.contenttypes.courses.interfaces import ES_CREDIT 
-from nti.contenttypes.courses.interfaces import ES_PUBLIC 
+from nti.contenttypes.courses.interfaces import ES_CREDIT
+from nti.contenttypes.courses.interfaces import ES_PUBLIC
 from nti.contenttypes.courses.interfaces import IN_CLASS_PREFIX
 
 from nti.contenttypes.courses.interfaces import ICourseInstance
@@ -35,8 +34,9 @@ from nti.contenttypes.courses.interfaces import ICourseInstanceVendorInfo
 from nti.contenttypes.courses.interfaces import ICourseInstancePublicScopedForum
 from nti.contenttypes.courses.interfaces import ICourseInstanceForCreditScopedForum
 
-from nti.contenttypes.courses.discussions.interfaces import ICourseDiscussion 
+from nti.contenttypes.courses.discussions.interfaces import ICourseDiscussion
 
+from nti.contenttypes.courses.discussions.utils import get_discussion_path
 from nti.contenttypes.courses.discussions.utils import is_nti_course_bundle
 from nti.contenttypes.courses.discussions.utils import get_course_for_discussion
 from nti.contenttypes.courses.discussions.utils import get_discussion_mapped_scopes
@@ -67,7 +67,7 @@ from .interfaces import NTIID_TYPE_COURSE_SECTION_TOPIC
 
 NTI_FORUMS_PUBLIC = (OPEN, OPEN, ES_PUBLIC, ICourseInstancePublicScopedForum)
 NTI_FORUMS_FORCREDIT = (IN_CLASS, IN_CLASS_PREFIX, ES_CREDIT, ICourseInstanceForCreditScopedForum)
-			
+
 CourseForum = namedtuple('Forum', 'name scope display_name interface')
 
 def get_vendor_info(context):
@@ -92,27 +92,27 @@ def _forums_for_instance(context, name):
 	if instance is None:
 		return forums
 
-	for prefix, key_prefix, scope, iface in ( NTI_FORUMS_PUBLIC,
+	for prefix, key_prefix, scope, iface in (NTI_FORUMS_PUBLIC,
 											  NTI_FORUMS_FORCREDIT):
 		has_key = 'Has' + key_prefix + name
 		displayname_key = key_prefix + name + 'DisplayName'
 		if forum_types.get(has_key):
 			title = prefix + ' ' + name
-			forum = CourseForum(title, 
+			forum = CourseForum(title,
 								instance.SharingScopes[scope],
 								forum_types.get(displayname_key, title),
 								iface)
-			forums.append( forum )
+			forums.append(forum)
 	return forums
 
 def _extract_content(body=()):
 	result = list()
 	for content in body or ():
-		## Should it be a video?
+		# Should it be a video?
 		if content.startswith("[ntivideo]"):
 			content = content[len("[ntivideo]"):]
-			## A type, or kaltura?
-			## raise erros on malformed
+			# A type, or kaltura?
+			# raise erros on malformed
 			if content[0] == '[':
 				vid_type_end = content.index(']')
 				vid_type = content[1:vid_type_end]
@@ -129,7 +129,7 @@ def _extract_content(body=()):
 		if content:
 			result.append(content)
 	return tuple(result)
-	
+
 def extract_content(discussion):
 	return _extract_content(discussion.body)
 
@@ -140,20 +140,20 @@ def discussions_forums(context):
 	return _forums_for_instance(context, 'Discussions')
 
 def get_topic_key(discussion):
-	title = discussion.title 
+	title = discussion.title
 	title = title.decode('utf-8', 'ignore') if title else u''
-	name = discussion.id # use id so title can be changed
+	name = discussion.id  # use id so title can be changed
 	if is_nti_course_bundle(discussion):
-		name = urlparse(name).path
+		name = get_discussion_path(name)
 	name = make_specific_safe(name or title)
 	return name
 
 def get_forum_scopes(forum):
 	result = None
 	course = find_interface(forum, ICourseInstance, strict=False)
-	m = {v.NTIID:k for k,v in course.SharingScopes.items()} if course else {}
+	m = {v.NTIID:k for k, v in course.SharingScopes.items()} if course else {}
 	if hasattr(forum, '__entities__'):
-		result = {m[k] for k,v in m.items() if k in forum.__entities__}
+		result = {m[k] for k, v in m.items() if k in forum.__entities__}
 	elif hasattr(forum, '__acl__'):
 		result = set()
 		for ace in forum.__acl__:
@@ -166,7 +166,7 @@ def get_forums_for_discussion(discussion, context=None):
 	scopes = get_discussion_mapped_scopes(discussion)
 	course = get_course_for_discussion(discussion, context=context)
 	if course is not None and scopes:
-		## find all forums for which the discussion has access
+		# find all forums for which the discussion has access
 		for k, v in course.Discussions.items():
 			forum_scopes = get_forum_scopes(v)
 			if scopes.intersection(forum_scopes):
@@ -175,33 +175,33 @@ def get_forums_for_discussion(discussion, context=None):
 	return result
 
 def get_acl(course, *entities):
-	## Our instance instructors get all permissions.
+	# Our instance instructors get all permissions.
 	instructors = [i for i in course.instructors or ()]
-	aces = [ace_allowing( i, ALL_PERMISSIONS ) for i in instructors]
-	
-	## specifed entities (e.g. students) get read permission 
+	aces = [ace_allowing(i, ALL_PERMISSIONS) for i in instructors]
+
+	# specifed entities (e.g. students) get read permission
 	entities = {IPrincipal(Entity.get_entity(e), None) for e in entities or ()}
 	entities.discard(None)
-	aces.extend([ace_allowing( i, ACT_READ ) for e in entities])
-	
-	## Subinstance instructors get the same permissions as their students.
+	aces.extend([ace_allowing(i, ACT_READ) for e in entities])
+
+	# Subinstance instructors get the same permissions as their students.
 	for subinstance in course.SubInstances.values():
 		instructors = [i for i in subinstance.instructors or ()]
-		aces.extend([ace_allowing( i, ACT_READ ) for i in instructors])
-	
+		aces.extend([ace_allowing(i, ACT_READ) for i in instructors])
+
 	acl = acl_from_aces(aces)
 	return acl
-	
+
 def create_forum(course, name, owner, display_name=None, entities=None, implement=None):
 	discussions = course.Discussions
 	entities = to_list(entities, ())
-	acl = get_acl( course, *entities)
-	
+	acl = get_acl(course, *entities)
+
 	safe_name = make_specific_safe(name)
 	creator = Entity.get_entity(owner)
 	try:
 		forum = discussions[safe_name]
-		forum.__acl__ = acl   
+		forum.__acl__ = acl
 		if forum.creator is not creator:
 			forum.creator = creator
 	except KeyError:
@@ -210,14 +210,14 @@ def create_forum(course, name, owner, display_name=None, entities=None, implemen
 		forum.title = display_name or name
 		discussions[safe_name] = forum
 		logger.debug('Created forum %s', forum)
-	
-	## udpate ACL
+
+	# udpate ACL
 	old_acl = getattr(forum, '__acl__', None)
 	if old_acl != acl:
 		forum.__acl__ = acl
-	## save entities
+	# save entities
 	forum.__entities__ = {str(x) for x in entities}
-	## update interface
+	# update interface
 	if implement is not None:
 		interface.alsoProvides(forum, implement)
 	return safe_name, forum
@@ -225,7 +225,7 @@ def create_forum(course, name, owner, display_name=None, entities=None, implemen
 def create_course_forums(context):
 	result = {'discussions':{}, 'announcements':{}}
 	course = ICourseInstance(context)
-	
+
 	def _creator(data, forums=()):
 		for forum in forums:
 			name, created = create_forum(course,
@@ -233,28 +233,28 @@ def create_course_forums(context):
 										 display_name=forum.display_name,
 										 entities=[forum.scope.NTIID],
 										 implement=forum.interface,
-										 ## Always created by the public community
+										 # # Always created by the public community
 										 owner=course.SharingScopes['Public'].NTIID)
 			data[forum.scope.username] = (name, created)
-		
-	_creator (result['discussions'], discussions_forums(course) )
-	_creator (result['announcements'], announcements_forums(course) )
+
+	_creator (result['discussions'], discussions_forums(course))
+	_creator (result['announcements'], announcements_forums(course))
 	return result
 
 def create_topics(discussion):
 	course = ICourseInstance(discussion)
 	all_fourms = create_course_forums(course)
 	discussions = all_fourms['discussions']
-	
-	## get all scopes for topics
+
+	# get all scopes for topics
 	scopes = get_discussion_mapped_scopes(discussion)
 	if not scopes:
 		logger.error("Cannot create discussions %s. Invalid scopes", discussion)
 		return ()
-	
-	## get/decode topic name
+
+	# get/decode topic name
 	name = get_topic_key(discussion)
-	title = discussion.title 
+	title = discussion.title
 	title = title.decode('utf-8', 'ignore') if title else u''
 
 	def _set_post(post, title, content):
@@ -263,7 +263,7 @@ def create_topics(discussion):
 		for i in post.body:
 			if hasattr(i, '__parent__'):
 				i.__parent__ = post
-		
+
 	result = []
 	content = extract_content(discussion)
 	for scope in scopes:
@@ -272,7 +272,7 @@ def create_topics(discussion):
 			logger.warn("No forum for scope %s was found", scope)
 			continue
 		_, forum = data
-		
+
 		created = True
 		creator = course.SharingScopes[scope]
 		if name in forum:
@@ -282,7 +282,7 @@ def create_topics(discussion):
 				topic.creator = creator
 			if topic.headline is not None and topic.headline.creator != creator:
 				topic.headline.creator = creator
-				
+
 			post = topic.headline
 			_set_post(post, title, content)
 			lifecycleevent.modified(post)
@@ -305,7 +305,7 @@ def create_topics(discussion):
 
 			lifecycleevent.created(post)
 			lifecycleevent.added(post)
-			
+
 		ntiid = topic.NTIID
 		if is_ntiid_of_type(ntiid, TYPE_OID):
 			# Got a new style course. Convert this into a useful
@@ -315,13 +315,13 @@ def create_topics(discussion):
 			# creating at a course instance or subinstance...
 			# XXX: This is assumming quite a bit about the way these work.
 			entry = ICourseCatalogEntry(course)
-			ntiid = make_ntiid(	provider=entry.ProviderUniqueID,
+			ntiid = make_ntiid(provider=entry.ProviderUniqueID,
 								nttype=NTIID_TYPE_COURSE_SECTION_TOPIC,
 								specific=topic._ntiid_specific_part)
 			logger.debug('%s topic %s with NTIID %s',
 						 ('Created' if created else 'Updated'), topic, ntiid)
 		result.append(ntiid)
-		## always publish		
+		# always publish
 		topic.publish()
 	return result
 
@@ -329,7 +329,7 @@ def create_topics(discussion):
 def _discussions_added(record, event):
 	if _auto_create_forums(record):
 		create_topics(record)
-	
+
 @component.adapter(ICourseDiscussion, IObjectModifiedEvent)
 def _discussions_modified(record, event):
 	if _auto_create_forums(record):

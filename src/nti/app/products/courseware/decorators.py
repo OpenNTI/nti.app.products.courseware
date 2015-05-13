@@ -78,13 +78,13 @@ class _CourseInstanceLinkDecorator(object):
 
 	__metaclass__ = SingletonDecorator
 
-	def decorateExternalMapping( self, context, result ):
+	def decorateExternalMapping(self, context, result):
 		# We have no way to know what order these will be
 		# called in, so we must preserve anything that exists
-		_links = result.setdefault( LINKS, [] )
+		_links = result.setdefault(LINKS, [])
 		entry = ICourseCatalogEntry(context, None)
 		if entry:
-			_links.append( Link( entry, rel=VIEW_CATALOG_ENTRY )  )
+			_links.append(Link(entry, rel=VIEW_CATALOG_ENTRY))
 
 		request = get_current_request()
 		if request is not None and has_permission(ACT_VIEW_ACTIVITY, context, request):
@@ -93,13 +93,13 @@ class _CourseInstanceLinkDecorator(object):
 			# NOTE: Assuming the two permissions are concordant; at worst this is a UI
 			# issue though, the actual views are protected with individual permissions
 			for rel in VIEW_COURSE_ENROLLMENT_ROSTER, VIEW_COURSE_ACTIVITY:
-				_links.append( Link( context,
+				_links.append(Link(context,
 									 rel=rel,
-									 elements=(rel,) ) )
+									 elements=(rel,)))
 
 		if 'href' not in result:
 			link = Link(context)
-			interface.alsoProvides( link, ILinkExternalHrefOnly )
+			interface.alsoProvides(link, ILinkExternalHrefOnly)
 			result['href'] = link
 
 		enrollments = ICourseEnrollments(context)
@@ -120,7 +120,7 @@ class _CourseInstanceStreamLinkDecorator(object):
 
 	__metaclass__ = SingletonDecorator
 
-	def decorateExternalMapping( self, context, result ):
+	def decorateExternalMapping(self, context, result):
 		_links = result.setdefault(LINKS, [])
 
 		for name in (VIEW_COURSE_RECURSIVE, VIEW_COURSE_RECURSIVE_BUCKET):
@@ -139,7 +139,7 @@ class _CourseInstancePagesLinkDecorator(object):
 
 	__metaclass__ = SingletonDecorator
 
-	def decorateExternalMapping( self, context, result ):
+	def decorateExternalMapping(self, context, result):
 		_links = result.setdefault(LINKS, [])
 
 		link = Link(context, rel='Pages', elements=('Pages',))
@@ -158,7 +158,7 @@ class _CourseOutlineContentsLinkDecorator(object):
 
 	__metaclass__ = SingletonDecorator
 
-	def decorateExternalMapping( self, context, result ):
+	def decorateExternalMapping(self, context, result):
 		_links = result.setdefault(LINKS, [])
 		link = Link(context, rel=VIEW_CONTENTS, elements=(VIEW_CONTENTS,))
 		interface.alsoProvides(link, ILocation)
@@ -177,7 +177,7 @@ class _CourseOutlineContentNodeLinkDecorator(object):
 			library = component.queryUtility(IContentPackageLibrary)
 			paths = library.pathToNTIID(context.ContentNTIID) if library else ()
 			if paths:
-				href = IContentUnitHrefMapper( paths[-1].key ).href
+				href = IContentUnitHrefMapper(paths[-1].key).href
 				href = urljoin(href, context.src)
 				# set link for overview
 				links = result.setdefault(LINKS, [])

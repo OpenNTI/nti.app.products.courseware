@@ -13,6 +13,7 @@ logger = __import__('logging').getLogger(__name__)
 
 from zope import interface
 from zope import component
+
 from zope.lifecycleevent import IObjectAddedEvent
 
 from nti.contentlibrary.interfaces import IGlobalContentPackageLibrary
@@ -31,7 +32,7 @@ class CourseCatalogLegacyContentEntry(CourseCatalogLegacyEntry):
 	__external_can_create__ = False
 
 	ContentPackageNTIID = None
-	Communities = () # Unused externally, deprecated internally
+	Communities = ()  # Unused externally, deprecated internally
 	Term = ''
 	legacy_content_package = None
 
@@ -40,18 +41,18 @@ class CourseCatalogLegacyContentEntry(CourseCatalogLegacyEntry):
 		try:
 			return self.legacy_content_package.PlatformPresentationResources
 		except AttributeError:
-			return super(CourseCatalogLegacyContentEntry,self).PlatformPresentationResources
+			return super(CourseCatalogLegacyContentEntry, self).PlatformPresentationResources
 
 from nti.contenttypes.courses.interfaces import ICourseCatalog
 from nti.contenttypes.courses._catalog_entry_parser import fill_entry_from_legacy_key
 
 @component.adapter(ILegacyCourseConflatedContentPackage, IObjectAddedEvent)
-def _content_package_registered( package, event ):
+def _content_package_registered(package, event):
 	# We only do this in the global library; anything added in a
 	# persistent site-library should be handled by an actual course instance
 	# directory using this as a content bundle; if we register twice
 	# we could get duplicates.
-	if not IGlobalContentPackageLibrary.providedBy( package.__parent__ ):
+	if not IGlobalContentPackageLibrary.providedBy(package.__parent__):
 		logger.info("Ignoring legacy course-conflated content package %s; "
 					"library %s should have course instance directory for it",
 					package, package.__parent__)
@@ -114,7 +115,7 @@ def _content_package_registered( package, event ):
 	# is_non_public   bool     False     Only (OU) enrolled students can see it; no one else can join it
 
 	if not package.courseInfoSrc:
-		logger.debug("No course info for %s", package )
+		logger.debug("No course info for %s", package)
 		return
 
 	info_json_key = package.make_sibling_key(package.courseInfoSrc)
@@ -123,7 +124,7 @@ def _content_package_registered( package, event ):
 	# For externalizing the photo URLs, we need
 	# to make them absolute, and we do that by making
 	# the package absolute
-	ext_package_href = to_external_object( package )['href']
+	ext_package_href = to_external_object(package)['href']
 
 	fill_entry_from_legacy_key(catalog_entry, info_json_key, base_href=ext_package_href)
 
@@ -144,10 +145,10 @@ def _content_package_registered( package, event ):
 	package._v_global_legacy_catalog_entry = catalog_entry
 
 	try:
-		catalog.addCatalogEntry( catalog_entry )
+		catalog.addCatalogEntry(catalog_entry)
 	except ValueError:
 		# XXX Test cases move catalog entries around
 		# to deal better with sites. Fix them, then remove this.
 		logger.exception("This should only happen in test cases")
-		catalog.removeCatalogEntry( catalog_entry, event=False )
+		catalog.removeCatalogEntry(catalog_entry, event=False)
 		catalog.addCatalogEntry(catalog_entry)

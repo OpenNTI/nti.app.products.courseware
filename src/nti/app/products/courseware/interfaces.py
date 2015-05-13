@@ -17,9 +17,12 @@ logger = __import__('logging').getLogger(__name__)
 # pylint:disable=I0011,E0213,E0211
 
 from zope import interface
-from zope.security.permission import Permission
+
 from zope.container.interfaces import IContained
+
 from zope.interface.common.mapping import IEnumerableMapping
+
+from zope.security.permission import Permission
 
 from nti.appserver.workspaces.interfaces import IWorkspace
 from nti.appserver.workspaces.interfaces import IContainerCollection
@@ -27,7 +30,8 @@ from nti.appserver.workspaces.interfaces import IContainerCollection
 from nti.contenttypes.courses.interfaces import ICourseInstance
 from nti.contenttypes.courses.interfaces import IPrincipalEnrollments
 
-from nti.dataserver.interfaces import ILastModified
+from nti.coremetadata.interfaces import ILastModified
+
 from nti.dataserver.interfaces import IShouldHaveTraversablePath
 
 from nti.ntiids.schema import ValidNTIID
@@ -85,7 +89,7 @@ class ICourseInstanceActivity(IContained, ILastModified):
 		Note that this may be very expensive.
 		"""
 
-	def items(min=None,max=None,excludemin=False,excludemax=False):
+	def items(min=None, max=None, excludemin=False, excludemax=False):
 		"""
 		Return an iterator over the activity items stored for this
 		course. The iterator is returned in sorted order, with
@@ -179,7 +183,7 @@ class ICourseInstanceAdministrativeRole(IShouldHaveTraversablePath):
 	__name__ = interface.Attribute("The name of the administration is the same as the CourseInstance.")
 
 	RoleName = Choice(title="The name of the role this principal holds",
-					  values=('instructor','teaching assistant'))
+					  values=('instructor', 'teaching assistant'))
 	CourseInstance = Object(ICourseInstance)
 
 class IPrincipalAdministrativeRoleCatalog(interface.Interface):
@@ -230,19 +234,19 @@ class ILegacyCourseConflatedContentPackageUsedAsCourse(ILegacyCourseConflatedCon
 	this ugliness to stand out.
 	"""
 
-#: A preliminary special type of NTIID that refers to an abstract
-#: notion of a topic within a particular abstract course. When
-#: resolved, we will find the specific course (sub)instance the user is
-#: enrolled in and return the closest matching topic. This type of
-#: NTIID is semi-suitable for use in content and other long-lived places.
-#:
-#: The `provider` field should be the value of the `ProviderUniqueID`
-#: from the course catalog for the top-level course (not section/subinstance).
+# A preliminary special type of NTIID that refers to an abstract
+# notion of a topic within a particular abstract course. When
+# resolved, we will find the specific course (sub)instance the user is
+# enrolled in and return the closest matching topic. This type of
+# NTIID is semi-suitable for use in content and other long-lived places.
+# 
+# The `provider` field should be the value of the `ProviderUniqueID`
+# from the course catalog for the top-level course (not section/subinstance).
 NTIID_TYPE_COURSE_SECTION_TOPIC = 'Topic:EnrolledCourseSection'
 
-#: Similar to :const:`.NTIID_TYPE_COURSE_SECTION_TOPIC`, but instead
-#: returns the top-level course topic, never the course topic
-#: for a subsection.
+# Similar to :const:`.NTIID_TYPE_COURSE_SECTION_TOPIC`, but instead
+# returns the top-level course topic, never the course topic
+# for a subsection.
 NTIID_TYPE_COURSE_TOPIC = 'Topic:EnrolledCourseRoot'
 
 # NTIIDs that look up named forums in courses.

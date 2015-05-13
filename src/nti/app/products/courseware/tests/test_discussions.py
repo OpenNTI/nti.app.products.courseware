@@ -2,7 +2,6 @@
 # -*- coding: utf-8 -*-
 
 from __future__ import print_function, unicode_literals, absolute_import, division
-from hamcrest.library.object.hasproperty import has_property
 __docformat__ = "restructuredtext en"
 
 # disable: accessing protected members, too many methods
@@ -17,11 +16,11 @@ from hamcrest import has_entry
 from hamcrest import has_length
 from hamcrest import assert_that
 from hamcrest import has_entries
+from hamcrest import has_property
 from hamcrest import contains_inanyorder
 does_not = is_not
 
 import fudge
-import urllib
 
 from zope import component
 
@@ -43,7 +42,7 @@ from nti.contenttypes.courses.discussions.model import CourseDiscussion
 from nti.contenttypes.courses.discussions.interfaces import NTI_COURSE_BUNDLE
 from nti.contenttypes.courses.discussions.interfaces import ICourseDiscussions
 
-from nti.dataserver.contenttypes.media import EmbeddedVideo 
+from nti.dataserver.contenttypes.media import EmbeddedVideo
 from nti.dataserver.contenttypes.forums.forum import CommunityForum
 
 from nti.dataserver.tests import mock_dataserver
@@ -54,7 +53,7 @@ from nti.app.testing.application_webtest import ApplicationLayerTest
 from nti.app.products.courseware.tests import InstructedCourseApplicationTestLayer
 
 class TestDiscussions(ApplicationLayerTest):
-	
+
 	layer = InstructedCourseApplicationTestLayer
 
 	contents = """
@@ -63,11 +62,11 @@ class TestDiscussions(ApplicationLayerTest):
 
 	Notice --- it has leading and trailing spaces, and even
 	commas and blank lines. You can\u2019t ignore the special apostrophe."""
-	
+
 	default_origin = b'http://janux.ou.edu'
-	
+
 	course_ntiid = 'tag:nextthought.com,2011-10:NTI-CourseInfo-Fall2013_CLC3403_LawAndJustice'
-	
+
 	vendor_info = {
 		"NTI": {
 			"Forums": {
@@ -77,14 +76,14 @@ class TestDiscussions(ApplicationLayerTest):
 			},
 		}
 	}
-				
+
 	@classmethod
 	def catalog_entry(self):
 		catalog = component.getUtility(ICourseCatalog)
 		for entry in catalog.iterCatalogEntries():
 			if entry.ntiid == self.course_ntiid:
 				return entry
-			
+
 	def test_extract_content_simple(self):
 		content = _extract_content((self.contents, '[ntivideo][kaltura]kaltura://1500101/1_vkxo2g66/'))
 		assert_that(content, is_(not_none()))
@@ -100,28 +99,27 @@ class TestDiscussions(ApplicationLayerTest):
 		discussion.body = (SanitizedHTMLContentFragment(content),)
 		discussion.scopes = (ES_ALL,)
 		discussion.title = 'title'
-		provider = urllib.quote('CLC 3403')
-		discussion.id = "%s://%s/%s" % (NTI_COURSE_BUNDLE, provider, 'foo')
-		
+		discussion.id = "%s://%s" % (NTI_COURSE_BUNDLE, 'foo')
+
 		mock_gvi.is_callable().with_args().returns(self.vendor_info)
-		
-		with mock_dataserver.mock_db_trans(self.ds,  site_name='platform.ou.edu'):
+
+		with mock_dataserver.mock_db_trans(self.ds, site_name='platform.ou.edu'):
 			entry = self.catalog_entry()
 			course = ICourseInstance(entry)
 			discussions = ICourseDiscussions(course)
 			discussions['foo'] = discussion
-			
+
 			assert_that(discussions_forums(course), has_length(2))
 			assert_that(announcements_forums(course), has_length(0))
 
 			acl = get_acl(course)
 			assert_that(acl , has_length(1))
 			assert_that(acl[0].to_external_string() , is_(u'Allow:harp4162:All'))
-			
+
 			result = create_course_forums(course)
 			assert_that(result , has_entry(u'discussions',
 										   has_entries('ForCredit', contains_inanyorder(u'In_Class_Discussions', is_(CommunityForum)),
-													   'Public', contains_inanyorder('Open_Discussions', is_(CommunityForum))) ) )
+													   'Public', contains_inanyorder('Open_Discussions', is_(CommunityForum)))))
 
 			discussions = result['discussions']
 			for t in discussions.values():
@@ -132,7 +130,7 @@ class TestDiscussions(ApplicationLayerTest):
 			result = create_topics(discussion)
 			assert_that(result, has_item('tag:nextthought.com,2011-10:CLC_3403-Topic:EnrolledCourseSection-In_Class_Discussions._foo'))
 			assert_that(result, has_item('tag:nextthought.com,2011-10:CLC_3403-Topic:EnrolledCourseSection-Open_Discussions._foo'))
-			
+
 			assert_that(forum, has_key('_foo'))
 
 			f4ds = get_forums_for_discussion(discussion, course)

@@ -51,7 +51,7 @@ class _DefaultCourseActivity(Persistent):
 	__name__ = None
 	__parent__ = None
 
-	createdTime = 0 # pretty useless, here for ILastModified
+	createdTime = 0  # pretty useless, here for ILastModified
 
 	def __init__(self):
 		pass
@@ -85,7 +85,7 @@ class _DefaultCourseActivity(Persistent):
 	@property
 	def lastModified(self):
 		if len(self):
-			return bit64_int_to_time( -self._storage.minKey() )
+			return bit64_int_to_time(-self._storage.minKey())
 		return 0
 
 	def append(self, activity):
@@ -93,20 +93,20 @@ class _DefaultCourseActivity(Persistent):
 		# Time is increasing, but we want
 		# our default sort order to be descending, so we
 		# negate the key
-		key = - time_to_64bit_int( time.time() )
+		key = -time_to_64bit_int(time.time())
 
 		# We do a poor job of probing to find a free time so as not to overwrite
 		while key in self._storage:
 			key -= 1
 
-		l = self.__len # must capture pre-state
+		l = self.__len  # must capture pre-state
 		self._storage[key] = value
 		l.change(1)
 
 	def remove(self, activity):
 		value = self._intids.getId(activity)
 		keys = []
-		for k, v in self._storage.items(): # This might be a use case for byValue?
+		for k, v in self._storage.items():  # This might be a use case for byValue?
 			if v == value:
 				keys.append(k)
 		if not keys:
@@ -122,10 +122,10 @@ class _DefaultCourseActivity(Persistent):
 		max = time_to_64bit_int(max) if max is not None else None
 
 		intids = self._intids
-		for key, value in self._storage.items(min,max, excludemin=excludemin, excludemax=excludemax):
-			key = - key
+		for key, value in self._storage.items(min, max, excludemin=excludemin, excludemax=excludemax):
+			key = -key
 			when = bit64_int_to_time(key)
-			activity = intids.queryObject(value) # account for deletions
+			activity = intids.queryObject(value)  # account for deletions
 
 			# Even if the activity object has gone missing, still
 			# yield None to be consistent with __len__

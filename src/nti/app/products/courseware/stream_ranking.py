@@ -21,35 +21,35 @@ from .interfaces import IViewCount
 
 _DEFAULT_TIME_FIELD = 'lastModified'
 
-def _get_likes( obj ):
-	return liking.like_count( obj )
+def _get_likes(obj):
+	return liking.like_count(obj)
 
-def _get_favorites( obj ):
-	return rating.rate_count( obj, 'favorites' )
+def _get_favorites(obj):
+	return rating.rate_count(obj, 'favorites')
 
-def _safe_check( func, obj ):
+def _safe_check(func, obj):
 	"Some objects may not have ratings. Return zero in those cases."
 	result = 0
 	try:
-		result = func( obj )
+		result = func(obj)
 	except (TypeError, LookupError):
 		pass
 	return result
 
-def _get_ratings( obj ):
-	like_count = _safe_check( _get_likes, obj )
-	favorite_count = _safe_check( _get_favorites, obj )
+def _get_ratings(obj):
+	like_count = _safe_check(_get_likes, obj)
+	favorite_count = _safe_check(_get_favorites, obj)
 	return like_count, favorite_count
 
-def _get_time_field( obj ):
-	return getattr( obj, _DEFAULT_TIME_FIELD, 0 )
+def _get_time_field(obj):
+	return getattr(obj, _DEFAULT_TIME_FIELD, 0)
 
-def _get_view_count( obj ):
-	view_count = IViewCount( obj, None )
+def _get_view_count(obj):
+	view_count = IViewCount(obj, None)
 	return view_count
 
-@interface.implementer( IRanker )
-class StreamConfidenceRanker( object ):
+@interface.implementer(IRanker)
+class StreamConfidenceRanker(object):
 	"""
 	Modeled after the reddit comment ranking system that relies on the
 	fraction of upvotes versus downvotes to base confidence in a 'ranking'.
@@ -65,23 +65,23 @@ class StreamConfidenceRanker( object ):
 		We rank on the ratio of upvotes to views, secondarily
 		on last modified.
 		"""
-		likes, favorites = _get_ratings( obj )
+		likes, favorites = _get_ratings(obj)
 		upvotes = likes + favorites
-		obj_time = _get_time_field( obj )
+		obj_time = _get_time_field(obj)
 
 		# This algorithm does not work if we have objects without
 		# view counts. If so, those objects will end up
 		# on the bottom.
-		view_count = _get_view_count( obj )
+		view_count = _get_view_count(obj)
 
 		# We should have a max of 2.0 (two possible upvotes per view)
-		score = ( upvotes * 1.0 ) / view_count if view_count else view_count
+		score = (upvotes * 1.0) / view_count if view_count else view_count
 
 		# The actual algorithm logarithmically adjusts the upvotes
 		# (log10 makes votes 11-100 count as much as votes 1-10). For
 		# our current scale, the pure ratio may be enough.
 
-		# TODO We could move anything without views to the top of the list.
+		# TODO: We could move anything without views to the top of the list.
 		# It would either get views and drop, or it is worthless. So if we
 		# do so, we should have some sort of aging component.
 		return (score, obj_time)
@@ -89,12 +89,11 @@ class StreamConfidenceRanker( object ):
 	def rank(self, items):
 		if items is None:
 			return []
-
-		items.sort( key=self._obj_ranking, reverse=True )
+		items.sort(key=self._obj_ranking, reverse=True)
 		return items
 
-@interface.implementer( IRanker )
-class LastModifiedRanker( object ):
+@interface.implementer(IRanker)
+class LastModifiedRanker(object):
 	"""
 	A simple ranker that ranks items based a time field. Newer objects
 	(e.g. created or LastModified) will rank higher than older objects.
@@ -104,5 +103,5 @@ class LastModifiedRanker( object ):
 		if items is None:
 			return []
 
-		items.sort( reverse=True, key=_get_time_field )
+		items.sort(reverse=True, key=_get_time_field)
 		return items

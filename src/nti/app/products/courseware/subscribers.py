@@ -44,7 +44,7 @@ from nti.externalization.externalization import to_external_object
 
 from nti.mailer.interfaces import ITemplatedMailer
 
-## Email
+# Email
 
 def _send_enrollment_confirmation(event, user, profile, email, course):
 	# Note that the `course` is an nti.contenttypes.courses.ICourseInstance
@@ -55,7 +55,7 @@ def _send_enrollment_confirmation(event, user, profile, email, course):
 	request = getattr(event, 'request', get_current_request())
 	if not request or not email:
 		logger.warn("Not sending an enrollment email to %s because of no email or request",
-					user )
+					user)
 		return
 
 	policy = component.getUtility(ISitePolicyUserEventListener)
@@ -74,17 +74,17 @@ def _send_enrollment_confirmation(event, user, profile, email, course):
 		locale = IBrowserRequest(request).locale
 		dates = locale.dates
 		formatter = dates.getFormatter('date', length='long')
-		course_start_date = formatter.format( catalog_entry.StartDate )
+		course_start_date = formatter.format(catalog_entry.StartDate)
 
 	html_sig = catalog_entry.InstructorsSignature.replace('\n', "<br />")
 
-	support_email = getattr( policy, 'SUPPORT_EMAIL', 'support@nextthought.com' )
+	support_email = getattr(policy, 'SUPPORT_EMAIL', 'support@nextthought.com')
 	course_end_date = catalog_entry.EndDate
 	course_preview = catalog_entry.Preview
 	course_archived = course_end_date and course_end_date < datetime.datetime.utcnow()
 
-	for_credit_url = getattr( policy, 'FOR_CREDIT_URL', '' )
-	site_alias = getattr( policy, 'COM_ALIAS', '' )
+	for_credit_url = getattr(policy, 'FOR_CREDIT_URL', '')
+	site_alias = getattr(policy, 'COM_ALIAS', '')
 
 	args = {'profile': profile,
 			'context': event,
@@ -102,10 +102,10 @@ def _send_enrollment_confirmation(event, user, profile, email, course):
 			'course_archived': course_archived,
 			'today': isodate.date_isoformat(datetime.datetime.now()) }
 
-	package = getattr( policy, 'PACKAGE', 'nti.app.products.courseware' )
+	package = getattr(policy, 'PACKAGE', 'nti.app.products.courseware')
 
 	template = 'enrollment_confirmation_email'
-	template = _get_template( catalog_entry, template, package )
+	template = _get_template(catalog_entry, template, package)
 
 	component.getUtility(ITemplatedMailer).queue_simple_html_text_email(
 		template,
@@ -148,9 +148,8 @@ def _get_template(catalog_entry, base_template, package):
 
 	if not os.path.exists(os.path.join(path, template + ".pt")):
 		# Full path doesn't exist; Drop our specific id part and try that
-		provider_unique_prefix = provider_unique_id.split( '-' )[0]
+		provider_unique_prefix = provider_unique_id.split('-')[0]
 		template = provider_unique_prefix + "_" + base_template
 		if not os.path.exists(os.path.join(path, template + ".pt")):
 			template = base_template
 	return template
-

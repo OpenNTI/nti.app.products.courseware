@@ -60,9 +60,9 @@ class ClassmatesSuggestedContactRankingPolicy(SuggestedContactRankingPolicy):
 		return startDate
 
 	def _s_cmp(self, x, y):
-		result = cmp(self._e_startDate(y), self._e_startDate(x)) # reverse /recent first
+		result = cmp(self._e_startDate(y), self._e_startDate(x))  # reverse /recent first
 		result = cmp(self._e_provider(x), self._e_provider(y)) if result == 0 else result
-		result = cmp(self._r_order(y), self._r_order(x)) if result == 0 else result # reverse
+		result = cmp(self._r_order(y), self._r_order(x)) if result == 0 else result  # reverse
 		# result = cmp(x.username, y.username) if result == 0 else result
 		return result
 
@@ -89,7 +89,7 @@ class ClassmatesSuggestedContactsProvider(SuggestedContactsProvider):
 		self.ranking.provider = self
 
 	def iter_courses(self, user):
-		for enrollments in component.subscribers( (user,), IPrincipalEnrollments):
+		for enrollments in component.subscribers((user,), IPrincipalEnrollments):
 			for enrollment in enrollments.iter_enrollments():
 				course = ICourseInstance(enrollment, None)
 				if course is not None:

@@ -60,10 +60,10 @@ def _course_content_package_to_course(package):
     cache_name = '_v_course_content_package_to_course'
     course_intid = getattr(package, cache_name, cache_name)
     course = None
-    intids = component.getUtility( zope.intid.IIntIds )
+    intids = component.getUtility(zope.intid.IIntIds)
 
     if course_intid is not cache_name:
-        course = intids.queryObject( course_intid )
+        course = intids.queryObject(course_intid)
 
     if course is not None:
         return course
@@ -78,7 +78,7 @@ def _course_content_package_to_course(package):
         entry = None
 
     course = ICourseInstance(entry, None)
-    course_intid = intids.queryId( course, None )
+    course_intid = intids.queryId(course, None)
 
     setattr(package, cache_name, course_intid)
     return course
@@ -117,7 +117,7 @@ def _content_unit_to_courses(unit, include_sub_instances=True):
 @interface.implementer(ICourseInstance)
 @component.adapter(IContentUnit)
 def _content_unit_to_course(unit):
-    ## get all courses, don't include sections
+    # get all courses, don't include sections
     courses = _content_unit_to_courses(unit, False)
 
     # XXX: We probably need to check and see who's enrolled
@@ -127,12 +127,12 @@ def _content_unit_to_course(unit):
     # XXX: FIXME: This requires a one-to-one mapping
     return courses[0] if courses else None
 
-from .utils import is_course_instructor as is_instructor #BWC
+from .utils import is_course_instructor as is_instructor  # BWC
 
 @interface.implementer(ICourseInstance)
 @component.adapter(IContentUnit, IUser)
 def _content_unit_and_user_to_course(unit, user):
-    ## get all courses
+    # # get all courses
     courses = _content_unit_to_courses(unit, True)
     for instance in courses or ():
         # check enrollment
@@ -147,4 +147,3 @@ def _content_unit_and_user_to_course(unit, user):
 
     # nothing found return first course
     return courses[0] if courses else None
-
