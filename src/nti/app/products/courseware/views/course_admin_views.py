@@ -54,8 +54,8 @@ from nti.dataserver import authorization as nauth
 from nti.dataserver.users import User
 from nti.dataserver.users.interfaces import IUserProfile
 
-from nti.externalization.interfaces import LocatedExternalDict 
-from nti.externalization.interfaces import StandardExternalFields 
+from nti.externalization.interfaces import LocatedExternalDict
+from nti.externalization.interfaces import StandardExternalFields
 
 from nti.ntiids.ntiids import find_object_with_ntiid
 
@@ -70,7 +70,7 @@ from . import CourseAdminPathAdapter
 
 ITEMS = StandardExternalFields.ITEMS
 
-## HELPER admin views
+# HELPER admin views
 
 def _tx_string(s):
 	if s and isinstance(s, unicode):
@@ -85,9 +85,9 @@ def _parse_user(values):
 	user = User.get_user(username)
 	if not user or not IUser.providedBy(user):
 		raise hexc.HTTPUnprocessableEntity(detail='User not found')
-	
+
 	return username, user
-	
+
 def _parse_course(values):
 	# get validate course entry
 	ntiid = values.get('ntiid') or \
@@ -95,7 +95,7 @@ def _parse_course(values):
 			values.get('course')
 	if not ntiid:
 		raise hexc.HTTPUnprocessableEntity(detail='No course entry identifier')
-	
+
 	context = find_object_with_ntiid(ntiid)
 	if context is None:
 		try:
@@ -105,12 +105,12 @@ def _parse_course(values):
 			raise hexc.HTTPUnprocessableEntity(detail='Catalog not found')
 		except KeyError:
 			context = None
-		
+
 	if context is None:
 		raise hexc.HTTPUnprocessableEntity(detail='Course not found')
-	
+
 	return context
-	
+
 class AbstractCourseEnrollView(AbstractAuthenticatedView,
 							   ModeledContentUploadRequestUtilsMixin):
 
@@ -129,11 +129,11 @@ class AbstractCourseEnrollView(AbstractAuthenticatedView,
 
 @view_config(name='UserCourseEnroll')
 @view_config(name='user_course_enroll')
-@view_defaults(	route_name='objects.generic.traversal',
-				renderer='rest',
-				request_method='POST',
-				context=CourseAdminPathAdapter,
-				permission=nauth.ACT_NTI_ADMIN)
+@view_defaults(route_name='objects.generic.traversal',
+			   renderer='rest',
+			   request_method='POST',
+			   context=CourseAdminPathAdapter,
+			   permission=nauth.ACT_NTI_ADMIN)
 class UserCourseEnrollView(AbstractCourseEnrollView):
 
 	def __call__(self):
@@ -150,7 +150,7 @@ class UserCourseEnrollView(AbstractCourseEnrollView):
 			service = IUserService(user)
 			workspace = ICoursesWorkspace(service)
 			parent = workspace['EnrolledCourses']
-			
+
 			logger.info("Enrolling %s in %s", user, catalog_entry.ntiid)
 			result = do_course_enrollment(catalog_entry, user, scope,
 										  parent=parent,
@@ -162,21 +162,21 @@ class UserCourseEnrollView(AbstractCourseEnrollView):
 
 @view_config(name='UserCourseDrop')
 @view_config(name='user_course_drop')
-@view_defaults(	route_name='objects.generic.traversal',
-				renderer='rest',
-				request_method='POST',
-				context=CourseAdminPathAdapter,
-				permission=nauth.ACT_NTI_ADMIN)
+@view_defaults(route_name='objects.generic.traversal',
+			   renderer='rest',
+			   request_method='POST',
+			   context=CourseAdminPathAdapter,
+			   permission=nauth.ACT_NTI_ADMIN)
 class UserCourseDropView(AbstractCourseEnrollView):
 
 	def __call__(self):
 		values = self.readInput()
 		catalog_entry, user = self.parseCommon(values)
-		
+
 		# Make sure we don't have any interaction.
 		endInteraction()
 		try:
-			course_instance  = ICourseInstance(catalog_entry)
+			course_instance = ICourseInstance(catalog_entry)
 			enrollments = get_enrollments(course_instance, self.request)
 			if enrollments.drop(user):
 				logger.info("%s drop from %s", user, catalog_entry.ntiid)
@@ -187,29 +187,29 @@ class UserCourseDropView(AbstractCourseEnrollView):
 
 @view_config(name='DropAllCourseEnrollments')
 @view_config(name='drop_all_course_enrollments')
-@view_defaults(	route_name='objects.generic.traversal',
-				renderer='rest',
-				context=CourseAdminPathAdapter,
-				permission=nauth.ACT_NTI_ADMIN,
-				name='DropAllCourseEnrollments')
+@view_defaults(route_name='objects.generic.traversal',
+			   renderer='rest',
+			   context=CourseAdminPathAdapter,
+			   permission=nauth.ACT_NTI_ADMIN,
+			   name='DropAllCourseEnrollments')
 class DropAllCourseEnrollmentsView(AbstractCourseEnrollView):
 
 	def __call__(self):
 		values = self.readInput()
 		result = LocatedExternalDict()
 		catalog_entry = _parse_course(values)
-		
+
 		# Make sure we don't have any interaction.
 		endInteraction()
 		try:
-			course_instance  = ICourseInstance(catalog_entry)
+			course_instance = ICourseInstance(catalog_entry)
 			manager = ICourseEnrollmentManager(course_instance)
 			dropped_records = manager.drop_all()
 			items = result[ITEMS] = []
 			for record in dropped_records:
 				principal = IPrincipal(record.Principal, None)
 				username = principal.id if principal is not None else 'deleted'
-				items.append( {'Username': username, 'Scope': record.Scope} )
+				items.append({'Username': username, 'Scope': record.Scope})
 			logger.info("Dropped %d enrollment records of %s",
 						len(dropped_records), catalog_entry.ntiid)
 		finally:
@@ -218,11 +218,11 @@ class DropAllCourseEnrollmentsView(AbstractCourseEnrollView):
 
 @view_config(name='UserCourseEnrollments')
 @view_config(name='user_course_enrollments')
-@view_defaults(	route_name='objects.generic.traversal',
-			 	renderer='rest',
-			 	request_method='GET',
-			 	context=CourseAdminPathAdapter,
-			 	permission=nauth.ACT_NTI_ADMIN)
+@view_defaults(route_name='objects.generic.traversal',
+			   renderer='rest',
+			   request_method='GET',
+			   context=CourseAdminPathAdapter,
+			   permission=nauth.ACT_NTI_ADMIN)
 class UserCourseEnrollmentsView(AbstractAuthenticatedView):
 
 	def __call__(self):
@@ -230,17 +230,17 @@ class UserCourseEnrollmentsView(AbstractAuthenticatedView):
 		_, user = _parse_user(params)
 		result = LocatedExternalDict()
 		items = result[ITEMS] = []
-		for enrollments in component.subscribers( (user,), IPrincipalEnrollments):
+		for enrollments in component.subscribers((user,), IPrincipalEnrollments):
 			for enrollment in enrollments.iter_enrollments():
 				items.append(enrollment)
 		return result
-	
+
 @view_config(name='CourseEnrollmentMigrator')
 @view_config(name='Course_enrollment_migrator')
-@view_defaults(	route_name='objects.generic.traversal',
-				renderer='rest',
-				context=CourseAdminPathAdapter,
-				permission=nauth.ACT_NTI_ADMIN)
+@view_defaults(route_name='objects.generic.traversal',
+			   renderer='rest',
+			   context=CourseAdminPathAdapter,
+			   permission=nauth.ACT_NTI_ADMIN)
 class CourseEnrollmentMigrationView(AbstractAuthenticatedView):
 	"""
 	Migrates the enrollments from one course to antother
@@ -256,13 +256,13 @@ class CourseEnrollmentMigrationView(AbstractAuthenticatedView):
 			values = self.request.params
 		result = CaseInsensitiveDict(values)
 		return result
-	
+
 	def _do_call(self):
 		try:
 			catalog = component.getUtility(ICourseCatalog)
 		except LookupError:
 			raise hexc.HTTPNotFound(detail='Catalog not found')
-			
+
 		params = {}
 		values = self.readInput()
 		for name, alias in (('source', 'source'), ('target', 'dest')):
@@ -275,11 +275,11 @@ class CourseEnrollmentMigrationView(AbstractAuthenticatedView):
 				params[name] = entry
 			except KeyError:
 				raise hexc.HTTPUnprocessableEntity(detail='Course not found')
-			
+
 		if params['source'] == params['target']:
 			msg = 'Source and target course are the same'
 			raise hexc.HTTPUnprocessableEntity(detail=msg)
-		
+
 		result = LocatedExternalDict()
 		users_moved = result['Users'] = list()
 		result['Source'] = params['source'].ntiid
@@ -290,7 +290,7 @@ class CourseEnrollmentMigrationView(AbstractAuthenticatedView):
 														  result=users_moved)
 		result['Total'] = total
 		return result
-	
+
 	def __call__(self):
 		# Make sure we don't send enrollment email, etc, during this process
 		# by not having any interaction.
@@ -300,15 +300,15 @@ class CourseEnrollmentMigrationView(AbstractAuthenticatedView):
 		finally:
 			restoreInteraction()
 
-## REPORT admin views
+# REPORT admin views
 
 @view_config(name='CourseRoles')
 @view_config(name='course_roles')
-@view_defaults(	route_name='objects.generic.traversal',
-				renderer='rest',
-				context=CourseAdminPathAdapter,
-				request_method='GET',
-				permission=nauth.ACT_MODERATE)
+@view_defaults(route_name='objects.generic.traversal',
+			   renderer='rest',
+			   context=CourseAdminPathAdapter,
+			   request_method='GET',
+			   permission=nauth.ACT_MODERATE)
 class CourseRolesView(AbstractAuthenticatedView,
 					  ModeledContentUploadRequestUtilsMixin):
 
@@ -317,27 +317,27 @@ class CourseRolesView(AbstractAuthenticatedView,
 
 		bio = BytesIO()
 		csv_writer = csv.writer(bio)
-		
+
 		# header
-		header = ['Course', 'SubInstance', 'Role', 'Setting', 'User', 'Email'] 
+		header = ['Course', 'SubInstance', 'Role', 'Setting', 'User', 'Email']
 		csv_writer.writerow(header)
 
 		for catalog_entry in catalog.iterCatalogEntries():
-			course = ICourseInstance( catalog_entry )
+			course = ICourseInstance(catalog_entry)
 
-			if ICourseSubInstance.providedBy( course ):
+			if ICourseSubInstance.providedBy(course):
 				sub_name = course.__name__
 				course_name = course.__parent__.__parent__.__name__
 			else:
 				course_name = course.__name__
 				sub_name = ''
 
-			roles = IPrincipalRoleMap( course, None )
+			roles = IPrincipalRoleMap(course, None)
 			if roles is not None:
 				for role_id, prin_id, setting in roles.getPrincipalsAndRoles():
-					user = User.get_user( prin_id )
-					profile = IUserProfile( user, None )
-					email = getattr( profile, 'email', None )
+					user = User.get_user(prin_id)
+					profile = IUserProfile(user, None)
+					email = getattr(profile, 'email', None)
 					# write data
 					row_data = [course_name, sub_name, role_id, setting, prin_id, email]
 					csv_writer.writerow([_tx_string(x) for x in row_data])
@@ -351,53 +351,53 @@ from nti.dataserver.interfaces import IUsernameSubstitutionPolicy
 
 @view_config(name='CourseEnrollments')
 @view_config(name='course_enrollments')
-@view_defaults(	route_name='objects.generic.traversal',
-				renderer='rest',
-				request_method='GET',
-				context=CourseAdminPathAdapter,
-				permission=nauth.ACT_NTI_ADMIN)
+@view_defaults(route_name='objects.generic.traversal',
+			   renderer='rest',
+			   request_method='GET',
+			   context=CourseAdminPathAdapter,
+			   permission=nauth.ACT_NTI_ADMIN)
 class CourseEnrollmentsView(AbstractAuthenticatedView):
 
 	@Lazy
 	def _substituter(self):
 		return component.queryUtility(IUsernameSubstitutionPolicy)
-		
+
 	def _replace(self, username):
 		substituter = self._substituter
 		if substituter is None:
 			return username
 		result = substituter.replace(username) or username
 		return result
-		
+
 	def __call__(self):
 		params = CaseInsensitiveDict(self.request.params)
 		context = _parse_course(params)
 		course = ICourseInstance(context, None)
 		if course is None:
 			raise hexc.HTTPUnprocessableEntity(detail='Course not found')
-		
+
 		bio = BytesIO()
 		csv_writer = csv.writer(bio)
-		
+
 		# header
-		header = ['username', 'realname', 'email', 'scope', 'created'] 
+		header = ['username', 'realname', 'email', 'scope', 'created']
 		csv_writer.writerow(header)
 
 		for record in ICourseEnrollments(course).iter_enrollments():
 			scope = record.Scope
-			
+
 			user = principal = IPrincipal(record.Principal, None)
 			username = principal.id if principal is not None else 'deleted'
-				
+
 			created = getattr(record, 'createdTime', None) or record.lastModified
 			created = isodate.datetime_isoformat(datetime.fromtimestamp(created or 0))
-			
-			if principal is not None:	
-				user = User.get_user( username )
-			profile = IUserProfile( user, None )
-			email = getattr( profile, 'email', None )
-			realname = getattr( profile, 'realname', None )
-					
+
+			if principal is not None:
+				user = User.get_user(username)
+			profile = IUserProfile(user, None)
+			email = getattr(profile, 'email', None)
+			realname = getattr(profile, 'realname', None)
+
 			row_data = [self._replace(username), realname, email, scope, created]
 			csv_writer.writerow([_tx_string(x) for x in row_data])
 
@@ -419,12 +419,12 @@ from ..interfaces import ICourseInstanceEnrollment
 
 @view_config(context=IDataserverFolder)
 @view_config(context=CourseAdminPathAdapter)
-@view_defaults(	route_name='objects.generic.traversal',
-			 	renderer='rest',
-				request_method='GET',
-			 	context=IDataserverFolder,
-				permission=nauth.ACT_NTI_ADMIN,
-			 	name='AllEnrollments.csv')
+@view_defaults(route_name='objects.generic.traversal',
+			   renderer='rest',
+			   request_method='GET',
+			   context=IDataserverFolder,
+			   permission=nauth.ACT_NTI_ADMIN,
+			   name='AllEnrollments.csv')
 class AllCourseEnrollmentRosterDownloadView(AbstractAuthenticatedView):
 	"""
 	Provides a downloadable table of all the enrollments
@@ -444,11 +444,11 @@ class AllCourseEnrollmentRosterDownloadView(AbstractAuthenticatedView):
 		if not status_filter:
 			return lambda course, user: True
 
-		def func(course,user):
+		def func(course, user):
 			enrollment = component.getMultiAdapter((course, user),
 												   ICourseInstanceEnrollment)
 			# Let this blow up when this goes away
-			return enrollment.LegacyEnrollmentStatus == status_filter 
+			return enrollment.LegacyEnrollmentStatus == status_filter
 
 		return func
 
@@ -477,7 +477,7 @@ class AllCourseEnrollmentRosterDownloadView(AbstractAuthenticatedView):
 								 "Deleted User? Bad Instance?", record)
 					continue
 				if enrollment_predicate(course, record):
-					user_to_coursenames[user].add( course_name )
+					user_to_coursenames[user].add(course_name)
 
 		rows = LocatedExternalList()
 		rows.__name__ = self.request.view_name
@@ -491,7 +491,7 @@ class AllCourseEnrollmentRosterDownloadView(AbstractAuthenticatedView):
 				   _e(getattr(profile, 'realname', None)),
 				   _e(getattr(profile, 'email', None)),
 				   ','.join(sorted(list(enrolled_course_names)))]
-			rows.append( row )
+			rows.append(row)
 
 		# Convert to CSV
 		# In the future, we might switch based on the accept header
@@ -507,11 +507,11 @@ class AllCourseEnrollmentRosterDownloadView(AbstractAuthenticatedView):
 
 @view_config(name='Enrollments.csv')
 @view_config(name='enrollments.csv')
-@view_defaults(	route_name='objects.generic.traversal',
-				renderer='rest',
-				request_method='GET',
-				context=ICourseInstance,
-				permission=nauth.ACT_NTI_ADMIN)
+@view_defaults(route_name='objects.generic.traversal',
+			   renderer='rest',
+			   request_method='GET',
+			   context=ICourseInstance,
+			   permission=nauth.ACT_NTI_ADMIN)
 class CourseEnrollmentsRosterDownloadView(AllCourseEnrollmentRosterDownloadView):
 	"""
 	Provides a downloadable table of the enrollments for
@@ -520,14 +520,14 @@ class CourseEnrollmentsRosterDownloadView(AllCourseEnrollmentRosterDownloadView)
 
 	def _iter_catalog_entries(self):
 		try:
-			return ( ICourseCatalogEntry(self.request.context), )
+			return (ICourseCatalogEntry(self.request.context),)
 		except TypeError:
 			# A course instance that's no longer in the catalog
 			raise hexc.HTTPNotFound("Course instance not in catalog")
 
 @view_config(name='Enrollments.csv')
 @view_config(name='enrollments.csv')
-@view_defaults(	route_name='objects.generic.traversal',
+@view_defaults(route_name='objects.generic.traversal',
 				renderer='rest',
 				request_method='GET',
 				context=ICourseCatalogEntry,
@@ -538,16 +538,16 @@ class CourseCatalogEntryEnrollmentsRosterDownloadView(AllCourseEnrollmentRosterD
 		return (self.request.context,)
 
 @view_config(name='discussions')
-@view_defaults(	route_name='objects.generic.traversal',
-			 	renderer='rest',
-			 	request_method='GET',
-			 	context=ICourseInstance,
-			 	permission=nauth.ACT_NTI_ADMIN)
+@view_defaults(route_name='objects.generic.traversal',
+			   renderer='rest',
+			   request_method='GET',
+			   context=ICourseInstance,
+			   permission=nauth.ACT_NTI_ADMIN)
 class CourseDiscussionsView(AbstractAuthenticatedView):
 
 	def _course(self):
 		return self.request.Context
-		
+
 	def __call__(self):
 		result = LocatedExternalDict()
 		items = result[ITEMS] = {}
@@ -558,13 +558,12 @@ class CourseDiscussionsView(AbstractAuthenticatedView):
 		return result
 
 @view_config(name='discussions')
-@view_defaults(	route_name='objects.generic.traversal',
-			 	renderer='rest',
-			 	request_method='GET',
-			 	context=ICourseCatalogEntry,
-			 	permission=nauth.ACT_NTI_ADMIN)
+@view_defaults(route_name='objects.generic.traversal',
+			   renderer='rest',
+			   request_method='GET',
+			   context=ICourseCatalogEntry,
+			   permission=nauth.ACT_NTI_ADMIN)
 class CourseCatalogEntryDiscussionsView(CourseDiscussionsView):
 
 	def _course(self):
 		return ICourseInstance(self.request.context, None)
-	
