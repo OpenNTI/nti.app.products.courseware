@@ -114,7 +114,8 @@ def _send_enrollment_confirmation(event, user, profile, email, course):
 		recipients=[profile],
 		template_args=args,
 		request=request,
-		package=package,)
+		package=package,
+		text_template_extension='.mak')
 
 @component.adapter(ICourseInstanceEnrollmentRecord, IObjectAddedEvent)
 def _enrollment_added(record, event):
