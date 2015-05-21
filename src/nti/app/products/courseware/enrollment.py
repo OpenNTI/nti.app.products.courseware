@@ -16,12 +16,14 @@ from zope.schema.fieldproperty import FieldPropertyStoredThroughField as FP
 from nti.contenttypes.courses.interfaces import ICourseCatalogEntry
 from nti.contenttypes.courses.interfaces import IDenyOpenEnrollment
 
-from nti.externalization.persistence import NoPickle
-from nti.externalization.representation import WithRepr
 from nti.externalization.interfaces import LocatedExternalDict
 from nti.externalization.interfaces import StandardExternalFields
-from nti.externalization.externalization import to_external_object
 from nti.externalization.interfaces import IInternalObjectExternalizer
+
+from nti.externalization.externalization import to_external_object
+
+from nti.externalization.persistence import NoPickle
+from nti.externalization.representation import WithRepr
 
 from nti.schema.schema import EqHash
 from nti.schema.field import SchemaConfigured
@@ -47,12 +49,12 @@ class EnrollmentOption(SchemaConfigured):
 	mime_type = mimeType = 'application/vnd.nextthought.courseware.enrollmentoption'
 
 	CatalogEntryNTIID = FP(IEnrollmentOption['CatalogEntryNTIID'])
-	
+
 	@property
 	def Name(self):
 		return self.__external_class_name__
 	__name__ = Name
-	
+
 	@Name.setter
 	def Name(self, value):
 		pass
@@ -65,12 +67,12 @@ class OpenEnrollmentOption(EnrollmentOption):
 	mime_type = mimeType = 'application/vnd.nextthought.courseware.openenrollmentoption'
 
 	Enabled = FP(IOpenEnrollmentOption['Enabled'])
-		
+
 @interface.implementer(IEnrollmentOptions, IInternalObjectExternalizer)
 @WithRepr
 @NoPickle
 class EnrollmentOptions(LocatedExternalDict):
-	
+
 	__external_can_create__ = False
 	__external_class_name__ = "EnrollmentOptions"
 	mime_type = mimeType = 'application/vnd.nextthought.courseware.enrollmentoptions'
@@ -99,7 +101,7 @@ class OpenEnrollmentOptionProvider(object):
 
 	def __init__(self, context):
 		self.context = context
-		
+
 	def iter_options(self):
 		result = OpenEnrollmentOption()
 		result.CatalogEntryNTIID = self.context.ntiid
