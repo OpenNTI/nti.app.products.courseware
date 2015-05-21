@@ -146,6 +146,8 @@ def _get_template(catalog_entry, base_template, package):
 	result = None
 	package = dottedname.resolve(package)
 	for provider in (catalog_entry.ProviderUniqueID, catalog_entry.DisplayName):
+		if not provider:
+			continue
 		provider = provider.replace(' ', '').lower()
 		replaced_provider = provider.replace('-', '')
 		template = replaced_provider + "_" + base_template
