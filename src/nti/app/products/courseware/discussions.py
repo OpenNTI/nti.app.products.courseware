@@ -182,7 +182,7 @@ def get_acl(course, *entities):
 	# specifed entities (e.g. students) get read permission
 	entities = {IPrincipal(Entity.get_entity(e), None) for e in entities or ()}
 	entities.discard(None)
-	aces.extend([ace_allowing(i, ACT_READ) for e in entities])
+	aces.extend([ace_allowing(e, ACT_READ) for e in entities])
 
 	# Subinstance instructors get the same permissions as their students.
 	for subinstance in course.SubInstances.values():
