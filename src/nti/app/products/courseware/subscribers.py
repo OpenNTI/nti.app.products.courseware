@@ -33,7 +33,6 @@ from pyramid.threadlocal import get_current_request
 from nti.appserver.policies.interfaces import ISitePolicyUserEventListener
 
 from nti.contenttypes.courses.interfaces import ES_PUBLIC
-
 from nti.contenttypes.courses.interfaces import ICourseCatalogEntry
 from nti.contenttypes.courses.interfaces import ICourseInstanceEnrollmentRecord
 
@@ -107,15 +106,16 @@ def _send_enrollment_confirmation(event, user, profile, email, course):
 	template = 'enrollment_confirmation_email'
 	template = _get_template(catalog_entry, template, package)
 
-	component.getUtility(ITemplatedMailer).queue_simple_html_text_email(
-		template,
-		subject=translate(_("Welcome to ${title}",
-							mapping={'title': catalog_entry.Title})),
-		recipients=[profile],
-		template_args=args,
-		request=request,
-		package=package,
-		text_template_extension='.mak')
+	mailer = component.getUtility(ITemplatedMailer)
+	mailer.queue_simple_html_text_email(
+					template,
+					subject=translate(_("Welcome to ${title}",
+										mapping={'title': catalog_entry.Title})),
+					recipients=[profile],
+					template_args=args,
+					request=request,
+					package=package,
+					text_template_extension='.mak')
 
 @component.adapter(ICourseInstanceEnrollmentRecord, IObjectAddedEvent)
 def _enrollment_added(record, event):
@@ -140,17 +140,24 @@ def _enrollment_added(record, event):
 	_send_enrollment_confirmation(event, creator, profile, email, course)
 
 def _get_template(catalog_entry, base_template, package):
-	"""Look for course-specific templates, if available."""
+	"""
+	Look for course-specific templates, if available.
+	"""
+	result = None
 	package = dottedname.resolve(package)
-	provider_unique_id = catalog_entry.ProviderUniqueID.replace(' ', '').lower()
-	full_provider_id = provider_unique_id.replace('-', '')
-	template = full_provider_id + "_" + base_template
-	path = os.path.join(os.path.dirname(package.__file__), 'templates')
-
-	if not os.path.exists(os.path.join(path, template + ".pt")):
-		# Full path doesn't exist; Drop our specific id part and try that
-		provider_unique_prefix = provider_unique_id.split('-')[0]
-		template = provider_unique_prefix + "_" + base_template
+	for provider in (catalog_entry.ProviderUniqueID, catalog_entry.DisplayName):
+		provider = provider.replace(' ', '').lower()
+		replaced_provider = provider.replace('-', '')
+		template = replaced_provider + "_" + base_template
+		path = os.path.join(os.path.dirname(package.__file__), 'templates')
 		if not os.path.exists(os.path.join(path, template + ".pt")):
-			template = base_template
-	return template
+			# Full path doesn't exist; drop our specific id part and try that
+			provider_prefix = provider.split('-')[0]
+			template = provider_prefix + "_" + base_template
+			if os.path.exists(os.path.join(path, template + ".pt")):
+				result = template
+				break
+		else:
+			result = template
+			break
+	return result or base_template
