@@ -78,11 +78,11 @@ def do_course_enrollment(catalog_entry, user, scope=ES_PUBLIC, parent=None,
 
 	# get an course instance enrollent
 	if not safe:
-		enrollment = component.getMultiAdapter( (course_instance, user),
-												ICourseInstanceEnrollment )
+		enrollment = component.getMultiAdapter((course_instance, user),
+												ICourseInstanceEnrollment)
 	else:
 		enrollment = component.queryMultiAdapter((course_instance, user),
-												 ICourseInstanceEnrollment )
+												 ICourseInstanceEnrollment)
 
 	if enrollment is not None:
 		if parent and not enrollment.__parent__:
@@ -98,11 +98,11 @@ def do_course_enrollment(catalog_entry, user, scope=ES_PUBLIC, parent=None,
 	# This should probably be a multi-adapter
 	return enrollment
 
-@view_config( route_name='objects.generic.traversal',
+@view_config(route_name='objects.generic.traversal',
 			  context=IEnrolledCoursesCollection,
 			  request_method='POST',
 			  permission=nauth.ACT_CREATE,
-			  renderer='rest' )
+			  renderer='rest')
 class enroll_course_view(AbstractAuthenticatedView,
 						 ModeledContentUploadRequestUtilsMixin):
 	"""
@@ -131,25 +131,25 @@ class enroll_course_view(AbstractAuthenticatedView,
 			except KeyError:
 				pass
 		else:
-			for k in 'NTIID', 'ntiid', 'ProviderUniqueID':
+			for k in ('NTIID', 'ntiid', 'ProviderUniqueID'):
 				try:
 					k = identifier[k]
 					catalog_entry = catalog.getCatalogEntry(k)
 					# The above either finds the entry or throws a
 					# KeyError. NO NEED TO CHECK before breaking
 					break
-				except (AttributeError,KeyError,TypeError):
+				except (AttributeError, KeyError, TypeError):
 					pass
 
 		if catalog_entry is None:
-			return hexc.HTTPNotFound( _("There is no course by that name") )
+			return hexc.HTTPNotFound(_("There is no course by that name"))
 
 		if not can_create(catalog_entry, request=self.request):
 			raise hexc.HTTPForbidden()
-		
+
 		if is_instructor_in_hierarchy(catalog_entry, self.remoteUser):
-			msg = _("Instructors cannot enroll in course") 
-			return hexc.HTTPNotFound( msg )
+			msg = _("Instructors cannot enroll in a course")
+			return hexc.HTTPNotFound(msg)
 
 		enrollment = do_course_enrollment(catalog_entry,
 										  self.remoteUser,
@@ -157,11 +157,11 @@ class enroll_course_view(AbstractAuthenticatedView,
 										  request=self.request)
 		return enrollment
 
-@view_config( route_name='objects.generic.traversal',
+@view_config(route_name='objects.generic.traversal',
 			  context=ICourseInstanceEnrollment,
 			  request_method='DELETE',
 			  permission=nauth.ACT_DELETE,
-			  renderer='rest' )
+			  renderer='rest')
 class drop_course_view(AbstractAuthenticatedView):
 	"""
 	Dropping a course consists of DELETEing its appearance
@@ -174,5 +174,5 @@ class drop_course_view(AbstractAuthenticatedView):
 	def __call__(self):
 		course_instance = self.request.context.CourseInstance
 		enrollments = get_enrollments(course_instance, self.request)
-		enrollments.drop( self.remoteUser )
+		enrollments.drop(self.remoteUser)
 		return hexc.HTTPNoContent()
