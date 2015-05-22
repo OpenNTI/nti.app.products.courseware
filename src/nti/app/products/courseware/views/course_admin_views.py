@@ -60,6 +60,7 @@ from nti.externalization.interfaces import StandardExternalFields
 from nti.ntiids.ntiids import find_object_with_ntiid
 
 from ..utils import drop_any_other_enrollments
+from ..utils import is_instructor_in_hierarchy
 
 from ..interfaces import ICoursesWorkspace
 
@@ -143,6 +144,10 @@ class UserCourseEnrollView(AbstractCourseEnrollView):
 		if not scope or scope not in ENROLLMENT_SCOPE_VOCABULARY.by_token.keys():
 			raise hexc.HTTPUnprocessableEntity(detail='Invalid scope')
 
+		if is_instructor_in_hierarchy(catalog_entry, user):
+			msg = 'User is an instructor in course hierarchy'
+			raise hexc.HTTPUnprocessableEntity(detail=msg)
+		
 		# Make sure we don't have any interaction.
 		endInteraction()
 		try:
