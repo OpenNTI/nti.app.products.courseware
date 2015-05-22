@@ -45,6 +45,8 @@ from nti.dataserver import authorization as nauth
 
 from nti.traversal import traversal
 
+from ..utils import is_instructor_in_hierarchy
+
 from ..interfaces import ICoursesWorkspace
 from ..interfaces import ICourseInstanceEnrollment
 from ..interfaces import IEnrolledCoursesCollection
@@ -144,6 +146,10 @@ class enroll_course_view(AbstractAuthenticatedView,
 
 		if not can_create(catalog_entry, request=self.request):
 			raise hexc.HTTPForbidden()
+		
+		if is_instructor_in_hierarchy(catalog_entry, self.remoteUser):
+			msg = _("Instructors cannot enroll in course") 
+			return hexc.HTTPNotFound( msg )
 
 		enrollment = do_course_enrollment(catalog_entry,
 										  self.remoteUser,
