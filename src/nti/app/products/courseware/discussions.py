@@ -43,6 +43,7 @@ from nti.contenttypes.courses.discussions.utils import get_discussion_mapped_sco
 
 from nti.dataserver.users import Entity
 
+from nti.dataserver.interfaces import ACE_DENY_ALL
 from nti.dataserver.interfaces import ACE_ACT_ALLOW
 from nti.dataserver.interfaces import ALL_PERMISSIONS
 
@@ -189,6 +190,7 @@ def get_acl(course, *entities):
 		instructors = [i for i in subinstance.instructors or ()]
 		aces.extend([ace_allowing(i, ACT_READ) for i in instructors])
 
+	aces.append(ACE_DENY_ALL)
 	acl = acl_from_aces(aces)
 	return acl
 
