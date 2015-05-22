@@ -34,43 +34,40 @@ from .interfaces import IEnrollmentOptionProvider
 
 ZERO_DATETIME = datetime.utcfromtimestamp(0)
 
-def is_there_an_open_enrollment(course, user):
+def get_parent_course(context):
+	course = ICourseInstance(context)
 	if ICourseSubInstance.providedBy(course):
 		main_course = course.__parent__.__parent__
 	else:
 		main_course = course
+	return main_course
 
-	for instance in chain( (main_course,), main_course.SubInstances.values() ):
+def is_there_an_open_enrollment(course, user):
+	main_course = get_parent_course(course)
+	for instance in chain((main_course,), main_course.SubInstances.values()):
 		enrollments = ICourseEnrollments(instance)
 		record = enrollments.get_enrollment_for_principal(user)
 		if record is not None and record.Scope == ES_PUBLIC:
 			return True
 	return False
 
-def get_any_enrollment(course, user):
-	if ICourseSubInstance.providedBy(course):
-		main_course = course.__parent__.__parent__
-	else:
-		main_course = course
-
-	for instance in chain( (main_course,), main_course.SubInstances.values() ):
+def get_enrollment_in_hierarchy(course, user):
+	main_course = get_parent_course(course)
+	for instance in chain((main_course,), main_course.SubInstances.values()):
 		enrollments = ICourseEnrollments(instance)
 		record = enrollments.get_enrollment_for_principal(user)
 		if record is not None:
 			return record
 	return None
+get_any_enrollment = get_enrollment_in_hierarchy
 
 def drop_any_other_enrollments(context, user, ignore_existing=True):
 	course = ICourseInstance(context)
 	entry = ICourseCatalogEntry(course)
-	
 	course_ntiid = entry.ntiid
-	if ICourseSubInstance.providedBy(course):
-		main_course = course.__parent__.__parent__
-	else:
-		main_course = course
-			
+
 	result = []
+	main_course = get_parent_course(course)
 	for instance in chain((main_course,) , main_course.SubInstances.values()):
 		instance_entry = ICourseCatalogEntry(instance)
 		if ignore_existing and course_ntiid == instance_entry.ntiid:
@@ -104,6 +101,20 @@ def is_course_instructor(context, user):
 						   roles.getSetting(RID_INSTRUCTOR, prin.id))
 	return result
 
+def is_instructor_in_hierarchy(context, user):
+	main_course = get_parent_course(context)
+	for instance in chain((main_course,) , main_course.SubInstances.values()):
+		if is_course_instructor(instance, user):
+			return True
+	return False
+
+def get_instructed_course_in_hierarchy(context, user):
+	main_course = get_parent_course(context)
+	for instance in chain((main_course,) , main_course.SubInstances.values()):
+		if is_course_instructor(instance, user):
+			return instance
+	return None
+
 def get_catalog_entry(ntiid, safe=True):
 	try:
 		catalog = component.getUtility(ICourseCatalog)
@@ -120,13 +131,25 @@ def get_enrollment_record(context, user):
 	record = enrollments.get_enrollment_for_principal(user) \
 			 if user is not None and enrollments is not None else None
 	return record
-			
+
+def get_enrollment_record_in_hierarchy(context, user):
+	main_course = get_parent_course(context)
+	for instance in chain((main_course,) , main_course.SubInstances.values()):
+		record = get_enrollment_record(instance, user)
+		if record is not None:
+			return record
+	return None
+
 def is_enrolled(context, user):
 	record = get_enrollment_record(context, user)
 	return record is not None
 
+def is_enrolled_in_hierarchy(context, user):
+	record = get_enrollment_record_in_hierarchy(context, user)
+	return record is not None
+
 def has_enrollments(user):
-	for enrollments in component.subscribers( (user,), IPrincipalEnrollments):
+	for enrollments in component.subscribers((user,), IPrincipalEnrollments):
 		if enrollments.count_enrollments():
 			return True
 	return False
