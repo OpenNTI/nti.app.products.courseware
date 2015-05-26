@@ -149,7 +149,7 @@ class enroll_course_view(AbstractAuthenticatedView,
 
 		if is_instructor_in_hierarchy(catalog_entry, self.remoteUser):
 			msg = _("Instructors cannot enroll in a course")
-			return hexc.HTTPNotFound(msg)
+			return hexc.HTTPForbidden(msg)
 
 		enrollment = do_course_enrollment(catalog_entry,
 										  self.remoteUser,
