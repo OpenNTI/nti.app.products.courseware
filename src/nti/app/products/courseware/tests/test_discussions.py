@@ -113,18 +113,22 @@ class TestDiscussions(ApplicationLayerTest):
 			assert_that(announcements_forums(course), has_length(0))
 
 			acl = get_acl(course)
-			assert_that(acl , has_length(1))
+			assert_that(acl , has_length(2))
 			assert_that(acl[0].to_external_string() , is_(u'Allow:harp4162:All'))
 
 			result = create_course_forums(course)
 			assert_that(result , has_entry(u'discussions',
-										   has_entries('ForCredit', contains_inanyorder(u'In_Class_Discussions', is_(CommunityForum)),
-													   'Public', contains_inanyorder('Open_Discussions', is_(CommunityForum)))))
+										   has_entries('ForCredit',
+														contains_inanyorder(u'In_Class_Discussions',
+																			is_(CommunityForum)),
+													   'Public',
+													   contains_inanyorder('Open_Discussions',
+																			is_(CommunityForum)))))
 
 			discussions = result['discussions']
 			for t in discussions.values():
 				_, forum = t
-				assert_that(forum, has_property('__acl__', has_length(2)))
+				assert_that(forum, has_property('__acl__', has_length(3)))
 				assert_that(forum, has_property('__entities__', has_length(1)))
 
 			result = create_topics(discussion)
