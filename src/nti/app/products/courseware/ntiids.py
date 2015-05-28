@@ -29,6 +29,7 @@ from nti.dataserver.contenttypes.forums.ntiids import resolve_forum_ntiid_in_boa
 
 from nti.ntiids.ntiids import get_provider
 from nti.ntiids.ntiids import escape_provider
+from nti.ntiids.ntiids import find_object_with_ntiid
 from nti.ntiids.interfaces import INTIIDResolver
 
 from .interfaces import NTIID_TYPE_COURSE_TOPIC
@@ -36,6 +37,8 @@ from .interfaces import NTIID_TYPE_COURSE_SECTION_TOPIC
 from .interfaces import NTIID_TYPE_COURSE_FORUM
 from .interfaces import NTIID_TYPE_COURSE_SECTION_FORUM
 from .interfaces import IPrincipalAdministrativeRoleCatalog
+
+COURSE_NTIID_PREFIX = 'tag:nextthought.com,2011-10:NTI-CourseInfo-'
 
 @interface.implementer(INTIIDResolver)
 @interface.named(NTIID_TYPE_COURSE_SECTION_TOPIC)
@@ -96,7 +99,12 @@ class _EnrolledCourseSectionTopicNTIIDResolver(object):
 		result = escape_provider(entry.ProviderUniqueID) if entry is not None else None
 		return result
 
-	def _solve_for_iface(self, ntiid, iface, provider_name, user):
+	def _solve_for_iface(self, ntiid, iface, provider_name, user, catalog_entry_matches=None):
+
+		def _catalog_entry_matches(catalog_entry, provider_name):
+			return self._escape_entry_provider(catalog_entry) == provider_name
+
+		catalog_entry_matches = catalog_entry_matches if catalog_entry_matches else _catalog_entry_matches
 
 		def _get_ntiid_for_subinstance(ntiid, subinstance, main_course):
 			result = None
@@ -118,7 +126,7 @@ class _EnrolledCourseSectionTopicNTIIDResolver(object):
 				# instructors enrolled in many sections.
 				# Otherwise, the client will be passing the content specified
 				# section.
-				if self._escape_entry_provider(catalog_entry) == provider_name:
+				if catalog_entry_matches( catalog_entry, provider_name ):
 					result = None
 					if ICourseSubInstance.providedBy(course):
 						main_course = course.__parent__.__parent__
@@ -134,9 +142,21 @@ class _EnrolledCourseSectionTopicNTIIDResolver(object):
 				if ICourseSubInstance.providedBy(course):
 					main_course = course.__parent__.__parent__
 					main_cce = ICourseCatalogEntry(main_course, None)
-					if self._escape_entry_provider(main_cce) == provider_name:
+					if catalog_entry_matches( main_cce, provider_name ):
 						return _get_ntiid_for_subinstance( ntiid, course, main_course )
 		return None
+
+	def _do_resolve(self, ntiid, user, provider_name, catalog_entry_matches=None):
+		result = self._solve_for_iface(ntiid, IPrincipalAdministrativeRoleCatalog,
+										   provider_name, user,
+										   catalog_entry_matches=catalog_entry_matches)
+
+		# 3. Enrolled
+		if result is None:
+			result = self._solve_for_iface(	ntiid, IPrincipalEnrollments,
+											provider_name, user,
+											catalog_entry_matches=catalog_entry_matches)
+		return result
 
 	def resolve(self, ntiid):
 		user = get_remote_user()
@@ -144,11 +164,19 @@ class _EnrolledCourseSectionTopicNTIIDResolver(object):
 			return
 
 		provider_name = get_provider(ntiid)
-		result = self._solve_for_iface(ntiid, IPrincipalAdministrativeRoleCatalog,
-									   provider_name, user)
-		if result is None:
-			result = self._solve_for_iface(	ntiid, IPrincipalEnrollments,
-											provider_name, user)
+		provider_name_ntiid = COURSE_NTIID_PREFIX + provider_name
+
+		result = find_object_with_ntiid( provider_name_ntiid )
+		if result is not None:
+			# Ok we have a course, we should be able to definitively return based
+			# on enrollments.
+			def catalog_entry_matches(catalog_entry, _):
+				return catalog_entry.ntiid == provider_name_ntiid
+			result = self._do_resolve( ntiid, user, provider_name,
+									catalog_entry_matches=catalog_entry_matches )
+		else:
+			# The legacy approach, which may collide across semesters.
+			result = self._do_resolve( ntiid, user, provider_name )
 		return result
 
 	def _find_in_course(self, course, ntiid):
