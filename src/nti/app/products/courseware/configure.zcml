@@ -185,7 +185,8 @@
 		<subscriber factory=".decorators._CourseOutlineContentNodeLinkDecorator"
 					provides="nti.externalization.interfaces.IExternalMappingDecorator" />
 	</configure>
-	<configure zcml:condition="not-have persistent_overview">
+
+	<configure zcml:condition="not-installed nti.app.contenttypes.presentation">
 		<subscriber factory=".decorators._CourseOutlineContentNodeLinkDecorator"
 					provides="nti.externalization.interfaces.IExternalMappingDecorator" />
 	</configure>
