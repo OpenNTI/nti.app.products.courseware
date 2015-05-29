@@ -212,7 +212,7 @@ def create_forum(course, name, owner, display_name=None, entities=None, implemen
 		forum.creator = creator
 		forum.title = display_name or name
 		discussions[safe_name] = forum
-		logger.debug('Created forum %s', forum)
+		logger.info('Created forum %s', forum)
 
 	# udpate ACL
 	old_acl = getattr(forum, '__acl__', None)
@@ -275,7 +275,7 @@ def create_topics(discussion):
 	for scope in scopes:
 		data = discussions.get(scope)
 		if not data:
-			logger.warn("No forum for scope %s was found", scope)
+			logger.debug("No forum for scope %s was found", scope)
 			continue
 		_, forum = data
 
@@ -311,6 +311,7 @@ def create_topics(discussion):
 
 			lifecycleevent.created(post)
 			lifecycleevent.added(post)
+			logger.info("Topic %s has been created", title)
 
 		ntiid = topic.NTIID
 		if is_ntiid_of_type(ntiid, TYPE_OID):
