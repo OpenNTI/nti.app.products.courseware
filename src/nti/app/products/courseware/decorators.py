@@ -11,10 +11,9 @@ __docformat__ = "restructuredtext en"
 
 logger = __import__('logging').getLogger(__name__)
 
-from urlparse import urljoin
-
 from zope import component
 from zope import interface
+
 from zope.location.interfaces import ILocation
 
 from pyramid.threadlocal import get_current_request
@@ -23,15 +22,11 @@ from nti.app.renderers.decorators import AbstractAuthenticatedRequestAwareDecora
 
 from nti.appserver.pyramid_authorization import has_permission
 
-from nti.contentlibrary.interfaces import IContentPackageLibrary
-from nti.contentlibrary.interfaces import IContentUnitHrefMapper
-
 from nti.contenttypes.courses.interfaces import ES_PUBLIC
 from nti.contenttypes.courses.interfaces import ICourseOutline
 from nti.contenttypes.courses.interfaces import ICourseInstance
 from nti.contenttypes.courses.interfaces import ICourseEnrollments
 from nti.contenttypes.courses.interfaces import ICourseCatalogEntry
-from nti.contenttypes.courses.interfaces import ICourseOutlineContentNode
 
 from nti.dataserver.interfaces import ILinkExternalHrefOnly
 
@@ -165,27 +160,6 @@ class _CourseOutlineContentsLinkDecorator(object):
 		link.__name__ = ''
 		link.__parent__ = context
 		_links.append(link)
-
-@interface.implementer(IExternalMappingDecorator)
-@component.adapter(ICourseOutlineContentNode)
-class _CourseOutlineContentNodeLinkDecorator(object):
-
-	__metaclass__ = SingletonDecorator
-
-	def decorateExternalMapping(self, context, result):
-		if context.src:
-			library = component.queryUtility(IContentPackageLibrary)
-			paths = library.pathToNTIID(context.ContentNTIID) if library else ()
-			if paths:
-				href = IContentUnitHrefMapper(paths[-1].key).href
-				href = urljoin(href, context.src)
-				# set link for overview
-				links = result.setdefault(LINKS, [])
-				link = Link(href, rel="overview-content", ignore_properties_of_target=True)
-				interface.alsoProvides(link, ILocation)
-				link.__name__ = ''
-				link.__parent__ = context
-				links.append(link)
 
 @interface.implementer(IExternalMappingDecorator)
 @component.adapter(ICourseInstanceEnrollment)
