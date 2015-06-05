@@ -119,11 +119,11 @@ class DefaultCourseCatalogLegacyEntryInstancePolicy(object):
 		and the picture names, and should match the community.
 		"""
 
-		purch_id = entry.ProviderUniqueID.replace(' ','').split('-')[0]
+		purch_id = entry.ProviderUniqueID.replace(' ', '').split('-')[0]
 		if entry.Term:
 			purch_id += entry.Term.replace(' ', '').replace('-', '')
 
-		if not entry.Communities or not entry.Communities[0].startswith( purch_id ):
+		if not entry.Communities or not entry.Communities[0].startswith(purch_id):
 			__traceback_info__ = purch_id, entry
 			raise ValueError("Community name not as expected")
 
@@ -136,7 +136,7 @@ class DefaultCourseCatalogLegacyEntryInstancePolicy(object):
 		return
 
 @component.adapter(ICourseCatalogLegacyContentEntry, IObjectAddedEvent)
-def _register_course_purchasable_from_catalog_entry( entry, event ):
+def _register_course_purchasable_from_catalog_entry(entry, event):
 	"""
 	When a catalog entry is added to the course catalog,
 	if it is a legacy catalog entry, and there is a registered
@@ -146,27 +146,27 @@ def _register_course_purchasable_from_catalog_entry( entry, event ):
 	provider = get_provider(entry.ContentPackageNTIID)
 	policy = component.queryUtility(ICourseCatalogLegacyEntryInstancePolicy, name=provider)
 	if policy is None:
-		logger.debug( "Ignoring legacy catalog entry (%r) for provider (%s) without policy",
-					  entry, provider )
+		logger.debug("Ignoring legacy catalog entry (%r) for provider (%s) without policy",
+					  entry, provider)
 		return
 
 	assert len(entry.Communities) == 1
-	purch_id = policy.purch_id_for_entry( entry )
+	purch_id = policy.purch_id_for_entry(entry)
 
 	# We have to externalize the package to get correct URLs
 	# to the course. They need to be absolute because there is no context
 	# in the purchasable.
-	ext_package = to_external_object( entry.legacy_content_package )
-	icon = urljoin( ext_package['href'],
-					'images/' + purch_id + '_promo.png' )
-	thumbnail = urljoin( ext_package['href'],
-						 'images/' + purch_id + '_cover.png' )
+	ext_package = to_external_object(entry.legacy_content_package)
+	icon = urljoin(ext_package['href'],
+					'images/' + purch_id + '_promo.png')
+	thumbnail = urljoin(ext_package['href'],
+						 'images/' + purch_id + '_cover.png')
 	# Temporarily also stash these things on the entry itself too
 	# where they can be externalized in the course catalog
 	entry.LegacyPurchasableIcon = icon
 	entry.LegacyPurchasableThumbnail = thumbnail
 
-	old_rendering = False # Some things were different with the courses produced for Fall 2013
+	old_rendering = False  # Some things were different with the courses produced for Fall 2013
 	if not entry.StartDate or not entry.EndDate:
 		# Hmm...something very fishy about this one...ancient legacy?
 		logger.warn("Course info has no start date and/or duration: %s", entry)
@@ -176,13 +176,13 @@ def _register_course_purchasable_from_catalog_entry( entry, event ):
 
 	sig_lines = []
 	for inst in entry.Instructors:
-		sig_lines.append( inst.Name )
-		sig_lines.append( inst.JobTitle )
-		policy.extend_signature_for_instructor( inst, sig_lines )
+		sig_lines.append(inst.Name)
+		sig_lines.append(inst.JobTitle)
+		policy.extend_signature_for_instructor(inst, sig_lines)
 
-		sig_lines.append( "" )
-	del sig_lines[-1] # always at least one instructor. take off the last trailing line
-	signature = '\n'.join( sig_lines )
+		sig_lines.append("")
+	del sig_lines[-1]  # always at least one instructor. take off the last trailing line
+	signature = '\n'.join(sig_lines)
 	entry.InstructorsSignature = signature
 	entry.ProviderDepartmentTitle = policy.department_title_for_entry(entry)
 
@@ -190,18 +190,18 @@ def _register_course_purchasable_from_catalog_entry( entry, event ):
 	# NTIID based simply on the provider's unique id. But the old renderings
 	# use an NTIID containing the title as well, and we can't change that...
 	# except for social stats
-	if old_rendering and purch_id != 'SOC3123': # with one exception
+	if old_rendering and purch_id != 'SOC3123':  # with one exception
 		# Old style is the title, minus whitespace and puncctuation, each word capitalized.
 		# we could delegate this to the policy, but it shouldn't be
 		# happening anymore
-		ntiid_title = entry.Title.replace(',', '' )
-		ntiid_title = ''.join( [x.capitalize() for x in ntiid_title.split()] )
+		ntiid_title = entry.Title.replace(',', '')
+		ntiid_title = ''.join([x.capitalize() for x in ntiid_title.split()])
 
 		specific = purch_id + ntiid_title
-		purch_ntiid = make_ntiid( provider=provider, nttype='course', specific=specific )
+		purch_ntiid = make_ntiid(provider=provider, nttype='course', specific=specific)
 
 	else:
-		purch_ntiid = make_ntiid( provider=provider, nttype='course', specific=purch_id )
+		purch_ntiid = make_ntiid(provider=provider, nttype='course', specific=purch_id)
 
 	logger.debug("Purchasable '%s' was created for course using content package'%s'",
 				 purch_ntiid, entry.ContentPackageNTIID)
@@ -244,7 +244,7 @@ def _register_course_purchasable_from_catalog_entry( entry, event ):
 		entry.__parent__ = None
 		try:
 			local_catalog.addCatalogEntry(entry, event=False)
-		except ValueError: # A re-enumeration; typically tests
+		except ValueError:  # A re-enumeration; typically tests
 			logger.info("Found duplicate local course catalog entry %s", entry.ProviderUniqueID)
 			local_catalog.removeCatalogEntry(entry, event=False)
 			local_catalog.addCatalogEntry(entry, event=False)
@@ -265,12 +265,11 @@ def _register_course_purchasable_from_catalog_entry( entry, event ):
 
 	the_course.setCatalogEntry(entry)
 
-
 	# Cache some lazy attributes /now/ while we now we have
 	# access to the volatile parts of the content package:
 
 	# ...Ensure we can parse the outline...
-	getattr( the_course, 'Outline' )
+	getattr(the_course, 'Outline')
 
 	# ...and get the sharing scopes...
 	# NOTE: The 'public' and restricted scopes must already exist,
@@ -278,8 +277,7 @@ def _register_course_purchasable_from_catalog_entry( entry, event ):
 	# does)
 	_update_scopes(the_course, purch_ntiid, entry.legacy_content_package)
 
-
-	the_course.updateInstructors( entry )
+	the_course.updateInstructors(entry)
 
 	_update_vendor_info(the_course, entry.legacy_content_package.root)
 
@@ -309,7 +307,7 @@ from pyramid.traversal import find_interface
 from .legacy_courses import get_scopes_from_course_element
 from .legacy_courses import get_scopes_for_purchasable_ntiid
 
-def _update_scopes(course, purchsable_ntiid, package): #pylint:disable=I0011,W0212
+def _update_scopes(course, purchsable_ntiid, package):  # pylint:disable=I0011,W0212
 	scopes = course.SharingScopes
 	# Bypass __setitem__ because we already have parents,
 	# and we don't conform anyway
@@ -327,7 +325,6 @@ def _update_scopes(course, purchsable_ntiid, package): #pylint:disable=I0011,W02
 			if restricted is not None:
 				scopes._SampleContainer__data[ES_CREDIT] = restricted
 
-
 	scopes.initScopes()
 
 @interface.implementer(ICourseInstance)
@@ -342,9 +339,9 @@ def _course_instance_for_catalog_entry(entry):
 		return None
 
 	purch_id = policy.purch_id_for_entry(entry)
-	community = Entity.get_entity( entry.Communities[0] )
+	community = Entity.get_entity(entry.Communities[0])
 	if community is None:
-		community = Community.create_community( username=entry.Communities[0] )
+		community = Community.create_community(username=entry.Communities[0])
 		names = IFriendlyNamed(community)
 		names.realname = purch_id
 		names.alias = entry.Title
@@ -353,7 +350,7 @@ def _course_instance_for_catalog_entry(entry):
 		interface.alsoProvides(community, IUseNTIIDAsExternalUsername)
 
 	# Course instances live inside ICourseAdminLevels
-	community_courses = ICourseAdministrativeLevel( community )
+	community_courses = ICourseAdministrativeLevel(community)
 	if purch_id not in community_courses:
 		community_courses[purch_id] = _LegacyCommunityBasedCourseInstance(entry.ContentPackageNTIID)
 
@@ -362,7 +359,7 @@ def _course_instance_for_catalog_entry(entry):
 
 @interface.implementer(ILegacyCommunityBasedCourseInstance)
 @component.adapter(ICommunity)
-def _course_instance_for_community( community ):
+def _course_instance_for_community(community):
 	courses_for_community = ICourseAdministrativeLevel(community)
 	assert len(courses_for_community) <= 1
 	if len(courses_for_community):
@@ -377,7 +374,7 @@ class _LegacyCommunityBasedCourseAdministrativeLevel(CourseAdministrativeLevel):
 	"""
 
 	def __init__(self):
-		super(_LegacyCommunityBasedCourseAdministrativeLevel,self).__init__()
+		super(_LegacyCommunityBasedCourseAdministrativeLevel, self).__init__()
 
 # The key becomes the __name__, which is useful for traversal
 from zope.annotation.factory import factory as an_factory
@@ -444,7 +441,7 @@ class _LegacyCommunityBasedCourseInstance(CourseInstance):
 		Create a new instance. We will look up the ``community_name``
 		on demand.
 		"""
-		super(_LegacyCommunityBasedCourseInstance,self).__init__()
+		super(_LegacyCommunityBasedCourseInstance, self).__init__()
 
 		self.ContentPackageNTIID = content_package_ntiid
 
@@ -536,14 +533,14 @@ class _LegacyCommunityBasedCourseInstance(CourseInstance):
 		for i in catalog_entry.Instructors:
 			user = User.get_user(i.username) if i.username else None
 			if user:
-				found_instructors.add( user )
+				found_instructors.add(user)
 				user.record_dynamic_membership(community)
 
 
 		if found_instructors:
 			storage = self._instructor_storage
 			storage.clear()
-			storage.update( [IWeakRef(user) for user in found_instructors] )
+			storage.update([IWeakRef(user) for user in found_instructors])
 		elif '_instructor_storage' in self.__dict__:
 			# Clear it, but only if we had it
 			self._instructor_storage.clear()
@@ -602,6 +599,6 @@ class _LegacyCourseInstanceACLProvider(object):
 	def __init__(self, context):
 		self.context = context
 		# TODO: This isn't right. What are instructor permissions?
-		aces = [ace_allowing(x,ALL_PERMISSIONS) for x in self.context.instructors]
-		aces.append( ace_allowing(self.context.legacy_community, ACT_READ ))
-		self.__acl__ = acl_from_aces( aces )
+		aces = [ace_allowing(x, ALL_PERMISSIONS) for x in self.context.instructors]
+		aces.append(ace_allowing(self.context.legacy_community, ACT_READ))
+		self.__acl__ = acl_from_aces(aces)
