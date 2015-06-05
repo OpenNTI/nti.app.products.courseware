@@ -62,8 +62,6 @@ from nti.schema.field import TextLine
 
 from nti.wref.interfaces import IWeakRef
 
-from nti.zodb import isBroken
-
 from .interfaces import ICourseCatalogLegacyContentEntry
 from .interfaces import ILegacyCommunityBasedCourseInstance
 
@@ -351,7 +349,7 @@ def _course_instance_for_catalog_entry(entry):
 		names.realname = purch_id
 		names.alias = entry.Title
 
-	if not isBroken(community) and not IUseNTIIDAsExternalUsername.providedBy(community):
+	if not IUseNTIIDAsExternalUsername.providedBy(community):
 		interface.alsoProvides(community, IUseNTIIDAsExternalUsername)
 
 	# Course instances live inside ICourseAdminLevels
