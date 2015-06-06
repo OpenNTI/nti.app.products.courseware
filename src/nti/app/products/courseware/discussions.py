@@ -44,6 +44,8 @@ from nti.contenttypes.courses.discussions.utils import get_discussion_mapped_sco
 from nti.dataserver.users import Entity
 
 from nti.dataserver.interfaces import IACLProvider
+from nti.dataserver.interfaces import IDefaultPublished
+
 from nti.dataserver.interfaces import ACE_DENY_ALL
 from nti.dataserver.interfaces import ACE_ACT_ALLOW
 from nti.dataserver.interfaces import ALL_PERMISSIONS
@@ -330,6 +332,9 @@ def create_topics(discussion):
 		result.append(ntiid)
 		# always publish
 		topic.publish()
+		# mark 
+		if not IDefaultPublished.providedBy(topic):
+			interface.alsoProvides(topic, IDefaultPublished)
 	return result
 
 @component.adapter(ICourseDiscussion, IObjectAddedEvent)
