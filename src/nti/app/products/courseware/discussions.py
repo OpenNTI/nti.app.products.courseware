@@ -30,6 +30,7 @@ from nti.contenttypes.courses.interfaces import IN_CLASS_PREFIX
 
 from nti.contenttypes.courses.interfaces import ICourseInstance
 from nti.contenttypes.courses.interfaces import ICourseCatalogEntry
+from nti.contenttypes.courses.interfaces import ICatalogEntrySynchronized
 from nti.contenttypes.courses.interfaces import ICourseInstanceVendorInfo
 from nti.contenttypes.courses.interfaces import ICourseInstancePublicScopedForum
 from nti.contenttypes.courses.interfaces import ICourseInstanceForCreditScopedForum
@@ -248,6 +249,7 @@ def create_course_forums(context):
 	_creator (result['discussions'], discussions_forums(course))
 	_creator (result['announcements'], announcements_forums(course))
 	return result
+update_course_forums = create_course_forums
 
 def create_topics(discussion):
 	course = ICourseInstance(discussion)
@@ -325,8 +327,8 @@ def create_topics(discussion):
 			# XXX: This is assumming quite a bit about the way these work.
 			entry = ICourseCatalogEntry(course)
 			ntiid = make_ntiid(provider=entry.ProviderUniqueID,
-								nttype=NTIID_TYPE_COURSE_SECTION_TOPIC,
-								specific=topic._ntiid_specific_part)
+							   nttype=NTIID_TYPE_COURSE_SECTION_TOPIC,
+							   specific=topic._ntiid_specific_part)
 			logger.debug('%s topic %s with NTIID %s',
 						 ('Created' if created else 'Updated'), topic, ntiid)
 		result.append(ntiid)
@@ -346,3 +348,9 @@ def _discussions_added(record, event):
 def _discussions_modified(record, event):
 	if _auto_create_forums(record):
 		create_topics(record)
+
+@component.adapter(ICourseCatalogEntry, ICatalogEntrySynchronized)
+def _catalog_entry_synchronized(entry, event):
+	course = ICourseInstance(entry, None)
+	if course is not None and _auto_create_forums(course):
+		update_course_forums(course)

@@ -49,6 +49,7 @@
 
 	<subscriber handler=".discussions._discussions_added" />
 	<subscriber handler=".discussions._discussions_modified" />
+	<subscriber handler=".discussions._catalog_entry_synchronized" />
 	<subscriber handler=".legacy_catalog._content_package_registered" />
 
 	<!-- Auto-gen course purchasables from content -->
@@ -180,11 +181,6 @@
 
 	<subscriber factory=".decorators._CourseCatalogEntryLegacyDecorator"
 				provides="nti.externalization.interfaces.IExternalMappingDecorator" />
-
-	<configure zcml:condition="not-installed nti.app.contenttypes.presentation">
-		<subscriber factory=".decorators._CourseOutlineContentNodeLinkDecorator"
-					provides="nti.externalization.interfaces.IExternalMappingDecorator" />
-	</configure>
 	
 	<subscriber factory=".decorators._ContainedCatalogEntryDecorator"
 				provides="nti.externalization.interfaces.IExternalMappingDecorator"
@@ -227,10 +223,10 @@
 			 for="nti.contenttypes.courses.interfaces.ICourseInstanceEnrollmentRecord" />
 
 	<!-- NTIID support -->
-	<utility factory=".ntiids._EnrolledCourseSectionTopicNTIIDResolver" />
+	<utility factory=".ntiids._EnrolledCourseRootForumNTIIDResolver" />
 	<utility factory=".ntiids._EnrolledCourseRootTopicNTIIDResolver" />
 	<utility factory=".ntiids._EnrolledCourseSectionForumNTIIDResolver" />
-	<utility factory=".ntiids._EnrolledCourseRootForumNTIIDResolver" />
+	<utility factory=".ntiids._EnrolledCourseSectionTopicNTIIDResolver" />
 
 	<!-- Enrollment Options -->
 	<subscriber	factory=".enrollment.OpenEnrollmentOptionProvider"
