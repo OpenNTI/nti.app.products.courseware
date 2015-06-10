@@ -233,7 +233,7 @@ class _CourseCatalogEntryDecorator(AbstractAuthenticatedRequestAwareDecorator):
 			result[u'EnrollmentOptions'] = to_external_object(options)
 
 @interface.implementer(IExternalMappingDecorator)
-class _BaseeClassmatesLinkDecorator(AbstractAuthenticatedRequestAwareDecorator):
+class _BaseClassmatesLinkDecorator(AbstractAuthenticatedRequestAwareDecorator):
 
 	def _do_decorate_external(self, context, result):
 		_links = result.setdefault(LINKS, [])
@@ -244,17 +244,19 @@ class _BaseeClassmatesLinkDecorator(AbstractAuthenticatedRequestAwareDecorator):
 		_links.append(link)
 
 @interface.implementer(IExternalMappingDecorator)
-class _CourseClassmatesLinkDecorator(_BaseeClassmatesLinkDecorator):
+class _CourseClassmatesLinkDecorator(_BaseClassmatesLinkDecorator):
 
 	def _predicate(self, context, result):
 		result = bool(self._is_authenticated and is_enrolled(context, self.remoteUser))
 		return result
 
 @component.adapter(IUser)
-class _ClassmatesLinkDecorator(_BaseeClassmatesLinkDecorator):
+class _ClassmatesLinkDecorator(_BaseClassmatesLinkDecorator):
 
 	def _predicate(self, context, result):
-		result = bool(self._is_authenticated and has_enrollments(self.remoteUser))
+		result = bool(self._is_authenticated and \
+					  self.remoteUser == context and \
+					  has_enrollments(self.remoteUser))
 		return result
 
 from nti.dataserver.interfaces import IContained

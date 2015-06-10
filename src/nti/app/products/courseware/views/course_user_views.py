@@ -96,6 +96,8 @@ class CourseClassmatesView(BaseClassmatesView):
 class ClassmatesView(BaseClassmatesView):
 
 	def __call__(self):
+		if self.remoteUser != self.request.context:
+			raise hexc.HTTPForbidden()
 		result = LocatedExternalDict()
 		provider = component.getUtility(IClassmatesSuggestedContactsProvider)
 		suggestions = provider.suggestions(self.remoteUser)
