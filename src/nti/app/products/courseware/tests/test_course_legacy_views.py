@@ -299,7 +299,6 @@ class TestCreateForums(_AbstractMixin,
 		res = self.fetch_user_recursive_notable_ugd()
 		assert_that( res.json_body, has_entry( 'TotalItemCount', 1))
 
-
 class TestCreateForumsOpenOnly(TestCreateForums):
 
 	layer = InstructedCourseApplicationTestLayer

@@ -154,7 +154,9 @@ def _get_template(catalog_entry, base_template, package):
 		path = os.path.join(os.path.dirname(package.__file__), 'templates')
 		if not os.path.exists(os.path.join(path, template + ".pt")):
 			# Full path doesn't exist; drop our specific id part and try that
+			# 'EDMA 4970', 'EDMA 4970-995', EDMA 4970/5970-995'
 			provider_prefix = provider.split('-')[0]
+			provider_prefix = provider_prefix.split('/')[0]
 			template = provider_prefix + "_" + base_template
 			if os.path.exists(os.path.join(path, template + ".pt")):
 				result = template
