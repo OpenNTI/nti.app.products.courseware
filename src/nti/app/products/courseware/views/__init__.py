@@ -32,9 +32,9 @@ VIEW_COURSE_ENROLLMENT_ROSTER = VIEW_COURSE_ENROLLMENT_ROSTER
 @interface.implementer(IPathAdapter)
 class CourseAdminPathAdapter(Contained):
 
-    __name__ = 'CourseAdmin'
+	__name__ = 'CourseAdmin'
 
-    def __init__(self, context, request):
-        self.context = context
-        self.request = request
-        self.__parent__ = context
+	def __init__(self, context, request):
+		self.context = context
+		self.request = request
+		self.__parent__ = context

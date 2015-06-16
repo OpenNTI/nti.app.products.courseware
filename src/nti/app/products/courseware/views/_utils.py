@@ -54,46 +54,46 @@ def _get_self_assessments_for_course(course):
 	result = [x for x in result if x.ntiid not in qsids_to_strip]
 	return result
 
-def _get_containers_in_course( course ):
+def _get_containers_in_course(course):
 	try:
 		packages = course.ContentPackageBundle.ContentPackages
 	except AttributeError:
 		packages = (course.legacy_content_package,)
 
-	def _recur( node, accum ):
-		## Get our embedded ntiids and recursively 
-		## fetch our children's ntiids
+	def _recur(node, accum):
+		# Get our embedded ntiids and recursively
+		# fetch our children's ntiids
 		ntiid = node.ntiid
 		try:
-			accum.update( node.embeddedContainerNTIIDs )
+			accum.update(node.embeddedContainerNTIIDs)
 		except AttributeError:
 			pass
-		
+
 		if ntiid:
-			accum.add( ntiid )
+			accum.add(ntiid)
 
 		for n in node.children:
-			_recur( n, accum )
+			_recur(n, accum)
 
 	containers_in_course = set()
 	for package in packages:
-		_recur( package, containers_in_course )
+		_recur(package, containers_in_course)
 
-	## Add in our self-assessments
+	# Add in our self-assessments
 	catalog = ICourseAssessmentItemCatalog(course)
 	ntiids = [x.ntiid for x in catalog.iter_assessment_items()]
-	containers_in_course = containers_in_course.union( ntiids )
+	containers_in_course = containers_in_course.union(ntiids)
 
 	self_assessments = _get_self_assessments_for_course(course)
 	self_assessment_containerids = {x.__parent__.ntiid for x in self_assessments}
 	self_assessment_qsids = {x.ntiid: x for x in self_assessments}
-	containers_in_course = containers_in_course.union( self_assessment_containerids )
-	containers_in_course = containers_in_course.union( self_assessment_qsids )
+	containers_in_course = containers_in_course.union(self_assessment_containerids)
+	containers_in_course = containers_in_course.union(self_assessment_qsids)
 
-	## Add in our assignments
-	assignment_catalog = ICourseAssignmentCatalog( course )
-	assignment_ntiids =  [asg.ntiid for asg in assignment_catalog.iter_assignments() ]
-	containers_in_course = containers_in_course.union( assignment_ntiids )
-	containers_in_course.discard( None )
+	# Add in our assignments
+	assignment_catalog = ICourseAssignmentCatalog(course)
+	assignment_ntiids = [asg.ntiid for asg in assignment_catalog.iter_assignments() ]
+	containers_in_course = containers_in_course.union(assignment_ntiids)
+	containers_in_course.discard(None)
 
 	return containers_in_course
