@@ -18,6 +18,7 @@ from pyramid.view import view_defaults
 from pyramid import httpexceptions as hexc
 
 from nti.app.base.abstract_views import AbstractAuthenticatedView
+
 from nti.app.externalization.view_mixins import BatchingUtilsMixin
 
 from nti.contenttypes.courses.interfaces import ICourseInstance
@@ -27,8 +28,8 @@ from nti.dataserver import authorization as nauth
 from nti.dataserver.users import User
 from nti.dataserver.interfaces import IUser
 
-from nti.externalization.interfaces import LocatedExternalDict 
-from nti.externalization.interfaces import StandardExternalFields 
+from nti.externalization.interfaces import LocatedExternalDict
+from nti.externalization.interfaces import StandardExternalFields
 from nti.externalization.externalization import to_external_object
 
 from .. import VIEW_CLASSMATES
@@ -50,10 +51,10 @@ class BaseClassmatesView(AbstractAuthenticatedView, BatchingUtilsMixin):
 	batchStart
 		The starting batch index.  Defaults to 0.
 	"""
-	
+
 	_DEFAULT_BATCH_SIZE = 50
 	_DEFAULT_BATCH_START = 0
-	
+
 	def selector(self, contact):
 		user = User.get_user(contact.username)
 		if user is not None and self.remoteUser != user:
@@ -80,7 +81,6 @@ class CourseClassmatesView(BaseClassmatesView):
 		record = get_enrollment_record(self.context, self.remoteUser)
 		if record is None:
 			raise hexc.HTTPForbidden(_("Must be enrolled in course."))
-		
 		result = LocatedExternalDict()
 		provider = component.getUtility(IClassmatesSuggestedContactsProvider)
 		suggestions = provider.suggestions_by_course(self.remoteUser, self.context)
