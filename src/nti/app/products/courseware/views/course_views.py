@@ -13,6 +13,7 @@ logger = __import__('logging').getLogger(__name__)
 
 from zope import component
 from zope import interface
+
 from zope.traversing.interfaces import IPathAdapter
 
 from pyramid.view import view_config
@@ -46,7 +47,7 @@ from . import VIEW_COURSE_ENROLLMENT_ROSTER
 
 ITEMS = StandardExternalFields.ITEMS
 
-@view_config( route_name='objects.generic.traversal',
+@view_config(route_name='objects.generic.traversal',
 			  context=ICourseOutline,
 			  request_method='GET',
 			  permission=nauth.ACT_READ,
@@ -71,12 +72,12 @@ class course_outline_contents_view(AbstractAuthenticatedView):
 		def _recur(the_list, the_nodes):
 			for node in the_nodes:
 				ext_node = to_external_object(node)
-				ext_node['contents'] = _recur([], node.values() )
+				ext_node['contents'] = _recur([], node.values())
 				# Pretty pointless to send these
 				ext_node.pop('NTIID', None)
 				ext_node.pop('OID', None)
 
-				the_list.append( ext_node )
+				the_list.append(ext_node)
 			return the_list
 
 		_recur(result, values)
@@ -122,12 +123,11 @@ class CourseEnrollmentRosterPathAdapter(Contained):
 		for record in enrollments_iter:
 			user = IUser(record)
 			if user.username.lower() == username:
-				enrollment = component.getMultiAdapter( (self.__parent__, record),
-														ICourseInstanceEnrollment )
+				enrollment = component.getMultiAdapter((self.__parent__, record),
+														ICourseInstanceEnrollment)
 
 				if enrollment.__parent__ is None:
-					# Typically it will be, lets give it the right
-					# place
+					# Typically it will be, lets give it the right place
 					enrollment.xxx_fill_in_parent()
 					enrollment.CourseInstance = None
 				return enrollment
@@ -237,7 +237,7 @@ class CourseEnrollmentRosterGetView(AbstractAuthenticatedView,
 				parts = IFriendlyNamed(user).get_searchable_realname_parts()
 				if not parts:
 					return ''
-				parts = reversed(parts) # last name first
+				parts = reversed(parts)  # last name first
 				return ' '.join(parts).lower()
 
 			enrollments_iter = sorted(enrollments_iter,
@@ -248,14 +248,14 @@ class CourseEnrollmentRosterGetView(AbstractAuthenticatedView,
 			enrollments_iter = sorted(enrollments_iter,
 									  key=_key,
 									  reverse=sort_reverse)
-		elif sort_name: # pragma: no cover
+		elif sort_name:  # pragma: no cover
 			# We're not silently ignoring because in the past
 			# we've had clients send in the wrong value for a long time
 			# before anybody noticed
 			raise hexc.HTTPBadRequest("Unsupported sort option")
 
-		items.extend((component.getMultiAdapter( (course, x),
-												 ICourseInstanceEnrollment )
+		items.extend((component.getMultiAdapter((course, x),
+												 ICourseInstanceEnrollment)
 					  for x in enrollments_iter))
 		result['FilteredTotalItemCount'] = result['TotalItemCount'] = len(result['Items'])
 
@@ -273,7 +273,7 @@ class CourseEnrollmentRosterGetView(AbstractAuthenticatedView,
 		elif filter_name == 'LegacyEnrollmentStatusOpen':
 			items = [x for x in items if x.LegacyEnrollmentStatus == 'Open']
 			result['FilteredTotalItemCount'] = len(items)
-		elif filter_name: # pragma: no cover
+		elif filter_name:  # pragma: no cover
 			raise hexc.HTTPBadRequest("Unsupported filteroption")
 
 		if username_search_term:
@@ -389,8 +389,8 @@ class CourseActivityLastViewedDecorator(AbstractAuthenticatedView,
 	KEY = 'nti.app.products.courseware.decorators._CourseInstanceActivityLastViewedDecorator'
 
 	def __init__(self, request=None):
-		if IRequest.providedBy(request): # as a view
-			super(CourseActivityLastViewedDecorator,self).__init__(request)
+		if IRequest.providedBy(request):  # as a view
+			super(CourseActivityLastViewedDecorator, self).__init__(request)
 		# otherwise, we're a decorator and no args are passed
 
 	def decorateExternalMapping(self, context, result):
@@ -411,11 +411,11 @@ class CourseActivityLastViewedDecorator(AbstractAuthenticatedView,
 			result['lastViewed'] = bit64_int_to_time(mapping[username])
 
 		# And tell them where to PUT it :)
-		links = result.setdefault( LINKS, [] )
-		links.append( Link( context,
-							rel='lastViewed',
-							elements=('lastViewed',),
-							method='PUT' ) )
+		links = result.setdefault(LINKS, [])
+		links.append(Link(context,
+						  rel='lastViewed',
+						  elements=('lastViewed',),
+						  method='PUT'))
 
 	def __call__(self):
 		context = self.request.context
@@ -437,7 +437,7 @@ class CourseActivityLastViewedDecorator(AbstractAuthenticatedView,
 			 context=ICourseInstance,
 			 permission=nauth.ACT_READ,
 			 name='Pages')
-class CoursePagesView( ContainerContextUGDPostView ):
+class CoursePagesView(ContainerContextUGDPostView):
 	"""
 	A pages view on the course.  We subclass ``ContainerContextUGDPostView`` in
 	order to intervene and annotate our ``IContainerContext``
@@ -445,5 +445,3 @@ class CoursePagesView( ContainerContextUGDPostView ):
 
 	Reading/Editing/Deleting will remain the same.
 	"""
-
-
