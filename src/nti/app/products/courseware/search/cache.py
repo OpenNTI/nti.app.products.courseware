@@ -46,10 +46,10 @@ def _flatten_outline(outline):
 		container = iface(unit, None)
 		if not container:
 			return
-		for item in container.get_data_items():
+		for item in container.values():
 			ntiid = None
-			for name in ('target-ntiid', 'ntiid'):
-				t_ntiid = item.get(name)
+			for name in ('target', 'ntiid'):
+				t_ntiid = getattr(item, name, None)
 				if _check_ntiid(t_ntiid):
 					ntiid = t_ntiid
 					break
