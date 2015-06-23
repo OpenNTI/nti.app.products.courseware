@@ -81,6 +81,10 @@
 	<adapter factory=".adapters._course_content_to_package_bundle" />
 	<adapter factory=".adapters._legacy_course_to_content_package_bundle" />
 
+	<adapter for="*"
+			 factory=".adapters._joinable_catalog_entry_provider"
+			 provides="nti.appserver.interfaces.IJoinableContextProvider" />
+
 	<!-- Allow traversing to the 'LegacyCourses' key of communities -->
 	<adapter name="LegacyCourses"
 			 for="nti.dataserver.interfaces.ICommunity"
@@ -181,7 +185,7 @@
 
 	<subscriber factory=".decorators._CourseCatalogEntryLegacyDecorator"
 				provides="nti.externalization.interfaces.IExternalMappingDecorator" />
-	
+
 	<subscriber factory=".decorators._ContainedCatalogEntryDecorator"
 				provides="nti.externalization.interfaces.IExternalMappingDecorator"
 				for="nti.dataserver.interfaces.IContained

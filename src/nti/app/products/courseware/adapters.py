@@ -15,9 +15,14 @@ import zope.intid
 from zope import interface
 from zope import component
 
+from nti.appserver.interfaces import IJoinableContextProvider
+from nti.appserver.pyramid_authorization import is_readable
+
 from nti.contentlibrary.interfaces import IContentUnit
 from nti.contentlibrary.interfaces import IContentPackage
 from nti.contentlibrary.interfaces import IContentPackageBundle
+
+from nti.contentlibrary.indexed_data import get_catalog
 
 from nti.contenttypes.courses.interfaces import ICourseCatalog
 from nti.contenttypes.courses.interfaces import ICourseInstance
@@ -27,6 +32,8 @@ from nti.contenttypes.courses.interfaces import ICourseCatalogEntry
 from nti.contenttypes.courses.interfaces import IContentCourseInstance
 
 from nti.dataserver.interfaces import IUser
+
+from nti.ntiids.ntiids import find_object_with_ntiid
 
 from .interfaces import ILegacyCommunityBasedCourseInstance
 from .interfaces import ILegacyCourseConflatedContentPackageUsedAsCourse
@@ -147,3 +154,26 @@ def _content_unit_and_user_to_course(unit, user):
 
     # nothing found return first course
     return courses[0] if courses else None
+
+@interface.implementer(IJoinableContextProvider)
+@component.adapter(interface.Interface)
+def _joinable_catalog_entry_provider( obj ):
+    """
+    Using the container index, look for catalog entries that contain
+    the given object.
+    """
+    catalog = get_catalog()
+    if catalog is None:
+        return
+    containers = catalog.get_containers( obj )
+    results = []
+    for container in containers:
+        container = find_object_with_ntiid( container )
+        course = ICourseInstance( container, None )
+        catalog_entry = ICourseCatalogEntry( course, None )
+
+        # We only want to add publicly available entries.
+        if         catalog_entry is not None \
+            and is_readable( catalog_entry ):
+            results.append( catalog_entry )
+    return results
