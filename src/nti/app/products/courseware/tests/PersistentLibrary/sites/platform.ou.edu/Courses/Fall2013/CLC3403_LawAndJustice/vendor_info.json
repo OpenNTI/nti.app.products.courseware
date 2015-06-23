@@ -15,7 +15,9 @@
 			"Provider": "Janux",
 			"Name": "Law and Justice",
 			"Title": "Law and Justice",
-			"AllowVendorUpdates": true
+			"AllowVendorUpdates": true,
+			"PurchaseCutOffDate": "2024-08-29T05:00:00+00:00",
+			"RedeemCutOffDate": "2024-08-23T04:59:00+00:00"
 		}
 	},
 	"OU": {
