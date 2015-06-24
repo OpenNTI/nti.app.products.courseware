@@ -13,6 +13,8 @@ from zope import component
 from zope import interface
 from zope.schema.fieldproperty import FieldPropertyStoredThroughField as FP
 
+from nti.common.property import alias
+
 from nti.contenttypes.courses.interfaces import ICourseCatalogEntry
 from nti.contenttypes.courses.interfaces import IDenyOpenEnrollment
 
@@ -67,6 +69,8 @@ class OpenEnrollmentOption(EnrollmentOption):
 	mime_type = mimeType = 'application/vnd.nextthought.courseware.openenrollmentoption'
 
 	Enabled = FP(IOpenEnrollmentOption['Enabled'])
+	
+	IsEnabled = alias('Enabled')
 
 @interface.implementer(IEnrollmentOptions, IInternalObjectExternalizer)
 @WithRepr
