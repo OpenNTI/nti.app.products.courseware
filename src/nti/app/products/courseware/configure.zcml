@@ -82,11 +82,11 @@
 	<adapter factory=".adapters._legacy_course_to_content_package_bundle" />
 
 	<adapter for="*"
-			 factory=".adapters._course_catalog_entry_provider"
+			 factory=".adapters._catalog_entry_from_container_object"
 			 provides="nti.appserver.interfaces.IJoinableContextProvider" />
 
 	<adapter for="*"
-			 factory=".adapters._course_catalog_entry_provider"
+			 factory=".adapters._courses_from_container_object"
 			 provides="nti.appserver.interfaces.ITopLevelContainerContextProvider" />
 
 	<!-- Allow traversing to the 'LegacyCourses' key of communities -->

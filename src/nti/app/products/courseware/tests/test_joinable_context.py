@@ -13,6 +13,7 @@ from hamcrest import has_length
 from hamcrest import assert_that
 
 from nti.appserver.interfaces import IJoinableContextProvider
+from nti.appserver.interfaces import ITopLevelContainerContextProvider
 
 from nti.dataserver.tests import mock_dataserver
 
@@ -46,4 +47,6 @@ class TestJoinableContextProvider( ApplicationLayerTest ):
 		with mock_dataserver.mock_db_trans(self.ds, site_name='platform.ou.edu'):
 			obj = find_object_with_ntiid( containerId )
 			results = IJoinableContextProvider( obj )
+			assert_that( results, has_length( 1 ))
+			results = ITopLevelContainerContextProvider( obj )
 			assert_that( results, has_length( 1 ))

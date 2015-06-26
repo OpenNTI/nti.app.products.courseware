@@ -157,12 +157,29 @@ def _content_unit_and_user_to_course(unit, user):
     # nothing found return first course
     return courses[0] if courses else None
 
-@interface.implementer(ITopLevelContainerContextProvider)
 @interface.implementer(IJoinableContextProvider)
 @component.adapter(interface.Interface)
-def _course_catalog_entry_provider( obj ):
+def _catalog_entry_from_container_object( obj ):
     """
     Using the container index, look for catalog entries that contain
+    the given object.
+    """
+    courses = _courses_from_container_object( obj )
+    results = set()
+    for course in courses or ():
+        catalog_entry = ICourseCatalogEntry( course, None )
+
+        # We only want to add publicly available entries.
+        if         catalog_entry is not None \
+            and is_readable( catalog_entry ):
+            results.add( catalog_entry )
+    return results
+
+@interface.implementer(ITopLevelContainerContextProvider)
+@component.adapter(interface.Interface)
+def _courses_from_container_object( obj ):
+    """
+    Using the container index, look for courses that contain
     the given object.
     """
     catalog = get_catalog()
@@ -173,10 +190,6 @@ def _course_catalog_entry_provider( obj ):
     for container in containers:
         container = find_object_with_ntiid( container )
         course = ICourseInstance( container, None )
-        catalog_entry = ICourseCatalogEntry( course, None )
-
-        # We only want to add publicly available entries.
-        if         catalog_entry is not None \
-            and is_readable( catalog_entry ):
-            results.add( catalog_entry )
+        if course is not None:
+            results.add( course )
     return results
