@@ -16,6 +16,8 @@ from zope import interface
 from zope import component
 
 from nti.appserver.interfaces import IJoinableContextProvider
+from nti.appserver.interfaces import ITopLevelContainerContextProvider
+
 from nti.appserver.pyramid_authorization import is_readable
 
 from nti.contentlibrary.interfaces import IContentUnit
@@ -155,9 +157,10 @@ def _content_unit_and_user_to_course(unit, user):
     # nothing found return first course
     return courses[0] if courses else None
 
+@interface.implementer(ITopLevelContainerContextProvider)
 @interface.implementer(IJoinableContextProvider)
 @component.adapter(interface.Interface)
-def _joinable_catalog_entry_provider( obj ):
+def _course_catalog_entry_provider( obj ):
     """
     Using the container index, look for catalog entries that contain
     the given object.
@@ -166,7 +169,7 @@ def _joinable_catalog_entry_provider( obj ):
     if catalog is None:
         return
     containers = catalog.get_containers( obj )
-    results = []
+    results = set()
     for container in containers:
         container = find_object_with_ntiid( container )
         course = ICourseInstance( container, None )
@@ -175,5 +178,5 @@ def _joinable_catalog_entry_provider( obj ):
         # We only want to add publicly available entries.
         if         catalog_entry is not None \
             and is_readable( catalog_entry ):
-            results.append( catalog_entry )
+            results.add( catalog_entry )
     return results
