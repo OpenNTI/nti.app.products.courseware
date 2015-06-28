@@ -35,7 +35,11 @@ from nti.contenttypes.courses.interfaces import IContentCourseInstance
 
 from nti.dataserver.interfaces import IUser
 
+from nti.dataserver_core.interfaces import IContainerContext
+
 from nti.ntiids.ntiids import find_object_with_ntiid
+
+from nti.traversal.traversal import find_interface
 
 from .interfaces import ILegacyCommunityBasedCourseInstance
 from .interfaces import ILegacyCourseConflatedContentPackageUsedAsCourse
@@ -179,17 +183,34 @@ def _catalog_entry_from_container_object( obj ):
 @component.adapter(interface.Interface)
 def _courses_from_container_object( obj ):
     """
-    Using the container index, look for courses that contain
-    the given object.
+    Try to return the preferred best-fit course
+    for the given object.
     """
-    catalog = get_catalog()
-    if catalog is None:
-        return
-    containers = catalog.get_containers( obj )
-    results = set()
-    for container in containers:
-        container = find_object_with_ntiid( container )
-        course = ICourseInstance( container, None )
+    # 1. Deterministic on obj
+    container_context = IContainerContext( obj, None )
+    if container_context is not None:
+        context_id = container_context.context_id
+        course = find_object_with_ntiid( context_id )
         if course is not None:
-            results.add( course )
+            return ( course, )
+
+    # 2. Check lineage
+    course = find_interface( obj, ICourseInstance, strict=False )
+    if course is not None:
+        return ( course, )
+
+    # 3. Ok, perhaps a contained object; use our index. We
+    # could attempt to return the best fit, according to enrollment etc.
+    catalog = get_catalog()
+    results = set()
+    container_id = getattr( obj, 'containerId', None )
+    if      catalog is not None \
+        and container_id:
+        obj = find_object_with_ntiid( container_id )
+        containers = catalog.get_containers( obj )
+        for container in containers:
+            container = find_object_with_ntiid( container )
+            course = ICourseInstance( container, None )
+            if course is not None:
+                results.add( course )
     return results
