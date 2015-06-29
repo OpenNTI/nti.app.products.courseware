@@ -32,8 +32,12 @@ from nti.contenttypes.courses.interfaces import ICourseCatalogEntry
 from nti.contenttypes.courses.interfaces import IContentCourseInstance
 
 from nti.dataserver.interfaces import IUser
+from nti.dataserver.interfaces import IHighlight
 
 from nti.dataserver_core.interfaces import IContainerContext
+
+from nti.dataserver.contenttypes.forums.interfaces import IPost
+from nti.dataserver.contenttypes.forums.interfaces import ITopic
 
 from nti.ntiids.ntiids import find_object_with_ntiid
 
@@ -167,7 +171,7 @@ def _catalog_entry_from_container_object(obj):
 	the given object.
 	"""
 	results = set()
-	courses = _courses_from_container_object(obj)
+	courses = ITopLevelContainerContextProvider( obj, None )
 	for course in courses or ():
 		catalog_entry = ICourseCatalogEntry(course, None)
 
@@ -177,43 +181,45 @@ def _catalog_entry_from_container_object(obj):
 	return results
 
 @interface.implementer(ITopLevelContainerContextProvider)
-@component.adapter(interface.Interface)
-def _courses_from_container_object(obj):
-	"""
-	Try to return the preferred best-fit course
-	for the given object.
-	"""
-	# 1. Deterministic on obj
+@component.adapter(IHighlight)
+def _courses_from_ugd(obj):
 	container_context = IContainerContext(obj, None)
+	results = ()
+	# Deterministic: just return single result.
 	if container_context is not None:
 		context_id = container_context.context_id
 		course = find_object_with_ntiid(context_id)
 		if course is not None:
-			return (course,)
+				results = (course,)
+	# No? Look in container catalog.
+	if not results:
+		catalog = get_catalog()
+		results = set()
+		container_id = getattr(obj, 'containerId', None)
+		if catalog is not None and container_id:
 
-	# 2. Check lineage
+			obj = find_object_with_ntiid(container_id)
+			containers = catalog.get_containers(obj)
+			for container in containers:
+				container = find_object_with_ntiid(container)
+				course = ICourseInstance(container, None)
+				if course is not None:
+					results.add(course)
+	return results
+
+@interface.implementer(ITopLevelContainerContextProvider)
+@component.adapter(IPost)
+@component.adapter(ITopic)
+def _courses_from_board(obj):
 	course = find_interface(obj, ICourseInstance, strict=False)
 	if course is not None:
 		return (course,)
 
-	# 3. Ok, perhaps a contained object; use our index. We
-	# could attempt to return the best fit, according to enrollment etc.
-	catalog = get_catalog()
-	results = set()
-	container_id = getattr(obj, 'containerId', None)
-	if catalog is not None and container_id:
-		obj = find_object_with_ntiid(container_id)
-		containers = catalog.get_containers(obj)
-		for container in containers:
-			container = find_object_with_ntiid(container)
-			course = ICourseInstance(container, None)
-			if course is not None:
-				results.add(course)
-
-	# 4. Adapt
-	if not results:
-		course = ICourseInstance(obj, None)
-		if course:
-			results.add(course)
-
-	return results
+@interface.implementer(ITopLevelContainerContextProvider)
+@component.adapter( IContentPackage )
+def _courses_from_package(obj):
+	# We could tweak the adapter above to return
+	# all possible courses, or use the container index.
+	course = ICourseInstance(obj, None)
+	if course:
+		return (course,)
