@@ -100,7 +100,7 @@ def _content_unit_to_courses(unit, include_sub_instances=True):
 	# First, try the true legacy case. This involves
 	# a direct mapping between courses and a catalog entry. It may be
 	# slightly more reliable, but only works for true legacy cases.
-	package = find_interface(unit, ILegacyCourseConflatedContentPackageUsedAsCourse)
+	package = find_interface(unit, ILegacyCourseConflatedContentPackageUsedAsCourse, strict=False)
 	if package is not None:
 		result = ICourseInstance(package, None)
 		if result is not None:
@@ -108,7 +108,7 @@ def _content_unit_to_courses(unit, include_sub_instances=True):
 
 	# Nothing true legacy. find all courses that match this pacakge
 	result = []
-	package = find_interface(unit, IContentPackage)
+	package = find_interface(unit, IContentPackage, strict=False)
 	course_catalog = component.getUtility(ICourseCatalog)
 	for entry in course_catalog.iterCatalogEntries():
 		instance = ICourseInstance(entry, None)
