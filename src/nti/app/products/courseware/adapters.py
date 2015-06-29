@@ -166,8 +166,8 @@ def _catalog_entry_from_container_object(obj):
 	Using the container index, look for catalog entries that contain
 	the given object.
 	"""
-	courses = _courses_from_container_object(obj)
 	results = set()
+	courses = _courses_from_container_object(obj)
 	for course in courses or ():
 		catalog_entry = ICourseCatalogEntry(course, None)
 
