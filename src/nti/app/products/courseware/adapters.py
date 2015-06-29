@@ -213,4 +213,11 @@ def _courses_from_container_object( obj ):
             course = ICourseInstance( container, None )
             if course is not None:
                 results.add( course )
+
+    # 4. Adapt
+    if not results:
+        course = ICourseInstance( obj, None )
+        if course:
+            results.add( course )
+
     return results
