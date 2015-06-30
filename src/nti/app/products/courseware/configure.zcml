@@ -87,7 +87,8 @@
 			 provides="nti.appserver.interfaces.IJoinableContextProvider" />
 
 	<adapter factory=".adapters._courses_from_ugd" />
-	<adapter factory=".adapters._courses_from_board" />
+	<adapter factory=".adapters._courses_from_post" />
+	<adapter factory=".adapters._courses_from_topic" />
 	<adapter factory=".adapters._courses_from_package" />
 
 	<!-- Allow traversing to the 'LegacyCourses' key of communities -->

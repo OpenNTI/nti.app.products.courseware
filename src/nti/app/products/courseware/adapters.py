@@ -209,8 +209,14 @@ def _courses_from_ugd(obj):
 
 @interface.implementer(ITopLevelContainerContextProvider)
 @component.adapter(IPost)
+def _courses_from_post(obj):
+	course = find_interface(obj, ICourseInstance, strict=False)
+	if course is not None:
+		return (course,)
+
+@interface.implementer(ITopLevelContainerContextProvider)
 @component.adapter(ITopic)
-def _courses_from_board(obj):
+def _courses_from_topic(obj):
 	course = find_interface(obj, ICourseInstance, strict=False)
 	if course is not None:
 		return (course,)
