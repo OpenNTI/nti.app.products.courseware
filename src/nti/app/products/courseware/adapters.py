@@ -213,6 +213,12 @@ def _get_outline_nodes( course, target_ntiid ):
 	return (course,)
 
 @interface.implementer(IHierarchicalContextProvider)
+@component.adapter( ICourseInstance, IHighlight )
+def _hierarchy_from_ugd_and_course( course, obj ):
+	container_id = getattr(obj, 'containerId', None)
+	return _get_outline_nodes(course, container_id)
+
+@interface.implementer(IHierarchicalContextProvider)
 @component.adapter(IHighlight)
 def _hierarchy_from_ugd(obj):
 	# On our container context
