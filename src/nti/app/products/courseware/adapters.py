@@ -5,6 +5,7 @@
 """
 
 from __future__ import print_function, unicode_literals, absolute_import, division
+
 __docformat__ = "restructuredtext en"
 
 logger = __import__('logging').getLogger(__name__)
@@ -14,6 +15,7 @@ from zope import interface
 from zope import component
 
 from nti.appserver.interfaces import IJoinableContextProvider
+from nti.appserver.interfaces import IHierarchicalContextProvider
 from nti.appserver.interfaces import ITopLevelContainerContextProvider
 
 from nti.appserver.pyramid_authorization import is_readable
@@ -30,6 +32,8 @@ from nti.contenttypes.courses.interfaces import ICourseEnrollments
 from nti.contenttypes.courses.interfaces import ICourseSubInstance
 from nti.contenttypes.courses.interfaces import ICourseCatalogEntry
 from nti.contenttypes.courses.interfaces import IContentCourseInstance
+
+from nti.contenttypes.presentation.interfaces import INTILessonOverview
 
 from nti.dataserver.interfaces import IUser
 from nti.dataserver.interfaces import IHighlight
@@ -180,31 +184,60 @@ def _catalog_entry_from_container_object(obj):
 			results.add(catalog_entry)
 	return results
 
-@interface.implementer(ITopLevelContainerContextProvider)
+def _get_outline_nodes( course, target_ntiid ):
+	"""
+	For a course and target ntiid, look for the outline hierarchy
+	used to get to the target ntiid.
+	"""
+	# This does not work with legacy courses.
+	if not target_ntiid or getattr( course, 'Outline', None ) is None:
+		return (course,)
+
+	def _found_target( item ):
+		target_ntiid_ref = getattr( item, 'target_ntiid', None )
+		ntiid_ref = getattr( item, 'ntiid', None )
+		# Video refs just have this...
+		target_ref = getattr( item, 'target', None )
+		return target_ntiid in ( target_ntiid_ref, ntiid_ref, target_ref )
+
+	outline = course.Outline
+	# TODO Do we need recursion here somewhere?
+	for outline_node in outline.values():
+		for outline_content_node in outline_node.values():
+			lesson_ntiid = outline_content_node.LessonOverviewNTIID
+			lesson_overview = component.queryUtility( INTILessonOverview, name=lesson_ntiid )
+			for overview_group in lesson_overview.items:
+				for item in overview_group.items:
+					if _found_target( item ):
+						return (course, outline_node, outline_content_node, lesson_overview)
+	return (course,)
+
+@interface.implementer(IHierarchicalContextProvider)
 @component.adapter(IHighlight)
-def _courses_from_ugd(obj):
+def _hierarchy_from_ugd(obj):
+	# On our container context
 	container_context = IContainerContext(obj, None)
-	results = ()
-	# Deterministic: just return single result.
+	results = set()
 	if container_context is not None:
 		context_id = container_context.context_id
 		course = find_object_with_ntiid(context_id)
 		if course is not None:
-				results = (course,)
-	# No? Look in container catalog.
-	if not results:
-		catalog = get_catalog()
-		results = set()
-		container_id = getattr(obj, 'containerId', None)
-		if catalog is not None and container_id:
+			results.add( course )
 
-			obj = find_object_with_ntiid(container_id)
-			containers = catalog.get_containers(obj)
-			for container in containers:
-				container = find_object_with_ntiid(container)
-				course = ICourseInstance(container, None)
-				if course is not None:
-					results.add(course)
+	# Now look in container catalog.
+	catalog = get_catalog()
+	container_id = getattr(obj, 'containerId', None)
+	if catalog is not None and container_id:
+
+		obj = find_object_with_ntiid(container_id)
+		containers = catalog.get_containers(obj)
+		for container in containers:
+			container = find_object_with_ntiid(container)
+			course = ICourseInstance(container, None)
+			if course is not None:
+				results.add(course)
+	# Now get our outline nodes.
+	results = [_get_outline_nodes(course, container_id) for course in results]
 	return results
 
 @interface.implementer(ITopLevelContainerContextProvider)

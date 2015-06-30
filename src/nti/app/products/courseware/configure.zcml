@@ -86,7 +86,7 @@
 			 factory=".adapters._catalog_entry_from_container_object"
 			 provides="nti.appserver.interfaces.IJoinableContextProvider" />
 
-	<adapter factory=".adapters._courses_from_ugd" />
+	<adapter factory=".adapters._hierarchy_from_ugd" />
 	<adapter factory=".adapters._courses_from_post" />
 	<adapter factory=".adapters._courses_from_topic" />
 	<adapter factory=".adapters._courses_from_package" />
