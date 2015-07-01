@@ -213,7 +213,7 @@ def _get_outline_nodes( course, target_ntiid ):
 				for item in overview_group.items:
 					if _found_target( item ):
 						# Return our course, leaf outline node, and overview.
-						return (course, outline_content_node, lesson_overview)
+						return (course, outline_content_node, item)
 	return (course,)
 
 @interface.implementer(IHierarchicalContextProvider)
