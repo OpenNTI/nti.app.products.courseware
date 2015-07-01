@@ -88,7 +88,9 @@
 
 	<!-- Hierarchy for UGD -->
 	<adapter factory=".adapters._hierarchy_from_ugd" />
+	<adapter factory=".adapters._hierarchy_from_unit" />
 	<adapter factory=".adapters._hierarchy_from_ugd_and_course" />
+	<adapter factory=".adapters._hierarchy_from_unit_and_course" />
 
 	<!-- Top level context for course items -->
 	<adapter factory=".adapters._courses_from_post" />
