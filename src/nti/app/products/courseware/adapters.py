@@ -36,7 +36,6 @@ from nti.contenttypes.courses.interfaces import IContentCourseInstance
 from nti.contenttypes.presentation.interfaces import INTILessonOverview
 
 from nti.dataserver.interfaces import IUser
-from nti.dataserver.interfaces import IHighlight
 
 from nti.dataserver_core.interfaces import IContainerContext
 
