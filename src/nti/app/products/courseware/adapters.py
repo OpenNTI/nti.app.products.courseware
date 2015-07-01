@@ -218,14 +218,8 @@ def _get_outline_nodes( course, target_ntiid ):
 	return (course,)
 
 @interface.implementer(IHierarchicalContextProvider)
-@component.adapter( ICourseInstance, IHighlight )
-def _hierarchy_from_ugd_and_course( course, obj ):
-	container_id = getattr(obj, 'containerId', None)
-	return _get_outline_nodes(course, container_id)
-
-@interface.implementer(IHierarchicalContextProvider)
-@component.adapter( ICourseInstance, IContentUnit )
-def _hierarchy_from_unit_and_course( course, obj ):
+@component.adapter( ICourseInstance, interface.Interface )
+def _hierarchy_from_obj_and_course( course, obj ):
 	return _get_outline_nodes(course, obj.ntiid)
 
 def _hierarchy_from_container(obj):
@@ -267,32 +261,8 @@ def _get_courses_from_container( obj ):
 	return results
 
 @interface.implementer(IHierarchicalContextProvider)
-@component.adapter(IHighlight)
-def _hierarchy_from_ugd(obj):
-	# On our container context
-	container_context = IContainerContext(obj, None)
-	results = set()
-	if container_context is not None:
-		context_id = container_context.context_id
-		course = find_object_with_ntiid(context_id)
-		if course is not None:
-			results.add( course )
-
-	container_id = getattr(obj, 'containerId', None)
-	if container_id:
-		obj = find_object_with_ntiid(container_id)
-		container_courses = _get_courses_from_container( obj )
-		results.update( container_courses )
-
-	# Now get our outline nodes.
-	results = [_get_outline_nodes(course, container_id) \
-				for course in results]
-	return results
-
-@interface.implementer(IHierarchicalContextProvider)
-@component.adapter(IContentUnit)
-def _hierarchy_from_unit(obj):
-	# Now get our outline nodes.
+@component.adapter(interface.Interface)
+def _hierarchy_from_obj(obj):
 	container_courses = _get_courses_from_container( obj )
 	results = [_get_outline_nodes(course, obj.ntiid) \
 				for course in container_courses]
