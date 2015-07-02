@@ -37,8 +37,6 @@ from nti.contenttypes.presentation.interfaces import INTILessonOverview
 
 from nti.dataserver.interfaces import IUser
 
-from nti.dataserver_core.interfaces import IContainerContext
-
 from nti.dataserver.contenttypes.forums.interfaces import IPost
 from nti.dataserver.contenttypes.forums.interfaces import ITopic
 
@@ -220,32 +218,6 @@ def _get_outline_nodes( course, target_ntiid ):
 @component.adapter( ICourseInstance, interface.Interface )
 def _hierarchy_from_obj_and_course( course, obj ):
 	return _get_outline_nodes(course, obj.ntiid)
-
-def _hierarchy_from_container(obj):
-	# On our container context
-	container_context = IContainerContext(obj, None)
-	results = set()
-	if container_context is not None:
-		context_id = container_context.context_id
-		course = find_object_with_ntiid(context_id)
-		if course is not None:
-			results.add( course )
-
-	# Now look in container catalog.
-	catalog = get_catalog()
-	container_id = getattr(obj, 'containerId', None)
-	if catalog is not None and container_id:
-
-		obj = find_object_with_ntiid(container_id)
-		containers = catalog.get_containers(obj)
-		for container in containers:
-			container = find_object_with_ntiid(container)
-			course = ICourseInstance(container, None)
-			if course is not None:
-				results.add(course)
-	# Now get our outline nodes.
-	results = [_get_outline_nodes(course, container_id) for course in results]
-	return results
 
 def _get_courses_from_container( obj ):
 	catalog = get_catalog()
