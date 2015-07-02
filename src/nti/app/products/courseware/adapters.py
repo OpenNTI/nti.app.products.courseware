@@ -282,7 +282,7 @@ def _courses_from_topic(obj):
 		return (course,)
 
 @interface.implementer(ITopLevelContainerContextProvider)
-@component.adapter( IContentPackage )
+@component.adapter( IContentUnit )
 def _courses_from_package(obj):
 	# We could tweak the adapter above to return
 	# all possible courses, or use the container index.

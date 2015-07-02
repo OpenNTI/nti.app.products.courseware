@@ -38,7 +38,7 @@ class TestJoinableContextProvider( ApplicationLayerTest ):
 	@fudge.patch('nti.app.products.courseware.adapters.get_catalog')
 	@fudge.patch('nti.app.products.courseware.adapters.is_readable')
 	def test_joinable(self, mock_get_catalog, mock_readable ):
-		containerId = 'tag:nextthought.com,2011-10:OU-NTICourse-ENGR1510_Intro_to_Water.course.1'
+		containerId = "tag:nextthought.com,2011-10:OU-HTML-CLC3403_LawAndJustice.sec:04.01_RequiredReading"
 		mock_catalog = MockCatalog()
 		mock_get_catalog.is_callable().returns( mock_catalog )
 		# Not sure why we need this.
