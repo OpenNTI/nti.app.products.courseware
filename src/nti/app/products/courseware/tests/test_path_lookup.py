@@ -33,15 +33,7 @@ class TestPathLookup( ApplicationLayerTest ):
 	testapp = None
 	default_origin = str('http://janux.ou.edu')
 
-	@WithSharedApplicationMockDS(users=True,testapp=True)
-	@fudge.patch('nti.app.products.courseware.adapters.get_catalog')
-	@fudge.patch('nti.app.products.courseware.adapters.is_readable')
-	def test_contained(self, mock_get_catalog, mock_readable ):
-		mock_catalog = MockCatalog()
-		mock_get_catalog.is_callable().returns( mock_catalog )
-		# Not sure why we need this.
-		mock_readable.is_callable().returns( True )
-
+	def _do_path_lookup(self):
 		# Get reading
 		path = '/dataserver2/LibraryPath?objectId=%s' % READING
 		res = self.testapp.get( path )
@@ -90,4 +82,21 @@ class TestPathLookup( ApplicationLayerTest ):
 										# XXX Does this NTIID make sense?
 										'NTIID', 'tag:nextthought.com,2011-10:OU-HTML-CLC3403_LawAndJustice.sec:01.01_RequiredReading',
 										'Title', '1.1 Aristotle, Nicomachean Ethics, 5.3-5.8' ))
+
+	@WithSharedApplicationMockDS(users=True,testapp=True)
+	@fudge.patch('nti.app.products.courseware.adapters.get_catalog')
+	@fudge.patch('nti.app.products.courseware.adapters.is_readable')
+	def test_contained_path(self, mock_get_catalog, mock_readable ):
+		mock_catalog = MockCatalog()
+		mock_get_catalog.is_callable().returns( mock_catalog )
+		self._do_path_lookup()
+
+	@WithSharedApplicationMockDS(users=True,testapp=True)
+	@fudge.patch('nti.app.products.courseware.adapters.is_readable')
+	def test_contained_path_legacy(self, mock_readable ):
+		"""
+		Our library path to the given ntiid is returned,
+		even though we do not have a catalog.
+		"""
+		self._do_path_lookup()
 
