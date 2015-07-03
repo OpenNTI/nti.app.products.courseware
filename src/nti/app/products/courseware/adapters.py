@@ -164,6 +164,15 @@ def _content_unit_and_user_to_course(unit, user):
 	# nothing found return first course
 	return courses[0] if courses else None
 
+def _get_top_level_contexts( obj ):
+	results = set()
+	for top_level_contexts in component.subscribers( (obj,),
+													ITopLevelContainerContextProvider ):
+		for top_level_context in top_level_contexts:
+			if ICourseInstance.providedBy( top_level_context ):
+				results.add( top_level_context )
+	return results
+
 @interface.implementer(IJoinableContextProvider)
 @component.adapter(interface.Interface)
 def _catalog_entry_from_container_object(obj):
@@ -172,7 +181,7 @@ def _catalog_entry_from_container_object(obj):
 	the given object.
 	"""
 	results = set()
-	courses = ITopLevelContainerContextProvider( obj, None )
+	courses = _get_top_level_contexts( obj )
 	for course in courses or ():
 		catalog_entry = ICourseCatalogEntry(course, None)
 

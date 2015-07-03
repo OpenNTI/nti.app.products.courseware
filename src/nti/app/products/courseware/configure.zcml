@@ -82,18 +82,23 @@
 	<adapter factory=".adapters._legacy_course_to_content_package_bundle" />
 
 	<!-- Content containers to courses -->
-	<adapter for="*"
-			 factory=".adapters._catalog_entry_from_container_object"
-			 provides="nti.appserver.interfaces.IJoinableContextProvider" />
+	<subscriber factory=".adapters._catalog_entry_from_container_object"
+				provides="nti.appserver.interfaces.IJoinableContextProvider"
+				for="*"/>
 
 	<!-- Hierarchy for UGD -->
-	<adapter factory=".adapters._hierarchy_from_obj" />
 	<adapter factory=".adapters._hierarchy_from_obj_and_course" />
+	<subscriber factory=".adapters._courses_from_package"
+				provides="nti.appserver.interfaces.ITopLevelContainerContextProvider"
+				for="nti.contentlibrary.interfaces.IContentUnit"/>
+
+	<subscriber factory=".adapters._hierarchy_from_obj"
+				provides="nti.appserver.interfaces.IHierarchicalContextProvider"
+				for="*"/>
 
 	<!-- Top level context for course items -->
 	<adapter factory=".adapters._courses_from_post" />
 	<adapter factory=".adapters._courses_from_topic" />
-	<adapter factory=".adapters._courses_from_package" />
 
 	<!-- Allow traversing to the 'LegacyCourses' key of communities -->
 	<adapter name="LegacyCourses"
