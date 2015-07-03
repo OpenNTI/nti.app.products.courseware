@@ -24,9 +24,11 @@ READING = 'tag:nextthought.com,2011-10:OU-HTML-CLC3403_LawAndJustice.sec:04.01_R
 SUB_SECTION = 'tag:nextthought.com,2011-10:OU-HTML-CLC3403_LawAndJustice.subsec:BOOK_5_CHAPTER_3'
 
 class MockCatalog(object):
+	course_ntiid = 'tag:nextthought.com,2011-10:OU-HTML-CLC3403_LawAndJustice.clc_3403_law_and_justice'
+	containers = (course_ntiid, )
+
 	def get_containers(self, _):
-		course_ntiid = 'tag:nextthought.com,2011-10:OU-HTML-CLC3403_LawAndJustice.clc_3403_law_and_justice'
-		return (course_ntiid,)
+		return self.containers
 
 class TestPathLookup( ApplicationLayerTest ):
 	layer = PersistentInstructedCourseApplicationTestLayer
@@ -58,13 +60,11 @@ class TestPathLookup( ApplicationLayerTest ):
 		# We do get course followed by appropriate page info.
 		assert_that( res, has_length( 1 ))
 		res = res[0]
-		assert_that( res, has_length( 3 ))
+		assert_that( res, has_length( 2 ))
 		assert_that( res[0], has_entry( 'Class', 'CourseInstance' ))
 		assert_that( res[1], has_entries( 'Class', 'PageInfo',
 										'NTIID', 'tag:nextthought.com,2011-10:OU-HTML-CLC3403_LawAndJustice.lec:01_LESSON',
 										'Title', '1. Defining Law and Justice'))
-		assert_that( res[2], has_entries( 'Class', 'Video',
-										'NTIID', VIDEO ))
 
 		# Sub section
 		path = '/dataserver2/LibraryPath?objectId=%s' % SUB_SECTION
@@ -92,11 +92,15 @@ class TestPathLookup( ApplicationLayerTest ):
 		self._do_path_lookup()
 
 	@WithSharedApplicationMockDS(users=True,testapp=True)
+	@fudge.patch('nti.app.products.courseware.adapters.get_catalog')
 	@fudge.patch('nti.app.products.courseware.adapters.is_readable')
-	def test_contained_path_legacy(self, mock_readable ):
+	def test_contained_path_legacy(self, mock_get_catalog, mock_readable ):
 		"""
 		Our library path to the given ntiid is returned,
 		even though we do not have a catalog.
 		"""
+		mock_catalog = MockCatalog()
+		mock_catalog.containers = []
+		mock_get_catalog.is_callable().returns( mock_catalog )
 		self._do_path_lookup()
 
