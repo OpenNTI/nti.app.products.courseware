@@ -95,8 +95,13 @@
 					 nti.dataserver.interfaces.IUser"/>
 
 	<!-- Top level context for course items -->
-	<adapter factory=".adapters._courses_from_post" />
-	<adapter factory=".adapters._courses_from_topic" />
+	<subscriber factory=".adapters._courses_from_post"
+				provides="nti.appserver.interfaces.ITopLevelContainerContextProvider"
+				for="nti.dataserver.contenttypes.forums.interfaces.IPost"/>
+
+	<subscriber factory=".adapters._courses_from_topic"
+				provides="nti.appserver.interfaces.ITopLevelContainerContextProvider"
+				for="nti.dataserver.contenttypes.forums.interfaces.ITopic"/>
 
 	<subscriber factory=".adapters._courses_from_package"
 				provides="nti.appserver.interfaces.ITopLevelContainerContextProvider"
