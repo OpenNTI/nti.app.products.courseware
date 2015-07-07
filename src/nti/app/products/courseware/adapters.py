@@ -228,22 +228,25 @@ def _get_outline_nodes( course, target_ntiid ):
 def _hierarchy_from_obj_and_course( course, obj ):
 	return _get_outline_nodes(course, obj.ntiid)
 
-def _get_courses_from_container( obj ):
+def _get_courses_from_container( obj, user=None ):
 	catalog = get_catalog()
 	results = set()
 	if catalog:
 		containers = catalog.get_containers(obj)
 		for container in containers:
 			container = find_object_with_ntiid(container)
-			course = ICourseInstance(container, None)
+			if user is not None:
+				course = component.queryMultiAdapter( (container,user), ICourseInstance )
+			else:
+				course = ICourseInstance(container, None)
 			if course is not None:
 				results.add(course)
 	return results
 
 @interface.implementer(IHierarchicalContextProvider)
-@component.adapter(interface.Interface)
-def _hierarchy_from_obj(obj):
-	container_courses = _get_courses_from_container( obj )
+@component.adapter(interface.Interface, IUser)
+def _hierarchy_from_obj_and_user(obj, user):
+	container_courses = _get_courses_from_container( obj, user )
 	results = [_get_outline_nodes(course, obj.ntiid) \
 				for course in container_courses]
 	return results
@@ -268,5 +271,12 @@ def _courses_from_package(obj):
 	# We could tweak the adapter above to return
 	# all possible courses, or use the container index.
 	course = ICourseInstance(obj, None)
+	if course:
+		return (course,)
+
+@interface.implementer(ITopLevelContainerContextProvider)
+@component.adapter( IContentUnit, IUser )
+def _courses_from_package_and_user(obj, user):
+	course = component.queryMultiAdapter( (obj,user), ICourseInstance )
 	if course:
 		return (course,)
