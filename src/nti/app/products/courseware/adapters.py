@@ -202,9 +202,18 @@ def _get_outline_nodes( course, target_ntiid ):
 	def _found_target( item ):
 		target_ntiid_ref = getattr( item, 'target_ntiid', None )
 		ntiid_ref = getattr( item, 'ntiid', None )
-		# Video refs just have this...
 		target_ref = getattr( item, 'target', None )
-		return target_ntiid in ( target_ntiid_ref, ntiid_ref, target_ref )
+		result = target_ntiid in ( target_ntiid_ref, ntiid_ref, target_ref )
+		if not result and target_ref:
+			# Perhaps our item has pages
+			target_obj = find_object_with_ntiid( target_ref )
+			if target_obj is not None:
+				try:
+					target_children = [x.ntiid for x in target_obj.children]
+					result = target_ntiid in target_children
+				except AttributeError:
+					pass
+		return result
 
 	outline = course.Outline
 	for outline_node in outline.values():
