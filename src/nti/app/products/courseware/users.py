@@ -108,7 +108,7 @@ class ClassmatesSuggestedContactsProvider(SuggestedContactsProvider):
 
 		result = []
 		course = ICourseInstance(context)
-		entry = ICourseCatalogEntry(context)
+		entry = ICourseCatalogEntry(context, None) # seen in alpha
 		for record in ICourseEnrollments(course).iter_enrollments():
 			if record.Scope in implies:
 				principal = IPrincipal(record.Principal, None)
