@@ -98,7 +98,7 @@ def _forums_for_instance(context, name):
 		return forums
 
 	for prefix, key_prefix, scope, iface in (NTI_FORUMS_PUBLIC,
-											  NTI_FORUMS_FORCREDIT):
+											 NTI_FORUMS_FORCREDIT):
 		has_key = 'Has' + key_prefix + name
 		displayname_key = key_prefix + name + 'DisplayName'
 		if forum_types.get(has_key):
@@ -242,8 +242,7 @@ def create_course_forums(context):
 										 display_name=forum.display_name,
 										 entities=[forum.scope.NTIID],
 										 implement=forum.interface,
-										 # # Always created by the public community
-										 owner=course.SharingScopes['Public'].NTIID)
+										 owner=forum.scope.NTIID)
 			data[forum.scope.username] = (name, created)
 
 	_creator (result['discussions'], discussions_forums(course))
