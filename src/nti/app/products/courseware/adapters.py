@@ -232,10 +232,19 @@ def _get_outline_nodes( course, target_ntiid ):
 						return (course, outline_content_node, item)
 	return (course,)
 
+def _get_target_ntiid( obj ):
+	target_ntiid = getattr( obj, 'ntiid', None )
+	# Content cards are pseudo objects, so get
+	# the nearest available ntiid.
+	if not target_ntiid:
+		target_ntiid = obj.path[-1].ntiid
+	return target_ntiid
+
 @interface.implementer(IHierarchicalContextProvider)
 @component.adapter( ICourseInstance, interface.Interface )
 def _hierarchy_from_obj_and_course( course, obj ):
-	return _get_outline_nodes(course, obj.ntiid)
+	target_ntiid = _get_target_ntiid( obj )
+	return _get_outline_nodes(course, target_ntiid)
 
 def _get_courses_from_container( obj, user=None ):
 	catalog = get_catalog()
@@ -256,7 +265,8 @@ def _get_courses_from_container( obj, user=None ):
 @component.adapter(interface.Interface, IUser)
 def _hierarchy_from_obj_and_user(obj, user):
 	container_courses = _get_courses_from_container( obj, user )
-	results = [_get_outline_nodes(course, obj.ntiid) \
+	target_ntiid = _get_target_ntiid( obj )
+	results = [_get_outline_nodes(course, target_ntiid) \
 				for course in container_courses]
 	return results
 
