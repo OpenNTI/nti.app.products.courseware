@@ -88,12 +88,25 @@ class ClassmatesSuggestedContactsProvider(SuggestedContactsProvider):
 		self.ranking = ClassmatesSuggestedContactRankingPolicy()
 		self.ranking.provider = self
 
-	def iter_courses(self, user):
+	def _get_courses(self, user):
 		for enrollments in component.subscribers((user,), IPrincipalEnrollments):
 			for enrollment in enrollments.iter_enrollments():
 				course = ICourseInstance(enrollment, None)
 				if course is not None:
-					yield course
+					entry = ICourseCatalogEntry(course, None)
+
+					# Only return active courses as they are the most relevant.
+					if 		entry is not None \
+						and entry.isCourseCurrentlyActive():
+							yield course
+
+	def iter_courses(self, user, source_user=None):
+		results = self._get_courses( user )
+		if source_user is not None and user != source_user:
+			user_courses = set( results )
+			source_courses = set( self._get_courses( source_user ))
+			results = user_courses.intersection( source_courses )
+		return results
 
 	def suggestions_by_course(self, user, context):
 		record = get_enrollment_record(context, user)
@@ -109,6 +122,7 @@ class ClassmatesSuggestedContactsProvider(SuggestedContactsProvider):
 		result = []
 		course = ICourseInstance(context)
 		entry = ICourseCatalogEntry(context, None) # seen in alpha
+
 		for record in ICourseEnrollments(course).iter_enrollments():
 			if record.Scope in implies:
 				principal = IPrincipal(record.Principal, None)
@@ -121,9 +135,9 @@ class ClassmatesSuggestedContactsProvider(SuggestedContactsProvider):
 		result = self.ranking.sort(result)
 		return result
 
-	def suggestions(self, user):
+	def suggestions(self, user, source_user=None):
 		result = []
-		for course in self.iter_courses(user):
+		for course in self.iter_courses(user, source_user):
 			suggestions = self.suggestions_by_course(user, course)
 			result.extend(suggestions)
 		result = self.ranking.sort(result)
