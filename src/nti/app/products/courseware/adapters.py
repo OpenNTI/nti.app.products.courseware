@@ -14,6 +14,8 @@ import zope.intid
 from zope import interface
 from zope import component
 
+from pyramid import httpexceptions as hexc
+
 from nti.appserver.interfaces import IJoinableContextProvider
 from nti.appserver.interfaces import IHierarchicalContextProvider
 from nti.appserver.interfaces import ITopLevelContainerContextProvider
@@ -210,6 +212,7 @@ def _get_outline_nodes( course, target_ntiid ):
 			if target_obj is not None:
 				try:
 					target_children = [x.ntiid for x in target_obj.children]
+					# FIXME embedded container ids?
 					result = target_ntiid in target_children
 				except AttributeError:
 					pass
@@ -237,7 +240,12 @@ def _get_target_ntiid( obj ):
 	# Content cards are pseudo objects, so get
 	# the nearest available ntiid.
 	if not target_ntiid:
-		target_ntiid = obj.path[-1].ntiid
+		try:
+			target_ntiid = obj.path[-1].ntiid
+		except AttributeError:
+			pass
+	if not target_ntiid:
+		raise hexc.HTTPUnprocessableEntity( 'Unexpected object %s' % type( obj ) )
 	return target_ntiid
 
 @interface.implementer(IHierarchicalContextProvider)
@@ -270,19 +278,22 @@ def _hierarchy_from_obj_and_user(obj, user):
 				for course in container_courses]
 	return results
 
-@interface.implementer(ITopLevelContainerContextProvider)
-@component.adapter(IPost)
-def _courses_from_post(obj):
+def _find_lineage_course( obj ):
 	course = find_interface(obj, ICourseInstance, strict=False)
 	if course is not None:
 		return (course,)
 
 @interface.implementer(ITopLevelContainerContextProvider)
+@component.adapter(IPost)
 @component.adapter(ITopic)
-def _courses_from_topic(obj):
-	course = find_interface(obj, ICourseInstance, strict=False)
-	if course is not None:
-		return (course,)
+def _courses_from_forum_obj(obj):
+	return _find_lineage_course( obj )
+
+@interface.implementer(ITopLevelContainerContextProvider)
+@component.adapter(IPost, IUser)
+@component.adapter(ITopic, IUser)
+def _courses_from_forum_obj_and_user(obj, _):
+	return _find_lineage_course( obj )
 
 @interface.implementer(ITopLevelContainerContextProvider)
 @component.adapter( IContentUnit )
@@ -299,3 +310,25 @@ def _courses_from_package_and_user(obj, user):
 	course = component.queryMultiAdapter( (obj,user), ICourseInstance )
 	if course:
 		return (course,)
+
+def __courses_from_obj_and_user(obj, user=None):
+	# TODO We need to index content units so this works for more
+	# contained objects.
+	container_courses = _get_courses_from_container( obj, user )
+	if not container_courses:
+		# No? Are we contained?
+		container_id = getattr( obj, 'containerId', None )
+		container_obj = find_object_with_ntiid( container_id ) if container_id else None
+		if container_obj is not None:
+			container_courses = _get_courses_from_container( container_obj, user )
+	return container_courses
+
+@interface.implementer(ITopLevelContainerContextProvider)
+@component.adapter(interface.Interface, IUser)
+def _courses_from_obj_and_user(obj, user):
+	__courses_from_obj_and_user(obj, user)
+
+@interface.implementer(ITopLevelContainerContextProvider)
+@component.adapter(interface.Interface)
+def _courses_from_obj(obj):
+	__courses_from_obj_and_user(obj)
