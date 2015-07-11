@@ -211,7 +211,10 @@ def _get_outline_nodes( course, target_ntiid ):
 		ntiid_ref = getattr( item, 'ntiid', None )
 		target_ref = getattr( item, 'target', None )
 		ntiid_vals = set( [target_ntiid_ref, ntiid_ref, target_ref] )
-		result = containers.intersection( ntiid_vals )
+		# We found our object's container, or we are the container.
+		result = 	containers.intersection( ntiid_vals ) \
+				or 	target_ntiid in ntiid_vals
+
 		if not result and target_ref:
 			# Legacy, perhaps our item is a page ref.
 			target_obj = find_object_with_ntiid( target_ref )
