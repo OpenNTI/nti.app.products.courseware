@@ -36,7 +36,7 @@ class _BasePredicate(object):
 	def cache(self):
 		result = component.getUtility(ICourseOutlineCache)
 		return result
-	
+
 	def _is_allowed(self, ntiid, query=None, now=None):
 		result = self.cache.is_allowed(ntiid, query=query, now=now)
 		return result
@@ -50,7 +50,7 @@ class _ContentHitPredicate(_BasePredicate):
 	def allow(self, item, score, query=None):
 		result = self._is_allowed(item.ntiid, query)
 		if not result:
-			logger.debug("Content ('%s') in container '%s' not allowed for search.", 
+			logger.debug("Content ('%s') in container '%s' not allowed for search.",
 						 item.title, item.ntiid)
 		return result
 
@@ -61,7 +61,7 @@ class _AudioContentHitPredicate(_BasePredicate):
 	def allow(self, item, score, query=None):
 		result = self._is_allowed(item.containerId, query)
 		if not result:
-			logger.debug("AudioContent ('%s') in container '%s' not allowed for search.", 
+			logger.debug("AudioContent ('%s') in container '%s' not allowed for search.",
 						 item.title, item.containerId)
 		return result
 
@@ -72,7 +72,7 @@ class _VideoContentHitPredicate(_BasePredicate):
 	def allow(self, item, score, query=None):
 		result = self._is_allowed(item.containerId, query)
 		if not result:
-			logger.debug("VideoContent ('%s') in container '%s' not allowed for search.", 
+			logger.debug("VideoContent ('%s') in container '%s' not allowed for search.",
 						 item.title, item.containerId)
 		return result
 
@@ -95,7 +95,7 @@ class _CreatedContentHitPredicate(_BasePredicate):
 		return bool(not containerId or \
 					is_ntiid_of_types(containerId, (TYPE_OID,)) or \
 					self._is_allowed(containerId, query))
-			
+
 	def allow(self, item, score, query=None):
 		resolver = IContainerIDResolver(item, None)
 		containerId = resolver.containerId if resolver is not None else None

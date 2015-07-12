@@ -38,4 +38,8 @@
 				provides="nti.contentsearch.interfaces.ISearchHitPredicate"
 				for="nti.dataserver.interfaces.IHighlight" />
 
+	<!-- Subscribers -->
+	<subscriber factory=".subscribers._RootSearchPacakgeResolver"
+				provides="nti.contentsearch.interfaces.ISearchPackageResolver"
+				for="nti.dataserver.interfaces.IUser" />
 </configure>
