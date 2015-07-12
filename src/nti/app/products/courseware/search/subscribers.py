@@ -22,6 +22,9 @@ from nti.ntiids.ntiids import ROOT
 @interface.implementer(ISearchPackageResolver)
 class _RootSearchPacakgeResolver(object):
 
+	def __init__(self, *args):
+		pass
+
 	def resolve(self, user, ntiid=None):
 		result = set()
 		if ntiid == ROOT:
