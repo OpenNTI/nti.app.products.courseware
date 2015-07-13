@@ -90,14 +90,28 @@
 	<adapter factory=".adapters._hierarchy_from_obj_and_course" />
 
 	<subscriber factory=".adapters._hierarchy_from_obj_and_user"
-				provides="nti.appserver.interfaces.IHierarchicalContextProvider"/>
+				provides="nti.appserver.interfaces.IHierarchicalContextProvider"
+				for="*
+					 nti.dataserver.interfaces.IUser"/>
 
 	<!-- Top level context for course items -->
 	<subscriber factory=".adapters._courses_from_forum_obj"
-				provides="nti.appserver.interfaces.ITopLevelContainerContextProvider"/>
+				provides="nti.appserver.interfaces.ITopLevelContainerContextProvider"
+				for="nti.dataserver.contenttypes.forums.interfaces.IPost"/>
+
+	<subscriber factory=".adapters._courses_from_forum_obj"
+				provides="nti.appserver.interfaces.ITopLevelContainerContextProvider"
+				for="nti.dataserver.contenttypes.forums.interfaces.ITopic"/>
 
 	<subscriber factory=".adapters._courses_from_forum_obj_and_user"
-				provides="nti.appserver.interfaces.ITopLevelContainerContextProvider"/>
+				provides="nti.appserver.interfaces.ITopLevelContainerContextProvider"
+				for="nti.dataserver.contenttypes.forums.interfaces.IPost
+					nti.dataserver.interfaces.IUser"/>
+
+	<subscriber factory=".adapters._courses_from_forum_obj_and_user"
+				provides="nti.appserver.interfaces.ITopLevelContainerContextProvider"
+				for="nti.dataserver.contenttypes.forums.interfaces.ITopic
+					nti.dataserver.interfaces.IUser"/>
 
 	<subscriber factory=".adapters._courses_from_package"
 				provides="nti.appserver.interfaces.ITopLevelContainerContextProvider"
@@ -113,7 +127,9 @@
 				for="*"/>
 
 	<subscriber factory=".adapters._courses_from_obj_and_user"
-				provides="nti.appserver.interfaces.ITopLevelContainerContextProvider"/>
+				provides="nti.appserver.interfaces.ITopLevelContainerContextProvider"
+				for="*
+					 nti.dataserver.interfaces.IUser"/>
 
 	<!-- Allow traversing to the 'LegacyCourses' key of communities -->
 	<adapter name="LegacyCourses"
