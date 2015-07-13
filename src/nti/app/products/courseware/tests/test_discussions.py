@@ -139,3 +139,20 @@ class TestDiscussions(ApplicationLayerTest):
 
 			f4ds = get_forums_for_discussion(discussion, course)
 			assert_that(f4ds, has_length(2))
+			discussion_ntiid = tuple(f4ds.values()[0].values())[0].NTIID
+
+		# Path lookup
+		# Topic -> (Course,Board,Forum)
+		path = '/dataserver2/LibraryPath?objectId=%s' % discussion_ntiid
+		res = self.testapp.get( path )
+		res = res.json_body
+
+		assert_that( res, has_length( 1 ))
+		res = res[0]
+		assert_that( res, has_length( 3 ))
+
+		assert_that( res[0], has_entry( 'Class', 'CourseInstance' ))
+		assert_that( res[1], has_entries( 'Class', 'CommunityBoard',
+										'title', 'Discussions' ))
+		assert_that( res[2], has_entries( 'Class', 'CommunityForum',
+										'title', 'Open Discussions' ))

@@ -22,10 +22,12 @@ from nti.app.products.courseware.tests import PersistentInstructedCourseApplicat
 VIDEO = 'tag:nextthought.com,2011-10:OU-NTIVideo-CLC3403_LawAndJustice.ntivideo.video_01.01'
 READING = 'tag:nextthought.com,2011-10:OU-HTML-CLC3403_LawAndJustice.sec:04.01_RequiredReading'
 SUB_SECTION = 'tag:nextthought.com,2011-10:OU-HTML-CLC3403_LawAndJustice.subsec:BOOK_5_CHAPTER_3'
+QUIZ = "tag:nextthought.com,2011-10:OU-HTML-CLC3403_LawAndJustice.sec:QUIZ_01.01"
+QUESTION = "tag:nextthought.com,2011-10:OU-NAQ-CLC3403_LawAndJustice.naq.qid.aristotle.1"
+COURSE_NTIID = 'tag:nextthought.com,2011-10:NTI-CourseInfo-Fall2013_CLC3403_LawAndJustice'
 
 class MockCatalog(object):
-	course_ntiid = 'tag:nextthought.com,2011-10:OU-HTML-CLC3403_LawAndJustice.clc_3403_law_and_justice'
-	containers = (course_ntiid, )
+	containers = (COURSE_NTIID, )
 
 	def get_containers(self, _):
 		return self.containers
@@ -56,8 +58,6 @@ class TestPathLookup( ApplicationLayerTest ):
 		res = self.testapp.get( path )
 		res = res.json_body
 
-		# No LessonOverview registered, so we lose outline.
-		# We do get course followed by appropriate page info.
 		assert_that( res, has_length( 1 ))
 		res = res[0]
 		assert_that( res, has_length( 2 ))
@@ -71,8 +71,6 @@ class TestPathLookup( ApplicationLayerTest ):
 		res = self.testapp.get( path )
 		res = res.json_body
 
-		# No LessonOverview registered, so we lose outline.
-		# We do get course followed by appropriate page info.
 		assert_that( res, has_length( 1 ))
 		res = res[0]
 		assert_that( res, has_length( 2 ))
@@ -83,18 +81,44 @@ class TestPathLookup( ApplicationLayerTest ):
 										'NTIID', 'tag:nextthought.com,2011-10:OU-HTML-CLC3403_LawAndJustice.sec:01.01_RequiredReading',
 										'Title', '1.1 Aristotle, Nicomachean Ethics, 5.3-5.8' ))
 
+		# Quiz
+		path = '/dataserver2/LibraryPath?objectId=%s' % QUIZ
+		res = self.testapp.get( path )
+		res = res.json_body
+
+		assert_that( res, has_length( 1 ))
+		res = res[0]
+		assert_that( res, has_length( 2 ))
+
+		assert_that( res[0], has_entry( 'Class', 'CourseInstance' ))
+		assert_that( res[1], has_entries( 'Class', 'PageInfo',
+										'NTIID', 'tag:nextthought.com,2011-10:OU-HTML-CLC3403_LawAndJustice.sec:QUIZ_01.01',
+										'Title', 'Self-Quiz 1' ))
+
+		# Question (returns same)
+		path = '/dataserver2/LibraryPath?objectId=%s' % QUESTION
+		res = self.testapp.get( path )
+		res = res.json_body
+
+		assert_that( res, has_length( 1 ))
+		res = res[0]
+		assert_that( res, has_length( 2 ))
+
+		assert_that( res[0], has_entry( 'Class', 'CourseInstance' ))
+		assert_that( res[1], has_entries( 'Class', 'PageInfo',
+										'NTIID', 'tag:nextthought.com,2011-10:OU-HTML-CLC3403_LawAndJustice.sec:QUIZ_01.01',
+										'Title', 'Self-Quiz 1' ))
+
 	@WithSharedApplicationMockDS(users=True,testapp=True)
 	@fudge.patch('nti.app.products.courseware.adapters.get_catalog')
-	@fudge.patch('nti.app.products.courseware.adapters.is_readable')
-	def test_contained_path(self, mock_get_catalog, mock_readable ):
+	def test_contained_path(self, mock_get_catalog ):
 		mock_catalog = MockCatalog()
 		mock_get_catalog.is_callable().returns( mock_catalog )
 		self._do_path_lookup()
 
 	@WithSharedApplicationMockDS(users=True,testapp=True)
 	@fudge.patch('nti.app.products.courseware.adapters.get_catalog')
-	@fudge.patch('nti.app.products.courseware.adapters.is_readable')
-	def test_contained_path_legacy(self, mock_get_catalog, mock_readable ):
+	def test_contained_path_legacy(self, mock_get_catalog ):
 		"""
 		Our library path to the given ntiid is returned,
 		even though we do not have a catalog.
@@ -103,4 +127,5 @@ class TestPathLookup( ApplicationLayerTest ):
 		mock_catalog.containers = []
 		mock_get_catalog.is_callable().returns( mock_catalog )
 		self._do_path_lookup()
+
 
