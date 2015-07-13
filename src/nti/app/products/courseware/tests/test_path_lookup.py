@@ -24,6 +24,8 @@ READING = 'tag:nextthought.com,2011-10:OU-HTML-CLC3403_LawAndJustice.sec:04.01_R
 SUB_SECTION = 'tag:nextthought.com,2011-10:OU-HTML-CLC3403_LawAndJustice.subsec:BOOK_5_CHAPTER_3'
 QUIZ = "tag:nextthought.com,2011-10:OU-HTML-CLC3403_LawAndJustice.sec:QUIZ_01.01"
 QUESTION = "tag:nextthought.com,2011-10:OU-NAQ-CLC3403_LawAndJustice.naq.qid.aristotle.1"
+CARD = 'tag:nextthought.com,2011-10:OU-NTICard-CLC3403_LawAndJustice.nticard.nticard_RR_PDF_03.02'
+
 COURSE_NTIID = 'tag:nextthought.com,2011-10:NTI-CourseInfo-Fall2013_CLC3403_LawAndJustice'
 
 class MockCatalog(object):
@@ -108,6 +110,20 @@ class TestPathLookup( ApplicationLayerTest ):
 		assert_that( res[1], has_entries( 'Class', 'PageInfo',
 										'NTIID', 'tag:nextthought.com,2011-10:OU-HTML-CLC3403_LawAndJustice.sec:QUIZ_01.01',
 										'Title', 'Self-Quiz 1' ))
+
+		# Card
+		path = '/dataserver2/LibraryPath?objectId=%s' % CARD
+		res = self.testapp.get( path )
+		res = res.json_body
+
+		assert_that( res, has_length( 1 ))
+		res = res[0]
+		assert_that( res, has_length( 2 ))
+
+		assert_that( res[0], has_entry( 'Class', 'CourseInstance' ))
+		assert_that( res[1], has_entries( 'Class', 'PageInfo',
+										'NTIID', 'tag:nextthought.com,2011-10:OU-HTML-CLC3403_LawAndJustice.sec:03.02_RequiredReading',
+										'Title', '3.2 Taplin, Shield of Achilles (within the Iliad)' ))
 
 	@WithSharedApplicationMockDS(users=True,testapp=True)
 	@fudge.patch('nti.app.products.courseware.adapters.get_catalog')
