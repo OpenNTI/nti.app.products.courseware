@@ -216,15 +216,20 @@ def _get_outline_nodes( course, target_ntiid ):
 				or 	target_ntiid in ntiid_vals
 
 		if not result and target_ref:
-			# Legacy, perhaps our item is a page ref.
+			# We could have an item contained by our target item
 			target_obj = find_object_with_ntiid( target_ref )
 			if target_obj is not None:
-				try:
-					target_children = [x.ntiid for x in target_obj.children]
-					result = target_ntiid in target_children \
-						or target_ntiid in target_obj.embeddedContainerNTIIDs
-				except AttributeError:
-					pass
+				item_containers = catalog.get_containers( target_obj ) if catalog else set()
+				result = target_ntiid in item_containers
+
+				if not result:
+					# Legacy, perhaps our item is a page ref.
+					try:
+						target_children = [x.ntiid for x in target_obj.children]
+						result = target_ntiid in target_children \
+							or target_ntiid in target_obj.embeddedContainerNTIIDs
+					except AttributeError:
+						pass
 		return result
 
 	outline = course.Outline
@@ -236,6 +241,7 @@ def _get_outline_nodes( course, target_ntiid ):
 			if not lesson_ntiid:
 				continue
 			lesson_overview = component.queryUtility( INTILessonOverview, name=lesson_ntiid )
+
 			for overview_group in lesson_overview.items:
 				for item in overview_group.items:
 					if _found_target( item ):
@@ -275,6 +281,10 @@ def _get_courses_from_container( obj, user=None ):
 				course = ICourseInstance(container, None)
 			if course is not None:
 				results.add(course)
+	if not results:
+		# If not, try adapting
+		course = component.queryMultiAdapter( (obj,user), ICourseInstance )
+		results.add( course )
 	return results
 
 @interface.implementer(IHierarchicalContextProvider)
