@@ -91,8 +91,18 @@
 
 	<subscriber factory=".adapters._hierarchy_from_obj_and_user"
 				provides="nti.appserver.interfaces.IHierarchicalContextProvider"
-				for="*
-					 nti.dataserver.interfaces.IUser"/>
+				for="nti.dataserver.interfaces.IHighlight
+					nti.dataserver.interfaces.IUser"/>
+
+	<subscriber factory=".adapters._hierarchy_from_obj_and_user"
+				provides="nti.appserver.interfaces.IHierarchicalContextProvider"
+				for="nti.contentlibrary.interfaces.IContentUnit
+					nti.dataserver.interfaces.IUser"/>
+
+	<subscriber factory=".adapters._hierarchy_from_obj_and_user"
+				provides="nti.appserver.interfaces.IHierarchicalContextProvider"
+				for="nti.contenttypes.presentation.interfaces.IPresentationAsset
+					nti.dataserver.interfaces.IUser"/>
 
 	<!-- Top level context for course items -->
 	<subscriber factory=".adapters._courses_from_forum_obj"
@@ -124,12 +134,21 @@
 
 	<subscriber factory=".adapters._courses_from_obj"
 				provides="nti.appserver.interfaces.ITopLevelContainerContextProvider"
-				for="*"/>
+				for="nti.contenttypes.presentation.interfaces.IPresentationAsset"/>
+
+	<subscriber factory=".adapters._courses_from_obj"
+				provides="nti.appserver.interfaces.ITopLevelContainerContextProvider"
+				for="nti.dataserver.interfaces.IHighlight"/>
 
 	<subscriber factory=".adapters._courses_from_obj_and_user"
 				provides="nti.appserver.interfaces.ITopLevelContainerContextProvider"
-				for="*
-					 nti.dataserver.interfaces.IUser"/>
+				for="nti.contenttypes.presentation.interfaces.IPresentationAsset
+					nti.dataserver.interfaces.IUser"/>
+
+	<subscriber factory=".adapters._courses_from_obj_and_user"
+				provides="nti.appserver.interfaces.ITopLevelContainerContextProvider"
+				for="nti.dataserver.interfaces.IHighlight
+					nti.dataserver.interfaces.IUser"/>
 
 	<!-- Allow traversing to the 'LegacyCourses' key of communities -->
 	<adapter name="LegacyCourses"

@@ -35,9 +35,11 @@ from nti.contenttypes.courses.interfaces import ICourseSubInstance
 from nti.contenttypes.courses.interfaces import ICourseCatalogEntry
 from nti.contenttypes.courses.interfaces import IContentCourseInstance
 
+from nti.contenttypes.presentation.interfaces import IPresentationAsset
 from nti.contenttypes.presentation.interfaces import INTILessonOverview
 
 from nti.dataserver.interfaces import IUser
+from nti.dataserver.interfaces import IHighlight
 
 from nti.dataserver.contenttypes.forums.interfaces import IPost
 from nti.dataserver.contenttypes.forums.interfaces import ITopic
@@ -241,6 +243,8 @@ def _get_outline_nodes( course, target_ntiid ):
 			if not lesson_ntiid:
 				continue
 			lesson_overview = component.queryUtility( INTILessonOverview, name=lesson_ntiid )
+			if lesson_overview is None:
+				continue
 
 			for overview_group in lesson_overview.items:
 				for item in overview_group.items:
@@ -288,7 +292,9 @@ def _get_courses_from_container( obj, user=None ):
 	return results
 
 @interface.implementer(IHierarchicalContextProvider)
-@component.adapter(interface.Interface, IUser)
+@component.adapter(IHighlight, IUser)
+@component.adapter(IContentUnit, IUser)
+@component.adapter(IPresentationAsset, IUser)
 def _hierarchy_from_obj_and_user(obj, user):
 	container_courses = _get_courses_from_container( obj, user )
 	target_ntiid = _get_target_ntiid( obj )
@@ -342,11 +348,13 @@ def __courses_from_obj_and_user(obj, user=None):
 	return container_courses
 
 @interface.implementer(ITopLevelContainerContextProvider)
-@component.adapter(interface.Interface, IUser)
+@component.adapter(IHighlight, IUser)
+@component.adapter(IPresentationAsset, IUser)
 def _courses_from_obj_and_user(obj, user):
 	__courses_from_obj_and_user(obj, user)
 
 @interface.implementer(ITopLevelContainerContextProvider)
-@component.adapter(interface.Interface)
+@component.adapter(IHighlight)
+@component.adapter(IPresentationAsset)
 def _courses_from_obj(obj):
 	__courses_from_obj_and_user(obj)
