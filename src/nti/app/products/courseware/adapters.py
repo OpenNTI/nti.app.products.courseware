@@ -288,7 +288,8 @@ def _get_courses_from_container( obj, user=None ):
 	if not results:
 		# If not, try adapting
 		course = component.queryMultiAdapter( (obj,user), ICourseInstance )
-		results.add( course )
+		if course is not None:
+			results.add( course )
 	return results
 
 @interface.implementer(IHierarchicalContextProvider)
