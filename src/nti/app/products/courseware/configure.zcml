@@ -113,6 +113,10 @@
 				provides="nti.appserver.interfaces.ITopLevelContainerContextProvider"
 				for="nti.dataserver.contenttypes.forums.interfaces.ITopic"/>
 
+	<subscriber factory=".adapters._courses_from_forum_obj"
+				provides="nti.appserver.interfaces.ITopLevelContainerContextProvider"
+				for="nti.dataserver.contenttypes.forums.interfaces.IForum"/>
+
 	<subscriber factory=".adapters._courses_from_forum_obj_and_user"
 				provides="nti.appserver.interfaces.ITopLevelContainerContextProvider"
 				for="nti.dataserver.contenttypes.forums.interfaces.IPost
@@ -121,6 +125,11 @@
 	<subscriber factory=".adapters._courses_from_forum_obj_and_user"
 				provides="nti.appserver.interfaces.ITopLevelContainerContextProvider"
 				for="nti.dataserver.contenttypes.forums.interfaces.ITopic
+					nti.dataserver.interfaces.IUser"/>
+
+	<subscriber factory=".adapters._courses_from_forum_obj_and_user"
+				provides="nti.appserver.interfaces.ITopLevelContainerContextProvider"
+				for="nti.dataserver.contenttypes.forums.interfaces.IForum
 					nti.dataserver.interfaces.IUser"/>
 
 	<subscriber factory=".adapters._courses_from_package"

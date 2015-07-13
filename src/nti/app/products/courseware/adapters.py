@@ -43,6 +43,7 @@ from nti.dataserver.interfaces import IHighlight
 
 from nti.dataserver.contenttypes.forums.interfaces import IPost
 from nti.dataserver.contenttypes.forums.interfaces import ITopic
+from nti.dataserver.contenttypes.forums.interfaces import IForum
 
 from nti.ntiids.ntiids import find_object_with_ntiid
 
@@ -311,12 +312,14 @@ def _find_lineage_course( obj ):
 @interface.implementer(ITopLevelContainerContextProvider)
 @component.adapter(IPost)
 @component.adapter(ITopic)
+@component.adapter(IForum)
 def _courses_from_forum_obj(obj):
 	return _find_lineage_course( obj )
 
 @interface.implementer(ITopLevelContainerContextProvider)
 @component.adapter(IPost, IUser)
 @component.adapter(ITopic, IUser)
+@component.adapter(IForum, IUser)
 def _courses_from_forum_obj_and_user(obj, _):
 	return _find_lineage_course( obj )
 
