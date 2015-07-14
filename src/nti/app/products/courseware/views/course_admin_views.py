@@ -252,6 +252,7 @@ class UserCourseEnrollmentsView(AbstractAuthenticatedView):
 			enrollment = intids.queryObject(uid)
 			if ICourseInstanceEnrollmentRecord.providedBy(enrollment):
 				items.append(enrollment)
+		result['Total'] = len(items)
 		return result
 
 @view_config(name='CourseEnrollmentMigrator')
@@ -547,10 +548,10 @@ class CourseEnrollmentsRosterDownloadView(AllCourseEnrollmentRosterDownloadView)
 @view_config(name='Enrollments.csv')
 @view_config(name='enrollments.csv')
 @view_defaults(route_name='objects.generic.traversal',
-				renderer='rest',
-				request_method='GET',
-				context=ICourseCatalogEntry,
-				permission=nauth.ACT_NTI_ADMIN)
+			   renderer='rest',
+			   request_method='GET',
+			   context=ICourseCatalogEntry,
+			   permission=nauth.ACT_NTI_ADMIN)
 class CourseCatalogEntryEnrollmentsRosterDownloadView(AllCourseEnrollmentRosterDownloadView):
 
 	def _iter_catalog_entries(self):
