@@ -18,6 +18,8 @@ from datetime import datetime
 
 from zope import component
 
+from zope.intid import IIntIds
+
 from zope.security.interfaces import IPrincipal
 from zope.security.management import endInteraction, restoreInteraction
 
@@ -37,14 +39,17 @@ from nti.appserver.workspaces.interfaces import IUserService
 from nti.common.property import Lazy
 from nti.common.maps import CaseInsensitiveDict
 
+from nti.contenttypes.courses.index import IX_COURSE
+from nti.contenttypes.courses.index import IX_USERNAME
+from nti.contenttypes.courses import get_enrollment_catalog
 from nti.contenttypes.courses.interfaces import ICourseCatalog
 from nti.contenttypes.courses.interfaces import ICourseInstance
 from nti.contenttypes.courses.interfaces import ICourseSubInstance
 from nti.contenttypes.courses.interfaces import ICourseEnrollments
-from nti.contenttypes.courses.interfaces import IPrincipalEnrollments
 from nti.contenttypes.courses.interfaces import ICourseEnrollmentManager
 from nti.contenttypes.courses.interfaces import ENROLLMENT_SCOPE_VOCABULARY
 from nti.contenttypes.courses.discussions.interfaces import ICourseDiscussions
+from nti.contenttypes.courses.interfaces import ICourseInstanceEnrollmentRecord
 from nti.contenttypes.courses.enrollment import migrate_enrollments_from_course_to_course
 
 from nti.dataserver.interfaces import IUser
@@ -147,7 +152,7 @@ class UserCourseEnrollView(AbstractCourseEnrollView):
 		if is_instructor_in_hierarchy(catalog_entry, user):
 			msg = 'User is an instructor in course hierarchy'
 			raise hexc.HTTPUnprocessableEntity(detail=msg)
-		
+
 		# Make sure we don't have any interaction.
 		endInteraction()
 		try:
@@ -235,8 +240,17 @@ class UserCourseEnrollmentsView(AbstractAuthenticatedView):
 		_, user = _parse_user(params)
 		result = LocatedExternalDict()
 		items = result[ITEMS] = []
-		for enrollments in component.subscribers((user,), IPrincipalEnrollments):
-			for enrollment in enrollments.iter_enrollments():
+
+		intids = component.getUtility(IIntIds)
+		catalog = component.getUtility(ICourseCatalog)
+		courses = [x.ntiid for x in catalog.iterCatalogEntries()]
+
+		catalog = get_enrollment_catalog()
+		query = {IX_COURSE:{'any_of':courses},
+				 IX_USERNAME:{'any_of':(user.username,)}}
+		for uid in catalog.apply(query) or ():
+			enrollment = intids.queryObject(uid)
+			if ICourseInstanceEnrollmentRecord.providedBy(enrollment):
 				items.append(enrollment)
 		return result
 
