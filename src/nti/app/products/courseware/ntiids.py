@@ -13,8 +13,8 @@ logger = __import__('logging').getLogger(__name__)
 
 import calendar
 
-from zope import interface
 from zope import component
+from zope import interface
 
 from nti.app.authentication import get_remote_user
 
@@ -30,11 +30,12 @@ from nti.dataserver.contenttypes.forums.ntiids import resolve_forum_ntiid_in_boa
 from nti.ntiids.ntiids import get_provider
 from nti.ntiids.ntiids import escape_provider
 from nti.ntiids.ntiids import find_object_with_ntiid
+
 from nti.ntiids.interfaces import INTIIDResolver
 
+from .interfaces import NTIID_TYPE_COURSE_FORUM
 from .interfaces import NTIID_TYPE_COURSE_TOPIC
 from .interfaces import NTIID_TYPE_COURSE_SECTION_TOPIC
-from .interfaces import NTIID_TYPE_COURSE_FORUM
 from .interfaces import NTIID_TYPE_COURSE_SECTION_FORUM
 from .interfaces import IPrincipalAdministrativeRoleCatalog
 
@@ -47,9 +48,9 @@ class _EnrolledCourseSectionTopicNTIIDResolver(object):
 	def __init__(self):
 		pass
 
-	#: Whether, when we find a match to a course, we return the sub
-	#: instance we're actually enrolled in or the parent instance
-	#: (the main course)
+	# Whether, when we find a match to a course, we return the sub
+	# instance we're actually enrolled in or the parent instance
+	# (the main course)
 	allow_section_match = True
 
 	def _sort_enrollments(self, enrollments):
@@ -78,7 +79,7 @@ class _EnrolledCourseSectionTopicNTIIDResolver(object):
 				continue
 
 			if catalog_entry is not None:
-				records.append( (course, catalog_entry, record))
+				records.append((course, catalog_entry, record))
 
 		# stable sort, the key will be the same for all the subinstances
 		# and then all the parent
@@ -92,7 +93,7 @@ class _EnrolledCourseSectionTopicNTIIDResolver(object):
 			result = (0 if ICourseSubInstance.providedBy(record[0]) else 1, ts)
 			return result
 
-		records.sort( key=key )
+		records.sort(key=key)
 		return records
 
 	def _escape_entry_provider(self, entry):
@@ -126,7 +127,7 @@ class _EnrolledCourseSectionTopicNTIIDResolver(object):
 				# instructors enrolled in many sections.
 				# Otherwise, the client will be passing the content specified
 				# section.
-				if catalog_entry_matches( catalog_entry, provider_name ):
+				if catalog_entry_matches(catalog_entry, provider_name):
 					result = None
 					if ICourseSubInstance.providedBy(course):
 						main_course = course.__parent__.__parent__
@@ -142,8 +143,8 @@ class _EnrolledCourseSectionTopicNTIIDResolver(object):
 				if ICourseSubInstance.providedBy(course):
 					main_course = course.__parent__.__parent__
 					main_cce = ICourseCatalogEntry(main_course, None)
-					if catalog_entry_matches( main_cce, provider_name ):
-						return _get_ntiid_for_subinstance( ntiid, course, main_course )
+					if catalog_entry_matches(main_cce, provider_name):
+						return _get_ntiid_for_subinstance(ntiid, course, main_course)
 		return None
 
 	def _do_resolve(self, ntiid, user, provider_name, catalog_entry_matches=None):
@@ -153,7 +154,7 @@ class _EnrolledCourseSectionTopicNTIIDResolver(object):
 
 		# 3. Enrolled
 		if result is None:
-			result = self._solve_for_iface(	ntiid, IPrincipalEnrollments,
+			result = self._solve_for_iface(ntiid, IPrincipalEnrollments,
 											provider_name, user,
 											catalog_entry_matches=catalog_entry_matches)
 		return result
@@ -166,17 +167,17 @@ class _EnrolledCourseSectionTopicNTIIDResolver(object):
 		provider_name = get_provider(ntiid)
 		provider_name_ntiid = COURSE_NTIID_PREFIX + provider_name
 
-		result = find_object_with_ntiid( provider_name_ntiid )
+		result = find_object_with_ntiid(provider_name_ntiid)
 		if result is not None:
 			# Ok we have a course, we should be able to definitively return based
 			# on enrollments.
 			def catalog_entry_matches(catalog_entry, _):
 				return catalog_entry.ntiid == provider_name_ntiid
-			result = self._do_resolve( ntiid, user, provider_name,
-									catalog_entry_matches=catalog_entry_matches )
+			result = self._do_resolve(ntiid, user, provider_name,
+									catalog_entry_matches=catalog_entry_matches)
 		else:
 			# The legacy approach, which may collide across semesters.
-			result = self._do_resolve( ntiid, user, provider_name )
+			result = self._do_resolve(ntiid, user, provider_name)
 		return result
 
 	def _find_in_course(self, course, ntiid):
@@ -187,11 +188,11 @@ class _EnrolledCourseSectionTopicNTIIDResolver(object):
 @interface.named(NTIID_TYPE_COURSE_TOPIC)
 class _EnrolledCourseRootTopicNTIIDResolver(_EnrolledCourseSectionTopicNTIIDResolver):
 
-	allow_section_match = False # always the root
+	allow_section_match = False  # always the root
 
 @interface.implementer(INTIIDResolver)
 @interface.named(NTIID_TYPE_COURSE_SECTION_FORUM)
-class _EnrolledCourseSectionForumNTIIDResolver( _EnrolledCourseSectionTopicNTIIDResolver ):
+class _EnrolledCourseSectionForumNTIIDResolver(_EnrolledCourseSectionTopicNTIIDResolver):
 
 	def _find_in_course(self, course, ntiid):
 		result = resolve_forum_ntiid_in_board(ntiid, course.Discussions)
@@ -199,6 +200,6 @@ class _EnrolledCourseSectionForumNTIIDResolver( _EnrolledCourseSectionTopicNTIID
 
 @interface.implementer(INTIIDResolver)
 @interface.named(NTIID_TYPE_COURSE_FORUM)
-class _EnrolledCourseRootForumNTIIDResolver( _EnrolledCourseSectionForumNTIIDResolver ):
+class _EnrolledCourseRootForumNTIIDResolver(_EnrolledCourseSectionForumNTIIDResolver):
 
-	allow_section_match = False # always the root
+	allow_section_match = False  # always the root
