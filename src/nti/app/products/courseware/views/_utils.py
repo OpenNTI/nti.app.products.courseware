@@ -17,6 +17,8 @@ from nti.app.assessment.interfaces import ICourseAssessmentItemCatalog
 from nti.assessment.interfaces import IQAssignment
 from nti.assessment.interfaces import IQuestionSet
 
+from nti.contentlibrary.indexed_data import get_catalog
+
 def _get_self_assessments_for_course(course):
 	"""
 	Given an :class:`.ICourseInstance`, return a list of all
@@ -78,6 +80,15 @@ def _get_containers_in_course(course):
 	containers_in_course = set()
 	for package in packages:
 		_recur(package, containers_in_course)
+
+	# Now fetch from our index
+	catalog = get_catalog()
+	if catalog is not None:
+		package_ntiids = (x.ntiid for x in packages)
+		contained_objs = catalog.search_objects( container_ntiids=package_ntiids )
+		# Do we need target_ntiid here?
+		contained_ntiids = {x.ntiid for x in contained_objs}
+		containers_in_course.update( contained_ntiids )
 
 	# Add in our self-assessments
 	catalog = ICourseAssessmentItemCatalog(course)

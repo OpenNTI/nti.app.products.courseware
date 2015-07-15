@@ -66,24 +66,19 @@ class StreamConfidenceRanker(object):
 		on last modified.
 		"""
 		likes, favorites = _get_ratings(obj)
+		# Base at one so everything is on level playing field
 		upvotes = likes + favorites
 		obj_time = _get_time_field(obj)
-
-		# This algorithm does not work if we have objects without
-		# view counts. If so, those objects will end up
-		# on the bottom.
 		view_count = _get_view_count(obj)
 
 		# We should have a max of 2.0 (two possible upvotes per view)
+		# Things without views should end up near the top. They will
+		# get views and drop, or get liked and stay up top.
 		score = (upvotes * 1.0) / view_count if view_count else view_count
 
 		# The actual algorithm logarithmically adjusts the upvotes
 		# (log10 makes votes 11-100 count as much as votes 1-10). For
 		# our current scale, the pure ratio may be enough.
-
-		# TODO: We could move anything without views to the top of the list.
-		# It would either get views and drop, or it is worthless. So if we
-		# do so, we should have some sort of aging component.
 		return (score, obj_time)
 
 	def rank(self, items):
