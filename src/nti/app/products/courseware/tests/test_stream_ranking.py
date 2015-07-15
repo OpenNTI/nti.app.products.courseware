@@ -97,15 +97,17 @@ class TestStreamRanking( TestCase ):
 		ranker = StreamConfidenceRanker()
 		assert_that( ranker, validly_provides( IRanker ))
 
+		now = time.time()
 		empty_obj = Object()
+		setattr( empty_obj, _DEFAULT_TIME_FIELD, now )
 		first_obj = Object()
-		setattr( first_obj, _DEFAULT_TIME_FIELD, 1000000000000 )
+		setattr( first_obj, _DEFAULT_TIME_FIELD, now )
 		second_obj = Object()
-		setattr( second_obj, _DEFAULT_TIME_FIELD, time.time() )
+		setattr( second_obj, _DEFAULT_TIME_FIELD, now )
 		third_obj = Object()
-		setattr( third_obj, _DEFAULT_TIME_FIELD, time.time() )
+		setattr( third_obj, _DEFAULT_TIME_FIELD, now )
 
 		results = ranker.rank( [ empty_obj, first_obj, second_obj, third_obj ] )
 		assert_that( results, has_length( 4 ) )
-		assert_that( results, contains( third_obj, first_obj, second_obj, empty_obj ))
+		assert_that( results, contains( third_obj, empty_obj, first_obj, second_obj ))
 

@@ -66,7 +66,6 @@ class StreamConfidenceRanker(object):
 		on last modified.
 		"""
 		likes, favorites = _get_ratings(obj)
-		# Base at one so everything is on level playing field
 		upvotes = likes + favorites
 		obj_time = _get_time_field(obj)
 		view_count = _get_view_count(obj)
@@ -74,7 +73,7 @@ class StreamConfidenceRanker(object):
 		# We should have a max of 2.0 (two possible upvotes per view)
 		# Things without views should end up near the top. They will
 		# get views and drop, or get liked and stay up top.
-		score = (upvotes * 1.0) / view_count if view_count else view_count
+		score = (upvotes * 1.0) / view_count if view_count else 1
 
 		# The actual algorithm logarithmically adjusts the upvotes
 		# (log10 makes votes 11-100 count as much as votes 1-10). For
