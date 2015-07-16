@@ -250,15 +250,15 @@ class CourseDashboardRecursiveStreamView(AbstractAuthenticatedView, BatchingUtil
 		return is_readable( obj, self.request, skip_cache=True)
 
 	def _do_get_intids(self):
-		"Return all 'relevant' intids for this course."
+		"""
+		Return all 'relevant' intids for this course. We keep things
+		the remoteUser created, since they may be a note/topic with recent
+		replies, which may be important to our user.
+		"""
 		catalog = self._catalog
 		top_level_results = self._get_top_level_board_objects()
 		ugd_results = self._get_course_ugd()
 		relevant_intids = catalog.family.IF.multiunion( [ugd_results, top_level_results] )
-
-		# Exclude things I created
-		created_by_me = self._catalog[IX_CREATOR].apply({'any_of': (self.remoteUser.username,)})
-		relevant_intids = catalog.family.IF.difference( relevant_intids, created_by_me )
 
 		# Exclude deleted items
 		deleted_intids_extent = catalog[IX_TOPICS][TP_DELETED_PLACEHOLDER].getExtent()
