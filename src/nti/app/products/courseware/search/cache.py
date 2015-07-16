@@ -26,6 +26,7 @@ from nti.contentlibrary.indexed_data.interfaces import CONTAINER_IFACES
 from nti.contenttypes.courses.interfaces import ICourseInstance
 from nti.contenttypes.courses.interfaces import ICourseCatalogEntry
 
+from nti.ntiids.ntiids import ROOT
 from nti.ntiids.ntiids import TYPE_OID
 from nti.ntiids.ntiids import TYPE_UUID
 from nti.ntiids.ntiids import TYPE_INTID
@@ -100,7 +101,7 @@ def _get_content_path(pacakge_paths_cache, ntiid):
 def _get_course_from_search_query(query):
 	context = query.context or {}
 	for course_id in (query.origin, context.get('course')):
-		if not course_id:
+		if not course_id or course_id==ROOT:
 			continue
 		course = find_object_with_ntiid(course_id)
 		course = ICourseInstance(course, None)
