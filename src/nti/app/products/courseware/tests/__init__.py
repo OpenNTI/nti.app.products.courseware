@@ -19,6 +19,9 @@ from zope.component.interfaces import IComponents
 
 from nti.contentlibrary.interfaces import IContentPackageLibrary
 
+from nti.contentlibrary.indexed_data.index import CATALOG_INDEX_NAME
+from nti.contentlibrary.indexed_data.interfaces import IContainedObjectCatalog
+
 from nti.contenttypes.courses.interfaces import ICourseCatalog
 from nti.contenttypes.courses.interfaces import ICourseInstance
 
@@ -42,8 +45,7 @@ def publish_ou_course_entries():
 
 def _do_then_enumerate_library(do, sync_libs=False):
 
-	database = ZODB.DB( ApplicationTestLayer._storage_base,
-						database_name='Users')
+	database = ZODB.DB(ApplicationTestLayer._storage_base, database_name='Users')
 	@WithMockDS(database=database)
 	def _create():
 		with mock_db_trans():
@@ -52,7 +54,7 @@ def _do_then_enumerate_library(do, sync_libs=False):
 			if sync_libs:
 				from nti.app.contentlibrary.admin_views import _SyncAllLibrariesView
 				view = _SyncAllLibrariesView(None)
-				view._SLEEP = False # see comments in the view class
+				view._SLEEP = False  # see comments in the view class
 				view()
 	_create()
 
@@ -78,7 +80,7 @@ def _delete_users(usernames=()):
 def _clear_catalogs(site_names=()):
 	component.getGlobalSiteManager().getUtility(ICourseCatalog).clear()
 	for name in site_names or ():
-		component.getUtility(IComponents,name=name).getUtility(ICourseCatalog).clear()
+		component.getUtility(IComponents, name=name).getUtility(ICourseCatalog).clear()
 
 def _delete_catalogs(site_names=()):
 	from nti.site.site import get_site_for_site_names
@@ -98,10 +100,10 @@ class LegacyInstructedCourseApplicationTestLayer(ApplicationTestLayer):
 	def _user_creation(cls):
 		for username in cls._instructors:
 			user = users.User.create_user(username=username, password='temp001')
-			interface.alsoProvides( user, IRecreatableUser )
+			interface.alsoProvides(user, IRecreatableUser)
 
 	@staticmethod
-	def _setup_library( cls, *args, **kwargs ):
+	def _setup_library(cls, *args, **kwargs):
 		from nti.contentlibrary.filesystem import CachedNotifyingStaticFilesystemLibrary as Library
 		lib = Library(
 			paths=(
@@ -112,7 +114,7 @@ class LegacyInstructedCourseApplicationTestLayer(ApplicationTestLayer):
 				os.path.join(
 					os.path.dirname(__file__),
 					cls._library_path,
-					'CLC3403_LawAndJustice')) )
+					'CLC3403_LawAndJustice')))
 		return lib
 
 	@classmethod
@@ -128,7 +130,7 @@ class LegacyInstructedCourseApplicationTestLayer(ApplicationTestLayer):
 		def _drop_any_direct_catalog_references():
 			for name in cls._sites_names:
 				with mock_db_trans(site_name=name):
-					## make sure they get looked up through the catalog
+					# # make sure they get looked up through the catalog
 					cat = component.getUtility(ICourseCatalog)
 					for i in cat.iterCatalogEntries():
 						course = ICourseInstance(i)
@@ -162,7 +164,7 @@ class RestrictedInstructedCourseApplicationTestLayer(ApplicationTestLayer):
 	def _user_creation(cls):
 		for username in cls._instructors:
 			user = users.User.create_user(username=username, password='temp001')
-			interface.alsoProvides( user, IRecreatableUser )
+			interface.alsoProvides(user, IRecreatableUser)
 
 	@classmethod
 	def setUp(cls):
@@ -170,7 +172,7 @@ class RestrictedInstructedCourseApplicationTestLayer(ApplicationTestLayer):
 		cls.__old_library = component.getUtility(IContentPackageLibrary)
 		component.provideUtility(LegacyInstructedCourseApplicationTestLayer._setup_library(cls),
 								 IContentPackageLibrary)
-		_do_then_enumerate_library(cls._user_creation )
+		_do_then_enumerate_library(cls._user_creation)
 
 	@classmethod
 	def tearDown(cls):
@@ -227,7 +229,7 @@ class PersistentInstructedCourseApplicationTestLayer(ApplicationTestLayer):
 	def _user_creation(cls):
 		for username in cls._instructors:
 			user = users.User.create_user(username=username, password='temp001')
-			interface.alsoProvides( user, IRecreatableUser )
+			interface.alsoProvides(user, IRecreatableUser)
 
 	@classmethod
 	def setUp(cls):
