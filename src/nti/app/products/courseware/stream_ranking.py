@@ -11,17 +11,13 @@ __docformat__ = "restructuredtext en"
 
 logger = __import__('logging').getLogger(__name__)
 
+from zope import component
 from zope import interface
 
-from pyramid.security import authenticated_userid
-from pyramid.threadlocal import get_current_request
-
-from zope import component
+from nti.app.authentication import get_remote_user
 
 from nti.dataserver import rating
 from nti.dataserver import liking
-
-from nti.dataserver.users import User
 
 from .interfaces import IRanker
 from .interfaces import IViewStats
@@ -35,7 +31,9 @@ def _get_favorites(obj):
 	return rating.rate_count(obj, 'favorites')
 
 def _safe_check(func, obj):
-	"Some objects may not have ratings. Return zero in those cases."
+	"""
+	Some objects may not have ratings. Return zero in those cases.
+	"""
 	result = 0
 	try:
 		result = func(obj)
@@ -55,7 +53,7 @@ def _get_view_stats(obj, user):
 	if not user:
 		result = IViewStats(obj, None)
 	else:
-		result = component.queryMultiAdapter( (obj, user), IViewStats )
+		result = component.queryMultiAdapter((obj, user), IViewStats)
 	return result
 
 @interface.implementer(IRanker)
@@ -73,10 +71,7 @@ class StreamConfidenceRanker(object):
 
 	def _get_remote_user(self):
 		if self.user is None:
-			request = get_current_request()
-			username = authenticated_userid( request ) if request else None
-			if username:
-				self.user = User.get_user( username )
+			self.user = get_remote_user()
 		return self.user
 
 	def _obj_ranking(self, obj):
@@ -119,6 +114,5 @@ class LastModifiedRanker(object):
 	def rank(self, items):
 		if items is None:
 			return []
-
 		items.sort(reverse=True, key=_get_time_field)
 		return items
