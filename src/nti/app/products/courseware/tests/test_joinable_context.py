@@ -31,28 +31,28 @@ class MockCatalog(object):
 		course_ntiid = 'tag:nextthought.com,2011-10:OU-HTML-ENGR1510_Intro_to_Water.course_info'
 		return (course_ntiid,)
 
-class TestJoinableContextProvider( ApplicationLayerTest ):
+class TestJoinableContextProvider(ApplicationLayerTest):
 	layer = PersistentInstructedCourseApplicationTestLayer
 	testapp = None
 	default_origin = str('http://janux.ou.edu')
 
-	@WithSharedApplicationMockDS(users=True,testapp=True)
+	@WithSharedApplicationMockDS(users=True, testapp=True)
 	@fudge.patch('nti.app.products.courseware.adapters.get_catalog')
 	@fudge.patch('nti.app.products.courseware.adapters.is_readable')
-	def test_joinable(self, mock_get_catalog, mock_readable ):
+	def test_joinable(self, mock_get_catalog, mock_readable):
 		containerId = "tag:nextthought.com,2011-10:OU-HTML-CLC3403_LawAndJustice.sec:04.01_RequiredReading"
 		mock_catalog = MockCatalog()
-		mock_get_catalog.is_callable().returns( mock_catalog )
+		mock_get_catalog.is_callable().returns(mock_catalog)
 		# Not sure why we need this.
-		mock_readable.is_callable().returns( True )
+		mock_readable.is_callable().returns(True)
 
 		with mock_dataserver.mock_db_trans(self.ds, site_name='platform.ou.edu'):
-			obj = find_object_with_ntiid( containerId )
+			obj = find_object_with_ntiid(containerId)
 			results = []
-			for contexts in component.subscribers( (obj,), IJoinableContextProvider ):
-				results.extend( contexts )
-			assert_that( results, has_length( 1 ))
+			for contexts in component.subscribers((obj,), IJoinableContextProvider):
+				results.extend(contexts)
+			assert_that(results, has_length(1))
 			results = []
-			for contexts in component.subscribers( (obj,), ITopLevelContainerContextProvider ):
-				results.extend( contexts )
-			assert_that( results, has_length( 1 ))
+			for contexts in component.subscribers((obj,), ITopLevelContainerContextProvider):
+				results.extend(contexts)
+			assert_that(results, has_length(1))
