@@ -13,11 +13,18 @@ logger = __import__('logging').getLogger(__name__)
 
 from zope import interface
 
+from pyramid.security import authenticated_userid
+from pyramid.threadlocal import get_current_request
+
+from zope import component
+
 from nti.dataserver import rating
 from nti.dataserver import liking
 
+from nti.dataserver.users import User
+
 from .interfaces import IRanker
-from .interfaces import IViewCount
+from .interfaces import IViewStats
 
 _DEFAULT_TIME_FIELD = 'lastModified'
 
@@ -44,9 +51,12 @@ def _get_ratings(obj):
 def _get_time_field(obj):
 	return getattr(obj, _DEFAULT_TIME_FIELD, 0)
 
-def _get_view_count(obj):
-	view_count = IViewCount(obj, None)
-	return view_count
+def _get_view_stats(obj, user):
+	if not user:
+		result = IViewStats(obj, None)
+	else:
+		result = component.queryMultiAdapter( (obj, user), IViewStats )
+	return result
 
 @interface.implementer(IRanker)
 class StreamConfidenceRanker(object):
@@ -59,21 +69,34 @@ class StreamConfidenceRanker(object):
 
 	See: http://amix.dk/blog/post/19588
 	"""
+	user = None
+
+	def _get_remote_user(self):
+		if self.user is None:
+			request = get_current_request()
+			username = authenticated_userid( request ) if request else None
+			if username:
+				self.user = User.get_user( username )
+		return self.user
 
 	def _obj_ranking(self, obj):
 		"""
-		We rank on the ratio of upvotes to views, secondarily
-		on last modified.
+		We rank on the ratio of upvotes and replies to views, secondarily
+		on last modified.  Items with heavy interactions will bubble to top.
+		If there is little activity, new items should generally have a favorable
+		ratio and bubble to top.
 		"""
 		likes, favorites = _get_ratings(obj)
-		upvotes = likes + favorites
+		interactions = likes + favorites
 		obj_time = _get_time_field(obj)
-		view_count = _get_view_count(obj)
 
-		# We should have a max of 2.0 (two possible upvotes per view)
-		# Things without views should end up near the top. They will
-		# get views and drop, or get liked and stay up top.
-		score = (upvotes * 1.0) / view_count if view_count else 1
+		view_stats = _get_view_stats(obj, self._get_remote_user())
+		view_count = 0
+		if view_stats:
+			view_count = view_stats.view_count
+			interactions += view_stats.new_reply_count_for_user
+
+		score = (interactions * 1.0) / view_count if view_count else 1
 
 		# The actual algorithm logarithmically adjusts the upvotes
 		# (log10 makes votes 11-100 count as much as votes 1-10). For

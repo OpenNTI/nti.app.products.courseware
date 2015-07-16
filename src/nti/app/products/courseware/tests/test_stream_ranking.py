@@ -26,6 +26,12 @@ from nti.testing.matchers import is_empty
 from nti.testing.matchers import validly_provides
 from nti.testing.time import time_monotonically_increases
 
+class _ViewStats( object ):
+
+	def __init__(self, view_count, new_reply_count_for_user=0 ):
+		self.view_count = view_count
+		self.new_reply_count_for_user = new_reply_count_for_user
+
 class Object(object):
 	def __str__(self):
 		return str( self.__dict__ )
@@ -69,11 +75,10 @@ class TestStreamRanking( TestCase ):
 		# Same as last mod
 		self._do_last_mod_tests( ranker )
 
-
 	@fudge.patch( 'nti.dataserver.rating.rate_count' )
 	@fudge.patch( 'nti.dataserver.liking.like_count' )
-	@fudge.patch( 'nti.app.products.courseware.stream_ranking._get_view_count')
-	def test_confidence( self, mock_rate_count, mock_like_count, mock_view_count ):
+	@fudge.patch( 'nti.app.products.courseware.stream_ranking._get_view_stats')
+	def test_confidence( self, mock_rate_count, mock_like_count, mock_view_stats ):
 
 		# obj0 is totally empty
 		# obj1 small upvotes but good ratio
@@ -89,10 +94,10 @@ class TestStreamRanking( TestCase ):
 		fake_rate.next_call().returns( 0 )
 		fake_rate.next_call().returns( 100 )
 
-		fake_view = mock_view_count.is_callable().returns( 0 )
-		fake_view.next_call().returns( 1 )
-		fake_view.next_call().returns( 10 )
-		fake_view.next_call().returns( 10 )
+		fake_view = mock_view_stats.is_callable().returns( _ViewStats( 0 ) )
+		fake_view.next_call().returns( _ViewStats( 1 ) )
+		fake_view.next_call().returns( _ViewStats( 10 ) )
+		fake_view.next_call().returns( _ViewStats( 10 ) )
 
 		ranker = StreamConfidenceRanker()
 		assert_that( ranker, validly_provides( IRanker ))

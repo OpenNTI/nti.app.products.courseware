@@ -239,7 +239,7 @@ class ILegacyCourseConflatedContentPackageUsedAsCourse(ILegacyCourseConflatedCon
 # resolved, we will find the specific course (sub)instance the user is
 # enrolled in and return the closest matching topic. This type of
 # NTIID is semi-suitable for use in content and other long-lived places.
-# 
+#
 # The `provider` field should be the value of the `ProviderUniqueID`
 # from the course catalog for the top-level course (not section/subinstance).
 NTIID_TYPE_COURSE_SECTION_TOPIC = 'Topic:EnrolledCourseSection'
@@ -307,9 +307,9 @@ class IRanker(interface.Interface):
 		Returns the modified set of items, ranked according to an underlying algorithm.
 		"""
 
-class IViewCount(interface.Interface):
+class IViewStats(interface.Interface):
 	"""
-	The count of how many times a user has viewed a particular item.
+	Contains view stats on the adapted object.
 	"""
 
 # suggested contacts
