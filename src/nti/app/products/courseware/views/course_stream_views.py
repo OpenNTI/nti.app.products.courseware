@@ -43,7 +43,6 @@ from nti.dataserver.interfaces import IUser
 
 from nti.dataserver import authorization as nauth
 
-from nti.dataserver.metadata_index import IX_CREATOR
 from nti.dataserver.metadata_index import IX_TOPICS
 from nti.dataserver.metadata_index import TP_DELETED_PLACEHOLDER
 from nti.dataserver.metadata_index import TP_TOP_LEVEL_CONTENT

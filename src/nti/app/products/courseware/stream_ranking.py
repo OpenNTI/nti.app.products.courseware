@@ -91,7 +91,7 @@ class StreamConfidenceRanker(object):
 			view_count = view_stats.view_count
 			interactions += view_stats.new_reply_count_for_user
 
-		score = (interactions * 1.0) / view_count if view_count else 1
+		score = (interactions * 1.0) / view_count if view_count else interactions
 
 		# The actual algorithm logarithmically adjusts the upvotes
 		# (log10 makes votes 11-100 count as much as votes 1-10). For
