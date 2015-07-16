@@ -19,9 +19,6 @@ from zope.component.interfaces import IComponents
 
 from nti.contentlibrary.interfaces import IContentPackageLibrary
 
-from nti.contentlibrary.indexed_data.index import CATALOG_INDEX_NAME
-from nti.contentlibrary.indexed_data.interfaces import IContainedObjectCatalog
-
 from nti.contenttypes.courses.interfaces import ICourseCatalog
 from nti.contenttypes.courses.interfaces import ICourseInstance
 
