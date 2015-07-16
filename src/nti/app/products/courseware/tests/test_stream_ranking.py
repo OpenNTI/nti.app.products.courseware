@@ -82,8 +82,8 @@ class TestStreamRanking( TestCase ):
 
 		# obj0 is totally empty
 		# obj1 small upvotes but good ratio
-		# obj2 no upvotes
-		# obj3 lots of upvotes to views
+		# obj2 no upvotes, but replies and low ratio
+		# obj3 lots of upvotes/replies to views
 		fake_like = mock_like_count.is_callable().returns( 0 )
 		fake_like.next_call().returns( 0 )
 		fake_like.next_call().returns( 0 )
@@ -92,12 +92,12 @@ class TestStreamRanking( TestCase ):
 		fake_rate = mock_rate_count.is_callable().returns( 0 )
 		fake_rate.next_call().returns( 1 )
 		fake_rate.next_call().returns( 0 )
-		fake_rate.next_call().returns( 100 )
+		fake_rate.next_call().returns( 50 )
 
 		fake_view = mock_view_stats.is_callable().returns( _ViewStats( 0 ) )
-		fake_view.next_call().returns( _ViewStats( 1 ) )
-		fake_view.next_call().returns( _ViewStats( 10 ) )
-		fake_view.next_call().returns( _ViewStats( 10 ) )
+		fake_view.next_call().returns( _ViewStats( 1, 1 ) )
+		fake_view.next_call().returns( _ViewStats( 10, 1 ) )
+		fake_view.next_call().returns( _ViewStats( 10, 50 ) )
 
 		ranker = StreamConfidenceRanker()
 		assert_that( ranker, validly_provides( IRanker ))
@@ -114,5 +114,5 @@ class TestStreamRanking( TestCase ):
 
 		results = ranker.rank( [ empty_obj, first_obj, second_obj, third_obj ] )
 		assert_that( results, has_length( 4 ) )
-		assert_that( results, contains( third_obj, empty_obj, first_obj, second_obj ))
+		assert_that( results, contains( third_obj, first_obj, second_obj, empty_obj ))
 
