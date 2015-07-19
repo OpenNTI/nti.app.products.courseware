@@ -7,12 +7,13 @@ __docformat__ = "restructuredtext en"
 # disable: accessing protected members, too many methods
 # pylint: disable=W0212,R0904
 
-import fudge
-
 from hamcrest import has_entry
 from hamcrest import has_length
 from hamcrest import assert_that
 from hamcrest import has_entries
+
+import fudge
+import unittest
 
 from nti.app.testing.decorators import WithSharedApplicationMockDS
 from nti.app.testing.application_webtest import ApplicationLayerTest
@@ -147,9 +148,10 @@ class TestPathLookup(ApplicationLayerTest):
 		mock_get_catalog.is_callable().returns(mock_catalog)
 		self._do_path_lookup()
 
+	@unittest.expectedFailure
 	@WithSharedApplicationMockDS(users=True, testapp=True)
 	@fudge.patch('nti.app.products.courseware.adapters.get_catalog')
-	def xtest_contained_path_video(self, mock_get_catalog):
+	def test_contained_path_video(self, mock_get_catalog):
 		mock_catalog = MockCatalog()
 		mock_get_catalog.is_callable().returns(mock_catalog)
 		self._do_path_lookup_video()
