@@ -139,7 +139,7 @@ class TestDiscussions(ApplicationLayerTest):
 
 			f4ds = get_forums_for_discussion(discussion, course)
 			assert_that(f4ds, has_length(2))
-			forum = f4ds.values()[0]
+			forum = f4ds.get( 'Open_Discussions' )
 			discussion_ntiid = tuple(forum.values())[0].NTIID
 			forum_ntiid = forum.NTIID
 
