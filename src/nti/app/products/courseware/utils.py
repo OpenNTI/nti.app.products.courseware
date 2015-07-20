@@ -37,10 +37,8 @@ ZERO_DATETIME = datetime.utcfromtimestamp(0)
 def get_parent_course(context):
 	course = ICourseInstance(context)
 	if ICourseSubInstance.providedBy(course):
-		main_course = course.__parent__.__parent__
-	else:
-		main_course = course
-	return main_course
+		course = course.__parent__.__parent__
+	return course
 
 def is_there_an_open_enrollment(course, user):
 	main_course = get_parent_course(course)
