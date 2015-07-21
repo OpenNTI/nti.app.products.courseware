@@ -133,7 +133,8 @@ def _extract_content(body=()):
 
 		if content:
 			result.append(content)
-	return tuple(result)
+	result = tuple(result)
+	return result
 
 def extract_content(discussion):
 	return _extract_content(discussion.body)
