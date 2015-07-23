@@ -9,6 +9,8 @@ __docformat__ = "restructuredtext en"
 
 logger = __import__('logging').getLogger(__name__)
 
+from datetime import datetime
+
 from brownie.caching import LFUCache
 
 from zope import component
@@ -165,9 +167,11 @@ class _CourseOutlineCache(object):
 		ntiids = _get_content_path(pacakge_paths_cache, ntiid) or (ntiid,)
 		# perform checking
 		for content_ntiid, data in nodes.items():
-			_, is_outline_stub_only = data
+			beginning, is_outline_stub_only = data
 			if content_ntiid in ntiids:
-				result = bool(not is_outline_stub_only)
+				beginning = beginning or ZERO_DATETIME
+				result = bool(not is_outline_stub_only) and \
+						 datetime.utcnow() >= beginning
 				return result
 		return True  # no match then allow
 
