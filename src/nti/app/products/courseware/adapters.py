@@ -16,6 +16,8 @@ from zope import component
 
 from pyramid import httpexceptions as hexc
 
+from nti.app.authentication import get_remote_user
+
 from nti.appserver.interfaces import IJoinableContextProvider
 from nti.appserver.interfaces import IHierarchicalContextProvider
 from nti.appserver.interfaces import ITopLevelContainerContextProvider
@@ -34,6 +36,7 @@ from nti.contenttypes.courses.interfaces import ICourseEnrollments
 from nti.contenttypes.courses.interfaces import ICourseSubInstance
 from nti.contenttypes.courses.interfaces import ICourseCatalogEntry
 from nti.contenttypes.courses.interfaces import IContentCourseInstance
+from nti.contenttypes.courses.interfaces import IPrincipalEnrollments
 
 from nti.contenttypes.presentation.interfaces import IPresentationAsset
 from nti.contenttypes.presentation.interfaces import INTILessonOverview
@@ -304,9 +307,33 @@ def _hierarchy_from_obj_and_user(obj, user):
 				for course in container_courses]
 	return results
 
+def _get_preferred_course( found_course ):
+	"""
+	Prefer any enrolled subinstances to a board object found
+	at a top-level course instance.
+	"""
+	# TODO Do we need to do anything different for instructors?
+	user = get_remote_user()
+	if ICourseSubInstance.providedBy(found_course) or user is None:
+		return found_course
+
+	enrolled_courses = []
+	for enrollments in component.subscribers((user,), IPrincipalEnrollments ):
+		for record in enrollments.iter_enrollments():
+			course = ICourseInstance(record, None)
+			if course is not None:
+				enrolled_courses.append( course )
+
+	if found_course not in enrolled_courses:
+		for subinstance in found_course.SubInstances.values():
+			if subinstance in enrolled_courses:
+				return subinstance
+	return found_course
+
 def _find_lineage_course( obj ):
 	course = find_interface(obj, ICourseInstance, strict=False)
 	if course is not None:
+		course = _get_preferred_course( course )
 		return (course,)
 
 @interface.implementer(ITopLevelContainerContextProvider)
