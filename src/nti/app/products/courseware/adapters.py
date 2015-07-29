@@ -180,7 +180,8 @@ def _get_top_level_contexts( obj ):
 	for top_level_contexts in component.subscribers( (obj,),
 													ITopLevelContainerContextProvider ):
 		for top_level_context in top_level_contexts:
-			if ICourseInstance.providedBy( top_level_context ):
+			if 		ICourseInstance.providedBy( top_level_context ) \
+				or	ICourseCatalogEntry.providedBy( top_level_context ):
 				results.add( top_level_context )
 	return results
 
