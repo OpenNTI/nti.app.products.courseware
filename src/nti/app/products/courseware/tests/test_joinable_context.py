@@ -39,12 +39,14 @@ class TestJoinableContextProvider(ApplicationLayerTest):
 	@WithSharedApplicationMockDS(users=True, testapp=True)
 	@fudge.patch('nti.app.products.courseware.adapters.get_catalog')
 	@fudge.patch('nti.app.products.courseware.adapters.is_readable')
-	def test_joinable(self, mock_get_catalog, mock_readable):
+	@fudge.patch('nti.app.products.courseware.adapters._is_user_enrolled')
+	def test_joinable(self, mock_get_catalog, mock_readable, mock_enrolled):
 		containerId = "tag:nextthought.com,2011-10:OU-HTML-CLC3403_LawAndJustice.sec:04.01_RequiredReading"
 		mock_catalog = MockCatalog()
 		mock_get_catalog.is_callable().returns(mock_catalog)
 		# Not sure why we need this.
 		mock_readable.is_callable().returns(True)
+		mock_enrolled.is_callable().returns(True)
 
 		with mock_dataserver.mock_db_trans(self.ds, site_name='platform.ou.edu'):
 			obj = find_object_with_ntiid(containerId)

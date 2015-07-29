@@ -153,20 +153,23 @@ def _content_unit_to_course(unit):
 
 from .utils import is_course_instructor as is_instructor  # BWC
 
+def _is_user_enrolled(user, course):
+	# Enrolled or instructor
+	if user is None:
+		return False
+
+	enrollments = ICourseEnrollments(course)
+	record = enrollments.get_enrollment_for_principal(user)
+	return 	record is not None \
+		 or is_instructor(course, user)
+
 @interface.implementer(ICourseInstance)
 @component.adapter(IContentUnit, IUser)
 def _content_unit_and_user_to_course(unit, user):
 	# # get all courses
 	courses = _content_unit_to_courses(unit, True)
 	for instance in courses or ():
-		# check enrollment
-		enrollments = ICourseEnrollments(instance)
-		record = enrollments.get_enrollment_for_principal(user)
-		if record is not None:
-			return instance
-
-		# check role
-		if is_instructor(instance, user):
+		if _is_user_enrolled(user, instance):
 			return instance
 
 	# nothing found return first course
@@ -179,6 +182,26 @@ def _get_top_level_contexts( obj ):
 		for top_level_context in top_level_contexts:
 			if ICourseInstance.providedBy( top_level_context ):
 				results.add( top_level_context )
+	return results
+
+def _get_valid_course_context( courses ):
+	"""
+	Validate course access for remote_user, returning
+	catalog entries otherwise.
+	"""
+	if ICourseInstance.providedBy( courses ):
+		courses = (courses,)
+
+	user = get_remote_user()
+	results = []
+	for course in courses:
+		if not _is_user_enrolled(user, course):
+			catalog_entry = ICourseCatalogEntry(course, None)
+			# We only want to add publicly available entries.
+			if catalog_entry is not None and is_readable(catalog_entry):
+				results.append(catalog_entry)
+		else:
+			results.append( course )
 	return results
 
 @interface.implementer(IJoinableContextProvider)
@@ -203,9 +226,15 @@ def _get_outline_nodes( course, target_ntiid ):
 	For a course and target ntiid, look for the outline hierarchy
 	used to get to the target ntiid.
 	"""
+	# Make sure we're permissioned on course
+	course_contexts = _get_valid_course_context( course )
+	if not course_contexts:
+		return
+	course_context = course_contexts[0]
+
 	# This does not work with legacy courses.
 	if not target_ntiid or getattr( course, 'Outline', None ) is None:
-		return (course,)
+		return (course_context,)
 
 	# Get the containers for our object.
 	catalog = get_catalog()
@@ -254,8 +283,8 @@ def _get_outline_nodes( course, target_ntiid ):
 				for item in overview_group.items:
 					if _found_target( item ):
 						# Return our course, leaf outline node, and overview.
-						return (course, outline_content_node, item)
-	return (course,)
+						return (course_context, outline_content_node, item)
+	return (course_context,)
 
 def _get_target_ntiid( obj ):
 	target_ntiid = getattr( obj, 'ntiid', None )
@@ -305,6 +334,7 @@ def _hierarchy_from_obj_and_user(obj, user):
 	target_ntiid = _get_target_ntiid( obj )
 	results = [_get_outline_nodes(course, target_ntiid) \
 				for course in container_courses]
+	results = [x for x in results if x is not None]
 	return results
 
 def _get_preferred_course( found_course ):
@@ -334,7 +364,8 @@ def _find_lineage_course( obj ):
 	course = find_interface(obj, ICourseInstance, strict=False)
 	if course is not None:
 		course = _get_preferred_course( course )
-		return (course,)
+		results = _get_valid_course_context( course )
+		return results
 
 @interface.implementer(ITopLevelContainerContextProvider)
 @component.adapter(IPost)
@@ -357,14 +388,16 @@ def _courses_from_package(obj):
 	# all possible courses, or use the container index.
 	course = ICourseInstance(obj, None)
 	if course:
-		return (course,)
+		results = _get_valid_course_context( course )
+		return results
 
 @interface.implementer(ITopLevelContainerContextProvider)
 @component.adapter( IContentUnit, IUser )
 def _courses_from_package_and_user(obj, user):
 	course = component.queryMultiAdapter( (obj,user), ICourseInstance )
 	if course:
-		return (course,)
+		results = _get_valid_course_context( course )
+		return results
 
 def __courses_from_obj_and_user(obj, user=None):
 	# TODO We need to index content units so this works for more
@@ -376,16 +409,17 @@ def __courses_from_obj_and_user(obj, user=None):
 		container_obj = find_object_with_ntiid( container_id ) if container_id else None
 		if container_obj is not None:
 			container_courses = _get_courses_from_container( container_obj, user )
-	return container_courses
+	results = _get_valid_course_context( container_courses )
+	return results
 
 @interface.implementer(ITopLevelContainerContextProvider)
 @component.adapter(IHighlight, IUser)
 @component.adapter(IPresentationAsset, IUser)
 def _courses_from_obj_and_user(obj, user):
-	__courses_from_obj_and_user(obj, user)
+	return __courses_from_obj_and_user(obj, user)
 
 @interface.implementer(ITopLevelContainerContextProvider)
 @component.adapter(IHighlight)
 @component.adapter(IPresentationAsset)
 def _courses_from_obj(obj):
-	__courses_from_obj_and_user(obj)
+	return __courses_from_obj_and_user(obj)

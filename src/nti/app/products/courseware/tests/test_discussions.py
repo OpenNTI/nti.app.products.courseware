@@ -143,7 +143,7 @@ class TestDiscussions(ApplicationLayerTest):
 			discussion_ntiid = tuple(forum.values())[0].NTIID
 			forum_ntiid = forum.NTIID
 
-		# Path lookup
+		# Path lookup, not enrolled so we get the catalog entry
 		# Forum -> (Course,Board)
 		path = '/dataserver2/LibraryPath?objectId=%s' % forum_ntiid
 		res = self.testapp.get( path )
@@ -153,7 +153,7 @@ class TestDiscussions(ApplicationLayerTest):
 		res = res[0]
 		assert_that( res, has_length( 2 ))
 
-		assert_that( res[0], has_entry( 'Class', 'CourseInstance' ))
+		assert_that( res[0], has_entry( 'Class', 'CourseCatalogLegacyEntry' ))
 		assert_that( res[1], has_entries( 'Class', 'CommunityBoard',
 										'title', 'Discussions' ))
 
@@ -166,7 +166,7 @@ class TestDiscussions(ApplicationLayerTest):
 		res = res[0]
 		assert_that( res, has_length( 3 ))
 
-		assert_that( res[0], has_entry( 'Class', 'CourseInstance' ))
+		assert_that( res[0], has_entry( 'Class', 'CourseCatalogLegacyEntry' ))
 		assert_that( res[1], has_entries( 'Class', 'CommunityBoard',
 										'title', 'Discussions' ))
 		assert_that( res[2], has_entries( 'Class', 'CommunityForum',

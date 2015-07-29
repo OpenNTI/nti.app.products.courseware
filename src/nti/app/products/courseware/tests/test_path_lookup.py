@@ -131,14 +131,17 @@ class TestPathLookup(ApplicationLayerTest):
 
 	@WithSharedApplicationMockDS(users=True, testapp=True)
 	@fudge.patch('nti.app.products.courseware.adapters.get_catalog')
-	def test_contained_path(self, mock_get_catalog):
+	@fudge.patch('nti.app.products.courseware.adapters._is_user_enrolled')
+	def test_contained_path(self, mock_get_catalog, mock_enrolled):
 		mock_catalog = MockCatalog()
 		mock_get_catalog.is_callable().returns(mock_catalog)
+		mock_enrolled.is_callable().returns( True )
 		self._do_path_lookup()
 
 	@WithSharedApplicationMockDS(users=True, testapp=True)
 	@fudge.patch('nti.app.products.courseware.adapters.get_catalog')
-	def test_contained_path_legacy(self, mock_get_catalog):
+	@fudge.patch('nti.app.products.courseware.adapters._is_user_enrolled')
+	def test_contained_path_legacy(self, mock_get_catalog, mock_enrolled):
 		"""
 		Our library path to the given ntiid is returned,
 		even though we do not have a catalog.
@@ -146,6 +149,7 @@ class TestPathLookup(ApplicationLayerTest):
 		mock_catalog = MockCatalog()
 		mock_catalog.containers = []
 		mock_get_catalog.is_callable().returns(mock_catalog)
+		mock_enrolled.is_callable().returns( True )
 		self._do_path_lookup()
 
 	@unittest.expectedFailure
