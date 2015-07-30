@@ -229,6 +229,15 @@
 			 for=".interfaces.ICourseInstanceEnrollment pyramid.interfaces.IRequest"
 			 provides="zope.traversing.interfaces.ITraversable" />
 
+	<!-- Vendor info -->
+	<subscriber	factory=".vendorinfo._DefaultCoursePublishableVendorInfo"
+				for="nti.contenttypes.courses.interfaces.ICourseInstance"
+				provides=".interfaces.ICoursePublishableVendorInfo" />
+
+	<subscriber	factory=".vendorinfo._DefaultCoursePublishableVendorInfo"
+				for="nti.contenttypes.courses.interfaces.ICourseCatalogEntry"
+				provides=".interfaces.ICoursePublishableVendorInfo" />
+			
 	<!-- Externalization -->
 	<include package="nti.externalization" file="meta.zcml" />
 	<include package="nti.externalization" />
