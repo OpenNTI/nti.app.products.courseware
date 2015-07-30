@@ -16,6 +16,7 @@ logger = __import__('logging').getLogger(__name__)
 # disable missing self
 # pylint:disable=I0011,E0213,E0211
 
+from zope import component
 from zope import interface
 
 from zope.container.interfaces import IContained
@@ -128,8 +129,8 @@ class ICourseInstanceEnrollment(IShouldHaveTraversablePath):
 	CourseInstance = Object(ICourseInstance)
 
 	Username = TextLine(title="The user this is about",
-							   required=False,
-							   readonly=True)
+						required=False,
+						readonly=True)
 
 class ILegacyCourseInstanceEnrollment(ICourseInstanceEnrollment):
 	"""
@@ -322,6 +323,28 @@ class IClassmatesSuggestedContactsProvider(ISuggestedContactsProvider):
 		"""
 		return classmates/contacts suggestions by course
 		"""
+
+# publishable vendor info
+
+class ICoursePublishableVendorInfo(interface.Interface):
+	"""
+	marker interface for a vendor info that can be made public.
+	this will be registered as subscribers
+	"""
+
+	def info():
+		"""
+		return a map with public info
+		"""
+
+def get_course_publishable_vendor_info(context):
+	result = {}
+	course = ICourseInstance(context)
+	subscribers = component.subscribers((course,), ICoursePublishableVendorInfo)
+	for s in list(subscribers):
+		info = s.info()
+		result.update(info or {})
+	return result
 
 # deprecations
 
