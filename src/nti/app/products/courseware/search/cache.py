@@ -28,6 +28,8 @@ from nti.contentlibrary.indexed_data.interfaces import CONTAINER_IFACES
 from nti.contenttypes.courses.interfaces import ICourseInstance
 from nti.contenttypes.courses.interfaces import ICourseCatalogEntry
 
+from nti.dataserver.users import User
+
 from nti.ntiids.ntiids import ROOT
 from nti.ntiids.ntiids import TYPE_OID
 from nti.ntiids.ntiids import TYPE_UUID
@@ -35,6 +37,7 @@ from nti.ntiids.ntiids import TYPE_INTID
 from nti.ntiids.ntiids import is_ntiid_of_types
 from nti.ntiids.ntiids import find_object_with_ntiid
 
+from ..utils import is_enrolled
 from ..utils import ZERO_DATETIME
 
 from .interfaces import ICourseOutlineCache
@@ -179,9 +182,16 @@ class _CourseOutlineCache(object):
 		if query is None:
 			return True  # allow by default
 
+		username = query.username if query is not None else None
+		user = User.get_user(username or u'')
+		if not user:
+			return False
+
 		course, course_id = _get_course_from_search_query(query)
 		if course is None or course_id is None:
 			return True  # allow by default
+		if not is_enrolled(course, user):
+			return False  # check has access
 
 		result = self._check_against_course_outline(course_id, course, ntiid)
 		return result
