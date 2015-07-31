@@ -17,17 +17,19 @@ from zope import interface
 from zope.traversing.interfaces import IPathAdapter
 
 from pyramid.view import view_config
+from pyramid.view import view_defaults
 from pyramid.interfaces import IRequest
 from pyramid import httpexceptions as hexc
 
 from nti.app.base.abstract_views import AbstractAuthenticatedView
 
-from nti.appserver.ugd_edit_views import ContainerContextUGDPostView
 from nti.appserver.pyramid_authorization import has_permission
+from nti.appserver.ugd_edit_views import ContainerContextUGDPostView
 
 from nti.contenttypes.courses.interfaces import ICourseOutline
 from nti.contenttypes.courses.interfaces import ICourseInstance
 from nti.contenttypes.courses.interfaces import ICourseEnrollments
+from nti.contenttypes.courses.interfaces import ICourseCatalogEntry
 
 from nti.dataserver import authorization as nauth
 
@@ -277,7 +279,9 @@ class CourseEnrollmentRosterGetView(AbstractAuthenticatedView,
 			raise hexc.HTTPBadRequest("Unsupported filteroption")
 
 		if username_search_term:
-			policy = component.getAdapter(self.remoteUser, IIntIdUserSearchPolicy, name='comprehensive')
+			policy = component.getAdapter(self.remoteUser, 
+										  IIntIdUserSearchPolicy,
+										  name='comprehensive')
 			id_util = component.getUtility(IIntIds)
 			matched_ids = policy.query_intids(username_search_term.lower())
 			items = [x for x in items if id_util.getId(IUser(x)) in matched_ids]
@@ -445,3 +449,18 @@ class CoursePagesView(ContainerContextUGDPostView):
 
 	Reading/Editing/Deleting will remain the same.
 	"""
+
+from ..utils import get_enrollment_options
+
+@view_config(context=ICourseInstance)
+@view_config(context=ICourseCatalogEntry)
+@view_defaults(route_name='objects.generic.traversal',
+			   renderer='rest',
+			   request_method='GET',
+			   name="EnrollmentOptions",
+			   permission=ACT_VIEW_ROSTER)
+class CourseEnrollmentOptionsGetView(AbstractAuthenticatedView):
+
+	def __call__(self):
+		options = get_enrollment_options(self.context)
+		return options
