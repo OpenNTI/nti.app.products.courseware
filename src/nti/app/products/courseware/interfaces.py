@@ -312,6 +312,11 @@ class IViewStats(interface.Interface):
 	"""
 	Contains view stats on the adapted object.
 	"""
+	
+class IVideoUsageStats(interface.Interface):
+	"""
+	Contains video usage stats for a course.
+	"""
 
 # suggested contacts
 
