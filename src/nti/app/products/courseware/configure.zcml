@@ -332,6 +332,11 @@
 	<utility factory=".users.ClassmatesSuggestedContactsProvider"
 			 provides=".interfaces.IClassmatesSuggestedContactsProvider" />
 
+	<!-- Filters -->
+	<subscriber	factory=".filters._CoursesContentObjectFilter"
+				provides="nti.appserver.interfaces.ICreatableObjectFilter"
+				for="nti.dataserver.interfaces.IUser" />
+			
 	<!-- Views -->
 	<include package=".views" />
 
