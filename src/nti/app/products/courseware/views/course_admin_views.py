@@ -23,6 +23,7 @@ from zope.intid import IIntIds
 from zope.security.interfaces import IPrincipal
 from zope.security.management import endInteraction, restoreInteraction
 
+from zope.securitypolicy.interfaces import Allow
 from zope.securitypolicy.interfaces import IPrincipalRoleMap
 
 from pyramid.view import view_config
@@ -41,13 +42,16 @@ from nti.common.maps import CaseInsensitiveDict
 
 from nti.contenttypes.courses.index import IX_COURSE
 from nti.contenttypes.courses.index import IX_USERNAME
+from nti.contenttypes.courses.interfaces import RID_INSTRUCTOR
+from nti.contenttypes.courses.interfaces import ENROLLMENT_SCOPE_VOCABULARY
+
 from nti.contenttypes.courses import get_enrollment_catalog
 from nti.contenttypes.courses.interfaces import ICourseCatalog
 from nti.contenttypes.courses.interfaces import ICourseInstance
 from nti.contenttypes.courses.interfaces import ICourseSubInstance
 from nti.contenttypes.courses.interfaces import ICourseEnrollments
 from nti.contenttypes.courses.interfaces import ICourseEnrollmentManager
-from nti.contenttypes.courses.interfaces import ENROLLMENT_SCOPE_VOCABULARY
+
 from nti.contenttypes.courses.discussions.interfaces import ICourseDiscussions
 from nti.contenttypes.courses.interfaces import ICourseInstanceEnrollmentRecord
 from nti.contenttypes.courses.enrollment import migrate_enrollments_from_course_to_course
@@ -68,6 +72,8 @@ from ..utils import drop_any_other_enrollments
 from ..utils import is_instructor_in_hierarchy
 
 from ..interfaces import ICoursesWorkspace
+
+from ..workspaces import CourseInstanceAdministrativeRole
 
 from .catalog_views import get_enrollments
 from .catalog_views import do_course_enrollment
@@ -249,9 +255,22 @@ class UserCourseEnrollmentsView(AbstractAuthenticatedView):
 		query = {IX_COURSE:{'any_of':courses},
 				 IX_USERNAME:{'any_of':(user.username,)}}
 		for uid in catalog.apply(query) or ():
-			enrollment = intids.queryObject(uid)
-			if ICourseInstanceEnrollmentRecord.providedBy(enrollment):
-				items.append(enrollment)
+			context = intids.queryObject(uid)
+			if ICourseInstanceEnrollmentRecord.providedBy(context):
+				items.append(context)
+			# check for instructor role
+			elif ICourseCatalogEntry.providedBy(context) or \
+				 ICourseInstance.providedBy(context):
+				
+				instance = ICourseInstance(context)
+				roles = IPrincipalRoleMap(instance)
+				role = 'teaching assistant'
+				if roles.getSetting(RID_INSTRUCTOR, user.id) is Allow:
+					role = 'instructor'
+				context = CourseInstanceAdministrativeRole(RoleName=role,
+													       CourseInstance=instance )
+				items.append(context)
+
 		result['Total'] = len(items)
 		return result
 
