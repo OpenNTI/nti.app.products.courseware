@@ -11,13 +11,14 @@ __docformat__ = "restructuredtext en"
 
 logger = __import__('logging').getLogger(__name__)
 
-from zope import interface
+import time
+
 from zope import component
+from zope import interface
+
 from zope.annotation import factory as an_factory
 
 from zope.intid.interfaces import IIntIds
-
-import time
 
 import BTrees
 from BTrees.Length import Length
@@ -118,11 +119,12 @@ class _DefaultCourseActivity(Persistent):
 		l.change(-len(keys))
 
 	def items(self, min=None, max=None, excludemin=False, excludemax=False):
+		intids = self._intids
 		min = time_to_64bit_int(min) if min is not None else None
 		max = time_to_64bit_int(max) if max is not None else None
-
-		intids = self._intids
-		for key, value in self._storage.items(min, max, excludemin=excludemin, excludemax=excludemax):
+		for key, value in self._storage.items(min, max, 
+											  excludemin=excludemin, 
+											  excludemax=excludemax):
 			key = -key
 			when = bit64_int_to_time(key)
 			activity = intids.queryObject(value)  # account for deletions

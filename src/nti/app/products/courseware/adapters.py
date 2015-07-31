@@ -10,9 +10,10 @@ __docformat__ = "restructuredtext en"
 
 logger = __import__('logging').getLogger(__name__)
 
-import zope.intid
 from zope import interface
 from zope import component
+
+from zope.intid import IIntIds
 
 from pyramid import httpexceptions as hexc
 
@@ -43,7 +44,6 @@ from nti.contenttypes.presentation.interfaces import INTILessonOverview
 
 from nti.dataserver.interfaces import IUser
 from nti.dataserver.interfaces import IHighlight
-
 from nti.dataserver.contenttypes.forums.interfaces import IPost
 from nti.dataserver.contenttypes.forums.interfaces import ITopic
 from nti.dataserver.contenttypes.forums.interfaces import IForum
@@ -84,7 +84,7 @@ def _course_content_package_to_course(package):
 	cache_name = '_v_course_content_package_to_course'
 	course_intid = getattr(package, cache_name, cache_name)
 	course = None
-	intids = component.getUtility(zope.intid.IIntIds)
+	intids = component.getUtility(IIntIds)
 
 	if course_intid is not cache_name:
 		course = intids.queryObject(course_intid)
@@ -113,7 +113,8 @@ def _content_unit_to_courses(unit, include_sub_instances=True):
 	# First, try the true legacy case. This involves
 	# a direct mapping between courses and a catalog entry. It may be
 	# slightly more reliable, but only works for true legacy cases.
-	package = find_interface(unit, ILegacyCourseConflatedContentPackageUsedAsCourse, strict=False)
+	package = find_interface(unit, ILegacyCourseConflatedContentPackageUsedAsCourse, 
+							 strict=False)
 	if package is not None:
 		result = ICourseInstance(package, None)
 		if result is not None:
@@ -143,7 +144,6 @@ def _content_unit_to_courses(unit, include_sub_instances=True):
 def _content_unit_to_course(unit):
 	# get all courses, don't include sections
 	courses = _content_unit_to_courses(unit, False)
-
 	# XXX: We probably need to check and see who's enrolled
 	# to find the most specific course instance to return?
 	# As it stands, we promise to return only a root course,
@@ -175,22 +175,22 @@ def _content_unit_and_user_to_course(unit, user):
 	# nothing found return first course
 	return courses[0] if courses else None
 
-def _get_top_level_contexts( obj ):
+def _get_top_level_contexts(obj):
 	results = set()
-	for top_level_contexts in component.subscribers( (obj,),
-													ITopLevelContainerContextProvider ):
+	for top_level_contexts in component.subscribers((obj,),
+													ITopLevelContainerContextProvider):
 		for top_level_context in top_level_contexts:
-			if 		ICourseInstance.providedBy( top_level_context ) \
-				or	ICourseCatalogEntry.providedBy( top_level_context ):
-				results.add( top_level_context )
+			if 		ICourseInstance.providedBy(top_level_context) \
+				or	ICourseCatalogEntry.providedBy(top_level_context):
+				results.add(top_level_context)
 	return results
 
-def _get_valid_course_context( courses ):
+def _get_valid_course_context(courses):
 	"""
 	Validate course access for remote_user, returning
 	catalog entries otherwise.
 	"""
-	if ICourseInstance.providedBy( courses ):
+	if ICourseInstance.providedBy(courses):
 		courses = (courses,)
 
 	user = get_remote_user()
@@ -202,7 +202,7 @@ def _get_valid_course_context( courses ):
 			if catalog_entry is not None and is_readable(catalog_entry):
 				results.append(catalog_entry)
 		else:
-			results.append( course )
+			results.append(course)
 	return results
 
 @interface.implementer(IJoinableContextProvider)
@@ -213,7 +213,7 @@ def _catalog_entry_from_container_object(obj):
 	the given object.
 	"""
 	results = set()
-	courses = _get_top_level_contexts( obj )
+	courses = _get_top_level_contexts(obj)
 	for course in courses or ():
 		catalog_entry = ICourseCatalogEntry(course, None)
 
@@ -222,40 +222,40 @@ def _catalog_entry_from_container_object(obj):
 			results.add(catalog_entry)
 	return results
 
-def _get_outline_nodes( course, target_ntiid ):
+def _get_outline_nodes(course, target_ntiid):
 	"""
 	For a course and target ntiid, look for the outline hierarchy
 	used to get to the target ntiid.
 	"""
 	# Make sure we're permissioned on course
-	course_contexts = _get_valid_course_context( course )
+	course_contexts = _get_valid_course_context(course)
 	if not course_contexts:
 		return
 	course_context = course_contexts[0]
 
 	# This does not work with legacy courses.
-	if not target_ntiid or getattr( course, 'Outline', None ) is None:
+	if not target_ntiid or getattr(course, 'Outline', None) is None:
 		return (course_context,)
 
 	# Get the containers for our object.
 	catalog = get_catalog()
-	target_obj = find_object_with_ntiid( target_ntiid )
-	containers = set( catalog.get_containers( target_obj ) ) if catalog else set()
+	target_obj = find_object_with_ntiid(target_ntiid)
+	containers = set(catalog.get_containers(target_obj)) if catalog else set()
 
-	def _found_target( item ):
-		target_ntiid_ref = getattr( item, 'target_ntiid', None )
-		ntiid_ref = getattr( item, 'ntiid', None )
-		target_ref = getattr( item, 'target', None )
-		ntiid_vals = set( [target_ntiid_ref, ntiid_ref, target_ref] )
+	def _found_target(item):
+		target_ntiid_ref = getattr(item, 'target_ntiid', None)
+		ntiid_ref = getattr(item, 'ntiid', None)
+		target_ref = getattr(item, 'target', None)
+		ntiid_vals = set([target_ntiid_ref, ntiid_ref, target_ref])
 		# We found our object's container, or we are the container.
-		result = 	containers.intersection( ntiid_vals ) \
+		result = 	containers.intersection(ntiid_vals) \
 				or 	target_ntiid in ntiid_vals
 
 		if not result and target_ref:
 			# We could have an item contained by our target item
-			target_obj = find_object_with_ntiid( target_ref )
+			target_obj = find_object_with_ntiid(target_ref)
 			if target_obj is not None:
-				item_containers = catalog.get_containers( target_obj ) if catalog else set()
+				item_containers = catalog.get_containers(target_obj) if catalog else set()
 				result = target_ntiid in item_containers
 
 				if not result:
@@ -273,22 +273,22 @@ def _get_outline_nodes( course, target_ntiid ):
 		for outline_content_node in outline_node.values():
 			if outline_content_node.ContentNTIID == target_ntiid:
 				return (course, outline_content_node)
-			lesson_ntiid = getattr( outline_content_node, 'LessonOverviewNTIID', None )
+			lesson_ntiid = getattr(outline_content_node, 'LessonOverviewNTIID', None)
 			if not lesson_ntiid:
 				continue
-			lesson_overview = component.queryUtility( INTILessonOverview, name=lesson_ntiid )
+			lesson_overview = component.queryUtility(INTILessonOverview, name=lesson_ntiid)
 			if lesson_overview is None:
 				continue
 
 			for overview_group in lesson_overview.items:
 				for item in overview_group.items:
-					if _found_target( item ):
+					if _found_target(item):
 						# Return our course, leaf outline node, and overview.
 						return (course_context, outline_content_node, item)
 	return (course_context,)
 
-def _get_target_ntiid( obj ):
-	target_ntiid = getattr( obj, 'ntiid', None )
+def _get_target_ntiid(obj):
+	target_ntiid = getattr(obj, 'ntiid', None)
 	# Content cards are pseudo objects, so get
 	# the nearest available ntiid.
 	if not target_ntiid:
@@ -297,16 +297,16 @@ def _get_target_ntiid( obj ):
 		except AttributeError:
 			pass
 	if not target_ntiid:
-		raise hexc.HTTPUnprocessableEntity( 'Unexpected object %s' % type( obj ) )
+		raise hexc.HTTPUnprocessableEntity('Unexpected object %s' % type(obj))
 	return target_ntiid
 
 @interface.implementer(IHierarchicalContextProvider)
-@component.adapter( ICourseInstance, interface.Interface )
-def _hierarchy_from_obj_and_course( course, obj ):
-	target_ntiid = _get_target_ntiid( obj )
+@component.adapter(ICourseInstance, interface.Interface)
+def _hierarchy_from_obj_and_course(course, obj):
+	target_ntiid = _get_target_ntiid(obj)
 	return _get_outline_nodes(course, target_ntiid)
 
-def _get_courses_from_container( obj, user=None ):
+def _get_courses_from_container(obj, user=None):
 	catalog = get_catalog()
 	results = set()
 	if catalog:
@@ -314,16 +314,16 @@ def _get_courses_from_container( obj, user=None ):
 		for container in containers:
 			container = find_object_with_ntiid(container)
 			if user is not None:
-				course = component.queryMultiAdapter( (container,user), ICourseInstance )
+				course = component.queryMultiAdapter((container, user), ICourseInstance)
 			else:
 				course = ICourseInstance(container, None)
 			if course is not None:
 				results.add(course)
 	if not results:
 		# If not, try adapting
-		course = component.queryMultiAdapter( (obj,user), ICourseInstance )
+		course = component.queryMultiAdapter((obj, user), ICourseInstance)
 		if course is not None:
-			results.add( course )
+			results.add(course)
 	return results
 
 @interface.implementer(IHierarchicalContextProvider)
@@ -331,14 +331,14 @@ def _get_courses_from_container( obj, user=None ):
 @component.adapter(IContentUnit, IUser)
 @component.adapter(IPresentationAsset, IUser)
 def _hierarchy_from_obj_and_user(obj, user):
-	container_courses = _get_courses_from_container( obj, user )
-	target_ntiid = _get_target_ntiid( obj )
+	container_courses = _get_courses_from_container(obj, user)
+	target_ntiid = _get_target_ntiid(obj)
 	results = [_get_outline_nodes(course, target_ntiid) \
 				for course in container_courses]
 	results = [x for x in results if x is not None]
 	return results
 
-def _get_preferred_course( found_course ):
+def _get_preferred_course(found_course):
 	"""
 	Prefer any enrolled subinstances to a board object found
 	at a top-level course instance.
@@ -349,11 +349,11 @@ def _get_preferred_course( found_course ):
 		return found_course
 
 	enrolled_courses = []
-	for enrollments in component.subscribers((user,), IPrincipalEnrollments ):
+	for enrollments in component.subscribers((user,), IPrincipalEnrollments):
 		for record in enrollments.iter_enrollments():
 			course = ICourseInstance(record, None)
 			if course is not None:
-				enrolled_courses.append( course )
+				enrolled_courses.append(course)
 
 	if found_course not in enrolled_courses:
 		for subinstance in found_course.SubInstances.values():
@@ -361,11 +361,11 @@ def _get_preferred_course( found_course ):
 				return subinstance
 	return found_course
 
-def _find_lineage_course( obj ):
+def _find_lineage_course(obj):
 	course = find_interface(obj, ICourseInstance, strict=False)
 	if course is not None:
-		course = _get_preferred_course( course )
-		results = _get_valid_course_context( course )
+		course = _get_preferred_course(course)
+		results = _get_valid_course_context(course)
 		return results
 
 @interface.implementer(ITopLevelContainerContextProvider)
@@ -373,44 +373,44 @@ def _find_lineage_course( obj ):
 @component.adapter(ITopic)
 @component.adapter(IForum)
 def _courses_from_forum_obj(obj):
-	return _find_lineage_course( obj )
+	return _find_lineage_course(obj)
 
 @interface.implementer(ITopLevelContainerContextProvider)
 @component.adapter(IPost, IUser)
 @component.adapter(ITopic, IUser)
 @component.adapter(IForum, IUser)
 def _courses_from_forum_obj_and_user(obj, _):
-	return _find_lineage_course( obj )
+	return _find_lineage_course(obj)
 
 @interface.implementer(ITopLevelContainerContextProvider)
-@component.adapter( IContentUnit )
+@component.adapter(IContentUnit)
 def _courses_from_package(obj):
 	# We could tweak the adapter above to return
 	# all possible courses, or use the container index.
 	course = ICourseInstance(obj, None)
 	if course:
-		results = _get_valid_course_context( course )
+		results = _get_valid_course_context(course)
 		return results
 
 @interface.implementer(ITopLevelContainerContextProvider)
-@component.adapter( IContentUnit, IUser )
+@component.adapter(IContentUnit, IUser)
 def _courses_from_package_and_user(obj, user):
-	course = component.queryMultiAdapter( (obj,user), ICourseInstance )
+	course = component.queryMultiAdapter((obj, user), ICourseInstance)
 	if course:
-		results = _get_valid_course_context( course )
+		results = _get_valid_course_context(course)
 		return results
 
 def __courses_from_obj_and_user(obj, user=None):
 	# TODO We need to index content units so this works for more
 	# contained objects.
-	container_courses = _get_courses_from_container( obj, user )
+	container_courses = _get_courses_from_container(obj, user)
 	if not container_courses:
 		# No? Are we contained?
-		container_id = getattr( obj, 'containerId', None )
-		container_obj = find_object_with_ntiid( container_id ) if container_id else None
+		container_id = getattr(obj, 'containerId', None)
+		container_obj = find_object_with_ntiid(container_id) if container_id else None
 		if container_obj is not None:
-			container_courses = _get_courses_from_container( container_obj, user )
-	results = _get_valid_course_context( container_courses )
+			container_courses = _get_courses_from_container(container_obj, user)
+	results = _get_valid_course_context(container_courses)
 	return results
 
 @interface.implementer(ITopLevelContainerContextProvider)

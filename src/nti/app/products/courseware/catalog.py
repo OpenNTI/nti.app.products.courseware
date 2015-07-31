@@ -17,4 +17,3 @@ zope.deferredimport.deprecatedFrom(
 	"CourseCatalog",
 	"CourseCatalogInstructorInfo",
 	"CourseCatalogEntry")
-
