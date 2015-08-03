@@ -16,14 +16,15 @@ from nti.appserver.interfaces import ICreatableObjectFilter
 @interface.implementer(ICreatableObjectFilter)
 class _CoursesContentObjectFilter(object):
 
-    PREFIX_1 = u'application/vnd.nextthought.courses'
-    PREFIX_2 = u'application/vnd.nextthought.courseware'
-
+    TO_FILTER = ("application/vnd.nextthought.courses.coursecataloginstructorinfo", 
+                 "application/vnd.nextthought.courses.coursesynchronizationresults", 
+                 "application/vnd.nextthought.courseware.courseinstanceadministrativerole")
+   
     def __init__(self, context=None):
         pass
 
     def filter_creatable_objects(self, terms):
-        for name in list(terms):  # mutating
-            if name.startswith(self.PREFIX_1) or name.startswith(self.PREFIX_2):
+        for name in self.TO_FILTER:
+            if name in terms:
                 terms.pop(name, None)
         return terms
