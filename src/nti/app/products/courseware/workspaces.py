@@ -11,10 +11,12 @@ __docformat__ = "restructuredtext en"
 
 logger = __import__('logging').getLogger(__name__)
 
-from zope import interface
 from zope import component
+from zope import interface
 
 from zope.container.contained import Contained
+
+from zope.intid import IIntIds
 
 from zope.location.traversing import LocationPhysicallyLocatable
 
@@ -27,11 +29,14 @@ from nti.appserver.workspaces.interfaces import IContainerCollection
 from nti.common.property import Lazy
 from nti.common.property import alias
 
+from nti.contenttypes.courses.index import IX_COURSE
+from nti.contenttypes.courses.index import IX_USERNAME
+from nti.contenttypes.courses import get_enrollment_catalog
+
 from nti.contenttypes.courses.interfaces import ES_CREDIT
+from nti.contenttypes.courses.interfaces import RID_INSTRUCTOR
 from nti.contenttypes.courses.interfaces import ES_CREDIT_DEGREE
 from nti.contenttypes.courses.interfaces import ES_CREDIT_NONDEGREE
-
-from nti.contenttypes.courses.interfaces import RID_INSTRUCTOR
 
 from nti.contenttypes.courses.interfaces import ICourseCatalog
 from nti.contenttypes.courses.interfaces import ICourseInstance
@@ -58,7 +63,7 @@ from .interfaces import IPrincipalAdministrativeRoleCatalog
 @interface.implementer(ICoursesWorkspace)
 class _CoursesWorkspace(Contained):
 
-	#: Our name, part of our URL
+	# : Our name, part of our URL
 	__name__ = 'Courses'
 	name = alias('__name__', __name__)
 
@@ -78,7 +83,9 @@ class _CoursesWorkspace(Contained):
 				AdministeredCoursesCollection(self))
 
 	def __getitem__(self, key):
-		"Make us traversable to collections."
+		"""
+		Make us traversable to collections.
+		"""
 		for i in self.collections:
 			if i.__name__ == key:
 				return i
@@ -89,14 +96,14 @@ class _CoursesWorkspace(Contained):
 
 @interface.implementer(ICoursesWorkspace)
 @component.adapter(IUserService)
-def CoursesWorkspace( user_service ):
+def CoursesWorkspace(user_service):
 	"""
 	The courses for a user reside at the path ``/users/$ME/Courses``.
 	"""
-	catalog = component.queryUtility( ICourseCatalog )
+	catalog = component.queryUtility(ICourseCatalog)
 	if catalog is not None:
 		# Ok, patch up the parent relationship
-		workspace = _CoursesWorkspace( user_service, catalog )
+		workspace = _CoursesWorkspace(user_service, catalog)
 		workspace.__parent__ = workspace.user
 		return workspace
 
@@ -115,11 +122,11 @@ from nti.externalization.interfaces import LocatedExternalDict
 @interface.implementer(IContainerCollection)
 class AllCoursesCollection(Contained):
 
-	#: Our name, part of our URL.
+	# : Our name, part of our URL.
 	__name__ = 'AllCourses'
 
 	accepts = ()
-	name = alias('__name__',__name__)
+	name = alias('__name__', __name__)
 
 	class _IteratingDict(LocatedExternalDict):
 		# BWC : act like a dict, but iterate like a list
@@ -157,8 +164,8 @@ class AllCoursesCollection(Contained):
 		for course in my_enrollments.values():
 			if ICourseSubInstance.providedBy(course):
 				# Look for parents and siblings to remove
-				courses_to_remove.extend( course.__parent__.values() )
-				courses_to_remove.append( course.__parent__.__parent__ )
+				courses_to_remove.extend(course.__parent__.values())
+				courses_to_remove.append(course.__parent__.__parent__)
 			else:
 				# Look for children to remove
 				courses_to_remove.extend(course.SubInstances.values())
@@ -166,7 +173,7 @@ class AllCoursesCollection(Contained):
 		for course in courses_to_remove:
 			ntiid = ICourseCatalogEntry(course).ntiid
 			if ntiid not in my_enrollments:
-				container.pop( ntiid, None )
+				container.pop(ntiid, None)
 
 	def __getitem__(self, key):
 		"""
@@ -190,9 +197,10 @@ class _AbstractQueryBasedCoursesCollection(Contained):
 	the eligible objects.
 	"""
 
-	query_interface = None
 	query_attr = None
+	query_interface = None
 	contained_interface = None
+
 	user_extra_auth = None
 
 	accepts = ()
@@ -200,13 +208,27 @@ class _AbstractQueryBasedCoursesCollection(Contained):
 	def __init__(self, parent):
 		self.__parent__ = parent
 
-	@Lazy
-	def container(self):
+	def _apply_user_extra_auth(self, enrollments):
+		parent = self.__parent__
+		if not self.user_extra_auth:
+			return enrollments
+		else:
+			for enrollment in enrollments or ():
+				course = ICourseInstance(enrollment)
+				enrollment._user = parent.user
+				enrollment.__acl__ = acl_from_aces(ace_allowing(parent.user,
+																self.user_extra_auth,
+																type(self)))
+				enrollment.__acl__.extend((ace_allowing(i, ACT_READ, type(self))
+										   for i in course.instructors))
+		return enrollments
+
+	def _build_container(self):
 		parent = self.__parent__
 		container = LastModifiedCopyingUserList()
-		for catalog in component.subscribers( (parent.user,), self.query_interface ):
+		for catalog in component.subscribers((parent.user,), self.query_interface):
 			queried = getattr(catalog, self.query_attr)()
-			container.extend( queried )
+			container.extend(queried)
 		# Now that we've got the courses, turn them into enrollment records;
 		# using extend() above or the direct lists return by the iterator
 		# preserves modification dates
@@ -220,19 +242,16 @@ class _AbstractQueryBasedCoursesCollection(Contained):
 				enrollment.Username = parent.user.username
 			if getattr(enrollment, '_user', self) is None:
 				enrollment._user = parent.user
-
-			if self.user_extra_auth:
-				course = ICourseInstance(enrollment)
-				enrollment._user = parent.user
-				enrollment.__acl__ = acl_from_aces(ace_allowing(parent.user,
-																self.user_extra_auth,
-																type(self)))
-				enrollment.__acl__.extend((ace_allowing( i, ACT_READ, type(self))
-										   for i in course.instructors) )
-
+		
+		self._apply_user_extra_auth(container)
 		return container
 
-	def __getitem__(self,key):
+	@Lazy
+	def container(self):
+		result = self._build_container()
+		return result
+
+	def __getitem__(self, key):
 		for o in self.container:
 			if o.__name__ == key or ICourseCatalogEntry(o).__name__ == key:
 				return o
@@ -262,7 +281,7 @@ class _AbstractInstanceWrapper(Contained):
 			# We probably want a better value than `ntiid`? Human readable?
 			# or is this supposed to be traversable?
 			return ICourseCatalogEntry(self._private_course_instance).ntiid
-		except TypeError: # Hmm, the catalog entry is gone, something doesn't match. What?
+		except TypeError:  # Hmm, the catalog entry is gone, something doesn't match. What?
 			logger.warning("Failed to get name from catalog for %s/%s",
 						   self._private_course_instance,
 						   self._private_course_instance.__name__)
@@ -272,20 +291,21 @@ class _AbstractInstanceWrapper(Contained):
 		if ICourseInstance.isOrExtends(iface):
 			return self._private_course_instance
 
-@interface.implementer(ICourseInstanceEnrollment)
 @component.adapter(ICourseInstance)
+@interface.implementer(ICourseInstanceEnrollment)
 class CourseInstanceEnrollment(_AbstractInstanceWrapper):
 	__external_can_create__ = False
-	Username = None
+
 	_user = None
+	Username = None
 
 	# Recall that this objects must be mutable and non-persistent
 
 	def __init__(self, course, user=None):
-		super(CourseInstanceEnrollment,self).__init__(course)
+		super(CourseInstanceEnrollment, self).__init__(course)
 		if user:
-			self.Username = user.username
 			self._user = user
+			self.Username = user.username
 
 	def xxx_fill_in_parent(self):
 		if self._user:
@@ -293,7 +313,7 @@ class CourseInstanceEnrollment(_AbstractInstanceWrapper):
 			ws = ICoursesWorkspace(service)
 			enr_coll = EnrolledCoursesCollection(ws)
 			self.__parent__ = enr_coll
-			getattr(self, '__name__') # ensure we have this
+			getattr(self, '__name__')  # ensure we have this
 
 	def __conform__(self, iface):
 		if IUser.isOrExtends(iface):
@@ -309,8 +329,8 @@ from nti.contenttypes.courses.interfaces import ICourseInstanceEnrollmentRecord
 
 from nti.externalization.oids import to_external_ntiid_oid
 
-@interface.implementer(ILegacyCourseInstanceEnrollment)
 @component.adapter(ICourseInstanceEnrollmentRecord)
+@interface.implementer(ILegacyCourseInstanceEnrollment)
 class DefaultCourseInstanceEnrollment(CourseInstanceEnrollment):
 
 	__external_class_name__ = 'CourseInstanceEnrollment'
@@ -318,8 +338,8 @@ class DefaultCourseInstanceEnrollment(CourseInstanceEnrollment):
 	def __init__(self, record, user=None):
 		CourseInstanceEnrollment.__init__(self, record.CourseInstance, record.Principal)
 		self._record = record
-		self.lastModified = self._record.lastModified
 		self.createdTime = self._record.createdTime
+		self.lastModified = self._record.lastModified
 
 	@property
 	def ntiid(self):
@@ -327,8 +347,8 @@ class DefaultCourseInstanceEnrollment(CourseInstanceEnrollment):
 
 	@Lazy
 	def LegacyEnrollmentStatus(self):
-		## CS/JZ/JAM: For legacy purposes we need to always return either Open or ForCredit
-		## See interface ILegacyCourseInstanceEnrollment
+		# CS/JZ/JAM: For legacy purposes we need to always return either Open or ForCredit
+		# See interface ILegacyCourseInstanceEnrollment
 		scope = self._record.Scope
 		if scope in (ES_CREDIT, ES_CREDIT_DEGREE, ES_CREDIT_NONDEGREE):
 			return ES_CREDIT
@@ -336,7 +356,7 @@ class DefaultCourseInstanceEnrollment(CourseInstanceEnrollment):
 
 	@Lazy
 	def RealEnrollmentStatus(self):
-		## CS: For display use the real scope
+		# CS: For display use the real scope
 		return self._record.Scope
 
 def enrollment_from_record(course, record):
@@ -349,18 +369,39 @@ def wrapper_to_catalog(wrapper):
 @interface.implementer(IEnrolledCoursesCollection)
 class EnrolledCoursesCollection(_AbstractQueryBasedCoursesCollection):
 
-	#: Our name, part of our URL.
+	# : Our name, part of our URL.
 	__name__ = 'EnrolledCourses'
-	name = alias('__name__',__name__)
+	name = alias('__name__', __name__)
 
 	# TODO: Need to add an accepts for what the
 	# POST-to-enroll takes. For now, just generic
 	accepts = ("application/json",)
 
-	query_interface = IPrincipalEnrollments
 	query_attr = 'iter_enrollments'
+	query_interface = IPrincipalEnrollments
 	contained_interface = ICourseInstanceEnrollment
+	
 	user_extra_auth = ACT_DELETE
+
+	def _build_from_catalog(self):
+		user = self.__parent__.user
+		intids = component.getUtility(IIntIds)
+		catalog = component.getUtility(ICourseCatalog)
+		courses = [x.ntiid for x in catalog.iterCatalogEntries()]
+		
+		catalog = get_enrollment_catalog()
+		result = LastModifiedCopyingUserList()
+		query = {IX_COURSE:{'any_of':courses},
+				 IX_USERNAME:{'any_of':(user.username,)}}
+		for uid in catalog.apply(query) or ():
+			context = intids.queryObject(uid)
+			if ICourseInstanceEnrollmentRecord.providedBy(context):
+				result.append(self.contained_interface(context))
+				
+		self._apply_user_extra_auth(result)
+		return result
+
+# administered courses
 
 @interface.implementer(ICourseInstanceAdministrativeRole)
 class CourseInstanceAdministrativeRole(SchemaConfigured,
@@ -387,7 +428,7 @@ class _DefaultPrincipalAdministrativeRoleCatalog(object):
 		self.user = user
 
 	def iter_administrations(self):
-		catalog = component.queryUtility( ICourseCatalog )
+		catalog = component.queryUtility(ICourseCatalog)
 		for entry in catalog.iterCatalogEntries():
 			instance = ICourseInstance(entry)
 			if self.user in instance.instructors:
@@ -396,12 +437,12 @@ class _DefaultPrincipalAdministrativeRoleCatalog(object):
 				if roles.getSetting(RID_INSTRUCTOR, self.user.id) is Allow:
 					role = 'instructor'
 				yield CourseInstanceAdministrativeRole(RoleName=role,
-													   CourseInstance=instance )
-	iter_enrollments = iter_administrations # for convenience
+													   CourseInstance=instance)
+	iter_enrollments = iter_administrations  # for convenience
 
 	def count_administrations(self):
 		result = 0
-		catalog = component.queryUtility( ICourseCatalog )
+		catalog = component.queryUtility(ICourseCatalog)
 		for entry in catalog.iterCatalogEntries():
 			instance = ICourseInstance(entry)
 			if self.user in instance.instructors:
@@ -409,16 +450,16 @@ class _DefaultPrincipalAdministrativeRoleCatalog(object):
 		return result
 
 	count_enrollments = count_administrations
-	
+
 @interface.implementer(IAdministeredCoursesCollection)
 class AdministeredCoursesCollection(_AbstractQueryBasedCoursesCollection):
 
-	#: Our name, part of our URL.
+	# : Our name, part of our URL.
 	__name__ = 'AdministeredCourses'
-	name = alias('__name__',__name__)
+	name = alias('__name__', __name__)
 
-	query_interface = IPrincipalAdministrativeRoleCatalog
 	query_attr = 'iter_administrations'
+	query_interface = IPrincipalAdministrativeRoleCatalog
 	contained_interface = ICourseInstanceAdministrativeRole
 
 from zope.location.interfaces import IRoot
@@ -452,19 +493,19 @@ class CatalogEntryLocationInfo(LocationPhysicallyLocatable):
 		userid = request.authenticated_userid if request else None
 
 		if userid:
-			user = User.get_user( userid, dataserver=ds )
+			user = User.get_user(userid, dataserver=ds)
 			service = IUserService(user)
 			workspace = CoursesWorkspace(service)
 			all_courses = AllCoursesCollection(workspace)
 
-			parents.append( all_courses )
-			parents.append( workspace )
-			parents.append( user )
-			parents.extend( ILocationInfo(user).getParents() )
+			parents.append(all_courses)
+			parents.append(workspace)
+			parents.append(user)
+			parents.extend(ILocationInfo(user).getParents())
 
 		else:
-			parents.append( ds.dataserver_folder )
-			parents.extend( ILocationInfo(ds.dataserver_folder).getParents() )
+			parents.append(ds.dataserver_folder)
+			parents.extend(ILocationInfo(ds.dataserver_folder).getParents())
 
 		if not IRoot.providedBy(parents[-1]):
 			raise TypeError("Not enough context to get all parents")
@@ -485,16 +526,16 @@ class _UserInstructorsPresentationPriorityCreators(object):
 
 	def iter_priority_creator_usernames(self):
 		result = set()
-		for enrollments in component.subscribers( (self.context,),
+		for enrollments in component.subscribers((self.context,),
 												  IPrincipalEnrollments):
 			for enrollment in enrollments.iter_enrollments():
 				course = ICourseInstance(enrollment, None)
 				catalog_entry = ICourseCatalogEntry(course, None)
-				if course is None or catalog_entry is None: # pragma: no cover
+				if course is None or catalog_entry is None:  # pragma: no cover
 					continue
 				if not catalog_entry.isCourseCurrentlyActive():
 					continue
 
 				for instructor in course.instructors:
-					result.add( instructor.id )
+					result.add(instructor.id)
 		return result
