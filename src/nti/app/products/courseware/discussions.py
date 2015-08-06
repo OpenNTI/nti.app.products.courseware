@@ -28,10 +28,10 @@ from nti.contenttypes.courses.interfaces import ES_CREDIT
 from nti.contenttypes.courses.interfaces import ES_PUBLIC
 from nti.contenttypes.courses.interfaces import IN_CLASS_PREFIX
 
+from nti.contenttypes.courses import get_course_vendor_info
 from nti.contenttypes.courses.interfaces import ICourseInstance
 from nti.contenttypes.courses.interfaces import ICourseCatalogEntry
 from nti.contenttypes.courses.interfaces import ICatalogEntrySynchronized
-from nti.contenttypes.courses.interfaces import ICourseInstanceVendorInfo
 from nti.contenttypes.courses.interfaces import ICourseInstancePublicScopedForum
 from nti.contenttypes.courses.interfaces import ICourseInstanceForCreditScopedForum
 
@@ -76,9 +76,8 @@ NTI_FORUMS_FORCREDIT = (IN_CLASS, IN_CLASS_PREFIX, ES_CREDIT, ICourseInstanceFor
 CourseForum = namedtuple('Forum', 'name scope display_name interface')
 
 def get_vendor_info(context):
-	course = ICourseInstance(context, None)
-	result = ICourseInstanceVendorInfo(course, None) or {}
-	return result
+	result = get_course_vendor_info(context, False) 
+	return result or {}
 
 def get_forum_types(context):
 	info = get_vendor_info(context)
