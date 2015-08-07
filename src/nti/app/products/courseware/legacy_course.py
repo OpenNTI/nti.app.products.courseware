@@ -26,6 +26,7 @@ from zope import interface
 from zope.component.interfaces import IComponents
 
 from zope.event import notify
+
 from zope.lifecycleevent import IObjectAddedEvent
 
 from zope.security.interfaces import IPrincipal
@@ -91,11 +92,15 @@ class ICourseCatalogLegacyEntryInstancePolicy(interface.Interface):
 		"""
 
 	def extend_signature_for_instructor(inst, sig_lines):
-		"Optionally add any additional signature lines for the instructor."
+		"""
+		Optionally add any additional signature lines for the instructor.
+		"""
 
 	def department_title_for_entry(entry):
-		"""Optionally modify the purchasable's title; otherwise this comes from the catalog's
-		``ProviderDepartmentTitle``, which ultimately currently comes from the ``school`` value."""
+		"""
+		Optionally modify the purchasable's title; otherwise this comes from the catalog's
+		``ProviderDepartmentTitle``, which ultimately currently comes from the ``school`` value.
+		"""
 
 @interface.implementer(ICourseCatalogLegacyEntryInstancePolicy)
 class DefaultCourseCatalogLegacyEntryInstancePolicy(object):
@@ -146,7 +151,8 @@ def _register_course_purchasable_from_catalog_entry(entry, event):
 	a legacy course instance.
 	"""
 	provider = get_provider(entry.ContentPackageNTIID)
-	policy = component.queryUtility(ICourseCatalogLegacyEntryInstancePolicy, name=provider)
+	policy = component.queryUtility(ICourseCatalogLegacyEntryInstancePolicy,
+									name=provider)
 	if policy is None:
 		logger.debug("Ignoring legacy catalog entry (%r) for provider (%s) without policy",
 					  entry, provider)
@@ -221,8 +227,9 @@ def _register_course_purchasable_from_catalog_entry(entry, event):
 		components = component.getGlobalSiteManager()
 		logger.info('Registering course %s globally for all sites', purch_ntiid)
 	else:
-		components = component.getGlobalSiteManager().getUtility(IComponents,
-																 name=policy.register_courses_in_components_named)
+		gsm = component.getGlobalSiteManager()
+		components = gsm.getUtility(IComponents,
+									name=policy.register_courses_in_components_named)
 		logger.info('Registering course %s/%s in site %s',
 					purch_ntiid, entry.ContentPackageNTIID,
 					policy.register_courses_in_components_named)
@@ -247,7 +254,8 @@ def _register_course_purchasable_from_catalog_entry(entry, event):
 		try:
 			local_catalog.addCatalogEntry(entry, event=False)
 		except ValueError:  # A re-enumeration; typically tests
-			logger.info("Found duplicate local course catalog entry %s", entry.ProviderUniqueID)
+			logger.info("Found duplicate local course catalog entry %s", 
+						entry.ProviderUniqueID)
 			local_catalog.removeCatalogEntry(entry, event=False)
 			local_catalog.addCatalogEntry(entry, event=False)
 		assert entry.__name__ not in global_catalog
@@ -380,6 +388,7 @@ class _LegacyCommunityBasedCourseAdministrativeLevel(CourseAdministrativeLevel):
 
 # The key becomes the __name__, which is useful for traversal
 from zope.annotation.factory import factory as an_factory
+
 _LegacyCommunityBasedCourseAdministrativeLevelFactory = an_factory(_LegacyCommunityBasedCourseAdministrativeLevel,
 																   key='LegacyCourses')
 
@@ -405,7 +414,6 @@ from nti.contenttypes.courses.interfaces import ES_PUBLIC
 from nti.contenttypes.courses.sharing import CourseInstanceSharingScopes
 from nti.contenttypes.courses.interfaces import ENROLLMENT_SCOPE_VOCABULARY
 from nti.contenttypes.courses.interfaces import ICourseInstanceSharingScopes
-
 
 _LEGACY_ENROLLMENT_SCOPE_VOCABULARY = SimpleVocabulary(
 	[ENROLLMENT_SCOPE_VOCABULARY.getTerm(ES_CREDIT),
@@ -444,7 +452,6 @@ class _LegacyCommunityBasedCourseInstance(CourseInstance):
 		on demand.
 		"""
 		super(_LegacyCommunityBasedCourseInstance, self).__init__()
-
 		self.ContentPackageNTIID = content_package_ntiid
 
 	@CachedProperty
@@ -457,7 +464,10 @@ class _LegacyCommunityBasedCourseInstance(CourseInstance):
 
 	@CachedProperty
 	def restricted_scope_entity_container(self):
-		"checking membership in this is pretty common, so caching it has measurable benefits"
+		"""
+		checking membership in this is pretty common, so caching 
+		it has measurable benefits
+		"""
 		return IEntityContainer(self.restricted_scope_entity, ())
 
 	def _make_sharing_scopes(self):
@@ -506,7 +516,9 @@ class _LegacyCommunityBasedCourseInstance(CourseInstance):
 			logger.warn("No content package found for %s/%s; no outline and other bad things may happen",
 						self, self.ContentPackageNTIID)
 		else:
-			fill_outline_from_key(self._LegacyOutline, package.index, xml_parent_name='course')
+			fill_outline_from_key(self._LegacyOutline,
+								  package.index,
+								  xml_parent_name='course')
 		return self._LegacyOutline
 
 	@Lazy
