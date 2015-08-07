@@ -20,8 +20,9 @@ logger = __import__('logging').getLogger(__name__)
 
 from urlparse import urljoin
 
-from zope import interface
 from zope import component
+from zope import interface
+
 from zope.component.interfaces import IComponents
 
 from zope.event import notify
@@ -32,6 +33,7 @@ from zope.security.interfaces import IPrincipal
 from zope.cachedescriptors.property import Lazy
 
 from BTrees import OOBTree
+
 from persistent import Persistent
 
 from nti.contentlibrary.interfaces import IContentPackageLibrary
@@ -279,7 +281,7 @@ def _register_course_purchasable_from_catalog_entry(entry, event):
 
 	the_course.updateInstructors(entry)
 
-	_update_vendor_info(the_course, entry.legacy_content_package.root)
+	# _update_vendor_info(the_course, entry.legacy_content_package.root)
 
 	# Always let people know it's available so they can do any
 	# synchronization work that needs to pull from the external
