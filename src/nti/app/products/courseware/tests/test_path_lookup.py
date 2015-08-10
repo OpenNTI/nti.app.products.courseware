@@ -56,15 +56,18 @@ class TestPathLookup(ApplicationLayerTest):
 										'NTIID', 'tag:nextthought.com,2011-10:OU-HTML-CLC3403_LawAndJustice.lec:01_LESSON',
 										'Title', '1. Defining Law and Justice'))
 
-	def _do_path_lookup(self):
+	def _do_path_lookup(self, is_legacy=False ):
 		# Get reading
 		path = '/dataserver2/LibraryPath?objectId=%s' % READING
 		res = self.testapp.get(path)
 		res = res.json_body
 
+		# For legacy non-indexed, we only get one possible path.
+		result_expected_val = 1 if is_legacy else 3
+
 		# No LessonOverview registered, so we lose outline.
 		# We do get course followed by appropriate page info.
-		assert_that(res, has_length(1))
+		assert_that(res, has_length(result_expected_val))
 		res = res[0]
 		assert_that(res, has_length(2))
 		assert_that(res[0], has_entry('Class', 'CourseInstance'))
@@ -77,7 +80,7 @@ class TestPathLookup(ApplicationLayerTest):
 		res = self.testapp.get(path)
 		res = res.json_body
 
-		assert_that(res, has_length(1))
+		assert_that(res, has_length(result_expected_val))
 		res = res[0]
 		assert_that(res, has_length(2))
 
@@ -92,7 +95,7 @@ class TestPathLookup(ApplicationLayerTest):
 		res = self.testapp.get(path)
 		res = res.json_body
 
-		assert_that(res, has_length(1))
+		assert_that(res, has_length(result_expected_val))
 		res = res[0]
 		assert_that(res, has_length(2))
 
@@ -102,24 +105,29 @@ class TestPathLookup(ApplicationLayerTest):
 										'Title', 'Self-Quiz 1'))
 
 		# Question (returns same)
+		# Not found in legacy
+		status = 403 if is_legacy else 200
 		path = '/dataserver2/LibraryPath?objectId=%s' % QUESTION
-		res = self.testapp.get(path)
-		res = res.json_body
+		res = self.testapp.get(path, status=status)
+		if not is_legacy:
+			res = res.json_body
 
-		assert_that(res, has_length(1))
-		res = res[0]
-		assert_that(res, has_length(2))
+			assert_that(res, has_length(result_expected_val))
+			res = res[0]
+			assert_that(res, has_length(2))
 
-		assert_that(res[0], has_entry('Class', 'CourseInstance'))
-		assert_that(res[1], has_entries('Class', 'PageInfo',
-										'NTIID', 'tag:nextthought.com,2011-10:OU-HTML-CLC3403_LawAndJustice.sec:QUIZ_01.01',
-										'Title', 'Self-Quiz 1'))
+			assert_that(res[0], has_entry('Class', 'CourseInstance'))
+			assert_that(res[1], has_entries('Class', 'PageInfo',
+											'NTIID', 'tag:nextthought.com,2011-10:OU-HTML-CLC3403_LawAndJustice.sec:QUIZ_01.01',
+											'Title', 'Self-Quiz 1'))
 
 		# Card
 		path = '/dataserver2/LibraryPath?objectId=%s' % CARD
 		res = self.testapp.get(path)
 		res = res.json_body
 
+		# Cards are not indexed in our container catalog, so
+		# we go down the legacy path that only returns one result.
 		assert_that(res, has_length(1))
 		res = res[0]
 		assert_that(res, has_length(2))
@@ -139,18 +147,18 @@ class TestPathLookup(ApplicationLayerTest):
 		self._do_path_lookup()
 
 	@WithSharedApplicationMockDS(users=True, testapp=True)
-	@fudge.patch('nti.app.products.courseware.adapters.get_catalog')
+	@fudge.patch('nti.app.products.courseware.adapters._get_courses_from_container')
 	@fudge.patch('nti.app.products.courseware.adapters._is_user_enrolled')
-	def test_contained_path_legacy(self, mock_get_catalog, mock_enrolled):
+	def test_contained_path_legacy(self, mock_get_courses, mock_enrolled):
 		"""
 		Our library path to the given ntiid is returned,
 		even though we do not have a catalog.
 		"""
 		mock_catalog = MockCatalog()
 		mock_catalog.containers = []
-		mock_get_catalog.is_callable().returns(mock_catalog)
+		mock_get_courses.is_callable().returns( () )
 		mock_enrolled.is_callable().returns( True )
-		self._do_path_lookup()
+		self._do_path_lookup( True )
 
 	@unittest.expectedFailure
 	@WithSharedApplicationMockDS(users=True, testapp=True)

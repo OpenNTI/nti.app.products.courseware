@@ -53,8 +53,8 @@ class TestJoinableContextProvider(ApplicationLayerTest):
 			results = []
 			for contexts in component.subscribers((obj,), IJoinableContextProvider):
 				results.extend(contexts)
-			assert_that(results, has_length(1))
+			assert_that(results, has_length(3))
 			results = []
 			for contexts in component.subscribers((obj,), ITopLevelContainerContextProvider):
 				results.extend(contexts)
-			assert_that(results, has_length(1))
+			assert_that(results, has_length(3))

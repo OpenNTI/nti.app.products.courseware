@@ -10,6 +10,8 @@ __docformat__ = "restructuredtext en"
 
 logger = __import__('logging').getLogger(__name__)
 
+from collections import Iterable
+
 from zope import interface
 from zope import component
 
@@ -113,7 +115,7 @@ def _content_unit_to_courses(unit, include_sub_instances=True):
 	# First, try the true legacy case. This involves
 	# a direct mapping between courses and a catalog entry. It may be
 	# slightly more reliable, but only works for true legacy cases.
-	package = find_interface(unit, ILegacyCourseConflatedContentPackageUsedAsCourse, 
+	package = find_interface(unit, ILegacyCourseConflatedContentPackageUsedAsCourse,
 							 strict=False)
 	if package is not None:
 		result = ICourseInstance(package, None)
@@ -185,24 +187,28 @@ def _get_top_level_contexts(obj):
 				results.add(top_level_context)
 	return results
 
-def _get_valid_course_context(courses):
+def _get_valid_course_context( course_contexts ):
 	"""
-	Validate course access for remote_user, returning
+	Validate course context access for remote_user, returning
 	catalog entries otherwise.
 	"""
-	if ICourseInstance.providedBy(courses):
-		courses = (courses,)
+	if 		ICourseCatalogEntry.providedBy( course_contexts ) \
+		or 	ICourseInstance.providedBy( course_contexts ):
+		course_contexts = (course_contexts,)
 
 	user = get_remote_user()
 	results = []
-	for course in courses:
-		if not _is_user_enrolled(user, course):
-			catalog_entry = ICourseCatalogEntry(course, None)
+	for course_context in course_contexts:
+		if ICourseCatalogEntry.providedBy( course_context ):
+			if is_readable( course_context ):
+				results.append( course_context )
+		elif not _is_user_enrolled(user, course_context):
+			catalog_entry = ICourseCatalogEntry(course_context, None)
 			# We only want to add publicly available entries.
 			if catalog_entry is not None and is_readable(catalog_entry):
 				results.append(catalog_entry)
 		else:
-			results.append(course)
+			results.append(course_context)
 	return results
 
 @interface.implementer(IJoinableContextProvider)
@@ -320,10 +326,8 @@ def _get_courses_from_container(obj, user=None):
 			if course is not None:
 				results.add(course)
 	if not results:
-		# If not, try adapting
-		course = component.queryMultiAdapter((obj, user), ICourseInstance)
-		if course is not None:
-			results.add(course)
+		courses = _content_unit_to_courses(obj, include_sub_instances=True)
+		results.update( courses )
 	return results
 
 @interface.implementer(IHierarchicalContextProvider)
@@ -332,6 +336,7 @@ def _get_courses_from_container(obj, user=None):
 @component.adapter(IPresentationAsset, IUser)
 def _hierarchy_from_obj_and_user(obj, user):
 	container_courses = _get_courses_from_container(obj, user)
+	container_courses = _get_valid_course_context(container_courses)
 	target_ntiid = _get_target_ntiid(obj)
 	results = [_get_outline_nodes(course, target_ntiid) \
 				for course in container_courses]
@@ -385,20 +390,17 @@ def _courses_from_forum_obj_and_user(obj, _):
 @interface.implementer(ITopLevelContainerContextProvider)
 @component.adapter(IContentUnit)
 def _courses_from_package(obj):
-	# We could tweak the adapter above to return
-	# all possible courses, or use the container index.
-	course = ICourseInstance(obj, None)
-	if course:
-		results = _get_valid_course_context(course)
-		return results
+	# We could use the container index.
+	courses = _content_unit_to_courses(obj, include_sub_instances=True)
+	results = _get_valid_course_context(courses)
+	return results
 
 @interface.implementer(ITopLevelContainerContextProvider)
 @component.adapter(IContentUnit, IUser)
 def _courses_from_package_and_user(obj, user):
-	course = component.queryMultiAdapter((obj, user), ICourseInstance)
-	if course:
-		results = _get_valid_course_context(course)
-		return results
+	courses = _content_unit_to_courses(obj, include_sub_instances=True)
+	results = _get_valid_course_context(courses)
+	return results
 
 def __courses_from_obj_and_user(obj, user=None):
 	# TODO We need to index content units so this works for more
