@@ -53,7 +53,7 @@
 	<subscriber handler=".discussions._catalog_entry_synchronized" />
 	<subscriber handler=".legacy_catalog._content_package_registered" />
 	<subscriber handler=".subscribers._join_communities_on_enrollment_added" />
-	
+
 	<!-- Auto-gen course purchasables from content -->
 	<!-- This must be a global subscriber as that's where
 	the library is -->
@@ -191,12 +191,13 @@
 	<!-- And an adapter for security purposes -->
 	<adapter factory=".legacy_principalrole.LegacyCourseInstancePrincipalRoleMap" />
 
-	<!-- A subscriber for important principals -->
-	<subscriber factory=".workspaces._UserInstructorsPresentationPriorityCreators"
-				provides="nti.app.notabledata.interfaces.IUserPresentationPriorityCreators"/>
+	<!-- Live notables by instructors. -->
+	<subscriber factory=".notables.TopLevelPriorityNotableFilter"
+				provides="nti.dataserver.interfaces.INotableFilter"
+				for="*" />
 
 	<!-- A subscriber for important principals notables. -->
-	<subscriber factory=".workspaces._UserPriorityCreatorNotableProvider"
+	<subscriber factory=".notables._UserPriorityCreatorNotableProvider"
 				provides="nti.app.notabledata.interfaces.IUserPriorityCreatorNotableProvider"/>
 
 	<!-- Traversal paths -->

@@ -14,8 +14,6 @@ logger = __import__('logging').getLogger(__name__)
 from zope import component
 from zope import interface
 
-from zope.catalog.interfaces import ICatalog
-
 from zope.container.contained import Contained
 
 from zope.intid import IIntIds
@@ -25,17 +23,11 @@ from zope.location.traversing import LocationPhysicallyLocatable
 from zope.securitypolicy.interfaces import Allow
 from zope.securitypolicy.interfaces import IPrincipalRoleMap
 
-from BTrees.LFBTree import LFSet as Set
-
-from nti.app.notabledata.interfaces import IUserPresentationPriorityCreators
-from nti.app.notabledata.interfaces import IUserPriorityCreatorNotableProvider
-
 from nti.appserver.workspaces.interfaces import IUserService
 from nti.appserver.workspaces.interfaces import IContainerCollection
 
 from nti.common.property import Lazy
 from nti.common.property import alias
-from nti.common.property import CachedProperty
 
 from nti.contenttypes.courses.index import IX_COURSE
 from nti.contenttypes.courses.index import IX_USERNAME
@@ -56,8 +48,6 @@ from nti.dataserver.interfaces import IUser
 from nti.dataserver.authorization import ACT_DELETE
 from nti.dataserver.authorization_acl import ace_allowing
 from nti.dataserver.authorization_acl import acl_from_aces
-
-from nti.dataserver.metadata_index import CATALOG_NAME as METADATA_CATALOG_NAME
 
 from nti.schema.field import SchemaConfigured
 from nti.schema.fieldproperty import createDirectFieldProperties
@@ -520,74 +510,3 @@ class CatalogEntryLocationInfo(LocationPhysicallyLocatable):
 		if not IRoot.providedBy(parents[-1]):
 			raise TypeError("Not enough context to get all parents")
 		return parents
-
-@interface.implementer(IUserPresentationPriorityCreators)
-@component.adapter(IUser, interface.Interface)
-class _UserInstructorsPresentationPriorityCreators(object):
-	"""
-	The instructors of the classes a user is enrolled in, and which
-	are not past their end date, given priority.
-	"""
-
-	def __init__(self, user, request):
-		self.context = user
-
-	def iter_priority_creator_usernames(self):
-		result = set()
-		# TODO: Consider using index
-		for enrollments in component.subscribers((self.context,), IPrincipalEnrollments):
-			for enrollment in enrollments.iter_enrollments():
-				course = ICourseInstance(enrollment, None)
-				catalog_entry = ICourseCatalogEntry(course, None)
-				if 		course is None \
-					or 	catalog_entry is None \
-					or not catalog_entry.isCourseCurrentlyActive():  # pragma: no cover
-					continue
-
-				for instructor in course.instructors:
-					result.add(instructor.id)
-		return result
-
-@interface.implementer(IUserPriorityCreatorNotableProvider)
-@component.adapter(IUser, interface.Interface)
-class _UserPriorityCreatorNotableProvider(object):
-	"""
-	We want all items created by instructors shared with
-	course communities the user is enrolled in.  If items
-	are shared with global communities or other, perhaps
-	older, courses, we should exclude those.
-	"""
-
-	def __init__(self, user, request):
-		self.context = user
-
-	@CachedProperty
-	def _catalog(self):
-		return component.getUtility(ICatalog, METADATA_CATALOG_NAME)
-
-	def get_notable_intids(self):
-		results = Set()
-		catalog = self._catalog
-		# TODO: Consider using index	
-		for enrollments in component.subscribers((self.context,), IPrincipalEnrollments):
-			for enrollment in enrollments.iter_enrollments():
-				course_instructors = set()
-				course = ICourseInstance(enrollment, None)
-				catalog_entry = ICourseCatalogEntry(course, None)
-				if 		course is None \
-					or 	catalog_entry is None \
- 					or 	not catalog_entry.isCourseCurrentlyActive():  # pragma: no cover
-					continue
-
-				course_instructors.update( (x.id for x in course.instructors) )
-				instructor_intids = catalog['creator'].apply(
-											{'any_of': course_instructors})
-				# TODO Do we need implies?
-				course_scope = course.SharingScopes[ enrollment.Scope ]
-				scope_ntiids = (course_scope.NTIID, )
-				course_shared_with_intids = catalog['sharedWith'].apply(
-													{'any_of': scope_ntiids})
-				course_results = catalog.family.IF.intersection(instructor_intids,
-																course_shared_with_intids)
-				results.update( course_results )
-		return results
