@@ -14,6 +14,8 @@ logger = __import__('logging').getLogger(__name__)
 from nti.app.assessment.interfaces import ICourseAssignmentCatalog
 from nti.app.assessment.interfaces import ICourseAssessmentItemCatalog
 
+from nti.assessment.interfaces import IQPoll
+from nti.assessment.interfaces import IQSurvey
 from nti.assessment.interfaces import IQAssignment
 from nti.assessment.interfaces import IQuestionSet
 
@@ -56,6 +58,32 @@ def _get_self_assessments_for_course(course):
 	result = [x for x in result if x.ntiid not in qsids_to_strip]
 	return result
 
+def _get_self_polls_for_course(course):
+	"""
+	Given an :class:`.ICourseInstance`, return a list of all
+	the \"self polls\" in the course. Self-polls are
+	defined as top-level polls sets that are not used within an survey
+	in the course.
+	"""
+
+	result = list()
+	qsids_to_strip = set()
+	catalog = ICourseAssessmentItemCatalog(course)
+
+	for item in catalog.iter_assessment_items():
+		if IQSurvey.providedBy(item):
+			qsids_to_strip.add(item.ntiid)
+			for poll in item.questions:
+				qsids_to_strip.add(poll.ntiid)
+		elif not IQPoll.providedBy(item):
+			qsids_to_strip.add(item.ntiid)
+		else:
+			result.append(item)
+
+	# Now remove the forbidden
+	result = [x for x in result if x.ntiid not in qsids_to_strip]
+	return result
+
 def _get_containers_in_course(course):
 	try:
 		packages = course.ContentPackageBundle.ContentPackages
@@ -85,10 +113,10 @@ def _get_containers_in_course(course):
 	catalog = get_catalog()
 	if catalog is not None:
 		package_ntiids = (x.ntiid for x in packages)
-		contained_objs = catalog.search_objects( container_ntiids=package_ntiids )
+		contained_objs = catalog.search_objects(container_ntiids=package_ntiids)
 		# Do we need target_ntiid here?
 		contained_ntiids = {x.ntiid for x in contained_objs}
-		containers_in_course.update( contained_ntiids )
+		containers_in_course.update(contained_ntiids)
 
 	# Add in our self-assessments
 	catalog = ICourseAssessmentItemCatalog(course)
