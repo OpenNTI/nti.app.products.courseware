@@ -10,10 +10,8 @@ __docformat__ = "restructuredtext en"
 
 logger = __import__('logging').getLogger(__name__)
 
-from collections import Iterable
-
-from zope import interface
 from zope import component
+from zope import interface
 
 from zope.intid import IIntIds
 
@@ -187,21 +185,21 @@ def _get_top_level_contexts(obj):
 				results.add(top_level_context)
 	return results
 
-def _get_valid_course_context( course_contexts ):
+def _get_valid_course_context(course_contexts):
 	"""
 	Validate course context access for remote_user, returning
 	catalog entries otherwise.
 	"""
-	if 		ICourseCatalogEntry.providedBy( course_contexts ) \
-		or 	ICourseInstance.providedBy( course_contexts ):
+	if 		ICourseCatalogEntry.providedBy(course_contexts) \
+		or 	ICourseInstance.providedBy(course_contexts):
 		course_contexts = (course_contexts,)
 
 	user = get_remote_user()
 	results = []
 	for course_context in course_contexts:
-		if ICourseCatalogEntry.providedBy( course_context ):
-			if is_readable( course_context ):
-				results.append( course_context )
+		if ICourseCatalogEntry.providedBy(course_context):
+			if is_readable(course_context):
+				results.append(course_context)
 		elif not _is_user_enrolled(user, course_context):
 			catalog_entry = ICourseCatalogEntry(course_context, None)
 			# We only want to add publicly available entries.
@@ -327,7 +325,7 @@ def _get_courses_from_container(obj, user=None):
 				results.add(course)
 	if not results:
 		courses = _content_unit_to_courses(obj, include_sub_instances=True)
-		results.update( courses )
+		results.update(courses)
 	return results
 
 @interface.implementer(IHierarchicalContextProvider)

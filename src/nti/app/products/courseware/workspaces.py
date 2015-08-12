@@ -11,8 +11,6 @@ __docformat__ = "restructuredtext en"
 
 logger = __import__('logging').getLogger(__name__)
 
-from BTrees.LFBTree import LFSet as Set
-
 from zope import component
 from zope import interface
 
@@ -26,6 +24,8 @@ from zope.location.traversing import LocationPhysicallyLocatable
 
 from zope.securitypolicy.interfaces import Allow
 from zope.securitypolicy.interfaces import IPrincipalRoleMap
+
+from BTrees.LFBTree import LFSet as Set
 
 from nti.app.notabledata.interfaces import IUserPresentationPriorityCreators
 from nti.app.notabledata.interfaces import IUserPriorityCreatorNotableProvider
@@ -534,8 +534,8 @@ class _UserInstructorsPresentationPriorityCreators(object):
 
 	def iter_priority_creator_usernames(self):
 		result = set()
-		for enrollments in component.subscribers((self.context,),
-												  IPrincipalEnrollments):
+		# TODO: Consider using index
+		for enrollments in component.subscribers((self.context,), IPrincipalEnrollments):
 			for enrollment in enrollments.iter_enrollments():
 				course = ICourseInstance(enrollment, None)
 				catalog_entry = ICourseCatalogEntry(course, None)
@@ -566,10 +566,10 @@ class _UserPriorityCreatorNotableProvider(object):
 		return component.getUtility(ICatalog, METADATA_CATALOG_NAME)
 
 	def get_notable_intids(self):
-		catalog = self._catalog
 		results = Set()
-		for enrollments in component.subscribers((self.context,),
-												  IPrincipalEnrollments):
+		catalog = self._catalog
+		# TODO: Consider using index	
+		for enrollments in component.subscribers((self.context,), IPrincipalEnrollments):
 			for enrollment in enrollments.iter_enrollments():
 				course_instructors = set()
 				course = ICourseInstance(enrollment, None)
