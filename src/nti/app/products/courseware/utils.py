@@ -9,6 +9,7 @@ __docformat__ = "restructuredtext en"
 
 logger = __import__('logging').getLogger(__name__)
 
+import six
 from itertools import chain
 from datetime import datetime
 
@@ -17,13 +18,17 @@ from zope import component
 from zope.component.interfaces import ComponentLookupError
 
 from zope.security.interfaces import IPrincipal
+
 from zope.securitypolicy.interfaces import Allow
 from zope.securitypolicy.interfaces import IPrincipalRoleMap
+
+from zope.traversing.api import traverse
 
 from nti.contenttypes.courses.interfaces import RID_TA
 from nti.contenttypes.courses.interfaces import ES_PUBLIC
 from nti.contenttypes.courses.interfaces import RID_INSTRUCTOR
 
+from nti.contenttypes.courses import get_course_vendor_info
 from nti.contenttypes.courses.interfaces import ICourseCatalog
 from nti.contenttypes.courses.interfaces import ICourseInstance
 from nti.contenttypes.courses.interfaces import ICourseEnrollments
@@ -160,3 +165,14 @@ def has_enrollments(user):
 		if enrollments.count_enrollments():
 			return True
 	return False
+
+def get_vendor_info(context):
+	info = get_course_vendor_info(context, False)
+	return info or {}
+
+def get_enrollment_communities(context):
+	vendor_info = get_vendor_info(context)
+	result = traverse(vendor_info, 'NTI/Enrollment/Communities', default=False)
+	if result and isinstance(result, six.string_types):
+		result = [result,]
+	return result

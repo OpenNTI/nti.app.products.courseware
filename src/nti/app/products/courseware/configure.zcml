@@ -47,11 +47,13 @@
 	<!-- I18N -->
 	<i18n:registerTranslations directory="locales" />
 
+	<!-- Events -->
 	<subscriber handler=".discussions._discussions_added" />
 	<subscriber handler=".discussions._discussions_modified" />
 	<subscriber handler=".discussions._catalog_entry_synchronized" />
 	<subscriber handler=".legacy_catalog._content_package_registered" />
-
+	<subscriber handler=".subscribers._join_communities_on_enrollment_added" />
+	
 	<!-- Auto-gen course purchasables from content -->
 	<!-- This must be a global subscriber as that's where
 	the library is -->

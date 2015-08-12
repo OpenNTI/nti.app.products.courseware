@@ -33,9 +33,12 @@ from pyramid.threadlocal import get_current_request
 from nti.appserver.policies.interfaces import ISitePolicyUserEventListener
 
 from nti.contenttypes.courses.interfaces import ES_PUBLIC
+from nti.contenttypes.courses.interfaces import ICourseSubInstance
 from nti.contenttypes.courses.interfaces import ICourseCatalogEntry
 from nti.contenttypes.courses.interfaces import ICourseInstanceEnrollmentRecord
 
+from nti.dataserver.users import Entity
+from nti.dataserver.interfaces import ICommunity 
 from nti.dataserver.users.interfaces import IUserProfile
 from nti.dataserver.users.interfaces import IEmailAddressable
 
@@ -43,7 +46,36 @@ from nti.externalization.externalization import to_external_object
 
 from nti.mailer.interfaces import ITemplatedMailer
 
+from .utils import get_enrollment_communities
+
 # Email
+
+def _get_template(catalog_entry, base_template, package):
+	"""
+	Look for course-specific templates, if available.
+	"""
+	result = None
+	package = dottedname.resolve(package)
+	for provider in (catalog_entry.ProviderUniqueID, catalog_entry.DisplayName):
+		if not provider:
+			continue
+		provider = provider.replace(' ', '').lower()
+		replaced_provider = provider.replace('-', '')
+		template = replaced_provider + "_" + base_template
+		path = os.path.join(os.path.dirname(package.__file__), 'templates')
+		if not os.path.exists(os.path.join(path, template + ".pt")):
+			# Full path doesn't exist; drop our specific id part and try that
+			# 'EDMA 4970', 'EDMA 4970-995', EDMA 4970/5970-995'
+			provider_prefix = provider.split('-')[0]
+			provider_prefix = provider_prefix.split('/')[0]
+			template = provider_prefix + "_" + base_template
+			if os.path.exists(os.path.join(path, template + ".pt")):
+				result = template
+				break
+		else:
+			result = template
+			break
+	return result or base_template
 
 def _send_enrollment_confirmation(event, user, profile, email, course):
 	# Note that the `course` is an nti.contenttypes.courses.ICourseInstance
@@ -139,29 +171,25 @@ def _enrollment_added(record, event):
 	course = record.CourseInstance
 	_send_enrollment_confirmation(event, creator, profile, email, course)
 
-def _get_template(catalog_entry, base_template, package):
-	"""
-	Look for course-specific templates, if available.
-	"""
-	result = None
-	package = dottedname.resolve(package)
-	for provider in (catalog_entry.ProviderUniqueID, catalog_entry.DisplayName):
-		if not provider:
+@component.adapter(ICourseInstanceEnrollmentRecord, IObjectAddedEvent)
+def _join_communities_on_enrollment_added(record, event):
+	course = record.CourseInstance
+	communities = get_enrollment_communities(course)
+	if not communities and ICourseSubInstance.providedBy(course):
+		course = course.__parent__.__parent__
+		communities = get_enrollment_communities(course)
+	if not communities:
+		return
+
+	principal = IPrincipal(record.Principal, None)
+	user = Entity.get_entity(principal.id) if principal else None
+	if user is None: # dup enrollment
+		return
+
+	for name in communities:
+		community = Entity.get_entity(name)
+		if community is None or not ICommunity.providedBy(community):
+			logger.warn("Community %s does not exists", name)
 			continue
-		provider = provider.replace(' ', '').lower()
-		replaced_provider = provider.replace('-', '')
-		template = replaced_provider + "_" + base_template
-		path = os.path.join(os.path.dirname(package.__file__), 'templates')
-		if not os.path.exists(os.path.join(path, template + ".pt")):
-			# Full path doesn't exist; drop our specific id part and try that
-			# 'EDMA 4970', 'EDMA 4970-995', EDMA 4970/5970-995'
-			provider_prefix = provider.split('-')[0]
-			provider_prefix = provider_prefix.split('/')[0]
-			template = provider_prefix + "_" + base_template
-			if os.path.exists(os.path.join(path, template + ".pt")):
-				result = template
-				break
-		else:
-			result = template
-			break
-	return result or base_template
+		user.record_dynamic_membership(community)
+		user.follow(community)
