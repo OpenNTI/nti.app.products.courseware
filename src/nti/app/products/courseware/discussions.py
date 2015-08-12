@@ -13,8 +13,8 @@ from collections import namedtuple
 
 from zope import component
 from zope import interface
-
 from zope import lifecycleevent
+
 from zope.lifecycleevent import IObjectAddedEvent
 from zope.lifecycleevent import IObjectModifiedEvent
 
@@ -28,7 +28,6 @@ from nti.contenttypes.courses.interfaces import ES_CREDIT
 from nti.contenttypes.courses.interfaces import ES_PUBLIC
 from nti.contenttypes.courses.interfaces import IN_CLASS_PREFIX
 
-from nti.contenttypes.courses import get_course_vendor_info
 from nti.contenttypes.courses.interfaces import ICourseInstance
 from nti.contenttypes.courses.interfaces import ICourseCatalogEntry
 from nti.contenttypes.courses.interfaces import ICatalogEntrySynchronized
@@ -70,14 +69,12 @@ from nti.traversal.traversal import find_interface
 
 from .interfaces import NTIID_TYPE_COURSE_SECTION_TOPIC
 
+from .utils import get_vendor_info
+
 NTI_FORUMS_PUBLIC = (OPEN, OPEN, ES_PUBLIC, ICourseInstancePublicScopedForum)
 NTI_FORUMS_FORCREDIT = (IN_CLASS, IN_CLASS_PREFIX, ES_CREDIT, ICourseInstanceForCreditScopedForum)
 
 CourseForum = namedtuple('Forum', 'name scope display_name interface')
-
-def get_vendor_info(context):
-	result = get_course_vendor_info(context, False) 
-	return result or {}
 
 def get_forum_types(context):
 	info = get_vendor_info(context)
