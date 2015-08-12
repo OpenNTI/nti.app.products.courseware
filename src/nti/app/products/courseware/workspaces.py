@@ -11,8 +11,12 @@ __docformat__ = "restructuredtext en"
 
 logger = __import__('logging').getLogger(__name__)
 
+from BTrees.LFBTree import LFSet as Set
+
 from zope import component
 from zope import interface
+
+from zope.catalog.interfaces import ICatalog
 
 from zope.container.contained import Contained
 
@@ -23,11 +27,15 @@ from zope.location.traversing import LocationPhysicallyLocatable
 from zope.securitypolicy.interfaces import Allow
 from zope.securitypolicy.interfaces import IPrincipalRoleMap
 
+from nti.app.notabledata.interfaces import IUserPresentationPriorityCreators
+from nti.app.notabledata.interfaces import IUserPriorityCreatorNotableProvider
+
 from nti.appserver.workspaces.interfaces import IUserService
 from nti.appserver.workspaces.interfaces import IContainerCollection
 
 from nti.common.property import Lazy
 from nti.common.property import alias
+from nti.common.property import CachedProperty
 
 from nti.contenttypes.courses.index import IX_COURSE
 from nti.contenttypes.courses.index import IX_USERNAME
@@ -48,6 +56,8 @@ from nti.dataserver.interfaces import IUser
 from nti.dataserver.authorization import ACT_DELETE
 from nti.dataserver.authorization_acl import ace_allowing
 from nti.dataserver.authorization_acl import acl_from_aces
+
+from nti.dataserver.metadata_index import CATALOG_NAME as METADATA_CATALOG_NAME
 
 from nti.schema.field import SchemaConfigured
 from nti.schema.fieldproperty import createDirectFieldProperties
@@ -242,7 +252,7 @@ class _AbstractQueryBasedCoursesCollection(Contained):
 				enrollment.Username = parent.user.username
 			if getattr(enrollment, '_user', self) is None:
 				enrollment._user = parent.user
-		
+
 		self._apply_user_extra_auth(container)
 		return container
 
@@ -380,7 +390,7 @@ class EnrolledCoursesCollection(_AbstractQueryBasedCoursesCollection):
 	query_attr = 'iter_enrollments'
 	query_interface = IPrincipalEnrollments
 	contained_interface = ICourseInstanceEnrollment
-	
+
 	user_extra_auth = ACT_DELETE
 
 	def _build_from_catalog(self):
@@ -388,7 +398,7 @@ class EnrolledCoursesCollection(_AbstractQueryBasedCoursesCollection):
 		intids = component.getUtility(IIntIds)
 		catalog = component.getUtility(ICourseCatalog)
 		courses = [x.ntiid for x in catalog.iterCatalogEntries()]
-		
+
 		catalog = get_enrollment_catalog()
 		result = LastModifiedCopyingUserList()
 		query = {IX_COURSE:{'any_of':courses},
@@ -397,7 +407,7 @@ class EnrolledCoursesCollection(_AbstractQueryBasedCoursesCollection):
 			context = intids.queryObject(uid)
 			if ICourseInstanceEnrollmentRecord.providedBy(context):
 				result.append(self.contained_interface(context))
-				
+
 		self._apply_user_extra_auth(result)
 		return result
 
@@ -511,8 +521,6 @@ class CatalogEntryLocationInfo(LocationPhysicallyLocatable):
 			raise TypeError("Not enough context to get all parents")
 		return parents
 
-from nti.app.notabledata.interfaces import IUserPresentationPriorityCreators
-
 @interface.implementer(IUserPresentationPriorityCreators)
 @component.adapter(IUser, interface.Interface)
 class _UserInstructorsPresentationPriorityCreators(object):
@@ -531,11 +539,55 @@ class _UserInstructorsPresentationPriorityCreators(object):
 			for enrollment in enrollments.iter_enrollments():
 				course = ICourseInstance(enrollment, None)
 				catalog_entry = ICourseCatalogEntry(course, None)
-				if course is None or catalog_entry is None:  # pragma: no cover
-					continue
-				if not catalog_entry.isCourseCurrentlyActive():
+				if 		course is None \
+					or 	catalog_entry is None \
+					or not catalog_entry.isCourseCurrentlyActive():  # pragma: no cover
 					continue
 
 				for instructor in course.instructors:
 					result.add(instructor.id)
 		return result
+
+@interface.implementer(IUserPriorityCreatorNotableProvider)
+@component.adapter(IUser, interface.Interface)
+class _UserPriorityCreatorNotableProvider(object):
+	"""
+	We want all items created by instructors shared with
+	course communities the user is enrolled in.  If items
+	are shared with global communities or other, perhaps
+	older, courses, we should exclude those.
+	"""
+
+	def __init__(self, user, request):
+		self.context = user
+
+	@CachedProperty
+	def _catalog(self):
+		return component.getUtility(ICatalog, METADATA_CATALOG_NAME)
+
+	def get_notable_intids(self):
+		catalog = self._catalog
+		results = Set()
+		for enrollments in component.subscribers((self.context,),
+												  IPrincipalEnrollments):
+			for enrollment in enrollments.iter_enrollments():
+				course_instructors = set()
+				course = ICourseInstance(enrollment, None)
+				catalog_entry = ICourseCatalogEntry(course, None)
+				if 		course is None \
+					or 	catalog_entry is None \
+ 					or 	not catalog_entry.isCourseCurrentlyActive():  # pragma: no cover
+					continue
+
+				course_instructors.update( (x.id for x in course.instructors) )
+				instructor_intids = catalog['creator'].apply(
+											{'any_of': course_instructors})
+				# TODO Do we need implies?
+				course_scope = course.SharingScopes[ enrollment.Scope ]
+				scope_ntiids = (course_scope.NTIID, )
+				course_shared_with_intids = catalog['sharedWith'].apply(
+													{'any_of': scope_ntiids})
+				course_results = catalog.family.IF.intersection(instructor_intids,
+																course_shared_with_intids)
+				results.update( course_results )
+		return results
