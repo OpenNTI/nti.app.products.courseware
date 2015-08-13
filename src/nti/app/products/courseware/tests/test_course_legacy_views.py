@@ -16,6 +16,7 @@ from hamcrest import assert_that
 from hamcrest import has_entries
 from hamcrest import starts_with
 from hamcrest import contains_string
+from hamcrest import greater_than_or_equal_to
 
 import csv
 import fudge
@@ -160,7 +161,7 @@ class _AbstractMixin(object):
 		# for the first instructor, it was notable to everyone else because they were
 		# explicitly listed in the ACL, which turns into direct-sharing)
 		res = self.fetch_user_recursive_notable_ugd(username='harp4162', extra_environ=inst_env )
-		assert_that( res.json_body, has_entry( 'TotalItemCount', 2))
+		assert_that( res.json_body, has_entry( 'TotalItemCount', greater_than_or_equal_to(2)))
 
 		# ... it is also in the instructors stream (why?)...
 		res = self.fetch_user_root_rstream( username='harp4162', extra_environ=inst_env)
