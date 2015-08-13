@@ -33,12 +33,15 @@ from pyramid.threadlocal import get_current_request
 from nti.appserver.policies.interfaces import ISitePolicyUserEventListener
 
 from nti.contenttypes.courses.interfaces import ES_PUBLIC
+from nti.contenttypes.courses.interfaces import ICourseInstance
 from nti.contenttypes.courses.interfaces import ICourseSubInstance
 from nti.contenttypes.courses.interfaces import ICourseCatalogEntry
+from nti.contenttypes.courses.interfaces import IDenyOpenEnrollment
+from nti.contenttypes.courses.interfaces import ICourseEnrollmentManager
 from nti.contenttypes.courses.interfaces import ICourseInstanceEnrollmentRecord
 
 from nti.dataserver.users import Entity
-from nti.dataserver.interfaces import ICommunity 
+from nti.dataserver.interfaces import ICommunity
 from nti.dataserver.users.interfaces import IUserProfile
 from nti.dataserver.users.interfaces import IEmailAddressable
 
@@ -46,6 +49,9 @@ from nti.externalization.externalization import to_external_object
 
 from nti.mailer.interfaces import ITemplatedMailer
 
+from nti.ntiids.ntiids import find_object_with_ntiid
+
+from .utils import get_enrollment_courses
 from .utils import get_enrollment_communities
 
 # Email
@@ -174,16 +180,19 @@ def _enrollment_added(record, event):
 @component.adapter(ICourseInstanceEnrollmentRecord, IObjectAddedEvent)
 def _join_communities_on_enrollment_added(record, event):
 	course = record.CourseInstance
-	communities = get_enrollment_communities(course)
+
+	# get communities
+	communities = set(get_enrollment_communities(course) or ())
 	if not communities and ICourseSubInstance.providedBy(course):
 		course = course.__parent__.__parent__
-		communities = get_enrollment_communities(course)
+		communities = set(get_enrollment_communities(course) or ())
 	if not communities:
 		return
 
+	# check for dup enrollment
 	principal = IPrincipal(record.Principal, None)
 	user = Entity.get_entity(principal.id) if principal else None
-	if user is None: # dup enrollment
+	if user is None:
 		return
 
 	for name in communities:
@@ -193,3 +202,42 @@ def _join_communities_on_enrollment_added(record, event):
 			continue
 		user.record_dynamic_membership(community)
 		user.follow(community)
+
+@component.adapter(ICourseInstanceEnrollmentRecord, IObjectAddedEvent)
+def _auto_enroll_on_enrollment_added(record, event):
+	course = record.CourseInstance
+	main_entry = ICourseCatalogEntry(course, None)
+	if main_entry is None:
+		return
+
+	# check for dup enrollment
+	principal = IPrincipal(record.Principal, None)
+	user = Entity.get_entity(principal.id) if principal else None
+	if user is None:
+		return
+
+	# get course entries
+	entries = set(get_enrollment_courses(course) or ())
+	if not entries and ICourseSubInstance.providedBy(course):
+		course = course.__parent__.__parent__
+		entries = set(get_enrollment_courses(course) or ())
+	if not entries:
+		return
+
+	for name in entries:
+		entry = ICourseCatalogEntry(find_object_with_ntiid(name), None)
+		if entry is None:
+			logger.warn("Course entry %s does not exists", name)
+			continue
+		# make sure avoid circles
+		if entry == main_entry:
+			continue
+		# check for deny open enrollment
+		course = ICourseInstance(entry)
+		if IDenyOpenEnrollment.providedBy(course) and record.Scope == ES_PUBLIC:
+			continue
+		# ready to enroll
+		manager = ICourseEnrollmentManager(course)
+		enrollment = manager.get_enrollment_for_principal(user)
+		if enrollment is None:
+			manager.enroll(user, scope=record.Scope)

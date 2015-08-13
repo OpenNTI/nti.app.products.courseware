@@ -176,3 +176,10 @@ def get_enrollment_communities(context):
 	if result and isinstance(result, six.string_types):
 		result = [result,]
 	return result
+
+def get_enrollment_courses(context):
+	vendor_info = get_vendor_info(context)
+	result = traverse(vendor_info, 'NTI/Enrollment/Courses', default=False)
+	if result and isinstance(result, six.string_types):
+		result = [result,]
+	return result
