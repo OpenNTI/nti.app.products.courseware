@@ -210,6 +210,16 @@ def _auto_enroll_on_enrollment_added(record, event):
 	if main_entry is None:
 		return
 
+	# get parent course
+	parent = course
+	if ICourseSubInstance.providedBy(course):
+		parent = course.__parent__.__parent__
+
+	# get all catalog entries in the hierarchy
+	main_entries = map(lambda x: ICourseCatalogEntry(x, None),
+				  	   parent.SubInstances.values())
+	main_entries.append(main_entry)
+	
 	# check for dup enrollment
 	principal = IPrincipal(record.Principal, None)
 	user = Entity.get_entity(principal.id) if principal else None
@@ -230,7 +240,7 @@ def _auto_enroll_on_enrollment_added(record, event):
 			logger.warn("Course entry %s does not exists", name)
 			continue
 		# make sure avoid circles
-		if entry == main_entry:
+		if entry in main_entries:
 			continue
 		# check for deny open enrollment
 		course = ICourseInstance(entry)
