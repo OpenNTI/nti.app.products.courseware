@@ -39,6 +39,7 @@ from nti.contenttypes.courses.interfaces import ICourseCatalogEntry
 from nti.contenttypes.courses.interfaces import IContentCourseInstance
 from nti.contenttypes.courses.interfaces import IPrincipalEnrollments
 
+from nti.contenttypes.presentation.interfaces import INTISlide
 from nti.contenttypes.presentation.interfaces import IPresentationAsset
 from nti.contenttypes.presentation.interfaces import INTILessonOverview
 
@@ -226,6 +227,21 @@ def _catalog_entry_from_container_object(obj):
 			results.add(catalog_entry)
 	return results
 
+def _get_outline_target_objs( target_ntiid ):
+	target_obj = find_object_with_ntiid(target_ntiid)
+	if INTISlide.providedBy( target_obj ):
+		try:
+			# If we have slides embedded in videos, we need to
+			# use the root NTIVideo to find our outline.
+			slide_vid = find_object_with_ntiid( target_obj.slidevideoid )
+			video_obj = find_object_with_ntiid( slide_vid.video_ntiid )
+			if video_obj is not None:
+				target_obj = video_obj
+				target_ntiid = video_obj.ntiid
+		except AttributeError:
+			pass
+	return target_ntiid, target_obj
+
 def _get_outline_nodes(course, target_ntiid):
 	"""
 	For a course and target ntiid, look for the outline hierarchy
@@ -243,7 +259,7 @@ def _get_outline_nodes(course, target_ntiid):
 
 	# Get the containers for our object.
 	catalog = get_catalog()
-	target_obj = find_object_with_ntiid(target_ntiid)
+	target_ntiid, target_obj = _get_outline_target_objs( target_ntiid )
 	containers = set(catalog.get_containers(target_obj)) if catalog else set()
 
 	def _found_target(item):
