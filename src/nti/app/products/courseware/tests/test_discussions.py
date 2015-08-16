@@ -146,28 +146,30 @@ class TestDiscussions(ApplicationLayerTest):
 		# Path lookup, not enrolled so we get the catalog entry
 		# Forum -> (Course,Board)
 		path = '/dataserver2/LibraryPath?objectId=%s' % forum_ntiid
-		res = self.testapp.get( path )
+		res = self.testapp.get( path, status=403 )
 		res = res.json_body
 
+		res = res.get( 'Items' )
 		assert_that( res, has_length( 1 ))
 		res = res[0]
-		assert_that( res, has_length( 2 ))
-
-		assert_that( res[0], has_entry( 'Class', 'CourseCatalogLegacyEntry' ))
-		assert_that( res[1], has_entries( 'Class', 'CommunityBoard',
-										'title', 'Discussions' ))
+		assert_that( res, has_entry( 'Class', 'CourseCatalogLegacyEntry' ))
 
 		# Topic -> (Course,Board,Forum)
 		path = '/dataserver2/LibraryPath?objectId=%s' % discussion_ntiid
-		res = self.testapp.get( path )
+		res = self.testapp.get( path, status=403 )
 		res = res.json_body
 
+		res = res.get( 'Items' )
 		assert_that( res, has_length( 1 ))
 		res = res[0]
-		assert_that( res, has_length( 3 ))
+		assert_that( res, has_entry( 'Class', 'CourseCatalogLegacyEntry' ))
 
-		assert_that( res[0], has_entry( 'Class', 'CourseCatalogLegacyEntry' ))
-		assert_that( res[1], has_entries( 'Class', 'CommunityBoard',
-										'title', 'Discussions' ))
-		assert_that( res[2], has_entries( 'Class', 'CommunityForum',
-										'title', 'Open Discussions' ))
+# 		assert_that( res, has_length( 1 ))
+# 		res = res[0]
+# 		assert_that( res, has_length( 3 ))
+#
+# 		assert_that( res[0], has_entry( 'Class', 'CourseCatalogLegacyEntry' ))
+# 		assert_that( res[1], has_entries( 'Class', 'CommunityBoard',
+# 										'title', 'Discussions' ))
+# 		assert_that( res[2], has_entries( 'Class', 'CommunityForum',
+# 										'title', 'Open Discussions' ))
