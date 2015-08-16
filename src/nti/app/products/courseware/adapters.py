@@ -19,6 +19,7 @@ from pyramid import httpexceptions as hexc
 
 from nti.app.authentication import get_remote_user
 
+from nti.appserver.interfaces import ForbiddenContextException
 from nti.appserver.interfaces import IJoinableContextProvider
 from nti.appserver.interfaces import IHierarchicalContextProvider
 from nti.appserver.interfaces import ITopLevelContainerContextProvider
@@ -191,6 +192,9 @@ def _get_valid_course_context(course_contexts):
 	Validate course context access for remote_user, returning
 	catalog entries otherwise.
 	"""
+	if not course_contexts:
+		return ()
+
 	if 		ICourseCatalogEntry.providedBy(course_contexts) \
 		or 	ICourseInstance.providedBy(course_contexts):
 		course_contexts = (course_contexts,)
@@ -208,7 +212,20 @@ def _get_valid_course_context(course_contexts):
 				results.append(catalog_entry)
 		else:
 			results.append(course_context)
-	return results
+
+	# If we only have catalog entries, we should raise.
+	# Otherwise, make sure our courses are returned first.
+	courses = []
+	catalog_entries = []
+	for context in results:
+		if ICourseInstance.providedBy( context ):
+			courses.append( context )
+		else:
+			catalog_entries.append( context )
+	if not courses:
+		raise ForbiddenContextException( results )
+
+	return courses + catalog_entries
 
 @interface.implementer(IJoinableContextProvider)
 @component.adapter(interface.Interface)
