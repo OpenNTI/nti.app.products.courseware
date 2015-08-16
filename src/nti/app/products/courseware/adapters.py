@@ -235,13 +235,10 @@ def _catalog_entry_from_container_object(obj):
 	the given object.
 	"""
 	results = set()
-	courses = _get_top_level_contexts(obj)
-	for course in courses or ():
-		catalog_entry = ICourseCatalogEntry(course, None)
-
-		# We only want to add publicly available entries.
-		if catalog_entry is not None and is_readable(catalog_entry):
-			results.add(catalog_entry)
+	try:
+		_get_top_level_contexts(obj)
+	except ForbiddenContextException as e:
+		results = set( e.joinable_contexts )
 	return results
 
 def _get_outline_target_objs( target_ntiid ):

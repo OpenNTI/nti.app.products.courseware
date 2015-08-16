@@ -46,7 +46,7 @@ class TestJoinableContextProvider(ApplicationLayerTest):
 		mock_get_catalog.is_callable().returns(mock_catalog)
 		# Not sure why we need this.
 		mock_readable.is_callable().returns(True)
-		mock_enrolled.is_callable().returns(True)
+		mock_enrolled.is_callable().returns(False)
 
 		with mock_dataserver.mock_db_trans(self.ds, site_name='platform.ou.edu'):
 			obj = find_object_with_ntiid(containerId)
@@ -55,6 +55,7 @@ class TestJoinableContextProvider(ApplicationLayerTest):
 				results.extend(contexts)
 			assert_that(results, has_length(3))
 			results = []
+			mock_enrolled.is_callable().returns(True)
 			for contexts in component.subscribers((obj,), ITopLevelContainerContextProvider):
 				results.extend(contexts)
 			assert_that(results, has_length(3))
