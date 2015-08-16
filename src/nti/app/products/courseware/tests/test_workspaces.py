@@ -175,7 +175,7 @@ class _AbstractEnrollingBase(object):
 								extra_environ=jmadden_environ,
 								status=201 )
 
-		# The instructor cannot fetch the enrollment records directly at their usual
+		# The instructor can try to fetch the enrollment records directly at their usual
 		# location...
 		enrollment_href = self.expected_enrollment_href
 		self.testapp.get(enrollment_href, extra_environ=instructor_env)
