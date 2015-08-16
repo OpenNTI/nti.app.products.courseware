@@ -130,7 +130,7 @@ class _AbstractEnrollingBase(object):
 
 		with mock_dataserver.mock_db_trans(self.ds):
 			from nti.dataserver.users.interfaces import IFriendlyNamed
-			from nti.dataserver.users import User
+
 			steve = User.get_user('sjohnson@nextthought.com')
 			jason = User.get_user('aaa_nextthought_com')
 			IFriendlyNamed(steve).realname = 'Steve Johnson'
@@ -175,11 +175,11 @@ class _AbstractEnrollingBase(object):
 								extra_environ=jmadden_environ,
 								status=201 )
 
-		# The instructor can fetch the enrollment records directly at their usual
+		# The instructor cannot fetch the enrollment records directly at their usual
 		# location...
 		enrollment_href = self.expected_enrollment_href
 		self.testapp.get(enrollment_href, extra_environ=instructor_env)
-		# ...or at a location within the roster... (sometimes)
+		# ...but sometimes at a location within the roster...
 		if self.individual_roster_accessible_to_instructor:
 			res = self.testapp.get(roster_link + '/sjohnson@nextthought.com', extra_environ=instructor_env)
 			assert_that( res.json_body, has_entries('Class', 'CourseInstanceEnrollment',
@@ -421,7 +421,7 @@ class _AbstractEnrollingBase(object):
 class TestLegacyWorkspace(_AbstractEnrollingBase,
 						  ApplicationLayerTest):
 	layer = LegacyInstructedCourseApplicationTestLayer
-
+	individual_roster_accessible_to_instructor = False
 
 class TestPersistentWorkspaces(_AbstractEnrollingBase,
 							   ApplicationLayerTest):

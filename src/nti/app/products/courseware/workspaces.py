@@ -24,10 +24,6 @@ from zope.location.traversing import LocationPhysicallyLocatable
 from zope.securitypolicy.interfaces import Allow
 from zope.securitypolicy.interfaces import IPrincipalRoleMap
 
-from pyramid import httpexceptions as hexc
-
-from nti.app.authentication import get_remote_user
-
 from nti.appserver.workspaces.interfaces import IUserService
 from nti.appserver.workspaces.interfaces import IContainerCollection
 
@@ -213,9 +209,6 @@ class _AbstractQueryBasedCoursesCollection(Contained):
 	def __init__(self, parent):
 		self.__parent__ = parent
 
-	def _check_security(self):
-		pass
-
 	def _apply_user_extra_auth(self, enrollments):
 		parent = self.__parent__
 		if not self.user_extra_auth:
@@ -256,7 +249,6 @@ class _AbstractQueryBasedCoursesCollection(Contained):
 
 	@Lazy
 	def container(self):
-		self._check_security()
 		result = self._build_container()
 		return result
 
@@ -391,11 +383,6 @@ class EnrolledCoursesCollection(_AbstractQueryBasedCoursesCollection):
 	contained_interface = ICourseInstanceEnrollment
 
 	user_extra_auth = ACT_DELETE
-
-	def _check_security(self):
-		user = self.__parent__.user
-		if user != get_remote_user():
-			raise hexc.HTTPForbidden()
 
 	def _build_from_catalog(self):
 		user = self.__parent__.user

@@ -44,6 +44,10 @@
         permission="zope.View"
         role="nti.roles.course_instructor" />
 
+	<!-- ACLs -->
+	<adapter factory=".acl.EnrolledCoursesCollectionACLProvider" />
+	<adapter factory=".acl.AdministeredCoursesCollectionACLProvider" />
+	
 	<!-- I18N -->
 	<i18n:registerTranslations directory="locales" />
 
