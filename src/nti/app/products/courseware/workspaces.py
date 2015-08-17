@@ -415,12 +415,11 @@ class CourseInstanceAdministrativeRole(SchemaConfigured,
 		SchemaConfigured.__init__(self, RoleName=RoleName)
 		_AbstractInstanceWrapper.__init__(self, CourseInstance)
 
-@interface.implementer(IPrincipalAdministrativeRoleCatalog)
 @component.adapter(IUser)
+@interface.implementer(IPrincipalAdministrativeRoleCatalog)
 class _DefaultPrincipalAdministrativeRoleCatalog(object):
 	"""
-	This catalog simply scans all available courses and checks
-	to see if the user is in the instructors list.
+	This catalog checks all courses the user is in the instructors list.
 	"""
 
 	def __init__(self, user):
@@ -439,12 +438,12 @@ class _DefaultPrincipalAdministrativeRoleCatalog(object):
 				yield context
 
 	def iter_administrations(self):
-		for instance in self._iter_admin_courses():
-			roles = IPrincipalRoleMap(instance)
+		for course in self._iter_admin_courses():
+			roles = IPrincipalRoleMap(course)
 			role = 'teaching assistant'
 			if roles.getSetting(RID_INSTRUCTOR, self.user.id) is Allow:
 				role = 'instructor'
-			yield CourseInstanceAdministrativeRole(RoleName=role, CourseInstance=instance)
+			yield CourseInstanceAdministrativeRole(RoleName=role, CourseInstance=course)
 	iter_enrollments = iter_administrations  # for convenience
 
 	def count_administrations(self):
