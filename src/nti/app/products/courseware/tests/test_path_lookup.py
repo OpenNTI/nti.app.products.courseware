@@ -57,7 +57,6 @@ class TestPathLookup(ApplicationLayerTest):
 										'Title', '1. Defining Law and Justice'))
 
 	def _check_catalog(self, res):
-		assert_that(res, has_length(1))
 		items = res.get( 'Items' )
 		assert_that(items, has_length( 2 ))
 		assert_that(items[0], has_entry('Class', 'CourseCatalogLegacyEntry'))
