@@ -222,7 +222,7 @@ def _get_valid_course_context(course_contexts):
 			courses.append( context )
 		else:
 			catalog_entries.append( context )
-	if not courses:
+	if not courses and catalog_entries:
 		raise ForbiddenContextException( results )
 
 	return courses + catalog_entries
