@@ -435,30 +435,21 @@ class _DefaultPrincipalAdministrativeRoleCatalog(object):
 		query = {IX_COURSE:{'any_of':courses}, IX_USERNAME:{'any_of':(user.username,)}}
 		for uid in catalog.apply(query) or ():
 			context = intids.queryObject(uid)
-			if ICourseCatalogEntry.providedBy(context):
-				yield ICourseInstance(context)
-	
+			if ICourseInstance.providedBy(context):
+				yield context
+
 	def iter_administrations(self):
-		catalog = component.queryUtility(ICourseCatalog)
-		for entry in catalog.iterCatalogEntries():
-			instance = ICourseInstance(entry)
-			if self.user in instance.instructors:
-				roles = IPrincipalRoleMap(instance)
-				role = 'teaching assistant'
-				if roles.getSetting(RID_INSTRUCTOR, self.user.id) is Allow:
-					role = 'instructor'
-				yield CourseInstanceAdministrativeRole(RoleName=role,
-													   CourseInstance=instance)
+		for instance in self._iter_admin_courses():
+			roles = IPrincipalRoleMap(instance)
+			role = 'teaching assistant'
+			if roles.getSetting(RID_INSTRUCTOR, self.user.id) is Allow:
+				role = 'instructor'
+			yield CourseInstanceAdministrativeRole(RoleName=role, CourseInstance=instance)
 	iter_enrollments = iter_administrations  # for convenience
 
 	def count_administrations(self):
-		result = 0
-		catalog = component.queryUtility(ICourseCatalog)
-		for entry in catalog.iterCatalogEntries():
-			instance = ICourseInstance(entry)
-			if self.user in instance.instructors:
-				result += 1
-		return result
+		result = list(self._iter_admin_courses())
+		return len(result)
 
 	count_enrollments = count_administrations
 
