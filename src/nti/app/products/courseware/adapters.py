@@ -23,6 +23,7 @@ from nti.appserver.interfaces import ForbiddenContextException
 from nti.appserver.interfaces import IJoinableContextProvider
 from nti.appserver.interfaces import IHierarchicalContextProvider
 from nti.appserver.interfaces import ITopLevelContainerContextProvider
+from nti.appserver.interfaces import ILibraryPathLastModifiedProvider
 
 from nti.appserver.pyramid_authorization import is_readable
 
@@ -454,3 +455,14 @@ def _courses_from_obj_and_user(obj, user):
 @component.adapter(IPresentationAsset)
 def _courses_from_obj(obj):
 	return __courses_from_obj_and_user(obj)
+
+@interface.implementer(ILibraryPathLastModifiedProvider)
+@component.adapter(IUser)
+def _enrollment_last_modified( user ):
+	result = 0
+	# Could use index here.
+	for enrollments in component.subscribers((user,), IPrincipalEnrollments):
+			for record in enrollments.iter_enrollments():
+				enroll_last_mod = getattr( record, 'lastModified', 0 )
+				result = max( result, enroll_last_mod )
+	return result

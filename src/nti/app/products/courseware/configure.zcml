@@ -166,6 +166,11 @@
 				for="nti.dataserver.interfaces.IHighlight
 					nti.dataserver.interfaces.IUser"/>
 
+	<!-- Library path last mod -->
+	<subscriber factory=".adapters._enrollment_last_modified"
+				provides="nti.appserver.interfaces.ILibraryPathLastModifiedProvider"
+				for="nti.dataserver.interfaces.IUser"/>
+
 	<!-- Allow traversing to the 'LegacyCourses' key of communities -->
 	<adapter name="LegacyCourses"
 			 for="nti.dataserver.interfaces.ICommunity"
