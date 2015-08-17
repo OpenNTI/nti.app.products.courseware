@@ -20,6 +20,7 @@ from nti.contenttypes.courses.interfaces import ICourseInstance
 from nti.contenttypes.courses.interfaces import ICourseEnrollments
 from nti.contenttypes.courses.interfaces import ICourseCatalogEntry
 from nti.contenttypes.courses.interfaces import IPrincipalEnrollments
+
 from nti.contenttypes.courses.interfaces import ENROLLMENT_SCOPE_VOCABULARY
 from nti.contenttypes.courses.interfaces import ES_CREDIT, ES_CREDIT_NONDEGREE
 from nti.contenttypes.courses.interfaces import ES_PURCHASED, ES_CREDIT_DEGREE, ES_PUBLIC
@@ -101,11 +102,11 @@ class ClassmatesSuggestedContactsProvider(SuggestedContactsProvider):
 							yield course
 
 	def iter_courses(self, user, source_user=None):
-		results = self._get_courses( user )
+		results = self._get_courses(user)
 		if source_user is not None and user != source_user:
-			user_courses = set( results )
-			source_courses = set( self._get_courses( source_user ))
-			results = user_courses.intersection( source_courses )
+			user_courses = set(results)
+			source_courses = set(self._get_courses(source_user))
+			results = user_courses.intersection(source_courses)
 		return results
 
 	def suggestions_by_course(self, user, context):
@@ -121,7 +122,7 @@ class ClassmatesSuggestedContactsProvider(SuggestedContactsProvider):
 
 		result = []
 		course = ICourseInstance(context)
-		entry = ICourseCatalogEntry(context, None) # seen in alpha
+		entry = ICourseCatalogEntry(context, None)  # seen in alpha
 
 		for record in ICourseEnrollments(course).iter_enrollments():
 			if record.Scope in implies:
