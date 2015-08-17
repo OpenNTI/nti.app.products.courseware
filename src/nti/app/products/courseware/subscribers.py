@@ -34,6 +34,7 @@ from nti.appserver.policies.interfaces import ISitePolicyUserEventListener
 
 from nti.contenttypes.courses.interfaces import ES_PUBLIC
 from nti.contenttypes.courses.interfaces import ICourseInstance
+from nti.contenttypes.courses.interfaces import ICourseEnrollments
 from nti.contenttypes.courses.interfaces import ICourseSubInstance
 from nti.contenttypes.courses.interfaces import ICourseCatalogEntry
 from nti.contenttypes.courses.interfaces import IDenyOpenEnrollment
@@ -247,7 +248,8 @@ def _auto_enroll_on_enrollment_added(record, event):
 		if IDenyOpenEnrollment.providedBy(course) and record.Scope == ES_PUBLIC:
 			continue
 		# ready to enroll
-		manager = ICourseEnrollmentManager(course)
-		enrollment = manager.get_enrollment_for_principal(user)
+		enrollments = ICourseEnrollments(course)
+		enrollment = enrollments.get_enrollment_for_principal(user)
 		if enrollment is None:
+			manager = ICourseEnrollmentManager(course)
 			manager.enroll(user, scope=record.Scope)
