@@ -7,7 +7,6 @@ Implementation of an Atom/OData workspace and collection for courses.
 """
 
 from __future__ import print_function, unicode_literals, absolute_import, division
-
 __docformat__ = "restructuredtext en"
 
 logger = __import__('logging').getLogger(__name__)
@@ -392,8 +391,7 @@ class EnrolledCoursesCollection(_AbstractQueryBasedCoursesCollection):
 
 		catalog = get_enrollment_catalog()
 		result = LastModifiedCopyingUserList()
-		query = {IX_COURSE:{'any_of':courses},
-				 IX_USERNAME:{'any_of':(user.username,)}}
+		query = {IX_COURSE:{'any_of':courses}, IX_USERNAME:{'any_of':(user.username,)}}
 		for uid in catalog.apply(query) or ():
 			context = intids.queryObject(uid)
 			if ICourseInstanceEnrollmentRecord.providedBy(context):
@@ -428,6 +426,18 @@ class _DefaultPrincipalAdministrativeRoleCatalog(object):
 	def __init__(self, user):
 		self.user = user
 
+	def _iter_admin_courses(self):
+		user = self.user
+		intids = component.getUtility(IIntIds)
+		catalog = component.getUtility(ICourseCatalog)
+		courses = [x.ntiid for x in catalog.iterCatalogEntries()]
+		catalog = get_enrollment_catalog()
+		query = {IX_COURSE:{'any_of':courses}, IX_USERNAME:{'any_of':(user.username,)}}
+		for uid in catalog.apply(query) or ():
+			context = intids.queryObject(uid)
+			if ICourseCatalogEntry.providedBy(context):
+				yield ICourseInstance(context)
+	
 	def iter_administrations(self):
 		catalog = component.queryUtility(ICourseCatalog)
 		for entry in catalog.iterCatalogEntries():
