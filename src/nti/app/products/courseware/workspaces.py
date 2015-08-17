@@ -415,11 +415,12 @@ class CourseInstanceAdministrativeRole(SchemaConfigured,
 		SchemaConfigured.__init__(self, RoleName=RoleName)
 		_AbstractInstanceWrapper.__init__(self, CourseInstance)
 
-@component.adapter(IUser)
 @interface.implementer(IPrincipalAdministrativeRoleCatalog)
+@component.adapter(IUser)
 class _DefaultPrincipalAdministrativeRoleCatalog(object):
 	"""
-	This catalog checks all courses the user is in the instructors list.
+	This catalog simply scans all available courses and checks
+	to see if the user is in the instructors list.
 	"""
 
 	def __init__(self, user):
@@ -434,21 +435,30 @@ class _DefaultPrincipalAdministrativeRoleCatalog(object):
 		query = {IX_COURSE:{'any_of':courses}, IX_USERNAME:{'any_of':(user.username,)}}
 		for uid in catalog.apply(query) or ():
 			context = intids.queryObject(uid)
-			if ICourseInstance.providedBy(context):
-				yield context
-
+			if ICourseCatalogEntry.providedBy(context):
+				yield ICourseInstance(context)
+	
 	def iter_administrations(self):
-		for course in self._iter_admin_courses():
-			roles = IPrincipalRoleMap(course)
-			role = 'teaching assistant'
-			if roles.getSetting(RID_INSTRUCTOR, self.user.id) is Allow:
-				role = 'instructor'
-			yield CourseInstanceAdministrativeRole(RoleName=role, CourseInstance=course)
+		catalog = component.queryUtility(ICourseCatalog)
+		for entry in catalog.iterCatalogEntries():
+			instance = ICourseInstance(entry)
+			if self.user in instance.instructors:
+				roles = IPrincipalRoleMap(instance)
+				role = 'teaching assistant'
+				if roles.getSetting(RID_INSTRUCTOR, self.user.id) is Allow:
+					role = 'instructor'
+				yield CourseInstanceAdministrativeRole(RoleName=role,
+													   CourseInstance=instance)
 	iter_enrollments = iter_administrations  # for convenience
 
 	def count_administrations(self):
-		result = list(self._iter_admin_courses())
-		return len(result)
+		result = 0
+		catalog = component.queryUtility(ICourseCatalog)
+		for entry in catalog.iterCatalogEntries():
+			instance = ICourseInstance(entry)
+			if self.user in instance.instructors:
+				result += 1
+		return result
 
 	count_enrollments = count_administrations
 
