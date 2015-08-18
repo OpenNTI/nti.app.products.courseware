@@ -29,11 +29,13 @@ from nti.appserver.workspaces.interfaces import IContainerCollection
 from nti.common.property import Lazy
 from nti.common.property import alias
 
+from nti.contenttypes.courses.index import IX_SCOPE
 from nti.contenttypes.courses.index import IX_COURSE
 from nti.contenttypes.courses.index import IX_USERNAME
 from nti.contenttypes.courses import get_enrollment_catalog
 
 from nti.contenttypes.courses.interfaces import ES_CREDIT
+from nti.contenttypes.courses.interfaces import INSTRUCTOR
 from nti.contenttypes.courses.interfaces import RID_INSTRUCTOR
 from nti.contenttypes.courses.interfaces import ES_CREDIT_DEGREE
 from nti.contenttypes.courses.interfaces import ES_CREDIT_NONDEGREE
@@ -431,7 +433,11 @@ class _DefaultPrincipalAdministrativeRoleCatalog(object):
 		catalog = component.getUtility(ICourseCatalog)
 		courses = [x.ntiid for x in catalog.iterCatalogEntries()]
 		catalog = get_enrollment_catalog()
-		query = {IX_COURSE:{'any_of':courses}, IX_USERNAME:{'any_of':(user.username,)}}
+		query = {
+					IX_COURSE:{'any_of':courses},
+				 	IX_SCOPE: {'any_of':(INSTRUCTOR,)},
+				 	IX_USERNAME:{'any_of':(user.username,)},
+				}
 		for uid in catalog.apply(query) or ():
 			context = intids.queryObject(uid)
 			if ICourseInstance.providedBy(context):
