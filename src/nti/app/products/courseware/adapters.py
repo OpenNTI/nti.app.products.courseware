@@ -196,8 +196,7 @@ def _get_valid_course_context(course_contexts):
 	if not course_contexts:
 		return ()
 
-	if 		ICourseCatalogEntry.providedBy(course_contexts) \
-		or 	ICourseInstance.providedBy(course_contexts):
+	if ICourseInstance.providedBy(course_contexts):
 		course_contexts = (course_contexts,)
 
 	user = get_remote_user()
@@ -257,19 +256,18 @@ def _get_outline_target_objs( target_ntiid ):
 			pass
 	return target_ntiid, target_obj
 
-def _get_outline_nodes(course, target_ntiid):
+def _get_outline_nodes(course_context, target_ntiid):
 	"""
 	For a course and target ntiid, look for the outline hierarchy
-	used to get to the target ntiid.
+	used to get to the target ntiid.  We assume the
+	course we have here is permissioned.
 	"""
-	# Make sure we're permissioned on course
-	course_contexts = _get_valid_course_context(course)
-	if not course_contexts:
+	if course_context is None:
 		return
-	course_context = course_contexts[0]
 
 	# This does not work with legacy courses.
-	if not target_ntiid or getattr(course, 'Outline', None) is None:
+	if 		not target_ntiid \
+		or 	getattr(course_context, 'Outline', None) is None:
 		return (course_context,)
 
 	# Get the containers for our object.
@@ -303,11 +301,11 @@ def _get_outline_nodes(course, target_ntiid):
 						pass
 		return result
 
-	outline = course.Outline
+	outline = course_context.Outline
 	for outline_node in outline.values():
 		for outline_content_node in outline_node.values():
 			if outline_content_node.ContentNTIID == target_ntiid:
-				return (course, outline_content_node)
+				return (course_context, outline_content_node)
 			lesson_ntiid = getattr(outline_content_node, 'LessonOverviewNTIID', None)
 			if not lesson_ntiid:
 				continue
@@ -339,6 +337,7 @@ def _get_target_ntiid(obj):
 @component.adapter(ICourseInstance, interface.Interface)
 def _hierarchy_from_obj_and_course(course, obj):
 	target_ntiid = _get_target_ntiid(obj)
+	course = _get_valid_course_context( course )[0]
 	return _get_outline_nodes(course, target_ntiid)
 
 def _get_courses_from_container(obj, user=None):
