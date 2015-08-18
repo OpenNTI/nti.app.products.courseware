@@ -12,9 +12,11 @@ __docformat__ = "restructuredtext en"
 logger = __import__('logging').getLogger(__name__)
 
 import csv
-import isodate
+import time
 from io import BytesIO
 from datetime import datetime
+
+import isodate
 
 from zope import component
 
@@ -247,6 +249,7 @@ class UserCourseEnrollmentsView(AbstractAuthenticatedView):
 		result = LocatedExternalDict()
 		items = result[ITEMS] = []
 
+		now = time.time()
 		intids = component.getUtility(IIntIds)
 		catalog = component.getUtility(ICourseCatalog)
 		courses = [x.ntiid for x in catalog.iterCatalogEntries()]
@@ -259,19 +262,17 @@ class UserCourseEnrollmentsView(AbstractAuthenticatedView):
 			if ICourseInstanceEnrollmentRecord.providedBy(context):
 				items.append(context)
 			# check for instructor role
-			elif ICourseCatalogEntry.providedBy(context) or \
-				 ICourseInstance.providedBy(context):
-				
-				instance = ICourseInstance(context)
-				roles = IPrincipalRoleMap(instance)
+			elif ICourseInstance.providedBy(context):
+				roles = IPrincipalRoleMap(context)
 				role = 'teaching assistant'
 				if roles.getSetting(RID_INSTRUCTOR, user.id) is Allow:
 					role = 'instructor'
 				context = CourseInstanceAdministrativeRole(RoleName=role,
-													       CourseInstance=instance )
+													       CourseInstance=context)
 				items.append(context)
 
 		result['Total'] = len(items)
+		result['TimeElapsed'] = time.time() - now()
 		return result
 
 @view_config(name='CourseEnrollmentMigrator')
