@@ -51,6 +51,7 @@ from nti.dataserver.interfaces import ACE_ACT_ALLOW
 from nti.dataserver.interfaces import ALL_PERMISSIONS
 
 from nti.dataserver.authorization import ACT_READ
+from nti.dataserver.authorization import ROLE_ADMIN
 from nti.dataserver.authorization_acl import ace_allowing
 from nti.dataserver.authorization_acl import acl_from_aces
 
@@ -180,7 +181,8 @@ def get_acl(course, *entities):
 	# Our instance instructors get all permissions.
 	instructors = [i for i in course.instructors or ()]
 	aces = [ace_allowing(i, ALL_PERMISSIONS) for i in instructors]
-
+	aces.append(ace_allowing(ROLE_ADMIN, ALL_PERMISSIONS))
+	
 	# specifed entities (e.g. students) get read permission
 	entities = {IPrincipal(Entity.get_entity(e), None) for e in entities or ()}
 	entities.discard(None)
