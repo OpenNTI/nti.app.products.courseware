@@ -63,16 +63,16 @@ from .interfaces import ICourseInstanceAdministrativeRole
 from .interfaces import IPrincipalAdministrativeRoleCatalog
 
 @interface.implementer(ICoursesWorkspace)
-class _CoursesWorkspace(Contained):
+class UserCourseWorkspace(Contained):
 
 	# : Our name, part of our URL
 	__name__ = 'Courses'
 	name = alias('__name__', __name__)
 
 	def __init__(self, user_service, catalog):
+		self.catalog = catalog
 		self.context = user_service
 		self.user = user_service.user
-		self.catalog = catalog
 
 	@Lazy
 	def collections(self):
@@ -95,9 +95,10 @@ class _CoursesWorkspace(Contained):
 
 	def __len__(self):
 		return len(self.collections)
+_CoursesWorkspace = UserCourseWorkspace
 
-@interface.implementer(ICoursesWorkspace)
 @component.adapter(IUserService)
+@interface.implementer(ICoursesWorkspace)
 def CoursesWorkspace(user_service):
 	"""
 	The courses for a user reside at the path ``/users/$ME/Courses``.
