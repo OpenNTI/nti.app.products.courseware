@@ -29,13 +29,11 @@ from nti.appserver.workspaces.interfaces import IContainerCollection
 from nti.common.property import Lazy
 from nti.common.property import alias
 
-from nti.contenttypes.courses.index import IX_SCOPE
 from nti.contenttypes.courses.index import IX_COURSE
 from nti.contenttypes.courses.index import IX_USERNAME
 from nti.contenttypes.courses import get_enrollment_catalog
 
 from nti.contenttypes.courses.interfaces import ES_CREDIT
-from nti.contenttypes.courses.interfaces import INSTRUCTOR
 from nti.contenttypes.courses.interfaces import RID_INSTRUCTOR
 from nti.contenttypes.courses.interfaces import ES_CREDIT_DEGREE
 from nti.contenttypes.courses.interfaces import ES_CREDIT_NONDEGREE
@@ -55,6 +53,7 @@ from nti.schema.field import SchemaConfigured
 from nti.schema.fieldproperty import createDirectFieldProperties
 
 from .interfaces import ICoursesWorkspace
+from .interfaces import IUserAdministeredCourses
 from .interfaces import ICourseInstanceEnrollment
 from .interfaces import IEnrolledCoursesCollection
 from .interfaces import IAdministeredCoursesCollection
@@ -429,20 +428,9 @@ class _DefaultPrincipalAdministrativeRoleCatalog(object):
 		self.user = user
 
 	def _iter_admin_courses(self):
-		user = self.user
-		intids = component.getUtility(IIntIds)
-		catalog = component.getUtility(ICourseCatalog)
-		courses = [x.ntiid for x in catalog.iterCatalogEntries()]
-		catalog = get_enrollment_catalog()
-		query = {
-					IX_COURSE:{'any_of':courses},
-				 	IX_SCOPE: {'any_of':(INSTRUCTOR,)},
-				 	IX_USERNAME:{'any_of':(user.username,)},
-				}
-		for uid in catalog.apply(query) or ():
-			context = intids.queryObject(uid)
-			if ICourseInstance.providedBy(context):
-				yield context
+		util = component.getUtility(IUserAdministeredCourses)
+		for context in util.iter_admin(self.user):
+			yield context
 
 	def iter_administrations(self):
 		for course in self._iter_admin_courses():

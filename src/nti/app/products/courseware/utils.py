@@ -14,8 +14,11 @@ from itertools import chain
 from datetime import datetime
 
 from zope import component
+from zope import interface
 
 from zope.component.interfaces import ComponentLookupError
+
+from zope.intid import IIntIds
 
 from zope.security.interfaces import IPrincipal
 
@@ -24,8 +27,15 @@ from zope.securitypolicy.interfaces import IPrincipalRoleMap
 
 from zope.traversing.api import traverse
 
+from nti.contenttypes.courses import get_enrollment_catalog
+
+from nti.contenttypes.courses.index import IX_SCOPE
+from nti.contenttypes.courses.index import IX_COURSE
+from nti.contenttypes.courses.index import IX_USERNAME
+
 from nti.contenttypes.courses.interfaces import RID_TA
 from nti.contenttypes.courses.interfaces import ES_PUBLIC
+from nti.contenttypes.courses.interfaces import INSTRUCTOR
 from nti.contenttypes.courses.interfaces import RID_INSTRUCTOR
 
 from nti.contenttypes.courses import get_course_vendor_info
@@ -38,6 +48,8 @@ from nti.contenttypes.courses.interfaces import IPrincipalEnrollments
 from nti.contenttypes.courses.interfaces import ICourseEnrollmentManager
 
 from .enrollment import EnrollmentOptions
+
+from .interfaces import IUserAdministeredCourses
 from .interfaces import IEnrollmentOptionProvider
 
 ZERO_DATETIME = datetime.utcfromtimestamp(0)
@@ -183,3 +195,33 @@ def get_enrollment_courses(context):
 	if result and isinstance(result, six.string_types):
 		result = [result,]
 	return result
+
+@interface.implementer(IUserAdministeredCourses)
+class IndexAdminCourses(object):
+	
+	def iter_admin(self, user):
+		intids = component.getUtility(IIntIds)
+		catalog = component.getUtility(ICourseCatalog)
+		courses = [x.ntiid for x in catalog.iterCatalogEntries()]
+		catalog = get_enrollment_catalog()
+		username = getattr(user, 'username', user)
+		query = {
+			IX_COURSE:{'any_of':courses},
+			IX_SCOPE: {'any_of':(INSTRUCTOR,)},
+			IX_USERNAME:{'any_of':(username,)},
+		}
+		for uid in catalog.apply(query) or ():
+			context = intids.queryObject(uid)
+			if ICourseInstance.providedBy(context):
+				yield context
+
+@interface.implementer(IUserAdministeredCourses)
+class IterableAdminCourses(object):
+	
+	def iter_admin(self, user):
+		principal = IPrincipal(user)
+		catalog = component.getUtility(ICourseCatalog)
+		for entry in catalog.iterCatalogEntries():
+			instance = ICourseInstance(entry)
+			if principal in instance.instructors:
+				yield instance

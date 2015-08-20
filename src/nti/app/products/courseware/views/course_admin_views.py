@@ -272,7 +272,7 @@ class UserCourseEnrollmentsView(AbstractAuthenticatedView):
 				items.append(context)
 
 		result['Total'] = len(items)
-		result['TimeElapsed'] = time.time() - now()
+		result['TimeElapsed'] = time.time() - now
 		return result
 
 @view_config(name='CourseEnrollmentMigrator')

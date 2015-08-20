@@ -351,6 +351,19 @@ def get_course_publishable_vendor_info(context):
 		result.update(info or {})
 	return result
 
+# utils
+
+class IUserAdministeredCourses(interface.Interface):
+	
+	"""
+	Marker for a callable utility that return the administered courses of a user
+	"""
+	
+	def iter_admin(user):
+		"""
+		return an interable with the users administered courses
+		"""
+
 # deprecations
 
 import zope.deferredimport

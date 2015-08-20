@@ -210,6 +210,13 @@
 	<subscriber factory=".notables._UserPriorityCreatorNotableProvider"
 				provides="nti.app.notabledata.interfaces.IUserPriorityCreatorNotableProvider"/>
 
+	<configure zcml:condition="not-have testmode">
+		<utility factory=".utils.IndexAdminCourses" />
+	</configure>	
+	<configure zcml:condition="have testmode">
+		<utility factory=".utils.IterableAdminCourses" />
+	</configure>
+
 	<!-- Traversal paths -->
 	<!-- This may go away -->
 	<adapter factory=".workspaces.CatalogEntryLocationInfo" />
