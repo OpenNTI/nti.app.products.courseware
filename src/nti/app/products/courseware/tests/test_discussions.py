@@ -139,37 +139,3 @@ class TestDiscussions(ApplicationLayerTest):
 
 			f4ds = get_forums_for_discussion(discussion, course)
 			assert_that(f4ds, has_length(2))
-			forum = f4ds.get( 'Open_Discussions' )
-			discussion_ntiid = tuple(forum.values())[0].NTIID
-			forum_ntiid = forum.NTIID
-
-		# Path lookup, not enrolled so we get the catalog entry
-		# Forum -> (Course,Board)
-		path = '/dataserver2/LibraryPath?objectId=%s' % forum_ntiid
-		res = self.testapp.get( path, status=403 )
-		res = res.json_body
-
-		res = res.get( 'Items' )
-		assert_that( res, has_length( 1 ))
-		res = res[0]
-		assert_that( res, has_entry( 'Class', 'CourseCatalogLegacyEntry' ))
-
-		# Topic -> (Course,Board,Forum)
-		path = '/dataserver2/LibraryPath?objectId=%s' % discussion_ntiid
-		res = self.testapp.get( path, status=403 )
-		res = res.json_body
-
-		res = res.get( 'Items' )
-		assert_that( res, has_length( 1 ))
-		res = res[0]
-		assert_that( res, has_entry( 'Class', 'CourseCatalogLegacyEntry' ))
-
-# 		assert_that( res, has_length( 1 ))
-# 		res = res[0]
-# 		assert_that( res, has_length( 3 ))
-#
-# 		assert_that( res[0], has_entry( 'Class', 'CourseCatalogLegacyEntry' ))
-# 		assert_that( res[1], has_entries( 'Class', 'CommunityBoard',
-# 										'title', 'Discussions' ))
-# 		assert_that( res[2], has_entries( 'Class', 'CommunityForum',
-# 										'title', 'Open Discussions' ))
