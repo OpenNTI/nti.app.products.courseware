@@ -42,6 +42,7 @@ from nti.contenttypes.courses.interfaces import IContentCourseInstance
 from nti.contenttypes.courses.interfaces import IPrincipalEnrollments
 
 from nti.contenttypes.presentation.interfaces import INTISlide
+from nti.contenttypes.presentation.interfaces import INTISlideDeck
 from nti.contenttypes.presentation.interfaces import IPresentationAsset
 from nti.contenttypes.presentation.interfaces import INTILessonOverview
 
@@ -242,19 +243,45 @@ def _catalog_entry_from_container_object(obj):
 	return results
 
 def _get_outline_target_objs( target_ntiid ):
+	"""
+	Returns the target ntiid/obj to search for in outline.
+	"""
 	target_obj = find_object_with_ntiid(target_ntiid)
-	if INTISlide.providedBy( target_obj ):
+	# Shouldnt we be able to find slidedeck in objects?
+	if 		INTISlide.providedBy( target_obj ) \
+		or 	INTISlideDeck.providedBy( target_obj ):
+
 		try:
+			if INTISlideDeck.providedBy( target_obj ):
+				# Arbitrary?
+				slide_vid = target_obj.videos[0]
+			else:
+				slide_vid = find_object_with_ntiid( target_obj.slidevideoid )
+
 			# If we have slides embedded in videos, we need to
 			# use the root NTIVideo to find our outline.
-			slide_vid = find_object_with_ntiid( target_obj.slidevideoid )
 			video_obj = find_object_with_ntiid( slide_vid.video_ntiid )
 			if video_obj is not None:
 				target_obj = video_obj
 				target_ntiid = video_obj.ntiid
-		except AttributeError:
+		except (AttributeError,IndexError):
 			pass
 	return target_ntiid, target_obj
+
+def _get_outline_result_items( target_ntiid, item ):
+	"""
+	Returns the outline endpoint.  For slides/decks we want to return
+	those instead of video they live on.
+	"""
+	original_obj = find_object_with_ntiid(target_ntiid)
+	if INTISlide.providedBy( original_obj ):
+		deck = find_object_with_ntiid( original_obj.slidedeckid )
+		results = (deck,original_obj,)
+	elif INTISlideDeck.providedBy( original_obj ):
+		results = (original_obj,)
+	else:
+		results = (item,)
+	return results
 
 def _get_outline_nodes(course_context, target_ntiid):
 	"""
@@ -272,6 +299,7 @@ def _get_outline_nodes(course_context, target_ntiid):
 
 	# Get the containers for our object.
 	catalog = get_catalog()
+	original_target_ntiid = target_ntiid
 	target_ntiid, target_obj = _get_outline_target_objs( target_ntiid )
 	containers = set(catalog.get_containers(target_obj)) if catalog else set()
 
@@ -316,8 +344,11 @@ def _get_outline_nodes(course_context, target_ntiid):
 			for overview_group in lesson_overview.items:
 				for item in overview_group.items:
 					if _found_target(item):
+						endpoints = _get_outline_result_items( original_target_ntiid, item )
 						# Return our course, leaf outline node, and overview.
-						return (course_context, outline_content_node, item)
+						results = [course_context, outline_content_node]
+						results.extend( endpoints )
+						return results
 	return (course_context,)
 
 def _get_target_ntiid(obj):
