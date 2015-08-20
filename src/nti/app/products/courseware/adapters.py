@@ -270,7 +270,7 @@ def _get_outline_target_objs( target_ntiid ):
 
 def _get_outline_result_items( target_ntiid, item ):
 	"""
-	Returns the outline endpoint.  For slides/decks we want to return
+	Returns the outline endpoints.  For slides/decks we want to return
 	those instead of video they live on.
 	"""
 	original_obj = find_object_with_ntiid(target_ntiid)
