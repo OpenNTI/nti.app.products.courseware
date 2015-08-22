@@ -12,6 +12,7 @@ __docformat__ = "restructuredtext en"
 logger = __import__('logging').getLogger(__name__)
 
 import csv
+import six
 import time
 from io import BytesIO
 from datetime import datetime
@@ -104,28 +105,40 @@ def _parse_user(values):
 
 	return username, user
 
-def _parse_course(values):
+def _parse_courses(values):
 	# get validate course entry
-	ntiid = values.get('ntiid') or \
-			values.get('entry') or \
-			values.get('course')
-	if not ntiid:
+	ntiids = values.get('ntiid') or values.get('ntiids') or \
+			 values.get('entry') or values.get('entries') or \
+			 values.get('course') or values.get('courses') 
+	if not ntiids:
 		raise hexc.HTTPUnprocessableEntity(detail='No course entry identifier')
 
-	context = find_object_with_ntiid(ntiid)
-	if context is None:
-		try:
-			catalog = component.getUtility(ICourseCatalog)
-			context = catalog.getCatalogEntry(ntiid)
-		except LookupError:
-			raise hexc.HTTPUnprocessableEntity(detail='Catalog not found')
-		except KeyError:
-			context = None
+	if isinstance(ntiids, six.string_types):
+		ntiids = ntiids.split()
+		
+	result = []
+	for ntiid in ntiids:
+		context = find_object_with_ntiid(ntiid)
+		if context is None:
+			try:
+				catalog = component.getUtility(ICourseCatalog)
+				context = catalog.getCatalogEntry(ntiid)
+			except LookupError:
+				raise hexc.HTTPUnprocessableEntity(detail='Catalog not found')
+			except KeyError:
+				context = None
+		else:
+			context = ICourseCatalogEntry(context, None)
 
-	if context is None:
+		if context is not None:
+			result.append(context)
+	return result
+
+def _parse_course(values):
+	result = _parse_courses(values)
+	if not result:
 		raise hexc.HTTPUnprocessableEntity(detail='Course not found')
-
-	return context
+	return result[0]
 
 class AbstractCourseEnrollView(AbstractAuthenticatedView,
 							   ModeledContentUploadRequestUtilsMixin):
@@ -609,3 +622,54 @@ class CourseCatalogEntryDiscussionsView(CourseDiscussionsView):
 
 	def _course(self):
 		return ICourseInstance(self.request.context, None)
+
+from nti.contenttypes.courses.interfaces import ICourseInstancePublicScopedForum
+from nti.contenttypes.courses.interfaces import ICourseInstanceForCreditScopedForum
+
+from ..discussions import get_topic_key
+
+@view_config(name='DropCourseDiscussions')
+@view_defaults(route_name='objects.generic.traversal',
+			   renderer='rest',
+			   request_method='POST',
+			   context=CourseAdminPathAdapter,
+			   permission=nauth.ACT_NTI_ADMIN)
+class DropCourseDiscussionsView(AbstractAuthenticatedView,
+								ModeledContentUploadRequestUtilsMixin):
+
+	def readInput(self, value=None):
+		values =  ModeledContentUploadRequestUtilsMixin.readInput(self, value=value)
+		return CaseInsensitiveDict(values)
+	
+	def __call__(self):
+		values = self.readInput()
+		courses = _parse_courses(values)
+		if not courses:
+			raise hexc.HTTPUnprocessableEntity(detail='Please specify a valid course')
+		
+		result = LocatedExternalDict()
+		items = result[ITEMS] = {}
+		for course in courses:
+			course = ICourseInstance(course, None)
+			entry = ICourseCatalogEntry(course, None)
+			if course is None or entry is None:
+				continue
+
+			data = items[entry.ntiid] = {}
+			course_discs = ICourseDiscussions(course, None) or {}
+			course_discs = {get_topic_key(d) for d in course_discs.values()}
+			if not course_discs:
+				continue
+
+			discussions = course.Discussions
+			for forum in discussions.values():
+				if 	not ICourseInstancePublicScopedForum.providedBy(forum) and \
+					not ICourseInstanceForCreditScopedForum.providedBy(forum):
+					continue
+				
+				for key in course_discs:
+					if key in forum:
+						del forum[key]
+						data.setdefault(forum.__name__, [])
+						data[forum.__name__].append(key)
+		return result
