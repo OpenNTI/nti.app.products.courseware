@@ -631,15 +631,17 @@ from ..discussions import get_topic_key
 @view_config(name='DropCourseDiscussions')
 @view_defaults(route_name='objects.generic.traversal',
 			   renderer='rest',
-			   request_method='POST',
 			   context=CourseAdminPathAdapter,
 			   permission=nauth.ACT_NTI_ADMIN)
-class DropCourseDiscussionsView(AbstractAuthenticatedView,
-								ModeledContentUploadRequestUtilsMixin):
+class DropCourseDiscussionsView(AbstractAuthenticatedView):
 
-	def readInput(self, value=None):
-		values =  ModeledContentUploadRequestUtilsMixin.readInput(self, value=value)
-		return CaseInsensitiveDict(values)
+	def readInput(self):
+		if self.request.body:
+			values = read_body_as_external_object(self.request)
+		else:
+			values = self.request.params
+		result = CaseInsensitiveDict(values)
+		return result
 	
 	def __call__(self):
 		values = self.readInput()
