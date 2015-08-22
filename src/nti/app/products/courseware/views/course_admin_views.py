@@ -42,7 +42,7 @@ from nti.appserver.workspaces.interfaces import IUserService
 from nti.common.property import Lazy
 from nti.common.maps import CaseInsensitiveDict
 
-from nti.contenttypes.courses.index import IX_COURSE
+from nti.contenttypes.courses.index import IX_SITE
 from nti.contenttypes.courses.index import IX_USERNAME
 from nti.contenttypes.courses.interfaces import RID_INSTRUCTOR
 from nti.contenttypes.courses.interfaces import ENROLLMENT_SCOPE_VOCABULARY
@@ -69,6 +69,8 @@ from nti.externalization.interfaces import LocatedExternalDict
 from nti.externalization.interfaces import StandardExternalFields
 
 from nti.ntiids.ntiids import find_object_with_ntiid
+
+from nti.site.site import get_component_hierarchy_names
 
 from ..utils import drop_any_other_enrollments
 from ..utils import is_instructor_in_hierarchy
@@ -250,13 +252,13 @@ class UserCourseEnrollmentsView(AbstractAuthenticatedView):
 		items = result[ITEMS] = []
 
 		now = time.time()
-		intids = component.getUtility(IIntIds)
-		catalog = component.getUtility(ICourseCatalog)
-		courses = [x.ntiid for x in catalog.iterCatalogEntries()]
-
 		catalog = get_enrollment_catalog()
-		query = {IX_COURSE:{'any_of':courses},
-				 IX_USERNAME:{'any_of':(user.username,)}}
+		intids = component.getUtility(IIntIds)
+		site_names = get_component_hierarchy_names()
+		query = {
+			IX_SITE:{'any_of': site_names},
+			IX_USERNAME:{'any_of':(user.username,)}
+		}
 		for uid in catalog.apply(query) or ():
 			context = intids.queryObject(uid)
 			if ICourseInstanceEnrollmentRecord.providedBy(context):
