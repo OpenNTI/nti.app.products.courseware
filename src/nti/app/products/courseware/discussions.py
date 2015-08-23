@@ -27,6 +27,7 @@ from nti.contenttypes.courses.interfaces import IN_CLASS
 from nti.contenttypes.courses.interfaces import ES_CREDIT
 from nti.contenttypes.courses.interfaces import ES_PUBLIC
 from nti.contenttypes.courses.interfaces import IN_CLASS_PREFIX
+from nti.contenttypes.courses.interfaces import ENROLLMENT_SCOPE_VOCABULARY
 
 from nti.contenttypes.courses.interfaces import ICourseInstance
 from nti.contenttypes.courses.interfaces import ICourseCatalogEntry
@@ -75,7 +76,7 @@ from .utils import get_vendor_info
 NTI_FORUMS_PUBLIC = (OPEN, OPEN, ES_PUBLIC, ICourseInstancePublicScopedForum)
 NTI_FORUMS_FORCREDIT = (IN_CLASS, IN_CLASS_PREFIX, ES_CREDIT, ICourseInstanceForCreditScopedForum)
 
-CourseForum = namedtuple('Forum', 'name scope display_name interface')
+CourseForum = namedtuple('Forum', 'name scope implies display_name interface')
 
 def get_forum_types(context):
 	info = get_vendor_info(context)
@@ -85,6 +86,18 @@ def get_forum_types(context):
 def _auto_create_forums(context):
 	forum_types = get_forum_types(context)
 	result = forum_types.get('AutoCreate', False)
+	return result
+
+def _get_implied_scopes(instance, scope):
+	result = set()
+	for t in ENROLLMENT_SCOPE_VOCABULARY:
+		if scope in t.implied_by:
+			value = t.value
+			try:
+				iss = instance.SharingScopes[value]
+				result.add(iss.NTIID)
+			except (KeyError, TypeError):
+				pass
 	return result
 
 def _forums_for_instance(context, name):
@@ -100,8 +113,10 @@ def _forums_for_instance(context, name):
 		displayname_key = key_prefix + name + 'DisplayName'
 		if forum_types.get(has_key):
 			title = prefix + ' ' + name
+			implied_scopes = _get_implied_scopes(instance, scope)
 			forum = CourseForum(title,
 								instance.SharingScopes[scope],
+								implied_scopes,
 								forum_types.get(displayname_key, title),
 								iface)
 			forums.append(forum)
@@ -236,10 +251,12 @@ def create_course_forums(context):
 
 	def _creator(data, forums=()):
 		for forum in forums:
+			entities = set(forum.implies)
+			entities.add(forum.scope.NTIID)
 			name, created = create_forum(course,
 										 name=forum.name,
 										 display_name=forum.display_name,
-										 entities=[forum.scope.NTIID],
+										 entities=list(entities),
 										 implement=forum.interface,
 										 owner=forum.scope.NTIID)
 			data[forum.scope.username] = (name, created)
