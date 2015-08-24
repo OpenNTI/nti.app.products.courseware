@@ -286,7 +286,7 @@ class UserCourseEnrollmentsView(AbstractAuthenticatedView):
 													       CourseInstance=context)
 				items.append(context)
 
-		result['Total'] = len(items)
+		result['ItemCount'] = result['Total'] = len(items)
 		result['TimeElapsed'] = time.time() - now
 		return result
 
