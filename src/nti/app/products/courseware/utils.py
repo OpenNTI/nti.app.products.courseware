@@ -29,8 +29,8 @@ from zope.traversing.api import traverse
 
 from nti.contenttypes.courses import get_enrollment_catalog
 
+from nti.contenttypes.courses.index import IX_SITE
 from nti.contenttypes.courses.index import IX_SCOPE
-from nti.contenttypes.courses.index import IX_COURSE
 from nti.contenttypes.courses.index import IX_USERNAME
 
 from nti.contenttypes.courses.interfaces import RID_TA
@@ -46,6 +46,8 @@ from nti.contenttypes.courses.interfaces import ICourseSubInstance
 from nti.contenttypes.courses.interfaces import ICourseCatalogEntry
 from nti.contenttypes.courses.interfaces import IPrincipalEnrollments
 from nti.contenttypes.courses.interfaces import ICourseEnrollmentManager
+
+from nti.site.site import get_component_hierarchy_names
 
 from .enrollment import EnrollmentOptions
 
@@ -201,18 +203,17 @@ class IndexAdminCourses(object):
 	
 	def iter_admin(self, user):
 		intids = component.getUtility(IIntIds)
-		catalog = component.getUtility(ICourseCatalog)
-		courses = [x.ntiid for x in catalog.iterCatalogEntries()]
 		catalog = get_enrollment_catalog()
+		sites = get_component_hierarchy_names()
 		username = getattr(user, 'username', user)
 		query = {
-			IX_COURSE:{'any_of':courses},
+			IX_SITE:{'any_of': sites},
 			IX_SCOPE: {'any_of':(INSTRUCTOR,)},
 			IX_USERNAME:{'any_of':(username,)},
 		}
 		for uid in catalog.apply(query) or ():
 			context = intids.queryObject(uid)
-			if ICourseInstance.providedBy(context):
+			if ICourseInstance.providedBy(context): # extra check
 				yield context
 
 @interface.implementer(IUserAdministeredCourses)
