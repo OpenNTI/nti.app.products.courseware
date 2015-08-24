@@ -44,6 +44,7 @@ from nti.common.property import Lazy
 from nti.common.maps import CaseInsensitiveDict
 
 from nti.contenttypes.courses.index import IX_SITE
+from nti.contenttypes.courses.index import IX_COURSE
 from nti.contenttypes.courses.index import IX_USERNAME
 from nti.contenttypes.courses.interfaces import RID_INSTRUCTOR
 from nti.contenttypes.courses.interfaces import ENROLLMENT_SCOPE_VOCABULARY
@@ -430,6 +431,7 @@ class CourseEnrollmentsView(AbstractAuthenticatedView):
 		course = ICourseInstance(context, None)
 		if course is None:
 			raise hexc.HTTPUnprocessableEntity(detail='Course not found')
+		entry = ICourseCatalogEntry(course)
 
 		bio = BytesIO()
 		csv_writer = csv.writer(bio)
@@ -438,7 +440,18 @@ class CourseEnrollmentsView(AbstractAuthenticatedView):
 		header = ['username', 'realname', 'email', 'scope', 'created']
 		csv_writer.writerow(header)
 
-		for record in ICourseEnrollments(course).iter_enrollments():
+		catalog = get_enrollment_catalog()
+		intids = component.getUtility(IIntIds)
+		site_names = get_component_hierarchy_names()
+		query = {
+			IX_SITE:{'any_of': site_names},
+			IX_COURSE:{'any_of': (entry.ntiid,)},
+		}
+		for uid in catalog.apply(query) or ():
+			context = intids.queryObject(uid)
+			if not ICourseInstanceEnrollmentRecord.providedBy(context):
+				continue
+			record = context
 			scope = record.Scope
 
 			user = principal = IPrincipal(record.Principal, None)
