@@ -18,6 +18,9 @@
 	<adapter name="CourseActivity"
 			 factory=".course_views.CourseActivityPathAdapter" />
 
+	<adapter name="CatalogEntryActivity"
+			 factory=".course_views.CatalogEntryActivityPathAdapter" />
+			 
 	<adapter name="CourseEnrollmentRoster"
 			 factory=".course_views.CourseEnrollmentRosterPathAdapter"
 			 provides="zope.traversing.interfaces.IPathAdapter" />

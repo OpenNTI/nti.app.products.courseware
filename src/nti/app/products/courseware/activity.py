@@ -37,8 +37,8 @@ from nti.dataserver.interfaces import ACE_DENY_ALL
 
 from .interfaces import ICourseInstanceActivity
 
-@interface.implementer(ICourseInstanceActivity)
 @component.adapter(ICourseInstance)
+@interface.implementer(ICourseInstanceActivity)
 class _DefaultCourseActivity(Persistent):
 	"""
 	Default activity storage.

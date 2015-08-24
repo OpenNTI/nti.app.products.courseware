@@ -308,6 +308,12 @@ class CourseEnrollmentRosterGetView(AbstractAuthenticatedView,
 def CourseActivityPathAdapter(context, request):
 	return ICourseInstanceActivity(context)
 
+@interface.implementer(IPathAdapter)
+@component.adapter(ICourseCatalogEntry, IRequest)
+def CatalogEntryActivityPathAdapter(context, request):
+	course = ICourseInstance(context)
+	return ICourseInstanceActivity(course)
+
 from nti.externalization.externalization import decorate_external_mapping
 
 from ..interfaces import ACT_VIEW_ACTIVITY
