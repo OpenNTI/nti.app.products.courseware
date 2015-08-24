@@ -26,8 +26,8 @@ from nti.contenttypes.courses.interfaces import OPEN
 from nti.contenttypes.courses.interfaces import IN_CLASS
 from nti.contenttypes.courses.interfaces import ES_CREDIT
 from nti.contenttypes.courses.interfaces import ES_PUBLIC
+from nti.contenttypes.courses.interfaces import ES_PURCHASED
 from nti.contenttypes.courses.interfaces import IN_CLASS_PREFIX
-from nti.contenttypes.courses.interfaces import ENROLLMENT_SCOPE_VOCABULARY
 
 from nti.contenttypes.courses.interfaces import ICourseInstance
 from nti.contenttypes.courses.interfaces import ICourseCatalogEntry
@@ -90,14 +90,12 @@ def _auto_create_forums(context):
 
 def _get_implied_scopes(instance, scope):
 	result = set()
-	for t in ENROLLMENT_SCOPE_VOCABULARY:
-		if scope in t.implied_by:
-			value = t.value
-			try:
-				iss = instance.SharingScopes[value]
-				result.add(iss.NTIID)
-			except (KeyError, TypeError):
-				pass
+	if scope == ES_CREDIT:
+		try:
+			iss = instance.SharingScopes[ES_PURCHASED]
+			result.add(iss.NTIID)
+		except (KeyError, TypeError):
+			pass
 	return result
 
 def _forums_for_instance(context, name):
