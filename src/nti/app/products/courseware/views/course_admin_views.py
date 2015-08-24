@@ -53,7 +53,6 @@ from nti.contenttypes.courses import get_enrollment_catalog
 from nti.contenttypes.courses.interfaces import ICourseCatalog
 from nti.contenttypes.courses.interfaces import ICourseInstance
 from nti.contenttypes.courses.interfaces import ICourseSubInstance
-from nti.contenttypes.courses.interfaces import ICourseEnrollments
 from nti.contenttypes.courses.interfaces import ICourseEnrollmentManager
 
 from nti.contenttypes.courses.discussions.interfaces import ICourseDiscussions
@@ -110,13 +109,13 @@ def _parse_courses(values):
 	# get validate course entry
 	ntiids = values.get('ntiid') or values.get('ntiids') or \
 			 values.get('entry') or values.get('entries') or \
-			 values.get('course') or values.get('courses') 
+			 values.get('course') or values.get('courses')
 	if not ntiids:
 		raise hexc.HTTPUnprocessableEntity(detail='No course entry identifier')
 
 	if isinstance(ntiids, six.string_types):
 		ntiids = ntiids.split()
-		
+
 	result = []
 	for ntiid in ntiids:
 		context = find_object_with_ntiid(ntiid)
@@ -284,7 +283,7 @@ class UserCourseEnrollmentsView(AbstractAuthenticatedView):
 				if roles.getSetting(RID_INSTRUCTOR, user.id) is Allow:
 					role = 'instructor'
 				context = CourseInstanceAdministrativeRole(RoleName=role,
-													       CourseInstance=context)
+														   CourseInstance=context)
 				items.append(context)
 
 		result['ItemCount'] = result['Total'] = len(items)
@@ -528,38 +527,47 @@ class AllCourseEnrollmentRosterDownloadView(AbstractAuthenticatedView):
 		# due to the poor implementation of enrollments
 		# for legacy courses.)
 		enrollment_predicate = self._make_enrollment_predicate()
-
 		user_to_coursenames = collections.defaultdict(set)
+		entries = list(self._iter_catalog_entries())
+		ntiids = [e.ntiid for e in entries]
 
-		for catalog_entry in self._iter_catalog_entries():
+		catalog = get_enrollment_catalog()
+		intids = component.getUtility(IIntIds)
+		site_names = get_component_hierarchy_names()
+		query = {
+			IX_COURSE:{'any_of': ntiids},
+			IX_SITE:{'any_of': site_names}
+		}
+		for uid in catalog.apply(query) or ():
+			context = intids.queryObject(uid)
+			if not ICourseInstanceEnrollmentRecord.providedBy(context):
+				continue
+			record = context
+			course = record.CourseInstance
+			catalog_entry = ICourseCatalogEntry(course)
+
 			course_name = catalog_entry.Title
 
-			course = ICourseInstance(catalog_entry)
-
-			enrollments = ICourseEnrollments(course)
-
-			for record in enrollments.iter_enrollments():
-				user = IUser(record, None)
-				if user is None:
-					logger.error("Could not adapt record %r to user. " +
+			user = IUser(record, None)
+			if user is None:
+				logger.error("Could not adapt record %r to user. " +
 								 "Deleted User? Bad Instance?", record)
-					continue
-				if enrollment_predicate(course, record):
-					user_to_coursenames[user].add(course_name)
+				continue
+			if enrollment_predicate(course, record):
+				user_to_coursenames[user].add(course_name)
 
 		rows = LocatedExternalList()
 		rows.__name__ = self.request.view_name
 		rows.__parent__ = self.request.context
-		def _e(s):
-			return s.encode('utf-8') if s else s
+
 		for user, enrolled_course_names in user_to_coursenames.items():
 			profile = IUserProfile(user)
 			row = [user.username,
-				   _e(getattr(profile, 'alias', None)),
-				   _e(getattr(profile, 'realname', None)),
-				   _e(getattr(profile, 'email', None)),
+				   getattr(profile, 'alias', None),
+				   getattr(profile, 'realname', None),
+				   getattr(profile, 'email', None),
 				   ','.join(sorted(list(enrolled_course_names)))]
-			rows.append(row)
+			rows.append([_tx_string(r) for r in row])
 
 		# Convert to CSV
 		# In the future, we might switch based on the accept header
@@ -655,13 +663,13 @@ class DropCourseDiscussionsView(AbstractAuthenticatedView):
 			values = self.request.params
 		result = CaseInsensitiveDict(values)
 		return result
-	
+
 	def __call__(self):
 		values = self.readInput()
 		courses = _parse_courses(values)
 		if not courses:
 			raise hexc.HTTPUnprocessableEntity(detail='Please specify a valid course')
-		
+
 		result = LocatedExternalDict()
 		items = result[ITEMS] = {}
 		for course in courses:
@@ -681,7 +689,7 @@ class DropCourseDiscussionsView(AbstractAuthenticatedView):
 				if 	not ICourseInstancePublicScopedForum.providedBy(forum) and \
 					not ICourseInstanceForCreditScopedForum.providedBy(forum):
 					continue
-				
+
 				for key in course_discs:
 					if key in forum:
 						del forum[key]
