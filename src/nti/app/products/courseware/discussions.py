@@ -92,6 +92,10 @@ def _get_implied_scopes(instance, scope):
 	result = set()
 	if scope == ES_CREDIT:
 		try:
+			# CS: 2015-08-23 We need to imply the purchase scope b/c 
+			# we don't have a Enrrol-For-Purchased in the clients
+			# so we force purchasing users to be for-credit ones
+			# We really need a purchase forum
 			iss = instance.SharingScopes[ES_PURCHASED]
 			result.add(iss.NTIID)
 		except (KeyError, TypeError):
