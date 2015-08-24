@@ -285,7 +285,8 @@ def create_topics(discussion):
 		created = True
 		creator = course.SharingScopes[scope]
 		if name in forum:
-			logger.debug("Found existing topic %s", title)
+			logger.debug('Found existing topic "%s" in "%s"', 
+						 title, forum.title)
 			topic = forum[name]
 			if topic.creator != creator:
 				topic.creator = creator
@@ -314,7 +315,8 @@ def create_topics(discussion):
 
 			lifecycleevent.created(post)
 			lifecycleevent.added(post)
-			logger.info("Topic %s has been created", title)
+			logger.info('Topic "%s" has been created in fourm "%s"',
+						title, forum.title)
 
 		ntiid = topic.NTIID
 		if is_ntiid_of_type(ntiid, TYPE_OID):
