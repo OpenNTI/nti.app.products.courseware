@@ -11,25 +11,22 @@ __docformat__ = "restructuredtext en"
 
 logger = __import__('logging').getLogger(__name__)
 
-import BTrees
-
 import time
-
 from datetime import datetime
 from datetime import timedelta
+
+from zope import component
+
+from zope.catalog.interfaces import ICatalog
+
+from zope.intid.interfaces import IIntIds
 
 from pyramid.view import view_config
 from pyramid.httpexceptions import HTTPBadRequest
 
-from zope import component
-from zope.catalog.interfaces import ICatalog
-from zope.intid.interfaces import IIntIds
-
-from ZODB.interfaces import IBroken
-from ZODB.POSException import POSError
+import BTrees
 
 from nti.app.base.abstract_views import AbstractAuthenticatedView
-
 from nti.app.externalization.view_mixins import BatchingUtilsMixin
 
 from nti.appserver.pyramid_authorization import is_readable
@@ -52,17 +49,17 @@ from nti.externalization.interfaces import LocatedExternalDict
 from nti.externalization.interfaces import LocatedExternalList
 from nti.externalization.interfaces import StandardExternalFields
 
-from nti.intid.interfaces import ObjectMissingError
-
 from nti.links.links import Link
+
+from nti.zope_catalog.catalog import isBroken
 
 from ..stream_ranking import _DEFAULT_TIME_FIELD
 from ..stream_ranking import StreamConfidenceRanker
 
+from ._utils import _get_containers_in_course
+
 from . import VIEW_COURSE_RECURSIVE
 from . import VIEW_COURSE_RECURSIVE_BUCKET
-
-from ._utils import _get_containers_in_course
 
 ITEMS = StandardExternalFields.ITEMS
 LINKS = StandardExternalFields.LINKS
@@ -73,7 +70,7 @@ LINKS = StandardExternalFields.LINKS
 # - caching (memcache?)
 # - last modified/etag support
 
-@view_config( route_name='objects.generic.traversal',
+@view_config(route_name='objects.generic.traversal',
 			  context=ICourseInstance,
 			  request_method='GET',
 			  permission=nauth.ACT_READ,
@@ -108,7 +105,7 @@ class CourseDashboardRecursiveStreamView(AbstractAuthenticatedView, BatchingUtil
 	_DEFAULT_BATCH_START = 0
 
 	def __init__(self, context, request):
-		super( CourseDashboardRecursiveStreamView, self ).__init__( request )
+		super(CourseDashboardRecursiveStreamView, self).__init__(request)
 		self.course = context
 		self.request = request
 		self._set_params()
@@ -122,21 +119,21 @@ class CourseDashboardRecursiveStreamView(AbstractAuthenticatedView, BatchingUtil
 		self.batch_after = None
 		if self.request.params.get('MostRecent'):
 			try:
-				self.batch_before = float(self.request.params.get( 'MostRecent' ))
-			except ValueError: # pragma no cover
+				self.batch_before = float(self.request.params.get('MostRecent'))
+			except ValueError:  # pragma no cover
 				raise HTTPBadRequest()
 
 		if self.request.params.get('Oldest'):
 			try:
-				self.batch_after = float(self.request.params.get( 'Oldest' ))
-			except ValueError: # pragma no cover
+				self.batch_after = float(self.request.params.get('Oldest'))
+			except ValueError:  # pragma no cover
 				raise HTTPBadRequest()
 
 		if 		self.batch_before and self.batch_after \
 			and	self.batch_before < self.batch_after:
 			# This behavior is undefined.
-			logger.warn( 'MostRecent time is before Oldest time (MostRecent=%s) (Oldest=%s)',
-						self.batch_before, self.batch_after )
+			logger.warn('MostRecent time is before Oldest time (MostRecent=%s) (Oldest=%s)',
+						self.batch_before, self.batch_after)
 
 	def _set_params(self):
 		self._batch_params()
@@ -153,7 +150,7 @@ class CourseDashboardRecursiveStreamView(AbstractAuthenticatedView, BatchingUtil
 	def _family(self):
 		return BTrees.family64
 
-	def _intids_in_time_range( self, min_created_time, max_created_time ):
+	def _intids_in_time_range(self, min_created_time, max_created_time):
 		# A few different ways to do this; let's use the catalog
 		# to awaken fewer objects.  Our timestamp normalizer
 		# normalizes to the minute, which should be fine.
@@ -161,13 +158,14 @@ class CourseDashboardRecursiveStreamView(AbstractAuthenticatedView, BatchingUtil
 			return None
 
 		# None at boundaries should be ok.
-		intids_in_time_range = self._catalog[ _DEFAULT_TIME_FIELD ].apply({'between': (min_created_time, max_created_time,)})
+		time_index = self._catalog[_DEFAULT_TIME_FIELD]
+		intids_in_time_range = time_index.apply({'between': (min_created_time, max_created_time,)})
 		return intids_in_time_range
 
 	def _topic_is_relevant(self, topic):
 		"Determines if our is topic stream worthy."
-		creator = getattr( topic, 'creator', None )
-		return IUser.providedBy( creator )
+		creator = getattr(topic, 'creator', None)
+		return IUser.providedBy(creator)
 
 	def _get_topics(self, course):
 		"Return a tuple of topic intids and ntiids."
@@ -179,27 +177,27 @@ class CourseDashboardRecursiveStreamView(AbstractAuthenticatedView, BatchingUtil
 			for topic in forum.values():
 				# Make sure we have access to our topic.
 				# We'll check comments elsewhere.
-				if self._is_readable( topic ):
+				if self._is_readable(topic):
 					# Return our topic if relevant, but make sure we
 					# always return the ntiid for its comments.
-					if self._topic_is_relevant( topic ):
-						topic_intids.add( intids.getId( topic ) )
-					topic_ntiids.add( topic.NTIID )
+					if self._topic_is_relevant(topic):
+						topic_intids.add(intids.getId(topic))
+					topic_ntiids.add(topic.NTIID)
 		return topic_intids, topic_ntiids
 
 	def _do_get_top_level_board_objects(self, course):
 		"Do the actual topic/top-level comment fetching."
 		catalog = self._catalog
 
-		topic_intids, topic_ntiids = self._get_topics( course )
+		topic_intids, topic_ntiids = self._get_topics(course)
 		toplevel_intids_extent = catalog[IX_TOPICS][TP_TOP_LEVEL_CONTENT].getExtent()
 
 		# Comments for our topic ntiids.
 		comment_intids = catalog['containerId'].apply({'any_of': topic_ntiids})
-		toplevel_comment_intids = toplevel_intids_extent.intersection( comment_intids )
+		toplevel_comment_intids = toplevel_intids_extent.intersection(comment_intids)
 
 		result_intids = [toplevel_comment_intids, topic_intids]
-		result_intids = catalog.family.IF.multiunion( result_intids )
+		result_intids = catalog.family.IF.multiunion(result_intids)
 
 		return result_intids
 
@@ -209,11 +207,11 @@ class CourseDashboardRecursiveStreamView(AbstractAuthenticatedView, BatchingUtil
 		parent course, if necessary.
 		"""
 		course = self.course
-		result_intids = self._do_get_top_level_board_objects( course )
+		result_intids = self._do_get_top_level_board_objects(course)
 
-		if ICourseSubInstance.providedBy( course ):
+		if ICourseSubInstance.providedBy(course):
 			parent_course = course.__parent__.__parent__
-			parent_intids = self._do_get_top_level_board_objects( parent_course )
+			parent_intids = self._do_get_top_level_board_objects(parent_course)
 
 			result_intids = [result_intids, parent_intids]
 			result_intids = self._catalog.family.IF.multiunion(result_intids)
@@ -229,16 +227,16 @@ class CourseDashboardRecursiveStreamView(AbstractAuthenticatedView, BatchingUtil
 		intids_shared_to_me = catalog['sharedWith'].apply({'any_of': user_ids})
 
 		toplevel_intids_extent = catalog[IX_TOPICS][TP_TOP_LEVEL_CONTENT].getExtent()
-		top_level_shared_intids = toplevel_intids_extent.intersection( intids_shared_to_me )
+		top_level_shared_intids = toplevel_intids_extent.intersection(intids_shared_to_me)
 
 		# Now grab our course notes
-		container_ntiids = _get_containers_in_course( course )
+		container_ntiids = _get_containers_in_course(course)
 		course_container_intids = catalog['containerId'].apply({'any_of': container_ntiids})
 		intids_of_notes = catalog['mimeType'].apply({'any_of': ('application/vnd.nextthought.note',)})
 
 		# Find collisions
-		shared_note_intids = catalog.family.IF.intersection( top_level_shared_intids, intids_of_notes )
-		results = catalog.family.IF.intersection( shared_note_intids, course_container_intids )
+		shared_note_intids = catalog.family.IF.intersection(top_level_shared_intids, intids_of_notes)
+		results = catalog.family.IF.intersection(shared_note_intids, course_container_intids)
 		return results
 
 	def _security_check(self):
@@ -246,7 +244,7 @@ class CourseDashboardRecursiveStreamView(AbstractAuthenticatedView, BatchingUtil
 		return self.make_sharing_security_check()
 
 	def _is_readable(self, obj):
-		return is_readable( obj, self.request, skip_cache=True)
+		return is_readable(obj, self.request, skip_cache=True)
 
 	def _do_get_intids(self):
 		"""
@@ -257,7 +255,7 @@ class CourseDashboardRecursiveStreamView(AbstractAuthenticatedView, BatchingUtil
 		catalog = self._catalog
 		top_level_results = self._get_top_level_board_objects()
 		ugd_results = self._get_course_ugd()
-		relevant_intids = catalog.family.IF.multiunion( [ugd_results, top_level_results] )
+		relevant_intids = catalog.family.IF.multiunion([ugd_results, top_level_results])
 
 		# Exclude deleted items
 		deleted_intids_extent = catalog[IX_TOPICS][TP_DELETED_PLACEHOLDER].getExtent()
@@ -269,14 +267,14 @@ class CourseDashboardRecursiveStreamView(AbstractAuthenticatedView, BatchingUtil
 		results = self._do_get_intids()
 
 		catalog = self._catalog
-		time_range_intids = self._intids_in_time_range( self.batch_after, self.batch_before )
+		time_range_intids = self._intids_in_time_range(self.batch_after, self.batch_before)
 		if time_range_intids is not None:
-			results = catalog.family.IF.intersection( time_range_intids, results )
+			results = catalog.family.IF.intersection(time_range_intids, results)
 		return results
 
 	def _rank_results(self, results):
 		"Given a set of results; rank them and return in sorted priority."
-		return self.ranker.rank( results )
+		return self.ranker.rank(results)
 
 	def _get_items(self, temp_results):
 		"""
@@ -287,27 +285,22 @@ class CourseDashboardRecursiveStreamView(AbstractAuthenticatedView, BatchingUtil
 
 		def _intermediates_iter():
 			for uid in temp_results:
-				try:
-					obj = self._intids.getObject( uid )
-					if not IBroken.providedBy(obj):
-						yield obj
-				except (KeyError, ObjectMissingError):
-					logger.warn( 'Object missing from course stream (id=%s)', uid )
-				except (TypeError, POSError):
-					logger.warn( 'Broken object missing from course stream (id=%s)', uid )
+				obj = self._intids.queryObject(uid)
+				if not isBroken(obj, uid):
+					yield obj
 
 		for obj in _intermediates_iter():
-			if security_check( obj ):
-				items.append( obj )
+			if security_check(obj):
+				items.append(obj)
 
 		# Rank
-		return self._rank_results( items )
+		return self._rank_results(items)
 
 	def __call__(self):
 		result = LocatedExternalDict()
 
 		intermediate_results = self._get_intids()
-		items = self._get_items( intermediate_results )
+		items = self._get_items(intermediate_results)
 
 		# Does our batching, as well as placing a link in result.
 		self._batch_items_iterable(result, items,
@@ -315,18 +308,18 @@ class CourseDashboardRecursiveStreamView(AbstractAuthenticatedView, BatchingUtil
 								   batch_size=self.batch_size,
 								   batch_start=self.batch_start)
 
-		result['TotalItemCount'] = len( result[ITEMS] )
+		result['TotalItemCount'] = len(result[ITEMS])
 		result['Class'] = 'CourseRecursiveStream'
 
 		return result
 
-@view_config( route_name='objects.generic.traversal',
+@view_config(route_name='objects.generic.traversal',
 			  context=ICourseInstance,
 			  request_method='GET',
 			  permission=nauth.ACT_READ,
 			  renderer='rest',
 			  name=VIEW_COURSE_RECURSIVE_BUCKET)
-class CourseDashboardBucketingStreamView( CourseDashboardRecursiveStreamView ):
+class CourseDashboardBucketingStreamView(CourseDashboardRecursiveStreamView):
 	"""
 	A course recursive stream view that buckets according to params (currently
 	hard-coded to bucket by week starting each Monday at 12 AM).  This view
@@ -362,18 +355,18 @@ class CourseDashboardBucketingStreamView( CourseDashboardRecursiveStreamView ):
 
 		if self.request.params.get('NonEmptyBucketCount'):
 			try:
-				self.non_empty_bucket_count = int(self.request.params.get( 'NonEmptyBucketCount' ))
-			except ValueError: # pragma no cover
+				self.non_empty_bucket_count = int(self.request.params.get('NonEmptyBucketCount'))
+			except ValueError:  # pragma no cover
 				raise HTTPBadRequest()
 
 		if self.request.params.get('BucketSize'):
 			try:
-				self.bucket_size = int(self.request.params.get( 'BucketSize' ))
-			except ValueError: # pragma no cover
+				self.bucket_size = int(self.request.params.get('BucketSize'))
+			except ValueError:  # pragma no cover
 				raise HTTPBadRequest()
 
 	def _set_params(self):
-		super( CourseDashboardBucketingStreamView,self )._set_params()
+		super(CourseDashboardBucketingStreamView, self)._set_params()
 		self._bucket_params()
 
 	def _get_bucket_batch_link(self, result, start_ts, end_ts):
@@ -387,8 +380,8 @@ class CourseDashboardBucketingStreamView( CourseDashboardRecursiveStreamView ):
 		batch_params = self.request.GET.copy()
 		# Pop some things that don't work
 		for n in self._BATCH_LINK_DROP_PARAMS:
-			batch_params.pop( n, None )
-			batch_params.pop( 'BucketSize', None )
+			batch_params.pop(n, None)
+			batch_params.pop('BucketSize', None)
 
 		batch_params['batchStart'] = next_batch_start
 		# Our bucket_size is the de-facto batchSize.
@@ -396,23 +389,23 @@ class CourseDashboardBucketingStreamView( CourseDashboardRecursiveStreamView ):
 		batch_params['MostRecent'] = end_ts
 		batch_params['Oldest'] = start_ts
 
-		link_next = Link( self.request.context,
-						rel='batch-next',
-						elements=(VIEW_COURSE_RECURSIVE,),
-						params=batch_params )
-		result.setdefault( LINKS, [] ).append( link_next )
+		link_next = Link(self.request.context,
+						 rel='batch-next',
+						 elements=(VIEW_COURSE_RECURSIVE,),
+						 params=batch_params)
+		result.setdefault(LINKS, []).append(link_next)
 
 	def _get_first_time_range(self):
 		"Return tuple of start/end timestamps for the first week."
 		most_recent_date = None
 		if self.batch_before is not None:
-			most_recent_date = datetime.utcfromtimestamp( self.batch_before )
+			most_recent_date = datetime.utcfromtimestamp(self.batch_before)
 
 		the_time = datetime.utcnow() if not most_recent_date else most_recent_date
 		# Monday is our default start
-		start_of_week = the_time.date() - timedelta( days=the_time.weekday() )
-		start_timestamp = time.mktime( start_of_week.timetuple() )
-		end_timestamp = time.mktime( the_time.timetuple() )
+		start_of_week = the_time.date() - timedelta(days=the_time.weekday())
+		start_timestamp = time.mktime(start_of_week.timetuple())
+		end_timestamp = time.mktime(the_time.timetuple())
 
 		# Since we're working backwards, set our next end_timestamp to this
 		# call's start_timestamp.
@@ -421,9 +414,9 @@ class CourseDashboardBucketingStreamView( CourseDashboardRecursiveStreamView ):
 
 	def _get_next_time_range(self):
 		"After getting the first time range, return a tuple of the previous week."
-		end_date = datetime.utcfromtimestamp( self._last_timestamp )
-		start_date = end_date - timedelta( days=7 )
-		start_timestamp = time.mktime( start_date.timetuple() )
+		end_date = datetime.utcfromtimestamp(self._last_timestamp)
+		start_date = end_date - timedelta(days=7)
+		start_timestamp = time.mktime(start_date.timetuple())
 
 		end_timestamp = self._last_timestamp
 		# Set our next endcap.
@@ -433,23 +426,23 @@ class CourseDashboardBucketingStreamView( CourseDashboardRecursiveStreamView ):
 	def _get_time_range_func(self):
 		return self._get_next_time_range if self._last_timestamp else self._get_first_time_range
 
-	def _do_batching( self, intids, start_ts, end_ts ):
+	def _do_batching(self, intids, start_ts, end_ts):
 		"""
 		Resolve the intids into objects and batch them.
 		"""
 		result_dict = {}
-		objects = self._get_items( intids )
+		objects = self._get_items(intids)
 
 		self._batch_items_iterable(result_dict, objects,
 								   number_items_needed=self.limit,
 								   batch_size=self.bucket_size,
 								   batch_start=self.batch_start)
 		# The next-batch links returned here are irrelevant.
-		result_dict.pop( LINKS, None )
+		result_dict.pop(LINKS, None)
 
-		if len( objects ) > self.bucket_size:
+		if len(objects) > self.bucket_size:
 			# We have more objects; provide a meaningful paging link.
-			self._get_bucket_batch_link( result_dict, start_ts, end_ts )
+			self._get_bucket_batch_link(result_dict, start_ts, end_ts)
 
 		return result_dict
 
@@ -471,7 +464,7 @@ class CourseDashboardBucketingStreamView( CourseDashboardRecursiveStreamView ):
 		# 4. We are checking a date before the requested oldest timestamp
 		while	found_buckets < self.non_empty_bucket_count \
 			and bucket_checks < self._MAX_BUCKET_CHECKS \
-			and (	start_ts is None
+			and (start_ts is None
 				or 	self.batch_after is None
 				or 	start_ts > self.batch_after) \
 			and course_intids:
@@ -480,27 +473,27 @@ class CourseDashboardBucketingStreamView( CourseDashboardRecursiveStreamView ):
 			# Get our bucket's time bound intids
 			time_range_func = self._get_time_range_func()
 			start_ts, end_ts = time_range_func()
-			bucket_time_range_intids = self._intids_in_time_range( start_ts, end_ts )
-			bucket_intids = catalog.family.IF.intersection( bucket_time_range_intids, course_intids )
+			bucket_time_range_intids = self._intids_in_time_range(start_ts, end_ts)
+			bucket_intids = catalog.family.IF.intersection(bucket_time_range_intids, course_intids)
 
 			if bucket_intids:
 				found_buckets += 1
 				# Decrement our collection
-				course_intids = catalog.family.IF.difference( course_intids, bucket_intids )
+				course_intids = catalog.family.IF.difference(course_intids, bucket_intids)
 
-				bucket_dict = self._do_batching( bucket_intids, start_ts, end_ts )
+				bucket_dict = self._do_batching(bucket_intids, start_ts, end_ts)
 
 				bucket_dict['OldestTimestamp'] = start_ts
 				bucket_dict['MostRecentTimestamp'] = end_ts
-				bucket_dict['BucketItemCount'] = len( bucket_dict[ITEMS] )
+				bucket_dict['BucketItemCount'] = len(bucket_dict[ITEMS])
 				bucket_dict['Class'] = 'CourseRecursiveStreamBucket'
-				results.append( bucket_dict )
+				results.append(bucket_dict)
 
 		if found_buckets < self.non_empty_bucket_count:
-			logger.info( 'Only found %s buckets when asked for %s (buckets_checked=%s)',
+			logger.info('Only found %s buckets when asked for %s (buckets_checked=%s)',
 						found_buckets,
 						self.non_empty_bucket_count,
-						bucket_checks )
+						bucket_checks)
 
 		return results
 
@@ -511,7 +504,7 @@ class CourseDashboardBucketingStreamView( CourseDashboardRecursiveStreamView ):
 
 		if course_intids:
 			# Ok we have something; let's bucket.
-			results = self._do_bucketing( course_intids )
+			results = self._do_bucketing(course_intids)
 		return results
 
 	def __call__(self):
@@ -519,6 +512,6 @@ class CourseDashboardBucketingStreamView( CourseDashboardRecursiveStreamView ):
 
 		items = self._get_bucketed_objects()
 		result[ITEMS] = items
-		result['TotalBucketCount'] = len( items )
+		result['TotalBucketCount'] = len(items)
 		result['Class'] = 'CourseRecursiveStreamByBucket'
 		return result

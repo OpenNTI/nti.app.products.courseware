@@ -551,7 +551,7 @@ class AllCourseEnrollmentRosterDownloadView(AbstractAuthenticatedView):
 			user = IUser(record, None)
 			if user is None:
 				logger.error("Could not adapt record %r to user. " +
-								 "Deleted User? Bad Instance?", record)
+							 "Deleted User? Bad Instance?", record)
 				continue
 			if enrollment_predicate(course, record):
 				user_to_coursenames[user].add(course_name)
@@ -578,7 +578,6 @@ class AllCourseEnrollmentRosterDownloadView(AbstractAuthenticatedView):
 
 		self.request.response.body = buf.getvalue()
 		self.request.response.content_disposition = b'attachment; filename="enrollments.csv"'
-
 		return self.request.response
 
 @view_config(name='Enrollments.csv')
