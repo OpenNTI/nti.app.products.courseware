@@ -5,22 +5,28 @@
 """
 
 from __future__ import print_function, unicode_literals, absolute_import, division
+
 __docformat__ = "restructuredtext en"
 
 logger = __import__('logging').getLogger(__name__)
 
+import hashlib
 from datetime import datetime
+
+import repoze.lru
 
 from brownie.caching import LFUCache
 
 from zope import component
 from zope import interface
 
+from zope.component.hooks import getSite
+
 from zope.container.contained import Contained
 
 from zope.traversing.interfaces import IEtcNamespace
 
-from nti.common.property import CachedProperty
+from nti.common.property import CachedProperty, Lazy
 
 from nti.contentlibrary.interfaces import IContentPackageLibrary
 from nti.contentlibrary.indexed_data.interfaces import CONTAINER_IFACES
@@ -30,6 +36,7 @@ from nti.contenttypes.courses.interfaces import ICourseCatalogEntry
 from nti.contenttypes.courses.interfaces import ICourseOutlineContentNode
 
 from nti.dataserver.users import User
+from nti.dataserver.interfaces import IMemcacheClient
 
 from nti.ntiids.ntiids import ROOT
 from nti.ntiids.ntiids import TYPE_OID
@@ -43,6 +50,42 @@ from ..utils import ZERO_DATETIME
 
 from .interfaces import ICourseOutlineCache
 
+EXP_TIME = 86400
+
+def _memcache_client():
+	return component.queryUtility(IMemcacheClient)
+
+def _memcache_get(key, client=None):
+	client = component.queryUtility(IMemcacheClient) if client is None else client
+	if client is not None:
+		try:
+			return client.get(key)
+		except:
+			pass
+	return None
+
+def _memcache_set(key, value, client=None, exp=EXP_TIME):
+	client = component.queryUtility(IMemcacheClient) if client is None else client
+	if client is not None:
+		try:
+			client.set(key, value, time=exp)
+			return True
+		except:
+			pass
+	return False
+
+@repoze.lru.lru_cache(100)
+def _encode_keys(*keys):
+	result = hashlib.md5()
+	for key in keys:
+		result.update(str(key).lower())
+	return result.hexdigest()
+
+def last_synchronized():
+	hostsites = component.queryUtility(IEtcNamespace, name='hostsites')
+	result = getattr(hostsites, 'lastSynchronized', 0)
+	return result
+	
 def _check_ntiid(ntiid):
 	result = ntiid and not is_ntiid_of_types(ntiid, (TYPE_OID, TYPE_UUID, TYPE_INTID))
 	return bool(result)
@@ -94,15 +137,19 @@ def _flatten_outline(outline):
 		_recur(outline, result)
 	return result
 
-def _get_content_path(pacakge_paths_cache, ntiid):
-	result = pacakge_paths_cache.get(ntiid)
+def _get_content_path(ntiid, lastSync=None, client=None):
+	lastSync = last_synchronized() if not lastSync else lastSync
+	key = _encode_keys(getSite().__name__, "search", "pacakge_paths", ntiid, lastSync)
+	result = _memcache_get(key, client=client)
 	if result is None:
 		result = ()
 		library = component.queryUtility(IContentPackageLibrary)
 		if library and ntiid:
 			paths = library.pathToNTIID(ntiid)
 			result = tuple(p.ntiid for p in paths) if paths else ()
-		pacakge_paths_cache[ntiid] = result
+		else:
+			result = (ntiid,)
+		_memcache_set(key, result, client=client)
 	return result
 
 def _get_course_from_search_query(query):
@@ -138,11 +185,6 @@ class _OutlineCacheEntry(Contained):
 	def csPackagePaths(self):
 		return dict()
 
-	@CachedProperty('lastSynchronized')
-	def csFlattenOutline(self):
-		result = _flatten_outline(self.Outline)
-		return result
-
 @interface.implementer(ICourseOutlineCache)
 class _CourseOutlineCache(object):
 
@@ -153,9 +195,11 @@ class _CourseOutlineCache(object):
 
 	@property
 	def lastSynchronized(self):
-		hostsites = component.queryUtility(IEtcNamespace, name='hostsites')
-		result = getattr(hostsites, 'lastSynchronized', 0)
-		return result
+		return last_synchronized()
+
+	@Lazy
+	def memcache(self):
+		return _memcache_client()
 
 	def _get_cached_entry(self, ntiid):
 		entry = self.outline_cache.get(ntiid)
@@ -168,8 +212,7 @@ class _CourseOutlineCache(object):
 	def _check_against_course_outline(self, course_id, course, ntiid, now=None):
 		entry = self._get_cached_entry(course_id)
 		nodes = entry.csFlattenOutline
-		pacakge_paths_cache = entry.csPackagePaths
-		ntiids = _get_content_path(pacakge_paths_cache, ntiid) or (ntiid,)
+		ntiids = _get_content_path(ntiid, self.lastSynchronized, self.memcache)
 		# perform checking
 		for content_ntiid, data in nodes.items():
 			beginning, is_outline_stub_only = data
