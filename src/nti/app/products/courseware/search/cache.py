@@ -5,7 +5,6 @@
 """
 
 from __future__ import print_function, unicode_literals, absolute_import, division
-
 __docformat__ = "restructuredtext en"
 
 logger = __import__('logging').getLogger(__name__)
@@ -24,17 +23,23 @@ from zope.component.hooks import getSite
 
 from zope.container.contained import Contained
 
+from zope.intid import IIntIds
+
 from zope.traversing.interfaces import IEtcNamespace
 
 from nti.common.property import CachedProperty, Lazy
 
+from nti.contentlibrary.indexed_data import get_catalog
 from nti.contentlibrary.interfaces import IContentPackageLibrary
-from nti.contentlibrary.indexed_data.interfaces import CONTAINER_IFACES
 
 from nti.contenttypes.courses.interfaces import ICourseInstance
 from nti.contenttypes.courses.interfaces import ICourseCatalogEntry
 from nti.contenttypes.courses.interfaces import ICourseOutlineContentNode
 
+from nti.contenttypes.presentation.interfaces import INTIAudio 
+from nti.contenttypes.presentation.interfaces import INTIVideo
+from nti.contenttypes.presentation.interfaces import INTISlideDeck
+	
 from nti.dataserver.users import User
 from nti.dataserver.interfaces import IMemcacheClient
 
@@ -50,6 +55,13 @@ from ..utils import ZERO_DATETIME
 
 from .interfaces import ICourseOutlineCache
 
+def last_synchronized():
+	hostsites = component.queryUtility(IEtcNamespace, name='hostsites')
+	result = getattr(hostsites, 'lastSynchronized', 0)
+	return result
+	
+# memcache
+	
 EXP_TIME = 86400
 
 def _memcache_client():
@@ -81,61 +93,69 @@ def _encode_keys(*keys):
 		result.update(str(key).lower())
 	return result.hexdigest()
 
-def last_synchronized():
-	hostsites = component.queryUtility(IEtcNamespace, name='hostsites')
-	result = getattr(hostsites, 'lastSynchronized', 0)
-	return result
-	
+# outline
+
 def _check_ntiid(ntiid):
 	result = ntiid and not is_ntiid_of_types(ntiid, (TYPE_OID, TYPE_UUID, TYPE_INTID))
 	return bool(result)
 
+def _outline_nodes(outline):
+	result = []
+	def _recur(node):
+		if ICourseOutlineContentNode.providedBy(node) and node.ContentNTIID:
+			result.append(node)
+		for child in node.values():
+			_recur(child)
+	if outline is not None:
+		_recur(outline)
+	return result
+
+def _index_node_data(node, result=None):
+	result = {} if result is None else result
+	
+	# cache initial values
+	contentNTIID = node.ContentNTIID
+	beginning = node.AvailableBeginning or ZERO_DATETIME
+	is_outline_stub_only = getattr(node, 'is_outline_stub_only', None) or False
+	result[contentNTIID] = (beginning, is_outline_stub_only)
+
+	library = component.queryUtility(IContentPackageLibrary)
+	if library is None:
+		return result
+
+	catalog = get_catalog()
+	intids = component.getUtility(IIntIds)
+
+	# loop through container interfaces
+	paths = library.pathToNTIID(contentNTIID)
+	unit = paths[-1] if paths else None
+	for item in catalog.search_objects(container_ntiids=(unit.ntiid,),
+									   provided=(INTIVideo, INTIAudio, INTISlideDeck),
+									   intids=intids):
+		ntiid = None
+		for name in ('target', 'ntiid'):
+			check_ntiid = getattr(item, name, None)
+			if _check_ntiid(check_ntiid):
+				ntiid = check_ntiid
+				break
+		if not ntiid:
+			continue
+		if ntiid not in result:
+			result[ntiid] = (beginning, is_outline_stub_only)
+		else:
+			_begin, _stub = result[ntiid]
+			_begin = max(beginning, _begin)  # max date
+			_stub = is_outline_stub_only or _stub  # stub true
+			result[ntiid] = (_begin, _stub)
+	return result
+
 def _flatten_outline(outline):
 	result = {}
-	library = component.queryUtility(IContentPackageLibrary)
-
-	def _indexed_data(iface, result, unit, beginning, is_outline_stub_only):
-		container = iface(unit, None) or {}
-		for item in container.values():
-			ntiid = None
-			for name in ('target', 'ntiid'):
-				t_ntiid = getattr(item, name, None)
-				if _check_ntiid(t_ntiid):
-					ntiid = t_ntiid
-					break
-			if not ntiid:
-				continue
-			if ntiid not in result:
-				result[ntiid] = (beginning, is_outline_stub_only)
-			else:
-				_begin, _stub = result[ntiid]
-				_begin = max(beginning, _begin)  # max date
-				_stub = is_outline_stub_only or _stub  # stub true
-				result[ntiid] = (_begin, _stub)
-
-	def _recur(node, result):
-		if ICourseOutlineContentNode.providedBy(node) and node.ContentNTIID:
-
-			content_ntiid = node.ContentNTIID
-			beginning = node.AvailableBeginning or ZERO_DATETIME
-			is_outline_stub_only = getattr(node, 'is_outline_stub_only', None) or False
-			
-			result[content_ntiid] = (beginning, is_outline_stub_only)
-			
-			# parse any container data
-			if library is not None:
-				paths = library.pathToNTIID(content_ntiid)
-				unit = paths[-1] if paths else None
-				for iface in CONTAINER_IFACES:
-					_indexed_data(iface, result, unit, beginning, is_outline_stub_only)
-
-		# parse children
-		for child in node.values():
-			_recur(child, result)
-
-	if outline is not None:
-		_recur(outline, result)
+	for node in _outline_nodes(outline):
+		_index_node_data(node, result)
 	return result
+
+# content paths
 
 def _get_content_path(ntiid, lastSync=None, client=None):
 	lastSync = last_synchronized() if not lastSync else lastSync
