@@ -162,13 +162,11 @@ def _get_content_path(ntiid, lastSync=None, client=None):
 	key = _encode_keys(getSite().__name__, "search", "pacakge_paths", ntiid, lastSync)
 	result = _memcache_get(key, client=client)
 	if result is None:
-		result = ()
 		library = component.queryUtility(IContentPackageLibrary)
 		if library and ntiid:
 			paths = library.pathToNTIID(ntiid)
 			result = tuple(p.ntiid for p in paths) if paths else ()
-		else:
-			result = (ntiid,)
+		result = result or (ntiid,)
 		_memcache_set(key, result, client=client)
 	return result
 
