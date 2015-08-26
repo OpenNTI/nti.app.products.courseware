@@ -27,6 +27,7 @@ from nti.contentlibrary.indexed_data.interfaces import CONTAINER_IFACES
 
 from nti.contenttypes.courses.interfaces import ICourseInstance
 from nti.contenttypes.courses.interfaces import ICourseCatalogEntry
+from nti.contenttypes.courses.interfaces import ICourseOutlineContentNode
 
 from nti.dataserver.users import User
 
@@ -51,9 +52,7 @@ def _flatten_outline(outline):
 	library = component.queryUtility(IContentPackageLibrary)
 
 	def _indexed_data(iface, result, unit, beginning, is_outline_stub_only):
-		container = iface(unit, None)
-		if not container:
-			return
+		container = iface(unit, None) or {}
 		for item in container.values():
 			ntiid = None
 			for name in ('target', 'ntiid'):
@@ -72,11 +71,14 @@ def _flatten_outline(outline):
 				result[ntiid] = (_begin, _stub)
 
 	def _recur(node, result):
-		content_ntiid = getattr(node, 'ContentNTIID', None)
-		if content_ntiid:
-			beginning = getattr(node, 'AvailableBeginning', None) or ZERO_DATETIME
+		if ICourseOutlineContentNode.providedBy(node) and node.ContentNTIID:
+
+			content_ntiid = node.ContentNTIID
+			beginning = node.AvailableBeginning or ZERO_DATETIME
 			is_outline_stub_only = getattr(node, 'is_outline_stub_only', None) or False
+			
 			result[content_ntiid] = (beginning, is_outline_stub_only)
+			
 			# parse any container data
 			if library is not None:
 				paths = library.pathToNTIID(content_ntiid)
