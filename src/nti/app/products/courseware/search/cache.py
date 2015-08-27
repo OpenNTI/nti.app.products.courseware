@@ -12,6 +12,8 @@ logger = __import__('logging').getLogger(__name__)
 import hashlib
 from datetime import datetime
 
+from pyramid.threadlocal import get_current_request
+
 import repoze.lru
 
 from brownie.caching import LFUCache
@@ -86,7 +88,7 @@ def _memcache_set(key, value, client=None, exp=EXP_TIME):
 			pass
 	return False
 
-@repoze.lru.lru_cache(100)
+@repoze.lru.lru_cache(200)
 def _encode_keys(*keys):
 	result = hashlib.md5()
 	for key in keys:
@@ -155,11 +157,58 @@ def _flatten_outline(outline):
 		_index_node_data(node, result)
 	return result
 
+def _flatten_and_cache_outline(course, client=None):
+	cached = True
+	site = getSite().__name__
+	lastSync = last_synchronized()
+	ntiid = ICourseCatalogEntry(course).ntiid
+	
+	# flatter and cache
+	result = _flatten_outline(course.Outline)
+	for key, value in result.items():
+		key = _encode_keys(site, ntiid, "search", "outline", key, lastSync)
+		cached = cached and _memcache_set(key, value, client=client)
+	
+	# mark as cached
+	key = _encode_keys(site, ntiid, "search", "outline", "cached", lastSync)
+	cached = cached and _memcache_set(key, 1, client=client)
+	
+	# return data and flag
+	return result, cached
+
+def _is_outline_cached(entry, client=None):
+	site = getSite().__name__
+	lastSync = last_synchronized()
+	key = _encode_keys(site, entry, "search", "outline", "cached",  lastSync)
+	return _memcache_get(key, client) == 1
+
+def _get_outline_cache_entry(ntiid, course, entry=None, client=None):
+	result = None
+	site = getSite().__name__
+	lastSync = last_synchronized()
+	request = get_current_request()
+	local = getattr(request, '_v_flatten_outline', None)
+	if local is not None:
+		result = local.get(ntiid)
+	else:
+		entry = ICourseCatalogEntry(course).ntiid if not entry else entry
+		key = _encode_keys(site, entry, "search", "outline", ntiid, lastSync)
+		if not _is_outline_cached(entry, client):
+			data, cached = _flatten_and_cache_outline(course, client)
+			if not cached:
+				if request is not None:
+					setattr(request, '_v_flatten_outline', data)
+				result = data.get(ntiid)
+		else:
+			result = _memcache_get(key, client)
+	return result
+
 # content paths
 
 def _get_content_path(ntiid, lastSync=None, client=None):
+	site = getSite().__name__
 	lastSync = last_synchronized() if not lastSync else lastSync
-	key = _encode_keys(getSite().__name__, "search", "pacakge_paths", ntiid, lastSync)
+	key = _encode_keys(site, "search", "pacakge_paths", ntiid, lastSync)
 	result = _memcache_get(key, client=client)
 	if result is None:
 		library = component.queryUtility(IContentPackageLibrary)
@@ -169,6 +218,8 @@ def _get_content_path(ntiid, lastSync=None, client=None):
 		result = result or (ntiid,)
 		_memcache_set(key, result, client=client)
 	return result
+
+# search query
 
 def _get_course_from_search_query(query):
 	context = query.context or {}
@@ -231,7 +282,7 @@ class _CourseOutlineCache(object):
 	def _check_against_course_outline(self, course_id, course, ntiid, now=None):
 		entry = self._get_cached_entry(course_id)
 		nodes = entry.csFlattenOutline
-		ntiids = _get_content_path(ntiid, self.lastSynchronized, self.memcache)
+		ntiids = _get_content_path(ntiid, last_synchronized(), self.memcache)
 		# perform checking
 		for content_ntiid, data in nodes.items():
 			beginning, is_outline_stub_only = data
