@@ -16,20 +16,16 @@ from pyramid.threadlocal import get_current_request
 
 import repoze.lru
 
-from brownie.caching import LFUCache
-
 from zope import component
 from zope import interface
 
 from zope.component.hooks import getSite
 
-from zope.container.contained import Contained
-
 from zope.intid import IIntIds
 
 from zope.traversing.interfaces import IEtcNamespace
 
-from nti.common.property import CachedProperty, Lazy
+from nti.common.property import Lazy
 
 from nti.contentlibrary.indexed_data import get_catalog
 from nti.contentlibrary.interfaces import IContentPackageLibrary
@@ -38,10 +34,10 @@ from nti.contenttypes.courses.interfaces import ICourseInstance
 from nti.contenttypes.courses.interfaces import ICourseCatalogEntry
 from nti.contenttypes.courses.interfaces import ICourseOutlineContentNode
 
-from nti.contenttypes.presentation.interfaces import INTIAudio 
+from nti.contenttypes.presentation.interfaces import INTIAudio
 from nti.contenttypes.presentation.interfaces import INTIVideo
 from nti.contenttypes.presentation.interfaces import INTISlideDeck
-	
+
 from nti.dataserver.users import User
 from nti.dataserver.interfaces import IMemcacheClient
 
@@ -61,9 +57,9 @@ def last_synchronized():
 	hostsites = component.queryUtility(IEtcNamespace, name='hostsites')
 	result = getattr(hostsites, 'lastSynchronized', 0)
 	return result
-	
+
 # memcache
-	
+
 EXP_TIME = 86400
 
 def _memcache_client():
@@ -114,7 +110,7 @@ def _outline_nodes(outline):
 
 def _index_node_data(node, result=None):
 	result = {} if result is None else result
-	
+
 	# cache initial values
 	contentNTIID = node.ContentNTIID
 	beginning = node.AvailableBeginning or ZERO_DATETIME
@@ -162,24 +158,24 @@ def _flatten_and_cache_outline(course, client=None):
 	site = getSite().__name__
 	lastSync = last_synchronized()
 	ntiid = ICourseCatalogEntry(course).ntiid
-	
+
 	# flatter and cache
 	result = _flatten_outline(course.Outline)
 	for key, value in result.items():
 		key = _encode_keys(site, ntiid, "search", "outline", key, lastSync)
 		cached = cached and _memcache_set(key, value, client=client)
-	
+
 	# mark as cached
 	key = _encode_keys(site, ntiid, "search", "outline", "cached", lastSync)
 	cached = cached and _memcache_set(key, 1, client=client)
-	
+
 	# return data and flag
 	return result, cached
 
 def _is_outline_cached(entry, client=None):
 	site = getSite().__name__
 	lastSync = last_synchronized()
-	key = _encode_keys(site, entry, "search", "outline", "cached",  lastSync)
+	key = _encode_keys(site, entry, "search", "outline", "cached", lastSync)
 	return _memcache_get(key, client) == 1
 
 def _get_outline_cache_entry(ntiid, course, entry=None, client=None):
@@ -234,64 +230,24 @@ def _get_course_from_search_query(query):
 			return course, course_id
 	return None, None
 
-class _OutlineCacheEntry(Contained):
-
-	def __init__(self , ntiid):
-		self.ntiid = ntiid
-
-	@property
-	def lastSynchronized(self):
-		result = self.__parent__.lastSynchronized
-		return result
-
-	@property
-	def Outline(self):
-		context = find_object_with_ntiid(self.ntiid)
-		course = ICourseInstance(context, None)
-		return course.Outline if course is not None else None
-
-	@CachedProperty('lastSynchronized')
-	def csFlattenOutline(self):
-		result = _flatten_outline(self.Outline)
-		return result
-
 @interface.implementer(ICourseOutlineCache)
 class _CourseOutlineCache(object):
-
-	max_cache_size = 10
-
-	def __init__(self, *args):
-		self.outline_cache = LFUCache(maxsize=self.max_cache_size)
-
-	@property
-	def lastSynchronized(self):
-		return last_synchronized()
 
 	@Lazy
 	def memcache(self):
 		return _memcache_client()
 
-	def _get_cached_entry(self, ntiid):
-		entry = self.outline_cache.get(ntiid)
-		if entry is None:
-			entry = _OutlineCacheEntry(ntiid)
-			entry.__parent__ = self
-			self.outline_cache[ntiid] = entry
-		return entry
-
-	def _check_against_course_outline(self, course_id, course, ntiid, now=None):
-		entry = self._get_cached_entry(course_id)
-		nodes = entry.csFlattenOutline
+	def _check_against_course_outline(self, entry, course, ntiid, now=None):
 		ntiids = _get_content_path(ntiid, last_synchronized(), self.memcache)
-		# perform checking
-		for content_ntiid, data in nodes.items():
-			beginning, is_outline_stub_only = data
-			if content_ntiid in ntiids:
+		for ntiid in ntiids or ():
+			data = _get_outline_cache_entry(ntiid, course, entry, client=self.memcache)
+			if data:
+				beginning, is_outline_stub_only = data
 				beginning = beginning or ZERO_DATETIME
 				result = bool(not is_outline_stub_only) and \
 						 datetime.utcnow() >= beginning
 				return result
-		return True  # no match then allow
+		return True
 
 	def is_allowed(self, ntiid, query=None, now=None):
 		if query is None:
@@ -302,11 +258,10 @@ class _CourseOutlineCache(object):
 		if not user:
 			return False
 
-		course, course_id = _get_course_from_search_query(query)
-		if course is None or course_id is None:
+		course, entry = _get_course_from_search_query(query)
+		if course is None or not entry:
 			return True  # allow by default
 		if not is_enrolled(course, user):
 			return False  # check has access
-
-		result = self._check_against_course_outline(course_id, course, ntiid)
+		result = self._check_against_course_outline(entry, course, ntiid)
 		return result
