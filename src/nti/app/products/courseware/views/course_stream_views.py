@@ -497,10 +497,43 @@ class CourseDashboardBucketingStreamView(CourseDashboardRecursiveStreamView):
 
 		return results
 
+	def _check_most_recent_record(self, course_intids):
+		"""
+		As an optimization, find the most recent object and start batching from it.
+		Mostly useful when dealing with archived courses.
+
+		Note: We could do this for each bucket, in case activity skips weeks, but that
+		would be more expensive for the general currently-active-course case. Or
+		perhaps it makes sense to only grab relevant activity from when the course
+		was active?
+		"""
+		# Only do so if they want a certain number of non-empty buckets.
+		if not self.non_empty_bucket_count or not course_intids:
+			return course_intids
+
+		most_recent = self._catalog[_DEFAULT_TIME_FIELD].sort(course_intids,
+														reverse=True,
+												 		limit=1)
+		result = None
+		try:
+			obj = tuple( most_recent )[0]
+			obj = self._intids.queryObject( obj )
+			result = getattr( obj, _DEFAULT_TIME_FIELD, None )
+		except IndexError:
+			pass
+
+		if result is not None:
+			self.batch_before = result
+			if self.batch_before < self.batch_after:
+				# Our most recent record is before earliest requested.
+				return None
+		return course_intids
+
 	def _get_bucketed_objects(self):
 		"Get the bucketed objects for this stream."
 		course_intids = self._do_get_intids()
 		results = {}
+		course_intids = self._check_most_recent_record( course_intids )
 
 		if course_intids:
 			# Ok we have something; let's bucket.
@@ -509,7 +542,6 @@ class CourseDashboardBucketingStreamView(CourseDashboardRecursiveStreamView):
 
 	def __call__(self):
 		result = LocatedExternalDict()
-
 		items = self._get_bucketed_objects()
 		result[ITEMS] = items
 		result['TotalBucketCount'] = len(items)

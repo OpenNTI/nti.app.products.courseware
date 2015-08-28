@@ -279,7 +279,7 @@ class CourseEnrollmentRosterGetView(AbstractAuthenticatedView,
 			raise hexc.HTTPBadRequest("Unsupported filteroption")
 
 		if username_search_term:
-			policy = component.getAdapter(self.remoteUser, 
+			policy = component.getAdapter(self.remoteUser,
 										  IIntIdUserSearchPolicy,
 										  name='comprehensive')
 			id_util = component.getUtility(IIntIds)
