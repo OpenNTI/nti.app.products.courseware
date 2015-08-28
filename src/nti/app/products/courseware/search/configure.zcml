@@ -18,6 +18,10 @@
 				provides="nti.contentsearch.interfaces.ISearchHitPredicate"
 				for="nti.contentsearch.interfaces.IBookContent" />
 
+	<subscriber factory=".predicates._ContentAssesmentHitPredicate"
+				provides="nti.contentsearch.interfaces.ISearchHitPredicate"
+				for="nti.contentsearch.interfaces.IBookContent" />
+
 	<subscriber factory=".predicates._AudioContentHitPredicate"
 				provides="nti.contentsearch.interfaces.ISearchHitPredicate"
 				for="nti.contentsearch.interfaces.IAudioTranscriptContent" />
@@ -42,4 +46,5 @@
 	<subscriber factory=".subscribers._RootSearchPacakgeResolver"
 				provides="nti.contentsearch.interfaces.ISearchPackageResolver"
 				for="nti.dataserver.interfaces.IUser" />
+
 </configure>

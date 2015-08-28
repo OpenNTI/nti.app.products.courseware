@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
 .. $Id$
@@ -52,6 +51,11 @@ from . import memcache_get
 from . import memcache_set
 from . import memcache_client
 from . import last_synchronized
+
+# memcache
+
+def _encode(*keys):
+	return '/search/%s' % encode_keys(*keys)
 
 # outline
 
@@ -124,11 +128,11 @@ def _flatten_and_cache_outline(course, client=None):
 	# flatter and cache
 	result = _flatten_outline(course.Outline)
 	for key, value in result.items():
-		key = encode_keys(site, ntiid, "search", "outline", key, lastSync)
+		key = _encode(site, ntiid, "outline", key, lastSync)
 		cached = cached and memcache_set(key, value, client=client)
 
 	# mark as cached
-	key = encode_keys(site, ntiid, "search", "outline", "cached", lastSync)
+	key = _encode(site, ntiid, "outline", "cached", lastSync)
 	cached = cached and memcache_set(key, 1, client=client)
 
 	# return data and flag
@@ -137,7 +141,7 @@ def _flatten_and_cache_outline(course, client=None):
 def _is_outline_cached(entry, client=None):
 	site = getSite().__name__
 	lastSync = last_synchronized()
-	key = encode_keys(site, entry, "search", "outline", "cached", lastSync)
+	key = _encode(site, entry, "outline", "cached", lastSync)
 	return memcache_get(key, client) == 1
 
 def _get_outline_cache_entry(ntiid, course, entry=None, client=None):
@@ -150,7 +154,7 @@ def _get_outline_cache_entry(ntiid, course, entry=None, client=None):
 		result = local.get(ntiid)
 	else:
 		entry = ICourseCatalogEntry(course).ntiid if not entry else entry
-		key = encode_keys(site, entry, "search", "outline", ntiid, lastSync)
+		key = _encode(site, entry, "outline", ntiid, lastSync)
 		if not _is_outline_cached(entry, client):
 			data, cached = _flatten_and_cache_outline(course, client)
 			if not cached:
@@ -166,7 +170,7 @@ def _get_outline_cache_entry(ntiid, course, entry=None, client=None):
 def _get_content_path(ntiid, lastSync=None, client=None):
 	site = getSite().__name__
 	lastSync = last_synchronized() if not lastSync else lastSync
-	key = encode_keys(site, "search", "pacakge_paths", ntiid, lastSync)
+	key = _encode(site, "pacakge_paths", ntiid, lastSync)
 	result = memcache_get(key, client=client)
 	if result is None:
 		library = component.queryUtility(IContentPackageLibrary)
