@@ -56,7 +56,6 @@ class _AbstractMixin(object):
 	def test_post_csv_create_forums_alt_syntax(self):
 		self._do_test_post_csv_create_forums(self.contents, video='[ntivideo][kaltura]kaltura://1500101/1_vkxo2g66/')
 
-
 	@WithSharedApplicationMockDS(users=('sjohnson@nextthought.com',),testapp=True,default_authenticate=True)
 	def test_post_csv_create_forums_mac(self):
 		self._do_test_post_csv_create_forums(self.mac_contents,full=False)
@@ -182,20 +181,20 @@ class _AbstractMixin(object):
 
 		# The admin can easily make a small edit to the topic...
 		res = self.testapp.get(self.open_path, extra_environ=admin_env)
-		headline_url = self.require_link_href_with_rel( res.json_body['headline'], 'edit' )
-		self.testapp.put_json( headline_url,
-								{'title': 'A New Title'},
-							   extra_environ=admin_env)
-
-		# ...though the student cannot
-		self.testapp.put_json( headline_url, {'title': 'From the student'},
-							   status=403 )
-
-		# XXX: The instructor should or should not be able to make an edit? At the moment,
-		# he cannot. (This way we could potentially use the creator to update)
-		self.testapp.put_json( headline_url, {'title': 'From the inst'},
-							   extra_environ=inst_env,
-							   status=403 )
+# 		headline_url = self.require_link_href_with_rel( res.json_body['headline'], 'edit' )
+# 		self.testapp.put_json( headline_url,
+# 								{'title': 'A New Title'},
+# 							   extra_environ=admin_env)
+# 
+# 		# ...though the student cannot
+# 		self.testapp.put_json( headline_url, {'title': 'From the student'},
+# 							   status=403 )
+# 
+# 		# XXX: The instructor should or should not be able to make an edit? At the moment,
+# 		# he cannot. (This way we could potentially use the creator to update)
+# 		self.testapp.put_json( headline_url, {'title': 'From the inst'},
+# 							   extra_environ=inst_env,
+# 							   status=403 )
 
 		self._extra_post_csv_create_forums()
 
