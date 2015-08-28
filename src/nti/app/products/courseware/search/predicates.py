@@ -12,8 +12,6 @@ logger = __import__('logging').getLogger(__name__)
 from zope import component
 from zope import interface
 
-from ZODB.loglevels import TRACE
-
 from nti.common.property import Lazy
 
 from nti.contentsearch.interfaces import IBookContent
@@ -51,9 +49,6 @@ class _ContentHitPredicate(_BasePredicate):
 
 	def allow(self, item, score, query=None):
 		result = self._is_allowed(item.ntiid, query)
-		if not result:
-			logger.log(TRACE, "Content ('%s') in container '%s' not allowed for search.",
-					   item.title, item.ntiid)
 		return result
 
 @interface.implementer(ISearchHitPredicate)
@@ -62,9 +57,6 @@ class _AudioContentHitPredicate(_BasePredicate):
 
 	def allow(self, item, score, query=None):
 		result = self._is_allowed(item.containerId, query)
-		if not result:
-			logger.log(TRACE, "AudioContent ('%s') in container '%s' not allowed for search.",
-					  item.title, item.containerId)
 		return result
 
 @interface.implementer(ISearchHitPredicate)
@@ -73,9 +65,6 @@ class _VideoContentHitPredicate(_BasePredicate):
 
 	def allow(self, item, score, query=None):
 		result = self._is_allowed(item.containerId, query)
-		if not result:
-			logger.log(TRACE, "VideoContent ('%s') in container '%s' not allowed for search.",
-					   item.title, item.containerId)
 		return result
 
 @interface.implementer(ISearchHitPredicate)
@@ -85,9 +74,6 @@ class _NTICardContentHitPredicate(_BasePredicate):
 	def allow(self, item, score, query=None):
 		result = self._is_allowed(item.containerId, query) and \
 				 self._is_allowed(item.target_ntiid, query)
-		if not result:
-			logger.log(TRACE, "NTICardContent ('%s') in container '%s' not allowed for search.",
-					   item.title, item.containerId)
 		return result
 
 @interface.implementer(ISearchHitPredicate)
@@ -102,7 +88,4 @@ class _CreatedContentHitPredicate(_BasePredicate):
 		resolver = IContainerIDResolver(item, None)
 		containerId = resolver.containerId if resolver is not None else None
 		result = self._allowed(containerId, query)
-		if not result:
-			logger.log(TRACE, "Object (%s) in container '%s' not allowed for search.",
-					   item, containerId)
 		return result

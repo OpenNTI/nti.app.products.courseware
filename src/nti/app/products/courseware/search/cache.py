@@ -9,12 +9,9 @@ __docformat__ = "restructuredtext en"
 
 logger = __import__('logging').getLogger(__name__)
 
-import hashlib
 from datetime import datetime
 
 from pyramid.threadlocal import get_current_request
-
-import repoze.lru
 
 from zope import component
 from zope import interface
@@ -22,8 +19,6 @@ from zope import interface
 from zope.component.hooks import getSite
 
 from zope.intid import IIntIds
-
-from zope.traversing.interfaces import IEtcNamespace
 
 from nti.common.property import Lazy
 
@@ -39,7 +34,6 @@ from nti.contenttypes.presentation.interfaces import INTIVideo
 from nti.contenttypes.presentation.interfaces import INTISlideDeck
 
 from nti.dataserver.users import User
-from nti.dataserver.interfaces import IMemcacheClient
 
 from nti.ntiids.ntiids import ROOT
 from nti.ntiids.ntiids import TYPE_OID
@@ -53,43 +47,11 @@ from ..utils import ZERO_DATETIME
 
 from .interfaces import ICourseOutlineCache
 
-def last_synchronized():
-	hostsites = component.queryUtility(IEtcNamespace, name='hostsites')
-	result = getattr(hostsites, 'lastSynchronized', 0)
-	return result
-
-# memcache
-
-EXP_TIME = 86400
-
-def _memcache_client():
-	return component.queryUtility(IMemcacheClient)
-
-def _memcache_get(key, client=None):
-	client = component.queryUtility(IMemcacheClient) if client is None else client
-	if client is not None:
-		try:
-			return client.get(key)
-		except:
-			pass
-	return None
-
-def _memcache_set(key, value, client=None, exp=EXP_TIME):
-	client = component.queryUtility(IMemcacheClient) if client is None else client
-	if client is not None:
-		try:
-			client.set(key, value, time=exp)
-			return True
-		except:
-			pass
-	return False
-
-@repoze.lru.lru_cache(200)
-def _encode_keys(*keys):
-	result = hashlib.md5()
-	for key in keys:
-		result.update(str(key).lower())
-	return result.hexdigest()
+from . import encode_keys
+from . import memcache_get
+from . import memcache_set
+from . import memcache_client
+from . import last_synchronized
 
 # outline
 
@@ -162,12 +124,12 @@ def _flatten_and_cache_outline(course, client=None):
 	# flatter and cache
 	result = _flatten_outline(course.Outline)
 	for key, value in result.items():
-		key = _encode_keys(site, ntiid, "search", "outline", key, lastSync)
-		cached = cached and _memcache_set(key, value, client=client)
+		key = encode_keys(site, ntiid, "search", "outline", key, lastSync)
+		cached = cached and memcache_set(key, value, client=client)
 
 	# mark as cached
-	key = _encode_keys(site, ntiid, "search", "outline", "cached", lastSync)
-	cached = cached and _memcache_set(key, 1, client=client)
+	key = encode_keys(site, ntiid, "search", "outline", "cached", lastSync)
+	cached = cached and memcache_set(key, 1, client=client)
 
 	# return data and flag
 	return result, cached
@@ -175,8 +137,8 @@ def _flatten_and_cache_outline(course, client=None):
 def _is_outline_cached(entry, client=None):
 	site = getSite().__name__
 	lastSync = last_synchronized()
-	key = _encode_keys(site, entry, "search", "outline", "cached", lastSync)
-	return _memcache_get(key, client) == 1
+	key = encode_keys(site, entry, "search", "outline", "cached", lastSync)
+	return memcache_get(key, client) == 1
 
 def _get_outline_cache_entry(ntiid, course, entry=None, client=None):
 	result = None
@@ -188,7 +150,7 @@ def _get_outline_cache_entry(ntiid, course, entry=None, client=None):
 		result = local.get(ntiid)
 	else:
 		entry = ICourseCatalogEntry(course).ntiid if not entry else entry
-		key = _encode_keys(site, entry, "search", "outline", ntiid, lastSync)
+		key = encode_keys(site, entry, "search", "outline", ntiid, lastSync)
 		if not _is_outline_cached(entry, client):
 			data, cached = _flatten_and_cache_outline(course, client)
 			if not cached:
@@ -196,7 +158,7 @@ def _get_outline_cache_entry(ntiid, course, entry=None, client=None):
 					setattr(request, '_v_flatten_outline', data)
 				result = data.get(ntiid)
 		else:
-			result = _memcache_get(key, client)
+			result = memcache_get(key, client)
 	return result
 
 # content paths
@@ -204,15 +166,15 @@ def _get_outline_cache_entry(ntiid, course, entry=None, client=None):
 def _get_content_path(ntiid, lastSync=None, client=None):
 	site = getSite().__name__
 	lastSync = last_synchronized() if not lastSync else lastSync
-	key = _encode_keys(site, "search", "pacakge_paths", ntiid, lastSync)
-	result = _memcache_get(key, client=client)
+	key = encode_keys(site, "search", "pacakge_paths", ntiid, lastSync)
+	result = memcache_get(key, client=client)
 	if result is None:
 		library = component.queryUtility(IContentPackageLibrary)
 		if library and ntiid:
 			paths = library.pathToNTIID(ntiid)
 			result = tuple(p.ntiid for p in paths) if paths else ()
 		result = result or (ntiid,)
-		_memcache_set(key, result, client=client)
+		memcache_set(key, result, client=client)
 	return result
 
 # search query
@@ -235,7 +197,7 @@ class _CourseOutlineCache(object):
 
 	@Lazy
 	def memcache(self):
-		return _memcache_client()
+		return memcache_client()
 
 	def _check_against_course_outline(self, entry, course, ntiid, now=None):
 		ntiids = _get_content_path(ntiid, last_synchronized(), self.memcache)
