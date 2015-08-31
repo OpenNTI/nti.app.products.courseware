@@ -19,7 +19,9 @@ from nti.assessment.interfaces import IQSurvey
 from nti.assessment.interfaces import IQAssignment
 from nti.assessment.interfaces import IQuestionSet
 
-from nti.contentlibrary.indexed_data import get_catalog
+from nti.contentlibrary.indexed_data import get_library_catalog
+
+from nti.site.site import get_component_hierarchy_names
 
 def _get_self_assessments_for_course(course):
 	"""
@@ -110,10 +112,12 @@ def _get_containers_in_course(course):
 		_recur(package, containers_in_course)
 
 	# Now fetch from our index
-	catalog = get_catalog()
+	catalog = get_library_catalog()
 	if catalog is not None:
+		sites = get_component_hierarchy_names()
 		package_ntiids = (x.ntiid for x in packages)
-		contained_objs = catalog.search_objects(container_ntiids=package_ntiids)
+		contained_objs = catalog.search_objects(container_ntiids=package_ntiids,
+												sites=sites)
 		# Do we need target_ntiid here?
 		contained_ntiids = {x.ntiid for x in contained_objs}
 		containers_in_course.update(contained_ntiids)

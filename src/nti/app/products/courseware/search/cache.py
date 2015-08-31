@@ -41,6 +41,8 @@ from nti.ntiids.ntiids import TYPE_INTID
 from nti.ntiids.ntiids import is_ntiid_of_types
 from nti.ntiids.ntiids import find_object_with_ntiid
 
+from nti.site.site import get_component_hierarchy_names
+
 from ..utils import is_enrolled
 from ..utils import ZERO_DATETIME
 
@@ -91,9 +93,10 @@ def _index_node_data(node, result=None):
 	intids = component.getUtility(IIntIds)
 
 	# loop through container interfaces
+	sites = get_component_hierarchy_names()
 	paths = library.pathToNTIID(contentNTIID)
 	unit = paths[-1] if paths else None
-	for item in catalog.search_objects(container_ntiids=(unit.ntiid,),
+	for item in catalog.search_objects(container_ntiids=(unit.ntiid,), sites=sites,
 									   provided=(INTIVideo, INTIAudio, INTISlideDeck),
 									   intids=intids):
 		ntiid = None
