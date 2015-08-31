@@ -19,7 +19,7 @@ from nti.assessment.interfaces import IQAssignment
 
 from nti.common.property import Lazy
 
-from nti.contentlibrary.indexed_data import get_catalog
+from nti.contentlibrary.indexed_data import get_library_catalog
 
 from nti.contentsearch.interfaces import IBookContent
 from nti.contentsearch.interfaces import INTICardContent
@@ -30,6 +30,8 @@ from nti.contentsearch.interfaces import IVideoTranscriptContent
 
 from nti.ntiids.ntiids import TYPE_OID
 from nti.ntiids.ntiids import is_ntiid_of_types
+
+from nti.site.site import get_component_hierarchy_names
 
 from .interfaces import ICourseOutlineCache
 
@@ -111,8 +113,10 @@ class _ContentAssesmentHitPredicate(_BasePredicate):
 		return memcache_client()
 
 	def has_assesments(self, ntiid):
-		catalog = get_catalog()
+		catalog = get_library_catalog()
+		sites = get_component_hierarchy_names()
 		refs = catalog.get_references(container_ntiids=ntiid,
+									  sites=sites,
 									  provided=(IQAssignment, IQSurvey))
 		result = bool(refs)
 		return result
