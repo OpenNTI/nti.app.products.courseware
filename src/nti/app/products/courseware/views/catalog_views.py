@@ -18,8 +18,8 @@ from . import MessageFactory as _
 
 logger = __import__('logging').getLogger(__name__)
 
-from zope import interface
 from zope import component
+from zope import interface
 
 from zope.traversing.interfaces import IPathAdapter
 
@@ -155,6 +155,15 @@ class enroll_course_view(AbstractAuthenticatedView,
 										  self.remoteUser,
 										  parent=self.request.context,
 										  request=self.request)
+
+		entry = catalog_entry
+		if enrollment is not None:
+			entry = ICourseCatalogEntry(enrollment.CourseInstance, None)
+		entry = catalog_entry if entry is None else entry
+
+		logger.info("User %s has enrolled in course %s",
+					self.remoteUser, entry.ntiid)
+
 		return enrollment
 
 @view_config(route_name='objects.generic.traversal',
@@ -173,6 +182,9 @@ class drop_course_view(AbstractAuthenticatedView):
 
 	def __call__(self):
 		course_instance = self.request.context.CourseInstance
+		catalog_entry = ICourseCatalogEntry(course_instance)
 		enrollments = get_enrollments(course_instance, self.request)
 		enrollments.drop(self.remoteUser)
+		logger.info("User %s has dropped from course %s",
+					self.remoteUser, catalog_entry.ntiid)
 		return hexc.HTTPNoContent()
