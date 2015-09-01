@@ -523,7 +523,9 @@ class CourseDashboardBucketingStreamView(CourseDashboardRecursiveStreamView):
 			pass
 
 		if result is not None:
-			self.batch_before = result
+			# Make sure we don't reset subsequent batches.
+			if result < self.batch_before:
+				self.batch_before = result
 			if self.batch_before < self.batch_after:
 				# Our most recent record is before earliest requested.
 				return None
