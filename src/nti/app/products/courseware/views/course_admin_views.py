@@ -44,15 +44,16 @@ from nti.common.property import Lazy
 from nti.common.maps import CaseInsensitiveDict
 
 from nti.contenttypes.courses.index import IX_SITE
+from nti.contenttypes.courses.index import IX_SCOPE
 from nti.contenttypes.courses.index import IX_COURSE
 from nti.contenttypes.courses.index import IX_USERNAME
+from nti.contenttypes.courses.interfaces import INSTRUCTOR
 from nti.contenttypes.courses.interfaces import RID_INSTRUCTOR
 from nti.contenttypes.courses.interfaces import ENROLLMENT_SCOPE_VOCABULARY
 
 from nti.contenttypes.courses import get_enrollment_catalog
 from nti.contenttypes.courses.interfaces import ICourseCatalog
 from nti.contenttypes.courses.interfaces import ICourseInstance
-from nti.contenttypes.courses.interfaces import ICourseSubInstance
 from nti.contenttypes.courses.interfaces import ICourseEnrollmentManager
 
 from nti.contenttypes.courses.discussions.interfaces import ICourseDiscussions
@@ -363,39 +364,43 @@ class CourseEnrollmentMigrationView(AbstractAuthenticatedView):
 			   renderer='rest',
 			   context=CourseAdminPathAdapter,
 			   request_method='GET',
-			   permission=nauth.ACT_MODERATE)
+			   permission=nauth.ACT_SYNC_LIBRARY)
 class CourseRolesView(AbstractAuthenticatedView,
 					  ModeledContentUploadRequestUtilsMixin):
 
 	def __call__(self):
-		catalog = component.getUtility(ICourseCatalog)
-
 		bio = BytesIO()
 		csv_writer = csv.writer(bio)
 
-		# header
-		header = ['Course', 'SubInstance', 'Role', 'Setting', 'User', 'Email']
+		header = ['User', 'Email', 'Title', 'NTIID']
 		csv_writer.writerow(header)
 
-		for catalog_entry in catalog.iterCatalogEntries():
-			course = ICourseInstance(catalog_entry)
-
-			if ICourseSubInstance.providedBy(course):
-				sub_name = course.__name__
-				course_name = course.__parent__.__parent__.__name__
-			else:
-				course_name = course.__name__
-				sub_name = ''
-
-			roles = IPrincipalRoleMap(course, None)
-			if roles is not None:
-				for role_id, prin_id, setting in roles.getPrincipalsAndRoles():
-					user = User.get_user(prin_id)
-					profile = IUserProfile(user, None)
-					email = getattr(profile, 'email', None)
-					# write data
-					row_data = [course_name, sub_name, role_id, setting, prin_id, email]
-					csv_writer.writerow([_tx_string(x) for x in row_data])
+		catalog = get_enrollment_catalog()
+		intids = component.getUtility(IIntIds)
+		site_names = get_component_hierarchy_names()
+		query = {
+			IX_SITE:{'any_of': site_names},
+			IX_SCOPE:{'any_of':(INSTRUCTOR,)}
+		}
+		user_idx = catalog[IX_USERNAME]
+		for uid in catalog.apply(query) or ():
+			context = intids.queryObject(uid)
+			entry = ICourseCatalogEntry(context, None)
+			if context is None or entry is None:
+				continue
+			
+			seen = set()
+			users = user_idx.documents_to_values.get(uid)
+			for username in users:
+				user = User.get_user(username)
+				seen.add(user)
+			seen.discard(None)
+			for user in seen:
+				profile = IUserProfile(user, None)
+				email = getattr(profile, 'email', None)
+				# write data
+				row_data = [user.username, email, entry.title, entry.ntiid]
+				csv_writer.writerow([_tx_string(x) for x in row_data])
 
 		response = self.request.response
 		response.body = bio.getvalue()
@@ -489,7 +494,6 @@ from ..interfaces import ICourseInstanceEnrollment
 @view_defaults(route_name='objects.generic.traversal',
 			   renderer='rest',
 			   request_method='GET',
-			   context=IDataserverFolder,
 			   permission=nauth.ACT_NTI_ADMIN,
 			   name='AllEnrollments.csv')
 class AllCourseEnrollmentRosterDownloadView(AbstractAuthenticatedView):
@@ -612,16 +616,19 @@ class CourseCatalogEntryEnrollmentsRosterDownloadView(AllCourseEnrollmentRosterD
 	def _iter_catalog_entries(self):
 		return (self.request.context,)
 
-@view_config(name='discussions')
+# discussions 
+
+@view_config(context=ICourseInstance)
+@view_config(context=ICourseCatalogEntry)
 @view_defaults(route_name='objects.generic.traversal',
 			   renderer='rest',
 			   request_method='GET',
-			   context=ICourseInstance,
+			   name='discussions',
 			   permission=nauth.ACT_NTI_ADMIN)
 class CourseDiscussionsView(AbstractAuthenticatedView):
 
 	def _course(self):
-		return self.request.Context
+		return ICourseInstance(self.request.Context, None)
 
 	def __call__(self):
 		result = LocatedExternalDict()
@@ -632,23 +639,13 @@ class CourseDiscussionsView(AbstractAuthenticatedView):
 			items[name] = discussion
 		return result
 
-@view_config(name='discussions')
-@view_defaults(route_name='objects.generic.traversal',
-			   renderer='rest',
-			   request_method='GET',
-			   context=ICourseCatalogEntry,
-			   permission=nauth.ACT_NTI_ADMIN)
-class CourseCatalogEntryDiscussionsView(CourseDiscussionsView):
-
-	def _course(self):
-		return ICourseInstance(self.request.context, None)
-
 from nti.contenttypes.courses.interfaces import ICourseInstancePublicScopedForum
 from nti.contenttypes.courses.interfaces import ICourseInstanceForCreditScopedForum
 
 from ..discussions import get_topic_key
 
 @view_config(name='DropCourseDiscussions')
+@view_config(name='drop_course_discussions')
 @view_defaults(route_name='objects.generic.traversal',
 			   renderer='rest',
 			   context=CourseAdminPathAdapter,
