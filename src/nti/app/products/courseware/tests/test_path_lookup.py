@@ -13,7 +13,6 @@ from hamcrest import assert_that
 from hamcrest import has_entries
 
 import fudge
-import unittest
 
 from zope import component
 
@@ -34,10 +33,12 @@ from nti.contenttypes.courses.discussions.interfaces import ICourseDiscussions
 from nti.contenttypes.courses.interfaces import ES_ALL
 from nti.contenttypes.courses.interfaces import ICourseCatalog
 from nti.contenttypes.courses.interfaces import ICourseInstance
+from nti.contenttypes.courses.interfaces import ICourseEnrollmentManager
 
 from nti.contentfragments.interfaces import SanitizedHTMLContentFragment
 
 from nti.dataserver.tests import mock_dataserver
+from nti.dataserver.users import User
 
 QUIZ = "tag:nextthought.com,2011-10:OU-HTML-CLC3403_LawAndJustice.sec:QUIZ_01.01"
 QUESTION = "tag:nextthought.com,2011-10:OU-NAQ-CLC3403_LawAndJustice.naq.qid.aristotle.1"
@@ -110,21 +111,7 @@ class TestPathLookup(ApplicationLayerTest):
 			self.discussion_ntiid = tuple(forum.values())[0].NTIID
 			self.forum_ntiid = forum.NTIID
 
-	def _do_path_lookup_video(self):
-		# Video
-		path = '/dataserver2/LibraryPath?objectId=%s' % VIDEO
-		res = self.testapp.get(path)
-		res = res.json_body
-
-		assert_that(res, has_length(1))
-		res = res[0]
-		assert_that(res, has_length(2))
-		assert_that(res[0], has_entry('Class', 'CourseInstance'))
-		assert_that(res[1], has_entries('Class', 'PageInfo',
-										'NTIID', 'tag:nextthought.com,2011-10:OU-HTML-CLC3403_LawAndJustice.lec:01_LESSON',
-										'Title', '1. Defining Law and Justice'))
-
-	def _check_catalog( self, res, res_count=2 ):
+	def _check_catalog( self, res, res_count=1 ):
 		items = res.get( 'Items' )
 		assert_that(items, has_length( res_count ))
 		for item in items:
@@ -134,7 +121,23 @@ class TestPathLookup(ApplicationLayerTest):
 		self._create_discussions()
 
 		# For legacy non-indexed, we only get one possible path.
-		result_expected_val = 1 if is_legacy else 3
+		result_expected_val = 1
+
+		# Video
+		path = '/dataserver2/LibraryPath?objectId=%s' % VIDEO
+		res = self.testapp.get(path, status=expected_status)
+		res = res.json_body
+
+		if expected_status == 403:
+			self._check_catalog(res, res_count=1)
+		else:
+			assert_that(res, has_length(result_expected_val))
+			res = res[0]
+			assert_that(res, has_length(2))
+			assert_that(res[0], has_entry('Class', 'CourseInstance'))
+			assert_that(res[1], has_entries('Class', 'PageInfo',
+											'NTIID', 'tag:nextthought.com,2011-10:OU-HTML-CLC3403_LawAndJustice.lec:01_LESSON',
+											'Title', '1. Defining Law and Justice'))
 
 		# Get reading
 		path = '/dataserver2/LibraryPath?objectId=%s' % READING
@@ -144,7 +147,7 @@ class TestPathLookup(ApplicationLayerTest):
 		# No LessonOverview registered, so we lose outline.
 		# We do get course followed by appropriate page info.
 		if expected_status == 403:
-			self._check_catalog(res)
+			self._check_catalog(res, res_count=1)
 		else:
 			assert_that(res, has_length(result_expected_val))
 			res = res[0]
@@ -216,7 +219,7 @@ class TestPathLookup(ApplicationLayerTest):
 		# Cards are not indexed in our container catalog, so
 		# we go down the legacy path that only returns one result.
 		if expected_status == 403:
-			self._check_catalog(res)
+			self._check_catalog(res, res_count=2)
 		else:
 			assert_that(res, has_length(1))
 			res = res[0]
@@ -236,7 +239,7 @@ class TestPathLookup(ApplicationLayerTest):
 
 			if expected_status == 403:
 				# Course specific forum/topic: only single catalog
-				self._check_catalog(res, res_count=1)
+				self._check_catalog(res)
 			else:
 				assert_that(res, has_length(1))
 				res = res[0]
@@ -254,7 +257,7 @@ class TestPathLookup(ApplicationLayerTest):
 			res = res.json_body
 
 			if expected_status == 403:
-				self._check_catalog(res, res_count=1)
+				self._check_catalog(res)
 			else:
 				assert_that(res, has_length(1))
 				res = res[0]
@@ -266,42 +269,40 @@ class TestPathLookup(ApplicationLayerTest):
 				assert_that( res[2], has_entries( 'Class', 'CommunityForum',
 												'title', 'Open Discussions' ))
 
+	def _enroll(self):
+		with mock_dataserver.mock_db_trans(site_name='platform.ou.edu'):
+			user = User.get_user('sjohnson@nextthought.com')
+
+			cat = component.getUtility(ICourseCatalog)
+			course = cat['Fall2013']['CLC3403_LawAndJustice']
+
+			manager = ICourseEnrollmentManager(course)
+			manager.enroll(user, scope='ForCreditDegree')
+
 	@WithSharedApplicationMockDS(users=True, testapp=True)
 	@fudge.patch('nti.app.products.courseware.adapters.get_catalog')
-	@fudge.patch('nti.app.products.courseware.adapters._is_user_enrolled')
-	def test_contained_path(self, mock_get_catalog, mock_enrolled):
+	def test_contained_path(self, mock_get_catalog):
+		self._enroll()
 		mock_catalog = MockCatalog()
 		mock_get_catalog.is_callable().returns(mock_catalog)
-		mock_enrolled.is_callable().returns( True )
 		self._do_path_lookup()
 
 	@WithSharedApplicationMockDS(users=True, testapp=True)
 	@fudge.patch('nti.app.products.courseware.adapters.get_catalog')
-	@fudge.patch('nti.app.products.courseware.adapters._is_user_enrolled')
-	def test_contained_path_unenrolled(self, mock_get_catalog, mock_enrolled):
+	def test_contained_path_unenrolled(self, mock_get_catalog):
 		mock_catalog = MockCatalog()
 		mock_get_catalog.is_callable().returns(mock_catalog)
-		mock_enrolled.is_callable().returns( False )
 		self._do_path_lookup( expected_status=403 )
 
 	@WithSharedApplicationMockDS(users=True, testapp=True)
 	@fudge.patch('nti.app.products.courseware.adapters._get_courses_from_container')
-	@fudge.patch('nti.app.products.courseware.adapters._is_user_enrolled')
-	def test_contained_path_legacy(self, mock_get_courses, mock_enrolled):
+	def test_contained_path_legacy(self, mock_get_courses):
 		"""
 		Our library path to the given ntiid is returned,
 		even though we do not have the index.
 		"""
+		self._enroll()
 		mock_catalog = MockCatalog()
 		mock_catalog.containers = []
 		mock_get_courses.is_callable().returns( () )
-		mock_enrolled.is_callable().returns( True )
 		self._do_path_lookup( is_legacy=True )
-
-	@unittest.expectedFailure
-	@WithSharedApplicationMockDS(users=True, testapp=True)
-	@fudge.patch('nti.app.products.courseware.adapters.get_catalog')
-	def test_contained_path_video(self, mock_get_catalog):
-		mock_catalog = MockCatalog()
-		mock_get_catalog.is_callable().returns(mock_catalog)
-		self._do_path_lookup_video()

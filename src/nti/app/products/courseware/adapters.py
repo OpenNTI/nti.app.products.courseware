@@ -380,8 +380,9 @@ def _get_courses_from_container(obj, user=None):
 			container = find_object_with_ntiid(container)
 			if user is not None:
 				course = component.queryMultiAdapter((container, user), ICourseInstance)
-			else:
+			if course is None:
 				course = ICourseInstance(container, None)
+
 			if course is not None:
 				results.add(course)
 	if not results:
@@ -395,11 +396,27 @@ def _get_courses_from_container(obj, user=None):
 @component.adapter(IPresentationAsset, IUser)
 def _hierarchy_from_obj_and_user(obj, user):
 	container_courses = _get_courses_from_container(obj, user)
-	container_courses = _get_valid_course_context(container_courses)
+	possible_courses = _get_valid_course_context(container_courses)
 	target_ntiid = _get_target_ntiid(obj)
-	results = [_get_outline_nodes(course, target_ntiid) \
-				for course in container_courses]
-	results = [x for x in results if x is not None]
+	results = []
+	catalog_entries = set()
+	for course in possible_courses:
+		if ICourseCatalogEntry.providedBy( course ):
+			catalog_entries.add( course )
+		else:
+			nodes = _get_outline_nodes(course, target_ntiid)
+			if nodes and len( nodes ) > 1:
+				results.append( nodes )
+
+	# This is an edge case.  We have courses and catalog entries,
+	# but our target NTIID only exists in a catalog entry that
+	# may or may not be open. If we can't find our ntiid in our
+	# course outlines, assume we don't have access and raise.
+	if container_courses and catalog_entries and not results:
+		raise ForbiddenContextException( catalog_entries )
+	# No outline nodes, but we did have courses.
+	if not results:
+		results = [ (x,) for x in possible_courses ]
 	return results
 
 def _get_preferred_course(found_course):
@@ -413,6 +430,7 @@ def _get_preferred_course(found_course):
 		return found_course
 
 	enrolled_courses = []
+	# TODO Enrollment index
 	for enrollments in component.subscribers((user,), IPrincipalEnrollments):
 		for record in enrollments.iter_enrollments():
 			course = ICourseInstance(record, None)
