@@ -377,6 +377,8 @@ def _get_courses_from_container(obj, user=None):
 	if catalog:
 		containers = catalog.get_containers(obj)
 		for container in containers:
+			course = None
+
 			container = find_object_with_ntiid(container)
 			if user is not None:
 				course = component.queryMultiAdapter((container, user), ICourseInstance)
