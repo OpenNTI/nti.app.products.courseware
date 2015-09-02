@@ -12,11 +12,8 @@ import fudge
 from hamcrest import has_length
 from hamcrest import assert_that
 
-from zope import component
-
+from nti.appserver.context_providers import get_joinable_contexts
 from nti.appserver.context_providers import get_top_level_contexts
-
-from nti.appserver.interfaces import IJoinableContextProvider
 
 from nti.dataserver.tests import mock_dataserver
 
@@ -51,9 +48,7 @@ class TestJoinableContextProvider(ApplicationLayerTest):
 
 		with mock_dataserver.mock_db_trans(self.ds, site_name='platform.ou.edu'):
 			obj = find_object_with_ntiid(containerId)
-			results = []
-			for contexts in component.subscribers((obj,), IJoinableContextProvider):
-				results.extend(contexts)
+			results = get_joinable_contexts( obj )
 			assert_that(results, has_length(3))
 
 			mock_enrolled.is_callable().returns(True)

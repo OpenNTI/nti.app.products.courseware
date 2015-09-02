@@ -20,6 +20,7 @@ from pyramid import httpexceptions as hexc
 from nti.app.authentication import get_remote_user
 
 from nti.appserver.context_providers import get_top_level_contexts
+from nti.appserver.context_providers import get_joinable_contexts
 
 from nti.appserver.interfaces import ForbiddenContextException
 from nti.appserver.interfaces import IJoinableContextProvider
@@ -232,16 +233,7 @@ def _get_valid_course_context(course_contexts):
 @interface.implementer(IJoinableContextProvider)
 @component.adapter(interface.Interface)
 def _catalog_entry_from_container_object(obj):
-	"""
-	Using the container index, look for catalog entries that contain
-	the given object.
-	"""
-	results = set()
-	try:
-		_get_top_level_contexts(obj)
-	except ForbiddenContextException as e:
-		results = set( e.joinable_contexts )
-	return results
+	return get_joinable_contexts( obj )
 
 def _get_outline_target_objs( target_ntiid ):
 	"""
