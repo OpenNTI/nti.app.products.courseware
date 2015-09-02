@@ -63,6 +63,8 @@ from . import VIEW_COURSE_RECURSIVE_BUCKET
 
 ITEMS = StandardExternalFields.ITEMS
 LINKS = StandardExternalFields.LINKS
+CLASS = StandardExternalFields.CLASS
+MIMETYPE = StandardExternalFields.MIMETYPE
 
 # TODO
 # - mimetype filter
@@ -309,7 +311,7 @@ class CourseDashboardRecursiveStreamView(AbstractAuthenticatedView, BatchingUtil
 								   batch_start=self.batch_start)
 
 		result['TotalItemCount'] = len(result[ITEMS])
-		result['Class'] = 'CourseRecursiveStream'
+		result[CLASS] = 'CourseRecursiveStream'
 
 		return result
 
@@ -547,5 +549,6 @@ class CourseDashboardBucketingStreamView(CourseDashboardRecursiveStreamView):
 		items = self._get_bucketed_objects()
 		result[ITEMS] = items
 		result['TotalBucketCount'] = len(items)
-		result['Class'] = 'CourseRecursiveStreamByBucket'
+		result[CLASS] = 'CourseRecursiveStreamByBucket'
+		result[MIMETYPE] = 'application/vnd.nextthought.courseware.courserecursivestreambucket'
 		return result

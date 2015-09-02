@@ -14,8 +14,9 @@ from hamcrest import assert_that
 
 from zope import component
 
+from nti.appserver.context_providers import get_top_level_contexts
+
 from nti.appserver.interfaces import IJoinableContextProvider
-from nti.appserver.interfaces import ITopLevelContainerContextProvider
 
 from nti.dataserver.tests import mock_dataserver
 
@@ -54,8 +55,7 @@ class TestJoinableContextProvider(ApplicationLayerTest):
 			for contexts in component.subscribers((obj,), IJoinableContextProvider):
 				results.extend(contexts)
 			assert_that(results, has_length(3))
-			results = []
+
 			mock_enrolled.is_callable().returns(True)
-			for contexts in component.subscribers((obj,), ITopLevelContainerContextProvider):
-				results.extend(contexts)
+			results = get_top_level_contexts( obj )
 			assert_that(results, has_length(3))

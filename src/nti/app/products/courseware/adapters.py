@@ -19,6 +19,8 @@ from pyramid import httpexceptions as hexc
 
 from nti.app.authentication import get_remote_user
 
+from nti.appserver.context_providers import get_top_level_contexts
+
 from nti.appserver.interfaces import ForbiddenContextException
 from nti.appserver.interfaces import IJoinableContextProvider
 from nti.appserver.interfaces import IHierarchicalContextProvider
@@ -181,12 +183,11 @@ def _content_unit_and_user_to_course(unit, user):
 
 def _get_top_level_contexts(obj):
 	results = set()
-	for top_level_contexts in component.subscribers((obj,),
-													ITopLevelContainerContextProvider):
-		for top_level_context in top_level_contexts:
-			if 		ICourseInstance.providedBy(top_level_context) \
-				or	ICourseCatalogEntry.providedBy(top_level_context):
-				results.add(top_level_context)
+	top_level_contexts = get_top_level_contexts( obj )
+	for top_level_context in top_level_contexts:
+		if 		ICourseInstance.providedBy(top_level_context) \
+			or	ICourseCatalogEntry.providedBy(top_level_context):
+			results.add(top_level_context)
 	return results
 
 def _get_valid_course_context(course_contexts):
