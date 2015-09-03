@@ -7,7 +7,6 @@ Views directly related to individual courses and course sub-objects.
 """
 
 from __future__ import print_function, unicode_literals, absolute_import, division
-from nti.contenttypes.courses.interfaces import ICourseInstance
 __docformat__ = "restructuredtext en"
 
 logger = __import__('logging').getLogger(__name__)
@@ -21,6 +20,8 @@ from nti.assessment.interfaces import IQAssignment
 from nti.assessment.interfaces import IQuestionSet
 
 from nti.contentlibrary.indexed_data import get_library_catalog
+
+from nti.contenttypes.courses.interfaces import ICourseInstance
 
 from nti.site.site import get_component_hierarchy_names
 
