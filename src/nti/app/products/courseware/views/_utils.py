@@ -11,9 +11,6 @@ __docformat__ = "restructuredtext en"
 
 logger = __import__('logging').getLogger(__name__)
 
-from nti.app.assessment.interfaces import ICourseAssignmentCatalog
-from nti.app.assessment.interfaces import ICourseAssessmentItemCatalog
-
 from nti.assessment.interfaces import IQPoll
 from nti.assessment.interfaces import IQSurvey
 from nti.assessment.interfaces import IQAssignment
@@ -22,6 +19,8 @@ from nti.assessment.interfaces import IQuestionSet
 from nti.contentlibrary.indexed_data import get_library_catalog
 
 from nti.contenttypes.courses.interfaces import ICourseInstance
+from nti.contenttypes.courses.interfaces import ICourseAssignmentCatalog
+from nti.contenttypes.courses.interfaces import ICourseAssessmentItemCatalog
 
 from nti.site.site import get_component_hierarchy_names
 
