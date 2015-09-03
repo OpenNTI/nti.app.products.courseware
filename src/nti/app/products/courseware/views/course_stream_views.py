@@ -61,9 +61,9 @@ from ._utils import _get_containers_in_course
 from . import VIEW_COURSE_RECURSIVE
 from . import VIEW_COURSE_RECURSIVE_BUCKET
 
+CLASS = StandardExternalFields.CLASS
 ITEMS = StandardExternalFields.ITEMS
 LINKS = StandardExternalFields.LINKS
-CLASS = StandardExternalFields.CLASS
 MIMETYPE = StandardExternalFields.MIMETYPE
 
 # TODO
@@ -246,7 +246,7 @@ class CourseDashboardRecursiveStreamView(AbstractAuthenticatedView, BatchingUtil
 		return self.make_sharing_security_check()
 
 	def _is_readable(self, obj):
-		return is_readable(obj, self.request, skip_cache=True)
+		return is_readable(obj, self.request, skip_cache=False)
 
 	def _do_get_intids(self):
 		"""
@@ -514,13 +514,13 @@ class CourseDashboardBucketingStreamView(CourseDashboardRecursiveStreamView):
 			return course_intids
 
 		most_recent = self._catalog[_DEFAULT_TIME_FIELD].sort(course_intids,
-														reverse=True,
-												 		limit=1)
+															  reverse=True,
+												 			  limit=1)
 		result = None
 		try:
-			obj = tuple( most_recent )[0]
-			obj = self._intids.queryObject( obj )
-			result = getattr( obj, _DEFAULT_TIME_FIELD, None )
+			obj = tuple(most_recent)[0]
+			obj = self._intids.queryObject(obj)
+			result = getattr(obj, _DEFAULT_TIME_FIELD, None)
 		except IndexError:
 			pass
 
@@ -537,7 +537,7 @@ class CourseDashboardBucketingStreamView(CourseDashboardRecursiveStreamView):
 		"Get the bucketed objects for this stream."
 		course_intids = self._do_get_intids()
 		results = {}
-		course_intids = self._check_most_recent_record( course_intids )
+		course_intids = self._check_most_recent_record(course_intids)
 
 		if course_intids:
 			# Ok we have something; let's bucket.
