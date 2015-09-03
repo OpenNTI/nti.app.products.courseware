@@ -28,6 +28,11 @@ from nti.contenttypes.courses.interfaces import ICourseInstance
 from nti.contenttypes.courses.interfaces import ICourseEnrollments
 from nti.contenttypes.courses.interfaces import ICourseCatalogEntry
 
+from nti.contenttypes.courses.utils import is_enrolled
+from nti.contenttypes.courses.utils import has_enrollments
+from nti.contenttypes.courses.utils import get_catalog_entry
+from nti.contenttypes.courses.utils import get_enrollment_record
+
 from nti.dataserver.interfaces import ILinkExternalHrefOnly
 
 from nti.externalization.singleton import SingletonDecorator
@@ -48,10 +53,6 @@ from . import VIEW_COURSE_CLASSMATES
 from . import VIEW_COURSE_RECURSIVE_BUCKET
 from . import VIEW_COURSE_ENROLLMENT_ROSTER
 
-from .utils import is_enrolled
-from .utils import has_enrollments
-from .utils import get_catalog_entry
-from .utils import get_enrollment_record
 from .utils import get_enrollment_options
 
 from .interfaces import ACT_VIEW_ACTIVITY

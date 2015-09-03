@@ -40,12 +40,12 @@ from nti.contenttypes.courses.interfaces import ICourseInstance
 from nti.contenttypes.courses.interfaces import ICourseCatalogEntry
 from nti.contenttypes.courses.interfaces import ICourseEnrollmentManager
 
+from nti.contenttypes.courses.utils import is_instructor_in_hierarchy
+
 from nti.dataserver.interfaces import IUser
 from nti.dataserver import authorization as nauth
 
 from nti.traversal import traversal
-
-from ..utils import is_instructor_in_hierarchy
 
 from ..interfaces import ICoursesWorkspace
 from ..interfaces import ICourseInstanceEnrollment

@@ -158,7 +158,7 @@ def _content_unit_to_course(unit):
 	# XXX: FIXME: This requires a one-to-one mapping
 	return courses[0] if courses else None
 
-from .utils import is_course_instructor as is_instructor  # BWC
+from nti.contenttypes.courses.utils import is_course_instructor as is_instructor  # BWC
 
 def _is_user_enrolled(user, course):
 	# Enrolled or instructor

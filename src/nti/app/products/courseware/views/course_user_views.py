@@ -22,6 +22,7 @@ from nti.app.base.abstract_views import AbstractAuthenticatedView
 from nti.app.externalization.view_mixins import BatchingUtilsMixin
 
 from nti.contenttypes.courses.interfaces import ICourseInstance
+from nti.contenttypes.courses.utils import get_enrollment_record
 
 from nti.dataserver import authorization as nauth
 
@@ -32,13 +33,11 @@ from nti.externalization.interfaces import LocatedExternalDict
 from nti.externalization.interfaces import StandardExternalFields
 from nti.externalization.externalization import to_external_object
 
-from .. import VIEW_CLASSMATES
-from .. import VIEW_COURSE_CLASSMATES
-
-from ..utils import get_enrollment_record
-
 from ..interfaces import ICourseInstanceEnrollment
 from ..interfaces import IClassmatesSuggestedContactsProvider
+
+from .. import VIEW_CLASSMATES
+from .. import VIEW_COURSE_CLASSMATES
 
 ITEMS = StandardExternalFields.ITEMS
 LINKS = StandardExternalFields.LINKS

@@ -16,14 +16,19 @@ from zope.security.interfaces import IPrincipal
 
 from nti.common.property import alias
 
+from nti.contenttypes.courses.interfaces import ES_CREDIT
+from nti.contenttypes.courses.interfaces import ES_PUBLIC
+from nti.contenttypes.courses.interfaces import ES_PURCHASED
+from nti.contenttypes.courses.interfaces import ES_CREDIT_DEGREE
+from nti.contenttypes.courses.interfaces import ES_CREDIT_NONDEGREE
+from nti.contenttypes.courses.interfaces import ENROLLMENT_SCOPE_VOCABULARY
+
 from nti.contenttypes.courses.interfaces import ICourseInstance
 from nti.contenttypes.courses.interfaces import ICourseEnrollments
 from nti.contenttypes.courses.interfaces import ICourseCatalogEntry
 from nti.contenttypes.courses.interfaces import IPrincipalEnrollments
 
-from nti.contenttypes.courses.interfaces import ENROLLMENT_SCOPE_VOCABULARY
-from nti.contenttypes.courses.interfaces import ES_CREDIT, ES_CREDIT_NONDEGREE
-from nti.contenttypes.courses.interfaces import ES_PURCHASED, ES_CREDIT_DEGREE, ES_PUBLIC
+from nti.contenttypes.courses.utils import get_enrollment_record
 
 from nti.dataserver.interfaces import IUser
 from nti.dataserver.users.suggested_contacts import SuggestedContact
@@ -31,7 +36,6 @@ from nti.dataserver.users.suggested_contacts import SuggestedContactsProvider
 from nti.dataserver.users.suggested_contacts import SuggestedContactRankingPolicy
 
 from .utils import ZERO_DATETIME
-from .utils import get_enrollment_record
 
 from .interfaces import ISuggestedContactsProvider
 

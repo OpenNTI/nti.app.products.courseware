@@ -52,13 +52,18 @@ from nti.contenttypes.courses.interfaces import RID_INSTRUCTOR
 from nti.contenttypes.courses.interfaces import ENROLLMENT_SCOPE_VOCABULARY
 
 from nti.contenttypes.courses import get_enrollment_catalog
+
 from nti.contenttypes.courses.interfaces import ICourseCatalog
 from nti.contenttypes.courses.interfaces import ICourseInstance
 from nti.contenttypes.courses.interfaces import ICourseEnrollmentManager
+from nti.contenttypes.courses.interfaces import ICourseInstanceEnrollmentRecord
 
 from nti.contenttypes.courses.discussions.interfaces import ICourseDiscussions
-from nti.contenttypes.courses.interfaces import ICourseInstanceEnrollmentRecord
+
 from nti.contenttypes.courses.enrollment import migrate_enrollments_from_course_to_course
+
+from nti.contenttypes.courses.utils import drop_any_other_enrollments
+from nti.contenttypes.courses.utils import is_instructor_in_hierarchy
 
 from nti.dataserver.interfaces import IUser
 
@@ -73,9 +78,6 @@ from nti.externalization.interfaces import StandardExternalFields
 from nti.ntiids.ntiids import find_object_with_ntiid
 
 from nti.site.site import get_component_hierarchy_names
-
-from ..utils import drop_any_other_enrollments
-from ..utils import is_instructor_in_hierarchy
 
 from ..interfaces import ICoursesWorkspace
 
@@ -388,7 +390,7 @@ class CourseRolesView(AbstractAuthenticatedView,
 			entry = ICourseCatalogEntry(context, None)
 			if context is None or entry is None:
 				continue
-			
+
 			seen = set()
 			users = user_idx.documents_to_values.get(uid)
 			for username in users:
@@ -616,7 +618,7 @@ class CourseCatalogEntryEnrollmentsRosterDownloadView(AllCourseEnrollmentRosterD
 	def _iter_catalog_entries(self):
 		return (self.request.context,)
 
-# discussions 
+# discussions
 
 @view_config(context=ICourseInstance)
 @view_config(context=ICourseCatalogEntry)
