@@ -19,10 +19,16 @@ from nti.assessment.interfaces import IQuestionSet
 from nti.contentlibrary.indexed_data import get_library_catalog
 
 from nti.contenttypes.courses.interfaces import ICourseInstance
+from nti.contenttypes.courses.interfaces import ICourseCatalogEntry
 from nti.contenttypes.courses.interfaces import ICourseAssignmentCatalog
 from nti.contenttypes.courses.interfaces import ICourseAssessmentItemCatalog
 
 from nti.site.site import get_component_hierarchy_names
+
+from ..utils import encode_keys
+from ..utils import memcache_get
+from ..utils import memcache_set
+from ..utils import last_synchronized
 
 def _get_self_assessments_for_course(course):
 	"""
@@ -87,7 +93,7 @@ def _get_self_polls_for_course(course):
 	result = [x for x in result if x.ntiid not in qsids_to_strip]
 	return result
 
-def _get_containers_in_course(context):
+def _do_get_containers_in_course(context):
 	course = ICourseInstance(context)
 	try:
 		packages = course.ContentPackageBundle.ContentPackages
@@ -140,5 +146,13 @@ def _get_containers_in_course(context):
 	assignment_ntiids = (asg.ntiid for asg in assignment_catalog.iter_assignments())
 	containers_in_course = containers_in_course.union(assignment_ntiids)
 	containers_in_course.discard(None)
-
 	return containers_in_course
+
+def _get_containers_in_course(context):
+	entry = ICourseCatalogEntry(context)
+	key = "/course/%s" % encode_keys(entry.ntiid, "containers", last_synchronized())
+	containers = memcache_get(key)
+	if containers is None:
+		containers = _do_get_containers_in_course(context)
+		memcache_set(key, containers)
+	return containers
