@@ -7,6 +7,7 @@ Views directly related to individual courses and course sub-objects.
 """
 
 from __future__ import print_function, unicode_literals, absolute_import, division
+from nti.contenttypes.courses.interfaces import ICourseInstance
 __docformat__ = "restructuredtext en"
 
 logger = __import__('logging').getLogger(__name__)
@@ -86,7 +87,8 @@ def _get_self_polls_for_course(course):
 	result = [x for x in result if x.ntiid not in qsids_to_strip]
 	return result
 
-def _get_containers_in_course(course):
+def _get_containers_in_course(context):
+	course = ICourseInstance(context)
 	try:
 		packages = course.ContentPackageBundle.ContentPackages
 	except AttributeError:
@@ -119,23 +121,23 @@ def _get_containers_in_course(course):
 		contained_objs = catalog.search_objects(container_ntiids=package_ntiids,
 												sites=sites)
 		# Do we need target_ntiid here?
-		contained_ntiids = {x.ntiid for x in contained_objs}
+		contained_ntiids = (x.ntiid for x in contained_objs)
 		containers_in_course.update(contained_ntiids)
 
 	# Add in our self-assessments
 	catalog = ICourseAssessmentItemCatalog(course)
-	ntiids = [x.ntiid for x in catalog.iter_assessment_items()]
+	ntiids = (x.ntiid for x in catalog.iter_assessment_items())
 	containers_in_course = containers_in_course.union(ntiids)
 
 	self_assessments = _get_self_assessments_for_course(course)
-	self_assessment_containerids = {x.__parent__.ntiid for x in self_assessments}
-	self_assessment_qsids = {x.ntiid: x for x in self_assessments}
+	self_assessment_qsids = (x.ntiid for x in self_assessments)
+	self_assessment_containerids = (x.__parent__.ntiid for x in self_assessments)
 	containers_in_course = containers_in_course.union(self_assessment_containerids)
 	containers_in_course = containers_in_course.union(self_assessment_qsids)
 
 	# Add in our assignments
 	assignment_catalog = ICourseAssignmentCatalog(course)
-	assignment_ntiids = [asg.ntiid for asg in assignment_catalog.iter_assignments() ]
+	assignment_ntiids = (asg.ntiid for asg in assignment_catalog.iter_assignments())
 	containers_in_course = containers_in_course.union(assignment_ntiids)
 	containers_in_course.discard(None)
 
