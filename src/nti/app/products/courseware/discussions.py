@@ -36,8 +36,7 @@ from nti.contenttypes.courses.interfaces import ICourseInstanceForCreditScopedFo
 
 from nti.contenttypes.courses.discussions.interfaces import ICourseDiscussion
 
-from nti.contenttypes.courses.discussions.utils import get_discussion_path
-from nti.contenttypes.courses.discussions.utils import is_nti_course_bundle
+from nti.contenttypes.courses.discussions.utils import get_topic_key
 from nti.contenttypes.courses.discussions.utils import get_course_for_discussion
 from nti.contenttypes.courses.discussions.utils import get_discussion_mapped_scopes
 
@@ -141,15 +140,6 @@ def announcements_forums(context):
 
 def discussions_forums(context):
 	return _forums_for_instance(context, 'Discussions')
-
-def get_topic_key(discussion):
-	title = discussion.title
-	title = title.decode('utf-8', 'ignore') if title else u''
-	name = discussion.id  # use id so title can be changed
-	if is_nti_course_bundle(discussion):
-		name = get_discussion_path(name)
-	name = make_specific_safe(name or title)
-	return name
 
 def get_forum_scopes(forum):
 	result = None
