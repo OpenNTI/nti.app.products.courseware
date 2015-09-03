@@ -10,7 +10,10 @@ __docformat__ = "restructuredtext en"
 logger = __import__('logging').getLogger(__name__)
 
 import six
+import hashlib
 from datetime import datetime
+
+import repoze.lru
 
 from zope import component
 from zope import interface
@@ -20,6 +23,7 @@ from zope.intid import IIntIds
 from zope.security.interfaces import IPrincipal
 
 from zope.traversing.api import traverse
+from zope.traversing.interfaces import IEtcNamespace
 
 from nti.contenttypes.courses import get_enrollment_catalog
 
@@ -34,6 +38,8 @@ from nti.contenttypes.courses.interfaces import ICourseCatalog
 from nti.contenttypes.courses.interfaces import ICourseInstance
 from nti.contenttypes.courses.interfaces import ICourseCatalogEntry
 
+from nti.dataserver.interfaces import IMemcacheClient
+
 from nti.site.site import get_component_hierarchy_names
 
 from .enrollment import EnrollmentOptions
@@ -41,7 +47,43 @@ from .enrollment import EnrollmentOptions
 from .interfaces import IUserAdministeredCourses
 from .interfaces import IEnrollmentOptionProvider
 
+DEFAULT_EXP_TIME = 86400
+
 ZERO_DATETIME = datetime.utcfromtimestamp(0)
+
+def last_synchronized():
+	hostsites = component.queryUtility(IEtcNamespace, name='hostsites')
+	result = getattr(hostsites, 'lastSynchronized', 0)
+	return result
+
+def memcache_client():
+	return component.queryUtility(IMemcacheClient)
+
+def memcache_get(key, client=None):
+	client = component.queryUtility(IMemcacheClient) if client is None else client
+	if client is not None:
+		try:
+			return client.get(key)
+		except:
+			pass
+	return None
+
+def memcache_set(key, value, client=None, exp=DEFAULT_EXP_TIME):
+	client = component.queryUtility(IMemcacheClient) if client is None else client
+	if client is not None:
+		try:
+			client.set(key, value, time=exp)
+			return True
+		except:
+			pass
+	return False
+
+@repoze.lru.lru_cache(200)
+def encode_keys(*keys):
+	result = hashlib.md5()
+	for key in keys:
+		result.update(str(key).lower())
+	return result.hexdigest()
 
 def get_vendor_info(context):
 	info = get_course_vendor_info(context, False)
