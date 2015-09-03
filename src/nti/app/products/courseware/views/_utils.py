@@ -11,6 +11,8 @@ __docformat__ = "restructuredtext en"
 
 logger = __import__('logging').getLogger(__name__)
 
+from zope.component.hooks import getSite
+
 from nti.assessment.interfaces import IQPoll
 from nti.assessment.interfaces import IQSurvey
 from nti.assessment.interfaces import IQAssignment
@@ -149,8 +151,9 @@ def _do_get_containers_in_course(context):
 	return containers_in_course
 
 def _get_containers_in_course(context):
+	site = getSite().__name__
 	entry = ICourseCatalogEntry(context)
-	key = "/course/%s" % encode_keys(entry.ntiid, "containers", last_synchronized())
+	key = "/course/%s" % encode_keys(site, entry.ntiid, "containers", last_synchronized())
 	containers = memcache_get(key)
 	if containers is None:
 		containers = _do_get_containers_in_course(context)
