@@ -27,6 +27,7 @@ from nti.appserver.interfaces import IJoinableContextProvider
 from nti.appserver.interfaces import IHierarchicalContextProvider
 from nti.appserver.interfaces import ITopLevelContainerContextProvider
 from nti.appserver.interfaces import ILibraryPathLastModifiedProvider
+from nti.appserver.interfaces import ITrustedTopLevelContainerContextProvider
 
 from nti.appserver.pyramid_authorization import is_readable
 
@@ -438,12 +439,24 @@ def _get_preferred_course(found_course):
 				return subinstance
 	return found_course
 
-def _find_lineage_course(obj):
+def _find_lineage_course(obj, trusted=False):
 	course = find_interface(obj, ICourseInstance, strict=False)
 	if course is not None:
 		course = _get_preferred_course(course)
-		results = _get_valid_course_context(course)
+		if trusted:
+			catalog_entry = ICourseCatalogEntry( course, None )
+			results = (catalog_entry,) if catalog_entry is not None else ()
+		else:
+			results = _get_valid_course_context(course)
 		return results
+
+def _catalog_entries_from_courses( courses ):
+	results = []
+	for course in courses:
+		catalog_entry = ICourseCatalogEntry( course, None )
+		if catalog_entry is not None:
+			results.append( catalog_entry )
+	return results
 
 @interface.implementer(ITopLevelContainerContextProvider)
 @component.adapter(IPost)
@@ -459,12 +472,26 @@ def _courses_from_forum_obj(obj):
 def _courses_from_forum_obj_and_user(obj, _):
 	return _find_lineage_course(obj)
 
+@interface.implementer(ITrustedTopLevelContainerContextProvider)
+@component.adapter(IPost)
+@component.adapter(ITopic)
+@component.adapter(IForum)
+def _catalog_entries_from_forum_obj(obj):
+	return _find_lineage_course(obj, trusted=True)
+
 @interface.implementer(ITopLevelContainerContextProvider)
 @component.adapter(IContentUnit)
 def _courses_from_package(obj):
 	# We could use the container index.
 	courses = _content_unit_to_courses(obj, include_sub_instances=True)
 	results = _get_valid_course_context(courses)
+	return results
+
+@interface.implementer(ITrustedTopLevelContainerContextProvider)
+@component.adapter(IContentUnit)
+def _catalog_entries_from_package(obj):
+	courses = _content_unit_to_courses(obj, include_sub_instances=True)
+	results = _catalog_entries_from_courses(courses)
 	return results
 
 @interface.implementer(ITopLevelContainerContextProvider)
@@ -475,29 +502,40 @@ def _courses_from_package_and_user(obj, user):
 	return results
 
 def __courses_from_obj_and_user(obj, user=None):
-	# TODO We need to index content units so this works for more
-	# contained objects.
-	container_courses = _get_courses_from_container(obj, user)
-	if not container_courses:
-		# No? Are we contained?
-		container_id = getattr(obj, 'containerId', None)
-		container_obj = find_object_with_ntiid(container_id) if container_id else None
+	if IHighlight.providedBy(obj):
+		obj_ntiid = obj.containerId
+		container_obj = find_object_with_ntiid(obj_ntiid)
 		if container_obj is not None:
-			container_courses = _get_courses_from_container(container_obj, user)
-	results = _get_valid_course_context(container_courses)
+			obj = container_obj
+	container_courses = _get_courses_from_container(obj, user)
+	return container_courses
+
+def _top_level_context_from_obj_and_user( obj, user=None ):
+	courses = __courses_from_obj_and_user(obj, user)
+	return _get_valid_course_context( courses )
+
+def _trusted_top_level_context( obj, user=None ):
+	courses = __courses_from_obj_and_user(obj, user)
+	results = _catalog_entries_from_courses( courses )
 	return results
 
 @interface.implementer(ITopLevelContainerContextProvider)
 @component.adapter(IHighlight, IUser)
 @component.adapter(IPresentationAsset, IUser)
 def _courses_from_obj_and_user(obj, user):
-	return __courses_from_obj_and_user(obj, user)
+	return _top_level_context_from_obj_and_user(obj, user)
 
 @interface.implementer(ITopLevelContainerContextProvider)
 @component.adapter(IHighlight)
 @component.adapter(IPresentationAsset)
 def _courses_from_obj(obj):
-	return __courses_from_obj_and_user(obj)
+	return _top_level_context_from_obj_and_user(obj)
+
+@interface.implementer(ITrustedTopLevelContainerContextProvider)
+@component.adapter(IHighlight)
+@component.adapter(IPresentationAsset)
+def _catalog_entries_from_obj(obj):
+	return _trusted_top_level_context(obj)
 
 @interface.implementer(ILibraryPathLastModifiedProvider)
 @component.adapter(IUser)
@@ -505,7 +543,7 @@ def _enrollment_last_modified( user ):
 	result = 0
 	# Could use index here.
 	for enrollments in component.subscribers((user,), IPrincipalEnrollments):
-			for record in enrollments.iter_enrollments():
-				enroll_last_mod = getattr( record, 'lastModified', 0 )
-				result = max( result, enroll_last_mod )
+		for record in enrollments.iter_enrollments():
+			enroll_last_mod = getattr( record, 'lastModified', 0 )
+			result = max( result, enroll_last_mod )
 	return result

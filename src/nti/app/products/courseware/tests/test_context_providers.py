@@ -14,6 +14,7 @@ from hamcrest import assert_that
 
 from nti.appserver.context_providers import get_joinable_contexts
 from nti.appserver.context_providers import get_top_level_contexts
+from nti.appserver.context_providers import get_trusted_top_level_contexts
 
 from nti.dataserver.tests import mock_dataserver
 
@@ -29,7 +30,7 @@ class MockCatalog(object):
 		course_ntiid = 'tag:nextthought.com,2011-10:OU-HTML-ENGR1510_Intro_to_Water.course_info'
 		return (course_ntiid,)
 
-class TestJoinableContextProvider(ApplicationLayerTest):
+class TestContextProviders(ApplicationLayerTest):
 	layer = PersistentInstructedCourseApplicationTestLayer
 	testapp = None
 	default_origin = str('http://janux.ou.edu')
@@ -38,7 +39,7 @@ class TestJoinableContextProvider(ApplicationLayerTest):
 	@fudge.patch('nti.app.products.courseware.adapters.get_catalog')
 	@fudge.patch('nti.app.products.courseware.adapters.is_readable')
 	@fudge.patch('nti.app.products.courseware.adapters._is_user_enrolled')
-	def test_joinable(self, mock_get_catalog, mock_readable, mock_enrolled):
+	def test_providers(self, mock_get_catalog, mock_readable, mock_enrolled):
 		containerId = "tag:nextthought.com,2011-10:OU-HTML-CLC3403_LawAndJustice.sec:04.01_RequiredReading"
 		mock_catalog = MockCatalog()
 		mock_get_catalog.is_callable().returns(mock_catalog)
@@ -53,4 +54,7 @@ class TestJoinableContextProvider(ApplicationLayerTest):
 
 			mock_enrolled.is_callable().returns(True)
 			results = get_top_level_contexts( obj )
+			assert_that(results, has_length(3))
+
+			results = get_trusted_top_level_contexts( obj )
 			assert_that(results, has_length(3))

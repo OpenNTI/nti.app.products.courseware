@@ -47,7 +47,7 @@
 	<!-- ACLs -->
 	<adapter factory=".acl.EnrolledCoursesCollectionACLProvider" />
 	<adapter factory=".acl.AdministeredCoursesCollectionACLProvider" />
-	
+
 	<!-- I18N -->
 	<i18n:registerTranslations directory="locales" />
 
@@ -166,6 +166,30 @@
 				for="nti.dataserver.interfaces.IHighlight
 					nti.dataserver.interfaces.IUser"/>
 
+	<subscriber factory=".adapters._catalog_entries_from_forum_obj"
+				provides="nti.appserver.interfaces.ITrustedTopLevelContainerContextProvider"
+				for="nti.dataserver.contenttypes.forums.interfaces.IPost"/>
+
+	<subscriber factory=".adapters._catalog_entries_from_forum_obj"
+				provides="nti.appserver.interfaces.ITrustedTopLevelContainerContextProvider"
+				for="nti.dataserver.contenttypes.forums.interfaces.ITopic"/>
+
+	<subscriber factory=".adapters._catalog_entries_from_forum_obj"
+				provides="nti.appserver.interfaces.ITrustedTopLevelContainerContextProvider"
+				for="nti.dataserver.contenttypes.forums.interfaces.IForum"/>
+
+	<subscriber factory=".adapters._catalog_entries_from_package"
+				provides="nti.appserver.interfaces.ITrustedTopLevelContainerContextProvider"
+				for="nti.contentlibrary.interfaces.IContentUnit"/>
+
+	<subscriber factory=".adapters._catalog_entries_from_obj"
+				provides="nti.appserver.interfaces.ITrustedTopLevelContainerContextProvider"
+				for="nti.contenttypes.presentation.interfaces.IPresentationAsset"/>
+
+	<subscriber factory=".adapters._catalog_entries_from_obj"
+				provides="nti.appserver.interfaces.ITrustedTopLevelContainerContextProvider"
+				for="nti.dataserver.interfaces.IHighlight"/>
+
 	<!-- Library path last mod -->
 	<subscriber factory=".adapters._enrollment_last_modified"
 				provides="nti.appserver.interfaces.ILibraryPathLastModifiedProvider"
@@ -212,7 +236,7 @@
 
 	<configure zcml:condition="not-have testmode">
 		<utility factory=".utils.IndexAdminCourses" />
-	</configure>	
+	</configure>
 	<configure zcml:condition="have testmode">
 		<utility factory=".utils.IterableAdminCourses" />
 	</configure>
