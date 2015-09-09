@@ -63,6 +63,7 @@ from nti.externalization.internalization import update_from_external_object
 from nti.ntiids.ntiids import TYPE_OID
 from nti.ntiids.ntiids import make_ntiid
 from nti.ntiids.ntiids import is_ntiid_of_type
+from nti.ntiids.ntiids import make_provider_safe
 from nti.ntiids.ntiids import make_specific_safe
 
 from nti.traversal.traversal import find_interface
@@ -317,7 +318,7 @@ def create_topics(discussion):
 			# creating at a course instance or subinstance...
 			# XXX: This is assumming quite a bit about the way these work.
 			entry = ICourseCatalogEntry(course)
-			ntiid = make_ntiid(provider=entry.ProviderUniqueID,
+			ntiid = make_ntiid(provider=make_provider_safe(entry.ProviderUniqueID),
 							   nttype=NTIID_TYPE_COURSE_SECTION_TOPIC,
 							   specific=topic._ntiid_specific_part)
 			logger.debug('%s topic %s with NTIID %s',
