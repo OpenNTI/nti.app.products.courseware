@@ -37,6 +37,7 @@ from BTrees import OOBTree
 
 from persistent import Persistent
 
+from nti.contentlibrary.bundle import ContentPackageBundle
 from nti.contentlibrary.interfaces import IContentPackageLibrary
 
 from nti.common.property import CachedProperty
@@ -254,7 +255,7 @@ def _register_course_purchasable_from_catalog_entry(entry, event):
 		try:
 			local_catalog.addCatalogEntry(entry, event=False)
 		except ValueError:  # A re-enumeration; typically tests
-			logger.info("Found duplicate local course catalog entry %s", 
+			logger.info("Found duplicate local course catalog entry %s",
 						entry.ProviderUniqueID)
 			local_catalog.removeCatalogEntry(entry, event=False)
 			local_catalog.addCatalogEntry(entry, event=False)
@@ -405,7 +406,8 @@ class _LegacyCommunityBasedCourseInstanceFakeBundle(object):
 
 	def toExternalObject(self, *args, **kwargs):
 		return {'ContentPackages': self.ContentPackages,
-				'Class': 'ContentPackageBundle'}
+				'Class': 'ContentPackageBundle',
+				'MimeType': ContentPackageBundle.mime_type }
 
 from zope.schema.vocabulary import SimpleVocabulary
 
@@ -465,7 +467,7 @@ class _LegacyCommunityBasedCourseInstance(CourseInstance):
 	@CachedProperty
 	def restricted_scope_entity_container(self):
 		"""
-		checking membership in this is pretty common, so caching 
+		checking membership in this is pretty common, so caching
 		it has measurable benefits
 		"""
 		return IEntityContainer(self.restricted_scope_entity, ())
