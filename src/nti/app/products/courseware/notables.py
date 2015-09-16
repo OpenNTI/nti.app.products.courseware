@@ -33,6 +33,8 @@ from nti.dataserver.contenttypes.forums.interfaces import IPersonalBlogComment
 from nti.dataserver.metadata_index import isTopLevelContentObjectFilter
 from nti.dataserver.metadata_index import CATALOG_NAME as METADATA_CATALOG_NAME
 
+_FEEDBACK_MIME_TYPE = "application/vnd.nextthought.assessment.userscourseassignmenthistoryitemfeedback"
+
 @interface.implementer( INotableFilter )
 class TopLevelPriorityNotableFilter(object):
 	"""
@@ -87,6 +89,9 @@ class _UserPriorityCreatorNotableProvider(object):
 	course communities the user is enrolled in.  If items
 	are shared with global communities or other, perhaps
 	older, courses, we should exclude those.
+
+	We also return all feedback created by such instructors.
+	We rely on permissioning to filter out non-relevant entries.
 	"""
 
 	def __init__(self, user, request):
@@ -95,6 +100,14 @@ class _UserPriorityCreatorNotableProvider(object):
 	@CachedProperty
 	def _catalog(self):
 		return component.getUtility(ICatalog, METADATA_CATALOG_NAME)
+
+	def _get_feedback_intids(self, instructor_intids):
+		catalog = self._catalog
+		feedback_intids = catalog['mimeType'].apply(
+								{'any_of': (_FEEDBACK_MIME_TYPE,)})
+		results = catalog.family.IF.intersection(instructor_intids,
+												feedback_intids)
+		return results
 
 	def get_notable_intids(self):
 		catalog = self._catalog
@@ -121,5 +134,8 @@ class _UserPriorityCreatorNotableProvider(object):
 													{'any_of': scope_ntiids})
 				course_results = catalog.family.IF.intersection(instructor_intids,
 																course_shared_with_intids)
+
 				results.update( course_results )
+				feedback_intids = self._get_feedback_intids( instructor_intids )
+				results.update( feedback_intids )
 		return results
