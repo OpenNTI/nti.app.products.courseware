@@ -89,8 +89,6 @@ class _AbstractMixin(object):
 		res_ntiids = __traceback_info__ = res.json_body
 		assert_that( res.json_body, contains(*self.body_matcher) )
 
-
-
 		for i in self.body_matcher:
 			if not isinstance(i, basestring):
 				continue
@@ -185,11 +183,11 @@ class _AbstractMixin(object):
 # 		self.testapp.put_json( headline_url,
 # 								{'title': 'A New Title'},
 # 							   extra_environ=admin_env)
-# 
+#
 # 		# ...though the student cannot
 # 		self.testapp.put_json( headline_url, {'title': 'From the student'},
 # 							   status=403 )
-# 
+#
 # 		# XXX: The instructor should or should not be able to make an edit? At the moment,
 # 		# he cannot. (This way we could potentially use the creator to update)
 # 		self.testapp.put_json( headline_url, {'title': 'From the inst'},

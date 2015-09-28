@@ -342,6 +342,12 @@
 				for="nti.contenttypes.courses.interfaces.ICourseCatalogEntry
 					 pyramid.interfaces.IRequest" />
 
+	<subscriber factory=".decorators._CatalogFamilyDecorator"
+				provides="nti.externalization.interfaces.IExternalMappingDecorator"
+				for="nti.contenttypes.courses.interfaces.ICourseCatalogEntry
+					 pyramid.interfaces.IRequest" />
+
+
 	<!--
 		 Get an href here to the real location, since we return these beneath Roster as well.
 		 Notice this is currently a very specific registration.

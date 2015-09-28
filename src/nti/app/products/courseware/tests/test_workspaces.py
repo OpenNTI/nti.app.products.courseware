@@ -565,16 +565,25 @@ class TestPersistentWorkspaces(_AbstractEnrollingBase,
 
 		# and we can see it in the all courses list...
 		res = self.testapp.get(self.all_courses_href)
-		assert_that( res.json_body, has_entry( 'Items',
-											   has_item( has_entry('ProviderUniqueID',
-																   'CLC 3403-Restricted')) ) )
-		assert_that( res.json_body, has_entry( 'Items',
-											   has_item( has_entry('ProviderUniqueID',
+		res = res.json_body
+		assert_that( res, has_entry( 'Items', has_item(
+												has_entries(
+													'ProviderUniqueID', 'CLC 3403-Restricted',
+													'CatalogFamilies',
+														has_entries(
+															'Class', 'CatalogFamilies',
+															'Items',
+																has_item(
+																	has_entries(
+																		'ProviderUniqueID', 'CLC 3403',
+																		'Class', 'CatalogFamily',
+																		'Title', 'Law and Justice' ))) )) ) )
+		assert_that( res, has_entry( 'Items', has_item( has_entry('ProviderUniqueID',
 																   'ENGR 1510-901')) ) )
 
 		# ...and the remaining 'sibling' sections have vanished...
 		# we get just Water and restricted
-		assert_that( res.json_body, has_entry( 'Items', has_length(2) ) )
+		assert_that( res, has_entry( 'Items', has_length(2) ) )
 
 class TestRestrictedWorkspace(ApplicationLayerTest):
 	layer = RestrictedInstructedCourseApplicationTestLayer
