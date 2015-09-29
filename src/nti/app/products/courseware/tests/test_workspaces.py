@@ -16,6 +16,7 @@ from hamcrest import has_key
 from hamcrest import contains
 from hamcrest import has_item
 from hamcrest import has_entry
+from hamcrest import not_none
 from hamcrest import has_items
 from hamcrest import has_length
 from hamcrest import assert_that
@@ -577,7 +578,9 @@ class TestPersistentWorkspaces(_AbstractEnrollingBase,
 																	has_entries(
 																		'ProviderUniqueID', 'CLC 3403',
 																		'Class', 'CatalogFamily',
-																		'Title', 'Law and Justice' ))) )) ) )
+																		'Title', 'Law and Justice',
+																		'CatalogFamilyID', not_none(),
+																		'PlatformPresentationResources', not_none() ))) )) ) )
 		assert_that( res, has_entry( 'Items', has_item( has_entry('ProviderUniqueID',
 																   'ENGR 1510-901')) ) )
 

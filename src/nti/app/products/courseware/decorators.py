@@ -22,6 +22,8 @@ from nti.app.renderers.decorators import AbstractAuthenticatedRequestAwareDecora
 
 from nti.appserver.pyramid_authorization import has_permission
 
+from nti.common.hash import md5_base64_digest
+
 from nti.contenttypes.courses.interfaces import ES_PUBLIC
 from nti.contenttypes.courses.interfaces import ICourseOutline
 from nti.contenttypes.courses.interfaces import ICourseInstance
@@ -298,7 +300,8 @@ class _CatalogFamilyDecorator(AbstractAuthenticatedRequestAwareDecorator):
 							'StartDate',
 							'EndDate',
 							'Title',
-							'Description')
+							'Description',
+							'PlatformPresentationResources')
 
 	def _predicate(self, context, result):
 		"""
@@ -314,6 +317,8 @@ class _CatalogFamilyDecorator(AbstractAuthenticatedRequestAwareDecorator):
 		catalog_family = {}
 		catalog_family[CLASS] = 'CatalogFamily'
 		catalog_family[MIME_TYPE] = 'application/vnd.nextthought.catalogfamily'
+		# Return opaque family ID.
+		catalog_family['CatalogFamilyID'] = md5_base64_digest( str( super_catalog.ntiid ) )
 		for field in self.family_display_fields:
 			val = getattr( super_catalog, field, None )
 			if val is not None:
