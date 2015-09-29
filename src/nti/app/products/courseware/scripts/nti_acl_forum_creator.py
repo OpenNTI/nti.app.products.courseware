@@ -13,8 +13,8 @@ import os
 import sys
 import argparse
 
-from zope import component 
-from zope import interface 
+from zope import component
+from zope import interface
 
 from zope.security.interfaces import IPrincipal
 
@@ -65,12 +65,12 @@ def _get_instructors(instance):
 
 def _get_acl(instance, permissions, ntiids):
 	instructors = _get_instructors(instance)
-	
+
 	# Our instance instructors get all permissions.
-	acl = [ForumACE(Permissions=("All",), 
+	acl = [ForumACE(Permissions=("All",),
 					Entities=[i for i in instructors],
 					Action='Allow'),
-		   ForumACE(Permissions=permissions, 
+		   ForumACE(Permissions=permissions,
 					Entities=list(ntiids),
 					Action='Allow')]
 
@@ -78,16 +78,16 @@ def _get_acl(instance, permissions, ntiids):
 	if not ICourseSubInstance.providedBy(instance):
 		for subinstance in instance.SubInstances.values():
 			instructors = _get_instructors(subinstance)
-			acl.append( ForumACE(Permissions=permissions, 
+			acl.append(ForumACE(Permissions=permissions,
 								 Entities=[i.id for i in instructors],
-								 Action='Allow' ) )
+								 Action='Allow'))
 	return acl
-	
+
 def _assign_iface(obj, iface=None):
 	if iface is not None and not iface.providedBy(obj):
 		interface.alsoProvides(obj, iface)
 		logger.info("Added interface to object %s %s", iface, obj)
-				
+
 def _assign_acl(obj, acl, iface=None):
 	if iface is not None and not iface.providedBy(obj):
 		interface.alsoProvides(obj, iface)
@@ -96,7 +96,7 @@ def _assign_acl(obj, acl, iface=None):
 	if not hasattr(obj, 'ACL') or obj.ACL != acl:
 		obj.ACL = acl
 		logger.info("Set ACL on object %s to %s", obj, acl)
-				
+
 def _creator(course, scope, name, title, permissions, site=None):
 	set_site(site)
 
@@ -111,16 +111,16 @@ def _creator(course, scope, name, title, permissions, site=None):
 			pass
 	if instance is None:
 		raise ValueError("Course cannot be found")
-	
+
 	# decode title
 	title = title.decode('utf-8', 'ignore')
-	
+
 	# Always created by the public community
 	# (because legacy courses might have a DFL
 	# for the non-public)
 	creator = instance.SharingScopes['Public'].NTIID
 	creator = Entity.get_entity(creator)
-	
+
 	# get fourm interface
 	if scope == ES_PUBLIC:
 		forum_interface = ICourseInstancePublicScopedForum
@@ -130,10 +130,10 @@ def _creator(course, scope, name, title, permissions, site=None):
 		forum_interface = ICourseInstanceForCreditScopedForum
 
 	discussions = instance.Discussions
-	
+
 	ntiid = instance.SharingScopes[scope].NTIID
 	acl = _get_acl(instance, permissions, (ntiid,))
-	
+
 	name = make_specific_safe(name)
 	try:
 		forum = discussions[name]
@@ -152,9 +152,9 @@ def _creator(course, scope, name, title, permissions, site=None):
 		discussions[name] = forum
 		logger.debug('Created forum %s', forum)
 	return forum.NTIID
-	
+
 def main():
-	arg_parser = argparse.ArgumentParser(description="Migrate enrollments from main course to sub-instances" )
+	arg_parser = argparse.ArgumentParser(description="ACL forum creator")
 	arg_parser.add_argument('-v', '--verbose', help="Be verbose", action='store_true',
 							dest='verbose')
 	arg_parser.add_argument('-c', '--course',
@@ -187,7 +187,7 @@ def main():
 	course = args.course
 	if not course:
 		raise ValueError("Please specify a course/catalog entry identifier")
-	
+
 	scope = args.scope
 	if not scope:
 		raise ValueError("Please specify a scope")
@@ -198,8 +198,8 @@ def main():
 	if not name:
 		raise ValueError("Please specify a fourum name")
 	title = args.title or name
-	
-	permissions = args.permissions or ()	
+
+	permissions = args.permissions or ()
 	permissions = [x.capitalize() for x in permissions if x]
 	for perm in permissions:
 		if perm not in PERMISSIONS:
@@ -207,20 +207,20 @@ def main():
 	if not permissions:
 		raise ValueError("Please specify forum permissions")
 
-	conf_packages = ('nti.appserver',) 
+	conf_packages = ('nti.appserver',)
 	context = create_context(env_dir, with_library=True)
 
-	run_with_dataserver( environment_dir=env_dir,
-						 xmlconfig_packages=conf_packages,
-						 verbose=args.verbose,
-						 context=context,
-						 function=lambda: _creator(site=site,
-												   course=course,
-												   name=name,
-												   title=title,
-												   scope=scope,
-												   permissions=permissions))
-	sys.exit( 0 )
+	run_with_dataserver(environment_dir=env_dir,
+						xmlconfig_packages=conf_packages,
+						verbose=args.verbose,
+						context=context,
+						function=lambda: _creator(site=site,
+												  course=course,
+												  name=name,
+												  title=title,
+												  scope=scope,
+												  permissions=permissions))
+	sys.exit(0)
 
 if __name__ == '__main__':
 	main()

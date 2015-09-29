@@ -13,9 +13,11 @@ import os
 import sys
 import argparse
 
-from zope import component 
-from zope.security.interfaces import IPrincipal
+from zope import component
+
 from zope.copypastemove.interfaces import IObjectMover
+
+from zope.security.interfaces import IPrincipal
 
 from nti.contenttypes.courses.interfaces import ES_PUBLIC
 from nti.contenttypes.courses.interfaces import ICourseCatalog
@@ -38,7 +40,7 @@ def _migrate(ntiid, scope=ES_PUBLIC, max_seat_count=25, sections=(),
 			 site=None, dry_run=False, verbose=False):
 	if site:
 		set_site(site)
-		
+
 	context = find_object_with_ntiid(ntiid)
 	instance = ICourseInstance(context, None)
 	if instance is None:
@@ -54,10 +56,10 @@ def _migrate(ntiid, scope=ES_PUBLIC, max_seat_count=25, sections=(),
 	parent = course = instance
 	if ICourseSubInstance.providedBy(course):
 		parent = course.__parent__.__parent__
-		
+
 	if not sections:
 		sections = list(parent.SubInstances.keys())
-	
+
 	items = []
 	for section in sections:
 		if section not in parent.SubInstances:
@@ -65,27 +67,27 @@ def _migrate(ntiid, scope=ES_PUBLIC, max_seat_count=25, sections=(),
 		sub_instance = parent.SubInstances[section]
 		count = ICourseEnrollments(sub_instance).count_enrollments()
 		items.append(SectionSeat(section, count))
-	
+
 	items.sort()
 	source_enrollments = IDefaultCourseInstanceEnrollmentStorage(course)
-	
+
 	count = 0
 	log = logger.warn if not verbose else logger.info
 
 	for source_prin_id in list(source_enrollments):
-	
+
 		if not source_prin_id or User.get_user(source_prin_id) is None:
-			## dup enrollment
+			# # dup enrollment
 			continue
-		
+
 		source_enrollment = source_enrollments[source_prin_id]
 		if source_enrollment is None or source_enrollment.Scope != scope:
 			continue
-	
+
 		if IPrincipal(source_enrollment.Principal, None) is None:
 			logger.warn("Ignoring dup enrollment for %s", source_prin_id)
 			continue
-		
+
 		index = 0
 		section = None
 		for idx, item in enumerate(items):
@@ -94,22 +96,22 @@ def _migrate(ntiid, scope=ES_PUBLIC, max_seat_count=25, sections=(),
 				index = idx
 				section = parent.SubInstances[section_name]
 				break
-		
+
 		if section is None:
 			index = 0
 			items.sort()
 			section_name = items[0].section_name
 			section = parent.SubInstances[section_name]
-			
+
 		dest_enrollments = IDefaultCourseInstanceEnrollmentStorage(section)
 		if source_prin_id in dest_enrollments:
 			continue
-		
-		if not dry_run:   
+
+		if not dry_run:
 			mover = IObjectMover(source_enrollment)
 			mover.moveTo(dest_enrollments)
-		
-		count +=1
+
+		count += 1
 		items[index].seat_count += 1
 		log("Move enrollment for principal %s to section %s", source_prin_id,
 			section_name)
@@ -117,7 +119,7 @@ def _migrate(ntiid, scope=ES_PUBLIC, max_seat_count=25, sections=(),
 	return count
 
 def main():
-	arg_parser = argparse.ArgumentParser(description="Migrate enrollments from main course to sub-instances" )
+	arg_parser = argparse.ArgumentParser(description="Migrate enrollments from main course to sub-instances")
 	arg_parser.add_argument('ntiid', help="Course entry identifier/ntiid")
 	arg_parser.add_argument('-v', '--verbose', help="Be verbose", action='store_true',
 							dest='verbose')
@@ -154,14 +156,14 @@ def main():
 	dry_run = args.dry_run
 	sections = args.sections
 	max_seat_count = args.max_seat_count
-	
+
 	if max_seat_count <= 0:
 		raise ValueError("Invalid max seat count")
-	
+
 	context = create_context(env_dir, with_library=True)
 	conf_packages = ('nti.appserver',)
-	
-	run_with_dataserver( environment_dir=env_dir,
+
+	run_with_dataserver(environment_dir=env_dir,
 						 xmlconfig_packages=conf_packages,
 						 verbose=args.verbose,
 						 context=context,
@@ -172,7 +174,7 @@ def main():
 												   sections=sections,
 												   verbose=args.verbose,
 												   max_seat_count=max_seat_count))
-	sys.exit( 0 )
+	sys.exit(0)
 
 if __name__ == '__main__':
 	main()
