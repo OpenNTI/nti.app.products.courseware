@@ -488,7 +488,8 @@ class CourseDashboardBucketingStreamView(CourseDashboardRecursiveStreamView):
 				bucket_dict['OldestTimestamp'] = start_ts
 				bucket_dict['MostRecentTimestamp'] = end_ts
 				bucket_dict['BucketItemCount'] = len(bucket_dict[ITEMS])
-				bucket_dict['Class'] = 'CourseRecursiveStreamBucket'
+				bucket_dict[CLASS] = 'CourseRecursiveStreamBucket'
+				bucket_dict[MIMETYPE] = 'application/vnd.nextthought.courseware.courserecursivestreambucket'
 				results.append(bucket_dict)
 
 		if found_buckets < self.non_empty_bucket_count:
@@ -550,5 +551,5 @@ class CourseDashboardBucketingStreamView(CourseDashboardRecursiveStreamView):
 		result[ITEMS] = items
 		result['TotalBucketCount'] = len(items)
 		result[CLASS] = 'CourseRecursiveStreamByBucket'
-		result[MIMETYPE] = 'application/vnd.nextthought.courseware.courserecursivestreambucket'
+		result[MIMETYPE] = 'application/vnd.nextthought.courseware.courserecursivestreambybucket'
 		return result

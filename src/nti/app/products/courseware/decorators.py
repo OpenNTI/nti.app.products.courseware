@@ -292,7 +292,7 @@ class _ContainedCatalogEntryDecorator(AbstractAuthenticatedRequestAwareDecorator
 @component.adapter(ICourseCatalogEntry)
 class _CatalogFamilyDecorator(AbstractAuthenticatedRequestAwareDecorator):
 	"""
-	Decorate the catalog entry family for a course.
+	Expose the catalog family for a course catalog entry.
 	"""
 	class_name = 'CatalogFamilies'
 	family_display_fields = ('ProviderUniqueID',
@@ -332,12 +332,12 @@ class _CatalogFamilyDecorator(AbstractAuthenticatedRequestAwareDecorator):
 		super_catalog = ICourseCatalogEntry( course, None )
 		if super_catalog is not None:
 			catalog_families = {}
-			# We support a list of catalog families, but we only
-			# provide the super course for now.
 			catalog_families[CLASS] = self.class_name
 			catalog_families[MIME_TYPE] = 'application/vnd.nextthought.catalogfamilies'
 			catalog_families[ITEMS] = vals = []
 
+			# We support a list of catalog families, but we only
+			# provide the super course catalog entry for now.
 			catalog_family = self._build_catalog_family( super_catalog )
 			vals.append( catalog_family )
 
