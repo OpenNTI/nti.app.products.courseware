@@ -64,7 +64,7 @@ from .interfaces import IPrincipalAdministrativeRoleCatalog
 @interface.implementer(ICoursesWorkspace)
 class UserCourseWorkspace(Contained):
 
-	# : Our name, part of our URL
+	#: Our name, part of our URL
 	__name__ = 'Courses'
 	name = alias('__name__', __name__)
 
@@ -450,7 +450,7 @@ class _DefaultPrincipalAdministrativeRoleCatalog(object):
 @interface.implementer(IAdministeredCoursesCollection)
 class AdministeredCoursesCollection(_AbstractQueryBasedCoursesCollection):
 
-	# : Our name, part of our URL.
+	#: Our name, part of our URL.
 	__name__ = 'AdministeredCourses'
 	name = alias('__name__', __name__)
 
