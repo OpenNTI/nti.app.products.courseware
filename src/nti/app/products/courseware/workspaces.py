@@ -124,7 +124,7 @@ from nti.externalization.interfaces import LocatedExternalDict
 @interface.implementer(IContainerCollection)
 class AllCoursesCollection(Contained):
 
-	# : Our name, part of our URL.
+	#: Our name, part of our URL.
 	__name__ = 'AllCourses'
 
 	accepts = ()
@@ -371,7 +371,7 @@ def wrapper_to_catalog(wrapper):
 @interface.implementer(IEnrolledCoursesCollection)
 class EnrolledCoursesCollection(_AbstractQueryBasedCoursesCollection):
 
-	# : Our name, part of our URL.
+	#: Our name, part of our URL.
 	__name__ = 'EnrolledCourses'
 	name = alias('__name__', __name__)
 
