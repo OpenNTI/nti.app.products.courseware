@@ -47,8 +47,10 @@ from nti.contenttypes.courses.index import IX_SITE
 from nti.contenttypes.courses.index import IX_SCOPE
 from nti.contenttypes.courses.index import IX_COURSE
 from nti.contenttypes.courses.index import IX_USERNAME
+from nti.contenttypes.courses.interfaces import ES_PUBLIC
 from nti.contenttypes.courses.interfaces import INSTRUCTOR
 from nti.contenttypes.courses.interfaces import RID_INSTRUCTOR
+from nti.contenttypes.courses.interfaces import ENROLLMENT_SCOPE_NAMES
 from nti.contenttypes.courses.interfaces import ENROLLMENT_SCOPE_VOCABULARY
 
 from nti.contenttypes.courses import get_enrollment_catalog
@@ -82,6 +84,8 @@ from nti.site.site import get_component_hierarchy_names
 from ..interfaces import ICoursesWorkspace
 
 from ..workspaces import CourseInstanceAdministrativeRole
+
+from ..utils import course_migrator
 
 from .catalog_views import get_enrollments
 from .catalog_views import do_course_enrollment
@@ -346,6 +350,78 @@ class CourseEnrollmentMigrationView(AbstractAuthenticatedView):
 		target = ICourseInstance(params['target'])
 		total = migrate_enrollments_from_course_to_course(source, target, verbose=True,
 														  result=users_moved)
+		result['Total'] = total
+		return result
+
+	def __call__(self):
+		# Make sure we don't send enrollment email, etc, during this process
+		# by not having any interaction.
+		endInteraction()
+		try:
+			return self._do_call()
+		finally:
+			restoreInteraction()
+
+@view_config(name='CourseSectionEnrollmentMigrator')
+@view_config(name='Course_section_enrollment_migrator')
+@view_defaults(route_name='objects.generic.traversal',
+			   renderer='rest',
+			   context=CourseAdminPathAdapter,
+			   permission=nauth.ACT_NTI_ADMIN)
+class CourseSectionEnrollmentMigrationView(AbstractAuthenticatedView):
+	"""
+	Migrates the enrollments from a course to its sections
+
+	Call this as a GET request for dry-run processing. POST to it
+	to do it for real.
+	"""
+
+	def readInput(self):
+		if self.request.body:
+			values = read_body_as_external_object(self.request)
+		else:
+			values = self.request.params
+		result = CaseInsensitiveDict(values)
+		return result
+
+	def _do_call(self):
+		values = self.readInput()
+		course = _parse_course(values)
+		if not course:
+			raise hexc.HTTPUnprocessableEntity('No course found')
+
+		scope = values.get('Scope') or ES_PUBLIC
+		if scope not in ENROLLMENT_SCOPE_NAMES:
+			raise hexc.HTTPUnprocessableEntity('Invalid scope')
+
+		seats = values.get('Seats') or values.get('SeatCount') or \
+				values.get('MaxSeatCount') or values.get('max_seat_count') or 25
+		try:
+			seats = int(seats)
+			assert seats > 0
+		except Exception:
+			raise hexc.HTTPUnprocessableEntity('Invalid max seat count')
+
+		seen = set()
+		sections = []
+		data = values.get('sections') or ()
+		if isinstance(data, six.string_types):
+			data = data.split()
+		for name in data:  # gather sections keep order
+			if name not in seen:
+				sections.append(name)
+			seen.add(name)
+
+		# migrate
+		items, total = course_migrator(	scope=scope,
+										verbose=True,
+								 		context=course,
+								 		sections=sections,
+								 		max_seat_count=seats)
+		result = LocatedExternalDict()
+		m = result[ITEMS] = {}
+		for info in items or ():
+			m[info.name] = info.count
 		result['Total'] = total
 		return result
 
