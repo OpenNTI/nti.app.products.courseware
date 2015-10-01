@@ -42,10 +42,12 @@ from nti.dataserver.interfaces import IMemcacheClient
 
 from nti.site.site import get_component_hierarchy_names
 
-from .enrollment import EnrollmentOptions
+from ..enrollment import EnrollmentOptions
 
-from .interfaces import IUserAdministeredCourses
-from .interfaces import IEnrollmentOptionProvider
+from ..interfaces import IUserAdministeredCourses
+from ..interfaces import IEnrollmentOptionProvider
+
+from .course_migrator import migrate as course_migrator
 
 DEFAULT_EXP_TIME = 86400
 
