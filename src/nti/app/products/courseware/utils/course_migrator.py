@@ -28,18 +28,20 @@ from nti.dataserver.users import User
 
 from nti.ntiids.ntiids import find_object_with_ntiid
 
-def migrate(ntiid, scope=ES_PUBLIC, max_seat_count=25, sections=(),
+def migrate(context=None, ntiid=None, scope=ES_PUBLIC, 
+			max_seat_count=25, sections=(),
 			dry_run=False, verbose=False):
 
-	context = find_object_with_ntiid(ntiid)
+	if context is None:
+		context = find_object_with_ntiid(ntiid or u'')
+		instance = ICourseInstance(context, None)
+		if instance is None:
+			catalog = component.getUtility(ICourseCatalog)
+			try:
+				context = catalog.getCatalogEntry(ntiid)
+			except KeyError:
+				pass
 	instance = ICourseInstance(context, None)
-	if instance is None:
-		catalog = component.getUtility(ICourseCatalog)
-		try:
-			context = catalog.getCatalogEntry(ntiid)
-			instance = ICourseInstance(context, None)
-		except KeyError:
-			pass
 	if instance is None:
 		raise ValueError("Course cannot be found")
 
@@ -106,4 +108,4 @@ def migrate(ntiid, scope=ES_PUBLIC, max_seat_count=25, sections=(),
 		log("Move enrollment for principal %s to section %s", source_prin_id,
 			section_name)
 
-	return count
+	return (items, count)
