@@ -544,5 +544,8 @@ def _catalog_entries_from_obj(obj):
 @interface.implementer(ILibraryPathLastModifiedProvider)
 @component.adapter(IUser)
 def _enrollment_last_modified( user ):
+	# We didn't migrate this, so this annotation may not be
+	# completely accurate. That should be ok since
+	# we know we're only using this for cache invalidation.
 	annotations = IAnnotations( user )
 	return annotations.get( USER_ENROLLMENT_LAST_MODIFIED_KEY, 0 )
