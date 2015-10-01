@@ -12,10 +12,13 @@ logger = __import__('logging').getLogger(__name__)
 from . import MessageFactory as _
 
 import os
+import time
 import isodate
 import datetime
 
 from zope import component
+
+from zope.annotation.interfaces import IAnnotations
 
 from zope.dottedname import resolve as dottedname
 
@@ -48,12 +51,17 @@ from nti.dataserver.users.interfaces import IEmailAddressable
 
 from nti.externalization.externalization import to_external_object
 
+from nti.intid.interfaces import IIntIdAddedEvent
+from nti.intid.interfaces import IIntIdRemovedEvent
+
 from nti.mailer.interfaces import ITemplatedMailer
 
 from nti.ntiids.ntiids import find_object_with_ntiid
 
 from .utils import get_enrollment_courses
 from .utils import get_enrollment_communities
+
+from . import USER_ENROLLMENT_LAST_MODIFIED_KEY
 
 # Email
 
@@ -220,7 +228,7 @@ def _auto_enroll_on_enrollment_added(record, event):
 	main_entries = map(lambda x: ICourseCatalogEntry(x, None),
 				  	   parent.SubInstances.values())
 	main_entries.append(main_entry)
-	
+
 	# check for dup enrollment
 	principal = IPrincipal(record.Principal, None)
 	user = Entity.get_entity(principal.id) if principal else None
@@ -253,3 +261,20 @@ def _auto_enroll_on_enrollment_added(record, event):
 		if enrollment is None:
 			manager = ICourseEnrollmentManager(course)
 			manager.enroll(user, scope=record.Scope)
+
+def _update_enroll_last_modified( record ):
+	principal = IPrincipal(record.Principal, None)
+	user = Entity.get_entity(principal.id) if principal else None
+	if user is None:
+		return
+
+	annotations = IAnnotations( user )
+	annotations[ USER_ENROLLMENT_LAST_MODIFIED_KEY ] = time.time()
+
+@component.adapter(ICourseInstanceEnrollmentRecord, IIntIdAddedEvent)
+def update_enrollment_modified_on_add(record, event):
+	_update_enroll_last_modified( record )
+
+@component.adapter(ICourseInstanceEnrollmentRecord, IIntIdRemovedEvent)
+def update_enrollment_modified_on_drop(record, event):
+	_update_enroll_last_modified( record )

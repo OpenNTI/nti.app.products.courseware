@@ -58,6 +58,8 @@
 	<subscriber handler=".legacy_catalog._content_package_registered" />
 	<subscriber handler=".subscribers._auto_enroll_on_enrollment_added " />
 	<subscriber handler=".subscribers._join_communities_on_enrollment_added" />
+	<subscriber handler=".subscribers.update_enrollment_modified_on_add" />
+	<subscriber handler=".subscribers.update_enrollment_modified_on_drop" />
 
 	<!-- Auto-gen course purchasables from content -->
 	<!-- This must be a global subscriber as that's where
@@ -346,7 +348,6 @@
 				provides="nti.externalization.interfaces.IExternalMappingDecorator"
 				for="nti.contenttypes.courses.interfaces.ICourseCatalogEntry
 					 pyramid.interfaces.IRequest" />
-
 
 	<!--
 		 Get an href here to the real location, since we return these beneath Roster as well.

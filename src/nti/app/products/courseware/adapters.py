@@ -17,6 +17,8 @@ from zope.intid import IIntIds
 
 from pyramid import httpexceptions as hexc
 
+from zope.annotation.interfaces import IAnnotations
+
 from nti.app.authentication import get_remote_user
 
 from nti.appserver.context_providers import get_top_level_contexts
@@ -62,6 +64,8 @@ from nti.traversal.traversal import find_interface
 
 from .interfaces import ILegacyCommunityBasedCourseInstance
 from .interfaces import ILegacyCourseConflatedContentPackageUsedAsCourse
+
+from . import USER_ENROLLMENT_LAST_MODIFIED_KEY
 
 @interface.implementer(IContentPackageBundle)
 @component.adapter(ILegacyCommunityBasedCourseInstance)
@@ -540,10 +544,5 @@ def _catalog_entries_from_obj(obj):
 @interface.implementer(ILibraryPathLastModifiedProvider)
 @component.adapter(IUser)
 def _enrollment_last_modified( user ):
-	result = 0
-	# Could use index here.
-	for enrollments in component.subscribers((user,), IPrincipalEnrollments):
-		for record in enrollments.iter_enrollments():
-			enroll_last_mod = getattr( record, 'lastModified', 0 )
-			result = max( result, enroll_last_mod )
-	return result
+	annotations = IAnnotations( user )
+	return annotations.get( USER_ENROLLMENT_LAST_MODIFIED_KEY, 0 )

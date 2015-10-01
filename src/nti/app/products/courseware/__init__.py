@@ -18,5 +18,7 @@ VIEW_COURSE_RECURSIVE = 'CourseRecursiveStream'
 VIEW_COURSE_ENROLLMENT_ROSTER = 'CourseEnrollmentRoster'
 VIEW_COURSE_RECURSIVE_BUCKET = 'CourseRecursiveStreamByBucket'
 
+USER_ENROLLMENT_LAST_MODIFIED_KEY = 'nti.app.products.courseware.UserEnrollmentLastModified'
+
 import zope.i18nmessageid
 MessageFactory = zope.i18nmessageid.MessageFactory('nti.app.products.courseware')
