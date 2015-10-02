@@ -29,7 +29,7 @@ from nti.dataserver.users import User
 
 from nti.ntiids.ntiids import find_object_with_ntiid
 
-def migrate(context=None, ntiid=None, scope=ES_PUBLIC, 
+def migrate(context=None, ntiid=None, scope=ES_PUBLIC,
 			max_seat_count=25, sections=(),
 			dry_run=False, events=True, verbose=False):
 
@@ -103,7 +103,7 @@ def migrate(context=None, ntiid=None, scope=ES_PUBLIC,
 		if not dry_run:
 			if events:
 				lifecycleevent.removed(source_enrollment)
-			mover = IObjectMover(source_enrollment)
+			mover = IObjectMover(source_enrollment)  # notify ObjectMovedEvent
 			mover.moveTo(dest_enrollments)
 			if events:
 				lifecycleevent.added(source_enrollment)
