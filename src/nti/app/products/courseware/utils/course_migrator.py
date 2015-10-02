@@ -10,6 +10,7 @@ __docformat__ = "restructuredtext en"
 logger = __import__('logging').getLogger(__name__)
 
 from zope import component
+from zope import lifecycleevent
 
 from zope.copypastemove.interfaces import IObjectMover
 
@@ -30,7 +31,7 @@ from nti.ntiids.ntiids import find_object_with_ntiid
 
 def migrate(context=None, ntiid=None, scope=ES_PUBLIC, 
 			max_seat_count=25, sections=(),
-			dry_run=False, verbose=False):
+			dry_run=False, events=True, verbose=False):
 
 	if context is None:
 		context = find_object_with_ntiid(ntiid or u'')
@@ -100,8 +101,12 @@ def migrate(context=None, ntiid=None, scope=ES_PUBLIC,
 			continue
 
 		if not dry_run:
+			if events:
+				lifecycleevent.removed(source_enrollment)
 			mover = IObjectMover(source_enrollment)
 			mover.moveTo(dest_enrollments)
+			if events:
+				lifecycleevent.added(source_enrollment)
 
 		count += 1
 		items[index].seat_count += 1
