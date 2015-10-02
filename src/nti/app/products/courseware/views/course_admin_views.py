@@ -421,7 +421,7 @@ class CourseSectionEnrollmentMigrationView(AbstractAuthenticatedView):
 		result = LocatedExternalDict()
 		m = result[ITEMS] = {}
 		for info in items or ():
-			m[info.name] = info.count
+			m[info.section_name] = info.seat_count
 		result['Total'] = total
 		return result
 
