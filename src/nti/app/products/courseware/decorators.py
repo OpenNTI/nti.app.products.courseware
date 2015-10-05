@@ -96,8 +96,8 @@ class _CourseInstanceLinkDecorator(object):
 			# issue though, the actual views are protected with individual permissions
 			for rel in VIEW_COURSE_ENROLLMENT_ROSTER, VIEW_COURSE_ACTIVITY:
 				_links.append(Link(context,
-									 rel=rel,
-									 elements=(rel,)))
+								   rel=rel,
+								   elements=(rel,)))
 
 		if 'href' not in result:
 			link = Link(context)
@@ -308,9 +308,9 @@ class _CatalogFamilyDecorator(AbstractAuthenticatedRequestAwareDecorator):
 		Only return a catalog entry family for course subinstances
 		or course super instances.
 		"""
-		context = ICourseInstance( context, None )
-		subinstances = tuple( getattr( context, 'SubInstances', () ) )
-		return ICourseSubInstance.providedBy( context ) \
+		context = ICourseInstance(context, None)
+		subinstances = tuple(getattr(context, 'SubInstances', ()))
+		return ICourseSubInstance.providedBy(context) \
 			or subinstances
 
 	def _build_catalog_family(self, super_catalog):
@@ -318,18 +318,18 @@ class _CatalogFamilyDecorator(AbstractAuthenticatedRequestAwareDecorator):
 		catalog_family[CLASS] = 'CatalogFamily'
 		catalog_family[MIME_TYPE] = 'application/vnd.nextthought.catalogfamily'
 		# Return opaque family ID.
-		catalog_family['CatalogFamilyID'] = md5_base64_digest( str( super_catalog.ntiid ) )
+		catalog_family['CatalogFamilyID'] = md5_base64_digest(str(super_catalog.ntiid))
 		for field in self.family_display_fields:
-			val = getattr( super_catalog, field, None )
+			val = getattr(super_catalog, field, None)
 			if val is not None:
 				catalog_family[field] = val
 		return catalog_family
 
 	def _do_decorate_external(self, context, result):
-		course = ICourseInstance( context, None)
-		if ICourseSubInstance.providedBy( course ):
+		course = ICourseInstance(context, None)
+		if ICourseSubInstance.providedBy(course):
 			course = course.__parent__.__parent__
-		super_catalog = ICourseCatalogEntry( course, None )
+		super_catalog = ICourseCatalogEntry(course, None)
 		if super_catalog is not None:
 			catalog_families = {}
 			catalog_families[CLASS] = self.class_name
@@ -338,7 +338,7 @@ class _CatalogFamilyDecorator(AbstractAuthenticatedRequestAwareDecorator):
 
 			# We support a list of catalog families, but we only
 			# provide the super course catalog entry for now.
-			catalog_family = self._build_catalog_family( super_catalog )
-			vals.append( catalog_family )
+			catalog_family = self._build_catalog_family(super_catalog)
+			vals.append(catalog_family)
 
 			result[self.class_name] = catalog_families

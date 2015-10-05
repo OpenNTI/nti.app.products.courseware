@@ -109,8 +109,7 @@ def _course_content_package_to_course(package):
 	try:
 		entry = package._v_global_legacy_catalog_entry
 	except AttributeError:
-		logger.warn("Consistency issue? No attribute on global package %s",
-					package)
+		logger.warn("Consistency issue? No attribute on global package %s", package)
 		entry = None
 
 	course = ICourseInstance(entry, None)
@@ -189,7 +188,7 @@ def _content_unit_and_user_to_course(unit, user):
 
 def _get_top_level_contexts(obj):
 	results = set()
-	top_level_contexts = get_top_level_contexts( obj )
+	top_level_contexts = get_top_level_contexts(obj)
 	for top_level_context in top_level_contexts:
 		if 		ICourseInstance.providedBy(top_level_context) \
 			or	ICourseCatalogEntry.providedBy(top_level_context):
@@ -226,56 +225,56 @@ def _get_valid_course_context(course_contexts):
 	courses = []
 	catalog_entries = []
 	for context in results:
-		if ICourseInstance.providedBy( context ):
-			courses.append( context )
+		if ICourseInstance.providedBy(context):
+			courses.append(context)
 		else:
-			catalog_entries.append( context )
+			catalog_entries.append(context)
 	if not courses and catalog_entries:
-		raise ForbiddenContextException( results )
+		raise ForbiddenContextException(results)
 
 	return courses + catalog_entries
 
 @interface.implementer(IJoinableContextProvider)
 @component.adapter(interface.Interface)
 def _catalog_entry_from_container_object(obj):
-	return get_joinable_contexts( obj )
+	return get_joinable_contexts(obj)
 
-def _get_outline_target_objs( target_ntiid ):
+def _get_outline_target_objs(target_ntiid):
 	"""
 	Returns the target ntiid/obj to search for in outline.
 	"""
 	target_obj = find_object_with_ntiid(target_ntiid)
 	# Shouldnt we be able to find slidedeck in objects?
-	if 		INTISlide.providedBy( target_obj ) \
-		or 	INTISlideDeck.providedBy( target_obj ):
+	if 		INTISlide.providedBy(target_obj) \
+		or 	INTISlideDeck.providedBy(target_obj):
 
 		try:
-			if INTISlideDeck.providedBy( target_obj ):
+			if INTISlideDeck.providedBy(target_obj):
 				# Arbitrary?
 				slide_vid = target_obj.videos[0]
 			else:
-				slide_vid = find_object_with_ntiid( target_obj.slidevideoid )
+				slide_vid = find_object_with_ntiid(target_obj.slidevideoid)
 
 			# If we have slides embedded in videos, we need to
 			# use the root NTIVideo to find our outline.
-			video_obj = find_object_with_ntiid( slide_vid.video_ntiid )
+			video_obj = find_object_with_ntiid(slide_vid.video_ntiid)
 			if video_obj is not None:
 				target_obj = video_obj
 				target_ntiid = video_obj.ntiid
-		except (AttributeError,IndexError):
+		except (AttributeError, IndexError):
 			pass
 	return target_ntiid, target_obj
 
-def _get_outline_result_items( target_ntiid, item ):
+def _get_outline_result_items(target_ntiid, item):
 	"""
 	Returns the outline endpoints.  For slides/decks we want to return
 	those instead of video they live on.
 	"""
 	original_obj = find_object_with_ntiid(target_ntiid)
-	if INTISlide.providedBy( original_obj ):
-		deck = find_object_with_ntiid( original_obj.slidedeckid )
-		results = (deck,original_obj,)
-	elif INTISlideDeck.providedBy( original_obj ):
+	if INTISlide.providedBy(original_obj):
+		deck = find_object_with_ntiid(original_obj.slidedeckid)
+		results = (deck, original_obj,)
+	elif INTISlideDeck.providedBy(original_obj):
 		results = (original_obj,)
 	else:
 		results = (item,)
@@ -298,7 +297,7 @@ def _get_outline_nodes(course_context, target_ntiid):
 	# Get the containers for our object.
 	catalog = get_catalog()
 	original_target_ntiid = target_ntiid
-	target_ntiid, target_obj = _get_outline_target_objs( target_ntiid )
+	target_ntiid, target_obj = _get_outline_target_objs(target_ntiid)
 	containers = set(catalog.get_containers(target_obj)) if catalog else set()
 
 	def _found_target(item):
@@ -342,10 +341,10 @@ def _get_outline_nodes(course_context, target_ntiid):
 			for overview_group in lesson_overview.items:
 				for item in overview_group.items:
 					if _found_target(item):
-						endpoints = _get_outline_result_items( original_target_ntiid, item )
+						endpoints = _get_outline_result_items(original_target_ntiid, item)
 						# Return our course, leaf outline node, and overview.
 						results = [course_context, outline_content_node]
-						results.extend( endpoints )
+						results.extend(endpoints)
 						return results
 	return (course_context,)
 
@@ -366,7 +365,7 @@ def _get_target_ntiid(obj):
 @component.adapter(ICourseInstance, interface.Interface)
 def _hierarchy_from_obj_and_course(course, obj):
 	target_ntiid = _get_target_ntiid(obj)
-	course = _get_valid_course_context( course )[0]
+	course = _get_valid_course_context(course)[0]
 	return _get_outline_nodes(course, target_ntiid)
 
 def _get_courses_from_container(obj, user=None):
@@ -401,19 +400,19 @@ def _hierarchy_from_obj_and_user(obj, user):
 	results = []
 	catalog_entries = set()
 	for course in possible_courses:
-		if ICourseCatalogEntry.providedBy( course ):
-			catalog_entries.add( course )
+		if ICourseCatalogEntry.providedBy(course):
+			catalog_entries.add(course)
 		else:
 			nodes = _get_outline_nodes(course, target_ntiid)
-			if nodes and len( nodes ) > 1:
-				results.append( nodes )
+			if nodes and len(nodes) > 1:
+				results.append(nodes)
 
 	# This is an edge case.  We have courses and catalog entries,
 	# but our target NTIID only exists in a catalog entry that
 	# may or may not be open. If we can't find our ntiid in our
 	# course outlines, assume we don't have access and raise.
 	if container_courses and catalog_entries and not results:
-		raise ForbiddenContextException( catalog_entries )
+		raise ForbiddenContextException(catalog_entries)
 	# No outline nodes, but we did have courses.
 	if not results:
 		results = [ (x,) for x in possible_courses ]
@@ -448,18 +447,18 @@ def _find_lineage_course(obj, trusted=False):
 	if course is not None:
 		course = _get_preferred_course(course)
 		if trusted:
-			catalog_entry = ICourseCatalogEntry( course, None )
+			catalog_entry = ICourseCatalogEntry(course, None)
 			results = (catalog_entry,) if catalog_entry is not None else ()
 		else:
 			results = _get_valid_course_context(course)
 		return results
 
-def _catalog_entries_from_courses( courses ):
+def _catalog_entries_from_courses(courses):
 	results = []
 	for course in courses:
-		catalog_entry = ICourseCatalogEntry( course, None )
+		catalog_entry = ICourseCatalogEntry(course, None)
 		if catalog_entry is not None:
-			results.append( catalog_entry )
+			results.append(catalog_entry)
 	return results
 
 @interface.implementer(ITopLevelContainerContextProvider)
@@ -514,13 +513,13 @@ def __courses_from_obj_and_user(obj, user=None):
 	container_courses = _get_courses_from_container(obj, user)
 	return container_courses
 
-def _top_level_context_from_obj_and_user( obj, user=None ):
+def _top_level_context_from_obj_and_user(obj, user=None):
 	courses = __courses_from_obj_and_user(obj, user)
-	return _get_valid_course_context( courses )
+	return _get_valid_course_context(courses)
 
-def _trusted_top_level_context( obj, user=None ):
+def _trusted_top_level_context(obj, user=None):
 	courses = __courses_from_obj_and_user(obj, user)
-	results = _catalog_entries_from_courses( courses )
+	results = _catalog_entries_from_courses(courses)
 	return results
 
 @interface.implementer(ITopLevelContainerContextProvider)
@@ -543,9 +542,9 @@ def _catalog_entries_from_obj(obj):
 
 @interface.implementer(ILibraryPathLastModifiedProvider)
 @component.adapter(IUser)
-def _enrollment_last_modified( user ):
+def _enrollment_last_modified(user):
 	# We didn't migrate this, so this annotation may not be
 	# completely accurate. That should be ok since
 	# we know we're only using this for cache invalidation.
-	annotations = IAnnotations( user )
-	return annotations.get( USER_ENROLLMENT_LAST_MODIFIED_KEY, 0 )
+	annotations = IAnnotations(user)
+	return annotations.get(USER_ENROLLMENT_LAST_MODIFIED_KEY, 0)

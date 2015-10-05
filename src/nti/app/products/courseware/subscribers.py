@@ -267,7 +267,6 @@ def _update_enroll_last_modified( record ):
 	user = Entity.get_entity(principal.id) if principal else None
 	if user is None:
 		return
-
 	annotations = IAnnotations( user )
 	annotations[ USER_ENROLLMENT_LAST_MODIFIED_KEY ] = time.time()
 

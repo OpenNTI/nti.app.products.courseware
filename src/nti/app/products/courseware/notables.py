@@ -15,6 +15,7 @@ from BTrees.LFBTree import LFSet as Set
 
 from zope import component
 from zope import interface
+
 from zope.catalog.interfaces import ICatalog
 
 from nti.app.notabledata.interfaces import IUserPriorityCreatorNotableProvider
@@ -35,7 +36,7 @@ from nti.dataserver.metadata_index import CATALOG_NAME as METADATA_CATALOG_NAME
 
 _FEEDBACK_MIME_TYPE = "application/vnd.nextthought.assessment.userscourseassignmenthistoryitemfeedback"
 
-@interface.implementer( INotableFilter )
+@interface.implementer(INotableFilter)
 class TopLevelPriorityNotableFilter(object):
 	"""
 	Determines whether the object is a notable created by important
@@ -47,21 +48,21 @@ class TopLevelPriorityNotableFilter(object):
 		self.context = context
 
 	def is_notable(self, obj, user):
-		obj_creator = getattr( obj, 'creator', None )
+		obj_creator = getattr(obj, 'creator', None)
 
 		# Filter out blog comments that might cause confusion.
 		if 		obj_creator is None \
-			or 	IPersonalBlogComment.providedBy( obj ) \
+			or 	IPersonalBlogComment.providedBy(obj) \
 			or  obj_creator.username == user.username:
 			return False
 
 		# Note: pulled from metadata_index; first two params not used.
-		if not isTopLevelContentObjectFilter( None, None, obj ):
+		if not isTopLevelContentObjectFilter(None, None, obj):
 			return False
 
 		# See if our creator is an instructor in a current course.
 		# Only if shared with my course community.
-		shared_with = getattr( obj, 'sharedWith', {} )
+		shared_with = getattr(obj, 'sharedWith', {})
 		if shared_with:
 			for enrollments in component.subscribers((user,),
 													  IPrincipalEnrollments):
@@ -77,7 +78,7 @@ class TopLevelPriorityNotableFilter(object):
 					if obj_creator.username in (x.id for x in course.instructors):
 						# TODO Like in the provider below, implies?
 						course_scope = course.SharingScopes[ enrollment.Scope ]
-						if obj.isSharedDirectlyWith( course_scope ):
+						if obj.isSharedDirectlyWith(course_scope):
 							return True
 		return False
 
@@ -105,14 +106,13 @@ class _UserPriorityCreatorNotableProvider(object):
 		catalog = self._catalog
 		feedback_intids = catalog['mimeType'].apply(
 								{'any_of': (_FEEDBACK_MIME_TYPE,)})
-		results = catalog.family.IF.intersection(instructor_intids,
-												feedback_intids)
+		results = catalog.family.IF.intersection(instructor_intids, feedback_intids)
 		return results
 
 	def get_notable_intids(self):
 		catalog = self._catalog
 		results = Set()
-		# TODO Use index?
+		# TODO: Use index?
 		for enrollments in component.subscribers((self.context,),
 												  IPrincipalEnrollments):
 			for enrollment in enrollments.iter_enrollments():
@@ -124,18 +124,18 @@ class _UserPriorityCreatorNotableProvider(object):
  					or 	not catalog_entry.isCourseCurrentlyActive():  # pragma: no cover
 					continue
 
-				course_instructors.update( (x.id for x in course.instructors) )
+				course_instructors.update((x.id for x in course.instructors))
 				instructor_intids = catalog['creator'].apply(
 											{'any_of': course_instructors})
 				# TODO Do we need implies?
 				course_scope = course.SharingScopes[ enrollment.Scope ]
-				scope_ntiids = (course_scope.NTIID, )
+				scope_ntiids = (course_scope.NTIID,)
 				course_shared_with_intids = catalog['sharedWith'].apply(
 													{'any_of': scope_ntiids})
 				course_results = catalog.family.IF.intersection(instructor_intids,
 																course_shared_with_intids)
 
-				results.update( course_results )
-				feedback_intids = self._get_feedback_intids( instructor_intids )
-				results.update( feedback_intids )
+				results.update(course_results)
+				feedback_intids = self._get_feedback_intids(instructor_intids)
+				results.update(feedback_intids)
 		return results
