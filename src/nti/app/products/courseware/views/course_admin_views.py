@@ -41,6 +41,7 @@ from nti.app.externalization.view_mixins import ModeledContentUploadRequestUtils
 from nti.appserver.workspaces.interfaces import IUserService
 
 from nti.common.property import Lazy
+from nti.common.string import TRUE_VALUES
 from nti.common.maps import CaseInsensitiveDict
 
 from nti.contenttypes.courses.index import IX_SITE
@@ -147,6 +148,9 @@ def _parse_course(values):
 		raise hexc.HTTPUnprocessableEntity(detail='Course not found')
 	return result[0]
 
+def is_true(s):
+	return s and s.lower() in TRUE_VALUES
+
 class AbstractCourseEnrollView(AbstractAuthenticatedView,
 							   ModeledContentUploadRequestUtilsMixin):
 
@@ -175,7 +179,7 @@ class UserCourseEnrollView(AbstractCourseEnrollView):
 	def __call__(self):
 		values = self.readInput()
 		catalog_entry, user = self.parseCommon(values)
-		scope = values.get('scope', 'Public')
+		scope = values.get('scope', ES_PUBLIC)
 		if not scope or scope not in ENROLLMENT_SCOPE_VOCABULARY.by_token.keys():
 			raise hexc.HTTPUnprocessableEntity(detail='Invalid scope')
 
@@ -183,8 +187,11 @@ class UserCourseEnrollView(AbstractCourseEnrollView):
 			msg = 'User is an instructor in course hierarchy'
 			raise hexc.HTTPUnprocessableEntity(detail=msg)
 
+		interaction = is_true(values.get('email') or values.get('interaction'))
+		
 		# Make sure we don't have any interaction.
-		endInteraction()
+		if not interaction:
+			endInteraction()
 		try:
 			drop_any_other_enrollments(catalog_entry, user)
 			service = IUserService(user)
@@ -197,7 +204,8 @@ class UserCourseEnrollView(AbstractCourseEnrollView):
 										  safe=True,
 										  request=self.request)
 		finally:
-			restoreInteraction()
+			if not interaction:
+				restoreInteraction()
 		return result
 
 @view_config(name='UserCourseDrop')
