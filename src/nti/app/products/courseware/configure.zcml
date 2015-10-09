@@ -211,6 +211,12 @@
 		<implements interface="zope.annotation.interfaces.IAttributeAnnotatable" />
 	</class>
 
+	<!-- Asset update -->
+	<adapter factory=".adapters._OutlineNodeExternalFieldTraverser"
+			 for="nti.contenttypes.courses.interfaces.ICourseOutlineNode pyramid.interfaces.IRequest"
+			 provides="zope.traversing.interfaces.ITraversable"
+			 name="fields" />
+			 
 	<!-- Workspaces -->
 	<!-- A subscriber for enumeration -->
 	<subscriber factory=".workspaces.CoursesWorkspace"
