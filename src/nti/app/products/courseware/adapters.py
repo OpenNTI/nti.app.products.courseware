@@ -53,8 +53,10 @@ from nti.contenttypes.courses.interfaces import IPrincipalEnrollments
 from nti.contenttypes.courses.interfaces import IContentCourseInstance
 from nti.contenttypes.courses.interfaces import ICourseOutlineCalendarNode
 
+from nti.contenttypes.presentation.interfaces import INTIVideo
 from nti.contenttypes.presentation.interfaces import INTISlide
 from nti.contenttypes.presentation.interfaces import INTISlideDeck
+from nti.contenttypes.presentation.interfaces import INTISlideVideo
 from nti.contenttypes.presentation.interfaces import IPresentationAsset
 from nti.contenttypes.presentation.interfaces import INTILessonOverview
 
@@ -67,6 +69,8 @@ from nti.dataserver.contenttypes.forums.interfaces import IForum
 from nti.ntiids.ntiids import find_object_with_ntiid
 
 from nti.schema.jsonschema import TAG_HIDDEN_IN_UI
+
+from nti.site.site import get_component_hierarchy_names
 
 from nti.traversal.traversal import find_interface
 
@@ -252,16 +256,21 @@ def _get_outline_target_objs(target_ntiid):
 	Returns the target ntiid/obj to search for in outline.
 	"""
 	target_obj = find_object_with_ntiid(target_ntiid)
-	# Shouldnt we be able to find slidedeck in objects?
+
+	# For slide objects, the video itself only shows up
+	# in the outline hierarchy.
 	if 		INTISlide.providedBy(target_obj) \
-		or 	INTISlideDeck.providedBy(target_obj):
+		or 	INTISlideDeck.providedBy(target_obj) \
+		or	INTISlideVideo.providedBy(target_obj):
 
 		try:
 			if INTISlideDeck.providedBy(target_obj):
 				# Arbitrary?
 				slide_vid = target_obj.videos[0]
-			else:
+			elif INTISlide.providedBy( target_obj ):
 				slide_vid = find_object_with_ntiid(target_obj.slidevideoid)
+			else:
+				slide_vid = target_obj
 
 			# If we have slides embedded in videos, we need to
 			# use the root NTIVideo to find our outline.
@@ -273,17 +282,42 @@ def _get_outline_target_objs(target_ntiid):
 			pass
 	return target_ntiid, target_obj
 
-def _get_outline_result_items(target_ntiid, item):
+def _get_slidedeck_for_video(video_ntiid, lesson_overview):
+	"""
+	For a video ntiid, return the slide deck containing it,
+	if it is a video on a slide deck.
+	"""
+	catalog = get_catalog()
+	content_ntiid = lesson_overview.__parent__.ContentNTIID
+	for slide_deck in catalog.search_objects(
+									container_ntiids=content_ntiid,
+									provided=INTISlideDeck,
+									sites=get_component_hierarchy_names()):
+		for slide_video in slide_deck.videos:
+			if slide_video.video_ntiid == video_ntiid:
+				return slide_deck
+	return None
+
+def _get_outline_result_items(target_ntiid, item, lesson_overview):
 	"""
 	Returns the outline endpoints.  For slides/decks we want to return
-	those instead of video they live on.
+	those instead of video they live on. For slide videos, we want the
+	slidedeck to be returned.
 	"""
 	original_obj = find_object_with_ntiid(target_ntiid)
-	if INTISlide.providedBy(original_obj):
+	if 		INTISlide.providedBy(original_obj) \
+		or 	INTISlideVideo.providedBy(original_obj):
+
 		deck = find_object_with_ntiid(original_obj.slidedeckid)
 		results = (deck, original_obj,)
 	elif INTISlideDeck.providedBy(original_obj):
 		results = (original_obj,)
+	elif INTIVideo.providedBy( original_obj ):
+		slide_deck = _get_slidedeck_for_video(target_ntiid, lesson_overview)
+		if slide_deck is not None:
+			results = (slide_deck, item,)
+		else:
+			results = (item,)
 	else:
 		results = (item,)
 	return results
@@ -349,7 +383,7 @@ def _get_outline_nodes(course_context, target_ntiid):
 			for overview_group in lesson_overview.items:
 				for item in overview_group.items:
 					if _found_target(item):
-						endpoints = _get_outline_result_items(original_target_ntiid, item)
+						endpoints = _get_outline_result_items(original_target_ntiid, item, lesson_overview)
 						# Return our course, leaf outline node, and overview.
 						results = [course_context, outline_content_node]
 						results.extend(endpoints)
