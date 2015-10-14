@@ -29,7 +29,7 @@ from nti.appserver.workspaces.interfaces import IContainerCollection
 from nti.common.property import Lazy
 from nti.common.property import alias
 
-from nti.contenttypes.courses.index import IX_COURSE
+from nti.contenttypes.courses.index import IX_SITE
 from nti.contenttypes.courses.index import IX_USERNAME
 from nti.contenttypes.courses import get_enrollment_catalog
 
@@ -51,6 +51,8 @@ from nti.dataserver.authorization_acl import acl_from_aces
 
 from nti.schema.field import SchemaConfigured
 from nti.schema.fieldproperty import createDirectFieldProperties
+
+from nti.site.site import get_component_hierarchy_names
 
 from .interfaces import ICoursesWorkspace
 from .interfaces import IUserAdministeredCourses
@@ -388,12 +390,14 @@ class EnrolledCoursesCollection(_AbstractQueryBasedCoursesCollection):
 	def _build_from_catalog(self):
 		user = self.__parent__.user
 		intids = component.getUtility(IIntIds)
-		catalog = component.getUtility(ICourseCatalog)
-		courses = [x.ntiid for x in catalog.iterCatalogEntries()]
 
 		catalog = get_enrollment_catalog()
+		site_names = get_component_hierarchy_names()
+		query = {
+			IX_SITE:{'any_of': site_names},
+			IX_USERNAME:{'any_of':(user.username,)}
+		}
 		result = LastModifiedCopyingUserList()
-		query = {IX_COURSE:{'any_of':courses}, IX_USERNAME:{'any_of':(user.username,)}}
 		for uid in catalog.apply(query) or ():
 			context = intids.queryObject(uid)
 			if ICourseInstanceEnrollmentRecord.providedBy(context):
