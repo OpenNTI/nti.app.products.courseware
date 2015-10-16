@@ -251,144 +251,190 @@ def _get_valid_course_context(course_contexts):
 def _catalog_entry_from_container_object(obj):
 	return get_joinable_contexts(obj)
 
-def _get_outline_target_objs(target_ntiid):
-	"""
-	Returns the target ntiid/obj to search for in outline.
-	"""
-	target_obj = find_object_with_ntiid(target_ntiid)
+class _OutlinePathFactory( object ):
 
-	# For slide objects, the video itself only shows up
-	# in the outline hierarchy.
-	if 		INTISlide.providedBy(target_obj) \
-		or 	INTISlideDeck.providedBy(target_obj) \
-		or	INTISlideVideo.providedBy(target_obj):
+	def __init__(self, course_context, target_ntiid):
+		self.original_target_ntiid = target_ntiid
+		self.target_ntiid, self.target_obj = self._get_outline_target_objs(target_ntiid)
+		self.course_context = course_context
 
-		try:
-			if INTISlideDeck.providedBy(target_obj):
-				# Arbitrary?
-				slide_vid = target_obj.videos[0]
-			elif INTISlide.providedBy( target_obj ):
-				slide_vid = find_object_with_ntiid(target_obj.slidevideoid)
+	def _get_outline_target_objs(self, target_ntiid):
+		"""
+		Returns the target ntiid/obj to search for in outline.
+		"""
+		target_obj = find_object_with_ntiid(target_ntiid)
+
+		# For slide objects, the video itself only shows up
+		# in the outline hierarchy.
+		if 		INTISlide.providedBy(target_obj) \
+			or 	INTISlideDeck.providedBy(target_obj) \
+			or	INTISlideVideo.providedBy(target_obj):
+
+			try:
+				if INTISlideDeck.providedBy(target_obj):
+					# Arbitrary?
+					slide_vid = target_obj.videos[0]
+				elif INTISlide.providedBy( target_obj ):
+					slide_vid = find_object_with_ntiid(target_obj.slidevideoid)
+				else:
+					slide_vid = target_obj
+
+				# If we have slides embedded in videos, we need to
+				# use the root NTIVideo to find our outline.
+				video_obj = find_object_with_ntiid(slide_vid.video_ntiid)
+				if video_obj is not None:
+					target_obj = video_obj
+					target_ntiid = video_obj.ntiid
+			except (AttributeError, IndexError):
+				pass
+		return target_ntiid, target_obj
+
+	@property
+	def catalog(self):
+		return get_catalog()
+
+	@property
+	def target_obj_containers(self):
+		# Get the containers for our object.
+		containers = set(self.catalog.get_containers(self.target_obj)) if self.catalog else set()
+		return containers
+
+	def _get_slidedeck_for_video(self, video_ntiid, lesson_overview):
+		"""
+		For a video ntiid, return the slide deck containing it,
+		if it is a video on a slide deck.
+		"""
+		content_ntiid = lesson_overview.__parent__.ContentNTIID
+		for slide_deck in self.catalog.search_objects(
+										container_ntiids=content_ntiid,
+										provided=INTISlideDeck,
+										sites=get_component_hierarchy_names()):
+			for slide_video in slide_deck.videos:
+				if slide_video.video_ntiid == video_ntiid:
+					return slide_deck
+		return None
+
+	def _get_outline_result_items(self, item, lesson_overview):
+		"""
+		Returns the outline endpoints.  For slides/decks we want to return
+		those instead of video they live on. For slide videos, we want the
+		slidedeck to be returned.
+		"""
+		original_obj = find_object_with_ntiid( self.target_ntiid )
+		if 		INTISlide.providedBy( original_obj ) \
+			or 	INTISlideVideo.providedBy( original_obj ):
+
+			deck = find_object_with_ntiid( original_obj.slidedeckid )
+			results = (deck, original_obj,)
+		elif INTISlideDeck.providedBy( original_obj ):
+			results = (original_obj,)
+		elif INTIVideo.providedBy( original_obj ):
+			slide_deck = self._get_slidedeck_for_video( self.original_target_ntiid,
+													lesson_overview )
+			if slide_deck is not None:
+				results = (slide_deck, item,)
 			else:
-				slide_vid = target_obj
-
-			# If we have slides embedded in videos, we need to
-			# use the root NTIVideo to find our outline.
-			video_obj = find_object_with_ntiid(slide_vid.video_ntiid)
-			if video_obj is not None:
-				target_obj = video_obj
-				target_ntiid = video_obj.ntiid
-		except (AttributeError, IndexError):
-			pass
-	return target_ntiid, target_obj
-
-def _get_slidedeck_for_video(video_ntiid, lesson_overview):
-	"""
-	For a video ntiid, return the slide deck containing it,
-	if it is a video on a slide deck.
-	"""
-	catalog = get_catalog()
-	content_ntiid = lesson_overview.__parent__.ContentNTIID
-	for slide_deck in catalog.search_objects(
-									container_ntiids=content_ntiid,
-									provided=INTISlideDeck,
-									sites=get_component_hierarchy_names()):
-		for slide_video in slide_deck.videos:
-			if slide_video.video_ntiid == video_ntiid:
-				return slide_deck
-	return None
-
-def _get_outline_result_items(target_ntiid, item, lesson_overview):
-	"""
-	Returns the outline endpoints.  For slides/decks we want to return
-	those instead of video they live on. For slide videos, we want the
-	slidedeck to be returned.
-	"""
-	original_obj = find_object_with_ntiid(target_ntiid)
-	if 		INTISlide.providedBy(original_obj) \
-		or 	INTISlideVideo.providedBy(original_obj):
-
-		deck = find_object_with_ntiid(original_obj.slidedeckid)
-		results = (deck, original_obj,)
-	elif INTISlideDeck.providedBy(original_obj):
-		results = (original_obj,)
-	elif INTIVideo.providedBy( original_obj ):
-		slide_deck = _get_slidedeck_for_video(target_ntiid, lesson_overview)
-		if slide_deck is not None:
-			results = (slide_deck, item,)
+				results = (item,)
 		else:
 			results = (item,)
-	else:
-		results = (item,)
-	return results
+		return results
 
-def _get_outline_nodes(course_context, target_ntiid):
-	"""
-	For a course and target ntiid, look for the outline hierarchy
-	used to get to the target ntiid.  We assume the
-	course we have here is permissioned.
-	"""
-	if course_context is None:
-		return
+	def _overview_item_contains_target( self, item, check_contained=True ):
+		"""
+		Check if the overview item contains our target object. The simple case
+		is we are looking for an ntiid that is our item.
 
-	# This does not work with legacy courses.
-	if 		not target_ntiid \
-		or 	getattr(course_context, 'Outline', None) is None:
-		return (course_context,)
+		`check_contained` checks to see if the given item is contained by
+		our target object.
 
-	# Get the containers for our object.
-	catalog = get_catalog()
-	original_target_ntiid = target_ntiid
-	target_ntiid, target_obj = _get_outline_target_objs(target_ntiid)
-	containers = set(catalog.get_containers(target_obj)) if catalog else set()
-
-	def _found_target(item):
+		Example cases:
+			* Content unit page containing videos. We do not want to return the
+			video object since we are looking for the related work ref (not check-contained).
+			* Content unit page contained by a related work ref (need check-contained).
+			* Video contained by an related work ref (need check-contained).
+		"""
 		target_ntiid_ref = getattr(item, 'target_ntiid', None)
 		ntiid_ref = getattr(item, 'ntiid', None)
 		target_ref = getattr(item, 'target', None)
 		ntiid_vals = set([target_ntiid_ref, ntiid_ref, target_ref])
 		# We found our object's container, or we are the container.
-		result = 	containers.intersection(ntiid_vals) \
-				or 	target_ntiid in ntiid_vals
+		result = 	self.target_obj_containers.intersection( ntiid_vals ) \
+				or 	self.target_ntiid in ntiid_vals
 
-		if not result and target_ref:
+		if 		not result \
+			and target_ref \
+			and check_contained:
 			# We could have an item contained by our target item
-			target_obj = find_object_with_ntiid(target_ref)
-			if target_obj is not None:
-				item_containers = catalog.get_containers(target_obj) if catalog else set()
-				result = target_ntiid in item_containers
+			target_ref_obj = find_object_with_ntiid(target_ref)
+			if target_ref_obj is not None:
+				item_containers = self.catalog.get_containers(target_ref_obj) if self.catalog else set()
+				result = self.target_ntiid in item_containers
 
 				if not result:
 					# Legacy, perhaps our item is a page ref.
 					try:
-						target_children = [x.ntiid for x in target_obj.children]
-						result = target_ntiid in target_children \
-							or target_ntiid in target_obj.embeddedContainerNTIIDs
+						target_children = [x.ntiid for x in target_ref_obj.children]
+						result = self.target_ntiid in target_children \
+							or self.target_ntiid in target_ref_obj.embeddedContainerNTIIDs
 					except AttributeError:
 						pass
 		return result
 
-	outline = course_context.Outline
-	for outline_node in outline.values():
-		for outline_content_node in outline_node.values():
-			if outline_content_node.ContentNTIID == target_ntiid:
-				return (course_context, outline_content_node)
-			lesson_ntiid = getattr(outline_content_node, 'LessonOverviewNTIID', None)
-			if not lesson_ntiid:
-				continue
-			lesson_overview = component.queryUtility(INTILessonOverview, name=lesson_ntiid)
-			if lesson_overview is None:
-				continue
-
+	def _lesson_overview_contains_target( self, outline_content_node, lesson_overview ):
+		def _do_check( check_contained=True ):
 			for overview_group in lesson_overview.items:
 				for item in overview_group.items:
-					if _found_target(item):
-						endpoints = _get_outline_result_items(original_target_ntiid, item, lesson_overview)
+					if self._overview_item_contains_target( item, check_contained ):
+						endpoints = self._get_outline_result_items( item, lesson_overview )
 						# Return our course, leaf outline node, and overview.
-						results = [course_context, outline_content_node]
+						results = [self.course_context, outline_content_node]
 						results.extend(endpoints)
 						return results
-	return (course_context,)
+
+		results = None
+		if IContentUnit.providedBy( self.target_obj ):
+			# First check if our content unit is a related work ref.
+			# We don't want to return a video that may be contained
+			# by our target content unit when we are looking for just
+			# a related work ref.
+			results = _do_check( False )
+		if not results:
+			results = _do_check()
+		return results
+
+
+	def __call__(self):
+		"""
+		For a course and target ntiid, look for the outline hierarchy
+		used to get to the target ntiid.  We assume the
+		course we have here is permissioned.
+		"""
+		if self.course_context is None:
+			return
+
+		# This does not work with legacy courses.
+		if 		not self.target_ntiid \
+			or 	getattr(self.course_context, 'Outline', None) is None:
+			return (self.course_context,)
+
+		outline = self.course_context.Outline
+		for outline_node in outline.values():
+			for outline_content_node in outline_node.values():
+				if outline_content_node.ContentNTIID == self.target_ntiid:
+					return (self.course_context, outline_content_node)
+				lesson_ntiid = getattr(outline_content_node, 'LessonOverviewNTIID', None)
+				if not lesson_ntiid:
+					continue
+				lesson_overview = component.queryUtility(INTILessonOverview,
+														name=lesson_ntiid)
+				if lesson_overview is None:
+					continue
+
+				results = self._lesson_overview_contains_target( outline_content_node,
+																lesson_overview )
+				if results is not None:
+					return results
+		return (self.course_context,)
 
 def _get_target_ntiid(obj):
 	target_ntiid = getattr(obj, 'ntiid', None)
@@ -408,7 +454,7 @@ def _get_target_ntiid(obj):
 def _hierarchy_from_obj_and_course(course, obj):
 	target_ntiid = _get_target_ntiid(obj)
 	course = _get_valid_course_context(course)[0]
-	return _get_outline_nodes(course, target_ntiid)
+	return _OutlinePathFactory(course, target_ntiid)()
 
 def _get_courses_from_container(obj, user=None):
 	results = set()
@@ -445,7 +491,7 @@ def _hierarchy_from_obj_and_user(obj, user):
 		if ICourseCatalogEntry.providedBy(course):
 			catalog_entries.add(course)
 		else:
-			nodes = _get_outline_nodes(course, target_ntiid)
+			nodes = _OutlinePathFactory(course, target_ntiid)()
 			if nodes and len(nodes) > 1:
 				results.append(nodes)
 
