@@ -35,7 +35,10 @@ from nti.coremetadata.interfaces import ILastModified
 
 from nti.dataserver.interfaces import IShouldHaveTraversablePath
 
+from nti.ntiids.schema import ValidNTIID
+
 from nti.schema.field import Bool
+from nti.schema.field import Dict
 from nti.schema.field import Choice
 from nti.schema.field import Object
 from nti.schema.field import ValidTextLine as TextLine
@@ -43,12 +46,24 @@ from nti.schema.field import ValidTextLine as TextLine
 ACT_VIEW_ROSTER = Permission('nti.actions.courseware.view_roster')
 ACT_VIEW_ACTIVITY = Permission('nti.actions.courseware.view_activity')
 
-# BWC exports
-from nti.contenttypes.courses.legacy_catalog import ICourseCatalogLegacyContentEntry
-from nti.contenttypes.courses.legacy_catalog import ILegacyCommunityBasedCourseInstance
+from nti.contenttypes.courses.legacy_catalog import ILegacyCourseInstance
+from nti.contenttypes.courses.legacy_catalog import ILegacyCourseCatalogEntry
 
-ICourseCatalogLegacyContentEntry = ICourseCatalogLegacyContentEntry
-ILegacyCommunityBasedCourseInstance = ILegacyCommunityBasedCourseInstance
+class ICourseCatalogLegacyContentEntry(ILegacyCourseCatalogEntry):
+	"""
+	Marker interface for a legacy course catalog entry
+	"""
+	ContentPackageNTIID = ValidNTIID(title="The NTIID of the root content package")
+
+class ILegacyCommunityBasedCourseInstance(ILegacyCourseInstance):
+	"""
+	Marker interface for a legacy course instance
+	"""
+
+	LegacyScopes = Dict(title="'public' and 'restricted' entity ids",
+						readonly=True)
+
+	ContentPackageBundle = interface.Attribute("A mock bundle, having a ContentPackages iterable")
 
 class ICourseInstanceActivity(IContained, ILastModified):
 	"""

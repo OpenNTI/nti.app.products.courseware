@@ -49,7 +49,7 @@ def _do_then_enumerate_library(do, sync_libs=False):
 			do()
 			publish_ou_course_entries()
 			if sync_libs:
-				from nti.app.contentlibrary.admin_views import _SyncAllLibrariesView
+				from nti.app.contentlibrary.views.sync_views import _SyncAllLibrariesView
 				view = _SyncAllLibrariesView(None)
 				view._SLEEP = False  # see comments in the view class
 				view()
