@@ -304,7 +304,10 @@ class _OutlinePathFactory( object ):
 		For a video ntiid, return the slide deck containing it,
 		if it is a video on a slide deck.
 		"""
-		content_ntiid = lesson_overview.__parent__.ContentNTIID
+		try:
+			content_ntiid = lesson_overview.__parent__.ContentNTIID
+		except AttributeError:
+			return
 		for slide_deck in self.catalog.search_objects(
 										container_ntiids=content_ntiid,
 										provided=INTISlideDeck,
