@@ -43,9 +43,10 @@ from nti.contentlibrary.interfaces import IContentPackageLibrary
 from nti.common.property import CachedProperty
 
 from nti.contenttypes.courses.courses import CourseInstance
+from nti.contenttypes.courses.courses import CourseAdministrativeLevel
+
 from nti.contenttypes.courses.interfaces import ICourseCatalog
 from nti.contenttypes.courses.interfaces import ICourseInstance
-from nti.contenttypes.courses.courses import CourseAdministrativeLevel
 from nti.contenttypes.courses.interfaces import ICourseAdministrativeLevel
 from nti.contenttypes.courses.interfaces import CourseInstanceAvailableEvent
 
@@ -520,8 +521,7 @@ class _LegacyCommunityBasedCourseInstance(CourseInstance):
 		else:
 			fill_outline_from_key(self._LegacyOutline,
 								  package.index,
-								  xml_parent_name='course',
-								  force=True)
+								  xml_parent_name='course')
 		return self._LegacyOutline
 
 	@Lazy
@@ -552,7 +552,6 @@ class _LegacyCommunityBasedCourseInstance(CourseInstance):
 			if user:
 				found_instructors.add(user)
 				user.record_dynamic_membership(community)
-
 
 		if found_instructors:
 			storage = self._instructor_storage
