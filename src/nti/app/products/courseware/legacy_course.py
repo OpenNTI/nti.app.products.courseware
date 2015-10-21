@@ -520,7 +520,8 @@ class _LegacyCommunityBasedCourseInstance(CourseInstance):
 		else:
 			fill_outline_from_key(self._LegacyOutline,
 								  package.index,
-								  xml_parent_name='course')
+								  xml_parent_name='course',
+								  force=True)
 		return self._LegacyOutline
 
 	@Lazy
