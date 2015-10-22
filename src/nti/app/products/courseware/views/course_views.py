@@ -76,9 +76,7 @@ class course_outline_contents_view(AbstractAuthenticatedView):
 				ext_node = to_external_object(node)
 				ext_node['contents'] = _recur([], node.values())
 				# Pretty pointless to send these
-				ext_node.pop('NTIID', None)
 				ext_node.pop('OID', None)
-
 				the_list.append(ext_node)
 			return the_list
 
@@ -86,7 +84,6 @@ class course_outline_contents_view(AbstractAuthenticatedView):
 		result.__name__ = self.request.view_name
 		result.__parent__ = self.request.context
 		self.request.response.last_modified = self.request.context.lastModified
-
 		return result
 
 from zope.intid.interfaces import IIntIds
@@ -127,7 +124,6 @@ class CourseEnrollmentRosterPathAdapter(Contained):
 			if user.username.lower() == username:
 				enrollment = component.getMultiAdapter((self.__parent__, record),
 														ICourseInstanceEnrollment)
-
 				if enrollment.__parent__ is None:
 					# Typically it will be, lets give it the right place
 					enrollment.xxx_fill_in_parent()
