@@ -49,7 +49,7 @@ from nti.externalization.tests import externalizes
 
 from nti.testing.matchers import verifiably_provides, validly_provides
 
-from . import LegacyInstructedCourseApplicationTestLayer
+from nti.app.products.courseware.tests import LegacyInstructedCourseApplicationTestLayer
 
 class TestApplicationCatalogFromContent(ApplicationLayerTest):
 	layer = LegacyInstructedCourseApplicationTestLayer
@@ -138,10 +138,10 @@ class TestApplicationCatalogFromContent(ApplicationLayerTest):
 					assert_that( acl, has_item(has_item(inst.instructors[0])))
 					assert_that( inst.Outline, has_length(6)) # Units
 
-					unit_1 = inst.Outline['0']
+					unit_1 = inst.Outline['tag:nextthought.com,2011-10:OU-NTICourseOutlineNode-CLC3403_LawAndJustice.course_info.0']
 					assert_that( unit_1, has_property('title', 'Introduction'))
 
-					lesson_1 = unit_1["0"]
+					lesson_1 = unit_1["tag:nextthought.com,2011-10:OU-NTICourseOutlineNode-CLC3403_LawAndJustice.course_info.0.0"]
 					assert_that( lesson_1.AvailableBeginning, is_(not_none()))
 					assert_that( lesson_1.AvailableEnding, is_(not_none()))
 					assert_that( lesson_1, has_property( 'title', '1. Defining Law and Justice' ) )
@@ -151,10 +151,11 @@ class TestApplicationCatalogFromContent(ApplicationLayerTest):
 																	'description', '')))
 					# Sub-lessons
 					assert_that( lesson_1, has_length(1) )
-					assert_that( lesson_1["0"], has_property('ContentNTIID', "tag:nextthought.com,2011-10:OU-HTML-DNE" ) )
+					assert_that( lesson_1["tag:nextthought.com,2011-10:OU-NTICourseOutlineNode-CLC3403_LawAndJustice.course_info.0.0.0"], 
+								 has_property('ContentNTIID', "tag:nextthought.com,2011-10:OU-HTML-DNE" ) )
 
 					# This one is a stub
-					lesson_2 = unit_1["1"]
+					lesson_2 = unit_1["tag:nextthought.com,2011-10:OU-NTICourseOutlineNode-CLC3403_LawAndJustice.course_info.0.1"]
 					assert_that( lesson_2,
 								 externalizes(
 									 all_of(
