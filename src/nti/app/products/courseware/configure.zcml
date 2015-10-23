@@ -216,7 +216,7 @@
 			 for="nti.contenttypes.courses.interfaces.ICourseOutlineNode pyramid.interfaces.IRequest"
 			 provides="zope.traversing.interfaces.ITraversable"
 			 name="fields" />
-			 
+
 	<!-- Workspaces -->
 	<!-- A subscriber for enumeration -->
 	<subscriber factory=".workspaces.CoursesWorkspace"
@@ -306,6 +306,9 @@
 						 .interfaces.ICourseInstanceAdministrativeRole
 						 .interfaces.ILegacyCommunityBasedCourseInstance"
 		modules=".legacy_catalog .legacy_course .workspaces .enrollment" />
+
+	<subscriber factory=".decorators._RosterMailLinkDecorator"
+				provides="nti.externalization.interfaces.IExternalMappingDecorator" />
 
 	<subscriber factory=".decorators._CourseInstanceLinkDecorator"
 				provides="nti.externalization.interfaces.IExternalMappingDecorator" />

@@ -10,6 +10,7 @@ __docformat__ = "restructuredtext en"
 logger = __import__('logging').getLogger(__name__)
 
 VIEW_CONTENTS = 'contents'
+VIEW_COURSE_MAIL = 'Mail'
 VIEW_CLASSMATES = 'Classmates'
 VIEW_COURSE_CLASSMATES = 'Classmates'
 VIEW_COURSE_ACTIVITY = 'CourseActivity'

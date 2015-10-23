@@ -34,6 +34,7 @@ from nti.contenttypes.courses.interfaces import ICourseCatalogEntry
 from nti.contenttypes.courses.utils import is_enrolled
 from nti.contenttypes.courses.utils import has_enrollments
 from nti.contenttypes.courses.utils import get_catalog_entry
+from nti.contenttypes.courses.utils import is_course_instructor
 from nti.contenttypes.courses.utils import get_enrollment_record
 
 from nti.dataserver.interfaces import ILinkExternalHrefOnly
@@ -49,6 +50,7 @@ from nti.dataserver.interfaces import IUser
 from nti.links.links import Link
 
 from . import VIEW_CONTENTS
+from . import VIEW_COURSE_MAIL
 from . import VIEW_CATALOG_ENTRY
 from . import VIEW_COURSE_ACTIVITY
 from . import VIEW_COURSE_RECURSIVE
@@ -90,11 +92,10 @@ class _CourseInstanceLinkDecorator(object):
 
 		request = get_current_request()
 		if request is not None and has_permission(ACT_VIEW_ACTIVITY, context, request):
-			# Give instructors the enrollment roster
-			# and activity.
+			# Give instructors the enrollment roster, activity, and mail links.
 			# NOTE: Assuming the two permissions are concordant; at worst this is a UI
 			# issue though, the actual views are protected with individual permissions
-			for rel in VIEW_COURSE_ENROLLMENT_ROSTER, VIEW_COURSE_ACTIVITY:
+			for rel in VIEW_COURSE_ENROLLMENT_ROSTER, VIEW_COURSE_ACTIVITY, VIEW_COURSE_MAIL:
 				_links.append(Link(context,
 								   rel=rel,
 								   elements=(rel,)))
@@ -112,6 +113,29 @@ class _CourseInstanceLinkDecorator(object):
 			result['TotalLegacyOpenEnrolledCount'] = enrollments.count_legacy_open_enrollments()
 		except AttributeError:
 			pass
+
+@interface.implementer(IExternalMappingDecorator)
+@component.adapter(ICourseInstanceEnrollment)
+class _RosterMailLinkDecorator(object):
+	"""
+	Decorate the course email link on the roster record for instructors.
+	"""
+
+	__metaclass__ = SingletonDecorator
+
+	def _predicate(self, context, result):
+		if not self._is_authenticated:
+			return False
+		course = ICourseInstance( context, None )
+		return course and is_course_instructor(course, self.remoteUser)
+
+	def decorateExternalMapping(self, context, result):
+		_links = result.setdefault(LINKS, [])
+		link = Link(context, rel=VIEW_COURSE_MAIL, elements=(VIEW_COURSE_MAIL,))
+		interface.alsoProvides(link, ILocation)
+		link.__name__ = ''
+		link.__parent__ = context
+		_links.append(link)
 
 @interface.implementer(IExternalMappingDecorator)
 @component.adapter(ICourseInstance)
