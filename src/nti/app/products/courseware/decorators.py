@@ -142,9 +142,9 @@ class _RosterMailLinkDecorator(object):
 
 @interface.implementer(IExternalMappingDecorator)
 @component.adapter(ICourseInstanceEnrollment)
-class _EnrollmentTrackingDecorator(object):
+class _VendorThankYouInfoDecorator(object):
 	"""
-	Decorate the tracking information.
+	Decorate the thank you page information.
 	"""
 
 	__metaclass__ = SingletonDecorator
@@ -154,10 +154,14 @@ class _EnrollmentTrackingDecorator(object):
 
 	def decorateExternalMapping(self, context, result):
 		course = ICourseInstance( context )
-		vendor_info = ICourseInstanceVenderInfo( course )
-		tracking = traverse( vendor_info, 'NTI/EnrollmentTracking', default=False )
-		if tracking and context.RealEnrollmentStatus in tracking:
-			result['EnrollmentTracking'] = tracking.get( context.RealEnrollmentStatus )
+		vendor_info = ICourseInstanceVenderInfo( course, None )
+		if vendor_info is None and ICourseSubInstance.providedBy( course ):
+			vendor_info = ICourseInstanceVenderInfo( course.__parent__.__parent__, None )
+
+		if vendor_info is not None:
+			tracking = traverse( vendor_info, 'NTI/VendorThankYouPage', default=False )
+			if tracking and context.RealEnrollmentStatus in tracking:
+				result['VendorThankYouPage'] = tracking.get( context.RealEnrollmentStatus )
 
 @interface.implementer(IExternalMappingDecorator)
 @component.adapter(ICourseInstance)

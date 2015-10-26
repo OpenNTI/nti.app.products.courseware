@@ -310,7 +310,7 @@
 	<subscriber factory=".decorators._RosterMailLinkDecorator"
 				provides="nti.externalization.interfaces.IExternalMappingDecorator" />
 
-	<subscriber factory=".decorators._EnrollmentTrackingDecorator"
+	<subscriber factory=".decorators._VendorThankYouInfoDecorator"
 				provides="nti.externalization.interfaces.IExternalMappingDecorator" />
 
 	<subscriber factory=".decorators._CourseInstanceLinkDecorator"
