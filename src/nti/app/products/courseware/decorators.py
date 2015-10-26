@@ -16,6 +16,8 @@ from zope import interface
 
 from zope.location.interfaces import ILocation
 
+from zope.traversing.api import traverse
+
 from pyramid.threadlocal import get_current_request
 
 from nti.app.renderers.decorators import AbstractAuthenticatedRequestAwareDecorator
@@ -30,6 +32,7 @@ from nti.contenttypes.courses.interfaces import ICourseInstance
 from nti.contenttypes.courses.interfaces import ICourseSubInstance
 from nti.contenttypes.courses.interfaces import ICourseEnrollments
 from nti.contenttypes.courses.interfaces import ICourseCatalogEntry
+from nti.contenttypes.courses.interfaces import ICourseInstanceVenderInfo
 
 from nti.contenttypes.courses.utils import is_enrolled
 from nti.contenttypes.courses.utils import has_enrollments
@@ -136,6 +139,25 @@ class _RosterMailLinkDecorator(object):
 		link.__name__ = ''
 		link.__parent__ = context
 		_links.append(link)
+
+@interface.implementer(IExternalMappingDecorator)
+@component.adapter(ICourseInstanceEnrollment)
+class _EnrollmentTrackingDecorator(object):
+	"""
+	Decorate the tracking information.
+	"""
+
+	__metaclass__ = SingletonDecorator
+
+	def _predicate(self, context, result):
+		return self._is_authenticated
+
+	def decorateExternalMapping(self, context, result):
+		course = ICourseInstance( context )
+		vendor_info = ICourseInstanceVenderInfo( course )
+		tracking = traverse( vendor_info, 'NTI/EnrollmentTracking', default=False )
+		if tracking and context.RealEnrollmentStatus in tracking:
+			result['EnrollmentTracking'] = tracking.get( context.RealEnrollmentStatus )
 
 @interface.implementer(IExternalMappingDecorator)
 @component.adapter(ICourseInstance)
