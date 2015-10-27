@@ -117,18 +117,11 @@ def get_enrollment_courses(context):
 	return result
 
 def get_vendor_thank_you_page(course, key):
-	vendor_info = get_vendor_info(course)
-	tracking = traverse(vendor_info, 'NTI/VendorThankYouPage', default=False)
-	if tracking and key in tracking:
-		return tracking.get(key)
-
-	if ICourseSubInstance.providedBy(course):
-		parent = get_parent_course(course)
-		vendor_info = get_vendor_info(parent)
+	for course in {ICourseInstance(course), get_parent_course(course)}:
+		vendor_info = get_vendor_info(course)
 		tracking = traverse(vendor_info, 'NTI/VendorThankYouPage', default=False)
 		if tracking and key in tracking:
 			return tracking.get(key)
-
 	return None
 
 @interface.implementer(IUserAdministeredCourses)
