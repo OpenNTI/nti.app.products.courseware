@@ -36,7 +36,6 @@ from nti.contenttypes.courses.utils import has_enrollments
 from nti.contenttypes.courses.utils import get_catalog_entry
 from nti.contenttypes.courses.utils import is_course_instructor
 from nti.contenttypes.courses.utils import get_enrollment_record
-from nti.contenttypes.courses.utils import get_vendor_thank_you_page
 
 from nti.dataserver.interfaces import ILinkExternalHrefOnly
 
@@ -60,6 +59,7 @@ from . import VIEW_COURSE_RECURSIVE_BUCKET
 from . import VIEW_COURSE_ENROLLMENT_ROSTER
 
 from .utils import get_enrollment_options
+from .utils import get_vendor_thank_you_page
 
 from .interfaces import ACT_VIEW_ACTIVITY
 from .interfaces import IOpenEnrollmentOption
