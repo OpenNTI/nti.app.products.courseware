@@ -5,6 +5,7 @@
 """
 
 from __future__ import print_function, unicode_literals, absolute_import, division
+\
 __docformat__ = "restructuredtext en"
 
 logger = __import__('logging').getLogger(__name__)
@@ -34,11 +35,12 @@ from nti.contenttypes.courses.index import IX_USERNAME
 from nti.contenttypes.courses.interfaces import INSTRUCTOR
 
 from nti.contenttypes.courses import get_course_vendor_info
+from nti.contenttypes.courses.utils import get_parent_course
+
 from nti.contenttypes.courses.interfaces import ICourseCatalog
 from nti.contenttypes.courses.interfaces import ICourseInstance
-from nti.contenttypes.courses.interfaces import ICourseCatalogEntry
 from nti.contenttypes.courses.interfaces import ICourseSubInstance
-from nti.contenttypes.courses.interfaces import ICourseInstanceVenderInfo
+from nti.contenttypes.courses.interfaces import ICourseCatalogEntry
 
 from nti.dataserver.interfaces import IMemcacheClient
 
@@ -115,15 +117,20 @@ def get_enrollment_courses(context):
 		result = [result]
 	return result
 
-def get_vendor_thank_you_page( course, key ):
-	vendor_info = ICourseInstanceVenderInfo( course, None )
-	if vendor_info is None and ICourseSubInstance.providedBy( course ):
-		vendor_info = ICourseInstanceVenderInfo( course.__parent__.__parent__, None )
+def get_vendor_thank_you_page(course, key):
+	vendor_info = get_vendor_info(course)
+	tracking = traverse(vendor_info, 'NTI/VendorThankYouPage', default=False)
+	if tracking and key in tracking:
+		return tracking.get(key)
 
-	if vendor_info is not None:
-		tracking = traverse( vendor_info, 'NTI/VendorThankYouPage', default=False )
+	if ICourseSubInstance.providedBy(course):
+		parent = get_parent_course(course)
+		vendor_info = get_vendor_info(parent)
+		tracking = traverse(vendor_info, 'NTI/VendorThankYouPage', default=False)
 		if tracking and key in tracking:
-			return tracking.get( key )
+			return tracking.get(key)
+
+	return None
 
 @interface.implementer(IUserAdministeredCourses)
 class IndexAdminCourses(object):
