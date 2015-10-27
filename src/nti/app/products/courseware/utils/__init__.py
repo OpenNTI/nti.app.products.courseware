@@ -37,6 +37,8 @@ from nti.contenttypes.courses import get_course_vendor_info
 from nti.contenttypes.courses.interfaces import ICourseCatalog
 from nti.contenttypes.courses.interfaces import ICourseInstance
 from nti.contenttypes.courses.interfaces import ICourseCatalogEntry
+from nti.contenttypes.courses.interfaces import ICourseSubInstance
+from nti.contenttypes.courses.interfaces import ICourseInstanceVenderInfo
 
 from nti.dataserver.interfaces import IMemcacheClient
 
@@ -112,6 +114,16 @@ def get_enrollment_courses(context):
 	if result and isinstance(result, six.string_types):
 		result = [result]
 	return result
+
+def get_vendor_thank_you_page( course, key ):
+	vendor_info = ICourseInstanceVenderInfo( course, None )
+	if vendor_info is None and ICourseSubInstance.providedBy( course ):
+		vendor_info = ICourseInstanceVenderInfo( course.__parent__.__parent__, None )
+
+	if vendor_info is not None:
+		tracking = traverse( vendor_info, 'NTI/VendorThankYouPage', default=False )
+		if tracking and key in tracking:
+			return tracking.get( key )
 
 @interface.implementer(IUserAdministeredCourses)
 class IndexAdminCourses(object):

@@ -16,8 +16,6 @@ from zope import interface
 
 from zope.location.interfaces import ILocation
 
-from zope.traversing.api import traverse
-
 from pyramid.threadlocal import get_current_request
 
 from nti.app.renderers.decorators import AbstractAuthenticatedRequestAwareDecorator
@@ -32,13 +30,13 @@ from nti.contenttypes.courses.interfaces import ICourseInstance
 from nti.contenttypes.courses.interfaces import ICourseSubInstance
 from nti.contenttypes.courses.interfaces import ICourseEnrollments
 from nti.contenttypes.courses.interfaces import ICourseCatalogEntry
-from nti.contenttypes.courses.interfaces import ICourseInstanceVenderInfo
 
 from nti.contenttypes.courses.utils import is_enrolled
 from nti.contenttypes.courses.utils import has_enrollments
 from nti.contenttypes.courses.utils import get_catalog_entry
 from nti.contenttypes.courses.utils import is_course_instructor
 from nti.contenttypes.courses.utils import get_enrollment_record
+from nti.contenttypes.courses.utils import get_vendor_thank_you_page
 
 from nti.dataserver.interfaces import ILinkExternalHrefOnly
 
@@ -154,14 +152,9 @@ class _VendorThankYouInfoDecorator(object):
 
 	def decorateExternalMapping(self, context, result):
 		course = ICourseInstance( context )
-		vendor_info = ICourseInstanceVenderInfo( course, None )
-		if vendor_info is None and ICourseSubInstance.providedBy( course ):
-			vendor_info = ICourseInstanceVenderInfo( course.__parent__.__parent__, None )
-
-		if vendor_info is not None:
-			tracking = traverse( vendor_info, 'NTI/VendorThankYouPage', default=False )
-			if tracking and context.RealEnrollmentStatus in tracking:
-				result['VendorThankYouPage'] = tracking.get( context.RealEnrollmentStatus )
+		thank_you_page = get_vendor_thank_you_page( course, context.RealEnrollmentStatus )
+		if thank_you_page:
+			result['VendorThankYouPage'] = thank_you_page
 
 @interface.implementer(IExternalMappingDecorator)
 @component.adapter(ICourseInstance)
