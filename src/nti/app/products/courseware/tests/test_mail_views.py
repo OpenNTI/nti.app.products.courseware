@@ -16,6 +16,11 @@ from nti.app.testing.application_webtest import ApplicationLayerTest
 
 from nti.app.products.courseware.tests import InstructedCourseApplicationTestLayer
 
+import nti.dataserver.tests.mock_dataserver as mock_dataserver
+
+from nti.dataserver.users import User
+from nti.dataserver.users.interfaces import IUserProfile
+
 class TestMailViews(ApplicationLayerTest):
 
 	layer = InstructedCourseApplicationTestLayer
@@ -36,8 +41,19 @@ class TestMailViews(ApplicationLayerTest):
 				'Subject': subject,
 				'NoReply': True }
 
+		# Test mail without subject and with a reply address.
+		mail_with_reply = dict( mail )
+		mail_with_reply['NoReply'] = False
+		mail_with_reply['Subject'] = None
+
 		instructor_env = self._make_extra_environ('harp4162')
 		jmadden_environ = self._make_extra_environ(username='aaa_nextthought_com')
+
+		# Give the user an email address.
+		with mock_dataserver.mock_db_trans(self.ds):
+			user = User.get_user( 'aaa_nextthought_com' )
+			IUserProfile(user).email_verified = True
+			IUserProfile(user).email = 'bill@nextthought.com'
 
 		res = self.testapp.get( '/dataserver2/users/harp4162/Courses/AdministeredCourses',
 								extra_environ=instructor_env)
@@ -60,10 +76,12 @@ class TestMailViews(ApplicationLayerTest):
 								extra_environ=instructor_env)
 		for enroll_record in res.json_body['Items']:
 			roster_link = self.require_link_href_with_rel( enroll_record, VIEW_COURSE_MAIL )
-			res = self.testapp.post_json( roster_link, mail, extra_environ=instructor_env)
+			self.testapp.post_json( roster_link, mail, extra_environ=instructor_env)
+			self.testapp.post_json( roster_link, mail_with_reply, extra_environ=instructor_env)
 
 		# Mail course
-		res = self.testapp.post_json( email_link, mail, extra_environ=instructor_env)
+		self.testapp.post_json( email_link, mail, extra_environ=instructor_env)
+		self.testapp.post_json( email_link, mail_with_reply, extra_environ=instructor_env)
 
 		# 403s/404s
 		self.testapp.post_json( email_link, mail, status=403 )

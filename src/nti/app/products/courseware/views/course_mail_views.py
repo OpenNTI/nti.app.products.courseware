@@ -60,16 +60,30 @@ class CourseMailView( AbstractMemberEmailView ):
 		display_name = self._context_display_name
 		return 'Email for "%s" users' % display_name
 
+	@property
+	def _public_scope(self):
+		return self.context.SharingScopes.get( 'Public' )
+
 	def _get_scope(self):
 		course = self.context
 		values = CaseInsensitiveDict( self.request.params )
 		scope_name = values.get( 'scope' )
-		public_scope = result = course.SharingScopes.get( 'Public' )
+		result = self._public_scope
 
 		if scope_name:
 			if scope_name not in ENROLLMENT_SCOPE_VOCABULARY.by_token.keys():
 				raise hexc.HTTPUnprocessableEntity(detail='Invalid scope')
-			result = course.SharingScopes.get( scope_name, public_scope )
+			result = course.SharingScopes.get( scope_name, self._public_scope )
+		return result
+
+	def reply_addr_for_recipient(self, recipient):
+		"""
+		If the recipient is Public/Open, we never want a reply address.
+		"""
+		if recipient in self._public_scope:
+			result = self._no_reply_addr
+		else:
+			result = self._sender_reply_addr
 		return result
 
 	def iter_members(self):
@@ -99,6 +113,10 @@ class EnrollmentRecordMailView( CourseMailView ):
 	@property
 	def course(self):
 		return ICourseInstance( self.context, None )
+
+	@property
+	def _public_scope(self):
+		return self.course.SharingScopes.get( 'Public' )
 
 	@property
 	def _context_display_name(self):
