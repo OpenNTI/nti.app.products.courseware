@@ -117,7 +117,7 @@ def get_enrollment_courses(context):
 	return result
 
 def get_vendor_thank_you_page(course, key):
-	for course in {ICourseInstance(course), get_parent_course(course)}:
+	for course in {ICourseInstance(course, None), get_parent_course(course)}:
 		vendor_info = get_vendor_info(course)
 		tracking = traverse(vendor_info, 'NTI/VendorThankYouPage', default=False)
 		if tracking and key in tracking:
