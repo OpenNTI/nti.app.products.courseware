@@ -49,7 +49,7 @@ class TestMailViews(ApplicationLayerTest):
 		instructor_env = self._make_extra_environ('harp4162')
 		jmadden_environ = self._make_extra_environ(username='aaa_nextthought_com')
 
-		# Give the user an email address.
+		# Give the user a NT email address.
 		with mock_dataserver.mock_db_trans(self.ds):
 			user = User.get_user( 'aaa_nextthought_com' )
 			IUserProfile(user).email_verified = True

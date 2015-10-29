@@ -18,6 +18,8 @@ from nti.app.mail.views import AbstractMemberEmailView
 
 from nti.common.maps import CaseInsensitiveDict
 
+from nti.contenttypes.courses.interfaces import ES_PUBLIC
+from nti.contenttypes.courses.interfaces import ES_CREDIT
 from nti.contenttypes.courses.interfaces import ICourseInstance
 from nti.contenttypes.courses.interfaces import ICourseCatalogEntry
 from nti.contenttypes.courses.interfaces import ENROLLMENT_SCOPE_VOCABULARY
@@ -53,7 +55,7 @@ class CourseMailView( AbstractMemberEmailView ):
 	"""
 	@property
 	def _context_display_name(self):
-		cat_entry = ICourseCatalogEntry( self.context )
+		cat_entry = ICourseCatalogEntry( self.course )
 		return getattr( cat_entry, 'title', '' )
 
 	def _default_subject(self):
@@ -61,11 +63,18 @@ class CourseMailView( AbstractMemberEmailView ):
 		return 'Email for "%s" users' % display_name
 
 	@property
+	def course(self):
+		return self.context
+
+	@property
 	def _public_scope(self):
-		return self.context.SharingScopes.get( 'Public' )
+		return self.course.SharingScopes.get( ES_PUBLIC )
+
+	@property
+	def _for_credit_scope(self):
+		return self.course.SharingScopes.get( ES_CREDIT )
 
 	def _get_scope(self):
-		course = self.context
 		values = CaseInsensitiveDict( self.request.params )
 		scope_name = values.get( 'scope' )
 		result = self._public_scope
@@ -73,14 +82,14 @@ class CourseMailView( AbstractMemberEmailView ):
 		if scope_name:
 			if scope_name not in ENROLLMENT_SCOPE_VOCABULARY.by_token.keys():
 				raise hexc.HTTPUnprocessableEntity(detail='Invalid scope')
-			result = course.SharingScopes.get( scope_name, self._public_scope )
+			result = self.course.SharingScopes.get( scope_name, self._public_scope )
 		return result
 
 	def reply_addr_for_recipient(self, recipient):
 		"""
 		If the recipient is Public/Open, we never want a reply address.
 		"""
-		if recipient in self._public_scope:
+		if recipient not in self._for_credit_scope:
 			result = self._no_reply_addr
 		else:
 			result = self._sender_reply_addr
@@ -89,7 +98,7 @@ class CourseMailView( AbstractMemberEmailView ):
 	def iter_members(self):
 		scope = self._get_scope()
 		scope_usernames = {x.lower() for x in IEnumerableEntityContainer(scope).iter_usernames()}
-		instructor_usernames = {x.username for x in self.context.instructors}
+		instructor_usernames = {x.username for x in self.course.instructors}
 		for username in scope_usernames:
 			if username not in instructor_usernames:
 				user = User.get_user( username )
@@ -97,8 +106,7 @@ class CourseMailView( AbstractMemberEmailView ):
 					yield user
 
 	def predicate(self):
-		course = self.context
-		return is_course_instructor( course, self.remoteUser )
+		return is_course_instructor( self.course, self.remoteUser )
 
 @view_config(route_name='objects.generic.traversal',
 			 context=ICourseInstanceEnrollment,
@@ -113,15 +121,6 @@ class EnrollmentRecordMailView( CourseMailView ):
 	@property
 	def course(self):
 		return ICourseInstance( self.context, None )
-
-	@property
-	def _public_scope(self):
-		return self.course.SharingScopes.get( 'Public' )
-
-	@property
-	def _context_display_name(self):
-		cat_entry = ICourseCatalogEntry( self.course )
-		return getattr( cat_entry, 'title', '' )
 
 	def iter_members(self):
 		user = User.get_user( self.context.Username )
