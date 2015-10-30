@@ -159,7 +159,7 @@ class ResetCourseOutlineView(AbstractAuthenticatedView,
 
 			outline.reset()
 			ntiid = ICourseCatalogEntry(course).ntiid
-			logger.info("%s node(s) removed from %s", len(removed), ntiid)
+			logger.info("%s node(s) removed from %s", len(removed)/len(sites), ntiid)
 			
 			root = course.root
 			outline_xml_node = None
