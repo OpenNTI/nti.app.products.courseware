@@ -156,8 +156,11 @@ class ResetCourseOutlineView(AbstractAuthenticatedView,
 												force=True))
 			for node in removed:
 				remove_transaction_history(node)
-			outline.reset()
 
+			outline.reset()
+			ntiid = ICourseCatalogEntry(course).ntiid
+			logger.info("%s node(s) removed from %s", len(removed), ntiid)
+			
 			root = course.root
 			outline_xml_node = None
 			outline_xml_key = root.getChildNamed(COURSE_OUTLINE_NAME)
@@ -173,9 +176,8 @@ class ResetCourseOutlineView(AbstractAuthenticatedView,
 								  	  outline_xml_key,
 								  	  xml_parent_name=outline_xml_node,
 								  	  force=True)
-				
-			ntiid = ICourseCatalogEntry(course).ntiid
 			items[ntiid] = [x.ntiid for x in outline_nodes(course.Outline)]
+			logger.info("%s node(s) registered for %s", len(items[ntiid]), ntiid)
 		return to_process
 
 	def __call__(self):
