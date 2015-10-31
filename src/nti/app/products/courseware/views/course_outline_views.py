@@ -30,6 +30,7 @@ from nti.app.base.abstract_views import AbstractAuthenticatedView
 from nti.app.externalization.internalization import read_body_as_external_object
 from nti.app.externalization.view_mixins import ModeledContentUploadRequestUtilsMixin
 
+from nti.common.string import TRUE_VALUES
 from nti.common.maps import CaseInsensitiveDict
 
 from nti.contenttypes.courses.interfaces import COURSE_OUTLINE_NAME
@@ -91,6 +92,9 @@ def _parse_course(values):
 		raise hexc.HTTPUnprocessableEntity(detail='Course not found')
 	return result[0]
 
+def _is_true(v):
+	return v and str(v).lower() in TRUE_VALUES
+
 def _reverse(data):
 	data.reverse()
 	return data
@@ -127,15 +131,16 @@ class ResetCourseOutlineView(AbstractAuthenticatedView,
 		return result
 
 	def _do_call(self, result, courses=None):
+		values = self.readInput()
 		if courses is None:
-			values = self.readInput()
 			courses = _parse_courses(values)
 
 		to_process = set()
 		items = result[ITEMS] = {}
+		force = _is_true(values.get('force'))
 		site_names = _reverse(get_component_hierarchy_names())
 		sites = get_sites(site_names)
-		
+
 		for course in courses:
 			course = ICourseInstance(course)
 			if ILegacyCourseInstance.providedBy(course):
@@ -153,14 +158,14 @@ class ResetCourseOutlineView(AbstractAuthenticatedView,
 				registry = site.getSiteManager()
 				removed.extend(unregister_nodes(outline,
 												registry=registry,
-												force=True))
+												force=force))
 			for node in removed:
 				remove_transaction_history(node)
 
 			outline.reset()
 			ntiid = ICourseCatalogEntry(course).ntiid
-			logger.info("%s node(s) removed from %s", len(removed)/len(sites), ntiid)
-			
+			logger.info("%s node(s) removed from %s", len(removed) / len(sites), ntiid)
+
 			root = course.root
 			outline_xml_node = None
 			outline_xml_key = root.getChildNamed(COURSE_OUTLINE_NAME)
@@ -175,7 +180,7 @@ class ResetCourseOutlineView(AbstractAuthenticatedView,
 				fill_outline_from_key(course.Outline,
 								  	  outline_xml_key,
 								  	  xml_parent_name=outline_xml_node,
-								  	  force=True)
+								  	  force=force)
 			items[ntiid] = [x.ntiid for x in outline_nodes(course.Outline)]
 			logger.info("%s node(s) registered for %s", len(items[ntiid]), ntiid)
 		return to_process
