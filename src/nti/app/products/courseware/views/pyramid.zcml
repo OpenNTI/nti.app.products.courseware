@@ -14,5 +14,6 @@
 	<pyramid:scan package=".course_legacy_views" />
 	<pyramid:scan package=".course_stream_views" />
 	<pyramid:scan package=".course_outline_views" />
+	<pyramid:scan package=".course_recordable_views" />
 
 </configure>

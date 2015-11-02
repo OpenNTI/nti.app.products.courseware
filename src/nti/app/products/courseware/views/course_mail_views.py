@@ -41,7 +41,7 @@ from . import VIEW_COURSE_MAIL
 			 renderer='rest',
 			 request_method='POST',
 			 name=VIEW_COURSE_MAIL)
-class CourseMailView( AbstractMemberEmailView ):
+class CourseMailView(AbstractMemberEmailView):
 	"""
 	Support emailing one or many students from the roster.
 
@@ -55,8 +55,8 @@ class CourseMailView( AbstractMemberEmailView ):
 	"""
 	@property
 	def _context_display_name(self):
-		cat_entry = ICourseCatalogEntry( self.course )
-		return getattr( cat_entry, 'title', '' )
+		cat_entry = ICourseCatalogEntry(self.course)
+		return getattr(cat_entry, 'title', '')
 
 	def _default_subject(self):
 		display_name = self._context_display_name
@@ -68,21 +68,21 @@ class CourseMailView( AbstractMemberEmailView ):
 
 	@property
 	def _public_scope(self):
-		return self.course.SharingScopes.get( ES_PUBLIC )
+		return self.course.SharingScopes.get(ES_PUBLIC)
 
 	@property
 	def _for_credit_scope(self):
-		return self.course.SharingScopes.get( ES_CREDIT )
+		return self.course.SharingScopes.get(ES_CREDIT)
 
 	def _get_scope(self):
-		values = CaseInsensitiveDict( self.request.params )
-		scope_name = values.get( 'scope' )
+		values = CaseInsensitiveDict(self.request.params)
+		scope_name = values.get('scope')
 		result = self._public_scope
 
 		if scope_name:
 			if scope_name not in ENROLLMENT_SCOPE_VOCABULARY.by_token.keys():
 				raise hexc.HTTPUnprocessableEntity(detail='Invalid scope')
-			result = self.course.SharingScopes.get( scope_name, self._public_scope )
+			result = self.course.SharingScopes.get(scope_name, self._public_scope)
 		return result
 
 	def reply_addr_for_recipient(self, recipient):
@@ -101,12 +101,12 @@ class CourseMailView( AbstractMemberEmailView ):
 		instructor_usernames = {x.username for x in self.course.instructors}
 		for username in scope_usernames:
 			if username not in instructor_usernames:
-				user = User.get_user( username )
+				user = User.get_user(username)
 				if user is not None:
 					yield user
 
 	def predicate(self):
-		return is_course_instructor( self.course, self.remoteUser )
+		return is_course_instructor(self.course, self.remoteUser)
 
 @view_config(route_name='objects.generic.traversal',
 			 context=ICourseInstanceEnrollment,
@@ -114,18 +114,19 @@ class CourseMailView( AbstractMemberEmailView ):
 			 renderer='rest',
 			 request_method='POST',
 			 name=VIEW_COURSE_MAIL)
-class EnrollmentRecordMailView( CourseMailView ):
+class EnrollmentRecordMailView(CourseMailView):
 	"""
 	Email an individual student.
 	"""
+
 	@property
 	def course(self):
-		return ICourseInstance( self.context, None )
+		return ICourseInstance(self.context, None)
 
 	def iter_members(self):
-		user = User.get_user( self.context.Username )
+		user = User.get_user(self.context.Username)
 		return  (user,)
 
 	def predicate(self):
 		return 	self.course is not None \
-			and is_course_instructor( self.course, self.remoteUser )
+			and is_course_instructor(self.course, self.remoteUser)
