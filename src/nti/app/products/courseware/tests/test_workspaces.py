@@ -23,6 +23,7 @@ from hamcrest import assert_that
 from hamcrest import has_entries
 from hamcrest import has_property
 from hamcrest import contains_inanyorder
+from hamcrest import greater_than_or_equal_to
 does_not = is_not
 
 from zope import component
@@ -105,7 +106,8 @@ class _AbstractEnrollingBase(object):
 		#assert_that( res.json_body, has_entry( 'Items', has_length( 0 )) )
 
 		res = self.testapp.get( self.all_courses_href )
-		assert_that( res.json_body, has_entry( 'Items', has_length( self.expected_workspace_length )) )
+		assert_that( res.json_body, has_entry('Items',
+											  has_length( greater_than_or_equal_to(self.expected_workspace_length) )) )
 		assert_that( res.json_body['Items'],
 					 has_items(
 						 all_of( has_entries( 'Duration', 'P112D',
@@ -418,7 +420,6 @@ class _AbstractEnrollingBase(object):
 		self._do_enroll( {'ntiid': self.enrollment_ntiid} )
 
 
-
 class TestLegacyWorkspace(_AbstractEnrollingBase,
 						  ApplicationLayerTest):
 	layer = LegacyInstructedCourseApplicationTestLayer
@@ -495,7 +496,7 @@ class TestPersistentWorkspaces(_AbstractEnrollingBase,
 		# OTOH, section 01 does have its own assets
 		res = self.testapp.get( self.all_courses_href )
 
-		assert_that( res.json_body, has_entry( 'Items', has_length( self.expected_workspace_length )) )
+		assert_that( res.json_body, has_entry( 'Items', has_length( greater_than_or_equal_to(self.expected_workspace_length ))) )
 
 		main_entry, sect_entry = self._get_main_and_sect_entries(res)
 
@@ -601,7 +602,7 @@ class TestRestrictedWorkspace(ApplicationLayerTest):
 		#assert_that( res.json_body, has_entry( 'Items', has_length( 0 )) )
 
 		res = self.testapp.get( '/dataserver2/users/sjohnson@nextthought.com/Courses/AllCourses' )
-		assert_that( res.json_body, has_entry( 'Items', has_length( 1 )) )
+		assert_that( res.json_body, has_entry( 'Items', has_length( greater_than_or_equal_to(1) )) )
 		assert_that( res.json_body['Items'],
 					 has_items(
 						 all_of( has_entries( 'Duration', 'P112D',

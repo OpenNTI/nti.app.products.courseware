@@ -11,6 +11,7 @@ from hamcrest import has_entry
 from hamcrest import has_length
 from hamcrest import assert_that
 from hamcrest import has_entries
+from hamcrest import greater_than_or_equal_to
 
 import fudge
 
@@ -113,7 +114,7 @@ class TestPathLookup(ApplicationLayerTest):
 
 	def _check_catalog(self, res, res_count=1):
 		items = res.get('Items')
-		assert_that(items, has_length(res_count))
+		assert_that(items, has_length(greater_than_or_equal_to(res_count)))
 		for item in items:
 			assert_that(item, has_entry('Class', 'CourseCatalogLegacyEntry'))
 
