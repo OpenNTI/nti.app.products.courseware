@@ -212,7 +212,7 @@
 	</class>
 
 	<!-- Asset update -->
-	<adapter factory=".adapters._OutlineNodeExternalFieldTraverser"
+	<adapter factory=".traversal._OutlineNodeExternalFieldTraverser"
 			 for="nti.contenttypes.courses.interfaces.ICourseOutlineNode pyramid.interfaces.IRequest"
 			 provides="zope.traversing.interfaces.ITraversable"
 			 name="fields" />

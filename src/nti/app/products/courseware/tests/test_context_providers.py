@@ -36,7 +36,7 @@ class TestContextProviders(ApplicationLayerTest):
 	default_origin = str('http://janux.ou.edu')
 
 	@WithSharedApplicationMockDS(users=True, testapp=True)
-	@fudge.patch('nti.app.products.courseware.adapters.get_catalog')
+	@fudge.patch('nti.app.products.courseware.adapters.get_library_catalog')
 	@fudge.patch('nti.app.products.courseware.adapters.is_readable')
 	@fudge.patch('nti.app.products.courseware.adapters._is_user_enrolled')
 	def test_providers(self, mock_get_catalog, mock_readable, mock_enrolled):

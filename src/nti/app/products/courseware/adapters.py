@@ -21,13 +21,10 @@ from zope.annotation.interfaces import IAnnotations
 
 from nti.app.authentication import get_remote_user
 
-from nti.appserver._adapters import _AbstractExternalFieldTraverser
-
 from nti.appserver.context_providers import get_top_level_contexts
 from nti.appserver.context_providers import get_joinable_contexts
 
 from nti.appserver.interfaces import IJoinableContextProvider
-from nti.appserver.interfaces import IExternalFieldTraversable
 from nti.appserver.interfaces import ForbiddenContextException
 from nti.appserver.interfaces import IHierarchicalContextProvider
 from nti.appserver.interfaces import ILibraryPathLastModifiedProvider
@@ -41,17 +38,15 @@ from nti.contentlibrary.interfaces import IContentUnit
 from nti.contentlibrary.interfaces import IContentPackage
 from nti.contentlibrary.interfaces import IContentPackageBundle
 
-from nti.contentlibrary.indexed_data import get_catalog
+from nti.contentlibrary.indexed_data import get_library_catalog
 
 from nti.contenttypes.courses.interfaces import ICourseCatalog
 from nti.contenttypes.courses.interfaces import ICourseInstance
 from nti.contenttypes.courses.interfaces import ICourseEnrollments
 from nti.contenttypes.courses.interfaces import ICourseSubInstance
 from nti.contenttypes.courses.interfaces import ICourseCatalogEntry
-from nti.contenttypes.courses.interfaces import ICourseOutlineNode
 from nti.contenttypes.courses.interfaces import IPrincipalEnrollments
 from nti.contenttypes.courses.interfaces import IContentCourseInstance
-from nti.contenttypes.courses.interfaces import ICourseOutlineCalendarNode
 
 from nti.contenttypes.presentation.interfaces import INTIVideo
 from nti.contenttypes.presentation.interfaces import INTISlide
@@ -67,8 +62,6 @@ from nti.dataserver.contenttypes.forums.interfaces import ITopic
 from nti.dataserver.contenttypes.forums.interfaces import IForum
 
 from nti.ntiids.ntiids import find_object_with_ntiid
-
-from nti.schema.jsonschema import TAG_HIDDEN_IN_UI
 
 from nti.site.site import get_component_hierarchy_names
 
@@ -291,7 +284,7 @@ class _OutlinePathFactory( object ):
 
 	@property
 	def catalog(self):
-		return get_catalog()
+		return get_library_catalog()
 
 	@property
 	def target_obj_containers(self):
@@ -461,7 +454,7 @@ def _hierarchy_from_obj_and_course(course, obj):
 
 def _get_courses_from_container(obj, user=None):
 	results = set()
-	catalog = get_catalog()
+	catalog = get_library_catalog()
 	if catalog:
 		containers = catalog.get_containers(obj)
 		for container in containers:
@@ -639,27 +632,3 @@ def _enrollment_last_modified(user):
 	# we know we're only using this for cache invalidation.
 	annotations = IAnnotations(user)
 	return annotations.get(USER_ENROLLMENT_LAST_MODIFIED_KEY, 0)
-
-@component.adapter(ICourseOutlineNode)
-@interface.implementer(IExternalFieldTraversable)
-class _OutlineNodeExternalFieldTraverser(_AbstractExternalFieldTraverser):
-
-	@classmethod
-	def iface_of_thing(cls, context):
-		if ICourseOutlineCalendarNode.providedBy(context):
-			return ICourseOutlineCalendarNode
-		return ICourseOutlineNode
-
-	def __init__(self, context, request=None):
-		super(_OutlineNodeExternalFieldTraverser, self).__init__(context, request=request)
-		allowed_fields = set()
-		assest_iface = self.iface_of_thing(context)
-		for k, v in assest_iface.namesAndDescriptions(all=True):
-			__traceback_info__ = k, v
-			if interface.interfaces.IMethod.providedBy(v):
-				continue
-			# v could be a schema field or an interface.Attribute
-			if v.queryTaggedValue(TAG_HIDDEN_IN_UI):
-				continue
-			allowed_fields.add(k)
-		self._allowed_fields = allowed_fields

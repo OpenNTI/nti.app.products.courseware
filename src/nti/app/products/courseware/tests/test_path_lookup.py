@@ -107,17 +107,17 @@ class TestPathLookup(ApplicationLayerTest):
 
 			f4ds = get_forums_for_discussion(discussion, course)
 			assert_that(f4ds, has_length(2))
-			forum = f4ds.get( 'Open_Discussions' )
+			forum = f4ds.get('Open_Discussions')
 			self.discussion_ntiid = tuple(forum.values())[0].NTIID
 			self.forum_ntiid = forum.NTIID
 
-	def _check_catalog( self, res, res_count=1 ):
-		items = res.get( 'Items' )
-		assert_that(items, has_length( res_count ))
+	def _check_catalog(self, res, res_count=1):
+		items = res.get('Items')
+		assert_that(items, has_length(res_count))
 		for item in items:
 			assert_that(item, has_entry('Class', 'CourseCatalogLegacyEntry'))
 
-	def _do_path_lookup(self, is_legacy=False, expected_status=200 ):
+	def _do_path_lookup(self, is_legacy=False, expected_status=200):
 		self._create_discussions()
 
 		# For legacy non-indexed, we only get one possible path.
@@ -248,9 +248,9 @@ class TestPathLookup(ApplicationLayerTest):
 				res = res[0]
 				assert_that(res, has_length(2))
 
-				assert_that( res[0], has_entry( 'Class', 'CourseInstance' ))
-				assert_that( res[1], has_entries( 'Class', 'CommunityBoard',
-												'title', 'Discussions' ))
+				assert_that(res[0], has_entry('Class', 'CourseInstance'))
+				assert_that(res[1], has_entries('Class', 'CommunityBoard',
+												'title', 'Discussions'))
 
 		# Topic: Course/Board/Forum
 		obj_path = '/dataserver2/Objects/%s/LibraryPath' % self.discussion_ntiid
@@ -266,11 +266,11 @@ class TestPathLookup(ApplicationLayerTest):
 				res = res[0]
 				assert_that(res, has_length(3))
 
-				assert_that( res[0], has_entry( 'Class', 'CourseInstance' ))
-				assert_that( res[1], has_entries( 'Class', 'CommunityBoard',
-												'title', 'Discussions' ))
-				assert_that( res[2], has_entries( 'Class', 'CommunityForum',
-												'title', 'Open Discussions' ))
+				assert_that(res[0], has_entry('Class', 'CourseInstance'))
+				assert_that(res[1], has_entries('Class', 'CommunityBoard',
+												'title', 'Discussions'))
+				assert_that(res[2], has_entries('Class', 'CommunityForum',
+												'title', 'Open Discussions'))
 
 	def _enroll(self):
 		with mock_dataserver.mock_db_trans(site_name='platform.ou.edu'):
@@ -283,7 +283,7 @@ class TestPathLookup(ApplicationLayerTest):
 			manager.enroll(user, scope='ForCreditDegree')
 
 	@WithSharedApplicationMockDS(users=True, testapp=True)
-	@fudge.patch('nti.app.products.courseware.adapters.get_catalog')
+	@fudge.patch('nti.app.products.courseware.adapters.get_library_catalog')
 	def test_contained_path(self, mock_get_catalog):
 		self._enroll()
 		mock_catalog = MockCatalog()
@@ -291,11 +291,11 @@ class TestPathLookup(ApplicationLayerTest):
 		self._do_path_lookup()
 
 	@WithSharedApplicationMockDS(users=True, testapp=True)
-	@fudge.patch('nti.app.products.courseware.adapters.get_catalog')
+	@fudge.patch('nti.app.products.courseware.adapters.get_library_catalog')
 	def test_contained_path_unenrolled(self, mock_get_catalog):
 		mock_catalog = MockCatalog()
 		mock_get_catalog.is_callable().returns(mock_catalog)
-		self._do_path_lookup( expected_status=403 )
+		self._do_path_lookup(expected_status=403)
 
 	@WithSharedApplicationMockDS(users=True, testapp=True)
 	@fudge.patch('nti.app.products.courseware.adapters._get_courses_from_container')
@@ -307,5 +307,5 @@ class TestPathLookup(ApplicationLayerTest):
 		self._enroll()
 		mock_catalog = MockCatalog()
 		mock_catalog.containers = []
-		mock_get_courses.is_callable().returns( () )
-		self._do_path_lookup( is_legacy=True )
+		mock_get_courses.is_callable().returns(())
+		self._do_path_lookup(is_legacy=True)

@@ -21,7 +21,7 @@ from zope.intid import IIntIds
 
 from nti.common.property import Lazy
 
-from nti.contentlibrary.indexed_data import get_catalog
+from nti.contentlibrary.indexed_data import get_library_catalog
 from nti.contentlibrary.interfaces import IContentPackageLibrary
 
 from nti.contenttypes.courses.interfaces import ICourseInstance
@@ -90,7 +90,7 @@ def _index_node_data(node, result=None):
 	if library is None:
 		return result
 
-	catalog = get_catalog()
+	catalog = get_library_catalog()
 	intids = component.getUtility(IIntIds)
 
 	# loop through container interfaces
