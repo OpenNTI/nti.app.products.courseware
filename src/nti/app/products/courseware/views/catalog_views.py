@@ -24,6 +24,7 @@ from zope import interface
 from zope.traversing.interfaces import IPathAdapter
 
 from pyramid.view import view_config
+from pyramid.view import view_defaults
 from pyramid.interfaces import IRequest
 from pyramid import httpexceptions as hexc
 
@@ -106,10 +107,10 @@ def do_course_enrollment(catalog_entry, user, scope=ES_PUBLIC, parent=None,
 	return enrollment
 
 @view_config(route_name='objects.generic.traversal',
-			  context=IEnrolledCoursesCollection,
-			  request_method='POST',
-			  permission=nauth.ACT_CREATE,
-			  renderer='rest')
+			 context=IEnrolledCoursesCollection,
+			 request_method='POST',
+			 permission=nauth.ACT_CREATE,
+			 renderer='rest')
 class enroll_course_view(AbstractAuthenticatedView,
 						 ModeledContentUploadRequestUtilsMixin):
 	"""
@@ -174,10 +175,10 @@ class enroll_course_view(AbstractAuthenticatedView,
 		return enrollment
 
 @view_config(route_name='objects.generic.traversal',
-			  context=ICourseInstanceEnrollment,
-			  request_method='DELETE',
-			  permission=nauth.ACT_DELETE,
-			  renderer='rest')
+			 context=ICourseInstanceEnrollment,
+			 request_method='DELETE',
+			 permission=nauth.ACT_DELETE,
+			 renderer='rest')
 class drop_course_view(AbstractAuthenticatedView):
 	"""
 	Dropping a course consists of DELETEing its appearance
@@ -196,12 +197,13 @@ class drop_course_view(AbstractAuthenticatedView):
 					self.remoteUser, catalog_entry.ntiid)
 		return hexc.HTTPNoContent()
 
-@view_config(route_name='objects.generic.traversal',
-			 context=CourseAdminPathAdapter,
-			 request_method='GET',
-			 name="AllCatalogEntries",
-			 permission=nauth.ACT_NTI_ADMIN,
-			 renderer='rest')
+@view_config(route_name='AllCourses')
+@view_config(name='AllCatalogEntries')
+@view_defaults(route_name='objects.generic.traversal',
+			   context=CourseAdminPathAdapter,
+			   request_method='GET',
+			   permission=nauth.ACT_NTI_ADMIN,
+			   renderer='rest')
 class AllCatalogEntriesView(AbstractAuthenticatedView):
 
 	def __call__(self):
