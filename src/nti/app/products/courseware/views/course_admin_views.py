@@ -13,7 +13,6 @@ logger = __import__('logging').getLogger(__name__)
 
 import csv
 import six
-import time
 from io import BytesIO
 from datetime import datetime
 
@@ -131,9 +130,7 @@ def _parse_courses(values):
 			try:
 				catalog = component.getUtility(ICourseCatalog)
 				context = catalog.getCatalogEntry(ntiid)
-			except LookupError:
-				raise hexc.HTTPUnprocessableEntity(detail='Catalog not found')
-			except KeyError:
+			except (KeyError, LookupError):
 				context = None
 		else:
 			context = ICourseCatalogEntry(context, None)
@@ -279,7 +276,6 @@ class UserCourseEnrollmentsView(AbstractAuthenticatedView):
 		result = LocatedExternalDict()
 		items = result[ITEMS] = []
 
-		now = time.time()
 		catalog = get_enrollment_catalog()
 		intids = component.getUtility(IIntIds)
 		site_names = get_component_hierarchy_names()
@@ -302,7 +298,6 @@ class UserCourseEnrollmentsView(AbstractAuthenticatedView):
 				items.append(context)
 
 		result['ItemCount'] = result['Total'] = len(items)
-		result['TimeElapsed'] = time.time() - now
 		return result
 
 @view_config(name='CourseEnrollmentMigrator')
