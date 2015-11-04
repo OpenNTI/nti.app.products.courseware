@@ -48,7 +48,7 @@ ITEMS = StandardExternalFields.ITEMS
 			   renderer='rest',
 			   request_method='GET',
 			   name='SyncLockedObjects',
-			   permission=nauth.ACT_NTI_ADMIN)
+			   permission=nauth.ACT_CONTENT_EDIT)
 class CourseSyncLockedObjectsView(AbstractAuthenticatedView):
 
 	def _outline_nodes_uids(self, course, intids):
@@ -109,6 +109,7 @@ class CourseSyncLockedObjectsView(AbstractAuthenticatedView):
 								namespace=pack_ntiids,
 								provided=ASSESSMENT_INTERFACES,
 								sites=sites)
+		all_ids.update(obj_ids)
 
 		recorder_catalog = get_recorder_catalog()
 		locked_intids = recorder_catalog[IX_LOCKED].apply({'any_of': (True,)})
