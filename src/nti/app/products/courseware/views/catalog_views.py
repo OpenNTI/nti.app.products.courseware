@@ -197,7 +197,7 @@ class drop_course_view(AbstractAuthenticatedView):
 					self.remoteUser, catalog_entry.ntiid)
 		return hexc.HTTPNoContent()
 
-@view_config(route_name='AllCourses')
+@view_config(name='AllCourses')
 @view_config(name='AllCatalogEntries')
 @view_defaults(route_name='objects.generic.traversal',
 			   context=CourseAdminPathAdapter,
