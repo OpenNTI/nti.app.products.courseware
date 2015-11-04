@@ -45,11 +45,18 @@ from nti.contenttypes.courses.utils import is_instructor_in_hierarchy
 from nti.dataserver.interfaces import IUser
 from nti.dataserver import authorization as nauth
 
+from nti.externalization.interfaces import LocatedExternalDict
+from nti.externalization.interfaces import StandardExternalFields
+
 from nti.traversal import traversal
 
 from ..interfaces import ICoursesWorkspace
 from ..interfaces import ICourseInstanceEnrollment
 from ..interfaces import IEnrolledCoursesCollection
+
+from . import CourseAdminPathAdapter
+
+ITEMS = StandardExternalFields.ITEMS
 
 @interface.implementer(IPathAdapter)
 @component.adapter(IUser, IRequest)
@@ -188,3 +195,20 @@ class drop_course_view(AbstractAuthenticatedView):
 		logger.info("User %s has dropped from course %s",
 					self.remoteUser, catalog_entry.ntiid)
 		return hexc.HTTPNoContent()
+
+@view_config(route_name='objects.generic.traversal',
+			 context=CourseAdminPathAdapter,
+			 request_method='GET',
+			 name="AllCatalogEntries",
+			 permission=nauth.ACT_NTI_ADMIN,
+			 renderer='rest')
+class AllCatalogEntriesView(AbstractAuthenticatedView):
+
+	def __call__(self):
+		catalog = component.getUtility(ICourseCatalog)
+		result = LocatedExternalDict()
+		items = result[ITEMS] = []
+		for entry in catalog.iterCatalogEntries():
+			items.append(entry)
+		result['Total'] = result['ItemCount'] = len(items)
+		return result
