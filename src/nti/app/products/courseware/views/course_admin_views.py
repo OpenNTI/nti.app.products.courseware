@@ -709,7 +709,7 @@ class CourseCatalogEntryEnrollmentsRosterDownloadView(AllCourseEnrollmentRosterD
 class CourseDiscussionsView(AbstractAuthenticatedView):
 
 	def _course(self):
-		return ICourseInstance(self.request.Context, None)
+		return ICourseInstance(self.context, None)
 
 	def __call__(self):
 		result = LocatedExternalDict()
