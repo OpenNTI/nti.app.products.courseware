@@ -307,8 +307,21 @@
 						 .interfaces.ILegacyCommunityBasedCourseInstance"
 		modules=".legacy_catalog .legacy_course .workspaces .enrollment" />
 
-	<subscriber factory=".decorators._RosterMailLinkDecorator"
+	<!-- Mail links in alpha only for now -->
+	<configure zcml:condition="have alpha_env">
+		<subscriber factory=".decorators._CourseMailLinkDecorator"
 				provides="nti.externalization.interfaces.IExternalMappingDecorator" />
+
+		<subscriber factory=".decorators._RosterMailLinkDecorator"
+				provides="nti.externalization.interfaces.IExternalMappingDecorator" />
+	</configure>
+	<configure zcml:condition="have devmode">
+		<subscriber factory=".decorators._CourseMailLinkDecorator"
+				provides="nti.externalization.interfaces.IExternalMappingDecorator" />
+
+		<subscriber factory=".decorators._RosterMailLinkDecorator"
+				provides="nti.externalization.interfaces.IExternalMappingDecorator" />
+	</configure>
 
 	<subscriber factory=".decorators._VendorThankYouInfoDecorator"
 				provides="nti.externalization.interfaces.IExternalMappingDecorator" />

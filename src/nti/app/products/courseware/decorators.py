@@ -96,7 +96,7 @@ class _CourseInstanceLinkDecorator(object):
 			# Give instructors the enrollment roster, activity, and mail links.
 			# NOTE: Assuming the two permissions are concordant; at worst this is a UI
 			# issue though, the actual views are protected with individual permissions
-			for rel in VIEW_COURSE_ENROLLMENT_ROSTER, VIEW_COURSE_ACTIVITY, VIEW_COURSE_MAIL:
+			for rel in VIEW_COURSE_ENROLLMENT_ROSTER, VIEW_COURSE_ACTIVITY:
 				_links.append(Link(context,
 								   rel=rel,
 								   elements=(rel,)))
@@ -114,6 +114,28 @@ class _CourseInstanceLinkDecorator(object):
 			result['TotalLegacyOpenEnrolledCount'] = enrollments.count_legacy_open_enrollments()
 		except AttributeError:
 			pass
+
+@interface.implementer(IExternalMappingDecorator)
+@component.adapter(ICourseInstance)
+class _CourseMailLinkDecorator(object):
+	"""
+	Decorate the course email link on the course for instructors.
+	"""
+
+	__metaclass__ = SingletonDecorator
+
+	def _predicate(self, context, result):
+		if not self._is_authenticated:
+			return False
+		return is_course_instructor(context, self.remoteUser)
+
+	def decorateExternalMapping(self, context, result):
+		_links = result.setdefault(LINKS, [])
+		link = Link(context, rel=VIEW_COURSE_MAIL, elements=(VIEW_COURSE_MAIL,))
+		interface.alsoProvides(link, ILocation)
+		link.__name__ = ''
+		link.__parent__ = context
+		_links.append(link)
 
 @interface.implementer(IExternalMappingDecorator)
 @component.adapter(ICourseInstanceEnrollment)
