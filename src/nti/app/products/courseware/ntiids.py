@@ -127,8 +127,8 @@ class _EnrolledCourseSectionTopicNTIIDResolver(object):
 				# instructors enrolled in many sections.
 				# Otherwise, the client will be passing the content specified
 				# section.
+				result = None
 				if catalog_entry_matches(catalog_entry, provider_name):
-					result = None
 					if ICourseSubInstance.providedBy(course):
 						main_course = course.__parent__.__parent__
 						main_cce = ICourseCatalogEntry(main_course, None)
@@ -136,15 +136,18 @@ class _EnrolledCourseSectionTopicNTIIDResolver(object):
 					else:
 						# The ntiid references a top-level course.
 						result = self._find_in_course(course, ntiid)
-					return result
 				# No? Is it a subcourse? Check the main course to see if it matches.
 				# If it does, we still want to return the most specific
 				# discussions allowed (either our section or, if not allowed, the parent)
-				if ICourseSubInstance.providedBy(course):
+				if result is None and ICourseSubInstance.providedBy(course):
 					main_course = course.__parent__.__parent__
 					main_cce = ICourseCatalogEntry(main_course, None)
 					if catalog_entry_matches(main_cce, provider_name):
-						return _get_ntiid_for_subinstance(ntiid, course, main_course)
+						# Some legacy cases (CHEM_4970) may match provider names.
+						result = _get_ntiid_for_subinstance(ntiid, course, main_course)
+
+				if result is not None:
+					return result
 		return None
 
 	def _do_resolve(self, ntiid, user, provider_name, catalog_entry_matches=None):
@@ -152,7 +155,7 @@ class _EnrolledCourseSectionTopicNTIIDResolver(object):
 										   provider_name, user,
 										   catalog_entry_matches=catalog_entry_matches)
 
-		# 3. Enrolled
+		# Enrolled
 		if result is None:
 			result = self._solve_for_iface(ntiid, IPrincipalEnrollments,
 											provider_name, user,
