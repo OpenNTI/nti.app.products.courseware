@@ -1,0 +1,967 @@
+{
+    "tag:nextthought.com,2011-10:OU-NAQ-CS1323_F_2015_Intro_to_Computer_Programming.naq.asg.assignment:1Dimensional_Arrays_010": {
+        "Title": "Problets: 1-Dimensional Arrays (10 points)", 
+        "auto_grade": null,
+        "available_for_submission_beginning": null, 
+        "available_for_submission_ending": "2015-10-03T04:59:00Z"
+    }, 
+    "tag:nextthought.com,2011-10:OU-NAQ-CS1323_F_2015_Intro_to_Computer_Programming.naq.asg.assignment:1Dimensional_Arrays_995": {
+        "Title": "Problets: 1-Dimensional Arrays (10 points)", 
+        "auto_grade": null,
+        "available_for_submission_beginning": null, 
+        "available_for_submission_ending": "2015-10-03T04:59:00Z",
+		"excluded": true
+    }, 
+    "tag:nextthought.com,2011-10:OU-NAQ-CS1323_F_2015_Intro_to_Computer_Programming.naq.asg.assignment:Early_Progress_Letter_Grade": {
+        "Title": "Early Progress Letter Grade", 
+        "auto_grade": null, 
+        "available_for_submission_beginning": null, 
+        "available_for_submission_ending": null
+    }, 
+    "tag:nextthought.com,2011-10:OU-NAQ-CS1323_F_2015_Intro_to_Computer_Programming.naq.asg.assignment:Early_Progress_Numeric_Grade": {
+        "Title": "Early Progress Numeric Grade", 
+        "auto_grade": null, 
+        "available_for_submission_beginning": null, 
+        "available_for_submission_ending": null
+    }, 
+    "tag:nextthought.com,2011-10:OU-NAQ-CS1323_F_2015_Intro_to_Computer_Programming.naq.asg.assignment:Homework_1": {
+        "Title": "Homework 1 (50 points)", 
+        "auto_grade": null,
+        "available_for_submission_beginning": "2015-09-04T13:00:00Z", 
+        "available_for_submission_ending": "2015-09-12T04:59:00Z",
+		"student_nuclear_reset_capable": true
+    }, 
+    "tag:nextthought.com,2011-10:OU-NAQ-CS1323_F_2015_Intro_to_Computer_Programming.naq.asg.assignment:Homework_2_part1": {
+        "Title": "Homework 2 Part 1 (50 points)", 
+        "auto_grade": null,
+        "available_for_submission_beginning": "2015-09-14T13:00:00Z", 
+        "available_for_submission_ending": "2015-09-24T04:59:00Z",
+		"student_nuclear_reset_capable": true
+    }, 
+    "tag:nextthought.com,2011-10:OU-NAQ-CS1323_F_2015_Intro_to_Computer_Programming.naq.asg.assignment:Homework_2_part2": {
+        "Title": "Homework 2 Part 2 (50 points)", 
+        "auto_grade": null,
+        "available_for_submission_beginning": "2015-09-14T13:00:00Z", 
+        "available_for_submission_ending": "2015-10-01T04:59:00Z",
+		"student_nuclear_reset_capable": true
+    }, 
+    "tag:nextthought.com,2011-10:OU-NAQ-CS1323_F_2015_Intro_to_Computer_Programming.naq.asg.assignment:Homework_3": {
+        "Title": "Homework 3 (50 points)", 
+        "auto_grade": null,
+        "available_for_submission_beginning": "2015-10-02T13:00:00Z", 
+        "available_for_submission_ending": "2015-10-15T04:59:00Z",
+		"student_nuclear_reset_capable": true
+    }, 
+    "tag:nextthought.com,2011-10:OU-NAQ-CS1323_F_2015_Intro_to_Computer_Programming.naq.asg.assignment:Homework_4": {
+        "Title": "Homework 4 (50 points)", 
+        "auto_grade": null,
+        "available_for_submission_beginning": "2015-10-16T13:00:00Z", 
+        "available_for_submission_ending": "2015-10-31T04:59:00Z",
+		"student_nuclear_reset_capable": true
+    }, 
+    "tag:nextthought.com,2011-10:OU-NAQ-CS1323_F_2015_Intro_to_Computer_Programming.naq.asg.assignment:JavaBat_Accessing_and_Changing_Objects": {
+        "Title": "Javabat: Accessing and Changing Objects (10 points)", 
+        "auto_grade": null,
+        "available_for_submission_beginning": null, 
+        "available_for_submission_ending": "2015-11-12T05:59:00Z"
+    }, 
+ "tag:nextthought.com,2011-10:OU-NAQ-CS1323_F_2015_Intro_to_Computer_Programming.naq.asg.assignment:JavaBat_Arrays_of_Primitive_Data": {
+        "Title": "JavaBat: Arrays of Primitive Data (10 points)", 
+        "auto_grade": null,
+        "available_for_submission_beginning": null, 
+        "available_for_submission_ending": "2015-10-03T04:59:00Z"
+    }, 
+    "tag:nextthought.com,2011-10:OU-NAQ-CS1323_F_2015_Intro_to_Computer_Programming.naq.asg.assignment:JavaBat_Logical_Operators": {
+        "Title": "Javabat: Logical Operators (10 points)", 
+        "auto_grade": null,
+        "available_for_submission_beginning": null, 
+        "available_for_submission_ending": "2015-03-24T04:59:00Z",
+		"excluded": true
+    }, 
+    "tag:nextthought.com,2011-10:OU-NAQ-CS1323_F_2015_Intro_to_Computer_Programming.naq.asg.assignment:JavaBat_Methods": {
+        "Title": "JavaBat: Methods (10 points)", 
+        "auto_grade": null, 
+        "available_for_submission_beginning": null, 
+        "available_for_submission_ending": "2015-09-29T04:59:00Z"
+    }, 
+    "tag:nextthought.com,2011-10:OU-NAQ-CS1323_F_2015_Intro_to_Computer_Programming.naq.asg.assignment:JavaBat_Nesting_Loops": {
+        "Title": "JavaBat: Nesting Loops (10 points)", 
+        "auto_grade": null,
+        "available_for_submission_beginning": null, 
+        "available_for_submission_ending": "2015-10-27T04:59:00Z"
+    }, 
+    "tag:nextthought.com,2011-10:OU-NAQ-CS1323_F_2015_Intro_to_Computer_Programming.naq.asg.assignment:Lab_10": {
+        "Title": "Project 10 (100 points)", 
+        "auto_grade": null,
+        "available_for_submission_beginning": "2015-10-27T13:00:00Z", 
+        "available_for_submission_ending": "2015-11-03T04:59:00Z",
+		"student_nuclear_reset_capable": true
+    }, 
+    "tag:nextthought.com,2011-10:OU-NAQ-CS1323_F_2015_Intro_to_Computer_Programming.naq.asg.assignment:Lab_11": {
+        "Title": "Project 11 (100 points)", 
+        "auto_grade": null,
+        "available_for_submission_beginning": "2015-04-02T13:00:00Z", 
+        "available_for_submission_ending": "2015-11-10T05:59:00Z",
+		"student_nuclear_reset_capable": true
+    }, 
+    "tag:nextthought.com,2011-10:OU-NAQ-CS1323_F_2015_Intro_to_Computer_Programming.naq.asg.assignment:Lab_11_995": {
+        "Title": "Project 11 (100 points)", 
+        "auto_grade": null,
+        "available_for_submission_beginning": "2015-04-02T13:00:00Z", 
+        "available_for_submission_ending": "2015-11-10T05:59:00Z",
+		"student_nuclear_reset_capable": true,
+		"excluded": true
+    }, 
+    "tag:nextthought.com,2011-10:OU-NAQ-CS1323_F_2015_Intro_to_Computer_Programming.naq.asg.assignment:Lab_12": {
+        "Title": "Project 12 (100 points)", 
+        "auto_grade": null,
+        "available_for_submission_beginning": "2015-11-10T14:00:00Z", 
+        "available_for_submission_ending": "2015-11-17T05:59:00Z",
+		"student_nuclear_reset_capable": true
+    }, 
+    "tag:nextthought.com,2011-10:OU-NAQ-CS1323_F_2015_Intro_to_Computer_Programming.naq.asg.assignment:Lab_2": {
+        "Title": "Project 2 (100 points)", 
+        "auto_grade": null,
+        "available_for_submission_beginning": "2015-09-01T13:00:00Z", 
+        "available_for_submission_ending": "2015-09-08T04:59:00Z",
+		"student_nuclear_reset_capable": true
+    }, 
+    "tag:nextthought.com,2011-10:OU-NAQ-CS1323_F_2015_Intro_to_Computer_Programming.naq.asg.assignment:Lab_4": {
+        "Title": "Project 4 (100 points)", 
+        "auto_grade": null,
+        "available_for_submission_beginning": "2015-09-15T13:00:00Z", 
+        "available_for_submission_ending": "2015-09-22T04:59:00Z",
+		"student_nuclear_reset_capable": true
+    }, 
+    "tag:nextthought.com,2011-10:OU-NAQ-CS1323_F_2015_Intro_to_Computer_Programming.naq.asg.assignment:Lab_5": {
+        "Title": "Project 5 (100 points)", 
+        "auto_grade": null,
+        "available_for_submission_beginning": "2015-09-22T13:00:00Z", 
+        "available_for_submission_ending": "2015-09-29T04:59:00Z",
+		"student_nuclear_reset_capable": true
+    }, 
+    "tag:nextthought.com,2011-10:OU-NAQ-CS1323_F_2015_Intro_to_Computer_Programming.naq.asg.assignment:Lab_6": {
+        "Title": "Project 6 (100 points)", 
+        "auto_grade": null,
+        "available_for_submission_beginning": "2015-09-29T13:00:00Z", 
+        "available_for_submission_ending": "2015-10-06T04:59:00Z",
+		"student_nuclear_reset_capable": true
+    }, 
+    "tag:nextthought.com,2011-10:OU-NAQ-CS1323_F_2015_Intro_to_Computer_Programming.naq.asg.assignment:Lab_7": {
+        "Title": "Project 7 (100 points)", 
+        "auto_grade": null,
+        "available_for_submission_beginning": "2015-10-06T13:00:00Z", 
+        "available_for_submission_ending": "2015-10-13T04:59:00Z",
+		"student_nuclear_reset_capable": true
+    }, 
+    "tag:nextthought.com,2011-10:OU-NAQ-CS1323_F_2015_Intro_to_Computer_Programming.naq.asg.assignment:Lab_8": {
+        "Title": "Project 8 (100 points)", 
+        "auto_grade": null,
+        "available_for_submission_beginning": "2015-10-13T13:00:00Z", 
+        "available_for_submission_ending": "2015-10-20T04:59:00Z",
+		"student_nuclear_reset_capable": true
+    }, 
+    "tag:nextthought.com,2011-10:OU-NAQ-CS1323_F_2015_Intro_to_Computer_Programming.naq.asg.assignment:Lab_9": {
+        "Title": "Project 9 (100 points)", 
+        "auto_grade": null,
+        "available_for_submission_beginning": "2015-10-20T13:00:00Z", 
+        "available_for_submission_ending": "2015-10-27T04:59:00Z",
+		"student_nuclear_reset_capable": true
+    }, 
+    "tag:nextthought.com,2011-10:OU-NAQ-CS1323_F_2015_Intro_to_Computer_Programming.naq.asg.assignment:Midterm_1": {
+        "Title": "Midterm 1", 
+        "auto_grade": null,
+        "available_for_submission_beginning": null, 
+        "available_for_submission_ending": null
+    }, 
+    "tag:nextthought.com,2011-10:OU-NAQ-CS1323_F_2015_Intro_to_Computer_Programming.naq.asg.assignment:Problets_Arithmetic_Tutor_010": {
+        "Title": "Problets: Arithmetic Tutor (10 points)", 
+        "auto_grade": null, 
+        "available_for_submission_beginning": null, 
+        "available_for_submission_ending": "2015-09-08T04:59:00Z"
+    }, 
+    "tag:nextthought.com,2011-10:OU-NAQ-CS1323_F_2015_Intro_to_Computer_Programming.naq.asg.assignment:Problets_Arithmetic_Tutor_995": {
+        "Title": "Problets: Arithmetic Tutor (10 points)", 
+        "auto_grade": null, 
+        "available_for_submission_beginning": null, 
+        "available_for_submission_ending": "2015-09-08T04:59:00Z",
+		"excluded": true
+    }, 
+    "tag:nextthought.com,2011-10:OU-NAQ-CS1323_F_2015_Intro_to_Computer_Programming.naq.asg.assignment:Problets_Behavior_of_Functions_010": {
+        "Title": "Problets: Behavior of Functions (10 points)", 
+        "auto_grade": null, 
+        "available_for_submission_beginning": null, 
+        "available_for_submission_ending": "2015-09-29T04:59:00Z"
+    }, 
+    "tag:nextthought.com,2011-10:OU-NAQ-CS1323_F_2015_Intro_to_Computer_Programming.naq.asg.assignment:Problets_Behavior_of_Functions_995": {
+        "Title": "Problets: Behavior of Functions (10 points)", 
+        "auto_grade": null, 
+        "available_for_submission_beginning": null, 
+        "available_for_submission_ending": "2015-09-29T04:59:00Z",
+		"excluded": true
+    }, 
+    "tag:nextthought.com,2011-10:OU-NAQ-CS1323_F_2015_Intro_to_Computer_Programming.naq.asg.assignment:Problets_Debugging_Functions_010": {
+        "Title": "Problets: Debugging Functions (10 points)", 
+        "auto_grade": null,
+        "available_for_submission_beginning": null, 
+        "available_for_submission_ending": "2015-10-17T04:59:00Z"
+    }, 
+    "tag:nextthought.com,2011-10:OU-NAQ-CS1323_F_2015_Intro_to_Computer_Programming.naq.asg.assignment:Problets_Debugging_Functions_995": {
+        "Title": "Problets: Debugging Functions (10 points)", 
+        "auto_grade": null,
+        "available_for_submission_beginning": null, 
+        "available_for_submission_ending": "2015-10-17T04:59:00Z",
+		"excluded": true
+    }, 
+    "tag:nextthought.com,2011-10:OU-NAQ-CS1323_F_2015_Intro_to_Computer_Programming.naq.asg.assignment:Problets_For_Loops_010": {
+        "Title": "Problets: For Loops (10 points)", 
+        "auto_grade": null,
+        "available_for_submission_beginning": null, 
+        "available_for_submission_ending": "2015-10-06T04:59:00Z"
+    }, 
+    "tag:nextthought.com,2011-10:OU-NAQ-CS1323_F_2015_Intro_to_Computer_Programming.naq.asg.assignment:Problets_For_Loops_995": {
+        "Title": "Problets: For Loops (10 points)", 
+        "auto_grade": null,
+        "available_for_submission_beginning": null, 
+        "available_for_submission_ending": "2015-10-06T04:59:00Z",
+		"excluded": true
+    }, 
+    "tag:nextthought.com,2011-10:OU-NAQ-CS1323_F_2015_Intro_to_Computer_Programming.naq.asg.assignment:Problets_Logical_Operators_010": {
+        "Title": "Problets: Logical Operators (10 points)", 
+        "auto_grade": null,
+        "available_for_submission_beginning": null, 
+        "available_for_submission_ending": "2015-10-15T04:59:00Z"
+    }, 
+    "tag:nextthought.com,2011-10:OU-NAQ-CS1323_F_2015_Intro_to_Computer_Programming.naq.asg.assignment:Problets_Logical_Operators_995": {
+        "Title": "Problets: Logical Operators (10 points)", 
+        "auto_grade": null,
+        "available_for_submission_beginning": null, 
+        "available_for_submission_ending": "2015-10-15T04:59:00Z",
+		"excluded": true
+    }, 
+    "tag:nextthought.com,2011-10:OU-NAQ-CS1323_F_2015_Intro_to_Computer_Programming.naq.asg.assignment:Problets_Nested_Loops_010": {
+        "Title": "Problets: Nested Loops (10 points)", 
+        "auto_grade": null,
+        "available_for_submission_beginning": null, 
+        "available_for_submission_ending": "2015-10-27T04:59:00Z"
+    }, 
+    "tag:nextthought.com,2011-10:OU-NAQ-CS1323_F_2015_Intro_to_Computer_Programming.naq.asg.assignment:Problets_Nested_Loops_995": {
+        "Title": "Problets: Nested Loops (10 points)", 
+        "auto_grade": null,
+        "available_for_submission_beginning": null, 
+        "available_for_submission_ending": "2015-10-27T04:59:00Z",
+		"excluded": true
+    }, 
+    "tag:nextthought.com,2011-10:OU-NAQ-CS1323_F_2015_Intro_to_Computer_Programming.naq.asg.assignment:Problets_Relational_Operators_010": {
+        "Title": "Problets: Relational Operators (10 points)", 
+        "auto_grade": null, 
+        "available_for_submission_beginning": null, 
+        "available_for_submission_ending": "2015-09-19T04:59:00Z"
+    }, 
+    "tag:nextthought.com,2011-10:OU-NAQ-CS1323_F_2015_Intro_to_Computer_Programming.naq.asg.assignment:Problets_Relational_Operators_995": {
+        "Title": "Problets: Relational Operators (10 points)", 
+        "auto_grade": null, 
+        "available_for_submission_beginning": null, 
+        "available_for_submission_ending": "2015-09-19T04:59:00Z",
+		"excluded": true
+    }, 
+    "tag:nextthought.com,2011-10:OU-NAQ-CS1323_F_2015_Intro_to_Computer_Programming.naq.asg.assignment:Problets_While_Loops_010": {
+        "Title": "Problets: While Loops (10 points)", 
+        "auto_grade": null, 
+        "available_for_submission_beginning": null, 
+        "available_for_submission_ending": "2015-09-22T04:59:00Z"
+    }, 
+    "tag:nextthought.com,2011-10:OU-NAQ-CS1323_F_2015_Intro_to_Computer_Programming.naq.asg.assignment:Problets_While_Loops_995": {
+        "Title": "Problets: While Loops (10 points)", 
+        "auto_grade": null, 
+        "available_for_submission_beginning": null, 
+        "available_for_submission_ending": "2015-09-22T04:59:00Z",
+		"excluded": true
+    }, 
+    "tag:nextthought.com,2011-10:OU-NAQ-CS1323_F_2015_Intro_to_Computer_Programming.naq.asg.assignment:Project_1": {
+        "Title": "Project 1 (100 points)", 
+        "auto_grade": null,
+        "available_for_submission_beginning": "2015-08-25T13:00:00Z", 
+        "available_for_submission_ending": "2015-09-08T04:59:59Z",
+		"student_nuclear_reset_capable": true
+    }, 
+    "tag:nextthought.com,2011-10:OU-NAQ-CS1323_F_2015_Intro_to_Computer_Programming.naq.asg.assignment:Shared_Dropbox_Link": {
+        "Title": "Shared Dropbox Link", 
+        "auto_grade": null, 
+        "available_for_submission_beginning": null, 
+        "available_for_submission_ending": null
+    }, 
+    "tag:nextthought.com,2011-10:OU-NAQ-CS1323_F_2015_Intro_to_Computer_Programming.naq.asg.assignment:TC_storing_primitive_data_001": {
+        "Title": "Turingscraft: Storing Primitive Data (15 points)", 
+        "auto_grade": null, 
+        "available_for_submission_beginning": null, 
+        "available_for_submission_ending": "2015-09-08T04:59:59Z",
+		"excluded": true
+    }, 
+    "tag:nextthought.com,2011-10:OU-NAQ-CS1323_F_2015_Intro_to_Computer_Programming.naq.asg.assignment:TC_storing_primitive_data_010": {
+        "Title": "Turingscraft: Storing Primitive Data (15 points)", 
+        "auto_grade": null, 
+        "available_for_submission_beginning": null, 
+        "available_for_submission_ending": "2015-09-08T04:59:59Z"
+    }, 
+    "tag:nextthought.com,2011-10:OU-NAQ-CS1323_F_2015_Intro_to_Computer_Programming.naq.asg.assignment:TC_storing_primitive_data_995": {
+        "Title": "Turingscraft: Storing Primitive Data (15 points)", 
+        "auto_grade": null, 
+        "available_for_submission_beginning": null, 
+        "available_for_submission_ending": "2015-09-08T04:59:59Z",
+		"excluded": true
+    }, 
+    "tag:nextthought.com,2011-10:OU-NAQ-CS1323_F_2015_Intro_to_Computer_Programming.naq.asg.assignment:Turingscraft_Arrays_of_Primitive_Data_001": {
+        "Title": "Turingscraft: Arrays of Primitive Data (26 points)", 
+        "auto_grade": null,
+        "available_for_submission_beginning": null, 
+        "available_for_submission_ending": "2015-10-03T04:59:00Z",
+		"excluded": true
+    }, 
+    "tag:nextthought.com,2011-10:OU-NAQ-CS1323_F_2015_Intro_to_Computer_Programming.naq.asg.assignment:Turingscraft_Arrays_of_Primitive_Data_010": {
+        "Title": "Turingscraft: Arrays of Primitive Data (26 points)", 
+        "auto_grade": null,
+        "available_for_submission_beginning": null, 
+        "available_for_submission_ending": "2015-10-03T04:59:00Z"
+    }, 
+    "tag:nextthought.com,2011-10:OU-NAQ-CS1323_F_2015_Intro_to_Computer_Programming.naq.asg.assignment:Turingscraft_Arrays_of_Primitive_Data_995": {
+        "Title": "Turingscraft: Arrays of Primitive Data (26 points)", 
+        "auto_grade": null,
+        "available_for_submission_beginning": null, 
+        "available_for_submission_ending": "2015-10-03T04:59:00Z",
+		"excluded": true
+    }, 
+    "tag:nextthought.com,2011-10:OU-NAQ-CS1323_F_2015_Intro_to_Computer_Programming.naq.asg.assignment:Turingscraft_Changing_Primitive_Data_001": {
+        "Title": "Turingscraft: Changing Primitive Data (59 points)", 
+        "auto_grade": null, 
+        "available_for_submission_beginning": null, 
+        "available_for_submission_ending": "2015-09-08T04:59:59Z",
+		"excluded": true
+    }, 
+    "tag:nextthought.com,2011-10:OU-NAQ-CS1323_F_2015_Intro_to_Computer_Programming.naq.asg.assignment:Turingscraft_Changing_Primitive_Data_010": {
+        "Title": "Turingscraft: Changing Primitive Data (59 points)", 
+        "auto_grade": null, 
+        "available_for_submission_beginning": null, 
+        "available_for_submission_ending": "2015-09-08T04:59:59Z"
+    }, 
+    "tag:nextthought.com,2011-10:OU-NAQ-CS1323_F_2015_Intro_to_Computer_Programming.naq.asg.assignment:Turingscraft_Changing_Primitive_Data_995": {
+        "Title": "Turingscraft: Changing Primitive Data (59 points)", 
+        "auto_grade": null, 
+        "available_for_submission_beginning": null, 
+        "available_for_submission_ending": "2015-09-08T04:59:59Z",
+		"excluded": true
+    }, 
+    "tag:nextthought.com,2011-10:OU-NAQ-CS1323_F_2015_Intro_to_Computer_Programming.naq.asg.assignment:Turingscraft_Class_Methods_001": {
+        "Title": "Turingscraft: Class Methods (9 points)", 
+        "auto_grade": null,
+        "available_for_submission_beginning": null, 
+        "available_for_submission_ending": "2015-11-17T05:59:00Z",
+		"excluded": true
+    }, 
+    "tag:nextthought.com,2011-10:OU-NAQ-CS1323_F_2015_Intro_to_Computer_Programming.naq.asg.assignment:Turingscraft_Class_Methods_010": {
+        "Title": "Turingscraft: Class Methods (9 points)", 
+        "auto_grade": null,
+        "available_for_submission_beginning": null, 
+        "available_for_submission_ending": "2015-11-17T05:59:00Z"
+    }, 
+    "tag:nextthought.com,2011-10:OU-NAQ-CS1323_F_2015_Intro_to_Computer_Programming.naq.asg.assignment:Turingscraft_Class_Methods_995": {
+        "Title": "Turingscraft: Class Methods (9 points)", 
+        "auto_grade": null,
+        "available_for_submission_beginning": null, 
+        "available_for_submission_ending": "2015-11-17T05:59:00Z",
+		"excluded": true
+    }, 
+    "tag:nextthought.com,2011-10:OU-NAQ-CS1323_F_2015_Intro_to_Computer_Programming.naq.asg.assignment:Turingscraft_Classes_with_Generics_001": {
+        "Title": "Turingscraft: Classes with Generics (17 points)", 
+        "auto_grade": null,
+        "available_for_submission_beginning": null, 
+        "available_for_submission_ending": "2015-11-21T05:59:00Z",
+		"excluded": true
+    }, 
+    "tag:nextthought.com,2011-10:OU-NAQ-CS1323_F_2015_Intro_to_Computer_Programming.naq.asg.assignment:Turingscraft_Classes_with_Generics_010": {
+        "Title": "Turingscraft: Classes with Generics (17 points)", 
+        "auto_grade": null,
+        "available_for_submission_beginning": null, 
+        "available_for_submission_ending": "2015-11-21T05:59:00Z"
+    }, 
+    "tag:nextthought.com,2011-10:OU-NAQ-CS1323_F_2015_Intro_to_Computer_Programming.naq.asg.assignment:Turingscraft_Classes_with_Generics_995": {
+        "Title": "Turingscraft: Classes with Generics (17 points)", 
+        "auto_grade": null,
+        "available_for_submission_beginning": null, 
+        "available_for_submission_ending": "2015-11-21T05:59:00Z",
+		"excluded": true
+    }, 
+    "tag:nextthought.com,2011-10:OU-NAQ-CS1323_F_2015_Intro_to_Computer_Programming.naq.asg.assignment:Turingscraft_Command_Line_Interactions_001": {
+        "Title": "Turingscraft: Command Line Interactions (18 points)", 
+        "auto_grade": null, 
+        "available_for_submission_beginning": null, 
+        "available_for_submission_ending": "2015-09-08T04:59:00Z",
+		"excluded": true
+    }, 
+    "tag:nextthought.com,2011-10:OU-NAQ-CS1323_F_2015_Intro_to_Computer_Programming.naq.asg.assignment:Turingscraft_Command_Line_Interactions_010": {
+        "Title": "Turingscraft: Command Line Interactions (18 points)", 
+        "auto_grade": null, 
+        "available_for_submission_beginning": null, 
+        "available_for_submission_ending": "2015-09-08T04:59:00Z"
+    }, 
+    "tag:nextthought.com,2011-10:OU-NAQ-CS1323_F_2015_Intro_to_Computer_Programming.naq.asg.assignment:Turingscraft_Command_Line_Interactions_995": {
+        "Title": "Turingscraft: Command Line Interactions (18 points)", 
+        "auto_grade": null, 
+        "available_for_submission_beginning": null, 
+        "available_for_submission_ending": "2015-09-08T04:59:00Z",
+		"excluded": true
+    }, 
+    "tag:nextthought.com,2011-10:OU-NAQ-CS1323_F_2015_Intro_to_Computer_Programming.naq.asg.assignment:Turingscraft_Conditional_Statements_and_Relational_Operators_001": {
+        "Title": "Turingscraft: Conditional Statements (29 points)", 
+        "auto_grade": null, 
+        "available_for_submission_beginning": null, 
+        "available_for_submission_ending": "2015-09-19T04:59:00Z",
+		"excluded": true
+    }, 
+    "tag:nextthought.com,2011-10:OU-NAQ-CS1323_F_2015_Intro_to_Computer_Programming.naq.asg.assignment:Turingscraft_Conditional_Statements_and_Relational_Operators_010": {
+        "Title": "Turingscraft: Conditional Statements (29 points)", 
+        "auto_grade": null, 
+        "available_for_submission_beginning": null, 
+        "available_for_submission_ending": "2015-09-19T04:59:00Z"
+    }, 
+    "tag:nextthought.com,2011-10:OU-NAQ-CS1323_F_2015_Intro_to_Computer_Programming.naq.asg.assignment:Turingscraft_Conditional_Statements_and_Relational_Operators_995": {
+        "Title": "Turingscraft: Conditional Statements (29 points)", 
+        "auto_grade": null, 
+        "available_for_submission_beginning": null, 
+        "available_for_submission_ending": "2015-09-19T04:59:00Z",
+		"excluded": true
+    }, 
+    "tag:nextthought.com,2011-10:OU-NAQ-CS1323_F_2015_Intro_to_Computer_Programming.naq.asg.assignment:Turingscraft_Construct_Objects_001": {
+        "Title": "Turingscraft: Construct Objects (27 points)", 
+        "auto_grade": null,
+        "available_for_submission_beginning": null, 
+        "available_for_submission_ending": "2015-11-10T05:59:00Z",
+		"excluded": true
+    }, 
+    "tag:nextthought.com,2011-10:OU-NAQ-CS1323_F_2015_Intro_to_Computer_Programming.naq.asg.assignment:Turingscraft_Construct_Objects_010": {
+        "Title": "Turingscraft: Construct Objects (27 points)", 
+        "auto_grade": null,
+        "available_for_submission_beginning": null, 
+        "available_for_submission_ending": "2015-11-10T05:59:00Z"
+    }, 
+    "tag:nextthought.com,2011-10:OU-NAQ-CS1323_F_2015_Intro_to_Computer_Programming.naq.asg.assignment:Turingscraft_Construct_Objects_995": {
+        "Title": "Turingscraft: Construct Objects (27 points)", 
+        "auto_grade": null,
+        "available_for_submission_beginning": null, 
+        "available_for_submission_ending": "2015-11-10T05:59:00Z",
+		"excluded": true
+    }, 
+    "tag:nextthought.com,2011-10:OU-NAQ-CS1323_F_2015_Intro_to_Computer_Programming.naq.asg.assignment:Turingscraft_For_Loops_001": {
+        "Title": "Turingscraft: For Loops (12 points)", 
+        "auto_grade": null,
+        "available_for_submission_beginning": null, 
+        "available_for_submission_ending": "2015-10-06T04:59:00Z",
+		"excluded": true
+    }, 
+    "tag:nextthought.com,2011-10:OU-NAQ-CS1323_F_2015_Intro_to_Computer_Programming.naq.asg.assignment:Turingscraft_For_Loops_010": {
+        "Title": "Turingscraft: For Loops (12 points)", 
+        "auto_grade": null,
+        "available_for_submission_beginning": null, 
+        "available_for_submission_ending": "2015-10-06T04:59:00Z"
+    }, 
+    "tag:nextthought.com,2011-10:OU-NAQ-CS1323_F_2015_Intro_to_Computer_Programming.naq.asg.assignment:Turingscraft_For_Loops_995": {
+        "Title": "Turingscraft: For Loops (12 points)", 
+        "auto_grade": null,
+        "available_for_submission_beginning": null, 
+        "available_for_submission_ending": "2015-10-06T04:59:00Z",
+		"excluded": true
+    }, 
+    "tag:nextthought.com,2011-10:OU-NAQ-CS1323_F_2015_Intro_to_Computer_Programming.naq.asg.assignment:Turingscraft_Logical_Operators_001": {
+        "Title": "Turingscraft: Logical Operators (27 points)", 
+        "auto_grade": null,
+        "available_for_submission_beginning": null, 
+        "available_for_submission_ending": "2015-10-15T04:59:00Z",
+		"excluded": true
+    }, 
+    "tag:nextthought.com,2011-10:OU-NAQ-CS1323_F_2015_Intro_to_Computer_Programming.naq.asg.assignment:Turingscraft_Logical_Operators_010": {
+        "Title": "Turingscraft: Logical Operators (27 points)", 
+        "auto_grade": null,
+        "available_for_submission_beginning": null, 
+        "available_for_submission_ending": "2015-10-15T04:59:00Z"
+    }, 
+    "tag:nextthought.com,2011-10:OU-NAQ-CS1323_F_2015_Intro_to_Computer_Programming.naq.asg.assignment:Turingscraft_Logical_Operators_995": {
+        "Title": "Turingscraft: Logical Operators (27 points)", 
+        "auto_grade": null,
+        "available_for_submission_beginning": null, 
+        "available_for_submission_ending": "2015-10-15T04:59:00Z",
+		"excluded": true
+    }, 
+    "tag:nextthought.com,2011-10:OU-NAQ-CS1323_F_2015_Intro_to_Computer_Programming.naq.asg.assignment:Turingscraft_Methods_001": {
+        "Title": "Turingscraft: Methods (22 points)", 
+        "auto_grade": null, 
+        "available_for_submission_beginning": null, 
+        "available_for_submission_ending": "2015-09-29T04:59:00Z",
+		"excluded": true
+    }, 
+    "tag:nextthought.com,2011-10:OU-NAQ-CS1323_F_2015_Intro_to_Computer_Programming.naq.asg.assignment:Turingscraft_Methods_010": {
+        "Title": "Turingscraft: Methods (22 points)", 
+        "auto_grade": null, 
+        "available_for_submission_beginning": null, 
+        "available_for_submission_ending": "2015-09-29T04:59:00Z"
+    }, 
+    "tag:nextthought.com,2011-10:OU-NAQ-CS1323_F_2015_Intro_to_Computer_Programming.naq.asg.assignment:Turingscraft_Methods_995": {
+        "Title": "Turingscraft: Methods (22 points)", 
+        "auto_grade": null, 
+        "available_for_submission_beginning": null, 
+        "available_for_submission_ending": "2015-09-29T04:59:00Z",
+		"excluded": true
+    }, 
+    "tag:nextthought.com,2011-10:OU-NAQ-CS1323_F_2015_Intro_to_Computer_Programming.naq.asg.assignment:Turingscraft_Methods_and_References_001": {
+        "Title": "Turingscraft: Methods and References (10 points)", 
+        "auto_grade": null,
+        "available_for_submission_beginning": null, 
+        "available_for_submission_ending": "2015-10-20T04:59:00Z",
+		"excluded": true
+    }, 
+    "tag:nextthought.com,2011-10:OU-NAQ-CS1323_F_2015_Intro_to_Computer_Programming.naq.asg.assignment:Turingscraft_Methods_and_References_010": {
+        "Title": "Turingscraft: Methods and References (10 points)", 
+        "auto_grade": null,
+        "available_for_submission_beginning": null, 
+        "available_for_submission_ending": "2015-10-20T04:59:00Z"
+    }, 
+    "tag:nextthought.com,2011-10:OU-NAQ-CS1323_F_2015_Intro_to_Computer_Programming.naq.asg.assignment:Turingscraft_Methods_and_References_995": {
+        "Title": "Turingscraft: Methods and References (10 points)", 
+        "auto_grade": null,
+        "available_for_submission_beginning": null, 
+        "available_for_submission_ending": "2015-10-20T04:59:00Z",
+		"excluded": true
+    }, 
+    "tag:nextthought.com,2011-10:OU-NAQ-CS1323_F_2015_Intro_to_Computer_Programming.naq.asg.assignment:Turingscraft_Modify_Objects_001": {
+        "Title": "Turingscraft: Accessing and Changing Objects (45 points)", 
+        "auto_grade": null,
+        "available_for_submission_beginning": null, 
+        "available_for_submission_ending": "2015-11-12T05:59:00Z",
+		"excluded": true
+    }, 
+    "tag:nextthought.com,2011-10:OU-NAQ-CS1323_F_2015_Intro_to_Computer_Programming.naq.asg.assignment:Turingscraft_Modify_Objects_010": {
+        "Title": "Turingscraft: Accessing and Changing Objects (45 points)", 
+        "auto_grade": null,
+        "available_for_submission_beginning": null, 
+        "available_for_submission_ending": "2015-11-12T05:59:00Z"
+    }, 
+    "tag:nextthought.com,2011-10:OU-NAQ-CS1323_F_2015_Intro_to_Computer_Programming.naq.asg.assignment:Turingscraft_Modify_Objects_995": {
+        "Title": "Turingscraft: Accessing and Changing Objects (45 points)", 
+        "auto_grade": null,
+        "available_for_submission_beginning": null, 
+        "available_for_submission_ending": "2015-11-12T05:59:00Z",
+		"excluded": true
+    }, 
+    "tag:nextthought.com,2011-10:OU-NAQ-CS1323_F_2015_Intro_to_Computer_Programming.naq.asg.assignment:Turingscraft_Nested_Loops_001": {
+        "Title": "Turingscraft: Nested Loops (3 points)", 
+        "auto_grade": null,
+        "available_for_submission_beginning": null, 
+        "available_for_submission_ending": "2015-10-27T04:59:00Z",
+		"excluded": true
+    }, 
+    "tag:nextthought.com,2011-10:OU-NAQ-CS1323_F_2015_Intro_to_Computer_Programming.naq.asg.assignment:Turingscraft_Nested_Loops_010": {
+        "Title": "Turingscraft: Nested Loops (3 points)", 
+        "auto_grade": null,
+        "available_for_submission_beginning": null, 
+        "available_for_submission_ending": "2015-10-27T04:59:00Z"
+    }, 
+    "tag:nextthought.com,2011-10:OU-NAQ-CS1323_F_2015_Intro_to_Computer_Programming.naq.asg.assignment:Turingscraft_Nested_Loops_995": {
+        "Title": "Turingscraft: Nested Loops (3 points)", 
+        "auto_grade": null,
+        "available_for_submission_beginning": null, 
+        "available_for_submission_ending": "2015-10-27T04:59:00Z",
+		"excluded": true
+    }, 
+    "tag:nextthought.com,2011-10:OU-NAQ-CS1323_F_2015_Intro_to_Computer_Programming.naq.asg.assignment:Turingscraft_While_Loops_and_Relational_Operators_001": {
+        "Title": "Turingscraft: While Loops (10 points)", 
+        "auto_grade": null, 
+        "available_for_submission_beginning": null, 
+        "available_for_submission_ending": "2015-09-24T04:59:00Z",
+		"excluded": true
+    }, 
+    "tag:nextthought.com,2011-10:OU-NAQ-CS1323_F_2015_Intro_to_Computer_Programming.naq.asg.assignment:Turingscraft_While_Loops_and_Relational_Operators_010": {
+        "Title": "Turingscraft: While Loops (10 points)", 
+        "auto_grade": null, 
+        "available_for_submission_beginning": null, 
+        "available_for_submission_ending": "2015-09-24T04:59:00Z"
+    }, 
+    "tag:nextthought.com,2011-10:OU-NAQ-CS1323_F_2015_Intro_to_Computer_Programming.naq.asg.assignment:Turingscraft_While_Loops_and_Relational_Operators_995": {
+        "Title": "Turingscraft: While Loops (10 points)", 
+        "auto_grade": null, 
+        "available_for_submission_beginning": null, 
+        "available_for_submission_ending": "2015-09-24T04:59:00Z",
+		"excluded": true
+    }, 
+    "tag:nextthought.com,2011-10:OU-NAQ-CS1323_F_2015_Intro_to_Computer_Programming.naq.asg.assignment:Zybook_Accessing_and_Changing_Objects": {
+        "Title": "Zybook: Accessing and Changing Objects (1 point)", 
+        "auto_grade": null,
+        "available_for_submission_beginning": null, 
+        "available_for_submission_ending": "2015-11-10T05:59:00Z"
+    }, 
+    "tag:nextthought.com,2011-10:OU-NAQ-CS1323_F_2015_Intro_to_Computer_Programming.naq.asg.assignment:Zybook_Arrays_of_Primitive_Data_Types": {
+        "Title": "Zybook: Arrays of Primitive Data Types (34 points)", 
+        "auto_grade": null,
+        "available_for_submission_beginning": null, 
+        "available_for_submission_ending": "2015-10-01T04:59:00Z"
+    }, 
+    "tag:nextthought.com,2011-10:OU-NAQ-CS1323_F_2015_Intro_to_Computer_Programming.naq.asg.assignment:Zybook_Changing_Primitive_Data": {
+        "Title": "Zybook: Changing Primitive Data", 
+        "auto_grade": null,
+        "available_for_submission_beginning": null, 
+        "available_for_submission_ending": "2015-09-08T04:59:59Z"
+    }, 
+    "tag:nextthought.com,2011-10:OU-NAQ-CS1323_F_2015_Intro_to_Computer_Programming.naq.asg.assignment:Zybook_Class_Methods": {
+        "Title": "Zybook: Class Methods (5 points)", 
+        "auto_grade": null,
+        "available_for_submission_beginning": null, 
+        "available_for_submission_ending": "2015-11-12T05:59:00Z"
+    }, 
+    "tag:nextthought.com,2011-10:OU-NAQ-CS1323_F_2015_Intro_to_Computer_Programming.naq.asg.assignment:Zybook_Classes_with_Generics": {
+        "Title": "Zybook: Classes with Generics (7 points)", 
+        "auto_grade": null,
+        "available_for_submission_beginning": null, 
+        "available_for_submission_ending": "2015-11-17T05:59:00Z"
+    }, 
+    "tag:nextthought.com,2011-10:OU-NAQ-CS1323_F_2015_Intro_to_Computer_Programming.naq.asg.assignment:Zybook_Command_Line_Interactions": {
+        "Title": "Zybook: Command Line Interaction", 
+        "auto_grade": null,
+        "available_for_submission_beginning": null, 
+        "available_for_submission_ending": "2015-09-08T04:59:59Z"
+    }, 
+    "tag:nextthought.com,2011-10:OU-NAQ-CS1323_F_2015_Intro_to_Computer_Programming.naq.asg.assignment:Zybook_Conditional_Statements_and_Relational_Operators": {
+        "Title": "Zybook: Conditional Statements and Relational Operators", 
+        "auto_grade": null, 
+        "available_for_submission_beginning": null, 
+        "available_for_submission_ending": "2015-09-19T04:59:00Z"
+    }, 
+    "tag:nextthought.com,2011-10:OU-NAQ-CS1323_F_2015_Intro_to_Computer_Programming.naq.asg.assignment:Zybook_For_Loops": {
+        "Title": "Zybook: For Loops (1 point)", 
+        "auto_grade": null,
+        "available_for_submission_beginning": null, 
+        "available_for_submission_ending": "2015-10-03T04:59:00Z"
+    }, 
+    "tag:nextthought.com,2011-10:OU-NAQ-CS1323_F_2015_Intro_to_Computer_Programming.naq.asg.assignment:Zybook_Logical_Operators": {
+        "Title": "Zybook: Logical Operators (5 points)", 
+        "auto_grade": null,
+        "available_for_submission_beginning": null, 
+        "available_for_submission_ending": "2015-10-06T04:59:00Z"
+    }, 
+    "tag:nextthought.com,2011-10:OU-NAQ-CS1323_F_2015_Intro_to_Computer_Programming.naq.asg.assignment:Zybook_Methods": {
+        "Title": "Zybook: Methods", 
+        "auto_grade": null,
+        "available_for_submission_beginning": null, 
+        "available_for_submission_ending": "2015-09-22T04:59:00Z"
+    }, 
+    "tag:nextthought.com,2011-10:OU-NAQ-CS1323_F_2015_Intro_to_Computer_Programming.naq.asg.assignment:Zybook_Methods_and_References": {
+        "Title": "Zybook: Methods and References (8 points)", 
+        "auto_grade": null,
+        "available_for_submission_beginning": null, 
+        "available_for_submission_ending": "2015-10-15T04:59:00Z"
+    }, 
+    "tag:nextthought.com,2011-10:OU-NAQ-CS1323_F_2015_Intro_to_Computer_Programming.naq.asg.assignment:Zybook_Nesting_Loops": {
+        "Title": "Zybook: Nesting Loops (15 points)", 
+        "auto_grade": null,
+        "available_for_submission_beginning": null, 
+        "available_for_submission_ending": "2015-10-24T04:59:00Z"
+    }, 
+    "tag:nextthought.com,2011-10:OU-NAQ-CS1323_F_2015_Intro_to_Computer_Programming.naq.asg.assignment:Zybook_Perfect_Size_and_Oversize_Arrays": {
+        "Title": "Zybook: Perfect Size and Oversize Arrays (3 points)", 
+        "auto_grade": null,
+        "available_for_submission_beginning": null, 
+        "available_for_submission_ending": "2015-10-20T04:59:00Z"
+    }, 
+    "tag:nextthought.com,2011-10:OU-NAQ-CS1323_F_2015_Intro_to_Computer_Programming.naq.asg.assignment:Zybook_Repetitions_While_Statements": {
+        "Title": "Zybook: Repetitions: While Statements", 
+        "auto_grade": null,
+        "available_for_submission_beginning": null, 
+        "available_for_submission_ending": "2015-09-19T04:59:00Z"
+    }, 
+    "tag:nextthought.com,2011-10:OU-NAQ-CS1323_F_2015_Intro_to_Computer_Programming.naq.asg.assignment:Zybook_Sorting_Algorithms_Selection_Sort": {
+        "Title": "Zybook: Sorting Algorithms - Selection Sort (3 points)", 
+        "auto_grade": null,
+        "available_for_submission_beginning": null, 
+        "available_for_submission_ending": "2015-10-27T04:59:00Z"
+    }, 
+    "tag:nextthought.com,2011-10:OU-NAQ-CS1323_F_2015_Intro_to_Computer_Programming.naq.asg.assignment:Zybook_Storing_Primitive_Data": {
+        "Title": "Zybook: Storing Primitive Data", 
+        "auto_grade": null,
+        "available_for_submission_beginning": null, 
+        "available_for_submission_ending": "2015-09-08T04:59:59Z"
+    }, 
+    "tag:nextthought.com,2011-10:OU-NAQ-CS1323_F_2015_Intro_to_Computer_Programming.naq.asg.assignment:Zybook_Storing_and_Constructing_Objects": {
+        "Title": "Zybook: Storing and Constructing Objects (34 points)", 
+        "auto_grade": null,
+        "available_for_submission_beginning": null, 
+        "available_for_submission_ending": "2015-11-05T05:59:00Z"
+    }, 
+    "tag:nextthought.com,2011-10:OU-NAQ-CS1323_F_2015_Intro_to_Computer_Programming.naq.asg.assignment:iClicker_10_02": {
+        "Title": "iClicker 10/02", 
+        "auto_grade": null,
+        "available_for_submission_beginning": null, 
+        "available_for_submission_ending": null
+    }, 
+    "tag:nextthought.com,2011-10:OU-NAQ-CS1323_F_2015_Intro_to_Computer_Programming.naq.asg.assignment:iClicker_10_05": {
+        "Title": "iClicker 10/05", 
+        "auto_grade": null,
+        "available_for_submission_beginning": null, 
+        "available_for_submission_ending": null
+    }, 
+    "tag:nextthought.com,2011-10:OU-NAQ-CS1323_F_2015_Intro_to_Computer_Programming.naq.asg.assignment:iClicker_10_07": {
+        "Title": "iClicker 10/07", 
+        "auto_grade": null,
+        "available_for_submission_beginning": null, 
+        "available_for_submission_ending": null
+    }, 
+    "tag:nextthought.com,2011-10:OU-NAQ-CS1323_F_2015_Intro_to_Computer_Programming.naq.asg.assignment:iClicker_10_09": {
+        "Title": "iClicker 10/09", 
+        "auto_grade": null,
+        "available_for_submission_beginning": null, 
+        "available_for_submission_ending": null
+    }, 
+    "tag:nextthought.com,2011-10:OU-NAQ-CS1323_F_2015_Intro_to_Computer_Programming.naq.asg.assignment:iClicker_10_12": {
+        "Title": "iClicker 10/12", 
+        "auto_grade": null,
+        "available_for_submission_beginning": null, 
+        "available_for_submission_ending": null
+    }, 
+    "tag:nextthought.com,2011-10:OU-NAQ-CS1323_F_2015_Intro_to_Computer_Programming.naq.asg.assignment:iClicker_10_14": {
+        "Title": "iClicker 10/14", 
+        "auto_grade": null,
+        "available_for_submission_beginning": null, 
+        "available_for_submission_ending": null
+    }, 
+    "tag:nextthought.com,2011-10:OU-NAQ-CS1323_F_2015_Intro_to_Computer_Programming.naq.asg.assignment:iClicker_10_16": {
+        "Title": "iClicker 10/16", 
+        "auto_grade": null,
+        "available_for_submission_beginning": null, 
+        "available_for_submission_ending": null
+    }, 
+    "tag:nextthought.com,2011-10:OU-NAQ-CS1323_F_2015_Intro_to_Computer_Programming.naq.asg.assignment:iClicker_10_19": {
+        "Title": "iClicker 10/19", 
+        "auto_grade": null,
+        "available_for_submission_beginning": null, 
+        "available_for_submission_ending": null
+    }, 
+    "tag:nextthought.com,2011-10:OU-NAQ-CS1323_F_2015_Intro_to_Computer_Programming.naq.asg.assignment:iClicker_10_21": {
+        "Title": "iClicker 10/21", 
+        "auto_grade": null,
+        "available_for_submission_beginning": null, 
+        "available_for_submission_ending": null
+    }, 
+    "tag:nextthought.com,2011-10:OU-NAQ-CS1323_F_2015_Intro_to_Computer_Programming.naq.asg.assignment:iClicker_10_23": {
+        "Title": "iClicker 10/23", 
+        "auto_grade": null,
+        "available_for_submission_beginning": null, 
+        "available_for_submission_ending": null
+    }, 
+    "tag:nextthought.com,2011-10:OU-NAQ-CS1323_F_2015_Intro_to_Computer_Programming.naq.asg.assignment:iClicker_10_26": {
+        "Title": "iClicker 10/26", 
+        "auto_grade": null,
+        "available_for_submission_beginning": null, 
+        "available_for_submission_ending": null
+    }, 
+    "tag:nextthought.com,2011-10:OU-NAQ-CS1323_F_2015_Intro_to_Computer_Programming.naq.asg.assignment:iClicker_10_28": {
+        "Title": "iClicker 10/28", 
+        "auto_grade": null,
+        "available_for_submission_beginning": null, 
+        "available_for_submission_ending": null
+    }, 
+    "tag:nextthought.com,2011-10:OU-NAQ-CS1323_F_2015_Intro_to_Computer_Programming.naq.asg.assignment:iClicker_10_30": {
+        "Title": "iClicker 10/30", 
+        "auto_grade": null,
+        "available_for_submission_beginning": null, 
+        "available_for_submission_ending": null
+    }, 
+    "tag:nextthought.com,2011-10:OU-NAQ-CS1323_F_2015_Intro_to_Computer_Programming.naq.asg.assignment:iClicker_11_02": {
+        "Title": "iClicker 11/02", 
+        "auto_grade": null,
+        "available_for_submission_beginning": null, 
+        "available_for_submission_ending": null
+    }, 
+    "tag:nextthought.com,2011-10:OU-NAQ-CS1323_F_2015_Intro_to_Computer_Programming.naq.asg.assignment:iClicker_11_04": {
+        "Title": "iClicker 11/04", 
+        "auto_grade": null,
+        "available_for_submission_beginning": null, 
+        "available_for_submission_ending": null
+    }, 
+    "tag:nextthought.com,2011-10:OU-NAQ-CS1323_F_2015_Intro_to_Computer_Programming.naq.asg.assignment:iClicker_11_06": {
+        "Title": "iClicker 11/06", 
+        "auto_grade": null,
+        "available_for_submission_beginning": null, 
+        "available_for_submission_ending": null
+    }, 
+    "tag:nextthought.com,2011-10:OU-NAQ-CS1323_F_2015_Intro_to_Computer_Programming.naq.asg.assignment:iClicker_11_09": {
+        "Title": "iClicker 11/09", 
+        "auto_grade": null,
+        "available_for_submission_beginning": null, 
+        "available_for_submission_ending": null
+    }, 
+    "tag:nextthought.com,2011-10:OU-NAQ-CS1323_F_2015_Intro_to_Computer_Programming.naq.asg.assignment:iClicker_11_11": {
+        "Title": "iClicker 11/11", 
+        "auto_grade": null,
+        "available_for_submission_beginning": null, 
+        "available_for_submission_ending": null
+    }, 
+    "tag:nextthought.com,2011-10:OU-NAQ-CS1323_F_2015_Intro_to_Computer_Programming.naq.asg.assignment:iClicker_11_13": {
+        "Title": "iClicker 11/13", 
+        "auto_grade": null,
+        "available_for_submission_beginning": null, 
+        "available_for_submission_ending": null
+    }, 
+    "tag:nextthought.com,2011-10:OU-NAQ-CS1323_F_2015_Intro_to_Computer_Programming.naq.asg.assignment:iClicker_11_16": {
+        "Title": "iClicker 11/16", 
+        "auto_grade": null,
+        "available_for_submission_beginning": null, 
+        "available_for_submission_ending": null
+    }, 
+    "tag:nextthought.com,2011-10:OU-NAQ-CS1323_F_2015_Intro_to_Computer_Programming.naq.asg.assignment:iClicker_11_18": {
+        "Title": "iClicker 11/18", 
+        "auto_grade": null,
+        "available_for_submission_beginning": null, 
+        "available_for_submission_ending": null
+    }, 
+    "tag:nextthought.com,2011-10:OU-NAQ-CS1323_F_2015_Intro_to_Computer_Programming.naq.asg.assignment:iClicker_11_20": {
+        "Title": "iClicker 11/20", 
+        "auto_grade": null,
+        "available_for_submission_beginning": null, 
+        "available_for_submission_ending": null
+    }, 
+    "tag:nextthought.com,2011-10:OU-NAQ-CS1323_F_2015_Intro_to_Computer_Programming.naq.asg.assignment:iClicker_11_23": {
+        "Title": "iClicker 11/23", 
+        "auto_grade": null,
+        "available_for_submission_beginning": null, 
+        "available_for_submission_ending": null
+    }, 
+    "tag:nextthought.com,2011-10:OU-NAQ-CS1323_F_2015_Intro_to_Computer_Programming.naq.asg.assignment:iClicker_11_25": {
+        "Title": "iClicker 11/25", 
+        "auto_grade": null,
+        "available_for_submission_beginning": null, 
+        "available_for_submission_ending": null
+    }, 
+    "tag:nextthought.com,2011-10:OU-NAQ-CS1323_F_2015_Intro_to_Computer_Programming.naq.asg.assignment:iClicker_11_27": {
+        "Title": "iClicker 11/27", 
+        "auto_grade": null,
+        "available_for_submission_beginning": null, 
+        "available_for_submission_ending": null
+    }, 
+    "tag:nextthought.com,2011-10:OU-NAQ-CS1323_F_2015_Intro_to_Computer_Programming.naq.asg.assignment:iClicker_11_30": {
+        "Title": "iClicker 11/30", 
+        "auto_grade": null,
+        "available_for_submission_beginning": null, 
+        "available_for_submission_ending": null
+    }, 
+    "tag:nextthought.com,2011-10:OU-NAQ-CS1323_F_2015_Intro_to_Computer_Programming.naq.asg.assignment:iClicker_12_02": {
+        "Title": "iClicker 12/02", 
+        "auto_grade": null,
+        "available_for_submission_beginning": null, 
+        "available_for_submission_ending": null
+    }, 
+    "tag:nextthought.com,2011-10:OU-NAQ-CS1323_F_2015_Intro_to_Computer_Programming.naq.asg.assignment:iClicker_12_04": {
+        "Title": "iClicker 12/04", 
+        "auto_grade": null,
+        "available_for_submission_beginning": null, 
+        "available_for_submission_ending": null
+    }, 
+    "tag:nextthought.com,2011-10:OU-NAQ-CS1323_F_2015_Intro_to_Computer_Programming.naq.asg.assignment:iClicker_12_07": {
+        "Title": "iClicker 12/07", 
+        "auto_grade": null,
+        "available_for_submission_beginning": null, 
+        "available_for_submission_ending": null
+    }, 
+    "tag:nextthought.com,2011-10:OU-NAQ-CS1323_F_2015_Intro_to_Computer_Programming.naq.asg.assignment:iClicker_12_09": {
+        "Title": "iClicker 12/09", 
+        "auto_grade": null,
+        "available_for_submission_beginning": null, 
+        "available_for_submission_ending": null
+    }, 
+    "tag:nextthought.com,2011-10:OU-NAQ-CS1323_F_2015_Intro_to_Computer_Programming.naq.asg.assignment:iClicker_12_11": {
+        "Title": "iClicker 12/11", 
+        "auto_grade": null,
+        "available_for_submission_beginning": null, 
+        "available_for_submission_ending": null
+    }, 
+    "tag:nextthought.com,2011-10:OU-NAQ-CS1323_F_2015_Intro_to_Computer_Programming.naq.asg.assignment:iClicker_8_24": {
+        "Title": "iClicker 8/24", 
+        "auto_grade": null,
+        "available_for_submission_beginning": null, 
+        "available_for_submission_ending": null
+    }, 
+    "tag:nextthought.com,2011-10:OU-NAQ-CS1323_F_2015_Intro_to_Computer_Programming.naq.asg.assignment:iClicker_8_26": {
+        "Title": "iClicker 8/26", 
+        "auto_grade": null,
+        "available_for_submission_beginning": null, 
+        "available_for_submission_ending": null
+    }, 
+    "tag:nextthought.com,2011-10:OU-NAQ-CS1323_F_2015_Intro_to_Computer_Programming.naq.asg.assignment:iClicker_8_28": {
+        "Title": "iClicker 8/28", 
+        "auto_grade": null,
+        "available_for_submission_beginning": null, 
+        "available_for_submission_ending": null
+    },
+    "tag:nextthought.com,2011-10:OU-NAQ-CS1323_F_2015_Intro_to_Computer_Programming.naq.asg.assignment:iClicker_8_31": {
+        "Title": "iClicker 08/31 (Not Graded)", 
+        "auto_grade": null,
+        "available_for_submission_beginning": null, 
+        "available_for_submission_ending": null
+    }, 
+    "tag:nextthought.com,2011-10:OU-NAQ-CS1323_F_2015_Intro_to_Computer_Programming.naq.asg.assignment:iClicker_9_02": {
+        "Title": "iClicker 09/02", 
+        "auto_grade": null,
+        "available_for_submission_beginning": null, 
+        "available_for_submission_ending": null
+    }, 
+    "tag:nextthought.com,2011-10:OU-NAQ-CS1323_F_2015_Intro_to_Computer_Programming.naq.asg.assignment:iClicker_9_04": {
+        "Title": "iClicker 09/04", 
+        "auto_grade": null,
+        "available_for_submission_beginning": null, 
+        "available_for_submission_ending": null
+    },
+    "tag:nextthought.com,2011-10:OU-NAQ-CS1323_F_2015_Intro_to_Computer_Programming.naq.asg.assignment:iClicker_9_09": {
+        "Title": "iClicker 09/09", 
+        "auto_grade": null,
+        "available_for_submission_beginning": null, 
+        "available_for_submission_ending": null
+    }, 
+    "tag:nextthought.com,2011-10:OU-NAQ-CS1323_F_2015_Intro_to_Computer_Programming.naq.asg.assignment:iClicker_9_11": {
+        "Title": "iClicker 09/11", 
+        "auto_grade": null,
+        "available_for_submission_beginning": null, 
+        "available_for_submission_ending": null
+    },
+    "tag:nextthought.com,2011-10:OU-NAQ-CS1323_F_2015_Intro_to_Computer_Programming.naq.asg.assignment:iClicker_9_14": {
+        "Title": "iClicker 09/14", 
+        "auto_grade": null,
+        "available_for_submission_beginning": null, 
+        "available_for_submission_ending": null
+    }, 
+    "tag:nextthought.com,2011-10:OU-NAQ-CS1323_F_2015_Intro_to_Computer_Programming.naq.asg.assignment:iClicker_9_16": {
+        "Title": "iClicker 09/16", 
+        "auto_grade": null,
+        "available_for_submission_beginning": null, 
+        "available_for_submission_ending": null
+    }, 
+    "tag:nextthought.com,2011-10:OU-NAQ-CS1323_F_2015_Intro_to_Computer_Programming.naq.asg.assignment:iClicker_9_18": {
+        "Title": "iClicker 09/18", 
+        "auto_grade": null,
+        "available_for_submission_beginning": null, 
+        "available_for_submission_ending": null
+    },
+    "tag:nextthought.com,2011-10:OU-NAQ-CS1323_F_2015_Intro_to_Computer_Programming.naq.asg.assignment:iClicker_9_21": {
+        "Title": "iClicker 09/21", 
+        "auto_grade": null,
+        "available_for_submission_beginning": null, 
+        "available_for_submission_ending": null
+    },
+    "tag:nextthought.com,2011-10:OU-NAQ-CS1323_F_2015_Intro_to_Computer_Programming.naq.asg.assignment:iClicker_9_28": {
+        "Title": "iClicker 09/28", 
+        "auto_grade": null,
+        "available_for_submission_beginning": null, 
+        "available_for_submission_ending": null
+    }, 
+    "tag:nextthought.com,2011-10:OU-NAQ-CS1323_F_2015_Intro_to_Computer_Programming.naq.asg.assignment:iClicker_9_30": {
+        "Title": "iClicker 09/30", 
+        "auto_grade": null,
+        "available_for_submission_beginning": null, 
+        "available_for_submission_ending": null,
+		"excluded": true
+    }
+}

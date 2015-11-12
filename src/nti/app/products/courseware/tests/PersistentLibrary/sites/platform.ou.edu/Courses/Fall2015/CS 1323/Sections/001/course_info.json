@@ -1,0 +1,38 @@
+{
+	"id": "CS 1323-001",
+	"isPreview": false,
+	"is_non_public": true,
+	"instructors": [
+		{
+			"name":"Deborah Trytten, Ph.D.",
+			"title": "Associate Professor, School of Computer Science"
+		},
+		{
+			"name":"Mamta Yadav",
+			"title": "Teaching Assistant"
+		},
+		{
+			"name":"Stephen Smart",
+			"title": "Teaching Assistant"
+		},
+		{
+			"name":"Taner Davis",
+			"title": "Teaching Assistant"
+		},
+		{
+			"name":"Sarah Otts",
+			"title": "Teaching Assistant"
+		},
+		{
+			"name":"James Land",
+			"title": "Teaching Assistant"
+		}
+	], 
+	"schedule": {
+		"days": ["MW"],
+		"times": [
+			"15:00:00-05:00",
+			"16:15:00-05:00"
+					]
+	}
+}

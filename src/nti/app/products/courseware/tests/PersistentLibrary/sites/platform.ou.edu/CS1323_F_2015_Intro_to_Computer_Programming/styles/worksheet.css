@@ -1,0 +1,169 @@
+/**
+ * $Revision: 6845 $
+ **/
+#NTIContent .helplink:before {
+	display: inline;
+	content: url(lightbulb.png);
+	height: 32px;
+	width: 32px;
+}
+#NTIContent a.helplink  {
+	text-decoration: none;
+	-webkit-tap-highlight-color: rgba(0,0,0,0);
+	color: #7889A3;
+}
+/* Make the helplinks inside results prettier
+ * and more contrasty. */
+#NTIContent div.result a.helplink {
+	color: white;
+}
+
+/* Donat show in correct answers. */
+#NTIContent div.result.correct a.helplink {
+	display: none;
+}
+
+#NTIContent .answerblank {
+}
+
+#NTIContent input {
+	display: inline-block;
+}
+
+#NTIContent li {
+	clear: both;
+	margin: 1em auto;
+}
+
+#NTIContent .worksheet-title{
+	display: block;
+	font-size: 150%;
+	text-align: center;
+	font-weight: bold;
+}
+
+#NTIContent .hidden {
+	display: none;
+}
+
+#NTIContent #previousattempts,
+#NTIContent .worksheet-title {
+	position: relative;
+}
+
+#NTIContent #previousattemptlist {
+	opacity: 0;
+	height: 0px;
+	padding: 0;
+	position: absolute;
+	border: #000000 solid 1px;
+	border-top: none;
+	background: white;
+	top: 0.1em;
+	left: 0;
+	z-index: 10000;
+	overflow: hidden;
+	border-radius: 0 0 10px 10px;
+
+	-webkit-transition: opacity .25s linear 0s, height .25s ease-out .1s;
+	-moz-transition: opacity .25s linear 0s, height .25s ease-out .1s;
+	transition: opacity .25s linear 0s, height .25s ease-out .1s;
+
+}
+
+#NTIContent #previousattemptlist.previousattemptsshow
+{
+	display: block;
+	height: auto;
+	opacity: 1;
+
+	-webkit-transition: opacity .25s linear 0s, height .25s linear 0s;
+	-moz-transition: opacity .25s linear 0s, height .25s linear 0s;
+	transition: opacity .25s linear 0s, height .25s linear 0s;
+}
+
+
+#NTIContent #previousattemptlist li {
+	display: block;
+	background: none;
+	padding: 0;
+	margin: 5px;
+	height: auto;
+	width: auto;
+	line-height: normal;
+	border-radius: 10px;
+}
+/*
+#NTIContent #previousattemptlist li a:hover {
+	background: #00b0d8;
+}
+*/
+#NTIContent #previousattemptlist li a {
+	display: block;
+	padding: 10px 20px;
+	margin: 0;
+	border-radius: 10px;
+	min-width: 200px;
+
+	-webkit-transition: background-color .5s ease;
+	-moz-transition: background-color .5s ease;
+	transition: background-color .5s ease;
+}
+
+/*
+#NTIContent .page-contents a {
+	clear: both;
+	margin: 0.7em;
+	display: box;
+	text-align: center;
+	padding: 0.3em;
+	background: rgb(90, 90, 90);
+	border-radius: 5px;
+	border: 2px solid rgb(90, 90, 90);
+	background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#666),
+		to(#222) );
+	color: white;
+	text-decoration: inherit; height 1.6em;
+	-webkit-box-shadow: 2px 2px 4px rgba(0, 0, 0, .2), 0px 0px 3px
+		rgba(0, 0, 0, .1), inset 0px 6px 12px rgb(80, 80, 80), inset 0px 12px
+		2px rgba(255, 255, 255, .7), inset 0px 16px 25px rgb(80, 80, 80);
+}
+*/
+#NTIContent .page-contents a:empty{
+	display: none;
+}
+/*
+#NTIContent .page-contents a:hover {
+	border-color: white;
+	background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#777),
+		to(#444) );
+	-webkit-box-shadow: 2px 2px 4px rgba(0, 0, 0, .2), 0px 0px 3px
+		rgba(0, 0, 0, .1), inset 0px 6px 12px rgb(100, 100, 100), inset 0px
+		12px 2px rgba(230, 230, 230, .7), inset 0px 15px 25px
+		rgb(100, 100, 100);
+}
+*/
+#NTIContent div.incorrect {
+	background-color: rgb(255, 227, 196);
+}
+/* Override things from prealgebra.css */
+#NTIContent .worksheet-problems li{clear: both;}
+
+#NTIContent .worksheet-problems .problem {
+    overflow: visible;
+    display: block;
+    border: none;
+    text-align: left;
+    padding: 0;
+    position: static;
+    margin: 0;
+    background: none;
+    white-space: normal;
+}
+
+#NTIContent .worksheet-problems .result {
+    clear: both;
+}
+#NTIContent .worksheet-problems .problem::after {
+    display: none;
+}

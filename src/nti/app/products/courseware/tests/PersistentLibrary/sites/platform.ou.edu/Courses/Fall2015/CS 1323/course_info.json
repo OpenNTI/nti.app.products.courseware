@@ -1,0 +1,52 @@
+{
+	"id": "CS 1323",
+	"school": "School of Computer Science at the University of Oklahoma",
+	"video": "kaltura://1500101/0_aqksto2u/",
+	"title": "Introduction to Computer Programming",
+	"credit": [
+		{
+			"hours":3,
+			"enrollment": {
+				"label":"OU Students Enroll on Ozone",
+				"url":"http://ozone.ou.edu/"
+			}
+		}
+	],
+	"isPreview": false,
+	"is_non_public": true,
+	"startDate": "2015-08-24T05:00:00+00:00",
+	"duration": "118 Days",
+	"description": "This course is designed as an introduction to computer programming using Java. Students will learn how to a) analyze a problem, and identify and define the computing requirements appropriate to its solution b) design, implement, and evaluate a computer-based system, process, component, or program to meet desired needs, and c) apply design and development principles in the construction of software systems of varying complexity. Topics include Computers, programs, Java, input and output, identifiers, variables, assignment statements, constants, memory diagrams, primitive data types, conditional statements, repetition, methods, parameters, arguments, return values, one dimensional arrays, objects, classes, and classes from the Java Application Programmers Interface (API). No prior programming experience is assumed.",
+	"prerequisites": [
+		{
+			"id":"",
+			"title":"MATH 1523 or concurrent enrollment, or placement into MATH 1743 or MATH 1823 or higher"
+		}
+	],
+	"instructors": [
+		{
+			"name":"Deborah Trytten, Ph.D.",
+			"title": "Associate Professor, School of Computer Science"
+		},
+		{
+			"name":"Mamta Yadav",
+			"title": "Teaching Assistant"
+		},
+		{
+			"name":"Stephen Smart",
+			"title": "Teaching Assistant"
+		},
+		{
+			"name":"Taner Davis",
+			"title": "Teaching Assistant"
+		},
+		{
+			"name":"Sarah Otts",
+			"title": "Teaching Assistant"
+		},
+		{
+			"name":"James Land",
+			"title": "Teaching Assistant"
+		}
+	]
+}

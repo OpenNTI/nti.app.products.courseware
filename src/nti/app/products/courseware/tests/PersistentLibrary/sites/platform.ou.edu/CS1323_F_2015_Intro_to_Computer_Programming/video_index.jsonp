@@ -1,0 +1,3229 @@
+jsonpReceiveContent({
+    "content": {
+        "Items": {
+            "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_janux_videos": {
+                "MimeType": "application/vnd.nextthought.ntivideo",
+                "mimeType": "application/vnd.nextthought.ntivideo",
+                "description": "",
+                "creator": "NextThought",
+                "title": "Janux Video Functionality",
+                "closedCaptions": null,
+                "ntiid": "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_janux_videos",
+                "sources": [
+                    {
+                        "service": "kaltura",
+                        "width": 640,
+                        "poster": "//www.kaltura.com/p/1500101/thumbnail/entry_id/0_hv7kyyl9/width/1280/",
+                        "height": 480,
+                        "source": [
+                            "1500101:0_hv7kyyl9"
+                        ],
+                        "type": [
+                            "video/kaltura"
+                        ],
+                        "thumbnail": "//www.kaltura.com/p/1500101/thumbnail/entry_id/0_hv7kyyl9/width/640/"
+                    }
+                ],
+                "transcripts": [
+                    {
+                        "srcjsonp": "resources/CS1323_F_2015_Intro_to_Computer_Programming/0ff0bdd77ca2d2ef538ac8a4842281d106fb5457/9b3fe7737c9828ea6a552664d89b26bc8de8a15e.jsonp",
+                        "src": "resources/CS1323_F_2015_Intro_to_Computer_Programming/0ff0bdd77ca2d2ef538ac8a4842281d106fb5457/90784fa2c5c148922446e05d45ff35f0aee3e69b.vtt",
+                        "type": "text/vtt",
+                        "lang": "en",
+                        "purpose": "normal"
+                    }
+                ]
+            },
+            "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_02.02.04_Cell": {
+                "MimeType": "application/vnd.nextthought.ntivideo",
+                "mimeType": "application/vnd.nextthought.ntivideo",
+                "description": "",
+                "creator": "Deborah Trytten",
+                "title": "Choosing a Cell Phone Contract: Iteration 6",
+                "closedCaptions": null,
+                "ntiid": "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_02.02.04_Cell",
+                "sources": [
+                    {
+                        "service": "kaltura",
+                        "width": 640,
+                        "poster": "//www.kaltura.com/p/1500101/thumbnail/entry_id/0_4qji4561/width/1280/",
+                        "height": 480,
+                        "source": [
+                            "1500101:0_4qji4561"
+                        ],
+                        "type": [
+                            "video/kaltura"
+                        ],
+                        "thumbnail": "//www.kaltura.com/p/1500101/thumbnail/entry_id/0_4qji4561/width/640/"
+                    }
+                ],
+                "transcripts": [
+                    {
+                        "srcjsonp": "resources/CS1323_F_2015_Intro_to_Computer_Programming/fa61f635a04fe6f7faeb6c9c0b8486d171af2035/9b3fe7737c9828ea6a552664d89b26bc8de8a15e.jsonp",
+                        "src": "resources/CS1323_F_2015_Intro_to_Computer_Programming/fa61f635a04fe6f7faeb6c9c0b8486d171af2035/90784fa2c5c148922446e05d45ff35f0aee3e69b.vtt",
+                        "type": "text/vtt",
+                        "lang": "en",
+                        "purpose": "normal"
+                    }
+                ],
+                "slidedeck": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Cell_Phone_6"
+            },
+            "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_05.01.02_Frogger_1": {
+                "MimeType": "application/vnd.nextthought.ntivideo",
+                "mimeType": "application/vnd.nextthought.ntivideo",
+                "description": "",
+                "creator": "Deborah Trytten",
+                "title": "Frogger Iteration 1",
+                "closedCaptions": null,
+                "ntiid": "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_05.01.02_Frogger_1",
+                "sources": [
+                    {
+                        "service": "kaltura",
+                        "width": 640,
+                        "poster": "//www.kaltura.com/p/1500101/thumbnail/entry_id/1_hehq3unj/width/1280/",
+                        "height": 480,
+                        "source": [
+                            "1500101:1_hehq3unj"
+                        ],
+                        "type": [
+                            "video/kaltura"
+                        ],
+                        "thumbnail": "//www.kaltura.com/p/1500101/thumbnail/entry_id/1_hehq3unj/width/640/"
+                    }
+                ],
+                "transcripts": [
+                    {
+                        "srcjsonp": "resources/CS1323_F_2015_Intro_to_Computer_Programming/43c114c688c258d58374970c8d0716a64288c3ae/9b3fe7737c9828ea6a552664d89b26bc8de8a15e.jsonp",
+                        "src": "resources/CS1323_F_2015_Intro_to_Computer_Programming/43c114c688c258d58374970c8d0716a64288c3ae/90784fa2c5c148922446e05d45ff35f0aee3e69b.vtt",
+                        "type": "text/vtt",
+                        "lang": "en",
+                        "purpose": "normal"
+                    }
+                ]
+            },
+            "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_02.01.04_Command_Line_Arguments": {
+                "MimeType": "application/vnd.nextthought.ntivideo",
+                "mimeType": "application/vnd.nextthought.ntivideo",
+                "description": "",
+                "creator": "Deborah Trytten",
+                "title": "Invisible Characters",
+                "closedCaptions": null,
+                "ntiid": "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_02.01.04_Command_Line_Arguments",
+                "sources": [
+                    {
+                        "service": "kaltura",
+                        "width": 640,
+                        "poster": "//www.kaltura.com/p/1500101/thumbnail/entry_id/0_s28el3c2/width/1280/",
+                        "height": 480,
+                        "source": [
+                            "1500101:0_s28el3c2"
+                        ],
+                        "type": [
+                            "video/kaltura"
+                        ],
+                        "thumbnail": "//www.kaltura.com/p/1500101/thumbnail/entry_id/0_s28el3c2/width/640/"
+                    }
+                ],
+                "transcripts": [
+                    {
+                        "srcjsonp": "resources/CS1323_F_2015_Intro_to_Computer_Programming/9e78f336f1c79bb9329902f01d16633ad07abd66/9b3fe7737c9828ea6a552664d89b26bc8de8a15e.jsonp",
+                        "src": "resources/CS1323_F_2015_Intro_to_Computer_Programming/9e78f336f1c79bb9329902f01d16633ad07abd66/90784fa2c5c148922446e05d45ff35f0aee3e69b.vtt",
+                        "type": "text/vtt",
+                        "lang": "en",
+                        "purpose": "normal"
+                    }
+                ],
+                "slidedeck": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Command_Line_Arguments"
+            },
+            "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_02.02.03_Cell_Phone": {
+                "MimeType": "application/vnd.nextthought.ntivideo",
+                "mimeType": "application/vnd.nextthought.ntivideo",
+                "description": "",
+                "creator": "Deborah Trytten",
+                "title": "Choosing a Cell Phone Contract: Iteration 5",
+                "closedCaptions": null,
+                "ntiid": "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_02.02.03_Cell_Phone",
+                "sources": [
+                    {
+                        "service": "kaltura",
+                        "width": 640,
+                        "poster": "//www.kaltura.com/p/1500101/thumbnail/entry_id/0_gkjg2gmg/width/1280/",
+                        "height": 480,
+                        "source": [
+                            "1500101:0_gkjg2gmg"
+                        ],
+                        "type": [
+                            "video/kaltura"
+                        ],
+                        "thumbnail": "//www.kaltura.com/p/1500101/thumbnail/entry_id/0_gkjg2gmg/width/640/"
+                    }
+                ],
+                "transcripts": [
+                    {
+                        "srcjsonp": "resources/CS1323_F_2015_Intro_to_Computer_Programming/bcd93fbb9df7c530b61c49b64f905376604e0750/9b3fe7737c9828ea6a552664d89b26bc8de8a15e.jsonp",
+                        "src": "resources/CS1323_F_2015_Intro_to_Computer_Programming/bcd93fbb9df7c530b61c49b64f905376604e0750/90784fa2c5c148922446e05d45ff35f0aee3e69b.vtt",
+                        "type": "text/vtt",
+                        "lang": "en",
+                        "purpose": "normal"
+                    }
+                ],
+                "slidedeck": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Cell_Phone_5"
+            },
+            "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_05.02.04_Set_Tutor": {
+                "MimeType": "application/vnd.nextthought.ntivideo",
+                "mimeType": "application/vnd.nextthought.ntivideo",
+                "description": "",
+                "creator": "Deborah Trytten",
+                "title": "Set Tutor",
+                "closedCaptions": null,
+                "ntiid": "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_05.02.04_Set_Tutor",
+                "sources": [
+                    {
+                        "service": "kaltura",
+                        "width": 640,
+                        "poster": "//www.kaltura.com/p/1500101/thumbnail/entry_id/0_vanjhief/width/1280/",
+                        "height": 480,
+                        "source": [
+                            "1500101:0_vanjhief"
+                        ],
+                        "type": [
+                            "video/kaltura"
+                        ],
+                        "thumbnail": "//www.kaltura.com/p/1500101/thumbnail/entry_id/0_vanjhief/width/640/"
+                    }
+                ],
+                "transcripts": [
+                    {
+                        "srcjsonp": "resources/CS1323_F_2015_Intro_to_Computer_Programming/a8e7956d24da47ba2aeb44d850f6bb95c23a5474/9b3fe7737c9828ea6a552664d89b26bc8de8a15e.jsonp",
+                        "src": "resources/CS1323_F_2015_Intro_to_Computer_Programming/a8e7956d24da47ba2aeb44d850f6bb95c23a5474/90784fa2c5c148922446e05d45ff35f0aee3e69b.vtt",
+                        "type": "text/vtt",
+                        "lang": "en",
+                        "purpose": "normal"
+                    }
+                ]
+            },
+            "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_03.02.04_Searching": {
+                "MimeType": "application/vnd.nextthought.ntivideo",
+                "mimeType": "application/vnd.nextthought.ntivideo",
+                "description": "",
+                "creator": "Deborah Trytten",
+                "title": "Lists with Hashtags",
+                "closedCaptions": null,
+                "ntiid": "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_03.02.04_Searching",
+                "sources": [
+                    {
+                        "service": "kaltura",
+                        "width": 640,
+                        "poster": "//www.kaltura.com/p/1500101/thumbnail/entry_id/0_l1o0u5aw/width/1280/",
+                        "height": 480,
+                        "source": [
+                            "1500101:0_l1o0u5aw"
+                        ],
+                        "type": [
+                            "video/kaltura"
+                        ],
+                        "thumbnail": "//www.kaltura.com/p/1500101/thumbnail/entry_id/0_l1o0u5aw/width/640/"
+                    }
+                ],
+                "transcripts": [
+                    {
+                        "srcjsonp": "resources/CS1323_F_2015_Intro_to_Computer_Programming/532424533553a4c467bdaa625fec27a1cec379e6/9b3fe7737c9828ea6a552664d89b26bc8de8a15e.jsonp",
+                        "src": "resources/CS1323_F_2015_Intro_to_Computer_Programming/532424533553a4c467bdaa625fec27a1cec379e6/90784fa2c5c148922446e05d45ff35f0aee3e69b.vtt",
+                        "type": "text/vtt",
+                        "lang": "en",
+                        "purpose": "normal"
+                    }
+                ]
+            },
+            "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_03.02.03_Logical_Operators_2": {
+                "MimeType": "application/vnd.nextthought.ntivideo",
+                "mimeType": "application/vnd.nextthought.ntivideo",
+                "description": "",
+                "creator": "Deborah Trytten",
+                "title": "Or in Java",
+                "closedCaptions": null,
+                "ntiid": "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_03.02.03_Logical_Operators_2",
+                "sources": [
+                    {
+                        "service": "kaltura",
+                        "width": 640,
+                        "poster": "//www.kaltura.com/p/1500101/thumbnail/entry_id/0_nckb3xlj/width/1280/",
+                        "height": 480,
+                        "source": [
+                            "1500101:0_nckb3xlj"
+                        ],
+                        "type": [
+                            "video/kaltura"
+                        ],
+                        "thumbnail": "//www.kaltura.com/p/1500101/thumbnail/entry_id/0_nckb3xlj/width/640/"
+                    }
+                ],
+                "transcripts": [
+                    {
+                        "srcjsonp": "resources/CS1323_F_2015_Intro_to_Computer_Programming/a16fac504864bc8d46cbd3febbe6c3a91ce91ae2/9b3fe7737c9828ea6a552664d89b26bc8de8a15e.jsonp",
+                        "src": "resources/CS1323_F_2015_Intro_to_Computer_Programming/a16fac504864bc8d46cbd3febbe6c3a91ce91ae2/90784fa2c5c148922446e05d45ff35f0aee3e69b.vtt",
+                        "type": "text/vtt",
+                        "lang": "en",
+                        "purpose": "normal"
+                    }
+                ],
+                "slidedeck": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Logical_Operators_2"
+            },
+            "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_02.01.02_Cell_Phone": {
+                "MimeType": "application/vnd.nextthought.ntivideo",
+                "mimeType": "application/vnd.nextthought.ntivideo",
+                "description": "",
+                "creator": "Deborah Trytten",
+                "title": "Choosing a Cell Phone Contract: Iteration 1",
+                "closedCaptions": null,
+                "ntiid": "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_02.01.02_Cell_Phone",
+                "sources": [
+                    {
+                        "service": "kaltura",
+                        "width": 640,
+                        "poster": "//www.kaltura.com/p/1500101/thumbnail/entry_id/0_d6zvpwma/width/1280/",
+                        "height": 480,
+                        "source": [
+                            "1500101:0_d6zvpwma"
+                        ],
+                        "type": [
+                            "video/kaltura"
+                        ],
+                        "thumbnail": "//www.kaltura.com/p/1500101/thumbnail/entry_id/0_d6zvpwma/width/640/"
+                    }
+                ],
+                "transcripts": [
+                    {
+                        "srcjsonp": "resources/CS1323_F_2015_Intro_to_Computer_Programming/f67fc3619528160b14153c8a9bb0382be0485b0c/9b3fe7737c9828ea6a552664d89b26bc8de8a15e.jsonp",
+                        "src": "resources/CS1323_F_2015_Intro_to_Computer_Programming/f67fc3619528160b14153c8a9bb0382be0485b0c/90784fa2c5c148922446e05d45ff35f0aee3e69b.vtt",
+                        "type": "text/vtt",
+                        "lang": "en",
+                        "purpose": "normal"
+                    }
+                ],
+                "slidedeck": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Cell_Phone_1"
+            },
+            "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_02.02.04_Memory_Diagrams_Passing_By_Value": {
+                "MimeType": "application/vnd.nextthought.ntivideo",
+                "mimeType": "application/vnd.nextthought.ntivideo",
+                "description": "",
+                "creator": "Deborah Trytten",
+                "title": "Parameter Passing",
+                "closedCaptions": null,
+                "ntiid": "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_02.02.04_Memory_Diagrams_Passing_By_Value",
+                "sources": [
+                    {
+                        "service": "kaltura",
+                        "width": 640,
+                        "poster": "//www.kaltura.com/p/1500101/thumbnail/entry_id/1_qcsms4kp/width/1280/",
+                        "height": 480,
+                        "source": [
+                            "1500101:1_qcsms4kp"
+                        ],
+                        "type": [
+                            "video/kaltura"
+                        ],
+                        "thumbnail": "//www.kaltura.com/p/1500101/thumbnail/entry_id/1_qcsms4kp/width/640/"
+                    }
+                ],
+                "transcripts": [
+                    {
+                        "srcjsonp": "resources/CS1323_F_2015_Intro_to_Computer_Programming/9f33c935f4f37fd2f73eba69c81bfb4a7cb6a509/9b3fe7737c9828ea6a552664d89b26bc8de8a15e.jsonp",
+                        "src": "resources/CS1323_F_2015_Intro_to_Computer_Programming/9f33c935f4f37fd2f73eba69c81bfb4a7cb6a509/90784fa2c5c148922446e05d45ff35f0aee3e69b.vtt",
+                        "type": "text/vtt",
+                        "lang": "en",
+                        "purpose": "normal"
+                    }
+                ],
+                "slidedeck": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Memory_Diagrams_Passing_By_Value"
+            },
+            "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_05.01.01_Classes": {
+                "MimeType": "application/vnd.nextthought.ntivideo",
+                "mimeType": "application/vnd.nextthought.ntivideo",
+                "description": "",
+                "creator": "Deborah Trytten",
+                "title": "Classes Organize Data",
+                "closedCaptions": null,
+                "ntiid": "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_05.01.01_Classes",
+                "sources": [
+                    {
+                        "service": "kaltura",
+                        "width": 640,
+                        "poster": "//www.kaltura.com/p/1500101/thumbnail/entry_id/1_jzg2vql7/width/1280/",
+                        "height": 480,
+                        "source": [
+                            "1500101:1_jzg2vql7"
+                        ],
+                        "type": [
+                            "video/kaltura"
+                        ],
+                        "thumbnail": "//www.kaltura.com/p/1500101/thumbnail/entry_id/1_jzg2vql7/width/640/"
+                    }
+                ],
+                "transcripts": [
+                    {
+                        "srcjsonp": "resources/CS1323_F_2015_Intro_to_Computer_Programming/4ddd8ea37449e267f5eaea8ffdff60e6762b9969/9b3fe7737c9828ea6a552664d89b26bc8de8a15e.jsonp",
+                        "src": "resources/CS1323_F_2015_Intro_to_Computer_Programming/4ddd8ea37449e267f5eaea8ffdff60e6762b9969/90784fa2c5c148922446e05d45ff35f0aee3e69b.vtt",
+                        "type": "text/vtt",
+                        "lang": "en",
+                        "purpose": "normal"
+                    }
+                ]
+            },
+            "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_01.01.01_Academic_Integrity": {
+                "MimeType": "application/vnd.nextthought.ntivideo",
+                "mimeType": "application/vnd.nextthought.ntivideo",
+                "description": "",
+                "creator": "Academic Integrity Council",
+                "title": "Academic Integrity at OU",
+                "closedCaptions": null,
+                "ntiid": "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_01.01.01_Academic_Integrity",
+                "sources": [
+                    {
+                        "service": "kaltura",
+                        "width": 640,
+                        "poster": "//www.kaltura.com/p/1500101/thumbnail/entry_id/0_ov8bvmqy/width/1280/",
+                        "height": 480,
+                        "source": [
+                            "1500101:0_ov8bvmqy"
+                        ],
+                        "type": [
+                            "video/kaltura"
+                        ],
+                        "thumbnail": "//www.kaltura.com/p/1500101/thumbnail/entry_id/0_ov8bvmqy/width/640/"
+                    }
+                ],
+                "transcripts": [
+                    {
+                        "srcjsonp": "resources/CS1323_F_2015_Intro_to_Computer_Programming/380c0b190f6f7d4ced765008d44e815e20a9c9ac/9b3fe7737c9828ea6a552664d89b26bc8de8a15e.jsonp",
+                        "src": "resources/CS1323_F_2015_Intro_to_Computer_Programming/380c0b190f6f7d4ced765008d44e815e20a9c9ac/90784fa2c5c148922446e05d45ff35f0aee3e69b.vtt",
+                        "type": "text/vtt",
+                        "lang": "en",
+                        "purpose": "normal"
+                    }
+                ]
+            },
+            "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_02.02.02_Vending_Machine": {
+                "MimeType": "application/vnd.nextthought.ntivideo",
+                "mimeType": "application/vnd.nextthought.ntivideo",
+                "description": "",
+                "creator": "Deborah Trytten",
+                "title": "Create a Vending Machine",
+                "closedCaptions": null,
+                "ntiid": "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_02.02.02_Vending_Machine",
+                "sources": [
+                    {
+                        "service": "kaltura",
+                        "width": 640,
+                        "poster": "//www.kaltura.com/p/1500101/thumbnail/entry_id/0_tt9d0kuk/width/1280/",
+                        "height": 480,
+                        "source": [
+                            "1500101:0_tt9d0kuk"
+                        ],
+                        "type": [
+                            "video/kaltura"
+                        ],
+                        "thumbnail": "//www.kaltura.com/p/1500101/thumbnail/entry_id/0_tt9d0kuk/width/640/"
+                    }
+                ],
+                "transcripts": [
+                    {
+                        "srcjsonp": "resources/CS1323_F_2015_Intro_to_Computer_Programming/ee1ce7fdd0b041c55dca6f7808fed27ec42b3251/9b3fe7737c9828ea6a552664d89b26bc8de8a15e.jsonp",
+                        "src": "resources/CS1323_F_2015_Intro_to_Computer_Programming/ee1ce7fdd0b041c55dca6f7808fed27ec42b3251/90784fa2c5c148922446e05d45ff35f0aee3e69b.vtt",
+                        "type": "text/vtt",
+                        "lang": "en",
+                        "purpose": "normal"
+                    }
+                ],
+                "slidedeck": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Vending_Machine"
+            },
+            "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_03.01.02_Explore_the_API": {
+                "MimeType": "application/vnd.nextthought.ntivideo",
+                "mimeType": "application/vnd.nextthought.ntivideo",
+                "description": "",
+                "creator": "Deborah Trytten",
+                "title": "Explore the API",
+                "closedCaptions": null,
+                "ntiid": "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_03.01.02_Explore_the_API",
+                "sources": [
+                    {
+                        "service": "kaltura",
+                        "width": 640,
+                        "poster": "//www.kaltura.com/p/1500101/thumbnail/entry_id/0_q243305f/width/1280/",
+                        "height": 480,
+                        "source": [
+                            "1500101:0_q243305f"
+                        ],
+                        "type": [
+                            "video/kaltura"
+                        ],
+                        "thumbnail": "//www.kaltura.com/p/1500101/thumbnail/entry_id/0_q243305f/width/640/"
+                    }
+                ],
+                "transcripts": [
+                    {
+                        "srcjsonp": "resources/CS1323_F_2015_Intro_to_Computer_Programming/a1d38df836a0ed86a83b3cf0232b34dcad91d14f/9b3fe7737c9828ea6a552664d89b26bc8de8a15e.jsonp",
+                        "src": "resources/CS1323_F_2015_Intro_to_Computer_Programming/a1d38df836a0ed86a83b3cf0232b34dcad91d14f/90784fa2c5c148922446e05d45ff35f0aee3e69b.vtt",
+                        "type": "text/vtt",
+                        "lang": "en",
+                        "purpose": "normal"
+                    }
+                ],
+                "slidedeck": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Explore_the_API"
+            },
+            "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_03.01.05_Classes_with_Generics": {
+                "MimeType": "application/vnd.nextthought.ntivideo",
+                "mimeType": "application/vnd.nextthought.ntivideo",
+                "description": "",
+                "creator": "Deborah Trytten",
+                "title": "Building a Sorted ArrayList",
+                "closedCaptions": null,
+                "ntiid": "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_03.01.05_Classes_with_Generics",
+                "sources": [
+                    {
+                        "service": "kaltura",
+                        "width": 640,
+                        "poster": "//www.kaltura.com/p/1500101/thumbnail/entry_id/0_3mh7rbyc/width/1280/",
+                        "height": 480,
+                        "source": [
+                            "1500101:0_3mh7rbyc"
+                        ],
+                        "type": [
+                            "video/kaltura"
+                        ],
+                        "thumbnail": "//www.kaltura.com/p/1500101/thumbnail/entry_id/0_3mh7rbyc/width/640/"
+                    }
+                ],
+                "transcripts": [
+                    {
+                        "srcjsonp": "resources/CS1323_F_2015_Intro_to_Computer_Programming/1989d33d2c1763184fc01a639635b4f52d131e54/9b3fe7737c9828ea6a552664d89b26bc8de8a15e.jsonp",
+                        "src": "resources/CS1323_F_2015_Intro_to_Computer_Programming/1989d33d2c1763184fc01a639635b4f52d131e54/90784fa2c5c148922446e05d45ff35f0aee3e69b.vtt",
+                        "type": "text/vtt",
+                        "lang": "en",
+                        "purpose": "normal"
+                    }
+                ],
+                "slidedeck": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Classes_with_Generics"
+            },
+            "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_02.02.04_Craps": {
+                "MimeType": "application/vnd.nextthought.ntivideo",
+                "mimeType": "application/vnd.nextthought.ntivideo",
+                "description": "",
+                "creator": "Deborah Trytten",
+                "title": "Craps: Iteration 2",
+                "closedCaptions": null,
+                "ntiid": "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_02.02.04_Craps",
+                "sources": [
+                    {
+                        "service": "kaltura",
+                        "width": 640,
+                        "poster": "//www.kaltura.com/p/1500101/thumbnail/entry_id/0_dc8msbvf/width/1280/",
+                        "height": 480,
+                        "source": [
+                            "1500101:0_dc8msbvf"
+                        ],
+                        "type": [
+                            "video/kaltura"
+                        ],
+                        "thumbnail": "//www.kaltura.com/p/1500101/thumbnail/entry_id/0_dc8msbvf/width/640/"
+                    }
+                ],
+                "transcripts": [
+                    {
+                        "srcjsonp": "resources/CS1323_F_2015_Intro_to_Computer_Programming/e1ffd0f7621c772f3820a0ddc141dff74d4c2010/9b3fe7737c9828ea6a552664d89b26bc8de8a15e.jsonp",
+                        "src": "resources/CS1323_F_2015_Intro_to_Computer_Programming/e1ffd0f7621c772f3820a0ddc141dff74d4c2010/90784fa2c5c148922446e05d45ff35f0aee3e69b.vtt",
+                        "type": "text/vtt",
+                        "lang": "en",
+                        "purpose": "normal"
+                    }
+                ],
+                "slidedeck": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Craps_2"
+            },
+            "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_02.01.03_Cell_Phone": {
+                "MimeType": "application/vnd.nextthought.ntivideo",
+                "mimeType": "application/vnd.nextthought.ntivideo",
+                "description": "",
+                "creator": "Deborah Trytten",
+                "title": "Choosing a Cell Phone Contract: Iteration 2",
+                "closedCaptions": null,
+                "ntiid": "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_02.01.03_Cell_Phone",
+                "sources": [
+                    {
+                        "service": "kaltura",
+                        "width": 640,
+                        "poster": "//www.kaltura.com/p/1500101/thumbnail/entry_id/0_6acfov89/width/1280/",
+                        "height": 480,
+                        "source": [
+                            "1500101:0_6acfov89"
+                        ],
+                        "type": [
+                            "video/kaltura"
+                        ],
+                        "thumbnail": "//www.kaltura.com/p/1500101/thumbnail/entry_id/0_6acfov89/width/640/"
+                    }
+                ],
+                "transcripts": [
+                    {
+                        "srcjsonp": "resources/CS1323_F_2015_Intro_to_Computer_Programming/e83ca2ea67449391c2ac93df00e62491e870c5d1/9b3fe7737c9828ea6a552664d89b26bc8de8a15e.jsonp",
+                        "src": "resources/CS1323_F_2015_Intro_to_Computer_Programming/e83ca2ea67449391c2ac93df00e62491e870c5d1/90784fa2c5c148922446e05d45ff35f0aee3e69b.vtt",
+                        "type": "text/vtt",
+                        "lang": "en",
+                        "purpose": "normal"
+                    }
+                ],
+                "slidedeck": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Cell_Phone_2"
+            },
+            "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_04.02.01_Control_Arrays": {
+                "MimeType": "application/vnd.nextthought.ntivideo",
+                "mimeType": "application/vnd.nextthought.ntivideo",
+                "description": "",
+                "creator": "Deborah Trytten",
+                "title": "Control Structures for Arrays",
+                "closedCaptions": null,
+                "ntiid": "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_04.02.01_Control_Arrays",
+                "sources": [
+                    {
+                        "service": "kaltura",
+                        "width": 640,
+                        "poster": "//www.kaltura.com/p/1500101/thumbnail/entry_id/0_8ofku4xd/width/1280/",
+                        "height": 480,
+                        "source": [
+                            "1500101:0_8ofku4xd"
+                        ],
+                        "type": [
+                            "video/kaltura"
+                        ],
+                        "thumbnail": "//www.kaltura.com/p/1500101/thumbnail/entry_id/0_8ofku4xd/width/640/"
+                    }
+                ],
+                "transcripts": [
+                    {
+                        "srcjsonp": "resources/CS1323_F_2015_Intro_to_Computer_Programming/b5b33ef2347c152cf6306c8365cdb7a6bdb74edf/9b3fe7737c9828ea6a552664d89b26bc8de8a15e.jsonp",
+                        "src": "resources/CS1323_F_2015_Intro_to_Computer_Programming/b5b33ef2347c152cf6306c8365cdb7a6bdb74edf/90784fa2c5c148922446e05d45ff35f0aee3e69b.vtt",
+                        "type": "text/vtt",
+                        "lang": "en",
+                        "purpose": "normal"
+                    }
+                ]
+            },
+            "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_05.01.03_Pseudo_ArrayList_Enforcing_the_Contract": {
+                "MimeType": "application/vnd.nextthought.ntivideo",
+                "mimeType": "application/vnd.nextthought.ntivideo",
+                "description": "",
+                "creator": "Deborah Trytten",
+                "title": "Pseudo ArrayList",
+                "closedCaptions": null,
+                "ntiid": "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_05.01.03_Pseudo_ArrayList_Enforcing_the_Contract",
+                "sources": [
+                    {
+                        "service": "kaltura",
+                        "width": 640,
+                        "poster": "//www.kaltura.com/p/1500101/thumbnail/entry_id/0_lfrii0yw/width/1280/",
+                        "height": 480,
+                        "source": [
+                            "1500101:0_lfrii0yw"
+                        ],
+                        "type": [
+                            "video/kaltura"
+                        ],
+                        "thumbnail": "//www.kaltura.com/p/1500101/thumbnail/entry_id/0_lfrii0yw/width/640/"
+                    }
+                ],
+                "transcripts": [
+                    {
+                        "srcjsonp": "resources/CS1323_F_2015_Intro_to_Computer_Programming/c178269b038739b73a730ad2690fa17e6b96d4b8/9b3fe7737c9828ea6a552664d89b26bc8de8a15e.jsonp",
+                        "src": "resources/CS1323_F_2015_Intro_to_Computer_Programming/c178269b038739b73a730ad2690fa17e6b96d4b8/90784fa2c5c148922446e05d45ff35f0aee3e69b.vtt",
+                        "type": "text/vtt",
+                        "lang": "en",
+                        "purpose": "normal"
+                    }
+                ]
+            },
+            "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_01.01.02_Mac": {
+                "MimeType": "application/vnd.nextthought.ntivideo",
+                "mimeType": "application/vnd.nextthought.ntivideo",
+                "description": "",
+                "creator": "Deborah Trytten",
+                "title": "Install Software on Macintosh",
+                "closedCaptions": null,
+                "ntiid": "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_01.01.02_Mac",
+                "sources": [
+                    {
+                        "service": "kaltura",
+                        "width": 640,
+                        "poster": "//www.kaltura.com/p/1500101/thumbnail/entry_id/0_06h42bu6/width/1280/",
+                        "height": 480,
+                        "source": [
+                            "1500101:0_06h42bu6"
+                        ],
+                        "type": [
+                            "video/kaltura"
+                        ],
+                        "thumbnail": "//www.kaltura.com/p/1500101/thumbnail/entry_id/0_06h42bu6/width/640/"
+                    }
+                ],
+                "transcripts": [
+                    {
+                        "srcjsonp": "resources/CS1323_F_2015_Intro_to_Computer_Programming/19c3d8f256236a87b6bea113a0d9f0250b2f5d78/9b3fe7737c9828ea6a552664d89b26bc8de8a15e.jsonp",
+                        "src": "resources/CS1323_F_2015_Intro_to_Computer_Programming/19c3d8f256236a87b6bea113a0d9f0250b2f5d78/90784fa2c5c148922446e05d45ff35f0aee3e69b.vtt",
+                        "type": "text/vtt",
+                        "lang": "en",
+                        "purpose": "normal"
+                    }
+                ],
+                "slidedeck": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Install_Mac"
+            },
+            "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_02.01.03_Swap_Data": {
+                "MimeType": "application/vnd.nextthought.ntivideo",
+                "mimeType": "application/vnd.nextthought.ntivideo",
+                "description": "",
+                "creator": "Deborah Trytten",
+                "title": "Swap and Rotate Data",
+                "closedCaptions": null,
+                "ntiid": "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_02.01.03_Swap_Data",
+                "sources": [
+                    {
+                        "service": "kaltura",
+                        "width": 640,
+                        "poster": "//www.kaltura.com/p/1500101/thumbnail/entry_id/0_pzu51j9e/width/1280/",
+                        "height": 480,
+                        "source": [
+                            "1500101:0_pzu51j9e"
+                        ],
+                        "type": [
+                            "video/kaltura"
+                        ],
+                        "thumbnail": "//www.kaltura.com/p/1500101/thumbnail/entry_id/0_pzu51j9e/width/640/"
+                    }
+                ],
+                "transcripts": [
+                    {
+                        "srcjsonp": "resources/CS1323_F_2015_Intro_to_Computer_Programming/6dc34e501c84a701f518c73f60088b9e14671a1a/9b3fe7737c9828ea6a552664d89b26bc8de8a15e.jsonp",
+                        "src": "resources/CS1323_F_2015_Intro_to_Computer_Programming/6dc34e501c84a701f518c73f60088b9e14671a1a/90784fa2c5c148922446e05d45ff35f0aee3e69b.vtt",
+                        "type": "text/vtt",
+                        "lang": "en",
+                        "purpose": "normal"
+                    }
+                ],
+                "slidedeck": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Swap_Data"
+            },
+            "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_03.01.04a_Class_Methods": {
+                "MimeType": "application/vnd.nextthought.ntivideo",
+                "mimeType": "application/vnd.nextthought.ntivideo",
+                "description": "",
+                "creator": "Deborah Trytten",
+                "title": "Converting String to int",
+                "closedCaptions": null,
+                "ntiid": "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_03.01.04a_Class_Methods",
+                "sources": [
+                    {
+                        "service": "kaltura",
+                        "width": 640,
+                        "poster": "//www.kaltura.com/p/1500101/thumbnail/entry_id/0_mezx4s8b/width/1280/",
+                        "height": 480,
+                        "source": [
+                            "1500101:0_mezx4s8b"
+                        ],
+                        "type": [
+                            "video/kaltura"
+                        ],
+                        "thumbnail": "//www.kaltura.com/p/1500101/thumbnail/entry_id/0_mezx4s8b/width/640/"
+                    }
+                ],
+                "transcripts": [
+                    {
+                        "srcjsonp": "resources/CS1323_F_2015_Intro_to_Computer_Programming/edf7b88dca7497a3f9e73d3986833ee9121fb1ef/9b3fe7737c9828ea6a552664d89b26bc8de8a15e.jsonp",
+                        "src": "resources/CS1323_F_2015_Intro_to_Computer_Programming/edf7b88dca7497a3f9e73d3986833ee9121fb1ef/90784fa2c5c148922446e05d45ff35f0aee3e69b.vtt",
+                        "type": "text/vtt",
+                        "lang": "en",
+                        "purpose": "normal"
+                    }
+                ],
+                "slidedeck": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Converting_String_to_int"
+            },
+            "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_04.02.02_Refining_Search": {
+                "MimeType": "application/vnd.nextthought.ntivideo",
+                "mimeType": "application/vnd.nextthought.ntivideo",
+                "description": "",
+                "creator": "Deborah Trytten",
+                "title": "Refining Search",
+                "closedCaptions": null,
+                "ntiid": "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_04.02.02_Refining_Search",
+                "sources": [
+                    {
+                        "service": "kaltura",
+                        "width": 640,
+                        "poster": "//www.kaltura.com/p/1500101/thumbnail/entry_id/1_p9tm7bgv/width/1280/",
+                        "height": 480,
+                        "source": [
+                            "1500101:1_p9tm7bgv"
+                        ],
+                        "type": [
+                            "video/kaltura"
+                        ],
+                        "thumbnail": "//www.kaltura.com/p/1500101/thumbnail/entry_id/1_p9tm7bgv/width/640/"
+                    }
+                ],
+                "transcripts": [
+                    {
+                        "srcjsonp": "resources/CS1323_F_2015_Intro_to_Computer_Programming/79169be78eaf9acb8fbb98e86b886caf0c3e14f7/9b3fe7737c9828ea6a552664d89b26bc8de8a15e.jsonp",
+                        "src": "resources/CS1323_F_2015_Intro_to_Computer_Programming/79169be78eaf9acb8fbb98e86b886caf0c3e14f7/90784fa2c5c148922446e05d45ff35f0aee3e69b.vtt",
+                        "type": "text/vtt",
+                        "lang": "en",
+                        "purpose": "normal"
+                    }
+                ],
+                "slidedeck": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Refining_Search"
+            },
+            "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_02.02.03_Craps": {
+                "MimeType": "application/vnd.nextthought.ntivideo",
+                "mimeType": "application/vnd.nextthought.ntivideo",
+                "description": "",
+                "creator": "Deborah Trytten",
+                "title": "Craps: Iteration 1",
+                "closedCaptions": null,
+                "ntiid": "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_02.02.03_Craps",
+                "sources": [
+                    {
+                        "service": "kaltura",
+                        "width": 640,
+                        "poster": "//www.kaltura.com/p/1500101/thumbnail/entry_id/0_zbv75ggi/width/1280/",
+                        "height": 480,
+                        "source": [
+                            "1500101:0_zbv75ggi"
+                        ],
+                        "type": [
+                            "video/kaltura"
+                        ],
+                        "thumbnail": "//www.kaltura.com/p/1500101/thumbnail/entry_id/0_zbv75ggi/width/640/"
+                    }
+                ],
+                "transcripts": [
+                    {
+                        "srcjsonp": "resources/CS1323_F_2015_Intro_to_Computer_Programming/e7db17753b82d1f0070d20e5b4639f57a79ddf10/9b3fe7737c9828ea6a552664d89b26bc8de8a15e.jsonp",
+                        "src": "resources/CS1323_F_2015_Intro_to_Computer_Programming/e7db17753b82d1f0070d20e5b4639f57a79ddf10/90784fa2c5c148922446e05d45ff35f0aee3e69b.vtt",
+                        "type": "text/vtt",
+                        "lang": "en",
+                        "purpose": "normal"
+                    }
+                ],
+                "slidedeck": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Craps_1"
+            },
+            "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_02.01.02_Storing_Primitive_Data": {
+                "MimeType": "application/vnd.nextthought.ntivideo",
+                "mimeType": "application/vnd.nextthought.ntivideo",
+                "description": "",
+                "creator": "Deborah Trytten",
+                "title": "int and double",
+                "closedCaptions": null,
+                "ntiid": "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_02.01.02_Storing_Primitive_Data",
+                "sources": [
+                    {
+                        "service": "kaltura",
+                        "width": 640,
+                        "poster": "//www.kaltura.com/p/1500101/thumbnail/entry_id/0_p6vf9qwj/width/1280/",
+                        "height": 480,
+                        "source": [
+                            "1500101:0_p6vf9qwj"
+                        ],
+                        "type": [
+                            "video/kaltura"
+                        ],
+                        "thumbnail": "//www.kaltura.com/p/1500101/thumbnail/entry_id/0_p6vf9qwj/width/640/"
+                    }
+                ],
+                "transcripts": [
+                    {
+                        "srcjsonp": "resources/CS1323_F_2015_Intro_to_Computer_Programming/0f882365e2590a82e755479292647f647e720aea/9b3fe7737c9828ea6a552664d89b26bc8de8a15e.jsonp",
+                        "src": "resources/CS1323_F_2015_Intro_to_Computer_Programming/0f882365e2590a82e755479292647f647e720aea/90784fa2c5c148922446e05d45ff35f0aee3e69b.vtt",
+                        "type": "text/vtt",
+                        "lang": "en",
+                        "purpose": "normal"
+                    }
+                ],
+                "slidedeck": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Storing_Primitive_Data"
+            },
+            "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_02.02.04_Javabat": {
+                "MimeType": "application/vnd.nextthought.ntivideo",
+                "mimeType": "application/vnd.nextthought.ntivideo",
+                "description": "",
+                "creator": "Deborah Trytten",
+                "title": "Javabat",
+                "closedCaptions": null,
+                "ntiid": "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_02.02.04_Javabat",
+                "sources": [
+                    {
+                        "service": "kaltura",
+                        "width": 640,
+                        "poster": "//www.kaltura.com/p/1500101/thumbnail/entry_id/0_sujttowt/width/1280/",
+                        "height": 480,
+                        "source": [
+                            "1500101:0_sujttowt"
+                        ],
+                        "type": [
+                            "video/kaltura"
+                        ],
+                        "thumbnail": "//www.kaltura.com/p/1500101/thumbnail/entry_id/0_sujttowt/width/640/"
+                    }
+                ],
+                "transcripts": [
+                    {
+                        "srcjsonp": "resources/CS1323_F_2015_Intro_to_Computer_Programming/c80c409521ab1ad8075e334f6879668f96c8b38d/9b3fe7737c9828ea6a552664d89b26bc8de8a15e.jsonp",
+                        "src": "resources/CS1323_F_2015_Intro_to_Computer_Programming/c80c409521ab1ad8075e334f6879668f96c8b38d/90784fa2c5c148922446e05d45ff35f0aee3e69b.vtt",
+                        "type": "text/vtt",
+                        "lang": "en",
+                        "purpose": "normal"
+                    }
+                ],
+                "slidedeck": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:How_To_Use_JavaBat"
+            },
+            "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_02.10.01_Dropping": {
+                "MimeType": "application/vnd.nextthought.ntivideo",
+                "mimeType": "application/vnd.nextthought.ntivideo",
+                "description": "",
+                "creator": "Deborah Trytten",
+                "title": "Dropping the Lowest Midterm Grade",
+                "closedCaptions": null,
+                "ntiid": "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_02.10.01_Dropping",
+                "sources": [
+                    {
+                        "service": "kaltura",
+                        "width": 640,
+                        "poster": "//www.kaltura.com/p/1500101/thumbnail/entry_id/0_2j5begap/width/1280/",
+                        "height": 480,
+                        "source": [
+                            "1500101:0_2j5begap"
+                        ],
+                        "type": [
+                            "video/kaltura"
+                        ],
+                        "thumbnail": "//www.kaltura.com/p/1500101/thumbnail/entry_id/0_2j5begap/width/640/"
+                    }
+                ],
+                "transcripts": [
+                    {
+                        "srcjsonp": "resources/CS1323_F_2015_Intro_to_Computer_Programming/910d84f8f8d4e65e23b90b0cd3eec77bb1af71ea/9b3fe7737c9828ea6a552664d89b26bc8de8a15e.jsonp",
+                        "src": "resources/CS1323_F_2015_Intro_to_Computer_Programming/910d84f8f8d4e65e23b90b0cd3eec77bb1af71ea/90784fa2c5c148922446e05d45ff35f0aee3e69b.vtt",
+                        "type": "text/vtt",
+                        "lang": "en",
+                        "purpose": "normal"
+                    }
+                ],
+                "slidedeck": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Dropping"
+            },
+            "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_01.02.01_How_to_with_Janux_PP": {
+                "MimeType": "application/vnd.nextthought.ntivideo",
+                "mimeType": "application/vnd.nextthought.ntivideo",
+                "description": "",
+                "creator": "Deborah Trytten",
+                "title": "How to Work with Janux PowerPoint",
+                "closedCaptions": null,
+                "ntiid": "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_01.02.01_How_to_with_Janux_PP",
+                "sources": [
+                    {
+                        "service": "kaltura",
+                        "width": 640,
+                        "poster": "//www.kaltura.com/p/1500101/thumbnail/entry_id//width/1280/",
+                        "height": 480,
+                        "source": [
+                            "1500101:"
+                        ],
+                        "type": [
+                            "video/kaltura"
+                        ],
+                        "thumbnail": "//www.kaltura.com/p/1500101/thumbnail/entry_id//width/640/"
+                    }
+                ],
+                "transcripts": []
+            },
+            "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_03.02.05_Debugging": {
+                "MimeType": "application/vnd.nextthought.ntivideo",
+                "mimeType": "application/vnd.nextthought.ntivideo",
+                "description": "",
+                "creator": "Deborah Trytten",
+                "title": "Building and Debugging Programs",
+                "closedCaptions": null,
+                "ntiid": "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_03.02.05_Debugging",
+                "sources": [
+                    {
+                        "service": "kaltura",
+                        "width": 640,
+                        "poster": "//www.kaltura.com/p/1500101/thumbnail/entry_id/0_30h6tjiv/width/1280/",
+                        "height": 480,
+                        "source": [
+                            "1500101:0_30h6tjiv"
+                        ],
+                        "type": [
+                            "video/kaltura"
+                        ],
+                        "thumbnail": "//www.kaltura.com/p/1500101/thumbnail/entry_id/0_30h6tjiv/width/640/"
+                    }
+                ],
+                "transcripts": [
+                    {
+                        "srcjsonp": "resources/CS1323_F_2015_Intro_to_Computer_Programming/c957d379e6d6babbfd3e5151e77909cd0861d3e9/9b3fe7737c9828ea6a552664d89b26bc8de8a15e.jsonp",
+                        "src": "resources/CS1323_F_2015_Intro_to_Computer_Programming/c957d379e6d6babbfd3e5151e77909cd0861d3e9/90784fa2c5c148922446e05d45ff35f0aee3e69b.vtt",
+                        "type": "text/vtt",
+                        "lang": "en",
+                        "purpose": "normal"
+                    }
+                ]
+            },
+            "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_05.01.04_Two_Patterns_Aggregation": {
+                "MimeType": "application/vnd.nextthought.ntivideo",
+                "mimeType": "application/vnd.nextthought.ntivideo",
+                "description": "",
+                "creator": "Deborah Trytten",
+                "title": "Two Patterns",
+                "closedCaptions": null,
+                "ntiid": "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_05.01.04_Two_Patterns_Aggregation",
+                "sources": [
+                    {
+                        "service": "kaltura",
+                        "width": 640,
+                        "poster": "//www.kaltura.com/p/1500101/thumbnail/entry_id/0_8bf3j59o/width/1280/",
+                        "height": 480,
+                        "source": [
+                            "1500101:0_8bf3j59o"
+                        ],
+                        "type": [
+                            "video/kaltura"
+                        ],
+                        "thumbnail": "//www.kaltura.com/p/1500101/thumbnail/entry_id/0_8bf3j59o/width/640/"
+                    }
+                ],
+                "transcripts": [
+                    {
+                        "srcjsonp": "resources/CS1323_F_2015_Intro_to_Computer_Programming/a19772a76697b6f7cad810a69e3b61ea55e81995/9b3fe7737c9828ea6a552664d89b26bc8de8a15e.jsonp",
+                        "src": "resources/CS1323_F_2015_Intro_to_Computer_Programming/a19772a76697b6f7cad810a69e3b61ea55e81995/90784fa2c5c148922446e05d45ff35f0aee3e69b.vtt",
+                        "type": "text/vtt",
+                        "lang": "en",
+                        "purpose": "normal"
+                    }
+                ]
+            },
+            "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_05.01.02_Pseudo_ArrayList_Classes_as_Contract": {
+                "MimeType": "application/vnd.nextthought.ntivideo",
+                "mimeType": "application/vnd.nextthought.ntivideo",
+                "description": "",
+                "creator": "Deborah Trytten",
+                "title": "Pseudo ArrayList",
+                "closedCaptions": null,
+                "ntiid": "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_05.01.02_Pseudo_ArrayList_Classes_as_Contract",
+                "sources": [
+                    {
+                        "service": "kaltura",
+                        "width": 640,
+                        "poster": "//www.kaltura.com/p/1500101/thumbnail/entry_id/0_iwi479do/width/1280/",
+                        "height": 480,
+                        "source": [
+                            "1500101:0_iwi479do"
+                        ],
+                        "type": [
+                            "video/kaltura"
+                        ],
+                        "thumbnail": "//www.kaltura.com/p/1500101/thumbnail/entry_id/0_iwi479do/width/640/"
+                    }
+                ],
+                "transcripts": [
+                    {
+                        "srcjsonp": "resources/CS1323_F_2015_Intro_to_Computer_Programming/dc8ae61e25641c011e9e4eee93906121987b5032/9b3fe7737c9828ea6a552664d89b26bc8de8a15e.jsonp",
+                        "src": "resources/CS1323_F_2015_Intro_to_Computer_Programming/dc8ae61e25641c011e9e4eee93906121987b5032/90784fa2c5c148922446e05d45ff35f0aee3e69b.vtt",
+                        "type": "text/vtt",
+                        "lang": "en",
+                        "purpose": "normal"
+                    }
+                ]
+            },
+            "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_05.01.03_Frogger_2": {
+                "MimeType": "application/vnd.nextthought.ntivideo",
+                "mimeType": "application/vnd.nextthought.ntivideo",
+                "description": "",
+                "creator": "Deborah Trytten",
+                "title": "Frogger Iteration 2",
+                "closedCaptions": null,
+                "ntiid": "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_05.01.03_Frogger_2",
+                "sources": [
+                    {
+                        "service": "kaltura",
+                        "width": 640,
+                        "poster": "//www.kaltura.com/p/1500101/thumbnail/entry_id/1_cwrt3sqk/width/1280/",
+                        "height": 480,
+                        "source": [
+                            "1500101:1_cwrt3sqk"
+                        ],
+                        "type": [
+                            "video/kaltura"
+                        ],
+                        "thumbnail": "//www.kaltura.com/p/1500101/thumbnail/entry_id/1_cwrt3sqk/width/640/"
+                    }
+                ],
+                "transcripts": [
+                    {
+                        "srcjsonp": "resources/CS1323_F_2015_Intro_to_Computer_Programming/50d58579ff2c3b1a09fdcc4d9796a1863fa8440a/9b3fe7737c9828ea6a552664d89b26bc8de8a15e.jsonp",
+                        "src": "resources/CS1323_F_2015_Intro_to_Computer_Programming/50d58579ff2c3b1a09fdcc4d9796a1863fa8440a/90784fa2c5c148922446e05d45ff35f0aee3e69b.vtt",
+                        "type": "text/vtt",
+                        "lang": "en",
+                        "purpose": "normal"
+                    }
+                ]
+            },
+            "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_03.02.02_Collections": {
+                "MimeType": "application/vnd.nextthought.ntivideo",
+                "mimeType": "application/vnd.nextthought.ntivideo",
+                "description": "",
+                "creator": "Deborah Trytten",
+                "title": "Collections and Java Idioms",
+                "closedCaptions": null,
+                "ntiid": "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_03.02.02_Collections",
+                "sources": [
+                    {
+                        "service": "kaltura",
+                        "width": 640,
+                        "poster": "//www.kaltura.com/p/1500101/thumbnail/entry_id/0_jrlv3pcy/width/1280/",
+                        "height": 480,
+                        "source": [
+                            "1500101:0_jrlv3pcy"
+                        ],
+                        "type": [
+                            "video/kaltura"
+                        ],
+                        "thumbnail": "//www.kaltura.com/p/1500101/thumbnail/entry_id/0_jrlv3pcy/width/640/"
+                    }
+                ],
+                "transcripts": [
+                    {
+                        "srcjsonp": "resources/CS1323_F_2015_Intro_to_Computer_Programming/4fa3053a7a20b648d573a2b9fe8fc31bf6c51ae6/9b3fe7737c9828ea6a552664d89b26bc8de8a15e.jsonp",
+                        "src": "resources/CS1323_F_2015_Intro_to_Computer_Programming/4fa3053a7a20b648d573a2b9fe8fc31bf6c51ae6/90784fa2c5c148922446e05d45ff35f0aee3e69b.vtt",
+                        "type": "text/vtt",
+                        "lang": "en",
+                        "purpose": "normal"
+                    }
+                ]
+            },
+            "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_04.02.06_Statistics": {
+                "MimeType": "application/vnd.nextthought.ntivideo",
+                "mimeType": "application/vnd.nextthought.ntivideo",
+                "description": "",
+                "creator": "Deborah Trytten",
+                "title": "How to Lie With Statistics",
+                "closedCaptions": null,
+                "ntiid": "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_04.02.06_Statistics",
+                "sources": [
+                    {
+                        "service": "kaltura",
+                        "width": 640,
+                        "poster": "//www.kaltura.com/p/1500101/thumbnail/entry_id/1_1gehv3f2/width/1280/",
+                        "height": 480,
+                        "source": [
+                            "1500101:1_1gehv3f2"
+                        ],
+                        "type": [
+                            "video/kaltura"
+                        ],
+                        "thumbnail": "//www.kaltura.com/p/1500101/thumbnail/entry_id/1_1gehv3f2/width/640/"
+                    }
+                ],
+                "transcripts": [
+                    {
+                        "srcjsonp": "resources/CS1323_F_2015_Intro_to_Computer_Programming/d5ee414ec752c13a5a5c9038ee271997703cf4d5/9b3fe7737c9828ea6a552664d89b26bc8de8a15e.jsonp",
+                        "src": "resources/CS1323_F_2015_Intro_to_Computer_Programming/d5ee414ec752c13a5a5c9038ee271997703cf4d5/90784fa2c5c148922446e05d45ff35f0aee3e69b.vtt",
+                        "type": "text/vtt",
+                        "lang": "en",
+                        "purpose": "normal"
+                    }
+                ],
+                "slidedeck": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Statistics"
+            },
+            "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_04.02.06_Debugging": {
+                "MimeType": "application/vnd.nextthought.ntivideo",
+                "mimeType": "application/vnd.nextthought.ntivideo",
+                "description": "",
+                "creator": "Deborah Trytten",
+                "title": "Building and Debugging Programs",
+                "closedCaptions": null,
+                "ntiid": "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_04.02.06_Debugging",
+                "sources": [
+                    {
+                        "service": "kaltura",
+                        "width": 640,
+                        "poster": "//www.kaltura.com/p/1500101/thumbnail/entry_id/0_svbdy6ao/width/1280/",
+                        "height": 480,
+                        "source": [
+                            "1500101:0_svbdy6ao"
+                        ],
+                        "type": [
+                            "video/kaltura"
+                        ],
+                        "thumbnail": "//www.kaltura.com/p/1500101/thumbnail/entry_id/0_svbdy6ao/width/640/"
+                    }
+                ],
+                "transcripts": [
+                    {
+                        "srcjsonp": "resources/CS1323_F_2015_Intro_to_Computer_Programming/8d1ca6b2a230f0011619d0ae8fd59d38b52222d6/9b3fe7737c9828ea6a552664d89b26bc8de8a15e.jsonp",
+                        "src": "resources/CS1323_F_2015_Intro_to_Computer_Programming/8d1ca6b2a230f0011619d0ae8fd59d38b52222d6/90784fa2c5c148922446e05d45ff35f0aee3e69b.vtt",
+                        "type": "text/vtt",
+                        "lang": "en",
+                        "purpose": "normal"
+                    }
+                ]
+            },
+            "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_03.01.06_Best_Shoes": {
+                "MimeType": "application/vnd.nextthought.ntivideo",
+                "mimeType": "application/vnd.nextthought.ntivideo",
+                "description": "",
+                "creator": "Deborah Trytten",
+                "title": "Pay Best Shoes BOGOF",
+                "closedCaptions": null,
+                "ntiid": "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_03.01.06_Best_Shoes",
+                "sources": [
+                    {
+                        "service": "kaltura",
+                        "width": 640,
+                        "poster": "//www.kaltura.com/p/1500101/thumbnail/entry_id/0_0ffkyfsv/width/1280/",
+                        "height": 480,
+                        "source": [
+                            "1500101:0_0ffkyfsv"
+                        ],
+                        "type": [
+                            "video/kaltura"
+                        ],
+                        "thumbnail": "//www.kaltura.com/p/1500101/thumbnail/entry_id/0_0ffkyfsv/width/640/"
+                    }
+                ],
+                "transcripts": [
+                    {
+                        "srcjsonp": "resources/CS1323_F_2015_Intro_to_Computer_Programming/ff81ad4a350d1bf29ebeecc31846b899d4c259fe/9b3fe7737c9828ea6a552664d89b26bc8de8a15e.jsonp",
+                        "src": "resources/CS1323_F_2015_Intro_to_Computer_Programming/ff81ad4a350d1bf29ebeecc31846b899d4c259fe/90784fa2c5c148922446e05d45ff35f0aee3e69b.vtt",
+                        "type": "text/vtt",
+                        "lang": "en",
+                        "purpose": "normal"
+                    }
+                ]
+            },
+            "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_02.01.02_How_to_Turingscraft": {
+                "MimeType": "application/vnd.nextthought.ntivideo",
+                "mimeType": "application/vnd.nextthought.ntivideo",
+                "description": "",
+                "creator": "Deborah Trytten",
+                "title": "How to Work with Turingscraft",
+                "closedCaptions": null,
+                "ntiid": "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_02.01.02_How_to_Turingscraft",
+                "sources": [
+                    {
+                        "service": "kaltura",
+                        "width": 640,
+                        "poster": "//www.kaltura.com/p/1500101/thumbnail/entry_id/0_oh2n8z0b/width/1280/",
+                        "height": 480,
+                        "source": [
+                            "1500101:0_oh2n8z0b"
+                        ],
+                        "type": [
+                            "video/kaltura"
+                        ],
+                        "thumbnail": "//www.kaltura.com/p/1500101/thumbnail/entry_id/0_oh2n8z0b/width/640/"
+                    }
+                ],
+                "transcripts": [
+                    {
+                        "srcjsonp": "resources/CS1323_F_2015_Intro_to_Computer_Programming/45af12e9e9348e397bf91257741c98c28ca8ee55/9b3fe7737c9828ea6a552664d89b26bc8de8a15e.jsonp",
+                        "src": "resources/CS1323_F_2015_Intro_to_Computer_Programming/45af12e9e9348e397bf91257741c98c28ca8ee55/90784fa2c5c148922446e05d45ff35f0aee3e69b.vtt",
+                        "type": "text/vtt",
+                        "lang": "en",
+                        "purpose": "normal"
+                    }
+                ],
+                "slidedeck": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:How_To_Use_Turingscraft"
+            },
+            "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_03.01.03_Texas_Infiltration": {
+                "MimeType": "application/vnd.nextthought.ntivideo",
+                "mimeType": "application/vnd.nextthought.ntivideo",
+                "description": "",
+                "creator": "Deborah Trytten",
+                "title": "Texas Infiltration",
+                "closedCaptions": null,
+                "ntiid": "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_03.01.03_Texas_Infiltration",
+                "sources": [
+                    {
+                        "service": "kaltura",
+                        "width": 640,
+                        "poster": "//www.kaltura.com/p/1500101/thumbnail/entry_id/0_wwd946tt/width/1280/",
+                        "height": 480,
+                        "source": [
+                            "1500101:0_wwd946tt"
+                        ],
+                        "type": [
+                            "video/kaltura"
+                        ],
+                        "thumbnail": "//www.kaltura.com/p/1500101/thumbnail/entry_id/0_wwd946tt/width/640/"
+                    }
+                ],
+                "transcripts": [
+                    {
+                        "srcjsonp": "resources/CS1323_F_2015_Intro_to_Computer_Programming/2e11dd9d5d4722e2a5b53dac3fa9ed2db67b7bf1/9b3fe7737c9828ea6a552664d89b26bc8de8a15e.jsonp",
+                        "src": "resources/CS1323_F_2015_Intro_to_Computer_Programming/2e11dd9d5d4722e2a5b53dac3fa9ed2db67b7bf1/90784fa2c5c148922446e05d45ff35f0aee3e69b.vtt",
+                        "type": "text/vtt",
+                        "lang": "en",
+                        "purpose": "normal"
+                    }
+                ],
+                "slidedeck": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:MostPopularDomain"
+            },
+            "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_01.01.02_Windows": {
+                "MimeType": "application/vnd.nextthought.ntivideo",
+                "mimeType": "application/vnd.nextthought.ntivideo",
+                "description": "",
+                "creator": "Deborah Trytten",
+                "title": "Install Software on a Windows Machine",
+                "closedCaptions": null,
+                "ntiid": "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_01.01.02_Windows",
+                "sources": [
+                    {
+                        "service": "kaltura",
+                        "width": 640,
+                        "poster": "//www.kaltura.com/p/1500101/thumbnail/entry_id/0_936y4imv/width/1280/",
+                        "height": 480,
+                        "source": [
+                            "1500101:0_936y4imv"
+                        ],
+                        "type": [
+                            "video/kaltura"
+                        ],
+                        "thumbnail": "//www.kaltura.com/p/1500101/thumbnail/entry_id/0_936y4imv/width/640/"
+                    }
+                ],
+                "transcripts": [
+                    {
+                        "srcjsonp": "resources/CS1323_F_2015_Intro_to_Computer_Programming/7022c251f240f070d99012b52d3172a32c58bc97/9b3fe7737c9828ea6a552664d89b26bc8de8a15e.jsonp",
+                        "src": "resources/CS1323_F_2015_Intro_to_Computer_Programming/7022c251f240f070d99012b52d3172a32c58bc97/90784fa2c5c148922446e05d45ff35f0aee3e69b.vtt",
+                        "type": "text/vtt",
+                        "lang": "en",
+                        "purpose": "normal"
+                    }
+                ],
+                "slidedeck": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Install_PC"
+            },
+            "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_05.01.05_Greyhound_Adoption": {
+                "MimeType": "application/vnd.nextthought.ntivideo",
+                "mimeType": "application/vnd.nextthought.ntivideo",
+                "description": "",
+                "creator": "Deborah Trytten",
+                "title": "Greyhound Adoption",
+                "closedCaptions": null,
+                "ntiid": "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_05.01.05_Greyhound_Adoption",
+                "sources": [
+                    {
+                        "service": "kaltura",
+                        "width": 640,
+                        "poster": "//www.kaltura.com/p/1500101/thumbnail/entry_id/0_b069qgxb/width/1280/",
+                        "height": 480,
+                        "source": [
+                            "1500101:0_b069qgxb"
+                        ],
+                        "type": [
+                            "video/kaltura"
+                        ],
+                        "thumbnail": "//www.kaltura.com/p/1500101/thumbnail/entry_id/0_b069qgxb/width/640/"
+                    }
+                ],
+                "transcripts": [
+                    {
+                        "srcjsonp": "resources/CS1323_F_2015_Intro_to_Computer_Programming/5ee0813813af971e1de13320ff53916c3258fa8b/9b3fe7737c9828ea6a552664d89b26bc8de8a15e.jsonp",
+                        "src": "resources/CS1323_F_2015_Intro_to_Computer_Programming/5ee0813813af971e1de13320ff53916c3258fa8b/90784fa2c5c148922446e05d45ff35f0aee3e69b.vtt",
+                        "type": "text/vtt",
+                        "lang": "en",
+                        "purpose": "normal"
+                    }
+                ]
+            },
+            "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_03.01.05_Persistent_List": {
+                "MimeType": "application/vnd.nextthought.ntivideo",
+                "mimeType": "application/vnd.nextthought.ntivideo",
+                "description": "",
+                "creator": "Deborah Trytten",
+                "title": "Persistent List",
+                "closedCaptions": null,
+                "ntiid": "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_03.01.05_Persistent_List",
+                "sources": [
+                    {
+                        "service": "kaltura",
+                        "width": 640,
+                        "poster": "//www.kaltura.com/p/1500101/thumbnail/entry_id/0_4lkib3vc/width/1280/",
+                        "height": 480,
+                        "source": [
+                            "1500101:0_4lkib3vc"
+                        ],
+                        "type": [
+                            "video/kaltura"
+                        ],
+                        "thumbnail": "//www.kaltura.com/p/1500101/thumbnail/entry_id/0_4lkib3vc/width/640/"
+                    }
+                ],
+                "transcripts": [
+                    {
+                        "srcjsonp": "resources/CS1323_F_2015_Intro_to_Computer_Programming/cbf04bec817f94c4abb4f929e578e00d12106a74/9b3fe7737c9828ea6a552664d89b26bc8de8a15e.jsonp",
+                        "src": "resources/CS1323_F_2015_Intro_to_Computer_Programming/cbf04bec817f94c4abb4f929e578e00d12106a74/90784fa2c5c148922446e05d45ff35f0aee3e69b.vtt",
+                        "type": "text/vtt",
+                        "lang": "en",
+                        "purpose": "normal"
+                    }
+                ],
+                "slidedeck": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:List_Maker"
+            },
+            "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_03.02.04_Searching_2": {
+                "MimeType": "application/vnd.nextthought.ntivideo",
+                "mimeType": "application/vnd.nextthought.ntivideo",
+                "description": "",
+                "creator": "Deborah Trytten",
+                "title": "Redact File",
+                "closedCaptions": null,
+                "ntiid": "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_03.02.04_Searching_2",
+                "sources": [
+                    {
+                        "service": "kaltura",
+                        "width": 640,
+                        "poster": "//www.kaltura.com/p/1500101/thumbnail/entry_id/0_7tu8cyg4/width/1280/",
+                        "height": 480,
+                        "source": [
+                            "1500101:0_7tu8cyg4"
+                        ],
+                        "type": [
+                            "video/kaltura"
+                        ],
+                        "thumbnail": "//www.kaltura.com/p/1500101/thumbnail/entry_id/0_7tu8cyg4/width/640/"
+                    }
+                ],
+                "transcripts": [
+                    {
+                        "srcjsonp": "resources/CS1323_F_2015_Intro_to_Computer_Programming/1927233f7f00fa2cd858f273b08c7b357f012fa1/9b3fe7737c9828ea6a552664d89b26bc8de8a15e.jsonp",
+                        "src": "resources/CS1323_F_2015_Intro_to_Computer_Programming/1927233f7f00fa2cd858f273b08c7b357f012fa1/90784fa2c5c148922446e05d45ff35f0aee3e69b.vtt",
+                        "type": "text/vtt",
+                        "lang": "en",
+                        "purpose": "normal"
+                    }
+                ]
+            },
+            "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_02.02.01_Control_Structures": {
+                "MimeType": "application/vnd.nextthought.ntivideo",
+                "mimeType": "application/vnd.nextthought.ntivideo",
+                "description": "",
+                "creator": "Deborah Trytten",
+                "title": "Introduction to Control Structures",
+                "closedCaptions": null,
+                "ntiid": "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_02.02.01_Control_Structures",
+                "sources": [
+                    {
+                        "service": "kaltura",
+                        "width": 640,
+                        "poster": "//www.kaltura.com/p/1500101/thumbnail/entry_id/0_cs2gsv11/width/1280/",
+                        "height": 480,
+                        "source": [
+                            "1500101:0_cs2gsv11"
+                        ],
+                        "type": [
+                            "video/kaltura"
+                        ],
+                        "thumbnail": "//www.kaltura.com/p/1500101/thumbnail/entry_id/0_cs2gsv11/width/640/"
+                    }
+                ],
+                "transcripts": [
+                    {
+                        "srcjsonp": "resources/CS1323_F_2015_Intro_to_Computer_Programming/0d98798f737fe950f4e90bdd71d1ce0e37b68f1b/9b3fe7737c9828ea6a552664d89b26bc8de8a15e.jsonp",
+                        "src": "resources/CS1323_F_2015_Intro_to_Computer_Programming/0d98798f737fe950f4e90bdd71d1ce0e37b68f1b/90784fa2c5c148922446e05d45ff35f0aee3e69b.vtt",
+                        "type": "text/vtt",
+                        "lang": "en",
+                        "purpose": "normal"
+                    }
+                ]
+            },
+            "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_02.02.02_Cell_Phone": {
+                "MimeType": "application/vnd.nextthought.ntivideo",
+                "mimeType": "application/vnd.nextthought.ntivideo",
+                "description": "",
+                "creator": "Deborah Trytten",
+                "title": "Choosing a Cell Phone Contract: Iteration 4",
+                "closedCaptions": null,
+                "ntiid": "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_02.02.02_Cell_Phone",
+                "sources": [
+                    {
+                        "service": "kaltura",
+                        "width": 640,
+                        "poster": "//www.kaltura.com/p/1500101/thumbnail/entry_id/0_3ebf5hgo/width/1280/",
+                        "height": 480,
+                        "source": [
+                            "1500101:0_3ebf5hgo"
+                        ],
+                        "type": [
+                            "video/kaltura"
+                        ],
+                        "thumbnail": "//www.kaltura.com/p/1500101/thumbnail/entry_id/0_3ebf5hgo/width/640/"
+                    }
+                ],
+                "transcripts": [
+                    {
+                        "srcjsonp": "resources/CS1323_F_2015_Intro_to_Computer_Programming/463bfa140a4fbda28f7740b06b3f29125324dcaa/9b3fe7737c9828ea6a552664d89b26bc8de8a15e.jsonp",
+                        "src": "resources/CS1323_F_2015_Intro_to_Computer_Programming/463bfa140a4fbda28f7740b06b3f29125324dcaa/90784fa2c5c148922446e05d45ff35f0aee3e69b.vtt",
+                        "type": "text/vtt",
+                        "lang": "en",
+                        "purpose": "normal"
+                    }
+                ],
+                "slidedeck": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Cell_Phone_4"
+            },
+            "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_02.01.01_Primative": {
+                "MimeType": "application/vnd.nextthought.ntivideo",
+                "mimeType": "application/vnd.nextthought.ntivideo",
+                "description": "",
+                "creator": "Deborah Trytten",
+                "title": "Introduction to Using Primitive Data Types in Programs",
+                "closedCaptions": null,
+                "ntiid": "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_02.01.01_Primative",
+                "sources": [
+                    {
+                        "service": "kaltura",
+                        "width": 640,
+                        "poster": "//www.kaltura.com/p/1500101/thumbnail/entry_id/0_0eebzb0u/width/1280/",
+                        "height": 480,
+                        "source": [
+                            "1500101:0_0eebzb0u"
+                        ],
+                        "type": [
+                            "video/kaltura"
+                        ],
+                        "thumbnail": "//www.kaltura.com/p/1500101/thumbnail/entry_id/0_0eebzb0u/width/640/"
+                    }
+                ],
+                "transcripts": [
+                    {
+                        "srcjsonp": "resources/CS1323_F_2015_Intro_to_Computer_Programming/d5fbb6572842bffc21e50a2f27d50871cdf40502/9b3fe7737c9828ea6a552664d89b26bc8de8a15e.jsonp",
+                        "src": "resources/CS1323_F_2015_Intro_to_Computer_Programming/d5fbb6572842bffc21e50a2f27d50871cdf40502/90784fa2c5c148922446e05d45ff35f0aee3e69b.vtt",
+                        "type": "text/vtt",
+                        "lang": "en",
+                        "purpose": "normal"
+                    }
+                ]
+            },
+            "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_03.01.02a_References_and_Constructors": {
+                "MimeType": "application/vnd.nextthought.ntivideo",
+                "mimeType": "application/vnd.nextthought.ntivideo",
+                "description": "",
+                "creator": "Deborah Trytten",
+                "title": " References and Constructors",
+                "closedCaptions": null,
+                "ntiid": "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_03.01.02a_References_and_Constructors",
+                "sources": [
+                    {
+                        "service": "kaltura",
+                        "width": 640,
+                        "poster": "//www.kaltura.com/p/1500101/thumbnail/entry_id/0_56tt7sxc/width/1280/",
+                        "height": 480,
+                        "source": [
+                            "1500101:0_56tt7sxc"
+                        ],
+                        "type": [
+                            "video/kaltura"
+                        ],
+                        "thumbnail": "//www.kaltura.com/p/1500101/thumbnail/entry_id/0_56tt7sxc/width/640/"
+                    }
+                ],
+                "transcripts": [
+                    {
+                        "srcjsonp": "resources/CS1323_F_2015_Intro_to_Computer_Programming/11019c3b5f4d1936a562abff3f4ad7faf2bd0e01/9b3fe7737c9828ea6a552664d89b26bc8de8a15e.jsonp",
+                        "src": "resources/CS1323_F_2015_Intro_to_Computer_Programming/11019c3b5f4d1936a562abff3f4ad7faf2bd0e01/90784fa2c5c148922446e05d45ff35f0aee3e69b.vtt",
+                        "type": "text/vtt",
+                        "lang": "en",
+                        "purpose": "normal"
+                    }
+                ],
+                "slidedeck": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:References_and_Constructors"
+            },
+            "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_02.01.05_E_commerce": {
+                "MimeType": "application/vnd.nextthought.ntivideo",
+                "mimeType": "application/vnd.nextthought.ntivideo",
+                "description": "",
+                "creator": "Deborah Trytten",
+                "title": "Write an E-Commerce Purchase Program",
+                "closedCaptions": null,
+                "ntiid": "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_02.01.05_E_commerce",
+                "sources": [
+                    {
+                        "service": "kaltura",
+                        "width": 640,
+                        "poster": "//www.kaltura.com/p/1500101/thumbnail/entry_id/0_359y49ye/width/1280/",
+                        "height": 480,
+                        "source": [
+                            "1500101:0_359y49ye"
+                        ],
+                        "type": [
+                            "video/kaltura"
+                        ],
+                        "thumbnail": "//www.kaltura.com/p/1500101/thumbnail/entry_id/0_359y49ye/width/640/"
+                    }
+                ],
+                "transcripts": [
+                    {
+                        "srcjsonp": "resources/CS1323_F_2015_Intro_to_Computer_Programming/3b7d66bc47d686d5693bd993e93869fbb44ab95c/9b3fe7737c9828ea6a552664d89b26bc8de8a15e.jsonp",
+                        "src": "resources/CS1323_F_2015_Intro_to_Computer_Programming/3b7d66bc47d686d5693bd993e93869fbb44ab95c/90784fa2c5c148922446e05d45ff35f0aee3e69b.vtt",
+                        "type": "text/vtt",
+                        "lang": "en",
+                        "purpose": "normal"
+                    }
+                ]
+            },
+            "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_02.03.01_Test_Driven": {
+                "MimeType": "application/vnd.nextthought.ntivideo",
+                "mimeType": "application/vnd.nextthought.ntivideo",
+                "description": "",
+                "creator": "Deborah Trytten",
+                "title": "Perspective: Test Driven Development",
+                "closedCaptions": null,
+                "ntiid": "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_02.03.01_Test_Driven",
+                "sources": [
+                    {
+                        "service": "kaltura",
+                        "width": 640,
+                        "poster": "//www.kaltura.com/p/1500101/thumbnail/entry_id/0_q0s2xnjf/width/1280/",
+                        "height": 480,
+                        "source": [
+                            "1500101:0_q0s2xnjf"
+                        ],
+                        "type": [
+                            "video/kaltura"
+                        ],
+                        "thumbnail": "//www.kaltura.com/p/1500101/thumbnail/entry_id/0_q0s2xnjf/width/640/"
+                    }
+                ],
+                "transcripts": [
+                    {
+                        "srcjsonp": "resources/CS1323_F_2015_Intro_to_Computer_Programming/c64671b6145d9762cdb5c63da17d57ee98e6fa86/9b3fe7737c9828ea6a552664d89b26bc8de8a15e.jsonp",
+                        "src": "resources/CS1323_F_2015_Intro_to_Computer_Programming/c64671b6145d9762cdb5c63da17d57ee98e6fa86/90784fa2c5c148922446e05d45ff35f0aee3e69b.vtt",
+                        "type": "text/vtt",
+                        "lang": "en",
+                        "purpose": "normal"
+                    }
+                ]
+            },
+            "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_04.02.04_Reading_Levels": {
+                "MimeType": "application/vnd.nextthought.ntivideo",
+                "mimeType": "application/vnd.nextthought.ntivideo",
+                "description": "",
+                "creator": "Deborah Trytten",
+                "title": "Reading Levels",
+                "closedCaptions": null,
+                "ntiid": "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_04.02.04_Reading_Levels",
+                "sources": [
+                    {
+                        "service": "kaltura",
+                        "width": 640,
+                        "poster": "//www.kaltura.com/p/1500101/thumbnail/entry_id/1_xpys2fvd/width/1280/",
+                        "height": 480,
+                        "source": [
+                            "1500101:1_xpys2fvd"
+                        ],
+                        "type": [
+                            "video/kaltura"
+                        ],
+                        "thumbnail": "//www.kaltura.com/p/1500101/thumbnail/entry_id/1_xpys2fvd/width/640/"
+                    }
+                ],
+                "transcripts": [
+                    {
+                        "srcjsonp": "resources/CS1323_F_2015_Intro_to_Computer_Programming/4697aca216e5b3c16a4b3b8520a080b8e1d59c3a/9b3fe7737c9828ea6a552664d89b26bc8de8a15e.jsonp",
+                        "src": "resources/CS1323_F_2015_Intro_to_Computer_Programming/4697aca216e5b3c16a4b3b8520a080b8e1d59c3a/90784fa2c5c148922446e05d45ff35f0aee3e69b.vtt",
+                        "type": "text/vtt",
+                        "lang": "en",
+                        "purpose": "normal"
+                    }
+                ],
+                "slidedeck": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Reading_Levels"
+            },
+            "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_janux_assignments": {
+                "MimeType": "application/vnd.nextthought.ntivideo",
+                "mimeType": "application/vnd.nextthought.ntivideo",
+                "description": "",
+                "creator": "NextThought",
+                "title": "Janux Self Checks",
+                "closedCaptions": null,
+                "ntiid": "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_janux_assignments",
+                "sources": [
+                    {
+                        "service": "kaltura",
+                        "width": 640,
+                        "poster": "//www.kaltura.com/p/1500101/thumbnail/entry_id/0_wf5e6i9t/width/1280/",
+                        "height": 480,
+                        "source": [
+                            "1500101:0_wf5e6i9t"
+                        ],
+                        "type": [
+                            "video/kaltura"
+                        ],
+                        "thumbnail": "//www.kaltura.com/p/1500101/thumbnail/entry_id/0_wf5e6i9t/width/640/"
+                    }
+                ],
+                "transcripts": [
+                    {
+                        "srcjsonp": "resources/CS1323_F_2015_Intro_to_Computer_Programming/16de2f3f063b033b807ba03d1935757872deb822/9b3fe7737c9828ea6a552664d89b26bc8de8a15e.jsonp",
+                        "src": "resources/CS1323_F_2015_Intro_to_Computer_Programming/16de2f3f063b033b807ba03d1935757872deb822/90784fa2c5c148922446e05d45ff35f0aee3e69b.vtt",
+                        "type": "text/vtt",
+                        "lang": "en",
+                        "purpose": "normal"
+                    }
+                ]
+            },
+            "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_03.02.03_Logical_Operators": {
+                "MimeType": "application/vnd.nextthought.ntivideo",
+                "mimeType": "application/vnd.nextthought.ntivideo",
+                "description": "",
+                "creator": "Deborah Trytten",
+                "title": "GUI Utilities With Ranges",
+                "closedCaptions": null,
+                "ntiid": "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_03.02.03_Logical_Operators",
+                "sources": [
+                    {
+                        "service": "kaltura",
+                        "width": 640,
+                        "poster": "//www.kaltura.com/p/1500101/thumbnail/entry_id/0_d4ytcpqw/width/1280/",
+                        "height": 480,
+                        "source": [
+                            "1500101:0_d4ytcpqw"
+                        ],
+                        "type": [
+                            "video/kaltura"
+                        ],
+                        "thumbnail": "//www.kaltura.com/p/1500101/thumbnail/entry_id/0_d4ytcpqw/width/640/"
+                    }
+                ],
+                "transcripts": [
+                    {
+                        "srcjsonp": "resources/CS1323_F_2015_Intro_to_Computer_Programming/107fd6de0fc1f0ccb89cce38739470023c6ba211/9b3fe7737c9828ea6a552664d89b26bc8de8a15e.jsonp",
+                        "src": "resources/CS1323_F_2015_Intro_to_Computer_Programming/107fd6de0fc1f0ccb89cce38739470023c6ba211/90784fa2c5c148922446e05d45ff35f0aee3e69b.vtt",
+                        "type": "text/vtt",
+                        "lang": "en",
+                        "purpose": "normal"
+                    }
+                ],
+                "slidedeck": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Logical_Operators"
+            },
+            "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_03.02.01_Control": {
+                "MimeType": "application/vnd.nextthought.ntivideo",
+                "mimeType": "application/vnd.nextthought.ntivideo",
+                "description": "",
+                "creator": "Deborah Trytten",
+                "title": "More Control Structures",
+                "closedCaptions": null,
+                "ntiid": "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_03.02.01_Control",
+                "sources": [
+                    {
+                        "service": "kaltura",
+                        "width": 640,
+                        "poster": "//www.kaltura.com/p/1500101/thumbnail/entry_id/0_5c4c5y4o/width/1280/",
+                        "height": 480,
+                        "source": [
+                            "1500101:0_5c4c5y4o"
+                        ],
+                        "type": [
+                            "video/kaltura"
+                        ],
+                        "thumbnail": "//www.kaltura.com/p/1500101/thumbnail/entry_id/0_5c4c5y4o/width/640/"
+                    }
+                ],
+                "transcripts": [
+                    {
+                        "srcjsonp": "resources/CS1323_F_2015_Intro_to_Computer_Programming/f40cd079cb0d6533bf9f4b8257cbda6bb3fb75ab/9b3fe7737c9828ea6a552664d89b26bc8de8a15e.jsonp",
+                        "src": "resources/CS1323_F_2015_Intro_to_Computer_Programming/f40cd079cb0d6533bf9f4b8257cbda6bb3fb75ab/90784fa2c5c148922446e05d45ff35f0aee3e69b.vtt",
+                        "type": "text/vtt",
+                        "lang": "en",
+                        "purpose": "normal"
+                    }
+                ]
+            },
+            "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_04.02.03_For_Loops": {
+                "MimeType": "application/vnd.nextthought.ntivideo",
+                "mimeType": "application/vnd.nextthought.ntivideo",
+                "description": "",
+                "creator": "Deborah Trytten",
+                "title": "Reading Files Using For Loops",
+                "closedCaptions": null,
+                "ntiid": "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_04.02.03_For_Loops",
+                "sources": [
+                    {
+                        "service": "kaltura",
+                        "width": 640,
+                        "poster": "//www.kaltura.com/p/1500101/thumbnail/entry_id/0_ms297gt7/width/1280/",
+                        "height": 480,
+                        "source": [
+                            "1500101:0_ms297gt7"
+                        ],
+                        "type": [
+                            "video/kaltura"
+                        ],
+                        "thumbnail": "//www.kaltura.com/p/1500101/thumbnail/entry_id/0_ms297gt7/width/640/"
+                    }
+                ],
+                "transcripts": [
+                    {
+                        "srcjsonp": "resources/CS1323_F_2015_Intro_to_Computer_Programming/ae4c43e14cd9046e84c4dbcb4da30f99b2063be9/9b3fe7737c9828ea6a552664d89b26bc8de8a15e.jsonp",
+                        "src": "resources/CS1323_F_2015_Intro_to_Computer_Programming/ae4c43e14cd9046e84c4dbcb4da30f99b2063be9/90784fa2c5c148922446e05d45ff35f0aee3e69b.vtt",
+                        "type": "text/vtt",
+                        "lang": "en",
+                        "purpose": "normal"
+                    }
+                ],
+                "slidedeck": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:For_Loops"
+            },
+            "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_01.01.01_Welcome": {
+                "MimeType": "application/vnd.nextthought.ntivideo",
+                "mimeType": "application/vnd.nextthought.ntivideo",
+                "description": "",
+                "creator": "Deborah Trytten",
+                "title": "Welcome to CS 1323",
+                "closedCaptions": null,
+                "ntiid": "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_01.01.01_Welcome",
+                "sources": [
+                    {
+                        "service": "kaltura",
+                        "width": 640,
+                        "poster": "//www.kaltura.com/p/1500101/thumbnail/entry_id/0_nxxtmrek/width/1280/",
+                        "height": 480,
+                        "source": [
+                            "1500101:0_nxxtmrek"
+                        ],
+                        "type": [
+                            "video/kaltura"
+                        ],
+                        "thumbnail": "//www.kaltura.com/p/1500101/thumbnail/entry_id/0_nxxtmrek/width/640/"
+                    }
+                ],
+                "transcripts": [
+                    {
+                        "srcjsonp": "resources/CS1323_F_2015_Intro_to_Computer_Programming/708b90a9a67ef8dd69506d3cb79b4931bb7665c2/9b3fe7737c9828ea6a552664d89b26bc8de8a15e.jsonp",
+                        "src": "resources/CS1323_F_2015_Intro_to_Computer_Programming/708b90a9a67ef8dd69506d3cb79b4931bb7665c2/90784fa2c5c148922446e05d45ff35f0aee3e69b.vtt",
+                        "type": "text/vtt",
+                        "lang": "en",
+                        "purpose": "normal"
+                    }
+                ]
+            },
+            "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_05.01.04_Charity_Donations": {
+                "MimeType": "application/vnd.nextthought.ntivideo",
+                "mimeType": "application/vnd.nextthought.ntivideo",
+                "description": "",
+                "creator": "Deborah Trytten",
+                "title": "Charity Donations",
+                "closedCaptions": null,
+                "ntiid": "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_05.01.04_Charity_Donations",
+                "sources": [
+                    {
+                        "service": "kaltura",
+                        "width": 640,
+                        "poster": "//www.kaltura.com/p/1500101/thumbnail/entry_id/1_stapn8iy/width/1280/",
+                        "height": 480,
+                        "source": [
+                            "1500101:1_stapn8iy"
+                        ],
+                        "type": [
+                            "video/kaltura"
+                        ],
+                        "thumbnail": "//www.kaltura.com/p/1500101/thumbnail/entry_id/1_stapn8iy/width/640/"
+                    }
+                ],
+                "transcripts": [
+                    {
+                        "srcjsonp": "resources/CS1323_F_2015_Intro_to_Computer_Programming/236b41ab2c8364beb094b6765cc26ad60e3bfdd9/9b3fe7737c9828ea6a552664d89b26bc8de8a15e.jsonp",
+                        "src": "resources/CS1323_F_2015_Intro_to_Computer_Programming/236b41ab2c8364beb094b6765cc26ad60e3bfdd9/90784fa2c5c148922446e05d45ff35f0aee3e69b.vtt",
+                        "type": "text/vtt",
+                        "lang": "en",
+                        "purpose": "normal"
+                    }
+                ]
+            },
+            "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_02.03.02_Laudible": {
+                "MimeType": "application/vnd.nextthought.ntivideo",
+                "mimeType": "application/vnd.nextthought.ntivideo",
+                "description": "",
+                "creator": "Deborah Trytten",
+                "title": "Laudible.com",
+                "closedCaptions": null,
+                "ntiid": "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_02.03.02_Laudible",
+                "sources": [
+                    {
+                        "service": "kaltura",
+                        "width": 640,
+                        "poster": "//www.kaltura.com/p/1500101/thumbnail/entry_id/0_v8d1q1n6/width/1280/",
+                        "height": 480,
+                        "source": [
+                            "1500101:0_v8d1q1n6"
+                        ],
+                        "type": [
+                            "video/kaltura"
+                        ],
+                        "thumbnail": "//www.kaltura.com/p/1500101/thumbnail/entry_id/0_v8d1q1n6/width/640/"
+                    }
+                ],
+                "transcripts": [
+                    {
+                        "srcjsonp": "resources/CS1323_F_2015_Intro_to_Computer_Programming/414cba6ac38fbba4b3e2d50b76522ef83dff0835/9b3fe7737c9828ea6a552664d89b26bc8de8a15e.jsonp",
+                        "src": "resources/CS1323_F_2015_Intro_to_Computer_Programming/414cba6ac38fbba4b3e2d50b76522ef83dff0835/90784fa2c5c148922446e05d45ff35f0aee3e69b.vtt",
+                        "type": "text/vtt",
+                        "lang": "en",
+                        "purpose": "normal"
+                    }
+                ],
+                "slidedeck": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Laudible"
+            },
+            "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_04.02.05_Partial_Sorting": {
+                "MimeType": "application/vnd.nextthought.ntivideo",
+                "mimeType": "application/vnd.nextthought.ntivideo",
+                "description": "",
+                "creator": "Deborah Trytten",
+                "title": "Partially Sorted Data",
+                "closedCaptions": null,
+                "ntiid": "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_04.02.05_Partial_Sorting",
+                "sources": [
+                    {
+                        "service": "kaltura",
+                        "width": 640,
+                        "poster": "//www.kaltura.com/p/1500101/thumbnail/entry_id/0_wuvz13rz/width/1280/",
+                        "height": 480,
+                        "source": [
+                            "1500101:0_wuvz13rz"
+                        ],
+                        "type": [
+                            "video/kaltura"
+                        ],
+                        "thumbnail": "//www.kaltura.com/p/1500101/thumbnail/entry_id/0_wuvz13rz/width/640/"
+                    }
+                ],
+                "transcripts": [
+                    {
+                        "srcjsonp": "resources/CS1323_F_2015_Intro_to_Computer_Programming/36374ea3a97c29cb79877e95ad588dd0d2b20430/9b3fe7737c9828ea6a552664d89b26bc8de8a15e.jsonp",
+                        "src": "resources/CS1323_F_2015_Intro_to_Computer_Programming/36374ea3a97c29cb79877e95ad588dd0d2b20430/90784fa2c5c148922446e05d45ff35f0aee3e69b.vtt",
+                        "type": "text/vtt",
+                        "lang": "en",
+                        "purpose": "normal"
+                    }
+                ],
+                "slidedeck": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Partial_Sorting"
+            },
+            "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_01.01.01_Java": {
+                "MimeType": "application/vnd.nextthought.ntivideo",
+                "mimeType": "application/vnd.nextthought.ntivideo",
+                "description": "",
+                "creator": "Deborah Trytten",
+                "title": "Why Are We Using Java?",
+                "closedCaptions": null,
+                "ntiid": "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_01.01.01_Java",
+                "sources": [
+                    {
+                        "service": "kaltura",
+                        "width": 640,
+                        "poster": "//www.kaltura.com/p/1500101/thumbnail/entry_id/1_g2octma7/width/1280/",
+                        "height": 480,
+                        "source": [
+                            "1500101:1_g2octma7"
+                        ],
+                        "type": [
+                            "video/kaltura"
+                        ],
+                        "thumbnail": "//www.kaltura.com/p/1500101/thumbnail/entry_id/1_g2octma7/width/640/"
+                    }
+                ],
+                "transcripts": [
+                    {
+                        "srcjsonp": "resources/CS1323_F_2015_Intro_to_Computer_Programming/84316dede0e0d2fd2cb868264bc56c648820d751/9b3fe7737c9828ea6a552664d89b26bc8de8a15e.jsonp",
+                        "src": "resources/CS1323_F_2015_Intro_to_Computer_Programming/84316dede0e0d2fd2cb868264bc56c648820d751/90784fa2c5c148922446e05d45ff35f0aee3e69b.vtt",
+                        "type": "text/vtt",
+                        "lang": "en",
+                        "purpose": "normal"
+                    }
+                ]
+            },
+            "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_04.02.05_Selection_Sort": {
+                "MimeType": "application/vnd.nextthought.ntivideo",
+                "mimeType": "application/vnd.nextthought.ntivideo",
+                "description": "",
+                "creator": "Deborah Trytten",
+                "title": "Selection Sort",
+                "closedCaptions": null,
+                "ntiid": "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_04.02.05_Selection_Sort",
+                "sources": [
+                    {
+                        "service": "kaltura",
+                        "width": 640,
+                        "poster": "//www.kaltura.com/p/1500101/thumbnail/entry_id/1_251liukw/width/1280/",
+                        "height": 480,
+                        "source": [
+                            "1500101:1_251liukw"
+                        ],
+                        "type": [
+                            "video/kaltura"
+                        ],
+                        "thumbnail": "//www.kaltura.com/p/1500101/thumbnail/entry_id/1_251liukw/width/640/"
+                    }
+                ],
+                "transcripts": [
+                    {
+                        "srcjsonp": "resources/CS1323_F_2015_Intro_to_Computer_Programming/b667002c593994454687c4713a510e1470520c6f/9b3fe7737c9828ea6a552664d89b26bc8de8a15e.jsonp",
+                        "src": "resources/CS1323_F_2015_Intro_to_Computer_Programming/b667002c593994454687c4713a510e1470520c6f/90784fa2c5c148922446e05d45ff35f0aee3e69b.vtt",
+                        "type": "text/vtt",
+                        "lang": "en",
+                        "purpose": "normal"
+                    }
+                ],
+                "slidedeck": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Selection_Sort"
+            },
+            "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_02.01.03_Changing_Primitive_Data": {
+                "MimeType": "application/vnd.nextthought.ntivideo",
+                "mimeType": "application/vnd.nextthought.ntivideo",
+                "description": "",
+                "creator": "Deborah Trytten",
+                "title": "Assignment Statements",
+                "closedCaptions": null,
+                "ntiid": "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_02.01.03_Changing_Primitive_Data",
+                "sources": [
+                    {
+                        "service": "kaltura",
+                        "width": 640,
+                        "poster": "//www.kaltura.com/p/1500101/thumbnail/entry_id/0_u0xcvd28/width/1280/",
+                        "height": 480,
+                        "source": [
+                            "1500101:0_u0xcvd28"
+                        ],
+                        "type": [
+                            "video/kaltura"
+                        ],
+                        "thumbnail": "//www.kaltura.com/p/1500101/thumbnail/entry_id/0_u0xcvd28/width/640/"
+                    }
+                ],
+                "transcripts": [
+                    {
+                        "srcjsonp": "resources/CS1323_F_2015_Intro_to_Computer_Programming/d8394560de67a1122736ea5949a0435fd1f7c774/9b3fe7737c9828ea6a552664d89b26bc8de8a15e.jsonp",
+                        "src": "resources/CS1323_F_2015_Intro_to_Computer_Programming/d8394560de67a1122736ea5949a0435fd1f7c774/90784fa2c5c148922446e05d45ff35f0aee3e69b.vtt",
+                        "type": "text/vtt",
+                        "lang": "en",
+                        "purpose": "normal"
+                    }
+                ],
+                "slidedeck": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Changing_Primitive_Data"
+            },
+            "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_03.02.05_Words_With_Acquaintances": {
+                "MimeType": "application/vnd.nextthought.ntivideo",
+                "mimeType": "application/vnd.nextthought.ntivideo",
+                "description": "",
+                "creator": "Deborah Trytten",
+                "title": "Words With Acquaintances Cheat",
+                "closedCaptions": null,
+                "ntiid": "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_03.02.05_Words_With_Acquaintances",
+                "sources": [
+                    {
+                        "service": "kaltura",
+                        "width": 640,
+                        "poster": "//www.kaltura.com/p/1500101/thumbnail/entry_id/1_pyt21c1t/width/1280/",
+                        "height": 480,
+                        "source": [
+                            "1500101:1_pyt21c1t"
+                        ],
+                        "type": [
+                            "video/kaltura"
+                        ],
+                        "thumbnail": "//www.kaltura.com/p/1500101/thumbnail/entry_id/1_pyt21c1t/width/640/"
+                    }
+                ],
+                "transcripts": [
+                    {
+                        "srcjsonp": "resources/CS1323_F_2015_Intro_to_Computer_Programming/9db4c0ecfb28ecef4b823f1797b35ba72953cbb0/9b3fe7737c9828ea6a552664d89b26bc8de8a15e.jsonp",
+                        "src": "resources/CS1323_F_2015_Intro_to_Computer_Programming/9db4c0ecfb28ecef4b823f1797b35ba72953cbb0/90784fa2c5c148922446e05d45ff35f0aee3e69b.vtt",
+                        "type": "text/vtt",
+                        "lang": "en",
+                        "purpose": "normal"
+                    }
+                ],
+                "slidedeck": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Words_With_Acquaintances"
+            },
+            "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_04.02.04_Rectangles_versus_Triangles": {
+                "MimeType": "application/vnd.nextthought.ntivideo",
+                "mimeType": "application/vnd.nextthought.ntivideo",
+                "description": "",
+                "creator": "Deborah Trytten",
+                "title": "Rectangles versus Triangles",
+                "closedCaptions": null,
+                "ntiid": "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_04.02.04_Rectangles_versus_Triangles",
+                "sources": [
+                    {
+                        "service": "kaltura",
+                        "width": 640,
+                        "poster": "//www.kaltura.com/p/1500101/thumbnail/entry_id/1_a0vkdva4/width/1280/",
+                        "height": 480,
+                        "source": [
+                            "1500101:1_a0vkdva4"
+                        ],
+                        "type": [
+                            "video/kaltura"
+                        ],
+                        "thumbnail": "//www.kaltura.com/p/1500101/thumbnail/entry_id/1_a0vkdva4/width/640/"
+                    }
+                ],
+                "transcripts": [
+                    {
+                        "srcjsonp": "resources/CS1323_F_2015_Intro_to_Computer_Programming/3424a12de81ee8235884bc3ca1c016c990514d21/9b3fe7737c9828ea6a552664d89b26bc8de8a15e.jsonp",
+                        "src": "resources/CS1323_F_2015_Intro_to_Computer_Programming/3424a12de81ee8235884bc3ca1c016c990514d21/90784fa2c5c148922446e05d45ff35f0aee3e69b.vtt",
+                        "type": "text/vtt",
+                        "lang": "en",
+                        "purpose": "normal"
+                    }
+                ],
+                "slidedeck": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Rectangles_versus_Triangles"
+            },
+            "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_04.01.03_Split": {
+                "MimeType": "application/vnd.nextthought.ntivideo",
+                "mimeType": "application/vnd.nextthought.ntivideo",
+                "description": "",
+                "creator": "Deborah Trytten",
+                "title": "Split",
+                "closedCaptions": null,
+                "ntiid": "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_04.01.03_Split",
+                "sources": [
+                    {
+                        "service": "kaltura",
+                        "width": 640,
+                        "poster": "//www.kaltura.com/p/1500101/thumbnail/entry_id/1_8xn364f2/width/1280/",
+                        "height": 480,
+                        "source": [
+                            "1500101:1_8xn364f2"
+                        ],
+                        "type": [
+                            "video/kaltura"
+                        ],
+                        "thumbnail": "//www.kaltura.com/p/1500101/thumbnail/entry_id/1_8xn364f2/width/640/"
+                    }
+                ],
+                "transcripts": [
+                    {
+                        "srcjsonp": "resources/CS1323_F_2015_Intro_to_Computer_Programming/24b9d5de660c21535c769b403674d1e77301bede/9b3fe7737c9828ea6a552664d89b26bc8de8a15e.jsonp",
+                        "src": "resources/CS1323_F_2015_Intro_to_Computer_Programming/24b9d5de660c21535c769b403674d1e77301bede/90784fa2c5c148922446e05d45ff35f0aee3e69b.vtt",
+                        "type": "text/vtt",
+                        "lang": "en",
+                        "purpose": "normal"
+                    }
+                ],
+                "slidedeck": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Split"
+            },
+            "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_05.02.04_Program_Design": {
+                "MimeType": "application/vnd.nextthought.ntivideo",
+                "mimeType": "application/vnd.nextthought.ntivideo",
+                "description": "",
+                "creator": "Deborah Trytten",
+                "title": "Introduction to Program Design",
+                "closedCaptions": null,
+                "ntiid": "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_05.02.04_Program_Design",
+                "sources": [
+                    {
+                        "service": "kaltura",
+                        "width": 640,
+                        "poster": "//www.kaltura.com/p/1500101/thumbnail/entry_id/0_gkpp97t9/width/1280/",
+                        "height": 480,
+                        "source": [
+                            "1500101:0_gkpp97t9"
+                        ],
+                        "type": [
+                            "video/kaltura"
+                        ],
+                        "thumbnail": "//www.kaltura.com/p/1500101/thumbnail/entry_id/0_gkpp97t9/width/640/"
+                    }
+                ],
+                "transcripts": [
+                    {
+                        "srcjsonp": "resources/CS1323_F_2015_Intro_to_Computer_Programming/707a686bbbf5862b36af2755c54b58bd11315fe2/9b3fe7737c9828ea6a552664d89b26bc8de8a15e.jsonp",
+                        "src": "resources/CS1323_F_2015_Intro_to_Computer_Programming/707a686bbbf5862b36af2755c54b58bd11315fe2/90784fa2c5c148922446e05d45ff35f0aee3e69b.vtt",
+                        "type": "text/vtt",
+                        "lang": "en",
+                        "purpose": "normal"
+                    }
+                ]
+            },
+            "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_05.02.02_Environment_Variables": {
+                "MimeType": "application/vnd.nextthought.ntivideo",
+                "mimeType": "application/vnd.nextthought.ntivideo",
+                "description": "",
+                "creator": "Deborah Trytten",
+                "title": "Environment Variables",
+                "closedCaptions": null,
+                "ntiid": "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_05.02.02_Environment_Variables",
+                "sources": [
+                    {
+                        "service": "kaltura",
+                        "width": 640,
+                        "poster": "//www.kaltura.com/p/1500101/thumbnail/entry_id/1_dsjr5f5j/width/1280/",
+                        "height": 480,
+                        "source": [
+                            "1500101:1_dsjr5f5j"
+                        ],
+                        "type": [
+                            "video/kaltura"
+                        ],
+                        "thumbnail": "//www.kaltura.com/p/1500101/thumbnail/entry_id/1_dsjr5f5j/width/640/"
+                    }
+                ],
+                "transcripts": [
+                    {
+                        "srcjsonp": "resources/CS1323_F_2015_Intro_to_Computer_Programming/780edd93c7e0a7d7bb43be482bf641c62e85d7f9/9b3fe7737c9828ea6a552664d89b26bc8de8a15e.jsonp",
+                        "src": "resources/CS1323_F_2015_Intro_to_Computer_Programming/780edd93c7e0a7d7bb43be482bf641c62e85d7f9/90784fa2c5c148922446e05d45ff35f0aee3e69b.vtt",
+                        "type": "text/vtt",
+                        "lang": "en",
+                        "purpose": "normal"
+                    }
+                ]
+            },
+            "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_04.01.03_Predicting_Weather": {
+                "MimeType": "application/vnd.nextthought.ntivideo",
+                "mimeType": "application/vnd.nextthought.ntivideo",
+                "description": "",
+                "creator": "Deborah Trytten",
+                "title": "Predicting Weather",
+                "closedCaptions": null,
+                "ntiid": "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_04.01.03_Predicting_Weather",
+                "sources": [
+                    {
+                        "service": "kaltura",
+                        "width": 640,
+                        "poster": "//www.kaltura.com/p/1500101/thumbnail/entry_id/0_rc1hwlgu/width/1280/",
+                        "height": 480,
+                        "source": [
+                            "1500101:0_rc1hwlgu"
+                        ],
+                        "type": [
+                            "video/kaltura"
+                        ],
+                        "thumbnail": "//www.kaltura.com/p/1500101/thumbnail/entry_id/0_rc1hwlgu/width/640/"
+                    }
+                ],
+                "transcripts": [
+                    {
+                        "srcjsonp": "resources/CS1323_F_2015_Intro_to_Computer_Programming/4795f34e8c40b4583c7c9587e79bb6154600578c/9b3fe7737c9828ea6a552664d89b26bc8de8a15e.jsonp",
+                        "src": "resources/CS1323_F_2015_Intro_to_Computer_Programming/4795f34e8c40b4583c7c9587e79bb6154600578c/90784fa2c5c148922446e05d45ff35f0aee3e69b.vtt",
+                        "type": "text/vtt",
+                        "lang": "en",
+                        "purpose": "normal"
+                    }
+                ],
+                "slidedeck": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Predicting_Weather"
+            },
+            "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_04.01.02_Yahtzee_1": {
+                "MimeType": "application/vnd.nextthought.ntivideo",
+                "mimeType": "application/vnd.nextthought.ntivideo",
+                "description": "",
+                "creator": "Deborah Trytten",
+                "title": "Yahtzee Iteration 1",
+                "closedCaptions": null,
+                "ntiid": "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_04.01.02_Yahtzee_1",
+                "sources": [
+                    {
+                        "service": "kaltura",
+                        "width": 640,
+                        "poster": "//www.kaltura.com/p/1500101/thumbnail/entry_id/0_xhui5jf0/width/1280/",
+                        "height": 480,
+                        "source": [
+                            "1500101:0_xhui5jf0"
+                        ],
+                        "type": [
+                            "video/kaltura"
+                        ],
+                        "thumbnail": "//www.kaltura.com/p/1500101/thumbnail/entry_id/0_xhui5jf0/width/640/"
+                    }
+                ],
+                "transcripts": [
+                    {
+                        "srcjsonp": "resources/CS1323_F_2015_Intro_to_Computer_Programming/a40915d99ae825225c55ba0644c07fe71fe6d97b/9b3fe7737c9828ea6a552664d89b26bc8de8a15e.jsonp",
+                        "src": "resources/CS1323_F_2015_Intro_to_Computer_Programming/a40915d99ae825225c55ba0644c07fe71fe6d97b/90784fa2c5c148922446e05d45ff35f0aee3e69b.vtt",
+                        "type": "text/vtt",
+                        "lang": "en",
+                        "purpose": "normal"
+                    }
+                ],
+                "slidedeck": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Yahtzee_1"
+            },
+            "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_04.02.05_Insertion_Sort": {
+                "MimeType": "application/vnd.nextthought.ntivideo",
+                "mimeType": "application/vnd.nextthought.ntivideo",
+                "description": "",
+                "creator": "Deborah Trytten",
+                "title": "Insertion Sort",
+                "closedCaptions": null,
+                "ntiid": "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_04.02.05_Insertion_Sort",
+                "sources": [
+                    {
+                        "service": "kaltura",
+                        "width": 640,
+                        "poster": "//www.kaltura.com/p/1500101/thumbnail/entry_id/1_x81pdhts/width/1280/",
+                        "height": 480,
+                        "source": [
+                            "1500101:1_x81pdhts"
+                        ],
+                        "type": [
+                            "video/kaltura"
+                        ],
+                        "thumbnail": "//www.kaltura.com/p/1500101/thumbnail/entry_id/1_x81pdhts/width/640/"
+                    }
+                ],
+                "transcripts": [
+                    {
+                        "srcjsonp": "resources/CS1323_F_2015_Intro_to_Computer_Programming/f2cda95f8518acfdfc3e75208e028135410a069a/9b3fe7737c9828ea6a552664d89b26bc8de8a15e.jsonp",
+                        "src": "resources/CS1323_F_2015_Intro_to_Computer_Programming/f2cda95f8518acfdfc3e75208e028135410a069a/90784fa2c5c148922446e05d45ff35f0aee3e69b.vtt",
+                        "type": "text/vtt",
+                        "lang": "en",
+                        "purpose": "normal"
+                    }
+                ],
+                "slidedeck": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Insertion_Sort"
+            },
+            "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_04.01.04_Hall_of_Fame": {
+                "MimeType": "application/vnd.nextthought.ntivideo",
+                "mimeType": "application/vnd.nextthought.ntivideo",
+                "description": "",
+                "creator": "Deborah Trytten",
+                "title": "Hall of Fame",
+                "closedCaptions": null,
+                "ntiid": "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_04.01.04_Hall_of_Fame",
+                "sources": [
+                    {
+                        "service": "kaltura",
+                        "width": 640,
+                        "poster": "//www.kaltura.com/p/1500101/thumbnail/entry_id/1_b2l9jcq3/width/1280/",
+                        "height": 480,
+                        "source": [
+                            "1500101:1_b2l9jcq3"
+                        ],
+                        "type": [
+                            "video/kaltura"
+                        ],
+                        "thumbnail": "//www.kaltura.com/p/1500101/thumbnail/entry_id/1_b2l9jcq3/width/640/"
+                    }
+                ],
+                "transcripts": [
+                    {
+                        "srcjsonp": "resources/CS1323_F_2015_Intro_to_Computer_Programming/6a1c31f87b5d98214a23ee12e1e8c45ecb8b971f/9b3fe7737c9828ea6a552664d89b26bc8de8a15e.jsonp",
+                        "src": "resources/CS1323_F_2015_Intro_to_Computer_Programming/6a1c31f87b5d98214a23ee12e1e8c45ecb8b971f/90784fa2c5c148922446e05d45ff35f0aee3e69b.vtt",
+                        "type": "text/vtt",
+                        "lang": "en",
+                        "purpose": "normal"
+                    }
+                ]
+            },
+            "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_02.02.02_Nested_Conditionals": {
+                "MimeType": "application/vnd.nextthought.ntivideo",
+                "mimeType": "application/vnd.nextthought.ntivideo",
+                "description": "",
+                "creator": "Deborah Trytten",
+                "title": "Nested Conditionals",
+                "closedCaptions": null,
+                "ntiid": "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_02.02.02_Nested_Conditionals",
+                "sources": [
+                    {
+                        "service": "kaltura",
+                        "width": 640,
+                        "poster": "//www.kaltura.com/p/1500101/thumbnail/entry_id/1_z5n8j7tw/width/1280/",
+                        "height": 480,
+                        "source": [
+                            "1500101:1_z5n8j7tw"
+                        ],
+                        "type": [
+                            "video/kaltura"
+                        ],
+                        "thumbnail": "//www.kaltura.com/p/1500101/thumbnail/entry_id/1_z5n8j7tw/width/640/"
+                    }
+                ],
+                "transcripts": [
+                    {
+                        "srcjsonp": "resources/CS1323_F_2015_Intro_to_Computer_Programming/4b94b9cb6c98c4fda6fa7e4eea41f06a4b962909/9b3fe7737c9828ea6a552664d89b26bc8de8a15e.jsonp",
+                        "src": "resources/CS1323_F_2015_Intro_to_Computer_Programming/4b94b9cb6c98c4fda6fa7e4eea41f06a4b962909/90784fa2c5c148922446e05d45ff35f0aee3e69b.vtt",
+                        "type": "text/vtt",
+                        "lang": "en",
+                        "purpose": "normal"
+                    }
+                ],
+                "slidedeck": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Nested_Conditionals"
+            },
+            "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_02.01.04_Cell_Phone": {
+                "MimeType": "application/vnd.nextthought.ntivideo",
+                "mimeType": "application/vnd.nextthought.ntivideo",
+                "description": "",
+                "creator": "Deborah Trytten",
+                "title": "Choosing a Cell Phone Contract: Iteration 3",
+                "closedCaptions": null,
+                "ntiid": "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_02.01.04_Cell_Phone",
+                "sources": [
+                    {
+                        "service": "kaltura",
+                        "width": 640,
+                        "poster": "//www.kaltura.com/p/1500101/thumbnail/entry_id/0_jnmspglu/width/1280/",
+                        "height": 480,
+                        "source": [
+                            "1500101:0_jnmspglu"
+                        ],
+                        "type": [
+                            "video/kaltura"
+                        ],
+                        "thumbnail": "//www.kaltura.com/p/1500101/thumbnail/entry_id/0_jnmspglu/width/640/"
+                    }
+                ],
+                "transcripts": [
+                    {
+                        "srcjsonp": "resources/CS1323_F_2015_Intro_to_Computer_Programming/e41b1b73725905c00bfad93d89bcf3be48d753f8/9b3fe7737c9828ea6a552664d89b26bc8de8a15e.jsonp",
+                        "src": "resources/CS1323_F_2015_Intro_to_Computer_Programming/e41b1b73725905c00bfad93d89bcf3be48d753f8/90784fa2c5c148922446e05d45ff35f0aee3e69b.vtt",
+                        "type": "text/vtt",
+                        "lang": "en",
+                        "purpose": "normal"
+                    }
+                ],
+                "slidedeck": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Cell_Phone_3"
+            },
+            "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_03.01.01_Predefined_Objects": {
+                "MimeType": "application/vnd.nextthought.ntivideo",
+                "mimeType": "application/vnd.nextthought.ntivideo",
+                "description": "",
+                "creator": "Deborah Trytten",
+                "title": "Introduction to Predefined Objects",
+                "closedCaptions": null,
+                "ntiid": "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_03.01.01_Predefined_Objects",
+                "sources": [
+                    {
+                        "service": "kaltura",
+                        "width": 640,
+                        "poster": "//www.kaltura.com/p/1500101/thumbnail/entry_id/0_mq0wx70g/width/1280/",
+                        "height": 480,
+                        "source": [
+                            "1500101:0_mq0wx70g"
+                        ],
+                        "type": [
+                            "video/kaltura"
+                        ],
+                        "thumbnail": "//www.kaltura.com/p/1500101/thumbnail/entry_id/0_mq0wx70g/width/640/"
+                    }
+                ],
+                "transcripts": [
+                    {
+                        "srcjsonp": "resources/CS1323_F_2015_Intro_to_Computer_Programming/879de4643d3ccec12eb9e164cb91327ca00f7de7/9b3fe7737c9828ea6a552664d89b26bc8de8a15e.jsonp",
+                        "src": "resources/CS1323_F_2015_Intro_to_Computer_Programming/879de4643d3ccec12eb9e164cb91327ca00f7de7/90784fa2c5c148922446e05d45ff35f0aee3e69b.vtt",
+                        "type": "text/vtt",
+                        "lang": "en",
+                        "purpose": "normal"
+                    }
+                ]
+            },
+            "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_03.02.05_Best_Friend": {
+                "MimeType": "application/vnd.nextthought.ntivideo",
+                "mimeType": "application/vnd.nextthought.ntivideo",
+                "description": "",
+                "creator": "Deborah Trytten",
+                "title": "Who\u2019s Your Best Friend?",
+                "closedCaptions": null,
+                "ntiid": "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_03.02.05_Best_Friend",
+                "sources": [
+                    {
+                        "service": "kaltura",
+                        "width": 640,
+                        "poster": "//www.kaltura.com/p/1500101/thumbnail/entry_id/0_pjufjnul/width/1280/",
+                        "height": 480,
+                        "source": [
+                            "1500101:0_pjufjnul"
+                        ],
+                        "type": [
+                            "video/kaltura"
+                        ],
+                        "thumbnail": "//www.kaltura.com/p/1500101/thumbnail/entry_id/0_pjufjnul/width/640/"
+                    }
+                ],
+                "transcripts": [
+                    {
+                        "srcjsonp": "resources/CS1323_F_2015_Intro_to_Computer_Programming/2463464e2b22f1cbb7e0996e3338c0f312c6d42d/9b3fe7737c9828ea6a552664d89b26bc8de8a15e.jsonp",
+                        "src": "resources/CS1323_F_2015_Intro_to_Computer_Programming/2463464e2b22f1cbb7e0996e3338c0f312c6d42d/90784fa2c5c148922446e05d45ff35f0aee3e69b.vtt",
+                        "type": "text/vtt",
+                        "lang": "en",
+                        "purpose": "normal"
+                    }
+                ],
+                "slidedeck": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Best_Friend"
+            },
+            "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_02.02.03_Zero_and_Unit_Indexing": {
+                "MimeType": "application/vnd.nextthought.ntivideo",
+                "mimeType": "application/vnd.nextthought.ntivideo",
+                "description": "",
+                "creator": "Deborah Trytten",
+                "title": "Zero and Unit Indexing",
+                "closedCaptions": null,
+                "ntiid": "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_02.02.03_Zero_and_Unit_Indexing",
+                "sources": [
+                    {
+                        "service": "kaltura",
+                        "width": 640,
+                        "poster": "//www.kaltura.com/p/1500101/thumbnail/entry_id/1_4qtcgi44/width/1280/",
+                        "height": 480,
+                        "source": [
+                            "1500101:1_4qtcgi44"
+                        ],
+                        "type": [
+                            "video/kaltura"
+                        ],
+                        "thumbnail": "//www.kaltura.com/p/1500101/thumbnail/entry_id/1_4qtcgi44/width/640/"
+                    }
+                ],
+                "transcripts": [
+                    {
+                        "srcjsonp": "resources/CS1323_F_2015_Intro_to_Computer_Programming/55cd19cf6b35f52b9c3186cd9f30c2dd075b6e6b/9b3fe7737c9828ea6a552664d89b26bc8de8a15e.jsonp",
+                        "src": "resources/CS1323_F_2015_Intro_to_Computer_Programming/55cd19cf6b35f52b9c3186cd9f30c2dd075b6e6b/90784fa2c5c148922446e05d45ff35f0aee3e69b.vtt",
+                        "type": "text/vtt",
+                        "lang": "en",
+                        "purpose": "normal"
+                    }
+                ],
+                "slidedeck": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Zero_and_Unit_Indexing"
+            },
+            "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_02.01.02_Heart_Rates": {
+                "MimeType": "application/vnd.nextthought.ntivideo",
+                "mimeType": "application/vnd.nextthought.ntivideo",
+                "description": "",
+                "creator": "Deborah Trytten",
+                "title": "Target Heart Rates: Iteration 1",
+                "closedCaptions": null,
+                "ntiid": "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_02.01.02_Heart_Rates",
+                "sources": [
+                    {
+                        "service": "kaltura",
+                        "width": 640,
+                        "poster": "//www.kaltura.com/p/1500101/thumbnail/entry_id/0_4qjfvh9d/width/1280/",
+                        "height": 480,
+                        "source": [
+                            "1500101:0_4qjfvh9d"
+                        ],
+                        "type": [
+                            "video/kaltura"
+                        ],
+                        "thumbnail": "//www.kaltura.com/p/1500101/thumbnail/entry_id/0_4qjfvh9d/width/640/"
+                    }
+                ],
+                "transcripts": [
+                    {
+                        "srcjsonp": "resources/CS1323_F_2015_Intro_to_Computer_Programming/51025795fe81ecefac3174105d44fa466b7d1cc7/9b3fe7737c9828ea6a552664d89b26bc8de8a15e.jsonp",
+                        "src": "resources/CS1323_F_2015_Intro_to_Computer_Programming/51025795fe81ecefac3174105d44fa466b7d1cc7/90784fa2c5c148922446e05d45ff35f0aee3e69b.vtt",
+                        "type": "text/vtt",
+                        "lang": "en",
+                        "purpose": "normal"
+                    }
+                ],
+                "slidedeck": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Heart_Rates_1"
+            },
+            "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_janux_reading_features": {
+                "MimeType": "application/vnd.nextthought.ntivideo",
+                "mimeType": "application/vnd.nextthought.ntivideo",
+                "description": "",
+                "creator": "NextThought",
+                "title": "Janux Readings",
+                "closedCaptions": null,
+                "ntiid": "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_janux_reading_features",
+                "sources": [
+                    {
+                        "service": "kaltura",
+                        "width": 640,
+                        "poster": "//www.kaltura.com/p/1500101/thumbnail/entry_id/0_9y5vgub9/width/1280/",
+                        "height": 480,
+                        "source": [
+                            "1500101:0_9y5vgub9"
+                        ],
+                        "type": [
+                            "video/kaltura"
+                        ],
+                        "thumbnail": "//www.kaltura.com/p/1500101/thumbnail/entry_id/0_9y5vgub9/width/640/"
+                    }
+                ],
+                "transcripts": [
+                    {
+                        "srcjsonp": "resources/CS1323_F_2015_Intro_to_Computer_Programming/63ee55e92f0ba2fa73ecf7ab55cb55ae5eceacc3/9b3fe7737c9828ea6a552664d89b26bc8de8a15e.jsonp",
+                        "src": "resources/CS1323_F_2015_Intro_to_Computer_Programming/63ee55e92f0ba2fa73ecf7ab55cb55ae5eceacc3/90784fa2c5c148922446e05d45ff35f0aee3e69b.vtt",
+                        "type": "text/vtt",
+                        "lang": "en",
+                        "purpose": "normal"
+                    }
+                ]
+            },
+            "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_janux_social_feeds": {
+                "MimeType": "application/vnd.nextthought.ntivideo",
+                "mimeType": "application/vnd.nextthought.ntivideo",
+                "description": "",
+                "creator": "NextThought",
+                "title": "Janux Social Feeds",
+                "closedCaptions": null,
+                "ntiid": "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_janux_social_feeds",
+                "sources": [
+                    {
+                        "service": "kaltura",
+                        "width": 640,
+                        "poster": "//www.kaltura.com/p/1500101/thumbnail/entry_id/0_aixq58xi/width/1280/",
+                        "height": 480,
+                        "source": [
+                            "1500101:0_aixq58xi"
+                        ],
+                        "type": [
+                            "video/kaltura"
+                        ],
+                        "thumbnail": "//www.kaltura.com/p/1500101/thumbnail/entry_id/0_aixq58xi/width/640/"
+                    }
+                ],
+                "transcripts": [
+                    {
+                        "srcjsonp": "resources/CS1323_F_2015_Intro_to_Computer_Programming/e8505e8b9dd5b685a4d27b487e813c5a740b6eab/9b3fe7737c9828ea6a552664d89b26bc8de8a15e.jsonp",
+                        "src": "resources/CS1323_F_2015_Intro_to_Computer_Programming/e8505e8b9dd5b685a4d27b487e813c5a740b6eab/90784fa2c5c148922446e05d45ff35f0aee3e69b.vtt",
+                        "type": "text/vtt",
+                        "lang": "en",
+                        "purpose": "normal"
+                    }
+                ]
+            },
+            "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_05.02.01_Classes": {
+                "MimeType": "application/vnd.nextthought.ntivideo",
+                "mimeType": "application/vnd.nextthought.ntivideo",
+                "description": "",
+                "creator": "Deborah Trytten",
+                "title": "Designing Classes Well",
+                "closedCaptions": null,
+                "ntiid": "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_05.02.01_Classes",
+                "sources": [
+                    {
+                        "service": "kaltura",
+                        "width": 640,
+                        "poster": "//www.kaltura.com/p/1500101/thumbnail/entry_id/1_0qscci8v/width/1280/",
+                        "height": 480,
+                        "source": [
+                            "1500101:1_0qscci8v"
+                        ],
+                        "type": [
+                            "video/kaltura"
+                        ],
+                        "thumbnail": "//www.kaltura.com/p/1500101/thumbnail/entry_id/1_0qscci8v/width/640/"
+                    }
+                ],
+                "transcripts": [
+                    {
+                        "srcjsonp": "resources/CS1323_F_2015_Intro_to_Computer_Programming/74046d38ce6a92ef1bdc29009714fcd991905e35/9b3fe7737c9828ea6a552664d89b26bc8de8a15e.jsonp",
+                        "src": "resources/CS1323_F_2015_Intro_to_Computer_Programming/74046d38ce6a92ef1bdc29009714fcd991905e35/90784fa2c5c148922446e05d45ff35f0aee3e69b.vtt",
+                        "type": "text/vtt",
+                        "lang": "en",
+                        "purpose": "normal"
+                    }
+                ]
+            },
+            "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_02.01.03_How_to_Problets": {
+                "MimeType": "application/vnd.nextthought.ntivideo",
+                "mimeType": "application/vnd.nextthought.ntivideo",
+                "description": "",
+                "creator": "Deborah Trytten",
+                "title": "How to Work with Problets",
+                "closedCaptions": null,
+                "ntiid": "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_02.01.03_How_to_Problets",
+                "sources": [
+                    {
+                        "service": "kaltura",
+                        "width": 640,
+                        "poster": "//www.kaltura.com/p/1500101/thumbnail/entry_id/0_1rhpnhmc/width/1280/",
+                        "height": 480,
+                        "source": [
+                            "1500101:0_1rhpnhmc"
+                        ],
+                        "type": [
+                            "video/kaltura"
+                        ],
+                        "thumbnail": "//www.kaltura.com/p/1500101/thumbnail/entry_id/0_1rhpnhmc/width/640/"
+                    }
+                ],
+                "transcripts": [
+                    {
+                        "srcjsonp": "resources/CS1323_F_2015_Intro_to_Computer_Programming/6d14293c30a94e25d4ad7e0baf93a8962ebf4e64/9b3fe7737c9828ea6a552664d89b26bc8de8a15e.jsonp",
+                        "src": "resources/CS1323_F_2015_Intro_to_Computer_Programming/6d14293c30a94e25d4ad7e0baf93a8962ebf4e64/90784fa2c5c148922446e05d45ff35f0aee3e69b.vtt",
+                        "type": "text/vtt",
+                        "lang": "en",
+                        "purpose": "normal"
+                    }
+                ],
+                "slidedeck": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:How_To_Use_Problets"
+            },
+            "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_HW.01.01_How_to_Submit": {
+                "MimeType": "application/vnd.nextthought.ntivideo",
+                "mimeType": "application/vnd.nextthought.ntivideo",
+                "description": "",
+                "creator": "Deborah Trytten",
+                "title": "How to Submit Programs on Janux",
+                "closedCaptions": null,
+                "ntiid": "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_HW.01.01_How_to_Submit",
+                "sources": [
+                    {
+                        "service": "kaltura",
+                        "width": 640,
+                        "poster": "//www.kaltura.com/p/1500101/thumbnail/entry_id/0_qmfzskae/width/1280/",
+                        "height": 480,
+                        "source": [
+                            "1500101:0_qmfzskae"
+                        ],
+                        "type": [
+                            "video/kaltura"
+                        ],
+                        "thumbnail": "//www.kaltura.com/p/1500101/thumbnail/entry_id/0_qmfzskae/width/640/"
+                    }
+                ],
+                "transcripts": [
+                    {
+                        "srcjsonp": "resources/CS1323_F_2015_Intro_to_Computer_Programming/74872bc4f712e4af9c85f35455a3ebea9669f023/9b3fe7737c9828ea6a552664d89b26bc8de8a15e.jsonp",
+                        "src": "resources/CS1323_F_2015_Intro_to_Computer_Programming/74872bc4f712e4af9c85f35455a3ebea9669f023/90784fa2c5c148922446e05d45ff35f0aee3e69b.vtt",
+                        "type": "text/vtt",
+                        "lang": "en",
+                        "purpose": "normal"
+                    }
+                ],
+                "slidedeck": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Submitting_Programs"
+            },
+            "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_04.01.01_Arrays": {
+                "MimeType": "application/vnd.nextthought.ntivideo",
+                "mimeType": "application/vnd.nextthought.ntivideo",
+                "description": "",
+                "creator": "Deborah Trytten",
+                "title": "Arrays",
+                "closedCaptions": null,
+                "ntiid": "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_04.01.01_Arrays",
+                "sources": [
+                    {
+                        "service": "kaltura",
+                        "width": 640,
+                        "poster": "//www.kaltura.com/p/1500101/thumbnail/entry_id/1_ir4zrvhp/width/1280/",
+                        "height": 480,
+                        "source": [
+                            "1500101:1_ir4zrvhp"
+                        ],
+                        "type": [
+                            "video/kaltura"
+                        ],
+                        "thumbnail": "//www.kaltura.com/p/1500101/thumbnail/entry_id/1_ir4zrvhp/width/640/"
+                    }
+                ],
+                "transcripts": [
+                    {
+                        "srcjsonp": "resources/CS1323_F_2015_Intro_to_Computer_Programming/794d21fcc58fdec19874958b0ef3a09d916e2e6b/9b3fe7737c9828ea6a552664d89b26bc8de8a15e.jsonp",
+                        "src": "resources/CS1323_F_2015_Intro_to_Computer_Programming/794d21fcc58fdec19874958b0ef3a09d916e2e6b/90784fa2c5c148922446e05d45ff35f0aee3e69b.vtt",
+                        "type": "text/vtt",
+                        "lang": "en",
+                        "purpose": "normal"
+                    }
+                ]
+            },
+            "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_04.02.02_Tracing_Parameter_Passing": {
+                "MimeType": "application/vnd.nextthought.ntivideo",
+                "mimeType": "application/vnd.nextthought.ntivideo",
+                "description": "",
+                "creator": "Deborah Trytten",
+                "title": "Tracing Parameter Passing",
+                "closedCaptions": null,
+                "ntiid": "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_04.02.02_Tracing_Parameter_Passing",
+                "sources": [
+                    {
+                        "service": "kaltura",
+                        "width": 640,
+                        "poster": "//www.kaltura.com/p/1500101/thumbnail/entry_id/1_c34ca11x/width/1280/",
+                        "height": 480,
+                        "source": [
+                            "1500101:1_c34ca11x"
+                        ],
+                        "type": [
+                            "video/kaltura"
+                        ],
+                        "thumbnail": "//www.kaltura.com/p/1500101/thumbnail/entry_id/1_c34ca11x/width/640/"
+                    }
+                ],
+                "transcripts": [
+                    {
+                        "srcjsonp": "resources/CS1323_F_2015_Intro_to_Computer_Programming/5f6233505e4b050a1887c6eb23a57b1cb74deb4b/9b3fe7737c9828ea6a552664d89b26bc8de8a15e.jsonp",
+                        "src": "resources/CS1323_F_2015_Intro_to_Computer_Programming/5f6233505e4b050a1887c6eb23a57b1cb74deb4b/90784fa2c5c148922446e05d45ff35f0aee3e69b.vtt",
+                        "type": "text/vtt",
+                        "lang": "en",
+                        "purpose": "normal"
+                    }
+                ],
+                "slidedeck": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Tracing_Parameter_Passing"
+            },
+            "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_01.01.01_Obama": {
+                "MimeType": "application/vnd.nextthought.ntivideo",
+                "mimeType": "application/vnd.nextthought.ntivideo",
+                "description": "",
+                "creator": "",
+                "title": "A Word from President Obama",
+                "closedCaptions": null,
+                "ntiid": "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_01.01.01_Obama",
+                "sources": [
+                    {
+                        "service": "youtube",
+                        "width": 640,
+                        "poster": "//img.youtube.com/vi/6XvmhE1J9PY/0.jpg",
+                        "height": 360,
+                        "source": [
+                            "6XvmhE1J9PY"
+                        ],
+                        "type": [
+                            "video/youtube"
+                        ],
+                        "thumbnail": "//img.youtube.com/vi/6XvmhE1J9PY/1.jpg"
+                    }
+                ],
+                "transcripts": [
+                    {
+                        "srcjsonp": "resources/CS1323_F_2015_Intro_to_Computer_Programming/fcc63c99519b5b91b96ab33d42cdff7d99b109dc/9b3fe7737c9828ea6a552664d89b26bc8de8a15e.jsonp",
+                        "src": "resources/CS1323_F_2015_Intro_to_Computer_Programming/fcc63c99519b5b91b96ab33d42cdff7d99b109dc/90784fa2c5c148922446e05d45ff35f0aee3e69b.vtt",
+                        "type": "text/vtt",
+                        "lang": "en",
+                        "purpose": "normal"
+                    }
+                ]
+            },
+            "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_01.01.01_Code": {
+                "MimeType": "application/vnd.nextthought.ntivideo",
+                "mimeType": "application/vnd.nextthought.ntivideo",
+                "description": "",
+                "creator": "",
+                "title": "Code.org",
+                "closedCaptions": null,
+                "ntiid": "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_01.01.01_Code",
+                "sources": [
+                    {
+                        "service": "youtube",
+                        "width": 640,
+                        "poster": "//img.youtube.com/vi/dU1xS07N-FA/0.jpg",
+                        "height": 360,
+                        "source": [
+                            "dU1xS07N-FA"
+                        ],
+                        "type": [
+                            "video/youtube"
+                        ],
+                        "thumbnail": "//img.youtube.com/vi/dU1xS07N-FA/1.jpg"
+                    }
+                ],
+                "transcripts": [
+                    {
+                        "srcjsonp": "resources/CS1323_F_2015_Intro_to_Computer_Programming/313769898bff99d720deff16ec1c71d17c070493/9b3fe7737c9828ea6a552664d89b26bc8de8a15e.jsonp",
+                        "src": "resources/CS1323_F_2015_Intro_to_Computer_Programming/313769898bff99d720deff16ec1c71d17c070493/90784fa2c5c148922446e05d45ff35f0aee3e69b.vtt",
+                        "type": "text/vtt",
+                        "lang": "en",
+                        "purpose": "normal"
+                    }
+                ]
+            },
+            "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_03.01.03a_StringBuilder_vs_String": {
+                "MimeType": "application/vnd.nextthought.ntivideo",
+                "mimeType": "application/vnd.nextthought.ntivideo",
+                "description": "",
+                "creator": "Deborah Trytten",
+                "title": "StringBuilder vs String",
+                "closedCaptions": null,
+                "ntiid": "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_03.01.03a_StringBuilder_vs_String",
+                "sources": [
+                    {
+                        "service": "kaltura",
+                        "width": 640,
+                        "poster": "//www.kaltura.com/p/1500101/thumbnail/entry_id/0_bdkozlu7/width/1280/",
+                        "height": 480,
+                        "source": [
+                            "1500101:0_bdkozlu7"
+                        ],
+                        "type": [
+                            "video/kaltura"
+                        ],
+                        "thumbnail": "//www.kaltura.com/p/1500101/thumbnail/entry_id/0_bdkozlu7/width/640/"
+                    }
+                ],
+                "transcripts": [
+                    {
+                        "srcjsonp": "resources/CS1323_F_2015_Intro_to_Computer_Programming/f4adfd722e0dfc1f3fbeb09230432f157899b005/9b3fe7737c9828ea6a552664d89b26bc8de8a15e.jsonp",
+                        "src": "resources/CS1323_F_2015_Intro_to_Computer_Programming/f4adfd722e0dfc1f3fbeb09230432f157899b005/90784fa2c5c148922446e05d45ff35f0aee3e69b.vtt",
+                        "type": "text/vtt",
+                        "lang": "en",
+                        "purpose": "normal"
+                    }
+                ],
+                "slidedeck": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:StringBuilder_vs_String"
+            },
+            "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_07.01.01_Next_Steps": {
+                "MimeType": "application/vnd.nextthought.ntivideo",
+                "mimeType": "application/vnd.nextthought.ntivideo",
+                "description": "",
+                "creator": "Deborah Trytten",
+                "title": "Next Steps to Becoming a Software Engineer",
+                "closedCaptions": null,
+                "ntiid": "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_07.01.01_Next_Steps",
+                "sources": [
+                    {
+                        "service": "kaltura",
+                        "width": 640,
+                        "poster": "//www.kaltura.com/p/1500101/thumbnail/entry_id/0_7pe8qmoe/width/1280/",
+                        "height": 480,
+                        "source": [
+                            "1500101:0_7pe8qmoe"
+                        ],
+                        "type": [
+                            "video/kaltura"
+                        ],
+                        "thumbnail": "//www.kaltura.com/p/1500101/thumbnail/entry_id/0_7pe8qmoe/width/640/"
+                    }
+                ],
+                "transcripts": [
+                    {
+                        "srcjsonp": "resources/CS1323_F_2015_Intro_to_Computer_Programming/f1b1c5cae2f84b7910f451fd4c5f58f051db53e2/9b3fe7737c9828ea6a552664d89b26bc8de8a15e.jsonp",
+                        "src": "resources/CS1323_F_2015_Intro_to_Computer_Programming/f1b1c5cae2f84b7910f451fd4c5f58f051db53e2/90784fa2c5c148922446e05d45ff35f0aee3e69b.vtt",
+                        "type": "text/vtt",
+                        "lang": "en",
+                        "purpose": "normal"
+                    }
+                ]
+            },
+            "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_03.01.04_GUI_Input_Tools": {
+                "MimeType": "application/vnd.nextthought.ntivideo",
+                "mimeType": "application/vnd.nextthought.ntivideo",
+                "description": "",
+                "creator": "Deborah Trytten",
+                "title": "Graphical User Interface Utilities",
+                "closedCaptions": null,
+                "ntiid": "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_03.01.04_GUI_Input_Tools",
+                "sources": [
+                    {
+                        "service": "kaltura",
+                        "width": 640,
+                        "poster": "//www.kaltura.com/p/1500101/thumbnail/entry_id/0_uywe9cj0/width/1280/",
+                        "height": 480,
+                        "source": [
+                            "1500101:0_uywe9cj0"
+                        ],
+                        "type": [
+                            "video/kaltura"
+                        ],
+                        "thumbnail": "//www.kaltura.com/p/1500101/thumbnail/entry_id/0_uywe9cj0/width/640/"
+                    }
+                ],
+                "transcripts": [
+                    {
+                        "srcjsonp": "resources/CS1323_F_2015_Intro_to_Computer_Programming/524deaa48c13090c8950b951b35f76ab5b498328/9b3fe7737c9828ea6a552664d89b26bc8de8a15e.jsonp",
+                        "src": "resources/CS1323_F_2015_Intro_to_Computer_Programming/524deaa48c13090c8950b951b35f76ab5b498328/90784fa2c5c148922446e05d45ff35f0aee3e69b.vtt",
+                        "type": "text/vtt",
+                        "lang": "en",
+                        "purpose": "normal"
+                    }
+                ],
+                "slidedeck": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:GUI_Input_Tools"
+            },
+            "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_04.01.02_Allocation_and_Access": {
+                "MimeType": "application/vnd.nextthought.ntivideo",
+                "mimeType": "application/vnd.nextthought.ntivideo",
+                "description": "",
+                "creator": "Deborah Trytten",
+                "title": "Allocation and Access",
+                "closedCaptions": null,
+                "ntiid": "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_04.01.02_Allocation_and_Access",
+                "sources": [
+                    {
+                        "service": "kaltura",
+                        "width": 640,
+                        "poster": "//www.kaltura.com/p/1500101/thumbnail/entry_id/1_uublrejp/width/1280/",
+                        "height": 480,
+                        "source": [
+                            "1500101:1_uublrejp"
+                        ],
+                        "type": [
+                            "video/kaltura"
+                        ],
+                        "thumbnail": "//www.kaltura.com/p/1500101/thumbnail/entry_id/1_uublrejp/width/640/"
+                    }
+                ],
+                "transcripts": [
+                    {
+                        "srcjsonp": "resources/CS1323_F_2015_Intro_to_Computer_Programming/f4b2ca377d2e9bf6e7f5b4fc9307df4baa71cc84/9b3fe7737c9828ea6a552664d89b26bc8de8a15e.jsonp",
+                        "src": "resources/CS1323_F_2015_Intro_to_Computer_Programming/f4b2ca377d2e9bf6e7f5b4fc9307df4baa71cc84/90784fa2c5c148922446e05d45ff35f0aee3e69b.vtt",
+                        "type": "text/vtt",
+                        "lang": "en",
+                        "purpose": "normal"
+                    }
+                ],
+                "slidedeck": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Allocation_and_Access"
+            },
+            "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_02.01.04_Heart_Rates": {
+                "MimeType": "application/vnd.nextthought.ntivideo",
+                "mimeType": "application/vnd.nextthought.ntivideo",
+                "description": "",
+                "creator": "Deborah Trytten",
+                "title": "Target Heart Rates: Iteration 2",
+                "closedCaptions": null,
+                "ntiid": "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_02.01.04_Heart_Rates",
+                "sources": [
+                    {
+                        "service": "kaltura",
+                        "width": 640,
+                        "poster": "//www.kaltura.com/p/1500101/thumbnail/entry_id/0_ybli4oi7/width/1280/",
+                        "height": 480,
+                        "source": [
+                            "1500101:0_ybli4oi7"
+                        ],
+                        "type": [
+                            "video/kaltura"
+                        ],
+                        "thumbnail": "//www.kaltura.com/p/1500101/thumbnail/entry_id/0_ybli4oi7/width/640/"
+                    }
+                ],
+                "transcripts": [
+                    {
+                        "srcjsonp": "resources/CS1323_F_2015_Intro_to_Computer_Programming/b5683e0779c86d38992c4145075ed6be97b174f3/9b3fe7737c9828ea6a552664d89b26bc8de8a15e.jsonp",
+                        "src": "resources/CS1323_F_2015_Intro_to_Computer_Programming/b5683e0779c86d38992c4145075ed6be97b174f3/90784fa2c5c148922446e05d45ff35f0aee3e69b.vtt",
+                        "type": "text/vtt",
+                        "lang": "en",
+                        "purpose": "normal"
+                    }
+                ],
+                "slidedeck": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Heart_Rates_2"
+            },
+            "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_01.03.01_How_to_with_Janux": {
+                "MimeType": "application/vnd.nextthought.ntivideo",
+                "mimeType": "application/vnd.nextthought.ntivideo",
+                "description": "",
+                "creator": "Deborah Trytten",
+                "title": "How to Work with Janux",
+                "closedCaptions": null,
+                "ntiid": "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_01.03.01_How_to_with_Janux",
+                "sources": [
+                    {
+                        "service": "kaltura",
+                        "width": 640,
+                        "poster": "//www.kaltura.com/p/1500101/thumbnail/entry_id//width/1280/",
+                        "height": 480,
+                        "source": [
+                            "1500101:"
+                        ],
+                        "type": [
+                            "video/kaltura"
+                        ],
+                        "thumbnail": "//www.kaltura.com/p/1500101/thumbnail/entry_id//width/640/"
+                    }
+                ],
+                "transcripts": []
+            },
+            "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_HW.15_Submitting_Multiple_Files": {
+                "MimeType": "application/vnd.nextthought.ntivideo",
+                "mimeType": "application/vnd.nextthought.ntivideo",
+                "description": "",
+                "creator": "Deborah Trytten",
+                "title": "How to Submit Multiple Files on Janux",
+                "closedCaptions": null,
+                "ntiid": "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_HW.15_Submitting_Multiple_Files",
+                "sources": [
+                    {
+                        "service": "kaltura",
+                        "width": 640,
+                        "poster": "//www.kaltura.com/p/1500101/thumbnail/entry_id/0_bu14kcnb/width/1280/",
+                        "height": 480,
+                        "source": [
+                            "1500101:0_bu14kcnb"
+                        ],
+                        "type": [
+                            "video/kaltura"
+                        ],
+                        "thumbnail": "//www.kaltura.com/p/1500101/thumbnail/entry_id/0_bu14kcnb/width/640/"
+                    }
+                ],
+                "transcripts": [
+                    {
+                        "srcjsonp": "resources/CS1323_F_2015_Intro_to_Computer_Programming/dd890727f9b2c5bc83d04a904ee2417d83f43e8e/9b3fe7737c9828ea6a552664d89b26bc8de8a15e.jsonp",
+                        "src": "resources/CS1323_F_2015_Intro_to_Computer_Programming/dd890727f9b2c5bc83d04a904ee2417d83f43e8e/90784fa2c5c148922446e05d45ff35f0aee3e69b.vtt",
+                        "type": "text/vtt",
+                        "lang": "en",
+                        "purpose": "normal"
+                    }
+                ]
+            },
+            "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_janux_overview": {
+                "MimeType": "application/vnd.nextthought.ntivideo",
+                "mimeType": "application/vnd.nextthought.ntivideo",
+                "description": "",
+                "creator": "NextThought",
+                "title": "Janux Overview",
+                "closedCaptions": null,
+                "ntiid": "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_janux_overview",
+                "sources": [
+                    {
+                        "service": "kaltura",
+                        "width": 640,
+                        "poster": "//www.kaltura.com/p/1500101/thumbnail/entry_id/0_xx00ip3m/width/1280/",
+                        "height": 480,
+                        "source": [
+                            "1500101:0_xx00ip3m"
+                        ],
+                        "type": [
+                            "video/kaltura"
+                        ],
+                        "thumbnail": "//www.kaltura.com/p/1500101/thumbnail/entry_id/0_xx00ip3m/width/640/"
+                    }
+                ],
+                "transcripts": [
+                    {
+                        "srcjsonp": "resources/CS1323_F_2015_Intro_to_Computer_Programming/70d39c8367ff47ca699b94e469c63e11997715d3/9b3fe7737c9828ea6a552664d89b26bc8de8a15e.jsonp",
+                        "src": "resources/CS1323_F_2015_Intro_to_Computer_Programming/70d39c8367ff47ca699b94e469c63e11997715d3/90784fa2c5c148922446e05d45ff35f0aee3e69b.vtt",
+                        "type": "text/vtt",
+                        "lang": "en",
+                        "purpose": "normal"
+                    }
+                ]
+            }
+        },
+        "Containers": {
+            "tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.lec:02.06_LESSON": [
+                "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_02.02.02_Cell_Phone",
+                "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_02.02.02_Nested_Conditionals",
+                "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_02.02.02_Vending_Machine",
+                "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_02.02.01_Control_Structures"
+            ],
+            "tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.lec:04.03_LESSON": [
+                "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_04.01.03_Split",
+                "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_04.01.03_Predicting_Weather"
+            ],
+            "tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.lec:01.03_LESSON": [
+                "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_01.01.02_Windows",
+                "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_01.01.02_Mac"
+            ],
+            "tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.lec:03.03_LESSON": [
+                "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_03.01.03_Texas_Infiltration",
+                "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_03.01.03a_StringBuilder_vs_String"
+            ],
+            "tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.lec:hmwk_01_LESSON": [
+                "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_HW.01.01_How_to_Submit"
+            ],
+            "tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.lec:02.03_LESSON": [
+                "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_02.01.03_Swap_Data",
+                "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_02.01.03_How_to_Problets",
+                "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_02.01.03_Cell_Phone",
+                "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_02.01.03_Changing_Primitive_Data"
+            ],
+            "tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.lec:04.06_LESSON": [
+                "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_04.02.02_Tracing_Parameter_Passing",
+                "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_04.02.02_Refining_Search"
+            ],
+            "tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.lec:03.04_LESSON": [
+                "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_03.01.04a_Class_Methods",
+                "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_03.01.04_GUI_Input_Tools"
+            ],
+            "tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.lec:04.07_LESSON": [
+                "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_04.02.04_Reading_Levels",
+                "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_04.02.04_Rectangles_versus_Triangles"
+            ],
+            "tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.lec:04.10_LESSON": [
+                "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_04.02.06_Statistics"
+            ],
+            "tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.lec:03.02_LESSON": [
+                "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_03.01.02_Explore_the_API",
+                "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_03.01.02a_References_and_Constructors"
+            ],
+            "tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.introduction_to_computer_programming": [
+                "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_05.01.02_Frogger_1",
+                "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_05.02.04_Set_Tutor",
+                "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_03.02.04_Searching",
+                "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_05.01.01_Classes",
+                "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_04.02.01_Control_Arrays",
+                "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_05.01.03_Pseudo_ArrayList_Enforcing_the_Contract",
+                "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_01.02.01_How_to_with_Janux_PP",
+                "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_03.02.05_Debugging",
+                "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_05.01.04_Two_Patterns_Aggregation",
+                "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_05.01.02_Pseudo_ArrayList_Classes_as_Contract",
+                "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_05.01.03_Frogger_2",
+                "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_03.02.02_Collections",
+                "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_04.02.06_Debugging",
+                "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_03.01.06_Best_Shoes",
+                "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_05.01.05_Greyhound_Adoption",
+                "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_03.02.04_Searching_2",
+                "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_02.01.05_E_commerce",
+                "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_02.03.01_Test_Driven",
+                "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_05.01.04_Charity_Donations",
+                "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_05.02.04_Program_Design",
+                "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_05.02.02_Environment_Variables",
+                "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_04.01.04_Hall_of_Fame",
+                "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_03.01.01_Predefined_Objects",
+                "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_05.02.01_Classes",
+                "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_04.01.01_Arrays",
+                "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_07.01.01_Next_Steps",
+                "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_01.03.01_How_to_with_Janux",
+                "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_HW.15_Submitting_Multiple_Files"
+            ],
+            "tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.lec:01.04_LESSON": [
+                "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_janux_social_feeds",
+                "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_janux_videos",
+                "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_janux_assignments",
+                "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_janux_overview",
+                "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_janux_reading_features"
+            ],
+            "tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.lec:03.10_LESSON": [
+                "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_03.02.03_Logical_Operators",
+                "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_03.02.03_Logical_Operators_2"
+            ],
+            "tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.lec:03.08_LESSON": [
+                "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_03.02.01_Control"
+            ],
+            "tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.lec:04.02_LESSON": [
+                "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_04.01.02_Allocation_and_Access",
+                "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_04.01.02_Yahtzee_1"
+            ],
+            "tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.lec:02.07_LESSON": [
+                "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_02.02.03_Cell_Phone",
+                "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_02.02.03_Craps",
+                "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_02.02.03_Zero_and_Unit_Indexing"
+            ],
+            "tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.lec:03.05_LESSON": [
+                "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_04.02.03_For_Loops"
+            ],
+            "tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.lec:02.04_LESSON": [
+                "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_02.01.04_Command_Line_Arguments",
+                "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_02.01.04_Heart_Rates",
+                "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_02.01.04_Cell_Phone"
+            ],
+            "tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.lec:03.13_LESSON": [
+                "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_03.02.05_Words_With_Acquaintances",
+                "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_03.02.05_Best_Friend"
+            ],
+            "tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.lec:02.01_LESSON": [
+                "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_02.01.01_Primative"
+            ],
+            "tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.lec:02.08_LESSON": [
+                "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_02.02.04_Memory_Diagrams_Passing_By_Value",
+                "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_02.02.04_Javabat",
+                "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_02.02.04_Cell",
+                "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_02.02.04_Craps"
+            ],
+            "tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.lec:03.06_LESSON": [
+                "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_03.01.05_Classes_with_Generics",
+                "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_03.01.05_Persistent_List"
+            ],
+            "tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.lec:02.10_LESSON": [
+                "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_02.10.01_Dropping",
+                "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_02.03.02_Laudible"
+            ],
+            "tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.lec:01.01_LESSON": [
+                "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_01.01.01_Welcome",
+                "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_01.01.01_Java",
+                "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_01.01.01_Academic_Integrity",
+                "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_01.01.01_Obama",
+                "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_01.01.01_Code"
+            ],
+            "tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.lec:02.02_LESSON": [
+                "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_02.01.02_Storing_Primitive_Data",
+                "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_02.01.02_Heart_Rates",
+                "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_02.01.02_How_to_Turingscraft",
+                "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_02.01.02_Cell_Phone"
+            ],
+            "tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.lec:04.08_LESSON": [
+                "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_04.02.05_Selection_Sort",
+                "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_04.02.05_Insertion_Sort",
+                "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_04.02.05_Partial_Sorting"
+            ]
+        }
+    },
+    "ntiid": "tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.introduction_to_computer_programming",
+    "version": "1",
+    "Content-Type": "application/json",
+    "Content-Encoding": "json"
+});

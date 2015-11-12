@@ -1,0 +1,27 @@
+{
+    "NTI": {
+	   "Forums": {
+		    "AutoCreate": true,
+            "HasInClassDiscussions": true,
+            "HasInClassAnnouncements": true,
+            "HasOpenDiscussions": false,
+            "HasOpenAnnouncements": false
+        },
+	    "SharingScopesDisplayInfo": {
+	               "ForCredit": {
+	                   "alias": "Introduction to Computer Programming For Credit",
+	                   "avatarURL": "https://d2ixlfeu83tci.cloudfront.net/images/avatars/ou/IntroToProgramming.png"
+	               }
+	           }
+    },
+	"OU": {
+		"IMS": {
+			"sourcedid": [
+				"34205.201510"
+			],
+			"source": "SMS"
+		},
+		"DropCutOffDate": "2015-09-05T04:59:00+00:00",
+		"EnrollCutOffDate": "2015-08-28T05:00:00+00:00"
+	}
+}

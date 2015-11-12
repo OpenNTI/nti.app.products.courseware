@@ -1,0 +1,7 @@
+#NTIContent div.caption{
+    display: none;
+}
+
+#NTIContent .image-caption .caption{
+    display: block;
+}

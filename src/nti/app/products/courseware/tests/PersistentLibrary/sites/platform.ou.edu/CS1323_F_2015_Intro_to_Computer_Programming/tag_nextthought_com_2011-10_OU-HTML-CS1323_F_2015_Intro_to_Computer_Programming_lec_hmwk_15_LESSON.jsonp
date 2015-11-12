@@ -1,0 +1,44 @@
+jsonpReceiveContent({
+    "content": {
+        "MimeType": "application/vnd.nextthought.ntilessonoverview",
+        "Items": [
+            {
+                "MimeType": "application/vnd.nextthought.nticourseoverviewgroup",
+                "NTIID": "tag:nextthought.com,2011-10:OU-NTICourseOverviewGroup-CS1323_F_2015_Intro_to_Computer_Programming.lec:hmwk_15_LESSON.0",
+                "Items": [
+                    {
+                        "MimeType": "application/vnd.nextthought.discussion",
+                        "title": "Project 10 Help",
+                        "label": "",
+                        "NTIID": "",
+                        "id": "nti-course-bundle://Discussions/Project_10_Help.json",
+                        "icon": "resources/CS1323_F_2015_Intro_to_Computer_Programming/a6973fad18aa64d2922b356896970c98d95db2fb/fd35e23767020999111e1f49239199b4c5eff23e.png"
+                    }
+                ],
+                "accentColor": "f5d420",
+                "title": "Discussions"
+            },
+            {
+                "MimeType": "application/vnd.nextthought.nticourseoverviewgroup",
+                "NTIID": "tag:nextthought.com,2011-10:OU-NTICourseOverviewGroup-CS1323_F_2015_Intro_to_Computer_Programming.lec:hmwk_15_LESSON.1",
+                "Items": [
+                    {
+                        "MimeType": "application/vnd.nextthought.naquestionset",
+                        "question-count": "1",
+                        "Target-NTIID": "tag:nextthought.com,2011-10:OU-NAQ-CS1323_F_2015_Intro_to_Computer_Programming.naq.set.qset:Lab_10",
+                        "NTIID": "tag:nextthought.com,2011-10:OU-NAQ-CS1323_F_2015_Intro_to_Computer_Programming.naq.set.qset:Lab_10",
+                        "label": "Project 10 (100 points)"
+                    }
+                ],
+                "accentColor": "81c8dc",
+                "title": "Assignments"
+            }
+        ],
+        "title": "Project 10",
+        "NTIID": "tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.lec:hmwk_15_LESSON"
+    },
+    "ntiid": "tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.lec:hmwk_15_LESSON",
+    "version": "1",
+    "Content-Type": "application/json",
+    "Content-Encoding": "json"
+});

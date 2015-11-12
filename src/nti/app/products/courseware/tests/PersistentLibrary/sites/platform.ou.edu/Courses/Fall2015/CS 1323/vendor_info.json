@@ -1,0 +1,17 @@
+{
+    "NTI": {
+	   "Forums": {
+		   "AutoCreate": true,
+            "HasInClassDiscussions": true,
+            "HasInClassAnnouncements": true,
+            "HasOpenDiscussions": false,
+            "HasOpenAnnouncements": false
+        },
+	    "SharingScopesDisplayInfo": {
+	               "ForCredit": {
+	                   "alias": "Introduction to Computer Programming - For Credit",
+	                   "avatarURL": "https://d2ixlfeu83tci.cloudfront.net/images/avatars/ou/IntroToProgramming.png"
+	               }
+	           }
+    }
+}

@@ -1,0 +1,6 @@
+/** 
+ * This file should remain blank. It is included after all the real stylesheets.
+ * its purpose is to be overwritten by the application with application
+ * settings (font preferences and such). This improves performance
+ * relative to changing the font and re-rendering the document.
+ */

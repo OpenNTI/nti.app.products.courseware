@@ -1,0 +1,11 @@
+{
+    "Class": "Discussion",
+    "MimeType": "application/vnd.nextthought.courses.discussion",
+    "body": [
+        "Do you need help with this assignment? Post your questions here to help each other out."
+    ],
+    "scopes": [
+        "All"
+    ],
+    "title": "Project 10 Help"
+}

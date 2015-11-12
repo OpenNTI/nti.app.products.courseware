@@ -1,0 +1,227 @@
+/**
+ * $Revision: 47409 $
+ **/
+/**
+ * Important: Using the * descendent selector will
+ * cause problems with dynamically changing font settings.
+ * Only apply the setting to the root.
+ */
+
+#NTIContent .minipage {
+	display: inline-block;
+	margin-top: .5em;
+	margin-right: .25em;
+	margin-bottom: .5em;
+	margin-left: .25em;
+	vertical-align: middle;
+}
+
+#NTIContent .description-item p.par {
+	display: inline;
+}
+
+#NTIContent td > p.par {
+	margin: 0;
+}
+
+#NTIContent td {
+	padding-left: 1.0em;
+	padding-right: 1.0em;
+}
+
+#NTIContent table {
+	margin-left: auto;
+	margin-right: auto;
+	border-spacing: 0;
+}
+
+#NTIContent .table .caption {
+	font-size: 130%;
+	font-weight: bold;
+	text-align: center;
+	margin-bottom: 0.75em;
+}
+
+#NTIContent .sidebar {
+	padding-top: 1em;
+	padding-bottom: 1em;
+	padding-left: 3em;
+	padding-right: 3em;
+	background-color: rgba(235, 235, 235, 0.3);
+}
+
+#NTIContent .sidebar-title {
+	font-size: 175%;
+	font-weight: 200;
+	margin-bottom: 0.5em;
+}
+
+#NTIContent .math.equation {
+	position: relative;
+}
+
+#NTIContent .equation-body {
+	text-align: center;
+}
+
+#NTIContent .equation-number {
+	position: absolute;
+	top: 50%;
+	right: 0;
+	text-align: right;
+}
+
+#NTIContent .equation-number div {
+	margin-top: -0.6em;
+}
+
+#NTIContent .lineout {
+	text-decoration: line-through;
+}
+
+#NTIContent .modified {
+	text-decoration: underline;
+	color: #1fd26f;
+}
+
+ul.nav {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+	background: #fff;
+	overflow: hidden;
+}
+
+ul.nav li {
+	display: inline-block;
+	float: left;
+	margin: 0;
+	padding: 0;
+	border: 1px solid #dbdbdb;
+	border-left-width: 0;
+}
+
+ul.nav li:first-of-type {
+	border-left-width: 1px;
+}
+
+ul.nav li a,
+ul.nav li a:hover,
+ul.nav li a:visited,
+ul.nav li a:active,
+ul.nav li a:link {
+	display: inline-block;
+	font: normal normal 12px/30px 'Open Sans', sans-serif;
+	color: #494949 !important;
+	padding: 0 0.8em;
+	text-transform: uppercase;
+}
+
+ul.nav li a:hover {
+	color: #8eb737 !important;
+}
+
+ul.nav a:empty {
+	display: none;
+}
+
+ul.nav p {
+	display: inline;
+	padding: 0;
+	margin: 0;   
+}
+
+div.align-center ul.nav {
+	display: inline-block;
+}
+
+#NTIContent #glossary {
+	display: none;
+}
+
+#NTIContent .language-code::before {
+	content: "";
+	position: absolute;
+	width: 2.25em;
+	height: 2.25em;
+	top: -1.1em;
+	left: -0.45em;
+	background: #d9d9d9;
+	border-radius: 100%;
+	z-index: -1;
+}
+
+#NTIContent .language-code:hover::before {
+	background: #3fb3f6;
+}
+
+#NTIContent .language-code {
+	cursor: pointer;
+	color: #fff;
+	font-size: .8em;
+	line-height: 0;
+	font-weight: 700;
+	float: right;
+	position: relative;
+	z-index: 1;
+	display: block;
+	vertical-align: top;
+	margin-top: 12px;
+}
+
+#NTIContent .directions-main {
+	font-size: 2em;
+	display: block;
+	margin-top: -10px;
+}
+
+#NTIContent .directions-example {
+	font-style: italic;
+}
+
+#NTIContent .ntidirectionsblock {
+	width: 640px;
+}
+
+#NTIContent .sidebar-leader {
+	position: relative;
+	display: inline-block;
+	top: -5px;
+	vertical-align: top;
+}
+
+#NTIContent .sidebar-body {
+	display: inline-block;
+}
+
+#NTIContent .ntidirectionsblock .directions {
+	display: inline-block;
+	width: 90%;
+}
+
+#NTIContent .ntidirectionsblock {
+	display: inline-block;
+	width: 100%;
+}
+
+#NTIContent .sidebar-body object[type$=ntisequence] {
+	display: inline;
+	padding: 12px 0px;
+}
+
+#NTIContent .sidebar-body object[type$=ntisequenceitem] {
+	width: 625px;
+	padding-right: 12px;
+}
+
+#NTIContent .chapter.title {
+	font-size: 34px;
+}
+
+#NTIContent .subsection.title {
+	font-size: 28px;
+}
+
+#NTIContent .subsubsection.title {
+	font-size: 24px;
+}
