@@ -5,7 +5,6 @@
 """
 
 from __future__ import print_function, unicode_literals, absolute_import, division
-
 __docformat__ = "restructuredtext en"
 
 logger = __import__('logging').getLogger(__name__)
@@ -244,7 +243,7 @@ def _get_valid_course_context(course_contexts):
 def _catalog_entry_from_container_object(obj):
 	return get_joinable_contexts(obj)
 
-class _OutlinePathFactory( object ):
+class _OutlinePathFactory(object):
 
 	def __init__(self, course_context, target_ntiid):
 		self.original_target_ntiid = target_ntiid
@@ -267,7 +266,7 @@ class _OutlinePathFactory( object ):
 				if INTISlideDeck.providedBy(target_obj):
 					# Arbitrary?
 					slide_vid = target_obj.videos[0]
-				elif INTISlide.providedBy( target_obj ):
+				elif INTISlide.providedBy(target_obj):
 					slide_vid = find_object_with_ntiid(target_obj.slidevideoid)
 				else:
 					slide_vid = target_obj
@@ -316,17 +315,17 @@ class _OutlinePathFactory( object ):
 		those instead of video they live on. For slide videos, we want the
 		slidedeck to be returned.
 		"""
-		original_obj = find_object_with_ntiid( self.target_ntiid )
-		if 		INTISlide.providedBy( original_obj ) \
-			or 	INTISlideVideo.providedBy( original_obj ):
+		original_obj = find_object_with_ntiid(self.target_ntiid)
+		if 		INTISlide.providedBy(original_obj) \
+			or 	INTISlideVideo.providedBy(original_obj):
 
-			deck = find_object_with_ntiid( original_obj.slidedeckid )
+			deck = find_object_with_ntiid(original_obj.slidedeckid)
 			results = (deck, original_obj,)
-		elif INTISlideDeck.providedBy( original_obj ):
+		elif INTISlideDeck.providedBy(original_obj):
 			results = (original_obj,)
-		elif INTIVideo.providedBy( original_obj ):
-			slide_deck = self._get_slidedeck_for_video( self.original_target_ntiid,
-													lesson_overview )
+		elif INTIVideo.providedBy(original_obj):
+			slide_deck = self._get_slidedeck_for_video(self.original_target_ntiid,
+													lesson_overview)
 			if slide_deck is not None:
 				results = (slide_deck, item,)
 			else:
@@ -335,7 +334,7 @@ class _OutlinePathFactory( object ):
 			results = (item,)
 		return results
 
-	def _overview_item_contains_target( self, item, check_contained=True ):
+	def _overview_item_contains_target(self, item, check_contained=True):
 		"""
 		Check if the overview item contains our target object. The simple case
 		is we are looking for an ntiid that is our item.
@@ -354,7 +353,7 @@ class _OutlinePathFactory( object ):
 		target_ref = getattr(item, 'target', None)
 		ntiid_vals = set([target_ntiid_ref, ntiid_ref, target_ref])
 		# We found our object's container, or we are the container.
-		result = 	self.target_obj_containers.intersection( ntiid_vals ) \
+		result = 	self.target_obj_containers.intersection(ntiid_vals) \
 				or 	self.target_ntiid in ntiid_vals
 
 		if 		not result \
@@ -376,24 +375,24 @@ class _OutlinePathFactory( object ):
 						pass
 		return result
 
-	def _lesson_overview_contains_target( self, outline_content_node, lesson_overview ):
-		def _do_check( check_contained=True ):
+	def _lesson_overview_contains_target(self, outline_content_node, lesson_overview):
+		def _do_check(check_contained=True):
 			for overview_group in lesson_overview.items:
 				for item in overview_group.items:
-					if self._overview_item_contains_target( item, check_contained ):
-						endpoints = self._get_outline_result_items( item, lesson_overview )
+					if self._overview_item_contains_target(item, check_contained):
+						endpoints = self._get_outline_result_items(item, lesson_overview)
 						# Return our course, leaf outline node, and overview.
 						results = [self.course_context, outline_content_node]
 						results.extend(endpoints)
 						return results
 
 		results = None
-		if IContentUnit.providedBy( self.target_obj ):
+		if IContentUnit.providedBy(self.target_obj):
 			# First check if our content unit is a related work ref.
 			# We don't want to return a video that may be contained
 			# by our target content unit when we are looking for just
 			# a related work ref.
-			results = _do_check( False )
+			results = _do_check(False)
 		if not results:
 			results = _do_check()
 		return results
@@ -426,8 +425,8 @@ class _OutlinePathFactory( object ):
 				if lesson_overview is None:
 					continue
 
-				results = self._lesson_overview_contains_target( outline_content_node,
-																lesson_overview )
+				results = self._lesson_overview_contains_target(outline_content_node,
+																lesson_overview)
 				if results is not None:
 					return results
 		return (self.course_context,)

@@ -28,6 +28,8 @@ from zope.security.permission import Permission
 from nti.appserver.workspaces.interfaces import IWorkspace
 from nti.appserver.workspaces.interfaces import IContainerCollection
 
+from nti.contentfolder.interfaces import IRootFolder
+
 from nti.contenttypes.courses.interfaces import ICourseInstance
 from nti.contenttypes.courses.interfaces import IPrincipalEnrollments
 
@@ -367,6 +369,11 @@ class IUserAdministeredCourses(interface.Interface):
 		"""
 		return an interable with the users administered courses
 		"""
+
+# resources
+
+class ICourseRootFolder(IRootFolder):
+	pass
 
 # deprecations
 

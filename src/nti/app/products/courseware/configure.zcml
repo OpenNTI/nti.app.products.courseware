@@ -55,12 +55,15 @@
 	<subscriber handler=".discussions._discussions_added" />
 	<subscriber handler=".discussions._discussions_modified" />
 	<subscriber handler=".discussions._catalog_entry_synchronized" />
+
 	<subscriber handler=".legacy_catalog._content_package_registered" />
+
 	<subscriber handler=".subscribers._auto_enroll_on_enrollment_added " />
 	<subscriber handler=".subscribers._join_communities_on_enrollment_added" />
+
 	<subscriber handler=".subscribers.update_enrollment_modified_on_add" />
 	<subscriber handler=".subscribers.update_enrollment_modified_on_drop" />
-
+	
 	<!-- Auto-gen course purchasables from content -->
 	<!-- This must be a global subscriber as that's where
 	the library is -->
@@ -89,7 +92,7 @@
 	<adapter factory=".adapters._entry_to_content_package_bundle" />
 	<adapter factory=".adapters._course_content_to_package_bundle" />
 	<adapter factory=".adapters._legacy_course_to_content_package_bundle" />
-
+	
 	<!-- Content containers to courses -->
 	<subscriber factory=".adapters._catalog_entry_from_container_object"
 				provides="nti.appserver.interfaces.IJoinableContextProvider"
@@ -250,7 +253,6 @@
 	</configure>
 
 	<!-- Traversal paths -->
-	<!-- This may go away -->
 	<adapter factory=".workspaces.CatalogEntryLocationInfo" />
 	<adapter factory=".workspaces.LegacyCourseInstanceEnrollment"
 			 for="nti.contenttypes.courses.interfaces.ICourseInstance
@@ -416,6 +418,22 @@
 	<subscriber	factory=".filters._CoursesContentObjectFilter"
 				provides="nti.appserver.interfaces.ICreatableObjectFilter"
 				for="nti.dataserver.interfaces.IUser" />
+
+	<!-- Resources -->
+	<adapter factory=".resources._course_resources" />
+
+	<subscriber handler=".resources._on_course_added"  />
+	<subscriber handler=".resources._on_course_removed" />
+
+	<adapter factory=".resources._resources_for_course_path_adapter"
+			 for="nti.contenttypes.courses.interfaces.ICourseInstance pyramid.interfaces.IRequest"
+			 provides="zope.traversing.interfaces.IPathAdapter"
+			 name="resources" />
+
+	<adapter factory=".resources._resources_for_course_path_adapter"
+			 for="nti.app.products.courseware.interfaces.ICourseCatalogEntry pyramid.interfaces.IRequest"
+			 provides="zope.traversing.interfaces.IPathAdapter"
+			 name="resources" />
 
 	<!-- Views -->
 	<include package=".views" />
