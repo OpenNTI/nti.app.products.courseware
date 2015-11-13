@@ -25,10 +25,11 @@ class TestMailViews(ApplicationLayerTest):
 
 	layer = InstructedCourseApplicationTestLayer
 	testapp = None
-	# This only works in the OU environment because that's where the purchasables are
+
+	# XXX: This only works in the OU environment because that's where the purchasables are
 	default_origin = b'http://janux.ou.edu'
 	enrolled_courses_href = '/dataserver2/users/sjohnson@nextthought.com/Courses/EnrolledCourses'
-	expected_enrollment_href =  '/dataserver2/users/sjohnson%40nextthought.com/Courses/EnrolledCourses/tag%3Anextthought.com%2C2011-10%3AOU-HTML-CLC3403_LawAndJustice.course_info'
+	expected_enrollment_href = '/dataserver2/users/sjohnson%40nextthought.com/Courses/EnrolledCourses/tag%3Anextthought.com%2C2011-10%3AOU-HTML-CLC3403_LawAndJustice.course_info'
 
 	@WithSharedApplicationMockDS(users=('aaa_nextthought_com',),
 								 testapp=True,
@@ -42,7 +43,7 @@ class TestMailViews(ApplicationLayerTest):
 				'NoReply': True }
 
 		# Test mail without subject and with a reply address.
-		mail_with_reply = dict( mail )
+		mail_with_reply = dict(mail)
 		mail_with_reply['NoReply'] = False
 		mail_with_reply['Subject'] = None
 
@@ -51,40 +52,40 @@ class TestMailViews(ApplicationLayerTest):
 
 		# Give the user a NT email address.
 		with mock_dataserver.mock_db_trans(self.ds):
-			user = User.get_user( 'aaa_nextthought_com' )
+			user = User.get_user('aaa_nextthought_com')
 			IUserProfile(user).email_verified = True
 			IUserProfile(user).email = 'bill@nextthought.com'
 
-		res = self.testapp.get( '/dataserver2/users/harp4162/Courses/AdministeredCourses',
+		res = self.testapp.get('/dataserver2/users/harp4162/Courses/AdministeredCourses',
 								extra_environ=instructor_env)
 
 		role = res.json_body['Items'][0]
 		course_instance = role['CourseInstance']
-		roster_link = self.require_link_href_with_rel( course_instance, 'CourseEnrollmentRoster')
-		email_link = self.require_link_href_with_rel( course_instance, VIEW_COURSE_MAIL )
+		roster_link = self.require_link_href_with_rel(course_instance, 'CourseEnrollmentRoster')
+		email_link = self.require_link_href_with_rel(course_instance, VIEW_COURSE_MAIL)
 
 		# Put everyone in the roster
-		self.testapp.post_json( self.enrolled_courses_href, 'CLC 3403', status=201 )
+		self.testapp.post_json(self.enrolled_courses_href, 'CLC 3403', status=201)
 
-		self.testapp.post_json( '/dataserver2/users/aaa_nextthought_com/Courses/EnrolledCourses',
+		self.testapp.post_json('/dataserver2/users/aaa_nextthought_com/Courses/EnrolledCourses',
 								'CLC 3403',
 								extra_environ=jmadden_environ,
-								status=201 )
+								status=201)
 
 		# Mail student
-		res = self.testapp.get( roster_link,
+		res = self.testapp.get(roster_link,
 								extra_environ=instructor_env)
 		for enroll_record in res.json_body['Items']:
-			roster_link = self.require_link_href_with_rel( enroll_record, VIEW_COURSE_MAIL )
-			self.testapp.post_json( roster_link, mail, extra_environ=instructor_env)
-			self.testapp.post_json( roster_link, mail_with_reply, extra_environ=instructor_env)
+			roster_link = self.require_link_href_with_rel(enroll_record, VIEW_COURSE_MAIL)
+			self.testapp.post_json(roster_link, mail, extra_environ=instructor_env)
+			self.testapp.post_json(roster_link, mail_with_reply, extra_environ=instructor_env)
 
 		# Mail course
-		self.testapp.post_json( email_link, mail, extra_environ=instructor_env)
-		self.testapp.post_json( email_link, mail_with_reply, extra_environ=instructor_env)
+		self.testapp.post_json(email_link, mail, extra_environ=instructor_env)
+		self.testapp.post_json(email_link, mail_with_reply, extra_environ=instructor_env)
 
 		# 403s/404s
-		self.testapp.post_json( email_link, mail, status=403 )
+		self.testapp.post_json(email_link, mail, status=403)
 		self.testapp.get(roster_link + '/not_enrolled/Mail',
 						 status=404,
-						 extra_environ=instructor_env )
+						 extra_environ=instructor_env)

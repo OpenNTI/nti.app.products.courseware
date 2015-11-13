@@ -13,6 +13,7 @@ from hamcrest import assert_that
 from hamcrest import has_property
 
 from zope import component
+
 from zope.intid.interfaces import IIntIds
 
 from nti.app.products.courseware.activity import _DefaultCourseActivity
@@ -27,17 +28,17 @@ from nti.dataserver.tests.mock_dataserver import WithMockDSTrans
 from nti.app.testing.application_webtest import ApplicationLayerTest
 
 class TestActivity(ApplicationLayerTest):
-	
+
 	@WithMockDSTrans
 	@time_monotonically_increases
 	def test_activity(self):
 
 		activity = _DefaultCourseActivity()
-		assert_that( activity, validly_provides(ICourseInstanceActivity))
+		assert_that(activity, validly_provides(ICourseInstanceActivity))
 
-		assert_that( list(activity.items()), is_empty() )
-		assert_that( activity, has_length(0) )
-		assert_that( activity, has_property('lastModified', 0))
+		assert_that(list(activity.items()), is_empty())
+		assert_that(activity, has_length(0))
+		assert_that(activity, has_property('lastModified', 0))
 		class Item(object):
 			pass
 
@@ -51,16 +52,16 @@ class TestActivity(ApplicationLayerTest):
 		activity.append(item1)
 		activity.append(item2)
 
-		assert_that( activity, has_length(2))
-		assert_that( activity, has_property('lastModified', 3.0))
-		assert_that( list(activity.items()),
-					 is_( [(3.0, item2),
-						   (2.0, item1)] ))
+		assert_that(activity, has_length(2))
+		assert_that(activity, has_property('lastModified', 3.0))
+		assert_that(list(activity.items()),
+					is_([(3.0, item2),
+						 (2.0, item1)]))
 
 		activity.remove(item1)
-		assert_that( list(activity.items()),
-					 is_( [(3.0, item2)] ) )
+		assert_that(list(activity.items()),
+					is_([(3.0, item2)]))
 
-		del activity._storage # let the transaction commit
+		del activity._storage  # let the transaction commit
 		iids.unregister(item1)
 		iids.unregister(item2)

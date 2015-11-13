@@ -26,6 +26,9 @@ from hamcrest import contains_inanyorder
 from hamcrest import greater_than_or_equal_to
 does_not = is_not
 
+from nti.testing.matchers import is_empty
+from nti.testing.matchers import verifiably_provides
+
 from zope import component
 from zope import lifecycleevent
 
@@ -53,9 +56,6 @@ from nti.app.products.courseware.tests import LegacyInstructedCourseApplicationT
 from nti.app.products.courseware.tests import RestrictedInstructedCourseApplicationTestLayer
 from nti.app.products.courseware.tests import PersistentInstructedCourseApplicationTestLayer
 
-from nti.testing.matchers import is_empty
-from nti.testing.matchers import verifiably_provides
-
 class TestWorkspace(ApplicationLayerTest):
 
 	testapp = None
@@ -63,33 +63,34 @@ class TestWorkspace(ApplicationLayerTest):
 	@WithSharedApplicationMockDS
 	def test_workspace_links_in_service(self):
 		with mock_dataserver.mock_db_trans(self.ds):
-			user = self._create_user( username=self.extra_environ_default_user )
+			user = self._create_user(username=self.extra_environ_default_user)
 			service = IUserService(user)
 
 			workspaces = service.workspaces
 
-			assert_that( workspaces, has_item( verifiably_provides( ICoursesWorkspace )))
+			assert_that(workspaces, has_item(verifiably_provides(ICoursesWorkspace)))
 
 			workspace = [x for x in workspaces if ICoursesWorkspace.providedBy(x)][0]
 
 			course_path = '/dataserver2/users/sjohnson%40nextthought.COM/Courses'
-			assert_that( traversal.resource_path( workspace ),
-						 is_( course_path ) )
+			assert_that(traversal.resource_path(workspace),
+						 is_(course_path))
 
-			assert_that( workspace.collections, contains( verifiably_provides( ICollection ),
-														  verifiably_provides( ICollection ),
-														  verifiably_provides( ICollection )))
+			assert_that(workspace.collections, contains(verifiably_provides(ICollection),
+														verifiably_provides(ICollection),
+														verifiably_provides(ICollection)))
 
-			assert_that( workspace.collections, has_items( has_property( 'name', 'AllCourses'),
-														   has_property( 'name', 'EnrolledCourses' ),
-														   has_property( 'name', 'AdministeredCourses' )) )
+			assert_that(workspace.collections, has_items(has_property('name', 'AllCourses'),
+														 has_property('name', 'EnrolledCourses'),
+														 has_property('name', 'AdministeredCourses')))
 
-			assert_that( [traversal.resource_path(c) for c in workspace.collections],
-						 has_items( course_path + '/AllCourses',
+			assert_that([traversal.resource_path(c) for c in workspace.collections],
+						 has_items(course_path + '/AllCourses',
 									course_path + '/EnrolledCourses' ,
-									course_path + '/AdministeredCourses' ))
+									course_path + '/AdministeredCourses'))
 
 class _AbstractEnrollingBase(object):
+
 	testapp = None
 	# This only works in the OU environment because that's where the purchasables are
 	default_origin = b'http://janux.ou.edu'
@@ -98,23 +99,23 @@ class _AbstractEnrollingBase(object):
 	all_courses_href = '/dataserver2/users/sjohnson@nextthought.com/Courses/AllCourses'
 	enrolled_courses_href = '/dataserver2/users/sjohnson@nextthought.com/Courses/EnrolledCourses'
 
-	@WithSharedApplicationMockDS(users=True,testapp=True)
+	@WithSharedApplicationMockDS(users=True, testapp=True)
 	def test_fetch_all_courses(self):
 		# XXX: Our layer is registering these globally...
-		#res = self.testapp.get( '/dataserver2/users/sjohnson@nextthought.com/Courses/AllCourses' )
+		# res = self.testapp.get( '/dataserver2/users/sjohnson@nextthought.com/Courses/AllCourses' )
 		# Nothing by default
-		#assert_that( res.json_body, has_entry( 'Items', has_length( 0 )) )
+		# assert_that( res.json_body, has_entry( 'Items', has_length( 0 )) )
 
-		res = self.testapp.get( self.all_courses_href )
-		assert_that( res.json_body, has_entry('Items',
-											  has_length( greater_than_or_equal_to(self.expected_workspace_length) )) )
-		assert_that( res.json_body['Items'],
+		res = self.testapp.get(self.all_courses_href)
+		assert_that(res.json_body, has_entry('Items',
+											  has_length(greater_than_or_equal_to(self.expected_workspace_length))))
+		assert_that(res.json_body['Items'],
 					 has_items(
-						 all_of( has_entries( 'Duration', 'P112D',
+						 all_of(has_entries('Duration', 'P112D',
 											  'Title', 'Introduction to Water',
 											  'StartDate', '2014-01-13T06:00:00Z')),
-						 all_of( has_entries( 'StartDate', '2013-08-13T06:00:00Z',
-											  'Title', 'Law and Justice' )) ) )
+						 all_of(has_entries('StartDate', '2013-08-13T06:00:00Z',
+											  'Title', 'Law and Justice'))))
 
 		for item in res.json_body['Items']:
 			self.testapp.get(item['href'])
@@ -144,39 +145,37 @@ class _AbstractEnrollingBase(object):
 			lifecycleevent.modified(IFriendlyNamed(steve))
 			lifecycleevent.modified(IFriendlyNamed(jason))
 
-
-		res = self.testapp.get( '/dataserver2/users/harp4162/Courses/AdministeredCourses',
+		res = self.testapp.get('/dataserver2/users/harp4162/Courses/AdministeredCourses',
 								extra_environ=instructor_env)
-		assert_that( res.json_body, has_entry( 'Items', has_length(1) ) )
+		assert_that(res.json_body, has_entry('Items', has_length(1)))
 
 		role = res.json_body['Items'][0]
-		assert_that( role, has_entry('RoleName', 'instructor'))
+		assert_that(role, has_entry('RoleName', 'instructor'))
 		course_instance = role['CourseInstance']
 
-		assert_that( course_instance,
-					 has_entries( 'Class', self.expected_instance_class,
+		assert_that(course_instance,
+					 has_entries('Class', self.expected_instance_class,
 								  'href', self.expected_instance_href,
-								  'Outline', has_entry( 'Links', has_item( has_entry( 'rel', 'contents' ))),
-								  #'instructors', has_item( has_entry('Username', 'harp4162')),
-								  'Links', has_item( has_entry( 'rel', 'CourseCatalogEntry' ) ),
-								  'Links', has_item( has_entry( 'rel', VIEW_COURSE_RECURSIVE ) ),
-								  'Links', has_item( has_entry( 'rel', 'CourseEnrollmentRoster' ) ),
-								  'Links', has_item( has_entry( 'rel', VIEW_COURSE_RECURSIVE_BUCKET ) ),
-								  'Links', has_item( has_entry( 'rel', 'Pages' ) )) )
+								  'Outline', has_entry('Links', has_item(has_entry('rel', 'contents'))),
+								  # 'instructors', has_item( has_entry('Username', 'harp4162')),
+								  'Links', has_item(has_entry('rel', 'CourseCatalogEntry')),
+								  'Links', has_item(has_entry('rel', VIEW_COURSE_RECURSIVE)),
+								  'Links', has_item(has_entry('rel', 'CourseEnrollmentRoster')),
+								  'Links', has_item(has_entry('rel', VIEW_COURSE_RECURSIVE_BUCKET)),
+								  'Links', has_item(has_entry('rel', 'Pages'))))
 
-
-		roster_link = self.require_link_href_with_rel( course_instance, 'CourseEnrollmentRoster')
-		activity_link = self.require_link_href_with_rel( course_instance, 'CourseActivity')
+		roster_link = self.require_link_href_with_rel(course_instance, 'CourseEnrollmentRoster')
+		activity_link = self.require_link_href_with_rel(course_instance, 'CourseActivity')
 
 		# Put everyone in the roster
-		self.testapp.post_json( self.enrolled_courses_href,
+		self.testapp.post_json(self.enrolled_courses_href,
 								'CLC 3403',
-								status=201 )
+								status=201)
 
-		self.testapp.post_json( '/dataserver2/users/aaa_nextthought_com/Courses/EnrolledCourses',
+		self.testapp.post_json('/dataserver2/users/aaa_nextthought_com/Courses/EnrolledCourses',
 								'CLC 3403',
 								extra_environ=jmadden_environ,
-								status=201 )
+								status=201)
 
 		# The instructor can try to fetch the enrollment records directly at their usual
 		# location...
@@ -185,123 +184,123 @@ class _AbstractEnrollingBase(object):
 		# ...but sometimes at a location within the roster...
 		if self.individual_roster_accessible_to_instructor:
 			res = self.testapp.get(roster_link + '/sjohnson@nextthought.com', extra_environ=instructor_env)
-			assert_that( res.json_body, has_entries('Class', 'CourseInstanceEnrollment',
+			assert_that(res.json_body, has_entries('Class', 'CourseInstanceEnrollment',
 													'Username', self.extra_environ_default_user.lower(),
-													'UserProfile', has_entries( 'realname', 'Steve Johnson',
+													'UserProfile', has_entries('realname', 'Steve Johnson',
 																				'NonI18NFirstName', 'Steve'),
 													'CourseInstance', None,
 													'href', enrollment_href))
 		# ... attempting to access someone not enrolled fails
 		self.testapp.get(roster_link + '/not_enrolled',
 						 status=404,
-						 extra_environ=instructor_env )
+						 extra_environ=instructor_env)
 
 		# fetch the roster as the instructor
-		res = self.testapp.get( roster_link,
+		res = self.testapp.get(roster_link,
 								extra_environ=instructor_env)
 
-		assert_that( res.json_body, has_entry( 'Items',
-											   contains_inanyorder(
+		assert_that(res.json_body, has_entry('Items',
+											  contains_inanyorder(
 												   has_entries('Class', 'CourseInstanceEnrollment',
 															   'Username', self.extra_environ_default_user.lower(),
-															   'UserProfile', has_entries( 'realname', 'Steve Johnson',
+															   'UserProfile', has_entries('realname', 'Steve Johnson',
 																						   'NonI18NFirstName', 'Steve'),
 															   'CourseInstance', None),
 												   has_entries('Class', 'CourseInstanceEnrollment',
 															   'Username', 'aaa_nextthought_com',
-															   'CourseInstance', None)) ) )
+															   'CourseInstance', None))))
 		# Sort by realname, ascending default
-		res = self.testapp.get( roster_link,
+		res = self.testapp.get(roster_link,
 								{'sortOn': 'realname'},
 								extra_environ=instructor_env)
-		assert_that( res.json_body, has_entry( 'TotalItemCount', 2))
-		assert_that( res.json_body, has_entry( 'Items',
-											   contains(
+		assert_that(res.json_body, has_entry('TotalItemCount', 2))
+		assert_that(res.json_body, has_entry('Items',
+											  contains(
 												   has_entries('Username', self.extra_environ_default_user.lower()),
-												   has_entries('Username', 'aaa_nextthought_com') ) ) )
-		res = self.testapp.get( roster_link,
+												   has_entries('Username', 'aaa_nextthought_com'))))
+		res = self.testapp.get(roster_link,
 								{'sortOn': 'realname', 'sortOrder': 'descending'},
 								extra_environ=instructor_env)
-		assert_that( res.json_body, has_entry( 'TotalItemCount', 2))
-		assert_that( res.json_body, has_entry( 'Items',
-											   contains(
+		assert_that(res.json_body, has_entry('TotalItemCount', 2))
+		assert_that(res.json_body, has_entry('Items',
+											  contains(
 												   has_entries('Username', 'aaa_nextthought_com'),
-												   has_entries('Username', self.extra_environ_default_user.lower()) ) ) )
-		res = self.testapp.get( roster_link,
+												   has_entries('Username', self.extra_environ_default_user.lower()))))
+		res = self.testapp.get(roster_link,
 								{'sortOn': 'realname', 'sortOrder': 'descending',
 								 'batchSize': 1, 'batchStart': 0},
 								extra_environ=instructor_env)
-		assert_that( res.json_body, has_entry( 'TotalItemCount', 2))
-		assert_that( res.json_body, has_entry( 'Items', has_length( 1 )))
-		assert_that( res.json_body, has_entry( 'Items',
-											   contains(
-												   has_entries('Username', 'aaa_nextthought_com') ) ) )
+		assert_that(res.json_body, has_entry('TotalItemCount', 2))
+		assert_that(res.json_body, has_entry('Items', has_length(1)))
+		assert_that(res.json_body, has_entry('Items',
+											  contains(
+												   has_entries('Username', 'aaa_nextthought_com'))))
 
 		# Sort by username
-		res = self.testapp.get( roster_link,
+		res = self.testapp.get(roster_link,
 								{'sortOn': 'username', 'sortOrder': 'descending'},
 								extra_environ=instructor_env)
-		assert_that( res.json_body, has_entry( 'TotalItemCount', 2))
-		assert_that( res.json_body, has_entry( 'Items',
+		assert_that(res.json_body, has_entry('TotalItemCount', 2))
+		assert_that(res.json_body, has_entry('Items',
 											   contains(
 												   has_entries('Username', self.extra_environ_default_user.lower()),
-												   has_entries('Username', 'aaa_nextthought_com') ) ) )
-		res = self.testapp.get( roster_link,
+												   has_entries('Username', 'aaa_nextthought_com'))))
+		res = self.testapp.get(roster_link,
 								{'sortOn': 'username', 'sortOrder': 'ascending'},
 								extra_environ=instructor_env)
-		assert_that( res.json_body, has_entry( 'TotalItemCount', 2))
-		assert_that( res.json_body, has_entry( 'Items',
-											   contains(
+		assert_that(res.json_body, has_entry('TotalItemCount', 2))
+		assert_that(res.json_body, has_entry('Items',
+											  contains(
 												   has_entries('Username', 'aaa_nextthought_com'),
-												   has_entries('Username', self.extra_environ_default_user.lower()) ) ) )
+												   has_entries('Username', self.extra_environ_default_user.lower()))))
 
 		# Filter
-		res = self.testapp.get( roster_link,
+		res = self.testapp.get(roster_link,
 								{'filter': 'LegacyEnrollmentStatusForCredit'},
 								extra_environ=instructor_env)
-		assert_that( res.json_body, has_entry( 'TotalItemCount', 2))
-		assert_that( res.json_body, has_entry( 'FilteredTotalItemCount', 0))
-		assert_that( res.json_body, has_entry( 'Items', has_length( 0 )))
+		assert_that(res.json_body, has_entry('TotalItemCount', 2))
+		assert_that(res.json_body, has_entry('FilteredTotalItemCount', 0))
+		assert_that(res.json_body, has_entry('Items', has_length(0)))
 
-		res = self.testapp.get( roster_link,
+		res = self.testapp.get(roster_link,
 								{'filter': 'LegacyEnrollmentStatusOpen'},
 								extra_environ=instructor_env)
-		assert_that( res.json_body, has_entry( 'TotalItemCount', 2))
-		assert_that( res.json_body, has_entry( 'FilteredTotalItemCount', 2))
-		assert_that( res.json_body, has_entry( 'Items', has_length( 2 )))
+		assert_that(res.json_body, has_entry('TotalItemCount', 2))
+		assert_that(res.json_body, has_entry('FilteredTotalItemCount', 2))
+		assert_that(res.json_body, has_entry('Items', has_length(2)))
 
-		res = self.testapp.get( roster_link,
-								{'usernameSearchTerm': 'aaa'}, # username
+		res = self.testapp.get(roster_link,
+								{'usernameSearchTerm': 'aaa'},  # username
 								extra_environ=instructor_env)
-		assert_that( res.json_body, has_entry( 'TotalItemCount', 2))
-		assert_that( res.json_body, has_entry( 'FilteredTotalItemCount', 1))
-		assert_that( res.json_body, has_entry( 'Items', has_length( 1 )))
-		assert_that( res.json_body, has_entry( 'Items',
-											   contains(
-												   has_entries('Username', 'aaa_nextthought_com') ) ) )
-		res = self.testapp.get( roster_link,
-								{'usernameSearchTerm': 'Steve'}, # realname
+		assert_that(res.json_body, has_entry('TotalItemCount', 2))
+		assert_that(res.json_body, has_entry('FilteredTotalItemCount', 1))
+		assert_that(res.json_body, has_entry('Items', has_length(1)))
+		assert_that(res.json_body, has_entry('Items',
+											  contains(
+												   has_entries('Username', 'aaa_nextthought_com'))))
+		res = self.testapp.get(roster_link,
+								{'usernameSearchTerm': 'Steve'},  # realname
 								extra_environ=instructor_env)
-		assert_that( res.json_body, has_entry( 'TotalItemCount', 2))
-		assert_that( res.json_body, has_entry( 'FilteredTotalItemCount', 1))
-		assert_that( res.json_body, has_entry( 'Items', has_length( 1 )))
-		assert_that( res.json_body, has_entry( 'Items',
-											   contains(
-												   has_entries('Username', self.extra_environ_default_user.lower() ) ) ) )
+		assert_that(res.json_body, has_entry('TotalItemCount', 2))
+		assert_that(res.json_body, has_entry('FilteredTotalItemCount', 1))
+		assert_that(res.json_body, has_entry('Items', has_length(1)))
+		assert_that(res.json_body, has_entry('Items',
+											  contains(
+												   has_entries('Username', self.extra_environ_default_user.lower()))))
 
 
 		# fetch the activity as the instructor
-		res = self.testapp.get( activity_link, extra_environ=instructor_env)
+		res = self.testapp.get(activity_link, extra_environ=instructor_env)
 
-		assert_that( res.json_body, has_entry( 'TotalItemCount', 0 ) )
-		assert_that( res.json_body, has_entry( 'lastViewed', 0 ) )
+		assert_that(res.json_body, has_entry('TotalItemCount', 0))
+		assert_that(res.json_body, has_entry('lastViewed', 0))
 
-		last_viewed_href = self.require_link_href_with_rel( res.json_body, 'lastViewed')
+		last_viewed_href = self.require_link_href_with_rel(res.json_body, 'lastViewed')
 
 		# update our viewed date
 		self.testapp.put_json(last_viewed_href, 1234, extra_environ=instructor_env)
-		res = self.testapp.get( activity_link, extra_environ=instructor_env)
-		assert_that( res.json_body, has_entry( 'lastViewed', 1234 ) )
+		res = self.testapp.get(activity_link, extra_environ=instructor_env)
+		assert_that(res.json_body, has_entry('lastViewed', 1234))
 
 
 		# The normal guy can't do that
@@ -310,7 +309,7 @@ class _AbstractEnrollingBase(object):
 		self.testapp.get(activity_link, status=403,
 						 extra_environ=jmadden_environ)
 
-	expected_enrollment_href =  '/dataserver2/users/sjohnson%40nextthought.com/Courses/EnrolledCourses/tag%3Anextthought.com%2C2011-10%3AOU-HTML-CLC3403_LawAndJustice.course_info'
+	expected_enrollment_href = '/dataserver2/users/sjohnson%40nextthought.com/Courses/EnrolledCourses/tag%3Anextthought.com%2C2011-10%3AOU-HTML-CLC3403_LawAndJustice.course_info'
 	expected_instance_href = '/dataserver2/users/CLC3403.ou.nextthought.com/LegacyCourses/CLC3403'
 	expected_catalog_entry_href = '/dataserver2/users/sjohnson%40nextthought.com/Courses/AllCourses/CourseCatalog/tag%3Anextthought.com%2C2011-10%3AOU-HTML-CLC3403_LawAndJustice.course_info'
 	expected_instance_class = 'LegacyCommunityBasedCourseInstance'
@@ -318,23 +317,23 @@ class _AbstractEnrollingBase(object):
 
 	def _do_enroll(self, postdata):
 		# First, we are enrolled in nothing
-		res = self.testapp.get( self.enrolled_courses_href )
-		assert_that( res.json_body, has_entry( 'Items', is_(empty()) ) )
-		assert_that( res.json_body, has_entry( 'accepts', contains('application/json')))
+		res = self.testapp.get(self.enrolled_courses_href)
+		assert_that(res.json_body, has_entry('Items', is_(empty())))
+		assert_that(res.json_body, has_entry('accepts', contains('application/json')))
 		# We can POST to EnrolledCourses to add a course, assuming we're allowed
 		# Right now, we accept any value that the course catalog can accept;
 		# this will probably get stricter. Raw strings are allowed but not preferred.
 
-		res = self.testapp.post_json( self.enrolled_courses_href,
+		res = self.testapp.post_json(self.enrolled_courses_href,
 									  postdata,
-									  status=201 )
+									  status=201)
 
 		# The response is a 201 created for our enrollment status
 		enrollment_href = self.expected_enrollment_href
 		instance_href = self.expected_instance_href
 		entry_href = self.expected_catalog_entry_href
 
-		assert_that( res.json_body,
+		assert_that(res.json_body,
 					 has_entries(
 						 'Class', 'CourseInstanceEnrollment',
 						 'href', enrollment_href,
@@ -346,78 +345,78 @@ class _AbstractEnrollingBase(object):
 													   'Outline', has_entry('Class', 'CourseOutline'),
 													   'LegacyScopes', has_key('public'),
 													   'LegacyScopes', has_key('restricted'),
-													   'Links', has_item( has_entries( 'rel', 'CourseCatalogEntry',
-																					   'href', entry_href  )) )))
-		assert_that( res.location, is_( 'http://localhost' + enrollment_href ))
+													   'Links', has_item(has_entries('rel', 'CourseCatalogEntry',
+																					   'href', entry_href)))))
+		assert_that(res.location, is_('http://localhost' + enrollment_href))
 
 		# We can resolve the record by NTIID/OID
 		record_ntiid = res.json_body['NTIID']
 		res = self.fetch_by_ntiid(record_ntiid)
-		assert_that( res.json_body,
+		assert_that(res.json_body,
 					 has_entries(
 						 'Class', 'CourseInstanceEnrollment',
-						 'NTIID', record_ntiid) )
+						 'NTIID', record_ntiid))
 
 		# Now it should show up in our workspace
-		res = self.testapp.get( self.enrolled_courses_href )
-		assert_that( res.json_body, has_entry( 'Items', has_length( 1 ) ) )
-		assert_that( res.json_body['Items'][0], has_entry( 'href', enrollment_href ) )
-		assert_that( res.json_body['Items'][0], has_entry( 'RealEnrollmentStatus', is_not(none()) ) )
+		res = self.testapp.get(self.enrolled_courses_href)
+		assert_that(res.json_body, has_entry('Items', has_length(1)))
+		assert_that(res.json_body['Items'][0], has_entry('href', enrollment_href))
+		assert_that(res.json_body['Items'][0], has_entry('RealEnrollmentStatus', is_not(none())))
 
 		return enrollment_href, instance_href, entry_href
 
-	@WithSharedApplicationMockDS(users=True,testapp=True)
+	@WithSharedApplicationMockDS(users=True, testapp=True)
 	def test_enroll_unenroll_using_workspace(self):
 		enrollment_href, instance_href, _ = self._do_enroll('CLC 3403')
 
 		# Because we are an admin, we can also access the global roster that will show us in it
 		res = self.testapp.get('/dataserver2/@@AllEnrollments.csv')
 		# We have no email address at this point
-		assert_that( res.text, is_('sjohnson@nextthought.com,,,,Law and Justice\r\n'))
+		assert_that(res.text, is_('sjohnson@nextthought.com,,,,Law and Justice\r\n'))
 
 		# give us one
-		self.testapp.put_json( '/dataserver2/users/sjohnson@nextthought.com/++fields++email',
-							   'jason.madden@nextthought.com' )
+		self.testapp.put_json('/dataserver2/users/sjohnson@nextthought.com/++fields++email',
+							   'jason.madden@nextthought.com')
 		# Along with a non-ascii alias
-		self.testapp.put_json( '/dataserver2/users/sjohnson@nextthought.com/++fields++alias',
+		self.testapp.put_json('/dataserver2/users/sjohnson@nextthought.com/++fields++alias',
 							   'Gr\xe8y')
 
 		# We find this both in the global list, and in the specific list
 		# if we filter to open enrollments
 		for url in '/dataserver2/@@AllEnrollments.csv?LegacyEnrollmentStatus=Open', instance_href + '/Enrollments.csv?LegacyEnrollmentStatus=Open':
 			res = self.testapp.get(url)
-			assert_that( res.text, is_('sjohnson@nextthought.com,Gr\xe8y,,jason.madden@nextthought.com,Law and Justice\r\n'))
+			assert_that(res.text, is_('sjohnson@nextthought.com,Gr\xe8y,,jason.madden@nextthought.com,Law and Justice\r\n'))
 
 		# And we find nothing if we filter to for credit enrollments
 		for url in '/dataserver2/@@AllEnrollments.csv?LegacyEnrollmentStatus=ForCredit', instance_href + '/Enrollments.csv?LegacyEnrollmentStatus=ForCredit':
 			res = self.testapp.get(url)
-			assert_that( res.text, is_('') )
+			assert_that(res.text, is_(''))
 
 		# We can delete to drop it
-		res = self.testapp.delete( enrollment_href,
+		res = self.testapp.delete(enrollment_href,
 								   status=204)
-		res = self.testapp.get( '/dataserver2/users/sjohnson@nextthought.com/Courses/EnrolledCourses' )
-		assert_that( res.json_body, has_entry( 'Items', is_(empty()) ) )
+		res = self.testapp.get('/dataserver2/users/sjohnson@nextthought.com/Courses/EnrolledCourses')
+		assert_that(res.json_body, has_entry('Items', is_(empty())))
 
 		# No longer in the enrolled list
 		res = self.testapp.get('/dataserver2/@@AllEnrollments.csv')
-		assert_that( res.text, is_('') )
+		assert_that(res.text, is_(''))
 
 
 		# If we post a non-existant class, it fails gracefully
-		res = self.testapp.post_json( '/dataserver2/users/sjohnson@nextthought.com/Courses/EnrolledCourses',
+		res = self.testapp.post_json('/dataserver2/users/sjohnson@nextthought.com/Courses/EnrolledCourses',
 									  'This Class Does Not Exist',
-									  status=404 )
+									  status=404)
 
 		# For convenience, we can use a dictionary
-		self.testapp.post_json( '/dataserver2/users/sjohnson@nextthought.com/Courses/EnrolledCourses',
+		self.testapp.post_json('/dataserver2/users/sjohnson@nextthought.com/Courses/EnrolledCourses',
 								{'ProviderUniqueID': 'CLC 3403'},
-								status=201 )
+								status=201)
 
 	enrollment_ntiid = 'tag:nextthought.com,2011-10:OU-HTML-CLC3403_LawAndJustice.course_info'
-	@WithSharedApplicationMockDS(users=True,testapp=True)
+	@WithSharedApplicationMockDS(users=True, testapp=True)
 	def test_enroll_using_ntiid(self):
-		self._do_enroll( {'ntiid': self.enrollment_ntiid} )
+		self._do_enroll({'ntiid': self.enrollment_ntiid})
 
 
 class TestLegacyWorkspace(_AbstractEnrollingBase,
@@ -456,16 +455,16 @@ class TestPersistentWorkspaces(_AbstractEnrollingBase,
 	# The third CLC section is restricted to enrolled students only
 	expected_workspace_length = 3
 
-	@WithSharedApplicationMockDS(users=True,testapp=True)
+	@WithSharedApplicationMockDS(users=True, testapp=True)
 	def test_search_for_scopes_when_enrolled(self):
 
 		res = self.search_users(username='CLC')
-		assert_that( res.json_body, has_entry('Items', is_empty()))
+		assert_that(res.json_body, has_entry('Items', is_empty()))
 
 		self._do_enroll({'ntiid': self.enrollment_ntiid})
 
 		res = self.search_users(username='CLC')
-		assert_that( res.json_body, has_entry('Items', contains(has_entry('alias',
+		assert_that(res.json_body, has_entry('Items', contains(has_entry('alias',
 																		  'CLC 3403 - Open'))))
 		scope = res.json_body['Items'][0]
 
@@ -474,9 +473,9 @@ class TestPersistentWorkspaces(_AbstractEnrollingBase,
 		# ...and resolve it as a user
 		usres = self.resolve_user_response(username=scope['Username'])
 
-		assert_that( ntres.json_body['NTIID'], is_(scope['NTIID']) )
+		assert_that(ntres.json_body['NTIID'], is_(scope['NTIID']))
 
-		assert_that( usres.json_body['Items'][0]['NTIID'], is_(scope['NTIID']) )
+		assert_that(usres.json_body['Items'][0]['NTIID'], is_(scope['NTIID']))
 
 
 
@@ -489,25 +488,25 @@ class TestPersistentWorkspaces(_AbstractEnrollingBase,
 
 		return main_entry, sect_entry
 
-	@WithSharedApplicationMockDS(users=True,testapp=True)
+	@WithSharedApplicationMockDS(users=True, testapp=True)
 	def test_presentation_assets(self):
 		# On disk, the main course-instance does not have any
 		# presentation assets, so we fallback to the content package.
 		# OTOH, section 01 does have its own assets
-		res = self.testapp.get( self.all_courses_href )
+		res = self.testapp.get(self.all_courses_href)
 
-		assert_that( res.json_body, has_entry( 'Items', has_length( greater_than_or_equal_to(self.expected_workspace_length ))) )
+		assert_that(res.json_body, has_entry('Items', has_length(greater_than_or_equal_to(self.expected_workspace_length))))
 
 		main_entry, sect_entry = self._get_main_and_sect_entries(res)
 
 		main_assets = '/sites/platform.ou.edu/CLC3403_LawAndJustice/presentation-assets/shared/v1/'
 		sect_assets = '/sites/platform.ou.edu/Courses/Fall2013/CLC3403_LawAndJustice/Sections/01/presentation-assets/shared/v1/'
 
-		assert_that( main_entry, has_entry('PlatformPresentationResources',
-										   has_item( has_entry('href', main_assets ) ) ) )
-		assert_that( sect_entry,
+		assert_that(main_entry, has_entry('PlatformPresentationResources',
+										   has_item(has_entry('href', main_assets))))
+		assert_that(sect_entry,
 					 has_entry('PlatformPresentationResources',
-							   has_item( has_entry('href', sect_assets) ) ) )
+							   has_item(has_entry('href', sect_assets))))
 
 		# If we give the global library a prefix, it manifests here too
 		from nti.contentlibrary.interfaces import IContentPackageLibrary
@@ -515,37 +514,37 @@ class TestPersistentWorkspaces(_AbstractEnrollingBase,
 		lib.url_prefix = 'content'
 
 		try:
-			res = self.testapp.get( self.all_courses_href )
+			res = self.testapp.get(self.all_courses_href)
 			main_entry, sect_entry = self._get_main_and_sect_entries(res)
 
-			assert_that( main_entry,
+			assert_that(main_entry,
 						 has_entry('PlatformPresentationResources',
-								   has_item( has_entry('href', '/content' + main_assets ) ) ) )
-			assert_that( sect_entry,
+								   has_item(has_entry('href', '/content' + main_assets))))
+			assert_that(sect_entry,
 						 has_entry('PlatformPresentationResources',
-								   has_item( has_entry('href', '/content' + sect_assets) ) ) )
+								   has_item(has_entry('href', '/content' + sect_assets))))
 
 		finally:
 			del lib.url_prefix
 
 
-	@WithSharedApplicationMockDS(users=True,testapp=True)
+	@WithSharedApplicationMockDS(users=True, testapp=True)
 	def test_legacy_fields(self):
 		res = self.testapp.get(self.all_courses_href)
 		main_entry, sect_entry = self._get_main_and_sect_entries(res)
 
-		assert_that( main_entry, has_entry('ContentPackageNTIID',
+		assert_that(main_entry, has_entry('ContentPackageNTIID',
 										   'tag:nextthought.com,2011-10:OU-HTML-CLC3403_LawAndJustice.clc_3403_law_and_justice'))
-		assert_that( sect_entry, has_entry('ContentPackageNTIID',
+		assert_that(sect_entry, has_entry('ContentPackageNTIID',
 										   'tag:nextthought.com,2011-10:OU-HTML-CLC3403_LawAndJustice.clc_3403_law_and_justice'))
 
-		assert_that( main_entry, has_entry('LegacyPurchasableIcon',
-										   '/sites/platform.ou.edu/CLC3403_LawAndJustice/images/CLC3403_promo.png' ) )
-		assert_that( sect_entry, has_entry('LegacyPurchasableIcon',
-										   '/sites/platform.ou.edu/CLC3403_LawAndJustice/images/CLC3403_promo.png' ) )
+		assert_that(main_entry, has_entry('LegacyPurchasableIcon',
+										   '/sites/platform.ou.edu/CLC3403_LawAndJustice/images/CLC3403_promo.png'))
+		assert_that(sect_entry, has_entry('LegacyPurchasableIcon',
+										   '/sites/platform.ou.edu/CLC3403_LawAndJustice/images/CLC3403_promo.png'))
 
 
-	@WithSharedApplicationMockDS(users=True,testapp=True)
+	@WithSharedApplicationMockDS(users=True, testapp=True)
 	def test_restricted_section(self):
 		# Enroll him
 		with mock_dataserver.mock_db_trans(site_name='platform.ou.edu'):
@@ -559,16 +558,16 @@ class TestPersistentWorkspaces(_AbstractEnrollingBase,
 			manager.enroll(user, scope='ForCreditDegree')
 
 		# now our enrollment:
-		res = self.testapp.get( self.enrolled_courses_href )
-		assert_that( res.json_body, has_entry( 'Items',
-											   has_length( 1 ) ) )
-		enrollment_href = self.require_link_href_with_rel(res.json_body['Items'][0], 'edit' )
+		res = self.testapp.get(self.enrolled_courses_href)
+		assert_that(res.json_body, has_entry('Items',
+											   has_length(1)))
+		enrollment_href = self.require_link_href_with_rel(res.json_body['Items'][0], 'edit')
 		self.testapp.get(enrollment_href)
 
 		# and we can see it in the all courses list...
 		res = self.testapp.get(self.all_courses_href)
 		res = res.json_body
-		assert_that( res, has_entry( 'Items', has_item(
+		assert_that(res, has_entry('Items', has_item(
 												has_entries(
 													'ProviderUniqueID', 'CLC 3403-Restricted',
 													'CatalogFamilies',
@@ -581,44 +580,44 @@ class TestPersistentWorkspaces(_AbstractEnrollingBase,
 																		'Class', 'CatalogFamily',
 																		'Title', 'Law and Justice',
 																		'CatalogFamilyID', not_none(),
-																		'PlatformPresentationResources', not_none() ))) )) ) )
-		assert_that( res, has_entry( 'Items', has_item( has_entry('ProviderUniqueID',
-																   'ENGR 1510-901')) ) )
+																		'PlatformPresentationResources', not_none())))))))
+		assert_that(res, has_entry('Items', has_item(has_entry('ProviderUniqueID',
+																   'ENGR 1510-901'))))
 
 		# ...and the remaining 'sibling' sections have vanished...
 		# we get just Water and restricted
-		assert_that( res, has_entry( 'Items', has_length(2) ) )
+		assert_that(res, has_entry('Items', has_length(2)))
 
 class TestRestrictedWorkspace(ApplicationLayerTest):
 	layer = RestrictedInstructedCourseApplicationTestLayer
 	testapp = None
 	default_origin = str('http://janux.ou.edu')
 
-	@WithSharedApplicationMockDS(users=True,testapp=True)
+	@WithSharedApplicationMockDS(users=True, testapp=True)
 	def test_fetch_all_courses(self):
 		# XXX: Our layer is registering these globally
-		#res = self.testapp.get( '/dataserver2/users/sjohnson@nextthought.com/Courses/AllCourses' )
+		# res = self.testapp.get( '/dataserver2/users/sjohnson@nextthought.com/Courses/AllCourses' )
 		# Nothing by default
-		#assert_that( res.json_body, has_entry( 'Items', has_length( 0 )) )
+		# assert_that( res.json_body, has_entry( 'Items', has_length( 0 )) )
 
-		res = self.testapp.get( '/dataserver2/users/sjohnson@nextthought.com/Courses/AllCourses' )
-		assert_that( res.json_body, has_entry( 'Items', has_length( greater_than_or_equal_to(1) )) )
-		assert_that( res.json_body['Items'],
+		res = self.testapp.get('/dataserver2/users/sjohnson@nextthought.com/Courses/AllCourses')
+		assert_that(res.json_body, has_entry('Items', has_length(greater_than_or_equal_to(1))))
+		assert_that(res.json_body['Items'],
 					 has_items(
-						 all_of( has_entries( 'Duration', 'P112D',
+						 all_of(has_entries('Duration', 'P112D',
 											  'Title', 'Introduction to Water',
-											  'StartDate', '2014-01-13T06:00:00Z')) ) )
+											  'StartDate', '2014-01-13T06:00:00Z'))))
 
-	@WithSharedApplicationMockDS(users=True,testapp=True)
+	@WithSharedApplicationMockDS(users=True, testapp=True)
 	def test_enroll_unenroll_using_workspace(self):
 
 		# First, we are enrolled in nothing
-		res = self.testapp.get( '/dataserver2/users/sjohnson@nextthought.com/Courses/EnrolledCourses' )
-		assert_that( res.json_body, has_entry( 'Items', is_(empty()) ) )
-		assert_that( res.json_body, has_entry( 'accepts', contains('application/json')))
+		res = self.testapp.get('/dataserver2/users/sjohnson@nextthought.com/Courses/EnrolledCourses')
+		assert_that(res.json_body, has_entry('Items', is_(empty())))
+		assert_that(res.json_body, has_entry('accepts', contains('application/json')))
 
 		# Enrolling in this one is not allowed
 
-		self.testapp.post_json( '/dataserver2/users/sjohnson@nextthought.com/Courses/EnrolledCourses',
+		self.testapp.post_json('/dataserver2/users/sjohnson@nextthought.com/Courses/EnrolledCourses',
 								'CLC 3403',
-								status=403 )
+								status=403)

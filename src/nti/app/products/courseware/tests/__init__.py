@@ -13,9 +13,9 @@ import os.path
 from zope import component
 from zope import interface
 
-import ZODB
-
 from zope.component.interfaces import IComponents
+
+import ZODB
 
 from nti.contentlibrary.interfaces import IContentPackageLibrary
 

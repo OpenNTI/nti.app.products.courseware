@@ -51,9 +51,7 @@ class TestCourseUGDViews(ApplicationLayerTest):
 								'selectedText': "This is the selected text",
 								'applicableRange': {'Class': 'ContentRangeDescription'}})
 
-		self.testapp.post(pages_href,
-							data,
-							status=201)
+		self.testapp.post(pages_href, data, status=201)
 
 		user_ugd_path = self.user_pages_href + '(' + self.container_ntiid + ')/UserGeneratedData'
 		user_ugd = self.testapp.get(user_ugd_path)

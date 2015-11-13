@@ -48,17 +48,17 @@ class _AbstractMixin(object):
 
 	mac_contents = contents.replace(b'\n', b'\r')
 
-	@WithSharedApplicationMockDS(users=('sjohnson@nextthought.com',),testapp=True,default_authenticate=True)
+	@WithSharedApplicationMockDS(users=('sjohnson@nextthought.com',), testapp=True, default_authenticate=True)
 	def test_post_csv_create_forums(self):
 		self._do_test_post_csv_create_forums(self.contents)
 
-	@WithSharedApplicationMockDS(users=('sjohnson@nextthought.com',),testapp=True,default_authenticate=True)
+	@WithSharedApplicationMockDS(users=('sjohnson@nextthought.com',), testapp=True, default_authenticate=True)
 	def test_post_csv_create_forums_alt_syntax(self):
 		self._do_test_post_csv_create_forums(self.contents, video='[ntivideo][kaltura]kaltura://1500101/1_vkxo2g66/')
 
-	@WithSharedApplicationMockDS(users=('sjohnson@nextthought.com',),testapp=True,default_authenticate=True)
+	@WithSharedApplicationMockDS(users=('sjohnson@nextthought.com',), testapp=True, default_authenticate=True)
 	def test_post_csv_create_forums_mac(self):
-		self._do_test_post_csv_create_forums(self.mac_contents,full=False)
+		self._do_test_post_csv_create_forums(self.mac_contents, full=False)
 
 	def _do_test_post_csv_create_forums(self, contents, full=True, video='[ntivideo]kaltura://1500101/1_vkxo2g66/'):
 		inst_env = self._make_extra_environ(username='harp4162')
@@ -80,28 +80,28 @@ class _AbstractMixin(object):
 		csv_writer.writerow([''])
 
 		csv_str = sio.getvalue()
-		assert_that( csv.DictReader(BytesIO(csv_str)).next()['Body 1'], is_(contents) )
+		assert_that(csv.DictReader(BytesIO(csv_str)).next()['Body 1'], is_(contents))
 
 		res = self.testapp.post('/dataserver2/CourseAdmin/LegacyCourseTopicCreator',
 								upload_files=[('ignored', 'foo.csv', csv_str)],
 								extra_environ=admin_env)
 
 		res_ntiids = __traceback_info__ = res.json_body
-		assert_that( res.json_body, contains(*self.body_matcher) )
+		assert_that(res.json_body, contains(*self.body_matcher))
 
 		for i in self.body_matcher:
 			if not isinstance(i, basestring):
 				continue
 			res = self.fetch_by_ntiid(i, extra_environ=inst_env)
 			if 'Topic' in res.json_body['Class']:
-				assert_that( res.json_body['headline']['body'][0],
+				assert_that(res.json_body['headline']['body'][0],
 							 # Yes, the one with the newlines, never \r
-							 is_(self.contents.decode('windows-1252')) )
-				assert_that( res.json_body['headline']['body'][1],
+							 is_(self.contents.decode('windows-1252')))
+				assert_that(res.json_body['headline']['body'][1],
 							 has_entries('Class', 'EmbeddedVideo',
 										 'type', 'kaltura',
 										 'embedURL', 'kaltura://1500101/1_vkxo2g66/',
-										 'href', starts_with('/dataserver2')) )
+										 'href', starts_with('/dataserver2')))
 
 		if not full:
 			return
@@ -114,13 +114,13 @@ class _AbstractMixin(object):
 				if res.json_body['Class'] == 'CommunityForum':
 					#  XXX: Fragile
 					found_forum = True
-					assert_that( res.json_body, has_entry("SharingScopeName", not_none()))
+					assert_that(res.json_body, has_entry("SharingScopeName", not_none()))
 					# The instructor should have an 'add' href for the forum
 					self.require_link_href_with_rel(res.json_body, 'add')
 
 					board_res = self.fetch_by_ntiid(res.json_body['ContainerId'], extra_environ=inst_env)
 					# The instructor should have an 'add' href for the board
-					assert_that( board_res.json_body['Class'], contains_string('Board'))
+					assert_that(board_res.json_body['Class'], contains_string('Board'))
 					self.require_link_href_with_rel(board_res.json_body, 'add')
 
 				else:
@@ -128,7 +128,7 @@ class _AbstractMixin(object):
 					# The instructor should have an 'add' href for the forum
 					self.require_link_href_with_rel(res.json_body, 'add')
 
-					assert_that( res.json_body['Class'], contains_string('Topic'))
+					assert_that(res.json_body['Class'], contains_string('Topic'))
 
 
 		assert found_forum, "Need to check at least one forum for the scope"
@@ -139,13 +139,13 @@ class _AbstractMixin(object):
 								upload_files=[('ignored', 'foo.csv', csv_str)],
 								extra_environ=admin_env)
 
-		assert_that( res.json_body, is_([] ) )
+		assert_that(res.json_body, is_([]))
 
 
 		# If a student (who first enrolls)...
 		res = self.post_user_data('CLC 3403',
 								  extra_path='/Courses/EnrolledCourses',
-								  status=201 )
+								  status=201)
 		self._extra_student_checks(res, inst_env)
 
 		# ... makes a comment in one of those discussions...
@@ -157,25 +157,25 @@ class _AbstractMixin(object):
 		# (we previously tried to not make that so, but it only worked
 		# for the first instructor, it was notable to everyone else because they were
 		# explicitly listed in the ACL, which turns into direct-sharing)
-		res = self.fetch_user_recursive_notable_ugd(username='harp4162', extra_environ=inst_env )
-		assert_that( res.json_body, has_entry( 'TotalItemCount', greater_than_or_equal_to(2)))
+		res = self.fetch_user_recursive_notable_ugd(username='harp4162', extra_environ=inst_env)
+		assert_that(res.json_body, has_entry('TotalItemCount', greater_than_or_equal_to(2)))
 
 		# ... it is also in the instructors stream (why?)...
-		res = self.fetch_user_root_rstream( username='harp4162', extra_environ=inst_env)
-		assert_that( res.json_body['Items'],
-					 has_item( has_entries('Creator', self.default_username,
+		res = self.fetch_user_root_rstream(username='harp4162', extra_environ=inst_env)
+		assert_that(res.json_body['Items'],
+					 has_item(has_entries('Creator', self.default_username,
 										   'Item', has_entries('Class', 'GeneralForumComment',
-															   'body', ['A comment']))) )
+															   'body', ['A comment']))))
 
 		# ...Likewise, the discussions are in the stream for the instructor...
 		for username, env in (('harp4162', inst_env),
-							  #(self.default_username, None)
+							  # (self.default_username, None)
 						  ):
-			res = self.fetch_user_root_rstream( username=username, extra_environ=env )
-			assert_that( res.json_body['Items'],
-						 has_item( has_entries('ChangeType', 'Shared',
+			res = self.fetch_user_root_rstream(username=username, extra_environ=env)
+			assert_that(res.json_body['Items'],
+						 has_item(has_entries('ChangeType', 'Shared',
 											   'Item', has_entries('Class', 'CommunityHeadlineTopic',
-																   'title', 'A clc discussion'))) )
+																   'title', 'A clc discussion'))))
 
 		# The admin can easily make a small edit to the topic...
 		res = self.testapp.get(self.open_path, extra_environ=admin_env)
@@ -234,7 +234,7 @@ class TestCreateLegacyForumsOpenOnly(TestCreateLegacyForums):
 
 	layer = LegacyInstructedCourseApplicationTestLayer
 	testapp = None
-	body_matcher = TestCreateLegacyForums.body_matcher[:3] # All three, because the in-class discussions still created, but not the topic
+	body_matcher = TestCreateLegacyForums.body_matcher[:3]  # All three, because the in-class discussions still created, but not the topic
 	scope = str('Open')
 
 class TestCreateForums(_AbstractMixin,
@@ -256,10 +256,10 @@ class TestCreateForums(_AbstractMixin,
 	def _extra_post_csv_create_forums(self):
 		# We should have absolute NTIIDs for the containerid of posts in
 		# new-style topics
-		assert_that( self.comment_res.json_body['ContainerId'],
-					 starts_with('tag:nextthought.com,2011-10:unknown-OID-0x') )
+		assert_that(self.comment_res.json_body['ContainerId'],
+					 starts_with('tag:nextthought.com,2011-10:unknown-OID-0x'))
 
-	@WithSharedApplicationMockDS(users=True,testapp=True,default_authenticate=True)
+	@WithSharedApplicationMockDS(users=True, testapp=True, default_authenticate=True)
 	@fudge.patch('nti.contenttypes.courses.catalog.CourseCatalogEntry.isCourseCurrentlyActive')
 	def test_create_topic_directly(self, fake_active):
 		# make it look like the course is in session
@@ -274,45 +274,46 @@ class TestCreateForums(_AbstractMixin,
 											 'body': ['My first thought'] },
 										   status=201,
 										   extra_environ=inst_env)
-		assert_that( topic_res.json_body,
+		assert_that(topic_res.json_body,
 					 # notability depends on mimetype
 					 has_entry('MimeType', "application/vnd.nextthought.forums.communityheadlinetopic"))
-		assert_that( topic_res.json_body,
+		assert_that(topic_res.json_body,
 					 has_entry('NTIID',
-							   starts_with('tag:nextthought.com,2011-10:unknown-OID-0x') ) )
-		assert_that( topic_res.json_body,
+							   starts_with('tag:nextthought.com,2011-10:unknown-OID-0x')))
+		assert_that(topic_res.json_body,
 					 has_entry('ContainerId',
-							   starts_with('tag:nextthought.com,2011-10:unknown-OID-0x') ) )
+							   starts_with('tag:nextthought.com,2011-10:unknown-OID-0x')))
 
 		# It is notable to a student...
 		self.post_user_data('CLC 3403',
 							extra_path='/Courses/EnrolledCourses',
-							status=201 )
+							status=201)
 		res = self.fetch_user_recursive_notable_ugd()
-		assert_that( res.json_body, has_entry( 'TotalItemCount', 0))
+		assert_that(res.json_body, has_entry('TotalItemCount', 0))
 
 		# ... but only once its published
 		self.testapp.post(self.require_link_href_with_rel(topic_res.json_body, 'publish'),
 						  extra_environ=inst_env)
 		res = self.fetch_user_recursive_notable_ugd()
-		assert_that( res.json_body, has_entry( 'TotalItemCount', 1))
+		assert_that(res.json_body, has_entry('TotalItemCount', 1))
 
 class TestCreateForumsOpenOnly(TestCreateForums):
 
 	layer = InstructedCourseApplicationTestLayer
 	testapp = None
 
-	body_matcher = TestCreateForums.body_matcher[:3] # All three, because the in-class discussions still created, but not the topic
+	# XXX: All three, because the in-class discussions still created, but not the topic
+	body_matcher = TestCreateForums.body_matcher[:3]
 
 	scope = str('Open')
 
 class TestMigrate(ApplicationLayerTest):
 
-	@WithSharedApplicationMockDS(users=True,testapp=True,default_authenticate=True)
+	@WithSharedApplicationMockDS(users=True, testapp=True, default_authenticate=True)
 	def test_migrate_legacy_to_new(self):
 		self.testapp.post('/dataserver2/@@SyncAllLibraries')
 		res = self.testapp.get('/dataserver2/CourseAdmin/LegacyCourseEnrollmentMigrator')
-		assert_that( res.json_body, is_(
+		assert_that(res.json_body, is_(
 			[['Nothing in site', 'demo.nextthought.com'],
 			 ['Nothing in site', 'labs.symmys.com'],
 			 ['Nothing in site', 'law.nextthought.com'],

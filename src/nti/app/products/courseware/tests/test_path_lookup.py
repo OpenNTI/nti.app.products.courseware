@@ -68,7 +68,8 @@ class TestPathLookup(ApplicationLayerTest):
 	Of the headline post
 
 	Notice --- it has leading and trailing spaces, and even
-	commas and blank lines. You can\u2019t ignore the special apostrophe."""
+	commas and blank lines. You can\u2019t ignore the special apostrophe.
+	"""
 
 	vendor_info = {
 		"NTI": {

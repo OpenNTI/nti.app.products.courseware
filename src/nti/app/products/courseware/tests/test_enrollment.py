@@ -63,11 +63,11 @@ class TestEnrollmentOptions(ApplicationLayerTest):
 			assert_that(options, has_entry('OpenEnrollment',
 										   has_property('Enabled', is_(True))))
 
-		self.testapp.post_json( self.enrolled_courses_href,
+		self.testapp.post_json(self.enrolled_courses_href,
 								'CLC 3403',
-								status=201 )
+								status=201)
 
-		res = self.testapp.get( self.all_courses_href )
+		res = self.testapp.get(self.all_courses_href)
 		assert_that
 		(
 			res.json_body['Items'],
@@ -106,10 +106,9 @@ class TestEnrollment(ApplicationLayerTest):
 	username = 'sjohnson@nextthought.com'
 
 	def _get_last_mod(self):
-		user = User.get_user( self.username )
+		user = User.get_user(self.username)
 		last_mod = None
-		for library_last_mod in component.subscribers( (user,),
-										ILibraryPathLastModifiedProvider ):
+		for library_last_mod in component.subscribers((user,), ILibraryPathLastModifiedProvider):
 			last_mod = library_last_mod
 		return last_mod
 
@@ -118,25 +117,23 @@ class TestEnrollment(ApplicationLayerTest):
 	def test_last_modified(self):
 		with mock_dataserver.mock_db_trans(self.ds, site_name='platform.ou.edu'):
 			last_mod = self._get_last_mod()
-			assert_that( last_mod, is_( 0 ) )
+			assert_that(last_mod, is_(0))
 
-		self.testapp.post_json( self.enrolled_courses_href,
-								'CLC 3403',
-								status=201 )
+		self.testapp.post_json(self.enrolled_courses_href, 'CLC 3403', status=201)
 
 		with mock_dataserver.mock_db_trans(self.ds, site_name='platform.ou.edu'):
 			last_mod = self._get_last_mod()
-			assert_that( last_mod, not_none() )
+			assert_that(last_mod, not_none())
 
 			# Again
 			prev_last_mod = last_mod
 			last_mod = self._get_last_mod()
-			assert_that( last_mod, is_( prev_last_mod ) )
+			assert_that(last_mod, is_(prev_last_mod))
 
 		# Delete updates last mod
-		self.testapp.delete( '%s/%s' % (self.enrolled_courses_href, self.course_ntiid),
+		self.testapp.delete('%s/%s' % (self.enrolled_courses_href, self.course_ntiid),
 							status=204)
 
 		with mock_dataserver.mock_db_trans(self.ds, site_name='platform.ou.edu'):
 			last_mod = self._get_last_mod()
-			assert_that( last_mod, does_not( prev_last_mod ) )
+			assert_that(last_mod, does_not(prev_last_mod))

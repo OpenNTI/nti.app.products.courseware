@@ -57,11 +57,11 @@ class TestDiscussions(ApplicationLayerTest):
 	layer = InstructedCourseApplicationTestLayer
 
 	contents = """
-	This is the contents.
-	Of the headline post
+	This is the contents of the headline post
 
 	Notice --- it has leading and trailing spaces, and even
-	commas and blank lines. You can\u2019t ignore the special apostrophe."""
+	commas and blank lines. You can\u2019t ignore the special apostrophe.
+	"""
 
 	default_origin = b'http://janux.ou.edu'
 

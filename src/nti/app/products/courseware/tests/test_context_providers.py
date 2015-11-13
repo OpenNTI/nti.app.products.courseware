@@ -31,7 +31,9 @@ class MockCatalog(object):
 		return (course_ntiid,)
 
 class TestContextProviders(ApplicationLayerTest):
+
 	layer = PersistentInstructedCourseApplicationTestLayer
+
 	testapp = None
 	default_origin = str('http://janux.ou.edu')
 
@@ -49,12 +51,12 @@ class TestContextProviders(ApplicationLayerTest):
 
 		with mock_dataserver.mock_db_trans(self.ds, site_name='platform.ou.edu'):
 			obj = find_object_with_ntiid(containerId)
-			results = get_joinable_contexts( obj )
+			results = get_joinable_contexts(obj)
 			assert_that(results, has_length(3))
 
 			mock_enrolled.is_callable().returns(True)
-			results = get_top_level_contexts( obj )
+			results = get_top_level_contexts(obj)
 			assert_that(results, has_length(3))
 
-			results = get_trusted_top_level_contexts( obj )
+			results = get_trusted_top_level_contexts(obj)
 			assert_that(results, has_length(3))
