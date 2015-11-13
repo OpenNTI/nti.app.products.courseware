@@ -17,43 +17,98 @@ from zope.annotation.interfaces import IAnnotations
 from zope.lifecycleevent import IObjectAddedEvent
 from zope.lifecycleevent import IObjectRemovedEvent
 
+from zope.security.interfaces import IPrincipal
+
+from nti.common.property import Lazy
+
 from nti.contentfolder.model import RootFolder
 
 from nti.contenttypes.courses.interfaces import ICourseInstance
+from nti.contenttypes.courses.interfaces import ICourseSubInstance
+
+from nti.contenttypes.courses.utils import get_parent_course
+
+from nti.dataserver.interfaces import IACLProvider
+from nti.dataserver.interfaces import ALL_PERMISSIONS
+
+from nti.dataserver.authorization import ACT_READ
+from nti.dataserver.authorization import ROLE_ADMIN
+from nti.dataserver.authorization import ROLE_CONTENT_EDITOR
+
+from nti.dataserver.authorization_acl import ace_allowing
+from nti.dataserver.authorization_acl import acl_from_aces
+
+from nti.traversal.traversal import find_interface
 
 from .interfaces import ICourseRootFolder
 
 @interface.implementer(ICourseRootFolder)
 class CourseRootFolder(RootFolder):
-    pass
+	pass
 
 @component.adapter(ICourseInstance)
 @interface.implementer(ICourseRootFolder)
 def _course_resources(course, create=True):
-    result = None
-    annotations = IAnnotations(course)
-    try:
-        KEY = 'resources'
-        result = annotations[KEY]
-    except KeyError:
-        if create:
-            result = CourseRootFolder(name="resources")
-            annotations[KEY] = result
-            result.__name__ = KEY
-            result.__parent__ = course
-    return result
+	result = None
+	annotations = IAnnotations(course)
+	try:
+		KEY = 'resources'
+		result = annotations[KEY]
+	except KeyError:
+		if create:
+			result = CourseRootFolder(name="resources")
+			annotations[KEY] = result
+			result.__name__ = KEY
+			result.__parent__ = course
+	return result
 
 def _resources_for_course_path_adapter(context, request):
-    course = ICourseInstance(context)
-    return _course_resources(course)
+	course = ICourseInstance(context)
+	return _course_resources(course)
 
 @component.adapter(ICourseInstance, IObjectAddedEvent)
 def _on_course_added(course, event):
-    _course_resources(course)
+	_course_resources(course)
 
 @component.adapter(ICourseInstance, IObjectRemovedEvent)
 def _on_course_removed(course, event):
-    root = _course_resources(course, False)
-    if root is not None:
-        root.clear()
-        
+	root = _course_resources(course, False)
+	if root is not None:
+		root.clear()
+
+@component.adapter(ICourseRootFolder)
+@interface.implementer(IACLProvider)
+class CourseRootFolderACLProvider(object):
+
+	def __init__(self, context):
+		self.context = context
+
+	@property
+	def __parent__(self):
+		return self.context.__parent__
+
+	@Lazy
+	def __acl__(self):
+		aces = [ ace_allowing(ROLE_ADMIN, ALL_PERMISSIONS, self),
+				 ace_allowing(ROLE_CONTENT_EDITOR, ALL_PERMISSIONS, type(self)) ]
+
+		course = find_interface(self.context, ICourseInstance, strict=False)
+		if course is not None:
+			# give instructors special powers
+			for i in course.instructors or ():
+				aces.extend(ace_allowing(i, ALL_PERMISSIONS, type(self))
+							for i in course.instructors or ())
+
+			# all scopes have read access
+			course.initScopes()
+			for scope in course.SharingScopes:
+				aces.append(ace_allowing(IPrincipal(scope), ACT_READ, type(self)))
+
+			if ICourseSubInstance.providedBy(course):
+				parent = get_parent_course(course)
+				for i in parent.instructors or ():
+					aces.extend(ace_allowing(i, ACT_READ, type(self))
+								for i in course.instructors or ())
+
+		result = acl_from_aces(aces)
+		return result

@@ -420,6 +420,9 @@
 				for="nti.dataserver.interfaces.IUser" />
 
 	<!-- Resources -->
+	<adapter factory=".resources.CourseRootFolderACLProvider" />
+	
+	<adapter factory=".resources._course_resources" />
 	<adapter factory=".resources._course_resources" />
 
 	<subscriber handler=".resources._on_course_added"  />
