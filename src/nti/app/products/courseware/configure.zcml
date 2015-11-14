@@ -433,7 +433,7 @@
 			 name="resources" />
 
 	<adapter factory=".resources._resources_for_course_path_adapter"
-			 for="nti.app.products.courseware.interfaces.ICourseCatalogEntry pyramid.interfaces.IRequest"
+			 for="nti.contenttypes.courses.interfaces.ICourseCatalogEntry pyramid.interfaces.IRequest"
 			 provides="zope.traversing.interfaces.IPathAdapter"
 			 name="resources" />
 
