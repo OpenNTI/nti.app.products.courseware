@@ -30,8 +30,8 @@ from nti.contenttypes.courses.interfaces import IN_CLASS_PREFIX
 
 from nti.contenttypes.courses.interfaces import ICourseInstance
 from nti.contenttypes.courses.interfaces import ICourseCatalogEntry
-from nti.contenttypes.courses.interfaces import ICatalogEntrySynchronized
 from nti.contenttypes.courses.interfaces import ICourseRolesSynchronized
+from nti.contenttypes.courses.interfaces import ICatalogEntrySynchronized
 from nti.contenttypes.courses.interfaces import ICourseInstancePublicScopedForum
 from nti.contenttypes.courses.interfaces import ICourseInstanceForCreditScopedForum
 
