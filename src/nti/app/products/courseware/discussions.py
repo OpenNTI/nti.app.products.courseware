@@ -31,6 +31,7 @@ from nti.contenttypes.courses.interfaces import IN_CLASS_PREFIX
 from nti.contenttypes.courses.interfaces import ICourseInstance
 from nti.contenttypes.courses.interfaces import ICourseCatalogEntry
 from nti.contenttypes.courses.interfaces import ICatalogEntrySynchronized
+from nti.contenttypes.courses.interfaces import ICourseRolesSynchronized
 from nti.contenttypes.courses.interfaces import ICourseInstancePublicScopedForum
 from nti.contenttypes.courses.interfaces import ICourseInstanceForCreditScopedForum
 
@@ -236,8 +237,8 @@ def create_course_forums(context):
 										 owner=forum.scope.NTIID)
 			data[forum.scope.username] = (name, created)
 
-	_creator (result['discussions'], discussions_forums(course))
-	_creator (result['announcements'], announcements_forums(course))
+	_creator(result['discussions'], discussions_forums(course))
+	_creator(result['announcements'], announcements_forums(course))
 	return result
 update_course_forums = create_course_forums
 
@@ -344,5 +345,10 @@ def _discussions_modified(record, event):
 @component.adapter(ICourseCatalogEntry, ICatalogEntrySynchronized)
 def _catalog_entry_synchronized(entry, event):
 	course = ICourseInstance(entry, None)
+	if course is not None and _auto_create_forums(course):
+		update_course_forums(course)
+
+@component.adapter(ICourseInstance, ICourseRolesSynchronized)
+def _course_roles_synchronized(course, event):
 	if course is not None and _auto_create_forums(course):
 		update_course_forums(course)

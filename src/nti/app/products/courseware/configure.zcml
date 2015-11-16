@@ -54,6 +54,7 @@
 	<!-- Events -->
 	<subscriber handler=".discussions._discussions_added" />
 	<subscriber handler=".discussions._discussions_modified" />
+	<subscriber handler=".discussions._course_roles_synchronized" />
 	<subscriber handler=".discussions._catalog_entry_synchronized" />
 
 	<subscriber handler=".legacy_catalog._content_package_registered" />
