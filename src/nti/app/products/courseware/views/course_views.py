@@ -11,6 +11,8 @@ __docformat__ = "restructuredtext en"
 
 logger = __import__('logging').getLogger(__name__)
 
+from datetime import datetime
+
 from zope import component
 from zope import interface
 
@@ -30,6 +32,8 @@ from nti.contenttypes.courses.interfaces import ICourseOutline
 from nti.contenttypes.courses.interfaces import ICourseInstance
 from nti.contenttypes.courses.interfaces import ICourseEnrollments
 from nti.contenttypes.courses.interfaces import ICourseCatalogEntry
+
+from nti.coremetadata.interfaces import IPublishable
 
 from nti.dataserver import authorization as nauth
 
@@ -67,14 +71,31 @@ class course_outline_contents_view(AbstractAuthenticatedView):
 	# We also aren't doing anything user specific yet so we don't
 	# do anything with tokens in the URL
 
+	def _is_visible(self, item):
+		return not IPublishable.providedBy(item) or item.is_published()
+
+	def _is_contents_available(self, item, now):
+		start = getattr( item, 'ContentsAvailableBeginning', None )
+		end = getattr( item, 'ContentsAvailableEnding', None )
+		return 	( not start or now > start ) \
+			and ( not end or now < end )
+
 	def __call__(self):
 		values = self.request.context.values()
 		result = ILocatedExternalSequence([])
+		now = datetime.utcnow()
 
 		def _recur(the_list, the_nodes):
 			for node in the_nodes:
+				if not self._is_visible( node ):
+					continue
+
 				ext_node = to_external_object(node)
-				ext_node['contents'] = _recur([], node.values())
+				if self._is_contents_available(node, now):
+					ext_node['contents'] = _recur([], node.values())
+				else:
+					# Some clients drive behavior based on this attr.
+					ext_node.pop( 'ContentNTIID', None )
 				# Pretty pointless to send these
 				ext_node.pop('OID', None)
 				the_list.append(ext_node)

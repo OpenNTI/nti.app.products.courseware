@@ -318,13 +318,18 @@ class IViewStats(interface.Interface):
 	"""
 	Contains view stats on the adapted object.
 	"""
-	
+
 class IVideoUsageStats(interface.Interface):
 	"""
 	Contains video usage stats for a course.
 	"""
 
-# suggested contacts
+	def get_stats(self, scope=None):
+		"""
+		Return video stats for course users, optionally by scope.
+		"""
+
+# Suggested contacts
 
 from nti.dataserver.users.interfaces import ISuggestedContactsProvider
 
@@ -360,11 +365,11 @@ def get_course_publishable_vendor_info(context):
 # utils
 
 class IUserAdministeredCourses(interface.Interface):
-	
+
 	"""
 	Marker for a callable utility that return the administered courses of a user
 	"""
-	
+
 	def iter_admin(user):
 		"""
 		return an interable with the users administered courses
