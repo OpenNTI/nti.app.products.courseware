@@ -72,7 +72,9 @@ class course_outline_contents_view(AbstractAuthenticatedView):
 	# do anything with tokens in the URL
 
 	def _is_visible(self, item):
-		return not IPublishable.providedBy(item) or item.is_published()
+		# Disable filtering for now
+		return True
+		#return not IPublishable.providedBy(item) or item.is_published()
 
 	def _is_contents_available(self, item, now):
 		start = getattr( item, 'ContentsAvailableBeginning', None )
