@@ -29,6 +29,7 @@ from nti.contentfolder.model import RootFolder
 
 from nti.contenttypes.courses.interfaces import ICourseInstance
 from nti.contenttypes.courses.interfaces import ICourseSubInstance
+from nti.contenttypes.courses.legacy_catalog import ILegacyCourseInstance
 
 from nti.contenttypes.courses.utils import is_enrolled
 from nti.contenttypes.courses.utils import get_parent_course
@@ -132,7 +133,9 @@ class _CourseResourcesLinkDecorator(AbstractAuthenticatedRequestAwareDecorator):
 
 	def _predicate(self, context, result):
 		user = self.remoteUser
+		course = ICourseInstance(context, None)
 		return 		bool(self._is_authenticated) \
+				and not ILegacyCourseInstance.providedBy(course) \
 				and (is_enrolled(context, user) or is_course_instructor(context, user))
 
 	def _do_decorate_external(self, context, result):
