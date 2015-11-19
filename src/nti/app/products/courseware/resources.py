@@ -17,7 +17,11 @@ from zope.annotation.interfaces import IAnnotations
 from zope.lifecycleevent import IObjectAddedEvent
 from zope.lifecycleevent import IObjectRemovedEvent
 
+from zope.location.interfaces import ILocation
+
 from zope.security.interfaces import IPrincipal
+
+from nti.app.renderers.decorators import AbstractAuthenticatedRequestAwareDecorator
 
 from nti.common.property import Lazy
 
@@ -26,7 +30,9 @@ from nti.contentfolder.model import RootFolder
 from nti.contenttypes.courses.interfaces import ICourseInstance
 from nti.contenttypes.courses.interfaces import ICourseSubInstance
 
+from nti.contenttypes.courses.utils import is_enrolled
 from nti.contenttypes.courses.utils import get_parent_course
+from nti.contenttypes.courses.utils import is_course_instructor
 
 from nti.dataserver.interfaces import IACLProvider
 from nti.dataserver.interfaces import ALL_PERMISSIONS
@@ -38,9 +44,17 @@ from nti.dataserver.authorization import ROLE_CONTENT_EDITOR
 from nti.dataserver.authorization_acl import ace_allowing
 from nti.dataserver.authorization_acl import acl_from_aces
 
+from nti.externalization.interfaces import StandardExternalFields
+from nti.externalization.interfaces import IExternalMappingDecorator
+
+from nti.links.links import Link
+
 from nti.traversal.traversal import find_interface
 
 from .interfaces import ICourseRootFolder
+
+RESOURCES = 'resources'
+LINKS = StandardExternalFields.LINKS
 
 @interface.implementer(ICourseRootFolder)
 class CourseRootFolder(RootFolder):
@@ -52,11 +66,11 @@ def _course_resources(course, create=True):
 	result = None
 	annotations = IAnnotations(course)
 	try:
-		KEY = 'resources'
+		KEY = RESOURCES
 		result = annotations[KEY]
 	except KeyError:
 		if create:
-			result = CourseRootFolder(name="resources")
+			result = CourseRootFolder(name=RESOURCES)
 			annotations[KEY] = result
 			result.__name__ = KEY
 			result.__parent__ = course
@@ -112,3 +126,19 @@ class CourseRootFolderACLProvider(object):
 
 		result = acl_from_aces(aces)
 		return result
+
+@interface.implementer(IExternalMappingDecorator)
+class _CourseResourcesLinkDecorator(AbstractAuthenticatedRequestAwareDecorator):
+
+	def _predicate(self, context, result):
+		user = self.remoteUser
+		return 		bool(self._is_authenticated) \
+				and (is_enrolled(context, user) or is_course_instructor(context, user))
+
+	def _do_decorate_external(self, context, result):
+		_links = result.setdefault(LINKS, [])
+		link = Link(context, rel=RESOURCES, elements=(RESOURCES,))
+		interface.alsoProvides(link, ILocation)
+		link.__name__ = ''
+		link.__parent__ = context
+		_links.append(link)
