@@ -16,12 +16,14 @@ from zope.intid import IIntIds
 
 from nti.contentsearch.interfaces import ISearchPackageResolver
 
-from nti.contenttypes.courses.index import IX_SITE
-from nti.contenttypes.courses.index import IX_USERNAME
 from nti.contenttypes.courses import get_enrollment_catalog
 
+from nti.contenttypes.courses.index import IX_SITE
+from nti.contenttypes.courses.index import IX_USERNAME
+
 from nti.contenttypes.courses.interfaces import ICourseInstance
-from nti.contenttypes.courses.interfaces import ICourseInstanceEnrollmentRecord
+
+from nti.contenttypes.courses.utils import get_course_packages
 
 from nti.ntiids.ntiids import ROOT
 
@@ -45,17 +47,10 @@ class _RootSearchPacakgeResolver(object):
 			}
 			for uid in catalog.apply(query) or ():
 				context = intids.queryObject(uid)
-				if ICourseInstanceEnrollmentRecord.providedBy(context):
-					context = context.CourseInstance
-				elif not ICourseInstance.providedBy(context):
+				context = ICourseInstance(context, None)
+				if context is None:
 					continue
-
-				try:
-					packages = context.ContentPackageBundle.ContentPackages
-				except AttributeError:
-					packages = (context.legacy_content_package,)
-
-				for package in packages:
+				for package in get_course_packages(context):
 					ntiid = package.ntiid
 					if ntiid:  # make sure we a valid ntiid
 						result.add(package.ntiid)
