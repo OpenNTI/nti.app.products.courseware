@@ -29,6 +29,7 @@ from nti.contenttypes.courses.interfaces import ICourseCatalogEntry
 from nti.contenttypes.courses.interfaces import ICourseOutlineContentNode
 
 from nti.contenttypes.courses.utils import is_enrolled
+from nti.contenttypes.courses.utils import is_course_instructor
 
 from nti.contenttypes.presentation.interfaces import INTIAudio
 from nti.contenttypes.presentation.interfaces import INTIVideo
@@ -229,7 +230,7 @@ class _CourseOutlineCache(object):
 			return False
 
 		course, entry = _get_course_from_search_query(query)
-		if course is None or not entry:
+		if course is None or not entry or is_course_instructor(course, user):
 			return True  # allow by default
 		if not is_enrolled(course, user):
 			return False  # check has access
