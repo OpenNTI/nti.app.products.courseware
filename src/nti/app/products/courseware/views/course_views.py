@@ -11,8 +11,6 @@ __docformat__ = "restructuredtext en"
 
 logger = __import__('logging').getLogger(__name__)
 
-from datetime import datetime
-
 from zope import component
 from zope import interface
 
@@ -43,6 +41,8 @@ from nti.externalization.interfaces import ILocatedExternalSequence
 
 from nti.externalization.externalization import to_external_object
 
+from nti.ntiids.ntiids import find_object_with_ntiid
+
 from ..interfaces import ACT_VIEW_ROSTER
 from ..interfaces import ICourseInstanceActivity
 from ..interfaces import ICourseInstanceEnrollment
@@ -71,22 +71,33 @@ class course_outline_contents_view(AbstractAuthenticatedView):
 	# We also aren't doing anything user specific yet so we don't
 	# do anything with tokens in the URL
 
-	def _is_visible(self, item):
-		# If it is published or if we're an editor.
+	def _is_published(self, item):
+		"""
+		Node is published or we're an editor.
+		"""
 		return 		not IPublishable.providedBy(item) \
 				or 	item.is_published() \
 				or	has_permission( nauth.ACT_CONTENT_EDIT, item, self.request )
 
-	def _is_contents_available(self, item, now):
-		start = getattr( item, 'ContentsAvailableBeginning', None )
-		end = getattr( item, 'ContentsAvailableEnding', None )
-		return 	( not start or now > start ) \
-			and ( not end or now < end )
+	_is_visible = _is_published
+
+	def _is_contents_available(self, item):
+		"""
+		Lesson is available if published or if we're an editor.
+		"""
+		try:
+			lesson_ntiid = item.LessonOverviewNTIID
+		except AttributeError:
+			# Legacy outline node or non-content node, allow it.
+			result = True
+		else:
+			lesson = find_object_with_ntiid( lesson_ntiid )
+			result = self._is_published( lesson )
+		return result
 
 	def __call__(self):
 		values = self.request.context.values()
 		result = ILocatedExternalSequence([])
-		now = datetime.utcnow()
 
 		def _recur(the_list, the_nodes):
 			for node in the_nodes:
@@ -94,7 +105,7 @@ class course_outline_contents_view(AbstractAuthenticatedView):
 					continue
 
 				ext_node = to_external_object(node)
-				if self._is_contents_available(node, now):
+				if self._is_contents_available( node ):
 					ext_node['contents'] = _recur([], node.values())
 				else:
 					# Some clients drive behavior based on this attr.
