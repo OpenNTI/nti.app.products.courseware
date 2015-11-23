@@ -130,3 +130,6 @@ class EnrollmentRecordMailView(CourseMailView):
 	def predicate(self):
 		return 	self.course is not None \
 			and is_course_instructor(self.course, self.remoteUser)
+
+	def reply_addr_for_recipient(self, recipient):
+		return self._sender_reply_addr
