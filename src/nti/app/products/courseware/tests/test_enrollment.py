@@ -64,7 +64,7 @@ class TestEnrollmentOptions(ApplicationLayerTest):
 										   has_property('Enabled', is_(True))))
 
 		self.testapp.post_json(self.enrolled_courses_href,
-								'CLC 3403',
+								self.course_ntiid,
 								status=201)
 
 		res = self.testapp.get(self.all_courses_href)
@@ -119,7 +119,7 @@ class TestEnrollment(ApplicationLayerTest):
 			last_mod = self._get_last_mod()
 			assert_that(last_mod, is_(0))
 
-		self.testapp.post_json(self.enrolled_courses_href, 'CLC 3403', status=201)
+		self.testapp.post_json(self.enrolled_courses_href, self.course_ntiid, status=201)
 
 		with mock_dataserver.mock_db_trans(self.ds, site_name='platform.ou.edu'):
 			last_mod = self._get_last_mod()

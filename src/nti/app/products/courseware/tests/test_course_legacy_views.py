@@ -66,8 +66,11 @@ class _AbstractMixin(object):
 
 		sio = BytesIO()
 		csv_writer = csv.writer(sio)
+		enrolled_course_id = getattr( self, 'enrollment_ntiid', None ) \
+						or 'tag:nextthought.com,2011-10:OU-HTML-CLC3403_LawAndJustice.course_info'
+
 		header_row = ['NTIID', 'DiscussionTitle', 'Body 1', 'Body 2']
-		row = ['CLC 3403', 'A clc discussion', contents, video]
+		row = [enrolled_course_id, 'A clc discussion', contents, video]
 		if self.scope:
 			header_row.append('DiscussionScope')
 			row.append(self.scope)
@@ -143,7 +146,7 @@ class _AbstractMixin(object):
 
 
 		# If a student (who first enrolls)...
-		res = self.post_user_data('CLC 3403',
+		res = self.post_user_data(enrolled_course_id,
 								  extra_path='/Courses/EnrolledCourses',
 								  status=201)
 		self._extra_student_checks(res, inst_env)
@@ -253,6 +256,8 @@ class TestCreateForums(_AbstractMixin,
 	open_path = '/dataserver2/%2B%2Betc%2B%2Bhostsites/platform.ou.edu/%2B%2Betc%2B%2Bsite/Courses/Fall2013/CLC3403_LawAndJustice/Discussions/Open_Discussions/A_clc_discussion'
 	default_path = '/dataserver2/%2B%2Betc%2B%2Bhostsites/platform.ou.edu/%2B%2Betc%2B%2Bsite/Courses/Fall2013/CLC3403_LawAndJustice/Discussions/Forum'
 
+	enrollment_ntiid = 'tag:nextthought.com,2011-10:NTI-CourseInfo-Fall2013_CLC3403_LawAndJustice'
+
 	def _extra_post_csv_create_forums(self):
 		# We should have absolute NTIIDs for the containerid of posts in
 		# new-style topics
@@ -285,7 +290,8 @@ class TestCreateForums(_AbstractMixin,
 							   starts_with('tag:nextthought.com,2011-10:unknown-OID-0x')))
 
 		# It is notable to a student...
-		self.post_user_data('CLC 3403',
+		enrolled_course_id = 'tag:nextthought.com,2011-10:NTI-CourseInfo-Fall2013_CLC3403_LawAndJustice'
+		self.post_user_data(enrolled_course_id,
 							extra_path='/Courses/EnrolledCourses',
 							status=201)
 		res = self.fetch_user_recursive_notable_ugd()

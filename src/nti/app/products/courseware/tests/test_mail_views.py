@@ -45,7 +45,7 @@ class TestMailViews(ApplicationLayerTest):
 	default_origin = b'http://janux.ou.edu'
 	enrolled_courses_href = '/dataserver2/users/sjohnson@nextthought.com/Courses/EnrolledCourses'
 	expected_enrollment_href = '/dataserver2/users/sjohnson%40nextthought.com/Courses/EnrolledCourses/tag%3Anextthought.com%2C2011-10%3AOU-HTML-CLC3403_LawAndJustice.course_info'
-
+	course_ntiid = 'tag:nextthought.com,2011-10:NTI-CourseInfo-Fall2013_CLC3403_LawAndJustice'
 
 	def _test_mail_payload(self, mail, instructor_env, link):
 		# Test basic text
@@ -142,10 +142,9 @@ class TestMailViews(ApplicationLayerTest):
 		email_link = self.require_link_href_with_rel(course_instance, VIEW_COURSE_MAIL)
 
 		# Put everyone in the roster
-		self.testapp.post_json(self.enrolled_courses_href, 'CLC 3403', status=201)
-
+		self.testapp.post_json(self.enrolled_courses_href, self.course_ntiid, status=201)
 		self.testapp.post_json('/dataserver2/users/aaa_nextthought_com/Courses/EnrolledCourses',
-								'CLC 3403',
+								self.course_ntiid,
 								extra_environ=jmadden_environ,
 								status=201)
 

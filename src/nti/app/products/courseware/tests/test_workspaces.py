@@ -168,12 +168,14 @@ class _AbstractEnrollingBase(object):
 		activity_link = self.require_link_href_with_rel(course_instance, 'CourseActivity')
 
 		# Put everyone in the roster
+		enrolled_course_id = getattr( self, 'enrollment_ntiid', None ) \
+					or 'tag:nextthought.com,2011-10:OU-HTML-CLC3403_LawAndJustice.course_info'
 		self.testapp.post_json(self.enrolled_courses_href,
-								'CLC 3403',
+								enrolled_course_id,
 								status=201)
 
 		self.testapp.post_json('/dataserver2/users/aaa_nextthought_com/Courses/EnrolledCourses',
-								'CLC 3403',
+								enrolled_course_id,
 								extra_environ=jmadden_environ,
 								status=201)
 
@@ -367,7 +369,9 @@ class _AbstractEnrollingBase(object):
 
 	@WithSharedApplicationMockDS(users=True, testapp=True)
 	def test_enroll_unenroll_using_workspace(self):
-		enrollment_href, instance_href, _ = self._do_enroll('CLC 3403')
+		enrolled_course_id = getattr( self, 'enrollment_ntiid', None ) \
+						or 'tag:nextthought.com,2011-10:OU-HTML-CLC3403_LawAndJustice.course_info'
+		enrollment_href, instance_href, _ = self._do_enroll( enrolled_course_id )
 
 		# Because we are an admin, we can also access the global roster that will show us in it
 		res = self.testapp.get('/dataserver2/@@AllEnrollments.csv')
@@ -402,7 +406,6 @@ class _AbstractEnrollingBase(object):
 		res = self.testapp.get('/dataserver2/@@AllEnrollments.csv')
 		assert_that(res.text, is_(''))
 
-
 		# If we post a non-existant class, it fails gracefully
 		res = self.testapp.post_json('/dataserver2/users/sjohnson@nextthought.com/Courses/EnrolledCourses',
 									  'This Class Does Not Exist',
@@ -410,7 +413,7 @@ class _AbstractEnrollingBase(object):
 
 		# For convenience, we can use a dictionary
 		self.testapp.post_json('/dataserver2/users/sjohnson@nextthought.com/Courses/EnrolledCourses',
-								{'ProviderUniqueID': 'CLC 3403'},
+								{'ProviderUniqueID': self.enrollment_ntiid},
 								status=201)
 
 	enrollment_ntiid = 'tag:nextthought.com,2011-10:OU-HTML-CLC3403_LawAndJustice.course_info'
@@ -617,7 +620,7 @@ class TestRestrictedWorkspace(ApplicationLayerTest):
 		assert_that(res.json_body, has_entry('accepts', contains('application/json')))
 
 		# Enrolling in this one is not allowed
-
+		enrolled_id = 'tag:nextthought.com,2011-10:OU-HTML-CLC3403_LawAndJustice.course_info'
 		self.testapp.post_json('/dataserver2/users/sjohnson@nextthought.com/Courses/EnrolledCourses',
-								'CLC 3403',
+								enrolled_id,
 								status=403)
