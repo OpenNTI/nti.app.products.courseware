@@ -48,6 +48,7 @@ class TestMailViews(ApplicationLayerTest):
 
 	external_reply_to = 'jzuech3@gmail.com'
 	to_address = 'bill@nextthought.com'
+	from_address = 'janux@ou.edu'
 
 	def _test_mail_payload(self, mail, reply_to_mail, instructor_env, link):
 		# Test basic text
@@ -65,7 +66,7 @@ class TestMailViews(ApplicationLayerTest):
 		html = decodestring(msg.html)
 		assert_that( html, contains_string( to_check ) )
 		assert_that( msg.get( 'Reply-To' ), is_( 'no-reply@nextthought.com' ))
-		assert_that( msg.get( 'From' ), contains_string( 'no-reply@nextthought.com' ))
+		assert_that( msg.get( 'From' ), contains_string( self.from_address ))
 		assert_that( msg.get( 'To' ), is_( self.to_address ))
 
 		# Test encoding
@@ -81,7 +82,7 @@ class TestMailViews(ApplicationLayerTest):
 		html = decodestring(msg.html)
 		assert_that( html, contains_string( to_check ) )
 		assert_that( msg.get( 'Reply-To' ), is_( 'no-reply@nextthought.com' ))
-		assert_that( msg.get( 'From' ), contains_string( 'no-reply@nextthought.com' ))
+		assert_that( msg.get( 'From' ), contains_string( self.from_address ))
 		assert_that( msg.get( 'To' ), is_( self.to_address ))
 
 		# Test html
@@ -99,7 +100,7 @@ class TestMailViews(ApplicationLayerTest):
 		assert_that( html, contains_string( to_check ) )
 		assert_that( html, contains_string( 'Test <br>' ) )
 		assert_that( msg.get( 'Reply-To' ), is_( 'no-reply@nextthought.com' ))
-		assert_that( msg.get( 'From' ), contains_string( 'no-reply@nextthought.com' ))
+		assert_that( msg.get( 'From' ), contains_string( self.from_address ))
 		assert_that( msg.get( 'To' ), is_( self.to_address ))
 
 		# Test script w/external reply-to
@@ -119,9 +120,9 @@ class TestMailViews(ApplicationLayerTest):
 		assert_that( html, contains_string( 'test output</p>' ) )
 		assert_that( html, does_not( contains_string( script ) ) )
 
-		# Distinct reply-to and from headers
+		# Distinct reply-to and from headers; reply-to is external email addr.
 		assert_that( msg.get( 'Reply-To' ), is_( self.external_reply_to ))
-		assert_that( msg.get( 'From' ), contains_string( 'janux@ou.edu' ))
+		assert_that( msg.get( 'From' ), contains_string( self.from_address ))
 		assert_that( msg.get( 'To' ), is_( self.to_address ))
 
 	@WithSharedApplicationMockDS(users=('aaa_nextthought_com',),
