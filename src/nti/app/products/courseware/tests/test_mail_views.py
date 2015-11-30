@@ -9,7 +9,6 @@ __docformat__ = "restructuredtext en"
 
 from hamcrest import is_
 from hamcrest import is_not
-from hamcrest import not_none
 from hamcrest import has_length
 from hamcrest import assert_that
 from hamcrest import has_property
@@ -47,7 +46,10 @@ class TestMailViews(ApplicationLayerTest):
 	expected_enrollment_href = '/dataserver2/users/sjohnson%40nextthought.com/Courses/EnrolledCourses/tag%3Anextthought.com%2C2011-10%3AOU-HTML-CLC3403_LawAndJustice.course_info'
 	course_ntiid = 'tag:nextthought.com,2011-10:NTI-CourseInfo-Fall2013_CLC3403_LawAndJustice'
 
-	def _test_mail_payload(self, mail, instructor_env, link):
+	external_reply_to = 'jzuech3@gmail.com'
+	to_address = 'bill@nextthought.com'
+
+	def _test_mail_payload(self, mail, reply_to_mail, instructor_env, link):
 		# Test basic text
 		mailer = component.getUtility(ITestMailDelivery)
 		del mailer.queue[:]
@@ -56,12 +58,15 @@ class TestMailViews(ApplicationLayerTest):
 		to_check = mail.get( 'Body' )
 		assert_that( mailer.queue, has_length(1) )
 		msg = mailer.queue[0]
-		assert_that( msg, has_property( 'body'))
+		assert_that( msg, has_property( 'body' ))
 		body = decodestring(msg.body)
 		assert_that( body, contains_string( to_check ) )
 		assert_that( msg, has_property('html'))
 		html = decodestring(msg.html)
 		assert_that( html, contains_string( to_check ) )
+		assert_that( msg.get( 'Reply-To' ), is_( 'no-reply@nextthought.com' ))
+		assert_that( msg.get( 'From' ), contains_string( 'no-reply@nextthought.com' ))
+		assert_that( msg.get( 'To' ), is_( self.to_address ))
 
 		# Test encoding
 		mail['Body'] = '哈哈....Zürich is a hub'
@@ -75,6 +80,9 @@ class TestMailViews(ApplicationLayerTest):
 		assert_that( body, contains_string( to_check ) )
 		html = decodestring(msg.html)
 		assert_that( html, contains_string( to_check ) )
+		assert_that( msg.get( 'Reply-To' ), is_( 'no-reply@nextthought.com' ))
+		assert_that( msg.get( 'From' ), contains_string( 'no-reply@nextthought.com' ))
+		assert_that( msg.get( 'To' ), is_( self.to_address ))
 
 		# Test html
 		mail['Body'] = 'Test <br /> <br /> with line breaks. <br />'
@@ -90,11 +98,14 @@ class TestMailViews(ApplicationLayerTest):
 		html = decodestring(msg.html)
 		assert_that( html, contains_string( to_check ) )
 		assert_that( html, contains_string( 'Test <br>' ) )
+		assert_that( msg.get( 'Reply-To' ), is_( 'no-reply@nextthought.com' ))
+		assert_that( msg.get( 'From' ), contains_string( 'no-reply@nextthought.com' ))
+		assert_that( msg.get( 'To' ), is_( self.to_address ))
 
-		# Test script
-		mail['Body'] = '<div><script><p>should be ignored</p> Other stuff.</script><p>test output</p>'
+		# Test script w/external reply-to
+		reply_to_mail['Body'] = '<div><script><p>should be ignored</p> Other stuff.</script><p>test output</p>'
 		del mailer.queue[:]
-		self.testapp.post_json(link, mail, extra_environ=instructor_env)
+		self.testapp.post_json(link, reply_to_mail, extra_environ=instructor_env)
 
 		to_check = 'test output'
 		script = '<script><p>should be ignored</p> Other stuff.</script>'
@@ -108,6 +119,11 @@ class TestMailViews(ApplicationLayerTest):
 		assert_that( html, contains_string( 'test output</p>' ) )
 		assert_that( html, does_not( contains_string( script ) ) )
 
+		# Distinct reply-to and from headers
+		assert_that( msg.get( 'Reply-To' ), is_( self.external_reply_to ))
+		assert_that( msg.get( 'From' ), contains_string( 'janux@ou.edu' ))
+		assert_that( msg.get( 'To' ), is_( self.to_address ))
+
 	@WithSharedApplicationMockDS(users=('aaa_nextthought_com',),
 								 testapp=True,
 								 default_authenticate=True)
@@ -119,19 +135,24 @@ class TestMailViews(ApplicationLayerTest):
 				'Subject': subject,
 				'NoReply': True }
 
+		student_username = 'aaa_nextthought_com'
+
 		# Test mail without subject and with a reply address.
 		mail_with_reply = dict(mail)
 		mail_with_reply['NoReply'] = False
 		mail_with_reply['Subject'] = None
 
 		instructor_env = self._make_extra_environ('harp4162')
-		jmadden_environ = self._make_extra_environ(username='aaa_nextthought_com')
+		jmadden_environ = self._make_extra_environ(username=student_username)
 
 		# Give the user a NT email address.
 		with mock_dataserver.mock_db_trans(self.ds):
 			user = User.get_user('aaa_nextthought_com')
 			IUserProfile(user).email_verified = True
-			IUserProfile(user).email = 'bill@nextthought.com'
+			IUserProfile(user).email = self.to_address
+			user = User.get_user('harp4162')
+			IUserProfile(user).email_verified = True
+			IUserProfile(user).email = self.external_reply_to
 
 		res = self.testapp.get('/dataserver2/users/harp4162/Courses/AdministeredCourses',
 								extra_environ=instructor_env)
@@ -152,9 +173,10 @@ class TestMailViews(ApplicationLayerTest):
 		res = self.testapp.get(roster_link,
 								extra_environ=instructor_env)
 		for enroll_record in res.json_body['Items']:
-			roster_link = self.require_link_href_with_rel(enroll_record, VIEW_COURSE_MAIL)
-			self.testapp.post_json(roster_link, mail, extra_environ=instructor_env)
-			self.testapp.post_json(roster_link, mail_with_reply, extra_environ=instructor_env)
+			if enroll_record.get( 'Username' ) == student_username:
+				roster_link = self.require_link_href_with_rel(enroll_record, VIEW_COURSE_MAIL)
+				self.testapp.post_json(roster_link, mail, extra_environ=instructor_env)
+				self.testapp.post_json(roster_link, mail_with_reply, extra_environ=instructor_env)
 
 		# Mail course
 		self.testapp.post_json(email_link, mail, extra_environ=instructor_env)
@@ -166,4 +188,4 @@ class TestMailViews(ApplicationLayerTest):
 						 status=404,
 						 extra_environ=instructor_env)
 
-		self._test_mail_payload( mail, instructor_env, email_link )
+		self._test_mail_payload( mail, mail_with_reply, instructor_env, roster_link )
