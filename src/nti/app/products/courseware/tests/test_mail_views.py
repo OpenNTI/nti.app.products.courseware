@@ -30,10 +30,21 @@ from nti.app.testing.application_webtest import ApplicationLayerTest
 
 from nti.app.products.courseware.tests import InstructedCourseApplicationTestLayer
 
+from nti.contenttypes.courses.interfaces import ES_CREDIT_DEGREE
+from nti.contenttypes.courses.interfaces import ICourseInstance
+from nti.contenttypes.courses.interfaces import ICourseEnrollmentManager
+
 import nti.dataserver.tests.mock_dataserver as mock_dataserver
 
 from nti.dataserver.users import User
 from nti.dataserver.users.interfaces import IUserProfile
+
+from nti.ntiids.ntiids import find_object_with_ntiid
+
+open_name = 'aaa_nextthought_com'
+credit_name = 'credit_nextthought_com'
+open_address = 'open@nextthought.com'
+credit_address = 'credit@nextthought.com'
 
 class TestMailViews(ApplicationLayerTest):
 
@@ -42,15 +53,35 @@ class TestMailViews(ApplicationLayerTest):
 
 	# XXX: This only works in the OU environment because that's where the purchasables are
 	default_origin = b'http://janux.ou.edu'
-	enrolled_courses_href = '/dataserver2/users/sjohnson@nextthought.com/Courses/EnrolledCourses'
-	expected_enrollment_href = '/dataserver2/users/sjohnson%40nextthought.com/Courses/EnrolledCourses/tag%3Anextthought.com%2C2011-10%3AOU-HTML-CLC3403_LawAndJustice.course_info'
 	course_ntiid = 'tag:nextthought.com,2011-10:NTI-CourseInfo-Fall2013_CLC3403_LawAndJustice'
-
 	external_reply_to = 'jzuech3@gmail.com'
-	to_address = 'bill@nextthought.com'
 	from_address = 'janux@ou.edu'
 
+	def _do_enroll(self):
+		# Set up enrollments/nextthought email addresses.
+		with mock_dataserver.mock_db_trans(self.ds, site_name='janux.ou.edu'):
+			open_user = User.get_user( open_name )
+			course = find_object_with_ntiid( self.course_ntiid )
+			course = ICourseInstance( course )
+			IUserProfile(open_user).email_verified = True
+			IUserProfile(open_user).email = open_address
+			manager = ICourseEnrollmentManager( course )
+			manager.enroll( open_user )
+
+			credit_user = User.get_user( credit_name )
+			manager.enroll( credit_user, scope=ES_CREDIT_DEGREE )
+			IUserProfile(credit_user).email_verified = True
+			IUserProfile(credit_user).email = credit_address
+
+			user = User.get_user('harp4162')
+			IUserProfile(user).email_verified = True
+			IUserProfile(user).email = self.external_reply_to
+
 	def _test_mail_payload(self, mail, reply_to_mail, instructor_env, link):
+		"""
+		Validate address and body properties of emails sent to an individual
+		open student.
+		"""
 		# Test basic text
 		mailer = component.getUtility(ITestMailDelivery)
 		del mailer.queue[:]
@@ -67,7 +98,7 @@ class TestMailViews(ApplicationLayerTest):
 		assert_that( html, contains_string( to_check ) )
 		assert_that( msg.get( 'Reply-To' ), is_( 'no-reply@nextthought.com' ))
 		assert_that( msg.get( 'From' ), contains_string( self.from_address ))
-		assert_that( msg.get( 'To' ), is_( self.to_address ))
+		assert_that( msg.get( 'To' ), is_( open_address ))
 
 		# Test encoding
 		mail['Body'] = '哈哈....Zürich is a hub'
@@ -83,7 +114,7 @@ class TestMailViews(ApplicationLayerTest):
 		assert_that( html, contains_string( to_check ) )
 		assert_that( msg.get( 'Reply-To' ), is_( 'no-reply@nextthought.com' ))
 		assert_that( msg.get( 'From' ), contains_string( self.from_address ))
-		assert_that( msg.get( 'To' ), is_( self.to_address ))
+		assert_that( msg.get( 'To' ), is_( open_address ))
 
 		# Test html
 		mail['Body'] = 'Test <br /> <br /> with line breaks. <br />'
@@ -101,7 +132,7 @@ class TestMailViews(ApplicationLayerTest):
 		assert_that( html, contains_string( 'Test <br>' ) )
 		assert_that( msg.get( 'Reply-To' ), is_( 'no-reply@nextthought.com' ))
 		assert_that( msg.get( 'From' ), contains_string( self.from_address ))
-		assert_that( msg.get( 'To' ), is_( self.to_address ))
+		assert_that( msg.get( 'To' ), is_( open_address ))
 
 		# Test script w/external reply-to
 		reply_to_mail['Body'] = '<div><script><p>should be ignored</p> Other stuff.</script><p>test output</p>'
@@ -123,9 +154,9 @@ class TestMailViews(ApplicationLayerTest):
 		# Distinct reply-to and from headers; reply-to is external email addr.
 		assert_that( msg.get( 'Reply-To' ), is_( self.external_reply_to ))
 		assert_that( msg.get( 'From' ), contains_string( self.from_address ))
-		assert_that( msg.get( 'To' ), is_( self.to_address ))
+		assert_that( msg.get( 'To' ), is_( open_address ))
 
-	@WithSharedApplicationMockDS(users=('aaa_nextthought_com',),
+	@WithSharedApplicationMockDS(users=(open_name,credit_name),
 								 testapp=True,
 								 default_authenticate=True)
 	def test_roster_email(self):
@@ -136,25 +167,13 @@ class TestMailViews(ApplicationLayerTest):
 				'Subject': subject,
 				'NoReply': True }
 
-		student_username = 'aaa_nextthought_com'
-
 		# Test mail without subject and with a reply address.
 		mail_with_reply = dict(mail)
 		mail_with_reply['NoReply'] = False
 		mail_with_reply['Subject'] = None
 
+		self._do_enroll()
 		instructor_env = self._make_extra_environ('harp4162')
-		jmadden_environ = self._make_extra_environ(username=student_username)
-
-		# Give the user a NT email address.
-		with mock_dataserver.mock_db_trans(self.ds):
-			user = User.get_user('aaa_nextthought_com')
-			IUserProfile(user).email_verified = True
-			IUserProfile(user).email = self.to_address
-			user = User.get_user('harp4162')
-			IUserProfile(user).email_verified = True
-			IUserProfile(user).email = self.external_reply_to
-
 		res = self.testapp.get('/dataserver2/users/harp4162/Courses/AdministeredCourses',
 								extra_environ=instructor_env)
 
@@ -163,25 +182,36 @@ class TestMailViews(ApplicationLayerTest):
 		roster_link = self.require_link_href_with_rel(course_instance, 'CourseEnrollmentRoster')
 		email_link = self.require_link_href_with_rel(course_instance, VIEW_COURSE_MAIL)
 
-		# Put everyone in the roster
-		self.testapp.post_json(self.enrolled_courses_href, self.course_ntiid, status=201)
-		self.testapp.post_json('/dataserver2/users/aaa_nextthought_com/Courses/EnrolledCourses',
-								self.course_ntiid,
-								extra_environ=jmadden_environ,
-								status=201)
-
 		# Mail student
 		res = self.testapp.get(roster_link,
 								extra_environ=instructor_env)
 		for enroll_record in res.json_body['Items']:
-			if enroll_record.get( 'Username' ) == student_username:
-				roster_link = self.require_link_href_with_rel(enroll_record, VIEW_COURSE_MAIL)
-				self.testapp.post_json(roster_link, mail, extra_environ=instructor_env)
-				self.testapp.post_json(roster_link, mail_with_reply, extra_environ=instructor_env)
+			roster_link = self.require_link_href_with_rel(enroll_record, VIEW_COURSE_MAIL)
+			self.testapp.post_json(roster_link, mail, extra_environ=instructor_env)
+			self.testapp.post_json(roster_link, mail_with_reply, extra_environ=instructor_env)
+			if enroll_record.get( 'Username' ) == open_name:
+				open_email_link = roster_link
 
-		# Mail course
+		# Mail everyone in course
+		mailer = component.getUtility(ITestMailDelivery)
+		del mailer.queue[:]
 		self.testapp.post_json(email_link, mail, extra_environ=instructor_env)
+		assert_that( mailer.queue, has_length( 2 ) )
+		del mailer.queue[:]
 		self.testapp.post_json(email_link, mail_with_reply, extra_environ=instructor_env)
+		assert_that( mailer.queue, has_length( 2 ) )
+
+		# Mail just for-credit
+		del mailer.queue[:]
+		self.testapp.post_json(email_link + '?scope=forCREDit', mail_with_reply, extra_environ=instructor_env)
+		assert_that( mailer.queue, has_length( 1 ) )
+		assert_that( mailer.queue[0].get( 'To' ), is_( credit_address ))
+
+		# Mail just public
+		del mailer.queue[:]
+		self.testapp.post_json(email_link + '?scope=public', mail_with_reply, extra_environ=instructor_env)
+		assert_that( mailer.queue, has_length( 1 ) )
+		assert_that( mailer.queue[0].get( 'To' ), is_( open_address ))
 
 		# 403s/404s
 		self.testapp.post_json(email_link, mail, status=403)
@@ -189,4 +219,4 @@ class TestMailViews(ApplicationLayerTest):
 						 status=404,
 						 extra_environ=instructor_env)
 
-		self._test_mail_payload( mail, mail_with_reply, instructor_env, roster_link )
+		self._test_mail_payload( mail, mail_with_reply, instructor_env, open_email_link )
