@@ -1,3 +1,20 @@
 {
-
+    "nti.roles.course_instructor": {
+        "allow": [
+            "112852859",
+            "yada2859",
+            "113851356",
+            "smar1356",
+            "112784647",
+            "davi4647",
+            "112882415",
+            "otts2415",
+            "112889036",
+            "land9036",
+            "janux_courses",
+			"tryt3968",
+			"112113968",
+			"steve.johnson@nextthought.com"
+        ]
+    }
 }
