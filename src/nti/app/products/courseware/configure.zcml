@@ -215,19 +215,9 @@
 		<implements interface="zope.annotation.interfaces.IAttributeAnnotatable" />
 	</class>
 
-	<!-- Asset update -->
+	<!-- Outline update -->
 	<adapter factory=".traversal._OutlineNodeExternalFieldTraverser"
 			 for="nti.contenttypes.courses.interfaces.ICourseOutlineNode pyramid.interfaces.IRequest"
-			 provides="zope.traversing.interfaces.ITraversable"
-			 name="fields" />
-
-	<adapter factory=".traversal._OutlineNodeExternalFieldTraverser"
-			 for="nti.contenttypes.courses.interfaces.ICourseOutlineContentNode pyramid.interfaces.IRequest"
-			 provides="zope.traversing.interfaces.ITraversable"
-			 name="fields" />
-
-	<adapter factory=".traversal._OutlineNodeExternalFieldTraverser"
-			 for="nti.contenttypes.courses.interfaces.ICourseOutlineCalendarNode pyramid.interfaces.IRequest"
 			 provides="zope.traversing.interfaces.ITraversable"
 			 name="fields" />
 
