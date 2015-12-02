@@ -29,8 +29,8 @@ class _OutlineNodeExternalFieldTraverser(_AbstractExternalFieldTraverser):
 	def __init__(self, context, request=None):
 		super(_OutlineNodeExternalFieldTraverser, self).__init__(context, request=request)
 		allowed_fields = set()
-		assest_iface = iface_of_node(context)
-		for k, v in assest_iface.namesAndDescriptions(all=True):
+		outline_iface = iface_of_node(context)
+		for k, v in outline_iface.namesAndDescriptions(all=True):
 			__traceback_info__ = k, v
 			if interface.interfaces.IMethod.providedBy(v):
 				continue
