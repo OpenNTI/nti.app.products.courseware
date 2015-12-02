@@ -415,7 +415,7 @@ class _OutlinePathFactory(object):
 		outline = self.course_context.Outline
 		for outline_node in outline.values():
 			for outline_content_node in outline_node.values():
-				if outline_content_node.ContentNTIID == self.target_ntiid:
+				if getattr( outline_content_node, 'ContentNTIID', None ) == self.target_ntiid:
 					return (self.course_context, outline_content_node)
 				lesson_ntiid = getattr(outline_content_node, 'LessonOverviewNTIID', None)
 				if not lesson_ntiid:
