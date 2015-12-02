@@ -377,8 +377,8 @@ class _OutlinePathFactory(object):
 
 	def _lesson_overview_contains_target(self, outline_content_node, lesson_overview):
 		def _do_check(check_contained=True):
-			for overview_group in lesson_overview.items:
-				for item in overview_group.items:
+			for overview_group in lesson_overview.items or ():
+				for item in overview_group.items or ():
 					if self._overview_item_contains_target(item, check_contained):
 						endpoints = self._get_outline_result_items(item, lesson_overview)
 						# Return our course, leaf outline node, and overview.
