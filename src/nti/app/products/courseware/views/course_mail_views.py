@@ -55,6 +55,10 @@ class CourseMailView(AbstractMemberEmailView):
 		and `Open`, case insensitive. By default, all users are
 		emailed.
 
+	replyToScope
+		The same values as `scope`.  Only users in this scope
+		will get reply addresses. This is only valid if the email
+		itself allows replies.
 	"""
 	@property
 	def _context_display_name(self):
@@ -69,19 +73,40 @@ class CourseMailView(AbstractMemberEmailView):
 	def course(self):
 		return self.context
 
+	@property
+	def _reply_to_scope_usernames(self):
+		values = CaseInsensitiveDict(self.request.params)
+		scope_name = values.get('replyToScope')
+		if not scope_name or scope_name.lower() == 'all':
+			result = None
+		elif scope_name.lower() == 'forcredit':
+			result = self._for_credit_usernames
+		elif scope_name.lower() in ('public', 'open'):
+			result = self._only_public_usernames
+		return result
+
 	def _get_scope_usernames(self, scope):
-		result = {x.lower() for x in IEnumerableEntityContainer( scope ).iter_usernames()}
+		result = set()
+		if scope:
+			result = {x.lower() for x in IEnumerableEntityContainer( scope ).iter_usernames()}
 		return result
 
 	@property
 	def _public_usernames(self):
-		public_scope = self.course.SharingScopes.get(ES_PUBLIC)
-		result = self._get_scope_usernames( public_scope )
+		result = self._get_scope_usernames( self._public_scope )
 		return result
+
+	@property
+	def _only_public_usernames(self):
+		return self._public_usernames - self._for_credit_usernames
 
 	@property
 	def _for_credit_scope(self):
 		return self.course.SharingScopes.get(ES_CREDIT)
+
+	@property
+	def _public_scope(self):
+		return self.course.SharingScopes.get(ES_PUBLIC)
 
 	@property
 	def _for_credit_usernames(self):
@@ -97,7 +122,7 @@ class CourseMailView(AbstractMemberEmailView):
 		elif scope_name.lower() == 'forcredit':
 			result = self._for_credit_usernames
 		elif scope_name.lower() in ('public', 'open'):
-			result = self._public_usernames - self._for_credit_usernames
+			result = self._only_public_usernames
 		else:
 			raise hexc.HTTPUnprocessableEntity(detail='Invalid scope %s' % scope_name)
 
@@ -107,11 +132,12 @@ class CourseMailView(AbstractMemberEmailView):
 
 	def reply_addr_for_recipient(self, recipient):
 		"""
-		If the recipient is Public/Open, we never want a reply address.
+		If the user specifies that we only reply to a certain
+		enrollee of a course, do so.
 		"""
-		if recipient not in self._for_credit_scope:
-			result = self._no_reply_addr
-		else:
+		result = self._no_reply_addr
+		if 		not self._reply_to_scope_usernames \
+			or 	recipient.username.lower() in self._reply_to_scope_usernames:
 			result = self._sender_reply_addr
 		return result
 

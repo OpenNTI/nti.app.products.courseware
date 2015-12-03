@@ -55,6 +55,7 @@ class TestMailViews(ApplicationLayerTest):
 	default_origin = b'http://janux.ou.edu'
 	course_ntiid = 'tag:nextthought.com,2011-10:NTI-CourseInfo-Fall2013_CLC3403_LawAndJustice'
 	external_reply_to = 'jzuech3@gmail.com'
+	no_reply = 'no-reply@nextthought.com'
 	from_address = 'janux@ou.edu'
 
 	def _do_enroll(self):
@@ -96,7 +97,7 @@ class TestMailViews(ApplicationLayerTest):
 		assert_that( msg, has_property('html'))
 		html = decodestring(msg.html)
 		assert_that( html, contains_string( to_check ) )
-		assert_that( msg.get( 'Reply-To' ), is_( 'no-reply@nextthought.com' ))
+		assert_that( msg.get( 'Reply-To' ), is_( self.no_reply ))
 		assert_that( msg.get( 'From' ), contains_string( self.from_address ))
 		assert_that( msg.get( 'To' ), is_( open_address ))
 
@@ -112,7 +113,7 @@ class TestMailViews(ApplicationLayerTest):
 		assert_that( body, contains_string( to_check ) )
 		html = decodestring(msg.html)
 		assert_that( html, contains_string( to_check ) )
-		assert_that( msg.get( 'Reply-To' ), is_( 'no-reply@nextthought.com' ))
+		assert_that( msg.get( 'Reply-To' ), is_( self.no_reply ))
 		assert_that( msg.get( 'From' ), contains_string( self.from_address ))
 		assert_that( msg.get( 'To' ), is_( open_address ))
 
@@ -130,7 +131,7 @@ class TestMailViews(ApplicationLayerTest):
 		html = decodestring(msg.html)
 		assert_that( html, contains_string( to_check ) )
 		assert_that( html, contains_string( 'Test <br>' ) )
-		assert_that( msg.get( 'Reply-To' ), is_( 'no-reply@nextthought.com' ))
+		assert_that( msg.get( 'Reply-To' ), is_( self.no_reply ))
 		assert_that( msg.get( 'From' ), contains_string( self.from_address ))
 		assert_that( msg.get( 'To' ), is_( open_address ))
 
@@ -197,9 +198,33 @@ class TestMailViews(ApplicationLayerTest):
 		del mailer.queue[:]
 		self.testapp.post_json(email_link, mail, extra_environ=instructor_env)
 		assert_that( mailer.queue, has_length( 2 ) )
+		assert_that( mailer.queue[0].get( 'Reply-To' ), is_( self.no_reply ))
+		assert_that( mailer.queue[1].get( 'Reply-To' ), is_( self.no_reply ))
+
+		# Mail everyone with reply
 		del mailer.queue[:]
 		self.testapp.post_json(email_link, mail_with_reply, extra_environ=instructor_env)
 		assert_that( mailer.queue, has_length( 2 ) )
+		assert_that( mailer.queue[0].get( 'Reply-To' ), is_( self.external_reply_to ))
+		assert_that( mailer.queue[1].get( 'Reply-To' ), is_( self.external_reply_to ))
+
+		# Mail everyone with replyToScope ForCredit
+		del mailer.queue[:]
+		self.testapp.post_json(email_link + '?replyToScope=ForCredit', mail_with_reply, extra_environ=instructor_env)
+		assert_that( mailer.queue, has_length( 2 ) )
+		open_msg = mailer.queue[0] if mailer.queue[0].get( 'To' ) == open_address else mailer.queue[1]
+		credit_msg = mailer.queue[0] if mailer.queue[0].get( 'To' ) == credit_address else mailer.queue[1]
+		assert_that( open_msg.get( 'Reply-To' ), is_( self.no_reply ))
+		assert_that( credit_msg.get( 'Reply-To' ), is_( self.external_reply_to ))
+
+		# Mail everyone with replyToScope open
+		del mailer.queue[:]
+		self.testapp.post_json(email_link + '?replyToScope=opEN', mail_with_reply, extra_environ=instructor_env)
+		assert_that( mailer.queue, has_length( 2 ) )
+		open_msg = mailer.queue[0] if mailer.queue[0].get( 'To' ) == open_address else mailer.queue[1]
+		credit_msg = mailer.queue[0] if mailer.queue[0].get( 'To' ) == credit_address else mailer.queue[1]
+		assert_that( open_msg.get( 'Reply-To' ), is_( self.external_reply_to ))
+		assert_that( credit_msg.get( 'Reply-To' ), is_( self.no_reply ))
 
 		# Mail just for-credit
 		del mailer.queue[:]
