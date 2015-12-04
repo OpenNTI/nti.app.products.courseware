@@ -43,6 +43,7 @@ from nti.contenttypes.courses.interfaces import ICourseCatalog
 from nti.contenttypes.courses.interfaces import ICourseInstance
 from nti.contenttypes.courses.interfaces import ICourseSubInstance
 from nti.contenttypes.courses.interfaces import ICourseCatalogEntry
+
 from nti.contenttypes.courses.legacy_catalog import ILegacyCourseInstance
 
 from nti.contenttypes.courses.utils import get_parent_course
@@ -117,6 +118,7 @@ def read_input(request):
 		values = request.params
 	result = CaseInsensitiveDict(values)
 	return result
+readInput = read_input
 
 @view_config(name='ResetCourseOutline')
 @view_defaults(route_name='objects.generic.traversal',
