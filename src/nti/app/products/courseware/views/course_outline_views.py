@@ -5,6 +5,7 @@
 """
 
 from __future__ import print_function, unicode_literals, absolute_import, division
+from nti.coremetadata.interfaces import IRecordable
 __docformat__ = "restructuredtext en"
 
 logger = __import__('logging').getLogger(__name__)
@@ -209,3 +210,71 @@ class ResetAllCoursesOutlinesView(ResetCourseOutlineView):
 		catalog = component.getUtility(ICourseCatalog)
 		courses = list(catalog.iterCatalogEntries())
 		return super(ResetAllCoursesOutlinesView, self)._do_call(result, courses)
+
+
+@view_config(name='UnlockOutlineNodes')
+@view_defaults(route_name='objects.generic.traversal',
+			   renderer='rest',
+			   context=CourseAdminPathAdapter,
+			   permission=nauth.ACT_NTI_ADMIN)
+class UnlockOutlineNodesView(AbstractAuthenticatedView,
+				 			 ModeledContentUploadRequestUtilsMixin):
+
+	def readInput(self, value=None):
+		result = read_input(self.request)
+		return result
+
+	def _do_call(self, result, courses=None):
+		values = self.readInput()
+		if courses is None:
+			courses = _parse_courses(values)
+
+		to_process = set()
+		items = result[ITEMS] = {}
+		for course in courses or ():
+			course = ICourseInstance(course)
+			if ILegacyCourseInstance.providedBy(course):
+				continue
+			if ICourseSubInstance.providedBy(course):
+				parent = get_parent_course(course)
+				if parent.Outline == course.Outline:
+					course = parent
+			to_process.add(course)
+
+		def _recur(node, unlocked):
+			if IRecordable.providedBy(node) and node.locked:
+				node.locked = False
+				unlocked.append(node.ntiid)
+			# parse children
+			for child in node.values():
+				_recur(child, unlocked)
+		
+		for course in to_process:
+			unlocked = []
+			_recur(course.Outline, unlocked)
+			items[ICourseCatalogEntry(course).ntiid] = unlocked
+
+		return to_process
+
+	def __call__(self):
+		now = time.time()
+		result = LocatedExternalDict()
+		endInteraction()
+		try:
+			self._do_call(result)
+		finally:
+			restoreInteraction()
+			result['TimeElapsed'] = time.time() - now
+		return result
+
+@view_config(name='UnlockAllOutlineNodes')
+@view_defaults(route_name='objects.generic.traversal',
+			   renderer='rest',
+			   context=CourseAdminPathAdapter,
+			   permission=nauth.ACT_NTI_ADMIN)
+class UnlockAllOutlineNodesView(UnlockOutlineNodesView):
+
+	def _do_call(self, result, courses=None):
+		catalog = component.getUtility(ICourseCatalog)
+		courses = list(catalog.iterCatalogEntries())
+		return super(UnlockAllOutlineNodesView, self)._do_call(result, courses)
