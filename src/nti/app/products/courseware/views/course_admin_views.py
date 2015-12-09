@@ -60,8 +60,6 @@ from nti.contenttypes.courses.interfaces import ICourseInstance
 from nti.contenttypes.courses.interfaces import ICourseEnrollmentManager
 from nti.contenttypes.courses.interfaces import ICourseInstanceEnrollmentRecord
 
-from nti.contenttypes.courses.discussions.interfaces import ICourseDiscussions
-
 from nti.contenttypes.courses.enrollment import migrate_enrollments_from_course_to_course
 
 from nti.contenttypes.courses.utils import drop_any_other_enrollments
@@ -126,15 +124,7 @@ def _parse_courses(values):
 	result = []
 	for ntiid in ntiids:
 		context = find_object_with_ntiid(ntiid)
-		if context is None:
-			try:
-				catalog = component.getUtility(ICourseCatalog)
-				context = catalog.getCatalogEntry(ntiid)
-			except (KeyError, LookupError):
-				context = None
-		else:
-			context = ICourseCatalogEntry(context, None)
-
+		context = ICourseCatalogEntry(context, None)
 		if context is not None:
 			result.append(context)
 	return result
@@ -185,7 +175,7 @@ class UserCourseEnrollView(AbstractCourseEnrollView):
 			raise hexc.HTTPUnprocessableEntity(detail=msg)
 
 		interaction = is_true(values.get('email') or values.get('interaction'))
-		
+
 		# Make sure we don't have any interaction.
 		if not interaction:
 			endInteraction()
@@ -416,7 +406,7 @@ class CourseSectionEnrollmentMigrationView(AbstractAuthenticatedView):
 			seen.add(name)
 
 		# migrate
-		items, total = course_migrator(	scope=scope,
+		items, total = course_migrator(scope=scope,
 										verbose=True,
 								 		context=course,
 								 		sections=sections,
@@ -696,80 +686,3 @@ class CourseCatalogEntryEnrollmentsRosterDownloadView(AllCourseEnrollmentRosterD
 
 	def _iter_catalog_entries(self):
 		return (self.request.context,)
-
-# discussions
-
-@view_config(context=ICourseInstance)
-@view_config(context=ICourseCatalogEntry)
-@view_defaults(route_name='objects.generic.traversal',
-			   renderer='rest',
-			   request_method='GET',
-			   name='discussions',
-			   permission=nauth.ACT_NTI_ADMIN)
-class CourseDiscussionsView(AbstractAuthenticatedView):
-
-	def _course(self):
-		return ICourseInstance(self.context, None)
-
-	def __call__(self):
-		result = LocatedExternalDict()
-		items = result[ITEMS] = {}
-		discussions = ICourseDiscussions(self._course(), None) or {}
-		for name, discussion in discussions.items():
-			name = discussion.id or name
-			items[name] = discussion
-		return result
-
-from nti.contenttypes.courses.interfaces import ICourseInstancePublicScopedForum
-from nti.contenttypes.courses.interfaces import ICourseInstanceForCreditScopedForum
-
-from ..discussions import get_topic_key
-
-@view_config(name='DropCourseDiscussions')
-@view_config(name='drop_course_discussions')
-@view_defaults(route_name='objects.generic.traversal',
-			   renderer='rest',
-			   context=CourseAdminPathAdapter,
-			   permission=nauth.ACT_NTI_ADMIN)
-class DropCourseDiscussionsView(AbstractAuthenticatedView):
-
-	def readInput(self):
-		if self.request.body:
-			values = read_body_as_external_object(self.request)
-		else:
-			values = self.request.params
-		result = CaseInsensitiveDict(values)
-		return result
-
-	def __call__(self):
-		values = self.readInput()
-		courses = _parse_courses(values)
-		if not courses:
-			raise hexc.HTTPUnprocessableEntity(detail='Please specify a valid course')
-
-		result = LocatedExternalDict()
-		items = result[ITEMS] = {}
-		for course in courses:
-			course = ICourseInstance(course, None)
-			entry = ICourseCatalogEntry(course, None)
-			if course is None or entry is None:
-				continue
-
-			data = items[entry.ntiid] = {}
-			course_discs = ICourseDiscussions(course, None) or {}
-			course_discs = {get_topic_key(d) for d in course_discs.values()}
-			if not course_discs:
-				continue
-
-			discussions = course.Discussions
-			for forum in discussions.values():
-				if 	not ICourseInstancePublicScopedForum.providedBy(forum) and \
-					not ICourseInstanceForCreditScopedForum.providedBy(forum):
-					continue
-
-				for key in course_discs:
-					if key in forum:
-						del forum[key]
-						data.setdefault(forum.__name__, [])
-						data[forum.__name__].append(key)
-		return result

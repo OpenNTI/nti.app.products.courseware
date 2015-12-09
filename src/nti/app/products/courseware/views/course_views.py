@@ -11,15 +11,26 @@ __docformat__ = "restructuredtext en"
 
 logger = __import__('logging').getLogger(__name__)
 
+from numbers import Number
+
 from zope import component
 from zope import interface
 
+from zope.annotation.interfaces import IAnnotations
+
+from zope.container.contained import Contained
+
+from zope.intid.interfaces import IIntIds
+
 from zope.traversing.interfaces import IPathAdapter
+
+import BTrees
 
 from pyramid.view import view_config
 from pyramid.view import view_defaults
 from pyramid.interfaces import IRequest
 from pyramid import httpexceptions as hexc
+from pyramid.threadlocal import get_current_request
 
 from nti.app.base.abstract_views import AbstractAuthenticatedView
 
@@ -46,6 +57,8 @@ from nti.ntiids.ntiids import find_object_with_ntiid
 from ..interfaces import ACT_VIEW_ROSTER
 from ..interfaces import ICourseInstanceActivity
 from ..interfaces import ICourseInstanceEnrollment
+
+from ..utils import get_enrollment_options
 
 from . import VIEW_CONTENTS
 from . import VIEW_COURSE_ACTIVITY
@@ -77,7 +90,7 @@ class course_outline_contents_view(AbstractAuthenticatedView):
 		"""
 		return 		not IPublishable.providedBy(item) \
 				or 	item.is_published() \
-				or	has_permission( nauth.ACT_CONTENT_EDIT, item, self.request )
+				or	has_permission(nauth.ACT_CONTENT_EDIT, item, self.request)
 
 	_is_visible = _is_published
 
@@ -91,8 +104,8 @@ class course_outline_contents_view(AbstractAuthenticatedView):
 			# Legacy outline node or non-content node, allow it.
 			result = True
 		else:
-			lesson = find_object_with_ntiid( lesson_ntiid )
-			result = self._is_published( lesson )
+			lesson = find_object_with_ntiid(lesson_ntiid)
+			result = self._is_published(lesson)
 		return result
 
 	def __call__(self):
@@ -101,15 +114,15 @@ class course_outline_contents_view(AbstractAuthenticatedView):
 
 		def _recur(the_list, the_nodes):
 			for node in the_nodes:
-				if not self._is_visible( node ):
+				if not self._is_visible(node):
 					continue
 
 				ext_node = to_external_object(node)
-				if self._is_contents_available( node ):
+				if self._is_contents_available(node):
 					ext_node['contents'] = _recur([], node.values())
 				else:
 					# Some clients drive behavior based on this attr.
-					ext_node.pop( 'ContentNTIID', None )
+					ext_node.pop('ContentNTIID', None)
 				# Pretty pointless to send these
 				ext_node.pop('OID', None)
 				the_list.append(ext_node)
@@ -120,9 +133,6 @@ class course_outline_contents_view(AbstractAuthenticatedView):
 		result.__parent__ = self.request.context
 		self.request.response.last_modified = self.request.context.lastModified
 		return result
-
-from zope.intid.interfaces import IIntIds
-from zope.container.contained import Contained
 
 from nti.appserver.interfaces import IIntIdUserSearchPolicy
 
@@ -388,14 +398,6 @@ class CourseActivityGetView(AbstractAuthenticatedView,
 		result['Last Modified'] = last_modified
 		return result
 
-import BTrees
-
-from numbers import Number
-
-from zope.annotation.interfaces import IAnnotations
-
-from pyramid.threadlocal import get_current_request
-
 from nti.app.externalization.view_mixins import ModeledContentUploadRequestUtilsMixin
 
 from nti.common.time import time_to_64bit_int
@@ -486,8 +488,6 @@ class CoursePagesView(ContainerContextUGDPostView):
 
 	Reading/Editing/Deleting will remain the same.
 	"""
-
-from ..utils import get_enrollment_options
 
 @view_config(context=ICourseInstance)
 @view_config(context=ICourseCatalogEntry)
