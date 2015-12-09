@@ -19,6 +19,8 @@ from nti.app.base.abstract_views import AbstractAuthenticatedView
 
 from nti.app.externalization.internalization import read_body_as_external_object
 
+from nti.appserver.ugd_edit_views import UGDPutView
+
 from nti.common.property import Lazy
 from nti.common.maps import CaseInsensitiveDict
 
@@ -27,6 +29,7 @@ from nti.contenttypes.courses.interfaces import ICourseCatalogEntry
 from nti.contenttypes.courses.interfaces import ICourseInstancePublicScopedForum
 from nti.contenttypes.courses.interfaces import ICourseInstanceForCreditScopedForum
 
+from nti.contenttypes.courses.discussions.interfaces import ICourseDiscussion
 from nti.contenttypes.courses.discussions.interfaces import ICourseDiscussions
 
 from nti.dataserver import authorization as nauth
@@ -90,6 +93,14 @@ class CourseDiscussionsView(AbstractAuthenticatedView):
 			name = discussion.id or name
 			items[name] = discussion
 		return result
+
+@view_config(context=ICourseDiscussion)
+@view_defaults(route_name='objects.generic.traversal',
+			   renderer='rest',
+			   request_method='PUT',
+			   permission=nauth.ACT_CONTENT_EDIT)
+class CourseDiscussionPutView(UGDPutView):
+	content_predicate = ICourseDiscussion.providedBy
 
 @view_config(name='DropCourseDiscussions')
 @view_config(name='drop_course_discussions')
