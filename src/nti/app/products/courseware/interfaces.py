@@ -190,7 +190,7 @@ class ICourseInstanceAdministrativeRole(IShouldHaveTraversablePath):
 	__name__ = interface.Attribute("The name of the administration is the same as the CourseInstance.")
 
 	RoleName = Choice(title="The name of the role this principal holds",
-					  values=('instructor', 'teaching assistant'))
+					  values=('instructor', 'teaching assistant', 'editor'))
 	CourseInstance = Object(ICourseInstance)
 
 class IPrincipalAdministrativeRoleCatalog(interface.Interface):

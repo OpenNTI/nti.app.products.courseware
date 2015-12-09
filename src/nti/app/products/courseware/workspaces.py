@@ -33,6 +33,7 @@ from nti.contenttypes.courses.index import IX_SITE
 from nti.contenttypes.courses.index import IX_USERNAME
 from nti.contenttypes.courses import get_enrollment_catalog
 
+from nti.contenttypes.courses.interfaces import RID_TA
 from nti.contenttypes.courses.interfaces import ES_CREDIT
 from nti.contenttypes.courses.interfaces import RID_INSTRUCTOR
 from nti.contenttypes.courses.interfaces import ES_CREDIT_DEGREE
@@ -439,9 +440,12 @@ class _DefaultPrincipalAdministrativeRoleCatalog(object):
 	def iter_administrations(self):
 		for course in self._iter_admin_courses():
 			roles = IPrincipalRoleMap(course)
-			role = 'teaching assistant'
 			if roles.getSetting(RID_INSTRUCTOR, self.user.id) is Allow:
 				role = 'instructor'
+			elif roles.getSetting(RID_TA, self.user.id) is Allow:
+				role = 'teaching assistant'
+			else:
+				role = 'editor'
 			yield CourseInstanceAdministrativeRole(RoleName=role, CourseInstance=course)
 	iter_enrollments = iter_administrations  # for convenience
 

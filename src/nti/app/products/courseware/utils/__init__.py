@@ -31,6 +31,7 @@ from nti.contenttypes.courses.index import IX_SITE
 from nti.contenttypes.courses.index import IX_SCOPE
 from nti.contenttypes.courses.index import IX_USERNAME
 
+from nti.contenttypes.courses.interfaces import EDITOR
 from nti.contenttypes.courses.interfaces import INSTRUCTOR
 
 from nti.contenttypes.courses import get_course_vendor_info
@@ -134,7 +135,7 @@ class IndexAdminCourses(object):
 		username = getattr(user, 'username', user)
 		query = {
 			IX_SITE:{'any_of': sites},
-			IX_SCOPE: {'any_of':(INSTRUCTOR,)},
+			IX_SCOPE: {'any_of':(INSTRUCTOR,EDITOR)},
 			IX_USERNAME:{'any_of':(username,)},
 		}
 		for uid in catalog.apply(query) or ():
