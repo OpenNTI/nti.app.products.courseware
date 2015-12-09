@@ -440,6 +440,8 @@ class _DefaultPrincipalAdministrativeRoleCatalog(object):
 	def iter_administrations(self):
 		for course in self._iter_admin_courses():
 			roles = IPrincipalRoleMap(course)
+			# For now, we're including editors in the administered
+			# workspace.
 			if roles.getSetting(RID_INSTRUCTOR, self.user.id) is Allow:
 				role = 'instructor'
 			elif roles.getSetting(RID_TA, self.user.id) is Allow:
