@@ -11,6 +11,8 @@ logger = __import__('logging').getLogger(__name__)
 
 import six
 
+from zope.security.interfaces import IPrincipal
+
 from pyramid.view import view_config
 from pyramid.view import view_defaults
 from pyramid import httpexceptions as hexc
@@ -19,6 +21,7 @@ from nti.app.base.abstract_views import AbstractAuthenticatedView
 
 from nti.app.externalization.internalization import read_body_as_external_object
 
+from nti.common.property import Lazy
 from nti.common.maps import CaseInsensitiveDict
 
 from nti.contenttypes.courses.interfaces import ICourseInstance
@@ -77,17 +80,26 @@ def _parse_course(values):
 			   permission=nauth.ACT_READ)
 class CourseDiscussionsView(AbstractAuthenticatedView):
 
+	@Lazy
 	def _course(self):
-		return ICourseInstance(self.context, None)
+		return ICourseInstance(self.context)
+
+	@Lazy
+	def _can_see_discussions(self):
+		principal = IPrincipal(self.remoteUser)
+		return principal in self._course.instructors
 
 	def __call__(self):
-		result = LocatedExternalDict()
-		items = result[ITEMS] = {}
-		discussions = ICourseDiscussions(self._course(), None) or {}
-		for name, discussion in discussions.items():
-			name = discussion.id or name
-			items[name] = discussion
-		return result
+		if not self._can_see_discussions:
+			raise hexc.HTTPForbidden()
+		else:
+			result = LocatedExternalDict()
+			items = result[ITEMS] = {}
+			discussions = ICourseDiscussions(self._course, None) or {}
+			for name, discussion in discussions.items():
+				name = discussion.id or name
+				items[name] = discussion
+			return result
 
 @view_config(name='DropCourseDiscussions')
 @view_config(name='drop_course_discussions')
