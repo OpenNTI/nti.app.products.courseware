@@ -11,8 +11,6 @@ logger = __import__('logging').getLogger(__name__)
 
 import six
 
-from zope.security.interfaces import IPrincipal
-
 from pyramid.view import view_config
 from pyramid.view import view_defaults
 from pyramid import httpexceptions as hexc
@@ -84,22 +82,14 @@ class CourseDiscussionsView(AbstractAuthenticatedView):
 	def _course(self):
 		return ICourseInstance(self.context)
 
-	@Lazy
-	def _can_see_discussions(self):
-		principal = IPrincipal(self.remoteUser)
-		return principal in self._course.instructors
-
 	def __call__(self):
-		if not self._can_see_discussions:
-			raise hexc.HTTPForbidden()
-		else:
-			result = LocatedExternalDict()
-			items = result[ITEMS] = {}
-			discussions = ICourseDiscussions(self._course, None) or {}
-			for name, discussion in discussions.items():
-				name = discussion.id or name
-				items[name] = discussion
-			return result
+		result = LocatedExternalDict()
+		items = result[ITEMS] = {}
+		discussions = ICourseDiscussions(self._course, None) or {}
+		for name, discussion in discussions.items():
+			name = discussion.id or name
+			items[name] = discussion
+		return result
 
 @view_config(name='DropCourseDiscussions')
 @view_config(name='drop_course_discussions')
