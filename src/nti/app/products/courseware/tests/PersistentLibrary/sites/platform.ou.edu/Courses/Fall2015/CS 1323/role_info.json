@@ -16,5 +16,13 @@
 			"112113968",
 			"steve.johnson@nextthought.com"
         ]
+    },
+    "nti.roles.course_content_editor": {
+        "allow": [
+            "janux_courses",
+			"tryt3968",
+			"112113968",
+			"steve.johnson@nextthought.com"
+        ]
     }
 }

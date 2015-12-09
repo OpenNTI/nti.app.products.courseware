@@ -5,5 +5,13 @@
 	},
 	"nti.roles.course_ta": {
 		"allow": ["jmadden"]
-	}
+	},
+	"nti.roles.course_content_editor": {
+        "allow": [
+            "janux_courses",
+			"jmadden",
+			"harp4162",
+			"steve.johnson@nextthought.com"
+        ]
+    }
 }

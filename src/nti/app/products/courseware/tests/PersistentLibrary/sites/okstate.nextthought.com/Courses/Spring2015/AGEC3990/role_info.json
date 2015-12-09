@@ -5,5 +5,13 @@
 	},
 	"nti.roles.course_ta": {
 		"allow": ["jmadden"]
-	}
+	},
+	"nti.roles.course_content_editor": {
+        "allow": [
+            "okstate_courses",
+			"jmadden",
+			"bailey.norwood@okstate.edu",
+			"steve.johnson@nextthought.com"
+        ]
+    }
 }
