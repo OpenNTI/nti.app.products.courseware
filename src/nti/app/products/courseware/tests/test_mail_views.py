@@ -8,6 +8,7 @@ __docformat__ = "restructuredtext en"
 # pylint: disable=W0212,R0904
 
 from hamcrest import is_
+from hamcrest import none
 from hamcrest import is_not
 from hamcrest import not_none
 from hamcrest import has_length
@@ -79,10 +80,11 @@ class TestMailViews(ApplicationLayerTest):
 			IUserProfile(user).email_verified = True
 			IUserProfile(user).email = self.external_reply_to
 
-	def _get_non_instructor_messages(self, mailer):
+	def _get_messages(self, mailer, has_copy=False):
 		"""
 		Validate we always have an author copy, returning the rest. Clear out
-		our queue on the fly.
+		our queue on the fly. If `has_copy` is False, we do not expect a
+		instructor copy.
 		"""
 		author_message = None
 		results = []
@@ -91,8 +93,11 @@ class TestMailViews(ApplicationLayerTest):
 				author_message = msg
 			else:
 				results.append( msg )
-		assert_that( author_message, not_none() )
-		assert_that( author_message.get( 'Subject' ), contains_string( 'COPY' ))
+		if has_copy:
+			assert_that( author_message, not_none() )
+			assert_that( author_message.get( 'Subject' ), contains_string( 'COPY' ))
+		else:
+			assert_that( author_message, none() )
 		del mailer.queue[:]
 		return results
 
@@ -107,7 +112,7 @@ class TestMailViews(ApplicationLayerTest):
 		self.testapp.post_json(link, mail, extra_environ=instructor_env)
 
 		to_check = mail.get( 'Body' )
-		messages = self._get_non_instructor_messages( mailer )
+		messages = self._get_messages( mailer, has_copy=True )
 		assert_that( messages, has_length(1) )
 		msg = messages[0]
 		assert_that( msg, has_property( 'body' ))
@@ -125,7 +130,7 @@ class TestMailViews(ApplicationLayerTest):
 		self.testapp.post_json(link, mail, extra_environ=instructor_env)
 
 		to_check = mail.get( 'Body' ).encode( 'utf-8' )
-		messages = self._get_non_instructor_messages( mailer )
+		messages = self._get_messages( mailer, has_copy=True )
 		assert_that( messages, has_length(1) )
 		msg = messages[0]
 		body = decodestring(msg.body)
@@ -141,7 +146,7 @@ class TestMailViews(ApplicationLayerTest):
 		self.testapp.post_json(link, mail, extra_environ=instructor_env)
 
 		to_check = 'with line breaks.'
-		messages = self._get_non_instructor_messages( mailer )
+		messages = self._get_messages( mailer, has_copy=True )
 		assert_that( messages, has_length(1) )
 		msg = messages[0]
 		body = decodestring(msg.body)
@@ -160,7 +165,7 @@ class TestMailViews(ApplicationLayerTest):
 
 		to_check = 'test output'
 		script = '<script><p>should be ignored</p> Other stuff.</script>'
-		messages = self._get_non_instructor_messages( mailer )
+		messages = self._get_messages( mailer )
 		assert_that( messages, has_length(1) )
 		msg = messages[0]
 		body = decodestring(msg.body)
@@ -185,12 +190,14 @@ class TestMailViews(ApplicationLayerTest):
 		mail = {'MimeType': Email.mime_type,
 				'Body': body,
 				'Subject': subject,
-				'NoReply': True }
+				'NoReply': True,
+				'Copy': True }
 
-		# Test mail without subject and with a reply address.
+		# Test mail without subject, with a reply address, and no copy.
 		mail_with_reply = dict(mail)
 		mail_with_reply['NoReply'] = False
 		mail_with_reply['Subject'] = None
+		mail_with_reply['Copy'] = False
 
 		self._do_enroll()
 		instructor_env = self._make_extra_environ('harp4162')
@@ -216,21 +223,21 @@ class TestMailViews(ApplicationLayerTest):
 		mailer = component.getUtility(ITestMailDelivery)
 		del mailer.queue[:]
 		self.testapp.post_json(email_link, mail, extra_environ=instructor_env)
-		messages = self._get_non_instructor_messages( mailer )
+		messages = self._get_messages( mailer, has_copy=True )
 		assert_that( messages, has_length( 2 ) )
 		assert_that( messages[0].get( 'Reply-To' ), is_( self.no_reply ))
 		assert_that( messages[1].get( 'Reply-To' ), is_( self.no_reply ))
 
 		# Mail everyone with reply
 		self.testapp.post_json(email_link, mail_with_reply, extra_environ=instructor_env)
-		messages = self._get_non_instructor_messages( mailer )
+		messages = self._get_messages( mailer )
 		assert_that( messages, has_length( 2 ) )
 		assert_that( messages[0].get( 'Reply-To' ), is_( self.external_reply_to ))
 		assert_that( messages[1].get( 'Reply-To' ), is_( self.external_reply_to ))
 
 		# Mail everyone with replyToScope ForCredit
 		self.testapp.post_json(email_link + '?replyToScope=ForCredit', mail_with_reply, extra_environ=instructor_env)
-		messages = self._get_non_instructor_messages( mailer )
+		messages = self._get_messages( mailer )
 		assert_that( messages, has_length( 2 ) )
 		open_msg = messages[0] if messages[0].get( 'To' ) == open_address else messages[1]
 		credit_msg = messages[0] if messages[0].get( 'To' ) == credit_address else messages[1]
@@ -239,7 +246,7 @@ class TestMailViews(ApplicationLayerTest):
 
 		# Mail everyone with replyToScope open
 		self.testapp.post_json(email_link + '?replyToScope=opEN', mail_with_reply, extra_environ=instructor_env)
-		messages = self._get_non_instructor_messages( mailer )
+		messages = self._get_messages( mailer )
 		assert_that( messages, has_length( 2 ) )
 		open_msg = messages[0] if messages[0].get( 'To' ) == open_address else messages[1]
 		credit_msg = messages[0] if messages[0].get( 'To' ) == credit_address else messages[1]
@@ -248,13 +255,13 @@ class TestMailViews(ApplicationLayerTest):
 
 		# Mail just for-credit
 		self.testapp.post_json(email_link + '?scope=forCREDit', mail_with_reply, extra_environ=instructor_env)
-		messages = self._get_non_instructor_messages( mailer )
+		messages = self._get_messages( mailer )
 		assert_that( messages, has_length( 1 ) )
 		assert_that( messages[0].get( 'To' ), is_( credit_address ))
 
 		# Mail just public
 		self.testapp.post_json(email_link + '?scope=public', mail_with_reply, extra_environ=instructor_env)
-		messages = self._get_non_instructor_messages( mailer )
+		messages = self._get_messages( mailer )
 		assert_that( messages, has_length( 1 ) )
 		assert_that( messages[0].get( 'To' ), is_( open_address ))
 
