@@ -9,6 +9,7 @@ __docformat__ = "restructuredtext en"
 
 logger = __import__('logging').getLogger(__name__)
 
+import six
 from collections import namedtuple
 
 from zope import component
@@ -112,7 +113,7 @@ def _extract_content(body=()):
 	result = list()
 	for content in body or ():
 		# Should it be a video?
-		if content.startswith("[ntivideo]"):
+		if isinstance(content, six.string_types) and content.startswith("[ntivideo]"):
 			content = content[len("[ntivideo]"):]
 			# A type, or kaltura?
 			# raise erros on malformed
@@ -174,7 +175,7 @@ def get_acl(course, *entities):
 	instructors = [i for i in course.instructors or ()]
 	aces = [ace_allowing(i, ALL_PERMISSIONS) for i in instructors]
 	aces.append(ace_allowing(ROLE_ADMIN, ALL_PERMISSIONS))
-	
+
 	# specifed entities (e.g. students) get read permission
 	entities = {IPrincipal(Entity.get_entity(e), None) for e in entities or ()}
 	entities.discard(None)
@@ -277,7 +278,7 @@ def create_topics(discussion):
 		created = True
 		creator = course.SharingScopes[scope]
 		if name in forum:
-			logger.debug('Found existing topic "%s" in "%s"', 
+			logger.debug('Found existing topic "%s" in "%s"',
 						 title, forum.title)
 			topic = forum[name]
 			if topic.creator != creator:
@@ -327,7 +328,7 @@ def create_topics(discussion):
 		result.append(ntiid)
 		# always publish
 		topic.publish()
-		# mark 
+		# mark
 		if not IDefaultPublished.providedBy(topic):
 			interface.alsoProvides(topic, IDefaultPublished)
 	return result
