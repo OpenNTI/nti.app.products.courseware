@@ -76,7 +76,7 @@ def _parse_course(values):
 @view_defaults(route_name='objects.generic.traversal',
 			   renderer='rest',
 			   request_method='GET',
-			   permission=nauth.ACT_READ)
+			   permission=nauth.ACT_CONTENT_EDIT)
 class CourseDiscussionsView(GenericGetView):
 	pass
 
