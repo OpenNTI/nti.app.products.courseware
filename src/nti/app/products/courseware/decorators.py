@@ -33,6 +33,7 @@ from nti.contenttypes.courses.interfaces import ICourseCatalogEntry
 
 from nti.contenttypes.courses.utils import is_enrolled
 from nti.contenttypes.courses.utils import has_enrollments
+from nti.contenttypes.courses.utils import is_course_editor
 from nti.contenttypes.courses.utils import get_catalog_entry
 from nti.contenttypes.courses.utils import is_course_instructor
 from nti.contenttypes.courses.utils import get_enrollment_record
@@ -65,9 +66,9 @@ from .interfaces import ACT_VIEW_ACTIVITY
 from .interfaces import IOpenEnrollmentOption
 from .interfaces import ICourseInstanceEnrollment
 
-LINKS = StandardExternalFields.LINKS
-ITEMS = StandardExternalFields.ITEMS
 CLASS = StandardExternalFields.CLASS
+ITEMS = StandardExternalFields.ITEMS
+LINKS = StandardExternalFields.LINKS
 MIME_TYPE = StandardExternalFields.MIMETYPE
 
 COURSE_CONTEXT_ANNOT_KEY = 'nti.app.products.course.context_key'
@@ -149,7 +150,7 @@ class _RosterMailLinkDecorator(object):
 	def _predicate(self, context, result):
 		if not self._is_authenticated:
 			return False
-		course = ICourseInstance( context, None )
+		course = ICourseInstance(context, None)
 		return course and is_course_instructor(course, self.remoteUser)
 
 	def decorateExternalMapping(self, context, result):
@@ -173,8 +174,8 @@ class _VendorThankYouInfoDecorator(object):
 		return self._is_authenticated
 
 	def decorateExternalMapping(self, context, result):
-		course = ICourseInstance( context )
-		thank_you_page = get_vendor_thank_you_page( course, context.RealEnrollmentStatus )
+		course = ICourseInstance(context)
+		thank_you_page = get_vendor_thank_you_page(course, context.RealEnrollmentStatus)
 		if thank_you_page:
 			result['VendorThankYouPage'] = thank_you_page
 
@@ -353,20 +354,20 @@ class _ContainedCatalogEntryDecorator(AbstractAuthenticatedRequestAwareDecorator
 					result['CatalogEntryNTIID'] = entry.ntiid
 				break
 
-@interface.implementer(IExternalMappingDecorator)
 @component.adapter(ICourseCatalogEntry)
+@interface.implementer(IExternalMappingDecorator)
 class _CatalogFamilyDecorator(AbstractAuthenticatedRequestAwareDecorator):
 	"""
 	Expose the catalog family for a course catalog entry.
 	"""
 	class_name = 'CatalogFamilies'
 	family_display_fields = ('ProviderUniqueID',
-							'ProviderDepartmentTitle',
-							'StartDate',
-							'EndDate',
-							'Title',
-							'Description',
-							'PlatformPresentationResources')
+							 'ProviderDepartmentTitle',
+							 'StartDate',
+							 'EndDate',
+							 'Title',
+							 'Description',
+							 'PlatformPresentationResources')
 
 	def _predicate(self, context, result):
 		"""
@@ -407,3 +408,17 @@ class _CatalogFamilyDecorator(AbstractAuthenticatedRequestAwareDecorator):
 			vals.append(catalog_family)
 
 			result[self.class_name] = catalog_families
+
+@interface.implementer(IExternalObjectDecorator)
+class _CourseDiscussionsLinkDecorator(AbstractAuthenticatedRequestAwareDecorator):
+
+	def _predicate(self, context, result):
+		return self._is_authenticated and is_course_editor(context, self.remoteUser)
+
+	def _do_decorate_external(self, context, result):
+		_links = result.setdefault(LINKS, [])
+		link = Link(context, rel='CourseDiscussions', elements=('CourseDiscussions',))
+		interface.alsoProvides(link, ILocation)
+		link.__name__ = ''
+		link.__parent__ = context
+		_links.append(link)

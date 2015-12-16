@@ -20,8 +20,8 @@ from nti.app.base.abstract_views import AbstractAuthenticatedView
 from nti.app.externalization.internalization import read_body_as_external_object
 
 from nti.appserver.ugd_edit_views import UGDPutView
+from nti.appserver.dataserver_pyramid_views import GenericGetView
 
-from nti.common.property import Lazy
 from nti.common.maps import CaseInsensitiveDict
 
 from nti.contenttypes.courses.interfaces import ICourseInstance
@@ -72,27 +72,28 @@ def _parse_course(values):
 
 # discussions
 
-@view_config(context=ICourseInstance)
+@view_config(context=ICourseDiscussions)
+@view_defaults(route_name='objects.generic.traversal',
+			   renderer='rest',
+			   request_method='GET',
+			   permission=nauth.ACT_READ)
+class CourseDiscussionsView(GenericGetView):
+	pass
+
 @view_config(context=ICourseCatalogEntry)
 @view_defaults(route_name='objects.generic.traversal',
 			   renderer='rest',
 			   request_method='GET',
-			   name='discussions',
-			   permission=nauth.ACT_READ)
-class CourseDiscussionsView(AbstractAuthenticatedView):
+			   name='CourseDiscussions',
+			   permission=nauth.ACT_CONTENT_EDIT)
+class CatalogEntryCourseDiscussionView(AbstractAuthenticatedView):
 
-	@Lazy
 	def _course(self):
 		return ICourseInstance(self.context)
 
 	def __call__(self):
-		result = LocatedExternalDict()
-		items = result[ITEMS] = {}
-		discussions = ICourseDiscussions(self._course, None) or {}
-		for name, discussion in discussions.items():
-			name = discussion.id or name
-			items[name] = discussion
-		return result
+		discussions = ICourseDiscussions(self._course)
+		return discussions
 
 @view_config(context=ICourseDiscussion)
 @view_defaults(route_name='objects.generic.traversal',
