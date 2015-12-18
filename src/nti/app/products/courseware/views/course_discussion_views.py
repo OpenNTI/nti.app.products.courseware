@@ -22,6 +22,7 @@ from nti.app.externalization.internalization import read_body_as_external_object
 from nti.appserver.ugd_edit_views import UGDPutView
 from nti.appserver.dataserver_pyramid_views import GenericGetView
 
+from nti.common.property import Lazy
 from nti.common.maps import CaseInsensitiveDict
 
 from nti.contenttypes.courses.interfaces import ICourseInstance
@@ -88,6 +89,7 @@ class CourseDiscussionsView(GenericGetView):
 			   permission=nauth.ACT_CONTENT_EDIT)
 class CatalogEntryCourseDiscussionView(AbstractAuthenticatedView):
 
+	@Lazy
 	def _course(self):
 		return ICourseInstance(self.context)
 
