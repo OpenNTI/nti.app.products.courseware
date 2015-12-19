@@ -72,7 +72,7 @@ ITEMS = StandardExternalFields.ITEMS
 			  permission=nauth.ACT_READ,
 			  renderer='rest',
 			  name=VIEW_CONTENTS)
-class course_outline_contents_view(AbstractAuthenticatedView):
+class CourseOutlineContentsView(AbstractAuthenticatedView):
 	"""
 	The view to get the actual contents of a course outline.
 
@@ -83,6 +83,7 @@ class course_outline_contents_view(AbstractAuthenticatedView):
 	# time. Thus we don't do anything fancy with PreRenderResponseCacheController.
 	# We also aren't doing anything user specific yet so we don't
 	# do anything with tokens in the URL
+	# XXX: These are now user-specific.
 
 	def _is_published(self, item):
 		"""
@@ -108,8 +109,8 @@ class course_outline_contents_view(AbstractAuthenticatedView):
 			result = self._is_published(lesson)
 		return result
 
-	def __call__(self):
-		values = self.request.context.values()
+	def _to_external(self):
+		values = self.context.values()
 		result = ILocatedExternalSequence([])
 
 		def _recur(the_list, the_nodes):
@@ -130,9 +131,12 @@ class course_outline_contents_view(AbstractAuthenticatedView):
 
 		_recur(result, values)
 		result.__name__ = self.request.view_name
-		result.__parent__ = self.request.context
-		self.request.response.last_modified = self.request.context.lastModified
+		result.__parent__ = self.context
+		self.request.response.last_modified = self.context.lastModified
 		return result
+
+	def __call__(self):
+		return self._to_external()
 
 from nti.appserver.interfaces import IIntIdUserSearchPolicy
 
