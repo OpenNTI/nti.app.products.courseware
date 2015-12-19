@@ -12,6 +12,7 @@ logger = __import__('logging').getLogger(__name__)
 import os
 import six
 
+from zope import interface
 from zope import lifecycleevent
 
 from pyramid.view import view_config
@@ -47,8 +48,14 @@ from nti.contenttypes.courses.discussions.interfaces import ICourseDiscussions
 
 from nti.dataserver import authorization as nauth
 
+from nti.dataserver_core.interfaces import ILinkExternalHrefOnly
+
 from nti.externalization.interfaces import LocatedExternalDict
 from nti.externalization.interfaces import StandardExternalFields
+from nti.externalization.externalization import to_external_object
+
+from nti.links.links import Link
+from nti.links.externalization import render_link
 
 from nti.namedfile.file import name_finder
 from nti.namedfile.file import safe_filename
@@ -84,6 +91,11 @@ def _remove_file(href):
 			return container.remove(named)
 	return False
 
+def to_external_href(resource):
+	link = Link(target=resource)
+	interface.alsoProvides(link, ILinkExternalHrefOnly)
+	return render_link(link)
+
 def _handle_multipart(context, discussion, sources):
 	provided = ICourseDiscussion
 	assets = get_assets_folder(context)
@@ -112,8 +124,12 @@ class CourseDiscussionsGetView(GenericGetView):
 								discussions.__class__.__name__)
 		items = result[ITEMS] = {}
 		for name, discussion in discussions.items():
-			items[name] = discussion
-		result['Total'] = result['ItemCount'] = len(items)
+			ext_obj = to_external_object(discussion)
+			ext_obj['href'] = to_external_href(discussion)
+			items[name] = ext_obj
+		result['ItemCount'] = len(items)
+		result.__parent__ = self.context
+		result.__name__ = self.request.view_name
 		result.lastModified = discussions.lastModified
 		return result
 

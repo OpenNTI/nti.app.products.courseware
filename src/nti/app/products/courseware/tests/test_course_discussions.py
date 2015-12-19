@@ -163,7 +163,7 @@ class TestDiscussions(ApplicationLayerTest):
 		assert_that(res.json_body,
 					has_entries('MimeType', u'application/vnd.nextthought.courses.discussions',
 								'Items', has_length((1)),
-								'Items', has_key('foo'),
+								'Items', has_entry('foo', has_key('href')),
 								'ItemCount', 1))
 		
 		url = '/dataserver2/Objects/%s/CourseDiscussions/foo' % course_ntiid
