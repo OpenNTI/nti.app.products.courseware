@@ -190,6 +190,6 @@ class TestDiscussions(ApplicationLayerTest):
 		res = self.testapp.post_json(url, source, status=201)
 		assert_that(res.json_body,
 					has_entries('MimeType', u'application/vnd.nextthought.courses.discussion',
-								'ID', contains_string('nti-course-bundle://Fall2013/CLC3403_LawAndJustice/Discussions/')))
+								'ID', contains_string('nti-course-bundle://Discussions/')))
 		
 		
