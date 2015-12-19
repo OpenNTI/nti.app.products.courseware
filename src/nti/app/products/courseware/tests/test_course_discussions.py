@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 from __future__ import print_function, unicode_literals, absolute_import, division
+from nti.externalization.oids import to_external_ntiid_oid
 __docformat__ = "restructuredtext en"
 
 # disable: accessing protected members, too many methods
@@ -91,15 +92,18 @@ class TestDiscussions(ApplicationLayerTest):
 		assert_that(content[0], has_length(169))
 		assert_that(content[1], is_(EmbeddedVideo))
 
-	@WithSharedApplicationMockDS(testapp=True, users=True)
-	@fudge.patch('nti.app.products.courseware.discussions.get_vendor_info')
-	def test_discussion_creation(self, mock_gvi):
+	def new_discussion(self):
 		discussion = CourseDiscussion()
 		content = _extract_content((self.contents,))[0]
 		discussion.body = (SanitizedHTMLContentFragment(content),)
 		discussion.scopes = (ES_ALL,)
 		discussion.title = 'title'
 		discussion.id = "%s://%s" % (NTI_COURSE_BUNDLE, 'foo')
+		return discussion
+
+	@WithSharedApplicationMockDS(testapp=True, users=True)
+	@fudge.patch('nti.app.products.courseware.discussions.get_vendor_info')
+	def test_discussion_creation(self, mock_gvi):
 
 		mock_gvi.is_callable().with_args().returns(self.vendor_info)
 
@@ -107,7 +111,7 @@ class TestDiscussions(ApplicationLayerTest):
 			entry = self.catalog_entry()
 			course = ICourseInstance(entry)
 			discussions = ICourseDiscussions(course)
-			discussions['foo'] = discussion
+			discussion = discussions['foo'] = self.new_discussion()
 
 			assert_that(discussions_forums(course), has_length(2))
 			assert_that(announcements_forums(course), has_length(0))
@@ -139,3 +143,28 @@ class TestDiscussions(ApplicationLayerTest):
 
 			f4ds = get_forums_for_discussion(discussion, course)
 			assert_that(f4ds, has_length(2))
+
+	@WithSharedApplicationMockDS(testapp=True, users=True)
+	def test_discussion_get(self):
+
+		with mock_dataserver.mock_db_trans(self.ds, site_name='platform.ou.edu'):
+			entry = self.catalog_entry()
+			course = ICourseInstance(entry)
+			discussions = ICourseDiscussions(course)
+			discussions['foo'] = self.new_discussion()
+			course_ntiid = to_external_ntiid_oid(course)
+			
+		url = '/dataserver2/Objects/%s/CourseDiscussions' % course_ntiid
+		res = self.testapp.get(url, status=200)
+		assert_that(res.json_body,
+					has_entries('MimeType', u'application/vnd.nextthought.courses.discussions',
+								'Items', has_length((1)),
+								'Items', has_key('foo'),
+								'ItemCount', 1))
+		
+		url = '/dataserver2/Objects/%s/CourseDiscussions/foo' % course_ntiid
+		res = self.testapp.get(url, status=200)
+		assert_that(res.json_body,
+					has_entries('MimeType', u'application/vnd.nextthought.courses.discussion',
+								'ID', u'nti-course-bundle://foo'))
+

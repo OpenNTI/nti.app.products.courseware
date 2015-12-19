@@ -9,6 +9,13 @@ __docformat__ = "restructuredtext en"
 
 logger = __import__('logging').getLogger(__name__)
 
+import zope.i18nmessageid
+MessageFactory = zope.i18nmessageid.MessageFactory('nti.app.products.courseware')
+
+ASSETS_FOLDER = 'assets'
+
+USER_ENROLLMENT_LAST_MODIFIED_KEY = 'nti.app.products.courseware.UserEnrollmentLastModified'
+
 VIEW_CONTENTS = 'contents'
 VIEW_COURSE_MAIL = 'Mail'
 VIEW_CLASSMATES = 'Classmates'
@@ -18,8 +25,3 @@ VIEW_CATALOG_ENTRY = 'CourseCatalogEntry'
 VIEW_COURSE_RECURSIVE = 'CourseRecursiveStream'
 VIEW_COURSE_ENROLLMENT_ROSTER = 'CourseEnrollmentRoster'
 VIEW_COURSE_RECURSIVE_BUCKET = 'CourseRecursiveStreamByBucket'
-
-USER_ENROLLMENT_LAST_MODIFIED_KEY = 'nti.app.products.courseware.UserEnrollmentLastModified'
-
-import zope.i18nmessageid
-MessageFactory = zope.i18nmessageid.MessageFactory('nti.app.products.courseware')

@@ -25,6 +25,8 @@ from zope.security.interfaces import IPrincipal
 from zope.traversing.api import traverse
 from zope.traversing.interfaces import IEtcNamespace
 
+from nti.contentfolder.model import ContentFolder
+
 from nti.contenttypes.courses import get_enrollment_catalog
 
 from nti.contenttypes.courses.index import IX_SITE
@@ -52,6 +54,12 @@ from ..interfaces import IUserAdministeredCourses
 from ..interfaces import IEnrollmentOptionProvider
 
 from .course_migrator import migrate as course_migrator
+
+from nti.traversal.traversal import find_interface
+
+from ..interfaces import ICourseRootFolder
+
+from .. import ASSETS_FOLDER
 
 DEFAULT_EXP_TIME = 86400
 
@@ -135,7 +143,7 @@ class IndexAdminCourses(object):
 		username = getattr(user, 'username', user)
 		query = {
 			IX_SITE:{'any_of': sites},
-			IX_SCOPE: {'any_of':(INSTRUCTOR,EDITOR)},
+			IX_SCOPE: {'any_of':(INSTRUCTOR, EDITOR)},
 			IX_USERNAME:{'any_of':(username,)},
 		}
 		for uid in catalog.apply(query) or ():
@@ -153,3 +161,17 @@ class IterableAdminCourses(object):
 			instance = ICourseInstance(entry)
 			if principal in instance.instructors:
 				yield instance
+
+def get_assets_folder(context, strict=True):
+	course = ICourseInstance(context, None)
+	if course is None:
+		course = find_interface(context, ICourseInstance, strict=strict)
+	root = ICourseRootFolder(course, None)
+	if root is not None:
+		if ASSETS_FOLDER not in root:
+			result = ContentFolder(name=ASSETS_FOLDER)
+			root[ASSETS_FOLDER] = result
+		else:
+			result = root[ASSETS_FOLDER]
+		return result
+	return None

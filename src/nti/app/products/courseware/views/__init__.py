@@ -15,6 +15,7 @@ from zope import interface
 from zope.container.contained import Contained
 from zope.traversing.interfaces import IPathAdapter
 
+from .. import ASSETS_FOLDER
 from .. import VIEW_CONTENTS
 from .. import VIEW_COURSE_MAIL
 from .. import VIEW_CATALOG_ENTRY
@@ -23,6 +24,7 @@ from .. import VIEW_COURSE_RECURSIVE
 from .. import VIEW_COURSE_RECURSIVE_BUCKET
 from .. import VIEW_COURSE_ENROLLMENT_ROSTER
 
+ASSETS_FOLDER = ASSETS_FOLDER
 VIEW_CONTENTS = VIEW_CONTENTS
 VIEW_COURSE_MAIL = VIEW_COURSE_MAIL
 VIEW_CATALOG_ENTRY = VIEW_CATALOG_ENTRY
