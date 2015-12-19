@@ -109,8 +109,12 @@ class CourseOutlineContentsView(AbstractAuthenticatedView):
 			result = self._is_published(lesson)
 		return result
 
-	def _to_external(self):
-		values = self.context.values()
+	def externalize_node_contents(self, node):
+		"""
+		Recursively externalize our `node` contents, setting the
+		response lastMod based on the given node.
+		"""
+		values = node.values()
 		result = ILocatedExternalSequence([])
 
 		def _recur(the_list, the_nodes):
@@ -131,12 +135,12 @@ class CourseOutlineContentsView(AbstractAuthenticatedView):
 
 		_recur(result, values)
 		result.__name__ = self.request.view_name
-		result.__parent__ = self.context
-		self.request.response.last_modified = self.context.lastModified
+		result.__parent__ = node
+		self.request.response.last_modified = node.lastModified
 		return result
 
 	def __call__(self):
-		return self._to_external()
+		return self.externalize_node_contents( self.context )
 
 from nti.appserver.interfaces import IIntIdUserSearchPolicy
 
