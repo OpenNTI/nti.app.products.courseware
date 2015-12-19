@@ -40,7 +40,6 @@ from nti.contenttypes.courses.interfaces import ICourseCatalogEntry
 from nti.contenttypes.courses.interfaces import ICourseInstancePublicScopedForum
 from nti.contenttypes.courses.interfaces import ICourseInstanceForCreditScopedForum
 
-from nti.contenttypes.courses.discussions.parser import path_to_course
 from nti.contenttypes.courses.discussions.interfaces import NTI_COURSE_BUNDLE
 from nti.contenttypes.courses.discussions.interfaces import ICourseDiscussion
 from nti.contenttypes.courses.discussions.interfaces import ICourseDiscussions
@@ -58,6 +57,7 @@ from nti.ntiids.ntiids import find_object_with_ntiid
 from ..discussions import get_topic_key
 
 from ..utils import get_assets_folder
+from ..utils import path_to_course_catalog
 
 from ._utils import _get_namedfile
 from ._utils import _get_render_link
@@ -166,7 +166,7 @@ class CourseDiscussionsPostView(UGDPostView):
 
 		# set a proper NTI course bundle id
 		course = ICourseInstance(self.context)
-		path = os.path.join(path_to_course(course.root), DISCUSSIONS)
+		path = os.path.join(path_to_course_catalog(course.root), DISCUSSIONS)
 		iden = "%s://%s" % (NTI_COURSE_BUNDLE, os.path.join(path, name))
 		discussion.id = iden
 

@@ -2,7 +2,6 @@
 # -*- coding: utf-8 -*-
 
 from __future__ import print_function, unicode_literals, absolute_import, division
-from nti.externalization.oids import to_external_ntiid_oid
 __docformat__ = "restructuredtext en"
 
 # disable: accessing protected members, too many methods
@@ -18,10 +17,13 @@ from hamcrest import has_length
 from hamcrest import assert_that
 from hamcrest import has_entries
 from hamcrest import has_property
+from hamcrest import contains_string
 from hamcrest import contains_inanyorder
 does_not = is_not
 
+import os
 import fudge
+import simplejson
 
 from zope import component
 
@@ -45,6 +47,8 @@ from nti.contenttypes.courses.discussions.interfaces import ICourseDiscussions
 
 from nti.dataserver.contenttypes.media import EmbeddedVideo
 from nti.dataserver.contenttypes.forums.forum import CommunityForum
+
+from nti.externalization.oids import to_external_ntiid_oid
 
 from nti.dataserver.tests import mock_dataserver
 
@@ -168,3 +172,24 @@ class TestDiscussions(ApplicationLayerTest):
 					has_entries('MimeType', u'application/vnd.nextthought.courses.discussion',
 								'ID', u'nti-course-bundle://foo'))
 
+	@WithSharedApplicationMockDS(testapp=True, users=True)
+	def test_discussion_post(self):
+
+		path = os.path.join(os.path.dirname(__file__), 'discussion.json')
+		with open(path, "r") as fp:
+			context = fp.read()
+			context = unicode(context, 'utf-8') if isinstance(context, bytes) else context
+			source = simplejson.loads(context)
+			
+		with mock_dataserver.mock_db_trans(self.ds, site_name='platform.ou.edu'):
+			entry = self.catalog_entry()
+			course = ICourseInstance(entry)
+			course_ntiid = to_external_ntiid_oid(course)
+			
+		url = '/dataserver2/Objects/%s/CourseDiscussions' % course_ntiid
+		res = self.testapp.post_json(url, source, status=201)
+		assert_that(res.json_body,
+					has_entries('MimeType', u'application/vnd.nextthought.courses.discussion',
+								'ID', contains_string('nti-course-bundle://Fall2013/CLC3403_LawAndJustice/Discussions/')))
+		
+		

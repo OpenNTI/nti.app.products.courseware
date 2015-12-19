@@ -9,6 +9,7 @@ __docformat__ = "restructuredtext en"
 
 logger = __import__('logging').getLogger(__name__)
 
+import os
 import six
 import hashlib
 from datetime import datetime
@@ -27,6 +28,8 @@ from zope.traversing.interfaces import IEtcNamespace
 
 from nti.contentfolder.model import ContentFolder
 
+from nti.contentlibrary.interfaces import IDelimitedHierarchyBucket
+
 from nti.contenttypes.courses import get_enrollment_catalog
 
 from nti.contenttypes.courses.index import IX_SITE
@@ -35,6 +38,7 @@ from nti.contenttypes.courses.index import IX_USERNAME
 
 from nti.contenttypes.courses.interfaces import EDITOR
 from nti.contenttypes.courses.interfaces import INSTRUCTOR
+from nti.contenttypes.courses.interfaces import COURSE_CATALOG_NAME
 
 from nti.contenttypes.courses import get_course_vendor_info
 from nti.contenttypes.courses.utils import get_parent_course
@@ -175,3 +179,18 @@ def get_assets_folder(context, strict=True):
 			result = root[ASSETS_FOLDER]
 		return result
 	return None
+
+def path_to_course_catalog(resource):
+	result = []
+	while resource is not None:
+		if 	IDelimitedHierarchyBucket.providedBy(resource) and \
+			resource.__name__ == COURSE_CATALOG_NAME:
+			break
+		try:
+			result.append(resource.__name__)
+			resource = resource.__parent__
+		except AttributeError:
+			resource = None
+	result.reverse()
+	result = os.path.sep.join(result)
+	return result
