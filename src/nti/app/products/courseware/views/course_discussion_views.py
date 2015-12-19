@@ -182,7 +182,20 @@ class CourseDiscussionsPostView(UGDPostView):
 			   request_method='PUT',
 			   permission=nauth.ACT_CONTENT_EDIT)
 class CourseDiscussionPutView(UGDPutView):
-	pass
+
+	def updateContentObject(self, contentObject, externalValue, set_id=False, notify=True):
+		result = UGDPutView.updateContentObject(self,
+												contentObject,
+												externalValue,
+												set_id=set_id,
+												notify=notify)
+
+		sources = get_all_sources(self.request)
+		if sources:
+			validate_sources(result, sources)
+			_handle_multipart(self.context, self.context, sources)
+		# TODO: Update discussion
+		return result
 
 # admin
 
