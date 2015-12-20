@@ -15,6 +15,7 @@ from zope import interface
 from zope.intid import IIntIds
 
 from pyramid import httpexceptions as hexc
+from pyramid.threadlocal import get_current_request
 
 from zope.annotation.interfaces import IAnnotations
 
@@ -33,6 +34,8 @@ from nti.appserver.interfaces import ITrustedTopLevelContainerContextProvider
 
 from nti.appserver.pyramid_authorization import is_readable
 from nti.appserver.pyramid_authorization import has_permission
+
+from nti.common.property import Lazy
 
 from nti.contentlibrary.interfaces import IContentUnit
 from nti.contentlibrary.interfaces import IContentPackage
@@ -255,6 +258,10 @@ class _OutlinePathFactory(object):
 		self.original_target_ntiid = target_ntiid
 		self.target_ntiid, self.target_obj = self._get_outline_target_objs(target_ntiid)
 		self.course_context = course_context
+
+	@Lazy
+	def request(self):
+		return get_current_request()
 
 	def _get_outline_target_objs(self, target_ntiid):
 		"""
