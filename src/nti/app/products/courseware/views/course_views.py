@@ -116,12 +116,18 @@ class CourseOutlineContentsView(AbstractAuthenticatedView):
 		"""
 		values = node.values()
 		result = ILocatedExternalSequence([])
+		def update_last_mod( new_last_mod ):
+			update_last_mod.last_mod = max( update_last_mod.last_mod, new_last_mod )
+		update_last_mod.last_mod = node.lastModified
 
 		def _recur(the_list, the_nodes):
 			for node in the_nodes:
 				if not self._is_visible(node):
 					continue
 
+				# We used to set this based on our outline itself, but now that
+				# items can be modified independently, we need to check our children.
+				update_last_mod( node.lastModified )
 				ext_node = to_external_object(node)
 				if self._is_contents_available(node):
 					ext_node['contents'] = _recur([], node.values())
@@ -136,7 +142,7 @@ class CourseOutlineContentsView(AbstractAuthenticatedView):
 		_recur(result, values)
 		result.__name__ = self.request.view_name
 		result.__parent__ = node
-		self.request.response.last_modified = node.lastModified
+		self.request.response.last_modified = update_last_mod.last_mod
 		return result
 
 	def __call__(self):
