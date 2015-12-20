@@ -32,6 +32,7 @@ from nti.appserver.interfaces import ITopLevelContainerContextProvider
 from nti.appserver.interfaces import ITrustedTopLevelContainerContextProvider
 
 from nti.appserver.pyramid_authorization import is_readable
+from nti.appserver.pyramid_authorization import has_permission
 
 from nti.contentlibrary.interfaces import IContentUnit
 from nti.contentlibrary.interfaces import IContentPackage
@@ -54,8 +55,13 @@ from nti.contenttypes.presentation.interfaces import INTISlideVideo
 from nti.contenttypes.presentation.interfaces import IPresentationAsset
 from nti.contenttypes.presentation.interfaces import INTILessonOverview
 
+from nti.coremetadata.interfaces import IPublishable
+
+from nti.dataserver import authorization as nauth
+
 from nti.dataserver.interfaces import IUser
 from nti.dataserver.interfaces import IHighlight
+
 from nti.dataserver.contenttypes.forums.interfaces import IPost
 from nti.dataserver.contenttypes.forums.interfaces import ITopic
 from nti.dataserver.contenttypes.forums.interfaces import IForum
@@ -334,6 +340,14 @@ class _OutlinePathFactory(object):
 			results = (item,)
 		return results
 
+	def _is_visible(self, item):
+		"""
+		Object is published or we're an editor.
+		"""
+		return 		not IPublishable.providedBy(item) \
+				or 	item.is_published() \
+				or	has_permission(nauth.ACT_CONTENT_EDIT, item, self.request)
+
 	def _overview_item_contains_target(self, item, check_contained=True):
 		"""
 		Check if the overview item contains our target object. The simple case
@@ -378,8 +392,11 @@ class _OutlinePathFactory(object):
 	def _lesson_overview_contains_target(self, outline_content_node, lesson_overview):
 		def _do_check(check_contained=True):
 			for overview_group in lesson_overview.items or ():
+				if not self._is_visible( overview_group ):
+					continue
 				for item in overview_group.items or ():
-					if self._overview_item_contains_target(item, check_contained):
+					if 		self._is_visible( item ) \
+						and self._overview_item_contains_target(item, check_contained):
 						endpoints = self._get_outline_result_items(item, lesson_overview)
 						# Return our course, leaf outline node, and overview.
 						results = [self.course_context, outline_content_node]
@@ -401,8 +418,8 @@ class _OutlinePathFactory(object):
 	def __call__(self):
 		"""
 		For a course and target ntiid, look for the outline hierarchy
-		used to get to the target ntiid.  We assume the
-		course we have here is permissioned.
+		used to get to the target ntiid.  We assume the course we have
+		here is permissioned.
 		"""
 		if self.course_context is None:
 			return
@@ -415,6 +432,9 @@ class _OutlinePathFactory(object):
 		outline = self.course_context.Outline
 		for outline_node in outline.values():
 			for outline_content_node in outline_node.values():
+				if not self._is_visible( outline_content_node ):
+					continue
+
 				if getattr( outline_content_node, 'ContentNTIID', None ) == self.target_ntiid:
 					return (self.course_context, outline_content_node)
 				lesson_ntiid = getattr(outline_content_node, 'LessonOverviewNTIID', None)
@@ -422,7 +442,8 @@ class _OutlinePathFactory(object):
 					continue
 				lesson_overview = component.queryUtility(INTILessonOverview,
 														name=lesson_ntiid)
-				if lesson_overview is None:
+				if 		lesson_overview is None \
+					or 	not self._is_visible( lesson_overview ):
 					continue
 
 				results = self._lesson_overview_contains_target(outline_content_node,
