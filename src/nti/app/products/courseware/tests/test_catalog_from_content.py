@@ -155,13 +155,14 @@ class TestApplicationCatalogFromContent(ApplicationLayerTest):
 					assert_that(lesson_1["tag:nextthought.com,2011-10:OU-NTICourseOutlineNode-CLC3403_LawAndJustice.course_info.0.0.0"],
 								 has_property('ContentNTIID', "tag:nextthought.com,2011-10:OU-HTML-DNE"))
 
-					# This one is a stub
+					# This one is a stub; with empty src.
 					lesson_2 = unit_1["tag:nextthought.com,2011-10:OU-NTICourseOutlineNode-CLC3403_LawAndJustice.course_info.0.1"]
 					assert_that(lesson_2,
 								 externalizes(
 									 all_of(
-										 does_not(has_key('ContentNTIID')),
-										 has_entry('Class', 'CourseOutlineCalendarNode'))))
+										 has_key('ContentNTIID'),
+										 has_entry( 'src', none() ),
+										 has_entry('Class', 'CourseOutlineContentNode'))))
 
 		# Test content search
 		with mock_dataserver.mock_db_trans(self.ds, site_name='platform.ou.edu'):
