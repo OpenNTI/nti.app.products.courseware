@@ -210,7 +210,6 @@ class CourseDiscussionPutView(UGDPutView):
 		if sources:
 			validate_sources(result, sources)
 			_handle_multipart(self.context, self.context, sources)
-		# TODO: Update discussion
 		return result
 
 # admin
