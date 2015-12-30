@@ -56,6 +56,7 @@ from nti.dataserver.users import Community
 from nti.dataserver.users.interfaces import IFriendlyNamed
 
 from nti.dataserver.interfaces import ICommunity
+from nti.dataserver.interfaces import EVERYONE_GROUP_NAME
 from nti.dataserver.interfaces import IUseNTIIDAsExternalUsername
 
 from nti.externalization.externalization import to_external_object
@@ -605,6 +606,9 @@ from nti.dataserver.interfaces import IACLProvider
 from nti.dataserver.interfaces import ALL_PERMISSIONS
 
 from nti.dataserver.authorization import ACT_READ
+from nti.dataserver.authorization import ACT_UPDATE
+from nti.dataserver.authorization import ACT_CONTENT_EDIT
+from nti.dataserver.authorization_acl import ace_denying
 from nti.dataserver.authorization_acl import ace_allowing
 from nti.dataserver.authorization_acl import acl_from_aces
 
@@ -617,4 +621,9 @@ class _LegacyCourseInstanceACLProvider(object):
 		# TODO: This isn't right. What are instructor permissions?
 		aces = [ace_allowing(x, ALL_PERMISSIONS) for x in self.context.instructors]
 		aces.append(ace_allowing(self.context.legacy_community, ACT_READ))
+		# Deny editing to everyone.
+		aces.append( ace_denying(IPrincipal(EVERYONE_GROUP_NAME),
+					(ACT_CONTENT_EDIT, ACT_UPDATE),
+					type(self)))
+
 		self.__acl__ = acl_from_aces(aces)
