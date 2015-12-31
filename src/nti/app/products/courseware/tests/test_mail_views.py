@@ -181,16 +181,19 @@ class TestMailViews(ApplicationLayerTest):
 		assert_that( msg.get( 'From' ), contains_string( self.from_address ))
 		assert_that( msg.get( 'To' ), is_( open_address ))
 
-		# Test valid
+		# Test newlines with default subject.
 		text_with_newlines = u"""IE11/win. 8.1\n\n\n1. In roster\n2. In the all students
 								view\n3. All Students, Allow replies from open, send a
 								copy\n\n\nfrom kaley\n"""
 
 		reply_to_mail['Body'] = text_with_newlines
+		reply_to_mail.pop( 'Subject' )
 		self.testapp.post_json(link, reply_to_mail, extra_environ=instructor_env)
 
 		messages = self._get_messages( mailer )
 		assert_that( messages, has_length(1) )
+		msg = messages[0]
+		assert_that( msg.get( 'Subject' ), is_( 'Email from harp4162' ))
 
 	@WithSharedApplicationMockDS(users=(open_name,credit_name),
 								 testapp=True,

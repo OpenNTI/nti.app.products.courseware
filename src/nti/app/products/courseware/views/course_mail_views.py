@@ -28,6 +28,8 @@ from nti.contenttypes.courses.utils import is_course_instructor
 from nti.dataserver import authorization as nauth
 
 from nti.dataserver.users import User
+from nti.dataserver.users.interfaces import IUserProfile
+
 from nti.dataserver.interfaces import IEnumerableEntityContainer
 
 from ..interfaces import ICourseInstanceEnrollment
@@ -66,8 +68,9 @@ class CourseMailView(AbstractMemberEmailView):
 		return getattr(cat_entry, 'title', '')
 
 	def _default_subject(self):
-		display_name = self._context_display_name
-		return 'Email for "%s" users' % display_name
+		profile = IUserProfile( self.sender )
+		display_name = profile.realname or self.sender.username
+		return 'Email from %s' % display_name
 
 	@property
 	def course(self):
