@@ -261,8 +261,9 @@ def create_topics(discussion):
 
 	def _set_post(post, title, content):
 		post.title = title
-		post.body = content
-		for i in post.body:
+		if content:
+			post.body = content
+		for i in post.body or ():
 			if hasattr(i, '__parent__'):
 				i.__parent__ = post
 
