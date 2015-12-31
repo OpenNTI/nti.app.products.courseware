@@ -13,7 +13,6 @@
 
 	<include package="nti.appserver.capabilities" file="meta.zcml" />
 
-
 	<!-- Capabilities -->
 	<cap:capability
 		id='nti.platform.courseware.advanced_editing'
