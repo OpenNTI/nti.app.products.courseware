@@ -160,11 +160,11 @@ class TestMailViews(ApplicationLayerTest):
 		assert_that( msg.get( 'To' ), is_( open_address ))
 
 		# Test script w/external reply-to
-		reply_to_mail['Body'] = '<div><script><p>should be ignored</p> Other stuff.</script><p>test output</p>'
-		self.testapp.post_json(link, reply_to_mail, extra_environ=instructor_env)
-
 		to_check = 'test output'
 		script = '<script><p>should be ignored</p> Other stuff.</script>'
+		reply_to_mail['Body'] = '<div>%s<p>%s</p></div>' % ( script, to_check )
+		self.testapp.post_json(link, reply_to_mail, extra_environ=instructor_env)
+
 		messages = self._get_messages( mailer )
 		assert_that( messages, has_length(1) )
 		msg = messages[0]
@@ -180,6 +180,17 @@ class TestMailViews(ApplicationLayerTest):
 		assert_that( msg.get( 'Reply-To' ), is_( self.external_reply_to ))
 		assert_that( msg.get( 'From' ), contains_string( self.from_address ))
 		assert_that( msg.get( 'To' ), is_( open_address ))
+
+		# Test valid
+		text_with_newlines = u"""IE11/win. 8.1\n\n\n1. In roster\n2. In the all students
+								view\n3. All Students, Allow replies from open, send a
+								copy\n\n\nfrom kaley\n"""
+
+		reply_to_mail['Body'] = text_with_newlines
+		self.testapp.post_json(link, reply_to_mail, extra_environ=instructor_env)
+
+		messages = self._get_messages( mailer )
+		assert_that( messages, has_length(1) )
 
 	@WithSharedApplicationMockDS(users=(open_name,credit_name),
 								 testapp=True,
