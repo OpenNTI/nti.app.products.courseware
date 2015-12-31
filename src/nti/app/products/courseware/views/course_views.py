@@ -13,8 +13,6 @@ logger = __import__('logging').getLogger(__name__)
 
 from numbers import Number
 
-from paste.deploy.converters import asbool
-
 from zope import component
 from zope import interface
 
@@ -38,6 +36,8 @@ from nti.app.base.abstract_views import AbstractAuthenticatedView
 
 from nti.appserver.pyramid_authorization import has_permission
 from nti.appserver.ugd_edit_views import ContainerContextUGDPostView
+
+from nti.common.string import TRUE_VALUES
 
 from nti.contenttypes.courses.interfaces import ICourseOutline
 from nti.contenttypes.courses.interfaces import ICourseInstance
@@ -67,6 +67,9 @@ from . import VIEW_COURSE_ACTIVITY
 from . import VIEW_COURSE_ENROLLMENT_ROSTER
 
 ITEMS = StandardExternalFields.ITEMS
+
+def _is_true(v):
+	return v and str(v).lower() in TRUE_VALUES
 
 @view_config(route_name='objects.generic.traversal',
 			  context=ICourseOutline,
@@ -98,7 +101,8 @@ class CourseOutlineContentsView(AbstractAuthenticatedView):
 		"""
 		return 		not IPublishable.providedBy(item) \
 				or 	item.is_published() \
-				or	(show_unpublished and has_permission(nauth.ACT_CONTENT_EDIT, item, self.request))
+				or	(	show_unpublished
+					and has_permission(nauth.ACT_CONTENT_EDIT, item, self.request))
 
 	_is_visible = _is_published
 
@@ -113,10 +117,10 @@ class CourseOutlineContentsView(AbstractAuthenticatedView):
 			result = True
 		else:
 			lesson = find_object_with_ntiid(lesson_ntiid)
-			result = self._is_published(lesson, show_unpublished=show_unpublished)
+			result = self._is_published(lesson, show_unpublished)
 		return result
 
-	def externalize_node_contents(self, node, include_unpublished):
+	def externalize_node_contents(self, node, include_unpublished=False):
 		"""
 		Recursively externalize our `node` contents, setting the
 		response lastMod based on the given node.
@@ -127,17 +131,17 @@ class CourseOutlineContentsView(AbstractAuthenticatedView):
 			update_last_mod.last_mod = max( update_last_mod.last_mod, new_last_mod )
 		update_last_mod.last_mod = node.lastModified
 
-		def _recur(the_list, the_nodes, show_unpublished):
+		def _recur(the_list, the_nodes):
 			for node in the_nodes:
-				if not self._is_visible(node, show_unpublished=show_unpublished):
+				if not self._is_visible(node, include_unpublished):
 					continue
 
 				# We used to set this based on our outline itself, but now that
 				# items can be modified independently, we need to check our children.
 				update_last_mod( node.lastModified )
 				ext_node = to_external_object(node)
-				if self._is_contents_available(node, show_unpublished):
-					ext_node['contents'] = _recur([], node.values(), show_unpublished)
+				if self._is_contents_available(node, include_unpublished):
+					ext_node['contents'] = _recur([], node.values())
 				else:
 					# Some clients drive behavior based on this attr.
 					ext_node.pop('ContentNTIID', None)
@@ -146,7 +150,7 @@ class CourseOutlineContentsView(AbstractAuthenticatedView):
 				the_list.append(ext_node)
 			return the_list
 
-		_recur(result, values, include_unpublished)
+		_recur(result, values)
 		result.__name__ = self.request.view_name
 		result.__parent__ = node
 		self.request.response.last_modified = update_last_mod.last_mod
@@ -156,11 +160,11 @@ class CourseOutlineContentsView(AbstractAuthenticatedView):
 		omit_unpublished = False
 
 		try:
-			omit_unpublished = asbool(self.request.params.get('omit_unpublished', False))
+			omit_unpublished = _is_true(self.request.params.get('omit_unpublished', False))
 		except ValueError:
 			pass
 
-		return self.externalize_node_contents( self.context , not omit_unpublished )
+		return self.externalize_node_contents( self.context, not omit_unpublished )
 
 from nti.appserver.interfaces import IIntIdUserSearchPolicy
 
