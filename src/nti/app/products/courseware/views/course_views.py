@@ -95,7 +95,7 @@ class CourseOutlineContentsView(AbstractAuthenticatedView):
 	# do anything with tokens in the URL
 	# XXX: These are now user-specific.
 
-	def _is_published(self, item, show_unpublished=False):
+	def _is_published(self, item, show_unpublished=True):
 		"""
 		Node is published or we're an editor.
 		"""
@@ -106,7 +106,7 @@ class CourseOutlineContentsView(AbstractAuthenticatedView):
 
 	_is_visible = _is_published
 
-	def _is_contents_available(self, item, show_unpublished=False):
+	def _is_contents_available(self, item, show_unpublished=True):
 		"""
 		Lesson is available if published or if we're an editor.
 		"""
@@ -120,7 +120,7 @@ class CourseOutlineContentsView(AbstractAuthenticatedView):
 			result = self._is_published(lesson, show_unpublished)
 		return result
 
-	def externalize_node_contents(self, node, include_unpublished=False):
+	def externalize_node_contents(self, node, include_unpublished=True):
 		"""
 		Recursively externalize our `node` contents, setting the
 		response lastMod based on the given node.
