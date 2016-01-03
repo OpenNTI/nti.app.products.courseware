@@ -50,7 +50,10 @@ from nti.contenttypes.courses.interfaces import ICourseSubInstance
 from nti.contenttypes.courses.interfaces import ICourseCatalogEntry
 from nti.contenttypes.courses.interfaces import IPrincipalEnrollments
 from nti.contenttypes.courses.interfaces import IContentCourseInstance
+
 from nti.contenttypes.courses.discussions.interfaces import ICourseDiscussion
+
+from nti.contenttypes.courses.utils import is_course_editor
 
 from nti.contenttypes.presentation.interfaces import INTIVideo
 from nti.contenttypes.presentation.interfaces import INTISlide
@@ -229,7 +232,9 @@ def _get_valid_course_context(course_contexts):
 		if ICourseCatalogEntry.providedBy(course_context):
 			if is_readable(course_context):
 				results.append(course_context)
-		elif not _is_user_enrolled(user, course_context):
+		elif 	not _is_user_enrolled(user, course_context) \
+			and not is_course_editor(course_context, user):
+			# Not enrolled and not an editor, get catalog entry.
 			catalog_entry = ICourseCatalogEntry(course_context, None)
 			# We only want to add publicly available entries.
 			if catalog_entry is not None and is_readable(catalog_entry):
