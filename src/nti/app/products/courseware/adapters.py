@@ -50,6 +50,7 @@ from nti.contenttypes.courses.interfaces import ICourseSubInstance
 from nti.contenttypes.courses.interfaces import ICourseCatalogEntry
 from nti.contenttypes.courses.interfaces import IPrincipalEnrollments
 from nti.contenttypes.courses.interfaces import IContentCourseInstance
+from nti.contenttypes.courses.discussions.interfaces import ICourseDiscussion
 
 from nti.contenttypes.presentation.interfaces import INTIVideo
 from nti.contenttypes.presentation.interfaces import INTISlide
@@ -68,6 +69,8 @@ from nti.dataserver.interfaces import IHighlight
 from nti.dataserver.contenttypes.forums.interfaces import IPost
 from nti.dataserver.contenttypes.forums.interfaces import ITopic
 from nti.dataserver.contenttypes.forums.interfaces import IForum
+
+from nti.namedfile.file import FileConstraints
 
 from nti.ntiids.ntiids import find_object_with_ntiid
 
@@ -659,3 +662,9 @@ def _enrollment_last_modified(user):
 	# we know we're only using this for cache invalidation.
 	annotations = IAnnotations(user)
 	return annotations.get(USER_ENROLLMENT_LAST_MODIFIED_KEY, 0)
+
+# constraints
+
+@component.adapter(ICourseDiscussion)
+class _CourseDiscussionFileConstraints(FileConstraints):
+	max_file_size = 10485760  # 10 MB

@@ -449,6 +449,9 @@
 				provides="nti.appserver.interfaces.ICreatableObjectFilter"
 				for="nti.dataserver.interfaces.IUser" />
 
+	<!-- Course Discussions -->
+	<adapter factory=".adapters._CourseDiscussionFileConstraints" />
+		
 	<!-- Resources -->
 	<adapter factory=".resources.CourseRootFolderACLProvider" />
 	
