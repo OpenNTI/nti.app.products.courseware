@@ -228,7 +228,8 @@ class _CourseOutlineContentsLinkDecorator(object):
 
 	def decorateExternalMapping(self, context, result):
 		_links = result.setdefault(LINKS, [])
-		link = Link(context, rel=VIEW_CONTENTS, elements=(VIEW_CONTENTS,), params={'omit_unpublished': True})
+		link = Link(context, rel=VIEW_CONTENTS, elements=(VIEW_CONTENTS,),
+					params={'omit_unpublished': True})
 		interface.alsoProvides(link, ILocation)
 		link.__name__ = ''
 		link.__parent__ = context

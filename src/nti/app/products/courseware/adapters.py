@@ -55,6 +55,7 @@ from nti.contenttypes.courses.discussions.interfaces import ICourseDiscussion
 from nti.contenttypes.presentation.interfaces import INTIVideo
 from nti.contenttypes.presentation.interfaces import INTISlide
 from nti.contenttypes.presentation.interfaces import INTISlideDeck
+from nti.contenttypes.presentation.interfaces import INTIMediaRoll
 from nti.contenttypes.presentation.interfaces import INTISlideVideo
 from nti.contenttypes.presentation.interfaces import IPresentationAsset
 from nti.contenttypes.presentation.interfaces import INTILessonOverview
@@ -271,7 +272,6 @@ class _OutlinePathFactory(object):
 		Returns the target ntiid/obj to search for in outline.
 		"""
 		target_obj = find_object_with_ntiid(target_ntiid)
-
 		# For slide objects, the video itself only shows up
 		# in the outline hierarchy.
 		if 		INTISlide.providedBy(target_obj) \
@@ -340,10 +340,15 @@ class _OutlinePathFactory(object):
 		elif INTISlideDeck.providedBy(original_obj):
 			results = (original_obj,)
 		elif INTIVideo.providedBy(original_obj):
+			# We want our slide deck, if applicable.
 			slide_deck = self._get_slidedeck_for_video(self.original_target_ntiid,
 													lesson_overview)
 			if slide_deck is not None:
 				results = (slide_deck, item,)
+			elif INTIMediaRoll.providedBy( item ):
+				# Currently, we only need to return the actual video object, and
+				# not its media roll container.
+				results = (original_obj,)
 			else:
 				results = (item,)
 		else:
@@ -370,15 +375,26 @@ class _OutlinePathFactory(object):
 			* Content unit page containing videos. We do not want to return the
 			video object since we are looking for the related work ref (not check-contained).
 			* Content unit page contained by a related work ref (need check-contained).
-			* Video contained by an related work ref (need check-contained).
+			* Video contained by a related work ref (need check-contained).
+			* Video contained by a video roll.
 		"""
 		target_ntiid_ref = getattr(item, 'target_ntiid', None)
 		ntiid_ref = getattr(item, 'ntiid', None)
 		target_ref = getattr(item, 'target', None)
 		ntiid_vals = set([target_ntiid_ref, ntiid_ref, target_ref])
+
 		# We found our object's container, or we are the container.
 		result = 	self.target_obj_containers.intersection(ntiid_vals) \
 				or 	self.target_ntiid in ntiid_vals
+
+		# Ok, do we have a media roll.
+		if not result and INTIMediaRoll.providedBy( item ):
+			for child in item.items or ():
+				child_ntiid = getattr( child, 'ntiid', '' )
+				child_target = getattr( child, 'target', '' )
+				if self.target_ntiid in ( child_ntiid, child_target ):
+					result = True
+					break
 
 		if 		not result \
 			and target_ref \
@@ -450,6 +466,7 @@ class _OutlinePathFactory(object):
 				lesson_ntiid = getattr(outline_content_node, 'LessonOverviewNTIID', None)
 				if not lesson_ntiid:
 					continue
+
 				lesson_overview = component.queryUtility(INTILessonOverview,
 														name=lesson_ntiid)
 				if 		lesson_overview is None \
@@ -525,6 +542,7 @@ def _hierarchy_from_obj_and_user(obj, user):
 	# but our target NTIID only exists in a catalog entry that
 	# may or may not be open. If we can't find our ntiid in our
 	# course outlines, assume we don't have access and raise.
+	# XXX: Not sure this is a good assumption.
 	if container_courses and catalog_entries and not results:
 		raise ForbiddenContextException(catalog_entries)
 	# No outline nodes, but we did have courses.
