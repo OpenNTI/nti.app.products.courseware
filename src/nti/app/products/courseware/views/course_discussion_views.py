@@ -91,7 +91,7 @@ def _remove_file(href):
 			return container.remove(named)
 	return False
 
-def to_external_href(resource):
+def render_to_external_ref(resource):
 	link = Link(target=resource)
 	interface.alsoProvides(link, ILinkExternalHrefOnly)
 	return render_link(link)
@@ -125,7 +125,7 @@ class CourseDiscussionsGetView(GenericGetView):
 		items = result[ITEMS] = {}
 		for name, discussion in discussions.items():
 			ext_obj = to_external_object(discussion)
-			ext_obj['href'] = to_external_href(discussion)
+			ext_obj['href'] = render_to_external_ref(discussion)
 			items[name] = ext_obj
 		result['ItemCount'] = len(items)
 		result.__parent__ = self.context

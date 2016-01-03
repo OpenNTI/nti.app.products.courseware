@@ -1,8 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
-Views directly related to individual courses and course sub-objects.
-
 .. $Id$
 """
 
@@ -22,7 +20,7 @@ from plone.namedfile.interfaces import INamed
 
 from slugify import slugify_filename
 
-from nti.app.contentfile import to_external_download_href
+from nti.app.contentfile import to_external_href
 
 from nti.assessment.interfaces import IQPoll
 from nti.assessment.interfaces import IQSurvey
@@ -227,7 +225,7 @@ def _get_namedfile(source, name=None):
 
 def _get_download_href(item):
 	try:
-		result = to_external_download_href(item)
+		result = to_external_href(item, True)
 		return result
 	except Exception:
 		pass  # Nope
