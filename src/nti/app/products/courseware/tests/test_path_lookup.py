@@ -126,23 +126,20 @@ class TestPathLookup(ApplicationLayerTest):
 		result_expected_val = 1
 
 		# Video
-		# TODO Fails due to ConnectionStateError after pulling video
-		# from registry.  Not sure why this video is the only
-		# object affected.
-# 		path = '/dataserver2/LibraryPath?objectId=%s' % VIDEO
-# 		res = self.testapp.get(path, status=expected_status)
-# 		res = res.json_body
-#
-# 		if expected_status == 403:
-# 			self._check_catalog(res, res_count=1)
-# 		else:
-# 			assert_that(res, has_length(result_expected_val))
-# 			res = res[0]
-# 			assert_that(res, has_length(2))
-# 			assert_that(res[0], has_entry('Class', 'CourseInstance'))
-# 			assert_that(res[1], has_entries('Class', 'PageInfo',
-# 											'NTIID', 'tag:nextthought.com,2011-10:OU-HTML-CLC3403_LawAndJustice.lec:01_LESSON',
-# 											'Title', '1. Defining Law and Justice'))
+		path = '/dataserver2/LibraryPath?objectId=%s' % VIDEO
+		res = self.testapp.get(path, status=expected_status)
+		res = res.json_body
+
+		if expected_status == 403:
+			self._check_catalog(res, res_count=1)
+		else:
+			assert_that(res, has_length(result_expected_val))
+			res = res[0]
+			assert_that(res, has_length(2))
+			assert_that(res[0], has_entry('Class', 'CourseInstance'))
+			assert_that(res[1], has_entries('Class', 'PageInfo',
+											'NTIID', 'tag:nextthought.com,2011-10:OU-HTML-CLC3403_LawAndJustice.lec:01_LESSON',
+											'Title', '1. Defining Law and Justice'))
 
 		# Get reading
 		path = '/dataserver2/LibraryPath?objectId=%s' % READING
@@ -287,6 +284,7 @@ class TestPathLookup(ApplicationLayerTest):
 	@WithSharedApplicationMockDS(users=True, testapp=True)
 	@fudge.patch('nti.app.products.courseware.adapters.get_library_catalog')
 	def test_contained_path(self, mock_get_catalog):
+		# TODO: the test course we're using does not have an outline
 		self._enroll()
 		mock_catalog = MockCatalog()
 		mock_get_catalog.is_callable().returns(mock_catalog)
@@ -301,13 +299,15 @@ class TestPathLookup(ApplicationLayerTest):
 
 	@WithSharedApplicationMockDS(users=True, testapp=True)
 	@fudge.patch('nti.app.products.courseware.adapters._get_courses_from_container')
-	def test_contained_path_legacy(self, mock_get_courses):
+	@fudge.patch('nti.app.contentlibrary.adapters._get_bundles_from_container')
+	def test_contained_path_legacy(self, mock_get_courses, mock_get_bundles):
 		"""
 		Our library path to the given ntiid is returned,
-		even though we do not have the index.
+		even though we do not have the index catalog.
 		"""
 		self._enroll()
 		mock_catalog = MockCatalog()
 		mock_catalog.containers = []
 		mock_get_courses.is_callable().returns(())
+		mock_get_bundles.is_callable().returns(())
 		self._do_path_lookup(is_legacy=True)
