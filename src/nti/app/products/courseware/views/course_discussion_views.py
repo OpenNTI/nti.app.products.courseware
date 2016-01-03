@@ -67,7 +67,7 @@ from ..discussions import get_topic_key
 from ..utils import get_assets_folder
 
 from ._utils import _get_namedfile
-from ._utils import _get_render_link
+from ._utils import _get_download_href
 from ._utils import _get_file_from_link
 from ._utils import _slugify_in_container
 
@@ -107,7 +107,7 @@ def _handle_multipart(context, discussion, sources):
 			file_key = _get_unique_filename(assets, source, name)
 			namedfile = _get_namedfile(source, file_key)
 			assets[file_key] = namedfile  # add to container
-			location = _get_render_link(namedfile)
+			location = _get_download_href(namedfile)
 			setattr(discussion, name, location)
 
 @view_config(context=ICourseDiscussions)

@@ -22,7 +22,7 @@ from plone.namedfile.interfaces import INamed
 
 from slugify import slugify_filename
 
-from nti.app.contentfile import to_external_href
+from nti.app.contentfile import to_external_download_href
 
 from nti.assessment.interfaces import IQPoll
 from nti.assessment.interfaces import IQSurvey
@@ -225,9 +225,9 @@ def _get_namedfile(source, name=None):
 	result.contentType = contentType
 	return result
 
-def _get_render_link(item):
+def _get_download_href(item):
 	try:
-		result = to_external_href(item)  # adds @@view
+		result = to_external_download_href(item)
 		return result
 	except Exception:
 		pass  # Nope
