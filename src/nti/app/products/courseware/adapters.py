@@ -312,22 +312,31 @@ class _OutlinePathFactory(object):
 		containers = set(self.catalog.get_containers(self.target_obj)) if self.catalog else set()
 		return containers
 
-	def _get_slidedeck_for_video(self, video_ntiid, lesson_overview):
+	def _get_slidedeck_for_video(self, target_ntiid, lesson_overview):
 		"""
-		For a video ntiid, return the slide deck containing it,
+		For a target ntiid, return the slide deck containing it,
 		if it is a video on a slide deck.
 		"""
 		try:
 			content_ntiid = lesson_overview.__parent__.ContentNTIID
 		except AttributeError:
 			return
+
+		def _check_slidedeck( slide_deck ):
+			# We may have the slide deck or a contained video.
+			if slide_deck.ntiid == target_ntiid:
+				return True
+			for slide_video in slide_deck.videos:
+				if slide_video.video_ntiid == target_ntiid:
+					return True
+			return False
+
 		for slide_deck in self.catalog.search_objects(
 										container_ntiids=content_ntiid,
 										provided=INTISlideDeck,
 										sites=get_component_hierarchy_names()):
-			for slide_video in slide_deck.videos:
-				if slide_video.video_ntiid == video_ntiid:
-					return slide_deck
+			if _check_slidedeck( slide_deck ):
+				return slide_deck
 		return None
 
 	def _get_outline_result_items(self, item, lesson_overview):
@@ -349,7 +358,8 @@ class _OutlinePathFactory(object):
 			slide_deck = self._get_slidedeck_for_video(self.original_target_ntiid,
 													lesson_overview)
 			if slide_deck is not None:
-				results = (slide_deck, item,)
+				# Our item may be a media roll here too.
+				results = (slide_deck, original_obj,)
 			elif INTIMediaRoll.providedBy( item ):
 				# Currently, we only need to return the actual video object, and
 				# not its media roll container.
