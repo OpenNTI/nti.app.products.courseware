@@ -57,6 +57,8 @@ from nti.contenttypes.courses.utils import is_course_editor
 
 from nti.contenttypes.presentation.interfaces import INTIVideo
 from nti.contenttypes.presentation.interfaces import INTISlide
+from nti.contenttypes.presentation.interfaces import INTIMedia
+from nti.contenttypes.presentation.interfaces import INTIMediaRef
 from nti.contenttypes.presentation.interfaces import INTISlideDeck
 from nti.contenttypes.presentation.interfaces import INTIMediaRoll
 from nti.contenttypes.presentation.interfaces import INTISlideVideo
@@ -215,6 +217,9 @@ def _get_top_level_contexts(obj):
 			results.add(top_level_context)
 	return results
 
+def _is_catalog_entry_visible( entry ):
+	return entry is not None and is_readable(entry)
+
 def _get_valid_course_context(course_contexts):
 	"""
 	Validate course context access for remote_user, returning
@@ -237,7 +242,7 @@ def _get_valid_course_context(course_contexts):
 			# Not enrolled and not an editor, get catalog entry.
 			catalog_entry = ICourseCatalogEntry(course_context, None)
 			# We only want to add publicly available entries.
-			if catalog_entry is not None and is_readable(catalog_entry):
+			if _is_catalog_entry_visible( catalog_entry ):
 				results.append(catalog_entry)
 		else:
 			results.append(course_context)
@@ -364,6 +369,9 @@ class _OutlinePathFactory(object):
 				# Currently, we only need to return the actual video object, and
 				# not its media roll container.
 				results = (original_obj,)
+			elif INTIMediaRef.providedBy( item ):
+				# Make sure we don't return refs.
+				results = (original_obj,)
 			else:
 				results = (item,)
 		else:
@@ -469,7 +477,6 @@ class _OutlinePathFactory(object):
 		if 		not self.target_ntiid \
 			or 	getattr(self.course_context, 'Outline', None) is None:
 			return (self.course_context,)
-
 		outline = self.course_context.Outline
 		for outline_node in outline.values():
 			for outline_content_node in outline_node.values():
