@@ -15,6 +15,7 @@ from zope import interface
 from zope.schema.fieldproperty import FieldPropertyStoredThroughField as FP
 
 from nti.common.property import alias
+from nti.common.persistence import NoPickle
 from nti.common.representation import WithRepr
 
 from nti.contenttypes.courses.interfaces import ICourseCatalogEntry
@@ -25,8 +26,6 @@ from nti.externalization.interfaces import StandardExternalFields
 from nti.externalization.interfaces import IInternalObjectExternalizer
 
 from nti.externalization.externalization import to_external_object
-
-from nti.externalization.persistence import NoPickle
 
 from nti.schema.schema import EqHash
 from nti.schema.field import SchemaConfigured
@@ -40,10 +39,10 @@ CLASS = StandardExternalFields.CLASS
 ITEMS = StandardExternalFields.ITEMS
 MIMETYPE = StandardExternalFields.MIMETYPE
 
-@interface.implementer(IEnrollmentOption)
 @WithRepr
 @NoPickle
 @EqHash('Name')
+@interface.implementer(IEnrollmentOption)
 class EnrollmentOption(SchemaConfigured):
 
 	__parent__ = None
@@ -62,8 +61,8 @@ class EnrollmentOption(SchemaConfigured):
 	def Name(self, value):
 		pass
 
-@interface.implementer(IOpenEnrollmentOption)
 @EqHash('Name', 'Enabled')
+@interface.implementer(IOpenEnrollmentOption)
 class OpenEnrollmentOption(EnrollmentOption):
 
 	__external_class_name__ = "OpenEnrollment"
@@ -73,9 +72,9 @@ class OpenEnrollmentOption(EnrollmentOption):
 
 	IsEnabled = alias('Enabled')
 
-@interface.implementer(IEnrollmentOptions, IInternalObjectExternalizer)
 @WithRepr
 @NoPickle
+@interface.implementer(IEnrollmentOptions, IInternalObjectExternalizer)
 class EnrollmentOptions(LocatedExternalDict):
 
 	__external_can_create__ = False

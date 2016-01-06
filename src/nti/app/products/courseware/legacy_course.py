@@ -168,10 +168,9 @@ def _register_course_purchasable_from_catalog_entry(entry, event):
 	# to the course. They need to be absolute because there is no context
 	# in the purchasable.
 	ext_package = to_external_object(entry.legacy_content_package)
-	icon = urljoin(ext_package['href'],
-					'images/' + purch_id + '_promo.png')
+	icon = urljoin(ext_package['href'], 'images/' + purch_id + '_promo.png')
 	thumbnail = urljoin(ext_package['href'],
-						 'images/' + purch_id + '_cover.png')
+						'images/' + purch_id + '_cover.png')
 	# Temporarily also stash these things on the entry itself too
 	# where they can be externalized in the course catalog
 	entry.LegacyPurchasableIcon = icon
@@ -415,9 +414,10 @@ from zope.schema.vocabulary import SimpleVocabulary
 
 from nti.contenttypes.courses.interfaces import ES_CREDIT
 from nti.contenttypes.courses.interfaces import ES_PUBLIC
-from nti.contenttypes.courses.sharing import CourseInstanceSharingScopes
 from nti.contenttypes.courses.interfaces import ENROLLMENT_SCOPE_VOCABULARY
 from nti.contenttypes.courses.interfaces import ICourseInstanceSharingScopes
+
+from nti.contenttypes.courses.sharing import CourseInstanceSharingScopes
 
 _LEGACY_ENROLLMENT_SCOPE_VOCABULARY = SimpleVocabulary(
 	[ENROLLMENT_SCOPE_VOCABULARY.getTerm(ES_CREDIT),
@@ -622,7 +622,7 @@ class _LegacyCourseInstanceACLProvider(object):
 		aces = [ace_allowing(x, ALL_PERMISSIONS) for x in self.context.instructors]
 		aces.append(ace_allowing(self.context.legacy_community, ACT_READ))
 		# Deny editing to everyone.
-		aces.append( ace_denying(IPrincipal(EVERYONE_GROUP_NAME),
+		aces.append(ace_denying(IPrincipal(EVERYONE_GROUP_NAME),
 					(ACT_CONTENT_EDIT, ACT_UPDATE),
 					type(self)))
 

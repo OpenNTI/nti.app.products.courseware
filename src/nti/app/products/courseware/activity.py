@@ -20,7 +20,7 @@ from zope.annotation import factory as an_factory
 
 from zope.intid.interfaces import IIntIds
 
-import BTrees
+from BTrees import family64
 from BTrees.Length import Length
 
 from persistent import Persistent
@@ -47,7 +47,7 @@ class _DefaultCourseActivity(Persistent):
 	sorted by timestamp and by reference to intid.
 	"""
 
-	family = BTrees.family64
+	family = family64
 
 	__name__ = None
 	__parent__ = None

@@ -279,7 +279,8 @@ class IOpenEnrollmentOption(IEnrollmentOption):
 	"""
 
 	Enabled = Bool(title="If the course allows open enrollemnt",
-				   required=False, default=True)
+				   required=False,
+				   default=True)
 
 class IEnrollmentOptions(IEnumerableMapping):
 
