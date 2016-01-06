@@ -7,6 +7,7 @@ __docformat__ = "restructuredtext en"
 # disable: accessing protected members, too many methods
 # pylint: disable=W0212,R0904
 
+from hamcrest import is_in
 from hamcrest import has_entry
 from hamcrest import has_length
 from hamcrest import assert_that
@@ -41,21 +42,25 @@ from nti.contentfragments.interfaces import SanitizedHTMLContentFragment
 from nti.dataserver.tests import mock_dataserver
 from nti.dataserver.users import User
 
-QUIZ = "tag:nextthought.com,2011-10:OU-HTML-CLC3403_LawAndJustice.sec:QUIZ_01.01"
-QUESTION = "tag:nextthought.com,2011-10:OU-NAQ-CLC3403_LawAndJustice.naq.qid.aristotle.1"
-VIDEO = 'tag:nextthought.com,2011-10:OU-NTIVideo-CLC3403_LawAndJustice.ntivideo.video_01.01'
-READING = 'tag:nextthought.com,2011-10:OU-HTML-CLC3403_LawAndJustice.sec:04.01_RequiredReading'
+COURSE_NTIID = 'tag:nextthought.com,2011-10:NTI-CourseInfo-Fall2013_CLC3403_LawAndJustice'
+
 SUB_SECTION = 'tag:nextthought.com,2011-10:OU-HTML-CLC3403_LawAndJustice.subsec:BOOK_5_CHAPTER_3'
 CARD = 'tag:nextthought.com,2011-10:OU-NTICard-CLC3403_LawAndJustice.nticard.nticard_RR_PDF_03.02'
 
-COURSE_NTIID = 'tag:nextthought.com,2011-10:NTI-CourseInfo-Fall2013_CLC3403_LawAndJustice'
+READING = "tag:nextthought.com,2011-10:OU-RelatedWorkRef-CS1323_F_2015_Intro_to_Computer_Programming.relatedworkref.relwk:01.01_install_mac"
+SLIDE_VIDEO = "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_01.01.02_Mac"
+SLIDE_DECK = "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Install_Mac"
 
-class MockCatalog(object):
+NON_ROLL_VIDEO = "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_02.01.01_Primative"
 
-	containers = (COURSE_NTIID,)
+VIDEO_ROLL_VIDEO = "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_02.01.03_Cell_Phone"
 
-	def get_containers(self, _):
-		return self.containers
+QUESTION_SET = "tag:nextthought.com,2011-10:OU-NAQ-CS1323_F_2015_Intro_to_Computer_Programming.naq.set.qset:Prj_1"
+QUESTION = "tag:nextthought.com,2011-10:OU-NAQ-CS1323_F_2015_Intro_to_Computer_Programming.naq.qid:Prj_1.1"
+
+# Some items may be found in either of the following page infos.
+CS_PAGES = ['tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.lec:01.03_LESSON',
+			'tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.introduction_to_computer_programming']
 
 class TestPathLookup(ApplicationLayerTest):
 
@@ -119,14 +124,12 @@ class TestPathLookup(ApplicationLayerTest):
 		for item in items:
 			assert_that(item, has_entry('Class', 'CourseCatalogLegacyEntry'))
 
-	def _do_path_lookup(self, is_legacy=False, expected_status=200):
-		self._create_discussions()
-
+	def _do_cs1323_path_lookup(self, is_legacy=False, expected_status=200):
 		# For legacy non-indexed, we only get one possible path.
 		result_expected_val = 1
 
 		# Video
-		path = '/dataserver2/LibraryPath?objectId=%s' % VIDEO
+		path = '/dataserver2/LibraryPath?objectId=%s' % NON_ROLL_VIDEO
 		res = self.testapp.get(path, status=expected_status)
 		res = res.json_body
 
@@ -135,102 +138,126 @@ class TestPathLookup(ApplicationLayerTest):
 		else:
 			assert_that(res, has_length(result_expected_val))
 			res = res[0]
-			assert_that(res, has_length(2))
+			assert_that( res, has_length( 4 ))
+
 			assert_that(res[0], has_entry('Class', 'CourseInstance'))
-			assert_that(res[1], has_entries('Class', 'PageInfo',
-											'NTIID', 'tag:nextthought.com,2011-10:OU-HTML-CLC3403_LawAndJustice.lec:01_LESSON',
-											'Title', '1. Defining Law and Justice'))
+			assert_that(res[1], has_entries('Class', 'CourseOutlineContentNode',
+											'NTIID', 'tag:nextthought.com,2011-10:NTI-NTICourseOutlineNode-Fall2015_CS_1323.3.0'))
+			assert_that(res[2], has_entries('Class', 'Video',
+											'NTIID', NON_ROLL_VIDEO))
+			assert_that(res[3], has_entries('Class', 'PageInfo',
+											'NTIID', 'tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.introduction_to_computer_programming'))
 
 		# Get reading
 		path = '/dataserver2/LibraryPath?objectId=%s' % READING
 		res = self.testapp.get(path, status=expected_status)
 		res = res.json_body
 
-		# No LessonOverview registered, so we lose outline.
-		# We do get course followed by appropriate page info.
 		if expected_status == 403:
 			self._check_catalog(res, res_count=1)
 		else:
 			assert_that(res, has_length(result_expected_val))
 			res = res[0]
-			assert_that(res, has_length(2))
-			assert_that(res[0], has_entry('Class', 'CourseInstance'))
-			assert_that(res[1], has_entries('Class', 'PageInfo',
-											'NTIID', READING,
-											'Title', '4.1 Homicide Law of Draco'))
-
-		# Sub section
-		path = '/dataserver2/LibraryPath?objectId=%s' % SUB_SECTION
-		res = self.testapp.get(path, status=expected_status)
-		res = res.json_body
-
-		if expected_status == 403:
-			self._check_catalog(res)
-		else:
-			assert_that(res, has_length(result_expected_val))
-			res = res[0]
-			assert_that(res, has_length(2))
+			assert_that( res, has_length( 4 ))
 
 			assert_that(res[0], has_entry('Class', 'CourseInstance'))
-			assert_that(res[1], has_entries('Class', 'PageInfo',
-											# XXX Does this NTIID make sense?
-											'NTIID', 'tag:nextthought.com,2011-10:OU-HTML-CLC3403_LawAndJustice.sec:01.01_RequiredReading',
-											'Title', '1.1 Aristotle, Nicomachean Ethics, 5.3-5.8'))
+			assert_that(res[1], has_entries('Class', 'CourseOutlineContentNode',
+											'NTIID', 'tag:nextthought.com,2011-10:NTI-NTICourseOutlineNode-Fall2015_CS_1323.0.1'))
+			assert_that(res[2], has_entries('Class', 'RelatedWork',
+											'NTIID', READING))
+			assert_that(res[3], has_entries('Class', 'PageInfo',
+											'NTIID', 'tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.lec:01.03_LESSON'))
 
 		# Quiz
-		path = '/dataserver2/LibraryPath?objectId=%s' % QUIZ
+		path = '/dataserver2/LibraryPath?objectId=%s' % QUESTION_SET
 		res = self.testapp.get(path, status=expected_status)
 		res = res.json_body
-
 		if expected_status == 403:
 			self._check_catalog(res)
 		else:
 			assert_that(res, has_length(result_expected_val))
 			res = res[0]
-			assert_that(res, has_length(2))
+			assert_that(res, has_length(4))
 
 			assert_that(res[0], has_entry('Class', 'CourseInstance'))
-			assert_that(res[1], has_entries('Class', 'PageInfo',
-											'NTIID', 'tag:nextthought.com,2011-10:OU-HTML-CLC3403_LawAndJustice.sec:QUIZ_01.01',
-											'Title', 'Self-Quiz 1'))
+			assert_that(res[1], has_entries('Class', 'CourseOutlineContentNode',
+											'NTIID', 'tag:nextthought.com,2011-10:NTI-NTICourseOutlineNode-Fall2015_CS_1323.2.1'))
+			assert_that(res[2], has_entries('Class', 'AssignmentRef',
+											'NTIID', 'tag:nextthought.com,2011-10:OU-NAQ-CS1323_F_2015_Intro_to_Computer_Programming.naq.asg.assignment:Project_1'))
+			assert_that(res[3], has_entries('Class', 'PageInfo',
+											'NTIID', 'tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.project_1_(100_points)'))
 
 		# Question (returns same)
 		# Not found in legacy, not even catalog.
 		status = 403 if is_legacy else expected_status
 		path = '/dataserver2/LibraryPath?objectId=%s' % QUESTION
 		res = self.testapp.get(path, status=status)
-		if status != 403:
+		if not is_legacy:
 			res = res.json_body
 			if expected_status == 403:
 				self._check_catalog(res)
 			else:
 				assert_that(res, has_length(result_expected_val))
 				res = res[0]
-				assert_that(res, has_length(2))
+				assert_that(res, has_length(4))
 
 				assert_that(res[0], has_entry('Class', 'CourseInstance'))
-				assert_that(res[1], has_entries('Class', 'PageInfo',
-												'NTIID', 'tag:nextthought.com,2011-10:OU-HTML-CLC3403_LawAndJustice.sec:QUIZ_01.01',
-												'Title', 'Self-Quiz 1'))
+				assert_that(res[1], has_entries('Class', 'CourseOutlineContentNode',
+												'NTIID', 'tag:nextthought.com,2011-10:NTI-NTICourseOutlineNode-Fall2015_CS_1323.2.1'))
+				assert_that(res[2], has_entries('Class', 'AssignmentRef',
+												'NTIID', 'tag:nextthought.com,2011-10:OU-NAQ-CS1323_F_2015_Intro_to_Computer_Programming.naq.asg.assignment:Project_1'))
+				assert_that(res[3], has_entries('Class', 'PageInfo',
+												'NTIID', 'tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.project_1_(100_points)'))
 
-		# Card
-		path = '/dataserver2/LibraryPath?objectId=%s' % CARD
+		# Slide video
+		path = '/dataserver2/LibraryPath?objectId=%s' % SLIDE_VIDEO
 		res = self.testapp.get(path, status=expected_status)
 		res = res.json_body
 
-		# Cards are not indexed in our container catalog, so
-		# we go down the legacy path that only returns one result.
 		if expected_status == 403:
 			self._check_catalog(res, res_count=2)
 		else:
 			assert_that(res, has_length(1))
 			res = res[0]
-			assert_that(res, has_length(2))
+			assert_that(res, has_length(5))
 
 			assert_that(res[0], has_entry('Class', 'CourseInstance'))
-			assert_that(res[1], has_entries('Class', 'PageInfo',
-											'NTIID', 'tag:nextthought.com,2011-10:OU-HTML-CLC3403_LawAndJustice.sec:03.02_RequiredReading',
-											'Title', '3.2 Taplin, Shield of Achilles (within the Iliad)'))
+			assert_that(res[1], has_entries('Class', 'CourseOutlineContentNode',
+											'NTIID', 'tag:nextthought.com,2011-10:NTI-NTICourseOutlineNode-Fall2015_CS_1323.0.1'))
+			assert_that(res[2], has_entries('Class', 'NTISlideDeck',
+											'NTIID', SLIDE_DECK))
+			assert_that(res[3], has_entries('Class', 'Video',
+											'NTIID', SLIDE_VIDEO))
+			assert_that(res[4], has_entries('Class', 'PageInfo',
+											'NTIID', 'tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.introduction_to_computer_programming'))
+
+		# SlideDeck
+		path = '/dataserver2/LibraryPath?objectId=%s' % SLIDE_DECK
+		res = self.testapp.get(path, status=expected_status)
+		res = res.json_body
+
+		if expected_status == 403:
+			self._check_catalog(res, res_count=2)
+		else:
+			assert_that(res, has_length(1))
+			res = res[0]
+			assert_that(res, has_length(5))
+
+			assert_that(res[0], has_entry('Class', 'CourseInstance'))
+			assert_that(res[1], has_entries('Class', 'CourseOutlineContentNode',
+											'NTIID', 'tag:nextthought.com,2011-10:NTI-NTICourseOutlineNode-Fall2015_CS_1323.0.1'))
+			assert_that(res[2], has_entries('Class', 'NTISlideDeck',
+											'NTIID', SLIDE_DECK))
+			assert_that(res[3], has_entries('Class', 'Video',
+											'NTIID', SLIDE_VIDEO))
+			assert_that(res[4], has_entries('Class', 'PageInfo',
+											'NTIID', is_in( CS_PAGES )))
+
+	def _do_clc_path_lookup(self, expected_status=200):
+		self._create_discussions()
+
+		# For legacy non-indexed, we only get one possible path.
+		result_expected_val = 1
 
 		# Forums: Course/Board
 		obj_path = '/dataserver2/Objects/%s/LibraryPath' % self.forum_ntiid
@@ -271,43 +298,108 @@ class TestPathLookup(ApplicationLayerTest):
 				assert_that(res[2], has_entries('Class', 'CommunityForum',
 												'title', 'Open Discussions'))
 
+		# Sub section
+		path = '/dataserver2/LibraryPath?objectId=%s' % SUB_SECTION
+		res = self.testapp.get(path, status=expected_status)
+		res = res.json_body
+
+		if expected_status == 403:
+			self._check_catalog(res)
+		else:
+			assert_that(res, has_length(result_expected_val))
+			res = res[0]
+			assert_that(res, has_length(2))
+
+			assert_that(res[0], has_entry('Class', 'CourseInstance'))
+			assert_that(res[1], has_entries('Class', 'PageInfo',
+											# XXX Does this NTIID make sense?
+											'NTIID', 'tag:nextthought.com,2011-10:OU-HTML-CLC3403_LawAndJustice.sec:01.01_RequiredReading',
+											'Title', '1.1 Aristotle, Nicomachean Ethics, 5.3-5.8'))
+
+		# Card
+		path = '/dataserver2/LibraryPath?objectId=%s' % CARD
+		res = self.testapp.get(path, status=expected_status)
+		res = res.json_body
+
+		# Cards are not indexed in our container catalog, so
+		# we go down the legacy path that only returns one result.
+		if expected_status == 403:
+			self._check_catalog(res, res_count=2)
+		else:
+			assert_that(res, has_length(1))
+			res = res[0]
+			assert_that(res, has_length(2))
+
+			assert_that(res[0], has_entry('Class', 'CourseInstance'))
+			assert_that(res[1], has_entries('Class', 'PageInfo',
+											'NTIID', 'tag:nextthought.com,2011-10:OU-HTML-CLC3403_LawAndJustice.sec:03.02_RequiredReading',
+											'Title', '3.2 Taplin, Shield of Achilles (within the Iliad)'))
+
 	def _enroll(self):
 		with mock_dataserver.mock_db_trans(site_name='platform.ou.edu'):
 			user = User.get_user('sjohnson@nextthought.com')
 
 			cat = component.getUtility(ICourseCatalog)
-			course = cat['Fall2013']['CLC3403_LawAndJustice']
-
-			manager = ICourseEnrollmentManager(course)
-			manager.enroll(user, scope='ForCreditDegree')
+			for group, bundle in (( 'Fall2013', 'CLC3403_LawAndJustice' ),
+								  ( 'Fall2015', 'CS 1323' )):
+				course = cat[group][bundle]
+				manager = ICourseEnrollmentManager(course)
+				manager.enroll(user, scope='ForCreditDegree')
 
 	@WithSharedApplicationMockDS(users=True, testapp=True)
-	@fudge.patch('nti.app.products.courseware.adapters.get_library_catalog')
-	def test_contained_path(self, mock_get_catalog):
-		# TODO: the test course we're using does not have an outline
+	@fudge.patch('nti.app.contentlibrary.views.library_views._LibraryPathView._get_legacy_results',
+				'nti.app.contentlibrary.adapters._get_bundles_from_container')
+	def test_cs1323_contained_path(self, mock_legacy, mock_get_bundles):
+		# CS1323 tests slides/videos/readings/self-assessments/video-rolls.
+		# It has a full outline for these tests.
+		self._enroll()
+		mock_legacy.is_callable().returns(())
+		mock_get_bundles.is_callable().returns(())
+		self._do_cs1323_path_lookup()
+
+	@WithSharedApplicationMockDS(users=True, testapp=True)
+	@fudge.patch('nti.app.products.courseware.adapters.get_library_catalog',
+				'nti.app.contentlibrary.adapters._get_bundles_from_container')
+	def test_clc_contained_path(self, mock_get_catalog, mock_get_bundles):
+		# CLC tests subsections, cards, and discussions/forums (for convenience).
+		# We do not have an outline for this course.
+		class MockCatalog(object):
+			containers = (COURSE_NTIID,)
+			def get_containers(self, _):
+				return self.containers
+
+		# The test course we're using does not have an outline
 		self._enroll()
 		mock_catalog = MockCatalog()
 		mock_get_catalog.is_callable().returns(mock_catalog)
-		self._do_path_lookup()
+		mock_get_bundles.is_callable().returns(())
+		self._do_clc_path_lookup()
 
 	@WithSharedApplicationMockDS(users=True, testapp=True)
-	@fudge.patch('nti.app.products.courseware.adapters.get_library_catalog')
-	def test_contained_path_unenrolled(self, mock_get_catalog):
-		mock_catalog = MockCatalog()
-		mock_get_catalog.is_callable().returns(mock_catalog)
-		self._do_path_lookup(expected_status=403)
+	@fudge.patch('nti.app.contentlibrary.views.library_views._LibraryPathView._get_legacy_results',
+				'nti.app.contentlibrary.adapters._get_bundles_from_container',
+				'nti.app.products.courseware.adapters._is_catalog_entry_visible')
+	def test_contained_path_unenrolled(self, mock_legacy, mock_get_bundles, mock_catalog_entry_visible):
+		mock_legacy.is_callable().returns(())
+		mock_get_bundles.is_callable().returns(())
+		mock_catalog_entry_visible.is_callable().returns( True )
+		self._do_cs1323_path_lookup(expected_status=403)
+
+# TODO: test content editor
+# TODO: test notes on content units (containing self-assessments etc)
 
 	@WithSharedApplicationMockDS(users=True, testapp=True)
 	@fudge.patch('nti.app.products.courseware.adapters._get_courses_from_container')
 	@fudge.patch('nti.app.contentlibrary.adapters._get_bundles_from_container')
-	def test_contained_path_legacy(self, mock_get_courses, mock_get_bundles):
+	@fudge.patch('nti.appserver.context_providers.get_hierarchy_context')
+	def test_contained_path_legacy(self, mock_get_courses, mock_get_bundles, mock_get_context):
 		"""
 		Our library path to the given ntiid is returned,
 		even though we do not have the index catalog.
 		"""
 		self._enroll()
-		mock_catalog = MockCatalog()
-		mock_catalog.containers = []
 		mock_get_courses.is_callable().returns(())
 		mock_get_bundles.is_callable().returns(())
-		self._do_path_lookup(is_legacy=True)
+		mock_get_context.is_callable().returns(())
+		self._do_cs1323_path_lookup(is_legacy=True)
+		self._do_clc_path_lookup()
