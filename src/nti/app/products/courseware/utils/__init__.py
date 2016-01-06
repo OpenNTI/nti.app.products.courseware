@@ -19,7 +19,7 @@ import repoze.lru
 from zope import component
 from zope import interface
 
-from zope.intid import IIntIds
+from zope.intid.interfaces import IIntIds
 
 from zope.security.interfaces import IPrincipal
 
@@ -39,7 +39,8 @@ from nti.contenttypes.courses.interfaces import INSTRUCTOR
 from nti.contenttypes.courses.interfaces import COURSE_CATALOG_NAME
 
 from nti.contenttypes.courses import get_course_vendor_info
-from nti.contenttypes.courses.utils import get_parent_course
+from nti.contenttypes.courses.utils import get_parent_course 
+from nti.contenttypes.courses.utils import get_course_editors
 
 from nti.contenttypes.courses.interfaces import ICourseCatalog
 from nti.contenttypes.courses.interfaces import ICourseInstance
@@ -161,7 +162,7 @@ class IterableAdminCourses(object):
 		catalog = component.getUtility(ICourseCatalog)
 		for entry in catalog.iterCatalogEntries():
 			instance = ICourseInstance(entry)
-			if principal in instance.instructors:
+			if principal in instance.instructors or get_course_editors(instance):
 				yield instance
 
 def get_assets_folder(context, strict=True):
