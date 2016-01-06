@@ -253,7 +253,6 @@ class OutlinePathFactory(object):
 		if self.course_context is None:
 			return
 
-		# This does not work with legacy courses.
 		if 		not self.target_ntiid \
 			or 	getattr(self.course_context, 'Outline', None) is None:
 			return (self.course_context,)
@@ -265,6 +264,7 @@ class OutlinePathFactory(object):
 
 				if getattr( outline_content_node, 'ContentNTIID', None ) == self.target_ntiid:
 					return (self.course_context, outline_content_node)
+				# I don't believe legacy courses have these lessons.
 				lesson_ntiid = getattr(outline_content_node, 'LessonOverviewNTIID', None)
 				if not lesson_ntiid:
 					continue
