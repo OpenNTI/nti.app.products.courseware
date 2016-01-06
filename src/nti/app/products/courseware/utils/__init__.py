@@ -51,14 +51,14 @@ from nti.dataserver.interfaces import IMemcacheClient
 
 from nti.site.site import get_component_hierarchy_names
 
+from nti.traversal.traversal import find_interface
+
 from ..enrollment import EnrollmentOptions
 
 from ..interfaces import IUserAdministeredCourses
 from ..interfaces import IEnrollmentOptionProvider
 
 from .course_migrator import migrate as course_migrator
-
-from nti.traversal.traversal import find_interface
 
 from ..interfaces import ICourseRootFolder
 
@@ -162,7 +162,8 @@ class IterableAdminCourses(object):
 		catalog = component.getUtility(ICourseCatalog)
 		for entry in catalog.iterCatalogEntries():
 			instance = ICourseInstance(entry)
-			if principal in instance.instructors or get_course_editors(instance):
+			if 		principal in instance.instructors \
+				or	principal in get_course_editors(instance):
 				yield instance
 
 def get_assets_folder(context, strict=True):
