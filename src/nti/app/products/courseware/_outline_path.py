@@ -175,6 +175,7 @@ class OutlinePathFactory(object):
 			* Content unit page contained by a related work ref (need check-contained).
 			* Video contained by a related work ref (need check-contained).
 			* Video contained by a video roll.
+			* Target obj is content unit page containing a self-assessment.
 		"""
 		target_ntiid_ref = getattr(item, 'target_ntiid', None)
 		ntiid_ref = getattr(item, 'ntiid', None)
@@ -193,6 +194,10 @@ class OutlinePathFactory(object):
 				if self.target_ntiid in ( child_ntiid, child_target ):
 					result = True
 					break
+
+		# Self assessment item contained by our target_obj.
+		if not result:
+			result = ntiid_ref in getattr(self.target_obj, 'embeddedContainerNTIIDs', ())
 
 		if 		not result \
 			and target_ref \
