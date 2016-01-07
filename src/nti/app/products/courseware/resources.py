@@ -105,7 +105,7 @@ class CourseRootFolderACLProvider(object):
 	@Lazy
 	def __acl__(self):
 		aces = [ ace_allowing(ROLE_ADMIN, ALL_PERMISSIONS, self),
-				 ace_allowing(ROLE_CONTENT_EDITOR, ALL_PERMISSIONS, type(self)) ]
+				 ace_allowing(ROLE_CONTENT_EDITOR, ALL_PERMISSIONS, type(self))]
 
 		course = find_interface(self.context, ICourseInstance, strict=False)
 		if course is not None:

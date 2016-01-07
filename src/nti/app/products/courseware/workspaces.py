@@ -22,6 +22,7 @@ from zope.location.traversing import LocationPhysicallyLocatable
 
 from zope.securitypolicy.interfaces import Allow
 from zope.securitypolicy.interfaces import IPrincipalRoleMap
+from zope.securitypolicy.principalrole import principalRoleManager
 
 from nti.appserver.workspaces.interfaces import IUserService
 from nti.appserver.workspaces.interfaces import IContainerCollection
@@ -47,6 +48,8 @@ from nti.contenttypes.courses.interfaces import IPrincipalEnrollments
 from nti.dataserver.interfaces import IUser
 
 from nti.dataserver.authorization import ACT_DELETE
+from nti.dataserver.authorization import ROLE_CONTENT_ADMIN
+
 from nti.dataserver.authorization_acl import ace_allowing
 from nti.dataserver.authorization_acl import acl_from_aces
 
@@ -426,19 +429,42 @@ class CourseInstanceAdministrativeRole(SchemaConfigured,
 @interface.implementer(IPrincipalAdministrativeRoleCatalog)
 class _DefaultPrincipalAdministrativeRoleCatalog(object):
 	"""
-	This catalog checks all courses the user is in the instructors list.
+	This catalog returns all courses the user is in the instructors list,
+	or all courses if the user is a global content admin.
 	"""
 
 	def __init__(self, user):
 		self.user = user
+
+	def _is_content_admin(self):
+		roles = principalRoleManager.getRolesForPrincipal( self.user.username )
+		for role, access in roles or ():
+			if role == ROLE_CONTENT_ADMIN.id and access == Allow:
+				return True
+		return False
+
+	def _iter_all_courses(self):
+		# We do not filter based on enrollment or anything else.
+		# This will probably move to its own workspace eventually.
+		catalog = component.queryUtility(ICourseCatalog)
+		for entry in catalog.iterCatalogEntries():
+			course = ICourseInstance( entry, None )
+			if course is not None:
+				yield course
 
 	def _iter_admin_courses(self):
 		util = component.getUtility(IUserAdministeredCourses)
 		for context in util.iter_admin(self.user):
 			yield context
 
+	def _get_course_iterator(self):
+		result = self._iter_admin_courses
+		if self._is_content_admin():
+			result = self._iter_all_courses
+		return result
+
 	def iter_administrations(self):
-		for course in self._iter_admin_courses():
+		for course in self._get_course_iterator()():
 			roles = IPrincipalRoleMap(course)
 			# For now, we're including editors in the administered
 			# workspace.
