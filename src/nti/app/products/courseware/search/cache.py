@@ -17,7 +17,7 @@ from zope import interface
 
 from zope.component.hooks import getSite
 
-from zope.intid import IIntIds
+from zope.intid.interfaces import IIntIds
 
 from nti.common.property import Lazy
 
@@ -148,9 +148,9 @@ def _flatten_and_cache_outline(course, client=None):
 	# return data and flag
 	return result, cached
 
-def _is_outline_cached(entry, client=None):
+def _is_outline_cached(course, entry, client=None):
 	site = getSite().__name__
-	lastSync = _course_timestamp(entry)
+	lastSync = _course_timestamp(course)
 	key = _encode(site, entry, "outline", "cached", lastSync)
 	return memcache_get(key, client) == 1
 
@@ -162,7 +162,7 @@ def _get_outline_cache_entry(ntiid, course, entry=None, client=None):
 		result = local.get(ntiid)
 	else:
 		entry = ICourseCatalogEntry(course).ntiid if not entry else entry
-		if not _is_outline_cached(entry, client):
+		if not _is_outline_cached(course, entry, client):
 			data, cached = _flatten_and_cache_outline(course, client)
 			if not cached:
 				if request is not None:
