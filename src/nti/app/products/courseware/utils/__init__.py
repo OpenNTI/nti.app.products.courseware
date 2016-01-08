@@ -68,9 +68,10 @@ DEFAULT_EXP_TIME = 86400
 
 ZERO_DATETIME = datetime.utcfromtimestamp(0)
 
-def last_synchronized():
-	hostsites = component.queryUtility(IEtcNamespace, name='hostsites')
-	result = getattr(hostsites, 'lastSynchronized', 0)
+def last_synchronized(context=None):
+	if context is None:
+		context = component.queryUtility(IEtcNamespace, name='hostsites')
+	result = getattr(context, 'lastSynchronized', None) or 0
 	return result
 
 def memcache_client():
