@@ -98,7 +98,7 @@
 			If you feel this email was sent in error, or this account was created
 			without your consent, you may email
 			<a href="mailto:support@nextthought.com"
-				tal:attributes="href options/support_email"
+				tal:attributes="href string:mailto:${options/support_email|default}"
 				tal:content="options/support_email">support@nextthought.com</a>.
 		</p>
 
