@@ -12,7 +12,7 @@ logger = __import__('logging').getLogger(__name__)
 from zope import component
 from zope import interface
 
-from zope.intid import IIntIds
+from zope.intid.interfaces import IIntIds
 
 from nti.contentsearch.interfaces import ISearchPackageResolver
 
@@ -48,8 +48,6 @@ class _RootSearchPacakgeResolver(object):
 			for uid in catalog.apply(query) or ():
 				context = intids.queryObject(uid)
 				context = ICourseInstance(context, None)
-				if context is None:
-					continue
 				for package in get_course_packages(context):
 					ntiid = package.ntiid
 					if ntiid:  # make sure we a valid ntiid
