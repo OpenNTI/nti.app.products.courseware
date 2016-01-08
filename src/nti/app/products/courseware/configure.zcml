@@ -77,7 +77,7 @@
 
 	<subscriber handler=".subscribers.update_enrollment_modified_on_add" />
 	<subscriber handler=".subscribers.update_enrollment_modified_on_drop" />
-	
+
 	<!-- Auto-gen course purchasables from content -->
 	<!-- This must be a global subscriber as that's where
 	the library is -->
@@ -106,7 +106,7 @@
 	<adapter factory=".adapters._entry_to_content_package_bundle" />
 	<adapter factory=".adapters._course_content_to_package_bundle" />
 	<adapter factory=".adapters._legacy_course_to_content_package_bundle" />
-	
+
 	<!-- Content containers to courses -->
 	<subscriber factory=".adapters._catalog_entry_from_container_object"
 				provides="nti.appserver.interfaces.IJoinableContextProvider"
@@ -339,15 +339,7 @@
 						 .interfaces.ILegacyCommunityBasedCourseInstance"
 		modules=".legacy_catalog .legacy_course .workspaces .enrollment" />
 
-	<!-- Mail links in alpha only for now -->
-	<configure zcml:condition="have alpha_env">
-		<subscriber factory=".decorators._CourseMailLinkDecorator"
-				provides="nti.externalization.interfaces.IExternalMappingDecorator" />
-
-		<subscriber factory=".decorators._RosterMailLinkDecorator"
-				provides="nti.externalization.interfaces.IExternalMappingDecorator" />
-	</configure>
-	<configure zcml:condition="have devmode">
+	<configure>
 		<subscriber factory=".decorators._CourseMailLinkDecorator"
 				provides="nti.externalization.interfaces.IExternalMappingDecorator" />
 
@@ -451,10 +443,10 @@
 
 	<!-- Course Discussions -->
 	<adapter factory=".adapters._CourseDiscussionFileConstraints" />
-		
+
 	<!-- Resources -->
 	<adapter factory=".resources.CourseRootFolderACLProvider" />
-	
+
 	<adapter factory=".resources._course_resources" />
 
 	<subscriber handler=".resources._on_course_added"  />
