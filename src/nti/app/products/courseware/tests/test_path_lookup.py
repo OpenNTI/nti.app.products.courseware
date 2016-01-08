@@ -7,7 +7,6 @@ __docformat__ = "restructuredtext en"
 # disable: accessing protected members, too many methods
 # pylint: disable=W0212,R0904
 
-from hamcrest import is_in
 from hamcrest import has_entry
 from hamcrest import has_length
 from hamcrest import assert_that
@@ -58,9 +57,7 @@ VIDEO_ROLL_VIDEO = "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_
 QUESTION_SET = "tag:nextthought.com,2011-10:OU-NAQ-CS1323_F_2015_Intro_to_Computer_Programming.naq.set.qset:Prj_1"
 QUESTION = "tag:nextthought.com,2011-10:OU-NAQ-CS1323_F_2015_Intro_to_Computer_Programming.naq.qid:Prj_1.1"
 
-# Some items may be found in either of the following page infos.
-CS_PAGES = ['tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.lec:01.03_LESSON',
-			'tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.introduction_to_computer_programming']
+CS1323_PACKAGE = 'tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.introduction_to_computer_programming'
 
 class TestPathLookup(ApplicationLayerTest):
 
@@ -133,6 +130,11 @@ class TestPathLookup(ApplicationLayerTest):
 		res = self.testapp.get(path, status=expected_status)
 		res = res.json_body
 
+		# TODO: CS1323 only seems to resolve to the package, the units themselves do not contain
+		# these object ids. It's probably because this video is contained in a video roll,
+		# and the slide is contained within a slide deck.
+		page_info = CS1323_PACKAGE if is_legacy else 'tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.lec:02.01_LESSON'
+
 		if expected_status == 403:
 			self._check_catalog(res, res_count=1)
 		else:
@@ -146,7 +148,7 @@ class TestPathLookup(ApplicationLayerTest):
 			assert_that(res[2], has_entries('Class', 'Video',
 											'NTIID', NON_ROLL_VIDEO))
 			assert_that(res[3], has_entries('Class', 'PageInfo',
-											'NTIID', 'tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.introduction_to_computer_programming'))
+											'NTIID', page_info))
 
 		# Get reading
 		path = '/dataserver2/LibraryPath?objectId=%s' % READING
@@ -166,7 +168,7 @@ class TestPathLookup(ApplicationLayerTest):
 			assert_that(res[2], has_entries('Class', 'RelatedWork',
 											'NTIID', READING))
 			assert_that(res[3], has_entries('Class', 'PageInfo',
-											'NTIID', 'tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.lec:01.03_LESSON'))
+											'NTIID', 'tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.lec:01.03_LESSON' ))
 
 		# Quiz
 		path = '/dataserver2/LibraryPath?objectId=%s' % QUESTION_SET
@@ -214,6 +216,8 @@ class TestPathLookup(ApplicationLayerTest):
 		res = self.testapp.get(path, status=expected_status)
 		res = res.json_body
 
+		page_info = CS1323_PACKAGE if is_legacy else 'tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.lec:01.03_LESSON'
+
 		if expected_status == 403:
 			self._check_catalog(res, res_count=2)
 		else:
@@ -229,7 +233,7 @@ class TestPathLookup(ApplicationLayerTest):
 			assert_that(res[3], has_entries('Class', 'Video',
 											'NTIID', SLIDE_VIDEO))
 			assert_that(res[4], has_entries('Class', 'PageInfo',
-											'NTIID', 'tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.introduction_to_computer_programming'))
+											'NTIID', page_info))
 
 		# SlideDeck
 		path = '/dataserver2/LibraryPath?objectId=%s' % SLIDE_DECK
@@ -251,7 +255,7 @@ class TestPathLookup(ApplicationLayerTest):
 			assert_that(res[3], has_entries('Class', 'Video',
 											'NTIID', SLIDE_VIDEO))
 			assert_that(res[4], has_entries('Class', 'PageInfo',
-											'NTIID', is_in( CS_PAGES )))
+											'NTIID', 'tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.lec:01.03_LESSON'))
 
 	def _do_clc_path_lookup(self, expected_status=200):
 		self._create_discussions()
