@@ -113,16 +113,26 @@ def _index_node_data(node, result=None):
 					result[ntiid] = (_begin, _stub)
 	return result
 
+def _outline_lastModified(context):
+	course = ICourseInstance(context, None)
+	outline = course.Outline if course is not None else None
+	return outline.lastModified if outline is not None else 0
+
 def _flatten_outline(outline):
 	result = {}
 	for node in _outline_nodes(outline):
 		_index_node_data(node, result)
 	return result
 
+def _course_timestamp(context=None):
+	context = ICourseInstance(context, None)
+	result = max(last_synchronized(context), _outline_lastModified(context))
+	return result
+
 def _flatten_and_cache_outline(course, client=None):
 	cached = True
 	site = getSite().__name__
-	lastSync = last_synchronized()
+	lastSync = _course_timestamp(course)
 	ntiid = ICourseCatalogEntry(course).ntiid
 
 	# flatter and cache
@@ -140,7 +150,7 @@ def _flatten_and_cache_outline(course, client=None):
 
 def _is_outline_cached(entry, client=None):
 	site = getSite().__name__
-	lastSync = last_synchronized()
+	lastSync = _course_timestamp(entry)
 	key = _encode(site, entry, "outline", "cached", lastSync)
 	return memcache_get(key, client) == 1
 
@@ -160,7 +170,7 @@ def _get_outline_cache_entry(ntiid, course, entry=None, client=None):
 			result = data.get(ntiid) if data is not None else None
 		else:
 			site = getSite().__name__
-			lastSync = last_synchronized()
+			lastSync = _course_timestamp(course)
 			key = _encode(site, entry, "outline", ntiid, lastSync)
 			result = memcache_get(key, client)
 	return result
@@ -169,7 +179,7 @@ def _get_outline_cache_entry(ntiid, course, entry=None, client=None):
 
 def _get_content_path(ntiid, lastSync=None, client=None):
 	site = getSite().__name__
-	lastSync = last_synchronized() if not lastSync else lastSync
+	lastSync = last_synchronized() if lastSync is None else lastSync
 	key = _encode(site, "pacakge_paths", ntiid, lastSync)
 	result = memcache_get(key, client=client)
 	if result is None:
@@ -204,7 +214,7 @@ class _CourseOutlineCache(object):
 		return memcache_client()
 
 	def _check_against_course_outline(self, entry, course, ntiid, now=None):
-		ntiids = _get_content_path(ntiid, last_synchronized(), self.memcache)
+		ntiids = _get_content_path(ntiid, _course_timestamp(course), self.memcache)
 		for ntiid in ntiids or ():
 			data = _get_outline_cache_entry(ntiid, course, entry, client=self.memcache)
 			if data:
