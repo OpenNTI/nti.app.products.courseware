@@ -165,7 +165,7 @@ def _get_outline_cache_entry(ntiid, course, entry=None, client=None):
 			if not cached:
 				if request is not None:
 					setattr(request, '_v_flatten_outline', data)
-				result = data.get(ntiid)
+			result = data.get(ntiid) if data is not None else None
 		else:
 			result = memcache_get(key, client)
 	return result
@@ -218,7 +218,7 @@ class _CourseOutlineCache(object):
 				result = bool(not is_outline_stub_only) and \
 						 datetime.utcnow() >= beginning
 				return result
-		return True
+		return False # no match set false
 
 	def is_allowed(self, ntiid, query=None, now=None):
 		if query is None:
