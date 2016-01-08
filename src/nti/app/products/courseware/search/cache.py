@@ -31,9 +31,7 @@ from nti.contenttypes.courses.interfaces import ICourseOutlineContentNode
 from nti.contenttypes.courses.utils import is_enrolled
 from nti.contenttypes.courses.utils import is_course_instructor
 
-from nti.contenttypes.presentation.interfaces import INTIAudio
-from nti.contenttypes.presentation.interfaces import INTIVideo
-from nti.contenttypes.presentation.interfaces import INTISlideDeck
+from nti.contenttypes.presentation import PACKAGE_CONTAINER_INTERFACES
 
 from nti.dataserver.users import User
 
@@ -99,23 +97,20 @@ def _index_node_data(node, result=None):
 	paths = library.pathToNTIID(contentNTIID)
 	unit = paths[-1] if paths else None
 	for item in catalog.search_objects(container_ntiids=(unit.ntiid,), sites=sites,
-									   provided=(INTIVideo, INTIAudio, INTISlideDeck),
+									   provided=PACKAGE_CONTAINER_INTERFACES,
 									   intids=intids):
-		ntiid = None
+		# Make sure we get both target and ntiid.
 		for name in ('target', 'ntiid'):
 			check_ntiid = getattr(item, name, None)
 			if _check_ntiid(check_ntiid):
 				ntiid = check_ntiid
-				break
-		if not ntiid:
-			continue
-		if ntiid not in result:
-			result[ntiid] = (beginning, is_outline_stub_only)
-		else:
-			_begin, _stub = result[ntiid]
-			_begin = max(beginning, _begin)  # max date
-			_stub = is_outline_stub_only or _stub  # stub true
-			result[ntiid] = (_begin, _stub)
+				if ntiid not in result:
+					result[ntiid] = (beginning, is_outline_stub_only)
+				else:
+					_begin, _stub = result[ntiid]
+					_begin = max(beginning, _begin)  # max date
+					_stub = is_outline_stub_only or _stub  # stub true
+					result[ntiid] = (_begin, _stub)
 	return result
 
 def _flatten_outline(outline):
@@ -151,15 +146,12 @@ def _is_outline_cached(entry, client=None):
 
 def _get_outline_cache_entry(ntiid, course, entry=None, client=None):
 	result = None
-	site = getSite().__name__
-	lastSync = last_synchronized()
 	request = get_current_request()
 	local = getattr(request, '_v_flatten_outline', None)
 	if local is not None:
 		result = local.get(ntiid)
 	else:
 		entry = ICourseCatalogEntry(course).ntiid if not entry else entry
-		key = _encode(site, entry, "outline", ntiid, lastSync)
 		if not _is_outline_cached(entry, client):
 			data, cached = _flatten_and_cache_outline(course, client)
 			if not cached:
@@ -167,6 +159,9 @@ def _get_outline_cache_entry(ntiid, course, entry=None, client=None):
 					setattr(request, '_v_flatten_outline', data)
 			result = data.get(ntiid) if data is not None else None
 		else:
+			site = getSite().__name__
+			lastSync = last_synchronized()
+			key = _encode(site, entry, "outline", ntiid, lastSync)
 			result = memcache_get(key, client)
 	return result
 
@@ -180,7 +175,7 @@ def _get_content_path(ntiid, lastSync=None, client=None):
 	if result is None:
 		library = component.queryUtility(IContentPackageLibrary)
 		if library and ntiid:
-			paths = library.pathToNTIID(ntiid)
+			paths = library.pathToNTIID( ntiid )
 			result = tuple(p.ntiid for p in paths) if paths else ()
 		result = result or (ntiid,)
 		memcache_set(key, result, client=client)
@@ -215,9 +210,9 @@ class _CourseOutlineCache(object):
 			if data:
 				beginning, is_outline_stub_only = data
 				beginning = beginning or ZERO_DATETIME
-				result = bool(not is_outline_stub_only) and \
-						 datetime.utcnow() >= beginning
-				return result
+				if 	bool(not is_outline_stub_only) and \
+					datetime.utcnow() >= beginning:
+					return True
 		return False # no match set false
 
 	def is_allowed(self, ntiid, query=None, now=None):
