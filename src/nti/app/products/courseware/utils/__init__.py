@@ -39,7 +39,7 @@ from nti.contenttypes.courses.interfaces import INSTRUCTOR
 from nti.contenttypes.courses.interfaces import COURSE_CATALOG_NAME
 
 from nti.contenttypes.courses import get_course_vendor_info
-from nti.contenttypes.courses.utils import get_parent_course 
+from nti.contenttypes.courses.utils import get_parent_course
 from nti.contenttypes.courses.utils import get_course_editors
 
 from nti.contenttypes.courses.interfaces import ICourseCatalog
@@ -180,3 +180,4 @@ def get_assets_folder(context, strict=True):
 			result = root[ASSETS_FOLDER]
 		return result
 	return None
+

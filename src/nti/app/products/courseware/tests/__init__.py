@@ -9,6 +9,8 @@ __docformat__ = "restructuredtext en"
 
 import os
 import os.path
+import shutil
+import tempfile
 
 from zope import component
 from zope import interface
@@ -16,6 +18,8 @@ from zope import interface
 from zope.component.interfaces import IComponents
 
 import ZODB
+
+import zope.testing.cleanup
 
 from nti.contentlibrary.interfaces import IContentPackageLibrary
 
@@ -31,6 +35,47 @@ from nti.app.testing.application_webtest import ApplicationTestLayer
 
 from nti.dataserver.tests.mock_dataserver import WithMockDS
 from nti.dataserver.tests.mock_dataserver import mock_db_trans
+
+from nti.dataserver.tests.mock_dataserver import DSInjectorMixin
+from nti.dataserver.tests.mock_dataserver import DataserverTestLayer
+from nti.dataserver.tests.mock_dataserver import DataserverLayerTest
+
+from nti.testing.layers import find_test
+from nti.testing.layers import GCLayerMixin
+from nti.testing.layers import ZopeComponentLayer
+from nti.testing.layers import ConfiguringLayerMixin
+
+class SharedConfiguringTestLayer(ZopeComponentLayer,
+                                 GCLayerMixin,
+                                 ConfiguringLayerMixin,
+                                 DSInjectorMixin):
+
+	set_up_packages = ('nti.app.products.courseware','nti.contenttypes.courses', 'nti.dataserver')
+
+	@classmethod
+	def setUp(cls):
+		cls.setUpPackages()
+		cls.old_data_dir = os.getenv('DATASERVER_DATA_DIR')
+		cls.new_data_dir = tempfile.mkdtemp(dir="/tmp")
+		os.environ['DATASERVER_DATA_DIR'] = cls.new_data_dir
+
+	@classmethod
+	def tearDown(cls):
+		cls.tearDownPackages()
+		zope.testing.cleanup.cleanUp()
+
+	@classmethod
+	def testSetUp(cls, test=None):
+		cls.setUpTestDS(test)
+		shutil.rmtree(cls.new_data_dir, True)
+		os.environ['DATASERVER_DATA_DIR'] = cls.old_data_dir or '/tmp'
+
+	@classmethod
+	def testTearDown(cls):
+		pass
+
+class CourseLayerTest(DataserverLayerTest):
+	layer = SharedConfiguringTestLayer
 
 def publish_ou_course_entries():
 	lib = component.getUtility(IContentPackageLibrary)

@@ -250,6 +250,12 @@
 				for="nti.contenttypes.courses.interfaces.ICourseCatalogEntry
 					 pyramid.interfaces.IRequest" />
 
+	<subscriber factory=".decorators._SharingScopesAndDiscussionDecorator"
+				provides="nti.externalization.interfaces.IExternalObjectDecorator" />
+
+	<subscriber factory=".decorators._AnnouncementsDecorator"
+				provides="nti.externalization.interfaces.IExternalObjectDecorator" />
+
 	<!-- Workspaces -->
 	<!-- A subscriber for enumeration -->
 	<subscriber factory=".workspaces.CoursesWorkspace"
@@ -339,13 +345,20 @@
 						 .interfaces.ILegacyCommunityBasedCourseInstance"
 		modules=".legacy_catalog .legacy_course .workspaces .enrollment" />
 
-	<configure>
-		<subscriber factory=".decorators._CourseMailLinkDecorator"
-				provides="nti.externalization.interfaces.IExternalMappingDecorator" />
+	<subscriber factory=".decorators._CourseCatalogEntryProviderDecorator"
+				provides="nti.externalization.interfaces.IExternalObjectDecorator" />
 
-		<subscriber factory=".decorators._RosterMailLinkDecorator"
-				provides="nti.externalization.interfaces.IExternalMappingDecorator" />
-	</configure>
+	<subscriber factory=".decorators._LegacyCCEFieldDecorator"
+				provides="nti.externalization.interfaces.IExternalObjectDecorator" />
+
+	<subscriber factory=".decorators._SharedScopesForumDecorator"
+				provides="nti.externalization.interfaces.IExternalObjectDecorator" />
+
+	<subscriber factory=".decorators._CourseMailLinkDecorator"
+			provides="nti.externalization.interfaces.IExternalMappingDecorator" />
+
+	<subscriber factory=".decorators._RosterMailLinkDecorator"
+			provides="nti.externalization.interfaces.IExternalMappingDecorator" />
 
 	<subscriber factory=".decorators._VendorThankYouInfoDecorator"
 				provides="nti.externalization.interfaces.IExternalMappingDecorator" />
