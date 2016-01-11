@@ -27,7 +27,6 @@ from nti.testing.matchers import is_empty
 from nti.testing.matchers import verifiably_provides
 
 import fudge
-import os.path
 import datetime
 import pkg_resources
 
@@ -76,8 +75,6 @@ from nti.externalization.tests import externalizes
 from nti.dataserver.tests.test_authorization_acl import denies
 from nti.dataserver.tests.test_authorization_acl import permits
 
-#from nti.contenttypes.courses.tests import CourseLayerTest
-
 from nti.ntiids import ntiids
 
 from nti.recorder.record import append_records
@@ -86,6 +83,8 @@ from nti.recorder.record import TransactionRecord
 
 from nti.app.products.courseware.tests import CourseLayerTest
 
+# This probably belongs in nti.contenttypes.courses, but some
+# tests below employ the decorators now in app.
 class TestFunctionalSynchronize(CourseLayerTest):
 
 	def setUp(self):
