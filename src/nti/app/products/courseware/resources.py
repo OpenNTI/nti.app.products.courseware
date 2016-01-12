@@ -31,6 +31,7 @@ from nti.contenttypes.courses.legacy_catalog import ILegacyCourseInstance
 
 from nti.contenttypes.courses.utils import is_enrolled
 from nti.contenttypes.courses.utils import get_parent_course
+from nti.contenttypes.courses.utils import get_course_editors
 from nti.contenttypes.courses.utils import is_course_instructor
 
 from nti.dataserver.interfaces import IACLProvider
@@ -114,6 +115,9 @@ class CourseRootFolderACLProvider(object):
 				aces.extend(ace_allowing(i, ALL_PERMISSIONS, type(self))
 							for i in course.instructors or ())
 
+			for i in get_course_editors(course):
+				aces.append(ace_allowing(i, ALL_PERMISSIONS, type(self)))
+				
 			# all scopes have read access
 			course.initScopes()
 			for scope in course.SharingScopes:
@@ -141,7 +145,7 @@ class _CourseResourcesLinkDecorator(PreviewCourseAccessPredicate):
 
 	def _do_decorate_external(self, context, result):
 		_links = result.setdefault(LINKS, [])
-		link = Link(context, rel=RESOURCES, elements=(RESOURCES,))
+		link = Link(context, rel=RESOURCES, elements=('@@'+RESOURCES,))
 		interface.alsoProvides(link, ILocation)
 		link.__name__ = ''
 		link.__parent__ = context

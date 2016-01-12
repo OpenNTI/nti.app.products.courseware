@@ -49,6 +49,8 @@ from nti.contenttypes.courses.utils import get_catalog_entry
 from nti.contenttypes.courses.utils import is_course_instructor
 from nti.contenttypes.courses.utils import get_enrollment_record
 
+from nti.dataserver.interfaces import IUser
+from nti.dataserver.interfaces import IContained
 from nti.dataserver.interfaces import IEntityContainer
 from nti.dataserver.interfaces import ILinkExternalHrefOnly
 
@@ -61,11 +63,10 @@ from nti.externalization.interfaces import StandardExternalFields
 from nti.externalization.interfaces import IExternalObjectDecorator
 from nti.externalization.interfaces import IExternalMappingDecorator
 
-from nti.dataserver.interfaces import IUser
-
 from nti.links.links import Link
 
 from nti.ntiids.ntiids import make_specific_safe
+from nti.ntiids.ntiids import find_object_with_ntiid
 
 from nti.traversal.traversal import find_interface
 
@@ -347,10 +348,6 @@ class _ClassmatesLinkDecorator(_BaseClassmatesLinkDecorator):
 					  self.remoteUser == context and \
 					  has_enrollments(self.remoteUser))
 		return result
-
-from nti.dataserver.interfaces import IContained
-
-from nti.ntiids.ntiids import find_object_with_ntiid
 
 @component.adapter(IContained)
 @interface.implementer(IExternalMappingDecorator)
@@ -697,8 +694,8 @@ class _CourseInstancePreviewExcludingDecorator(PreviewCourseAccessPredicate):
 
 	def _predicate(self, context, result):
 		# We only want to pop entries if the predicate is False.
-		return not super( _CourseInstancePreviewExcludingDecorator, self )._predicate( context, result )
+		return not super(_CourseInstancePreviewExcludingDecorator, self)._predicate(context, result)
 
 	def _do_decorate_external(self, context, result):
-		result.pop( 'ContentPackageBundle' )
-		result.pop( 'Discussions' )
+		result.pop('ContentPackageBundle')
+		result.pop('Discussions')
