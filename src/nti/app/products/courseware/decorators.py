@@ -697,5 +697,5 @@ class _CourseInstancePreviewExcludingDecorator(PreviewCourseAccessPredicate):
 		return not super(_CourseInstancePreviewExcludingDecorator, self)._predicate(context, result)
 
 	def _do_decorate_external(self, context, result):
-		result.pop('ContentPackageBundle')
+		#result.pop('ContentPackageBundle')
 		result.pop('Discussions')
