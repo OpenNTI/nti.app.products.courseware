@@ -214,7 +214,9 @@ class PreviewCourseAccessPredicate( AbstractAuthenticatedRequestAwareDecorator )
 		The course is not in preview mode, or we are an editor,
 		instructor, or content admin.
 		"""
+		result = super( PreviewCourseAccessPredicate, self )._predicate( context, result )
 		course = ICourseInstance( context )
-		return not self._is_preview( course ) \
-			or self._is_content_admin() \
-			or is_course_instructor_or_editor( course, self.remoteUser )
+		return result \
+			and ( 	not self._is_preview( course ) \
+				or self._is_content_admin() \
+				or is_course_instructor_or_editor( course, self.remoteUser ))
