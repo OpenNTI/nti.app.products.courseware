@@ -23,8 +23,14 @@ from zope.intid.interfaces import IIntIds
 
 from zope.security.interfaces import IPrincipal
 
+from zope.securitypolicy.interfaces import Allow
+
+from zope.securitypolicy.principalrole import principalRoleManager
+
 from zope.traversing.api import traverse
 from zope.traversing.interfaces import IEtcNamespace
+
+from nti.app.renderers.decorators import AbstractAuthenticatedRequestAwareDecorator
 
 from nti.contentfolder.model import ContentFolder
 
@@ -41,11 +47,14 @@ from nti.contenttypes.courses.interfaces import COURSE_CATALOG_NAME
 from nti.contenttypes.courses import get_course_vendor_info
 from nti.contenttypes.courses.utils import get_parent_course
 from nti.contenttypes.courses.utils import get_course_editors
+from nti.contenttypes.courses.utils import is_course_instructor_or_editor
 
 from nti.contenttypes.courses.interfaces import ICourseCatalog
 from nti.contenttypes.courses.interfaces import ICourseInstance
 from nti.contenttypes.courses.interfaces import ICourseSubInstance
 from nti.contenttypes.courses.interfaces import ICourseCatalogEntry
+
+from nti.dataserver.authorization import ROLE_CONTENT_ADMIN
 
 from nti.dataserver.interfaces import IMemcacheClient
 
@@ -181,3 +190,31 @@ def get_assets_folder(context, strict=True):
 		return result
 	return None
 
+class PreviewCourseAccessPredicate( AbstractAuthenticatedRequestAwareDecorator ):
+	"""
+	A predicate useful when determining whether the remote user has access to
+	course materials when the course is in preview mode. The context must be
+	adaptable to an `ICourseInstance`.
+	"""
+
+	def _is_content_admin(self):
+		roles = principalRoleManager.getRolesForPrincipal(
+											self.remoteUser.username )
+		for role, access in roles or ():
+			if role == ROLE_CONTENT_ADMIN.id and access == Allow:
+				return True
+		return False
+
+	def _is_preview(self, course):
+		entry = ICourseCatalogEntry( course, None )
+		return entry is not None and entry.Preview
+
+	def _predicate(self, context, result):
+		"""
+		The course is not in preview mode, or we are an editor,
+		instructor, or content admin.
+		"""
+		course = ICourseInstance( context )
+		return not self._is_preview( course ) \
+			or self._is_content_admin() \
+			or is_course_instructor_or_editor( course, self.remoteUser )

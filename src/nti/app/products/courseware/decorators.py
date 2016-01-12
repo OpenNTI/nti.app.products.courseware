@@ -18,12 +18,6 @@ from zope import interface
 
 from zope.location.interfaces import ILocation
 
-from zope.securitypolicy.interfaces import Allow
-
-from zope.securitypolicy.principalrole import principalRoleManager
-
-from nti.dataserver.authorization import ROLE_CONTENT_ADMIN
-
 from pyramid.threadlocal import get_current_request
 
 from nti.app.renderers.decorators import AbstractAuthenticatedRequestAwareDecorator
@@ -54,7 +48,6 @@ from nti.contenttypes.courses.utils import is_course_editor
 from nti.contenttypes.courses.utils import get_catalog_entry
 from nti.contenttypes.courses.utils import is_course_instructor
 from nti.contenttypes.courses.utils import get_enrollment_record
-from nti.contenttypes.courses.utils import is_course_instructor_or_editor
 
 from nti.dataserver.interfaces import IEntityContainer
 from nti.dataserver.interfaces import ILinkExternalHrefOnly
@@ -87,6 +80,7 @@ from . import VIEW_COURSE_ENROLLMENT_ROSTER
 
 from .utils import get_enrollment_options
 from .utils import get_vendor_thank_you_page
+from .utils import PreviewCourseAccessPredicate
 
 from .interfaces import ACT_VIEW_ACTIVITY
 from .interfaces import IOpenEnrollmentOption
@@ -226,14 +220,12 @@ class _CourseInstanceStreamLinkDecorator(object):
 
 @interface.implementer(IExternalMappingDecorator)
 @component.adapter(ICourseInstance)
-class _CourseInstancePagesLinkDecorator(object):
+class _CourseInstancePagesLinkDecorator(PreviewCourseAccessPredicate):
 	"""
 	Places a link to the pages view of a course.
 	"""
 
-	__metaclass__ = SingletonDecorator
-
-	def decorateExternalMapping(self, context, result):
+	def _do_decorate_external(self, context, result):
 		_links = result.setdefault(LINKS, [])
 
 		link = Link(context, rel='Pages', elements=('Pages',))
@@ -244,15 +236,12 @@ class _CourseInstancePagesLinkDecorator(object):
 
 @interface.implementer(IExternalMappingDecorator)
 @component.adapter(ICourseOutline)
-class _CourseOutlineContentsLinkDecorator(object):
+class _CourseOutlineContentsLinkDecorator(PreviewCourseAccessPredicate):
 	"""
 	Adds the Contents link to the course outline to fetch its children.
 	"""
-	# See comments in other places about generalization
 
-	__metaclass__ = SingletonDecorator
-
-	def decorateExternalMapping(self, context, result):
+	def _do_decorate_external(self, context, result):
 		_links = result.setdefault(LINKS, [])
 		link = Link(context, rel=VIEW_CONTENTS, elements=(VIEW_CONTENTS,),
 					params={'omit_unpublished': True})
@@ -450,43 +439,9 @@ class _CourseDiscussionsLinkDecorator(AbstractAuthenticatedRequestAwareDecorator
 		link.__parent__ = context
 		_links.append(link)
 
-class PreviewCourseAccessPredicate(AbstractAuthenticatedRequestAwareDecorator):
-
-	def _is_content_admin(self):
-		roles = principalRoleManager.getRolesForPrincipal(
-											self.remoteUser.username )
-		for role, access in roles or ():
-			if role == ROLE_CONTENT_ADMIN.id and access == Allow:
-				return True
-		return False
-
-	def _predicate(self):
-		entry = ICourseCatalogEntry( self.context )
-		return not entry.Preview \
-			or self._is_content_admin() \
-			or is_course_instructor_or_editor(self.context, self.remoteUser)
-
-# @interface.implementer(IExternalMappingDecorator)
-# @component.adapter(ICourseInstance)
-# class _CourseInstancePreviewDecorator(PreviewCourseAccessPredicate):
-# 	"""
-# 	Removes entries that should not be visible to a user
-# 	when the context is in preview mode.
-# 	"""
-#
-# 	__metaclass__ = SingletonDecorator
-#
-# 	def _predicate(self):
-# 		# We only want to pop entries if the predicate fails.
-# 		return not super( _CourseInstancePreviewDecorator, self )._predicate()
-#
-# 	def decorateExternalMapping(self, context, result):
-# 		result.pop( 'Outline' )
-
-
 @interface.implementer(IExternalObjectDecorator)
 @component.adapter(ICourseInstance, interface.Interface)
-class _SharingScopesAndDiscussionDecorator(AbstractAuthenticatedRequestAwareDecorator):
+class _SharingScopesAndDiscussionDecorator(PreviewCourseAccessPredicate):
 
 	def _do_decorate_external(self, context, result):
 		is_section = ICourseSubInstance.providedBy(context)
@@ -568,7 +523,7 @@ class _SharingScopesAndDiscussionDecorator(AbstractAuthenticatedRequestAwareDeco
 
 @interface.implementer(IExternalObjectDecorator)
 @component.adapter(ICourseInstance, interface.Interface)
-class _AnnouncementsDecorator(AbstractAuthenticatedRequestAwareDecorator):
+class _AnnouncementsDecorator(PreviewCourseAccessPredicate):
 	"""
 	Adds announcement discussions to externalized course, by scope.
 	"""
@@ -724,10 +679,26 @@ class _SharedScopesForumDecorator(AbstractAuthenticatedRequestAwareDecorator):
 		if not scope_name:
 			scope_name = getattr(context, 'SharingScopeName', None)
 		if not scope_name:
-			# ok, is it on the tagged value?
+			# Ok, is it on the tagged value?
 			provided_by = interface.providedBy(context)
 			scope_name = provided_by.get('SharingScopeName').queryTaggedValue('value')
 
 		if scope_name:
 			result.setdefault('AutoTags', []).append('SharingScopeName=' + scope_name)
 			result['SharingScopeName'] = scope_name
+
+@interface.implementer(IExternalObjectDecorator)
+@component.adapter(ICourseInstance)
+class _CourseInstancePreviewExcludingDecorator(PreviewCourseAccessPredicate):
+	"""
+	Removes external entries that should not be visible to a user
+	when the context is in preview mode.
+	"""
+
+	def _predicate(self, context, result):
+		# We only want to pop entries if the predicate is False.
+		return not super( _CourseInstancePreviewExcludingDecorator, self )._predicate( context, result )
+
+	def _do_decorate_external(self, context, result):
+		result.pop( 'ContentPackageBundle' )
+		result.pop( 'Discussions' )

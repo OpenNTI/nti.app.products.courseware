@@ -97,6 +97,9 @@
 	<!-- Community to course -->
 	<adapter factory=".legacy_course._course_instance_for_community" />
 
+	<!-- Outline to course -->
+	<adapter factory=".adapters._outline_to_course" />
+
 	<!-- And the content packages to the course instance -->
 	<adapter factory=".adapters._content_unit_to_course" />
 	<adapter factory=".adapters._content_unit_and_user_to_course" />
@@ -369,17 +372,26 @@
 	<subscriber factory=".decorators._CourseInstanceStreamLinkDecorator"
 				provides="nti.externalization.interfaces.IExternalMappingDecorator" />
 
-	<subscriber factory=".decorators._CourseInstancePagesLinkDecorator"
-				provides="nti.externalization.interfaces.IExternalMappingDecorator" />
-
-	<subscriber factory=".decorators._CourseOutlineContentsLinkDecorator"
-				provides="nti.externalization.interfaces.IExternalMappingDecorator" />
-
 	<subscriber factory=".decorators._CourseEnrollmentUserProfileDetailsDecorator"
 				provides="nti.externalization.interfaces.IExternalMappingDecorator" />
 
 	<subscriber factory=".decorators._CourseCatalogEntryLegacyDecorator"
 				provides="nti.externalization.interfaces.IExternalMappingDecorator" />
+
+	<subscriber factory=".decorators._CourseInstancePreviewExcludingDecorator"
+				provides="nti.externalization.interfaces.IExternalObjectDecorator"
+				for="nti.contenttypes.courses.interfaces.ICourseInstance
+					 pyramid.interfaces.IRequest" />
+
+	<subscriber factory=".decorators._CourseInstancePagesLinkDecorator"
+				provides="nti.externalization.interfaces.IExternalMappingDecorator"
+				for="nti.contenttypes.courses.interfaces.ICourseInstance
+					 pyramid.interfaces.IRequest" />
+
+	<subscriber factory=".decorators._CourseOutlineContentsLinkDecorator"
+				provides="nti.externalization.interfaces.IExternalMappingDecorator"
+				for="nti.contenttypes.courses.interfaces.ICourseOutline
+					 pyramid.interfaces.IRequest" />
 
 	<subscriber factory=".decorators._ContainedCatalogEntryDecorator"
 				provides="nti.externalization.interfaces.IExternalMappingDecorator"

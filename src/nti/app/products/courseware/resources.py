@@ -21,8 +21,6 @@ from zope.location.interfaces import ILocation
 
 from zope.security.interfaces import IPrincipal
 
-from nti.app.renderers.decorators import AbstractAuthenticatedRequestAwareDecorator
-
 from nti.common.property import Lazy
 
 from nti.contentfolder.model import RootFolder
@@ -53,6 +51,8 @@ from nti.links.links import Link
 from nti.traversal.traversal import find_interface
 
 from .interfaces import ICourseRootFolder
+
+from .utils import PreviewCourseAccessPredicate
 
 RESOURCES = 'resources'
 LINKS = StandardExternalFields.LINKS
@@ -129,12 +129,13 @@ class CourseRootFolderACLProvider(object):
 		return result
 
 @interface.implementer(IExternalMappingDecorator)
-class _CourseResourcesLinkDecorator(AbstractAuthenticatedRequestAwareDecorator):
+class _CourseResourcesLinkDecorator(PreviewCourseAccessPredicate):
 
 	def _predicate(self, context, result):
 		user = self.remoteUser
 		course = ICourseInstance(context, None)
-		return 		bool(self._is_authenticated) \
+		return 		super(_CourseResourcesLinkDecorator,self)._predicate( context, result ) \
+				and	bool(self._is_authenticated) \
 				and not ILegacyCourseInstance.providedBy(course) \
 				and (is_enrolled(context, user) or is_course_instructor(context, user))
 

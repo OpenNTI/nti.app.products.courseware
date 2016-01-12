@@ -40,6 +40,7 @@ from nti.contentlibrary.interfaces import IContentPackageBundle
 from nti.contentlibrary.indexed_data import get_library_catalog
 
 from nti.contenttypes.courses.interfaces import ICourseCatalog
+from nti.contenttypes.courses.interfaces import ICourseOutline
 from nti.contenttypes.courses.interfaces import ICourseInstance
 from nti.contenttypes.courses.interfaces import ICourseEnrollments
 from nti.contenttypes.courses.interfaces import ICourseSubInstance
@@ -72,6 +73,12 @@ from .interfaces import ILegacyCommunityBasedCourseInstance
 from .interfaces import ILegacyCourseConflatedContentPackageUsedAsCourse
 
 from . import USER_ENROLLMENT_LAST_MODIFIED_KEY
+
+@component.adapter(ICourseOutline)
+@interface.implementer(ICourseInstance)
+def _outline_to_course(outline):
+	result = find_interface(outline, ICourseInstance, strict=False)
+	return result
 
 @interface.implementer(IContentPackageBundle)
 @component.adapter(ILegacyCommunityBasedCourseInstance)
