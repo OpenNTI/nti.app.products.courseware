@@ -12,6 +12,7 @@ logger = __import__('logging').getLogger(__name__)
 import zope.i18nmessageid
 MessageFactory = zope.i18nmessageid.MessageFactory('nti.app.products.courseware')
 
+#: Folder for storing course assets
 ASSETS_FOLDER = 'assets'
 
 USER_ENROLLMENT_LAST_MODIFIED_KEY = 'nti.app.products.courseware.UserEnrollmentLastModified'

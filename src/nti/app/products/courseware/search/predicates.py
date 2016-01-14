@@ -14,6 +14,14 @@ from zope import interface
 
 from zope.component.hooks import getSite
 
+from nti.app.products.courseware.search import encode_keys
+from nti.app.products.courseware.search import memcache_get
+from nti.app.products.courseware.search import memcache_set
+from nti.app.products.courseware.search import memcache_client
+from nti.app.products.courseware.search import last_synchronized
+
+from nti.app.products.courseware.search.interfaces import ICourseOutlineCache
+
 from nti.assessment.interfaces import IQSurvey
 from nti.assessment.interfaces import IQAssignment
 
@@ -32,14 +40,6 @@ from nti.ntiids.ntiids import TYPE_OID
 from nti.ntiids.ntiids import is_ntiid_of_types
 
 from nti.site.site import get_component_hierarchy_names
-
-from .interfaces import ICourseOutlineCache
-
-from . import encode_keys
-from . import memcache_get
-from . import memcache_set
-from . import memcache_client
-from . import last_synchronized
 
 @interface.implementer(ISearchHitPredicate)
 class _BasePredicate(object):
@@ -87,17 +87,17 @@ class _VideoContentHitPredicate(_BasePredicate):
 class _NTICardContentHitPredicate(_BasePredicate):
 
 	def allow(self, item, score, query=None):
-		result = self._is_allowed(item.containerId, query) and \
-				 self._is_allowed(item.target_ntiid, query)
+		result =	 self._is_allowed(item.containerId, query) \
+				 and self._is_allowed(item.target_ntiid, query)
 		return result
 
 @interface.implementer(ISearchHitPredicate)
 class _CreatedContentHitPredicate(_BasePredicate):
 
 	def _allowed(self, containerId, query):
-		return bool(not containerId or \
-					is_ntiid_of_types(containerId, (TYPE_OID,)) or \
-					self._is_allowed(containerId, query))
+		return bool(	not containerId \
+					or	is_ntiid_of_types(containerId, (TYPE_OID,)) \
+					or	self._is_allowed(containerId, query))
 
 	def allow(self, item, score, query=None):
 		resolver = IContainerIDResolver(item, None)
@@ -120,14 +120,14 @@ class _ContentAssesmentHitPredicate(_BasePredicate):
 									  provided=(IQAssignment, IQSurvey))
 		result = bool(refs)
 		return result
-	
+
 	def cache_key(self, ntiid):
 		site = getSite().__name__
 		clazz = self.__class__.__name__
 		lastSync = last_synchronized()
 		result = '/search/%s' % encode_keys(site, clazz, ntiid, lastSync)
 		return result
-	
+
 	def _is_allowed(self, ntiid, query=None, now=None):
 		key = self.cache_key(ntiid)
 		result = memcache_get(key, self.memcache)

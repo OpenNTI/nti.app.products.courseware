@@ -9,10 +9,10 @@ __docformat__ = "restructuredtext en"
 
 logger = __import__('logging').getLogger(__name__)
 
-from ..utils import DEFAULT_EXP_TIME
+from nti.app.products.courseware.utils import DEFAULT_EXP_TIME
 
-from ..utils import encode_keys
-from ..utils import memcache_get
-from ..utils import memcache_set
-from ..utils import memcache_client
-from ..utils import last_synchronized
+from nti.app.products.courseware.utils import encode_keys
+from nti.app.products.courseware.utils import memcache_get
+from nti.app.products.courseware.utils import memcache_set
+from nti.app.products.courseware.utils import memcache_client
+from nti.app.products.courseware.utils import last_synchronized

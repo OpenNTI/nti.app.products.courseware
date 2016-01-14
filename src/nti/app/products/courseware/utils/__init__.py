@@ -30,6 +30,16 @@ from zope.securitypolicy.principalrole import principalRoleManager
 from zope.traversing.api import traverse
 from zope.traversing.interfaces import IEtcNamespace
 
+from nti.app.products.courseware import ASSETS_FOLDER
+
+from nti.app.products.courseware.enrollment import EnrollmentOptions
+
+from nti.app.products.courseware.interfaces import ICourseRootFolder
+from nti.app.products.courseware.interfaces import IUserAdministeredCourses
+from nti.app.products.courseware.interfaces import IEnrollmentOptionProvider
+
+from nti.app.products.courseware.utils.course_migrator import migrate as course_migrator
+
 from nti.app.renderers.decorators import AbstractAuthenticatedRequestAwareDecorator
 
 from nti.contentfolder.model import ContentFolder
@@ -62,19 +72,10 @@ from nti.site.site import get_component_hierarchy_names
 
 from nti.traversal.traversal import find_interface
 
-from ..enrollment import EnrollmentOptions
-
-from ..interfaces import IUserAdministeredCourses
-from ..interfaces import IEnrollmentOptionProvider
-
-from .course_migrator import migrate as course_migrator
-
-from ..interfaces import ICourseRootFolder
-
-from .. import ASSETS_FOLDER
-
+#: Default memcache expiration time
 DEFAULT_EXP_TIME = 86400
 
+#: 1970-01-1
 ZERO_DATETIME = datetime.utcfromtimestamp(0)
 
 def last_synchronized(context=None):
@@ -190,7 +191,7 @@ def get_assets_folder(context, strict=True):
 		return result
 	return None
 
-class PreviewCourseAccessPredicate( AbstractAuthenticatedRequestAwareDecorator ):
+class PreviewCourseAccessPredicateDecorator(AbstractAuthenticatedRequestAwareDecorator):
 	"""
 	A predicate useful when determining whether the remote user has access to
 	course materials when the course is in preview mode. The context must be
@@ -199,14 +200,14 @@ class PreviewCourseAccessPredicate( AbstractAuthenticatedRequestAwareDecorator )
 
 	def _is_content_admin(self):
 		roles = principalRoleManager.getRolesForPrincipal(
-											self.remoteUser.username )
+											self.remoteUser.username)
 		for role, access in roles or ():
 			if role == ROLE_CONTENT_ADMIN.id and access == Allow:
 				return True
 		return False
 
 	def _is_preview(self, course):
-		entry = ICourseCatalogEntry( course, None )
+		entry = ICourseCatalogEntry(course, None)
 		return entry is not None and entry.Preview
 
 	def _predicate(self, context, result):
@@ -214,9 +215,11 @@ class PreviewCourseAccessPredicate( AbstractAuthenticatedRequestAwareDecorator )
 		The course is not in preview mode, or we are an editor,
 		instructor, or content admin.
 		"""
-		result = super( PreviewCourseAccessPredicate, self )._predicate( context, result )
-		course = ICourseInstance( context )
+		result = super(PreviewCourseAccessPredicate, self)._predicate(context, result)
+		course = ICourseInstance(context)
 		return result \
-			and ( 	not self._is_preview( course ) \
-				or self._is_content_admin() \
-				or is_course_instructor_or_editor( course, self.remoteUser ))
+			and (not self._is_preview(course) \
+				 or self._is_content_admin() \
+				 or is_course_instructor_or_editor(course, self.remoteUser))
+
+PreviewCourseAccessPredicate = PreviewCourseAccessPredicateDecorator # BWC

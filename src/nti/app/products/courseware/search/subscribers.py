@@ -50,6 +50,6 @@ class _RootSearchPacakgeResolver(object):
 				context = ICourseInstance(context, None)
 				for package in get_course_packages(context):
 					ntiid = package.ntiid
-					if ntiid:  # make sure we a valid ntiid
+					if ntiid: # make sure we a valid ntiid
 						result.add(package.ntiid)
 		return result
