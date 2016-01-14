@@ -10,8 +10,6 @@ logger = __import__('logging').getLogger(__name__)
 
 from datetime import datetime
 
-from pyramid.threadlocal import get_current_request
-
 from zope import component
 from zope import interface
 
@@ -19,7 +17,18 @@ from zope.component.hooks import getSite
 
 from zope.intid.interfaces import IIntIds
 
+from pyramid.threadlocal import get_current_request
+
 from nti.common.property import Lazy
+
+from nti.app.products.courseware.search import encode_keys
+from nti.app.products.courseware.search import memcache_get
+from nti.app.products.courseware.search import memcache_set
+from nti.app.products.courseware.search import memcache_client
+from nti.app.products.courseware.search import last_synchronized
+from nti.app.products.courseware.search.interfaces import ICourseOutlineCache
+
+from nti.app.products.courseware.utils import ZERO_DATETIME
 
 from nti.contentlibrary.indexed_data import get_library_catalog
 from nti.contentlibrary.interfaces import IContentPackageLibrary
@@ -43,16 +52,6 @@ from nti.ntiids.ntiids import is_ntiid_of_types
 from nti.ntiids.ntiids import find_object_with_ntiid
 
 from nti.site.site import get_component_hierarchy_names
-
-from ..utils import ZERO_DATETIME
-
-from .interfaces import ICourseOutlineCache
-
-from . import encode_keys
-from . import memcache_get
-from . import memcache_set
-from . import memcache_client
-from . import last_synchronized
 
 # memcache
 
