@@ -19,4 +19,8 @@ class ICourseOutlineCache(interface.Interface):
     def is_allowed(ntiid, query=None, now=None):
         """
         returns true if the specified query is allowed over the specified NTIID
+        
+        :param ntiid: The [container] NTIID
+        :param query: The search query
+        :param now: Current time
         """
