@@ -308,23 +308,36 @@ def _hierarchy_from_obj_and_user(obj, user):
 	target_ntiid = _get_target_ntiid(obj)
 	results = []
 	catalog_entries = set()
+	caught_exception = None
+
 	for course in possible_courses:
 		if ICourseCatalogEntry.providedBy(course):
 			catalog_entries.add(course)
 		else:
-			nodes = OutlinePathFactory(course, target_ntiid)()
-			if nodes and len(nodes) > 1:
-				results.append(nodes)
+			try:
+				nodes = OutlinePathFactory(course, target_ntiid)()
+			except ForbiddenContextException as e:
+				# Catch and see if other courses have an acceptable path.
+				caught_exception = e
+			else:
+				if nodes and len(nodes) > 1:
+					results.append(nodes)
 
-	# This is an edge case.  We have courses and catalog entries,
-	# but our target NTIID only exists in a catalog entry that
-	# may or may not be open. If we can't find our ntiid in our
-	# course outlines, assume we don't have access and raise.
-	# XXX: Not sure this is a good assumption.
-	if container_courses and catalog_entries and not results:
-		raise ForbiddenContextException(catalog_entries)
-	# No outline nodes, but we did have courses.
 	if not results:
+		if caught_exception is not None:
+			# No path found and this exception indicates the path goes through
+			# an unpublished object. This case is unlikely.
+			raise caught_exception
+
+		# This is an edge case.  We have courses and catalog entries,
+		# but our target NTIID only exists in a catalog entry that
+		# may or may not be open. If we can't find our ntiid in our
+		# course outlines, assume we don't have access and raise.
+		# XXX: Not sure this is a good assumption.
+		if container_courses and catalog_entries:
+			raise ForbiddenContextException(catalog_entries)
+
+		# No outline nodes, but we did have courses.
 		results = [ (x,) for x in possible_courses ]
 	return results
 

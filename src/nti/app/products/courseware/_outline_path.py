@@ -13,6 +13,8 @@ from zope import component
 
 from pyramid.threadlocal import get_current_request
 
+from nti.appserver.interfaces import ForbiddenContextException
+
 from nti.appserver.pyramid_authorization import has_permission
 
 from nti.common.property import Lazy
@@ -153,14 +155,6 @@ class OutlinePathFactory(object):
 			results = (item,)
 		return results
 
-	def _is_visible(self, item):
-		"""
-		Object is published or we're an editor.
-		"""
-		return 		not IPublishable.providedBy(item) \
-				or 	item.is_published() \
-				or	has_permission(nauth.ACT_CONTENT_EDIT, item, self.request)
-
 	def _overview_item_contains_target(self, item, check_contained=True):
 		"""
 		Check if the overview item contains our target object. The simple case
@@ -218,18 +212,33 @@ class OutlinePathFactory(object):
 						pass
 		return result
 
+	def _is_visible(self, item):
+		"""
+		Object is published or we're an editor.
+		"""
+		return 		not IPublishable.providedBy(item) \
+				or 	item.is_published() \
+				or	has_permission(nauth.ACT_CONTENT_EDIT, item, self.request)
+
+	def _validate_path_visibility(self, path):
+		"""
+		Validate all of our path objects are accessible (published) by
+		our user. Otherwise we'll return a 403.
+		"""
+		for item in path:
+			if not self._is_visible( item ):
+				raise ForbiddenContextException()
+
 	def _lesson_overview_contains_target(self, outline_content_node, lesson_overview):
 		def _do_check(check_contained=True):
 			for overview_group in lesson_overview.items or ():
-				if not self._is_visible( overview_group ):
-					continue
 				for item in overview_group.items or ():
-					if 		self._is_visible( item ) \
-						and self._overview_item_contains_target(item, check_contained):
+					if self._overview_item_contains_target(item, check_contained):
 						endpoints = self._get_outline_result_items(item, lesson_overview)
 						# Return our course, leaf outline node, and overview.
 						results = [self.course_context, outline_content_node]
 						results.extend(endpoints)
+						self._validate_path_visibility( (outline_content_node, lesson_overview, endpoints) )
 						return results
 
 		results = None
@@ -259,8 +268,6 @@ class OutlinePathFactory(object):
 		outline = self.course_context.Outline
 		for outline_node in outline.values():
 			for outline_content_node in outline_node.values():
-				if not self._is_visible( outline_content_node ):
-					continue
 
 				if getattr( outline_content_node, 'ContentNTIID', None ) == self.target_ntiid:
 					return (self.course_context, outline_content_node)
@@ -271,8 +278,7 @@ class OutlinePathFactory(object):
 
 				lesson_overview = component.queryUtility(INTILessonOverview,
 														name=lesson_ntiid)
-				if 		lesson_overview is None \
-					or 	not self._is_visible( lesson_overview ):
+				if lesson_overview is None:
 					continue
 
 				results = self._lesson_overview_contains_target(outline_content_node,
