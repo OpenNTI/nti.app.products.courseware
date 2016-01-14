@@ -53,7 +53,6 @@ class TestMailViews(ApplicationLayerTest):
 	layer = InstructedCourseApplicationTestLayer
 	testapp = None
 
-	# XXX: This only works in the OU environment because that's where the purchasables are
 	default_origin = b'http://janux.ou.edu'
 	course_ntiid = 'tag:nextthought.com,2011-10:NTI-CourseInfo-Fall2013_CLC3403_LawAndJustice'
 	external_reply_to = 'jzuech3@gmail.com'

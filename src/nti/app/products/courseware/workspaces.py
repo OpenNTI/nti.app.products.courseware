@@ -46,8 +46,10 @@ from nti.contenttypes.courses.interfaces import ICourseCatalogEntry
 from nti.contenttypes.courses.interfaces import IPrincipalEnrollments
 
 from nti.dataserver.interfaces import IUser
+from nti.dataserver.interfaces import IGroupMember
 
 from nti.dataserver.authorization import ACT_DELETE
+from nti.dataserver.authorization import ROLE_ADMIN
 from nti.dataserver.authorization import ROLE_CONTENT_ADMIN
 
 from nti.dataserver.authorization_acl import ace_allowing
@@ -436,6 +438,12 @@ class _DefaultPrincipalAdministrativeRoleCatalog(object):
 	def __init__(self, user):
 		self.user = user
 
+	def _is_admin(self):
+		for _, adapter in component.getAdapters( (self.user,), IGroupMember ):
+			if adapter.groups and ROLE_ADMIN in adapter.groups:
+				return True
+		return False
+
 	def _is_content_admin(self):
 		roles = principalRoleManager.getRolesForPrincipal( self.user.username )
 		for role, access in roles or ():
@@ -459,7 +467,7 @@ class _DefaultPrincipalAdministrativeRoleCatalog(object):
 
 	def _get_course_iterator(self):
 		result = self._iter_admin_courses
-		if self._is_content_admin():
+		if self._is_content_admin() or self._is_admin():
 			result = self._iter_all_courses
 		return result
 
