@@ -38,6 +38,7 @@ from nti.contenttypes.courses.interfaces import ICourseCatalogEntry
 from nti.contenttypes.courses.interfaces import ICourseOutlineContentNode
 
 from nti.contenttypes.courses.utils import is_enrolled
+from nti.contenttypes.courses.utils import get_course_packages
 from nti.contenttypes.courses.utils import is_course_instructor
 
 from nti.contenttypes.presentation import PACKAGE_CONTAINER_INTERFACES
@@ -139,6 +140,11 @@ def _flatten_and_cache_outline(course, client=None):
 	for key, value in result.items():
 		key = _encode(site, ntiid, "outline", key, lastSync)
 		cached = cached and memcache_set(key, value, client=client)
+
+	# add main course pkg ntiids
+	for pkg in get_course_packages(course):
+		key = _encode(site, ntiid, "outline", pkg.ntiid, lastSync)
+		cached = cached and memcache_set(key, (ZERO_DATETIME, False), client=client)
 
 	# mark as cached
 	key = _encode(site, ntiid, "outline", "cached", lastSync)
