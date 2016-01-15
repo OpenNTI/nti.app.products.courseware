@@ -39,7 +39,7 @@ class TestContextProviders(ApplicationLayerTest):
 
 	@WithSharedApplicationMockDS(users=True, testapp=True)
 	@fudge.patch('nti.app.products.courseware.adapters.get_library_catalog')
-	@fudge.patch('nti.app.products.courseware.adapters.is_readable')
+	@fudge.patch('nti.app.products.courseware.adapters._is_catalog_entry_visible')
 	@fudge.patch('nti.app.products.courseware.adapters._is_user_enrolled')
 	def test_providers(self, mock_get_catalog, mock_readable, mock_enrolled):
 		containerId = "tag:nextthought.com,2011-10:OU-HTML-CLC3403_LawAndJustice.sec:04.01_RequiredReading"

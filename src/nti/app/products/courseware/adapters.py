@@ -47,6 +47,7 @@ from nti.contenttypes.courses.interfaces import ICourseSubInstance
 from nti.contenttypes.courses.interfaces import ICourseCatalogEntry
 from nti.contenttypes.courses.interfaces import IPrincipalEnrollments
 from nti.contenttypes.courses.interfaces import IContentCourseInstance
+from nti.contenttypes.courses.interfaces import INonPublicCourseInstance
 
 from nti.contenttypes.courses.discussions.interfaces import ICourseDiscussion
 
@@ -209,7 +210,9 @@ def _get_top_level_contexts(obj):
 	return results
 
 def _is_catalog_entry_visible( entry ):
-	return entry is not None and is_readable(entry)
+	return 	entry is not None \
+		and not INonPublicCourseInstance.providedBy( entry ) \
+		and is_readable(entry)
 
 def _get_valid_course_context(course_contexts):
 	"""
@@ -223,32 +226,26 @@ def _get_valid_course_context(course_contexts):
 		course_contexts = (course_contexts,)
 
 	user = get_remote_user()
-	results = []
+	courses = []
+	catalog_entries = []
 	for course_context in course_contexts:
 		if ICourseCatalogEntry.providedBy(course_context):
-			if is_readable(course_context):
-				results.append(course_context)
+			if _is_catalog_entry_visible( course_context ):
+				catalog_entries.append(course_context)
 		elif 	not _is_user_enrolled(user, course_context) \
 			and not is_course_editor(course_context, user):
 			# Not enrolled and not an editor, get catalog entry.
 			catalog_entry = ICourseCatalogEntry(course_context, None)
 			# We only want to add publicly available entries.
 			if _is_catalog_entry_visible( catalog_entry ):
-				results.append(catalog_entry)
+				catalog_entries.append(catalog_entry)
 		else:
-			results.append(course_context)
+			courses.append(course_context)
 
 	# If we only have catalog entries, we should raise.
 	# Otherwise, make sure our courses are returned first.
-	courses = []
-	catalog_entries = []
-	for context in results:
-		if ICourseInstance.providedBy(context):
-			courses.append(context)
-		else:
-			catalog_entries.append(context)
 	if not courses and catalog_entries:
-		raise ForbiddenContextException(results)
+		raise ForbiddenContextException(catalog_entries)
 
 	return courses + catalog_entries
 
