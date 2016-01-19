@@ -154,15 +154,15 @@ class _AbstractEnrollingBase(object):
 		course_instance = role['CourseInstance']
 
 		assert_that(course_instance,
-					 has_entries('Class', self.expected_instance_class,
-								  'href', self.expected_instance_href,
-								  'Outline', has_entry('Links', has_item(has_entry('rel', 'contents'))),
-								  # 'instructors', has_item( has_entry('Username', 'harp4162')),
-								  'Links', has_item(has_entry('rel', 'CourseCatalogEntry')),
-								  'Links', has_item(has_entry('rel', VIEW_COURSE_RECURSIVE)),
-								  'Links', has_item(has_entry('rel', 'CourseEnrollmentRoster')),
-								  'Links', has_item(has_entry('rel', VIEW_COURSE_RECURSIVE_BUCKET)),
-								  'Links', has_item(has_entry('rel', 'Pages'))))
+					has_entries('Class', self.expected_instance_class,
+								'href', self.expected_instance_href,
+								'Outline', has_entry('Links', has_item(has_entry('rel', 'contents'))),
+								# 'instructors', has_item( has_entry('Username', 'harp4162')),
+								'Links', has_item(has_entry('rel', 'CourseCatalogEntry')),
+								'Links', has_item(has_entry('rel', VIEW_COURSE_RECURSIVE)),
+								'Links', has_item(has_entry('rel', 'CourseEnrollmentRoster')),
+								'Links', has_item(has_entry('rel', VIEW_COURSE_RECURSIVE_BUCKET)),
+								'Links', has_item(has_entry('rel', 'Pages'))))
 
 		roster_link = self.require_link_href_with_rel(course_instance, 'CourseEnrollmentRoster')
 		activity_link = self.require_link_href_with_rel(course_instance, 'CourseActivity')
@@ -421,7 +421,6 @@ class _AbstractEnrollingBase(object):
 	def test_enroll_using_ntiid(self):
 		self._do_enroll({'ntiid': self.enrollment_ntiid})
 
-
 class TestLegacyWorkspace(_AbstractEnrollingBase,
 						  ApplicationLayerTest):
 	layer = LegacyInstructedCourseApplicationTestLayer
@@ -441,7 +440,6 @@ class TestPersistentWorkspaces(_AbstractEnrollingBase,
 	# and getNextUtility find the utility registered in
 	# <non-persistent-janux> first...
 
-
 	expected_enrollment_href = '/dataserver2/users/sjohnson%40nextthought.com/Courses/EnrolledCourses/tag%3Anextthought.com%2C2011-10%3ANTI-CourseInfo-Fall2013_CLC3403_LawAndJustice'
 	expected_instance_href = '/dataserver2/%2B%2Betc%2B%2Bhostsites/platform.ou.edu/%2B%2Betc%2B%2Bsite/Courses/Fall2013/CLC3403_LawAndJustice'
 	expected_instance_class = 'CourseInstance'
@@ -452,7 +450,6 @@ class TestPersistentWorkspaces(_AbstractEnrollingBase,
 	# An ACL issue prevents this from working (though frankly I'm not sure how it worked
 	# in the legacy case.) Investigate more.
 	individual_roster_accessible_to_instructor = False
-
 
 	# 3 entries: two sections of clc (main, 01), one for water
 	# The third CLC section is restricted to enrolled students only
@@ -480,8 +477,6 @@ class TestPersistentWorkspaces(_AbstractEnrollingBase,
 
 		assert_that(usres.json_body['Items'][0]['NTIID'], is_(scope['NTIID']))
 
-
-
 	main_ntiid = 'tag:nextthought.com,2011-10:NTI-CourseInfo-Fall2013_CLC3403_LawAndJustice'
 	section_ntiid = 'tag:nextthought.com,2011-10:NTI-CourseInfo-Fall2013_CLC3403_LawAndJustice_SubInstances_01'
 
@@ -508,7 +503,7 @@ class TestPersistentWorkspaces(_AbstractEnrollingBase,
 		assert_that(main_entry, has_entry('PlatformPresentationResources',
 										   has_item(has_entry('href', main_assets))))
 		assert_that(sect_entry,
-					 has_entry('PlatformPresentationResources',
+					has_entry('PlatformPresentationResources',
 							   has_item(has_entry('href', sect_assets))))
 
 		# If we give the global library a prefix, it manifests here too
@@ -530,7 +525,6 @@ class TestPersistentWorkspaces(_AbstractEnrollingBase,
 		finally:
 			del lib.url_prefix
 
-
 	@WithSharedApplicationMockDS(users=True, testapp=True)
 	def test_legacy_fields(self):
 		res = self.testapp.get(self.all_courses_href)
@@ -545,7 +539,6 @@ class TestPersistentWorkspaces(_AbstractEnrollingBase,
 										   '/sites/platform.ou.edu/CLC3403_LawAndJustice/images/CLC3403_promo.png'))
 		assert_that(sect_entry, has_entry('LegacyPurchasableIcon',
 										   '/sites/platform.ou.edu/CLC3403_LawAndJustice/images/CLC3403_promo.png'))
-
 
 	@WithSharedApplicationMockDS(users=True, testapp=True)
 	def test_restricted_section(self):
@@ -587,11 +580,10 @@ class TestPersistentWorkspaces(_AbstractEnrollingBase,
 		assert_that(res, has_entry('Items', has_item(has_entry('ProviderUniqueID',
 																   'ENGR 1510-901'))))
 
-		# ...and the remaining 'sibling' sections have vanished...
-		# we get just Water and restricted
-		assert_that(res, has_entry('Items', has_length(2)))
+		assert_that(res, has_entry('Items', has_length(6)))
 
 class TestRestrictedWorkspace(ApplicationLayerTest):
+
 	layer = RestrictedInstructedCourseApplicationTestLayer
 	testapp = None
 	default_origin = str('http://janux.ou.edu')
@@ -606,10 +598,10 @@ class TestRestrictedWorkspace(ApplicationLayerTest):
 		res = self.testapp.get('/dataserver2/users/sjohnson@nextthought.com/Courses/AllCourses')
 		assert_that(res.json_body, has_entry('Items', has_length(greater_than_or_equal_to(1))))
 		assert_that(res.json_body['Items'],
-					 has_items(
+					has_items(
 						 all_of(has_entries('Duration', 'P112D',
-											  'Title', 'Introduction to Water',
-											  'StartDate', '2014-01-13T06:00:00Z'))))
+											'Title', 'Introduction to Water',
+											'StartDate', '2014-01-13T06:00:00Z'))))
 
 	@WithSharedApplicationMockDS(users=True, testapp=True)
 	def test_enroll_unenroll_using_workspace(self):

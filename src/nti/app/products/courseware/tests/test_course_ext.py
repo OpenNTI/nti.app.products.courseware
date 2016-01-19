@@ -55,7 +55,7 @@ from nti.app.products.courseware.tests import CourseLayerTest
 class TestCourseInstance(CourseLayerTest):
 
 	def test_course_implements(self):
-		assert_that( courses.CourseInstance(), verifiably_provides(interfaces.ICourseInstance) )
+		assert_that(courses.CourseInstance(), verifiably_provides(interfaces.ICourseInstance))
 
 	def test_course_containment(self):
 		inst = courses.CourseInstance()
@@ -63,37 +63,37 @@ class TestCourseInstance(CourseLayerTest):
 		parent['Course'] = inst
 		gp = courses.CourseAdministrativeLevel()
 		gp['Child'] = parent
-		assert_that( gp, verifiably_provides(interfaces.ICourseAdministrativeLevel) )
+		assert_that(gp, verifiably_provides(interfaces.ICourseAdministrativeLevel))
 
 	def test_course_instance_discussion(self):
-		assert_that( courses.CourseInstance(), has_property( 'Discussions', not_none() ) )
+		assert_that(courses.CourseInstance(), has_property('Discussions', not_none()))
 		inst = courses.CourseInstance()
-		assert_that( inst.Discussions, is_( same_instance( inst.Discussions )))
+		assert_that(inst.Discussions, is_(same_instance(inst.Discussions)))
 
 	def test_course_externalizes(self):
 		inst = courses.CourseInstance()
-		getattr(inst, 'Discussions' ) # this creates the Public scope
+		getattr(inst, 'Discussions')  # this creates the Public scope
 		getattr(inst, 'SubInstances')
-		ntiid =  'tag:nextthought.com,2011-10:NTI-OID-0x12345'
+		ntiid = 'tag:nextthought.com,2011-10:NTI-OID-0x12345'
 		inst.SharingScopes['Public'].to_external_ntiid_oid = lambda: ntiid
 
-		assert_that( unicode(inst.SharingScopes['Public']),
+		assert_that(unicode(inst.SharingScopes['Public']),
 					 is_(ntiid))
-		assert_that( inst,
-					 externalizes(has_entries('Class', 'CourseInstance',
-											  'Discussions', has_entries('Class', 'CommunityBoard', # Reall course instance board
-																		 'MimeType', 'application/vnd.nextthought.forums.communityboard',
-																		 'title', 'Discussions',
-																		 'Creator', ntiid,
+		assert_that(inst,
+					externalizes(has_entries('Class', 'CourseInstance',
+											 'Discussions', has_entries('Class', 'CommunityBoard',  # Reall course instance board
+																		'MimeType', 'application/vnd.nextthought.forums.communityboard',
+																		'title', 'Discussions',
+																		'Creator', ntiid,
 																	 ),
-											  'MimeType', 'application/vnd.nextthought.courses.courseinstance',
-							  ) ) )
+											 'MimeType', 'application/vnd.nextthought.courses.courseinstance',
+							  )))
 
-		assert_that( inst,
-					 externalizes( all_of(
-						 does_not( has_key('SubInstances')),
+		assert_that(inst,
+					externalizes(all_of(
+						 does_not(has_key('SubInstances')),
 						 # No sharing scopes, no request
-						 does_not( has_key('SharingScopes'))) ) )
+						 does_not(has_key('SharingScopes')))))
 
 		assert_that(hash(inst), is_not(none()))
 
@@ -113,11 +113,11 @@ class TestCourseInstance(CourseLayerTest):
 		provider = acl.CourseInstanceACLProvider(inst)
 
 		inst_acl = provider.__acl__
-		assert_that(inst_acl, has_length(1))
+		assert_that(inst_acl, has_length(3))
 		assert_that(inst_acl,
 					has_item(has_properties('actor', is_(public),
 											'action', 'Allow',
-											'permission', is_([ACT_READ]) )))
+											'permission', is_([ACT_READ]))))
 
 		# Non public is same ACL
 		interface.alsoProvides(inst, interfaces.INonPublicCourseInstance)
@@ -125,14 +125,14 @@ class TestCourseInstance(CourseLayerTest):
 		inst_acl = provider.__acl__
 
 		inst_acl = provider.__acl__
-		assert_that(inst_acl, has_length(1))
+		assert_that(inst_acl, has_length(3))
 		assert_that(inst_acl,
 					has_item(has_properties('actor', is_(public),
 											'action', 'Allow',
-											'permission', is_([ACT_READ]) )))
+											'permission', is_([ACT_READ]))))
 
 		# Subinstances
-		instructor = IPrincipal( 'instructor-bob' )
+		instructor = IPrincipal('instructor-bob')
 		subinstance = courses.CourseInstance()
 		connection.add(subinstance)
 		inst.SubInstances = { 'section-01' : subinstance }
@@ -140,15 +140,15 @@ class TestCourseInstance(CourseLayerTest):
 
 		provider = acl.CourseInstanceACLProvider(inst)
 		inst_acl = provider.__acl__
-		assert_that(inst_acl, has_length(2))
+		assert_that(inst_acl, has_length(4))
 		assert_that(inst_acl,
 					has_item(has_properties('actor', is_(public),
 											'action', 'Allow',
-											'permission', is_([ACT_READ]) )))
+											'permission', is_([ACT_READ]))))
 		assert_that(inst_acl,
 					has_item(has_properties('actor', is_(instructor),
 											'action', 'Allow',
-											'permission', is_([ACT_READ]) )))
+											'permission', is_([ACT_READ]))))
 
 	@fudge.patch('nti.app.products.courseware.decorators.IEntityContainer',
 				 'nti.app.renderers.decorators.get_remote_user')
@@ -159,9 +159,9 @@ class TestCourseInstance(CourseLayerTest):
 		mock_rem_user.is_callable()
 
 		inst = courses.CourseInstance()
-		getattr(inst, 'Discussions' ) # this creates the Public scope
+		getattr(inst, 'Discussions')  # this creates the Public scope
 		getattr(inst, 'SubInstances')
-		ntiid =  'tag:nextthought.com,2011-10:NTI-OID-0x12345'
+		ntiid = 'tag:nextthought.com,2011-10:NTI-OID-0x12345'
 		inst.SharingScopes['Public'].to_external_ntiid_oid = lambda: ntiid
 
 		subinst = courses.ContentCourseSubInstance()
@@ -173,24 +173,24 @@ class TestCourseInstance(CourseLayerTest):
 		result = {}
 		_SharingScopesAndDiscussionDecorator(subinst, None)._do_decorate_external(subinst, result)
 
-		assert_that( result, has_entry( 'SharingScopes',
-										has_entries( 'Class', 'CourseInstanceSharingScopes',
-													 'Items', has_entries(
+		assert_that(result, has_entry(	'SharingScopes',
+										has_entries('Class', 'CourseInstanceSharingScopes',
+													'Items', has_entries(
 														 'Public', has_entries('Creator', 'system',
-																			   'Class', 'Community', # Really CourseInstanceSharingScope
+																			   'Class', 'Community',  # Really CourseInstanceSharingScope
 																			   'MimeType', 'application/vnd.nextthought.community',
 																			   'NTIID', ntiid2,
 																			   'ID', ntiid2,
-																			   'Username', ntiid2))) ) )
-		assert_that( result, has_entry( 'ParentSharingScopes',
+																			   'Username', ntiid2)))))
+		assert_that(result, has_entry(	'ParentSharingScopes',
 										has_entries('Class', 'CourseInstanceSharingScopes',
 													'Items', has_entry(
 														'Public', has_entries('Creator', 'system',
 																			  'NTIID', ntiid,
 																			  'ID', ntiid,
-																			  'Username', ntiid))) ) )
+																			  'Username', ntiid)))))
 
-		assert_that( result, has_entry('ParentDiscussions',
+		assert_that(result, has_entry('ParentDiscussions',
 									   has_entries('Creator', ntiid)))
 
 	def _course_setup(self):
@@ -205,7 +205,7 @@ class TestCourseInstance(CourseLayerTest):
 			admin[name] = course
 			course.SharingScopes.initScopes()
 
-		self.principal  = principal
+		self.principal = principal
 		self.course = admin['course']
 		self.admin = self.ds.root['admin']
 
