@@ -426,7 +426,8 @@ class _CatalogFamilyDecorator(AbstractAuthenticatedRequestAwareDecorator):
 class _CourseDiscussionsLinkDecorator(AbstractAuthenticatedRequestAwareDecorator):
 
 	def _predicate(self, context, result):
-		return self._is_authenticated and is_course_editor(context, self.remoteUser)
+		return 		self._is_authenticated \
+				and is_course_editor(context, self.remoteUser)
 
 	def _do_decorate_external(self, context, result):
 		_links = result.setdefault(LINKS, [])
