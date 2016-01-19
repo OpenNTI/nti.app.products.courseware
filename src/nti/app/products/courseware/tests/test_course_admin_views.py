@@ -34,6 +34,11 @@ class TestCourseAdminViews(ApplicationLayerTest):
 	@WithSharedApplicationMockDS(testapp=True, users=True)
 	def test_views(self):
 
+		all_entries_url = '/dataserver2/CourseAdmin/AllCatalogEntries'
+		res = self.testapp.get(all_entries_url, status=200)
+		assert_that(res.json_body,
+					has_entry('Items', has_length(8)))
+		
 		student = "ichigo"
 		with mock_dataserver.mock_db_trans(self.ds):
 			User.create_user(username=student)
