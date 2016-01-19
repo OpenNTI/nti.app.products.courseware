@@ -71,6 +71,8 @@ from ._utils import _get_download_href
 from ._utils import _get_file_from_link
 from ._utils import _slugify_in_container
 
+from . import VIEW_COURSE_DISCUSSIONS
+
 from . import CourseAdminPathAdapter
 
 CLASS = StandardExternalFields.CLASS
@@ -140,7 +142,7 @@ class CourseDiscussionsGetView(GenericGetView):
 @view_defaults(route_name='objects.generic.traversal',
 			   renderer='rest',
 			   request_method='GET',
-			   name='CourseDiscussions',
+			   name=VIEW_COURSE_DISCUSSIONS,
 			   permission=nauth.ACT_CONTENT_EDIT)
 class CatalogEntryCourseDiscussionView(CourseDiscussionsGetView):
 

@@ -76,6 +76,7 @@ from . import VIEW_CATALOG_ENTRY
 from . import VIEW_COURSE_ACTIVITY
 from . import VIEW_COURSE_RECURSIVE
 from . import VIEW_COURSE_CLASSMATES
+from . import VIEW_COURSE_DISCUSSIONS
 from . import VIEW_COURSE_RECURSIVE_BUCKET
 from . import VIEW_COURSE_ENROLLMENT_ROSTER
 
@@ -431,7 +432,9 @@ class _CourseDiscussionsLinkDecorator(AbstractAuthenticatedRequestAwareDecorator
 
 	def _do_decorate_external(self, context, result):
 		_links = result.setdefault(LINKS, [])
-		link = Link(context, rel='CourseDiscussions', elements=('CourseDiscussions',))
+		link = Link(context, 
+					rel=VIEW_COURSE_DISCUSSIONS,
+					elements=(VIEW_COURSE_DISCUSSIONS,))
 		interface.alsoProvides(link, ILocation)
 		link.__name__ = ''
 		link.__parent__ = context
