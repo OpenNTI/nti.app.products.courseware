@@ -32,7 +32,9 @@ from nti.app.testing.application_webtest import ApplicationLayerTest
 
 from nti.app.products.courseware.tests import InstructedCourseApplicationTestLayer
 
+from nti.contenttypes.courses.interfaces import ES_PURCHASED
 from nti.contenttypes.courses.interfaces import ES_CREDIT_DEGREE
+
 from nti.contenttypes.courses.interfaces import ICourseInstance
 from nti.contenttypes.courses.interfaces import ICourseEnrollmentManager
 
@@ -68,7 +70,8 @@ class TestMailViews(ApplicationLayerTest):
 			IUserProfile(open_user).email_verified = True
 			IUserProfile(open_user).email = open_address
 			manager = ICourseEnrollmentManager( course )
-			manager.enroll( open_user )
+			# Purchased falls in Open category
+			manager.enroll( open_user, scope=ES_PURCHASED )
 
 			credit_user = User.get_user( credit_name )
 			manager.enroll( credit_user, scope=ES_CREDIT_DEGREE )

@@ -95,21 +95,22 @@ class CourseMailView(AbstractMemberEmailView):
 		return result
 
 	@property
+	def _public_scope(self):
+		return self.course.SharingScopes.get(ES_PUBLIC)
+
+	@property
 	def _public_usernames(self):
 		result = self._get_scope_usernames( self._public_scope )
 		return result
 
 	@property
 	def _only_public_usernames(self):
+		# PURCHASED falls in this category.
 		return self._public_usernames - self._for_credit_usernames
 
 	@property
 	def _for_credit_scope(self):
 		return self.course.SharingScopes.get(ES_CREDIT)
-
-	@property
-	def _public_scope(self):
-		return self.course.SharingScopes.get(ES_PUBLIC)
 
 	@property
 	def _for_credit_usernames(self):
