@@ -22,6 +22,11 @@ from slugify import slugify_filename
 
 from nti.app.contentfile import to_external_href
 
+from nti.app.products.courseware.utils import encode_keys
+from nti.app.products.courseware.utils import memcache_get
+from nti.app.products.courseware.utils import memcache_set
+from nti.app.products.courseware.utils import last_synchronized
+
 from nti.assessment.interfaces import IQPoll
 from nti.assessment.interfaces import IQSurvey
 from nti.assessment.interfaces import IQAssignment
@@ -43,11 +48,6 @@ from nti.ntiids.ntiids import find_object_with_ntiid
 from nti.ntiids.ntiids import is_valid_ntiid_string as is_valid_ntiid
 
 from nti.site.site import get_component_hierarchy_names
-
-from ..utils import encode_keys
-from ..utils import memcache_get
-from ..utils import memcache_set
-from ..utils import last_synchronized
 
 def _get_self_assessments_for_course(course):
 	"""

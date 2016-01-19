@@ -14,8 +14,6 @@ the workspace collections.
 from __future__ import print_function, unicode_literals, absolute_import, division
 __docformat__ = "restructuredtext en"
 
-from . import MessageFactory as _
-
 logger = __import__('logging').getLogger(__name__)
 
 from zope import component
@@ -23,17 +21,29 @@ from zope import interface
 
 from zope.traversing.interfaces import IPathAdapter
 
-from pyramid.view import view_config
-from pyramid.view import view_defaults
-from pyramid.interfaces import IRequest
 from pyramid import httpexceptions as hexc
 
+from pyramid.interfaces import IRequest
+
+from pyramid.view import view_config
+from pyramid.view import view_defaults
+
 from nti.app.base.abstract_views import AbstractAuthenticatedView
+
 from nti.app.externalization.view_mixins import ModeledContentUploadRequestUtilsMixin
 
-from nti.appserver.pyramid_authorization import can_create
-from nti.appserver.workspaces.interfaces import IUserService
+from nti.app.products.courseware.interfaces import ICoursesWorkspace
+from nti.app.products.courseware.interfaces import ICourseInstanceEnrollment
+from nti.app.products.courseware.interfaces import IEnrolledCoursesCollection
+
+from nti.app.products.courseware.views import MessageFactory as _
+from nti.app.products.courseware.views import CourseAdminPathAdapter
+
 from nti.appserver.dataserver_pyramid_views import GenericGetView
+
+from nti.appserver.pyramid_authorization import can_create
+
+from nti.appserver.workspaces.interfaces import IUserService
 
 from nti.contenttypes.courses.interfaces import ES_PUBLIC
 from nti.contenttypes.courses.interfaces import ICourseCatalog
@@ -43,19 +53,14 @@ from nti.contenttypes.courses.interfaces import ICourseEnrollmentManager
 
 from nti.contenttypes.courses.utils import is_instructor_in_hierarchy
 
-from nti.dataserver.interfaces import IUser
 from nti.dataserver import authorization as nauth
+
+from nti.dataserver.interfaces import IUser
 
 from nti.externalization.interfaces import LocatedExternalDict
 from nti.externalization.interfaces import StandardExternalFields
 
 from nti.traversal import traversal
-
-from ..interfaces import ICoursesWorkspace
-from ..interfaces import ICourseInstanceEnrollment
-from ..interfaces import IEnrolledCoursesCollection
-
-from . import CourseAdminPathAdapter
 
 ITEMS = StandardExternalFields.ITEMS
 
@@ -209,8 +214,6 @@ class AllCatalogEntriesView(AbstractAuthenticatedView):
 	def __call__(self):
 		catalog = component.getUtility(ICourseCatalog)
 		result = LocatedExternalDict()
-		items = result[ITEMS] = []
-		for entry in catalog.iterCatalogEntries():
-			items.append(entry)
+		items = result[ITEMS] = [e for e in catalog.iterCatalogEntries()]
 		result['Total'] = result['ItemCount'] = len(items)
 		return result
