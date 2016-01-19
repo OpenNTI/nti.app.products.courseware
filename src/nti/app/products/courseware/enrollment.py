@@ -14,12 +14,18 @@ from zope import interface
 
 from zope.schema.fieldproperty import FieldPropertyStoredThroughField as FP
 
+from nti.app.products.courseware.interfaces import IEnrollmentOption
+from nti.app.products.courseware.interfaces import IEnrollmentOptions
+from nti.app.products.courseware.interfaces import IOpenEnrollmentOption
+from nti.app.products.courseware.interfaces import IEnrollmentOptionProvider
+
 from nti.common.property import alias
 from nti.common.persistence import NoPickle
 from nti.common.representation import WithRepr
 
 from nti.contenttypes.courses.interfaces import ICourseCatalogEntry
 from nti.contenttypes.courses.interfaces import IDenyOpenEnrollment
+from nti.contenttypes.courses.interfaces import INonPublicCourseInstance
 
 from nti.externalization.interfaces import LocatedExternalDict
 from nti.externalization.interfaces import StandardExternalFields
@@ -29,11 +35,6 @@ from nti.externalization.externalization import to_external_object
 
 from nti.schema.schema import EqHash
 from nti.schema.field import SchemaConfigured
-
-from .interfaces import IEnrollmentOption
-from .interfaces import IEnrollmentOptions
-from .interfaces import IOpenEnrollmentOption
-from .interfaces import IEnrollmentOptionProvider
 
 CLASS = StandardExternalFields.CLASS
 ITEMS = StandardExternalFields.ITEMS
@@ -107,7 +108,9 @@ class OpenEnrollmentOptionProvider(object):
 		self.context = context
 
 	def iter_options(self):
-		result = OpenEnrollmentOption()
-		result.CatalogEntryNTIID = self.context.ntiid
-		result.Enabled = not IDenyOpenEnrollment.providedBy(self.context)
-		return (result,)
+		if not INonPublicCourseInstance.providedBy(self.context):
+			result = OpenEnrollmentOption()
+			result.CatalogEntryNTIID = self.context.ntiid
+			result.Enabled = not IDenyOpenEnrollment.providedBy(self.context)
+			return (result,)
+		return ()
