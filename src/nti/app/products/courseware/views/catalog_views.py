@@ -50,6 +50,7 @@ from nti.contenttypes.courses.interfaces import ICourseCatalog
 from nti.contenttypes.courses.interfaces import ICourseInstance
 from nti.contenttypes.courses.interfaces import ICourseCatalogEntry
 from nti.contenttypes.courses.interfaces import ICourseEnrollmentManager
+from nti.contenttypes.courses.interfaces import INonPublicCourseInstance
 
 from nti.contenttypes.courses.utils import is_instructor_in_hierarchy
 
@@ -59,6 +60,7 @@ from nti.dataserver.interfaces import IUser
 
 from nti.externalization.interfaces import LocatedExternalDict
 from nti.externalization.interfaces import StandardExternalFields
+from nti.externalization.externalization import to_external_object
 
 from nti.traversal import traversal
 
@@ -214,6 +216,10 @@ class AllCatalogEntriesView(AbstractAuthenticatedView):
 	def __call__(self):
 		catalog = component.getUtility(ICourseCatalog)
 		result = LocatedExternalDict()
-		items = result[ITEMS] = [e for e in catalog.iterCatalogEntries()]
+		items = result[ITEMS] = []
+		for e in catalog.iterCatalogEntries():
+			ext_obj = to_external_object(e)
+			ext_obj['is_non_public'] = INonPublicCourseInstance.providedBy(e)
+			items.append(ext_obj)
 		result['Total'] = result['ItemCount'] = len(items)
 		return result
