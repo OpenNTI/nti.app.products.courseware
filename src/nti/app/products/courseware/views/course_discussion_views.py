@@ -125,7 +125,7 @@ class CourseDiscussionsGetView(GenericGetView):
 		result[CLASS] = getattr(discussions, '__external_class_name__',
 								discussions.__class__.__name__)
 		items = result[ITEMS] = []
-		for discussion in list(discussions.values()):
+		for discussion in sorted(discussions.values()):
 			ext_obj = to_external_object(discussion)
 			ext_obj['href'] = render_to_external_ref(discussion)
 			items.append(ext_obj)
