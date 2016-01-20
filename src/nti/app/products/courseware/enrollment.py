@@ -108,9 +108,8 @@ class OpenEnrollmentOptionProvider(object):
 		self.context = context
 
 	def iter_options(self):
-		if not INonPublicCourseInstance.providedBy(self.context):
-			result = OpenEnrollmentOption()
-			result.CatalogEntryNTIID = self.context.ntiid
-			result.Enabled = not IDenyOpenEnrollment.providedBy(self.context)
-			return (result,)
-		return ()
+		result = OpenEnrollmentOption()
+		result.CatalogEntryNTIID = self.context.ntiid
+		result.Enabled = 	 not INonPublicCourseInstance.providedBy(self.context) \
+						 and not IDenyOpenEnrollment.providedBy(self.context)
+		return (result,)
