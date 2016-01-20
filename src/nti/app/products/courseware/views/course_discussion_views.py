@@ -26,6 +26,19 @@ from nti.app.contentfile import validate_sources
 
 from nti.app.externalization.internalization import read_body_as_external_object
 
+from nti.app.products.courseware.discussions import get_topic_key
+
+from nti.app.products.courseware.utils import get_assets_folder
+
+from nti.app.products.courseware.views._utils import _get_namedfile
+from nti.app.products.courseware.views._utils import _get_download_href
+from nti.app.products.courseware.views._utils import _get_file_from_link
+from nti.app.products.courseware.views._utils import _slugify_in_container
+
+from nti.app.products.courseware.views import VIEW_COURSE_DISCUSSIONS
+
+from nti.app.products.courseware.views import CourseAdminPathAdapter
+
 from nti.appserver.ugd_edit_views import UGDPutView
 from nti.appserver.ugd_edit_views import UGDPostView
 from nti.appserver.dataserver_pyramid_views import GenericGetView
@@ -61,19 +74,6 @@ from nti.namedfile.file import name_finder
 from nti.namedfile.file import safe_filename
 
 from nti.ntiids.ntiids import find_object_with_ntiid
-
-from ..discussions import get_topic_key
-
-from ..utils import get_assets_folder
-
-from ._utils import _get_namedfile
-from ._utils import _get_download_href
-from ._utils import _get_file_from_link
-from ._utils import _slugify_in_container
-
-from . import VIEW_COURSE_DISCUSSIONS
-
-from . import CourseAdminPathAdapter
 
 CLASS = StandardExternalFields.CLASS
 ITEMS = StandardExternalFields.ITEMS
@@ -124,12 +124,12 @@ class CourseDiscussionsGetView(GenericGetView):
 		result[MIMETYPE] = discussions.mimeType
 		result[CLASS] = getattr(discussions, '__external_class_name__',
 								discussions.__class__.__name__)
-		items = result[ITEMS] = {}
-		for name, discussion in discussions.items():
+		items = result[ITEMS] = []
+		for discussion in list(discussions.values()):
 			ext_obj = to_external_object(discussion)
 			ext_obj['href'] = render_to_external_ref(discussion)
-			items[name] = ext_obj
-		result['ItemCount'] = len(items)
+			items.append(ext_obj)
+		result['Total'] = result['ItemCount'] = len(items)
 		result.__parent__ = self.context
 		result.__name__ = self.request.view_name
 		result.lastModified = discussions.lastModified
