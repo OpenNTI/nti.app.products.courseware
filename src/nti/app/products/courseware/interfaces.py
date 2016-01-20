@@ -317,18 +317,30 @@ class IRanker(interface.Interface):
 
 class IViewStats(interface.Interface):
 	"""
-	Contains view stats on the adapted object.
+	Gives view stats on the adapted object.
 	"""
 
-class IVideoUsageStats(interface.Interface):
-	"""
-	Contains video usage stats for a course.
-	"""
+class IUsageStats( interface.Interface ):
 
 	def get_stats(self, scope=None):
 		"""
-		Return video stats for course users, optionally by scope.
+		Return stats for course users, optionally by scope.
 		"""
+
+	def get_top_stats(self, scope=None, top_count=None):
+		"""
+		Return top usage stats for course users, optionally by scope.
+		"""
+
+class IVideoUsageStats(IUsageStats):
+	"""
+	Returns video usage stats for a course.
+	"""
+
+class IResourceUsageStats(IUsageStats):
+	"""
+	Returns resource usage stats for a course.
+	"""
 
 # Suggested contacts
 

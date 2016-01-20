@@ -260,7 +260,7 @@ class TestMailViews(ApplicationLayerTest):
 		assert_that( open_msg.get( 'Reply-To' ), is_( self.no_reply ))
 		assert_that( credit_msg.get( 'Reply-To' ), is_( self.external_reply_to ))
 
-		# Mail everyone with replyToScope open
+		# Mail everyone with replyToScope open (also purchased)
 		self.testapp.post_json(email_link + '?replyToScope=opEN', mail_with_reply, extra_environ=instructor_env)
 		messages = self._get_messages( mailer )
 		assert_that( messages, has_length( 2 ) )
