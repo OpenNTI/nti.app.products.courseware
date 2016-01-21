@@ -133,11 +133,11 @@ class ResetCourseOutlineView(AbstractAuthenticatedView,
 
 		for course in to_process:
 			folder = find_interface(course, IHostPolicyFolder, strict=False)
-			site = get_site_for_site_names((folder.__name__,))
-			with current_site(site): # site where course is registered
+			reg_site = get_site_for_site_names((folder.__name__,))
+			with current_site(reg_site): # site where course is registered
 				removed = []
 				outline = course.Outline
-				registry = component.getSiteManager()
+				registry = folder.getSiteManager()
 				removed.extend(unregister_nodes(outline,
 												registry=registry,
 												force=force))
@@ -160,6 +160,7 @@ class ResetCourseOutlineView(AbstractAuthenticatedView,
 
 				fill_outline_from_key(course.Outline,
 								  	  outline_xml_key,
+								  	  registry=registry,
 								  	  xml_parent_name=outline_xml_node,
 								  	  force=force)
 
