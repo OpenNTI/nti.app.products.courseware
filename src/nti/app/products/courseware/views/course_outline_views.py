@@ -19,16 +19,17 @@ from zope.component.hooks import site as current_site
 from zope.security.management import endInteraction
 from zope.security.management import restoreInteraction
 
-from zope.traversing.interfaces import IEtcNamespace
+from pyramid import httpexceptions as hexc
 
 from pyramid.view import view_config
 from pyramid.view import view_defaults
-from pyramid import httpexceptions as hexc
 
 from nti.app.base.abstract_views import AbstractAuthenticatedView
 
 from nti.app.externalization.internalization import read_body_as_external_object
 from nti.app.externalization.view_mixins import ModeledContentUploadRequestUtilsMixin
+
+from nti.app.products.courseware.views import CourseAdminPathAdapter
 
 from nti.common.string import TRUE_VALUES
 from nti.common.maps import CaseInsensitiveDict
@@ -59,16 +60,15 @@ from nti.ntiids.ntiids import find_object_with_ntiid
 
 from nti.recorder.record import remove_transaction_history
 
-from nti.site.site import get_component_hierarchy_names
+from nti.site.interfaces import IHostPolicyFolder
+from nti.site.site import get_site_for_site_names
 
-from . import CourseAdminPathAdapter
+from nti.traversal.traversal import find_interface
 
 ITEMS = StandardExternalFields.ITEMS
 
 def _parse_courses(values):
-	ntiids = values.get('ntiid') or values.get('ntiids') or \
-			 values.get('entry') or values.get('entries') or \
-			 values.get('course') or values.get('courses')
+	ntiids = values.get('ntiid') or values.get('ntiids')
 	if not ntiids:
 		raise hexc.HTTPUnprocessableEntity(detail='No course entry identifier')
 
@@ -76,14 +76,8 @@ def _parse_courses(values):
 		ntiids = ntiids.split()
 
 	result = list()
-	catalog = component.getUtility(ICourseCatalog)
 	for ntiid in ntiids:
 		context = find_object_with_ntiid(ntiid)
-		if context is None:
-			try:
-				context = catalog.getCatalogEntry(ntiid)
-			except (KeyError, LookupError):
-				context = None
 		context = ICourseInstance(context, None)
 		if context is not None:
 			result.append(context)
@@ -97,21 +91,6 @@ def _parse_course(values):
 
 def _is_true(v):
 	return v and str(v).lower() in TRUE_VALUES
-
-def _reverse(data):
-	data.reverse()
-	return data
-
-def get_sites(sites_names):
-	result = []
-	hostsites = component.getUtility(IEtcNamespace, name='hostsites')
-	for name in sites_names or ():
-		try:
-			folder = hostsites[name]
-			result.append(folder)
-		except KeyError:
-			pass
-	return result
 
 def read_input(request):
 	if request.body:
@@ -136,16 +115,13 @@ class ResetCourseOutlineView(AbstractAuthenticatedView,
 
 	def _do_call(self, result, courses=None):
 		values = self.readInput()
-		if courses is None:
-			courses = _parse_courses(values)
+		courses = courses if courses is not None else _parse_courses(values)
 
 		to_process = set()
 		items = result[ITEMS] = {}
 		force = _is_true(values.get('force'))
-		site_names = _reverse(get_component_hierarchy_names())
-		sites = get_sites(site_names)
 
-		for course in courses:
+		for course in courses or ():
 			course = ICourseInstance(course)
 			if ILegacyCourseInstance.providedBy(course):
 				continue
@@ -156,37 +132,39 @@ class ResetCourseOutlineView(AbstractAuthenticatedView,
 			to_process.add(course)
 
 		for course in to_process:
-			removed = []
-			outline = course.Outline
-			for site in sites:
-				registry = site.getSiteManager()
+			folder = find_interface(course, IHostPolicyFolder, strict=False)
+			site = get_site_for_site_names((folder.__name__,))
+			with current_site(site): # site where course is registered
+				removed = []
+				outline = course.Outline
+				registry = component.getSiteManager()
 				removed.extend(unregister_nodes(outline,
 												registry=registry,
 												force=force))
-			for node in removed:
-				remove_transaction_history(node)
+				for node in removed:
+					remove_transaction_history(node)
 
-			outline.reset()
-			ntiid = ICourseCatalogEntry(course).ntiid
-			logger.info("%s node(s) removed from %s", len(removed) / len(sites), ntiid)
+				outline.reset()
+				ntiid = ICourseCatalogEntry(course).ntiid
+				logger.info("%s node(s) removed from %s", len(removed), ntiid)
 
-			root = course.root
-			outline_xml_node = None
-			outline_xml_key = root.getChildNamed(COURSE_OUTLINE_NAME)
-			if not outline_xml_key:
-				if course.ContentPackageBundle:
-					for package in course.ContentPackageBundle.ContentPackages:
-						outline_xml_key = package.index
-						outline_xml_node = 'course'
-						break
+				root = course.root
+				outline_xml_node = None
+				outline_xml_key = root.getChildNamed(COURSE_OUTLINE_NAME)
+				if not outline_xml_key:
+					if course.ContentPackageBundle:
+						for package in course.ContentPackageBundle.ContentPackages:
+							outline_xml_key = package.index
+							outline_xml_node = 'course'
+							break
 
-			with current_site(sites[0]):  # sync in root
 				fill_outline_from_key(course.Outline,
 								  	  outline_xml_key,
 								  	  xml_parent_name=outline_xml_node,
 								  	  force=force)
-			items[ntiid] = [x.ntiid for x in outline_nodes(course.Outline)]
-			logger.info("%s node(s) registered for %s", len(items[ntiid]), ntiid)
+
+				items[ntiid] = [x.ntiid for x in outline_nodes(course.Outline)]
+				logger.info("%s node(s) registered for %s", len(items[ntiid]), ntiid)
 		return to_process
 
 	def __call__(self):
@@ -212,7 +190,6 @@ class ResetAllCoursesOutlinesView(ResetCourseOutlineView):
 		courses = list(catalog.iterCatalogEntries())
 		return super(ResetAllCoursesOutlinesView, self)._do_call(result, courses)
 
-
 @view_config(name='UnlockOutlineNodes')
 @view_defaults(route_name='objects.generic.traversal',
 			   renderer='rest',
@@ -227,8 +204,7 @@ class UnlockOutlineNodesView(AbstractAuthenticatedView,
 
 	def _do_call(self, result, courses=None):
 		values = self.readInput()
-		if courses is None:
-			courses = _parse_courses(values)
+		courses = courses if courses is not None else _parse_courses(values)
 
 		to_process = set()
 		items = result[ITEMS] = {}
@@ -249,7 +225,7 @@ class UnlockOutlineNodesView(AbstractAuthenticatedView,
 			# parse children
 			for child in node.values():
 				_recur(child, unlocked)
-		
+
 		for course in to_process:
 			unlocked = []
 			_recur(course.Outline, unlocked)

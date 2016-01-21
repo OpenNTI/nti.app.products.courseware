@@ -11,10 +11,15 @@ __docformat__ = "restructuredtext en"
 
 logger = __import__('logging').getLogger(__name__)
 
-from pyramid.view import view_config
 from pyramid import httpexceptions as hexc
 
+from pyramid.view import view_config
+
 from nti.app.mail.views import AbstractMemberEmailView
+
+from nti.app.products.courseware.interfaces import ICourseInstanceEnrollment
+
+from nti.app.products.courseware.views import VIEW_COURSE_MAIL
 
 from nti.common.maps import CaseInsensitiveDict
 
@@ -31,10 +36,6 @@ from nti.dataserver.users import User
 from nti.dataserver.users.interfaces import IUserProfile
 
 from nti.dataserver.interfaces import IEnumerableEntityContainer
-
-from ..interfaces import ICourseInstanceEnrollment
-
-from . import VIEW_COURSE_MAIL
 
 @view_config(route_name='objects.generic.traversal',
 			 context=ICourseInstance,
@@ -68,7 +69,7 @@ class CourseMailView(AbstractMemberEmailView):
 		return getattr(cat_entry, 'title', '')
 
 	def _default_subject(self):
-		profile = IUserProfile( self.sender )
+		profile = IUserProfile(self.sender)
 		display_name = profile.realname or self.sender.username
 		return 'Email from %s' % display_name
 
@@ -91,7 +92,7 @@ class CourseMailView(AbstractMemberEmailView):
 	def _get_scope_usernames(self, scope):
 		result = set()
 		if scope:
-			result = {x.lower() for x in IEnumerableEntityContainer( scope ).iter_usernames()}
+			result = {x.lower() for x in IEnumerableEntityContainer(scope).iter_usernames()}
 		return result
 
 	@property
@@ -100,7 +101,7 @@ class CourseMailView(AbstractMemberEmailView):
 
 	@property
 	def _public_usernames(self):
-		result = self._get_scope_usernames( self._public_scope )
+		result = self._get_scope_usernames(self._public_scope)
 		return result
 
 	@property
@@ -114,7 +115,7 @@ class CourseMailView(AbstractMemberEmailView):
 
 	@property
 	def _for_credit_usernames(self):
-		result = self._get_scope_usernames( self._for_credit_scope )
+		result = self._get_scope_usernames(self._for_credit_scope)
 		return result
 
 	def _get_member_names(self):
