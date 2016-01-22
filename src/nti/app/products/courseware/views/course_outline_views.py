@@ -16,6 +16,8 @@ from zope import component
 
 from zope.component.hooks import site as current_site
 
+from zope.intid.interfaces import IIntIds
+
 from zope.security.management import endInteraction
 from zope.security.management import restoreInteraction
 
@@ -34,13 +36,15 @@ from nti.app.products.courseware.views import CourseAdminPathAdapter
 from nti.common.string import TRUE_VALUES
 from nti.common.maps import CaseInsensitiveDict
 
+from nti.contentlibrary.indexed_data import get_library_catalog
+
 from nti.contenttypes.courses.interfaces import COURSE_OUTLINE_NAME
 
 from nti.contenttypes.courses._outline_parser import outline_nodes
 from nti.contenttypes.courses._outline_parser import unregister_nodes
 from nti.contenttypes.courses._outline_parser import fill_outline_from_key
 
-from nti.contenttypes.courses.interfaces import iface_of_node 
+from nti.contenttypes.courses.interfaces import iface_of_node
 from nti.contenttypes.courses.interfaces import ICourseCatalog
 from nti.contenttypes.courses.interfaces import ICourseInstance
 from nti.contenttypes.courses.interfaces import ICourseSubInstance
@@ -50,6 +54,8 @@ from nti.contenttypes.courses.interfaces import ICourseCatalogEntry
 from nti.contenttypes.courses.legacy_catalog import ILegacyCourseInstance
 
 from nti.contenttypes.courses.utils import get_parent_course
+
+from nti.contenttypes.presentation.interfaces import INTILessonOverview
 
 from nti.coremetadata.interfaces import IRecordable
 
@@ -125,8 +131,9 @@ class ResetCourseOutlineView(AbstractAuthenticatedView,
 	def _do_reset(self, course, force, registry=None):
 		removed = []
 		outline = course.Outline
+		intids = component.getUtility(IIntIds)
 		registry = component.getSiteManager() if registry is None else registry
-		
+
 		# unregister nodes
 		removed.extend(unregister_nodes(outline,
 										registry=registry,
@@ -154,8 +161,25 @@ class ResetCourseOutlineView(AbstractAuthenticatedView,
 						  	  xml_parent_name=outline_xml_node,
 						  	  force=force)
 
+		registered = []
+
+		# XXX: restore node lesson overviews
+		# code based on nti.app.contenttypes.presentation.synchronizer
+		catalog = get_library_catalog()
+		for node in outline_nodes(course.Outline):
+			registered.append(node.ntiid)
+			if not getattr(node, 'src', None):
+				continue
+			objects = list(catalog.search_objects(namespace=node.src, # unique
+											 	  provided=INTILessonOverview,
+											 	  intids=intids))
+			if objects:
+				item = objects[0] # first
+				item.__parent__ = node  # lineage
+				node.LessonOverviewNTIID = item.ntiid
+				catalog.index(item, intids=intids, container_ntiids=(ntiid,))
+
 		result = {}
-		registered = [x.ntiid for x in outline_nodes(course.Outline)]
 		result['Registered'] = registered
 		result['RemovedCount'] = len(removed)
 		result['RegisteredCount'] = len(registered)
@@ -220,7 +244,7 @@ class ResetAllCoursesOutlinesView(ResetCourseOutlineView):
 						count += 1
 						removeIntId(node)
 		logger.info("%s node(s) unregistered", count)
-				
+
 	def _do_call(self, result, courses=None):
 		self._unregisterAll()
 		catalog = component.getUtility(ICourseCatalog)
