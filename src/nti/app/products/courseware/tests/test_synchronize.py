@@ -404,6 +404,8 @@ class TestFunctionalSynchronize(CourseLayerTest):
 		outline_node.append( user_child_node )
 		outline_node.append( child_node )
 		outline_node.append( unchanged_node )
+		# Unlock our outline node, all children should be preserved.
+		outline_node.locked = False
 
 		_resync()
 
