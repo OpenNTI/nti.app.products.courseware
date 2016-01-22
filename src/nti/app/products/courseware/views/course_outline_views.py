@@ -5,8 +5,6 @@
 """
 
 from __future__ import print_function, unicode_literals, absolute_import, division
-from nti.site.site import get_component_hierarchy_names
-from nti.intid.common import removeIntId
 __docformat__ = "restructuredtext en"
 
 logger = __import__('logging').getLogger(__name__)
@@ -60,6 +58,8 @@ from nti.dataserver import authorization as nauth
 from nti.externalization.interfaces import LocatedExternalDict
 from nti.externalization.interfaces import StandardExternalFields
 
+from nti.intid.common import removeIntId
+
 from nti.ntiids.ntiids import find_object_with_ntiid
 
 from nti.recorder.record import remove_transaction_history
@@ -67,6 +67,8 @@ from nti.recorder.record import remove_transaction_history
 from nti.site.hostpolicy import get_host_site
 
 from nti.site.interfaces import IHostPolicyFolder
+
+from nti.site.site import get_component_hierarchy_names
 
 from nti.site.utils import unregisterUtility
 
