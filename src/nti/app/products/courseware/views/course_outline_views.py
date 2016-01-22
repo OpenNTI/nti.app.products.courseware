@@ -164,8 +164,12 @@ class ResetCourseOutlineView(AbstractAuthenticatedView,
 								  	  xml_parent_name=outline_xml_node,
 								  	  force=force)
 
-				items[ntiid] = [x.ntiid for x in outline_nodes(course.Outline)]
-				logger.info("%s node(s) registered for %s", len(items[ntiid]), ntiid)
+				info = items[ntiid] = {}
+				registered = [x.ntiid for x in outline_nodes(course.Outline)]
+				info['Registered'] = registered
+				info['RemovedCount'] = len(removed)
+				info['RegisteredCount'] = len(registered)
+				logger.info("%s node(s) registered for %s", len(registered), ntiid)
 		return to_process
 
 	def __call__(self):
