@@ -404,9 +404,17 @@ class TestFunctionalSynchronize(CourseLayerTest):
 		outline_node.append( user_child_node )
 		outline_node.append( child_node )
 		outline_node.append( unchanged_node )
+
+		_resync()
+
+		outline = gateway.Outline
+		assert_that( outline.lastModified, is_not(is_( 0 )))
+		outline_node = outline.values()[0]
+		# New node exists
+		assert_that( outline_node, has_length(3) )
+
 		# Unlock our outline node, all children should be preserved.
 		outline_node.locked = False
-
 		_resync()
 
 		outline = gateway.Outline
