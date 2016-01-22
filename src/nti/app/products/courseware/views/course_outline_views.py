@@ -113,6 +113,46 @@ class ResetCourseOutlineView(AbstractAuthenticatedView,
 		result = read_input(self.request)
 		return result
 
+	def _do_reset(self, course, force, registry=None):
+		removed = []
+		outline = course.Outline
+		registry = component.getSiteManager() if registry is None else registry
+		
+		# unregister nodes
+		removed.extend(unregister_nodes(outline,
+										registry=registry,
+										force=force))
+		for node in removed:
+			remove_transaction_history(node)
+
+		outline.reset()
+		ntiid = ICourseCatalogEntry(course).ntiid
+		logger.info("%s node(s) removed from %s", len(removed), ntiid)
+
+		root = course.root
+		outline_xml_node = None
+		outline_xml_key = root.getChildNamed(COURSE_OUTLINE_NAME)
+		if not outline_xml_key:
+			if course.ContentPackageBundle:
+				for package in course.ContentPackageBundle.ContentPackages:
+					outline_xml_key = package.index
+					outline_xml_node = 'course'
+					break
+
+		fill_outline_from_key(course.Outline,
+						  	  outline_xml_key,
+						  	  registry=registry,
+						  	  xml_parent_name=outline_xml_node,
+						  	  force=force)
+
+		result = {}
+		registered = [x.ntiid for x in outline_nodes(course.Outline)]
+		result['Registered'] = registered
+		result['RemovedCount'] = len(removed)
+		result['RegisteredCount'] = len(registered)
+		logger.info("%s node(s) registered for %s", len(registered), ntiid)
+		return result
+
 	def _do_call(self, result, courses=None):
 		values = self.readInput()
 		courses = courses if courses is not None else _parse_courses(values)
@@ -135,41 +175,10 @@ class ResetCourseOutlineView(AbstractAuthenticatedView,
 			folder = find_interface(course, IHostPolicyFolder, strict=False)
 			reg_site = get_site_for_site_names((folder.__name__,))
 			with current_site(reg_site): # site where course is registered
-				removed = []
-				outline = course.Outline
 				registry = folder.getSiteManager()
-				removed.extend(unregister_nodes(outline,
-												registry=registry,
-												force=force))
-				for node in removed:
-					remove_transaction_history(node)
-
-				outline.reset()
 				ntiid = ICourseCatalogEntry(course).ntiid
-				logger.info("%s node(s) removed from %s", len(removed), ntiid)
+				items[ntiid] = self._do_reset(course, force, registry)
 
-				root = course.root
-				outline_xml_node = None
-				outline_xml_key = root.getChildNamed(COURSE_OUTLINE_NAME)
-				if not outline_xml_key:
-					if course.ContentPackageBundle:
-						for package in course.ContentPackageBundle.ContentPackages:
-							outline_xml_key = package.index
-							outline_xml_node = 'course'
-							break
-
-				fill_outline_from_key(course.Outline,
-								  	  outline_xml_key,
-								  	  registry=registry,
-								  	  xml_parent_name=outline_xml_node,
-								  	  force=force)
-
-				info = items[ntiid] = {}
-				registered = [x.ntiid for x in outline_nodes(course.Outline)]
-				info['Registered'] = registered
-				info['RemovedCount'] = len(removed)
-				info['RegisteredCount'] = len(registered)
-				logger.info("%s node(s) registered for %s", len(registered), ntiid)
 		return to_process
 
 	def __call__(self):
