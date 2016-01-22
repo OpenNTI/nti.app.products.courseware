@@ -5,6 +5,8 @@
 """
 
 from __future__ import print_function, unicode_literals, absolute_import, division
+from nti.site.site import get_component_hierarchy_names
+from nti.intid.common import removeIntId
 __docformat__ = "restructuredtext en"
 
 logger = __import__('logging').getLogger(__name__)
@@ -40,9 +42,11 @@ from nti.contenttypes.courses._outline_parser import outline_nodes
 from nti.contenttypes.courses._outline_parser import unregister_nodes
 from nti.contenttypes.courses._outline_parser import fill_outline_from_key
 
+from nti.contenttypes.courses.interfaces import iface_of_node 
 from nti.contenttypes.courses.interfaces import ICourseCatalog
 from nti.contenttypes.courses.interfaces import ICourseInstance
 from nti.contenttypes.courses.interfaces import ICourseSubInstance
+from nti.contenttypes.courses.interfaces import ICourseOutlineNode
 from nti.contenttypes.courses.interfaces import ICourseCatalogEntry
 
 from nti.contenttypes.courses.legacy_catalog import ILegacyCourseInstance
@@ -63,6 +67,8 @@ from nti.recorder.record import remove_transaction_history
 from nti.site.hostpolicy import get_host_site
 
 from nti.site.interfaces import IHostPolicyFolder
+
+from nti.site.utils import unregisterUtility
 
 from nti.traversal.traversal import find_interface
 
@@ -199,7 +205,22 @@ class ResetCourseOutlineView(AbstractAuthenticatedView,
 			   permission=nauth.ACT_NTI_ADMIN)
 class ResetAllCoursesOutlinesView(ResetCourseOutlineView):
 
+	def _unregisterAll(self):
+		count = 0
+		# XXX: Remove all outline nodes from all registries
+		for name in get_component_hierarchy_names():
+			with current_site(get_host_site(name)):
+				registry = component.getSiteManager()
+				for ntiid, node in list(registry.getUtilitiesFor(ICourseOutlineNode)):
+					if unregisterUtility(registry,
+									  	 name=ntiid,
+							 		  	 provided=iface_of_node(node)):
+						count += 1
+						removeIntId(node)
+		logger.info("%s node(s) unregistered", count)
+				
 	def _do_call(self, result, courses=None):
+		self._unregisterAll()
 		catalog = component.getUtility(ICourseCatalog)
 		courses = list(catalog.iterCatalogEntries())
 		return super(ResetAllCoursesOutlinesView, self)._do_call(result, courses)
