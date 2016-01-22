@@ -60,7 +60,7 @@ from nti.ntiids.ntiids import find_object_with_ntiid
 
 from nti.recorder.record import remove_transaction_history
 
-from nti.site.hostpolicy import get_site
+from nti.site.hostpolicy import get_host_site
 
 from nti.site.interfaces import IHostPolicyFolder
 
@@ -174,7 +174,7 @@ class ResetCourseOutlineView(AbstractAuthenticatedView,
 
 		for course in to_process:
 			folder = find_interface(course, IHostPolicyFolder, strict=False)
-			with current_site(get_site(folder.__name__)):
+			with current_site(get_host_site(folder.__name__)):
 				registry = folder.getSiteManager()
 				ntiid = ICourseCatalogEntry(course).ntiid
 				items[ntiid] = self._do_reset(course, force, registry)
