@@ -32,6 +32,8 @@ from nti.testing.matchers import verifiably_provides
 from zope import component
 from zope import lifecycleevent
 
+from zope.securitypolicy.principalrole import principalRoleManager
+
 from nti.appserver.workspaces.interfaces import ICollection
 from nti.appserver.workspaces.interfaces import IUserService
 
@@ -42,6 +44,9 @@ from nti.app.products.courseware.interfaces import ICoursesWorkspace
 
 from nti.contenttypes.courses.interfaces import ICourseCatalog
 from nti.contenttypes.courses.interfaces import ICourseEnrollmentManager
+
+from nti.dataserver.authorization import ROLE_ADMIN
+from nti.dataserver.authorization import ROLE_CONTENT_ADMIN
 
 from nti.dataserver.users import User
 
@@ -483,7 +488,6 @@ class TestPersistentWorkspaces(_AbstractEnrollingBase,
 	def _get_main_and_sect_entries(self, res):
 		main_entry, = [x for x in res.json_body['Items'] if x['NTIID'] == self.main_ntiid]
 		sect_entry, = [x for x in res.json_body['Items'] if x['NTIID'] == self.section_ntiid]
-
 		return main_entry, sect_entry
 
 	@WithSharedApplicationMockDS(users=True, testapp=True)
@@ -581,6 +585,38 @@ class TestPersistentWorkspaces(_AbstractEnrollingBase,
 																   'ENGR 1510-901'))))
 
 		assert_that(res, has_entry('Items', has_length(6)))
+
+	editor_role = 'editor'
+
+	@WithSharedApplicationMockDS(users=('content_admin',), testapp=True)
+	def test_content_admin(self):
+		admin_environ = self._make_extra_environ(username='content_admin')
+
+		res = self.testapp.get('/dataserver2/users/content_admin/Courses/AdministeredCourses',
+								extra_environ=admin_environ)
+		assert_that(res.json_body, has_entry('Items', has_length(0)))
+
+		with mock_dataserver.mock_db_trans(self.ds):
+			principalRoleManager.assignRoleToPrincipal(
+								ROLE_CONTENT_ADMIN.id, 'content_admin', check=False)
+
+		res = self.testapp.get('/dataserver2/users/content_admin/Courses/AdministeredCourses',
+								extra_environ=admin_environ)
+		# All non-global courses, including our non-public one.
+		assert_that(res.json_body, has_entry('Items', has_length(7)))
+		for course in res.json_body.get( 'Items' ):
+			assert_that( course, has_entry( 'RoleName', is_( self.editor_role )))
+
+	@WithSharedApplicationMockDS(users=('arbitrary@nextthought.com',), testapp=True)
+	def test_admin(self):
+		# NT admins are automatically part of the role.
+		admin_environ = self._make_extra_environ(username='arbitrary@nextthought.com')
+		res = self.testapp.get('/dataserver2/users/arbitrary@nextthought.com/Courses/AdministeredCourses',
+								extra_environ=admin_environ)
+		# All non-global courses, including our non-public one.
+		assert_that(res.json_body, has_entry('Items', has_length(7)))
+		for course in res.json_body.get( 'Items' ):
+			assert_that( course, has_entry( 'RoleName', is_( self.editor_role )))
 
 class TestRestrictedWorkspace(ApplicationLayerTest):
 

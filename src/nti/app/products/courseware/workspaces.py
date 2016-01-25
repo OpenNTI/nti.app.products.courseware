@@ -45,11 +45,14 @@ from nti.contenttypes.courses.interfaces import ICourseInstance
 from nti.contenttypes.courses.interfaces import ICourseCatalogEntry
 from nti.contenttypes.courses.interfaces import IPrincipalEnrollments
 
+from nti.contenttypes.courses.legacy_catalog import ILegacyCourseInstance
+
 from nti.dataserver.interfaces import IUser
 from nti.dataserver.interfaces import IGroupMember
 
 from nti.dataserver.authorization import ACT_DELETE
 from nti.dataserver.authorization import ROLE_ADMIN
+from nti.dataserver.authorization import ACT_CONTENT_EDIT
 from nti.dataserver.authorization import ROLE_CONTENT_ADMIN
 
 from nti.dataserver.authorization_acl import ace_allowing
@@ -455,9 +458,13 @@ class _DefaultPrincipalAdministrativeRoleCatalog(object):
 		# We do not filter based on enrollment or anything else.
 		# This will probably move to its own workspace eventually.
 		catalog = component.queryUtility(ICourseCatalog)
+		is_admin = self._is_admin()
 		for entry in catalog.iterCatalogEntries():
 			course = ICourseInstance( entry, None )
-			if course is not None:
+			if 		course is not None \
+				and not ILegacyCourseInstance.providedBy( course ) \
+				and (	is_admin \
+					or 	has_permission( ACT_CONTENT_EDIT, entry, self.user )):
 				yield course
 
 	def _iter_admin_courses(self):

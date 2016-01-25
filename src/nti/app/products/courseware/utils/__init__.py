@@ -64,7 +64,11 @@ from nti.contenttypes.courses.interfaces import ICourseInstance
 from nti.contenttypes.courses.interfaces import ICourseSubInstance
 from nti.contenttypes.courses.interfaces import ICourseCatalogEntry
 
+from nti.dataserver.authorization import ACT_READ
+from nti.dataserver.authorization import ACT_CONTENT_EDIT
 from nti.dataserver.authorization import ROLE_CONTENT_ADMIN
+
+from nti.dataserver.authorization_acl import has_permission
 
 from nti.dataserver.interfaces import IMemcacheClient
 
@@ -198,14 +202,6 @@ class PreviewCourseAccessPredicateDecorator(AbstractAuthenticatedRequestAwareDec
 	adaptable to an `ICourseInstance`.
 	"""
 
-	def _is_content_admin(self):
-		roles = principalRoleManager.getRolesForPrincipal(
-											self.remoteUser.username)
-		for role, access in roles or ():
-			if role == ROLE_CONTENT_ADMIN.id and access == Allow:
-				return True
-		return False
-
 	def _is_preview(self, course):
 		entry = ICourseCatalogEntry(course, None)
 		return entry is not None and entry.Preview
@@ -217,9 +213,9 @@ class PreviewCourseAccessPredicateDecorator(AbstractAuthenticatedRequestAwareDec
 		"""
 		result = super(PreviewCourseAccessPredicate, self)._predicate(context, result)
 		course = ICourseInstance(context)
-		return result \
-			and (not self._is_preview(course) \
-				 or self._is_content_admin() \
-				 or is_course_instructor_or_editor(course, self.remoteUser))
+		return 	result \
+			and (	not self._is_preview(course) \
+				or 	is_course_instructor_or_editor( course, self.remoteUser ) \
+				or 	has_permission( ACT_CONTENT_EDIT, course, self.remoteUser ))
 
 PreviewCourseAccessPredicate = PreviewCourseAccessPredicateDecorator # BWC
