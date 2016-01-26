@@ -54,7 +54,7 @@ class CourseMailView(AbstractMemberEmailView):
 	Params:
 
 	scope
-		We support scope filters of: `all`, `ForCredit`, `Public`
+		We support scope filters of: `All`, `ForCredit`, `Public`
 		and `Open`, case insensitive. By default, all users are
 		emailed.
 
@@ -66,7 +66,7 @@ class CourseMailView(AbstractMemberEmailView):
 	@property
 	def _context_display_name(self):
 		cat_entry = ICourseCatalogEntry(self.course)
-		return getattr(cat_entry, 'title', '')
+		return getattr(cat_entry, 'ProviderUniqueID', self.course.__name__)
 
 	def _default_subject(self):
 		profile = IUserProfile(self.sender)
