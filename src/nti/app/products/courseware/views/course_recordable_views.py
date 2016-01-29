@@ -80,7 +80,7 @@ class CourseSyncLockedObjectsView(AbstractAuthenticatedView):
 		entry = ICourseCatalogEntry(context)
 		intids = component.getUtility(IIntIds)
 		sites = get_component_hierarchy_names()
-		
+
 		containers = [entry.ntiid]
 		containers.extend(self._get_course_pacakge_ntiids(course))
 
@@ -114,7 +114,12 @@ class CourseSyncLockedObjectsView(AbstractAuthenticatedView):
 
 	def __call__(self):
 		result = LocatedExternalDict()
+		result.__name__ = self.request.view_name
+		result.__parent__ = self.request.context
+		self.request.acl_decoration = False  # decoration
 		items = result[ITEMS] = []
 		items.extend(self._get_locked_objects(self.context))
 		result['Total'] = result['ItemCount'] = len(items)
+		result.lastModified = reduce(lambda x, y: max(x, getattr(y, 'lastModified', 0)),
+									 items, 0)
 		return result
