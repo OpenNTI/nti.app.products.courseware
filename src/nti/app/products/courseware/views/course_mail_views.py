@@ -167,6 +167,12 @@ class EnrollmentRecordMailView(CourseMailView):
 	"""
 
 	@property
+	def _context_display_name(self):
+		course = super( EnrollmentRecordMailView, self )._context_display_name
+		result = '%s in %s' % ( self.context.Username, course )
+		return result
+
+	@property
 	def course(self):
 		return ICourseInstance(self.context, None)
 
