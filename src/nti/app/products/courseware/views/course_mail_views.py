@@ -66,6 +66,14 @@ class CourseMailView(AbstractMemberEmailView):
 	@property
 	def _context_display_name(self):
 		cat_entry = ICourseCatalogEntry(self.course)
+		result = getattr(cat_entry, 'title', None)
+		if not result:
+			result = getattr(cat_entry, 'ProviderUniqueID', '' )
+		return result
+
+	@property
+	def _context_logged_info(self):
+		cat_entry = ICourseCatalogEntry(self.course)
 		return getattr(cat_entry, 'ProviderUniqueID', self.course.__name__)
 
 	def _default_subject(self):
@@ -167,7 +175,7 @@ class EnrollmentRecordMailView(CourseMailView):
 	"""
 
 	@property
-	def _context_display_name(self):
+	def _context_logged_info(self):
 		course = super( EnrollmentRecordMailView, self )._context_display_name
 		result = '%s in %s' % ( self.context.Username, course )
 		return result
