@@ -92,6 +92,7 @@ class CourseSyncLockedObjectsView(AbstractAuthenticatedView):
 
 		# presentation assets in course
 		obj_ids = lib_catalog.get_references(
+								container_all_of=False,
 								container_ntiids=containers,
 								provided=ALL_PRESENTATION_ASSETS_INTERFACES,
 								sites=sites)
