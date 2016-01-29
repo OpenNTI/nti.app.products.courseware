@@ -11,20 +11,21 @@ logger = __import__('logging').getLogger(__name__)
 
 from zope import component
 
-from zope.intid import IIntIds
+from zope.intid.interfaces import IIntIds
 
 from pyramid.view import view_config
 from pyramid.view import view_defaults
 
 from nti.app.base.abstract_views import AbstractAuthenticatedView
 
-from nti.assessment.interfaces import ASSESSMENT_INTERFACES
-
 from nti.contentlibrary.indexed_data import get_library_catalog
 
 from nti.contenttypes.courses.interfaces import ICourseOutline
 from nti.contenttypes.courses.interfaces import ICourseInstance
 from nti.contenttypes.courses.interfaces import ICourseCatalogEntry
+from nti.contenttypes.courses.interfaces import ICourseAssessmentItemCatalog
+
+from nti.contenttypes.courses.utils import get_course_packages
 
 from nti.contenttypes.presentation import ALL_PRESENTATION_ASSETS_INTERFACES
 
@@ -66,10 +67,7 @@ class CourseSyncLockedObjectsView(AbstractAuthenticatedView):
 		return result
 
 	def _get_course_pacakge_ntiids(self, course):
-		try:
-			packs = course.ContentPackageBundle.ContentPackages
-		except AttributeError:
-			packs = (course.legacy_content_package,)
+		packs = get_course_packages(course)
 		result = [pack.ntiid for pack in packs]
 		return result
 
@@ -82,7 +80,9 @@ class CourseSyncLockedObjectsView(AbstractAuthenticatedView):
 		entry = ICourseCatalogEntry(context)
 		intids = component.getUtility(IIntIds)
 		sites = get_component_hierarchy_names()
-		pack_ntiids = self._get_course_pacakge_ntiids(course)
+		
+		containers = [entry.ntiid]
+		containers.extend(self._get_course_pacakge_ntiids(course))
 
 		all_ids = lib_catalog.family.IF.LFSet()
 
@@ -92,24 +92,17 @@ class CourseSyncLockedObjectsView(AbstractAuthenticatedView):
 
 		# presentation assets in course
 		obj_ids = lib_catalog.get_references(
-								container_ntiids=entry.ntiid,
+								container_ntiids=containers,
 								provided=ALL_PRESENTATION_ASSETS_INTERFACES,
 								sites=sites)
 		all_ids.update(obj_ids)
 
-		# presentation assets in packages
-		obj_ids = lib_catalog.get_references(
-								namespace=pack_ntiids,
-								provided=ALL_PRESENTATION_ASSETS_INTERFACES,
-								sites=sites)
-		all_ids.update(obj_ids)
-
-		# assesments in packages
-		obj_ids = lib_catalog.get_references(
-								namespace=pack_ntiids,
-								provided=ASSESSMENT_INTERFACES,
-								sites=sites)
-		all_ids.update(obj_ids)
+		# assesments in course
+		catalog = ICourseAssessmentItemCatalog(course)
+		for item in catalog.iter_assessment_items():
+			doc_id = intids.queryId(item)
+			if doc_id is not None:
+				all_ids.add(doc_id)
 
 		recorder_catalog = get_recorder_catalog()
 		locked_intids = recorder_catalog[IX_LOCKED].apply({'any_of': (True,)})

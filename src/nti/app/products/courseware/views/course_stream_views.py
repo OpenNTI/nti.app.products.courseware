@@ -53,13 +53,13 @@ from nti.links.links import Link
 
 from nti.zope_catalog.catalog import isBroken
 
-from ..stream_ranking import _DEFAULT_TIME_FIELD
-from ..stream_ranking import StreamConfidenceRanker
+from nti.app.products.courseware.stream_ranking import _DEFAULT_TIME_FIELD
+from nti.app.products.courseware.stream_ranking import StreamConfidenceRanker
 
-from ._utils import _get_containers_in_course
+from nti.app.products.courseware.views._utils import _get_containers_in_course
 
-from . import VIEW_COURSE_RECURSIVE
-from . import VIEW_COURSE_RECURSIVE_BUCKET
+from nti.app.products.courseware.views import VIEW_COURSE_RECURSIVE
+from nti.app.products.courseware.views import VIEW_COURSE_RECURSIVE_BUCKET
 
 CLASS = StandardExternalFields.CLASS
 ITEMS = StandardExternalFields.ITEMS
