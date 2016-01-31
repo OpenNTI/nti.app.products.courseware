@@ -67,12 +67,15 @@ class CourseSyncLockedObjectsView(AbstractAuthenticatedView):
 		return result
 
 	def _get_course_pacakge_ntiids(self, course):
-		packs = get_course_packages(course)
-		result = [pack.ntiid for pack in packs]
-		return result
-
-	def _has_permission(self, obj):
-		return True
+		result = set()
+		def _recur(unit):
+			for child in unit.children or ():
+				_recur(child)
+			result.add(unit.ntiid)
+		for pack in get_course_packages(course):
+			_recur(pack)
+		result.discard(None)
+		return tuple(result)
 
 	def _get_locked_objects(self, context):
 		lib_catalog = get_library_catalog()
