@@ -305,18 +305,18 @@ class DropCourseDiscussionsView(AbstractAuthenticatedView):
 		result = LocatedExternalDict()
 		items = result[ITEMS] = {}
 		for course in courses:
-			course = ICourseInstance(course, None)
-			entry = ICourseCatalogEntry(course, None)
+			course = ICourseInstance(course)
+			entry = ICourseCatalogEntry(course)
 			data = items[entry.ntiid] = {}
-			course_discs = ICourseDiscussions(course)
-			course_discs = {get_topic_key(d) for d in course_discs.values()}
-			discussions = course.Discussions
-			for forum in discussions.values():
-				if (not ICourseInstancePublicScopedForum.providedBy(forum)
+
+			discussions = ICourseDiscussions(course)
+			discussions = {get_topic_key(d) for d in discussions.values()}
+			for forum in course.Discussions.values():
+				if (	not ICourseInstancePublicScopedForum.providedBy(forum)
 					and not ICourseInstanceForCreditScopedForum.providedBy(forum)):
 					continue
 
-				for key in course_discs:
+				for key in discussions:
 					if key in forum:
 						del forum[key]
 						data.setdefault(forum.__name__, [])
