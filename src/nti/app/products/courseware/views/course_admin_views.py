@@ -20,22 +20,35 @@ import isodate
 
 from zope import component
 
-from zope.intid import IIntIds
+from zope.intid.interfaces import IIntIds
 
 from zope.security.interfaces import IPrincipal
-from zope.security.management import endInteraction, restoreInteraction
+from zope.security.management import endInteraction
+from zope.security.management import restoreInteraction
 
 from zope.securitypolicy.interfaces import Allow
 from zope.securitypolicy.interfaces import IPrincipalRoleMap
 
+from pyramid import httpexceptions as hexc
+
 from pyramid.view import view_config
 from pyramid.view import view_defaults
-from pyramid import httpexceptions as hexc
 
 from nti.app.base.abstract_views import AbstractAuthenticatedView
 
 from nti.app.externalization.internalization import read_body_as_external_object
 from nti.app.externalization.view_mixins import ModeledContentUploadRequestUtilsMixin
+
+from nti.app.products.courseware.interfaces import ICoursesWorkspace
+
+from nti.app.products.courseware.workspaces import CourseInstanceAdministrativeRole
+
+from nti.app.products.courseware.utils import course_migrator
+
+from nti.app.products.courseware.views.catalog_views import get_enrollments
+from nti.app.products.courseware.views.catalog_views import do_course_enrollment
+
+from nti.app.products.courseware.views import CourseAdminPathAdapter
 
 from nti.appserver.workspaces.interfaces import IUserService
 
@@ -43,31 +56,31 @@ from nti.common.property import Lazy
 from nti.common.string import TRUE_VALUES
 from nti.common.maps import CaseInsensitiveDict
 
+from nti.contenttypes.courses import get_enrollment_catalog
+
+from nti.contenttypes.courses.enrollment import migrate_enrollments_from_course_to_course
+
 from nti.contenttypes.courses.index import IX_SITE
 from nti.contenttypes.courses.index import IX_SCOPE
 from nti.contenttypes.courses.index import IX_COURSE
 from nti.contenttypes.courses.index import IX_USERNAME
+
 from nti.contenttypes.courses.interfaces import ES_PUBLIC
 from nti.contenttypes.courses.interfaces import INSTRUCTOR
 from nti.contenttypes.courses.interfaces import RID_INSTRUCTOR
 from nti.contenttypes.courses.interfaces import ENROLLMENT_SCOPE_NAMES
 from nti.contenttypes.courses.interfaces import ENROLLMENT_SCOPE_VOCABULARY
 
-from nti.contenttypes.courses import get_enrollment_catalog
-
 from nti.contenttypes.courses.interfaces import ICourseCatalog
 from nti.contenttypes.courses.interfaces import ICourseInstance
 from nti.contenttypes.courses.interfaces import ICourseEnrollmentManager
 from nti.contenttypes.courses.interfaces import ICourseInstanceEnrollmentRecord
-
-from nti.contenttypes.courses.enrollment import migrate_enrollments_from_course_to_course
-
 from nti.contenttypes.courses.utils import drop_any_other_enrollments
 from nti.contenttypes.courses.utils import is_instructor_in_hierarchy
 
-from nti.dataserver.interfaces import IUser
-
 from nti.dataserver import authorization as nauth
+
+from nti.dataserver.interfaces import IUser
 
 from nti.dataserver.users import User
 from nti.dataserver.users.interfaces import IUserProfile
@@ -78,17 +91,6 @@ from nti.externalization.interfaces import StandardExternalFields
 from nti.ntiids.ntiids import find_object_with_ntiid
 
 from nti.site.site import get_component_hierarchy_names
-
-from ..interfaces import ICoursesWorkspace
-
-from ..workspaces import CourseInstanceAdministrativeRole
-
-from ..utils import course_migrator
-
-from .catalog_views import get_enrollments
-from .catalog_views import do_course_enrollment
-
-from . import CourseAdminPathAdapter
 
 ITEMS = StandardExternalFields.ITEMS
 
@@ -112,9 +114,7 @@ def _parse_user(values):
 
 def _parse_courses(values):
 	# get validate course entry
-	ntiids = values.get('ntiid') or values.get('ntiids') or \
-			 values.get('entry') or values.get('entries') or \
-			 values.get('course') or values.get('courses')
+	ntiids = values.get('ntiid') or values.get('ntiids')
 	if not ntiids:
 		raise hexc.HTTPUnprocessableEntity(detail='No course entry identifier')
 
