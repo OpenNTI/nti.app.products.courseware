@@ -15,9 +15,10 @@ import six
 from zope import interface
 from zope import lifecycleevent
 
+from pyramid import httpexceptions as hexc
+
 from pyramid.view import view_config
 from pyramid.view import view_defaults
-from pyramid import httpexceptions as hexc
 
 from nti.app.base.abstract_views import get_all_sources
 from nti.app.base.abstract_views import AbstractAuthenticatedView
@@ -26,25 +27,28 @@ from nti.app.contentfile import validate_sources
 
 from nti.app.externalization.internalization import read_body_as_external_object
 
+from nti.app.products.courseware.discussions import create_topics
 from nti.app.products.courseware.discussions import get_topic_key
 
 from nti.app.products.courseware.utils import get_assets_folder
+
+from nti.app.products.courseware.views import VIEW_COURSE_DISCUSSIONS
+
+from nti.app.products.courseware.views import CourseAdminPathAdapter
 
 from nti.app.products.courseware.views._utils import _get_namedfile
 from nti.app.products.courseware.views._utils import _get_download_href
 from nti.app.products.courseware.views._utils import _get_file_from_link
 from nti.app.products.courseware.views._utils import _slugify_in_container
 
-from nti.app.products.courseware.views import VIEW_COURSE_DISCUSSIONS
-
-from nti.app.products.courseware.views import CourseAdminPathAdapter
+from nti.appserver.dataserver_pyramid_views import GenericGetView
 
 from nti.appserver.ugd_edit_views import UGDPutView
 from nti.appserver.ugd_edit_views import UGDPostView
-from nti.appserver.dataserver_pyramid_views import GenericGetView
+
+from nti.common.maps import CaseInsensitiveDict
 
 from nti.common.property import Lazy
-from nti.common.maps import CaseInsensitiveDict
 
 from nti.contentfolder.interfaces import IContentFolder
 
@@ -54,21 +58,25 @@ from nti.contenttypes.courses.interfaces import ICourseCatalogEntry
 from nti.contenttypes.courses.interfaces import ICourseInstancePublicScopedForum
 from nti.contenttypes.courses.interfaces import ICourseInstanceForCreditScopedForum
 
-from nti.contenttypes.courses.discussions.parser import path_to_course
 from nti.contenttypes.courses.discussions.interfaces import NTI_COURSE_BUNDLE
+
 from nti.contenttypes.courses.discussions.interfaces import ICourseDiscussion
 from nti.contenttypes.courses.discussions.interfaces import ICourseDiscussions
+
+from nti.contenttypes.courses.discussions.parser import path_to_course
 
 from nti.dataserver import authorization as nauth
 
 from nti.dataserver_core.interfaces import ILinkExternalHrefOnly
 
-from nti.externalization.interfaces import LocatedExternalDict
-from nti.externalization.interfaces import StandardExternalFields
 from nti.externalization.externalization import to_external_object
 
-from nti.links.links import Link
+from nti.externalization.interfaces import LocatedExternalDict
+from nti.externalization.interfaces import StandardExternalFields
+
 from nti.links.externalization import render_link
+
+from nti.links.links import Link
 
 from nti.namedfile.file import name_finder
 from nti.namedfile.file import safe_filename
@@ -218,9 +226,7 @@ class CourseDiscussionPutView(UGDPutView):
 
 def _parse_courses(values):
 	# get validate course entry
-	ntiids = values.get('ntiid') or values.get('ntiids') or \
-			 values.get('entry') or values.get('entries') or \
-			 values.get('course') or values.get('courses')
+	ntiids = values.get('ntiid') or values.get('ntiids')
 	if not ntiids:
 		raise hexc.HTTPUnprocessableEntity(detail='No course entry identifier')
 
@@ -240,6 +246,39 @@ def _parse_course(values):
 	if not result:
 		raise hexc.HTTPUnprocessableEntity(detail='Course not found')
 	return result[0]
+
+@view_config(name='SyncCourseDiscussions')
+@view_config(name='sync_course_discussions')
+@view_defaults(route_name='objects.generic.traversal',
+			   renderer='rest',
+			   context=CourseAdminPathAdapter,
+			   permission=nauth.ACT_NTI_ADMIN)
+class SyncCourseDiscussionsView(AbstractAuthenticatedView):
+
+	def readInput(self):
+		if self.request.body:
+			values = read_body_as_external_object(self.request)
+		else:
+			values = self.request.params
+		result = CaseInsensitiveDict(values)
+		return result
+
+	def __call__(self):
+		values = self.readInput()
+		courses = _parse_courses(values)
+		if not courses:
+			raise hexc.HTTPUnprocessableEntity(detail='Please specify a valid course')
+
+		result = LocatedExternalDict()
+		items = result[ITEMS] = {}
+		for course in courses:
+			course = ICourseInstance(course)
+			entry = ICourseCatalogEntry(course)
+			data = items[entry.ntiid] = []
+			discussions = ICourseDiscussions(course)
+			for discussion in discussions.values():
+				data.extend(create_topics(discussion))
+		return result
 
 @view_config(name='DropCourseDiscussions')
 @view_config(name='drop_course_discussions')
@@ -268,19 +307,13 @@ class DropCourseDiscussionsView(AbstractAuthenticatedView):
 		for course in courses:
 			course = ICourseInstance(course, None)
 			entry = ICourseCatalogEntry(course, None)
-			if course is None or entry is None:
-				continue
-
 			data = items[entry.ntiid] = {}
-			course_discs = ICourseDiscussions(course, None) or {}
+			course_discs = ICourseDiscussions(course)
 			course_discs = {get_topic_key(d) for d in course_discs.values()}
-			if not course_discs:
-				continue
-
 			discussions = course.Discussions
 			for forum in discussions.values():
-				if 		not ICourseInstancePublicScopedForum.providedBy(forum) \
-					and not ICourseInstanceForCreditScopedForum.providedBy(forum):
+				if (not ICourseInstancePublicScopedForum.providedBy(forum)
+					and not ICourseInstanceForCreditScopedForum.providedBy(forum)):
 					continue
 
 				for key in course_discs:
