@@ -19,12 +19,19 @@ from zope import component
 from zope import interface
 from zope import lifecycleevent
 
-from pyramid.view import view_config
 from pyramid import httpexceptions as hexc
+
+from pyramid.view import view_config
 
 from nti.app.base.abstract_views import AbstractAuthenticatedView
 
 from nti.app.externalization.view_mixins import UploadRequestUtilsMixin
+
+from nti.app.products.courseware.interfaces import NTIID_TYPE_COURSE_SECTION_TOPIC
+
+from nti.app.products.courseware.legacy_courses import _copy_enrollments_from_legacy_to_new
+
+from nti.app.products.courseware.views import CourseAdminPathAdapter
 
 from nti.contentfragments.interfaces import CensoredPlainTextContentFragment
 
@@ -37,14 +44,18 @@ from nti.contenttypes.courses.interfaces import ICourseInstanceForCreditScopedFo
 
 from nti.dataserver import authorization as nauth
 
-from nti.dataserver.users import Entity
-
 from nti.dataserver.contenttypes.forums.ace import ForumACE
+
 from nti.dataserver.contenttypes.forums.forum import ACLCommunityForum
-from nti.dataserver.contenttypes.forums.post import CommunityHeadlinePost
-from nti.dataserver.contenttypes.forums.topic import CommunityHeadlineTopic
+
 from nti.dataserver.contenttypes.forums.interfaces import IACLCommunityBoard
 from nti.dataserver.contenttypes.forums.interfaces import IACLCommunityForum
+
+from nti.dataserver.contenttypes.forums.post import CommunityHeadlinePost
+
+from nti.dataserver.contenttypes.forums.topic import CommunityHeadlineTopic
+
+from nti.dataserver.users import Entity
 
 from nti.externalization.internalization import update_from_external_object
 
@@ -52,13 +63,7 @@ from nti.ntiids import ntiids
 
 from nti.traversal import traversal
 
-from ..interfaces import NTIID_TYPE_COURSE_SECTION_TOPIC
-
-from ..legacy_courses import _copy_enrollments_from_legacy_to_new
-
-from . import CourseAdminPathAdapter
-
-## LEGACY views
+# LEGACY views
 
 @view_config(route_name='objects.generic.traversal',
 			 renderer='rest',
@@ -66,7 +71,7 @@ from . import CourseAdminPathAdapter
 			 context=CourseAdminPathAdapter,
 			 permission=nauth.ACT_NTI_ADMIN,
 			 name='LegacyCourseTopicCreator')
-class CourseTopicCreationView(AbstractAuthenticatedView,UploadRequestUtilsMixin):
+class CourseTopicCreationView(AbstractAuthenticatedView, UploadRequestUtilsMixin):
 	"""
 	POST a CSV file to create topics.
 
@@ -119,7 +124,7 @@ class CourseTopicCreationView(AbstractAuthenticatedView,UploadRequestUtilsMixin)
 		# Subinstance instructors get the same permissions as their students.
 		for subinstance in instance.SubInstances.values():
 			instructors = [instructor.context for instructor in subinstance.instructors]
-			acl.append( ForumACE(Permissions=("Read",), Entities=[i.username for i in instructors], Action='Allow' ) )
+			acl.append(ForumACE(Permissions=("Read",), Entities=[i.username for i in instructors], Action='Allow'))
 
 		return acl
 
@@ -138,7 +143,7 @@ class CourseTopicCreationView(AbstractAuthenticatedView,UploadRequestUtilsMixin)
 			return
 
 		discussions = instance.Discussions
-		acl = self._get_acl( instance, forum_readable_ntiid )
+		acl = self._get_acl(instance, forum_readable_ntiid)
 
 		def _assign_acl(obj, iface):
 			action = False
@@ -166,15 +171,15 @@ class CourseTopicCreationView(AbstractAuthenticatedView,UploadRequestUtilsMixin)
 			forum = discussions[name]
 			logger.debug("Found existing forum %s", forum_name)
 			_assign_acl(forum, IACLCommunityForum)
-			_assign_iface(forum,forum_interface)
+			_assign_iface(forum, forum_interface)
 			if forum.creator is not creator:
 				forum.creator = creator
 		except KeyError:
 			forum = ACLCommunityForum()
 			forum.creator = creator
 			forum.title = forum_display_name or forum_name
-			_assign_acl(forum,IACLCommunityForum)
-			_assign_iface(forum,forum_interface)
+			_assign_acl(forum, IACLCommunityForum)
+			_assign_iface(forum, forum_interface)
 
 			discussions[name] = forum
 			logger.debug('Created forum %s', forum)
@@ -193,14 +198,14 @@ class CourseTopicCreationView(AbstractAuthenticatedView,UploadRequestUtilsMixin)
 
 			if forum_types.get(has_key, True):
 				title = prefix + ' ' + name
-				forums.append( (
+				forums.append((
 					# This value CAN NOT CHANGE: Open Discussions,
 					# In-Class Discussions. NTIIDS depend on it. Hence
 					# the display name.
 					title,
 					instance.SharingScopes[scope],
 					forum_types.get(dpy_key, title),
-					iface) )
+					iface))
 		return forums
 
 	def _extract_content(self, row):
@@ -373,7 +378,7 @@ class CourseTopicCreationView(AbstractAuthenticatedView,UploadRequestUtilsMixin)
 
 		created_ntiids = list()
 		for catalog_entry in catalog.iterCatalogEntries():
-			# FIXME Are we avoiding creating these for legacy 2013 courses?
+			# FIXME: Are we avoiding creating these for legacy 2013 courses?
 			if catalog_entry.StartDate.year < 2014:
 				continue
 			instance = ICourseInstance(catalog_entry)
@@ -415,7 +420,7 @@ class CourseTopicCreationView(AbstractAuthenticatedView,UploadRequestUtilsMixin)
 @view_config(route_name='objects.generic.traversal',
 			 renderer='rest',
 			 context=CourseAdminPathAdapter,
-			 permission=nauth.ACT_NTI_ADMIN, # XXX FIXME
+			 permission=nauth.ACT_NTI_ADMIN,  # XXX FIXME
 			 name='LegacyCourseEnrollmentMigrator')
 class LegacyCourseEnrollmentMigrationView(AbstractAuthenticatedView):
 	"""
