@@ -42,6 +42,7 @@ from nti.site.site import get_component_hierarchy_names
 from nti.zope_catalog.catalog import ResultSet
 
 ITEMS = StandardExternalFields.ITEMS
+LAST_MODIFIED = StandardExternalFields.LAST_MODIFIED
 
 @view_config(context=ICourseInstance)
 @view_config(context=ICourseCatalogEntry)
@@ -123,6 +124,6 @@ class CourseSyncLockedObjectsView(AbstractAuthenticatedView):
 		self.request.acl_decoration = False  # decoration
 		items = result[ITEMS] = [x for x in self._get_locked_objects(ctx) if x.locked]
 		result['Total'] = result['ItemCount'] = len(items)
-		result.lastModified = reduce(lambda x, y: max(x, getattr(y, 'lastModified', 0)),
-									 items, 0)
+		result.lastModified = result[LAST_MODIFIED] = \
+					reduce(lambda x, y: max(x, getattr(y, 'lastModified', 0)), items, 0)
 		return result
