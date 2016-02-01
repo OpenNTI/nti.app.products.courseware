@@ -116,12 +116,12 @@ class CourseSyncLockedObjectsView(AbstractAuthenticatedView):
 		return result
 
 	def __call__(self):
+		ctx = self.context
 		result = LocatedExternalDict()
 		result.__name__ = self.request.view_name
 		result.__parent__ = self.request.context
 		self.request.acl_decoration = False  # decoration
-		items = result[ITEMS] = []
-		items.extend(self._get_locked_objects(self.context))
+		items = result[ITEMS] = [x for x in self._get_locked_objects(ctx) if x.locked]
 		result['Total'] = result['ItemCount'] = len(items)
 		result.lastModified = reduce(lambda x, y: max(x, getattr(y, 'lastModified', 0)),
 									 items, 0)
