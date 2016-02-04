@@ -120,10 +120,9 @@ class CourseSyncLockedObjectsView(AbstractAuthenticatedView,
 
 		# assesments in course
 		catalog = ICourseAssessmentItemCatalog(course)
-		for item in catalog.iter_assessment_items():
-			doc_id = intids.queryId(item)
-			if doc_id is not None:
-				all_ids.add(doc_id)
+		obj_ids = {intids.queryId(item) for item in catalog.iter_assessment_items()}
+		obj_ids.discard(None)
+		all_ids.update(obj_ids)
 
 		recorder_catalog = get_recorder_catalog()
 		locked_intids = recorder_catalog[IX_LOCKED].apply({'any_of': (True,)})
@@ -140,13 +139,12 @@ class CourseSyncLockedObjectsView(AbstractAuthenticatedView,
 		items = result[ITEMS] = [x for x in self._get_locked_objects(self.context) if x.locked]
 		if items:
 			result[LAST_MODIFIED] = max((getattr(x, 'lastModified', 0) for x in items))
-			items.sort(key=lambda t: getattr(t, 'lastModified', 0) , reverse=self._sort_desc)
+			items.sort(key=lambda t: getattr(t, 'lastModified', 0), reverse=self._sort_desc)
 			result.lastModified = result[LAST_MODIFIED]
 
 		result['TotalItemCount'] = len(items)
 		self._batch_items_iterable(result, items)
-		result['ItemCount'] = len(result.get(ITEMS))
-
+		result['ItemCount'] = len(result.get(ITEMS, ()))
 		return result
 
 @view_config(name=VIEW_RECURSIVE_AUDIT_LOG)
@@ -156,11 +154,11 @@ class CourseSyncLockedObjectsView(AbstractAuthenticatedView,
 			   request_method='GET',
 			   permission=nauth.ACT_CONTENT_EDIT,
 			   context=ICourseInstance)
-class RecursiveCourseTransactionHistoryView( AbstractRecursiveTransactionHistoryView ):
+class RecursiveCourseTransactionHistoryView(AbstractRecursiveTransactionHistoryView):
 	"""
 	A batched view to get all edits that have occurred in the course
 	hierarchy, recursively.
 	"""
 
 	def _get_items(self):
-		return self._get_node_items( self.context.Outline )
+		return self._get_node_items(self.context.Outline)
