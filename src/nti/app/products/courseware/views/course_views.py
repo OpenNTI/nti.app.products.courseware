@@ -56,15 +56,20 @@ from nti.externalization.externalization import to_external_object
 
 from nti.ntiids.ntiids import find_object_with_ntiid
 
-from ..interfaces import ACT_VIEW_ROSTER
-from ..interfaces import ICourseInstanceActivity
-from ..interfaces import ICourseInstanceEnrollment
+from nti.app.products.courseware import VIEW_RECURSIVE_AUDIT_LOG
+from nti.app.products.courseware import VIEW_RECURSIVE_TX_HISTORY
 
-from ..utils import get_enrollment_options
+from nti.app.products.courseware.interfaces import ACT_VIEW_ROSTER
+from nti.app.products.courseware.interfaces import ICourseInstanceActivity
+from nti.app.products.courseware.interfaces import ICourseInstanceEnrollment
 
-from . import VIEW_CONTENTS
-from . import VIEW_COURSE_ACTIVITY
-from . import VIEW_COURSE_ENROLLMENT_ROSTER
+from nti.app.products.courseware.utils import get_enrollment_options
+
+from nti.app.products.courseware.views import VIEW_CONTENTS
+from nti.app.products.courseware.views import VIEW_COURSE_ACTIVITY
+from nti.app.products.courseware.views import VIEW_COURSE_ENROLLMENT_ROSTER
+
+from nti.app.products.courseware.views.view_mixins import AbstractRecursiveTransactionHistoryView
 
 ITEMS = StandardExternalFields.ITEMS
 
@@ -533,3 +538,19 @@ class CourseEnrollmentOptionsGetView(AbstractAuthenticatedView):
 	def __call__(self):
 		options = get_enrollment_options(self.context)
 		return options
+
+@view_config(name=VIEW_RECURSIVE_AUDIT_LOG)
+@view_config(name=VIEW_RECURSIVE_TX_HISTORY)
+@view_defaults(route_name='objects.generic.traversal',
+			   renderer='rest',
+			   request_method='GET',
+			   permission=nauth.ACT_CONTENT_EDIT,
+			   context=ICourseInstance)
+class RecursiveCourseTransactionHistoryView( AbstractRecursiveTransactionHistoryView ):
+	"""
+	A batched view to get all edits that have occurred in the course
+	hierarchy, recursively.
+	"""
+
+	def _get_items(self):
+		return self._get_node_items( self.context.Outline )

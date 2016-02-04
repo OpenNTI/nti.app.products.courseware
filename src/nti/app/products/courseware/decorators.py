@@ -49,6 +49,8 @@ from nti.contenttypes.courses.utils import get_catalog_entry
 from nti.contenttypes.courses.utils import is_course_instructor
 from nti.contenttypes.courses.utils import get_enrollment_record
 
+from nti.dataserver.authorization import ACT_CONTENT_EDIT
+
 from nti.dataserver.interfaces import IUser
 from nti.dataserver.interfaces import IContained
 from nti.dataserver.interfaces import IEntityContainer
@@ -70,23 +72,24 @@ from nti.ntiids.ntiids import find_object_with_ntiid
 
 from nti.traversal.traversal import find_interface
 
-from . import VIEW_CONTENTS
-from . import VIEW_COURSE_MAIL
-from . import VIEW_CATALOG_ENTRY
-from . import VIEW_COURSE_ACTIVITY
-from . import VIEW_COURSE_RECURSIVE
-from . import VIEW_COURSE_CLASSMATES
-from . import VIEW_COURSE_DISCUSSIONS
-from . import VIEW_COURSE_RECURSIVE_BUCKET
-from . import VIEW_COURSE_ENROLLMENT_ROSTER
+from nti.app.products.courseware import VIEW_CONTENTS
+from nti.app.products.courseware import VIEW_COURSE_MAIL
+from nti.app.products.courseware import VIEW_CATALOG_ENTRY
+from nti.app.products.courseware import VIEW_COURSE_ACTIVITY
+from nti.app.products.courseware import VIEW_COURSE_RECURSIVE
+from nti.app.products.courseware import VIEW_COURSE_CLASSMATES
+from nti.app.products.courseware import VIEW_COURSE_DISCUSSIONS
+from nti.app.products.courseware import VIEW_RECURSIVE_AUDIT_LOG
+from nti.app.products.courseware import VIEW_COURSE_RECURSIVE_BUCKET
+from nti.app.products.courseware import VIEW_COURSE_ENROLLMENT_ROSTER
 
-from .utils import get_enrollment_options
-from .utils import get_vendor_thank_you_page
-from .utils import PreviewCourseAccessPredicate
+from nti.app.products.courseware.utils import get_enrollment_options
+from nti.app.products.courseware.utils import get_vendor_thank_you_page
+from nti.app.products.courseware.utils import PreviewCourseAccessPredicate
 
-from .interfaces import ACT_VIEW_ACTIVITY
-from .interfaces import IOpenEnrollmentOption
-from .interfaces import ICourseInstanceEnrollment
+from nti.app.products.courseware.interfaces import ACT_VIEW_ACTIVITY
+from nti.app.products.courseware.interfaces import IOpenEnrollmentOption
+from nti.app.products.courseware.interfaces import ICourseInstanceEnrollment
 
 CLASS = StandardExternalFields.CLASS
 ITEMS = StandardExternalFields.ITEMS
@@ -159,6 +162,31 @@ class _CourseMailLinkDecorator(object):
 		link.__name__ = ''
 		link.__parent__ = context
 		_links.append(link)
+
+class BaseRecursiveAuditLogLinkDecorator(AbstractAuthenticatedRequestAwareDecorator):
+	"""
+	Decorate the audit log links on the given context if the
+	remote user has edit permissions.
+	"""
+	ELEMENT = '@@%s' % VIEW_RECURSIVE_AUDIT_LOG
+
+	def _predicate(self, context, result):
+		if not self._is_authenticated:
+			return False
+		return has_permission(ACT_CONTENT_EDIT, context, self.request)
+
+	def _do_decorate_external(self, context, result):
+		_links = result.setdefault(LINKS, [])
+		link = Link(context, rel=VIEW_RECURSIVE_AUDIT_LOG, elements=(self.ELEMENT,))
+		interface.alsoProvides(link, ILocation)
+		link.__name__ = ''
+		link.__parent__ = context
+		_links.append(link)
+
+@component.adapter(ICourseInstance)
+@interface.implementer(IExternalMappingDecorator)
+class CourseRecursiveAuditLogLinkDecorator(BaseRecursiveAuditLogLinkDecorator):
+	pass
 
 @interface.implementer(IExternalMappingDecorator)
 @component.adapter(ICourseInstanceEnrollment)
@@ -432,7 +460,7 @@ class _CourseDiscussionsLinkDecorator(AbstractAuthenticatedRequestAwareDecorator
 
 	def _do_decorate_external(self, context, result):
 		_links = result.setdefault(LINKS, [])
-		link = Link(context, 
+		link = Link(context,
 					rel=VIEW_COURSE_DISCUSSIONS,
 					elements=(VIEW_COURSE_DISCUSSIONS,))
 		interface.alsoProvides(link, ILocation)

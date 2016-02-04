@@ -292,3 +292,4 @@ class UnlockAllOutlineNodesView(UnlockOutlineNodesView):
 		catalog = component.getUtility(ICourseCatalog)
 		courses = list(catalog.iterCatalogEntries())
 		return super(UnlockAllOutlineNodesView, self)._do_call(result, courses)
+

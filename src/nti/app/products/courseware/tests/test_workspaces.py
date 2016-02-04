@@ -45,7 +45,6 @@ from nti.app.products.courseware.interfaces import ICoursesWorkspace
 from nti.contenttypes.courses.interfaces import ICourseCatalog
 from nti.contenttypes.courses.interfaces import ICourseEnrollmentManager
 
-from nti.dataserver.authorization import ROLE_ADMIN
 from nti.dataserver.authorization import ROLE_CONTENT_ADMIN
 
 from nti.dataserver.users import User
