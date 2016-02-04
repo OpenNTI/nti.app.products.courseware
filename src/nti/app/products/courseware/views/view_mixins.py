@@ -87,6 +87,9 @@ class AbstractRecursiveTransactionHistoryView(AbstractAuthenticatedView,
 
 	def __call__(self):
 		result = LocatedExternalDict()
+		result.__name__ = self.request.view_name
+		result.__parent__ = self.request.context
+
 		items = self._get_items()
 		if items:
 			result[ LAST_MODIFIED ] = max( (x.createdTime for x in items) )

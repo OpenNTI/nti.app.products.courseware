@@ -20,6 +20,11 @@ from nti.app.base.abstract_views import AbstractAuthenticatedView
 
 from nti.app.externalization.view_mixins import BatchingUtilsMixin
 
+from nti.app.products.courseware import VIEW_RECURSIVE_AUDIT_LOG
+from nti.app.products.courseware import VIEW_RECURSIVE_TX_HISTORY
+
+from nti.app.products.courseware.views.view_mixins import AbstractRecursiveTransactionHistoryView
+
 from nti.contentlibrary.indexed_data import get_library_catalog
 
 from nti.contenttypes.courses.interfaces import ICourseOutline
@@ -136,10 +141,26 @@ class CourseSyncLockedObjectsView(AbstractAuthenticatedView,
 		if items:
 			result[LAST_MODIFIED] = max((getattr(x, 'lastModified', 0) for x in items))
 			items.sort(key=lambda t: getattr(t, 'lastModified', 0) , reverse=self._sort_desc)
-			result.lastModified = result[LAST_MODIFIED] 
+			result.lastModified = result[LAST_MODIFIED]
 
 		result['TotalItemCount'] = len(items)
 		self._batch_items_iterable(result, items)
 		result['ItemCount'] = len(result.get(ITEMS))
 
 		return result
+
+@view_config(name=VIEW_RECURSIVE_AUDIT_LOG)
+@view_config(name=VIEW_RECURSIVE_TX_HISTORY)
+@view_defaults(route_name='objects.generic.traversal',
+			   renderer='rest',
+			   request_method='GET',
+			   permission=nauth.ACT_CONTENT_EDIT,
+			   context=ICourseInstance)
+class RecursiveCourseTransactionHistoryView( AbstractRecursiveTransactionHistoryView ):
+	"""
+	A batched view to get all edits that have occurred in the course
+	hierarchy, recursively.
+	"""
+
+	def _get_items(self):
+		return self._get_node_items( self.context.Outline )
