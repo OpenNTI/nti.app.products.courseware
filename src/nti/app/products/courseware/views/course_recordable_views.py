@@ -18,6 +18,8 @@ from pyramid.view import view_defaults
 
 from nti.app.base.abstract_views import AbstractAuthenticatedView
 
+from nti.app.externalization.view_mixins import BatchingUtilsMixin
+
 from nti.contentlibrary.indexed_data import get_library_catalog
 
 from nti.contenttypes.courses.interfaces import ICourseOutline
@@ -51,7 +53,16 @@ LAST_MODIFIED = StandardExternalFields.LAST_MODIFIED
 			   request_method='GET',
 			   name='SyncLockedObjects',
 			   permission=nauth.ACT_CONTENT_EDIT)
-class CourseSyncLockedObjectsView(AbstractAuthenticatedView):
+class CourseSyncLockedObjectsView(AbstractAuthenticatedView,
+								  BatchingUtilsMixin):
+
+	_DEFAULT_BATCH_SIZE = 20
+	_DEFAULT_BATCH_START = 0
+
+	@property
+	def _sort_desc(self):
+		sort_order_param = self.request.params.get('sortOrder', 'ascending')
+		return sort_order_param.lower() == 'descending'
 
 	def _outline_nodes_uids(self, course, intids):
 		result = set()
@@ -117,13 +128,18 @@ class CourseSyncLockedObjectsView(AbstractAuthenticatedView):
 		return result
 
 	def __call__(self):
-		ctx = self.context
 		result = LocatedExternalDict()
 		result.__name__ = self.request.view_name
 		result.__parent__ = self.request.context
-		self.request.acl_decoration = False  # decoration
-		items = result[ITEMS] = [x for x in self._get_locked_objects(ctx) if x.locked]
-		result['Total'] = result['ItemCount'] = len(items)
-		result.lastModified = result[LAST_MODIFIED] = \
-					reduce(lambda x, y: max(x, getattr(y, 'lastModified', 0)), items, 0)
+
+		items = result[ITEMS] = [x for x in self._get_locked_objects(self.context) if x.locked]
+		if items:
+			result[LAST_MODIFIED] = max((getattr(x, 'lastModified', 0) for x in items))
+			items.sort(key=lambda t: getattr(t, 'lastModified', 0) , reverse=self._sort_desc)
+			result.lastModified = result[LAST_MODIFIED] 
+
+		result['TotalItemCount'] = len(items)
+		self._batch_items_iterable(result, items)
+		result['ItemCount'] = len(result.get(ITEMS))
+
 		return result
