@@ -80,6 +80,7 @@ from nti.app.products.courseware import VIEW_COURSE_RECURSIVE
 from nti.app.products.courseware import VIEW_COURSE_CLASSMATES
 from nti.app.products.courseware import VIEW_COURSE_DISCUSSIONS
 from nti.app.products.courseware import VIEW_RECURSIVE_AUDIT_LOG
+from nti.app.products.courseware import VIEW_COURSE_LOCKED_OBJECTS
 from nti.app.products.courseware import VIEW_COURSE_RECURSIVE_BUCKET
 from nti.app.products.courseware import VIEW_COURSE_ENROLLMENT_ROSTER
 
@@ -168,7 +169,6 @@ class BaseRecursiveAuditLogLinkDecorator(AbstractAuthenticatedRequestAwareDecora
 	Decorate the audit log links on the given context if the
 	remote user has edit permissions.
 	"""
-	ELEMENT = '@@%s' % VIEW_RECURSIVE_AUDIT_LOG
 
 	def _predicate(self, context, result):
 		if not self._is_authenticated:
@@ -177,11 +177,12 @@ class BaseRecursiveAuditLogLinkDecorator(AbstractAuthenticatedRequestAwareDecora
 
 	def _do_decorate_external(self, context, result):
 		_links = result.setdefault(LINKS, [])
-		link = Link(context, rel=VIEW_RECURSIVE_AUDIT_LOG, elements=(self.ELEMENT,))
-		interface.alsoProvides(link, ILocation)
-		link.__name__ = ''
-		link.__parent__ = context
-		_links.append(link)
+		for name in (VIEW_RECURSIVE_AUDIT_LOG, VIEW_COURSE_LOCKED_OBJECTS):
+			link = Link(context, rel=name, elements=('@@%s' % name,))
+			interface.alsoProvides(link, ILocation)
+			link.__name__ = ''
+			link.__parent__ = context
+			_links.append(link)
 
 @component.adapter(ICourseInstance)
 @interface.implementer(IExternalMappingDecorator)
