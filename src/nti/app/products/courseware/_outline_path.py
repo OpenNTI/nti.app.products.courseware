@@ -171,10 +171,12 @@ class OutlinePathFactory(object):
 			* Video contained by a video roll.
 			* Target obj is content unit page containing a self-assessment.
 		"""
-		target_ntiid_ref = getattr(item, 'target_ntiid', None)
-		ntiid_ref = getattr(item, 'ntiid', None)
-		target_ref = getattr(item, 'target', None)
-		ntiid_vals = set([target_ntiid_ref, ntiid_ref, target_ref])
+		target_ntiid_ref = getattr(item, 'target_ntiid', None )
+		ntiid_ref = getattr( item, 'ntiid', None )
+		target_ref = getattr( item, 'target', None )
+		# Some related work refs have hrefs pointing at content (instead of target).
+		href = getattr( item, 'href', None )
+		ntiid_vals = set([target_ntiid_ref, ntiid_ref, target_ref, href])
 
 		# We found our object's container, or we are the container.
 		result = 	self.target_obj_containers.intersection(ntiid_vals) \
@@ -252,7 +254,6 @@ class OutlinePathFactory(object):
 			results = _do_check()
 		return results
 
-
 	def __call__(self):
 		"""
 		For a course and target ntiid, look for the outline hierarchy
@@ -265,6 +266,7 @@ class OutlinePathFactory(object):
 		if 		not self.target_ntiid \
 			or 	getattr(self.course_context, 'Outline', None) is None:
 			return (self.course_context,)
+
 		outline = self.course_context.Outline
 		for outline_node in outline.values():
 			for outline_content_node in outline_node.values():
