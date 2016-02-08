@@ -96,6 +96,9 @@ def _index_node_data(node, result=None):
 	sites = get_component_hierarchy_names()
 	paths = library.pathToNTIID(contentNTIID)
 	unit = paths[-1] if paths else None
+	if unit is None:
+		return result
+
 	for item in catalog.search_objects(container_ntiids=(unit.ntiid,), sites=sites,
 									   provided=PACKAGE_CONTAINER_INTERFACES,
 									   intids=intids):
