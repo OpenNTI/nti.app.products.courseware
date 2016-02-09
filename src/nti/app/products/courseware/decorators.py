@@ -374,28 +374,10 @@ class _CourseClassmatesLinkDecorator(_BaseClassmatesLinkDecorator):
 class _ClassmatesLinkDecorator(_BaseClassmatesLinkDecorator):
 
 	def _predicate(self, context, result):
-		result = bool(self._is_authenticated and \
-					  self.remoteUser == context and \
-					  has_enrollments(self.remoteUser))
+		result = bool(	  self._is_authenticated
+					  and self.remoteUser == context
+					  and has_enrollments(self.remoteUser))
 		return result
-
-@component.adapter(IContained)
-@interface.implementer(IExternalMappingDecorator)
-class _ContainedCatalogEntryDecorator(AbstractAuthenticatedRequestAwareDecorator):
-
-	def _predicate(self, context, result):
-		return bool(self._is_authenticated)
-
-	def _do_decorate_external(self, context, result):
-		containerId = context.containerId
-		entry = container = find_object_with_ntiid(containerId) if containerId else None
-		for iface in (ICourseInstance, ICourseCatalogEntry):
-			entry = iface(container, None)
-			if entry is not None:
-				entry = ICourseCatalogEntry(entry, None)
-				if entry is not None:
-					result['CatalogEntryNTIID'] = entry.ntiid
-				break
 
 @component.adapter(ICourseCatalogEntry)
 @interface.implementer(IExternalMappingDecorator)
