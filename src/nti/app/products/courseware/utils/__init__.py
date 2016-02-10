@@ -76,10 +76,10 @@ from nti.site.site import get_component_hierarchy_names
 
 from nti.traversal.traversal import find_interface
 
-# : Default memcache expiration time
+#: Default memcache expiration time
 DEFAULT_EXP_TIME = 86400
 
-# : 1970-01-1
+#: 1970-01-1
 ZERO_DATETIME = datetime.utcfromtimestamp(0)
 
 def last_synchronized(context=None):
