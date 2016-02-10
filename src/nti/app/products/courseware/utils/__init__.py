@@ -76,10 +76,10 @@ from nti.site.site import get_component_hierarchy_names
 
 from nti.traversal.traversal import find_interface
 
-#: Default memcache expiration time
+# : Default memcache expiration time
 DEFAULT_EXP_TIME = 86400
 
-#: 1970-01-1
+# : 1970-01-1
 ZERO_DATETIME = datetime.utcfromtimestamp(0)
 
 def last_synchronized(context=None):
@@ -214,8 +214,8 @@ class PreviewCourseAccessPredicateDecorator(AbstractAuthenticatedRequestAwareDec
 		result = super(PreviewCourseAccessPredicate, self)._predicate(context, result)
 		course = ICourseInstance(context)
 		return 	result \
-			and (	not self._is_preview(course) \
-				or 	is_course_instructor_or_editor( course, self.remoteUser ) \
-				or 	has_permission( ACT_CONTENT_EDIT, course, self.remoteUser ))
+			and (	not self._is_preview(course)
+				 or is_course_instructor_or_editor(course, self.remoteUser)
+				 or has_permission(ACT_CONTENT_EDIT, course, self.remoteUser))
 
-PreviewCourseAccessPredicate = PreviewCourseAccessPredicateDecorator # BWC
+PreviewCourseAccessPredicate = PreviewCourseAccessPredicateDecorator  # BWC

@@ -21,6 +21,10 @@ from zope.location.interfaces import ILocation
 
 from zope.security.interfaces import IPrincipal
 
+from nti.app.products.courseware.interfaces import ICourseRootFolder
+
+from nti.app.products.courseware.utils import PreviewCourseAccessPredicateDecorator
+
 from nti.common.property import Lazy
 
 from nti.contentfolder.model import RootFolder
@@ -32,7 +36,6 @@ from nti.contenttypes.courses.legacy_catalog import ILegacyCourseInstance
 from nti.contenttypes.courses.utils import is_enrolled
 from nti.contenttypes.courses.utils import get_parent_course
 from nti.contenttypes.courses.utils import get_course_editors
-from nti.contenttypes.courses.utils import is_course_instructor
 
 from nti.dataserver.interfaces import IACLProvider
 from nti.dataserver.interfaces import ALL_PERMISSIONS
@@ -50,10 +53,6 @@ from nti.externalization.interfaces import IExternalMappingDecorator
 from nti.links.links import Link
 
 from nti.traversal.traversal import find_interface
-
-from .interfaces import ICourseRootFolder
-
-from .utils import PreviewCourseAccessPredicate
 
 RESOURCES = 'resources'
 LINKS = StandardExternalFields.LINKS
@@ -133,19 +132,21 @@ class CourseRootFolderACLProvider(object):
 		return result
 
 @interface.implementer(IExternalMappingDecorator)
-class _CourseResourcesLinkDecorator(PreviewCourseAccessPredicate):
+class _CourseResourcesLinkDecorator(PreviewCourseAccessPredicateDecorator):
 
 	def _predicate(self, context, result):
 		user = self.remoteUser
 		course = ICourseInstance(context, None)
-		return 		super(_CourseResourcesLinkDecorator,self)._predicate( context, result ) \
-				and	bool(self._is_authenticated) \
-				and not ILegacyCourseInstance.providedBy(course) \
-				and (is_enrolled(context, user) or is_course_instructor(context, user))
+		result = super(_CourseResourcesLinkDecorator,self)._predicate( context, result )
+		if not result:
+			result =	bool(self._is_authenticated) \
+					and not ILegacyCourseInstance.providedBy(course) \
+					and is_enrolled(context, user)
+		return result
 
 	def _do_decorate_external(self, context, result):
 		_links = result.setdefault(LINKS, [])
-		link = Link(context, rel=RESOURCES, elements=('@@'+RESOURCES,))
+		link = Link(context, rel=RESOURCES.capitalize(), elements=(RESOURCES,))
 		interface.alsoProvides(link, ILocation)
 		link.__name__ = ''
 		link.__parent__ = context

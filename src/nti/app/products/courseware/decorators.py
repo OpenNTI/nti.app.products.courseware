@@ -52,7 +52,6 @@ from nti.contenttypes.courses.utils import get_enrollment_record
 from nti.dataserver.authorization import ACT_CONTENT_EDIT
 
 from nti.dataserver.interfaces import IUser
-from nti.dataserver.interfaces import IContained
 from nti.dataserver.interfaces import IEntityContainer
 from nti.dataserver.interfaces import ILinkExternalHrefOnly
 
@@ -68,7 +67,6 @@ from nti.externalization.interfaces import IExternalMappingDecorator
 from nti.links.links import Link
 
 from nti.ntiids.ntiids import make_specific_safe
-from nti.ntiids.ntiids import find_object_with_ntiid
 
 from nti.traversal.traversal import find_interface
 
