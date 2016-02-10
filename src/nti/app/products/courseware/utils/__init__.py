@@ -202,20 +202,31 @@ class PreviewCourseAccessPredicateDecorator(AbstractAuthenticatedRequestAwareDec
 	adaptable to an `ICourseInstance`.
 	"""
 
+	def __init__(self, context, request):
+		super(PreviewCourseAccessPredicateDecorator, self).__init__( context, request )
+		self.context = context
+
 	def _is_preview(self, course):
 		entry = ICourseCatalogEntry(course, None)
 		return entry is not None and entry.Preview
+
+	@property
+	def course(self):
+		return ICourseInstance( self.context )
+
+	@property
+	def instructor_or_editor(self):
+		result =  	is_course_instructor_or_editor(self.course, self.remoteUser) \
+				 or has_permission(ACT_CONTENT_EDIT, self.course, self.remoteUser)
+		return result
 
 	def _predicate(self, context, result):
 		"""
 		The course is not in preview mode, or we are an editor,
 		instructor, or content admin.
 		"""
-		result = super(PreviewCourseAccessPredicate, self)._predicate(context, result)
-		course = ICourseInstance(context)
-		return 	result \
-			and (	not self._is_preview(course)
-				 or is_course_instructor_or_editor(course, self.remoteUser)
-				 or has_permission(ACT_CONTENT_EDIT, course, self.remoteUser))
+		return 	self._is_authenticated \
+			and (	not self._is_preview( self.course )
+				 or self.instructor_or_editor )
 
 PreviewCourseAccessPredicate = PreviewCourseAccessPredicateDecorator  # BWC

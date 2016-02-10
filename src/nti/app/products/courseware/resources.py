@@ -116,7 +116,7 @@ class CourseRootFolderACLProvider(object):
 
 			for i in get_course_editors(course):
 				aces.append(ace_allowing(i, ALL_PERMISSIONS, type(self)))
-				
+
 			# all scopes have read access
 			course.initScopes()
 			for scope in course.SharingScopes:
@@ -137,16 +137,15 @@ class _CourseResourcesLinkDecorator(PreviewCourseAccessPredicateDecorator):
 	def _predicate(self, context, result):
 		user = self.remoteUser
 		course = ICourseInstance(context, None)
-		result = super(_CourseResourcesLinkDecorator,self)._predicate( context, result )
-		if not result:
-			result =	bool(self._is_authenticated) \
-					and not ILegacyCourseInstance.providedBy(course) \
-					and is_enrolled(context, user)
+		result =	super(_CourseResourcesLinkDecorator,self)._predicate( context, result ) \
+				and not ILegacyCourseInstance.providedBy(course) \
+				and ( 	is_enrolled(context, user) \
+					or  self.instructor_or_editor)
 		return result
 
 	def _do_decorate_external(self, context, result):
 		_links = result.setdefault(LINKS, [])
-		link = Link(context, rel=RESOURCES.capitalize(), elements=(RESOURCES,))
+		link = Link(context, rel=RESOURCES, elements=(RESOURCES,))
 		interface.alsoProvides(link, ILocation)
 		link.__name__ = ''
 		link.__parent__ = context
