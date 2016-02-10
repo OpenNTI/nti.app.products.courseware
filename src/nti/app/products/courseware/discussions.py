@@ -21,7 +21,17 @@ from zope.lifecycleevent import IObjectModifiedEvent
 
 from zope.security.interfaces import IPrincipal
 
+from nti.app.products.courseware.interfaces import NTIID_TYPE_COURSE_SECTION_TOPIC
+
+from nti.app.products.courseware.utils import get_vendor_info
+
 from nti.common.iterables import to_list
+
+from nti.contenttypes.courses.discussions.interfaces import ICourseDiscussion
+
+from nti.contenttypes.courses.discussions.utils import get_topic_key
+from nti.contenttypes.courses.discussions.utils import get_course_for_discussion
+from nti.contenttypes.courses.discussions.utils import get_discussion_mapped_scopes
 
 from nti.contenttypes.courses.interfaces import OPEN
 from nti.contenttypes.courses.interfaces import IN_CLASS
@@ -36,21 +46,6 @@ from nti.contenttypes.courses.interfaces import ICatalogEntrySynchronized
 from nti.contenttypes.courses.interfaces import ICourseInstancePublicScopedForum
 from nti.contenttypes.courses.interfaces import ICourseInstanceForCreditScopedForum
 
-from nti.contenttypes.courses.discussions.interfaces import ICourseDiscussion
-
-from nti.contenttypes.courses.discussions.utils import get_topic_key
-from nti.contenttypes.courses.discussions.utils import get_course_for_discussion
-from nti.contenttypes.courses.discussions.utils import get_discussion_mapped_scopes
-
-from nti.dataserver.users import Entity
-
-from nti.dataserver.interfaces import IACLProvider
-from nti.dataserver.interfaces import IDefaultPublished
-
-from nti.dataserver.interfaces import ACE_DENY_ALL
-from nti.dataserver.interfaces import ACE_ACT_ALLOW
-from nti.dataserver.interfaces import ALL_PERMISSIONS
-
 from nti.dataserver.authorization import ACT_READ
 from nti.dataserver.authorization import ROLE_ADMIN
 from nti.dataserver.authorization_acl import ace_allowing
@@ -59,6 +54,15 @@ from nti.dataserver.authorization_acl import acl_from_aces
 from nti.dataserver.contenttypes.forums.forum import CommunityForum
 from nti.dataserver.contenttypes.forums.post import CommunityHeadlinePost
 from nti.dataserver.contenttypes.forums.topic import CommunityHeadlineTopic
+
+from nti.dataserver.interfaces import IACLProvider
+from nti.dataserver.interfaces import IDefaultPublished
+
+from nti.dataserver.interfaces import ACE_DENY_ALL
+from nti.dataserver.interfaces import ACE_ACT_ALLOW
+from nti.dataserver.interfaces import ALL_PERMISSIONS
+
+from nti.dataserver.users import Entity
 
 from nti.externalization.internalization import update_from_external_object
 
@@ -69,10 +73,6 @@ from nti.ntiids.ntiids import make_provider_safe
 from nti.ntiids.ntiids import make_specific_safe
 
 from nti.traversal.traversal import find_interface
-
-from .interfaces import NTIID_TYPE_COURSE_SECTION_TOPIC
-
-from .utils import get_vendor_info
 
 NTI_FORUMS_PUBLIC = (OPEN, OPEN, ES_PUBLIC, ICourseInstancePublicScopedForum)
 NTI_FORUMS_FORCREDIT = (IN_CLASS, IN_CLASS_PREFIX, ES_CREDIT, ICourseInstanceForCreditScopedForum)

@@ -19,8 +19,10 @@ from nti.app.products.courseware.interfaces import IEnrollmentOptions
 from nti.app.products.courseware.interfaces import IOpenEnrollmentOption
 from nti.app.products.courseware.interfaces import IEnrollmentOptionProvider
 
-from nti.common.property import alias
 from nti.common.persistence import NoPickle
+
+from nti.common.property import alias
+
 from nti.common.representation import WithRepr
 
 from nti.contenttypes.courses.interfaces import ICourseCatalogEntry

@@ -16,13 +16,15 @@ from zope import interface
 
 from nti.app.authentication import get_remote_user
 
+from nti.app.products.courseware.interfaces import IRanker
+from nti.app.products.courseware.interfaces import IViewStats
+
 from nti.dataserver import rating
 from nti.dataserver import liking
 
-from .interfaces import IRanker
-from .interfaces import IViewStats
+from nti.externalization.interfaces import StandardInternalFields
 
-_DEFAULT_TIME_FIELD = 'lastModified'
+_DEFAULT_TIME_FIELD = StandardInternalFields.LAST_MODIFIED
 
 def _get_likes(obj):
 	return liking.like_count(obj)
