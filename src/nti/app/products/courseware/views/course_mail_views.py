@@ -23,9 +23,11 @@ from nti.app.products.courseware.views import VIEW_COURSE_MAIL
 
 from nti.common.maps import CaseInsensitiveDict
 
-from nti.contenttypes.courses.interfaces import ES_PUBLIC
+from nti.common.property import Lazy
+
 from nti.contenttypes.courses.interfaces import ES_CREDIT
 from nti.contenttypes.courses.interfaces import ICourseInstance
+from nti.contenttypes.courses.interfaces import ICourseEnrollments
 from nti.contenttypes.courses.interfaces import ICourseCatalogEntry
 
 from nti.contenttypes.courses.utils import is_course_instructor
@@ -47,9 +49,7 @@ class CourseMailView(AbstractMemberEmailView):
 	"""
 	Support emailing one or many students from the roster.
 
-	TODO: Do we gather students from subinstances automatically?
-	TODO: Permissioning, any instructor have permission or only
-	those on each subinstance?
+	We do not currently gather students from subinstances automatically.
 
 	Params:
 
@@ -103,19 +103,21 @@ class CourseMailView(AbstractMemberEmailView):
 			result = {x.lower() for x in IEnumerableEntityContainer(scope).iter_usernames()}
 		return result
 
-	@property
-	def _public_scope(self):
-		return self.course.SharingScopes.get(ES_PUBLIC)
+	@Lazy
+	def _instructors(self):
+		instructor_usernames = {x.username.lower() for x in self.course.instructors}
+		return instructor_usernames
 
-	@property
-	def _public_usernames(self):
-		result = self._get_scope_usernames(self._public_scope)
-		return result
+	@Lazy
+	def _all_students(self):
+		enrollments = ICourseEnrollments( self.course )
+		result = set( (x.lower() for x in enrollments.iter_principals()) )
+		return result - self._instructors
 
 	@property
 	def _only_public_usernames(self):
 		# PURCHASED falls in this category.
-		return self._public_usernames - self._for_credit_usernames
+		return self._all_students - self._for_credit_usernames
 
 	@property
 	def _for_credit_scope(self):
@@ -124,14 +126,14 @@ class CourseMailView(AbstractMemberEmailView):
 	@property
 	def _for_credit_usernames(self):
 		result = self._get_scope_usernames(self._for_credit_scope)
-		return result
+		return result & self._all_students
 
 	def _get_member_names(self):
 		values = CaseInsensitiveDict(self.request.params)
 		scope_name = values.get('scope')
 
 		if not scope_name or scope_name.lower() == 'all':
-			result = self._public_usernames
+			result = self._all_students
 		elif scope_name.lower() == 'forcredit':
 			result = self._for_credit_usernames
 		elif scope_name.lower() in ('public', 'open'):
