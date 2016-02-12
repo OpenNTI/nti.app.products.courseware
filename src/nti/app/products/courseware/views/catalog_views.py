@@ -85,9 +85,9 @@ def get_enrollments(course_instance, request):
 		enrollments = ICourseEnrollmentManager(course_instance)
 	return enrollments
 
-def do_course_enrollment(catalog_entry, user, scope=ES_PUBLIC, parent=None,
+def do_course_enrollment(context, user, scope=ES_PUBLIC, parent=None,
 						 request=None, safe=False):
-	course_instance = ICourseInstance(catalog_entry)
+	course_instance = ICourseInstance(context)
 	enrollments = get_enrollments(course_instance, request)
 	freshly_added = enrollments.enroll(user, scope=scope)
 

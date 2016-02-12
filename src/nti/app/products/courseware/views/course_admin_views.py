@@ -75,6 +75,9 @@ from nti.contenttypes.courses.interfaces import ICourseCatalog
 from nti.contenttypes.courses.interfaces import ICourseInstance
 from nti.contenttypes.courses.interfaces import ICourseEnrollmentManager
 from nti.contenttypes.courses.interfaces import ICourseInstanceEnrollmentRecord
+
+from nti.contenttypes.courses.legacy_catalog import ILegacyCourseInstance
+
 from nti.contenttypes.courses.utils import drop_any_other_enrollments
 from nti.contenttypes.courses.utils import is_instructor_in_hierarchy
 
@@ -124,7 +127,8 @@ def _parse_courses(values):
 	result = []
 	for ntiid in ntiids:
 		context = find_object_with_ntiid(ntiid)
-		context = ICourseCatalogEntry(context, None)
+		if not ILegacyCourseInstance.providedBy(context):
+			context = ICourseCatalogEntry(context, None)
 		if context is not None:
 			result.append(context)
 	return result
@@ -151,8 +155,8 @@ class AbstractCourseEnrollView(AbstractAuthenticatedView,
 
 	def parseCommon(self, values):
 		_, user = _parse_user(values)
-		catalog_entry = _parse_course(values)
-		return (catalog_entry, user)
+		context = _parse_course(values)
+		return (context, user)
 
 @view_config(name='UserCourseEnroll')
 @view_config(name='user_course_enroll')
@@ -165,12 +169,12 @@ class UserCourseEnrollView(AbstractCourseEnrollView):
 
 	def __call__(self):
 		values = self.readInput()
-		catalog_entry, user = self.parseCommon(values)
+		context, user = self.parseCommon(values)
 		scope = values.get('scope', ES_PUBLIC)
 		if not scope or scope not in ENROLLMENT_SCOPE_VOCABULARY.by_token.keys():
 			raise hexc.HTTPUnprocessableEntity(detail='Invalid scope')
 
-		if is_instructor_in_hierarchy(catalog_entry, user):
+		if is_instructor_in_hierarchy(context, user):
 			msg = 'User is an instructor in course hierarchy'
 			raise hexc.HTTPUnprocessableEntity(detail=msg)
 
@@ -180,13 +184,14 @@ class UserCourseEnrollView(AbstractCourseEnrollView):
 		if not interaction:
 			endInteraction()
 		try:
-			drop_any_other_enrollments(catalog_entry, user)
+			drop_any_other_enrollments(context, user)
 			service = IUserService(user)
 			workspace = ICoursesWorkspace(service)
 			parent = workspace['EnrolledCourses']
 
-			logger.info("Enrolling %s in %s", user, catalog_entry.ntiid)
-			result = do_course_enrollment(catalog_entry, user, scope,
+			entry = ICourseCatalogEntry(context, None)
+			logger.info("Enrolling %s in %s", user, getattr(entry, 'ntiid', None))
+			result = do_course_enrollment(context, user, scope,
 										  parent=parent,
 										  safe=True,
 										  request=self.request)
@@ -206,15 +211,16 @@ class UserCourseDropView(AbstractCourseEnrollView):
 
 	def __call__(self):
 		values = self.readInput()
-		catalog_entry, user = self.parseCommon(values)
+		context, user = self.parseCommon(values)
 
 		# Make sure we don't have any interaction.
 		endInteraction()
 		try:
-			course_instance = ICourseInstance(catalog_entry)
+			course_instance = ICourseInstance(context)
 			enrollments = get_enrollments(course_instance, self.request)
 			if enrollments.drop(user):
-				logger.info("%s drop from %s", user, catalog_entry.ntiid)
+				entry = ICourseCatalogEntry(context, None)
+				logger.info("%s drop from %s", user, getattr(entry, 'ntiid', None))
 		finally:
 			restoreInteraction()
 
@@ -232,12 +238,12 @@ class DropAllCourseEnrollmentsView(AbstractCourseEnrollView):
 	def __call__(self):
 		values = self.readInput()
 		result = LocatedExternalDict()
-		catalog_entry = _parse_course(values)
+		context = _parse_course(values)
 
 		# Make sure we don't have any interaction.
 		endInteraction()
 		try:
-			course_instance = ICourseInstance(catalog_entry)
+			course_instance = ICourseInstance(context)
 			manager = ICourseEnrollmentManager(course_instance)
 			dropped_records = manager.drop_all()
 			items = result[ITEMS] = []
@@ -245,8 +251,9 @@ class DropAllCourseEnrollmentsView(AbstractCourseEnrollView):
 				principal = IPrincipal(record.Principal, None)
 				username = principal.id if principal is not None else 'deleted'
 				items.append({'Username': username, 'Scope': record.Scope})
+			entry = ICourseCatalogEntry(context, None)
 			logger.info("Dropped %d enrollment records of %s",
-						len(dropped_records), catalog_entry.ntiid)
+						len(dropped_records), getattr(entry, 'ntiid', None))
 		finally:
 			restoreInteraction()
 		return result
