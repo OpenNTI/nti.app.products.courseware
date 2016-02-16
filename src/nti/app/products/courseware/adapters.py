@@ -12,7 +12,7 @@ logger = __import__('logging').getLogger(__name__)
 from zope import component
 from zope import interface
 
-from zope.intid import IIntIds
+from zope.intid.interfaces import IIntIds
 
 from pyramid import httpexceptions as hexc
 
@@ -20,15 +20,21 @@ from zope.annotation.interfaces import IAnnotations
 
 from nti.app.authentication import get_remote_user
 
-from nti.appserver.context_providers import get_top_level_contexts
+from nti.app.products.courseware import USER_ENROLLMENT_LAST_MODIFIED_KEY
+
+from nti.app.products.courseware._outline_path import OutlinePathFactory
+
+from nti.app.products.courseware.interfaces import ILegacyCommunityBasedCourseInstance
+from nti.app.products.courseware.interfaces import ILegacyCourseConflatedContentPackageUsedAsCourse
+
 from nti.appserver.context_providers import get_joinable_contexts
+from nti.appserver.context_providers import get_top_level_contexts
 
 from nti.appserver.interfaces import IJoinableContextProvider
 from nti.appserver.interfaces import ForbiddenContextException
 from nti.appserver.interfaces import IHierarchicalContextProvider
 from nti.appserver.interfaces import ILibraryPathLastModifiedProvider
 from nti.appserver.interfaces import ITopLevelContainerContextProvider
-
 from nti.appserver.interfaces import ITrustedTopLevelContainerContextProvider
 
 from nti.appserver.pyramid_authorization import is_readable
@@ -39,7 +45,9 @@ from nti.contentlibrary.interfaces import IContentPackageBundle
 
 from nti.contentlibrary.indexed_data import get_library_catalog
 
-from nti.contenttypes.courses.interfaces import ICourseCatalog
+from nti.contenttypes.courses.index import IX_SITE
+from nti.contenttypes.courses.index import IX_PACKAGES
+
 from nti.contenttypes.courses.interfaces import ICourseOutline
 from nti.contenttypes.courses.interfaces import ICourseInstance
 from nti.contenttypes.courses.interfaces import ICourseEnrollments
@@ -52,28 +60,25 @@ from nti.contenttypes.courses.interfaces import INonPublicCourseInstance
 from nti.contenttypes.courses.discussions.interfaces import ICourseDiscussion
 
 from nti.contenttypes.courses.utils import is_course_editor
+from nti.contenttypes.courses.utils import get_courses_catalog
+from nti.contenttypes.courses.utils import is_course_instructor as is_instructor # BWC
 
 from nti.contenttypes.presentation.interfaces import IPresentationAsset
-
-from nti.dataserver.interfaces import IUser
-from nti.dataserver.interfaces import IHighlight
 
 from nti.dataserver.contenttypes.forums.interfaces import IPost
 from nti.dataserver.contenttypes.forums.interfaces import ITopic
 from nti.dataserver.contenttypes.forums.interfaces import IForum
 
+from nti.dataserver.interfaces import IUser
+from nti.dataserver.interfaces import IHighlight
+
 from nti.namedfile.file import FileConstraints
 
 from nti.ntiids.ntiids import find_object_with_ntiid
 
+from nti.site.site import get_component_hierarchy_names
+
 from nti.traversal.traversal import find_interface
-
-from ._outline_path import OutlinePathFactory
-
-from .interfaces import ILegacyCommunityBasedCourseInstance
-from .interfaces import ILegacyCourseConflatedContentPackageUsedAsCourse
-
-from . import USER_ENROLLMENT_LAST_MODIFIED_KEY
 
 @component.adapter(ICourseOutline)
 @interface.implementer(ICourseInstance)
@@ -107,9 +112,9 @@ def _course_content_package_to_course(package):
 	# registration, though could if we used a plain
 	# ConflatedContentPackage), so it should be safe to cache this on
 	# the package. Be extra careful though, just in case.
+	course = None
 	cache_name = '_v_course_content_package_to_course'
 	course_intid = getattr(package, cache_name, cache_name)
-	course = None
 	intids = component.getUtility(IIntIds)
 
 	if course_intid is not cache_name:
@@ -128,7 +133,6 @@ def _course_content_package_to_course(package):
 
 	course = ICourseInstance(entry, None)
 	course_intid = intids.queryId(course, None)
-
 	setattr(package, cache_name, course_intid)
 	return course
 
@@ -147,21 +151,19 @@ def _content_unit_to_courses(unit, include_sub_instances=True):
 
 	# Nothing true legacy. find all courses that match this pacakge
 	result = []
+	catalog = get_courses_catalog()
+	intids = component.getUtility(IIntIds)
+	sites = get_component_hierarchy_names()
 	package = find_interface(unit, IContentPackage, strict=False)
-	course_catalog = component.getUtility(ICourseCatalog)
-	for entry in course_catalog.iterCatalogEntries():
-		instance = ICourseInstance(entry, None)
-		if instance is None:
+	query = { IX_SITE: {'any_of':sites},
+			  IX_PACKAGES: {'any_of':(package.ntiid,) }}
+	for uid in catalog.apply(query) or ():
+		course = intids.queryObject(uid)
+		if not ICourseInstance.providedBy(course):
 			continue
-		if not include_sub_instances and ICourseSubInstance.providedBy(instance):
+		if not include_sub_instances and ICourseSubInstance.providedBy(course):
 			continue
-		try:
-			packages = instance.ContentPackageBundle.ContentPackages
-		except AttributeError:
-			packages = (instance.legacy_content_package,)
-
-		if package in packages:
-			result.append(instance)
+		result.append(course)
 	return result
 
 @interface.implementer(ICourseInstance)
@@ -176,8 +178,6 @@ def _content_unit_to_course(unit):
 	# XXX: FIXME: This requires a one-to-one mapping
 	return courses[0] if courses else None
 
-from nti.contenttypes.courses.utils import is_course_instructor as is_instructor  # BWC
-
 def _is_user_enrolled(user, course):
 	# Enrolled or instructor
 	if user is None:
@@ -185,13 +185,12 @@ def _is_user_enrolled(user, course):
 
 	enrollments = ICourseEnrollments(course)
 	record = enrollments.get_enrollment_for_principal(user)
-	return 	record is not None \
-		 or is_instructor(course, user)
+	return record is not None or is_instructor(course, user)
 
 @interface.implementer(ICourseInstance)
 @component.adapter(IContentUnit, IUser)
 def _content_unit_and_user_to_course(unit, user):
-	# # get all courses
+	# get all courses
 	courses = _content_unit_to_courses(unit, True)
 	for instance in courses or ():
 		if _is_user_enrolled(user, instance):
@@ -210,9 +209,9 @@ def _get_top_level_contexts(obj):
 	return results
 
 def _is_catalog_entry_visible( entry ):
-	return 	entry is not None \
-		and not INonPublicCourseInstance.providedBy( entry ) \
-		and is_readable(entry)
+	return 		entry is not None \
+			and not INonPublicCourseInstance.providedBy( entry ) \
+			and is_readable(entry)
 
 def _get_valid_course_context(course_contexts):
 	"""
