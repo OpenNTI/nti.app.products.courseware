@@ -45,22 +45,24 @@ from nti.contentlibrary.interfaces import IContentPackageBundle
 
 from nti.contentlibrary.indexed_data import get_library_catalog
 
+from nti.contenttypes.courses.discussions.interfaces import ICourseDiscussion
+
 from nti.contenttypes.courses.index import IX_SITE
 from nti.contenttypes.courses.index import IX_PACKAGES
+from nti.contenttypes.courses.index import IX_USERNAME
 
 from nti.contenttypes.courses.interfaces import ICourseOutline
 from nti.contenttypes.courses.interfaces import ICourseInstance
 from nti.contenttypes.courses.interfaces import ICourseEnrollments
 from nti.contenttypes.courses.interfaces import ICourseSubInstance
 from nti.contenttypes.courses.interfaces import ICourseCatalogEntry
-from nti.contenttypes.courses.interfaces import IPrincipalEnrollments
 from nti.contenttypes.courses.interfaces import IContentCourseInstance
 from nti.contenttypes.courses.interfaces import INonPublicCourseInstance
-
-from nti.contenttypes.courses.discussions.interfaces import ICourseDiscussion
+from nti.contenttypes.courses.interfaces import ICourseInstanceEnrollmentRecord
 
 from nti.contenttypes.courses.utils import is_course_editor
 from nti.contenttypes.courses.utils import get_courses_catalog
+from nti.contenttypes.courses.utils import get_enrollment_catalog
 from nti.contenttypes.courses.utils import is_course_instructor as is_instructor # BWC
 
 from nti.contenttypes.presentation.interfaces import IPresentationAsset
@@ -348,10 +350,17 @@ def _get_preferred_course(found_course):
 		return found_course
 
 	enrolled_courses = []
-	# TODO: Enrollment index
-	for enrollments in component.subscribers((user,), IPrincipalEnrollments):
-		for record in enrollments.iter_enrollments():
-			course = ICourseInstance(record, None)
+	catalog = get_enrollment_catalog()
+	intids = component.getUtility(IIntIds)
+	site_names = get_component_hierarchy_names()
+	query = {
+		IX_SITE:{'any_of': site_names},
+		IX_USERNAME:{'any_of':(user.username,)}
+	}
+	for uid in catalog.apply(query) or ():
+		context = intids.queryObject(uid)
+		if ICourseInstanceEnrollmentRecord.providedBy(context):
+			course = ICourseInstance(context, None)
 			if course is not None:
 				enrolled_courses.append(course)
 
