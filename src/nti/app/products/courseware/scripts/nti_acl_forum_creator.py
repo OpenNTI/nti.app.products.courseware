@@ -16,15 +16,8 @@ import argparse
 from zope import component
 from zope import interface
 
-from zope.security.interfaces import IPrincipal
-
-from zope.securitypolicy.settings import Allow as ALLOW_PERM
-from zope.securitypolicy.interfaces import IPrincipalRoleMap
-
-from nti.contenttypes.courses.interfaces import RID_TA
 from nti.contenttypes.courses.interfaces import ES_PUBLIC
 from nti.contenttypes.courses.interfaces import ES_PURCHASED
-from nti.contenttypes.courses.interfaces import RID_INSTRUCTOR
 from nti.contenttypes.courses.interfaces import ENROLLMENT_SCOPE_VOCABULARY
 
 from nti.contenttypes.courses.interfaces import ICourseCatalog
@@ -33,6 +26,8 @@ from nti.contenttypes.courses.interfaces import ICourseSubInstance
 from nti.contenttypes.courses.interfaces import ICourseInstancePublicScopedForum
 from nti.contenttypes.courses.interfaces import ICourseInstanceForCreditScopedForum
 from nti.contenttypes.courses.interfaces import ICourseInstancePurchasedScopedForum
+
+from nti.contenttypes.courses.utils import get_course_instructors
 
 from nti.dataserver.contenttypes.forums.ace import ForumACE
 from nti.dataserver.contenttypes.forums.forum import ACLCommunityForum
@@ -52,15 +47,7 @@ from nti.ntiids.ntiids import make_specific_safe
 from nti.ntiids.ntiids import find_object_with_ntiid
 
 def _get_instructors(instance):
-	roles = IPrincipalRoleMap(instance, None)
-	if not roles:
-		instructors = instance.instructors or ()
-		result = [IPrincipal(x).id for x in instructors if IPrincipal(x, None)]
-	else:
-		result = []
-		for role in (RID_TA, RID_INSTRUCTOR):
-			settings = roles.getPrincipalsForRole(role) or ()
-			result.extend(x[0] for x in settings if x[1] == ALLOW_PERM)
+	result = get_course_instructors(instance)
 	return result
 
 def _get_acl(instance, permissions, ntiids):

@@ -13,13 +13,13 @@ import os
 import sys
 import argparse
 
+from nti.app.products.courseware.utils import course_migrator
+
 from nti.contenttypes.courses.interfaces import ES_PUBLIC
 
 from nti.dataserver.utils import run_with_dataserver
 from nti.dataserver.utils.base_script import set_site
 from nti.dataserver.utils.base_script import create_context
-
-from ..utils import course_migrator
 
 def _migrate(ntiid, scope=ES_PUBLIC, max_seat_count=25, sections=(),
 			 site=None, dry_run=False, verbose=False):
