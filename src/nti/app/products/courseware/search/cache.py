@@ -110,10 +110,10 @@ def _index_node_data(node, result=None):
 		catalog = get_library_catalog()
 		intids = component.getUtility(IIntIds)
 		sites = get_component_hierarchy_names()
-		package_assets =  catalog.search_objects(sites=sites,
-												 container_ntiids=(unit.ntiid,),
-									  			 provided=PACKAGE_CONTAINER_INTERFACES,
-									   			 intids=intids)
+		package_assets = catalog.search_objects(sites=sites,
+												container_ntiids=(unit.ntiid,),
+									  			provided=PACKAGE_CONTAINER_INTERFACES,
+									   			intids=intids)
 	else:
 		context = find_object_with_ntiid(contentNTIID)
 		if INTILessonOverview.providedBy(context):
@@ -121,7 +121,7 @@ def _index_node_data(node, result=None):
 		else:
 			package_assets = ()
 
-	for item in package_assets:
+	for item in package_assets or ():
 		# Make sure we get both target and ntiid.
 		for name in ('target', 'ntiid'):
 			check_ntiid = getattr(item, name, None)
