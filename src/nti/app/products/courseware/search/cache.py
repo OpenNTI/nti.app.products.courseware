@@ -24,6 +24,7 @@ from nti.app.products.courseware.search import memcache_get
 from nti.app.products.courseware.search import memcache_set
 from nti.app.products.courseware.search import memcache_client
 from nti.app.products.courseware.search import last_synchronized
+
 from nti.app.products.courseware.search.interfaces import ICourseOutlineCache
 
 from nti.app.products.courseware.utils import ZERO_DATETIME
@@ -112,8 +113,8 @@ def _index_node_data(node, result=None):
 		sites = get_component_hierarchy_names()
 		package_assets = catalog.search_objects(sites=sites,
 												container_ntiids=(unit.ntiid,),
-									  			provided=PACKAGE_CONTAINER_INTERFACES,
-									   			intids=intids)
+												provided=PACKAGE_CONTAINER_INTERFACES,
+												intids=intids)
 	else:
 		context = find_object_with_ntiid(contentNTIID)
 		if INTILessonOverview.providedBy(context):

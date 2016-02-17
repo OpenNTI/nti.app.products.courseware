@@ -24,10 +24,11 @@ from nti.app.products.courseware.search.interfaces import ICourseOutlineCache
 
 from nti.assessment.interfaces import IQSurvey
 from nti.assessment.interfaces import IQAssignment
+from nti.assessment.interfaces import IQAssessmentItemContainer
 
 from nti.common.property import Lazy
 
-from nti.contentlibrary.indexed_data import get_library_catalog
+from nti.contentlibrary.interfaces import IContentUnit
 
 from nti.contentsearch.interfaces import IBookContent
 from nti.contentsearch.interfaces import INTICardContent
@@ -38,8 +39,7 @@ from nti.contentsearch.interfaces import IVideoTranscriptContent
 
 from nti.ntiids.ntiids import TYPE_OID
 from nti.ntiids.ntiids import is_ntiid_of_types
-
-from nti.site.site import get_component_hierarchy_names
+from nti.ntiids.ntiids import find_object_with_ntiid
 
 @interface.implementer(ISearchHitPredicate)
 class _BasePredicate(object):
@@ -95,8 +95,8 @@ class _NTICardContentHitPredicate(_BasePredicate):
 class _CreatedContentHitPredicate(_BasePredicate):
 
 	def _allowed(self, containerId, query):
-		return bool(	not containerId \
-					or	is_ntiid_of_types(containerId, (TYPE_OID,)) \
+		return bool(	not containerId
+					or	is_ntiid_of_types(containerId, (TYPE_OID,))
 					or	self._is_allowed(containerId, query))
 
 	def allow(self, item, score, query=None):
@@ -113,13 +113,15 @@ class _ContentAssesmentHitPredicate(_BasePredicate):
 		return memcache_client()
 
 	def has_assesments(self, ntiid):
-		catalog = get_library_catalog()
-		sites = get_component_hierarchy_names()
-		refs = catalog.get_references(container_ntiids=ntiid,
-									  sites=sites,
-									  provided=(IQAssignment, IQSurvey))
-		result = bool(refs)
-		return result
+		context = find_object_with_ntiid(ntiid or u'')
+		if IContentUnit.providedBy(context):
+			container = IQAssessmentItemContainer(context, None)
+			if container is None:
+				return False
+			for item in container.assessments():
+				if IQAssignment.providedBy(item) or IQSurvey.providedBy(item):
+					return True
+		return False
 
 	def cache_key(self, ntiid):
 		site = getSite().__name__
