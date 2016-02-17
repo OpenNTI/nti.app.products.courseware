@@ -10,6 +10,7 @@ __docformat__ = "restructuredtext en"
 logger = __import__('logging').getLogger(__name__)
 
 from zope import component
+from zope import lifecycleevent
 
 from zope.intid.interfaces import IIntIds
 
@@ -51,23 +52,7 @@ from nti.zope_catalog.catalog import ResultSet
 ITEMS = StandardExternalFields.ITEMS
 LAST_MODIFIED = StandardExternalFields.LAST_MODIFIED
 
-@view_config(context=ICourseInstance)
-@view_config(context=ICourseCatalogEntry)
-@view_defaults(route_name='objects.generic.traversal',
-			   renderer='rest',
-			   request_method='GET',
-			   name='SyncLockedObjects',
-			   permission=nauth.ACT_CONTENT_EDIT)
-class CourseSyncLockedObjectsView(AbstractAuthenticatedView,
-								  BatchingUtilsMixin):
-
-	_DEFAULT_BATCH_SIZE = 20
-	_DEFAULT_BATCH_START = 0
-
-	@property
-	def _sort_desc(self):
-		sort_order_param = self.request.params.get('sortOrder', 'ascending')
-		return sort_order_param.lower() == 'descending'
+class CourseSyncLockedObjectsMixin(object):
 
 	def _outline_nodes_uids(self, course, intids):
 		result = set()
@@ -94,7 +79,7 @@ class CourseSyncLockedObjectsView(AbstractAuthenticatedView,
 		result.discard(None)
 		return tuple(result)
 
-	def _get_locked_objects(self, context):
+	def _compute_locked_objects(self, context):
 		lib_catalog = get_library_catalog()
 		course = ICourseInstance(context)
 		entry = ICourseCatalogEntry(context)
@@ -131,12 +116,33 @@ class CourseSyncLockedObjectsView(AbstractAuthenticatedView,
 		result = ResultSet(doc_ids, intids, ignore_invalid=True)
 		return result
 
+	def _get_locked_objects(self, context):
+		return [x for x in self._compute_locked_objects(context) if x.locked]
+
+@view_config(context=ICourseInstance)
+@view_config(context=ICourseCatalogEntry)
+@view_defaults(route_name='objects.generic.traversal',
+			   renderer='rest',
+			   request_method='GET',
+			   name='SyncLockedObjects',
+			   permission=nauth.ACT_CONTENT_EDIT)
+class CourseSyncLockedObjectsView(CourseSyncLockedObjectsMixin,
+								  AbstractAuthenticatedView,
+								  BatchingUtilsMixin):
+
+	_DEFAULT_BATCH_SIZE = 20
+	_DEFAULT_BATCH_START = 0
+
+	@property
+	def _sort_desc(self):
+		sort_order_param = self.request.params.get('sortOrder', 'ascending')
+		return sort_order_param.lower() == 'descending'
+
 	def __call__(self):
 		result = LocatedExternalDict()
 		result.__name__ = self.request.view_name
 		result.__parent__ = self.request.context
-
-		items = result[ITEMS] = [x for x in self._get_locked_objects(self.context) if x.locked]
+		items = result[ITEMS] = self._get_locked_objects(self.context)
 		if items:
 			result[LAST_MODIFIED] = max((getattr(x, 'lastModified', 0) for x in items))
 			items.sort(key=lambda t: getattr(t, 'lastModified', 0), reverse=self._sort_desc)
@@ -145,6 +151,28 @@ class CourseSyncLockedObjectsView(AbstractAuthenticatedView,
 		result['TotalItemCount'] = len(items)
 		self._batch_items_iterable(result, items)
 		result['ItemCount'] = len(result.get(ITEMS, ()))
+		return result
+
+@view_config(context=ICourseInstance)
+@view_config(context=ICourseCatalogEntry)
+@view_defaults(route_name='objects.generic.traversal',
+			   renderer='rest',
+			   name='UnlockSyncLockedObjects',
+			   permission=nauth.ACT_CONTENT_EDIT)
+class UnlockCourseSyncLockedObjectsView(CourseSyncLockedObjectsMixin,
+								  		AbstractAuthenticatedView,
+								  		BatchingUtilsMixin):
+
+	def __call__(self):
+		result = LocatedExternalDict()
+		result.__name__ = self.request.view_name
+		result.__parent__ = self.request.context
+		items = result[ITEMS] = []
+		for item in self._get_locked_objects(self.context):
+			item.locked = False
+			items.add(item.ntiid)
+			lifecycleevent.modified(item)
+		result['Total'] = result['ItemCount'] = len(items)
 		return result
 
 @view_config(name=VIEW_RECURSIVE_AUDIT_LOG)
