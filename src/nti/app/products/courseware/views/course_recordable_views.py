@@ -170,7 +170,7 @@ class UnlockCourseSyncLockedObjectsView(CourseSyncLockedObjectsMixin,
 		items = result[ITEMS] = []
 		for item in self._get_locked_objects(self.context):
 			item.unlock()
-			items.add(item.ntiid)
+			items.append(item.ntiid)
 			lifecycleevent.modified(item)
 		result['Total'] = result['ItemCount'] = len(items)
 		return result
