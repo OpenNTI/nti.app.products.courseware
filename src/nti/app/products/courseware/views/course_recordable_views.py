@@ -117,7 +117,7 @@ class CourseSyncLockedObjectsMixin(object):
 		return result
 
 	def _get_locked_objects(self, context):
-		return [x for x in self._compute_locked_objects(context) if x.locked]
+		return [x for x in self._compute_locked_objects(context) if x.isLocked()]
 
 @view_config(context=ICourseInstance)
 @view_config(context=ICourseCatalogEntry)
@@ -169,7 +169,7 @@ class UnlockCourseSyncLockedObjectsView(CourseSyncLockedObjectsMixin,
 		result.__parent__ = self.request.context
 		items = result[ITEMS] = []
 		for item in self._get_locked_objects(self.context):
-			item.locked = False
+			item.unlock()
 			items.add(item.ntiid)
 			lifecycleevent.modified(item)
 		result['Total'] = result['ItemCount'] = len(items)
