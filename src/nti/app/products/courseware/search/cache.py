@@ -19,8 +19,6 @@ from zope.intid.interfaces import IIntIds
 
 from pyramid.threadlocal import get_current_request
 
-from nti.common.property import Lazy
-
 from nti.app.products.courseware.search import encode_keys
 from nti.app.products.courseware.search import memcache_get
 from nti.app.products.courseware.search import memcache_set
@@ -29,6 +27,8 @@ from nti.app.products.courseware.search import last_synchronized
 from nti.app.products.courseware.search.interfaces import ICourseOutlineCache
 
 from nti.app.products.courseware.utils import ZERO_DATETIME
+
+from nti.common.property import Lazy
 
 from nti.contentlibrary.indexed_data import get_library_catalog
 from nti.contentlibrary.interfaces import IContentPackageLibrary
@@ -41,7 +41,9 @@ from nti.contenttypes.courses.utils import is_enrolled
 from nti.contenttypes.courses.utils import get_course_packages
 from nti.contenttypes.courses.utils import is_course_instructor
 
+from nti.contenttypes.presentation import iface_of_asset
 from nti.contenttypes.presentation import PACKAGE_CONTAINER_INTERFACES
+from nti.contenttypes.presentation.interfaces import INTILessonOverview
 
 from nti.dataserver.users import User
 
@@ -76,32 +78,50 @@ def _outline_nodes(outline):
 		_recur(outline)
 	return result
 
+def get_lesson_package_assets(lesson):
+	result = []
+	for group in lesson:
+		for item in group:
+			provided = iface_of_asset(item)
+			if provided in PACKAGE_CONTAINER_INTERFACES:
+				result.append(item)
+	return result
+
 def _index_node_data(node, result=None):
 	result = {} if result is None else result
 
 	# cache initial values
 	contentNTIID = node.ContentNTIID
+	if not contentNTIID:
+		return result # pragma no cover
+
 	beginning = node.AvailableBeginning or ZERO_DATETIME
 	is_outline_stub_only = getattr(node, 'is_outline_stub_only', None) or False
 	result[contentNTIID] = (beginning, is_outline_stub_only)
 
 	library = component.queryUtility(IContentPackageLibrary)
 	if library is None:
-		return result
-
-	catalog = get_library_catalog()
-	intids = component.getUtility(IIntIds)
+		return result # pragma no cover
 
 	# loop through container interfaces
-	sites = get_component_hierarchy_names()
 	paths = library.pathToNTIID(contentNTIID)
 	unit = paths[-1] if paths else None
-	if unit is None:
-		return result
+	if unit is not None:
+		catalog = get_library_catalog()
+		intids = component.getUtility(IIntIds)
+		sites = get_component_hierarchy_names()
+		package_assets =  catalog.search_objects(sites=sites,
+												 container_ntiids=(unit.ntiid,),
+									  			 provided=PACKAGE_CONTAINER_INTERFACES,
+									   			 intids=intids)
+	else:
+		context = find_object_with_ntiid(contentNTIID)
+		if INTILessonOverview.providedBy(context):
+			package_assets = get_lesson_package_assets(context)
+		else:
+			package_assets = ()
 
-	for item in catalog.search_objects(container_ntiids=(unit.ntiid,), sites=sites,
-									   provided=PACKAGE_CONTAINER_INTERFACES,
-									   intids=intids):
+	for item in package_assets:
 		# Make sure we get both target and ntiid.
 		for name in ('target', 'ntiid'):
 			check_ntiid = getattr(item, name, None)
