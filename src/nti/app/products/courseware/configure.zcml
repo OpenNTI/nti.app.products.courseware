@@ -13,6 +13,11 @@
 
 	<include package="nti.appserver.capabilities" file="meta.zcml" />
 
+	<!-- Generations -->
+	<utility factory=".generations.install._SchemaManager"
+			 name="nti.dataserver-app-products-courseware"
+			 provides="zope.generations.interfaces.IInstallableSchemaManager" />
+
 	<!-- Capabilities -->
 	<cap:capability
 		id='nti.platform.courseware.advanced_editing'
