@@ -16,6 +16,8 @@ import argparse
 from zope import component
 from zope import interface
 
+from zope.pluggableauth.interfaces import IPrincipal
+
 from nti.contenttypes.courses.interfaces import ES_PUBLIC
 from nti.contenttypes.courses.interfaces import ES_PURCHASED
 from nti.contenttypes.courses.interfaces import ENROLLMENT_SCOPE_VOCABULARY
@@ -47,7 +49,8 @@ from nti.ntiids.ntiids import make_specific_safe
 from nti.ntiids.ntiids import find_object_with_ntiid
 
 def _get_instructors(instance):
-	result = get_course_instructors(instance)
+	result = set(IPrincipal(x, None) for x in get_course_instructors(instance))
+	result.discard(None)
 	return result
 
 def _get_acl(instance, permissions, ntiids):
@@ -66,8 +69,8 @@ def _get_acl(instance, permissions, ntiids):
 		for subinstance in instance.SubInstances.values():
 			instructors = _get_instructors(subinstance)
 			acl.append(ForumACE(Permissions=permissions,
-								 Entities=[i.id for i in instructors],
-								 Action='Allow'))
+								Entities=[i.id for i in instructors],
+								Action='Allow'))
 	return acl
 
 def _assign_iface(obj, iface=None):

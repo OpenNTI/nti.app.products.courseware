@@ -121,7 +121,7 @@ class TestDiscussions(ApplicationLayerTest):
 			assert_that(announcements_forums(course), has_length(0))
 
 			acl = get_acl(course)
-			assert_that(acl , has_length(4))
+			assert_that(acl , has_length(3))
 			assert_that(acl[0].to_external_string() , is_(u'Allow:role:nti.admin:All'))
 			assert_that(acl[1].to_external_string() , is_(u'Allow:harp4162:All'))
 
@@ -137,7 +137,7 @@ class TestDiscussions(ApplicationLayerTest):
 			discussions = result['discussions']
 			for t in discussions.values():
 				_, forum = t
-				assert_that(forum, has_property('__acl__', has_length(5)))
+				assert_that(forum, has_property('__acl__', has_length(4)))
 				assert_that(forum, has_property('__entities__', has_length(1)))
 
 			result = create_topics(discussion)

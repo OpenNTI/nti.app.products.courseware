@@ -48,6 +48,7 @@ from nti.contenttypes.courses.interfaces import ICourseInstanceForCreditScopedFo
 
 from nti.contenttypes.courses.utils import get_course_editors
 from nti.contenttypes.courses.utils import get_course_instructors
+from nti.contenttypes.courses.utils import get_course_subinstances
 
 from nti.dataserver.authorization import ACT_READ
 from nti.dataserver.authorization import ROLE_ADMIN
@@ -100,8 +101,7 @@ def _forums_for_instance(context, name):
 	if instance is None:
 		return forums
 
-	for prefix, key_prefix, scope, iface in (NTI_FORUMS_PUBLIC,
-											 NTI_FORUMS_FORCREDIT):
+	for prefix, key_prefix, scope, iface in (NTI_FORUMS_PUBLIC, NTI_FORUMS_FORCREDIT):
 		has_key = 'Has' + key_prefix + name
 		displayname_key = key_prefix + name + 'DisplayName'
 		if forum_types.get(has_key):
@@ -177,13 +177,14 @@ def get_forums_for_discussion(discussion, context=None):
 def get_acl(course, *entities):
 	aces = [ ace_allowing(ROLE_ADMIN, ALL_PERMISSIONS) ]
 
-	def _get_users( context ):
-		course_users = set( get_course_instructors( context ) )
-		course_users.update( get_course_editors( context ) )
+	def _get_users(context):
+		course_users = set(IPrincipal(x, None) for x in get_course_instructors(context))
+		course_users.update(get_course_editors(context))
+		course_users.discard(None)
 		return course_users
 
-	for user in _get_users( course ):
-		aces.append( ace_allowing(user, ALL_PERMISSIONS) )
+	for user in _get_users(course):
+		aces.append(ace_allowing(user, ALL_PERMISSIONS))
 
 	# Specified entities (e.g. students) get read permission
 	entities = {IPrincipal(Entity.get_entity(e), None) for e in entities or ()}
@@ -191,9 +192,9 @@ def get_acl(course, *entities):
 	aces.extend([ace_allowing(e, ACT_READ) for e in entities])
 
 	# Subinstance instructors/editors get READ access.
-	for subinstance in course.SubInstances.values():
-		for user in _get_users( subinstance ):
-			aces.append( ace_allowing(user, ACT_READ) )
+	for subinstance in get_course_subinstances(course):
+		for user in _get_users(subinstance):
+			aces.append(ace_allowing(user, ACT_READ))
 
 	aces.append(ACE_DENY_ALL)
 	acl = acl_from_aces(aces)
