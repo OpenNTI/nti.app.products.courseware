@@ -320,7 +320,10 @@ class TestMigrate(ApplicationLayerTest):
 		self.testapp.post('/dataserver2/@@SyncAllLibraries')
 		res = self.testapp.get('/dataserver2/CourseAdmin/LegacyCourseEnrollmentMigrator')
 		assert_that(res.json_body, is_(
-			[['Nothing in site', 'demo.nextthought.com'],
+			[[u'No persistent site', u'alibra.nextthought.com'],
+			 [u'No persistent site', u'augsfluoroscopy.nextthought.com'],
+			 ['Nothing in site', 'demo.nextthought.com'],
+			 [u'No persistent site', u'eval.nextthought.com'],
 			 ['Nothing in site', 'labs.symmys.com'],
 			 ['Nothing in site', 'law.nextthought.com'],
 			 ['Nothing in site', 'mathcounts.nextthought.com'],
@@ -360,5 +363,6 @@ class TestMigrate(ApplicationLayerTest):
 			 ['Nothing in site', 'symmys-alpha.nextthought.com'],
 			 ['Nothing in site', 'symmys.nextthought.com'],
 			 ['Nothing in site', 'testmathcounts.nextthought.com'],
-			 ['Nothing in site', 'testprmia.nextthought.com']]
+			 ['Nothing in site', 'testprmia.nextthought.com'],
+			 [u'No persistent site', u'utsa.nextthought.com']]
 		))
