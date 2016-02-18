@@ -157,15 +157,16 @@ def _content_unit_to_courses(unit, include_sub_instances=True):
 	intids = component.getUtility(IIntIds)
 	sites = get_component_hierarchy_names()
 	package = find_interface(unit, IContentPackage, strict=False)
-	query = { IX_SITE: {'any_of':sites},
-			  IX_PACKAGES: {'any_of':(package.ntiid,) }}
-	for uid in catalog.apply(query) or ():
-		course = intids.queryObject(uid)
-		if not ICourseInstance.providedBy(course):
-			continue
-		if not include_sub_instances and ICourseSubInstance.providedBy(course):
-			continue
-		result.append(course)
+	if package is not None:
+		query = { IX_SITE: {'any_of':sites},
+				  IX_PACKAGES: {'any_of':(package.ntiid,) }}
+		for uid in catalog.apply(query) or ():
+			course = intids.queryObject(uid)
+			if not ICourseInstance.providedBy(course):
+				continue
+			if not include_sub_instances and ICourseSubInstance.providedBy(course):
+				continue
+			result.append(course)
 	return result
 
 @interface.implementer(ICourseInstance)
