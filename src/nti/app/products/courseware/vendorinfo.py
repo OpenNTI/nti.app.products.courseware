@@ -11,7 +11,7 @@ logger = __import__('logging').getLogger(__name__)
 
 from zope import interface
 
-from .interfaces import ICoursePublishableVendorInfo
+from nti.app.products.courseware.interfaces import ICoursePublishableVendorInfo
 
 @interface.implementer(ICoursePublishableVendorInfo)
 class _DefaultCoursePublishableVendorInfo(object):
