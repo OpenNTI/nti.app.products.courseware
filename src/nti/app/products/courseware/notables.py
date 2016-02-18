@@ -11,28 +11,38 @@ __docformat__ = "restructuredtext en"
 
 logger = __import__('logging').getLogger(__name__)
 
-from BTrees.LFBTree import LFSet as Set
-
 from zope import component
 from zope import interface
 
 from zope.catalog.interfaces import ICatalog
 
+from zope.intid.interfaces import IIntIds
+
+from BTrees.LFBTree import LFSet as Set
+
 from nti.app.notabledata.interfaces import IUserPriorityCreatorNotableProvider
 
 from nti.common.property import CachedProperty
 
+from nti.contenttypes.courses.index import IX_SITE
+from nti.contenttypes.courses.index import IX_USERNAME
+
 from nti.contenttypes.courses.interfaces import ICourseInstance
 from nti.contenttypes.courses.interfaces import ICourseCatalogEntry
 from nti.contenttypes.courses.interfaces import IPrincipalEnrollments
+from nti.contenttypes.courses.interfaces import ICourseInstanceEnrollmentRecord
+
+from nti.contenttypes.courses.utils import get_enrollment_catalog
+
+from nti.dataserver.contenttypes.forums.interfaces import IPersonalBlogComment
 
 from nti.dataserver.interfaces import IUser
 from nti.dataserver.interfaces import INotableFilter
 
-from nti.dataserver.contenttypes.forums.interfaces import IPersonalBlogComment
-
 from nti.dataserver.metadata_index import isTopLevelContentObjectFilter
 from nti.dataserver.metadata_index import CATALOG_NAME as METADATA_CATALOG_NAME
+
+from nti.site.site import get_component_hierarchy_names
 
 _FEEDBACK_MIME_TYPE = "application/vnd.nextthought.assessment.userscourseassignmenthistoryitemfeedback"
 
@@ -110,32 +120,36 @@ class _UserPriorityCreatorNotableProvider(object):
 		return results
 
 	def get_notable_intids(self):
-		catalog = self._catalog
 		results = Set()
-		# TODO: Use index?
-		for enrollments in component.subscribers((self.context,),
-												  IPrincipalEnrollments):
-			for enrollment in enrollments.iter_enrollments():
-				course_instructors = set()
-				course = ICourseInstance(enrollment, None)
-				catalog_entry = ICourseCatalogEntry(course, None)
-				if 		course is None \
-					or 	catalog_entry is None \
- 					or 	not catalog_entry.isCourseCurrentlyActive():  # pragma: no cover
-					continue
+		catalog = self._catalog
+		intids = component.getUtility(IIntIds)
+		enrollment_catalog = get_enrollment_catalog()
+		site_names = get_component_hierarchy_names()
+		query = {
+			IX_SITE:{'any_of': site_names},
+			IX_USERNAME:{'any_of':(self.context.username,)}
+		}
+		for uid in enrollment_catalog.apply(query) or ():
+			enrollment = intids.queryObject(uid)
+			if not ICourseInstanceEnrollmentRecord.providedBy(enrollment):
+				continue
 
-				course_instructors.update((x.id for x in course.instructors))
-				instructor_intids = catalog['creator'].apply(
-											{'any_of': course_instructors})
-				# TODO Do we need implies?
-				course_scope = course.SharingScopes[ enrollment.Scope ]
-				scope_ntiids = (course_scope.NTIID,)
-				course_shared_with_intids = catalog['sharedWith'].apply(
-													{'any_of': scope_ntiids})
-				course_results = catalog.family.IF.intersection(instructor_intids,
-																course_shared_with_intids)
+			course = ICourseInstance(enrollment, None)
+			catalog_entry = ICourseCatalogEntry(course, None)
+			if 		course is None \
+				or 	catalog_entry is None \
+				or 	not catalog_entry.isCourseCurrentlyActive():  # pragma: no cover
+				continue
 
-				results.update(course_results)
-				feedback_intids = self._get_feedback_intids(instructor_intids)
-				results.update(feedback_intids)
+			course_instructors = {x.id for x in course.instructors}
+			instructor_intids = catalog['creator'].apply({'any_of': course_instructors})
+			# TODO: Do we need implies?
+			course_scope = course.SharingScopes[ enrollment.Scope ]
+			scope_ntiids = (course_scope.NTIID,)
+			course_shared_with_intids = catalog['sharedWith'].apply({'any_of': scope_ntiids})
+			course_results = catalog.family.IF.intersection(instructor_intids,
+															course_shared_with_intids)
+			results.update(course_results)
+			feedback_intids = self._get_feedback_intids(instructor_intids)
+			results.update(feedback_intids)
 		return results

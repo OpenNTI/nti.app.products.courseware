@@ -16,13 +16,22 @@ from zope import interface
 
 from zope.container.contained import Contained
 
-from zope.intid import IIntIds
+from zope.intid.interfaces import IIntIds
 
 from zope.location.traversing import LocationPhysicallyLocatable
 
 from zope.securitypolicy.interfaces import Allow
 from zope.securitypolicy.interfaces import IPrincipalRoleMap
 from zope.securitypolicy.principalrole import principalRoleManager
+
+from nti.app.products.courseware.interfaces import ICoursesWorkspace
+from nti.app.products.courseware.interfaces import IUserAdministeredCourses
+from nti.app.products.courseware.interfaces import ICourseInstanceEnrollment
+from nti.app.products.courseware.interfaces import IEnrolledCoursesCollection
+from nti.app.products.courseware.interfaces import IAdministeredCoursesCollection
+from nti.app.products.courseware.interfaces import ILegacyCourseInstanceEnrollment
+from nti.app.products.courseware.interfaces import ICourseInstanceAdministrativeRole
+from nti.app.products.courseware.interfaces import IPrincipalAdministrativeRoleCatalog
 
 from nti.appserver.workspaces.interfaces import IUserService
 from nti.appserver.workspaces.interfaces import IContainerCollection
@@ -32,7 +41,6 @@ from nti.common.property import alias
 
 from nti.contenttypes.courses.index import IX_SITE
 from nti.contenttypes.courses.index import IX_USERNAME
-from nti.contenttypes.courses import get_enrollment_catalog
 
 from nti.contenttypes.courses.interfaces import RID_TA
 from nti.contenttypes.courses.interfaces import ES_CREDIT
@@ -47,8 +55,7 @@ from nti.contenttypes.courses.interfaces import IPrincipalEnrollments
 
 from nti.contenttypes.courses.legacy_catalog import ILegacyCourseInstance
 
-from nti.dataserver.interfaces import IUser
-from nti.dataserver.interfaces import IGroupMember
+from nti.contenttypes.courses.utils import get_enrollment_catalog
 
 from nti.dataserver.authorization import ACT_DELETE
 from nti.dataserver.authorization import ROLE_ADMIN
@@ -58,19 +65,13 @@ from nti.dataserver.authorization import ROLE_CONTENT_ADMIN
 from nti.dataserver.authorization_acl import ace_allowing
 from nti.dataserver.authorization_acl import acl_from_aces
 
+from nti.dataserver.interfaces import IUser
+from nti.dataserver.interfaces import IGroupMember
+
 from nti.schema.field import SchemaConfigured
 from nti.schema.fieldproperty import createDirectFieldProperties
 
 from nti.site.site import get_component_hierarchy_names
-
-from .interfaces import ICoursesWorkspace
-from .interfaces import IUserAdministeredCourses
-from .interfaces import ICourseInstanceEnrollment
-from .interfaces import IEnrolledCoursesCollection
-from .interfaces import IAdministeredCoursesCollection
-from .interfaces import ILegacyCourseInstanceEnrollment
-from .interfaces import ICourseInstanceAdministrativeRole
-from .interfaces import IPrincipalAdministrativeRoleCatalog
 
 @interface.implementer(ICoursesWorkspace)
 class UserCourseWorkspace(Contained):
@@ -514,10 +515,11 @@ from zope.location.interfaces import ILocationInfo
 
 from pyramid.threadlocal import get_current_request
 
-from nti.dataserver.users import User
+from nti.app.products.courseware.interfaces import ICourseCatalogLegacyContentEntry
+
 from nti.dataserver.interfaces import IDataserver
 
-from .interfaces import ICourseCatalogLegacyContentEntry
+from nti.dataserver.users import User
 
 @component.adapter(ICourseCatalogLegacyContentEntry)
 class CatalogEntryLocationInfo(LocationPhysicallyLocatable):

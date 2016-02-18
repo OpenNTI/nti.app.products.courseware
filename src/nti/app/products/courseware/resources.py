@@ -37,15 +37,15 @@ from nti.contenttypes.courses.utils import is_enrolled
 from nti.contenttypes.courses.utils import get_parent_course
 from nti.contenttypes.courses.utils import get_course_editors
 
-from nti.dataserver.interfaces import IACLProvider
-from nti.dataserver.interfaces import ALL_PERMISSIONS
-
 from nti.dataserver.authorization import ACT_READ
 from nti.dataserver.authorization import ROLE_ADMIN
 from nti.dataserver.authorization import ROLE_CONTENT_EDITOR
 
 from nti.dataserver.authorization_acl import ace_allowing
 from nti.dataserver.authorization_acl import acl_from_aces
+
+from nti.dataserver.interfaces import IACLProvider
+from nti.dataserver.interfaces import ALL_PERMISSIONS
 
 from nti.externalization.interfaces import StandardExternalFields
 from nti.externalization.interfaces import IExternalMappingDecorator
@@ -137,10 +137,9 @@ class _CourseResourcesLinkDecorator(PreviewCourseAccessPredicateDecorator):
 	def _predicate(self, context, result):
 		user = self.remoteUser
 		course = ICourseInstance(context, None)
-		result =	super(_CourseResourcesLinkDecorator,self)._predicate( context, result ) \
+		result = 	super(_CourseResourcesLinkDecorator, self)._predicate(context, result) \
 				and not ILegacyCourseInstance.providedBy(course) \
-				and ( 	is_enrolled(context, user) \
-					or  self.instructor_or_editor)
+				and (is_enrolled(context, user) or  self.instructor_or_editor)
 		return result
 
 	def _do_decorate_external(self, context, result):

@@ -14,7 +14,10 @@ logger = __import__('logging').getLogger(__name__)
 
 from zope import component
 from zope import interface
+
 from zope.securitypolicy.interfaces import IPrincipalRoleMap
+
+from nti.app.products.courseware.interfaces import ILegacyCommunityBasedCourseInstance
 
 from nti.common.property import CachedProperty
 
@@ -22,8 +25,6 @@ from nti.contenttypes.courses.interfaces import RID_TA
 from nti.contenttypes.courses.interfaces import RID_INSTRUCTOR
 from nti.contenttypes.courses.interfaces import ICourseCatalogEntry
 from nti.contenttypes.courses.principalrole import CourseInstancePrincipalRoleMap
-
-from .interfaces import ILegacyCommunityBasedCourseInstance
 
 @interface.implementer(IPrincipalRoleMap)
 @component.adapter(ILegacyCommunityBasedCourseInstance)
