@@ -17,6 +17,8 @@ from zope.generations.generations import SchemaManager as BaseSchemaManager
 
 from zope.generations.interfaces import IInstallableSchemaManager
 
+from nti.app.products.courseware.generations import evolve2
+
 @interface.implementer(IInstallableSchemaManager)
 class _SchemaManager(BaseSchemaManager):
     """
@@ -33,4 +35,4 @@ class _SchemaManager(BaseSchemaManager):
         evolve(context)
 
 def evolve(context):
-    pass
+    evolve2( context )
