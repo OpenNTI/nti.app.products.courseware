@@ -35,4 +35,4 @@ class _SchemaManager(BaseSchemaManager):
         evolve(context)
 
 def evolve(context):
-    evolve2( context )
+    evolve2.evolve( context )
