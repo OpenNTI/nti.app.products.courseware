@@ -12,6 +12,7 @@ from hamcrest import is_not
 from hamcrest import has_key
 from hamcrest import not_none
 from hamcrest import has_item
+from hamcrest import has_items
 from hamcrest import has_entry
 from hamcrest import has_length
 from hamcrest import assert_that
@@ -110,6 +111,9 @@ class TestDiscussions(ApplicationLayerTest):
 	def test_discussion_creation(self, mock_gvi):
 
 		mock_gvi.is_callable().with_args().returns(self.vendor_info)
+		course_editor = 'janux_courses'
+		with mock_dataserver.mock_db_trans(self.ds):
+			self._create_user( course_editor )
 
 		with mock_dataserver.mock_db_trans(self.ds, site_name='platform.ou.edu'):
 			entry = self.catalog_entry()
@@ -121,12 +125,19 @@ class TestDiscussions(ApplicationLayerTest):
 			assert_that(announcements_forums(course), has_length(0))
 
 			acl = get_acl(course)
-			assert_that(acl , has_length(3))
-			assert_that(acl[0].to_external_string() , is_(u'Allow:role:nti.admin:All'))
-			assert_that(acl[1].to_external_string() , is_(u'Allow:harp4162:All'))
+			assert_that(acl , has_length(4))
+			acls = []
+			for ace in acl:
+				try:
+					acls.append( ace.to_external_string())
+				except AttributeError:
+					pass
+			assert_that(acls, has_items(u'Allow:role:nti.admin:All',
+										u'Allow:harp4162:All',
+										u'Allow:janux_courses:All'))
 
 			result = create_course_forums(course)
-			assert_that(result , has_entry(u'discussions',
+			assert_that(result, has_entry(u'discussions',
 										   has_entries('ForCredit',
 														contains_inanyorder(u'In_Class_Discussions',
 																			is_(CommunityForum)),
@@ -135,9 +146,10 @@ class TestDiscussions(ApplicationLayerTest):
 																			is_(CommunityForum)))))
 
 			discussions = result['discussions']
+			discussion_hrefs = [x[1].NTIID for x in discussions.values()]
 			for t in discussions.values():
 				_, forum = t
-				assert_that(forum, has_property('__acl__', has_length(4)))
+				assert_that(forum, has_property('__acl__', has_length(5)))
 				assert_that(forum, has_property('__entities__', has_length(1)))
 
 			result = create_topics(discussion)
@@ -148,6 +160,12 @@ class TestDiscussions(ApplicationLayerTest):
 
 			f4ds = get_forums_for_discussion(discussion, course)
 			assert_that(f4ds, has_length(2))
+
+		# Validate access
+		for editor in ( course_editor, 'harp4162' ):
+			editor_environ = self._make_extra_environ( editor )
+			for href in discussion_hrefs:
+				self.fetch_by_ntiid( href, extra_environ=editor_environ )
 
 	@WithSharedApplicationMockDS(testapp=True, users=True)
 	def test_discussion_get(self):
