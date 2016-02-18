@@ -11,6 +11,7 @@ logger = __import__('logging').getLogger(__name__)
 
 import zope.deferredimport
 zope.deferredimport.initialize()
+
 zope.deferredimport.deprecatedFrom(
 	"moved to nti.contenttypes.courses",
 	"nti.contenttypes.courses.catalog",

@@ -15,6 +15,7 @@ MessageFactory = zope.i18nmessageid.MessageFactory('nti.app.products.courseware'
 #: Folder for storing course assets
 ASSETS_FOLDER = 'assets'
 
+#: User enrollment last mod annotation key
 USER_ENROLLMENT_LAST_MODIFIED_KEY = 'nti.app.products.courseware.UserEnrollmentLastModified'
 
 VIEW_CONTENTS = 'contents'
