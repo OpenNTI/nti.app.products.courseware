@@ -63,6 +63,7 @@ from nti.contenttypes.courses.interfaces import ICourseInstanceEnrollmentRecord
 from nti.contenttypes.courses.utils import is_course_editor
 from nti.contenttypes.courses.utils import get_courses_catalog
 from nti.contenttypes.courses.utils import get_enrollment_catalog
+from nti.contenttypes.courses.utils import get_course_subinstances
 from nti.contenttypes.courses.utils import is_course_instructor as is_instructor # BWC
 
 from nti.contenttypes.presentation.interfaces import IPresentationAsset
@@ -366,7 +367,7 @@ def _get_preferred_course(found_course):
 				enrolled_courses.append(course)
 
 	if found_course not in enrolled_courses:
-		for subinstance in found_course.SubInstances.values():
+		for subinstance in get_course_subinstances(found_course):
 			if subinstance in enrolled_courses:
 				return subinstance
 	return found_course
