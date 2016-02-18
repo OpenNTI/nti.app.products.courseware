@@ -121,8 +121,9 @@ class TestDiscussions(ApplicationLayerTest):
 			assert_that(announcements_forums(course), has_length(0))
 
 			acl = get_acl(course)
-			assert_that(acl , has_length(3))
-			assert_that(acl[0].to_external_string() , is_(u'Allow:harp4162:All'))
+			assert_that(acl , has_length(4))
+			assert_that(acl[0].to_external_string() , is_(u'Allow:role:nti.admin:All'))
+			assert_that(acl[1].to_external_string() , is_(u'Allow:harp4162:All'))
 
 			result = create_course_forums(course)
 			assert_that(result , has_entry(u'discussions',
@@ -136,7 +137,7 @@ class TestDiscussions(ApplicationLayerTest):
 			discussions = result['discussions']
 			for t in discussions.values():
 				_, forum = t
-				assert_that(forum, has_property('__acl__', has_length(4)))
+				assert_that(forum, has_property('__acl__', has_length(5)))
 				assert_that(forum, has_property('__entities__', has_length(1)))
 
 			result = create_topics(discussion)
@@ -157,14 +158,14 @@ class TestDiscussions(ApplicationLayerTest):
 			discussions = ICourseDiscussions(course)
 			discussions['foo'] = self.new_discussion()
 			course_ntiid = to_external_ntiid_oid(course)
-			
+
 		url = '/dataserver2/Objects/%s/CourseDiscussions' % course_ntiid
 		res = self.testapp.get(url, status=200)
 		assert_that(res.json_body,
 					has_entries('MimeType', u'application/vnd.nextthought.courses.discussions',
 								'Items', has_length((1)),
 								'ItemCount', 1))
-		
+
 		url = '/dataserver2/Objects/%s/CourseDiscussions/foo' % course_ntiid
 		res = self.testapp.get(url, status=200)
 		assert_that(res.json_body,
@@ -179,16 +180,15 @@ class TestDiscussions(ApplicationLayerTest):
 			context = fp.read()
 			context = unicode(context, 'utf-8') if isinstance(context, bytes) else context
 			source = simplejson.loads(context)
-			
+
 		with mock_dataserver.mock_db_trans(self.ds, site_name='platform.ou.edu'):
 			entry = self.catalog_entry()
 			course = ICourseInstance(entry)
 			course_ntiid = to_external_ntiid_oid(course)
-			
+
 		url = '/dataserver2/Objects/%s/CourseDiscussions' % course_ntiid
 		res = self.testapp.post_json(url, source, status=201)
 		assert_that(res.json_body,
 					has_entries('MimeType', u'application/vnd.nextthought.courses.discussion',
 								'ID', contains_string('nti-course-bundle://Discussions/')))
-		
-		
+

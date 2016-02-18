@@ -46,8 +46,12 @@ from nti.contenttypes.courses.interfaces import ICatalogEntrySynchronized
 from nti.contenttypes.courses.interfaces import ICourseInstancePublicScopedForum
 from nti.contenttypes.courses.interfaces import ICourseInstanceForCreditScopedForum
 
+from nti.contenttypes.courses.utils import get_course_editors
+from nti.contenttypes.courses.utils import get_course_instructors
+
 from nti.dataserver.authorization import ACT_READ
 from nti.dataserver.authorization import ROLE_ADMIN
+
 from nti.dataserver.authorization_acl import ace_allowing
 from nti.dataserver.authorization_acl import acl_from_aces
 
@@ -171,20 +175,25 @@ def get_forums_for_discussion(discussion, context=None):
 	return result
 
 def get_acl(course, *entities):
-	# Our instance instructors get all permissions.
-	instructors = [i for i in course.instructors or ()]
-	aces = [ace_allowing(i, ALL_PERMISSIONS) for i in instructors]
-	aces.append(ace_allowing(ROLE_ADMIN, ALL_PERMISSIONS))
+	aces = [ ace_allowing(ROLE_ADMIN, ALL_PERMISSIONS) ]
 
-	# specifed entities (e.g. students) get read permission
+	def _get_users( context ):
+		course_users = set( get_course_instructors( context ) )
+		course_users.update( get_course_editors( context ) )
+		return course_users
+
+	for user in _get_users( course ):
+		aces.append( ace_allowing(user, ALL_PERMISSIONS) )
+
+	# Specified entities (e.g. students) get read permission
 	entities = {IPrincipal(Entity.get_entity(e), None) for e in entities or ()}
 	entities.discard(None)
 	aces.extend([ace_allowing(e, ACT_READ) for e in entities])
 
-	# Subinstance instructors get the same permissions as their students.
+	# Subinstance instructors/editors get READ access.
 	for subinstance in course.SubInstances.values():
-		instructors = [i for i in subinstance.instructors or ()]
-		aces.extend([ace_allowing(i, ACT_READ) for i in instructors])
+		for user in _get_users( subinstance ):
+			aces.append( ace_allowing(user, ACT_READ) )
 
 	aces.append(ACE_DENY_ALL)
 	acl = acl_from_aces(aces)
@@ -209,7 +218,7 @@ def create_forum(course, name, owner, display_name=None, entities=None, implemen
 		discussions[safe_name] = forum
 		logger.info('Created forum %s', forum)
 
-	# udpate ACL
+	# Update ACL
 	old_acl = getattr(forum, '__acl__', None)
 	if old_acl != acl:
 		forum.__acl__ = acl
