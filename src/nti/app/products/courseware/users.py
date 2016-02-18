@@ -14,6 +14,10 @@ from zope import interface
 
 from zope.security.interfaces import IPrincipal
 
+from nti.app.products.courseware.interfaces import ISuggestedContactsProvider
+
+from nti.app.products.courseware.utils import ZERO_DATETIME
+
 from nti.common.property import alias
 
 from nti.contenttypes.courses.interfaces import ES_CREDIT
@@ -31,13 +35,10 @@ from nti.contenttypes.courses.interfaces import IPrincipalEnrollments
 from nti.contenttypes.courses.utils import get_enrollment_record
 
 from nti.dataserver.interfaces import IUser
+
 from nti.dataserver.users.suggested_contacts import SuggestedContact
 from nti.dataserver.users.suggested_contacts import SuggestedContactsProvider
 from nti.dataserver.users.suggested_contacts import SuggestedContactRankingPolicy
-
-from .utils import ZERO_DATETIME
-
-from .interfaces import ISuggestedContactsProvider
 
 ES_ORDER = {ES_CREDIT_DEGREE: 15,
 			ES_CREDIT_NONDEGREE: 15,
