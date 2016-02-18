@@ -18,11 +18,19 @@ from zope import interface
 
 from nti.app.authentication import get_remote_user
 
+from nti.app.products.courseware.interfaces import NTIID_TYPE_COURSE_FORUM
+from nti.app.products.courseware.interfaces import NTIID_TYPE_COURSE_TOPIC
+from nti.app.products.courseware.interfaces import NTIID_TYPE_COURSE_SECTION_TOPIC
+from nti.app.products.courseware.interfaces import NTIID_TYPE_COURSE_SECTION_FORUM
+from nti.app.products.courseware.interfaces import IPrincipalAdministrativeRoleCatalog
+
 from nti.contenttypes.courses.interfaces import ICourseInstance
 from nti.contenttypes.courses.interfaces import ICourseSubInstance
 from nti.contenttypes.courses.interfaces import ICourseCatalogEntry
 from nti.contenttypes.courses.interfaces import IPrincipalEnrollments
 from nti.contenttypes.courses.interfaces import INonPublicCourseInstance
+
+from nti.contenttypes.courses.utils import get_parent_course
 
 from nti.dataserver.contenttypes.forums.ntiids import resolve_ntiid_in_board
 from nti.dataserver.contenttypes.forums.ntiids import resolve_forum_ntiid_in_board
@@ -32,12 +40,6 @@ from nti.ntiids.ntiids import escape_provider
 from nti.ntiids.ntiids import find_object_with_ntiid
 
 from nti.ntiids.interfaces import INTIIDResolver
-
-from .interfaces import NTIID_TYPE_COURSE_FORUM
-from .interfaces import NTIID_TYPE_COURSE_TOPIC
-from .interfaces import NTIID_TYPE_COURSE_SECTION_TOPIC
-from .interfaces import NTIID_TYPE_COURSE_SECTION_FORUM
-from .interfaces import IPrincipalAdministrativeRoleCatalog
 
 COURSE_NTIID_PREFIX = 'tag:nextthought.com,2011-10:NTI-CourseInfo-'
 
@@ -130,7 +132,7 @@ class _EnrolledCourseSectionTopicNTIIDResolver(object):
 				result = None
 				if catalog_entry_matches(catalog_entry, provider_name):
 					if ICourseSubInstance.providedBy(course):
-						main_course = course.__parent__.__parent__
+						main_course = get_parent_course(course)
 						main_cce = ICourseCatalogEntry(main_course, None)
 						result = _get_ntiid_for_subinstance(ntiid, course, main_course)
 					else:
@@ -151,15 +153,19 @@ class _EnrolledCourseSectionTopicNTIIDResolver(object):
 		return None
 
 	def _do_resolve(self, ntiid, user, provider_name, catalog_entry_matches=None):
-		result = self._solve_for_iface(ntiid, IPrincipalAdministrativeRoleCatalog,
-										   provider_name, user,
-										   catalog_entry_matches=catalog_entry_matches)
+		result = self._solve_for_iface(ntiid, 
+									   IPrincipalAdministrativeRoleCatalog,
+									   provider_name,
+									   user,
+									   catalog_entry_matches=catalog_entry_matches)
 
 		# Enrolled
 		if result is None:
-			result = self._solve_for_iface(ntiid, IPrincipalEnrollments,
-											provider_name, user,
-											catalog_entry_matches=catalog_entry_matches)
+			result = self._solve_for_iface(ntiid, 
+										   IPrincipalEnrollments,
+										   provider_name, 
+										   user,
+										   catalog_entry_matches=catalog_entry_matches)
 		return result
 
 	def resolve(self, ntiid):
@@ -176,8 +182,10 @@ class _EnrolledCourseSectionTopicNTIIDResolver(object):
 			# on enrollments.
 			def catalog_entry_matches(catalog_entry, _):
 				return catalog_entry.ntiid == provider_name_ntiid
-			result = self._do_resolve(ntiid, user, provider_name,
-									catalog_entry_matches=catalog_entry_matches)
+			result = self._do_resolve(ntiid, 
+									  user, 
+									  provider_name,
+									  catalog_entry_matches=catalog_entry_matches)
 		else:
 			# The legacy approach, which may collide across semesters.
 			result = self._do_resolve(ntiid, user, provider_name)
