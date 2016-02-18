@@ -175,6 +175,7 @@ def get_forums_for_discussion(discussion, context=None):
 	return result
 
 def get_acl(course, *entities):
+	# XXX: This seems fragile; we cannot adjust ACL easily for new instructors/editors.
 	aces = [ ace_allowing(ROLE_ADMIN, ALL_PERMISSIONS) ]
 
 	def _get_users(context):
