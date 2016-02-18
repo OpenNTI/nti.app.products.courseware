@@ -9,8 +9,6 @@ __docformat__ = "restructuredtext en"
 
 logger = __import__('logging').getLogger(__name__)
 
-from . import MessageFactory as _
-
 import os
 import time
 import isodate
@@ -33,6 +31,12 @@ from zope.security.management import queryInteraction
 
 from pyramid.threadlocal import get_current_request
 
+from nti.app.products.courseware import MessageFactory as _
+from nti.app.products.courseware import USER_ENROLLMENT_LAST_MODIFIED_KEY
+
+from nti.app.products.courseware.utils import get_enrollment_courses
+from nti.app.products.courseware.utils import get_enrollment_communities
+
 from nti.appserver.policies.interfaces import ISitePolicyUserEventListener
 
 from nti.contenttypes.courses.interfaces import ES_PUBLIC
@@ -44,8 +48,12 @@ from nti.contenttypes.courses.interfaces import IDenyOpenEnrollment
 from nti.contenttypes.courses.interfaces import ICourseEnrollmentManager
 from nti.contenttypes.courses.interfaces import ICourseInstanceEnrollmentRecord
 
-from nti.dataserver.users import Entity
+from nti.contenttypes.courses.utils import get_parent_course
+from nti.contenttypes.courses.utils import get_course_subinstances
+
 from nti.dataserver.interfaces import ICommunity
+
+from nti.dataserver.users import Entity
 from nti.dataserver.users.interfaces import IUserProfile
 from nti.dataserver.users.interfaces import IEmailAddressable
 
@@ -57,11 +65,6 @@ from nti.intid.interfaces import IIntIdRemovedEvent
 from nti.mailer.interfaces import ITemplatedMailer
 
 from nti.ntiids.ntiids import find_object_with_ntiid
-
-from .utils import get_enrollment_courses
-from .utils import get_enrollment_communities
-
-from . import USER_ENROLLMENT_LAST_MODIFIED_KEY
 
 # Email
 
@@ -193,7 +196,7 @@ def _join_communities_on_enrollment_added(record, event):
 	# get communities
 	communities = set(get_enrollment_communities(course) or ())
 	if not communities and ICourseSubInstance.providedBy(course):
-		course = course.__parent__.__parent__
+		course = get_parent_course(course)
 		communities = set(get_enrollment_communities(course) or ())
 	if not communities:
 		return
@@ -220,13 +223,11 @@ def _auto_enroll_on_enrollment_added(record, event):
 		return
 
 	# get parent course
-	parent = course
-	if ICourseSubInstance.providedBy(course):
-		parent = course.__parent__.__parent__
+	parent = get_parent_course(course)
 
 	# get all catalog entries in the hierarchy
 	main_entries = map(lambda x: ICourseCatalogEntry(x, None),
-				  	   parent.SubInstances.values())
+				  	   get_course_subinstances(parent))
 	main_entries.append(main_entry)
 
 	# check for dup enrollment
@@ -238,7 +239,7 @@ def _auto_enroll_on_enrollment_added(record, event):
 	# get course entries
 	entries = set(get_enrollment_courses(course) or ())
 	if not entries and ICourseSubInstance.providedBy(course):
-		course = course.__parent__.__parent__
+		course = get_parent_course(course)
 		entries = set(get_enrollment_courses(course) or ())
 	if not entries:
 		return
@@ -262,18 +263,18 @@ def _auto_enroll_on_enrollment_added(record, event):
 			manager = ICourseEnrollmentManager(course)
 			manager.enroll(user, scope=record.Scope)
 
-def _update_enroll_last_modified( record ):
+def _update_enroll_last_modified(record):
 	principal = IPrincipal(record.Principal, None)
 	user = Entity.get_entity(principal.id) if principal else None
 	if user is None:
 		return
-	annotations = IAnnotations( user )
-	annotations[ USER_ENROLLMENT_LAST_MODIFIED_KEY ] = time.time()
+	annotations = IAnnotations(user)
+	annotations[USER_ENROLLMENT_LAST_MODIFIED_KEY] = time.time()
 
 @component.adapter(ICourseInstanceEnrollmentRecord, IIntIdAddedEvent)
 def update_enrollment_modified_on_add(record, event):
-	_update_enroll_last_modified( record )
+	_update_enroll_last_modified(record)
 
 @component.adapter(ICourseInstanceEnrollmentRecord, IIntIdRemovedEvent)
 def update_enrollment_modified_on_drop(record, event):
-	_update_enroll_last_modified( record )
+	_update_enroll_last_modified(record)
