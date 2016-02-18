@@ -153,11 +153,11 @@ def _content_unit_to_courses(unit, include_sub_instances=True):
 
 	# Nothing true legacy. find all courses that match this pacakge
 	result = []
-	catalog = get_courses_catalog()
-	intids = component.getUtility(IIntIds)
-	sites = get_component_hierarchy_names()
 	package = find_interface(unit, IContentPackage, strict=False)
 	if package is not None:
+		catalog = get_courses_catalog()
+		intids = component.getUtility(IIntIds)
+		sites = get_component_hierarchy_names()
 		query = { IX_SITE: {'any_of':sites},
 				  IX_PACKAGES: {'any_of':(package.ntiid,) }}
 		for uid in catalog.apply(query) or ():
