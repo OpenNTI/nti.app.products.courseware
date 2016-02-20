@@ -59,17 +59,19 @@ def _adjust_acls(current, seen):
 			if course is not None and _auto_create_forums(course):
 				count = 0
 				discussions = course.Discussions
-				for forum in chain( discussions_forums( course ),
-									announcements_forums( course )):
+				for forum in chain(discussions_forums(course),
+								   announcements_forums(course)):
 					safe_name = make_specific_safe(forum.name)
-					new_acl = get_acl( course, forum.scope.NTIID )
+					new_acl = get_acl(course, forum.scope.NTIID)
 					# Get our actual forum
-					forum = discussions[safe_name]
-					forum.__acl__ = new_acl
-					count += 1
-				logger.info( '[%s] Updating forum acls for %s (count=%s)',
-							 current.__name__, entry.ntiid, count )
-
+					try:
+						forum = discussions[safe_name]
+						forum.__acl__ = new_acl
+						count += 1
+						logger.info('[%s] Updating forum acls for %s (count=%s)',
+									current.__name__, entry.ntiid, count)
+					except KeyError:
+						pass
 
 def do_evolve(context, generation=generation):
 	conn = context.connection
