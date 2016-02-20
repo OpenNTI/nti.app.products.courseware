@@ -56,6 +56,13 @@ class AbstractRecursiveTransactionHistoryView(AbstractAuthenticatedView,
 			result = get_transactions(obj, sort=False)
 		return result
 
+	def __get_number_items_needed(self, total_item_count):
+		number_items_needed = total_item_count
+		batch_size, batch_start = self._get_batch_size_start()
+		if batch_size is not None and batch_start is not None:
+			number_items_needed = min(batch_size + batch_start + 2, total_item_count)
+		return number_items_needed
+
 	def _accum_lesson_transactions(self, lesson_overview, accum):
 		accum.extend( self._get_transactions( lesson_overview ) )
 		for overview_group in lesson_overview.items or ():
@@ -95,7 +102,10 @@ class AbstractRecursiveTransactionHistoryView(AbstractAuthenticatedView,
 			result[ LAST_MODIFIED ] = max( (x.createdTime for x in items) )
 			items.sort(key=lambda t: t.createdTime, reverse=self._sort_desc)
 
-		result['TotalItemCount'] = len( items )
-		self._batch_items_iterable(result, items)
+		result['TotalItemCount'] = item_count = len( items )
+		# Supply this number to batching to prevent batch-ext links from showing
+		# up if we've exhausted our supply.
+		number_items_needed = self.__get_number_items_needed( item_count )
+		self._batch_items_iterable(result, items, number_items_needed=number_items_needed)
 		result['ItemCount'] = len( result.get( 'Items' ) )
 		return result
