@@ -89,10 +89,11 @@ def get_forum_types(context):
 	result = info.get('NTI', {}).get('Forums', {})
 	return result
 
-def _auto_create_forums(context):
+def auto_create_forums(context):
 	forum_types = get_forum_types(context)
 	result = forum_types.get('AutoCreate', False)
 	return result
+_auto_create_forums = auto_create_forums
 
 def _forums_for_instance(context, name):
 	forums = []

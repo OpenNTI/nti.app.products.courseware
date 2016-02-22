@@ -19,8 +19,8 @@ from zope import interface
 from zope.component.hooks import site as current_site
 
 from nti.app.products.courseware.discussions import get_acl
+from nti.app.products.courseware.discussions import auto_create_forums
 from nti.app.products.courseware.discussions import discussions_forums
-from nti.app.products.courseware.discussions import _auto_create_forums
 from nti.app.products.courseware.discussions import announcements_forums
 
 from nti.contenttypes.courses.interfaces import ICourseCatalog
@@ -56,7 +56,7 @@ def _adjust_acls(current, seen):
 				continue
 			seen.add(entry.ntiid)
 			course = ICourseInstance(entry)
-			if course is not None and _auto_create_forums(course):
+			if course is not None and auto_create_forums(course):
 				count = 0
 				discussions = course.Discussions
 				for forum in chain(discussions_forums(course),
