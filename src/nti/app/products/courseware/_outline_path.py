@@ -208,8 +208,8 @@ class OutlinePathFactory(object):
 					# Legacy, perhaps our item is a page ref.
 					try:
 						target_children = [x.ntiid for x in target_ref_obj.children]
-						result = self.target_ntiid in target_children \
-							or self.target_ntiid in target_ref_obj.embeddedContainerNTIIDs
+						result = 	self.target_ntiid in target_children \
+								or 	self.target_ntiid in target_ref_obj.embeddedContainerNTIIDs
 					except AttributeError:
 						pass
 		return result

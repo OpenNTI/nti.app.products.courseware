@@ -393,17 +393,13 @@ class TestPathLookup(ApplicationLayerTest):
 # TODO: test notes on content units (containing self-assessments etc)
 
 	@WithSharedApplicationMockDS(users=True, testapp=True)
-	@fudge.patch('nti.app.products.courseware.adapters._get_courses_from_container')
-	@fudge.patch('nti.app.contentlibrary.adapters._get_bundles_from_container')
-	@fudge.patch('nti.appserver.context_providers.get_hierarchy_context')
-	def test_contained_path_legacy(self, mock_get_courses, mock_get_bundles, mock_get_context):
+	@fudge.patch('nti.app.contentlibrary.views.library_views.get_hierarchy_context')
+	def test_contained_path_legacy(self, mock_get_context):
 		"""
 		Our library path to the given ntiid is returned,
 		even though we do not have the index catalog.
 		"""
 		self._enroll()
-		mock_get_courses.is_callable().returns(())
-		mock_get_bundles.is_callable().returns(())
 		mock_get_context.is_callable().returns(())
 		self._do_cs1323_path_lookup(is_legacy=True)
 		self._do_clc_path_lookup()

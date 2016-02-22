@@ -86,7 +86,7 @@ class TopLevelPriorityNotableFilter(object):
 						continue
 
 					if obj_creator.username in (x.id for x in course.instructors):
-						# TODO Like in the provider below, implies?
+						# TODO: Like in the provider below, implies?
 						course_scope = course.SharingScopes[ enrollment.Scope ]
 						if obj.isSharedDirectlyWith(course_scope):
 							return True
