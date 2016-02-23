@@ -89,6 +89,9 @@ def do_evolve(context, generation=generation):
 		for current in get_all_host_sites():
 			_adjust_acls(current, seen)
 
+	# Since we're registered in the install, unregister our DS here
+	# to prevent leakage into test layers.
+	component.getGlobalSiteManager().unregisterUtility(mock_ds, IDataserver)
 	logger.info('Evolution %s done.', generation)
 
 def evolve(context):
