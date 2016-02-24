@@ -142,19 +142,16 @@ class _CourseInstanceLinkDecorator(object):
 
 @interface.implementer(IExternalMappingDecorator)
 @component.adapter(ICourseInstance)
-class _CourseMailLinkDecorator(object):
+class _CourseMailLinkDecorator(AbstractAuthenticatedRequestAwareDecorator):
 	"""
 	Decorate the course email link on the course for instructors.
 	"""
 
-	__metaclass__ = SingletonDecorator
-
 	def _predicate(self, context, result):
-		if not self._is_authenticated:
-			return False
-		return is_course_instructor(context, self.remoteUser)
+		return 	self._is_authenticated \
+			and	is_course_instructor(context, self.remoteUser)
 
-	def decorateExternalMapping(self, context, result):
+	def _do_decorate_external(self, context, result):
 		_links = result.setdefault(LINKS, [])
 		link = Link(context, rel=VIEW_COURSE_MAIL, elements=(VIEW_COURSE_MAIL,))
 		interface.alsoProvides(link, ILocation)
@@ -169,9 +166,8 @@ class BaseRecursiveAuditLogLinkDecorator(AbstractAuthenticatedRequestAwareDecora
 	"""
 
 	def _predicate(self, context, result):
-		if not self._is_authenticated:
-			return False
-		return has_permission(ACT_CONTENT_EDIT, context, self.request)
+		return 	self._is_authenticated \
+			and has_permission(ACT_CONTENT_EDIT, context, self.request)
 
 	def _do_decorate_external(self, context, result):
 		_links = result.setdefault(LINKS, [])
@@ -189,12 +185,10 @@ class CourseRecursiveAuditLogLinkDecorator(BaseRecursiveAuditLogLinkDecorator):
 
 @interface.implementer(IExternalMappingDecorator)
 @component.adapter(ICourseInstanceEnrollment)
-class _RosterMailLinkDecorator(object):
+class _RosterMailLinkDecorator(AbstractAuthenticatedRequestAwareDecorator):
 	"""
 	Decorate the course email link on the roster record for instructors.
 	"""
-
-	__metaclass__ = SingletonDecorator
 
 	def _predicate(self, context, result):
 		if not self._is_authenticated:
@@ -202,7 +196,7 @@ class _RosterMailLinkDecorator(object):
 		course = ICourseInstance(context, None)
 		return course and is_course_instructor(course, self.remoteUser)
 
-	def decorateExternalMapping(self, context, result):
+	def _do_decorate_external(self, context, result):
 		_links = result.setdefault(LINKS, [])
 		link = Link(context, rel=VIEW_COURSE_MAIL, elements=(VIEW_COURSE_MAIL,))
 		interface.alsoProvides(link, ILocation)
@@ -212,21 +206,18 @@ class _RosterMailLinkDecorator(object):
 
 @interface.implementer(IExternalMappingDecorator)
 @component.adapter(ICourseInstanceEnrollment)
-class _VendorThankYouInfoDecorator(object):
+class _VendorThankYouInfoDecorator(AbstractAuthenticatedRequestAwareDecorator):
 	"""
 	Decorate the thank you page information.
 	"""
 
-	__metaclass__ = SingletonDecorator
-
-	def _predicate(self, context, result):
-		return self._is_authenticated
-
-	def decorateExternalMapping(self, context, result):
+	def _do_decorate_external(self, context, result):
 		course = ICourseInstance(context)
-		thank_you_page = get_vendor_thank_you_page(course, context.RealEnrollmentStatus)
-		if thank_you_page:
-			result['VendorThankYouPage'] = thank_you_page
+		key = getattr( context, 'RealEnrollmentStatus', None )
+		if course is not None and key:
+			thank_you_page = get_vendor_thank_you_page(course, key)
+			if thank_you_page:
+				result['VendorThankYouPage'] = thank_you_page
 
 @interface.implementer(IExternalMappingDecorator)
 @component.adapter(ICourseInstance)

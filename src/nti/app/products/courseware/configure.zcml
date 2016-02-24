@@ -367,15 +367,6 @@
 	<subscriber factory=".decorators._SharedScopesForumDecorator"
 				provides="nti.externalization.interfaces.IExternalObjectDecorator" />
 
-	<subscriber factory=".decorators._CourseMailLinkDecorator"
-			provides="nti.externalization.interfaces.IExternalMappingDecorator" />
-
-	<subscriber factory=".decorators._RosterMailLinkDecorator"
-			provides="nti.externalization.interfaces.IExternalMappingDecorator" />
-
-	<subscriber factory=".decorators._VendorThankYouInfoDecorator"
-				provides="nti.externalization.interfaces.IExternalMappingDecorator" />
-
 	<subscriber factory=".decorators._CourseInstanceLinkDecorator"
 				provides="nti.externalization.interfaces.IExternalMappingDecorator" />
 
@@ -390,6 +381,21 @@
 
 	<subscriber factory=".decorators._CourseInstancePreviewExcludingDecorator"
 				provides="nti.externalization.interfaces.IExternalObjectDecorator"
+				for="nti.contenttypes.courses.interfaces.ICourseInstance
+					 pyramid.interfaces.IRequest" />
+
+	<subscriber factory=".decorators._VendorThankYouInfoDecorator"
+				provides="nti.externalization.interfaces.IExternalMappingDecorator"
+				for="nti.app.products.courseware.interfaces.ICourseInstanceEnrollment
+					 pyramid.interfaces.IRequest" />
+
+	<subscriber factory=".decorators._RosterMailLinkDecorator"
+				provides="nti.externalization.interfaces.IExternalMappingDecorator"
+				for="nti.app.products.courseware.interfaces.ICourseInstanceEnrollment
+					 pyramid.interfaces.IRequest" />
+
+	<subscriber factory=".decorators._CourseMailLinkDecorator"
+				provides="nti.externalization.interfaces.IExternalMappingDecorator"
 				for="nti.contenttypes.courses.interfaces.ICourseInstance
 					 pyramid.interfaces.IRequest" />
 

@@ -226,7 +226,7 @@ class TestMailViews(ApplicationLayerTest):
 		email_link = self.require_link_href_with_rel(course_instance, VIEW_COURSE_MAIL)
 
 		# Mail student
-		res = self.testapp.get(roster_link,
+		res = self.testapp.get( roster_link,
 								extra_environ=instructor_env)
 		for enroll_record in res.json_body['Items']:
 			roster_link = self.require_link_href_with_rel(enroll_record, VIEW_COURSE_MAIL)
