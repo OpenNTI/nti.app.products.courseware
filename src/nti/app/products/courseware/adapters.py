@@ -140,8 +140,6 @@ def _course_content_package_to_course(package):
 	return course
 
 def _content_unit_to_courses(unit, include_sub_instances=True):
-	# XXX JAM These heuristics aren't well tested.
-
 	# First, try the true legacy case. This involves
 	# a direct mapping between courses and a catalog entry. It may be
 	# slightly more reliable, but only works for true legacy cases.
@@ -152,7 +150,7 @@ def _content_unit_to_courses(unit, include_sub_instances=True):
 		if result is not None:
 			return (result,)
 
-	# Nothing true legacy. find all courses that match this pacakge
+	# Nothing true legacy. find all courses that match this package.
 	result = []
 	package = find_interface(unit, IContentPackage, strict=False)
 	if package is not None:
