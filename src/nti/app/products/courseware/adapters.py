@@ -40,7 +40,6 @@ from nti.appserver.interfaces import ITrustedTopLevelContainerContextProvider
 from nti.appserver.pyramid_authorization import is_readable
 
 from nti.contentlibrary.interfaces import IContentUnit
-from nti.contentlibrary.interfaces import IContentPackage
 from nti.contentlibrary.interfaces import IContentPackageBundle
 
 from nti.contentlibrary.indexed_data import get_library_catalog
@@ -48,7 +47,6 @@ from nti.contentlibrary.indexed_data import get_library_catalog
 from nti.contenttypes.courses.discussions.interfaces import ICourseDiscussion
 
 from nti.contenttypes.courses.index import IX_SITE
-from nti.contenttypes.courses.index import IX_PACKAGES
 from nti.contenttypes.courses.index import IX_USERNAME
 
 from nti.contenttypes.courses.interfaces import ICourseOutline
@@ -61,10 +59,10 @@ from nti.contenttypes.courses.interfaces import INonPublicCourseInstance
 from nti.contenttypes.courses.interfaces import ICourseInstanceEnrollmentRecord
 
 from nti.contenttypes.courses.utils import is_course_editor
-from nti.contenttypes.courses.utils import get_courses_catalog
 from nti.contenttypes.courses.utils import get_enrollment_catalog
 from nti.contenttypes.courses.utils import get_course_subinstances
 from nti.contenttypes.courses.utils import is_course_instructor as is_instructor # BWC
+from nti.contenttypes.courses.utils import content_unit_to_courses as indexedcontent_unit_to_courses
 
 from nti.contenttypes.presentation.interfaces import IPresentationAsset
 
@@ -139,7 +137,7 @@ def _course_content_package_to_course(package):
 	setattr(package, cache_name, course_intid)
 	return course
 
-def _content_unit_to_courses(unit, include_sub_instances=True):
+def content_unit_to_courses(unit, include_sub_instances=True):
 	# First, try the true legacy case. This involves
 	# a direct mapping between courses and a catalog entry. It may be
 	# slightly more reliable, but only works for true legacy cases.
@@ -150,31 +148,15 @@ def _content_unit_to_courses(unit, include_sub_instances=True):
 		if result is not None:
 			return (result,)
 
-	# Nothing true legacy. find all courses that match this package.
-	result = []
-	package = find_interface(unit, IContentPackage, strict=False)
-	if package is not None:
-		catalog = get_courses_catalog()
-		intids = component.getUtility(IIntIds)
-		sites = get_component_hierarchy_names()
-		query = { IX_SITE: {'any_of':sites},
-				  IX_PACKAGES: {'any_of':(package.ntiid,) }}
-		for uid in catalog.apply(query) or ():
-			course = intids.queryObject(uid)
-			if not ICourseInstance.providedBy(course):
-				continue
-			if not include_sub_instances and ICourseSubInstance.providedBy(course):
-				continue
-			result.append(course)
+	result = indexedcontent_unit_to_courses(unit,
+											include_sub_instances=include_sub_instances)
 	return result
-
-content_unit_to_courses = _content_unit_to_courses
 
 @interface.implementer(ICourseInstance)
 @component.adapter(IContentUnit)
 def _content_unit_to_course(unit):
 	# get all courses, don't include sections
-	courses = _content_unit_to_courses(unit, False)
+	courses = content_unit_to_courses(unit, False)
 	# XXX: We probably need to check and see who's enrolled
 	# to find the most specific course instance to return?
 	# As it stands, we promise to return only a root course,
@@ -195,7 +177,7 @@ def _is_user_enrolled(user, course):
 @component.adapter(IContentUnit, IUser)
 def _content_unit_and_user_to_course(unit, user):
 	# get all courses
-	courses = _content_unit_to_courses(unit, True)
+	courses = content_unit_to_courses(unit, True)
 	for instance in courses or ():
 		if _is_user_enrolled(user, instance):
 			return instance
@@ -294,7 +276,7 @@ def _get_courses_from_container(obj, user=None):
 			if course is not None:
 				results.add(course)
 	if not results:
-		courses = _content_unit_to_courses(obj, include_sub_instances=True)
+		courses = content_unit_to_courses(obj, include_sub_instances=True)
 		results.update(courses)
 	return results
 
@@ -416,21 +398,21 @@ def _catalog_entries_from_forum_obj(obj):
 @interface.implementer(ITrustedTopLevelContainerContextProvider)
 def _courses_from_package(obj):
 	# We could use the container index.
-	courses = _content_unit_to_courses(obj, include_sub_instances=True)
+	courses = content_unit_to_courses(obj, include_sub_instances=True)
 	results = _get_valid_course_context(courses)
 	return results
 
 @component.adapter(IContentUnit)
 @interface.implementer(ITrustedTopLevelContainerContextProvider)
 def _catalog_entries_from_package(obj):
-	courses = _content_unit_to_courses(obj, include_sub_instances=True)
+	courses = content_unit_to_courses(obj, include_sub_instances=True)
 	results = _catalog_entries_from_courses(courses)
 	return results
 
 @component.adapter(IContentUnit, IUser)
 @interface.implementer(ITopLevelContainerContextProvider)
 def _courses_from_package_and_user(obj, user):
-	courses = _content_unit_to_courses(obj, include_sub_instances=True)
+	courses = content_unit_to_courses(obj, include_sub_instances=True)
 	results = _get_valid_course_context(courses)
 	return results
 
