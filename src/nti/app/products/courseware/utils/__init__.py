@@ -225,8 +225,7 @@ class PreviewCourseAccessPredicateDecorator(AbstractAuthenticatedRequestAwareDec
 		The course is not in preview mode, or we are an editor,
 		instructor, or content admin.
 		"""
-		return 	self._is_authenticated \
-			and (	not self._is_preview( self.course )
-				 or self.instructor_or_editor )
+		return not self._is_preview( self.course ) \
+			or (self._is_authenticated and self.instructor_or_editor)
 
 PreviewCourseAccessPredicate = PreviewCourseAccessPredicateDecorator  # BWC
