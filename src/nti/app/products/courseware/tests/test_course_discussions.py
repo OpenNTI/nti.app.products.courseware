@@ -125,7 +125,7 @@ class TestDiscussions(ApplicationLayerTest):
 			assert_that(announcements_forums(course), has_length(0))
 
 			acl = get_acl(course)
-			assert_that(acl , has_length(4))
+			assert_that(acl , has_length(5))
 			acls = []
 			for ace in acl:
 				try:
@@ -149,7 +149,7 @@ class TestDiscussions(ApplicationLayerTest):
 			discussion_hrefs = [x[1].NTIID for x in discussions.values()]
 			for t in discussions.values():
 				_, forum = t
-				assert_that(forum, has_property('__acl__', has_length(5)))
+				assert_that(forum, has_property('__acl__', has_length(6)))
 				assert_that(forum, has_property('__entities__', has_length(1)))
 
 			result = create_topics(discussion)
