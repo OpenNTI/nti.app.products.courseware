@@ -62,7 +62,7 @@ from nti.contenttypes.courses.utils import is_course_editor
 from nti.contenttypes.courses.utils import get_enrollment_catalog
 from nti.contenttypes.courses.utils import get_course_subinstances
 from nti.contenttypes.courses.utils import is_course_instructor as is_instructor # BWC
-from nti.contenttypes.courses.utils import content_unit_to_courses as indexedcontent_unit_to_courses
+from nti.contenttypes.courses.utils import content_unit_to_courses as indexed_content_unit_to_courses
 
 from nti.contenttypes.presentation.interfaces import IPresentationAsset
 
@@ -148,8 +148,8 @@ def content_unit_to_courses(unit, include_sub_instances=True):
 		if result is not None:
 			return (result,)
 
-	result = indexedcontent_unit_to_courses(unit,
-											include_sub_instances=include_sub_instances)
+	result = indexed_content_unit_to_courses(unit,
+											 include_sub_instances=include_sub_instances)
 	return result
 
 @interface.implementer(ICourseInstance)
