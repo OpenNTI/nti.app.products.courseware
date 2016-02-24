@@ -170,6 +170,8 @@ def _content_unit_to_courses(unit, include_sub_instances=True):
 			result.append(course)
 	return result
 
+content_unit_to_courses = _content_unit_to_courses
+
 @interface.implementer(ICourseInstance)
 @component.adapter(IContentUnit)
 def _content_unit_to_course(unit):
