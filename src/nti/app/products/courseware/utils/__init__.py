@@ -96,7 +96,7 @@ def memcache_get(key, client=None):
 	if client is not None:
 		try:
 			return client.get(key)
-		except:
+		except (StandardError, Exception):
 			pass
 	return None
 
@@ -106,7 +106,7 @@ def memcache_set(key, value, client=None, exp=DEFAULT_EXP_TIME):
 		try:
 			client.set(key, value, time=exp)
 			return True
-		except:
+		except (StandardError, Exception):
 			pass
 	return False
 
