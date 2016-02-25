@@ -443,7 +443,12 @@ class _CourseDiscussionsLinkDecorator(AbstractAuthenticatedRequestAwareDecorator
 
 @interface.implementer(IExternalObjectDecorator)
 @component.adapter(ICourseInstance, interface.Interface)
-class _SharingScopesAndDiscussionDecorator(PreviewCourseAccessPredicate):
+class _SharingScopesAndDiscussionDecorator(	PreviewCourseAccessPredicate,
+											AbstractAuthenticatedRequestAwareDecorator):
+
+	def _predicate(self, context, result):
+		return 	self._is_authenticated \
+			and super( _SharingScopesAndDiscussionDecorator, self )._predicate( context, result )
 
 	def _do_decorate_external(self, context, result):
 		is_section = ICourseSubInstance.providedBy(context)
@@ -525,10 +530,15 @@ class _SharingScopesAndDiscussionDecorator(PreviewCourseAccessPredicate):
 
 @interface.implementer(IExternalObjectDecorator)
 @component.adapter(ICourseInstance, interface.Interface)
-class _AnnouncementsDecorator(PreviewCourseAccessPredicate):
+class _AnnouncementsDecorator(	PreviewCourseAccessPredicate,
+								AbstractAuthenticatedRequestAwareDecorator):
 	"""
 	Adds announcement discussions to externalized course, by scope.
 	"""
+
+	def _predicate(self, context, result):
+		return 	self._is_authenticated \
+			and super( _AnnouncementsDecorator, self )._predicate( context, result )
 
 	def _in_scope(self, scope_name, course):
 		user = self.remoteUser if self._is_authenticated else None
