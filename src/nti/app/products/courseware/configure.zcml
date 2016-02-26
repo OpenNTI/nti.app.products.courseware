@@ -24,8 +24,8 @@
 		title='Advanced Course Editing'
 		description='Does the user have access to advanced course editing functionality'/>
 
-	<adapter factory=".policies.AdvancedEditingCapabilityFilter"
-			 	 for="nti.dataserver.interfaces.IUser"
+	<subscriber factory=".policies.AdvancedEditingCapabilityFilter"
+				 for="nti.dataserver.interfaces.IUser"
 			 	 provides="nti.appserver.interfaces.IUserCapabilityFilter" />
 
 	<include package="nti.contenttypes.courses" />
