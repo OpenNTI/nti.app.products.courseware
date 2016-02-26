@@ -651,3 +651,21 @@ class TestRestrictedWorkspace(ApplicationLayerTest):
 		self.testapp.post_json('/dataserver2/users/sjohnson@nextthought.com/Courses/EnrolledCourses',
 								enrolled_id,
 								status=403)
+
+class TestCapabilities(ApplicationLayerTest):
+
+	layer = PersistentInstructedCourseApplicationTestLayer
+
+	default_origin = str('http://platform.ou.edu')
+
+	@WithSharedApplicationMockDS(users=True, testapp=True)
+	def test_capabilities(self):
+		instructor_env = self._make_extra_environ('harp4162')
+		res = self.testapp.get( '/dataserver2', extra_environ=instructor_env )
+		caps = res.json_body.get( 'CapabilityList' )
+		assert_that( caps, does_not( has_item( 'nti.platform.courseware.advanced_editing')))
+
+		res = self.testapp.get( '/dataserver2' )
+		caps = res.json_body.get( 'CapabilityList' )
+		assert_that( caps, has_items( 'nti.platform.courseware.advanced_editing',
+									  'nti.platform.customization.can_change_password'))
