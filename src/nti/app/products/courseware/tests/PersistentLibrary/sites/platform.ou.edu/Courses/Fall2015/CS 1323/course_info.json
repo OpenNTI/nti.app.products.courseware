@@ -48,5 +48,6 @@
 			"name":"James Land",
 			"title": "Teaching Assistant"
 		}
-	]
+	],
+	"is_anonymously_but_not_publicly_accessible": true
 }

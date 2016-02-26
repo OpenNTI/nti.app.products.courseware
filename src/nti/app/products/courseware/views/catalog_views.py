@@ -28,6 +28,9 @@ from pyramid.interfaces import IRequest
 from pyramid.view import view_config
 from pyramid.view import view_defaults
 
+from nti.app.authentication import is_anonymous_identity
+
+from nti.app.base.abstract_views import AbstractView
 from nti.app.base.abstract_views import AbstractAuthenticatedView
 
 from nti.app.externalization.view_mixins import ModeledContentUploadRequestUtilsMixin
@@ -51,12 +54,15 @@ from nti.contenttypes.courses.interfaces import ICourseInstance
 from nti.contenttypes.courses.interfaces import ICourseCatalogEntry
 from nti.contenttypes.courses.interfaces import ICourseEnrollmentManager
 from nti.contenttypes.courses.interfaces import INonPublicCourseInstance
+from nti.contenttypes.courses.interfaces import IAnonymouslyAccessibleCourseInstance
 
 from nti.contenttypes.courses.utils import is_instructor_in_hierarchy
 
 from nti.dataserver import authorization as nauth
+from nti.dataserver.authorization_acl import has_permission
 
 from nti.dataserver.interfaces import IUser
+from nti.dataserver.interfaces import IDataserverFolder
 
 from nti.externalization.interfaces import LocatedExternalDict
 from nti.externalization.interfaces import StandardExternalFields
@@ -221,5 +227,32 @@ class AllCatalogEntriesView(AbstractAuthenticatedView):
 			ext_obj = to_external_object(e)
 			ext_obj['is_non_public'] = INonPublicCourseInstance.providedBy(e)
 			items.append(ext_obj)
+		result['Total'] = result['ItemCount'] = len(items)
+		return result
+
+
+@view_config(name='_AnonymouslyButNotPubliclyAvailableCourseInstances',
+			 route_name='objects.generic.traversal',
+			 context=IDataserverFolder,
+			 request_method='GET',
+			 renderer='rest')
+class AnonymouslyAvailableCourses(AbstractView):
+
+	def _can_access(self):
+		identity = self.request.environ.get('repoze.who.identity')
+		return is_anonymous_identity(identity)
+
+	def __call__(self):
+		if not self._can_access():
+			raise hexc.HTTPForbidden()
+
+		catalog = component.getUtility(ICourseCatalog)
+		result = LocatedExternalDict()
+		items = result[ITEMS] = []
+		for e in catalog.iterCatalogEntries():
+			if IAnonymouslyAccessibleCourseInstance.providedBy(e):
+				course_instance = ICourseInstance( e )
+				ext_obj = to_external_object( course_instance )
+				items.append(ext_obj)
 		result['Total'] = result['ItemCount'] = len(items)
 		return result
