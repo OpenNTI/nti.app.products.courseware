@@ -52,9 +52,11 @@ from nti.app.products.courseware.views import CourseAdminPathAdapter
 
 from nti.appserver.workspaces.interfaces import IUserService
 
-from nti.common.property import Lazy
-from nti.common.string import TRUE_VALUES
 from nti.common.maps import CaseInsensitiveDict
+
+from nti.common.property import Lazy
+
+from nti.common.string import TRUE_VALUES
 
 from nti.contenttypes.courses import get_enrollment_catalog
 

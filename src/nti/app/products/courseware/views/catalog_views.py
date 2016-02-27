@@ -59,14 +59,14 @@ from nti.contenttypes.courses.interfaces import IAnonymouslyAccessibleCourseInst
 from nti.contenttypes.courses.utils import is_instructor_in_hierarchy
 
 from nti.dataserver import authorization as nauth
-from nti.dataserver.authorization_acl import has_permission
 
 from nti.dataserver.interfaces import IUser
 from nti.dataserver.interfaces import IDataserverFolder
 
+from nti.externalization.externalization import to_external_object
+
 from nti.externalization.interfaces import LocatedExternalDict
 from nti.externalization.interfaces import StandardExternalFields
-from nti.externalization.externalization import to_external_object
 
 from nti.traversal import traversal
 
@@ -230,12 +230,11 @@ class AllCatalogEntriesView(AbstractAuthenticatedView):
 		result['Total'] = result['ItemCount'] = len(items)
 		return result
 
-
-@view_config(name='_AnonymouslyButNotPubliclyAvailableCourseInstances',
-			 route_name='objects.generic.traversal',
-			 context=IDataserverFolder,
-			 request_method='GET',
-			 renderer='rest')
+@view_config(context=IDataserverFolder)
+@view_defaults(name='_AnonymouslyButNotPubliclyAvailableCourseInstances',
+			   route_name='objects.generic.traversal',
+			   request_method='GET',
+			   renderer='rest')
 class AnonymouslyAvailableCourses(AbstractView):
 
 	def _can_access(self):
@@ -251,8 +250,8 @@ class AnonymouslyAvailableCourses(AbstractView):
 		items = result[ITEMS] = []
 		for e in catalog.iterCatalogEntries():
 			if IAnonymouslyAccessibleCourseInstance.providedBy(e):
-				course_instance = ICourseInstance( e )
-				ext_obj = to_external_object( course_instance )
+				course_instance = ICourseInstance(e)
+				ext_obj = to_external_object(course_instance)
 				items.append(ext_obj)
 		result['Total'] = result['ItemCount'] = len(items)
 		return result
