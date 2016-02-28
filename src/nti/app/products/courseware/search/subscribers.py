@@ -19,9 +19,10 @@ from nti.contentsearch.interfaces import ISearchPackageResolver
 from nti.contenttypes.courses.index import IX_SITE
 from nti.contenttypes.courses.index import IX_USERNAME
 
+from nti.contenttypes.courses.common import get_course_packages
+
 from nti.contenttypes.courses.interfaces import ICourseInstance
 
-from nti.contenttypes.courses.utils import get_course_packages
 from nti.contenttypes.courses.utils import get_enrollment_catalog
 
 from nti.ntiids.ntiids import ROOT

@@ -32,14 +32,16 @@ from nti.app.products.courseware.utils import ZERO_DATETIME
 from nti.common.property import Lazy
 
 from nti.contentlibrary.indexed_data import get_library_catalog
+
 from nti.contentlibrary.interfaces import IContentPackageLibrary
+
+from nti.contenttypes.courses.common import get_course_packages
 
 from nti.contenttypes.courses.interfaces import ICourseInstance
 from nti.contenttypes.courses.interfaces import ICourseCatalogEntry
 from nti.contenttypes.courses.interfaces import ICourseOutlineContentNode
 
 from nti.contenttypes.courses.utils import is_enrolled
-from nti.contenttypes.courses.utils import get_course_packages
 from nti.contenttypes.courses.utils import is_course_instructor
 
 from nti.contenttypes.presentation import iface_of_asset
