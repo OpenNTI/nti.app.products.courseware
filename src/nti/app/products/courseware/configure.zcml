@@ -280,7 +280,7 @@
 
 	<!-- A subscriber for getting admin roles -->
 	<subscriber factory=".workspaces._DefaultPrincipalAdministrativeRoleCatalog"
-				provides=".interfaces.IPrincipalAdministrativeRoleCatalog" />
+				provides="nti.contenttypes.courses.interfaces.IPrincipalAdministrativeRoleCatalog" />
 
 	<!-- And an adapter for security purposes -->
 	<adapter factory=".legacy_principalrole.LegacyCourseInstancePrincipalRoleMap" />

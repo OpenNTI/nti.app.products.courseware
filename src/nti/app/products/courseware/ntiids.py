@@ -22,13 +22,13 @@ from nti.app.products.courseware.interfaces import NTIID_TYPE_COURSE_FORUM
 from nti.app.products.courseware.interfaces import NTIID_TYPE_COURSE_TOPIC
 from nti.app.products.courseware.interfaces import NTIID_TYPE_COURSE_SECTION_TOPIC
 from nti.app.products.courseware.interfaces import NTIID_TYPE_COURSE_SECTION_FORUM
-from nti.app.products.courseware.interfaces import IPrincipalAdministrativeRoleCatalog
 
 from nti.contenttypes.courses.interfaces import ICourseInstance
 from nti.contenttypes.courses.interfaces import ICourseSubInstance
 from nti.contenttypes.courses.interfaces import ICourseCatalogEntry
 from nti.contenttypes.courses.interfaces import IPrincipalEnrollments
 from nti.contenttypes.courses.interfaces import INonPublicCourseInstance
+from nti.contenttypes.courses.interfaces import IPrincipalAdministrativeRoleCatalog
 
 from nti.contenttypes.courses.utils import get_parent_course
 

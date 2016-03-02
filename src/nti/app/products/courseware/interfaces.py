@@ -33,6 +33,9 @@ from nti.contentfolder.interfaces import IRootFolder
 from nti.contenttypes.courses.interfaces import ICourseInstance
 from nti.contenttypes.courses.interfaces import IPrincipalEnrollments
 
+from nti.contenttypes.courses.legacy_catalog import ILegacyCourseInstance
+from nti.contenttypes.courses.legacy_catalog import ILegacyCourseCatalogEntry
+
 from nti.coremetadata.interfaces import ILastModified
 
 from nti.dataserver.interfaces import IShouldHaveTraversablePath
@@ -47,9 +50,6 @@ from nti.schema.field import ValidTextLine as TextLine
 
 ACT_VIEW_ROSTER = Permission('nti.actions.courseware.view_roster')
 ACT_VIEW_ACTIVITY = Permission('nti.actions.courseware.view_activity')
-
-from nti.contenttypes.courses.legacy_catalog import ILegacyCourseInstance
-from nti.contenttypes.courses.legacy_catalog import ILegacyCourseCatalogEntry
 
 class ICourseCatalogLegacyContentEntry(ILegacyCourseCatalogEntry):
 	"""
@@ -192,27 +192,6 @@ class ICourseInstanceAdministrativeRole(IShouldHaveTraversablePath):
 	RoleName = Choice(title="The name of the role this principal holds",
 					  values=('instructor', 'teaching assistant', 'editor'))
 	CourseInstance = Object(ICourseInstance)
-
-class IPrincipalAdministrativeRoleCatalog(interface.Interface):
-	"""
-	Something that can provide information about all courses
-	administered by the principal.
-
-	There can be multiple catalogs for courses that are managed in
-	different ways. Therefore, commonly implementations will be
-	registered as subscription adapters from the user.
-	"""
-
-	def iter_administrations():
-		"""
-		Iterate across :class:`.ICourseInstanceAdministrativeRole` objects, or at
-		least something that can be adapted to that interface.
-		"""
-
-	def count_administrations():
-		"""
-		return the count of administrator roles
-		"""
 
 class IAdministeredCoursesCollection(IContainerCollection):
 	"""
@@ -403,7 +382,9 @@ zope.deferredimport.deprecatedFrom(
 	"ICourseCatalogEntry",
 	"ICourseCatalogInstructorInfo",
 	"ICourseInstanceAvailableEvent",
-	"CourseInstanceAvailableEventg")
+	"CourseInstanceAvailableEventg",
+	'IPrincipalAdministrativeRoleCatalog')
+
 zope.deferredimport.deprecatedFrom(
 	"Moved to nti.contenttypes.courses",
 	"nti.contenttypes.courses.legacy_catalog",

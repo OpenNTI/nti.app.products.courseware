@@ -31,7 +31,6 @@ from nti.app.products.courseware.interfaces import IEnrolledCoursesCollection
 from nti.app.products.courseware.interfaces import IAdministeredCoursesCollection
 from nti.app.products.courseware.interfaces import ILegacyCourseInstanceEnrollment
 from nti.app.products.courseware.interfaces import ICourseInstanceAdministrativeRole
-from nti.app.products.courseware.interfaces import IPrincipalAdministrativeRoleCatalog
 
 from nti.appserver.workspaces.interfaces import IUserService
 from nti.appserver.workspaces.interfaces import IContainerCollection
@@ -47,6 +46,7 @@ from nti.contenttypes.courses.interfaces import ES_CREDIT
 from nti.contenttypes.courses.interfaces import RID_INSTRUCTOR
 from nti.contenttypes.courses.interfaces import ES_CREDIT_DEGREE
 from nti.contenttypes.courses.interfaces import ES_CREDIT_NONDEGREE
+from nti.contenttypes.courses.interfaces import IPrincipalAdministrativeRoleCatalog
 
 from nti.contenttypes.courses.interfaces import ICourseCatalog
 from nti.contenttypes.courses.interfaces import ICourseInstance
