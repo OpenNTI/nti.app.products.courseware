@@ -278,10 +278,6 @@
 	<adapter factory=".workspaces.CoursesWorkspace"
 			 provides=".interfaces.ICoursesWorkspace" />
 
-	<!-- A subscriber for getting admin roles -->
-	<subscriber factory=".workspaces._DefaultPrincipalAdministrativeRoleCatalog"
-				provides="nti.contenttypes.courses.interfaces.IPrincipalAdministrativeRoleCatalog" />
-
 	<!-- And an adapter for security purposes -->
 	<adapter factory=".legacy_principalrole.LegacyCourseInstancePrincipalRoleMap" />
 
@@ -293,13 +289,6 @@
 	<!-- A subscriber for important principals notables. -->
 	<subscriber factory=".notables._UserPriorityCreatorNotableProvider"
 				provides="nti.app.notabledata.interfaces.IUserPriorityCreatorNotableProvider"/>
-
-	<configure zcml:condition="not-have testmode">
-		<utility factory=".utils.IndexAdminCourses" />
-	</configure>
-	<configure zcml:condition="have testmode">
-		<utility factory=".utils.IterableAdminCourses" />
-	</configure>
 
 	<!-- Traversal paths -->
 	<adapter factory=".workspaces.CatalogEntryLocationInfo" />
@@ -320,7 +309,7 @@
 			 for=".interfaces.ICourseInstanceEnrollment"/>
 
 	<adapter factory=".workspaces.wrapper_to_catalog"
-			 for=".interfaces.ICourseInstanceAdministrativeRole"/>
+			 for="nti.contenttypes.courses.interfaces.ICourseInstanceAdministrativeRole"/>
 
 	<!--
 		Application (request) specific traversal for course instances and enrollments, etc.
@@ -354,9 +343,8 @@
 						 .interfaces.IEnrollmentOptions
 						 .interfaces.ICourseInstanceEnrollment
 						 .interfaces.ICourseCatalogLegacyContentEntry
-						 .interfaces.ICourseInstanceAdministrativeRole
 						 .interfaces.ILegacyCommunityBasedCourseInstance"
-		modules=".legacy_catalog .legacy_course .workspaces .enrollment" />
+		modules=".enrollment .legacy_catalog .legacy_course .workspaces" />
 
 	<subscriber factory=".decorators._CourseCatalogEntryProviderDecorator"
 				provides="nti.externalization.interfaces.IExternalObjectDecorator" />

@@ -172,31 +172,10 @@ class IPrincipalEnrollmentCatalog(IPrincipalEnrollments):
 		objects; we provide an adapter from that to the enrollment.)
 		"""
 
-class ICourseInstanceAdministrativeRole(IShouldHaveTraversablePath):
-	"""
-	An object representing a principal's administrative
-	role within a course instance.
-
-	Currently, the only supported role is that of instructor, and that
-	role is static; thus, this object cannot be deleted or altered
-	externally.) In the future as there are more roles (such as TA)
-	and those roles are made dynamic, instances of this
-	object may be able to be DELETEd or POSTd.
-
-	Implementations should be adaptable to their course instance
-	and the corresponding catalog entry.
-	"""
-
-	__name__ = interface.Attribute("The name of the administration is the same as the CourseInstance.")
-
-	RoleName = Choice(title="The name of the role this principal holds",
-					  values=('instructor', 'teaching assistant', 'editor'))
-	CourseInstance = Object(ICourseInstance)
-
 class IAdministeredCoursesCollection(IContainerCollection):
 	"""
 	A collection (local to a user) of courses he administers
-	(:class:`.ICourseInstanceAdministrativeRole`)
+	(:class:`nti.contenttypes.courses.interfaces.ICourseInstanceAdministrativeRole`)
 	"""
 
 from nti.contentlibrary.interfaces import ILegacyCourseConflatedContentPackage
@@ -354,19 +333,6 @@ def get_course_publishable_vendor_info(context):
 		result.update(info or {})
 	return result
 
-# utils
-
-class IUserAdministeredCourses(interface.Interface):
-
-	"""
-	Marker for a callable utility that return the administered courses of a user
-	"""
-
-	def iter_admin(user):
-		"""
-		return an interable with the users administered courses
-		"""
-
 # resources
 
 class ICourseRootFolder(IRootFolder):
@@ -380,9 +346,11 @@ zope.deferredimport.deprecatedFrom(
 	"Moved to nti.contenttypes.courses",
 	"nti.contenttypes.courses.interfaces",
 	"ICourseCatalogEntry",
+	"IUserAdministeredCourses",
 	"ICourseCatalogInstructorInfo",
 	"ICourseInstanceAvailableEvent",
 	"CourseInstanceAvailableEventg",
+	"ICourseInstanceAdministrativeRole",
 	'IPrincipalAdministrativeRoleCatalog')
 
 zope.deferredimport.deprecatedFrom(

@@ -41,8 +41,6 @@ from nti.app.externalization.view_mixins import ModeledContentUploadRequestUtils
 
 from nti.app.products.courseware.interfaces import ICoursesWorkspace
 
-from nti.app.products.courseware.workspaces import CourseInstanceAdministrativeRole
-
 from nti.app.products.courseware.utils import course_migrator
 
 from nti.app.products.courseware.views.catalog_views import get_enrollments
@@ -59,6 +57,8 @@ from nti.common.property import Lazy
 from nti.common.string import TRUE_VALUES
 
 from nti.contenttypes.courses import get_enrollment_catalog
+
+from nti.contenttypes.courses.administered import CourseInstanceAdministrativeRole
 
 from nti.contenttypes.courses.enrollment import migrate_enrollments_from_course_to_course
 

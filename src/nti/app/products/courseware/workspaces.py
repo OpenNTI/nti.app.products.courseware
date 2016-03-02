@@ -20,17 +20,11 @@ from zope.intid.interfaces import IIntIds
 
 from zope.location.traversing import LocationPhysicallyLocatable
 
-from zope.securitypolicy.interfaces import Allow
-from zope.securitypolicy.interfaces import IPrincipalRoleMap
-from zope.securitypolicy.principalrole import principalRoleManager
-
 from nti.app.products.courseware.interfaces import ICoursesWorkspace
-from nti.app.products.courseware.interfaces import IUserAdministeredCourses
 from nti.app.products.courseware.interfaces import ICourseInstanceEnrollment
 from nti.app.products.courseware.interfaces import IEnrolledCoursesCollection
 from nti.app.products.courseware.interfaces import IAdministeredCoursesCollection
 from nti.app.products.courseware.interfaces import ILegacyCourseInstanceEnrollment
-from nti.app.products.courseware.interfaces import ICourseInstanceAdministrativeRole
 
 from nti.appserver.workspaces.interfaces import IUserService
 from nti.appserver.workspaces.interfaces import IContainerCollection
@@ -41,9 +35,7 @@ from nti.common.property import alias
 from nti.contenttypes.courses.index import IX_SITE
 from nti.contenttypes.courses.index import IX_USERNAME
 
-from nti.contenttypes.courses.interfaces import RID_TA
 from nti.contenttypes.courses.interfaces import ES_CREDIT
-from nti.contenttypes.courses.interfaces import RID_INSTRUCTOR
 from nti.contenttypes.courses.interfaces import ES_CREDIT_DEGREE
 from nti.contenttypes.courses.interfaces import ES_CREDIT_NONDEGREE
 from nti.contenttypes.courses.interfaces import IPrincipalAdministrativeRoleCatalog
@@ -52,24 +44,17 @@ from nti.contenttypes.courses.interfaces import ICourseCatalog
 from nti.contenttypes.courses.interfaces import ICourseInstance
 from nti.contenttypes.courses.interfaces import ICourseCatalogEntry
 from nti.contenttypes.courses.interfaces import IPrincipalEnrollments
-
-from nti.contenttypes.courses.legacy_catalog import ILegacyCourseInstance
+from nti.contenttypes.courses.interfaces import ICourseInstanceAdministrativeRole
 
 from nti.contenttypes.courses.utils import get_enrollment_catalog
+from nti.contenttypes.courses.utils import AbstractInstanceWrapper as _AbstractInstanceWrapper
 
 from nti.dataserver.authorization import ACT_DELETE
-from nti.dataserver.authorization import ROLE_ADMIN
-from nti.dataserver.authorization import ACT_CONTENT_EDIT
-from nti.dataserver.authorization import ROLE_CONTENT_ADMIN
 
 from nti.dataserver.authorization_acl import ace_allowing
 from nti.dataserver.authorization_acl import acl_from_aces
 
 from nti.dataserver.interfaces import IUser
-from nti.dataserver.interfaces import IGroupMember
-
-from nti.schema.field import SchemaConfigured
-from nti.schema.fieldproperty import createDirectFieldProperties
 
 from nti.site.site import get_component_hierarchy_names
 
@@ -280,31 +265,6 @@ class _AbstractQueryBasedCoursesCollection(Contained):
 	def __len__(self):
 		return len(self.container)
 
-class _AbstractInstanceWrapper(Contained):
-
-	__acl__ = ()
-	def __init__(self, context):
-		self.CourseInstance = context
-		# Sometimes the CourseInstance object goes away
-		# for externalization, so capture an extra copy
-		self._private_course_instance = context
-
-	@Lazy
-	def __name__(self):
-		try:
-			# We probably want a better value than `ntiid`? Human readable?
-			# or is this supposed to be traversable?
-			return ICourseCatalogEntry(self._private_course_instance).ntiid
-		except TypeError:  # Hmm, the catalog entry is gone, something doesn't match. What?
-			logger.warning("Failed to get name from catalog for %s/%s",
-						   self._private_course_instance,
-						   self._private_course_instance.__name__)
-			return self._private_course_instance.__name__
-
-	def __conform__(self, iface):
-		if ICourseInstance.isOrExtends(iface):
-			return self._private_course_instance
-
 @component.adapter(ICourseInstance)
 @interface.implementer(ICourseInstanceEnrollment)
 class CourseInstanceEnrollment(_AbstractInstanceWrapper):
@@ -417,87 +377,6 @@ class EnrolledCoursesCollection(_AbstractQueryBasedCoursesCollection):
 		return result
 
 # administered courses
-
-@interface.implementer(ICourseInstanceAdministrativeRole)
-class CourseInstanceAdministrativeRole(SchemaConfigured,
-									   _AbstractInstanceWrapper):
-	createDirectFieldProperties(ICourseInstanceAdministrativeRole,
-								# Be flexible about what this is,
-								# the LegacyCommunityInstance doesn't fully comply
-								omit=('CourseInstance',))
-
-	def __init__(self, CourseInstance=None, RoleName=None):
-		# SchemaConfigured is not cooperative
-		SchemaConfigured.__init__(self, RoleName=RoleName)
-		_AbstractInstanceWrapper.__init__(self, CourseInstance)
-
-@component.adapter(IUser)
-@interface.implementer(IPrincipalAdministrativeRoleCatalog)
-class _DefaultPrincipalAdministrativeRoleCatalog(object):
-	"""
-	This catalog returns all courses the user is in the instructors list,
-	or all courses if the user is a global content admin.
-	"""
-
-	def __init__(self, user):
-		self.user = user
-
-	def _is_admin(self):
-		for _, adapter in component.getAdapters( (self.user,), IGroupMember ):
-			if adapter.groups and ROLE_ADMIN in adapter.groups:
-				return True
-		return False
-
-	def _is_content_admin(self):
-		roles = principalRoleManager.getRolesForPrincipal( self.user.username )
-		for role, access in roles or ():
-			if role == ROLE_CONTENT_ADMIN.id and access == Allow:
-				return True
-		return False
-
-	def _iter_all_courses(self):
-		# We do not filter based on enrollment or anything else.
-		# This will probably move to its own workspace eventually.
-		catalog = component.queryUtility(ICourseCatalog)
-		is_admin = self._is_admin()
-		for entry in catalog.iterCatalogEntries():
-			course = ICourseInstance( entry, None )
-			if 		course is not None \
-				and not ILegacyCourseInstance.providedBy( course ) \
-				and (	is_admin \
-					or 	has_permission( ACT_CONTENT_EDIT, entry, self.user )):
-				yield course
-
-	def _iter_admin_courses(self):
-		util = component.getUtility(IUserAdministeredCourses)
-		for context in util.iter_admin(self.user):
-			yield context
-
-	def _get_course_iterator(self):
-		result = self._iter_admin_courses
-		if self._is_content_admin() or self._is_admin():
-			result = self._iter_all_courses
-		return result
-
-	def iter_administrations(self):
-		for course in self._get_course_iterator()():
-			roles = IPrincipalRoleMap(course)
-			# For now, we're including editors in the administered
-			# workspace.
-			if roles.getSetting(RID_INSTRUCTOR, self.user.id) is Allow:
-				role = 'instructor'
-			elif roles.getSetting(RID_TA, self.user.id) is Allow:
-				role = 'teaching assistant'
-			else:
-				role = 'editor'
-			yield CourseInstanceAdministrativeRole(RoleName=role, CourseInstance=course)
-	iter_enrollments = iter_administrations  # for convenience
-
-	def count_administrations(self):
-		result = list(self._iter_admin_courses())
-		return len(result)
-
-	count_enrollments = count_administrations
 
 @interface.implementer(IAdministeredCoursesCollection)
 class AdministeredCoursesCollection(_AbstractQueryBasedCoursesCollection):

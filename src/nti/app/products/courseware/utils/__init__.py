@@ -17,15 +17,6 @@ from datetime import datetime
 import repoze.lru
 
 from zope import component
-from zope import interface
-
-from zope.intid.interfaces import IIntIds
-
-from zope.security.interfaces import IPrincipal
-
-from zope.securitypolicy.interfaces import Allow
-
-from zope.securitypolicy.principalrole import principalRoleManager
 
 from zope.traversing.api import traverse
 from zope.traversing.interfaces import IEtcNamespace
@@ -35,7 +26,6 @@ from nti.app.products.courseware import ASSETS_FOLDER
 from nti.app.products.courseware.enrollment import EnrollmentOptions
 
 from nti.app.products.courseware.interfaces import ICourseRootFolder
-from nti.app.products.courseware.interfaces import IUserAdministeredCourses
 from nti.app.products.courseware.interfaces import IEnrollmentOptionProvider
 
 from nti.app.products.courseware.utils.course_migrator import migrate as course_migrator
@@ -44,35 +34,23 @@ from nti.app.renderers.decorators import AbstractAuthenticatedRequestAwareDecora
 
 from nti.contentfolder.model import ContentFolder
 
-from nti.contenttypes.courses import get_enrollment_catalog
-
-from nti.contenttypes.courses.index import IX_SITE
-from nti.contenttypes.courses.index import IX_SCOPE
-from nti.contenttypes.courses.index import IX_USERNAME
+from nti.contenttypes.courses import get_course_vendor_info
 
 from nti.contenttypes.courses.interfaces import EDITOR
 from nti.contenttypes.courses.interfaces import INSTRUCTOR
 from nti.contenttypes.courses.interfaces import COURSE_CATALOG_NAME
 
-from nti.contenttypes.courses import get_course_vendor_info
-from nti.contenttypes.courses.utils import get_parent_course
-from nti.contenttypes.courses.utils import get_course_editors
-from nti.contenttypes.courses.utils import is_course_instructor_or_editor
-
-from nti.contenttypes.courses.interfaces import ICourseCatalog
 from nti.contenttypes.courses.interfaces import ICourseInstance
-from nti.contenttypes.courses.interfaces import ICourseSubInstance
 from nti.contenttypes.courses.interfaces import ICourseCatalogEntry
 
-from nti.dataserver.authorization import ACT_READ
+from nti.contenttypes.courses.utils import get_parent_course
+from nti.contenttypes.courses.utils import is_course_instructor_or_editor
+
 from nti.dataserver.authorization import ACT_CONTENT_EDIT
-from nti.dataserver.authorization import ROLE_CONTENT_ADMIN
 
 from nti.dataserver.authorization_acl import has_permission
 
 from nti.dataserver.interfaces import IMemcacheClient
-
-from nti.site.site import get_component_hierarchy_names
 
 from nti.traversal.traversal import find_interface
 
@@ -150,36 +128,6 @@ def get_vendor_thank_you_page(course, key):
 		if tracking and key in tracking:
 			return tracking.get(key)
 	return None
-
-@interface.implementer(IUserAdministeredCourses)
-class IndexAdminCourses(object):
-
-	def iter_admin(self, user):
-		intids = component.getUtility(IIntIds)
-		catalog = get_enrollment_catalog()
-		sites = get_component_hierarchy_names()
-		username = getattr(user, 'username', user)
-		query = {
-			IX_SITE:{'any_of': sites},
-			IX_SCOPE: {'any_of':(INSTRUCTOR, EDITOR)},
-			IX_USERNAME:{'any_of':(username,)},
-		}
-		for uid in catalog.apply(query) or ():
-			context = intids.queryObject(uid)
-			if ICourseInstance.providedBy(context):  # extra check
-				yield context
-
-@interface.implementer(IUserAdministeredCourses)
-class IterableAdminCourses(object):
-
-	def iter_admin(self, user):
-		principal = IPrincipal(user)
-		catalog = component.getUtility(ICourseCatalog)
-		for entry in catalog.iterCatalogEntries():
-			instance = ICourseInstance(entry)
-			if 		principal in instance.instructors \
-				or	principal in get_course_editors(instance):
-				yield instance
 
 def get_assets_folder(context, strict=True):
 	course = ICourseInstance(context, None)
