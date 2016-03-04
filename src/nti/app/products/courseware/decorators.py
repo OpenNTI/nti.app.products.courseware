@@ -20,6 +20,26 @@ from zope.location.interfaces import ILocation
 
 from pyramid.threadlocal import get_current_request
 
+from nti.app.products.courseware import VIEW_CONTENTS
+from nti.app.products.courseware import VIEW_COURSE_MAIL
+from nti.app.products.courseware import VIEW_CATALOG_ENTRY
+from nti.app.products.courseware import VIEW_COURSE_ACTIVITY
+from nti.app.products.courseware import VIEW_COURSE_RECURSIVE
+from nti.app.products.courseware import VIEW_COURSE_CLASSMATES
+from nti.app.products.courseware import VIEW_COURSE_DISCUSSIONS
+from nti.app.products.courseware import VIEW_RECURSIVE_AUDIT_LOG
+from nti.app.products.courseware import VIEW_COURSE_LOCKED_OBJECTS
+from nti.app.products.courseware import VIEW_COURSE_RECURSIVE_BUCKET
+from nti.app.products.courseware import VIEW_COURSE_ENROLLMENT_ROSTER
+
+from nti.app.products.courseware.interfaces import ACT_VIEW_ACTIVITY
+from nti.app.products.courseware.interfaces import IOpenEnrollmentOption
+from nti.app.products.courseware.interfaces import ICourseInstanceEnrollment
+
+from nti.app.products.courseware.utils import get_enrollment_options
+from nti.app.products.courseware.utils import get_vendor_thank_you_page
+from nti.app.products.courseware.utils import PreviewCourseAccessPredicateDecorator
+
 from nti.app.renderers.decorators import AbstractAuthenticatedRequestAwareDecorator
 
 from nti.appserver.pyramid_authorization import has_permission
@@ -55,9 +75,11 @@ from nti.dataserver.interfaces import IUser
 from nti.dataserver.interfaces import IEntityContainer
 from nti.dataserver.interfaces import ILinkExternalHrefOnly
 
-from nti.externalization.oids import to_external_ntiid_oid
-from nti.externalization.singleton import SingletonDecorator
 from nti.externalization.externalization import to_external_object
+
+from nti.externalization.oids import to_external_ntiid_oid
+
+from nti.externalization.singleton import SingletonDecorator
 
 from nti.externalization.interfaces import LocatedExternalDict
 from nti.externalization.interfaces import StandardExternalFields
@@ -70,30 +92,10 @@ from nti.ntiids.ntiids import make_specific_safe
 
 from nti.traversal.traversal import find_interface
 
-from nti.app.products.courseware import VIEW_CONTENTS
-from nti.app.products.courseware import VIEW_COURSE_MAIL
-from nti.app.products.courseware import VIEW_CATALOG_ENTRY
-from nti.app.products.courseware import VIEW_COURSE_ACTIVITY
-from nti.app.products.courseware import VIEW_COURSE_RECURSIVE
-from nti.app.products.courseware import VIEW_COURSE_CLASSMATES
-from nti.app.products.courseware import VIEW_COURSE_DISCUSSIONS
-from nti.app.products.courseware import VIEW_RECURSIVE_AUDIT_LOG
-from nti.app.products.courseware import VIEW_COURSE_LOCKED_OBJECTS
-from nti.app.products.courseware import VIEW_COURSE_RECURSIVE_BUCKET
-from nti.app.products.courseware import VIEW_COURSE_ENROLLMENT_ROSTER
-
-from nti.app.products.courseware.utils import get_enrollment_options
-from nti.app.products.courseware.utils import get_vendor_thank_you_page
-from nti.app.products.courseware.utils import PreviewCourseAccessPredicate
-
-from nti.app.products.courseware.interfaces import ACT_VIEW_ACTIVITY
-from nti.app.products.courseware.interfaces import IOpenEnrollmentOption
-from nti.app.products.courseware.interfaces import ICourseInstanceEnrollment
-
 CLASS = StandardExternalFields.CLASS
 ITEMS = StandardExternalFields.ITEMS
 LINKS = StandardExternalFields.LINKS
-MIME_TYPE = MIMETYPE = StandardExternalFields.MIMETYPE
+MIMETYPE = StandardExternalFields.MIMETYPE
 
 COURSE_CONTEXT_ANNOT_KEY = 'nti.app.products.course.context_key'
 
@@ -213,7 +215,7 @@ class _VendorThankYouInfoDecorator(AbstractAuthenticatedRequestAwareDecorator):
 
 	def _do_decorate_external(self, context, result):
 		course = ICourseInstance(context)
-		key = getattr( context, 'RealEnrollmentStatus', None )
+		key = getattr(context, 'RealEnrollmentStatus', None)
 		if course is not None and key:
 			thank_you_page = get_vendor_thank_you_page(course, key)
 			if thank_you_page:
@@ -240,7 +242,7 @@ class _CourseInstanceStreamLinkDecorator(object):
 
 @interface.implementer(IExternalMappingDecorator)
 @component.adapter(ICourseInstance)
-class _CourseInstancePagesLinkDecorator(PreviewCourseAccessPredicate):
+class _CourseInstancePagesLinkDecorator(PreviewCourseAccessPredicateDecorator):
 	"""
 	Places a link to the pages view of a course.
 	"""
@@ -256,7 +258,7 @@ class _CourseInstancePagesLinkDecorator(PreviewCourseAccessPredicate):
 
 @interface.implementer(IExternalMappingDecorator)
 @component.adapter(ICourseOutline)
-class _CourseOutlineContentsLinkDecorator(PreviewCourseAccessPredicate):
+class _CourseOutlineContentsLinkDecorator(PreviewCourseAccessPredicateDecorator):
 	"""
 	Adds the Contents link to the course outline to fetch its children.
 	"""
@@ -363,7 +365,7 @@ class _CourseClassmatesLinkDecorator(_BaseClassmatesLinkDecorator):
 class _ClassmatesLinkDecorator(_BaseClassmatesLinkDecorator):
 
 	def _predicate(self, context, result):
-		result = bool(	  self._is_authenticated
+		result = bool(self._is_authenticated
 					  and self.remoteUser == context
 					  and has_enrollments(self.remoteUser))
 		return result
@@ -396,7 +398,7 @@ class _CatalogFamilyDecorator(AbstractAuthenticatedRequestAwareDecorator):
 	def _build_catalog_family(self, super_catalog):
 		catalog_family = {}
 		catalog_family[CLASS] = 'CatalogFamily'
-		catalog_family[MIME_TYPE] = 'application/vnd.nextthought.catalogfamily'
+		catalog_family[MIMETYPE] = 'application/vnd.nextthought.catalogfamily'
 		# Return opaque family ID.
 		catalog_family['CatalogFamilyID'] = md5_base64_digest(str(super_catalog.ntiid))
 		for field in self.family_display_fields:
@@ -413,7 +415,7 @@ class _CatalogFamilyDecorator(AbstractAuthenticatedRequestAwareDecorator):
 		if super_catalog is not None:
 			catalog_families = {}
 			catalog_families[CLASS] = self.class_name
-			catalog_families[MIME_TYPE] = 'application/vnd.nextthought.catalogfamilies'
+			catalog_families[MIMETYPE] = 'application/vnd.nextthought.catalogfamilies'
 			catalog_families[ITEMS] = vals = []
 
 			# We support a list of catalog families, but we only
@@ -428,7 +430,7 @@ class _CourseDiscussionsLinkDecorator(AbstractAuthenticatedRequestAwareDecorator
 
 	def _predicate(self, context, result):
 		return 		self._is_authenticated \
-				and (	is_course_editor(context, self.remoteUser)
+				and (is_course_editor(context, self.remoteUser)
 					 or has_permission(ACT_CONTENT_EDIT, context, self.request))
 
 	def _do_decorate_external(self, context, result):
@@ -443,12 +445,12 @@ class _CourseDiscussionsLinkDecorator(AbstractAuthenticatedRequestAwareDecorator
 
 @interface.implementer(IExternalObjectDecorator)
 @component.adapter(ICourseInstance, interface.Interface)
-class _SharingScopesAndDiscussionDecorator(	PreviewCourseAccessPredicate,
-											AbstractAuthenticatedRequestAwareDecorator):
+class _SharingScopesAndDiscussionDecorator(PreviewCourseAccessPredicateDecorator,
+										   AbstractAuthenticatedRequestAwareDecorator):
 
 	def _predicate(self, context, result):
 		return 	self._is_authenticated \
-			and super( _SharingScopesAndDiscussionDecorator, self )._predicate( context, result )
+			and super(_SharingScopesAndDiscussionDecorator, self)._predicate(context, result)
 
 	def _do_decorate_external(self, context, result):
 		is_section = ICourseSubInstance.providedBy(context)
@@ -530,15 +532,15 @@ class _SharingScopesAndDiscussionDecorator(	PreviewCourseAccessPredicate,
 
 @interface.implementer(IExternalObjectDecorator)
 @component.adapter(ICourseInstance, interface.Interface)
-class _AnnouncementsDecorator(	PreviewCourseAccessPredicate,
-								AbstractAuthenticatedRequestAwareDecorator):
+class _AnnouncementsDecorator(PreviewCourseAccessPredicateDecorator,
+							  AbstractAuthenticatedRequestAwareDecorator):
 	"""
 	Adds announcement discussions to externalized course, by scope.
 	"""
 
 	def _predicate(self, context, result):
 		return 	self._is_authenticated \
-			and super( _AnnouncementsDecorator, self )._predicate( context, result )
+			and super(_AnnouncementsDecorator, self)._predicate(context, result)
 
 	def _in_scope(self, scope_name, course):
 		user = self.remoteUser if self._is_authenticated else None
@@ -701,7 +703,7 @@ class _SharedScopesForumDecorator(AbstractAuthenticatedRequestAwareDecorator):
 
 @interface.implementer(IExternalObjectDecorator)
 @component.adapter(ICourseInstance)
-class _CourseInstancePreviewExcludingDecorator(PreviewCourseAccessPredicate):
+class _CourseInstancePreviewExcludingDecorator(PreviewCourseAccessPredicateDecorator):
 	"""
 	Removes external entries that should not be visible to a user
 	when the context is in preview mode.
@@ -712,5 +714,5 @@ class _CourseInstancePreviewExcludingDecorator(PreviewCourseAccessPredicate):
 		return not super(_CourseInstancePreviewExcludingDecorator, self)._predicate(context, result)
 
 	def _do_decorate_external(self, context, result):
-		#result.pop('ContentPackageBundle')
+		# result.pop('ContentPackageBundle')
 		result.pop('Discussions')

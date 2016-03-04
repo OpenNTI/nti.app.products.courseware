@@ -38,13 +38,12 @@ from nti.contenttypes.courses.legacy_catalog import ILegacyCourseCatalogEntry
 
 from nti.coremetadata.interfaces import ILastModified
 
-from nti.dataserver.interfaces import IShouldHaveTraversablePath
+from nti.dataserver_core.interfaces import IShouldHaveTraversablePath
 
 from nti.ntiids.schema import ValidNTIID
 
 from nti.schema.field import Bool
 from nti.schema.field import Dict
-from nti.schema.field import Choice
 from nti.schema.field import Object
 from nti.schema.field import ValidTextLine as TextLine
 
