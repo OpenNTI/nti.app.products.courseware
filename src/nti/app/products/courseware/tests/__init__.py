@@ -27,6 +27,7 @@ from nti.contenttypes.courses.interfaces import ICourseCatalog
 from nti.contenttypes.courses.interfaces import ICourseInstance
 
 from nti.dataserver import users
+
 from nti.dataserver.users.interfaces import IRecreatableUser
 
 from nti.site.hostpolicy import run_job_in_all_host_sites
@@ -46,9 +47,9 @@ from nti.testing.layers import ZopeComponentLayer
 from nti.testing.layers import ConfiguringLayerMixin
 
 class SharedConfiguringTestLayer(ZopeComponentLayer,
-                                 GCLayerMixin,
-                                 ConfiguringLayerMixin,
-                                 DSInjectorMixin):
+								 GCLayerMixin,
+								 ConfiguringLayerMixin,
+								 DSInjectorMixin):
 
 	set_up_packages = ('nti.app.products.courseware','nti.contenttypes.courses', 'nti.dataserver')
 
@@ -141,8 +142,9 @@ class LegacyInstructedCourseApplicationTestLayer(ApplicationTestLayer):
 	@classmethod
 	def _user_creation(cls):
 		for username in cls._instructors:
-			user = users.User.create_user(username=username, password='temp001')
-			interface.alsoProvides(user, IRecreatableUser)
+			if users.User.get_user(username) is None:
+				user = users.User.create_user(username=username, password='temp001')
+				interface.alsoProvides(user, IRecreatableUser)
 
 	@staticmethod
 	def _setup_library(cls, *args, **kwargs):
@@ -205,8 +207,9 @@ class RestrictedInstructedCourseApplicationTestLayer(ApplicationTestLayer):
 	@classmethod
 	def _user_creation(cls):
 		for username in cls._instructors:
-			user = users.User.create_user(username=username, password='temp001')
-			interface.alsoProvides(user, IRecreatableUser)
+			if users.User.get_user(username) is None:
+				user = users.User.create_user(username=username, password='temp001')
+				interface.alsoProvides(user, IRecreatableUser)
 
 	@classmethod
 	def setUp(cls):
@@ -270,8 +273,9 @@ class PersistentInstructedCourseApplicationTestLayer(ApplicationTestLayer):
 	@classmethod
 	def _user_creation(cls):
 		for username in cls._instructors:
-			user = users.User.create_user(username=username, password='temp001')
-			interface.alsoProvides(user, IRecreatableUser)
+			if users.User.get_user(username) is None:
+				user = users.User.create_user(username=username, password='temp001')
+				interface.alsoProvides(user, IRecreatableUser)
 
 	@classmethod
 	def setUp(cls):
