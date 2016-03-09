@@ -14,8 +14,6 @@ logger = __import__('logging').getLogger(__name__)
 from zope import component
 from zope import interface
 
-from zope.catalog.interfaces import ICatalog
-
 from zope.intid.interfaces import IIntIds
 
 from BTrees.LFBTree import LFSet as Set
@@ -40,7 +38,8 @@ from nti.dataserver.interfaces import IUser
 from nti.dataserver.interfaces import INotableFilter
 
 from nti.dataserver.metadata_index import isTopLevelContentObjectFilter
-from nti.dataserver.metadata_index import CATALOG_NAME as METADATA_CATALOG_NAME
+
+from nti.metadata import dataserver_metadata_catalog
 
 from nti.site.site import get_component_hierarchy_names
 
@@ -110,12 +109,12 @@ class _UserPriorityCreatorNotableProvider(object):
 
 	@CachedProperty
 	def _catalog(self):
-		return component.getUtility(ICatalog, METADATA_CATALOG_NAME)
+		return dataserver_metadata_catalog()
 
 	def _get_feedback_intids(self, instructor_intids):
 		catalog = self._catalog
-		feedback_intids = catalog['mimeType'].apply(
-								{'any_of': (_FEEDBACK_MIME_TYPE,)})
+		query = {'any_of': (_FEEDBACK_MIME_TYPE,) }
+		feedback_intids = catalog['mimeType'].apply(query)
 		results = catalog.family.IF.intersection(instructor_intids, feedback_intids)
 		return results
 
