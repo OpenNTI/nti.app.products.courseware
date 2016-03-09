@@ -177,7 +177,7 @@ class CourseDiscussionsPostView(UGDPostView):
 															 externalValue=externalValue)
 		sources = get_all_sources(self.request)
 		if sources:  # multi-part data
-			validate_sources(contentObject, sources)
+			validate_sources(self.remoteUser, contentObject, sources)
 			_handle_multipart(self.context, contentObject, sources)
 		return contentObject
 
@@ -218,7 +218,7 @@ class CourseDiscussionPutView(UGDPutView):
 
 		sources = get_all_sources(self.request)
 		if sources:
-			validate_sources(result, sources)
+			validate_sources(self.remoteUser, result, sources)
 			_handle_multipart(self.context, self.context, sources)
 		return result
 
