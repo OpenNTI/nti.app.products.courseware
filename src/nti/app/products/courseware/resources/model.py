@@ -11,9 +11,9 @@ logger = __import__('logging').getLogger(__name__)
 
 from zope import interface
 
-from nti.app.products.courseware.interfaces import ICourseRootFolder
-from nti.app.products.courseware.interfaces import ICourseContentFile
-from nti.app.products.courseware.interfaces import ICourseContentFolder
+from nti.app.products.courseware.resources.interfaces import ICourseRootFolder
+from nti.app.products.courseware.resources.interfaces import ICourseContentFile
+from nti.app.products.courseware.resources.interfaces import ICourseContentFolder
 
 from nti.contentfile.model import ContentBlobFile
 

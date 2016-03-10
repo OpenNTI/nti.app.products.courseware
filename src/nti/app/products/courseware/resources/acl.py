@@ -14,7 +14,7 @@ from zope import interface
 
 from zope.security.interfaces import IPrincipal
 
-from nti.app.products.courseware.interfaces import ICourseRootFolder
+from nti.app.products.courseware.resources.interfaces import ICourseRootFolder
 
 from nti.common.property import Lazy
 

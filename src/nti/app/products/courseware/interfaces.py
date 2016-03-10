@@ -28,11 +28,6 @@ from zope.security.permission import Permission
 from nti.appserver.workspaces.interfaces import IWorkspace
 from nti.appserver.workspaces.interfaces import IContainerCollection
 
-from nti.contentfile.interfaces import IContentBlobFile
-
-from nti.contentfolder.interfaces import IRootFolder
-from nti.contentfolder.interfaces import IContentFolder
-
 from nti.contenttypes.courses.interfaces import ICourseInstance
 from nti.contenttypes.courses.interfaces import IPrincipalEnrollments
 
@@ -335,21 +330,18 @@ def get_course_publishable_vendor_info(context):
 		result.update(info or {})
 	return result
 
-# resources
-
-class ICourseRootFolder(IRootFolder):
-	pass
-
-class ICourseContentFolder(IContentFolder):
-	pass
-
-class ICourseContentFile(IContentBlobFile):
-	pass
-
 # deprecations
 
 import zope.deferredimport
 zope.deferredimport.initialize()
+
+zope.deferredimport.deprecatedFrom(
+	"Moved to nti.app.products.courseware.resources.interfaces",
+	"nti.app.products.courseware.resources.interfaces",
+	"ICourseRootFolder",
+	"ICourseContentFile",
+	"ICourseContentFolder")
+
 zope.deferredimport.deprecatedFrom(
 	"Moved to nti.contenttypes.courses",
 	"nti.contenttypes.courses.interfaces",

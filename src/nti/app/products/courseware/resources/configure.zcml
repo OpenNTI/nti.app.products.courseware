@@ -10,6 +10,14 @@
 	<include package="zope.component" />
 	<include package="zope.security" />
 
+	<!-- Externalization -->
+	<include package="nti.externalization" file="meta.zcml" />
+	<include package="nti.externalization" />
+
+	<ext:registerAutoPackageIO
+		root_interfaces=".interfaces.ICourseContentFolder"
+		modules=".model" />
+
 	<!-- Adapters -->
 	<adapter factory=".adapters.course_resources" />
 
@@ -32,20 +40,12 @@
 				for="nti.contenttypes.courses.interfaces.ICourseInstance
 					 pyramid.interfaces.IRequest" />
 
-	<!-- Externalization -->
-	<include package="nti.externalization" file="meta.zcml" />
-	<include package="nti.externalization" />
-
-	<ext:registerAutoPackageIO
-		root_interfaces="..interfaces.ICourseContentFolder"
-		modules=".model" />
-	
 	<adapter factory=".datastructures.CourseContentFileFactory"
 			 for="dolmen.builtins.IDict"
 			 provides="nti.externalization.interfaces.IMimeObjectFactory"
 			 name="application/vnd.nextthought.courseware.contentfile" />
 
 	<adapter factory=".datastructures.CourseContentFileObjectIO"
-			 for="..interfaces.ICourseContentFile" />
+			 for=".interfaces.ICourseContentFile" />
 			 
 </configure>

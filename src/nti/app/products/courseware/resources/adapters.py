@@ -14,9 +14,9 @@ from zope import interface
 
 from zope.annotation.interfaces import IAnnotations
 
-from nti.app.products.courseware.interfaces import ICourseRootFolder
-
 from nti.app.products.courseware.resources import RESOURCES
+
+from nti.app.products.courseware.resources.interfaces import ICourseRootFolder
 
 from nti.app.products.courseware.resources.model import CourseRootFolder
 

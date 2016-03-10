@@ -25,30 +25,22 @@ from nti.app.products.courseware import ASSETS_FOLDER
 
 from nti.app.products.courseware.enrollment import EnrollmentOptions
 
-from nti.app.products.courseware.interfaces import ICourseRootFolder
 from nti.app.products.courseware.interfaces import IEnrollmentOptionProvider
+
+from nti.app.products.courseware.resources.interfaces import ICourseRootFolder
+
+from nti.app.products.courseware.resources.model import CourseContentFolder
+
+from nti.app.products.courseware.utils.decorators import PreviewCourseAccessPredicateDecorator
 
 from nti.app.products.courseware.utils.course_migrator import migrate as course_migrator
 
-from nti.app.renderers.decorators import AbstractAuthenticatedRequestAwareDecorator
-
-from nti.contentfolder.model import ContentFolder
-
 from nti.contenttypes.courses import get_course_vendor_info
-
-from nti.contenttypes.courses.interfaces import EDITOR
-from nti.contenttypes.courses.interfaces import INSTRUCTOR
-from nti.contenttypes.courses.interfaces import COURSE_CATALOG_NAME
 
 from nti.contenttypes.courses.interfaces import ICourseInstance
 from nti.contenttypes.courses.interfaces import ICourseCatalogEntry
 
 from nti.contenttypes.courses.utils import get_parent_course
-from nti.contenttypes.courses.utils import is_course_instructor_or_editor
-
-from nti.dataserver.authorization import ACT_CONTENT_EDIT
-
-from nti.dataserver.authorization_acl import has_permission
 
 from nti.dataserver.interfaces import IMemcacheClient
 
@@ -59,6 +51,9 @@ DEFAULT_EXP_TIME = 86400
 
 #: 1970-01-1
 ZERO_DATETIME = datetime.utcfromtimestamp(0)
+
+# BWC exports
+PreviewCourseAccessPredicate = PreviewCourseAccessPredicateDecorator
 
 def last_synchronized(context=None):
 	if context is None:
@@ -136,44 +131,9 @@ def get_assets_folder(context, strict=True):
 	root = ICourseRootFolder(course, None)
 	if root is not None:
 		if ASSETS_FOLDER not in root:
-			result = ContentFolder(name=ASSETS_FOLDER)
+			result = CourseContentFolder(name=ASSETS_FOLDER)
 			root[ASSETS_FOLDER] = result
 		else:
 			result = root[ASSETS_FOLDER]
 		return result
 	return None
-
-class PreviewCourseAccessPredicateDecorator(AbstractAuthenticatedRequestAwareDecorator):
-	"""
-	A predicate useful when determining whether the remote user has access to
-	course materials when the course is in preview mode. The context must be
-	adaptable to an `ICourseInstance`.
-	"""
-
-	def __init__(self, context, request):
-		super(PreviewCourseAccessPredicateDecorator, self).__init__(context, request)
-		self.context = context
-
-	def _is_preview(self, course):
-		entry = ICourseCatalogEntry(course, None)
-		return entry is not None and entry.Preview
-
-	@property
-	def course(self):
-		return ICourseInstance(self.context)
-
-	@property
-	def instructor_or_editor(self):
-		result = 	is_course_instructor_or_editor(self.course, self.remoteUser) \
-				 or has_permission(ACT_CONTENT_EDIT, self.course, self.remoteUser)
-		return result
-
-	def _predicate(self, context, result):
-		"""
-		The course is not in preview mode, or we are an editor,
-		instructor, or content admin.
-		"""
-		return 		not self._is_preview(self.course) \
-				or	(self._is_authenticated and self.instructor_or_editor)
-
-PreviewCourseAccessPredicate = PreviewCourseAccessPredicateDecorator  # BWC
