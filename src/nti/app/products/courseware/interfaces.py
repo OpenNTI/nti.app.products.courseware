@@ -28,7 +28,10 @@ from zope.security.permission import Permission
 from nti.appserver.workspaces.interfaces import IWorkspace
 from nti.appserver.workspaces.interfaces import IContainerCollection
 
+from nti.contentfile.interfaces import IContentBlobFile
+
 from nti.contentfolder.interfaces import IRootFolder
+from nti.contentfolder.interfaces import IContentFolder
 
 from nti.contenttypes.courses.interfaces import ICourseInstance
 from nti.contenttypes.courses.interfaces import IPrincipalEnrollments
@@ -335,6 +338,12 @@ def get_course_publishable_vendor_info(context):
 # resources
 
 class ICourseRootFolder(IRootFolder):
+	pass
+
+class ICourseContentFolder(IContentFolder):
+	pass
+
+class ICourseContentFile(IContentBlobFile):
 	pass
 
 # deprecations

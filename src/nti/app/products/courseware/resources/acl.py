@@ -12,28 +12,15 @@ logger = __import__('logging').getLogger(__name__)
 from zope import component
 from zope import interface
 
-from zope.annotation.interfaces import IAnnotations
-
-from zope.lifecycleevent import IObjectAddedEvent
-from zope.lifecycleevent import IObjectRemovedEvent
-
-from zope.location.interfaces import ILocation
-
 from zope.security.interfaces import IPrincipal
 
 from nti.app.products.courseware.interfaces import ICourseRootFolder
 
-from nti.app.products.courseware.utils import PreviewCourseAccessPredicateDecorator
-
 from nti.common.property import Lazy
-
-from nti.contentfolder.model import RootFolder
 
 from nti.contenttypes.courses.interfaces import ICourseInstance
 from nti.contenttypes.courses.interfaces import ICourseSubInstance
-from nti.contenttypes.courses.legacy_catalog import ILegacyCourseInstance
 
-from nti.contenttypes.courses.utils import is_enrolled
 from nti.contenttypes.courses.utils import get_parent_course
 from nti.contenttypes.courses.utils import get_course_editors
 
@@ -47,49 +34,7 @@ from nti.dataserver.authorization_acl import acl_from_aces
 from nti.dataserver.interfaces import IACLProvider
 from nti.dataserver.interfaces import ALL_PERMISSIONS
 
-from nti.externalization.interfaces import StandardExternalFields
-from nti.externalization.interfaces import IExternalMappingDecorator
-
-from nti.links.links import Link
-
 from nti.traversal.traversal import find_interface
-
-RESOURCES = 'resources'
-LINKS = StandardExternalFields.LINKS
-
-@interface.implementer(ICourseRootFolder)
-class CourseRootFolder(RootFolder):
-	pass
-
-@component.adapter(ICourseInstance)
-@interface.implementer(ICourseRootFolder)
-def _course_resources(course, create=True):
-	result = None
-	annotations = IAnnotations(course)
-	try:
-		KEY = RESOURCES
-		result = annotations[KEY]
-	except KeyError:
-		if create:
-			result = CourseRootFolder(name=RESOURCES)
-			annotations[KEY] = result
-			result.__name__ = KEY
-			result.__parent__ = course
-	return result
-
-def _resources_for_course_path_adapter(context, request):
-	course = ICourseInstance(context)
-	return _course_resources(course)
-
-@component.adapter(ICourseInstance, IObjectAddedEvent)
-def _on_course_added(course, event):
-	_course_resources(course)
-
-@component.adapter(ICourseInstance, IObjectRemovedEvent)
-def _on_course_removed(course, event):
-	root = _course_resources(course, False)
-	if root is not None:
-		root.clear()
 
 @component.adapter(ICourseRootFolder)
 @interface.implementer(IACLProvider)
@@ -130,23 +75,3 @@ class CourseRootFolderACLProvider(object):
 
 		result = acl_from_aces(aces)
 		return result
-
-@interface.implementer(IExternalMappingDecorator)
-class _CourseResourcesLinkDecorator(PreviewCourseAccessPredicateDecorator):
-
-	def _predicate(self, context, result):
-		user = self.remoteUser
-		course = ICourseInstance(context, None)
-		# XXX: Unauth access?
-		result = 	super(_CourseResourcesLinkDecorator, self)._predicate(context, result) \
-				and not ILegacyCourseInstance.providedBy(course) \
-				and (is_enrolled(context, user) or self.instructor_or_editor)
-		return result
-
-	def _do_decorate_external(self, context, result):
-		_links = result.setdefault(LINKS, [])
-		link = Link(context, rel=RESOURCES, elements=(RESOURCES,))
-		interface.alsoProvides(link, ILocation)
-		link.__name__ = ''
-		link.__parent__ = context
-		_links.append(link)
