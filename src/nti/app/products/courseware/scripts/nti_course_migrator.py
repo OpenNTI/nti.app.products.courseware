@@ -13,7 +13,7 @@ import os
 import sys
 import argparse
 
-from nti.app.products.courseware.utils import course_migrator
+from nti.app.products.courseware.utils.migrator import course_migrator
 
 from nti.contenttypes.courses.interfaces import ES_PUBLIC
 

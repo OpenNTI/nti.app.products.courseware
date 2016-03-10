@@ -33,8 +33,6 @@ from nti.app.products.courseware.resources.model import CourseContentFolder
 
 from nti.app.products.courseware.utils.decorators import PreviewCourseAccessPredicateDecorator
 
-from nti.app.products.courseware.utils.course_migrator import migrate as course_migrator
-
 from nti.contenttypes.courses import get_course_vendor_info
 
 from nti.contenttypes.courses.interfaces import ICourseInstance

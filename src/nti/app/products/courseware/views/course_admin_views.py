@@ -41,7 +41,7 @@ from nti.app.externalization.view_mixins import ModeledContentUploadRequestUtils
 
 from nti.app.products.courseware.interfaces import ICoursesWorkspace
 
-from nti.app.products.courseware.utils import course_migrator
+from nti.app.products.courseware.utils.migrator import course_migrator
 
 from nti.app.products.courseware.views.catalog_views import get_enrollments
 from nti.app.products.courseware.views.catalog_views import do_course_enrollment
