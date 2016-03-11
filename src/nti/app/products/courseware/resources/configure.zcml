@@ -45,7 +45,15 @@
 			 provides="nti.externalization.interfaces.IMimeObjectFactory"
 			 name="application/vnd.nextthought.courseware.contentfile" />
 
+	<adapter factory=".datastructures.CourseContentImageFactory"
+			 for="dolmen.builtins.IDict"
+			 provides="nti.externalization.interfaces.IMimeObjectFactory"
+			 name="application/vnd.nextthought.courseware.contentimage" />
+
 	<adapter factory=".datastructures.CourseContentFileObjectIO"
-			 for=".interfaces.ICourseContentFile" />
+			 for=".interfaces.ICourseContentFile"  />
+
+	<adapter factory=".datastructures.CourseContentImageObjectIO"
+			 for=".interfaces.ICourseContentImage"  />
 			 
 </configure>

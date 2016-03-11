@@ -13,9 +13,11 @@ from zope import interface
 
 from nti.app.products.courseware.resources.interfaces import ICourseRootFolder
 from nti.app.products.courseware.resources.interfaces import ICourseContentFile
+from nti.app.products.courseware.resources.interfaces import ICourseContentImage
 from nti.app.products.courseware.resources.interfaces import ICourseContentFolder
 
 from nti.contentfile.model import ContentBlobFile
+from nti.contentfile.model import ContentBlobImage
 
 from nti.contentfolder.model import RootFolder
 from nti.contentfolder.model import ContentFolder
@@ -30,4 +32,8 @@ class CourseContentFolder(ContentFolder):
 
 @interface.implementer(ICourseContentFile)
 class CourseContentFile(ContentBlobFile):
+	pass
+
+@interface.implementer(ICourseContentImage)
+class CourseContentImage(ContentBlobImage):
 	pass

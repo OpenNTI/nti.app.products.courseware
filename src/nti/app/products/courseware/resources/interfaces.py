@@ -10,6 +10,7 @@ __docformat__ = "restructuredtext en"
 logger = __import__('logging').getLogger(__name__)
 
 from nti.contentfile.interfaces import IContentBlobFile
+from nti.contentfile.interfaces import IContentBlobImage
 
 from nti.contentfolder.interfaces import IRootFolder
 from nti.contentfolder.interfaces import IContentFolder
@@ -21,4 +22,7 @@ class ICourseContentFolder(IContentFolder):
     pass
 
 class ICourseContentFile(IContentBlobFile):
+    pass
+
+class ICourseContentImage(IContentBlobImage):
     pass

@@ -27,15 +27,15 @@ from nti.app.products.courseware.utils import memcache_get
 from nti.app.products.courseware.utils import memcache_set
 from nti.app.products.courseware.utils import last_synchronized
 
+from nti.app.products.courseware.resources import CourseContentFile
+from nti.app.products.courseware.resources import CourseContentImage
+
 from nti.assessment.interfaces import IQPoll
 from nti.assessment.interfaces import IQSurvey
 from nti.assessment.interfaces import IQAssignment
 from nti.assessment.interfaces import IQuestionSet
 
 from nti.common.random import generate_random_hex_string
-
-from nti.contentfile.model import ContentBlobFile
-from nti.contentfile.model import ContentBlobImage
 
 from nti.contentlibrary.indexed_data import get_library_catalog
 
@@ -208,18 +208,19 @@ def _get_file_from_link(link):
 def _get_namedfile(source, name=None):
 	contentType = getattr(source, 'contentType', None)
 	if contentType:
-		factory = ContentBlobFile
+		factory = CourseContentFile
 	else:
 		contentType, _, _ = getImageInfo(source)
 		source.seek(0)  # reset
-		factory = ContentBlobImage if contentType else ContentBlobFile
+		factory = CourseContentImage if contentType else CourseContentFile
 	contentType = contentType or u'application/octet-stream'
 	result = factory()
 	result.name = name
 	# for filename we want to use the filename as originally provided on the source, not
 	# the sluggified internal name. This allows us to give it back in the
 	# Content-Disposition header on download
-	result.filename = getattr(source, 'filename', None) or getattr(source, 'name', name)
+	result.filename = 	 getattr(source, 'filename', None) \
+					  or getattr(source, 'name', name)
 	result.data = source.read()
 	result.contentType = contentType
 	return result

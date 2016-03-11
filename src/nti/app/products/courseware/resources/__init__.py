@@ -14,4 +14,5 @@ RESOURCES = 'resources'
 
 from nti.app.products.courseware.resources.model import CourseRootFolder
 from nti.app.products.courseware.resources.model import CourseContentFile
+from nti.app.products.courseware.resources.model import CourseContentImage
 from nti.app.products.courseware.resources.model import CourseContentFolder
