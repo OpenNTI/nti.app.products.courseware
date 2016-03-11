@@ -70,11 +70,6 @@
 	<i18n:registerTranslations directory="locales" />
 
 	<!-- Events -->
-	<subscriber handler=".discussions._discussions_added" />
-	<subscriber handler=".discussions._discussions_modified" />
-	<subscriber handler=".discussions._course_roles_synchronized" />
-	<subscriber handler=".discussions._catalog_entry_synchronized" />
-
 	<subscriber handler=".legacy_catalog._content_package_registered" />
 
 	<subscriber handler=".subscribers._auto_enroll_on_enrollment_added " />
@@ -242,27 +237,13 @@
 			 provides="zope.traversing.interfaces.ITraversable"
 			 name="fields" />
 
-	<!-- Course discussions -->
-	<adapter factory=".traversal._discussions_for_course_path_adapter"
-			 for="nti.contenttypes.courses.interfaces.ICourseInstance pyramid.interfaces.IRequest"
-			 provides="zope.traversing.interfaces.IPathAdapter"
-			 name="CourseDiscussions" />
-
+	<!-- Audit log -->
 	<subscriber factory=".decorators.CourseRecursiveAuditLogLinkDecorator"
 				provides="nti.externalization.interfaces.IExternalMappingDecorator"
 				for="nti.contenttypes.courses.interfaces.ICourseInstance
 					 pyramid.interfaces.IRequest" />
 
-	<subscriber factory=".decorators._CourseDiscussionsLinkDecorator"
-				provides="nti.externalization.interfaces.IExternalMappingDecorator"
-				for="nti.contenttypes.courses.interfaces.ICourseInstance
-					 pyramid.interfaces.IRequest" />
-
-	<subscriber factory=".decorators._CourseDiscussionsLinkDecorator"
-				provides="nti.externalization.interfaces.IExternalMappingDecorator"
-				for="nti.contenttypes.courses.interfaces.ICourseCatalogEntry
-					 pyramid.interfaces.IRequest" />
-
+	<!-- Scopes and Announcements -->
 	<subscriber factory=".decorators._SharingScopesAndDiscussionDecorator"
 				provides="nti.externalization.interfaces.IExternalObjectDecorator" />
 
@@ -466,7 +447,7 @@
 				for="nti.dataserver.interfaces.IUser" />
 
 	<!-- Course Discussions -->
-	<adapter factory=".adapters._CourseDiscussionFileConstraints" />
+	<include package=".discussions" />
 
 	<!-- Resources -->
 	<include package=".resources" />

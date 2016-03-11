@@ -26,7 +26,6 @@ from nti.app.products.courseware import VIEW_CATALOG_ENTRY
 from nti.app.products.courseware import VIEW_COURSE_ACTIVITY
 from nti.app.products.courseware import VIEW_COURSE_RECURSIVE
 from nti.app.products.courseware import VIEW_COURSE_CLASSMATES
-from nti.app.products.courseware import VIEW_COURSE_DISCUSSIONS
 from nti.app.products.courseware import VIEW_RECURSIVE_AUDIT_LOG
 from nti.app.products.courseware import VIEW_COURSE_LOCKED_OBJECTS
 from nti.app.products.courseware import VIEW_COURSE_RECURSIVE_BUCKET
@@ -64,7 +63,6 @@ from nti.contenttypes.courses.sharing import get_default_sharing_scope
 
 from nti.contenttypes.courses.utils import is_enrolled
 from nti.contenttypes.courses.utils import has_enrollments
-from nti.contenttypes.courses.utils import is_course_editor
 from nti.contenttypes.courses.utils import get_catalog_entry
 from nti.contenttypes.courses.utils import is_course_instructor
 from nti.contenttypes.courses.utils import get_enrollment_record
@@ -424,24 +422,6 @@ class _CatalogFamilyDecorator(AbstractAuthenticatedRequestAwareDecorator):
 			vals.append(catalog_family)
 
 			result[self.class_name] = catalog_families
-
-@interface.implementer(IExternalObjectDecorator)
-class _CourseDiscussionsLinkDecorator(AbstractAuthenticatedRequestAwareDecorator):
-
-	def _predicate(self, context, result):
-		return 		self._is_authenticated \
-				and (is_course_editor(context, self.remoteUser)
-					 or has_permission(ACT_CONTENT_EDIT, context, self.request))
-
-	def _do_decorate_external(self, context, result):
-		_links = result.setdefault(LINKS, [])
-		link = Link(context,
-					rel=VIEW_COURSE_DISCUSSIONS,
-					elements=(VIEW_COURSE_DISCUSSIONS,))
-		interface.alsoProvides(link, ILocation)
-		link.__name__ = ''
-		link.__parent__ = context
-		_links.append(link)
 
 @interface.implementer(IExternalObjectDecorator)
 @component.adapter(ICourseInstance, interface.Interface)

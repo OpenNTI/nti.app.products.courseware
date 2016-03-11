@@ -16,9 +16,6 @@ from zope import component
 from zope import interface
 from zope import lifecycleevent
 
-from zope.lifecycleevent import IObjectAddedEvent
-from zope.lifecycleevent import IObjectModifiedEvent
-
 from zope.security.interfaces import IPrincipal
 
 from nti.app.products.courseware.interfaces import NTIID_TYPE_COURSE_SECTION_TOPIC
@@ -26,8 +23,6 @@ from nti.app.products.courseware.interfaces import NTIID_TYPE_COURSE_SECTION_TOP
 from nti.app.products.courseware.utils import get_vendor_info
 
 from nti.common.iterables import to_list
-
-from nti.contenttypes.courses.discussions.interfaces import ICourseDiscussion
 
 from nti.contenttypes.courses.discussions.utils import get_topic_key
 from nti.contenttypes.courses.discussions.utils import get_course_for_discussion
@@ -41,8 +36,6 @@ from nti.contenttypes.courses.interfaces import IN_CLASS_PREFIX
 
 from nti.contenttypes.courses.interfaces import ICourseInstance
 from nti.contenttypes.courses.interfaces import ICourseCatalogEntry
-from nti.contenttypes.courses.interfaces import ICourseRolesSynchronized
-from nti.contenttypes.courses.interfaces import ICatalogEntrySynchronized
 from nti.contenttypes.courses.interfaces import ICourseInstancePublicScopedForum
 from nti.contenttypes.courses.interfaces import ICourseInstanceForCreditScopedForum
 
@@ -345,24 +338,3 @@ def create_topics(discussion):
 		if not IDefaultPublished.providedBy(topic):
 			interface.alsoProvides(topic, IDefaultPublished)
 	return result
-
-@component.adapter(ICourseDiscussion, IObjectAddedEvent)
-def _discussions_added(record, event):
-	if _auto_create_forums(record):
-		create_topics(record)
-
-@component.adapter(ICourseDiscussion, IObjectModifiedEvent)
-def _discussions_modified(record, event):
-	if _auto_create_forums(record):
-		create_topics(record)
-
-@component.adapter(ICourseCatalogEntry, ICatalogEntrySynchronized)
-def _catalog_entry_synchronized(entry, event):
-	course = ICourseInstance(entry, None)
-	if course is not None and _auto_create_forums(course):
-		update_course_forums(course)
-
-@component.adapter(ICourseInstance, ICourseRolesSynchronized)
-def _course_roles_synchronized(course, event):
-	if course is not None and _auto_create_forums(course):
-		update_course_forums(course)
