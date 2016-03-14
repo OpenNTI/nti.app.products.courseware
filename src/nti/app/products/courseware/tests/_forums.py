@@ -129,7 +129,6 @@ class _AbstractMixin(object):
 
 					assert_that(res.json_body['Class'], contains_string('Topic'))
 
-
 		assert found_forum, "Need to check at least one forum for the scope"
 		assert found_topic, "Need to check at least one topic for the scope"
 
@@ -162,9 +161,9 @@ class _AbstractMixin(object):
 		# ... it is also in the instructors stream (why?)...
 		res = self.fetch_user_root_rstream(username='harp4162', extra_environ=inst_env)
 		assert_that(res.json_body['Items'],
-					 has_item(has_entries('Creator', self.default_username,
-										   'Item', has_entries('Class', 'GeneralForumComment',
-															   'body', ['A comment']))))
+					has_item(has_entries('Creator', self.default_username,
+										  'Item', has_entries('Class', 'GeneralForumComment',
+															  'body', ['A comment']))))
 
 		# ...Likewise, the discussions are in the stream for the instructor...
 		for username, env in (('harp4162', inst_env),
@@ -172,12 +171,13 @@ class _AbstractMixin(object):
 						  ):
 			res = self.fetch_user_root_rstream(username=username, extra_environ=env)
 			assert_that(res.json_body['Items'],
-						 has_item(has_entries('ChangeType', 'Shared',
-											   'Item', has_entries('Class', 'CommunityHeadlineTopic',
-																   'title', 'A clc discussion'))))
+						has_item(has_entries('ChangeType', 'Shared',
+											  'Item', has_entries('Class', 'CommunityHeadlineTopic',
+																  'title', 'A clc discussion'))))
 
 		# The admin can easily make a small edit to the topic...
 		res = self.testapp.get(self.open_path, extra_environ=admin_env)
+
 # 		headline_url = self.require_link_href_with_rel( res.json_body['headline'], 'edit' )
 # 		self.testapp.put_json( headline_url,
 # 								{'title': 'A New Title'},

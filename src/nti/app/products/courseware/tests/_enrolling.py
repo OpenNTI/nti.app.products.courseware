@@ -16,84 +16,26 @@ from hamcrest import has_key
 from hamcrest import contains
 from hamcrest import has_item
 from hamcrest import has_entry
-from hamcrest import not_none
 from hamcrest import has_items
 from hamcrest import has_length
 from hamcrest import assert_that
 from hamcrest import has_entries
-from hamcrest import has_property
 from hamcrest import contains_inanyorder
 from hamcrest import greater_than_or_equal_to
 does_not = is_not
 
-from nti.testing.matchers import is_empty
-from nti.testing.matchers import verifiably_provides
-
-from zope import component
 from zope import lifecycleevent
-
-from zope.securitypolicy.principalrole import principalRoleManager
-
-from nti.appserver.workspaces.interfaces import ICollection
-from nti.appserver.workspaces.interfaces import IUserService
 
 from nti.app.products.courseware import VIEW_COURSE_RECURSIVE
 from nti.app.products.courseware import VIEW_COURSE_RECURSIVE_BUCKET
 
-from nti.app.products.courseware.interfaces import ICoursesWorkspace
-
-from nti.contenttypes.courses.interfaces import ICourseCatalog
-from nti.contenttypes.courses.interfaces import ICourseEnrollmentManager
-
-from nti.dataserver.authorization import ROLE_CONTENT_ADMIN
-
 from nti.dataserver.users import User
+
+from nti.app.testing.decorators import WithSharedApplicationMockDS
 
 from nti.dataserver.tests import mock_dataserver
 
-from nti.traversal import traversal
-
-from nti.app.testing.decorators import WithSharedApplicationMockDS
-from nti.app.testing.application_webtest import ApplicationLayerTest
-
-from nti.app.products.courseware.tests import LegacyInstructedCourseApplicationTestLayer
-from nti.app.products.courseware.tests import RestrictedInstructedCourseApplicationTestLayer
-from nti.app.products.courseware.tests import PersistentInstructedCourseApplicationTestLayer
-
-class TestWorkspace(ApplicationLayerTest):
-
-	testapp = None
-
-	@WithSharedApplicationMockDS
-	def test_workspace_links_in_service(self):
-		with mock_dataserver.mock_db_trans(self.ds):
-			user = self._create_user(username=self.extra_environ_default_user)
-			service = IUserService(user)
-
-			workspaces = service.workspaces
-
-			assert_that(workspaces, has_item(verifiably_provides(ICoursesWorkspace)))
-
-			workspace = [x for x in workspaces if ICoursesWorkspace.providedBy(x)][0]
-
-			course_path = '/dataserver2/users/sjohnson%40nextthought.COM/Courses'
-			assert_that(traversal.resource_path(workspace),
-						 is_(course_path))
-
-			assert_that(workspace.collections, contains(verifiably_provides(ICollection),
-														verifiably_provides(ICollection),
-														verifiably_provides(ICollection)))
-
-			assert_that(workspace.collections, has_items(has_property('name', 'AllCourses'),
-														 has_property('name', 'EnrolledCourses'),
-														 has_property('name', 'AdministeredCourses')))
-
-			assert_that([traversal.resource_path(c) for c in workspace.collections],
-						 has_items(course_path + '/AllCourses',
-									course_path + '/EnrolledCourses' ,
-									course_path + '/AdministeredCourses'))
-
-class _AbstractEnrollingBase(object):
+class AbstractEnrollingBase(object):
 
 	testapp = None
 	# This only works in the OU environment because that's where the purchasables are
@@ -424,248 +366,6 @@ class _AbstractEnrollingBase(object):
 	@WithSharedApplicationMockDS(users=True, testapp=True)
 	def test_enroll_using_ntiid(self):
 		self._do_enroll({'ntiid': self.enrollment_ntiid})
+		
+_AbstractEnrollingBase = AbstractEnrollingBase
 
-class TestLegacyWorkspace(_AbstractEnrollingBase,
-						  ApplicationLayerTest):
-	layer = LegacyInstructedCourseApplicationTestLayer
-	individual_roster_accessible_to_instructor = False
-
-class TestPersistentWorkspaces(_AbstractEnrollingBase,
-							   ApplicationLayerTest):
-	layer = PersistentInstructedCourseApplicationTestLayer
-
-	default_origin = str('http://platform.ou.edu')
-	# XXX: The order of resolution is messed up. If we install the
-	# courses in the persistent platform.ou.edu, but access
-	# janux.ou.edu, we only find the things registered in the
-	# (non-persistent) platform.ou.edu. This is because
-	# the persistent janux.ou.edu has bases:
-	# (<non-persistent-janux>, <persistent platform>)
-	# and getNextUtility find the utility registered in
-	# <non-persistent-janux> first...
-
-	expected_enrollment_href = '/dataserver2/users/sjohnson%40nextthought.com/Courses/EnrolledCourses/tag%3Anextthought.com%2C2011-10%3ANTI-CourseInfo-Fall2013_CLC3403_LawAndJustice'
-	expected_instance_href = '/dataserver2/%2B%2Betc%2B%2Bhostsites/platform.ou.edu/%2B%2Betc%2B%2Bsite/Courses/Fall2013/CLC3403_LawAndJustice'
-	expected_instance_class = 'CourseInstance'
-	expected_catalog_entry_href = '/dataserver2/%2B%2Betc%2B%2Bhostsites/platform.ou.edu/%2B%2Betc%2B%2Bsite/Courses/Fall2013/CLC3403_LawAndJustice/CourseCatalogEntry'
-
-	enrollment_ntiid = 'tag:nextthought.com,2011-10:NTI-CourseInfo-Fall2013_CLC3403_LawAndJustice'
-
-	# An ACL issue prevents this from working (though frankly I'm not sure how it worked
-	# in the legacy case.) Investigate more.
-	individual_roster_accessible_to_instructor = False
-
-	# 3 entries: two sections of clc (main, 01), one for water
-	# The third CLC section is restricted to enrolled students only
-	expected_workspace_length = 3
-
-	@WithSharedApplicationMockDS(users=True, testapp=True)
-	def test_search_for_scopes_when_enrolled(self):
-
-		res = self.search_users(username='CLC')
-		assert_that(res.json_body, has_entry('Items', is_empty()))
-
-		self._do_enroll({'ntiid': self.enrollment_ntiid})
-
-		res = self.search_users(username='CLC')
-		assert_that(res.json_body, has_entry('Items', contains(has_entry('alias',
-																		  'CLC 3403 - Open'))))
-		scope = res.json_body['Items'][0]
-
-		# And we can fetch it by id...
-		ntres = self.fetch_by_ntiid(scope['NTIID'])
-		# ...and resolve it as a user
-		usres = self.resolve_user_response(username=scope['Username'])
-
-		assert_that(ntres.json_body['NTIID'], is_(scope['NTIID']))
-
-		assert_that(usres.json_body['Items'][0]['NTIID'], is_(scope['NTIID']))
-
-	main_ntiid = 'tag:nextthought.com,2011-10:NTI-CourseInfo-Fall2013_CLC3403_LawAndJustice'
-	section_ntiid = 'tag:nextthought.com,2011-10:NTI-CourseInfo-Fall2013_CLC3403_LawAndJustice_SubInstances_01'
-
-	def _get_main_and_sect_entries(self, res):
-		main_entry, = [x for x in res.json_body['Items'] if x['NTIID'] == self.main_ntiid]
-		sect_entry, = [x for x in res.json_body['Items'] if x['NTIID'] == self.section_ntiid]
-		return main_entry, sect_entry
-
-	@WithSharedApplicationMockDS(users=True, testapp=True)
-	def test_presentation_assets(self):
-		# On disk, the main course-instance does not have any
-		# presentation assets, so we fallback to the content package.
-		# OTOH, section 01 does have its own assets
-		res = self.testapp.get(self.all_courses_href)
-
-		assert_that(res.json_body, has_entry('Items', has_length(greater_than_or_equal_to(self.expected_workspace_length))))
-
-		main_entry, sect_entry = self._get_main_and_sect_entries(res)
-
-		main_assets = '/sites/platform.ou.edu/CLC3403_LawAndJustice/presentation-assets/shared/v1/'
-		sect_assets = '/sites/platform.ou.edu/Courses/Fall2013/CLC3403_LawAndJustice/Sections/01/presentation-assets/shared/v1/'
-
-		assert_that(main_entry, has_entry('PlatformPresentationResources',
-										   has_item(has_entry('href', main_assets))))
-		assert_that(sect_entry,
-					has_entry('PlatformPresentationResources',
-							   has_item(has_entry('href', sect_assets))))
-
-		# If we give the global library a prefix, it manifests here too
-		from nti.contentlibrary.interfaces import IContentPackageLibrary
-		lib = component.getUtility(IContentPackageLibrary)
-		lib.url_prefix = 'content'
-
-		try:
-			res = self.testapp.get(self.all_courses_href)
-			main_entry, sect_entry = self._get_main_and_sect_entries(res)
-
-			assert_that(main_entry,
-						 has_entry('PlatformPresentationResources',
-								   has_item(has_entry('href', '/content' + main_assets))))
-			assert_that(sect_entry,
-						 has_entry('PlatformPresentationResources',
-								   has_item(has_entry('href', '/content' + sect_assets))))
-
-		finally:
-			del lib.url_prefix
-
-	@WithSharedApplicationMockDS(users=True, testapp=True)
-	def test_legacy_fields(self):
-		res = self.testapp.get(self.all_courses_href)
-		main_entry, sect_entry = self._get_main_and_sect_entries(res)
-
-		assert_that(main_entry, has_entry('ContentPackageNTIID',
-										   'tag:nextthought.com,2011-10:OU-HTML-CLC3403_LawAndJustice.clc_3403_law_and_justice'))
-		assert_that(sect_entry, has_entry('ContentPackageNTIID',
-										   'tag:nextthought.com,2011-10:OU-HTML-CLC3403_LawAndJustice.clc_3403_law_and_justice'))
-
-		assert_that(main_entry, has_entry('LegacyPurchasableIcon',
-										   '/sites/platform.ou.edu/CLC3403_LawAndJustice/images/CLC3403_promo.png'))
-		assert_that(sect_entry, has_entry('LegacyPurchasableIcon',
-										   '/sites/platform.ou.edu/CLC3403_LawAndJustice/images/CLC3403_promo.png'))
-
-	@WithSharedApplicationMockDS(users=True, testapp=True)
-	def test_restricted_section(self):
-		# Enroll him
-		with mock_dataserver.mock_db_trans(site_name='platform.ou.edu'):
-			user = User.get_user('sjohnson@nextthought.com')
-
-			cat = component.getUtility(ICourseCatalog)
-
-			course = cat['Fall2013']['CLC3403_LawAndJustice'].SubInstances['02-Restricted']
-
-			manager = ICourseEnrollmentManager(course)
-			manager.enroll(user, scope='ForCreditDegree')
-
-		# now our enrollment:
-		res = self.testapp.get(self.enrolled_courses_href)
-		assert_that(res.json_body, has_entry('Items',
-											   has_length(1)))
-		enrollment_href = self.require_link_href_with_rel(res.json_body['Items'][0], 'edit')
-		self.testapp.get(enrollment_href)
-
-		# and we can see it in the all courses list...
-		res = self.testapp.get(self.all_courses_href)
-		res = res.json_body
-		assert_that(res, has_entry('Items', has_item(
-												has_entries(
-													'ProviderUniqueID', 'CLC 3403-Restricted',
-													'CatalogFamilies',
-														has_entries(
-															'Class', 'CatalogFamilies',
-															'Items',
-																has_item(
-																	has_entries(
-																		'ProviderUniqueID', 'CLC 3403',
-																		'Class', 'CatalogFamily',
-																		'Title', 'Law and Justice',
-																		'CatalogFamilyID', not_none(),
-																		'PlatformPresentationResources', not_none())))))))
-		assert_that(res, has_entry('Items', has_item(has_entry('ProviderUniqueID',
-																   'ENGR 1510-901'))))
-
-		assert_that(res, has_entry('Items', has_length(6)))
-
-	editor_role = 'editor'
-
-	@WithSharedApplicationMockDS(users=('content_admin',), testapp=True)
-	def test_content_admin(self):
-		admin_environ = self._make_extra_environ(username='content_admin')
-
-		res = self.testapp.get('/dataserver2/users/content_admin/Courses/AdministeredCourses',
-								extra_environ=admin_environ)
-		assert_that(res.json_body, has_entry('Items', has_length(0)))
-
-		with mock_dataserver.mock_db_trans(self.ds):
-			principalRoleManager.assignRoleToPrincipal(
-								ROLE_CONTENT_ADMIN.id, 'content_admin', check=False)
-
-		res = self.testapp.get('/dataserver2/users/content_admin/Courses/AdministeredCourses',
-								extra_environ=admin_environ)
-		# All non-global courses, including our non-public one.
-		assert_that(res.json_body, has_entry('Items', has_length(7)))
-		for course in res.json_body.get( 'Items' ):
-			assert_that( course, has_entry( 'RoleName', is_( self.editor_role )))
-
-	@WithSharedApplicationMockDS(users=('arbitrary@nextthought.com',), testapp=True)
-	def test_admin(self):
-		# NT admins are automatically part of the role.
-		admin_environ = self._make_extra_environ(username='arbitrary@nextthought.com')
-		res = self.testapp.get('/dataserver2/users/arbitrary@nextthought.com/Courses/AdministeredCourses',
-								extra_environ=admin_environ)
-		# All non-global courses, including our non-public one.
-		assert_that(res.json_body, has_entry('Items', has_length(7)))
-		for course in res.json_body.get( 'Items' ):
-			assert_that( course, has_entry( 'RoleName', is_( self.editor_role )))
-
-class TestRestrictedWorkspace(ApplicationLayerTest):
-
-	layer = RestrictedInstructedCourseApplicationTestLayer
-	testapp = None
-	default_origin = str('http://janux.ou.edu')
-
-	@WithSharedApplicationMockDS(users=True, testapp=True)
-	def test_fetch_all_courses(self):
-		# XXX: Our layer is registering these globally
-		# res = self.testapp.get( '/dataserver2/users/sjohnson@nextthought.com/Courses/AllCourses' )
-		# Nothing by default
-		# assert_that( res.json_body, has_entry( 'Items', has_length( 0 )) )
-
-		res = self.testapp.get('/dataserver2/users/sjohnson@nextthought.com/Courses/AllCourses')
-		assert_that(res.json_body, has_entry('Items', has_length(greater_than_or_equal_to(1))))
-		assert_that(res.json_body['Items'],
-					has_items(
-						 all_of(has_entries('Duration', 'P112D',
-											'Title', 'Introduction to Water',
-											'StartDate', '2014-01-13T06:00:00Z'))))
-
-	@WithSharedApplicationMockDS(users=True, testapp=True)
-	def test_enroll_unenroll_using_workspace(self):
-
-		# First, we are enrolled in nothing
-		res = self.testapp.get('/dataserver2/users/sjohnson@nextthought.com/Courses/EnrolledCourses')
-		assert_that(res.json_body, has_entry('Items', is_(empty())))
-		assert_that(res.json_body, has_entry('accepts', contains('application/json')))
-
-		# Enrolling in this one is not allowed
-		enrolled_id = 'tag:nextthought.com,2011-10:OU-HTML-CLC3403_LawAndJustice.course_info'
-		self.testapp.post_json('/dataserver2/users/sjohnson@nextthought.com/Courses/EnrolledCourses',
-								enrolled_id,
-								status=403)
-
-class TestCapabilities(ApplicationLayerTest):
-
-	layer = PersistentInstructedCourseApplicationTestLayer
-
-	default_origin = str('http://platform.ou.edu')
-
-	@WithSharedApplicationMockDS(users=True, testapp=True)
-	def test_capabilities(self):
-		instructor_env = self._make_extra_environ('harp4162')
-		res = self.testapp.get( '/dataserver2', extra_environ=instructor_env )
-		caps = res.json_body.get( 'CapabilityList' )
-		assert_that( caps, does_not( has_item( 'nti.platform.courseware.advanced_editing')))
-
-		res = self.testapp.get( '/dataserver2' )
-		caps = res.json_body.get( 'CapabilityList' )
-		assert_that( caps, has_items( 'nti.platform.courseware.advanced_editing',
-									  'nti.platform.customization.can_change_password'))
