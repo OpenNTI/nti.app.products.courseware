@@ -12,10 +12,11 @@ from hamcrest import assert_that
 
 import anyjson as json
 
-from nti.app.testing.decorators import WithSharedApplicationMockDS
+from nti.app.products.courseware.tests import PersistentInstructedCourseApplicationTestLayer
+
 from nti.app.testing.application_webtest import ApplicationLayerTest
 
-from nti.app.products.courseware.tests import PersistentInstructedCourseApplicationTestLayer
+from nti.app.testing.decorators import WithSharedApplicationMockDS
 
 class TestCourseUGDViews(ApplicationLayerTest):
 	"""

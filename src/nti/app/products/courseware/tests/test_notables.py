@@ -15,7 +15,7 @@ does_not = is_not
 
 from zope import component
 
-from zope.intid import IIntIds
+from zope.intid.interfaces import IIntIds
 
 from nti.app.notabledata.interfaces import IUserPriorityCreatorNotableProvider
 
@@ -29,19 +29,19 @@ from nti.dataserver.contenttypes.note import Note
 from nti.dataserver.users import User
 from nti.dataserver.users.communities import Community
 
-from nti.dataserver.tests import mock_dataserver
+from nti.app.products.courseware.tests import PersistentInstructedCourseApplicationTestLayer
 
-from nti.app.testing.decorators import WithSharedApplicationMockDS
 from nti.app.testing.application_webtest import ApplicationLayerTest
 
-from nti.app.products.courseware.tests import PersistentInstructedCourseApplicationTestLayer
+from nti.app.testing.decorators import WithSharedApplicationMockDS
+
+from nti.dataserver.tests import mock_dataserver
 
 class TestNotables(ApplicationLayerTest):
 	layer = PersistentInstructedCourseApplicationTestLayer
 
 	@WithSharedApplicationMockDS(users=True, testapp=True)
 	def test_priority_user_notables(self):
-
 		# Enroll in our course, create two notes: one visible to my class
 		# and one only through my community.  Only the one visible to my
 		# course is notable.

@@ -42,21 +42,24 @@ from nti.contenttypes.courses.interfaces import ES_ALL
 from nti.contenttypes.courses.interfaces import ICourseCatalog
 from nti.contenttypes.courses.interfaces import ICourseInstance
 
-from nti.contenttypes.courses.discussions.model import CourseDiscussion
 from nti.contenttypes.courses.discussions.interfaces import NTI_COURSE_BUNDLE
 from nti.contenttypes.courses.discussions.interfaces import ICourseDiscussions
 
-from nti.dataserver.contenttypes.media import EmbeddedVideo
+from nti.contenttypes.courses.discussions.model import CourseDiscussion
+
 from nti.dataserver.contenttypes.forums.forum import CommunityForum
+
+from nti.dataserver.contenttypes.media import EmbeddedVideo
 
 from nti.externalization.oids import to_external_ntiid_oid
 
-from nti.dataserver.tests import mock_dataserver
+from nti.app.products.courseware.tests import PersistentInstructedCourseApplicationTestLayer
 
-from nti.app.testing.decorators import WithSharedApplicationMockDS
 from nti.app.testing.application_webtest import ApplicationLayerTest
 
-from nti.app.products.courseware.tests import PersistentInstructedCourseApplicationTestLayer
+from nti.app.testing.decorators import WithSharedApplicationMockDS
+
+from nti.dataserver.tests import mock_dataserver
 
 class TestDiscussions(ApplicationLayerTest):
 

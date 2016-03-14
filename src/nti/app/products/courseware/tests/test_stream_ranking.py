@@ -11,6 +11,10 @@ from hamcrest import contains
 from hamcrest import has_length
 from hamcrest import assert_that
 
+from nti.testing.matchers import is_empty
+from nti.testing.matchers import validly_provides
+from nti.testing.time import time_monotonically_increases
+
 import time
 import fudge
 from unittest import TestCase
@@ -21,10 +25,6 @@ from nti.app.products.courseware.stream_ranking import _DEFAULT_TIME_FIELD
 
 from nti.app.products.courseware.stream_ranking import LastModifiedRanker
 from nti.app.products.courseware.stream_ranking import StreamConfidenceRanker
-
-from nti.testing.matchers import is_empty
-from nti.testing.matchers import validly_provides
-from nti.testing.time import time_monotonically_increases
 
 class _ViewStats(object):
 
@@ -79,7 +79,6 @@ class TestStreamRanking(TestCase):
 	@fudge.patch('nti.dataserver.liking.like_count')
 	@fudge.patch('nti.app.products.courseware.stream_ranking._get_view_stats')
 	def test_confidence(self, mock_rate_count, mock_like_count, mock_view_stats):
-
 		# obj0 is totally empty
 		# obj1 small upvotes but good ratio
 		# obj2 no upvotes, but replies and low ratio

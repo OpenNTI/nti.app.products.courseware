@@ -18,24 +18,25 @@ from hamcrest import has_entries
 from hamcrest import has_property
 does_not = is_not
 
-from zope import component
+from nti.testing.time import time_monotonically_increases
 
-from nti.contenttypes.courses.interfaces import ICourseCatalog
+from zope import component
 
 from nti.app.products.courseware.utils import get_enrollment_options
 
-from nti.app.testing.decorators import WithSharedApplicationMockDS
-from nti.app.testing.application_webtest import ApplicationLayerTest
-
 from nti.appserver.interfaces import ILibraryPathLastModifiedProvider
+
+from nti.contenttypes.courses.interfaces import ICourseCatalog
 
 from nti.dataserver.users import User
 
-from nti.dataserver.tests import mock_dataserver
-
 from nti.app.products.courseware.tests import PersistentInstructedCourseApplicationTestLayer
 
-from nti.testing.time import time_monotonically_increases
+from nti.app.testing.application_webtest import ApplicationLayerTest
+
+from nti.app.testing.decorators import WithSharedApplicationMockDS
+
+from nti.dataserver.tests import mock_dataserver
 
 class TestEnrollmentOptions(ApplicationLayerTest):
 

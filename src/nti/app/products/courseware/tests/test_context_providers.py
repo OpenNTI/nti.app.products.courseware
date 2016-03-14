@@ -16,14 +16,15 @@ from nti.appserver.context_providers import get_joinable_contexts
 from nti.appserver.context_providers import get_top_level_contexts
 from nti.appserver.context_providers import get_trusted_top_level_contexts
 
-from nti.dataserver.tests import mock_dataserver
-
-from nti.app.testing.decorators import WithSharedApplicationMockDS
-from nti.app.testing.application_webtest import ApplicationLayerTest
+from nti.ntiids.ntiids import find_object_with_ntiid
 
 from nti.app.products.courseware.tests import PersistentInstructedCourseApplicationTestLayer
 
-from nti.ntiids.ntiids import find_object_with_ntiid
+from nti.app.testing.application_webtest import ApplicationLayerTest
+
+from nti.app.testing.decorators import WithSharedApplicationMockDS
+
+from nti.dataserver.tests import mock_dataserver
 
 class MockCatalog(object):
 	def get_containers(self, _):

@@ -25,25 +25,26 @@ from nti.app.mail.interfaces import Email
 
 from nti.app.products.courseware import VIEW_COURSE_MAIL
 
-from nti.app.testing.testing import ITestMailDelivery
-
-from nti.app.testing.decorators import WithSharedApplicationMockDS
-from nti.app.testing.application_webtest import ApplicationLayerTest
-
-from nti.app.products.courseware.tests import PersistentInstructedCourseApplicationTestLayer
-
 from nti.contenttypes.courses.interfaces import ES_PURCHASED
 from nti.contenttypes.courses.interfaces import ES_CREDIT_DEGREE
 
 from nti.contenttypes.courses.interfaces import ICourseInstance
 from nti.contenttypes.courses.interfaces import ICourseEnrollmentManager
 
-import nti.dataserver.tests.mock_dataserver as mock_dataserver
-
 from nti.dataserver.users import User
 from nti.dataserver.users.interfaces import IUserProfile
 
 from nti.ntiids.ntiids import find_object_with_ntiid
+
+from nti.app.products.courseware.tests import PersistentInstructedCourseApplicationTestLayer
+
+from nti.app.testing.application_webtest import ApplicationLayerTest
+
+from nti.app.testing.decorators import WithSharedApplicationMockDS
+
+from nti.app.testing.testing import ITestMailDelivery
+
+import nti.dataserver.tests.mock_dataserver as mock_dataserver
 
 open_name = 'aaa_nextthought_com'
 credit_name = 'credit_nextthought_com'

@@ -14,16 +14,18 @@ from hamcrest import starts_with
 
 import fudge
 
-from nti.app.testing.application_webtest import ApplicationLayerTest
-from nti.app.testing.decorators import WithSharedApplicationMockDS
-
 from nti.app.products.courseware.tests import PersistentInstructedCourseApplicationTestLayer
 
 from nti.app.products.courseware.tests._forums import _AbstractMixin
 
+from nti.app.testing.application_webtest import ApplicationLayerTest
+
+from nti.app.testing.decorators import WithSharedApplicationMockDS
+
 class TestCreateForums(_AbstractMixin, ApplicationLayerTest):
 
 	layer = PersistentInstructedCourseApplicationTestLayer
+
 	testapp = None
 
 	# This only works in the OU environment because that's where the purchasables are
@@ -61,14 +63,14 @@ class TestCreateForums(_AbstractMixin, ApplicationLayerTest):
 										   status=201,
 										   extra_environ=inst_env)
 		assert_that(topic_res.json_body,
-					 # notability depends on mimetype
-					 has_entry('MimeType', "application/vnd.nextthought.forums.communityheadlinetopic"))
+					# notability depends on mimetype
+					has_entry('MimeType', "application/vnd.nextthought.forums.communityheadlinetopic"))
 		assert_that(topic_res.json_body,
-					 has_entry('NTIID',
-							   starts_with('tag:nextthought.com,2011-10:unknown-OID-0x')))
+					has_entry('NTIID',
+							  starts_with('tag:nextthought.com,2011-10:unknown-OID-0x')))
 		assert_that(topic_res.json_body,
-					 has_entry('ContainerId',
-							   starts_with('tag:nextthought.com,2011-10:unknown-OID-0x')))
+					has_entry('ContainerId',
+							  starts_with('tag:nextthought.com,2011-10:unknown-OID-0x')))
 
 		# It is notable to a student...
 		enrolled_course_id = 'tag:nextthought.com,2011-10:NTI-CourseInfo-Fall2013_CLC3403_LawAndJustice'

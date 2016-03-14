@@ -40,15 +40,16 @@ from nti.contenttypes.courses.interfaces import ES_PURCHASED
 
 from nti.app.products.courseware.decorators import _SharingScopesAndDiscussionDecorator
 
-from nti.dataserver.interfaces import IUser
 from nti.dataserver.authorization import ACT_READ
 
-from nti.externalization.tests import externalizes
+from nti.dataserver.interfaces import IUser
 
 from nti.contenttypes.courses.tests import MockPrincipal
 
 import nti.dataserver.tests.mock_dataserver as mock_dataserver
 from nti.dataserver.tests.mock_dataserver import WithMockDSTrans
+
+from nti.externalization.tests import externalizes
 
 from nti.app.products.courseware.tests import CourseLayerTest
 

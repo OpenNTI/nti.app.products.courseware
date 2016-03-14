@@ -4,16 +4,18 @@
 from __future__ import print_function, unicode_literals, absolute_import, division
 __docformat__ = "restructuredtext en"
 
-
-from hamcrest import assert_that
+# disable: accessing protected members, too many methods
+# pylint: disable=W0212,R0904
 from hamcrest import has_entry
-
-from nti.app.testing.decorators import WithSharedApplicationMockDS
-from nti.app.testing.application_webtest import ApplicationLayerTest
-
-from nti.dataserver.tests import mock_dataserver
+from hamcrest import assert_that
 
 from nti.app.products.courseware.tests import PersistentInstructedCourseApplicationTestLayer
+
+from nti.app.testing.application_webtest import ApplicationLayerTest
+
+from nti.app.testing.decorators import WithSharedApplicationMockDS
+
+from nti.dataserver.tests import mock_dataserver
 
 class TestCatalogViews(ApplicationLayerTest):
 

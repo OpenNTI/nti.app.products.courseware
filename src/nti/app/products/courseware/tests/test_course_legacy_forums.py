@@ -7,11 +7,11 @@ __docformat__ = "restructuredtext en"
 # disable: accessing protected members, too many methods
 # pylint: disable=W0212,R0904
 
-from nti.app.testing.application_webtest import ApplicationLayerTest
-
 from nti.app.products.courseware.tests import LegacyInstructedCourseApplicationTestLayer
 
 from nti.app.products.courseware.tests._forums import _AbstractMixin
+
+from nti.app.testing.application_webtest import ApplicationLayerTest
 
 class TestCreateLegacyForums(_AbstractMixin, ApplicationLayerTest):
 	
@@ -34,6 +34,8 @@ class TestCreateLegacyForums(_AbstractMixin, ApplicationLayerTest):
 class TestCreateLegacyForumsOpenOnly(TestCreateLegacyForums):
 
 	layer = LegacyInstructedCourseApplicationTestLayer
+	
 	testapp = None
+	
 	body_matcher = TestCreateLegacyForums.body_matcher[:3]  # All three, because the in-class discussions still created, but not the topic
 	scope = str('Open')

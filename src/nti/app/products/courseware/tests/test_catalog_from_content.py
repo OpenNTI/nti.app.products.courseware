@@ -23,9 +23,16 @@ from hamcrest import has_property
 from hamcrest import has_properties
 does_not = is_not
 
+from nti.testing.matchers import validly_provides
+from nti.testing.matchers import verifiably_provides
+
 from datetime import datetime
 
 from zope import component
+
+from nti.app.products.courseware.interfaces import ILegacyCommunityBasedCourseInstance
+
+from nti.app.products.courseware.search.interfaces import ICourseOutlineCache
 
 from nti.contentlibrary.interfaces import IContentPackageLibrary
 
@@ -36,8 +43,7 @@ from nti.contenttypes.courses.legacy_catalog import ICourseCatalogInstructorLega
 
 from nti.dataserver.authorization_acl import ACL
 
-from nti.app.products.courseware.search.interfaces import ICourseOutlineCache
-from nti.app.products.courseware.interfaces import ILegacyCommunityBasedCourseInstance
+from nti.app.products.courseware.tests import LegacyInstructedCourseApplicationTestLayer
 
 from nti.app.testing.application_webtest import ApplicationLayerTest
 
@@ -46,10 +52,6 @@ from nti.app.testing.decorators import WithSharedApplicationMockDS
 from nti.dataserver.tests import mock_dataserver
 
 from nti.externalization.tests import externalizes
-
-from nti.testing.matchers import verifiably_provides, validly_provides
-
-from nti.app.products.courseware.tests import LegacyInstructedCourseApplicationTestLayer
 
 class TestApplicationCatalogFromContent(ApplicationLayerTest):
 
