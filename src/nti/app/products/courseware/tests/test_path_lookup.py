@@ -17,19 +17,15 @@ import fudge
 
 from zope import component
 
-from nti.app.testing.decorators import WithSharedApplicationMockDS
-from nti.app.testing.application_webtest import ApplicationLayerTest
-
 from nti.app.products.courseware.discussions import create_topics
 from nti.app.products.courseware.discussions import _extract_content
 from nti.app.products.courseware.discussions import create_course_forums
 from nti.app.products.courseware.discussions import get_forums_for_discussion
 
-from nti.app.products.courseware.tests import PersistentInstructedCourseApplicationTestLayer
-
-from nti.contenttypes.courses.discussions.model import CourseDiscussion
 from nti.contenttypes.courses.discussions.interfaces import NTI_COURSE_BUNDLE
 from nti.contenttypes.courses.discussions.interfaces import ICourseDiscussions
+
+from nti.contenttypes.courses.discussions.model import CourseDiscussion
 
 from nti.contenttypes.courses.interfaces import ES_ALL
 from nti.contenttypes.courses.interfaces import ICourseCatalog
@@ -38,8 +34,15 @@ from nti.contenttypes.courses.interfaces import ICourseEnrollmentManager
 
 from nti.contentfragments.interfaces import SanitizedHTMLContentFragment
 
-from nti.dataserver.tests import mock_dataserver
 from nti.dataserver.users import User
+
+from nti.app.products.courseware.tests import PersistentInstructedCourseApplicationTestLayer
+
+from nti.app.testing.application_webtest import ApplicationLayerTest
+
+from nti.app.testing.decorators import WithSharedApplicationMockDS
+
+from nti.dataserver.tests import mock_dataserver
 
 COURSE_NTIID = 'tag:nextthought.com,2011-10:NTI-CourseInfo-Fall2013_CLC3403_LawAndJustice'
 
