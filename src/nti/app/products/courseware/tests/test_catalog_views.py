@@ -13,11 +13,11 @@ from nti.app.testing.application_webtest import ApplicationLayerTest
 
 from nti.dataserver.tests import mock_dataserver
 
-from nti.app.products.courseware.tests import InstructedCourseApplicationTestLayer
+from nti.app.products.courseware.tests import PersistentInstructedCourseApplicationTestLayer
 
 class TestCatalogViews(ApplicationLayerTest):
 
-	layer = InstructedCourseApplicationTestLayer
+	layer = PersistentInstructedCourseApplicationTestLayer
 
 	default_origin = b'http://janux.ou.edu'
 

@@ -30,7 +30,7 @@ from nti.app.testing.testing import ITestMailDelivery
 from nti.app.testing.decorators import WithSharedApplicationMockDS
 from nti.app.testing.application_webtest import ApplicationLayerTest
 
-from nti.app.products.courseware.tests import InstructedCourseApplicationTestLayer
+from nti.app.products.courseware.tests import PersistentInstructedCourseApplicationTestLayer
 
 from nti.contenttypes.courses.interfaces import ES_PURCHASED
 from nti.contenttypes.courses.interfaces import ES_CREDIT_DEGREE
@@ -52,7 +52,7 @@ credit_address = 'credit@nextthought.com'
 
 class TestMailViews(ApplicationLayerTest):
 
-	layer = InstructedCourseApplicationTestLayer
+	layer = PersistentInstructedCourseApplicationTestLayer
 	testapp = None
 
 	default_origin = b'http://janux.ou.edu'

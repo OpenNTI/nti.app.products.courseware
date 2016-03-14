@@ -25,7 +25,7 @@ from nti.app.products.courseware.discussions import _extract_content
 from nti.app.products.courseware.discussions import create_course_forums
 from nti.app.products.courseware.discussions import get_forums_for_discussion
 
-from nti.app.products.courseware.tests import InstructedCourseApplicationTestLayer
+from nti.app.products.courseware.tests import PersistentInstructedCourseApplicationTestLayer
 
 from nti.contenttypes.courses.discussions.model import CourseDiscussion
 from nti.contenttypes.courses.discussions.interfaces import NTI_COURSE_BUNDLE
@@ -61,7 +61,7 @@ CS1323_PACKAGE = 'tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Com
 
 class TestPathLookup(ApplicationLayerTest):
 
-	layer = InstructedCourseApplicationTestLayer
+	layer = PersistentInstructedCourseApplicationTestLayer
 
 	default_origin = b'http://janux.ou.edu'
 

@@ -22,7 +22,7 @@ from nti.app.testing.application_webtest import ApplicationLayerTest
 
 from nti.app.products.courseware import VIEW_RECURSIVE_AUDIT_LOG
 
-from nti.app.products.courseware.tests import InstructedCourseApplicationTestLayer
+from nti.app.products.courseware.tests import PersistentInstructedCourseApplicationTestLayer
 
 from nti.app.products.courseware.views.view_mixins import AbstractRecursiveTransactionHistoryView
 
@@ -52,7 +52,7 @@ TX_POOL_SIZE = int( TX_POOL_SIZE )
 
 class TestCourseRecursiveTransactionHistory(ApplicationLayerTest):
 
-	layer = InstructedCourseApplicationTestLayer
+	layer = PersistentInstructedCourseApplicationTestLayer
 	testapp = None
 
 	default_origin = b'http://janux.ou.edu'

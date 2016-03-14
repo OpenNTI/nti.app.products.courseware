@@ -15,7 +15,7 @@ import anyjson as json
 from nti.app.testing.decorators import WithSharedApplicationMockDS
 from nti.app.testing.application_webtest import ApplicationLayerTest
 
-from nti.app.products.courseware.tests import InstructedCourseApplicationTestLayer
+from nti.app.products.courseware.tests import PersistentInstructedCourseApplicationTestLayer
 
 class TestCourseUGDViews(ApplicationLayerTest):
 	"""
@@ -24,7 +24,7 @@ class TestCourseUGDViews(ApplicationLayerTest):
 	this course context.
 	"""
 
-	layer = InstructedCourseApplicationTestLayer
+	layer = PersistentInstructedCourseApplicationTestLayer
 
 	default_origin = b'http://janux.ou.edu'
 

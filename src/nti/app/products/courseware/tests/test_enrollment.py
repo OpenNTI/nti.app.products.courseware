@@ -33,13 +33,13 @@ from nti.dataserver.users import User
 
 from nti.dataserver.tests import mock_dataserver
 
-from nti.app.products.courseware.tests import InstructedCourseApplicationTestLayer
+from nti.app.products.courseware.tests import PersistentInstructedCourseApplicationTestLayer
 
 from nti.testing.time import time_monotonically_increases
 
 class TestEnrollmentOptions(ApplicationLayerTest):
 
-	layer = InstructedCourseApplicationTestLayer
+	layer = PersistentInstructedCourseApplicationTestLayer
 
 	default_origin = b'http://janux.ou.edu'
 
@@ -96,7 +96,7 @@ class TestEnrollmentOptions(ApplicationLayerTest):
 
 class TestEnrollment(ApplicationLayerTest):
 
-	layer = InstructedCourseApplicationTestLayer
+	layer = PersistentInstructedCourseApplicationTestLayer
 
 	default_origin = b'http://janux.ou.edu'
 
