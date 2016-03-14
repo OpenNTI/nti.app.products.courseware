@@ -92,7 +92,6 @@ def do_evolve(context, generation=generation):
 		seen = set()
 		for current in get_all_host_sites():
 			_adjust_course(current, seen)
-		from IPython.core.debugger import Tracer; Tracer()()
 	component.getGlobalSiteManager().unregisterUtility(mock_ds, IDataserver)
 	logger.info('Evolution %s done.', generation)
 
