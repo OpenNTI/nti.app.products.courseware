@@ -33,7 +33,9 @@ class CourseContentFolder(ContentFolder):
 @interface.implementer(ICourseContentFile)
 class CourseContentFile(ContentBlobFile):
 	pass
+CourseContentBlobFile = CourseContentFile
 
 @interface.implementer(ICourseContentImage)
 class CourseContentImage(ContentBlobImage):
 	pass
+CourseContentBlobImage = CourseContentImage
