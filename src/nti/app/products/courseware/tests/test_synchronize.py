@@ -35,15 +35,19 @@ from zope import component
 
 from persistent.interfaces import IPersistent
 
-from nti.contentlibrary import filesystem
-from nti.contentlibrary.interfaces import IContentPackageLibrary
+from nti.app.products.courseware.decorators import _AnnouncementsDecorator
+from nti.app.products.courseware.decorators import _SharingScopesAndDiscussionDecorator
 
 from nti.assessment.interfaces import IQAssignmentDateContext
 
 from nti.assessment.interfaces import IQAssignmentPolicies
 
+from nti.contentlibrary import filesystem
+from nti.contentlibrary.interfaces import IContentPackageLibrary
+
 from nti.dataserver.authorization import ACT_READ
 from nti.dataserver.authorization import ACT_CREATE
+
 from nti.dataserver.interfaces import EVERYONE_GROUP_NAME
 from nti.dataserver.interfaces import AUTHENTICATED_GROUP_NAME
 from nti.dataserver.interfaces import ISharingTargetEntityIterable
@@ -52,9 +56,6 @@ from nti.externalization.externalization import to_external_object
 
 from nti.contenttypes.courses import catalog
 from nti.contenttypes.courses import legacy_catalog
-
-from nti.app.products.courseware.decorators import _AnnouncementsDecorator
-from nti.app.products.courseware.decorators import _SharingScopesAndDiscussionDecorator
 
 from nti.contenttypes.courses.interfaces import ES_CREDIT
 from nti.contenttypes.courses.interfaces import ICourseCatalog
@@ -72,9 +73,6 @@ from nti.contenttypes.courses._synchronize import synchronize_catalog_from_root
 
 from nti.externalization.tests import externalizes
 
-from nti.dataserver.tests.test_authorization_acl import denies
-from nti.dataserver.tests.test_authorization_acl import permits
-
 from nti.ntiids import ntiids
 
 from nti.recorder.record import append_records
@@ -83,18 +81,23 @@ from nti.recorder.record import TransactionRecord
 
 from nti.app.products.courseware.tests import CourseLayerTest
 
+from nti.dataserver.tests.test_authorization_acl import denies
+from nti.dataserver.tests.test_authorization_acl import permits
+
+resource_filename = getattr(pkg_resources, 'resource_filename')
+
 # This probably belongs in nti.contenttypes.courses, but some
 # tests below employ the decorators now in app.
 class TestFunctionalSynchronize(CourseLayerTest):
 
 	def setUp(self):
-		subscribers = pkg_resources.resource_filename( 'nti.contenttypes.courses.tests', 'test_subscribers' )
+		subscribers = resource_filename( 'nti.contenttypes.courses.tests', 'test_subscribers' )
 		self.library = filesystem.GlobalFilesystemContentPackageLibrary( subscribers )
 		self.library.syncContentPackages()
 		component.getGlobalSiteManager().registerUtility(self.library, IContentPackageLibrary)
 
 		root_name = 'TestSynchronizeWithSubInstances'
-		synchronize = pkg_resources.resource_filename( 'nti.contenttypes.courses.tests', root_name )
+		synchronize = resource_filename( 'nti.contenttypes.courses.tests', root_name )
 		bucket = filesystem.FilesystemBucket(name=root_name)
 		bucket.absolute_path = synchronize
 
