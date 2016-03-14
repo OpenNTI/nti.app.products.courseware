@@ -36,13 +36,13 @@ from nti.dataserver.tests import mock_dataserver
 
 from nti.app.products.courseware.tests import PersistentInstructedCourseApplicationTestLayer
 
-from nti.app.products.courseware.tests._enrolling import _AbstractEnrollingBase
+from nti.app.products.courseware.tests._workspaces import AbstractEnrollingBase
 
 from nti.app.testing.application_webtest import ApplicationLayerTest
 
 from nti.app.testing.decorators import WithSharedApplicationMockDS
 
-class TestPersistentWorkspaces(_AbstractEnrollingBase, ApplicationLayerTest):
+class TestPersistentWorkspaces(AbstractEnrollingBase, ApplicationLayerTest):
 
 	layer = PersistentInstructedCourseApplicationTestLayer
 

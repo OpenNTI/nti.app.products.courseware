@@ -9,10 +9,10 @@ __docformat__ = "restructuredtext en"
 
 from nti.app.products.courseware.tests import LegacyInstructedCourseApplicationTestLayer
 
-from nti.app.products.courseware.tests._enrolling import _AbstractEnrollingBase
+from nti.app.products.courseware.tests._workspaces import AbstractEnrollingBase
 
 from nti.app.testing.application_webtest import ApplicationLayerTest
 
-class TestLegacyWorkspace(_AbstractEnrollingBase, ApplicationLayerTest):
+class TestLegacyWorkspace(AbstractEnrollingBase, ApplicationLayerTest):
 	layer = LegacyInstructedCourseApplicationTestLayer
 	individual_roster_accessible_to_instructor = False

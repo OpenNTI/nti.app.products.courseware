@@ -23,7 +23,7 @@ from io import BytesIO
 
 from nti.app.testing.decorators import WithSharedApplicationMockDS
 
-class _AbstractMixin(object):
+class AbstractMixin(object):
 
 	default_username = 'normaluser'
 	default_origin = str('http://janux.ou.edu')
@@ -210,3 +210,5 @@ class _AbstractMixin(object):
 			self.resolve_user(username=o['NTIID'], extra_environ=inst_env)
 			self.resolve_user(username=o['Username'], extra_environ=inst_env)
 			self.resolve_user(username=o['OID'], extra_environ=inst_env)
+
+_AbstractMixin = AbstractMixin

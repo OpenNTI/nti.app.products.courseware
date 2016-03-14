@@ -16,13 +16,13 @@ import fudge
 
 from nti.app.products.courseware.tests import PersistentInstructedCourseApplicationTestLayer
 
-from nti.app.products.courseware.tests._forums import _AbstractMixin
+from nti.app.products.courseware.tests._legacy_forums import AbstractMixin
 
 from nti.app.testing.application_webtest import ApplicationLayerTest
 
 from nti.app.testing.decorators import WithSharedApplicationMockDS
 
-class TestCreateForums(_AbstractMixin, ApplicationLayerTest):
+class TestCreateForums(AbstractMixin, ApplicationLayerTest):
 
 	layer = PersistentInstructedCourseApplicationTestLayer
 

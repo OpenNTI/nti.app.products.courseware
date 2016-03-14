@@ -9,11 +9,11 @@ __docformat__ = "restructuredtext en"
 
 from nti.app.products.courseware.tests import LegacyInstructedCourseApplicationTestLayer
 
-from nti.app.products.courseware.tests._forums import _AbstractMixin
+from nti.app.products.courseware.tests._legacy_forums import AbstractMixin
 
 from nti.app.testing.application_webtest import ApplicationLayerTest
 
-class TestCreateLegacyForums(_AbstractMixin, ApplicationLayerTest):
+class TestCreateLegacyForums(AbstractMixin, ApplicationLayerTest):
 	
 	layer = LegacyInstructedCourseApplicationTestLayer
 
