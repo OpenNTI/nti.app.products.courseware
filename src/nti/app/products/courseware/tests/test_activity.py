@@ -12,6 +12,11 @@ from hamcrest import has_length
 from hamcrest import assert_that
 from hamcrest import has_property
 
+from nti.testing.matchers import is_empty
+from nti.testing.matchers import validly_provides
+
+from nti.testing.time import time_monotonically_increases
+
 from zope import component
 
 from zope.intid.interfaces import IIntIds
@@ -19,13 +24,9 @@ from zope.intid.interfaces import IIntIds
 from nti.app.products.courseware.activity import _DefaultCourseActivity
 from nti.app.products.courseware.interfaces import ICourseInstanceActivity
 
-from nti.testing.matchers import is_empty
-from nti.testing.matchers import validly_provides
-from nti.testing.time import time_monotonically_increases
+from nti.app.testing.application_webtest import ApplicationLayerTest
 
 from nti.dataserver.tests.mock_dataserver import WithMockDSTrans
-
-from nti.app.testing.application_webtest import ApplicationLayerTest
 
 class TestActivity(ApplicationLayerTest):
 
