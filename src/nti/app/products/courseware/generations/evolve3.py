@@ -52,7 +52,6 @@ class MockDataserver(object):
 def _adjust_item(item):
 	if IContentFolder.providedBy(item):
 		for x in item.values():
-			from IPython.core.debugger import Tracer; Tracer()()
 			_adjust_item(x)
 		if 		not ICourseRootFolder.providedBy(item) \
 			and not ICourseContentFolder.providedBy(item):
