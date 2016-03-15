@@ -26,6 +26,7 @@ from nti.app.products.courseware import VIEW_CATALOG_ENTRY
 from nti.app.products.courseware import VIEW_COURSE_ACTIVITY
 from nti.app.products.courseware import VIEW_COURSE_RECURSIVE
 from nti.app.products.courseware import VIEW_COURSE_CLASSMATES
+from nti.app.products.courseware import VIEW_COURSE_INVITATIONS
 from nti.app.products.courseware import VIEW_RECURSIVE_AUDIT_LOG
 from nti.app.products.courseware import VIEW_COURSE_LOCKED_OBJECTS
 from nti.app.products.courseware import VIEW_COURSE_RECURSIVE_BUCKET
@@ -159,6 +160,22 @@ class _CourseMailLinkDecorator(AbstractAuthenticatedRequestAwareDecorator):
 		link.__parent__ = context
 		_links.append(link)
 
+@component.adapter(ICourseInstance)
+@interface.implementer(IExternalMappingDecorator)
+class _CourseInvitationsLinkDecorator(AbstractAuthenticatedRequestAwareDecorator):
+
+	def _predicate(self, context, result):
+		return 	self._is_authenticated \
+			and	is_course_instructor(context, self.remoteUser)
+
+	def _do_decorate_external(self, context, result):
+		_links = result.setdefault(LINKS, [])
+		link = Link(context, rel=VIEW_COURSE_INVITATIONS, elements=(VIEW_COURSE_INVITATIONS,))
+		interface.alsoProvides(link, ILocation)
+		link.__name__ = ''
+		link.__parent__ = context
+		_links.append(link)
+		
 class BaseRecursiveAuditLogLinkDecorator(AbstractAuthenticatedRequestAwareDecorator):
 	"""
 	Decorate the audit log links on the given context if the
