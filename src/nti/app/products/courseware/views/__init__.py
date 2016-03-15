@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
-.. $Id$
+nti.app.products.courseware  $Id$
 """
 
 from __future__ import print_function, unicode_literals, absolute_import, division
@@ -9,31 +9,24 @@ __docformat__ = "restructuredtext en"
 
 logger = __import__('logging').getLogger(__name__)
 
-from .. import MessageFactory
-
 from zope import interface
+
 from zope.container.contained import Contained
+
 from zope.traversing.interfaces import IPathAdapter
 
-from .. import ASSETS_FOLDER
-from .. import VIEW_CONTENTS
-from .. import VIEW_COURSE_MAIL
-from .. import VIEW_CATALOG_ENTRY
-from .. import VIEW_COURSE_ACTIVITY
-from .. import VIEW_COURSE_RECURSIVE
-from .. import VIEW_COURSE_DISCUSSIONS
-from .. import VIEW_COURSE_RECURSIVE_BUCKET
-from .. import VIEW_COURSE_ENROLLMENT_ROSTER
+from nti.app.products.courseware import MessageFactory
 
-ASSETS_FOLDER = ASSETS_FOLDER
-VIEW_CONTENTS = VIEW_CONTENTS
-VIEW_COURSE_MAIL = VIEW_COURSE_MAIL
-VIEW_CATALOG_ENTRY = VIEW_CATALOG_ENTRY
-VIEW_COURSE_ACTIVITY = VIEW_COURSE_ACTIVITY
-VIEW_COURSE_RECURSIVE = VIEW_COURSE_RECURSIVE
-VIEW_COURSE_DISCUSSIONS = VIEW_COURSE_DISCUSSIONS
-VIEW_COURSE_RECURSIVE_BUCKET = VIEW_COURSE_RECURSIVE_BUCKET
-VIEW_COURSE_ENROLLMENT_ROSTER = VIEW_COURSE_ENROLLMENT_ROSTER
+from nti.app.products.courseware import ASSETS_FOLDER
+from nti.app.products.courseware import VIEW_CONTENTS
+from nti.app.products.courseware import VIEW_COURSE_MAIL
+from nti.app.products.courseware import VIEW_CATALOG_ENTRY
+from nti.app.products.courseware import VIEW_COURSE_ACTIVITY
+from nti.app.products.courseware import VIEW_COURSE_RECURSIVE
+from nti.app.products.courseware import VIEW_COURSE_DISCUSSIONS
+from nti.app.products.courseware import VIEW_COURSE_INVITATIONS
+from nti.app.products.courseware import VIEW_COURSE_RECURSIVE_BUCKET
+from nti.app.products.courseware import VIEW_COURSE_ENROLLMENT_ROSTER
 
 @interface.implementer(IPathAdapter)
 class CourseAdminPathAdapter(Contained):

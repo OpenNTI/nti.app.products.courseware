@@ -24,6 +24,7 @@ from nti.app.base.abstract_views import get_all_sources
 from nti.app.base.abstract_views import AbstractAuthenticatedView
 
 from nti.app.contentfile import validate_sources
+from nti.app.contentfile import get_file_from_oid_external_link
 
 from nti.app.externalization.internalization import read_body_as_external_object
 
@@ -38,7 +39,6 @@ from nti.app.products.courseware.views import CourseAdminPathAdapter
 
 from nti.app.products.courseware.views._utils import _get_namedfile
 from nti.app.products.courseware.views._utils import _get_download_href
-from nti.app.products.courseware.views._utils import _get_file_from_link
 from nti.app.products.courseware.views._utils import _slugify_in_container
 
 from nti.appserver.dataserver_pyramid_views import GenericGetView
@@ -95,7 +95,7 @@ def _get_unique_filename(folder, context, name):
 
 def _remove_file(href):
 	if href and isinstance(href, six.string_types):
-		named = _get_file_from_link(href)
+		named = get_file_from_oid_external_link(href)
 		container = getattr(named, '__parent__', None)
 		if IContentFolder.providedBy(container):
 			return container.remove(named)
