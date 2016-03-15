@@ -28,8 +28,9 @@ from nti.app.contentfile import get_file_from_oid_external_link
 
 from nti.app.externalization.internalization import read_body_as_external_object
 
-from nti.app.products.courseware.discussions import create_topics
 from nti.app.products.courseware.discussions import get_topic_key
+from nti.app.products.courseware.discussions import create_topics
+from nti.app.products.courseware.discussions import auto_create_forums
 
 from nti.app.products.courseware.utils import get_assets_folder
 
@@ -52,18 +53,17 @@ from nti.common.property import Lazy
 
 from nti.contentfolder.interfaces import IContentFolder
 
+from nti.contenttypes.courses.discussions.interfaces import NTI_COURSE_BUNDLE
+from nti.contenttypes.courses.discussions.interfaces import ICourseDiscussion
+from nti.contenttypes.courses.discussions.interfaces import ICourseDiscussions
+
+from nti.contenttypes.courses.discussions.parser import path_to_course
+
 from nti.contenttypes.courses.interfaces import DISCUSSIONS
 from nti.contenttypes.courses.interfaces import ICourseInstance
 from nti.contenttypes.courses.interfaces import ICourseCatalogEntry
 from nti.contenttypes.courses.interfaces import ICourseInstancePublicScopedForum
 from nti.contenttypes.courses.interfaces import ICourseInstanceForCreditScopedForum
-
-from nti.contenttypes.courses.discussions.interfaces import NTI_COURSE_BUNDLE
-
-from nti.contenttypes.courses.discussions.interfaces import ICourseDiscussion
-from nti.contenttypes.courses.discussions.interfaces import ICourseDiscussions
-
-from nti.contenttypes.courses.discussions.parser import path_to_course
 
 from nti.dataserver import authorization as nauth
 
@@ -267,7 +267,7 @@ class SyncCourseDiscussionsView(AbstractAuthenticatedView):
 		values = self.readInput()
 		courses = _parse_courses(values)
 		if not courses:
-			raise hexc.HTTPUnprocessableEntity(detail='Please specify a valid course')
+			raise hexc.HTTPUnprocessableEntity('Please specify a valid course')
 
 		result = LocatedExternalDict()
 		items = result[ITEMS] = {}
@@ -275,6 +275,7 @@ class SyncCourseDiscussionsView(AbstractAuthenticatedView):
 			course = ICourseInstance(course)
 			entry = ICourseCatalogEntry(course)
 			data = items[entry.ntiid] = []
+			auto_create_forums(course) # always
 			discussions = ICourseDiscussions(course)
 			for discussion in discussions.values():
 				data.extend(create_topics(discussion))
@@ -300,7 +301,7 @@ class DropCourseDiscussionsView(AbstractAuthenticatedView):
 		values = self.readInput()
 		courses = _parse_courses(values)
 		if not courses:
-			raise hexc.HTTPUnprocessableEntity(detail='Please specify a valid course')
+			raise hexc.HTTPUnprocessableEntity('Please specify a valid course')
 
 		result = LocatedExternalDict()
 		items = result[ITEMS] = {}

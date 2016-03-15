@@ -18,6 +18,7 @@
 	<subscriber handler=".subscribers._discussions_modified" />
 	<subscriber handler=".subscribers._course_roles_synchronized" />
 	<subscriber handler=".subscribers._catalog_entry_synchronized" />
+	<subscriber handler=".subscribers._course_vendor_info_synchronized" />
 
 	<!-- Traversal -->
 	<adapter factory=".traversal._discussions_for_course_path_adapter"
@@ -35,4 +36,5 @@
 				provides="nti.externalization.interfaces.IExternalMappingDecorator"
 				for="nti.contenttypes.courses.interfaces.ICourseCatalogEntry
 					 pyramid.interfaces.IRequest" />
+
 </configure>

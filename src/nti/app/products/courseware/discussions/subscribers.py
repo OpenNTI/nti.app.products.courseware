@@ -24,6 +24,7 @@ from nti.contenttypes.courses.interfaces import ICourseInstance
 from nti.contenttypes.courses.interfaces import ICourseCatalogEntry
 from nti.contenttypes.courses.interfaces import ICourseRolesSynchronized
 from nti.contenttypes.courses.interfaces import ICatalogEntrySynchronized
+from nti.contenttypes.courses.interfaces import ICourseVendorInfoSynchronized
 
 @component.adapter(ICourseDiscussion, IObjectAddedEvent)
 def _discussions_added(record, event):
@@ -43,5 +44,10 @@ def _catalog_entry_synchronized(entry, event):
 
 @component.adapter(ICourseInstance, ICourseRolesSynchronized)
 def _course_roles_synchronized(course, event):
+	if course is not None and auto_create_forums(course):
+		update_course_forums(course)
+
+@component.adapter(ICourseInstance, ICourseVendorInfoSynchronized)
+def _course_vendor_info_synchronized(course, event):
 	if course is not None and auto_create_forums(course):
 		update_course_forums(course)

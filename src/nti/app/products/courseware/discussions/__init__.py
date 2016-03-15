@@ -53,12 +53,12 @@ from nti.dataserver.contenttypes.forums.forum import CommunityForum
 from nti.dataserver.contenttypes.forums.post import CommunityHeadlinePost
 from nti.dataserver.contenttypes.forums.topic import CommunityHeadlineTopic
 
-from nti.dataserver.interfaces import IACLProvider
-from nti.dataserver.interfaces import IDefaultPublished
-
 from nti.dataserver.interfaces import ACE_DENY_ALL
 from nti.dataserver.interfaces import ACE_ACT_ALLOW
 from nti.dataserver.interfaces import ALL_PERMISSIONS
+
+from nti.dataserver.interfaces import IACLProvider
+from nti.dataserver.interfaces import IDefaultPublished
 
 from nti.dataserver.users import Entity
 
