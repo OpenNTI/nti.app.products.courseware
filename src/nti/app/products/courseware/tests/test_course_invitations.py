@@ -1,0 +1,74 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
+from __future__ import print_function, unicode_literals, absolute_import, division
+__docformat__ = "restructuredtext en"
+
+# disable: accessing protected members, too many methods
+# pylint: disable=W0212,R0904
+
+from hamcrest import is_
+from hamcrest import is_not
+from hamcrest import has_entry
+from hamcrest import has_length
+from hamcrest import assert_that
+does_not = is_not
+
+from zope import component
+
+from nti.contenttypes.courses.interfaces import ICourseCatalog
+from nti.contenttypes.courses.interfaces import ICourseInstance
+from nti.contenttypes.courses.interfaces import IJoinCourseInvitation
+
+from nti.contenttypes.courses.invitation import JoinCourseInvitation
+
+from nti.externalization.externalization import StandardExternalFields
+
+from nti.externalization.oids import to_external_ntiid_oid
+
+from nti.app.products.courseware.tests import PersistentInstructedCourseApplicationTestLayer
+
+from nti.app.testing.application_webtest import ApplicationLayerTest
+
+from nti.app.testing.decorators import WithSharedApplicationMockDS
+
+from nti.dataserver.tests import mock_dataserver
+
+ITEMS = StandardExternalFields.ITEMS
+
+class TestInvitations(ApplicationLayerTest):
+
+	layer = PersistentInstructedCourseApplicationTestLayer
+
+	default_origin = b'http://janux.ou.edu'
+
+	entry_ntiid = 'tag:nextthought.com,2011-10:NTI-CourseInfo-Fall2013_CLC3403_LawAndJustice'
+
+	@classmethod
+	def catalog_entry(self):
+		catalog = component.getUtility(ICourseCatalog)
+		for entry in catalog.iterCatalogEntries():
+			if entry.ntiid == self.entry_ntiid:
+				return entry
+
+	@WithSharedApplicationMockDS(testapp=True, users=True)
+	def test_get_invitations(self):
+
+		with mock_dataserver.mock_db_trans(self.ds, site_name='platform.ou.edu'):
+			invitiation = JoinCourseInvitation("CLC3403", self.entry_ntiid)
+			component.getGlobalSiteManager().registerUtility(invitiation, 
+															 IJoinCourseInvitation,
+															 "CLC3403")
+			entry = self.catalog_entry()
+			course = ICourseInstance(entry)
+			course_ntiid = to_external_ntiid_oid(course)
+		
+		environ = self._make_extra_environ(username='harp4162')
+		environ[b'HTTP_ORIGIN'] = b'http://platform.ou.edu'
+
+		url = '/dataserver2/Objects/%s/CourseInvitations' % course_ntiid
+		res = self.testapp.get(url, extra_environ=environ, status=200)
+		
+		assert_that(res.json_body, has_entry(ITEMS, has_length(1)))
+		assert_that(res.json_body, has_entry(ITEMS, is_(["CLC3403"])))
+				

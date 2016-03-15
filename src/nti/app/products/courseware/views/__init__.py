@@ -23,6 +23,7 @@ from nti.app.products.courseware import VIEW_COURSE_MAIL
 from nti.app.products.courseware import VIEW_CATALOG_ENTRY
 from nti.app.products.courseware import VIEW_COURSE_ACTIVITY
 from nti.app.products.courseware import VIEW_COURSE_RECURSIVE
+from nti.app.products.courseware import SEND_COURSE_INVITATIONS
 from nti.app.products.courseware import VIEW_COURSE_DISCUSSIONS
 from nti.app.products.courseware import VIEW_COURSE_INVITATIONS
 from nti.app.products.courseware import VIEW_COURSE_RECURSIVE_BUCKET

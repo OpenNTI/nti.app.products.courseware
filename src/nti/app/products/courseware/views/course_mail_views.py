@@ -33,11 +33,10 @@ from nti.contenttypes.courses.interfaces import ICourseCatalogEntry
 from nti.contenttypes.courses.utils import is_course_instructor
 
 from nti.dataserver import authorization as nauth
+from nti.dataserver.interfaces import IEnumerableEntityContainer
 
 from nti.dataserver.users import User
 from nti.dataserver.users.interfaces import IUserProfile
-
-from nti.dataserver.interfaces import IEnumerableEntityContainer
 
 @view_config(route_name='objects.generic.traversal',
 			 context=ICourseInstance,
@@ -68,7 +67,7 @@ class CourseMailView(AbstractMemberEmailView):
 		cat_entry = ICourseCatalogEntry(self.course)
 		result = getattr(cat_entry, 'title', None)
 		if not result:
-			result = getattr(cat_entry, 'ProviderUniqueID', '' )
+			result = getattr(cat_entry, 'ProviderUniqueID', '')
 		return result
 
 	@property
@@ -110,8 +109,8 @@ class CourseMailView(AbstractMemberEmailView):
 
 	@Lazy
 	def _all_students(self):
-		enrollments = ICourseEnrollments( self.course )
-		result = set( (x.lower() for x in enrollments.iter_principals()) )
+		enrollments = ICourseEnrollments(self.course)
+		result = set((x.lower() for x in enrollments.iter_principals()))
 		return result - self._instructors
 
 	@property
@@ -178,8 +177,8 @@ class EnrollmentRecordMailView(CourseMailView):
 
 	@property
 	def _context_logged_info(self):
-		course = super( EnrollmentRecordMailView, self )._context_display_name
-		result = '%s in %s' % ( self.context.Username, course )
+		course = super(EnrollmentRecordMailView, self)._context_display_name
+		result = '%s in %s' % (self.context.Username, course)
 		return result
 
 	@property

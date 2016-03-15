@@ -18,6 +18,9 @@ from pyramid.view import view_defaults
 
 from nti.app.base.abstract_views import AbstractAuthenticatedView
 
+from nti.app.externalization.view_mixins import ModeledContentUploadRequestUtilsMixin
+
+from nti.app.products.courseware.views import SEND_COURSE_INVITATIONS
 from nti.app.products.courseware.views import VIEW_COURSE_INVITATIONS
 
 from nti.app.products.courseware.views import CourseAdminPathAdapter
@@ -43,7 +46,6 @@ from nti.externalization.interfaces import StandardExternalFields
 ITEMS = StandardExternalFields.ITEMS
 
 @view_config(context=ICourseInstance)
-@view_config(context=ICourseCatalogEntry)
 @view_defaults(route_name='objects.generic.traversal',
 			   renderer='rest',
 			   request_method='GET',
@@ -70,6 +72,32 @@ class CourseInvitationsView(AbstractAuthenticatedView):
 		result.__name__ = self.request.view_name
 		return result
 
+@view_config(context=ICourseCatalogEntry)
+@view_defaults(route_name='objects.generic.traversal',
+			   renderer='rest',
+			   request_method='GET',
+			   name=VIEW_COURSE_INVITATIONS,
+			   permission=nauth.ACT_READ)
+class CatalogEntryInvitationsView(CourseInvitationsView):
+	pass
+
+@view_config(context=ICourseInstance)
+@view_config(context=ICourseCatalogEntry)
+@view_defaults(route_name='objects.generic.traversal',
+			   renderer='rest',
+			   request_method='POST',
+			   name=SEND_COURSE_INVITATIONS,
+			   permission=nauth.ACT_READ)
+class SendCourseInvitationsView(AbstractAuthenticatedView,
+								ModeledContentUploadRequestUtilsMixin):
+
+	@Lazy
+	def _course(self):
+		return ICourseInstance(self.context)
+
+	def __call__(self):
+		pass
+	
 @view_config(context=IDataserverFolder)
 @view_config(context=CourseAdminPathAdapter)
 @view_defaults(route_name='objects.generic.traversal',

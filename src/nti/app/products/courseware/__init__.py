@@ -18,6 +18,8 @@ ASSETS_FOLDER = 'assets'
 #: User enrollment last mod annotation key
 USER_ENROLLMENT_LAST_MODIFIED_KEY = 'nti.app.products.courseware.UserEnrollmentLastModified'
 
+SEND_COURSE_INVITATIONS = 'SendCourseInvitations'
+
 VIEW_CONTENTS = 'contents'
 VIEW_COURSE_MAIL = 'Mail'
 VIEW_CLASSMATES = 'Classmates'
