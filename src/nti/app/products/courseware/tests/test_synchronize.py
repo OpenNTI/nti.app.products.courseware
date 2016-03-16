@@ -10,7 +10,9 @@ __docformat__ = "restructuredtext en"
 from hamcrest import is_
 from hamcrest import none
 from hamcrest import is_not
+from hamcrest import raises
 from hamcrest import has_key
+from hamcrest import calling
 from hamcrest import contains
 from hamcrest import not_none
 from hamcrest import has_entry
@@ -43,6 +45,8 @@ from nti.assessment.interfaces import IQAssignmentDateContext
 from nti.assessment.interfaces import IQAssignmentPolicies
 
 from nti.contentlibrary import filesystem
+from nti.contentlibrary import ContentRemovalException
+
 from nti.contentlibrary.interfaces import IContentPackageLibrary
 
 from nti.dataserver.authorization import ACT_READ
@@ -338,9 +342,9 @@ class TestFunctionalSynchronize(CourseLayerTest):
 		outline = gateway.Outline
 		assert_that( outline, has_length(7) )
 
-		def _resync():
+		def _resync(force=False):
 			outline.lastModified = 0
-			synchronize_catalog_from_root(folder, bucket)
+			synchronize_catalog_from_root(folder, bucket, force=force)
 
 		outline_node = outline.values()[0]
 		child_node = outline_node.values()[0]
@@ -476,6 +480,24 @@ class TestFunctionalSynchronize(CourseLayerTest):
 		# Reset
 		outline.child_order_locked = False
 		_resync()
+		assert_that( outline, has_length(7) )
+
+		# Add new unit node in outline, with locked children.
+		user_child_node.locked = user_child_node.child_order_locked = False
+		outline.locked = outline.child_order_locked = False
+		grandchild_node = CourseOutlineContentNode()
+		grandchild_node.ntiid = 'tag:nextthought.com,2011-10:NTI-NTICourseOutlineNode-Spring2014_Gateway.0.1000.grandchild'
+		grandchild_node.title = 'To be deleted'
+		grandchild_node.locked = True
+		outline.append( user_child_node )
+		user_child_node.append( grandchild_node )
+		assert_that( calling( _resync ), raises( ContentRemovalException ))
+		# Not in transaction, so state is not reverted; re-add.
+		assert_that( outline, has_length(7) )
+		outline.append( user_child_node )
+
+		# Now force it and the unit node is removed.
+		_resync( force=True )
 		assert_that( outline, has_length(7) )
 
 		# Swap order

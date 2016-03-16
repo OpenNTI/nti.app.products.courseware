@@ -360,8 +360,8 @@ class TestPathLookup(ApplicationLayerTest):
 		# CS1323 tests slides/videos/readings/self-assessments/video-rolls.
 		# It has a full outline for these tests.
 		self._enroll()
-		mock_legacy.is_callable().returns(())
 		mock_get_bundles.is_callable().returns(())
+		mock_legacy.is_callable().returns(())
 		self._do_cs1323_path_lookup()
 
 	@WithSharedApplicationMockDS(users=True, testapp=True)
