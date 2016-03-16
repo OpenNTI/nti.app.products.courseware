@@ -38,6 +38,7 @@ from nti.app.products.courseware.interfaces import IOpenEnrollmentOption
 from nti.app.products.courseware.interfaces import ICourseInstanceEnrollment
 
 from nti.app.products.courseware.utils import get_enrollment_options
+from nti.app.products.courseware.utils import has_course_invitations
 from nti.app.products.courseware.utils import get_vendor_thank_you_page
 from nti.app.products.courseware.utils import PreviewCourseAccessPredicateDecorator
 
@@ -168,8 +169,9 @@ class _CourseInvitationsLinkDecorator(AbstractAuthenticatedRequestAwareDecorator
 
 	def _predicate(self, context, result):
 		return 	self._is_authenticated \
-			and	is_course_instructor(context, self.remoteUser) \
-			and has_permission(ACT_NTI_ADMIN, context, self.request)
+			and	(	is_course_instructor(context, self.remoteUser) 
+				 or has_permission(ACT_NTI_ADMIN, context, self.request) ) \
+			and has_course_invitations(context)
 
 	def _do_decorate_external(self, context, result):
 		_links = result.setdefault(LINKS, [])

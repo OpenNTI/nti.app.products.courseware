@@ -154,6 +154,10 @@ def get_course_invitations(context):
 			result[name] = invitation
 	return result
 
+def has_course_invitations(context):
+	result = get_course_invitations(context)
+	return len(result) >= 1
+
 def get_all_course_invitations():
 	result = [x for _, x in component.getUtilitiesFor(IJoinCourseInvitation)]
 	return result
