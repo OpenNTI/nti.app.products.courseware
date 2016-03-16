@@ -27,6 +27,8 @@ from nti.app.products.courseware.views import CourseAdminPathAdapter
 
 from nti.appserver.dataserver_pyramid_views import GenericGetView
 
+from nti.appserver.pyramid_authorization import has_permission
+
 from nti.common.property import Lazy
 
 from nti.contenttypes.courses.interfaces import ICourseInstance
@@ -36,6 +38,7 @@ from nti.contenttypes.courses.interfaces import IJoinCourseInvitation
 from nti.contenttypes.courses.utils import is_course_instructor
 	
 from nti.dataserver import authorization as nauth
+
 from nti.dataserver.interfaces import IDataserverFolder
 
 from nti.externalization.externalization import to_external_ntiid_oid
@@ -58,7 +61,8 @@ class CourseInvitationsView(AbstractAuthenticatedView):
 		return ICourseInstance(self.context)
 
 	def __call__(self):
-		if not is_course_instructor(self._course, self.remoteUser):
+		if 		not is_course_instructor(self._course, self.remoteUser) \
+			and not has_permission(nauth.ACT_NTI_ADMIN, self._course, self.request):
 			raise hexc.HTTPForbidden()
 		entry = ICourseCatalogEntry(self._course)
 		ntiid = to_external_ntiid_oid(self._course)
@@ -82,7 +86,6 @@ class CatalogEntryInvitationsView(CourseInvitationsView):
 	pass
 
 @view_config(context=ICourseInstance)
-@view_config(context=ICourseCatalogEntry)
 @view_defaults(route_name='objects.generic.traversal',
 			   renderer='rest',
 			   request_method='POST',
@@ -96,8 +99,10 @@ class SendCourseInvitationsView(AbstractAuthenticatedView,
 		return ICourseInstance(self.context)
 
 	def __call__(self):
-		pass
-	
+		if 		not is_course_instructor(self._course, self.remoteUser) \
+			and not has_permission(nauth.ACT_NTI_ADMIN, self._course, self.request):
+			raise hexc.HTTPForbidden()
+		
 @view_config(context=IDataserverFolder)
 @view_config(context=CourseAdminPathAdapter)
 @view_defaults(route_name='objects.generic.traversal',
