@@ -26,6 +26,7 @@ from nti.app.products.courseware import VIEW_CATALOG_ENTRY
 from nti.app.products.courseware import VIEW_COURSE_ACTIVITY
 from nti.app.products.courseware import VIEW_COURSE_RECURSIVE
 from nti.app.products.courseware import VIEW_COURSE_CLASSMATES
+from nti.app.products.courseware import SEND_COURSE_INVITATIONS
 from nti.app.products.courseware import VIEW_COURSE_INVITATIONS
 from nti.app.products.courseware import VIEW_RECURSIVE_AUDIT_LOG
 from nti.app.products.courseware import VIEW_COURSE_LOCKED_OBJECTS
@@ -68,7 +69,8 @@ from nti.contenttypes.courses.utils import get_catalog_entry
 from nti.contenttypes.courses.utils import is_course_instructor
 from nti.contenttypes.courses.utils import get_enrollment_record
 
-from nti.dataserver.authorization import ACT_CONTENT_EDIT
+from nti.dataserver.authorization import ACT_NTI_ADMIN
+from nti.dataserver.authorization import ACT_CONTENT_EDIT 
 
 from nti.dataserver.interfaces import IUser
 from nti.dataserver.interfaces import IEntityContainer
@@ -166,15 +168,17 @@ class _CourseInvitationsLinkDecorator(AbstractAuthenticatedRequestAwareDecorator
 
 	def _predicate(self, context, result):
 		return 	self._is_authenticated \
-			and	is_course_instructor(context, self.remoteUser)
+			and	is_course_instructor(context, self.remoteUser) \
+			and has_permission(ACT_NTI_ADMIN, context, self.request)
 
 	def _do_decorate_external(self, context, result):
 		_links = result.setdefault(LINKS, [])
-		link = Link(context, rel=VIEW_COURSE_INVITATIONS, elements=(VIEW_COURSE_INVITATIONS,))
-		interface.alsoProvides(link, ILocation)
-		link.__name__ = ''
-		link.__parent__ = context
-		_links.append(link)
+		for name in (VIEW_COURSE_INVITATIONS, SEND_COURSE_INVITATIONS):
+			link = Link(context, rel=name, elements=(name,))
+			interface.alsoProvides(link, ILocation)
+			link.__name__ = ''
+			link.__parent__ = context
+			_links.append(link)
 		
 class BaseRecursiveAuditLogLinkDecorator(AbstractAuthenticatedRequestAwareDecorator):
 	"""
