@@ -37,10 +37,13 @@ from nti.contenttypes.courses import get_course_vendor_info
 
 from nti.contenttypes.courses.interfaces import ICourseInstance
 from nti.contenttypes.courses.interfaces import ICourseCatalogEntry
+from nti.contenttypes.courses.interfaces import IJoinCourseInvitation
 
 from nti.contenttypes.courses.utils import get_parent_course
 
 from nti.dataserver.interfaces import IMemcacheClient
+
+from nti.externalization.oids import to_external_ntiid_oid
 
 from nti.traversal.traversal import find_interface
 
@@ -135,3 +138,22 @@ def get_assets_folder(context, strict=True):
 			result = root[ASSETS_FOLDER]
 		return result
 	return None
+
+def get_course_invitation(code):
+	result = component.queryUtility(IJoinCourseInvitation, name=code or '')
+	return result
+
+def get_course_invitations(context):
+	result = {}
+	course = ICourseInstance(context, None)
+	entry = ICourseCatalogEntry(course, None)
+	entry_ntiid = entry.ntiid if entry is not None else None
+	ntiid = to_external_ntiid_oid(course) if course is not None else None
+	for name, invitation in list(component.getUtilitiesFor(IJoinCourseInvitation)):
+		if invitation.course in (ntiid, entry_ntiid):
+			result[name] = invitation
+	return result
+
+def get_all_course_invitations():
+	result = [x for _, x in component.getUtilitiesFor(IJoinCourseInvitation)]
+	return result
