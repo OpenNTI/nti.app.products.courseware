@@ -12,8 +12,6 @@ logger = __import__('logging').getLogger(__name__)
 import csv
 import six
 
-from zope import component
-
 from zope.i18n import translate
 
 from z3c.schema.email import isValidMailAddress
@@ -30,6 +28,10 @@ from nti.app.externalization.error import raise_json_error
 from nti.app.externalization.view_mixins import ModeledContentUploadRequestUtilsMixin
 
 from nti.app.products.courseware import MessageFactory as _
+
+from nti.app.products.courseware.utils import get_course_invitation
+from nti.app.products.courseware.utils import get_course_invitations
+from nti.app.products.courseware.utils import get_all_course_invitations
 
 from nti.app.products.courseware.views import SEND_COURSE_INVITATIONS
 from nti.app.products.courseware.views import VIEW_COURSE_INVITATIONS
@@ -48,7 +50,6 @@ from nti.common.string import TRUE_VALUES
 
 from nti.contenttypes.courses.interfaces import ICourseInstance
 from nti.contenttypes.courses.interfaces import ICourseCatalogEntry
-from nti.contenttypes.courses.interfaces import IJoinCourseInvitation
 
 from nti.contenttypes.courses.utils import is_course_instructor
 	
@@ -59,8 +60,6 @@ from nti.dataserver.interfaces import IDataserverFolder
 
 from nti.dataserver.users import User
 from nti.dataserver.users.interfaces import IUserProfile
-
-from nti.externalization.externalization import to_external_ntiid_oid
 
 from nti.externalization.interfaces import LocatedExternalDict
 from nti.externalization.interfaces import StandardExternalFields
@@ -83,13 +82,10 @@ class CourseInvitationsView(AbstractAuthenticatedView):
 		if 		not is_course_instructor(self._course, self.remoteUser) \
 			and not has_permission(nauth.ACT_NTI_ADMIN, self._course, self.request):
 			raise hexc.HTTPForbidden()
-		entry = ICourseCatalogEntry(self._course)
-		ntiid = to_external_ntiid_oid(self._course)
+
 		result = LocatedExternalDict()
-		items = result[ITEMS] = []
-		for name, invitation in list(component.getUtilitiesFor(IJoinCourseInvitation)):
-			if invitation.course in (ntiid, entry.ntiid):
-				items.append(name)
+		invitations = get_course_invitations(self._course)
+		items = result[ITEMS] = list(invitations.keys())
 		result['Total'] = result['ItemCount'] = len(items)
 		result.__parent__ = self.context
 		result.__name__ = self.request.view_name
@@ -126,7 +122,7 @@ class SendCourseInvitationsView(AbstractAuthenticatedView,
 		code = values.get('code')
 		if not code:
 			raise hexc.HTTPUnprocessableEntity(_("Must provide a inviation code."))
-		invitation = component.getUtility(IJoinCourseInvitation, name=code)
+		invitation = get_course_invitation(code)
 		if invitation is None:
 			raise hexc.HTTPUnprocessableEntity(_("Invalid inviation code."))
 
@@ -242,10 +238,10 @@ class AllCourseInvitationsView(GenericGetView):
 	def __call__(self):
 		result = LocatedExternalDict()
 		items = result[ITEMS] = {}
-		for name, invitation in list(component.getUtilitiesFor(IJoinCourseInvitation)):
+		for invitation in get_all_course_invitations():
 			key = invitation.course
 			items.setdefault(key, [])
-			items[key].append(name)
+			items[key].append(invitation.code)
 		result['Total'] = result['ItemCount'] = len(items)
 		result.__parent__ = self.context
 		result.__name__ = self.request.view_name
