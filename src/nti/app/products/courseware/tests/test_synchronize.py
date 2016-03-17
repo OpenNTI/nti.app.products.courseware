@@ -500,7 +500,15 @@ class TestFunctionalSynchronize(CourseLayerTest):
 		_resync( force=True )
 		assert_that( outline, has_length(7) )
 
-		# Swap order
+		# Deleted node has unlocked children. A non-removed node
+		# does have locked children.
+		outline.values()[0].values()[0].locked = True
+		grandchild_node.locked = False
+		outline.append( user_child_node )
+		_resync()
+		assert_that( outline, has_length(7) )
+
+		# Swap node order
 		original_ntiid_order = tuple( outline.keys() )
 		outline.insert( 0, outline.values()[-1] )
 		move_ntiid_order = tuple( outline.keys() )
