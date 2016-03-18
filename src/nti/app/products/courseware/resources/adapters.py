@@ -19,6 +19,7 @@ from nti.app.products.courseware.resources import RESOURCES
 from nti.app.products.courseware.resources.filer import CourseSourceFiler
 
 from nti.app.products.courseware.resources.interfaces import ICourseRootFolder
+from nti.app.products.courseware.resources.interfaces import ICourseSourceFiler
 
 from nti.app.products.courseware.resources.model import CourseRootFolder
 
@@ -53,3 +54,10 @@ def _course_user_source_filer(context, user=None):
 	course = ICourseInstance(context)
 	result = CourseSourceFiler(course, user)
 	return result
+
+@component.adapter(ICourseInstance)
+@interface.implementer(ICourseSourceFiler)
+def _course_source_filer(context):
+	return _course_user_source_filer(context, None)
+
+

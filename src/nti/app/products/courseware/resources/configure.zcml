@@ -21,15 +21,19 @@
 	<!-- Adapters -->
 	<adapter factory=".adapters.course_resources" />
 
+	<adapter factory=".adapters._course_source_filer"
+			 for="nti.contenttypes.courses.interfaces.ICourseInstance"
+			 provides=".interfaces.ICourseSourceFiler" />
+
+	<adapter factory=".adapters._course_user_source_filer"
+			 for="nti.contenttypes.courses.interfaces.ICourseInstance nti.dataserver.interfaces.IUser"
+			 provides=".interfaces.ICourseSourceFiler" />
+
+	<!-- Traversal -->
 	<adapter factory=".adapters._resources_for_course_path_adapter"
 			 for="nti.contenttypes.courses.interfaces.ICourseInstance pyramid.interfaces.IRequest"
 			 provides="zope.traversing.interfaces.IPathAdapter"
 			 name="resources" />
-			 
-	<!-- Traversal -->
-	<adapter factory=".adapters._course_user_source_filer"
-			 for="nti.contenttypes.courses.interfaces.ICourseInstance nti.dataserver.interfaces.IUser"
-			 provides=".interfaces.ICourseSourceFiler" />
 
 	<!-- ACL -->
 	<adapter factory=".acl.CourseRootFolderACLProvider" />
