@@ -17,6 +17,8 @@ from nti.app.products.courseware.resources.model import CourseContentFolder
 
 from nti.contenttypes.courses.interfaces import ICourseInstance
 
+from nti.coremetadata.interfaces import SYSTEM_USER_ID
+
 from nti.traversal.traversal import find_interface
 
 def get_assets_folder(context, strict=True):
@@ -30,5 +32,7 @@ def get_assets_folder(context, strict=True):
 			root[ASSETS_FOLDER] = result
 		else:
 			result = root[ASSETS_FOLDER]
+		if result.creator is None:
+			result.creator = SYSTEM_USER_ID
 		return result
 	return None

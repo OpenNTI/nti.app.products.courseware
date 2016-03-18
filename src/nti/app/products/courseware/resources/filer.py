@@ -11,8 +11,12 @@ logger = __import__('logging').getLogger(__name__)
 
 from zope import interface
 
+from nti.app.products.courseware import ASSETS_FOLDER
+
 from nti.app.products.courseware.resources.interfaces import ICourseRootFolder
 from nti.app.products.courseware.resources.interfaces import ICourseSourceFiler
+
+from nti.app.products.courseware.resources.model import CourseContentFolder
 
 from nti.app.products.courseware.resources.utils import get_assets_folder
 
@@ -26,6 +30,11 @@ class CourseSourceFiler(object):
 		self.course = ICourseInstance(context)
 
 	@property
+	def username(self):
+		result = getattr(self.user, 'username', None)
+		return result
+
+	@property
 	def root(self):
 		result = ICourseRootFolder(self.course)
 		return result
@@ -36,7 +45,14 @@ class CourseSourceFiler(object):
 		return result
 
 	def save(self, source, key, contentType=None, overwrite=False, **kwargs):
-		_ = kwargs.get('bucket')
+		bucket = kwargs.get('bucket')
+		if bucket == ASSETS_FOLDER:
+			bucket = self.assets
+		elif bucket:
+			bucket = self.root[bucket] = CourseContentFolder(name=bucket)
+			bucket.creator = self.username  # set creator
+		else:
+			bucket = self.root
 
 	def get(self, key):
 		pass

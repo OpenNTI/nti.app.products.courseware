@@ -22,6 +22,8 @@ from nti.app.products.courseware.resources.model import CourseRootFolder
 
 from nti.contenttypes.courses.interfaces import ICourseInstance
 
+from nti.coremetadata.interfaces import SYSTEM_USER_ID
+
 @component.adapter(ICourseInstance)
 @interface.implementer(ICourseRootFolder)
 def course_resources(course, create=True):
@@ -36,6 +38,8 @@ def course_resources(course, create=True):
 			annotations[KEY] = result
 			result.__name__ = KEY
 			result.__parent__ = course
+	if result.creator is not None:
+		result.creator = SYSTEM_USER_ID
 	return result
 _course_resources = course_resources
 
