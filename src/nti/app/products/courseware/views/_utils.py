@@ -9,33 +9,17 @@ __docformat__ = "restructuredtext en"
 
 logger = __import__('logging').getLogger(__name__)
 
-import os
-from urllib import unquote
-from urlparse import urlparse
-
 from zope.component.hooks import getSite
-
-from plone.namedfile.file import getImageInfo
-from plone.namedfile.interfaces import INamed
-
-from slugify import slugify_filename
-
-from nti.app.contentfile import to_external_href
 
 from nti.app.products.courseware.utils import encode_keys
 from nti.app.products.courseware.utils import memcache_get
 from nti.app.products.courseware.utils import memcache_set
 from nti.app.products.courseware.utils import last_synchronized
 
-from nti.app.products.courseware.resources import CourseContentFile
-from nti.app.products.courseware.resources import CourseContentImage
-
 from nti.assessment.interfaces import IQPoll
 from nti.assessment.interfaces import IQSurvey
 from nti.assessment.interfaces import IQAssignment
 from nti.assessment.interfaces import IQuestionSet
-
-from nti.common.random import generate_random_hex_string
 
 from nti.contentlibrary.indexed_data import get_library_catalog
 
@@ -43,9 +27,6 @@ from nti.contenttypes.courses.interfaces import ICourseInstance
 from nti.contenttypes.courses.interfaces import ICourseCatalogEntry
 from nti.contenttypes.courses.interfaces import ICourseAssignmentCatalog
 from nti.contenttypes.courses.interfaces import ICourseAssessmentItemCatalog
-
-from nti.ntiids.ntiids import find_object_with_ntiid
-from nti.ntiids.ntiids import is_valid_ntiid_string as is_valid_ntiid
 
 from nti.site.site import get_component_hierarchy_names
 
@@ -177,58 +158,3 @@ def _get_containers_in_course(context):
 		containers = _do_get_containers_in_course(context)
 		memcache_set(key, containers)
 	return containers
-
-def _slugify_in_container(text, container):
-	separator = '_'
-	newtext = slugify_filename(text)
-	text_noe, ext = os.path.splitext(newtext)
-	while True:
-		s = generate_random_hex_string(6)
-		newtext = "%s%s%s%s" % (text_noe, separator, s, ext)
-		if newtext not in container:
-			break
-	return newtext
-
-def _get_file_from_link(link):
-	result = None
-	try:
-		if link.endswith('view') or link.endswith('download'):
-			path = urlparse(link).path
-			path = os.path.split(path)[0]
-		else:
-			path = link
-		ntiid = unquote(os.path.split(path)[1] or u'')  # last part of path
-		result = find_object_with_ntiid(ntiid) if is_valid_ntiid(ntiid) else None
-		if INamed.providedBy(result):
-			return result
-	except Exception:
-		pass  # Nope
-	return None
-
-def _get_namedfile(source, name=None):
-	contentType = getattr(source, 'contentType', None)
-	if contentType:
-		factory = CourseContentFile
-	else:
-		contentType, _, _ = getImageInfo(source)
-		source.seek(0)  # reset
-		factory = CourseContentImage if contentType else CourseContentFile
-	contentType = contentType or u'application/octet-stream'
-	result = factory()
-	result.name = name
-	# for filename we want to use the filename as originally provided on the source, not
-	# the sluggified internal name. This allows us to give it back in the
-	# Content-Disposition header on download
-	result.filename = 	 getattr(source, 'filename', None) \
-					  or getattr(source, 'name', name)
-	result.data = source.read()
-	result.contentType = contentType
-	return result
-
-def _get_download_href(item):
-	try:
-		result = to_external_href(item, True)
-		return result
-	except Exception:
-		pass  # Nope
-	return None

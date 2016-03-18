@@ -24,23 +24,22 @@ from nti.app.base.abstract_views import get_all_sources
 from nti.app.base.abstract_views import AbstractAuthenticatedView
 
 from nti.app.contentfile import validate_sources
-from nti.app.contentfile import get_file_from_oid_external_link
 
 from nti.app.externalization.internalization import read_body_as_external_object
+
+from nti.app.products.courseware import ASSETS_FOLDER
 
 from nti.app.products.courseware.discussions import get_topic_key
 from nti.app.products.courseware.discussions import create_topics
 from nti.app.products.courseware.discussions import auto_create_forums
 
-from nti.app.products.courseware.utils import get_assets_folder
+from nti.app.products.courseware.resources.filer import get_unique_file_name
+
+from nti.app.products.courseware.resources.utils import get_course_filer
 
 from nti.app.products.courseware.views import VIEW_COURSE_DISCUSSIONS
 
 from nti.app.products.courseware.views import CourseAdminPathAdapter
-
-from nti.app.products.courseware.views._utils import _get_namedfile
-from nti.app.products.courseware.views._utils import _get_download_href
-from nti.app.products.courseware.views._utils import _slugify_in_container
 
 from nti.appserver.dataserver_pyramid_views import GenericGetView
 
@@ -50,8 +49,6 @@ from nti.appserver.ugd_edit_views import UGDPostView
 from nti.common.maps import CaseInsensitiveDict
 
 from nti.common.property import Lazy
-
-from nti.contentfolder.interfaces import IContentFolder
 
 from nti.contenttypes.courses.discussions.interfaces import NTI_COURSE_BUNDLE
 from nti.contenttypes.courses.discussions.interfaces import ICourseDiscussion
@@ -87,37 +84,28 @@ CLASS = StandardExternalFields.CLASS
 ITEMS = StandardExternalFields.ITEMS
 MIMETYPE = StandardExternalFields.MIMETYPE
 
-def _get_unique_filename(folder, context, name):
-	name = getattr(context, 'filename', None) or getattr(context, 'name', None) or name
-	name = safe_filename(name_finder(name))
-	result = _slugify_in_container(name, folder)
-	return result
-
-def _remove_file(href):
-	if href and isinstance(href, six.string_types):
-		named = get_file_from_oid_external_link(href)
-		container = getattr(named, '__parent__', None)
-		if IContentFolder.providedBy(container):
-			return container.remove(named)
-	return False
-
 def render_to_external_ref(resource):
 	link = Link(target=resource)
 	interface.alsoProvides(link, ILinkExternalHrefOnly)
 	return render_link(link)
 
-def _handle_multipart(context, discussion, sources):
+def _get_filename(context, name):
+	result = getattr(context, 'filename', None) or getattr(context, 'name', None) or name
+	result = safe_filename(name_finder(result))
+	return result
+
+def _handle_multipart(context, user, discussion, sources):
 	provided = ICourseDiscussion
-	assets = get_assets_folder(context)
+	filer = get_course_filer(context, user)
 	for name, source in sources.items():
 		if name in provided:
 			# remove existing
-			_remove_file(getattr(discussion, name, None))
-			# save a new file
-			file_key = _get_unique_filename(assets, source, name)
-			namedfile = _get_namedfile(source, file_key)
-			assets[file_key] = namedfile  # add to container
-			location = _get_download_href(namedfile)
+			location = getattr(discussion, name, None)
+			if location:
+				filer.remove(location)
+			# save a in a new file
+			key = _get_filename(source, name)
+			location = filer.save(source, key, overwrite=False, bucket=ASSETS_FOLDER)
 			setattr(discussion, name, location)
 
 @view_config(context=ICourseDiscussions)
@@ -178,7 +166,7 @@ class CourseDiscussionsPostView(UGDPostView):
 		sources = get_all_sources(self.request)
 		if sources:  # multi-part data
 			validate_sources(self.remoteUser, contentObject, sources)
-			_handle_multipart(self.context, contentObject, sources)
+			_handle_multipart(self.context, self.remoteUser, contentObject, sources)
 		return contentObject
 
 	def _do_call(self):
@@ -188,7 +176,7 @@ class CourseDiscussionsPostView(UGDPostView):
 		discussion.updateLastMod()
 
 		# get a unique file nane
-		name = _slugify_in_container("discussion.json", self.context)
+		name = get_unique_file_name("discussion.json", self.context)
 
 		# set a proper NTI course bundle id
 		course = ICourseInstance(self.context)
@@ -219,7 +207,7 @@ class CourseDiscussionPutView(UGDPutView):
 		sources = get_all_sources(self.request)
 		if sources:
 			validate_sources(self.remoteUser, result, sources)
-			_handle_multipart(self.context, self.context, sources)
+			_handle_multipart(self.context, self.remoteUser, self.context, sources)
 		return result
 
 # admin
