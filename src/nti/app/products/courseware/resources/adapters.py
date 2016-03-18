@@ -16,6 +16,8 @@ from zope.annotation.interfaces import IAnnotations
 
 from nti.app.products.courseware.resources import RESOURCES
 
+from nti.app.products.courseware.resources.filer import CourseSourceFiler
+
 from nti.app.products.courseware.resources.interfaces import ICourseRootFolder
 
 from nti.app.products.courseware.resources.model import CourseRootFolder
@@ -46,3 +48,8 @@ _course_resources = course_resources
 def _resources_for_course_path_adapter(context, request):
 	course = ICourseInstance(context)
 	return _course_resources(course)
+
+def _course_user_source_filer(context, user=None):
+	course = ICourseInstance(context)
+	result = CourseSourceFiler(course, user)
+	return result
