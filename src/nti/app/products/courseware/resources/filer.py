@@ -9,18 +9,70 @@ __docformat__ = "restructuredtext en"
 
 logger = __import__('logging').getLogger(__name__)
 
+import os
+
 from zope import interface
+
+from plone.namedfile.file import getImageInfo
+
+from slugify import slugify_filename
+
+from nti.app.contentfile import transfer_data
+from nti.app.contentfile import to_external_download_oid_href
+from nti.app.contentfile import get_file_from_oid_external_link
 
 from nti.app.products.courseware import ASSETS_FOLDER
 
 from nti.app.products.courseware.resources.interfaces import ICourseRootFolder
 from nti.app.products.courseware.resources.interfaces import ICourseSourceFiler
 
+from nti.app.products.courseware.resources.model import CourseContentFile
+from nti.app.products.courseware.resources.model import CourseContentImage
 from nti.app.products.courseware.resources.model import CourseContentFolder
 
 from nti.app.products.courseware.resources.utils import get_assets_folder
 
 from nti.contenttypes.courses.interfaces import ICourseInstance
+
+from nti.common.random import generate_random_hex_string
+
+from nti.namedfile.file import safe_filename
+
+from nti.traversal.traversal import find_interface
+
+def get_unique_file_name(text, container):
+	separator = '_'
+	newtext = slugify_filename(text)
+	text_noe, ext = os.path.splitext(newtext)
+	while True:
+		s = generate_random_hex_string(6)
+		newtext = "%s%s%s%s" % (text_noe, separator, s, ext)
+		if newtext not in container:
+			break
+	return newtext
+
+def get_namedfile_factory(source):
+	contentType = getattr(source, 'contentType', None)
+	if contentType:
+		factory = CourseContentFile
+	else:
+		contentType, _, _ = getImageInfo(source)
+		source.seek(0)  # reset
+		factory = CourseContentFile if contentType else CourseContentImage
+	contentType = contentType or u'application/octet-stream'
+	return factory, contentType
+
+def get_namedfile_from_source(source, name):
+	factory, contentType = get_namedfile_factory(source)
+	result = factory()
+	result.name = name
+	transfer_data(source, result)
+	result.contentType = result.contentType or contentType
+	# for filename we want to use the filename as originally provided on the source, not
+	# the sluggified internal name. This allows us to give it back in the
+	# Content-Disposition header on download
+	result.filename = result.filename or getattr(source, 'name', name)
+	return result
 
 @interface.implementer(ICourseSourceFiler)
 class CourseSourceFiler(object):
@@ -54,8 +106,32 @@ class CourseSourceFiler(object):
 		else:
 			bucket = self.root
 
+		key = safe_filename(key)
+		if overwrite and key in bucket:
+			bucket.remove(key)
+		else:
+			key = get_unique_file_name(key, bucket)
+		
+		namedfile = get_namedfile_from_source(source, key)
+		namedfile.creator = self.username # set creator
+		namedfile.contentType = contentType if contentType else namedfile.contentType
+		bucket.add(namedfile)
+		
+		result = to_external_download_oid_href(namedfile)
+		return result
+
 	def get(self, key):
-		pass
+		result = get_file_from_oid_external_link(key)
+		if result is not None:
+			course = find_interface(result, ICourseInstance, strict=False)
+			if course is not self.course: # not the same course
+				result = None
+		return result
 
 	def remove(self, key):
-		pass
+		result = self.get(key)
+		if result is not None:
+			parent = result.__parent__
+			parent.remove(result)
+			return True
+		return False
