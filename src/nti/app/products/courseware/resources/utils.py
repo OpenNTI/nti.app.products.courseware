@@ -44,7 +44,7 @@ def get_assets_folder(context, strict=True):
 		return result
 	return None
 
-def get_course_filer(context, user=None):
-	course = get_course(context, strict=False)
+def get_course_filer(context, user=None, strict=False):
+	course = get_course(context, strict=strict)
 	result = get_source_filer(course, user, ICourseSourceFiler)
 	return result
