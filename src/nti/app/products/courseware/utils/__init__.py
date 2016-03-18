@@ -27,9 +27,7 @@ from nti.app.products.courseware.enrollment import EnrollmentOptions
 
 from nti.app.products.courseware.interfaces import IEnrollmentOptionProvider
 
-from nti.app.products.courseware.resources.interfaces import ICourseRootFolder
-
-from nti.app.products.courseware.resources.model import CourseContentFolder
+from nti.app.products.courseware.resources.utils import get_assets_folder
 
 from nti.app.products.courseware.utils.decorators import PreviewCourseAccessPredicateDecorator
 
@@ -52,6 +50,9 @@ DEFAULT_EXP_TIME = 86400
 
 #: 1970-01-1
 ZERO_DATETIME = datetime.utcfromtimestamp(0)
+
+# BWC exports
+get_assets_folder = get_assets_folder
 
 # BWC exports
 PreviewCourseAccessPredicate = PreviewCourseAccessPredicateDecorator
@@ -123,20 +124,6 @@ def get_vendor_thank_you_page(course, key):
 		tracking = traverse(vendor_info, 'NTI/VendorThankYouPage', default=False)
 		if tracking and key in tracking:
 			return tracking.get(key)
-	return None
-
-def get_assets_folder(context, strict=True):
-	course = ICourseInstance(context, None)
-	if course is None:
-		course = find_interface(context, ICourseInstance, strict=strict)
-	root = ICourseRootFolder(course, None)
-	if root is not None:
-		if ASSETS_FOLDER not in root:
-			result = CourseContentFolder(name=ASSETS_FOLDER)
-			root[ASSETS_FOLDER] = result
-		else:
-			result = root[ASSETS_FOLDER]
-		return result
 	return None
 
 def get_course_invitation(code):
