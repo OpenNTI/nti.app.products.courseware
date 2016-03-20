@@ -36,6 +36,8 @@ from nti.contenttypes.courses.interfaces import ICourseInstance
 
 from nti.common.random import generate_random_hex_string
 
+from nti.coremetadata.interfaces import SYSTEM_USER_ID
+
 from nti.namedfile.file import safe_filename
 
 from nti.traversal.traversal import find_interface
@@ -96,13 +98,22 @@ class CourseSourceFiler(object):
 		result = get_assets_folder(self.course)
 		return result
 
+	def get_create_folder(self, parent, name):
+		if name in parent:
+			result = parent[name]
+		else:
+			result = parent[name] = CourseContentFolder(name=name)
+			result.creator = self.username or SYSTEM_USER_ID # set creator
+		return result
+
 	def save(self, source, key, contentType=None, overwrite=False, **kwargs):
+		username = self.username
 		bucket = kwargs.get('bucket')
 		if bucket == ASSETS_FOLDER:
 			bucket = self.assets
+			bucket = self.get_create_folder(bucket, username) if username else bucket
 		elif bucket:
-			bucket = self.root[bucket] = CourseContentFolder(name=bucket)
-			bucket.creator = self.username  # set creator
+			bucket = self.get_create_folder(self.root, bucket)
 		else:
 			bucket = self.root
 
@@ -113,7 +124,7 @@ class CourseSourceFiler(object):
 			key = get_unique_file_name(key, bucket)
 		
 		namedfile = get_namedfile_from_source(source, key)
-		namedfile.creator = self.username # set creator
+		namedfile.creator = username or SYSTEM_USER_ID# set creator
 		namedfile.contentType = contentType if contentType else namedfile.contentType
 		bucket.add(namedfile)
 		
