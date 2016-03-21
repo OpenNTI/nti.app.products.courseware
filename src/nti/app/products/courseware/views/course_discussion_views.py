@@ -105,7 +105,8 @@ def _handle_multipart(context, user, discussion, sources):
 				filer.remove(location)
 			# save a in a new file
 			key = _get_filename(source, name)
-			location = filer.save(source, key, overwrite=False, bucket=ASSETS_FOLDER)
+			location = filer.save(source, key, overwrite=False,
+								  bucket=ASSETS_FOLDER, context=discussion)
 			setattr(discussion, name, location)
 
 @view_config(context=ICourseDiscussions)
@@ -164,14 +165,11 @@ class CourseDiscussionsPostView(UGDPostView):
 															 search_owner=search_owner,
 															 externalValue=externalValue)
 		sources = get_all_sources(self.request)
-		if sources:  # multi-part data
-			validate_sources(self.remoteUser, contentObject, sources)
-			_handle_multipart(self.context, self.remoteUser, contentObject, sources)
-		return contentObject
+		return contentObject, sources
 
 	def _do_call(self):
 		creator = self.remoteUser
-		discussion = self.readCreateUpdateContentObject(creator, search_owner=False)
+		discussion, sources = self.readCreateUpdateContentObject(creator, search_owner=False)
 		discussion.creator = creator.username
 		discussion.updateLastMod()
 
@@ -187,6 +185,12 @@ class CourseDiscussionsPostView(UGDPostView):
 		# add discussion
 		lifecycleevent.created(discussion)
 		self.context[name] = discussion
+		
+		# handle multi-part data
+		if sources:  
+			validate_sources(self.remoteUser, discussion, sources)
+			_handle_multipart(self.context, self.remoteUser, discussion, sources)
+
 		self.request.response.status_int = 201
 		return discussion
 
