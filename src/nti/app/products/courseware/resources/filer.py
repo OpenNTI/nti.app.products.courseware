@@ -109,6 +109,7 @@ class CourseSourceFiler(object):
 	def save(self, source, key, contentType=None, overwrite=False, **kwargs):
 		username = self.username
 		bucket = kwargs.get('bucket')
+		context = kwargs.get('context')
 		if bucket == ASSETS_FOLDER:
 			bucket = self.assets
 			bucket = self.get_create_folder(bucket, username) if username else bucket
@@ -127,7 +128,10 @@ class CourseSourceFiler(object):
 		namedfile.creator = username or SYSTEM_USER_ID# set creator
 		namedfile.contentType = contentType if contentType else namedfile.contentType
 		bucket.add(namedfile)
-		
+
+		if context is not None:
+			namedfile.add_association(context)
+
 		result = to_external_download_oid_href(namedfile)
 		return result
 
