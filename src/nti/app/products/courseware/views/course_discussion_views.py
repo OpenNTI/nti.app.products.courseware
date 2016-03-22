@@ -21,6 +21,7 @@ from pyramid.view import view_config
 from pyramid.view import view_defaults
 
 from nti.app.base.abstract_views import get_all_sources
+from nti.app.base.abstract_views import get_safe_source_filename
 from nti.app.base.abstract_views import AbstractAuthenticatedView
 
 from nti.app.contentfile import validate_sources
@@ -75,9 +76,6 @@ from nti.links.externalization import render_link
 
 from nti.links.links import Link
 
-from nti.namedfile.file import name_finder
-from nti.namedfile.file import safe_filename
-
 from nti.ntiids.ntiids import find_object_with_ntiid
 
 CLASS = StandardExternalFields.CLASS
@@ -89,11 +87,6 @@ def render_to_external_ref(resource):
 	interface.alsoProvides(link, ILinkExternalHrefOnly)
 	return render_link(link)
 
-def _get_filename(context, name):
-	result = getattr(context, 'filename', None) or getattr(context, 'name', None) or name
-	result = safe_filename(name_finder(result))
-	return result
-
 def _handle_multipart(context, user, discussion, sources):
 	provided = ICourseDiscussion
 	filer = get_course_filer(context, user)
@@ -104,7 +97,7 @@ def _handle_multipart(context, user, discussion, sources):
 			if location:
 				filer.remove(location)
 			# save a in a new file
-			key = _get_filename(source, name)
+			key = get_safe_source_filename(source, name)
 			location = filer.save(source, key, overwrite=False,
 								  bucket=ASSETS_FOLDER, context=discussion)
 			setattr(discussion, name, location)
