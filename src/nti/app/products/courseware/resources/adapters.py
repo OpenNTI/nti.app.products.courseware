@@ -41,7 +41,7 @@ def course_resources(course, create=True):
 			annotations[KEY] = result
 			result.__name__ = KEY
 			result.__parent__ = course
-	if result.creator is not None:
+	if result is not None and result.creator is None:
 		result.creator = SYSTEM_USER_ID
 	return result
 _course_resources = course_resources
