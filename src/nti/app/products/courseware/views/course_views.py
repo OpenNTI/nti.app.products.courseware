@@ -111,8 +111,11 @@ class CourseOutlineContentsView(AbstractAuthenticatedView):
 		Lesson is available if published or if we're an editor.
 		"""
 		lesson_ntiid = item.LessonOverviewNTIID
-		lesson = find_object_with_ntiid(lesson_ntiid) if lesson_ntiid else None
-		result = self._is_published(lesson, show_unpublished)
+		if not lesson_ntiid:
+			result = True # Legacy outline node or non-content node, allow it.
+		else:
+			lesson = find_object_with_ntiid(lesson_ntiid) if lesson_ntiid else None
+			result = self._is_published(lesson, show_unpublished)
 		return result
 
 	def externalize_node_contents(self, node, include_unpublished=True):
