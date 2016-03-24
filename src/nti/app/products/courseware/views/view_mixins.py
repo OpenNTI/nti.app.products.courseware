@@ -77,7 +77,7 @@ class AbstractRecursiveTransactionHistoryView(AbstractAuthenticatedView,
 			accum.extend( self._get_transactions( node ) )
 			for child in node.values() or ():
 				handle_node( child )
-			lesson_ntiid = getattr(node, 'LessonOverviewNTIID', None)
+			lesson_ntiid = node.LessonOverviewNTIID
 			if lesson_ntiid:
 				lesson_overview = component.queryUtility(INTILessonOverview,
 														name=lesson_ntiid)

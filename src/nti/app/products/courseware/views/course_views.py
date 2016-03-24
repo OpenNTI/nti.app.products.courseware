@@ -101,8 +101,8 @@ class CourseOutlineContentsView(AbstractAuthenticatedView):
 		"""
 		return 		not IPublishable.providedBy(item) \
 				or 	item.is_published() \
-				or	(	show_unpublished
-					and has_permission(nauth.ACT_CONTENT_EDIT, item, self.request))
+				or	(	 show_unpublished
+					 and has_permission(nauth.ACT_CONTENT_EDIT, item, self.request))
 
 	_is_visible = _is_published
 
@@ -110,14 +110,9 @@ class CourseOutlineContentsView(AbstractAuthenticatedView):
 		"""
 		Lesson is available if published or if we're an editor.
 		"""
-		try:
-			lesson_ntiid = item.LessonOverviewNTIID
-		except AttributeError:
-			# Legacy outline node or non-content node, allow it.
-			result = True
-		else:
-			lesson = find_object_with_ntiid(lesson_ntiid)
-			result = self._is_published(lesson, show_unpublished)
+		lesson_ntiid = item.LessonOverviewNTIID
+		lesson = find_object_with_ntiid(lesson_ntiid) if lesson_ntiid else None
+		result = self._is_published(lesson, show_unpublished)
 		return result
 
 	def externalize_node_contents(self, node, include_unpublished=True):

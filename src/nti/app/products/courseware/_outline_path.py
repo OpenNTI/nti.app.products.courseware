@@ -274,7 +274,7 @@ class OutlinePathFactory(object):
 				if getattr( outline_content_node, 'ContentNTIID', None ) == self.target_ntiid:
 					return (self.course_context, outline_content_node)
 				# I don't believe legacy courses have these lessons.
-				lesson_ntiid = getattr(outline_content_node, 'LessonOverviewNTIID', None)
+				lesson_ntiid = outline_content_node.LessonOverviewNTIID
 				if not lesson_ntiid:
 					continue
 
