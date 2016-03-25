@@ -106,9 +106,8 @@ class CourseSourceFiler(object):
 			result.creator = self.username or SYSTEM_USER_ID # set creator
 		return result
 
-	def save(self, source, key, contentType=None, overwrite=False, **kwargs):
+	def save(self, key, source, contentType=None, bucket=None, overwrite=False, **kwargs):
 		username = self.username
-		bucket = kwargs.get('bucket')
 		context = kwargs.get('context')
 		if bucket == ASSETS_FOLDER:
 			bucket = self.assets
@@ -134,6 +133,7 @@ class CourseSourceFiler(object):
 
 		result = to_external_download_oid_href(namedfile)
 		return result
+	write = save
 
 	def get(self, key):
 		result = get_file_from_oid_external_link(key)
@@ -142,6 +142,7 @@ class CourseSourceFiler(object):
 			if course is not self.course: # not the same course
 				result = None
 		return result
+	read = get
 
 	def remove(self, key):
 		result = self.get(key)
