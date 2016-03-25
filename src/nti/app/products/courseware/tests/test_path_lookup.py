@@ -174,23 +174,25 @@ class TestPathLookup(ApplicationLayerTest):
 											'NTIID', 'tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.lec:01.03_LESSON' ))
 
 		# Quiz
+		# Not found in legacy (not indexed?) 3.25.2016.
 		path = '/dataserver2/LibraryPath?objectId=%s' % QUESTION_SET
 		res = self.testapp.get(path, status=expected_status)
-		res = res.json_body
-		if expected_status == 403:
-			self._check_catalog(res)
-		else:
-			assert_that(res, has_length(result_expected_val))
-			res = res[0]
-			assert_that(res, has_length(4))
+		if not is_legacy:
+			res = res.json_body
+			if expected_status == 403:
+				self._check_catalog(res)
+			else:
+				assert_that(res, has_length(result_expected_val))
+				res = res[0]
+				assert_that(res, has_length(4))
 
-			assert_that(res[0], has_entry('Class', 'CourseInstance'))
-			assert_that(res[1], has_entries('Class', 'CourseOutlineContentNode',
-											'NTIID', 'tag:nextthought.com,2011-10:NTI-NTICourseOutlineNode-Fall2015_CS_1323.2.1'))
-			assert_that(res[2], has_entries('Class', 'AssignmentRef',
-											'NTIID', 'tag:nextthought.com,2011-10:OU-NAQ-CS1323_F_2015_Intro_to_Computer_Programming.naq.asg.assignment:Project_1'))
-			assert_that(res[3], has_entries('Class', 'PageInfo',
-											'NTIID', 'tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.project_1_(100_points)'))
+				assert_that(res[0], has_entry('Class', 'CourseInstance'))
+				assert_that(res[1], has_entries('Class', 'CourseOutlineContentNode',
+												'NTIID', 'tag:nextthought.com,2011-10:NTI-NTICourseOutlineNode-Fall2015_CS_1323.2.1'))
+				assert_that(res[2], has_entries('Class', 'AssignmentRef',
+												'NTIID', 'tag:nextthought.com,2011-10:OU-NAQ-CS1323_F_2015_Intro_to_Computer_Programming.naq.asg.assignment:Project_1'))
+				assert_that(res[3], has_entries('Class', 'PageInfo',
+												'NTIID', 'tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.project_1_(100_points)'))
 
 		# Question (returns same)
 		# Not found in legacy, not even catalog.
