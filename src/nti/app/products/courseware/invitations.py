@@ -67,7 +67,7 @@ def send_invitation_email(sender, receiver_name, receiver_email, invitation, req
 		return False
 
 	course = ICourseInstance(find_object_with_ntiid(invitation.course), None)
-	if ICourseInstance.providedBy(course):
+	if not ICourseInstance.providedBy(course):
 		logger.warn("Not sending an invitation email because course could not be found")
 		return False
 
@@ -89,7 +89,9 @@ def send_invitation_email(sender, receiver_name, receiver_email, invitation, req
 		'support_email' : support_email,
 		'course_title': entry.title,
 		'invitation_code' : invitation.code,
-        'today': isodate.date_isoformat(datetime.datetime.now())
+		'invitation_message' : None,
+		'redemption_link': None,
+		'today': isodate.date_isoformat(datetime.datetime.now())
 	}
 	
 	try:

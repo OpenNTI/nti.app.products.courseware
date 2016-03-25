@@ -130,7 +130,11 @@ def get_course_invitation(code):
 	result = component.queryUtility(IJoinCourseInvitation, name=code or '')
 	return result
 
-def get_course_invitations(context):
+def get_all_course_invitations():
+	result = [x for _, x in component.getUtilitiesFor(IJoinCourseInvitation)]
+	return result
+
+def get_invitations_for_course(context):
 	result = {}
 	course = ICourseInstance(context, None)
 	entry = ICourseCatalogEntry(course, None)
@@ -142,9 +146,5 @@ def get_course_invitations(context):
 	return result
 
 def has_course_invitations(context):
-	result = get_course_invitations(context)
+	result = get_invitations_for_course(context)
 	return len(result) >= 1
-
-def get_all_course_invitations():
-	result = [x for _, x in component.getUtilitiesFor(IJoinCourseInvitation)]
-	return result

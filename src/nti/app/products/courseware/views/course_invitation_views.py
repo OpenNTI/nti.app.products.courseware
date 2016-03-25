@@ -32,8 +32,8 @@ from nti.app.products.courseware import MessageFactory as _
 from nti.app.products.courseware.invitations import send_invitation_email
 
 from nti.app.products.courseware.utils import get_course_invitation
-from nti.app.products.courseware.utils import get_course_invitations
 from nti.app.products.courseware.utils import get_all_course_invitations
+from nti.app.products.courseware.utils import get_invitations_for_course
 
 from nti.app.products.courseware.views import SEND_COURSE_INVITATIONS
 from nti.app.products.courseware.views import VIEW_COURSE_INVITATIONS
@@ -91,7 +91,7 @@ class CourseInvitationsView(AbstractAuthenticatedView):
 			raise hexc.HTTPForbidden()
 
 		result = LocatedExternalDict()
-		invitations = get_course_invitations(self._course)
+		invitations = get_invitations_for_course(self._course)
 		items = result[ITEMS] = list(invitations.keys())
 		result['Total'] = result['ItemCount'] = len(items)
 		result.__parent__ = self.context
@@ -128,13 +128,18 @@ class SendCourseInvitationsView(AbstractAuthenticatedView,
 	def get_invitation(self, values):
 		code = values.get('code')
 		if not code:
+			invitations = get_invitations_for_course(self.context)
+			if invitations: # not provided
+				code = tuple(invitations.keys())[0] # pick first
+		if not code:
 			raise hexc.HTTPUnprocessableEntity(_("Must provide a inviation code."))
 		invitation = get_course_invitation(code)
 		if invitation is None:
 			raise hexc.HTTPUnprocessableEntity(_("Invalid inviation code."))
+		return invitation
 
 	def get_direct_users(self, values, warnings=()):
-		usernames = values.get('user') or values.get('username') or values.get('usernames')
+		usernames = values.get('username') or values.get('usernames')
 		if isinstance(usernames, six.string_types):
 			usernames = usernames.split(",")
 		usernames = set(usernames or ())
@@ -145,15 +150,15 @@ class SendCourseInvitationsView(AbstractAuthenticatedView,
 			if not IUser.providedBy(user):
 				msg = translate(_("Could not find user ${user}.", 
 								mapping={'user': username}))
-				warnings.add(msg)
+				warnings.append(msg)
 				continue
 			profile = IUserProfile(user)
-			realname = profile.realname
+			realname = profile.realname or user.username
 			email = getattr(profile, 'email', None)
-			if not email or not realname:
+			if not email:
 				msg = translate(_("User ${user} does not have a valid email.", 
 								mapping={'user': username}))
-				warnings.add(msg)
+				warnings.append(msg)
 				continue
 			result[email] = realname
 		return result
@@ -170,19 +175,23 @@ class SendCourseInvitationsView(AbstractAuthenticatedView,
 				if not realname or not email:
 					msg = translate(_("Missing name or email in line ${line}.", 
 									mapping={'line': idx+1}))
-					warnings.add(msg)
+					warnings.append(msg)
 					continue
 				if not isValidMailAddress(email):
 					msg = translate(_("Invalid email ${email}.", 
 									mapping={'email': email}))
-					warnings.add(msg)
+					warnings.append(msg)
 					continue
 				result[email] = realname
 		return result
 
 	def send_invitations(self, invitation, users):
 		for email, name in users.items():
-			send_invitation_email(self.remoteUser, name, email, invitation, self.request)
+			send_invitation_email(self.remoteUser,
+								  name,
+								  email, 
+								  invitation, 
+								  self.request)
 
 	def __call__(self):
 		if 		not is_course_instructor(self._course, self.remoteUser) \

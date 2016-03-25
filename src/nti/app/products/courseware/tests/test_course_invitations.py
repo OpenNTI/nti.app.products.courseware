@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 from __future__ import print_function, unicode_literals, absolute_import, division
+from nti.dataserver.users.interfaces import IUserProfile
 __docformat__ = "restructuredtext en"
 
 # disable: accessing protected members, too many methods
@@ -31,6 +32,8 @@ from nti.app.products.courseware.tests import PersistentInstructedCourseApplicat
 from nti.app.testing.application_webtest import ApplicationLayerTest
 
 from nti.app.testing.decorators import WithSharedApplicationMockDS
+
+from nti.app.testing.testing import ITestMailDelivery
 
 from nti.dataserver.tests import mock_dataserver
 
@@ -71,4 +74,31 @@ class TestInvitations(ApplicationLayerTest):
 		
 		assert_that(res.json_body, has_entry(ITEMS, has_length(1)))
 		assert_that(res.json_body, has_entry(ITEMS, is_(["CLC3403"])))
+		
+	@WithSharedApplicationMockDS(testapp=True, users=True)
+	def test_send_invitations(self):
+		with mock_dataserver.mock_db_trans(self.ds):
+			user = self._create_user('ichigo')
+			IUserProfile(user).email = 'ichigo@bleach.org'
+			
+		with mock_dataserver.mock_db_trans(self.ds, site_name='platform.ou.edu'):
+			invitiation = JoinCourseInvitation("CLC3403", self.entry_ntiid)
+			component.getGlobalSiteManager().registerUtility(invitiation, 
+															 IJoinCourseInvitation,
+															 "CLC3403")
+			entry = self.catalog_entry()
+			course = ICourseInstance(entry)
+			course_ntiid = to_external_ntiid_oid(course)
+		
+		mailer = component.getUtility(ITestMailDelivery)
+		del mailer.queue[:]
+		
+		environ = self._make_extra_environ(username='harp4162')
+		environ[b'HTTP_ORIGIN'] = b'http://platform.ou.edu'
+		data = {'username':'ichigo', 'code':"CLC3403"}
+		url = '/dataserver2/Objects/%s/SendCourseInvitations' % course_ntiid
+		self.testapp.post_json(url, data, extra_environ=environ, status=204)
+		
+		mailer = component.getUtility(ITestMailDelivery)
+		_ = mailer.queue[0]
 				
