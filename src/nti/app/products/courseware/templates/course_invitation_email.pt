@@ -1,0 +1,259 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+		xmlns:metal="http://xml.zope.org/namespaces/metal"
+		xmlns:tal="http://xml.zope.org/namespaces/tal">
+	<head>
+		<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+		<title>Welcome To NextThought</title>
+
+		<!-- TODO Integrate this into our main css -->
+		<style type="text/css" >
+			body{
+				font-family:"Helvetica Neue", Helvetica, Arial, sans-serif;
+				padding:0px;
+				margin:0px;
+				margin-left: 30px;
+				background-color:white;
+			}
+			#wrapper{
+				width:100%;
+				margin-right:auto;
+			}
+			#wrapper-top{
+				width:100%;
+				margin-top: 0px;
+				margin-bottom: 0px;
+			}
+			#top{
+				padding-top: 15px;
+				padding-bottom: 15px;
+				color: #991b1e;
+				margin-right:auto;
+			}
+			#top p{
+				font-family: Helvetica, Arial, sans-serif;
+				font-size: 14px;
+				line-height: 18px;
+				color: #757474;
+				margin-top: 0px;
+				margin-bottom: 0px;
+			}
+			#banner{width:100%;}
+			tr{
+				vertical-align:top;
+				display:block;
+				border-bottom:solid #e2e5e7 1px;
+				color:#6d7d87;
+				font-weight:bold;
+				font-size:12px;
+				padding-top:11px;
+				padding-bottom:0px;
+				line-height:18px;
+				width: 100%;
+			}
+			tr.noborder {
+				vertical-align:top;
+				display:block;
+				color:#6d7d87;
+				border: 0;
+				border-bottom: 0;
+				font-weight:bold;
+				font-size:12px;
+				padding-top:0px;
+				padding-bottom:0px;
+				line-height:18px;
+				width: 100%;
+			}
+			tr.nested{
+				vertical-align:top;
+				display:block;
+				border-top:solid #e2e5e7 1px;
+				border-bottom:solid #e2e5e7 1px;
+				color:#6d7d87;
+				font-size:12px;
+				padding-top:0px;
+				padding-bottom:0px;
+				line-height:18px;
+				width: 100%;
+			}
+			td.header{
+				font-size:11px;
+			}
+			.wrap {
+			  display: table;
+			  padding:10px;
+			}
+
+			.wrap p {
+			  display: table-cell;
+			  vertical-align: middle;
+			}
+			.course-name{
+				color:#525e65;
+				font-size:16px;
+			}
+			h1{
+				color:#9ea9af;
+				font-weight:300;
+				font-style:italic;
+				font-size:21px;
+				line-height:35px;
+				margin-top:35px;
+				margin-bottom:55px;
+				padding:0px;
+			}
+			a.but{
+				background-color:#3fb3f6;
+				border-style:none;
+				outline:none;
+				border-radius:20px;
+				padding:10px 25px;
+				color:white;
+				font-weight:600;
+				letter-spacing:1px;
+				font-size:14px;
+				font-family:"OpenSans", sans-serif;
+				margin-left:5px;
+				margin-right:5px;
+				display:inline;
+				margin-bottom:15px;
+				text-decoration:none;
+			}
+			.but-cont{
+				margin-bottom:40px;
+				text-align:center;
+			}
+			.topper{
+				margin-top:20px;
+				float: right;
+			}
+			a.outline{
+				background-color:transparent;
+				border-style:2px solid #3fb3f6;
+				border:2px solid #3fb3f6;
+				color:#3fb3f6;
+				text-decoration:none;
+			}
+			a.but:hover{
+				cursor:pointer;
+			}
+			.caption{
+				text-align:center;
+				color:#8c8c8c;
+				font-size:14px;
+				line-height:24px;
+			}
+			.left{
+				color:#8c8c8c;
+				font-size:14px;
+				line-height:24px;
+			}
+			.left strong{
+				color:#3fb3f6;
+			}
+			.caption strong{
+				color:#3fb3f6;
+			}
+			#action{
+				margin-left:auto;
+				margin-right:auto;
+				margin-bottom:30px;
+			}
+			#footer{
+				margin-left:auto;
+				margin-right:auto;
+			}
+			#top-header{
+				margin-left:auto;
+				margin-right:auto;
+			}
+			@media screen and (max-width: 600px){
+				#wrapper{
+						margin-left:auto !important;
+						margin-right:auto;
+				}
+				#wrapper-top{
+						margin-left:auto !important;
+						margin-right:auto;
+				}
+				body{
+					margin-left: 0px;
+				}
+				th,td {
+			   	 padding: 0px;
+				}
+				img.frame{
+					width:100%;
+				}
+				#banner{width:100% !important;
+				}
+				table, th, td {
+		    		border-collapse: collapse;
+				}
+			}
+		</style>
+	</head>
+	<body>
+		<div id="wrapper-top">
+			<div id="top">
+				<p 	class="left" tal:condition="options/header | nothing"
+					tal:content="options/header">Congratulations!</p>
+			</div>
+		</div>
+
+		<div id="crimson-bar" style="background-color: #991b1e; width: 100%; height: 6px;"></div>
+
+		<img class="frame" src="https://d2ixlfeu83tci.cloudfront.net/images/OU-History-email-long.png"
+			alt="NextThought" width="450" height="94">
+		<div id="wrapper">
+
+		<table style="width:100%">
+			<tr>
+				<td class="header">TO:</td>
+				<td tal:condition="options/receiver_name | nothing" tal:content="options/receiver_name">
+					Ichigo Kurozaki 
+				</td>
+			</tr>
+			<tr>
+				<td class="header">FROM:</td>
+				<!-- If there is not a TO address, let them fill in the FROM address manually. -->
+				<td tal:condition="options/receiver_name | nothing" tal:content="options/sender_name">Aizen Sosuke</td>
+			</tr>
+			
+			<tr>
+				<td class="header">INVITATION:</td>
+				<td class="course"><span class="course-name" tal:content="options/course_title | default">
+					Bleach</span><br>An Online Course Presented by NextThought
+				</td>
+			</tr>
+		</table>
+
+		<h1 tal:condition="options/invitation_message" tal:content="options/invitation_message">
+			Congratulations! Enjoy full access to an interactive online course like no other.
+		</h1>
+
+		<h1 tal:condition="not:options/invitation_message">
+			Congratulations! Enjoy full access to an interactive online course like no other.
+		</h1>
+
+		<!-- redeem link -->
+		<div class="but-cont topper" tal:condition="options/redemption_link">
+			<a 	href="https://www.nextthought.com" class="but"
+				tal:attributes="href python: options/redemption_link)">REDEEM NOW
+			</a>
+		</div>
+
+		<p class="caption">
+			<tal:block>
+				<strong>Access Key: <span tal:content="options/invitation_code">UZ6njBPSWtx</span></strong><br>
+			</tal:block>
+			If you feel this email was sent in error, you may email
+			<a href="mailto:support@nextthought.com"
+				tal:attributes="href string:mailto:${options/support_email|default}"
+				tal:content="options/support_email">support@nextthought.com</a>.
+		</p>
+		</div>
+
+	</body>
+</html>
