@@ -101,8 +101,8 @@ class CourseSourceFiler(object):
 		return result
 
 	def get_create_folders(self, parent, name):
-		def builder(name):
-			result = CourseContentFolder(name=name)
+		def builder():
+			result = CourseContentFolder()
 			result.creator = self.username or SYSTEM_USER_ID
 			return result
 		result = mkdirs(parent, name, factory=builder)
