@@ -32,6 +32,8 @@ from nti.app.products.courseware.resources.model import CourseContentFolder
 
 from nti.app.products.courseware.resources.utils import get_assets_folder
 
+from nti.contentfolder.utils import mkdirs
+
 from nti.contenttypes.courses.interfaces import ICourseInstance
 
 from nti.common.random import generate_random_hex_string
@@ -98,22 +100,23 @@ class CourseSourceFiler(object):
 		result = get_assets_folder(self.course)
 		return result
 
-	def get_create_folder(self, parent, name):
-		if name in parent:
-			result = parent[name]
-		else:
-			result = parent[name] = CourseContentFolder(name=name)
-			result.creator = self.username or SYSTEM_USER_ID # set creator
+	def get_create_folders(self, parent, name):
+		def builder(name):
+			result = CourseContentFolder(name=name)
+			result.creator = self.username or SYSTEM_USER_ID
+			return result
+		result = mkdirs(parent, name, factory=builder)
 		return result
+	get_create_folder = get_create_folders
 
 	def save(self, key, source, contentType=None, bucket=None, overwrite=False, **kwargs):
 		username = self.username
 		context = kwargs.get('context')
 		if bucket == ASSETS_FOLDER:
 			bucket = self.assets
-			bucket = self.get_create_folder(bucket, username) if username else bucket
+			bucket = self.get_create_folders(bucket, username) if username else bucket
 		elif bucket:
-			bucket = self.get_create_folder(self.root, bucket)
+			bucket = self.get_create_folders(self.root, bucket)
 		else:
 			bucket = self.root
 
@@ -122,9 +125,9 @@ class CourseSourceFiler(object):
 			bucket.remove(key)
 		else:
 			key = get_unique_file_name(key, bucket)
-		
+
 		namedfile = get_namedfile_from_source(source, key)
-		namedfile.creator = username or SYSTEM_USER_ID# set creator
+		namedfile.creator = username or SYSTEM_USER_ID  # set creator
 		namedfile.contentType = contentType if contentType else namedfile.contentType
 		bucket.add(namedfile)
 
@@ -139,7 +142,7 @@ class CourseSourceFiler(object):
 		result = get_file_from_oid_external_link(key)
 		if result is not None:
 			course = find_interface(result, ICourseInstance, strict=False)
-			if course is not self.course: # not the same course
+			if course is not self.course:  # not the same course
 				result = None
 		return result
 	read = get
