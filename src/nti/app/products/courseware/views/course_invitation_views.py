@@ -29,6 +29,8 @@ from nti.app.externalization.view_mixins import ModeledContentUploadRequestUtils
 
 from nti.app.products.courseware import MessageFactory as _
 
+from nti.app.products.courseware.invitations import send_invitation_email
+
 from nti.app.products.courseware.utils import get_course_invitation
 from nti.app.products.courseware.utils import get_course_invitations
 from nti.app.products.courseware.utils import get_all_course_invitations
@@ -61,10 +63,15 @@ from nti.dataserver.interfaces import IDataserverFolder
 from nti.dataserver.users import User
 from nti.dataserver.users.interfaces import IUserProfile
 
+from nti.externalization.externalization import to_external_object
+
 from nti.externalization.interfaces import LocatedExternalDict
 from nti.externalization.interfaces import StandardExternalFields
 
+from nti.links.links import Link
+
 ITEMS = StandardExternalFields.ITEMS
+LINKS = StandardExternalFields.LINKS
 
 @view_config(context=ICourseInstance)
 @view_defaults(route_name='objects.generic.traversal',
@@ -153,7 +160,7 @@ class SendCourseInvitationsView(AbstractAuthenticatedView,
 		
 	def get_csv_users(self, warnings=()):
 		result = {}
-		source = get_source(self.request, 'csv')
+		source = get_source(self.request, 'csv', 'input')
 		if source is not None:
 			for idx, row in enumerate(csv.reader(source)):
 				if not row or row[0].startswith("#"):
@@ -174,7 +181,8 @@ class SendCourseInvitationsView(AbstractAuthenticatedView,
 		return result
 
 	def send_invitations(self, invitation, users):
-		pass
+		for email, name in users.items():
+			send_invitation_email(self.remoteUser, name, email, invitation, self.request)
 
 	def __call__(self):
 		if 		not is_course_instructor(self._course, self.remoteUser) \
@@ -188,6 +196,10 @@ class SendCourseInvitationsView(AbstractAuthenticatedView,
 		invitation = self.get_invitation(values)
 		csv_users = self.get_csv_users(warnings)
 		if not force and warnings:
+			links = (
+				Link(self.request.path, rel='confirm',
+					 params={'force':True}, method='POST'),
+			)
 			raise_json_error(
 					self.request,
 					hexc.HTTPUnprocessableEntity,
@@ -195,6 +207,7 @@ class SendCourseInvitationsView(AbstractAuthenticatedView,
 						u'warnings':  warnings,
 						u'message': _('There are errors in invitation csv source.') ,
 						u'code': 'SendCourseInvitationCSVError',
+						LINKS: to_external_object(links),
 					},
 					None)
 		
