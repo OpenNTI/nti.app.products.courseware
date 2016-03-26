@@ -117,13 +117,17 @@ class CatalogEntryInvitationsView(CourseInvitationsView):
 @view_config(context=ICourseInstance)
 @view_defaults(route_name='objects.generic.traversal',
 			   renderer='rest',
-			   request_method='POST',
 			   name=ACCEPT_COURSE_INVITATIONS,
 			   permission=nauth.ACT_READ)
 class AcceptCourseInvitationsView(AcceptInvitationsView):
 	
 	def get_invite_codes(self):
-		data = read_body_as_external_object(self.request)
+		if self.request.body:
+			data = read_body_as_external_object(self.request)
+		else:
+			data = self.request.subpath[0] if self.request.subpath else None
+			data = data or self.request.params
+
 		if isinstance(data, Mapping):
 			data = data.get('invitation_codes') or data.get('codes') or data.get('code')
 		if isinstance(data, six.string_types):
@@ -132,6 +136,11 @@ class AcceptCourseInvitationsView(AcceptInvitationsView):
 			raise hexc.HTTPBadRequest()
 		return data
 	
+	def __call__(self):
+		self.request.environ[b'nti.request_had_transaction_side_effects'] = b'True'
+		result = AcceptInvitationsView.__call__(self)
+		return result
+
 @view_config(context=ICourseInstance)
 @view_defaults(route_name='objects.generic.traversal',
 			   renderer='rest',

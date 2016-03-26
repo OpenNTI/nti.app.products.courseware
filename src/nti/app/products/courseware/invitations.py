@@ -12,6 +12,7 @@ logger = __import__('logging').getLogger(__name__)
 import os
 import isodate
 import datetime
+from urlparse import urljoin
 
 from zope import component
 
@@ -21,11 +22,16 @@ from zope.i18n import translate
 
 from nti.app.products.courseware import MessageFactory as _
 
+from nti.app.products.courseware import ACCEPT_COURSE_INVITATIONS
+
 from nti.appserver.policies.interfaces import ISitePolicyUserEventListener
 
 from nti.contenttypes.courses.interfaces import ICourseInstance
 from nti.contenttypes.courses.interfaces import ICourseCatalogEntry
 
+from nti.dataserver.interfaces import IUser
+
+from nti.dataserver.users import User
 from nti.dataserver.users.interfaces import IUserProfile
 
 from nti.externalization.externalization import to_external_object
@@ -60,6 +66,13 @@ def get_template_and_package(entry, base_template, default_package=None):
 		package = default_package
 	return template, package
 
+def get_ds2(request):
+	try:
+		result = request.path_info_peek() if request else None # e.g. /dataserver2
+	except AttributeError:  # in unit test we may see this
+		result = None
+	return result or "dataserver2"
+
 def send_invitation_email(invitation, 
 						  sender, 
 						  receiver_name,
@@ -87,7 +100,18 @@ def send_invitation_email(invitation,
 	user_ext = to_external_object(sender)
 	informal_username = 	user_ext.get('NonI18NFirstName', profile.realname) \
 						or	sender.username
-	
+
+	user = User.get_user(receiver_username) if receiver_username else None
+	if IUser.providedBy(user):
+		app_url = request.application_url
+		url = '/%s/users/%s/%s/%s' % (get_ds2(request),
+								 	  receiver_username,
+								 	  ACCEPT_COURSE_INVITATIONS,
+								 	  invitation.code)
+		redemption_link = urljoin(app_url, url)
+	else:
+		redemption_link = None
+
 	args = {
 		'sender_name' : informal_username,
 		'receiver_name' : receiver_name,
@@ -95,7 +119,7 @@ def send_invitation_email(invitation,
 		'course_title': entry.title,
 		'invitation_code' : invitation.code,
 		'invitation_message' : None,
-		'redemption_link': None,
+		'redemption_link': redemption_link,
 		'today': isodate.date_isoformat(datetime.datetime.now())
 	}
 	
@@ -110,7 +134,8 @@ def send_invitation_email(invitation,
 						request=request,
 						package=package,
 						text_template_extension='.mak')
-	except Exception:
+	except Exception as e:
+		print(e)
 		logger.exception("Cannot send course invitation email to %s", receiver_email)
 		return False
 	return True

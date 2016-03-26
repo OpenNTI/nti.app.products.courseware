@@ -240,7 +240,7 @@
 		<!-- redeem link -->
 		<div class="but-cont topper" tal:condition="options/redemption_link">
 			<a 	href="https://www.nextthought.com" class="but"
-				tal:attributes="href python: options/redemption_link)">REDEEM NOW
+				tal:attributes="href python: options['redemption_link']">ACCEPT NOW
 			</a>
 		</div>
 
