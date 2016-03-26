@@ -13,6 +13,8 @@ import csv
 import six
 from collections import Mapping
 
+from zope import component
+
 from zope.i18n import translate
 
 from z3c.schema.email import isValidMailAddress
@@ -34,6 +36,8 @@ from nti.app.externalization.view_mixins import ModeledContentUploadRequestUtils
 from nti.app.invitations.views import AcceptInvitationsView
 
 from nti.app.products.courseware import MessageFactory as _
+
+from nti.app.products.courseware.interfaces import ICourseInstanceEnrollment
 
 from nti.app.products.courseware.invitations import send_invitation_email
 
@@ -59,6 +63,7 @@ from nti.common.string import TRUE_VALUES
 
 from nti.contenttypes.courses.interfaces import ICourseInstance
 from nti.contenttypes.courses.interfaces import ICourseCatalogEntry
+from nti.contenttypes.courses.interfaces import IJoinCourseInvitation
 
 from nti.contenttypes.courses.utils import is_course_instructor
 	
@@ -76,6 +81,8 @@ from nti.externalization.interfaces import LocatedExternalDict
 from nti.externalization.interfaces import StandardExternalFields
 
 from nti.links.links import Link
+
+from nti.ntiids.ntiids import find_object_with_ntiid
 
 ITEMS = StandardExternalFields.ITEMS
 LINKS = StandardExternalFields.LINKS
@@ -114,7 +121,7 @@ class CourseInvitationsView(AbstractAuthenticatedView):
 class CatalogEntryInvitationsView(CourseInvitationsView):
 	pass
 
-@view_config(context=ICourseInstance)
+@view_config(context=IUser)
 @view_defaults(route_name='objects.generic.traversal',
 			   renderer='rest',
 			   name=ACCEPT_COURSE_INVITATIONS,
@@ -125,8 +132,8 @@ class AcceptCourseInvitationsView(AcceptInvitationsView):
 		if self.request.body:
 			data = read_body_as_external_object(self.request)
 		else:
-			data = self.request.subpath[0] if self.request.subpath else None
-			data = data or self.request.params
+			data = self.request.subpath[0] if self.request.subpath else ''
+			data = self.request.params
 
 		if isinstance(data, Mapping):
 			data = data.get('invitation_codes') or data.get('codes') or data.get('code')
@@ -137,8 +144,20 @@ class AcceptCourseInvitationsView(AcceptInvitationsView):
 		return data
 	
 	def __call__(self):
+		result = LocatedExternalDict()
+		result[ITEMS] = items = []
+		accepted = AcceptInvitationsView._do_call(self) or {}
+		for invitation in accepted.values():
+			if not IJoinCourseInvitation.providedBy(invitation):
+				continue
+			course = find_object_with_ntiid(invitation.course)
+			course = ICourseInstance(course, None)
+			enrollment = component.queryMultiAdapter((course, self.context),
+												 	 ICourseInstanceEnrollment)
+			if enrollment is not None:
+				items.append(enrollment)
+		# make sure we commit
 		self.request.environ[b'nti.request_had_transaction_side_effects'] = b'True'
-		result = AcceptInvitationsView.__call__(self)
 		return result
 
 @view_config(context=ICourseInstance)

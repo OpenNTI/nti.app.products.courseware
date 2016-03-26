@@ -12,6 +12,7 @@ logger = __import__('logging').getLogger(__name__)
 import os
 import isodate
 import datetime
+from urllib import urlencode
 from urlparse import urljoin
 
 from zope import component
@@ -103,12 +104,13 @@ def send_invitation_email(invitation,
 
 	user = User.get_user(receiver_username) if receiver_username else None
 	if IUser.providedBy(user):
-		app_url = request.application_url
-		url = '/%s/users/%s/%s/%s' % (get_ds2(request),
+		params = {'code':invitation.code}
+		query = urlencode(params)
+		url = '/%s/users/%s/%s?%s' % (get_ds2(request),
 								 	  receiver_username,
 								 	  ACCEPT_COURSE_INVITATIONS,
-								 	  invitation.code)
-		redemption_link = urljoin(app_url, url)
+								 	  query)
+		redemption_link = urljoin(request.application_url, url)
 	else:
 		redemption_link = None
 
