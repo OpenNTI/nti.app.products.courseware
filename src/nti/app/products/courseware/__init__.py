@@ -20,6 +20,8 @@ USER_ENROLLMENT_LAST_MODIFIED_KEY = 'nti.app.products.courseware.UserEnrollmentL
 
 SEND_COURSE_INVITATIONS = 'SendCourseInvitations'
 
+ACCEPT_COURSE_INVITATIONS = 'accept-course-invitations'
+
 VIEW_CONTENTS = 'contents'
 VIEW_COURSE_MAIL = 'Mail'
 VIEW_CLASSMATES = 'Classmates'

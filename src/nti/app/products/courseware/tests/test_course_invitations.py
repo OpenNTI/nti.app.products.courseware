@@ -97,8 +97,9 @@ class TestInvitations(ApplicationLayerTest):
 		environ[b'HTTP_ORIGIN'] = b'http://platform.ou.edu'
 		data = {'username':'ichigo', 'code':"CLC3403"}
 		url = '/dataserver2/Objects/%s/SendCourseInvitations' % course_ntiid
-		self.testapp.post_json(url, data, extra_environ=environ, status=204)
-		
+		res = self.testapp.post_json(url, data, extra_environ=environ, status=200)
+		assert_that(res.json_body, has_entry(ITEMS, has_length(1)))
+
 		mailer = component.getUtility(ITestMailDelivery)
 		_ = mailer.queue[0]
 				

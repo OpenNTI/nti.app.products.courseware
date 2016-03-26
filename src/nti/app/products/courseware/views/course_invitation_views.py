@@ -11,6 +11,7 @@ logger = __import__('logging').getLogger(__name__)
 
 import csv
 import six
+from collections import Mapping
 
 from zope.i18n import translate
 
@@ -25,7 +26,12 @@ from nti.app.base.abstract_views import get_source
 from nti.app.base.abstract_views import AbstractAuthenticatedView
 
 from nti.app.externalization.error import raise_json_error
+
+from nti.app.externalization.internalization import read_body_as_external_object
+
 from nti.app.externalization.view_mixins import ModeledContentUploadRequestUtilsMixin
+
+from nti.app.invitations.views import AcceptInvitationsView
 
 from nti.app.products.courseware import MessageFactory as _
 
@@ -37,6 +43,7 @@ from nti.app.products.courseware.utils import get_invitations_for_course
 
 from nti.app.products.courseware.views import SEND_COURSE_INVITATIONS
 from nti.app.products.courseware.views import VIEW_COURSE_INVITATIONS
+from nti.app.products.courseware.views import ACCEPT_COURSE_INVITATIONS
 
 from nti.app.products.courseware.views import CourseAdminPathAdapter
 
@@ -111,6 +118,24 @@ class CatalogEntryInvitationsView(CourseInvitationsView):
 @view_defaults(route_name='objects.generic.traversal',
 			   renderer='rest',
 			   request_method='POST',
+			   name=ACCEPT_COURSE_INVITATIONS,
+			   permission=nauth.ACT_READ)
+class AcceptCourseInvitationsView(AcceptInvitationsView):
+	
+	def get_invite_codes(self):
+		data = read_body_as_external_object(self.request)
+		if isinstance(data, Mapping):
+			data = data.get('invitation_codes') or data.get('codes') or data.get('code')
+		if isinstance(data, six.string_types):
+			data = data.split()
+		if not data:
+			raise hexc.HTTPBadRequest()
+		return data
+	
+@view_config(context=ICourseInstance)
+@view_defaults(route_name='objects.generic.traversal',
+			   renderer='rest',
+			   request_method='POST',
 			   name=SEND_COURSE_INVITATIONS,
 			   permission=nauth.ACT_READ)
 class SendCourseInvitationsView(AbstractAuthenticatedView,
@@ -160,7 +185,7 @@ class SendCourseInvitationsView(AbstractAuthenticatedView,
 								mapping={'user': username}))
 				warnings.append(msg)
 				continue
-			result[email] = realname
+			result[email] = (realname, user.username)
 		return result
 		
 	def get_csv_users(self, warnings=()):
@@ -182,16 +207,21 @@ class SendCourseInvitationsView(AbstractAuthenticatedView,
 									mapping={'email': email}))
 					warnings.append(msg)
 					continue
-				result[email] = realname
+				result[email] = (realname, email)
 		return result
 
 	def send_invitations(self, invitation, users):
-		for email, name in users.items():
-			send_invitation_email(self.remoteUser,
-								  name,
-								  email, 
-								  invitation, 
-								  self.request)
+		result = dict()
+		for email, data in users.items():
+			name, username = data
+			if send_invitation_email(invitation, 
+									 self.remoteUser,
+								 	 name,
+								  	 email,
+								  	 username,
+								     self.request):
+				result[email] = name
+		return result
 
 	def __call__(self):
 		if 		not is_course_instructor(self._course, self.remoteUser) \
@@ -244,9 +274,11 @@ class SendCourseInvitationsView(AbstractAuthenticatedView,
 						u'code': 'SendCourseInvitationError',
 					},
 					None)
-		# send
-		self.send_invitations(invitation, direct_users)
-		return hexc.HTTPNoContent()
+		# send invites
+		sent = self.send_invitations(invitation, direct_users)
+		result = LocatedExternalDict()
+		result[ITEMS] = sent
+		return result
 		
 @view_config(context=IDataserverFolder)
 @view_config(context=CourseAdminPathAdapter)

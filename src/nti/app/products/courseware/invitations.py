@@ -60,7 +60,12 @@ def get_template_and_package(entry, base_template, default_package=None):
 		package = default_package
 	return template, package
 
-def send_invitation_email(sender, receiver_name, receiver_email, invitation, request=None):
+def send_invitation_email(invitation, 
+						  sender, 
+						  receiver_name,
+						  receiver_email, 
+						  receiver_username=None,
+						  request=None):
 
 	if not request or not receiver_email:
 		logger.warn("Not sending an invitation email because of no email or request")
