@@ -25,6 +25,7 @@ from nti.app.products.courseware import ASSETS_FOLDER
 
 from nti.app.products.courseware.resources.interfaces import ICourseRootFolder
 from nti.app.products.courseware.resources.interfaces import ICourseSourceFiler
+from nti.app.products.courseware.resources.interfaces import ICourseContentFolder
 
 from nti.app.products.courseware.resources.model import CourseContentFile
 from nti.app.products.courseware.resources.model import CourseContentImage
@@ -33,6 +34,7 @@ from nti.app.products.courseware.resources.model import CourseContentFolder
 from nti.app.products.courseware.resources.utils import get_assets_folder
 
 from nti.contentfolder.utils import mkdirs
+from nti.contentfolder.utils import traverse
 
 from nti.contenttypes.courses.interfaces import ICourseInstance
 
@@ -154,3 +156,13 @@ class CourseSourceFiler(object):
 			parent.remove(result)
 			return True
 		return False
+
+	def list(self, bucket=None):
+		context = traverse(self.root, bucket) if bucket else self.root
+		return tuple(context.keys())
+
+	def is_bucket(self, bucket):
+		context = traverse(self.root, bucket) if bucket else self.root
+		return ICourseContentFolder.providedBy(context) \
+			or ICourseRootFolder.providedBy(context)
+	isBucket = is_bucket
