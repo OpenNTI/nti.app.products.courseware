@@ -18,6 +18,7 @@ from plone.namedfile.file import getImageInfo
 from slugify import slugify_filename
 
 from nti.app.contentfile import transfer_data
+from nti.app.contentfile import is_oid_external_link
 from nti.app.contentfile import to_external_download_oid_href
 from nti.app.contentfile import get_file_from_oid_external_link
 
@@ -111,7 +112,8 @@ class CourseSourceFiler(object):
 		return result
 	get_create_folder = get_create_folders
 
-	def save(self, key, source, contentType=None, bucket=None, overwrite=False, **kwargs):
+	def save(self, key, source, contentType=None, bucket=None, 
+			 overwrite=False, **kwargs):
 		username = self.username
 		context = kwargs.get('context')
 		if bucket == ASSETS_FOLDER:
@@ -141,12 +143,19 @@ class CourseSourceFiler(object):
 	write = save
 
 	def get(self, key):
-		result = get_file_from_oid_external_link(key)
-		if result is not None:
-			course = find_interface(result, ICourseInstance, strict=False)
-			if course is not self.course:  # not the same course
-				result = None
-		return result
+		if is_oid_external_link(key):
+			result = get_file_from_oid_external_link(key)
+			if result is not None:
+				course = find_interface(result, ICourseInstance, strict=False)
+				if course is not self.course:  # not the same course
+					result = None
+			return result
+		else:
+			path, key = os.path.split(key)
+			context = traverse(self.root, path)
+			if context is not None and key in context:
+				return context[key]
+		return None
 	read = get
 
 	def remove(self, key):
