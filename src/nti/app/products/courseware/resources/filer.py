@@ -125,8 +125,9 @@ class CourseSourceFiler(object):
 			bucket = self.root
 
 		key = safe_filename(key)
-		if overwrite and key in bucket:
-			bucket.remove(key)
+		if overwrite:
+			if key in bucket:
+				bucket.remove(key)
 		else:
 			key = get_unique_file_name(key, bucket)
 
