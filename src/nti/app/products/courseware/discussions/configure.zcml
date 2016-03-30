@@ -37,4 +37,7 @@
 				for="nti.contenttypes.courses.interfaces.ICourseCatalogEntry
 					 pyramid.interfaces.IRequest" />
 
+	<!-- Exporter -->
+	<utility factory=".exporter.CourseDiscussionsExporter" name="discussions" />
+
 </configure>
