@@ -50,7 +50,6 @@ class CourseContentResource(Contained):
 				context = context.__parent__
 			except AttributeError:
 				break
-		result.append('/')
 		result.reverse()
 		return '/'.join(result)
 
