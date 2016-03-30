@@ -142,7 +142,6 @@ class CourseSourceFiler(object):
 
 		result = to_external_file_link(namedfile, self.oid)
 		return result
-	write = save
 
 	def get(self, key):
 		if is_internal_file_link(key):
@@ -158,7 +157,6 @@ class CourseSourceFiler(object):
 			if context is not None and key in context:
 				return context[key]
 		return None
-	read = get
 
 	def remove(self, key):
 		result = self.get(key)

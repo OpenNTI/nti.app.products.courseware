@@ -9,6 +9,8 @@ __docformat__ = "restructuredtext en"
 
 logger = __import__('logging').getLogger(__name__)
 
+from zope import interface
+
 from nti.cabinet.interfaces import ISourceFiler
 
 from nti.contentfile.interfaces import IContentBlobFile
@@ -17,17 +19,24 @@ from nti.contentfile.interfaces import IContentBlobImage
 from nti.contentfolder.interfaces import IRootFolder
 from nti.contentfolder.interfaces import IContentFolder
 
+from nti.schema.field import ValidTextLine
+
 class ICourseRootFolder(IRootFolder):
-    pass
+	pass
 
 class ICourseContentFolder(IContentFolder):
-    pass
+	pass
 
-class ICourseContentFile(IContentBlobFile):
-    pass
+class ICourseContentResource(interface.Interface):
 
-class ICourseContentImage(IContentBlobImage):
-    pass
+	path = ValidTextLine(title="the abs path to this resource",
+                         required=False, readonly=True)
+
+class ICourseContentFile(IContentBlobFile, ICourseContentResource):
+	pass
+
+class ICourseContentImage(IContentBlobImage, ICourseContentResource):
+	pass
 
 class ICourseSourceFiler(ISourceFiler):
-    pass
+	pass
