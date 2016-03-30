@@ -51,7 +51,9 @@ class CourseContentResource(Contained):
 			except AttributeError:
 				break
 		result.reverse()
-		return '/'.join(result)
+		result = '/'.join(result)
+		result = '/' + result if not result.startswith('/' ) else result
+		return result
 
 @interface.implementer(ICourseContentFile)
 class CourseContentFile(ContentBlobFile, CourseContentResource):
