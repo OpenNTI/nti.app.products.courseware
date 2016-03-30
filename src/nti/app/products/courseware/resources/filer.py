@@ -36,6 +36,7 @@ from nti.app.products.courseware.resources.utils import get_file_from_external_l
 
 from nti.contentfolder.utils import mkdirs
 from nti.contentfolder.utils import traverse
+from nti.contentfolder.utils import TraversalException
 
 from nti.contenttypes.courses.interfaces import ICourseInstance
 
@@ -166,6 +167,17 @@ class CourseSourceFiler(object):
 			return True
 		return False
 
+	def contains(self, key, bucket=None):
+		if is_internal_file_link(key):
+			result = self.get(key) is not None
+		else:
+			try:
+				context = traverse(self.root, bucket) if bucket else self.root
+				result = key in context
+			except TraversalException:
+				result = False
+		return result
+	
 	def list(self, bucket=None):
 		context = traverse(self.root, bucket) if bucket else self.root
 		return tuple(context.keys())
