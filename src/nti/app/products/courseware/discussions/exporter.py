@@ -19,6 +19,9 @@ from nti.app.products.courseware.utils.exporter import save_resources_to_filer
 
 from nti.contenttypes.courses.discussions.interfaces import ICourseDiscussions
 
+from nti.contenttypes.courses.interfaces import SECTIONS
+from nti.contenttypes.courses.interfaces import DISCUSSIONS
+
 from nti.contenttypes.courses.interfaces import ICourseInstance
 from nti.contenttypes.courses.interfaces import ICourseSubInstance
 from nti.contenttypes.courses.interfaces import ICourseSectionExporter
@@ -36,20 +39,20 @@ class CourseDiscussionsExporter(object):
 	def export(self, context, filer):
 		course = ICourseInstance(context)
 		if ICourseSubInstance.providedBy(course):
-			bucket = "Sections/%s/Discussions" % course.__name__
+			bucket = "%s/%s/%s" % (SECTIONS, course.__name__, DISCUSSIONS)
 		else:
-			bucket = "Discussions"
-			
+			bucket = DISCUSSIONS
+
 		discussions = ICourseDiscussions(course)
 		for name, discussion in list(discussions.items()):
 			# export to json
 			source = StringIO()
-			ext_obj = to_external_object(discussion,  decorate=False)
+			ext_obj = to_external_object(discussion, decorate=False)
 			self._process_resources(discussion, ext_obj, filer)
 			simplejson.dump(ext_obj, source, indent=4)
 			source.seek(0)
 			# save in filer
-			filer.save(name, source, contentType="text/json", 
+			filer.save(name, source, contentType="text/json",
 				   	   bucket=bucket, overwrite=True)
 		# save outlines for subinstances
 		for sub_instance in get_course_subinstances(course):
