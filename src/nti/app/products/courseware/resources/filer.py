@@ -18,9 +18,6 @@ from plone.namedfile.file import getImageInfo
 from slugify import slugify_filename
 
 from nti.app.contentfile import transfer_data
-from nti.app.contentfile import is_oid_external_link
-from nti.app.contentfile import to_external_download_oid_href
-from nti.app.contentfile import get_file_from_oid_external_link
 
 from nti.app.products.courseware import ASSETS_FOLDER
 
@@ -33,6 +30,9 @@ from nti.app.products.courseware.resources.model import CourseContentImage
 from nti.app.products.courseware.resources.model import CourseContentFolder
 
 from nti.app.products.courseware.resources.utils import get_assets_folder
+from nti.app.products.courseware.resources.utils import is_internal_file_link
+from nti.app.products.courseware.resources.utils import to_external_file_link
+from nti.app.products.courseware.resources.utils import get_file_from_external_link
 
 from nti.contentfolder.utils import mkdirs
 from nti.contentfolder.utils import traverse
@@ -84,7 +84,8 @@ def get_namedfile_from_source(source, name):
 @interface.implementer(ICourseSourceFiler)
 class CourseSourceFiler(object):
 
-	def __init__(self, context=None, user=None):
+	def __init__(self, context=None, user=None, oid=True):
+		self.oid = oid
 		self.user = user
 		self.course = ICourseInstance(context)
 
@@ -139,13 +140,13 @@ class CourseSourceFiler(object):
 		if context is not None:
 			namedfile.add_association(context)
 
-		result = to_external_download_oid_href(namedfile)
+		result = to_external_file_link(namedfile, self.oid)
 		return result
 	write = save
 
 	def get(self, key):
-		if is_oid_external_link(key):
-			result = get_file_from_oid_external_link(key)
+		if is_internal_file_link(key):
+			result = get_file_from_external_link(key)
 			if result is not None:
 				course = find_interface(result, ICourseInstance, strict=False)
 				if course is not self.course:  # not the same course

@@ -11,6 +11,14 @@ logger = __import__('logging').getLogger(__name__)
 
 from nti.app.base.abstract_views import get_source_filer
 
+from nti.app.contentfile.view_mixins import is_oid_external_link
+from nti.app.contentfile.view_mixins import to_external_download_oid_href
+from nti.app.contentfile.view_mixins import get_file_from_oid_external_link
+
+from nti.app.contentfolder.utils import is_cf_io_href
+from nti.app.contentfolder.utils import to_external_cf_io_href
+from nti.app.contentfolder.utils import get_file_from_cf_io_url
+
 from nti.app.products.courseware import ASSETS_FOLDER
 
 from nti.app.products.courseware.resources.interfaces import ICourseRootFolder
@@ -47,4 +55,24 @@ def get_assets_folder(context, strict=True):
 def get_course_filer(context, user=None, strict=False):
 	course = get_course(context, strict=strict)
 	result = get_source_filer(course, user, ICourseSourceFiler)
+	return result
+
+def is_internal_file_link(link):
+	result = is_oid_external_link(link) or is_cf_io_href(link)
+	return result
+
+def get_file_from_external_link(link):
+	if is_oid_external_link(link):
+		result = get_file_from_oid_external_link(link)
+	elif is_cf_io_href(link):
+		result = get_file_from_cf_io_url(link)
+	else:
+		result = None
+	return result
+
+def to_external_file_link(context, oid=True):
+	if oid:
+		result = to_external_download_oid_href(context)
+	else:
+		result = to_external_cf_io_href(context)
 	return result
