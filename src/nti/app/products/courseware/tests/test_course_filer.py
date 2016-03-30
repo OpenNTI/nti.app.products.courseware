@@ -18,9 +18,9 @@ from StringIO import StringIO
 
 from zope import component
 
-from nti.app.contentfile import is_oid_external_link
-
 from nti.app.products.courseware.resources.interfaces import ICourseSourceFiler
+
+from nti.app.products.courseware.resources.utils import is_internal_file_link
 
 from nti.contenttypes.courses.interfaces import ICourseCatalog
 from nti.contenttypes.courses.interfaces import ICourseInstance
@@ -58,7 +58,7 @@ class TestCourseFiler(ApplicationLayerTest):
 			source = StringIO("<ichigo/>")
 			href = filer.save("ichigo.xml", source, contentType="text/xml",
 							  overwrite=True)
-			assert_that(is_oid_external_link(href), is_(True))
+			assert_that(is_internal_file_link(href), is_(True))
 
 			obj = filer.get(href)
 			assert_that(filer, is_(not_none()))
@@ -68,7 +68,7 @@ class TestCourseFiler(ApplicationLayerTest):
 			source = StringIO("<ichigo/>")
 			href = filer.save("ichigo.xml", source, contentType="text/xml",
 							  overwrite=True, bucket="bleach/shikai")
-			assert_that(is_oid_external_link(href), is_(True))
+			assert_that(is_internal_file_link(href), is_(True))
 
 			obj = filer.get("/bleach/shikai/ichigo.xml")
 			assert_that(filer, is_(not_none()))

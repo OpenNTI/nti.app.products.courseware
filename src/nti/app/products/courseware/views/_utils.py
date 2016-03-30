@@ -9,7 +9,11 @@ __docformat__ = "restructuredtext en"
 
 logger = __import__('logging').getLogger(__name__)
 
+import six
+
 from zope.component.hooks import getSite
+
+from pyramid import httpexceptions as hexc
 
 from nti.app.products.courseware.utils import encode_keys
 from nti.app.products.courseware.utils import memcache_get
@@ -21,12 +25,22 @@ from nti.assessment.interfaces import IQSurvey
 from nti.assessment.interfaces import IQAssignment
 from nti.assessment.interfaces import IQuestionSet
 
+from nti.common.string import TRUE_VALUES
+
 from nti.contentlibrary.indexed_data import get_library_catalog
 
 from nti.contenttypes.courses.interfaces import ICourseInstance
 from nti.contenttypes.courses.interfaces import ICourseCatalogEntry
 from nti.contenttypes.courses.interfaces import ICourseAssignmentCatalog
 from nti.contenttypes.courses.interfaces import ICourseAssessmentItemCatalog
+
+from nti.contenttypes.courses.legacy_catalog import ILegacyCourseInstance
+
+from nti.dataserver.interfaces import IUser
+
+from nti.dataserver.users import User
+
+from nti.ntiids.ntiids import find_object_with_ntiid
 
 from nti.site.site import get_component_hierarchy_names
 
@@ -158,3 +172,46 @@ def _get_containers_in_course(context):
 		containers = _do_get_containers_in_course(context)
 		memcache_set(key, containers)
 	return containers
+
+def _tx_string(s):
+	if s and isinstance(s, unicode):
+		s = s.encode('utf-8')
+	return s
+
+def _parse_user(values):
+	username = values.get('username') or values.get('user')
+	if not username:
+		raise hexc.HTTPUnprocessableEntity(detail='No username')
+
+	user = User.get_user(username)
+	if not user or not IUser.providedBy(user):
+		raise hexc.HTTPUnprocessableEntity(detail='User not found')
+
+	return username, user
+
+def _parse_courses(values):
+	# get validate course entry
+	ntiids = values.get('ntiid') or values.get('ntiids')
+	if not ntiids:
+		raise hexc.HTTPUnprocessableEntity(detail='No course entry identifier')
+
+	if isinstance(ntiids, six.string_types):
+		ntiids = ntiids.split()
+
+	result = []
+	for ntiid in ntiids:
+		context = find_object_with_ntiid(ntiid)
+		if not ILegacyCourseInstance.providedBy(context):
+			context = ICourseCatalogEntry(context, None)
+		if context is not None:
+			result.append(context)
+	return result
+
+def _parse_course(values):
+	result = _parse_courses(values)
+	if not result:
+		raise hexc.HTTPUnprocessableEntity(detail='Course not found')
+	return result[0]
+
+def is_true(s):
+	return s and s.lower() in TRUE_VALUES

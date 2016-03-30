@@ -23,6 +23,7 @@ from zope import component
 from zope.intid.interfaces import IIntIds
 
 from zope.security.interfaces import IPrincipal
+
 from zope.security.management import endInteraction
 from zope.security.management import restoreInteraction
 
@@ -37,24 +38,28 @@ from pyramid.view import view_defaults
 from nti.app.base.abstract_views import AbstractAuthenticatedView
 
 from nti.app.externalization.internalization import read_body_as_external_object
+
 from nti.app.externalization.view_mixins import ModeledContentUploadRequestUtilsMixin
 
 from nti.app.products.courseware.interfaces import ICoursesWorkspace
 
 from nti.app.products.courseware.utils.migrator import course_migrator
 
+from nti.app.products.courseware.views import CourseAdminPathAdapter
+
+from nti.app.products.courseware.views._utils import is_true
+from nti.app.products.courseware.views._utils import _tx_string
+from nti.app.products.courseware.views._utils import _parse_user
+from nti.app.products.courseware.views._utils import _parse_course
+
 from nti.app.products.courseware.views.catalog_views import get_enrollments
 from nti.app.products.courseware.views.catalog_views import do_course_enrollment
-
-from nti.app.products.courseware.views import CourseAdminPathAdapter
 
 from nti.appserver.workspaces.interfaces import IUserService
 
 from nti.common.maps import CaseInsensitiveDict
 
 from nti.common.property import Lazy
-
-from nti.common.string import TRUE_VALUES
 
 from nti.contenttypes.courses import get_enrollment_catalog
 
@@ -78,8 +83,6 @@ from nti.contenttypes.courses.interfaces import ICourseInstance
 from nti.contenttypes.courses.interfaces import ICourseEnrollmentManager
 from nti.contenttypes.courses.interfaces import ICourseInstanceEnrollmentRecord
 
-from nti.contenttypes.courses.legacy_catalog import ILegacyCourseInstance
-
 from nti.contenttypes.courses.utils import drop_any_other_enrollments
 from nti.contenttypes.courses.utils import is_instructor_in_hierarchy
 
@@ -93,56 +96,11 @@ from nti.dataserver.users.interfaces import IUserProfile
 from nti.externalization.interfaces import LocatedExternalDict
 from nti.externalization.interfaces import StandardExternalFields
 
-from nti.ntiids.ntiids import find_object_with_ntiid
-
 from nti.site.site import get_component_hierarchy_names
 
 ITEMS = StandardExternalFields.ITEMS
 
 # HELPER admin views
-
-def _tx_string(s):
-	if s and isinstance(s, unicode):
-		s = s.encode('utf-8')
-	return s
-
-def _parse_user(values):
-	username = values.get('username') or values.get('user')
-	if not username:
-		raise hexc.HTTPUnprocessableEntity(detail='No username')
-
-	user = User.get_user(username)
-	if not user or not IUser.providedBy(user):
-		raise hexc.HTTPUnprocessableEntity(detail='User not found')
-
-	return username, user
-
-def _parse_courses(values):
-	# get validate course entry
-	ntiids = values.get('ntiid') or values.get('ntiids')
-	if not ntiids:
-		raise hexc.HTTPUnprocessableEntity(detail='No course entry identifier')
-
-	if isinstance(ntiids, six.string_types):
-		ntiids = ntiids.split()
-
-	result = []
-	for ntiid in ntiids:
-		context = find_object_with_ntiid(ntiid)
-		if not ILegacyCourseInstance.providedBy(context):
-			context = ICourseCatalogEntry(context, None)
-		if context is not None:
-			result.append(context)
-	return result
-
-def _parse_course(values):
-	result = _parse_courses(values)
-	if not result:
-		raise hexc.HTTPUnprocessableEntity(detail='Course not found')
-	return result[0]
-
-def is_true(s):
-	return s and s.lower() in TRUE_VALUES
 
 class AbstractCourseEnrollView(AbstractAuthenticatedView,
 							   ModeledContentUploadRequestUtilsMixin):
