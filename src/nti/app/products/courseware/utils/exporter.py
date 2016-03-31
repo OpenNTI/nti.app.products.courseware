@@ -37,7 +37,7 @@ def save_resources_to_filer(provided, obj, filer, ext_obj=None):
 			# get resource
 			resource = get_file_from_external_link(value)
 			contentType = resource.contentType
-			if ICourseContentResource.providedBy(resource):
+			if ICourseContentResource.providedBy(resource) and hasattr(resource, 'path'):
 				path = resource.path
 				path = os.path.split(path)[0]  # remove resource name
 				path = path[1:] if path.startswith('/') else path
