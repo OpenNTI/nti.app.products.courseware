@@ -271,21 +271,25 @@ class OutlinePathFactory(object):
 		for outline_node in outline.values():
 			for outline_content_node in outline_node.values():
 
-				if getattr( outline_content_node, 'ContentNTIID', None ) == self.target_ntiid:
-					return (self.course_context, outline_content_node)
+				content_ntiid = getattr( outline_content_node, 'ContentNTIID', None )
+				if content_ntiid == self.target_ntiid:
+					return (self.course_context, outline_content_node, self.target_obj)
 				# I don't believe legacy courses have these lessons.
 				lesson_ntiid = outline_content_node.LessonOverviewNTIID
-				if not lesson_ntiid:
-					continue
+				lesson_overview = None
+				if lesson_ntiid:
+					lesson_overview = component.queryUtility(INTILessonOverview,
+															name=lesson_ntiid)
 
-				lesson_overview = component.queryUtility(INTILessonOverview,
-														name=lesson_ntiid)
-				if lesson_overview is None:
-					continue
-
-				results = self._lesson_overview_contains_target(outline_content_node,
-																lesson_overview)
-				if results is not None:
-					return results
+				if lesson_overview is not None:
+					results = self._lesson_overview_contains_target(outline_content_node,
+																	lesson_overview)
+					if results is not None:
+						return results
+				# Legacy courses; try looking in unit
+				if content_ntiid != lesson_ntiid:
+					unit = find_object_with_ntiid( content_ntiid )
+					if unit and self.target_ntiid in unit.embeddedContainerNTIIDs:
+						return (self.course_context, outline_content_node, self.target_obj)
 		return (self.course_context,)
 

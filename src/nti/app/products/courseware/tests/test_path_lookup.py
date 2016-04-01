@@ -406,5 +406,7 @@ class TestPathLookup(ApplicationLayerTest):
 		"""
 		self._enroll()
 		mock_get_context.is_callable().returns(())
+		# TODO: We should test if lesson_overview is none (via fudging).
+		# and remove legacy code in library_views.py
 		self._do_cs1323_path_lookup(is_legacy=True)
 		self._do_clc_path_lookup()
