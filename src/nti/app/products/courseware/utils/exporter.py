@@ -11,6 +11,7 @@ logger = __import__('logging').getLogger(__name__)
 
 import os
 import six
+from urlparse import urlparse
 
 from nti.app.products.courseware import ASSETS_FOLDER
 
@@ -18,6 +19,8 @@ from nti.app.products.courseware.resources.interfaces import ICourseContentResou
 
 from nti.app.products.courseware.resources.utils import is_internal_file_link
 from nti.app.products.courseware.resources.utils import get_file_from_external_link
+
+from nti.common import mimetypes
 
 from nti.contenttypes.courses.interfaces import NTI_COURSE_FILE_SCHEME
 
@@ -51,4 +54,32 @@ def save_resources_to_filer(provided, obj, filer, ext_obj=None):
 			result[name] = internal
 			if ext_obj is not None:
 				ext_obj[name] = internal
+	return result
+
+def transfer_resources_from_filer(provided, obj, source_filer, target_filer):
+	"""
+	parse the provided interface field and look for internal resources to
+	be gotten from the specified source filer and saved to the target filer
+	"""
+	result = {}
+	for name in provided:
+		if name.startswith('_'):
+			continue
+		value = getattr(obj, name, None)
+		if 	value is not None \
+			and isinstance(value, six.string_types) \
+			and value.startswith(NTI_COURSE_FILE_SCHEME):
+
+			path = urlparse(value).path
+			bucket, name = os.path.split(path)
+			bucket = None if not bucket else bucket
+			
+			source  = source_filer.get(path)
+			contentType = getattr(source, 'contentType', None) or mimetypes.guess_type(name)
+			if source is not None:
+				href = target_filer.save(name, source, bucket=bucket, 
+										 contentType=contentType,
+								  		 overwrite=True)
+				setattr(obj, name, href)
+				result[name] = href
 	return result
