@@ -43,28 +43,31 @@ def _export(ntiid, path=None, site=None):
 	# prepare source filer
 	filer = ICourseExportFiler(course)
 	filer.prepare()
-	
+
 	# export course
 	exporter = component.getUtility(ICourseExporter)
 	exporter.export(course, filer)
 
 	# zip contents
 	zip_file = filer.asZip(path=path)
-	filename = os.path.split(zip_file)[1]
-		
+
 	# remove all content
 	filer.reset()
-	return filename
+
+	logger.info("Course exported to %s", zip_file)
+	return zip_file
 
 def main():
 	arg_parser = argparse.ArgumentParser(description="Export a course")
-	arg_parser.add_argument('ntiid', help="Course NTIID")
 	arg_parser.add_argument('-v', '--verbose', help="Be verbose", action='store_true',
 							dest='verbose')
 	arg_parser.add_argument('-p', '--path',
 							dest='path',
 							help="Output path")
-	arg_parser.add_argument('--site',
+	arg_parser.add_argument('-n', '--ntiid',
+							dest='ntiid',
+							help="Course NTIID")
+	arg_parser.add_argument('-s', '--site',
 							dest='site',
 							help="Application SITE.")
 	args = arg_parser.parse_args()
@@ -77,8 +80,11 @@ def main():
 	ntiid = args.ntiid
 	path = args.path or os.getcwd()
 
+	if not ntiid:
+		raise ValueError("No course specified")
+
 	if not site:
-		raise ValueError("not site specified")
+		raise ValueError("No site specified")
 
 	context = create_context(env_dir, with_library=True)
 	conf_packages = ('nti.appserver',)
