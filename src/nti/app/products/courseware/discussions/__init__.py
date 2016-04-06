@@ -262,7 +262,10 @@ def create_topics(discussion):
 	# get/decode topic name
 	name = get_topic_key(discussion)
 	title = discussion.title
-	title = title.decode('utf-8', 'ignore') if title else u''
+	if not title:
+		title = u''
+	elif not isinstance(title, unicode):
+		title = title.decode('utf-8', 'ignore')
 
 	def _set_post(post, title, content):
 		post.title = title
