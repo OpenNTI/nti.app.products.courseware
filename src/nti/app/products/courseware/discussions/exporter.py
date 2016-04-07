@@ -9,10 +9,6 @@ __docformat__ = "restructuredtext en"
 
 logger = __import__('logging').getLogger(__name__)
 
-from StringIO import StringIO
-
-import simplejson
-
 from zope import interface
 
 from nti.app.products.courseware.utils.exporter import save_resources_to_filer
@@ -20,6 +16,8 @@ from nti.app.products.courseware.utils.exporter import save_resources_to_filer
 from nti.contenttypes.courses.discussions.parser import path_to_discussions
 
 from nti.contenttypes.courses.discussions.interfaces import ICourseDiscussions
+
+from nti.contenttypes.courses.exporter import BaseSectionExporter
 
 from nti.contenttypes.courses.interfaces import ICourseInstance
 from nti.contenttypes.courses.interfaces import ICourseSectionExporter
@@ -29,7 +27,7 @@ from nti.contenttypes.courses.utils import get_course_subinstances
 from nti.externalization.externalization import to_external_object
 
 @interface.implementer(ICourseSectionExporter)
-class CourseDiscussionsExporter(object):
+class CourseDiscussionsExporter(BaseSectionExporter):
 
 	def _process_resources(self, discussion, ext_obj, filer):
 		save_resources_to_filer(ICourseDiscussions, discussion, filer, ext_obj)
@@ -39,14 +37,10 @@ class CourseDiscussionsExporter(object):
 		bucket = path_to_discussions(course)
 		discussions = ICourseDiscussions(course)
 		for name, discussion in list(discussions.items()):
-			# export to json
-			source = StringIO()
 			ext_obj = to_external_object(discussion, decorate=False)
 			self._process_resources(discussion, ext_obj, filer)
-			simplejson.dump(ext_obj, source, indent=4)
-			source.seek(0)
-			# save in filer
-			filer.save(name, source, contentType="text/json",
+			source = self.dump(ext_obj)
+			filer.save(name, source, contentType="application/json",
 				   	   bucket=bucket, overwrite=True)
 		# save outlines for subinstances
 		for sub_instance in get_course_subinstances(course):
