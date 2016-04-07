@@ -17,13 +17,11 @@ from zope import interface
 
 from nti.app.products.courseware.utils.exporter import save_resources_to_filer
 
+from nti.contenttypes.courses.discussions.parser import path_to_discussions
+
 from nti.contenttypes.courses.discussions.interfaces import ICourseDiscussions
 
-from nti.contenttypes.courses.interfaces import SECTIONS
-from nti.contenttypes.courses.interfaces import DISCUSSIONS
-
 from nti.contenttypes.courses.interfaces import ICourseInstance
-from nti.contenttypes.courses.interfaces import ICourseSubInstance
 from nti.contenttypes.courses.interfaces import ICourseSectionExporter
 
 from nti.contenttypes.courses.utils import get_course_subinstances
@@ -38,11 +36,7 @@ class CourseDiscussionsExporter(object):
 
 	def export(self, context, filer):
 		course = ICourseInstance(context)
-		if ICourseSubInstance.providedBy(course):
-			bucket = "%s/%s/%s" % (SECTIONS, course.__name__, DISCUSSIONS)
-		else:
-			bucket = DISCUSSIONS
-
+		bucket = path_to_discussions(course)
 		discussions = ICourseDiscussions(course)
 		for name, discussion in list(discussions.items()):
 			# export to json
