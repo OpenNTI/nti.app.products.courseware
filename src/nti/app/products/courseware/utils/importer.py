@@ -36,8 +36,9 @@ def transfer_resources_from_filer(provided, obj, source_filer, target_filer):
 			bucket = None if not bucket else bucket
 			
 			source  = source_filer.get(path)
-			contentType = getattr(source, 'contentType', None) or mimetypes.guess_type(name)
 			if source is not None:
+				contentType = getattr(source, 'contentType', None)
+				contentType = contentType or mimetypes.guess_type(name)
 				href = target_filer.save(name, source, bucket=bucket, 
 										 contentType=contentType,
 								  		 overwrite=True)
