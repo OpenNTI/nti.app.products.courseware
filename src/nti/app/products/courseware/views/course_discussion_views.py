@@ -55,9 +55,8 @@ from nti.contenttypes.courses.discussions.interfaces import NTI_COURSE_BUNDLE
 from nti.contenttypes.courses.discussions.interfaces import ICourseDiscussion
 from nti.contenttypes.courses.discussions.interfaces import ICourseDiscussions
 
-from nti.contenttypes.courses.discussions.parser import path_to_course
+from nti.contenttypes.courses.discussions.parser import path_to_discussions
 
-from nti.contenttypes.courses.interfaces import DISCUSSIONS
 from nti.contenttypes.courses.interfaces import ICourseInstance
 from nti.contenttypes.courses.interfaces import ICourseCatalogEntry
 from nti.contenttypes.courses.interfaces import ICourseInstancePublicScopedForum
@@ -171,8 +170,9 @@ class CourseDiscussionsPostView(UGDPostView):
 
 		# set a proper NTI course bundle id
 		course = ICourseInstance(self.context)
-		path = os.path.join(path_to_course(course.root), DISCUSSIONS)
-		iden = "%s://%s" % (NTI_COURSE_BUNDLE, os.path.join(path, name))
+		path = path_to_discussions(course)
+		path = os.path.join(path, name)
+		iden = "%s://%s" % (NTI_COURSE_BUNDLE, path)
 		discussion.id = iden
 
 		# add discussion
