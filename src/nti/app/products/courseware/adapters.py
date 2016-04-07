@@ -56,13 +56,16 @@ from nti.contenttypes.courses.interfaces import IContentCourseInstance
 from nti.contenttypes.courses.interfaces import INonPublicCourseInstance
 from nti.contenttypes.courses.interfaces import ICourseInstanceEnrollmentRecord
 
-from nti.contenttypes.courses.utils import is_course_editor
 from nti.contenttypes.courses.utils import get_enrollment_catalog
 from nti.contenttypes.courses.utils import get_course_subinstances
 from nti.contenttypes.courses.utils import is_course_instructor as is_instructor # BWC
 from nti.contenttypes.courses.utils import content_unit_to_courses as indexed_content_unit_to_courses
 
 from nti.contenttypes.presentation.interfaces import IPresentationAsset
+
+from nti.dataserver.authorization import ACT_CONTENT_EDIT
+
+from nti.dataserver.authorization_acl import has_permission
 
 from nti.dataserver.contenttypes.forums.interfaces import IPost
 from nti.dataserver.contenttypes.forums.interfaces import ITopic
@@ -214,7 +217,7 @@ def _get_valid_course_context(course_contexts):
 			if _is_catalog_entry_visible( course_context ):
 				catalog_entries.append(course_context)
 		elif 	not _is_user_enrolled(user, course_context) \
-			and not is_course_editor(course_context, user):
+			and not has_permission(ACT_CONTENT_EDIT, course_context, user):
 			# Not enrolled and not an editor, get catalog entry.
 			catalog_entry = ICourseCatalogEntry(course_context, None)
 			# We only want to add publicly available entries.
