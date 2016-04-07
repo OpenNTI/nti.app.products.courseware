@@ -180,10 +180,12 @@ class CourseSourceFiler(object):
 	
 	def list(self, bucket=None):
 		context = traverse(self.root, bucket) if bucket else self.root
-		return tuple(context.keys())
+		path = context.path or u'/'
+		result = tuple(os.path.join(path, name) for name in context.keys())
+		return result
 
 	def is_bucket(self, bucket):
 		context = traverse(self.root, bucket) if bucket else self.root
-		return ICourseContentFolder.providedBy(context) \
-			or ICourseRootFolder.providedBy(context)
+		return 		ICourseContentFolder.providedBy(context) \
+				or	ICourseRootFolder.providedBy(context)
 	isBucket = is_bucket
