@@ -38,6 +38,10 @@
 					 pyramid.interfaces.IRequest" />
 
 	<!-- Exporter -->
-	<utility factory=".exporter.CourseDiscussionsExporter" name="020:Discussions" />
+	<utility factory=".exporter.CourseDiscussionsExporter" name="020:Course_Discussions" />
 
+	<!-- Importer -->
+	<!-- Ideally course discussions should be imported after vendor info -->
+	<utility factory=".importer.CourseDiscussionsImporter" name="999:Course_Discussions" />
+		
 </configure>
