@@ -23,6 +23,8 @@ def transfer_resources_from_filer(provided, obj, source_filer, target_filer):
 	be gotten from the specified source filer and saved to the target filer
 	"""
 	result = {}
+	if source_filer is target_filer:
+		return result
 	for name in provided:
 		if name.startswith('_'):
 			continue
