@@ -308,6 +308,22 @@ class IClassmatesSuggestedContactsProvider(ISuggestedContactsProvider):
 		return classmates/contacts suggestions by course
 		"""
 
+# Email options
+
+class ICourseEnrollmentEmailBCCProvider(interface.Interface):
+
+	def get_bcc_emails( user ):
+		"""
+		Return BCC email addresses.
+		"""
+
+class ICourseEnrollmentEmailArgsProvider(interface.Interface):
+
+	def get_email_args( user ):
+		"""
+		Return email args for the given user.
+		"""
+
 # publishable vendor info
 
 class ICoursePublishableVendorInfo(interface.Interface):
