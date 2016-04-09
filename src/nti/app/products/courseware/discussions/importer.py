@@ -43,6 +43,7 @@ class CourseDiscussionsImporter(BaseSectionImporter):
 		if source_filer.is_bucket(bucket):
 			target_filer = get_course_filer(course)
 			discussions = ICourseDiscussions(course)
+			discussions.clear() # clear first
 			for key in source_filer.list(bucket):
 				if source_filer.is_bucket(key):
 					continue
