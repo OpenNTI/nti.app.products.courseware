@@ -33,13 +33,9 @@ from nti.contentfolder.model import ContentFolder
 class CourseRootFolder(RootFolder):
 	pass
 
-@interface.implementer(ICourseContentFolder)
-class CourseContentFolder(ContentFolder):
-	mimeType = mime_type = str('application/vnd.nextthought.courseware.contentfolder')
-
 @interface.implementer(ICourseContentResource)
 class CourseContentResource(Contained):
-	
+
 	@CachedProperty('__parent__')
 	def path(self):
 		context = self
@@ -54,6 +50,10 @@ class CourseContentResource(Contained):
 		result = '/'.join(result)
 		result = '/' + result if not result.startswith('/' ) else result
 		return result
+
+@interface.implementer(ICourseContentFolder)
+class CourseContentFolder(ContentFolder, CourseContentResource):
+	mimeType = mime_type = str('application/vnd.nextthought.courseware.contentfolder')
 
 @interface.implementer(ICourseContentFile)
 class CourseContentFile(ContentBlobFile, CourseContentResource):

@@ -74,7 +74,7 @@ class TestCourseFiler(ApplicationLayerTest):
 			assert_that(filer, is_(not_none()))
 
 			assert_that(filer.is_bucket("/bleach/shikai"), is_(True))
-			assert_that(filer.list("/bleach/shikai"), is_((u'ichigo.xml',)))
+			assert_that(filer.list("/bleach/shikai"), is_((u'/bleach/shikai/ichigo.xml',)))
 
 			assert_that(filer.remove(href), is_(True))
 			assert_that(filer.list("/bleach/shikai"), is_(()))

@@ -24,13 +24,13 @@ from nti.schema.field import ValidTextLine
 class ICourseRootFolder(IRootFolder):
 	pass
 
-class ICourseContentFolder(IContentFolder):
-	pass
-
 class ICourseContentResource(interface.Interface):
 
 	path = ValidTextLine(title="the abs path to this resource",
                          required=False, readonly=True)
+
+class ICourseContentFolder(IContentFolder, ICourseContentResource):
+	pass
 
 class ICourseContentFile(IContentBlobFile, ICourseContentResource):
 	pass
