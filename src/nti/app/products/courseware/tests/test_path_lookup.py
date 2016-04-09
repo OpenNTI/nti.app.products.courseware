@@ -86,6 +86,8 @@ class TestPathLookup(ApplicationLayerTest):
 		}
 	}
 
+	student_username = 'Your_Past_Life_as_a_Blast'
+
 	@classmethod
 	def catalog_entry(self):
 		catalog = component.getUtility(ICourseCatalog)
@@ -130,7 +132,8 @@ class TestPathLookup(ApplicationLayerTest):
 
 		# Video
 		path = '/dataserver2/LibraryPath?objectId=%s' % NON_ROLL_VIDEO
-		res = self.testapp.get(path, status=expected_status)
+		environ = self._make_extra_environ( self.student_username )
+		res = self.testapp.get(path, status=expected_status, extra_environ=environ)
 		res = res.json_body
 
 		# TODO: CS1323 only seems to resolve to the package, the units themselves do not contain
@@ -155,7 +158,7 @@ class TestPathLookup(ApplicationLayerTest):
 
 		# Get reading
 		path = '/dataserver2/LibraryPath?objectId=%s' % READING
-		res = self.testapp.get(path, status=expected_status)
+		res = self.testapp.get(path, status=expected_status, extra_environ=environ)
 		res = res.json_body
 
 		if expected_status == 403:
@@ -176,7 +179,7 @@ class TestPathLookup(ApplicationLayerTest):
 		# Quiz
 		# Not found in legacy (not indexed?) 3.25.2016.
 		path = '/dataserver2/LibraryPath?objectId=%s' % QUESTION_SET
-		res = self.testapp.get(path, status=expected_status)
+		res = self.testapp.get(path, status=expected_status, extra_environ=environ)
 		if not is_legacy:
 			res = res.json_body
 			if expected_status == 403:
@@ -198,7 +201,7 @@ class TestPathLookup(ApplicationLayerTest):
 		# Not found in legacy, not even catalog.
 		status = 403 if is_legacy else expected_status
 		path = '/dataserver2/LibraryPath?objectId=%s' % QUESTION
-		res = self.testapp.get(path, status=status)
+		res = self.testapp.get(path, status=status, extra_environ=environ)
 		if not is_legacy:
 			res = res.json_body
 			if expected_status == 403:
@@ -218,7 +221,7 @@ class TestPathLookup(ApplicationLayerTest):
 
 		# Slide video
 		path = '/dataserver2/LibraryPath?objectId=%s' % SLIDE_VIDEO
-		res = self.testapp.get(path, status=expected_status)
+		res = self.testapp.get(path, status=expected_status, extra_environ=environ)
 		res = res.json_body
 
 		page_info = CS1323_PACKAGE if is_legacy else 'tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.lec:01.03_LESSON'
@@ -242,7 +245,7 @@ class TestPathLookup(ApplicationLayerTest):
 
 		# SlideDeck
 		path = '/dataserver2/LibraryPath?objectId=%s' % SLIDE_DECK
-		res = self.testapp.get(path, status=expected_status)
+		res = self.testapp.get(path, status=expected_status, extra_environ=environ)
 		res = res.json_body
 
 		if expected_status == 403:
@@ -268,11 +271,13 @@ class TestPathLookup(ApplicationLayerTest):
 		# For legacy non-indexed, we only get one possible path.
 		result_expected_val = 1
 
+		environ = self._make_extra_environ( self.student_username )
+
 		# Forums: Course/Board
 		obj_path = '/dataserver2/Objects/%s/LibraryPath' % self.forum_ntiid
 		gen_path = '/dataserver2/LibraryPath?objectId=%s' % self.forum_ntiid
 		for path in (obj_path, gen_path):
-			res = self.testapp.get(path, status=expected_status)
+			res = self.testapp.get(path, status=expected_status, extra_environ=environ)
 			res = res.json_body
 
 			if expected_status == 403:
@@ -291,7 +296,7 @@ class TestPathLookup(ApplicationLayerTest):
 		obj_path = '/dataserver2/Objects/%s/LibraryPath' % self.discussion_ntiid
 		gen_path = '/dataserver2/LibraryPath?objectId=%s' % self.discussion_ntiid
 		for path in (obj_path, gen_path):
-			res = self.testapp.get(path, status=expected_status)
+			res = self.testapp.get(path, status=expected_status, extra_environ=environ)
 			res = res.json_body
 
 			if expected_status == 403:
@@ -309,7 +314,7 @@ class TestPathLookup(ApplicationLayerTest):
 
 		# Sub section
 		path = '/dataserver2/LibraryPath?objectId=%s' % SUB_SECTION
-		res = self.testapp.get(path, status=expected_status)
+		res = self.testapp.get(path, status=expected_status, extra_environ=environ)
 		res = res.json_body
 
 		if expected_status == 403:
@@ -327,7 +332,7 @@ class TestPathLookup(ApplicationLayerTest):
 
 		# Card
 		path = '/dataserver2/LibraryPath?objectId=%s' % CARD
-		res = self.testapp.get(path, status=expected_status)
+		res = self.testapp.get(path, status=expected_status, extra_environ=environ)
 		res = res.json_body
 
 		# Cards are not indexed in our container catalog, so
@@ -345,8 +350,12 @@ class TestPathLookup(ApplicationLayerTest):
 											'Title', '3.2 Taplin, Shield of Achilles (within the Iliad)'))
 
 	def _enroll(self):
+		username = self.student_username
+		with mock_dataserver.mock_db_trans():
+			self._create_user( username )
+
 		with mock_dataserver.mock_db_trans(site_name='platform.ou.edu'):
-			user = User.get_user('sjohnson@nextthought.com')
+			user = User.get_user(username)
 
 			cat = component.getUtility(ICourseCatalog)
 			for group, bundle in (( 'Fall2013', 'CLC3403_LawAndJustice' ),
@@ -392,6 +401,8 @@ class TestPathLookup(ApplicationLayerTest):
 		mock_legacy.is_callable().returns(())
 		mock_get_bundles.is_callable().returns(())
 		mock_catalog_entry_visible.is_callable().returns( True )
+		with mock_dataserver.mock_db_trans():
+			self._create_user( self.student_username )
 		self._do_cs1323_path_lookup(expected_status=403)
 
 # TODO: test content editor
