@@ -44,6 +44,8 @@ class CourseDiscussionsImporter(BaseSectionImporter):
 			target_filer = get_course_filer(course)
 			discussions = ICourseDiscussions(course)
 			for key in source_filer.list(bucket):
+				if source_filer.is_bucket(key):
+					continue
 				source = source_filer.get(key)
 				if source is not None:
 					name = source.name
