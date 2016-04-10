@@ -189,3 +189,12 @@ class CourseSourceFiler(object):
 		return 		ICourseContentFolder.providedBy(context) \
 				or	ICourseRootFolder.providedBy(context)
 	isBucket = is_bucket
+
+	def key_name(self, identifier):
+		if is_internal_file_link(identifier):
+			result = self.get(identifier)
+			result = result.__name__ if result is not None else None
+		else:
+			result = os.path.split(identifier)[1]
+		return result
+	keyName = key_name
