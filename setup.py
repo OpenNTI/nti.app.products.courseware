@@ -6,6 +6,7 @@ VERSION = '0.0.0'
 entry_points = {
 	'console_scripts': [
 		"nti_course_exporter = nti.app.products.courseware.scripts.nti_course_exporter:main",
+		"nti_course_importer = nti.app.products.courseware.scripts.nti_course_importer:main",
 		"nti_course_migrator = nti.app.products.courseware.scripts.nti_course_migrator:main",
 		"nti_acl_forum_creator = nti.app.products.courseware.scripts.nti_acl_forum_creator:main",
 		"nti_unregister_invalid_nodes = nti.app.products.courseware.scripts.nti_unregister_invalid_nodes:main"
