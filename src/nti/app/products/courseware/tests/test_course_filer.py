@@ -16,14 +16,13 @@ does_not = is_not
 
 from StringIO import StringIO
 
-from zope import component
-
 from nti.app.products.courseware.resources.interfaces import ICourseSourceFiler
 
 from nti.app.products.courseware.resources.utils import is_internal_file_link
 
-from nti.contenttypes.courses.interfaces import ICourseCatalog
 from nti.contenttypes.courses.interfaces import ICourseInstance
+
+from nti.ntiids.ntiids import find_object_with_ntiid
 
 from nti.app.products.courseware.tests import PersistentInstructedCourseApplicationTestLayer
 
@@ -42,10 +41,7 @@ class TestCourseFiler(ApplicationLayerTest):
 
 	@classmethod
 	def course_entry(cls):
-		catalog = component.getUtility(ICourseCatalog)
-		for entry in catalog.iterCatalogEntries():
-			if entry.ntiid == cls.entry_ntiid:
-				return entry
+		return find_object_with_ntiid(cls.entry_ntiid)
 
 	@WithSharedApplicationMockDS(testapp=False, users=True)
 	def test_filer(self):

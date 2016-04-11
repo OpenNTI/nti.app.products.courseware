@@ -31,6 +31,8 @@ from zope import interface
 
 from zope.security.interfaces import IPrincipal
 
+from nti.app.products.courseware.decorators import _SharingScopesAndDiscussionDecorator
+
 from nti.contenttypes.courses import acl
 from nti.contenttypes.courses import courses
 from nti.contenttypes.courses import interfaces
@@ -38,11 +40,11 @@ from nti.contenttypes.courses.interfaces import ES_PUBLIC
 from nti.contenttypes.courses.interfaces import ES_CREDIT
 from nti.contenttypes.courses.interfaces import ES_PURCHASED
 
-from nti.app.products.courseware.decorators import _SharingScopesAndDiscussionDecorator
-
 from nti.dataserver.authorization import ACT_READ
 
 from nti.dataserver.interfaces import IUser
+
+from nti.app.products.courseware.tests import CourseLayerTest
 
 from nti.contenttypes.courses.tests import MockPrincipal
 
@@ -50,8 +52,6 @@ import nti.dataserver.tests.mock_dataserver as mock_dataserver
 from nti.dataserver.tests.mock_dataserver import WithMockDSTrans
 
 from nti.externalization.tests import externalizes
-
-from nti.app.products.courseware.tests import CourseLayerTest
 
 class TestCourseInstance(CourseLayerTest):
 

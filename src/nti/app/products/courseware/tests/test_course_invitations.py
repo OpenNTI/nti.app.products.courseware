@@ -2,8 +2,6 @@
 # -*- coding: utf-8 -*-
 
 from __future__ import print_function, unicode_literals, absolute_import, division
-from nti.dataserver.users.interfaces import IUserProfile
-from nti.invitations.interfaces import IInvitations
 __docformat__ = "restructuredtext en"
 
 # disable: accessing protected members, too many methods
@@ -21,15 +19,20 @@ from quopri import decodestring
 
 from zope import component
 
-from nti.contenttypes.courses.interfaces import ICourseCatalog
 from nti.contenttypes.courses.interfaces import ICourseInstance
 from nti.contenttypes.courses.interfaces import IJoinCourseInvitation
 
 from nti.contenttypes.courses.invitation import JoinCourseInvitation
 
+from nti.dataserver.users.interfaces import IUserProfile
+
 from nti.externalization.externalization import StandardExternalFields
 
 from nti.externalization.oids import to_external_ntiid_oid
+
+from nti.invitations.interfaces import IInvitations
+
+from nti.ntiids.ntiids import find_object_with_ntiid
 
 from nti.app.products.courseware.tests import PersistentInstructedCourseApplicationTestLayer
 
@@ -52,11 +55,8 @@ class TestInvitations(ApplicationLayerTest):
 	entry_ntiid = 'tag:nextthought.com,2011-10:NTI-CourseInfo-Fall2013_CLC3403_LawAndJustice'
 
 	@classmethod
-	def catalog_entry(self):
-		catalog = component.getUtility(ICourseCatalog)
-		for entry in catalog.iterCatalogEntries():
-			if entry.ntiid == self.entry_ntiid:
-				return entry
+	def course_entry(cls):
+		return find_object_with_ntiid(cls.entry_ntiid)
 
 	@WithSharedApplicationMockDS(testapp=True, users=True)
 	def test_get_invitations(self):
