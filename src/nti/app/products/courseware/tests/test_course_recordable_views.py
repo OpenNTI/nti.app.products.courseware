@@ -106,7 +106,7 @@ class TestCourseRecursiveTransactionHistory(ApplicationLayerTest):
 		self._do_enroll()
 		student_environ = self._make_extra_environ('student_user')
 		res = self.fetch_by_ntiid(self.catalog_ntiid, self.testapp,
-									extra_environ=student_environ)
+								  extra_environ=student_environ)
 		self.forbid_link_with_rel(res.json_body, VIEW_RECURSIVE_AUDIT_LOG)
 
 		# Admin user
@@ -145,6 +145,7 @@ class TestCourseRecursiveTransactionHistory(ApplicationLayerTest):
 		res = res.json_body
 		records = res.get(ITEMS)
 		assert_that(records, has_length(TX_POOL_SIZE))
+
 		# Most recent items are returned first.
 		item_tids = [x.get('tid') for x in records]
 		item_tids.reverse()
