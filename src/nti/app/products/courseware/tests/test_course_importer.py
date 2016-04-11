@@ -15,7 +15,7 @@ does_not = is_not
 
 from zope import component
 
-from nti.contenttypes.courses.interfaces import ICourseSectionExporter
+from nti.contenttypes.courses.interfaces import ICourseSectionImporter
 
 from nti.ntiids.ntiids import find_object_with_ntiid
 
@@ -37,18 +37,14 @@ class TestCourseExporter(ApplicationLayerTest):
 		return find_object_with_ntiid(cls.entry_ntiid)
 
 	@WithSharedApplicationMockDS(testapp=False, users=False)
-	def test_get_exporters(self):
-		sections = tuple(x for x, _ in sorted(component.getUtilitiesFor(ICourseSectionExporter)))
-		assert_that(sections, has_length(11))
+	def test_get_importers(self):
+		sections = tuple(x for x, _ in sorted(component.getUtilitiesFor(ICourseSectionImporter)))
+		assert_that(sections, has_length(7))
 		assert_that(sections, is_(
-					(u'001:Bundle_Metainfo', 
-					 u'002:Bundle_DC_Metadata',
-					 u'003:Presentation_Assets',
-					 u'004:Course_Info', 
-					 u'005:Vendor_Info', 
-					 u'006:Role_Info', 
+					(u'003:Presentation_Assets',
 					 u'008:Course_Outline', 
 					 u'010:Assessments',
 					 u'015:Lesson_Overviews', 
-					 u'020:Course_Discussions',
-					 u'100:Assignment_Policies')))
+					 u'666:Role_Info',
+					 u'777:Vendor_Info',
+					 u'999:Course_Discussions')))
