@@ -56,9 +56,10 @@ def _migrate(current, seen):
 		if catalog is None or catalog.isEmpty():
 			return
 		for entry in catalog.iterCatalogEntries():
-			if entry.ntiid in seen:
+			ntiid = entry.ntiid
+			if ntiid in seen:
 				continue
-			seen.add(entry.ntiid)
+			seen.add(ntiid)
 			course = ICourseInstance(entry)
 			course_discussions = ICourseDiscussions(course)
 			if not course_discussions:
@@ -66,14 +67,13 @@ def _migrate(current, seen):
 			for course_discussion in course_discussions.values():
 				key = get_topic_key(course_discussion)
 				title = make_specific_safe(_decode(course_discussion.title))
-				# search in board fourms
-				for board in course.Discussions:
-					for forum in board.values():
-						if title in forum:
-							from IPython.core.debugger import Tracer; Tracer()()
-							logger.info("Moving %s to %s", title, key)
-							item = forum._delitemf(title, event=False)
-							forum._setitemf(key, item)
+				# search in board / fourms
+				for forum in course.Discussions.values():
+					if title in forum:
+						logger.info('In course %s, moving "%s" to "%s"', 
+									ntiid, title, key)
+						item = forum._delitemf(title, event=False)
+						forum._setitemf(key, item)
 
 def do_evolve(context, generation=generation):
 	conn = context.connection
