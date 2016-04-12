@@ -56,5 +56,4 @@ class CourseDiscussionsImporter(BaseSectionImporter):
 												 path=bucket)
 					self._process_resources(discussion, source_filer, target_filer)
 		for sub_instance in get_course_subinstances(course):
-			if sub_instance.Outline is not course.Outline:
-				self.process(sub_instance, source_filer)
+			self.process(sub_instance, source_filer)

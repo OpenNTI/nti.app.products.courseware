@@ -48,5 +48,4 @@ class CourseDiscussionsExporter(BaseSectionExporter):
 				   	   bucket=bucket, overwrite=True)
 		# process subinstances
 		for sub_instance in get_course_subinstances(course):
-			if sub_instance.Outline is not course.Outline:
-				self.export(sub_instance, filer)
+			self.export(sub_instance, filer)
