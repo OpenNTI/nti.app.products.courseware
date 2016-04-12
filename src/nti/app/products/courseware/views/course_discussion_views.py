@@ -38,6 +38,8 @@ from nti.app.products.courseware.resources.filer import get_unique_file_name
 
 from nti.app.products.courseware.resources.utils import get_course_filer
 
+from nti.app.products.courseware.views._utils import is_true
+
 from nti.app.products.courseware.views import VIEW_COURSE_DISCUSSIONS
 
 from nti.app.products.courseware.views import CourseAdminPathAdapter
@@ -55,9 +57,12 @@ from nti.contenttypes.courses.discussions.interfaces import NTI_COURSE_BUNDLE
 from nti.contenttypes.courses.discussions.interfaces import ICourseDiscussion
 from nti.contenttypes.courses.discussions.interfaces import ICourseDiscussions
 
+from nti.contenttypes.courses.discussions.parser import parse_discussions
 from nti.contenttypes.courses.discussions.parser import path_to_discussions
 
-from nti.contenttypes.courses.interfaces import ICourseInstance
+from nti.contenttypes.courses.interfaces import DISCUSSIONS
+
+from nti.contenttypes.courses.interfaces import ICourseInstance 
 from nti.contenttypes.courses.interfaces import ICourseCatalogEntry
 from nti.contenttypes.courses.interfaces import ICourseInstancePublicScopedForum
 from nti.contenttypes.courses.interfaces import ICourseInstanceForCreditScopedForum
@@ -232,13 +237,13 @@ def _parse_course(values):
 		raise hexc.HTTPUnprocessableEntity(detail='Course not found')
 	return result[0]
 
-@view_config(name='SyncCourseDiscussions')
-@view_config(name='sync_course_discussions')
+@view_config(name='CreateCourseDiscussionTopics')
+@view_config(name='create_course_discussion_topics')
 @view_defaults(route_name='objects.generic.traversal',
 			   renderer='rest',
 			   context=CourseAdminPathAdapter,
 			   permission=nauth.ACT_NTI_ADMIN)
-class SyncCourseDiscussionsView(AbstractAuthenticatedView):
+class CreateCourseDiscussionTopicsView(AbstractAuthenticatedView):
 
 	def readInput(self):
 		if self.request.body:
@@ -265,6 +270,41 @@ class SyncCourseDiscussionsView(AbstractAuthenticatedView):
 			for discussion in discussions.values():
 				data.extend(create_topics(discussion))
 		return result
+
+@view_config(name='SyncCourseDiscussions')
+@view_config(name='sync_course_discussions')
+@view_defaults(route_name='objects.generic.traversal',
+			   renderer='rest',
+			   context=CourseAdminPathAdapter,
+			   permission=nauth.ACT_NTI_ADMIN)
+class SyncCourseDiscussionsView(AbstractAuthenticatedView):
+
+	def readInput(self):
+		if self.request.body:
+			values = read_body_as_external_object(self.request)
+		else:
+			values = self.request.params
+		result = CaseInsensitiveDict(values)
+		return result
+
+	def __call__(self):
+		values = self.readInput()
+		courses = _parse_courses(values)
+		if not courses:
+			raise hexc.HTTPUnprocessableEntity('Please specify a valid course')
+
+		force = is_true(values.get('force'))
+		for course in courses:
+			course = ICourseInstance(course)
+			root = course.root
+			if root is None:
+				continue
+			ds_bucket = root.getChildNamed(DISCUSSIONS)
+			if ds_bucket is None:
+				continue
+			parse_discussions(course, ds_bucket, force=force)
+
+		return hexc.HTTPNoContent()
 
 @view_config(name='DropCourseDiscussions')
 @view_config(name='drop_course_discussions')
