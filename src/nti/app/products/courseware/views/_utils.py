@@ -214,4 +214,4 @@ def _parse_course(values):
 	return result[0]
 
 def is_true(s):
-	return s and s.lower() in TRUE_VALUES
+	return bool(s and s.lower() in TRUE_VALUES)
