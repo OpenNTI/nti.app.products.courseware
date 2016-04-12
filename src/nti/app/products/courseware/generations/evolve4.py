@@ -96,6 +96,6 @@ def do_evolve(context, generation=generation):
 
 def evolve(context):
 	"""
-	Evolve to generation 2 by adjusting bundled discussion ACLs.
+	Evolve to generation 4 by adjusting discussion topic keys
 	"""
 	do_evolve(context, generation)

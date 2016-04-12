@@ -97,6 +97,6 @@ def do_evolve(context, generation=generation):
 
 def evolve(context):
 	"""
-	Evolve to generation 3 by adjusting bundled discussion ACLs.
+	Evolve to generation 3 by making content files in courses be course-content-files
 	"""
 	do_evolve(context, generation)
