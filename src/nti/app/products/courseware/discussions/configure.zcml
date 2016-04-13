@@ -26,6 +26,8 @@
 			 provides="zope.traversing.interfaces.IPathAdapter"
 			 name="CourseDiscussions" />
 
+	<adapter factory=".traversal._CourseDiscussionsTraversable" />
+	
 	<!-- Decorators -->
 	<subscriber factory=".decorators._CourseDiscussionsLinkDecorator"
 				provides="nti.externalization.interfaces.IExternalMappingDecorator"
