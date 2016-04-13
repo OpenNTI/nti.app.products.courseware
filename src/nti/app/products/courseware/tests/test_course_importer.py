@@ -39,9 +39,10 @@ class TestCourseExporter(ApplicationLayerTest):
 	@WithSharedApplicationMockDS(testapp=False, users=False)
 	def test_get_importers(self):
 		sections = tuple(x for x, _ in sorted(component.getUtilitiesFor(ICourseSectionImporter)))
-		assert_that(sections, has_length(8))
+		assert_that(sections, has_length(9))
 		assert_that(sections, is_(
 					(u'003:Presentation_Assets',
+					 u'004:Course_Info',
 					 u'008:Course_Outline', 
 					 u'010:Assessments',
 					 u'015:Lesson_Overviews', 
