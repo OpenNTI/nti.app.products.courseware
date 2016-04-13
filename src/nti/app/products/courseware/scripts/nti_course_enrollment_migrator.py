@@ -13,7 +13,7 @@ import os
 import sys
 import argparse
 
-from nti.app.products.courseware.utils.migrator import course_migrator
+from nti.app.products.courseware.utils.migrator import course_enrollment_migrator
 
 from nti.contenttypes.courses.interfaces import ES_PUBLIC
 
@@ -25,12 +25,12 @@ def _migrate(ntiid, scope=ES_PUBLIC, max_seat_count=25, sections=(),
 			 site=None, dry_run=False, verbose=False):
 
 	set_site(site)
-	result = course_migrator(ntiid=ntiid,
-							 scope=scope,
-							 dry_run=dry_run,
-							 verbose=verbose,
-							 sections=sections,
-							 max_seat_count=max_seat_count)
+	result = course_enrollment_migrator(ntiid=ntiid,
+										scope=scope,
+							 			dry_run=dry_run,
+							 			verbose=verbose,
+							 			sections=sections,
+							 			max_seat_count=max_seat_count)
 	return result
 
 def main():

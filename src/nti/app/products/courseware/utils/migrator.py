@@ -29,9 +29,9 @@ from nti.dataserver.users import User
 
 from nti.ntiids.ntiids import find_object_with_ntiid
 
-def course_migrator(context=None, ntiid=None, scope=ES_PUBLIC,
-					max_seat_count=25, sections=(),
-					dry_run=False, events=True, verbose=False):
+def course_enrollment_migrator(context=None, ntiid=None, scope=ES_PUBLIC,
+							   max_seat_count=25, sections=(),
+							   dry_run=False, events=True, verbose=False):
 
 	if context is None:
 		context = find_object_with_ntiid(ntiid or u'')
@@ -115,4 +115,4 @@ def course_migrator(context=None, ntiid=None, scope=ES_PUBLIC,
 
 	return (items, count)
 
-migrate = course_migrator
+migrate = course_migrator = course_enrollment_migrator
