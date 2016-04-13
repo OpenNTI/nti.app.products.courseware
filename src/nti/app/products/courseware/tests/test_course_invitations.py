@@ -55,7 +55,7 @@ class TestInvitations(ApplicationLayerTest):
 	entry_ntiid = 'tag:nextthought.com,2011-10:NTI-CourseInfo-Fall2013_CLC3403_LawAndJustice'
 
 	@classmethod
-	def course_entry(cls):
+	def catalog_entry(cls):
 		return find_object_with_ntiid(cls.entry_ntiid)
 
 	@WithSharedApplicationMockDS(testapp=True, users=True)
