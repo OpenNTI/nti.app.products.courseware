@@ -99,7 +99,7 @@ def _process(args):
 		_create(args.adm, args.key, path)
 
 def main():
-	arg_parser = argparse.ArgumentParser(description="Import a course")
+	arg_parser = argparse.ArgumentParser(description="Import/Create a course")
 	arg_parser.add_argument('-v', '--verbose', help="Be verbose", action='store_true',
 							dest='verbose')
 
