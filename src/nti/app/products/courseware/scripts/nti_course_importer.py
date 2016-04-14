@@ -74,8 +74,6 @@ def _create(adm, key, path):
 	root = adm_level.root
 	if not IFilesystemBucket.providedBy(root):
 		raise IOError("Administrative level does not have a root bucket")
-	if key in adm_level:
-		raise KeyError("Course key already created")
 
 	course_path = os.path.join(root.absolute_path, key)
 	if not os.path.exists(course_path):
@@ -83,10 +81,13 @@ def _create(adm, key, path):
 	course_root = root.getChildNamed(key)
 	if course_root is None:
 		raise IOError("Could not access course bucket %s", course_path)
-	# create course and execute import
-	course = ContentCourseInstance()
-	course.root = course_root
-	adm_level[key] = course
+	if key in adm_level:
+		course = adm_level[key]
+		logger.info("Course '%s' already created", key)
+	else:
+		course = ContentCourseInstance()
+		course.root = course_root
+		adm_level[key] = course
 	return _execute(course, path)
 
 def _process(args):
