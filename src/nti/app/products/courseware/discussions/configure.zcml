@@ -44,6 +44,6 @@
 
 	<!-- Importer -->
 	<!-- Ideally course discussions should be imported after vendor info -->
-	<utility factory=".importer.CourseDiscussionsImporter" name="999:Course_Discussions" />
+	<utility factory=".importer.CourseDiscussionsImporter" name="888:Course_Discussions" />
 		
 </configure>
