@@ -16,7 +16,8 @@ import argparse
 
 from zope import component
 
-from nti.contenttypes.courses.interfaces import ICourseExporter, ICourseCatalog
+from nti.contenttypes.courses.interfaces import ICourseCatalog 
+from nti.contenttypes.courses.interfaces import ICourseExporter 
 from nti.contenttypes.courses.interfaces import ICourseInstance
 from nti.contenttypes.courses.interfaces import ICourseExportFiler
 
