@@ -195,10 +195,15 @@ class SendCourseInvitationsView(AbstractAuthenticatedView,
 		usernames = values.get('username') or values.get('usernames')
 		if isinstance(usernames, six.string_types):
 			usernames = usernames.split(",")
-		usernames = set(usernames or ())
+		usernames = set(x.lowerO for x in usernames or ())
 		
 		result = {}
 		for username in usernames:
+			if username.endswith('@nextthought.com'):
+				msg = translate(_("Cannot send invitation to NT user ${user}.", 
+								 mapping={'user': username}))
+				warnings.append(msg)
+				continue
 			user = User.get_user(username)
 			if not IUser.providedBy(user):
 				msg = translate(_("Could not find user ${user}.", 
@@ -233,6 +238,11 @@ class SendCourseInvitationsView(AbstractAuthenticatedView,
 				if not isValidMailAddress(email):
 					msg = translate(_("Invalid email ${email}.", 
 									mapping={'email': email}))
+					warnings.append(msg)
+					continue
+				if email.lower().endswith('@nextthought.com'):
+					msg = translate(_("Cannot send invitation to email ${email}.", 
+									 mapping={'email': email}))
 					warnings.append(msg)
 					continue
 				result[email] = (realname, email)
