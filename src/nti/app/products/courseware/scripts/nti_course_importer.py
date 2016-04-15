@@ -55,7 +55,7 @@ def _create_dir(path):
 def _delete_dir(path):
 	if path and os.path.exists(path):
 		shutil.rmtree(path, True)
-		
+
 def _execute(course, path):
 	course = ICourseInstance(course, None)
 	if course is None:
@@ -73,7 +73,7 @@ def _execute(course, path):
 def _import(ntiid, path, dry_run=False):
 	course = find_object_with_ntiid(ntiid or u'')
 	return _execute(course, path, dry_run=dry_run)
-		
+
 def _create(adm, key, path):
 	catalog = component.getUtility(ICourseCatalog)
 	if adm not in catalog:
@@ -83,40 +83,41 @@ def _create(adm, key, path):
 	if not IFilesystemBucket.providedBy(root):
 		raise IOError("Administrative level does not have a root bucket")
 
-	tmp_path = _check_archive(path)
-	course_path = os.path.join(root.absolute_path, key)
-	_create_dir(course_path)
-
-	course_root = root.getChildNamed(key)
-	if course_root is None:
-		raise IOError("Could not access course bucket %s", course_path)
-	if key in adm_level:
-		course = adm_level[key]
-		logger.info("Course '%s' already created", key)
-	else:
-		course = ContentCourseInstance()
-		course.root = course_root
-		adm_level[key] = course
-		# let's check for subinstances
-		archive_sec_path = os.path.expanduser(tmp_path or path)
-		archive_sec_path = os.path.join(archive_sec_path, SECTIONS)
-		if os.path.isdir(archive_sec_path): # if found in archive
-			sections_path = os.path.join(course_path, SECTIONS)
-			_create_dir(sections_path)
-			sections_root = course_root.getChildNamed(SECTIONS)
-			for name in os.listdir(archive_sec_path):
-				ipath = os.path.join(archive_sec_path, name)
-				if not os.path.isdir(ipath):
-					continue
-				# create subinstance
-				subinstance_section_path = os.path.join(sections_path, name)
-				_create_dir(subinstance_section_path)
-				# get chained root
-				section_root = sections_root.getChildNamed(name)
-				subinstance = ContentCourseSubInstance()
-				subinstance.root = section_root
-				course.SubInstances[name] = subinstance
 	try:
+		tmp_path = _check_archive(path)
+		course_path = os.path.join(root.absolute_path, key)
+		_create_dir(course_path)
+
+		course_root = root.getChildNamed(key)
+		if course_root is None:
+			raise IOError("Could not access course bucket %s", course_path)
+		if key in adm_level:
+			course = adm_level[key]
+			logger.info("Course '%s' already created", key)
+		else:
+			course = ContentCourseInstance()
+			course.root = course_root
+			adm_level[key] = course
+			# let's check for subinstances
+			archive_sec_path = os.path.expanduser(tmp_path or path)
+			archive_sec_path = os.path.join(archive_sec_path, SECTIONS)
+			if os.path.isdir(archive_sec_path):  # if found in archive
+				sections_path = os.path.join(course_path, SECTIONS)
+				_create_dir(sections_path)
+				sections_root = course_root.getChildNamed(SECTIONS)
+				for name in os.listdir(archive_sec_path):
+					ipath = os.path.join(archive_sec_path, name)
+					if not os.path.isdir(ipath):
+						continue
+					# create subinstance
+					subinstance_section_path = os.path.join(sections_path, name)
+					_create_dir(subinstance_section_path)
+					# get chained root
+					section_root = sections_root.getChildNamed(name)
+					subinstance = ContentCourseSubInstance()
+					subinstance.root = section_root
+					course.SubInstances[name] = subinstance
+		# process
 		_execute(course, path)
 	finally:
 		_delete_dir(tmp_path)
@@ -149,7 +150,7 @@ def main():
 	# create
 	parser_create = subparsers.add_parser('create', help='Create command',
 										  parents=[parent_parser])
-	parser_create.add_argument('-a', '--adm',
+	parser_create.add_argument('-a', '--admin',
 								dest='adm',
 								help="Administrative level", required=True)
 	parser_create.add_argument('-k', '--key',
