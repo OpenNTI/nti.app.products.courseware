@@ -53,7 +53,7 @@ def _create_dir(path):
 		os.mkdir(path)
 
 def _delete_dir(path):
-	if path and not os.path.exists(path):
+	if path and os.path.exists(path):
 		shutil.rmtree(path, True)
 		
 def _execute(course, path):
