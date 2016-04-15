@@ -16,8 +16,6 @@ import zipfile
 import argparse
 import tempfile
 
-import transaction
-
 from zope import component
 
 from nti.cabinet.filer import DirectoryFiler
@@ -25,7 +23,9 @@ from nti.cabinet.filer import DirectoryFiler
 from nti.contentlibrary.interfaces import IFilesystemBucket
 
 from nti.contenttypes.courses.courses import ContentCourseInstance
+from nti.contenttypes.courses.courses import ContentCourseSubInstance
 
+from nti.contenttypes.courses.interfaces import SECTIONS
 from nti.contenttypes.courses.interfaces import ICourseCatalog
 from nti.contenttypes.courses.interfaces import ICourseImporter
 from nti.contenttypes.courses.interfaces import ICourseInstance
@@ -37,35 +37,43 @@ from nti.dataserver.utils.base_script import create_context
 
 from nti.ntiids.ntiids import find_object_with_ntiid
 
-def _execute(course, path, dry_run=False):
+def _check_archive(path):
+	if not os.path.isdir(path):
+		if not zipfile.is_zipfile(path):
+			raise IOError("Invalid archive")
+		archive = zipfile.ZipFile(path)
+		tmp_path = tempfile.mkdtemp()
+		archive.extractall(tmp_path)
+	else:
+		tmp_path = None
+	return tmp_path
+
+def _create_dir(path):
+	if not os.path.exists(path):
+		os.mkdir(path)
+
+def _delete_dir(path):
+	if path and not os.path.exists(path):
+		shutil.rmtree(path, True)
+		
+def _execute(course, path):
 	course = ICourseInstance(course, None)
 	if course is None:
 		raise ValueError("Invalid course")
-
 	try:
-		if not os.path.isdir(path):
-			if not zipfile.is_zipfile(path):
-				raise IOError("Invalid archive")
-			archive = zipfile.ZipFile(path)
-			path = tmp_path = tempfile.mkdtemp()
-			archive.extractall(tmp_path)
-		else:
-			tmp_path = None
-
-		filer = DirectoryFiler(path)
+		tmp_path = _check_archive(path)
+		filer = DirectoryFiler(tmp_path or path)
 		importer = component.getUtility(ICourseImporter)
 		importer.process(course, filer)
 	finally:
-		if tmp_path:
-			shutil.rmtree(tmp_path, True)
-		if dry_run:
-			transaction.doom()
+		_delete_dir(tmp_path)
+
 	logger.info("Course imported from %s", path)
 
 def _import(ntiid, path, dry_run=False):
 	course = find_object_with_ntiid(ntiid or u'')
 	return _execute(course, path, dry_run=dry_run)
-
+		
 def _create(adm, key, path):
 	catalog = component.getUtility(ICourseCatalog)
 	if adm not in catalog:
@@ -75,9 +83,10 @@ def _create(adm, key, path):
 	if not IFilesystemBucket.providedBy(root):
 		raise IOError("Administrative level does not have a root bucket")
 
+	tmp_path = _check_archive(path)
 	course_path = os.path.join(root.absolute_path, key)
-	if not os.path.exists(course_path):
-		os.mkdir(course_path)
+	_create_dir(course_path)
+
 	course_root = root.getChildNamed(key)
 	if course_root is None:
 		raise IOError("Could not access course bucket %s", course_path)
@@ -88,7 +97,29 @@ def _create(adm, key, path):
 		course = ContentCourseInstance()
 		course.root = course_root
 		adm_level[key] = course
-	return _execute(course, path)
+		# let's check for subinstances
+		archive_sec_path = os.path.expanduser(tmp_path or path)
+		archive_sec_path = os.path.join(archive_sec_path, SECTIONS)
+		if os.path.isdir(archive_sec_path): # if found in archive
+			sections_path = os.path.join(course_path, SECTIONS)
+			_create_dir(sections_path)
+			sections_root = course_root.getChildNamed(SECTIONS)
+			for name in os.listdir(archive_sec_path):
+				ipath = os.path.join(archive_sec_path, name)
+				if not os.path.isdir(ipath):
+					continue
+				# create subinstance
+				subinstance_section_path = os.path.join(sections_path, name)
+				_create_dir(subinstance_section_path)
+				# get chained root
+				section_root = sections_root.getChildNamed(name)
+				subinstance = ContentCourseSubInstance()
+				subinstance.root = section_root
+				course.SubInstances[name] = subinstance
+	try:
+		_execute(course, path)
+	finally:
+		_delete_dir(tmp_path)
 
 def _process(args):
 	set_site(args.site)
