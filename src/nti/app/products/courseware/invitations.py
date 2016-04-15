@@ -16,13 +16,17 @@ from urllib import urlencode
 from urlparse import urljoin
 
 from zope import component
+from zope import interface
 
 from zope.dottedname import resolve as dottedname
 
 from zope.i18n import translate
 
-from nti.app.products.courseware import MessageFactory as _
+from zope.location.interfaces import ILocation
 
+from nti.app.invitations.interfaces import IUserInvitationsLinkProvider
+
+from nti.app.products.courseware import MessageFactory as _
 from nti.app.products.courseware import ACCEPT_COURSE_INVITATIONS
 
 from nti.appserver.policies.interfaces import ISitePolicyUserEventListener
@@ -36,6 +40,8 @@ from nti.dataserver.users import User
 from nti.dataserver.users.interfaces import IUserProfile
 
 from nti.externalization.externalization import to_external_object
+
+from nti.links.links import Link
 
 from nti.mailer.interfaces import ITemplatedMailer
 
@@ -141,3 +147,20 @@ def send_invitation_email(invitation,
 		logger.exception("Cannot send course invitation email to %s", receiver_email)
 		return False
 	return True
+
+@component.adapter(IUser)
+@interface.implementer(IUserInvitationsLinkProvider)
+class _CourseUserInvitationsLinkProvider(object):
+		
+	def __init__(self, user=None):
+		self.user = user
+
+	def links(self, workspace):
+		link = Link(self.user, 
+					method="POST",
+					rel=ACCEPT_COURSE_INVITATIONS, 
+					elements=('@@' + ACCEPT_COURSE_INVITATIONS,))
+		link.__name__ = ACCEPT_COURSE_INVITATIONS
+		link.__parent__ = self.user
+		interface.alsoProvides(link, ILocation)
+		return (link,)
