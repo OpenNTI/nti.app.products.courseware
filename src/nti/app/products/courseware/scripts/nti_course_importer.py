@@ -82,7 +82,6 @@ def _create(adm, key, path):
 	root = adm_level.root
 	if not IFilesystemBucket.providedBy(root):
 		raise IOError("Administrative level does not have a root bucket")
-
 	try:
 		tmp_path = _check_archive(path)
 		course_path = os.path.join(root.absolute_path, key)
@@ -97,7 +96,8 @@ def _create(adm, key, path):
 		else:
 			course = ContentCourseInstance()
 			course.root = course_root
-			adm_level[key] = course
+			adm_level[key] = course # gain intid
+			course.SharingScopes.initScopes()
 			# let's check for subinstances
 			archive_sec_path = os.path.expanduser(tmp_path or path)
 			archive_sec_path = os.path.join(archive_sec_path, SECTIONS)
@@ -118,7 +118,7 @@ def _create(adm, key, path):
 					subinstance.root = section_root
 					course.SubInstances[name] = subinstance
 		# process
-		_execute(course, path)
+		_execute(course, tmp_path or path)
 	finally:
 		_delete_dir(tmp_path)
 
