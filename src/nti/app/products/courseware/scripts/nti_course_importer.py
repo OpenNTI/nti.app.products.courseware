@@ -97,7 +97,6 @@ def _create(adm, key, path):
 			course = ContentCourseInstance()
 			course.root = course_root
 			adm_level[key] = course # gain intid
-			course.SharingScopes.initScopes()
 			# let's check for subinstances
 			archive_sec_path = os.path.expanduser(tmp_path or path)
 			archive_sec_path = os.path.join(archive_sec_path, SECTIONS)
