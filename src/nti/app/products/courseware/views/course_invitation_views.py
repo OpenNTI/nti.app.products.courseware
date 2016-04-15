@@ -195,7 +195,7 @@ class SendCourseInvitationsView(AbstractAuthenticatedView,
 		usernames = values.get('username') or values.get('usernames')
 		if isinstance(usernames, six.string_types):
 			usernames = usernames.split(",")
-		usernames = set(x.lowerO for x in usernames or ())
+		usernames = set(x.lower() for x in usernames or ())
 		
 		result = {}
 		for username in usernames:
