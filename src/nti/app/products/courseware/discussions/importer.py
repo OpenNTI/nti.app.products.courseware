@@ -9,11 +9,17 @@ __docformat__ = "restructuredtext en"
 
 logger = __import__('logging').getLogger(__name__)
 
+import os
+
 from zope import interface
 
 from nti.app.products.courseware.resources.utils import get_course_filer
 
 from nti.app.products.courseware.utils.importer import transfer_resources_from_filer
+
+from nti.cabinet.filer import transfer_to_native_file
+
+from nti.contentlibrary.interfaces import IFilesystemBucket
 
 from nti.contenttypes.courses.discussions.interfaces import ICourseDiscussion
 from nti.contenttypes.courses.discussions.interfaces import ICourseDiscussions
@@ -39,7 +45,12 @@ class CourseDiscussionsImporter(BaseSectionImporter):
 
 	def process(self, context, source_filer):
 		course = ICourseInstance(context)
+		root = course.root
 		bucket = path_to_discussions(course)
+		if IFilesystemBucket.providedBy(root):
+			path = os.path.join(root.absolute_path, bucket)
+			if not os.path.exists(path):
+				os.makedirs(path)
 		if source_filer.is_bucket(bucket):
 			target_filer = get_course_filer(course)
 			discussions = ICourseDiscussions(course)
@@ -48,12 +59,19 @@ class CourseDiscussionsImporter(BaseSectionImporter):
 				if source_filer.is_bucket(key):
 					continue
 				source = source_filer.get(key)
-				if source is not None:
-					name = source.name
-					discussion = load_discussion(name, 
-												 source, 
-												 discussions,
-												 path=bucket)
-					self._process_resources(discussion, source_filer, target_filer)
-		for sub_instance in get_course_subinstances(course):
-			self.process(sub_instance, source_filer)
+				if source is None:
+					continue
+				name = source.name
+				discussion = load_discussion(name, 
+											 source, 
+											 discussions,
+											 path=bucket)
+				self._process_resources(discussion, source_filer, target_filer)
+				if IFilesystemBucket.providedBy(root):
+					path = os.path.join(root.absolute_path, bucket)
+					path = os.path.join(path, name)
+					source = source_filer.get(key) # get source again
+					transfer_to_native_file(source, path)
+		# process subinstances
+		for subinstance in get_course_subinstances(course):
+			self.process(subinstance, source_filer)
