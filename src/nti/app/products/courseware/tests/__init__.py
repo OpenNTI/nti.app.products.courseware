@@ -267,8 +267,8 @@ class PersistentInstructedCourseApplicationTestLayer(ApplicationTestLayer):
 	# A mix of new and old-style courses
 
 	_library_path = 'PersistentLibrary'
-	_instructors = ('harp4162', 'bailey.norwood@okstate.edu', 'tryt3968', 'jmadden')
-	_sites_names = ('platform.ou.edu', 'okstate.nextthought.com')
+	_instructors = ('harp4162', 'tryt3968', 'jmadden')
+	_sites_names = ('platform.ou.edu',)
 
 	@classmethod
 	def _user_creation(cls):
