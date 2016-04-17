@@ -58,11 +58,12 @@ class TopLevelPriorityNotableFilter(object):
 
 	def is_notable(self, obj, user):
 		obj_creator = getattr(obj, 'creator', None)
-
+		obj_creator = getattr(obj_creator, 'username', obj_creator)
+		
 		# Filter out blog comments that might cause confusion.
 		if 		obj_creator is None \
 			or 	IPersonalBlogComment.providedBy(obj) \
-			or  obj_creator.username == user.username:
+			or  obj_creator == user.username:
 			return False
 
 		# Note: pulled from metadata_index; first two params not used.
@@ -84,7 +85,7 @@ class TopLevelPriorityNotableFilter(object):
 	 					or 	not catalog_entry.isCourseCurrentlyActive():  # pragma: no cover
 						continue
 
-					if obj_creator.username in (x.id for x in course.instructors):
+					if obj_creator in (x.id for x in course.instructors):
 						# TODO: Like in the provider below, implies?
 						course_scope = course.SharingScopes[ enrollment.Scope ]
 						if obj.isSharedDirectlyWith(course_scope):
