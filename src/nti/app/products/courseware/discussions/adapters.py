@@ -13,7 +13,7 @@ from zope import component
 
 from nti.contenttypes.courses.discussions.interfaces import ICourseDiscussion
 
-from nti.namedfile.file import FileConstraints
+from nti.namedfile.constraints import FileConstraints
 
 @component.adapter(ICourseDiscussion)
 class _CourseDiscussionFileConstraints(FileConstraints):
