@@ -12,6 +12,8 @@ logger = __import__('logging').getLogger(__name__)
 import os
 import six
 
+from zope.interface.interfaces import IMethod
+
 from nti.app.products.courseware import ASSETS_FOLDER
 
 from nti.app.products.courseware.resources.interfaces import ICourseContentResource
@@ -32,6 +34,7 @@ def save_resources_to_filer(provided, obj, filer, ext_obj=None):
 			continue
 		value = getattr(obj, name, None)
 		if 		value is not None \
+			and not IMethod.providedBy(value) \
 			and isinstance(value, six.string_types) \
 			and is_internal_file_link(value):
 			# get resource

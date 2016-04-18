@@ -13,6 +13,8 @@ import os
 import six
 from urlparse import urlparse
 
+from zope.interface.interfaces import IMethod
+
 from nti.common import mimetypes
 
 from nti.contenttypes.courses.interfaces import NTI_COURSE_FILE_SCHEME
@@ -25,11 +27,12 @@ def transfer_resources_from_filer(provided, obj, source_filer, target_filer):
 	result = {}
 	if source_filer is target_filer:
 		return result
-	for name in provided:
-		if name.startswith('_'):
+	for field_name in provided:
+		if field_name.startswith('_'):
 			continue
-		value = getattr(obj, name, None)
+		value = getattr(obj, field_name, None)
 		if 		value is not None \
+			and not IMethod.providedBy(value) \
 			and isinstance(value, six.string_types) \
 			and value.startswith(NTI_COURSE_FILE_SCHEME):
 
@@ -44,6 +47,6 @@ def transfer_resources_from_filer(provided, obj, source_filer, target_filer):
 				href = target_filer.save(name, source, bucket=bucket, 
 										 contentType=contentType,
 								  		 overwrite=True)
-				setattr(obj, name, href)
-				result[name] = href
+				setattr(obj, field_name, href)
+				result[field_name] = href
 	return result
