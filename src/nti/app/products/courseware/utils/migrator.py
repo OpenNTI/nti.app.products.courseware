@@ -114,5 +114,3 @@ def course_enrollment_migrator(context=None, ntiid=None, scope=ES_PUBLIC,
 			section_name)
 
 	return (items, count)
-
-migrate = course_migrator = course_enrollment_migrator

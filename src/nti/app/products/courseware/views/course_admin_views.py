@@ -43,7 +43,7 @@ from nti.app.externalization.view_mixins import ModeledContentUploadRequestUtils
 
 from nti.app.products.courseware.interfaces import ICoursesWorkspace
 
-from nti.app.products.courseware.utils.migrator import course_migrator
+from nti.app.products.courseware.utils.migrator import course_enrollment_migrator
 
 from nti.app.products.courseware.views import CourseAdminPathAdapter
 
@@ -373,11 +373,11 @@ class CourseSectionEnrollmentMigrationView(AbstractAuthenticatedView):
 			seen.add(name)
 
 		# migrate
-		items, total = course_migrator(scope=scope,
-										verbose=True,
-								 		context=course,
-								 		sections=sections,
-								 		max_seat_count=seats)
+		items, total = course_enrollment_migrator(scope=scope,
+												  verbose=True,
+								 				  context=course,
+								 				  sections=sections,
+								 				  max_seat_count=seats)
 		result = LocatedExternalDict()
 		m = result[ITEMS] = {}
 		for info in items or ():
