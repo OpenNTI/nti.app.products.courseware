@@ -43,8 +43,10 @@ class ExportCourseView(AbstractAuthenticatedView,
 				 	   ModeledContentUploadRequestUtilsMixin):
 
 	def readInput(self, value=None):
-		result = ModeledContentUploadRequestUtilsMixin.readInput(self, value=value)
-		return CaseInsensitiveDict(result)
+		if self.request.body:
+			result = ModeledContentUploadRequestUtilsMixin.readInput(self, value=value)
+			return CaseInsensitiveDict(result)
+		return CaseInsensitiveDict()
 
 	def __call__(self):
 		values = self.readInput()
