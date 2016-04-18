@@ -11,7 +11,9 @@
 	<include package="zope.security" />
 
 	<!-- Adapters -->
-	<adapter factory=".adapters._CourseDiscussionFileConstraints" />
+	<adapter factory=".adapters._CourseDiscussionFileConstraints"
+			 for="nti.contenttypes.courses.discussions.interfaces.ICourseDiscussion"
+			 provides="nti.namedfile.interfaces.IFileConstraints" />
 	
 	<!-- Events -->
 	<subscriber handler=".subscribers._discussions_added" />
