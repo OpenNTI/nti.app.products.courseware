@@ -47,6 +47,7 @@ def transfer_resources_from_filer(provided, obj, source_filer, target_filer):
 				href = target_filer.save(name, source, bucket=bucket, 
 										 contentType=contentType,
 								  		 overwrite=True)
+				logger.debug("%s was saved as %s", value, href)
 				setattr(obj, field_name, href)
 				result[field_name] = href
 	return result

@@ -51,6 +51,7 @@ def save_resources_to_filer(provided, obj, filer, ext_obj=None):
 					   contentType=contentType, overwrite=True)
 			# get course file scheme
 			internal = NTI_COURSE_FILE_SCHEME + path + "/" + resource.name
+			logger.debug("%s was saved as %s", value, internal)
 			result[name] = internal
 			if ext_obj is not None:
 				ext_obj[name] = internal
