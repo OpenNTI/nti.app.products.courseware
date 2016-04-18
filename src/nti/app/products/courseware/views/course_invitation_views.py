@@ -181,10 +181,6 @@ class SendCourseInvitationsView(AbstractAuthenticatedView,
 	def get_invitation(self, values):
 		code = values.get('code')
 		if not code:
-			invitations = get_invitations_for_course(self.context)
-			if invitations: # not provided
-				code = tuple(invitations.keys())[0] # pick first
-		if not code:
 			raise hexc.HTTPUnprocessableEntity(_("Must provide a inviation code."))
 		invitation = get_course_invitation(code)
 		if invitation is None:
