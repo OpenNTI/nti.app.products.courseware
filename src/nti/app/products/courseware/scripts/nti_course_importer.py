@@ -21,6 +21,7 @@ from zope import component
 from nti.cabinet.filer import DirectoryFiler
 
 from nti.contentlibrary.interfaces import IFilesystemBucket
+from nti.contentlibrary.interfaces import IContentPackageLibrary
 
 from nti.contenttypes.courses.courses import ContentCourseInstance
 from nti.contenttypes.courses.courses import ContentCourseSubInstance
@@ -122,6 +123,8 @@ def _create(adm, key, path):
 		_delete_dir(tmp_path)
 
 def _process(args):
+	library = component.getUtility(IContentPackageLibrary)
+	library.syncContentPackages()
 	set_site(args.site)
 	path = os.path.expanduser(args.path or os.getcwd())
 	if hasattr(args, 'ntiid'):
