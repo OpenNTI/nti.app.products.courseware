@@ -78,7 +78,7 @@ def import_course(ntiid, archive_path):
 	course = find_object_with_ntiid(ntiid or u'')
 	return _execute(course, archive_path)
 
-def create_course(admin, key, archive_path):
+def create_course(admin, key, archive_path, catalog=None):
 	"""
 	Creates a course from a file archive
 	
@@ -86,7 +86,7 @@ def create_course(admin, key, archive_path):
 	:param key Course name
 	:param archive_path archive path
 	"""
-	catalog = component.getUtility(ICourseCatalog)
+	catalog = component.getUtility(ICourseCatalog) if catalog is None else catalog
 	if admin not in catalog:
 		raise KeyError("Invalid Administrative level")
 

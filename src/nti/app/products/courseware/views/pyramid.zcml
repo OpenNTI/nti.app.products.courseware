@@ -12,6 +12,7 @@
 	<pyramid:scan package=".course_user_views" />
 	<pyramid:scan package=".course_admin_views" />
 	<pyramid:scan package=".course_export_views" />
+	<pyramid:scan package=".course_import_views" />
 	<pyramid:scan package=".course_legacy_views" />
 	<pyramid:scan package=".course_stream_views" />
 	<pyramid:scan package=".course_outline_views" />
