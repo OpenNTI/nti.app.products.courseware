@@ -146,7 +146,17 @@ class AcceptCourseInvitationsView(AcceptInvitationsView):
 	def __call__(self):
 		result = LocatedExternalDict()
 		result[ITEMS] = items = []
-		accepted = AcceptInvitationsView._do_call(self) or {}
+		try:
+			accepted = AcceptInvitationsView._do_call(self) or {}
+		except ValueError as e:
+			raise_json_error(
+					self.request,
+					hexc.HTTPUnprocessableEntity,
+					{
+						u'message': str(e),
+						u'code': 'ValidationError',
+					},
+					None)
 		for invitation in accepted.values():
 			if not IJoinCourseInvitation.providedBy(invitation):
 				continue
@@ -158,6 +168,8 @@ class AcceptCourseInvitationsView(AcceptInvitationsView):
 				items.append(enrollment)
 		# make sure we commit
 		self.request.environ[b'nti.request_had_transaction_side_effects'] = b'True'
+		if len(items) == 1:
+			return items[0] # single enrollment record
 		return result
 
 @view_config(context=ICourseInstance)
