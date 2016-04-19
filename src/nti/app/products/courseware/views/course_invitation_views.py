@@ -87,6 +87,7 @@ from nti.links.links import Link
 
 from nti.ntiids.ntiids import find_object_with_ntiid
 
+CLASS = StandardExternalFields.CLASS
 ITEMS = StandardExternalFields.ITEMS
 LINKS = StandardExternalFields.LINKS
 
@@ -147,8 +148,7 @@ class AcceptCourseInvitationsView(AcceptInvitationsView):
 		return data
 	
 	def __call__(self):
-		result = LocatedExternalDict()
-		result[ITEMS] = items = []
+		items = []
 		try:
 			accepted = AcceptInvitationsView._do_call(self) or {}
 		except (AlreadyEnrolledException, CourseInvitationException) as e:
@@ -173,7 +173,13 @@ class AcceptCourseInvitationsView(AcceptInvitationsView):
 		# make sure we commit
 		self.request.environ[b'nti.request_had_transaction_side_effects'] = b'True'
 		if len(items) == 1:
-			return to_external_object(items[0]) # single enrollment record
+			# XXX single enrollment record. Externalize first 
+			# we have seen a LocationError if the enrollment object is returned
+			result = to_external_object(items[0]) 
+		else:
+			result = LocatedExternalDict()
+			result[CLASS] = 'CourseInstanceEnrollments'
+			result[ITEMS] = items
 		return result
 
 @view_config(context=ICourseInstance)
