@@ -76,7 +76,7 @@ class ImportCourseView(AbstractAuthenticatedView,
 		elif self.request.POST:
 			source = None
 			filename = None
-			for name, source in get_all_sources(self.request, None):
+			for name, source in get_all_sources(self.request, None).items():
 				filename = getattr(source, 'filename', name)
 				filename = safe_filename(os.path.split(filename)[1])
 				break
