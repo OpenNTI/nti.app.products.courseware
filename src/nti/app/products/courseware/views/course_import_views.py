@@ -22,7 +22,6 @@ from zope.security.management import restoreInteraction
 from pyramid import httpexceptions as hexc
 
 from pyramid.view import view_config
-from pyramid.view import view_defaults
 
 from nti.app.base.abstract_views import get_all_sources
 from nti.app.base.abstract_views import AbstractAuthenticatedView
@@ -54,12 +53,12 @@ from nti.site.hostpolicy import get_host_site
 
 from nti.site.site import get_component_hierarchy_names
 
-@view_config(name='ImportCourse')
-@view_config(context=CourseAdminPathAdapter)
-@view_defaults(route_name='objects.generic.traversal',
-			   renderer='rest',
-			   request_method='POST',
-			   permission=nauth.ACT_NTI_ADMIN)
+@view_config(route_name='objects.generic.traversal',
+			 renderer='rest',
+			 name='ImportCourse',
+			 request_method='POST',
+			 context=CourseAdminPathAdapter,
+			 permission=nauth.ACT_NTI_ADMIN)
 class ImportCourseView(AbstractAuthenticatedView,
 				 	   ModeledContentUploadRequestUtilsMixin):
 
@@ -86,7 +85,7 @@ class ImportCourseView(AbstractAuthenticatedView,
 			tmp_path = tempfile.mkdtemp()
 			path = os.path.join(tmp_path, filename)
 			transfer_to_native_file(source, path)
-		else:
+		elif not path:
 			raise hexc.HTTPUnprocessableEntity(_('No archive source uploaded.'))
 		return path, tmp_path
 

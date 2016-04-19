@@ -13,6 +13,9 @@ from hamcrest import has_length
 from hamcrest import assert_that
 does_not = is_not
 
+import os
+import fudge
+
 from zope import component
 
 from nti.contenttypes.courses.interfaces import ICourseSectionImporter
@@ -51,3 +54,18 @@ class TestCourseExporter(ApplicationLayerTest):
 					 u'666:Role_Info',
 					 u'777:Vendor_Info',
 					 u'888:Course_Discussions')))
+		
+	@WithSharedApplicationMockDS(testapp=True, users=True)
+	@fudge.patch('nti.app.products.courseware.views.course_import_views.create_course',
+				 'nti.app.products.courseware.views.course_import_views.import_course')
+	def test_fake_imports(self, mock_create, mock_import):
+		mock_create.is_callable().with_args().returns(False)
+		mock_import.is_callable().with_args().returns(False)
+		
+		path = os.getcwd()
+		href = '/dataserver2/CourseAdmin/@@ImportCourse'
+		data = {'ntiid':self.entry_ntiid, 'path':path}
+		self.testapp.post_json(href, data, status=204)
+
+		data = {'admin':'Fall2015', 'key':'Bleach', 'path':path}
+		self.testapp.post_json(href, data, status=204)

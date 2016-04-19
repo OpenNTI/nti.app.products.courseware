@@ -15,7 +15,6 @@ import tempfile
 from zope import component
 
 from pyramid.view import view_config
-from pyramid.view import view_defaults
 
 from nti.app.base.abstract_views import AbstractAuthenticatedView
 
@@ -33,12 +32,12 @@ from nti.contenttypes.courses.interfaces import ICourseExportFiler
 
 from nti.dataserver import authorization as nauth
 
-@view_config(name='ExportCourse')
-@view_config(context=CourseAdminPathAdapter)
-@view_defaults(route_name='objects.generic.traversal',
-			   renderer='rest',
-			   request_method='POST',
-			   permission=nauth.ACT_NTI_ADMIN)
+@view_config(route_name='objects.generic.traversal',
+			 renderer='rest',
+			 name='ExportCourse',
+			 request_method='POST',
+			 context=CourseAdminPathAdapter,
+			 permission=nauth.ACT_NTI_ADMIN)
 class ExportCourseView(AbstractAuthenticatedView,
 				 	   ModeledContentUploadRequestUtilsMixin):
 
