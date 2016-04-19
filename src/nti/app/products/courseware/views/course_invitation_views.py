@@ -65,6 +65,9 @@ from nti.contenttypes.courses.interfaces import ICourseInstance
 from nti.contenttypes.courses.interfaces import ICourseCatalogEntry
 from nti.contenttypes.courses.interfaces import IJoinCourseInvitation
 
+from nti.contenttypes.courses.interfaces import AlreadyEnrolledException
+from nti.contenttypes.courses.interfaces import CourseInvitationException
+
 from nti.contenttypes.courses.utils import is_course_instructor
 	
 from nti.dataserver import authorization as nauth
@@ -148,7 +151,7 @@ class AcceptCourseInvitationsView(AcceptInvitationsView):
 		result[ITEMS] = items = []
 		try:
 			accepted = AcceptInvitationsView._do_call(self) or {}
-		except ValueError as e:
+		except (AlreadyEnrolledException, CourseInvitationException) as e:
 			raise_json_error(
 					self.request,
 					hexc.HTTPUnprocessableEntity,
@@ -157,6 +160,7 @@ class AcceptCourseInvitationsView(AcceptInvitationsView):
 						u'code': 'ValidationError',
 					},
 					None)
+
 		for invitation in accepted.values():
 			if not IJoinCourseInvitation.providedBy(invitation):
 				continue
