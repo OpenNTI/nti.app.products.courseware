@@ -169,7 +169,7 @@ class AcceptCourseInvitationsView(AcceptInvitationsView):
 		# make sure we commit
 		self.request.environ[b'nti.request_had_transaction_side_effects'] = b'True'
 		if len(items) == 1:
-			return items[0] # single enrollment record
+			return to_external_object(items[0]) # single enrollment record
 		return result
 
 @view_config(context=ICourseInstance)

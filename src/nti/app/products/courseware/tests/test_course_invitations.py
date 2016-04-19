@@ -117,4 +117,4 @@ class TestInvitations(ApplicationLayerTest):
 		environ = self._make_extra_environ(username='ichigo')
 		environ[b'HTTP_ORIGIN'] = b'http://platform.ou.edu'
 		res = self.testapp.get(to_check, extra_environ=environ, status=200)
-		assert_that(res.json_body, has_entry(ITEMS, has_length(1)))
+		assert_that(res.json_body, has_entry('Class', u'CourseInstanceEnrollment'))
