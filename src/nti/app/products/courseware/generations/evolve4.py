@@ -74,6 +74,7 @@ def _migrate(current, seen):
 									ntiid, title, key)
 						item = forum._delitemf(title, event=False)
 						forum._setitemf(key, item)
+						item.__name__ = key
 
 def do_evolve(context, generation=generation):
 	conn = context.connection
