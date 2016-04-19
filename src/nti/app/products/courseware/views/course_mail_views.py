@@ -146,8 +146,8 @@ class CourseMailView(AbstractMemberEmailView):
 
 	def reply_addr_for_recipient(self, recipient):
 		"""
-		If the user specifies that we only reply to a certain
-		enrollee of a course, do so.
+		If the user specifies that we only supply a ReplyTo on a certain
+		type of enrollee of a course, do so.
 		"""
 		result = self._no_reply_addr
 		if 		not self._reply_to_scope_usernames \
