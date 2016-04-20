@@ -279,7 +279,7 @@ class SendCourseInvitationsView(AbstractAuthenticatedView,
 								mapping={'email': email}))
 				warnings.append(msg)
 			else:
-				result[email] = name
+				result[email] = (name, email)
 		return result
 
 	def send_invitations(self, invitation, users):
