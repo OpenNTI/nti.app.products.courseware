@@ -48,6 +48,8 @@ from nti.appserver.pyramid_authorization import has_permission
 
 from nti.common.hash import md5_base64_digest
 
+from nti.contenttypes.courses.common import get_course_packages
+
 from nti.contenttypes.courses.interfaces import ES_PUBLIC
 from nti.contenttypes.courses.interfaces import ES_CREDIT
 from nti.contenttypes.courses.interfaces import ES_PURCHASED
@@ -69,9 +71,10 @@ from nti.contenttypes.courses.utils import has_enrollments
 from nti.contenttypes.courses.utils import get_catalog_entry
 from nti.contenttypes.courses.utils import is_course_instructor
 from nti.contenttypes.courses.utils import get_enrollment_record
+from nti.contenttypes.courses.utils import get_course_subinstances
 
 from nti.dataserver.authorization import ACT_NTI_ADMIN
-from nti.dataserver.authorization import ACT_CONTENT_EDIT 
+from nti.dataserver.authorization import ACT_CONTENT_EDIT
 
 from nti.dataserver.interfaces import IUser
 from nti.dataserver.interfaces import IEntityContainer
@@ -139,8 +142,8 @@ class _CourseInstanceLinkDecorator(object):
 		result['TotalEnrolledCount'] = enrollments.count_enrollments()
 		# Legacy, non-interface methods
 		try:
-			result['TotalLegacyForCreditEnrolledCount'] = enrollments.count_legacy_forcredit_enrollments()
 			result['TotalLegacyOpenEnrolledCount'] = enrollments.count_legacy_open_enrollments()
+			result['TotalLegacyForCreditEnrolledCount'] = enrollments.count_legacy_forcredit_enrollments()
 		except AttributeError:
 			pass
 
@@ -169,8 +172,8 @@ class _CourseInvitationsLinkDecorator(AbstractAuthenticatedRequestAwareDecorator
 
 	def _predicate(self, context, result):
 		return 	self._is_authenticated \
-			and	(	is_course_instructor(context, self.remoteUser) 
-				 or has_permission(ACT_NTI_ADMIN, context, self.request) ) \
+			and	(is_course_instructor(context, self.remoteUser)
+				 or has_permission(ACT_NTI_ADMIN, context, self.request)) \
 			and has_course_invitations(context)
 
 	def _do_decorate_external(self, context, result):
@@ -181,7 +184,7 @@ class _CourseInvitationsLinkDecorator(AbstractAuthenticatedRequestAwareDecorator
 			link.__name__ = ''
 			link.__parent__ = context
 			_links.append(link)
-		
+
 class BaseRecursiveAuditLogLinkDecorator(AbstractAuthenticatedRequestAwareDecorator):
 	"""
 	Decorate the audit log links on the given context if the
@@ -386,7 +389,7 @@ class _CourseClassmatesLinkDecorator(_BaseClassmatesLinkDecorator):
 class _ClassmatesLinkDecorator(_BaseClassmatesLinkDecorator):
 
 	def _predicate(self, context, result):
-		result =	self._is_authenticated \
+		result = 	self._is_authenticated \
 				and self.remoteUser == context \
 				and has_enrollments(self.remoteUser)
 		return result
@@ -412,9 +415,8 @@ class _CatalogFamilyDecorator(AbstractAuthenticatedRequestAwareDecorator):
 		or course super instances.
 		"""
 		context = ICourseInstance(context, None)
-		subinstances = tuple(getattr(context, 'SubInstances', ()))
-		return ICourseSubInstance.providedBy(context) \
-			or subinstances
+		subinstances = get_course_subinstances(context)
+		return ICourseSubInstance.providedBy(context) or subinstances
 
 	def _build_catalog_family(self, super_catalog):
 		catalog_family = {}
@@ -574,7 +576,7 @@ class _AnnouncementsDecorator(PreviewCourseAccessPredicateDecorator,
 		# A marker interface might make this easier
 		announcements = {}
 		items = { ITEMS: announcements,
-				  'Class': 'CourseInstanceAnnouncementForums' }
+				  CLASS: 'CourseInstanceAnnouncementForums' }
 
 		vendor_info = ICourseInstanceVendorInfo(context)
 		forum_types = vendor_info.get('NTI', {}).get('Forums', {})
@@ -594,10 +596,10 @@ class _AnnouncementsDecorator(PreviewCourseAccessPredicateDecorator,
 				discussions = context.Discussions
 				found_forum = discussions.get(forum_key)
 				if found_forum is not None:
-					announcements[ scope_name ] = found_forum
+					announcements[scope_name] = found_forum
 
 		if announcements:
-			result[ 'AnnouncementForums' ] = items
+			result['AnnouncementForums'] = items
 
 @component.adapter(ICourseCatalogEntry)
 @interface.implementer(IExternalObjectDecorator)
@@ -616,13 +618,9 @@ class _LegacyCCEFieldDecorator(object):
 	__metaclass__ = SingletonDecorator
 
 	def _course_package(self, context):
-		package = None
 		course = ICourseInstance(context, None)
-		if course is not None:
-			try:
-				package = list(course.ContentPackageBundle.ContentPackages)[0]
-			except (AttributeError, IndexError):
-				package = None
+		packages = get_course_packages(context)
+		package = packages[0] if packages else None
 		return course, package
 
 	def decorateExternalObject(self, context, result):
@@ -638,8 +636,8 @@ class _LegacyCCEFieldDecorator(object):
 			if package is not None:
 				result['ContentPackageNTIID'] = package.ntiid
 
-		if 	not result.get('LegacyPurchasableIcon') or \
-			not result.get('LegacyPurchasableThumbnail'):
+		if 		not result.get('LegacyPurchasableIcon') \
+			or	not result.get('LegacyPurchasableThumbnail'):
 
 			if not checked:
 				course, package = self._course_package(context)
@@ -665,8 +663,8 @@ class _LegacyCCEFieldDecorator(object):
 				context.LegacyPurchasableIcon = icon
 				context.LegacyPurchasableThumbnail = thumbnail
 
-				result['LegacyPurchasableThumbnail'] = thumbnail
 				result['LegacyPurchasableIcon'] = icon
+				result['LegacyPurchasableThumbnail'] = thumbnail
 
 		if 'CourseNTIID' not in result:
 			if not checked:
