@@ -39,13 +39,6 @@ class MockDataserver(object):
 			return resolver.get_object_by_oid(oid, ignore_creator=ignore_creator)
 		return None
 
-def _decode(s):
-	if not s:
-		s = u''
-	elif not isinstance(s, unicode):
-		s = s.decode('utf-8', 'ignore')
-	return s
-
 def _migrate(current, seen):
 	with current_site(current):
 		catalog = component.queryUtility(ICourseCatalog)

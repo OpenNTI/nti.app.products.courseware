@@ -37,6 +37,8 @@ from zope import component
 
 from persistent.interfaces import IPersistent
 
+from zope.lifecycleevent import notify
+
 from nti.app.products.courseware.decorators import _AnnouncementsDecorator
 from nti.app.products.courseware.decorators import _SharingScopesAndDiscussionDecorator
 
@@ -49,12 +51,8 @@ from nti.contentlibrary import ContentRemovalException
 
 from nti.contentlibrary.interfaces import IContentPackageLibrary
 
-from nti.dataserver.authorization import ACT_READ
-from nti.dataserver.authorization import ACT_CREATE
-
 from nti.dataserver.interfaces import EVERYONE_GROUP_NAME
 from nti.dataserver.interfaces import AUTHENTICATED_GROUP_NAME
-from nti.dataserver.interfaces import ISharingTargetEntityIterable
 
 from nti.externalization.externalization import to_external_object
 
@@ -65,7 +63,9 @@ from nti.contenttypes.courses.interfaces import ES_CREDIT
 from nti.contenttypes.courses.interfaces import ICourseCatalog
 from nti.contenttypes.courses.interfaces import ICourseInstance
 from nti.contenttypes.courses.interfaces import ICourseCatalogEntry
+from nti.contenttypes.courses.interfaces import CourseBundleUpdatedEvent
 from nti.contenttypes.courses.interfaces import INonPublicCourseInstance
+from nti.contenttypes.courses.interfaces import ICourseEnrollmentManager
 from nti.contenttypes.courses.interfaces import ICourseInstanceVendorInfo
 from nti.contenttypes.courses.interfaces import IEnrollmentMappedCourseInstance
 
@@ -75,20 +75,41 @@ from nti.contenttypes.courses.outlines import CourseOutlineContentNode
 
 from nti.contenttypes.courses._synchronize import synchronize_catalog_from_root
 
+from nti.dataserver.authorization import ACT_READ
+from nti.dataserver.authorization import ACT_CREATE
+from nti.dataserver.authorization import CONTENT_ROLE_PREFIX
+
+from nti.dataserver.interfaces import IMutableGroupMember
+from nti.dataserver.interfaces import ISharingTargetEntityIterable
+
+from nti.dataserver.users import User
+
 from nti.externalization.tests import externalizes
 
 from nti.ntiids import ntiids
+from nti.ntiids.ntiids import find_object_with_ntiid
 
 from nti.recorder.record import append_records
 from nti.recorder.record import get_transactions
 from nti.recorder.record import TransactionRecord
+
+from nti.schema.schema import EqHash
 
 from nti.app.products.courseware.tests import CourseLayerTest
 
 from nti.dataserver.tests.test_authorization_acl import denies
 from nti.dataserver.tests.test_authorization_acl import permits
 
+from nti.dataserver.tests.mock_dataserver import WithMockDS
+from nti.dataserver.tests.mock_dataserver import mock_db_trans
+
 resource_filename = getattr(pkg_resources, 'resource_filename')
+
+@EqHash( 'ntiid' )
+class MockContentPackage(object):
+
+	def __init__(self, ntiid):
+		self.ntiid = ntiid
 
 # This probably belongs in nti.contenttypes.courses, but some
 # tests below employ the decorators now in app.
@@ -745,3 +766,67 @@ class TestFunctionalSynchronize(CourseLayerTest):
 											has_entry('Public', not_none()),
 										   	'Class',
 										   	'CourseInstanceAnnouncementForums')))
+
+	@WithMockDS
+	@fudge.patch( 'nti.contenttypes.courses._synchronize._site_name',
+				  'nti.contenttypes.courses.sharing._adjust_scope_membership',
+				  'nti.contenttypes.courses.sharing.get_enrollments' )
+	def test_sync_with_multiple_packages(self, mock_get_site, mock_adjust_scope, mock_get_enroll):
+		"""
+		Test enrollment and permissioning when courses add content packages
+		during sync.
+		"""
+		# Some of this doesn't quite work with this test setup.
+		mock_get_site.is_callable().returns( '' )
+		mock_adjust_scope.is_callable().returns( None )
+
+		# Create and enroll user
+		with mock_db_trans():
+			user = User.create_user( username='seveneves' )
+		bucket = self.bucket
+		folder = self.folder
+		synchronize_catalog_from_root(folder, bucket)
+
+		# Now check that we get the structure we expect
+		spring = folder['Spring2014']
+		gateway = spring['Gateway']
+
+		def _get_role_ids():
+			membership = component.getAdapter(user, IMutableGroupMember,
+										  	CONTENT_ROLE_PREFIX)
+			return [x.id for x in set(membership.groups)]
+
+		package_one_id = 'content-role:ussc:cohen.cohen_v._california.'
+		package_two_id = 'content-role:ussc:cohen.cohen_v._california2.'
+
+		# Check base enrollment roles
+		with mock_db_trans():
+			manager = ICourseEnrollmentManager(gateway)
+			record = manager.enroll( user )
+			mock_get_enroll.is_callable().returns( (record,) )
+
+			role_ids = _get_role_ids()
+			assert_that( role_ids, contains( package_one_id ))
+
+		# Now with another content package
+		with mock_db_trans():
+			new_cp = MockContentPackage( "tag:nextthought.com,2011-10:USSC-HTML-Cohen.cohen_v._california2." )
+			notify( CourseBundleUpdatedEvent( gateway, (new_cp,), () ) )
+			role_ids = _get_role_ids()
+			assert_that( role_ids, contains_inanyorder( package_one_id,
+														package_two_id ))
+
+		# Remove original during sync (e.g. removed from another course), but we
+		# still have access to this package due to our enrollment.
+		with mock_db_trans():
+			old_cp = find_object_with_ntiid(  "tag:nextthought.com,2011-10:USSC-HTML-Cohen.cohen_v._california." )
+			notify( CourseBundleUpdatedEvent( gateway, (), (old_cp,) ) )
+			role_ids = _get_role_ids()
+			assert_that( role_ids, contains_inanyorder( package_one_id,
+														package_two_id ))
+
+		# Remove new
+		with mock_db_trans():
+			notify( CourseBundleUpdatedEvent( gateway, (), (new_cp,) ) )
+			role_ids = _get_role_ids()
+			assert_that( role_ids, contains( package_one_id ))
