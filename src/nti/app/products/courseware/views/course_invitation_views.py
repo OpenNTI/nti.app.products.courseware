@@ -175,16 +175,8 @@ class AcceptCourseInvitationsView(AcceptInvitationsView):
 				items.append(enrollment)
 		# make sure we commit
 		self.request.environ[b'nti.request_had_transaction_side_effects'] = b'True'
-		if len(items) == 1:
-			# XXX single enrollment record. Externalize first 
-			# we have seen a LocationError if the enrollment object is returned
-			result = to_external_object(items[0]) 
-		else:
-			result = LocatedExternalDict()
-			result[CLASS] = 'CourseInstanceEnrollments'
-			result[ITEMS] = items
+		# XXX: redirect to host so enrollments can be loaded
 		return hexc.HTTPFound(location=self.request.host_url)
-		return result
 
 @view_config(context=ICourseInstance)
 @view_defaults(route_name='objects.generic.traversal',
