@@ -8,6 +8,7 @@ __docformat__ = "restructuredtext en"
 # pylint: disable=W0212,R0904
 
 from hamcrest import is_not
+from hamcrest import has_key
 from hamcrest import has_entry
 from hamcrest import has_length
 from hamcrest import assert_that
@@ -76,6 +77,7 @@ class TestInvitations(ApplicationLayerTest):
 		res = self.testapp.get(url, extra_environ=environ, status=200)
 
 		assert_that(res.json_body, has_entry(ITEMS, has_length(1)))
+		assert_that(res.json_body, has_entry(ITEMS, has_key("CLC3403")))
 
 	@WithSharedApplicationMockDS(testapp=True, users=True)
 	def test_send_accept_invitation(self):
