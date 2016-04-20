@@ -7,7 +7,6 @@ __docformat__ = "restructuredtext en"
 # disable: accessing protected members, too many methods
 # pylint: disable=W0212,R0904
 
-from hamcrest import is_
 from hamcrest import is_not
 from hamcrest import has_entry
 from hamcrest import has_length
@@ -77,7 +76,6 @@ class TestInvitations(ApplicationLayerTest):
 		res = self.testapp.get(url, extra_environ=environ, status=200)
 
 		assert_that(res.json_body, has_entry(ITEMS, has_length(1)))
-		assert_that(res.json_body, has_entry(ITEMS, is_(["CLC3403"])))
 
 	@WithSharedApplicationMockDS(testapp=True, users=True)
 	def test_send_accept_invitation(self):

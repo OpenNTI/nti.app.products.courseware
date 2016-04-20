@@ -109,8 +109,15 @@ class CourseInvitationsView(AbstractAuthenticatedView):
 			raise hexc.HTTPForbidden()
 
 		result = LocatedExternalDict()
+		result[CLASS] = 'CourseInvitations'
 		invitations = get_invitations_for_course(self._course)
-		items = result[ITEMS] = list(invitations.keys())
+		items = result[ITEMS] = list()
+		for name, invitation in invitations.items():
+			items.append( { 
+				'description':invitation.description, 
+				'scope':invitation.scope,
+				'code:':name,
+				CLASS:'CourseInvitation'} )
 		result['Total'] = result['ItemCount'] = len(items)
 		result.__parent__ = self.context
 		result.__name__ = self.request.view_name
