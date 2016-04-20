@@ -90,6 +90,7 @@ from nti.ntiids.ntiids import find_object_with_ntiid
 CLASS = StandardExternalFields.CLASS
 ITEMS = StandardExternalFields.ITEMS
 LINKS = StandardExternalFields.LINKS
+MIMETYPE = StandardExternalFields.MIMETYPE
 
 @view_config(context=ICourseInstance)
 @view_defaults(route_name='objects.generic.traversal',
@@ -110,6 +111,7 @@ class CourseInvitationsView(AbstractAuthenticatedView):
 
 		result = LocatedExternalDict()
 		result[CLASS] = 'CourseInvitations'
+		result[MIMETYPE] = u'application/vnd.nextthought.courses.joincourseinvitations'
 		invitations = get_invitations_for_course(self._course)
 		items = result[ITEMS] = dict(invitations)
 		result['Total'] = result['ItemCount'] = len(items)
