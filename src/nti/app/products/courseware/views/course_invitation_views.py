@@ -183,6 +183,7 @@ class AcceptCourseInvitationsView(AcceptInvitationsView):
 			result = LocatedExternalDict()
 			result[CLASS] = 'CourseInstanceEnrollments'
 			result[ITEMS] = items
+		return hexc.HTTPFound(location=self.request.host_url)
 		return result
 
 @view_config(context=ICourseInstance)

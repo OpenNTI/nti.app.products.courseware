@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 from __future__ import print_function, unicode_literals, absolute_import, division
+from nti.contenttypes.courses.utils import get_enrollments
 __docformat__ = "restructuredtext en"
 
 # disable: accessing protected members, too many methods
@@ -120,12 +121,12 @@ class TestInvitations(ApplicationLayerTest):
 
 		environ = self._make_extra_environ(username='ichigo')
 		environ[b'HTTP_ORIGIN'] = b'http://platform.ou.edu'
-		res = self.testapp.get(to_check, extra_environ=environ, status=200)
-		assert_that(res.json_body, has_entry('Class', u'CourseInstanceEnrollment'))
-		
+		self.testapp.get(to_check, extra_environ=environ, status=302)
+		with mock_dataserver.mock_db_trans(self.ds, site_name='platform.ou.edu'):
+			assert_that(get_enrollments('ichigo'), has_length(1))
+
 		environ = self._make_extra_environ(username='harp4162')
 		environ[b'HTTP_ORIGIN'] = b'http://platform.ou.edu'
 		data = {'name':'ichigo', 'email':'ichigo@bleach.org', 'code':"CLC3403"}
 		url = '/dataserver2/Objects/%s/SendCourseInvitations' % course_ntiid
-		res = self.testapp.post_json(url, data, extra_environ=environ, status=200)
-		assert_that(res.json_body, has_entry(ITEMS, has_length(1)))
+		self.testapp.post_json(url, data, extra_environ=environ, status=200)
