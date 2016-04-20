@@ -9,17 +9,24 @@ __docformat__ = "restructuredtext en"
 
 logger = __import__('logging').getLogger(__name__)
 
-from . import MessageFactory as _
-
 from zope import component
+
+from pyramid import httpexceptions as hexc
 
 from pyramid.view import view_config
 from pyramid.view import view_defaults
-from pyramid import httpexceptions as hexc
 
 from nti.app.base.abstract_views import AbstractAuthenticatedView
 
 from nti.app.externalization.view_mixins import BatchingUtilsMixin
+
+from nti.app.products.courseware import MessageFactory as _
+
+from nti.app.products.courseware import VIEW_CLASSMATES
+from nti.app.products.courseware import VIEW_COURSE_CLASSMATES
+
+from nti.app.products.courseware.interfaces import ICourseInstanceEnrollment
+from nti.app.products.courseware.interfaces import IClassmatesSuggestedContactsProvider
 
 from nti.contenttypes.courses.interfaces import ICourseInstance
 from nti.contenttypes.courses.utils import get_enrollment_record
@@ -32,12 +39,6 @@ from nti.dataserver.interfaces import IUser
 from nti.externalization.interfaces import LocatedExternalDict
 from nti.externalization.interfaces import StandardExternalFields
 from nti.externalization.externalization import to_external_object
-
-from ..interfaces import ICourseInstanceEnrollment
-from ..interfaces import IClassmatesSuggestedContactsProvider
-
-from .. import VIEW_CLASSMATES
-from .. import VIEW_COURSE_CLASSMATES
 
 ITEMS = StandardExternalFields.ITEMS
 LINKS = StandardExternalFields.LINKS

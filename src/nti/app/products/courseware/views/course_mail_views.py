@@ -33,6 +33,7 @@ from nti.contenttypes.courses.interfaces import ICourseCatalogEntry
 from nti.contenttypes.courses.utils import is_course_instructor
 
 from nti.dataserver import authorization as nauth
+
 from nti.dataserver.interfaces import IEnumerableEntityContainer
 
 from nti.dataserver.users import User

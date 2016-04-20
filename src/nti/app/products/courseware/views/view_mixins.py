@@ -38,7 +38,6 @@ class AbstractRecursiveTransactionHistoryView(AbstractAuthenticatedView,
 	Params:
 
 	sortOrder - Either 'descending' or 'ascending'; defaults to ascending.
-
 	"""
 
 	_DEFAULT_BATCH_SIZE = 20
@@ -64,27 +63,27 @@ class AbstractRecursiveTransactionHistoryView(AbstractAuthenticatedView,
 		return number_items_needed
 
 	def _accum_lesson_transactions(self, lesson_overview, accum):
-		accum.extend( self._get_transactions( lesson_overview ) )
+		accum.extend(self._get_transactions(lesson_overview))
 		for overview_group in lesson_overview.items or ():
-			accum.extend( self._get_transactions( overview_group ) )
+			accum.extend(self._get_transactions(overview_group))
 			for item in overview_group.items or ():
-				accum.extend( self._get_transactions( item ) )
+				accum.extend(self._get_transactions(item))
 
 	def _get_node_items(self, origin_node):
 		accum = list()
 
-		def handle_node( node ):
-			accum.extend( self._get_transactions( node ) )
+		def handle_node(node):
+			accum.extend(self._get_transactions(node))
 			for child in node.values() or ():
-				handle_node( child )
+				handle_node(child)
 			lesson_ntiid = node.LessonOverviewNTIID
 			if lesson_ntiid:
 				lesson_overview = component.queryUtility(INTILessonOverview,
-														name=lesson_ntiid)
+														 name=lesson_ntiid)
 				if lesson_overview is not None:
-					self._accum_lesson_transactions( lesson_overview, accum )
+					self._accum_lesson_transactions(lesson_overview, accum)
 
-		handle_node( origin_node )
+		handle_node(origin_node)
 		return accum
 
 	@property
@@ -99,13 +98,12 @@ class AbstractRecursiveTransactionHistoryView(AbstractAuthenticatedView,
 
 		items = self._get_items()
 		if items:
-			result[ LAST_MODIFIED ] = max( (x.createdTime for x in items) )
+			result[ LAST_MODIFIED ] = max((x.createdTime for x in items))
 			items.sort(key=lambda t: t.createdTime, reverse=self._sort_desc)
-
-		result['TotalItemCount'] = item_count = len( items )
+		result['TotalItemCount'] = item_count = len(items)
 		# Supply this number to batching to prevent batch-ext links from showing
 		# up if we've exhausted our supply.
-		number_items_needed = self.__get_number_items_needed( item_count )
+		number_items_needed = self.__get_number_items_needed(item_count)
 		self._batch_items_iterable(result, items, number_items_needed=number_items_needed)
-		result['ItemCount'] = len( result.get( 'Items' ) )
+		result['ItemCount'] = len(result.get('Items'))
 		return result

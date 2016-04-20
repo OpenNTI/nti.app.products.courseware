@@ -21,13 +21,23 @@ from zope.catalog.interfaces import ICatalog
 
 from zope.intid.interfaces import IIntIds
 
-from pyramid.view import view_config
 from pyramid.httpexceptions import HTTPBadRequest
+
+from pyramid.view import view_config
 
 import BTrees
 
 from nti.app.base.abstract_views import AbstractAuthenticatedView
+
 from nti.app.externalization.view_mixins import BatchingUtilsMixin
+
+from nti.app.products.courseware.stream_ranking import _DEFAULT_TIME_FIELD
+from nti.app.products.courseware.stream_ranking import StreamConfidenceRanker
+
+from nti.app.products.courseware.views import VIEW_COURSE_RECURSIVE
+from nti.app.products.courseware.views import VIEW_COURSE_RECURSIVE_BUCKET
+
+from nti.app.products.courseware.views._utils import _get_containers_in_course
 
 from nti.appserver.pyramid_authorization import is_readable
 
@@ -36,9 +46,9 @@ from nti.common.property import CachedProperty
 from nti.contenttypes.courses.interfaces import ICourseInstance
 from nti.contenttypes.courses.interfaces import	ICourseSubInstance
 
-from nti.dataserver.interfaces import IUser
-
 from nti.dataserver import authorization as nauth
+
+from nti.dataserver.interfaces import IUser
 
 from nti.dataserver.metadata_index import IX_TOPICS
 from nti.dataserver.metadata_index import TP_DELETED_PLACEHOLDER
@@ -52,14 +62,6 @@ from nti.externalization.interfaces import StandardExternalFields
 from nti.links.links import Link
 
 from nti.zope_catalog.catalog import isBroken
-
-from nti.app.products.courseware.stream_ranking import _DEFAULT_TIME_FIELD
-from nti.app.products.courseware.stream_ranking import StreamConfidenceRanker
-
-from nti.app.products.courseware.views._utils import _get_containers_in_course
-
-from nti.app.products.courseware.views import VIEW_COURSE_RECURSIVE
-from nti.app.products.courseware.views import VIEW_COURSE_RECURSIVE_BUCKET
 
 CLASS = StandardExternalFields.CLASS
 ITEMS = StandardExternalFields.ITEMS

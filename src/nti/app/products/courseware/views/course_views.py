@@ -26,13 +26,26 @@ from zope.traversing.interfaces import IPathAdapter
 
 import BTrees
 
+from pyramid import httpexceptions as hexc
+
+from pyramid.interfaces import IRequest
+
 from pyramid.view import view_config
 from pyramid.view import view_defaults
-from pyramid.interfaces import IRequest
-from pyramid import httpexceptions as hexc
+
 from pyramid.threadlocal import get_current_request
 
 from nti.app.base.abstract_views import AbstractAuthenticatedView
+
+from nti.app.products.courseware.interfaces import ACT_VIEW_ROSTER
+from nti.app.products.courseware.interfaces import ICourseInstanceActivity
+from nti.app.products.courseware.interfaces import ICourseInstanceEnrollment
+
+from nti.app.products.courseware.utils import get_enrollment_options
+
+from nti.app.products.courseware.views import VIEW_CONTENTS
+from nti.app.products.courseware.views import VIEW_COURSE_ACTIVITY
+from nti.app.products.courseware.views import VIEW_COURSE_ENROLLMENT_ROSTER
 
 from nti.appserver.pyramid_authorization import has_permission
 from nti.appserver.ugd_edit_views import ContainerContextUGDPostView
@@ -56,20 +69,10 @@ from nti.externalization.externalization import to_external_object
 
 from nti.ntiids.ntiids import find_object_with_ntiid
 
-from nti.app.products.courseware.interfaces import ACT_VIEW_ROSTER
-from nti.app.products.courseware.interfaces import ICourseInstanceActivity
-from nti.app.products.courseware.interfaces import ICourseInstanceEnrollment
-
-from nti.app.products.courseware.utils import get_enrollment_options
-
-from nti.app.products.courseware.views import VIEW_CONTENTS
-from nti.app.products.courseware.views import VIEW_COURSE_ACTIVITY
-from nti.app.products.courseware.views import VIEW_COURSE_ENROLLMENT_ROSTER
-
 ITEMS = StandardExternalFields.ITEMS
 
 def _is_true(v):
-	return v and str(v).lower() in TRUE_VALUES
+	return bool(v and str(v).lower() in TRUE_VALUES)
 
 @view_config(route_name='objects.generic.traversal',
 			  context=ICourseOutline,
@@ -531,4 +534,3 @@ class CourseEnrollmentOptionsGetView(AbstractAuthenticatedView):
 	def __call__(self):
 		options = get_enrollment_options(self.context)
 		return options
-

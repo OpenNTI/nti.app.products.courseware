@@ -42,8 +42,9 @@ from nti.dataserver import authorization as nauth
 from nti.externalization.interfaces import LocatedExternalDict
 from nti.externalization.interfaces import StandardExternalFields
 
-from nti.recorder.index import IX_LOCKED
 from nti.recorder import get_recorder_catalog
+
+from nti.recorder.index import IX_LOCKED
 
 from nti.site.site import get_component_hierarchy_names
 
@@ -117,7 +118,7 @@ class CourseSyncLockedObjectsMixin(object):
 		return result
 
 	def _get_locked_objects(self, context):
-		return [x for x in self._compute_locked_objects(context) if x.isLocked()]
+		return tuple(x for x in self._compute_locked_objects(context) if x.isLocked())
 
 @view_config(context=ICourseInstance)
 @view_config(context=ICourseCatalogEntry)

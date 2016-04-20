@@ -290,6 +290,5 @@ class UnlockAllOutlineNodesView(UnlockOutlineNodesView):
 
 	def _do_call(self, result, courses=None):
 		catalog = component.getUtility(ICourseCatalog)
-		courses = list(catalog.iterCatalogEntries())
+		courses = tuple(catalog.iterCatalogEntries())
 		return super(UnlockAllOutlineNodesView, self)._do_call(result, courses)
-
