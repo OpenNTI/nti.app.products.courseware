@@ -70,6 +70,10 @@ class TestInvitations(ApplicationLayerTest):
 			course = ICourseInstance(entry)
 			course_ntiid = to_external_ntiid_oid(course)
 
+		url = '/dataserver2/@@CourseInvitations'
+		res = self.testapp.get(url, status=200)
+		assert_that(res.json_body, has_entry(ITEMS, has_length(1)))
+
 		environ = self._make_extra_environ(username='harp4162')
 		environ[b'HTTP_ORIGIN'] = b'http://platform.ou.edu'
 

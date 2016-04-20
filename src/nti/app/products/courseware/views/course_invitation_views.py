@@ -385,11 +385,7 @@ class AllCourseInvitationsView(GenericGetView):
 
 	def __call__(self):
 		result = LocatedExternalDict()
-		items = result[ITEMS] = {}
-		for invitation in get_all_course_invitations():
-			key = invitation.course
-			items.setdefault(key, [])
-			items[key].append(invitation.code)
+		items = result[ITEMS] = list(get_all_course_invitations())
 		result['Total'] = result['ItemCount'] = len(items)
 		result.__parent__ = self.context
 		result.__name__ = self.request.view_name

@@ -71,7 +71,7 @@ def memcache_get(key, client=None):
 	if client is not None:
 		try:
 			return client.get(key)
-		except (StandardError, Exception):
+		except Exception:
 			pass
 	return None
 
@@ -81,7 +81,7 @@ def memcache_set(key, value, client=None, exp=DEFAULT_EXP_TIME):
 		try:
 			client.set(key, value, time=exp)
 			return True
-		except (StandardError, Exception):
+		except Exception:
 			pass
 	return False
 
@@ -131,7 +131,7 @@ def get_course_invitation(code):
 	return result
 
 def get_all_course_invitations():
-	result = [x for _, x in component.getUtilitiesFor(IJoinCourseInvitation)]
+	result = tuple(x for _, x in component.getUtilitiesFor(IJoinCourseInvitation))
 	return result
 
 def get_invitations_for_course(context):
