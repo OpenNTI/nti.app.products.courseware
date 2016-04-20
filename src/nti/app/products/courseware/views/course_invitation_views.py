@@ -266,6 +266,22 @@ class SendCourseInvitationsView(AbstractAuthenticatedView,
 				result[email] = (realname, email)
 		return result
 
+	def get_name_email(self, values, warnings=()):
+		result = {}
+		name = values.get('name')
+		email = values.get('email')
+		if name or email:
+			if not name or not email:
+				msg = translate(_("Missing name or email."))
+				warnings.append(msg)
+			elif not isValidMailAddress(email):
+				msg = translate(_("Invalid email ${email}.", 
+								mapping={'email': email}))
+				warnings.append(msg)
+			else:
+				result[email] = name
+		return result
+
 	def send_invitations(self, invitation, users):
 		result = dict()
 		for email, data in users.items():
@@ -319,8 +335,22 @@ class SendCourseInvitationsView(AbstractAuthenticatedView,
 					},
 					None)
 		
+		warnings = []
+		direct_email = self.get_name_email(values, warnings)
+		if not force and warnings:
+			raise_json_error(
+					self.request,
+					hexc.HTTPUnprocessableEntity,
+					{
+						u'warnings':  warnings,
+						u'message': _('Could not process all user invitations.') ,
+						u'code': 'SendCourseInvitationUserError',
+					},
+					None)
+
 		all_users = direct_users
 		all_users.update(csv_users)
+		all_users.update(direct_email)
 		if not all_users:
 			raise_json_error(
 					self.request,
@@ -330,6 +360,7 @@ class SendCourseInvitationsView(AbstractAuthenticatedView,
 						u'code': 'SendCourseInvitationError',
 					},
 					None)
+
 		# send invites
 		sent = self.send_invitations(invitation, direct_users)
 		result = LocatedExternalDict()
