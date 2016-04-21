@@ -51,25 +51,24 @@ class ExportCourseView(AbstractAuthenticatedView,
 		values = self.readInput()
 		context = _parse_course(values)
 		course = ICourseInstance(context)
-
-		# get and prepare folder
 		filer = ICourseExportFiler(course)
-		filer.prepare()
-
-		# export course
-		exporter = component.getUtility(ICourseExporter)
-		exporter.export(course, filer)
-
-		# zip contents
-		zip_file = filer.asZip(path=tempfile.mkdtemp())
-		filename = os.path.split(zip_file)[1]
-		
-		# remove all content
-		filer.reset()
-		
-		response = self.request.response
-		response.content_encoding = str('identity')
-		response.content_type = str('application/zip; charset=UTF-8')
-		response.content_disposition = str('attachment; filename="%s"' % filename)
-		response.body_file = open(zip_file, "rb")
-		return response
+		try:
+			# prepare filer
+			filer.prepare()
+			
+			# export course
+			exporter = component.getUtility(ICourseExporter)
+			exporter.export(course, filer)
+	
+			# zip contents
+			zip_file = filer.asZip(path=tempfile.mkdtemp())
+			filename = os.path.split(zip_file)[1]
+			
+			response = self.request.response
+			response.content_encoding = str('identity')
+			response.content_type = str('application/zip; charset=UTF-8')
+			response.content_disposition = str('attachment; filename="%s"' % filename)
+			response.body_file = open(zip_file, "rb")
+			return response
+		finally:
+			filer.reset()
