@@ -160,11 +160,14 @@ class CourseSourceFiler(object):
 		return None
 
 	def remove(self, key):
-		result = self.get(key)
-		if result is not None:
-			parent = result.__parent__
-			parent.remove(result)
-			return True
+		try:
+			result = self.get(key)
+			if result is not None:
+				parent = result.__parent__
+				parent.remove(result)
+				return True
+		except TraversalException:
+			pass
 		return False
 
 	def contains(self, key, bucket=None):
