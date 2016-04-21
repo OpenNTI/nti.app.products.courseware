@@ -150,20 +150,31 @@ class AcceptCourseInvitationsView(AcceptInvitationsView):
 			raise hexc.HTTPBadRequest()
 		return data
 	
-	def __call__(self):
-		items = []
-		try:
-			accepted = AcceptInvitationsView._do_call(self) or {}
-		except (AlreadyEnrolledException, CourseInvitationException) as e:
+	def handle_possible_validation_error(self, request, e):
+		if isinstance(e, AlreadyEnrolledException):
+			raise_json_error(
+					self.request,
+					hexc.HTTPConflict,
+					{
+						u'message': str(e),
+						u'code': 'AlreadyEnrolledException',
+					},
+					None)
+		elif isinstance(e, CourseInvitationException):
 			raise_json_error(
 					self.request,
 					hexc.HTTPUnprocessableEntity,
 					{
 						u'message': str(e),
-						u'code': 'ValidationError',
+						u'code': 'CourseValidationError',
 					},
 					None)
-
+		else:
+			super(AcceptCourseInvitationsView, self).handle_possible_validation_error(request, e)
+		
+	def _do_call(self):
+		items = []
+		accepted = AcceptInvitationsView._do_call(self) or {}
 		for invitation in accepted.values():
 			if not IJoinCourseInvitation.providedBy(invitation):
 				continue
@@ -173,6 +184,10 @@ class AcceptCourseInvitationsView(AcceptInvitationsView):
 												 	 ICourseInstanceEnrollment)
 			if enrollment is not None:
 				items.append(enrollment)
+		return items
+
+	def __call__(self):
+		self._do_call()
 		# make sure we commit
 		self.request.environ[b'nti.request_had_transaction_side_effects'] = b'True'
 		# XXX: redirect to host so enrollments can be loaded
@@ -206,7 +221,14 @@ class SendCourseInvitationsView(AbstractAuthenticatedView,
 			raise hexc.HTTPUnprocessableEntity(_("Must provide a inviation code."))
 		invitation = get_course_invitation(code)
 		if invitation is None:
-			raise hexc.HTTPUnprocessableEntity(_("Invalid inviation code."))
+			raise_json_error(
+					self.request,
+					hexc.HTTPUnprocessableEntity,
+					{
+						u'message': _('Invalid inviation code.') ,
+						u'code': 'InvalidInvitationCodeError',
+					},
+					None)
 		return invitation
 
 	def get_direct_users(self, values, warnings=()):
