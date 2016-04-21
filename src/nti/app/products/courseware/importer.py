@@ -103,9 +103,10 @@ def create_course(admin, key, archive_path, catalog=None):
 		course_root = root.getChildNamed(key)
 		if course_root is None:
 			raise IOError("Could not access course bucket %s", course_path)
+
 		if key in administrative_level:
 			course = administrative_level[key]
-			logger.info("Course '%s' already created", key)
+			logger.debug("Course '%s' already created", key)
 		else:
 			course = ContentCourseInstance()
 			course.root = course_root

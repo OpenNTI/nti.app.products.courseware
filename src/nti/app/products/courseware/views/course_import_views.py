@@ -117,7 +117,7 @@ class ImportCourseView(AbstractAuthenticatedView,
 
 	def __call__(self):
 		values = self.readInput()
-		# Make sure we don't have any interaction.
+		# XXX: Make sure we don't have any interaction.
 		endInteraction()
 		try:
 			path, tmp_path = self._get_source_paths(values)
