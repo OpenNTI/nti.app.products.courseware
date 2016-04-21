@@ -70,7 +70,7 @@ def get_file_from_external_link(link):
 		result = None
 	return result
 
-def to_external_file_link(context, oid=False):
+def to_external_file_link(context, oid=True):
 	if oid:
 		result = to_external_download_oid_href(context)
 	else:
