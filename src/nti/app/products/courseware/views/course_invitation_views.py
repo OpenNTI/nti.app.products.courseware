@@ -24,7 +24,7 @@ from pyramid import httpexceptions as hexc
 from pyramid.view import view_config
 from pyramid.view import view_defaults
 
-from nti.app.base.abstract_views import get_source 
+from nti.app.base.abstract_views import get_source
 from nti.app.base.abstract_views import AbstractAuthenticatedView
 
 from nti.app.externalization.error import raise_json_error
@@ -69,7 +69,7 @@ from nti.contenttypes.courses.interfaces import AlreadyEnrolledException
 from nti.contenttypes.courses.interfaces import CourseInvitationException
 
 from nti.contenttypes.courses.utils import is_course_instructor
-	
+
 from nti.dataserver import authorization as nauth
 
 from nti.dataserver.interfaces import IUser
@@ -134,7 +134,7 @@ class CatalogEntryInvitationsView(CourseInvitationsView):
 			   name=ACCEPT_COURSE_INVITATIONS,
 			   permission=nauth.ACT_READ)
 class AcceptCourseInvitationsView(AcceptInvitationsView):
-	
+
 	def get_invite_codes(self):
 		if self.request.body:
 			data = read_body_as_external_object(self.request)
@@ -149,7 +149,7 @@ class AcceptCourseInvitationsView(AcceptInvitationsView):
 		if not data:
 			raise hexc.HTTPBadRequest()
 		return data
-	
+
 	def handle_possible_validation_error(self, request, e):
 		if isinstance(e, AlreadyEnrolledException):
 			raise_json_error(
@@ -171,7 +171,7 @@ class AcceptCourseInvitationsView(AcceptInvitationsView):
 					None)
 		else:
 			super(AcceptCourseInvitationsView, self).handle_possible_validation_error(request, e)
-		
+
 	def _do_call(self):
 		items = []
 		accepted = AcceptInvitationsView._do_call(self) or {}
@@ -187,11 +187,22 @@ class AcceptCourseInvitationsView(AcceptInvitationsView):
 		return items
 
 	def __call__(self):
-		self._do_call()
+		items = self._do_call()
 		# make sure we commit
 		self.request.environ[b'nti.request_had_transaction_side_effects'] = b'True'
-		# XXX: redirect to host so enrollments can be loaded
-		return hexc.HTTPFound(location=self.request.host_url)
+		if self.request.is_xhr:
+			if len(items) == 1:
+				# XXX single enrollment record. Externalize first
+				# we have seen a LocationError if the enrollment object is returned
+				result = to_external_object(items[0])
+			else:
+				result = LocatedExternalDict()
+				result[CLASS] = 'CourseInstanceEnrollments'
+				result[ITEMS] = items
+		else:
+			# XXX: redirect to host so enrollments can be loaded
+			result = hexc.HTTPFound(location=self.request.host_url)
+		return result
 
 @view_config(context=ICourseInstance)
 @view_defaults(route_name='objects.generic.traversal',
@@ -236,17 +247,17 @@ class SendCourseInvitationsView(AbstractAuthenticatedView,
 		if isinstance(usernames, six.string_types):
 			usernames = usernames.split(",")
 		usernames = set(x.lower() for x in usernames or ())
-		
+
 		result = {}
 		for username in usernames:
 			if username.endswith('@nextthought.com'):
-				msg = translate(_("Cannot send invitation to NT user ${user}.", 
+				msg = translate(_("Cannot send invitation to NT user ${user}.",
 								 mapping={'user': username}))
 				warnings.append(msg)
 				continue
 			user = User.get_user(username)
 			if not IUser.providedBy(user):
-				msg = translate(_("Could not find user ${user}.", 
+				msg = translate(_("Could not find user ${user}.",
 								mapping={'user': username}))
 				warnings.append(msg)
 				continue
@@ -254,13 +265,13 @@ class SendCourseInvitationsView(AbstractAuthenticatedView,
 			realname = profile.realname or user.username
 			email = getattr(profile, 'email', None)
 			if not email:
-				msg = translate(_("User ${user} does not have a valid email.", 
+				msg = translate(_("User ${user} does not have a valid email.",
 								mapping={'user': username}))
 				warnings.append(msg)
 				continue
 			result[email] = (realname, user.username)
 		return result
-		
+
 	def get_csv_users(self, warnings=()):
 		result = {}
 		source = get_source(self.request, 'csv', 'input')
@@ -271,17 +282,17 @@ class SendCourseInvitationsView(AbstractAuthenticatedView,
 				realname = row[0]
 				email = row[1] if len(row) > 1 else None
 				if not realname or not email:
-					msg = translate(_("Missing name or email in line ${line}.", 
+					msg = translate(_("Missing name or email in line ${line}.",
 									mapping={'line': idx+1}))
 					warnings.append(msg)
 					continue
 				if not isValidMailAddress(email):
-					msg = translate(_("Invalid email ${email}.", 
+					msg = translate(_("Invalid email ${email}.",
 									mapping={'email': email}))
 					warnings.append(msg)
 					continue
 				if email.lower().endswith('@nextthought.com'):
-					msg = translate(_("Cannot send invitation to email ${email}.", 
+					msg = translate(_("Cannot send invitation to email ${email}.",
 									 mapping={'email': email}))
 					warnings.append(msg)
 					continue
@@ -297,7 +308,7 @@ class SendCourseInvitationsView(AbstractAuthenticatedView,
 				msg = translate(_("Missing name or email."))
 				warnings.append(msg)
 			elif not isValidMailAddress(email):
-				msg = translate(_("Invalid email ${email}.", 
+				msg = translate(_("Invalid email ${email}.",
 								mapping={'email': email}))
 				warnings.append(msg)
 			else:
@@ -308,7 +319,7 @@ class SendCourseInvitationsView(AbstractAuthenticatedView,
 		result = dict()
 		for email, data in users.items():
 			name, username = data
-			if send_invitation_email(invitation, 
+			if send_invitation_email(invitation,
 									 self.remoteUser,
 								 	 name,
 								  	 email,
@@ -321,7 +332,7 @@ class SendCourseInvitationsView(AbstractAuthenticatedView,
 		if 		not is_course_instructor(self._course, self.remoteUser) \
 			and not has_permission(nauth.ACT_NTI_ADMIN, self._course, self.request):
 			raise hexc.HTTPForbidden()
-		
+
 		values = self.readInput()
 		force = (values.get('force') or u'').lower() in TRUE_VALUES
 
@@ -343,7 +354,7 @@ class SendCourseInvitationsView(AbstractAuthenticatedView,
 						LINKS: to_external_object(links),
 					},
 					None)
-		
+
 		warnings = []
 		direct_users = self.get_direct_users(values, warnings)
 		if not force and warnings:
@@ -356,7 +367,7 @@ class SendCourseInvitationsView(AbstractAuthenticatedView,
 						u'code': 'SendCourseInvitationUserError',
 					},
 					None)
-		
+
 		warnings = []
 		direct_email = self.get_name_email(values, warnings)
 		if not force and warnings:
@@ -388,7 +399,7 @@ class SendCourseInvitationsView(AbstractAuthenticatedView,
 		result = LocatedExternalDict()
 		result[ITEMS] = sent
 		return result
-		
+
 @view_config(context=IDataserverFolder)
 @view_config(context=CourseAdminPathAdapter)
 @view_defaults(route_name='objects.generic.traversal',
