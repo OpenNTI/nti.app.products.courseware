@@ -12,15 +12,24 @@ logger = __import__('logging').getLogger(__name__)
 from pyramid.view import view_config
 from pyramid.view import view_defaults
 
+from plone.namedfile.file import getImageInfo
+
 from nti.app.contentfolder.views import MkdirView
 from nti.app.contentfolder.views import MkdirsView
+from nti.app.contentfolder.views import UploadView
 
 from nti.app.products.courseware.resources.interfaces import ICourseRootFolder
 from nti.app.products.courseware.resources.interfaces import ICourseContentFolder
 
+from nti.app.products.courseware.resources.model import CourseContentFile
+from nti.app.products.courseware.resources.model import CourseContentImage
 from nti.app.products.courseware.resources.model import CourseContentFolder
 
 from nti.dataserver import authorization as nauth
+
+from nti.externalization.interfaces import StandardExternalFields
+
+MIMETYPE = StandardExternalFields.MIMETYPE
 
 @view_config(context=ICourseRootFolder)
 @view_config(context=ICourseContentFolder)
@@ -28,9 +37,15 @@ from nti.dataserver import authorization as nauth
 			   renderer='rest',
 			   request_method='POST',
 			   name='mkdir',
-			   permission=nauth.ACT_CONTENT_EDIT)
-class CourseFolderMkdir(MkdirView):
+			   permission=nauth.ACT_UPDATE)
+class CourseFolderMkdirView(MkdirView):
+
 	default_folder_mime_type = CourseContentFolder.mimeType
+
+	def readInput(self, value=None):
+		data = MkdirView.readInput(self, value=value)
+		data[MIMETYPE] = self.default_folder_mime_type
+		return data
 
 @view_config(context=ICourseRootFolder)
 @view_config(context=ICourseContentFolder)
@@ -38,6 +53,28 @@ class CourseFolderMkdir(MkdirView):
 			   renderer='rest',
 			   request_method='POST',
 			   name='mkdirs',
-			   permission=nauth.ACT_CONTENT_EDIT)
-class CourseFolderMkdirs(MkdirsView):	
+			   permission=nauth.ACT_UPDATE)
+class CourseFolderMkdirsView(MkdirsView):
 	folder_factory = CourseContentFolder
+
+@view_config(context=ICourseRootFolder)
+@view_config(context=ICourseContentFolder)
+@view_defaults(route_name='objects.generic.traversal',
+			   renderer='rest',
+			   request_method='POST',
+			   name='upload',
+			   permission=nauth.ACT_UPDATE)
+class CourseFolderUploadView(UploadView):
+
+	def factory(self, source):
+		contentType = getattr(source, 'contentType', None)
+		if contentType:
+			factory = CourseContentFile
+		else:
+			contentType, _, _ = getImageInfo(source)
+			source.seek(0)  # reset
+			if contentType:  # it's an image
+				factory = CourseContentImage
+			else:
+				factory = CourseContentFile
+		return factory
