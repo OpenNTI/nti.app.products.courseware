@@ -124,7 +124,7 @@ class TestInvitations(ApplicationLayerTest):
 		self.testapp.get(to_check, extra_environ=environ, status=302)
 		with mock_dataserver.mock_db_trans(self.ds, site_name='platform.ou.edu'):
 			assert_that(get_enrollments('ichigo'), has_length(1))
-			
+
 		self.testapp.get(to_check, extra_environ=environ, status=409)
 
 		environ = self._make_extra_environ(username='harp4162')

@@ -12,6 +12,7 @@ logger = __import__('logging').getLogger(__name__)
 import os
 import isodate
 import datetime
+
 from urllib import urlencode
 from urlparse import urljoin
 
@@ -80,10 +81,10 @@ def get_ds2(request):
 		result = None
 	return result or "dataserver2"
 
-def send_invitation_email(invitation, 
-						  sender, 
+def send_invitation_email(invitation,
+						  sender,
 						  receiver_name,
-						  receiver_email, 
+						  receiver_email,
 						  receiver_username=None,
 						  request=None):
 
@@ -130,7 +131,7 @@ def send_invitation_email(invitation,
 		'redemption_link': redemption_link,
 		'today': isodate.date_isoformat(datetime.datetime.now())
 	}
-	
+
 	try:
 		mailer = component.getUtility(ITemplatedMailer)
 		mailer.queue_simple_html_text_email(
@@ -151,14 +152,14 @@ def send_invitation_email(invitation,
 @component.adapter(IUser)
 @interface.implementer(IUserInvitationsLinkProvider)
 class _CourseUserInvitationsLinkProvider(object):
-		
+
 	def __init__(self, user=None):
 		self.user = user
 
 	def links(self, workspace):
-		link = Link(self.user, 
+		link = Link(self.user,
 					method="POST",
-					rel=ACCEPT_COURSE_INVITATIONS, 
+					rel=ACCEPT_COURSE_INVITATIONS,
 					elements=('@@' + ACCEPT_COURSE_INVITATIONS,))
 		link.__name__ = ACCEPT_COURSE_INVITATIONS
 		link.__parent__ = self.user

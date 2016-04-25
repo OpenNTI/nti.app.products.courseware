@@ -63,7 +63,7 @@ class CourseMailView(AbstractMemberEmailView):
 		will get reply addresses. This is only valid if the email
 		itself allows replies.
 	"""
-	@property
+	@Lazy
 	def _context_display_name(self):
 		cat_entry = ICourseCatalogEntry(self.course)
 		result = getattr(cat_entry, 'title', None)
@@ -71,7 +71,7 @@ class CourseMailView(AbstractMemberEmailView):
 			result = getattr(cat_entry, 'ProviderUniqueID', '')
 		return result
 
-	@property
+	@Lazy
 	def _context_logged_info(self):
 		cat_entry = ICourseCatalogEntry(self.course)
 		return getattr(cat_entry, 'ProviderUniqueID', self.course.__name__)
@@ -85,7 +85,7 @@ class CourseMailView(AbstractMemberEmailView):
 	def course(self):
 		return self.context
 
-	@property
+	@Lazy
 	def _reply_to_scope_usernames(self):
 		values = CaseInsensitiveDict(self.request.params)
 		scope_name = values.get('replyToScope')
@@ -114,16 +114,16 @@ class CourseMailView(AbstractMemberEmailView):
 		result = set((x.lower() for x in enrollments.iter_principals()))
 		return result - self._instructors
 
-	@property
+	@Lazy
 	def _only_public_usernames(self):
 		# PURCHASED falls in this category.
 		return self._all_students - self._for_credit_usernames
 
-	@property
+	@Lazy
 	def _for_credit_scope(self):
 		return self.course.SharingScopes.get(ES_CREDIT)
 
-	@property
+	@Lazy
 	def _for_credit_usernames(self):
 		result = self._get_scope_usernames(self._for_credit_scope)
 		return result & self._all_students
@@ -176,13 +176,13 @@ class EnrollmentRecordMailView(CourseMailView):
 	Email an individual student.
 	"""
 
-	@property
+	@Lazy
 	def _context_logged_info(self):
 		course = super(EnrollmentRecordMailView, self)._context_display_name
 		result = '%s in %s' % (self.context.Username, course)
 		return result
 
-	@property
+	@Lazy
 	def course(self):
 		return ICourseInstance(self.context, None)
 
