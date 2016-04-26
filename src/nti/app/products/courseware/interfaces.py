@@ -338,7 +338,7 @@ class ICoursePublishableVendorInfo(interface.Interface):
 		"""
 
 def get_course_publishable_vendor_info(context):
-	result = {}
+	result = dict()
 	course = ICourseInstance(context, None)
 	subscribers = component.subscribers((course,), ICoursePublishableVendorInfo)
 	for s in list(subscribers):

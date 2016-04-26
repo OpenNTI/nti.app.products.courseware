@@ -327,7 +327,7 @@ def _get_preferred_course(found_course):
 	Prefer any enrolled subinstances to a board object found
 	at a top-level course instance.
 	"""
-	# TODO Do we need to do anything different for instructors?
+	# TODO: Do we need to do anything different for instructors?
 	user = get_remote_user()
 	if ICourseSubInstance.providedBy(found_course) or user is None:
 		return found_course

@@ -31,7 +31,8 @@ from zope.security.management import queryInteraction
 
 from pyramid.threadlocal import get_current_request
 
-from nti.app.products.courseware import MessageFactory as _
+from nti.app.products.courseware import MessageFactory as _m
+
 from nti.app.products.courseware import USER_ENROLLMENT_LAST_MODIFIED_KEY
 
 from nti.app.products.courseware.interfaces import ICourseEnrollmentEmailBCCProvider
@@ -155,16 +156,16 @@ def _send_enrollment_confirmation(event, user, profile, email, course):
 			'today': isodate.date_isoformat(datetime.datetime.now()) }
 
 	# Augment with our args providers
-	for name, args_provider in component.getUtilitiesFor(ICourseEnrollmentEmailArgsProvider):
-		util_args = args_provider.get_email_args( user )
+	for _, args_provider in list(component.getUtilitiesFor(ICourseEnrollmentEmailArgsProvider)):
+		util_args = args_provider.get_email_args(user)
 		if util_args:
-			args.update( util_args )
+			args.update(util_args)
 
 	bcc = []
-	for name, bcc_provider in component.getUtilitiesFor(ICourseEnrollmentEmailBCCProvider):
+	for _, bcc_provider in list(component.getUtilitiesFor(ICourseEnrollmentEmailBCCProvider)):
 		bcc_emails = bcc_provider.get_bcc_emails()
 		if bcc_emails:
-			bcc.extend( bcc_emails )
+			bcc.extend(bcc_emails)
 
 	package = getattr(policy, 'PACKAGE', 'nti.app.products.courseware')
 
@@ -174,8 +175,8 @@ def _send_enrollment_confirmation(event, user, profile, email, course):
 	mailer = component.getUtility(ITemplatedMailer)
 	mailer.queue_simple_html_text_email(
 					template,
-					subject=translate(_("Welcome to ${title}",
-										mapping={'title': catalog_entry.Title})),
+					subject=translate(_m("Welcome to ${title}",
+										 mapping={'title': catalog_entry.Title})),
 					recipients=[profile],
 					template_args=args,
 					bcc=bcc,
