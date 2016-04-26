@@ -9,20 +9,26 @@ __docformat__ = "restructuredtext en"
 
 logger = __import__('logging').getLogger(__name__)
 
+from pyramid import httpexceptions as hexc
+
 from pyramid.view import view_config
 from pyramid.view import view_defaults
 
-from plone.namedfile.file import getImageInfo
-
 from nti.app.contentfolder.views import MkdirView
+from nti.app.contentfolder.views import DeleteView
 from nti.app.contentfolder.views import MkdirsView
 from nti.app.contentfolder.views import UploadView
 
+from nti.app.externalization.error import raise_json_error
+
+from nti.app.products.courseware import MessageFactory as _
+
 from nti.app.products.courseware.resources.interfaces import ICourseRootFolder
+from nti.app.products.courseware.resources.interfaces import ICourseContentFile
+from nti.app.products.courseware.resources.interfaces import ICourseContentImage
 from nti.app.products.courseware.resources.interfaces import ICourseContentFolder
 
 from nti.app.products.courseware.resources.model import CourseContentFile
-from nti.app.products.courseware.resources.model import CourseContentImage
 from nti.app.products.courseware.resources.model import CourseContentFolder
 
 from nti.dataserver import authorization as nauth
@@ -67,14 +73,27 @@ class CourseFolderMkdirsView(MkdirsView):
 class CourseFolderUploadView(UploadView):
 
 	def factory(self, source):
-		contentType = getattr(source, 'contentType', None)
-		if contentType:
-			factory = CourseContentFile
-		else:
-			contentType, _, _ = getImageInfo(source)
-			source.seek(0)  # reset
-			if contentType:  # it's an image
-				factory = CourseContentImage
-			else:
-				factory = CourseContentFile
-		return factory
+		return CourseContentFile
+
+@view_config(context=ICourseContentFile)
+@view_config(context=ICourseContentImage)
+@view_defaults(route_name='objects.generic.traversal',
+			   renderer='rest',
+			   request_method='DELETE',
+			   permission=nauth.ACT_DELETE)
+class CourseFileDeleteView(DeleteView):
+	
+	def _do_delete(self, theObject):
+		try:
+			if theObject.has_associations():
+				raise_json_error(
+						self.request,
+						hexc.HTTPUnprocessableEntity,
+						{
+							u'message': _('File is referenced by other assets.'),
+							u'code': 'CourseContentFileReferenceError',
+						},
+						None)
+		except AttributeError:
+			pass
+		return DeleteView._do_delete(self, theObject)
