@@ -84,11 +84,12 @@ def has_associations(obj):
 
 @view_config(context=ICourseContentFile)
 @view_config(context=ICourseContentImage)
+@view_config(context=ICourseContentFolder)
 @view_defaults(route_name='objects.generic.traversal',
 			   renderer='rest',
 			   request_method='DELETE',
 			   permission=nauth.ACT_DELETE)
-class CourseFileDeleteView(DeleteView):
+class CourseResourceDeleteView(DeleteView):
 	
 	def _do_delete(self, theObject):
 		try:
