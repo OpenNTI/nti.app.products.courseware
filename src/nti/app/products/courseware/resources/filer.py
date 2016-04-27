@@ -144,24 +144,28 @@ class CourseSourceFiler(object):
 		result = to_external_file_link(namedfile, self.oid)
 		return result
 
-	def get(self, key):
+	def get(self, key, bucket=None):
+		result = None
 		if is_internal_file_link(key):
 			result = get_file_from_external_link(key)
 			if result is not None:
 				course = find_interface(result, ICourseInstance, strict=False)
 				if course is not self.course:  # not the same course
 					result = None
-			return result
+		elif bucket:
+			context = traverse(self.root, bucket)
+			if context is not None and key in context:
+				result = context[key]
 		else:
 			path, key = os.path.split(key)
 			context = traverse(self.root, path)
 			if context is not None and key in context:
-				return context[key]
-		return None
+				result = context[key]
+		return result
 
-	def remove(self, key):
+	def remove(self, key, bucket=None):
 		try:
-			result = self.get(key)
+			result = self.get(key, bucket=bucket)
 			if result is not None:
 				parent = result.__parent__
 				parent.remove(result)
