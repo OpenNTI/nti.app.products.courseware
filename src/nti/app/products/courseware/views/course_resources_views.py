@@ -75,6 +75,13 @@ class CourseFolderUploadView(UploadView):
 	def factory(self, source):
 		return CourseContentFile
 
+def has_associations(obj):
+	try:
+		return obj.has_associations()
+	except AttributeError:
+		pass
+	return False
+
 @view_config(context=ICourseContentFile)
 @view_config(context=ICourseContentImage)
 @view_defaults(route_name='objects.generic.traversal',
@@ -85,7 +92,7 @@ class CourseFileDeleteView(DeleteView):
 	
 	def _do_delete(self, theObject):
 		try:
-			if theObject.has_associations():
+			if has_associations(theObject):
 				raise_json_error(
 						self.request,
 						hexc.HTTPUnprocessableEntity,
