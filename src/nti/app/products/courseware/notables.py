@@ -92,8 +92,8 @@ class TopLevelPriorityNotableFilter(object):
 							return True
 		return False
 
-@interface.implementer(IUserPriorityCreatorNotableProvider)
 @component.adapter(IUser, interface.Interface)
+@interface.implementer(IUserPriorityCreatorNotableProvider)
 class _UserPriorityCreatorNotableProvider(object):
 	"""
 	We want all items created by instructors shared with
@@ -143,6 +143,7 @@ class _UserPriorityCreatorNotableProvider(object):
 
 			course_instructors = {x.id for x in course.instructors}
 			instructor_intids = catalog['creator'].apply({'any_of': course_instructors})
+
 			# TODO: Do we need implies?
 			course_scope = course.SharingScopes[ enrollment.Scope ]
 			scope_ntiids = (course_scope.NTIID,)

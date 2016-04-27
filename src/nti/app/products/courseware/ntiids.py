@@ -35,11 +35,11 @@ from nti.contenttypes.courses.utils import get_parent_course
 from nti.dataserver.contenttypes.forums.ntiids import resolve_ntiid_in_board
 from nti.dataserver.contenttypes.forums.ntiids import resolve_forum_ntiid_in_board
 
+from nti.ntiids.interfaces import INTIIDResolver
+
 from nti.ntiids.ntiids import get_provider
 from nti.ntiids.ntiids import escape_provider
 from nti.ntiids.ntiids import find_object_with_ntiid
-
-from nti.ntiids.interfaces import INTIIDResolver
 
 COURSE_NTIID_PREFIX = 'tag:nextthought.com,2011-10:NTI-CourseInfo-'
 
