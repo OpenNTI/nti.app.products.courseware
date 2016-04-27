@@ -126,7 +126,6 @@
 			}
 			.topper{
 				margin-top:20px;
-				float: right;
 			}
 			a.outline{
 				background-color:transparent;
@@ -212,7 +211,7 @@
 			<tr>
 				<td class="header">TO:</td>
 				<td tal:condition="options/receiver_name | nothing" tal:content="options/receiver_name">
-					Ichigo Kurozaki 
+					Ichigo Kurozaki
 				</td>
 			</tr>
 			<tr>
@@ -220,7 +219,7 @@
 				<!-- If there is not a TO address, let them fill in the FROM address manually. -->
 				<td tal:condition="options/receiver_name | nothing" tal:content="options/sender_name">Aizen Sosuke</td>
 			</tr>
-			
+
 			<tr>
 				<td class="header">INVITATION:</td>
 				<td class="course"><span class="course-name" tal:content="options/course_title | default">
