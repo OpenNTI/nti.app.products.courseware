@@ -37,6 +37,7 @@ from nti.app.products.courseware.discussions import auto_create_forums
 from nti.app.products.courseware.resources.filer import get_unique_file_name
 
 from nti.app.products.courseware.resources.utils import get_course_filer
+from nti.app.products.courseware.resources.utils import is_internal_file_link	
 
 from nti.app.products.courseware.views._utils import is_true
 
@@ -98,7 +99,7 @@ def _handle_multipart(context, user, discussion, sources):
 		if name in provided:
 			# remove existing
 			location = getattr(discussion, name, None)
-			if location:
+			if location and is_internal_file_link(location):
 				filer.remove(location)
 			# save a in a new file
 			key = get_safe_source_filename(source, name)
