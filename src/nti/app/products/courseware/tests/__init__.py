@@ -149,6 +149,10 @@ class LegacyInstructedCourseApplicationTestLayer(ApplicationTestLayer):
 	@staticmethod
 	def _setup_library(cls, *args, **kwargs):
 		from nti.contentlibrary.filesystem import CachedNotifyingStaticFilesystemLibrary as Library
+		# FIXME: We load CLC in both global and site level libraries.
+		# This caused some weird ConnectionStateErrors in contentlibrary.subscribers when
+		# tearing down the library (now worked around). The registered items were ghosted
+		# by the time we query for them in the site level tear down.
 		lib = Library(
 			paths=(
 				os.path.join(
