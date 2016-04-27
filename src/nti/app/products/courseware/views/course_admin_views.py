@@ -382,7 +382,7 @@ class CourseSectionEnrollmentMigrationView(AbstractAuthenticatedView):
 		m = result[ITEMS] = {}
 		for info in items or ():
 			m[info.section_name] = info.seat_count
-		result['Total'] = total
+		result['Total'] = result['ItemCount'] = total
 		return result
 
 	def __call__(self):
@@ -519,13 +519,13 @@ class CourseEnrollmentsView(AbstractAuthenticatedView):
 import collections
 from cStringIO import StringIO
 
+from nti.app.products.courseware.interfaces import ICourseInstanceEnrollment
+
 from nti.contenttypes.courses.interfaces import ICourseCatalogEntry
 
 from nti.dataserver.interfaces import IDataserverFolder
 
 from nti.externalization.interfaces import LocatedExternalList
-
-from ..interfaces import ICourseInstanceEnrollment
 
 @view_config(context=IDataserverFolder)
 @view_config(context=CourseAdminPathAdapter)
