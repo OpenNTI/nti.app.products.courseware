@@ -47,8 +47,12 @@ def save_resources_to_filer(provided, obj, filer, ext_obj=None):
 			else:
 				path = ASSETS_FOLDER
 			# save resource
-			filer.save(resource.name, resource, bucket=path,
-					   contentType=contentType, overwrite=True)
+			filer.save(resource.name, 
+					   resource, 
+					   bucket=path,
+					   context=obj,
+					   overwrite=True,
+					   contentType=contentType)
 			# get course file scheme
 			internal = NTI_COURSE_FILE_SCHEME + path + "/" + resource.name
 			logger.debug("%s was saved as %s", value, internal)
