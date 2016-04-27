@@ -31,6 +31,9 @@ from nti.contentfolder.model import ContentFolder
 
 class AssociationsMixin(object):
 
+	def __init__(self, *args, **kwargs):
+		super(CourseContentResource, self).__init__(*args, **kwargs)
+
 	def has_associations(self):
 		result = False
 		for value in list(self.values()): # snapshot
@@ -49,6 +52,9 @@ class CourseRootFolder(RootFolder, AssociationsMixin):
 @interface.implementer(ICourseContentResource)
 class CourseContentResource(Contained):
 
+	def __init__(self, *args, **kwargs):
+		super(CourseContentResource, self).__init__(*args, **kwargs)
+
 	@CachedProperty('__parent__')
 	def path(self):
 		context = self
@@ -65,13 +71,13 @@ class CourseContentResource(Contained):
 		return result
 
 @interface.implementer(ICourseContentFolder)
-class CourseContentFolder(ContentFolder, CourseContentResource, AssociationsMixin):
+class CourseContentFolder(CourseContentResource, ContentFolder, AssociationsMixin):
 	mimeType = mime_type = str('application/vnd.nextthought.courseware.contentfolder')
 
 @interface.implementer(ICourseContentFile)
-class CourseContentFile(ContentBlobFile, CourseContentResource):
+class CourseContentFile(CourseContentResource, ContentBlobFile):
 	pass
 
 @interface.implementer(ICourseContentImage)
-class CourseContentImage(ContentBlobImage, CourseContentResource):
+class CourseContentImage(CourseContentResource, ContentBlobImage):
 	pass
