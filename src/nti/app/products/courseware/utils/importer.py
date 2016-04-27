@@ -46,7 +46,8 @@ def transfer_resources_from_filer(provided, obj, source_filer, target_filer):
 				contentType = contentType or mimetypes.guess_type(name)
 				href = target_filer.save(name, source, bucket=bucket, 
 										 contentType=contentType,
-								  		 overwrite=True)
+								  		 overwrite=True,
+								  		 context=obj)
 				logger.debug("%s was saved as %s", value, href)
 				setattr(obj, field_name, href)
 				result[field_name] = href
