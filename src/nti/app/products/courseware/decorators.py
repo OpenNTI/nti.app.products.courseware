@@ -30,6 +30,7 @@ from nti.app.products.courseware import SEND_COURSE_INVITATIONS
 from nti.app.products.courseware import VIEW_COURSE_INVITATIONS
 from nti.app.products.courseware import VIEW_RECURSIVE_AUDIT_LOG
 from nti.app.products.courseware import VIEW_COURSE_LOCKED_OBJECTS
+from nti.app.products.courseware import CHECK_COURSE_INVITATIONS_CSV
 from nti.app.products.courseware import VIEW_COURSE_RECURSIVE_BUCKET
 from nti.app.products.courseware import VIEW_COURSE_ENROLLMENT_ROSTER
 
@@ -172,13 +173,15 @@ class _CourseInvitationsLinkDecorator(AbstractAuthenticatedRequestAwareDecorator
 
 	def _predicate(self, context, result):
 		return 	self._is_authenticated \
-			and	(is_course_instructor(context, self.remoteUser)
+			and	(	is_course_instructor(context, self.remoteUser)
 				 or has_permission(ACT_NTI_ADMIN, context, self.request)) \
 			and has_course_invitations(context)
 
 	def _do_decorate_external(self, context, result):
 		_links = result.setdefault(LINKS, [])
-		for name in (VIEW_COURSE_INVITATIONS, SEND_COURSE_INVITATIONS):
+		for name in (VIEW_COURSE_INVITATIONS,
+					 SEND_COURSE_INVITATIONS,
+					 CHECK_COURSE_INVITATIONS_CSV):
 			link = Link(context, rel=name, elements=(name,))
 			interface.alsoProvides(link, ILocation)
 			link.__name__ = ''

@@ -48,6 +48,7 @@ from nti.app.products.courseware.utils import get_invitations_for_course
 from nti.app.products.courseware.views import SEND_COURSE_INVITATIONS
 from nti.app.products.courseware.views import VIEW_COURSE_INVITATIONS
 from nti.app.products.courseware.views import ACCEPT_COURSE_INVITATIONS
+from nti.app.products.courseware.views import CHECK_COURSE_INVITATIONS_CSV
 
 from nti.app.products.courseware.views import CourseAdminPathAdapter
 
@@ -92,6 +93,11 @@ ITEMS = StandardExternalFields.ITEMS
 LINKS = StandardExternalFields.LINKS
 MIMETYPE = StandardExternalFields.MIMETYPE
 
+USER_COURSE_INVITATIONS_CLASS = u'UserCourseInvitations'
+JOIN_COURSE_INVITATIONS_MIMETYPE = u'application/vnd.nextthought.courses.joincourseinvitations'
+USER_COURSE_INVITATIONS_MIMETYPE = u'application/vnd.nextthought.courses.usercourseinvitations'
+COURSE_INVITATIONS_SENT_MIMETYPE = u'application/vnd.nextthought.courses.courseinvitationssent'
+
 @view_config(context=ICourseInstance)
 @view_defaults(route_name='objects.generic.traversal',
 			   renderer='rest',
@@ -111,7 +117,7 @@ class CourseInvitationsView(AbstractAuthenticatedView):
 
 		result = LocatedExternalDict()
 		result[CLASS] = 'CourseInvitations'
-		result[MIMETYPE] = u'application/vnd.nextthought.courses.joincourseinvitations'
+		result[MIMETYPE] = JOIN_COURSE_INVITATIONS_MIMETYPE
 		invitations = get_invitations_for_course(self._course)
 		items = result[ITEMS] = dict(invitations)
 		result['Total'] = result['ItemCount'] = len(items)
@@ -205,6 +211,62 @@ class AcceptCourseInvitationsView(AcceptInvitationsView):
 		return result
 
 @view_config(context=ICourseInstance)
+@view_config(context=ICourseCatalogEntry)
+@view_defaults(route_name='objects.generic.traversal',
+			   renderer='rest',
+			   request_method='POST',
+			   name=CHECK_COURSE_INVITATIONS_CSV,
+			   permission=nauth.ACT_READ)
+class CheckCourseInvitationsCSVView(AbstractAuthenticatedView,
+									ModeledContentUploadRequestUtilsMixin):
+
+	@Lazy
+	def _course(self):
+		return ICourseInstance(self.context)
+
+	def parse_csv_users(self, warnings=()):
+		result = []
+		source = get_source(self.request, 'csv', 'input')
+		if source is not None:
+			for idx, row in enumerate(csv.reader(source)):
+				if not row or row[0].startswith("#"):
+					continue
+				realname = row[0]
+				email = row[1] if len(row) > 1 else None
+				if not realname or not email:
+					msg = translate(_("Missing name or email in line ${line}.",
+									mapping={'line': idx+1}))
+					warnings.append(msg)
+					continue
+				if not isValidMailAddress(email):
+					msg = translate(_("Invalid email ${email} in line ${line}.",
+									mapping={'email': email, 'line': idx+1}))
+					warnings.append(msg)
+					continue
+				if email.lower().endswith('@nextthought.com'):
+					msg = translate(_("Cannot send invitation to email ${email}.",
+									 mapping={'email': email}))
+					warnings.append(msg)
+					continue
+				result.append({'email':email, 'name':realname})
+		else:
+			warnings.append(_("No CSV source found."))
+		return result
+
+	def __call__(self):
+		if 		not is_course_instructor(self._course, self.remoteUser) \
+			and not has_permission(nauth.ACT_NTI_ADMIN, self._course, self.request):
+			raise hexc.HTTPForbidden()
+
+		warnings = list()
+		result = LocatedExternalDict()
+		result[CLASS] = USER_COURSE_INVITATIONS_CLASS
+		result[MIMETYPE] = USER_COURSE_INVITATIONS_MIMETYPE
+		result[ITEMS] = self.parse_csv_users(warnings)
+		result['Warnings'] = warnings if warnings else None
+		return result
+
+@view_config(context=ICourseInstance)
 @view_defaults(route_name='objects.generic.traversal',
 			   renderer='rest',
 			   request_method='POST',
@@ -272,23 +334,22 @@ class SendCourseInvitationsView(AbstractAuthenticatedView,
 			result[email] = (realname, user.username)
 		return result
 
-	def get_csv_users(self, warnings=()):
+	def get_user_course_invitations(self, values, warnings=()):
 		result = {}
-		source = get_source(self.request, 'csv', 'input')
-		if source is not None:
-			for idx, row in enumerate(csv.reader(source)):
-				if not row or row[0].startswith("#"):
-					continue
-				realname = row[0]
-				email = row[1] if len(row) > 1 else None
+		if 		values.get(MIMETYPE) == USER_COURSE_INVITATIONS_MIMETYPE \
+			or	values.get(CLASS) == USER_COURSE_INVITATIONS_CLASS:
+			items = values.get(ITEMS) or ()
+			for idx, entry in enumerate(items):
+				email = entry.get('email') 
+				realname = entry.get('name') 
 				if not realname or not email:
-					msg = translate(_("Missing name or email in line ${line}.",
-									mapping={'line': idx+1}))
+					msg = translate(_("Missing name or email at index ${idx}.",
+									mapping={'idx': idx+1}))
 					warnings.append(msg)
 					continue
 				if not isValidMailAddress(email):
-					msg = translate(_("Invalid email ${email}.",
-									mapping={'email': email}))
+					msg = translate(_("Invalid email ${email} at index ${idx}.",
+									mapping={'email': email, 'idx':idx+1}))
 					warnings.append(msg)
 					continue
 				if email.lower().endswith('@nextthought.com'):
@@ -335,23 +396,26 @@ class SendCourseInvitationsView(AbstractAuthenticatedView,
 
 		values = self.readInput()
 		force = (values.get('force') or u'').lower() in TRUE_VALUES
-
-		warnings = []
-		invitation = self.get_invitation(values)
-		csv_users = self.get_csv_users(warnings)
-		if not force and warnings:
+		if not force:
 			links = (
 				Link(self.request.path, rel='confirm',
 					 params={'force':True}, method='POST'),
 			)
+		else:
+			links = None
+
+		warnings = []
+		invitation = self.get_invitation(values)
+		user_invitations = self.get_user_course_invitations(values, warnings)
+		if not force and warnings:
 			raise_json_error(
 					self.request,
 					hexc.HTTPUnprocessableEntity,
 					{
 						u'warnings':  warnings,
-						u'message': _('There are errors in invitation csv source.') ,
-						u'code': 'SendCourseInvitationCSVError',
-						LINKS: to_external_object(links),
+						u'message': _('There are errors in the user invitation source.') ,
+						u'code': 'SendCourseInvitationError',
+						LINKS: to_external_object(links) if links else None,
 					},
 					None)
 
@@ -363,8 +427,9 @@ class SendCourseInvitationsView(AbstractAuthenticatedView,
 					hexc.HTTPUnprocessableEntity,
 					{
 						u'warnings':  warnings,
-						u'message': _('Could not process all user invitations.') ,
-						u'code': 'SendCourseInvitationUserError',
+						u'message': _('Could not process all direct user invitations.') ,
+						u'code': 'SendCourseInvitationError',
+						LINKS: to_external_object(links) if links else None,
 					},
 					None)
 
@@ -376,14 +441,15 @@ class SendCourseInvitationsView(AbstractAuthenticatedView,
 					hexc.HTTPUnprocessableEntity,
 					{
 						u'warnings':  warnings,
-						u'message': _('Could not process all user invitations.') ,
-						u'code': 'SendCourseInvitationUserError',
+						u'message': _('Could not process single user invitation.') ,
+						u'code': 'SendCourseInvitationError',
+						LINKS: to_external_object(links) if links else None,
 					},
 					None)
 
 		all_users = direct_users
-		all_users.update(csv_users)
 		all_users.update(direct_email)
+		all_users.update(user_invitations)
 		if not all_users:
 			raise_json_error(
 					self.request,
@@ -397,6 +463,8 @@ class SendCourseInvitationsView(AbstractAuthenticatedView,
 		# send invites
 		sent = self.send_invitations(invitation, direct_users)
 		result = LocatedExternalDict()
+		result[CLASS] = 'CourseInvitationsSent'
+		result[MIMETYPE] = COURSE_INVITATIONS_SENT_MIMETYPE
 		result[ITEMS] = sent
 		return result
 

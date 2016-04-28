@@ -19,6 +19,7 @@ ASSETS_FOLDER = 'assets'
 USER_ENROLLMENT_LAST_MODIFIED_KEY = 'nti.app.products.courseware.UserEnrollmentLastModified'
 
 SEND_COURSE_INVITATIONS = 'SendCourseInvitations'
+CHECK_COURSE_INVITATIONS_CSV = 'CheckCourseInvitationsCSV'
 
 ACCEPT_COURSE_INVITATIONS = 'accept-course-invitations'
 
