@@ -140,8 +140,9 @@ class CourseSourceFiler(object):
 
 		if context is not None:
 			namedfile.add_association(context)
-
-		result = to_external_file_link(namedfile, self.oid)
+		
+		# return external link
+		result = self.get_external_link(namedfile)
 		return result
 
 	def get(self, key, bucket=None):
@@ -192,9 +193,13 @@ class CourseSourceFiler(object):
 		return result
 
 	def is_bucket(self, bucket):
-		context = traverse(self.root, bucket) if bucket else self.root
-		return 		ICourseContentFolder.providedBy(context) \
-				or	ICourseRootFolder.providedBy(context)
+		try:
+			context = traverse(self.root, bucket) if bucket else self.root
+			result =	ICourseContentFolder.providedBy(context) \
+					or	ICourseRootFolder.providedBy(context)
+		except TraversalException:
+			result = False
+		return result
 	isBucket = is_bucket
 
 	def key_name(self, identifier):
@@ -205,3 +210,8 @@ class CourseSourceFiler(object):
 			result = os.path.split(identifier)[1]
 		return result
 	keyName = key_name
+	
+	def get_external_link(self, item):
+		result = to_external_file_link(item, self.oid)
+		return result
+	to_external_link = get_external_link
