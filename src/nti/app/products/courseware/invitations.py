@@ -86,6 +86,7 @@ def send_invitation_email(invitation,
 						  receiver_name,
 						  receiver_email,
 						  receiver_username=None,
+						  message=None,
 						  request=None):
 
 	if not request or not receiver_email:
@@ -127,7 +128,7 @@ def send_invitation_email(invitation,
 		'support_email' : support_email,
 		'course_title': entry.title,
 		'invitation_code' : invitation.code,
-		'invitation_message' : None,
+		'invitation_message' : message,
 		'redemption_link': redemption_link,
 		'today': isodate.date_isoformat(datetime.datetime.now())
 	}

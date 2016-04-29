@@ -147,10 +147,9 @@ class TestInvitations(ApplicationLayerTest):
 	@WithSharedApplicationMockDS(testapp=True, users=True)
 	def test_check_course_inv_csv(self):
 		source = [
-			'"ichigo kurosaki",ichigo@bleach.org',
-			'"azien sosuke",aizen@bleach.org',
-			'"invalid_email",invalid',
-			',empty@foo.com'
+			'ichigo@bleach.org,"ichigo kurosaki"',
+			'aizen@bleach.org,"azien sosuke"',
+			'invalid,"invalid_email"',
 		]
 		source = str('\n'.join(source))
 		with mock_dataserver.mock_db_trans(self.ds, site_name='platform.ou.edu'):
@@ -170,7 +169,7 @@ class TestInvitations(ApplicationLayerTest):
 						  		status=200)
 
 		assert_that(res.json_body, has_entry(ITEMS, has_length(2)))
-		assert_that(res.json_body, has_entry('Warnings', has_length(2)))
+		assert_that(res.json_body, has_entry('Warnings', has_length(1)))
 		
 		data = dict(res.json_body)
 		data.pop('Warnings')

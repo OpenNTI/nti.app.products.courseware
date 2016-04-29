@@ -251,10 +251,10 @@ class CheckCourseInvitationsCSVView(AbstractAuthenticatedView,
 			for idx, row in enumerate(csv.reader(source)):
 				if not row or row[0].startswith("#"):
 					continue
-				realname = row[0]
-				email = row[1] if len(row) > 1 else None
-				if not realname or not email:
-					msg = translate(_("Missing name or email in line ${line}.",
+				email = row[0]
+				realname = row[1] if len(row) > 1 else email
+				if not email:
+					msg = translate(_("Missing email in line ${line}.",
 									mapping={'line': idx+1}))
 					warnings.append(msg)
 					continue
@@ -361,9 +361,9 @@ class SendCourseInvitationsView(AbstractAuthenticatedView,
 			items = values.get(ITEMS) or ()
 			for idx, entry in enumerate(items):
 				email = entry.get('email') 
-				realname = entry.get('name') 
-				if not realname or not email:
-					msg = translate(_("Missing name or email at index ${idx}.",
+				realname = entry.get('name') or email
+				if not email:
+					msg = translate(_("Missing email at index ${idx}.",
 									mapping={'idx': idx+1}))
 					warnings.append(msg)
 					continue
@@ -382,11 +382,11 @@ class SendCourseInvitationsView(AbstractAuthenticatedView,
 
 	def get_name_email(self, values, warnings=()):
 		result = {}
-		name = values.get('name')
 		email = values.get('email')
+		name = values.get('name') or email
 		if name or email:
-			if not name or not email:
-				msg = translate(_("Missing name or email."))
+			if not email:
+				msg = translate(_("Missing email."))
 				warnings.append(msg)
 			elif not isValidMailAddress(email):
 				msg = translate(_("Invalid email ${email}.",
@@ -396,7 +396,7 @@ class SendCourseInvitationsView(AbstractAuthenticatedView,
 				result[email] = (name, email)
 		return result
 
-	def send_invitations(self, invitation, users):
+	def send_invitations(self, invitation, users, message=None):
 		result = dict()
 		for email, data in users.items():
 			name, username = data
@@ -405,7 +405,8 @@ class SendCourseInvitationsView(AbstractAuthenticatedView,
 								 	 name,
 								  	 email,
 								  	 username,
-								     self.request):
+								  	 message=message,
+								     request=self.request):
 				result[email] = name
 		return result
 
@@ -481,7 +482,8 @@ class SendCourseInvitationsView(AbstractAuthenticatedView,
 					None)
 
 		# send invites
-		sent = self.send_invitations(invitation, direct_users)
+		message = values.get('message')
+		sent = self.send_invitations(invitation, all_users, message)
 		result = LocatedExternalDict()
 		result[CLASS] = 'CourseInvitationsSent'
 		result[MIMETYPE] = COURSE_INVITATIONS_SENT_MIMETYPE
