@@ -517,7 +517,10 @@ class CourseEnrollmentsView(AbstractAuthenticatedView):
 		return response
 
 import collections
-from cStringIO import StringIO
+try:
+	from cStringIO import StringIO
+except ImportError:
+	from StringIO import StringIO
 
 from nti.app.products.courseware.interfaces import ICourseInstanceEnrollment
 
@@ -571,7 +574,7 @@ class AllCourseEnrollmentRosterDownloadView(AbstractAuthenticatedView):
 		enrollment_predicate = self._make_enrollment_predicate()
 		user_to_coursenames = collections.defaultdict(set)
 		entries = list(self._iter_catalog_entries())
-		ntiids = [e.ntiid for e in entries]
+		ntiids = {e.ntiid for e in entries}
 
 		catalog = get_enrollment_catalog()
 		intids = component.getUtility(IIntIds)
