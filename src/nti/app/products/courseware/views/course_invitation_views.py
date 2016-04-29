@@ -13,6 +13,8 @@ import csv
 import six
 from collections import Mapping
 
+from urlparse import urljoin
+
 from zope import component
 
 from zope.i18n import translate
@@ -192,22 +194,40 @@ class AcceptCourseInvitationsView(AcceptInvitationsView):
 				items.append(enrollment)
 		return items
 
+	def _web_root(self):
+		from nti.appserver.interfaces import IApplicationSettings
+		settings = component.getUtility(IApplicationSettings)
+		web_root = settings.get('web_app_root', '/app/')
+		return web_root
+
+	def _get_app_url(self, request, redemption_code):
+		# The webapp does this dance to get to the course library page
+		url = '#!library/availablecourses/invitations/accept/%s' % redemption_code
+		app_url = request.application_url
+		redemption_link = urljoin(app_url, self._web_root())
+		redemption_link = urljoin(redemption_link, url)
+		return redemption_link
+
 	def __call__(self):
+		if not self.request.is_xhr:
+			# For non-xhr (email links), redirect to our app form.
+			# XXX: Not sure it's possible to get multiple codes.
+			codes = self.get_invite_codes()
+			code = codes[0]
+			app_url = self._get_app_url( self.request, code )
+			raise hexc.HTTPFound( location=app_url )
+
 		items = self._do_call()
-		# make sure we commit
+		# Make sure we commit
 		self.request.environ[b'nti.request_had_transaction_side_effects'] = b'True'
-		if self.request.is_xhr:
-			if len(items) == 1:
-				# XXX single enrollment record. Externalize first
-				# we have seen a LocationError if the enrollment object is returned
-				result = to_external_object(items[0])
-			else:
-				result = LocatedExternalDict()
-				result[CLASS] = 'CourseInstanceEnrollments'
-				result[ITEMS] = items
+		if len(items) == 1:
+			# XXX single enrollment record. Externalize first
+			# we have seen a LocationError if the enrollment object is returned
+			result = to_external_object(items[0])
 		else:
-			# XXX: redirect to host so enrollments can be loaded
-			result = hexc.HTTPFound(location=self.request.host_url)
+			result = LocatedExternalDict()
+			result[CLASS] = 'CourseInstanceEnrollments'
+			result[ITEMS] = items
 		return result
 
 @view_config(context=ICourseInstance)

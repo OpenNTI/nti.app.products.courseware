@@ -7,6 +7,7 @@ __docformat__ = "restructuredtext en"
 # disable: accessing protected members, too many methods
 # pylint: disable=W0212,R0904
 
+from hamcrest import is_
 from hamcrest import is_not
 from hamcrest import has_key
 from hamcrest import has_entry
@@ -111,6 +112,7 @@ class TestInvitations(ApplicationLayerTest):
 		data = {'username':'ichigo', 'code':"CLC3403"}
 		url = '/dataserver2/Objects/%s/SendCourseInvitations' % course_ntiid
 		res = self.testapp.post_json(url, data, extra_environ=environ, status=200)
+
 		assert_that(res.json_body, has_entry(ITEMS, has_length(1)))
 
 		mailer = component.getUtility(ITestMailDelivery)
@@ -122,7 +124,15 @@ class TestInvitations(ApplicationLayerTest):
 
 		environ = self._make_extra_environ(username='ichigo')
 		environ[b'HTTP_ORIGIN'] = b'http://platform.ou.edu'
-		self.testapp.get(to_check, extra_environ=environ, status=302)
+		# Redirected to app form
+		res = self.testapp.get(to_check, extra_environ=environ, status=302)
+		assert_that( res.location,
+					 is_('http://localhost/app/#!library/availablecourses/invitations/accept/CLC3403'))
+
+		# Now submitted
+		environ['HTTP_X_REQUESTED_WITH'] = b'XMLHttpRequest'
+		self.testapp.get(to_check, extra_environ=environ, status=200)
+
 		with mock_dataserver.mock_db_trans(self.ds, site_name='platform.ou.edu'):
 			assert_that(get_enrollments('ichigo'), has_length(1))
 
