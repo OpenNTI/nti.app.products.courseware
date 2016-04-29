@@ -285,7 +285,7 @@ class SendCourseInvitationsView(AbstractAuthenticatedView,
 		return result
 
 	def get_invitation(self, values):
-		code = values.get('code')
+		code = values.get('code') or values.get('invitation')
 		if not code:
 			invitations = get_invitations_for_course(self.context)
 			if invitations: # not provided
