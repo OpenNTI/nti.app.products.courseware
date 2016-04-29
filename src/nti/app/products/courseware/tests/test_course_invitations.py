@@ -2,7 +2,6 @@
 # -*- coding: utf-8 -*-
 
 from __future__ import print_function, unicode_literals, absolute_import, division
-from nti.contenttypes.courses.utils import get_enrollments
 __docformat__ = "restructuredtext en"
 
 # disable: accessing protected members, too many methods
@@ -24,6 +23,8 @@ from nti.contenttypes.courses.interfaces import ICourseInstance
 from nti.contenttypes.courses.interfaces import IJoinCourseInvitation
 
 from nti.contenttypes.courses.invitation import JoinCourseInvitation
+
+from nti.contenttypes.courses.utils import get_enrollments
 
 from nti.dataserver.users.interfaces import IUserProfile
 
@@ -132,3 +133,41 @@ class TestInvitations(ApplicationLayerTest):
 		data = {'name':'ichigo', 'email':'ichigo@bleach.org', 'code':"CLC3403"}
 		url = '/dataserver2/Objects/%s/SendCourseInvitations' % course_ntiid
 		self.testapp.post_json(url, data, extra_environ=environ, status=200)
+
+	@WithSharedApplicationMockDS(testapp=True, users=True)
+	def test_check_course_inv_csv(self):
+		source = [
+			'"ichigo kurosaki",ichigo@bleach.org',
+			'"azien sosuke",aizen@bleach.org',
+			'"invalid_email",invalid',
+			',empty@foo.com'
+		]
+		source = str('\n'.join(source))
+		with mock_dataserver.mock_db_trans(self.ds, site_name='platform.ou.edu'):
+			invitiation = JoinCourseInvitation("CLC3403", self.entry_ntiid)
+			component.getGlobalSiteManager().registerUtility(invitiation,
+															 IJoinCourseInvitation,
+															 "CLC3403")
+			entry = self.catalog_entry()
+			course = ICourseInstance(entry)
+			course_ntiid = to_external_ntiid_oid(course)
+		
+		environ = self._make_extra_environ(username='harp4162')
+		environ[b'HTTP_ORIGIN'] = b'http://platform.ou.edu'
+		url = '/dataserver2/Objects/%s/CheckCourseInvitationsCSV' % course_ntiid
+		res = self.testapp.post(url,
+						  		upload_files=[('input', 'source.csv', source)],
+						  		status=200)
+
+		assert_that(res.json_body, has_entry(ITEMS, has_length(2)))
+		assert_that(res.json_body, has_entry('Warnings', has_length(2)))
+		
+		data = dict(res.json_body)
+		data.pop('Warnings')
+		
+		mailer = component.getUtility(ITestMailDelivery)
+		del mailer.queue[:]
+		
+		url = '/dataserver2/Objects/%s/SendCourseInvitations' % course_ntiid
+		res = self.testapp.post_json(url, data, extra_environ=environ, status=200)
+		assert_that(res.json_body, has_entry(ITEMS, has_length(2)))

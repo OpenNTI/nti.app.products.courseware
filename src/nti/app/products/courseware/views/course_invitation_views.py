@@ -226,7 +226,7 @@ class CheckCourseInvitationsCSVView(AbstractAuthenticatedView,
 
 	def parse_csv_users(self, warnings=()):
 		result = []
-		source = get_source(self.request, 'csv', 'input')
+		source = get_source(self.request, 'csv', 'input', 'source')
 		if source is not None:
 			for idx, row in enumerate(csv.reader(source)):
 				if not row or row[0].startswith("#"):
