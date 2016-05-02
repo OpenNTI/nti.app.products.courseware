@@ -127,7 +127,7 @@ class TestInvitations(ApplicationLayerTest):
 		# Redirected to app form
 		res = self.testapp.get(to_check, extra_environ=environ, status=302)
 		assert_that( res.location,
-					 is_('http://localhost/app/#!library/availablecourses/invitations/accept/CLC3403'))
+					 is_('http://localhost/app/library/courses/available/invitations/accept/CLC3403'))
 
 		# Now submitted
 		environ['HTTP_X_REQUESTED_WITH'] = b'XMLHttpRequest'
@@ -160,7 +160,7 @@ class TestInvitations(ApplicationLayerTest):
 			entry = self.catalog_entry()
 			course = ICourseInstance(entry)
 			course_ntiid = to_external_ntiid_oid(course)
-		
+
 		environ = self._make_extra_environ(username='harp4162')
 		environ[b'HTTP_ORIGIN'] = b'http://platform.ou.edu'
 		url = '/dataserver2/Objects/%s/CheckCourseInvitationsCSV' % course_ntiid
@@ -170,13 +170,13 @@ class TestInvitations(ApplicationLayerTest):
 
 		assert_that(res.json_body, has_entry(ITEMS, has_length(2)))
 		assert_that(res.json_body, has_entry('Warnings', has_length(1)))
-		
+
 		data = dict(res.json_body)
 		data.pop('Warnings')
-		
+
 		mailer = component.getUtility(ITestMailDelivery)
 		del mailer.queue[:]
-		
+
 		url = '/dataserver2/Objects/%s/SendCourseInvitations' % course_ntiid
 		res = self.testapp.post_json(url, data, extra_environ=environ, status=200)
 		assert_that(res.json_body, has_entry(ITEMS, has_length(2)))

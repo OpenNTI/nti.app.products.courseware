@@ -201,8 +201,7 @@ class AcceptCourseInvitationsView(AcceptInvitationsView):
 		return web_root
 
 	def _get_app_url(self, request, redemption_code):
-		# The webapp does this dance to get to the course library page
-		url = '#!library/availablecourses/invitations/accept/%s' % redemption_code
+		url = 'library/courses/available/invitations/accept/%s' % redemption_code
 		app_url = request.application_url
 		redemption_link = urljoin(app_url, self._web_root())
 		redemption_link = urljoin(redemption_link, url)
@@ -360,7 +359,7 @@ class SendCourseInvitationsView(AbstractAuthenticatedView,
 			or	values.get(CLASS) == USER_COURSE_INVITATIONS_CLASS:
 			items = values.get(ITEMS) or ()
 			for idx, entry in enumerate(items):
-				email = entry.get('email') 
+				email = entry.get('email')
 				realname = entry.get('name') or email
 				if not email:
 					msg = translate(_("Missing email at index ${idx}.",
