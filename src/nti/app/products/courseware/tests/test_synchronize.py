@@ -39,6 +39,8 @@ from persistent.interfaces import IPersistent
 
 from zope.lifecycleevent import notify
 
+from nti.contenttypes.presentation.lesson import NTILessonOverView
+
 from nti.app.products.courseware.decorators import _AnnouncementsDecorator
 from nti.app.products.courseware.decorators import _SharingScopesAndDiscussionDecorator
 
@@ -349,10 +351,12 @@ class TestFunctionalSynchronize(CourseLayerTest):
 		assert_that(discussions, has_key('d1.json'))
 		assert_that(discussions['d1.json'], has_property('id', is_(u'nti-course-bundle://Sections/02/Discussions/d1.json')))
 
-	def test_synchronize_with_locked(self):
+	@fudge.patch( 'nti.contenttypes.courses._outline_parser.find_object_with_ntiid' )
+	def test_synchronize_with_locked(self, mock_find_object):
 		"""
 		Test outline nodes respect sync locks.
 		"""
+		mock_find_object.is_callable().returns( None )
 		bucket = self.bucket
 		folder = self.folder
 		synchronize_catalog_from_root(folder, bucket)
@@ -539,6 +543,19 @@ class TestFunctionalSynchronize(CourseLayerTest):
 		assert_that( outline, has_length(7) )
 		assert_that( move_ntiid_order, is_not( original_ntiid_order ))
 		assert_that( tuple( outline.keys() ), is_( move_ntiid_order ))
+
+		# Reset and lock an underlying lesson. The lesson survives.
+		# XXX: It may be better to lock the parent node when lessons are edited.
+		_resync( force=True )
+		content_node = outline.values()[0].values()[0]
+		content_node.LessonOverviewNTIID = lesson_ntiid = 'about-today'
+		locked_lesson = NTILessonOverView()
+		locked_lesson.lock()
+		mock_find_object.is_callable().returns( locked_lesson )
+
+		_resync()
+		content_node = outline.values()[0].values()[0]
+		assert_that( content_node.LessonOverviewNTIID, is_(lesson_ntiid) )
 
 	def test_default_sharing_scope_use_parent(self):
 		"""
