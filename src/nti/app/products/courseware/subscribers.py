@@ -27,7 +27,9 @@ from zope.lifecycleevent import IObjectAddedEvent
 from zope.publisher.interfaces.browser import IBrowserRequest
 
 from zope.security.interfaces import IPrincipal
+from zope.security.management import endInteraction
 from zope.security.management import queryInteraction
+from zope.security.management import restoreInteraction
 
 from pyramid.threadlocal import get_current_request
 
@@ -263,24 +265,31 @@ def _auto_enroll_on_enrollment_added(record, event):
 	if not entries:
 		return
 
-	for name in entries:
-		entry = ICourseCatalogEntry(find_object_with_ntiid(name), None)
-		if entry is None:
-			logger.warn("Course entry %s does not exists", name)
-			continue
-		# make sure avoid circles
-		if entry in main_entries:
-			continue
-		# check for deny open enrollment
-		course = ICourseInstance(entry)
-		if IDenyOpenEnrollment.providedBy(course) and record.Scope == ES_PUBLIC:
-			continue
-		# ready to enroll
-		enrollments = ICourseEnrollments(course)
-		enrollment = enrollments.get_enrollment_for_principal(user)
-		if enrollment is None:
-			manager = ICourseEnrollmentManager(course)
-			manager.enroll(user, scope=record.Scope)
+	has_interaction = queryInteraction() is not None
+	if has_interaction:
+		endInteraction()
+	try:
+		for name in entries:
+			entry = ICourseCatalogEntry(find_object_with_ntiid(name), None)
+			if entry is None:
+				logger.warn("Course entry %s does not exists", name)
+				continue
+			# make sure avoid circles
+			if entry in main_entries:
+				continue
+			# check for deny open enrollment
+			course = ICourseInstance(entry)
+			if IDenyOpenEnrollment.providedBy(course) and record.Scope == ES_PUBLIC:
+				continue
+			# ready to enroll
+			enrollments = ICourseEnrollments(course)
+			enrollment = enrollments.get_enrollment_for_principal(user)
+			if enrollment is None:
+				manager = ICourseEnrollmentManager(course)
+				manager.enroll(user, scope=record.Scope)
+	finally:
+		if has_interaction:
+			restoreInteraction()
 
 def _update_enroll_last_modified(record):
 	principal = IPrincipal(record.Principal, None)
