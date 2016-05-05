@@ -22,7 +22,8 @@ from zope.dottedname import resolve as dottedname
 
 from zope.i18n import translate
 
-from zope.lifecycleevent import IObjectAddedEvent
+from zope.lifecycleevent.interfaces import IObjectAddedEvent
+from zope.lifecycleevent.interfaces import IObjectModifiedEvent
 
 from zope.publisher.interfaces.browser import IBrowserRequest
 
@@ -243,25 +244,23 @@ def _auto_enroll_on_enrollment_added(record, event):
 	if main_entry is None:
 		return
 
-	# get parent course
-	parent = get_parent_course(course)
-
-	# get all catalog entries in the hierarchy
-	main_entries = map(lambda x: ICourseCatalogEntry(x, None),
-				  	   get_course_subinstances(parent))
-	main_entries.append(main_entry)
-
 	# check for dup enrollment
 	principal = IPrincipal(record.Principal, None)
 	user = Entity.get_entity(principal.id) if principal else None
 	if user is None:
 		return
 
+	# get parent course
+	parent = get_parent_course(course)
+
+	# get all catalog entries in the hierarchy
+	main_entries = [ICourseCatalogEntry(x, None) for x in get_course_subinstances(parent)]
+	main_entries.append(main_entry)
+
 	# get course entries
-	entries = set(get_enrollment_courses(course) or ())
+	entries = set(get_enrollment_courses(course))
 	if not entries and ICourseSubInstance.providedBy(course):
-		course = get_parent_course(course)
-		entries = set(get_enrollment_courses(course) or ())
+		entries = set(get_enrollment_courses(parent))
 	if not entries:
 		return
 
@@ -290,6 +289,11 @@ def _auto_enroll_on_enrollment_added(record, event):
 	finally:
 		if has_interaction:
 			restoreInteraction()
+
+@component.adapter(ICourseInstanceEnrollmentRecord, IObjectModifiedEvent)
+def _auto_enroll_on_enrollment_modified(record, event):
+	# XXX: A user may have open-enrolled and then purcharse/switch enrollment 
+	_auto_enroll_on_enrollment_added(record, event)
 
 def _update_enroll_last_modified(record):
 	principal = IPrincipal(record.Principal, None)

@@ -99,7 +99,7 @@ def get_vendor_info(context):
 def get_enrollment_options(context):
 	result = EnrollmentOptions()
 	entry = ICourseCatalogEntry(context)
-	for provider in component.subscribers((entry,), IEnrollmentOptionProvider):
+	for provider in list(component.subscribers((entry,), IEnrollmentOptionProvider)):
 		for option in provider.iter_options():
 			result.append(option)
 	return result
@@ -108,15 +108,15 @@ def get_enrollment_communities(context):
 	vendor_info = get_vendor_info(context)
 	result = traverse(vendor_info, 'NTI/Enrollment/Communities', default=False)
 	if result and isinstance(result, six.string_types):
-		result = [result]
-	return result
+		result = result.split()
+	return result or ()
 
 def get_enrollment_courses(context):
 	vendor_info = get_vendor_info(context)
 	result = traverse(vendor_info, 'NTI/Enrollment/Courses', default=False)
 	if result and isinstance(result, six.string_types):
-		result = [result]
-	return result
+		result = result.split()
+	return result or ()
 
 def get_vendor_thank_you_page(course, key):
 	for course in {ICourseInstance(course, None), get_parent_course(course)}:
@@ -131,7 +131,7 @@ def get_course_invitation(code):
 	return result
 
 def get_all_course_invitations():
-	result = tuple(x for _, x in component.getUtilitiesFor(IJoinCourseInvitation))
+	result = list(x for _, x in component.getUtilitiesFor(IJoinCourseInvitation))
 	return result
 
 def get_invitations_for_course(context):
