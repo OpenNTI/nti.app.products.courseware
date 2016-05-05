@@ -69,8 +69,3 @@ class TestCourseExporter(ApplicationLayerTest):
 
 		data = {'admin':'Fall2015', 'key':'Bleach', 'path':path}
 		self.testapp.post_json(href, data, status=204)
-		
-		data = {'ntiid':self.entry_ntiid}
-		self.testapp.post(href, data,
-						  upload_files=[('ichigo.zip', 'ichigo.zip', b'ichigo'),],
-						  status=204)
