@@ -28,8 +28,6 @@ from nti.app.products.courseware.enrollment import EnrollmentOptions
 
 from nti.app.products.courseware.interfaces import IEnrollmentOptionProvider
 
-from nti.app.products.courseware.resources.utils import get_assets_folder
-
 from nti.app.products.courseware.utils.decorators import PreviewCourseAccessPredicateDecorator
 
 from nti.common.maps import CaseInsensitiveDict
@@ -57,9 +55,6 @@ DEFAULT_EXP_TIME = 86400
 
 #: 1970-01-1
 ZERO_DATETIME = datetime.utcfromtimestamp(0)
-
-# BWC exports
-get_assets_folder = get_assets_folder
 
 # BWC exports
 PreviewCourseAccessPredicate = PreviewCourseAccessPredicateDecorator
