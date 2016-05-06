@@ -13,6 +13,7 @@ import os
 import six
 import hashlib
 from datetime import datetime
+from collections import Mapping
 
 import repoze.lru
 
@@ -31,7 +32,13 @@ from nti.app.products.courseware.resources.utils import get_assets_folder
 
 from nti.app.products.courseware.utils.decorators import PreviewCourseAccessPredicateDecorator
 
+from nti.common.maps import CaseInsensitiveDict
+
 from nti.contenttypes.courses import get_course_vendor_info
+
+from nti.contenttypes.courses.interfaces import SCOPE
+from nti.contenttypes.courses.interfaces import ES_PUBLIC
+from nti.contenttypes.courses.interfaces import DESCRIPTION
 
 from nti.contenttypes.courses.interfaces import ICourseInstance
 from nti.contenttypes.courses.interfaces import ICourseCatalogEntry
@@ -124,6 +131,30 @@ def get_vendor_thank_you_page(course, key):
 		tracking = traverse(vendor_info, 'NTI/VendorThankYouPage', default=False)
 		if tracking and key in tracking:
 			return tracking.get(key)
+	return None
+
+def get_course_invitations(context):
+	for course in {ICourseInstance(context, None), get_parent_course(context)}:
+		result = None
+		vendor_info = get_vendor_info(course)
+		invitations = traverse(vendor_info, 'NTI/Invitations', default=False)
+		if isinstance(invitations, six.string_types):
+			invitations = invitations.split()
+		if isinstance(invitations, (list, tuple)):
+			result = {x:{SCOPE:ES_PUBLIC, DESCRIPTION: ES_PUBLIC} for x in invitations}
+		elif isinstance(invitations, Mapping):
+			result = {}
+			for key, value in invitations.items():
+				if isinstance(value, six.string_types):
+					result[key] = {SCOPE:value, DESCRIPTION:value}
+				elif isinstance(value, Mapping):
+					value = CaseInsensitiveDict(value)
+					scope = value.get(SCOPE)
+					desc = value.get(DESCRIPTION) or scope
+					if scope:
+						result[key] = {SCOPE:scope, DESCRIPTION:desc}
+		if result:
+			return result
 	return None
 
 def get_course_invitation(code):
