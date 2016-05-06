@@ -136,18 +136,27 @@ def get_course_invitations(context):
 		if isinstance(invitations, six.string_types):
 			invitations = invitations.split()
 		if isinstance(invitations, (list, tuple)):
-			result = {x:{SCOPE:ES_PUBLIC, DESCRIPTION: ES_PUBLIC} for x in invitations}
+			result = []
+			for value in invitations:
+				if isinstance(value, six.string_types):
+					result.append({'code':value, SCOPE:ES_PUBLIC, DESCRIPTION:ES_PUBLIC})
+				elif isinstance(invitations, Mapping):
+					value = CaseInsensitiveDict(value)
+					code = value.get('code')
+					scope = value.get(SCOPE) or ES_PUBLIC
+					desc = value.get(DESCRIPTION) or scope
+					if code:
+						result.append({'code':code, SCOPE:scope, DESCRIPTION:desc})
 		elif isinstance(invitations, Mapping):
-			result = {}
+			result = []
 			for key, value in invitations.items():
 				if isinstance(value, six.string_types):
-					result[key] = {SCOPE:value, DESCRIPTION:value}
+					result.append({'code':key, SCOPE:value, DESCRIPTION:value})
 				elif isinstance(value, Mapping):
 					value = CaseInsensitiveDict(value)
-					scope = value.get(SCOPE)
+					scope = value.get(SCOPE) or ES_PUBLIC
 					desc = value.get(DESCRIPTION) or scope
-					if scope:
-						result[key] = {SCOPE:scope, DESCRIPTION:desc}
+					result.append({'code':key, SCOPE:scope, DESCRIPTION:desc})
 		if result:
 			return result
 	return None
