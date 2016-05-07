@@ -9,7 +9,6 @@ __docformat__ = "restructuredtext en"
 
 logger = __import__('logging').getLogger(__name__)
 
-from zope import component
 from zope import interface
 
 from zope.security.interfaces import IPrincipal
@@ -30,8 +29,8 @@ from nti.contenttypes.courses.interfaces import ENROLLMENT_SCOPE_VOCABULARY
 from nti.contenttypes.courses.interfaces import ICourseInstance
 from nti.contenttypes.courses.interfaces import ICourseEnrollments
 from nti.contenttypes.courses.interfaces import ICourseCatalogEntry
-from nti.contenttypes.courses.interfaces import IPrincipalEnrollments
 
+from nti.contenttypes.courses.utils import get_enrollments
 from nti.contenttypes.courses.utils import get_enrollment_record
 
 from nti.dataserver.interfaces import IUser
@@ -95,16 +94,12 @@ class ClassmatesSuggestedContactsProvider(SuggestedContactsProvider):
 		self.ranking.provider = self
 
 	def _get_courses(self, user):
-		for enrollments in component.subscribers((user,), IPrincipalEnrollments):
-			for enrollment in enrollments.iter_enrollments():
-				course = ICourseInstance(enrollment, None)
-				if course is not None:
-					entry = ICourseCatalogEntry(course, None)
-
-					# Only return active courses as they are the most relevant.
-					if 		entry is not None \
-						and entry.isCourseCurrentlyActive():
-							yield course
+		for record in get_enrollments(user):
+			course = ICourseInstance(record, None)
+			entry = ICourseCatalogEntry(course, None)
+			# Only return active courses as they are the most relevant.
+			if entry is not None and entry.isCourseCurrentlyActive():
+				yield course
 
 	def iter_courses(self, user, source_user=None):
 		results = self._get_courses(user)
