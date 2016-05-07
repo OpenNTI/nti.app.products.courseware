@@ -153,13 +153,7 @@ def get_course_invitations(context):
 		elif isinstance(invitations, Mapping):
 			result = []
 			for key, value in invitations.items():
-				if isinstance(value, six.string_types):
-					result.append({'Code':key, SCOPE:value, DESCRIPTION:value})
-				elif isinstance(value, Mapping):
-					value = CaseInsensitiveDict(value)
-					scope = value.get(SCOPE) or ES_PUBLIC
-					desc = value.get(DESCRIPTION) or scope
-					result.append({'Code':key, SCOPE:scope, DESCRIPTION:desc})
+				result.append({'Code':key, SCOPE:value, DESCRIPTION:value})
 		if result:
 			return result
 	return None
