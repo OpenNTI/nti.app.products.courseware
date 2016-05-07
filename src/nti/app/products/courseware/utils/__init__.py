@@ -120,8 +120,11 @@ def get_enrollment_courses(context):
 		result = result.split()
 	return result or ()
 
+def get_course_and_parent(context):
+	return {ICourseInstance(context, None), get_parent_course(context)}
+
 def get_vendor_thank_you_page(course, key):
-	for course in {ICourseInstance(course, None), get_parent_course(course)}:
+	for course in get_course_and_parent(course):
 		vendor_info = get_vendor_info(course)
 		tracking = traverse(vendor_info, 'NTI/VendorThankYouPage', default=False)
 		if tracking and key in tracking:
@@ -129,7 +132,7 @@ def get_vendor_thank_you_page(course, key):
 	return None
 
 def get_course_invitations(context):
-	for course in {ICourseInstance(context, None), get_parent_course(context)}:
+	for course in get_course_and_parent(context):
 		result = None
 		vendor_info = get_vendor_info(course)
 		invitations = traverse(vendor_info, 'NTI/Invitations', default=False)
@@ -139,24 +142,24 @@ def get_course_invitations(context):
 			result = []
 			for value in invitations:
 				if isinstance(value, six.string_types):
-					result.append({'code':value, SCOPE:ES_PUBLIC, DESCRIPTION:ES_PUBLIC})
-				elif isinstance(invitations, Mapping):
+					result.append({'Code':value, SCOPE:ES_PUBLIC, DESCRIPTION:ES_PUBLIC})
+				elif isinstance(value, Mapping):
 					value = CaseInsensitiveDict(value)
-					code = value.get('code')
+					code = value.get('Code')
 					scope = value.get(SCOPE) or ES_PUBLIC
 					desc = value.get(DESCRIPTION) or scope
 					if code:
-						result.append({'code':code, SCOPE:scope, DESCRIPTION:desc})
+						result.append({'Code':code, SCOPE:scope, DESCRIPTION:desc})
 		elif isinstance(invitations, Mapping):
 			result = []
 			for key, value in invitations.items():
 				if isinstance(value, six.string_types):
-					result.append({'code':key, SCOPE:value, DESCRIPTION:value})
+					result.append({'Code':key, SCOPE:value, DESCRIPTION:value})
 				elif isinstance(value, Mapping):
 					value = CaseInsensitiveDict(value)
 					scope = value.get(SCOPE) or ES_PUBLIC
 					desc = value.get(DESCRIPTION) or scope
-					result.append({'code':key, SCOPE:scope, DESCRIPTION:desc})
+					result.append({'Code':key, SCOPE:scope, DESCRIPTION:desc})
 		if result:
 			return result
 	return None
