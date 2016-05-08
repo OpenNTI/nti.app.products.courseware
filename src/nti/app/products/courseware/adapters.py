@@ -117,7 +117,7 @@ def _course_content_package_to_course(package):
 	course_intid = getattr(package, cache_name, cache_name)
 	intids = component.getUtility(IIntIds)
 
-	if course_intid is not cache_name:
+	if course_intid is not cache_name and isinstance(course_intid, int):
 		course = intids.queryObject(course_intid)
 
 	if course is not None:
