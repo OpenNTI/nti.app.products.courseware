@@ -174,13 +174,29 @@ class AcceptCourseInvitationsView(AcceptInvitationByCodeView):
 			data = 		data.get('code') \
 					or  data.get('invitation') \
 					or	data.get('invitation_code') \
-					or	data.get('invitation_codes')
+					or	data.get('invitation_codes') # legacy
 		if not isinstance(data, six.string_types):
 			raise hexc.HTTPBadRequest()
 		return data
 
+	def handle_generic_invitation(self, code):
+		invitation = get_course_invitation(self.context, code)
+		if invitation is not None and invitation.IsGeneric:
+			invitation = JoinCourseInvitation()
+			invitation.scope = invitation.Scope
+			invitation.course = invitation.Course
+			invitation.receiver = self.context.username
+			self.invitations.add(invitation) # record a new invitation
+			return invitation
+		return None
+
 	def _do_call(self):
-		accepted = AcceptInvitationByCodeView._do_call(self)
+		code = self.get_invite_code()
+		accepted = self.handle_generic_invitation(code)
+		if accepted is not None:
+			self.accept_invitation(self.context, accepted)
+		else:
+			accepted = AcceptInvitationByCodeView._do_call(self)
 		if IJoinCourseInvitation.providedBy(accepted):
 			course = find_object_with_ntiid(accepted.course)
 			course = ICourseInstance(course, None)
