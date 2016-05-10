@@ -134,6 +134,7 @@ def get_vendor_thank_you_page(course, key):
 	return None
 
 def get_course_invitations(context):
+	entry = ICourseCatalogEntry(context)
 	for course in get_course_and_parent(context):
 		result = None
 		vendor_info = get_vendor_info(course)
@@ -146,6 +147,7 @@ def get_course_invitations(context):
 				if isinstance(value, six.string_types):
 					invitaion = CourseInvitation(Code=value, 
 												 Scope=ES_PUBLIC,
+												 Course=entry.ntiid,
 												 Description=ES_PUBLIC)
 					result.append(invitaion)
 				elif isinstance(value, Mapping):
@@ -156,14 +158,16 @@ def get_course_invitations(context):
 					if code:
 						invitaion = CourseInvitation(Code=code, 
 												 	 Scope=scope,
-												 	 Description=desc)
+												 	 Description=desc,
+												 	 Course=entry.ntiid)
 						result.append(invitaion)
 		elif isinstance(invitations, Mapping):
 			result = []
 			for key, value in invitations.items():
 				invitaion = CourseInvitation(Code=key, 
 											 Scope=value,
-											 Description=value)
+											 Description=value,
+											 Course=entry.ntiid)
 				result.append(invitaion)
 		if result:
 			return result

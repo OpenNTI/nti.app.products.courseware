@@ -34,6 +34,8 @@ from nti.app.products.courseware.interfaces import ICourseInvitation
 
 from nti.appserver.policies.interfaces import ISitePolicyUserEventListener
 
+from nti.common.property import alias
+
 from nti.contenttypes.courses.interfaces import ICourseInstance
 from nti.contenttypes.courses.interfaces import ICourseCatalogEntry
 
@@ -50,7 +52,33 @@ from nti.mailer.interfaces import ITemplatedMailer
 
 from nti.ntiids.ntiids import find_object_with_ntiid
 
+from nti.schema.field import SchemaConfigured
 from nti.schema.fieldproperty import createDirectFieldProperties
+
+@interface.implementer(ICourseInvitation)
+class CourseInvitation(SchemaConfigured):
+	createDirectFieldProperties(ICourseInvitation)
+	
+	code = alias('Code')
+	scope = alias('Scope')
+	course = alias('Course')
+
+@component.adapter(IUser)
+@interface.implementer(IUserInvitationsLinkProvider)
+class _CourseUserInvitationsLinkProvider(object):
+
+	def __init__(self, user=None):
+		self.user = user
+
+	def links(self, workspace):
+		link = Link(self.user,
+					method="POST",
+					rel=ACCEPT_COURSE_INVITATIONS,
+					elements=('@@' + ACCEPT_COURSE_INVITATIONS,))
+		link.__name__ = ACCEPT_COURSE_INVITATIONS
+		link.__parent__ = self.user
+		interface.alsoProvides(link, ILocation)
+		return (link,)
 
 def get_policy_package():
 	policy = component.getUtility(ISitePolicyUserEventListener)
@@ -153,24 +181,3 @@ def send_invitation_email(invitation,
 		logger.exception("Cannot send course invitation email to %s", receiver_email)
 		return False
 	return True
-
-@component.adapter(IUser)
-@interface.implementer(IUserInvitationsLinkProvider)
-class _CourseUserInvitationsLinkProvider(object):
-
-	def __init__(self, user=None):
-		self.user = user
-
-	def links(self, workspace):
-		link = Link(self.user,
-					method="POST",
-					rel=ACCEPT_COURSE_INVITATIONS,
-					elements=('@@' + ACCEPT_COURSE_INVITATIONS,))
-		link.__name__ = ACCEPT_COURSE_INVITATIONS
-		link.__parent__ = self.user
-		interface.alsoProvides(link, ILocation)
-		return (link,)
-
-@interface.implementer(ICourseInvitation)
-class CourseInvitation(object):
-	createDirectFieldProperties(ICourseInvitation)

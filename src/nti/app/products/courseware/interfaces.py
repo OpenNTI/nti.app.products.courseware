@@ -352,6 +352,8 @@ class ICourseInvitation(interface.Interface):
 	Code = TextLine(title="Invitation code.", required=True)
 	Scope = TextLine(title="The enrollment scope.", required=True)
 	Description = TextLine(title="The invitation description.", required=True)
+	Course = TextLine(title="Course catalog entry NTIID.", required=False)
+	Course.setTaggedValue('_ext_excluded_out', True)
 
 # deprecations
 
