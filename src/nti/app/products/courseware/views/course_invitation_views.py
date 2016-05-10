@@ -233,7 +233,7 @@ class CourseInvitationAcceptView(UserAcceptCourseInvitationView):
 			invitation = JoinCourseInvitation()
 			invitation.scope = invitation.Scope
 			invitation.course = invitation.Course
-			invitation.receiver = self.context.username
+			invitation.receiver = self.remoteUser.username
 			self.invitations.add(invitation) # record a new invitation
 			return invitation
 		return None
@@ -242,7 +242,7 @@ class CourseInvitationAcceptView(UserAcceptCourseInvitationView):
 		code = self.get_invite_code()
 		accepted = self.handle_generic_invitation(code)
 		if accepted is not None:
-			self.accept_invitation(self.context, accepted)
+			self.accept_invitation(self.remoteUser, accepted)
 		else:
 			accepted = super(CourseInvitationAcceptView, self)._do_call()
 		return self._transform(accepted)

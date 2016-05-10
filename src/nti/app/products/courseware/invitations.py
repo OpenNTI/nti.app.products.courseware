@@ -47,8 +47,6 @@ from nti.dataserver.users.interfaces import IUserProfile
 
 from nti.externalization.externalization import to_external_object
 
-from nti.externalization.oids import to_external_ntiid_oid
-
 from nti.invitations.interfaces import IInvitationSentEvent
 
 from nti.links.links import Link
@@ -148,11 +146,10 @@ def send_invitation_email(invitation,
 	informal_username = 	user_ext.get('NonI18NFirstName', profile.realname) \
 						or	sender.username
 
-	oid = to_external_ntiid_oid(course)
 	params = {'code':invitation.code}
 	query = urlencode(params)
 	url = '/%s/Objects/%s/%s?%s' % (get_ds2(request),
-							 	    oid,
+							 	    entry.ntiid,
 							 	    ACCEPT_COURSE_INVITATIONS,
 							 	    query)
 	redemption_link = urljoin(request.application_url, url)
