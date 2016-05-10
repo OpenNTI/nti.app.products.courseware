@@ -11,11 +11,12 @@ logger = __import__('logging').getLogger(__name__)
 
 import csv
 import six
+from urlparse import urljoin
 from collections import Mapping
 
-from urlparse import urljoin
-
 from zope import component
+
+from zope.event import notify
 
 from zope.i18n import translate
 
@@ -35,19 +36,18 @@ from nti.app.externalization.internalization import read_body_as_external_object
 
 from nti.app.externalization.view_mixins import ModeledContentUploadRequestUtilsMixin
 
-from nti.app.invitations.views import AcceptInvitationsView
+from nti.app.invitations.views import AcceptInvitationByCodeView
 
 from nti.app.products.courseware import MessageFactory as _
 
 from nti.app.products.courseware.interfaces import ICourseInstanceEnrollment
-
-from nti.app.products.courseware.invitations import send_invitation_email
 
 from nti.app.products.courseware.utils import get_course_invitation
 from nti.app.products.courseware.utils import get_course_invitations
 
 from nti.app.products.courseware.views import SEND_COURSE_INVITATIONS
 from nti.app.products.courseware.views import VIEW_COURSE_INVITATIONS
+from nti.app.products.courseware.views import ACCEPT_COURSE_INVITATION
 from nti.app.products.courseware.views import ACCEPT_COURSE_INVITATIONS
 from nti.app.products.courseware.views import CHECK_COURSE_INVITATIONS_CSV
 
@@ -66,6 +66,8 @@ from nti.contenttypes.courses.interfaces import IJoinCourseInvitation
 from nti.contenttypes.courses.interfaces import AlreadyEnrolledException
 from nti.contenttypes.courses.interfaces import CourseInvitationException
 
+from nti.contenttypes.courses.invitation import JoinCourseInvitation
+
 from nti.contenttypes.courses.utils import is_course_instructor
 
 from nti.dataserver import authorization as nauth
@@ -79,6 +81,9 @@ from nti.externalization.externalization import to_external_object
 
 from nti.externalization.interfaces import LocatedExternalDict
 from nti.externalization.interfaces import StandardExternalFields
+
+from nti.invitations.interfaces import InvitationSentEvent
+from nti.invitations.interfaces import IInvitationsContainer
 
 from nti.links.links import Link
 
@@ -129,27 +134,13 @@ class CourseInvitationsView(AbstractAuthenticatedView):
 class CatalogEntryInvitationsView(CourseInvitationsView):
 	pass
 
-@view_config(context=IUser)
+@view_config(name=ACCEPT_COURSE_INVITATION)
+@view_config(name=ACCEPT_COURSE_INVITATIONS)
 @view_defaults(route_name='objects.generic.traversal',
 			   renderer='rest',
-			   name=ACCEPT_COURSE_INVITATIONS,
+			   context=IUser,
 			   permission=nauth.ACT_READ)
-class AcceptCourseInvitationsView(AcceptInvitationsView):
-
-	def get_invite_codes(self):
-		if self.request.body:
-			data = read_body_as_external_object(self.request)
-		else:
-			data = self.request.subpath[0] if self.request.subpath else ''
-			data = self.request.params
-
-		if isinstance(data, Mapping):
-			data = data.get('invitation_codes') or data.get('codes') or data.get('code')
-		if isinstance(data, six.string_types):
-			data = data.split()
-		if not data:
-			raise hexc.HTTPBadRequest()
-		return data
+class AcceptCourseInvitationsView(AcceptInvitationByCodeView):
 
 	def handle_possible_validation_error(self, request, e):
 		if isinstance(e, AlreadyEnrolledException):
@@ -173,19 +164,30 @@ class AcceptCourseInvitationsView(AcceptInvitationsView):
 		else:
 			super(AcceptCourseInvitationsView, self).handle_possible_validation_error(request, e)
 
+	def get_invite_code(self):
+		if self.request.body:
+			data = read_body_as_external_object(self.request)
+		else:
+			data = self.request.params
+		if isinstance(data, Mapping):
+			data = CaseInsensitiveDict(data)
+			data = 		data.get('code') \
+					or  data.get('invitation') \
+					or	data.get('invitation_code') \
+					or	data.get('invitation_codes')
+		if not isinstance(data, six.string_types):
+			raise hexc.HTTPBadRequest()
+		return data
+
 	def _do_call(self):
-		items = []
-		accepted = AcceptInvitationsView._do_call(self) or {}
-		for invitation in accepted.values():
-			if not IJoinCourseInvitation.providedBy(invitation):
-				continue
-			course = find_object_with_ntiid(invitation.course)
+		accepted = AcceptInvitationByCodeView._do_call(self)
+		if IJoinCourseInvitation.providedBy(accepted):
+			course = find_object_with_ntiid(accepted.course)
 			course = ICourseInstance(course, None)
 			enrollment = component.queryMultiAdapter((course, self.context),
-												 	 ICourseInstanceEnrollment)
-			if enrollment is not None:
-				items.append(enrollment)
-		return items
+											 		 ICourseInstanceEnrollment)
+			return enrollment
+		return accepted
 
 	def _web_root(self):
 		from nti.appserver.interfaces import IApplicationSettings
@@ -203,23 +205,15 @@ class AcceptCourseInvitationsView(AcceptInvitationsView):
 	def __call__(self):
 		if not self.request.is_xhr:
 			# For non-xhr (email links), redirect to our app form.
-			# XXX: Not sure it's possible to get multiple codes.
-			codes = self.get_invite_codes()
-			code = codes[0]
-			app_url = self._get_app_url( self.request, code )
-			raise hexc.HTTPFound( location=app_url )
-
-		items = self._do_call()
+			code = self.get_invite_code()
+			app_url = self._get_app_url(self.request, code)
+			raise hexc.HTTPFound(location=app_url)
+		item = self._do_call()
 		# Make sure we commit
 		self.request.environ[b'nti.request_had_transaction_side_effects'] = b'True'
-		if len(items) == 1:
-			# XXX single enrollment record. Externalize first
-			# we have seen a LocationError if the enrollment object is returned
-			result = to_external_object(items[0])
-		else:
-			result = LocatedExternalDict()
-			result[CLASS] = 'CourseInstanceEnrollments'
-			result[ITEMS] = items
+		# XXX single enrollment record. Externalize first
+		# we have seen a LocationError if the enrollment object is returned
+		result = to_external_object(item)
 		return result
 
 @view_config(context=ICourseInstance)
@@ -247,12 +241,12 @@ class CheckCourseInvitationsCSVView(AbstractAuthenticatedView,
 				realname = row[1] if len(row) > 1 else email
 				if not email:
 					msg = translate(_("Missing email in line ${line}.",
-									mapping={'line': idx+1}))
+									mapping={'line': idx + 1}))
 					warnings.append(msg)
 					continue
 				if not isValidMailAddress(email):
 					msg = translate(_("Invalid email ${email} in line ${line}.",
-									mapping={'email': email, 'line': idx+1}))
+									mapping={'email': email, 'line': idx + 1}))
 					warnings.append(msg)
 					continue
 				if email.lower().endswith('@nextthought.com'):
@@ -302,7 +296,7 @@ class SendCourseInvitationsView(AbstractAuthenticatedView,
 		if not code:
 			invitations = get_course_invitations(self.context)
 			if invitations:
-				invitation = invitations[0] # pick first
+				invitation = invitations[0]  # pick first
 			else:
 				raise_json_error(
 						self.request,
@@ -365,12 +359,12 @@ class SendCourseInvitationsView(AbstractAuthenticatedView,
 				realname = entry.get('name') or email
 				if not email:
 					msg = translate(_("Missing email at index ${idx}.",
-									mapping={'idx': idx+1}))
+									mapping={'idx': idx + 1}))
 					warnings.append(msg)
 					continue
 				if not isValidMailAddress(email):
 					msg = translate(_("Invalid email ${email} at index ${idx}.",
-									mapping={'email': email, 'idx':idx+1}))
+									mapping={'email': email, 'idx':idx + 1}))
 					warnings.append(msg)
 					continue
 				if email.lower().endswith('@nextthought.com'):
@@ -397,18 +391,31 @@ class SendCourseInvitationsView(AbstractAuthenticatedView,
 				result[email] = (name, email)
 		return result
 
-	def send_invitations(self, invitation, users, message=None):
-		result = dict()
+	@Lazy
+	def invitations(self):
+		return component.getUtility(IInvitationsContainer)
+
+	def register_invitation(self, course, username, email, name, scope, message=None):
+		result = JoinCourseInvitation(name=name, email=email, message=message)
+		result.scope = scope
+		result.course = course
+		result.receiver = username
+		result.sender = self.remoteUser.username
+		self.invitations.add(result)
+		return result
+
+	def send_invitations(self, users, course, scope=None, message=None):
+		result = list()
 		for email, data in users.items():
 			name, username = data
-			if send_invitation_email(invitation,
-									 self.remoteUser,
-								 	 name,
-								  	 email,
-								  	 username,
-								  	 message=message,
-								     request=self.request):
-				result[email] = name
+			invitation = self.register_invitation(name=name,
+												  email=email,
+												  scope=scope,
+												  course=course,
+												  message=message,
+												  username=username)
+			notify(InvitationSentEvent(invitation, username))
+			result.append(invitation)
 		return result
 
 	def __call__(self):
@@ -484,7 +491,10 @@ class SendCourseInvitationsView(AbstractAuthenticatedView,
 
 		# send invites
 		message = values.get('message')
-		sent = self.send_invitations(invitation, all_users, message)
+		sent = self.send_invitations(all_users,
+									 invitation.Course,
+									 invitation.Scope,
+									 message=message)
 		result = LocatedExternalDict()
 		result[CLASS] = 'CourseInvitationsSent'
 		result[MIMETYPE] = COURSE_INVITATIONS_SENT_MIMETYPE

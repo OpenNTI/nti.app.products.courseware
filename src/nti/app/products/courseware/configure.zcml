@@ -456,9 +456,7 @@
 	<subscriber	factory=".invitations._CourseUserInvitationsLinkProvider"
 				provides="nti.app.invitations.interfaces.IUserInvitationsLinkProvider"/>
 
-	<!-- Externalization -->
-	<include package="nti.externalization" file="meta.zcml" />
-	<include package="nti.externalization" />
+	<subscriber handler=".invitations._on_invitation_sent" />
 
 	<ext:registerAutoPackageIO
 		root_interfaces=".interfaces.ICourseInvitation"

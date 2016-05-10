@@ -354,6 +354,8 @@ class ICourseInvitation(interface.Interface):
 	Description = TextLine(title="The invitation description.", required=True)
 	Course = TextLine(title="Course catalog entry NTIID.", required=False)
 	Course.setTaggedValue('_ext_excluded_out', True)
+	IsGeneric = Bool(title="Invitation code is generic.", required=False, default=False)
+	IsGeneric.setTaggedValue('_ext_excluded_out', True)
 
 # deprecations
 

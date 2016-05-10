@@ -90,22 +90,22 @@ class TestInvitations(ApplicationLayerTest):
 		data = {'username':'ichigo', 'code':"CLC3403"}
 		url = '/dataserver2/Objects/%s/SendCourseInvitations' % course_ntiid
 		res = self.testapp.post_json(url, data, extra_environ=environ, status=200)
-
 		assert_that(res.json_body, has_entry(ITEMS, has_length(1)))
+		code = res.json_body[ITEMS][0]['code']
 
 		mailer = component.getUtility(ITestMailDelivery)
 		msg = mailer.queue[0]
 
 		html = decodestring(msg.html)
-		to_check = '/dataserver2/users/ichigo/accept-course-invitations?code=CLC3403'
+		to_check = '/dataserver2/users/ichigo/accept-course-invitations?code=%s' % code
 		assert_that(html, contains_string(to_check))
 
 		environ = self._make_extra_environ(username='ichigo')
 		environ[b'HTTP_ORIGIN'] = b'http://platform.ou.edu'
 		# Redirected to app form
 		res = self.testapp.get(to_check, extra_environ=environ, status=302)
-		assert_that( res.location,
-					 is_('http://localhost/app/library/courses/available/invitations/accept/CLC3403'))
+		assert_that(res.location,
+					is_('http://localhost/app/library/courses/available/invitations/accept/%s' % code))
 
 		# Now submitted
 		environ['HTTP_X_REQUESTED_WITH'] = b'XMLHttpRequest'
@@ -114,11 +114,11 @@ class TestInvitations(ApplicationLayerTest):
 		with mock_dataserver.mock_db_trans(self.ds, site_name='platform.ou.edu'):
 			assert_that(get_enrollments('ichigo'), has_length(1))
 
-		self.testapp.get(to_check, extra_environ=environ, status=409)
+		self.testapp.get(to_check, extra_environ=environ, status=422)
 
 		environ = self._make_extra_environ(username='harp4162')
 		environ[b'HTTP_ORIGIN'] = b'http://platform.ou.edu'
-		data = {'name':'ichigo', 'email':'ichigo@bleach.org', 'code':"CLC3403"}
+		data = {'name':'ichigo', 'email':'ichigo@bleach.org', 'code':'CLC3403'}
 		url = '/dataserver2/Objects/%s/SendCourseInvitations' % course_ntiid
 		self.testapp.post_json(url, data, extra_environ=environ, status=200)
 

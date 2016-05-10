@@ -23,6 +23,7 @@
 			{
 				"Code": "CLC3403",
 				"Scope": "Public",
+				"IsGeneric": true,
 				"Description": "Public Invitation"
 			}
 		]

@@ -34,6 +34,8 @@ from nti.app.products.courseware.utils.decorators import PreviewCourseAccessPred
 
 from nti.common.maps import CaseInsensitiveDict
 
+from nti.common.string import TRUE_VALUES
+
 from nti.contenttypes.courses import get_course_vendor_info
 
 from nti.contenttypes.courses.interfaces import SCOPE
@@ -60,6 +62,10 @@ ZERO_DATETIME = datetime.utcfromtimestamp(0)
 
 # BWC exports
 PreviewCourseAccessPredicate = PreviewCourseAccessPredicateDecorator
+
+def is_true(s):
+	result = bool(s and str(s) in TRUE_VALUES)
+	return result
 
 def last_synchronized(context=None):
 	if context is None:
@@ -155,11 +161,13 @@ def get_course_invitations(context):
 					code = value.get('Code')
 					scope = value.get(SCOPE) or ES_PUBLIC
 					desc = value.get(DESCRIPTION) or scope
+					isGeneric = is_true(value.get('IsGeneric'))
 					if code:
 						invitaion = CourseInvitation(Code=code, 
 												 	 Scope=scope,
 												 	 Description=desc,
-												 	 Course=entry.ntiid)
+												 	 Course=entry.ntiid,
+												 	 IsGeneric=isGeneric)
 						result.append(invitaion)
 		elif isinstance(invitations, Mapping):
 			result = []

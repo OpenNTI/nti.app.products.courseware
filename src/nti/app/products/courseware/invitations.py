@@ -25,6 +25,8 @@ from zope.i18n import translate
 
 from zope.location.interfaces import ILocation
 
+from pyramid.threadlocal import get_current_request
+
 from nti.app.invitations.interfaces import IUserInvitationsLinkProvider
 
 from nti.app.products.courseware import MessageFactory as _
@@ -34,10 +36,9 @@ from nti.app.products.courseware.interfaces import ICourseInvitation
 
 from nti.appserver.policies.interfaces import ISitePolicyUserEventListener
 
-from nti.common.property import alias
-
 from nti.contenttypes.courses.interfaces import ICourseInstance
 from nti.contenttypes.courses.interfaces import ICourseCatalogEntry
+from nti.contenttypes.courses.interfaces import IJoinCourseInvitation
 
 from nti.dataserver.interfaces import IUser
 
@@ -45,6 +46,8 @@ from nti.dataserver.users import User
 from nti.dataserver.users.interfaces import IUserProfile
 
 from nti.externalization.externalization import to_external_object
+
+from nti.invitations.interfaces import IInvitationSentEvent
 
 from nti.links.links import Link
 
@@ -58,10 +61,9 @@ from nti.schema.fieldproperty import createDirectFieldProperties
 @interface.implementer(ICourseInvitation)
 class CourseInvitation(SchemaConfigured):
 	createDirectFieldProperties(ICourseInvitation)
-	
-	code = alias('Code')
-	scope = alias('Scope')
-	course = alias('Course')
+
+	def isGeneric(self):
+		return self.GenericCode
 
 @component.adapter(IUser)
 @interface.implementer(IUserInvitationsLinkProvider)
@@ -79,6 +81,8 @@ class _CourseUserInvitationsLinkProvider(object):
 		link.__parent__ = self.user
 		interface.alsoProvides(link, ILocation)
 		return (link,)
+
+# email routines
 
 def get_policy_package():
 	policy = component.getUtility(ISitePolicyUserEventListener)
@@ -176,8 +180,19 @@ def send_invitation_email(invitation,
 						request=request,
 						package=package,
 						text_template_extension='.mak')
-	except Exception as e:
-		print(e)
+	except Exception:
 		logger.exception("Cannot send course invitation email to %s", receiver_email)
 		return False
 	return True
+
+@component.adapter(IJoinCourseInvitation, IInvitationSentEvent)
+def _on_invitation_sent(invitation, event):
+	request = getattr(event, 'request', None) or get_current_request()
+	sender = User.get_user(invitation.sender)
+	send_invitation_email(invitation,
+						  sender=sender,
+						  receiver_name=invitation.name,
+						  receiver_email=invitation.email,
+						  receiver_username=invitation.receiver,
+						  message=invitation.message,
+						  request=request)
