@@ -87,7 +87,7 @@ class TestInvitations(ApplicationLayerTest):
 
 		environ = self._make_extra_environ(username='harp4162')
 		environ[b'HTTP_ORIGIN'] = b'http://platform.ou.edu'
-		data = {'username':'ichigo', 'code':"CLC3403"}
+		data = {'username':'ichigo', 'code':"CI-CLC-3403"}
 		url = '/dataserver2/Objects/%s/SendCourseInvitations' % course_ntiid
 		res = self.testapp.post_json(url, data, extra_environ=environ, status=200)
 		assert_that(res.json_body, has_entry(ITEMS, has_length(1)))
@@ -118,7 +118,7 @@ class TestInvitations(ApplicationLayerTest):
 
 		environ = self._make_extra_environ(username='harp4162')
 		environ[b'HTTP_ORIGIN'] = b'http://platform.ou.edu'
-		data = {'name':'ichigo', 'email':'ichigo@bleach.org', 'code':'CLC3403'}
+		data = {'name':'ichigo', 'email':'ichigo@bleach.org', 'code':'CI-CLC-3403'}
 		url = '/dataserver2/Objects/%s/SendCourseInvitations' % course_ntiid
 		self.testapp.post_json(url, data, extra_environ=environ, status=200)
 

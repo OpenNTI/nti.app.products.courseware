@@ -21,9 +21,9 @@
 		},
 		"Invitations" : [
 			{
-				"Code": "CLC3403",
-				"Scope": "Public",
 				"IsGeneric": true,
+				"Scope": "Public",
+				"Code": "CI-CLC-3403",
 				"Description": "Public Invitation"
 			}
 		]
