@@ -140,7 +140,7 @@ class CatalogEntryInvitationsView(CourseInvitationsView):
 			   renderer='rest',
 			   context=IUser,
 			   permission=nauth.ACT_READ)
-class AcceptCourseInvitationsView(AcceptInvitationByCodeView):
+class AcceptCourseInvitationByCodeView(AcceptInvitationByCodeView):
 
 	def handle_possible_validation_error(self, request, e):
 		if isinstance(e, AlreadyEnrolledException):
@@ -162,7 +162,7 @@ class AcceptCourseInvitationsView(AcceptInvitationByCodeView):
 					},
 					None)
 		else:
-			super(AcceptCourseInvitationsView, self).handle_possible_validation_error(request, e)
+			super(AcceptCourseInvitationByCodeView, self).handle_possible_validation_error(request, e)
 
 	def get_invite_code(self):
 		if self.request.body:
@@ -190,13 +190,7 @@ class AcceptCourseInvitationsView(AcceptInvitationByCodeView):
 			return invitation
 		return None
 
-	def _do_call(self):
-		code = self.get_invite_code()
-		accepted = self.handle_generic_invitation(code)
-		if accepted is not None:
-			self.accept_invitation(self.context, accepted)
-		else:
-			accepted = AcceptInvitationByCodeView._do_call(self)
+	def _transform(self, accepted):
 		if IJoinCourseInvitation.providedBy(accepted):
 			course = find_object_with_ntiid(accepted.course)
 			course = ICourseInstance(course, None)
@@ -204,6 +198,10 @@ class AcceptCourseInvitationsView(AcceptInvitationByCodeView):
 											 		 ICourseInstanceEnrollment)
 			return enrollment
 		return accepted
+
+	def _do_call(self):
+		accepted = AcceptInvitationByCodeView._do_call(self)
+		return self._transform(accepted)
 
 	def _web_root(self):
 		from nti.appserver.interfaces import IApplicationSettings
@@ -232,13 +230,42 @@ class AcceptCourseInvitationsView(AcceptInvitationByCodeView):
 		result = to_external_object(item)
 		return result
 
+@view_config(name=ACCEPT_COURSE_INVITATION)
+@view_config(name=ACCEPT_COURSE_INVITATIONS)
+@view_defaults(route_name='objects.generic.traversal',
+			   renderer='rest',
+			   context=ICourseInstance,
+			   permission=nauth.ACT_READ,
+			   name=ACCEPT_COURSE_INVITATION)
+class CourseInvitationAcceptView(AcceptCourseInvitationByCodeView):
+
+	def handle_generic_invitation(self, code):
+		invitation = get_course_invitation(self.context, code)
+		if invitation is not None and invitation.IsGeneric:
+			invitation = JoinCourseInvitation()
+			invitation.scope = invitation.Scope
+			invitation.course = invitation.Course
+			invitation.receiver = self.context.username
+			self.invitations.add(invitation) # record a new invitation
+			return invitation
+		return None
+
+	def _do_call(self):
+		code = self.get_invite_code()
+		accepted = self.handle_generic_invitation(code)
+		if accepted is not None:
+			self.accept_invitation(self.context, accepted)
+		else:
+			accepted = super(CourseInvitationAcceptView, self)._do_call()
+		return self._transform(accepted)
+
 @view_config(context=ICourseInstance)
 @view_config(context=ICourseCatalogEntry)
 @view_defaults(route_name='objects.generic.traversal',
 			   renderer='rest',
 			   request_method='POST',
-			   name=CHECK_COURSE_INVITATIONS_CSV,
-			   permission=nauth.ACT_READ)
+			   permission=nauth.ACT_READ,
+			   name=CHECK_COURSE_INVITATIONS_CSV)
 class CheckCourseInvitationsCSVView(AbstractAuthenticatedView,
 									ModeledContentUploadRequestUtilsMixin):
 
