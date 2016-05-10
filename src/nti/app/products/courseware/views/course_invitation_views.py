@@ -140,7 +140,7 @@ class CatalogEntryInvitationsView(CourseInvitationsView):
 			   renderer='rest',
 			   context=IUser,
 			   permission=nauth.ACT_READ)
-class AcceptCourseInvitationByCodeView(AcceptInvitationByCodeView):
+class UserAcceptCourseInvitationView(AcceptInvitationByCodeView):
 
 	def handle_possible_validation_error(self, request, e):
 		if isinstance(e, AlreadyEnrolledException):
@@ -162,7 +162,7 @@ class AcceptCourseInvitationByCodeView(AcceptInvitationByCodeView):
 					},
 					None)
 		else:
-			super(AcceptCourseInvitationByCodeView, self).handle_possible_validation_error(request, e)
+			super(UserAcceptCourseInvitationView, self).handle_possible_validation_error(request, e)
 
 	def get_invite_code(self):
 		if self.request.body:
@@ -178,17 +178,6 @@ class AcceptCourseInvitationByCodeView(AcceptInvitationByCodeView):
 		if not isinstance(data, six.string_types):
 			raise hexc.HTTPBadRequest()
 		return data
-
-	def handle_generic_invitation(self, code):
-		invitation = get_course_invitation(self.context, code)
-		if invitation is not None and invitation.IsGeneric:
-			invitation = JoinCourseInvitation()
-			invitation.scope = invitation.Scope
-			invitation.course = invitation.Course
-			invitation.receiver = self.context.username
-			self.invitations.add(invitation) # record a new invitation
-			return invitation
-		return None
 
 	def _transform(self, accepted):
 		if IJoinCourseInvitation.providedBy(accepted):
@@ -235,9 +224,8 @@ class AcceptCourseInvitationByCodeView(AcceptInvitationByCodeView):
 @view_defaults(route_name='objects.generic.traversal',
 			   renderer='rest',
 			   context=ICourseInstance,
-			   permission=nauth.ACT_READ,
-			   name=ACCEPT_COURSE_INVITATION)
-class CourseInvitationAcceptView(AcceptCourseInvitationByCodeView):
+			   permission=nauth.ACT_READ)
+class CourseInvitationAcceptView(UserAcceptCourseInvitationView):
 
 	def handle_generic_invitation(self, code):
 		invitation = get_course_invitation(self.context, code)
@@ -258,6 +246,15 @@ class CourseInvitationAcceptView(AcceptCourseInvitationByCodeView):
 		else:
 			accepted = super(CourseInvitationAcceptView, self)._do_call()
 		return self._transform(accepted)
+
+@view_config(name=ACCEPT_COURSE_INVITATION)
+@view_config(name=ACCEPT_COURSE_INVITATIONS)
+@view_defaults(route_name='objects.generic.traversal',
+			   renderer='rest',
+			   context=ICourseCatalogEntry,
+			   permission=nauth.ACT_READ)
+class CatalogEntryInvitationAcceptView(CourseInvitationAcceptView):
+	pass
 
 @view_config(context=ICourseInstance)
 @view_config(context=ICourseCatalogEntry)
