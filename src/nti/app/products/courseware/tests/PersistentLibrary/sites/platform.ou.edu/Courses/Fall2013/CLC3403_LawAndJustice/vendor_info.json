@@ -18,7 +18,14 @@
 			"AllowVendorUpdates": true,
 			"PurchaseCutOffDate": "2024-08-09T05:00:00+00:00",
 			"RedeemCutOffDate": "2024-08-23T04:59:00+00:00"
-		}
+		},
+		"Invitations" : [
+			{
+				"Code": "CLC3403",
+				"Scope": "Public",
+				"Description": "Public Invitation"
+			}
+		],
 	},
 	"OU": {
 		"CRN" : 34846,

@@ -21,9 +21,6 @@ from quopri import decodestring
 from zope import component
 
 from nti.contenttypes.courses.interfaces import ICourseInstance
-from nti.contenttypes.courses.interfaces import IJoinCourseInvitation
-
-from nti.contenttypes.courses.invitation import JoinCourseInvitation
 
 from nti.contenttypes.courses.utils import get_enrollments
 
@@ -32,8 +29,6 @@ from nti.dataserver.users.interfaces import IUserProfile
 from nti.externalization.externalization import StandardExternalFields
 
 from nti.externalization.oids import to_external_ntiid_oid
-
-from nti.invitations.interfaces import IInvitations
 
 from nti.ntiids.ntiids import find_object_with_ntiid
 
@@ -65,10 +60,6 @@ class TestInvitations(ApplicationLayerTest):
 	def test_get_invitations(self):
 
 		with mock_dataserver.mock_db_trans(self.ds, site_name='platform.ou.edu'):
-			invitiation = JoinCourseInvitation("CLC3403", self.entry_ntiid)
-			component.getGlobalSiteManager().registerUtility(invitiation,
-															 IJoinCourseInvitation,
-															 "CLC3403")
 			entry = self.catalog_entry()
 			course = ICourseInstance(entry)
 			course_ntiid = to_external_ntiid_oid(course)
@@ -93,13 +84,6 @@ class TestInvitations(ApplicationLayerTest):
 			IUserProfile(user).email = 'ichigo@bleach.org'
 
 		with mock_dataserver.mock_db_trans(self.ds, site_name='platform.ou.edu'):
-			invitiation = JoinCourseInvitation("CLC3403", self.entry_ntiid)
-			component.getGlobalSiteManager().registerUtility(invitiation,
-															 IJoinCourseInvitation,
-															 "CLC3403")
-			invitations = component.getUtility(IInvitations)
-			invitations.registerInvitation(invitiation)
-
 			entry = self.catalog_entry()
 			course = ICourseInstance(entry)
 			course_ntiid = to_external_ntiid_oid(course)
@@ -153,10 +137,6 @@ class TestInvitations(ApplicationLayerTest):
 		]
 		source = str('\n'.join(source))
 		with mock_dataserver.mock_db_trans(self.ds, site_name='platform.ou.edu'):
-			invitiation = JoinCourseInvitation("CLC3403", self.entry_ntiid)
-			component.getGlobalSiteManager().registerUtility(invitiation,
-															 IJoinCourseInvitation,
-															 "CLC3403")
 			entry = self.catalog_entry()
 			course = ICourseInstance(entry)
 			course_ntiid = to_external_ntiid_oid(course)

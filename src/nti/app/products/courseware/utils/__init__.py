@@ -28,6 +28,8 @@ from nti.app.products.courseware.enrollment import EnrollmentOptions
 
 from nti.app.products.courseware.interfaces import IEnrollmentOptionProvider
 
+from nti.app.products.courseware.invitations import CourseInvitation
+
 from nti.app.products.courseware.utils.decorators import PreviewCourseAccessPredicateDecorator
 
 from nti.common.maps import CaseInsensitiveDict
@@ -142,41 +144,37 @@ def get_course_invitations(context):
 			result = []
 			for value in invitations:
 				if isinstance(value, six.string_types):
-					result.append({'Code':value, SCOPE:ES_PUBLIC, DESCRIPTION:ES_PUBLIC})
+					invitaion = CourseInvitation(Code=value, 
+												 Scope=ES_PUBLIC,
+												 Description=ES_PUBLIC)
+					result.append(invitaion)
 				elif isinstance(value, Mapping):
 					value = CaseInsensitiveDict(value)
 					code = value.get('Code')
 					scope = value.get(SCOPE) or ES_PUBLIC
 					desc = value.get(DESCRIPTION) or scope
 					if code:
-						result.append({'Code':code, SCOPE:scope, DESCRIPTION:desc})
+						invitaion = CourseInvitation(Code=code, 
+												 	 Scope=scope,
+												 	 Description=desc)
+						result.append(invitaion)
 		elif isinstance(invitations, Mapping):
 			result = []
 			for key, value in invitations.items():
-				result.append({'Code':key, SCOPE:value, DESCRIPTION:value})
+				invitaion = CourseInvitation(Code=key, 
+											 Scope=value,
+											 Description=value)
+				result.append(invitaion)
 		if result:
 			return result
+	return ()
+
+def get_course_invitation(context, code):
+	for invitation in get_course_invitations(context):
+		if invitation.Code == code:
+			return invitation
 	return None
 
-def get_course_invitation(code):
-	result = component.queryUtility(IJoinCourseInvitation, name=code or '')
-	return result
-
-def get_all_course_invitations():
-	result = list(x for _, x in component.getUtilitiesFor(IJoinCourseInvitation))
-	return result
-
-def get_invitations_for_course(context):
-	result = {}
-	course = ICourseInstance(context, None)
-	entry = ICourseCatalogEntry(course, None)
-	entry_ntiid = entry.ntiid if entry is not None else None
-	ntiid = to_external_ntiid_oid(course) if course is not None else None
-	for name, invitation in list(component.getUtilitiesFor(IJoinCourseInvitation)):
-		if invitation.course in (ntiid, entry_ntiid):
-			result[name] = invitation
-	return result
-
 def has_course_invitations(context):
-	result = get_invitations_for_course(context)
+	result = get_course_invitations(context)
 	return len(result) >= 1

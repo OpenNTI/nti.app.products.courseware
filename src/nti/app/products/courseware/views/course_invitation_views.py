@@ -44,17 +44,12 @@ from nti.app.products.courseware.interfaces import ICourseInstanceEnrollment
 from nti.app.products.courseware.invitations import send_invitation_email
 
 from nti.app.products.courseware.utils import get_course_invitation
-from nti.app.products.courseware.utils import get_all_course_invitations
-from nti.app.products.courseware.utils import get_invitations_for_course
+from nti.app.products.courseware.utils import get_course_invitations
 
 from nti.app.products.courseware.views import SEND_COURSE_INVITATIONS
 from nti.app.products.courseware.views import VIEW_COURSE_INVITATIONS
 from nti.app.products.courseware.views import ACCEPT_COURSE_INVITATIONS
 from nti.app.products.courseware.views import CHECK_COURSE_INVITATIONS_CSV
-
-from nti.app.products.courseware.views import CourseAdminPathAdapter
-
-from nti.appserver.dataserver_pyramid_views import GenericGetView
 
 from nti.appserver.pyramid_authorization import has_permission
 
@@ -76,7 +71,6 @@ from nti.contenttypes.courses.utils import is_course_instructor
 from nti.dataserver import authorization as nauth
 
 from nti.dataserver.interfaces import IUser
-from nti.dataserver.interfaces import IDataserverFolder
 
 from nti.dataserver.users import User
 from nti.dataserver.users.interfaces import IUserProfile
@@ -96,7 +90,7 @@ LINKS = StandardExternalFields.LINKS
 MIMETYPE = StandardExternalFields.MIMETYPE
 
 USER_COURSE_INVITATIONS_CLASS = u'UserCourseInvitations'
-JOIN_COURSE_INVITATIONS_MIMETYPE = u'application/vnd.nextthought.courses.joincourseinvitations'
+COURSE_INVITATIONS_MIMETYPE = u'application/vnd.nextthought.courseware.courseinvitations'
 USER_COURSE_INVITATIONS_MIMETYPE = u'application/vnd.nextthought.courses.usercourseinvitations'
 COURSE_INVITATIONS_SENT_MIMETYPE = u'application/vnd.nextthought.courses.courseinvitationssent'
 
@@ -119,9 +113,8 @@ class CourseInvitationsView(AbstractAuthenticatedView):
 
 		result = LocatedExternalDict()
 		result[CLASS] = 'CourseInvitations'
-		result[MIMETYPE] = JOIN_COURSE_INVITATIONS_MIMETYPE
-		invitations = get_invitations_for_course(self._course)
-		items = result[ITEMS] = dict(invitations)
+		result[MIMETYPE] = COURSE_INVITATIONS_MIMETYPE
+		items = result[ITEMS] = get_course_invitations(self._course)
 		result['Total'] = result['ItemCount'] = len(items)
 		result.__parent__ = self.context
 		result.__name__ = self.request.view_name
@@ -303,15 +296,24 @@ class SendCourseInvitationsView(AbstractAuthenticatedView,
 		result = CaseInsensitiveDict(result)
 		return result
 
-	def get_invitation(self, values):
+	def get_course_invitation(self, values):
+		invitation = None
 		code = values.get('code') or values.get('invitation')
 		if not code:
-			invitations = get_invitations_for_course(self.context)
-			if invitations: # not provided
-				code = tuple(invitations.keys())[0] # pick first
-		if not code:
-			raise hexc.HTTPUnprocessableEntity(_("Must provide a inviation code."))
-		invitation = get_course_invitation(code)
+			invitations = get_course_invitations(self.context)
+			if invitations:
+				invitation = invitations[0] # pick first
+			else:
+				raise_json_error(
+						self.request,
+						hexc.HTTPUnprocessableEntity,
+						{
+							u'message': _('Must provide a inviation code.') ,
+							u'code': 'MissingInvitationCodeError',
+						},
+						None)
+		if invitation is None:
+			invitation = get_course_invitation(self.context, code)
 		if invitation is None:
 			raise_json_error(
 					self.request,
@@ -425,7 +427,7 @@ class SendCourseInvitationsView(AbstractAuthenticatedView,
 			links = None
 
 		warnings = []
-		invitation = self.get_invitation(values)
+		invitation = self.get_course_invitation(values)
 		user_invitations = self.get_user_course_invitations(values, warnings)
 		if not force and warnings:
 			raise_json_error(
@@ -487,21 +489,4 @@ class SendCourseInvitationsView(AbstractAuthenticatedView,
 		result[CLASS] = 'CourseInvitationsSent'
 		result[MIMETYPE] = COURSE_INVITATIONS_SENT_MIMETYPE
 		result[ITEMS] = sent
-		return result
-
-@view_config(context=IDataserverFolder)
-@view_config(context=CourseAdminPathAdapter)
-@view_defaults(route_name='objects.generic.traversal',
-			   renderer='rest',
-			   request_method='GET',
-			   name=VIEW_COURSE_INVITATIONS,
-			   permission=nauth.ACT_NTI_ADMIN)
-class AllCourseInvitationsView(GenericGetView):
-
-	def __call__(self):
-		result = LocatedExternalDict()
-		items = result[ITEMS] = list(get_all_course_invitations())
-		result['Total'] = result['ItemCount'] = len(items)
-		result.__parent__ = self.context
-		result.__name__ = self.request.view_name
 		return result

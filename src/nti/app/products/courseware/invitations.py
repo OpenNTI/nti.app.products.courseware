@@ -30,6 +30,8 @@ from nti.app.invitations.interfaces import IUserInvitationsLinkProvider
 from nti.app.products.courseware import MessageFactory as _
 from nti.app.products.courseware import ACCEPT_COURSE_INVITATIONS
 
+from nti.app.products.courseware.interfaces import ICourseInvitation
+
 from nti.appserver.policies.interfaces import ISitePolicyUserEventListener
 
 from nti.contenttypes.courses.interfaces import ICourseInstance
@@ -47,6 +49,8 @@ from nti.links.links import Link
 from nti.mailer.interfaces import ITemplatedMailer
 
 from nti.ntiids.ntiids import find_object_with_ntiid
+
+from nti.schema.fieldproperty import createDirectFieldProperties
 
 def get_policy_package():
 	policy = component.getUtility(ISitePolicyUserEventListener)
@@ -166,3 +170,7 @@ class _CourseUserInvitationsLinkProvider(object):
 		link.__parent__ = self.user
 		interface.alsoProvides(link, ILocation)
 		return (link,)
+
+@interface.implementer(ICourseInvitation)
+class CourseInvitation(object):
+	createDirectFieldProperties(ICourseInvitation)

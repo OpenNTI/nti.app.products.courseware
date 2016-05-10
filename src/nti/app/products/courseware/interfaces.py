@@ -346,6 +346,13 @@ def get_course_publishable_vendor_info(context):
 		result.update(info or {})
 	return result
 
+# publishable vendor info
+
+class ICourseInvitation(interface.Interface):
+	Code = TextLine(title="Invitation code.", required=True)
+	Scope = TextLine(title="The enrollment scope.", required=True)
+	Description = TextLine(title="The invitation description.", required=True)
+
 # deprecations
 
 import zope.deferredimport
