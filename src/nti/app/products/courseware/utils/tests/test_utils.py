@@ -41,13 +41,3 @@ class TestUtils(unittest.TestCase):
 		assert_that(info[0], has_entries("Scope", "ForCredit",
 										 "Code","Two",
 										 "Description","22"))
-		
-		data = {"Three":"Purchased"}
-		mock_tr.is_callable().with_args().returns(data)
-		mock_one.is_callable().with_args().returns([1])
-		mock_vi.is_callable().with_args().returns(data)
-		info = get_course_invitations(1)
-		assert_that(info, has_length(1))
-		assert_that(info[0], has_entries("Scope", "Purchased",
-										 "Code","Three",
-										 "Description","Purchased"))
