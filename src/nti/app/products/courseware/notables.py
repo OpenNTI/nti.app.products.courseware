@@ -59,7 +59,7 @@ class TopLevelPriorityNotableFilter(object):
 	def is_notable(self, obj, user):
 		obj_creator = getattr(obj, 'creator', None)
 		obj_creator = getattr(obj_creator, 'username', obj_creator)
-		
+
 		# Filter out blog comments that might cause confusion.
 		if 		obj_creator is None \
 			or 	IPersonalBlogComment.providedBy(obj) \
