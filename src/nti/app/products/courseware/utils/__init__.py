@@ -140,7 +140,9 @@ def get_vendor_thank_you_page(course, key):
 	return None
 
 def get_course_invitations(context):
-	entry = ICourseCatalogEntry(context)
+	entry = ICourseCatalogEntry(context, None)
+	if entry is None:
+		return ()
 	for course in get_course_and_parent(context):
 		result = None
 		vendor_info = get_vendor_info(course)
