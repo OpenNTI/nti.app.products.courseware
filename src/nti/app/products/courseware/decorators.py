@@ -66,6 +66,8 @@ from nti.contenttypes.courses.interfaces import INonPublicCourseInstance
 from nti.contenttypes.courses.interfaces import ICourseInstanceVendorInfo
 from nti.contenttypes.courses.interfaces import ICourseInstanceScopedForum
 
+from nti.contenttypes.courses.legacy_catalog import ILegacyCourseInstance
+
 from nti.contenttypes.courses.sharing import get_default_sharing_scope
 
 from nti.contenttypes.courses.utils import is_enrolled
@@ -173,7 +175,8 @@ class _CourseMailLinkDecorator(AbstractAuthenticatedRequestAwareDecorator):
 class _CourseInvitationsLinkDecorator(AbstractAuthenticatedRequestAwareDecorator):
 
 	def _predicate(self, context, result):
-		return self._is_authenticated
+		return 		self._is_authenticated \
+				and not ILegacyCourseInstance.providedBy(context)
 
 	def _do_decorate_external(self, context, result):
 		_links = result.setdefault(LINKS, [])

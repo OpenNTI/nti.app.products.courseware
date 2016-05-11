@@ -40,6 +40,8 @@ from nti.contenttypes.courses.interfaces import ICourseInstance
 from nti.contenttypes.courses.interfaces import ICourseCatalogEntry
 from nti.contenttypes.courses.interfaces import IJoinCourseInvitation
 
+from nti.common.representation import WithRepr
+
 from nti.dataserver.interfaces import IUser
 
 from nti.dataserver.users import User
@@ -58,6 +60,10 @@ from nti.ntiids.ntiids import find_object_with_ntiid
 from nti.schema.field import SchemaConfigured
 from nti.schema.fieldproperty import createDirectFieldProperties
 
+from nti.schema.schema import EqHash
+
+@WithRepr
+@EqHash('Code')
 @interface.implementer(ICourseInvitation)
 class CourseInvitation(SchemaConfigured):
 	createDirectFieldProperties(ICourseInvitation)

@@ -147,17 +147,20 @@ def get_course_invitations(context):
 		result = None
 		vendor_info = get_vendor_info(course)
 		invitations = traverse(vendor_info, 'NTI/Invitations', default=False)
+		# simple string code
 		if isinstance(invitations, six.string_types):
 			invitations = invitations.split()
 		if isinstance(invitations, (list, tuple)):
 			result = []
 			for value in invitations:
+				# simple string code
 				if isinstance(value, six.string_types):
 					invitaion = CourseInvitation(Code=value, 
 												 Scope=ES_PUBLIC,
 												 Course=entry.ntiid,
 												 Description=ES_PUBLIC)
 					result.append(invitaion)
+				# fully modeled invitation
 				elif isinstance(value, Mapping):
 					value = CaseInsensitiveDict(value)
 					code = value.get('Code')
@@ -171,14 +174,6 @@ def get_course_invitations(context):
 												 	 Course=entry.ntiid,
 												 	 IsGeneric=isGeneric)
 						result.append(invitaion)
-		elif isinstance(invitations, Mapping):
-			result = []
-			for key, value in invitations.items():
-				invitaion = CourseInvitation(Code=key, 
-											 Scope=value,
-											 Description=value,
-											 Course=entry.ntiid)
-				result.append(invitaion)
 		if result:
 			return result
 	return ()
@@ -191,4 +186,4 @@ def get_course_invitation(context, code):
 
 def has_course_invitations(context):
 	result = get_course_invitations(context)
-	return len(result) >= 1
+	return bool(result)
