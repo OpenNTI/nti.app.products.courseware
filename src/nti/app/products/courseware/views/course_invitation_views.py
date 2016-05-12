@@ -205,7 +205,7 @@ class UserAcceptCourseInvitationView(AcceptInvitationByCodeView):
 		}
 		intids = component.getUtility(IIntIds)
 		for doc_id in catalog.apply(query) or ():
-			course = intids.querObject(doc_id)
+			course = intids.queryObject(doc_id)
 			if ICourseInstance.providedBy(course):
 				yield course
 
