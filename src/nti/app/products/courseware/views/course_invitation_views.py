@@ -20,6 +20,8 @@ from zope.event import notify
 
 from zope.i18n import translate
 
+from zope.intid.interfaces import IIntIds
+
 from z3c.schema.email import isValidMailAddress
 
 from pyramid import httpexceptions as hexc
@@ -61,7 +63,8 @@ from nti.common.property import Lazy
 
 from nti.common.string import TRUE_VALUES
 
-from nti.contenttypes.courses.interfaces import ICourseCatalog
+from nti.contenttypes.courses.index import IX_KEYWORDS
+
 from nti.contenttypes.courses.interfaces import ICourseInstance
 from nti.contenttypes.courses.interfaces import ICourseCatalogEntry
 from nti.contenttypes.courses.interfaces import IJoinCourseInvitation
@@ -71,6 +74,7 @@ from nti.contenttypes.courses.interfaces import CourseInvitationException
 
 from nti.contenttypes.courses.invitation import JoinCourseInvitation
 
+from nti.contenttypes.courses.utils import get_courses_catalog
 from nti.contenttypes.courses.utils import is_course_instructor
 
 from nti.dataserver import authorization as nauth
@@ -169,7 +173,7 @@ class UserAcceptCourseInvitationView(AcceptInvitationByCodeView):
 			data = 		data.get('code') \
 					or  data.get('invitation') \
 					or	data.get('invitation_code') \
-					or	data.get('invitation_codes') # legacy
+					or	data.get('invitation_codes')  # legacy
 		if not isinstance(data, six.string_types):
 			raise hexc.HTTPBadRequest()
 		return data
@@ -190,22 +194,32 @@ class UserAcceptCourseInvitationView(AcceptInvitationByCodeView):
 			user_invitation.scope = invitation.Scope
 			user_invitation.course = invitation.Course
 			user_invitation.receiver = self.remoteUser.username
-			self.invitations.add(user_invitation) # record a new invitation
+			self.invitations.add(user_invitation)  # record a new invitation
 			return user_invitation
 		return None
+
+	def _get_courses_by_code(self, code):
+		catalog = get_courses_catalog()
+		query = {
+			IX_KEYWORDS: {'any_of': (code,)}
+		}
+		intids = component.getUtility(IIntIds)
+		for doc_id in catalog.apply(query) or ():
+			course = intids.querObject(doc_id)
+			if ICourseInstance.providedBy(course):
+				yield course
 
 	def _do_validation(self, code):
 		result = None
 		if code not in self.invitations:
 			# Not targeted, so look through catalog for generic code.
-			catalog = component.getUtility( ICourseCatalog )
-			for entry in catalog.iterCatalogEntries():
-				result = self.handle_generic_invitation( entry, code )
+			for course in self._get_courses_by_code(code):
+				result = self.handle_generic_invitation(course, code)
 				if result is not None:
 					break
 		# If nothing, let our super class handle validation.
 		if result is None:
-			result = super( UserAcceptCourseInvitationView, self )._do_validation( code )
+			result = super(UserAcceptCourseInvitationView, self)._do_validation(code)
 		return result
 
 	def _do_call(self):
@@ -246,20 +260,9 @@ class UserAcceptCourseInvitationView(AcceptInvitationByCodeView):
 			   permission=nauth.ACT_READ)
 class CourseInvitationAcceptView(UserAcceptCourseInvitationView):
 
-	def handle_generic_invitation(self, code):
-		invitation = get_course_invitation(self.context, code)
-		if invitation is not None and invitation.IsGeneric:
-			user_invitation = JoinCourseInvitation()
-			user_invitation.scope = invitation.Scope
-			user_invitation.course = invitation.Course
-			user_invitation.receiver = self.remoteUser.username
-			self.invitations.add(user_invitation) # record a new invitation
-			return user_invitation
-		return None
-
 	def _do_call(self):
 		code = self.get_invite_code()
-		accepted = self.handle_generic_invitation(code)
+		accepted = self.handle_generic_invitation(self.context, code)
 		if accepted is not None:
 			self.accept_invitation(self.remoteUser, accepted)
 		else:
