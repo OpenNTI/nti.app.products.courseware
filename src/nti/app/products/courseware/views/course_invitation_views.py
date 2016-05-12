@@ -46,9 +46,9 @@ from nti.app.products.courseware.utils import get_course_invitation
 from nti.app.products.courseware.utils import get_course_invitations
 
 from nti.app.products.courseware.views import SEND_COURSE_INVITATIONS
-from nti.app.products.courseware.views import VIEW_COURSE_INVITATIONS
 from nti.app.products.courseware.views import ACCEPT_COURSE_INVITATION
 from nti.app.products.courseware.views import ACCEPT_COURSE_INVITATIONS
+from nti.app.products.courseware.views import VIEW_COURSE_ACCESS_TOKENS
 from nti.app.products.courseware.views import CHECK_COURSE_INVITATIONS_CSV
 
 from nti.appserver.interfaces import IApplicationSettings
@@ -103,10 +103,11 @@ USER_COURSE_INVITATIONS_MIMETYPE = u'application/vnd.nextthought.courses.usercou
 COURSE_INVITATIONS_SENT_MIMETYPE = u'application/vnd.nextthought.courses.courseinvitationssent'
 
 @view_config(context=ICourseInstance)
+@view_config(context=ICourseCatalogEntry)
 @view_defaults(route_name='objects.generic.traversal',
 			   renderer='rest',
 			   request_method='GET',
-			   name=VIEW_COURSE_INVITATIONS,
+			   name=VIEW_COURSE_ACCESS_TOKENS,
 			   permission=nauth.ACT_READ)
 class CourseInvitationsView(AbstractAuthenticatedView):
 
@@ -127,15 +128,6 @@ class CourseInvitationsView(AbstractAuthenticatedView):
 		result.__parent__ = self.context
 		result.__name__ = self.request.view_name
 		return result
-
-@view_config(context=ICourseCatalogEntry)
-@view_defaults(route_name='objects.generic.traversal',
-			   renderer='rest',
-			   request_method='GET',
-			   name=VIEW_COURSE_INVITATIONS,
-			   permission=nauth.ACT_READ)
-class CatalogEntryInvitationsView(CourseInvitationsView):
-	pass
 
 @view_config(name=ACCEPT_COURSE_INVITATION)
 @view_config(name=ACCEPT_COURSE_INVITATIONS)

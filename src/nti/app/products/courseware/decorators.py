@@ -27,7 +27,7 @@ from nti.app.products.courseware import VIEW_COURSE_ACTIVITY
 from nti.app.products.courseware import VIEW_COURSE_RECURSIVE
 from nti.app.products.courseware import VIEW_COURSE_CLASSMATES
 from nti.app.products.courseware import SEND_COURSE_INVITATIONS
-from nti.app.products.courseware import VIEW_COURSE_INVITATIONS
+from nti.app.products.courseware import VIEW_COURSE_ACCESS_TOKENS
 from nti.app.products.courseware import VIEW_RECURSIVE_AUDIT_LOG
 from nti.app.products.courseware import ACCEPT_COURSE_INVITATIONS
 from nti.app.products.courseware import VIEW_COURSE_LOCKED_OBJECTS
@@ -184,7 +184,7 @@ class _CourseInvitationsLinkDecorator(AbstractAuthenticatedRequestAwareDecorator
 			# instructor or admin, it can send invitations
 			if 		is_course_instructor(context, self.remoteUser) \
 				or	has_permission(ACT_NTI_ADMIN, context, self.request):
-				for name in (VIEW_COURSE_INVITATIONS,
+				for name in (VIEW_COURSE_ACCESS_TOKENS,
 							 SEND_COURSE_INVITATIONS,
 							 CHECK_COURSE_INVITATIONS_CSV):
 					link = Link(context, rel=name, elements=(name,))
@@ -194,7 +194,7 @@ class _CourseInvitationsLinkDecorator(AbstractAuthenticatedRequestAwareDecorator
 					_links.append(link)
 			# if not enrolled in course it can accept invites
 			elif not is_enrolled(context, self.remoteUser):
-				link = Link(context, rel=ACCEPT_COURSE_INVITATIONS, 
+				link = Link(context, rel=ACCEPT_COURSE_INVITATIONS,
 							elements=('@@' + ACCEPT_COURSE_INVITATIONS,))
 				interface.alsoProvides(link, ILocation)
 				link.__name__ = ''

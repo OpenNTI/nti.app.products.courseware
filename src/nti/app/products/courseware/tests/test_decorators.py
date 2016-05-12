@@ -67,7 +67,7 @@ class TestCoursePreviewExternalization(ApplicationLayerTest):
 		assert_that(course_ext.get('SharingScopes'), to_check())
 		assert_that(course_ext.get('Discussions'), to_check())
 
-		for rel in (RESOURCES, 'Pages',):
+		for rel in (RESOURCES, 'Pages'):
 			link_check(course_ext, rel)
 
 		outline = course_ext.get('Outline')

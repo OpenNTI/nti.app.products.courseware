@@ -25,9 +25,9 @@ from nti.app.products.courseware import VIEW_COURSE_ACTIVITY
 from nti.app.products.courseware import VIEW_COURSE_RECURSIVE
 from nti.app.products.courseware import SEND_COURSE_INVITATIONS
 from nti.app.products.courseware import VIEW_COURSE_DISCUSSIONS
-from nti.app.products.courseware import VIEW_COURSE_INVITATIONS
 from nti.app.products.courseware import ACCEPT_COURSE_INVITATION
 from nti.app.products.courseware import ACCEPT_COURSE_INVITATIONS
+from nti.app.products.courseware import VIEW_COURSE_ACCESS_TOKENS
 from nti.app.products.courseware import CHECK_COURSE_INVITATIONS_CSV
 from nti.app.products.courseware import VIEW_COURSE_RECURSIVE_BUCKET
 from nti.app.products.courseware import VIEW_COURSE_ENROLLMENT_ROSTER

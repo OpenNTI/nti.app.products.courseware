@@ -19,6 +19,8 @@ from quopri import decodestring
 
 from zope import component
 
+from nti.app.products.courseware import VIEW_COURSE_ACCESS_TOKENS
+
 from nti.contenttypes.courses.interfaces import ICourseInstance
 
 from nti.contenttypes.courses.utils import get_enrollments
@@ -66,9 +68,11 @@ class TestInvitations(ApplicationLayerTest):
 		environ = self._make_extra_environ(username='harp4162')
 		environ[b'HTTP_ORIGIN'] = b'http://platform.ou.edu'
 
-		url = '/dataserver2/Objects/%s/CourseInvitations' % course_ntiid
+		url = '/dataserver2/Objects/%s' % course_ntiid
 		res = self.testapp.get(url, extra_environ=environ, status=200)
+		access_token_href = self.require_link_href_with_rel(res.json_body, VIEW_COURSE_ACCESS_TOKENS)
 
+		res = self.testapp.get(access_token_href, extra_environ=environ, status=200)
 		assert_that(res.json_body, has_entry(ITEMS, has_length(1)))
 
 	@WithSharedApplicationMockDS(testapp=True, users=True)
