@@ -51,6 +51,8 @@ from nti.app.products.courseware.views import ACCEPT_COURSE_INVITATION
 from nti.app.products.courseware.views import ACCEPT_COURSE_INVITATIONS
 from nti.app.products.courseware.views import CHECK_COURSE_INVITATIONS_CSV
 
+from nti.appserver.interfaces import IApplicationSettings
+
 from nti.appserver.pyramid_authorization import has_permission
 
 from nti.common.maps import CaseInsensitiveDict
@@ -59,6 +61,7 @@ from nti.common.property import Lazy
 
 from nti.common.string import TRUE_VALUES
 
+from nti.contenttypes.courses.interfaces import ICourseCatalog
 from nti.contenttypes.courses.interfaces import ICourseInstance
 from nti.contenttypes.courses.interfaces import ICourseCatalogEntry
 from nti.contenttypes.courses.interfaces import IJoinCourseInvitation
@@ -188,12 +191,36 @@ class UserAcceptCourseInvitationView(AcceptInvitationByCodeView):
 			return enrollment
 		return accepted
 
+	def handle_generic_invitation(self, context, code):
+		invitation = get_course_invitation(context, code)
+		if invitation is not None and invitation.IsGeneric:
+			user_invitation = JoinCourseInvitation()
+			user_invitation.scope = invitation.Scope
+			user_invitation.course = invitation.Course
+			user_invitation.receiver = self.remoteUser.username
+			self.invitations.add(user_invitation) # record a new invitation
+			return user_invitation
+		return None
+
+	def _do_validation(self, code):
+		result = None
+		if code not in self.invitations:
+			# Not targeted, so look through catalog for generic code.
+			catalog = component.getUtility( ICourseCatalog )
+			for entry in catalog.iterCatalogEntries():
+				result = self.handle_generic_invitation( entry, code )
+				if result is not None:
+					break
+		# If nothing, let our super class handle validation.
+		if result is None:
+			result = super( UserAcceptCourseInvitationView, self )._do_validation( code )
+		return result
+
 	def _do_call(self):
 		accepted = AcceptInvitationByCodeView._do_call(self)
 		return self._transform(accepted)
 
 	def _web_root(self):
-		from nti.appserver.interfaces import IApplicationSettings
 		settings = component.getUtility(IApplicationSettings)
 		web_root = settings.get('web_app_root', '/app/')
 		return web_root
@@ -230,12 +257,12 @@ class CourseInvitationAcceptView(UserAcceptCourseInvitationView):
 	def handle_generic_invitation(self, code):
 		invitation = get_course_invitation(self.context, code)
 		if invitation is not None and invitation.IsGeneric:
-			invitation = JoinCourseInvitation()
-			invitation.scope = invitation.Scope
-			invitation.course = invitation.Course
-			invitation.receiver = self.remoteUser.username
-			self.invitations.add(invitation) # record a new invitation
-			return invitation
+			user_invitation = JoinCourseInvitation()
+			user_invitation.scope = invitation.Scope
+			user_invitation.course = invitation.Course
+			user_invitation.receiver = self.remoteUser.username
+			self.invitations.add(user_invitation) # record a new invitation
+			return user_invitation
 		return None
 
 	def _do_call(self):

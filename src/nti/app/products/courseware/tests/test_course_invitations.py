@@ -95,11 +95,10 @@ class TestInvitations(ApplicationLayerTest):
 
 		mailer = component.getUtility(ITestMailDelivery)
 		msg = mailer.queue[0]
-
 		html = decodestring(msg.html)
-		accept_url = '/dataserver2/users/ichigo/accept-course-invitations?code=%s' % code
 		assert_that(html, contains_string('/accept-course-invitations?code=%s' % code))
 
+		accept_url = '/dataserver2/users/ichigo/accept-course-invitations?code=%s' % code
 		environ = self._make_extra_environ(username='ichigo')
 		environ[b'HTTP_ORIGIN'] = b'http://platform.ou.edu'
 		# Redirected to app form
@@ -121,6 +120,31 @@ class TestInvitations(ApplicationLayerTest):
 		data = {'name':'ichigo', 'email':'ichigo@bleach.org', 'code':'CI-CLC-3403'}
 		url = '/dataserver2/Objects/%s/SendCourseInvitations' % course_ntiid
 		self.testapp.post_json(url, data, extra_environ=environ, status=200)
+
+	@WithSharedApplicationMockDS(testapp=True, users=True)
+	def test_accept_generic_invitation(self):
+		with mock_dataserver.mock_db_trans(self.ds):
+			user = self._create_user('ichigo')
+			IUserProfile(user).email = 'ichigo@bleach.org'
+
+		code = "CI-CLC-3403"
+		accept_url = '/dataserver2/users/ichigo/accept-course-invitations?code=%s' % code
+		environ = self._make_extra_environ(username='ichigo')
+		environ[b'HTTP_ORIGIN'] = b'http://platform.ou.edu'
+		# Redirected to app form
+		res = self.testapp.get(accept_url, extra_environ=environ, status=302)
+		assert_that(res.location,
+					is_('http://localhost/app/library/courses/available/invitations/accept/%s' % code))
+
+		# Now submitted
+		environ['HTTP_X_REQUESTED_WITH'] = b'XMLHttpRequest'
+		self.testapp.get(accept_url, extra_environ=environ, status=200)
+
+		with mock_dataserver.mock_db_trans(self.ds, site_name='platform.ou.edu'):
+			assert_that(get_enrollments('ichigo'), has_length(1))
+
+		# Already enrolled
+		self.testapp.get(accept_url, extra_environ=environ, status=409)
 
 	@WithSharedApplicationMockDS(testapp=True, users=True)
 	def test_check_course_inv_csv(self):

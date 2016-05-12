@@ -64,7 +64,7 @@ ZERO_DATETIME = datetime.utcfromtimestamp(0)
 PreviewCourseAccessPredicate = PreviewCourseAccessPredicateDecorator
 
 def is_true(s):
-	result = bool(s and str(s) in TRUE_VALUES)
+	result = bool(s and str(s).lower() in TRUE_VALUES)
 	return result
 
 def last_synchronized(context=None):
@@ -155,7 +155,7 @@ def get_course_invitations(context):
 			for value in invitations:
 				# simple string code
 				if isinstance(value, six.string_types):
-					invitaion = CourseInvitation(Code=value, 
+					invitaion = CourseInvitation(Code=value,
 												 Scope=ES_PUBLIC,
 												 Course=entry.ntiid,
 												 Description=ES_PUBLIC)
@@ -168,7 +168,7 @@ def get_course_invitations(context):
 					desc = value.get(DESCRIPTION) or scope
 					isGeneric = is_true(value.get('IsGeneric'))
 					if code:
-						invitaion = CourseInvitation(Code=code, 
+						invitaion = CourseInvitation(Code=code,
 												 	 Scope=scope,
 												 	 Description=desc,
 												 	 Course=entry.ntiid,
