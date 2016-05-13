@@ -7,192 +7,7 @@
 		<meta http-equiv="content-type" content="text/html; charset=utf-8" />
 		<title>Welcome To NextThought</title>
 
-		<!-- TODO Integrate this into our main css -->
-		<style type="text/css" >
-			body{
-				font-family:"Helvetica Neue", Helvetica, Arial, sans-serif;
-				padding:0px;
-				margin:0px;
-				margin-left: 30px;
-				background-color:white;
-			}
-			#wrapper{
-				width:100%;
-				margin-right:auto;
-			}
-			#wrapper-top{
-				width:100%;
-				margin-top: 0px;
-				margin-bottom: 0px;
-			}
-			#top{
-				padding-top: 15px;
-				padding-bottom: 15px;
-				color: #991b1e;
-				margin-right:auto;
-			}
-			#top p{
-				font-family: Helvetica, Arial, sans-serif;
-				font-size: 14px;
-				line-height: 18px;
-				color: #757474;
-				margin-top: 0px;
-				margin-bottom: 0px;
-			}
-			#banner{width:100%;}
-			tr{
-				vertical-align:top;
-				display:block;
-				border-bottom:solid #e2e5e7 1px;
-				color:#6d7d87;
-				font-weight:bold;
-				font-size:12px;
-				padding-top:11px;
-				padding-bottom:0px;
-				line-height:18px;
-				width: 100%;
-			}
-			tr.noborder {
-				vertical-align:top;
-				display:block;
-				color:#6d7d87;
-				border: 0;
-				border-bottom: 0;
-				font-weight:bold;
-				font-size:12px;
-				padding-top:0px;
-				padding-bottom:0px;
-				line-height:18px;
-				width: 100%;
-			}
-			tr.nested{
-				vertical-align:top;
-				display:block;
-				border-top:solid #e2e5e7 1px;
-				border-bottom:solid #e2e5e7 1px;
-				color:#6d7d87;
-				font-size:12px;
-				padding-top:0px;
-				padding-bottom:0px;
-				line-height:18px;
-				width: 100%;
-			}
-			td.header{
-				font-size:11px;
-			}
-			.wrap {
-			  display: table;
-			  padding:10px;
-			}
-
-			.wrap p {
-			  display: table-cell;
-			  vertical-align: middle;
-			}
-			.course-name{
-				color:#525e65;
-				font-size:16px;
-			}
-			h1{
-				color:#9ea9af;
-				font-weight:300;
-				font-style:italic;
-				font-size:21px;
-				line-height:35px;
-				margin-top:35px;
-				margin-bottom:55px;
-				padding:0px;
-			}
-			a.but{
-				background-color:#3fb3f6;
-				border-style:none;
-				outline:none;
-				border-radius:20px;
-				padding:10px 25px;
-				color:white;
-				font-weight:600;
-				letter-spacing:1px;
-				font-size:14px;
-				font-family:"OpenSans", sans-serif;
-				margin-left:5px;
-				margin-right:5px;
-				margin-bottom:15px;
-				text-decoration:none;
-			}
-			.but-cont{
-				margin-bottom:40px;
-				text-align:center;
-			}
-			.topper{
-				margin-top:20px;
-				float: right;
-			}
-			a.outline{
-				background-color:transparent;
-				border-style:2px solid #3fb3f6;
-				border:2px solid #3fb3f6;
-				color:#3fb3f6;
-				text-decoration:none;
-			}
-			a.but:hover{
-				cursor:pointer;
-			}
-			.caption{
-				text-align:center;
-				color:#8c8c8c;
-				font-size:14px;
-				line-height:24px;
-			}
-			.left{
-				color:#8c8c8c;
-				font-size:14px;
-				line-height:24px;
-			}
-			.left strong{
-				color:#3fb3f6;
-			}
-			.caption strong{
-				color:#3fb3f6;
-			}
-			#action{
-				margin-left:auto;
-				margin-right:auto;
-				margin-bottom:30px;
-			}
-			#footer{
-				margin-left:auto;
-				margin-right:auto;
-			}
-			#top-header{
-				margin-left:auto;
-				margin-right:auto;
-			}
-			@media screen and (max-width: 600px){
-				#wrapper{
-						width:440px !important;
-						margin-left:auto !important;
-						margin-right:auto;
-				}
-				#wrapper-top{
-						width:440px !important;
-						margin-left:auto !important;
-						margin-right:auto;
-				}
-				body{
-					margin-left: 0px;
-				}
-				th,td {
-			   	 padding: 0px;
-				}
-				img.frame{
-					width:300px;
-				}
-				#banner{width:100% !important;
-				}
-				table, th, td {
-		    		border-collapse: collapse;
-				}
-			}
+		<style metal:use-macro="macro:style" >
 		</style>
 	</head>
 	<body>
@@ -220,13 +35,13 @@
 			</tr>
 		</table>
 
-		<h1 tal:condition="options/invitation_message" tal:content="options/invitation_message">
+		<h1 class="message" tal:condition="options/invitation_message" tal:content="options/invitation_message">
 			Congratulations! Enjoy full access to an interactive online course like no other.
 		</h1>
 
-		<h1 tal:condition="not:options/invitation_message">
-			You've been invited to join the course <span class="course-name"
-			tal:content="options/course_title">Course Name</span> by <span
+		<h1 class="message" tal:condition="not:options/invitation_message">
+			You've been invited to join the course "<span
+			tal:content="options/course_title">Course Name</span>" by <span
 			tal:content="options/brand">Course Name</span>.
 		</h1>
 
