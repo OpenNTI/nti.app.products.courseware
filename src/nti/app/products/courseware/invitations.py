@@ -146,6 +146,10 @@ def send_invitation_email(invitation,
 
 	policy = component.getUtility(ISitePolicyUserEventListener)
 	support_email = getattr(policy, 'SUPPORT_EMAIL', 'support@nextthought.com')
+	brand = getattr(policy, 'BRAND', 'NextThought')
+	brand_tag = 'Presented by NextThought'
+	if brand.lower() != 'nextthought':
+		brand_tag = 'Presented by %s and NextThought' % brand
 
 	profile = IUserProfile(sender)
 	user_ext = to_external_object(sender)
@@ -168,6 +172,8 @@ def send_invitation_email(invitation,
 		'invitation_code' : invitation.code,
 		'invitation_message' : message,
 		'redemption_link': redemption_link,
+		'brand': brand,
+		'brand_tag': brand_tag,
 		'today': isodate.date_isoformat(datetime.datetime.now())
 	}
 

@@ -116,7 +116,6 @@
 				font-family:"OpenSans", sans-serif;
 				margin-left:5px;
 				margin-right:5px;
-				display:inline;
 				margin-bottom:15px;
 				text-decoration:none;
 			}
@@ -126,6 +125,7 @@
 			}
 			.topper{
 				margin-top:20px;
+				float: right;
 			}
 			a.outline{
 				background-color:transparent;
@@ -169,10 +169,12 @@
 			}
 			@media screen and (max-width: 600px){
 				#wrapper{
+						width:440px !important;
 						margin-left:auto !important;
 						margin-right:auto;
 				}
 				#wrapper-top{
+						width:440px !important;
 						margin-left:auto !important;
 						margin-right:auto;
 				}
@@ -183,7 +185,7 @@
 			   	 padding: 0px;
 				}
 				img.frame{
-					width:100%;
+					width:300px;
 				}
 				#banner{width:100% !important;
 				}
@@ -194,18 +196,8 @@
 		</style>
 	</head>
 	<body>
-		<div id="wrapper-top">
-			<div id="top">
-				<p 	class="left" tal:condition="options/header | nothing"
-					tal:content="options/header">Congratulations!</p>
-			</div>
+		<div metal:use-macro="macro:header">
 		</div>
-
-		<div id="crimson-bar" style="background-color: #991b1e; width: 100%; height: 6px;"></div>
-
-		<img class="frame" src="https://d2ixlfeu83tci.cloudfront.net/images/OU-History-email-long.png"
-			alt="NextThought" width="450" height="94">
-		<div id="wrapper">
 
 		<table style="width:100%">
 			<tr>
@@ -222,8 +214,8 @@
 
 			<tr>
 				<td class="header">INVITATION:</td>
-				<td class="course"><span class="course-name" tal:content="options/course_title | default">
-					Bleach</span><br>An Online Course Presented by NextThought
+				<td class="course"><span class="course-name" tal:content="options/course_title">
+					Course Name</span><br><span tal:content="options/brand_tag">Bleach</span>
 				</td>
 			</tr>
 		</table>
@@ -233,13 +225,15 @@
 		</h1>
 
 		<h1 tal:condition="not:options/invitation_message">
-			Congratulations! Enjoy full access to an interactive online course like no other.
+			You've been invited to join the course <span class="course-name"
+			tal:content="options/course_title">Course Name</span> by <span
+			tal:content="options/brand">Course Name</span>.
 		</h1>
 
 		<!-- redeem link -->
-		<div class="but-cont topper" tal:condition="options/redemption_link">
+		<div class="but-cont topper" style="float: center;" tal:condition="options/redemption_link">
 			<a 	href="https://www.nextthought.com" class="but"
-				tal:attributes="href python: options['redemption_link']">ACCEPT NOW
+				tal:attributes="href python: options['redemption_link']">ACCEPT INVITATION
 			</a>
 		</div>
 
@@ -252,7 +246,6 @@
 				tal:attributes="href string:mailto:${options/support_email|default}"
 				tal:content="options/support_email">support@nextthought.com</a>.
 		</p>
-		</div>
 
 	</body>
 </html>
