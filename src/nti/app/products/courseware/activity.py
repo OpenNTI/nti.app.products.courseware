@@ -25,6 +25,8 @@ from BTrees.Length import Length
 
 from persistent import Persistent
 
+from nti.app.products.courseware.interfaces import ICourseInstanceActivity
+
 from nti.common.property import Lazy
 from nti.common.property import CachedProperty
 
@@ -34,8 +36,6 @@ from nti.common.time import bit64_int_to_time
 from nti.contenttypes.courses.interfaces import ICourseInstance
 
 from nti.dataserver.interfaces import ACE_DENY_ALL
-
-from .interfaces import ICourseInstanceActivity
 
 @component.adapter(ICourseInstance)
 @interface.implementer(ICourseInstanceActivity)
@@ -107,7 +107,7 @@ class _DefaultCourseActivity(Persistent):
 	def remove(self, activity):
 		value = self._intids.getId(activity)
 		keys = []
-		for k, v in self._storage.items():  # This might be a use case for byValue?
+		for k, v in list(self._storage.items()):  # This might be a use case for byValue?
 			if v == value:
 				keys.append(k)
 		if not keys:
