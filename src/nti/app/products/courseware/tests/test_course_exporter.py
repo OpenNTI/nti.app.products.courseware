@@ -46,7 +46,7 @@ class TestCourseExporter(ApplicationLayerTest):
 	@WithSharedApplicationMockDS(testapp=False, users=False)
 	def test_get_exporters(self):
 		sections = tuple(x for x, _ in sorted(component.getUtilitiesFor(ICourseSectionExporter)))
-		assert_that(sections, has_length(11))
+		assert_that(sections, has_length(12))
 		assert_that(sections, is_(
 					(u'001:Bundle_Metainfo',
 					 u'002:Bundle_DC_Metadata',
@@ -56,6 +56,7 @@ class TestCourseExporter(ApplicationLayerTest):
 					 u'006:Role_Info',
 					 u'008:Course_Outline',
 					 u'010:Assessments',
+					 u'012:Evaluations',
 					 u'015:Lesson_Overviews',
 					 u'020:Course_Discussions',
 					 u'100:Assignment_Policies')))
