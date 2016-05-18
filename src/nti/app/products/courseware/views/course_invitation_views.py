@@ -292,7 +292,7 @@ class CheckCourseInvitationsCSVView(AbstractAuthenticatedView,
 	def _course(self):
 		return ICourseInstance(self.context)
 
-	def parse_csv_users(self, warnings=()):
+	def parse_csv_users(self, warnings=(), invalid_emails=()):
 		result = []
 		source = get_source(self.request, 'csv', 'input', 'source')
 		if source is not None:
@@ -307,9 +307,7 @@ class CheckCourseInvitationsCSVView(AbstractAuthenticatedView,
 					warnings.append(msg)
 					continue
 				if not isValidMailAddress(email):
-					msg = translate(_("Invalid email ${email} in line ${line}.",
-									mapping={'email': email, 'line': idx + 1}))
-					warnings.append(msg)
+					invalid_emails.append(email)
 					continue
 				result.append({'email':email, 'name':realname})
 		else:
@@ -322,11 +320,17 @@ class CheckCourseInvitationsCSVView(AbstractAuthenticatedView,
 			raise hexc.HTTPForbidden()
 
 		warnings = list()
+		invalid_emails = list()
 		result = LocatedExternalDict()
 		result[CLASS] = USER_COURSE_INVITATIONS_CLASS
 		result[MIMETYPE] = USER_COURSE_INVITATIONS_MIMETYPE
-		result[ITEMS] = self.parse_csv_users(warnings)
+		result[ITEMS] = self.parse_csv_users(warnings, invalid_emails)
 		result['Warnings'] = warnings if warnings else None
+		if invalid_emails:
+			invalid = dict()
+			invalid['message'] = _("Invalid emails.")
+			invalid[ITEMS] = invalid_emails
+			result['InvalidEmails'] = invalid
 		return result
 
 @view_config(context=ICourseInstance)

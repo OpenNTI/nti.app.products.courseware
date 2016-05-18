@@ -9,6 +9,8 @@ __docformat__ = "restructuredtext en"
 
 from hamcrest import is_
 from hamcrest import is_not
+from hamcrest import not_none
+from hamcrest import contains
 from hamcrest import has_entry
 from hamcrest import has_length
 from hamcrest import assert_that
@@ -171,7 +173,9 @@ class TestInvitations(ApplicationLayerTest):
 						  		status=200)
 
 		assert_that(res.json_body, has_entry(ITEMS, has_length(2)))
-		assert_that(res.json_body, has_entry('Warnings', has_length(1)))
+		invalid_emails = res.json_body.get( 'InvalidEmails' )
+		assert_that(invalid_emails.get( 'message' ), not_none() )
+		assert_that(invalid_emails.get( 'Items' ), contains('invalid') )
 
 		data = dict(res.json_body)
 		data.pop('Warnings')
