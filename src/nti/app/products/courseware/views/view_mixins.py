@@ -155,8 +155,8 @@ class AbstractChildMoveView(AbstractAuthenticatedView,
 
 	def _get_context_ntiid(self):
 		"""
-		Subclasses should implement this to define the
-		contextual ntiid.
+		Subclasses should implement this to define the contextual ntiid.
+		Can return null.
 		"""
 		return getattr(self.context, 'ntiid', None)
 
@@ -177,7 +177,7 @@ class AbstractChildMoveView(AbstractAuthenticatedView,
 		if old_parent_ntiid:
 			result = find_object_with_ntiid(old_parent_ntiid)
 			if result is None:
-				raise hexc.HTTPUnprocessableEntity(_('Old node parent no longer exists.'))
+				raise hexc.HTTPUnprocessableEntity(_('Old item parent no longer exists.'))
 		return result
 
 	def _get_new_parent(self, context_ntiid, new_parent_ntiid):
@@ -191,6 +191,13 @@ class AbstractChildMoveView(AbstractAuthenticatedView,
 			raise hexc.HTTPUnprocessableEntity(_('New parent does not exist.'))
 		return new_parent
 
+	def _validate_parents(self, old_parent_ntiid=None, new_parent_ntiid=None, context_ntiid=None, *args, **kwargs):
+		children_ntiids = self._get_children_ntiids(context_ntiid)
+		if 		new_parent_ntiid not in children_ntiids \
+			or (	old_parent_ntiid
+				and old_parent_ntiid not in children_ntiids):
+			raise hexc.HTTPUnprocessableEntity(_('Cannot move between root objects.'))
+
 	def __call__(self):
 		values = CaseInsensitiveDict(self.readInput())
 		index = values.get('Index')
@@ -203,16 +210,15 @@ class AbstractChildMoveView(AbstractAuthenticatedView,
 		old_parent = self._get_old_parent(old_parent_ntiid)
 		if old_parent is None:
 			old_parent = new_parent
-		obj = self._get_object_to_move(ntiid, old_parent)
-
-		children_ntiids = self._get_children_ntiids(context_ntiid)
-		if 		new_parent_ntiid not in children_ntiids \
-			or (	old_parent_ntiid
-				and old_parent_ntiid not in children_ntiids):
-			raise hexc.HTTPUnprocessableEntity(_('Cannot move between root objects.'))
+		self._validate_parents( old_parent=old_parent,
+								new_parent=new_parent,
+								old_parent_ntiid=old_parent_ntiid,
+								new_parent_ntiid=new_parent_ntiid,
+								context_ntiid=context_ntiid )
 
 		if index is not None and index < 0:
 			raise hexc.HTTPBadRequest(_('Invalid index.'))
+		obj = self._get_object_to_move(ntiid, old_parent)
 		new_parent.insert(index, obj)
 
 		# Make sure they don't move the object within the same node and
@@ -220,7 +226,7 @@ class AbstractChildMoveView(AbstractAuthenticatedView,
 		if old_parent_ntiid and old_parent_ntiid != new_parent_ntiid:
 			did_remove = self._remove_from_parent(old_parent, obj)
 			if not did_remove:
-				raise hexc.HTTPUnprocessableEntity(_('Moved node does not exist in old parent.'))
+				raise hexc.HTTPUnprocessableEntity(_('Moved item does not exist in old parent.'))
 			old_parent.child_order_locked = True
 
 		if self.notify_type:
