@@ -311,11 +311,6 @@ class CheckCourseInvitationsCSVView(AbstractAuthenticatedView,
 									mapping={'email': email, 'line': idx + 1}))
 					warnings.append(msg)
 					continue
-				if email.lower().endswith('@nextthought.com'):
-					msg = translate(_("Cannot send invitation to email ${email}.",
-									 mapping={'email': email}))
-					warnings.append(msg)
-					continue
 				result.append({'email':email, 'name':realname})
 		else:
 			warnings.append(_("No CSV source found."))
@@ -364,7 +359,7 @@ class SendCourseInvitationsView(AbstractAuthenticatedView,
 						self.request,
 						hexc.HTTPUnprocessableEntity,
 						{
-							u'message': _('Must provide a inviation code.') ,
+							u'message': _('Must provide a invitation code.') ,
 							u'code': 'MissingInvitationCodeError',
 						},
 						None)
@@ -375,7 +370,7 @@ class SendCourseInvitationsView(AbstractAuthenticatedView,
 					self.request,
 					hexc.HTTPUnprocessableEntity,
 					{
-						u'message': _('Invalid inviation code.') ,
+						u'message': _('Invalid invitation code.') ,
 						u'code': 'InvalidInvitationCodeError',
 					},
 					None)
@@ -389,11 +384,6 @@ class SendCourseInvitationsView(AbstractAuthenticatedView,
 
 		result = {}
 		for username in usernames:
-			if username.endswith('@nextthought.com'):
-				msg = translate(_("Cannot send invitation to NT user ${user}.",
-								 mapping={'user': username}))
-				warnings.append(msg)
-				continue
 			user = User.get_user(username)
 			if not IUser.providedBy(user):
 				msg = translate(_("Could not find user ${user}.",
@@ -427,11 +417,6 @@ class SendCourseInvitationsView(AbstractAuthenticatedView,
 				if not isValidMailAddress(email):
 					msg = translate(_("Invalid email ${email} at index ${idx}.",
 									mapping={'email': email, 'idx':idx + 1}))
-					warnings.append(msg)
-					continue
-				if email.lower().endswith('@nextthought.com'):
-					msg = translate(_("Cannot send invitation to email ${email}.",
-									 mapping={'email': email}))
 					warnings.append(msg)
 					continue
 				result[email] = (realname, email)
@@ -546,7 +531,7 @@ class SendCourseInvitationsView(AbstractAuthenticatedView,
 					self.request,
 					hexc.HTTPUnprocessableEntity,
 					{
-						u'message': _('There are no invitation to process.') ,
+						u'message': _('There are no invitations to process.') ,
 						u'code': 'SendCourseInvitationError',
 					},
 					None)
