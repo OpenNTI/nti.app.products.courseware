@@ -154,12 +154,12 @@ class TestInvitations(ApplicationLayerTest):
 
 	@WithSharedApplicationMockDS(testapp=True, users=True)
 	def test_check_course_inv_csv(self):
-		source = [
+		base_source = [
 			'ichigo@bleach.org,"ichigo kurosaki"',
 			'aizen@bleach.org,"azien sosuke"',
 			'invalid,"invalid_email"',
 		]
-		source = str('\n'.join(source))
+		source = str('\n'.join(base_source))
 		with mock_dataserver.mock_db_trans(self.ds, site_name='platform.ou.edu'):
 			entry = self.catalog_entry()
 			course = ICourseInstance(entry)
@@ -167,8 +167,8 @@ class TestInvitations(ApplicationLayerTest):
 
 		environ = self._make_extra_environ(username='harp4162')
 		environ[b'HTTP_ORIGIN'] = b'http://platform.ou.edu'
-		url = '/dataserver2/Objects/%s/CheckCourseInvitationsCSV' % course_ntiid
-		res = self.testapp.post(url,
+		cvs_url = '/dataserver2/Objects/%s/CheckCourseInvitationsCSV' % course_ntiid
+		res = self.testapp.post(cvs_url,
 						  		upload_files=[('input', 'source.csv', source)],
 						  		status=200)
 
@@ -186,3 +186,9 @@ class TestInvitations(ApplicationLayerTest):
 		url = '/dataserver2/Objects/%s/SendCourseInvitations' % course_ntiid
 		res = self.testapp.post_json(url, data, extra_environ=environ, status=200)
 		assert_that(res.json_body, has_entry(ITEMS, has_length(2)))
+
+		# Now CR only
+		source = str('\r'.join(base_source))
+		res = self.testapp.post(cvs_url,
+						  		upload_files=[('input', 'source.csv', source)],
+						  		status=200)

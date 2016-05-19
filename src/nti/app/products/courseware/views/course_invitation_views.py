@@ -296,7 +296,10 @@ class CheckCourseInvitationsCSVView(AbstractAuthenticatedView,
 		result = []
 		source = get_source(self.request, 'csv', 'input', 'source')
 		if source is not None:
-			for idx, row in enumerate(csv.reader(source)):
+			# Read in and split (to handle universal newlines).
+			# XXX: Generalize this?
+			source = source.read()
+			for idx, row in enumerate(csv.reader(source.splitlines())):
 				if not row or row[0].startswith("#"):
 					continue
 				email = row[0]
@@ -406,7 +409,7 @@ class SendCourseInvitationsView(AbstractAuthenticatedView,
 			result[email] = (realname, user.username)
 		return result
 
-	def get_user_course_invitations(self, values, warnings=()):
+	def get_user_course_invitations(self, values, warnings=(), invalid_emails=()):
 		result = {}
 		if 		values.get(MIMETYPE) == USER_COURSE_INVITATIONS_MIMETYPE \
 			or	values.get(CLASS) == USER_COURSE_INVITATIONS_CLASS:
@@ -420,9 +423,7 @@ class SendCourseInvitationsView(AbstractAuthenticatedView,
 					warnings.append(msg)
 					continue
 				if not isValidMailAddress(email):
-					msg = translate(_("Invalid email ${email} at index ${idx}.",
-									mapping={'email': email, 'idx':idx + 1}))
-					warnings.append(msg)
+					invalid_emails.append( email )
 					continue
 				result[email] = (realname, email)
 		return result
@@ -486,18 +487,25 @@ class SendCourseInvitationsView(AbstractAuthenticatedView,
 			links = None
 
 		warnings = []
+		invalid_emails = []
 		invitation = self.get_course_invitation(values)
-		user_invitations = self.get_user_course_invitations(values, warnings)
-		if not force and warnings:
-			raise_json_error(
-					self.request,
-					hexc.HTTPUnprocessableEntity,
-					{
+		user_invitations = self.get_user_course_invitations(values, warnings, invalid_emails)
+		if not force and (warnings or invalid_emails):
+			err_json = {
 						u'warnings':  warnings,
 						u'message': _('There are errors in the user invitation source.') ,
 						u'code': 'SendCourseInvitationError',
 						LINKS: to_external_object(links) if links else None,
-					},
+						}
+			if invalid_emails:
+				invalid = dict()
+				invalid['message'] = _("Invalid emails.")
+				invalid[ITEMS] = invalid_emails
+				err_json['InvalidEmails'] = invalid
+			raise_json_error(
+					self.request,
+					hexc.HTTPUnprocessableEntity,
+					err_json,
 					None)
 
 		warnings = []
