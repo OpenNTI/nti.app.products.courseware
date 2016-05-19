@@ -22,6 +22,8 @@ from nti.app.base.abstract_views import AbstractAuthenticatedView
 from nti.app.externalization.view_mixins import BatchingUtilsMixin
 from nti.app.externalization.view_mixins import ModeledContentUploadRequestUtilsMixin
 
+from nti.app.products.courseware.views import MessageFactory as _
+
 from nti.common.maps import CaseInsensitiveDict
 
 from nti.contenttypes.presentation.interfaces import INTILessonOverview

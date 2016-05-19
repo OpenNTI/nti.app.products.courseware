@@ -300,6 +300,7 @@ class CheckCourseInvitationsCSVView(AbstractAuthenticatedView,
 				if not row or row[0].startswith("#"):
 					continue
 				email = row[0]
+				email = email.strip() if email else email
 				realname = row[1] if len(row) > 1 else email
 				if not email:
 					msg = translate(_("Missing email in line ${line}.",
