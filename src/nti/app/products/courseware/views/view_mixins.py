@@ -31,6 +31,7 @@ from nti.contenttypes.presentation.interfaces import INTILessonOverview
 from nti.externalization.interfaces import LocatedExternalDict
 from nti.externalization.interfaces import StandardExternalFields
 
+from nti.ntiids.ntiids import is_valid_ntiid_string
 from nti.ntiids.ntiids import find_object_with_ntiid
 
 from nti.recorder import get_transactions
@@ -255,3 +256,77 @@ class IndexedRequestMixin(object):
 				raise hexc.HTTPUnprocessableEntity(_('Invalid index %s' % index))
 		index = index if index is None else max(index, 0)
 		return index
+
+class NTIIDPathMixin(object):
+
+	def _get_ntiid(self):
+		"""
+		Looks for a user supplied ntiid in the context path: '.../ntiid/<ntiid>'.
+		"""
+		result = None
+		if self.request.subpath and self.request.subpath[0] == 'ntiid':
+			try:
+				result = self.request.subpath[1]
+			except (TypeError, IndexError):
+				pass
+		if result is None or not is_valid_ntiid_string(result):
+			raise hexc.HTTPUnprocessableEntity(_('Invalid ntiid %s' % result))
+		return result
+
+class DeleteChildViewMixin(NTIIDPathMixin):
+	"""
+	A view to delete a child underneath the given context.
+
+	index
+		This param will be used to indicate which object should be
+		deleted. If the object described by `ntiid` is no longer at
+		this index, the object will still be deleted, as long as it
+		is unambiguous.
+
+	:raises HTTPConflict if state has changed out from underneath user
+	"""
+	def _get_children(self):
+		return self.context
+
+	def _is_target(self, obj, ntiid):
+		return ntiid == getattr(obj, 'ntiid', '')
+
+	def _remove(self, item, index):
+		"""
+		Subclasses should override to implement removal.
+		"""
+		raise NotImplementedError()
+
+	def _get_item(self, ntiid, index):
+		"""
+		Find the item or index to delete for the given ntiid and index.
+		"""
+		found = []
+		for idx, child in enumerate( self._get_children() ):
+			if self._is_target( child, ntiid ):
+				if idx == index:
+					# We have an exact ref hit.
+					return None, idx
+				else:
+					found.append(child)
+
+		if len(found) == 1:
+			# Inconsistent match, but it's unambiguous.
+			return found[0], None
+
+		if found:
+			# Multiple matches, none at index
+			raise hexc.HTTPConflict(_('Ambiguous item ref no longer exists at this index.'))
+
+	def __call__(self):
+		values = CaseInsensitiveDict(self.request.params)
+		index = values.get('index')
+		ntiid = self._get_ntiid()
+		found = self._get_item(ntiid, index)
+
+		if found:
+			to_delete, index = found
+			self._remove( to_delete, index )
+			self.context.child_order_locked = True
+		return hexc.HTTPOk()
+
