@@ -252,12 +252,13 @@ class UserAcceptCourseInvitationView(AcceptInvitationByCodeView):
 		result = to_external_object(item)
 		return result
 
+# These may be non-public courses that the incoming user
+# is not (yet) enrolled in. Thus, no permissions required.
 @view_config(name=ACCEPT_COURSE_INVITATION)
 @view_config(name=ACCEPT_COURSE_INVITATIONS)
 @view_defaults(route_name='objects.generic.traversal',
 			   renderer='rest',
-			   context=ICourseInstance,
-			   permission=nauth.ACT_READ)
+			   context=ICourseInstance)
 class CourseInvitationAcceptView(UserAcceptCourseInvitationView):
 
 	def _do_call(self):
@@ -273,8 +274,7 @@ class CourseInvitationAcceptView(UserAcceptCourseInvitationView):
 @view_config(name=ACCEPT_COURSE_INVITATIONS)
 @view_defaults(route_name='objects.generic.traversal',
 			   renderer='rest',
-			   context=ICourseCatalogEntry,
-			   permission=nauth.ACT_READ)
+			   context=ICourseCatalogEntry)
 class CatalogEntryInvitationAcceptView(CourseInvitationAcceptView):
 	pass
 
