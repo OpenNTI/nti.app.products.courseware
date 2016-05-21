@@ -197,7 +197,7 @@ class AbstractChildMoveView(AbstractAuthenticatedView,
 	def _validate_parents(self, old_parent_ntiid=None, new_parent_ntiid=None, context_ntiid=None, *args, **kwargs):
 		children_ntiids = self._get_children_ntiids(context_ntiid)
 		if 		new_parent_ntiid not in children_ntiids \
-			or (	old_parent_ntiid
+			or (old_parent_ntiid
 				and old_parent_ntiid not in children_ntiids):
 			raise hexc.HTTPUnprocessableEntity(_('Cannot move between root objects.'))
 
@@ -213,11 +213,11 @@ class AbstractChildMoveView(AbstractAuthenticatedView,
 		old_parent = self._get_old_parent(old_parent_ntiid)
 		if old_parent is None:
 			old_parent = new_parent
-		self._validate_parents( old_parent=old_parent,
+		self._validate_parents(old_parent=old_parent,
 								new_parent=new_parent,
 								old_parent_ntiid=old_parent_ntiid,
 								new_parent_ntiid=new_parent_ntiid,
-								context_ntiid=context_ntiid )
+								context_ntiid=context_ntiid)
 
 		if index is not None and index < 0:
 			raise hexc.HTTPBadRequest(_('Invalid index.'))
@@ -291,7 +291,7 @@ class DeleteChildViewMixin(NTIIDPathMixin):
 	def _is_target(self, obj, ntiid):
 		return ntiid == getattr(obj, 'ntiid', '')
 
-	def _remove(self, item, index):
+	def _remove(self, item=None, index=None):
 		"""
 		Subclasses should override to implement removal.
 		"""
@@ -302,8 +302,8 @@ class DeleteChildViewMixin(NTIIDPathMixin):
 		Find the item or index to delete for the given ntiid and index.
 		"""
 		found = []
-		for idx, child in enumerate( self._get_children() ):
-			if self._is_target( child, ntiid ):
+		for idx, child in enumerate(self._get_children()):
+			if self._is_target(child, ntiid):
 				if idx == index:
 					# We have an exact ref hit.
 					return None, idx
@@ -326,7 +326,6 @@ class DeleteChildViewMixin(NTIIDPathMixin):
 
 		if found:
 			to_delete, index = found
-			self._remove( to_delete, index )
+			self._remove(to_delete, index)
 			self.context.child_order_locked = True
 		return hexc.HTTPOk()
-
