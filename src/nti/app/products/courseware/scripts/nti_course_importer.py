@@ -30,6 +30,7 @@ def _process(args):
 	library.syncContentPackages()
 	set_site(args.site)
 	path = os.path.expanduser(args.path or os.getcwd())
+	path = os.path.abspath(path)
 	if hasattr(args, 'ntiid'):
 		import_course(args.ntiid, path)
 	else:
