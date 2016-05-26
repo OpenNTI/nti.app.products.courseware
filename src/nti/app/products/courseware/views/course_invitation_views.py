@@ -328,7 +328,18 @@ class CheckCourseInvitationsCSVView(AbstractAuthenticatedView,
 		result = LocatedExternalDict()
 		result[CLASS] = USER_COURSE_INVITATIONS_CLASS
 		result[MIMETYPE] = USER_COURSE_INVITATIONS_MIMETYPE
-		result[ITEMS] = self.parse_csv_users(warnings, invalid_emails)
+		try:
+			result[ITEMS] = self.parse_csv_users(warnings, invalid_emails)
+		except:
+			logger.exception( 'Failed to parse csv file' )
+			raise_json_error(
+					self.request,
+					hexc.HTTPUnprocessableEntity,
+					{
+						u'message': _('Could not parse csv file.') ,
+						u'code': 'InvalidCSVFileCodeError',
+					},
+					None)
 		result['Warnings'] = warnings if warnings else None
 		if invalid_emails:
 			invalid = dict()
