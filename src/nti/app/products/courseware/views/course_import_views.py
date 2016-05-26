@@ -121,6 +121,7 @@ class ImportCourseView(AbstractAuthenticatedView,
 		endInteraction()
 		try:
 			path, tmp_path = self._get_source_paths(values)
+			path = os.path.abspath(path)
 			ntiid = values.get('ntiid')
 			if ntiid:
 				self._import_course(ntiid, path)
