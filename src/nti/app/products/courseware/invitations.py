@@ -181,7 +181,7 @@ def send_invitation_email(invitation,
 		mailer = component.getUtility(ITemplatedMailer)
 		mailer.queue_simple_html_text_email(
 						template,
-						subject=translate(_("Welcome to ${title}",
+						subject=translate(_("You're invited to ${title}",
 											mapping={'title': entry.Title})),
 						recipients=[receiver_email],
 						template_args=args,
