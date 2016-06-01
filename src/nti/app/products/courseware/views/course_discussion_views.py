@@ -39,8 +39,6 @@ from nti.app.products.courseware.resources.filer import get_unique_file_name
 from nti.app.products.courseware.resources.utils import get_course_filer
 from nti.app.products.courseware.resources.utils import is_internal_file_link	
 
-from nti.app.products.courseware.views._utils import is_true
-
 from nti.app.products.courseware.views import VIEW_COURSE_DISCUSSIONS
 
 from nti.app.products.courseware.views import CourseAdminPathAdapter
@@ -53,6 +51,8 @@ from nti.appserver.ugd_edit_views import UGDPostView
 from nti.common.maps import CaseInsensitiveDict
 
 from nti.common.property import Lazy
+
+from nti.common.string import is_true
 
 from nti.contenttypes.courses.discussions.interfaces import NTI_COURSE_BUNDLE
 from nti.contenttypes.courses.discussions.interfaces import ICourseDiscussion

@@ -25,7 +25,7 @@ from nti.assessment.interfaces import IQSurvey
 from nti.assessment.interfaces import IQAssignment
 from nti.assessment.interfaces import IQuestionSet
 
-from nti.common.string import TRUE_VALUES
+from nti.common.string import is_true
 
 from nti.contentlibrary.indexed_data import get_library_catalog
 
@@ -212,6 +212,3 @@ def _parse_course(values):
 	if not result:
 		raise hexc.HTTPUnprocessableEntity(detail='Course not found')
 	return result[0]
-
-def is_true(s):
-	return bool(s and s.lower() in TRUE_VALUES)

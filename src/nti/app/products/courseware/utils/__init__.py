@@ -34,7 +34,7 @@ from nti.app.products.courseware.utils.decorators import PreviewCourseAccessPred
 
 from nti.common.maps import CaseInsensitiveDict
 
-from nti.common.string import TRUE_VALUES
+from nti.common.string import is_true
 
 from nti.contenttypes.courses import get_course_vendor_info
 
@@ -62,10 +62,6 @@ ZERO_DATETIME = datetime.utcfromtimestamp(0)
 
 # BWC exports
 PreviewCourseAccessPredicate = PreviewCourseAccessPredicateDecorator
-
-def is_true(s):
-	result = bool(s and str(s).lower() in TRUE_VALUES)
-	return result
 
 def last_synchronized(context=None):
 	if context is None:

@@ -50,7 +50,7 @@ from nti.app.products.courseware.views import VIEW_COURSE_ENROLLMENT_ROSTER
 from nti.appserver.pyramid_authorization import has_permission
 from nti.appserver.ugd_edit_views import ContainerContextUGDPostView
 
-from nti.common.string import TRUE_VALUES
+from nti.common.string import is_true
 
 from nti.contenttypes.courses.interfaces import ICourseOutline
 from nti.contenttypes.courses.interfaces import ICourseInstance
@@ -70,9 +70,6 @@ from nti.externalization.externalization import to_external_object
 from nti.ntiids.ntiids import find_object_with_ntiid
 
 ITEMS = StandardExternalFields.ITEMS
-
-def _is_true(v):
-	return bool(v and str(v).lower() in TRUE_VALUES)
 
 @view_config(route_name='objects.generic.traversal',
 			  context=ICourseOutline,
@@ -161,7 +158,7 @@ class CourseOutlineContentsView(AbstractAuthenticatedView):
 		omit_unpublished = False
 
 		try:
-			omit_unpublished = _is_true(self.request.params.get('omit_unpublished', False))
+			omit_unpublished = is_true(self.request.params.get('omit_unpublished', False))
 		except ValueError:
 			pass
 

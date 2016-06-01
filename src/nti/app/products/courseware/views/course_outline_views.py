@@ -31,8 +31,9 @@ from nti.app.externalization.view_mixins import ModeledContentUploadRequestUtils
 
 from nti.app.products.courseware.views import CourseAdminPathAdapter
 
-from nti.common.string import TRUE_VALUES
 from nti.common.maps import CaseInsensitiveDict
+
+from nti.common.string import is_true
 
 from nti.contenttypes.courses.interfaces import COURSE_OUTLINE_NAME
 
@@ -97,9 +98,6 @@ def _parse_course(values):
 	if not result:
 		raise hexc.HTTPUnprocessableEntity(detail='Course not found')
 	return result[0]
-
-def _is_true(v):
-	return v and str(v).lower() in TRUE_VALUES
 
 def read_input(request):
 	if request.body:
@@ -168,7 +166,7 @@ class ResetCourseOutlineView(AbstractAuthenticatedView,
 
 		to_process = set()
 		items = result[ITEMS] = {}
-		force = _is_true(values.get('force'))
+		force = is_true(values.get('force'))
 
 		for course in courses or ():
 			course = ICourseInstance(course)

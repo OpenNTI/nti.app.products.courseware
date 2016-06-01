@@ -47,7 +47,6 @@ from nti.app.products.courseware.utils.migrator import course_enrollment_migrato
 
 from nti.app.products.courseware.views import CourseAdminPathAdapter
 
-from nti.app.products.courseware.views._utils import is_true
 from nti.app.products.courseware.views._utils import _tx_string
 from nti.app.products.courseware.views._utils import _parse_user
 from nti.app.products.courseware.views._utils import _parse_course
@@ -60,6 +59,8 @@ from nti.appserver.workspaces.interfaces import IUserService
 from nti.common.maps import CaseInsensitiveDict
 
 from nti.common.property import Lazy
+
+from nti.common.string import is_true
 
 from nti.contenttypes.courses import get_enrollment_catalog
 
