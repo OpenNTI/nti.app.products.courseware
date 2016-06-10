@@ -18,6 +18,7 @@ from nti.app.contentfolder.views import MkdirView
 from nti.app.contentfolder.views import DeleteView
 from nti.app.contentfolder.views import MkdirsView
 from nti.app.contentfolder.views import UploadView
+from nti.app.contentfolder.views import UploadZipView
 
 from nti.app.externalization.error import raise_json_error
 
@@ -73,6 +74,20 @@ class CourseFolderMkdirsView(MkdirsView):
 class CourseFolderUploadView(UploadView):
 
 	def factory(self, source):
+		return CourseContentFile
+
+@view_config(context=ICourseRootFolder)
+@view_config(context=ICourseContentFolder)
+@view_defaults(route_name='objects.generic.traversal',
+			   renderer='rest',
+			   request_method='POST',
+			   name='upload_zip',
+			   permission=nauth.ACT_UPDATE)
+class CourseFolderUploadZipView(UploadZipView):
+
+	folder_factory = CourseContentFolder
+
+	def factory(self, filename):
 		return CourseContentFile
 
 def has_associations(obj):
