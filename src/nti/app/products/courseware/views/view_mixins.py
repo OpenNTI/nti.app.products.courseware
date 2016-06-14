@@ -291,6 +291,9 @@ class DeleteChildViewMixin(NTIIDPathMixin):
 	def _is_target(self, obj, ntiid):
 		return ntiid == getattr(obj, 'ntiid', '')
 
+	def _validate(self):
+		pass
+
 	def _remove(self, item=None, index=None):
 		"""
 		Subclasses should override to implement removal.
@@ -319,6 +322,7 @@ class DeleteChildViewMixin(NTIIDPathMixin):
 			raise hexc.HTTPConflict(_('Ambiguous item ref no longer exists at this index.'))
 
 	def __call__(self):
+		self._validate()
 		values = CaseInsensitiveDict(self.request.params)
 		index = values.get('index')
 		ntiid = self._get_ntiid()
