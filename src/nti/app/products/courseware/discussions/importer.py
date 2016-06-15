@@ -43,11 +43,11 @@ class CourseDiscussionsImporter(BaseSectionImporter):
 									  source_filer, 
 									  target_filer)
 
-	def process(self, context, source_filer):
+	def process(self, context, source_filer, writeout=True):
 		course = ICourseInstance(context)
 		root = course.root
 		bucket = path_to_discussions(course)
-		if IFilesystemBucket.providedBy(root):
+		if IFilesystemBucket.providedBy(root) and writeout:
 			path = os.path.join(root.absolute_path, bucket)
 			if not os.path.exists(path):
 				os.makedirs(path)
@@ -67,7 +67,7 @@ class CourseDiscussionsImporter(BaseSectionImporter):
 											 discussions,
 											 path=bucket)
 				self._process_resources(discussion, source_filer, target_filer)
-				if IFilesystemBucket.providedBy(root):
+				if IFilesystemBucket.providedBy(root) and writeout:
 					path = os.path.join(root.absolute_path, bucket)
 					path = os.path.join(path, name)
 					source = source_filer.get(key) # get source again
