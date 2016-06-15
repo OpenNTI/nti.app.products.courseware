@@ -42,6 +42,8 @@ from nti.common.file import safe_filename
 
 from nti.common.maps import CaseInsensitiveDict
 
+from nti.common.string import is_true
+
 from nti.contenttypes.courses.interfaces import ICourseCatalog
 from nti.contenttypes.courses.interfaces import ICourseInstance
 
@@ -89,14 +91,14 @@ class ImportCourseView(AbstractAuthenticatedView,
 			raise hexc.HTTPUnprocessableEntity(_('No archive source uploaded.'))
 		return path, tmp_path
 
-	def _import_course(self, ntiid, path):
+	def _import_course(self, ntiid, path, writeout=True):
 		context = find_object_with_ntiid(ntiid)
 		course = ICourseInstance(context, None)
 		if course is None:
 			raise hexc.HTTPUnprocessableEntity(_('Invalid course.'))
-		import_course(ntiid, path)
+		import_course(ntiid, path, writeout)
 
-	def _create_course(self, admin, key, path):
+	def _create_course(self, admin, key, path, writeout=True):
 		if not admin:
 			raise hexc.HTTPUnprocessableEntity(
 							_('No administrative level specified.'))
@@ -113,7 +115,7 @@ class ImportCourseView(AbstractAuthenticatedView,
 					break
 		if catalog is None:
 			raise hexc.HTTPUnprocessableEntity(_('Invalid administrative level.'))
-		create_course(admin, key, path, catalog=catalog)
+		create_course(admin, key, path, catalog=catalog, writeout=writeout)
 
 	def __call__(self):
 		values = self.readInput()
@@ -123,12 +125,13 @@ class ImportCourseView(AbstractAuthenticatedView,
 			path, tmp_path = self._get_source_paths(values)
 			path = os.path.abspath(path)
 			ntiid = values.get('ntiid')
+			writeout = is_true(values.get('writeout') or values.get('save'))
 			if ntiid:
-				self._import_course(ntiid, path)
+				self._import_course(ntiid, path, writeout)
 			else:
 				key = values.get('key')
 				admin = values.get('admin')
-				self._create_course(admin, key, path)
+				self._create_course(admin, key, path, writeout)
 		finally:
 			restoreInteraction()
 			delete_dir(tmp_path)

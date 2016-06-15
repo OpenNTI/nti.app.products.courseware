@@ -51,7 +51,7 @@ def delete_dir(path):
 	if path and os.path.exists(path):
 		shutil.rmtree(path, True)
 
-def _execute(course, archive_path):
+def _execute(course, archive_path, writeout=True):
 	course = ICourseInstance(course, None)
 	if course is None:
 		raise ValueError("Invalid course")
@@ -61,14 +61,14 @@ def _execute(course, archive_path):
 		tmp_path = check_archive(archive_path)
 		filer = DirectoryFiler(tmp_path or archive_path)
 		importer = component.getUtility(ICourseImporter)
-		importer.process(course, filer)
+		importer.process(course, filer, writeout)
 	finally:
 		delete_dir(tmp_path)
 
 	logger.info("Course imported from %s in %s", 
 				archive_path, time.time() - now)
 
-def import_course(ntiid, archive_path):
+def import_course(ntiid, archive_path, writeout=True):
 	"""
 	Import a course from a file archive
 	
@@ -76,9 +76,9 @@ def import_course(ntiid, archive_path):
 	:param archive_path archive path
 	"""
 	course = find_object_with_ntiid(ntiid or u'')
-	return _execute(course, archive_path)
+	return _execute(course, archive_path, writeout)
 
-def create_course(admin, key, archive_path, catalog=None):
+def create_course(admin, key, archive_path, catalog=None, writeout=True):
 	"""
 	Creates a course from a file archive
 	
@@ -134,6 +134,6 @@ def create_course(admin, key, archive_path, catalog=None):
 					subinstance.root = section_root
 					course.SubInstances[name] = subinstance
 		# process
-		_execute(course, tmp_path or archive_path)
+		_execute(course, tmp_path or archive_path, writeout)
 	finally:
 		delete_dir(tmp_path)
