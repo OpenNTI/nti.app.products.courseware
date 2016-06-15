@@ -24,6 +24,9 @@ from nti.app.externalization.view_mixins import ModeledContentUploadRequestUtils
 
 from nti.app.products.courseware.views import MessageFactory as _
 
+from nti.app.publishing import TRX_TYPE_PUBLISH
+from nti.app.publishing import TRX_TYPE_UNPUBLISH
+
 from nti.common.maps import CaseInsensitiveDict
 
 from nti.contenttypes.presentation.interfaces import INTILessonOverview
@@ -54,6 +57,7 @@ class AbstractRecursiveTransactionHistoryView(AbstractAuthenticatedView,
 
 	_DEFAULT_BATCH_SIZE = 20
 	_DEFAULT_BATCH_START = 0
+	_FILTER_NODE_TYPES = (TRX_TYPE_PUBLISH, TRX_TYPE_UNPUBLISH)
 
 	def _get_items(self):
 		"""
@@ -81,11 +85,20 @@ class AbstractRecursiveTransactionHistoryView(AbstractAuthenticatedView,
 			for item in overview_group.items or ():
 				accum.extend(self._get_transactions(item))
 
+	def _filter_node_transactions(self, transactions):
+		# Exclude publish/unpublish node events, since these are essential
+		# dupes of lesson publish/unpublish.
+		for transaction in transactions:
+			if transaction.type not in self._FILTER_NODE_TYPES:
+				yield transaction
+
 	def _get_node_items(self, origin_node):
 		accum = list()
 
 		def handle_node(node):
-			accum.extend(self._get_transactions(node))
+			node_transactions = self._get_transactions(node)
+			node_transactions = self._filter_node_transactions( node_transactions )
+			accum.extend( node_transactions )
 			for child in node.values() or ():
 				handle_node(child)
 			lesson_ntiid = node.LessonOverviewNTIID
