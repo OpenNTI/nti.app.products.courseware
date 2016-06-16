@@ -98,7 +98,8 @@ def create_course(admin, key, archive_path, catalog=None, writeout=True):
 	try:
 		tmp_path = check_archive(archive_path)
 		course_path = os.path.join(root.absolute_path, key)
-		create_dir(course_path)
+		if writeout:
+			create_dir(course_path)
 
 		course_root = root.getChildNamed(key)
 		if course_root is None:
@@ -117,7 +118,8 @@ def create_course(admin, key, archive_path, catalog=None, writeout=True):
 			archive_sec_path = os.path.join(archive_sec_path, SECTIONS)
 			if os.path.isdir(archive_sec_path):  # if found in archive
 				sections_path = os.path.join(course_path, SECTIONS)
-				create_dir(sections_path)
+				if writeout:
+					create_dir(sections_path)
 				sections_root = course_root.getChildNamed(SECTIONS)
 				for name in os.listdir(archive_sec_path):
 					ipath = os.path.join(archive_sec_path, name)
@@ -126,7 +128,8 @@ def create_course(admin, key, archive_path, catalog=None, writeout=True):
 
 					# create subinstance
 					subinstance_section_path = os.path.join(sections_path, name)
-					create_dir(subinstance_section_path)
+					if writeout:
+						create_dir(subinstance_section_path)
 
 					# get chained root
 					section_root = sections_root.getChildNamed(name)
