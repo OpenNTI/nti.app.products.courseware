@@ -38,9 +38,9 @@ from nti.contenttypes.courses.utils import get_course_subinstances
 class CourseDiscussionsImporter(BaseSectionImporter):
 
 	def _process_resources(self, discussion, source_filer, target_filer):
-		transfer_resources_from_filer(ICourseDiscussion, # provided interface
-									  discussion, 
-									  source_filer, 
+		transfer_resources_from_filer(ICourseDiscussion,  # provided interface
+									  discussion,
+									  source_filer,
 									  target_filer)
 
 	def process(self, context, source_filer, writeout=True):
@@ -54,7 +54,7 @@ class CourseDiscussionsImporter(BaseSectionImporter):
 		if source_filer.is_bucket(bucket):
 			target_filer = get_course_filer(course)
 			discussions = ICourseDiscussions(course)
-			discussions.clear() # clear first
+			discussions.clear()  # clear first
 			for key in source_filer.list(bucket):
 				if source_filer.is_bucket(key):
 					continue
@@ -62,15 +62,16 @@ class CourseDiscussionsImporter(BaseSectionImporter):
 				if source is None:
 					continue
 				name = source.name
-				discussion = load_discussion(name, 
-											 source, 
+				__traceback_info__ = key, bucket
+				discussion = load_discussion(name,
+											 source,
 											 discussions,
 											 path=bucket)
 				self._process_resources(discussion, source_filer, target_filer)
 				if IFilesystemBucket.providedBy(root) and writeout:
 					path = os.path.join(root.absolute_path, bucket)
 					path = os.path.join(path, name)
-					source = source_filer.get(key) # get source again
+					source = source_filer.get(key)  # get source again
 					transfer_to_native_file(source, path)
 		# process subinstances
 		for subinstance in get_course_subinstances(course):
