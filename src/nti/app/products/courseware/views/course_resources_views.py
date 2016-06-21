@@ -16,9 +16,9 @@ from pyramid.view import view_defaults
 
 from nti.app.contentfolder.views import MkdirView
 from nti.app.contentfolder.views import DeleteView
+from nti.app.contentfolder.views import ImportView
 from nti.app.contentfolder.views import MkdirsView
 from nti.app.contentfolder.views import UploadView
-from nti.app.contentfolder.views import UploadZipView
 
 from nti.app.externalization.error import raise_json_error
 
@@ -81,9 +81,9 @@ class CourseFolderUploadView(UploadView):
 @view_defaults(route_name='objects.generic.traversal',
 			   renderer='rest',
 			   request_method='POST',
-			   name='upload_zip',
+			   name='import',
 			   permission=nauth.ACT_UPDATE)
-class CourseFolderUploadZipView(UploadZipView):
+class CourseFolderImportView(ImportView):
 
 	folder_factory = CourseContentFolder
 
