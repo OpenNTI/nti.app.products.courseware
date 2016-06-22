@@ -99,7 +99,9 @@ from nti.ntiids.ntiids import find_object_with_ntiid
 CLASS = StandardExternalFields.CLASS
 ITEMS = StandardExternalFields.ITEMS
 LINKS = StandardExternalFields.LINKS
+TOTAL = StandardExternalFields.TOTAL
 MIMETYPE = StandardExternalFields.MIMETYPE
+ITEM_COUNT = StandardExternalFields.ITEM_COUNT
 
 USER_COURSE_INVITATIONS_CLASS = u'UserCourseInvitations'
 COURSE_INVITATIONS_MIMETYPE = u'application/vnd.nextthought.courseware.courseinvitations'
@@ -128,7 +130,7 @@ class CourseInvitationsView(AbstractAuthenticatedView):
 		result[CLASS] = 'CourseInvitations'
 		result[MIMETYPE] = COURSE_INVITATIONS_MIMETYPE
 		items = result[ITEMS] = get_course_invitations(self._course)
-		result['Total'] = result['ItemCount'] = len(items)
+		result[TOTAL] = result[ITEM_COUNT] = len(items)
 		result.__parent__ = self.context
 		result.__name__ = self.request.view_name
 		return result
@@ -570,4 +572,5 @@ class SendCourseInvitationsView(AbstractAuthenticatedView,
 		result[CLASS] = 'CourseInvitationsSent'
 		result[MIMETYPE] = COURSE_INVITATIONS_SENT_MIMETYPE
 		result[ITEMS] = sent
+		result[TOTAL] = result[ITEM_COUNT] = len(sent)
 		return result
