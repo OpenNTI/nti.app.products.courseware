@@ -188,7 +188,7 @@ class EnrollmentRecordMailView(CourseMailView):
 
 	def iter_members(self):
 		user = User.get_user(self.context.Username)
-		return (user,)
+		return (user,) if user is not None else ()
 
 	def predicate(self):
 		return 	self.course is not None \
