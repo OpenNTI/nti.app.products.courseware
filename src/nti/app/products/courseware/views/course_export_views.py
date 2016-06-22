@@ -48,6 +48,7 @@ class ExportCourseView(AbstractAuthenticatedView,
 		return CaseInsensitiveDict()
 
 	def __call__(self):
+		zip_file = None
 		values = self.readInput()
 		context = _parse_course(values)
 		course = ICourseInstance(context)
@@ -55,15 +56,15 @@ class ExportCourseView(AbstractAuthenticatedView,
 		try:
 			# prepare filer
 			filer.prepare()
-			
+
 			# export course
 			exporter = component.getUtility(ICourseExporter)
 			exporter.export(course, filer)
-	
+
 			# zip contents
 			zip_file = filer.asZip(path=tempfile.mkdtemp())
 			filename = os.path.split(zip_file)[1]
-			
+
 			response = self.request.response
 			response.content_encoding = str('identity')
 			response.content_type = str('application/zip; charset=UTF-8')
@@ -72,3 +73,5 @@ class ExportCourseView(AbstractAuthenticatedView,
 			return response
 		finally:
 			filer.reset()
+			if zip_file:
+				os.remove(zip_file)

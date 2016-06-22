@@ -100,8 +100,8 @@ class ImportCourseView(AbstractAuthenticatedView,
 
 	def _create_course(self, admin, key, path, writeout=True):
 		if not admin:
-			raise hexc.HTTPUnprocessableEntity(
-							_('No administrative level specified.'))
+			msg = _('No administrative level specified.')
+			raise hexc.HTTPUnprocessableEntity(msg)
 		if not key:
 			raise hexc.HTTPUnprocessableEntity(_('No course key specified.'))
 
