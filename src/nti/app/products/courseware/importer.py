@@ -19,6 +19,8 @@ from zope import component
 
 from nti.cabinet.filer import DirectoryFiler
 
+from nti.contentlibrary.filesystem import FilesystemBucket
+
 from nti.contentlibrary.interfaces import IFilesystemBucket
 
 from nti.contenttypes.courses.courses import ContentCourseInstance
@@ -103,7 +105,11 @@ def create_course(admin, key, archive_path, catalog=None, writeout=True):
 
 		course_root = root.getChildNamed(key)
 		if course_root is None:
-			raise IOError("Could not access course bucket %s", course_path)
+			if not writeout:
+				course_root = FilesystemBucket()
+				course_root.absolute_path = course_path
+			else:
+				raise IOError("Could not access course bucket %s", course_path)
 
 		if key in administrative_level:
 			course = administrative_level[key]
