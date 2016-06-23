@@ -45,7 +45,10 @@ class CourseDiscussionsImporter(BaseSectionImporter):
 
 	def process(self, context, source_filer, writeout=True):
 		course = ICourseInstance(context)
-		root = course.root
+		# make sure Discussions are initialized
+		getattr(course, 'Discussions')
+		# write discussions directory structure
+		root = course.root 
 		bucket = path_to_discussions(course)
 		if IFilesystemBucket.providedBy(root) and writeout:
 			path = os.path.join(root.absolute_path, bucket)
