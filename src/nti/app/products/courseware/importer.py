@@ -139,6 +139,9 @@ def create_course(admin, key, archive_path, catalog=None, writeout=True):
 
 					# get chained root
 					section_root = sections_root.getChildNamed(name)
+					if section_root is None:
+						section_root = FilesystemBucket()
+						section_root.absolute_path = subinstance_section_path
 					subinstance = ContentCourseSubInstance()
 					subinstance.root = section_root
 					course.SubInstances[name] = subinstance
