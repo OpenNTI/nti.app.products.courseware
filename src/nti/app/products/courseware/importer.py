@@ -141,13 +141,13 @@ def create_course(admin, key, archive_path, catalog=None, writeout=True):
 						create_dir(subinstance_section_path)
 
 					# get chained root
-					section_root = sections_root.getChildNamed(name)
-					if section_root is None:
-						section_root = FilesystemBucket()
-						section_root.absolute_path = subinstance_section_path
+					sub_section_root = sections_root.getChildNamed(name)
+					if sub_section_root is None:
+						sub_section_root = FilesystemBucket()
+						sub_section_root.absolute_path = subinstance_section_path
 					subinstance = ContentCourseSubInstance()
-					subinstance.root = section_root
-					course.SubInstances[name] = subinstance
+					subinstance.root = sub_section_root
+					course.SubInstances[name] = subinstance # register
 		# process
 		_execute(course, tmp_path or archive_path, writeout)
 	finally:
