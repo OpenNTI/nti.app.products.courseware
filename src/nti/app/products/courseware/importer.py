@@ -127,6 +127,9 @@ def create_course(admin, key, archive_path, catalog=None, writeout=True):
 				if writeout:
 					create_dir(sections_path)
 				sections_root = course_root.getChildNamed(SECTIONS)
+				if sections_root is None:
+					sections_root = FilesystemBucket()
+					sections_root.absolute_path = sections_path
 				for name in os.listdir(archive_sec_path):
 					ipath = os.path.join(archive_sec_path, name)
 					if not os.path.isdir(ipath):
