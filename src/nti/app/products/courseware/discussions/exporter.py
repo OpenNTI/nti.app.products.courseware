@@ -27,6 +27,11 @@ from nti.contenttypes.courses.utils import get_course_subinstances
 
 from nti.externalization.externalization import to_external_object
 
+from nti.externalization.interfaces import StandardExternalFields
+
+OID = StandardExternalFields.OID
+NTIID = StandardExternalFields.NTIID
+
 @interface.implementer(ICourseSectionExporter)
 class CourseDiscussionsExporter(BaseSectionExporter):
 
@@ -35,6 +40,12 @@ class CourseDiscussionsExporter(BaseSectionExporter):
 							    discussion,
 							    target_filer, 
 							    ext_obj)
+
+	def _ext_obj(self, discussion):
+		ext_obj = to_external_object(discussion, decorate=False)
+		ext_obj.pop(NTIID, None)
+		ext_obj.pop(OID, None)
+		return ext_obj
 
 	def export(self, context, filer):
 		course = ICourseInstance(context)
