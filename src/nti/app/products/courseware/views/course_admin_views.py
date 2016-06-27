@@ -37,6 +37,8 @@ from pyramid.view import view_defaults
 
 from nti.app.base.abstract_views import AbstractAuthenticatedView
 
+from nti.app.contentlibrary.views.sync_views import SyncAllLibrariesView
+
 from nti.app.externalization.internalization import read_body_as_external_object
 
 from nti.app.externalization.view_mixins import ModeledContentUploadRequestUtilsMixin
@@ -64,6 +66,8 @@ from nti.common.string import is_true
 
 from nti.contenttypes.courses import get_enrollment_catalog
 
+from nti.contenttypes.courses.common import get_course_packages
+
 from nti.contenttypes.courses.administered import CourseInstanceAdministrativeRole
 
 from nti.contenttypes.courses.enrollment import migrate_enrollments_from_course_to_course
@@ -81,9 +85,11 @@ from nti.contenttypes.courses.interfaces import ENROLLMENT_SCOPE_VOCABULARY
 
 from nti.contenttypes.courses.interfaces import ICourseCatalog
 from nti.contenttypes.courses.interfaces import ICourseInstance
+from nti.contenttypes.courses.interfaces import ICourseCatalogEntry
 from nti.contenttypes.courses.interfaces import ICourseEnrollmentManager
 from nti.contenttypes.courses.interfaces import ICourseInstanceEnrollmentRecord
 
+from nti.contenttypes.courses.utils import get_course_subinstances
 from nti.contenttypes.courses.utils import drop_any_other_enrollments
 from nti.contenttypes.courses.utils import is_instructor_in_hierarchy
 
@@ -97,7 +103,11 @@ from nti.dataserver.users.interfaces import IUserProfile
 from nti.externalization.interfaces import LocatedExternalDict
 from nti.externalization.interfaces import StandardExternalFields
 
+from nti.site.interfaces import IHostPolicyFolder
+
 from nti.site.site import get_component_hierarchy_names
+
+from nti.traversal.traversal import find_interface
 
 ITEMS = StandardExternalFields.ITEMS
 
@@ -525,8 +535,6 @@ except ImportError:
 
 from nti.app.products.courseware.interfaces import ICourseInstanceEnrollment
 
-from nti.contenttypes.courses.interfaces import ICourseCatalogEntry
-
 from nti.dataserver.interfaces import IDataserverFolder
 
 from nti.externalization.interfaces import LocatedExternalList
@@ -657,3 +665,24 @@ class CourseCatalogEntryEnrollmentsRosterDownloadView(AllCourseEnrollmentRosterD
 
 	def _iter_catalog_entries(self):
 		return (self.request.context,)
+
+# sync course
+
+@view_config(context=ICourseInstance)
+@view_config(context=ICourseCatalogEntry)
+@view_defaults(route_name='objects.generic.traversal',
+			   renderer='rest',
+			   request_method='POST',
+			   name='SyncCourse',
+			   permission=nauth.ACT_NTI_ADMIN)
+class SyncCourseView(SyncAllLibrariesView):
+
+	def _do_call(self):
+		course = ICourseInstance(self.context)
+		entry = ICourseCatalogEntry(self.context)
+		ntiids = [entry.ntiid]
+		ntiids.extend(p.ntiid for p in get_course_packages(course))
+		ntiids.extend(ICourseCatalogEntry(s).ntiid for s in get_course_subinstances(course))
+		site = find_interface(course, IHostPolicyFolder, strict=False).__name__ # site
+		result = self._do_sync(ntiids, site, allowRemoval=False)
+		return result
