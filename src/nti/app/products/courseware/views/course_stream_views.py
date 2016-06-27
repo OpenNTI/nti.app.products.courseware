@@ -51,8 +51,8 @@ from nti.dataserver import authorization as nauth
 from nti.dataserver.interfaces import IUser
 
 from nti.dataserver.metadata_index import IX_TOPICS
-from nti.dataserver.metadata_index import TP_DELETED_PLACEHOLDER
 from nti.dataserver.metadata_index import TP_TOP_LEVEL_CONTENT
+from nti.dataserver.metadata_index import TP_DELETED_PLACEHOLDER
 from nti.dataserver.metadata_index import CATALOG_NAME as METADATA_CATALOG_NAME
 
 from nti.externalization.interfaces import LocatedExternalDict
@@ -116,7 +116,9 @@ class CourseDashboardRecursiveStreamView(AbstractAuthenticatedView, BatchingUtil
 		self.ranker = StreamConfidenceRanker()
 
 	def _batch_params(self):
-		"Sets our batch params."
+		"""
+		Sets our batch params.
+		"""
 		self.batch_size, self.batch_start = self._get_batch_size_start()
 		self.limit = self.batch_start + self.batch_size + 2
 		self.batch_before = None
@@ -167,12 +169,16 @@ class CourseDashboardRecursiveStreamView(AbstractAuthenticatedView, BatchingUtil
 		return intids_in_time_range
 
 	def _topic_is_relevant(self, topic):
-		"Determines if our is topic stream worthy."
+		"""
+		Determines if our is topic stream worthy.
+		"""
 		creator = getattr(topic, 'creator', None)
 		return IUser.providedBy(creator)
 
 	def _get_topics(self, course):
-		"Return a tuple of topic intids and ntiids."
+		"""
+		Return a tuple of topic intids and ntiids.
+		"""
 		topic_ntiids = set()
 		topic_intids = self._family.IF.LFSet()
 		intids = self._intids
@@ -190,7 +196,9 @@ class CourseDashboardRecursiveStreamView(AbstractAuthenticatedView, BatchingUtil
 		return topic_intids, topic_ntiids
 
 	def _do_get_top_level_board_objects(self, course):
-		"Do the actual topic/top-level comment fetching."
+		"""
+		Do the actual topic/top-level comment fetching.
+		"""
 		catalog = self._catalog
 
 		topic_intids, topic_ntiids = self._get_topics(course)
@@ -223,7 +231,9 @@ class CourseDashboardRecursiveStreamView(AbstractAuthenticatedView, BatchingUtil
 		return result_intids
 
 	def _get_course_ugd(self):
-		"Top-level notes, shared with me, in my course."
+		"""
+		Top-level notes, shared with me, in my course.
+		"""
 		course = self.course
 		catalog = self._catalog
 		# This gets our effective principals.
@@ -244,7 +254,9 @@ class CourseDashboardRecursiveStreamView(AbstractAuthenticatedView, BatchingUtil
 		return results
 
 	def _security_check(self):
-		"Make sure our user has permission on the object."
+		"""
+		Make sure our user has permission on the object.
+		"""
 		return self.make_sharing_security_check()
 
 	def _is_readable(self, obj):
@@ -267,7 +279,9 @@ class CourseDashboardRecursiveStreamView(AbstractAuthenticatedView, BatchingUtil
 		return relevant_intids
 
 	def _get_intids(self):
-		"Get all intids for this course's stream."
+		"""
+		Get all intids for this course's stream.
+		"""
 		results = self._do_get_intids()
 
 		catalog = self._catalog
@@ -277,7 +291,9 @@ class CourseDashboardRecursiveStreamView(AbstractAuthenticatedView, BatchingUtil
 		return results
 
 	def _rank_results(self, results):
-		"Given a set of results; rank them and return in sorted priority."
+		"""
+		Given a set of results; rank them and return in sorted priority.
+		"""
 		return self.ranker.rank(results)
 
 	def _get_items(self, temp_results):
@@ -353,7 +369,9 @@ class CourseDashboardBucketingStreamView(CourseDashboardRecursiveStreamView):
 	_last_timestamp = None
 
 	def _bucket_params(self):
-		"Sets our bucket params."
+		"""
+		Sets our bucket params.
+		"""
 		self.non_empty_bucket_count = self._DEFAULT_BUCKET_COUNT
 		self.bucket_size = self._DEFAULT_BUCKET_SIZE
 
@@ -400,7 +418,9 @@ class CourseDashboardBucketingStreamView(CourseDashboardRecursiveStreamView):
 		result.setdefault(LINKS, []).append(link_next)
 
 	def _get_first_time_range(self):
-		"Return tuple of start/end timestamps for the first week."
+		"""
+		Return tuple of start/end timestamps for the first week.
+		"""
 		most_recent_date = None
 		if self.batch_before is not None:
 			most_recent_date = datetime.utcfromtimestamp(self.batch_before)
@@ -417,7 +437,9 @@ class CourseDashboardBucketingStreamView(CourseDashboardRecursiveStreamView):
 		return start_timestamp, end_timestamp
 
 	def _get_next_time_range(self):
-		"After getting the first time range, return a tuple of the previous week."
+		"""
+		After getting the first time range, return a tuple of the previous week.
+		"""
 		end_date = datetime.utcfromtimestamp(self._last_timestamp)
 		start_date = end_date - timedelta(days=7)
 		start_timestamp = time.mktime(start_date.timetuple())
