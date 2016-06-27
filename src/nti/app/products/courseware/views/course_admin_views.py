@@ -96,6 +96,7 @@ from nti.contenttypes.courses.utils import is_instructor_in_hierarchy
 from nti.dataserver import authorization as nauth
 
 from nti.dataserver.interfaces import IUser
+from nti.dataserver.interfaces import IUsernameSubstitutionPolicy
 
 from nti.dataserver.users import User
 from nti.dataserver.users.interfaces import IUserProfile
@@ -456,8 +457,6 @@ class CourseRolesView(AbstractAuthenticatedView,
 		response.content_disposition = b'attachment; filename="CourseRoles.csv"'
 		return response
 
-from nti.dataserver.interfaces import IUsernameSubstitutionPolicy
-
 @view_config(name='CourseEnrollments')
 @view_config(name='course_enrollments')
 @view_defaults(route_name='objects.generic.traversal',
@@ -666,7 +665,7 @@ class CourseCatalogEntryEnrollmentsRosterDownloadView(AllCourseEnrollmentRosterD
 	def _iter_catalog_entries(self):
 		return (self.request.context,)
 
-# sync course
+# SYNC vuews
 
 @view_config(context=ICourseInstance)
 @view_config(context=ICourseCatalogEntry)
