@@ -674,7 +674,7 @@ class CourseCatalogEntryEnrollmentsRosterDownloadView(AllCourseEnrollmentRosterD
 			   renderer='rest',
 			   request_method='POST',
 			   name='SyncCourse',
-			   permission=nauth.ACT_NTI_ADMIN)
+			   permission=nauth.ACT_SYNC_LIBRARY)
 class SyncCourseView(SyncAllLibrariesView):
 
 	def _do_call(self):
