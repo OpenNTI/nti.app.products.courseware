@@ -40,6 +40,7 @@ from nti.ntiids.ntiids import find_object_with_ntiid
 from nti.recorder import get_transactions
 
 ITEMS = StandardExternalFields.ITEMS
+ITEM_COUNT = StandardExternalFields.ITEM_COUNT
 LAST_MODIFIED = StandardExternalFields.LAST_MODIFIED
 
 class AbstractRecursiveTransactionHistoryView(AbstractAuthenticatedView,
@@ -130,7 +131,7 @@ class AbstractRecursiveTransactionHistoryView(AbstractAuthenticatedView,
 		# up if we've exhausted our supply.
 		number_items_needed = self.__get_number_items_needed(item_count)
 		self._batch_items_iterable(result, items, number_items_needed=number_items_needed)
-		result['ItemCount'] = len(result.get(ITEMS) or ())
+		result[ITEM_COUNT] = len(result.get(ITEMS) or ())
 		return result
 
 class AbstractChildMoveView(AbstractAuthenticatedView,
