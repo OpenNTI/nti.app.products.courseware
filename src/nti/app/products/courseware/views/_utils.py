@@ -25,8 +25,6 @@ from nti.assessment.interfaces import IQSurvey
 from nti.assessment.interfaces import IQAssignment
 from nti.assessment.interfaces import IQuestionSet
 
-from nti.common.string import is_true
-
 from nti.contentlibrary.indexed_data import get_library_catalog
 
 from nti.contenttypes.courses.interfaces import ICourseInstance
@@ -152,7 +150,8 @@ def _do_get_containers_in_course(context):
 
 	self_assessments = _get_self_assessments_for_course(course)
 	self_assessment_qsids = (x.ntiid for x in self_assessments)
-	self_assessment_containerids = (x.__parent__.ntiid for x in self_assessments)
+	self_assessment_containerids = (x.__parent__.ntiid for x in self_assessments
+									if hasattr(x.__parent__, 'ntiid'))
 	containers_in_course = containers_in_course.union(self_assessment_containerids)
 	containers_in_course = containers_in_course.union(self_assessment_qsids)
 
