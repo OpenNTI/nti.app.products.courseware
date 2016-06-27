@@ -29,19 +29,23 @@ from nti.app.products.courseware.interfaces import ICourseInstanceEnrollment
 from nti.app.products.courseware.interfaces import IClassmatesSuggestedContactsProvider
 
 from nti.contenttypes.courses.interfaces import ICourseInstance
+
 from nti.contenttypes.courses.utils import get_enrollment_record
 
 from nti.dataserver import authorization as nauth
 
-from nti.dataserver.users import User
 from nti.dataserver.interfaces import IUser
+
+from nti.dataserver.users import User
+
+from nti.externalization.externalization import to_external_object
 
 from nti.externalization.interfaces import LocatedExternalDict
 from nti.externalization.interfaces import StandardExternalFields
-from nti.externalization.externalization import to_external_object
 
 ITEMS = StandardExternalFields.ITEMS
 LINKS = StandardExternalFields.LINKS
+ITEM_COUNT = StandardExternalFields.ITEM_COUNT
 
 class BaseClassmatesView(AbstractAuthenticatedView, BatchingUtilsMixin):
 	"""
@@ -66,7 +70,7 @@ class BaseClassmatesView(AbstractAuthenticatedView, BatchingUtilsMixin):
 	def export_suggestions(self, result_dict, suggestions):
 		result_dict['TotalItemCount'] = len(suggestions)
 		self._batch_items_iterable(result_dict, suggestions, selector=self.selector)
-		result_dict['ItemCount'] = len(result_dict.get(ITEMS) or ())
+		result_dict[ITEM_COUNT] = len(result_dict.get(ITEMS) or ())
 
 @view_config(context=ICourseInstance)
 @view_config(context=ICourseInstanceEnrollment)
