@@ -169,8 +169,7 @@ class CourseSyncLockedObjectsView(CourseSyncLockedObjectsMixin,
 			   name='UnlockSyncLockedObjects',
 			   permission=nauth.ACT_CONTENT_EDIT)
 class UnlockCourseSyncLockedObjectsView(CourseSyncLockedObjectsMixin,
-								  		AbstractAuthenticatedView,
-								  		BatchingUtilsMixin):
+								  		AbstractAuthenticatedView):
 
 	def __call__(self):
 		result = LocatedExternalDict()
