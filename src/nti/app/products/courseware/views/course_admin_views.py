@@ -665,7 +665,7 @@ class CourseCatalogEntryEnrollmentsRosterDownloadView(AllCourseEnrollmentRosterD
 	def _iter_catalog_entries(self):
 		return (self.request.context,)
 
-# SYNC vuews
+# SYNC views
 
 @view_config(context=ICourseInstance)
 @view_config(context=ICourseCatalogEntry)
