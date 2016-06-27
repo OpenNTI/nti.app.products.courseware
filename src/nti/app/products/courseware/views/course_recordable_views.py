@@ -37,6 +37,8 @@ from nti.contenttypes.courses.interfaces import ICourseAssessmentItemCatalog
 
 from nti.contenttypes.presentation import ALL_PRESENTATION_ASSETS_INTERFACES
 
+from nti.coremetadata.interfaces import IRecordableContainer
+
 from nti.dataserver import authorization as nauth
 
 from nti.externalization.interfaces import LocatedExternalDict
@@ -45,12 +47,15 @@ from nti.externalization.interfaces import StandardExternalFields
 from nti.recorder import get_recorder_catalog
 
 from nti.recorder.index import IX_LOCKED
+from nti.recorder.index import IX_CHILD_ORDER_LOCKED
 
 from nti.site.site import get_component_hierarchy_names
 
 from nti.zope_catalog.catalog import ResultSet
 
 ITEMS = StandardExternalFields.ITEMS
+TOTAL = StandardExternalFields.TOTAL
+ITEM_COUNT = StandardExternalFields.ITEM_COUNT
 LAST_MODIFIED = StandardExternalFields.LAST_MODIFIED
 
 class CourseSyncLockedObjectsMixin(object):
@@ -112,13 +117,16 @@ class CourseSyncLockedObjectsMixin(object):
 
 		recorder_catalog = get_recorder_catalog()
 		locked_intids = recorder_catalog[IX_LOCKED].apply({'any_of': (True,)})
-
-		doc_ids = recorder_catalog.family.IF.intersection(all_ids, locked_intids)
+		child_order_locked_intids = recorder_catalog[IX_CHILD_ORDER_LOCKED].apply({'any_of': (True,)})
+		all_locked = recorder_catalog.family.IF.multiunion([locked_intids, child_order_locked_intids])
+		
+		doc_ids = recorder_catalog.family.IF.intersection(all_ids, all_locked)
 		result = ResultSet(doc_ids, intids, ignore_invalid=True)
 		return result
 
 	def _get_locked_objects(self, context):
-		return tuple(x for x in self._compute_locked_objects(context) if x.isLocked())
+		return list(x for x in self._compute_locked_objects(context) 
+					if x.isLocked() or (IRecordableContainer.providedBy(x) and x.isChildOrderLocked()))
 
 @view_config(context=ICourseInstance)
 @view_config(context=ICourseCatalogEntry)
@@ -144,14 +152,14 @@ class CourseSyncLockedObjectsView(CourseSyncLockedObjectsMixin,
 		result.__name__ = self.request.view_name
 		result.__parent__ = self.request.context
 		items = result[ITEMS] = self._get_locked_objects(self.context)
-		if items:
+		if items: # check to sort
 			result[LAST_MODIFIED] = max((getattr(x, 'lastModified', 0) for x in items))
 			items.sort(key=lambda t: getattr(t, 'lastModified', 0), reverse=self._sort_desc)
 			result.lastModified = result[LAST_MODIFIED]
 
 		result['TotalItemCount'] = len(items)
 		self._batch_items_iterable(result, items)
-		result['ItemCount'] = len(result.get(ITEMS, ()))
+		result[ITEM_COUNT] = len(result.get(ITEMS, ()))
 		return result
 
 @view_config(context=ICourseInstance)
@@ -170,10 +178,13 @@ class UnlockCourseSyncLockedObjectsView(CourseSyncLockedObjectsMixin,
 		result.__parent__ = self.request.context
 		items = result[ITEMS] = []
 		for item in self._get_locked_objects(self.context):
-			item.unlock()
+			if item.isLocked():
+				item.unlock()
+			if IRecordableContainer.providedBy(item) and item.isChildOrderLocked():
+				item.childOrderUnlock()
 			items.append(item.ntiid)
 			lifecycleevent.modified(item)
-		result['Total'] = result['ItemCount'] = len(items)
+		result[TOTAL] = result[ITEM_COUNT] = len(items)
 		return result
 
 @view_config(name=VIEW_RECURSIVE_AUDIT_LOG)
