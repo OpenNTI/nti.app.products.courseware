@@ -69,6 +69,7 @@ from nti.externalization.externalization import to_external_object
 
 from nti.ntiids.ntiids import find_object_with_ntiid
 
+OID = StandardExternalFields.OID
 ITEMS = StandardExternalFields.ITEMS
 
 @view_config(route_name='objects.generic.traversal',
@@ -144,7 +145,7 @@ class CourseOutlineContentsView(AbstractAuthenticatedView):
 					# Some clients drive behavior based on this attr.
 					ext_node.pop('ContentNTIID', None)
 				# Pretty pointless to send these
-				ext_node.pop('OID', None)
+				ext_node.pop(OID, None)
 				the_list.append(ext_node)
 			return the_list
 
@@ -385,9 +386,9 @@ def CatalogEntryActivityPathAdapter(context, request):
 	course = ICourseInstance(context)
 	return ICourseInstanceActivity(course)
 
-from nti.externalization.externalization import decorate_external_mapping
+from nti.app.products.courseware.interfaces import ACT_VIEW_ACTIVITY
 
-from ..interfaces import ACT_VIEW_ACTIVITY
+from nti.externalization.externalization import decorate_external_mapping
 
 @view_config(route_name='objects.generic.traversal',
 			 renderer='rest',
