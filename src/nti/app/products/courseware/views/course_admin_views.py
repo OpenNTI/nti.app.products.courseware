@@ -37,7 +37,7 @@ from pyramid.view import view_defaults
 
 from nti.app.base.abstract_views import AbstractAuthenticatedView
 
-from nti.app.contentlibrary.views.sync_views import SyncAllLibrariesView
+from nti.app.contentlibrary.views.sync_views import _SyncAllLibrariesView
 
 from nti.app.externalization.internalization import read_body_as_external_object
 
@@ -674,7 +674,7 @@ class CourseCatalogEntryEnrollmentsRosterDownloadView(AllCourseEnrollmentRosterD
 			   request_method='POST',
 			   name='SyncCourse',
 			   permission=nauth.ACT_SYNC_LIBRARY)
-class SyncCourseView(SyncAllLibrariesView):
+class SyncCourseView(_SyncAllLibrariesView):
 
 	def _do_call(self):
 		course = ICourseInstance(self.context)
