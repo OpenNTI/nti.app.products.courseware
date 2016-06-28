@@ -5,6 +5,7 @@
 """
 
 from __future__ import print_function, unicode_literals, absolute_import, division
+from nti.ntiids.ntiids import find_object_with_ntiid
 __docformat__ = "restructuredtext en"
 
 logger = __import__('logging').getLogger(__name__)
@@ -32,6 +33,7 @@ from nti.contenttypes.courses.common import get_course_packages
 
 from nti.contenttypes.courses.interfaces import ICourseOutline
 from nti.contenttypes.courses.interfaces import ICourseInstance
+from nti.contenttypes.courses.interfaces import ICourseOutlineNode
 from nti.contenttypes.courses.interfaces import ICourseCatalogEntry
 from nti.contenttypes.courses.interfaces import ICourseAssessmentItemCatalog
 
@@ -65,6 +67,9 @@ class CourseSyncLockedObjectsMixin(object):
 		def _recur(node):
 			if not ICourseOutline.providedBy(node):
 				result.add(intids.queryId(node))
+			if ICourseOutlineNode.providedBy(node):
+				lesson = find_object_with_ntiid(node.LessonOverviewNTIID or u'')
+				result.add(intids.queryId(lesson) if lesson is not None else None)
 			for child in node.values():
 				_recur(child)
 
