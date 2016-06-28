@@ -35,7 +35,6 @@ from nti.dataserver import authorization as nauth
 @view_config(route_name='objects.generic.traversal',
 			 renderer='rest',
 			 name='ExportCourse',
-			 request_method='POST',
 			 context=CourseAdminPathAdapter,
 			 permission=nauth.ACT_NTI_ADMIN)
 class ExportCourseView(AbstractAuthenticatedView,
@@ -45,7 +44,8 @@ class ExportCourseView(AbstractAuthenticatedView,
 		if self.request.body:
 			result = ModeledContentUploadRequestUtilsMixin.readInput(self, value=value)
 			return CaseInsensitiveDict(result)
-		return CaseInsensitiveDict()
+		else:
+			return CaseInsensitiveDict(self.request.params)
 
 	def __call__(self):
 		zip_file = None
