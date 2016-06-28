@@ -107,6 +107,8 @@ def create_course(admin, key, archive_path, catalog=None, writeout=True):
 		if course_root is None:
 			if not writeout:
 				course_root = FilesystemBucket()
+				course_root.key = key
+				course_root.bucket = root
 				course_root.absolute_path = course_path
 			else:
 				raise IOError("Could not access course bucket %s", course_path)
@@ -129,6 +131,8 @@ def create_course(admin, key, archive_path, catalog=None, writeout=True):
 				sections_root = course_root.getChildNamed(SECTIONS)
 				if sections_root is None:
 					sections_root = FilesystemBucket()
+					sections_root.key = SECTIONS
+					sections_root.bucket = course_root
 					sections_root.absolute_path = sections_path
 				for name in os.listdir(archive_sec_path):
 					ipath = os.path.join(archive_sec_path, name)
@@ -144,6 +148,8 @@ def create_course(admin, key, archive_path, catalog=None, writeout=True):
 					sub_section_root = sections_root.getChildNamed(name)
 					if sub_section_root is None:
 						sub_section_root = FilesystemBucket()
+						sub_section_root.key = name
+						sub_section_root.bucket = sections_root
 						sub_section_root.absolute_path = subinstance_section_path
 					subinstance = ContentCourseSubInstance()
 					subinstance.root = sub_section_root
