@@ -41,6 +41,10 @@ def check_archive(path):
 		archive = zipfile.ZipFile(path)
 		tmp_path = tempfile.mkdtemp()
 		archive.extractall(tmp_path)
+		# check for extract dir
+		files = os.listdir(tmp_path)
+		if len(files) == 1 and os.path.isdir(os.path.join(tmp_path, files[0])):
+			tmp_path = os.path.join(tmp_path, files[0])
 	else:
 		tmp_path = None
 	return tmp_path
@@ -88,6 +92,7 @@ def create_course(admin, key, archive_path, catalog=None, writeout=True):
 	:param key Course name
 	:param archive_path archive path
 	"""
+	from IPython.core.debugger import Tracer; Tracer()()
 	catalog = component.getUtility(ICourseCatalog) if catalog is None else catalog
 	if admin not in catalog:
 		raise KeyError("Invalid Administrative level")
