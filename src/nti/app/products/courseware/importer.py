@@ -92,7 +92,6 @@ def create_course(admin, key, archive_path, catalog=None, writeout=True):
 	:param key Course name
 	:param archive_path archive path
 	"""
-	from IPython.core.debugger import Tracer; Tracer()()
 	catalog = component.getUtility(ICourseCatalog) if catalog is None else catalog
 	if admin not in catalog:
 		raise KeyError("Invalid Administrative level")
