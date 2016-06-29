@@ -10,6 +10,7 @@ __docformat__ = "restructuredtext en"
 logger = __import__('logging').getLogger(__name__)
 
 import os
+import time
 import tempfile
 
 from zope import component
@@ -49,11 +50,16 @@ from nti.contenttypes.courses.interfaces import ICourseInstance
 
 from nti.dataserver import authorization as nauth
 
+from nti.externalization.interfaces import LocatedExternalDict
+from nti.externalization.interfaces import StandardExternalFields
+
 from nti.ntiids.ntiids import find_object_with_ntiid
 
 from nti.site.hostpolicy import get_host_site
 
 from nti.site.site import get_component_hierarchy_names
+
+NTIID = StandardExternalFields.NTIID
 
 @view_config(route_name='objects.generic.traversal',
 			 renderer='rest',
@@ -96,7 +102,7 @@ class ImportCourseView(AbstractAuthenticatedView,
 		course = ICourseInstance(context, None)
 		if course is None:
 			raise hexc.HTTPUnprocessableEntity(_('Invalid course.'))
-		import_course(ntiid, path, writeout)
+		return import_course(ntiid, path, writeout)
 
 	def _create_course(self, admin, key, path, writeout=True):
 		if not admin:
@@ -115,24 +121,30 @@ class ImportCourseView(AbstractAuthenticatedView,
 					break
 		if catalog is None:
 			raise hexc.HTTPUnprocessableEntity(_('Invalid administrative level.'))
-		create_course(admin, key, path, catalog=catalog, writeout=writeout)
+		return create_course(admin, key, path, catalog=catalog, writeout=writeout)
 
 	def __call__(self):
 		values = self.readInput()
+		result = LocatedExternalDict()
+		params = result['Params'] = {}
 		# XXX: Make sure we don't have any interaction.
 		endInteraction()
+		now = time.time()
 		try:
 			path, tmp_path = self._get_source_paths(values)
 			path = os.path.abspath(path)
 			ntiid = values.get('ntiid')
 			writeout = is_true(values.get('writeout') or values.get('save'))
 			if ntiid:
-				self._import_course(ntiid, path, writeout)
+				params[NTIID] = ntiid
+				course = self._import_course(ntiid, path, writeout)
 			else:
-				key = values.get('key')
-				admin = values.get('admin')
-				self._create_course(admin, key, path, writeout)
+				params['Key'] = key = values.get('key')
+				params['Admin'] = admin = values.get('admin')
+				course = self._create_course(admin, key, path, writeout)
+			result['Course'] = course
+			result['Elapsed'] = time.time() - now
 		finally:
 			restoreInteraction()
 			delete_dir(tmp_path)
-		return hexc.HTTPNoContent()
+		return result
