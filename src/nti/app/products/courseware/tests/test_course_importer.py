@@ -68,4 +68,4 @@ class TestCourseExporter(ApplicationLayerTest):
 		self.testapp.post_json(href, data, status=204)
 
 		data = {'admin':'Fall2015', 'key':'Bleach', 'path':path}
-		self.testapp.post_json(href, data, status=204)
+		self.testapp.post_json(href, data, status=200)
