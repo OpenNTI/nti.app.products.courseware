@@ -78,4 +78,4 @@ class CourseDiscussionsImporter(BaseSectionImporter):
 					transfer_to_native_file(source, path)
 		# process subinstances
 		for subinstance in get_course_subinstances(course):
-			self.process(subinstance, source_filer)
+			self.process(subinstance, source_filer, writeout=writeout)
