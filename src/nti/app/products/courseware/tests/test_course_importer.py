@@ -28,7 +28,7 @@ from nti.app.testing.application_webtest import ApplicationLayerTest
 
 from nti.app.testing.decorators import WithSharedApplicationMockDS
 
-class TestCourseExporter(ApplicationLayerTest):
+class TestCourseImporter(ApplicationLayerTest):
 
 	layer = PersistentInstructedCourseApplicationTestLayer
 
@@ -65,7 +65,7 @@ class TestCourseExporter(ApplicationLayerTest):
 		path = os.getcwd()
 		href = '/dataserver2/CourseAdmin/@@ImportCourse'
 		data = {'ntiid':self.entry_ntiid, 'path':path}
-		self.testapp.post_json(href, data, status=204)
+		self.testapp.post_json(href, data, status=200)
 
 		data = {'admin':'Fall2015', 'key':'Bleach', 'path':path}
 		self.testapp.post_json(href, data, status=200)
