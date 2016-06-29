@@ -10,7 +10,6 @@ __docformat__ = "restructuredtext en"
 logger = __import__('logging').getLogger(__name__)
 
 import os
-import time
 import shutil
 import zipfile
 import tempfile
@@ -62,17 +61,14 @@ def _execute(course, archive_path, writeout=True):
 	if course is None:
 		raise ValueError("Invalid course")
 
-	now = time.time()
 	try:
 		tmp_path = check_archive(archive_path)
 		filer = DirectoryFiler(tmp_path or archive_path)
 		importer = component.getUtility(ICourseImporter)
-		importer.process(course, filer, writeout)
+		result = importer.process(course, filer, writeout)
+		return result
 	finally:
 		delete_dir(tmp_path)
-
-	logger.info("Course imported from %s in %s", 
-				archive_path, time.time() - now)
 
 def import_course(ntiid, archive_path, writeout=True):
 	"""
@@ -82,7 +78,8 @@ def import_course(ntiid, archive_path, writeout=True):
 	:param archive_path archive path
 	"""
 	course = find_object_with_ntiid(ntiid or u'')
-	return _execute(course, archive_path, writeout)
+	_execute(course, archive_path, writeout)
+	return course
 
 def create_course(admin, key, archive_path, catalog=None, writeout=True):
 	"""
@@ -160,5 +157,6 @@ def create_course(admin, key, archive_path, catalog=None, writeout=True):
 					course.SubInstances[name] = subinstance # register
 		# process
 		_execute(course, tmp_path or archive_path, writeout)
+		return course
 	finally:
 		delete_dir(tmp_path)
