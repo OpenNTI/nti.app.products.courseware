@@ -86,14 +86,14 @@ from nti.dataserver.interfaces import ILinkExternalHrefOnly
 
 from nti.externalization.externalization import to_external_object
 
-from nti.externalization.oids import to_external_ntiid_oid
-
-from nti.externalization.singleton import SingletonDecorator
-
 from nti.externalization.interfaces import LocatedExternalDict
 from nti.externalization.interfaces import StandardExternalFields
 from nti.externalization.interfaces import IExternalObjectDecorator
 from nti.externalization.interfaces import IExternalMappingDecorator
+
+from nti.externalization.oids import to_external_ntiid_oid
+
+from nti.externalization.singleton import SingletonDecorator
 
 from nti.links.links import Link
 
@@ -108,8 +108,8 @@ MIMETYPE = StandardExternalFields.MIMETYPE
 
 COURSE_CONTEXT_ANNOT_KEY = 'nti.app.products.course.context_key'
 
-@interface.implementer(IExternalMappingDecorator)
 @component.adapter(ICourseInstance)
+@interface.implementer(IExternalMappingDecorator)
 class _CourseInstanceLinkDecorator(object):
 	"""
 	If a course instance can find its catalog entry, return that as a link.
@@ -225,8 +225,8 @@ class BaseRecursiveAuditLogLinkDecorator(AbstractAuthenticatedRequestAwareDecora
 class CourseRecursiveAuditLogLinkDecorator(BaseRecursiveAuditLogLinkDecorator):
 	pass
 
-@interface.implementer(IExternalMappingDecorator)
 @component.adapter(ICourseInstanceEnrollment)
+@interface.implementer(IExternalMappingDecorator)
 class _RosterMailLinkDecorator(AbstractAuthenticatedRequestAwareDecorator):
 	"""
 	Decorate the course email link on the roster record for instructors.
@@ -246,8 +246,8 @@ class _RosterMailLinkDecorator(AbstractAuthenticatedRequestAwareDecorator):
 		link.__parent__ = context
 		_links.append(link)
 
-@interface.implementer(IExternalMappingDecorator)
 @component.adapter(ICourseInstanceEnrollment)
+@interface.implementer(IExternalMappingDecorator)
 class _VendorThankYouInfoDecorator(AbstractAuthenticatedRequestAwareDecorator):
 	"""
 	Decorate the thank you page information.
@@ -261,8 +261,8 @@ class _VendorThankYouInfoDecorator(AbstractAuthenticatedRequestAwareDecorator):
 			if thank_you_page:
 				result['VendorThankYouPage'] = thank_you_page
 
-@interface.implementer(IExternalMappingDecorator)
 @component.adapter(ICourseInstance)
+@interface.implementer(IExternalMappingDecorator)
 class _CourseInstanceStreamLinkDecorator(object):
 	"""
 	Place the recursive stream links on the course.
@@ -280,8 +280,8 @@ class _CourseInstanceStreamLinkDecorator(object):
 			link.__parent__ = context
 			_links.append(link)
 
-@interface.implementer(IExternalMappingDecorator)
 @component.adapter(ICourseInstance)
+@interface.implementer(IExternalMappingDecorator)
 class _CourseInstancePagesLinkDecorator(PreviewCourseAccessPredicateDecorator):
 	"""
 	Places a link to the pages view of a course.
@@ -718,8 +718,8 @@ class _SharedScopesForumDecorator(AbstractAuthenticatedRequestAwareDecorator):
 			result.setdefault('AutoTags', []).append('SharingScopeName=' + scope_name)
 			result['SharingScopeName'] = scope_name
 
-@interface.implementer(IExternalObjectDecorator)
 @component.adapter(ICourseInstance)
+@interface.implementer(IExternalObjectDecorator)
 class _CourseInstancePreviewExcludingDecorator(PreviewCourseAccessPredicateDecorator):
 	"""
 	Removes external entries that should not be visible to a user
@@ -731,5 +731,4 @@ class _CourseInstancePreviewExcludingDecorator(PreviewCourseAccessPredicateDecor
 		return not super(_CourseInstancePreviewExcludingDecorator, self)._predicate(context, result)
 
 	def _do_decorate_external(self, context, result):
-		# result.pop('ContentPackageBundle')
-		result.pop('Discussions')
+		result.pop('Discussions', None)
