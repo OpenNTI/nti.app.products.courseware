@@ -60,7 +60,7 @@ def get_assets_folder(context):
 def get_documents_folder(context):
 	return get_create_root_folder(context, DOCUMENTS_FOLDER, strict=True)
 
-def get_imagess_folder(context):
+def get_images_folder(context):
 	return get_create_root_folder(context, IMAGES_FOLDER, strict=True)
 
 def get_course_filer(context, user=None, strict=False):
