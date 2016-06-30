@@ -70,8 +70,9 @@ class CourseRootFolderACLProvider(object):
 			if ICourseSubInstance.providedBy(course):
 				parent = get_parent_course(course)
 				for i in parent.instructors or ():
-					aces.extend(ace_allowing(i, ACT_READ, type(self))
-								for i in course.instructors or ())
+					aces.append(ace_allowing(i, ACT_READ, type(self)))
+				for i in get_course_editors(parent):
+					aces.append(ace_allowing(i, ACT_READ, type(self)))
 
 		result = acl_from_aces(aces)
 		return result
