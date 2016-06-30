@@ -55,9 +55,8 @@ class CourseRootFolderACLProvider(object):
 		course = find_interface(self.context, ICourseInstance, strict=False)
 		if course is not None:
 			# give instructors special powers
-			for i in course.instructors or ():
-				aces.extend(ace_allowing(i, ALL_PERMISSIONS, type(self))
-							for i in course.instructors or ())
+			aces.extend(ace_allowing(i, ALL_PERMISSIONS, type(self))
+						for i in course.instructors or ())
 
 			for i in get_course_editors(course):
 				aces.append(ace_allowing(i, ALL_PERMISSIONS, type(self)))
