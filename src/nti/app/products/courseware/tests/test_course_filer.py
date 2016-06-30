@@ -11,6 +11,7 @@ from hamcrest import is_
 from hamcrest import is_not
 from hamcrest import not_none
 from hamcrest import assert_that
+from hamcrest import starts_with
 from hamcrest import has_property
 does_not = is_not
 
@@ -74,3 +75,12 @@ class TestCourseFiler(ApplicationLayerTest):
 
 			assert_that(filer.remove(href), is_(True))
 			assert_that(filer.list("/bleach/shikai"), is_(()))
+			
+			source = StringIO("<ichigo/>")
+			filer.save("ichigo.xml", source, contentType="text/xml", overwrite=False, 
+					   bucket="bleach/shikai")
+			source = StringIO("<ichigo/>")
+			href = filer.save("ichigo.xml", source, contentType="text/xml",
+							  overwrite=False, bucket="bleach/shikai")
+			obj = filer.get(href)
+			assert_that(obj, has_property('name', starts_with('ichigo_')))

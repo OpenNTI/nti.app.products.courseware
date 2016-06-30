@@ -20,6 +20,8 @@ from nti.app.contentfolder.utils import to_external_cf_io_href
 from nti.app.contentfolder.utils import get_file_from_cf_io_url
 
 from nti.app.products.courseware import ASSETS_FOLDER
+from nti.app.products.courseware import IMAGES_FOLDER
+from nti.app.products.courseware import DOCUMENTS_FOLDER
 
 from nti.app.products.courseware.resources.interfaces import ICourseRootFolder
 from nti.app.products.courseware.resources.interfaces import ICourseSourceFiler
@@ -38,19 +40,28 @@ def get_course(context, strict=False):
 		course = find_interface(context, ICourseInstance, strict=strict)
 	return course
 
-def get_assets_folder(context, strict=True):
+def get_create_root_folder(context, name, strict=True):
 	course = get_course(context, strict=strict)
 	root = ICourseRootFolder(course, None)
 	if root is not None:
-		if ASSETS_FOLDER not in root:
-			result = CourseContentFolder(name=ASSETS_FOLDER)
-			root[ASSETS_FOLDER] = result
+		if name not in root:
+			result = CourseContentFolder(name=name)
+			root[name] = result
 		else:
-			result = root[ASSETS_FOLDER]
+			result = root[name]
 		if result.creator is None:
 			result.creator = SYSTEM_USER_ID
 		return result
 	return None
+
+def get_assets_folder(context):
+	return get_create_root_folder(context, ASSETS_FOLDER, strict=True)
+
+def get_documents_folder(context):
+	return get_create_root_folder(context, DOCUMENTS_FOLDER, strict=True)
+
+def get_imagess_folder(context):
+	return get_create_root_folder(context, IMAGES_FOLDER, strict=True)
 
 def get_course_filer(context, user=None, strict=False):
 	course = get_course(context, strict=strict)

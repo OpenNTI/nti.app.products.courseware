@@ -48,15 +48,18 @@ from nti.coremetadata.interfaces import SYSTEM_USER_ID
 
 from nti.traversal.traversal import find_interface
 
+_maker = object()
+
 def get_unique_file_name(text, container):
 	separator = '_'
-	newtext = slugify_filename(text)
-	text_noe, ext = os.path.splitext(newtext)
+	newtext = text
+	slugified = slugify_filename(text)
+	text_noe, ext = os.path.splitext(slugified)
 	while True:
-		s = generate_random_hex_string(6)
-		newtext = "%s%s%s%s" % (text_noe, separator, s, ext)
 		if newtext not in container:
 			break
+		s = generate_random_hex_string(6)
+		newtext = "%s%s%s%s" % (text_noe, separator, s, ext)
 	return newtext
 
 def get_namedfile_factory(source):
@@ -120,8 +123,7 @@ class CourseSourceFiler(object):
 		context = kwargs.get('context')
 		if bucket == ASSETS_FOLDER:
 			bucket = self.assets
-			bucket = self.get_create_folders(bucket, username) if username else bucket
-		elif bucket:
+		elif bucket is not _maker:
 			bucket = self.get_create_folders(self.root, bucket)
 		else:
 			bucket = self.root
