@@ -30,6 +30,8 @@ from nti.app.products.courseware.resources.model import CourseContentImage
 from nti.app.products.courseware.resources.model import CourseContentFolder
 
 from nti.app.products.courseware.resources.utils import get_assets_folder
+from nti.app.products.courseware.resources.utils import get_images_folder
+from nti.app.products.courseware.resources.utils import get_documents_folder
 from nti.app.products.courseware.resources.utils import is_internal_file_link
 from nti.app.products.courseware.resources.utils import to_external_file_link
 from nti.app.products.courseware.resources.utils import get_file_from_external_link
@@ -46,9 +48,9 @@ from nti.common.random import generate_random_hex_string
 
 from nti.coremetadata.interfaces import SYSTEM_USER_ID
 
-from nti.traversal.traversal import find_interface
+from nti.common.mimetypes import guess_type
 
-_maker = object()
+from nti.traversal.traversal import find_interface
 
 def get_unique_file_name(text, container):
 	separator = '_'
@@ -108,6 +110,16 @@ class CourseSourceFiler(object):
 		result = get_assets_folder(self.course)
 		return result
 
+	@property
+	def images(self):
+		result = get_images_folder(self.course)
+		return result
+
+	@property
+	def documents(self):
+		result = get_documents_folder(self.course)
+		return result
+	
 	def get_create_folders(self, parent, name):
 		def builder():
 			result = CourseContentFolder()
@@ -117,13 +129,21 @@ class CourseSourceFiler(object):
 		return result
 	get_create_folder = get_create_folders
 
+	@classmethod
+	def is_image(cls, key, contentType=None):
+		result = 	(guess_type(key.lower())[0] or u'').startswith('image/') \
+				 or (contentType or u'').startswith('image/')
+		return result
+
 	def save(self, key, source, contentType=None, bucket=None, 
-			 overwrite=False, **kwargs):
+			 overwrite=False, structure=False, **kwargs):
 		username = self.username
 		context = kwargs.get('context')
-		if bucket == ASSETS_FOLDER:
+		if structure:
+			bucket = self.images if self.is_image(key, contentType) else self.documents
+		elif bucket == ASSETS_FOLDER: # legacy
 			bucket = self.assets
-		elif bucket is not _maker:
+		elif bucket:
 			bucket = self.get_create_folders(self.root, bucket)
 		else:
 			bucket = self.root
