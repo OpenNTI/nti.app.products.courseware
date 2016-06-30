@@ -87,6 +87,11 @@ def get_namedfile_from_source(source, name):
 	result.filename = result.filename or getattr(source, 'name', name)
 	return result
 
+def is_image(key, contentType=None):
+	result = 	(guess_type(key.lower())[0] or u'').startswith('image/') \
+			 or (contentType or u'').startswith('image/')
+	return result
+	
 @interface.implementer(ICourseSourceFiler)
 class CourseSourceFiler(object):
 
@@ -129,18 +134,12 @@ class CourseSourceFiler(object):
 		return result
 	get_create_folder = get_create_folders
 
-	@classmethod
-	def is_image(cls, key, contentType=None):
-		result = 	(guess_type(key.lower())[0] or u'').startswith('image/') \
-				 or (contentType or u'').startswith('image/')
-		return result
-
 	def save(self, key, source, contentType=None, bucket=None, 
 			 overwrite=False, structure=False, **kwargs):
 		username = self.username
 		context = kwargs.get('context')
 		if structure:
-			bucket = self.images if self.is_image(key, contentType) else self.documents
+			bucket = self.images if is_image(key, contentType) else self.documents
 		elif bucket == ASSETS_FOLDER: # legacy
 			bucket = self.assets
 		elif bucket:
