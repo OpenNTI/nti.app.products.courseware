@@ -37,6 +37,7 @@
 
 	<!-- ACL -->
 	<adapter factory=".acl.CourseRootFolderACLProvider" />
+	<adapter factory=".acl.CourseLockedFolderACLProvider" />
 
 	<!-- Subscribers -->
 	<subscriber handler=".subscribers._on_course_added"  />

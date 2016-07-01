@@ -9,12 +9,15 @@ __docformat__ = "restructuredtext en"
 
 logger = __import__('logging').getLogger(__name__)
 
+from itertools import chain
+
 from zope import component
 from zope import interface
 
 from zope.security.interfaces import IPrincipal
 
 from nti.app.products.courseware.resources.interfaces import ICourseRootFolder
+from nti.app.products.courseware.resources.interfaces import ICourseLockedFolder
 
 from nti.common.property import Lazy
 
@@ -25,19 +28,21 @@ from nti.contenttypes.courses.utils import get_parent_course
 from nti.contenttypes.courses.utils import get_course_editors
 
 from nti.dataserver.authorization import ACT_READ
+from nti.dataserver.authorization import ACT_UPDATE 
 from nti.dataserver.authorization import ROLE_ADMIN
 from nti.dataserver.authorization import ROLE_CONTENT_EDITOR
 
 from nti.dataserver.authorization_acl import ace_allowing
 from nti.dataserver.authorization_acl import acl_from_aces
+from nti.dataserver.authorization_acl import ace_denying_all
 
 from nti.dataserver.interfaces import IACLProvider
 from nti.dataserver.interfaces import ALL_PERMISSIONS
 
 from nti.traversal.traversal import find_interface
 
-@component.adapter(ICourseRootFolder)
 @interface.implementer(IACLProvider)
+@component.adapter(ICourseRootFolder)
 class CourseRootFolderACLProvider(object):
 
 	def __init__(self, context):
@@ -54,11 +59,7 @@ class CourseRootFolderACLProvider(object):
 
 		course = find_interface(self.context, ICourseInstance, strict=False)
 		if course is not None:
-			# give instructors special powers
-			aces.extend(ace_allowing(i, ALL_PERMISSIONS, type(self))
-						for i in course.instructors or ())
-
-			for i in get_course_editors(course):
+			for i in chain(course.instructors or (), get_course_editors(course)):
 				aces.append(ace_allowing(i, ALL_PERMISSIONS, type(self)))
 
 			# all scopes have read access
@@ -68,10 +69,46 @@ class CourseRootFolderACLProvider(object):
 
 			if ICourseSubInstance.providedBy(course):
 				parent = get_parent_course(course)
-				for i in parent.instructors or ():
-					aces.append(ace_allowing(i, ACT_READ, type(self)))
-				for i in get_course_editors(parent):
+				for i in chain(parent.instructors or (), get_course_editors(parent)):
 					aces.append(ace_allowing(i, ACT_READ, type(self)))
 
+		result = acl_from_aces(aces)
+		return result
+
+@interface.implementer(IACLProvider)
+@component.adapter(ICourseLockedFolder)
+class CourseLockedFolderACLProvider(object):
+
+	def __init__(self, context):
+		self.context = context
+
+	@property
+	def __parent__(self):
+		return self.context.__parent__
+
+	def principals_and_perms(self, course):
+		yield ROLE_CONTENT_EDITOR, (ACT_READ, ACT_UPDATE)
+		
+		for i in chain(course.instructors or (), get_course_editors(course)):
+			yield i, (ACT_READ, ACT_UPDATE)
+
+		course.initScopes()
+		for scope in course.SharingScopes:
+			yield IPrincipal(scope), (ACT_READ,)
+
+		if ICourseSubInstance.providedBy(course):
+			parent = get_parent_course(course)
+			for i in chain(parent.instructors or (), get_course_editors(parent)):
+				yield i, (ACT_READ,)
+
+	@Lazy
+	def __acl__(self):
+		aces = [ ace_allowing(ROLE_ADMIN, ALL_PERMISSIONS, self) ]
+		course = find_interface(self.context, ICourseInstance, strict=False)
+		if course is not None:
+			for i, perms in self.principals_and_perms(course):
+				for perm in perms:
+					aces.append(ace_allowing(i, perm, type(self)))
+		aces.append(ace_denying_all())
 		result = acl_from_aces(aces)
 		return result

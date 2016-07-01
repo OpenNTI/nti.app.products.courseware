@@ -17,6 +17,7 @@ from nti.contentfile.interfaces import IContentBlobFile
 from nti.contentfile.interfaces import IContentBlobImage
 
 from nti.contentfolder.interfaces import IRootFolder
+from nti.contentfolder.interfaces import ILockedFolder
 from nti.contentfolder.interfaces import IContentFolder
 
 from nti.schema.field import ValidTextLine
@@ -37,6 +38,9 @@ class ICourseContentResource(interface.Interface):
 						 required=False, readonly=True)
 
 class ICourseContentFolder(IContentFolder, ICourseContentResource, IAssociationsMixin):
+	pass
+
+class ICourseLockedFolder(ICourseContentFolder, ILockedFolder):
 	pass
 
 class ICourseContentFile(IContentBlobFile, ICourseContentResource):
