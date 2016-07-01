@@ -26,7 +26,7 @@ from nti.contenttypes.courses.interfaces import ENROLLMENT_SCOPE_MAP
 
 from nti.contenttypes.courses.interfaces import ICourseInstance
 from nti.contenttypes.courses.interfaces import ICourseCatalogEntry
-from nti.contenttypes.courses.interfaces import IPrincipalEnrollments
+from nti.contenttypes.courses.interfaces import ICourseInstanceEnrollmentRecord
 
 from nti.dataserver.contenttypes.forums.interfaces import IPersonalBlogComment
 
@@ -43,8 +43,8 @@ def _get_implied_course_scopes( course, scope ):
 	"""
 	For the given enrollment scope and course, return all implied scopes.
 	"""
-	scope_term = ENROLLMENT_SCOPE_MAP[scope]
 	results = []
+	scope_term = ENROLLMENT_SCOPE_MAP[scope]
 	course_scope = course.SharingScopes.get( scope )
 	results.append( course_scope )
 	for scope in scope_term.implies:
@@ -81,22 +81,22 @@ class TopLevelPriorityNotableFilter(object):
 		# Only if shared with my course community.
 		shared_with = getattr(obj, 'sharedWith', {})
 		if shared_with:
-			for enrollments in component.subscribers((user,),
-													  IPrincipalEnrollments):
-				for enrollment in enrollments.iter_enrollments():
+			enrollments = get_enrollments( user.username )
+			for enrollment in enrollments or ():
+				if not ICourseInstanceEnrollmentRecord.providedBy(enrollment):
+					continue
+				course = ICourseInstance(enrollment, None)
+				catalog_entry = ICourseCatalogEntry(course, None)
+				if 		course is None \
+					or 	catalog_entry is None \
+	 				or 	not catalog_entry.isCourseCurrentlyActive():  # pragma: no cover
+					continue
 
-					course = ICourseInstance(enrollment, None)
-					catalog_entry = ICourseCatalogEntry(course, None)
-					if 		course is None \
-						or 	catalog_entry is None \
-	 					or 	not catalog_entry.isCourseCurrentlyActive():  # pragma: no cover
-						continue
-
-					if obj_creator in (x.id for x in course.instructors):
-						scopes = _get_implied_course_scopes( course, enrollment.Scope )
-						for scope in scopes:
-							if obj.isSharedDirectlyWith(scope):
-								return True
+				if obj_creator in (x.id for x in course.instructors or ()):
+					scopes = _get_implied_course_scopes( course, enrollment.Scope )
+					for scope in scopes:
+						if obj.isSharedDirectlyWith(scope):
+							return True
 		return False
 
 @component.adapter(IUser, interface.Interface)
@@ -129,9 +129,10 @@ class _UserPriorityCreatorNotableProvider(object):
 	def get_notable_intids(self):
 		results = Set()
 		catalog = self._catalog
-		enrollments = get_enrollments( self.context.username ) or ()
-
-		for enrollment in enrollments:
+		enrollments = get_enrollments( self.context.username )
+		for enrollment in enrollments or ():
+			if not ICourseInstanceEnrollmentRecord.providedBy(enrollment):
+				continue
 			course = ICourseInstance(enrollment, None)
 			catalog_entry = ICourseCatalogEntry(course, None)
 			if 		course is None \
