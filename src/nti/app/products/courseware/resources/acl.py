@@ -28,7 +28,7 @@ from nti.contenttypes.courses.utils import get_parent_course
 from nti.contenttypes.courses.utils import get_course_editors
 
 from nti.dataserver.authorization import ACT_READ
-from nti.dataserver.authorization import ACT_UPDATE 
+from nti.dataserver.authorization import ACT_UPDATE
 from nti.dataserver.authorization import ROLE_ADMIN
 from nti.dataserver.authorization import ROLE_CONTENT_EDITOR
 
@@ -57,20 +57,19 @@ class CourseRootFolderACLProvider(object):
 		aces = [ ace_allowing(ROLE_ADMIN, ALL_PERMISSIONS, self),
 				 ace_allowing(ROLE_CONTENT_EDITOR, ALL_PERMISSIONS, type(self))]
 
-		course = find_interface(self.context, ICourseInstance, strict=False)
-		if course is not None:
-			for i in chain(course.instructors or (), get_course_editors(course)):
-				aces.append(ace_allowing(i, ALL_PERMISSIONS, type(self)))
+		course = find_interface(self.context, ICourseInstance, strict=True)
+		for i in chain(course.instructors or (), get_course_editors(course)):
+			aces.append(ace_allowing(i, ALL_PERMISSIONS, type(self)))
 
-			# all scopes have read access
-			course.initScopes()
-			for scope in course.SharingScopes:
-				aces.append(ace_allowing(IPrincipal(scope), ACT_READ, type(self)))
+		# all scopes have read access
+		course.initScopes()
+		for scope in course.SharingScopes:
+			aces.append(ace_allowing(IPrincipal(scope), ACT_READ, type(self)))
 
-			if ICourseSubInstance.providedBy(course):
-				parent = get_parent_course(course)
-				for i in chain(parent.instructors or (), get_course_editors(parent)):
-					aces.append(ace_allowing(i, ACT_READ, type(self)))
+		if ICourseSubInstance.providedBy(course):
+			parent = get_parent_course(course)
+			for i in chain(parent.instructors or (), get_course_editors(parent)):
+				aces.append(ace_allowing(i, ACT_READ, type(self)))
 
 		result = acl_from_aces(aces)
 		return result
@@ -88,7 +87,7 @@ class CourseLockedFolderACLProvider(object):
 
 	def principals_and_perms(self, course):
 		yield ROLE_CONTENT_EDITOR, (ACT_READ, ACT_UPDATE)
-		
+
 		for i in chain(course.instructors or (), get_course_editors(course)):
 			yield i, (ACT_READ, ACT_UPDATE)
 
@@ -104,11 +103,10 @@ class CourseLockedFolderACLProvider(object):
 	@Lazy
 	def __acl__(self):
 		aces = [ ace_allowing(ROLE_ADMIN, ALL_PERMISSIONS, self) ]
-		course = find_interface(self.context, ICourseInstance, strict=False)
-		if course is not None:
-			for i, perms in self.principals_and_perms(course):
-				for perm in perms:
-					aces.append(ace_allowing(i, perm, type(self)))
+		course = find_interface(self.context, ICourseInstance, strict=True)
+		for i, perms in self.principals_and_perms(course):
+			for perm in perms:
+				aces.append(ace_allowing(i, perm, type(self)))
 		aces.append(ace_denying_all())
 		result = acl_from_aces(aces)
 		return result
