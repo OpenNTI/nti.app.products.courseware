@@ -9,6 +9,8 @@ __docformat__ = "restructuredtext en"
 
 logger = __import__('logging').getLogger(__name__)
 
+from zope import interface
+
 from nti.app.base.abstract_views import get_source_filer
 
 from nti.app.contentfile.view_mixins import is_oid_external_link
@@ -25,6 +27,7 @@ from nti.app.products.courseware import DOCUMENTS_FOLDER
 
 from nti.app.products.courseware.resources.interfaces import ICourseRootFolder
 from nti.app.products.courseware.resources.interfaces import ICourseSourceFiler
+from nti.app.products.courseware.resources.interfaces import ICourseLockedFolder
 
 from nti.app.products.courseware.resources.model import CourseContentFolder
 
@@ -40,7 +43,7 @@ def get_course(context, strict=False):
 		course = find_interface(context, ICourseInstance, strict=strict)
 	return course
 
-def get_create_root_folder(context, name, strict=True):
+def get_create_root_folder(context, name, strict=True, lock=False):
 	course = get_course(context, strict=strict)
 	root = ICourseRootFolder(course, None)
 	if root is not None:
@@ -51,6 +54,8 @@ def get_create_root_folder(context, name, strict=True):
 			result = root[name]
 		if result.creator is None:
 			result.creator = SYSTEM_USER_ID
+		if lock and not ICourseLockedFolder.providedBy(result):
+			interface.alsoProvides(result, ICourseLockedFolder)
 		return result
 	return None
 
