@@ -23,6 +23,7 @@ from zope.security.management import restoreInteraction
 from pyramid import httpexceptions as hexc
 
 from pyramid.view import view_config
+from pyramid.view import view_defaults
 
 from nti.app.base.abstract_views import get_all_sources
 from nti.app.base.abstract_views import AbstractAuthenticatedView
@@ -47,6 +48,7 @@ from nti.common.string import is_true
 
 from nti.contenttypes.courses.interfaces import ICourseCatalog
 from nti.contenttypes.courses.interfaces import ICourseInstance
+from nti.contenttypes.courses.interfaces import ICourseCatalogEntry
 
 from nti.dataserver import authorization as nauth
 
@@ -61,14 +63,7 @@ from nti.site.site import get_component_hierarchy_names
 
 NTIID = StandardExternalFields.NTIID
 
-@view_config(route_name='objects.generic.traversal',
-			 renderer='rest',
-			 name='ImportCourse',
-			 request_method='POST',
-			 context=CourseAdminPathAdapter,
-			 permission=nauth.ACT_NTI_ADMIN)
-class ImportCourseView(AbstractAuthenticatedView,
-				 	   ModeledContentUploadRequestUtilsMixin):
+class CourseImportMixin(ModeledContentUploadRequestUtilsMixin):
 
 	def readInput(self, value=None):
 		if self.request.body:
@@ -94,8 +89,49 @@ class ImportCourseView(AbstractAuthenticatedView,
 			path = os.path.join(tmp_path, filename)
 			transfer_to_native_file(source, path)
 		elif not path:
-			raise hexc.HTTPUnprocessableEntity(_('No archive source uploaded.'))
+			raise hexc.HTTPUnprocessableEntity(_('No archive source specified.'))
 		return path, tmp_path
+
+	def _do_call(self):
+		pass
+
+	def __call__(self):
+		endInteraction()
+		try:
+			return self._do_call()
+		finally:
+			restoreInteraction()
+
+@view_config(context=ICourseInstance)
+@view_config(context=ICourseCatalogEntry)
+@view_defaults(route_name='objects.generic.traversal',
+			   renderer='rest',
+			   name='Import',
+			   permission=nauth.ACT_NTI_ADMIN)
+class CourseImportView(AbstractAuthenticatedView, CourseImportMixin):
+
+	def _do_call(self):
+		now = time.time()
+		values = self.readInput()
+		result = LocatedExternalDict()
+		try:
+			entry = ICourseCatalogEntry(self.context)
+			path, tmp_path = self._get_source_paths(values)
+			writeout = is_true(values.get('writeout') or values.get('save'))
+			import_course(entry.ntiid, os.path.abspath(path), writeout)
+			result['Elapsed'] = time.time() - now
+			result['Course'] = ICourseInstance(self.context)
+		finally:
+			delete_dir(tmp_path)
+		return result
+
+@view_config(route_name='objects.generic.traversal',
+			 renderer='rest',
+			 name='ImportCourse',
+			 request_method='POST',
+			 context=CourseAdminPathAdapter,
+			 permission=nauth.ACT_NTI_ADMIN)
+class ImportCourseView(AbstractAuthenticatedView, CourseImportMixin):
 
 	def _import_course(self, ntiid, path, writeout=True):
 		context = find_object_with_ntiid(ntiid)
@@ -123,13 +159,11 @@ class ImportCourseView(AbstractAuthenticatedView,
 			raise hexc.HTTPUnprocessableEntity(_('Invalid administrative level.'))
 		return create_course(admin, key, path, catalog=catalog, writeout=writeout)
 
-	def __call__(self):
+	def _do_call(self):
+		now = time.time()
 		values = self.readInput()
 		result = LocatedExternalDict()
 		params = result['Params'] = {}
-		# XXX: Make sure we don't have any interaction.
-		endInteraction()
-		now = time.time()
 		try:
 			path, tmp_path = self._get_source_paths(values)
 			path = os.path.abspath(path)
@@ -145,6 +179,5 @@ class ImportCourseView(AbstractAuthenticatedView,
 			result['Course'] = course
 			result['Elapsed'] = time.time() - now
 		finally:
-			restoreInteraction()
 			delete_dir(tmp_path)
 		return result
