@@ -227,7 +227,7 @@ class OutlinePathFactory(object):
 		Validate all of our path objects are accessible (published) by
 		our user. Otherwise we'll return a 403.
 		"""
-		for item in path:
+		for item in path or ():
 			if not self._is_visible( item ):
 				raise ForbiddenContextException()
 
@@ -292,4 +292,3 @@ class OutlinePathFactory(object):
 					if unit and self.target_ntiid in unit.embeddedContainerNTIIDs:
 						return (self.course_context, outline_content_node, self.target_obj)
 		return (self.course_context,)
-
