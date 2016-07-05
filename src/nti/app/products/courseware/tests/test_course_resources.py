@@ -15,8 +15,6 @@ from hamcrest import has_entries
 from hamcrest import assert_that
 does_not = is_not
 
-import fudge
-
 from nti.contenttypes.courses.interfaces import ICourseInstance
 
 from nti.externalization.externalization import StandardExternalFields
@@ -89,19 +87,3 @@ class TestCourseResoures(ApplicationLayerTest):
 		assert_that(res.json_body,
 					has_entries(u'MimeType', u'application/vnd.nextthought.courseware.contentfolder',
 								u'path', u'/bleach/ichigo/shikai'))
-
-	@WithSharedApplicationMockDS(testapp=True, users=True)
-	@fudge.patch('nti.app.products.courseware.views.course_resources_views.has_associations')
-	def test_delete(self, mock_ha):
-		course_ntiid = self.course_oid()
-		href = '/dataserver2/Objects/%s/resources' % course_ntiid
-		self.testapp.post(href + '/@@upload',
-						  upload_files=[ ('ichigo.txt', 'ichigo.txt', b'ichigo') ],
-						  status=201)
-		
-		mock_ha.is_callable().with_args().returns(True)
-		self.testapp.delete(href + '/ichigo.txt', status=422)
-		mock_ha.is_callable().with_args().returns(False)
-		self.testapp.delete(href + '/ichigo.txt', status=204)
-
-		
