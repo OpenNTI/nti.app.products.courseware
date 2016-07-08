@@ -27,6 +27,10 @@ from nti.contenttypes.courses.interfaces import ICourseInstance
 
 from nti.coremetadata.interfaces import SYSTEM_USER_ID
 
+from nti.namedfile.constraints import FileConstraints
+
+from nti.namedfile.interfaces import IFileConstraints
+
 @component.adapter(ICourseInstance)
 @interface.implementer(ICourseRootFolder)
 def course_resources(course, create=True):
@@ -60,4 +64,8 @@ def _course_user_source_filer(context, user=None):
 def _course_source_filer(context):
 	return _course_user_source_filer(context, None)
 
-
+@interface.implementer(IFileConstraints)
+def _CourseFolderFileConstraints(note):
+	result = FileConstraints()
+	result.max_file_size = 104857600  # 100 MB
+	return result
