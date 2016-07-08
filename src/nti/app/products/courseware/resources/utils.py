@@ -43,7 +43,7 @@ def get_course(context, strict=False):
 		course = find_interface(context, ICourseInstance, strict=strict)
 	return course
 
-def get_create_root_folder(context, name, strict=True, lock=False):
+def get_create_root_folder(context, name, strict=True, lock=True):
 	course = get_course(context, strict=strict)
 	root = ICourseRootFolder(course, None)
 	if root is not None:
