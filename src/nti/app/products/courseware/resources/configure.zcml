@@ -29,15 +29,13 @@
 			 for="nti.contenttypes.courses.interfaces.ICourseInstance nti.dataserver.interfaces.IUser"
 			 provides=".interfaces.ICourseSourceFiler" />
 
-	<configure zcml:condition="not-have devmode">
-		<adapter factory=".adapters._CourseFolderFileConstraints"
-				 for=".interfaces.ICourseRootFolder"
-				 provides="nti.namedfile.interfaces.IFileConstraints" />
-	
-		<adapter factory=".adapters._CourseFolderFileConstraints"
-				 for=".interfaces.ICourseContentFolder"
-				 provides="nti.namedfile.interfaces.IFileConstraints" />
-	</configure>
+	<adapter factory=".adapters._CourseFolderFileConstraints"
+			 for=".interfaces.ICourseRootFolder"
+			 provides="nti.namedfile.interfaces.IFileConstraints" />
+
+	<adapter factory=".adapters._CourseFolderFileConstraints"
+			 for=".interfaces.ICourseContentFolder"
+			 provides="nti.namedfile.interfaces.IFileConstraints" />
 
 	<!-- Traversal -->
 	<adapter factory=".adapters._resources_for_course_path_adapter"
