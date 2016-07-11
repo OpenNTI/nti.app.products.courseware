@@ -55,7 +55,7 @@ class CourseContentResource(Contained):
 	def __init__(self, *args, **kwargs):
 		super(CourseContentResource, self).__init__(*args, **kwargs)
 
-	@CachedProperty('__parent__')
+	@CachedProperty('__parent__', 'name')
 	def path(self):
 		context = self
 		result = []
