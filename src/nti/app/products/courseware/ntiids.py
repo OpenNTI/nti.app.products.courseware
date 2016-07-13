@@ -90,7 +90,7 @@ class _EnrolledCourseSectionTopicNTIIDResolver(object):
 			# admin roles do not have created time, in that case
 			if hasattr(record[2], 'createdTime'):
 				ts = -record[2].createdTime
-			if not ts and catalog_entry is not None:
+			if not ts and catalog_entry is not None and catalog_entry.StartDate:
 				ts = -calendar.timegm(catalog_entry.StartDate.utctimetuple())
 			result = (0 if ICourseSubInstance.providedBy(record[0]) else 1, ts)
 			return result
@@ -153,7 +153,7 @@ class _EnrolledCourseSectionTopicNTIIDResolver(object):
 		return None
 
 	def _do_resolve(self, ntiid, user, provider_name, catalog_entry_matches=None):
-		result = self._solve_for_iface(ntiid, 
+		result = self._solve_for_iface(ntiid,
 									   IPrincipalAdministrativeRoleCatalog,
 									   provider_name,
 									   user,
@@ -161,9 +161,9 @@ class _EnrolledCourseSectionTopicNTIIDResolver(object):
 
 		# Enrolled
 		if result is None:
-			result = self._solve_for_iface(ntiid, 
+			result = self._solve_for_iface(ntiid,
 										   IPrincipalEnrollments,
-										   provider_name, 
+										   provider_name,
 										   user,
 										   catalog_entry_matches=catalog_entry_matches)
 		return result
@@ -182,8 +182,8 @@ class _EnrolledCourseSectionTopicNTIIDResolver(object):
 			# on enrollments.
 			def catalog_entry_matches(catalog_entry, _):
 				return catalog_entry.ntiid == provider_name_ntiid
-			result = self._do_resolve(ntiid, 
-									  user, 
+			result = self._do_resolve(ntiid,
+									  user,
 									  provider_name,
 									  catalog_entry_matches=catalog_entry_matches)
 		else:
