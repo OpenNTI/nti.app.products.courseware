@@ -15,6 +15,8 @@ import six
 from zope.interface.interfaces import IMethod
 
 from nti.app.products.courseware import ASSETS_FOLDER
+from nti.app.products.courseware import IMAGES_FOLDER
+from nti.app.products.courseware import DOCUMENTS_FOLDER
 
 from nti.app.products.courseware.resources.interfaces import ICourseContentResource
 
@@ -46,7 +48,9 @@ def save_resources_to_filer(provided, obj, filer, ext_obj=None):
 				path = resource.path
 				path = os.path.split(path)[0]  # remove resource name
 				path = path[1:] if path.startswith('/') else path
-				path = os.path.join(ASSETS_FOLDER, path)
+				if 		not path.startswith(IMAGES_FOLDER) \
+					and not path.startswith(DOCUMENTS_FOLDER):
+					path = os.path.join(ASSETS_FOLDER, path)
 			else:
 				path = ASSETS_FOLDER
 			# save resource
