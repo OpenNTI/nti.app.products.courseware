@@ -46,6 +46,7 @@ def save_resources_to_filer(provided, obj, filer, ext_obj=None):
 				path = resource.path
 				path = os.path.split(path)[0]  # remove resource name
 				path = path[1:] if path.startswith('/') else path
+				path = os.path.join(ASSETS_FOLDER, path)
 			else:
 				path = ASSETS_FOLDER
 			# save resource
