@@ -16,8 +16,14 @@ from zope import interface
 
 from zope.security.interfaces import IPrincipal
 
+from nti.app.contentfile.acl import ContentBaseFileACLProvider
+
+from nti.app.contentfolder.acl import ContentFolderACLProvider
+
 from nti.app.products.courseware.resources.interfaces import ICourseRootFolder
+from nti.app.products.courseware.resources.interfaces import ICourseContentFile
 from nti.app.products.courseware.resources.interfaces import ICourseLockedFolder
+from nti.app.products.courseware.resources.interfaces import ICourseContentFolder
 
 from nti.common.property import Lazy
 
@@ -41,6 +47,17 @@ from nti.dataserver.interfaces import ALL_PERMISSIONS
 
 from nti.traversal.traversal import find_interface
 
+def _common_aces(course, aces):
+	# all scopes have read access
+	course.initScopes()
+	for scope in course.SharingScopes:
+		aces.append(ace_allowing(IPrincipal(scope), ACT_READ, type(self)))
+
+	if ICourseSubInstance.providedBy(course):
+		parent = get_parent_course(course)
+		for i in chain(parent.instructors or (), get_course_editors(parent)):
+			aces.append(ace_allowing(i, ACT_READ, type(self)))
+
 @interface.implementer(IACLProvider)
 @component.adapter(ICourseRootFolder)
 class CourseRootFolderACLProvider(object):
@@ -61,15 +78,7 @@ class CourseRootFolderACLProvider(object):
 		for i in chain(course.instructors or (), get_course_editors(course)):
 			aces.append(ace_allowing(i, ALL_PERMISSIONS, type(self)))
 
-		# all scopes have read access
-		course.initScopes()
-		for scope in course.SharingScopes:
-			aces.append(ace_allowing(IPrincipal(scope), ACT_READ, type(self)))
-
-		if ICourseSubInstance.providedBy(course):
-			parent = get_parent_course(course)
-			for i in chain(parent.instructors or (), get_course_editors(parent)):
-				aces.append(ace_allowing(i, ACT_READ, type(self)))
+		_common_aces(course, aces)
 
 		result = acl_from_aces(aces)
 		return result
@@ -108,5 +117,37 @@ class CourseLockedFolderACLProvider(object):
 			for perm in perms:
 				aces.append(ace_allowing(i, perm, type(self)))
 		aces.append(ace_denying_all())
+		result = acl_from_aces(aces)
+		return result
+
+@interface.implementer(IACLProvider)
+@component.adapter(ICourseContentFolder)
+class CourseContentFolderACLProvider(ContentFolderACLProvider):
+
+	@Lazy
+	def __acl__(self):
+		aces = super(CourseContentFolderACLProvider, self).__aces__
+		course = find_interface(self.context, ICourseInstance, strict=True)
+		for i in chain(course.instructors or (), get_course_editors(course)):
+			aces.append(ace_allowing(i, ALL_PERMISSIONS, type(self)))
+
+		_common_aces(course, aces)
+
+		result = acl_from_aces(aces)
+		return result
+
+@interface.implementer(IACLProvider)
+@component.adapter(ICourseContentFile)
+class CourseContentFileACLProvider(ContentBaseFileACLProvider):
+
+	@Lazy
+	def __acl__(self):
+		aces = super(CourseContentFileACLProvider, self).__aces__
+		course = find_interface(self.context, ICourseInstance, strict=True)
+		for i in chain(course.instructors or (), get_course_editors(course)):
+			aces.append(ace_allowing(i, ALL_PERMISSIONS, type(self)))
+
+		_common_aces(course, aces)
+
 		result = acl_from_aces(aces)
 		return result

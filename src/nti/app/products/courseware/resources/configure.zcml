@@ -44,8 +44,10 @@
 			 name="resources" />
 
 	<!-- ACL -->
+	<adapter factory=".acl.CourseContentFileACLProvider" />
 	<adapter factory=".acl.CourseRootFolderACLProvider" />
 	<adapter factory=".acl.CourseLockedFolderACLProvider" />
+	<adapter factory=".acl.CourseContentFolderACLProvider" />
 
 	<!-- Subscribers -->
 	<subscriber handler=".subscribers._on_course_added"  />
