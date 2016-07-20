@@ -26,6 +26,8 @@ from nti.app.base.abstract_views import AbstractAuthenticatedView
 
 from nti.app.contentfile import validate_sources
 
+from nti.app.contentfolder.utils import get_unique_file_name
+
 from nti.app.externalization.internalization import read_body_as_external_object
 
 from nti.app.products.courseware import ASSETS_FOLDER
@@ -33,8 +35,6 @@ from nti.app.products.courseware import ASSETS_FOLDER
 from nti.app.products.courseware.discussions import get_topic_key
 from nti.app.products.courseware.discussions import create_topics
 from nti.app.products.courseware.discussions import auto_create_forums
-
-from nti.app.products.courseware.resources.filer import get_unique_file_name
 
 from nti.app.products.courseware.resources.utils import get_course_filer
 from nti.app.products.courseware.resources.utils import is_internal_file_link	
@@ -172,7 +172,7 @@ class CourseDiscussionsPostView(UGDPostView):
 		discussion.updateLastMod()
 
 		# get a unique file nane
-		name = get_unique_file_name("discussion.json", self.context)
+		name, _ = get_unique_file_name("discussion.json", container=self.context)
 
 		# set a proper NTI course bundle id
 		course = ICourseInstance(self.context)
