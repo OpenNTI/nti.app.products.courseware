@@ -49,7 +49,7 @@ from nti.traversal.traversal import find_interface
 
 def _common_aces(course, aces):
 	# all scopes have read access
-	course.initScopes()
+	course.SharingScopes.initScopes()
 	for scope in course.SharingScopes:
 		aces.append(ace_allowing(IPrincipal(scope), ACT_READ, type(self)))
 
@@ -100,7 +100,7 @@ class CourseLockedFolderACLProvider(object):
 		for i in chain(course.instructors or (), get_course_editors(course)):
 			yield i, (ACT_READ, ACT_UPDATE)
 
-		course.initScopes()
+		course.SharingScopes.initScopes()
 		for scope in course.SharingScopes:
 			yield IPrincipal(scope), (ACT_READ,)
 
