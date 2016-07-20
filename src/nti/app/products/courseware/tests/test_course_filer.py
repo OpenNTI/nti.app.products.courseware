@@ -83,4 +83,4 @@ class TestCourseFiler(ApplicationLayerTest):
 			href = filer.save("ichigo.xml", source, contentType="text/xml",
 							  overwrite=False, bucket="bleach/shikai")
 			obj = filer.get(href)
-			assert_that(obj, has_property('name', starts_with('ichigo_')))
+			assert_that(obj, has_property('name', starts_with('ichigo.')))
