@@ -47,16 +47,16 @@ from nti.dataserver.interfaces import ALL_PERMISSIONS
 
 from nti.traversal.traversal import find_interface
 
-def _common_aces(course, aces):
+def _common_aces(course, aces, provenance=None):
 	# all scopes have read access
 	course.SharingScopes.initScopes()
 	for scope in course.SharingScopes:
-		aces.append(ace_allowing(IPrincipal(scope), ACT_READ, type(self)))
+		aces.append(ace_allowing(IPrincipal(scope), ACT_READ, provenance))
 
 	if ICourseSubInstance.providedBy(course):
 		parent = get_parent_course(course)
 		for i in chain(parent.instructors or (), get_course_editors(parent)):
-			aces.append(ace_allowing(i, ACT_READ, type(self)))
+			aces.append(ace_allowing(i, ACT_READ, provenance))
 
 @interface.implementer(IACLProvider)
 @component.adapter(ICourseRootFolder)
@@ -78,7 +78,7 @@ class CourseRootFolderACLProvider(object):
 		for i in chain(course.instructors or (), get_course_editors(course)):
 			aces.append(ace_allowing(i, ALL_PERMISSIONS, type(self)))
 
-		_common_aces(course, aces)
+		_common_aces(course, aces, type(self))
 
 		result = acl_from_aces(aces)
 		return result
@@ -131,7 +131,7 @@ class CourseContentFolderACLProvider(ContentFolderACLProvider):
 		for i in chain(course.instructors or (), get_course_editors(course)):
 			aces.append(ace_allowing(i, ALL_PERMISSIONS, type(self)))
 
-		_common_aces(course, aces)
+		_common_aces(course, aces, type(self))
 
 		result = acl_from_aces(aces)
 		return result
@@ -147,7 +147,7 @@ class CourseContentFileACLProvider(ContentBaseFileACLProvider):
 		for i in chain(course.instructors or (), get_course_editors(course)):
 			aces.append(ace_allowing(i, ALL_PERMISSIONS, type(self)))
 
-		_common_aces(course, aces)
+		_common_aces(course, aces, type(self))
 
 		result = acl_from_aces(aces)
 		return result
