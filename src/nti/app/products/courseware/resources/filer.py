@@ -15,8 +15,6 @@ from zope import interface
 
 from plone.namedfile.file import getImageInfo
 
-from slugify import slugify_filename
-
 from nti.app.contentfile import transfer_data
 
 from nti.app.products.courseware import ASSETS_FOLDER
@@ -36,6 +34,8 @@ from nti.app.products.courseware.resources.utils import is_internal_file_link
 from nti.app.products.courseware.resources.utils import to_external_file_link
 from nti.app.products.courseware.resources.utils import get_file_from_external_link
 
+from nti.app.contentfolder.utils import get_unique_file_name
+
 from nti.contentfolder.utils import mkdirs
 from nti.contentfolder.utils import traverse
 from nti.contentfolder.utils import TraversalException
@@ -44,25 +44,11 @@ from nti.contenttypes.courses.interfaces import ICourseInstance
 
 from nti.common.file import safe_filename
 
-from nti.common.random import generate_random_hex_string
-
 from nti.coremetadata.interfaces import SYSTEM_USER_ID
 
 from nti.common.mimetypes import guess_type
 
 from nti.traversal.traversal import find_interface
-
-def get_unique_file_name(text, container):
-	separator = '_'
-	newtext = text
-	slugified = slugify_filename(text)
-	text_noe, ext = os.path.splitext(slugified)
-	while True:
-		if newtext not in container:
-			break
-		s = generate_random_hex_string(6)
-		newtext = "%s%s%s%s" % (text_noe, separator, s, ext)
-	return newtext
 
 def get_namedfile_factory(source):
 	contentType = getattr(source, 'contentType', None)
@@ -152,7 +138,7 @@ class CourseSourceFiler(object):
 			if key in bucket:
 				bucket.remove(key)
 		else:
-			key = get_unique_file_name(key, bucket)
+			key, _ = get_unique_file_name(key, bucket)
 
 		namedfile = get_namedfile_from_source(source, key)
 		namedfile.creator = username or SYSTEM_USER_ID  # set creator
