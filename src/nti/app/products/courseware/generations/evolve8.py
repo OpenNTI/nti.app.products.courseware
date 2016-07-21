@@ -50,8 +50,9 @@ def _transformer(container, intids):
 		if INamedContainer.providedBy(value):
 			_transformer(value, intids)
 		elif IContentBaseFile.providedBy(value) and value.has_associations():
-			for obj in list(value.associations()):
-				value.remove_association(obj)
+			associations = list(value.associations())
+			value.clear_associations()
+			for obj in associations:
 				if intids.queryId(obj) is not None:
 					value.add_association(obj)
 
