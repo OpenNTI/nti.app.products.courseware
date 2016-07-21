@@ -24,6 +24,8 @@ from nti.app.products.courseware.resources.filer import get_unique_file_name
 from nti.app.products.courseware.resources.utils import get_images_folder
 from nti.app.products.courseware.resources.utils import get_documents_folder
 
+from nti.common.string import to_unicode
+
 from nti.contentfolder.interfaces import INamedContainer
 
 from nti.contenttypes.courses.interfaces import ICourseCatalog
@@ -66,7 +68,7 @@ def _mover(container, images, documents):
 				target = documents
 			target_name = get_unique_file_name(name,  target)
 			if target_name != name:
-				value.name = value.filename = target_name
+				value.name = value.filename = to_unicode(target_name)
 			container.moveTo(value, target, target_name)
 
 	if not container:
