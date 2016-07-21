@@ -61,7 +61,7 @@ def get_namedfile_factory(source):
 	contentType = contentType or u'application/octet-stream'
 	return factory, contentType
 
-def get_namedfile_from_source(source, name):
+def get_namedfile_from_source(source, name, filename=None):
 	factory, contentType = get_namedfile_factory(source)
 	result = factory()
 	result.name = name
@@ -70,7 +70,7 @@ def get_namedfile_from_source(source, name):
 	# for filename we want to use the filename as originally provided on the source, not
 	# the sluggified internal name. This allows us to give it back in the
 	# Content-Disposition header on download
-	result.filename = result.filename or getattr(source, 'name', name)
+	result.filename = filename or result.filename or getattr(source, 'name', name)
 	return result
 
 def is_image(key, contentType=None):
@@ -133,14 +133,15 @@ class CourseSourceFiler(object):
 		else:
 			bucket = self.root
 
+		filename = None
 		key = safe_filename(key)
 		if overwrite:
 			if key in bucket:
 				bucket.remove(key)
 		else:
-			key, _ = get_unique_file_name(key, bucket)
+			key, filename = get_unique_file_name(key, bucket)
 
-		namedfile = get_namedfile_from_source(source, key)
+		namedfile = get_namedfile_from_source(source, key, filename)
 		namedfile.creator = username or SYSTEM_USER_ID  # set creator
 		namedfile.contentType = contentType if contentType else namedfile.contentType
 		bucket.add(namedfile)
