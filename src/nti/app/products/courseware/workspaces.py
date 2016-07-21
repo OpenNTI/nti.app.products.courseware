@@ -188,7 +188,7 @@ class AllCoursesCollection(Contained):
 	def __len__(self):
 		return 1
 
-from nti.dataserver.datastructures import LastModifiedCopyingUserList
+from nti.datastructures.datastructures import LastModifiedCopyingUserList
 
 class _AbstractQueryBasedCoursesCollection(Contained):
 	"""
