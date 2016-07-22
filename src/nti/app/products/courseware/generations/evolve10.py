@@ -76,7 +76,7 @@ def _convert(name, value, container):
 	container[name] = result
 	return result
 
-def _transformer(container, catalog, intids):
+def _transformer(container, intids):
 	for name, value in list(container.items()):	
 		if INamedContainer.providedBy(value):
 			_transformer(value, intids)
@@ -95,7 +95,7 @@ def _rebase_assets(site, entry, catalog, intids):
 				source = get_file_from_external_link(value)
 				if source is None:
 					continue
-				if not isinstance(value, (CourseContentFile, CourseContentImage)):
+				if not isinstance(source, (CourseContentFile, CourseContentImage)):
 					name = source.__name__
 					container = source.__parent__
 					if 		ICourseContentFolder.providedBy(container) \
@@ -103,9 +103,8 @@ def _rebase_assets(site, entry, catalog, intids):
 						source = _convert(name, source, container)
 						link = to_external_file_link(source)
 						setattr(item, name, link)
-				if hasattr(source, "add_association"):
 					source.add_association(item)
-			
+
 def _migrate(current, seen, intids):
 	libray_catalog = get_library_catalog()
 	with current_site(current):
