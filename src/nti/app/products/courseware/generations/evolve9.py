@@ -74,6 +74,7 @@ def _migrate(current, seen, intids):
 	with current_site(current):
 		catalog = component.queryUtility(ICourseCatalog)
 		for entry in catalog.iterCatalogEntries():
+			logger.info("Course %s", entry.ntiid)
 			course = ICourseInstance(entry)
 			resources = course_resources(course, create=False)
 			if not resources:
@@ -100,6 +101,7 @@ def do_evolve(context, generation=generation):
 		lsm = ds_folder.getSiteManager()
 		intids = lsm.getUtility(IIntIds)
 		for current in get_all_host_sites():
+			logger.info("Processing site %s", current)
 			_migrate(current, seen, intids)
 
 	component.getGlobalSiteManager().unregisterUtility(mock_ds, IDataserver)
