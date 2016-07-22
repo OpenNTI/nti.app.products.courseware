@@ -59,8 +59,11 @@ def _transformer(container):
 			if not m:
 				m = re.match(r"\((.*),(.*)\)", value.name)
 			if not m:
-				continue
-			if m.groups()[0] == m.groups()[1]:
+				m = re.match(r"\((.*),(.*)\)", value.filename)
+				if m:
+					value.filename = m.groups()[0]
+					continue
+			if m and m.groups()[0] == m.groups()[1]:
 				value.filename = m.groups()[0]
 				container._delitemf(name, event=False)
 				value.__name__ = value.name = m.groups()[0]
