@@ -49,7 +49,7 @@ class MockDataserver(object):
 			return resolver.get_object_by_oid(oid, ignore_creator=ignore_creator)
 		return None
 
-def _mover(container, images, documents):
+def mover(container, images, documents):
 	if container is images or container  is documents:
 		return
 
@@ -59,7 +59,7 @@ def _mover(container, images, documents):
 			continue
 			
 		if INamedContainer.providedBy(value):
-			_mover(value, images, documents)
+			mover(value, images, documents)
 		else:
 			contentType = getattr(value, 'contentType', None)
 			if is_image(name, contentType):
@@ -78,8 +78,6 @@ def _mover(container, images, documents):
 def _migrate(current, seen):
 	with current_site(current):
 		catalog = component.queryUtility(ICourseCatalog)
-		if catalog is None or catalog.isEmpty():
-			return
 		for entry in catalog.iterCatalogEntries():
 			ntiid = entry.ntiid
 			if ntiid in seen:
@@ -91,7 +89,7 @@ def _migrate(current, seen):
 				continue
 			images = get_images_folder(course)
 			documents = get_documents_folder(course)
-			_mover(resources, images, documents)
+			mover(resources, images, documents)
 
 def do_evolve(context, generation=generation):
 	conn = context.connection
