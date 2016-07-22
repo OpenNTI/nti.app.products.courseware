@@ -31,7 +31,7 @@ from nti.app.products.courseware.resources.interfaces import ICourseContentFolde
 from nti.app.products.courseware.resources.utils import is_internal_file_link
 from nti.app.products.courseware.resources.utils import to_external_file_link
 from nti.app.products.courseware.resources.utils import get_file_from_external_link
-	
+
 from nti.contentfolder.interfaces import INamedContainer
 
 from nti.contentlibrary.indexed_data import get_library_catalog
@@ -65,19 +65,19 @@ def _convert(name, value, container):
 	result.filename = value.filename
 	result.__name__ = result.name = name
 	result.contentType = getattr(value, 'contentType', None)
-	
+
 	# XXX: Check for invalid filename
 	m = re.match(r"\(u'(.*)', u'(.*)'\)", value.filename)
 	if m is not None:
 		result.filename = m.groups()[0]
-				
+
 	# update container
 	del container[name]
 	container[name] = result
 	return result
 
 def _transformer(container, intids):
-	for name, value in list(container.items()):	
+	for name, value in list(container.items()):
 		if INamedContainer.providedBy(value):
 			_transformer(value, intids)
 		elif not isinstance(value, (CourseContentFile, CourseContentImage)):
@@ -87,8 +87,8 @@ def _rebase_assets(site, entry, catalog, intids):
 	items = catalog.search_objects(sites=site.__name__,
 						  		   provided=INTIRelatedWorkRef,
 						  		   container_ntiids=entry.ntiid,
-						  		   intids=intids)	
-	for item in items:	
+						  		   intids=intids)
+	for item in items:
 		for name in ('href', 'icon'):
 			value = getattr(item, name, None)
 			if is_internal_file_link(value or u''):
