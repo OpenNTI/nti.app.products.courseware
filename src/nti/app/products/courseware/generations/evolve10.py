@@ -59,7 +59,8 @@ def _transformer(container, intids):
 			new_value.__name__ = new_value.name = name
 			new_value.contentType = getattr(value, 'contentType', None)
 
-			m = re.match(r"\(u'(.*)', u'(.*)'\)", value.filename) # match tree/key
+			# XXX: Check for invalid filename
+			m = re.match(r"\(u'(.*)', u'(.*)'\)", value.filename)
 			if m is not None:
 				new_value.filename = m.groups()[0]
 
