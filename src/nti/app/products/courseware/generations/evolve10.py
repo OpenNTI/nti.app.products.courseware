@@ -117,7 +117,4 @@ def do_evolve(context, generation=generation):
 	logger.info('Evolution %s done.', generation)
 
 def evolve(context):
-	"""
-	Evolve to generation 10 by making all files course files of a single class
-	"""
-	do_evolve(context, generation)
+	pass
