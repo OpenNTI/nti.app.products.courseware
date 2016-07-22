@@ -32,9 +32,9 @@ def _convert_to_locked_folders(current, seen, intids):
 	with current_site(current):
 		catalog = component.getUtility(ICourseCatalog)
 		for entry in catalog.iterCatalogEntries():
-			course = ICourseInstance(entry)
-			doc_id = intids.getId(course)
-			if doc_id in seen:
+			course = ICourseInstance(entry, None)
+			doc_id = intids.getId(course) if course is not None else None
+			if doc_id is None or doc_id in seen:
 				continue
 			seen.add(doc_id)
 			for get_folder in (get_documents_folder, get_images_folder):
