@@ -75,10 +75,6 @@ def _migrate(current, seen, intids):
 		catalog = component.queryUtility(ICourseCatalog)
 		for entry in catalog.iterCatalogEntries():
 			course = ICourseInstance(entry)
-			doc_id = intids.getId(course)
-			if doc_id in seen:
-				continue
-			seen.add(doc_id)
 			resources = course_resources(course, create=False)
 			if not resources:
 				continue
