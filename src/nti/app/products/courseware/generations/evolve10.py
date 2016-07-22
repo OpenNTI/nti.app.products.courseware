@@ -11,6 +11,8 @@ logger = __import__('logging').getLogger(__name__)
 
 generation = 10
 
+import re
+
 from zope import component
 from zope import interface
 
@@ -46,17 +48,21 @@ class MockDataserver(object):
 			return resolver.get_object_by_oid(oid, ignore_creator=ignore_creator)
 		return None
 
-def _transformer(container, intids):
+def _transformer(container, intids):	
 	for name, value in list(container.items()):	
 		if INamedContainer.providedBy(value):
-			_transformer(value)
+			_transformer(value, intids)
 		elif not isinstance(value, (CourseContentFile, CourseContentImage)):
 			new_value = CourseContentFile()
 			new_value.data = value.data
 			new_value.filename = value.filename
 			new_value.__name__ = new_value.name = name
 			new_value.contentType = getattr(value, 'contentType', None)
-			
+
+			m = re.match(r"\(u'(.*)', u'(.*)'\)", value.filename) # match tree/key
+			if m is not None:
+				new_value.filename = m.groups()[0]
+
 			# update associations
 			if hasattr(value, 'associations'):
 				associations =  list(value.associations())
@@ -70,7 +76,7 @@ def _transformer(container, intids):
 
 			# update w/ intid
 			doc_id = intids.getId(value)
-			intids.forceUnregister(doc_id, notify=False)
+			intids.forceUnregister(doc_id, value, notify=False)
 			intids.forceRegister(doc_id, new_value)
 			
 			value.__parent__ = None # ground

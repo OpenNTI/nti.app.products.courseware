@@ -16,6 +16,8 @@ from zope import interface
 
 from zope.component.hooks import site as current_site
 
+from zope.intid.interfaces import IIntIds
+
 from nti.contenttypes.courses.discussions.interfaces import ICourseDiscussions
 
 from nti.contenttypes.courses.interfaces import ICourseCatalog
@@ -39,16 +41,16 @@ class MockDataserver(object):
 			return resolver.get_object_by_oid(oid, ignore_creator=ignore_creator)
 		return None
 
-def _migrate(current, seen):
+def _migrate(current, seen, intids):
 	with current_site(current):
-		catalog = component.queryUtility(ICourseCatalog)
-		if catalog is None or catalog.isEmpty():
-			return
+		catalog = component.getUtility(ICourseCatalog)
 		for entry in catalog.iterCatalogEntries():
 			ntiid = entry.ntiid
-			if ntiid in seen:
+			course = ICourseInstance(entry)
+			doc_id = intids.getId(course)
+			if doc_id in seen:
 				continue
-			seen.add(ntiid)
+			seen.add(doc_id)
 			course = ICourseInstance(entry)
 			course_discussions = ICourseDiscussions(course)
 			if not course_discussions:
@@ -73,8 +75,10 @@ def do_evolve(context, generation=generation):
 				"Hooks not installed?"
 
 		seen = set()
+		lsm = ds_folder.getSiteManager()
+		intids = lsm.getUtility(IIntIds)
 		for current in get_all_host_sites():
-			_migrate(current, seen)
+			_migrate(current, seen, intids)
 
 	component.getGlobalSiteManager().unregisterUtility(mock_ds, IDataserver)
 	logger.info('Evolution %s done.', generation)
