@@ -56,11 +56,11 @@ def _transformer(container):
 			_transformer(value)
 		else:
 			pattern = r"\(u'(.*)', u'(.*)'\)"
-			m = re.match(pattern, name)
+			m = re.match(pattern, name) # match tree/key
 			if not m:
-				m = re.match(pattern, value.name)
+				m = re.match(pattern, value.name) # match name
 			if not m:
-				m = re.match(pattern, value.filename)
+				m = re.match(pattern, value.filename) # match display name
 				if m:
 					value.filename = m.groups()[0]
 					continue
@@ -73,10 +73,13 @@ def _transformer(container):
 
 def _migrate(current, seen, intids):
 	with current_site(current):
-		catalog = component.queryUtility(ICourseCatalog)
+		catalog = component.getUtility(ICourseCatalog)
 		for entry in catalog.iterCatalogEntries():
-			logger.info("Course %s", entry.ntiid)
 			course = ICourseInstance(entry)
+			doc_id = intids.getId(course)
+			if doc_id in seen:
+				continue
+			seen.add(doc_id)
 			resources = course_resources(course, create=False)
 			if resources is None:
 				continue
@@ -102,7 +105,6 @@ def do_evolve(context, generation=generation):
 		lsm = ds_folder.getSiteManager()
 		intids = lsm.getUtility(IIntIds)
 		for current in get_all_host_sites():
-			logger.info("Processing site %s", current)
 			_migrate(current, seen, intids)
 
 	component.getGlobalSiteManager().unregisterUtility(mock_ds, IDataserver)

@@ -58,17 +58,15 @@ def _transformer(container, intids):
 
 def _migrate(current, seen, intids):
 	with current_site(current):
-		catalog = component.queryUtility(ICourseCatalog)
-		if catalog is None or catalog.isEmpty():
-			return
+		catalog = component.getUtility(ICourseCatalog)
 		for entry in catalog.iterCatalogEntries():
-			ntiid = entry.ntiid
-			if ntiid in seen:
-				continue
-			seen.add(ntiid)
 			course = ICourseInstance(entry)
+			doc_id = intids.getId(course)
+			if doc_id in seen:
+				continue
+			seen.add(doc_id)
 			resources = course_resources(course, create=False)
-			if resources:
+			if resources is not None:
 				_transformer(resources, intids)
 
 def do_evolve(context, generation=generation):

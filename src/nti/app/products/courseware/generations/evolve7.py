@@ -14,6 +14,8 @@ generation = 7
 from zope import component
 from zope import interface
 
+from zope.intid.interfaces import IIntIds
+
 from zope.component.hooks import site as current_site
 
 from nti.app.products.courseware.resources.interfaces import ICourseLockedFolder
@@ -26,17 +28,15 @@ from nti.contenttypes.courses.interfaces import ICourseInstance
 
 from nti.site.hostpolicy import get_all_host_sites
 
-def _convert_to_locked_folders(current, seen):
+def _convert_to_locked_folders(current, seen, intids):
 	with current_site(current):
-		catalog = component.queryUtility(ICourseCatalog)
-		if catalog is None or catalog.isEmpty():
-			return
+		catalog = component.getUtility(ICourseCatalog)
 		for entry in catalog.iterCatalogEntries():
-			ntiid = entry.ntiid
-			if ntiid in seen:
-				continue
-			seen.add(ntiid)
 			course = ICourseInstance(entry)
+			doc_id = intids.getId(course)
+			if doc_id in seen:
+				continue
+			seen.add(doc_id)
 			for get_folder in (get_documents_folder, get_images_folder):
 				folder = get_folder(course)
 				if not ICourseLockedFolder.providedBy(folder):
@@ -51,8 +51,10 @@ def do_evolve(context, generation=generation):
 				"Hooks not installed?"
 
 		seen = set()
+		lsm = ds_folder.getSiteManager()
+		intids = lsm.getUtility(IIntIds)
 		for current in get_all_host_sites():
-			_convert_to_locked_folders(current, seen)
+			_convert_to_locked_folders(current, seen, intids)
 
 	logger.info('Evolution %s done.', generation)
 
