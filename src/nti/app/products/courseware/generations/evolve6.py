@@ -66,9 +66,10 @@ def _mover(container, images, documents):
 				target = images
 			else:
 				target = documents
-			target_name = get_unique_file_name(name,  target)
+			target_name, filename = get_unique_file_name(name,  target)
 			if target_name != name:
-				value.name = value.filename = to_unicode(target_name)
+				value.name = to_unicode(target_name)
+				value.filename = to_unicode(filename)
 			container.moveTo(value, target, target_name)
 
 	if not container:
