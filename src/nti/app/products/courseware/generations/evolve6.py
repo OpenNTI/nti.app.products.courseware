@@ -70,6 +70,7 @@ def mover(container, images, documents):
 			if target_name != name:
 				value.name = to_unicode(target_name)
 				value.filename = to_unicode(filename)
+			logger.info("moving %s to %s/%s", name, target.name, target_name)
 			container.moveTo(value, target, target_name)
 
 	if not container:
