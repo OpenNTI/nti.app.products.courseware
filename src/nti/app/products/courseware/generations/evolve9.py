@@ -55,11 +55,12 @@ def _transformer(container):
 		if INamedContainer.providedBy(value):
 			_transformer(value)
 		else:
-			m = re.match(r"\((.*),(.*)\)", name)
+			pattern = r"\(u'(.*)', u'(.*)'\)"
+			m = re.match(pattern, name)
 			if not m:
-				m = re.match(r"\((.*),(.*)\)", value.name)
+				m = re.match(pattern, value.name)
 			if not m:
-				m = re.match(r"\((.*),(.*)\)", value.filename)
+				m = re.match(pattern, value.filename)
 				if m:
 					value.filename = m.groups()[0]
 					continue
@@ -77,7 +78,7 @@ def _migrate(current, seen, intids):
 			logger.info("Course %s", entry.ntiid)
 			course = ICourseInstance(entry)
 			resources = course_resources(course, create=False)
-			if not resources:
+			if resources is None:
 				continue
 			_transformer(resources)
 			# move to images / documents
