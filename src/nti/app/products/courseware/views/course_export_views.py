@@ -70,7 +70,7 @@ def _export_course_response(context, response):
 @view_defaults(route_name='objects.generic.traversal',
 			   renderer='rest',
 			   name='Export',
-			   permission=nauth.ACT_NTI_ADMIN)
+			   permission=nauth.ACT_CONTENT_EDIT)
 class CourseExportView(AbstractAuthenticatedView):
 
 	def __call__(self):
@@ -80,7 +80,7 @@ class CourseExportView(AbstractAuthenticatedView):
 			 renderer='rest',
 			 name='ExportCourse',
 			 context=CourseAdminPathAdapter,
-			 permission=nauth.ACT_NTI_ADMIN)
+			 permission=nauth.ACT_CONTENT_EDIT)
 class AdminExportCourseView(AbstractAuthenticatedView,
 				 			ModeledContentUploadRequestUtilsMixin):
 
