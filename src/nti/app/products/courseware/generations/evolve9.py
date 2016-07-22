@@ -18,6 +18,8 @@ from zope import interface
 
 from zope.component.hooks import site as current_site
 
+from zope.intid.interfaces import IIntIds
+
 from nti.app.products.courseware.generations import evolve6
 
 from nti.app.products.courseware.resources.adapters import course_resources
@@ -53,23 +55,27 @@ def _transformer(container):
 		if INamedContainer.providedBy(value):
 			_transformer(value)
 		else:
-			m  = re.match(r"\((.*),(.*)\)", name)
-			if m and m.groups()[0] == m.groups()[1]:
+			m = re.match(r"\((.*),(.*)\)", name)
+			if not m:
+				m = re.match(r"\((.*),(.*)\)", value.name)
+			if not m:
+				continue
+			if m.groups()[0] == m.groups()[1]:
 				value.filename = m.groups()[0]
 				container._delitemf(name, event=False)
 				value.__name__ = value.name = m.groups()[0]
 				container._setitemf(value.name, value)
 				logger.warn("%s was renamed to %s", name, value.filename)
 
-def _migrate(current, seen):
+def _migrate(current, seen, intids):
 	with current_site(current):
 		catalog = component.queryUtility(ICourseCatalog)
 		for entry in catalog.iterCatalogEntries():
-			ntiid = entry.ntiid
-			if ntiid in seen:
-				continue
-			seen.add(ntiid)
 			course = ICourseInstance(entry)
+			doc_id = intids.getId(course)
+			if doc_id in seen:
+				continue
+			seen.add(doc_id)
 			resources = course_resources(course, create=False)
 			if not resources:
 				continue
@@ -92,8 +98,10 @@ def do_evolve(context, generation=generation):
 				"Hooks not installed?"
 
 		seen = set()
+		lsm = ds_folder.getSiteManager()
+		intids = lsm.getUtility(IIntIds)
 		for current in get_all_host_sites():
-			_migrate(current, seen)
+			_migrate(current, seen, intids)
 
 	component.getGlobalSiteManager().unregisterUtility(mock_ds, IDataserver)
 	logger.info('Evolution %s done.', generation)
