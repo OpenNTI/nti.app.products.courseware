@@ -107,7 +107,7 @@ class CourseImportMixin(ModeledContentUploadRequestUtilsMixin):
 @view_defaults(route_name='objects.generic.traversal',
 			   renderer='rest',
 			   name='Import',
-			   permission=nauth.ACT_NTI_ADMIN)
+			   permission=nauth.ACT_CONTENT_EDIT)
 class CourseImportView(AbstractAuthenticatedView, CourseImportMixin):
 
 	def _do_call(self):
@@ -130,7 +130,7 @@ class CourseImportView(AbstractAuthenticatedView, CourseImportMixin):
 			 name='ImportCourse',
 			 request_method='POST',
 			 context=CourseAdminPathAdapter,
-			 permission=nauth.ACT_NTI_ADMIN)
+			 permission=nauth.ACT_CONTENT_EDIT)
 class ImportCourseView(AbstractAuthenticatedView, CourseImportMixin):
 
 	def _import_course(self, ntiid, path, writeout=True):
