@@ -431,11 +431,12 @@ class CourseActivityGetView(AbstractAuthenticatedView,
 
 from nti.app.externalization.view_mixins import ModeledContentUploadRequestUtilsMixin
 
-from nti.common.time import time_to_64bit_int
-from nti.common.time import bit64_int_to_time
-
 from nti.links.links import Link
 
+from nti.zodb.containers import bit64_int_to_time
+from nti.zodb.containers import time_to_64bit_int
+
+bit64_int_to_time
 LINKS = StandardExternalFields.LINKS
 
 @view_config(route_name='objects.generic.traversal',
