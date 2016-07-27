@@ -750,8 +750,8 @@ class ImportExportLinkDecorator(AbstractAuthenticatedRequestAwareDecorator):
 
 	def _do_decorate_external(self, context, result):
 		_links = result.setdefault(LINKS, [])
-		for name in (VIEW_IMPORT_COURSE, VIEW_EXPORT_COURSE):
-			link = Link(context, rel=name, elements=('@@%s' % name,))
+		for name, method in ( (VIEW_IMPORT_COURSE, 'POST'), (VIEW_EXPORT_COURSE, 'GET')):
+			link = Link(context, rel=name, elements=('@@%s' % name,), method=method)
 			interface.alsoProvides(link, ILocation)
 			link.__name__ = ''
 			link.__parent__ = context
