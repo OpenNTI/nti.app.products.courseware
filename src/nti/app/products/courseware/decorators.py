@@ -23,6 +23,8 @@ from pyramid.threadlocal import get_current_request
 from nti.app.products.courseware import VIEW_CONTENTS
 from nti.app.products.courseware import VIEW_COURSE_MAIL
 from nti.app.products.courseware import VIEW_CATALOG_ENTRY
+from nti.app.products.courseware import VIEW_EXPORT_COURSE
+from nti.app.products.courseware import VIEW_IMPORT_COURSE
 from nti.app.products.courseware import VIEW_COURSE_ACTIVITY
 from nti.app.products.courseware import VIEW_COURSE_RECURSIVE
 from nti.app.products.courseware import VIEW_COURSE_CLASSMATES
@@ -151,8 +153,8 @@ class _CourseInstanceLinkDecorator(object):
 		except AttributeError:
 			pass
 
-@interface.implementer(IExternalMappingDecorator)
 @component.adapter(ICourseInstance)
+@interface.implementer(IExternalMappingDecorator)
 class _CourseMailLinkDecorator(AbstractAuthenticatedRequestAwareDecorator):
 	"""
 	Decorate the course email link on the course for instructors.
@@ -732,3 +734,25 @@ class _CourseInstancePreviewExcludingDecorator(PreviewCourseAccessPredicateDecor
 
 	def _do_decorate_external(self, context, result):
 		result.pop('Discussions', None)
+
+@component.adapter(ICourseInstance)
+@component.adapter(ICourseCatalogEntry)
+@interface.implementer(IExternalObjectDecorator)
+class ImportExportLinkDecorator(AbstractAuthenticatedRequestAwareDecorator):
+	"""
+	Decorate the import/export  links on the given context if the
+	remote user has edit permissions.
+	"""
+
+	def _predicate(self, context, result):
+		return 		self._is_authenticated \
+				and has_permission(ACT_CONTENT_EDIT, context, self.request)
+
+	def _do_decorate_external(self, context, result):
+		_links = result.setdefault(LINKS, [])
+		for name in (VIEW_IMPORT_COURSE, VIEW_EXPORT_COURSE):
+			link = Link(context, rel=name, elements=('@@%s' % name,))
+			interface.alsoProvides(link, ILocation)
+			link.__name__ = ''
+			link.__parent__ = context
+			_links.append(link)

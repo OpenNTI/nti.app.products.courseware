@@ -36,6 +36,7 @@ from nti.app.products.courseware.importer import delete_dir
 from nti.app.products.courseware.importer import create_course
 from nti.app.products.courseware.importer import import_course
 
+from nti.app.products.courseware.views import VIEW_IMPORT_COURSE
 from nti.app.products.courseware.views import CourseAdminPathAdapter
 
 from nti.cabinet.filer import transfer_to_native_file
@@ -106,7 +107,7 @@ class CourseImportMixin(ModeledContentUploadRequestUtilsMixin):
 @view_config(context=ICourseCatalogEntry)
 @view_defaults(route_name='objects.generic.traversal',
 			   renderer='rest',
-			   name='Import',
+			   name=VIEW_IMPORT_COURSE,
 			   permission=nauth.ACT_CONTENT_EDIT)
 class CourseImportView(AbstractAuthenticatedView, CourseImportMixin):
 

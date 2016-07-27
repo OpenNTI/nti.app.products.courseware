@@ -21,6 +21,7 @@ from nti.app.base.abstract_views import AbstractAuthenticatedView
 
 from nti.app.externalization.view_mixins import ModeledContentUploadRequestUtilsMixin
 
+from nti.app.products.courseware.views import VIEW_EXPORT_COURSE
 from nti.app.products.courseware.views import CourseAdminPathAdapter
 
 from nti.app.products.courseware.views._utils import _parse_course
@@ -69,7 +70,7 @@ def _export_course_response(context, response):
 @view_config(context=ICourseCatalogEntry)
 @view_defaults(route_name='objects.generic.traversal',
 			   renderer='rest',
-			   name='Export',
+			   name=VIEW_EXPORT_COURSE,
 			   permission=nauth.ACT_CONTENT_EDIT)
 class CourseExportView(AbstractAuthenticatedView):
 
