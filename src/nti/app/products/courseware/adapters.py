@@ -256,10 +256,15 @@ def _get_target_ntiid(obj):
 def _hierarchy_from_obj_and_course(course, obj):
 	target_ntiid = _get_target_ntiid(obj)
 	course = _get_valid_course_context(course)[0]
-	return OutlinePathFactory(course, target_ntiid)()
+	results = OutlinePathFactory(course, target_ntiid)()
+	return (results,)
 
 def _get_courses_from_container(obj, user=None):
 	results = set()
+	if ICourseInstance.providedBy( obj ):
+		results.add( obj )
+		return results
+
 	catalog = get_library_catalog()
 	if catalog:
 		containers = catalog.get_containers(obj)
@@ -413,6 +418,18 @@ def _catalog_entries_from_package(obj):
 def _courses_from_package_and_user(obj, user):
 	courses = content_unit_to_courses(obj, include_sub_instances=True)
 	results = _get_valid_course_context(courses)
+	return results
+
+@component.adapter(ICourseInstance, IUser)
+@interface.implementer(ITopLevelContainerContextProvider)
+def _top_level_context_from_course_and_user(obj, user):
+	results = _get_valid_course_context(obj)
+	return results
+
+@component.adapter(ICourseInstance)
+@interface.implementer(ITopLevelContainerContextProvider)
+def _top_level_context_from_course(obj):
+	results = _get_valid_course_context(obj)
 	return results
 
 def __courses_from_obj_and_user(obj, user=None):

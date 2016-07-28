@@ -127,12 +127,12 @@
 	<subscriber factory=".adapters._hierarchy_from_obj_and_user"
 				provides="nti.appserver.interfaces.IHierarchicalContextProvider"
 				for="nti.contentlibrary.interfaces.IContentUnit
-					nti.dataserver.interfaces.IUser"/>
+					 nti.dataserver.interfaces.IUser"/>
 
 	<subscriber factory=".adapters._hierarchy_from_obj_and_user"
 				provides="nti.appserver.interfaces.IHierarchicalContextProvider"
 				for="nti.contenttypes.presentation.interfaces.IPresentationAsset
-					nti.dataserver.interfaces.IUser"/>
+					 nti.dataserver.interfaces.IUser"/>
 
 	<!-- Top level context for course items -->
 	<subscriber factory=".adapters._courses_from_forum_obj"
@@ -169,6 +169,15 @@
 	<subscriber factory=".adapters._courses_from_package_and_user"
 				provides="nti.appserver.interfaces.ITopLevelContainerContextProvider"
 				for="nti.contentlibrary.interfaces.IContentUnit
+					 nti.dataserver.interfaces.IUser"/>
+
+	<subscriber factory=".adapters._top_level_context_from_course"
+				provides="nti.appserver.interfaces.ITopLevelContainerContextProvider"
+				for="nti.contenttypes.courses.interfaces.ICourseInstance"/>
+
+	<subscriber factory=".adapters._top_level_context_from_course_and_user"
+				provides="nti.appserver.interfaces.ITopLevelContainerContextProvider"
+				for="nti.contenttypes.courses.interfaces.ICourseInstance
 					 nti.dataserver.interfaces.IUser"/>
 
 	<subscriber factory=".adapters._courses_from_obj"
