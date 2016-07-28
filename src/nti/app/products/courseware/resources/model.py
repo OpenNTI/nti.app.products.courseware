@@ -24,10 +24,10 @@ from nti.common.property import CachedProperty
 from nti.contentfile.model import ContentBlobFile
 from nti.contentfile.model import ContentBlobImage
 
-from nti.contentfolder.interfaces import IRootFolder
-
 from nti.contentfolder.model import RootFolder
 from nti.contentfolder.model import ContentFolder
+
+from nti.contentfolder.utils import compute_path
 
 class AssociationsMixin(object):
 
@@ -57,17 +57,7 @@ class CourseContentResource(Contained):
 
 	@CachedProperty('__parent__', '__name__')
 	def path(self):
-		context = self
-		result = []
-		while context is not None and not IRootFolder.providedBy(context):
-			try:
-				result.append(context.__name__)
-				context = context.__parent__
-			except AttributeError:
-				break
-		result.reverse()
-		result = '/'.join(result)
-		result = '/' + result if not result.startswith('/' ) else result
+		result = compute_path(self)
 		return result
 
 @interface.implementer(ICourseContentFolder)
