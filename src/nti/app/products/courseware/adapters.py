@@ -257,7 +257,8 @@ def _hierarchy_from_obj_and_course(course, obj):
 	target_ntiid = _get_target_ntiid(obj)
 	course = _get_valid_course_context(course)[0]
 	results = OutlinePathFactory(course, target_ntiid)()
-	return (results,)
+	results = (results,) if results else results
+	return results
 
 def _get_courses_from_container(obj, user=None):
 	results = set()
