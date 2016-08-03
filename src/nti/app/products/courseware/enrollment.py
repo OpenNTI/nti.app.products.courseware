@@ -23,17 +23,17 @@ from nti.common.persistence import NoPickle
 
 from nti.common.property import alias
 
-from nti.common.representation import WithRepr
-
 from nti.contenttypes.courses.interfaces import ICourseCatalogEntry
 from nti.contenttypes.courses.interfaces import IDenyOpenEnrollment
 from nti.contenttypes.courses.interfaces import INonPublicCourseInstance
+
+from nti.externalization.externalization import to_external_object
 
 from nti.externalization.interfaces import LocatedExternalDict
 from nti.externalization.interfaces import StandardExternalFields
 from nti.externalization.interfaces import IInternalObjectExternalizer
 
-from nti.externalization.externalization import to_external_object
+from nti.externalization.representation import WithRepr
 
 from nti.schema.eqhash import EqHash
 

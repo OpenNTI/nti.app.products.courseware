@@ -40,14 +40,14 @@ from nti.contenttypes.courses.interfaces import ICourseInstance
 from nti.contenttypes.courses.interfaces import ICourseCatalogEntry
 from nti.contenttypes.courses.interfaces import IJoinCourseInvitation
 
-from nti.common.representation import WithRepr
-
 from nti.dataserver.interfaces import IUser
 
 from nti.dataserver.users import User
 from nti.dataserver.users.interfaces import IUserProfile
 
 from nti.externalization.externalization import to_external_object
+
+from nti.externalization.representation import WithRepr
 
 from nti.invitations.interfaces import IInvitationSentEvent
 
