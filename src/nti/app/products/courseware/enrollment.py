@@ -35,9 +35,9 @@ from nti.externalization.interfaces import IInternalObjectExternalizer
 
 from nti.externalization.externalization import to_external_object
 
-from nti.schema.field import SchemaConfigured
+from nti.schema.eqhash import EqHash
 
-from nti.schema.schema import EqHash
+from nti.schema.field import SchemaConfigured
 
 CLASS = StandardExternalFields.CLASS
 ITEMS = StandardExternalFields.ITEMS

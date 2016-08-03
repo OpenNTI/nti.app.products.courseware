@@ -95,7 +95,7 @@ from nti.recorder.record import append_records
 from nti.recorder.record import get_transactions
 from nti.recorder.record import TransactionRecord
 
-from nti.schema.schema import EqHash
+from nti.schema.eqhash import EqHash
 
 from nti.app.products.courseware.tests import CourseLayerTest
 
