@@ -50,6 +50,8 @@ from nti.app.renderers.decorators import AbstractAuthenticatedRequestAwareDecora
 
 from nti.appserver.pyramid_authorization import has_permission
 
+from nti.appserver.pyramid_renderers_edit_link_decorator import LinkRemoverDecorator
+
 from nti.common.hash import md5_base64_digest
 
 from nti.contenttypes.courses.common import get_course_packages
@@ -81,6 +83,8 @@ from nti.contenttypes.courses.utils import get_course_subinstances
 
 from nti.dataserver.authorization import ACT_NTI_ADMIN
 from nti.dataserver.authorization import ACT_CONTENT_EDIT
+
+from nti.dataserver.contenttypes.forums.interfaces import ITopic
 
 from nti.dataserver.interfaces import IUser
 from nti.dataserver.interfaces import IEntityContainer
@@ -756,3 +760,19 @@ class ImportExportLinkDecorator(AbstractAuthenticatedRequestAwareDecorator):
 			link.__name__ = ''
 			link.__parent__ = context
 			_links.append(link)
+
+@component.adapter(ITopic)
+@interface.implementer(IExternalObjectDecorator)
+class TopicAddRemoverLinkDecorator(LinkRemoverDecorator):
+	"""
+	Remove add link if not instructor but has course content edit perms
+	"""
+
+	links_to_remove = ('add',)
+	
+	def _predicate(self, context, result):
+		course = find_interface(context, ICourseInstance, strict=False)
+		return 		self._is_authenticated \
+				and course is not None \
+				and not is_course_instructor(course, self.remoteUser) \
+				and has_permission(ACT_CONTENT_EDIT, course, self.request)
