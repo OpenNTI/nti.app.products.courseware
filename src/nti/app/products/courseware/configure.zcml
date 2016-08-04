@@ -423,6 +423,11 @@
 				for="nti.app.products.courseware.interfaces.ICourseInstance
 					 pyramid.interfaces.IRequest" />
 
+	<subscriber factory=".decorators.TopicAddRemoverLinkDecorator"
+				provides="nti.externalization.interfaces.IExternalObjectDecorator"
+				for="nti.dataserver.contenttypes.forums.interfaces.ITopic
+					 pyramid.interfaces.IRequest"/>
+
 	<!--
 		 Get an href here to the real location, since we return these beneath Roster as well.
 		 Notice this is currently a very specific registration.
