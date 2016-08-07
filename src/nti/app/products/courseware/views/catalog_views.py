@@ -71,6 +71,9 @@ from nti.externalization.interfaces import StandardExternalFields
 from nti.traversal import traversal
 
 ITEMS = StandardExternalFields.ITEMS
+NTIID = StandardExternalFields.NTIID
+TOTAL = StandardExternalFields.TOTAL
+ITEM_COUNT = StandardExternalFields.ITEM_COUNT
 
 @interface.implementer(IPathAdapter)
 @component.adapter(IUser, IRequest)
@@ -152,7 +155,7 @@ class enroll_course_view(AbstractAuthenticatedView,
 			except KeyError:
 				pass
 		else:
-			for k in ('NTIID', 'ntiid', 'ProviderUniqueID'):
+			for k in (NTIID, NTIID.lower(), 'ProviderUniqueID'):
 				try:
 					k = identifier[k]
 					catalog_entry = catalog.getCatalogEntry(k)
@@ -227,13 +230,15 @@ class AllCatalogEntriesView(AbstractAuthenticatedView):
 			ext_obj = to_external_object(e)
 			ext_obj['is_non_public'] = INonPublicCourseInstance.providedBy(e)
 			items.append(ext_obj)
-		result['Total'] = result['ItemCount'] = len(items)
+		result[TOTAL] = result[ITEM_COUNT] = len(items)
 		return result
 
-@view_config(context=IDataserverFolder)
+@view_config(name='AnonymouslyButNotPubliclyAvailableCourseInstances')
+@view_config(name='_AnonymouslyButNotPubliclyAvailableCourseInstances')
 @view_defaults(name='_AnonymouslyButNotPubliclyAvailableCourseInstances',
 			   route_name='objects.generic.traversal',
 			   request_method='GET',
+			   context=IDataserverFolder,
 			   renderer='rest')
 class AnonymouslyAvailableCourses(AbstractView):
 
@@ -253,5 +258,5 @@ class AnonymouslyAvailableCourses(AbstractView):
 				course_instance = ICourseInstance(e)
 				ext_obj = to_external_object(course_instance)
 				items.append(ext_obj)
-		result['Total'] = result['ItemCount'] = len(items)
+		result[TOTAL] = result[ITEM_COUNT] = len(items)
 		return result
