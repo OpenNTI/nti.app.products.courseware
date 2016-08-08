@@ -5,6 +5,7 @@
 """
 
 from __future__ import print_function, unicode_literals, absolute_import, division
+from nti.externalization.oids import to_external_ntiid_oid
 __docformat__ = "restructuredtext en"
 
 logger = __import__('logging').getLogger(__name__)
@@ -103,6 +104,8 @@ def _rebase_assets(site, entry, catalog, intids):
 						source = _convert(name, source, container)
 						link = to_external_file_link(source)
 						setattr(item, name, link)
+						if name == 'href': # set target
+							item.target = to_external_ntiid_oid(source)
 					source.add_association(item)
 
 def _migrate(current, seen, intids):
