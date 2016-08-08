@@ -9,9 +9,9 @@ __docformat__ = "restructuredtext en"
 
 logger = __import__('logging').getLogger(__name__)
 
-generation = 11
+generation = 12
 
-import re
+from urlparse import unquote
 
 from zope import component
 from zope import interface
@@ -20,31 +20,21 @@ from zope.component.hooks import site as current_site
 
 from zope.intid.interfaces import IIntIds
 
-from nti.app.products.courseware.resources import CourseContentFile
-from nti.app.products.courseware.resources import CourseContentImage
-
 from nti.app.products.courseware.resources.adapters import course_resources
 
-from nti.app.products.courseware.resources.interfaces import ICourseRootFolder
-from nti.app.products.courseware.resources.interfaces import ICourseContentFolder
-
-from nti.app.products.courseware.resources.utils import is_internal_file_link
 from nti.app.products.courseware.resources.utils import to_external_file_link
-from nti.app.products.courseware.resources.utils import get_file_from_external_link
 
 from nti.contentfolder.interfaces import INamedContainer
-
-from nti.contentlibrary.indexed_data import get_library_catalog
 
 from nti.contenttypes.courses.interfaces import ICourseCatalog
 from nti.contenttypes.courses.interfaces import ICourseInstance
 
 from nti.contenttypes.presentation.interfaces import INTIRelatedWorkRef
 
-from nti.externalization.oids import to_external_ntiid_oid
-
 from nti.dataserver.interfaces import IDataserver
 from nti.dataserver.interfaces import IOIDResolver
+
+from nti.externalization.oids import to_external_ntiid_oid
 
 from nti.site.hostpolicy import get_all_host_sites
 
@@ -61,56 +51,44 @@ class MockDataserver(object):
 			return resolver.get_object_by_oid(oid, ignore_creator=ignore_creator)
 		return None
 
-def _convert(name, value, container):
-	result = CourseContentFile()
-	result.data = value.data
-	result.filename = value.filename
-	result.__name__ = result.name = name
-	result.contentType = getattr(value, 'contentType', None)
-
-	# XXX: Check for invalid filename
-	m = re.match(r"\(u'(.*)', u'(.*)'\)", value.filename)
-	if m is not None:
-		result.filename = m.groups()[0]
-
-	# update container
-	del container[name]
-	container[name] = result
-	return result
-
-def _transformer(container, intids):
+def _fix_pointers(container):
 	for name, value in list(container.items()):
 		if INamedContainer.providedBy(value):
-			_transformer(value, intids)
-		elif not isinstance(value, (CourseContentFile, CourseContentImage)):
-			_convert(name, value, container)
-
-def _rebase_assets(site, entry, catalog, intids):
-	items = catalog.search_objects(sites=site.__name__,
-						  		   provided=INTIRelatedWorkRef,
-						  		   container_ntiids=entry.ntiid,
-						  		   intids=intids)
-	for item in items:
-		for name in ('href', 'icon'):
-			value = getattr(item, name, None)
-			if is_internal_file_link(value or u''):
-				source = get_file_from_external_link(value)
-				if source is None:
+			_fix_pointers(value)
+		elif value.has_associations():
+			href = to_external_file_link(value)
+			target = to_external_ntiid_oid(value)
+			for obj in value.associations():
+				if not INTIRelatedWorkRef.providedBy(obj):
+					continue	
+				# if href is equal continue
+				if obj.href == href:
+					# make sure we have a valid target
+					if obj.target != target:
+						obj.target = target 
 					continue
-				if not isinstance(source, (CourseContentFile, CourseContentImage)):
-					name = source.__name__
-					container = source.__parent__
-					if 		ICourseContentFolder.providedBy(container) \
-						or	ICourseRootFolder.providedBy(container):
-						source = _convert(name, source, container)
-						link = to_external_file_link(source)
-						setattr(item, name, link)
-						if name == 'href': # set target
-							item.target = to_external_ntiid_oid(source)
-					source.add_association(item)
+				# if target is equal continue
+				if obj.target == target:
+					# make sure we have a valid href
+					if obj.href != href:
+						obj.href = href 
+					continue
+				# if icon continue
+				if obj.icon == href:
+					continue
+				# update icon if found in file name
+				unquoted_icon = unquote(obj.icon)
+				if name in unquoted_icon or obj.filename in unquoted_icon:
+					logger.info('Updating [%s] icon url to %s', obj.ntiid, href)
+					obj.icon = href
+					continue
+				logger.info('Updating [%s] href url to %s', obj.ntiid, href)
+				logger.info('Updating [%s] target to %s', obj.ntiid, target)
+				# otherwise update href
+				obj.href = href
+				obj.target = target
 
 def _migrate(current, seen, intids):
-	libray_catalog = get_library_catalog()
 	with current_site(current):
 		catalog = component.getUtility(ICourseCatalog)
 		for entry in catalog.iterCatalogEntries():
@@ -119,10 +97,9 @@ def _migrate(current, seen, intids):
 			if doc_id is None or doc_id in seen:
 				continue
 			seen.add(doc_id)
-			_rebase_assets(current, entry, libray_catalog, intids)
 			resources = course_resources(course, create=False)
 			if resources is not None:
-				_transformer(resources, intids)
+				_fix_pointers(resources)
 
 def do_evolve(context, generation=generation):
 	conn = context.connection
@@ -147,6 +124,6 @@ def do_evolve(context, generation=generation):
 
 def evolve(context):
 	"""
-	Evolve to generation 11 to make all course files of the same class
+	Evolve to generation 12 to fix href/icon pointers
 	"""
 	do_evolve(context)
