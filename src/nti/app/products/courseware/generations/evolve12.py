@@ -58,11 +58,12 @@ def _fix_pointers(container):
 		elif value.has_associations():
 			href = to_external_file_link(value)
 			target = to_external_ntiid_oid(value)
+			unquoted_href = unquote(href)
 			for obj in value.associations():
 				if not INTIRelatedWorkRef.providedBy(obj):
 					continue	
 				# if href is equal continue
-				if obj.href == href:
+				if unquote(obj.href) == unquoted_href:
 					# make sure we have a valid target
 					if obj.target != target:
 						obj.target = target 
@@ -70,15 +71,15 @@ def _fix_pointers(container):
 				# if target is equal continue
 				if obj.target == target:
 					# make sure we have a valid href
-					if obj.href != href:
+					if unquote(obj.href) != unquoted_href:
 						obj.href = href 
 					continue
 				# if icon continue
-				if obj.icon == href:
+				unquoted_icon = unquote(obj.icon)
+				if unquoted_icon == unquoted_href:
 					continue
 				# update icon if found in file name
-				unquoted_icon = unquote(obj.icon)
-				if name in unquoted_icon or obj.filename in unquoted_icon:
+				if name in unquoted_icon or value.filename in unquoted_icon:
 					logger.info('Updating [%s] icon url to %s', obj.ntiid, href)
 					obj.icon = href
 					continue
