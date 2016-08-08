@@ -34,6 +34,8 @@ from zope.security.management import restoreInteraction
 
 from pyramid.threadlocal import get_current_request
 
+from zope.traversing.interfaces import IBeforeTraverseEvent
+
 from nti.app.products.courseware import MessageFactory as _m
 
 from nti.app.products.courseware import USER_ENROLLMENT_LAST_MODIFIED_KEY
@@ -310,3 +312,13 @@ def update_enrollment_modified_on_add(record, event):
 @component.adapter(ICourseInstanceEnrollmentRecord, IIntIdRemovedEvent)
 def update_enrollment_modified_on_drop(record, event):
 	_update_enroll_last_modified(record)
+
+@component.adapter(ICourseInstance, IBeforeTraverseEvent)
+def course_traversal_context_subscriber(course, event):
+	"""
+	We commonly need access to the course context in underlying
+	requests/decorators. Store that here for easy access.
+	"""
+	request = get_current_request()
+	if request is not None:
+		request.course_traversal_context = course
