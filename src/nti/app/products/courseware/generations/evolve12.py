@@ -63,7 +63,7 @@ def _fix_pointers(container):
 				if not INTIRelatedWorkRef.providedBy(obj):
 					continue	
 				# if href is equal continue
-				if unquote(obj.href) == unquoted_href:
+				if unquote(obj.href or u'') == unquoted_href:
 					# make sure we have a valid target
 					if obj.target != target:
 						obj.target = target 
@@ -71,11 +71,11 @@ def _fix_pointers(container):
 				# if target is equal continue
 				if obj.target == target:
 					# make sure we have a valid href
-					if unquote(obj.href) != unquoted_href:
+					if unquote(obj.href or u'') != unquoted_href:
 						obj.href = href 
 					continue
 				# if icon continue
-				unquoted_icon = unquote(obj.icon)
+				unquoted_icon = unquote(obj.icon or u'')
 				if unquoted_icon == unquoted_href:
 					continue
 				# update icon if found in file name
