@@ -289,6 +289,7 @@ class OutlinePathFactory(object):
 				# Legacy courses; try looking in unit
 				if content_ntiid != lesson_ntiid:
 					unit = find_object_with_ntiid( content_ntiid )
-					if unit and self.target_ntiid in unit.embeddedContainerNTIIDs:
+					if 		IContentUnit.providedBy(unit) \
+						and self.target_ntiid in unit.embeddedContainerNTIIDs:
 						return (self.course_context, outline_content_node, self.target_obj)
 		return (self.course_context,)
