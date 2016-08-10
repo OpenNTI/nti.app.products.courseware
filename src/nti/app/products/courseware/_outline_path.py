@@ -282,8 +282,11 @@ class OutlinePathFactory(object):
 															name=lesson_ntiid)
 
 				if lesson_overview is not None:
-					results = self._lesson_overview_contains_target(outline_content_node,
-																	lesson_overview)
+					if lesson_ntiid == self.target_ntiid:
+						results = (self.course_context, outline_content_node, self.target_obj)
+					else:
+						results = self._lesson_overview_contains_target(outline_content_node,
+																		lesson_overview)
 					if results is not None:
 						return results
 				# Legacy courses; try looking in unit
