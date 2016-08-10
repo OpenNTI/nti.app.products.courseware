@@ -65,17 +65,18 @@ def _fix_pointers(container):
 				# if href is equal continue
 				if unquote(obj.href or u'') == unquoted_href:
 					# make sure we have a valid target
-					if obj.target != target:
+					if not hasattr(obj, 'target') or obj.target != target:
 						obj.target = target 
 					continue
 				# if target is equal continue
-				if obj.target == target:
+				if hasattr(obj, 'target') and obj.target == target:
 					# make sure we have a valid href
-					if unquote(obj.href or u'') != unquoted_href:
+					if 		not hasattr(obj, 'href') \
+						or	unquote(obj.href or u'') != unquoted_href:
 						obj.href = href 
 					continue
 				# if icon continue
-				unquoted_icon = unquote(obj.icon or u'')
+				unquoted_icon = unquote(obj.icon or u'') if hasattr(obj, 'icon') else u''
 				if unquoted_icon == unquoted_href:
 					continue
 				# update icon if found in file name
