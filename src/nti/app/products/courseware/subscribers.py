@@ -77,12 +77,15 @@ from nti.ntiids.ntiids import find_object_with_ntiid
 
 # Email
 
-def _get_template(catalog_entry, base_template, package):
+def _get_template(catalog_entry, 
+				  base_template='enrollment_confirmation_email', 
+				  package='nti.app.products.courseware'):
 	"""
 	Look for course-specific templates, if available.
 	"""
 	result = None
 	package = dottedname.resolve(package)
+	catalog_entry = ICourseCatalogEntry(catalog_entry)
 	for provider in (catalog_entry.ProviderUniqueID, catalog_entry.DisplayName):
 		if not provider:
 			continue
@@ -103,6 +106,7 @@ def _get_template(catalog_entry, base_template, package):
 			result = template
 			break
 	return result or base_template
+get_course_template = _get_template
 
 def _send_enrollment_confirmation(event, user, profile, email, course):
 	# Note that the `course` is an nti.contenttypes.courses.ICourseInstance
