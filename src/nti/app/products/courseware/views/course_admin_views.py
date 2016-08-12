@@ -678,10 +678,13 @@ class SyncCourseView(_SyncAllLibrariesView):
 
 	def _do_call(self):
 		course = ICourseInstance(self.context)
+		# collect all course associated ntiids
 		entry = ICourseCatalogEntry(self.context)
 		ntiids = [entry.ntiid]
 		ntiids.extend(p.ntiid for p in get_course_packages(course))
 		ntiids.extend(ICourseCatalogEntry(s).ntiid for s in get_course_subinstances(course))
+		# course site
 		site = find_interface(course, IHostPolicyFolder, strict=False).__name__ # site
-		result = self._do_sync(ntiids, site, allowRemoval=False)
+		# do sync
+		result = self._do_sync(site=site, ntiids=ntiids, allowRemoval=False)
 		return result
