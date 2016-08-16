@@ -36,6 +36,8 @@ from nti.dataserver.interfaces import IOIDResolver
 
 from nti.externalization.oids import to_external_ntiid_oid
 
+from nti.ntiids.ntiids import is_valid_ntiid_string
+
 from nti.site.hostpolicy import get_all_host_sites
 
 @interface.implementer(IDataserver)
@@ -72,7 +74,8 @@ def _fix_pointers(container):
 				if hasattr(obj, 'target') and obj.target == target:
 					# make sure we have a valid href
 					if 		not hasattr(obj, 'href') \
-						or	unquote(obj.href or u'') != unquoted_href:
+						or	(	 unquote(obj.href or u'') != unquoted_href \
+							 and not is_valid_ntiid_string(obj.href or u'')):
 						obj.href = href 
 					continue
 				# if icon continue
