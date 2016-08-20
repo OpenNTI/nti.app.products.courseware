@@ -5,7 +5,6 @@
 """
 
 from __future__ import print_function, unicode_literals, absolute_import, division
-from nti.ntiids.ntiids import find_object_with_ntiid
 __docformat__ = "restructuredtext en"
 
 logger = __import__('logging').getLogger(__name__)
@@ -45,6 +44,8 @@ from nti.dataserver import authorization as nauth
 
 from nti.externalization.interfaces import LocatedExternalDict
 from nti.externalization.interfaces import StandardExternalFields
+
+from nti.ntiids.ntiids import find_object_with_ntiid
 
 from nti.recorder import get_recorder_catalog
 
@@ -124,13 +125,13 @@ class CourseSyncLockedObjectsMixin(object):
 		locked_intids = recorder_catalog[IX_LOCKED].apply({'any_of': (True,)})
 		child_order_locked_intids = recorder_catalog[IX_CHILD_ORDER_LOCKED].apply({'any_of': (True,)})
 		all_locked = recorder_catalog.family.IF.multiunion([locked_intids, child_order_locked_intids])
-		
+
 		doc_ids = recorder_catalog.family.IF.intersection(all_ids, all_locked)
 		result = ResultSet(doc_ids, intids, ignore_invalid=True)
 		return result
 
 	def _get_locked_objects(self, context):
-		return list(x for x in self._compute_locked_objects(context) 
+		return list(x for x in self._compute_locked_objects(context)
 					if x.isLocked() or (IRecordableContainer.providedBy(x) and x.isChildOrderLocked()))
 
 @view_config(context=ICourseInstance)
@@ -157,7 +158,7 @@ class CourseSyncLockedObjectsView(CourseSyncLockedObjectsMixin,
 		result.__name__ = self.request.view_name
 		result.__parent__ = self.request.context
 		items = result[ITEMS] = self._get_locked_objects(self.context)
-		if items: # check to sort
+		if items:  # check to sort
 			result[LAST_MODIFIED] = max((getattr(x, 'lastModified', 0) for x in items))
 			items.sort(key=lambda t: getattr(t, 'lastModified', 0), reverse=self._sort_desc)
 			result.lastModified = result[LAST_MODIFIED]
