@@ -60,8 +60,6 @@ from nti.appserver.workspaces.interfaces import IUserService
 
 from nti.common.maps import CaseInsensitiveDict
 
-from nti.common.property import Lazy
-
 from nti.common.string import is_true
 
 from nti.contenttypes.courses import get_enrollment_catalog
@@ -103,6 +101,8 @@ from nti.dataserver.users.interfaces import IUserProfile
 
 from nti.externalization.interfaces import LocatedExternalDict
 from nti.externalization.interfaces import StandardExternalFields
+
+from nti.property.property import Lazy
 
 from nti.site.interfaces import IHostPolicyFolder
 
@@ -684,7 +684,7 @@ class SyncCourseView(_SyncAllLibrariesView):
 		ntiids.extend(p.ntiid for p in get_course_packages(course))
 		ntiids.extend(ICourseCatalogEntry(s).ntiid for s in get_course_subinstances(course))
 		# course site
-		site = find_interface(course, IHostPolicyFolder, strict=False).__name__ # site
+		site = find_interface(course, IHostPolicyFolder, strict=False).__name__  # site
 		# do sync
 		result = self._do_sync(site=site, ntiids=ntiids, allowRemoval=False)
 		return result
