@@ -112,6 +112,7 @@ class CourseImportMixin(ModeledContentUploadRequestUtilsMixin):
 class CourseImportView(AbstractAuthenticatedView, CourseImportMixin):
 
 	def _do_call(self):
+		tmp_path = None
 		now = time.time()
 		values = self.readInput()
 		result = LocatedExternalDict()
@@ -123,7 +124,8 @@ class CourseImportView(AbstractAuthenticatedView, CourseImportMixin):
 			result['Elapsed'] = time.time() - now
 			result['Course'] = ICourseInstance(self.context)
 		finally:
-			delete_dir(tmp_path)
+			if tmp_path:
+				delete_dir(tmp_path)
 		return result
 
 @view_config(route_name='objects.generic.traversal',
