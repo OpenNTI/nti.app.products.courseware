@@ -169,10 +169,10 @@ from nti.appserver.interfaces import IIntIdUserSearchPolicy
 
 from nti.app.externalization.view_mixins import BatchingUtilsMixin
 
-from nti.common.property import alias
-
 from nti.dataserver.interfaces import IUser
 from nti.dataserver.users.interfaces import IFriendlyNamed
+
+from nti.property.property import alias
 
 @interface.implementer(IPathAdapter)
 @component.adapter(ICourseInstance, IRequest)
