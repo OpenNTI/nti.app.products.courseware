@@ -38,6 +38,7 @@ from nti.contenttypes.courses.interfaces import ICourseAssessmentItemCatalog
 
 from nti.contenttypes.presentation import ALL_PRESENTATION_ASSETS_INTERFACES
 
+from nti.coremetadata.interfaces import IRecordable
 from nti.coremetadata.interfaces import IRecordableContainer
 
 from nti.dataserver import authorization as nauth
@@ -130,9 +131,12 @@ class CourseSyncLockedObjectsMixin(object):
 		result = ResultSet(doc_ids, intids, ignore_invalid=True)
 		return result
 
+	def _is_locked(self, x):
+		return		(IRecordable.providedBy(x) and x.isLocked()) \
+				or	(IRecordableContainer.providedBy(x) and x.isChildOrderLocked())
+
 	def _get_locked_objects(self, context):
-		return list(x for x in self._compute_locked_objects(context)
-					if x.isLocked() or (IRecordableContainer.providedBy(x) and x.isChildOrderLocked()))
+		return [x for x in self._compute_locked_objects(context) if self._is_locked(x)]
 
 @view_config(context=ICourseInstance)
 @view_config(context=ICourseCatalogEntry)
