@@ -61,6 +61,7 @@ def _execute(course, archive_path, writeout=True):
 	if course is None:
 		raise ValueError("Invalid course")
 
+	tmp_path = None
 	try:
 		tmp_path = check_archive(archive_path)
 		filer = DirectoryFiler(tmp_path or archive_path)
@@ -68,7 +69,8 @@ def _execute(course, archive_path, writeout=True):
 		result = importer.process(course, filer, writeout)
 		return result
 	finally:
-		delete_dir(tmp_path)
+		if tmp_path:
+			delete_dir(tmp_path)
 
 def import_course(ntiid, archive_path, writeout=True):
 	"""
