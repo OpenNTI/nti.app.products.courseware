@@ -209,5 +209,19 @@ class RecursiveCourseTransactionHistoryView(AbstractRecursiveTransactionHistoryV
 	hierarchy, recursively.
 	"""
 
+	@property
+	def _course(self):
+		return ICourseInstance(self.context)
+
 	def _get_items(self):
-		return self._get_node_items(self.context.Outline)
+		return self._get_node_items(self._course.Outline)
+
+@view_config(name=VIEW_RECURSIVE_AUDIT_LOG)
+@view_config(name=VIEW_RECURSIVE_TX_HISTORY)
+@view_defaults(route_name='objects.generic.traversal',
+			   renderer='rest',
+			   request_method='GET',
+			   permission=nauth.ACT_CONTENT_EDIT,
+			   context=ICourseCatalogEntry)
+class RecursiveCatalogEntryTransactionHistoryView(RecursiveCourseTransactionHistoryView):
+	pass
