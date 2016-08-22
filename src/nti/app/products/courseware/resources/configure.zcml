@@ -19,7 +19,8 @@
 		modules=".model" />
 
 	<!-- Adapters -->
-	<adapter factory=".adapters.course_resources" />
+	<adapter factory=".adapters._entry_resources" />
+	<adapter factory=".adapters._course_resources" />
 
 	<adapter factory=".adapters._course_source_filer"
 			 for="nti.contenttypes.courses.interfaces.ICourseInstance"

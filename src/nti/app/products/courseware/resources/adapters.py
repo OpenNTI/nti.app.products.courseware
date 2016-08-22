@@ -24,6 +24,7 @@ from nti.app.products.courseware.resources.interfaces import ICourseSourceFiler
 from nti.app.products.courseware.resources.model import CourseRootFolder
 
 from nti.contenttypes.courses.interfaces import ICourseInstance
+from nti.contenttypes.courses.interfaces import ICourseCatalogEntry
 
 from nti.coremetadata.interfaces import SYSTEM_USER_ID
 
@@ -31,10 +32,10 @@ from nti.namedfile.constraints import FileConstraints
 
 from nti.namedfile.interfaces import IFileConstraints
 
-@component.adapter(ICourseInstance)
 @interface.implementer(ICourseRootFolder)
-def course_resources(course, create=True):
+def course_resources(context, create=True):
 	result = None
+	course = ICourseInstance(context)
 	annotations = IAnnotations(course)
 	try:
 		KEY = RESOURCES
@@ -49,6 +50,16 @@ def course_resources(course, create=True):
 		result.creator = SYSTEM_USER_ID
 	return result
 _course_resources = course_resources
+
+@component.adapter(ICourseInstance)
+@interface.implementer(ICourseRootFolder)
+def _course_resources(context, create=True):
+	return course_resources(context, create)
+
+@component.adapter(ICourseCatalogEntry)
+@interface.implementer(ICourseRootFolder)
+def _entry_resources(context, create=True):
+	return course_resources(context, create)
 
 def _resources_for_course_path_adapter(context, request):
 	course = ICourseInstance(context)

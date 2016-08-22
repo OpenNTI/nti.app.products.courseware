@@ -671,7 +671,6 @@ class CourseCatalogEntryEnrollmentsRosterDownloadView(AllCourseEnrollmentRosterD
 @view_config(context=ICourseCatalogEntry)
 @view_defaults(route_name='objects.generic.traversal',
 			   renderer='rest',
-			   request_method='POST',
 			   name='SyncCourse',
 			   permission=nauth.ACT_SYNC_LIBRARY)
 class SyncCourseView(_SyncAllLibrariesView):
