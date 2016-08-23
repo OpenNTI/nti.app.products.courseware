@@ -25,8 +25,12 @@ from pyramid import httpexceptions as hexc
 from pyramid.view import view_config
 from pyramid.view import view_defaults
 
+from pyramid.threadlocal import get_current_request
+
 from nti.app.base.abstract_views import get_all_sources
 from nti.app.base.abstract_views import AbstractAuthenticatedView
+
+from nti.app.externalization.error import raise_json_error
 
 from nti.app.externalization.view_mixins import ModeledContentUploadRequestUtilsMixin
 
@@ -64,6 +68,10 @@ from nti.site.site import get_component_hierarchy_names
 
 NTIID = StandardExternalFields.NTIID
 
+def raise_error(v, tb=None, factory=hexc.HTTPUnprocessableEntity, request=None):
+	request = request or get_current_request()
+	raise_json_error(request, factory, v, tb)
+
 class CourseImportMixin(ModeledContentUploadRequestUtilsMixin):
 
 	def readInput(self, value=None):
@@ -76,7 +84,10 @@ class CourseImportMixin(ModeledContentUploadRequestUtilsMixin):
 		tmp_path = None
 		path = values.get('path')
 		if path and not os.path.exists(path):
-			raise hexc.HTTPUnprocessableEntity(_('Invalid path.'))
+			raise_error({
+				u'message': _("Invalid path."),
+				u'code': 'InvalidPath',
+			})
 		elif self.request.POST:
 			source = None
 			filename = None
@@ -85,12 +96,18 @@ class CourseImportMixin(ModeledContentUploadRequestUtilsMixin):
 				filename = safe_filename(os.path.split(filename)[1])
 				break
 			if not filename:
-				raise hexc.HTTPUnprocessableEntity(_('No archive source uploaded.'))
+				raise_error({
+					u'message': _("No archive source uploaded."),
+					u'code': 'InvalidSource',
+				})
 			tmp_path = tempfile.mkdtemp()
 			path = os.path.join(tmp_path, filename)
 			transfer_to_native_file(source, path)
 		elif not path:
-			raise hexc.HTTPUnprocessableEntity(_('No archive source specified.'))
+			raise_error({
+				u'message': _("No archive source specified."),
+				u'code': 'NoSourceSpecified',
+			})
 		return path, tmp_path
 
 	def _do_call(self):
@@ -140,15 +157,23 @@ class ImportCourseView(AbstractAuthenticatedView, CourseImportMixin):
 		context = find_object_with_ntiid(ntiid)
 		course = ICourseInstance(context, None)
 		if course is None:
-			raise hexc.HTTPUnprocessableEntity(_('Invalid course.'))
+			raise_error({
+					u'message': _("Invalid course."),
+					u'code': 'InvalidCourse',
+			})
 		return import_course(ntiid, path, writeout)
 
 	def _create_course(self, admin, key, path, writeout=True):
 		if not admin:
-			msg = _('No administrative level specified.')
-			raise hexc.HTTPUnprocessableEntity(msg)
+			raise_error({
+					u'message': _("No administrative level specified."),
+					u'code': 'MissingAdminLevel',
+			})
 		if not key:
-			raise hexc.HTTPUnprocessableEntity(_('No course key specified.'))
+			raise_error({
+					u'message': _("No course key specified."),
+					u'code': 'MissingCourseKey',
+			})
 
 		catalog = None
 		for name in get_component_hierarchy_names(reverse=True):
@@ -159,7 +184,10 @@ class ImportCourseView(AbstractAuthenticatedView, CourseImportMixin):
 					catalog = adm_levels
 					break
 		if catalog is None:
-			raise hexc.HTTPUnprocessableEntity(_('Invalid administrative level.'))
+			raise_error({
+					u'message': _("Invalid administrative level."),
+					u'code': 'InvalidAdminLevel',
+			})
 		return create_course(admin, key, path, catalog=catalog, writeout=writeout)
 
 	def _do_call(self):
