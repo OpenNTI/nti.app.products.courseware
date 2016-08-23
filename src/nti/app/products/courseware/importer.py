@@ -18,6 +18,8 @@ from zope import component
 
 from nti.cabinet.filer import DirectoryFiler
 
+from nti.common.string import to_unicode
+
 from nti.contentlibrary.filesystem import FilesystemBucket
 
 from nti.contentlibrary.interfaces import IFilesystemBucket
@@ -101,6 +103,8 @@ def create_course(admin, key, archive_path, catalog=None, writeout=True):
 		raise IOError("Administrative level does not have a root bucket")
 
 	try:
+		key = to_unicode(key)
+		admin = to_unicode(admin)
 		tmp_path = check_archive(archive_path)
 		course_path = os.path.join(root.absolute_path, key)
 		if writeout:
