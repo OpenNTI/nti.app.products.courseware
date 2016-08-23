@@ -490,7 +490,7 @@ class CourseDashboardBucketingStreamView(CourseDashboardRecursiveStreamView):
 		# 4. We are checking a date before the requested oldest timestamp
 		while	found_buckets < self.non_empty_bucket_count \
 			and bucket_checks < self._MAX_BUCKET_CHECKS \
-			and (start_ts is None
+			and (	start_ts is None
 				or 	self.batch_after is None
 				or 	start_ts > self.batch_after) \
 			and course_intids:
@@ -503,18 +503,22 @@ class CourseDashboardBucketingStreamView(CourseDashboardRecursiveStreamView):
 			bucket_intids = catalog.family.IF.intersection(bucket_time_range_intids, course_intids)
 
 			if bucket_intids:
-				found_buckets += 1
 				# Decrement our collection
 				course_intids = catalog.family.IF.difference(course_intids, bucket_intids)
 
 				bucket_dict = self._do_batching(bucket_intids, start_ts, end_ts)
+				bucket_items = bucket_dict[ITEMS]
+				if not bucket_items:
+					# May have been empty due to security check.
+					continue
 
 				bucket_dict['OldestTimestamp'] = start_ts
 				bucket_dict['MostRecentTimestamp'] = end_ts
-				bucket_dict['BucketItemCount'] = len(bucket_dict[ITEMS])
+				bucket_dict['BucketItemCount'] = len(bucket_items)
 				bucket_dict[CLASS] = 'CourseRecursiveStreamBucket'
 				bucket_dict[MIMETYPE] = 'application/vnd.nextthought.courseware.courserecursivestreambucket'
 				results.append(bucket_dict)
+				found_buckets += 1
 
 		if found_buckets < self.non_empty_bucket_count:
 			logger.info('Only found %s buckets when asked for %s (buckets_checked=%s)',
