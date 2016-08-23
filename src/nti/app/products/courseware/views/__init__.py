@@ -15,6 +15,12 @@ from zope.container.contained import Contained
 
 from zope.traversing.interfaces import IPathAdapter
 
+from pyramid import httpexceptions as hexc
+
+from pyramid.threadlocal import get_current_request
+
+from nti.app.externalization.error import raise_json_error
+
 from nti.app.products.courseware import MessageFactory
 
 from nti.app.products.courseware import ASSETS_FOLDER
@@ -46,3 +52,7 @@ class CourseAdminPathAdapter(Contained):
 		self.context = context
 		self.request = request
 		self.__parent__ = context
+
+def raise_error(v, tb=None, factory=hexc.HTTPUnprocessableEntity, request=None):
+	request = request or get_current_request()
+	raise_json_error(request, factory, v, tb)

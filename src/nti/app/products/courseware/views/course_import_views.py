@@ -20,17 +20,11 @@ from zope.component.hooks import site as current_site
 from zope.security.management import endInteraction
 from zope.security.management import restoreInteraction
 
-from pyramid import httpexceptions as hexc
-
 from pyramid.view import view_config
 from pyramid.view import view_defaults
 
-from pyramid.threadlocal import get_current_request
-
 from nti.app.base.abstract_views import get_all_sources
 from nti.app.base.abstract_views import AbstractAuthenticatedView
-
-from nti.app.externalization.error import raise_json_error
 
 from nti.app.externalization.view_mixins import ModeledContentUploadRequestUtilsMixin
 
@@ -40,12 +34,11 @@ from nti.app.products.courseware.importer import delete_dir
 from nti.app.products.courseware.importer import create_course
 from nti.app.products.courseware.importer import import_course
 
+from nti.app.products.courseware.views import raise_error
 from nti.app.products.courseware.views import VIEW_IMPORT_COURSE
 from nti.app.products.courseware.views import CourseAdminPathAdapter
 
 from nti.cabinet.filer import transfer_to_native_file
-
-from nti.common.file import safe_filename
 
 from nti.common.maps import CaseInsensitiveDict
 
@@ -60,6 +53,8 @@ from nti.dataserver import authorization as nauth
 from nti.externalization.interfaces import LocatedExternalDict
 from nti.externalization.interfaces import StandardExternalFields
 
+from nti.namedfile.file import safe_filename
+
 from nti.ntiids.ntiids import find_object_with_ntiid
 
 from nti.site.hostpolicy import get_host_site
@@ -67,10 +62,6 @@ from nti.site.hostpolicy import get_host_site
 from nti.site.site import get_component_hierarchy_names
 
 NTIID = StandardExternalFields.NTIID
-
-def raise_error(v, tb=None, factory=hexc.HTTPUnprocessableEntity, request=None):
-	request = request or get_current_request()
-	raise_json_error(request, factory, v, tb)
 
 class CourseImportMixin(ModeledContentUploadRequestUtilsMixin):
 
@@ -158,21 +149,21 @@ class ImportCourseView(AbstractAuthenticatedView, CourseImportMixin):
 		course = ICourseInstance(context, None)
 		if course is None:
 			raise_error({
-					u'message': _("Invalid course."),
-					u'code': 'InvalidCourse',
+				u'message': _("Invalid course."),
+				u'code': 'InvalidCourse',
 			})
 		return import_course(ntiid, path, writeout)
 
 	def _create_course(self, admin, key, path, writeout=True):
 		if not admin:
 			raise_error({
-					u'message': _("No administrative level specified."),
-					u'code': 'MissingAdminLevel',
+				u'message': _("No administrative level specified."),
+				u'code': 'MissingAdminLevel',
 			})
 		if not key:
 			raise_error({
-					u'message': _("No course key specified."),
-					u'code': 'MissingCourseKey',
+				u'message': _("No course key specified."),
+				u'code': 'MissingCourseKey',
 			})
 
 		catalog = None
@@ -185,8 +176,8 @@ class ImportCourseView(AbstractAuthenticatedView, CourseImportMixin):
 					break
 		if catalog is None:
 			raise_error({
-					u'message': _("Invalid administrative level."),
-					u'code': 'InvalidAdminLevel',
+				u'message': _("Invalid administrative level."),
+				u'code': 'InvalidAdminLevel',
 			})
 		return create_course(admin, key, path, catalog=catalog, writeout=writeout)
 
