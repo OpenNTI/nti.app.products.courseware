@@ -326,3 +326,7 @@ def course_traversal_context_subscriber(course, event):
 	request = get_current_request()
 	if request is not None:
 		request.course_traversal_context = course
+
+@component.adapter(ICourseCatalogEntry, IBeforeTraverseEvent)
+def catalog_entry_traversal_context_subscriber(entry, event):
+	course_traversal_context_subscriber(ICourseInstance(entry), event)
