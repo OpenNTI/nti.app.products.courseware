@@ -19,8 +19,6 @@ from nti.app.products.courseware.resources.interfaces import ICourseContentImage
 from nti.app.products.courseware.resources.interfaces import ICourseContentFolder
 from nti.app.products.courseware.resources.interfaces import ICourseContentResource
 
-from nti.common.property import CachedProperty
-
 from nti.contentfile.model import ContentBlobFile
 from nti.contentfile.model import ContentBlobImage
 
@@ -28,6 +26,8 @@ from nti.contentfolder.model import RootFolder
 from nti.contentfolder.model import ContentFolder
 
 from nti.contentfolder.utils import compute_path
+
+from nti.property.property import CachedProperty
 
 class AssociationsMixin(object):
 

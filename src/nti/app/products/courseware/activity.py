@@ -27,12 +27,12 @@ from persistent import Persistent
 
 from nti.app.products.courseware.interfaces import ICourseInstanceActivity
 
-from nti.common.property import Lazy
-from nti.common.property import CachedProperty
-
 from nti.contenttypes.courses.interfaces import ICourseInstance
 
 from nti.dataserver.interfaces import ACE_DENY_ALL
+
+from nti.property.property import Lazy
+from nti.property.property import CachedProperty
 
 from nti.zodb.containers import bit64_int_to_time
 from nti.zodb.containers import time_to_64bit_int

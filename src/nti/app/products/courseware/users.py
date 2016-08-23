@@ -17,8 +17,6 @@ from nti.app.products.courseware.interfaces import ISuggestedContactsProvider
 
 from nti.app.products.courseware.utils import ZERO_DATETIME
 
-from nti.common.property import alias
-
 from nti.contenttypes.courses.interfaces import ES_CREDIT
 from nti.contenttypes.courses.interfaces import ES_PUBLIC
 from nti.contenttypes.courses.interfaces import ES_PURCHASED
@@ -38,6 +36,8 @@ from nti.dataserver.interfaces import IUser
 from nti.dataserver.users.suggested_contacts import SuggestedContact
 from nti.dataserver.users.suggested_contacts import SuggestedContactsProvider
 from nti.dataserver.users.suggested_contacts import SuggestedContactRankingPolicy
+
+from nti.property.property import alias
 
 ES_ORDER = {ES_CREDIT_DEGREE: 15,
 			ES_CREDIT_NONDEGREE: 15,

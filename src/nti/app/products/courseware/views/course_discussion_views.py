@@ -50,8 +50,6 @@ from nti.appserver.ugd_edit_views import UGDPostView
 
 from nti.common.maps import CaseInsensitiveDict
 
-from nti.common.property import Lazy
-
 from nti.common.string import is_true
 
 from nti.contenttypes.courses.discussions.interfaces import NTI_COURSE_BUNDLE
@@ -82,6 +80,8 @@ from nti.links.externalization import render_link
 from nti.links.links import Link
 
 from nti.ntiids.ntiids import find_object_with_ntiid
+
+from nti.property.property import Lazy
 
 CLASS = StandardExternalFields.CLASS
 ITEMS = StandardExternalFields.ITEMS

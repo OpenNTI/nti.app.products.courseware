@@ -26,8 +26,6 @@ from nti.assessment.interfaces import IQSurvey
 from nti.assessment.interfaces import IQAssignment
 from nti.assessment.interfaces import IQAssessmentItemContainer
 
-from nti.common.property import Lazy
-
 from nti.contentlibrary.interfaces import IContentUnit
 
 from nti.contentsearch.interfaces import IBookContent
@@ -40,6 +38,8 @@ from nti.contentsearch.interfaces import IVideoTranscriptContent
 from nti.ntiids.ntiids import TYPE_OID
 from nti.ntiids.ntiids import is_ntiid_of_types
 from nti.ntiids.ntiids import find_object_with_ntiid
+
+from nti.property.property import Lazy
 
 @interface.implementer(ISearchHitPredicate)
 class _BasePredicate(object):

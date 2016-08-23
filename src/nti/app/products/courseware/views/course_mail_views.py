@@ -23,8 +23,6 @@ from nti.app.products.courseware.views import VIEW_COURSE_MAIL
 
 from nti.common.maps import CaseInsensitiveDict
 
-from nti.common.property import Lazy
-
 from nti.contenttypes.courses.interfaces import ES_CREDIT
 from nti.contenttypes.courses.interfaces import ICourseInstance
 from nti.contenttypes.courses.interfaces import ICourseEnrollments
@@ -38,6 +36,8 @@ from nti.dataserver.interfaces import IEnumerableEntityContainer
 
 from nti.dataserver.users import User
 from nti.dataserver.users.interfaces import IUserProfile
+
+from nti.property.property import Lazy
 
 @view_config(route_name='objects.generic.traversal',
 			 context=ICourseInstance,

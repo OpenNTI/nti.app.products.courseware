@@ -41,8 +41,6 @@ from nti.app.products.courseware.views._utils import _get_containers_in_course
 
 from nti.appserver.pyramid_authorization import is_readable
 
-from nti.common.property import CachedProperty
-
 from nti.contenttypes.courses.interfaces import ICourseInstance
 from nti.contenttypes.courses.interfaces import	ICourseSubInstance
 
@@ -60,6 +58,8 @@ from nti.externalization.interfaces import LocatedExternalList
 from nti.externalization.interfaces import StandardExternalFields
 
 from nti.links.links import Link
+
+from nti.property.property import CachedProperty
 
 from nti.zope_catalog.catalog import isBroken
 

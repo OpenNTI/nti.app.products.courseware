@@ -25,8 +25,6 @@ from nti.app.products.courseware.resources.interfaces import ICourseContentFile
 from nti.app.products.courseware.resources.interfaces import ICourseLockedFolder
 from nti.app.products.courseware.resources.interfaces import ICourseContentFolder
 
-from nti.common.property import Lazy
-
 from nti.contenttypes.courses.interfaces import ICourseInstance
 from nti.contenttypes.courses.interfaces import ICourseSubInstance
 
@@ -44,6 +42,8 @@ from nti.dataserver.authorization_acl import ace_denying_all
 
 from nti.dataserver.interfaces import IACLProvider
 from nti.dataserver.interfaces import ALL_PERMISSIONS
+
+from nti.property.property import Lazy
 
 from nti.traversal.traversal import find_interface
 

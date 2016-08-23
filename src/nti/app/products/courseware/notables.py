@@ -18,8 +18,6 @@ from BTrees.LFBTree import LFSet as Set
 
 from nti.app.notabledata.interfaces import IUserPriorityCreatorNotableProvider
 
-from nti.common.property import CachedProperty
-
 from nti.contenttypes.courses.utils import get_enrollments
 
 from nti.contenttypes.courses.interfaces import ENROLLMENT_SCOPE_MAP
@@ -36,6 +34,8 @@ from nti.dataserver.interfaces import INotableFilter
 from nti.dataserver.metadata_index import isTopLevelContentObjectFilter
 
 from nti.metadata import dataserver_metadata_catalog
+
+from nti.property.property import CachedProperty
 
 _FEEDBACK_MIME_TYPE = "application/vnd.nextthought.assessment.userscourseassignmenthistoryitemfeedback"
 

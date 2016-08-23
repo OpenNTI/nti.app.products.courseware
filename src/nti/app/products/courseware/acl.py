@@ -17,14 +17,14 @@ from zope.security.interfaces import IPrincipal
 from nti.app.products.courseware.interfaces import IEnrolledCoursesCollection
 from nti.app.products.courseware.interfaces import IAdministeredCoursesCollection
 
-from nti.common.property import Lazy
-
 from nti.dataserver.authorization_acl import ace_allowing
 from nti.dataserver.authorization_acl import acl_from_aces
 
 from nti.dataserver.interfaces import IACLProvider
 from nti.dataserver.interfaces import ACE_DENY_ALL
 from nti.dataserver.interfaces import ALL_PERMISSIONS
+
+from nti.property.property import Lazy
 
 @interface.implementer(IACLProvider)
 class CollectionACLProviderMixin(object):

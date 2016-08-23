@@ -37,10 +37,11 @@ from BTrees import OOBTree
 
 from persistent import Persistent
 
+from nti.app.products.courseware.interfaces import ICourseCatalogLegacyContentEntry
+from nti.app.products.courseware.interfaces import ILegacyCommunityBasedCourseInstance
+
 from nti.contentlibrary.bundle import ContentPackageBundle
 from nti.contentlibrary.interfaces import IContentPackageLibrary
-
-from nti.common.property import CachedProperty
 
 from nti.contenttypes.courses.courses import CourseInstance
 from nti.contenttypes.courses.courses import CourseAdministrativeLevel
@@ -64,12 +65,11 @@ from nti.externalization.externalization import to_external_object
 from nti.ntiids.ntiids import make_ntiid
 from nti.ntiids.ntiids import get_provider
 
+from nti.property.property import CachedProperty
+
 from nti.schema.field import TextLine
 
 from nti.wref.interfaces import IWeakRef
-
-from .interfaces import ICourseCatalogLegacyContentEntry
-from .interfaces import ILegacyCommunityBasedCourseInstance
 
 class ICourseCatalogLegacyEntryInstancePolicy(interface.Interface):
 	"""

@@ -17,8 +17,6 @@ from nti.appserver.interfaces import ForbiddenContextException
 
 from nti.appserver.pyramid_authorization import has_permission
 
-from nti.common.property import Lazy
-
 from nti.contentlibrary.interfaces import IContentUnit
 
 from nti.contentlibrary.indexed_data import get_library_catalog
@@ -36,6 +34,8 @@ from nti.coremetadata.interfaces import IPublishable
 from nti.dataserver import authorization as nauth
 
 from nti.ntiids.ntiids import find_object_with_ntiid
+
+from nti.property.property import Lazy
 
 from nti.site.site import get_component_hierarchy_names
 

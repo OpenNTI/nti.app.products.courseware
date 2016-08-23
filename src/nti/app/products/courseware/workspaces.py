@@ -29,9 +29,6 @@ from nti.app.products.courseware.interfaces import ILegacyCourseInstanceEnrollme
 from nti.appserver.workspaces.interfaces import IUserService
 from nti.appserver.workspaces.interfaces import IContainerCollection
 
-from nti.common.property import Lazy
-from nti.common.property import alias
-
 from nti.contenttypes.courses.index import IX_SITE
 from nti.contenttypes.courses.index import IX_USERNAME
 
@@ -55,6 +52,9 @@ from nti.dataserver.authorization_acl import ace_allowing
 from nti.dataserver.authorization_acl import acl_from_aces
 
 from nti.dataserver.interfaces import IUser
+
+from nti.property.property import Lazy
+from nti.property.property import alias
 
 from nti.site.site import get_component_hierarchy_names
 

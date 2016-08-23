@@ -59,8 +59,6 @@ from nti.appserver.pyramid_authorization import has_permission
 
 from nti.common.maps import CaseInsensitiveDict
 
-from nti.common.property import Lazy
-
 from nti.common.string import TRUE_VALUES
 
 from nti.contenttypes.courses.index import IX_KEYWORDS
@@ -95,6 +93,8 @@ from nti.invitations.interfaces import IInvitationsContainer
 from nti.links.links import Link
 
 from nti.ntiids.ntiids import find_object_with_ntiid
+
+from nti.property.property import Lazy
 
 CLASS = StandardExternalFields.CLASS
 ITEMS = StandardExternalFields.ITEMS

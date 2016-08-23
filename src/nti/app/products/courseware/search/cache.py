@@ -29,8 +29,6 @@ from nti.app.products.courseware.search.interfaces import ICourseOutlineCache
 
 from nti.app.products.courseware.utils import ZERO_DATETIME
 
-from nti.common.property import Lazy
-
 from nti.contentlibrary.indexed_data import get_library_catalog
 
 from nti.contentlibrary.interfaces import IContentPackageLibrary
@@ -56,6 +54,8 @@ from nti.ntiids.ntiids import TYPE_UUID
 from nti.ntiids.ntiids import TYPE_INTID
 from nti.ntiids.ntiids import is_ntiid_of_types
 from nti.ntiids.ntiids import find_object_with_ntiid
+
+from nti.property.property import Lazy
 
 from nti.site.site import get_component_hierarchy_names
 
