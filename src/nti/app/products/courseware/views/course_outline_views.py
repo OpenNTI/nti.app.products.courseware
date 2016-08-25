@@ -9,7 +9,6 @@ __docformat__ = "restructuredtext en"
 
 logger = __import__('logging').getLogger(__name__)
 
-import six
 import time
 
 from zope import component
@@ -18,8 +17,6 @@ from zope.component.hooks import site as current_site
 
 from zope.security.management import endInteraction
 from zope.security.management import restoreInteraction
-
-from pyramid import httpexceptions as hexc
 
 from pyramid.view import view_config
 from pyramid.view import view_defaults
@@ -59,8 +56,6 @@ from nti.externalization.interfaces import StandardExternalFields
 
 from nti.intid.common import removeIntId
 
-from nti.ntiids.ntiids import find_object_with_ntiid
-
 from nti.recorder.record import remove_transaction_history
 
 from nti.site.hostpolicy import get_host_site
@@ -74,28 +69,6 @@ from nti.site.utils import unregisterUtility
 from nti.traversal.traversal import find_interface
 
 ITEMS = StandardExternalFields.ITEMS
-
-def _parse_courses(values):
-	ntiids = values.get('ntiid') or values.get('ntiids')
-	if not ntiids:
-		raise hexc.HTTPUnprocessableEntity(detail='No course entry identifier')
-
-	if isinstance(ntiids, six.string_types):
-		ntiids = ntiids.split()
-
-	result = list()
-	for ntiid in ntiids:
-		context = find_object_with_ntiid(ntiid)
-		context = ICourseInstance(context, None)
-		if context is not None:
-			result.append(context)
-	return result
-
-def _parse_course(values):
-	result = _parse_courses(values)
-	if not result:
-		raise hexc.HTTPUnprocessableEntity(detail='Course not found')
-	return result[0]
 
 def read_input(request):
 	if request.body:
