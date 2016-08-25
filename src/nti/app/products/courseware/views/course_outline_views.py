@@ -52,8 +52,6 @@ from nti.contenttypes.courses.legacy_catalog import ILegacyCourseInstance
 
 from nti.contenttypes.courses.utils import get_parent_course
 
-from nti.coremetadata.interfaces import IRecordable
-
 from nti.dataserver import authorization as nauth
 
 from nti.externalization.interfaces import LocatedExternalDict
@@ -108,11 +106,12 @@ def read_input(request):
 	return result
 readInput = read_input
 
-@view_config(name='ResetCourseOutline')
+@view_config(context=ICourseInstance)
+@view_config(context=ICourseCatalogEntry)
 @view_defaults(route_name='objects.generic.traversal',
 			   renderer='rest',
-			   context=CourseAdminPathAdapter,
-			   permission=nauth.ACT_NTI_ADMIN)
+			   permission=nauth.ACT_NTI_ADMIN,
+			   name="ResetCourseOutline")
 class ResetCourseOutlineView(AbstractAuthenticatedView,
 				 			 ModeledContentUploadRequestUtilsMixin):
 
@@ -120,10 +119,9 @@ class ResetCourseOutlineView(AbstractAuthenticatedView,
 		result = read_input(self.request)
 		return result
 
-	def _do_reset(self, course, force, registry=None):
+	def _do_reset(self, course, registry, force):
 		removed = []
 		outline = course.Outline
-		registry = component.getSiteManager() if registry is None else registry
 
 		# unregister nodes
 		removed.extend(unregister_nodes(outline,
@@ -160,133 +158,81 @@ class ResetCourseOutlineView(AbstractAuthenticatedView,
 		logger.info("%s node(s) registered for %s", len(registered), ntiid)
 		return result
 
-	def _do_call(self, result, courses=None):
+	def _do_context(self, context, items):
 		values = self.readInput()
-		courses = courses if courses is not None else _parse_courses(values)
-
-		to_process = set()
-		items = result[ITEMS] = {}
 		force = is_true(values.get('force'))
 
-		for course in courses or ():
-			course = ICourseInstance(course)
-			if ILegacyCourseInstance.providedBy(course):
-				continue
-			if ICourseSubInstance.providedBy(course):
-				parent = get_parent_course(course)
-				if parent.Outline == course.Outline:
-					course = parent
-			to_process.add(course)
+		course = ICourseInstance(context)
+		if ILegacyCourseInstance.providedBy(course):
+			return ()
 
-		for course in to_process:
-			folder = find_interface(course, IHostPolicyFolder, strict=False)
-			with current_site(get_host_site(folder.__name__)):
-				registry = folder.getSiteManager()
-				ntiid = ICourseCatalogEntry(course).ntiid
-				items[ntiid] = self._do_reset(course, force, registry)
+		if ICourseSubInstance.providedBy(course):
+			parent = get_parent_course(course)
+			if parent.Outline == course.Outline:
+				course = parent
 
-		return to_process
+		folder = find_interface(course, IHostPolicyFolder, strict=False)
+		with current_site(get_host_site(folder.__name__)):
+			registry = folder.getSiteManager()
+			result = self._do_reset(course, registry, force)
+			
+		entry = ICourseCatalogEntry(context, None)
+		if entry is not None:
+			items[entry.ntiid] = result
+
+		return result
 
 	def __call__(self):
 		now = time.time()
 		result = LocatedExternalDict()
+		items = result[ITEMS] = {}
 		endInteraction()
 		try:
-			self._do_call(result)
+			self._do_context(self.context, items)
 		finally:
 			restoreInteraction()
 			result['TimeElapsed'] = time.time() - now
 		return result
 
-@view_config(name='ResetAllCoursesOutlines')
+@view_config(context=CourseAdminPathAdapter)
 @view_defaults(route_name='objects.generic.traversal',
 			   renderer='rest',
-			   context=CourseAdminPathAdapter,
+			   name='ResetAllCoursesOutlines',
 			   permission=nauth.ACT_NTI_ADMIN)
 class ResetAllCoursesOutlinesView(ResetCourseOutlineView):
 
-	def _unregisterAll(self):
+	def _unregisterSite(self, name):
 		count = 0
-		# XXX: Remove all outline nodes from all registries
+		with current_site(get_host_site(name)):
+			registry = component.getSiteManager()
+			for ntiid, node in list(registry.getUtilitiesFor(ICourseOutlineNode)):
+				if unregisterUtility(registry,
+								  	 name=ntiid,
+						 		  	 provided=iface_of_node(node)):
+					count += 1
+					removeIntId(node)
+		return count
+	
+	def _unregisterAll(self):
+		"""
+		Remove all outline nodes from all registries
+		"""
+		count = 0
 		for name in get_component_hierarchy_names():
-			with current_site(get_host_site(name)):
-				registry = component.getSiteManager()
-				for ntiid, node in list(registry.getUtilitiesFor(ICourseOutlineNode)):
-					if unregisterUtility(registry,
-									  	 name=ntiid,
-							 		  	 provided=iface_of_node(node)):
-						count += 1
-						removeIntId(node)
+			count += self._unregisterSite(name)
 		logger.info("%s node(s) unregistered", count)
-
-	def _do_call(self, result, courses=None):
-		self._unregisterAll()
-		catalog = component.getUtility(ICourseCatalog)
-		courses = list(catalog.iterCatalogEntries())
-		return super(ResetAllCoursesOutlinesView, self)._do_call(result, courses)
-
-@view_config(name='UnlockOutlineNodes')
-@view_defaults(route_name='objects.generic.traversal',
-			   renderer='rest',
-			   context=CourseAdminPathAdapter,
-			   permission=nauth.ACT_NTI_ADMIN)
-class UnlockOutlineNodesView(AbstractAuthenticatedView,
-				 			 ModeledContentUploadRequestUtilsMixin):
-
-	def readInput(self, value=None):
-		result = read_input(self.request)
-		return result
-
-	def _do_call(self, result, courses=None):
-		values = self.readInput()
-		courses = courses if courses is not None else _parse_courses(values)
-
-		to_process = set()
-		items = result[ITEMS] = {}
-		for course in courses or ():
-			course = ICourseInstance(course)
-			if ILegacyCourseInstance.providedBy(course):
-				continue
-			if ICourseSubInstance.providedBy(course):
-				parent = get_parent_course(course)
-				if parent.Outline == course.Outline:
-					course = parent
-			to_process.add(course)
-
-		def _recur(node, unlocked):
-			if IRecordable.providedBy(node) and node.locked:
-				node.locked = False
-				unlocked.append(node.ntiid)
-			# parse children
-			for child in node.values():
-				_recur(child, unlocked)
-
-		for course in to_process:
-			unlocked = []
-			_recur(course.Outline, unlocked)
-			items[ICourseCatalogEntry(course).ntiid] = unlocked
-
-		return to_process
-
+	
 	def __call__(self):
 		now = time.time()
 		result = LocatedExternalDict()
+		items = result[ITEMS] = {}
 		endInteraction()
 		try:
-			self._do_call(result)
+			self._unregisterAll()
+			catalog = component.getUtility(ICourseCatalog)
+			for context in list(catalog.iterCatalogEntries()):
+				self._do_context(context, items)
 		finally:
 			restoreInteraction()
 			result['TimeElapsed'] = time.time() - now
 		return result
-
-@view_config(name='UnlockAllOutlineNodes')
-@view_defaults(route_name='objects.generic.traversal',
-			   renderer='rest',
-			   context=CourseAdminPathAdapter,
-			   permission=nauth.ACT_NTI_ADMIN)
-class UnlockAllOutlineNodesView(UnlockOutlineNodesView):
-
-	def _do_call(self, result, courses=None):
-		catalog = component.getUtility(ICourseCatalog)
-		courses = tuple(catalog.iterCatalogEntries())
-		return super(UnlockAllOutlineNodesView, self)._do_call(result, courses)
