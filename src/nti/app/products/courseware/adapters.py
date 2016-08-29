@@ -49,13 +49,13 @@ from nti.contenttypes.courses.index import IX_USERNAME
 
 from nti.contenttypes.courses.interfaces import ICourseOutline
 from nti.contenttypes.courses.interfaces import ICourseInstance
-from nti.contenttypes.courses.interfaces import ICourseEnrollments
 from nti.contenttypes.courses.interfaces import ICourseSubInstance
 from nti.contenttypes.courses.interfaces import ICourseCatalogEntry
 from nti.contenttypes.courses.interfaces import IContentCourseInstance
 from nti.contenttypes.courses.interfaces import INonPublicCourseInstance
 from nti.contenttypes.courses.interfaces import ICourseInstanceEnrollmentRecord
 
+from nti.contenttypes.courses.utils import is_enrolled 
 from nti.contenttypes.courses.utils import get_enrollment_catalog
 from nti.contenttypes.courses.utils import get_course_subinstances
 from nti.contenttypes.courses.utils import is_course_instructor as is_instructor # BWC
@@ -166,11 +166,10 @@ def _content_unit_to_course(unit):
 def _is_user_enrolled(user, course):
 	# Enrolled or instructor
 	if user is None:
-		return False
-
-	enrollments = ICourseEnrollments(course)
-	record = enrollments.get_enrollment_for_principal(user)
-	return record is not None or is_instructor(course, user)
+		result = False
+	else:
+		result = is_enrolled(course, user) or is_instructor(course, user)
+	return result
 
 @interface.implementer(ICourseInstance)
 @component.adapter(IContentUnit, IUser)
@@ -180,7 +179,6 @@ def _content_unit_and_user_to_course(unit, user):
 	for instance in courses or ():
 		if _is_user_enrolled(user, instance):
 			return instance
-
 	# nothing found return first course
 	return courses[0] if courses else None
 
