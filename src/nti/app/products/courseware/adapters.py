@@ -165,10 +165,8 @@ def _content_unit_to_course(unit):
 
 def _is_user_enrolled(user, course):
 	# Enrolled or instructor
-	if user is None:
-		result = False
-	else:
-		result = is_enrolled(course, user) or is_instructor(course, user)
+	result = 	 user is not None \
+			 and is_enrolled(course, user) or is_instructor(course, user)
 	return result
 
 @interface.implementer(ICourseInstance)
