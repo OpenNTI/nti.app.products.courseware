@@ -61,11 +61,6 @@ def _process_site(current, intids, seen):
 			unregisterUtility(registry, item, provided=provided, name=ntiid, force=True)
 			continue
 
-		# registration not in base site
-		if ntiid in seen:
-			logger.warn("Removing %s from site %s", ntiid, site_name)
-			unregisterUtility(registry, provided=provided, name=ntiid)
-
 		seen.add(ntiid)
 
 def _process_args(verbose=False):
