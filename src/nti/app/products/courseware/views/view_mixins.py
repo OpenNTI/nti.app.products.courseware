@@ -29,6 +29,7 @@ from nti.app.publishing import TRX_TYPE_UNPUBLISH
 
 from nti.common.maps import CaseInsensitiveDict
 
+from nti.contenttypes.presentation.interfaces import IConcreteAsset
 from nti.contenttypes.presentation.interfaces import INTILessonOverview
 
 from nti.externalization.interfaces import LocatedExternalDict
@@ -81,9 +82,10 @@ class AbstractRecursiveTransactionHistoryView(AbstractAuthenticatedView,
 
 	def _accum_lesson_transactions(self, lesson_overview, accum):
 		accum.extend(self._get_transactions(lesson_overview))
-		for overview_group in lesson_overview.items or ():
+		for overview_group in lesson_overview or ():
 			accum.extend(self._get_transactions(overview_group))
-			for item in overview_group.items or ():
+			for item in overview_group or ():
+				item = IConcreteAsset(item, item)
 				accum.extend(self._get_transactions(item))
 
 	def _filter_node_transactions(self, transactions):
