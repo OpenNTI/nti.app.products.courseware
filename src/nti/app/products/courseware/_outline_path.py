@@ -28,6 +28,7 @@ from nti.contenttypes.presentation.interfaces import INTISlideDeck
 from nti.contenttypes.presentation.interfaces import INTIMediaRoll
 from nti.contenttypes.presentation.interfaces import INTISlideVideo
 from nti.contenttypes.presentation.interfaces import INTILessonOverview
+from nti.contenttypes.presentation.interfaces import INTIRelatedWorkRefPointer
 
 from nti.coremetadata.interfaces import IPublishable
 
@@ -121,6 +122,15 @@ class OutlinePathFactory(object):
 				return slide_deck
 		return None
 
+	def _convert_refs(self, objects):
+		results = []
+		for item in objects:
+			# Should we do this for all asset refs?
+			if INTIMediaRef.providedBy( item ) or INTIRelatedWorkRefPointer.providedBy( item ):
+				item = find_object_with_ntiid( item.target )
+			results.append( item )
+		return results
+
 	def _get_outline_result_items(self, item, lesson_overview):
 		"""
 		Returns the outline endpoints.  For slides/decks we want to return
@@ -138,7 +148,7 @@ class OutlinePathFactory(object):
 		elif INTIVideo.providedBy(original_obj):
 			# We want our slide deck, if applicable.
 			slide_deck = self._get_slidedeck_for_video(self.original_target_ntiid,
-													lesson_overview)
+													   lesson_overview)
 			if slide_deck is not None:
 				# Our item may be a media roll here too.
 				results = (slide_deck, original_obj,)
@@ -146,13 +156,12 @@ class OutlinePathFactory(object):
 				# Currently, we only need to return the actual video object, and
 				# not its media roll container.
 				results = (original_obj,)
-			elif INTIMediaRef.providedBy( item ):
-				# Make sure we don't return refs.
-				results = (original_obj,)
 			else:
 				results = (item,)
 		else:
 			results = (item,)
+		# Make sure we don't return refs.
+		results = self._convert_refs( results )
 		return results
 
 	def _overview_item_contains_target(self, item, check_contained=True):
