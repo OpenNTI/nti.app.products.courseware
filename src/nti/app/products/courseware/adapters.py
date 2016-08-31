@@ -16,6 +16,8 @@ from zope.intid.interfaces import IIntIds
 
 from pyramid import httpexceptions as hexc
 
+from pyramid.interfaces import IRequest
+
 from zope.annotation.interfaces import IAnnotations
 
 from nti.app.authentication import get_remote_user
@@ -55,7 +57,7 @@ from nti.contenttypes.courses.interfaces import IContentCourseInstance
 from nti.contenttypes.courses.interfaces import INonPublicCourseInstance
 from nti.contenttypes.courses.interfaces import ICourseInstanceEnrollmentRecord
 
-from nti.contenttypes.courses.utils import is_enrolled 
+from nti.contenttypes.courses.utils import is_enrolled
 from nti.contenttypes.courses.utils import get_enrollment_catalog
 from nti.contenttypes.courses.utils import get_course_subinstances
 from nti.contenttypes.courses.utils import is_course_instructor as is_instructor # BWC
@@ -473,3 +475,12 @@ def _enrollment_last_modified(user):
 	# we know we're only using this for cache invalidation.
 	annotations = IAnnotations(user)
 	return annotations.get(USER_ENROLLMENT_LAST_MODIFIED_KEY, 0)
+
+@component.adapter(IRequest)
+@interface.implementer(ICourseInstance)
+def _course_from_request(request):
+	"""
+	We may have our course instance stashed in the request if it
+	was in our path.
+	"""
+	return getattr( request, 'course_traversal_context', None )

@@ -305,6 +305,10 @@
 	<adapter factory=".workspaces.wrapper_to_catalog"
 			 for="nti.contenttypes.courses.interfaces.ICourseInstanceAdministrativeRole"/>
 
+	<adapter factory=".adapters._course_from_request"
+			 provides="nti.contenttypes.courses.interfaces.ICourseInstance"
+				for="pyramid.interfaces.IRequest" />
+
 	<!--
 		Application (request) specific traversal for course instances and enrollments, etc.
 		Primarily, we want to bring the usual automatic-conversion to path adapters into
