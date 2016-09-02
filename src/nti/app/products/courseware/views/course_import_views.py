@@ -144,7 +144,7 @@ class CourseImportView(AbstractAuthenticatedView, CourseImportMixin):
 			 permission=nauth.ACT_CONTENT_EDIT)
 class ImportCourseView(AbstractAuthenticatedView, CourseImportMixin):
 
-	def _import_course(self, ntiid, path, writeout=True):
+	def _import_course(self, ntiid, path, writeout=True, lockout=False):
 		context = find_object_with_ntiid(ntiid)
 		course = ICourseInstance(context, None)
 		if course is None:
@@ -152,9 +152,9 @@ class ImportCourseView(AbstractAuthenticatedView, CourseImportMixin):
 				u'message': _("Invalid course."),
 				u'code': 'InvalidCourse',
 			})
-		return import_course(ntiid, path, writeout)
+		return import_course(ntiid, path, writeout, lockout)
 
-	def _create_course(self, admin, key, path, writeout=True):
+	def _create_course(self, admin, key, path, writeout=True, lockout=False):
 		if not admin:
 			raise_error({
 				u'message': _("No administrative level specified."),
@@ -179,7 +179,8 @@ class ImportCourseView(AbstractAuthenticatedView, CourseImportMixin):
 				u'message': _("Invalid administrative level."),
 				u'code': 'InvalidAdminLevel',
 			})
-		return create_course(admin, key, path, catalog=catalog, writeout=writeout)
+		return create_course(admin, key, path, catalog=catalog,
+							 writeout=writeout, lockout=lockout)
 
 	def _do_call(self):
 		now = time.time()
@@ -190,14 +191,15 @@ class ImportCourseView(AbstractAuthenticatedView, CourseImportMixin):
 			path, tmp_path = self._get_source_paths(values)
 			path = os.path.abspath(path)
 			ntiid = values.get('ntiid')
+			lockout = is_true(values.get('lock') or values.get('lockout'))
 			writeout = is_true(values.get('writeout') or values.get('save'))
 			if ntiid:
 				params[NTIID] = ntiid
-				course = self._import_course(ntiid, path, writeout)
+				course = self._import_course(ntiid, path, writeout, lockout)
 			else:
 				params['Key'] = key = values.get('key')
 				params['Admin'] = admin = values.get('admin')
-				course = self._create_course(admin, key, path, writeout)
+				course = self._create_course(admin, key, path, writeout, lockout)
 			result['Course'] = course
 			result['Elapsed'] = time.time() - now
 		finally:

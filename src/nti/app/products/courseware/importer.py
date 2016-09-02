@@ -29,9 +29,16 @@ from nti.contenttypes.courses.courses import ContentCourseSubInstance
 
 from nti.contenttypes.courses.interfaces import SECTIONS
 
+from nti.contenttypes.courses.interfaces import ICourseOutline 
 from nti.contenttypes.courses.interfaces import ICourseCatalog
 from nti.contenttypes.courses.interfaces import ICourseImporter
 from nti.contenttypes.courses.interfaces import ICourseInstance
+
+from nti.contenttypes.presentation.interfaces import IConcreteAsset
+from nti.contenttypes.presentation.interfaces import INTILessonOverview
+from nti.contenttypes.presentation.interfaces import IItemAssetContainer
+
+from nti.coremetadata.interfaces import IRecordable
 
 from nti.ntiids.ntiids import find_object_with_ntiid
 
@@ -58,7 +65,28 @@ def delete_dir(path):
 	if path and os.path.exists(path):
 		shutil.rmtree(path, True)
 
-def _execute(course, archive_path, writeout=True):
+def _lockout(course):
+	
+	def _do_lock(obj):
+		if obj is not None and IRecordable.providedBy(obj):
+			obj.lock()
+
+	def _lock_assets(asset):
+		_do_lock(asset)
+		_do_lock(IConcreteAsset(asset, None))
+		if IItemAssetContainer.providedBy(asset):
+			for item in asset.Items or ():
+				_lock_assets(item)
+			
+	def _recur(node):
+		if not ICourseOutline.providedBy(node):
+			_do_lock(node)
+		_lock_assets(INTILessonOverview(node, None))
+		for child in node.values():
+			_recur(child)
+	_recur(course.Outline)
+	
+def _execute(course, archive_path, writeout=True, lockout=False):
 	course = ICourseInstance(course, None)
 	if course is None:
 		raise ValueError("Invalid course")
@@ -69,12 +97,14 @@ def _execute(course, archive_path, writeout=True):
 		filer = DirectoryFiler(tmp_path or archive_path)
 		importer = component.getUtility(ICourseImporter)
 		result = importer.process(course, filer, writeout)
+		if lockout:
+			_lockout(course)
 		return result
 	finally:
 		if tmp_path:
 			delete_dir(tmp_path)
 
-def import_course(ntiid, archive_path, writeout=True):
+def import_course(ntiid, archive_path, writeout=True, lockout=False):
 	"""
 	Import a course from a file archive
 	
@@ -82,10 +112,10 @@ def import_course(ntiid, archive_path, writeout=True):
 	:param archive_path archive path
 	"""
 	course = find_object_with_ntiid(ntiid or u'')
-	_execute(course, archive_path, writeout)
+	_execute(course, archive_path, writeout, lockout)
 	return course
 
-def create_course(admin, key, archive_path, catalog=None, writeout=True):
+def create_course(admin, key, archive_path, catalog=None, writeout=True, lockout=False):
 	"""
 	Creates a course from a file archive
 	
@@ -162,7 +192,7 @@ def create_course(admin, key, archive_path, catalog=None, writeout=True):
 					subinstance.root = sub_section_root
 					course.SubInstances[name] = subinstance # register
 		# process
-		_execute(course, tmp_path or archive_path, writeout)
+		_execute(course, tmp_path or archive_path, writeout, lockout)
 		return course
 	finally:
 		delete_dir(tmp_path)

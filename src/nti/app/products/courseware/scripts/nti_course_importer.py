@@ -32,9 +32,13 @@ def _process(args):
 	path = os.path.expanduser(args.path or os.getcwd())
 	path = os.path.abspath(path)
 	if hasattr(args, 'ntiid'):
-		import_course(args.ntiid, path, writeout=args.writeout)
+		import_course(args.ntiid, path, 
+					  writeout=args.writeout,
+					  lockout=args.lockout)
 	else:
-		create_course(args.admin, args.key, path, writeout=args.writeout)
+		create_course(args.admin, args.key, path,
+					  writeout=args.writeout,
+					  lockout=args.lockout)
 
 def main():
 	arg_parser = argparse.ArgumentParser(description="Import/Create a course")
@@ -53,6 +57,10 @@ def main():
 	parent_parser.add_argument('-w', '--writeout',
 							   dest='writeout',
 							   help="Save sources on disk.",
+							   action='store_true')
+	parent_parser.add_argument('-l', '--lockout',
+							   dest='lockout',
+							   help="Lock course.",
 							   action='store_true')
 
 	subparsers = arg_parser.add_subparsers(help='sub-command help')
