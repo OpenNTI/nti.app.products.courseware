@@ -87,7 +87,6 @@ def _lockout(course):
 		_lock_assets(INTILessonOverview(node, None))
 		for child in node.values():
 			_recur(child)
-	from IPython.core.debugger import Tracer; Tracer()()
 	_recur(course.Outline)
 	
 def _execute(course, archive_path, writeout=True, lockout=False):
