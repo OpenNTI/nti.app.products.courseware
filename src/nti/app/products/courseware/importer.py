@@ -68,7 +68,7 @@ def delete_dir(path):
 		shutil.rmtree(path, True)
 
 def _lockout(course):
-	
+	logger.info("Locking course")
 	def _do_lock(obj):
 		if 		obj is not None \
 			and IRecordable.providedBy(obj) \
