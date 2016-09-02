@@ -49,6 +49,7 @@ from nti.contenttypes.courses.interfaces import ICourseInstance
 from nti.contenttypes.courses.interfaces import ICourseCatalogEntry
 
 from nti.dataserver import authorization as nauth
+from nti.dataserver.interfaces import IDataserverFolder
 
 from nti.externalization.interfaces import LocatedExternalDict
 from nti.externalization.interfaces import StandardExternalFields
@@ -137,12 +138,13 @@ class CourseImportView(AbstractAuthenticatedView, CourseImportMixin):
 				delete_dir(tmp_path)
 		return result
 
-@view_config(route_name='objects.generic.traversal',
-			 renderer='rest',
-			 name='ImportCourse',
-			 request_method='POST',
-			 context=CourseAdminPathAdapter,
-			 permission=nauth.ACT_CONTENT_EDIT)
+@view_config(context=IDataserverFolder)
+@view_config(context=CourseAdminPathAdapter)
+@view_defaults(route_name='objects.generic.traversal',
+			   renderer='rest',
+			   name='ImportCourse',
+			   request_method='POST',
+			   permission=nauth.ACT_CONTENT_EDIT)
 class ImportCourseView(AbstractAuthenticatedView, CourseImportMixin):
 
 	def _import_course(self, ntiid, path, writeout=True, lockout=False):
@@ -192,8 +194,8 @@ class ImportCourseView(AbstractAuthenticatedView, CourseImportMixin):
 			path, tmp_path = self._get_source_paths(values)
 			path = os.path.abspath(path)
 			ntiid = values.get('ntiid')
-			lockout = is_true(values.get('lock') or values.get('lockout'))
 			writeout = is_true(values.get('writeout') or values.get('save'))
+			lockout = is_true(values.get('lock') or values.get('lockout') or 'True')
 			if ntiid:
 				params[NTIID] = ntiid
 				course = self._import_course(ntiid, path, writeout, lockout)
