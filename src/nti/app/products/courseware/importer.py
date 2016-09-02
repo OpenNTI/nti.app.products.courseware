@@ -15,6 +15,7 @@ import zipfile
 import tempfile
 
 from zope import component
+from zope import lifecycleevent
 
 from nti.cabinet.filer import DirectoryFiler
 
@@ -73,6 +74,7 @@ def _lockout(course):
 			and IRecordable.providedBy(obj) \
 			and not INTIMedia.providedBy(obj):
 			obj.lock()
+			lifecycleevent.modified(obj)
 
 	def _lock_assets(asset):
 		_do_lock(asset)
