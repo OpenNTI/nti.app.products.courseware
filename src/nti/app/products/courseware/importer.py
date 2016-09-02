@@ -34,6 +34,7 @@ from nti.contenttypes.courses.interfaces import ICourseCatalog
 from nti.contenttypes.courses.interfaces import ICourseImporter
 from nti.contenttypes.courses.interfaces import ICourseInstance
 
+from nti.contenttypes.presentation.interfaces import INTIMedia
 from nti.contenttypes.presentation.interfaces import IConcreteAsset
 from nti.contenttypes.presentation.interfaces import INTILessonOverview
 from nti.contenttypes.presentation.interfaces import IItemAssetContainer
@@ -68,7 +69,9 @@ def delete_dir(path):
 def _lockout(course):
 	
 	def _do_lock(obj):
-		if obj is not None and IRecordable.providedBy(obj):
+		if 		obj is not None \
+			and IRecordable.providedBy(obj) \
+			and not INTIMedia.providedBy(obj):
 			obj.lock()
 
 	def _lock_assets(asset):
@@ -84,6 +87,7 @@ def _lockout(course):
 		_lock_assets(INTILessonOverview(node, None))
 		for child in node.values():
 			_recur(child)
+	from IPython.core.debugger import Tracer; Tracer()()
 	_recur(course.Outline)
 	
 def _execute(course, archive_path, writeout=True, lockout=False):
