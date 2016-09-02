@@ -128,7 +128,8 @@ class CourseImportView(AbstractAuthenticatedView, CourseImportMixin):
 			entry = ICourseCatalogEntry(self.context)
 			path, tmp_path = self._get_source_paths(values)
 			writeout = is_true(values.get('writeout') or values.get('save'))
-			import_course(entry.ntiid, os.path.abspath(path), writeout)
+			lockout = is_true(values.get('lock') or values.get('lockout'))
+			import_course(entry.ntiid, os.path.abspath(path), writeout, lockout)
 			result['Elapsed'] = time.time() - now
 			result['Course'] = ICourseInstance(self.context)
 		finally:
