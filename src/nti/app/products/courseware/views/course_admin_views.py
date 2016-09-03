@@ -527,7 +527,7 @@ class CourseEnrollmentsView(AbstractAuthenticatedView):
 		return response
 
 import collections
-from io import StringIO
+from cStringIO import StringIO
 
 from nti.app.products.courseware.interfaces import ICourseInstanceEnrollment
 
