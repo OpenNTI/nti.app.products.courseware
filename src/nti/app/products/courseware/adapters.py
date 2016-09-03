@@ -253,7 +253,8 @@ def _get_target_ntiid(obj):
 @component.adapter(ICourseInstance, interface.Interface)
 def _hierarchy_from_obj_and_course(course, obj):
 	target_ntiid = _get_target_ntiid(obj)
-	course = _get_valid_course_context(course)[0]
+	context_courses = _get_valid_course_context(course)
+	course = context_courses[0] if context_courses else course
 	results = OutlinePathFactory(course, target_ntiid)()
 	results = (results,) if results else results
 	return results
