@@ -253,10 +253,13 @@ def _get_target_ntiid(obj):
 @component.adapter(ICourseInstance, interface.Interface)
 def _hierarchy_from_obj_and_course(course, obj):
 	target_ntiid = _get_target_ntiid(obj)
+	# Typically, we get a user enrolled course here, but validate.
 	context_courses = _get_valid_course_context(course)
-	course = context_courses[0] if context_courses else course
-	results = OutlinePathFactory(course, target_ntiid)()
-	results = (results,) if results else results
+	results = []
+	if context_courses:
+		course = context_courses[0]
+		results = OutlinePathFactory(course, target_ntiid)()
+		results = (results,) if results else results
 	return results
 
 def _get_courses_from_container(obj, user=None):
