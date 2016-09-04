@@ -21,14 +21,13 @@ from nti.contentlibrary.interfaces import IContentUnit
 
 from nti.contentlibrary.indexed_data import get_library_catalog
 
-from nti.contenttypes.presentation.interfaces import INTIVideo
 from nti.contenttypes.presentation.interfaces import INTISlide
-from nti.contenttypes.presentation.interfaces import INTIMediaRef
+from nti.contenttypes.presentation.interfaces import INTIVideo
 from nti.contenttypes.presentation.interfaces import INTISlideDeck
 from nti.contenttypes.presentation.interfaces import INTIMediaRoll
+from nti.contenttypes.presentation.interfaces import IConcreteAsset
 from nti.contenttypes.presentation.interfaces import INTISlideVideo
 from nti.contenttypes.presentation.interfaces import INTILessonOverview
-from nti.contenttypes.presentation.interfaces import INTIRelatedWorkRefPointer
 
 from nti.coremetadata.interfaces import IPublishable
 
@@ -124,11 +123,9 @@ class OutlinePathFactory(object):
 
 	def _convert_refs(self, objects):
 		results = []
-		for item in objects:
+		for item in objects or ():
 			# Should we do this for all asset refs?
-			if 		INTIMediaRef.providedBy( item ) \
-				or  INTIRelatedWorkRefPointer.providedBy( item ):
-				item = find_object_with_ntiid( item.target )
+			item = IConcreteAsset(item, item)
 			results.append( item )
 		return results
 
@@ -181,8 +178,7 @@ class OutlinePathFactory(object):
 			* Video contained by a video roll.
 			* Target obj is content unit page containing a self-assessment.
 		"""
-		if INTIRelatedWorkRefPointer.providedBy( item ):
-			item = find_object_with_ntiid( item.target )
+		item = IConcreteAsset(item, item)
 		target_ntiid_ref = getattr(item, 'target_ntiid', None )
 		ntiid_ref = getattr( item, 'ntiid', None )
 		target_ref = getattr( item, 'target', None )
