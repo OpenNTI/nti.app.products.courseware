@@ -126,7 +126,8 @@ class OutlinePathFactory(object):
 		results = []
 		for item in objects:
 			# Should we do this for all asset refs?
-			if INTIMediaRef.providedBy( item ) or INTIRelatedWorkRefPointer.providedBy( item ):
+			if 		INTIMediaRef.providedBy( item ) \
+				or  INTIRelatedWorkRefPointer.providedBy( item ):
 				item = find_object_with_ntiid( item.target )
 			results.append( item )
 		return results
@@ -180,6 +181,8 @@ class OutlinePathFactory(object):
 			* Video contained by a video roll.
 			* Target obj is content unit page containing a self-assessment.
 		"""
+		if INTIRelatedWorkRefPointer.providedBy( item ):
+			item = find_object_with_ntiid( item.target )
 		target_ntiid_ref = getattr(item, 'target_ntiid', None )
 		ntiid_ref = getattr( item, 'ntiid', None )
 		target_ref = getattr( item, 'target', None )
