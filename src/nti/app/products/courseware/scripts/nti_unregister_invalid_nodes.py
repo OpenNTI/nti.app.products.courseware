@@ -15,7 +15,7 @@ import argparse
 
 from zope import component
 
-from zope.interface.adapter import _lookupAll as zopeLookupAll
+from zope.interface.adapter import _lookupAll as zopeLookupAll # private API
 
 from zope.intid.interfaces import IIntIds
 
@@ -58,7 +58,7 @@ def _process_site(current, intids, seen):
 		if doc_id is None:
 			logger.warn("Removing invalid registration %s from site %s",
 						ntiid, site_name)
-			unregisterUtility(registry, item, provided=provided, name=ntiid, force=True)
+			unregisterUtility(registry, item, provided=provided, name=ntiid)
 			continue
 
 		seen.add(ntiid)
