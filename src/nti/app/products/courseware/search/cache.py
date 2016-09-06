@@ -44,6 +44,8 @@ from nti.contenttypes.courses.utils import is_course_instructor
 
 from nti.contenttypes.presentation import iface_of_asset
 from nti.contenttypes.presentation import PACKAGE_CONTAINER_INTERFACES
+
+from nti.contenttypes.presentation.interfaces import IConcreteAsset
 from nti.contenttypes.presentation.interfaces import INTILessonOverview
 
 from nti.dataserver.users import User
@@ -125,6 +127,7 @@ def _index_node_data(node, result=None):
 			package_assets = ()
 
 	for item in package_assets or ():
+		item = IConcreteAsset(item, item)
 		# Make sure we get both target and ntiid.
 		for name in ('target', 'ntiid'):
 			check_ntiid = getattr(item, name, None)
