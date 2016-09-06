@@ -63,6 +63,8 @@ VIDEO_ROLL_VIDEO = "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_
 QUESTION_SET = "tag:nextthought.com,2011-10:OU-NAQ-CS1323_F_2015_Intro_to_Computer_Programming.naq.set.qset:Prj_1"
 QUESTION = "tag:nextthought.com,2011-10:OU-NAQ-CS1323_F_2015_Intro_to_Computer_Programming.naq.qid:Prj_1.1"
 
+SELF_ASSESS = "tag:nextthought.com,2011-10:OU-NAQ-CLC3403_LawAndJustice.naq.set.qset:QUIZ1_aristotle"
+
 CS1323_PACKAGE = 'tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.introduction_to_computer_programming'
 
 class TestPathLookup(ApplicationLayerTest):
@@ -288,7 +290,9 @@ class TestPathLookup(ApplicationLayerTest):
 			assert_that(res[4], has_entries('Class', 'PageInfo',
 											'NTIID', 'tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.lec:01.03_LESSON'))
 
-	def _do_clc_path_lookup(self, expected_status=200):
+	def _do_clc_path_lookup(self, is_legacy=False, expected_status=200):
+		# XXX: It's nice we have these for non-persistent courses, but
+		# we need these tests in persistent courses as well.
 		self._create_discussions()
 
 		# For legacy non-indexed, we only get one possible path.
@@ -372,6 +376,23 @@ class TestPathLookup(ApplicationLayerTest):
 											'NTIID', 'tag:nextthought.com,2011-10:OU-HTML-CLC3403_LawAndJustice.sec:03.02_RequiredReading',
 											'Title', '3.2 Taplin, Shield of Achilles (within the Iliad)'))
 
+		# Self assessment
+		path = '/dataserver2/LibraryPath?objectId=%s' % SELF_ASSESS
+		res = self.testapp.get(path, status=expected_status, extra_environ=environ)
+		res = res.json_body
+
+		if expected_status == 403:
+			self._check_catalog(res)
+		else:
+			assert_that(res, has_length(result_expected_val))
+			res = res[0]
+			assert_that(res, has_length(2))
+
+			assert_that(res[0], has_entry('Class', 'CourseInstance'))
+			assert_that(res[1], has_entries('Class', 'PageInfo',
+											'NTIID', 'tag:nextthought.com,2011-10:OU-HTML-CLC3403_LawAndJustice.sec:QUIZ_01.01',
+											'Title', 'Self-Quiz 1'))
+
 	def _enroll(self):
 		username = self.student_username
 		with mock_dataserver.mock_db_trans():
@@ -429,7 +450,6 @@ class TestPathLookup(ApplicationLayerTest):
 		self._do_cs1323_path_lookup(expected_status=403)
 
 # TODO: test content editor
-# TODO: test notes on content units (containing self-assessments etc)
 
 	@WithSharedApplicationMockDS(users=True, testapp=True)
 	@fudge.patch('nti.app.contentlibrary.views.library_views.get_hierarchy_context')
@@ -443,4 +463,4 @@ class TestPathLookup(ApplicationLayerTest):
 		# TODO: We should test if lesson_overview is none (via fudging).
 		# and remove legacy code in library_views.py
 		self._do_cs1323_path_lookup(is_legacy=True)
-		self._do_clc_path_lookup()
+		self._do_clc_path_lookup(is_legacy=True)
