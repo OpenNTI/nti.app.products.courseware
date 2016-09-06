@@ -49,7 +49,10 @@ COURSE_NTIID = 'tag:nextthought.com,2011-10:NTI-CourseInfo-Fall2013_CLC3403_LawA
 SUB_SECTION = 'tag:nextthought.com,2011-10:OU-HTML-CLC3403_LawAndJustice.subsec:BOOK_5_CHAPTER_3'
 CARD = 'tag:nextthought.com,2011-10:OU-NTICard-CLC3403_LawAndJustice.nticard.nticard_RR_PDF_03.02'
 
+# Work-ref ntiid
 READING = "tag:nextthought.com,2011-10:OU-RelatedWorkRef-CS1323_F_2015_Intro_to_Computer_Programming.relatedworkref.relwk:01.01_install_mac"
+# Href of related work ref
+READING_HREF = "tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.reading:literacy_expectations"
 SLIDE_VIDEO = "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_01.01.02_Mac"
 SLIDE_DECK = "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Install_Mac"
 
@@ -175,6 +178,26 @@ class TestPathLookup(ApplicationLayerTest):
 											'NTIID', READING))
 			assert_that(res[3], has_entries('Class', 'PageInfo',
 											'NTIID', 'tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.lec:01.03_LESSON' ))
+
+		# Get reading href
+		path = '/dataserver2/LibraryPath?objectId=%s' % READING_HREF
+		res = self.testapp.get(path, status=expected_status, extra_environ=environ)
+		res = res.json_body
+
+		if expected_status == 403:
+			self._check_catalog(res, res_count=1)
+		else:
+			assert_that(res, has_length(result_expected_val))
+			res = res[0]
+			assert_that( res, has_length( 4 ))
+
+			assert_that(res[0], has_entry('Class', 'CourseInstance'))
+			assert_that(res[1], has_entries('Class', 'CourseOutlineContentNode',
+											'NTIID', 'tag:nextthought.com,2011-10:NTI-NTICourseOutlineNode-Fall2015_CS_1323.1.0'))
+			assert_that(res[2], has_entries('Class', 'RelatedWork',
+											'NTIID', "tag:nextthought.com,2011-10:OU-RelatedWorkRef-CS1323_F_2015_Intro_to_Computer_Programming.relatedworkref.relwk:01.01_literacy_expectations"))
+			assert_that(res[3], has_entries('Class', 'PageInfo',
+											'NTIID', READING_HREF ))
 
 		# Quiz
 		# Not found in legacy (not indexed?) 3.25.2016.

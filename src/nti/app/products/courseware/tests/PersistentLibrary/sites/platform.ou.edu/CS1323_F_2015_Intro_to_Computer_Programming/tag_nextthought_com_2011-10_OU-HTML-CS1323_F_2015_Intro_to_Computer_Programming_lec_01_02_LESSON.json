@@ -1,0 +1,106 @@
+{
+    "MimeType": "application/vnd.nextthought.ntilessonoverview",
+    "Items": [
+        {
+            "MimeType": "application/vnd.nextthought.nticourseoverviewgroup",
+            "NTIID": "tag:nextthought.com,2011-10:OU-NTICourseOverviewGroup-CS1323_F_2015_Intro_to_Computer_Programming.lec:01.02_LESSON.0",
+            "Items": [
+                {
+                    "MimeType": "application/vnd.nextthought.relatedworkref",
+                    "targetMimeType": "application/vnd.nextthought.externallink",
+                    "creator": "Deborah Trytten",
+                    "section": "required",
+                    "visibility": "ForCredit",
+                    "label": "Course Syllabus",
+                    "NTIID": "tag:nextthought.com,2011-10:OU-RelatedWorkRef-CS1323_F_2015_Intro_to_Computer_Programming.relatedworkref.relwk:syllabus",
+                    "href": "https://www.dropbox.com/s/but3whwh8z9lgpj/CS%201323%20Syllabus%20Fall%202015.docx?dl=0",
+                    "target-NTIID": "tag:nextthought.com,2011-10:NTI-UUID-66fc2ca1f7dbb4e5ded8b5383da84ce3",
+                    "icon": "resources/CS1323_F_2015_Intro_to_Computer_Programming/ba1d27596d509fc1e8324632f4304888086b4732/fd35e23767020999111e1f49239199b4c5eff23e.png",
+                    "desc": ""
+                },
+                {
+                    "MimeType": "application/vnd.nextthought.relatedworkref",
+                    "targetMimeType": "application/vnd.nextthought.externallink",
+                    "creator": "Deborah Trytten",
+                    "section": "required",
+                    "visibility": "everyone",
+                    "label": "Office Hours",
+                    "NTIID": "tag:nextthought.com,2011-10:OU-RelatedWorkRef-CS1323_F_2015_Intro_to_Computer_Programming.relatedworkref.relwk:officehours",
+                    "href": "https://www.dropbox.com/sh/ho3tuc6gcqcmtos/AACMRN0KV0iU8K-0xoc1dSK6a/CS%201323%20Office%20Hours%20Fall%202015.xlsx?dl=0",
+                    "target-NTIID": "tag:nextthought.com,2011-10:NTI-UUID-5c609f6e7280486dddd5b60c8c1adc7c",
+                    "icon": "resources/CS1323_F_2015_Intro_to_Computer_Programming/7d5621bfe93d432ed22c2f7a0383582f62b1a8b1/fd35e23767020999111e1f49239199b4c5eff23e.png",
+                    "desc": ""
+                },
+                {
+                    "MimeType": "application/vnd.nextthought.relatedworkref",
+                    "targetMimeType": "application/vnd.nextthought.externallink",
+                    "creator": "Deborah Trytten",
+                    "section": "required",
+                    "visibility": "everyone",
+                    "label": "Semester Documents",
+                    "NTIID": "tag:nextthought.com,2011-10:OU-RelatedWorkRef-CS1323_F_2015_Intro_to_Computer_Programming.relatedworkref.relwk:semesterdocuments",
+                    "href": "https://www.dropbox.com/sh/ho3tuc6gcqcmtos/AABUIwQIM_jU51uQIaTO7u6ca?dl=0",
+                    "target-NTIID": "tag:nextthought.com,2011-10:NTI-UUID-e645ffed27288600b09afdcf09aacd6d",
+                    "icon": "resources/CS1323_F_2015_Intro_to_Computer_Programming/5b7e969794f83ad2bf0c01ee8094aade6a5e60fa/fd35e23767020999111e1f49239199b4c5eff23e.png",
+                    "desc": ""
+                },
+                {
+                    "MimeType": "application/vnd.nextthought.relatedworkref",
+                    "targetMimeType": "application/vnd.nextthought.content",
+                    "creator": "Deborah Trytten",
+                    "section": "required",
+                    "visibility": "everyone",
+                    "label": "Computer Literacy Expectations",
+                    "NTIID": "tag:nextthought.com,2011-10:OU-RelatedWorkRef-CS1323_F_2015_Intro_to_Computer_Programming.relatedworkref.relwk:01.01_literacy_expectations",
+                    "href": "tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.reading:literacy_expectations",
+                    "target-NTIID": "tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.reading:literacy_expectations",
+                    "icon": "resources/CS1323_F_2015_Intro_to_Computer_Programming/c25f52399d641992d890fce141d4a9fe70400639/fd35e23767020999111e1f49239199b4c5eff23e.png",
+                    "desc": ""
+                },
+                {
+                    "MimeType": "application/vnd.nextthought.relatedworkref",
+                    "targetMimeType": "application/vnd.nextthought.content",
+                    "creator": "Deborah Trytten",
+                    "section": "required",
+                    "visibility": "everyone",
+                    "label": "Discussion Board Rules and Etiquette",
+                    "NTIID": "tag:nextthought.com,2011-10:OU-RelatedWorkRef-CS1323_F_2015_Intro_to_Computer_Programming.relatedworkref.relwk:01.01_rules_etiquette",
+                    "href": "tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.reading:rules_etiquette",
+                    "target-NTIID": "tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.reading:rules_etiquette",
+                    "icon": "resources/CS1323_F_2015_Intro_to_Computer_Programming/9faae34685700181ae78d279ea4e5f5cdb4c1afb/fd35e23767020999111e1f49239199b4c5eff23e.png",
+                    "desc": ""
+                },
+                {
+                    "MimeType": "application/vnd.nextthought.relatedworkref",
+                    "targetMimeType": "application/vnd.nextthought.externallink",
+                    "creator": "Deborah Trytten",
+                    "section": "required",
+                    "visibility": "everyone",
+                    "label": "Course Schedule",
+                    "NTIID": "tag:nextthought.com,2011-10:OU-RelatedWorkRef-CS1323_F_2015_Intro_to_Computer_Programming.relatedworkref.relwk:01.01_schedule",
+                    "href": "https://www.dropbox.com/sh/ho3tuc6gcqcmtos/AABOjFOZxJiwM7KME2xO0q0la/CS%201323%20Schedule%20Fall%202015.xlsx?dl=0",
+                    "target-NTIID": "tag:nextthought.com,2011-10:NTI-UUID-abddd42d58e12ddc98698263d6c7909b",
+                    "icon": "resources/CS1323_F_2015_Intro_to_Computer_Programming/7d5621bfe93d432ed22c2f7a0383582f62b1a8b1/fd35e23767020999111e1f49239199b4c5eff23e.png",
+                    "desc": "Schedule of topics and assignments"
+                },
+                {
+                    "MimeType": "application/vnd.nextthought.relatedworkref",
+                    "targetMimeType": "application/vnd.nextthought.externallink",
+                    "creator": "Deborah Trytten",
+                    "section": "required",
+                    "visibility": "everyone",
+                    "label": "CS 1323 Section 10 Class Pledge",
+                    "NTIID": "tag:nextthought.com,2011-10:OU-RelatedWorkRef-CS1323_F_2015_Intro_to_Computer_Programming.relatedworkref.relwk:cs1323_section10_class_pledge",
+                    "href": "resources/CS_1323_Pledge_Section_10_Fall_2015.docx",
+                    "target-NTIID": "tag:nextthought.com,2011-10:NTI-UUID-747fe82ff0fc691c511d66f125463cfa",
+                    "icon": "resources/CS1323_F_2015_Intro_to_Computer_Programming/583b61b2202851bd80245dfddda3c5d88cadb0a1/fd35e23767020999111e1f49239199b4c5eff23e.png",
+                    "desc": ""
+                }
+            ],
+            "accentColor": "f9824e",
+            "title": "Required Resources"
+        }
+    ],
+    "title": "Important Documents",
+    "NTIID": "tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.lec:01.02_LESSON"
+}
