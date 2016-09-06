@@ -87,6 +87,7 @@ def get_lesson_package_assets(lesson):
 	result = []
 	for group in lesson:
 		for item in group:
+			item = IConcreteAsset(item, item)
 			provided = iface_of_asset(item)
 			if provided in PACKAGE_CONTAINER_INTERFACES:
 				result.append(item)
