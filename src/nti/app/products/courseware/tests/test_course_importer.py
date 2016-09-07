@@ -49,6 +49,7 @@ class TestCourseImporter(ApplicationLayerTest):
 					 u'004:Course_Info',
 					 u'008:Course_Outline', 
 					 u'010:Assessments',
+					 u'012:Evaluations',
 					 u'015:Lesson_Overviews', 
 					 u'100:Assignment_Policies',
 					 u'666:Role_Info',
