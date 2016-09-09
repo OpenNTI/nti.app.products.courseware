@@ -29,6 +29,7 @@ from nti.app.products.courseware import VIEW_COURSE_ACTIVITY
 from nti.app.products.courseware import VIEW_COURSE_RECURSIVE
 from nti.app.products.courseware import VIEW_COURSE_CLASSMATES
 from nti.app.products.courseware import SEND_COURSE_INVITATIONS
+from nti.app.products.courseware import VIEW_LESSONS_CONTAINERS
 from nti.app.products.courseware import VIEW_COURSE_ACCESS_TOKENS
 from nti.app.products.courseware import VIEW_RECURSIVE_AUDIT_LOG
 from nti.app.products.courseware import ACCEPT_COURSE_INVITATIONS
@@ -51,6 +52,11 @@ from nti.app.renderers.decorators import AbstractAuthenticatedRequestAwareDecora
 from nti.appserver.pyramid_authorization import has_permission
 
 from nti.appserver.pyramid_renderers_edit_link_decorator import LinkRemoverDecorator
+
+from nti.assessment.interfaces import IQAssignment
+from nti.assessment.interfaces import IQuestionSet
+
+from nti.assessment.randomized.interfaces import IQuestionBank
 
 from nti.common.hash import md5_base64_digest
 
@@ -769,10 +775,34 @@ class TopicAddRemoverLinkDecorator(LinkRemoverDecorator):
 	"""
 
 	links_to_remove = ('add',)
-	
+
 	def _predicate(self, context, result):
 		course = find_interface(context, ICourseInstance, strict=False)
 		return 		self._is_authenticated \
 				and course is not None \
 				and not is_course_instructor(course, self.remoteUser) \
 				and has_permission(ACT_CONTENT_EDIT, course, self.request)
+
+@component.adapter(IQAssignment)
+@component.adapter(IQuestionSet)
+@component.adapter(IQuestionBank)
+@interface.implementer(IExternalObjectDecorator)
+class LessonsContainerLinkDecorator(AbstractAuthenticatedRequestAwareDecorator):
+	"""
+	Add a lessons link to fetch all lessons containing our given
+	assessment context.
+	"""
+
+	def _predicate(self, context, result):
+		return 		self._is_authenticated \
+				and has_permission(ACT_CONTENT_EDIT, context, self.request)
+
+	def _do_decorate_external(self, context, result):
+		_links = result.setdefault(LINKS, [])
+		link = Link(context,
+					rel=VIEW_LESSONS_CONTAINERS,
+					elements=('@@%s' % VIEW_LESSONS_CONTAINERS,))
+		interface.alsoProvides(link, ILocation)
+		link.__name__ = ''
+		link.__parent__ = context
+		_links.append(link)

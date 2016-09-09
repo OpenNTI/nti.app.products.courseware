@@ -435,6 +435,21 @@
 				for="nti.dataserver.contenttypes.forums.interfaces.ITopic
 					 pyramid.interfaces.IRequest"/>
 
+	<subscriber factory=".decorators.LessonsContainerLinkDecorator"
+				provides="nti.externalization.interfaces.IExternalObjectDecorator"
+				for="nti.assessment.interfaces.IQAssignment
+					 pyramid.interfaces.IRequest" />
+
+	<subscriber factory=".decorators.LessonsContainerLinkDecorator"
+				provides="nti.externalization.interfaces.IExternalObjectDecorator"
+				for="nti.assessment.interfaces.IQuestionSet
+					 pyramid.interfaces.IRequest" />
+
+	<subscriber factory=".decorators.LessonsContainerLinkDecorator"
+				provides="nti.externalization.interfaces.IExternalObjectDecorator"
+				for="nti.assessment.randomized.interfaces.IQuestionBank
+					 pyramid.interfaces.IRequest" />
+
 	<!--
 		 Get an href here to the real location, since we return these beneath Roster as well.
 		 Notice this is currently a very specific registration.
