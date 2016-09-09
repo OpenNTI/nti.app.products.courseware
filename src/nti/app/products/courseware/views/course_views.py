@@ -356,7 +356,7 @@ class CourseEnrollmentRosterGetView(AbstractAuthenticatedView,
 										  name='comprehensive')
 			id_util = component.getUtility(IIntIds)
 			matched_ids = policy.query_intids(username_search_term.lower())
-			items = [x for x in items if id_util.getId(IUser(x)) in matched_ids]
+			items = [x for x in items if id_util.getId(IUser(x, None)) in matched_ids]
 			result['FilteredTotalItemCount'] = len(items)
 
 		self._batch_tuple_iterable(result, items,
