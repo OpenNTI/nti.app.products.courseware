@@ -42,7 +42,7 @@ class TestCourseImporter(ApplicationLayerTest):
 	@WithSharedApplicationMockDS(testapp=False, users=False)
 	def test_get_importers(self):
 		sections = tuple(x for x, _ in sorted(component.getUtilitiesFor(ICourseSectionImporter)))
-		assert_that(sections, has_length(10))
+		assert_that(sections, has_length(11))
 		assert_that(sections, is_(
 					(u'001:Bundle_Metainfo',
 					 u'003:Presentation_Assets',
