@@ -32,8 +32,8 @@ from nti.assessment.randomized.interfaces import IQuestionBank
 
 from nti.contentlibrary.indexed_data import get_library_catalog
 
-from nti.contenttypes.courses.interfaces import ICourseCatalogEntry,\
-	ICourseInstance
+from nti.contenttypes.courses.interfaces import ICourseInstance
+from nti.contenttypes.courses.interfaces import ICourseCatalogEntry
 
 from nti.contenttypes.presentation.interfaces import INTIAssignmentRef
 from nti.contenttypes.presentation.interfaces import INTIQuestionSetRef
