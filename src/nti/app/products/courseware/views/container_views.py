@@ -9,12 +9,12 @@ __docformat__ = "restructuredtext en"
 
 logger = __import__('logging').getLogger(__name__)
 
-from pyramid.view import view_config
-from pyramid.view import view_defaults
-
 from zope import component
 
 from zope.intid.interfaces import IIntIds
+
+from pyramid.view import view_config
+from pyramid.view import view_defaults
 
 from nti.app.assessment.common import get_evaluation_courses
 
@@ -58,10 +58,10 @@ class AbstractContainersView(AbstractAuthenticatedView):
 	results from all courses will be returned.
 	"""
 
-	#: Subclasses define for searching
+	# : Subclasses define for searching
 	provided = None
 
-	def _search_for_lessons( self, container_ntiids, catalog, intids, sites ):
+	def _search_for_lessons(self, container_ntiids, catalog, intids, sites):
 		results = []
 		for item in catalog.search_objects(intids=intids,
 										   provided=self.provided,
@@ -69,19 +69,19 @@ class AbstractContainersView(AbstractAuthenticatedView):
 										   container_all_of=False,
 										   sites=sites):
 			if item.target == self.context.ntiid:
-				lesson = find_interface( item, INTILessonOverview, strict=False )
+				lesson = find_interface(item, INTILessonOverview, strict=False)
 				if lesson is not None:
-					results.append( lesson )
+					results.append(lesson)
 		return results
 
-	def get_lessons( self, courses ):
+	def get_lessons(self, courses):
 		catalog = get_library_catalog()
 		intids = component.getUtility(IIntIds)
 		sites = get_component_hierarchy_names()
 		container_ntiids = \
 				set(getattr(ICourseCatalogEntry(x, None), 'ntiid', None) for x in courses)
 		container_ntiids.discard(None)
-		result = self._search_for_lessons( container_ntiids, catalog, intids, sites )
+		result = self._search_for_lessons(container_ntiids, catalog, intids, sites)
 		return result
 
 	def __call__(self):
@@ -90,14 +90,14 @@ class AbstractContainersView(AbstractAuthenticatedView):
 		course = ICourseInstance(self.request, None)
 		courses = (course,)
 		if course is None:
-			courses = get_evaluation_courses( self.context )
+			courses = get_evaluation_courses(self.context)
 		if not courses:
 			raise_error({
 				u'message': _("No courses found for assessment."),
 				u'code': 'NoCoursesForAssessment',
 				})
-		lessons.extend( self.get_lessons( courses ) )
-		result[ITEM_COUNT] = result[TOTAL] = len( lessons )
+		lessons.extend(self.get_lessons(courses))
+		result[ITEM_COUNT] = result[TOTAL] = len(lessons)
 		return result
 
 @view_config(context=IQuestionSet)
