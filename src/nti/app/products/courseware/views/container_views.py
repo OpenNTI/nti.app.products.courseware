@@ -5,7 +5,6 @@
 """
 
 from __future__ import print_function, unicode_literals, absolute_import, division
-
 __docformat__ = "restructuredtext en"
 
 logger = __import__('logging').getLogger(__name__)
@@ -18,8 +17,6 @@ from zope import component
 from zope.intid.interfaces import IIntIds
 
 from nti.app.assessment.common import get_evaluation_courses
-
-from nti.app.assessment.utils import get_course_from_request
 
 from nti.app.base.abstract_views import AbstractAuthenticatedView
 
@@ -35,7 +32,8 @@ from nti.assessment.randomized.interfaces import IQuestionBank
 
 from nti.contentlibrary.indexed_data import get_library_catalog
 
-from nti.contenttypes.courses.interfaces import ICourseCatalogEntry
+from nti.contenttypes.courses.interfaces import ICourseCatalogEntry,\
+	ICourseInstance
 
 from nti.contenttypes.presentation.interfaces import INTIAssignmentRef
 from nti.contenttypes.presentation.interfaces import INTIQuestionSetRef
@@ -71,26 +69,26 @@ class AbstractContainersView(AbstractAuthenticatedView):
 										   container_all_of=False,
 										   sites=sites):
 			if item.target == self.context.ntiid:
-				lesson = find_interface( item, INTILessonOverview )
-				results.append( lesson )
+				lesson = find_interface( item, INTILessonOverview, strict=False )
+				if lesson is not None:
+					results.append( lesson )
 		return results
 
 	def get_lessons( self, courses ):
-		intids = component.getUtility(IIntIds)
 		catalog = get_library_catalog()
+		intids = component.getUtility(IIntIds)
 		sites = get_component_hierarchy_names()
-		container_ntiids = []
-		for course in courses:
-			entry = ICourseCatalogEntry( course, None )
-			if entry is not None:
-				container_ntiids.append( entry.ntiid )
+		container_ntiids = \
+				set(map(lambda x: getattr(ICourseCatalogEntry(x, None), 'ntiid', None),
+						courses))
+		container_ntiids.discard(None)
 		result = self._search_for_lessons( container_ntiids, catalog, intids, sites )
 		return result
 
 	def __call__(self):
 		result = LocatedExternalDict()
 		result['Lessons'] = lessons = list()
-		course = get_course_from_request()
+		course = ICourseInstance(self.request, None)
 		courses = (course,)
 		if course is None:
 			courses = get_evaluation_courses( self.context )
