@@ -79,8 +79,7 @@ class AbstractContainersView(AbstractAuthenticatedView):
 		intids = component.getUtility(IIntIds)
 		sites = get_component_hierarchy_names()
 		container_ntiids = \
-				set(map(lambda x: getattr(ICourseCatalogEntry(x, None), 'ntiid', None),
-						courses))
+				set(getattr(ICourseCatalogEntry(x, None), 'ntiid', None) for x in courses)
 		container_ntiids.discard(None)
 		result = self._search_for_lessons( container_ntiids, catalog, intids, sites )
 		return result
