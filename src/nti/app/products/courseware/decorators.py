@@ -56,8 +56,6 @@ from nti.appserver.pyramid_renderers_edit_link_decorator import LinkRemoverDecor
 from nti.assessment.interfaces import IQAssignment
 from nti.assessment.interfaces import IQuestionSet
 
-from nti.assessment.randomized.interfaces import IQuestionBank
-
 from nti.common.hash import md5_base64_digest
 
 from nti.contenttypes.courses.common import get_course_packages
@@ -785,7 +783,6 @@ class TopicAddRemoverLinkDecorator(LinkRemoverDecorator):
 
 @component.adapter(IQAssignment)
 @component.adapter(IQuestionSet)
-@component.adapter(IQuestionBank)
 @interface.implementer(IExternalObjectDecorator)
 class LessonsContainerLinkDecorator(AbstractAuthenticatedRequestAwareDecorator):
 	"""
