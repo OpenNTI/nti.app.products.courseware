@@ -58,7 +58,7 @@ class AbstractContainersView(AbstractAuthenticatedView):
 	results from all courses will be returned.
 	"""
 
-	# : Subclasses define for searching
+	#: Subclasses define for searching
 	provided = None
 
 	def _search_for_lessons(self, container_ntiids, catalog, intids, sites):
