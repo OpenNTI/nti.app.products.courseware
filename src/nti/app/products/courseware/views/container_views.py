@@ -49,6 +49,7 @@ from nti.site.site import get_component_hierarchy_names
 from nti.traversal.traversal import find_interface
 
 TOTAL = StandardExternalFields.TOTAL
+ITEMS = StandardExternalFields.ITEMS
 ITEM_COUNT = StandardExternalFields.ITEM_COUNT
 
 class AbstractContainersView(AbstractAuthenticatedView):
@@ -86,7 +87,7 @@ class AbstractContainersView(AbstractAuthenticatedView):
 
 	def __call__(self):
 		result = LocatedExternalDict()
-		result['Lessons'] = lessons = list()
+		result[ITEMS] = lessons = list()
 		course = ICourseInstance(self.request, None)
 		courses = (course,)
 		if course is None:
