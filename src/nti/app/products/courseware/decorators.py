@@ -43,6 +43,7 @@ from nti.app.products.courseware.interfaces import IOpenEnrollmentOption
 from nti.app.products.courseware.interfaces import ICourseInstanceEnrollment
 
 from nti.app.products.courseware.utils import get_enrollment_options
+from nti.app.products.courseware.utils import get_evaluation_lessons
 from nti.app.products.courseware.utils import has_course_invitations
 from nti.app.products.courseware.utils import get_vendor_thank_you_page
 from nti.app.products.courseware.utils import PreviewCourseAccessPredicateDecorator
@@ -84,6 +85,9 @@ from nti.contenttypes.courses.utils import get_catalog_entry
 from nti.contenttypes.courses.utils import is_course_instructor
 from nti.contenttypes.courses.utils import get_enrollment_record
 from nti.contenttypes.courses.utils import get_course_subinstances
+
+from nti.contenttypes.presentation.interfaces import INTIAssignmentRef
+from nti.contenttypes.presentation.interfaces import INTIQuestionSetRef
 
 from nti.dataserver.authorization import ACT_NTI_ADMIN
 from nti.dataserver.authorization import ACT_CONTENT_EDIT
@@ -781,20 +785,23 @@ class TopicAddRemoverLinkDecorator(LinkRemoverDecorator):
 				and not is_course_instructor(course, self.remoteUser) \
 				and has_permission(ACT_CONTENT_EDIT, course, self.request)
 
-@component.adapter(IQAssignment)
-@component.adapter(IQuestionSet)
-@interface.implementer(IExternalObjectDecorator)
-class LessonsContainerLinkDecorator(AbstractAuthenticatedRequestAwareDecorator):
+class _BaseLessonsContainerDecorator(AbstractAuthenticatedRequestAwareDecorator):
 	"""
 	Add a lessons link to fetch all lessons containing our given
-	assessment context.
+	assessment context and add a `LessonContainerCount`.
 	"""
+
+	#: Subclasses need to define which outline ref they need to look up.
+	provided = None
 
 	def _predicate(self, context, result):
 		return 		self._is_authenticated \
 				and has_permission(ACT_CONTENT_EDIT, context, self.request)
 
 	def _do_decorate_external(self, context, result):
+		lessons = get_evaluation_lessons( context, self.provided )
+		result['LessonContainerCount'] = len( lessons or () )
+
 		_links = result.setdefault(LINKS, [])
 		link = Link(context,
 					rel=VIEW_LESSONS_CONTAINERS,
@@ -803,3 +810,15 @@ class LessonsContainerLinkDecorator(AbstractAuthenticatedRequestAwareDecorator):
 		link.__name__ = ''
 		link.__parent__ = context
 		_links.append(link)
+
+@component.adapter(IQuestionSet)
+@interface.implementer(IExternalObjectDecorator)
+class QuestionSetLessonsContainerDecorator(_BaseLessonsContainerDecorator):
+
+	provided = INTIQuestionSetRef
+
+@component.adapter(IQAssignment)
+@interface.implementer(IExternalObjectDecorator)
+class AssignmentLessonsContainerDecorator(_BaseLessonsContainerDecorator):
+
+	provided = INTIAssignmentRef

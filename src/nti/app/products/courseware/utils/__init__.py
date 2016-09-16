@@ -17,10 +17,16 @@ from collections import Mapping
 
 import repoze.lru
 
+from pyramid.threadlocal import get_current_request
+
 from zope import component
+
+from zope.intid.interfaces import IIntIds
 
 from zope.traversing.api import traverse
 from zope.traversing.interfaces import IEtcNamespace
+
+from nti.app.assessment.common import get_evaluation_courses
 
 from nti.app.products.courseware import ASSETS_FOLDER
 
@@ -31,6 +37,8 @@ from nti.app.products.courseware.interfaces import IEnrollmentOptionProvider
 from nti.app.products.courseware.invitations import CourseInvitation
 
 from nti.app.products.courseware.utils.decorators import PreviewCourseAccessPredicateDecorator
+
+from nti.contentlibrary.indexed_data import get_library_catalog
 
 from nti.common.maps import CaseInsensitiveDict
 
@@ -48,9 +56,13 @@ from nti.contenttypes.courses.interfaces import IJoinCourseInvitation
 
 from nti.contenttypes.courses.utils import get_parent_course
 
+from nti.contenttypes.presentation.interfaces import INTILessonOverview
+
 from nti.dataserver.interfaces import IMemcacheClient
 
 from nti.externalization.oids import to_external_ntiid_oid
+
+from nti.site.site import get_component_hierarchy_names
 
 from nti.traversal.traversal import find_interface
 
@@ -183,3 +195,39 @@ def get_course_invitation(context, code):
 def has_course_invitations(context):
 	result = get_course_invitations(context)
 	return bool(result)
+
+def _search_for_lessons( evaluation, provided, container_ntiids, catalog, intids, sites ):
+	results = []
+	for item in catalog.search_objects(intids=intids,
+									   provided=provided,
+									   container_ntiids=container_ntiids,
+									   container_all_of=False,
+									   sites=sites):
+		if item.target == evaluation.ntiid:
+			lesson = find_interface(item, INTILessonOverview, strict=False)
+			if lesson is not None:
+				results.append(lesson)
+	return results
+
+def get_evaluation_lessons( evaluation, outline_provided, courses=None, request=None ):
+	"""
+	For the given evaluation, get all lessons containing the evaluation.
+
+	`outline_provided` is the outline ref type pointing to the given evaluation.
+	"""
+	request = get_current_request() if request is None else request
+	if courses is None:
+		# XXX: If we have a request course, we use it. Do we want all courses?
+		course = ICourseInstance(request, None)
+		courses = (course,)
+		if course is None:
+			courses = get_evaluation_courses( evaluation )
+	catalog = get_library_catalog()
+	intids = component.getUtility(IIntIds)
+	sites = get_component_hierarchy_names()
+	container_ntiids = \
+			set(getattr(ICourseCatalogEntry(x, None), 'ntiid', None) for x in courses)
+	container_ntiids.discard(None)
+	result = _search_for_lessons( evaluation, outline_provided,
+								  container_ntiids, catalog, intids, sites )
+	return result

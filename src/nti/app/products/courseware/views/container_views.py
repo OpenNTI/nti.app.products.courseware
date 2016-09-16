@@ -9,10 +9,6 @@ __docformat__ = "restructuredtext en"
 
 logger = __import__('logging').getLogger(__name__)
 
-from zope import component
-
-from zope.intid.interfaces import IIntIds
-
 from pyramid.view import view_config
 from pyramid.view import view_defaults
 
@@ -22,6 +18,8 @@ from nti.app.base.abstract_views import AbstractAuthenticatedView
 
 from nti.app.products.courseware import MessageFactory as _
 
+from nti.app.products.courseware.utils import get_evaluation_lessons
+
 from nti.app.products.courseware.views import raise_error
 from nti.app.products.courseware.views import VIEW_LESSONS_CONTAINERS
 
@@ -30,23 +28,15 @@ from nti.assessment.interfaces import IQuestionSet
 
 from nti.assessment.randomized.interfaces import IQuestionBank
 
-from nti.contentlibrary.indexed_data import get_library_catalog
-
 from nti.contenttypes.courses.interfaces import ICourseInstance
-from nti.contenttypes.courses.interfaces import ICourseCatalogEntry
 
 from nti.contenttypes.presentation.interfaces import INTIAssignmentRef
 from nti.contenttypes.presentation.interfaces import INTIQuestionSetRef
-from nti.contenttypes.presentation.interfaces import INTILessonOverview
 
 from nti.dataserver import authorization as nauth
 
 from nti.externalization.interfaces import LocatedExternalDict
 from nti.externalization.interfaces import StandardExternalFields
-
-from nti.site.site import get_component_hierarchy_names
-
-from nti.traversal.traversal import find_interface
 
 TOTAL = StandardExternalFields.TOTAL
 ITEMS = StandardExternalFields.ITEMS
@@ -62,32 +52,8 @@ class AbstractContainersView(AbstractAuthenticatedView):
 	#: Subclasses define for searching
 	provided = None
 
-	def _search_for_lessons(self, container_ntiids, catalog, intids, sites):
-		results = []
-		for item in catalog.search_objects(intids=intids,
-										   provided=self.provided,
-										   container_ntiids=container_ntiids,
-										   container_all_of=False,
-										   sites=sites):
-			if item.target == self.context.ntiid:
-				lesson = find_interface(item, INTILessonOverview, strict=False)
-				if lesson is not None:
-					results.append(lesson)
-		return results
-
-	def get_lessons(self, courses):
-		catalog = get_library_catalog()
-		intids = component.getUtility(IIntIds)
-		sites = get_component_hierarchy_names()
-		container_ntiids = \
-				set(getattr(ICourseCatalogEntry(x, None), 'ntiid', None) for x in courses)
-		container_ntiids.discard(None)
-		result = self._search_for_lessons(container_ntiids, catalog, intids, sites)
-		return result
-
 	def __call__(self):
 		result = LocatedExternalDict()
-		result[ITEMS] = lessons = list()
 		course = ICourseInstance(self.request, None)
 		courses = (course,)
 		if course is None:
@@ -97,7 +63,8 @@ class AbstractContainersView(AbstractAuthenticatedView):
 				u'message': _("No courses found for assessment."),
 				u'code': 'NoCoursesForAssessment',
 				})
-		lessons.extend(self.get_lessons(courses))
+		lessons = get_evaluation_lessons( self.context, self.provided, courses=courses, request=self.request )
+		result[ITEMS] = lessons
 		result[ITEM_COUNT] = result[TOTAL] = len(lessons)
 		return result
 
