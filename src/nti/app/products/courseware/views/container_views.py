@@ -26,8 +26,6 @@ from nti.app.products.courseware.views import VIEW_LESSONS_CONTAINERS
 from nti.assessment.interfaces import IQAssignment
 from nti.assessment.interfaces import IQuestionSet
 
-from nti.assessment.randomized.interfaces import IQuestionBank
-
 from nti.contenttypes.courses.interfaces import ICourseInstance
 
 from nti.contenttypes.presentation.interfaces import INTIAssignmentRef
@@ -63,13 +61,13 @@ class AbstractContainersView(AbstractAuthenticatedView):
 				u'message': _("No courses found for assessment."),
 				u'code': 'NoCoursesForAssessment',
 				})
-		lessons = get_evaluation_lessons( self.context, self.provided, courses=courses, request=self.request )
+		lessons = get_evaluation_lessons( self.context, self.provided,
+										  courses=courses, request=self.request )
 		result[ITEMS] = lessons
 		result[ITEM_COUNT] = result[TOTAL] = len(lessons)
 		return result
 
 @view_config(context=IQuestionSet)
-@view_config(context=IQuestionBank)
 @view_defaults(route_name='objects.generic.traversal',
 			   renderer='rest',
 			   name=VIEW_LESSONS_CONTAINERS,

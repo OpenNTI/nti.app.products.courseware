@@ -20,6 +20,10 @@ from zope.location.interfaces import ILocation
 
 from pyramid.threadlocal import get_current_request
 
+from nti.app.assessment.common import get_course_from_evaluation
+
+from nti.app.assessment.utils import get_course_from_request
+
 from nti.app.products.courseware import VIEW_CONTENTS
 from nti.app.products.courseware import VIEW_COURSE_MAIL
 from nti.app.products.courseware import VIEW_CATALOG_ENTRY
@@ -794,6 +798,13 @@ class _BaseLessonsContainerDecorator(AbstractAuthenticatedRequestAwareDecorator)
 	#: Subclasses need to define which outline ref they need to look up.
 	provided = None
 
+	def _get_course_from_evaluation(self, evaluation):
+		result = get_course_from_request(self.request)
+		if result is None:
+			result = get_course_from_evaluation(evaluation=evaluation,
+										  		user=self.remoteUser)
+		return result
+
 	def _predicate(self, context, result):
 		return 		self._is_authenticated \
 				and has_permission(ACT_CONTENT_EDIT, context, self.request)
@@ -802,13 +813,17 @@ class _BaseLessonsContainerDecorator(AbstractAuthenticatedRequestAwareDecorator)
 		lessons = get_evaluation_lessons( context, self.provided )
 		result['LessonContainerCount'] = len( lessons or () )
 
+		course = self._get_course_from_evaluation(context)
+		link_context = context if course is None else course
+		pre_elements = () if course is None else ('Assessments', context.ntiid)
+
 		_links = result.setdefault(LINKS, [])
-		link = Link(context,
+		link = Link(link_context,
 					rel=VIEW_LESSONS_CONTAINERS,
-					elements=('@@%s' % VIEW_LESSONS_CONTAINERS,))
+					elements=pre_elements + ('@@%s' % VIEW_LESSONS_CONTAINERS,))
 		interface.alsoProvides(link, ILocation)
 		link.__name__ = ''
-		link.__parent__ = context
+		link.__parent__ = link_context
 		_links.append(link)
 
 @component.adapter(IQuestionSet)
