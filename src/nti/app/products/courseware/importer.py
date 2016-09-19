@@ -35,6 +35,8 @@ from nti.contenttypes.courses.interfaces import ICourseCatalog
 from nti.contenttypes.courses.interfaces import ICourseImporter
 from nti.contenttypes.courses.interfaces import ICourseInstance
 
+from nti.contenttypes.courses.utils import set_course_site_manager
+
 from nti.contenttypes.presentation.interfaces import INTIMedia
 from nti.contenttypes.presentation.interfaces import IConcreteAsset
 from nti.contenttypes.presentation.interfaces import INTILessonOverview
@@ -162,6 +164,7 @@ def create_course(admin, key, archive_path, catalog=None, writeout=True, lockout
 			course = ContentCourseInstance()
 			course.root = course_root
 			administrative_level[key] = course # gain intid
+			set_course_site_manager(course) # add site manager
 
 			# let's check for subinstances
 			archive_sec_path = os.path.expanduser(tmp_path or archive_path)
@@ -196,6 +199,8 @@ def create_course(admin, key, archive_path, catalog=None, writeout=True, lockout
 					subinstance = ContentCourseSubInstance()
 					subinstance.root = sub_section_root
 					course.SubInstances[name] = subinstance # register
+					set_course_site_manager(course) # add site manager
+
 		# process
 		_execute(course, tmp_path or archive_path, writeout, lockout)
 		return course
