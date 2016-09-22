@@ -34,11 +34,13 @@ def _process(args):
 	if hasattr(args, 'ntiid'):
 		import_course(args.ntiid, path, 
 					  writeout=args.writeout,
-					  lockout=args.lockout)
+					  lockout=args.lockout,
+					  clear=args.clear)
 	else:
 		create_course(args.admin, args.key, path,
 					  writeout=args.writeout,
-					  lockout=args.lockout)
+					  lockout=args.lockout,
+					  clear=args.clear)
 
 def main():
 	arg_parser = argparse.ArgumentParser(description="Import/Create a course")
@@ -61,6 +63,10 @@ def main():
 	parent_parser.add_argument('-l', '--lockout',
 							   dest='lockout',
 							   help="Lock course.",
+							   action='store_true')
+	parent_parser.add_argument('-c', '--clear',
+							   dest='clear',
+							   help="Clear course resources.",
 							   action='store_true')
 
 	subparsers = arg_parser.add_subparsers(help='sub-command help')

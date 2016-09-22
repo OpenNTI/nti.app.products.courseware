@@ -130,7 +130,9 @@ class CourseImportView(AbstractAuthenticatedView, CourseImportMixin):
 			path, tmp_path = self._get_source_paths(values)
 			writeout = is_true(values.get('writeout') or values.get('save'))
 			lockout = is_true(values.get('lock') or values.get('lockout'))
-			import_course(entry.ntiid, os.path.abspath(path), writeout, lockout)
+			clear = is_true(values.get('clear'))
+			import_course(entry.ntiid, os.path.abspath(path), writeout, 
+						  lockout, clear=clear)
 			result['Elapsed'] = time.time() - now
 			result['Course'] = ICourseInstance(self.context)
 		finally:
@@ -196,13 +198,15 @@ class ImportCourseView(AbstractAuthenticatedView, CourseImportMixin):
 			ntiid = values.get('ntiid')
 			writeout = is_true(values.get('writeout') or values.get('save'))
 			lockout = is_true(values.get('lock') or values.get('lockout') or 'True')
+			clear = is_true(values.get('clear') or 'True')
 			if ntiid:
 				params[NTIID] = ntiid
 				course = self._import_course(ntiid, path, writeout, lockout)
 			else:
 				params['Key'] = key = values.get('key')
 				params['Admin'] = admin = values.get('admin')
-				course = self._create_course(admin, key, path, writeout, lockout)
+				course = self._create_course(admin, key, path, writeout, 
+											 lockout, clear=clear)
 			result['Course'] = course
 			result['Elapsed'] = time.time() - now
 		finally:

@@ -21,6 +21,8 @@ from nti.cabinet.filer import DirectoryFiler
 
 from nti.common.string import to_unicode
 
+from nti.contentfolder.interfaces import IRootFolder
+
 from nti.contentlibrary.filesystem import FilesystemBucket
 
 from nti.contentlibrary.interfaces import IFilesystemBucket
@@ -91,10 +93,13 @@ def _lockout(course):
 			_recur(child)
 	_recur(course.Outline)
 	
-def _execute(course, archive_path, writeout=True, lockout=False):
+def _execute(course, archive_path, writeout=True, lockout=False, clear=False):
 	course = ICourseInstance(course, None)
 	if course is None:
 		raise ValueError("Invalid course")
+	if clear:
+		root = IRootFolder(course)
+		root.clear()
 
 	tmp_path = None
 	try:
@@ -109,7 +114,7 @@ def _execute(course, archive_path, writeout=True, lockout=False):
 		if tmp_path:
 			delete_dir(tmp_path)
 
-def import_course(ntiid, archive_path, writeout=True, lockout=False):
+def import_course(ntiid, archive_path, writeout=True, lockout=False, clear=False):
 	"""
 	Import a course from a file archive
 	
@@ -117,10 +122,11 @@ def import_course(ntiid, archive_path, writeout=True, lockout=False):
 	:param archive_path archive path
 	"""
 	course = find_object_with_ntiid(ntiid or u'')
-	_execute(course, archive_path, writeout, lockout)
+	_execute(course, archive_path, writeout, lockout, clear)
 	return course
 
-def create_course(admin, key, archive_path, catalog=None, writeout=True, lockout=False):
+def create_course(admin, key, archive_path, catalog=None, writeout=True, 
+				  lockout=False, clear=False):
 	"""
 	Creates a course from a file archive
 	
@@ -198,7 +204,7 @@ def create_course(admin, key, archive_path, catalog=None, writeout=True, lockout
 					course.SubInstances[name] = subinstance # register
 
 		# process
-		_execute(course, tmp_path or archive_path, writeout, lockout)
+		_execute(course, tmp_path or archive_path, writeout, lockout, clear)
 		return course
 	finally:
 		delete_dir(tmp_path)
