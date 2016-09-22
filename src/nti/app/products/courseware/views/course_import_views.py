@@ -198,7 +198,7 @@ class ImportCourseView(AbstractAuthenticatedView, CourseImportMixin):
 			ntiid = values.get('ntiid')
 			writeout = is_true(values.get('writeout') or values.get('save'))
 			lockout = is_true(values.get('lock') or values.get('lockout') or 'True')
-			clear = is_true(values.get('clear') or 'True')
+			clear = is_true(values.get('clear'))
 			if ntiid:
 				params[NTIID] = ntiid
 				course = self._import_course(ntiid, path, writeout, lockout)
