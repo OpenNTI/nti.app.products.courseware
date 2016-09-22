@@ -16,7 +16,7 @@ from hamcrest import assert_that
 from hamcrest import has_entries
 from hamcrest import starts_with
 from hamcrest import contains_string
-from hamcrest import greater_than_or_equal_to
+from hamcrest import is_not as does_not
 
 import csv
 from io import BytesIO
@@ -111,7 +111,7 @@ class AbstractMixin(object):
 			if i:
 				res = self.fetch_by_ntiid(i, extra_environ=inst_env)
 				if res.json_body['Class'] == 'CommunityForum':
-					#  XXX: Fragile
+					# XXX: Fragile
 					found_forum = True
 					assert_that(res.json_body, has_entry("SharingScopeName", not_none()))
 					# The instructor should have an 'add' href for the forum
@@ -151,29 +151,28 @@ class AbstractMixin(object):
 												  {'Class': 'Post', 'body': ['A comment']},
 												  status=201)
 
-		# ...it /is/ notable for the instructor...
-		# (we previously tried to not make that so, but it only worked
-		# for the first instructor, it was notable to everyone else because they were
-		# explicitly listed in the ACL, which turns into direct-sharing)
+		# ...it is no longer notable for the instructor...
 		res = self.fetch_user_recursive_notable_ugd(username='harp4162', extra_environ=inst_env)
-		assert_that(res.json_body, has_entry('TotalItemCount', greater_than_or_equal_to(2)))
+		assert_that(res.json_body, has_entry('TotalItemCount', is_( 0 )))
 
-		# ... it is also in the instructors stream (why?)...
+		# ... the change is also in the instructors stream (why?)...
 		res = self.fetch_user_root_rstream(username='harp4162', extra_environ=inst_env)
 		assert_that(res.json_body['Items'],
 					has_item(has_entries('Creator', self.default_username,
 										  'Item', has_entries('Class', 'GeneralForumComment',
 															  'body', ['A comment']))))
 
-		# ...Likewise, the discussions are in the stream for the instructor...
+		# ...Likewise, the discussion change is in the stream for the instructor (why?), 
+		# but not the discussion itself.
 		for username, env in (('harp4162', inst_env),
 							  # (self.default_username, None)
 						  ):
 			res = self.fetch_user_root_rstream(username=username, extra_environ=env)
 			assert_that(res.json_body['Items'],
-						has_item(has_entries('ChangeType', 'Shared',
+						does_not(
+							has_item(has_entries('ChangeType', 'Shared',
 											  'Item', has_entries('Class', 'CommunityHeadlineTopic',
-																  'title', 'A clc discussion'))))
+																  'title', 'A clc discussion')))))
 
 		# The admin can easily make a small edit to the topic...
 		res = self.testapp.get(self.open_path, extra_environ=admin_env)
