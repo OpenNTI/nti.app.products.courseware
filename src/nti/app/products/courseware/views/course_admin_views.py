@@ -579,10 +579,9 @@ class AllCourseEnrollmentRosterDownloadView(AbstractAuthenticatedView):
 		# (NOTE: This winds up being an O(n^2) approach
 		# due to the poor implementation of enrollments
 		# for legacy courses.)
-		enrollment_predicate = self._make_enrollment_predicate()
 		user_to_coursenames = collections.defaultdict(set)
-		entries = list(self._iter_catalog_entries())
-		ntiids = {e.ntiid for e in entries}
+		enrollment_predicate = self._make_enrollment_predicate()
+		ntiids = {e.ntiid for e in self._iter_catalog_entries()}
 
 		catalog = get_enrollment_catalog()
 		intids = component.getUtility(IIntIds)
