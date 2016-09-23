@@ -111,6 +111,8 @@ from nti.site.site import get_component_hierarchy_names
 from nti.traversal.traversal import find_interface
 
 ITEMS = StandardExternalFields.ITEMS
+TOTAL = StandardExternalFields.TOTAL
+ITEM_COUNT = StandardExternalFields.ITEM_COUNT
 
 # HELPER admin views
 
@@ -394,7 +396,7 @@ class CourseSectionEnrollmentMigrationView(AbstractAuthenticatedView):
 		m = result[ITEMS] = {}
 		for info in items or ():
 			m[info.section_name] = info.seat_count
-		result['Total'] = result['ItemCount'] = total
+		result[TOTAL] = result[ITEM_COUNT] = total
 		return result
 
 	def __call__(self):
@@ -527,7 +529,8 @@ class CourseEnrollmentsView(AbstractAuthenticatedView):
 		return response
 
 import collections
-from cStringIO import StringIO
+
+from simplejson.compat import StringIO
 
 from nti.app.products.courseware.interfaces import ICourseInstanceEnrollment
 
