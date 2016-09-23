@@ -149,7 +149,8 @@ class CourseImportView(AbstractAuthenticatedView, CourseImportMixin):
 			   permission=nauth.ACT_CONTENT_EDIT)
 class ImportCourseView(AbstractAuthenticatedView, CourseImportMixin):
 
-	def _import_course(self, ntiid, path, writeout=True, lockout=False):
+	def _import_course(self, ntiid, path, writeout=True, 
+					   lockout=False, clear=False):
 		context = find_object_with_ntiid(ntiid)
 		course = ICourseInstance(context, None)
 		if course is None:
@@ -157,9 +158,10 @@ class ImportCourseView(AbstractAuthenticatedView, CourseImportMixin):
 				u'message': _("Invalid course."),
 				u'code': 'InvalidCourse',
 			})
-		return import_course(ntiid, path, writeout, lockout)
+		return import_course(ntiid, path, writeout, lockout, clear=clear)
 
-	def _create_course(self, admin, key, path, writeout=True, lockout=False):
+	def _create_course(self, admin, key, path, writeout=True, 
+					   lockout=False, clear=False):
 		if not admin:
 			raise_error({
 				u'message': _("No administrative level specified."),
@@ -185,7 +187,7 @@ class ImportCourseView(AbstractAuthenticatedView, CourseImportMixin):
 				u'code': 'InvalidAdminLevel',
 			})
 		return create_course(admin, key, path, catalog=catalog,
-							 writeout=writeout, lockout=lockout)
+							 writeout=writeout, lockout=lockout, clear=clear)
 
 	def _do_call(self):
 		now = time.time()
@@ -201,7 +203,8 @@ class ImportCourseView(AbstractAuthenticatedView, CourseImportMixin):
 			clear = is_true(values.get('clear'))
 			if ntiid:
 				params[NTIID] = ntiid
-				course = self._import_course(ntiid, path, writeout, lockout)
+				course = self._import_course(ntiid, path, writeout, 
+											 lockout, clear=clear)
 			else:
 				params['Key'] = key = values.get('key')
 				params['Admin'] = admin = values.get('admin')
