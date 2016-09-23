@@ -25,7 +25,7 @@ from pyramid.httpexceptions import HTTPBadRequest
 
 from pyramid.view import view_config
 
-import BTrees
+from BTrees import family64
 
 from nti.app.base.abstract_views import AbstractAuthenticatedView
 
@@ -154,7 +154,7 @@ class CourseDashboardRecursiveStreamView(AbstractAuthenticatedView, BatchingUtil
 
 	@property
 	def _family(self):
-		return BTrees.family64
+		return family64
 
 	def _intids_in_time_range(self, min_created_time, max_created_time):
 		# A few different ways to do this; let's use the catalog
@@ -563,7 +563,9 @@ class CourseDashboardBucketingStreamView(CourseDashboardRecursiveStreamView):
 		return course_intids
 
 	def _get_bucketed_objects(self):
-		"Get the bucketed objects for this stream."
+		"""
+		Get the bucketed objects for this stream.
+		"""
 		course_intids = self._do_get_intids()
 		results = {}
 		course_intids = self._check_most_recent_record(course_intids)
