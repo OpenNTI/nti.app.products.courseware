@@ -28,8 +28,6 @@ from pyramid.interfaces import IRequest
 from pyramid.view import view_config
 from pyramid.view import view_defaults
 
-from nti.app.authentication import is_anonymous_identity
-
 from nti.app.base.abstract_views import AbstractView
 from nti.app.base.abstract_views import AbstractAuthenticatedView
 
@@ -243,9 +241,9 @@ class AllCatalogEntriesView(AbstractAuthenticatedView):
 class AnonymouslyAvailableCourses(AbstractView):
 
 	def _can_access(self):
-		#TODO circle back around and do a more legitimate check here
-		#identity = self.request.environ.get('repoze.who.identity')
-		#return is_anonymous_identity(identity)
+		# TODO: circle back around and do a more legitimate check here
+		# identity = self.request.environ.get('repoze.who.identity')
+		# return is_anonymous_identity(identity)
 		return False
 
 	def __call__(self):
