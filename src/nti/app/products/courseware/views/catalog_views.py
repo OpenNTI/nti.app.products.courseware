@@ -243,8 +243,10 @@ class AllCatalogEntriesView(AbstractAuthenticatedView):
 class AnonymouslyAvailableCourses(AbstractView):
 
 	def _can_access(self):
-		identity = self.request.environ.get('repoze.who.identity')
-		return is_anonymous_identity(identity)
+		#TODO circle back around and do a more legitimate check here
+		#identity = self.request.environ.get('repoze.who.identity')
+		#return is_anonymous_identity(identity)
+		return False
 
 	def __call__(self):
 		if not self._can_access():
