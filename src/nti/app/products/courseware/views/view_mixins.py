@@ -210,7 +210,8 @@ class AbstractChildMoveView(AbstractAuthenticatedView,
 			raise hexc.HTTPUnprocessableEntity(_('New parent does not exist.'))
 		return new_parent
 
-	def _validate_parents(self, old_parent_ntiid=None, new_parent_ntiid=None, context_ntiid=None, *args, **kwargs):
+	def _validate_parents(self, old_parent_ntiid=None, new_parent_ntiid=None, 
+						  context_ntiid=None, *args, **kwargs):
 		children_ntiids = self._get_children_ntiids(context_ntiid)
 		if 		new_parent_ntiid not in children_ntiids \
 			or (old_parent_ntiid
@@ -246,14 +247,14 @@ class AbstractChildMoveView(AbstractAuthenticatedView,
 			did_remove = self._remove_from_parent(old_parent, obj)
 			if not did_remove:
 				raise hexc.HTTPUnprocessableEntity(_('Moved item does not exist in old parent.'))
-			old_parent.child_order_locked = True
+			old_parent.childOrderLock()
 
 		if self.notify_type:
 			notify(self.notify_type(obj, self.remoteUser.username,
 									index, old_parent_ntiid=old_parent_ntiid))
 		logger.info('Moved item (%s) at index (%s) (to=%s) (from=%s)',
 					ntiid, index, new_parent_ntiid, old_parent_ntiid)
-		new_parent.child_order_locked = True
+		new_parent.childOrderLock()
 		return self.context
 
 class IndexedRequestMixin(object):
@@ -347,5 +348,5 @@ class DeleteChildViewMixin(NTIIDPathMixin):
 		if found:
 			to_delete, index = found
 			self._remove(to_delete, index)
-			self.context.child_order_locked = True
+			self.context.childOrderLock()
 		return hexc.HTTPOk()
