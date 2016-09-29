@@ -9,8 +9,6 @@ __docformat__ = "restructuredtext en"
 
 logger = __import__('logging').getLogger(__name__)
 
-from zope import component
-
 from pyramid.threadlocal import get_current_request
 
 from nti.appserver.interfaces import ForbiddenContextException
@@ -104,7 +102,7 @@ class OutlinePathFactory(object):
 		except AttributeError:
 			return
 
-		def _check_slidedeck( slide_deck ):
+		def _check_slidedeck(slide_deck):
 			# We may have the slide deck or a contained video.
 			if slide_deck.ntiid == target_ntiid:
 				return True
@@ -117,7 +115,7 @@ class OutlinePathFactory(object):
 										container_ntiids=content_ntiid,
 										provided=INTISlideDeck,
 										sites=get_component_hierarchy_names()):
-			if _check_slidedeck( slide_deck ):
+			if _check_slidedeck(slide_deck):
 				return slide_deck
 		return None
 
@@ -126,7 +124,7 @@ class OutlinePathFactory(object):
 		for item in objects or ():
 			# Should we do this for all asset refs?
 			item = IConcreteAsset(item, item)
-			results.append( item )
+			results.append(item)
 		return results
 
 	def _get_outline_result_items(self, item, lesson_overview):
@@ -150,7 +148,7 @@ class OutlinePathFactory(object):
 			if slide_deck is not None:
 				# Our item may be a media roll here too.
 				results = (slide_deck, original_obj,)
-			elif INTIMediaRoll.providedBy( item ):
+			elif INTIMediaRoll.providedBy(item):
 				# Currently, we only need to return the actual video object, and
 				# not its media roll container.
 				results = (original_obj,)
@@ -159,7 +157,7 @@ class OutlinePathFactory(object):
 		else:
 			results = (item,)
 		# Make sure we don't return refs.
-		results = self._convert_refs( results )
+		results = self._convert_refs(results)
 		return results
 
 	def _overview_item_contains_target(self, item, check_contained=True):
@@ -179,11 +177,11 @@ class OutlinePathFactory(object):
 			* Target obj is content unit page containing a self-assessment.
 		"""
 		item = IConcreteAsset(item, item)
-		target_ntiid_ref = getattr(item, 'target_ntiid', None )
-		ntiid_ref = getattr( item, 'ntiid', None )
-		target_ref = getattr( item, 'target', None )
+		target_ntiid_ref = getattr(item, 'target_ntiid', None)
+		ntiid_ref = getattr(item, 'ntiid', None)
+		target_ref = getattr(item, 'target', None)
 		# Some related work refs have hrefs pointing at content (instead of target).
-		href = getattr( item, 'href', None )
+		href = getattr(item, 'href', None)
 		ntiid_vals = set([target_ntiid_ref, ntiid_ref, target_ref, href])
 
 		# We found our object's container, or we are the container.
@@ -191,11 +189,11 @@ class OutlinePathFactory(object):
 				or 	self.target_ntiid in ntiid_vals
 
 		# Ok, do we have a media roll.
-		if not result and INTIMediaRoll.providedBy( item ):
+		if not result and INTIMediaRoll.providedBy(item):
 			for child in item.items or ():
-				child_ntiid = getattr( child, 'ntiid', '' )
-				child_target = getattr( child, 'target', '' )
-				if self.target_ntiid in ( child_ntiid, child_target ):
+				child_ntiid = getattr(child, 'ntiid', '')
+				child_target = getattr(child, 'target', '')
+				if self.target_ntiid in (child_ntiid, child_target):
 					result = True
 					break
 
@@ -236,7 +234,7 @@ class OutlinePathFactory(object):
 		our user. Otherwise we'll return a 403.
 		"""
 		for item in path or ():
-			if not self._is_visible( item ):
+			if not self._is_visible(item):
 				raise ForbiddenContextException()
 
 	def _lesson_overview_contains_target(self, outline_content_node, lesson_overview):
@@ -248,7 +246,7 @@ class OutlinePathFactory(object):
 						# Return our course, leaf outline node, and overview.
 						results = [self.course_context, outline_content_node]
 						results.extend(endpoints)
-						self._validate_path_visibility( (outline_content_node, lesson_overview, endpoints) )
+						self._validate_path_visibility((outline_content_node, lesson_overview, endpoints))
 						return results
 
 		results = None
@@ -278,17 +276,12 @@ class OutlinePathFactory(object):
 		outline = self.course_context.Outline
 		for outline_node in outline.values():
 			for outline_content_node in outline_node.values():
-
-				content_ntiid = getattr( outline_content_node, 'ContentNTIID', None )
+				content_ntiid = getattr(outline_content_node, 'ContentNTIID', None)
 				if content_ntiid == self.target_ntiid:
 					return (self.course_context, outline_content_node, self.target_obj)
 				# I don't believe legacy courses have these lessons.
 				lesson_ntiid = outline_content_node.LessonOverviewNTIID
-				lesson_overview = None
-				if lesson_ntiid:
-					lesson_overview = component.queryUtility(INTILessonOverview,
-															name=lesson_ntiid)
-
+				lesson_overview = INTILessonOverview(outline_content_node, None)
 				if lesson_overview is not None:
 					if lesson_ntiid == self.target_ntiid:
 						results = (self.course_context, outline_content_node, self.target_obj)
@@ -299,7 +292,7 @@ class OutlinePathFactory(object):
 						return results
 				# Legacy courses; try looking in unit
 				if content_ntiid != lesson_ntiid:
-					unit = find_object_with_ntiid( content_ntiid )
+					unit = find_object_with_ntiid(content_ntiid)
 					if 		IContentUnit.providedBy(unit) \
 						and self.target_ntiid in unit.embeddedContainerNTIIDs:
 						return (self.course_context, outline_content_node, self.target_obj)
