@@ -44,11 +44,6 @@
 			 provides="zope.traversing.interfaces.IPathAdapter"
 			 name="resources" />
 
-	<adapter factory=".adapters._resources_for_course_path_adapter"
-			 for="nti.contenttypes.courses.interfaces.ICourseCatalogEntry pyramid.interfaces.IRequest"
-			 provides="zope.traversing.interfaces.IPathAdapter"
-			 name="resources" />
-
 	<!-- ACL -->
 	<adapter factory=".acl.CourseContentFileACLProvider" />
 	<adapter factory=".acl.CourseRootFolderACLProvider" />

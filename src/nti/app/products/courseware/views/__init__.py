@@ -28,6 +28,7 @@ from nti.app.products.courseware import IMAGES_FOLDER
 from nti.app.products.courseware import DOCUMENTS_FOLDER
 
 from nti.app.products.courseware import VIEW_CONTENTS
+from nti.app.products.courseware import VIEW_RESOURCES
 from nti.app.products.courseware import VIEW_COURSE_MAIL
 from nti.app.products.courseware import VIEW_CATALOG_ENTRY
 from nti.app.products.courseware import VIEW_EXPORT_COURSE
