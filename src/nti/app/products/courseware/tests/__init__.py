@@ -6,6 +6,7 @@ __docformat__ = "restructuredtext en"
 
 # disable: accessing protected members, too many methods
 # pylint: disable=W0212,R0904
+import gc
 
 import os
 import os.path
@@ -79,7 +80,9 @@ class CourseLayerTest(DataserverLayerTest):
 	layer = SharedConfiguringTestLayer
 
 def publish_ou_course_entries():
-	lib = component.getUtility(IContentPackageLibrary)
+	lib = component.getGlobalSiteManager().queryUtility(IContentPackageLibrary)
+	if lib is None:
+		return
 	try:
 		del lib.contentPackages
 	except AttributeError:
@@ -147,7 +150,7 @@ class LegacyInstructedCourseApplicationTestLayer(ApplicationTestLayer):
 				interface.alsoProvides(user, IRecreatableUser)
 
 	@staticmethod
-	def _setup_library(cls, *args, **kwargs):
+	def _setup_library(layer, *args, **kwargs):
 		from nti.contentlibrary.filesystem import CachedNotifyingStaticFilesystemLibrary as Library
 		# FIXME: We load CLC in both global and site level libraries.
 		# This caused some weird ConnectionStateErrors in contentlibrary.subscribers when
@@ -157,20 +160,46 @@ class LegacyInstructedCourseApplicationTestLayer(ApplicationTestLayer):
 			paths=(
 				os.path.join(
 					os.path.dirname(__file__),
-					cls._library_path,
+					layer._library_path,
 					'IntroWater'),
 				os.path.join(
 					os.path.dirname(__file__),
-					cls._library_path,
+					layer._library_path,
 					'CLC3403_LawAndJustice')))
 		return lib
+
+	@staticmethod
+	def _install_library(layer, *enum_args, **enum_kwargs):
+		gsm = component.getGlobalSiteManager()
+		layer._old_library = gsm.queryUtility(IContentPackageLibrary)
+		if layer._old_library is None:
+			print("WARNING: A previous layer removed the global IContentPackageLibrary", layer)
+		layer._new_library = LegacyInstructedCourseApplicationTestLayer._setup_library(layer)
+		gsm.registerUtility(layer._new_library, IContentPackageLibrary)
+		_do_then_enumerate_library(*enum_args, **enum_kwargs)
+
+	@staticmethod
+	def _uninstall_library(layer):
+		_reset_site_libs()
+		# Bypass inheritance for these, make sure we're only getting from this
+		# class.
+		new_lib = layer.__dict__['_new_library']
+		old_lib = layer.__dict__['_old_library']
+		gsm = component.getGlobalSiteManager()
+		gsm.unregisterUtility(new_lib, IContentPackageLibrary)
+		if old_lib is not None:
+			old_lib.resetContentPackages()
+			gsm.registerUtility(old_lib, IContentPackageLibrary)
+		else:
+			print("WARNING: When tearing layer", layer, "no IContentPackageLibrary to restore")
+		del layer._old_library
+		del layer._new_library
+		gc.collect()
 
 	@classmethod
 	def setUp(cls):
 		# Must implement!
-		cls.__old_library = component.getUtility(IContentPackageLibrary)
-		component.provideUtility(cls._setup_library(cls), IContentPackageLibrary)
-		_do_then_enumerate_library(cls._user_creation)
+		cls._install_library(cls, cls._user_creation)
 
 		database = ZODB.DB(ApplicationTestLayer._storage_base, database_name='Users')
 
@@ -193,14 +222,13 @@ class LegacyInstructedCourseApplicationTestLayer(ApplicationTestLayer):
 		# Clean up any side effects of these content packages being
 		# registered
 		def cleanup():
-			_reset_site_libs()
-			cls.__old_library.resetContentPackages()
-			component.provideUtility(cls.__old_library, IContentPackageLibrary)
+			cls._uninstall_library(cls)
 			_delete_users(cls._instructors)
 			_clear_catalogs(cls._sites_names)
 
 		_do_then_enumerate_library(cleanup)
-		del cls.__old_library
+
+	testSetUp = testTearDown = classmethod(lambda cls: None)
 
 class RestrictedInstructedCourseApplicationTestLayer(ApplicationTestLayer):
 
@@ -218,10 +246,7 @@ class RestrictedInstructedCourseApplicationTestLayer(ApplicationTestLayer):
 	@classmethod
 	def setUp(cls):
 		# Must implement!
-		cls.__old_library = component.getUtility(IContentPackageLibrary)
-		component.provideUtility(LegacyInstructedCourseApplicationTestLayer._setup_library(cls),
-								 IContentPackageLibrary)
-		_do_then_enumerate_library(cls._user_creation)
+		LegacyInstructedCourseApplicationTestLayer._install_library(cls, cls._user_creation)
 
 	@classmethod
 	def tearDown(cls):
@@ -229,14 +254,13 @@ class RestrictedInstructedCourseApplicationTestLayer(ApplicationTestLayer):
 		# Clean up any side effects of these content packages being
 		# registered
 		def cleanup():
-			_reset_site_libs()
-			cls.__old_library.resetContentPackages()
-			component.provideUtility(cls.__old_library, IContentPackageLibrary)
+			LegacyInstructedCourseApplicationTestLayer._uninstall_library(cls)
 			_delete_users(cls._instructors)
 			_clear_catalogs(cls._sites_names)
 
 		_do_then_enumerate_library(cleanup)
-		del cls.__old_library
+
+	testSetUp = testTearDown = classmethod(lambda cls: None)
 
 class NotInstructedCourseApplicationTestLayer(ApplicationTestLayer):
 
@@ -246,10 +270,9 @@ class NotInstructedCourseApplicationTestLayer(ApplicationTestLayer):
 	@classmethod
 	def setUp(cls):
 		# Must implement!
-		cls.__old_library = component.getUtility(IContentPackageLibrary)
-		component.provideUtility(LegacyInstructedCourseApplicationTestLayer._setup_library(cls),
-								 IContentPackageLibrary)
-		_do_then_enumerate_library(lambda: lambda: True, sync_libs=True)
+		LegacyInstructedCourseApplicationTestLayer._install_library(
+			cls,
+			lambda: lambda: True, sync_libs=True)
 
 	@classmethod
 	def tearDown(cls):
@@ -258,14 +281,13 @@ class NotInstructedCourseApplicationTestLayer(ApplicationTestLayer):
 		# registered
 
 		def cleanup():
-			_reset_site_libs()
-			cls.__old_library.resetContentPackages()
-			component.provideUtility(cls.__old_library, IContentPackageLibrary)
+			LegacyInstructedCourseApplicationTestLayer._uninstall_library(cls)
 			_clear_catalogs(cls._sites_names)
 			_delete_catalogs(cls._sites_names)
 
 		_do_then_enumerate_library(cleanup)
-		del cls.__old_library
+
+	testSetUp = testTearDown = classmethod(lambda cls: None)
 
 class PersistentInstructedCourseApplicationTestLayer(ApplicationTestLayer):
 	# A mix of new and old-style courses
@@ -284,10 +306,7 @@ class PersistentInstructedCourseApplicationTestLayer(ApplicationTestLayer):
 	@classmethod
 	def setUp(cls):
 		# Must implement!
-		cls.__old_library = component.getUtility(IContentPackageLibrary)
-		component.provideUtility(LegacyInstructedCourseApplicationTestLayer._setup_library(cls),
-								 IContentPackageLibrary)
-		_do_then_enumerate_library(cls._user_creation, sync_libs=True)
+		LegacyInstructedCourseApplicationTestLayer._install_library(cls, cls._user_creation, sync_libs=True)
 
 	@classmethod
 	def tearDown(cls):
@@ -296,15 +315,14 @@ class PersistentInstructedCourseApplicationTestLayer(ApplicationTestLayer):
 		# registered
 
 		def cleanup():
-			_reset_site_libs()
-			cls.__old_library.resetContentPackages()
-			component.provideUtility(cls.__old_library, IContentPackageLibrary)
+			LegacyInstructedCourseApplicationTestLayer._uninstall_library(cls)
 			_delete_users(cls._instructors)
 			_clear_catalogs(cls._sites_names)
 			_delete_catalogs(cls._sites_names)
 
 		_do_then_enumerate_library(cleanup)
-		del cls.__old_library
+
+	testSetUp = testTearDown = classmethod(lambda cls: None)
 
 # Export the new-style stuff as default
 InstructedCourseApplicationTestLayer = PersistentInstructedCourseApplicationTestLayer
