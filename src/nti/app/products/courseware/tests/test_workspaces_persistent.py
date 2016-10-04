@@ -201,6 +201,10 @@ class TestPersistentWorkspaces(AbstractEnrollingBase, ApplicationLayerTest):
 
 	@WithSharedApplicationMockDS(users=('content_admin',), testapp=True)
 	def test_content_admin(self):
+		"""
+		Make sure our global content admin has all the courses show up in
+		her workspace.
+		"""
 		admin_environ = self._make_extra_environ(username='content_admin')
 
 		res = self.testapp.get('/dataserver2/users/content_admin/Courses/AdministeredCourses',
@@ -217,6 +221,21 @@ class TestPersistentWorkspaces(AbstractEnrollingBase, ApplicationLayerTest):
 		assert_that(res.json_body, has_entry('Items', has_length(7)))
 		for course in res.json_body.get( 'Items' ):
 			assert_that( course, has_entry( 'RoleName', is_( self.editor_role )))
+
+		# Now validate our admin cannot add/update forums, topics and comments.
+		course_ext = res.json_body['Items'][0]['CourseInstance']
+		discussions = course_ext.get( 'Discussions' )
+		self.forbid_link_with_rel(discussions, 'edit')
+		self.forbid_link_with_rel(discussions, 'add')
+
+		discussion_contents_rel = self.require_link_href_with_rel(discussions, 'contents')
+		discussion_contents = self.testapp.get( discussion_contents_rel,
+												extra_environ=admin_environ )
+		discussion_contents = discussion_contents.json_body
+
+		forum = discussion_contents['Items'][0]
+		self.forbid_link_with_rel(forum, 'edit')
+		self.forbid_link_with_rel(forum, 'add')
 
 	@WithSharedApplicationMockDS(users=('arbitrary@nextthought.com',), testapp=True)
 	def test_admin(self):
