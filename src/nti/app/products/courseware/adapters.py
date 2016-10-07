@@ -487,4 +487,7 @@ def _course_from_request(request):
 	We may have our course instance stashed in the request if it
 	was in our path.
 	"""
-	return getattr( request, 'course_traversal_context', None )
+	try:
+		return request.course_traversal_context
+	except AttributeError:
+		return None
