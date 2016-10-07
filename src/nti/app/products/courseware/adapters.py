@@ -207,9 +207,9 @@ def _get_valid_course_context(course_contexts):
 	if ICourseInstance.providedBy(course_contexts):
 		course_contexts = (course_contexts,)
 
-	user = get_remote_user()
 	courses = []
 	catalog_entries = []
+	user = get_remote_user()
 	for course_context in course_contexts:
 		if ICourseCatalogEntry.providedBy(course_context):
 			if _is_catalog_entry_visible( course_context ):
@@ -374,7 +374,7 @@ def _find_lineage_course(obj, trusted=False):
 
 def _catalog_entries_from_courses(courses):
 	results = []
-	for course in courses:
+	for course in courses or ():
 		catalog_entry = ICourseCatalogEntry(course, None)
 		if catalog_entry is not None:
 			results.append(catalog_entry)
