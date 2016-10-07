@@ -9,7 +9,6 @@ __docformat__ = "restructuredtext en"
 
 logger = __import__('logging').getLogger(__name__)
 
-import os
 import six
 import hashlib
 from datetime import datetime
@@ -27,8 +26,6 @@ from zope.traversing.api import traverse
 from zope.traversing.interfaces import IEtcNamespace
 
 from nti.app.assessment.common import get_evaluation_courses
-
-from nti.app.products.courseware import ASSETS_FOLDER
 
 from nti.app.products.courseware.enrollment import EnrollmentOptions
 
@@ -66,10 +63,10 @@ from nti.site.site import get_component_hierarchy_names
 
 from nti.traversal.traversal import find_interface
 
-#: Default memcache expiration time
+# : Default memcache expiration time
 DEFAULT_EXP_TIME = 86400
 
-#: 1970-01-1
+# : 1970-01-1
 ZERO_DATETIME = datetime.utcfromtimestamp(0)
 
 # BWC exports
@@ -196,7 +193,7 @@ def has_course_invitations(context):
 	result = get_course_invitations(context)
 	return bool(result)
 
-def _search_for_lessons( evaluation, provided, container_ntiids, catalog, intids, sites ):
+def _search_for_lessons(evaluation, provided, container_ntiids, catalog, intids, sites):
 	results = []
 	for item in catalog.search_objects(intids=intids,
 									   provided=provided,
@@ -209,7 +206,7 @@ def _search_for_lessons( evaluation, provided, container_ntiids, catalog, intids
 				results.append(lesson)
 	return results
 
-def get_evaluation_lessons( evaluation, outline_provided, courses=None, request=None ):
+def get_evaluation_lessons(evaluation, outline_provided, courses=None, request=None):
 	"""
 	For the given evaluation, get all lessons containing the evaluation.
 
@@ -221,13 +218,13 @@ def get_evaluation_lessons( evaluation, outline_provided, courses=None, request=
 		course = ICourseInstance(request, None)
 		courses = (course,)
 		if course is None:
-			courses = get_evaluation_courses( evaluation )
+			courses = get_evaluation_courses(evaluation)
 	catalog = get_library_catalog()
 	intids = component.getUtility(IIntIds)
 	sites = get_component_hierarchy_names()
 	container_ntiids = \
 			set(getattr(ICourseCatalogEntry(x, None), 'ntiid', None) for x in courses)
 	container_ntiids.discard(None)
-	result = _search_for_lessons( evaluation, outline_provided,
-								  container_ntiids, catalog, intids, sites )
+	result = _search_for_lessons(evaluation, outline_provided,
+								  container_ntiids, catalog, intids, sites)
 	return result
