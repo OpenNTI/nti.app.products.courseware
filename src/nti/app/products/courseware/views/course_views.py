@@ -351,12 +351,17 @@ class CourseEnrollmentRosterGetView(AbstractAuthenticatedView,
 			raise hexc.HTTPBadRequest("Unsupported filteroption")
 
 		if username_search_term:
+			matched_items = []
 			policy = component.getAdapter(self.remoteUser,
 										  IIntIdUserSearchPolicy,
 										  name='comprehensive')
 			id_util = component.getUtility(IIntIds)
 			matched_ids = policy.query_intids(username_search_term.lower())
-			items = [x for x in items if id_util.queryId(IUser(x, None)) in matched_ids]
+			for x in items:
+				uid = id_util.queryId(IUser(x, None))
+				if uid is not None and uid in matched_ids:
+					matched_items.append(x)
+			items = matched_items
 			result['FilteredTotalItemCount'] = len(items)
 
 		self._batch_tuple_iterable(result, items,
