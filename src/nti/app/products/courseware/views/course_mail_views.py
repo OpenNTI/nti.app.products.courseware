@@ -62,6 +62,10 @@ class CourseMailView(AbstractMemberEmailView):
 		The same values as `scope`.  Only users in this scope
 		will get reply addresses. This is only valid if the email
 		itself allows replies.
+		
+	include-instructors
+		If true, email all instructors in the course as well
+		as the students in this scope. Defaults to false.
 	"""
 	@Lazy
 	def _context_display_name(self):
@@ -140,9 +144,15 @@ class CourseMailView(AbstractMemberEmailView):
 			result = self._only_public_usernames
 		else:
 			raise hexc.HTTPUnprocessableEntity(detail='Invalid scope %s' % scope_name)
-
-		instructor_usernames = {x.username for x in self.course.instructors}
-		result = result - instructor_usernames
+		
+		include_instructors = values.get('include-instructors')
+			
+		instructor_usernames = self._instructors
+		if include_instructors and include_instructors.lower() == 'true':
+			result = result | instructor_usernames - {self.sender.username}
+		else:
+			result = result - instructor_usernames
+			
 		return result
 
 	def reply_addr_for_recipient(self, recipient):

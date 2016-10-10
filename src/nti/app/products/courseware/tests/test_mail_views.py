@@ -82,6 +82,10 @@ class TestMailViews(ApplicationLayerTest):
 			user = User.get_user('harp4162')
 			IUserProfile(user).email_verified = True
 			IUserProfile(user).email = self.external_reply_to
+			
+			other_instructor = User.get_user('jmadden')
+			IUserProfile(other_instructor).email_verified = True
+			IUserProfile(other_instructor).email = 'zachary.roux@nextthought.com'
 
 	def _get_messages(self, mailer, has_copy=False):
 		"""
@@ -260,6 +264,17 @@ class TestMailViews(ApplicationLayerTest):
 		credit_msg = messages[0] if messages[0].get( 'To' ) == credit_address else messages[1]
 		assert_that( open_msg.get( 'Reply-To' ), is_( self.no_reply ))
 		assert_that( credit_msg.get( 'Reply-To' ), is_( self.external_reply_to ))
+		
+		# Test mailing an instructor along with the students in the course
+		self.testapp.post_json(email_link + '?include-instructors=True', mail, extra_environ=instructor_env)
+		messages = self._get_messages(mailer, has_copy=True)
+		assert_that( messages, has_length( 3 ) )
+		self.testapp.post_json(email_link + '?include-instructors=True', mail_with_reply, extra_environ=instructor_env)
+		messages = self._get_messages(mailer, has_copy=False)
+		assert_that( messages, has_length( 3 ) )
+		assert_that( messages[0].get( 'Reply-To' ), is_( self.external_reply_to ))
+		assert_that( messages[1].get( 'Reply-To' ), is_( self.external_reply_to ))
+		assert_that( messages[2].get( 'Reply-To' ), is_( self.external_reply_to ))
 
 		# Mail everyone with replyToScope open (also purchased)
 		self.testapp.post_json(email_link + '?replyToScope=opEN', mail_with_reply, extra_environ=instructor_env)
