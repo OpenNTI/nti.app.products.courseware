@@ -22,6 +22,7 @@ from nti.app.products.courseware.interfaces import ICourseInstanceEnrollment
 from nti.app.products.courseware.views import VIEW_COURSE_MAIL
 
 from nti.common.maps import CaseInsensitiveDict
+from nti.common.string import is_true
 
 from nti.contenttypes.courses.interfaces import ES_CREDIT
 from nti.contenttypes.courses.interfaces import ICourseInstance
@@ -148,7 +149,7 @@ class CourseMailView(AbstractMemberEmailView):
 		include_instructors = values.get('include-instructors')
 			
 		instructor_usernames = self._instructors
-		if include_instructors and include_instructors.lower() == 'true':
+		if include_instructors and is_true(include_instructors):
 			result = result | instructor_usernames - {self.sender.username}
 		else:
 			result = result - instructor_usernames
