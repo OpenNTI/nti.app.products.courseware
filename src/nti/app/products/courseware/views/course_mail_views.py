@@ -22,6 +22,7 @@ from nti.app.products.courseware.interfaces import ICourseInstanceEnrollment
 from nti.app.products.courseware.views import VIEW_COURSE_MAIL
 
 from nti.common.maps import CaseInsensitiveDict
+
 from nti.common.string import is_true
 
 from nti.contenttypes.courses.interfaces import ES_CREDIT
@@ -63,7 +64,7 @@ class CourseMailView(AbstractMemberEmailView):
 		The same values as `scope`.  Only users in this scope
 		will get reply addresses. This is only valid if the email
 		itself allows replies.
-		
+
 	include-instructors
 		If true, email all instructors in the course as well
 		as the students in this scope. Defaults to false.
@@ -145,15 +146,15 @@ class CourseMailView(AbstractMemberEmailView):
 			result = self._only_public_usernames
 		else:
 			raise hexc.HTTPUnprocessableEntity(detail='Invalid scope %s' % scope_name)
-		
+
 		include_instructors = values.get('include-instructors')
-			
+
 		instructor_usernames = self._instructors
 		if include_instructors and is_true(include_instructors):
 			result = result | instructor_usernames - {self.sender.username}
 		else:
 			result = result - instructor_usernames
-			
+
 		return result
 
 	def reply_addr_for_recipient(self, recipient):
