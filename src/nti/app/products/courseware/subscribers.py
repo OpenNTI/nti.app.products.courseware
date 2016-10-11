@@ -171,7 +171,7 @@ def _send_enrollment_confirmation(event, user, profile, email, course):
 			args.update(util_args)
 
 	bcc = []
-	for _, bcc_provider in list(component.getUtilitiesFor(ICourseEnrollmentEmailBCCProvider)):
+	for name, bcc_provider in list(component.getUtilitiesFor(ICourseEnrollmentEmailBCCProvider)):
 		bcc_emails = bcc_provider.get_bcc_emails()
 		if bcc_emails:
 			bcc.extend(bcc_emails)
