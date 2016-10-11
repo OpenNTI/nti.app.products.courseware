@@ -36,7 +36,7 @@ from pyramid.threadlocal import get_current_request
 
 from zope.traversing.interfaces import IBeforeTraverseEvent
 
-from nti.app.products.courseware import MessageFactory as _m
+from nti.app.products.courseware import MessageFactory as _
 
 from nti.app.products.courseware import USER_ENROLLMENT_LAST_MODIFIED_KEY
 
@@ -184,8 +184,8 @@ def _send_enrollment_confirmation(event, user, profile, email, course):
 	mailer = component.getUtility(ITemplatedMailer)
 	mailer.queue_simple_html_text_email(
 					template,
-					subject=translate(_m("Welcome to ${title}",
-										 mapping={'title': catalog_entry.Title})),
+					subject=translate(_("Welcome to ${title}",
+										mapping={'title': catalog_entry.Title})),
 					recipients=[profile],
 					template_args=args,
 					bcc=bcc,
