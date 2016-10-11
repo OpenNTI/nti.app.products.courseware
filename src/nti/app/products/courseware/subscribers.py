@@ -58,7 +58,7 @@ from nti.contenttypes.courses.interfaces import ICourseEnrollmentManager
 from nti.contenttypes.courses.interfaces import ICourseInstanceEnrollmentRecord
 
 from nti.contenttypes.courses.utils import get_parent_course
-from nti.contenttypes.courses.utils import get_course_subinstances
+from nti.contenttypes.courses.utils import get_course_hierarchy
 
 from nti.dataserver.interfaces import ICommunity
 
@@ -260,8 +260,8 @@ def _auto_enroll_on_enrollment_added(record, event):
 	parent = get_parent_course(course)
 
 	# get all catalog entries in the hierarchy
-	main_entries = [ICourseCatalogEntry(x, None) for x in get_course_subinstances(parent)]
-	main_entries.append(main_entry)
+	main_entries = {ICourseCatalogEntry(x, None) for x in get_course_hierarchy(main_entry)}
+	main_entries.discard(None)
 
 	# get course entries
 	entries = set(get_enrollment_courses(course))
