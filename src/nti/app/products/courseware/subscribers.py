@@ -165,7 +165,7 @@ def _send_enrollment_confirmation(event, user, profile, email, course):
 			'today': isodate.date_isoformat(datetime.datetime.now()) }
 
 	# Augment with our args providers
-	for _, args_provider in list(component.getUtilitiesFor(ICourseEnrollmentEmailArgsProvider)):
+	for name, args_provider in list(component.getUtilitiesFor(ICourseEnrollmentEmailArgsProvider)):
 		util_args = args_provider.get_email_args(user)
 		if util_args:
 			args.update(util_args)
