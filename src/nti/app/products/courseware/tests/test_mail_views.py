@@ -11,6 +11,8 @@ from hamcrest import is_
 from hamcrest import none
 from hamcrest import is_not
 from hamcrest import not_none
+from hamcrest import has_item
+from hamcrest import has_entry
 from hamcrest import has_length
 from hamcrest import assert_that
 from hamcrest import has_property
@@ -269,13 +271,14 @@ class TestMailViews(ApplicationLayerTest):
 		self.testapp.post_json(email_link + '?include-instructors=True', mail, extra_environ=instructor_env)
 		messages = self._get_messages(mailer, has_copy=True)
 		assert_that( messages, has_length( 3 ) )
+		assert_that(messages, has_item(has_entry('To', 'zachary.roux@nextthought.com')))
+		assert_that(messages, is_not(has_item(has_entry('To', 'jzuech3@gmail.com'))))
 		self.testapp.post_json(email_link + '?include-instructors=True', mail_with_reply, extra_environ=instructor_env)
 		messages = self._get_messages(mailer, has_copy=False)
 		assert_that( messages, has_length( 3 ) )
-		assert_that( messages[0].get( 'Reply-To' ), is_( self.external_reply_to ))
-		assert_that( messages[1].get( 'Reply-To' ), is_( self.external_reply_to ))
-		assert_that( messages[2].get( 'Reply-To' ), is_( self.external_reply_to ))
-
+		assert_that(messages, has_item(has_entry('To', 'zachary.roux@nextthought.com')))
+		assert_that(messages, is_not(has_item(has_entry('To', 'jzuech3@gmail.com'))))
+		
 		# Mail everyone with replyToScope open (also purchased)
 		self.testapp.post_json(email_link + '?replyToScope=opEN', mail_with_reply, extra_environ=instructor_env)
 		messages = self._get_messages( mailer )
