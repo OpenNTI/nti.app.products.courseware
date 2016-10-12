@@ -151,7 +151,7 @@ class CourseMailView(AbstractMemberEmailView):
 
 		instructor_usernames = self._instructors
 		if include_instructors and is_true(include_instructors):
-			result = result | instructor_usernames - {self.sender.username}
+			result = result | instructor_usernames - {self.sender.username.lower()}
 		else:
 			result = result - instructor_usernames
 
