@@ -137,7 +137,7 @@ class TestDiscussions(ApplicationLayerTest):
 					pass
 			assert_that(acls, has_items(u'Allow:role:nti.admin:All',
 										u'Allow:harp4162:All',
-										u'Allow:janux_courses:All'))
+										u"Allow:janux_courses:['zope.View']"))
 
 			result = create_course_forums(course)
 			assert_that(result, has_entry(u'discussions',

@@ -172,19 +172,29 @@ def get_acl(course, *entities):
 	# XXX: This seems fragile; we cannot adjust ACL easily for new instructors/editors.
 	aces = [ ace_allowing(ROLE_ADMIN, ALL_PERMISSIONS) ]
 
-	def _get_users(context):
-		course_users = set(IPrincipal(x, None) for x in get_course_instructors(context))
-		course_users.update(get_course_editors(context))
-		course_users.discard(None)
-		return course_users
-
-	for user in _get_users(course):
+	# Instructors get all
+	instructors = set(IPrincipal(x, None) for x in get_course_instructors(course))
+	instructors.discard( None )
+	for user in instructors:
 		aces.append(ace_allowing(user, ALL_PERMISSIONS))
+
+	# Editors get read perms
+	editors = set( get_course_editors(course) or () )
+	editors = editors - instructors
+	editors.discard( None )
+	for user in editors:
+		aces.append(ace_allowing(user, ACT_READ))
 
 	# Specified entities (e.g. students) get read permission
 	entities = {IPrincipal(Entity.get_entity(e), None) for e in entities or ()}
 	entities.discard(None)
 	aces.extend([ace_allowing(e, ACT_READ) for e in entities])
+
+	def _get_users(context):
+		course_users = set(IPrincipal(x, None) for x in get_course_instructors(context))
+		course_users.update(get_course_editors(context))
+		course_users.discard(None)
+		return course_users
 
 	# Subinstance instructors/editors get READ access.
 	for subinstance in get_course_subinstances(course):
