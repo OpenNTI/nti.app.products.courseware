@@ -64,7 +64,8 @@ from nti.common.string import is_true
 
 from nti.contenttypes.courses import get_enrollment_catalog
 
-from nti.contenttypes.courses.common import get_course_packages, get_course_site
+from nti.contenttypes.courses.common import get_course_packages
+from nti.contenttypes.courses.common import get_course_site_name
 
 from nti.contenttypes.courses.administered import CourseInstanceAdministrativeRole
 
@@ -675,7 +676,6 @@ class SyncCourseView(_SyncAllLibrariesView):
 		ntiids.extend(p.ntiid for p in get_course_packages(course))
 		ntiids.extend(ICourseCatalogEntry(s).ntiid for s in get_course_subinstances(course))
 		# do sync
-		result = self._do_sync(site=get_course_site(course), 
-							   ntiids=ntiids, 
-							   allowRemoval=False)
-		return result
+		return self._do_sync(site=get_course_site_name(course), 
+							 ntiids=ntiids, 
+							 allowRemoval=False)
