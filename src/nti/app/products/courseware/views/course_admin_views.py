@@ -502,20 +502,19 @@ class CourseEnrollmentsView(AbstractAuthenticatedView):
 			IX_COURSE:{'any_of': (entry.ntiid,)},
 		}
 		for uid in catalog.apply(query) or ():
-			context = intids.queryObject(uid)
-			if not ICourseInstanceEnrollmentRecord.providedBy(context):
+			record = intids.queryObject(uid)
+			if not ICourseInstanceEnrollmentRecord.providedBy(record):
 				continue
-			record = context
+			user = IUser(record, None)
+			if user is None:
+				continue
+
 			scope = record.Scope
-
-			user = principal = IPrincipal(record.Principal, None)
-			username = principal.id if principal is not None else 'deleted'
-
+			username = user.username
+			
 			created = getattr(record, 'createdTime', None) or record.lastModified
 			created = isodate.datetime_isoformat(datetime.fromtimestamp(created or 0))
 
-			if principal is not None:
-				user = User.get_user(username)
 			profile = IUserProfile(user, None)
 			email = getattr(profile, 'email', None)
 			realname = getattr(profile, 'realname', None)
