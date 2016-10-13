@@ -620,6 +620,12 @@ class AllCourseEnrollmentRosterDownloadView(AbstractAuthenticatedView):
 		# and provide it as json alternately
 		buf = StringIO()
 		writer = csv.writer(buf)
+		
+		# header
+		header = ['username', 'alias', 'realname', 'email', 'courses']
+		writer.writerow(header)
+		
+		# rowdata
 		writer.writerows(rows)
 
 		self.request.response.body = buf.getvalue()
