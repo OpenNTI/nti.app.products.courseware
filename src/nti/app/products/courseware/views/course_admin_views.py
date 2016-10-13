@@ -14,9 +14,6 @@ logger = __import__('logging').getLogger(__name__)
 import csv
 import six
 from io import BytesIO
-from datetime import datetime
-
-import isodate
 
 from zope import component
 
@@ -456,74 +453,6 @@ class CourseRolesView(AbstractAuthenticatedView,
 		response.content_disposition = b'attachment; filename="CourseRoles.csv"'
 		return response
 
-@view_config(name='CourseEnrollments')
-@view_config(name='course_enrollments')
-@view_defaults(route_name='objects.generic.traversal',
-			   renderer='rest',
-			   request_method='GET',
-			   context=CourseAdminPathAdapter,
-			   permission=nauth.ACT_NTI_ADMIN)
-class CourseEnrollmentsView(AbstractAuthenticatedView):
-
-	@Lazy
-	def _substituter(self):
-		return component.queryUtility(IUsernameSubstitutionPolicy)
-
-	def _replace(self, username):
-		substituter = self._substituter
-		if substituter is None:
-			return username
-		result = substituter.replace(username) or username
-		return result
-
-	def __call__(self):
-		params = CaseInsensitiveDict(self.request.params)
-		context = _parse_course(params)
-		course = ICourseInstance(context, None)
-		if course is None:
-			raise hexc.HTTPUnprocessableEntity(detail='Course not found')
-		entry = ICourseCatalogEntry(course)
-
-		bio = BytesIO()
-		csv_writer = csv.writer(bio)
-
-		# header
-		header = ['username', 'realname', 'email', 'scope', 'created']
-		csv_writer.writerow(header)
-
-		catalog = get_enrollment_catalog()
-		intids = component.getUtility(IIntIds)
-		site_names = get_component_hierarchy_names()
-		query = {
-			IX_SITE:{'any_of': site_names},
-			IX_COURSE:{'any_of': (entry.ntiid,)},
-		}
-		for uid in catalog.apply(query) or ():
-			record = intids.queryObject(uid)
-			if not ICourseInstanceEnrollmentRecord.providedBy(record):
-				continue
-			user = IUser(record, None)
-			if user is None:
-				continue
-
-			scope = record.Scope
-			username = user.username
-			
-			created = getattr(record, 'createdTime', None) or record.lastModified
-			created = isodate.datetime_isoformat(datetime.fromtimestamp(created or 0))
-
-			profile = IUserProfile(user, None)
-			email = getattr(profile, 'email', None)
-			realname = getattr(profile, 'realname', None)
-
-			row_data = [self._replace(username), realname, email, scope, created]
-			csv_writer.writerow([_tx_string(x) for x in row_data])
-
-		response = self.request.response
-		response.body = bio.getvalue()
-		response.content_disposition = b'attachment; filename="enrollments.csv"'
-		return response
-
 import collections
 
 from simplejson.compat import StringIO
@@ -547,6 +476,17 @@ class AllCourseEnrollmentRosterDownloadView(AbstractAuthenticatedView):
 	present in the system. The table has columns
 	for username, email address, and enrolled courses.
 	"""
+
+	@Lazy
+	def _substituter(self):
+		return component.queryUtility(IUsernameSubstitutionPolicy)
+
+	def _replace(self, username):
+		substituter = self._substituter
+		if substituter is None:
+			return username
+		result = substituter.replace(username) or username
+		return result
 
 	def _iter_catalog_entries(self):
 		"""
@@ -587,28 +527,22 @@ class AllCourseEnrollmentRosterDownloadView(AbstractAuthenticatedView):
 			IX_SITE:{'any_of': site_names}
 		}
 		for uid in catalog.apply(query) or ():
-			context = intids.queryObject(uid)
-			if not ICourseInstanceEnrollmentRecord.providedBy(context):
+			record = intids.queryObject(uid)
+			if not ICourseInstanceEnrollmentRecord.providedBy(record):
 				continue
-			record = context
 			course = record.CourseInstance
-			catalog_entry = ICourseCatalogEntry(course)
-
-			course_name = catalog_entry.Title
+			course_name = ICourseCatalogEntry(course).Title
 
 			user = IUser(record, None)
 			if user is None:
 				continue
-			if enrollment_predicate(course, record):
+			if enrollment_predicate(course, user):
 				user_to_coursenames[user].add(course_name)
 
 		rows = LocatedExternalList()
-		rows.__name__ = self.request.view_name
-		rows.__parent__ = self.request.context
-
 		for user, enrolled_course_names in user_to_coursenames.items():
 			profile = IUserProfile(user, None)
-			row = [user.username,
+			row = [self._replace(user.username),
 				   getattr(profile, 'alias', None),
 				   getattr(profile, 'realname', None),
 				   getattr(profile, 'email', None),
