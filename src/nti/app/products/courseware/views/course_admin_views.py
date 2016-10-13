@@ -64,7 +64,7 @@ from nti.common.string import is_true
 
 from nti.contenttypes.courses import get_enrollment_catalog
 
-from nti.contenttypes.courses.common import get_course_packages
+from nti.contenttypes.courses.common import get_course_packages, get_course_site
 
 from nti.contenttypes.courses.administered import CourseInstanceAdministrativeRole
 
@@ -104,11 +104,7 @@ from nti.externalization.interfaces import StandardExternalFields
 
 from nti.property.property import Lazy
 
-from nti.site.interfaces import IHostPolicyFolder
-
 from nti.site.site import get_component_hierarchy_names
-
-from nti.traversal.traversal import find_interface
 
 ITEMS = StandardExternalFields.ITEMS
 TOTAL = StandardExternalFields.TOTAL
@@ -673,13 +669,13 @@ class SyncCourseView(_SyncAllLibrariesView):
 
 	def _do_call(self):
 		course = ICourseInstance(self.context)
-		# collect all course associated ntiids
 		entry = ICourseCatalogEntry(self.context)
+		# collect all course associated ntiids
 		ntiids = [entry.ntiid]
 		ntiids.extend(p.ntiid for p in get_course_packages(course))
 		ntiids.extend(ICourseCatalogEntry(s).ntiid for s in get_course_subinstances(course))
-		# course site
-		site = find_interface(course, IHostPolicyFolder, strict=False).__name__  # site
 		# do sync
-		result = self._do_sync(site=site, ntiids=ntiids, allowRemoval=False)
+		result = self._do_sync(site=get_course_site(course), 
+							   ntiids=ntiids, 
+							   allowRemoval=False)
 		return result
