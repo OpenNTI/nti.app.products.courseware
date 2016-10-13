@@ -640,11 +640,7 @@ class CourseEnrollmentsRosterDownloadView(AllCourseEnrollmentRosterDownloadView)
 	"""
 
 	def _iter_catalog_entries(self):
-		try:
-			return (ICourseCatalogEntry(self.request.context),)
-		except TypeError:
-			# A course instance that's no longer in the catalog
-			raise hexc.HTTPNotFound("Course instance not in catalog")
+		return (ICourseCatalogEntry(self.request.context),)
 
 @view_config(name='Enrollments.csv')
 @view_config(name='enrollments.csv')
