@@ -601,8 +601,6 @@ class AllCourseEnrollmentRosterDownloadView(AbstractAuthenticatedView):
 
 			user = IUser(record, None)
 			if user is None:
-				logger.error("Could not adapt record %r to user. " +
-							 "Deleted User? Bad Instance?", record)
 				continue
 			if enrollment_predicate(course, record):
 				user_to_coursenames[user].add(course_name)
