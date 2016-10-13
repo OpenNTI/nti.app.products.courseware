@@ -32,11 +32,13 @@ from nti.common.maps import CaseInsensitiveDict
 
 from nti.common.string import is_true
 
-from nti.contenttypes.courses.interfaces import COURSE_OUTLINE_NAME
-
 from nti.contenttypes.courses._outline_parser import outline_nodes
 from nti.contenttypes.courses._outline_parser import unregister_nodes
 from nti.contenttypes.courses._outline_parser import fill_outline_from_key
+
+from nti.contenttypes.courses.common import get_course_packages
+
+from nti.contenttypes.courses.interfaces import COURSE_OUTLINE_NAME
 
 from nti.contenttypes.courses.interfaces import iface_of_node
 from nti.contenttypes.courses.interfaces import ICourseCatalog
@@ -112,7 +114,7 @@ class ResetCourseOutlineView(AbstractAuthenticatedView,
 		outline_xml_key = root.getChildNamed(COURSE_OUTLINE_NAME)
 		if not outline_xml_key:
 			if course.ContentPackageBundle:
-				for package in course.ContentPackageBundle.ContentPackages:
+				for package in get_course_packages(course):
 					outline_xml_key = package.index
 					outline_xml_node = 'course'
 					break
