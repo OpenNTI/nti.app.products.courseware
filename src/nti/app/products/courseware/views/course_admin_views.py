@@ -607,7 +607,7 @@ class AllCourseEnrollmentRosterDownloadView(AbstractAuthenticatedView):
 		rows.__parent__ = self.request.context
 
 		for user, enrolled_course_names in user_to_coursenames.items():
-			profile = IUserProfile(user)
+			profile = IUserProfile(user, None)
 			row = [user.username,
 				   getattr(profile, 'alias', None),
 				   getattr(profile, 'realname', None),
