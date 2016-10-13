@@ -27,6 +27,8 @@ from nti.assessment.interfaces import IQuestionSet
 
 from nti.contentlibrary.indexed_data import get_library_catalog
 
+from nti.contenttypes.courses.common import get_course_packages
+
 from nti.contenttypes.courses.interfaces import ICourseInstance
 from nti.contenttypes.courses.interfaces import ICourseCatalogEntry
 from nti.contenttypes.courses.interfaces import ICourseAssignmentCatalog
@@ -107,10 +109,7 @@ def _get_self_polls_for_course(course):
 
 def _do_get_containers_in_course(context):
 	course = ICourseInstance(context)
-	try:
-		packages = course.ContentPackageBundle.ContentPackages
-	except AttributeError:
-		packages = (course.legacy_content_package,)
+	packages = get_course_packages(course)
 
 	def _recur(node, accum):
 		# Get our embedded ntiids and recursively
