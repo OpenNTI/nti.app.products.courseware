@@ -198,6 +198,7 @@ class ImportCourseView(AbstractAuthenticatedView, CourseImportMixin):
 							 writeout=writeout, lockout=lockout, clear=clear)
 
 	def _do_call(self):
+		tmp_path = None
 		now = time.time()
 		values = self.readInput()
 		result = LocatedExternalDict()

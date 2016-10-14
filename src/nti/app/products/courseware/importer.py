@@ -143,6 +143,7 @@ def create_course(admin, key, archive_path, catalog=None, writeout=True,
 	if not IFilesystemBucket.providedBy(root):
 		raise IOError("Administrative level does not have a root bucket")
 
+	tmp_path = None
 	try:
 		key = to_unicode(key)
 		admin = to_unicode(admin)
