@@ -203,7 +203,6 @@ class ImportCourseView(AbstractAuthenticatedView, CourseImportMixin):
 		values = self.readInput()
 		result = LocatedExternalDict()
 		params = result['Params'] = {}
-		tmp_path = None
 		try:
 			path, tmp_path = self._get_source_paths(values)
 			path = os.path.abspath(path)
