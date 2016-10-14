@@ -185,7 +185,7 @@ class ImportCourseView(AbstractAuthenticatedView, CourseImportMixin):
 						logger.info( '[%s] Creating admin level %s',
 									 site.__name__, admin)
 						new_level = CourseAdministrativeLevel()
-						new_level.__parent__ = adm_levels
+						new_level.root = adm_levels
 						adm_levels[admin] = new_level
 					catalog = adm_levels
 					break
