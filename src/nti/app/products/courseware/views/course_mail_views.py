@@ -206,5 +206,5 @@ class EnrollmentRecordMailView(CourseMailView):
 		return 	self.course is not None \
 			and is_course_instructor(self.course, self.remoteUser)
 
-	def reply_addr_for_recipient(self, recipient):
+	def reply_addr_for_recipient(self, unused_recipient):
 		return self._sender_reply_addr

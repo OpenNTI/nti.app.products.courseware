@@ -44,6 +44,8 @@ from nti.common.maps import CaseInsensitiveDict
 
 from nti.common.string import is_true
 
+from nti.contenttypes.courses.courses import CourseAdministrativeLevel
+
 from nti.contenttypes.courses.interfaces import ICourseCatalog
 from nti.contenttypes.courses.interfaces import ICourseInstance
 from nti.contenttypes.courses.interfaces import ICourseCatalogEntry
@@ -131,7 +133,7 @@ class CourseImportView(AbstractAuthenticatedView, CourseImportMixin):
 			writeout = is_true(values.get('writeout') or values.get('save'))
 			lockout = is_true(values.get('lock') or values.get('lockout'))
 			clear = is_true(values.get('clear'))
-			import_course(entry.ntiid, os.path.abspath(path), writeout, 
+			import_course(entry.ntiid, os.path.abspath(path), writeout,
 						  lockout, clear=clear)
 			result['Elapsed'] = time.time() - now
 			result['Course'] = ICourseInstance(self.context)
@@ -149,7 +151,7 @@ class CourseImportView(AbstractAuthenticatedView, CourseImportMixin):
 			   permission=nauth.ACT_CONTENT_EDIT)
 class ImportCourseView(AbstractAuthenticatedView, CourseImportMixin):
 
-	def _import_course(self, ntiid, path, writeout=True, 
+	def _import_course(self, ntiid, path, writeout=True,
 					   lockout=False, clear=False):
 		context = find_object_with_ntiid(ntiid)
 		course = ICourseInstance(context, None)
@@ -160,7 +162,7 @@ class ImportCourseView(AbstractAuthenticatedView, CourseImportMixin):
 			})
 		return import_course(ntiid, path, writeout, lockout, clear=clear)
 
-	def _create_course(self, admin, key, path, writeout=True, 
+	def _create_course(self, admin, key, path, writeout=True,
 					   lockout=False, clear=False):
 		if not admin:
 			raise_error({
@@ -178,7 +180,13 @@ class ImportCourseView(AbstractAuthenticatedView, CourseImportMixin):
 			site = get_host_site(name)
 			with current_site(site):
 				adm_levels = component.queryUtility(ICourseCatalog)
-				if adm_levels is not None and admin in adm_levels:
+				if adm_levels is not None:
+					if admin not in adm_levels:
+						logger.info( '[%s] Creating admin level %s',
+									 site.__name__, admin)
+						new_level = CourseAdministrativeLevel()
+						new_level.__parent__ = adm_levels
+						adm_levels[admin] = new_level
 					catalog = adm_levels
 					break
 		if catalog is None:
@@ -194,6 +202,7 @@ class ImportCourseView(AbstractAuthenticatedView, CourseImportMixin):
 		values = self.readInput()
 		result = LocatedExternalDict()
 		params = result['Params'] = {}
+		tmp_path = None
 		try:
 			path, tmp_path = self._get_source_paths(values)
 			path = os.path.abspath(path)
@@ -203,15 +212,16 @@ class ImportCourseView(AbstractAuthenticatedView, CourseImportMixin):
 			clear = is_true(values.get('clear'))
 			if ntiid:
 				params[NTIID] = ntiid
-				course = self._import_course(ntiid, path, writeout, 
+				course = self._import_course(ntiid, path, writeout,
 											 lockout, clear=clear)
 			else:
 				params['Key'] = key = values.get('key')
 				params['Admin'] = admin = values.get('admin')
-				course = self._create_course(admin, key, path, writeout, 
+				course = self._create_course(admin, key, path, writeout,
 											 lockout, clear=clear)
 			result['Course'] = course
 			result['Elapsed'] = time.time() - now
 		finally:
-			delete_dir(tmp_path)
+			if tmp_path:
+				delete_dir(tmp_path)
 		return result
