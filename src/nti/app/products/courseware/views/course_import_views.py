@@ -44,6 +44,9 @@ from nti.common.maps import CaseInsensitiveDict
 
 from nti.common.string import is_true
 
+from nti.contentlibrary.interfaces import IContentPackageLibrary
+from nti.contentlibrary.interfaces import IDelimitedHierarchyContentPackageEnumeration
+
 from nti.contenttypes.courses.courses import CourseAdministrativeLevel
 
 from nti.contenttypes.courses.interfaces import ICourseCatalog
@@ -162,6 +165,27 @@ class ImportCourseView(AbstractAuthenticatedView, CourseImportMixin):
 			})
 		return import_course(ntiid, path, writeout, lockout, clear=clear)
 
+	def _makedirs(self, path):
+		if path and not os.path.exists(path):
+			os.makedirs(path)
+
+	def _install_admin_level(self, admin_name, catalog, site):
+		library = component.getUtility( IContentPackageLibrary )
+		enumeration = IDelimitedHierarchyContentPackageEnumeration(library)
+		enumeration_root = enumeration.root
+		courses_bucket = enumeration_root.getChildNamed(catalog.__name__)
+		logger.info( '[%s] Creating admin level %s', site.__name__, admin_name)
+		admin_root = courses_bucket.getChildNamed( admin_name )
+		if admin_root is None:
+			path = os.path.join(courses_bucket.absolute_path, admin_name)
+			self.makedirs( path )
+			admin_root = courses_bucket.getChildNamed( admin_name )
+
+		new_level = CourseAdministrativeLevel()
+		new_level.root = admin_root
+		catalog[admin_name] = new_level
+		return new_level
+
 	def _create_course(self, admin, key, path, writeout=True,
 					   lockout=False, clear=False):
 		if not admin:
@@ -182,11 +206,7 @@ class ImportCourseView(AbstractAuthenticatedView, CourseImportMixin):
 				adm_levels = component.queryUtility(ICourseCatalog)
 				if adm_levels is not None:
 					if admin not in adm_levels:
-						logger.info( '[%s] Creating admin level %s',
-									 site.__name__, admin)
-						new_level = CourseAdministrativeLevel()
-						new_level.root = adm_levels
-						adm_levels[admin] = new_level
+						self._install_admin_level( admin, adm_levels, site )
 					catalog = adm_levels
 					break
 		if catalog is None:
