@@ -17,6 +17,8 @@ import tempfile
 from zope import component
 from zope import lifecycleevent
 
+from zope.component.hooks import getSite
+
 from nti.cabinet.filer import DirectoryFiler
 
 from nti.common.string import to_unicode
@@ -26,13 +28,16 @@ from nti.contentfolder.interfaces import IRootFolder
 from nti.contentlibrary.filesystem import FilesystemBucket
 
 from nti.contentlibrary.interfaces import IFilesystemBucket
+from nti.contentlibrary.interfaces import IContentPackageLibrary
+from nti.contentlibrary.interfaces import IDelimitedHierarchyContentPackageEnumeration
 
 from nti.contenttypes.courses.courses import ContentCourseInstance
 from nti.contenttypes.courses.courses import ContentCourseSubInstance
+from nti.contenttypes.courses.courses import CourseAdministrativeLevel
 
 from nti.contenttypes.courses.interfaces import SECTIONS
 
-from nti.contenttypes.courses.interfaces import ICourseOutline 
+from nti.contenttypes.courses.interfaces import ICourseOutline
 from nti.contenttypes.courses.interfaces import ICourseCatalog
 from nti.contenttypes.courses.interfaces import ICourseImporter
 from nti.contenttypes.courses.interfaces import ICourseInstance
@@ -62,8 +67,12 @@ def check_archive(path):
 	return tmp_path
 
 def create_dir(path):
-	if not os.path.exists(path):
+	if path and not os.path.exists(path):
 		os.mkdir(path)
+
+def mkdirs(path):
+	if path and not os.path.exists(path):
+		os.makedirs(path)
 
 def delete_dir(path):
 	if path and os.path.exists(path):
@@ -84,7 +93,7 @@ def _lockout(course):
 		if IItemAssetContainer.providedBy(asset):
 			for item in asset.Items or ():
 				_lock_assets(item)
-			
+
 	def _recur(node):
 		if not ICourseOutline.providedBy(node):
 			_do_lock(node)
@@ -92,7 +101,7 @@ def _lockout(course):
 		for child in node.values():
 			_recur(child)
 	_recur(course.Outline)
-	
+
 def _execute(course, archive_path, writeout=True, lockout=False, clear=False):
 	course = ICourseInstance(course, None)
 	if course is None:
@@ -117,7 +126,7 @@ def _execute(course, archive_path, writeout=True, lockout=False, clear=False):
 def import_course(ntiid, archive_path, writeout=True, lockout=False, clear=False):
 	"""
 	Import a course from a file archive
-	
+
 	:param ntiid Course NTIID
 	:param archive_path archive path
 	"""
@@ -125,18 +134,35 @@ def import_course(ntiid, archive_path, writeout=True, lockout=False, clear=False
 	_execute(course, archive_path, writeout, lockout, clear)
 	return course
 
-def create_course(admin, key, archive_path, catalog=None, writeout=True, 
+def install_admin_level(admin_name, catalog, site=None):
+	site = getSite() if site is None else site
+	library = component.getUtility(IContentPackageLibrary)
+	enumeration = IDelimitedHierarchyContentPackageEnumeration(library)
+	enumeration_root = enumeration.root
+	courses_bucket = enumeration_root.getChildNamed(catalog.__name__)
+	logger.info('[%s] Creating admin level %s', site.__name__, admin_name)
+	admin_root = courses_bucket.getChildNamed(admin_name)
+	if admin_root is None:
+		path = os.path.join(courses_bucket.absolute_path, admin_name)
+		mkdirs(path)
+		admin_root = courses_bucket.getChildNamed(admin_name)
+	new_level = CourseAdministrativeLevel()
+	new_level.root = admin_root
+	catalog[admin_name] = new_level
+	return new_level
+
+def create_course(admin, key, archive_path, catalog=None, writeout=True,
 				  lockout=False, clear=False):
 	"""
 	Creates a course from a file archive
-	
+
 	:param admin Administrative level key
 	:param key Course name
 	:param archive_path archive path
 	"""
 	catalog = component.getUtility(ICourseCatalog) if catalog is None else catalog
 	if admin not in catalog:
-		raise KeyError("Invalid Administrative level")
+		install_admin_level(admin, catalog)
 
 	administrative_level = catalog[admin]
 	root = administrative_level.root
@@ -168,7 +194,7 @@ def create_course(admin, key, archive_path, catalog=None, writeout=True,
 		else:
 			course = ContentCourseInstance()
 			course.root = course_root
-			administrative_level[key] = course # gain intid
+			administrative_level[key] = course  # gain intid
 
 			# let's check for subinstances
 			archive_sec_path = os.path.expanduser(tmp_path or archive_path)
@@ -202,7 +228,7 @@ def create_course(admin, key, archive_path, catalog=None, writeout=True,
 						sub_section_root.absolute_path = subinstance_section_path
 					subinstance = ContentCourseSubInstance()
 					subinstance.root = sub_section_root
-					course.SubInstances[name] = subinstance # register
+					course.SubInstances[name] = subinstance  # register
 
 		# process
 		_execute(course, tmp_path or archive_path, writeout, lockout, clear)
