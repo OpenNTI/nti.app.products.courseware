@@ -508,7 +508,7 @@ class CourseEnrollmentsView(AbstractAuthenticatedView):
 
 			scope = record.Scope
 			username = user.username
-			
+
 			created = getattr(record, 'createdTime', None) or record.lastModified
 			created = isodate.datetime_isoformat(datetime.fromtimestamp(created or 0))
 
@@ -625,11 +625,11 @@ class AllCourseEnrollmentRosterDownloadView(AbstractAuthenticatedView):
 		# and provide it as json alternately
 		buf = StringIO()
 		writer = csv.writer(buf)
-		
+
 		# header
 		header = ['username', 'alias', 'realname', 'email', 'courses']
 		writer.writerow(header)
-		
+
 		# rowdata
 		writer.writerows(rows)
 
@@ -683,6 +683,6 @@ class SyncCourseView(_SyncAllLibrariesView):
 		ntiids.extend(p.ntiid for p in get_course_packages(course))
 		ntiids.extend(ICourseCatalogEntry(s).ntiid for s in get_course_subinstances(course))
 		# do sync
-		return self._do_sync(site=get_course_site_name(course), 
-							 ntiids=ntiids, 
+		return self._do_sync(site=get_course_site_name(course),
+							 ntiids=ntiids,
 							 allowRemoval=False)

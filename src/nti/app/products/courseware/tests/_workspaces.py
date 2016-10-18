@@ -24,6 +24,10 @@ from hamcrest import contains_inanyorder
 from hamcrest import greater_than_or_equal_to
 does_not = is_not
 
+import csv
+
+from six import StringIO
+
 from zope import lifecycleevent
 
 from nti.app.products.courseware import VIEW_COURSE_RECURSIVE
@@ -321,8 +325,15 @@ class AbstractEnrollingBase(object):
 
 		# Because we are an admin, we can also access the global roster that will show us in it
 		res = self.testapp.get('/dataserver2/@@AllEnrollments.csv')
+		enrollments = tuple( csv.DictReader( StringIO( res.body ) ) )
+		assert_that( enrollments, has_length( 1 ))
+		enrollment = enrollments[0]
 		# We have no email address at this point
-		assert_that(res.text, is_('sjohnson@nextthought.com,,,,Law and Justice\r\n'))
+		assert_that( enrollment, has_entries( 'username', 'sjohnson@nextthought.com',
+											  'alias', '',
+											  'realname', '',
+											  'email', '',
+											  'courses', 'Law and Justice'))
 
 		# give us one
 		self.testapp.put_json('/dataserver2/users/sjohnson@nextthought.com/++fields++email',
@@ -333,14 +344,25 @@ class AbstractEnrollingBase(object):
 
 		# We find this both in the global list, and in the specific list
 		# if we filter to open enrollments
-		for url in '/dataserver2/@@AllEnrollments.csv?LegacyEnrollmentStatus=Open', instance_href + '/Enrollments.csv?LegacyEnrollmentStatus=Open':
+		for url in ('/dataserver2/@@AllEnrollments.csv?LegacyEnrollmentStatus=Open',
+					instance_href + '/Enrollments.csv?LegacyEnrollmentStatus=Open'):
 			res = self.testapp.get(url)
-			assert_that(res.text, is_('sjohnson@nextthought.com,Gr\xe8y,,jason.madden@nextthought.com,Law and Justice\r\n'))
+			enrollments = tuple( csv.DictReader( StringIO( res.body ) ) )
+			assert_that( enrollments, has_length( 1 ))
+			enrollment = enrollments[0]
+			enrollment = {k: v.decode( 'utf-8' ) for k, v in enrollment.items()}
+			assert_that( enrollment, has_entries( 'username', 'sjohnson@nextthought.com',
+												  'alias', 'Gr\xe8y',
+												  'realname', '',
+												  'email', 'jason.madden@nextthought.com',
+												  'courses', 'Law and Justice'))
 
 		# And we find nothing if we filter to for credit enrollments
-		for url in '/dataserver2/@@AllEnrollments.csv?LegacyEnrollmentStatus=ForCredit', instance_href + '/Enrollments.csv?LegacyEnrollmentStatus=ForCredit':
+		for url in ('/dataserver2/@@AllEnrollments.csv?LegacyEnrollmentStatus=ForCredit',
+					instance_href + '/Enrollments.csv?LegacyEnrollmentStatus=ForCredit'):
 			res = self.testapp.get(url)
-			assert_that(res.text, is_(''))
+			enrollments = tuple( csv.DictReader( StringIO( res.body ) ) )
+			assert_that( enrollments, has_length( 0 ))
 
 		# We can delete to drop it
 		res = self.testapp.delete(enrollment_href,
@@ -350,7 +372,8 @@ class AbstractEnrollingBase(object):
 
 		# No longer in the enrolled list
 		res = self.testapp.get('/dataserver2/@@AllEnrollments.csv')
-		assert_that(res.text, is_(''))
+		enrollments = tuple( csv.DictReader( StringIO( res.body ) ) )
+		assert_that( enrollments, has_length( 0 ))
 
 		# If we post a non-existant class, it fails gracefully
 		res = self.testapp.post_json('/dataserver2/users/sjohnson@nextthought.com/Courses/EnrolledCourses',
@@ -366,6 +389,6 @@ class AbstractEnrollingBase(object):
 	@WithSharedApplicationMockDS(users=True, testapp=True)
 	def test_enroll_using_ntiid(self):
 		self._do_enroll({'ntiid': self.enrollment_ntiid})
-		
+
 _AbstractEnrollingBase = AbstractEnrollingBase
 
