@@ -147,9 +147,8 @@ class CourseMailView(AbstractMemberEmailView):
 		else:
 			raise hexc.HTTPUnprocessableEntity(detail='Invalid scope %s' % scope_name)
 
-		include_instructors = values.get('include-instructors')
-
 		instructor_usernames = self._instructors
+		include_instructors = values.get('include-instructors')
 		if include_instructors and is_true(include_instructors):
 			result = result | instructor_usernames - {self.sender.username.lower()}
 		else:
@@ -163,9 +162,10 @@ class CourseMailView(AbstractMemberEmailView):
 		type of enrollee of a course, do so.
 		"""
 		result = self._no_reply_addr
+		normed_username = recipient.username.lower()
 		if 		not self._reply_to_scope_usernames \
-			or 	recipient.username.lower() in self._reply_to_scope_usernames \
-			or	recipient.username.lower() in self._instructors:
+			or 	normed_username in self._reply_to_scope_usernames \
+			or	normed_username in self._instructors:
 
 			result = self._sender_reply_addr
 		return result
