@@ -13,6 +13,7 @@ from hamcrest import is_not
 from hamcrest import not_none
 from hamcrest import has_item
 from hamcrest import has_entry
+from hamcrest import has_entries
 from hamcrest import has_length
 from hamcrest import assert_that
 from hamcrest import has_property
@@ -273,11 +274,19 @@ class TestMailViews(ApplicationLayerTest):
 		assert_that( messages, has_length( 3 ) )
 		assert_that(messages, has_item(has_entry('To', 'zachary.roux@nextthought.com')))
 		assert_that(messages, is_not(has_item(has_entry('To', 'jzuech3@gmail.com'))))
+		# Another instructor in the course should still have a reply-to address even when students don't.
+		assert_that(messages, has_item(has_entries('Reply-To', 'jzuech3@gmail.com', 'To', 'zachary.roux@nextthought.com')))
+		assert_that(messages, is_not(has_item(has_entries('Reply-To', 'jzuech3@gmail.com', 'To', 'open@nextthought.com'))))
+		assert_that(messages, is_not(has_item(has_entries('Reply-To', 'jzuech3@gmail.com', 'To', 'credit@nextthought.com'))))
 		self.testapp.post_json(email_link + '?include-instructors=True', mail_with_reply, extra_environ=instructor_env)
 		messages = self._get_messages(mailer, has_copy=False)
 		assert_that( messages, has_length( 3 ) )
 		assert_that(messages, has_item(has_entry('To', 'zachary.roux@nextthought.com')))
 		assert_that(messages, is_not(has_item(has_entry('To', 'jzuech3@gmail.com'))))
+		# The message to another instructor should also have a reply-to address from the sender
+		assert_that(messages, has_item(has_entries('Reply-To', 'jzuech3@gmail.com', 'To', 'zachary.roux@nextthought.com')))
+		assert_that(messages, has_item(has_entries('Reply-To', 'jzuech3@gmail.com', 'To', 'open@nextthought.com')))
+		assert_that(messages, has_item(has_entries('Reply-To', 'jzuech3@gmail.com', 'To', 'credit@nextthought.com')))
 		
 		# Mail everyone with replyToScope open (also purchased)
 		self.testapp.post_json(email_link + '?replyToScope=opEN', mail_with_reply, extra_environ=instructor_env)

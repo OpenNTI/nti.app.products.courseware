@@ -164,7 +164,9 @@ class CourseMailView(AbstractMemberEmailView):
 		"""
 		result = self._no_reply_addr
 		if 		not self._reply_to_scope_usernames \
-			or 	recipient.username.lower() in self._reply_to_scope_usernames:
+			or 	recipient.username.lower() in self._reply_to_scope_usernames \
+			or	recipient.username.lower() in self._instructors:
+
 			result = self._sender_reply_addr
 		return result
 
@@ -176,6 +178,16 @@ class CourseMailView(AbstractMemberEmailView):
 
 	def predicate(self):
 		return is_course_instructor(self.course, self.remoteUser)
+		
+	def _get_reply_addr(self, to_user, email):
+		# Overriding this method, because we always want
+		# to provide a reply-to email address for
+		# instructors, even if students don't get one.  
+		if email.NoReply and to_user.username.lower() not in self._instructors:
+			result = self._no_reply_addr
+		else:
+			result = self.reply_addr_for_recipient(to_user)
+		return result
 
 @view_config(route_name='objects.generic.traversal',
 			 context=ICourseInstanceEnrollment,
