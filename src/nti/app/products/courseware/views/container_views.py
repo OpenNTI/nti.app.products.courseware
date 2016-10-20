@@ -63,6 +63,7 @@ class AbstractContainersView(AbstractAuthenticatedView):
 				})
 		lessons = get_evaluation_lessons( self.context, self.provided,
 										  courses=courses, request=self.request )
+		lessons = set( lessons or () )
 		result[ITEMS] = lessons
 		result[ITEM_COUNT] = result[TOTAL] = len(lessons)
 		return result
