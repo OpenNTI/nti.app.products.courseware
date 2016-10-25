@@ -44,6 +44,7 @@ from nti.app.products.courseware.interfaces import ICourseEnrollmentEmailBCCProv
 from nti.app.products.courseware.interfaces import ICourseEnrollmentEmailArgsProvider
 
 from nti.app.products.courseware.utils import get_enrollment_courses
+from nti.app.products.courseware.utils import get_enrollment_for_scope
 from nti.app.products.courseware.utils import get_enrollment_communities
 
 from nti.appserver.policies.interfaces import ISitePolicyUserEventListener
@@ -263,10 +264,15 @@ def _auto_enroll_on_enrollment_added(record, event):
 	main_entries = {ICourseCatalogEntry(x, None) for x in get_course_hierarchy(main_entry)}
 	main_entries.discard(None)
 
-	# get course entries
-	entries = set(get_enrollment_courses(course))
-	if not entries and ICourseSubInstance.providedBy(course):
-		entries = set(get_enrollment_courses(parent))
+	# XXX Let's get the entries for the scope NTI/Enrollment/Scopes{scope}
+	entries = set(get_enrollment_for_scope(course, record.Scope))
+	if not entries and ICourseSubInstance.providedBy(course): # look at parent
+		entries = set(get_enrollment_for_scope(parent, record.Scope))
+	if not entries: # default to  NTI/Enrollment/Courses
+		# get course entries
+		entries = set(get_enrollment_courses(course))
+		if not entries and ICourseSubInstance.providedBy(course):
+			entries = set(get_enrollment_courses(parent))
 	if not entries:
 		return
 

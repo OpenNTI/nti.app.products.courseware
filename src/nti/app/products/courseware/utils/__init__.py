@@ -133,6 +133,19 @@ def get_enrollment_courses(context):
 		result = result.split()
 	return result or ()
 
+def get_enrollment_scopes(context):
+	vendor_info = get_vendor_info(context)
+	return traverse(vendor_info, 'NTI/Enrollment/Scopes', default=False)
+
+def get_enrollment_for_scope(context, scope):
+	scopes = get_enrollment_scopes(context)
+	if isinstance(scopes, Mapping):
+		result = scopes.get(scope)
+		if result and isinstance(result, six.string_types):
+			result = result.split()
+		return result
+	return ()
+
 def get_course_and_parent(context):
 	return {ICourseInstance(context, None), get_parent_course(context)}
 
