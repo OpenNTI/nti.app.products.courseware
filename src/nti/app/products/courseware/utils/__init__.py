@@ -143,7 +143,7 @@ def get_enrollment_for_scope(context, scope):
 		result = scopes.get(scope)
 		if result and isinstance(result, six.string_types):
 			result = result.split()
-		return result
+		return result or ()
 	return ()
 
 def get_course_and_parent(context):
