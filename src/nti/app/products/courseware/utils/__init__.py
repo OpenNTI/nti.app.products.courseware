@@ -232,11 +232,16 @@ def get_evaluation_lessons(evaluation, outline_provided, courses=None, request=N
 		courses = (course,)
 		if course is None:
 			courses = get_evaluation_courses(evaluation)
+	# Make sure we get our parent course since that usually holds the outline
+	possible_courses = set()
+	for course in courses or ():
+		possible_courses.add( course )
+		possible_courses.add( get_parent_course( course ) )
 	catalog = get_library_catalog()
 	intids = component.getUtility(IIntIds)
 	sites = get_component_hierarchy_names()
 	container_ntiids = \
-			set(getattr(ICourseCatalogEntry(x, None), 'ntiid', None) for x in courses)
+			set(getattr(ICourseCatalogEntry(x, None), 'ntiid', None) for x in possible_courses)
 	container_ntiids.discard(None)
 	result = _search_for_lessons(evaluation, outline_provided,
 								  container_ntiids, catalog, intids, sites)
