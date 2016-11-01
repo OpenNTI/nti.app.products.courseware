@@ -25,7 +25,7 @@ def associate(obj, filer, key, bucket=None):
 	source = filer.get(key=key, bucket=bucket)
 	if IContentBaseFile.providedBy(source):
 		source.add_association(obj)
-		return get_external_link(source)
+		return filer.get_external_link(source)
 	return None
 
 def transfer_resources_from_filer(provided, obj, source_filer, target_filer):
