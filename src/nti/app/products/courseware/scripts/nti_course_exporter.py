@@ -36,7 +36,7 @@ def _list(site):
 		result.append(("%s,'%s'" % (entry.ntiid, entry.Title)))
 	pprint.pprint(sorted(result))
 
-def _export(ntiid, site, path=None):
+def _export(ntiid, site, backup, path=None):
 	set_site(site)
 	course = find_object_with_ntiid(ntiid)
 	course = ICourseInstance(course, None)
@@ -56,7 +56,7 @@ def _export(ntiid, site, path=None):
 
 	# export course
 	exporter = component.getUtility(ICourseExporter)
-	exporter.export(course, filer)
+	exporter.export(course, filer, backup=backup)
 
 	# zip contents
 	zip_file = filer.asZip(path=path)
@@ -73,8 +73,9 @@ def _process(args):
 		return _list(site)
 	else:
 		ntiid = args.ntiid
+		backup = args.backup
 		path = args.path or os.getcwd()
-		return _export(ntiid, site, path=path)
+		return _export(ntiid, site, backup, path=path)
 		
 def main():
 	arg_parser = argparse.ArgumentParser(description="Export a course")
@@ -86,6 +87,9 @@ def main():
 	arg_parser.add_argument('-s', '--site',
 							dest='site',
 							help="Application SITE.")
+	arg_parser.add_argument('-b', '--backup',
+							dest='backup',
+							help="backup flag.")
 	site_group = arg_parser.add_mutually_exclusive_group()
 	site_group.add_argument('-n', '--ntiid',
 							dest='ntiid',

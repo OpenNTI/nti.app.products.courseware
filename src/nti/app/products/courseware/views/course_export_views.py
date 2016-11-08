@@ -28,6 +28,8 @@ from nti.app.products.courseware.views._utils import _parse_course
 
 from nti.common.maps import CaseInsensitiveDict
 
+from nti.common.string import is_true
+
 from nti.contenttypes.courses.interfaces import ICourseExporter
 from nti.contenttypes.courses.interfaces import ICourseInstance
 from nti.contenttypes.courses.interfaces import ICourseExportFiler
@@ -35,7 +37,7 @@ from nti.contenttypes.courses.interfaces import ICourseCatalogEntry
 
 from nti.dataserver import authorization as nauth
 
-def export_course(context):
+def export_course(context, backup=True):
 	course = ICourseInstance(context)
 	filer = ICourseExportFiler(course)
 	try:
@@ -44,7 +46,7 @@ def export_course(context):
 
 		# export course
 		exporter = component.getUtility(ICourseExporter)
-		exporter.export(course, filer)
+		exporter.export(course, filer, backup)
 
 		# zip contents
 		zip_file = filer.asZip(path=tempfile.mkdtemp())
@@ -52,10 +54,10 @@ def export_course(context):
 	finally:
 		filer.reset()
 
-def _export_course_response(context, response):
+def _export_course_response(context, backup, response):
 	zip_file = None
 	try:
-		zip_file = export_course(context)
+		zip_file = export_course(context, backup)
 		filename = os.path.split(zip_file)[1]
 		response.content_encoding = str('identity')
 		response.content_type = str('application/zip; charset=UTF-8')
@@ -75,7 +77,9 @@ def _export_course_response(context, response):
 class CourseExportView(AbstractAuthenticatedView):
 
 	def __call__(self):
-		return _export_course_response(self.context, self.request.response)
+		values = CaseInsensitiveDict(self.request.params)
+		backup = is_true(values.get('backup'))
+		return _export_course_response(self.context, backup, self.request.response)
 	
 @view_config(route_name='objects.generic.traversal',
 			 renderer='rest',
@@ -95,4 +99,5 @@ class AdminExportCourseView(AbstractAuthenticatedView,
 	def __call__(self):
 		values = self.readInput()
 		context = _parse_course(values)
-		return _export_course_response(context, self.request.response)
+		backup = is_true(values.get('backup'))
+		return _export_course_response(context, backup, self.request.response)
