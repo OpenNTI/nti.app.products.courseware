@@ -51,6 +51,7 @@ from nti.contenttypes.courses.index import IX_USERNAME
 
 from nti.contenttypes.courses.interfaces import ICourseOutline
 from nti.contenttypes.courses.interfaces import ICourseInstance
+from nti.contenttypes.courses.interfaces import ICourseOutlineNode
 from nti.contenttypes.courses.interfaces import ICourseSubInstance
 from nti.contenttypes.courses.interfaces import ICourseCatalogEntry
 from nti.contenttypes.courses.interfaces import IContentCourseInstance
@@ -64,6 +65,8 @@ from nti.contenttypes.courses.utils import is_course_instructor as is_instructor
 from nti.contenttypes.courses.utils import content_unit_to_courses as indexed_content_unit_to_courses
 
 from nti.contenttypes.presentation.interfaces import IPresentationAsset
+from nti.contenttypes.presentation.interfaces import INTILessonOverview
+from nti.contenttypes.presentation.interfaces import INTICourseOverviewGroup
 
 from nti.dataserver.authorization import ACT_CONTENT_EDIT
 
@@ -82,11 +85,41 @@ from nti.site.site import get_component_hierarchy_names
 
 from nti.traversal.traversal import find_interface
 
+# misc
+
+def _is_user_enrolled(user, course):
+	# Enrolled or instructor
+	result = 	 user is not None \
+			 and is_enrolled(course, user) or is_instructor(course, user)
+	return result
+
+# outline adapters
+
 @component.adapter(ICourseOutline)
 @interface.implementer(ICourseInstance)
 def _outline_to_course(outline):
-	result = find_interface(outline, ICourseInstance, strict=False)
+	return find_interface(outline, ICourseInstance, strict=False)
+
+@component.adapter(IPresentationAsset)
+@interface.implementer(ICourseOutlineNode)
+def _asset_to_node(asset, user=None):
+	result = find_interface(asset, ICourseOutlineNode, strict=False)
+	if result is None:
+		catalog = get_library_catalog()
+		for container in catalog.get_containers(asset) or ():
+			obj = find_object_with_ntiid(container)
+			if 		INTILessonOverview.providedBy(obj) \
+				or	INTICourseOverviewGroup.providedBy(obj):
+				result = find_interface(asset, ICourseOutlineNode, strict=False)
+				course = find_interface(result, ICourseInstance, strict=False)
+				if 		result is not None \
+					and (user is None or _is_user_enrolled(user, course)):
+						break
+				else:
+					result = None
 	return result
+
+# course adapters
 
 @interface.implementer(IContentPackageBundle)
 @component.adapter(ILegacyCommunityBasedCourseInstance)
@@ -153,8 +186,8 @@ def content_unit_to_courses(unit, include_sub_instances=True):
 											 include_sub_instances=include_sub_instances)
 	return result
 
-@interface.implementer(ICourseInstance)
 @component.adapter(IContentUnit)
+@interface.implementer(ICourseInstance)
 def _content_unit_to_course(unit):
 	# get all courses, don't include sections
 	courses = content_unit_to_courses(unit, False)
@@ -164,12 +197,6 @@ def _content_unit_to_course(unit):
 	# not a subinstance (section)
 	# XXX: FIXME: This requires a one-to-one mapping
 	return courses[0] if courses else None
-
-def _is_user_enrolled(user, course):
-	# Enrolled or instructor
-	result = 	 user is not None \
-			 and is_enrolled(course, user) or is_instructor(course, user)
-	return result
 
 @interface.implementer(ICourseInstance)
 @component.adapter(IContentUnit, IUser)
@@ -181,6 +208,8 @@ def _content_unit_and_user_to_course(unit, user):
 			return instance
 	# nothing found return first course
 	return courses[0] if courses else None
+
+# context adapters
 
 def _get_top_level_contexts(obj):
 	results = set()
@@ -231,8 +260,8 @@ def _get_valid_course_context(course_contexts):
 
 	return courses + catalog_entries
 
-@interface.implementer(IJoinableContextProvider)
 @component.adapter(interface.Interface)
+@interface.implementer(IJoinableContextProvider)
 def _catalog_entry_from_container_object(obj):
 	return get_joinable_contexts(obj)
 
@@ -479,6 +508,8 @@ def _enrollment_last_modified(user):
 	# we know we're only using this for cache invalidation.
 	annotations = IAnnotations(user)
 	return annotations.get(USER_ENROLLMENT_LAST_MODIFIED_KEY, 0)
+
+# request adapters
 
 @component.adapter(IRequest)
 @interface.implementer(ICourseInstance)
