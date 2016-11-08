@@ -19,21 +19,22 @@ from zope.intid.interfaces import IIntIds
 
 from pyramid.threadlocal import get_current_request
 
-from nti.app.products.courseware.search import encode_keys
-from nti.app.products.courseware.search import memcache_get
-from nti.app.products.courseware.search import memcache_set
-from nti.app.products.courseware.search import memcache_client
-from nti.app.products.courseware.search import last_synchronized
-
 from nti.app.products.courseware.search.interfaces import ICourseOutlineCache
 
 from nti.app.products.courseware.utils import ZERO_DATETIME
+
+from nti.app.products.courseware.utils import encode_keys
+from nti.app.products.courseware.utils import memcache_get
+from nti.app.products.courseware.utils import memcache_set
+from nti.app.products.courseware.utils import memcache_client
+from nti.app.products.courseware.utils import last_synchronized
 
 from nti.contentlibrary.indexed_data import get_library_catalog
 
 from nti.contentlibrary.interfaces import IContentPackageLibrary
 
 from nti.contenttypes.courses.common import get_course_packages
+from nti.contenttypes.courses.common import get_course_site_name
 
 from nti.contenttypes.courses.interfaces import ICourseInstance
 from nti.contenttypes.courses.interfaces import ICourseCatalogEntry
@@ -156,14 +157,13 @@ def _flatten_outline(outline):
 
 def _course_timestamp(context=None):
 	context = ICourseInstance(context, None)
-	result = max(last_synchronized(context), _outline_lastModified(context))
-	return result
+	return max(last_synchronized(context), _outline_lastModified(context))
 
 def _flatten_and_cache_outline(course, client=None):
 	cached = True
-	site = getSite().__name__
 	lastSync = _course_timestamp(course)
 	ntiid = ICourseCatalogEntry(course).ntiid
+	site = get_course_site_name(course) or u''
 
 	# flatter and cache
 	result = _flatten_outline(course.Outline)
