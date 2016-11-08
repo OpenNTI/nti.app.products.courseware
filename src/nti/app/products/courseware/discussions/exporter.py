@@ -47,7 +47,7 @@ class CourseDiscussionsExporter(BaseSectionExporter):
 		ext_obj.pop(OID, None)
 		return ext_obj
 
-	def export(self, context, filer):
+	def export(self, context, filer, backup=True):
 		course = ICourseInstance(context)
 		bucket = path_to_discussions(course)
 		discussions = ICourseDiscussions(course)
