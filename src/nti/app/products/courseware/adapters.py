@@ -151,7 +151,7 @@ def _contained_to_node(obj, user=None):
 									 	  provided=(INTIRelatedWorkRefPointer, INTITimelineRef))
 			
 			# find node and check
-			for obj in itertools.chain(objs, (docket,)):
+			for obj in itertools.chain(objs or (), (docket,)):
 				lesson = find_interface(obj, INTILessonOverview, strict=False)
 				node = find_interface(lesson, ICourseOutlineNode, strict=False)
 				course = find_interface(node, ICourseInstance, strict=False)
