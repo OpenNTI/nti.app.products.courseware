@@ -153,7 +153,7 @@
 	<subscriber factory=".adapters._courses_from_forum_obj_and_user"
 				provides="nti.appserver.interfaces.ITopLevelContainerContextProvider"
 				for="nti.dataserver.contenttypes.forums.interfaces.IPost
-					nti.dataserver.interfaces.IUser"/>
+					 nti.dataserver.interfaces.IUser"/>
 
 	<subscriber factory=".adapters._courses_from_forum_obj_and_user"
 				provides="nti.appserver.interfaces.ITopLevelContainerContextProvider"
@@ -163,7 +163,7 @@
 	<subscriber factory=".adapters._courses_from_forum_obj_and_user"
 				provides="nti.appserver.interfaces.ITopLevelContainerContextProvider"
 				for="nti.dataserver.contenttypes.forums.interfaces.IForum
-					nti.dataserver.interfaces.IUser"/>
+					 nti.dataserver.interfaces.IUser"/>
 
 	<subscriber factory=".adapters._courses_from_package"
 				provides="nti.appserver.interfaces.ITopLevelContainerContextProvider"
@@ -475,6 +475,34 @@
 				provides="nti.externalization.interfaces.IExternalObjectDecorator"
 				for=".interfaces.IOpenEnrollmentOption
 					 pyramid.interfaces.IRequest" />
+	
+	<!-- Outline nodes-->
+	<adapter factory=".adapters._asset_to_node"
+			 provides="nti.contenttypes.courses.interfaces.ICourseOutlineNode"
+			 for="nti.contenttypes.presentation.interfaces.IPresentationAsset" />
+	
+	<adapter factory=".adapters._asset_to_node"
+			 provides="nti.contenttypes.courses.interfaces.ICourseOutlineNode"
+			 for="nti.contenttypes.presentation.interfaces.IPresentationAsset
+			 	  nti.dataserver.interfaces.IUser" />
+
+	<adapter factory=".adapters._contained_to_node"
+			 provides="nti.contenttypes.courses.interfaces.ICourseOutlineNode"
+			 for="nti.dataserver.interfaces.IContained" />
+	
+	<adapter factory=".adapters._contained_to_node"
+			 provides="nti.contenttypes.courses.interfaces.ICourseOutlineNode"
+			 for="nti.dataserver.interfaces.IContained
+			 	  nti.dataserver.interfaces.IUser" />
+
+	<adapter factory=".adapters._contained_to_node"
+			 provides="nti.contenttypes.courses.interfaces.ICourseOutlineNode"
+			 for="nti.dataserver.interfaces.IUserGeneratedData" />
+	
+	<adapter factory=".adapters._contained_to_node"
+			 provides="nti.contenttypes.courses.interfaces.ICourseOutlineNode"
+			 for="nti.dataserver.interfaces.IUserGeneratedData
+			 	  nti.dataserver.interfaces.IUser" />
 
 	<!-- Content Search -->
 	<include package=".search" />

@@ -125,6 +125,8 @@ def _asset_to_node(asset, user=None):
 						break
 				else:
 					result = None
+	elif (user is not None and not _is_user_enrolled(user, course)):
+		result = None
 	return result
 
 @component.adapter(IContained)
