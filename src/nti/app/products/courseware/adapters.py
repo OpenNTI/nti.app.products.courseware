@@ -9,6 +9,8 @@ __docformat__ = "restructuredtext en"
 
 logger = __import__('logging').getLogger(__name__)
 
+import itertools
+
 from zope import component
 from zope import interface
 
@@ -65,10 +67,12 @@ from nti.contenttypes.courses.utils import is_course_instructor as is_instructor
 from nti.contenttypes.courses.utils import content_unit_to_courses as indexed_content_unit_to_courses
 
 from nti.contenttypes.presentation.interfaces import INTITimeline
+from nti.contenttypes.presentation.interfaces import INTITimelineRef
 from nti.contenttypes.presentation.interfaces import IPresentationAsset
 from nti.contenttypes.presentation.interfaces import INTIRelatedWorkRef
 from nti.contenttypes.presentation.interfaces import INTILessonOverview
 from nti.contenttypes.presentation.interfaces import INTICourseOverviewGroup
+from nti.contenttypes.presentation.interfaces import INTIRelatedWorkRefPointer
 
 from nti.dataserver.authorization import ACT_CONTENT_EDIT
 
@@ -133,11 +137,26 @@ def _contained_to_node(obj, user=None):
 		catalog = get_library_catalog()
 		intids = component.getUtility(IIntIds)
 		sites = get_component_hierarchy_names()
-		objs = catalog.search_objects(sites=sites,
-									  intids=intids,
-									  target=containerId,
-									  provided=(INTIRelatedWorkRef, INTITimeline))
-		return objs
+		
+		# search for all dockets that point to the container
+		for docket in catalog.search_objects(sites=sites,
+									  		 intids=intids,
+									 		 target=containerId,
+									 		 provided=(INTIRelatedWorkRef, INTITimeline)):
+			
+			# search for all pointers that point to the docket
+			objs = catalog.search_objects(sites=sites,
+										  intids=intids,
+										  target=docket.ntiid,
+									 	  provided=(INTIRelatedWorkRefPointer, INTITimelineRef))
+			
+			# find node and check
+			for obj in itertools.chain(objs, (docket,)):
+				lesson = find_interface(obj, INTILessonOverview, strict=False)
+				node = find_interface(lesson, ICourseOutlineNode, strict=False)
+				course = find_interface(node, ICourseInstance, strict=False)
+				if node is not None and (node is None or _is_user_enrolled(user, course)):
+					return node
 	return None
 
 # course adapters
