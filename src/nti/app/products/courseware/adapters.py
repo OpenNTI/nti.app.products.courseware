@@ -64,7 +64,9 @@ from nti.contenttypes.courses.utils import get_course_subinstances
 from nti.contenttypes.courses.utils import is_course_instructor as is_instructor # BWC
 from nti.contenttypes.courses.utils import content_unit_to_courses as indexed_content_unit_to_courses
 
+from nti.contenttypes.presentation.interfaces import INTITimeline
 from nti.contenttypes.presentation.interfaces import IPresentationAsset
+from nti.contenttypes.presentation.interfaces import INTIRelatedWorkRef
 from nti.contenttypes.presentation.interfaces import INTILessonOverview
 from nti.contenttypes.presentation.interfaces import INTICourseOverviewGroup
 
@@ -77,7 +79,9 @@ from nti.dataserver.contenttypes.forums.interfaces import ITopic
 from nti.dataserver.contenttypes.forums.interfaces import IForum
 
 from nti.dataserver.interfaces import IUser
+from nti.dataserver.interfaces import IContained
 from nti.dataserver.interfaces import IHighlight
+from nti.dataserver.interfaces import IUserGeneratedData
 
 from nti.ntiids.ntiids import find_object_with_ntiid
 
@@ -118,6 +122,23 @@ def _asset_to_node(asset, user=None):
 				else:
 					result = None
 	return result
+
+@component.adapter(IContained)
+@component.adapter(IUserGeneratedData)
+@interface.implementer(ICourseOutlineNode)
+def _contained_to_node(obj, user=None):
+	containerId = getattr(obj, 'containerId', None)
+	container = find_object_with_ntiid(containerId) if containerId else None
+	if IContentUnit.providedBy(container):
+		catalog = get_library_catalog()
+		intids = component.getUtility(IIntIds)
+		sites = get_component_hierarchy_names()
+		objs = catalog.search_objects(sites=sites,
+									  intids=intids,
+									  target=containerId,
+									  provided=(INTIRelatedWorkRef, INTITimeline))
+		return objs
+	return None
 
 # course adapters
 
