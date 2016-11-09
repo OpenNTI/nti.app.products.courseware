@@ -155,7 +155,7 @@ def _contained_to_node(obj, user=None):
 				lesson = find_interface(obj, INTILessonOverview, strict=False)
 				node = find_interface(lesson, ICourseOutlineNode, strict=False)
 				course = find_interface(node, ICourseInstance, strict=False)
-				if node is not None and (node is None or _is_user_enrolled(user, course)):
+				if node is not None and (user is None or _is_user_enrolled(user, course)):
 					return node
 	return None
 
