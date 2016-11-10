@@ -117,7 +117,7 @@ def _outline_to_course(outline):
 
 @component.adapter(IPresentationAsset)
 @interface.implementer(ICourseOutlineNodes)
-def _asset_to_node(asset, user=None):
+def _asset_to_nodes(asset, user=None):
 	result = find_interface(asset, ICourseOutlineNode, strict=False)
 	if result is None:
 		result = []
@@ -139,7 +139,7 @@ def _asset_to_node(asset, user=None):
 @component.adapter(IContained)
 @component.adapter(IUserGeneratedData)
 @interface.implementer(ICourseOutlineNodes)
-def _contained_to_node(obj, user=None):
+def _contained_to_nodes(obj, user=None):
 	containerId = getattr(obj, 'containerId', None)
 	container = find_object_with_ntiid(containerId) if containerId else None
 	if IContentUnit.providedBy(container):
@@ -171,7 +171,7 @@ def _contained_to_node(obj, user=None):
 
 @component.adapter(IQEvaluation)
 @interface.implementer(ICourseOutlineNodes)
-def _evaluation_to_node(obj, user=None):
+def _evaluation_to_nodes(obj, user=None):
 	result = []
 	catalog = get_library_catalog()
 	intids = component.getUtility(IIntIds)
