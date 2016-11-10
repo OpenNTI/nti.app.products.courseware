@@ -96,6 +96,7 @@ class CourseImportMixin(ModeledContentUploadRequestUtilsMixin):
 			tmp_path = tempfile.mkdtemp()
 			path = os.path.join(tmp_path, filename)
 			transfer_to_native_file(source, path)
+			logger.info("Source data saved to %s", path)
 		elif not path:
 			raise_error({
 				u'message': _("No archive source specified."),
@@ -129,9 +130,9 @@ class CourseImportView(AbstractAuthenticatedView, CourseImportMixin):
 		try:
 			entry = ICourseCatalogEntry(self.context)
 			path, tmp_path = self._get_source_paths(values)
+			clear = is_true(values.get('clear'))
 			writeout = is_true(values.get('writeout') or values.get('save'))
 			lockout = is_true(values.get('lock') or values.get('lockout'))
-			clear = is_true(values.get('clear'))
 			import_course(entry.ntiid, os.path.abspath(path), writeout,
 						  lockout, clear=clear)
 			result['Elapsed'] = time.time() - now
@@ -181,7 +182,7 @@ class ImportCourseView(AbstractAuthenticatedView, CourseImportMixin):
 				adm_levels = component.queryUtility(ICourseCatalog)
 				if adm_levels is not None:
 					if admin not in adm_levels:
-						install_admin_level( admin, adm_levels, site )
+						install_admin_level(admin, adm_levels, site)
 					catalog = adm_levels
 					break
 		if catalog is None:
@@ -199,12 +200,12 @@ class ImportCourseView(AbstractAuthenticatedView, CourseImportMixin):
 		result = LocatedExternalDict()
 		params = result['Params'] = {}
 		try:
+			ntiid = values.get('ntiid')
 			path, tmp_path = self._get_source_paths(values)
 			path = os.path.abspath(path)
-			ntiid = values.get('ntiid')
+			clear = is_true(values.get('clear'))
 			writeout = is_true(values.get('writeout') or values.get('save'))
 			lockout = is_true(values.get('lock') or values.get('lockout') or 'True')
-			clear = is_true(values.get('clear'))
 			if ntiid:
 				params[NTIID] = ntiid
 				course = self._import_course(ntiid, path, writeout,
