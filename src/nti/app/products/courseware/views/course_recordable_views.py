@@ -128,8 +128,7 @@ class CourseSyncLockedObjectsMixin(object):
 		all_locked = recorder_catalog.family.IF.multiunion([locked_intids, child_order_locked_intids])
 
 		doc_ids = recorder_catalog.family.IF.intersection(all_ids, all_locked)
-		result = ResultSet(doc_ids, intids, ignore_invalid=True)
-		return result
+		return ResultSet(doc_ids, intids, True)
 
 	def _is_locked(self, x):
 		return		(IRecordable.providedBy(x) and x.isLocked()) \
