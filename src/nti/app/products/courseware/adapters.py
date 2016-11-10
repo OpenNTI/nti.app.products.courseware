@@ -58,6 +58,7 @@ from nti.contenttypes.courses.interfaces import ICourseInstance
 from nti.contenttypes.courses.interfaces import ICourseOutlineNode
 from nti.contenttypes.courses.interfaces import ICourseSubInstance
 from nti.contenttypes.courses.interfaces import ICourseCatalogEntry
+from nti.contenttypes.courses.interfaces import ICourseOutlineNodes
 from nti.contenttypes.courses.interfaces import IContentCourseInstance
 from nti.contenttypes.courses.interfaces import INonPublicCourseInstance
 from nti.contenttypes.courses.interfaces import ICourseInstanceEnrollmentRecord
@@ -77,8 +78,7 @@ from nti.contenttypes.presentation.interfaces import INTIAssignmentRef
 from nti.contenttypes.presentation.interfaces import INTIQuestionSetRef
 from nti.contenttypes.presentation.interfaces import IPresentationAsset
 from nti.contenttypes.presentation.interfaces import INTIRelatedWorkRef
-from nti.contenttypes.presentation.interfaces import INTILessonOverview
-from nti.contenttypes.presentation.interfaces import INTICourseOverviewGroup
+from nti.contenttypes.presentation.interfaces import IItemAssetContainer
 from nti.contenttypes.presentation.interfaces import INTIRelatedWorkRefPointer
 
 from nti.dataserver.authorization import ACT_CONTENT_EDIT
@@ -116,33 +116,34 @@ def _outline_to_course(outline):
 	return find_interface(outline, ICourseInstance, strict=False)
 
 @component.adapter(IPresentationAsset)
-@interface.implementer(ICourseOutlineNode)
+@interface.implementer(ICourseOutlineNodes)
 def _asset_to_node(asset, user=None):
 	result = find_interface(asset, ICourseOutlineNode, strict=False)
 	if result is None:
+		result = []
 		catalog = get_library_catalog()
 		for container in catalog.get_containers(asset) or ():
 			obj = find_object_with_ntiid(container)
-			if 		INTILessonOverview.providedBy(obj) \
-				or	INTICourseOverviewGroup.providedBy(obj):
-				result = find_interface(asset, ICourseOutlineNode, strict=False)
+			if IItemAssetContainer.providedBy(obj):
+				node = find_interface(asset, ICourseOutlineNode, strict=False)
 				course = find_interface(result, ICourseInstance, strict=False)
-				if 		result is not None \
+				if 		node is not None \
 					and (user is None or _is_user_enrolled(user, course)):
-						break
-				else:
-					result = None
+					result.append(node)
 	elif (user is not None and not _is_user_enrolled(user, course)):
-		result = None
+		result = ()
+	else:
+		result = (result,)
 	return result
 
 @component.adapter(IContained)
 @component.adapter(IUserGeneratedData)
-@interface.implementer(ICourseOutlineNode)
+@interface.implementer(ICourseOutlineNodes)
 def _contained_to_node(obj, user=None):
 	containerId = getattr(obj, 'containerId', None)
 	container = find_object_with_ntiid(containerId) if containerId else None
 	if IContentUnit.providedBy(container):
+		result = []
 		catalog = get_library_catalog()
 		intids = component.getUtility(IIntIds)
 		sites = get_component_hierarchy_names()
@@ -161,16 +162,17 @@ def _contained_to_node(obj, user=None):
 			
 			# find node and check
 			for ref in itertools.chain(objs or (), (docket,)):
-				lesson = find_interface(ref, INTILessonOverview, strict=False)
-				node = find_interface(lesson, ICourseOutlineNode, strict=False)
+				node = find_interface(ref, ICourseOutlineNode, strict=False)
 				course = find_interface(node, ICourseInstance, strict=False)
 				if node is not None and (user is None or _is_user_enrolled(user, course)):
-					return node
-	return None
+					result.append(node)
+		return result
+	return ()
 
 @component.adapter(IQEvaluation)
-@interface.implementer(ICourseOutlineNode)
+@interface.implementer(ICourseOutlineNodes)
 def _evaluation_to_node(obj, user=None):
+	result = []
 	catalog = get_library_catalog()
 	intids = component.getUtility(IIntIds)
 	sites = get_component_hierarchy_names()		
@@ -182,12 +184,11 @@ def _evaluation_to_node(obj, user=None):
 								  	  intids=intids,
 								 	  target=obj.ntiid,
 								 	  provided=provided):
-		lesson = find_interface(ref, INTILessonOverview, strict=False)
-		node = find_interface(lesson, ICourseOutlineNode, strict=False)
+		node = find_interface(ref, ICourseOutlineNode, strict=False)
 		course = find_interface(node, ICourseInstance, strict=False)
 		if node is not None and (user is None or _is_user_enrolled(user, course)):
-			return node
-	return None
+			result.append(node)
+	return result or ()
 
 # course adapters
 
