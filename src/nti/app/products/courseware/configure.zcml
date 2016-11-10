@@ -504,6 +504,15 @@
 			 for="nti.dataserver.interfaces.IUserGeneratedData
 			 	  nti.dataserver.interfaces.IUser" />
 
+	<adapter factory=".adapters._evaluation_to_node"
+			 provides="nti.contenttypes.courses.interfaces.ICourseOutlineNode"
+			 for="nti.assessment.interfaces.IQEvaluation" />
+	
+	<adapter factory=".adapters._evaluation_to_node"
+			 provides="nti.contenttypes.courses.interfaces.ICourseOutlineNode"
+			 for="nti.assessment.interfaces.IQEvaluation
+			 	  nti.dataserver.interfaces.IUser" />
+
 	<!-- Content Search -->
 	<include package=".search" />
 

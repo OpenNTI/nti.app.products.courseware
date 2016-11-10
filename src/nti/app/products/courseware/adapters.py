@@ -43,6 +43,8 @@ from nti.appserver.interfaces import ITrustedTopLevelContainerContextProvider
 
 from nti.appserver.pyramid_authorization import is_readable
 
+from nti.assessment.interfaces import IQEvaluation
+
 from nti.contentlibrary.interfaces import IContentUnit
 from nti.contentlibrary.interfaces import IContentPackageBundle
 
@@ -66,8 +68,13 @@ from nti.contenttypes.courses.utils import get_course_subinstances
 from nti.contenttypes.courses.utils import is_course_instructor as is_instructor # BWC
 from nti.contenttypes.courses.utils import content_unit_to_courses as indexed_content_unit_to_courses
 
+from nti.contenttypes.presentation.interfaces import INTIPollRef
 from nti.contenttypes.presentation.interfaces import INTITimeline
+from nti.contenttypes.presentation.interfaces import INTISurveyRef
+from nti.contenttypes.presentation.interfaces import INTIQuestionRef
 from nti.contenttypes.presentation.interfaces import INTITimelineRef
+from nti.contenttypes.presentation.interfaces import INTIAssignmentRef
+from nti.contenttypes.presentation.interfaces import INTIQuestionSetRef
 from nti.contenttypes.presentation.interfaces import IPresentationAsset
 from nti.contenttypes.presentation.interfaces import INTIRelatedWorkRef
 from nti.contenttypes.presentation.interfaces import INTILessonOverview
@@ -153,12 +160,33 @@ def _contained_to_node(obj, user=None):
 									 	  provided=(INTIRelatedWorkRefPointer, INTITimelineRef))
 			
 			# find node and check
-			for obj in itertools.chain(objs or (), (docket,)):
-				lesson = find_interface(obj, INTILessonOverview, strict=False)
+			for ref in itertools.chain(objs or (), (docket,)):
+				lesson = find_interface(ref, INTILessonOverview, strict=False)
 				node = find_interface(lesson, ICourseOutlineNode, strict=False)
 				course = find_interface(node, ICourseInstance, strict=False)
 				if node is not None and (user is None or _is_user_enrolled(user, course)):
 					return node
+	return None
+
+@component.adapter(IQEvaluation)
+@interface.implementer(ICourseOutlineNode)
+def _evaluation_to_node(obj, user=None):
+	catalog = get_library_catalog()
+	intids = component.getUtility(IIntIds)
+	sites = get_component_hierarchy_names()		
+	provided = (INTIPollRef, INTISurveyRef, INTIQuestionRef, 
+				INTIQuestionSetRef, INTIAssignmentRef)
+
+	# search for all dockets that point to the container
+	for ref in catalog.search_objects(sites=sites,
+								  	  intids=intids,
+								 	  target=obj.ntiid,
+								 	  provided=provided):
+		lesson = find_interface(ref, INTILessonOverview, strict=False)
+		node = find_interface(lesson, ICourseOutlineNode, strict=False)
+		course = find_interface(node, ICourseInstance, strict=False)
+		if node is not None and (user is None or _is_user_enrolled(user, course)):
+			return node
 	return None
 
 # course adapters
