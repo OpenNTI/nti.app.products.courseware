@@ -217,6 +217,9 @@ class ImportCourseView(AbstractAuthenticatedView, CourseImportMixin):
 											 lockout, clear=clear)
 			result['Course'] = course
 			result['Elapsed'] = time.time() - now
+		except Exception as e:
+			tmp_path = None
+			raise e
 		finally:
 			if tmp_path:
 				delete_dir(tmp_path)
