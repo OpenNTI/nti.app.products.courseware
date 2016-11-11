@@ -8,23 +8,23 @@ Interfaces
 Access to courses begins by finding them. Courses are described in a
 course catalog:
 
-.. autointerface:: nti.app.products.courseware.interfaces.ICourseCatalog
+.. autointerface:: nti.contenttypes.courses.interfaces.ICourseCatalog
 	:noindex:
 
 The course catalog is made up of entries:
 
-.. autointerface:: nti.app.products.courseware.interfaces.ICourseCatalogEntry
+.. autointerface:: nti.contenttypes.courses.interfaces.ICourseCatalogEntry
 	:noindex:
-.. autointerface:: nti.app.products.courseware.interfaces.ICourseCatalogInstructorInfo
+.. autointerface:: nti.contenttypes.courses.interfaces.ICourseCatalogInstructorInfo
 	:noindex:
 
 and legacy entries:
 
-.. autointerface:: nti.app.products.courseware.interfaces.ICourseCatalogLegacyEntry
+.. autointerface:: nti.contenttypes.courses.legacy_catalog.ICourseCatalogLegacyEntry
 	:noindex:
-.. autointerface:: nti.app.products.courseware.interfaces.ICourseCreditLegacyInfo
+.. autointerface:: nti.contenttypes.courses.legacy_catalog.ICourseCreditLegacyInfo
 	:noindex:
-.. autointerface:: nti.app.products.courseware.interfaces.ICourseCatalogInstructorLegacyInfo
+.. autointerface:: nti.contenttypes.courses.legacy_catalog.ICourseCatalogInstructorLegacyInfo
 	:noindex:
 
 Implementation
@@ -32,11 +32,11 @@ Implementation
 
 These are implemented here:
 
-.. automodule:: nti.app.products.courseware.catalog
+.. automodule:: nti.contenttypes.courses.legacy_catalog
 
-.. autoclass:: nti.app.products.courseware.legacy.CourseCatalogLegacyEntry
-.. autoclass:: nti.app.products.courseware.legacy.CourseCatalogInstructorLegacyInfo
-.. autoclass:: nti.app.products.courseware.legacy.CourseCreditLegacyInfo
+.. autoclass:: nti.contenttypes.courses.legacy_catalog.CourseCatalogLegacyEntry
+.. autoclass:: nti.contenttypes.courses.legacy_catalog.CourseCatalogInstructorLegacyInfo
+.. autoclass:: nti.contenttypes.courses.legacy_catalog.CourseCreditLegacyInfo
 
 ReST
 ====
