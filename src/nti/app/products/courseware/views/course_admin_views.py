@@ -686,3 +686,17 @@ class SyncCourseView(_SyncAllLibrariesView):
 		return self._do_sync(site=get_course_site_name(course),
 							 ntiids=ntiids,
 							 allowRemoval=False)
+
+# DELETE views
+
+@view_config(context=ICourseInstance)
+@view_config(context=ICourseCatalogEntry)
+@view_defaults(route_name='objects.generic.traversal',
+			   renderer='rest',
+			   request_method='DELETE',
+			   permission=nauth.ACT_NTI_ADMIN)
+class DeleteCourseView(_SyncAllLibrariesView):
+
+	def _do_call(self):
+		course = ICourseInstance(self.context)
+		del course.__parent__[course.__name__]
