@@ -700,3 +700,5 @@ class DeleteCourseView(_SyncAllLibrariesView):
 	def _do_call(self):
 		course = ICourseInstance(self.context)
 		del course.__parent__[course.__name__]
+		return hexc.HTTPNoContent()
+
