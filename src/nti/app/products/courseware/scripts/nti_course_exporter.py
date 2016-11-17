@@ -87,9 +87,9 @@ def main():
 	arg_parser.add_argument('-s', '--site',
 							dest='site',
 							help="Application SITE.")
-	arg_parser.add_argument('-b', '--backup',
-							dest='backup',
-							help="backup flag.")
+	arg_parser.add_argument('-b', '--backup', 
+							help="Backup flag", action='store_true',
+							dest='backup')
 	site_group = arg_parser.add_mutually_exclusive_group()
 	site_group.add_argument('-n', '--ntiid',
 							dest='ntiid',
