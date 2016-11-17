@@ -38,7 +38,7 @@ class CourseDiscussionsExporter(BaseSectionExporter):
 	def _process_resources(self, discussion, ext_obj, target_filer):
 		save_resources_to_filer(ICourseDiscussion, # provided interface
 							    discussion,
-							    target_filer, 
+							    target_filer,
 							    ext_obj)
 
 	def _ext_obj(self, discussion):
@@ -47,7 +47,7 @@ class CourseDiscussionsExporter(BaseSectionExporter):
 		ext_obj.pop(OID, None)
 		return ext_obj
 
-	def export(self, context, filer, backup=True):
+	def export(self, context, filer, backup=True, salt=None):
 		course = ICourseInstance(context)
 		bucket = path_to_discussions(course)
 		discussions = ICourseDiscussions(course)
@@ -59,4 +59,4 @@ class CourseDiscussionsExporter(BaseSectionExporter):
 				   	   bucket=bucket, overwrite=True)
 		# process subinstances
 		for sub_instance in get_course_subinstances(course):
-			self.export(sub_instance, filer, backup)
+			self.export(sub_instance, filer, backup, salt)

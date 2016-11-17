@@ -37,7 +37,7 @@ from nti.contenttypes.courses.interfaces import ICourseCatalogEntry
 
 from nti.dataserver import authorization as nauth
 
-def export_course(context, backup=True):
+def export_course(context, backup=True, salt=None):
 	course = ICourseInstance(context)
 	filer = ICourseExportFiler(course)
 	try:
@@ -46,7 +46,7 @@ def export_course(context, backup=True):
 
 		# export course
 		exporter = component.getUtility(ICourseExporter)
-		exporter.export(course, filer, backup)
+		exporter.export(course, filer, backup, salt)
 
 		# zip contents
 		zip_file = filer.asZip(path=tempfile.mkdtemp())
@@ -54,10 +54,10 @@ def export_course(context, backup=True):
 	finally:
 		filer.reset()
 
-def _export_course_response(context, backup, response):
+def _export_course_response(context, backup, salt, response):
 	zip_file = None
 	try:
-		zip_file = export_course(context, backup)
+		zip_file = export_course(context, backup, salt)
 		filename = os.path.split(zip_file)[1]
 		response.content_encoding = str('identity')
 		response.content_type = str('application/zip; charset=UTF-8')
@@ -79,8 +79,10 @@ class CourseExportView(AbstractAuthenticatedView):
 	def __call__(self):
 		values = CaseInsensitiveDict(self.request.params)
 		backup = is_true(values.get('backup'))
-		return _export_course_response(self.context, backup, self.request.response)
-	
+		salt = values.get('backup')
+		return _export_course_response(self.context, backup, salt,
+									   self.request.response)
+
 @view_config(route_name='objects.generic.traversal',
 			 renderer='rest',
 			 name='ExportCourse',
