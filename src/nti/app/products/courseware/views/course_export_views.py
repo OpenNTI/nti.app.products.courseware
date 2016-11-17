@@ -10,6 +10,7 @@ __docformat__ = "restructuredtext en"
 logger = __import__('logging').getLogger(__name__)
 
 import os
+import time
 import tempfile
 
 from zope import component
@@ -79,7 +80,10 @@ class CourseExportView(AbstractAuthenticatedView):
 	def __call__(self):
 		values = CaseInsensitiveDict(self.request.params)
 		backup = is_true(values.get('backup'))
-		salt = values.get('backup')
+		salt = values.get('salt')
+		if not backup and not salt:
+			# Default a salt for course copies.
+			salt = str( time.time() )
 		return _export_course_response(self.context, backup, salt,
 									   self.request.response)
 
