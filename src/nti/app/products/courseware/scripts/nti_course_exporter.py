@@ -77,7 +77,7 @@ def _process(args):
 		ntiid = args.ntiid
 		backup = args.backup
 		path = args.path or os.getcwd()
-		salt = time.time() if not salt and not backup else salt
+		salt = str(time.time()) if not salt and not backup else salt
 		return _export(ntiid, site, backup, salt=salt, path=path)
 		
 def main():
@@ -95,8 +95,7 @@ def main():
 							dest='backup')
 	arg_parser.add_argument('-t', '--salt',
 							dest='salt',
-							help="Hash salt.",
-							type=float)
+							help="Hash salt.")
 	site_group = arg_parser.add_mutually_exclusive_group()
 	site_group.add_argument('-n', '--ntiid',
 							dest='ntiid',
