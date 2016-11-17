@@ -106,4 +106,9 @@ class AdminExportCourseView(AbstractAuthenticatedView,
 		values = self.readInput()
 		context = _parse_course(values)
 		backup = is_true(values.get('backup'))
-		return _export_course_response(context, backup, self.request.response)
+		salt = values.get('salt')
+		if not backup and not salt:
+			# Default a salt for course copies.
+			salt = str( time.time() )
+		return _export_course_response(context, backup, salt,
+									   self.request.response)
