@@ -95,7 +95,8 @@ def main():
 							dest='backup')
 	arg_parser.add_argument('-t', '--salt',
 							dest='salt',
-							help="Hash salt.")
+							help="Hash salt.",
+							type=float)
 	site_group = arg_parser.add_mutually_exclusive_group()
 	site_group.add_argument('-n', '--ntiid',
 							dest='ntiid',
