@@ -11,6 +11,7 @@ logger = __import__('logging').getLogger(__name__)
 
 import os
 import sys
+import time
 import pprint
 import argparse
 
@@ -36,7 +37,7 @@ def _list(site):
 		result.append(("%s,'%s'" % (entry.ntiid, entry.Title)))
 	pprint.pprint(sorted(result))
 
-def _export(ntiid, site, backup, path=None):
+def _export(ntiid, site, backup, salt=None, path=None):
 	set_site(site)
 	course = find_object_with_ntiid(ntiid)
 	course = ICourseInstance(course, None)
@@ -56,7 +57,7 @@ def _export(ntiid, site, backup, path=None):
 
 	# export course
 	exporter = component.getUtility(ICourseExporter)
-	exporter.export(course, filer, backup=backup)
+	exporter.export(course, filer, backup=backup, salt=salt)
 
 	# zip contents
 	zip_file = filer.asZip(path=path)
@@ -72,10 +73,12 @@ def _process(args):
 	if args.list:
 		return _list(site)
 	else:
+		salt = args.salt
 		ntiid = args.ntiid
 		backup = args.backup
 		path = args.path or os.getcwd()
-		return _export(ntiid, site, backup, path=path)
+		salt = time.time() if not salt and not backup else salt
+		return _export(ntiid, site, backup, salt=salt, path=path)
 		
 def main():
 	arg_parser = argparse.ArgumentParser(description="Export a course")
@@ -90,6 +93,9 @@ def main():
 	arg_parser.add_argument('-b', '--backup', 
 							help="Backup flag", action='store_true',
 							dest='backup')
+	arg_parser.add_argument('-t', '--salt',
+							dest='salt',
+							help="Hash salt.")
 	site_group = arg_parser.add_mutually_exclusive_group()
 	site_group.add_argument('-n', '--ntiid',
 							dest='ntiid',
