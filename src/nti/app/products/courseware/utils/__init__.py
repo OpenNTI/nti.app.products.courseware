@@ -52,6 +52,7 @@ from nti.contenttypes.courses.interfaces import ICourseCatalogEntry
 from nti.contenttypes.courses.interfaces import IJoinCourseInvitation
 
 from nti.contenttypes.courses.utils import get_parent_course
+from nti.contenttypes.courses.utils import get_course_hierarchy
 
 from nti.contenttypes.presentation.interfaces import INTILessonOverview
 
@@ -219,6 +220,18 @@ def _search_for_lessons(evaluation, provided, container_ntiids, catalog, intids,
 				results.append(lesson)
 	return results
 
+def _get_possible_courses_for_ref( courses ):
+	# Get any courses that match our outline; since the ref may have been
+	# indexed or stored from any course.
+	possible_courses = set()
+	for course in courses or ():
+		hierarchy = get_course_hierarchy( course )
+		root_outline = course.Outline
+		for child_course in hierarchy or ():
+			if child_course.Outline == root_outline:
+				possible_courses.add( child_course )
+	return possible_courses
+
 def get_evaluation_lessons(evaluation, outline_provided, courses=None, request=None):
 	"""
 	For the given evaluation, get all lessons containing the evaluation.
@@ -232,11 +245,7 @@ def get_evaluation_lessons(evaluation, outline_provided, courses=None, request=N
 		courses = (course,)
 		if course is None:
 			courses = get_evaluation_courses(evaluation)
-	# Make sure we get our parent course since that usually holds the outline
-	possible_courses = set()
-	for course in courses or ():
-		possible_courses.add( course )
-		possible_courses.add( get_parent_course( course ) )
+	possible_courses = _get_possible_courses_for_ref( courses )
 	catalog = get_library_catalog()
 	intids = component.getUtility(IIntIds)
 	sites = get_component_hierarchy_names()
