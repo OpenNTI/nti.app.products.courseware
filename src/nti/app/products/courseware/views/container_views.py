@@ -28,7 +28,7 @@ from nti.assessment.interfaces import IQuestionSet
 
 from nti.contenttypes.courses.interfaces import ICourseInstance
 
-from nti.contenttypes.presentation.interfaces import INTIAssignmentRef
+from nti.contenttypes.presentation.interfaces import INTIAssessmentRef
 from nti.contenttypes.presentation.interfaces import INTIQuestionSetRef
 
 from nti.dataserver import authorization as nauth
@@ -47,8 +47,11 @@ class AbstractContainersView(AbstractAuthenticatedView):
 	results from all courses will be returned.
 	"""
 
-	#: Subclasses define for searching
+	#: Subclasses define this for searching
 	provided = None
+
+	def _get_target_ntiids(self):
+		return (self.context.ntiid,)
 
 	def __call__(self):
 		result = LocatedExternalDict()
@@ -61,8 +64,12 @@ class AbstractContainersView(AbstractAuthenticatedView):
 				u'message': _("No courses found for assessment."),
 				u'code': 'NoCoursesForAssessment',
 				})
-		lessons = get_evaluation_lessons( self.context, self.provided,
-										  courses=courses, request=self.request )
+		target_ntiids = self._get_target_ntiids()
+		lessons = get_evaluation_lessons( self.context,
+										  target_ntiids,
+										  self.provided,
+										  courses=courses,
+										  request=self.request )
 		lessons = set( lessons or () )
 		result[ITEMS] = lessons
 		result[ITEM_COUNT] = result[TOTAL] = len(lessons)
@@ -84,4 +91,13 @@ class QuestionSetContainersView(AbstractContainersView):
 			   permission=nauth.ACT_CONTENT_EDIT)
 class AssignmentLessonsContainersView(AbstractContainersView):
 
-	provided = INTIAssignmentRef
+	# Some assignments are in question set refs...
+	provided = INTIAssessmentRef
+
+	def _get_target_ntiids(self):
+		result = []
+		result.append( self.context.ntiid )
+		for part in self.context.parts or ():
+			if part.question_set is not None:
+				result.append( part.question_set.ntiid )
+		return result

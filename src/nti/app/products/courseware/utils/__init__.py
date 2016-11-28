@@ -47,11 +47,13 @@ from nti.contenttypes.courses.interfaces import SCOPE
 from nti.contenttypes.courses.interfaces import ES_PUBLIC
 from nti.contenttypes.courses.interfaces import DESCRIPTION
 
+from nti.contenttypes.courses.interfaces import ICourseOutline
 from nti.contenttypes.courses.interfaces import ICourseInstance
 from nti.contenttypes.courses.interfaces import ICourseCatalogEntry
 from nti.contenttypes.courses.interfaces import IJoinCourseInvitation
 
 from nti.contenttypes.courses.utils import get_parent_course
+from nti.contenttypes.courses.utils import get_course_packages
 from nti.contenttypes.courses.utils import get_course_hierarchy
 
 from nti.contenttypes.presentation.interfaces import INTILessonOverview
@@ -207,7 +209,10 @@ def has_course_invitations(context):
 	result = get_course_invitations(context)
 	return bool(result)
 
-def _search_for_lessons(evaluation, provided, container_ntiids, catalog, intids, sites):
+def _search_for_lessons(evaluation, provided, container_ntiids, catalog, valid_outlines, intids, sites):
+	"""
+	Find lessons for the given evaluation, existing in our valid_outlines.
+	"""
 	results = []
 	for item in catalog.search_objects(intids=intids,
 									   provided=provided,
@@ -217,22 +222,49 @@ def _search_for_lessons(evaluation, provided, container_ntiids, catalog, intids,
 		if item.target == evaluation.ntiid:
 			lesson = find_interface(item, INTILessonOverview, strict=False)
 			if lesson is not None:
-				results.append(lesson)
+				outline = find_interface( lesson, ICourseOutline, strict=False )
+				if outline is not None and outline in valid_outlines:
+					results.append(lesson)
 	return results
 
-def _get_possible_courses_for_ref( courses ):
+def _get_lessons_for_courses(container_ntiids):
+	"""
+	Find lessons for the given evaluation, existing in our valid_outlines.
+	"""
+	catalog = get_library_catalog()
+	intids = component.getUtility(IIntIds)
+	sites = get_component_hierarchy_names()
+	result_set = catalog.search_objects(intids=intids,
+										provided=INTILessonOverview,
+										container_ntiids=container_ntiids,
+										container_all_of=False,
+										sites=sites)
+	return set( result_set ) if result_set else ()
+
+def _get_course_ntiids( courses ):
 	# Get any courses that match our outline; since the ref may have been
 	# indexed or stored from any course.
-	possible_courses = set()
+	results = set()
 	for course in courses or ():
 		hierarchy = get_course_hierarchy( course )
 		root_outline = course.Outline
+		#outlines.add( root_outline )
 		for child_course in hierarchy or ():
 			if child_course.Outline == root_outline:
-				possible_courses.add( child_course )
-	return possible_courses
+				entry = ICourseCatalogEntry( child_course, None )
+				if entry is not None:
+					results.add( entry.ntiid )
+	return results
 
-def get_evaluation_lessons(evaluation, outline_provided, courses=None, request=None):
+def _is_evaluation_in_lesson( lesson, target_ntiids, outline_provided ):
+	for group in lesson or ():
+		for item in group or ():
+			if 		outline_provided.providedBy( item ) \
+				and item.target in target_ntiids:
+				return True
+	return False
+
+def get_evaluation_lessons(evaluation, target_ntiids, outline_provided, courses=None, request=None):
 	"""
 	For the given evaluation, get all lessons containing the evaluation.
 
@@ -245,13 +277,10 @@ def get_evaluation_lessons(evaluation, outline_provided, courses=None, request=N
 		courses = (course,)
 		if course is None:
 			courses = get_evaluation_courses(evaluation)
-	possible_courses = _get_possible_courses_for_ref( courses )
-	catalog = get_library_catalog()
-	intids = component.getUtility(IIntIds)
-	sites = get_component_hierarchy_names()
-	container_ntiids = \
-			set(getattr(ICourseCatalogEntry(x, None), 'ntiid', None) for x in possible_courses)
-	container_ntiids.discard(None)
-	result = _search_for_lessons(evaluation, outline_provided,
-								  container_ntiids, catalog, intids, sites)
+	container_ntiids = _get_course_ntiids( courses )
+	lessons = _get_lessons_for_courses( container_ntiids )
+	result = set()
+	for lesson in lessons:
+		if _is_evaluation_in_lesson( lesson, target_ntiids, outline_provided ):
+			result.add( lesson )
 	return result
