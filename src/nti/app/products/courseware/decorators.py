@@ -90,7 +90,7 @@ from nti.contenttypes.courses.utils import is_course_instructor
 from nti.contenttypes.courses.utils import get_enrollment_record
 from nti.contenttypes.courses.utils import get_course_subinstances
 
-from nti.contenttypes.presentation.interfaces import INTIAssignmentRef
+from nti.contenttypes.presentation.interfaces import INTIAssessmentRef
 from nti.contenttypes.presentation.interfaces import INTIQuestionSetRef
 
 from nti.dataserver.authorization import ACT_NTI_ADMIN
@@ -836,4 +836,4 @@ class QuestionSetLessonsContainerDecorator(_BaseLessonsContainerDecorator):
 @interface.implementer(IExternalObjectDecorator)
 class AssignmentLessonsContainerDecorator(_BaseLessonsContainerDecorator):
 
-	provided = INTIAssignmentRef
+	provided = INTIAssessmentRef

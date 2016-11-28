@@ -35,6 +35,8 @@ from nti.app.products.courseware.invitations import CourseInvitation
 
 from nti.app.products.courseware.utils.decorators import PreviewCourseAccessPredicateDecorator
 
+from nti.assessment.interfaces import IQAssignment
+
 from nti.contentlibrary.indexed_data import get_library_catalog
 
 from nti.common.maps import CaseInsensitiveDict
@@ -264,7 +266,17 @@ def _is_evaluation_in_lesson( lesson, target_ntiids, outline_provided ):
 				return True
 	return False
 
-def get_evaluation_lessons(evaluation, target_ntiids, outline_provided, courses=None, request=None):
+def _get_ref_target_ntiids( evaluation ):
+	result = []
+	if IQAssignment.providedBy( evaluation ):
+		# Some refs actually point to assignment qset ntiids.
+		for part in evaluation.parts or ():
+			if part.question_set is not None:
+				result.append( part.question_set.ntiid )
+	result.append( evaluation.ntiid )
+	return result
+
+def get_evaluation_lessons(evaluation, outline_provided, courses=None, request=None):
 	"""
 	For the given evaluation, get all lessons containing the evaluation.
 
@@ -277,6 +289,7 @@ def get_evaluation_lessons(evaluation, target_ntiids, outline_provided, courses=
 		courses = (course,)
 		if course is None:
 			courses = get_evaluation_courses(evaluation)
+	target_ntiids = _get_ref_target_ntiids( evaluation )
 	container_ntiids = _get_course_ntiids( courses )
 	lessons = _get_lessons_for_courses( container_ntiids )
 	result = set()

@@ -50,9 +50,6 @@ class AbstractContainersView(AbstractAuthenticatedView):
 	#: Subclasses define this for searching
 	provided = None
 
-	def _get_target_ntiids(self):
-		return (self.context.ntiid,)
-
 	def __call__(self):
 		result = LocatedExternalDict()
 		course = ICourseInstance(self.request, None)
@@ -64,9 +61,7 @@ class AbstractContainersView(AbstractAuthenticatedView):
 				u'message': _("No courses found for assessment."),
 				u'code': 'NoCoursesForAssessment',
 				})
-		target_ntiids = self._get_target_ntiids()
 		lessons = get_evaluation_lessons( self.context,
-										  target_ntiids,
 										  self.provided,
 										  courses=courses,
 										  request=self.request )
@@ -93,11 +88,3 @@ class AssignmentLessonsContainersView(AbstractContainersView):
 
 	# Some assignments are in question set refs...
 	provided = INTIAssessmentRef
-
-	def _get_target_ntiids(self):
-		result = []
-		result.append( self.context.ntiid )
-		for part in self.context.parts or ():
-			if part.question_set is not None:
-				result.append( part.question_set.ntiid )
-		return result
