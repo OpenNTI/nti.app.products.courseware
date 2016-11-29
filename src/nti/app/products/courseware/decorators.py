@@ -20,6 +20,7 @@ from zope.location.interfaces import ILocation
 
 from pyramid.threadlocal import get_current_request
 
+from nti.app.assessment.common import is_global_evaluation
 from nti.app.assessment.common import get_course_from_evaluation
 
 from nti.app.assessment.utils import get_course_from_request
@@ -807,6 +808,7 @@ class _BaseLessonsContainerDecorator(AbstractAuthenticatedRequestAwareDecorator)
 
 	def _predicate(self, context, result):
 		return 		self._is_authenticated \
+				and not is_global_evaluation( context ) \
 				and has_permission(ACT_CONTENT_EDIT, context, self.request)
 
 	def _do_decorate_external(self, context, result):
