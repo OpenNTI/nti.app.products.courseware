@@ -486,6 +486,15 @@
 			 for="nti.contenttypes.presentation.interfaces.IPresentationAsset
 			 	  nti.dataserver.interfaces.IUser" />
 
+	<adapter factory=".adapters._contentunit_to_nodes"
+			 provides="nti.contenttypes.courses.interfaces.ICourseOutlineNodes"
+			 for="nti.contentlibrary.interfaces.IContentUnit" />
+
+	<adapter factory=".adapters._contentunit_to_nodes"
+			 provides="nti.contenttypes.courses.interfaces.ICourseOutlineNodes"
+			 for="nti.contentlibrary.interfaces.IContentUnit
+			 	  nti.dataserver.interfaces.IUser" />
+
 	<adapter factory=".adapters._contained_to_nodes"
 			 provides="nti.contenttypes.courses.interfaces.ICourseOutlineNodes"
 			 for="nti.dataserver.interfaces.IContained" />

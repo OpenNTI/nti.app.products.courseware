@@ -136,6 +136,37 @@ def _asset_to_nodes(asset, user=None):
 		result = (result,)
 	return result
 
+@component.adapter(IContentUnit)
+@interface.implementer(ICourseOutlineNodes)
+def _contentunit_to_nodes(obj, user=None):
+	result = []
+	ntiid = obj.ntiid
+	catalog = get_library_catalog()
+	intids = component.getUtility(IIntIds)
+	sites = get_component_hierarchy_names()
+	
+	# search for all dockets that point to the container
+	HARD_IFACES = (INTIRelatedWorkRef, INTITimeline)
+	POINTER_IFACES = (INTIRelatedWorkRefPointer, INTITimelineRef)
+	for docket in catalog.search_objects(sites=sites,
+								  		 intids=intids,
+								 		 target=ntiid,
+								 		 provided=HARD_IFACES):
+		
+		# search for all pointers that point to the docket
+		objs = catalog.search_objects(sites=sites,
+									  intids=intids,
+									  target=docket.ntiid,
+								 	  provided=POINTER_IFACES)
+		
+		# find node and check
+		for ref in itertools.chain(objs or (), (docket,)):
+			node = find_interface(ref, ICourseOutlineNode, strict=False)
+			course = find_interface(node, ICourseInstance, strict=False)
+			if node is not None and (user is None or _is_user_enrolled(user, course)):
+				result.append(node)
+	return result
+
 @component.adapter(IContained)
 @component.adapter(IUserGeneratedData)
 @interface.implementer(ICourseOutlineNodes)
@@ -143,30 +174,7 @@ def _contained_to_nodes(obj, user=None):
 	containerId = getattr(obj, 'containerId', None)
 	container = find_object_with_ntiid(containerId) if containerId else None
 	if IContentUnit.providedBy(container):
-		result = []
-		catalog = get_library_catalog()
-		intids = component.getUtility(IIntIds)
-		sites = get_component_hierarchy_names()
-		
-		# search for all dockets that point to the container
-		for docket in catalog.search_objects(sites=sites,
-									  		 intids=intids,
-									 		 target=containerId,
-									 		 provided=(INTIRelatedWorkRef, INTITimeline)):
-			
-			# search for all pointers that point to the docket
-			objs = catalog.search_objects(sites=sites,
-										  intids=intids,
-										  target=docket.ntiid,
-									 	  provided=(INTIRelatedWorkRefPointer, INTITimelineRef))
-			
-			# find node and check
-			for ref in itertools.chain(objs or (), (docket,)):
-				node = find_interface(ref, ICourseOutlineNode, strict=False)
-				course = find_interface(node, ICourseInstance, strict=False)
-				if node is not None and (user is None or _is_user_enrolled(user, course)):
-					result.append(node)
-		return result
+		return _contentunit_to_nodes(container, user)
 	return ()
 
 @component.adapter(IQEvaluation)
