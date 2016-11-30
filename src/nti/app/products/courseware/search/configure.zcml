@@ -30,10 +30,6 @@
 				provides="nti.contentsearch.interfaces.ISearchHitPredicate"
 				for="nti.contentsearch.interfaces.IVideoTranscriptContent" />
 
-	<subscriber factory=".predicates._NTICardContentHitPredicate"
-				provides="nti.contentsearch.interfaces.ISearchHitPredicate"
-				for="nti.contentsearch.interfaces.INTICardContent" />
-
 	<subscriber factory=".predicates._CreatedContentHitPredicate"
 				provides="nti.contentsearch.interfaces.ISearchHitPredicate"
 				for="nti.dataserver.interfaces.INote" />

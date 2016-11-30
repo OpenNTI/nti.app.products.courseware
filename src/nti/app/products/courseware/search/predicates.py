@@ -29,7 +29,6 @@ from nti.assessment.interfaces import IQAssessmentItemContainer
 from nti.contentlibrary.interfaces import IContentUnit
 
 from nti.contentsearch.interfaces import IBookContent
-from nti.contentsearch.interfaces import INTICardContent
 from nti.contentsearch.interfaces import ISearchHitPredicate
 from nti.contentsearch.interfaces import IContainerIDResolver
 from nti.contentsearch.interfaces import IAudioTranscriptContent
@@ -80,15 +79,6 @@ class _VideoContentHitPredicate(_BasePredicate):
 
 	def allow(self, item, score, query=None):
 		result = self._is_allowed(item.containerId, query)
-		return result
-
-@interface.implementer(ISearchHitPredicate)
-@component.adapter(INTICardContent)
-class _NTICardContentHitPredicate(_BasePredicate):
-
-	def allow(self, item, score, query=None):
-		result =	 self._is_allowed(item.containerId, query) \
-				 and self._is_allowed(item.target_ntiid, query)
 		return result
 
 @interface.implementer(ISearchHitPredicate)
