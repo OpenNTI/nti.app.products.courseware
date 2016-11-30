@@ -53,7 +53,6 @@ from nti.contentlibrary.indexed_data import get_library_catalog
 from nti.contenttypes.courses.index import IX_SITE
 from nti.contenttypes.courses.index import IX_USERNAME
 
-from nti.contenttypes.courses.interfaces import ICourseOutline
 from nti.contenttypes.courses.interfaces import ICourseInstance
 from nti.contenttypes.courses.interfaces import ICourseOutlineNode
 from nti.contenttypes.courses.interfaces import ICourseSubInstance
@@ -109,11 +108,6 @@ def _is_user_enrolled(user, course):
 	return result
 
 # outline adapters
-
-@component.adapter(ICourseOutline)
-@interface.implementer(ICourseInstance)
-def _outline_to_course(outline):
-	return find_interface(outline, ICourseInstance, strict=False)
 
 @component.adapter(IPresentationAsset)
 @interface.implementer(ICourseOutlineNodes)

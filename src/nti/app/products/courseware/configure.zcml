@@ -101,9 +101,6 @@
 	<!-- Community to course -->
 	<adapter factory=".legacy_course._course_instance_for_community" />
 
-	<!-- Outline to course -->
-	<adapter factory=".adapters._outline_to_course" />
-
 	<!-- And the content packages to the course instance -->
 	<adapter factory=".adapters._content_unit_to_course" />
 	<adapter factory=".adapters._content_unit_and_user_to_course" />
