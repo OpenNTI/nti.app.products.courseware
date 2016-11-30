@@ -49,7 +49,7 @@ class _RootSearchPacakgeResolver(object):
 				context = intids.queryObject(uid)
 				context = ICourseInstance(context, None)
 				for package in get_course_packages(context):
-					ntiid = package.ntiid
-					if ntiid: # make sure we a valid ntiid
-						result.add(package.ntiid)
+					ntiid = package.ntiid or u''
+					result.add(package.ntiid)
+		result.discard(u'') # valid ntiids
 		return result

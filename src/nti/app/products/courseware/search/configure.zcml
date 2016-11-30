@@ -9,10 +9,11 @@
 	<include package="zope.component" />
 	<include package="zope.security" />
 
-	<!-- Utilities -->
+	<!-- Utilities 
 	<utility factory=".cache._CourseOutlineCache" />
-	
-	<!-- Predicates -->
+	-->
+
+	<!-- Predicates
 	<subscriber factory=".predicates._ContentHitPredicate"
 				provides="nti.contentsearch.interfaces.ISearchHitPredicate"
 				for="nti.contentsearch.interfaces.IBookContent" />
@@ -40,7 +41,8 @@
 	<subscriber factory=".predicates._CreatedContentHitPredicate"
 				provides="nti.contentsearch.interfaces.ISearchHitPredicate"
 				for="nti.dataserver.interfaces.IHighlight" />
-
+	-->
+	 
 	<!-- Subscribers -->
 	<subscriber factory=".subscribers._RootSearchPacakgeResolver"
 				provides="nti.contentsearch.interfaces.ISearchPackageResolver"
