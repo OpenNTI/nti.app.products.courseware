@@ -33,6 +33,8 @@ from nti.app.products.courseware.legacy_courses import _copy_enrollments_from_le
 
 from nti.app.products.courseware.views import CourseAdminPathAdapter
 
+from nti.common._compat import aq_base
+
 from nti.contentfragments.interfaces import CensoredPlainTextContentFragment
 
 from nti.contenttypes.courses.interfaces import ICourseCatalog
@@ -169,6 +171,8 @@ class CourseTopicCreationView(AbstractAuthenticatedView, UploadRequestUtilsMixin
 		creator = Entity.get_entity(forum_owner_ntiid)
 		try:
 			forum = discussions[name]
+			# Unwrap before modifying
+			forum = aq_base(forum)
 			logger.debug("Found existing forum %s", forum_name)
 			_assign_acl(forum, IACLCommunityForum)
 			_assign_iface(forum, forum_interface)
