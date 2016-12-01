@@ -74,16 +74,12 @@ class _CourseSearchHitPredicate(DefaultSearchHitPredicate):
 
 @component.adapter(IContentUnit)
 class _ContentHitPredicate(_CourseSearchHitPredicate):
-
-	@Lazy
-	def user(self):
-		return User.get_user(self.principal.id)
 	
 	def allow(self, item, score, query=None):
 		if self.principal is None or self.is_admin(item):
 			return True
 		nodes = component.queryMultiAdapter((item, self.user), ICourseOutlineNodes)
-		if not nodes: # nothing points to it
+		if not nodes: # nothing points to it or no adpater
 			return True
 		else:
 			for node in nodes or ():
