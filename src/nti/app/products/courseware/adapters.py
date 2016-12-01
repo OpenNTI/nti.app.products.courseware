@@ -9,8 +9,6 @@ __docformat__ = "restructuredtext en"
 
 logger = __import__('logging').getLogger(__name__)
 
-import itertools
-
 from zope import component
 from zope import interface
 
@@ -45,10 +43,13 @@ from nti.appserver.pyramid_authorization import is_readable
 
 from nti.assessment.interfaces import IQEvaluation
 
+from nti.contentlibrary.indexed_data import get_library_catalog
+
 from nti.contentlibrary.interfaces import IContentUnit
 from nti.contentlibrary.interfaces import IContentPackageBundle
+from nti.contentlibrary.interfaces import IContentPackageLibrary
 
-from nti.contentlibrary.indexed_data import get_library_catalog
+from nti.contenttypes.courses.common import get_course_site_name
 
 from nti.contenttypes.courses.index import IX_SITE
 from nti.contenttypes.courses.index import IX_USERNAME
@@ -65,20 +66,17 @@ from nti.contenttypes.courses.interfaces import ICourseInstanceEnrollmentRecord
 from nti.contenttypes.courses.utils import is_enrolled
 from nti.contenttypes.courses.utils import get_enrollment_catalog
 from nti.contenttypes.courses.utils import get_course_subinstances
+from nti.contenttypes.courses.utils import get_content_outline_nodes
 from nti.contenttypes.courses.utils import is_course_instructor as is_instructor # BWC
 from nti.contenttypes.courses.utils import content_unit_to_courses as indexed_content_unit_to_courses
 
 from nti.contenttypes.presentation.interfaces import INTIPollRef
-from nti.contenttypes.presentation.interfaces import INTITimeline
 from nti.contenttypes.presentation.interfaces import INTISurveyRef
 from nti.contenttypes.presentation.interfaces import INTIQuestionRef
-from nti.contenttypes.presentation.interfaces import INTITimelineRef
 from nti.contenttypes.presentation.interfaces import INTIAssignmentRef
 from nti.contenttypes.presentation.interfaces import INTIQuestionSetRef
 from nti.contenttypes.presentation.interfaces import IPresentationAsset
-from nti.contenttypes.presentation.interfaces import INTIRelatedWorkRef
 from nti.contenttypes.presentation.interfaces import IItemAssetContainer
-from nti.contenttypes.presentation.interfaces import INTIRelatedWorkRefPointer
 
 from nti.dataserver.authorization import ACT_CONTENT_EDIT
 
@@ -104,8 +102,14 @@ from nti.traversal.traversal import find_interface
 def _is_user_enrolled(user, course):
 	# Enrolled or instructor
 	result = 	 user is not None \
+			 and course is not None \
 			 and is_enrolled(course, user) or is_instructor(course, user)
 	return result
+
+def _get_content_root(ntiid):
+	library = component.queryUtility(IContentPackageLibrary)
+	paths = library.pathToNTIID(ntiid) if library else None
+	return paths[0] if paths else None
 
 # outline adapters
 
@@ -134,31 +138,13 @@ def _asset_to_nodes(asset, user=None):
 @interface.implementer(ICourseOutlineNodes)
 def _contentunit_to_nodes(obj, user=None):
 	result = []
-	ntiid = obj.ntiid
-	catalog = get_library_catalog()
-	intids = component.getUtility(IIntIds)
 	sites = get_component_hierarchy_names()
-	
-	# search for all dockets that point to the container
-	HARD_IFACES = (INTIRelatedWorkRef, INTITimeline)
-	POINTER_IFACES = (INTIRelatedWorkRefPointer, INTITimelineRef)
-	for docket in catalog.search_objects(sites=sites,
-								  		 intids=intids,
-								 		 target=ntiid,
-								 		 provided=HARD_IFACES):
-		
-		# search for all pointers that point to the docket
-		objs = catalog.search_objects(sites=sites,
-									  intids=intids,
-									  target=docket.ntiid,
-								 	  provided=POINTER_IFACES)
-		
-		# find node and check
-		for ref in itertools.chain(objs or (), (docket,)):
-			node = find_interface(ref, ICourseOutlineNode, strict=False)
-			course = find_interface(node, ICourseInstance, strict=False)
-			if node is not None and (user is None or _is_user_enrolled(user, course)):
-				result.append(node)
+	for node in get_content_outline_nodes(obj.ntiid):
+		course = find_interface(node, ICourseInstance, strict=False)
+		if user is None and get_course_site_name(course) in sites:
+			result.append(node)
+		elif _is_user_enrolled(user, course):
+			result.append(node)
 	return result
 
 @component.adapter(IContained)
