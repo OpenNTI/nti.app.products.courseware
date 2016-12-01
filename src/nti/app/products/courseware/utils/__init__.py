@@ -24,6 +24,8 @@ from zope.intid.interfaces import IIntIds
 
 from zope.traversing.api import traverse
 
+from zope.traversing.interfaces import IEtcNamespace
+
 from nti.app.assessment.common import get_evaluation_courses
 
 from nti.app.products.courseware.enrollment import EnrollmentOptions
@@ -71,6 +73,12 @@ ZERO_DATETIME = datetime.utcfromtimestamp(0)
 
 # BWC exports
 PreviewCourseAccessPredicate = PreviewCourseAccessPredicateDecorator
+
+def last_synchronized(context=None):
+	if context is None:
+		context = component.queryUtility(IEtcNamespace, name='hostsites')
+	result = getattr(context, 'lastSynchronized', None) or 0
+	return result
 
 def memcache_client():
 	return component.queryUtility(IMemcacheClient)
