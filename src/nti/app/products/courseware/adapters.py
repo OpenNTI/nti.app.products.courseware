@@ -32,8 +32,9 @@ from nti.app.products.courseware.interfaces import ILegacyCourseConflatedContent
 from nti.appserver.context_providers import get_joinable_contexts
 from nti.appserver.context_providers import get_top_level_contexts
 
-from nti.appserver.interfaces import IJoinableContextProvider
 from nti.appserver.interfaces import ForbiddenContextException
+
+from nti.appserver.interfaces import IJoinableContextProvider
 from nti.appserver.interfaces import IHierarchicalContextProvider
 from nti.appserver.interfaces import ILibraryPathLastModifiedProvider
 from nti.appserver.interfaces import ITopLevelContainerContextProvider

@@ -13,11 +13,11 @@
 	<utility factory=".cache._CourseOutlineCache" />
 	-->
 
-	<!-- Predicates
 	<subscriber factory=".predicates._ContentHitPredicate"
 				provides="nti.contentsearch.interfaces.ISearchHitPredicate"
-				for="nti.contentsearch.interfaces.IBookContent" />
+				for="nti.contentlibrary.interfaces.IContentUnit" />
 
+	<!-- Predicates
 	<subscriber factory=".predicates._ContentAssesmentHitPredicate"
 				provides="nti.contentsearch.interfaces.ISearchHitPredicate"
 				for="nti.contentsearch.interfaces.IBookContent" />

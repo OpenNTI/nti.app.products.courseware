@@ -9,10 +9,14 @@ __docformat__ = "restructuredtext en"
 
 logger = __import__('logging').getLogger(__name__)
 
+from datetime import datetime
+
 from zope import component
 from zope import interface
 
 from zope.component.hooks import getSite
+
+from nti.app.products.courseware.utils import ZERO_DATETIME
 
 from nti.app.products.courseware.search import encode_keys
 from nti.app.products.courseware.search import memcache_get
@@ -34,11 +38,39 @@ from nti.contentsearch.interfaces import IContainerIDResolver
 from nti.contentsearch.interfaces import IAudioTranscriptContent
 from nti.contentsearch.interfaces import IVideoTranscriptContent
 
+from nti.contentsearch.predicates import DefaultSearchHitPredicate
+
+from nti.contenttypes.courses.interfaces import ICourseOutlineNodes
+
+from nti.contenttypes.presentation.interfaces import INTILessonOverview
+
+from nti.dataserver.users import User 
+
 from nti.ntiids.ntiids import TYPE_OID
 from nti.ntiids.ntiids import is_ntiid_of_types
 from nti.ntiids.ntiids import find_object_with_ntiid
 
 from nti.property.property import Lazy
+
+@component.adapter(IContentUnit)
+class _ContentHitPredicate(DefaultSearchHitPredicate):
+
+	@Lazy
+	def user(self):
+		return User.get_user(self.principal.id)
+	
+	def allow(self, item, score, query=None):
+		if self.principal is None:
+			return True
+		nodes = component.queryMultiAdapter((item, self.user), ICourseOutlineNodes)
+		for node in nodes or ():
+			beginning = getattr(node, 'AvailableBeginning', None) or ZERO_DATETIME
+			lesson = INTILessonOverview(node, None)
+			if 		lesson is not None \
+				and lesson.isPublished \
+				and datetime.utcnow() >= beginning:
+				return True # first node found
+		return False
 
 @interface.implementer(ISearchHitPredicate)
 class _BasePredicate(object):
@@ -57,13 +89,6 @@ class _BasePredicate(object):
 
 	def allow(self, item, score, query=None):
 		raise NotImplementedError()
-
-@component.adapter(IBookContent)
-class _ContentHitPredicate(_BasePredicate):
-
-	def allow(self, item, score, query=None):
-		result = self._is_allowed(item.ntiid, query)
-		return result
 
 @interface.implementer(ISearchHitPredicate)
 @component.adapter(IAudioTranscriptContent)
