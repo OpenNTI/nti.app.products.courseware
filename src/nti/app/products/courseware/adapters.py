@@ -50,7 +50,6 @@ from nti.contentlibrary.indexed_data import get_library_catalog
 
 from nti.contentlibrary.interfaces import IContentUnit
 from nti.contentlibrary.interfaces import IContentPackageBundle
-from nti.contentlibrary.interfaces import IContentPackageLibrary
 
 from nti.contenttypes.courses.common import get_course_site_name
 
@@ -106,7 +105,8 @@ from nti.site.site import get_component_hierarchy_names
 from nti.traversal.traversal import find_interface
 
 is_instructor = is_course_instructor # BWC
-# misc
+
+#: Misc
 
 def _is_user_enrolled(user, course):
 	# Enrolled or instructor
@@ -115,12 +115,7 @@ def _is_user_enrolled(user, course):
 			 and is_enrolled(course, user) or is_course_instructor_or_editor(course, user)
 	return result
 
-def _get_content_root(ntiid):
-	library = component.queryUtility(IContentPackageLibrary)
-	paths = library.pathToNTIID(ntiid) if library else None
-	return paths[0] if paths else None
-
-# outline adapters
+#: Outline adapters
 
 @component.adapter(IPresentationAsset)
 @interface.implementer(ICourseOutlineNodes)
@@ -215,7 +210,7 @@ def _evaluation_to_nodes(obj, user=None):
 			result.append(node)
 	return result or ()
 
-# course adapters
+#: Course adapters
 
 @interface.implementer(IContentPackageBundle)
 @component.adapter(ILegacyCommunityBasedCourseInstance)
@@ -305,7 +300,7 @@ def _content_unit_and_user_to_course(unit, user):
 	# nothing found return first course
 	return courses[0] if courses else None
 
-# context adapters
+#: Context adapters
 
 def _get_top_level_contexts(obj):
 	results = set()
@@ -599,7 +594,7 @@ def _enrollment_last_modified(user):
 	annotations = IAnnotations(user)
 	return annotations.get(USER_ENROLLMENT_LAST_MODIFIED_KEY, 0)
 
-# request adapters
+#: Request adapters
 
 @component.adapter(IRequest)
 @interface.implementer(ICourseInstance)
