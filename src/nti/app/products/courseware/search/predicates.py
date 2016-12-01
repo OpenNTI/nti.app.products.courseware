@@ -47,7 +47,8 @@ from nti.contentsearch.predicates import DefaultSearchHitPredicate
 from nti.contenttypes.courses.interfaces import ICourseOutlineNodes
 
 from nti.contenttypes.presentation.interfaces import INTILessonOverview
-
+from nti.contenttypes.presentation.interfaces import IPresentationAsset
+	
 from nti.dataserver.authorization import ACT_NTI_ADMIN
 
 from nti.dataserver.users import User 
@@ -58,7 +59,7 @@ from nti.ntiids.ntiids import find_object_with_ntiid
 
 from nti.property.property import Lazy
 
-@component.adapter(IContentUnit)
+@interface.implementer(ISearchHitPredicate)
 class _CourseSearchHitPredicate(DefaultSearchHitPredicate):
 	
 	@Lazy
@@ -72,9 +73,16 @@ class _CourseSearchHitPredicate(DefaultSearchHitPredicate):
 	def is_admin(self, context):
 		return has_permission(ACT_NTI_ADMIN, context, self.request)
 
-@component.adapter(IContentUnit)
-class _ContentHitPredicate(_CourseSearchHitPredicate):
-	
+	def check_nodes(self, nodes):
+		for node in nodes or ():
+			beginning = getattr(node, 'AvailableBeginning', None) or ZERO_DATETIME
+			lesson = INTILessonOverview(node, None)
+			if 		lesson is not None \
+				and lesson.isPublished \
+				and datetime.utcnow() >= beginning:
+				return True # first node found
+		return False
+
 	def allow(self, item, score, query=None):
 		if self.principal is None or self.is_admin(item):
 			return True
@@ -82,14 +90,15 @@ class _ContentHitPredicate(_CourseSearchHitPredicate):
 		if not nodes: # nothing points to it or no adpater
 			return True
 		else:
-			for node in nodes or ():
-				beginning = getattr(node, 'AvailableBeginning', None) or ZERO_DATETIME
-				lesson = INTILessonOverview(node, None)
-				if 		lesson is not None \
-					and lesson.isPublished \
-					and datetime.utcnow() >= beginning:
-					return True # first node found
-		return False
+			return self.check_nodes(nodes)
+
+@component.adapter(IContentUnit)
+class _ContentHitPredicate(_CourseSearchHitPredicate):
+	pass
+
+@component.adapter(IPresentationAsset)
+class _PresentationAssetHitPredicate(_CourseSearchHitPredicate):
+	pass
 
 @interface.implementer(ISearchHitPredicate)
 class _BasePredicate(object):

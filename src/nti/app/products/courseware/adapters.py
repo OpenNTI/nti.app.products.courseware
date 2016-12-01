@@ -67,10 +67,11 @@ from nti.contenttypes.courses.interfaces import INonPublicCourseInstance
 from nti.contenttypes.courses.interfaces import ICourseInstanceEnrollmentRecord
 
 from nti.contenttypes.courses.utils import is_enrolled
+from nti.contenttypes.courses.utils import is_course_instructor
 from nti.contenttypes.courses.utils import get_enrollment_catalog
 from nti.contenttypes.courses.utils import get_course_subinstances
 from nti.contenttypes.courses.utils import get_content_outline_nodes
-from nti.contenttypes.courses.utils import is_course_instructor as is_instructor # BWC
+from nti.contenttypes.courses.utils import is_course_instructor_or_editor 
 from nti.contenttypes.courses.utils import content_unit_to_courses as indexed_content_unit_to_courses
 
 from nti.contenttypes.presentation.interfaces import INTIPollRef
@@ -104,13 +105,14 @@ from nti.site.site import get_component_hierarchy_names
 
 from nti.traversal.traversal import find_interface
 
+is_instructor = is_course_instructor # BWC
 # misc
 
 def _is_user_enrolled(user, course):
 	# Enrolled or instructor
 	result = 	 user is not None \
 			 and course is not None \
-			 and is_enrolled(course, user) or is_instructor(course, user)
+			 and is_enrolled(course, user) or is_course_instructor_or_editor(course, user)
 	return result
 
 def _get_content_root(ntiid):
@@ -135,10 +137,12 @@ def _asset_to_nodes(asset, user=None):
 				if 		node is not None \
 					and (user is None or _is_user_enrolled(user, course)):
 					result.append(node)
-	elif (user is not None and not _is_user_enrolled(user, course)):
-		result = ()
 	else:
-		result = (result,)
+		course = find_interface(result, ICourseInstance, strict=False)
+		if (user is not None and not _is_user_enrolled(user, course)):
+			result = ()
+		else:
+			result = (result,)
 	return result
 
 @component.adapter(IContentUnit)
@@ -178,7 +182,7 @@ def _contentunit_to_nodes(obj, user=None):
 				course = find_interface(node, ICourseInstance, strict=False)
 				if node is not None and (user is None or _is_user_enrolled(user, course)):
 					result.add(node)
-	return result
+	return result or ()
 
 @component.adapter(IContained)
 @component.adapter(IUserGeneratedData)

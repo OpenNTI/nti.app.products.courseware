@@ -17,19 +17,11 @@
 				provides="nti.contentsearch.interfaces.ISearchHitPredicate"
 				for="nti.contentlibrary.interfaces.IContentUnit" />
 
+	<subscriber factory=".predicates._PresentationAssetHitPredicate"
+				provides="nti.contentsearch.interfaces.ISearchHitPredicate"
+				for="nti.contenttypes.presentation.interfaces.IPresentationAsset" />
+
 	<!-- Predicates
-	<subscriber factory=".predicates._ContentAssesmentHitPredicate"
-				provides="nti.contentsearch.interfaces.ISearchHitPredicate"
-				for="nti.contentsearch.interfaces.IBookContent" />
-
-	<subscriber factory=".predicates._AudioContentHitPredicate"
-				provides="nti.contentsearch.interfaces.ISearchHitPredicate"
-				for="nti.contentsearch.interfaces.IAudioTranscriptContent" />
-
-	<subscriber factory=".predicates._VideoContentHitPredicate"
-				provides="nti.contentsearch.interfaces.ISearchHitPredicate"
-				for="nti.contentsearch.interfaces.IVideoTranscriptContent" />
-
 	<subscriber factory=".predicates._CreatedContentHitPredicate"
 				provides="nti.contentsearch.interfaces.ISearchHitPredicate"
 				for="nti.dataserver.interfaces.INote" />
