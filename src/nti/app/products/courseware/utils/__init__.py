@@ -45,6 +45,8 @@ from nti.common.string import is_true
 
 from nti.contenttypes.courses import get_course_vendor_info
 
+from nti.contenttypes.courses.common import get_course_packages
+
 from nti.contenttypes.courses.interfaces import SCOPE
 from nti.contenttypes.courses.interfaces import ES_PUBLIC
 from nti.contenttypes.courses.interfaces import DESCRIPTION
@@ -55,7 +57,6 @@ from nti.contenttypes.courses.interfaces import ICourseCatalogEntry
 from nti.contenttypes.courses.interfaces import IJoinCourseInvitation
 
 from nti.contenttypes.courses.utils import get_parent_course
-from nti.contenttypes.courses.utils import get_course_packages
 from nti.contenttypes.courses.utils import get_course_hierarchy
 
 from nti.contenttypes.presentation.interfaces import INTILessonOverview
