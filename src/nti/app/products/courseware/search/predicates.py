@@ -38,9 +38,6 @@ from nti.contentlibrary.interfaces import IContentUnit
 
 from nti.contentsearch.interfaces import IBookContent
 from nti.contentsearch.interfaces import ISearchHitPredicate
-from nti.contentsearch.interfaces import IContainerIDResolver
-from nti.contentsearch.interfaces import IAudioTranscriptContent
-from nti.contentsearch.interfaces import IVideoTranscriptContent
 
 from nti.contentsearch.predicates import DefaultSearchHitPredicate
 
@@ -49,12 +46,12 @@ from nti.contenttypes.courses.interfaces import ICourseOutlineNodes
 from nti.contenttypes.presentation.interfaces import INTILessonOverview
 from nti.contenttypes.presentation.interfaces import IPresentationAsset
 	
+from nti.dataserver.interfaces import IUserGeneratedData
+
 from nti.dataserver.authorization import ACT_NTI_ADMIN
 
 from nti.dataserver.users import User 
 
-from nti.ntiids.ntiids import TYPE_OID
-from nti.ntiids.ntiids import is_ntiid_of_types
 from nti.ntiids.ntiids import find_object_with_ntiid
 
 from nti.property.property import Lazy
@@ -100,6 +97,16 @@ class _ContentHitPredicate(_CourseSearchHitPredicate):
 class _PresentationAssetHitPredicate(_CourseSearchHitPredicate):
 	pass
 
+@interface.implementer(IUserGeneratedData)
+class _UserGeneratedDataHitPredicate(_CourseSearchHitPredicate):
+
+	def allow(self, item, score, query=None):
+		nodes = component.queryMultiAdapter((item, self.user), ICourseOutlineNodes)
+		if not nodes: # nothing points to it or no adpater
+			return True
+		else:
+			return self.check_nodes(nodes)
+
 @interface.implementer(ISearchHitPredicate)
 class _BasePredicate(object):
 
@@ -117,36 +124,6 @@ class _BasePredicate(object):
 
 	def allow(self, item, score, query=None):
 		raise NotImplementedError()
-
-@interface.implementer(ISearchHitPredicate)
-@component.adapter(IAudioTranscriptContent)
-class _AudioContentHitPredicate(_BasePredicate):
-
-	def allow(self, item, score, query=None):
-		result = self._is_allowed(item.containerId, query)
-		return result
-
-@interface.implementer(ISearchHitPredicate)
-@component.adapter(IVideoTranscriptContent)
-class _VideoContentHitPredicate(_BasePredicate):
-
-	def allow(self, item, score, query=None):
-		result = self._is_allowed(item.containerId, query)
-		return result
-
-@interface.implementer(ISearchHitPredicate)
-class _CreatedContentHitPredicate(_BasePredicate):
-
-	def _allowed(self, containerId, query):
-		return bool(	not containerId
-					or	is_ntiid_of_types(containerId, (TYPE_OID,))
-					or	self._is_allowed(containerId, query))
-
-	def allow(self, item, score, query=None):
-		resolver = IContainerIDResolver(item, None)
-		containerId = resolver.containerId if resolver is not None else None
-		result = self._allowed(containerId, query)
-		return result
 
 @component.adapter(IBookContent)
 class _ContentAssesmentHitPredicate(_BasePredicate):

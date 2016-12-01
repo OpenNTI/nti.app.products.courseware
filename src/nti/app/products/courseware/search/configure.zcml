@@ -21,15 +21,9 @@
 				provides="nti.contentsearch.interfaces.ISearchHitPredicate"
 				for="nti.contenttypes.presentation.interfaces.IPresentationAsset" />
 
-	<!-- Predicates
-	<subscriber factory=".predicates._CreatedContentHitPredicate"
+	<subscriber factory=".predicates._UserGeneratedDataHitPredicate"
 				provides="nti.contentsearch.interfaces.ISearchHitPredicate"
-				for="nti.dataserver.interfaces.INote" />
-
-	<subscriber factory=".predicates._CreatedContentHitPredicate"
-				provides="nti.contentsearch.interfaces.ISearchHitPredicate"
-				for="nti.dataserver.interfaces.IHighlight" />
-	-->
+				for="nti.dataserver.interfaces.IUserGeneratedData" />
 	 
 	<!-- Subscribers -->
 	<subscriber factory=".subscribers._RootSearchPacakgeResolver"
