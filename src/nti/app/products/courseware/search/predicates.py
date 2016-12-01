@@ -14,29 +14,14 @@ from datetime import datetime
 from zope import component
 from zope import interface
 
-from zope.component.hooks import getSite
-
 from pyramid.threadlocal import get_current_request
 
 from nti.app.products.courseware.utils import ZERO_DATETIME
 
-from nti.app.products.courseware.search import encode_keys
-from nti.app.products.courseware.search import memcache_get
-from nti.app.products.courseware.search import memcache_set
-from nti.app.products.courseware.search import memcache_client
-from nti.app.products.courseware.search import last_synchronized
-
-from nti.app.products.courseware.search.interfaces import ICourseOutlineCache
-
 from nti.appserver.pyramid_authorization import has_permission
-
-from nti.assessment.interfaces import IQSurvey
-from nti.assessment.interfaces import IQAssignment
-from nti.assessment.interfaces import IQAssessmentItemContainer
 
 from nti.contentlibrary.interfaces import IContentUnit
 
-from nti.contentsearch.interfaces import IBookContent
 from nti.contentsearch.interfaces import ISearchHitPredicate
 
 from nti.contentsearch.predicates import DefaultSearchHitPredicate
@@ -51,8 +36,6 @@ from nti.dataserver.interfaces import IUserGeneratedData
 from nti.dataserver.authorization import ACT_NTI_ADMIN
 
 from nti.dataserver.users import User 
-
-from nti.ntiids.ntiids import find_object_with_ntiid
 
 from nti.property.property import Lazy
 
@@ -106,58 +89,3 @@ class _UserGeneratedDataHitPredicate(_CourseSearchHitPredicate):
 			return True
 		else:
 			return self.check_nodes(nodes)
-
-@interface.implementer(ISearchHitPredicate)
-class _BasePredicate(object):
-
-	def __init__(self, *args):
-		pass
-
-	@Lazy
-	def cache(self):
-		result = component.getUtility(ICourseOutlineCache)
-		return result
-
-	def _is_allowed(self, ntiid, query=None, now=None):
-		result = self.cache.is_allowed(ntiid, query=query, now=now)
-		return result
-
-	def allow(self, item, score, query=None):
-		raise NotImplementedError()
-
-@component.adapter(IBookContent)
-class _ContentAssesmentHitPredicate(_BasePredicate):
-
-	@Lazy
-	def memcache(self):
-		return memcache_client()
-
-	def has_assesments(self, ntiid):
-		context = find_object_with_ntiid(ntiid or u'')
-		if IContentUnit.providedBy(context):
-			container = IQAssessmentItemContainer(context, None)
-			if container is None:
-				return False
-			for item in container.assessments():
-				if IQAssignment.providedBy(item) or IQSurvey.providedBy(item):
-					return True
-		return False
-
-	def cache_key(self, ntiid):
-		site = getSite().__name__
-		clazz = self.__class__.__name__
-		lastSync = last_synchronized()
-		result = '/search/%s' % encode_keys(site, clazz, ntiid, lastSync)
-		return result
-
-	def _is_allowed(self, ntiid, query=None, now=None):
-		key = self.cache_key(ntiid)
-		result = memcache_get(key, self.memcache)
-		if result is None:
-			result = not self.has_assesments(ntiid)
-			memcache_set(key, result)
-		return result
-
-	def allow(self, item, score, query=None):
-		result = self._is_allowed(item.ntiid, query)
-		return result
