@@ -9,10 +9,6 @@
 	<include package="zope.component" />
 	<include package="zope.security" />
 
-	<!-- Utilities 
-	<utility factory=".cache._CourseOutlineCache" />
-	-->
-
 	<subscriber factory=".predicates._ContentHitPredicate"
 				provides="nti.contentsearch.interfaces.ISearchHitPredicate"
 				for="nti.contentlibrary.interfaces.IContentUnit" />

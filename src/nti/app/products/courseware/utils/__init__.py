@@ -10,11 +10,8 @@ __docformat__ = "restructuredtext en"
 logger = __import__('logging').getLogger(__name__)
 
 import six
-import hashlib
 from datetime import datetime
 from collections import Mapping
-
-import repoze.lru
 
 from pyramid.threadlocal import get_current_request
 
@@ -23,7 +20,6 @@ from zope import component
 from zope.intid.interfaces import IIntIds
 
 from zope.traversing.api import traverse
-from zope.traversing.interfaces import IEtcNamespace
 
 from nti.app.assessment.common import get_evaluation_courses
 
@@ -45,8 +41,6 @@ from nti.common.string import is_true
 
 from nti.contenttypes.courses import get_course_vendor_info
 
-from nti.contenttypes.courses.common import get_course_packages
-
 from nti.contenttypes.courses.interfaces import SCOPE
 from nti.contenttypes.courses.interfaces import ES_PUBLIC
 from nti.contenttypes.courses.interfaces import DESCRIPTION
@@ -54,16 +48,11 @@ from nti.contenttypes.courses.interfaces import DESCRIPTION
 from nti.contenttypes.courses.interfaces import ICourseOutline
 from nti.contenttypes.courses.interfaces import ICourseInstance
 from nti.contenttypes.courses.interfaces import ICourseCatalogEntry
-from nti.contenttypes.courses.interfaces import IJoinCourseInvitation
 
 from nti.contenttypes.courses.utils import get_parent_course
 from nti.contenttypes.courses.utils import get_course_hierarchy
 
 from nti.contenttypes.presentation.interfaces import INTILessonOverview
-
-from nti.dataserver.interfaces import IMemcacheClient
-
-from nti.externalization.oids import to_external_ntiid_oid
 
 from nti.site.site import get_component_hierarchy_names
 
@@ -77,41 +66,6 @@ ZERO_DATETIME = datetime.utcfromtimestamp(0)
 
 # BWC exports
 PreviewCourseAccessPredicate = PreviewCourseAccessPredicateDecorator
-
-def last_synchronized(context=None):
-	if context is None:
-		context = component.queryUtility(IEtcNamespace, name='hostsites')
-	result = getattr(context, 'lastSynchronized', None) or 0
-	return result
-
-def memcache_client():
-	return component.queryUtility(IMemcacheClient)
-
-def memcache_get(key, client=None):
-	client = component.queryUtility(IMemcacheClient) if client is None else client
-	if client is not None:
-		try:
-			return client.get(key)
-		except Exception:
-			pass
-	return None
-
-def memcache_set(key, value, client=None, exp=DEFAULT_EXP_TIME):
-	client = component.queryUtility(IMemcacheClient) if client is None else client
-	if client is not None:
-		try:
-			client.set(key, value, time=exp)
-			return True
-		except Exception:
-			pass
-	return False
-
-@repoze.lru.lru_cache(200)
-def encode_keys(*keys):
-	result = hashlib.md5()
-	for key in keys:
-		result.update(str(key).lower())
-	return result.hexdigest()
 
 def get_vendor_info(context):
 	info = get_course_vendor_info(context, False)
@@ -212,7 +166,8 @@ def has_course_invitations(context):
 	result = get_course_invitations(context)
 	return bool(result)
 
-def _search_for_lessons(evaluation, provided, container_ntiids, catalog, valid_outlines, intids, sites):
+def _search_for_lessons(evaluation, provided, container_ntiids, catalog,
+						valid_outlines, intids, sites):
 	"""
 	Find lessons for the given evaluation, existing in our valid_outlines.
 	"""
@@ -225,7 +180,7 @@ def _search_for_lessons(evaluation, provided, container_ntiids, catalog, valid_o
 		if item.target == evaluation.ntiid:
 			lesson = find_interface(item, INTILessonOverview, strict=False)
 			if lesson is not None:
-				outline = find_interface( lesson, ICourseOutline, strict=False )
+				outline = find_interface(lesson, ICourseOutline, strict=False)
 				if outline is not None and outline in valid_outlines:
 					results.append(lesson)
 	return results
@@ -242,39 +197,39 @@ def _get_lessons_for_courses(container_ntiids):
 										container_ntiids=container_ntiids,
 										container_all_of=False,
 										sites=sites)
-	return set( result_set ) if result_set else ()
+	return set(result_set) if result_set else ()
 
-def _get_course_ntiids( courses ):
+def _get_course_ntiids(courses):
 	# Get any courses that match our outline; since the ref may have been
 	# indexed or stored from any course.
 	results = set()
 	for course in courses or ():
-		hierarchy = get_course_hierarchy( course )
+		hierarchy = get_course_hierarchy(course)
 		root_outline = course.Outline
-		#outlines.add( root_outline )
+		# outlines.add( root_outline )
 		for child_course in hierarchy or ():
 			if child_course.Outline == root_outline:
-				entry = ICourseCatalogEntry( child_course, None )
+				entry = ICourseCatalogEntry(child_course, None)
 				if entry is not None:
-					results.add( entry.ntiid )
+					results.add(entry.ntiid)
 	return results
 
-def _is_evaluation_in_lesson( lesson, target_ntiids, outline_provided ):
+def _is_evaluation_in_lesson(lesson, target_ntiids, outline_provided):
 	for group in lesson or ():
 		for item in group or ():
-			if 		outline_provided.providedBy( item ) \
+			if 		outline_provided.providedBy(item) \
 				and item.target in target_ntiids:
 				return True
 	return False
 
-def _get_ref_target_ntiids( evaluation ):
+def _get_ref_target_ntiids(evaluation):
 	result = []
-	if IQAssignment.providedBy( evaluation ):
+	if IQAssignment.providedBy(evaluation):
 		# Some refs actually point to assignment qset ntiids.
 		for part in evaluation.parts or ():
 			if part.question_set is not None:
-				result.append( part.question_set.ntiid )
-	result.append( evaluation.ntiid )
+				result.append(part.question_set.ntiid)
+	result.append(evaluation.ntiid)
 	return result
 
 def get_evaluation_lessons(evaluation, outline_provided, courses=None, request=None):
@@ -290,11 +245,11 @@ def get_evaluation_lessons(evaluation, outline_provided, courses=None, request=N
 		courses = (course,)
 		if course is None:
 			courses = get_evaluation_courses(evaluation)
-	target_ntiids = _get_ref_target_ntiids( evaluation )
-	container_ntiids = _get_course_ntiids( courses )
-	lessons = _get_lessons_for_courses( container_ntiids )
+	target_ntiids = _get_ref_target_ntiids(evaluation)
+	container_ntiids = _get_course_ntiids(courses)
+	lessons = _get_lessons_for_courses(container_ntiids)
 	result = set()
 	for lesson in lessons:
-		if _is_evaluation_in_lesson( lesson, target_ntiids, outline_provided ):
-			result.add( lesson )
+		if _is_evaluation_in_lesson(lesson, target_ntiids, outline_provided):
+			result.add(lesson)
 	return result
