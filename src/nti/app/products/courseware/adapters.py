@@ -9,6 +9,8 @@ __docformat__ = "restructuredtext en"
 
 logger = __import__('logging').getLogger(__name__)
 
+import itertools
+
 from zope import component
 from zope import interface
 
@@ -72,12 +74,16 @@ from nti.contenttypes.courses.utils import is_course_instructor as is_instructor
 from nti.contenttypes.courses.utils import content_unit_to_courses as indexed_content_unit_to_courses
 
 from nti.contenttypes.presentation.interfaces import INTIPollRef
+from nti.contenttypes.presentation.interfaces import INTITimeline
 from nti.contenttypes.presentation.interfaces import INTISurveyRef
 from nti.contenttypes.presentation.interfaces import INTIQuestionRef
+from nti.contenttypes.presentation.interfaces import INTITimelineRef
 from nti.contenttypes.presentation.interfaces import INTIAssignmentRef
 from nti.contenttypes.presentation.interfaces import INTIQuestionSetRef
 from nti.contenttypes.presentation.interfaces import IPresentationAsset
+from nti.contenttypes.presentation.interfaces import INTIRelatedWorkRef
 from nti.contenttypes.presentation.interfaces import IItemAssetContainer
+from nti.contenttypes.presentation.interfaces import INTIRelatedWorkRefPointer
 
 from nti.dataserver.authorization import ACT_CONTENT_EDIT
 
@@ -138,14 +144,40 @@ def _asset_to_nodes(asset, user=None):
 @component.adapter(IContentUnit)
 @interface.implementer(ICourseOutlineNodes)
 def _contentunit_to_nodes(obj, user=None):
-	result = []
+	result = set()
 	sites = get_component_hierarchy_names()
-	for node in get_content_outline_nodes(obj.ntiid):
-		course = find_interface(node, ICourseInstance, strict=False)
-		if user is None and get_course_site_name(course) in sites:
-			result.append(node)
-		elif _is_user_enrolled(user, course):
-			result.append(node)
+	nodes = get_content_outline_nodes(obj.ntiid)
+	if nodes: # easy case .. direct node
+		for node in nodes:
+			course = find_interface(node, ICourseInstance, strict=False)
+			if user is None and get_course_site_name(course) in sites:
+				result.add(node)
+			elif _is_user_enrolled(user, course):
+				result.add(node)
+	else:
+		catalog = get_library_catalog()
+		intids = component.getUtility(IIntIds)
+		DOCKET_PROVIDED = (INTIRelatedWorkRef, INTITimeline)
+		REF_PROVIDED = (INTIRelatedWorkRefPointer, INTITimelineRef)
+
+		# search for all dockets that point to the container
+		for docket in catalog.search_objects(sites=sites,
+									  		 intids=intids,
+									 		 target=obj.ntiid,
+									 		 provided=DOCKET_PROVIDED):
+			
+			# search for all pointers that point to the docket
+			objs = catalog.search_objects(sites=sites,
+										  intids=intids,
+										  target=docket.ntiid,
+									 	  provided=REF_PROVIDED)
+			
+			# find node and check
+			for ref in itertools.chain(objs or (), (docket,)):
+				node = find_interface(ref, ICourseOutlineNode, strict=False)
+				course = find_interface(node, ICourseInstance, strict=False)
+				if node is not None and (user is None or _is_user_enrolled(user, course)):
+					result.add(node)
 	return result
 
 @component.adapter(IContained)
