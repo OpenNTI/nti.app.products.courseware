@@ -10,8 +10,11 @@ __docformat__ = "restructuredtext en"
 logger = __import__('logging').getLogger(__name__)
 
 import six
+import hashlib
 from datetime import datetime
 from collections import Mapping
+
+import repoze.lru
 
 from pyramid.threadlocal import get_current_request
 
@@ -54,6 +57,8 @@ from nti.contenttypes.courses.utils import get_course_hierarchy
 
 from nti.contenttypes.presentation.interfaces import INTILessonOverview
 
+from nti.dataserver.interfaces import IMemcacheClient
+
 from nti.site.site import get_component_hierarchy_names
 
 from nti.traversal.traversal import find_interface
@@ -66,6 +71,35 @@ ZERO_DATETIME = datetime.utcfromtimestamp(0)
 
 # BWC exports
 PreviewCourseAccessPredicate = PreviewCourseAccessPredicateDecorator
+
+def memcache_client():
+	return component.queryUtility(IMemcacheClient)
+
+def memcache_get(key, client=None):
+	client = component.queryUtility(IMemcacheClient) if client is None else client
+	if client is not None:
+		try:
+			return client.get(key)
+		except Exception:
+			pass
+	return None
+
+def memcache_set(key, value, client=None, exp=DEFAULT_EXP_TIME):
+	client = component.queryUtility(IMemcacheClient) if client is None else client
+	if client is not None:
+		try:
+			client.set(key, value, time=exp)
+			return True
+		except Exception:
+			pass
+	return False
+
+@repoze.lru.lru_cache(200)
+def encode_keys(*keys):
+	result = hashlib.md5()
+	for key in keys:
+		result.update(str(key).lower())
+	return result.hexdigest()
 
 def get_vendor_info(context):
 	info = get_course_vendor_info(context, False)
