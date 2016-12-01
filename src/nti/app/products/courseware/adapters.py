@@ -494,34 +494,29 @@ def _catalog_entries_from_forum_obj(obj):
 def _courses_from_package(obj):
 	# We could use the container index.
 	courses = content_unit_to_courses(obj, include_sub_instances=True)
-	results = _get_valid_course_context(courses)
-	return results
+	return _get_valid_course_context(courses)
 
 @component.adapter(IContentUnit)
 @interface.implementer(ITrustedTopLevelContainerContextProvider)
 def _catalog_entries_from_package(obj):
 	courses = content_unit_to_courses(obj, include_sub_instances=True)
-	results = _catalog_entries_from_courses(courses)
-	return results
+	return _catalog_entries_from_courses(courses)
 
 @component.adapter(IContentUnit, IUser)
 @interface.implementer(ITopLevelContainerContextProvider)
 def _courses_from_package_and_user(obj, user):
 	courses = content_unit_to_courses(obj, include_sub_instances=True)
-	results = _get_valid_course_context(courses)
-	return results
+	return _get_valid_course_context(courses)
 
 @component.adapter(ICourseInstance, IUser)
 @interface.implementer(ITopLevelContainerContextProvider)
 def _top_level_context_from_course_and_user(obj, user):
-	results = _get_valid_course_context(obj)
-	return results
+	return _get_valid_course_context(obj)
 
 @component.adapter(ICourseInstance)
 @interface.implementer(ITopLevelContainerContextProvider)
 def _top_level_context_from_course(obj):
-	results = _get_valid_course_context(obj)
-	return results
+	return _get_valid_course_context(obj)
 
 def __courses_from_obj_and_user(obj, user=None):
 	if IHighlight.providedBy(obj):
@@ -538,8 +533,7 @@ def _top_level_context_from_obj_and_user(obj, user=None):
 
 def _trusted_top_level_context(obj, user=None):
 	courses = __courses_from_obj_and_user(obj, user)
-	results = _catalog_entries_from_courses(courses)
-	return results
+	return _catalog_entries_from_courses(courses)
 
 @component.adapter(IHighlight, IUser)
 @component.adapter(IPresentationAsset, IUser)
