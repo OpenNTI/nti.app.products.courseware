@@ -16,6 +16,8 @@ from zope import interface
 
 from zope.component.hooks import getSite
 
+from pyramid.threadlocal import get_current_request
+
 from nti.app.products.courseware.utils import ZERO_DATETIME
 
 from nti.app.products.courseware.search import encode_keys
@@ -25,6 +27,8 @@ from nti.app.products.courseware.search import memcache_client
 from nti.app.products.courseware.search import last_synchronized
 
 from nti.app.products.courseware.search.interfaces import ICourseOutlineCache
+
+from nti.appserver.pyramid_authorization import has_permission
 
 from nti.assessment.interfaces import IQSurvey
 from nti.assessment.interfaces import IQAssignment
@@ -44,6 +48,8 @@ from nti.contenttypes.courses.interfaces import ICourseOutlineNodes
 
 from nti.contenttypes.presentation.interfaces import INTILessonOverview
 
+from nti.dataserver.authorization import ACT_NTI_ADMIN
+
 from nti.dataserver.users import User 
 
 from nti.ntiids.ntiids import TYPE_OID
@@ -53,23 +59,40 @@ from nti.ntiids.ntiids import find_object_with_ntiid
 from nti.property.property import Lazy
 
 @component.adapter(IContentUnit)
-class _ContentHitPredicate(DefaultSearchHitPredicate):
+class _CourseSearchHitPredicate(DefaultSearchHitPredicate):
+	
+	@Lazy
+	def request(self):
+		return get_current_request()
+	
+	@Lazy
+	def user(self):
+		return User.get_user(self.principal.id)
+	
+	def is_admin(self, context):
+		return has_permission(ACT_NTI_ADMIN, context, self.request)
+
+@component.adapter(IContentUnit)
+class _ContentHitPredicate(_CourseSearchHitPredicate):
 
 	@Lazy
 	def user(self):
 		return User.get_user(self.principal.id)
 	
 	def allow(self, item, score, query=None):
-		if self.principal is None:
+		if self.principal is None or self.is_admin(item):
 			return True
 		nodes = component.queryMultiAdapter((item, self.user), ICourseOutlineNodes)
-		for node in nodes or ():
-			beginning = getattr(node, 'AvailableBeginning', None) or ZERO_DATETIME
-			lesson = INTILessonOverview(node, None)
-			if 		lesson is not None \
-				and lesson.isPublished \
-				and datetime.utcnow() >= beginning:
-				return True # first node found
+		if not nodes: # nothing points to it
+			return True
+		else:
+			for node in nodes or ():
+				beginning = getattr(node, 'AvailableBeginning', None) or ZERO_DATETIME
+				lesson = INTILessonOverview(node, None)
+				if 		lesson is not None \
+					and lesson.isPublished \
+					and datetime.utcnow() >= beginning:
+					return True # first node found
 		return False
 
 @interface.implementer(ISearchHitPredicate)
