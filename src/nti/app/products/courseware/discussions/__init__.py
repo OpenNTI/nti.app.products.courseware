@@ -25,6 +25,7 @@ from nti.app.products.courseware.utils import get_vendor_info
 from nti.common.iterables import to_list
 
 from nti.contenttypes.courses.discussions.utils import get_topic_key
+from nti.contenttypes.courses.discussions.utils import is_nti_course_bundle
 from nti.contenttypes.courses.discussions.utils import get_course_for_discussion
 from nti.contenttypes.courses.discussions.utils import get_discussion_mapped_scopes
 
@@ -317,6 +318,8 @@ def create_topics(discussion):
 			topic.title = title
 			topic.creator = creator
 			topic.description = title
+			if is_nti_course_bundle(discussion):
+				topic.discussion_id = discussion.id # save discusion id
 
 			lifecycleevent.created(topic)
 			forum[name] = topic
