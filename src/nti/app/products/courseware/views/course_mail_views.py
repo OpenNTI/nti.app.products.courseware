@@ -133,6 +133,14 @@ class CourseMailView(AbstractMemberEmailView):
 	def _for_credit_usernames(self):
 		result = self._get_scope_usernames(self._for_credit_scope)
 		return result & self._all_students
+	
+	def _copy_instructors_if_necessary(self, members, params):
+		instructor_usernames = self._instructors
+		include_instructors = params.get('include-instructors')
+		if include_instructors and is_true(include_instructors):
+			return members | instructor_usernames - {self.sender.username.lower()}
+		else:
+			return members - instructor_usernames
 
 	def _get_member_names(self):
 		values = CaseInsensitiveDict(self.request.params)
@@ -146,14 +154,8 @@ class CourseMailView(AbstractMemberEmailView):
 			result = self._only_public_usernames
 		else:
 			raise hexc.HTTPUnprocessableEntity(detail='Invalid scope %s' % scope_name)
-
-		instructor_usernames = self._instructors
-		include_instructors = values.get('include-instructors')
-		if include_instructors and is_true(include_instructors):
-			result = result | instructor_usernames - {self.sender.username.lower()}
-		else:
-			result = result - instructor_usernames
-
+		
+		result = self._copy_instructors_if_necessary(result, values)
 		return result
 	
 	def reply_addr_for_recipient(self, recipient):
@@ -213,13 +215,8 @@ class EnrollmentRecordMailView(CourseMailView):
 		values = CaseInsensitiveDict(self.request.params)
 		user = User.get_user(self.context.Username)
 		if user is not None:
-			instructor_usernames = self._instructors
-			include_instructors = values.get('include-instructors')
-			if include_instructors and is_true(include_instructors):
-				other_instructors = instructor_usernames - {self.sender.username.lower()}
-				return {user} | {User.get_user(x) for x in other_instructors}
-			else:
-				return (user,)
+			result = self._copy_instructors_if_necessary({self.context.Username}, values)
+			return {User.get_user(x) for x in result}
 		return ()
 
 	def predicate(self):
