@@ -49,6 +49,9 @@ from nti.app.products.courseware.views import VIEW_COURSE_ENROLLMENT_ROSTER
 
 from nti.appserver.pyramid_authorization import has_permission
 from nti.appserver.ugd_edit_views import ContainerContextUGDPostView
+from nti.appserver.ugd_query_views import Operator
+from nti.appserver.ugd_query_views import _combine_predicate
+from nti.appserver.relevant_ugd_views import _RelevantUGDView
 
 from nti.common.string import is_true
 
@@ -66,11 +69,14 @@ from nti.externalization.interfaces import StandardExternalFields
 from nti.externalization.interfaces import ILocatedExternalSequence
 
 from nti.externalization.externalization import to_external_object
+from nti.externalization.oids import to_external_ntiid_oid as toExternalOID
 
 from nti.ntiids.ntiids import find_object_with_ntiid
 
 OID = StandardExternalFields.OID
 ITEMS = StandardExternalFields.ITEMS
+
+union_operator = Operator.union
 
 @view_config(route_name='objects.generic.traversal',
 			  context=ICourseOutline,
@@ -518,13 +524,48 @@ class CourseActivityLastViewedDecorator(AbstractAuthenticatedView,
 			 permission=nauth.ACT_READ,
 			 name='Pages')
 class CoursePagesView(ContainerContextUGDPostView):
-	"""
+	""" 
 	A pages view on the course.  We subclass ``ContainerContextUGDPostView`` in
 	order to intervene and annotate our ``IContainerContext``
 	object with the course context.
 
 	Reading/Editing/Deleting will remain the same.
 	"""
+	
+@view_config(route_name='objects.generic.traversal',
+			 renderer='rest',
+			 request_method='GET',
+			 context=ICourseInstance,
+			 permission=nauth.ACT_READ,
+			 name='Pages')
+class RelevantUGDGetView(_RelevantUGDView):
+	"""
+	A pages view on the course to get relevant UGD content.
+	Relevant UGD is defined as the set of objects which are top-level, 
+	shared with the user, and either have no context_id or have
+	a context_id matching the course context from the request.
+	"""
+	def __init__(self, request, the_user=None, the_ntiid=None):
+		self.request = request
+		super(_RelevantUGDView, self).__init__(request, 
+											the_user=self.remoteUser, 
+											the_ntiid=request.subpath[0])
+	
+	def _make_complete_predicate(self, operator=union_operator):
+		predicate = _RelevantUGDView._make_complete_predicate(self, operator)
+		course_instance = ICourseInstance(self.request, None)
+		allowed_id = toExternalOID(course_instance)
+		
+		def _filter(obj):
+			if obj.context_id and obj.context_id == allowed_id:
+				return True
+			return False
+
+		predicate = _combine_predicate(_filter, 
+										predicate, 
+										operator=Operator.intersection)
+		return predicate
+	
 
 @view_config(context=ICourseInstance)
 @view_config(context=ICourseCatalogEntry)
