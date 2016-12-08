@@ -15,7 +15,7 @@ from zope import interface
 
 from nti.app.products.courseware.resources.utils import get_course_filer
 
-from nti.app.products.courseware.utils.importer import transfer_resources_from_filer
+from nti.app.products.courseware.utils import transfer_resources_from_filer
 
 from nti.cabinet.filer import transfer_to_native_file
 
@@ -48,7 +48,7 @@ class CourseDiscussionsImporter(BaseSectionImporter):
 		# make sure Discussions are initialized
 		getattr(course, 'Discussions')
 		# write discussions directory structure
-		root = course.root 
+		root = course.root
 		bucket = path_to_discussions(course)
 		if IFilesystemBucket.providedBy(root) and writeout:
 			path = os.path.join(root.absolute_path, bucket)
