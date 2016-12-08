@@ -155,7 +155,7 @@ class CourseMailView(AbstractMemberEmailView):
 			result = result - instructor_usernames
 
 		return result
-
+	
 	def reply_addr_for_recipient(self, recipient):
 		"""
 		If the user specifies that we only supply a ReplyTo on a certain
@@ -166,7 +166,6 @@ class CourseMailView(AbstractMemberEmailView):
 		if 		not self._reply_to_scope_usernames \
 			or 	normed_username in self._reply_to_scope_usernames \
 			or	normed_username in self._instructors:
-
 			result = self._sender_reply_addr
 		return result
 
@@ -211,8 +210,17 @@ class EnrollmentRecordMailView(CourseMailView):
 		return ICourseInstance(self.context, None)
 
 	def iter_members(self):
+		values = CaseInsensitiveDict(self.request.params)
 		user = User.get_user(self.context.Username)
-		return (user,) if user is not None else ()
+		if user is not None:
+			instructor_usernames = self._instructors
+			include_instructors = values.get('include-instructors')
+			if include_instructors and is_true(include_instructors):
+				other_instructors = instructor_usernames - {self.sender.username.lower()}
+				return {user} | {User.get_user(x) for x in other_instructors}
+			else:
+				return (user,)
+		return ()
 
 	def predicate(self):
 		return 	self.course is not None \
