@@ -306,6 +306,9 @@ def get_evaluation_lessons(evaluation, outline_provided, courses=None, request=N
 	return result
 
 def associate(obj, filer, key, bucket=None):
+	intids = component.getUtility(IIntIds)
+	if intids.queryId( obj ) is None:
+		return
 	source = filer.get(key=key, bucket=bucket)
 	if IContentBaseFile.providedBy(source):
 		source.add_association(obj)
