@@ -139,8 +139,7 @@ class CourseMailView(AbstractMemberEmailView):
 		include_instructors = params.get('include-instructors')
 		if include_instructors and is_true(include_instructors):
 			return members | instructor_usernames - {self.sender.username.lower()}
-		else:
-			return members - instructor_usernames
+		return members - instructor_usernames
 
 	def _get_member_names(self):
 		values = CaseInsensitiveDict(self.request.params)
@@ -211,13 +210,11 @@ class EnrollmentRecordMailView(CourseMailView):
 	def course(self):
 		return ICourseInstance(self.context, None)
 
-	def iter_members(self):
+	def _get_member_names(self):
 		values = CaseInsensitiveDict(self.request.params)
 		user = User.get_user(self.context.Username)
-		if user is not None:
-			result = self._copy_instructors_if_necessary({self.context.Username}, values)
-			return {User.get_user(x) for x in result}
-		return ()
+		result = self._copy_instructors_if_necessary({self.context.Username}, values)
+		return {User.get_user(x) for x in result}
 
 	def predicate(self):
 		return 	self.course is not None \
