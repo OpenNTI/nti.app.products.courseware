@@ -154,7 +154,6 @@ class CourseMailView(AbstractMemberEmailView):
 		else:
 			raise hexc.HTTPUnprocessableEntity(detail='Invalid scope %s' % scope_name)
 		
-		result = self._copy_instructors_if_necessary(result, values)
 		return result
 	
 	def reply_addr_for_recipient(self, recipient):
@@ -171,7 +170,8 @@ class CourseMailView(AbstractMemberEmailView):
 		return result
 
 	def iter_members(self):
-		for username in self._get_member_names():
+		values = CaseInsensitiveDict(self.request.params)
+		for username in self._copy_instructors_if_necessary(self._get_member_names(), values):
 			user = User.get_user(username)
 			if user is not None:
 				yield user
@@ -211,10 +211,7 @@ class EnrollmentRecordMailView(CourseMailView):
 		return ICourseInstance(self.context, None)
 
 	def _get_member_names(self):
-		values = CaseInsensitiveDict(self.request.params)
-		user = User.get_user(self.context.Username)
-		result = self._copy_instructors_if_necessary({self.context.Username}, values)
-		return {User.get_user(x) for x in result}
+		return {self.context.Username,}
 
 	def predicate(self):
 		return 	self.course is not None \
