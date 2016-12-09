@@ -18,6 +18,12 @@ from nti.app.products.courseware.discussions import create_topics
 from nti.app.products.courseware.discussions import auto_create_forums
 from nti.app.products.courseware.discussions import update_course_forums
 
+from nti.app.products.courseware.resources.utils import get_course_filer
+
+from nti.app.products.courseware.utils import transfer_resources_from_filer
+
+from nti.cabinet.filer import DirectoryFiler
+
 from nti.contenttypes.courses.discussions.interfaces import ICourseDiscussion
 
 from nti.contenttypes.courses.interfaces import ICourseInstance
@@ -28,6 +34,16 @@ from nti.contenttypes.courses.interfaces import ICourseVendorInfoSynchronized
 
 @component.adapter(ICourseDiscussion, IObjectAddedEvent)
 def _discussions_added(record, event):
+	course = ICourseInstance( record, None )
+	if course is not None:
+		# Now update our hrefs/icons, if necessary.
+		target_filer = get_course_filer(course)
+		source_filer = DirectoryFiler(course.root.absolute_path)
+		transfer_resources_from_filer(ICourseDiscussion,
+									  record,
+									  source_filer,
+									  target_filer)
+	# Now create topics
 	if auto_create_forums(record):
 		create_topics(record)
 
