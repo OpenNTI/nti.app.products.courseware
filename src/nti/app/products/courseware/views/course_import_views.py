@@ -218,6 +218,7 @@ class ImportCourseView(AbstractAuthenticatedView, CourseImportMixin):
 			result['Course'] = course
 			result['Elapsed'] = time.time() - now
 		except Exception as e:
+			logger.exception("Cannot import/create course")
 			tmp_path = None
 			raise e
 		finally:
