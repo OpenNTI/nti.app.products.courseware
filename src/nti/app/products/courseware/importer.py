@@ -134,7 +134,7 @@ def import_course(ntiid, archive_path, writeout=True, lockout=False, clear=False
 	_execute(course, archive_path, writeout, lockout, clear)
 	return course
 
-def install_admin_level(admin_name, catalog, site=None):
+def install_admin_level(admin_name, catalog, site=None, writeout=True):
 	site = getSite() if site is None else site
 	library = component.getUtility(IContentPackageLibrary)
 	enumeration = IDelimitedHierarchyContentPackageEnumeration(library)
@@ -144,8 +144,14 @@ def install_admin_level(admin_name, catalog, site=None):
 	admin_root = courses_bucket.getChildNamed(admin_name)
 	if admin_root is None:
 		path = os.path.join(courses_bucket.absolute_path, admin_name)
-		mkdirs(path)
-		admin_root = courses_bucket.getChildNamed(admin_name)
+		if writeout:
+			mkdirs(path)
+			admin_root = courses_bucket.getChildNamed(admin_name)
+		else:
+			admin_root = FilesystemBucket()
+			admin_root.key = admin_name
+			admin_root.bucket = courses_bucket
+			admin_root.absolute_path = path
 	new_level = CourseAdministrativeLevel()
 	new_level.root = admin_root
 	catalog[admin_name] = new_level

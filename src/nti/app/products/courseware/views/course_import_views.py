@@ -182,7 +182,7 @@ class ImportCourseView(AbstractAuthenticatedView, CourseImportMixin):
 				adm_levels = component.queryUtility(ICourseCatalog)
 				if adm_levels is not None:
 					if admin not in adm_levels:
-						install_admin_level(admin, adm_levels, site)
+						install_admin_level(admin, adm_levels, site, writeout)
 					catalog = adm_levels
 					break
 		if catalog is None:
