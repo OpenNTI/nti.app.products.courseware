@@ -9,6 +9,8 @@ __docformat__ = "restructuredtext en"
 
 logger = __import__('logging').getLogger(__name__)
 
+import os
+
 from zope import component
 
 from zope.lifecycleevent import IObjectAddedEvent
@@ -38,11 +40,12 @@ def _discussions_added(record, event):
 	if course is not None:
 		# Now update our hrefs/icons, if necessary.
 		target_filer = get_course_filer(course)
-		source_filer = DirectoryFiler(course.root.absolute_path)
-		transfer_resources_from_filer(ICourseDiscussion,
-									  record,
-									  source_filer,
-									  target_filer)
+		if os.path.exists( course.root.absolute_path ):
+			source_filer = DirectoryFiler(course.root.absolute_path)
+			transfer_resources_from_filer(ICourseDiscussion,
+										  record,
+										  source_filer,
+										  target_filer)
 	# Now create topics
 	if auto_create_forums(record):
 		create_topics(record)
