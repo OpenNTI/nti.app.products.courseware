@@ -49,13 +49,14 @@ def save_resources_to_filer(provided, obj, filer, ext_obj=None):
 				path = os.path.split(path)[0]  # remove resource name
 				path = path[1:] if path.startswith('/') else path
 				if 		not path.startswith(IMAGES_FOLDER) \
-					and not path.startswith(DOCUMENTS_FOLDER):
+					and not path.startswith(DOCUMENTS_FOLDER) \
+					and not path.startswith(ASSETS_FOLDER):
 					path = os.path.join(ASSETS_FOLDER, path)
 			else:
 				path = ASSETS_FOLDER
 			# save resource
-			filer.save(resource.name, 
-					   resource, 
+			filer.save(resource.name,
+					   resource,
 					   bucket=path,
 					   context=obj,
 					   overwrite=True,
