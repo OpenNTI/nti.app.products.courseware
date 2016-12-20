@@ -32,6 +32,9 @@ from zope.security.management import endInteraction
 from zope.security.management import queryInteraction
 from zope.security.management import restoreInteraction
 
+from zc.intid.interfaces import IAfterIdAddedEvent
+from zc.intid.interfaces import IBeforeIdRemovedEvent
+
 from pyramid.threadlocal import get_current_request
 
 from zope.traversing.interfaces import IBeforeTraverseEvent
@@ -68,9 +71,6 @@ from nti.dataserver.users.interfaces import IUserProfile
 from nti.dataserver.users.interfaces import IEmailAddressable
 
 from nti.externalization.externalization import to_external_object
-
-from nti.intid.interfaces import IIntIdAddedEvent
-from nti.intid.interfaces import IIntIdRemovedEvent
 
 from nti.mailer.interfaces import ITemplatedMailer
 
@@ -315,11 +315,11 @@ def _update_enroll_last_modified(record):
 	annotations = IAnnotations(user)
 	annotations[USER_ENROLLMENT_LAST_MODIFIED_KEY] = time.time()
 
-@component.adapter(ICourseInstanceEnrollmentRecord, IIntIdAddedEvent)
+@component.adapter(ICourseInstanceEnrollmentRecord, IAfterIdAddedEvent)
 def update_enrollment_modified_on_add(record, event):
 	_update_enroll_last_modified(record)
 
-@component.adapter(ICourseInstanceEnrollmentRecord, IIntIdRemovedEvent)
+@component.adapter(ICourseInstanceEnrollmentRecord, IBeforeIdRemovedEvent)
 def update_enrollment_modified_on_drop(record, event):
 	_update_enroll_last_modified(record)
 
