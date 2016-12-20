@@ -26,13 +26,9 @@ does_not = is_not
 from nti.testing.matchers import validly_provides
 from nti.testing.matchers import verifiably_provides
 
-from datetime import datetime
-
 from zope import component
 
 from nti.app.products.courseware.interfaces import ILegacyCommunityBasedCourseInstance
-
-from nti.app.products.courseware.search.interfaces import ICourseOutlineCache
 
 from nti.contentlibrary.interfaces import IContentPackageLibrary
 
@@ -165,14 +161,3 @@ class TestApplicationCatalogFromContent(ApplicationLayerTest):
 										 has_key('ContentNTIID'),
 										 has_entry( 'src', none() ),
 										 has_entry('Class', 'CourseOutlineContentNode'))))
-
-		# Test content search
-		with mock_dataserver.mock_db_trans(self.ds, site_name='platform.ou.edu'):
-			cache = component.getUtility(ICourseOutlineCache)
-			ntiid = u'tag:nextthought.com,2011-10:OU-HTML-CLC3403_LawAndJustice.lec:03_LESSON'
-			b = cache.is_allowed(ntiid)
-			assert_that(b, is_(True))
-
-			now = datetime.fromtimestamp(100)
-			b = cache.is_allowed(ntiid, now=now)
-			assert_that(b, is_(True))
