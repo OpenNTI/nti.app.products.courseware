@@ -20,8 +20,6 @@ from pyramid.view import view_defaults
 
 from nti.app.base.abstract_views import AbstractAuthenticatedView
 
-from nti.app.externalization.view_mixins import ModeledContentUploadRequestUtilsMixin
-
 from nti.app.products.courseware.views import VIEW_EXPORT_COURSE
 from nti.app.products.courseware.views import CourseAdminPathAdapter
 
@@ -73,6 +71,7 @@ def _export_course_response(context, backup, salt, response):
 @view_config(context=ICourseCatalogEntry)
 @view_defaults(route_name='objects.generic.traversal',
 			   renderer='rest',
+			   request_method='GET',
 			   name=VIEW_EXPORT_COURSE,
 			   permission=nauth.ACT_CONTENT_EDIT)
 class CourseExportView(AbstractAuthenticatedView):
@@ -90,20 +89,13 @@ class CourseExportView(AbstractAuthenticatedView):
 @view_config(route_name='objects.generic.traversal',
 			 renderer='rest',
 			 name='ExportCourse',
+			 request_method='GET',
 			 context=CourseAdminPathAdapter,
 			 permission=nauth.ACT_CONTENT_EDIT)
-class AdminExportCourseView(AbstractAuthenticatedView,
-				 			ModeledContentUploadRequestUtilsMixin):
-
-	def readInput(self, value=None):
-		if self.request.body:
-			result = ModeledContentUploadRequestUtilsMixin.readInput(self, value=value)
-		else:
-			result = self.request.params
-		return CaseInsensitiveDict(result)
+class AdminExportCourseView(AbstractAuthenticatedView):
 
 	def __call__(self):
-		values = self.readInput()
+		values = CaseInsensitiveDict(self.request.params)
 		context = _parse_course(values)
 		backup = is_true(values.get('backup'))
 		salt = values.get('salt')
