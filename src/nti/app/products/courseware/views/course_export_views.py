@@ -111,5 +111,8 @@ class AdminExportCourseView(AbstractAuthenticatedView,
 		if not backup and not salt:
 			# Default a salt for course copies.
 			salt = str( time.time() )
+
+		logger.info('Initiating course export for %s. (backup=%s), (salt=%s)', context.ntiid, backup, salt)
+
 		return _export_course_response(context, backup, salt,
 									   self.request.response)
