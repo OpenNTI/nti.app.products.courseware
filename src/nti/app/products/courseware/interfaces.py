@@ -35,8 +35,7 @@ from nti.contenttypes.courses.legacy_catalog import ILegacyCourseInstance
 from nti.contenttypes.courses.legacy_catalog import ILegacyCourseCatalogEntry
 
 from nti.coremetadata.interfaces import ILastModified
-
-from nti.dataserver_core.interfaces import IShouldHaveTraversablePath
+from nti.coremetadata.interfaces import IShouldHaveTraversablePath
 
 from nti.ntiids.schema import ValidNTIID
 
