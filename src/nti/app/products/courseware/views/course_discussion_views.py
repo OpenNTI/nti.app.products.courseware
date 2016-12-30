@@ -30,6 +30,8 @@ from nti.app.contentfolder.utils import get_unique_file_name
 
 from nti.app.externalization.internalization import read_body_as_external_object
 
+from nti.app.links.externalization import render_link
+
 from nti.app.products.courseware import ASSETS_FOLDER
 
 from nti.app.products.courseware.discussions import get_topic_key
@@ -68,14 +70,12 @@ from nti.contenttypes.courses.interfaces import ICourseInstanceForCreditScopedFo
 
 from nti.dataserver import authorization as nauth
 
-from nti.dataserver_core.interfaces import ILinkExternalHrefOnly
+from nti.dataserver.interfaces import ILinkExternalHrefOnly
 
 from nti.externalization.externalization import to_external_object
 
 from nti.externalization.interfaces import LocatedExternalDict
 from nti.externalization.interfaces import StandardExternalFields
-
-from nti.links.externalization import render_link
 
 from nti.links.links import Link
 
