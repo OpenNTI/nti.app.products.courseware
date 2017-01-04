@@ -16,8 +16,6 @@ from zope import interface
 
 from zope.container.contained import Contained
 
-from zope.intid.interfaces import IIntIds
-
 from zope.location.traversing import LocationPhysicallyLocatable
 
 from nti.app.products.courseware.interfaces import ICoursesWorkspace
@@ -28,9 +26,6 @@ from nti.app.products.courseware.interfaces import ILegacyCourseInstanceEnrollme
 
 from nti.appserver.workspaces.interfaces import IUserService
 from nti.appserver.workspaces.interfaces import IContainerCollection
-
-from nti.contenttypes.courses.index import IX_SITE
-from nti.contenttypes.courses.index import IX_USERNAME
 
 from nti.contenttypes.courses.interfaces import ES_CREDIT
 from nti.contenttypes.courses.interfaces import ES_CREDIT_DEGREE
@@ -43,7 +38,6 @@ from nti.contenttypes.courses.interfaces import ICourseCatalogEntry
 from nti.contenttypes.courses.interfaces import IPrincipalEnrollments
 from nti.contenttypes.courses.interfaces import ICourseInstanceAdministrativeRole
 
-from nti.contenttypes.courses.utils import get_enrollment_catalog
 from nti.contenttypes.courses.utils import AbstractInstanceWrapper as _AbstractInstanceWrapper
 
 from nti.dataserver.authorization import ACT_DELETE
@@ -55,8 +49,6 @@ from nti.dataserver.interfaces import IUser
 
 from nti.property.property import Lazy
 from nti.property.property import alias
-
-from nti.site.site import get_component_hierarchy_names
 
 @interface.implementer(ICoursesWorkspace)
 class UserCourseWorkspace(Contained):
@@ -356,25 +348,6 @@ class EnrolledCoursesCollection(_AbstractQueryBasedCoursesCollection):
 	contained_interface = ICourseInstanceEnrollment
 
 	user_extra_auth = ACT_DELETE
-
-	def _build_from_catalog(self):
-		user = self.__parent__.user
-		intids = component.getUtility(IIntIds)
-
-		catalog = get_enrollment_catalog()
-		site_names = get_component_hierarchy_names()
-		query = {
-			IX_SITE:{'any_of': site_names},
-			IX_USERNAME:{'any_of':(user.username,)}
-		}
-		result = LastModifiedCopyingUserList()
-		for uid in catalog.apply(query) or ():
-			context = intids.queryObject(uid)
-			if ICourseInstanceEnrollmentRecord.providedBy(context):
-				result.append(self.contained_interface(context))
-
-		self._apply_user_extra_auth(result)
-		return result
 
 # administered courses
 
