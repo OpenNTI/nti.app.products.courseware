@@ -750,7 +750,7 @@ class FixBrokenEnrollmentsView(AbstractAuthenticatedView):
 			extra = set(stored).difference( actual )
 			for extra_record in extra or ():
 				username = user.username
-				user_list = items.set_default( username, [] )
+				user_list = items.setdefault( username, [] )
 				if ICourseInstanceEnrollmentRecord.providedBy(extra_record):
 					entry = ICourseCatalogEntry( extra_record.CourseInstance, None )
 					entry_ntiid = entry and entry.ntiid
