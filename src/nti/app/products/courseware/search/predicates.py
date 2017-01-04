@@ -30,26 +30,26 @@ from nti.contenttypes.courses.interfaces import ICourseOutlineNodes
 
 from nti.contenttypes.presentation.interfaces import INTILessonOverview
 from nti.contenttypes.presentation.interfaces import IPresentationAsset
-	
+
 from nti.dataserver.interfaces import IUserGeneratedData
 
 from nti.dataserver.authorization import ACT_NTI_ADMIN
 
-from nti.dataserver.users import User 
+from nti.dataserver.users import User
 
 from nti.property.property import Lazy
 
 @interface.implementer(ISearchHitPredicate)
 class _CourseSearchHitPredicate(DefaultSearchHitPredicate):
-	
+
 	@Lazy
 	def request(self):
 		return get_current_request()
-	
+
 	@Lazy
 	def user(self):
 		return User.get_user(self.principal.id)
-	
+
 	def is_admin(self, context):
 		return has_permission(ACT_NTI_ADMIN, context, self.request)
 
@@ -58,7 +58,7 @@ class _CourseSearchHitPredicate(DefaultSearchHitPredicate):
 			beginning = getattr(node, 'AvailableBeginning', None) or ZERO_DATETIME
 			lesson = INTILessonOverview(node, None)
 			if 		lesson is not None \
-				and lesson.isPublished \
+				and lesson.isPublished() \
 				and datetime.utcnow() >= beginning:
 				return True # first node found
 		return False
@@ -67,10 +67,9 @@ class _CourseSearchHitPredicate(DefaultSearchHitPredicate):
 		if self.principal is None or self.is_admin(item):
 			return True
 		nodes = component.queryMultiAdapter((item, self.user), ICourseOutlineNodes)
-		if not nodes: # nothing points to it or no adpater
+		if not nodes: # nothing points to it or no adapter
 			return True
-		else:
-			return self.check_nodes(nodes)
+		return self.check_nodes(nodes)
 
 @component.adapter(IContentUnit)
 class _ContentHitPredicate(_CourseSearchHitPredicate):
@@ -85,7 +84,6 @@ class _UserGeneratedDataHitPredicate(_CourseSearchHitPredicate):
 
 	def allow(self, item, score, query=None):
 		nodes = component.queryMultiAdapter((item, self.user), ICourseOutlineNodes)
-		if not nodes: # nothing points to it or no adpater
+		if not nodes: # nothing points to it or no adapter
 			return True
-		else:
-			return self.check_nodes(nodes)
+		return self.check_nodes(nodes)
