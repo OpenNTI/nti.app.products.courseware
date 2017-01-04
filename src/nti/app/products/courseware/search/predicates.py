@@ -39,51 +39,58 @@ from nti.dataserver.users import User
 
 from nti.property.property import Lazy
 
+
 @interface.implementer(ISearchHitPredicate)
 class _CourseSearchHitPredicate(DefaultSearchHitPredicate):
 
-	@Lazy
-	def request(self):
-		return get_current_request()
+    @Lazy
+    def request(self):
+        return get_current_request()
 
-	@Lazy
-	def user(self):
-		return User.get_user(self.principal.id)
+    @Lazy
+    def user(self):
+        return User.get_user(self.principal.id)
 
-	def is_admin(self, context):
-		return has_permission(ACT_NTI_ADMIN, context, self.request)
+    def is_admin(self, context):
+        return has_permission(ACT_NTI_ADMIN, context, self.request)
 
-	def check_nodes(self, nodes):
-		for node in nodes or ():
-			beginning = getattr(node, 'AvailableBeginning', None) or ZERO_DATETIME
-			lesson = INTILessonOverview(node, None)
-			if 		lesson is not None \
-				and lesson.isPublished() \
-				and datetime.utcnow() >= beginning:
-				return True # first node found
-		return False
+    def check_nodes(self, nodes):
+        for node in nodes or ():
+            beginning = getattr(
+                node, 'AvailableBeginning', None) or ZERO_DATETIME
+            lesson = INTILessonOverview(node, None)
+            if 		lesson is not None \
+                    and lesson.isPublished() \
+                    and datetime.utcnow() >= beginning:
+                return True  # first node found
+        return False
 
-	def allow(self, item, score, query=None):
-		if self.principal is None or self.is_admin(item):
-			return True
-		nodes = component.queryMultiAdapter((item, self.user), ICourseOutlineNodes)
-		if not nodes: # nothing points to it or no adapter
-			return True
-		return self.check_nodes(nodes)
+    def allow(self, item, score, query=None):
+        if self.principal is None or self.is_admin(item):
+            return True
+        nodes = component.queryMultiAdapter(
+            (item, self.user), ICourseOutlineNodes)
+        if not nodes:  # nothing points to it or no adapter
+            return True
+        return self.check_nodes(nodes)
+
 
 @component.adapter(IContentUnit)
 class _ContentHitPredicate(_CourseSearchHitPredicate):
-	pass
+    pass
+
 
 @component.adapter(IPresentationAsset)
 class _PresentationAssetHitPredicate(_CourseSearchHitPredicate):
-	pass
+    pass
+
 
 @interface.implementer(IUserGeneratedData)
 class _UserGeneratedDataHitPredicate(_CourseSearchHitPredicate):
 
-	def allow(self, item, score, query=None):
-		nodes = component.queryMultiAdapter((item, self.user), ICourseOutlineNodes)
-		if not nodes: # nothing points to it or no adapter
-			return True
-		return self.check_nodes(nodes)
+    def allow(self, item, score, query=None):
+        nodes = component.queryMultiAdapter(
+            (item, self.user), ICourseOutlineNodes)
+        if not nodes:  # nothing points to it or no adapter
+            return True
+        return self.check_nodes(nodes)
