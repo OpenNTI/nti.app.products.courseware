@@ -133,7 +133,7 @@ class CourseMailView(AbstractMemberEmailView):
 	def _for_credit_usernames(self):
 		result = self._get_scope_usernames(self._for_credit_scope)
 		return result & self._all_students
-	
+
 	def _copy_instructors_if_necessary(self, members, params):
 		instructor_usernames = self._instructors
 		include_instructors = params.get('include-instructors')
@@ -153,9 +153,9 @@ class CourseMailView(AbstractMemberEmailView):
 			result = self._only_public_usernames
 		else:
 			raise hexc.HTTPUnprocessableEntity(detail='Invalid scope %s' % scope_name)
-		
+
 		return result
-	
+
 	def reply_addr_for_recipient(self, recipient):
 		"""
 		If the user specifies that we only supply a ReplyTo on a certain
@@ -178,11 +178,11 @@ class CourseMailView(AbstractMemberEmailView):
 
 	def predicate(self):
 		return is_course_instructor(self.course, self.remoteUser)
-		
+
 	def _get_reply_addr(self, to_user, email):
 		# Overriding this method, because we always want
 		# to provide a reply-to email address for
-		# instructors, even if students don't get one.  
+		# instructors, even if students don't get one.
 		if email.NoReply and to_user.username.lower() not in self._instructors:
 			result = self._no_reply_addr
 		else:

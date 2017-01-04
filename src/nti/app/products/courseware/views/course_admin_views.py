@@ -69,6 +69,7 @@ from nti.contenttypes.courses.common import get_course_site_name
 
 from nti.contenttypes.courses.administered import CourseInstanceAdministrativeRole
 
+from nti.contenttypes.courses.enrollment import DefaultPrincipalEnrollments
 from nti.contenttypes.courses.enrollment import migrate_enrollments_from_course_to_course
 
 from nti.contenttypes.courses.index import IX_SITE
@@ -88,13 +89,17 @@ from nti.contenttypes.courses.interfaces import ICourseCatalogEntry
 from nti.contenttypes.courses.interfaces import ICourseEnrollmentManager
 from nti.contenttypes.courses.interfaces import ICourseInstanceEnrollmentRecord
 
+from nti.contenttypes.courses.utils import unenroll
 from nti.contenttypes.courses.utils import get_course_subinstances
 from nti.contenttypes.courses.utils import drop_any_other_enrollments
 from nti.contenttypes.courses.utils import is_instructor_in_hierarchy
+from nti.contenttypes.courses.utils import get_enrollments as get_index_enrollments
 
 from nti.dataserver import authorization as nauth
 
 from nti.dataserver.interfaces import IUser
+from nti.dataserver.interfaces import IDataserver
+from nti.dataserver.interfaces import IShardLayout
 from nti.dataserver.interfaces import IUsernameSubstitutionPolicy
 
 from nti.dataserver.users import User
@@ -105,6 +110,7 @@ from nti.externalization.interfaces import StandardExternalFields
 
 from nti.property.property import Lazy
 
+from nti.site.site import getSite
 from nti.site.site import get_component_hierarchy_names
 
 ITEMS = StandardExternalFields.ITEMS
@@ -701,3 +707,58 @@ class DeleteCourseView(_SyncAllLibrariesView):
 		course = ICourseInstance(self.context)
 		del course.__parent__[course.__name__]
 		return hexc.HTTPNoContent()
+
+@view_config(context=IDataserverFolder)
+@view_config(context=CourseAdminPathAdapter)
+@view_defaults(route_name='objects.generic.traversal',
+			   renderer='rest',
+			   request_method='POST',
+			   permission=nauth.ACT_NTI_ADMIN,
+			   name='FixBrokenEnrollments')
+class FixBrokenEnrollmentsView(AbstractAuthenticatedView):
+	"""
+	Fixes broken enrollment records stored in backing db. Param of
+	`dry_run` will perform a test run.
+	"""
+
+	def _get_stored_enrollments(self, user):
+		enrollments = DefaultPrincipalEnrollments(user)
+		return enrollments.iter_enrollments()
+
+	def _get_enrollments(self, user):
+		# We consider the index to be accurate.
+		result = get_index_enrollments( user )
+		return result
+
+	def __call__(self):
+		result = LocatedExternalDict()
+		result[ITEMS] = items = dict()
+		site_name = getSite().__name__
+		count = 0
+		params = CaseInsensitiveDict( self.request.params )
+		dry_run = is_true( params.get( 'dry_run' ) or params.get( 'test' ) )
+
+		dataserver = component.getUtility(IDataserver)
+		users_folder = IShardLayout(dataserver).users_folder
+		for user in tuple(users_folder.values()):
+			if not IUser.providedBy(user):
+				continue
+
+			stored = self._get_stored_enrollments(user)
+			actual = self._get_enrollments(user)
+			# Get extra enrollment records from storage.
+			extra = set(stored).difference( actual )
+			for extra_record in extra or ():
+				username = IPrincipal( extra_record.Principal ).id
+				user_list = items.set_default( username, [] )
+				if ICourseInstanceEnrollmentRecord.providedBy(extra_record):
+					entry = ICourseCatalogEntry( extra_record.CourseInstance, None )
+					entry_ntiid = entry and entry.ntiid
+					logger.info("[%s] Removing enrollment record for (user=%s) (entry=%s)",
+								 site_name, username, entry_ntiid)
+					user_list.append( entry_ntiid )
+					count += 1
+					if not dry_run:
+						unenroll(extra_record, extra_record.Principal)
+		result[TOTAL] = count
+		return result
