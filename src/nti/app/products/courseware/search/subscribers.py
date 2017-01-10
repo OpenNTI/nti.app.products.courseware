@@ -21,7 +21,8 @@ from nti.contenttypes.courses.index import IX_USERNAME
 
 from nti.contenttypes.courses.common import get_course_packages
 
-from nti.contenttypes.courses.interfaces import ICourseInstance
+from nti.contenttypes.courses.interfaces import ICourseInstance,\
+    ICourseCatalogEntry
 
 from nti.contenttypes.courses.utils import get_enrollment_catalog
 
@@ -54,5 +55,7 @@ class _RootSearchPacakgeResolver(object):
                 for package in get_course_packages(context):
                     ntiid = package.ntiid or u''
                     result.add(package.ntiid)
+                entry = ICourseCatalogEntry(context, None)
+                result.add(getattr(entry, 'ntiid', None) or u'')
         result.discard(u'')  # valid ntiids
         return result
