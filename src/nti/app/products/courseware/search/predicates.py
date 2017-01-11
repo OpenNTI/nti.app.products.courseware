@@ -109,7 +109,6 @@ class _UserGeneratedDataHitPredicate(_CourseSearchHitPredicate):
             return True
         return self.check_nodes(nodes)
 
-
 @interface.implementer(ICommunityForum)
 class _CommunityForumHitPredicate(_CourseSearchHitPredicate):
 
@@ -118,7 +117,8 @@ class _CommunityForumHitPredicate(_CourseSearchHitPredicate):
         entry = ICourseCatalogEntry(course, None)
         if entry is not None:
             return (self.is_admin(course) or self.is_editor(course)) \
-                or (is_enrolled(course, self.user) and entry.isCourseCurrentlyActive())
+                or (is_enrolled(course, self.user) 
+                    and not getattr(entry, 'Preview', False))
         return True
 
 @interface.implementer(ICommunityHeadlinePost)
