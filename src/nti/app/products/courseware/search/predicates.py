@@ -26,18 +26,29 @@ from nti.contentsearch.interfaces import ISearchHitPredicate
 
 from nti.contentsearch.predicates import DefaultSearchHitPredicate
 
+from nti.contenttypes.courses.interfaces import ICourseInstance
+from nti.contenttypes.courses.interfaces import ICourseCatalogEntry
 from nti.contenttypes.courses.interfaces import ICourseOutlineNodes
+
+from nti.contenttypes.courses.utils import is_enrolled
 
 from nti.contenttypes.presentation.interfaces import INTILessonOverview
 from nti.contenttypes.presentation.interfaces import IPresentationAsset
 
+from nti.dataserver.contenttypes.forums.interfaces import ICommunityForum
+from nti.dataserver.contenttypes.forums.interfaces import IGeneralForumComment
+from nti.dataserver.contenttypes.forums.interfaces import ICommunityHeadlinePost
+
 from nti.dataserver.interfaces import IUserGeneratedData
 
 from nti.dataserver.authorization import ACT_NTI_ADMIN
+from nti.dataserver.authorization import ACT_CONTENT_EDIT
 
 from nti.dataserver.users import User
 
 from nti.property.property import Lazy
+
+from nti.traversal.traversal import find_interface
 
 
 @interface.implementer(ISearchHitPredicate)
@@ -54,10 +65,13 @@ class _CourseSearchHitPredicate(DefaultSearchHitPredicate):
     def is_admin(self, context):
         return has_permission(ACT_NTI_ADMIN, context, self.request)
 
+    def is_editor(self, context):
+        return has_permission(ACT_CONTENT_EDIT, context, self.request)
+
     def check_nodes(self, nodes):
         for node in nodes or ():
-            beginning = getattr(
-                node, 'AvailableBeginning', None) or ZERO_DATETIME
+            available = getattr(node, 'AvailableBeginning', None)
+            beginning = available or ZERO_DATETIME
             lesson = INTILessonOverview(node, None)
             if 		lesson is not None \
                     and lesson.isPublished() \
@@ -94,3 +108,23 @@ class _UserGeneratedDataHitPredicate(_CourseSearchHitPredicate):
         if not nodes:  # nothing points to it or no adapter
             return True
         return self.check_nodes(nodes)
+
+
+@interface.implementer(ICommunityForum)
+class _CommunityForumHitPredicate(_CourseSearchHitPredicate):
+
+    def allow(self, item, score, query=None):
+        course = find_interface(item, ICourseInstance, strict=False)
+        entry = ICourseCatalogEntry(course, None)
+        if entry is not None:
+            return (self.is_admin(course) or self.is_editor(course)) \
+                or (is_enrolled(course, self.user) and entry.isCourseCurrentlyActive())
+        return True
+
+@interface.implementer(ICommunityHeadlinePost)
+class _CommunityHeadlinePostHitPredicate(_CommunityForumHitPredicate):
+    pass
+
+@interface.implementer(IGeneralForumComment)
+class _GeneralForumCommentHitPredicate(_CommunityHeadlinePostHitPredicate):
+    pass

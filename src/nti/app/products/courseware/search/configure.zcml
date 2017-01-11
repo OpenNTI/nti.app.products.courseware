@@ -20,7 +20,19 @@
 	<subscriber factory=".predicates._UserGeneratedDataHitPredicate"
 				provides="nti.contentsearch.interfaces.ISearchHitPredicate"
 				for="nti.dataserver.interfaces.IUserGeneratedData" />
-	 
+	
+	<subscriber factory=".predicates._CommunityForumHitPredicate"
+				provides="nti.contentsearch.interfaces.ISearchHitPredicate"
+				for="nti.dataserver.contenttypes.forums.interfaces.ICommunityForum" />
+
+	<subscriber factory=".predicates._CommunityHeadlinePostHitPredicate"
+				provides="nti.contentsearch.interfaces.ISearchHitPredicate"
+				for="nti.dataserver.contenttypes.forums.interfaces.ICommunityHeadlinePost" />
+ 
+ 	<subscriber factory=".predicates._GeneralForumCommentHitPredicate"
+				provides="nti.contentsearch.interfaces.ISearchHitPredicate"
+				for="nti.dataserver.contenttypes.forums.interfaces.IGeneralForumComment" />
+ 
 	<!-- Subscribers -->
 	<subscriber factory=".subscribers._RootSearchPacakgeResolver"
 				provides="nti.contentsearch.interfaces.ISearchPackageResolver"
