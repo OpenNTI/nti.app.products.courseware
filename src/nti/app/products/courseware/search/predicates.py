@@ -82,8 +82,8 @@ class _CourseSearchHitPredicate(DefaultSearchHitPredicate):
     def allow(self, item, score, query=None):
         if self.principal is None or self.is_admin(item):
             return True
-        nodes = component.queryMultiAdapter(
-            (item, self.user), ICourseOutlineNodes)
+        nodes = component.queryMultiAdapter((item, self.user), 
+                                            ICourseOutlineNodes)
         if not nodes:  # nothing points to it or no adapter
             return True
         return self.check_nodes(nodes)
@@ -103,8 +103,8 @@ class _PresentationAssetHitPredicate(_CourseSearchHitPredicate):
 class _UserGeneratedDataHitPredicate(_CourseSearchHitPredicate):
 
     def allow(self, item, score, query=None):
-        nodes = component.queryMultiAdapter(
-            (item, self.user), ICourseOutlineNodes)
+        nodes = component.queryMultiAdapter((item, self.user), 
+                                            ICourseOutlineNodes)
         if not nodes:  # nothing points to it or no adapter
             return True
         return self.check_nodes(nodes)
