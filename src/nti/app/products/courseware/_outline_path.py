@@ -277,9 +277,8 @@ class OutlinePathFactory(object):
 		for outline_node in outline.values():
 			for outline_content_node in outline_node.values():
 				content_ntiid = getattr(outline_content_node, 'ContentNTIID', None)
-				if content_ntiid == self.target_ntiid:
-					return (self.course_context, outline_content_node, self.target_obj)
 				# I don't believe legacy courses have these lessons.
+				# Navigate through lesson first.
 				lesson_ntiid = outline_content_node.LessonOverviewNTIID
 				lesson_overview = INTILessonOverview(outline_content_node, None)
 				if lesson_overview is not None:
@@ -290,7 +289,11 @@ class OutlinePathFactory(object):
 																		lesson_overview)
 					if results is not None:
 						return results
-				# Legacy courses; try looking in unit
+				# Check if our content node points directly at the content.
+				if content_ntiid == self.target_ntiid:
+					# Our target_obj is probably an IContentUnit.
+					return (self.course_context, outline_content_node)
+				# Legacy courses; try looking in unit for contained item.
 				if content_ntiid != lesson_ntiid:
 					unit = find_object_with_ntiid(content_ntiid)
 					if 		IContentUnit.providedBy(unit) \
