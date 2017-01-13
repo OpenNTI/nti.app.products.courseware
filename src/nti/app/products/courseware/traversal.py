@@ -73,11 +73,10 @@ class CoursePagesTraversable(ContainerAdapterTraversable):
 
 		pfx = 'Pages('
 		if key.startswith(pfx) and  key.endswith(')'):
-			key = key[len(pfx):-1]
-			resource = _CoursePageContainerResource(self, self.request, name=key, parent=self.context)
-			if not resource:
-				raise LocationError
-			return resource
+			return _CoursePageContainerResource(self, 
+											self.request, 
+											name=key[len(pfx):-1], 
+											parent=self.context)
 	
 		# Otherwise, we look for a named path adapter. 
 		return super(CoursePagesTraversable, self).traverse(key, remaining_path)
