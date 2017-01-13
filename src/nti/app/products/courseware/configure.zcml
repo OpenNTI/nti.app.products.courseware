@@ -312,7 +312,7 @@
 		play for ease of extension by other packages. (Hmm, perhaps we ought to make that
 		part of the default traversal).
 	-->
-	<adapter factory="nti.traversal.traversal.ContainerAdapterTraversable"
+	<adapter factory="nti.contenttypes.courses.traversal.CoursePagesTraversable"
 			 for="nti.contenttypes.courses.interfaces.ICourseInstance pyramid.interfaces.IRequest"
 			 provides="zope.traversing.interfaces.ITraversable" />
 

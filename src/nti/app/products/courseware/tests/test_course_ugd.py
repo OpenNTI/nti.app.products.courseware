@@ -114,7 +114,7 @@ class TestCourseUGDViews(ApplicationLayerTest):
 		
 		# When we get UGD for this object, we should get back 
 		# the first highlight, but not the second
-		course_ugd_path = self.course_href + '/@@Pages/' + self.container_ntiid
+		course_ugd_path = self.course_href + '/Pages(' + self.container_ntiid + ')/RelevantUGD'
 		self.testapp.get(course_ugd_path, extra_environ=environ)
 		course_ugd = self.testapp.get(course_ugd_path)
 		course_ugd = course_ugd.json_body

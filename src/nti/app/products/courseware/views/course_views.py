@@ -43,6 +43,7 @@ from nti.app.products.courseware.interfaces import ICourseInstanceEnrollment
 
 from nti.app.products.courseware.utils import get_enrollment_options
 
+from nti.app.products.courseware.interfaces import ICoursePagesContainerResource
 from nti.app.products.courseware.views import VIEW_CONTENTS
 from nti.app.products.courseware.views import VIEW_COURSE_ACTIVITY
 from nti.app.products.courseware.views import VIEW_COURSE_ENROLLMENT_ROSTER
@@ -535,9 +536,9 @@ class CoursePagesView(ContainerContextUGDPostView):
 @view_config(route_name='objects.generic.traversal',
 			 renderer='rest',
 			 request_method='GET',
-			 context=ICourseInstance,
+			 context=ICoursePagesContainerResource,
 			 permission=nauth.ACT_READ,
-			 name='Pages')
+			 name='RelevantUGD')
 class RelevantUGDGetView(_RelevantUGDView):
 	"""
 	A pages view on the course to get relevant UGD content.
@@ -549,7 +550,7 @@ class RelevantUGDGetView(_RelevantUGDView):
 		self.request = request
 		super(_RelevantUGDView, self).__init__(request, 
 											the_user=self.remoteUser, 
-											the_ntiid=request.subpath[0])
+											the_ntiid=self.context.ntiid)
 	
 	def _make_complete_predicate(self, operator=union_operator):
 		predicate = _RelevantUGDView._make_complete_predicate(self, operator)

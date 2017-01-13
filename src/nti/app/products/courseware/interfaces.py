@@ -18,6 +18,7 @@ logger = __import__('logging').getLogger(__name__)
 
 from zope import component
 from zope import interface
+from zope import schema
 
 from zope.container.interfaces import IContained
 
@@ -25,6 +26,7 @@ from zope.interface.common.mapping import IEnumerableMapping
 
 from zope.security.permission import Permission
 
+from nti.appserver.interfaces import IContainerResource
 from nti.appserver.workspaces.interfaces import IWorkspace
 from nti.appserver.workspaces.interfaces import IContainerCollection
 
@@ -106,6 +108,13 @@ class ICoursesWorkspace(IWorkspace):
 	"""
 	A workspace containing data for courses.
 	"""
+	
+class ICoursePagesContainerResource (IContainerResource):
+	"""
+	A pages resource on a course.
+	"""
+	course = schema.Object(ICourseInstance, title="The course that owns the page container")
+	ntiid = schema.TextLine(title="The NTIID of the container")
 
 class IEnrolledCoursesCollection(IContainerCollection):
 	"""
