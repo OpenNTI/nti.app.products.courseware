@@ -283,6 +283,7 @@
 
 	<!-- Traversal paths -->
 	<adapter factory=".workspaces.CatalogEntryLocationInfo" />
+
 	<adapter factory=".workspaces.LegacyCourseInstanceEnrollment"
 			 for="nti.contenttypes.courses.interfaces.ICourseInstance
 				  nti.dataserver.interfaces.IUser"
@@ -304,7 +305,7 @@
 
 	<adapter factory=".adapters._course_from_request"
 			 provides="nti.contenttypes.courses.interfaces.ICourseInstance"
-				for="pyramid.interfaces.IRequest" />
+			 for="pyramid.interfaces.IRequest" />
 
 	<!--
 		Application (request) specific traversal for course instances and enrollments, etc.
