@@ -208,7 +208,8 @@ class OutlinePathFactory(object):
 			target_ref_obj = find_object_with_ntiid(target_ref)
 			if target_ref_obj is not None:
 				item_containers = self.catalog.get_containers(target_ref_obj) if self.catalog else set()
-				result = self.target_ntiid in item_containers
+				result = self.target_ntiid in item_containers \
+					or self.target_ntiid == getattr( target_ref_obj, 'containerId', '' )
 
 				if not result:
 					# Legacy, perhaps our item is a page ref.
