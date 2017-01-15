@@ -13,11 +13,12 @@ from zope import interface
 
 from nti.app.products.courseware.interfaces import ICoursePublishableVendorInfo
 
+
 @interface.implementer(ICoursePublishableVendorInfo)
 class _DefaultCoursePublishableVendorInfo(object):
 
-	def __init__(self, context):
-		self.context = context
+    def __init__(self, context):
+        self.context = context
 
-	def info(self):
-		return None
+    def info(self):
+        return None

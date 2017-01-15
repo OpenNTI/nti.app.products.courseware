@@ -39,107 +39,115 @@ from nti.dataserver.users.suggested_contacts import SuggestedContactRankingPolic
 
 from nti.property.property import alias
 
+
 ES_ORDER = {ES_CREDIT_DEGREE: 15,
-			ES_CREDIT_NONDEGREE: 15,
-			ES_CREDIT: 10,
-			ES_PURCHASED: 10,
-			ES_PUBLIC: 0}
+            ES_CREDIT_NONDEGREE: 15,
+            ES_CREDIT: 10,
+            ES_PURCHASED: 10,
+            ES_PUBLIC: 0}
+
 
 class ClassmatesSuggestedContactRankingPolicy(SuggestedContactRankingPolicy):
 
-	provider = alias('__parent__')
+    provider = alias('__parent__')
 
-	def _r_order(self, x):
-		scope = getattr(x, 'Scope', None) or ES_PUBLIC
-		result = ES_ORDER.get(scope, 0)
-		return result
+    def _r_order(self, x):
+        scope = getattr(x, 'Scope', None) or ES_PUBLIC
+        result = ES_ORDER.get(scope, 0)
+        return result
 
-	def _e_provider(self, x):
-		entry = getattr(x, 'entry', None)
-		result = getattr(entry, 'ProviderUniqueID', None) or u''
-		return result
+    def _e_provider(self, x):
+        entry = getattr(x, 'entry', None)
+        result = getattr(entry, 'ProviderUniqueID', None) or u''
+        return result
 
-	def _e_startDate(self, x):
-		entry = getattr(x, 'entry', None)
-		startDate = getattr(entry, 'StartDate', None) or ZERO_DATETIME
-		return startDate
+    def _e_startDate(self, x):
+        entry = getattr(x, 'entry', None)
+        startDate = getattr(entry, 'StartDate', None) or ZERO_DATETIME
+        return startDate
 
-	def _s_cmp(self, x, y):
-		result = cmp(self._e_startDate(y), self._e_startDate(x))  # reverse /recent first
-		result = cmp(self._e_provider(x), self._e_provider(y)) if result == 0 else result
-		result = cmp(self._r_order(y), self._r_order(x)) if result == 0 else result  # reverse
-		# result = cmp(x.username, y.username) if result == 0 else result
-		return result
+    def _s_cmp(self, x, y):
+        # reverse /recent first
+        result = cmp(self._e_startDate(y), self._e_startDate(x))
+        if result == 0:
+            result = cmp(self._e_provider(x), self._e_provider(y))
+        if result == 0:
+            result = cmp(self._r_order(y), self._r_order(x))  # reverse
+        # result = cmp(x.username, y.username) if result == 0 else result
+        return result
 
-	def sort(self, data):
-		result = []
-		seen = set()
-		data = sorted(data, cmp=self._s_cmp)
-		for contact in data:
-			if contact.username not in seen:
-				result.append(contact)
-				seen.add(contact.username)
-				try:
-					del contact.entry
-				except AttributeError:
-					pass
-		return result
+    def sort(self, data):
+        result = []
+        seen = set()
+        data = sorted(data, cmp=self._s_cmp)
+        for contact in data:
+            if contact.username not in seen:
+                result.append(contact)
+                seen.add(contact.username)
+                try:
+                    del contact.entry
+                except AttributeError:
+                    pass
+        return result
+
 
 @interface.implementer(ISuggestedContactsProvider)
 class ClassmatesSuggestedContactsProvider(SuggestedContactsProvider):
 
-	def __init__(self, *args, **kwargs):
-		super(ClassmatesSuggestedContactsProvider, self).__init__(*args, **kwargs)
-		self.ranking = ClassmatesSuggestedContactRankingPolicy()
-		self.ranking.provider = self
+    def __init__(self, *args, **kwargs):
+        super(ClassmatesSuggestedContactsProvider, self).__init__(
+            *args, **kwargs)
+        self.ranking = ClassmatesSuggestedContactRankingPolicy()
+        self.ranking.provider = self
 
-	def _get_courses(self, user):
-		for record in get_enrollments(user):
-			course = ICourseInstance(record, None)
-			entry = ICourseCatalogEntry(course, None)
-			# Only return active courses as they are the most relevant.
-			if entry is not None and entry.isCourseCurrentlyActive():
-				yield course
+    def _get_courses(self, user):
+        for record in get_enrollments(user):
+            course = ICourseInstance(record, None)
+            entry = ICourseCatalogEntry(course, None)
+            # Only return active courses as they are the most relevant.
+            if entry is not None and entry.isCourseCurrentlyActive():
+                yield course
 
-	def iter_courses(self, user, source_user=None):
-		results = self._get_courses(user)
-		if source_user is not None and user != source_user:
-			user_courses = set(results)
-			source_courses = set(self._get_courses(source_user))
-			results = user_courses.intersection(source_courses)
-		return results
+    def iter_courses(self, user, source_user=None):
+        results = self._get_courses(user)
+        if source_user is not None and user != source_user:
+            user_courses = set(results)
+            source_courses = set(self._get_courses(source_user))
+            results = user_courses.intersection(source_courses)
+        return results
 
-	def suggestions_by_course(self, user, context):
-		record = get_enrollment_record(context, user)
-		if record is None:
-			return ()
+    def suggestions_by_course(self, user, context):
+        record = get_enrollment_record(context, user)
+        if record is None:
+            return ()
 
-		implies = set([record.Scope])
-		for term in ENROLLMENT_SCOPE_VOCABULARY:
-			if record.Scope == term.value:
-				implies.update(term.implies)
-				break
+        implies = set([record.Scope])
+        for term in ENROLLMENT_SCOPE_VOCABULARY:
+            if record.Scope == term.value:
+                implies.update(term.implies)
+                break
 
-		result = []
-		course = ICourseInstance(context)
-		entry = ICourseCatalogEntry(context, None)  # seen in alpha
+        result = []
+        course = ICourseInstance(context)
+        entry = ICourseCatalogEntry(context, None)  # seen in alpha
 
-		for record in ICourseEnrollments(course).iter_enrollments():
-			if record.Scope in implies:
-				principal = IPrincipal(record.Principal, None)
-				if principal is not None and IUser(principal) != user:
-					suggestion = SuggestedContact(username=principal.id, rank=1)
-					suggestion.entry = entry
-					suggestion.provider = self
-					suggestion.Scope = record.Scope
-					result.append(suggestion)
-		result = self.ranking.sort(result)
-		return result
+        for record in ICourseEnrollments(course).iter_enrollments():
+            if record.Scope in implies:
+                principal = IPrincipal(record.Principal, None)
+                if principal is not None and IUser(principal) != user:
+                    suggestion = SuggestedContact(username=principal.id,
+                                                  rank=1)
+                    suggestion.entry = entry
+                    suggestion.provider = self
+                    suggestion.Scope = record.Scope
+                    result.append(suggestion)
+        result = self.ranking.sort(result)
+        return result
 
-	def suggestions(self, user, source_user=None):
-		result = []
-		for course in self.iter_courses(user, source_user):
-			suggestions = self.suggestions_by_course(user, course)
-			result.extend(suggestions)
-		result = self.ranking.sort(result)
-		return result
+    def suggestions(self, user, source_user=None):
+        result = []
+        for course in self.iter_courses(user, source_user):
+            suggestions = self.suggestions_by_course(user, course)
+            result.extend(suggestions)
+        result = self.ranking.sort(result)
+        return result
