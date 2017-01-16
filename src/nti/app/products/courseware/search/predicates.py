@@ -54,6 +54,8 @@ from nti.traversal.traversal import find_interface
 @interface.implementer(ISearchHitPredicate)
 class _CourseSearchHitPredicate(DefaultSearchHitPredicate):
 
+    __name__ = 'DefaultCourse'
+
     @Lazy
     def request(self):
         return get_current_request()
@@ -73,7 +75,7 @@ class _CourseSearchHitPredicate(DefaultSearchHitPredicate):
             available = getattr(node, 'AvailableBeginning', None)
             beginning = available or ZERO_DATETIME
             lesson = INTILessonOverview(node, None)
-            if 		lesson is not None \
+            if         lesson is not None \
                     and lesson.isPublished() \
                     and datetime.utcnow() >= beginning:
                 return True  # first node found
@@ -82,7 +84,7 @@ class _CourseSearchHitPredicate(DefaultSearchHitPredicate):
     def allow(self, item, score, query=None):
         if self.principal is None or self.is_admin(item):
             return True
-        nodes = component.queryMultiAdapter((item, self.user), 
+        nodes = component.queryMultiAdapter((item, self.user),
                                             ICourseOutlineNodes)
         if not nodes:  # nothing points to it or no adapter
             return True
@@ -91,40 +93,47 @@ class _CourseSearchHitPredicate(DefaultSearchHitPredicate):
 
 @component.adapter(IContentUnit)
 class _ContentHitPredicate(_CourseSearchHitPredicate):
-    pass
+    __name__ = 'CourseContentUnit'
 
 
 @component.adapter(IPresentationAsset)
 class _PresentationAssetHitPredicate(_CourseSearchHitPredicate):
-    pass
+    __name__ = 'CoursePresentationAsset'
 
 
 @interface.implementer(IUserGeneratedData)
 class _UserGeneratedDataHitPredicate(_CourseSearchHitPredicate):
 
+    __name__ = 'CourseUserGeneratedData'
+
     def allow(self, item, score, query=None):
-        nodes = component.queryMultiAdapter((item, self.user), 
+        nodes = component.queryMultiAdapter((item, self.user),
                                             ICourseOutlineNodes)
         if not nodes:  # nothing points to it or no adapter
             return True
         return self.check_nodes(nodes)
 
+
 @interface.implementer(ICommunityForum)
 class _CommunityForumHitPredicate(_CourseSearchHitPredicate):
+
+    __name__ = 'CourseCommunityForum'
 
     def allow(self, item, score, query=None):
         course = find_interface(item, ICourseInstance, strict=False)
         entry = ICourseCatalogEntry(course, None)
         if entry is not None:
             return (self.is_admin(course) or self.is_editor(course)) \
-                or (is_enrolled(course, self.user) 
+                or (is_enrolled(course, self.user)
                     and not getattr(entry, 'Preview', False))
         return True
 
+
 @interface.implementer(ICommunityHeadlinePost)
 class _CommunityHeadlinePostHitPredicate(_CommunityForumHitPredicate):
-    pass
+    __name__ = 'CourseCommunityHeadlinePost'
+
 
 @interface.implementer(IGeneralForumComment)
 class _GeneralForumCommentHitPredicate(_CommunityHeadlinePostHitPredicate):
-    pass
+    __name__ = 'CourseGeneralForumComment'
