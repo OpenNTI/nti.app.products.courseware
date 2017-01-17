@@ -17,6 +17,7 @@
 	<pyramid:scan package=".course_legacy_views" />
 	<pyramid:scan package=".course_stream_views" />
 	<pyramid:scan package=".course_outline_views" />
+	<pyramid:scan package=".course_policies_views" />
 	<pyramid:scan package=".course_resources_views" />
 	<pyramid:scan package=".course_discussion_views" />
 	<pyramid:scan package=".course_invitation_views" />
