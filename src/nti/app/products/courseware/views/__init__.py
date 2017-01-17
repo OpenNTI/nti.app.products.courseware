@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
-nti.app.products.courseware  $Id$
+.. $Id$
 """
 
 from __future__ import print_function, unicode_literals, absolute_import, division
@@ -45,16 +45,18 @@ from nti.app.products.courseware import CHECK_COURSE_INVITATIONS_CSV
 from nti.app.products.courseware import VIEW_COURSE_RECURSIVE_BUCKET
 from nti.app.products.courseware import VIEW_COURSE_ENROLLMENT_ROSTER
 
+
 @interface.implementer(IPathAdapter)
 class CourseAdminPathAdapter(Contained):
 
-	__name__ = 'CourseAdmin'
+    __name__ = 'CourseAdmin'
 
-	def __init__(self, context, request):
-		self.context = context
-		self.request = request
-		self.__parent__ = context
+    def __init__(self, context, request):
+        self.context = context
+        self.request = request
+        self.__parent__ = context
+
 
 def raise_error(v, tb=None, factory=hexc.HTTPUnprocessableEntity, request=None):
-	request = request or get_current_request()
-	raise_json_error(request, factory, v, tb)
+    request = request or get_current_request()
+    raise_json_error(request, factory, v, tb)
