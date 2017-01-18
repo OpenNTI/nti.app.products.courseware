@@ -75,6 +75,7 @@ class CourseGradingPolicyGetView(AbstractAuthenticatedView, CourseGradingPolicyM
 @view_defaults(route_name='objects.generic.traversal',
                renderer='rest',
                request_method='POST',
+               name=VIEW_COURSE_GRADING_POLICY,
                permission=nauth.ACT_CONTENT_EDIT)
 class CourseGradingPolicyPostView(UGDPostView, CourseGradingPolicyMixin):
 
@@ -101,6 +102,7 @@ class CourseGradingPolicyPostView(UGDPostView, CourseGradingPolicyMixin):
 @view_defaults(route_name='objects.generic.traversal',
                renderer='rest',
                request_method='PUT',
+               name=VIEW_COURSE_GRADING_POLICY,
                permission=nauth.ACT_CONTENT_EDIT)
 class CourseGradingPolicyPutView(UGDPutView, CourseGradingPolicyMixin):
 
@@ -120,6 +122,7 @@ class CourseGradingPolicyPutView(UGDPutView, CourseGradingPolicyMixin):
 @view_defaults(route_name='objects.generic.traversal',
                renderer='rest',
                request_method='DELETE',
+               name=VIEW_COURSE_GRADING_POLICY,
                permission=nauth.ACT_CONTENT_EDIT)
 class CourseGradingPolicyDeleteView(UGDDeleteView, CourseGradingPolicyMixin):
 
