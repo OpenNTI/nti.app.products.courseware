@@ -18,6 +18,8 @@ does_not = is_not
 
 from nti.testing.matchers import verifiably_provides
 
+from urllib import unquote
+
 from nti.app.products.courseware.interfaces import ICoursesWorkspace
 
 from nti.appserver.workspaces.interfaces import ICollection
@@ -49,7 +51,7 @@ class TestWorkspaceLinks(ApplicationLayerTest):
 
 			course_path = '/dataserver2/users/sjohnson%40nextthought.COM/Courses'
 			assert_that(traversal.resource_path(workspace),
-						 is_(course_path))
+						 is_(unquote(course_path)))
 
 			assert_that(workspace.collections, contains(verifiably_provides(ICollection),
 														verifiably_provides(ICollection),
@@ -61,5 +63,5 @@ class TestWorkspaceLinks(ApplicationLayerTest):
 
 			assert_that([traversal.resource_path(c) for c in workspace.collections],
 						 has_items(course_path + '/AllCourses',
-									course_path + '/EnrolledCourses' ,
-									course_path + '/AdministeredCourses'))
+								   course_path + '/EnrolledCourses' ,
+								   course_path + '/AdministeredCourses'))

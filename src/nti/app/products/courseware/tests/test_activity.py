@@ -28,41 +28,43 @@ from nti.app.testing.application_webtest import ApplicationLayerTest
 
 from nti.dataserver.tests.mock_dataserver import WithMockDSTrans
 
+
 class TestActivity(ApplicationLayerTest):
 
-	@WithMockDSTrans
-	@time_monotonically_increases
-	def test_activity(self):
+    @WithMockDSTrans
+    @time_monotonically_increases
+    def test_activity(self):
 
-		activity = _DefaultCourseActivity()
-		assert_that(activity, validly_provides(ICourseInstanceActivity))
+        activity = _DefaultCourseActivity()
+        assert_that(activity, validly_provides(ICourseInstanceActivity))
 
-		assert_that(list(activity.items()), is_empty())
-		assert_that(activity, has_length(0))
-		assert_that(activity, has_property('lastModified', 0))
-		class Item(object):
-			pass
+        assert_that(list(activity.items()), is_empty())
+        assert_that(activity, has_length(0))
+        assert_that(activity, has_property('lastModified', 0))
 
-		item1 = Item()
-		item2 = Item()
+        class Item(object):
+            pass
 
-		iids = component.getUtility(IIntIds)
-		iids.register(item1)
-		iids.register(item2)
+        item1 = Item()
+        item2 = Item()
 
-		activity.append(item1)
-		activity.append(item2)
+        iids = component.getUtility(IIntIds)
+        iids.register(item1)
+        iids.register(item2)
 
-		assert_that(activity, has_length(2))
-		assert_that(activity, has_property('lastModified', 3.0))
-		assert_that(list(activity.items()),
-					is_([(3.0, item2),
-						 (2.0, item1)]))
+        activity.append(item1)
+        activity.append(item2)
 
-		activity.remove(item1)
-		assert_that(list(activity.items()),
-					is_([(3.0, item2)]))
+        assert_that(activity, has_length(2))
+        assert_that(activity, has_property('lastModified', 3.0))
+        assert_that(list(activity.items()),
+                    is_([(3.0, item2),
+                         (2.0, item1)]))
 
-		del activity._storage  # let the transaction commit
-		iids.unregister(item1)
-		iids.unregister(item2)
+        activity.remove(item1)
+        assert_that(list(activity.items()),
+                    is_([(3.0, item2)]))
+
+        del activity._storage  # let the transaction commit
+        iids.unregister(item1)
+        iids.unregister(item2)

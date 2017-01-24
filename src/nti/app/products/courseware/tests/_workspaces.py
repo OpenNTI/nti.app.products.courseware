@@ -25,6 +25,7 @@ from hamcrest import greater_than_or_equal_to
 does_not = is_not
 
 import csv
+from urllib import unquote
 
 from six import StringIO
 
@@ -62,10 +63,10 @@ class AbstractEnrollingBase(object):
 		assert_that(res.json_body['Items'],
 					 has_items(
 						 all_of(has_entries('Duration', 'P112D',
-											  'Title', 'Introduction to Water',
-											  'StartDate', '2014-01-13T06:00:00Z')),
+											'Title', 'Introduction to Water',
+											'StartDate', '2014-01-13T06:00:00Z')),
 						 all_of(has_entries('StartDate', '2013-08-13T06:00:00Z',
-											  'Title', 'Law and Justice'))))
+											'Title', 'Law and Justice'))))
 
 		for item in res.json_body['Items']:
 			self.testapp.get(item['href'])
@@ -105,7 +106,7 @@ class AbstractEnrollingBase(object):
 
 		assert_that(course_instance,
 					has_entries('Class', self.expected_instance_class,
-								'href', self.expected_instance_href,
+								'href', unquote(self.expected_instance_href),
 								'Outline', has_entry('Links', has_item(has_entry('rel', 'contents'))),
 								# 'instructors', has_item( has_entry('Username', 'harp4162')),
 								'Links', has_item(has_entry('rel', 'CourseCatalogEntry')),
@@ -119,8 +120,8 @@ class AbstractEnrollingBase(object):
 
 		# Put everyone in the roster
 		enrolled_course_id = getattr( self, 'enrollment_ntiid', None ) \
-					or 'tag:nextthought.com,2011-10:OU-HTML-CLC3403_LawAndJustice.course_info'
-		self.testapp.post_json(self.enrolled_courses_href,
+							 or 'tag:nextthought.com,2011-10:OU-HTML-CLC3403_LawAndJustice.course_info'
+		self.testapp.post_json( self.enrolled_courses_href,
 								enrolled_course_id,
 								status=201)
 
@@ -286,11 +287,11 @@ class AbstractEnrollingBase(object):
 		entry_href = self.expected_catalog_entry_href
 
 		assert_that(res.json_body,
-					 has_entries(
-						 'Class', 'CourseInstanceEnrollment',
-						 'href', enrollment_href,
-						 'CourseInstance', has_entries('Class', self.expected_instance_class,
-													   'href', instance_href,
+					has_entries(
+						'Class', 'CourseInstanceEnrollment',
+						'href', unquote(enrollment_href),
+						'CourseInstance', has_entries('Class', self.expected_instance_class,
+													   'href', unquote(instance_href),
 													   'TotalEnrolledCount', 1,
 													   'TotalLegacyOpenEnrolledCount', 1,
 													   'TotalLegacyForCreditEnrolledCount', self.expected_for_credit_count,
@@ -298,21 +299,21 @@ class AbstractEnrollingBase(object):
 													   'LegacyScopes', has_key('public'),
 													   'LegacyScopes', has_key('restricted'),
 													   'Links', has_item(has_entries('rel', 'CourseCatalogEntry',
-																					   'href', entry_href)))))
-		assert_that(res.location, is_('http://localhost' + enrollment_href))
+																					 'href', unquote(entry_href))))))
+		assert_that(res.location, is_('http://localhost' + unquote(enrollment_href)))
 
 		# We can resolve the record by NTIID/OID
 		record_ntiid = res.json_body['NTIID']
 		res = self.fetch_by_ntiid(record_ntiid)
 		assert_that(res.json_body,
-					 has_entries(
+					has_entries(
 						 'Class', 'CourseInstanceEnrollment',
 						 'NTIID', record_ntiid))
 
 		# Now it should show up in our workspace
 		res = self.testapp.get(self.enrolled_courses_href)
 		assert_that(res.json_body, has_entry('Items', has_length(1)))
-		assert_that(res.json_body['Items'][0], has_entry('href', enrollment_href))
+		assert_that(res.json_body['Items'][0], has_entry('href', unquote(enrollment_href)))
 		assert_that(res.json_body['Items'][0], has_entry('RealEnrollmentStatus', is_not(none())))
 
 		return enrollment_href, instance_href, entry_href
