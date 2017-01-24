@@ -49,9 +49,9 @@ class TestWorkspaceLinks(ApplicationLayerTest):
 
 			workspace = [x for x in workspaces if ICoursesWorkspace.providedBy(x)][0]
 
-			course_path = '/dataserver2/users/sjohnson%40nextthought.COM/Courses'
+			course_path = unquote('/dataserver2/users/sjohnson%40nextthought.COM/Courses')
 			assert_that(traversal.resource_path(workspace),
-						 is_(unquote(course_path)))
+						 is_(course_path))
 
 			assert_that(workspace.collections, contains(verifiably_provides(ICollection),
 														verifiably_provides(ICollection),
