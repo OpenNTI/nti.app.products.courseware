@@ -25,6 +25,7 @@ from nti.app.products.courseware.utils import get_vendor_info
 from nti.common.iterables import to_list
 
 from nti.contenttypes.courses.discussions.utils import get_topic_key
+from nti.contenttypes.courses.discussions.utils import get_forum_scopes
 from nti.contenttypes.courses.discussions.utils import is_nti_course_bundle
 from nti.contenttypes.courses.discussions.utils import get_course_for_discussion
 from nti.contenttypes.courses.discussions.utils import get_discussion_mapped_scopes
@@ -142,19 +143,6 @@ def announcements_forums(context):
 
 def discussions_forums(context):
 	return _forums_for_instance(context, 'Discussions')
-
-def get_forum_scopes(forum):
-	result = None
-	course = find_interface(forum, ICourseInstance, strict=False)
-	m = {v.NTIID:k for k, v in course.SharingScopes.items()} if course else {}
-	if hasattr(forum, '__entities__'):
-		result = {m[k] for k, v in m.items() if k in forum.__entities__}
-	elif hasattr(forum, '__acl__'):
-		result = set()
-		for ace in forum.__acl__:
-			if IPrincipal(ace.actor).id in m and ace.action == ACE_ACT_ALLOW:
-				result.add(m[k])
-	return result or ()
 
 def get_forums_for_discussion(discussion, context=None):
 	result = {}
