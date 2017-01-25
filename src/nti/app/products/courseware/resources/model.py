@@ -29,45 +29,50 @@ from nti.contentfolder.utils import compute_path
 
 from nti.property.property import CachedProperty
 
+
 class AssociationsMixin(object):
 
-	def __init__(self, *args, **kwargs):
-		super(CourseContentResource, self).__init__(*args, **kwargs)
+    def __init__(self, *args, **kwargs):
+        super(CourseContentResource, self).__init__(*args, **kwargs)
 
-	def has_associations(self):
-		result = False
-		for value in list(self.values()): # snapshot
-			try:
-				result = value.has_associations() or result
-				if result:
-					break
-			except AttributeError:
-				pass
-		return result
+    def has_associations(self):
+        result = False
+        for value in list(self.values()):  # snapshot
+            try:
+                result = value.has_associations() or result
+                if result:
+                    break
+            except AttributeError:
+                pass
+        return result
+
 
 @interface.implementer(ICourseRootFolder)
 class CourseRootFolder(RootFolder, AssociationsMixin):
-	pass
+    pass
+
 
 @interface.implementer(ICourseContentResource)
 class CourseContentResource(Contained):
 
-	def __init__(self, *args, **kwargs):
-		super(CourseContentResource, self).__init__(*args, **kwargs)
+    def __init__(self, *args, **kwargs):
+        super(CourseContentResource, self).__init__(*args, **kwargs)
 
-	@CachedProperty('__parent__', '__name__')
-	def path(self):
-		result = compute_path(self)
-		return result
+    @CachedProperty('__parent__', '__name__')
+    def path(self):
+        return compute_path(self)
+
 
 @interface.implementer(ICourseContentFolder)
 class CourseContentFolder(CourseContentResource, ContentFolder, AssociationsMixin):
-	mimeType = mime_type = str('application/vnd.nextthought.courseware.contentfolder')
+    mimeType = mime_type = u'application/vnd.nextthought.courseware.contentfolder'
+
 
 @interface.implementer(ICourseContentFile)
 class CourseContentFile(CourseContentResource, ContentBlobFile):
-	pass
+    pass
+
 
 @interface.implementer(ICourseContentImage)
 class CourseContentImage(CourseContentResource, ContentBlobImage):
-	pass
+    pass

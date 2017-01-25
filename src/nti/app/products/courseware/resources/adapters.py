@@ -32,51 +32,57 @@ from nti.namedfile.constraints import FileConstraints
 
 from nti.namedfile.interfaces import IFileConstraints
 
+
 @interface.implementer(ICourseRootFolder)
 def course_resources(context, create=True):
-	result = None
-	course = ICourseInstance(context)
-	annotations = IAnnotations(course)
-	try:
-		KEY = RESOURCES
-		result = annotations[KEY]
-	except KeyError:
-		if create:
-			result = CourseRootFolder(name=RESOURCES)
-			annotations[KEY] = result
-			result.__name__ = KEY
-			result.__parent__ = course
-	if result is not None and result.creator is None:
-		result.creator = SYSTEM_USER_ID
-	return result
+    result = None
+    course = ICourseInstance(context)
+    annotations = IAnnotations(course)
+    try:
+        KEY = RESOURCES
+        result = annotations[KEY]
+    except KeyError:
+        if create:
+            result = CourseRootFolder(name=RESOURCES)
+            annotations[KEY] = result
+            result.__name__ = KEY
+            result.__parent__ = course
+    if result is not None and result.creator is None:
+        result.creator = SYSTEM_USER_ID
+    return result
 _course_resources = course_resources
+
 
 @component.adapter(ICourseInstance)
 @interface.implementer(ICourseRootFolder)
 def _course_resources(context, create=True):
-	return course_resources(context, create)
+    return course_resources(context, create)
+
 
 @component.adapter(ICourseCatalogEntry)
 @interface.implementer(ICourseRootFolder)
 def _entry_resources(context, create=True):
-	return course_resources(context, create)
+    return course_resources(context, create)
+
 
 def _resources_for_course_path_adapter(context, request):
-	course = ICourseInstance(context)
-	return _course_resources(course)
+    course = ICourseInstance(context)
+    return _course_resources(course)
+
 
 def _course_user_source_filer(context, user=None):
-	course = ICourseInstance(context)
-	result = CourseSourceFiler(course, user)
-	return result
+    course = ICourseInstance(context)
+    return CourseSourceFiler(course, user)
+
 
 @component.adapter(ICourseInstance)
 @interface.implementer(ICourseSourceFiler)
 def _course_source_filer(context):
-	return _course_user_source_filer(context, None)
+    return _course_user_source_filer(context, None)
+
 
 @interface.implementer(IFileConstraints)
 def _CourseFolderFileConstraints(note):
-	result = FileConstraints()
-	result.max_file_size = 104857600  # 100 MB
-	return result
+    result = FileConstraints()
+    result.max_file_size = 104857600  # 100 MB
+    return result

@@ -21,6 +21,7 @@ from nti.contentfile.datastructures import BaseFactory
 from nti.contentfile.datastructures import ContentFileObjectIO
 from nti.contentfile.datastructures import ContentImageObjectIO
 
+
 @component.adapter(ICourseContentFile)
 class CourseContentFileObjectIO(ContentFileObjectIO):
 
@@ -28,6 +29,7 @@ class CourseContentFileObjectIO(ContentFileObjectIO):
 
     def _ext_mimeType(self, obj):
         return u'application/vnd.nextthought.courseware.contentfile'
+
 
 @component.adapter(ICourseContentImage)
 class CourseContentImageObjectIO(ContentImageObjectIO):
@@ -37,10 +39,12 @@ class CourseContentImageObjectIO(ContentImageObjectIO):
     def _ext_mimeType(self, obj):
         return u'application/vnd.nextthought.courseware.contentimage'
 
+
 def CourseContentFileFactory(ext_obj):
     result = BaseFactory(ext_obj, CourseContentFile, CourseContentFile)
-    return  result
+    return result
+
 
 def CourseContentImageFactory(ext_obj):
     result = BaseFactory(ext_obj, CourseContentImage, CourseContentImage)
-    return  result
+    return result

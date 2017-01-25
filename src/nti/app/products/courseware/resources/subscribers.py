@@ -18,12 +18,14 @@ from nti.app.products.courseware.resources.adapters import course_resources
 
 from nti.contenttypes.courses.interfaces import ICourseInstance
 
+
 @component.adapter(ICourseInstance, IObjectAddedEvent)
 def _on_course_added(course, event):
-	course_resources(course)
+    course_resources(course)
+
 
 @component.adapter(ICourseInstance, IObjectRemovedEvent)
 def _on_course_removed(course, event):
-	root = course_resources(course, False)
-	if root is not None:
-		root.clear()
+    root = course_resources(course, False)
+    if root is not None:
+        root.clear()

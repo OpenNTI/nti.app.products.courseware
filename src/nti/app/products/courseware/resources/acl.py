@@ -47,107 +47,112 @@ from nti.property.property import Lazy
 
 from nti.traversal.traversal import find_interface
 
-def _common_aces(course, aces, provenance=None):
-	# all scopes have read access
-	course.SharingScopes.initScopes()
-	for scope in course.SharingScopes:
-		aces.append(ace_allowing(IPrincipal(scope), ACT_READ, provenance))
 
-	if ICourseSubInstance.providedBy(course):
-		parent = get_parent_course(course)
-		for i in chain(parent.instructors or (), get_course_editors(parent)):
-			aces.append(ace_allowing(i, ACT_READ, provenance))
+def _common_aces(course, aces, provenance=None):
+    # all scopes have read access
+    course.SharingScopes.initScopes()
+    for scope in course.SharingScopes:
+        aces.append(ace_allowing(IPrincipal(scope), ACT_READ, provenance))
+
+    if ICourseSubInstance.providedBy(course):
+        parent = get_parent_course(course)
+        for i in chain(parent.instructors or (), get_course_editors(parent)):
+            aces.append(ace_allowing(i, ACT_READ, provenance))
+
 
 @interface.implementer(IACLProvider)
 @component.adapter(ICourseRootFolder)
 class CourseRootFolderACLProvider(object):
 
-	def __init__(self, context):
-		self.context = context
+    def __init__(self, context):
+        self.context = context
 
-	@property
-	def __parent__(self):
-		return self.context.__parent__
+    @property
+    def __parent__(self):
+        return self.context.__parent__
 
-	@Lazy
-	def __acl__(self):
-		aces = [ ace_allowing(ROLE_ADMIN, ALL_PERMISSIONS, self),
-				 ace_allowing(ROLE_CONTENT_EDITOR, ALL_PERMISSIONS, type(self))]
+    @Lazy
+    def __acl__(self):
+        aces = [ace_allowing(ROLE_ADMIN, ALL_PERMISSIONS, self),
+                ace_allowing(ROLE_CONTENT_EDITOR, ALL_PERMISSIONS, type(self))]
 
-		course = find_interface(self.context, ICourseInstance, strict=True)
-		for i in chain(course.instructors or (), get_course_editors(course)):
-			aces.append(ace_allowing(i, ALL_PERMISSIONS, type(self)))
+        course = find_interface(self.context, ICourseInstance, strict=True)
+        for i in chain(course.instructors or (), get_course_editors(course)):
+            aces.append(ace_allowing(i, ALL_PERMISSIONS, type(self)))
 
-		_common_aces(course, aces, type(self))
+        _common_aces(course, aces, type(self))
 
-		result = acl_from_aces(aces)
-		return result
+        result = acl_from_aces(aces)
+        return result
+
 
 @interface.implementer(IACLProvider)
 @component.adapter(ICourseLockedFolder)
 class CourseLockedFolderACLProvider(object):
 
-	def __init__(self, context):
-		self.context = context
+    def __init__(self, context):
+        self.context = context
 
-	@property
-	def __parent__(self):
-		return self.context.__parent__
+    @property
+    def __parent__(self):
+        return self.context.__parent__
 
-	def principals_and_perms(self, course):
-		yield ROLE_CONTENT_EDITOR, (ACT_READ, ACT_UPDATE)
+    def principals_and_perms(self, course):
+        yield ROLE_CONTENT_EDITOR, (ACT_READ, ACT_UPDATE)
 
-		for i in chain(course.instructors or (), get_course_editors(course)):
-			yield i, (ACT_READ, ACT_UPDATE)
+        for i in chain(course.instructors or (), get_course_editors(course)):
+            yield i, (ACT_READ, ACT_UPDATE)
 
-		course.SharingScopes.initScopes()
-		for scope in course.SharingScopes:
-			yield IPrincipal(scope), (ACT_READ,)
+        course.SharingScopes.initScopes()
+        for scope in course.SharingScopes:
+            yield IPrincipal(scope), (ACT_READ,)
 
-		if ICourseSubInstance.providedBy(course):
-			parent = get_parent_course(course)
-			for i in chain(parent.instructors or (), get_course_editors(parent)):
-				yield i, (ACT_READ,)
+        if ICourseSubInstance.providedBy(course):
+            parent = get_parent_course(course)
+            for i in chain(parent.instructors or (), get_course_editors(parent)):
+                yield i, (ACT_READ,)
 
-	@Lazy
-	def __acl__(self):
-		aces = [ ace_allowing(ROLE_ADMIN, ALL_PERMISSIONS, self) ]
-		course = find_interface(self.context, ICourseInstance, strict=True)
-		for i, perms in self.principals_and_perms(course):
-			for perm in perms:
-				aces.append(ace_allowing(i, perm, type(self)))
-		aces.append(ace_denying_all())
-		result = acl_from_aces(aces)
-		return result
+    @Lazy
+    def __acl__(self):
+        aces = [ace_allowing(ROLE_ADMIN, ALL_PERMISSIONS, self)]
+        course = find_interface(self.context, ICourseInstance, strict=True)
+        for i, perms in self.principals_and_perms(course):
+            for perm in perms:
+                aces.append(ace_allowing(i, perm, type(self)))
+        aces.append(ace_denying_all())
+        result = acl_from_aces(aces)
+        return result
+
 
 @interface.implementer(IACLProvider)
 @component.adapter(ICourseContentFolder)
 class CourseContentFolderACLProvider(ContentFolderACLProvider):
 
-	@Lazy
-	def __acl__(self):
-		aces = super(CourseContentFolderACLProvider, self).__aces__
-		course = find_interface(self.context, ICourseInstance, strict=True)
-		for i in chain(course.instructors or (), get_course_editors(course)):
-			aces.append(ace_allowing(i, ALL_PERMISSIONS, type(self)))
+    @Lazy
+    def __acl__(self):
+        aces = super(CourseContentFolderACLProvider, self).__aces__
+        course = find_interface(self.context, ICourseInstance, strict=True)
+        for i in chain(course.instructors or (), get_course_editors(course)):
+            aces.append(ace_allowing(i, ALL_PERMISSIONS, type(self)))
 
-		_common_aces(course, aces, type(self))
+        _common_aces(course, aces, type(self))
 
-		result = acl_from_aces(aces)
-		return result
+        result = acl_from_aces(aces)
+        return result
+
 
 @interface.implementer(IACLProvider)
 @component.adapter(ICourseContentFile)
 class CourseContentFileACLProvider(ContentBaseFileACLProvider):
 
-	@Lazy
-	def __acl__(self):
-		aces = super(CourseContentFileACLProvider, self).__aces__
-		course = find_interface(self.context, ICourseInstance, strict=True)
-		for i in chain(course.instructors or (), get_course_editors(course)):
-			aces.append(ace_allowing(i, ALL_PERMISSIONS, type(self)))
+    @Lazy
+    def __acl__(self):
+        aces = super(CourseContentFileACLProvider, self).__aces__
+        course = find_interface(self.context, ICourseInstance, strict=True)
+        for i in chain(course.instructors or (), get_course_editors(course)):
+            aces.append(ace_allowing(i, ALL_PERMISSIONS, type(self)))
 
-		_common_aces(course, aces, type(self))
+        _common_aces(course, aces, type(self))
 
-		result = acl_from_aces(aces)
-		return result
+        result = acl_from_aces(aces)
+        return result

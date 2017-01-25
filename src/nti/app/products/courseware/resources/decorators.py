@@ -30,22 +30,23 @@ from nti.links.links import Link
 
 LINKS = StandardExternalFields.LINKS
 
+
 @interface.implementer(IExternalMappingDecorator)
 class _CourseResourcesLinkDecorator(PreviewCourseAccessPredicateDecorator):
 
-	def _predicate(self, context, result):
-		user = self.remoteUser
-		course = ICourseInstance(context, None)
-		# XXX: Unauth access?
-		result = 	super(_CourseResourcesLinkDecorator, self)._predicate(context, result) \
-				and not ILegacyCourseInstance.providedBy(course) \
-				and (is_enrolled(context, user) or self.instructor_or_editor)
-		return result
+    def _predicate(self, context, result):
+        user = self.remoteUser
+        course = ICourseInstance(context, None)
+        # XXX: Unauth access?
+        result =  super(_CourseResourcesLinkDecorator, self)._predicate(context, result) \
+             and not ILegacyCourseInstance.providedBy(course) \
+             and (is_enrolled(context, user) or self.instructor_or_editor)
+        return result
 
-	def _do_decorate_external(self, context, result):
-		_links = result.setdefault(LINKS, [])
-		link = Link(context, rel=RESOURCES, elements=(RESOURCES,))
-		interface.alsoProvides(link, ILocation)
-		link.__name__ = ''
-		link.__parent__ = context
-		_links.append(link)
+    def _do_decorate_external(self, context, result):
+        _links = result.setdefault(LINKS, [])
+        link = Link(context, rel=RESOURCES, elements=(RESOURCES,))
+        interface.alsoProvides(link, ILocation)
+        link.__name__ = ''
+        link.__parent__ = context
+        _links.append(link)

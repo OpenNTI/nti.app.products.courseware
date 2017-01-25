@@ -130,8 +130,7 @@ class CourseSourceFiler(object):
         username = self.username
         context = kwargs.get('context')
         if structure:
-            bucket = self.images if is_image(
-                key, contentType) else self.documents
+            bucket = self.images if is_image(key, contentType) else self.documents
         elif bucket == ASSETS_FOLDER:  # legacy
             bucket = self.assets
         elif bucket:
