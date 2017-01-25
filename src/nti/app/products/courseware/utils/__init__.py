@@ -12,6 +12,8 @@ logger = __import__('logging').getLogger(__name__)
 import os
 import six
 import hashlib
+import mimetypes
+
 from datetime import datetime
 from collections import Mapping
 from urlparse import urlparse
@@ -43,8 +45,6 @@ from nti.app.products.courseware.utils.decorators import PreviewCourseAccessPred
 from nti.assessment.interfaces import IQAssignment
 
 from nti.contentlibrary.indexed_data import get_library_catalog
-
-from nti.common import mimetypes
 
 from nti.common.maps import CaseInsensitiveDict
 
