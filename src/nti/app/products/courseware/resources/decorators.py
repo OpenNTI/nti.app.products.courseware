@@ -38,9 +38,9 @@ class _CourseResourcesLinkDecorator(PreviewCourseAccessPredicateDecorator):
         user = self.remoteUser
         course = ICourseInstance(context, None)
         # XXX: Unauth access?
-        result =  super(_CourseResourcesLinkDecorator, self)._predicate(context, result) \
-             and not ILegacyCourseInstance.providedBy(course) \
-             and (is_enrolled(context, user) or self.instructor_or_editor)
+        result = super(_CourseResourcesLinkDecorator, self)._predicate(context, result) \
+            and not ILegacyCourseInstance.providedBy(course) \
+            and (is_enrolled(context, user) or self.instructor_or_editor)
         return result
 
     def _do_decorate_external(self, context, result):
