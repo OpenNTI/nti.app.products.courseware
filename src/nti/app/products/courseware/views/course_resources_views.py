@@ -28,55 +28,59 @@ from nti.dataserver import authorization as nauth
 from nti.externalization.interfaces import StandardExternalFields
 
 MIMETYPE = StandardExternalFields.MIMETYPE
-	
+
+
 @view_config(context=ICourseRootFolder)
 @view_config(context=ICourseContentFolder)
 @view_defaults(route_name='objects.generic.traversal',
-			   renderer='rest',
-			   request_method='POST',
-			   name='mkdir',
-			   permission=nauth.ACT_UPDATE)
+               renderer='rest',
+               request_method='POST',
+               name='mkdir',
+               permission=nauth.ACT_UPDATE)
 class CourseFolderMkdirView(MkdirView):
 
-	default_folder_mime_type = CourseContentFolder.mimeType
+    default_folder_mime_type = CourseContentFolder.mimeType
 
-	def readInput(self, value=None):
-		data = MkdirView.readInput(self, value=value)
-		data[MIMETYPE] = self.default_folder_mime_type
-		return data
+    def readInput(self, value=None):
+        data = MkdirView.readInput(self, value=value)
+        data[MIMETYPE] = self.default_folder_mime_type
+        return data
+
 
 @view_config(context=ICourseRootFolder)
 @view_config(context=ICourseContentFolder)
 @view_defaults(route_name='objects.generic.traversal',
-			   renderer='rest',
-			   request_method='POST',
-			   name='mkdirs',
-			   permission=nauth.ACT_UPDATE)
+               renderer='rest',
+               request_method='POST',
+               name='mkdirs',
+               permission=nauth.ACT_UPDATE)
 class CourseFolderMkdirsView(MkdirsView):
-	folder_factory = CourseContentFolder
+    folder_factory = CourseContentFolder
+
 
 @view_config(context=ICourseRootFolder)
 @view_config(context=ICourseContentFolder)
 @view_defaults(route_name='objects.generic.traversal',
-			   renderer='rest',
-			   request_method='POST',
-			   name='upload',
-			   permission=nauth.ACT_UPDATE)
+               renderer='rest',
+               request_method='POST',
+               name='upload',
+               permission=nauth.ACT_UPDATE)
 class CourseFolderUploadView(UploadView):
 
-	def factory(self, source):
-		return CourseContentFile
+    def factory(self, source):
+        return CourseContentFile
+
 
 @view_config(context=ICourseRootFolder)
 @view_config(context=ICourseContentFolder)
 @view_defaults(route_name='objects.generic.traversal',
-			   renderer='rest',
-			   request_method='POST',
-			   name='import',
-			   permission=nauth.ACT_UPDATE)
+               renderer='rest',
+               request_method='POST',
+               name='import',
+               permission=nauth.ACT_UPDATE)
 class CourseFolderImportView(ImportView):
 
-	folder_factory = CourseContentFolder
+    folder_factory = CourseContentFolder
 
-	def factory(self, filename):
-		return CourseContentFile
+    def factory(self, filename):
+        return CourseContentFile
