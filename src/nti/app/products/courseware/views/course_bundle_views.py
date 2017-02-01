@@ -16,11 +16,11 @@ from pyramid import httpexceptions as hexc
 from pyramid.view import view_config
 from pyramid.view import view_defaults
 
-from nti.appserver.ugd_edit_views import UGDPutView
-
 from nti.app.externalization.error import raise_json_error
 
 from nti.app.products.courseware import MessageFactory as _
+
+from nti.appserver.ugd_edit_views import UGDPutView
 
 from nti.contenttypes.courses.interfaces import ICourseInstance
 from nti.contenttypes.courses.interfaces import ICourseContentPackageBundle
