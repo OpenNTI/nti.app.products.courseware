@@ -26,12 +26,13 @@ setup(
 	license='Proprietary',
 	keywords='pyramid course',
 	classifiers=[
+		'Framework :: Pyramid',
 		'Intended Audience :: Developers',
 		'Natural Language :: English',
 		'Operating System :: OS Independent',
 		'Programming Language :: Python :: 2',
 		'Programming Language :: Python :: 2.7',
-		'Framework :: Pyramid',
+		'Programming Language :: Python :: Implementation :: CPython'
 	],
 	packages=find_packages('src'),
 	package_dir={'': 'src'},
