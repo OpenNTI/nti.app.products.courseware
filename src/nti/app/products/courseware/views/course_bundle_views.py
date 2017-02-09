@@ -58,4 +58,6 @@ class ContentPackageBundlePutView(UGDPutView):
         if added or removed:
             course = find_interface(result, ICourseInstance, strict=False)
             z_notify(CourseBundleUpdatedEvent(course, added, removed))
+        else:
+            logger.warn( 'Updating bundle without changing contents' )
         return result
