@@ -712,6 +712,7 @@ class SyncCourseView(_SyncAllLibrariesView):
                              ntiids=ntiids,
                              allowRemoval=False)
 
+
 # Enrollment views
 
 

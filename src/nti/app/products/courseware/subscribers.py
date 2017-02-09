@@ -78,8 +78,8 @@ from nti.ntiids.ntiids import find_object_with_ntiid
 
 # Email
 
-def _get_template(catalog_entry, 
-				  base_template='enrollment_confirmation_email', 
+def _get_template(catalog_entry,
+				  base_template='enrollment_confirmation_email',
 				  package='nti.app.products.courseware'):
 	"""
 	Look for course-specific templates, if available.

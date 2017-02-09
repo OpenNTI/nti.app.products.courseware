@@ -56,6 +56,6 @@ class ContentPackageBundlePutView(UGDPutView):
         removed = old_packages.difference(new_packages)
         added = new_packages.difference(old_packages)
         if added or removed:
-            course = find_interface(result, ICourseInstance, stric=False)
+            course = find_interface(result, ICourseInstance, strict=False)
             z_notify(CourseBundleUpdatedEvent(course, added, removed))
         return result
