@@ -86,7 +86,7 @@ def is_image(key, contentType=None):
 @interface.implementer(ICourseSourceFiler)
 class CourseSourceFiler(object):
 
-    def __init__(self, context=None, user=None, oid=True):
+    def __init__(self, context=None, user=None, oid=False):
         self.oid = oid
         self.user = user
         self.course = ICourseInstance(context)
@@ -209,7 +209,7 @@ class CourseSourceFiler(object):
         try:
             context = traverse(self.root, bucket) if bucket else self.root
             result = ICourseContentFolder.providedBy(context) \
-                  or ICourseRootFolder.providedBy(context)
+                or ICourseRootFolder.providedBy(context)
         except TraversalException:
             result = False
         return result
@@ -225,6 +225,5 @@ class CourseSourceFiler(object):
     keyName = key_name
 
     def get_external_link(self, item):
-        result = to_external_file_link(item, self.oid)
-        return result
+        return to_external_file_link(item, self.oid)
     to_external_link = get_external_link

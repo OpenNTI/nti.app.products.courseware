@@ -91,7 +91,7 @@ def get_file_from_external_link(link):
     return None
 
 
-def to_external_file_link(context, oid=True):
+def to_external_file_link(context, oid=False):
     if oid:
         return to_external_download_oid_href(context)
     return to_external_cf_io_href(context)
