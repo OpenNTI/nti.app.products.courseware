@@ -82,8 +82,7 @@ class CourseRootFolderACLProvider(object):
 
         _common_aces(course, aces, type(self))
 
-        result = acl_from_aces(aces)
-        return result
+        return acl_from_aces(aces)
 
 
 @interface.implementer(IACLProvider)
@@ -109,7 +108,8 @@ class CourseLockedFolderACLProvider(object):
 
         if ICourseSubInstance.providedBy(course):
             parent = get_parent_course(course)
-            for i in chain(parent.instructors or (), get_course_editors(parent)):
+            instructors = parent.instructors or ()
+            for i in chain(instructors, get_course_editors(parent)):
                 yield i, (ACT_READ,)
 
     @Lazy
@@ -120,8 +120,7 @@ class CourseLockedFolderACLProvider(object):
             for perm in perms:
                 aces.append(ace_allowing(i, perm, type(self)))
         aces.append(ace_denying_all())
-        result = acl_from_aces(aces)
-        return result
+        return acl_from_aces(aces)
 
 
 @interface.implementer(IACLProvider)
@@ -137,8 +136,7 @@ class CourseContentFolderACLProvider(ContentFolderACLProvider):
 
         _common_aces(course, aces, type(self))
 
-        result = acl_from_aces(aces)
-        return result
+        return acl_from_aces(aces)
 
 
 @interface.implementer(IACLProvider)
@@ -154,5 +152,4 @@ class CourseContentFileACLProvider(ContentBaseFileACLProvider):
 
         _common_aces(course, aces, type(self))
 
-        result = acl_from_aces(aces)
-        return result
+        return acl_from_aces(aces)

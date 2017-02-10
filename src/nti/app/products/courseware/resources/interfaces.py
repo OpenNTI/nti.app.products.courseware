@@ -41,7 +41,9 @@ class ICourseContentResource(interface.Interface):
                          required=False, readonly=True)
 
 
-class ICourseContentFolder(IContentFolder, ICourseContentResource, IAssociationsMixin):
+class ICourseContentFolder(IContentFolder,
+                           ICourseContentResource, 
+                           IAssociationsMixin):
     pass
 
 

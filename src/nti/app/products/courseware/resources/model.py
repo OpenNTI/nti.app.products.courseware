@@ -64,7 +64,9 @@ class CourseContentResource(Contained):
 
 
 @interface.implementer(ICourseContentFolder)
-class CourseContentFolder(CourseContentResource, ContentFolder, AssociationsMixin):
+class CourseContentFolder(CourseContentResource, 
+                          ContentFolder,
+                          AssociationsMixin):
     mimeType = mime_type = u'application/vnd.nextthought.courseware.contentfolder'
 
 

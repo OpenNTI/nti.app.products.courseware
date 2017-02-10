@@ -20,12 +20,12 @@ from nti.contenttypes.courses.interfaces import ICourseInstance
 
 
 @component.adapter(ICourseInstance, IObjectAddedEvent)
-def _on_course_added(course, event):
+def _on_course_added(course, event=None):
     course_resources(course)
 
 
 @component.adapter(ICourseInstance, IObjectRemovedEvent)
-def _on_course_removed(course, event):
+def _on_course_removed(course, event=None):
     root = course_resources(course, False)
     if root is not None:
         root.clear()

@@ -65,7 +65,7 @@ def _entry_resources(context, create=True):
     return course_resources(context, create)
 
 
-def _resources_for_course_path_adapter(context, request):
+def _resources_for_course_path_adapter(context, request=None):
     course = ICourseInstance(context)
     return _course_resources(course)
 
