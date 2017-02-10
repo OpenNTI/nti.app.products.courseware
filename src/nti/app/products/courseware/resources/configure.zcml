@@ -38,15 +38,13 @@
 			 for=".interfaces.ICourseContentFolder"
 			 provides="nti.namedfile.interfaces.IFileConstraints" />
 
-	<configure zcml:condition="have devmode">
-		<adapter factory=".providers.CourseFileExternalLinkProvider" 
-				 provides="nti.app.contentfile.interfaces.IExternalLinkProvider" 
-				 for=".interfaces.ICourseContentFile" />
+	<adapter factory=".providers.CourseFileExternalLinkProvider" 
+			 provides="nti.app.contentfile.interfaces.IExternalLinkProvider" 
+			 for=".interfaces.ICourseContentFile" />
 		
-		<adapter factory=".providers.CourseFileExternalLinkProvider" 
-				 provides="nti.app.contentfile.interfaces.IExternalLinkProvider"
-				 for=".interfaces.ICourseContentImage" />
-	</configure>
+	<adapter factory=".providers.CourseFileExternalLinkProvider" 
+			 provides="nti.app.contentfile.interfaces.IExternalLinkProvider"
+			 for=".interfaces.ICourseContentImage" />
 
 	<!-- Traversal -->
 	<adapter factory=".adapters._resources_for_course_path_adapter"
