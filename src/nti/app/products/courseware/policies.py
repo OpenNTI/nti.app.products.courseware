@@ -36,7 +36,7 @@ class AdvancedEditingCapabilityFilter(object):
 
     def filterCapabilities(self, capabilities):
         result = set(capabilities)
-        if 		self.user is None \
-                or not has_permission(nauth.ACT_CONTENT_EDIT, self.user.__parent__):
+        if     self.user is None \
+            or not has_permission(nauth.ACT_CONTENT_EDIT, self.user.__parent__):
             result.discard('nti.platform.courseware.advanced_editing')
         return result
