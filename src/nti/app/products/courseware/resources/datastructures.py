@@ -41,10 +41,8 @@ class CourseContentImageObjectIO(ContentImageObjectIO):
 
 
 def CourseContentFileFactory(ext_obj):
-    result = BaseFactory(ext_obj, CourseContentFile, CourseContentFile)
-    return result
+    return BaseFactory(ext_obj, CourseContentFile, CourseContentFile)
 
 
 def CourseContentImageFactory(ext_obj):
-    result = BaseFactory(ext_obj, CourseContentImage, CourseContentImage)
-    return result
+    return BaseFactory(ext_obj, CourseContentImage, CourseContentImage)
