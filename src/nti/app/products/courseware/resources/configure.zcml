@@ -40,11 +40,11 @@
 
 	<configure zcml:condition="have devmode">
 		<adapter factory=".providers.CourseFileExternalLinkProvider" 
-				 provides=".interfaces.IExternalLinkProvider" 
+				 provides="nti.app.contentfile.interfaces.IExternalLinkProvider" 
 				 for=".interfaces.ICourseContentFile" />
 		
 		<adapter factory=".providers.CourseFileExternalLinkProvider" 
-				 provides=".interfaces.IExternalLinkProvider"
+				 provides="nti.app.contentfile.interfaces.IExternalLinkProvider"
 				 for=".interfaces.ICourseContentImage" />
 	</configure>
 
