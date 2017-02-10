@@ -9,6 +9,8 @@ __docformat__ = "restructuredtext en"
 
 logger = __import__('logging').getLogger(__name__)
 
+from urllib import unquote
+
 from zope import interface
 
 from zope.container.contained import Contained
@@ -45,6 +47,22 @@ from nti.app.products.courseware import CHECK_COURSE_INVITATIONS_CSV
 from nti.app.products.courseware import VIEW_COURSE_RECURSIVE_BUCKET
 from nti.app.products.courseware import VIEW_COURSE_ENROLLMENT_ROSTER
 
+from nti.contenttypes.courses.interfaces import ICourseInstance
+
+from nti.dataserver.authorization import ACT_READ
+from nti.dataserver.authorization import ROLE_ADMIN
+from nti.dataserver.authorization import ROLE_CONTENT_ADMIN
+
+from nti.dataserver.authorization_acl import ace_allowing
+from nti.dataserver.authorization_acl import acl_from_aces
+
+from nti.dataserver.interfaces import ALL_PERMISSIONS
+
+from nti.ntiids.ntiids import find_object_with_ntiid
+
+from nti.property.property import Lazy
+
+
 @interface.implementer(IPathAdapter)
 class CourseAdminPathAdapter(Contained):
 
@@ -55,7 +73,24 @@ class CourseAdminPathAdapter(Contained):
         self.request = request
         self.__parent__ = context
 
+    def __getitem__(self, ntiid):
+        if not ntiid:
+            raise hexc.HTTPNotFound()
+        ntiid = unquote(ntiid)
+        result = ICourseInstance(find_object_with_ntiid(ntiid), None)
+        if ICourseInstance.providedBy(result):
+            return result
+        raise KeyError(ntiid)
 
-def raise_error(v, tb=None, factory=hexc.HTTPUnprocessableEntity, request=None):
+    @Lazy
+    def __acl__(self):
+        aces = [ace_allowing(ROLE_ADMIN, ALL_PERMISSIONS, type(self)),
+                ace_allowing(ROLE_CONTENT_ADMIN, ALL_PERMISSIONS, type(self))]
+        return acl_from_aces(aces)
+
+
+def raise_error(data, tb=None,
+                factory=hexc.HTTPUnprocessableEntity, 
+                request=None):
     request = request or get_current_request()
-    raise_json_error(request, factory, v, tb)
+    raise_json_error(request, factory, data, tb)
