@@ -15,7 +15,7 @@ from pyramid.threadlocal import get_current_request
 
 from nti.app.contentfile.interfaces import IExternalLinkProvider
 
-from nti.app.products.courseware.resources.utils import to_external_download_oid_href
+from nti.app.products.courseware.resources.utils import to_external_cf_io_href
 
 
 @interface.implementer(IExternalLinkProvider)
@@ -26,4 +26,4 @@ class CourseFileExternalLinkProvider(object):
         self.request = request or get_current_request()
 
     def link(self):
-        return to_external_download_oid_href(self.context)
+        return to_external_cf_io_href(self.context)
