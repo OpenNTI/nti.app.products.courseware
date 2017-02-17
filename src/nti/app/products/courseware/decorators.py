@@ -684,22 +684,24 @@ class _LegacyCCEFieldDecorator(object):
 				if getattr(context, 'Term', ''):  # non interface, briefly seen field
 					purch_id += context.Term.replace(' ', '').replace('-', '')
 
-				# We have to externalize the package to get correct URLs
-				# to the course. They need to be absolute because there is no context
+				# We have to externalize the package to get correct URLs to
+				# the course. They need to be absolute because there is no context
 				# in the purchasable.
 				ext_package = to_external_object(package)
-				icon = urljoin(ext_package['href'],
-							   'images/' + purch_id + '_promo.png')
-				thumbnail = urljoin(ext_package['href'],
-									'images/' + purch_id + '_cover.png')
-				# Temporarily also stash these things on the entry itself too
-				# where they can be externalized in the course catalog;
-				# this should save us a trip through next time
-				context.LegacyPurchasableIcon = icon
-				context.LegacyPurchasableThumbnail = thumbnail
+				# Make sure the package has info
+				if 'href' in ext_package:
+					icon = urljoin(ext_package['href'],
+								   'images/' + purch_id + '_promo.png')
+					thumbnail = urljoin(ext_package['href'],
+										'images/' + purch_id + '_cover.png')
+					# Temporarily also stash these things on the entry itself too
+					# where they can be externalized in the course catalog;
+					# this should save us a trip through next time
+					context.LegacyPurchasableIcon = icon
+					context.LegacyPurchasableThumbnail = thumbnail
 
-				result['LegacyPurchasableIcon'] = icon
-				result['LegacyPurchasableThumbnail'] = thumbnail
+					result['LegacyPurchasableIcon'] = icon
+					result['LegacyPurchasableThumbnail'] = thumbnail
 
 		if 'CourseNTIID' not in result:
 			if not checked:
