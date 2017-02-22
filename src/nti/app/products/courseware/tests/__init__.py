@@ -47,19 +47,28 @@ from nti.testing.layers import GCLayerMixin
 from nti.testing.layers import ZopeComponentLayer
 from nti.testing.layers import ConfiguringLayerMixin
 
+def setChameleonCache(cls):
+	cls.old_cache_dir = os.getenv('CHAMELEON_CACHE')
+	cls.new_cache_dir = tempfile.mkdtemp(prefix="cham_")
+	os.environ['CHAMELEON_CACHE'] = cls.new_cache_dir
+
+def restoreChameleonCache(cls):
+	shutil.rmtree(cls.new_cache_dir, True)
+	os.environ['CHAMELEON_CACHE'] = cls.old_cache_dir
+		
 class SharedConfiguringTestLayer(ZopeComponentLayer,
 								 GCLayerMixin,
 								 ConfiguringLayerMixin,
 								 DSInjectorMixin):
 
-	set_up_packages = ('nti.app.products.courseware','nti.contenttypes.courses', 'nti.dataserver')
+	set_up_packages = ('nti.app.products.courseware',
+					   'nti.contenttypes.courses', 
+					   'nti.dataserver')
 
 	@classmethod
 	def setUp(cls):
+		setChameleonCache(cls)
 		cls.setUpPackages()
-		cls.old_data_dir = os.getenv('DATASERVER_DATA_DIR')
-		cls.new_data_dir = tempfile.mkdtemp(dir="/tmp")
-		os.environ['DATASERVER_DATA_DIR'] = cls.new_data_dir
 
 	@classmethod
 	def tearDown(cls):
@@ -69,12 +78,10 @@ class SharedConfiguringTestLayer(ZopeComponentLayer,
 	@classmethod
 	def testSetUp(cls, test=None):
 		cls.setUpTestDS(test)
-		shutil.rmtree(cls.new_data_dir, True)
-		os.environ['DATASERVER_DATA_DIR'] = cls.old_data_dir or '/tmp'
 
 	@classmethod
 	def testTearDown(cls):
-		pass
+		restoreChameleonCache(cls)
 
 class CourseLayerTest(DataserverLayerTest):
 	layer = SharedConfiguringTestLayer
@@ -198,6 +205,8 @@ class LegacyInstructedCourseApplicationTestLayer(ApplicationTestLayer):
 
 	@classmethod
 	def setUp(cls):
+		setChameleonCache(cls)
+
 		# Must implement!
 		cls._install_library(cls, cls._user_creation)
 
@@ -228,7 +237,11 @@ class LegacyInstructedCourseApplicationTestLayer(ApplicationTestLayer):
 
 		_do_then_enumerate_library(cleanup)
 
-	testSetUp = testTearDown = classmethod(lambda cls: None)
+	testSetUp = classmethod(lambda cls: None)
+	
+	@classmethod
+	def testTearDown(cls):
+		restoreChameleonCache(cls)
 
 class RestrictedInstructedCourseApplicationTestLayer(ApplicationTestLayer):
 
@@ -246,6 +259,7 @@ class RestrictedInstructedCourseApplicationTestLayer(ApplicationTestLayer):
 	@classmethod
 	def setUp(cls):
 		# Must implement!
+		setChameleonCache(cls)
 		LegacyInstructedCourseApplicationTestLayer._install_library(cls, cls._user_creation)
 
 	@classmethod
@@ -260,7 +274,11 @@ class RestrictedInstructedCourseApplicationTestLayer(ApplicationTestLayer):
 
 		_do_then_enumerate_library(cleanup)
 
-	testSetUp = testTearDown = classmethod(lambda cls: None)
+	testSetUp = classmethod(lambda cls: None)
+	
+	@classmethod
+	def testTearDown(cls):
+		restoreChameleonCache(cls)
 
 class NotInstructedCourseApplicationTestLayer(ApplicationTestLayer):
 
@@ -270,6 +288,7 @@ class NotInstructedCourseApplicationTestLayer(ApplicationTestLayer):
 	@classmethod
 	def setUp(cls):
 		# Must implement!
+		setChameleonCache(cls)
 		LegacyInstructedCourseApplicationTestLayer._install_library(
 			cls,
 			lambda: lambda: True, sync_libs=True)
@@ -287,7 +306,11 @@ class NotInstructedCourseApplicationTestLayer(ApplicationTestLayer):
 
 		_do_then_enumerate_library(cleanup)
 
-	testSetUp = testTearDown = classmethod(lambda cls: None)
+	testSetUp = classmethod(lambda cls: None)
+	
+	@classmethod
+	def testTearDown(cls):
+		restoreChameleonCache(cls)
 
 class PersistentInstructedCourseApplicationTestLayer(ApplicationTestLayer):
 	# A mix of new and old-style courses
@@ -306,6 +329,7 @@ class PersistentInstructedCourseApplicationTestLayer(ApplicationTestLayer):
 	@classmethod
 	def setUp(cls):
 		# Must implement!
+		setChameleonCache(cls)
 		LegacyInstructedCourseApplicationTestLayer._install_library(cls, cls._user_creation, sync_libs=True)
 
 	@classmethod
@@ -322,7 +346,11 @@ class PersistentInstructedCourseApplicationTestLayer(ApplicationTestLayer):
 
 		_do_then_enumerate_library(cleanup)
 
-	testSetUp = testTearDown = classmethod(lambda cls: None)
+	testSetUp = classmethod(lambda cls: None)
+	
+	@classmethod
+	def testTearDown(cls):
+		restoreChameleonCache(cls)
 
 # Export the new-style stuff as default
 InstructedCourseApplicationTestLayer = PersistentInstructedCourseApplicationTestLayer
