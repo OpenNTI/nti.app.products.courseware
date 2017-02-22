@@ -280,6 +280,8 @@
 	<!-- A subscriber for important principals notables. -->
 	<subscriber factory=".notables._UserPriorityCreatorNotableProvider"
 				provides="nti.app.notabledata.interfaces.IUserPriorityCreatorNotableProvider"/>
+	<subscriber factory=".notables._UserInstructorFeedbackNotableProvider"
+				provides="nti.app.notabledata.interfaces.IUserInstructorFeedbackNotableProvider"/>
 
 	<!-- Traversal paths -->
 	<adapter factory=".workspaces.CatalogEntryLocationInfo" />
