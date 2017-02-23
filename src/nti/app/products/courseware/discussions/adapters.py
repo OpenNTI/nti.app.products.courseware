@@ -18,8 +18,9 @@ from nti.namedfile.constraints import FileConstraints
 
 from nti.namedfile.interfaces import IFileConstraints
 
+
 @component.adapter(ICourseDiscussion)
 @interface.implementer(IFileConstraints)
 class _CourseDiscussionFileConstraints(FileConstraints):
-	max_files = 2
-	max_file_size = 10485760  # 10 MB
+    max_files = 2
+    max_file_size = 10485760  # 10 MB

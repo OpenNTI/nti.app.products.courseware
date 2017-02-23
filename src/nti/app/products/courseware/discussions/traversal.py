@@ -19,12 +19,15 @@ from nti.contenttypes.courses.interfaces import ICourseInstance
 
 from nti.traversal.traversal import ContainerAdapterTraversable
 
+
 @component.adapter(ICourseInstance, IRequest)
 def _discussions_for_course_path_adapter(course, request):
-	return ICourseDiscussions(course)
+    return ICourseDiscussions(course)
+
 
 @component.adapter(ICourseDiscussions, IRequest)
 class _CourseDiscussionsTraversable(ContainerAdapterTraversable):
 
-	def traverse(self, key, remaining_path):
-		return super(_CourseDiscussionsTraversable, self).traverse(key, remaining_path)
+    def traverse(self, key, remaining_path):
+        return super(_CourseDiscussionsTraversable, self).traverse(key, 
+                                                                   remaining_path)

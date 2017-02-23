@@ -13,13 +13,14 @@ from zope import interface
 
 from nti.appserver.interfaces import ICreatableObjectFilter
 
+
 @interface.implementer(ICreatableObjectFilter)
 class _CoursesContentObjectFilter(object):
 
-    TO_FILTER = ("application/vnd.nextthought.courses.coursecataloginstructorinfo", 
-                 "application/vnd.nextthought.courses.coursesynchronizationresults", 
+    TO_FILTER = ("application/vnd.nextthought.courses.coursecataloginstructorinfo",
+                 "application/vnd.nextthought.courses.coursesynchronizationresults",
                  "application/vnd.nextthought.courseware.courseinstanceadministrativerole")
-   
+
     def __init__(self, context=None):
         pass
 

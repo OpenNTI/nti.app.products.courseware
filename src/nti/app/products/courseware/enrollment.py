@@ -43,76 +43,80 @@ CLASS = StandardExternalFields.CLASS
 ITEMS = StandardExternalFields.ITEMS
 MIMETYPE = StandardExternalFields.MIMETYPE
 
+
 @WithRepr
 @NoPickle
 @EqHash('Name')
 @interface.implementer(IEnrollmentOption)
 class EnrollmentOption(SchemaConfigured):
 
-	__parent__ = None
-	__external_can_create__ = False
-	__external_class_name__ = "EnrollmentOption"
-	mime_type = mimeType = 'application/vnd.nextthought.courseware.enrollmentoption'
+    __parent__ = None
+    __external_can_create__ = False
+    __external_class_name__ = "EnrollmentOption"
+    mime_type = mimeType = 'application/vnd.nextthought.courseware.enrollmentoption'
 
-	CatalogEntryNTIID = FP(IEnrollmentOption['CatalogEntryNTIID'])
+    CatalogEntryNTIID = FP(IEnrollmentOption['CatalogEntryNTIID'])
 
-	@property
-	def Name(self):
-		return self.__external_class_name__
-	__name__ = Name
+    @property
+    def Name(self):
+        return self.__external_class_name__
+    __name__ = Name
 
-	@Name.setter
-	def Name(self, value):
-		pass
+    @Name.setter
+    def Name(self, value):
+        pass
+
 
 @EqHash('Name', 'Enabled')
 @interface.implementer(IOpenEnrollmentOption)
 class OpenEnrollmentOption(EnrollmentOption):
 
-	__external_class_name__ = "OpenEnrollment"
-	mime_type = mimeType = 'application/vnd.nextthought.courseware.openenrollmentoption'
+    __external_class_name__ = "OpenEnrollment"
+    mime_type = mimeType = 'application/vnd.nextthought.courseware.openenrollmentoption'
 
-	Enabled = FP(IOpenEnrollmentOption['Enabled'])
+    Enabled = FP(IOpenEnrollmentOption['Enabled'])
 
-	IsEnabled = alias('Enabled')
+    IsEnabled = alias('Enabled')
+
 
 @WithRepr
 @NoPickle
 @interface.implementer(IEnrollmentOptions, IInternalObjectExternalizer)
 class EnrollmentOptions(LocatedExternalDict):
 
-	__external_can_create__ = False
-	__external_class_name__ = "EnrollmentOptions"
-	mime_type = mimeType = 'application/vnd.nextthought.courseware.enrollmentoptions'
+    __external_can_create__ = False
+    __external_class_name__ = "EnrollmentOptions"
+    mime_type = mimeType = 'application/vnd.nextthought.courseware.enrollmentoptions'
 
-	def append(self, option):
-		self[option.Name] = option
+    def append(self, option):
+        self[option.Name] = option
 
-	def __setitem__(self, key, value):
-		assert IEnrollmentOption.providedBy(value)
-		assert value.Name
-		value.__parent__ = self
-		return LocatedExternalDict.__setitem__(self, key, value)
+    def __setitem__(self, key, value):
+        assert IEnrollmentOption.providedBy(value)
+        assert value.Name
+        value.__parent__ = self
+        return LocatedExternalDict.__setitem__(self, key, value)
 
-	def toExternalObject(self, *args, **kwargs):
-		result = LocatedExternalDict()
-		result[CLASS] = self.__external_class_name__
-		result[MIMETYPE] = self.mimeType
-		items = result[ITEMS] = {}
-		for value in self.values():
-			items[value.Name] = to_external_object(value)
-		return result
+    def toExternalObject(self, *args, **kwargs):
+        result = LocatedExternalDict()
+        result[CLASS] = self.__external_class_name__
+        result[MIMETYPE] = self.mimeType
+        items = result[ITEMS] = {}
+        for value in self.values():
+            items[value.Name] = to_external_object(value)
+        return result
+
 
 @component.adapter(ICourseCatalogEntry)
 @interface.implementer(IEnrollmentOptionProvider)
 class OpenEnrollmentOptionProvider(object):
 
-	def __init__(self, context):
-		self.context = context
+    def __init__(self, context):
+        self.context = context
 
-	def iter_options(self):
-		result = OpenEnrollmentOption()
-		result.CatalogEntryNTIID = self.context.ntiid
-		result.Enabled = 	 not INonPublicCourseInstance.providedBy(self.context) \
-						 and not IDenyOpenEnrollment.providedBy(self.context)
-		return (result,)
+    def iter_options(self):
+        result = OpenEnrollmentOption()
+        result.CatalogEntryNTIID = self.context.ntiid
+        result.Enabled = not INonPublicCourseInstance.providedBy(self.context) \
+                     and not IDenyOpenEnrollment.providedBy(self.context)
+        return (result,)

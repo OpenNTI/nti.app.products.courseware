@@ -32,20 +32,21 @@ from nti.links.links import Link
 
 LINKS = StandardExternalFields.LINKS
 
+
 @interface.implementer(IExternalObjectDecorator)
 class _CourseDiscussionsLinkDecorator(AbstractAuthenticatedRequestAwareDecorator):
 
-	def _predicate(self, context, result):
-		return 		self._is_authenticated \
-				and (	is_course_editor(context, self.remoteUser)
-					 or has_permission(ACT_CONTENT_EDIT, context, self.request))
+    def _predicate(self, context, result):
+        return   self._is_authenticated \
+            and (   is_course_editor(context, self.remoteUser)
+                 or has_permission(ACT_CONTENT_EDIT, context, self.request))
 
-	def _do_decorate_external(self, context, result):
-		_links = result.setdefault(LINKS, [])
-		link = Link(context,
-					rel=VIEW_COURSE_DISCUSSIONS,
-					elements=(VIEW_COURSE_DISCUSSIONS,))
-		interface.alsoProvides(link, ILocation)
-		link.__name__ = ''
-		link.__parent__ = context
-		_links.append(link)
+    def _do_decorate_external(self, context, result):
+        _links = result.setdefault(LINKS, [])
+        link = Link(context,
+                    rel=VIEW_COURSE_DISCUSSIONS,
+                    elements=(VIEW_COURSE_DISCUSSIONS,))
+        interface.alsoProvides(link, ILocation)
+        link.__name__ = ''
+        link.__parent__ = context
+        _links.append(link)

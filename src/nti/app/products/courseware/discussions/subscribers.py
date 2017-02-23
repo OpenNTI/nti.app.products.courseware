@@ -34,39 +34,44 @@ from nti.contenttypes.courses.interfaces import ICourseRolesSynchronized
 from nti.contenttypes.courses.interfaces import ICatalogEntrySynchronized
 from nti.contenttypes.courses.interfaces import ICourseVendorInfoSynchronized
 
+
 @component.adapter(ICourseDiscussion, IObjectAddedEvent)
 def _discussions_added(record, event):
-	course = ICourseInstance( record, None )
-	if course is not None:
-		# Now update our hrefs/icons, if necessary.
-		target_filer = get_course_filer(course)
-		if os.path.exists( course.root.absolute_path ):
-			source_filer = DirectoryFiler(course.root.absolute_path)
-			transfer_resources_from_filer(ICourseDiscussion,
-										  record,
-										  source_filer,
-										  target_filer)
-	# Now create topics
-	if auto_create_forums(record):
-		create_topics(record)
+    course = ICourseInstance(record, None)
+    if course is not None:
+        # Now update our hrefs/icons, if necessary.
+        target_filer = get_course_filer(course)
+        if os.path.exists(course.root.absolute_path):
+            source_filer = DirectoryFiler(course.root.absolute_path)
+            transfer_resources_from_filer(ICourseDiscussion,
+                                          record,
+                                          source_filer,
+                                          target_filer)
+    # Now create topics
+    if auto_create_forums(record):
+        create_topics(record)
+
 
 @component.adapter(ICourseDiscussion, IObjectModifiedEvent)
 def _discussions_modified(record, event):
-	if auto_create_forums(record):
-		create_topics(record)
+    if auto_create_forums(record):
+        create_topics(record)
+
 
 @component.adapter(ICourseCatalogEntry, ICatalogEntrySynchronized)
 def _catalog_entry_synchronized(entry, event):
-	course = ICourseInstance(entry, None)
-	if course is not None and auto_create_forums(course):
-		update_course_forums(course)
+    course = ICourseInstance(entry, None)
+    if course is not None and auto_create_forums(course):
+        update_course_forums(course)
+
 
 @component.adapter(ICourseInstance, ICourseRolesSynchronized)
 def _course_roles_synchronized(course, event):
-	if course is not None and auto_create_forums(course):
-		update_course_forums(course)
+    if course is not None and auto_create_forums(course):
+        update_course_forums(course)
+
 
 @component.adapter(ICourseInstance, ICourseVendorInfoSynchronized)
 def _course_vendor_info_synchronized(course, event):
-	if course is not None and auto_create_forums(course):
-		update_course_forums(course)
+    if course is not None and auto_create_forums(course):
+        update_course_forums(course)
