@@ -28,7 +28,6 @@ from nti.contenttypes.courses.interfaces import ENROLLMENT_SCOPE_MAP
 from nti.contenttypes.courses.interfaces import ICourseInstance
 from nti.contenttypes.courses.interfaces import ICourseCatalogEntry
 from nti.contenttypes.courses.interfaces import ICourseInstanceEnrollmentRecord
-from nti.contenttypes.courses.interfaces import ES_PUBLIC
 
 from nti.dataserver.contenttypes.forums.interfaces import IPersonalBlogComment
 
@@ -74,9 +73,9 @@ class TopLevelPriorityNotableFilter(object):
         obj_creator = getattr(obj, 'creator', None)
         obj_creator = getattr(obj_creator, 'username', obj_creator)
         # Filter out blog comments that might cause confusion.
-        if 		obj_creator is None \
-                or 	IPersonalBlogComment.providedBy(obj) \
-                or obj_creator == user.username:
+        if     obj_creator is None \
+            or IPersonalBlogComment.providedBy(obj) \
+            or obj_creator == user.username:
             return False
 
         # Note: pulled from metadata_index; first two params not used.
@@ -93,14 +92,14 @@ class TopLevelPriorityNotableFilter(object):
                     continue
                 course = ICourseInstance(enrollment, None)
                 catalog_entry = ICourseCatalogEntry(course, None)
-                if 		course is None \
-                        or 	catalog_entry is None \
-                        or not catalog_entry.isCourseCurrentlyActive():  # pragma: no cover
+                if     course is None \
+                    or catalog_entry is None \
+                    or not catalog_entry.isCourseCurrentlyActive():  # pragma: no cover
                     continue
 
                 if obj_creator in (x.id for x in course.instructors or ()):
-                    scopes = _get_implied_course_scopes(
-                        course, enrollment.Scope)
+                    scopes = _get_implied_course_scopes(course,
+                                                        enrollment.Scope)
                     for scope in scopes:
                         if obj.isSharedDirectlyWith(scope):
                             return True
@@ -136,13 +135,12 @@ class _UserInstructorFeedbackNotableProvider(object):
 
     def get_notable_intids(self):
         results = Set()
-
         instructed_courses = get_instructed_courses(self.context)
         for course in instructed_courses:
             course_enrollments = get_course_enrollments(course)
             student_ids = [x.Principal.id for x in course_enrollments]
-            student_intids = self._catalog['creator'].apply(
-                {'any_of': student_ids})
+            query =  {'any_of': student_ids}
+            student_intids = self._catalog['creator'].apply(query)
             results.update(self._get_feedback_intids(student_intids))
 
         return results
@@ -185,21 +183,21 @@ class _UserPriorityCreatorNotableProvider(object):
                 continue
             course = ICourseInstance(enrollment, None)
             catalog_entry = ICourseCatalogEntry(course, None)
-            if 		course is None \
-                    or 	catalog_entry is None  \
-                    or not catalog_entry.isCourseCurrentlyActive():  # pragma: no cover
+            if     course is None \
+                or catalog_entry is None  \
+                or not catalog_entry.isCourseCurrentlyActive():  # pragma: no cover
                 continue
 
             course_instructors = {x.id for x in course.instructors}
-            instructor_intids = catalog['creator'].apply(
-                {'any_of': course_instructors})
+            query = {'any_of': course_instructors}
+            instructor_intids = catalog['creator'].apply(query)
 
             # Gather the implied course scopes.
             scopes = _get_implied_course_scopes(course, enrollment.Scope)
             scope_ntiids = [scope.NTIID for scope in scopes]
 
-            course_shared_with_intids = catalog[
-                'sharedWith'].apply({'any_of': scope_ntiids})
+            query = {'any_of': scope_ntiids}
+            course_shared_with_intids = catalog['sharedWith'].apply(query)
             course_results = catalog.family.IF.intersection(instructor_intids,
                                                             course_shared_with_intids)
             results.update(course_results)
