@@ -19,6 +19,10 @@ logger = __import__('logging').getLogger(__name__)
 from zope import component
 from zope import interface
 
+from zope.authentication.interfaces import IUnauthenticatedPrincipal
+
+from zope.security.management import getInteraction
+
 from zope.traversing.interfaces import IPathAdapter
 
 from pyramid import httpexceptions as hexc
@@ -241,10 +245,15 @@ class AllCatalogEntriesView(AbstractAuthenticatedView):
 class AnonymouslyAvailableCourses(AbstractView):
 
 	def _can_access(self):
-		# TODO: circle back around and do a more legitimate check here
-		# identity = self.request.environ.get('repoze.who.identity')
-		# return is_anonymous_identity(identity)
-		return False
+		"""
+		Only let requests that are actually anonymous, those which the interaction
+		provides IUnauthenticatedPrincipal, fetch this information
+		"""
+		# we should always have an interaction here at this point right?
+		# if we don't something went really wrong and we probably want to blow
+		# up aggresively.
+		principal = getInteraction().participations[0].principal
+		return IUnauthenticatedPrincipal.providedBy(principal)
 
 	def __call__(self):
 		if not self._can_access():

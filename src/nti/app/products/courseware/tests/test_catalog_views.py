@@ -25,17 +25,11 @@ class TestCatalogViews(ApplicationLayerTest):
 
 	default_origin = b'http://janux.ou.edu'
 
-	@unittest.skip("Still work-in-progress")
 	@WithSharedApplicationMockDS(testapp=True, users=True, default_authenticate=False)
 	def test_anonymously_available_courses_view(self):
 		anonymous_instances_url = '/dataserver2/_AnonymouslyButNotPubliclyAvailableCourseInstances'
 
-
-		# Anonymous requests that aren't our special classifier prompt for auth
-		unauthed_environ = self._make_extra_environ(username=None)
-		self.testapp.get(anonymous_instances_url, extra_environ=unauthed_environ, status=401)
-
-		# authed users also can't login
+		# authed users also can't fetch this view
 		with mock_dataserver.mock_db_trans(self.ds):
 			self._create_user('ichigo')
 
@@ -44,7 +38,6 @@ class TestCatalogViews(ApplicationLayerTest):
 
 		# unauthed requests that have our special classifier are allowed
 		extra_environ = self._make_extra_environ(username=None)
-		extra_environ['nti.paste.testing.classification'] = 'application-tvos'
 		result = self.testapp.get(anonymous_instances_url, extra_environ=extra_environ, status=200)
 		result = result.json_body
 		assert_that(result, has_entry('ItemCount', 1))
