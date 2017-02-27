@@ -546,7 +546,7 @@ class CourseEnrollmentsView(AbstractAuthenticatedView):
 
 import collections
 
-from simplejson.compat import StringIO
+from six import StringIO
 
 from nti.app.products.courseware.interfaces import ICourseInstanceEnrollment
 
