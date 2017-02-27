@@ -8,10 +8,12 @@ __docformat__ = "restructuredtext en"
 # pylint: disable=W0212,R0904
 
 from hamcrest import is_
+from hamcrest import is_in
 from hamcrest import is_not
 from hamcrest import has_length
 from hamcrest import assert_that
 from hamcrest import greater_than
+from hamcrest import greater_than_or_equal_to
 does_not = is_not
 
 import shutil
@@ -32,47 +34,47 @@ from nti.app.testing.application_webtest import ApplicationLayerTest
 
 from nti.app.testing.decorators import WithSharedApplicationMockDS
 
+
 class TestCourseExporter(ApplicationLayerTest):
 
-	layer = PersistentInstructedCourseApplicationTestLayer
+    layer = PersistentInstructedCourseApplicationTestLayer
 
-	default_origin = b'http://janux.ou.edu'
-	entry_ntiid = 'tag:nextthought.com,2011-10:NTI-CourseInfo-Fall2015_CS_1323'
+    default_origin = b'http://janux.ou.edu'
+    entry_ntiid = 'tag:nextthought.com,2011-10:NTI-CourseInfo-Fall2015_CS_1323'
 
-	@classmethod
-	def catalog_entry(cls):
-		return find_object_with_ntiid(cls.entry_ntiid)
+    @classmethod
+    def catalog_entry(cls):
+        return find_object_with_ntiid(cls.entry_ntiid)
 
-	@WithSharedApplicationMockDS(testapp=False, users=False)
-	def test_get_exporters(self):
-		sections = tuple(x for x, _ in sorted(component.getUtilitiesFor(ICourseSectionExporter)))
-		assert_that(sections, has_length(12))
-		assert_that(sections, is_(
-					(u'001:Bundle_Metainfo',
-					 u'002:Bundle_DC_Metadata',
-					 u'003:Presentation_Assets',
-					 u'004:Course_Info',
-					 u'005:Vendor_Info',
-					 u'006:Role_Info',
-					 u'008:Course_Outline',
-					 u'010:Assessments',
-					 u'012:Evaluations',
-					 u'015:Lesson_Overviews',
-					 u'020:Course_Discussions',
-					 u'100:Assignment_Policies')))
+    @WithSharedApplicationMockDS(testapp=False, users=False)
+    def test_get_exporters(self):
+        sections = tuple(x for x, _ in component.getUtilitiesFor(ICourseSectionExporter))
+        assert_that(sections, has_length(greater_than_or_equal_to(12)))
+        assert_that(u'001:Bundle_Metainfo', is_in(sections))
+        assert_that(u'002:Bundle_DC_Metadata', is_in(sections))
+        assert_that(u'003:Presentation_Assets', is_in(sections))
+        assert_that(u'004:Course_Info', is_in(sections))
+        assert_that(u'005:Vendor_Info', is_in(sections))
+        assert_that(u'006:Role_Info', is_in(sections))
+        assert_that(u'008:Course_Outline', is_in(sections))
+        assert_that(u'010:Assessments', is_in(sections))
+        assert_that(u'012:Evaluations', is_in(sections))
+        assert_that(u'015:Lesson_Overviews', is_in(sections))
+        assert_that(u'020:Course_Discussions', is_in(sections))
+        assert_that(u'100:Assignment_Policies', is_in(sections))
 
-	@WithSharedApplicationMockDS(testapp=True, users=True)
-	def test_export_course(self):
-		href = '/dataserver2/CourseAdmin/@@ExportCourse'
-		data = {'ntiid':self.entry_ntiid}
-		res = self.testapp.post_json(href, data)
-		tmp_dir = tempfile.mkdtemp(dir="/tmp")
-		try:
-			path = tmp_dir + "/exported.zip"
-			with open(path, "wb") as fp:
-				for data in res.app_iter:
-					fp.write(data)
-			assert_that(get_file_size(path), greater_than(0))
-			assert_that(zipfile.is_zipfile(path), is_(True))
-		finally:
-			shutil.rmtree(tmp_dir, True)
+    @WithSharedApplicationMockDS(testapp=True, users=True)
+    def test_export_course(self):
+        href = '/dataserver2/CourseAdmin/@@ExportCourse'
+        data = {'ntiid': self.entry_ntiid}
+        res = self.testapp.post_json(href, data)
+        tmp_dir = tempfile.mkdtemp(dir="/tmp")
+        try:
+            path = tmp_dir + "/exported.zip"
+            with open(path, "wb") as fp:
+                for data in res.app_iter:
+                    fp.write(data)
+            assert_that(get_file_size(path), greater_than(0))
+            assert_that(zipfile.is_zipfile(path), is_(True))
+        finally:
+            shutil.rmtree(tmp_dir, True)
