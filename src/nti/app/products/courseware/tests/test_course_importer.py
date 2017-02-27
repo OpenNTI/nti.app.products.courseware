@@ -7,10 +7,11 @@ __docformat__ = "restructuredtext en"
 # disable: accessing protected members, too many methods
 # pylint: disable=W0212,R0904
 
-from hamcrest import is_
+from hamcrest import is_in
 from hamcrest import is_not
 from hamcrest import has_length
 from hamcrest import assert_that
+from hamcrest import greater_than_or_equal_to
 does_not = is_not
 
 import os
@@ -28,45 +29,45 @@ from nti.app.testing.application_webtest import ApplicationLayerTest
 
 from nti.app.testing.decorators import WithSharedApplicationMockDS
 
+
 class TestCourseImporter(ApplicationLayerTest):
 
-	layer = PersistentInstructedCourseApplicationTestLayer
+    layer = PersistentInstructedCourseApplicationTestLayer
 
-	default_origin = b'http://janux.ou.edu'
-	entry_ntiid = 'tag:nextthought.com,2011-10:NTI-CourseInfo-Fall2015_CS_1323'
+    default_origin = b'http://janux.ou.edu'
+    entry_ntiid = 'tag:nextthought.com,2011-10:NTI-CourseInfo-Fall2015_CS_1323'
 
-	@classmethod
-	def catalog_entry(cls):
-		return find_object_with_ntiid(cls.entry_ntiid)
+    @classmethod
+    def catalog_entry(cls):
+        return find_object_with_ntiid(cls.entry_ntiid)
 
-	@WithSharedApplicationMockDS(testapp=False, users=False)
-	def test_get_importers(self):
-		sections = tuple(x for x, _ in sorted(component.getUtilitiesFor(ICourseSectionImporter)))
-		assert_that(sections, has_length(11))
-		assert_that(sections, is_(
-					(u'001:Bundle_Metainfo',
-					 u'003:Presentation_Assets',
-					 u'004:Course_Info',
-					 u'008:Course_Outline', 
-					 u'010:Assessments',
-					 u'012:Evaluations',
-					 u'015:Lesson_Overviews', 
-					 u'100:Assignment_Policies',
-					 u'666:Role_Info',
-					 u'777:Vendor_Info',
-					 u'888:Course_Discussions')))
-		
-	@WithSharedApplicationMockDS(testapp=True, users=True)
-	@fudge.patch('nti.app.products.courseware.views.course_import_views.create_course',
-				 'nti.app.products.courseware.views.course_import_views.import_course')
-	def test_fake_imports(self, mock_create, mock_import):
-		mock_create.is_callable().with_args().returns(False)
-		mock_import.is_callable().with_args().returns(False)
-		
-		path = os.getcwd()
-		href = '/dataserver2/CourseAdmin/@@ImportCourse'
-		data = {'ntiid':self.entry_ntiid, 'path':path}
-		self.testapp.post_json(href, data, status=200)
+    @WithSharedApplicationMockDS(testapp=False, users=False)
+    def test_get_importers(self):
+        sections = tuple(x for x, _ in component.getUtilitiesFor(ICourseSectionImporter))
+        assert_that(sections, has_length(greater_than_or_equal_to(11)))
+        assert_that(u'001:Bundle_Metainfo', is_in(sections))
+        assert_that(u'003:Presentation_Assets', is_in(sections))
+        assert_that(u'004:Course_Info', is_in(sections))
+        assert_that(u'008:Course_Outline', is_in(sections))
+        assert_that(u'010:Assessments', is_in(sections))
+        assert_that(u'012:Evaluations', is_in(sections))
+        assert_that(u'015:Lesson_Overviews', is_in(sections))
+        assert_that(u'100:Assignment_Policies', is_in(sections))
+        assert_that(u'666:Role_Info', is_in(sections))
+        assert_that(u'777:Vendor_Info', is_in(sections))
+        assert_that(u'888:Course_Discussions', is_in(sections))
 
-		data = {'admin':'Fall2015', 'key':'Bleach', 'path':path}
-		self.testapp.post_json(href, data, status=200)
+    @WithSharedApplicationMockDS(testapp=True, users=True)
+    @fudge.patch('nti.app.products.courseware.views.course_import_views.create_course',
+                 'nti.app.products.courseware.views.course_import_views.import_course')
+    def test_fake_imports(self, mock_create, mock_import):
+        mock_create.is_callable().with_args().returns(False)
+        mock_import.is_callable().with_args().returns(False)
+
+        path = os.getcwd()
+        href = '/dataserver2/CourseAdmin/@@ImportCourse'
+        data = {'ntiid': self.entry_ntiid, 'path': path}
+        self.testapp.post_json(href, data, status=200)
+
+        data = {'admin': 'Fall2015', 'key': 'Bleach', 'path': path}
+        self.testapp.post_json(href, data, status=200)
