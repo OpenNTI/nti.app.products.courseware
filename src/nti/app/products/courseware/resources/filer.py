@@ -43,9 +43,9 @@ from nti.contentfolder.utils import TraversalException
 
 from nti.contenttypes.courses.interfaces import ICourseInstance
 
-from nti.common.file import safe_filename
-
 from nti.coremetadata.interfaces import SYSTEM_USER_ID
+
+from nti.namedfile.file import safe_filename
 
 from nti.traversal.traversal import find_interface
 
