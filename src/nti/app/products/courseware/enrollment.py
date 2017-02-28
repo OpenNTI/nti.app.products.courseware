@@ -19,8 +19,6 @@ from nti.app.products.courseware.interfaces import IEnrollmentOptions
 from nti.app.products.courseware.interfaces import IOpenEnrollmentOption
 from nti.app.products.courseware.interfaces import IEnrollmentOptionProvider
 
-from nti.common.persistence import NoPickle
-
 from nti.contenttypes.courses.interfaces import ICourseCatalogEntry
 from nti.contenttypes.courses.interfaces import IDenyOpenEnrollment
 from nti.contenttypes.courses.interfaces import INonPublicCourseInstance
@@ -30,6 +28,8 @@ from nti.externalization.externalization import to_external_object
 from nti.externalization.interfaces import LocatedExternalDict
 from nti.externalization.interfaces import StandardExternalFields
 from nti.externalization.interfaces import IInternalObjectExternalizer
+
+from nti.externalization.persistence import NoPickle
 
 from nti.externalization.representation import WithRepr
 

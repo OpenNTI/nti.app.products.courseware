@@ -13,8 +13,8 @@ import zope.deferredimport
 zope.deferredimport.initialize()
 
 zope.deferredimport.deprecatedFrom(
-	"moved to nti.contenttypes.courses",
-	"nti.contenttypes.courses.catalog",
-	"CourseCatalog",
-	"CourseCatalogInstructorInfo",
-	"CourseCatalogEntry")
+    "moved to nti.contenttypes.courses",
+    "nti.contenttypes.courses.catalog",
+    "CourseCatalog",
+    "CourseCatalogInstructorInfo",
+    "CourseCatalogEntry")

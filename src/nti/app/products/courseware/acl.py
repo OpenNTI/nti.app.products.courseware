@@ -26,25 +26,28 @@ from nti.dataserver.interfaces import ALL_PERMISSIONS
 
 from nti.property.property import Lazy
 
+
 @interface.implementer(IACLProvider)
 class CollectionACLProviderMixin(object):
 
-	def __init__(self, context):
-		self.context = context
+    def __init__(self, context):
+        self.context = context
 
-	@Lazy
-	def __acl__(self):
-		user = self.context.__parent__.user
-		aces = [ace_allowing(IPrincipal(user),
-							 (ALL_PERMISSIONS),
-							 CollectionACLProviderMixin)]
-		aces.append(ACE_DENY_ALL)
-		return acl_from_aces(aces)
+    @Lazy
+    def __acl__(self):
+        user = self.context.__parent__.user
+        aces = [ace_allowing(IPrincipal(user),
+                             (ALL_PERMISSIONS),
+                             CollectionACLProviderMixin)]
+        aces.append(ACE_DENY_ALL)
+        return acl_from_aces(aces)
+
 
 @component.adapter(IEnrolledCoursesCollection)
 class EnrolledCoursesCollectionACLProvider(CollectionACLProviderMixin):
-	pass
+    pass
+
 
 @component.adapter(IAdministeredCoursesCollection)
 class AdministeredCoursesCollectionACLProvider(CollectionACLProviderMixin):
-	pass
+    pass

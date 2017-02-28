@@ -16,13 +16,13 @@ logger = __import__('logging').getLogger(__name__)
 # disable missing self
 # pylint:disable=I0011,E0213,E0211
 
+from zope import schema
 from zope import component
 from zope import interface
-from zope import schema
-
-from zope.container.interfaces import IContained
 
 from zope.interface.common.mapping import IEnumerableMapping
+
+from zope.location.interfaces import IContained
 
 from zope.security.permission import Permission
 
@@ -49,160 +49,173 @@ from nti.schema.field import ValidTextLine as TextLine
 ACT_VIEW_ROSTER = Permission('nti.actions.courseware.view_roster')
 ACT_VIEW_ACTIVITY = Permission('nti.actions.courseware.view_activity')
 
+
 class ICourseCatalogLegacyContentEntry(ILegacyCourseCatalogEntry):
-	"""
-	Marker interface for a legacy course catalog entry
-	"""
-	ContentPackageNTIID = ValidNTIID(title="The NTIID of the root content package")
+    """
+    Marker interface for a legacy course catalog entry
+    """
+    ContentPackageNTIID = ValidNTIID(title="The NTIID of the root content package")
+
 
 class ILegacyCommunityBasedCourseInstance(ILegacyCourseInstance):
-	"""
-	Marker interface for a legacy course instance
-	"""
+    """
+    Marker interface for a legacy course instance
+    """
 
-	LegacyScopes = Dict(title="'public' and 'restricted' entity ids",
-						readonly=True)
+    LegacyScopes = Dict(title="'public' and 'restricted' entity ids",
+                        readonly=True)
 
-	ContentPackageBundle = interface.Attribute("A mock bundle, having a ContentPackages iterable")
+    ContentPackageBundle = interface.Attribute(
+        "A mock bundle, having a ContentPackages iterable")
+
 
 class ICourseInstanceActivity(IContained, ILastModified):
-	"""
-	A firehose implementation of activity relating
-	to a course and typically expected to be visible to
-	instructors/administrators of the course.
+    """
+    A firehose implementation of activity relating
+    to a course and typically expected to be visible to
+    instructors/administrators of the course.
 
-	An implementation of this interface will be available
-	by adapting a course to it.
-	"""
+    An implementation of this interface will be available
+    by adapting a course to it.
+    """
 
-	def __len__():
-		"How many items are in this collection."
+    def __len__():
+        "How many items are in this collection."
 
-	def append(activity):
-		"""
-		Note that the ``activity`` relevant to this course
-		has happened. The ``activity`` object must have an intid,
-		and it will be stored along with an approximate timestamp
-		of when it occurred. Note that if activity is happening on multiple
-		machines, relative times will only be as good as clock
-		synchronization.
-		"""
+    def append(activity):
+        """
+        Note that the ``activity`` relevant to this course
+        has happened. The ``activity`` object must have an intid,
+        and it will be stored along with an approximate timestamp
+        of when it occurred. Note that if activity is happening on multiple
+        machines, relative times will only be as good as clock
+        synchronization.
+        """
 
-	def remove(activity):
-		"""
-		Remove the activity from the list for this course.
-		Note that this may be very expensive.
-		"""
+    def remove(activity):
+        """
+        Remove the activity from the list for this course.
+        Note that this may be very expensive.
+        """
 
-	def items(min=None, max=None, excludemin=False, excludemax=False):
-		"""
-		Return an iterator over the activity items stored for this
-		course. The iterator is returned in sorted order, with
-		most recent items first.
+    def items(min=None, max=None, excludemin=False, excludemax=False):
+        """
+        Return an iterator over the activity items stored for this
+        course. The iterator is returned in sorted order, with
+        most recent items first.
 
-		:keyword min: If given, a timestamp.
-		:keyword max: If given, a timestamp.
-		"""
+        :keyword min: If given, a timestamp.
+        :keyword max: If given, a timestamp.
+        """
+
 
 class ICoursesWorkspace(IWorkspace):
-	"""
-	A workspace containing data for courses.
-	"""
-	
+    """
+    A workspace containing data for courses.
+    """
+
+
 class ICoursePagesContainerResource (IContainerResource):
-	"""
-	A pages resource on a course.
-	"""
-	course = schema.Object(ICourseInstance, title="The course that owns the page container")
-	ntiid = schema.TextLine(title="The NTIID of the container")
+    """
+    A pages resource on a course.
+    """
+    course = Object(ICourseInstance,
+                    title="The course that owns the page container")
+    ntiid = schema.TextLine(title="The NTIID of the container")
+
 
 class IEnrolledCoursesCollection(IContainerCollection):
-	"""
-	A collection (local to a user) of courses he is enrolled in
-	(:class:`.ICourseInstanceEnrollment`)
-	"""
+    """
+    A collection (local to a user) of courses he is enrolled in
+    (:class:`.ICourseInstanceEnrollment`)
+    """
+
 
 class ICourseInstanceEnrollment(IShouldHaveTraversablePath):
-	"""
-	An object representing a principal's enrollment in a course
-	instance.
+    """
+    An object representing a principal's enrollment in a course
+    instance.
 
-	Implementations should be adaptable to their course instance
-	and the corresponding catalog entry.
+    Implementations should be adaptable to their course instance
+    and the corresponding catalog entry.
 
-	These objects should be non-persistent and derived from the
-	underlying :class:`.ICourseInstanceEnrollmentRecord`, but
-	independently mutable.
-	"""
+    These objects should be non-persistent and derived from the
+    underlying :class:`.ICourseInstanceEnrollmentRecord`, but
+    independently mutable.
+    """
 
-	__name__ = interface.Attribute("The name of the enrollment is the same as the CourseInstance.")
+    __name__ = interface.Attribute("The name of the enrollment is the same as the CourseInstance.")
 
-	CourseInstance = Object(ICourseInstance)
+    CourseInstance = Object(ICourseInstance)
 
-	Username = TextLine(title="The user this is about",
-						required=False,
-						readonly=True)
+    Username = TextLine(title="The user this is about",
+                        required=False,
+                        readonly=True)
+
 
 class ILegacyCourseInstanceEnrollment(ICourseInstanceEnrollment):
-	"""
-	An object with information about enrollment in a legacy course.
-	"""
+    """
+    An object with information about enrollment in a legacy course.
+    """
 
-	LegacyEnrollmentStatus = TextLine(title="The type of enrollment, ForCredit or Open",
-									  required=True,
-									  readonly=True,
-									  default='Open')
+    LegacyEnrollmentStatus = TextLine(title="The type of enrollment, ForCredit or Open",
+                                      required=True,
+                                      readonly=True,
+                                      default='Open')
 
-	RealEnrollmentStatus = TextLine(title="The type of enrollment (Scope)",
-									required=False,
-									readonly=True)
+    RealEnrollmentStatus = TextLine(title="The type of enrollment (Scope)",
+                                    required=False,
+                                    readonly=True)
+
 
 class IPrincipalEnrollmentCatalog(IPrincipalEnrollments):
-	"""
-	Extends the base enrollments interface to be in terms
-	of the :class:`.ICourseInstanceEnrollment` objects defined
-	in this module.
+    """
+    Extends the base enrollments interface to be in terms
+    of the :class:`.ICourseInstanceEnrollment` objects defined
+    in this module.
 
-	There can be multiple catalogs of enrollments for courses
-	that are managed in different ways. Therefore, commonly
-	implementations will be registered as subscription adapters
-	from the user.
-	"""
+    There can be multiple catalogs of enrollments for courses
+    that are managed in different ways. Therefore, commonly
+    implementations will be registered as subscription adapters
+    from the user.
+    """
 
-	def iter_enrollments():
-		"""
-		Iterate across :class:`.ICourseInstanceEnrollment` objects, or at
-		least something that can be adapted to that interface.
-		(Commonly, this will return actual :class:`.ICourseInstance`
-		objects; we provide an adapter from that to the enrollment.)
-		"""
+    def iter_enrollments():
+        """
+        Iterate across :class:`.ICourseInstanceEnrollment` objects, or at
+        least something that can be adapted to that interface.
+        (Commonly, this will return actual :class:`.ICourseInstance`
+        objects; we provide an adapter from that to the enrollment.)
+        """
+
 
 class IAdministeredCoursesCollection(IContainerCollection):
-	"""
-	A collection (local to a user) of courses he administers
-	(:class:`nti.contenttypes.courses.interfaces.ICourseInstanceAdministrativeRole`)
-	"""
+    """
+    A collection (local to a user) of courses he administers
+    (:class:`nti.contenttypes.courses.interfaces.ICourseInstanceAdministrativeRole`)
+    """
 
 from nti.contentlibrary.interfaces import ILegacyCourseConflatedContentPackage
 
+
 class ILegacyCourseConflatedContentPackageUsedAsCourse(ILegacyCourseConflatedContentPackage):
-	"""
-	A marker applied on top of a content package that was already
-	conflated when it is actually being used by a course.
+    """
+    A marker applied on top of a content package that was already
+    conflated when it is actually being used by a course.
 
-	Remember that this can only happen in the global library with non-persistent
-	content packages; the code in :mod:`legacy_catalog` will refuse to turn
-	any persistent content package in a site library into a course. Therefore this
-	marker interface can be used to distinguish things that are actually being
-	used as :class:`ILegacyCommunityBasedCourseInstance` and which are not.
+    Remember that this can only happen in the global library with non-persistent
+    content packages; the code in :mod:`legacy_catalog` will refuse to turn
+    any persistent content package in a site library into a course. Therefore this
+    marker interface can be used to distinguish things that are actually being
+    used as :class:`ILegacyCommunityBasedCourseInstance` and which are not.
 
-	When this marker is applied, instances should get access to
-	an attribute ``_v_global_legacy_catalog_entry`` that points to the catalog
-	entry, which should also be global and not persistent. Access this attribute
-	to get the catalog entry; yes, it will lead to warnings in your code about
-	a private attribute, but it will be easy to clean them up later, and we want
-	this ugliness to stand out.
-	"""
+    When this marker is applied, instances should get access to
+    an attribute ``_v_global_legacy_catalog_entry`` that points to the catalog
+    entry, which should also be global and not persistent. Access this attribute
+    to get the catalog entry; yes, it will lead to warnings in your code about
+    a private attribute, but it will be easy to clean them up later, and we want
+    this ugliness to stand out.
+    """
 
 # A preliminary special type of NTIID that refers to an abstract
 # notion of a topic within a particular abstract course. When
@@ -224,146 +237,164 @@ NTIID_TYPE_COURSE_SECTION_FORUM = 'Forum:EnrolledCourseSection'
 
 NTIID_TYPE_COURSE_FORUM = 'Forum:EnrolledCourseRoot'
 
+
 class IEnrollmentOption(IContained):
-	"""
-	Marker interface for a course/entry enrollment option
-	"""
+    """
+    Marker interface for a course/entry enrollment option
+    """
 
-	Name = TextLine(title="Enrollment option name", required=True)
-	Name.setTaggedValue('_ext_excluded_out', True)
+    Name = TextLine(title="Enrollment option name", required=True)
+    Name.setTaggedValue('_ext_excluded_out', True)
 
-	CatalogEntryNTIID = TextLine(title="Catalog entry NTIID", required=False)
-	CatalogEntryNTIID.setTaggedValue('_ext_excluded_out', True)
+    CatalogEntryNTIID = TextLine(title="Catalog entry NTIID", required=False)
+    CatalogEntryNTIID.setTaggedValue('_ext_excluded_out', True)
+
 
 class IOpenEnrollmentOption(IEnrollmentOption):
 
-	"""
-	Open course/entry enrollment option
-	"""
+    """
+    Open course/entry enrollment option
+    """
 
-	Enabled = Bool(title="If the course allows open enrollemnt",
-				   required=False,
-				   default=True)
+    Enabled = Bool(title="If the course allows open enrollemnt",
+                   required=False,
+                   default=True)
+
 
 class IEnrollmentOptions(IEnumerableMapping):
 
-	"""
-	Marker interface for an object that hold :class:`.IEnrollmentOption` objects
-	for a course.
-	"""
+    """
+    Marker interface for an object that hold :class:`.IEnrollmentOption` objects
+    for a course.
+    """
 
-	def append(option):
-		"""
-		add an enrollment option
-		"""
+    def append(option):
+        """
+        add an enrollment option
+        """
+
 
 class IEnrollmentOptionProvider(interface.Interface):
 
-	"""
-	subscriber for a course/entry enrollment options
-	"""
+    """
+    subscriber for a course/entry enrollment options
+    """
 
-	def iter_options():
-		"""
-		return a iterable of :class:`.IEnrollmentOption` for the specified course
-		"""
+    def iter_options():
+        """
+        return a iterable of :class:`.IEnrollmentOption` for the specified course
+        """
+
 
 class IRanker(interface.Interface):
-	"""
-	Knows how to rank a disparate set of items.
-	"""
+    """
+    Knows how to rank a disparate set of items.
+    """
 
-	def rank(items):
-		"""
-		Returns the modified set of items, ranked according to an underlying algorithm.
-		"""
+    def rank(items):
+        """
+        Returns the modified set of items, ranked according to an underlying algorithm.
+        """
+
 
 class IViewStats(interface.Interface):
-	"""
-	Gives view stats on the adapted object.
-	"""
+    """
+    Gives view stats on the adapted object.
+    """
 
-class IUsageStats( interface.Interface ):
 
-	def get_stats(self, scope=None):
-		"""
-		Return stats for course users, optionally by scope.
-		"""
+class IUsageStats(interface.Interface):
 
-	def get_top_stats(self, scope=None, top_count=None):
-		"""
-		Return top usage stats for course users, optionally by scope.
-		"""
+    def get_stats(self, scope=None):
+        """
+        Return stats for course users, optionally by scope.
+        """
+
+    def get_top_stats(self, scope=None, top_count=None):
+        """
+        Return top usage stats for course users, optionally by scope.
+        """
+
 
 class IVideoUsageStats(IUsageStats):
-	"""
-	Returns video usage stats for a course.
-	"""
+    """
+    Returns video usage stats for a course.
+    """
+
 
 class IResourceUsageStats(IUsageStats):
-	"""
-	Returns resource usage stats for a course.
-	"""
+    """
+    Returns resource usage stats for a course.
+    """
 
 # Suggested contacts
 
 from nti.dataserver.users.interfaces import ISuggestedContactsProvider
 
+
 class IClassmatesSuggestedContactsProvider(ISuggestedContactsProvider):
 
-	def suggestions_by_course(user, course):
-		"""
-		return classmates/contacts suggestions by course
-		"""
+    def suggestions_by_course(user, course):
+        """
+        return classmates/contacts suggestions by course
+        """
 
 # Email options
 
+
 class ICourseEnrollmentEmailBCCProvider(interface.Interface):
 
-	def get_bcc_emails( user ):
-		"""
-		Return BCC email addresses.
-		"""
+    def get_bcc_emails(user):
+        """
+        Return BCC email addresses.
+        """
+
 
 class ICourseEnrollmentEmailArgsProvider(interface.Interface):
 
-	def get_email_args( user ):
-		"""
-		Return email args for the given user.
-		"""
+    def get_email_args(user):
+        """
+        Return email args for the given user.
+        """
 
 # publishable vendor info
+
 
 class ICoursePublishableVendorInfo(interface.Interface):
-	"""
-	marker interface for a vendor info that can be made public.
-	this will be registered as subscribers
-	"""
+    """
+    marker interface for a vendor info that can be made public.
+    this will be registered as subscribers
+    """
 
-	def info():
-		"""
-		return a map with public info
-		"""
+    def info():
+        """
+        return a map with public info
+        """
+
 
 def get_course_publishable_vendor_info(context):
-	result = dict()
-	course = ICourseInstance(context, None)
-	subscribers = component.subscribers((course,), ICoursePublishableVendorInfo)
-	for s in list(subscribers):
-		info = s.info()
-		result.update(info or {})
-	return result
+    result = dict()
+    course = ICourseInstance(context, None)
+    subscribers = component.subscribers((course,), 
+                                        ICoursePublishableVendorInfo)
+    for s in list(subscribers):
+        info = s.info()
+        result.update(info or {})
+    return result
 
 # publishable vendor info
 
+
 class ICourseInvitation(interface.Interface):
-	Code = TextLine(title="Invitation code.", required=True)
-	Scope = TextLine(title="The enrollment scope.", required=True)
-	Description = TextLine(title="The invitation description.", required=True)
-	Course = TextLine(title="Course catalog entry NTIID.", required=False)
-	Course.setTaggedValue('_ext_excluded_out', True)
-	IsGeneric = Bool(title="Invitation code is generic.", required=False, default=False)
-	IsGeneric.setTaggedValue('_ext_excluded_out', True)
+    Code = TextLine(title="Invitation code.", required=True)
+    Scope = TextLine(title="The enrollment scope.", required=True)
+    Description = TextLine(title="The invitation description.", required=True)
+    Course = TextLine(title="Course catalog entry NTIID.", required=False)
+    Course.setTaggedValue('_ext_excluded_out', True)
+    IsGeneric = Bool(title="Invitation code is generic.",
+                     required=False,
+                     default=False)
+    IsGeneric.setTaggedValue('_ext_excluded_out', True)
 
 # deprecations
 
@@ -371,32 +402,32 @@ import zope.deferredimport
 zope.deferredimport.initialize()
 
 zope.deferredimport.deprecatedFrom(
-	"Moved to nti.app.products.courseware.resources.interfaces",
-	"nti.app.products.courseware.resources.interfaces",
-	"ICourseRootFolder",
-	"ICourseContentFile",
-	"ICourseContentFolder")
+    "Moved to nti.app.products.courseware.resources.interfaces",
+    "nti.app.products.courseware.resources.interfaces",
+    "ICourseRootFolder",
+    "ICourseContentFile",
+    "ICourseContentFolder")
 
 zope.deferredimport.deprecatedFrom(
-	"Moved to nti.contenttypes.courses",
-	"nti.contenttypes.courses.interfaces",
-	"ICourseCatalogEntry",
-	"IUserAdministeredCourses",
-	"ICourseCatalogInstructorInfo",
-	"ICourseInstanceAvailableEvent",
-	"CourseInstanceAvailableEventg",
-	"ICourseInstanceAdministrativeRole",
-	'IPrincipalAdministrativeRoleCatalog')
+    "Moved to nti.contenttypes.courses",
+    "nti.contenttypes.courses.interfaces",
+    "ICourseCatalogEntry",
+    "IUserAdministeredCourses",
+    "ICourseCatalogInstructorInfo",
+    "ICourseInstanceAvailableEvent",
+    "CourseInstanceAvailableEventg",
+    "ICourseInstanceAdministrativeRole",
+    'IPrincipalAdministrativeRoleCatalog')
 
 zope.deferredimport.deprecatedFrom(
-	"Moved to nti.contenttypes.courses",
-	"nti.contenttypes.courses.legacy_catalog",
-	"ICourseCatalogInstructorLegacyInfo",
-	"ICourseCreditLegacyInfo",
-	'ICourseCatalogLegacyEntry')
+    "Moved to nti.contenttypes.courses",
+    "nti.contenttypes.courses.legacy_catalog",
+    "ICourseCatalogInstructorLegacyInfo",
+    "ICourseCreditLegacyInfo",
+    'ICourseCatalogLegacyEntry')
 
 zope.deferredimport.deprecated(
-	"Moved to nti.contenttypes.courses",
-	# XXX: Note the aliasing: This is somewhat dangerous if we
-	# attempt to register things by this interface!
-	ICourseCatalog="nti.contenttypes.courses.interfaces:IWritableCourseCatalog")
+    "Moved to nti.contenttypes.courses",
+    # XXX: Note the aliasing: This is somewhat dangerous if we
+    # attempt to register things by this interface!
+    ICourseCatalog="nti.contenttypes.courses.interfaces:IWritableCourseCatalog")
