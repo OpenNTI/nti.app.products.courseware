@@ -36,7 +36,7 @@ def save_resources_to_filer(provided, obj, filer, ext_obj=None):
         if name.startswith('_'):
             continue
         value = getattr(obj, name, None)
-        if 		value is not None \
+        if      value is not None \
             and not IMethod.providedBy(value) \
             and isinstance(value, six.string_types) \
             and is_internal_file_link(value):
@@ -45,12 +45,12 @@ def save_resources_to_filer(provided, obj, filer, ext_obj=None):
             if resource is None:
                 continue
             contentType = resource.contentType
-            if 		ICourseContentResource.providedBy(resource) \
+            if      ICourseContentResource.providedBy(resource) \
                 and hasattr(resource, 'path'):
                 path = resource.path
                 path = os.path.split(path)[0]  # remove resource name
                 path = path[1:] if path.startswith('/') else path
-                if 		not path.startswith(IMAGES_FOLDER) \
+                if         not path.startswith(IMAGES_FOLDER) \
                     and not path.startswith(DOCUMENTS_FOLDER) \
                     and not path.startswith(ASSETS_FOLDER):
                     path = os.path.join(ASSETS_FOLDER, path)
