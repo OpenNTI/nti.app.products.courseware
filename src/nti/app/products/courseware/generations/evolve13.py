@@ -11,8 +11,6 @@ logger = __import__('logging').getLogger(__name__)
 
 generation = 12
 
-from urlparse import unquote
-
 from zope import component
 from zope import interface
 
@@ -22,21 +20,15 @@ from zope.intid.interfaces import IIntIds
 
 from nti.app.products.courseware.resources.adapters import course_resources
 
-from nti.app.products.courseware.resources.utils import to_external_file_link
+from nti.app.products.courseware.resources.index import install_course_resources_catalog
 
 from nti.contentfolder.interfaces import INamedContainer
 
 from nti.contenttypes.courses.interfaces import ICourseCatalog
 from nti.contenttypes.courses.interfaces import ICourseInstance
 
-from nti.contenttypes.presentation.interfaces import INTIRelatedWorkRef
-
 from nti.dataserver.interfaces import IDataserver
 from nti.dataserver.interfaces import IOIDResolver
-
-from nti.externalization.oids import to_external_ntiid_oid
-
-from nti.ntiids.ntiids import is_valid_ntiid_string
 
 from nti.site.hostpolicy import get_all_host_sites
 
@@ -55,49 +47,21 @@ class MockDataserver(object):
         return None
 
 
-def _fix_pointers(container):
-    for name, value in list(container.items()):
+def index_course_resources(container, catalog, intids):
+    for value in list(container.values()):
         if INamedContainer.providedBy(value):
-            _fix_pointers(value)
-        elif value.has_associations():
-            href = to_external_file_link(value)
-            target = to_external_ntiid_oid(value)
-            unquoted_href = unquote(href)
-            for obj in value.associations():
-                if not INTIRelatedWorkRef.providedBy(obj):
-                    continue
-                # if href is equal continue
-                if unquote(obj.href or u'') == unquoted_href:
-                    # make sure we have a valid target
-                    if not hasattr(obj, 'target') or obj.target != target:
-                        obj.target = target
-                    continue
-                # if target is equal continue
-                if hasattr(obj, 'target') and obj.target == target:
-                    # make sure we have a valid href
-                    if     not hasattr(obj, 'href') \
-                        or (    unquote(obj.href or u'') != unquoted_href
-                            and not is_valid_ntiid_string(obj.href or u'')):
-                        obj.href = href
-                    continue
-                # if icon continue
-                unquoted_icon = unquote(obj.icon or u'') if hasattr(obj, 'icon') else u''
-                if unquoted_icon == unquoted_href:
-                    continue
-                # update icon if found in file name
-                if name in unquoted_icon or value.filename in unquoted_icon:
-                    logger.info('Updating [%s] icon url to %s', 
-                                obj.ntiid, href)
-                    obj.icon = href
-                    continue
-                logger.info('Updating [%s] href url to %s', obj.ntiid, href)
-                logger.info('Updating [%s] target to %s', obj.ntiid, target)
-                # otherwise update href
-                obj.href = href
-                obj.target = target
+            index_course_resources(value, catalog)
+        value.validate_associations()
+        doc_id = intids.queryId(value)
+        if doc_id is not None:
+            catalog.index(doc_id, value)
+    # inde container
+    doc_id = intids.queryId(container)
+    if doc_id is not None:
+        catalog.index(doc_id, container)
 
 
-def _migrate(current, seen, intids):
+def _process_site(current, catalog, intids, seen):
     with current_site(current):
         catalog = component.queryUtility(ICourseCatalog)
         if catalog is None or catalog.isEmpty():
@@ -109,8 +73,8 @@ def _migrate(current, seen, intids):
                 continue
             seen.add(doc_id)
             resources = course_resources(course, create=False)
-            if resources is not None:
-                _fix_pointers(resources)
+            if resources:
+                index_course_resources(resources, catalog, intids)
 
 
 def do_evolve(context, generation=generation):
@@ -128,8 +92,9 @@ def do_evolve(context, generation=generation):
         seen = set()
         lsm = ds_folder.getSiteManager()
         intids = lsm.getUtility(IIntIds)
+        catalog = install_course_resources_catalog(ds_folder, intids)
         for current in get_all_host_sites():
-            _migrate(current, seen, intids)
+            _process_site(current, catalog, intids, seen)
 
     component.getGlobalSiteManager().unregisterUtility(mock_ds, IDataserver)
     logger.info('Evolution %s done.', generation)
@@ -137,6 +102,6 @@ def do_evolve(context, generation=generation):
 
 def evolve(context):
     """
-    Evolve to generation 12 to fix href/icon pointers
+    Evolve to generation 13 to indexing course resources
     """
     do_evolve(context)

@@ -17,22 +17,28 @@ from zope.generations.generations import SchemaManager as BaseSchemaManager
 
 from zope.generations.interfaces import IInstallableSchemaManager
 
-from nti.app.products.courseware.generations import evolve2
+from zope.intid.interfaces import IIntIds
+
+from nti.app.products.courseware.resources.index import install_course_resources_catalog
+
 
 @interface.implementer(IInstallableSchemaManager)
 class _SchemaManager(BaseSchemaManager):
-	"""
-	A schema manager that we can register as a utility in ZCML.
-	"""
 
-	def __init__(self):
-		super(_SchemaManager, self).__init__(
-						generation=generation,
-						minimum_generation=generation,
-						package_name='nti.app.products.courseware.generations')
+    def __init__(self):
+        super(_SchemaManager, self).__init__(
+            generation=generation,
+            minimum_generation=generation,
+            package_name='nti.app.products.courseware.generations')
 
-	def install(self, context):
-		evolve(context)
+    def install(self, context):
+        evolve(context)
+
 
 def evolve(context):
-	evolve2.evolve(context)
+    conn = context.connection
+    root = conn.root()
+    dataserver_folder = root['nti.dataserver']
+    lsm = dataserver_folder.getSiteManager()
+    intids = lsm.getUtility(IIntIds)
+    install_course_resources_catalog(dataserver_folder, intids)
