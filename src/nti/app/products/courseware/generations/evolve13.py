@@ -50,18 +50,19 @@ class MockDataserver(object):
 def index_course_resources(container, catalog, intids):
     for value in list(container.values()):
         if INamedContainer.providedBy(value):
-            index_course_resources(value, catalog)
-        value.validate_associations()
-        doc_id = intids.queryId(value)
-        if doc_id is not None:
-            catalog.index(doc_id, value)
+            index_course_resources(value, catalog, intids)
+        else:
+            value.validate_associations()
+            doc_id = intids.queryId(value)
+            if doc_id is not None:
+                catalog.force_index_doc(doc_id, value)
     # inde container
     doc_id = intids.queryId(container)
     if doc_id is not None:
-        catalog.index(doc_id, container)
+        catalog.force_index_doc(doc_id, container)
 
 
-def _process_site(current, catalog, intids, seen):
+def _process_site(current, index, intids, seen):
     with current_site(current):
         catalog = component.queryUtility(ICourseCatalog)
         if catalog is None or catalog.isEmpty():
@@ -74,7 +75,7 @@ def _process_site(current, catalog, intids, seen):
             seen.add(doc_id)
             resources = course_resources(course, create=False)
             if resources:
-                index_course_resources(resources, catalog, intids)
+                index_course_resources(resources, index, intids)
 
 
 def do_evolve(context, generation=generation):

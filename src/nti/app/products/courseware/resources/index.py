@@ -225,7 +225,7 @@ class ValidatingAssociations(object):
             or ICourseContentImage.providedBy(obj):
             intid = component.queryUtility(IIntIds)
             if intid is not None and obj.has_associations():
-                ids = {intid.queryId(x) for x in obj.associations}
+                ids = {intid.queryId(x) for x in obj.associations()}
                 ids.discard(None)
                 self.associations = tuple(ids)
 
