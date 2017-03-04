@@ -14,8 +14,6 @@ from mimetypes import guess_type
 
 from zope import interface
 
-from plone.namedfile.file import getImageInfo
-
 from nti.app.contentfile import transfer_data
 
 from nti.app.products.courseware import ASSETS_FOLDER
@@ -46,6 +44,8 @@ from nti.contenttypes.courses.interfaces import ICourseInstance
 from nti.coremetadata.interfaces import SYSTEM_USER_ID
 
 from nti.namedfile.file import safe_filename
+
+from nti.namedfile.utils import getImageInfo
 
 from nti.traversal.traversal import find_interface
 
