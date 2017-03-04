@@ -20,8 +20,20 @@ from nti.app.products.courseware.resources.filer import CourseSourceFiler
 
 from nti.app.products.courseware.resources.interfaces import ICourseRootFolder
 from nti.app.products.courseware.resources.interfaces import ICourseSourceFiler
+from nti.app.products.courseware.resources.interfaces import ICourseContentFile
+from nti.app.products.courseware.resources.interfaces import ICourseContentImage
+from nti.app.products.courseware.resources.interfaces import ICourseContentFolder
+from nti.app.products.courseware.resources.interfaces import ICourseContentResource
 
 from nti.app.products.courseware.resources.model import CourseRootFolder
+
+from nti.base._compat import unicode_
+
+from nti.contentfolder.adapters import MimeType
+from nti.contentfolder.adapters import ContainerId
+
+from nti.contentfolder.interfaces import IMimeTypeAdapter
+from nti.contentfolder.interfaces import IContainerIdAdapter
 
 from nti.contenttypes.courses.interfaces import ICourseInstance
 from nti.contenttypes.courses.interfaces import ICourseCatalogEntry
@@ -31,6 +43,8 @@ from nti.coremetadata.interfaces import SYSTEM_USER_ID
 from nti.namedfile.constraints import FileConstraints
 
 from nti.namedfile.interfaces import IFileConstraints
+
+from nti.traversal.traversal import find_interface
 
 
 @interface.implementer(ICourseRootFolder)
@@ -86,3 +100,35 @@ def _CourseFolderFileConstraints(note):
     result = FileConstraints()
     result.max_file_size = 104857600  # 100 MB
     return result
+
+
+@component.adapter(ICourseContentFile)
+@interface.implementer(IMimeTypeAdapter)
+def _course_contentfile_mimeType_adapter(context):
+    return MimeType(u'application/vnd.nextthought.courseware.contentfile')
+
+
+@component.adapter(ICourseContentImage)
+@interface.implementer(IMimeTypeAdapter)
+def _course_contentimage_mimeType_adapter(context):
+    return MimeType(u'application/vnd.nextthought.courseware.contentimage')
+
+
+def _containerId_adater(context):
+    course = find_interface(context, ICourseInstance, strict=False)
+    entry = ICourseCatalogEntry(course, None)
+    if entry is not None:
+        return ContainerId(unicode_(entry.ntiid))
+    return None
+
+
+@component.adapter(ICourseContentResource)
+@interface.implementer(IContainerIdAdapter)
+def _course_contentresource_containerId_adapter(context):
+    return _containerId_adater(context)
+
+
+@component.adapter(ICourseContentFolder)
+@interface.implementer(IContainerIdAdapter)
+def _course_contentfolder_containerId_adapter(context):
+    return _containerId_adater(context)
