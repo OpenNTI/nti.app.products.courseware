@@ -13,6 +13,7 @@ import os
 from mimetypes import guess_type
 
 from zope import interface
+from zope import lifecycleevent
 
 from nti.app.contentfile import transfer_data
 
@@ -153,6 +154,7 @@ class CourseSourceFiler(object):
 
         if context is not None:
             namedfile.add_association(context)
+            lifecycleevent.modified(namedfile)
 
         # return external link
         result = self.get_external_link(namedfile)
