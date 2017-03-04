@@ -20,8 +20,6 @@ from zope.intid.interfaces import IIntIds
 
 from nti.app.products.courseware.resources.adapters import course_resources
 
-from nti.app.products.courseware.resources.index import install_course_resources_catalog
-
 from nti.contentfolder.interfaces import INamedContainer
 
 from nti.contenttypes.courses.interfaces import ICourseCatalog
@@ -90,12 +88,12 @@ def do_evolve(context, generation=generation):
         assert  component.getSiteManager() == ds_folder.getSiteManager(), \
                 "Hooks not installed?"
 
-        seen = set()
-        lsm = ds_folder.getSiteManager()
-        intids = lsm.getUtility(IIntIds)
-        catalog = install_course_resources_catalog(ds_folder, intids)
-        for current in get_all_host_sites():
-            _process_site(current, catalog, intids, seen)
+#         seen = set()
+#         lsm = ds_folder.getSiteManager()
+#         intids = lsm.getUtility(IIntIds)
+#         catalog = install_course_resources_catalog(ds_folder, intids)
+#         for current in get_all_host_sites():
+#             _process_site(current, catalog, intids, seen)
 
     component.getGlobalSiteManager().unregisterUtility(mock_ds, IDataserver)
     logger.info('Evolution %s done.', generation)
@@ -105,4 +103,4 @@ def evolve(context):
     """
     Evolve to generation 13 to indexing course resources
     """
-    do_evolve(context)
+    pass

@@ -9,17 +9,13 @@ __docformat__ = "restructuredtext en"
 
 logger = __import__('logging').getLogger(__name__)
 
-generation = 13
+generation = 14
 
 from zope import interface
 
 from zope.generations.generations import SchemaManager as BaseSchemaManager
 
 from zope.generations.interfaces import IInstallableSchemaManager
-
-from zope.intid.interfaces import IIntIds
-
-from nti.app.products.courseware.resources.index import install_course_resources_catalog
 
 
 @interface.implementer(IInstallableSchemaManager)
@@ -36,9 +32,4 @@ class _SchemaManager(BaseSchemaManager):
 
 
 def evolve(context):
-    conn = context.connection
-    root = conn.root()
-    dataserver_folder = root['nti.dataserver']
-    lsm = dataserver_folder.getSiteManager()
-    intids = lsm.getUtility(IIntIds)
-    install_course_resources_catalog(dataserver_folder, intids)
+    pass
