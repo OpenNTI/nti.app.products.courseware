@@ -51,15 +51,22 @@ def do_evolve(context, generation=generation):
 
     with current_site(ds_folder):
         assert  component.getSiteManager() == ds_folder.getSiteManager(), \
-            "Hooks not installed?"
+                "Hooks not installed?"
 
         lsm = ds_folder.getSiteManager()
         intids = lsm.getUtility(IIntIds)
         catalog = lsm.queryUtility(IMetadataCatalog, name=CATALOG_NAME)
         if catalog is not None:
+            catalog.__parent__ = None
             intids.unregister(catalog)
-            for index in catalog.values():
+            for name, index in list(catalog.items()):
+                del catalog[name]
+                index.__parent__ = None
                 intids.unregister(index)
+                try:
+                    index.clear()
+                except AttributeError:
+                    pass
             lsm.unregisterUtility(provided=IMetadataCatalog, name=CATALOG_NAME)
 
     component.getGlobalSiteManager().unregisterUtility(mock_ds, IDataserver)
