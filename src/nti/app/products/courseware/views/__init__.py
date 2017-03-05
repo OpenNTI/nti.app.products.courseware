@@ -90,7 +90,7 @@ class CourseAdminPathAdapter(Contained):
 
 
 def raise_error(data, tb=None,
-                factory=hexc.HTTPUnprocessableEntity, 
+                factory=hexc.HTTPUnprocessableEntity,
                 request=None):
     request = request or get_current_request()
     raise_json_error(request, factory, data, tb)
