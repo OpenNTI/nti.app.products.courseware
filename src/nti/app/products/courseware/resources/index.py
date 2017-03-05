@@ -9,34 +9,34 @@ __docformat__ = "restructuredtext en"
 
 logger = __import__('logging').getLogger(__name__)
 
-from zope.deprecation import deprecated
+from zope.deprecation import deprecate
 
-deprecated('ValidatingSite', 'No longer used')
+@deprecate('ValidatingSite no longer used')
 class ValidatingSite(object):
     pass
 
 
-deprecated('ValidatingMimeType', 'No longer used')
+@deprecate('ValidatingMimeType no longer used')
 class ValidatingMimeType(object):
     pass
 
 
-deprecated('ValidatingCourse', 'No longer used')
+@deprecate('ValidatingCourse no longer used')
 class ValidatingCourse(object):
     pass
 
 
-deprecated('ValidatingCreator', 'No longer used')
+@deprecate('ValidatingCreator no longer used')
 class ValidatingCreator(object):
     pass
 
 
-deprecated('ValidatingContentType', 'No longer used')
+@deprecate('ValidatingContentType no longer used')
 class ValidatingContentType(object):
     pass
 
 
-deprecated('ValidatingAssociations', 'No longer used')
+@deprecate('ValidatingAssociations no longer used')
 class ValidatingAssociations(object):
     pass
 
