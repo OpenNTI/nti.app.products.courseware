@@ -321,10 +321,26 @@ class IVideoUsageStats(IUsageStats):
     Returns video usage stats for a course.
     """
 
-
 class IResourceUsageStats(IUsageStats):
     """
     Returns resource usage stats for a course.
+    """
+
+class IUserUsageStats(interface.Interface):
+
+    def get_stats(self):
+        """
+        Return stats for course users, optionally by scope.
+        """
+
+class IUserVideoUsageStats(IUserUsageStats):
+    """
+    Returns video usage stats for a course and user.
+    """
+
+class IUserResourceUsageStats(IUserUsageStats):
+    """
+    Returns resource usage stats for a course and user.
     """
 
 # Suggested contacts
@@ -375,7 +391,7 @@ class ICoursePublishableVendorInfo(interface.Interface):
 def get_course_publishable_vendor_info(context):
     result = dict()
     course = ICourseInstance(context, None)
-    subscribers = component.subscribers((course,), 
+    subscribers = component.subscribers((course,),
                                         ICoursePublishableVendorInfo)
     for s in list(subscribers):
         info = s.info()
