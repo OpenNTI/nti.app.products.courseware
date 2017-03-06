@@ -18,6 +18,8 @@ from datetime import datetime
 from urlparse import urlparse
 from collections import Mapping
 
+from requests.structures import CaseInsensitiveDict
+
 import repoze.lru
 
 from pyramid.threadlocal import get_current_request
@@ -46,8 +48,6 @@ from nti.app.products.courseware.utils.decorators import PreviewCourseAccessPred
 from nti.assessment.interfaces import IQAssignment
 
 from nti.contentlibrary.indexed_data import get_library_catalog
-
-from nti.common.maps import CaseInsensitiveDict
 
 from nti.common.string import is_true
 

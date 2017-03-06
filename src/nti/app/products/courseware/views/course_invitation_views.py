@@ -14,6 +14,8 @@ import six
 from urlparse import urljoin
 from collections import Mapping
 
+from requests.structures import CaseInsensitiveDict
+
 from zope import component
 
 from zope.event import notify
@@ -56,8 +58,6 @@ from nti.app.products.courseware.views import CHECK_COURSE_INVITATIONS_CSV
 from nti.appserver.interfaces import IApplicationSettings
 
 from nti.appserver.pyramid_authorization import has_permission
-
-from nti.common.maps import CaseInsensitiveDict
 
 from nti.common.string import TRUE_VALUES
 

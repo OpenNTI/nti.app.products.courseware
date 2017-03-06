@@ -12,6 +12,8 @@ logger = __import__('logging').getLogger(__name__)
 import os
 import six
 
+from requests.structures import CaseInsensitiveDict
+
 from zope import interface
 from zope import lifecycleevent
 
@@ -47,8 +49,6 @@ from nti.appserver.dataserver_pyramid_views import GenericGetView
 
 from nti.appserver.ugd_edit_views import UGDPutView
 from nti.appserver.ugd_edit_views import UGDPostView
-
-from nti.common.maps import CaseInsensitiveDict
 
 from nti.common.string import is_true
 

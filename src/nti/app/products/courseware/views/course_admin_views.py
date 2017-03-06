@@ -16,6 +16,8 @@ import six
 from io import BytesIO
 from datetime import datetime
 
+from requests.structures import CaseInsensitiveDict
+
 import isodate
 
 from zope import component
@@ -57,8 +59,6 @@ from nti.app.products.courseware.views.catalog_views import get_enrollments
 from nti.app.products.courseware.views.catalog_views import do_course_enrollment
 
 from nti.appserver.workspaces.interfaces import IUserService
-
-from nti.common.maps import CaseInsensitiveDict
 
 from nti.common.string import is_true
 
