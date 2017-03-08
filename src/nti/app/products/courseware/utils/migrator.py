@@ -25,6 +25,8 @@ from nti.contenttypes.courses.interfaces import ICourseEnrollments
 from nti.contenttypes.courses.enrollment import SectionSeat
 from nti.contenttypes.courses.enrollment import IDefaultCourseInstanceEnrollmentStorage
 
+from nti.contenttypes.courses.utils import get_parent_course
+
 from nti.dataserver.users import User
 
 from nti.ntiids.ntiids import find_object_with_ntiid
@@ -49,7 +51,7 @@ def course_enrollment_migrator(context=None, ntiid=None, scope=ES_PUBLIC,
 
     parent = course = instance
     if ICourseSubInstance.providedBy(course):
-        parent = course.__parent__.__parent__
+        parent = get_parent_course(course)
 
     if not sections:
         sections = list(parent.SubInstances.keys())
