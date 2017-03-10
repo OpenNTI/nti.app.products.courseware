@@ -33,7 +33,7 @@ from nti.app.products.courseware.legacy_courses import _copy_enrollments_from_le
 
 from nti.app.products.courseware.views import CourseAdminPathAdapter
 
-from nti.common._compat import aq_base
+from Acquisition import aq_base
 
 from nti.contentfragments.interfaces import CensoredPlainTextContentFragment
 
