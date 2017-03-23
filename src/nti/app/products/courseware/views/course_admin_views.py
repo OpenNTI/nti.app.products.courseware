@@ -62,6 +62,8 @@ from nti.appserver.workspaces.interfaces import IUserService
 
 from nti.common.string import is_true
 
+from nti.contentlibrary.interfaces import IEditableContentPackage
+
 from nti.contenttypes.courses import get_enrollment_catalog
 
 from nti.contenttypes.courses.common import get_course_packages
@@ -169,8 +171,8 @@ class UserCourseEnrollView(AbstractCourseEnrollView):
             parent = workspace['EnrolledCourses']
 
             entry = ICourseCatalogEntry(context, None)
-            logger.info(
-                "Enrolling %s in %s", user, getattr(entry, 'ntiid', None))
+            logger.info("Enrolling %s in %s",
+                        user, getattr(entry, 'ntiid', None))
             result = do_course_enrollment(context, user, scope,
                                           parent=parent,
                                           safe=True,
@@ -193,7 +195,6 @@ class UserCourseDropView(AbstractCourseEnrollView):
     def __call__(self):
         values = self.readInput()
         context, user = self.parseCommon(values)
-
         # Make sure we don't have any interaction.
         endInteraction()
         try:
@@ -201,8 +202,8 @@ class UserCourseDropView(AbstractCourseEnrollView):
             enrollments = get_enrollments(course_instance, self.request)
             if enrollments.drop(user):
                 entry = ICourseCatalogEntry(context, None)
-                logger.info(
-                    "%s drop from %s", user, getattr(entry, 'ntiid', None))
+                logger.info("%s drop from %s", user,
+                            getattr(entry, 'ntiid', None))
         finally:
             restoreInteraction()
 
@@ -222,7 +223,6 @@ class DropAllCourseEnrollmentsView(AbstractCourseEnrollView):
         values = self.readInput()
         result = LocatedExternalDict()
         context = _parse_course(values)
-
         # Make sure we don't have any interaction.
         endInteraction()
         try:
@@ -544,6 +544,7 @@ class CourseEnrollmentsView(AbstractAuthenticatedView):
         response.content_disposition = b'attachment; filename="enrollments.csv"'
         return response
 
+
 import collections
 
 from six import StringIO
@@ -704,9 +705,11 @@ class SyncCourseView(_SyncAllLibrariesView):
         entry = ICourseCatalogEntry(self.context)
         # collect all course associated ntiids
         ntiids = [entry.ntiid]
-        ntiids.extend(p.ntiid for p in get_course_packages(course))
-        ntiids.extend(
-            ICourseCatalogEntry(s).ntiid for s in get_course_subinstances(course))
+        ntiids.extend([p.ntiid for p in get_course_packages(course)
+                       if not IEditableContentPackage.providedBy(p)])
+        ntiids.extend([
+            ICourseCatalogEntry(s).ntiid for s in get_course_subinstances(course)
+        ])
         # do sync
         return self._do_sync(site=get_course_site_name(course),
                              ntiids=ntiids,
@@ -751,17 +754,16 @@ class FixBrokenEnrollmentsView(AbstractAuthenticatedView):
         for user in tuple(users_folder.values()):
             if not IUser.providedBy(user):
                 continue
-
-            stored = self._get_stored_enrollments(user)
             actual = self._get_enrollments(user)
+            stored = self._get_stored_enrollments(user)
             # Get extra enrollment records from storage.
             extra = set(stored).difference(actual)
             for extra_record in extra or ():
                 username = user.username
                 user_list = items.setdefault(username, [])
                 if ICourseInstanceEnrollmentRecord.providedBy(extra_record):
-                    entry = ICourseCatalogEntry(
-                        extra_record.CourseInstance, None)
+                    course = extra_record.CourseInstance
+                    entry = ICourseCatalogEntry(course, None)
                     entry_ntiid = entry and entry.ntiid
                     logger.info("[%s] Removing enrollment record for (user=%s) (entry=%s)",
                                 site_name, username, entry_ntiid)
