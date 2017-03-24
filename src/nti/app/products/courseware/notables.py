@@ -39,6 +39,7 @@ from nti.metadata import dataserver_metadata_catalog
 
 from nti.property.property import CachedProperty
 
+
 _FEEDBACK_MIME_TYPE = "application/vnd.nextthought.assessment.userscourseassignmenthistoryitemfeedback"
 
 
@@ -73,8 +74,8 @@ class TopLevelPriorityNotableFilter(object):
         obj_creator = getattr(obj_creator, 'username', obj_creator)
         # Filter out blog comments that might cause confusion.
         if     obj_creator is None \
-                or IPersonalBlogComment.providedBy(obj) \
-                or obj_creator == user.username:
+            or IPersonalBlogComment.providedBy(obj) \
+            or obj_creator == user.username:
             return False
 
         # Note: pulled from metadata_index; first two params not used.
@@ -92,8 +93,8 @@ class TopLevelPriorityNotableFilter(object):
                 course = ICourseInstance(enrollment, None)
                 catalog_entry = ICourseCatalogEntry(course, None)
                 if     course is None \
-                        or catalog_entry is None \
-                        or not catalog_entry.isCourseCurrentlyActive():  # pragma: no cover
+                    or catalog_entry is None \
+                    or not catalog_entry.isCourseCurrentlyActive():  # pragma: no cover
                     continue
 
                 if obj_creator in (x.id for x in course.instructors or ()):
@@ -129,8 +130,8 @@ class _UserPriorityCreatorNotableProvider(object):
         catalog = self._catalog
         query = {'any_of': (_FEEDBACK_MIME_TYPE,)}
         feedback_intids = catalog['mimeType'].apply(query)
-        results = catalog.family.IF.intersection(
-            instructor_intids, feedback_intids)
+        results = catalog.family.IF.intersection(instructor_intids, 
+                                                 feedback_intids)
         return results
 
     def get_notable_intids(self):
@@ -143,8 +144,8 @@ class _UserPriorityCreatorNotableProvider(object):
             course = ICourseInstance(enrollment, None)
             catalog_entry = ICourseCatalogEntry(course, None)
             if     course is None \
-                    or catalog_entry is None  \
-                    or not catalog_entry.isCourseCurrentlyActive():  # pragma: no cover
+                or catalog_entry is None  \
+                or not catalog_entry.isCourseCurrentlyActive():  # pragma: no cover
                 continue
 
             course_instructors = {x.id for x in course.instructors}
@@ -179,13 +180,11 @@ class _UserInstructorFeedbackNotableProvider(_UserPriorityCreatorNotableProvider
 
     def get_notable_intids(self):
         results = Set()
-
         instructed_courses = get_instructed_courses(self.context)
         for course in instructed_courses:
             course_enrollments = get_course_enrollments(course)
             student_ids = [x.Principal.id for x in course_enrollments]
-            student_intids = self._catalog['creator'].apply(
-                {'any_of': student_ids})
+            index = self._catalog['creator']
+            student_intids = index.apply({'any_of': student_ids})
             results.update(self._get_feedback_intids(student_intids))
-
         return results
