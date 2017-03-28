@@ -265,14 +265,14 @@ class OutlinePathFactory(object):
 		"""
 		For a course and target ntiid, look for the outline hierarchy
 		used to get to the target ntiid.  We assume the course we have
-		here is permissioned.
+		here is permissioned. Returns None if no path in the outline is found.
 		"""
 		if self.course_context is None:
 			return
 
 		if 		not self.target_ntiid \
 			or 	getattr(self.course_context, 'Outline', None) is None:
-			return (self.course_context,)
+			return
 
 		outline = self.course_context.Outline
 		for outline_node in outline.values():
@@ -300,4 +300,3 @@ class OutlinePathFactory(object):
 					if 		IContentUnit.providedBy(unit) \
 						and self.target_ntiid in unit.embeddedContainerNTIIDs:
 						return (self.course_context, outline_content_node, self.target_obj)
-		return (self.course_context,)

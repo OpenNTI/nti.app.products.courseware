@@ -70,7 +70,7 @@ from nti.contenttypes.courses.utils import is_course_instructor
 from nti.contenttypes.courses.utils import get_enrollment_catalog
 from nti.contenttypes.courses.utils import get_course_subinstances
 from nti.contenttypes.courses.utils import get_content_outline_nodes
-from nti.contenttypes.courses.utils import is_course_instructor_or_editor 
+from nti.contenttypes.courses.utils import is_course_instructor_or_editor
 from nti.contenttypes.courses.utils import content_unit_to_courses as indexed_content_unit_to_courses
 
 from nti.contenttypes.presentation.interfaces import INTIPollRef
@@ -164,13 +164,13 @@ def _contentunit_to_nodes(obj, user=None):
 									  		 intids=intids,
 									 		 target=obj.ntiid,
 									 		 provided=DOCKET_PROVIDED):
-			
+
 			# search for all pointers that point to the docket
 			objs = catalog.search_objects(sites=sites,
 										  intids=intids,
 										  target=docket.ntiid,
 									 	  provided=REF_PROVIDED)
-			
+
 			# find node and check
 			for ref in itertools.chain(objs or (), (docket,)):
 				node = find_interface(ref, ICourseOutlineNode, strict=False)
@@ -195,8 +195,8 @@ def _evaluation_to_nodes(obj, user=None):
 	result = []
 	catalog = get_library_catalog()
 	intids = component.getUtility(IIntIds)
-	sites = get_component_hierarchy_names()		
-	provided = (INTIPollRef, INTISurveyRef, INTIQuestionRef, 
+	sites = get_component_hierarchy_names()
+	provided = (INTIPollRef, INTISurveyRef, INTIQuestionRef,
 				INTIQuestionSetRef, INTIAssignmentRef)
 
 	# search for all dockets that point to the container
@@ -396,7 +396,8 @@ def _get_courses_from_container(obj, user=None):
 
 			container = find_object_with_ntiid(container)
 			if user is not None:
-				course = component.queryMultiAdapter((container, user), ICourseInstance)
+				course = component.queryMultiAdapter((container, user),
+													 ICourseInstance)
 			if course is None:
 				course = ICourseInstance(container, None)
 
@@ -418,7 +419,6 @@ def _hierarchy_from_obj_and_user(obj, user):
 	results = []
 	catalog_entries = set()
 	caught_exception = None
-
 	for course in possible_courses:
 		if ICourseCatalogEntry.providedBy(course):
 			catalog_entries.add(course)
@@ -429,25 +429,19 @@ def _hierarchy_from_obj_and_user(obj, user):
 				# Catch and see if other courses have an acceptable path.
 				caught_exception = e
 			else:
-				if nodes and len(nodes) > 1:
-					results.append(nodes)
+				nodes = nodes if nodes else (course,)
+				results.append(nodes)
 
 	if not results:
 		if caught_exception is not None:
 			# No path found and this exception indicates the path goes through
-			# an unpublished object. This case is unlikely.
+			# an unpublished object.
 			raise caught_exception
 
-		# This is an edge case.  We have courses and catalog entries,
-		# but our target NTIID only exists in a catalog entry that
-		# may or may not be open. If we can't find our ntiid in our
-		# course outlines, assume we don't have access and raise.
-		# XXX: Not sure this is a good assumption.
-		if container_courses and catalog_entries:
+		# This means are content only exists in catalog entries
+		# our user cannot currently reach.
+		if catalog_entries:
 			raise ForbiddenContextException(catalog_entries)
-
-		# No outline nodes, but we did have courses.
-		results = [ (x,) for x in possible_courses ]
 	return results
 
 def _get_preferred_course(found_course):
