@@ -69,6 +69,7 @@ from nti.contenttypes.courses.interfaces import IJoinCourseInvitation
 
 from nti.contenttypes.courses.interfaces import AlreadyEnrolledException
 from nti.contenttypes.courses.interfaces import CourseInvitationException
+from nti.contenttypes.courses.interfaces import InstructorEnrolledException
 
 from nti.contenttypes.courses.invitation import JoinCourseInvitation
 
@@ -160,6 +161,15 @@ class UserAcceptCourseInvitationView(AcceptInvitationByCodeView):
 					{
 						u'message': str(e),
 						u'code': 'CourseValidationError',
+					},
+					None)
+		elif isinstance(e, InstructorEnrolledException):
+			raise_json_error(
+					self.request,
+					hexc.HTTPUnprocessableEntity,
+					{
+						u'message': str(e),
+						u'code': 'InstructorEnrolledError',
 					},
 					None)
 		else:

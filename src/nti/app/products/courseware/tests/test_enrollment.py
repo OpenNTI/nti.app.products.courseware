@@ -138,3 +138,11 @@ class TestEnrollment(ApplicationLayerTest):
 		with mock_dataserver.mock_db_trans(self.ds, site_name='platform.ou.edu'):
 			last_mod = self._get_last_mod()
 			assert_that(last_mod, does_not(prev_last_mod))
+
+	@WithSharedApplicationMockDS(testapp=True, users=True)
+	def test_instructor(self):
+		enrolled_href = '/dataserver2/users/harp4162/Courses/EnrolledCourses'
+		instructor_environ = self._make_extra_environ(username='harp4162')
+		self.testapp.post_json(enrolled_href, self.course_ntiid,
+							   extra_environ=instructor_environ,
+							   status=422)

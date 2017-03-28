@@ -56,9 +56,8 @@ from nti.contenttypes.courses.interfaces import ICourseInstance
 from nti.contenttypes.courses.interfaces import ICourseCatalogEntry
 from nti.contenttypes.courses.interfaces import ICourseEnrollmentManager
 from nti.contenttypes.courses.interfaces import INonPublicCourseInstance
+from nti.contenttypes.courses.interfaces import InstructorEnrolledException
 from nti.contenttypes.courses.interfaces import IAnonymouslyAccessibleCourseInstance
-
-from nti.contenttypes.courses.utils import is_instructor_in_hierarchy
 
 from nti.dataserver import authorization as nauth
 
@@ -173,14 +172,13 @@ class enroll_course_view(AbstractAuthenticatedView,
 		if not can_create(catalog_entry, request=self.request):
 			raise hexc.HTTPForbidden()
 
-		if is_instructor_in_hierarchy(catalog_entry, self.remoteUser):
-			msg = _("Instructors cannot enroll in a course")
-			return hexc.HTTPForbidden(msg)
-
-		enrollment = do_course_enrollment(catalog_entry,
-										  self.remoteUser,
-										  parent=self.request.context,
-										  request=self.request)
+		try:
+			enrollment = do_course_enrollment(catalog_entry,
+											  self.remoteUser,
+											  parent=self.request.context,
+											  request=self.request)
+		except InstructorEnrolledException as e:
+			raise hexc.HTTPUnprocessableEntity(_(str(e)))
 
 		entry = catalog_entry
 		if enrollment is not None:
