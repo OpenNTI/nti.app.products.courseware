@@ -47,9 +47,9 @@ from nti.contenttypes.presentation.interfaces import IConcreteAsset
 from nti.contenttypes.presentation.interfaces import INTILessonOverview
 from nti.contenttypes.presentation.interfaces import IItemAssetContainer
 
-from nti.coremetadata.interfaces import IRecordable
-
 from nti.ntiids.ntiids import find_object_with_ntiid
+
+from nti.recorder.interfaces import IRecordable
 
 
 def check_archive(path):
