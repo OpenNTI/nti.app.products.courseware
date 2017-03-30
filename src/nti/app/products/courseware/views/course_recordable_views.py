@@ -38,9 +38,6 @@ from nti.contenttypes.courses.interfaces import ICourseAssessmentItemCatalog
 
 from nti.contenttypes.presentation import ALL_PRESENTATION_ASSETS_INTERFACES
 
-from nti.coremetadata.interfaces import IRecordable
-from nti.coremetadata.interfaces import IRecordableContainer
-
 from nti.dataserver import authorization as nauth
 
 from nti.externalization.interfaces import LocatedExternalDict
@@ -48,10 +45,13 @@ from nti.externalization.interfaces import StandardExternalFields
 
 from nti.ntiids.ntiids import find_object_with_ntiid
 
-from nti.recorder import get_recorder_catalog
-
 from nti.recorder.index import IX_LOCKED
 from nti.recorder.index import IX_CHILD_ORDER_LOCKED
+
+from nti.recorder.index import get_recorder_catalog
+
+from nti.recorder.interfaces import IRecordable
+from nti.recorder.interfaces import IRecordableContainer
 
 from nti.site.site import get_component_hierarchy_names
 
@@ -87,7 +87,6 @@ class CourseSyncLockedObjectsMixin(object):
 
     def _get_course_pacakge_ntiids(self, course):
         result = set()
-
         def _recur(unit):
             for child in unit.children or ():
                 _recur(child)
@@ -131,8 +130,9 @@ class CourseSyncLockedObjectsMixin(object):
         locked_intids = recorder_catalog[IX_LOCKED].apply({'any_of': (True,)})
         index = recorder_catalog[IX_CHILD_ORDER_LOCKED]
         child_order_locked_intids = index.apply({'any_of': (True,)})
-        all_locked = recorder_catalog.family.IF.multiunion(
-            [locked_intids, child_order_locked_intids])
+        
+        union = [locked_intids, child_order_locked_intids]
+        all_locked = recorder_catalog.family.IF.multiunion(union)
 
         doc_ids = recorder_catalog.family.IF.intersection(all_ids, all_locked)
         return ResultSet(doc_ids, intids, True)
