@@ -16,6 +16,17 @@ __docformat__ = "restructuredtext en"
 
 logger = __import__('logging').getLogger(__name__)
 
+from datetime import datetime
+
+from pip._vendor.requests.structures import CaseInsensitiveDict
+
+from pyramid import httpexceptions as hexc
+
+from pyramid.interfaces import IRequest
+
+from pyramid.view import view_config
+from pyramid.view import view_defaults
+
 from zope import component
 from zope import interface
 
@@ -25,13 +36,6 @@ from zope.security.management import getInteraction
 
 from zope.traversing.interfaces import IPathAdapter
 
-from pyramid import httpexceptions as hexc
-
-from pyramid.interfaces import IRequest
-
-from pyramid.view import view_config
-from pyramid.view import view_defaults
-
 from nti.app.base.abstract_views import AbstractView
 from nti.app.base.abstract_views import AbstractAuthenticatedView
 
@@ -40,9 +44,12 @@ from nti.app.externalization.view_mixins import ModeledContentUploadRequestUtils
 from nti.app.products.courseware.interfaces import ICoursesWorkspace
 from nti.app.products.courseware.interfaces import ICourseInstanceEnrollment
 from nti.app.products.courseware.interfaces import IEnrolledCoursesCollection
+from nti.app.products.courseware.interfaces import IAdministeredCoursesCollection
 
 from nti.app.products.courseware.views import MessageFactory as _
 from nti.app.products.courseware.views import CourseAdminPathAdapter
+
+from nti.app.products.courseware.views import VIEW_COURSE_FAVORITES
 
 from nti.appserver.dataserver_pyramid_views import GenericGetView
 
@@ -69,12 +76,15 @@ from nti.externalization.externalization import to_external_object
 from nti.externalization.interfaces import LocatedExternalDict
 from nti.externalization.interfaces import StandardExternalFields
 
+from nti.property.property import Lazy
+
 from nti.traversal import traversal
 
 ITEMS = StandardExternalFields.ITEMS
 NTIID = StandardExternalFields.NTIID
 TOTAL = StandardExternalFields.TOTAL
 ITEM_COUNT = StandardExternalFields.ITEM_COUNT
+
 
 @interface.implementer(IPathAdapter)
 @component.adapter(IUser, IRequest)
@@ -189,6 +199,116 @@ class enroll_course_view(AbstractAuthenticatedView,
 					self.remoteUser, entry.ntiid)
 
 		return enrollment
+
+
+class _AbstractFavoriteCoursesView(AbstractAuthenticatedView):
+	"""
+	An abstract view to fetch the `favorite` courses of a user.
+	"""
+
+	#: The default number of items we return in our favorites view.
+	DEFAULT_RESULT_COUNT = 4
+
+	@Lazy
+	def requested_count(self):
+		params = CaseInsensitiveDict(self.request.params)
+		result = params.get('count') \
+			  or params.get('limit') \
+			  or params.get('size')
+		return result or self.DEFAULT_RESULT_COUNT
+
+	def _sort_key(self, entry_tuple):
+		start_date = entry_tuple[0].StartDate
+		return (start_date is not None, start_date)
+
+	@Lazy
+	def now(self):
+		return datetime.utcnow()
+
+	def _get_entry_for_record(self, record):
+		course = record.CourseInstance
+		entry = ICourseCatalogEntry(course, None)
+		return entry
+
+	@Lazy
+	def entries_and_records(self):
+		result = list()
+		for record in self.context.container or ():
+			entry = self._get_entry_for_record(record)
+			if entry is not None:
+				result.append((entry, record))
+		return result
+
+	@Lazy
+	def sorted_entries_and_records(self):
+		result = sorted(self.entries_and_records,
+					    key=self._sort_key,
+					    reverse=True)
+		return result
+
+	def _is_entry_current(self, entry):
+		now = self.now
+		return  (entry.StartDate is None or now > entry.StartDate) \
+			and (entry.EndDate is None or now < entry.EndDate)
+
+	@Lazy
+	def sorted_current_entries_and_records(self):
+		result = [x for x in self.sorted_entries_and_records \
+			      if self._is_entry_current(x[0])]
+		return result
+
+	def _get_items(self):
+		"""
+		Get our result set items, which will include the `current`
+		enrollments backfilled with the most recent.
+		"""
+		result = self.sorted_current_entries_and_records[:self.requested_count]
+		if len(result) < self.requested_count:
+			# Backfill with most-recent items
+			seen_entries = set(x[0] for x in result)
+			for entry_tuple in self.sorted_entries_and_records:
+				if entry_tuple[0] not in seen_entries:
+					result.append(entry_tuple)
+					if len(result) >= self.requested_count:
+						break
+		# Now grab the records we want
+		result = [x[1] for x in result]
+		return result
+
+	def __call__(self):
+		result = LocatedExternalDict()
+		result[ITEMS] = items = self._get_items()
+		result[ITEM_COUNT] = len(items)
+		result[TOTAL] = len(self.entries_and_records)
+		return result
+
+@view_config(route_name='objects.generic.traversal',
+			 context=IEnrolledCoursesCollection,
+			 request_method='GET',
+			 permission=nauth.ACT_READ,
+			 name=VIEW_COURSE_FAVORITES,
+			 renderer='rest')
+class FavoriteEnrolledCoursesView(_AbstractFavoriteCoursesView):
+	"""
+	A view into the `favorite` enrolled courses of a user.
+	"""
+
+	def _sort_key(self, entry_tuple):
+		enrollment = entry_tuple[1]
+		return enrollment.createdTime
+
+
+@view_config(route_name='objects.generic.traversal',
+			 context=IAdministeredCoursesCollection,
+			 request_method='GET',
+			 permission=nauth.ACT_READ,
+			 name=VIEW_COURSE_FAVORITES,
+			 renderer='rest')
+class FavoriteAdministeredCoursesView(_AbstractFavoriteCoursesView):
+	"""
+	A view into the `favorite` administered courses of a user.
+	"""
+
 
 @view_config(route_name='objects.generic.traversal',
 			 context=ICourseInstanceEnrollment,
