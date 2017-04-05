@@ -108,6 +108,8 @@ class UserCourseWorkspace(Contained):
 
     def __len__(self):
         return len(self.collections)
+
+
 _CoursesWorkspace = UserCourseWorkspace
 
 
@@ -171,6 +173,7 @@ class AllCoursesCollection(Contained):
         for course in my_enrollments.values():
             if ICourseSubInstance.providedBy(course):
                 # Look for parents and siblings to remove
+                # XXX: Too much knowledge
                 courses_to_remove.extend(course.__parent__.values())
                 courses_to_remove.append(course.__parent__.__parent__)
             else:
@@ -218,8 +221,8 @@ class _AbstractQueryBasedCoursesCollection(Contained):
     def links(self):
         result = []
         link = Link(self,
-					rel=VIEW_COURSE_FAVORITES,
-					elements=('@@%s' % VIEW_COURSE_FAVORITES,))
+                    rel=VIEW_COURSE_FAVORITES,
+                    elements=('@@%s' % VIEW_COURSE_FAVORITES,))
         result.append(link)
         return result
 
@@ -314,8 +317,8 @@ class CourseInstanceEnrollment(_AbstractInstanceWrapper):
 
 
 def LegacyCourseInstanceEnrollment(course_instance, user):
-    record = ICourseEnrollments(
-        course_instance).get_enrollment_for_principal(user)
+    enrollments = ICourseEnrollments(course_instance)
+    record = enrollments.get_enrollment_for_principal(user)
     if record is not None:
         return DefaultCourseInstanceEnrollment(record, user)
 
@@ -327,8 +330,7 @@ class DefaultCourseInstanceEnrollment(CourseInstanceEnrollment):
     __external_class_name__ = 'CourseInstanceEnrollment'
 
     def __init__(self, record, user=None):
-        CourseInstanceEnrollment.__init__(
-            self, record.CourseInstance, record.Principal)
+        CourseInstanceEnrollment.__init__(self, record.CourseInstance, record.Principal)
         self._record = record
         self.createdTime = self._record.createdTime
         self.lastModified = self._record.lastModified
