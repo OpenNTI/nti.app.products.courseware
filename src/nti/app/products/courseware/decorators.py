@@ -34,6 +34,7 @@ from nti.app.products.courseware import VIEW_COURSE_ACTIVITY
 from nti.app.products.courseware import VIEW_COURSE_RECURSIVE
 from nti.app.products.courseware import VIEW_COURSE_CLASSMATES
 from nti.app.products.courseware import SEND_COURSE_INVITATIONS
+from nti.app.products.courseware import VIEW_USER_COURSE_ACCESS
 from nti.app.products.courseware import VIEW_LESSONS_CONTAINERS
 from nti.app.products.courseware import VIEW_COURSE_ACCESS_TOKENS
 from nti.app.products.courseware import VIEW_RECURSIVE_AUDIT_LOG
@@ -145,6 +146,9 @@ class _CourseInstanceLinkDecorator(object):
 		entry = ICourseCatalogEntry(context, None)
 		if entry:
 			_links.append(Link(entry, rel=VIEW_CATALOG_ENTRY))
+
+		_links.append(Link(context, rel=VIEW_USER_COURSE_ACCESS,
+						   elements=('@@%s' % VIEW_USER_COURSE_ACCESS,)))
 
 		request = get_current_request()
 		if request is not None and has_permission(ACT_VIEW_ACTIVITY, context, request):

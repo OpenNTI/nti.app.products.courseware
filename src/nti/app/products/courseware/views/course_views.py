@@ -49,8 +49,11 @@ from nti.app.products.courseware.utils import get_enrollment_options
 from nti.app.products.courseware.interfaces import ACT_VIEW_ACTIVITY
 from nti.app.products.courseware.interfaces import ICoursePagesContainerResource
 
+from nti.app.products.courseware.views import MessageFactory as _
+
 from nti.app.products.courseware.views import VIEW_CONTENTS
 from nti.app.products.courseware.views import VIEW_COURSE_ACTIVITY
+from nti.app.products.courseware.views import VIEW_USER_COURSE_ACCESS
 from nti.app.products.courseware.views import VIEW_COURSE_ENROLLMENT_ROSTER
 
 from nti.appserver.interfaces import IIntIdUserSearchPolicy
@@ -63,14 +66,21 @@ from nti.appserver.relevant_ugd_views import _RelevantUGDView
 
 from nti.common.string import is_true
 
+from nti.contenttypes.courses.administered import get_course_admin_role
+
 from nti.contenttypes.courses.interfaces import ICourseOutline
 from nti.contenttypes.courses.interfaces import ICourseInstance
 from nti.contenttypes.courses.interfaces import ICourseEnrollments
 from nti.contenttypes.courses.interfaces import ICourseCatalogEntry
 
+from nti.contenttypes.courses.utils import is_enrolled
+from nti.contenttypes.courses.utils import is_course_instructor_or_editor
+
 from nti.coremetadata.interfaces import IPublishable
 
 from nti.dataserver import authorization as nauth
+
+from nti.dataserver.authorization import is_admin_or_content_admin
 
 from nti.dataserver.interfaces import IUser
 
@@ -322,7 +332,7 @@ class CourseEnrollmentRosterGetView(AbstractAuthenticatedView,
 
         filter_name = self.request.params.get('filter')
         sort_name = self.request.params.get('sortOn')
-        sort_reverse = self.request.params.get('sortOrder', 'ascending') 
+        sort_reverse = self.request.params.get('sortOrder', 'ascending')
         sort_reverse = sort_reverse == 'descending'
         username_search_term = self.request.params.get('usernameSearchTerm')
 
@@ -357,9 +367,9 @@ class CourseEnrollmentRosterGetView(AbstractAuthenticatedView,
         items.extend((component.getMultiAdapter((course, x),
                                                 ICourseInstanceEnrollment)
                       for x in enrollments_iter))
-        
+
         result['TotalItemCount'] = len(result['Items'])
-        result['FilteredTotalItemCount'] = result['TotalItemCount'] 
+        result['FilteredTotalItemCount'] = result['TotalItemCount']
 
         # We could theoretically be more efficient with the user of
         # the IEnumerableEntity container and the scopes, especially
@@ -453,7 +463,7 @@ class CourseActivityGetView(AbstractAuthenticatedView,
 
         number_items_needed = total_item_count
         if batch_size is not None and batch_start is not None:
-            number_items_needed = min(batch_size + batch_start + 2, 
+            number_items_needed = min(batch_size + batch_start + 2,
                                       total_item_count)
 
         self._batch_tuple_iterable(result, activity.items(),
@@ -598,3 +608,38 @@ class CourseEnrollmentOptionsGetView(AbstractAuthenticatedView):
     def __call__(self):
         options = get_enrollment_options(self.context)
         return options
+
+
+@view_config(route_name='objects.generic.traversal',
+             renderer='rest',
+             name=VIEW_USER_COURSE_ACCESS,
+             request_method='GET',
+             context=ICourseInstance,
+             permission=nauth.ACT_READ)
+class UserCourseAccessView(AbstractAuthenticatedView):
+    """
+    A view that returns the preferred user access to the course context. This
+    may be an administrative role or an enrollment record. We should mimic what
+    is returned by the course workspaces.
+    """
+
+    def _is_admin(self):
+        return  is_admin_or_content_admin(self.remoteUser) \
+            or  is_course_instructor_or_editor(self.context, self.remoteUser)
+
+    def __call__(self):
+        result = None
+        if self._is_admin():
+            result = get_course_admin_role(self.context, self.remoteUser)
+        elif is_enrolled(self.context, self.remoteUser):
+            result = component.getMultiAdapter((self.context, self.remoteUser),
+                                               ICourseInstanceEnrollment)
+            if result is None:
+                logger.warn('User enrolled but no enrollment record (%s) (%s)',
+                            self.remoteUser,
+                            ICourseCatalogEntry(self.context).ntiid)
+            else:
+                result.__parent__ = self.context
+        if result is None:
+            raise hexc.HTTPForbidden(_('User does not have access to this course.'))
+        return result
