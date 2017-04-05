@@ -129,10 +129,10 @@ class CourseOutlineContentsView(AbstractAuthenticatedView):
         """
         Node is published or we're an editor.
         """
-        return 		not IPublishable.providedBy(item) \
-            or 	item.is_published() \
-            or (	 show_unpublished
-                  and has_permission(nauth.ACT_CONTENT_EDIT, item, self.request))
+        return not IPublishable.providedBy(item) \
+            or item.is_published() \
+            or (    show_unpublished
+                and has_permission(nauth.ACT_CONTENT_EDIT, item, self.request))
 
     _is_visible = _is_published
 
@@ -144,8 +144,7 @@ class CourseOutlineContentsView(AbstractAuthenticatedView):
         if not lesson_ntiid:
             result = True  # Legacy outline node or non-content node, allow it.
         else:
-            lesson = find_object_with_ntiid(
-                lesson_ntiid) if lesson_ntiid else None
+            lesson = find_object_with_ntiid(lesson_ntiid) if lesson_ntiid else None
             result = self._is_published(lesson, show_unpublished)
         return result
 
@@ -190,10 +189,9 @@ class CourseOutlineContentsView(AbstractAuthenticatedView):
 
     def __call__(self):
         omit_unpublished = False
-
         try:
-            omit_unpublished = is_true(
-                self.request.params.get('omit_unpublished', False))
+            value = self.request.params.get('omit_unpublished', False)
+            omit_unpublished = is_true(value)
         except ValueError:
             pass
 
@@ -219,9 +217,7 @@ class CourseEnrollmentRosterPathAdapter(Contained):
     def __getitem__(self, username):
         username = username.lower()
         # XXX: We can do better than this interface now
-        enrollments_iter = ICourseEnrollments(
-            self.__parent__).iter_enrollments()
-
+        enrollments_iter = ICourseEnrollments(self.__parent__).iter_enrollments()
         for record in enrollments_iter:
             user = IUser(record)
             if user.username.lower() == username:
@@ -326,8 +322,8 @@ class CourseEnrollmentRosterGetView(AbstractAuthenticatedView,
 
         filter_name = self.request.params.get('filter')
         sort_name = self.request.params.get('sortOn')
-        sort_reverse = self.request.params.get(
-            'sortOrder', 'ascending') == 'descending'
+        sort_reverse = self.request.params.get('sortOrder', 'ascending') 
+        sort_reverse = sort_reverse == 'descending'
         username_search_term = self.request.params.get('usernameSearchTerm')
 
         if sort_name == 'realname':
@@ -348,7 +344,7 @@ class CourseEnrollmentRosterGetView(AbstractAuthenticatedView,
                                       key=_key,
                                       reverse=sort_reverse)
         elif sort_name == 'username':
-            _key = lambda x: IUser(x).username
+            def _key(x): return IUser(x).username
             enrollments_iter = sorted(enrollments_iter,
                                       key=_key,
                                       reverse=sort_reverse)
@@ -361,8 +357,9 @@ class CourseEnrollmentRosterGetView(AbstractAuthenticatedView,
         items.extend((component.getMultiAdapter((course, x),
                                                 ICourseInstanceEnrollment)
                       for x in enrollments_iter))
-        result['FilteredTotalItemCount'] = result[
-            'TotalItemCount'] = len(result['Items'])
+        
+        result['TotalItemCount'] = len(result['Items'])
+        result['FilteredTotalItemCount'] = result['TotalItemCount'] 
 
         # We could theoretically be more efficient with the user of
         # the IEnumerableEntity container and the scopes, especially
@@ -374,10 +371,13 @@ class CourseEnrollmentRosterGetView(AbstractAuthenticatedView,
 
         if filter_name == 'LegacyEnrollmentStatusForCredit':
             items = [
-                x for x in items if x.LegacyEnrollmentStatus == 'ForCredit']
+                x for x in items if x.LegacyEnrollmentStatus == 'ForCredit'
+            ]
             result['FilteredTotalItemCount'] = len(items)
         elif filter_name == 'LegacyEnrollmentStatusOpen':
-            items = [x for x in items if x.LegacyEnrollmentStatus == 'Open']
+            items = [
+                x for x in items if x.LegacyEnrollmentStatus == 'Open'
+            ]
             result['FilteredTotalItemCount'] = len(items)
         elif filter_name:  # pragma: no cover
             raise hexc.HTTPBadRequest("Unsupported filteroption")
@@ -453,8 +453,8 @@ class CourseActivityGetView(AbstractAuthenticatedView,
 
         number_items_needed = total_item_count
         if batch_size is not None and batch_start is not None:
-            number_items_needed = min(
-                batch_size + batch_start + 2, total_item_count)
+            number_items_needed = min(batch_size + batch_start + 2, 
+                                      total_item_count)
 
         self._batch_tuple_iterable(result, activity.items(),
                                    number_items_needed,
@@ -524,13 +524,11 @@ class CourseActivityLastViewedDecorator(AbstractAuthenticatedView,
     def __call__(self):
         context = self.request.context
         username = self.request.authenticated_userid
-
         annot = IAnnotations(context)
         mapping = annot.get(self.KEY)
         if mapping is None:
             mapping = BTrees.OLBTree.BTree()
             annot[self.KEY] = mapping
-
         now = self.readInput()
         mapping[username] = time_to_64bit_int(now)
         return now
@@ -600,4 +598,3 @@ class CourseEnrollmentOptionsGetView(AbstractAuthenticatedView):
     def __call__(self):
         options = get_enrollment_options(self.context)
         return options
-
