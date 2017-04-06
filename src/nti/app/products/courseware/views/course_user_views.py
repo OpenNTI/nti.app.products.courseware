@@ -47,63 +47,66 @@ ITEMS = StandardExternalFields.ITEMS
 LINKS = StandardExternalFields.LINKS
 ITEM_COUNT = StandardExternalFields.ITEM_COUNT
 
+
 class BaseClassmatesView(AbstractAuthenticatedView, BatchingUtilsMixin):
-	"""
-	batchSize
-		The size of the batch.  Defaults to 50.
+    """
+    batchSize The size of the batch.  Defaults to 50.
+    batchStart The starting batch index.  Defaults to 0.
+    """
 
-	batchStart
-		The starting batch index.  Defaults to 0.
-	"""
+    _DEFAULT_BATCH_SIZE = 50
+    _DEFAULT_BATCH_START = 0
 
-	_DEFAULT_BATCH_SIZE = 50
-	_DEFAULT_BATCH_START = 0
+    def selector(self, contact):
+        user = User.get_user(contact.username)
+        if user is not None and self.remoteUser != user:
+            ext = to_external_object(user, name="summary")
+            ext.pop(LINKS, None)
+            return ext
+        return contact
 
-	def selector(self, contact):
-		user = User.get_user(contact.username)
-		if user is not None and self.remoteUser != user:
-			ext = to_external_object(user, name="summary")
-			ext.pop(LINKS, None)
-			return ext
-		return contact
+    def export_suggestions(self, result_dict, suggestions):
+        result_dict['TotalItemCount'] = len(suggestions)
+        self._batch_items_iterable(result_dict,
+                                   suggestions,
+                                   selector=self.selector)
+        result_dict[ITEM_COUNT] = len(result_dict.get(ITEMS) or ())
 
-	def export_suggestions(self, result_dict, suggestions):
-		result_dict['TotalItemCount'] = len(suggestions)
-		self._batch_items_iterable(result_dict, suggestions, selector=self.selector)
-		result_dict[ITEM_COUNT] = len(result_dict.get(ITEMS) or ())
 
 @view_config(context=ICourseInstance)
 @view_config(context=ICourseInstanceEnrollment)
 @view_defaults(route_name='objects.generic.traversal',
-			   renderer='rest',
-			   request_method='GET',
-			   permission=nauth.ACT_READ,
-			   name=VIEW_COURSE_CLASSMATES)
+               renderer='rest',
+               request_method='GET',
+               permission=nauth.ACT_READ,
+               name=VIEW_COURSE_CLASSMATES)
 class CourseClassmatesView(BaseClassmatesView):
 
-	def __call__(self):
-		record = get_enrollment_record(self.context, self.remoteUser)
-		if record is None:
-			raise hexc.HTTPForbidden(_("Must be enrolled in course."))
-		result = LocatedExternalDict()
-		provider = component.getUtility(IClassmatesSuggestedContactsProvider)
-		suggestions = provider.suggestions_by_course(self.remoteUser, self.context)
-		self.export_suggestions(result, suggestions)
-		return result
+    def __call__(self):
+        record = get_enrollment_record(self.context, self.remoteUser)
+        if record is None:
+            raise hexc.HTTPForbidden(_("Must be enrolled in course."))
+        result = LocatedExternalDict()
+        provider = component.getUtility(IClassmatesSuggestedContactsProvider)
+        suggestions = provider.suggestions_by_course(self.remoteUser,
+                                                     self.context)
+        self.export_suggestions(result, suggestions)
+        return result
+
 
 @view_config(context=IUser)
 @view_defaults(route_name='objects.generic.traversal',
-			   renderer='rest',
-			   request_method='GET',
-			   permission=nauth.ACT_READ,
-			   name=VIEW_CLASSMATES)
+               renderer='rest',
+               request_method='GET',
+               permission=nauth.ACT_READ,
+               name=VIEW_CLASSMATES)
 class ClassmatesView(BaseClassmatesView):
 
-	def __call__(self):
-		if self.remoteUser != self.request.context:
-			raise hexc.HTTPForbidden()
-		result = LocatedExternalDict()
-		provider = component.getUtility(IClassmatesSuggestedContactsProvider)
-		suggestions = provider.suggestions(self.remoteUser)
-		self.export_suggestions(result, suggestions)
-		return result
+    def __call__(self):
+        if self.remoteUser != self.request.context:
+            raise hexc.HTTPForbidden()
+        result = LocatedExternalDict()
+        provider = component.getUtility(IClassmatesSuggestedContactsProvider)
+        suggestions = provider.suggestions(self.remoteUser)
+        self.export_suggestions(result, suggestions)
+        return result
