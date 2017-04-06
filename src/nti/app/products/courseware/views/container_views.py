@@ -40,51 +40,52 @@ TOTAL = StandardExternalFields.TOTAL
 ITEMS = StandardExternalFields.ITEMS
 ITEM_COUNT = StandardExternalFields.ITEM_COUNT
 
+
 class AbstractContainersView(AbstractAuthenticatedView):
-	"""
-	Fetch all lessons holding our given context. A `course` param
-	can be given that narrows the scope of the result, otherwise,
-	results from all courses will be returned.
-	"""
+    """
+    Fetch all lessons holding our given context. A `course` param
+    can be given that narrows the scope of the result, otherwise,
+    results from all courses will be returned.
+    """
 
-	#: Subclasses define this for searching
-	provided = None
+    #: Subclasses define this for searching
+    provided = None
 
-	def __call__(self):
-		result = LocatedExternalDict()
-		course = ICourseInstance(self.request, None)
-		courses = (course,)
-		if course is None:
-			courses = get_evaluation_courses(self.context)
-		if not courses:
-			raise_error({
-				u'message': _("No courses found for assessment."),
-				u'code': 'NoCoursesForAssessment',
-				})
-		lessons = get_evaluation_lessons( self.context,
-										  self.provided,
-										  courses=courses,
-										  request=self.request )
-		lessons = set( lessons or () )
-		result[ITEMS] = lessons
-		result[ITEM_COUNT] = result[TOTAL] = len(lessons)
-		return result
+    def __call__(self):
+        result = LocatedExternalDict()
+        course = ICourseInstance(self.request, None)
+        courses = (course,)
+        if course is None:
+            courses = get_evaluation_courses(self.context)
+        if not courses:
+            raise_error({
+                u'message': _("No courses found for assessment."),
+                u'code': 'NoCoursesForAssessment',
+            })
+        lessons = get_evaluation_lessons(self.context,
+                                         self.provided,
+                                         courses=courses,
+                                         request=self.request)
+        lessons = set(lessons or ())
+        result[ITEMS] = lessons
+        result[ITEM_COUNT] = result[TOTAL] = len(lessons)
+        return result
+
 
 @view_config(context=IQuestionSet)
 @view_defaults(route_name='objects.generic.traversal',
-			   renderer='rest',
-			   name=VIEW_LESSONS_CONTAINERS,
-			   permission=nauth.ACT_CONTENT_EDIT)
+               renderer='rest',
+               name=VIEW_LESSONS_CONTAINERS,
+               permission=nauth.ACT_CONTENT_EDIT)
 class QuestionSetContainersView(AbstractContainersView):
+    provided = INTIQuestionSetRef
 
-	provided = INTIQuestionSetRef
 
 @view_config(context=IQAssignment)
 @view_defaults(route_name='objects.generic.traversal',
-			   renderer='rest',
-			   name=VIEW_LESSONS_CONTAINERS,
-			   permission=nauth.ACT_CONTENT_EDIT)
+               renderer='rest',
+               name=VIEW_LESSONS_CONTAINERS,
+               permission=nauth.ACT_CONTENT_EDIT)
 class AssignmentLessonsContainersView(AbstractContainersView):
-
-	# Some assignments are in question set refs...
-	provided = INTIAssessmentRef
+    # Some assignments are in question set refs...
+    provided = INTIAssessmentRef
