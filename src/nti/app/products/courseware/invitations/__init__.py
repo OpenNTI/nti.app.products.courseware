@@ -9,9 +9,6 @@ __docformat__ = "restructuredtext en"
 
 logger = __import__('logging').getLogger(__name__)
 
-from nti.app.products.courseware import MessageFactory as _
-from nti.app.products.courseware import ACCEPT_COURSE_INVITATIONS
-
 from nti.app.products.courseware.invitations.interfaces import ICourseInvitation
 
 from nti.app.products.courseware.invitations.model import CourseInvitation
