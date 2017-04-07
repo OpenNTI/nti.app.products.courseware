@@ -398,24 +398,16 @@ def get_course_publishable_vendor_info(context):
         result.update(info or {})
     return result
 
-# publishable vendor info
-
-
-class ICourseInvitation(interface.Interface):
-    Code = TextLine(title="Invitation code.", required=True)
-    Scope = TextLine(title="The enrollment scope.", required=True)
-    Description = TextLine(title="The invitation description.", required=True)
-    Course = TextLine(title="Course catalog entry NTIID.", required=False)
-    Course.setTaggedValue('_ext_excluded_out', True)
-    IsGeneric = Bool(title="Invitation code is generic.",
-                     required=False,
-                     default=False)
-    IsGeneric.setTaggedValue('_ext_excluded_out', True)
-
 # deprecations
 
 import zope.deferredimport
 zope.deferredimport.initialize()
+
+zope.deferredimport.deprecatedFrom(
+    "Moved to nti.app.products.courseware.invitation.interfaces",
+    "nti.app.products.courseware.invitation.interfaces",
+    "ICourseInvitation")
+
 
 zope.deferredimport.deprecatedFrom(
     "Moved to nti.app.products.courseware.resources.interfaces",

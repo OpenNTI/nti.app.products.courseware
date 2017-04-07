@@ -33,14 +33,10 @@ from nti.app.products.courseware import VIEW_IMPORT_COURSE
 from nti.app.products.courseware import VIEW_COURSE_ACTIVITY
 from nti.app.products.courseware import VIEW_COURSE_RECURSIVE
 from nti.app.products.courseware import VIEW_COURSE_CLASSMATES
-from nti.app.products.courseware import SEND_COURSE_INVITATIONS
 from nti.app.products.courseware import VIEW_USER_COURSE_ACCESS
 from nti.app.products.courseware import VIEW_LESSONS_CONTAINERS
-from nti.app.products.courseware import VIEW_COURSE_ACCESS_TOKENS
 from nti.app.products.courseware import VIEW_RECURSIVE_AUDIT_LOG
-from nti.app.products.courseware import ACCEPT_COURSE_INVITATIONS
 from nti.app.products.courseware import VIEW_COURSE_LOCKED_OBJECTS
-from nti.app.products.courseware import CHECK_COURSE_INVITATIONS_CSV
 from nti.app.products.courseware import VIEW_COURSE_RECURSIVE_BUCKET
 from nti.app.products.courseware import VIEW_COURSE_ENROLLMENT_ROSTER
 
@@ -50,7 +46,6 @@ from nti.app.products.courseware.interfaces import ICourseInstanceEnrollment
 
 from nti.app.products.courseware.utils import get_enrollment_options
 from nti.app.products.courseware.utils import get_evaluation_lessons
-from nti.app.products.courseware.utils import has_course_invitations
 from nti.app.products.courseware.utils import get_vendor_thank_you_page
 from nti.app.products.courseware.utils import PreviewCourseAccessPredicateDecorator
 
@@ -81,8 +76,6 @@ from nti.contenttypes.courses.interfaces import INonPublicCourseInstance
 from nti.contenttypes.courses.interfaces import ICourseInstanceVendorInfo
 from nti.contenttypes.courses.interfaces import ICourseInstanceScopedForum
 
-from nti.contenttypes.courses.legacy_catalog import ILegacyCourseInstance
-
 from nti.contenttypes.courses.sharing import get_default_sharing_scope
 
 from nti.contenttypes.courses.utils import is_enrolled
@@ -95,7 +88,6 @@ from nti.contenttypes.courses.utils import get_course_subinstances
 from nti.contenttypes.presentation.interfaces import INTIAssessmentRef
 from nti.contenttypes.presentation.interfaces import INTIQuestionSetRef
 
-from nti.dataserver.authorization import ACT_NTI_ADMIN
 from nti.dataserver.authorization import ACT_CONTENT_EDIT
 
 from nti.dataserver.contenttypes.forums.interfaces import ITopic
@@ -193,36 +185,6 @@ class _CourseMailLinkDecorator(AbstractAuthenticatedRequestAwareDecorator):
 		link.__parent__ = context
 		_links.append(link)
 
-@component.adapter(ICourseInstance)
-@interface.implementer(IExternalMappingDecorator)
-class _CourseInvitationsLinkDecorator(AbstractAuthenticatedRequestAwareDecorator):
-
-	def _predicate(self, context, result):
-		return 		self._is_authenticated \
-				and not ILegacyCourseInstance.providedBy(context)
-
-	def _do_decorate_external(self, context, result):
-		_links = result.setdefault(LINKS, [])
-		if has_course_invitations(context):
-			# instructor or admin, it can send invitations
-			if 		is_course_instructor(context, self.remoteUser) \
-				or	has_permission(ACT_NTI_ADMIN, context, self.request):
-				for name in (VIEW_COURSE_ACCESS_TOKENS,
-							 SEND_COURSE_INVITATIONS,
-							 CHECK_COURSE_INVITATIONS_CSV):
-					link = Link(context, rel=name, elements=(name,))
-					interface.alsoProvides(link, ILocation)
-					link.__name__ = ''
-					link.__parent__ = context
-					_links.append(link)
-			# if not enrolled in course it can accept invites
-			elif not is_enrolled(context, self.remoteUser):
-				link = Link(context, rel=ACCEPT_COURSE_INVITATIONS,
-							elements=('@@' + ACCEPT_COURSE_INVITATIONS,))
-				interface.alsoProvides(link, ILocation)
-				link.__name__ = ''
-				link.__parent__ = context
-				_links.append(link)
 
 class BaseRecursiveAuditLogLinkDecorator(AbstractAuthenticatedRequestAwareDecorator):
 	"""
