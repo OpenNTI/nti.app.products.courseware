@@ -207,14 +207,21 @@ class enroll_course_view(AbstractAuthenticatedView,
 
 class _AbstractFavoriteCoursesView(AbstractAuthenticatedView):
     """
-    An abstract view to fetch the `favorite` courses of a user.
+    An abstract view to fetch the `favorite` courses of a user. All
+    `current` courses will be returned, or the default minimum. Current
+    courses are defined as being currently past their start date (or the
+    start date is empty) and currently before the course end date (or the end
+    date is empty).
+
+    params
+    	count - the minimum number of courses to return
     """
 
-    #: The default number of items we return in our favorites view.
+    #: The default minimum number of items we return in our favorites view.
     DEFAULT_RESULT_COUNT = 4
 
     @Lazy
-    def requested_count(self):
+    def minimum_count(self):
         params = CaseInsensitiveDict(self.request.params)
         result = params.get('count') \
               or params.get('limit') \
@@ -266,14 +273,14 @@ class _AbstractFavoriteCoursesView(AbstractAuthenticatedView):
         Get our result set items, which will include the `current`
         enrollments backfilled with the most recent.
         """
-        result = self.sorted_current_entries_and_records[:self.requested_count]
-        if len(result) < self.requested_count:
+        result = self.sorted_current_entries_and_records
+        if len(result) < self.minimum_count:
             # Backfill with most-recent items
             seen_entries = set(x[0] for x in result)
             for entry_tuple in self.sorted_entries_and_records:
                 if entry_tuple[0] not in seen_entries:
                     result.append(entry_tuple)
-                    if len(result) >= self.requested_count:
+                    if len(result) >= self.minimum_count:
                         break
         # Now grab the records we want
         result = [x[1] for x in result]
