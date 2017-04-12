@@ -11,6 +11,7 @@ from hamcrest import is_
 from hamcrest import has_length
 from hamcrest import assert_that
 from hamcrest import has_property
+from hamcrest import greater_than
 
 from nti.testing.matchers import is_empty
 from nti.testing.matchers import validly_provides
@@ -40,7 +41,8 @@ class TestActivity(ApplicationLayerTest):
 
         assert_that(list(activity.items()), is_empty())
         assert_that(activity, has_length(0))
-        assert_that(activity, has_property('lastModified', 0))
+        original_lastmod = activity.lastModified
+        assert_that(original_lastmod, is_(0))
 
         class Item(object):
             pass
@@ -56,14 +58,16 @@ class TestActivity(ApplicationLayerTest):
         activity.append(item2)
 
         assert_that(activity, has_length(2))
-        assert_that(activity, has_property('lastModified', 3.0))
-        assert_that(list(activity.items()),
-                    is_([(3.0, item2),
-                         (2.0, item1)]))
+        assert_that(activity, has_property('lastModified',
+                                           greater_than(original_lastmod)))
+        def get_items():
+            return [x[1] for x in activity.items()]
+        assert_that(get_items(),
+                    is_([item2, item1]))
 
         activity.remove(item1)
-        assert_that(list(activity.items()),
-                    is_([(3.0, item2)]))
+        assert_that(get_items(),
+                    is_([item2]))
 
         del activity._storage  # let the transaction commit
         iids.unregister(item1)
