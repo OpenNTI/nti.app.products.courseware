@@ -13,8 +13,6 @@ import time
 
 from requests.structures import CaseInsensitiveDict
 
-from zope import component
-
 from zope.component.hooks import site as current_site
 
 from zope.security.management import endInteraction
@@ -29,8 +27,6 @@ from nti.app.externalization.internalization import read_body_as_external_object
 
 from nti.app.externalization.view_mixins import ModeledContentUploadRequestUtilsMixin
 
-from nti.app.products.courseware.views import CourseAdminPathAdapter
-
 from nti.common.string import is_true
 
 from nti.contenttypes.courses._outline_parser import outline_nodes
@@ -41,11 +37,8 @@ from nti.contenttypes.courses.common import get_course_packages
 
 from nti.contenttypes.courses.interfaces import COURSE_OUTLINE_NAME
 
-from nti.contenttypes.courses.interfaces import iface_of_node
-from nti.contenttypes.courses.interfaces import ICourseCatalog
 from nti.contenttypes.courses.interfaces import ICourseInstance
 from nti.contenttypes.courses.interfaces import ICourseSubInstance
-from nti.contenttypes.courses.interfaces import ICourseOutlineNode
 from nti.contenttypes.courses.interfaces import ICourseCatalogEntry
 
 from nti.contenttypes.courses.legacy_catalog import ILegacyCourseInstance
@@ -57,17 +50,11 @@ from nti.dataserver import authorization as nauth
 from nti.externalization.interfaces import LocatedExternalDict
 from nti.externalization.interfaces import StandardExternalFields
 
-from nti.intid.common import removeIntId
-
 from nti.recorder.record import remove_transaction_history
 
 from nti.site.hostpolicy import get_host_site
 
 from nti.site.interfaces import IHostPolicyFolder
-
-from nti.site.site import get_component_hierarchy_names
-
-from nti.site.utils import unregisterUtility
 
 from nti.traversal.traversal import find_interface
 
@@ -167,50 +154,6 @@ class ResetCourseOutlineView(AbstractAuthenticatedView,
         endInteraction()
         try:
             self._do_context(self.context, items)
-        finally:
-            restoreInteraction()
-            result['TimeElapsed'] = time.time() - now
-        return result
-
-
-@view_config(context=CourseAdminPathAdapter)
-@view_defaults(route_name='objects.generic.traversal',
-               renderer='rest',
-               name='ResetAllCoursesOutlines',
-               permission=nauth.ACT_NTI_ADMIN)
-class ResetAllCoursesOutlinesView(ResetCourseOutlineView):
-
-    def _unregisterSite(self, name):
-        count = 0
-        with current_site(get_host_site(name)):
-            registry = component.getSiteManager()
-            for ntiid, node in list(registry.getUtilitiesFor(ICourseOutlineNode)):
-                if unregisterUtility(registry,
-                                     name=ntiid,
-                                     provided=iface_of_node(node)):
-                    count += 1
-                    removeIntId(node)
-        return count
-
-    def _unregisterAll(self):
-        """
-        Remove all outline nodes from all registries
-        """
-        count = 0
-        for name in get_component_hierarchy_names():
-            count += self._unregisterSite(name)
-        logger.info("%s node(s) unregistered", count)
-
-    def __call__(self):
-        now = time.time()
-        result = LocatedExternalDict()
-        items = result[ITEMS] = {}
-        endInteraction()
-        try:
-            self._unregisterAll()
-            catalog = component.getUtility(ICourseCatalog)
-            for context in list(catalog.iterCatalogEntries()):
-                self._do_context(context, items)
         finally:
             restoreInteraction()
             result['TimeElapsed'] = time.time() - now
