@@ -11,6 +11,10 @@ logger = __import__('logging').getLogger(__name__)
 
 from pyramid.threadlocal import get_current_request
 
+from zope import component
+
+from nti.app.authentication import get_remote_user
+
 from nti.appserver.interfaces import ForbiddenContextException
 
 from nti.appserver.pyramid_authorization import has_permission
@@ -26,6 +30,7 @@ from nti.contenttypes.presentation.interfaces import INTIMediaRoll
 from nti.contenttypes.presentation.interfaces import IConcreteAsset
 from nti.contenttypes.presentation.interfaces import INTISlideVideo
 from nti.contenttypes.presentation.interfaces import INTILessonOverview
+from nti.contenttypes.presentation.interfaces import IUserAssetVisibilityUtility
 
 from nti.coremetadata.interfaces import IPublishable
 
@@ -36,6 +41,7 @@ from nti.ntiids.ntiids import find_object_with_ntiid
 from nti.property.property import Lazy
 
 from nti.site.site import get_component_hierarchy_names
+
 
 class OutlinePathFactory(object):
 	"""
@@ -51,6 +57,26 @@ class OutlinePathFactory(object):
 	@Lazy
 	def request(self):
 		return get_current_request()
+
+	@Lazy
+	def visibility_util(self):
+		user = get_remote_user()
+		result = None
+		if user is not None:
+			result = component.queryMultiAdapter((user, self.course_context),
+												 IUserAssetVisibilityUtility)
+		return result
+
+	def is_item_visible(self, item):
+		"""
+		Returns whether the user has access to the given presentation item.
+		Defaults to True.
+		"""
+		result = True
+		if self.visibility_util:
+			result = self.visibility_util.is_item_visible(item)
+		return result
+
 
 	def _get_outline_target_objs(self, target_ntiid):
 		"""
@@ -177,6 +203,9 @@ class OutlinePathFactory(object):
 			* Target obj is content unit page containing a self-assessment.
 		"""
 		item = IConcreteAsset(item, item)
+		if not self.is_item_visible(item):
+			return False
+
 		target_ntiid_ref = getattr(item, 'target_ntiid', None)
 		ntiid_ref = getattr(item, 'ntiid', None)
 		target_ref = getattr(item, 'target', None)
