@@ -713,7 +713,7 @@ class SyncCourseView(_SyncAllLibrariesView):
         # do sync
         return self._do_sync(site=get_course_site_name(course),
                              ntiids=ntiids,
-                             allowRemoval=False)
+                             allowRemoval=True)
 
 
 # Enrollment views
