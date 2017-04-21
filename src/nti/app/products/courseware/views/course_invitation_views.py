@@ -152,7 +152,7 @@ class UserAcceptCourseInvitationView(AcceptInvitationByCodeView):
                 self.request,
                 hexc.HTTPConflict,
                 {
-                    u'message': str(e),
+                    u'message': e.i18n_message,
                     u'code': 'AlreadyEnrolledException',
                 },
                 None)
@@ -161,7 +161,7 @@ class UserAcceptCourseInvitationView(AcceptInvitationByCodeView):
                 self.request,
                 hexc.HTTPUnprocessableEntity,
                 {
-                    u'message': str(e),
+                    u'message': e.i18n_message,
                     u'code': 'CourseValidationError',
                 },
                 None)
@@ -170,7 +170,7 @@ class UserAcceptCourseInvitationView(AcceptInvitationByCodeView):
                 self.request,
                 hexc.HTTPUnprocessableEntity,
                 {
-                    u'message': str(e),
+                    u'message': e.i18n_message,
                     u'code': 'InstructorEnrolledError',
                 },
                 None)
@@ -520,7 +520,7 @@ class SendCourseInvitationsView(AbstractAuthenticatedView,
         invalid_emails = []
         invitation = self.get_course_invitation(values)
         user_invitations = self.get_user_course_invitations(values,
-														    warnings, 
+														    warnings,
 														    invalid_emails)
         if not force and (warnings or invalid_emails):
             err_json = {
