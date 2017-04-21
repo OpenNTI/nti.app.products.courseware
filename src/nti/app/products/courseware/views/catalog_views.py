@@ -192,7 +192,7 @@ class enroll_course_view(AbstractAuthenticatedView,
                                               parent=self.request.context,
                                               request=self.request)
         except InstructorEnrolledException as e:
-            raise hexc.HTTPUnprocessableEntity(e.i18n_message)
+            raise hexc.HTTPUnprocessableEntity(str(e) or e.i18n_message)
 
         entry = catalog_entry
         if enrollment is not None:
