@@ -71,8 +71,7 @@ class CourseImportMixin(ModeledContentUploadRequestUtilsMixin):
         if not self.request.body:
             return CaseInsensitiveDict()
         else:
-            result = super(CourseImportMixin, self).readInput(value)
-            return CaseInsensitiveDict(result)
+            return CaseInsensitiveDict(self.request.POST)
 
     def _get_source_paths(self, values):
         tmp_path = None
@@ -86,6 +85,8 @@ class CourseImportMixin(ModeledContentUploadRequestUtilsMixin):
             source = None
             filename = None
             for name, source in get_all_sources(self.request, None).items():
+                if not isinstance(source, file):
+                    continue
                 filename = getattr(source, 'filename', name)
                 filename = safe_filename(os.path.split(filename)[1])
                 break
@@ -135,10 +136,10 @@ class CourseImportView(AbstractAuthenticatedView, CourseImportMixin):
             clear = is_true(values.get('clear'))
             writeout = is_true(values.get('writeout') or values.get('save'))
             lockout = is_true(values.get('lock') or values.get('lockout'))
-            import_course(entry.ntiid, 
-                          os.path.abspath(path), 
+            import_course(entry.ntiid,
+                          os.path.abspath(path),
                           writeout,
-                          lockout, 
+                          lockout,
                           clear=clear)
             result['Elapsed'] = time.time() - now
             result['Course'] = ICourseInstance(self.context)
@@ -167,8 +168,8 @@ class ImportCourseView(AbstractAuthenticatedView, CourseImportMixin):
             })
         return import_course(ntiid,
                              path,
-                             writeout, 
-                             lockout, 
+                             writeout,
+                             lockout,
                              clear=clear)
 
     def _create_course(self, admin, key, path, writeout=True,
@@ -214,8 +215,8 @@ class ImportCourseView(AbstractAuthenticatedView, CourseImportMixin):
             path = os.path.abspath(path)
             clear = is_true(values.get('clear'))
             writeout = is_true(values.get('writeout') or values.get('save'))
-            lockout = is_true(   values.get('lock') 
-                              or values.get('lockout') 
+            lockout = is_true(   values.get('lock')
+                              or values.get('lockout')
                               or 'True')
             if ntiid:
                 params[NTIID] = ntiid
