@@ -152,7 +152,7 @@ class UserAcceptCourseInvitationView(AcceptInvitationByCodeView):
                 self.request,
                 hexc.HTTPConflict,
                 {
-                    u'message': e.i18n_message,
+                    u'message': str(e) or e.i18n_message,
                     u'code': 'AlreadyEnrolledException',
                 },
                 None)
@@ -161,7 +161,7 @@ class UserAcceptCourseInvitationView(AcceptInvitationByCodeView):
                 self.request,
                 hexc.HTTPUnprocessableEntity,
                 {
-                    u'message': e.i18n_message,
+                    u'message': str(e) or e.i18n_message,
                     u'code': 'CourseValidationError',
                 },
                 None)
@@ -170,7 +170,7 @@ class UserAcceptCourseInvitationView(AcceptInvitationByCodeView):
                 self.request,
                 hexc.HTTPUnprocessableEntity,
                 {
-                    u'message': e.i18n_message,
+                    u'message': str(e) or e.i18n_message,
                     u'code': 'InstructorEnrolledError',
                 },
                 None)
