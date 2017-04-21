@@ -86,8 +86,6 @@ class CourseImportMixin(ModeledContentUploadRequestUtilsMixin):
             source = None
             filename = None
             for name, source in get_all_sources(self.request, None).items():
-                if not isinstance(source, file):
-                    continue
                 filename = getattr(source, 'filename', name)
                 filename = safe_filename(os.path.split(filename)[1])
                 break
