@@ -71,7 +71,8 @@ class CourseImportMixin(ModeledContentUploadRequestUtilsMixin):
         if not self.request.body:
             return CaseInsensitiveDict()
         else:
-            return CaseInsensitiveDict(self.request.POST)
+            result = super(CourseImportMixin, self).readInput(value)
+            return CaseInsensitiveDict(result)
 
     def _get_source_paths(self, values):
         tmp_path = None
