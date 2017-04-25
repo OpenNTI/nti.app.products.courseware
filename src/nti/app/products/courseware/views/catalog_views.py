@@ -18,7 +18,7 @@ logger = __import__('logging').getLogger(__name__)
 
 from datetime import datetime
 
-from pip._vendor.requests.structures import CaseInsensitiveDict
+from requests.structures import CaseInsensitiveDict
 
 from pyramid import httpexceptions as hexc
 
@@ -31,6 +31,8 @@ from zope import component
 from zope import interface
 
 from zope.authentication.interfaces import IUnauthenticatedPrincipal
+
+from zope.cachedescriptors.property import Lazy
 
 from zope.security.management import getInteraction
 

@@ -22,6 +22,8 @@ import isodate
 
 from zope import component
 
+from zope.cachedescriptors.property import Lazy
+
 from zope.intid.interfaces import IIntIds
 
 from zope.security.interfaces import IPrincipal
@@ -109,8 +111,6 @@ from nti.dataserver.users.interfaces import IUserProfile
 
 from nti.externalization.interfaces import LocatedExternalDict
 from nti.externalization.interfaces import StandardExternalFields
-
-from nti.property.property import Lazy
 
 from nti.site.site import getSite
 from nti.site.site import get_component_hierarchy_names

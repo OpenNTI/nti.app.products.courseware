@@ -18,6 +18,9 @@ from zope import interface
 
 from zope.annotation import factory as an_factory
 
+from zope.cachedescriptors.property import Lazy
+from zope.cachedescriptors.property import CachedProperty
+
 from zope.intid.interfaces import IIntIds
 
 from BTrees import family64
@@ -30,9 +33,6 @@ from nti.app.products.courseware.interfaces import ICourseInstanceActivity
 from nti.contenttypes.courses.interfaces import ICourseInstance
 
 from nti.dataserver.interfaces import ACE_DENY_ALL
-
-from nti.property.property import Lazy
-from nti.property.property import CachedProperty
 
 from nti.zodb.containers import bit64_int_to_time
 from nti.zodb.containers import time_to_64bit_int

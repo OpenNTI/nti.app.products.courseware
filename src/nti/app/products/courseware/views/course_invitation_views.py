@@ -18,6 +18,8 @@ from requests.structures import CaseInsensitiveDict
 
 from zope import component
 
+from zope.cachedescriptors.property import Lazy
+
 from zope.event import notify
 
 from zope.i18n import translate
@@ -94,8 +96,6 @@ from nti.invitations.interfaces import IInvitationsContainer
 from nti.links.links import Link
 
 from nti.ntiids.ntiids import find_object_with_ntiid
-
-from nti.property.property import Lazy
 
 CLASS = StandardExternalFields.CLASS
 ITEMS = StandardExternalFields.ITEMS

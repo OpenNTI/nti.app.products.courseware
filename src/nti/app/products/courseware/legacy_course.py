@@ -23,6 +23,8 @@ from urlparse import urljoin
 from zope import component
 from zope import interface
 
+from zope.cachedescriptors.property import Lazy
+
 from zope.component.interfaces import IComponents
 
 from zope.event import notify
@@ -30,8 +32,6 @@ from zope.event import notify
 from zope.lifecycleevent import IObjectAddedEvent
 
 from zope.security.interfaces import IPrincipal
-
-from zope.cachedescriptors.property import Lazy
 
 from BTrees import OOBTree
 

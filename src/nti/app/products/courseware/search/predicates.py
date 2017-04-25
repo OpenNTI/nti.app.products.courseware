@@ -14,6 +14,8 @@ from datetime import datetime
 from zope import component
 from zope import interface
 
+from zope.cachedescriptors.property import Lazy
+
 from pyramid.threadlocal import get_current_request
 
 from nti.app.products.courseware.utils import ZERO_DATETIME
@@ -45,8 +47,6 @@ from nti.dataserver.authorization import ACT_NTI_ADMIN
 from nti.dataserver.authorization import ACT_CONTENT_EDIT
 
 from nti.dataserver.users import User
-
-from nti.property.property import Lazy
 
 from nti.traversal.traversal import find_interface
 

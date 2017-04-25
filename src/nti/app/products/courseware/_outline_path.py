@@ -9,9 +9,11 @@ __docformat__ = "restructuredtext en"
 
 logger = __import__('logging').getLogger(__name__)
 
-from pyramid.threadlocal import get_current_request
-
 from zope import component
+
+from zope.cachedescriptors.property import Lazy
+
+from pyramid.threadlocal import get_current_request
 
 from nti.app.authentication import get_remote_user
 
@@ -37,8 +39,6 @@ from nti.coremetadata.interfaces import IPublishable
 from nti.dataserver import authorization as nauth
 
 from nti.ntiids.ntiids import find_object_with_ntiid
-
-from nti.property.property import Lazy
 
 from nti.site.site import get_component_hierarchy_names
 

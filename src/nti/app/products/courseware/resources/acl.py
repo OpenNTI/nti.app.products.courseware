@@ -14,6 +14,8 @@ from itertools import chain
 from zope import component
 from zope import interface
 
+from zope.cachedescriptors.property import Lazy
+
 from zope.security.interfaces import IPrincipal
 
 from nti.app.contentfile.acl import ContentBaseFileACLProvider
@@ -42,8 +44,6 @@ from nti.dataserver.authorization_acl import ace_denying_all
 
 from nti.dataserver.interfaces import IACLProvider
 from nti.dataserver.interfaces import ALL_PERMISSIONS
-
-from nti.property.property import Lazy
 
 from nti.traversal.traversal import find_interface
 

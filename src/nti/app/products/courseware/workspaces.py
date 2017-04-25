@@ -16,6 +16,8 @@ from pyramid.threadlocal import get_current_request
 from zope import component
 from zope import interface
 
+from zope.cachedescriptors.property import Lazy
+
 from zope.container.contained import Contained
 
 from zope.location.interfaces import IRoot
@@ -71,7 +73,6 @@ from nti.externalization.oids import to_external_ntiid_oid
 
 from nti.links.links import Link
 
-from nti.property.property import Lazy
 from nti.property.property import alias
 
 

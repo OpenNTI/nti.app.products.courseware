@@ -13,6 +13,8 @@ logger = __import__('logging').getLogger(__name__)
 
 from requests.structures import CaseInsensitiveDict
 
+from zope.cachedescriptors.property import Lazy
+
 from pyramid import httpexceptions as hexc
 
 from pyramid.view import view_config
@@ -39,7 +41,6 @@ from nti.dataserver.interfaces import IEnumerableEntityContainer
 from nti.dataserver.users import User
 from nti.dataserver.users.interfaces import IUserProfile
 
-from nti.property.property import Lazy
 
 @view_config(route_name='objects.generic.traversal',
 			 context=ICourseInstance,
