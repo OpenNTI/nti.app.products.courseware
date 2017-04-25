@@ -24,6 +24,7 @@ from zope import component
 from zope import interface
 
 from zope.cachedescriptors.property import Lazy
+from zope.cachedescriptors.property import CachedProperty
 
 from zope.component.interfaces import IComponents
 
@@ -65,8 +66,6 @@ from nti.externalization.externalization import to_external_object
 
 from nti.ntiids.ntiids import make_ntiid
 from nti.ntiids.ntiids import get_provider
-
-from nti.property.property import CachedProperty
 
 from nti.schema.field import TextLine
 
@@ -183,7 +182,7 @@ def _register_course_purchasable_from_catalog_entry(entry, event):
     old_rendering = False
     if not entry.StartDate or not entry.EndDate:
         # Hmm...something very fishy about this one...ancient legacy?
-        logger.warn("Course info has no start date and/or duration: %s", 
+        logger.warn("Course info has no start date and/or duration: %s",
 					entry)
         old_rendering = True
     else:
@@ -214,12 +213,12 @@ def _register_course_purchasable_from_catalog_entry(entry, event):
         ntiid_title = ''.join([x.capitalize() for x in ntiid_title.split()])
 
         specific = purch_id + ntiid_title
-        purch_ntiid = make_ntiid(provider=provider, 
+        purch_ntiid = make_ntiid(provider=provider,
                                  nttype='course',
                                  specific=specific)
 
     else:
-        purch_ntiid = make_ntiid(provider=provider, 
+        purch_ntiid = make_ntiid(provider=provider,
                                  nttype='course',
                                  specific=purch_id)
 
@@ -280,12 +279,12 @@ def _register_course_purchasable_from_catalog_entry(entry, event):
     # NOTE: This requires that we are operating in a transaction
     # with a real database.
     # MAY send IObjectAdded if new
-    the_course = _course_instance_for_catalog_entry(entry) 
+    the_course = _course_instance_for_catalog_entry(entry)
 
     # Defend against content package IDs changing
     if the_course.ContentPackageNTIID != entry.ContentPackageNTIID:
         __traceback_info__ = entry, the_course
-        raise ValueError("The root NTIID for course %s has changed!", 
+        raise ValueError("The root NTIID for course %s has changed!",
                          the_course)
 
     the_course.setCatalogEntry(entry)

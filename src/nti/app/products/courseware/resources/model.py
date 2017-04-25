@@ -11,6 +11,8 @@ logger = __import__('logging').getLogger(__name__)
 
 from zope import interface
 
+from zope.cachedescriptors.property import CachedProperty
+
 from zope.container.contained import Contained
 
 from nti.app.products.courseware.resources.interfaces import ICourseRootFolder
@@ -26,8 +28,6 @@ from nti.contentfolder.model import RootFolder
 from nti.contentfolder.model import ContentFolder
 
 from nti.contentfolder.utils import compute_path
-
-from nti.property.property import CachedProperty
 
 
 class AssociationsMixin(object):
@@ -64,7 +64,7 @@ class CourseContentResource(Contained):
 
 
 @interface.implementer(ICourseContentFolder)
-class CourseContentFolder(CourseContentResource, 
+class CourseContentFolder(CourseContentResource,
                           ContentFolder,
                           AssociationsMixin):
     mimeType = mime_type = u'application/vnd.nextthought.courseware.contentfolder'

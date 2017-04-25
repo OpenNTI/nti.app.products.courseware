@@ -17,6 +17,8 @@ from datetime import timedelta
 
 from zope import component
 
+from zope.cachedescriptors.property import CachedProperty
+
 from zope.catalog.interfaces import ICatalog
 
 from zope.intid.interfaces import IIntIds
@@ -58,8 +60,6 @@ from nti.externalization.interfaces import LocatedExternalList
 from nti.externalization.interfaces import StandardExternalFields
 
 from nti.links.links import Link
-
-from nti.property.property import CachedProperty
 
 from nti.zope_catalog.catalog import isBroken
 

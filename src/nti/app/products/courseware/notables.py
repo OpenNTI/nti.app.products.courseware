@@ -16,6 +16,8 @@ from zope import interface
 
 from BTrees.LFBTree import LFSet as Set
 
+from zope.cachedescriptors.property import CachedProperty
+
 from nti.app.notabledata.interfaces import IUserNotableProvider
 
 from nti.contenttypes.courses.utils import get_instructed_courses
@@ -36,8 +38,6 @@ from nti.dataserver.interfaces import INotableFilter
 from nti.dataserver.metadata_index import isTopLevelContentObjectFilter
 
 from nti.metadata import dataserver_metadata_catalog
-
-from nti.property.property import CachedProperty
 
 
 _FEEDBACK_MIME_TYPE = "application/vnd.nextthought.assessment.userscourseassignmenthistoryitemfeedback"
@@ -130,7 +130,7 @@ class _UserPriorityCreatorNotableProvider(object):
         catalog = self._catalog
         query = {'any_of': (_FEEDBACK_MIME_TYPE,)}
         feedback_intids = catalog['mimeType'].apply(query)
-        results = catalog.family.IF.intersection(instructor_intids, 
+        results = catalog.family.IF.intersection(instructor_intids,
                                                  feedback_intids)
         return results
 
