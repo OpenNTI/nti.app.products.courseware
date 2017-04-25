@@ -78,8 +78,6 @@ from nti.externalization.externalization import to_external_object
 from nti.externalization.interfaces import LocatedExternalDict
 from nti.externalization.interfaces import StandardExternalFields
 
-from nti.property.property import Lazy
-
 from nti.traversal import traversal
 
 ITEMS = StandardExternalFields.ITEMS
