@@ -60,7 +60,6 @@ from nti.dataserver.interfaces import ACE_ACT_ALLOW
 from nti.dataserver.interfaces import ALL_PERMISSIONS
 
 from nti.dataserver.interfaces import IACLProvider
-from nti.dataserver.interfaces import IDefaultPublished
 
 from nti.dataserver.users import Entity
 
@@ -71,6 +70,8 @@ from nti.ntiids.ntiids import make_ntiid
 from nti.ntiids.ntiids import is_ntiid_of_type
 from nti.ntiids.ntiids import make_provider_safe
 from nti.ntiids.ntiids import make_specific_safe
+
+from nti.publishing.interfaces import IDefaultPublished
 
 from nti.traversal.traversal import find_interface
 
