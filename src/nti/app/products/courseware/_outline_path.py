@@ -34,11 +34,11 @@ from nti.contenttypes.presentation.interfaces import INTISlideVideo
 from nti.contenttypes.presentation.interfaces import INTILessonOverview
 from nti.contenttypes.presentation.interfaces import IUserAssetVisibilityUtility
 
-from nti.coremetadata.interfaces import IPublishable
-
 from nti.dataserver import authorization as nauth
 
 from nti.ntiids.ntiids import find_object_with_ntiid
+
+from nti.publishing.interfaces import IPublishable
 
 from nti.site.site import get_component_hierarchy_names
 

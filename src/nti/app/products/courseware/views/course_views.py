@@ -76,8 +76,6 @@ from nti.contenttypes.courses.interfaces import ICourseCatalogEntry
 from nti.contenttypes.courses.utils import is_enrolled
 from nti.contenttypes.courses.utils import is_course_instructor_or_editor
 
-from nti.coremetadata.interfaces import IPublishable
-
 from nti.dataserver import authorization as nauth
 
 from nti.dataserver.authorization import is_admin_or_content_admin
@@ -100,6 +98,8 @@ from nti.links.links import Link
 from nti.ntiids.ntiids import find_object_with_ntiid
 
 from nti.property.property import alias
+
+from nti.publishing.interfaces import IPublishable
 
 from nti.zodb.containers import bit64_int_to_time
 from nti.zodb.containers import time_to_64bit_int
