@@ -25,6 +25,8 @@ from zope import component
 
 from zope.securitypolicy.principalrole import principalRoleManager
 
+from nti.app.products.courseware import VIEW_COURSE_FAVORITES
+
 from nti.contenttypes.courses.interfaces import ICourseCatalog
 from nti.contenttypes.courses.interfaces import ICourseEnrollmentManager
 
@@ -33,6 +35,11 @@ from nti.dataserver.authorization import ROLE_CONTENT_ADMIN
 from nti.dataserver.users import User
 
 from nti.dataserver.tests import mock_dataserver
+
+from nti.externalization.interfaces import StandardExternalFields
+
+TOTAL = StandardExternalFields.TOTAL
+ITEM_COUNT = StandardExternalFields.ITEM_COUNT
 
 from nti.app.products.courseware.tests import PersistentInstructedCourseApplicationTestLayer
 
@@ -197,6 +204,11 @@ class TestPersistentWorkspaces(AbstractEnrollingBase, ApplicationLayerTest):
 
 		assert_that(res, has_entry('Items', has_length(6)))
 
+		res = self.testapp.get('%s/%s' % (self.enrolled_courses_href, VIEW_COURSE_FAVORITES))
+		res = res.json_body
+		assert_that(res[ITEM_COUNT], is_(1))
+		assert_that(res[TOTAL], is_(1))
+
 	editor_role = 'editor'
 
 	@WithSharedApplicationMockDS(users=('content_admin',), testapp=True)
@@ -241,10 +253,23 @@ class TestPersistentWorkspaces(AbstractEnrollingBase, ApplicationLayerTest):
 	def test_admin(self):
 		# NT admins are automatically part of the role.
 		admin_environ = self._make_extra_environ(username='arbitrary@nextthought.com')
-		res = self.testapp.get('/dataserver2/users/arbitrary@nextthought.com/Courses/AdministeredCourses',
-								extra_environ=admin_environ)
+		admin_href = '/dataserver2/users/arbitrary@nextthought.com/Courses/AdministeredCourses'
+		res = self.testapp.get(admin_href, extra_environ=admin_environ)
 		# All non-global courses, including our non-public one.
 		assert_that(res.json_body, has_entry('Items', has_length(7)))
 		for course in res.json_body.get( 'Items' ):
 			assert_that( course, has_entry( 'RoleName', is_( self.editor_role )))
+
+		res = self.testapp.get('%s/%s' % (admin_href, VIEW_COURSE_FAVORITES),
+								extra_environ=admin_environ)
+		res = res.json_body
+		assert_that(res[ITEM_COUNT], is_(4))
+		assert_that(res[TOTAL], is_(7))
+
+		enroll_href = '/dataserver2/users/arbitrary@nextthought.com/Courses/EnrolledCourses'
+		res = self.testapp.get('%s/%s' % (enroll_href, VIEW_COURSE_FAVORITES),
+								extra_environ=admin_environ)
+		res = res.json_body
+		assert_that(res[ITEM_COUNT], is_(0))
+		assert_that(res[TOTAL], is_(0))
 

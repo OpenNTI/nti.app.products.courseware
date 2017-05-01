@@ -252,6 +252,7 @@ class _AbstractFavoriteCoursesView(AbstractAuthenticatedView):
 
     @Lazy
     def sorted_entries_and_records(self):
+        # Want the most recent first
         result = sorted(self.entries_and_records,
                         key=self._sort_key,
                         reverse=True)
