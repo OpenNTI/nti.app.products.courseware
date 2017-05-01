@@ -45,7 +45,6 @@ from nti.app.externalization.view_mixins import ModeledContentUploadRequestUtils
 from nti.app.products.courseware.interfaces import ACT_VIEW_ROSTER
 from nti.app.products.courseware.interfaces import ACT_VIEW_ACTIVITY
 
-from nti.app.products.courseware.interfaces import ICoursesWorkspace
 from nti.app.products.courseware.interfaces import ICourseInstanceActivity
 from nti.app.products.courseware.interfaces import ICourseInstanceEnrollment
 from nti.app.products.courseware.interfaces import ICoursePagesContainerResource
@@ -66,8 +65,6 @@ from nti.appserver.ugd_edit_views import ContainerContextUGDPostView
 from nti.appserver.ugd_query_views import Operator
 from nti.appserver.ugd_query_views import _combine_predicate
 from nti.appserver.relevant_ugd_views import _RelevantUGDView
-
-from nti.appserver.workspaces.interfaces import IUserService
 
 from nti.common.string import is_true
 
