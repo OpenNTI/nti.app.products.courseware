@@ -41,7 +41,7 @@ from nti.app.products.courseware.discussions import create_topics
 from nti.app.products.courseware.discussions import auto_create_forums
 
 from nti.app.products.courseware.resources.utils import get_course_filer
-from nti.app.products.courseware.resources.utils import is_internal_file_link	
+from nti.app.products.courseware.resources.utils import is_internal_file_link
 
 from nti.app.products.courseware.views import VIEW_COURSE_DISCUSSIONS
 
@@ -63,7 +63,7 @@ from nti.contenttypes.courses.discussions.parser import path_to_discussions
 
 from nti.contenttypes.courses.interfaces import DISCUSSIONS
 
-from nti.contenttypes.courses.interfaces import ICourseInstance 
+from nti.contenttypes.courses.interfaces import ICourseInstance
 from nti.contenttypes.courses.interfaces import ICourseCatalogEntry
 from nti.contenttypes.courses.interfaces import ICourseInstancePublicScopedForum
 from nti.contenttypes.courses.interfaces import ICourseInstanceForCreditScopedForum
@@ -84,267 +84,283 @@ from nti.ntiids.ntiids import find_object_with_ntiid
 
 CLASS = StandardExternalFields.CLASS
 ITEMS = StandardExternalFields.ITEMS
+TOTAL = StandardExternalFields.TOTAL
 MIMETYPE = StandardExternalFields.MIMETYPE
+ITEM_COUNT = StandardExternalFields.ITEM_COUNT
+
 
 def render_to_external_ref(resource):
-	link = Link(target=resource)
-	interface.alsoProvides(link, ILinkExternalHrefOnly)
-	return render_link(link)
+    link = Link(target=resource)
+    interface.alsoProvides(link, ILinkExternalHrefOnly)
+    return render_link(link)
+
 
 def _handle_multipart(context, user, discussion, sources):
-	provided = ICourseDiscussion
-	filer = get_course_filer(context, user)
-	for name, source in sources.items():
-		if name in provided:
-			# remove existing
-			location = getattr(discussion, name, None)
-			if location and is_internal_file_link(location):
-				filer.remove(location)
-			# save a in a new file
-			key = get_safe_source_filename(source, name)
-			location = filer.save(key, source, overwrite=False,
-								  bucket=ASSETS_FOLDER, context=discussion)
-			setattr(discussion, name, location)
+    provided = ICourseDiscussion
+    filer = get_course_filer(context, user)
+    for name, source in sources.items():
+        if name in provided:
+            # remove existing
+            location = getattr(discussion, name, None)
+            if location and is_internal_file_link(location):
+                filer.remove(location)
+            # save a in a new file
+            key = get_safe_source_filename(source, name)
+            location = filer.save(key, source, overwrite=False,
+                                  bucket=ASSETS_FOLDER, context=discussion)
+            setattr(discussion, name, location)
+
 
 @view_config(context=ICourseDiscussions)
 @view_defaults(route_name='objects.generic.traversal',
-			   renderer='rest',
-			   request_method='GET',
-			   permission=nauth.ACT_CONTENT_EDIT)
+               renderer='rest',
+               request_method='GET',
+               permission=nauth.ACT_CONTENT_EDIT)
 class CourseDiscussionsGetView(GenericGetView):
 
-	def _do_call(self, discussions):
-		result = LocatedExternalDict()
-		result[MIMETYPE] = discussions.mimeType
-		result[CLASS] = getattr(discussions, '__external_class_name__',
-								discussions.__class__.__name__)
-		items = result[ITEMS] = []
-		for discussion in sorted(discussions.values()):
-			ext_obj = to_external_object(discussion)
-			ext_obj['href'] = render_to_external_ref(discussion)
-			items.append(ext_obj)
-		result['Total'] = result['ItemCount'] = len(items)
-		result.__parent__ = self.context
-		result.__name__ = self.request.view_name
-		result.lastModified = discussions.lastModified
-		return result
+    def _do_call(self, discussions):
+        result = LocatedExternalDict()
+        result[MIMETYPE] = discussions.mimeType
+        result[CLASS] = getattr(discussions, '__external_class_name__',
+                                discussions.__class__.__name__)
+        items = result[ITEMS] = []
+        for discussion in sorted(discussions.values()):
+            ext_obj = to_external_object(discussion)
+            ext_obj['href'] = render_to_external_ref(discussion)
+            items.append(ext_obj)
+        result[TOTAL] = result[ITEM_COUNT] = len(items)
+        result.__parent__ = self.context
+        result.__name__ = self.request.view_name
+        result.lastModified = discussions.lastModified
+        return result
 
-	def __call__(self):
-		return self._do_call(self.context)
+    def __call__(self):
+        return self._do_call(self.context)
+
 
 @view_config(context=ICourseCatalogEntry)
 @view_defaults(route_name='objects.generic.traversal',
-			   renderer='rest',
-			   request_method='GET',
-			   name=VIEW_COURSE_DISCUSSIONS,
-			   permission=nauth.ACT_CONTENT_EDIT)
+               renderer='rest',
+               request_method='GET',
+               name=VIEW_COURSE_DISCUSSIONS,
+               permission=nauth.ACT_CONTENT_EDIT)
 class CatalogEntryCourseDiscussionView(CourseDiscussionsGetView):
 
-	@Lazy
-	def _course(self):
-		return ICourseInstance(self.context)
+    @Lazy
+    def _course(self):
+        return ICourseInstance(self.context)
 
-	def __call__(self):
-		discussions = ICourseDiscussions(self._course)
-		return self._do_call(discussions)
+    def __call__(self):
+        discussions = ICourseDiscussions(self._course)
+        return self._do_call(discussions)
+
 
 @view_config(context=ICourseDiscussions)
 @view_defaults(route_name='objects.generic.traversal',
-			   renderer='rest',
-			   request_method='POST',
-			   permission=nauth.ACT_CONTENT_EDIT)
+               renderer='rest',
+               request_method='POST',
+               permission=nauth.ACT_CONTENT_EDIT)
 class CourseDiscussionsPostView(UGDPostView):
 
-	content_predicate = ICourseDiscussion.providedBy
+    content_predicate = ICourseDiscussion.providedBy
 
-	def readCreateUpdateContentObject(self, creator, search_owner=False, externalValue=None):
-		contentObject = self.doReadCreateUpdateContentObject(creator=creator,
-															 search_owner=search_owner,
-															 externalValue=externalValue)
-		sources = get_all_sources(self.request)
-		return contentObject, sources
+    def readCreateUpdateContentObject(self, creator, search_owner=False, externalValue=None):
+        contentObject = self.doReadCreateUpdateContentObject(creator=creator,
+                                                             search_owner=search_owner,
+                                                             externalValue=externalValue)
+        sources = get_all_sources(self.request)
+        return contentObject, sources
 
-	def _do_call(self):
-		creator = self.remoteUser
-		discussion, sources = self.readCreateUpdateContentObject(creator, search_owner=False)
-		discussion.creator = creator.username
-		discussion.updateLastMod()
+    def _do_call(self):
+        creator = self.remoteUser
+        discussion, sources = self.readCreateUpdateContentObject(creator,
+                                                                 search_owner=False)
+        discussion.creator = creator.username
+        discussion.updateLastMod()
 
-		# get a unique file nane
-		name, _ = get_unique_file_name("discussion.json", container=self.context)
+        # get a unique file nane
+        name, _ = get_unique_file_name("discussion.json",
+                                       container=self.context)
 
-		# set a proper NTI course bundle id
-		course = ICourseInstance(self.context)
-		path = path_to_discussions(course)
-		path = os.path.join(path, name)
-		iden = "%s://%s" % (NTI_COURSE_BUNDLE, path)
-		discussion.id = iden
+        # set a proper NTI course bundle id
+        course = ICourseInstance(self.context)
+        path = path_to_discussions(course)
+        path = os.path.join(path, name)
+        iden = "%s://%s" % (NTI_COURSE_BUNDLE, path)
+        discussion.id = iden
 
-		# add discussion
-		lifecycleevent.created(discussion)
-		self.context[name] = discussion
-		
-		# handle multi-part data
-		if sources:  
-			validate_sources(self.remoteUser, discussion, sources)
-			_handle_multipart(self.context, self.remoteUser, discussion, sources)
+        # add discussion
+        lifecycleevent.created(discussion)
+        self.context[name] = discussion
 
-		self.request.response.status_int = 201
-		return discussion
+        # handle multi-part data
+        if sources:
+            validate_sources(self.remoteUser, discussion, sources)
+            _handle_multipart(self.context, self.remoteUser,
+                              discussion, sources)
+
+        self.request.response.status_int = 201
+        return discussion
+
 
 @view_config(context=ICourseDiscussion)
 @view_defaults(route_name='objects.generic.traversal',
-			   renderer='rest',
-			   request_method='PUT',
-			   permission=nauth.ACT_CONTENT_EDIT)
+               renderer='rest',
+               request_method='PUT',
+               permission=nauth.ACT_CONTENT_EDIT)
 class CourseDiscussionPutView(UGDPutView):
 
-	def updateContentObject(self, contentObject, externalValue, set_id=False, notify=True):
-		result = UGDPutView.updateContentObject(self,
-												contentObject,
-												externalValue,
-												set_id=set_id,
-												notify=notify)
+    def updateContentObject(self, contentObject, externalValue, set_id=False, notify=True):
+        result = UGDPutView.updateContentObject(self,
+                                                contentObject,
+                                                externalValue,
+                                                set_id=set_id,
+                                                notify=notify)
 
-		sources = get_all_sources(self.request)
-		if sources:
-			validate_sources(self.remoteUser, result, sources)
-			_handle_multipart(self.context, self.remoteUser, self.context, sources)
-		return result
+        sources = get_all_sources(self.request)
+        if sources:
+            validate_sources(self.remoteUser, result, sources)
+            _handle_multipart(self.context, self.remoteUser,
+                              self.context, sources)
+        return result
 
 # admin
 
+
 def _parse_courses(values):
-	# get validate course entry
-	ntiids = values.get('ntiid') or values.get('ntiids')
-	if not ntiids:
-		raise hexc.HTTPUnprocessableEntity(detail='No course entry identifier')
+    # get validate course entry
+    ntiids = values.get('ntiid') or values.get('ntiids')
+    if not ntiids:
+        raise hexc.HTTPUnprocessableEntity(detail='No course entry identifier')
 
-	if isinstance(ntiids, six.string_types):
-		ntiids = ntiids.split()
+    if isinstance(ntiids, six.string_types):
+        ntiids = ntiids.split()
 
-	result = []
-	for ntiid in ntiids:
-		context = find_object_with_ntiid(ntiid)
-		context = ICourseCatalogEntry(context, None)
-		if context is not None:
-			result.append(context)
-	return result
+    result = []
+    for ntiid in ntiids:
+        context = find_object_with_ntiid(ntiid)
+        context = ICourseCatalogEntry(context, None)
+        if context is not None:
+            result.append(context)
+    return result
+
 
 def _parse_course(values):
-	result = _parse_courses(values)
-	if not result:
-		raise hexc.HTTPUnprocessableEntity(detail='Course not found')
-	return result[0]
+    result = _parse_courses(values)
+    if not result:
+        raise hexc.HTTPUnprocessableEntity(detail='Course not found')
+    return result[0]
+
 
 @view_config(name='CreateCourseDiscussionTopics')
 @view_config(name='create_course_discussion_topics')
 @view_defaults(route_name='objects.generic.traversal',
-			   renderer='rest',
-			   context=CourseAdminPathAdapter,
-			   permission=nauth.ACT_NTI_ADMIN)
+               renderer='rest',
+               context=CourseAdminPathAdapter,
+               permission=nauth.ACT_NTI_ADMIN)
 class CreateCourseDiscussionTopicsView(AbstractAuthenticatedView):
 
-	def readInput(self):
-		if self.request.body:
-			values = read_body_as_external_object(self.request)
-		else:
-			values = self.request.params
-		result = CaseInsensitiveDict(values)
-		return result
+    def readInput(self):
+        if self.request.body:
+            values = read_body_as_external_object(self.request)
+        else:
+            values = self.request.params
+        result = CaseInsensitiveDict(values)
+        return result
 
-	def __call__(self):
-		values = self.readInput()
-		courses = _parse_courses(values)
-		if not courses:
-			raise hexc.HTTPUnprocessableEntity('Please specify a valid course')
+    def __call__(self):
+        values = self.readInput()
+        courses = _parse_courses(values)
+        if not courses:
+            raise hexc.HTTPUnprocessableEntity('Please specify a valid course')
 
-		result = LocatedExternalDict()
-		items = result[ITEMS] = {}
-		for course in courses:
-			course = ICourseInstance(course)
-			entry = ICourseCatalogEntry(course)
-			data = items[entry.ntiid] = []
-			auto_create_forums(course) # always
-			discussions = ICourseDiscussions(course)
-			for discussion in discussions.values():
-				data.extend(create_topics(discussion))
-		return result
+        result = LocatedExternalDict()
+        items = result[ITEMS] = {}
+        for course in courses:
+            course = ICourseInstance(course)
+            entry = ICourseCatalogEntry(course)
+            data = items[entry.ntiid] = []
+            auto_create_forums(course)  # always
+            discussions = ICourseDiscussions(course)
+            for discussion in discussions.values():
+                data.extend(create_topics(discussion))
+        return result
+
 
 @view_config(name='SyncCourseDiscussions')
 @view_config(name='sync_course_discussions')
 @view_defaults(route_name='objects.generic.traversal',
-			   renderer='rest',
-			   context=CourseAdminPathAdapter,
-			   permission=nauth.ACT_NTI_ADMIN)
+               renderer='rest',
+               context=CourseAdminPathAdapter,
+               permission=nauth.ACT_NTI_ADMIN)
 class SyncCourseDiscussionsView(AbstractAuthenticatedView):
 
-	def readInput(self):
-		if self.request.body:
-			values = read_body_as_external_object(self.request)
-		else:
-			values = self.request.params
-		result = CaseInsensitiveDict(values)
-		return result
+    def readInput(self):
+        if self.request.body:
+            values = read_body_as_external_object(self.request)
+        else:
+            values = self.request.params
+        result = CaseInsensitiveDict(values)
+        return result
 
-	def __call__(self):
-		values = self.readInput()
-		courses = _parse_courses(values)
-		if not courses:
-			raise hexc.HTTPUnprocessableEntity('Please specify a valid course')
+    def __call__(self):
+        values = self.readInput()
+        courses = _parse_courses(values)
+        if not courses:
+            raise hexc.HTTPUnprocessableEntity('Please specify a valid course')
 
-		force = is_true(values.get('force'))
-		for course in courses:
-			course = ICourseInstance(course)
-			root = course.root
-			if root is None:
-				continue
-			ds_bucket = root.getChildNamed(DISCUSSIONS)
-			if ds_bucket is None:
-				continue
-			parse_discussions(course, ds_bucket, force=force)
+        force = is_true(values.get('force'))
+        for course in courses:
+            course = ICourseInstance(course)
+            root = course.root
+            if root is None:
+                continue
+            ds_bucket = root.getChildNamed(DISCUSSIONS)
+            if ds_bucket is None:
+                continue
+            parse_discussions(course, ds_bucket, force=force)
 
-		return hexc.HTTPNoContent()
+        return hexc.HTTPNoContent()
+
 
 @view_config(name='DropCourseDiscussions')
 @view_config(name='drop_course_discussions')
 @view_defaults(route_name='objects.generic.traversal',
-			   renderer='rest',
-			   context=CourseAdminPathAdapter,
-			   permission=nauth.ACT_NTI_ADMIN)
+               renderer='rest',
+               context=CourseAdminPathAdapter,
+               permission=nauth.ACT_NTI_ADMIN)
 class DropCourseDiscussionsView(AbstractAuthenticatedView):
 
-	def readInput(self):
-		if self.request.body:
-			values = read_body_as_external_object(self.request)
-		else:
-			values = self.request.params
-		result = CaseInsensitiveDict(values)
-		return result
+    def readInput(self):
+        if self.request.body:
+            values = read_body_as_external_object(self.request)
+        else:
+            values = self.request.params
+        result = CaseInsensitiveDict(values)
+        return result
 
-	def __call__(self):
-		values = self.readInput()
-		courses = _parse_courses(values)
-		if not courses:
-			raise hexc.HTTPUnprocessableEntity('Please specify a valid course')
+    def __call__(self):
+        values = self.readInput()
+        courses = _parse_courses(values)
+        if not courses:
+            raise hexc.HTTPUnprocessableEntity('Please specify a valid course')
 
-		result = LocatedExternalDict()
-		items = result[ITEMS] = {}
-		for course in courses:
-			course = ICourseInstance(course)
-			entry = ICourseCatalogEntry(course)
-			data = items[entry.ntiid] = {}
+        result = LocatedExternalDict()
+        items = result[ITEMS] = {}
+        for course in courses:
+            course = ICourseInstance(course)
+            entry = ICourseCatalogEntry(course)
+            data = items[entry.ntiid] = {}
 
-			discussions = ICourseDiscussions(course)
-			discussions = {get_topic_key(d) for d in discussions.values()}
-			for forum in course.Discussions.values():
-				if (	not ICourseInstancePublicScopedForum.providedBy(forum)
-					and not ICourseInstanceForCreditScopedForum.providedBy(forum)):
-					continue
-
-				for key in discussions:
-					if key in forum:
-						del forum[key]
-						data.setdefault(forum.__name__, [])
-						data[forum.__name__].append(key)
-		return result
+            discussions = ICourseDiscussions(course)
+            discussions = {get_topic_key(d) for d in discussions.values()}
+            for forum in course.Discussions.values():
+                if      not ICourseInstancePublicScopedForum.providedBy(forum) \
+                    and not ICourseInstanceForCreditScopedForum.providedBy(forum):
+                    continue
+                for key in discussions:
+                    if key in forum:
+                        del forum[key]
+                        data.setdefault(forum.__name__, [])
+                        data[forum.__name__].append(key)
+        return result
