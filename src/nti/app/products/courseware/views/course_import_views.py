@@ -144,8 +144,7 @@ class CourseImportView(AbstractAuthenticatedView, CourseImportMixin):
             result['Elapsed'] = time.time() - now
             result['Course'] = ICourseInstance(self.context)
         finally:
-            if tmp_path:
-                delete_directory(tmp_path)
+            delete_directory(tmp_path)
         return result
 
 
@@ -236,6 +235,5 @@ class ImportCourseView(AbstractAuthenticatedView, CourseImportMixin):
             tmp_path = None
             raise e
         finally:
-            if tmp_path:
-                delete_directory(tmp_path)
+            delete_directory(tmp_path)
         return result

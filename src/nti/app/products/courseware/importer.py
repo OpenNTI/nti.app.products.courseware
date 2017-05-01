@@ -102,8 +102,7 @@ def _execute(course, archive_path, writeout=True, lockout=False, clear=False):
             _lockout(course)
         return result
     finally:
-        if tmp_path:
-            delete_directory(tmp_path)
+        delete_directory(tmp_path)
 
 
 def import_course(ntiid, archive_path, writeout=True, lockout=False, clear=False):
