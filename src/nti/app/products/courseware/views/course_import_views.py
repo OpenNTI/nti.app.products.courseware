@@ -32,10 +32,8 @@ from nti.app.externalization.view_mixins import ModeledContentUploadRequestUtils
 
 from nti.app.products.courseware import MessageFactory as _
 
-from nti.app.products.courseware.importer import delete_dir
 from nti.app.products.courseware.importer import create_course
 from nti.app.products.courseware.importer import import_course
-from nti.app.products.courseware.importer import install_admin_level
 
 from nti.app.products.courseware.views import raise_error
 from nti.app.products.courseware.views import VIEW_IMPORT_COURSE
@@ -44,6 +42,9 @@ from nti.app.products.courseware.views import CourseAdminPathAdapter
 from nti.cabinet.filer import transfer_to_native_file
 
 from nti.common.string import is_true
+
+from nti.contenttypes.courses.creator import delete_directory
+from nti.contenttypes.courses.creator import install_admin_level
 
 from nti.contenttypes.courses.interfaces import ICourseCatalog
 from nti.contenttypes.courses.interfaces import ICourseInstance
@@ -144,7 +145,7 @@ class CourseImportView(AbstractAuthenticatedView, CourseImportMixin):
             result['Course'] = ICourseInstance(self.context)
         finally:
             if tmp_path:
-                delete_dir(tmp_path)
+                delete_directory(tmp_path)
         return result
 
 
@@ -236,5 +237,5 @@ class ImportCourseView(AbstractAuthenticatedView, CourseImportMixin):
             raise e
         finally:
             if tmp_path:
-                delete_dir(tmp_path)
+                delete_directory(tmp_path)
         return result
