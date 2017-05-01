@@ -18,6 +18,8 @@ from zope import interface
 
 from zope.annotation.interfaces import IAnnotations
 
+from zope.cachedescriptors.property import Lazy
+
 from zope.container.contained import Contained
 
 from zope.intid.interfaces import IIntIds
@@ -41,13 +43,14 @@ from nti.app.externalization.view_mixins import BatchingUtilsMixin
 from nti.app.externalization.view_mixins import ModeledContentUploadRequestUtilsMixin
 
 from nti.app.products.courseware.interfaces import ACT_VIEW_ROSTER
+from nti.app.products.courseware.interfaces import ACT_VIEW_ACTIVITY
+
+from nti.app.products.courseware.interfaces import ICoursesWorkspace
 from nti.app.products.courseware.interfaces import ICourseInstanceActivity
 from nti.app.products.courseware.interfaces import ICourseInstanceEnrollment
+from nti.app.products.courseware.interfaces import ICoursePagesContainerResource
 
 from nti.app.products.courseware.utils import get_enrollment_options
-
-from nti.app.products.courseware.interfaces import ACT_VIEW_ACTIVITY
-from nti.app.products.courseware.interfaces import ICoursePagesContainerResource
 
 from nti.app.products.courseware.views import MessageFactory as _
 
@@ -63,6 +66,8 @@ from nti.appserver.ugd_edit_views import ContainerContextUGDPostView
 from nti.appserver.ugd_query_views import Operator
 from nti.appserver.ugd_query_views import _combine_predicate
 from nti.appserver.relevant_ugd_views import _RelevantUGDView
+
+from nti.appserver.workspaces.interfaces import IUserService
 
 from nti.common.string import is_true
 
@@ -623,13 +628,23 @@ class UserCourseAccessView(AbstractAuthenticatedView):
     is returned by the course workspaces.
     """
 
+    @Lazy
     def _is_admin(self):
         return  is_admin_or_content_admin(self.remoteUser) \
             or  is_course_instructor_or_editor(self.context, self.remoteUser)
 
+    def _set_parent(self, obj):
+        # Need to set our links off of the collection
+        if      not self._is_admin \
+            and obj.__parent__ is None:
+            try:
+                obj.xxx_fill_in_parent()
+            except AttributeError:
+                pass
+
     def __call__(self):
         result = None
-        if self._is_admin():
+        if self._is_admin:
             result = get_course_admin_role(self.context, self.remoteUser)
         elif is_enrolled(self.context, self.remoteUser):
             result = component.getMultiAdapter((self.context, self.remoteUser),
@@ -638,8 +653,7 @@ class UserCourseAccessView(AbstractAuthenticatedView):
                 logger.warn('User enrolled but no enrollment record (%s) (%s)',
                             self.remoteUser,
                             ICourseCatalogEntry(self.context).ntiid)
-            else:
-                result.__parent__ = self.context
         if result is None:
             raise hexc.HTTPForbidden(_('User does not have access to this course.'))
+        self._set_parent(result)
         return result
