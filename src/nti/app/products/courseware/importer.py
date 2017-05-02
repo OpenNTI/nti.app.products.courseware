@@ -16,8 +16,6 @@ import tempfile
 from zope import component
 from zope import lifecycleevent
 
-from nti.base._compat import text_
-
 from nti.cabinet.filer import DirectoryFiler
 
 from nti.contentfolder.interfaces import IRootFolder
@@ -127,8 +125,6 @@ def create_course(admin, key, archive_path, catalog=None, writeout=True,
     :param archive_path archive path
     """
     tmp_path = None
-    key = text_(key)
-    admin = text_(admin)
     course = course_creator(admin, key, writeout=writeout)
     try:
         # create subinstances
