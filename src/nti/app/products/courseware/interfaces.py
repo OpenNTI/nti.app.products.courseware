@@ -54,7 +54,8 @@ class ICourseCatalogLegacyContentEntry(ILegacyCourseCatalogEntry):
     """
     Marker interface for a legacy course catalog entry
     """
-    ContentPackageNTIID = ValidNTIID(title="The NTIID of the root content package")
+    ContentPackageNTIID = ValidNTIID(title="The NTIID of the root content package",
+									 required=False)
 
 
 class ILegacyCommunityBasedCourseInstance(ILegacyCourseInstance):
