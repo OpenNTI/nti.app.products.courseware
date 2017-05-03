@@ -53,6 +53,8 @@ from nti.contenttypes.courses.interfaces import ICourseInstanceVendorInfo
 from nti.contenttypes.courses.interfaces import ICourseAdministrativeLevel
 from nti.contenttypes.courses.interfaces import CourseInstanceAvailableEvent
 
+from nti.contenttypes.courses.internalization import CourseCatalogLegacyEntryUpdater
+
 from nti.dataserver.users import User
 from nti.dataserver.users import Entity
 from nti.dataserver.users import Community
@@ -656,3 +658,14 @@ class _LegacyCourseInstanceACLProvider(object):
                                 type(self)))
 
         self.__acl__ = acl_from_aces(aces)
+
+
+@interface.implementer(ICourseCatalogLegacyContentEntry)
+class _CourseCatalogLegacyContentEntryUpdater(CourseCatalogLegacyEntryUpdater):
+    
+    def transform(self, parsed):
+        CourseCatalogLegacyEntryUpdater.transform(self, parsed)
+        if 'ntiid' in parsed:
+            context = self._ext_replacement()
+            context.ntiid = parsed['ntiid']
+        return self

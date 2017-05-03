@@ -344,6 +344,10 @@
 						 .interfaces.ILegacyCommunityBasedCourseInstance"
 		modules=".enrollment .legacy_catalog .legacy_course .workspaces" />
 
+	<adapter factory=".legacy_course._CourseCatalogLegacyContentEntryUpdater"
+			 for=".legacy_course.ICourseCatalogLegacyContentEntry"
+			 provides="nti.externalization.interfaces.IInternalObjectUpdater" />
+
 	<subscriber factory=".decorators._CourseCatalogEntryProviderDecorator"
 				provides="nti.externalization.interfaces.IExternalObjectDecorator" />
 
