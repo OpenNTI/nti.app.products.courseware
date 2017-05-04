@@ -127,17 +127,16 @@ def create_course(admin, key, archive_path, catalog=None, writeout=True,
     tmp_path = None
     course = course_creator(admin, key, catalog=catalog, writeout=writeout)
     try:
-        # create subinstances
         tmp_path = check_archive(archive_path)
         archive_sec_path = os.path.expanduser(tmp_path or archive_path)
         archive_sec_path = os.path.join(archive_sec_path, SECTIONS)
-        if not os.path.isdir(archive_sec_path):  # if found in archive
-            return course
-        for name in os.listdir(archive_sec_path):
-            ipath = os.path.join(archive_sec_path, name)
-            if not os.path.isdir(ipath):
-                continue
-            create_course_subinstance(course, name, writeout=writeout)
+        # Import sections, if necessary.
+        if os.path.isdir(archive_sec_path):
+            for name in os.listdir(archive_sec_path):
+                ipath = os.path.join(archive_sec_path, name)
+                if not os.path.isdir(ipath):
+                    continue
+                create_course_subinstance(course, name, writeout=writeout)
         # process
         _execute(course, tmp_path or archive_path, writeout, lockout, clear)
         return course
