@@ -115,7 +115,7 @@ def import_course(ntiid, archive_path, writeout=True, lockout=False, clear=False
     return course
 
 
-def create_course(admin, key, archive_path, writeout=True,
+def create_course(admin, key, archive_path, catalog=None, writeout=True,
                   lockout=False, clear=False):
     """
     Creates a course from a file archive
