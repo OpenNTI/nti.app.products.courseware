@@ -115,7 +115,7 @@ def import_course(ntiid, archive_path, writeout=True, lockout=False, clear=False
     return course
 
 
-def create_course(admin, key, archive_path, catalog=None, writeout=True,
+def create_course(admin, key, archive_path, writeout=True,
                   lockout=False, clear=False):
     """
     Creates a course from a file archive
@@ -125,7 +125,7 @@ def create_course(admin, key, archive_path, catalog=None, writeout=True,
     :param archive_path archive path
     """
     tmp_path = None
-    course = course_creator(admin, key, writeout=writeout)
+    course = course_creator(admin, key, catalog=catalog, writeout=writeout)
     try:
         # create subinstances
         tmp_path = check_archive(archive_path)
