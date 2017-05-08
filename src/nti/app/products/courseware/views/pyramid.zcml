@@ -22,5 +22,6 @@
 	<pyramid:scan package=".course_discussion_views" />
 	<pyramid:scan package=".course_invitation_views" />
 	<pyramid:scan package=".course_recordable_views" />
+	<pyramid:scan package=".course_management_views" />
 
 </configure>

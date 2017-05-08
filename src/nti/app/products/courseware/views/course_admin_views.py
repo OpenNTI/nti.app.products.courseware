@@ -68,10 +68,10 @@ from nti.contentlibrary.interfaces import IEditableContentPackage
 
 from nti.contenttypes.courses import get_enrollment_catalog
 
+from nti.contenttypes.courses.administered import CourseInstanceAdministrativeRole
+
 from nti.contenttypes.courses.common import get_course_packages
 from nti.contenttypes.courses.common import get_course_site_name
-
-from nti.contenttypes.courses.administered import CourseInstanceAdministrativeRole
 
 from nti.contenttypes.courses.enrollment import DefaultPrincipalEnrollments
 from nti.contenttypes.courses.enrollment import migrate_enrollments_from_course_to_course
@@ -134,7 +134,7 @@ class AbstractCourseEnrollView(AbstractAuthenticatedView,
         return result
 
     def parseCommon(self, values):
-        _, user = _parse_user(values)
+        unused_name, user = _parse_user(values)
         context = _parse_course(values)
         return (context, user)
 
@@ -253,7 +253,7 @@ class UserCourseEnrollmentsView(AbstractAuthenticatedView):
 
     def __call__(self):
         params = CaseInsensitiveDict(self.request.params)
-        _, user = _parse_user(params)
+        unused_name, user = _parse_user(params)
         result = LocatedExternalDict()
         items = result[ITEMS] = []
 
@@ -773,3 +773,4 @@ class FixBrokenEnrollmentsView(AbstractAuthenticatedView):
                         unenroll(extra_record, extra_record.Principal)
         result[TOTAL] = count
         return result
+

@@ -449,6 +449,11 @@
 				for="nti.assessment.interfaces.IQuestionSet
 					 pyramid.interfaces.IRequest" />
 
+	<subscriber factory=".decorators.CourseWorkspaceDecorator"
+                provides="nti.externalization.interfaces.IExternalObjectDecorator"
+                for="nti.app.products.courseware.interfaces.ICoursesWorkspace
+                     pyramid.interfaces.IRequest" />
+
 	<!--
 		 Get an href here to the real location, since we return these beneath Roster as well.
 		 Notice this is currently a very specific registration.
@@ -479,12 +484,12 @@
 				provides="nti.externalization.interfaces.IExternalObjectDecorator"
 				for=".interfaces.IOpenEnrollmentOption
 					 pyramid.interfaces.IRequest" />
-	
+
 	<!-- Outline nodes-->
 	<adapter factory=".adapters._asset_to_nodes"
 			 provides="nti.contenttypes.courses.interfaces.ICourseOutlineNodes"
 			 for="nti.contenttypes.presentation.interfaces.IPresentationAsset" />
-	
+
 	<adapter factory=".adapters._asset_to_nodes"
 			 provides="nti.contenttypes.courses.interfaces.ICourseOutlineNodes"
 			 for="nti.contenttypes.presentation.interfaces.IPresentationAsset
@@ -502,7 +507,7 @@
 	<adapter factory=".adapters._contained_to_nodes"
 			 provides="nti.contenttypes.courses.interfaces.ICourseOutlineNodes"
 			 for="nti.dataserver.interfaces.IContained" />
-	
+
 	<adapter factory=".adapters._contained_to_nodes"
 			 provides="nti.contenttypes.courses.interfaces.ICourseOutlineNodes"
 			 for="nti.dataserver.interfaces.IContained
@@ -511,7 +516,7 @@
 	<adapter factory=".adapters._contained_to_nodes"
 			 provides="nti.contenttypes.courses.interfaces.ICourseOutlineNodes"
 			 for="nti.dataserver.interfaces.IUserGeneratedData" />
-	
+
 	<adapter factory=".adapters._contained_to_nodes"
 			 provides="nti.contenttypes.courses.interfaces.ICourseOutlineNodes"
 			 for="nti.dataserver.interfaces.IUserGeneratedData
@@ -520,7 +525,7 @@
 	<adapter factory=".adapters._evaluation_to_nodes"
 			 provides="nti.contenttypes.courses.interfaces.ICourseOutlineNodes"
 			 for="nti.assessment.interfaces.IQEvaluation" />
-	
+
 	<adapter factory=".adapters._evaluation_to_nodes"
 			 provides="nti.contenttypes.courses.interfaces.ICourseOutlineNodes"
 			 for="nti.assessment.interfaces.IQEvaluation
