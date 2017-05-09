@@ -29,6 +29,10 @@ from nti.app.testing.decorators import WithSharedApplicationMockDS
 from nti.contentlibrary.interfaces import IContentPackageLibrary
 from nti.contentlibrary.interfaces import IDelimitedHierarchyContentPackageEnumeration
 
+from nti.contenttypes.courses._synchronize import synchronize_catalog_from_root
+
+from nti.contenttypes.courses.interfaces import ICourseCatalog
+
 from nti.dataserver.tests import mock_dataserver
 
 from nti.externalization.interfaces import StandardExternalFields
@@ -52,16 +56,29 @@ class TestCourseManagement(ApplicationLayerTest):
             enumeration = IDelimitedHierarchyContentPackageEnumeration(library)
             shutil.rmtree(enumeration.root.absolute_path, True)
 
-    @WithSharedApplicationMockDS(testapp=True, users=True)
-    def test_views(self):
-        """
-        Validate basic admin level management.
-        """
+    def _sync(self):
+        with mock_dataserver.mock_db_trans(site_name='janux.ou.edu'):
+            library = component.getUtility(IContentPackageLibrary)
+            course_catalog = component.getUtility(ICourseCatalog)
+            enumeration = IDelimitedHierarchyContentPackageEnumeration(library)
+            enumeration_root = enumeration.root
+            courses_bucket = enumeration_root.getChildNamed(course_catalog.__name__)
+            synchronize_catalog_from_root(course_catalog, courses_bucket)
+
+    def _get_admin_href(self):
         service_res = self.fetch_service_doc()
         workspaces = service_res.json_body['Items']
         courses_workspace = next(x for x in workspaces if x['Title'] == 'Courses')
         admin_href = self.require_link_href_with_rel(courses_workspace,
                                                      VIEW_COURSE_ADMIN_LEVELS)
+        return admin_href
+
+    @WithSharedApplicationMockDS(testapp=True, users=True)
+    def test_views(self):
+        """
+        Validate basic admin level management.
+        """
+        admin_href = self._get_admin_href()
         admin_levels = self.testapp.get(admin_href)
         admin_levels = admin_levels.json_body
         assert_that(admin_levels[ITEM_COUNT], is_(2))
@@ -83,6 +100,62 @@ class TestCourseManagement(ApplicationLayerTest):
 
         # Duplicate
         self.testapp.post_json(admin_href, {'key': test_admin_key}, status=422)
+
+        # Delete
+        self.testapp.delete(new_admin_href)
+        self.testapp.get(new_admin_href, status=404)
+
+        admin_levels = self.testapp.get(admin_href)
+        admin_levels = admin_levels.json_body
+        assert_that(admin_levels[ITEM_COUNT], is_(2))
+        assert_that(admin_levels[ITEMS],
+                    contains_inanyorder('Fall2013', 'Fall2015'))
+
+    @WithSharedApplicationMockDS(testapp=True, users=True)
+    def test_sync(self):
+        """
+        Validate syncs and admin levels.
+        """
+        admin_href = self._get_admin_href()
+        admin_levels = self.testapp.get(admin_href)
+        admin_levels = admin_levels.json_body
+        assert_that(admin_levels[ITEM_COUNT], is_(2))
+        assert_that(admin_levels[ITEMS],
+                    contains_inanyorder('Fall2013', 'Fall2015'))
+
+        # Create
+        test_admin_key = 'TestAdminKey'
+        self.testapp.post_json(admin_href, {'key': test_admin_key})
+        admin_levels = self.testapp.get(admin_href)
+        admin_levels = admin_levels.json_body
+        assert_that(admin_levels[ITEM_COUNT], is_(3))
+        assert_that(admin_levels[ITEMS],
+                    contains_inanyorder('Fall2013', 'Fall2015', test_admin_key))
+
+        new_admin = admin_levels[ITEMS][test_admin_key]
+        new_admin_href = new_admin['href']
+        assert_that(new_admin_href, not_none())
+
+        # Sync is ok
+        self._sync()
+        admin_levels = self.testapp.get(admin_href)
+        admin_levels = admin_levels.json_body
+        assert_that(admin_levels[ITEM_COUNT], is_(3))
+        assert_that(admin_levels[ITEMS],
+                    contains_inanyorder('Fall2013', 'Fall2015', test_admin_key))
+
+        # Remove filesystem path and re-sync; no change.
+        with mock_dataserver.mock_db_trans(site_name='janux.ou.edu'):
+            course_catalog = component.getUtility(ICourseCatalog)
+            admin_level = course_catalog[test_admin_key]
+            shutil.rmtree( admin_level.root.absolute_path, False )
+
+        self._sync()
+        admin_levels = self.testapp.get(admin_href)
+        admin_levels = admin_levels.json_body
+        assert_that(admin_levels[ITEM_COUNT], is_(3))
+        assert_that(admin_levels[ITEMS],
+                    contains_inanyorder('Fall2013', 'Fall2015', test_admin_key))
 
         # Delete
         self.testapp.delete(new_admin_href)
