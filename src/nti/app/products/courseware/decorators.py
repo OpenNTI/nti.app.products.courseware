@@ -619,6 +619,19 @@ class _CourseCatalogEntryProviderDecorator(object):
 		result['ProviderDisplayName'] = context.ProviderUniqueID
 		result.pop('DisplayName', None)  # replace for legacy purposes
 
+
+@component.adapter(ICourseInstanceEnrollment)
+@interface.implementer(IExternalObjectDecorator)
+class _CourseInstanceEnrollmentDecorator(object):
+
+	__metaclass__ = SingletonDecorator
+
+	def decorateExternalObject(self, context, result):
+		context_link = Link(context)
+		interface.alsoProvides(context_link, ILinkExternalHrefOnly)
+		result['href'] = context_link
+
+
 @component.adapter(ICourseCatalogEntry)
 @interface.implementer(IExternalObjectDecorator)
 class _LegacyCCEFieldDecorator(object):
