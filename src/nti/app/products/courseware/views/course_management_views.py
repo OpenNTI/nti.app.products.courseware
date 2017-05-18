@@ -16,6 +16,7 @@ from requests.structures import CaseInsensitiveDict
 from pyramid import httpexceptions as hexc
 
 from pyramid.view import view_config
+from pyramid.view import view_defaults
 
 from nti.app.base.abstract_views import AbstractAuthenticatedView
 
@@ -31,6 +32,8 @@ from nti.appserver.ugd_edit_views import UGDDeleteView
 
 from nti.contenttypes.courses.creator import install_admin_level
 
+from nti.contenttypes.courses.interfaces import ICourseInstance
+from nti.contenttypes.courses.interfaces import ICourseCatalogEntry
 from nti.contenttypes.courses.interfaces import ICourseAdministrativeLevel
 
 from nti.contenttypes.courses.interfaces import ICourseCatalog
@@ -133,3 +136,17 @@ class AdminLevelsDeleteView(UGDDeleteView):
         logger.info('Deleted %s', self.context)
         return result
 
+
+@view_config(context=ICourseInstance)
+@view_config(context=ICourseCatalogEntry)
+@view_defaults(route_name='objects.generic.traversal',
+               renderer='rest',
+               request_method='DELETE',
+               permission=nauth.ACT_NTI_ADMIN)
+class DeleteCourseView(AbstractAuthenticatedView):
+
+    def _do_call(self):
+        course = ICourseInstance(self.context)
+        logger.info('Deleting course (%s)', ICourseCatalogEntry(course).ntiid)
+        del course.__parent__[course.__name__]
+        return hexc.HTTPNoContent()
