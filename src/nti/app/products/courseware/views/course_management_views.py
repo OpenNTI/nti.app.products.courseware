@@ -145,7 +145,7 @@ class AdminLevelsDeleteView(UGDDeleteView):
                permission=nauth.ACT_NTI_ADMIN)
 class DeleteCourseView(AbstractAuthenticatedView):
 
-    def _do_call(self):
+    def __call__(self):
         course = ICourseInstance(self.context)
         logger.info('Deleting course (%s)', ICourseCatalogEntry(course).ntiid)
         del course.__parent__[course.__name__]
