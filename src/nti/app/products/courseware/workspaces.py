@@ -303,13 +303,17 @@ class CourseInstanceEnrollment(_AbstractInstanceWrapper):
             self._user = user
             self.Username = user.username
 
-    def xxx_fill_in_parent(self):
+    @Lazy
+    def __parent__(self):
         if self._user:
             service = IUserService(self._user)
             ws = ICoursesWorkspace(service)
             enr_coll = EnrolledCoursesCollection(ws)
-            self.__parent__ = enr_coll
             getattr(self, '__name__')  # ensure we have this
+            return enr_coll
+
+    def xxx_fill_in_parent(self):
+        return self.__parent__
 
     def __conform__(self, iface):
         if IUser.isOrExtends(iface):
