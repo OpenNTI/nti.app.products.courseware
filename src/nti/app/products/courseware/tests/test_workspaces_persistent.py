@@ -16,6 +16,7 @@ from hamcrest import has_entry
 from hamcrest import has_length
 from hamcrest import assert_that
 from hamcrest import has_entries
+from hamcrest import contains_string
 from hamcrest import greater_than_or_equal_to
 does_not = is_not
 
@@ -38,6 +39,7 @@ from nti.dataserver.tests import mock_dataserver
 
 from nti.externalization.interfaces import StandardExternalFields
 
+ITEMS = StandardExternalFields.ITEMS
 TOTAL = StandardExternalFields.TOTAL
 ITEM_COUNT = StandardExternalFields.ITEM_COUNT
 
@@ -185,20 +187,23 @@ class TestPersistentWorkspaces(AbstractEnrollingBase, ApplicationLayerTest):
 		# and we can see it in the all courses list...
 		res = self.testapp.get(self.all_courses_href)
 		res = res.json_body
-		assert_that(res, has_entry('Items', has_item(
+		assert_that(res,
+					has_entry(
+						'Items',
+						has_item(
+							has_entries(
+								'ProviderUniqueID', 'CLC 3403-Restricted',
+								'CatalogFamilies',
+									has_entries(
+										'Class', 'CatalogFamilies',
+										'Items',
+											has_item(
 												has_entries(
-													'ProviderUniqueID', 'CLC 3403-Restricted',
-													'CatalogFamilies',
-														has_entries(
-															'Class', 'CatalogFamilies',
-															'Items',
-																has_item(
-																	has_entries(
-																		'ProviderUniqueID', 'CLC 3403',
-																		'Class', 'CatalogFamily',
-																		'Title', 'Law and Justice',
-																		'CatalogFamilyID', not_none(),
-																		'PlatformPresentationResources', not_none())))))))
+													'ProviderUniqueID', 'CLC 3403',
+													'Class', 'CatalogFamily',
+													'Title', 'Law and Justice',
+													'CatalogFamilyID', not_none(),
+													'PlatformPresentationResources', not_none())))))))
 		assert_that(res, has_entry('Items', has_item(has_entry('ProviderUniqueID',
 																   'ENGR 1510-901'))))
 
@@ -272,4 +277,34 @@ class TestPersistentWorkspaces(AbstractEnrollingBase, ApplicationLayerTest):
 		res = res.json_body
 		assert_that(res[ITEM_COUNT], is_(0))
 		assert_that(res[TOTAL], is_(0))
+
+	@WithSharedApplicationMockDS(users=('enrolled.user',), testapp=True)
+	def test_enrolled_favorites(self):
+		enroll_href = '/dataserver2/users/%s/Courses/EnrolledCourses' % 'enrolled.user'
+		admin_href = '/dataserver2/users/%s/Courses/AdministeredCourses' % 'enrolled.user'
+		enroll_faves = '%s/@@%s' % (enroll_href, VIEW_COURSE_FAVORITES)
+		admin_faves = '%s/@@%s' % (admin_href, VIEW_COURSE_FAVORITES)
+		environ = self._make_extra_environ(username='enrolled.user')
+
+		res = self.testapp.get(enroll_href, extra_environ=environ)
+		assert_that(res.json_body, has_entry('Items', has_length(0)))
+
+		res = self.testapp.get(admin_faves, extra_environ=environ)
+		assert_that(res.json_body[ITEM_COUNT], is_(0))
+		assert_that(res.json_body[TOTAL], is_(0))
+
+		res = self.testapp.get(enroll_faves, extra_environ=environ)
+		assert_that(res.json_body[ITEM_COUNT], is_(0))
+		assert_that(res.json_body[TOTAL], is_(0))
+
+		self.testapp.post_json( enroll_href,
+								{'ntiid': self.enrollment_ntiid},
+								extra_environ=environ)
+		res = self.testapp.get(enroll_faves, extra_environ=environ)
+		assert_that(res.json_body[ITEM_COUNT], is_(1))
+		assert_that(res.json_body[TOTAL], is_(1))
+		record = res.json_body[ITEMS][0]
+		assert_that(record,
+					has_entry('href',
+							  is_('%s/%s' % (enroll_href, self.enrollment_ntiid))))
 
