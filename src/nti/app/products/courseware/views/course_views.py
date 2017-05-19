@@ -235,10 +235,7 @@ class CourseEnrollmentRosterPathAdapter(Contained):
             if user.username.lower() == username:
                 enrollment = component.getMultiAdapter((self.__parent__, record),
                                                        ICourseInstanceEnrollment)
-                if enrollment.__parent__ is None:
-                    # Typically it will be, lets give it the right place
-                    enrollment.xxx_fill_in_parent()
-                    enrollment.CourseInstance = None
+                enrollment.CourseInstance = None
                 return enrollment
 
         raise KeyError(username)
@@ -416,10 +413,6 @@ class CourseEnrollmentRosterGetView(AbstractAuthenticatedView,
         # can generate 12MB of response. So we don't include the course
         # instance
         for i in result[ITEMS]:
-            if i.__parent__ is None:
-                # Typically it will be, lets give it the right
-                # place
-                i.xxx_fill_in_parent()
             i.CourseInstance = None
 
         # TODO: We have no last modified for this
@@ -627,17 +620,8 @@ class UserCourseAccessView(AbstractAuthenticatedView):
 
     @Lazy
     def _is_admin(self):
-        return  is_admin_or_content_admin(self.remoteUser) \
-            or  is_course_instructor_or_editor(self.context, self.remoteUser)
-
-    def _set_parent(self, obj):
-        # Need to set our links off of the collection
-        if      not self._is_admin \
-            and obj.__parent__ is None:
-            try:
-                obj.xxx_fill_in_parent()
-            except AttributeError:
-                pass
+        return is_admin_or_content_admin(self.remoteUser) \
+            or is_course_instructor_or_editor(self.context, self.remoteUser)
 
     def __call__(self):
         result = None
@@ -652,5 +636,4 @@ class UserCourseAccessView(AbstractAuthenticatedView):
                             ICourseCatalogEntry(self.context).ntiid)
         if result is None:
             raise hexc.HTTPForbidden(_('User does not have access to this course.'))
-        self._set_parent(result)
         return result

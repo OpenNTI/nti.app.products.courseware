@@ -312,9 +312,6 @@ class CourseInstanceEnrollment(_AbstractInstanceWrapper):
             getattr(self, '__name__')  # ensure we have this
             return enr_coll
 
-    def xxx_fill_in_parent(self):
-        return self.__parent__
-
     def __conform__(self, iface):
         if IUser.isOrExtends(iface):
             return self._user
