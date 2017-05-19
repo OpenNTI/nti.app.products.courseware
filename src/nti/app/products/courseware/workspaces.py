@@ -131,7 +131,6 @@ def CoursesWorkspace(user_service):
 @interface.implementer(IContainerCollection)
 class AllCoursesCollection(Contained):
 
-    #: Our name, part of our URL.
     __name__ = 'AllCourses'
 
     accepts = ()
@@ -147,6 +146,10 @@ class AllCoursesCollection(Contained):
 
     def __init__(self, parent):
         self.__parent__ = parent
+
+    @Lazy
+    def container(self):
+        parent = self.__parent__
         user = parent.user
         # To support ACLs limiting the available parts of the catalog,
         # we filter out here.
@@ -155,7 +158,7 @@ class AllCoursesCollection(Contained):
         # We also filter out sibling courses when we are already enrolled
         # in one; this is probably inefficient
         my_enrollments = {}
-        container = self.container = self._IteratingDict()
+        container = result = self._IteratingDict()
         container.__name__ = parent.catalog.__name__
         container.__parent__ = parent.catalog.__parent__
         container.lastModified = parent.catalog.lastModified
@@ -185,6 +188,7 @@ class AllCoursesCollection(Contained):
             ntiid = ICourseCatalogEntry(course).ntiid
             if ntiid not in my_enrollments:
                 container.pop(ntiid, None)
+        return result
 
     def __getitem__(self, key):
         """
