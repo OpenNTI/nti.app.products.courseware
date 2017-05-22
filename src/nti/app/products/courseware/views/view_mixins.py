@@ -38,7 +38,7 @@ from nti.externalization.interfaces import StandardExternalFields
 from nti.ntiids.ntiids import is_valid_ntiid_string
 from nti.ntiids.ntiids import find_object_with_ntiid
 
-from nti.recorder import get_transactions
+from nti.recorder.record import get_transactions
 
 ITEMS = StandardExternalFields.ITEMS
 ITEM_COUNT = StandardExternalFields.ITEM_COUNT
