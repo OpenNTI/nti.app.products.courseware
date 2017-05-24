@@ -10,6 +10,7 @@ __docformat__ = "restructuredtext en"
 from hamcrest import is_
 from hamcrest import is_not
 from hamcrest import not_none
+from hamcrest import has_item
 from hamcrest import assert_that
 from hamcrest import contains_inanyorder
 does_not = is_not
@@ -38,6 +39,8 @@ from nti.dataserver.tests import mock_dataserver
 from nti.externalization.interfaces import StandardExternalFields
 
 ITEMS = StandardExternalFields.ITEMS
+CLASS = StandardExternalFields.CLASS
+MIMETYPE = StandardExternalFields.MIMETYPE
 ITEM_COUNT = StandardExternalFields.ITEM_COUNT
 
 
@@ -74,7 +77,7 @@ class TestCourseManagement(ApplicationLayerTest):
         return admin_href
 
     @WithSharedApplicationMockDS(testapp=True, users=True)
-    def test_views(self):
+    def test_admin_views(self):
         """
         Validate basic admin level management.
         """
@@ -185,3 +188,52 @@ class TestCourseManagement(ApplicationLayerTest):
         course_href = '/dataserver2/++etc++hostsites/platform.ou.edu/++etc++site/Courses'
         self.testapp.delete('%s/%s' % (course_href, 'Fall2013'),
                             extra_environ=environ, status=403)
+
+    @WithSharedApplicationMockDS(testapp=True, users=True)
+    def test_course_views(self):
+        """
+        Validate basic course managment.
+        """
+        admin_href = self._get_admin_href()
+        # Create admin level
+        test_admin_key = 'TheLastMan'
+        self.testapp.post_json(admin_href, {'key': test_admin_key})
+        admin_levels = self.testapp.get(admin_href)
+        admin_levels = admin_levels.json_body
+        new_admin = admin_levels[ITEMS][test_admin_key]
+        new_admin_href = new_admin['href']
+        assert_that(new_admin_href, not_none())
+
+        new_course_key = 'Yorick'
+        courses = self.testapp.get(new_admin_href)
+        assert_that(courses.json_body, does_not(has_item(new_course_key)))
+
+        # Create course
+        new_course = self.testapp.post_json(new_admin_href,
+                                            {'course': new_course_key})
+        new_course = new_course.json_body
+        new_course_href = new_course['href']
+        assert_that(new_course_href, not_none())
+        assert_that(new_course[CLASS], is_(u'CourseInstance'))
+        assert_that(new_course[MIMETYPE], is_(u'application/vnd.nextthought.courses.courseinstance'))
+        assert_that(new_course['NTIID'], not_none())
+        assert_that(new_course['TotalEnrolledCount'], is_(0))
+
+        catalog = self.testapp.get('%s/CourseCatalogEntry' % new_course_href)
+        catalog = catalog.json_body
+        assert_that( catalog['NTIID'], is_(u'tag:nextthought.com,2011-10:NTI-CourseInfo-TheLastMan_Yorick'))
+
+        # Idempotent
+        self.testapp.post_json(new_admin_href,
+                               {'course': new_course_key})
+
+        # XXX: Not sure this is externalized like we want.
+        courses = self.testapp.get(new_admin_href)
+        assert_that(courses.json_body, has_item(new_course_key))
+
+        # Delete
+        self.testapp.delete(new_course['href'])
+        self.testapp.get(new_course_href, status=404)
+        courses = self.testapp.get(new_admin_href)
+        assert_that(courses.json_body, does_not(has_item(new_course_key)))
+        self.testapp.delete(new_admin_href)

@@ -30,6 +30,7 @@ from nti.app.products.courseware.views import MessageFactory as _
 
 from nti.appserver.ugd_edit_views import UGDDeleteView
 
+from nti.contenttypes.courses.creator import create_course
 from nti.contenttypes.courses.creator import install_admin_level
 
 from nti.contenttypes.courses.interfaces import ICourseInstance
@@ -135,6 +136,37 @@ class AdminLevelsDeleteView(UGDDeleteView):
         result = super(AdminLevelsDeleteView, self).__call__()
         logger.info('Deleted %s', self.context)
         return result
+
+
+@view_config(route_name='objects.generic.traversal',
+             renderer='rest',
+             context=ICourseAdministrativeLevel,
+             request_method='POST',
+             permission=nauth.ACT_NTI_ADMIN)
+class CreateCourseView(AbstractAuthenticatedView,
+                       ModeledContentUploadRequestUtilsMixin):
+
+    def readInput(self):
+        if self.request.body:
+            values = read_body_as_external_object(self.request)
+        else:
+            values = self.request.params
+        result = CaseInsensitiveDict(values)
+        return result
+
+    def _get_course_key(self, values):
+        result =   values.get('key') \
+                or values.get('name') \
+                or values.get('course')
+        return result
+
+    def __call__(self):
+        params = self.readInput()
+        key = self._get_course_key(params)
+        admin_level = self.context.__name__
+        logger.info('Creating course (%s) (admin=%s)', key, admin_level)
+        course = create_course(admin_level, key, writeout=False)
+        return course
 
 
 @view_config(context=ICourseInstance)
