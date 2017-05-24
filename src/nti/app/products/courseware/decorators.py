@@ -228,7 +228,9 @@ class _RosterMailLinkDecorator(AbstractAuthenticatedRequestAwareDecorator):
 		if not self._is_authenticated:
 			return False
 		course = ICourseInstance(context, None)
-		return course and is_course_instructor(course, self.remoteUser)
+		return  course is not None \
+			and IUser(context, None) is not None \
+			and is_course_instructor(course, self.remoteUser)
 
 	def _do_decorate_external(self, context, result):
 		_links = result.setdefault(LINKS, [])
@@ -627,9 +629,10 @@ class _CourseInstanceEnrollmentDecorator(object):
 	__metaclass__ = SingletonDecorator
 
 	def decorateExternalObject(self, context, result):
-		context_link = Link(context)
-		interface.alsoProvides(context_link, ILinkExternalHrefOnly)
-		result['href'] = context_link
+		if IUser(context, None) is not None:
+			context_link = Link(context)
+			interface.alsoProvides(context_link, ILinkExternalHrefOnly)
+			result['href'] = context_link
 
 
 @component.adapter(ICourseCatalogEntry)
