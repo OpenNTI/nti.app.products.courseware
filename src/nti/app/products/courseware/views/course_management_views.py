@@ -18,6 +18,8 @@ from pyramid import httpexceptions as hexc
 from pyramid.view import view_config
 from pyramid.view import view_defaults
 
+from zope.event import notify
+
 from nti.app.base.abstract_views import AbstractAuthenticatedView
 
 from nti.app.externalization.internalization import read_body_as_external_object
@@ -36,6 +38,7 @@ from nti.contenttypes.courses.creator import install_admin_level
 from nti.contenttypes.courses.interfaces import ICourseInstance
 from nti.contenttypes.courses.interfaces import ICourseCatalogEntry
 from nti.contenttypes.courses.interfaces import ICourseAdministrativeLevel
+from nti.contenttypes.courses.interfaces import CourseInstanceAvailableEvent
 
 from nti.contenttypes.courses.interfaces import ICourseCatalog
 
@@ -161,11 +164,13 @@ class CreateCourseView(AbstractAuthenticatedView,
         return result
 
     def __call__(self):
+        # TODO: Do we need to create this in preview mode by default?
         params = self.readInput()
         key = self._get_course_key(params)
         admin_level = self.context.__name__
         logger.info('Creating course (%s) (admin=%s)', key, admin_level)
         course = create_course(admin_level, key, writeout=False)
+        notify(CourseInstanceAvailableEvent(course))
         return course
 
 
