@@ -6,7 +6,7 @@ Decorators for providing access to the various course pieces.
 .. $Id$
 """
 
-from __future__ import print_function, unicode_literals, absolute_import, division
+from __future__ import print_function, absolute_import, division
 __docformat__ = "restructuredtext en"
 
 logger = __import__('logging').getLogger(__name__)
@@ -49,14 +49,14 @@ LINKS = StandardExternalFields.LINKS
 class _CourseInvitationsLinkDecorator(AbstractAuthenticatedRequestAwareDecorator):
 
     def _predicate(self, context, result):
-        return self._is_authenticated \
+        return  self._is_authenticated \
             and not ILegacyCourseInstance.providedBy(context)
 
     def _do_decorate_external(self, context, result):
         _links = result.setdefault(LINKS, [])
         if has_course_invitations(context):
             # instructor or admin, it can send invitations
-            if        is_course_instructor(context, self.remoteUser) \
+            if     is_course_instructor(context, self.remoteUser) \
                 or has_permission(ACT_NTI_ADMIN, context, self.request):
                 for name in (VIEW_COURSE_ACCESS_TOKENS,
                              SEND_COURSE_INVITATIONS,
@@ -68,7 +68,8 @@ class _CourseInvitationsLinkDecorator(AbstractAuthenticatedRequestAwareDecorator
                     _links.append(link)
             # if not enrolled in course it can accept invites
             elif not is_enrolled(context, self.remoteUser):
-                link = Link(context, rel=ACCEPT_COURSE_INVITATIONS,
+                link = Link(context, 
+                            rel=ACCEPT_COURSE_INVITATIONS,
                             elements=('@@' + ACCEPT_COURSE_INVITATIONS,))
                 interface.alsoProvides(link, ILocation)
                 link.__name__ = ''
