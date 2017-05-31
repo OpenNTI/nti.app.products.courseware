@@ -35,9 +35,8 @@ from nti.dataserver.contenttypes.forums.interfaces import IPersonalBlogComment
 from nti.dataserver.interfaces import IUser
 from nti.dataserver.interfaces import INotableFilter
 
-from nti.dataserver.metadata_index import isTopLevelContentObjectFilter
-
-from nti.metadata import dataserver_metadata_catalog
+from nti.dataserver.metadata.index import get_metadata_catalog
+from nti.dataserver.metadata.index import isTopLevelContentObjectFilter
 
 
 _FEEDBACK_MIME_TYPE = "application/vnd.nextthought.assessment.userscourseassignmenthistoryitemfeedback"
@@ -124,7 +123,7 @@ class _UserPriorityCreatorNotableProvider(object):
 
     @CachedProperty
     def _catalog(self):
-        return dataserver_metadata_catalog()
+        return get_metadata_catalog()
 
     def _get_feedback_intids(self, instructor_intids):
         catalog = self._catalog
