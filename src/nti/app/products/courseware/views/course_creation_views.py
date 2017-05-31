@@ -4,8 +4,7 @@
 .. $Id$
 """
 
-from __future__ import print_function, unicode_literals, absolute_import, division
-
+from __future__ import print_function, absolute_import, division
 __docformat__ = "restructuredtext en"
 
 logger = __import__('logging').getLogger(__name__)
@@ -46,11 +45,9 @@ def export_course(context, backup=True, salt=None):
     try:
         # prepare filer
         filer.prepare()
-
         # export course
         exporter = component.getUtility(ICourseExporter)
         exporter.export(course, filer, backup, salt)
-
         # zip contents
         zip_file = filer.asZip(path=tempfile.mkdtemp())
         return zip_file
@@ -63,8 +60,8 @@ def _export_course_response(context, backup, salt, response):
     try:
         zip_file = export_course(context, backup, salt)
         filename = os.path.split(zip_file)[1]
-        response.content_encoding = str('identity')
-        response.content_type = str('application/zip; charset=UTF-8')
+        response.content_encoding = 'identity'
+        response.content_type = 'application/zip; charset=UTF-8'
         content_disposition = 'attachment; filename="%s"' % filename
         response.content_disposition = str(content_disposition)
         response.body_file = open(zip_file, "rb")
@@ -105,8 +102,7 @@ class AdminExportCourseView(AbstractAuthenticatedView,
     def readInput(self, value=None):
         result = CaseInsensitiveDict(self.request.params)
         if self.request.body:
-            post = ModeledContentUploadRequestUtilsMixin.readInput(
-                self, value=value)
+            post = super(AdminExportCourseView, self).readInput(value)
             result.update(post)
         return result
 
@@ -118,9 +114,7 @@ class AdminExportCourseView(AbstractAuthenticatedView,
         if not backup and not salt:
             # Default a salt for course copies.
             salt = str(time.time())
-
         logger.info('Initiating course export for %s. (backup=%s) (salt=%s)',
                     context.ntiid, backup, salt)
-
         return _export_course_response(context, backup, salt,
                                        self.request.response)
