@@ -4,7 +4,7 @@
 .. $Id$
 """
 
-from __future__ import print_function, unicode_literals, absolute_import, division
+from __future__ import print_function, absolute_import, division
 __docformat__ = "restructuredtext en"
 
 logger = __import__('logging').getLogger(__name__)
@@ -80,8 +80,8 @@ class CourseImportMixin(ModeledContentUploadRequestUtilsMixin):
         path = values.get('path')
         if path and not os.path.exists(path):
             raise_error({
-                u'message': _("Invalid path."),
-                u'code': 'InvalidPath',
+                'message': _(u"Invalid path."),
+                'code': 'InvalidPath',
             })
         elif self.request.POST:
             source = None
@@ -92,8 +92,8 @@ class CourseImportMixin(ModeledContentUploadRequestUtilsMixin):
                 break
             if not filename:
                 raise_error({
-                    u'message': _("No archive source uploaded."),
-                    u'code': 'InvalidSource',
+                    'message': _(u"No archive source uploaded."),
+                    'code': 'InvalidSource',
                 })
             tmp_path = tempfile.mkdtemp()
             path = os.path.join(tmp_path, filename)
@@ -101,8 +101,8 @@ class CourseImportMixin(ModeledContentUploadRequestUtilsMixin):
             logger.info("Source data saved to %s", path)
         elif not path:
             raise_error({
-                u'message': _("No archive source specified."),
-                u'code': 'NoSourceSpecified',
+                'message': _(u"No archive source specified."),
+                'code': 'NoSourceSpecified',
             })
         return path, tmp_path
 
@@ -162,8 +162,8 @@ class ImportCourseView(AbstractAuthenticatedView, CourseImportMixin):
         course = ICourseInstance(context, None)
         if course is None:
             raise_error({
-                u'message': _("Invalid course."),
-                u'code': 'InvalidCourse',
+                'message': _(u"Invalid course."),
+                'code': 'InvalidCourse',
             })
         return import_course(ntiid,
                              path,
@@ -175,13 +175,13 @@ class ImportCourseView(AbstractAuthenticatedView, CourseImportMixin):
                        lockout=False, clear=False):
         if not admin:
             raise_error({
-                u'message': _("No administrative level specified."),
-                u'code': 'MissingAdminLevel',
+                'message': _(u"No administrative level specified."),
+                'code': 'MissingAdminLevel',
             })
         if not key:
             raise_error({
-                u'message': _("No course key specified."),
-                u'code': 'MissingCourseKey',
+                'message': _(u"No course key specified."),
+                'code': 'MissingCourseKey',
             })
 
         catalog = None
@@ -196,8 +196,8 @@ class ImportCourseView(AbstractAuthenticatedView, CourseImportMixin):
                     break
         if catalog is None:
             raise_error({
-                u'message': _("Invalid administrative level."),
-                u'code': 'InvalidAdminLevel',
+                'message': _(u"Invalid administrative level."),
+                'code': 'InvalidAdminLevel',
             })
         logger.info('Importing course (key=%s) (admin=%s) (path=%s) (lockout=%s) (clear=%s)',
                     key, admin, path, lockout, clear)
