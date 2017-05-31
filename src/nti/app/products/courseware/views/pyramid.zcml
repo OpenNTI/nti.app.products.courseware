@@ -11,6 +11,7 @@
 	<pyramid:scan package=".container_views" />
 	<pyramid:scan package=".course_mail_views" />
 	<pyramid:scan package=".course_user_views" />
+	<pyramid:scan package=".course_role_views" />
 	<pyramid:scan package=".course_admin_views" />
 	<pyramid:scan package=".course_bundle_views" />
 	<pyramid:scan package=".course_export_views" />

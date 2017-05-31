@@ -304,7 +304,7 @@ def _auto_enroll_on_enrollment_added(record, event):
 
 @component.adapter(ICourseInstanceEnrollmentRecord, IObjectModifiedEvent)
 def _auto_enroll_on_enrollment_modified(record, event):
-	# XXX: A user may have open-enrolled and then purcharse/switch enrollment
+	# XXX: A user may have open-enrolled and then purchase/switch enrollment
 	_auto_enroll_on_enrollment_added(record, event)
 
 def _update_enroll_last_modified(record):
