@@ -37,6 +37,7 @@ from nti.app.products.courseware import VIEW_COURSE_REMOVE_EDITORS
 from nti.app.products.courseware import VIEW_COURSE_REMOVE_INSTRUCTORS
 
 from nti.app.products.courseware.views import raise_error
+from nti.app.products.courseware.views import MessageFactory as _
 
 from nti.contenttypes.courses.interfaces import RID_INSTRUCTOR
 from nti.contenttypes.courses.interfaces import RID_CONTENT_EDITOR
@@ -111,6 +112,9 @@ class AbstractRoleManagerView(AbstractAuthenticatedView,
                               ModeledContentUploadRequestUtilsMixin):
     """
     A base class for granting/denying user permissions to a course.
+
+    params:
+        user - the username of the person to add to the course role
     """
 
     def _edit_permissions(self, user):

@@ -169,6 +169,10 @@ class TestCourseRoles(ApplicationLayerTest):
         def _editor_names():
             return _get_names(editor_href)
 
+        # Error handling; bad input, non-existant user
+        self.testapp.post_json(instructor_href, status=422)
+        self.testapp.post_json(instructor_href, {'user': 'does-not-exist'}, status=422)
+
         # Add instructor (twice is ok)
         instructors = _instructor_names()
         assert_that(instructors, has_length(2))
