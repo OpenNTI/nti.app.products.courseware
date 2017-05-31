@@ -58,6 +58,8 @@ from nti.app.products.courseware.views import VIEW_COURSE_ACTIVITY
 from nti.app.products.courseware.views import VIEW_USER_COURSE_ACCESS
 from nti.app.products.courseware.views import VIEW_COURSE_ENROLLMENT_ROSTER
 
+from nti.app.renderers.interfaces import IResponseCacheController
+
 from nti.appserver.interfaces import IIntIdUserSearchPolicy
 
 from nti.appserver.pyramid_authorization import has_permission
@@ -113,6 +115,19 @@ LINKS = StandardExternalFields.LINKS
 union_operator = Operator.union
 
 
+class PreResponseOutlineContentsCacheController(object):
+
+    def __call__(self, last_modified, system):
+        request = system['request']
+        self.remote_user = request.authenticated_userid
+        response = request.response
+        response.last_modified = last_modified
+        obj = object()
+        cache_controller = IResponseCacheController(obj)
+        # Context is ignored
+        return cache_controller(obj, system)
+
+
 @view_config(route_name='objects.generic.traversal',
              context=ICourseOutline,
              request_method='GET',
@@ -131,11 +146,6 @@ class CourseOutlineContentsView(AbstractAuthenticatedView):
     We flatten all the children directly into the returned nodes at
     this level because the default externalization does not.
     """
-    # XXX: These are small, so we're not too concerned about rendering
-    # time. Thus we don't do anything fancy with PreRenderResponseCacheController.
-    # We also aren't doing anything user specific yet so we don't
-    # do anything with tokens in the URL
-    # XXX: These are now user-specific.
 
     def _is_published(self, item, show_unpublished=True):
         """
@@ -147,6 +157,36 @@ class CourseOutlineContentsView(AbstractAuthenticatedView):
                 and has_permission(nauth.ACT_CONTENT_EDIT, item, self.request))
 
     _is_visible = _is_published
+
+    @Lazy
+    def last_mod(self):
+        """
+        Derive our last mod time by traversing the tree. To do this correctly,
+        we would need to pre-determine which nodes are visible to our user
+        (is_published). We should cache that check.
+        """
+        def update_last_mod(new_last_mod):
+            update_last_mod.last_mod = max(
+                update_last_mod.last_mod, new_last_mod)
+        update_last_mod.last_mod = self.context.lastModified
+
+        def _recur(the_nodes):
+            for node in the_nodes:
+                update_last_mod(node.lastModified)
+                # Must also take into account publishication changes.
+                if IPublishable.providedBy(node):
+                    update_last_mod(node.publishLastModified)
+                _recur(node.values())
+
+        _recur(self.context.values())
+        return update_last_mod.last_mod
+
+    def pre_caching(self):
+        # Since we externalize ourselves, attempt to return early if we
+        # can. This call can be extensive to externalize now that we have
+        # massive course outlines in the wild.
+        cache_controller = PreResponseOutlineContentsCacheController()
+        cache_controller(self.last_mod, {'request': self.request})
 
     def _is_contents_available(self, item, show_unpublished=True):
         """
@@ -168,11 +208,6 @@ class CourseOutlineContentsView(AbstractAuthenticatedView):
         values = node.values()
         result = ILocatedExternalSequence([])
 
-        def update_last_mod(new_last_mod):
-            update_last_mod.last_mod = max(
-                update_last_mod.last_mod, new_last_mod)
-        update_last_mod.last_mod = node.lastModified
-
         def _recur(the_list, the_nodes):
             for node in the_nodes:
                 if not self._is_visible(node, include_unpublished):
@@ -181,7 +216,6 @@ class CourseOutlineContentsView(AbstractAuthenticatedView):
                 # We used to set this based on our outline itself, but now that
                 # items can be modified independently, we need to check our
                 # children.
-                update_last_mod(node.lastModified)
                 ext_node = to_external_object(node)
                 if self._is_contents_available(node, include_unpublished):
                     ext_node['contents'] = _recur([], node.values())
@@ -196,7 +230,7 @@ class CourseOutlineContentsView(AbstractAuthenticatedView):
         _recur(result, values)
         result.__name__ = self.request.view_name
         result.__parent__ = node
-        self.request.response.last_modified = update_last_mod.last_mod
+        self.request.response.last_modified = self.last_mod
         return result
 
     def __call__(self):
@@ -206,7 +240,7 @@ class CourseOutlineContentsView(AbstractAuthenticatedView):
             omit_unpublished = is_true(value)
         except ValueError:
             pass
-
+        self.pre_caching()
         return self.externalize_node_contents(self.context, not omit_unpublished)
 
 
