@@ -50,10 +50,10 @@ from nti.dataserver import authorization as nauth
 
 from nti.dataserver.interfaces import IUser
 
-from nti.dataserver.metadata_index import IX_TOPICS
-from nti.dataserver.metadata_index import TP_TOP_LEVEL_CONTENT
-from nti.dataserver.metadata_index import TP_DELETED_PLACEHOLDER
-from nti.dataserver.metadata_index import CATALOG_NAME as METADATA_CATALOG_NAME
+from nti.dataserver.metadata.index import IX_TOPICS
+from nti.dataserver.metadata.index import TP_TOP_LEVEL_CONTENT
+from nti.dataserver.metadata.index import TP_DELETED_PLACEHOLDER
+from nti.dataserver.metadata.index import CATALOG_NAME as METADATA_CATALOG_NAME
 
 from nti.externalization.interfaces import LocatedExternalDict
 from nti.externalization.interfaces import LocatedExternalList
