@@ -16,8 +16,6 @@ from urlparse import urljoin
 from zope import component
 from zope import interface
 
-from zope.cachedescriptors.property import Lazy
-
 from zope.location.interfaces import ILocation
 
 from pyramid.threadlocal import get_current_request
@@ -38,7 +36,6 @@ from nti.app.products.courseware import VIEW_COURSE_INSTRUCTORS
 from nti.app.products.courseware import VIEW_USER_COURSE_ACCESS
 from nti.app.products.courseware import VIEW_LESSONS_CONTAINERS
 from nti.app.products.courseware import VIEW_RECURSIVE_AUDIT_LOG
-from nti.app.products.courseware import VIEW_COURSE_ADMIN_LEVELS
 from nti.app.products.courseware import VIEW_COURSE_LOCKED_OBJECTS
 from nti.app.products.courseware import VIEW_COURSE_REMOVE_EDITORS
 from nti.app.products.courseware import VIEW_COURSE_RECURSIVE_BUCKET
@@ -47,7 +44,6 @@ from nti.app.products.courseware import VIEW_COURSE_REMOVE_INSTRUCTORS
 
 from nti.app.products.courseware.interfaces import ACT_VIEW_ACTIVITY
 
-from nti.app.products.courseware.interfaces import ICoursesWorkspace
 from nti.app.products.courseware.interfaces import IOpenEnrollmentOption
 from nti.app.products.courseware.interfaces import ICourseInstanceEnrollment
 
@@ -75,7 +71,6 @@ from nti.contenttypes.courses.interfaces import ES_PURCHASED
 from nti.contenttypes.courses.interfaces import ENROLLMENT_SCOPE_VOCABULARY
 
 from nti.contenttypes.courses.interfaces import ICourseOutline
-from nti.contenttypes.courses.interfaces import ICourseCatalog
 from nti.contenttypes.courses.interfaces import ICourseInstance
 from nti.contenttypes.courses.interfaces import ICourseSubInstance
 from nti.contenttypes.courses.interfaces import ICourseEnrollments
@@ -811,35 +806,6 @@ class QuestionSetLessonsContainerDecorator(_BaseLessonsContainerDecorator):
 class AssignmentLessonsContainerDecorator(_BaseLessonsContainerDecorator):
 
 	provided = INTIAssessmentRef
-
-
-@component.adapter(ICoursesWorkspace)
-@interface.implementer(IExternalObjectDecorator)
-class CourseWorkspaceDecorator(AbstractAuthenticatedRequestAwareDecorator):
-	"""
-	A decorator that provides links for course management.
-
-	Note, we actually decorate and check access on the ICourseCatalog.
-	"""
-
-	@Lazy
-	def catalog(self):
-		return component.queryUtility(ICourseCatalog)
-
-	def _predicate(self, context, result):
-		# Currently only NTI admins can access the admin level views.
-		return has_permission(ACT_NTI_ADMIN, self.catalog, self.request)
-
-	def _do_decorate_external(self, context, result):
-		if self.catalog is not None:
-			_links = result.setdefault(LINKS, [])
-			link = Link(self.catalog,
-						rel=VIEW_COURSE_ADMIN_LEVELS,
-						elements=('@@%s' % VIEW_COURSE_ADMIN_LEVELS,))
-			interface.alsoProvides(link, ILocation)
-			link.__name__ = ''
-			link.__parent__ = context
-			_links.append(link)
 
 
 @component.adapter(ICourseInstance)
