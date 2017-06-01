@@ -30,7 +30,6 @@ from nti.app.assessment.utils import get_course_from_request
 from nti.app.products.courseware import VIEW_CONTENTS
 from nti.app.products.courseware import VIEW_COURSE_MAIL
 from nti.app.products.courseware import VIEW_CATALOG_ENTRY
-from nti.app.products.courseware import VIEW_IMPORT_COURSE
 from nti.app.products.courseware import VIEW_COURSE_EDITORS
 from nti.app.products.courseware import VIEW_COURSE_ACTIVITY
 from nti.app.products.courseware import VIEW_COURSE_RECURSIVE
@@ -746,27 +745,6 @@ class _CourseInstancePreviewExcludingDecorator(PreviewCourseAccessPredicateDecor
 	def _do_decorate_external(self, context, result):
 		result.pop('Discussions', None)
 
-@component.adapter(ICourseInstance)
-@component.adapter(ICourseCatalogEntry)
-@interface.implementer(IExternalObjectDecorator)
-class ImportExportLinkDecorator(AbstractAuthenticatedRequestAwareDecorator):
-	"""
-	Decorate the import/export  links on the given context if the
-	remote user has edit permissions.
-	"""
-
-	def _predicate(self, context, result):
-		return 		self._is_authenticated \
-				and has_permission(ACT_CONTENT_EDIT, context, self.request)
-
-	def _do_decorate_external(self, context, result):
-		_links = result.setdefault(LINKS, [])
-		for name, method in ( (VIEW_IMPORT_COURSE, 'POST'),):
-			link = Link(context, rel=name, elements=('@@%s' % name,), method=method)
-			interface.alsoProvides(link, ILocation)
-			link.__name__ = ''
-			link.__parent__ = context
-			_links.append(link)
 
 @component.adapter(ITopic)
 @interface.implementer(IExternalObjectDecorator)

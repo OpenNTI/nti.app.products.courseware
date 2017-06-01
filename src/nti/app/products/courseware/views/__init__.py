@@ -35,7 +35,6 @@ from nti.app.products.courseware import VIEW_CONTENTS
 from nti.app.products.courseware import VIEW_RESOURCES
 from nti.app.products.courseware import VIEW_COURSE_MAIL
 from nti.app.products.courseware import VIEW_CATALOG_ENTRY
-from nti.app.products.courseware import VIEW_IMPORT_COURSE
 from nti.app.products.courseware import VIEW_COURSE_ACTIVITY
 from nti.app.products.courseware import VIEW_COURSE_FAVORITES
 from nti.app.products.courseware import VIEW_COURSE_RECURSIVE
