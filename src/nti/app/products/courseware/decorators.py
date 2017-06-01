@@ -28,19 +28,15 @@ from nti.app.assessment.utils import get_course_from_request
 from nti.app.products.courseware import VIEW_CONTENTS
 from nti.app.products.courseware import VIEW_COURSE_MAIL
 from nti.app.products.courseware import VIEW_CATALOG_ENTRY
-from nti.app.products.courseware import VIEW_COURSE_EDITORS
 from nti.app.products.courseware import VIEW_COURSE_ACTIVITY
 from nti.app.products.courseware import VIEW_COURSE_RECURSIVE
 from nti.app.products.courseware import VIEW_COURSE_CLASSMATES
-from nti.app.products.courseware import VIEW_COURSE_INSTRUCTORS
 from nti.app.products.courseware import VIEW_USER_COURSE_ACCESS
 from nti.app.products.courseware import VIEW_LESSONS_CONTAINERS
 from nti.app.products.courseware import VIEW_RECURSIVE_AUDIT_LOG
 from nti.app.products.courseware import VIEW_COURSE_LOCKED_OBJECTS
-from nti.app.products.courseware import VIEW_COURSE_REMOVE_EDITORS
 from nti.app.products.courseware import VIEW_COURSE_RECURSIVE_BUCKET
 from nti.app.products.courseware import VIEW_COURSE_ENROLLMENT_ROSTER
-from nti.app.products.courseware import VIEW_COURSE_REMOVE_INSTRUCTORS
 
 from nti.app.products.courseware.interfaces import ACT_VIEW_ACTIVITY
 
@@ -91,7 +87,6 @@ from nti.contenttypes.courses.utils import get_course_subinstances
 from nti.contenttypes.presentation.interfaces import INTIAssessmentRef
 from nti.contenttypes.presentation.interfaces import INTIQuestionSetRef
 
-from nti.dataserver.authorization import ACT_NTI_ADMIN
 from nti.dataserver.authorization import ACT_CONTENT_EDIT
 
 from nti.dataserver.contenttypes.forums.interfaces import ITopic
@@ -798,36 +793,9 @@ class _BaseLessonsContainerDecorator(AbstractAuthenticatedRequestAwareDecorator)
 @component.adapter(IQuestionSet)
 @interface.implementer(IExternalObjectDecorator)
 class QuestionSetLessonsContainerDecorator(_BaseLessonsContainerDecorator):
-
 	provided = INTIQuestionSetRef
 
 @component.adapter(IQAssignment)
 @interface.implementer(IExternalObjectDecorator)
 class AssignmentLessonsContainerDecorator(_BaseLessonsContainerDecorator):
-
 	provided = INTIAssessmentRef
-
-
-@component.adapter(ICourseInstance)
-@interface.implementer(IExternalObjectDecorator)
-class CourseRoleManagementLinkDecorator(AbstractAuthenticatedRequestAwareDecorator):
-	"""
-	A decorator that provides links for course role management.
-	"""
-
-	def _predicate(self, context, result):
-		# Currently only NTI admins can manage course roles.
-		return has_permission(ACT_NTI_ADMIN, context, self.request)
-
-	def _do_decorate_external(self, context, result):
-		for rel in (VIEW_COURSE_EDITORS,
-					VIEW_COURSE_INSTRUCTORS,
-					VIEW_COURSE_REMOVE_EDITORS,
-					VIEW_COURSE_REMOVE_INSTRUCTORS):
-			_links = result.setdefault(LINKS, [])
-			link = Link(context, rel=rel, elements=('@@%s' % rel,))
-			interface.alsoProvides(link, ILocation)
-			link.__name__ = ''
-			link.__parent__ = context
-			_links.append(link)
-
