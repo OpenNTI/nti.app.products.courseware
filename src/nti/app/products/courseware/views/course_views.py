@@ -147,14 +147,32 @@ class CourseOutlineContentsView(AbstractAuthenticatedView):
     this level because the default externalization does not.
     """
 
-    def _is_published(self, item, show_unpublished=True):
+    @Lazy
+    def _is_course_editor(self):
+        # Course/outline editors should have access to edit all nodes
+        return has_permission(nauth.ACT_CONTENT_EDIT, self.context, self.request)
+
+    @Lazy
+    def show_unpublished(self):
         """
-        Node is published or we're an editor.
+        Show unpublished nodes, defaults to True.
+        """
+        omit_unpublished = False
+        try:
+            value = self.request.params.get('omit_unpublished', False)
+            omit_unpublished = is_true(value)
+        except ValueError:
+            pass
+        return not omit_unpublished
+
+    def _is_published(self, item):
+        """
+        Node is published or we're an editor asking for unpublished.
         """
         return not IPublishable.providedBy(item) \
             or item.is_published() \
-            or (    show_unpublished
-                and has_permission(nauth.ACT_CONTENT_EDIT, item, self.request))
+            or (    self.show_unpublished
+                and self._is_course_editor)
 
     _is_visible = _is_published
 
@@ -173,7 +191,7 @@ class CourseOutlineContentsView(AbstractAuthenticatedView):
         def _recur(the_nodes):
             for node in the_nodes:
                 update_last_mod(node.lastModified)
-                # Must also take into account publishication changes.
+                # Must also take into account publication changes.
                 if IPublishable.providedBy(node):
                     update_last_mod(node.publishLastModified)
                 _recur(node.values())
@@ -188,7 +206,7 @@ class CourseOutlineContentsView(AbstractAuthenticatedView):
         cache_controller = PreResponseOutlineContentsCacheController()
         cache_controller(self.last_mod, {'request': self.request})
 
-    def _is_contents_available(self, item, show_unpublished=True):
+    def _is_contents_available(self, item):
         """
         Lesson is available if published or if we're an editor.
         """
@@ -197,10 +215,10 @@ class CourseOutlineContentsView(AbstractAuthenticatedView):
             result = True  # Legacy outline node or non-content node, allow it.
         else:
             lesson = find_object_with_ntiid(lesson_ntiid) if lesson_ntiid else None
-            result = self._is_published(lesson, show_unpublished)
+            result = self._is_published(lesson)
         return result
 
-    def externalize_node_contents(self, node, include_unpublished=True):
+    def externalize_node_contents(self, node):
         """
         Recursively externalize our `node` contents, setting the
         response lastMod based on the given node.
@@ -210,14 +228,14 @@ class CourseOutlineContentsView(AbstractAuthenticatedView):
 
         def _recur(the_list, the_nodes):
             for node in the_nodes:
-                if not self._is_visible(node, include_unpublished):
+                if not self._is_visible(node):
                     continue
 
                 # We used to set this based on our outline itself, but now that
                 # items can be modified independently, we need to check our
                 # children.
                 ext_node = to_external_object(node)
-                if self._is_contents_available(node, include_unpublished):
+                if self._is_contents_available(node):
                     ext_node['contents'] = _recur([], node.values())
                 else:
                     # Some clients drive behavior based on this attr.
@@ -234,14 +252,8 @@ class CourseOutlineContentsView(AbstractAuthenticatedView):
         return result
 
     def __call__(self):
-        omit_unpublished = False
-        try:
-            value = self.request.params.get('omit_unpublished', False)
-            omit_unpublished = is_true(value)
-        except ValueError:
-            pass
         self.pre_caching()
-        return self.externalize_node_contents(self.context, not omit_unpublished)
+        return self.externalize_node_contents(self.context)
 
 
 @interface.implementer(IPathAdapter)
