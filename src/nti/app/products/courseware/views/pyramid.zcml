@@ -14,7 +14,6 @@
 	<pyramid:scan package=".course_role_views" />
 	<pyramid:scan package=".course_admin_views" />
 	<pyramid:scan package=".course_bundle_views" />
-	<pyramid:scan package=".course_export_views" />
 	<pyramid:scan package=".course_import_views" />
 	<pyramid:scan package=".course_legacy_views" />
 	<pyramid:scan package=".course_stream_views" />

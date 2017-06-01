@@ -30,7 +30,6 @@ from nti.app.assessment.utils import get_course_from_request
 from nti.app.products.courseware import VIEW_CONTENTS
 from nti.app.products.courseware import VIEW_COURSE_MAIL
 from nti.app.products.courseware import VIEW_CATALOG_ENTRY
-from nti.app.products.courseware import VIEW_EXPORT_COURSE
 from nti.app.products.courseware import VIEW_IMPORT_COURSE
 from nti.app.products.courseware import VIEW_COURSE_EDITORS
 from nti.app.products.courseware import VIEW_COURSE_ACTIVITY
@@ -762,7 +761,7 @@ class ImportExportLinkDecorator(AbstractAuthenticatedRequestAwareDecorator):
 
 	def _do_decorate_external(self, context, result):
 		_links = result.setdefault(LINKS, [])
-		for name, method in ( (VIEW_IMPORT_COURSE, 'POST'), (VIEW_EXPORT_COURSE, 'GET')):
+		for name, method in ( (VIEW_IMPORT_COURSE, 'POST'),):
 			link = Link(context, rel=name, elements=('@@%s' % name,), method=method)
 			interface.alsoProvides(link, ILocation)
 			link.__name__ = ''
