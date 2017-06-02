@@ -41,6 +41,8 @@ from zope.traversing.interfaces import IPathAdapter
 from nti.app.base.abstract_views import AbstractView
 from nti.app.base.abstract_views import AbstractAuthenticatedView
 
+from nti.app.externalization.error import raise_json_error
+
 from nti.app.externalization.view_mixins import ModeledContentUploadRequestUtilsMixin
 
 from nti.app.products.courseware.interfaces import ICoursesWorkspace
@@ -181,7 +183,14 @@ class enroll_course_view(AbstractAuthenticatedView,
                     pass
 
         if catalog_entry is None:
-            return hexc.HTTPNotFound(_("There is no course by that name"))
+            raise_json_error(
+                        self.request,
+                        hexc.HTTPNotFound,
+                        {
+                            u'message': _("There is no course by that name"),
+                            u'code': 'NoCourseFoundError',
+                        },
+                        None)
 
         if not can_create(catalog_entry, request=self.request):
             raise hexc.HTTPForbidden()
@@ -192,7 +201,14 @@ class enroll_course_view(AbstractAuthenticatedView,
                                               parent=self.request.context,
                                               request=self.request)
         except InstructorEnrolledException as e:
-            raise hexc.HTTPUnprocessableEntity(str(e) or e.i18n_message)
+            raise_json_error(
+                    self.request,
+                    hexc.HTTPUnprocessableEntity,
+                    {
+                        u'message': str(e) or e.i18n_message,
+                        u'code': 'InstructorEnrolledError',
+                    },
+                    None)
 
         entry = catalog_entry
         if enrollment is not None:
