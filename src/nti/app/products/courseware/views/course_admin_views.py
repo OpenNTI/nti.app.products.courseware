@@ -77,12 +77,10 @@ from nti.contenttypes.courses.enrollment import DefaultPrincipalEnrollments
 from nti.contenttypes.courses.enrollment import migrate_enrollments_from_course_to_course
 
 from nti.contenttypes.courses.index import IX_SITE
-from nti.contenttypes.courses.index import IX_SCOPE
 from nti.contenttypes.courses.index import IX_COURSE
 from nti.contenttypes.courses.index import IX_USERNAME
 
 from nti.contenttypes.courses.interfaces import ES_PUBLIC
-from nti.contenttypes.courses.interfaces import INSTRUCTOR
 from nti.contenttypes.courses.interfaces import RID_INSTRUCTOR
 from nti.contenttypes.courses.interfaces import ENROLLMENT_SCOPE_NAMES
 from nti.contenttypes.courses.interfaces import ENROLLMENT_SCOPE_VOCABULARY
@@ -106,7 +104,6 @@ from nti.dataserver.interfaces import IDataserver
 from nti.dataserver.interfaces import IShardLayout
 from nti.dataserver.interfaces import IUsernameSubstitutionPolicy
 
-from nti.dataserver.users import User
 from nti.dataserver.users.interfaces import IUserProfile
 
 from nti.externalization.interfaces import LocatedExternalDict
@@ -423,56 +420,6 @@ class CourseSectionEnrollmentMigrationView(AbstractAuthenticatedView):
 # REPORT admin views
 
 
-@view_config(name='CourseRoles')
-@view_config(name='course_roles')
-@view_defaults(route_name='objects.generic.traversal',
-               renderer='rest',
-               context=CourseAdminPathAdapter,
-               request_method='GET',
-               permission=nauth.ACT_SYNC_LIBRARY)
-class CourseRolesView(AbstractAuthenticatedView,
-                      ModeledContentUploadRequestUtilsMixin):
-
-    def __call__(self):
-        bio = BytesIO()
-        csv_writer = csv.writer(bio)
-
-        header = ['User', 'Email', 'Title', 'NTIID']
-        csv_writer.writerow(header)
-
-        catalog = get_enrollment_catalog()
-        intids = component.getUtility(IIntIds)
-        site_names = get_component_hierarchy_names()
-        query = {
-            IX_SITE: {'any_of': site_names},
-            IX_SCOPE: {'any_of': (INSTRUCTOR,)}
-        }
-        user_idx = catalog[IX_USERNAME]
-        for uid in catalog.apply(query) or ():
-            context = intids.queryObject(uid)
-            entry = ICourseCatalogEntry(context, None)
-            if context is None or entry is None:
-                continue
-
-            seen = set()
-            users = user_idx.documents_to_values.get(uid)
-            for username in users:
-                user = User.get_user(username)
-                seen.add(user)
-            seen.discard(None)
-            for user in seen:
-                profile = IUserProfile(user, None)
-                email = getattr(profile, 'email', None)
-                # write data
-                row_data = [user.username, email, entry.title, entry.ntiid]
-                csv_writer.writerow([_tx_string(x) for x in row_data])
-
-        response = self.request.response
-        response.body = bio.getvalue()
-        response.content_disposition = b'attachment; filename="CourseRoles.csv"'
-        return response
-
-
 @view_config(name='CourseEnrollments')
 @view_config(name='course_enrollments')
 @view_defaults(route_name='objects.generic.traversal',
@@ -773,4 +720,3 @@ class FixBrokenEnrollmentsView(AbstractAuthenticatedView):
                         unenroll(extra_record, extra_record.Principal)
         result[TOTAL] = count
         return result
-
