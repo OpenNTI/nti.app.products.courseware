@@ -4,7 +4,7 @@
 .. $Id$
 """
 
-from __future__ import print_function, unicode_literals, absolute_import, division
+from __future__ import print_function, absolute_import, division
 __docformat__ = "restructuredtext en"
 
 logger = __import__('logging').getLogger(__name__)
@@ -104,10 +104,10 @@ TOTAL = StandardExternalFields.TOTAL
 MIMETYPE = StandardExternalFields.MIMETYPE
 ITEM_COUNT = StandardExternalFields.ITEM_COUNT
 
-USER_COURSE_INVITATIONS_CLASS = u'UserCourseInvitations'
-COURSE_INVITATIONS_MIMETYPE = u'application/vnd.nextthought.courseware.courseinvitations'
-USER_COURSE_INVITATIONS_MIMETYPE = u'application/vnd.nextthought.courses.usercourseinvitations'
-COURSE_INVITATIONS_SENT_MIMETYPE = u'application/vnd.nextthought.courses.courseinvitationssent'
+USER_COURSE_INVITATIONS_CLASS = 'UserCourseInvitations'
+COURSE_INVITATIONS_MIMETYPE = 'application/vnd.nextthought.courseware.courseinvitations'
+USER_COURSE_INVITATIONS_MIMETYPE = 'application/vnd.nextthought.courses.usercourseinvitations'
+COURSE_INVITATIONS_SENT_MIMETYPE = 'application/vnd.nextthought.courses.courseinvitationssent'
 
 
 @view_config(context=ICourseInstance)
@@ -152,8 +152,8 @@ class UserAcceptCourseInvitationView(AcceptInvitationByCodeView):
                 self.request,
                 hexc.HTTPConflict,
                 {
-                    u'message': str(e) or e.i18n_message,
-                    u'code': 'AlreadyEnrolledException',
+                    'message': str(e) or e.i18n_message,
+                    'code': 'AlreadyEnrolledException',
                 },
                 None)
         elif isinstance(e, CourseInvitationException):
@@ -161,8 +161,8 @@ class UserAcceptCourseInvitationView(AcceptInvitationByCodeView):
                 self.request,
                 hexc.HTTPUnprocessableEntity,
                 {
-                    u'message': str(e) or e.i18n_message,
-                    u'code': 'CourseValidationError',
+                    'message': str(e) or e.i18n_message,
+                    'code': 'CourseValidationError',
                 },
                 None)
         elif isinstance(e, InstructorEnrolledException):
@@ -170,12 +170,12 @@ class UserAcceptCourseInvitationView(AcceptInvitationByCodeView):
                 self.request,
                 hexc.HTTPUnprocessableEntity,
                 {
-                    u'message': str(e) or e.i18n_message,
-                    u'code': 'InstructorEnrolledError',
+                    'message': str(e) or e.i18n_message,
+                    'code': 'InstructorEnrolledError',
                 },
                 None)
         else:
-            super(UserAcceptCourseInvitationView, self).handle_possible_validation_error(request, e)
+            AcceptInvitationByCodeView.handle_possible_validation_error(self, request, e)
 
     def get_invite_code(self):
         if self.request.body:
@@ -260,11 +260,12 @@ class UserAcceptCourseInvitationView(AcceptInvitationByCodeView):
             raise hexc.HTTPFound(location=app_url)
         item = self._do_call()
         # Make sure we commit
-        self.request.environ[b'nti.request_had_transaction_side_effects'] = b'True'
+        self.request.environ['nti.request_had_transaction_side_effects'] = 'True'
         # XXX single enrollment record. Externalize first
         # we have seen a LocationError if the enrollment object is returned
         result = to_external_object(item)
         return result
+
 
 # These may be non-public courses that the incoming user
 # is not (yet) enrolled in. Thus, no permissions required.
@@ -324,8 +325,8 @@ class CheckCourseInvitationsCSVView(AbstractAuthenticatedView,
                 email = email.strip() if email else email
                 realname = row[1] if len(row) > 1 else email
                 if not email:
-                    msg = translate(_("Missing email in line ${line}.",
-                                      mapping={'line': idx + 1}))
+                    msg = translate(_(u"Missing email in line ${line}.",
+                                    mapping={'line': idx + 1}))
                     warnings.append(msg)
                     continue
                 if not isValidMailAddress(email):
@@ -333,7 +334,7 @@ class CheckCourseInvitationsCSVView(AbstractAuthenticatedView,
                     continue
                 result.append({'email': email, 'name': realname})
         else:
-            warnings.append(_("No CSV source found."))
+            warnings.append(_(u"No CSV source found."))
         return result
 
     def __call__(self):
@@ -354,14 +355,14 @@ class CheckCourseInvitationsCSVView(AbstractAuthenticatedView,
                 self.request,
                 hexc.HTTPUnprocessableEntity,
                 {
-                    u'message': _('Could not parse csv file.'),
-                    u'code': 'InvalidCSVFileCodeError',
+                    'message': _(u'Could not parse csv file.'),
+                    'code': 'InvalidCSVFileCodeError',
                 },
                 None)
         result['Warnings'] = warnings if warnings else None
         if invalid_emails:
             invalid = dict()
-            invalid['message'] = _("Invalid emails.")
+            invalid['message'] = _(u"Invalid emails.")
             invalid[ITEMS] = invalid_emails
             result['InvalidEmails'] = invalid
         return result
@@ -397,8 +398,8 @@ class SendCourseInvitationsView(AbstractAuthenticatedView,
                     self.request,
                     hexc.HTTPUnprocessableEntity,
                     {
-                        u'message': _('Must provide a invitation code.'),
-                        u'code': 'MissingInvitationCodeError',
+                        'message': _(u'Must provide a invitation code.'),
+                        'code': 'MissingInvitationCodeError',
                     },
                     None)
         if invitation is None:
@@ -408,8 +409,8 @@ class SendCourseInvitationsView(AbstractAuthenticatedView,
                 self.request,
                 hexc.HTTPUnprocessableEntity,
                 {
-                    u'message': _('Invalid invitation code.'),
-                    u'code': 'InvalidInvitationCodeError',
+                    'message': _(u'Invalid invitation code.'),
+                    'code': 'InvalidInvitationCodeError',
                 },
                 None)
         return invitation
@@ -424,7 +425,7 @@ class SendCourseInvitationsView(AbstractAuthenticatedView,
         for username in usernames:
             user = User.get_user(username)
             if not IUser.providedBy(user):
-                msg = translate(_("Could not find user ${user}.",
+                msg = translate(_(u"Could not find user ${user}.",
                                   mapping={'user': username}))
                 warnings.append(msg)
                 continue
@@ -432,7 +433,7 @@ class SendCourseInvitationsView(AbstractAuthenticatedView,
             realname = profile.realname or user.username
             email = getattr(profile, 'email', None)
             if not email:
-                msg = translate(_("User ${user} does not have a valid email.",
+                msg = translate(_(u"User ${user} does not have a valid email.",
                                   mapping={'user': username}))
                 warnings.append(msg)
                 continue
@@ -448,7 +449,7 @@ class SendCourseInvitationsView(AbstractAuthenticatedView,
                 email = entry.get('email')
                 realname = entry.get('name') or email
                 if not email:
-                    msg = translate(_("Missing email at index ${idx}.",
+                    msg = translate(_(u"Missing email at index ${idx}.",
                                       mapping={'idx': idx + 1}))
                     warnings.append(msg)
                     continue
@@ -464,10 +465,10 @@ class SendCourseInvitationsView(AbstractAuthenticatedView,
         name = values.get('name') or email
         if name or email:
             if not email:
-                msg = translate(_("Missing email."))
+                msg = _(u"Missing email.")
                 warnings.append(msg)
             elif not isValidMailAddress(email):
-                msg = translate(_("Invalid email ${email}.",
+                msg = translate(_(u"Invalid email ${email}.",
                                   mapping={'email': email}))
                 warnings.append(msg)
             else:
@@ -502,12 +503,12 @@ class SendCourseInvitationsView(AbstractAuthenticatedView,
         return result
 
     def __call__(self):
-        if not is_course_instructor(self._course, self.remoteUser) \
-                and not has_permission(nauth.ACT_NTI_ADMIN, self._course, self.request):
+        if      not is_course_instructor(self._course, self.remoteUser) \
+            and not has_permission(nauth.ACT_NTI_ADMIN, self._course, self.request):
             raise hexc.HTTPForbidden()
 
         values = self.readInput()
-        force = (values.get('force') or u'').lower() in TRUE_VALUES
+        force = (values.get('force') or '').lower() in TRUE_VALUES
         if not force:
             links = (
                 Link(self.request.path, rel='confirm',
@@ -520,18 +521,18 @@ class SendCourseInvitationsView(AbstractAuthenticatedView,
         invalid_emails = []
         invitation = self.get_course_invitation(values)
         user_invitations = self.get_user_course_invitations(values,
-														    warnings,
-														    invalid_emails)
+                                                            warnings,
+                                                            invalid_emails)
         if not force and (warnings or invalid_emails):
             err_json = {
-                u'warnings':  warnings,
-                u'message': _('There are errors in the user invitation source.'),
-                u'code': 'SendCourseInvitationError',
+                'warnings':  warnings,
+                'message': _(u'There are errors in the user invitation source.'),
+                'code': 'SendCourseInvitationError',
                 LINKS: to_external_object(links) if links else None,
             }
             if invalid_emails:
                 invalid = dict()
-                invalid['message'] = _("Invalid emails.")
+                invalid['message'] = _(u"Invalid emails.")
                 invalid[ITEMS] = invalid_emails
                 err_json['InvalidEmails'] = invalid
             raise_json_error(
@@ -547,9 +548,9 @@ class SendCourseInvitationsView(AbstractAuthenticatedView,
                 self.request,
                 hexc.HTTPUnprocessableEntity,
                 {
-                    u'warnings':  warnings,
-                    u'message': _('Could not process all direct user invitations.'),
-                    u'code': 'SendCourseInvitationError',
+                    'warnings':  warnings,
+                    'message': _(u'Could not process all direct user invitations.'),
+                    'code': 'SendCourseInvitationError',
                     LINKS: to_external_object(links) if links else None,
                 },
                 None)
@@ -561,9 +562,9 @@ class SendCourseInvitationsView(AbstractAuthenticatedView,
                 self.request,
                 hexc.HTTPUnprocessableEntity,
                 {
-                    u'warnings':  warnings,
-                    u'message': _('Could not process single user invitation.'),
-                    u'code': 'SendCourseInvitationError',
+                    'warnings':  warnings,
+                    'message': _(u'Could not process single user invitation.'),
+                    'code': 'SendCourseInvitationError',
                     LINKS: to_external_object(links) if links else None,
                 },
                 None)
@@ -576,8 +577,8 @@ class SendCourseInvitationsView(AbstractAuthenticatedView,
                 self.request,
                 hexc.HTTPUnprocessableEntity,
                 {
-                    u'message': _('There are no invitations to process.'),
-                    u'code': 'SendCourseInvitationError',
+                    'message': _(u'There are no invitations to process.'),
+                    'code': 'SendCourseInvitationError',
                 },
                 None)
 
