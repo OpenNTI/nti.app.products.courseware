@@ -80,6 +80,9 @@ from nti.contenttypes.courses.interfaces import ICourseCatalogEntry
 from nti.contenttypes.courses.utils import is_enrolled
 from nti.contenttypes.courses.utils import is_course_instructor_or_editor
 
+from nti.contenttypes.presentation.interfaces import ILessonPublicationConstraints
+from nti.contenttypes.presentation.interfaces import INTILessonOverview
+
 from nti.dataserver import authorization as nauth
 
 from nti.dataserver.authorization import is_admin_or_content_admin
@@ -171,7 +174,7 @@ class CourseOutlineContentsView(AbstractAuthenticatedView):
         """
         return not IPublishable.providedBy(item) \
             or item.is_published() \
-            or (    self.show_unpublished
+            or (self.show_unpublished
                 and self._is_course_editor)
 
     _is_visible = _is_published
@@ -193,7 +196,25 @@ class CourseOutlineContentsView(AbstractAuthenticatedView):
                 update_last_mod(node.lastModified)
                 # Must also take into account publication changes.
                 if IPublishable.providedBy(node):
-                    update_last_mod(node.publishLastModified)
+                    last_modified_time = node.publishLastModified
+
+                    # If this node is a lesson, it may have been gated.
+                    # If it has constraints that have been satisfied,
+                    # we should use the most recent time that those were
+                    # satisfied instead of when the lesson content was
+                    # actually last changed.
+                    lesson_ntiid = node.LessonOverviewNTIID
+                    lesson = find_object_with_ntiid(
+                        lesson_ntiid) if lesson_ntiid else None
+                    if lesson is not None:
+                        constraints = ILessonPublicationConstraints(lesson)
+                        for constraint in constraints.values() or ():
+                            satisfied_time = constraint.get_constraint_satisfied_time(
+                                self.remoteUser)
+                            last_modified_time = max(
+                                last_modified_time, satisfied_time)
+
+                    update_last_mod(last_modified_time)
                 _recur(node.values())
 
         _recur(self.context.values())
@@ -214,7 +235,8 @@ class CourseOutlineContentsView(AbstractAuthenticatedView):
         if not lesson_ntiid:
             result = True  # Legacy outline node or non-content node, allow it.
         else:
-            lesson = find_object_with_ntiid(lesson_ntiid) if lesson_ntiid else None
+            lesson = find_object_with_ntiid(
+                lesson_ntiid) if lesson_ntiid else None
             result = self._is_published(lesson)
         return result
 
@@ -275,7 +297,8 @@ class CourseEnrollmentRosterPathAdapter(Contained):
     def __getitem__(self, username):
         username = username.lower()
         # XXX: We can do better than this interface now
-        enrollments_iter = ICourseEnrollments(self.__parent__).iter_enrollments()
+        enrollments_iter = ICourseEnrollments(
+            self.__parent__).iter_enrollments()
         for record in enrollments_iter:
             user = IUser(record)
             if user.username.lower() == username:
@@ -681,5 +704,6 @@ class UserCourseAccessView(AbstractAuthenticatedView):
                             self.remoteUser,
                             ICourseCatalogEntry(self.context).ntiid)
         if result is None:
-            raise hexc.HTTPForbidden(_('User does not have access to this course.'))
+            raise hexc.HTTPForbidden(
+                _('User does not have access to this course.'))
         return result
