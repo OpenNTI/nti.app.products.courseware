@@ -174,7 +174,7 @@ class CourseOutlineContentsView(AbstractAuthenticatedView):
         """
         return not IPublishable.providedBy(item) \
             or item.is_published() \
-            or (self.show_unpublished
+            or (    self.show_unpublished
                 and self._is_course_editor)
 
     _is_visible = _is_published
@@ -187,8 +187,8 @@ class CourseOutlineContentsView(AbstractAuthenticatedView):
         (is_published). We should cache that check.
         """
         def update_last_mod(new_last_mod):
-            update_last_mod.last_mod = max(
-                update_last_mod.last_mod, new_last_mod)
+            update_last_mod.last_mod = max(update_last_mod.last_mod, 
+                                           new_last_mod)
         update_last_mod.last_mod = self.context.lastModified
 
         def _recur(the_nodes):
@@ -203,16 +203,14 @@ class CourseOutlineContentsView(AbstractAuthenticatedView):
                     # we should use the most recent time that those were
                     # satisfied instead of when the lesson content was
                     # actually last changed.
-                    lesson_ntiid = node.LessonOverviewNTIID
-                    lesson = find_object_with_ntiid(
-                        lesson_ntiid) if lesson_ntiid else None
+                    lesson = INTILessonOverview(node, None)
                     if lesson is not None:
                         constraints = ILessonPublicationConstraints(lesson)
-                        for constraint in constraints.values() or ():
-                            satisfied_time = constraint.get_constraint_satisfied_time(
-                                self.remoteUser)
-                            last_modified_time = max(
-                                last_modified_time, satisfied_time)
+                        for unused in constraints.values() or ():
+                            satisfied_time = 0
+                            # constraint.get_constraint_satisfied_time(self.remoteUser)
+                            last_modified_time = max(last_modified_time, 
+                                                     satisfied_time)
 
                     update_last_mod(last_modified_time)
                 _recur(node.values())
@@ -235,8 +233,7 @@ class CourseOutlineContentsView(AbstractAuthenticatedView):
         if not lesson_ntiid:
             result = True  # Legacy outline node or non-content node, allow it.
         else:
-            lesson = find_object_with_ntiid(
-                lesson_ntiid) if lesson_ntiid else None
+            lesson = find_object_with_ntiid(lesson_ntiid)
             result = self._is_published(lesson)
         return result
 
