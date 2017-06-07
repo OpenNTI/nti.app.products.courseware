@@ -76,10 +76,10 @@ class TestInvitations(ApplicationLayerTest):
         access_token_href = self.require_link_href_with_rel(res.json_body,
                                                             VIEW_COURSE_ACCESS_TOKENS)
 
-        res = self.testapp.get(access_token_href, 
-                               extra_environ=environ, 
+        res = self.testapp.get(access_token_href,
+                               extra_environ=environ,
                                status=200)
-        assert_that(res.json_body, 
+        assert_that(res.json_body,
                     has_entry(ITEMS, has_length(1)))
 
     @WithSharedApplicationMockDS(testapp=True, users=True)
@@ -100,7 +100,7 @@ class TestInvitations(ApplicationLayerTest):
         environ['HTTP_ORIGIN'] = 'http://platform.ou.edu'
         data = {'username': 'ichigo', 'code': "CI-CLC-3403"}
         url = '/dataserver2/Objects/%s/SendCourseInvitations' % course_ntiid
-        res = self.testapp.post_json(url, data, 
+        res = self.testapp.post_json(url, data,
                                      extra_environ=environ, status=200)
         assert_that(res.json_body, has_entry(ITEMS, has_length(1)))
         code = res.json_body[ITEMS][0]['code']
@@ -108,7 +108,7 @@ class TestInvitations(ApplicationLayerTest):
         mailer = component.getUtility(ITestMailDelivery)
         msg = mailer.queue[0]
         html = decodestring(msg.html)
-        assert_that(html, 
+        assert_that(html,
                     contains_string('/accept-course-invitations?code=%s' % code))
 
         accept_url = '/dataserver2/users/ichigo/accept-course-invitations?code=%s' % code
@@ -192,8 +192,8 @@ class TestInvitations(ApplicationLayerTest):
         del mailer.queue[:]
 
         url = '/dataserver2/Objects/%s/SendCourseInvitations' % course_ntiid
-        res = self.testapp.post_json(url, data, 
-                                     extra_environ=environ, 
+        res = self.testapp.post_json(url, data,
+                                     extra_environ=environ,
                                      status=200)
         assert_that(res.json_body, has_entry(ITEMS, has_length(2)))
 

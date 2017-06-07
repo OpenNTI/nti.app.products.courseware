@@ -181,7 +181,7 @@ def get_vendor_thank_you_page(course, key):
     for course in get_course_and_parent(course):
         vendor_info = get_vendor_info(course)
         tracking = traverse(vendor_info,
-                           'NTI/VendorThankYouPage', 
+                           'NTI/VendorThankYouPage',
                            default=False)
         if tracking and key in tracking:
             return tracking.get(key)
@@ -196,7 +196,7 @@ def get_course_invitations(context):
         result = None
         vendor_info = get_vendor_info(course)
         invitations = traverse(vendor_info,
-                               'NTI/Invitations', 
+                               'NTI/Invitations',
                                default=False)
         # simple string code
         if isinstance(invitations, six.string_types):
@@ -386,7 +386,7 @@ def transfer_resources_from_filer(provided, obj, source_filer, target_filer):
                                          bucket=bucket,
                                          overwrite=True,
                                          contentType=contentType)
-                logger.debug("%s was saved as %s", value, href)
+                logger.info("%s was saved as %s", value, href)
                 setattr(obj, field_name, href)
                 result[field_name] = href
     return result
