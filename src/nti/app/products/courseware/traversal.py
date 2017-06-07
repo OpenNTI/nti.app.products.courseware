@@ -4,7 +4,7 @@
 .. $Id$
 """
 
-from __future__ import print_function, unicode_literals, absolute_import, division
+from __future__ import print_function, absolute_import, division
 __docformat__ = "restructuredtext en"
 
 logger = __import__('logging').getLogger(__name__)
@@ -38,8 +38,7 @@ from nti.traversal.traversal import ContainerAdapterTraversable
 class _OutlineNodeExternalFieldTraverser(_AbstractExternalFieldTraverser):
 
     def __init__(self, context, request=None):
-        super(_OutlineNodeExternalFieldTraverser, self).__init__(
-            context, request=request)
+        super(_OutlineNodeExternalFieldTraverser, self).__init__(context, request=request)
         allowed_fields = set()
         outline_iface = iface_of_node(context)
         for k, v in outline_iface.namesAndDescriptions(all=True):

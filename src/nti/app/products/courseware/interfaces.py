@@ -8,7 +8,7 @@ datastructures defined in :mod:`nti.app.products.courses`.
 .. $Id$
 """
 
-from __future__ import print_function, unicode_literals, absolute_import, division
+from __future__ import print_function, absolute_import, division
 __docformat__ = "restructuredtext en"
 
 logger = __import__('logging').getLogger(__name__)
@@ -54,7 +54,7 @@ class ICourseCatalogLegacyContentEntry(ILegacyCourseCatalogEntry):
     """
     Marker interface for a legacy course catalog entry
     """
-    ContentPackageNTIID = ValidNTIID(title="The NTIID of the root content package",
+    ContentPackageNTIID = ValidNTIID(title=u"The NTIID of the root content package",
 									 required=False)
 
 
@@ -63,7 +63,7 @@ class ILegacyCommunityBasedCourseInstance(ILegacyCourseInstance):
     Marker interface for a legacy course instance
     """
 
-    LegacyScopes = Dict(title="'public' and 'restricted' entity ids",
+    LegacyScopes = Dict(title=u"'public' and 'restricted' entity ids",
                         readonly=True)
 
     ContentPackageBundle = interface.Attribute(
@@ -121,8 +121,9 @@ class ICoursePagesContainerResource (IContainerResource):
     A pages resource on a course.
     """
     course = Object(ICourseInstance,
-                    title="The course that owns the page container")
-    ntiid = schema.TextLine(title="The NTIID of the container")
+                    title=u"The course that owns the page container")
+
+    ntiid = schema.TextLine(title=u"The NTIID of the container")
 
 
 class IEnrolledCoursesCollection(IContainerCollection):
@@ -149,7 +150,7 @@ class ICourseInstanceEnrollment(IShouldHaveTraversablePath):
 
     CourseInstance = Object(ICourseInstance)
 
-    Username = TextLine(title="The user this is about",
+    Username = TextLine(title=u"The user this is about",
                         required=False,
                         readonly=True)
 
@@ -159,12 +160,12 @@ class ILegacyCourseInstanceEnrollment(ICourseInstanceEnrollment):
     An object with information about enrollment in a legacy course.
     """
 
-    LegacyEnrollmentStatus = TextLine(title="The type of enrollment, ForCredit or Open",
+    LegacyEnrollmentStatus = TextLine(title=u"The type of enrollment, ForCredit or Open",
                                       required=True,
                                       readonly=True,
-                                      default='Open')
+                                      default=u'Open')
 
-    RealEnrollmentStatus = TextLine(title="The type of enrollment (Scope)",
+    RealEnrollmentStatus = TextLine(title=u"The type of enrollment (Scope)",
                                     required=False,
                                     readonly=True)
 
@@ -244,10 +245,10 @@ class IEnrollmentOption(IContained):
     Marker interface for a course/entry enrollment option
     """
 
-    Name = TextLine(title="Enrollment option name", required=True)
+    Name = TextLine(title=u"Enrollment option name", required=True)
     Name.setTaggedValue('_ext_excluded_out', True)
 
-    CatalogEntryNTIID = TextLine(title="Catalog entry NTIID", required=False)
+    CatalogEntryNTIID = TextLine(title=u"Catalog entry NTIID", required=False)
     CatalogEntryNTIID.setTaggedValue('_ext_excluded_out', True)
 
 
@@ -257,7 +258,7 @@ class IOpenEnrollmentOption(IEnrollmentOption):
     Open course/entry enrollment option
     """
 
-    Enabled = Bool(title="If the course allows open enrollemnt",
+    Enabled = Bool(title=u"If the course allows open enrollemnt",
                    required=False,
                    default=True)
 
@@ -346,6 +347,7 @@ class IUserResourceUsageStats(IUserUsageStats):
 
 # Suggested contacts
 
+
 from nti.dataserver.users.interfaces import ISuggestedContactsProvider
 
 
@@ -355,6 +357,7 @@ class IClassmatesSuggestedContactsProvider(ISuggestedContactsProvider):
         """
         return classmates/contacts suggestions by course
         """
+
 
 # Email options
 
@@ -373,6 +376,7 @@ class ICourseEnrollmentEmailArgsProvider(interface.Interface):
         """
         Return email args for the given user.
         """
+
 
 # publishable vendor info
 
@@ -399,7 +403,9 @@ def get_course_publishable_vendor_info(context):
         result.update(info or {})
     return result
 
+
 # deprecations
+
 
 import zope.deferredimport
 zope.deferredimport.initialize()

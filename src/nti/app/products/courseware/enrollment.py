@@ -4,7 +4,7 @@
 .. $Id$
 """
 
-from __future__ import print_function, unicode_literals, absolute_import, division
+from __future__ import print_function, absolute_import, division
 __docformat__ = "restructuredtext en"
 
 logger = __import__('logging').getLogger(__name__)
@@ -93,7 +93,7 @@ class EnrollmentOptions(LocatedExternalDict):
 
     def __setitem__(self, key, value):
         assert IEnrollmentOption.providedBy(value)
-        assert value.Name
+        assert value.Name, 'Missing Enrollment option name'
         value.__parent__ = self
         return LocatedExternalDict.__setitem__(self, key, value)
 
@@ -102,7 +102,7 @@ class EnrollmentOptions(LocatedExternalDict):
         result[CLASS] = self.__external_class_name__
         result[MIMETYPE] = self.mimeType
         items = result[ITEMS] = {}
-        for value in self.values():
+        for value in list(self.values()):
             items[value.Name] = to_external_object(value)
         return result
 
