@@ -103,7 +103,7 @@ class EnrollmentOptions(LocatedExternalDict):
         result[MIMETYPE] = self.mimeType
         items = result[ITEMS] = {}
         for value in list(self.values()):
-            items[value.Name] = to_external_object(value)
+            items[value.Name] = to_external_object(value, *args, **kwargs)
         return result
 
 
