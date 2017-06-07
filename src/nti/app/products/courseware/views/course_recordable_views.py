@@ -4,7 +4,7 @@
 .. $Id$
 """
 
-from __future__ import print_function, unicode_literals, absolute_import, division
+from __future__ import print_function, absolute_import, division
 __docformat__ = "restructuredtext en"
 
 logger = __import__('logging').getLogger(__name__)
@@ -94,7 +94,7 @@ class CourseSyncLockedObjectsMixin(object):
         for pack in get_course_packages(course):
             _recur(pack)
         result.discard(None)
-        return tuple(result)
+        return result
 
     def _compute_locked_objects(self, context):
         lib_catalog = get_library_catalog()
@@ -121,8 +121,9 @@ class CourseSyncLockedObjectsMixin(object):
 
         # assesments in course
         catalog = ICourseAssessmentItemCatalog(course)
-        obj_ids = {intids.queryId(item)
-                   for item in catalog.iter_assessment_items()}
+        obj_ids = {
+            intids.queryId(item) for item in catalog.iter_assessment_items()
+        }
         obj_ids.discard(None)
         all_ids.update(obj_ids)
 
