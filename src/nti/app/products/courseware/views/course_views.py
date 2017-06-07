@@ -80,8 +80,7 @@ from nti.contenttypes.courses.interfaces import ICourseCatalogEntry
 from nti.contenttypes.courses.utils import is_enrolled
 from nti.contenttypes.courses.utils import is_course_instructor_or_editor
 
-from nti.contenttypes.presentation.interfaces import ILessonPublicationConstraints
-from nti.contenttypes.presentation.interfaces import INTILessonOverview
+from nti.contenttypes.presentation.lesson import get_constraint_satisfied_time
 
 from nti.dataserver import authorization as nauth
 
@@ -107,7 +106,6 @@ from nti.ntiids.ntiids import find_object_with_ntiid
 from nti.property.property import alias
 
 from nti.publishing.interfaces import IPublishable
-from nti.publishing.utils import get_constraint_satisfied_time
 
 from nti.zodb.containers import bit64_int_to_time
 from nti.zodb.containers import time_to_64bit_int
@@ -180,6 +178,11 @@ class CourseOutlineContentsView(AbstractAuthenticatedView):
 
     _is_visible = _is_published
 
+    def _get_node_lesson(self, node):
+        lesson_ntiid = node.LessonOverviewNTIID
+        lesson = find_object_with_ntiid(lesson_ntiid) if lesson_ntiid else None
+        return lesson
+
     @Lazy
     def last_mod(self):
         """
@@ -198,22 +201,17 @@ class CourseOutlineContentsView(AbstractAuthenticatedView):
                 # Must also take into account publication changes.
                 if IPublishable.providedBy(node):
                     last_modified_time = node.publishLastModified
-
-                    # If this node is a lesson, it may have been gated.
-                    # If it has constraints that have been satisfied,
-                    # we should use the most recent time that those were
-                    # satisfied instead of when the lesson content was
-                    # actually last changed.
-                    lesson_ntiid = node.LessonOverviewNTIID
-                    lesson = find_object_with_ntiid(
-                        lesson_ntiid) if lesson_ntiid else None
-                    if lesson is not None:
-                        constraints_satisfied_time = get_constraint_satisfied_time(
-                            user=self.remoteUser, lesson=lesson)
-                        last_modified_time = max(
-                            last_modified_time, constraints_satisfied_time)
-
                     update_last_mod(last_modified_time)
+
+                lesson = self._get_node_lesson(node)
+                # If this node has a lesson, it may have been gated.
+                # If the constraints have been satisfied, we'll need
+                # to use that time when considered the contents available.
+                if lesson is not None:
+                    constraints_satisfied_time = get_constraint_satisfied_time(
+                                                        self.remoteUser, lesson)
+                    if constraints_satisfied_time is not None:
+                        update_last_mod(constraints_satisfied_time)
                 _recur(node.values())
 
         _recur(self.context.values())
@@ -230,13 +228,9 @@ class CourseOutlineContentsView(AbstractAuthenticatedView):
         """
         Lesson is available if published or if we're an editor.
         """
-        lesson_ntiid = item.LessonOverviewNTIID
-        if not lesson_ntiid:
-            result = True  # Legacy outline node or non-content node, allow it.
-        else:
-            lesson = find_object_with_ntiid(
-                lesson_ntiid) if lesson_ntiid else None
-            result = self._is_published(lesson)
+        lesson = self._get_node_lesson(item)
+        # Returns True if lesson is None (implying outline node)
+        result = self._is_published(lesson)
         return result
 
     def externalize_node_contents(self, node):
