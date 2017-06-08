@@ -174,7 +174,17 @@ def get_enrollment_for_scope(context, scope):
 
 
 def get_course_and_parent(context):
-    return {ICourseInstance(context, None), get_parent_course(context)}
+    """
+    Fetch the course and parent (if available), returning the course first
+    in the resulting sequence.
+    """
+    course = ICourseInstance(context, None)
+    parent = get_parent_course(context)
+    if parent is not None and parent != course:
+        result = (course, parent)
+    else:
+        result = (course,)
+    return result
 
 
 def get_vendor_thank_you_page(course, key):
@@ -189,6 +199,9 @@ def get_vendor_thank_you_page(course, key):
 
 
 def get_course_invitations(context):
+    """
+    Fetch the invitations found in the course or parent, in that order.
+    """
     entry = ICourseCatalogEntry(context, None)
     if entry is None:
         return ()
