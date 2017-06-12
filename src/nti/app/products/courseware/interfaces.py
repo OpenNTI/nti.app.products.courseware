@@ -36,6 +36,8 @@ from nti.contenttypes.courses.interfaces import IPrincipalEnrollments
 from nti.contenttypes.courses.legacy_catalog import ILegacyCourseInstance
 from nti.contenttypes.courses.legacy_catalog import ILegacyCourseCatalogEntry
 
+from nti.contenttypes.reports.interfaces import IReportContext
+
 from nti.coremetadata.interfaces import ILastModified
 from nti.coremetadata.interfaces import IShouldHaveTraversablePath
 
@@ -133,7 +135,8 @@ class IEnrolledCoursesCollection(IContainerCollection):
     """
 
 
-class ICourseInstanceEnrollment(IShouldHaveTraversablePath):
+class ICourseInstanceEnrollment(IShouldHaveTraversablePath,
+                                IReportContext):
     """
     An object representing a principal's enrollment in a course
     instance.
