@@ -11,6 +11,8 @@ __docformat__ = "restructuredtext en"
 
 logger = __import__('logging').getLogger(__name__)
 
+import time
+
 from numbers import Number
 
 from zope import component
@@ -183,6 +185,34 @@ class CourseOutlineContentsView(AbstractAuthenticatedView):
         lesson = find_object_with_ntiid(lesson_ntiid) if lesson_ntiid else None
         return lesson
 
+    def _get_lesson_last_mod(self, node, now):
+        """
+        If this node has a lesson, the lesson last modified time (as far as
+        caching is concerned) involves checking for constraint mod times, as
+        well as publishable times that may open up access to users.
+        """
+        result = None
+        lesson = self._get_node_lesson(node)
+        # If this node has a lesson, it may have been gated.
+        # If the constraints have been satisfied, we'll need
+        # to use that time when considered the contents available.
+        if lesson is not None:
+            constraints_satisfied_time = get_constraint_satisfied_time(
+                                                self.remoteUser, lesson)
+            if constraints_satisfied_time is not None:
+                result = max(result, constraints_satisfied_time)
+            if IPublishable.providedBy(lesson):
+                result = max(result, lesson.publishLastModified)
+                for date_field in ('publishBeginning', 'publishEnding'):
+                    publish_time = getattr(lesson, date_field, None)
+                    if publish_time:
+                        publish_time = time.mktime(publish_time.timetuple())
+                        # Only care about publish_time if our current time is
+                        # past the boundary.
+                        if now > publish_time:
+                            result = max(result, publish_time)
+        return result
+
     @Lazy
     def last_mod(self):
         """
@@ -191,9 +221,10 @@ class CourseOutlineContentsView(AbstractAuthenticatedView):
         (is_published). We should cache that check.
         """
         def update_last_mod(new_last_mod):
-            update_last_mod.last_mod = max(
-                update_last_mod.last_mod, new_last_mod)
+            update_last_mod.last_mod = max( update_last_mod.last_mod,
+                                            new_last_mod)
         update_last_mod.last_mod = self.context.lastModified
+        now = time.time()
 
         def _recur(the_nodes):
             for node in the_nodes:
@@ -203,15 +234,8 @@ class CourseOutlineContentsView(AbstractAuthenticatedView):
                     last_modified_time = node.publishLastModified
                     update_last_mod(last_modified_time)
 
-                lesson = self._get_node_lesson(node)
-                # If this node has a lesson, it may have been gated.
-                # If the constraints have been satisfied, we'll need
-                # to use that time when considered the contents available.
-                if lesson is not None:
-                    constraints_satisfied_time = get_constraint_satisfied_time(
-                                                        self.remoteUser, lesson)
-                    if constraints_satisfied_time is not None:
-                        update_last_mod(constraints_satisfied_time)
+                lesson_last_mod = self._get_lesson_last_mod(node, now)
+                update_last_mod(lesson_last_mod)
                 _recur(node.values())
 
         _recur(self.context.values())
