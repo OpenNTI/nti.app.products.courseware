@@ -265,8 +265,6 @@ class CourseOutlineContentsView(AbstractAuthenticatedView):
         result.__parent__ = node
         response = self.request.response
         response.last_modified = self.last_mod
-        response.cache_control.must_revalidate = True
-        response.cache_control.max_age = 300
         return result
 
     def __call__(self):
