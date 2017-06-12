@@ -263,11 +263,14 @@ class CourseOutlineContentsView(AbstractAuthenticatedView):
         _recur(result, values)
         result.__name__ = self.request.view_name
         result.__parent__ = node
-        self.request.response.last_modified = self.last_mod
+        response = self.request.response
+        response.last_modified = self.last_mod
+        response.cache_control.must_revalidate = True
+        response.cache_control.max_age = 300
         return result
 
     def __call__(self):
-        self.pre_caching()
+        #self.pre_caching()
         return self.externalize_node_contents(self.context)
 
 
