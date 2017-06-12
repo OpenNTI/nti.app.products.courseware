@@ -268,7 +268,7 @@ class CourseOutlineContentsView(AbstractAuthenticatedView):
         return result
 
     def __call__(self):
-        #self.pre_caching()
+        self.pre_caching()
         return self.externalize_node_contents(self.context)
 
 
