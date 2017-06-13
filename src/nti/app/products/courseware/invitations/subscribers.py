@@ -34,9 +34,8 @@ from nti.contenttypes.courses.interfaces import ICourseCatalogEntry
 from nti.contenttypes.courses.interfaces import IJoinCourseInvitation
 
 from nti.dataserver.users import User
-from nti.dataserver.users.interfaces import IUserProfile
 
-from nti.externalization.externalization import to_external_object
+from nti.dataserver.users.interfaces import IFriendlyNamed
 
 from nti.invitations.interfaces import IInvitationSentEvent
 
@@ -109,10 +108,8 @@ def send_invitation_email(invitation,
     if brand.lower() != 'nextthought':
         brand_tag = 'Presented by %s and NextThought' % brand
 
-    profile = IUserProfile(sender)
-    user_ext = to_external_object(sender)
-    informal_username = user_ext.get('NonI18NFirstName', profile.realname) \
-        or sender.username
+    names = IFriendlyNamed(sender)
+    informal_username = names.alias or names.realname or sender.username
 
     params = {'code': invitation.code}
     query = urlencode(params)
@@ -147,7 +144,7 @@ def send_invitation_email(invitation,
             package=package,
             text_template_extension='.mak')
     except Exception:
-        logger.exception("Cannot send course invitation email to %s", 
+        logger.exception("Cannot send course invitation email to %s",
 						receiver_email)
         return False
     return True

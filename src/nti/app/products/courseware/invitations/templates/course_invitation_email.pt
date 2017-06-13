@@ -7,7 +7,6 @@
         <meta http-equiv="content-type" content="text/html; charset=utf-8" />
         <title>Notifications</title>
         <style>
-            <!-- http://stackoverflow.com/questions/12539697/iphone-5-css-media-query -->
             @media screen and (max-width: 600px){
                 #wrapper{
                         width:440px !important;
