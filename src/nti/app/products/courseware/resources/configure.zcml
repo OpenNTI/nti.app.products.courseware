@@ -76,12 +76,12 @@
 					 pyramid.interfaces.IRequest" />
 
 	<adapter factory=".datastructures.CourseContentFileFactory"
-			 for="dolmen.builtins.IDict"
+			 for="nti.base.interfaces.IDict"
 			 provides="nti.externalization.interfaces.IMimeObjectFactory"
 			 name="application/vnd.nextthought.courseware.contentfile" />
 
 	<adapter factory=".datastructures.CourseContentImageFactory"
-			 for="dolmen.builtins.IDict"
+			 for="nti.base.interfaces.IDict"
 			 provides="nti.externalization.interfaces.IMimeObjectFactory"
 			 name="application/vnd.nextthought.courseware.contentimage" />
 
