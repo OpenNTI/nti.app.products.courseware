@@ -36,14 +36,12 @@ class TestContainerViews(ApplicationLayerTest):
 
     default_origin = 'http://janux.ou.edu'
 
-    student_username = 'Your_Past_Life_as_a_Blast'
-
     @WithSharedApplicationMockDS(users=True, testapp=True)
     def test_content_containers(self):
         res = self.testapp.get('/dataserver2/Objects/%s' % CS1323_PACKAGE,
                                headers={'Accept': str(ContentPackage.mime_type)})
         res = res.json_body
-        assert_that( res.get('LessonContainerCount'), is_(0))
+        assert_that( res.get(u'LessonContainerCount'), is_(0))
         lessons_link = self.require_link_href_with_rel(res, VIEW_LESSONS_CONTAINERS)
         res = self.testapp.get(lessons_link)
         res = res.json_body
