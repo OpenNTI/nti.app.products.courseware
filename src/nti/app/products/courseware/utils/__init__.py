@@ -53,6 +53,8 @@ from nti.common.string import is_true
 
 from nti.contentfile.interfaces import IContentBaseFile
 
+from nti.contentlibrary.interfaces import IContentPackage
+
 from nti.contenttypes.courses import get_course_vendor_info
 
 from nti.contenttypes.courses.interfaces import SCOPE
@@ -66,8 +68,10 @@ from nti.contenttypes.courses.interfaces import ICourseCatalogEntry
 
 from nti.contenttypes.courses.utils import get_parent_course
 from nti.contenttypes.courses.utils import get_course_hierarchy
+from nti.contenttypes.courses.utils import get_courses_for_packages
 
 from nti.contenttypes.presentation.interfaces import INTILessonOverview
+from nti.contenttypes.presentation.interfaces import INTIRelatedWorkRef
 
 from nti.dataserver.interfaces import IMemcacheClient
 
@@ -402,4 +406,34 @@ def transfer_resources_from_filer(provided, obj, source_filer, target_filer):
                 logger.info("%s was saved as %s", value, href)
                 setattr(obj, field_name, href)
                 result[field_name] = href
+    return result
+
+
+def _get_course_refs(courses):
+    """
+    Get all the related work refs for the given courses.
+    """
+    container_ntiids = [ICourseCatalogEntry(x).ntiid for x in courses]
+    catalog = get_library_catalog()
+    sites = get_component_hierarchy_names()
+    refs = tuple(catalog.search_objects(provided=INTIRelatedWorkRef,
+                                        container_ntiids=container_ntiids,
+                                        container_all_of=False,
+                                        sites=sites))
+    return refs
+
+
+def get_content_related_work_refs(unit):
+    """
+    Pull all `:class:INTIRelatedWorkRefs` the given `:class:IContentUnit` is
+    found in.
+    """
+    result = []
+    package = find_interface(unit, IContentPackage, strict=False)
+    if package is not None:
+        courses = get_courses_for_packages(packages=(package.ntiid,))
+        if courses:
+            for ref in _get_course_refs(courses):
+                if ref.target == package.ntiid:
+                    result.append(ref)
     return result

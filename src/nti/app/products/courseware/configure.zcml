@@ -442,6 +442,11 @@
 				for="nti.assessment.interfaces.IQuestionSet
 					 pyramid.interfaces.IRequest" />
 
+	<subscriber factory=".decorators._ContentUnitLessonsContainerDecorator"
+                provides="nti.externalization.interfaces.IExternalObjectDecorator"
+                for="nti.contentlibrary.interfaces.IContentUnit
+                     pyramid.interfaces.IRequest" />
+
 	<!--
 		 Get an href here to the real location, since we return these beneath Roster as well.
 		 Notice this is currently a very specific registration.

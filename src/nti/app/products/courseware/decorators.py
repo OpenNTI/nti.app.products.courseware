@@ -46,6 +46,7 @@ from nti.app.products.courseware.interfaces import ICourseInstanceEnrollment
 from nti.app.products.courseware.utils import get_enrollment_options
 from nti.app.products.courseware.utils import get_evaluation_lessons
 from nti.app.products.courseware.utils import get_vendor_thank_you_page
+from nti.app.products.courseware.utils import get_content_related_work_refs
 from nti.app.products.courseware.utils import PreviewCourseAccessPredicateDecorator
 
 from nti.app.renderers.decorators import AbstractAuthenticatedRequestAwareDecorator
@@ -58,6 +59,8 @@ from nti.assessment.interfaces import IQAssignment
 from nti.assessment.interfaces import IQuestionSet
 
 from nti.common.hash import md5_base64_digest
+
+from nti.contentlibrary.interfaces import IContentUnit
 
 from nti.contenttypes.courses.common import get_course_packages
 
@@ -752,16 +755,48 @@ class TopicAddRemoverLinkDecorator(LinkRemoverDecorator):
 				and not is_course_instructor(course, self.remoteUser) \
 				and has_permission(ACT_CONTENT_EDIT, course, self.request)
 
-class _BaseLessonsContainerDecorator(AbstractAuthenticatedRequestAwareDecorator):
+class _AbstractLessonsContainerDecorator(AbstractAuthenticatedRequestAwareDecorator):
 	"""
 	Add a lessons link to fetch all lessons containing our given
 	assessment context and add a `LessonContainerCount`.
 	"""
 
+	def _get_lessons(self, context):
+		raise NotImplementedError()
+
+	def _predicate(self, context, result):
+		return 		self._is_authenticated \
+				and has_permission(ACT_CONTENT_EDIT, context, self.request)
+
+	def _get_link(self, context):
+		link = Link(context,
+					rel=VIEW_LESSONS_CONTAINERS,
+					elements=('@@%s' % VIEW_LESSONS_CONTAINERS,))
+		return link
+
+	def _do_decorate_external(self, context, result):
+		lessons = self._get_lessons(context)
+		result['LessonContainerCount'] = len( lessons or () )
+		link = self._get_link(context)
+		_links = result.setdefault(LINKS, [])
+		_links.append(link)
+
+
+@component.adapter(IContentUnit)
+@interface.implementer(IExternalObjectDecorator)
+class _ContentUnitLessonsContainerDecorator(_AbstractLessonsContainerDecorator):
+
+
+	def _get_lessons(self, context):
+		return get_content_related_work_refs( context )
+
+
+class _AbstractAssessmentLessonsContainerDecorator(_AbstractLessonsContainerDecorator):
+
 	#: Subclasses need to define which outline ref they need to look up.
 	provided = None
 
-	def _get_course_from_evaluation(self, evaluation):
+	def _get_course(self, evaluation):
 		result = get_course_from_request(self.request)
 		if result is None:
 			result = get_course_from_evaluation(evaluation=evaluation,
@@ -769,33 +804,28 @@ class _BaseLessonsContainerDecorator(AbstractAuthenticatedRequestAwareDecorator)
 		return result
 
 	def _predicate(self, context, result):
-		return 		self._is_authenticated \
-				and not is_global_evaluation( context ) \
-				and has_permission(ACT_CONTENT_EDIT, context, self.request)
+		return 	is_global_evaluation( context ) \
+			and super(_AbstractAssessmentLessonsContainerDecorator, self)._predicate(context, result)
 
-	def _do_decorate_external(self, context, result):
-		lessons = get_evaluation_lessons( context, self.provided )
-		result['LessonContainerCount'] = len( lessons or () )
+	def _get_lessons(self, context):
+		return get_evaluation_lessons( context, self.provided )
 
+	def _get_link(self, context):
 		course = self._get_course_from_evaluation(context)
 		link_context = context if course is None else course
 		pre_elements = () if course is None else ('Assessments', context.ntiid)
-
-		_links = result.setdefault(LINKS, [])
 		link = Link(link_context,
 					rel=VIEW_LESSONS_CONTAINERS,
 					elements=pre_elements + ('@@%s' % VIEW_LESSONS_CONTAINERS,))
-		interface.alsoProvides(link, ILocation)
-		link.__name__ = ''
-		link.__parent__ = link_context
-		_links.append(link)
+		return link
+
 
 @component.adapter(IQuestionSet)
 @interface.implementer(IExternalObjectDecorator)
-class QuestionSetLessonsContainerDecorator(_BaseLessonsContainerDecorator):
+class QuestionSetLessonsContainerDecorator(_AbstractAssessmentLessonsContainerDecorator):
 	provided = INTIQuestionSetRef
 
 @component.adapter(IQAssignment)
 @interface.implementer(IExternalObjectDecorator)
-class AssignmentLessonsContainerDecorator(_BaseLessonsContainerDecorator):
+class AssignmentLessonsContainerDecorator(_AbstractAssessmentLessonsContainerDecorator):
 	provided = INTIAssessmentRef
