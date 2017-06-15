@@ -27,6 +27,8 @@ from pyramid.threadlocal import get_current_request
 from zope import component
 from zope import lifecycleevent
 
+from zope.component.hooks import getSite
+
 from zope.interface.interfaces import IMethod
 
 from zope.intid.interfaces import IIntIds
@@ -430,7 +432,7 @@ def get_content_related_work_refs(unit):
     """
     result = []
     package = find_interface(unit, IContentPackage, strict=False)
-    if package is not None:
+    if package is not None and getSite() is not None: # tests
         courses = get_courses_for_packages(packages=(package.ntiid,))
         if courses:
             for ref in _get_course_refs(courses):
