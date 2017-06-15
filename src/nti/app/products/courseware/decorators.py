@@ -811,7 +811,7 @@ class _AbstractAssessmentLessonsContainerDecorator(_AbstractLessonsContainerDeco
 		return get_evaluation_lessons( context, self.provided )
 
 	def _get_link(self, context):
-		course = self._get_course_from_evaluation(context)
+		course = self._get_course(context)
 		link_context = context if course is None else course
 		pre_elements = () if course is None else ('Assessments', context.ntiid)
 		link = Link(link_context,
