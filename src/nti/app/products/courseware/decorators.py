@@ -804,7 +804,7 @@ class _AbstractAssessmentLessonsContainerDecorator(_AbstractLessonsContainerDeco
 		return result
 
 	def _predicate(self, context, result):
-		return 	is_global_evaluation( context ) \
+		return 	not is_global_evaluation( context ) \
 			and super(_AbstractAssessmentLessonsContainerDecorator, self)._predicate(context, result)
 
 	def _get_lessons(self, context):
