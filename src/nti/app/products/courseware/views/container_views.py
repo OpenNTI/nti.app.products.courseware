@@ -27,6 +27,8 @@ from nti.app.products.courseware.views import VIEW_LESSONS_CONTAINERS
 from nti.assessment.interfaces import IQAssignment
 from nti.assessment.interfaces import IQuestionSet
 
+from nti.contentlibrary.indexed_data import get_library_catalog
+
 from nti.contentlibrary.interfaces import IContentUnit
 
 from nti.contenttypes.courses.interfaces import ICourseInstance
@@ -42,7 +44,7 @@ from nti.dataserver import authorization as nauth
 from nti.externalization.interfaces import LocatedExternalDict
 from nti.externalization.interfaces import StandardExternalFields
 
-from nti.traversal.traversal import find_interface
+from nti.ntiids.ntiids import find_object_with_ntiid
 
 TOTAL = StandardExternalFields.TOTAL
 ITEMS = StandardExternalFields.ITEMS
@@ -90,13 +92,23 @@ class ContentContainersView(AbstractContainersView):
     def _get_courses(self):
         return get_courses_for_packages(packages=self.context.ntiid)
 
+    def _get_ref_lessons(self, catalog, ref):
+        result = []
+        containers = catalog.get_containers(ref)
+        for ntiid in containers or ():
+            obj = find_object_with_ntiid(ntiid)
+            if INTILessonOverview.providedBy(obj):
+                result.append(obj)
+        return result
+
     def _get_lessons(self, courses):
         refs = get_content_related_work_refs(self.context)
         lessons = []
+        catalog = get_library_catalog()
         for ref in refs or ():
-            lesson = find_interface(ref, INTILessonOverview, strict=False)
-            if lesson is not None:
-                lessons.append(lesson)
+            ref_lessons = self._get_ref_lessons(catalog, ref)
+            if ref_lessons:
+                lessons.extend(ref_lessons)
         return lessons
 
 
