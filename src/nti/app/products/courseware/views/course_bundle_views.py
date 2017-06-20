@@ -25,7 +25,7 @@ from nti.appserver.ugd_edit_views import UGDPutView
 from nti.contenttypes.courses.interfaces import ICourseInstance
 from nti.contenttypes.courses.interfaces import ICourseContentPackageBundle
 
-from nti.contenttypes.courses.interfaces import CourseBundleUpdatedEvent
+from nti.contenttypes.courses.interfaces import CourseBundleWillUpdateEvent
 
 from nti.dataserver import authorization as nauth
 
@@ -57,7 +57,7 @@ class ContentPackageBundlePutView(UGDPutView):
         added = new_packages.difference(old_packages)
         if added or removed:
             course = find_interface(result, ICourseInstance, strict=False)
-            z_notify(CourseBundleUpdatedEvent(course, added, removed))
+            z_notify(CourseBundleWillUpdateEvent(course, added, removed))
         else:
             logger.warn( 'Updating bundle without changing contents' )
         return result

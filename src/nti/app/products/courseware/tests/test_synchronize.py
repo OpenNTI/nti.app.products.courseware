@@ -65,10 +65,10 @@ from nti.contenttypes.courses.interfaces import ES_CREDIT
 from nti.contenttypes.courses.interfaces import ICourseCatalog
 from nti.contenttypes.courses.interfaces import ICourseInstance
 from nti.contenttypes.courses.interfaces import ICourseCatalogEntry
-from nti.contenttypes.courses.interfaces import CourseBundleUpdatedEvent
 from nti.contenttypes.courses.interfaces import INonPublicCourseInstance
 from nti.contenttypes.courses.interfaces import ICourseEnrollmentManager
 from nti.contenttypes.courses.interfaces import ICourseInstanceVendorInfo
+from nti.contenttypes.courses.interfaces import CourseBundleWillUpdateEvent
 from nti.contenttypes.courses.interfaces import IEnrollmentMappedCourseInstance
 
 from nti.contenttypes.courses.discussions.interfaces import ICourseDiscussions
@@ -828,7 +828,7 @@ class TestFunctionalSynchronize(CourseLayerTest):
 		# Now with another content package
 		with mock_db_trans():
 			new_cp = MockContentPackage( "tag:nextthought.com,2011-10:USSC-HTML-Cohen.cohen_v._california2." )
-			notify( CourseBundleUpdatedEvent( gateway, (new_cp,), () ) )
+			notify( CourseBundleWillUpdateEvent( gateway, (new_cp,), () ) )
 			role_ids = _get_role_ids()
 			assert_that( role_ids, contains_inanyorder( package_one_id,
 														package_two_id ))
@@ -837,13 +837,13 @@ class TestFunctionalSynchronize(CourseLayerTest):
 		# still have access to this package due to our enrollment.
 		with mock_db_trans():
 			old_cp = find_object_with_ntiid(  "tag:nextthought.com,2011-10:USSC-HTML-Cohen.cohen_v._california." )
-			notify( CourseBundleUpdatedEvent( gateway, (), (old_cp,) ) )
+			notify( CourseBundleWillUpdateEvent( gateway, (), (old_cp,) ) )
 			role_ids = _get_role_ids()
 			assert_that( role_ids, contains_inanyorder( package_one_id,
 														package_two_id ))
 
 		# Remove new
 		with mock_db_trans():
-			notify( CourseBundleUpdatedEvent( gateway, (), (new_cp,) ) )
+			notify( CourseBundleWillUpdateEvent( gateway, (), (new_cp,) ) )
 			role_ids = _get_role_ids()
 			assert_that( role_ids, contains( package_one_id ))
