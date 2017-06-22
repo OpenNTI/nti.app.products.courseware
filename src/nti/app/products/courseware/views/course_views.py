@@ -60,6 +60,8 @@ from nti.app.products.courseware.views import VIEW_COURSE_ACTIVITY
 from nti.app.products.courseware.views import VIEW_USER_COURSE_ACCESS
 from nti.app.products.courseware.views import VIEW_COURSE_ENROLLMENT_ROSTER
 
+from nti.app.renderers.caching import AbstractReliableLastModifiedCacheController
+
 from nti.app.renderers.interfaces import IResponseCacheController
 
 from nti.appserver.interfaces import IIntIdUserSearchPolicy
@@ -119,17 +121,18 @@ LINKS = StandardExternalFields.LINKS
 union_operator = Operator.union
 
 
-class PreResponseOutlineContentsCacheController(object):
+class OutlineContentsCacheController(AbstractReliableLastModifiedCacheController):
 
-    def __call__(self, last_modified, system):
-        request = system['request']
-        self.remote_user = request.authenticated_userid
-        response = request.response
-        response.last_modified = last_modified
-        obj = object()
-        cache_controller = IResponseCacheController(obj)
-        # Context is ignored
-        return cache_controller(obj, system)
+    max_age = 0
+
+    def __init__(self, context, request=None, visible_ntiids=()):
+        self.context = context
+        self.request = request
+        self.visible_ntiids = visible_ntiids
+
+    @property
+    def _context_specific(self):
+        return sorted(x for x in self.visible_ntiids)
 
 
 @view_config(route_name='objects.generic.traversal',
@@ -174,7 +177,7 @@ class CourseOutlineContentsView(AbstractAuthenticatedView):
         Node is published or we're an editor asking for unpublished.
         """
         return not IPublishable.providedBy(item) \
-            or item.is_published() \
+            or item.is_published(principal=self.remoteUser, context=self.context) \
             or (self.show_unpublished
                 and self._is_course_editor)
 
@@ -185,85 +188,14 @@ class CourseOutlineContentsView(AbstractAuthenticatedView):
         lesson = find_object_with_ntiid(lesson_ntiid) if lesson_ntiid else None
         return lesson
 
-    def _get_lesson_last_mod(self, node, now):
-        """
-        If this node has a lesson, the lesson last modified time (as far as
-        caching is concerned) involves checking for constraint mod times, as
-        well as publishable times that may open up access to users.
-        """
-        result = None
-        lesson = self._get_node_lesson(node)
-        # If this node has a lesson, it may have been gated.
-        # If the constraints have been satisfied, we'll need
-        # to use that time when considered the contents available.
-        if lesson is not None:
-            constraints_satisfied_time = get_constraint_satisfied_time(
-                                                self.remoteUser, lesson)
-            if constraints_satisfied_time is not None:
-                result = max(result, constraints_satisfied_time)
-            if IPublishable.providedBy(lesson):
-                result = max(result, lesson.publishLastModified)
-                for date_field in ('publishBeginning', 'publishEnding'):
-                    publish_time = getattr(lesson, date_field, None)
-                    if publish_time:
-                        publish_time = time.mktime(publish_time.timetuple())
-                        # Only care about publish_time if our current time is
-                        # past the boundary.
-                        if now > publish_time:
-                            result = max(result, publish_time)
-        return result
-
     @Lazy
-    def last_mod(self):
+    def _visible_nodes(self):
         """
-        Derive our last mod time by traversing the tree. To do this correctly,
-        we would need to pre-determine which nodes are visible to our user
-        (is_published). We should cache that check.
+        Recursively fetches and externalizes the nodes 
+        that are visible to this user
         """
-        def update_last_mod(new_last_mod):
-            update_last_mod.last_mod = max( update_last_mod.last_mod,
-                                            new_last_mod)
-        update_last_mod.last_mod = self.context.lastModified
-        now = time.time()
-
-        def _recur(the_nodes):
-            for node in the_nodes:
-                update_last_mod(node.lastModified)
-                # Must also take into account publication changes.
-                if IPublishable.providedBy(node):
-                    last_modified_time = node.publishLastModified
-                    update_last_mod(last_modified_time)
-
-                lesson_last_mod = self._get_lesson_last_mod(node, now)
-                update_last_mod(lesson_last_mod)
-                _recur(node.values())
-
-        _recur(self.context.values())
-        return update_last_mod.last_mod
-
-    def pre_caching(self):
-        # Since we externalize ourselves, attempt to return early if we
-        # can. This call can be extensive to externalize now that we have
-        # massive course outlines in the wild.
-        cache_controller = PreResponseOutlineContentsCacheController()
-        cache_controller(self.last_mod, {'request': self.request})
-
-    def _is_contents_available(self, item):
-        """
-        Lesson is available if published or if we're an editor.
-        """
-        lesson = self._get_node_lesson(item)
-        # Returns True if lesson is None (implying outline node)
-        result = self._is_published(lesson)
-        return result
-
-    def externalize_node_contents(self, node):
-        """
-        Recursively externalize our `node` contents, setting the
-        response lastMod based on the given node.
-        """
-        values = node.values()
-        result = ILocatedExternalSequence([])
+        values = self.context.values()
+        result = []
 
         def _recur(the_list, the_nodes):
             for node in the_nodes:
@@ -285,15 +217,54 @@ class CourseOutlineContentsView(AbstractAuthenticatedView):
             return the_list
 
         _recur(result, values)
+        return result
+
+    def _ntiids_of_nodes(self, nodes):
+        result = []
+
+        def _get_ntiids_from_node(node):
+            contents = node['contents']
+            ntiids = [node['ntiid'], ]
+            for item in contents:
+                if 'ContentNTIID' in item.keys():
+                    # need to check this to know if the lesson was
+                    # published or not
+                    ntiids.append(item['LessonOverviewNTIID'])
+            return ntiids
+
+        for node in nodes:
+            result.extend(_get_ntiids_from_node(node))
+
+        return result
+
+    def pre_caching(self):
+        # Since we externalize ourselves, attempt to return early if we
+        # can. This call can be extensive to externalize now that we have
+        # massive course outlines in the wild. The etag is based on the set
+        # of ntiids of lessons that are visible to this user.
+        visible_ntiids = self._ntiids_of_nodes(self._visible_nodes)
+        cache_controller = OutlineContentsCacheController(
+            self.context, visible_ntiids=visible_ntiids)
+        cache_controller(self.context, {'request': self.request})
+
+    def _is_contents_available(self, item):
+        """
+        Lesson is available if published or if we're an editor.
+        """
+        lesson = self._get_node_lesson(item)
+        # Returns True if lesson is None (implying outline node)
+        result = self._is_published(lesson)
+        return result
+
+    def externalize_node_contents(self):
+        result = ILocatedExternalSequence(self._visible_nodes)
         result.__name__ = self.request.view_name
-        result.__parent__ = node
-        response = self.request.response
-        response.last_modified = self.last_mod
+        result.__parent__ = self.context
         return result
 
     def __call__(self):
         self.pre_caching()
-        return self.externalize_node_contents(self.context)
+        return self.externalize_node_contents()
 
 
 @interface.implementer(IPathAdapter)
