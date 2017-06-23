@@ -121,6 +121,12 @@ union_operator = Operator.union
 
 
 class OutlineContentsCacheController(AbstractReliableLastModifiedCacheController):
+    """
+    The outline contents cache is controlled by an eTag comprising of the set
+    of node ntiids as well as the outline last modified time. The outline node
+    last modified time is sufficient since children last modified times
+    percolate up to the course outline object itself.
+    """
 
     max_age = 0
 
@@ -134,7 +140,8 @@ class OutlineContentsCacheController(AbstractReliableLastModifiedCacheController
         return sorted(x for x in self.visible_ntiids)
 
 #: A simple structure to hold node content data.
-OutlineNodeContents = namedtuple("OutlineNodeContents", ("node", "contents", "lesson_ntiid"))
+OutlineNodeContents = namedtuple("OutlineNodeContents",
+                                 ("node", "contents", "lesson_ntiid"))
 
 
 @view_config(route_name='objects.generic.traversal',
