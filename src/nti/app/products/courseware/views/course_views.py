@@ -183,13 +183,14 @@ class CourseOutlineContentsView(AbstractAuthenticatedView):
         return INTILessonOverview(node, None)
 
     @Lazy
-    def _visible_nodes(self):
+    def _externalize_visible_nodes(self):
         """
-        Recursively fetches and externalizes the nodes 
+        Recursively fetches and externalizes the nodes
         that are visible to this user
         """
         result = []
         values = self.context.values()
+
         def _recur(the_list, the_nodes):
             for node in the_nodes:
                 if not self._is_visible(node):
@@ -212,11 +213,13 @@ class CourseOutlineContentsView(AbstractAuthenticatedView):
 
     def _ntiids_of_nodes(self, nodes):
         result = []
+
         def _get_ntiids_from_node(node):
             ntiids = [node['ntiid']]
             contents = node['contents']
             for item in contents:
-                if 'ContentNTIID' in item:
+                if 'ContentNTIID' in item \
+                        and 'LessonOverviewNTIID' in item:
                     # need to check this to know if the lesson was
                     # published or not
                     ntiids.append(item['LessonOverviewNTIID'])
@@ -230,8 +233,9 @@ class CourseOutlineContentsView(AbstractAuthenticatedView):
         # can. This call can be extensive to externalize now that we have
         # massive course outlines in the wild. The etag is based on the set
         # of ntiids of lessons that are visible to this user.
-        visible_ntiids = self._ntiids_of_nodes(self._visible_nodes)
-        cache_controller = OutlineContentsCacheController(self.context, 
+        visible_ntiids = self._ntiids_of_nodes(
+            self._externalize_visible_nodes)
+        cache_controller = OutlineContentsCacheController(self.context,
                                                           visible_ntiids=visible_ntiids)
         cache_controller(self.context, {'request': self.request})
 
@@ -244,15 +248,16 @@ class CourseOutlineContentsView(AbstractAuthenticatedView):
         result = self._is_published(lesson)
         return result
 
-    def externalize_node_contents(self):
-        result = ILocatedExternalSequence(self._visible_nodes)
+    def externalize_node_contents(self, node):
+        self.context = node
+        result = ILocatedExternalSequence(self._externalize_visible_nodes)
         result.__name__ = self.request.view_name
         result.__parent__ = self.context
         return result
 
     def __call__(self):
         self.pre_caching()
-        return self.externalize_node_contents()
+        return self.externalize_node_contents(self.context)
 
 
 @interface.implementer(IPathAdapter)
