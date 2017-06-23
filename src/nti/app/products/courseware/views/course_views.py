@@ -11,6 +11,8 @@ __docformat__ = "restructuredtext en"
 
 logger = __import__('logging').getLogger(__name__)
 
+from collections import namedtuple
+
 from numbers import Number
 
 from zope import component
@@ -131,6 +133,9 @@ class OutlineContentsCacheController(AbstractReliableLastModifiedCacheController
     def _context_specific(self):
         return sorted(x for x in self.visible_ntiids)
 
+#: A simple structure to hold node content data.
+OutlineNodeContents = namedtuple("OutlineNodeContents", ("node", "contents", "lesson_ntiid"))
+
 
 @view_config(route_name='objects.generic.traversal',
              context=ICourseOutline,
@@ -192,24 +197,38 @@ class CourseOutlineContentsView(AbstractAuthenticatedView):
         return result
 
     @Lazy
-    def _externalize_visible_nodes(self):
+    def _visible_nodes(self):
         """
-        Recursively fetches and externalizes the nodes
-        that are visible to this user
+        Builds a tree of `OutlineNodeContents` objects to be externalized.
         """
         result = []
-        values = self.context.values()
-
         def _recur(the_list, the_nodes):
             for node in the_nodes:
                 if not self._is_visible(node):
                     continue
-                # We used to set this based on our outline itself, but now that
-                # items can be modified independently, we need to check our
-                # children.
-                ext_node = to_external_object(node)
+                contents = None
+                lesson_ntiid = None
                 if self._is_contents_available(node):
-                    ext_node['contents'] = _recur([], node.values())
+                    contents = _recur([], node.values())
+                    lesson_ntiid = node.LessonOverviewNTIID
+                node_contents = OutlineNodeContents(node, contents, lesson_ntiid)
+                the_list.append(node_contents)
+            return the_list
+        _recur(result, self.context.values())
+        return result
+
+    @Lazy
+    def _externalized_nodes(self):
+        """
+        Externalize our node tree appropriately based on visible underlying
+        contents.
+        """
+        result = []
+        def _recur(the_list, the_nodes):
+            for outline_node in the_nodes:
+                ext_node = to_external_object(outline_node.node)
+                if outline_node.contents is not None:
+                    ext_node['contents'] = _recur([], outline_node.contents)
                 else:
                     # Some clients drive behavior based on this attr.
                     ext_node.pop('ContentNTIID', None)
@@ -217,47 +236,45 @@ class CourseOutlineContentsView(AbstractAuthenticatedView):
                 ext_node.pop(OID, None)
                 the_list.append(ext_node)
             return the_list
-        _recur(result, values)
+        _recur(result, self._visible_nodes)
         return result
 
-    def _ntiids_of_nodes(self, nodes):
+    @Lazy
+    def _visible_node_ntiids(self):
+        """
+        All visible ntiids of our node structure.
+        """
         result = []
-
-        def _recur(node):
-            ntiids = [node['ntiid']]
-            contents = node.get('contents')
-            for item in contents or ():
-                if      'ContentNTIID' in item \
-                    and 'LessonOverviewNTIID' in item:
-                    # need to check this to know if the lesson was
-                    # published or not
-                    ntiids.append(item['LessonOverviewNTIID'])
-                ntiids.extend(_recur(item))
-            return ntiids
-        for node in nodes or ():
-            result.extend(_recur(node))
+        def _recur(accum, outline_node):
+            # Gather our node and lesson ntiids, and then underlying contents
+            # (recursively) if available.
+            accum.append(outline_node.node.ntiid)
+            if outline_node.lesson_ntiid:
+                accum.append(outline_node.lesson_ntiid)
+            for child_outline_node in outline_node.contents or ():
+                _recur(accum, child_outline_node)
+        for outline_node in self._visible_nodes:
+            _recur(result, outline_node)
         return result
 
-    def pre_caching(self):
-        # Since we externalize ourselves, attempt to return early if we
-        # can. This call can be extensive to externalize now that we have
-        # massive course outlines in the wild. The etag is based on the set
-        # of ntiids of lessons that are visible to this user.
-        nodes = self._externalize_visible_nodes
-        visible_ntiids = self._ntiids_of_nodes(nodes)
+    def caching(self):
+        # Since we externalize ourselves, attempt to return early if we can.
+        # This call can be expensive to externalize now that we have massive
+        # course outlines in the wild. The etag is based on the set of ntiids
+        # of nodes and lessons that are visible to this user.
         cache_controller = OutlineContentsCacheController(self.context,
-                                                          visible_ntiids=visible_ntiids)
+                                                          visible_ntiids=self._visible_node_ntiids)
         cache_controller(self.context, {'request': self.request})
 
     def externalize_node_contents(self, node):
         self.context = node
-        result = ILocatedExternalSequence(self._externalize_visible_nodes)
+        result = ILocatedExternalSequence(self._externalized_nodes)
         result.__name__ = self.request.view_name
         result.__parent__ = self.context
         return result
 
     def __call__(self):
-        self.pre_caching()
+        self.caching()
         return self.externalize_node_contents(self.context)
 
 
