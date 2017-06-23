@@ -182,6 +182,15 @@ class CourseOutlineContentsView(AbstractAuthenticatedView):
     def _get_node_lesson(self, node):
         return INTILessonOverview(node, None)
 
+    def _is_contents_available(self, item):
+        """
+        Lesson is available if published or if we're an editor.
+        """
+        lesson = self._get_node_lesson(item)
+        # Returns True if lesson is None (implying outline node)
+        result = self._is_published(lesson)
+        return result
+
     @Lazy
     def _externalize_visible_nodes(self):
         """
@@ -214,18 +223,19 @@ class CourseOutlineContentsView(AbstractAuthenticatedView):
     def _ntiids_of_nodes(self, nodes):
         result = []
 
-        def _get_ntiids_from_node(node):
+        def _recur(node):
             ntiids = [node['ntiid']]
-            contents = node['contents']
-            for item in contents:
+            contents = node.get('contents')
+            for item in contents or ():
                 if      'ContentNTIID' in item \
                     and 'LessonOverviewNTIID' in item:
                     # need to check this to know if the lesson was
                     # published or not
                     ntiids.append(item['LessonOverviewNTIID'])
+                ntiids.extend(_recur(item))
             return ntiids
         for node in nodes or ():
-            result.extend(_get_ntiids_from_node(node))
+            result.extend(_recur(node))
         return result
 
     def pre_caching(self):
@@ -238,15 +248,6 @@ class CourseOutlineContentsView(AbstractAuthenticatedView):
         cache_controller = OutlineContentsCacheController(self.context,
                                                           visible_ntiids=visible_ntiids)
         cache_controller(self.context, {'request': self.request})
-
-    def _is_contents_available(self, item):
-        """
-        Lesson is available if published or if we're an editor.
-        """
-        lesson = self._get_node_lesson(item)
-        # Returns True if lesson is None (implying outline node)
-        result = self._is_published(lesson)
-        return result
 
     def externalize_node_contents(self, node):
         self.context = node
