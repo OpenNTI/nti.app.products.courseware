@@ -218,8 +218,8 @@ class CourseOutlineContentsView(AbstractAuthenticatedView):
             ntiids = [node['ntiid']]
             contents = node['contents']
             for item in contents:
-                if 'ContentNTIID' in item \
-                        and 'LessonOverviewNTIID' in item:
+                if      'ContentNTIID' in item \
+                    and 'LessonOverviewNTIID' in item:
                     # need to check this to know if the lesson was
                     # published or not
                     ntiids.append(item['LessonOverviewNTIID'])
@@ -233,8 +233,8 @@ class CourseOutlineContentsView(AbstractAuthenticatedView):
         # can. This call can be extensive to externalize now that we have
         # massive course outlines in the wild. The etag is based on the set
         # of ntiids of lessons that are visible to this user.
-        visible_ntiids = self._ntiids_of_nodes(
-            self._externalize_visible_nodes)
+        nodes = self._externalize_visible_nodes
+        visible_ntiids = self._ntiids_of_nodes(nodes)
         cache_controller = OutlineContentsCacheController(self.context,
                                                           visible_ntiids=visible_ntiids)
         cache_controller(self.context, {'request': self.request})
