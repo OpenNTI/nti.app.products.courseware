@@ -11,8 +11,6 @@ __docformat__ = "restructuredtext en"
 
 logger = __import__('logging').getLogger(__name__)
 
-import time
-
 from numbers import Number
 
 from zope import component
@@ -62,15 +60,16 @@ from nti.app.products.courseware.views import VIEW_COURSE_ENROLLMENT_ROSTER
 
 from nti.app.renderers.caching import AbstractReliableLastModifiedCacheController
 
-from nti.app.renderers.interfaces import IResponseCacheController
-
 from nti.appserver.interfaces import IIntIdUserSearchPolicy
 
 from nti.appserver.pyramid_authorization import has_permission
+
+from nti.appserver.relevant_ugd_views import _RelevantUGDView
+
 from nti.appserver.ugd_edit_views import ContainerContextUGDPostView
+
 from nti.appserver.ugd_query_views import Operator
 from nti.appserver.ugd_query_views import _combine_predicate
-from nti.appserver.relevant_ugd_views import _RelevantUGDView
 
 from nti.common.string import is_true
 
@@ -84,7 +83,7 @@ from nti.contenttypes.courses.interfaces import ICourseCatalogEntry
 from nti.contenttypes.courses.utils import is_enrolled
 from nti.contenttypes.courses.utils import is_course_instructor_or_editor
 
-from nti.contenttypes.presentation.lesson import get_constraint_satisfied_time
+from nti.contenttypes.presentation.interfaces import INTILessonOverview
 
 from nti.dataserver import authorization as nauth
 
@@ -104,8 +103,6 @@ from nti.externalization.externalization import decorate_external_mapping
 from nti.externalization.oids import to_external_ntiid_oid as toExternalOID
 
 from nti.links.links import Link
-
-from nti.ntiids.ntiids import find_object_with_ntiid
 
 from nti.property.property import alias
 
@@ -128,7 +125,7 @@ class OutlineContentsCacheController(AbstractReliableLastModifiedCacheController
     def __init__(self, context, request=None, visible_ntiids=()):
         self.context = context
         self.request = request
-        self.visible_ntiids = visible_ntiids
+        self.visible_ntiids = visible_ntiids or ()
 
     @property
     def _context_specific(self):
@@ -178,15 +175,12 @@ class CourseOutlineContentsView(AbstractAuthenticatedView):
         """
         return not IPublishable.providedBy(item) \
             or item.is_published(principal=self.remoteUser, context=self.context) \
-            or (self.show_unpublished
-                and self._is_course_editor)
+            or (self.show_unpublished and self._is_course_editor)
 
     _is_visible = _is_published
 
     def _get_node_lesson(self, node):
-        lesson_ntiid = node.LessonOverviewNTIID
-        lesson = find_object_with_ntiid(lesson_ntiid) if lesson_ntiid else None
-        return lesson
+        return INTILessonOverview(node, None)
 
     @Lazy
     def _visible_nodes(self):
@@ -194,14 +188,12 @@ class CourseOutlineContentsView(AbstractAuthenticatedView):
         Recursively fetches and externalizes the nodes 
         that are visible to this user
         """
-        values = self.context.values()
         result = []
-
+        values = self.context.values()
         def _recur(the_list, the_nodes):
             for node in the_nodes:
                 if not self._is_visible(node):
                     continue
-
                 # We used to set this based on our outline itself, but now that
                 # items can be modified independently, we need to check our
                 # children.
@@ -215,26 +207,22 @@ class CourseOutlineContentsView(AbstractAuthenticatedView):
                 ext_node.pop(OID, None)
                 the_list.append(ext_node)
             return the_list
-
         _recur(result, values)
         return result
 
     def _ntiids_of_nodes(self, nodes):
         result = []
-
         def _get_ntiids_from_node(node):
+            ntiids = [node['ntiid']]
             contents = node['contents']
-            ntiids = [node['ntiid'], ]
             for item in contents:
-                if 'ContentNTIID' in item.keys():
+                if 'ContentNTIID' in item:
                     # need to check this to know if the lesson was
                     # published or not
                     ntiids.append(item['LessonOverviewNTIID'])
             return ntiids
-
-        for node in nodes:
+        for node in nodes or ():
             result.extend(_get_ntiids_from_node(node))
-
         return result
 
     def pre_caching(self):
@@ -243,8 +231,8 @@ class CourseOutlineContentsView(AbstractAuthenticatedView):
         # massive course outlines in the wild. The etag is based on the set
         # of ntiids of lessons that are visible to this user.
         visible_ntiids = self._ntiids_of_nodes(self._visible_nodes)
-        cache_controller = OutlineContentsCacheController(
-            self.context, visible_ntiids=visible_ntiids)
+        cache_controller = OutlineContentsCacheController(self.context, 
+                                                          visible_ntiids=visible_ntiids)
         cache_controller(self.context, {'request': self.request})
 
     def _is_contents_available(self, item):
@@ -693,6 +681,6 @@ class UserCourseAccessView(AbstractAuthenticatedView):
                             self.remoteUser,
                             ICourseCatalogEntry(self.context).ntiid)
         if result is None:
-            raise hexc.HTTPForbidden(
-                _('User does not have access to this course.'))
+            msg = _('User does not have access to this course.')
+            raise hexc.HTTPForbidden(msg)
         return result
