@@ -41,8 +41,6 @@ from pyramid.view import view_defaults
 
 from nti.app.base.abstract_views import AbstractAuthenticatedView
 
-from nti.app.contentlibrary.views.sync_views import _SyncAllLibrariesView
-
 from nti.app.externalization.internalization import read_body_as_external_object
 
 from nti.app.externalization.view_mixins import ModeledContentUploadRequestUtilsMixin
@@ -64,14 +62,9 @@ from nti.appserver.workspaces.interfaces import IUserService
 
 from nti.common.string import is_true
 
-from nti.contentlibrary.interfaces import IEditableContentPackage
-
 from nti.contenttypes.courses import get_enrollment_catalog
 
 from nti.contenttypes.courses.administered import CourseInstanceAdministrativeRole
-
-from nti.contenttypes.courses.common import get_course_packages
-from nti.contenttypes.courses.common import get_course_site_name
 
 from nti.contenttypes.courses.enrollment import DefaultPrincipalEnrollments
 from nti.contenttypes.courses.enrollment import migrate_enrollments_from_course_to_course
@@ -92,7 +85,6 @@ from nti.contenttypes.courses.interfaces import ICourseEnrollmentManager
 from nti.contenttypes.courses.interfaces import ICourseInstanceEnrollmentRecord
 
 from nti.contenttypes.courses.utils import unenroll
-from nti.contenttypes.courses.utils import get_course_subinstances
 from nti.contenttypes.courses.utils import drop_any_other_enrollments
 from nti.contenttypes.courses.utils import is_instructor_in_hierarchy
 from nti.contenttypes.courses.utils import get_enrollments as get_index_enrollments
@@ -635,32 +627,6 @@ class CourseCatalogEntryEnrollmentsRosterDownloadView(AllCourseEnrollmentRosterD
 
     def _iter_catalog_entries(self):
         return (self.request.context,)
-
-# SYNC views
-
-
-@view_config(context=ICourseInstance)
-@view_config(context=ICourseCatalogEntry)
-@view_defaults(route_name='objects.generic.traversal',
-               renderer='rest',
-               name='SyncCourse',
-               permission=nauth.ACT_SYNC_LIBRARY)
-class SyncCourseView(_SyncAllLibrariesView):
-
-    def _do_call(self):
-        course = ICourseInstance(self.context)
-        entry = ICourseCatalogEntry(self.context)
-        # collect all course associated ntiids
-        ntiids = [entry.ntiid]
-        ntiids.extend([p.ntiid for p in get_course_packages(course)
-                       if not IEditableContentPackage.providedBy(p)])
-        ntiids.extend([
-            ICourseCatalogEntry(s).ntiid for s in get_course_subinstances(course)
-        ])
-        # do sync
-        return self._do_sync(site=get_course_site_name(course),
-                             ntiids=ntiids,
-                             allowRemoval=True)
 
 
 # Enrollment views
