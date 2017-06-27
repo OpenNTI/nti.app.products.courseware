@@ -41,7 +41,8 @@ from persistent import Persistent
 from nti.app.products.courseware.interfaces import ICourseCatalogLegacyContentEntry
 from nti.app.products.courseware.interfaces import ILegacyCommunityBasedCourseInstance
 
-from nti.contentlibrary.bundle import ContentPackageBundle
+from nti.contentlibrary.bundle import DEFAULT_BUNDLE_MIME_TYPE
+
 from nti.contentlibrary.interfaces import IContentPackageLibrary
 
 from nti.contenttypes.courses.courses import CourseInstance
@@ -432,7 +433,7 @@ class _LegacyCommunityBasedCourseInstanceFakeBundle(object):
     def toExternalObject(self, *args, **kwargs):
         return {'ContentPackages': self.ContentPackages,
                 'Class': 'ContentPackageBundle',
-                'MimeType': ContentPackageBundle.mime_type}
+                'MimeType': DEFAULT_BUNDLE_MIME_TYPE}
 
 
 from zope.schema.vocabulary import SimpleVocabulary
