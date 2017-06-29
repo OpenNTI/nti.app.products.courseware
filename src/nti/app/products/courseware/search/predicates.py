@@ -4,7 +4,7 @@
 .. $Id$
 """
 
-from __future__ import print_function, unicode_literals, absolute_import, division
+from __future__ import print_function, absolute_import, division
 __docformat__ = "restructuredtext en"
 
 logger = __import__('logging').getLogger(__name__)
@@ -33,6 +33,7 @@ from nti.contenttypes.courses.interfaces import ICourseCatalogEntry
 from nti.contenttypes.courses.interfaces import ICourseOutlineNodes
 
 from nti.contenttypes.courses.utils import is_enrolled
+from nti.contenttypes.courses.utils import is_course_instructor
 
 from nti.contenttypes.presentation.interfaces import INTILessonOverview
 from nti.contenttypes.presentation.interfaces import IPresentationAsset
@@ -75,9 +76,9 @@ class _CourseSearchHitPredicate(DefaultSearchHitPredicate):
             available = getattr(node, 'AvailableBeginning', None)
             beginning = available or ZERO_DATETIME
             lesson = INTILessonOverview(node, None)
-            if         lesson is not None \
-                    and lesson.isPublished() \
-                    and datetime.utcnow() >= beginning:
+            if      lesson is not None \
+                and lesson.isPublished() \
+                and datetime.utcnow() >= beginning:
                 return True  # first node found
         return False
 
@@ -123,7 +124,9 @@ class _CommunityForumHitPredicate(_CourseSearchHitPredicate):
         course = find_interface(item, ICourseInstance, strict=False)
         entry = ICourseCatalogEntry(course, None)
         if entry is not None:
-            return (self.is_admin(course) or self.is_editor(course)) \
+            return (   self.is_admin(course) 
+                    or self.is_editor(course)
+                    or is_course_instructor(course, self.user)) \
                 or (is_enrolled(course, self.user)
                     and not getattr(entry, 'Preview', False))
         return True
