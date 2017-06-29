@@ -255,7 +255,9 @@ class CourseOutlineContentsView(AbstractAuthenticatedView):
         def _recur(accum, outline_node):
             # Gather our node and lesson ntiids, and then underlying contents
             # (recursively) if available.
-            accum.append(outline_node.node.ntiid)
+            node_ntiid = getattr(outline_node.node, 'ntiid', '')
+            if node_ntiid:
+                accum.append(node_ntiid)
             if outline_node.lesson_ntiid:
                 accum.append(outline_node.lesson_ntiid)
             for child_outline_node in outline_node.contents or ():
