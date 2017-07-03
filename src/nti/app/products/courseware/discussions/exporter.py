@@ -110,6 +110,7 @@ def export_user_topic_as_discussion(topic):
         doc_id = str(doc_id) if doc_id is not None else None
     else:
         doc_id = headline.title
+    # give a proper id
     doc_id = safe_filename(doc_id or headline.title)
     result['id'] = "%s://%s/%s" % (NTI_COURSE_BUNDLE, path, doc_id)
     return result
