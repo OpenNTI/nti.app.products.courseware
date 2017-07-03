@@ -4,7 +4,7 @@
 .. $Id$
 """
 
-from __future__ import print_function, unicode_literals, absolute_import, division
+from __future__ import print_function, absolute_import, division
 __docformat__ = "restructuredtext en"
 
 logger = __import__('logging').getLogger(__name__)
@@ -21,7 +21,7 @@ from nti.traversal.traversal import ContainerAdapterTraversable
 
 
 @component.adapter(ICourseInstance, IRequest)
-def _discussions_for_course_path_adapter(course, request):
+def _discussions_for_course_path_adapter(course, unused_request):
     return ICourseDiscussions(course)
 
 
@@ -29,5 +29,4 @@ def _discussions_for_course_path_adapter(course, request):
 class _CourseDiscussionsTraversable(ContainerAdapterTraversable):
 
     def traverse(self, key, remaining_path):
-        return super(_CourseDiscussionsTraversable, self).traverse(key, 
-                                                                   remaining_path)
+        return super(_CourseDiscussionsTraversable, self).traverse(key, remaining_path)
