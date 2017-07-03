@@ -524,6 +524,11 @@
 			 for="nti.assessment.interfaces.IQEvaluation
 			 	  nti.dataserver.interfaces.IUser" />
 
+	<!-- Library -->
+	<subscriber factory=".predicates._CourseContentUnitAssociations"
+					provides="nti.contentlibrary.interfaces.IContentUnitAssociations"
+					for="nti.contentlibrary.interfaces.IContentUnit" />
+					
 	<!-- Content Search -->
 	<include package=".search" />
 
