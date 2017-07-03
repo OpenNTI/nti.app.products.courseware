@@ -411,18 +411,19 @@ def transfer_resources_from_filer(provided, obj, source_filer, target_filer):
     return result
 
 
-def _get_course_refs(courses):
+def _get_course_refs(courses, target=None):
     """
     Get all the related work refs for the given courses.
     """
-    container_ntiids = [ICourseCatalogEntry(x).ntiid for x in courses]
     catalog = get_library_catalog()
     sites = get_component_hierarchy_names()
-    refs = tuple(catalog.search_objects(provided=INTIRelatedWorkRef,
-                                        container_ntiids=container_ntiids,
-                                        container_all_of=False,
-                                        sites=sites))
-    return refs
+    container_ntiids = [ICourseCatalogEntry(x).ntiid for x in courses]
+    result = catalog.search_objects(target=target,
+                                    provided=INTIRelatedWorkRef,
+                                    container_ntiids=container_ntiids,
+                                    container_all_of=False,
+                                    sites=sites)
+    return result or ()
 
 
 def get_content_related_work_refs(unit):
@@ -435,7 +436,5 @@ def get_content_related_work_refs(unit):
     if package is not None and getSite() is not None: # tests
         courses = get_courses_for_packages(packages=(package.ntiid,))
         if courses:
-            for ref in _get_course_refs(courses):
-                if ref.target == package.ntiid:
-                    result.append(ref)
+            result.extend(_get_course_refs(courses, package.ntiid))
     return result
