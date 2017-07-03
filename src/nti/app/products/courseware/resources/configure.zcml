@@ -6,9 +6,7 @@
 			i18n_domain="zope">
 
 	<include package="zope.component" file="meta.zcml" />
-	<include package="zope.security" file="meta.zcml" />
 	<include package="zope.component" />
-	<include package="zope.security" />
 
 	<!-- Externalization -->
 	<include package="nti.externalization" file="meta.zcml" />
@@ -60,8 +58,8 @@
 			 name="resources" />
 
 	<!-- ACL -->
-	<adapter factory=".acl.CourseContentFileACLProvider" />
 	<adapter factory=".acl.CourseRootFolderACLProvider" />
+	<adapter factory=".acl.CourseContentFileACLProvider" />
 	<adapter factory=".acl.CourseLockedFolderACLProvider" />
 	<adapter factory=".acl.CourseContentFolderACLProvider" />
 

@@ -4,7 +4,7 @@
 .. $Id$
 """
 
-from __future__ import print_function, unicode_literals, absolute_import, division
+from __future__ import print_function, absolute_import, division
 __docformat__ = "restructuredtext en"
 
 logger = __import__('logging').getLogger(__name__)
@@ -27,7 +27,7 @@ from nti.app.products.courseware.resources.interfaces import ICourseContentResou
 
 from nti.app.products.courseware.resources.model import CourseRootFolder
 
-from nti.base._compat import unicode_
+from nti.base._compat import text_
 
 from nti.contentfolder.adapters import MimeType
 from nti.contentfolder.adapters import ContainerId
@@ -79,7 +79,7 @@ def _entry_resources(context, create=True):
     return course_resources(context, create)
 
 
-def _resources_for_course_path_adapter(context, request=None):
+def _resources_for_course_path_adapter(context, _=None):
     course = ICourseInstance(context)
     return _course_resources(course)
 
@@ -96,7 +96,7 @@ def _course_source_filer(context):
 
 
 @interface.implementer(IFileConstraints)
-def _CourseFolderFileConstraints(context):
+def _CourseFolderFileConstraints(_):
     result = FileConstraints()
     result.max_file_size = 104857600  # 100 MB
     return result
@@ -104,21 +104,21 @@ def _CourseFolderFileConstraints(context):
 
 @component.adapter(ICourseContentFile)
 @interface.implementer(IMimeTypeAdapter)
-def _course_contentfile_mimeType_adapter(context):
-    return MimeType(u'application/vnd.nextthought.courseware.contentfile')
+def _course_contentfile_mimeType_adapter(_):
+    return MimeType('application/vnd.nextthought.courseware.contentfile')
 
 
 @component.adapter(ICourseContentImage)
 @interface.implementer(IMimeTypeAdapter)
-def _course_contentimage_mimeType_adapter(context):
-    return MimeType(u'application/vnd.nextthought.courseware.contentimage')
+def _course_contentimage_mimeType_adapter(_):
+    return MimeType('application/vnd.nextthought.courseware.contentimage')
 
 
 def _containerId_adater(context):
     course = find_interface(context, ICourseInstance, strict=False)
     entry = ICourseCatalogEntry(course, None)
     if entry is not None:
-        return ContainerId(unicode_(entry.ntiid))
+        return ContainerId(text_(entry.ntiid))
     return None
 
 

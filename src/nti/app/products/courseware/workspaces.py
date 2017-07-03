@@ -6,12 +6,10 @@ Implementation of an Atom/OData workspace and collection for courses.
 .. $Id$
 """
 
-from __future__ import print_function, unicode_literals, absolute_import, division
+from __future__ import print_function, absolute_import, division
 __docformat__ = "restructuredtext en"
 
 logger = __import__('logging').getLogger(__name__)
-
-from pyramid.threadlocal import get_current_request
 
 from zope import component
 from zope import interface
@@ -24,6 +22,8 @@ from zope.location.interfaces import IRoot
 from zope.location.interfaces import ILocationInfo
 
 from zope.location.traversing import LocationPhysicallyLocatable
+
+from pyramid.threadlocal import get_current_request
 
 from nti.app.products.courseware import VIEW_COURSE_FAVORITES
 
@@ -81,6 +81,7 @@ class UserCourseWorkspace(Contained):
 
     #: Our name, part of our URL
     __name__ = 'Courses'
+
     name = alias('__name__', __name__)
 
     def __init__(self, user_service, catalog):
@@ -109,8 +110,6 @@ class UserCourseWorkspace(Contained):
 
     def __len__(self):
         return len(self.collections)
-
-
 _CoursesWorkspace = UserCourseWorkspace
 
 
@@ -134,6 +133,7 @@ class AllCoursesCollection(Contained):
     __name__ = 'AllCourses'
 
     accepts = ()
+
     name = alias('__name__', __name__)
 
     class _IteratingDict(LocatedExternalDict):
@@ -282,8 +282,8 @@ class _AbstractQueryBasedCoursesCollection(Contained):
         # No actual match. Legacy ProviderUniqueID?
         for o in self.container:
             if ICourseCatalogEntry(o).ProviderUniqueID == key:
-                logger.warning(
-                    "Using legacy provider ID to match %s to %s", key, o)
+                logger.warning("Using legacy provider ID to match %s to %s",
+                                key, o)
                 return o
         raise KeyError(key)
 
@@ -374,6 +374,7 @@ class EnrolledCoursesCollection(_AbstractQueryBasedCoursesCollection):
 
     #: Our name, part of our URL.
     __name__ = 'EnrolledCourses'
+
     name = alias('__name__', __name__)
 
     # TODO: Need to add an accepts for what the
@@ -394,6 +395,7 @@ class AdministeredCoursesCollection(_AbstractQueryBasedCoursesCollection):
 
     #: Our name, part of our URL.
     __name__ = 'AdministeredCourses'
+
     name = alias('__name__', __name__)
 
     query_attr = 'iter_administrations'

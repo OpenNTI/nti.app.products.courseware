@@ -4,7 +4,7 @@
 .. $Id$
 """
 
-from __future__ import print_function, unicode_literals, absolute_import, division
+from __future__ import print_function, absolute_import, division
 __docformat__ = "restructuredtext en"
 
 logger = __import__('logging').getLogger(__name__)
@@ -72,15 +72,15 @@ def get_namedfile_from_source(source, name, filename=None):
     # for filename we want to use the filename as originally provided on the source, not
     # the sluggified internal name. This allows us to give it back in the
     # Content-Disposition header on download
-    result.filename =  filename \
-                    or result.filename \
-                    or getattr(source, 'name', name)
+    result.filename = filename \
+                   or result.filename \
+                   or getattr(source, 'name', name)
     return result
 
 
 def is_image(key, contentType=None):
-    result =   (guess_type(key.lower())[0] or u'').startswith('image/') \
-            or (contentType or u'').startswith('image/')
+    result = (guess_type(key.lower())[0] or '').startswith('image/') \
+          or (contentType or '').startswith('image/')
     return result
 
 

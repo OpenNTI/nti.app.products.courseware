@@ -4,7 +4,7 @@
 .. $Id$
 """
 
-from __future__ import print_function, unicode_literals, absolute_import, division
+from __future__ import print_function, absolute_import, division
 __docformat__ = "restructuredtext en"
 
 logger = __import__('logging').getLogger(__name__)
@@ -37,12 +37,12 @@ class ICourseRootFolder(IRootFolder, IAssociationsMixin):
 
 class ICourseContentResource(interface.Interface):
 
-    path = ValidTextLine(title="the abs path to this resource",
+    path = ValidTextLine(title=u"the abs path to this resource",
                          required=False, readonly=True)
 
 
 class ICourseContentFolder(IContentFolder,
-                           ICourseContentResource, 
+                           ICourseContentResource,
                            IAssociationsMixin):
     pass
 

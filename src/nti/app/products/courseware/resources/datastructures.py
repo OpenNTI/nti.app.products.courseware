@@ -4,7 +4,7 @@
 .. $Id$
 """
 
-from __future__ import print_function, unicode_literals, absolute_import, division
+from __future__ import print_function, absolute_import, division
 __docformat__ = "restructuredtext en"
 
 logger = __import__('logging').getLogger(__name__)
@@ -28,7 +28,7 @@ class CourseContentFileObjectIO(ContentFileObjectIO):
     _ext_iface_upper_bound = ICourseContentFile
 
     def _ext_mimeType(self, obj):
-        return u'application/vnd.nextthought.courseware.contentfile'
+        return 'application/vnd.nextthought.courseware.contentfile'
 
 
 @component.adapter(ICourseContentImage)
@@ -37,7 +37,7 @@ class CourseContentImageObjectIO(ContentImageObjectIO):
     _ext_iface_upper_bound = ICourseContentImage
 
     def _ext_mimeType(self, obj):
-        return u'application/vnd.nextthought.courseware.contentimage'
+        return 'application/vnd.nextthought.courseware.contentimage'
 
 
 def CourseContentFileFactory(ext_obj):
