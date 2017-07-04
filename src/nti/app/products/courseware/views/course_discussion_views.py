@@ -48,7 +48,6 @@ from nti.app.products.courseware.views import VIEW_COURSE_DISCUSSIONS
 from nti.appserver.dataserver_pyramid_views import GenericGetView
 
 from nti.appserver.ugd_edit_views import UGDPutView
-from nti.appserver.ugd_edit_views import UGDPostView
 
 from nti.common.string import is_true
 
@@ -153,21 +152,19 @@ class CatalogEntryCourseDiscussionView(CourseDiscussionsGetView):
                renderer='rest',
                request_method='POST',
                permission=nauth.ACT_CONTENT_EDIT)
-class CourseDiscussionsPostView(UGDPostView):
+class CourseDiscussionsPostView(AbstractAuthenticatedView,
+                                ModeledContentUploadRequestUtilsMixin):
 
     content_predicate = ICourseDiscussion.providedBy
 
-    def readCreateUpdateContentObject(self, creator, search_owner=False, externalValue=None):
-        contentObject = self.doReadCreateUpdateContentObject(creator=creator,
-                                                             search_owner=search_owner,
-                                                             externalValue=externalValue)
+    def readCreateUpdateContentObject(self, user):
+        result = super(CourseDiscussionsPostView, self).readCreateUpdateContentObject(user)
         sources = get_all_sources(self.request)
-        return contentObject, sources
+        return result, sources
 
     def _do_call(self):
         creator = self.remoteUser
-        discussion, sources = self.readCreateUpdateContentObject(creator,
-                                                                 search_owner=False)
+        discussion, sources = self.readCreateUpdateContentObject(creator)
         discussion.creator = creator.username
         discussion.updateLastMod()
         # register discussion
