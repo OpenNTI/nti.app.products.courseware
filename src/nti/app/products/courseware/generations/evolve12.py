@@ -4,7 +4,7 @@
 .. $Id$
 """
 
-from __future__ import print_function, unicode_literals, absolute_import, division
+from __future__ import print_function, absolute_import, division
 __docformat__ = "restructuredtext en"
 
 logger = __import__('logging').getLogger(__name__)
@@ -67,7 +67,7 @@ def _fix_pointers(container):
                 if not INTIRelatedWorkRef.providedBy(obj):
                     continue
                 # if href is equal continue
-                if unquote(obj.href or u'') == unquoted_href:
+                if unquote(obj.href or '') == unquoted_href:
                     # make sure we have a valid target
                     if not hasattr(obj, 'target') or obj.target != target:
                         obj.target = target
@@ -76,12 +76,12 @@ def _fix_pointers(container):
                 if hasattr(obj, 'target') and obj.target == target:
                     # make sure we have a valid href
                     if     not hasattr(obj, 'href') \
-                        or (    unquote(obj.href or u'') != unquoted_href
-                            and not is_valid_ntiid_string(obj.href or u'')):
+                        or (    unquote(obj.href or '') != unquoted_href
+                            and not is_valid_ntiid_string(obj.href or '')):
                         obj.href = href
                     continue
                 # if icon continue
-                unquoted_icon = unquote(obj.icon or u'') if hasattr(obj, 'icon') else u''
+                unquoted_icon = unquote(obj.icon or '') if hasattr(obj, 'icon') else ''
                 if unquoted_icon == unquoted_href:
                     continue
                 # update icon if found in file name
