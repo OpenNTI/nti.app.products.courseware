@@ -1,14 +1,12 @@
 <!-- -*- mode: nxml -*- -->
 <configure	xmlns="http://namespaces.zope.org/zope"
 			xmlns:i18n="http://namespaces.zope.org/i18n"
-			xmlns:ext="http://nextthought.com/ntp/ext"
 			xmlns:zcml="http://namespaces.zope.org/zcml">
 
 	<include package="zope.component" file="meta.zcml" />
-	<include package="zope.security" file="meta.zcml" />
 	<include package="zope.component" />
-	<include package="zope.security" />
 
+	<!-- Predicates -->
 	<subscriber factory=".predicates._ContentHitPredicate"
 				provides="nti.contentsearch.interfaces.ISearchHitPredicate"
 				for="nti.contentlibrary.interfaces.IContentUnit" />
@@ -34,7 +32,7 @@
 				for="nti.dataserver.contenttypes.forums.interfaces.IGeneralForumComment" />
  
 	<!-- Subscribers -->
-	<subscriber factory=".subscribers._RootSearchPacakgeResolver"
+	<subscriber factory=".subscribers._CourseSearchPacakgeResolver"
 				provides="nti.contentsearch.interfaces.ISearchPackageResolver"
 				for="nti.dataserver.interfaces.IUser" />
 
