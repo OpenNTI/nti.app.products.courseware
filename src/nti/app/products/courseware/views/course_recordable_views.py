@@ -172,7 +172,7 @@ class CourseSyncLockedObjectsView(CourseSyncLockedObjectsMixin,
         items = result[ITEMS] = self._get_locked_objects(self.context)
         if items:  # check to sort
             result[LAST_MODIFIED] = max(
-                (getattr(x, 'lastModified', 0) for x in items)
+                getattr(x, 'lastModified', 0) for x in items
             )
             items.sort(key=lambda t: getattr(t, 'lastModified', 0), 
                        reverse=self._sort_desc)

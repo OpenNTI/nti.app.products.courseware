@@ -67,7 +67,7 @@ class CourseFolderMkdirsView(MkdirsView):
                permission=nauth.ACT_UPDATE)
 class CourseFolderUploadView(UploadView):
 
-    def factory(self, source):
+    def factory(self, _):
         return CourseContentFile
 
 
@@ -82,5 +82,5 @@ class CourseFolderImportView(ImportView):
 
     folder_factory = CourseContentFolder
 
-    def factory(self, filename):
+    def factory(self, _):
         return CourseContentFile

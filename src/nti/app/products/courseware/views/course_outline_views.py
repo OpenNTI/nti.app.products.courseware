@@ -4,7 +4,7 @@
 .. $Id$
 """
 
-from __future__ import print_function, unicode_literals, absolute_import, division
+from __future__ import print_function, absolute_import, division
 __docformat__ = "restructuredtext en"
 
 logger = __import__('logging').getLogger(__name__)
@@ -22,8 +22,6 @@ from pyramid.view import view_config
 from pyramid.view import view_defaults
 
 from nti.app.base.abstract_views import AbstractAuthenticatedView
-
-from nti.app.externalization.internalization import read_body_as_external_object
 
 from nti.app.externalization.view_mixins import ModeledContentUploadRequestUtilsMixin
 
@@ -52,22 +50,9 @@ from nti.externalization.interfaces import StandardExternalFields
 
 from nti.recorder.record import remove_transaction_history
 
-from nti.site.hostpolicy import get_host_site
-
 from nti.site.interfaces import IHostPolicyFolder
 
-from nti.traversal.traversal import find_interface
-
 ITEMS = StandardExternalFields.ITEMS
-
-
-def read_input(request):
-    if request.body:
-        values = read_body_as_external_object(request)
-    else:
-        values = request.params
-    return CaseInsensitiveDict(values)
-readInput = read_input
 
 
 @view_config(context=ICourseInstance)
@@ -80,13 +65,15 @@ class ResetCourseOutlineView(AbstractAuthenticatedView,
                              ModeledContentUploadRequestUtilsMixin):
 
     def readInput(self, value=None):
-        result = read_input(self.request)
-        return result
+        if self.request.body:
+            values = super(ResetCourseOutlineView, self).readInput(value)
+        else:
+            values = self.request.params
+        return CaseInsensitiveDict(values)
 
     def _do_reset(self, course, registry, force):
         removed = []
         outline = course.Outline
-
         # unregister nodes
         removed.extend(unregister_nodes(outline,
                                         registry=registry,
@@ -94,11 +81,12 @@ class ResetCourseOutlineView(AbstractAuthenticatedView,
         for node in removed:
             remove_transaction_history(node)
 
+        # reset
         outline.reset()
         ntiid = ICourseCatalogEntry(course).ntiid
         logger.info("%s node(s) removed from %s", 
 					len(removed), ntiid)
-
+        # read again
         root = course.root
         outline_xml_node = None
         outline_xml_key = root.getChildNamed(COURSE_OUTLINE_NAME)
@@ -108,14 +96,13 @@ class ResetCourseOutlineView(AbstractAuthenticatedView,
                     outline_xml_key = package.index
                     outline_xml_node = 'course'
                     break
-
         fill_outline_from_key(course.Outline,
                               outline_xml_key,
                               registry=registry,
                               xml_parent_name=outline_xml_node,
                               force=force)
-
-        result = {}
+        # return
+        result = LocatedExternalDict()
         registered = [x.ntiid for x in outline_nodes(course.Outline)]
         result['Registered'] = registered
         result['RemovedCount'] = len(removed)
@@ -126,25 +113,21 @@ class ResetCourseOutlineView(AbstractAuthenticatedView,
     def _do_context(self, context, items):
         values = self.readInput()
         force = is_true(values.get('force'))
-
         course = ICourseInstance(context)
         if ILegacyCourseInstance.providedBy(course):
             return ()
-
         if ICourseSubInstance.providedBy(course):
             parent = get_parent_course(course)
             if parent.Outline == course.Outline:
                 course = parent
-
-        folder = find_interface(course, IHostPolicyFolder, strict=False)
-        with current_site(get_host_site(folder.__name__)):
-            registry = folder.getSiteManager()
+        # use course site
+        site = IHostPolicyFolder(course)
+        with current_site(site):
+            registry = site.getSiteManager()
             result = self._do_reset(course, registry, force)
-
         entry = ICourseCatalogEntry(context, None)
         if entry is not None:
             items[entry.ntiid] = result
-
         return result
 
     def __call__(self):
