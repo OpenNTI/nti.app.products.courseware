@@ -4,7 +4,7 @@
 .. $Id$
 """
 
-from __future__ import print_function, unicode_literals, absolute_import, division
+from __future__ import print_function, absolute_import, division
 __docformat__ = "restructuredtext en"
 
 logger = __import__('logging').getLogger(__name__)
@@ -44,14 +44,13 @@ class ContentPackageBundlePutView(UGDPutView):
         try:
             result = UGDPutView.__call__(self)
         except KeyError:
-            raise_json_error(
-                self.request,
-                hexc.HTTPConflict,
-                {
-                    u'message': _("Content Package Not Found."),
-                    u'code': 'ContentPackageNotFound',
-                },
-                None)
+            raise_json_error(self.request,
+                             hexc.HTTPConflict,
+                             {
+                                 'message': _(u"Content Package Not Found."),
+                                 'code': 'ContentPackageNotFound',
+                             },
+                             None)
         new_packages = set(self.context.ContentPackages or ())
         removed = old_packages.difference(new_packages)
         added = new_packages.difference(old_packages)
@@ -59,5 +58,5 @@ class ContentPackageBundlePutView(UGDPutView):
             course = find_interface(result, ICourseInstance, strict=False)
             z_notify(CourseBundleWillUpdateEvent(course, added, removed))
         else:
-            logger.warn( 'Updating bundle without changing contents' )
+            logger.warn('Updating bundle without changing contents')
         return result
