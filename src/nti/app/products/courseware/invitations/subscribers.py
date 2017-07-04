@@ -4,7 +4,7 @@
 .. $Id$
 """
 
-from __future__ import print_function, unicode_literals, absolute_import, division
+from __future__ import print_function, absolute_import, division
 __docformat__ = "restructuredtext en"
 
 logger = __import__('logging').getLogger(__name__)
@@ -46,7 +46,7 @@ from nti.ntiids.ntiids import find_object_with_ntiid
 
 def get_ds2(request):
     try:
-        result = request.path_info_peek() if request else None  # e.g. /dataserver2
+        result = request.path_info_peek() if request else None
     except AttributeError:  # in unit test we may see this
         result = None
     return result or "dataserver2"
@@ -136,7 +136,7 @@ def send_invitation_email(invitation,
         mailer = component.getUtility(ITemplatedMailer)
         mailer.queue_simple_html_text_email(
             template,
-            subject=translate(_("You're invited to ${title}",
+            subject=translate(_(u"You're invited to ${title}",
                                 mapping={'title': entry.Title})),
             recipients=[receiver_email],
             template_args=args,
@@ -145,7 +145,7 @@ def send_invitation_email(invitation,
             text_template_extension='.mak')
     except Exception:
         logger.exception("Cannot send course invitation email to %s",
-						receiver_email)
+                         receiver_email)
         return False
     return True
 
