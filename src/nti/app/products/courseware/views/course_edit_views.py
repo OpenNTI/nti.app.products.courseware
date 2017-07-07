@@ -19,17 +19,19 @@ from nti.app.externalization.view_mixins import ModeledContentUploadRequestUtils
 
 from nti.contenttypes.courses.interfaces import ICourseCatalogEntry
 
-from nti.dataserver import authorization as nauth
+from nti.contenttypes.courses.legacy_catalog import ILegacyCourseCatalogEntry
 
-from nti.recorder.utils import record_transaction
+from nti.contenttypes.courses._catalog_entry_parser import fill_entry_from_legacy_json
+
+from nti.dataserver import authorization as nauth
 
 
 @view_config(route_name='objects.generic.traversal',
-             request_method='POST',
+             request_method='PUT',
              name="edit",
              context=ICourseCatalogEntry,
              permission=nauth.ACT_CONTENT_EDIT)
-class EditCourse(AbstractAuthenticatedView,
+class EditCatalogEntryView(AbstractAuthenticatedView,
                  ModeledContentUploadRequestUtilsMixin):
     """
     Route making ICourseCatalogEntries available for editing.
@@ -44,27 +46,32 @@ class EditCourse(AbstractAuthenticatedView,
         return values
 
     def __call__(self):
-        # Get input
+        # Get the new course info as input data
         values = self.readInput()
-
-        # If any of the arguments given aren't valid attributes,
-        # return 400 Bad Reqest
-        if not all(hasattr(self.context, att) for att in values.keys()):
-            return hexc.HTTPBadRequest()
-
-        # Update the attributes
-        for key, value in values.items():
-            setattr(self.context, key, value)
-
-        # Record the transaction
-        record_transaction(self.context)
-
-        # Ouput information to logger
+        
+        # Not allowed to edit these courses
+        if ILegacyCourseCatalogEntry.providedBy(self.context):
+            return hexc.HTTPForbidden()
+        
+        # If catalog entry is locked, warn and don't update.
+        if self.context.isLocked():
+            logger.warning("Catalog entry %s is locked, cannot update" % self.context.ntiid)
+            return self.context
+        
+        # These won't set properly, so we won't change or delete them
+        values.pop("PlatformPresentationResources")
+        values.pop("Duration")
+        
+        values["MimeType"] = self.context.mimeType
+        
+        fill_entry_from_legacy_json(self.context, values, notify=True, delete=False)
+        
+        # Output information to logger
         logger_str = "".join(["%s: %s\n" % (key, value)
                               for (key, value) in values.items()])
         logger.info(
             "Course catalog %s was modified with values:\n %s" %
             (self.context.ntiid, logger_str))
-
-        # No content needs to be returned
-        return hexc.HTTPNoContent()
+        
+        # Return new catalog entry object
+        return self.context
