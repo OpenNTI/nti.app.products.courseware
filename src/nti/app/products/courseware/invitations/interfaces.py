@@ -12,7 +12,7 @@ logger = __import__('logging').getLogger(__name__)
 from zope import interface
 
 from nti.schema.field import Bool
-from nti.schema.field import ValidTextLine as TextLine
+from nti.schema.field import TextLine
 
 
 class ICourseInvitation(interface.Interface):

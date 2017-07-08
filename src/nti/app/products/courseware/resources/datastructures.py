@@ -27,7 +27,7 @@ class CourseContentFileObjectIO(ContentFileObjectIO):
 
     _ext_iface_upper_bound = ICourseContentFile
 
-    def _ext_mimeType(self, obj):
+    def _ext_mimeType(self, _):
         return 'application/vnd.nextthought.courseware.contentfile'
 
 
@@ -36,7 +36,7 @@ class CourseContentImageObjectIO(ContentImageObjectIO):
 
     _ext_iface_upper_bound = ICourseContentImage
 
-    def _ext_mimeType(self, obj):
+    def _ext_mimeType(self, _):
         return 'application/vnd.nextthought.courseware.contentimage'
 
 

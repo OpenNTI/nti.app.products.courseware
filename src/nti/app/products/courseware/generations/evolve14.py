@@ -21,7 +21,6 @@ from zope.intid.interfaces import IIntIds
 from nti.dataserver.interfaces import IDataserver
 from nti.dataserver.interfaces import IOIDResolver
 
-
 from nti.zope_catalog.interfaces import IMetadataCatalog
 
 CATALOG_NAME = 'nti.dataserver.++etc++course-resources'

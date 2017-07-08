@@ -118,7 +118,7 @@ def send_invitation_email(invitation,
                                     ACCEPT_COURSE_INVITATIONS,
                                     query)
     redemption_link = urljoin(request.application_url, url)
-
+    receiver_name = receiver_name or receiver_username
     args = {
         'sender_name': informal_username,
         'receiver_name': receiver_name,

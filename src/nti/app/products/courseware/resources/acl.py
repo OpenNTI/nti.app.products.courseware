@@ -79,9 +79,7 @@ class CourseRootFolderACLProvider(object):
         course = find_interface(self.context, ICourseInstance, strict=True)
         for i in chain(course.instructors or (), get_course_editors(course)):
             aces.append(ace_allowing(i, ALL_PERMISSIONS, type(self)))
-
         _common_aces(course, aces, type(self))
-
         return acl_from_aces(aces)
 
 
@@ -133,9 +131,7 @@ class CourseContentFolderACLProvider(ContentFolderACLProvider):
         course = find_interface(self.context, ICourseInstance, strict=True)
         for i in chain(course.instructors or (), get_course_editors(course)):
             aces.append(ace_allowing(i, ALL_PERMISSIONS, type(self)))
-
         _common_aces(course, aces, type(self))
-
         return acl_from_aces(aces)
 
 
@@ -149,7 +145,5 @@ class CourseContentFileACLProvider(ContentBaseFileACLProvider):
         course = find_interface(self.context, ICourseInstance, strict=True)
         for i in chain(course.instructors or (), get_course_editors(course)):
             aces.append(ace_allowing(i, ALL_PERMISSIONS, type(self)))
-
         _common_aces(course, aces, type(self))
-
         return acl_from_aces(aces)
