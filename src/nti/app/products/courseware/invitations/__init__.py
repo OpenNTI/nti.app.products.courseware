@@ -8,9 +8,3 @@ from __future__ import print_function, absolute_import, division
 __docformat__ = "restructuredtext en"
 
 logger = __import__('logging').getLogger(__name__)
-
-from nti.app.products.courseware.invitations.interfaces import ICourseInvitation
-
-from nti.app.products.courseware.invitations.model import CourseInvitation
-
-from nti.app.products.courseware.invitations.subscribers import send_invitation_email

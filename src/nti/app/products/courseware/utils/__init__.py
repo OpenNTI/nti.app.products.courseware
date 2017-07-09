@@ -43,7 +43,7 @@ from nti.app.products.courseware.enrollment import EnrollmentOptions
 
 from nti.app.products.courseware.interfaces import IEnrollmentOptionProvider
 
-from nti.app.products.courseware.invitations import CourseInvitation
+from nti.app.products.courseware.invitations.model import CourseInvitation
 
 from nti.app.products.courseware.utils.decorators import PreviewCourseAccessPredicateDecorator
 
