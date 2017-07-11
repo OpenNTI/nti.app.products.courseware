@@ -270,16 +270,19 @@ def create_course_forums(context):
 update_course_forums = create_course_forums
 
 
-def create_topics(discussion, update=True):
+def create_topics(discussion, update=True, topics=None):
     course = ICourseInstance(discussion)
     all_fourms = create_course_forums(course)
     discussions = all_fourms[u'discussions']
+    topics = dict() if topics is None else topics
+
     # get all scopes for topics
     scopes = get_discussion_mapped_scopes(discussion)
     if not scopes:
         logger.error("Cannot create discussions %s. Invalid scopes", 
                      discussion)
         return ()
+
     # get/decode topic name
     name = get_topic_key(discussion)
     title = text_(discussion.title or u'')
@@ -304,11 +307,11 @@ def create_topics(discussion, update=True):
         created = True
         creator = course.SharingScopes[scope]
         if name in forum:
+            topic = forum[name]
             if not update:
                 continue
             logger.debug('Found existing topic "%s" in "%s"',
                          title, forum.title)
-            topic = forum[name]
             if topic.creator != creator:
                 topic.creator = creator
             if topic.headline is not None and topic.headline.creator != creator:
@@ -357,6 +360,7 @@ def create_topics(discussion, update=True):
             logger.debug('%s topic %s with NTIID %s',
                          ('Created' if created else 'Updated'), topic, ntiid)
         result.append(ntiid)
+        topics[ntiid] = topic
         # always publish
         topic.publish()
         # mark
