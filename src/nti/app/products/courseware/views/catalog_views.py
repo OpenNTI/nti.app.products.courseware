@@ -321,29 +321,36 @@ class _AbstractPagedFavoriteCoursesView(_AbstractFavoriteCoursesView):
     courses along with the most recent month of archived courses. All other pages
     will return months in chronological order of archived courses
     """
-
+    
+    def _to_datetime(self, stamp):
+        return datetime.fromtimestamp(stamp)
+    
     @Lazy
-    def page_number(self):
+    def not_before(self):
         params = CaseInsensitiveDict(self.request.params)
         try:
-            result = int(params.get("page"))
+            result = float(params.get("notBefore"))
         except (ValueError, TypeError):
             return False
+        result = self._to_datetime(result)
+        return result
+    
+    @Lazy
+    def not_after(self):
+        params = CaseInsensitiveDict(self.request.params)
+        try:
+            result = float(params.get("notAfter"))
+        except (ValueError, TypeError):
+            return False
+        result = self._to_datetime(result)
         return result
 
-    def _get_page_dict(self, courses):
-        pages = defaultdict(list)
-        for course in courses:
-            course_year = course.StartDate.date().year
-            course_month = course.StartDate.date().month
-            pages[str(course_year) + str(course_month)].append(course)
-        self.page_count = len(pages.keys())
-        return pages
-
     def get_paged_courses(self, courses):
-        pages = self._get_page_dict(courses)
-        return pages.values()[self.page_number - 1] if self.page_count > 0 \
-            and self.page_count <= len(pages.values()) else []
+        pages = []
+        for course in courses:
+            if course.StartDate > self.not_before and course.StartDate < self.not_after:
+                pages.append(course)
+        return pages
 
     def _get_items(self):
         """
@@ -356,17 +363,16 @@ class _AbstractPagedFavoriteCoursesView(_AbstractFavoriteCoursesView):
         not_seen = [
             x[0] for x in self.sorted_entries_and_records if x[0] not in seen_entries]
         paged_courses = self.get_paged_courses(not_seen)
-        result = result + paged_courses if self.page_number == 1 else paged_courses
+        result = result + paged_courses
         return result
 
     def __call__(self):
-        if not self.page_number:
+        if not self.not_before or not self.not_after:
             return hexc.HTTPBadRequest()
         result = LocatedExternalDict()
         result[ITEMS] = items = self._get_items()
         result[ITEM_COUNT] = len(items)
         result[TOTAL] = len(self.entries_and_records)
-        result["PageCount"] = self.page_count
         return result
 
 @view_config(route_name='objects.generic.traversal',
@@ -477,25 +483,26 @@ class PagedAllCatalogEntriesView(_AbstractPagedFavoriteCoursesView):
     Paged AllCourses view
     """
     
+    def _get_ext_obj(self, obj):
+        ext_obj = to_external_object(obj)
+        ext_obj['is_non_public'] = INonPublicCourseInstance.providedBy(obj)
+        return ext_obj
+    
     def __call__(self):
-        if not self.page_number:
+        if not self.not_before or not self.not_after:
             return hexc.HTTPBadRequest()
         catalog = component.getUtility(ICourseCatalog)
         result = LocatedExternalDict()
         items = result[ITEMS] = []
         non_current = []
         for e in catalog.iterCatalogEntries():
-            ext_obj = to_external_object(e)
-            ext_obj['is_non_public'] = INonPublicCourseInstance.providedBy(e)
             if self._is_entry_current(e):
-                if self.page_number == 1:
-                    items.append(ext_obj)
+                items.append(self._get_ext_obj(e))
             else:
                 non_current.append(e)
-        non_current = self.get_paged_courses(non_current)
+        non_current = [self._get_ext_obj(e) for e in self.get_paged_courses(non_current)]
         items += non_current
         result[TOTAL] = result[ITEM_COUNT] = len(items)
-        result["PageCount"] = self.page_count
         return result
 
 
