@@ -342,7 +342,8 @@ class _AbstractPagedFavoriteCoursesView(_AbstractFavoriteCoursesView):
 
     def get_paged_courses(self, courses):
         pages = self._get_page_dict(courses)
-        return pages.values()[self.page_number - 1] if self.page_count > 0 else []
+        return pages.values()[self.page_number - 1] if self.page_count > 0 \
+            and self.page_count <= len(pages.values()) else []
 
     def _get_items(self):
         """
