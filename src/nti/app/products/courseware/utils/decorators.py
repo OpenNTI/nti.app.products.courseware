@@ -43,7 +43,7 @@ class PreviewCourseAccessPredicateDecorator(AbstractAuthenticatedRequestAwareDec
     @property
     def instructor_or_editor(self):
         result = is_course_instructor_or_editor(self.course, self.remoteUser) \
-             or has_permission(ACT_CONTENT_EDIT, self.course, self.remoteUser)
+              or has_permission(ACT_CONTENT_EDIT, self.course, self.remoteUser)
         return result
 
     def _predicate(self, context, result):
