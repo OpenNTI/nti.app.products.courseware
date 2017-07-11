@@ -26,6 +26,8 @@ from nti.base._compat import text_
 
 from nti.common.iterables import to_list
 
+from nti.contenttypes.courses.discussions.interfaces import ICourseDiscussionTopic
+
 from nti.contenttypes.courses.discussions.utils import get_topic_key
 from nti.contenttypes.courses.discussions.utils import get_forum_scopes
 from nti.contenttypes.courses.discussions.utils import is_nti_course_bundle
@@ -330,8 +332,7 @@ def create_topics(discussion, update=True, topics=None):
             topic.title = title
             topic.creator = creator
             topic.description = title
-            if is_nti_course_bundle(discussion):
-                topic.discussion_id = discussion.id  # save discusion id
+
             lifecycleevent.created(topic)
             forum[name] = topic
             # take ownership
@@ -343,6 +344,13 @@ def create_topics(discussion, update=True, topics=None):
             lifecycleevent.added(post)
             logger.info('Topic "%s" has been created in fourm "%s"',
                         title, forum.title)
+
+        if is_nti_course_bundle(discussion):
+            if not getattr(topic, 'discussion_id', None):
+                topic.discussion_id = discussion.id  # save discusion id
+            if not ICourseDiscussionTopic.providedBy(topic):
+                interface.alsoProvides(topic, ICourseDiscussionTopic)
+
         # check ntiid
         ntiid = topic.NTIID
         if is_ntiid_of_type(ntiid, TYPE_OID):
