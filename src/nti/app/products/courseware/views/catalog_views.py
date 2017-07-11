@@ -16,6 +16,8 @@ __docformat__ = "restructuredtext en"
 
 logger = __import__('logging').getLogger(__name__)
 
+from collections import defaultdict
+
 from datetime import datetime
 
 from requests.structures import CaseInsensitiveDict
@@ -60,6 +62,7 @@ from nti.appserver.dataserver_pyramid_views import GenericGetView
 from nti.appserver.pyramid_authorization import can_create
 
 from nti.appserver.workspaces.interfaces import IUserService
+from nti.appserver.workspaces.interfaces import IContainerCollection
 
 from nti.contenttypes.courses.interfaces import ES_PUBLIC
 from nti.contenttypes.courses.interfaces import ICourseCatalog
@@ -220,7 +223,6 @@ class enroll_course_view(AbstractAuthenticatedView,
 
         return enrollment
 
-
 class _AbstractFavoriteCoursesView(AbstractAuthenticatedView):
     """
     An abstract view to fetch the `favorite` courses of a user. All
@@ -235,7 +237,7 @@ class _AbstractFavoriteCoursesView(AbstractAuthenticatedView):
 
     #: The default minimum number of items we return in our favorites view.
     DEFAULT_RESULT_COUNT = 4
-
+    
     @Lazy
     def minimum_count(self):
         params = CaseInsensitiveDict(self.request.params)
@@ -284,7 +286,7 @@ class _AbstractFavoriteCoursesView(AbstractAuthenticatedView):
         result = [x for x in self.sorted_entries_and_records
                   if self._is_entry_current(x[0])]
         return result
-
+    
     def _get_items(self):
         """
         Get our result set items, which will include the `current`
@@ -298,8 +300,9 @@ class _AbstractFavoriteCoursesView(AbstractAuthenticatedView):
                 if entry_tuple[0] not in seen_entries:
                     result.append(entry_tuple)
                     if len(result) >= self.minimum_count:
-                        break
-        # Now grab the records we want
+                        break           
+            
+        # If no paging, grab all records
         result = [x[1] for x in result]
         return result
 
@@ -310,6 +313,85 @@ class _AbstractFavoriteCoursesView(AbstractAuthenticatedView):
         result[TOTAL] = len(self.entries_and_records)
         return result
 
+
+class _AbstractPagedFavoriteCoursesView(_AbstractFavoriteCoursesView):
+    """
+    Base for a course fetching view that will page the results.
+    The first page (get arg page=1) will return the current and upcoming
+    courses along with the most recent month of archived courses. All other pages
+    will return months in chronological order of archived courses
+    """
+
+    @Lazy
+    def page_number(self):
+        params = CaseInsensitiveDict(self.request.params)
+        try:
+            result = int(params.get("page"))
+        except (ValueError, TypeError):
+            return False
+        return result
+
+    def _get_page_dict(self, courses):
+        pages = defaultdict(list)
+        for course in courses:
+            course_year = course.StartDate.date().year
+            course_month = course.StartDate.date().month
+            pages[str(course_year) + str(course_month)].append(course)
+        self.page_count = len(pages.keys())
+        return pages
+
+    def get_paged_courses(self, courses):
+        pages = self._get_page_dict(courses)
+        return pages.values()[self.page_number - 1]
+
+    def _get_items(self):
+        """
+        Get our result set items, which will include the `current`
+        enrollments (if first page) backfilled with the most recent.
+        """
+        result = self.sorted_current_entries_and_records
+        paged = []
+        seen_entries = set(x[0] for x in result)
+        not_seen = [
+            x[0] for x in self.sorted_entries_and_records if x[0] not in seen_entries]
+        paged_courses = self.get_paged_courses(not_seen)
+        result = result + paged_courses if self.page_number == 1 else paged_courses
+        return result
+
+    def __call__(self):
+        if not self.page_number:
+            return hexc.HTTPBadRequest()
+        result = LocatedExternalDict()
+        result[ITEMS] = items = self._get_items()
+        result[ITEM_COUNT] = len(items)
+        result[TOTAL] = len(self.entries_and_records)
+        result["PageCount"] = self.page_count
+        return result
+
+@view_config(route_name='objects.generic.traversal',
+             context=IAdministeredCoursesCollection,
+             request_method='GET',
+             permission=nauth.ACT_READ,
+             name="PagedAdministered",
+             renderer='rest')
+class PagedFavoriteAdministeredCoursesView(_AbstractPagedFavoriteCoursesView):
+    """
+    Paged Administered Courses View
+    """
+
+@view_config(route_name='objects.generic.traversal',
+             context=IEnrolledCoursesCollection,
+             request_method='GET',
+             permission=nauth.ACT_READ,
+             name="PagedEnrolled",
+             renderer='rest')
+class PagedFavoriteEnrolledCoursesView(_AbstractPagedFavoriteCoursesView):
+    """
+    Paged Administered Courses View
+    """
+    def _sort_key(self, entry_tuple):
+        enrollment = entry_tuple[1]
+        return enrollment.createdTime
 
 @view_config(route_name='objects.generic.traversal',
              context=IEnrolledCoursesCollection,
@@ -337,7 +419,6 @@ class FavoriteAdministeredCoursesView(_AbstractFavoriteCoursesView):
     """
     A view into the `favorite` administered courses of a user.
     """
-
 
 @view_config(route_name='objects.generic.traversal',
              context=ICourseInstanceEnrollment,
@@ -381,6 +462,39 @@ class AllCatalogEntriesView(AbstractAuthenticatedView):
             ext_obj['is_non_public'] = INonPublicCourseInstance.providedBy(e)
             items.append(ext_obj)
         result[TOTAL] = result[ITEM_COUNT] = len(items)
+        return result
+
+@view_config(name="PagedAllCourses")
+@view_config(name="PagedAllCatalogEntries")
+@view_defaults(route_name='objects.generic.traversal',
+               context=IContainerCollection,
+               request_method='GET',
+               permission=nauth.ACT_NTI_ADMIN,
+               renderer='rest')
+class PagedAllCatalogEntriesView(_AbstractPagedFavoriteCoursesView):
+    """
+    Paged AllCourses view
+    """
+    
+    def __call__(self):
+        if not self.page_number:
+            return hexc.HTTPBadRequest()
+        catalog = component.getUtility(ICourseCatalog)
+        result = LocatedExternalDict()
+        items = result[ITEMS] = []
+        non_current = []
+        for e in catalog.iterCatalogEntries():
+            ext_obj = to_external_object(e)
+            ext_obj['is_non_public'] = INonPublicCourseInstance.providedBy(e)
+            if self._is_entry_current(e):
+                if self.page_number == 1:
+                    items.append(ext_obj)
+            else:
+                non_current.append(e)
+        non_current = self.get_paged_courses(non_current)
+        items += non_current
+        result[TOTAL] = result[ITEM_COUNT] = len(items)
+        result["PageCount"] = self.page_count
         return result
 
 
