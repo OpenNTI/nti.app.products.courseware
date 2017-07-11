@@ -72,6 +72,17 @@ class TestCatalogViews(ApplicationLayerTest):
 		admin_environ = self._make_extra_environ()
 
 		enroll_path = "/dataserver2/users/sjohnson%40nextthought.com/Courses/EnrolledCourses"
+		get_enrolled_courses_path = enroll_path + "/@@PagedEnrolled"
+		
+		# Make sure we still get a good response with no enrollments
+		get_params = {"page": 1}
+
+		res = self.testapp.get(get_enrolled_courses_path,
+                         get_params,
+                         extra_environ=admin_environ,
+                         status=200)
+
+		assert_that(res.json_body, get_params, has_entry("Items", has_length(1)))
 
 		self.testapp.post_json(enroll_path,
                          'tag:nextthought.com,2011-10:NTI-CourseInfo-Fall2013_CLC3403_LawAndJustice',
@@ -85,8 +96,6 @@ class TestCatalogViews(ApplicationLayerTest):
                          status=200)
 
 		assert_that(res.json_body, has_entry("Items", has_length(2)))
-
-		get_enrolled_courses_path = enroll_path + "/@@PagedEnrolled"
 
 		get_params = {"page": 1}
 
