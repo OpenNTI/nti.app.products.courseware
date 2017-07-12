@@ -16,8 +16,6 @@ __docformat__ = "restructuredtext en"
 
 logger = __import__('logging').getLogger(__name__)
 
-from collections import defaultdict
-
 from datetime import datetime
 
 from requests.structures import CaseInsensitiveDict
@@ -314,42 +312,54 @@ class _AbstractFavoriteCoursesView(AbstractAuthenticatedView):
         return result
 
 
-class _AbstractPagedFavoriteCoursesView(_AbstractFavoriteCoursesView):
+class _AbstractWindowedCoursesView(_AbstractFavoriteCoursesView):
     """
-    Base for a course fetching view that will page the results.
-    The first page (get arg page=1) will return the current and upcoming
-    courses along with the most recent month of archived courses. All other pages
-    will return months in chronological order of archived courses
+    Base for fetching courses in a more paged style. Request gives
+    back courses that 
+    are between the the notBefore and notAfter GET params. If neither of these arguments are given, 
+    return the entire collection. If only one is give, return the courses that fall into that
+    category.
     """
     
     def _to_datetime(self, stamp):
-        return datetime.fromtimestamp(stamp)
+        return datetime.utcfromtimestamp(stamp)
+    
+    def _get_param(self, param):
+        params = CaseInsensitiveDict(self.request.params)
+        try:
+            result = float(params.get(param)) if param in params else None
+        except ValueError:
+            return -1
+        if result is None:
+            return result
+        result = self._to_datetime(result)
+        return result
     
     @Lazy
     def not_before(self):
-        params = CaseInsensitiveDict(self.request.params)
-        try:
-            result = float(params.get("notBefore"))
-        except (ValueError, TypeError):
-            return False
-        result = self._to_datetime(result)
-        return result
+        return self._get_param("notBefore")
     
     @Lazy
     def not_after(self):
-        params = CaseInsensitiveDict(self.request.params)
-        try:
-            result = float(params.get("notAfter"))
-        except (ValueError, TypeError):
-            return False
-        result = self._to_datetime(result)
-        return result
+        return self._get_param("notAfter")
+    
+    def _is_not_before(self, course):
+        if self.not_before is None:
+            return True
+        return self.not_before < course.StartDate
+    
+    def _is_not_after(self, course):
+        if self.not_after is None:
+            return True
+        return self.not_after > course.StartDate
 
     def get_paged_courses(self, courses):
         pages = []
         for course in courses:
-            if course.StartDate > self.not_before and course.StartDate < self.not_after:
-                pages.append(course)
+            if not self._is_not_before(course[0]):
+                break
+            if self._is_not_after(course[0]):
+                pages.append(course[1])
         return pages
 
     def _get_items(self):
@@ -357,18 +367,15 @@ class _AbstractPagedFavoriteCoursesView(_AbstractFavoriteCoursesView):
         Get our result set items, which will include the `current`
         enrollments (if first page) backfilled with the most recent.
         """
-        result = self.sorted_current_entries_and_records
-        paged = []
-        seen_entries = set(x[0] for x in result)
-        not_seen = [
-            x[0] for x in self.sorted_entries_and_records if x[0] not in seen_entries]
-        paged_courses = self.get_paged_courses(not_seen)
-        result = result + paged_courses
-        return result
+        entries = self.sorted_entries_and_records
+        current_entries = self.sorted_current_entries_and_records
+        entries = set(x for x in entries if x not in current_entries)
+        paged_courses = self.get_paged_courses(current_entries + entries)
+        return paged_courses
 
     def __call__(self):
-        if not self.not_before or not self.not_after:
-            return hexc.HTTPBadRequest()
+        if self.not_before == -1 or self.not_after == -1:
+            return hexc.HTTPBadRequest(_("Invalid timestamp supplied."))
         result = LocatedExternalDict()
         result[ITEMS] = items = self._get_items()
         result[ITEM_COUNT] = len(items)
@@ -379,9 +386,9 @@ class _AbstractPagedFavoriteCoursesView(_AbstractFavoriteCoursesView):
              context=IAdministeredCoursesCollection,
              request_method='GET',
              permission=nauth.ACT_READ,
-             name="PagedAdministered",
+             name="WindowedAdministered",
              renderer='rest')
-class PagedFavoriteAdministeredCoursesView(_AbstractPagedFavoriteCoursesView):
+class WindowedFavoriteAdministeredCoursesView(_AbstractWindowedCoursesView):
     """
     Paged Administered Courses View
     """
@@ -390,9 +397,9 @@ class PagedFavoriteAdministeredCoursesView(_AbstractPagedFavoriteCoursesView):
              context=IEnrolledCoursesCollection,
              request_method='GET',
              permission=nauth.ACT_READ,
-             name="PagedEnrolled",
+             name="WindowedEnrolled",
              renderer='rest')
-class PagedFavoriteEnrolledCoursesView(_AbstractPagedFavoriteCoursesView):
+class WindowedFavoriteEnrolledCoursesView(_AbstractWindowedCoursesView):
     """
     Paged Administered Courses View
     """
@@ -471,40 +478,36 @@ class AllCatalogEntriesView(AbstractAuthenticatedView):
         result[TOTAL] = result[ITEM_COUNT] = len(items)
         return result
 
-@view_config(name="PagedAllCourses")
-@view_config(name="PagedAllCatalogEntries")
+@view_config(name="WindowedAllCourses")
+@view_config(name="WindowedAllCatalogEntries")
 @view_defaults(route_name='objects.generic.traversal',
                context=IContainerCollection,
                request_method='GET',
-               permission=nauth.ACT_NTI_ADMIN,
+               permission=nauth.ACT_READ,
                renderer='rest')
-class PagedAllCatalogEntriesView(_AbstractPagedFavoriteCoursesView):
+class WindowedAllCatalogEntriesView(_AbstractWindowedCoursesView):
     """
     Paged AllCourses view
     """
     
-    def _get_ext_obj(self, obj):
-        ext_obj = to_external_object(obj)
-        ext_obj['is_non_public'] = INonPublicCourseInstance.providedBy(obj)
-        return ext_obj
-    
-    def __call__(self):
-        if not self.not_before or not self.not_after:
-            return hexc.HTTPBadRequest()
-        catalog = component.getUtility(ICourseCatalog)
-        result = LocatedExternalDict()
-        items = result[ITEMS] = []
-        non_current = []
-        for e in catalog.iterCatalogEntries():
-            if self._is_entry_current(e):
-                items.append(self._get_ext_obj(e))
-            else:
-                non_current.append(e)
-        non_current = [self._get_ext_obj(e) for e in self.get_paged_courses(non_current)]
-        items += non_current
-        result[TOTAL] = result[ITEM_COUNT] = len(items)
+    @Lazy
+    def entries_and_records(self):
+        result = list()
+        for record in self.context.container or ():
+            if record is not None:
+                # This one is different, the collection contains
+                # entries instead of records
+                result.append((record, None))
         return result
-
+    
+    def get_paged_courses(self, courses):
+        pages = []
+        for course in courses:
+            if not self._is_not_before(course[0]):
+                break
+            if self._is_not_after(course[0]):
+                pages.append(course[0])
+        return pages
 
 @view_config(name='AnonymouslyButNotPubliclyAvailableCourseInstances')
 @view_config(name='_AnonymouslyButNotPubliclyAvailableCourseInstances')
