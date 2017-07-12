@@ -26,6 +26,10 @@ from zope import component
 from zope.securitypolicy.principalrole import principalRoleManager
 
 from nti.app.products.courseware import VIEW_COURSE_FAVORITES
+from nti.app.products.courseware import VIEW_ADMINISTERED_WINDOWED
+from nti.app.products.courseware import VIEW_ENROLLED_WINDOWED
+from nti.app.products.courseware import VIEW_ALL_COURSES_WINDOWED
+from nti.app.products.courseware import VIEW_ALL_ENTRIES_WINDOWED
 
 from nti.contenttypes.courses.interfaces import ICourseCatalog
 from nti.contenttypes.courses.interfaces import ICourseEnrollmentManager
@@ -307,3 +311,27 @@ class TestPersistentWorkspaces(AbstractEnrollingBase, ApplicationLayerTest):
 		assert_that(record,
 					has_entry('href',
 							  is_('%s/%s' % (enroll_href, self.enrollment_ntiid))))
+
+	@WithSharedApplicationMockDS(users=True, testapp=True)
+	def test_windowed_links(self):
+		administered_path = '/dataserver2/users/sjohnson@nextthought.com/Courses/AdministeredCourses'
+		enrolled_path = '/dataserver2/users/sjohnson@nextthought.com/Courses/EnrolledCourses'
+		all_path = '/dataserver2/users/sjohnson@nextthought.com/Courses/AllCourses'
+		res = self.testapp.get(administered_path)
+		
+		links = res.json_body["Collection"]["Links"]
+		
+		assert_that(links, has_item(has_entry("href", administered_path + "/@@" + VIEW_ADMINISTERED_WINDOWED)))
+		
+		res = self.testapp.get(enrolled_path)
+		
+		links = res.json_body["Collection"]["Links"]
+		
+		assert_that(links, has_item(has_entry("href", enrolled_path + "/@@" + VIEW_ENROLLED_WINDOWED)))
+		
+		res = self.testapp.get(all_path)
+		
+		links = res.json_body["Collection"]["Links"]
+		
+		assert_that(links, has_item(has_entry("href", all_path + "/@@" + VIEW_ALL_COURSES_WINDOWED)))
+		assert_that(links, has_item(has_entry("href", all_path + "/@@" + VIEW_ALL_ENTRIES_WINDOWED)))
