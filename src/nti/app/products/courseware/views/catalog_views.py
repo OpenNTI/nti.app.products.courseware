@@ -369,7 +369,7 @@ class _AbstractWindowedCoursesView(_AbstractFavoriteCoursesView):
         """
         entries = self.sorted_entries_and_records
         current_entries = self.sorted_current_entries_and_records
-        entries = set(x for x in entries if x not in current_entries)
+        entries = [x for x in entries if x not in current_entries]
         paged_courses = self.get_paged_courses(current_entries + entries)
         return paged_courses
 
