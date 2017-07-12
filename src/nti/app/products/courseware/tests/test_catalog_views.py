@@ -181,4 +181,4 @@ class TestCatalogViews(ApplicationLayerTest):
                     enroll_path,
                     get_params,
                     extra_environ=admin_environ,
-                    status=400)
+                    status=422)

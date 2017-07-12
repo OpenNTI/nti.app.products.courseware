@@ -329,7 +329,12 @@ class _AbstractWindowedCoursesView(_AbstractFavoriteCoursesView):
         try:
             result = float(params.get(param)) if param in params else None
         except ValueError:
-            raise hexc.HTTPBadRequest(_("Invalid timestamp supplied."))
+            raise_json_error(self.request,
+                             hexc.HTTPUnprocessableEntity,
+                             {
+                                 'message': _(u'Unsupported/missing Class.'),
+                             },
+                             None)
         if result is None:
             return result
         result = self._to_datetime(result)
