@@ -329,7 +329,7 @@ class _AbstractWindowedCoursesView(_AbstractFavoriteCoursesView):
         try:
             result = float(params.get(param)) if param in params else None
         except ValueError:
-            return -1
+            raise hexc.HTTPBadRequest(_("Invalid timestamp supplied."))
         if result is None:
             return result
         result = self._to_datetime(result)
@@ -344,17 +344,15 @@ class _AbstractWindowedCoursesView(_AbstractFavoriteCoursesView):
         return self._get_param("notAfter")
     
     def _is_not_before(self, course):
-        if self.not_before is None:
-            return True
-        return self.not_before < course.StartDate
+        return self.not_before is None or self.not_before < course.StartDate
     
     def _is_not_after(self, course):
-        if self.not_after is None:
-            return True
-        return self.not_after > course.StartDate
+        return self.not_after is None or self.not_after > course.StartDate
 
     def get_paged_courses(self, courses):
         pages = []
+        if self.not_before is None and self.not_after is None:
+            return courses
         for course in courses:
             if not self._is_not_before(course[0]):
                 break
@@ -374,8 +372,6 @@ class _AbstractWindowedCoursesView(_AbstractFavoriteCoursesView):
         return paged_courses
 
     def __call__(self):
-        if self.not_before == -1 or self.not_after == -1:
-            return hexc.HTTPBadRequest(_("Invalid timestamp supplied."))
         result = LocatedExternalDict()
         result[ITEMS] = items = self._get_items()
         result[ITEM_COUNT] = len(items)
@@ -490,24 +486,9 @@ class WindowedAllCatalogEntriesView(_AbstractWindowedCoursesView):
     Paged AllCourses view
     """
     
-    @Lazy
-    def entries_and_records(self):
-        result = list()
-        for record in self.context.container or ():
-            if record is not None:
-                # This one is different, the collection contains
-                # entries instead of records
-                result.append((record, None))
-        return result
-    
-    def get_paged_courses(self, courses):
-        pages = []
-        for course in courses:
-            if not self._is_not_before(course[0]):
-                break
-            if self._is_not_after(course[0]):
-                pages.append(course[0])
-        return pages
+    def _get_entry_for_record(self, record):
+        entry = ICourseCatalogEntry(record, None)
+        return entry
 
 @view_config(name='AnonymouslyButNotPubliclyAvailableCourseInstances')
 @view_config(name='_AnonymouslyButNotPubliclyAvailableCourseInstances')

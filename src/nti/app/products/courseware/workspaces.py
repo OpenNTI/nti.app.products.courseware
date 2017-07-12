@@ -26,6 +26,10 @@ from zope.location.traversing import LocationPhysicallyLocatable
 from pyramid.threadlocal import get_current_request
 
 from nti.app.products.courseware import VIEW_COURSE_FAVORITES
+from nti.app.products.courseware import VIEW_ADMINISTERED_WINDOWED
+from nti.app.products.courseware import VIEW_ENROLLED_WINDOWED
+from nti.app.products.courseware import VIEW_ALL_COURSES_WINDOWED
+from nti.app.products.courseware import VIEW_ALL_ENTRIES_WINDOWED
 
 from nti.app.products.courseware.interfaces import ICoursesWorkspace
 from nti.app.products.courseware.interfaces import ICourseInstanceEnrollment
@@ -188,6 +192,17 @@ class AllCoursesCollection(Contained):
             ntiid = ICourseCatalogEntry(course).ntiid
             if ntiid not in my_enrollments:
                 container.pop(ntiid, None)
+        return result
+
+    @property
+    def links(self):
+        result = []
+        rels = [VIEW_ALL_COURSES_WINDOWED, VIEW_ALL_ENTRIES_WINDOWED]
+        for rel in rels:
+            link = Link(self,
+                        rel=rel,
+                        elements=('@@%s' % rel,))
+            result.append(link)
         return result
 
     def __getitem__(self, key):
@@ -386,6 +401,17 @@ class EnrolledCoursesCollection(_AbstractQueryBasedCoursesCollection):
     contained_interface = ICourseInstanceEnrollment
 
     user_extra_auth = ACT_DELETE
+    
+    @property
+    def links(self):
+        result = []
+        rels = [VIEW_COURSE_FAVORITES, VIEW_ENROLLED_WINDOWED]
+        for rel in rels:
+            link = Link(self,
+                        rel=rel,
+                        elements=('@@%s' % rel,))
+            result.append(link)
+        return result
 
 # administered courses
 
@@ -401,6 +427,17 @@ class AdministeredCoursesCollection(_AbstractQueryBasedCoursesCollection):
     query_attr = 'iter_administrations'
     query_interface = IPrincipalAdministrativeRoleCatalog
     contained_interface = ICourseInstanceAdministrativeRole
+    
+    @property
+    def links(self):
+        result = []
+        rels = [VIEW_COURSE_FAVORITES, VIEW_ADMINISTERED_WINDOWED]
+        for rel in rels:
+            link = Link(self,
+                        rel=rel,
+                        elements=('@@%s' % rel,))
+            result.append(link)
+        return result
 
 
 @component.adapter(ICourseCatalogLegacyContentEntry)

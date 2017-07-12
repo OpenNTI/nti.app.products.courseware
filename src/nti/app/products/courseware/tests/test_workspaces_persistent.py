@@ -300,10 +300,10 @@ class TestPersistentWorkspaces(AbstractEnrollingBase, ApplicationLayerTest):
 								{'ntiid': self.enrollment_ntiid},
 								extra_environ=environ)
 		res = self.testapp.get(enroll_faves, extra_environ=environ)
+		
 		assert_that(res.json_body[ITEM_COUNT], is_(1))
 		assert_that(res.json_body[TOTAL], is_(1))
 		record = res.json_body[ITEMS][0]
 		assert_that(record,
 					has_entry('href',
 							  is_('%s/%s' % (enroll_href, self.enrollment_ntiid))))
-

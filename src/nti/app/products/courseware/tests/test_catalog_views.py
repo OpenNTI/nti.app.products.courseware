@@ -151,7 +151,7 @@ class TestCatalogViews(ApplicationLayerTest):
   
 		res = self.testapp.get(all_path,
                          extra_environ=admin_environ)
-  
+  		
 		assert_that(res.json_body, has_entry("Items", has_length(8)))
   
 		all_paged_path = "/dataserver2/users/sjohnson%40nextthought.com/Courses/AllCourses/@@WindowedAllCourses"
