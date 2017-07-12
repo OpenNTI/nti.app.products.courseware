@@ -318,20 +318,20 @@ class TestPersistentWorkspaces(AbstractEnrollingBase, ApplicationLayerTest):
 		enrolled_path = '/dataserver2/users/sjohnson@nextthought.com/Courses/EnrolledCourses'
 		all_path = '/dataserver2/users/sjohnson@nextthought.com/Courses/AllCourses'
 		res = self.testapp.get(administered_path)
-		
-		links = res.json_body["Collection"]["Links"]
-		
-		assert_that(links, has_item(has_entry("href", administered_path + "/@@" + VIEW_ADMINISTERED_WINDOWED)))
-		
+
+		col = res.json_body["Collection"]
+
+		self.require_link_href_with_rel(col, VIEW_ADMINISTERED_WINDOWED)
+
 		res = self.testapp.get(enrolled_path)
-		
-		links = res.json_body["Collection"]["Links"]
-		
-		assert_that(links, has_item(has_entry("href", enrolled_path + "/@@" + VIEW_ENROLLED_WINDOWED)))
-		
+
+		col = res.json_body["Collection"]
+
+		self.require_link_href_with_rel(col, VIEW_ENROLLED_WINDOWED)
+
 		res = self.testapp.get(all_path)
-		
-		links = res.json_body["Collection"]["Links"]
-		
-		assert_that(links, has_item(has_entry("href", all_path + "/@@" + VIEW_ALL_COURSES_WINDOWED)))
-		assert_that(links, has_item(has_entry("href", all_path + "/@@" + VIEW_ALL_ENTRIES_WINDOWED)))
+
+		col = res.json_body["Collection"]
+
+		self.require_link_href_with_rel(col, VIEW_ALL_COURSES_WINDOWED)
+		self.require_link_href_with_rel(col, VIEW_ALL_ENTRIES_WINDOWED)
