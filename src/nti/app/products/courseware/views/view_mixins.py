@@ -126,7 +126,7 @@ class AbstractRecursiveTransactionHistoryView(AbstractAuthenticatedView,
 
 		items = self._get_items()
 		if items:
-			result[LAST_MODIFIED] = max((x.createdTime for x in items))
+			result[LAST_MODIFIED] = max(x.createdTime for x in items)
 			items.sort(key=lambda t: t.createdTime, reverse=self._sort_desc)
 		result['TotalItemCount'] = item_count = len(items)
 		# Supply this number to batching to prevent batch-ext links from showing
