@@ -36,6 +36,7 @@ from nti.app.products.courseware import VIEW_LESSONS_CONTAINERS
 from nti.app.products.courseware import VIEW_RECURSIVE_AUDIT_LOG
 from nti.app.products.courseware import VIEW_COURSE_LOCKED_OBJECTS
 from nti.app.products.courseware import VIEW_COURSE_RECURSIVE_BUCKET
+from nti.app.products.courseware import VIEW_COURSE_CATALOG_FAMILIES
 from nti.app.products.courseware import VIEW_COURSE_ENROLLMENT_ROSTER
 
 from nti.app.products.courseware.interfaces import ACT_VIEW_ACTIVITY
@@ -122,6 +123,7 @@ MIMETYPE = StandardExternalFields.MIMETYPE
 
 COURSE_CONTEXT_ANNOT_KEY = 'nti.app.products.course.context_key'
 
+
 @component.adapter(ICourseInstance)
 @interface.implementer(IExternalMappingDecorator)
 class _CourseInstanceLinkDecorator(object):
@@ -141,8 +143,9 @@ class _CourseInstanceLinkDecorator(object):
 		if entry:
 			_links.append(Link(entry, rel=VIEW_CATALOG_ENTRY))
 
-		_links.append(Link(context, rel=VIEW_USER_COURSE_ACCESS,
-						   elements=('@@%s' % VIEW_USER_COURSE_ACCESS,)))
+		for rel in (VIEW_USER_COURSE_ACCESS, VIEW_COURSE_CATALOG_FAMILIES):
+			link = Link(context, rel=rel,elements=('@@%s' % rel,))
+			_links.append(link)
 
 		request = get_current_request()
 		if request is not None and has_permission(ACT_VIEW_ACTIVITY, context, request):
@@ -372,6 +375,12 @@ class _CourseCatalogEntryDecorator(AbstractAuthenticatedRequestAwareDecorator):
 		if options:
 			result[u'EnrollmentOptions'] = to_external_object(options)
 
+		_links = result.setdefault(LINKS, [])
+		link = Link(context,
+					rel=VIEW_USER_COURSE_ACCESS,
+					elements=('@@%s' % VIEW_USER_COURSE_ACCESS,))
+		_links.append(link)
+
 @interface.implementer(IExternalMappingDecorator)
 class _BaseClassmatesLinkDecorator(AbstractAuthenticatedRequestAwareDecorator):
 
@@ -452,6 +461,12 @@ class _CatalogFamilyDecorator(AbstractAuthenticatedRequestAwareDecorator):
 			vals.append(catalog_family)
 
 			result[self.class_name] = catalog_families
+
+		_links = result.setdefault(LINKS, [])
+		link = Link(context,
+					rel=VIEW_COURSE_CATALOG_FAMILIES,
+					elements=('@@%s' % VIEW_COURSE_CATALOG_FAMILIES,))
+		_links.append(link)
 
 @interface.implementer(IExternalObjectDecorator)
 @component.adapter(ICourseInstance, interface.Interface)

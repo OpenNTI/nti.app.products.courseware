@@ -54,6 +54,7 @@ from nti.app.products.courseware.views import MessageFactory as _
 from nti.app.products.courseware.views import CourseAdminPathAdapter
 
 from nti.app.products.courseware.views import VIEW_COURSE_FAVORITES
+from nti.app.products.courseware.views import VIEW_COURSE_CATALOG_FAMILIES
 
 from nti.appserver.dataserver_pyramid_views import GenericGetView
 
@@ -71,7 +72,13 @@ from nti.contenttypes.courses.interfaces import INonPublicCourseInstance
 from nti.contenttypes.courses.interfaces import InstructorEnrolledException
 from nti.contenttypes.courses.interfaces import IAnonymouslyAccessibleCourseInstance
 
+from nti.contenttypes.courses.utils import is_enrolled
+from nti.contenttypes.courses.utils import get_course_hierarchy
+from nti.contenttypes.courses.utils import is_course_instructor_or_editor
+
 from nti.dataserver import authorization as nauth
+
+from nti.dataserver.authorization import is_admin_or_content_admin
 
 from nti.dataserver.interfaces import IUser
 from nti.dataserver.interfaces import IDataserverFolder
@@ -235,7 +242,7 @@ class _AbstractFavoriteCoursesView(AbstractAuthenticatedView):
 
     #: The default minimum number of items we return in our favorites view.
     DEFAULT_RESULT_COUNT = 4
-    
+
     @Lazy
     def minimum_count(self):
         params = CaseInsensitiveDict(self.request.params)
@@ -284,7 +291,7 @@ class _AbstractFavoriteCoursesView(AbstractAuthenticatedView):
         result = [x for x in self.sorted_entries_and_records
                   if self._is_entry_current(x[0])]
         return result
-    
+
     def _get_items(self):
         """
         Get our result set items, which will include the `current`
@@ -298,8 +305,8 @@ class _AbstractFavoriteCoursesView(AbstractAuthenticatedView):
                 if entry_tuple[0] not in seen_entries:
                     result.append(entry_tuple)
                     if len(result) >= self.minimum_count:
-                        break           
-            
+                        break
+
         # If no paging, grab all records
         result = [x[1] for x in result]
         return result
@@ -315,15 +322,15 @@ class _AbstractFavoriteCoursesView(AbstractAuthenticatedView):
 class _AbstractWindowedCoursesView(_AbstractFavoriteCoursesView):
     """
     Base for fetching courses in a more paged style. Request gives
-    back courses that 
-    are between the the notBefore and notAfter GET params. If neither of these arguments are given, 
+    back courses that
+    are between the the notBefore and notAfter GET params. If neither of these arguments are given,
     return the entire collection. If only one is give, return the courses that fall into that
     category.
     """
-    
+
     def _to_datetime(self, stamp):
         return datetime.utcfromtimestamp(stamp)
-    
+
     def _get_param(self, param):
         params = CaseInsensitiveDict(self.request.params)
         try:
@@ -339,18 +346,18 @@ class _AbstractWindowedCoursesView(_AbstractFavoriteCoursesView):
             return result
         result = self._to_datetime(result)
         return result
-    
+
     @Lazy
     def not_before(self):
         return self._get_param("notBefore")
-    
+
     @Lazy
     def not_after(self):
         return self._get_param("notAfter")
-    
+
     def _is_not_before(self, course):
         return self.not_before is None or self.not_before < course.StartDate
-    
+
     def _is_not_after(self, course):
         return self.not_after is None or self.not_after > course.StartDate
 
@@ -490,7 +497,7 @@ class WindowedAllCatalogEntriesView(_AbstractWindowedCoursesView):
     """
     Paged AllCourses view
     """
-    
+
     def _get_entry_for_record(self, record):
         entry = ICourseCatalogEntry(record, None)
         return entry
@@ -528,4 +535,60 @@ class AnonymouslyAvailableCourses(AbstractView):
                 ext_obj = to_external_object(course_instance)
                 items.append(ext_obj)
         result[TOTAL] = result[ITEM_COUNT] = len(items)
+        return result
+
+
+@view_config(context=ICourseInstance)
+@view_config(context=ICourseCatalogEntry)
+@view_defaults(route_name='objects.generic.traversal',
+               renderer='rest',
+               name=VIEW_COURSE_CATALOG_FAMILIES,
+               request_method='GET',
+               permission=nauth.ACT_READ)
+class UserCourseCatalogFamiliesView(AbstractAuthenticatedView):
+    """
+    A view that fetches the parent/subinstance :class:`ICourseCatalogEntry`
+    objects of the given context.
+    """
+
+    @Lazy
+    def _entry(self):
+        return ICourseCatalogEntry(self.context)
+
+    @Lazy
+    def _course(self):
+        return ICourseInstance(self.context)
+
+    @Lazy
+    def _is_admin(self):
+        return is_admin_or_content_admin(self.remoteUser)
+
+    def _is_visible(self, course):
+        """
+        Course is visible if we're an admin (all courses), instructor/editor,
+        or enrolled.
+        """
+        return self._is_admin \
+            or is_course_instructor_or_editor(course, self.remoteUser) \
+            or is_enrolled(course, self.remoteUser)
+
+    def _get_entries(self):
+        """
+        Fetch all catalog entries for courses we have access to.
+        """
+        result = []
+        courses = get_course_hierarchy(self._course)
+        for course in courses or ():
+            if self._is_visible(course):
+                entry = ICourseCatalogEntry(course)
+                if entry != self._entry:
+                    result.append(entry)
+        return result
+
+
+    def __call__(self):
+        result = LocatedExternalDict()
+        entries = self._get_entries()
+        result[ITEM_COUNT] = len(entries)
+        result[ITEMS] = entries
         return result

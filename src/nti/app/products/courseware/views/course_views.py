@@ -683,12 +683,13 @@ class CourseEnrollmentOptionsGetView(AbstractAuthenticatedView):
         return options
 
 
-@view_config(route_name='objects.generic.traversal',
-             renderer='rest',
-             name=VIEW_USER_COURSE_ACCESS,
-             request_method='GET',
-             context=ICourseInstance,
-             permission=nauth.ACT_READ)
+@view_config(context=ICourseInstance)
+@view_config(context=ICourseCatalogEntry)
+@view_defaults(route_name='objects.generic.traversal',
+               renderer='rest',
+               name=VIEW_USER_COURSE_ACCESS,
+               request_method='GET',
+               permission=nauth.ACT_READ)
 class UserCourseAccessView(AbstractAuthenticatedView):
     """
     A view that returns the preferred user access to the course context. This
@@ -697,21 +698,25 @@ class UserCourseAccessView(AbstractAuthenticatedView):
     """
 
     @Lazy
+    def _course(self):
+        return ICourseInstance(self.context)
+
+    @Lazy
     def _is_admin(self):
         return is_admin_or_content_admin(self.remoteUser) \
-            or is_course_instructor_or_editor(self.context, self.remoteUser)
+            or is_course_instructor_or_editor(self._course, self.remoteUser)
 
     def __call__(self):
         result = None
         if self._is_admin:
-            result = get_course_admin_role(self.context, self.remoteUser)
-        elif is_enrolled(self.context, self.remoteUser):
-            result = component.getMultiAdapter((self.context, self.remoteUser),
+            result = get_course_admin_role(self._course, self.remoteUser)
+        elif is_enrolled(self._course, self.remoteUser):
+            result = component.getMultiAdapter((self._course, self.remoteUser),
                                                ICourseInstanceEnrollment)
             if result is None:
                 logger.warn('User enrolled but no enrollment record (%s) (%s)',
                             self.remoteUser,
-                            ICourseCatalogEntry(self.context).ntiid)
+                            ICourseCatalogEntry(self._course).ntiid)
         if result is None:
             msg = _('User does not have access to this course.')
             raise hexc.HTTPForbidden(msg)
