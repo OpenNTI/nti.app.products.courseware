@@ -30,6 +30,7 @@ from nti.contenttypes.courses.discussions.interfaces import ICourseDiscussion
 
 from nti.contenttypes.courses.interfaces import ICourseInstance
 from nti.contenttypes.courses.interfaces import ICourseCatalogEntry
+from nti.contenttypes.courses.interfaces import ICourseRoleUpdatedEvent
 from nti.contenttypes.courses.interfaces import ICourseRolesSynchronized
 from nti.contenttypes.courses.interfaces import ICatalogEntrySynchronized
 from nti.contenttypes.courses.interfaces import ICourseVendorInfoSynchronized
@@ -58,20 +59,28 @@ def _discussions_modified(record, unused_event):
         create_topics(record)
 
 
+def _update_course_forums(course):
+    if course is not None and auto_create_forums(course):
+        update_course_forums(course)
+
+
 @component.adapter(ICourseCatalogEntry, ICatalogEntrySynchronized)
 def _catalog_entry_synchronized(entry, unused_event):
     course = ICourseInstance(entry, None)
-    if course is not None and auto_create_forums(course):
-        update_course_forums(course)
+    _update_course_forums(course)
 
 
 @component.adapter(ICourseInstance, ICourseRolesSynchronized)
 def _course_roles_synchronized(course, unused_event):
-    if course is not None and auto_create_forums(course):
-        update_course_forums(course)
+    _update_course_forums(course)
 
 
 @component.adapter(ICourseInstance, ICourseVendorInfoSynchronized)
 def _course_vendor_info_synchronized(course, unused_event):
-    if course is not None and auto_create_forums(course):
-        update_course_forums(course)
+    _update_course_forums(course)
+
+
+@component.adapter(ICourseRoleUpdatedEvent)
+def _course_role_updated(event):
+    _update_course_forums(event.course)
+

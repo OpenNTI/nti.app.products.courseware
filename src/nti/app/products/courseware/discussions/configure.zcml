@@ -11,9 +11,10 @@
 	<adapter factory=".adapters._CourseDiscussionFileConstraints"
 			 for="nti.contenttypes.courses.discussions.interfaces.ICourseDiscussion"
 			 provides="nti.namedfile.interfaces.IFileConstraints" />
-	
+
 	<!-- Events -->
 	<subscriber handler=".subscribers._discussions_added" />
+	<subscriber handler=".subscribers._course_role_updated" />
 	<subscriber handler=".subscribers._discussions_modified" />
 	<subscriber handler=".subscribers._course_roles_synchronized" />
 	<subscriber handler=".subscribers._catalog_entry_synchronized" />
@@ -26,7 +27,7 @@
 			 name="CourseDiscussions" />
 
 	<adapter factory=".traversal._CourseDiscussionsTraversable" />
-	
+
 	<!-- Decorators -->
 	<subscriber factory=".decorators._CourseDiscussionsLinkDecorator"
 				provides="nti.externalization.interfaces.IExternalMappingDecorator"
@@ -44,5 +45,5 @@
 	<!-- Importer -->
 	<!-- Ideally course discussions should be imported after vendor info -->
 	<utility factory=".importer.CourseDiscussionsImporter" name="888:Course_Discussions" />
-		
+
 </configure>
