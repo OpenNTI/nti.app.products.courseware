@@ -33,9 +33,12 @@ from zope.security.interfaces import IPrincipal
 
 from nti.app.products.courseware.decorators import _SharingScopesAndDiscussionDecorator
 
+from nti.base._compat import text_
+
 from nti.contenttypes.courses import acl
 from nti.contenttypes.courses import courses
 from nti.contenttypes.courses import interfaces
+
 from nti.contenttypes.courses.interfaces import ES_PUBLIC
 from nti.contenttypes.courses.interfaces import ES_CREDIT
 from nti.contenttypes.courses.interfaces import ES_PURCHASED
@@ -78,8 +81,8 @@ class TestCourseInstance(CourseLayerTest):
 		ntiid = 'tag:nextthought.com,2011-10:NTI-OID-0x12345'
 		inst.SharingScopes['Public'].to_external_ntiid_oid = lambda: ntiid
 
-		assert_that(unicode(inst.SharingScopes['Public']),
-					 is_(ntiid))
+		assert_that(text_(inst.SharingScopes['Public']),
+					is_(ntiid))
 		assert_that(inst,
 					externalizes(has_entries('Class', 'CourseInstance',
 											 'Discussions', has_entries('Class', 'CommunityBoard',  # Reall course instance board

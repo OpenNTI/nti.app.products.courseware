@@ -36,6 +36,8 @@ from nti.app.products.courseware.discussions import create_course_forums
 from nti.app.products.courseware.discussions import announcements_forums
 from nti.app.products.courseware.discussions import get_forums_for_discussion
 
+from nti.base._compat import text_
+
 from nti.contentfragments.interfaces import SanitizedHTMLContentFragment
 
 from nti.contenttypes.courses.interfaces import ES_ALL
@@ -199,7 +201,7 @@ class TestDiscussions(ApplicationLayerTest):
 		path = os.path.join(os.path.dirname(__file__), 'discussion.json')
 		with open(path, "r") as fp:
 			context = fp.read()
-			context = unicode(context, 'utf-8') if isinstance(context, bytes) else context
+			context = text_(context, 'utf-8') if isinstance(context, bytes) else context
 			source = simplejson.loads(context)
 
 		with mock_dataserver.mock_db_trans(self.ds, site_name='platform.ou.edu'):
