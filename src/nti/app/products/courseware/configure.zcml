@@ -553,4 +553,7 @@
 	<!-- Views -->
 	<include package=".views" />
 
+	<!-- Recordables -->
+	<utility factory=".recordables.CourseCatalogRecordables" name="courses" />
+
 </configure>
