@@ -48,7 +48,7 @@ LINKS = StandardExternalFields.LINKS
 @interface.implementer(IExternalMappingDecorator)
 class _CourseInvitationsLinkDecorator(AbstractAuthenticatedRequestAwareDecorator):
 
-    def _predicate(self, context, result):
+    def _predicate(self, context, unused_result):
         return  self._is_authenticated \
             and not ILegacyCourseInstance.providedBy(context)
 

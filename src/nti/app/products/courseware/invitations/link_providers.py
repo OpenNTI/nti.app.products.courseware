@@ -30,7 +30,7 @@ class _CourseUserInvitationsLinkProvider(object):
     def __init__(self, user=None):
         self.user = user
 
-    def links(self, workspace):
+    def links(self, unused_workspace):
         link = Link(self.user,
                     method="POST",
                     rel=ACCEPT_COURSE_INVITATIONS,

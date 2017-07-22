@@ -16,6 +16,7 @@ from nti.schema.field import TextLine
 
 
 class ICourseInvitation(interface.Interface):
+
     Code = TextLine(title=u"Invitation code.", required=True)
 
     Scope = TextLine(title=u"The enrollment scope.", required=True)
