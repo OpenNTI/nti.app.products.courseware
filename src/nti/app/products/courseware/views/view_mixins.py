@@ -210,7 +210,7 @@ class AbstractChildMoveView(AbstractAuthenticatedView,
 			raise hexc.HTTPUnprocessableEntity(_('New parent does not exist.'))
 		return new_parent
 
-	def _validate_parents(self, old_parent_ntiid=None, new_parent_ntiid=None, 
+	def _validate_parents(self, old_parent_ntiid=None, new_parent_ntiid=None,
 						  context_ntiid=None, *args, **kwargs):
 		children_ntiids = self._get_children_ntiids(context_ntiid)
 		if 		new_parent_ntiid not in children_ntiids \

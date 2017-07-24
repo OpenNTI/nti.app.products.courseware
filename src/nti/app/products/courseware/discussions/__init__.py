@@ -126,14 +126,14 @@ def _extract_content(body=()):
         if isinstance(content, six.string_types) and content.startswith("[ntivideo]"):
             content = content[len("[ntivideo]"):]
             # A type, or kaltura?
-            # raise erros on malformed
+            # raise errors on malformed
             if content[0] == '[':
                 vid_type_end = content.index(']')
                 vid_type = content[1:vid_type_end]
                 vid_url = content[vid_type_end + 1:]
             else:
                 vid_url = content
-                vid_type = 'kaltura'
+                vid_type = u'kaltura'
 
             name = "application/vnd.nextthought.embeddedvideo"
             video = component.getUtility(component.IFactory, name=name)()
@@ -281,14 +281,14 @@ def create_topics(discussion, update=True, topics=None):
     # get all scopes for topics
     scopes = get_discussion_mapped_scopes(discussion)
     if not scopes:
-        logger.error("Cannot create discussions %s. Invalid scopes", 
+        logger.error("Cannot create discussions %s. Invalid scopes",
                      discussion)
         return ()
 
     # get/decode topic name
     name = get_topic_key(discussion)
     title = text_(discussion.title or u'')
-    
+
     def set_post(post, title, content):
         post.title = title
         if content:
