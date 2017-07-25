@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from __future__ import print_function, unicode_literals, absolute_import, division
+from __future__ import print_function, absolute_import, division
 __docformat__ = "restructuredtext en"
 
 # disable: accessing protected members, too many methods
@@ -18,6 +18,10 @@ from hamcrest import has_entries
 from hamcrest import has_property
 does_not = is_not
 
+from nose.tools import assert_raises
+
+from nti.testing.matchers import verifiably_provides
+
 from nti.testing.time import time_monotonically_increases
 
 from zope import component
@@ -27,6 +31,12 @@ from nti.app.products.courseware.utils import get_enrollment_options
 from nti.appserver.interfaces import ILibraryPathLastModifiedProvider
 
 from nti.contenttypes.courses.interfaces import ICourseCatalog
+from nti.contenttypes.courses.interfaces import ICourseInstance
+from nti.contenttypes.courses.interfaces import ICourseEnrollments
+from nti.contenttypes.courses.interfaces import InstructorEnrolledException
+
+from nti.dataserver.interfaces import IAccessProvider
+from nti.dataserver.interfaces import IGrantAccessException
 
 from nti.dataserver.users import User
 
@@ -37,6 +47,8 @@ from nti.app.testing.application_webtest import ApplicationLayerTest
 from nti.app.testing.decorators import WithSharedApplicationMockDS
 
 from nti.dataserver.tests import mock_dataserver
+
+from nti.ntiids.ntiids import find_object_with_ntiid
 
 class TestEnrollmentOptions(ApplicationLayerTest):
 
@@ -140,9 +152,34 @@ class TestEnrollment(ApplicationLayerTest):
 			assert_that(last_mod, does_not(prev_last_mod))
 
 	@WithSharedApplicationMockDS(testapp=True, users=True)
+	def test_access_provider(self):
+		with mock_dataserver.mock_db_trans(self.ds):
+			self._create_user('marco')
+		with mock_dataserver.mock_db_trans(self.ds, site_name='platform.ou.edu'):
+			entity = User.get_user('marco')
+			entry = find_object_with_ntiid(self.course_ntiid)
+			course = ICourseInstance(entry)
+			access_provider = IAccessProvider(course)
+			record = access_provider.grant_access(entity)
+			assert_that(record, not_none())
+
+			enrollments = ICourseEnrollments(course)
+			assert_that(enrollments.is_principal_enrolled(entity), is_(True))
+
+	@WithSharedApplicationMockDS(testapp=True, users=True)
 	def test_instructor(self):
 		enrolled_href = '/dataserver2/users/harp4162/Courses/EnrolledCourses'
 		instructor_environ = self._make_extra_environ(username='harp4162')
 		self.testapp.post_json(enrolled_href, self.course_ntiid,
 							   extra_environ=instructor_environ,
 							   status=422)
+
+		with mock_dataserver.mock_db_trans(self.ds, site_name='platform.ou.edu'):
+			entity = User.get_user('harp4162')
+			entry = find_object_with_ntiid(self.course_ntiid)
+			course = ICourseInstance(entry)
+			access_provider = IAccessProvider(course)
+			with assert_raises(InstructorEnrolledException) as exc:
+				access_provider.grant_access(entity)
+			assert_that(exc.exception,
+						verifiably_provides(IGrantAccessException))

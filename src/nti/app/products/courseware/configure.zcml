@@ -106,7 +106,7 @@
 	<adapter factory=".adapters._content_unit_and_user_to_course" />
 	<adapter factory=".adapters._course_content_package_to_course" />
 
-	<!-- And the course/entry instance  to content packages bundle -->
+	<!-- And the course/entry instance to content packages bundle -->
 	<adapter factory=".adapters._entry_to_content_package_bundle" />
 	<adapter factory=".adapters._course_content_to_package_bundle" />
 	<adapter factory=".adapters._legacy_course_to_content_package_bundle" />
@@ -240,6 +240,9 @@
 	<class class=".activity._DefaultCourseActivity">
 		<implements interface="zope.annotation.interfaces.IAttributeAnnotatable" />
 	</class>
+
+	<!-- Enrollment -->
+    <adapter factory=".adapters._CourseAccessProvider" />
 
 	<!-- Outline update -->
 	<adapter factory=".traversal._OutlineNodeExternalFieldTraverser"
@@ -528,7 +531,7 @@
 	<subscriber factory=".predicates._CourseContentUnitAssociations"
 					provides="nti.contentlibrary.interfaces.IContentUnitAssociations"
 					for="nti.contentlibrary.interfaces.IContentUnit" />
-					
+
 	<!-- Content Search -->
 	<include package=".search" />
 

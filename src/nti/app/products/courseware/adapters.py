@@ -22,6 +22,8 @@ from pyramid.interfaces import IRequest
 
 from zope.annotation.interfaces import IAnnotations
 
+from zope.cachedescriptors.property import Lazy
+
 from nti.app.authentication import get_remote_user
 
 from nti.app.products.courseware import USER_ENROLLMENT_LAST_MODIFIED_KEY
@@ -56,6 +58,8 @@ from nti.contenttypes.courses.common import get_course_site_name
 from nti.contenttypes.courses.index import IX_SITE
 from nti.contenttypes.courses.index import IX_USERNAME
 
+from nti.contenttypes.courses.interfaces import ES_PUBLIC
+
 from nti.contenttypes.courses.interfaces import ICourseInstance
 from nti.contenttypes.courses.interfaces import ICourseOutlineNode
 from nti.contenttypes.courses.interfaces import ICourseSubInstance
@@ -63,6 +67,7 @@ from nti.contenttypes.courses.interfaces import ICourseCatalogEntry
 from nti.contenttypes.courses.interfaces import ICourseOutlineNodes
 from nti.contenttypes.courses.interfaces import IContentCourseInstance
 from nti.contenttypes.courses.interfaces import INonPublicCourseInstance
+from nti.contenttypes.courses.interfaces import ICourseEnrollmentManager
 from nti.contenttypes.courses.interfaces import ICourseInstanceEnrollmentRecord
 
 from nti.contenttypes.courses.utils import is_enrolled
@@ -96,6 +101,7 @@ from nti.dataserver.contenttypes.forums.interfaces import IForum
 from nti.dataserver.interfaces import IUser
 from nti.dataserver.interfaces import IContained
 from nti.dataserver.interfaces import IHighlight
+from nti.dataserver.interfaces import IAccessProvider
 from nti.dataserver.interfaces import IUserGeneratedData
 
 from nti.ntiids.ntiids import find_object_with_ntiid
@@ -601,3 +607,40 @@ def _course_from_request(request):
 		return request.course_traversal_context
 	except AttributeError:
 		return None
+
+
+@component.adapter(ICourseInstance)
+@interface.implementer(IAccessProvider)
+class _CourseAccessProvider(object):
+	"""
+	Grants and removes access to a course. This is simply a passthrough
+	to :class:`ICourseEnrollmentManager` operations.
+	"""
+
+	def __init__(self, context):
+		self.context = self.course = context
+
+	@Lazy
+	def entry_ntiid(self):
+		return ICourseCatalogEntry(self.course).ntiid
+
+	def grant_access(self, entity, access_context=None):
+		"""
+		Enrolls the entity into the course.
+		"""
+		scope = access_context or ES_PUBLIC
+		manager = ICourseEnrollmentManager(self.course)
+		result = manager.enroll(entity, scope=scope)
+		logger.info("User enrolled in course (%s) (%s)",
+                    entity.username, self.entry_ntiid)
+		return result
+
+	def remove_access(self, entity):
+		"""
+		Unenrolls the user from the course.
+		"""
+		manager = ICourseEnrollmentManager(self.course)
+		result = manager.drop(entity)
+		logger.info("User dropped course (%s) (%s)",
+                    entity.username, self.entry_ntiid)
+		return result
