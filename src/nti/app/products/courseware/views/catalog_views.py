@@ -307,7 +307,7 @@ class _AbstractFavoriteCoursesView(AbstractAuthenticatedView):
                     if len(result) >= self.minimum_count:
                         break
 
-        # If no paging, grab all records
+        # Now grab the records we want
         result = [x[1] for x in result]
         return result
 
@@ -321,29 +321,31 @@ class _AbstractFavoriteCoursesView(AbstractAuthenticatedView):
 
 class _AbstractWindowedCoursesView(_AbstractFavoriteCoursesView):
     """
-    Base for fetching courses in a more paged style. Request gives
-    back courses that
-    are between the the notBefore and notAfter GET params. If neither of these arguments are given,
-    return the entire collection. If only one is give, return the courses that fall into that
-    category.
+    Base for fetching courses in a more paged style. Request gives back courses
+    that are between the notBefore and notAfter GET params. If neither of these
+    params are given return the entire collection.
     """
 
     def _to_datetime(self, stamp):
         return datetime.utcfromtimestamp(stamp)
 
-    def _get_param(self, param):
-        params = CaseInsensitiveDict(self.request.params)
+    @Lazy
+    def _params(self):
+        return CaseInsensitiveDict(self.request.params)
+
+    def _get_param(self, param_name):
+        param_val = self._params.get(param_name)
+        if param_val is None:
+            return None
         try:
-            result = float(params.get(param)) if param in params else None
+            result = float(param_val)
         except ValueError:
             raise_json_error(self.request,
                              hexc.HTTPUnprocessableEntity,
                              {
-                                 'message': _(u'Unsupported/missing Class.'),
+                                 'message': _(u'Invalid timestamp boundary.'),
                              },
                              None)
-        if result is None:
-            return result
         result = self._to_datetime(result)
         return result
 
@@ -361,34 +363,27 @@ class _AbstractWindowedCoursesView(_AbstractFavoriteCoursesView):
     def _is_not_after(self, course):
         return self.not_after is None or self.not_after > course.StartDate
 
-    def get_paged_courses(self, courses):
-        pages = []
+    def get_paged_records(self, entry_record_tuples):
+        """
+        Gather all records that fall within our window, defined by the user
+        given timestamp boundaries.
+        """
+        records = []
         if self.not_before is None and self.not_after is None:
-            return courses
-        for course in courses:
-            if not self._is_not_before(course[0]):
+            # Return everything if no filter.
+            return [x[1] for x in entry_record_tuples]
+        # We are iterating from most recent to oldest.
+        for entry, record in entry_record_tuples or ():
+            if not self._is_not_before(entry):
                 break
-            if self._is_not_after(course[0]):
-                pages.append(course[1])
-        return pages
+            if self._is_not_after(entry):
+                records.append(record)
+        return records
 
     def _get_items(self):
-        """
-        Get our result set items, which will include the `current`
-        enrollments (if first page) backfilled with the most recent.
-        """
-        entries = self.sorted_entries_and_records
-        current_entries = self.sorted_current_entries_and_records
-        entries = [x for x in entries if x not in current_entries]
-        paged_courses = self.get_paged_courses(current_entries + entries)
-        return paged_courses
+        records = self.get_paged_records(self.sorted_entries_and_records)
+        return records
 
-    def __call__(self):
-        result = LocatedExternalDict()
-        result[ITEMS] = items = self._get_items()
-        result[ITEM_COUNT] = len(items)
-        result[TOTAL] = len(self.entries_and_records)
-        return result
 
 @view_config(route_name='objects.generic.traversal',
              context=IAdministeredCoursesCollection,
@@ -400,6 +395,7 @@ class WindowedFavoriteAdministeredCoursesView(_AbstractWindowedCoursesView):
     """
     Paged Administered Courses View
     """
+
 
 @view_config(route_name='objects.generic.traversal',
              context=IEnrolledCoursesCollection,
@@ -414,6 +410,7 @@ class WindowedFavoriteEnrolledCoursesView(_AbstractWindowedCoursesView):
     def _sort_key(self, entry_tuple):
         enrollment = entry_tuple[1]
         return enrollment.createdTime
+
 
 @view_config(route_name='objects.generic.traversal',
              context=IEnrolledCoursesCollection,
@@ -441,6 +438,7 @@ class FavoriteAdministeredCoursesView(_AbstractFavoriteCoursesView):
     """
     A view into the `favorite` administered courses of a user.
     """
+
 
 @view_config(route_name='objects.generic.traversal',
              context=ICourseInstanceEnrollment,
