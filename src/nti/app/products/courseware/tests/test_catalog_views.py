@@ -108,7 +108,7 @@ class TestCatalogViews(ApplicationLayerTest):
 															VIEW_COURSE_CATALOG_FAMILIES)
             families = self.testapp.get(families_href, extra_environ=environ)
             families = families.json_body
-            assert_that(families[ITEM_COUNT], is_(0), user)
+            assert_that(families[ITEM_COUNT], is_(1), user)
             # Now fetch access
             access_href = self.require_link_href_with_rel(course_ext,
 														  VIEW_USER_COURSE_ACCESS)
@@ -121,12 +121,12 @@ class TestCatalogViews(ApplicationLayerTest):
             entry = self.testapp.get( '/dataserver2/Objects/%s' % entry_ntiid )
             entry = entry.json_body
 
-            # Admins have access to all parents/sections; so 3 is returned (sans context)
+            # Admins have access to all parents/sections; so 4 are returned
             families_href = self.require_link_href_with_rel(entry,
 															VIEW_COURSE_CATALOG_FAMILIES)
             families = self.testapp.get(families_href)
             families = families.json_body
-            assert_that(families[ITEM_COUNT], is_(3))
+            assert_that(families[ITEM_COUNT], is_(4))
 
             # Fetch administrative role
             access_href = self.require_link_href_with_rel(entry,

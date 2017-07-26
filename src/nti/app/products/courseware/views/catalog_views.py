@@ -451,7 +451,7 @@ class drop_course_view(AbstractAuthenticatedView):
     in your enrolled courses view.
 
     For this to work, it requires that the IEnrolledCoursesCollection
-    is not itself traversable to children.
+    is not itself traverseable to children.
     """
 
     def __call__(self):
@@ -550,10 +550,6 @@ class UserCourseCatalogFamiliesView(AbstractAuthenticatedView):
     """
 
     @Lazy
-    def _entry(self):
-        return ICourseCatalogEntry(self.context)
-
-    @Lazy
     def _course(self):
         return ICourseInstance(self.context)
 
@@ -579,8 +575,7 @@ class UserCourseCatalogFamiliesView(AbstractAuthenticatedView):
         for course in courses or ():
             if self._is_visible(course):
                 entry = ICourseCatalogEntry(course)
-                if entry != self._entry:
-                    result.append(entry)
+                result.append(entry)
         return result
 
 
