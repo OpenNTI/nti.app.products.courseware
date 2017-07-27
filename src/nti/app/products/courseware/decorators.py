@@ -20,8 +20,8 @@ from zope.location.interfaces import ILocation
 
 from pyramid.threadlocal import get_current_request
 
-from nti.app.assessment.common import is_global_evaluation
-from nti.app.assessment.common import get_course_from_evaluation
+from nti.app.assessment.common.evaluations import is_global_evaluation
+from nti.app.assessment.common.evaluations import get_course_from_evaluation
 
 from nti.app.assessment.utils import get_course_from_request
 
