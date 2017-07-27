@@ -37,7 +37,7 @@ from zope.traversing.api import traverse
 
 from zope.traversing.interfaces import IEtcNamespace
 
-from nti.app.assessment.common import get_evaluation_courses
+from nti.app.assessment.common.evaluations import get_evaluation_courses
 
 from nti.app.products.courseware.enrollment import EnrollmentOptions
 
