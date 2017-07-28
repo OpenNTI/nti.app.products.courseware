@@ -21,6 +21,9 @@ from zope import component
 
 from nti.app.products.courseware.views import VIEW_USER_COURSE_ACCESS
 from nti.app.products.courseware.views import VIEW_COURSE_CATALOG_FAMILIES
+from nti.app.products.courseware.views import VIEW_UPCOMING_COURSES
+from nti.app.products.courseware.views import VIEW_ARCHIVED_COURSES
+from nti.app.products.courseware.views import VIEW_CURRENT_COURSES
 
 from nti.app.products.courseware.tests import PersistentInstructedCourseApplicationTestLayer
 
@@ -221,3 +224,34 @@ class TestCatalogViews(ApplicationLayerTest):
                     enroll_path,
                     get_params,
                     status=422)
+
+    @WithSharedApplicationMockDS(testapp=True, users=True, default_authenticate=True)
+    def test_upcoming_course_view(self):
+        upcoming_course_path = "/dataserver2/users/sjohnson%40nextthought.com/Courses/AllCourses/@@" + VIEW_UPCOMING_COURSES
+        
+        res = self.testapp.get(upcoming_course_path, 
+                               status=200)
+        
+        res = res.json_body
+        assert_that(res, has_entry("ItemCount", 0))
+        
+    @WithSharedApplicationMockDS(testapp=True, users=True, default_authenticate=True)
+    def test_archived_course_view(self):
+        archived_course_path = "/dataserver2/users/sjohnson%40nextthought.com/Courses/AllCourses/@@" + VIEW_ARCHIVED_COURSES
+        
+        res = self.testapp.get(archived_course_path, 
+                               status=200)
+        
+        res = res.json_body
+        assert_that(res, has_entry("ItemCount", 5))
+    
+    @WithSharedApplicationMockDS(testapp=True, users=True, default_authenticate=True)
+    def test_current_course_view(self):
+        archived_course_path = "/dataserver2/users/sjohnson%40nextthought.com/Courses/AllCourses/@@" + VIEW_CURRENT_COURSES
+        
+        res = self.testapp.get(archived_course_path, 
+                               status=200)
+        
+        res = res.json_body
+        assert_that(res, has_entry("ItemCount", 3))
+        

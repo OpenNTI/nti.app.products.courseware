@@ -49,6 +49,9 @@ from nti.app.products.courseware import VIEW_COURSE_CATALOG_FAMILIES
 from nti.app.products.courseware import CHECK_COURSE_INVITATIONS_CSV
 from nti.app.products.courseware import VIEW_COURSE_RECURSIVE_BUCKET
 from nti.app.products.courseware import VIEW_COURSE_ENROLLMENT_ROSTER
+from nti.app.products.courseware import VIEW_UPCOMING_COURSES
+from nti.app.products.courseware import VIEW_ARCHIVED_COURSES
+from nti.app.products.courseware import VIEW_CURRENT_COURSES
 
 from nti.contenttypes.courses.interfaces import ICourseInstance
 

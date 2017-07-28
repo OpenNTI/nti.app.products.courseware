@@ -30,6 +30,9 @@ from nti.app.products.courseware import VIEW_ADMINISTERED_WINDOWED
 from nti.app.products.courseware import VIEW_ENROLLED_WINDOWED
 from nti.app.products.courseware import VIEW_ALL_COURSES_WINDOWED
 from nti.app.products.courseware import VIEW_ALL_ENTRIES_WINDOWED
+from nti.app.products.courseware import VIEW_UPCOMING_COURSES
+from nti.app.products.courseware import VIEW_CURRENT_COURSES
+from nti.app.products.courseware import VIEW_ARCHIVED_COURSES
 
 from nti.app.products.courseware.interfaces import ICoursesWorkspace
 from nti.app.products.courseware.interfaces import ICourseInstanceEnrollment
@@ -197,7 +200,8 @@ class AllCoursesCollection(Contained):
     @property
     def links(self):
         result = []
-        rels = [VIEW_ALL_COURSES_WINDOWED, VIEW_ALL_ENTRIES_WINDOWED]
+        rels = [VIEW_ALL_COURSES_WINDOWED, VIEW_ALL_ENTRIES_WINDOWED,
+                VIEW_CURRENT_COURSES, VIEW_ARCHIVED_COURSES, VIEW_UPCOMING_COURSES]
         for rel in rels:
             link = Link(self,
                         rel=rel,

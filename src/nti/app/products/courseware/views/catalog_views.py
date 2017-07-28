@@ -55,6 +55,9 @@ from nti.app.products.courseware.views import CourseAdminPathAdapter
 
 from nti.app.products.courseware.views import VIEW_COURSE_FAVORITES
 from nti.app.products.courseware.views import VIEW_COURSE_CATALOG_FAMILIES
+from nti.app.products.courseware.views import VIEW_CURRENT_COURSES
+from nti.app.products.courseware.views import VIEW_ARCHIVED_COURSES
+from nti.app.products.courseware.views import VIEW_UPCOMING_COURSES
 
 from nti.appserver.dataserver_pyramid_views import GenericGetView
 
@@ -426,7 +429,7 @@ class FavoriteEnrolledCoursesView(_AbstractFavoriteCoursesView):
     def _sort_key(self, entry_tuple):
         enrollment = entry_tuple[1]
         return enrollment.createdTime
-
+    
 
 @view_config(route_name='objects.generic.traversal',
              context=IAdministeredCoursesCollection,
@@ -584,4 +587,99 @@ class UserCourseCatalogFamiliesView(AbstractAuthenticatedView):
         entries = self._get_entries()
         result[ITEM_COUNT] = len(entries)
         result[ITEMS] = entries
+        return result
+
+
+@view_config(route_name='objects.generic.traversal',
+             context=IContainerCollection,
+             request_method='GET',
+             permission=nauth.ACT_READ,
+             name=VIEW_UPCOMING_COURSES)
+class UpcomingCoursesView(_AbstractFavoriteCoursesView):
+
+    def _get_entry_for_record(self, record):
+        entry = ICourseCatalogEntry(record, None)
+        return entry
+
+    def _is_entry_upcoming(self, entry):
+        now = self.now
+        return (entry.StartDate is None or now < entry.StartDate)
+
+    @Lazy
+    def sorted_upcoming_entries_and_records(self):
+        result = sorted([x for x in self.entries_and_records
+                         if self._is_entry_upcoming(x[0])],
+                        key=self._sort_key,
+                        reverse=True)
+        return result
+
+    def _get_items(self):
+        """
+        Get only the upcoming courses
+        """
+        result = self.sorted_upcoming_entries_and_records
+        # Now grab the records we want
+        result = [x[1] for x in result]
+        return result
+
+
+@view_config(route_name='objects.generic.traversal',
+             context=IContainerCollection,
+             request_method='GET',
+             permission=nauth.ACT_READ,
+             name=VIEW_ARCHIVED_COURSES)
+class ArchivedCoursesView(_AbstractFavoriteCoursesView):
+
+    def _get_entry_for_record(self, record):
+        entry = ICourseCatalogEntry(record, None)
+        return entry
+
+    def _is_entry_archived(self, entry):
+        now = self.now
+        return (entry.EndDate is None or now > entry.EndDate)
+
+    @Lazy
+    def sorted_archived_entries_and_records(self):
+        result = sorted([x for x in self.entries_and_records
+                         if self._is_entry_archived(x[0])],
+                        key=self._sort_key,
+                        reverse=True)
+        return result
+
+    def _get_items(self):
+        """
+        Get only the archived courses
+        """
+        result = self.sorted_archived_entries_and_records
+        # Now grab the records we want
+        result = [x[1] for x in result]
+        return result
+
+
+@view_config(route_name='objects.generic.traversal',
+             context=IContainerCollection,
+             request_method='GET',
+             permission=nauth.ACT_READ,
+             name=VIEW_CURRENT_COURSES)
+class CurrentCoursesView(_AbstractFavoriteCoursesView):
+
+    def _get_entry_for_record(self, record):
+        entry = ICourseCatalogEntry(record, None)
+        return entry
+
+    @Lazy
+    def sorted_current_entries_and_records(self):
+        result = sorted([x for x in self.entries_and_records
+                         if self._is_entry_current(x[0])],
+                        key=self._sort_key,
+                        reverse=True)
+        return result
+
+    def _get_items(self):
+        """
+        Get only the current courses
+        """
+        result = self.sorted_current_entries_and_records
+        # Now grab the records we want
+        result = [x[1] for x in result]
         return result
