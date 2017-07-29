@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from __future__ import print_function, unicode_literals, absolute_import, division
+from __future__ import print_function, absolute_import, division
 __docformat__ = "restructuredtext en"
 
 # disable: accessing protected members, too many methods
@@ -19,11 +19,11 @@ from datetime import datetime
 
 from zope import component
 
+from nti.app.products.courseware.views import VIEW_CURRENT_COURSES
+from nti.app.products.courseware.views import VIEW_ARCHIVED_COURSES
+from nti.app.products.courseware.views import VIEW_UPCOMING_COURSES
 from nti.app.products.courseware.views import VIEW_USER_COURSE_ACCESS
 from nti.app.products.courseware.views import VIEW_COURSE_CATALOG_FAMILIES
-from nti.app.products.courseware.views import VIEW_UPCOMING_COURSES
-from nti.app.products.courseware.views import VIEW_ARCHIVED_COURSES
-from nti.app.products.courseware.views import VIEW_CURRENT_COURSES
 
 from nti.app.products.courseware.tests import PersistentInstructedCourseApplicationTestLayer
 
@@ -49,7 +49,7 @@ class TestCatalogViews(ApplicationLayerTest):
 
     layer = PersistentInstructedCourseApplicationTestLayer
 
-    default_origin = b'http://janux.ou.edu'
+    default_origin = 'http://janux.ou.edu'
 
     @WithSharedApplicationMockDS(testapp=True, users=True, default_authenticate=False)
     def test_anonymously_available_courses_view(self):
@@ -57,30 +57,28 @@ class TestCatalogViews(ApplicationLayerTest):
 
         # authed users also can't fetch this view
         with mock_dataserver.mock_db_trans(self.ds):
-            self._create_user('ichigo')
+            self._create_user(u'ichigo')
 
         unauthed_environ = self._make_extra_environ(username='ichigo')
-        self.testapp.get(
-                    anonymous_instances_url,
-                    extra_environ=unauthed_environ,
-                    status=403)
+        self.testapp.get(anonymous_instances_url,
+                         extra_environ=unauthed_environ,
+                         status=403)
 
         # unauthed requests that have our special classifier are allowed
         extra_environ = self._make_extra_environ(username=None)
-        result = self.testapp.get(
-                    anonymous_instances_url,
-                    extra_environ=extra_environ)
+        result = self.testapp.get(anonymous_instances_url,
+                                  extra_environ=extra_environ)
         result = result.json_body
         assert_that(result, has_entry('ItemCount', 1))
 
     def _create_and_enroll(self, username, section=None):
         with mock_dataserver.mock_db_trans():
-            self._create_user( username )
+            self._create_user(username)
 
         with mock_dataserver.mock_db_trans(site_name='platform.ou.edu'):
             user = User.get_user(username)
             cat = component.getUtility(ICourseCatalog)
-            course = cat['Fall2015']['CS 1323' ]
+            course = cat['Fall2015']['CS 1323']
             if section:
                 course = course.SubInstances[section]
             manager = ICourseEnrollmentManager(course)
@@ -88,9 +86,9 @@ class TestCatalogViews(ApplicationLayerTest):
 
     @WithSharedApplicationMockDS(testapp=True, users=True, default_authenticate=True)
     def test_catalog_families(self):
-        parent_user = 'parent_user'
-        section_user1 = 'section_user1'
-        section_user2 = 'section_user2'
+        parent_user = u'parent_user'
+        section_user1 = u'section_user1'
+        section_user2 = u'section_user2'
         self._create_and_enroll(parent_user)
         self._create_and_enroll(section_user1, section='010')
         self._create_and_enroll(section_user2, section='995')
@@ -108,32 +106,32 @@ class TestCatalogViews(ApplicationLayerTest):
 
             # Enrolled only have access to their entry, so nothing is returned.
             families_href = self.require_link_href_with_rel(course_ext,
-															VIEW_COURSE_CATALOG_FAMILIES)
+                                                            VIEW_COURSE_CATALOG_FAMILIES)
             families = self.testapp.get(families_href, extra_environ=environ)
             families = families.json_body
             assert_that(families[ITEM_COUNT], is_(1), user)
+
             # Now fetch access
             access_href = self.require_link_href_with_rel(course_ext,
-														  VIEW_USER_COURSE_ACCESS)
+                                                          VIEW_USER_COURSE_ACCESS)
             access = self.testapp.get(access_href, extra_environ=environ)
             access = access.json_body
             assert_that(access[CLASS], is_('CourseInstanceEnrollment'))
 
-
             # Admins
-            entry = self.testapp.get( '/dataserver2/Objects/%s' % entry_ntiid )
+            entry = self.testapp.get('/dataserver2/Objects/%s' % entry_ntiid)
             entry = entry.json_body
 
             # Admins have access to all parents/sections; so 4 are returned
             families_href = self.require_link_href_with_rel(entry,
-															VIEW_COURSE_CATALOG_FAMILIES)
+                                                            VIEW_COURSE_CATALOG_FAMILIES)
             families = self.testapp.get(families_href)
             families = families.json_body
             assert_that(families[ITEM_COUNT], is_(4))
 
             # Fetch administrative role
             access_href = self.require_link_href_with_rel(entry,
-														  VIEW_USER_COURSE_ACCESS)
+                                                          VIEW_USER_COURSE_ACCESS)
             access = self.testapp.get(access_href)
             access = access.json_body
             assert_that(access[CLASS], is_('CourseInstanceAdministrativeRole'))
@@ -167,14 +165,15 @@ class TestCatalogViews(ApplicationLayerTest):
         get_params = {"notBefore": notBefore, "notAfter": notAfter}
 
         res = self.testapp.get(get_enrolled_courses_path, get_params)
-        assert_that(res.json_body, get_params, has_entry("Items", has_length(1)))
+        assert_that(res.json_body, get_params,
+                    has_entry("Items", has_length(1)))
 
         self.testapp.post_json(enroll_path,
-                         'tag:nextthought.com,2011-10:NTI-CourseInfo-Fall2013_CLC3403_LawAndJustice',
-                         status=201)
+                               'tag:nextthought.com,2011-10:NTI-CourseInfo-Fall2013_CLC3403_LawAndJustice',
+                               status=201)
         self.testapp.post_json(enroll_path,
-                         'tag:nextthought.com,2011-10:NTI-CourseInfo-Fall2015_CS_1323_SubInstances_995',
-                         status=201)
+                               'tag:nextthought.com,2011-10:NTI-CourseInfo-Fall2015_CS_1323_SubInstances_995',
+                               status=201)
 
         res = self.testapp.get(enroll_path)
         assert_that(res.json_body, has_entry("Items", has_length(2)))
@@ -220,38 +219,39 @@ class TestCatalogViews(ApplicationLayerTest):
         get_params = {"notBefore": "Garbage"}
 
         # Test with not an integer
-        self.testapp.get(
-                    enroll_path,
-                    get_params,
-                    status=422)
+        self.testapp.get(enroll_path,
+                         get_params,
+                         status=422)
 
     @WithSharedApplicationMockDS(testapp=True, users=True, default_authenticate=True)
     def test_upcoming_course_view(self):
-        upcoming_course_path = "/dataserver2/users/sjohnson%40nextthought.com/Courses/AllCourses/@@" + VIEW_UPCOMING_COURSES
-        
-        res = self.testapp.get(upcoming_course_path, 
+        upcoming_course_path = "/dataserver2/users/sjohnson%40nextthought.com/Courses/AllCourses/@@"
+        upcoming_course_path += VIEW_UPCOMING_COURSES
+
+        res = self.testapp.get(upcoming_course_path,
                                status=200)
-        
+
         res = res.json_body
         assert_that(res, has_entry("ItemCount", 0))
-        
+
     @WithSharedApplicationMockDS(testapp=True, users=True, default_authenticate=True)
     def test_archived_course_view(self):
-        archived_course_path = "/dataserver2/users/sjohnson%40nextthought.com/Courses/AllCourses/@@" + VIEW_ARCHIVED_COURSES
-        
-        res = self.testapp.get(archived_course_path, 
+        archived_course_path = "/dataserver2/users/sjohnson%40nextthought.com/Courses/AllCourses/@@"
+        archived_course_path += VIEW_ARCHIVED_COURSES
+
+        res = self.testapp.get(archived_course_path,
                                status=200)
-        
+
         res = res.json_body
         assert_that(res, has_entry("ItemCount", 5))
-    
+
     @WithSharedApplicationMockDS(testapp=True, users=True, default_authenticate=True)
     def test_current_course_view(self):
-        archived_course_path = "/dataserver2/users/sjohnson%40nextthought.com/Courses/AllCourses/@@" + VIEW_CURRENT_COURSES
-        
-        res = self.testapp.get(archived_course_path, 
+        archived_course_path = "/dataserver2/users/sjohnson%40nextthought.com/Courses/AllCourses/@@"
+        archived_course_path += VIEW_CURRENT_COURSES
+
+        res = self.testapp.get(archived_course_path,
                                status=200)
-        
+
         res = res.json_body
         assert_that(res, has_entry("ItemCount", 3))
-        

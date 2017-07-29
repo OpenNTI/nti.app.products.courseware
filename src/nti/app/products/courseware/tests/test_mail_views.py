@@ -47,7 +47,7 @@ from nti.app.testing.decorators import WithSharedApplicationMockDS
 
 from nti.app.testing.testing import ITestMailDelivery
 
-import nti.dataserver.tests.mock_dataserver as mock_dataserver
+from nti.dataserver.tests import mock_dataserver
 
 open_name = 'aaa_nextthought_com'
 credit_name = 'credit_nextthought_com'
@@ -341,7 +341,7 @@ class TestMailViews(ApplicationLayerTest):
 		role = res.json_body['Items'][0]
 		course_instance = role['CourseInstance']
 		roster_link = self.require_link_href_with_rel(course_instance, 'CourseEnrollmentRoster')
-		email_link = self.require_link_href_with_rel(course_instance, VIEW_COURSE_MAIL)
+		self.require_link_href_with_rel(course_instance, VIEW_COURSE_MAIL)
 
 		# Mail an open student
 		res = self.testapp.get( roster_link,

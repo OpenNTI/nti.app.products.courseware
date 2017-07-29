@@ -11,7 +11,7 @@ the workspace collections.
 .. $Id$
 """
 
-from __future__ import print_function, unicode_literals, absolute_import, division
+from __future__ import print_function, absolute_import, division
 __docformat__ = "restructuredtext en"
 
 logger = __import__('logging').getLogger(__name__)
@@ -101,7 +101,7 @@ ITEM_COUNT = StandardExternalFields.ITEM_COUNT
 
 @interface.implementer(IPathAdapter)
 @component.adapter(IUser, IRequest)
-def CoursesPathAdapter(context, request):
+def CoursesPathAdapter(context, unused_request):
     service = IUserService(context)
     workspace = ICoursesWorkspace(service)
     return workspace
@@ -194,14 +194,13 @@ class enroll_course_view(AbstractAuthenticatedView,
                     pass
 
         if catalog_entry is None:
-            raise_json_error(
-                        self.request,
-                        hexc.HTTPNotFound,
-                        {
-                            u'message': _("There is no course by that name"),
-                            u'code': 'NoCourseFoundError',
-                        },
-                        None)
+            raise_json_error(self.request,
+                             hexc.HTTPNotFound,
+                             {
+                                 'message': _(u"There is no course by that name"),
+                                 'code': 'NoCourseFoundError',
+                             },
+                             None)
 
         if not can_create(catalog_entry, request=self.request):
             raise hexc.HTTPForbidden()
@@ -212,14 +211,13 @@ class enroll_course_view(AbstractAuthenticatedView,
                                               parent=self.request.context,
                                               request=self.request)
         except InstructorEnrolledException as e:
-            raise_json_error(
-                    self.request,
-                    hexc.HTTPUnprocessableEntity,
-                    {
-                        u'message': str(e) or e.i18n_message,
-                        u'code': 'InstructorEnrolledError',
-                    },
-                    None)
+            raise_json_error(self.request,
+                             hexc.HTTPUnprocessableEntity,
+                             {
+                                 'message': str(e) or e.i18n_message,
+                                 'code': 'InstructorEnrolledError',
+                             },
+                             None)
 
         entry = catalog_entry
         if enrollment is not None:
@@ -231,6 +229,7 @@ class enroll_course_view(AbstractAuthenticatedView,
 
         return enrollment
 
+
 class _AbstractFavoriteCoursesView(AbstractAuthenticatedView):
     """
     An abstract view to fetch the `favorite` courses of a user. All
@@ -240,7 +239,7 @@ class _AbstractFavoriteCoursesView(AbstractAuthenticatedView):
     date is empty).
 
     params
-    	count - the minimum number of courses to return
+        count - the minimum number of courses to return
     """
 
     #: The default minimum number of items we return in our favorites view.
@@ -410,6 +409,7 @@ class WindowedFavoriteEnrolledCoursesView(_AbstractWindowedCoursesView):
     """
     Paged Administered Courses View
     """
+
     def _sort_key(self, entry_tuple):
         enrollment = entry_tuple[1]
         return enrollment.createdTime
@@ -429,7 +429,7 @@ class FavoriteEnrolledCoursesView(_AbstractFavoriteCoursesView):
     def _sort_key(self, entry_tuple):
         enrollment = entry_tuple[1]
         return enrollment.createdTime
-    
+
 
 @view_config(route_name='objects.generic.traversal',
              context=IAdministeredCoursesCollection,
@@ -487,6 +487,7 @@ class AllCatalogEntriesView(AbstractAuthenticatedView):
         result[TOTAL] = result[ITEM_COUNT] = len(items)
         return result
 
+
 @view_config(name="WindowedAllCourses")
 @view_config(name="WindowedAllCatalogEntries")
 @view_defaults(route_name='objects.generic.traversal',
@@ -502,6 +503,7 @@ class WindowedAllCatalogEntriesView(_AbstractWindowedCoursesView):
     def _get_entry_for_record(self, record):
         entry = ICourseCatalogEntry(record, None)
         return entry
+
 
 @view_config(name='AnonymouslyButNotPubliclyAvailableCourseInstances')
 @view_config(name='_AnonymouslyButNotPubliclyAvailableCourseInstances')
@@ -581,7 +583,6 @@ class UserCourseCatalogFamiliesView(AbstractAuthenticatedView):
                 result.append(entry)
         return result
 
-
     def __call__(self):
         result = LocatedExternalDict()
         entries = self._get_entries()
@@ -607,8 +608,8 @@ class UpcomingCoursesView(_AbstractFavoriteCoursesView):
 
     @Lazy
     def sorted_upcoming_entries_and_records(self):
-        result = sorted([x for x in self.entries_and_records
-                         if self._is_entry_upcoming(x[0])],
+        result = sorted((x for x in self.entries_and_records
+                         if self._is_entry_upcoming(x[0])),
                         key=self._sort_key,
                         reverse=True)
         return result
@@ -669,8 +670,8 @@ class CurrentCoursesView(_AbstractFavoriteCoursesView):
 
     @Lazy
     def sorted_current_entries_and_records(self):
-        result = sorted([x for x in self.entries_and_records
-                         if self._is_entry_current(x[0])],
+        result = sorted((x for x in self.entries_and_records
+                         if self._is_entry_current(x[0])),
                         key=self._sort_key,
                         reverse=True)
         return result
