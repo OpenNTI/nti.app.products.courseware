@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from __future__ import print_function, unicode_literals, absolute_import, division
+from __future__ import print_function, absolute_import, division
 __docformat__ = "restructuredtext en"
 
 # disable: accessing protected members, too many methods
@@ -46,8 +46,11 @@ class TestNotables(ApplicationLayerTest):
         # Enroll in our course, create two notes: one visible to my class
         # and one only through my community.  Only the one visible to my
         # course is notable.
+        with mock_dataserver.mock_db_trans():
+            self._create_user(u'sjohnson@nti.com')
+            
         with mock_dataserver.mock_db_trans(site_name='platform.ou.edu'):
-            user = User.get_user('sjohnson@nextthought.com')
+            user = User.get_user(u'sjohnson@nti.com')
 
             cat = component.getUtility(ICourseCatalog)
 
@@ -61,8 +64,8 @@ class TestNotables(ApplicationLayerTest):
             manager.enroll(user, scope='ForCreditDegree')
 
             course_scope = course.SharingScopes['ForCreditDegree']
-            new_community = Community.create_community(
-                username='new_shared_community')
+            username = u'new_shared_community'
+            new_community = Community.create_community(username=username)
             new_community._note_member(user)
             # Create a note visible to my community and my course
             note1 = Note()
@@ -97,7 +100,7 @@ class TestNotables(ApplicationLayerTest):
             assert_that(notable_filter.is_notable(note2, user), is_(False))
 
             # Not for instructor
-            assert_that(
-                notable_filter.is_notable(note1, instructor_user), is_(False))
-            assert_that(
-                notable_filter.is_notable(note2, instructor_user), is_(False))
+            assert_that(notable_filter.is_notable(note1, instructor_user),
+                        is_(False))
+            assert_that(notable_filter.is_notable(note2, instructor_user),
+                        is_(False))
