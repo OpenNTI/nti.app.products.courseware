@@ -591,25 +591,19 @@ class UserCourseCatalogFamiliesView(AbstractAuthenticatedView):
         return result
 
 
-@view_config(route_name='objects.generic.traversal',
-             context=IContainerCollection,
-             request_method='GET',
-             permission=nauth.ACT_READ,
-             name=VIEW_UPCOMING_COURSES)
-class UpcomingCoursesView(_AbstractFavoriteCoursesView):
+class _AbstractFilteredCourseView(_AbstractFavoriteCoursesView):
 
     def _get_entry_for_record(self, record):
         entry = ICourseCatalogEntry(record, None)
         return entry
 
-    def _is_entry_upcoming(self, entry):
-        now = self.now
-        return (entry.StartDate is None or now < entry.StartDate)
+    def _filter(self, entry):
+        raise NotImplementedError()
 
     @Lazy
-    def sorted_upcoming_entries_and_records(self):
-        result = sorted((x for x in self.entries_and_records
-                         if self._is_entry_upcoming(x[0])),
+    def sorted_filtered_entries_and_records(self):
+        result = sorted([x for x in self.entries_and_records
+                         if self._filter(x[0])],
                         key=self._sort_key,
                         reverse=True)
         return result
@@ -618,10 +612,25 @@ class UpcomingCoursesView(_AbstractFavoriteCoursesView):
         """
         Get only the upcoming courses
         """
-        result = self.sorted_upcoming_entries_and_records
+        result = self.sorted_filtered_entries_and_records
         # Now grab the records we want
         result = [x[1] for x in result]
         return result
+
+
+@view_config(route_name='objects.generic.traversal',
+             request_method='GET',
+             permission=nauth.ACT_READ,
+             name=VIEW_UPCOMING_COURSES,
+             context=IContainerCollection)
+class AllUpcomingCoursesView(_AbstractFilteredCourseView):
+    """
+    Fetch all upcoming courses in the collection
+    """
+
+    def _filter(self, entry):
+        now = self.now
+        return (entry.StartDate is None or now < entry.StartDate)
 
 
 @view_config(route_name='objects.generic.traversal',
@@ -629,32 +638,14 @@ class UpcomingCoursesView(_AbstractFavoriteCoursesView):
              request_method='GET',
              permission=nauth.ACT_READ,
              name=VIEW_ARCHIVED_COURSES)
-class ArchivedCoursesView(_AbstractFavoriteCoursesView):
+class AllArchivedCoursesView(_AbstractFilteredCourseView):
+    """
+    Fetch all archived courses in the collection
+    """
 
-    def _get_entry_for_record(self, record):
-        entry = ICourseCatalogEntry(record, None)
-        return entry
-
-    def _is_entry_archived(self, entry):
+    def _filter(self, entry):
         now = self.now
         return (entry.EndDate is None or now > entry.EndDate)
-
-    @Lazy
-    def sorted_archived_entries_and_records(self):
-        result = sorted([x for x in self.entries_and_records
-                         if self._is_entry_archived(x[0])],
-                        key=self._sort_key,
-                        reverse=True)
-        return result
-
-    def _get_items(self):
-        """
-        Get only the archived courses
-        """
-        result = self.sorted_archived_entries_and_records
-        # Now grab the records we want
-        result = [x[1] for x in result]
-        return result
 
 
 @view_config(route_name='objects.generic.traversal',
@@ -662,25 +653,10 @@ class ArchivedCoursesView(_AbstractFavoriteCoursesView):
              request_method='GET',
              permission=nauth.ACT_READ,
              name=VIEW_CURRENT_COURSES)
-class CurrentCoursesView(_AbstractFavoriteCoursesView):
+class AllCurrentCoursesView(_AbstractFilteredCourseView):
+    """
+    Fetch all current courses in the collection
+    """
 
-    def _get_entry_for_record(self, record):
-        entry = ICourseCatalogEntry(record, None)
-        return entry
-
-    @Lazy
-    def sorted_current_entries_and_records(self):
-        result = sorted((x for x in self.entries_and_records
-                         if self._is_entry_current(x[0])),
-                        key=self._sort_key,
-                        reverse=True)
-        return result
-
-    def _get_items(self):
-        """
-        Get only the current courses
-        """
-        result = self.sorted_current_entries_and_records
-        # Now grab the records we want
-        result = [x[1] for x in result]
-        return result
+    def _filter(self, entry):
+        return self._is_entry_current(entry)

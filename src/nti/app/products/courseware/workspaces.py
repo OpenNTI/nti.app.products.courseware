@@ -409,7 +409,8 @@ class EnrolledCoursesCollection(_AbstractQueryBasedCoursesCollection):
     @property
     def links(self):
         result = []
-        rels = [VIEW_COURSE_FAVORITES, VIEW_ENROLLED_WINDOWED]
+        rels = [VIEW_ALL_COURSES_WINDOWED, VIEW_ALL_ENTRIES_WINDOWED,
+                VIEW_CURRENT_COURSES, VIEW_ARCHIVED_COURSES, VIEW_UPCOMING_COURSES]
         for rel in rels:
             link = Link(self,
                         rel=rel,
@@ -435,7 +436,8 @@ class AdministeredCoursesCollection(_AbstractQueryBasedCoursesCollection):
     @property
     def links(self):
         result = []
-        rels = [VIEW_COURSE_FAVORITES, VIEW_ADMINISTERED_WINDOWED]
+        rels = [VIEW_ALL_COURSES_WINDOWED, VIEW_ALL_ENTRIES_WINDOWED,
+                VIEW_CURRENT_COURSES, VIEW_ARCHIVED_COURSES, VIEW_UPCOMING_COURSES]
         for rel in rels:
             link = Link(self,
                         rel=rel,
