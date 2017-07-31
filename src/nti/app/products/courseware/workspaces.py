@@ -405,13 +405,12 @@ class EnrolledCoursesCollection(_AbstractQueryBasedCoursesCollection):
     contained_interface = ICourseInstanceEnrollment
 
     user_extra_auth = ACT_DELETE
-    
+
     @property
     def links(self):
         result = []
-        rels = [VIEW_ALL_COURSES_WINDOWED, VIEW_ALL_ENTRIES_WINDOWED,
-                VIEW_CURRENT_COURSES, VIEW_ARCHIVED_COURSES, VIEW_UPCOMING_COURSES,
-                VIEW_COURSE_FAVORITES]
+        rels = [VIEW_ENROLLED_WINDOWED, VIEW_CURRENT_COURSES, VIEW_ARCHIVED_COURSES,
+                VIEW_UPCOMING_COURSES, VIEW_COURSE_FAVORITES]
         for rel in rels:
             link = Link(self,
                         rel=rel,
@@ -433,13 +432,12 @@ class AdministeredCoursesCollection(_AbstractQueryBasedCoursesCollection):
     query_attr = 'iter_administrations'
     query_interface = IPrincipalAdministrativeRoleCatalog
     contained_interface = ICourseInstanceAdministrativeRole
-    
+
     @property
     def links(self):
         result = []
-        rels = [VIEW_ALL_COURSES_WINDOWED, VIEW_ALL_ENTRIES_WINDOWED,
-                VIEW_CURRENT_COURSES, VIEW_ARCHIVED_COURSES, VIEW_UPCOMING_COURSES,
-                VIEW_COURSE_FAVORITES]
+        rels = [VIEW_ADMINISTERED_WINDOWED, VIEW_CURRENT_COURSES, VIEW_ARCHIVED_COURSES,
+                VIEW_UPCOMING_COURSES, VIEW_COURSE_FAVORITES]
         for rel in rels:
             link = Link(self,
                         rel=rel,

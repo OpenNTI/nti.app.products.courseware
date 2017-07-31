@@ -407,12 +407,9 @@ class WindowedFavoriteAdministeredCoursesView(_AbstractWindowedCoursesView):
              renderer='rest')
 class WindowedFavoriteEnrolledCoursesView(_AbstractWindowedCoursesView):
     """
-    Paged Administered Courses View
+    Paged enrolled courses view. If we're paging, we'll want to sort
+    by entry start date, not the record enrollment date.
     """
-
-    def _sort_key(self, entry_tuple):
-        enrollment = entry_tuple[1]
-        return enrollment.createdTime
 
 
 @view_config(route_name='objects.generic.traversal',
@@ -423,7 +420,8 @@ class WindowedFavoriteEnrolledCoursesView(_AbstractWindowedCoursesView):
              renderer='rest')
 class FavoriteEnrolledCoursesView(_AbstractFavoriteCoursesView):
     """
-    A view into the `favorite` enrolled courses of a user.
+    A view into the `favorite` enrolled courses of a user. We want to sort
+    by enrollment record here.
     """
 
     def _sort_key(self, entry_tuple):
@@ -609,9 +607,6 @@ class _AbstractFilteredCourseView(_AbstractFavoriteCoursesView):
         return result
 
     def _get_items(self):
-        """
-        Get only the upcoming courses
-        """
         result = self.sorted_filtered_entries_and_records
         # Now grab the records we want
         result = [x[1] for x in result]
