@@ -410,7 +410,8 @@ class EnrolledCoursesCollection(_AbstractQueryBasedCoursesCollection):
     def links(self):
         result = []
         rels = [VIEW_ALL_COURSES_WINDOWED, VIEW_ALL_ENTRIES_WINDOWED,
-                VIEW_CURRENT_COURSES, VIEW_ARCHIVED_COURSES, VIEW_UPCOMING_COURSES]
+                VIEW_CURRENT_COURSES, VIEW_ARCHIVED_COURSES, VIEW_UPCOMING_COURSES,
+                VIEW_COURSE_FAVORITES]
         for rel in rels:
             link = Link(self,
                         rel=rel,
@@ -437,7 +438,8 @@ class AdministeredCoursesCollection(_AbstractQueryBasedCoursesCollection):
     def links(self):
         result = []
         rels = [VIEW_ALL_COURSES_WINDOWED, VIEW_ALL_ENTRIES_WINDOWED,
-                VIEW_CURRENT_COURSES, VIEW_ARCHIVED_COURSES, VIEW_UPCOMING_COURSES]
+                VIEW_CURRENT_COURSES, VIEW_ARCHIVED_COURSES, VIEW_UPCOMING_COURSES,
+                VIEW_COURSE_FAVORITES]
         for rel in rels:
             link = Link(self,
                         rel=rel,
