@@ -607,6 +607,9 @@ class _AbstractFilteredCourseView(_AbstractFavoriteCoursesView):
         return result
 
     def _get_items(self):
+        """
+        Get the courses relevant in the collection
+        """
         result = self.sorted_filtered_entries_and_records
         # Now grab the records we want
         result = [x[1] for x in result]
@@ -641,6 +644,15 @@ class AllArchivedCoursesView(_AbstractFilteredCourseView):
     def _filter(self, entry):
         now = self.now
         return (entry.EndDate is None or now > entry.EndDate)
+    
+    def _get_items(self):
+        """
+        Get only the archived courses
+        """
+        result = self.sorted_filtered_entries_and_records
+        # Now grab the records we want
+        result = [x[0] for x in result]
+        return result
 
 
 @view_config(route_name='objects.generic.traversal',
