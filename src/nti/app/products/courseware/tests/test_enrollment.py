@@ -30,6 +30,9 @@ from nti.app.products.courseware.utils import get_enrollment_options
 
 from nti.appserver.interfaces import ILibraryPathLastModifiedProvider
 
+from nti.contenttypes.courses.interfaces import ES_PUBLIC
+from nti.contenttypes.courses.interfaces import ES_PURCHASED
+
 from nti.contenttypes.courses.interfaces import ICourseCatalog
 from nti.contenttypes.courses.interfaces import ICourseInstance
 from nti.contenttypes.courses.interfaces import ICourseEnrollments
@@ -155,6 +158,8 @@ class TestEnrollment(ApplicationLayerTest):
 	def test_access_provider(self):
 		with mock_dataserver.mock_db_trans(self.ds):
 			self._create_user('marco')
+			self._create_user('alana')
+
 		with mock_dataserver.mock_db_trans(self.ds, site_name='platform.ou.edu'):
 			entity = User.get_user('marco')
 			entry = find_object_with_ntiid(self.course_ntiid)
@@ -162,6 +167,19 @@ class TestEnrollment(ApplicationLayerTest):
 			access_provider = IAccessProvider(course)
 			record = access_provider.grant_access(entity)
 			assert_that(record, not_none())
+			assert_that(record.Scope, is_(ES_PUBLIC))
+
+			enrollments = ICourseEnrollments(course)
+			assert_that(enrollments.is_principal_enrolled(entity), is_(True))
+
+			# Purchase enrollment
+			entity = User.get_user('alana')
+			entry = find_object_with_ntiid(self.course_ntiid)
+			course = ICourseInstance(entry)
+			access_provider = IAccessProvider(course)
+			record = access_provider.grant_access(entity, access_context='purchased')
+			assert_that(record, not_none())
+			assert_that(record.Scope, is_(ES_PURCHASED))
 
 			enrollments = ICourseEnrollments(course)
 			assert_that(enrollments.is_principal_enrolled(entity), is_(True))

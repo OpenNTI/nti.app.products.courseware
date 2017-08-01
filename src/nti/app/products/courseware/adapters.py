@@ -59,6 +59,7 @@ from nti.contenttypes.courses.index import IX_SITE
 from nti.contenttypes.courses.index import IX_USERNAME
 
 from nti.contenttypes.courses.interfaces import ES_PUBLIC
+from nti.contenttypes.courses.interfaces import ENROLLMENT_SCOPE_NAMES
 
 from nti.contenttypes.courses.interfaces import ICourseInstance
 from nti.contenttypes.courses.interfaces import ICourseOutlineNode
@@ -624,15 +625,28 @@ class _CourseAccessProvider(object):
 	def entry_ntiid(self):
 		return ICourseCatalogEntry(self.course).ntiid
 
+	def _scope_lookup(self, scope_name):
+		"""
+		Case insensitive lookup of given scope.
+		"""
+		scope_dict = dict()
+		for scope in ENROLLMENT_SCOPE_NAMES:
+			scope_dict[scope.lower()] = scope
+		scope_name = scope_name.lower()
+		# XXX: Should probably raise if we have a non-existent scope.
+		return scope_dict.get(scope_name, ES_PUBLIC)
+
 	def grant_access(self, entity, access_context=None):
 		"""
-		Enrolls the entity into the course.
+		Enrolls the entity into the course. Defaults to public enrollment.
 		"""
-		scope = access_context or ES_PUBLIC
+		scope = ES_PUBLIC
+		if access_context:
+			scope =  self._scope_lookup(access_context)
 		manager = ICourseEnrollmentManager(self.course)
 		result = manager.enroll(entity, scope=scope)
-		logger.info("User enrolled in course (%s) (%s)",
-                    entity.username, self.entry_ntiid)
+		logger.info("User enrolled in course (%s) (%s) (scope=%s)",
+                    entity.username, self.entry_ntiid, scope)
 		return result
 
 	def remove_access(self, entity):
