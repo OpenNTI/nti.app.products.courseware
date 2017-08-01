@@ -6,7 +6,7 @@ Views directly related to individual courses and course sub-objects.
 .. $Id$
 """
 
-from __future__ import print_function, unicode_literals, absolute_import, division
+from __future__ import print_function, absolute_import, division
 __docformat__ = "restructuredtext en"
 
 logger = __import__('logging').getLogger(__name__)
@@ -20,6 +20,8 @@ from zope import component
 from zope.event import notify
 
 from nti.app.base.abstract_views import AbstractAuthenticatedView
+
+from nti.app.externalization.error import raise_json_error
 
 from nti.app.externalization.view_mixins import BatchingUtilsMixin
 from nti.app.externalization.view_mixins import ModeledContentUploadRequestUtilsMixin
@@ -78,8 +80,8 @@ class AbstractRecursiveTransactionHistoryView(AbstractAuthenticatedView,
         number_items_needed = total_item_count
         batch_size, batch_start = self._get_batch_size_start()
         if batch_size is not None and batch_start is not None:
-            number_items_needed = min(
-                batch_size + batch_start + 2, total_item_count)
+            number_items_needed = min(batch_size + batch_start + 2,
+                                      total_item_count)
         return number_items_needed
 
     def _accum_lesson_transactions(self, lesson_overview, accum):
@@ -101,9 +103,8 @@ class AbstractRecursiveTransactionHistoryView(AbstractAuthenticatedView,
         accum = list()
 
         def handle_node(node):
-            node_transactions = self._get_transactions(node)
-            node_transactions = self._filter_node_transactions(
-                node_transactions)
+            traxs = self._get_transactions(node)
+            node_transactions = self._filter_node_transactions(traxs)
             accum.extend(node_transactions)
             for child in node.values() or ():
                 handle_node(child)
@@ -132,11 +133,12 @@ class AbstractRecursiveTransactionHistoryView(AbstractAuthenticatedView,
             result[LAST_MODIFIED] = max(x.createdTime for x in items)
             items.sort(key=lambda t: t.createdTime, reverse=self._sort_desc)
         result['TotalItemCount'] = item_count = len(items)
+
         # Supply this number to batching to prevent batch-ext links from showing
         # up if we've exhausted our supply.
         number_items_needed = self.__get_number_items_needed(item_count)
-        self._batch_items_iterable(
-            result, items, number_items_needed=number_items_needed)
+        self._batch_items_iterable(result, items,
+                                   number_items_needed=number_items_needed)
         result[ITEM_COUNT] = len(result.get(ITEMS) or ())
         return result
 
@@ -193,7 +195,12 @@ class AbstractChildMoveView(AbstractAuthenticatedView,
     def _get_object_to_move(self, ntiid, old_parent=None):
         obj = find_object_with_ntiid(ntiid)
         if obj is None:
-            raise hexc.HTTPUnprocessableEntity(_('Object no longer exists.'))
+            raise_json_error(self.request,
+                             hexc.HTTPUnprocessableEntity,
+                             {
+                                 'message': _(u"Object no longer exists."),
+                             },
+                             None)
         return obj
 
     def _get_old_parent(self, old_parent_ntiid):
@@ -201,8 +208,12 @@ class AbstractChildMoveView(AbstractAuthenticatedView,
         if old_parent_ntiid:
             result = find_object_with_ntiid(old_parent_ntiid)
             if result is None:
-                raise hexc.HTTPUnprocessableEntity(
-                    _('Old item parent no longer exists.'))
+                raise_json_error(self.request,
+                                 hexc.HTTPUnprocessableEntity,
+                                 {
+                                     'message': _(u"Old item parent no longer exists."),
+                                 },
+                                 None)
         return result
 
     def _get_new_parent(self, context_ntiid, new_parent_ntiid):
@@ -214,17 +225,26 @@ class AbstractChildMoveView(AbstractAuthenticatedView,
         if new_parent is None:
             # Really shouldn't happen if we validate this object is in our
             # outline.
-            raise hexc.HTTPUnprocessableEntity(_('New parent does not exist.'))
+            raise_json_error(self.request,
+                             hexc.HTTPUnprocessableEntity,
+                             {
+                                 'message': _(u"New parent does not exist."),
+                             },
+                             None)
         return new_parent
 
     def _validate_parents(self, old_parent_ntiid=None, new_parent_ntiid=None,
                           context_ntiid=None, *args, **kwargs):
         children_ntiids = self._get_children_ntiids(context_ntiid)
-        if 		new_parent_ntiid not in children_ntiids \
-                or (old_parent_ntiid
-                    and old_parent_ntiid not in children_ntiids):
-            raise hexc.HTTPUnprocessableEntity(
-                _('Cannot move between root objects.'))
+        if      new_parent_ntiid not in children_ntiids \
+            or (    old_parent_ntiid
+                and old_parent_ntiid not in children_ntiids):
+            raise_json_error(self.request,
+                             hexc.HTTPUnprocessableEntity,
+                             {
+                                 'message': _(u"Cannot move between root objects."),
+                             },
+                             None)
 
     def __call__(self):
         values = CaseInsensitiveDict(self.readInput())
@@ -245,7 +265,12 @@ class AbstractChildMoveView(AbstractAuthenticatedView,
                                context_ntiid=context_ntiid)
 
         if index is not None and index < 0:
-            raise hexc.HTTPBadRequest(_('Invalid index.'))
+            raise_json_error(self.request,
+                             hexc.HTTPBadRequest,
+                             {
+                                 'message': _(u"Invalid index."),
+                             },
+                             None)
         obj = self._get_object_to_move(ntiid, old_parent)
         new_parent.insert(index, obj)
 
@@ -254,8 +279,12 @@ class AbstractChildMoveView(AbstractAuthenticatedView,
         if old_parent_ntiid and old_parent_ntiid != new_parent_ntiid:
             did_remove = self._remove_from_parent(old_parent, obj)
             if not did_remove:
-                raise hexc.HTTPUnprocessableEntity(
-                    _('Moved item does not exist in old parent.'))
+                raise_json_error(self.request,
+                                 hexc.HTTPUnprocessableEntity,
+                                 {
+                                     'message': _(u"Moved item does not exist in old parent."),
+                                 },
+                                 None)
             old_parent.childOrderLock()
 
         if self.notify_type:
@@ -280,8 +309,12 @@ class IndexedRequestMixin(object):
                 index = self.request.subpath[1]
                 index = int(index)
             except (TypeError, IndexError):
-                raise hexc.HTTPUnprocessableEntity(
-                    _('Invalid index %s' % index))
+                raise_json_error(self.request,
+                                 hexc.HTTPUnprocessableEntity,
+                                 {
+                                     'message': _(u'Invalid index %s' % index),
+                                 },
+                                 None)
         index = index if index is None else max(index, 0)
         return index
 
@@ -299,7 +332,12 @@ class NTIIDPathMixin(object):
             except (TypeError, IndexError):
                 pass
         if result is None or not is_valid_ntiid_string(result):
-            raise hexc.HTTPUnprocessableEntity(_('Invalid ntiid %s' % result))
+            raise_json_error(self.request,
+                             hexc.HTTPUnprocessableEntity,
+                             {
+                                 'message': _(u'Invalid ntiid %s' % result),
+                             },
+                             None)
         return result
 
 
@@ -350,8 +388,13 @@ class DeleteChildViewMixin(NTIIDPathMixin):
 
         if found:
             # Multiple matches, none at index
-            raise hexc.HTTPConflict(
-                _('Ambiguous item ref no longer exists at this index.'))
+            msg = _(u'Ambiguous item ref no longer exists at this index.')
+            raise_json_error(self.request,
+                             hexc.HTTPConflict,
+                             {
+                                 'message': msg,
+                             },
+                             None)
 
     def __call__(self):
         self._validate()
@@ -359,7 +402,6 @@ class DeleteChildViewMixin(NTIIDPathMixin):
         index = values.get('index')
         ntiid = self._get_ntiid()
         found = self._get_item(ntiid, index)
-
         if found:
             to_delete, index = found
             self._remove(to_delete, index)
