@@ -19,6 +19,8 @@ from zope import component
 
 from zope.event import notify
 
+from zope.i18n import translate
+
 from nti.app.base.abstract_views import AbstractAuthenticatedView
 
 from nti.app.externalization.error import raise_json_error
@@ -309,10 +311,12 @@ class IndexedRequestMixin(object):
                 index = self.request.subpath[1]
                 index = int(index)
             except (TypeError, IndexError):
+                msg = translate(_(u"Invalid index ${index}.",
+                                mapping={'index': index})),
                 raise_json_error(self.request,
                                  hexc.HTTPUnprocessableEntity,
                                  {
-                                     'message': _(u'Invalid index %s' % index),
+                                     'message': msg,
                                  },
                                  None)
         index = index if index is None else max(index, 0)
@@ -332,10 +336,12 @@ class NTIIDPathMixin(object):
             except (TypeError, IndexError):
                 pass
         if result is None or not is_valid_ntiid_string(result):
+            msg = translate(_(u"Invalid ntiid ${ntiid}.",
+                              mapping={'ntiid': result})),
             raise_json_error(self.request,
                              hexc.HTTPUnprocessableEntity,
                              {
-                                 'message': _(u'Invalid ntiid %s' % result),
+                                 'message': msg,
                              },
                              None)
         return result
