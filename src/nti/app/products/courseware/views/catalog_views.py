@@ -197,7 +197,7 @@ class enroll_course_view(AbstractAuthenticatedView,
             raise_json_error(self.request,
                              hexc.HTTPNotFound,
                              {
-                                 'message': _(u"There is no course by that name"),
+                                 'message': _(u"There is no course by that name."),
                                  'code': 'NoCourseFoundError',
                              },
                              None)
