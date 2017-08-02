@@ -591,6 +591,18 @@ class UserCourseCatalogFamiliesView(AbstractAuthenticatedView):
 
 class _AbstractFilteredCourseView(_AbstractFavoriteCoursesView):
 
+    def _is_admin(self, course):
+        return is_admin_or_content_admin(self.remoteUser) \
+            or is_course_instructor_or_editor(course, self.remoteUser)
+            
+    def _attach_admin_info(self, courses):
+        result = []
+        for course in courses:
+            ext_obj = to_external_object(course)
+            ext_obj["isAdmin"] = self._is_admin(course)
+            result.append(ext_obj)
+        return result
+
     def _get_entry_for_record(self, record):
         entry = ICourseCatalogEntry(record, None)
         return entry
@@ -614,6 +626,15 @@ class _AbstractFilteredCourseView(_AbstractFavoriteCoursesView):
         # Now grab the records we want
         result = [x[1] for x in result]
         return result
+    
+    def __call__(self):
+        result = LocatedExternalDict()
+        result[ITEMS] = items = self._get_items()
+        if self.context.__name__ == 'AllCourses':
+            result[ITEMS] = self._attach_admin_info(items)
+        result[ITEM_COUNT] = len(items)
+        result[TOTAL] = len(self.entries_and_records)
+        return result
 
 
 @view_config(route_name='objects.generic.traversal',
@@ -621,7 +642,7 @@ class _AbstractFilteredCourseView(_AbstractFavoriteCoursesView):
              permission=nauth.ACT_READ,
              name=VIEW_UPCOMING_COURSES,
              context=IContainerCollection)
-class AllUpcomingCoursesView(_AbstractFilteredCourseView):
+class UpcomingCoursesView(_AbstractFilteredCourseView):
     """
     Fetch all upcoming courses in the collection
     """
@@ -636,7 +657,7 @@ class AllUpcomingCoursesView(_AbstractFilteredCourseView):
              request_method='GET',
              permission=nauth.ACT_READ,
              name=VIEW_ARCHIVED_COURSES)
-class AllArchivedCoursesView(_AbstractFilteredCourseView):
+class ArchivedCoursesView(_AbstractFilteredCourseView):
     """
     Fetch all archived courses in the collection
     """
@@ -651,7 +672,7 @@ class AllArchivedCoursesView(_AbstractFilteredCourseView):
              request_method='GET',
              permission=nauth.ACT_READ,
              name=VIEW_CURRENT_COURSES)
-class AllCurrentCoursesView(_AbstractFilteredCourseView):
+class CurrentCoursesView(_AbstractFilteredCourseView):
     """
     Fetch all current courses in the collection
     """
