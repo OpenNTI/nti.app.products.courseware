@@ -239,7 +239,7 @@ class AbstractChildMoveView(AbstractAuthenticatedView,
                           context_ntiid=None, *args, **kwargs):
         children_ntiids = self._get_children_ntiids(context_ntiid)
         if      new_parent_ntiid not in children_ntiids \
-            or (    old_parent_ntiid
+            or (old_parent_ntiid
                 and old_parent_ntiid not in children_ntiids):
             raise_json_error(self.request,
                              hexc.HTTPUnprocessableEntity,
@@ -312,7 +312,7 @@ class IndexedRequestMixin(object):
                 index = int(index)
             except (TypeError, IndexError):
                 msg = translate(_(u"Invalid index ${index}.",
-                                mapping={'index': index})),
+                                  mapping={'index': index})),
                 raise_json_error(self.request,
                                  hexc.HTTPUnprocessableEntity,
                                  {
@@ -379,10 +379,24 @@ class DeleteChildViewMixin(NTIIDPathMixin):
         """
         Find the item or index to delete for the given ntiid and index.
         """
+
+        # If the index param is an empty string, we should treat
+        # it the same as if it was not included at all. We should
+        # only raise a 422 if the index is a non-numeric string.
+        if index:
+            try:
+                index = int(index)
+            except ValueError:
+                raise_json_error(self.request,
+                                 hexc.HTTPUnprocessableEntity,
+                                 {
+                                     'message': "Index must be an int",
+                                 },
+                                 None)
         found = []
         for idx, child in enumerate(self._get_children()):
             if self._is_target(child, ntiid):
-                if idx == int(index):
+                if idx == index:
                     # We have an exact ref hit.
                     return None, idx
                 else:
