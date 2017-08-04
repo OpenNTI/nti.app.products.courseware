@@ -649,7 +649,7 @@ class UpcomingCoursesView(_AbstractFilteredCourseView):
 
     def _filter(self, entry):
         now = self.now
-        return (entry.StartDate is None or now < entry.StartDate)
+        return False if entry.StartDate is None else now < entry.StartDate
 
 
 @view_config(route_name='objects.generic.traversal',
@@ -664,7 +664,7 @@ class ArchivedCoursesView(_AbstractFilteredCourseView):
 
     def _filter(self, entry):
         now = self.now
-        return (entry.EndDate is None or now > entry.EndDate)
+        return False if entry.EndDate is None else now > entry.EndDate
 
 
 @view_config(route_name='objects.generic.traversal',
