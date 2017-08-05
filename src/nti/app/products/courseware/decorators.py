@@ -359,6 +359,7 @@ class _OpenEnrollmentOptionLinkDecorator(AbstractAuthenticatedRequestAwareDecora
 		result['IsAvailable'] = context.Enabled and record is None
 		result['IsEnrolled'] = bool(record is not None and record.Scope == ES_PUBLIC)
 
+
 @component.adapter(ICourseCatalogEntry)
 @interface.implementer(IExternalMappingDecorator)
 class _CourseCatalogEntryDecorator(AbstractAuthenticatedRequestAwareDecorator):
@@ -366,10 +367,16 @@ class _CourseCatalogEntryDecorator(AbstractAuthenticatedRequestAwareDecorator):
 	def _predicate(self, context, result):
 		return self._is_authenticated
 
+	def _get_legacy_status(self, record):
+		enrollment = ICourseInstanceEnrollment(record)
+		return getattr(enrollment, 'LegacyEnrollmentStatus', '')
+
 	def _do_decorate_external(self, context, result):
 		record = get_enrollment_record(context, self.remoteUser)
 		if record is not None:
 			result['RealEnrollmentStatus'] = record.Scope
+			legacy_status = self._get_legacy_status(record)
+			result['LegacyEnrollmentStatus'] = legacy_status
 
 		options = get_enrollment_options(context)
 		if options:
@@ -380,6 +387,7 @@ class _CourseCatalogEntryDecorator(AbstractAuthenticatedRequestAwareDecorator):
 					rel=VIEW_USER_COURSE_ACCESS,
 					elements=('@@%s' % VIEW_USER_COURSE_ACCESS,))
 		_links.append(link)
+
 
 @interface.implementer(IExternalMappingDecorator)
 class _BaseClassmatesLinkDecorator(AbstractAuthenticatedRequestAwareDecorator):
