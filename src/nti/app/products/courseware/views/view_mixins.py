@@ -13,13 +13,13 @@ logger = __import__('logging').getLogger(__name__)
 
 from requests.structures import CaseInsensitiveDict
 
-from pyramid import httpexceptions as hexc
-
 from zope import component
 
 from zope.event import notify
 
 from zope.i18n import translate
+
+from pyramid import httpexceptions as hexc
 
 from nti.app.base.abstract_views import AbstractAuthenticatedView
 
