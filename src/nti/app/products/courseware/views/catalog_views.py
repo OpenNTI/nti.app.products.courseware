@@ -20,13 +20,6 @@ from datetime import datetime
 
 from requests.structures import CaseInsensitiveDict
 
-from pyramid import httpexceptions as hexc
-
-from pyramid.interfaces import IRequest
-
-from pyramid.view import view_config
-from pyramid.view import view_defaults
-
 from zope import component
 from zope import interface
 
@@ -37,6 +30,13 @@ from zope.cachedescriptors.property import Lazy
 from zope.security.management import getInteraction
 
 from zope.traversing.interfaces import IPathAdapter
+
+from pyramid import httpexceptions as hexc
+
+from pyramid.interfaces import IRequest
+
+from pyramid.view import view_config
+from pyramid.view import view_defaults
 
 from nti.app.base.abstract_views import AbstractView
 from nti.app.base.abstract_views import AbstractAuthenticatedView
@@ -285,7 +285,7 @@ class _AbstractFavoriteCoursesView(AbstractAuthenticatedView):
 
     def _is_entry_current(self, entry):
         now = self.now
-        return (entry.StartDate is None or now > entry.StartDate) \
+        return  (entry.StartDate is None or now > entry.StartDate) \
             and (entry.EndDate is None or now < entry.EndDate)
 
     @Lazy
@@ -594,7 +594,7 @@ class _AbstractFilteredCourseView(_AbstractFavoriteCoursesView):
     def _is_admin(self, course):
         return is_admin_or_content_admin(self.remoteUser) \
             or is_course_instructor_or_editor(course, self.remoteUser)
-            
+
     def _attach_admin_info(self, courses):
         result = []
         for course in courses:
@@ -626,7 +626,7 @@ class _AbstractFilteredCourseView(_AbstractFavoriteCoursesView):
         # Now grab the records we want
         result = [x[1] for x in result]
         return result
-    
+
     def __call__(self):
         result = LocatedExternalDict()
         result[ITEMS] = items = self._get_items()
