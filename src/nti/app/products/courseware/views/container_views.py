@@ -4,7 +4,7 @@
 .. $Id$
 """
 
-from __future__ import print_function, unicode_literals, absolute_import, division
+from __future__ import print_function, absolute_import, division
 __docformat__ = "restructuredtext en"
 
 logger = __import__('logging').getLogger(__name__)
@@ -85,9 +85,9 @@ class ContentContainersView(AbstractContainersView):
 
     def _raise_error(self):
         raise_error({
-            u'message': _("No courses found for reading."),
-            u'code': 'NoCoursesForReading',
-            })
+            'message': _(u"No courses found for reading."),
+            'code': 'NoCoursesForReading',
+        })
 
     def _get_courses(self):
         return get_courses_for_packages(packages=self.context.ntiid)
@@ -101,7 +101,7 @@ class ContentContainersView(AbstractContainersView):
                 result.append(obj)
         return result
 
-    def _get_lessons(self, courses):
+    def _get_lessons(self, unused_courses):
         refs = get_content_related_work_refs(self.context)
         lessons = []
         catalog = get_library_catalog()
@@ -119,9 +119,9 @@ class AbstractAssessmentContainersView(AbstractContainersView):
 
     def _raise_error(self):
         raise_error({
-            u'message': _("No courses found for assessment."),
-            u'code': 'NoCoursesForAssessment',
-            })
+            'message': _(u"No courses found for assessment."),
+            'code': 'NoCoursesForAssessment',
+        })
 
     def _get_courses(self):
         return get_evaluation_courses(self.context)
