@@ -36,6 +36,10 @@ from nti.app.products.courseware.resources.utils import is_internal_file_link
 from nti.app.products.courseware.resources.utils import to_external_file_link
 from nti.app.products.courseware.resources.utils import get_file_from_external_link
 
+from nti.base._compat import text_
+
+from nti.base.interfaces import DEFAULT_CONTENT_TYPE
+
 from nti.contentfolder.utils import mkdirs
 from nti.contentfolder.utils import traverse
 from nti.contentfolder.utils import TraversalException
@@ -59,7 +63,7 @@ def get_namedfile_factory(source):
         contentType, _, _ = getImageInfo(source)
         source.seek(0)  # reset
         factory = CourseContentFile if contentType else CourseContentImage
-    contentType = contentType or u'application/octet-stream'
+    contentType = contentType or text_(DEFAULT_CONTENT_TYPE)
     return factory, contentType
 
 
