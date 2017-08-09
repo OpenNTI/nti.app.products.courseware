@@ -18,8 +18,6 @@ from nti.app.products.courseware import ASSETS_FOLDER
 from nti.app.products.courseware import IMAGES_FOLDER
 from nti.app.products.courseware import DOCUMENTS_FOLDER
 
-from nti.app.products.courseware.resources.interfaces import ICourseContentResource
-
 from nti.app.products.courseware.resources.utils import is_internal_file_link
 from nti.app.products.courseware.resources.utils import get_file_from_external_link
 
@@ -45,8 +43,7 @@ def save_resources_to_filer(provided, obj, filer, ext_obj=None):
             if resource is None:
                 continue
             contentType = resource.contentType
-            if      ICourseContentResource.providedBy(resource) \
-                and hasattr(resource, 'path'):
+            if hasattr(resource, 'path'):
                 path = resource.path
                 path = os.path.split(path)[0]  # remove resource name
                 path = path[1:] if path.startswith('/') else path
