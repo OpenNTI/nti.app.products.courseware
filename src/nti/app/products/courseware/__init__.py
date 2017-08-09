@@ -12,15 +12,6 @@ logger = __import__('logging').getLogger(__name__)
 import zope.i18nmessageid
 MessageFactory = zope.i18nmessageid.MessageFactory(__name__)
 
-#: Folder for storing course assets
-ASSETS_FOLDER = 'assets'
-
-#: Folder for storing course documents
-DOCUMENTS_FOLDER = 'Documents'
-
-#: Folder for storing course images
-IMAGES_FOLDER = 'Images'
-
 #: User enrollment last mod annotation key
 USER_ENROLLMENT_LAST_MODIFIED_KEY = 'nti.app.products.courseware.UserEnrollmentLastModified'
 

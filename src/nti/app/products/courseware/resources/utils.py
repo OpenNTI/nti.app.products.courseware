@@ -17,13 +17,13 @@ from nti.app.contentfile.view_mixins import is_oid_external_link
 from nti.app.contentfile.view_mixins import to_external_download_oid_href
 from nti.app.contentfile.view_mixins import get_file_from_oid_external_link
 
+from nti.app.contentfolder import ASSETS_FOLDER
+from nti.app.contentfolder import IMAGES_FOLDER
+from nti.app.contentfolder import DOCUMENTS_FOLDER
+
 from nti.app.contentfolder.utils import is_cf_io_href
 from nti.app.contentfolder.utils import to_external_cf_io_href
 from nti.app.contentfolder.utils import get_file_from_cf_io_url
-
-from nti.app.products.courseware import ASSETS_FOLDER
-from nti.app.products.courseware import IMAGES_FOLDER
-from nti.app.products.courseware import DOCUMENTS_FOLDER
 
 from nti.app.products.courseware.resources.interfaces import ICourseRootFolder
 from nti.app.products.courseware.resources.interfaces import ICourseSourceFiler

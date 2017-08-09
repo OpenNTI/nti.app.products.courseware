@@ -23,13 +23,13 @@ from pyramid import httpexceptions as hexc
 
 from pyramid.threadlocal import get_current_request
 
+from nti.app.contentfolder import ASSETS_FOLDER
+from nti.app.contentfolder import IMAGES_FOLDER
+from nti.app.contentfolder import DOCUMENTS_FOLDER
+
 from nti.app.externalization.error import raise_json_error
 
 from nti.app.products.courseware import MessageFactory
-
-from nti.app.products.courseware import ASSETS_FOLDER
-from nti.app.products.courseware import IMAGES_FOLDER
-from nti.app.products.courseware import DOCUMENTS_FOLDER
 
 from nti.app.products.courseware import VIEW_CONTENTS
 from nti.app.products.courseware import VIEW_RESOURCES

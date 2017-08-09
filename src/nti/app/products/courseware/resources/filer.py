@@ -17,7 +17,9 @@ from zope import lifecycleevent
 
 from nti.app.contentfile import transfer_data
 
-from nti.app.products.courseware import ASSETS_FOLDER
+from nti.app.contentfolder import ASSETS_FOLDER
+
+from nti.app.contentfolder.utils import get_unique_file_name
 
 from nti.app.products.courseware.resources.interfaces import ICourseRootFolder
 from nti.app.products.courseware.resources.interfaces import ICourseSourceFiler
@@ -33,8 +35,6 @@ from nti.app.products.courseware.resources.utils import get_documents_folder
 from nti.app.products.courseware.resources.utils import is_internal_file_link
 from nti.app.products.courseware.resources.utils import to_external_file_link
 from nti.app.products.courseware.resources.utils import get_file_from_external_link
-
-from nti.app.contentfolder.utils import get_unique_file_name
 
 from nti.contentfolder.utils import mkdirs
 from nti.contentfolder.utils import traverse

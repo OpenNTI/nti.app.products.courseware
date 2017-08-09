@@ -30,11 +30,11 @@ from nti.app.base.abstract_views import AbstractAuthenticatedView
 
 from nti.app.contentfile import validate_sources
 
+from nti.app.contentfolder import ASSETS_FOLDER
+
 from nti.app.contentfolder.utils import get_unique_file_name
 
 from nti.app.externalization.view_mixins import ModeledContentUploadRequestUtilsMixin
-
-from nti.app.products.courseware import ASSETS_FOLDER
 
 from nti.app.products.courseware.discussions import get_topic_key
 from nti.app.products.courseware.discussions import create_topics

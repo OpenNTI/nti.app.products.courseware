@@ -14,9 +14,9 @@ import six
 
 from zope.interface.interfaces import IMethod
 
-from nti.app.products.courseware import ASSETS_FOLDER
-from nti.app.products.courseware import IMAGES_FOLDER
-from nti.app.products.courseware import DOCUMENTS_FOLDER
+from nti.app.contentfolder import ASSETS_FOLDER
+from nti.app.contentfolder import IMAGES_FOLDER
+from nti.app.contentfolder import DOCUMENTS_FOLDER
 
 from nti.app.products.courseware.resources.utils import is_internal_file_link
 from nti.app.products.courseware.resources.utils import get_file_from_external_link
