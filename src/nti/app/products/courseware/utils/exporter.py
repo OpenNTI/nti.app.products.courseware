@@ -45,7 +45,7 @@ def save_resources_to_filer(provided, obj, filer, ext_obj=None):
             contentType = resource.contentType
             if hasattr(resource, 'path'):
                 path = resource.path
-                path = os.path.split(path)[0]  # remove resource name
+                path = os.path.split(path)[0] if path else '' # remove resource name
                 path = path[1:] if path.startswith('/') else path
                 if      not path.startswith(IMAGES_FOLDER) \
                     and not path.startswith(DOCUMENTS_FOLDER) \
