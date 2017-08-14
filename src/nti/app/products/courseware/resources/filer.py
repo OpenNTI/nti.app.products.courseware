@@ -137,7 +137,7 @@ class CourseSourceFiler(object):
         else:
             bucket = self.root
 
-        filename = key
+        filename = text_(key)
         if overwrite:
             if filename in bucket:
                 bucket.remove(filename)
