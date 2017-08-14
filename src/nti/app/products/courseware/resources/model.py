@@ -13,8 +13,6 @@ from zope import interface
 
 from zope.cachedescriptors.property import CachedProperty
 
-from zope.container.contained import Contained
-
 from nti.app.products.courseware.resources.interfaces import ICourseRootFolder
 from nti.app.products.courseware.resources.interfaces import ICourseContentFile
 from nti.app.products.courseware.resources.interfaces import ICourseContentImage
@@ -53,7 +51,7 @@ class CourseRootFolder(RootFolder, AssociationsMixin):
 
 
 @interface.implementer(ICourseContentResource)
-class CourseContentResource(Contained):
+class CourseContentResource(object):
 
     def __init__(self, *args, **kwargs):
         super(CourseContentResource, self).__init__(*args, **kwargs)
