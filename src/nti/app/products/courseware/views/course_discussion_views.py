@@ -171,8 +171,7 @@ class CourseDiscussionsPostView(AbstractAuthenticatedView,
         intids = component.getUtility(IIntIds)
         doc_id = intids.register(discussion)
         # get a unique file nane
-        name, _ = get_unique_file_name("%s.json" % doc_id,
-                                       container=self.context)
+        name = get_unique_file_name("%s.json" % doc_id, self.context)
         lifecycleevent.created(discussion)
         self.context[name] = discussion
         # set a proper NTI course bundle id
