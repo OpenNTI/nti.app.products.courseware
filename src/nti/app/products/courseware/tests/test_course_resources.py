@@ -57,8 +57,8 @@ class TestCourseResoures(ApplicationLayerTest):
         course_ntiid = self.course_oid()
         href = '/dataserver2/Objects/%s/resources' % course_ntiid
         res = self.testapp.post(href + '/@@upload',
-                                upload_files=[('ichigo', 'ichigo.txt', b'ichigo'),
-                                              ('aizen', 'aizen.txt', b'aizen')],
+                                upload_files=[('ichigo.txt', 'ichigo.txt', b'ichigo'),
+                                              ('aizen.txt', 'aizen.txt', b'aizen')],
                                 status=201)
         assert_that(res.json_body,
                     has_entries('ItemCount', is_(2),
