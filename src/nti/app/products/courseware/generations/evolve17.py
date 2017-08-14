@@ -105,6 +105,6 @@ def do_evolve(context, generation=generation):
 
 def evolve(context):
     """
-    Evolve to generation 16 by setting the proper site name to invitations
+    Evolve to generation 17 by setting the proper site name to invitations
     """
     do_evolve(context)
