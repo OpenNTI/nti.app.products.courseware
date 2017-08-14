@@ -48,8 +48,6 @@ from nti.contenttypes.courses.interfaces import ICourseInstance
 
 from nti.coremetadata.interfaces import SYSTEM_USER_ID
 
-from nti.namedfile.file import safe_filename
-
 from nti.namedfile.utils import getImageInfo
 
 from nti.traversal.traversal import find_interface
@@ -67,18 +65,14 @@ def get_namedfile_factory(source):
     return factory, contentType
 
 
-def get_namedfile_from_source(source, name, filename=None):
+def get_namedfile_from_source(source, filename, name=None):
     factory, contentType = get_namedfile_factory(source)
     result = factory()
-    result.name = name
+    result.filename = filename
     transfer_data(source, result)
     result.contentType = result.contentType or contentType
-    # for filename we want to use the filename as originally provided on the source, not
-    # the sluggified internal name. This allows us to give it back in the
-    # Content-Disposition header on download
-    result.filename = filename \
-                   or result.filename \
-                   or getattr(source, 'name', name)
+    if name and filename != name:
+        result.name = name 
     return result
 
 
@@ -143,15 +137,14 @@ class CourseSourceFiler(object):
         else:
             bucket = self.root
 
-        filename = None
-        key = safe_filename(key)
+        filename = key
         if overwrite:
-            if key in bucket:
-                bucket.remove(key)
+            if filename in bucket:
+                bucket.remove(filename)
         else:
-            key, filename = get_unique_file_name(key, bucket)
+            filename = get_unique_file_name(filename, bucket)
 
-        namedfile = get_namedfile_from_source(source, key, filename)
+        namedfile = get_namedfile_from_source(source, filename)
         namedfile.creator = username or SYSTEM_USER_ID  # set creator
         namedfile.contentType = contentType if contentType else namedfile.contentType
         bucket.add(namedfile)
