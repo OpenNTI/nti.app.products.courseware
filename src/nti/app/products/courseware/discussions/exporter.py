@@ -66,8 +66,8 @@ class CourseDiscussionsExporter(BaseSectionExporter):
 
     def export(self, context, filer, backup=True, salt=None):
         course = ICourseInstance(context)
-        bucket = path_to_discussions(course)
         discussions = ICourseDiscussions(course)
+        filer.default_bucket = bucket = path_to_discussions(course)
         for name, discussion in list(discussions.items()):  # snapshot
             ext_obj = to_external_object(discussion, decorate=False)
             self._process_resources(discussion, ext_obj, filer)
