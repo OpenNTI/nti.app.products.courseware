@@ -92,28 +92,24 @@ class CourseSourceFiler(object):
 
     @property
     def username(self):
-        result = getattr(self.user, 'username', None)
-        return result
+        return getattr(self.user, 'username', None)
 
     @property
     def root(self):
-        result = ICourseRootFolder(self.course)
-        return result
+        return ICourseRootFolder(self.course)
+    default_bucket = root
 
     @property
     def assets(self):
-        result = get_assets_folder(self.course)
-        return result
+        return get_assets_folder(self.course)
 
     @property
     def images(self):
-        result = get_images_folder(self.course)
-        return result
+        return get_images_folder(self.course)
 
     @property
     def documents(self):
-        result = get_documents_folder(self.course)
-        return result
+        return get_documents_folder(self.course)
 
     def get_create_folders(self, parent, name):
         def builder():
