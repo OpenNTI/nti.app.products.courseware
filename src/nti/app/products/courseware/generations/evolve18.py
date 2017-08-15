@@ -11,8 +11,9 @@ logger = __import__('logging').getLogger(__name__)
 
 generation = 18
 
-from zope import component, lifecycleevent
+from zope import component
 from zope import interface
+from zope import lifecycleevent
 
 from zope.component.hooks import site as current_site
 
