@@ -31,20 +31,6 @@ from nti.dataserver.interfaces import IOIDResolver
 from nti.site.hostpolicy import get_all_host_sites
 
 
-@interface.implementer(IDataserver)
-class MockDataserver(object):
-
-    root = None
-
-    def get_by_oid(self, oid, ignore_creator=False):
-        resolver = component.queryUtility(IOIDResolver)
-        if resolver is None:
-            logger.warn("Using dataserver without a proper ISiteManager.")
-        else:
-            return resolver.get_object_by_oid(oid, ignore_creator=ignore_creator)
-        return None
-
-
 def process_course_resources(container):
     for key, value in list(container.items()):
         modify = False
@@ -62,13 +48,13 @@ def process_course_resources(container):
         else:
             # __name__ is now an alias of 'filename'
             # make sure filename is in dict or has the correct value
-            if     'filename' not in value.__dict__ \
-                or value.__dict__['filename'] != key:
+            if 'filename' not in value.__dict__ \
+                    or value.__dict__['filename'] != key:
                 value.filename = key
                 modify = True
             # name may be redundant
-            if      'name' in value.__dict__ \
-                and value.__dict__['name'] == key:
+            if 'name' in value.__dict__ \
+                    and value.__dict__['name'] == key:
                 del value.__dict__['name']
                 modify = True
         if modify:
@@ -90,6 +76,20 @@ def _process_site(current, intids, seen):
             resources = course_resources(course, create=False)
             if resources:
                 process_course_resources(resources)
+
+
+@interface.implementer(IDataserver)
+class MockDataserver(object):
+
+    root = None
+
+    def get_by_oid(self, oid, ignore_creator=False):
+        resolver = component.queryUtility(IOIDResolver)
+        if resolver is None:
+            logger.warn("Using dataserver without a proper ISiteManager.")
+        else:
+            return resolver.get_object_by_oid(oid, ignore_creator=ignore_creator)
+        return None
 
 
 def do_evolve(context, generation=generation):
