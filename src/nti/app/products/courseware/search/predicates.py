@@ -55,7 +55,7 @@ from nti.traversal.traversal import find_interface
 @interface.implementer(ISearchHitPredicate)
 class _CourseSearchHitPredicate(DefaultSearchHitPredicate):
 
-    __name__ = 'DefaultCourse'
+    __name__ = u'DefaultCourse'
 
     @Lazy
     def request(self):
@@ -82,7 +82,7 @@ class _CourseSearchHitPredicate(DefaultSearchHitPredicate):
                 return True  # first node found
         return False
 
-    def allow(self, item, score, query=None):
+    def allow(self, item, unused_score, unused_query=None):
         if self.principal is None or self.is_admin(item):
             return True
         nodes = component.queryMultiAdapter((item, self.user),
@@ -94,20 +94,20 @@ class _CourseSearchHitPredicate(DefaultSearchHitPredicate):
 
 @component.adapter(IContentUnit)
 class _ContentHitPredicate(_CourseSearchHitPredicate):
-    __name__ = 'CourseContentUnit'
+    __name__ = u'CourseContentUnit'
 
 
 @component.adapter(IPresentationAsset)
 class _PresentationAssetHitPredicate(_CourseSearchHitPredicate):
-    __name__ = 'CoursePresentationAsset'
+    __name__ = u'CoursePresentationAsset'
 
 
 @interface.implementer(IUserGeneratedData)
 class _UserGeneratedDataHitPredicate(_CourseSearchHitPredicate):
 
-    __name__ = 'CourseUserGeneratedData'
+    __name__ = u'CourseUserGeneratedData'
 
-    def allow(self, item, score, query=None):
+    def allow(self, item, unused_score, unused_query=None):
         nodes = component.queryMultiAdapter((item, self.user),
                                             ICourseOutlineNodes)
         if not nodes:  # nothing points to it or no adapter
@@ -118,9 +118,9 @@ class _UserGeneratedDataHitPredicate(_CourseSearchHitPredicate):
 @interface.implementer(ICommunityForum)
 class _CommunityForumHitPredicate(_CourseSearchHitPredicate):
 
-    __name__ = 'CourseCommunityForum'
+    __name__ = u'CourseCommunityForum'
 
-    def allow(self, item, score, query=None):
+    def allow(self, item, unused_score, unused_query=None):
         course = find_interface(item, ICourseInstance, strict=False)
         entry = ICourseCatalogEntry(course, None)
         if entry is not None:
@@ -134,9 +134,9 @@ class _CommunityForumHitPredicate(_CourseSearchHitPredicate):
 
 @interface.implementer(ICommunityHeadlinePost)
 class _CommunityHeadlinePostHitPredicate(_CommunityForumHitPredicate):
-    __name__ = 'CourseCommunityHeadlinePost'
+    __name__ = u'CourseCommunityHeadlinePost'
 
 
 @interface.implementer(IGeneralForumComment)
 class _GeneralForumCommentHitPredicate(_CommunityHeadlinePostHitPredicate):
-    __name__ = 'CourseGeneralForumComment'
+    __name__ = u'CourseGeneralForumComment'
