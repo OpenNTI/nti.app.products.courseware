@@ -25,14 +25,14 @@ from zope.location.traversing import LocationPhysicallyLocatable
 
 from pyramid.threadlocal import get_current_request
 
+from nti.app.products.courseware import VIEW_CURRENT_COURSES
 from nti.app.products.courseware import VIEW_COURSE_FAVORITES
-from nti.app.products.courseware import VIEW_ADMINISTERED_WINDOWED
+from nti.app.products.courseware import VIEW_UPCOMING_COURSES
+from nti.app.products.courseware import VIEW_ARCHIVED_COURSES
 from nti.app.products.courseware import VIEW_ENROLLED_WINDOWED
 from nti.app.products.courseware import VIEW_ALL_COURSES_WINDOWED
 from nti.app.products.courseware import VIEW_ALL_ENTRIES_WINDOWED
-from nti.app.products.courseware import VIEW_UPCOMING_COURSES
-from nti.app.products.courseware import VIEW_CURRENT_COURSES
-from nti.app.products.courseware import VIEW_ARCHIVED_COURSES
+from nti.app.products.courseware import VIEW_ADMINISTERED_WINDOWED
 
 from nti.app.products.courseware.interfaces import ICoursesWorkspace
 from nti.app.products.courseware.interfaces import ICourseInstanceEnrollment
@@ -137,7 +137,7 @@ def CoursesWorkspace(user_service):
 @interface.implementer(IContainerCollection)
 class AllCoursesCollection(Contained):
 
-    __name__ = 'AllCourses'
+    __name__ = u'AllCourses'
 
     accepts = ()
 
@@ -300,7 +300,8 @@ class _AbstractQueryBasedCoursesCollection(Contained):
 
         # No actual match. Legacy ProviderUniqueID?
         for o in self.container:
-            if ICourseCatalogEntry(o).ProviderUniqueID == key:
+            entry = ICourseCatalogEntry(o, None)
+            if getattr(entry, 'ProviderUniqueID', None) == key:
                 logger.warning("Using legacy provider ID to match %s to %s",
                                 key, o)
                 return o
@@ -354,7 +355,7 @@ class DefaultCourseInstanceEnrollment(CourseInstanceEnrollment):
 
     __external_class_name__ = 'CourseInstanceEnrollment'
 
-    def __init__(self, record, user=None):
+    def __init__(self, record, unused_user=None):
         CourseInstanceEnrollment.__init__(self, record.CourseInstance, record.Principal)
         self._record = record
         self.createdTime = self._record.createdTime
@@ -379,13 +380,13 @@ class DefaultCourseInstanceEnrollment(CourseInstanceEnrollment):
         return self._record.Scope
 
 
-def enrollment_from_record(course, record):
+def enrollment_from_record(unused_course, record):
     return DefaultCourseInstanceEnrollment(record)
 
 
 @interface.implementer(ICourseCatalogEntry)
 def wrapper_to_catalog(wrapper):
-    return ICourseCatalogEntry(wrapper.CourseInstance)
+    return ICourseCatalogEntry(wrapper.CourseInstance, None)
 
 
 @interface.implementer(IEnrolledCoursesCollection)
@@ -425,7 +426,7 @@ class EnrolledCoursesCollection(_AbstractQueryBasedCoursesCollection):
 class AdministeredCoursesCollection(_AbstractQueryBasedCoursesCollection):
 
     #: Our name, part of our URL.
-    __name__ = 'AdministeredCourses'
+    __name__ = u'AdministeredCourses'
 
     name = alias('__name__', __name__)
 
