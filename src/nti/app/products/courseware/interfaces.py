@@ -27,8 +27,11 @@ from zope.location.interfaces import IContained
 from zope.security.permission import Permission
 
 from nti.appserver.interfaces import IContainerResource
+
 from nti.appserver.workspaces.interfaces import IWorkspace
 from nti.appserver.workspaces.interfaces import IContainerCollection
+
+from nti.base.interfaces import ILastModified
 
 from nti.contenttypes.courses.interfaces import ICourseInstance
 from nti.contenttypes.courses.interfaces import IPrincipalEnrollments
@@ -38,7 +41,6 @@ from nti.contenttypes.courses.legacy_catalog import ILegacyCourseCatalogEntry
 
 from nti.contenttypes.reports.interfaces import IReportContext
 
-from nti.coremetadata.interfaces import ILastModified
 from nti.coremetadata.interfaces import IShouldHaveTraversablePath
 
 from nti.ntiids.schema import ValidNTIID
