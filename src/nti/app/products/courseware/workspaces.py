@@ -393,7 +393,7 @@ def wrapper_to_catalog(wrapper):
 class EnrolledCoursesCollection(_AbstractQueryBasedCoursesCollection):
 
     #: Our name, part of our URL.
-    __name__ = 'EnrolledCourses'
+    __name__ = u'EnrolledCourses'
 
     name = alias('__name__', __name__)
 
