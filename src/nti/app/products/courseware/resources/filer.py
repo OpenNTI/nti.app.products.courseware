@@ -84,7 +84,9 @@ def is_image(key, contentType=None):
 
 @interface.implementer(ICourseSourceFiler)
 class CourseSourceFiler(object):
-
+    
+    default_bucket = None
+        
     def __init__(self, context=None, user=None, oid=False):
         self.oid = oid
         self.user = user
@@ -97,7 +99,6 @@ class CourseSourceFiler(object):
     @property
     def root(self):
         return ICourseRootFolder(self.course)
-    default_bucket = root
 
     @property
     def assets(self):
@@ -124,6 +125,7 @@ class CourseSourceFiler(object):
              overwrite=False, structure=False, **kwargs):
         username = self.username
         context = kwargs.get('context')
+        bucket = bucket or self.default_bucket
         if structure:
             bucket = self.images if is_image(key, contentType) else self.documents
         elif bucket == ASSETS_FOLDER:  # legacy
@@ -155,6 +157,7 @@ class CourseSourceFiler(object):
 
     def get(self, key, bucket=None):
         result = None
+        bucket = bucket or self.default_bucket
         if is_internal_file_link(key):
             result = get_file_from_external_link(key)
             if result is not None:
@@ -173,6 +176,7 @@ class CourseSourceFiler(object):
         return result
 
     def remove(self, key, bucket=None):
+        bucket = bucket or self.default_bucket
         try:
             result = self.get(key, bucket=bucket)
             if result is not None:
@@ -184,6 +188,7 @@ class CourseSourceFiler(object):
         return False
 
     def contains(self, key, bucket=None):
+        bucket = bucket or self.default_bucket
         if is_internal_file_link(key):
             result = self.get(key) is not None
         else:
@@ -195,6 +200,7 @@ class CourseSourceFiler(object):
         return result
 
     def list(self, bucket=None):
+        bucket = bucket or self.default_bucket
         context = traverse(self.root, bucket) if bucket else self.root
         path = context.path or u'/'
         result = tuple(os.path.join(path, name) for name in context.keys())
