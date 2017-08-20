@@ -10,12 +10,15 @@ __docformat__ = "restructuredtext en"
 logger = __import__('logging').getLogger(__name__)
 
 from zope import component
+from zope import interface
 
 from zope.container.interfaces import IContentContainer
 
-from nti.app.products.courseware.resources.interfaces import ICourseRootFolder
+from nti.app.products.courseware.resources.adapters import course_resources
 
 from nti.appserver.pyramid_authorization import has_permission
+
+from nti.contentfolder.interfaces import IContentResources
 
 from nti.contenttypes.courses.predicates import course_collector
 
@@ -36,24 +39,32 @@ def is_instructor_or_editor(course, user):
         or has_permission(ACT_CONTENT_EDIT, course)
 
 
+def folder_objects(folder):
+    result = []
+    for item in folder.values():
+        if IContentContainer.providedBy(item):
+            result.append(item)
+            result.extend(folder_objects(item))
+        else:
+            result.append(item)
+    return result
+
+
+def course_files(course):
+    root = course_resources(course, False)
+    if root:
+        for item in folder_objects(root):
+            yield item
+
+
 @component.adapter(IUser)
 class _CourseFilesMixin(BasePrincipalObjects):
 
     def folder_objects(self, folder):
-        result = []
-        for item in folder.values():
-            if IContentContainer.providedBy(item):
-                result.append(item)
-                result.extend(self.folder_objects(item))
-            else:
-                result.append(item)
-        return result
+        return folder_objects(folder)
 
     def course_files(self, course):
-        root = ICourseRootFolder(course, None)
-        if root:
-            for item in self.folder_objects(root):
-                yield item
+        return course_files(course)
 
 
 @component.adapter(IUser)
@@ -80,3 +91,17 @@ class _CourseSystemFileObjects(_CourseFilesMixin):
                 if self.is_system_username(self.creator(item)):
                     result.append(item)
         return result
+
+
+@interface.implementer(IContentResources)
+class _CatalogContentResources(object):
+    
+    __slots__ = ()
+
+    def __init__(self, *args):
+        pass
+
+    def iter_objects(self):
+        for course in course_collector():
+            for item in course_files(course):
+                yield item

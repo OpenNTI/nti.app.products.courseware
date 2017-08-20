@@ -88,7 +88,10 @@
 
 	<adapter factory=".datastructures.CourseContentImageObjectIO"
 			 for=".interfaces.ICourseContentImage"  />
-			 
+		
+	<!-- Utilities -->	 
+	<utility factory=".predicates._CatalogContentResources" name="courses" />
+
 	<!-- Metadata -->
 	<subscriber	factory=".predicates._CourseUserFileObjects"
 				provides="nti.dataserver.metadata.interfaces.IPrincipalMetadataObjects" />
