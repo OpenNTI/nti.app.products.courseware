@@ -36,7 +36,7 @@ LINKS = StandardExternalFields.LINKS
 @interface.implementer(IExternalObjectDecorator)
 class _CourseDiscussionsLinkDecorator(AbstractAuthenticatedRequestAwareDecorator):
 
-    def _predicate(self, context, result):
+    def _predicate(self, context, unused_result):
         return   self._is_authenticated \
             and (   is_course_editor(context, self.remoteUser)
                  or has_permission(ACT_CONTENT_EDIT, context, self.request))

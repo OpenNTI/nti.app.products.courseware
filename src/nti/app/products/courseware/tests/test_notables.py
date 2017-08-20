@@ -26,7 +26,8 @@ from nti.contenttypes.courses.interfaces import ICourseEnrollmentManager
 
 from nti.dataserver.contenttypes.note import Note
 
-from nti.dataserver.users import User
+from nti.dataserver.users.users import User
+
 from nti.dataserver.users.communities import Community
 
 from nti.app.products.courseware.tests import PersistentInstructedCourseApplicationTestLayer
@@ -39,6 +40,7 @@ from nti.dataserver.tests import mock_dataserver
 
 
 class TestNotables(ApplicationLayerTest):
+
     layer = PersistentInstructedCourseApplicationTestLayer
 
     @WithSharedApplicationMockDS(users=True, testapp=True)
@@ -48,7 +50,7 @@ class TestNotables(ApplicationLayerTest):
         # course is notable.
         with mock_dataserver.mock_db_trans():
             self._create_user(u'sjohnson@nti.com')
-            
+
         with mock_dataserver.mock_db_trans(site_name='platform.ou.edu'):
             user = User.get_user(u'sjohnson@nti.com')
 
@@ -69,18 +71,18 @@ class TestNotables(ApplicationLayerTest):
             new_community._note_member(user)
             # Create a note visible to my community and my course
             note1 = Note()
-            note1.body = ('test222',)
+            note1.body = (u'test222',)
             note1.creator = instructor_user
-            note1.containerId = 'tag:nti:foo'
+            note1.containerId = u'tag:nti:foo'
             note1.addSharingTarget(course_scope)
             note1.addSharingTarget(new_community)
             instructor_user.addContainedObject(note1)
 
             # Create a note visible to my community
             note2 = Note()
-            note2.body = ('test222',)
+            note2.body = (u'test222',)
             note2.creator = instructor_user
-            note2.containerId = 'tag:nti:foo'
+            note2.containerId = u'tag:nti:foo'
             note2.addSharingTarget(new_community)
             instructor_user.addContainedObject(note2)
             intids = component.getUtility(IIntIds)

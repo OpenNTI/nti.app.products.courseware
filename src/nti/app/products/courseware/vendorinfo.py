@@ -17,6 +17,8 @@ from nti.app.products.courseware.interfaces import ICoursePublishableVendorInfo
 @interface.implementer(ICoursePublishableVendorInfo)
 class _DefaultCoursePublishableVendorInfo(object):
 
+    __slots__ = ('context',)
+
     def __init__(self, context):
         self.context = context
 

@@ -26,6 +26,9 @@ class CourseCatalogRecordables(object):
 
     __slots__ = ()
 
+    def __init__(self, *args):
+        pass
+
     def _process_course(self, course, result):
         # assets
         container = IPresentationAssetContainer(course)

@@ -27,6 +27,8 @@ from nti.traversal.traversal import find_interface
 @interface.implementer(IContentUnitAssociations)
 class _CourseContentUnitAssociations(object):
 
+    __slots__ = ()
+
     def __init__(self, *args):
         pass
 

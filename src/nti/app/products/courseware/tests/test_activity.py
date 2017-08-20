@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from __future__ import print_function, unicode_literals, absolute_import, division
+from __future__ import print_function, absolute_import, division
 __docformat__ = "restructuredtext en"
 
 # disable: accessing protected members, too many methods
@@ -23,6 +23,7 @@ from zope import component
 from zope.intid.interfaces import IIntIds
 
 from nti.app.products.courseware.activity import _DefaultCourseActivity
+
 from nti.app.products.courseware.interfaces import ICourseInstanceActivity
 
 from nti.app.testing.application_webtest import ApplicationLayerTest
@@ -60,6 +61,7 @@ class TestActivity(ApplicationLayerTest):
         assert_that(activity, has_length(2))
         assert_that(activity, has_property('lastModified',
                                            greater_than(original_lastmod)))
+
         def get_items():
             return [x[1] for x in activity.items()]
         assert_that(get_items(),

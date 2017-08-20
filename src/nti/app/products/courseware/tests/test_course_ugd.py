@@ -54,7 +54,8 @@ class TestCourseUGDViews(ApplicationLayerTest):
         course_ntiid = course_json.get('NTIID')
 
         data = json.serialize({
-            'Class': 'Highlight', 'MimeType': 'application/vnd.nextthought.highlight',
+            'Class': 'Highlight',
+            'MimeType': 'application/vnd.nextthought.highlight',
             'ContainerId': self.container_ntiid,
             'selectedText': "This is the selected text",
             'applicableRange': {'Class': 'ContentRangeDescription'}
@@ -131,7 +132,9 @@ class TestCourseUGDViews(ApplicationLayerTest):
         highlight_json = course_ugd.get('Items')[0]
         assert_that(highlight_json,
                     has_entry('ContainerContext', course_ntiid))
+
         assert_that(highlight_json,
                     has_entry('selectedText', "This is the selected text"))
+
         assert_that(highlight_json,
                     not_(has_entry('selectedText', "Different selected text")))

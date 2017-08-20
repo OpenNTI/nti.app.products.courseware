@@ -31,6 +31,8 @@ class AdvancedEditingCapabilityFilter(object):
     global edit permissions.
     """
 
+    __slots__ = ('user',)
+
     def __init__(self, context=None):
         self.user = context
 

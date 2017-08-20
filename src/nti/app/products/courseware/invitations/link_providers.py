@@ -27,6 +27,8 @@ from nti.links.links import Link
 @interface.implementer(IUserInvitationsLinkProvider)
 class _CourseUserInvitationsLinkProvider(object):
 
+    __slots__ = ('user',)
+
     def __init__(self, user=None):
         self.user = user
 

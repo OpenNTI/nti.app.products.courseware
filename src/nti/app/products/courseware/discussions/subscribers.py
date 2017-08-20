@@ -83,4 +83,3 @@ def _course_vendor_info_synchronized(course, unused_event):
 @component.adapter(ICourseRoleUpdatedEvent)
 def _course_role_updated(event):
     _update_course_forums(event.course)
-

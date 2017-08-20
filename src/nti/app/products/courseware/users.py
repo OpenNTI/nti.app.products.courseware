@@ -95,8 +95,7 @@ class ClassmatesSuggestedContactRankingPolicy(SuggestedContactRankingPolicy):
 class ClassmatesSuggestedContactsProvider(SuggestedContactsProvider):
 
     def __init__(self, *args, **kwargs):
-        super(ClassmatesSuggestedContactsProvider, self).__init__(
-            *args, **kwargs)
+        super(ClassmatesSuggestedContactsProvider, self).__init__(*args, **kwargs)
         self.ranking = ClassmatesSuggestedContactRankingPolicy()
         self.ranking.provider = self
 

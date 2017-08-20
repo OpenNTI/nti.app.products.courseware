@@ -21,7 +21,6 @@ from zope import component
 
 from nti.app.products.courseware.views import VIEW_CURRENT_COURSES
 from nti.app.products.courseware.views import VIEW_ARCHIVED_COURSES
-from nti.app.products.courseware.views import VIEW_UPCOMING_COURSES
 from nti.app.products.courseware.views import VIEW_USER_COURSE_ACCESS
 from nti.app.products.courseware.views import VIEW_COURSE_CATALOG_FAMILIES
 

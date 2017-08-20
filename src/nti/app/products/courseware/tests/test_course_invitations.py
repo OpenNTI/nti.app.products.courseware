@@ -186,7 +186,7 @@ class TestInvitations(ApplicationLayerTest):
         assert_that(invalid_emails.get('Items'), contains('invalid'))
 
         data = dict(res.json_body)
-        data.pop('Warnings')
+        data.pop('Warnings', None)
 
         mailer = component.getUtility(ITestMailDelivery)
         del mailer.queue[:]

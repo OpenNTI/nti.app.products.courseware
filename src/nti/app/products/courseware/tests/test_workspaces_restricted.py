@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from __future__ import print_function, unicode_literals, absolute_import, division
+from __future__ import print_function, absolute_import, division
 __docformat__ = "restructuredtext en"
 
 # disable: accessing protected members, too many methods
@@ -26,38 +26,42 @@ from nti.app.testing.application_webtest import ApplicationLayerTest
 
 from nti.app.testing.decorators import WithSharedApplicationMockDS
 
+
 class TestRestrictedWorkspace(ApplicationLayerTest):
 
-	layer = RestrictedInstructedCourseApplicationTestLayer
+    layer = RestrictedInstructedCourseApplicationTestLayer
 
-	testapp = None
-	default_origin = str('http://janux.ou.edu')
+    testapp = None
+    default_origin = 'http://janux.ou.edu'
 
-	@WithSharedApplicationMockDS(users=True, testapp=True)
-	def test_fetch_all_courses(self):
-		# XXX: Our layer is registering these globally
-		# res = self.testapp.get( '/dataserver2/users/sjohnson@nextthought.com/Courses/AllCourses' )
-		# Nothing by default
-		# assert_that( res.json_body, has_entry( 'Items', has_length( 0 )) )
+    @WithSharedApplicationMockDS(users=True, testapp=True)
+    def test_fetch_all_courses(self):
+        # XXX: Our layer is registering these globally
+        # res = self.testapp.get( '/dataserver2/users/sjohnson@nextthought.com/Courses/AllCourses' )
+        # Nothing by default
+        # assert_that( res.json_body, has_entry( 'Items', has_length( 0 )) )
 
-		res = self.testapp.get('/dataserver2/users/sjohnson@nextthought.com/Courses/AllCourses')
-		assert_that(res.json_body, has_entry('Items', has_length(greater_than_or_equal_to(1))))
-		assert_that(res.json_body['Items'],
-					has_items(
-						 all_of(has_entries('Duration', 'P112D',
-											'Title', 'Introduction to Water',
-											'StartDate', '2014-01-13T06:00:00Z'))))
+        res = self.testapp.get('/dataserver2/users/sjohnson@nextthought.com/Courses/AllCourses')
+        assert_that(res.json_body, 
+                    has_entry('Items', has_length(greater_than_or_equal_to(1))))
 
-	@WithSharedApplicationMockDS(users=True, testapp=True)
-	def test_enroll_unenroll_using_workspace(self):
+        assert_that(res.json_body['Items'],
+                    has_items(
+                        all_of(has_entries('Duration', 'P112D',
+                                           'Title', 'Introduction to Water',
+                                           'StartDate', '2014-01-13T06:00:00Z'))))
 
-		# First, we are enrolled in nothing
-		res = self.testapp.get('/dataserver2/users/sjohnson@nextthought.com/Courses/EnrolledCourses')
-		assert_that(res.json_body, has_entry('Items', is_(empty())))
-		assert_that(res.json_body, has_entry('accepts', contains('application/json')))
+    @WithSharedApplicationMockDS(users=True, testapp=True)
+    def test_enroll_unenroll_using_workspace(self):
 
-		# Enrolling in this one is not allowed
-		enrolled_id = 'tag:nextthought.com,2011-10:OU-HTML-CLC3403_LawAndJustice.course_info'
-		self.testapp.post_json('/dataserver2/users/sjohnson@nextthought.com/Courses/EnrolledCourses',
-								enrolled_id,
-								status=403)
+        # First, we are enrolled in nothing
+        res = self.testapp.get('/dataserver2/users/sjohnson@nextthought.com/Courses/EnrolledCourses')
+        assert_that(res.json_body, has_entry('Items', is_(empty())))
+        assert_that(res.json_body, 
+                    has_entry('accepts', contains('application/json')))
+
+        # Enrolling in this one is not allowed
+        enrolled_id = 'tag:nextthought.com,2011-10:OU-HTML-CLC3403_LawAndJustice.course_info'
+        self.testapp.post_json('/dataserver2/users/sjohnson@nextthought.com/Courses/EnrolledCourses',
+                               enrolled_id,
+                               status=403)

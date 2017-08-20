@@ -137,4 +137,4 @@ class _DefaultCourseActivity(Persistent):
             yield when, activity
 
 _DefaultCourseActivityFactory = an_factory(_DefaultCourseActivity,
-                                           'CourseActivity')
+                                           u'CourseActivity')

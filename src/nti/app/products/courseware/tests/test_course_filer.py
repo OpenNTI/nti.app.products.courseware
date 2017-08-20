@@ -54,7 +54,7 @@ class TestCourseFiler(ApplicationLayerTest):
             assert_that(filer, is_(not_none()))
 
             source = StringIO("<ichigo/>")
-            href = filer.save("ichigo.xml", source, contentType="text/xml",
+            href = filer.save(u"ichigo.xml", source, contentType=u"text/xml",
                               overwrite=True)
             assert_that(is_internal_file_link(href), is_(True))
 
@@ -64,7 +64,7 @@ class TestCourseFiler(ApplicationLayerTest):
             assert_that(obj, has_property('contentType', "text/xml"))
 
             source = StringIO("<ichigo/>")
-            href = filer.save("ichigo.xml", source, contentType="text/xml",
+            href = filer.save(u"ichigo.xml", source, contentType=u"text/xml",
                               overwrite=True, bucket="bleach/shikai")
             assert_that(is_internal_file_link(href), is_(True))
 
@@ -79,8 +79,8 @@ class TestCourseFiler(ApplicationLayerTest):
             assert_that(filer.list("/bleach/shikai"), is_(()))
 
             source = StringIO("<ichigo/>")
-            filer.save("ichigo.xml", source, contentType="text/xml", overwrite=False,
-                       bucket="bleach/shikai")
+            filer.save(u"ichigo.xml", source, contentType="text/xml", 
+                       overwrite=False, bucket="bleach/shikai")
             source = StringIO("<ichigo/>")
             href = filer.save("ichigo.xml", source, contentType="text/xml",
                               overwrite=False, bucket="bleach/shikai")
