@@ -53,11 +53,11 @@ from nti.app.products.courseware.interfaces import IAdministeredCoursesCollectio
 from nti.app.products.courseware.views import MessageFactory as _
 from nti.app.products.courseware.views import CourseAdminPathAdapter
 
-from nti.app.products.courseware.views import VIEW_COURSE_FAVORITES
-from nti.app.products.courseware.views import VIEW_COURSE_CATALOG_FAMILIES
 from nti.app.products.courseware.views import VIEW_CURRENT_COURSES
 from nti.app.products.courseware.views import VIEW_ARCHIVED_COURSES
+from nti.app.products.courseware.views import VIEW_COURSE_FAVORITES
 from nti.app.products.courseware.views import VIEW_UPCOMING_COURSES
+from nti.app.products.courseware.views import VIEW_COURSE_CATALOG_FAMILIES
 
 from nti.appserver.dataserver_pyramid_views import GenericGetView
 
@@ -90,6 +90,7 @@ from nti.externalization.externalization import to_external_object
 
 from nti.externalization.interfaces import LocatedExternalDict
 from nti.externalization.interfaces import StandardExternalFields
+from nti.externalization.interfaces import StandardInternalFields
 
 from nti.traversal import traversal
 
@@ -97,6 +98,8 @@ ITEMS = StandardExternalFields.ITEMS
 NTIID = StandardExternalFields.NTIID
 TOTAL = StandardExternalFields.TOTAL
 ITEM_COUNT = StandardExternalFields.ITEM_COUNT
+
+INTERNAL_NTIID = StandardInternalFields.NTIID
 
 
 @interface.implementer(IPathAdapter)
@@ -183,7 +186,7 @@ class enroll_course_view(AbstractAuthenticatedView,
             except KeyError:
                 pass
         else:
-            for k in (NTIID, NTIID.lower(), 'ProviderUniqueID'):
+            for k in (NTIID, INTERNAL_NTIID, 'ProviderUniqueID'):
                 try:
                     k = identifier[k]
                     catalog_entry = catalog.getCatalogEntry(k)
