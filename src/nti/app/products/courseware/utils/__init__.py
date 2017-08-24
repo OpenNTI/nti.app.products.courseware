@@ -4,7 +4,7 @@
 .. $Id$
 """
 
-from __future__ import print_function, unicode_literals, absolute_import, division
+from __future__ import print_function, absolute_import, division
 __docformat__ = "restructuredtext en"
 
 logger = __import__('logging').getLogger(__name__)
@@ -369,6 +369,31 @@ def associate(obj, filer, key, bucket=None):
     return None
 
 
+def transfer_resource_from_filer(reference, context, source_filer, target_filer):
+    path = urlparse(reference).path
+    bucket, name = os.path.split(path)
+    bucket = None if not bucket else bucket
+
+    # don't save if already in target filer.
+    if target_filer.contains(key=name, bucket=bucket):
+        href = associate(context, target_filer, name, bucket)
+        return (href, False)
+
+    source = source_filer.get(path)
+    if source is not None:
+        contentType = getattr(source, 'contentType', None)
+        contentType = contentType or mimetypes.guess_type(name)
+        href = target_filer.save(name, source,
+                                 bucket=bucket,
+                                 overwrite=True,
+                                 context=context,
+                                 contentType=contentType)
+        logger.info("%s was saved as %s", reference, href)
+        return (href, True)
+
+    return (None, False)
+
+
 def transfer_resources_from_filer(provided, obj, source_filer, target_filer):
     """
     parse the provided interface field and look for internal resources to
@@ -385,28 +410,14 @@ def transfer_resources_from_filer(provided, obj, source_filer, target_filer):
             and not IMethod.providedBy(value) \
             and isinstance(value, six.string_types) \
             and value.startswith(NTI_COURSE_FILE_SCHEME):
-
-            path = urlparse(value).path
-            bucket, name = os.path.split(path)
-            bucket = None if not bucket else bucket
-
-            # don't save if already in target filer.
-            if target_filer.contains(key=name, bucket=bucket):
-                href = associate(obj, target_filer, name, bucket)
-                setattr(obj, field_name, href)
+            # get resource and save it
+            href, saved = transfer_resource_from_filer(value, obj,
+                                                       source_filer,
+                                                       target_filer)
+            if not href:
                 continue
-
-            source = source_filer.get(path)
-            if source is not None:
-                contentType = getattr(source, 'contentType', None)
-                contentType = contentType or mimetypes.guess_type(name)
-                href = target_filer.save(name, source,
-                                         context=obj,
-                                         bucket=bucket,
-                                         overwrite=True,
-                                         contentType=contentType)
-                logger.info("%s was saved as %s", value, href)
-                setattr(obj, field_name, href)
+            setattr(obj, field_name, href)
+            if saved:
                 result[field_name] = href
     return result
 
