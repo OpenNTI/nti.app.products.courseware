@@ -24,6 +24,37 @@ from nti.app.products.courseware.resources.utils import get_file_from_external_l
 from nti.contenttypes.courses.interfaces import NTI_COURSE_FILE_SCHEME
 
 
+def save_resource_to_filer(reference, filer, context=None):
+    if isinstance(reference, six.string_types):
+        resource = get_file_from_external_link(reference)
+    if resource is None:
+        return None
+    contentType = resource.contentType
+    if hasattr(resource, 'path'):
+        path = resource.path
+        # remove resource name
+        path = os.path.split(path)[0] if path else ''
+        path = path[1:] if path.startswith('/') else path
+        if not path:
+            path = ASSETS_FOLDER
+        elif    not path.startswith(IMAGES_FOLDER) \
+            and not path.startswith(DOCUMENTS_FOLDER) \
+            and not path.startswith(ASSETS_FOLDER):
+            path = os.path.join(ASSETS_FOLDER, path)
+    else:
+        path = ASSETS_FOLDER
+    # save resource
+    filer.save(resource.name,
+               resource,
+               bucket=path,
+               overwrite=True,
+               context=context,
+               contentType=contentType)
+    # get course file scheme
+    internal = NTI_COURSE_FILE_SCHEME + path + "/" + resource.name
+    return internal
+
+
 def save_resources_to_filer(provided, obj, filer, ext_obj=None):
     """
     parse the provided interface field and look for internal resources to
@@ -39,32 +70,9 @@ def save_resources_to_filer(provided, obj, filer, ext_obj=None):
             and isinstance(value, six.string_types) \
             and is_internal_file_link(value):
             # get resource
-            resource = get_file_from_external_link(value)
-            if resource is None:
+            internal = save_resource_to_filer(value, filer, obj)
+            if internal is None:
                 continue
-            contentType = resource.contentType
-            if hasattr(resource, 'path'):
-                path = resource.path
-                # remove resource name
-                path = os.path.split(path)[0] if path else ''
-                path = path[1:] if path.startswith('/') else path
-                if not path:
-                    path = ASSETS_FOLDER
-                elif    not path.startswith(IMAGES_FOLDER) \
-                    and not path.startswith(DOCUMENTS_FOLDER) \
-                    and not path.startswith(ASSETS_FOLDER):
-                    path = os.path.join(ASSETS_FOLDER, path)
-            else:
-                path = ASSETS_FOLDER
-            # save resource
-            filer.save(resource.name,
-                       resource,
-                       bucket=path,
-                       context=obj,
-                       overwrite=True,
-                       contentType=contentType)
-            # get course file scheme
-            internal = NTI_COURSE_FILE_SCHEME + path + "/" + resource.name
             logger.debug("%s was saved as %s", value, internal)
             result[name] = internal
             if ext_obj is not None:
