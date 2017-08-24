@@ -24,7 +24,7 @@ from nti.app.products.courseware.resources.utils import get_file_from_external_l
 from nti.contenttypes.courses.interfaces import NTI_COURSE_FILE_SCHEME
 
 
-def save_resource_to_filer(reference, filer, context=None):
+def save_resource_to_filer(reference, filer, overwrite=True, context=None):
     if isinstance(reference, six.string_types):
         resource = get_file_from_external_link(reference)
     if resource is None:
@@ -47,8 +47,8 @@ def save_resource_to_filer(reference, filer, context=None):
     filer.save(resource.name,
                resource,
                bucket=path,
-               overwrite=True,
                context=context,
+               overwrite=overwrite,
                contentType=contentType)
     # get course file scheme
     internal = NTI_COURSE_FILE_SCHEME + path + "/" + resource.name
@@ -70,7 +70,7 @@ def save_resources_to_filer(provided, obj, filer, ext_obj=None):
             and isinstance(value, six.string_types) \
             and is_internal_file_link(value):
             # get resource
-            internal = save_resource_to_filer(value, filer, obj)
+            internal = save_resource_to_filer(value, filer, True, obj)
             if internal is None:
                 continue
             logger.debug("%s was saved as %s", value, internal)
