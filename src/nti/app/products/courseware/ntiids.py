@@ -20,8 +20,8 @@ from nti.app.authentication import get_remote_user
 
 from nti.app.products.courseware.interfaces import NTIID_TYPE_COURSE_FORUM
 from nti.app.products.courseware.interfaces import NTIID_TYPE_COURSE_TOPIC
-from nti.app.products.courseware.interfaces import NTIID_TYPE_COURSE_SECTION_TOPIC
 from nti.app.products.courseware.interfaces import NTIID_TYPE_COURSE_SECTION_FORUM
+from nti.app.products.courseware.interfaces import NTIID_TYPE_COURSE_SECTION_TOPIC
 
 from nti.contenttypes.courses.interfaces import ICourseInstance
 from nti.contenttypes.courses.interfaces import ICourseSubInstance
@@ -48,7 +48,7 @@ COURSE_NTIID_PREFIX = u'tag:nextthought.com,2011-10:NTI-CourseInfo-'
 @interface.named(NTIID_TYPE_COURSE_SECTION_TOPIC)
 class _EnrolledCourseSectionTopicNTIIDResolver(object):
 
-    def __init__(self):
+    def __init__(self, *args):
         pass
 
     # Whether, when we find a match to a course, we return the sub
@@ -100,8 +100,9 @@ class _EnrolledCourseSectionTopicNTIIDResolver(object):
         return records
 
     def _escape_entry_provider(self, entry):
-        result = escape_provider(
-            entry.ProviderUniqueID) if entry is not None else None
+        result = None
+        if entry is not None:
+            result = escape_provider(entry.ProviderUniqueID)
         return result
 
     def _solve_for_iface(self, ntiid, iface, provider_name, user, catalog_entry_matches=None):
@@ -164,7 +165,7 @@ class _EnrolledCourseSectionTopicNTIIDResolver(object):
                                        IPrincipalAdministrativeRoleCatalog,
                                        provider_name,
                                        user,
-                                       catalog_entry_matches=catalog_entry_matches)
+                                       catalog_entry_matches)
 
         # Enrolled
         if result is None:
@@ -172,7 +173,7 @@ class _EnrolledCourseSectionTopicNTIIDResolver(object):
                                            IPrincipalEnrollments,
                                            provider_name,
                                            user,
-                                           catalog_entry_matches=catalog_entry_matches)
+                                           catalog_entry_matches)
         return result
 
     def resolve(self, ntiid):
@@ -192,7 +193,7 @@ class _EnrolledCourseSectionTopicNTIIDResolver(object):
             result = self._do_resolve(ntiid,
                                       user,
                                       provider_name,
-                                      catalog_entry_matches=catalog_entry_matches)
+                                      catalog_entry_matches)
         else:
             # The legacy approach, which may collide across semesters.
             result = self._do_resolve(ntiid, user, provider_name)
