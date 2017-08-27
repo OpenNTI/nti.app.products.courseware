@@ -236,7 +236,7 @@ class AbstractChildMoveView(AbstractAuthenticatedView,
         return new_parent
 
     def _validate_parents(self, old_parent_ntiid=None, new_parent_ntiid=None,
-                          context_ntiid=None, *args, **kwargs):
+                          context_ntiid=None, *unused_args, **unused_kwargs):
         children_ntiids = self._get_children_ntiids(context_ntiid)
         if      new_parent_ntiid not in children_ntiids \
             or (old_parent_ntiid
@@ -390,7 +390,7 @@ class DeleteChildViewMixin(NTIIDPathMixin):
                 raise_json_error(self.request,
                                  hexc.HTTPUnprocessableEntity,
                                  {
-                                     'message': "Index must be an int",
+                                     'message': _(u"Index must be an int."),
                                  },
                                  None)
         found = []
