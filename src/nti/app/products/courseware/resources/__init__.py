@@ -10,7 +10,7 @@ __docformat__ = "restructuredtext en"
 logger = __import__('logging').getLogger(__name__)
 
 #: Course resources
-RESOURCES = 'resources'
+RESOURCES = u'resources'
 
 from nti.app.products.courseware.resources.model import CourseRootFolder
 from nti.app.products.courseware.resources.model import CourseContentFile
