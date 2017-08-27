@@ -39,6 +39,8 @@ from nti.externalization.externalization import to_external_object
 
 from nti.externalization.interfaces import StandardExternalFields
 
+from nti.mimetype.externalization import decorateMimeType
+
 from nti.namedfile.file import safe_filename
 
 from nti.traversal.traversal import find_interface
@@ -60,8 +62,8 @@ class CourseDiscussionsExporter(BaseSectionExporter):
 
     def _ext_obj(self, discussion):
         ext_obj = to_external_object(discussion, decorate=False)
-        ext_obj.pop(NTIID, None)
-        ext_obj.pop(OID, None)
+        decorateMimeType(discussion, ext_obj)
+        [ext_obj.pop(x, None) for x in (NTIID, OID)]
         return ext_obj
 
     def export(self, context, filer, backup=True, salt=None):
@@ -69,7 +71,7 @@ class CourseDiscussionsExporter(BaseSectionExporter):
         discussions = ICourseDiscussions(course)
         filer.default_bucket = bucket = path_to_discussions(course)
         for name, discussion in list(discussions.items()):  # snapshot
-            ext_obj = to_external_object(discussion, decorate=False)
+            ext_obj = self._ext_obj(discussion)
             self._process_resources(discussion, ext_obj, filer)
             source = self.dump(ext_obj)
             filer.save(name, source, contentType="application/json",
