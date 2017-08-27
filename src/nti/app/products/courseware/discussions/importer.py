@@ -76,7 +76,8 @@ class CourseDiscussionsImporter(BaseSectionImporter):
                 self._process_resources(discussion,
                                         source_filer,
                                         target_filer)
-                # create topics
+                # create topics since they may be required by other
+                # objects (e.g. assignments)
                 create_topics(discussion)
                 # write out if required
                 if IFilesystemBucket.providedBy(root) and writeout:
