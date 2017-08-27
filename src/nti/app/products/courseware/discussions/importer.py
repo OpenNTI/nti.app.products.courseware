@@ -13,6 +13,8 @@ import os
 
 from zope import interface
 
+from nti.app.products.courseware.discussions import create_topics
+
 from nti.app.products.courseware.resources.utils import get_course_filer
 
 from nti.app.products.courseware.utils import transfer_resources_from_filer
@@ -74,6 +76,9 @@ class CourseDiscussionsImporter(BaseSectionImporter):
                 self._process_resources(discussion,
                                         source_filer,
                                         target_filer)
+                # create topics
+                create_topics(discussion)
+                # write out if required
                 if IFilesystemBucket.providedBy(root) and writeout:
                     path = os.path.join(root.absolute_path, bucket)
                     path = os.path.join(path, name)
