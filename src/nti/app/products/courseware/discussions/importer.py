@@ -15,6 +15,8 @@ from zope import interface
 
 from nti.app.products.courseware.discussions import create_topics
 
+from nti.app.products.courseware.discussions.interfaces import ICourseDiscussionsSectionExporter
+
 from nti.app.products.courseware.resources.utils import get_course_filer
 
 from nti.app.products.courseware.utils import transfer_resources_from_filer
@@ -32,12 +34,11 @@ from nti.contenttypes.courses.discussions.parser import path_to_discussions
 from nti.contenttypes.courses.importer import BaseSectionImporter
 
 from nti.contenttypes.courses.interfaces import ICourseInstance
-from nti.contenttypes.courses.interfaces import ICourseSectionImporter
 
 from nti.contenttypes.courses.utils import get_course_subinstances
 
 
-@interface.implementer(ICourseSectionImporter)
+@interface.implementer(ICourseDiscussionsSectionExporter)
 class CourseDiscussionsImporter(BaseSectionImporter):
 
     def _process_resources(self, discussion, source_filer, target_filer):

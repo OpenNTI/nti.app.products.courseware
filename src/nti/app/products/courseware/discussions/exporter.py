@@ -14,6 +14,8 @@ from zope import interface
 
 from zope.intid.interfaces import IIntIds
 
+from nti.app.products.courseware.discussions.interfaces import ICourseDiscussionsSectionExporter
+
 from nti.app.products.courseware.utils.exporter import save_resources_to_filer
 
 from nti.contenttypes.courses.discussions.interfaces import NTI_COURSE_BUNDLE
@@ -27,7 +29,6 @@ from nti.contenttypes.courses.exporter import BaseSectionExporter
 from nti.contenttypes.courses.interfaces import ENROLLMENT_SCOPE_MAP
 
 from nti.contenttypes.courses.interfaces import ICourseInstance
-from nti.contenttypes.courses.interfaces import ICourseSectionExporter
 
 from nti.contenttypes.courses.utils import get_course_subinstances
 from nti.contenttypes.courses.utils import get_enrollment_in_hierarchy
@@ -51,7 +52,7 @@ NTIID = StandardExternalFields.NTIID
 MIMETYPE = StandardExternalFields.MIMETYPE
 
 
-@interface.implementer(ICourseSectionExporter)
+@interface.implementer(ICourseDiscussionsSectionExporter)
 class CourseDiscussionsExporter(BaseSectionExporter):
 
     def _process_resources(self, discussion, ext_obj, target_filer):

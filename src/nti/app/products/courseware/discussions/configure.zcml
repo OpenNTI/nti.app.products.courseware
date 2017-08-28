@@ -40,10 +40,14 @@
 					 pyramid.interfaces.IRequest" />
 
 	<!-- Exporter -->
-	<utility factory=".exporter.CourseDiscussionsExporter" name="020:Course_Discussions" />
+	<utility factory=".exporter.CourseDiscussionsExporter"
+			 provides=".interfaces.ICourseDiscussionsSectionExporter"
+			 name="020:Course_Discussions" />
 
 	<!-- Importer -->
 	<!-- course discussions should be imported after vendor info & before Evaluations -->
-	<utility factory=".importer.CourseDiscussionsImporter" name="010:Course_Discussions" />
+	<utility factory=".importer.CourseDiscussionsImporter" 
+			 provides=".interfaces.ICourseDiscussionsSectionImporter"
+			 name="010:Course_Discussions" />
 
 </configure>
