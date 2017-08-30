@@ -20,8 +20,6 @@ from nti.app.products.courseware.resources.filer import CourseSourceFiler
 
 from nti.app.products.courseware.resources.interfaces import ICourseRootFolder
 from nti.app.products.courseware.resources.interfaces import ICourseSourceFiler
-from nti.app.products.courseware.resources.interfaces import ICourseContentFile
-from nti.app.products.courseware.resources.interfaces import ICourseContentImage
 from nti.app.products.courseware.resources.interfaces import ICourseContentFolder
 from nti.app.products.courseware.resources.interfaces import ICourseContentResource
 
@@ -29,10 +27,8 @@ from nti.app.products.courseware.resources.model import CourseRootFolder
 
 from nti.base._compat import text_
 
-from nti.contentfolder.adapters import MimeType
 from nti.contentfolder.adapters import ContainerId
 
-from nti.contentfolder.interfaces import IMimeTypeAdapter
 from nti.contentfolder.interfaces import IContainerIdAdapter
 
 from nti.contenttypes.courses.interfaces import ICourseInstance
@@ -100,18 +96,6 @@ def _CourseFolderFileConstraints(_):
     result = FileConstraints()
     result.max_file_size = 104857600  # 100 MB
     return result
-
-
-@component.adapter(ICourseContentFile)
-@interface.implementer(IMimeTypeAdapter)
-def _course_contentfile_mimeType_adapter(_):
-    return MimeType('application/vnd.nextthought.courseware.contentfile')
-
-
-@component.adapter(ICourseContentImage)
-@interface.implementer(IMimeTypeAdapter)
-def _course_contentimage_mimeType_adapter(_):
-    return MimeType('application/vnd.nextthought.courseware.contentimage')
 
 
 def _containerId_adater(context):

@@ -37,9 +37,6 @@
 			 provides="nti.namedfile.interfaces.IFileConstraints" />
 
 	<!-- index -->
-	<adapter factory=".adapters._course_contentfile_mimeType_adapter" />
-	<adapter factory=".adapters._course_contentimage_mimeType_adapter" />
-
 	<adapter factory=".adapters._course_contentfolder_containerId_adapter" />	
 	<adapter factory=".adapters._course_contentresource_containerId_adapter" />
 

@@ -70,9 +70,9 @@ class CourseContentFolder(CourseContentResource,
 
 @interface.implementer(ICourseContentFile)
 class CourseContentFile(CourseContentResource, ContentBlobFile):
-    pass
+    __external_mimeType__ = 'application/vnd.nextthought.courseware.contentfile'
 
 
 @interface.implementer(ICourseContentImage)
 class CourseContentImage(CourseContentResource, ContentBlobImage):
-    pass
+    __external_mimeType__ = 'application/vnd.nextthought.courseware.contentimage'
