@@ -11,12 +11,11 @@ logger = __import__('logging').getLogger(__name__)
 
 from zope import interface
 
-from nti.app.products.courseware.discussions.interfaces import ICourseDiscussionsSectionExporter
-
 from nti.app.products.courseware.utils.exporter import save_resources_to_filer
 
 from nti.contenttypes.courses.discussions.interfaces import ICourseDiscussion
 from nti.contenttypes.courses.discussions.interfaces import ICourseDiscussions
+from nti.contenttypes.courses.discussions.interfaces import ICourseDiscussionsSectionExporter
 
 from nti.contenttypes.courses.discussions.parser import path_to_discussions
 

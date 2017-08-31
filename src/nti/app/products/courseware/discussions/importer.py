@@ -15,8 +15,6 @@ from zope import interface
 
 from nti.app.products.courseware.discussions import create_topics
 
-from nti.app.products.courseware.discussions.interfaces import ICourseDiscussionsSectionExporter
-
 from nti.app.products.courseware.resources.utils import get_course_filer
 
 from nti.app.products.courseware.utils import transfer_resources_from_filer
@@ -27,6 +25,7 @@ from nti.contentlibrary.interfaces import IFilesystemBucket
 
 from nti.contenttypes.courses.discussions.interfaces import ICourseDiscussion
 from nti.contenttypes.courses.discussions.interfaces import ICourseDiscussions
+from nti.contenttypes.courses.discussions.interfaces import ICourseDiscussionsSectionExporter
 
 from nti.contenttypes.courses.discussions.parser import load_discussion
 from nti.contenttypes.courses.discussions.parser import path_to_discussions

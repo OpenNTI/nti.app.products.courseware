@@ -41,13 +41,13 @@
 
 	<!-- Exporter -->
 	<utility factory=".exporter.CourseDiscussionsExporter"
-			 provides=".interfaces.ICourseDiscussionsSectionExporter"
+			 provides="nti.contenttypes.courses.discussions.interfaces.ICourseDiscussionsSectionExporter"
 			 name="020:Course_Discussions" />
 
 	<!-- Importer -->
 	<!-- course discussions should be imported after vendor info & before Evaluations -->
 	<utility factory=".importer.CourseDiscussionsImporter" 
-			 provides=".interfaces.ICourseDiscussionsSectionImporter"
+			 provides="nti.contenttypes.courses.discussions.interfaces.ICourseDiscussionsSectionImporter"
 			 name="010:Course_Discussions" />
 
 </configure>
