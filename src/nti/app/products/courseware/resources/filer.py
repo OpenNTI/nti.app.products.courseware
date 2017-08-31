@@ -72,7 +72,7 @@ def get_namedfile_from_source(source, filename, name=None):
     transfer_data(source, result)
     result.contentType = result.contentType or contentType
     if name and filename != name:
-        result.name = name 
+        result.name = name
     return result
 
 

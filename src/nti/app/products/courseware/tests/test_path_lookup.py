@@ -290,7 +290,7 @@ class TestPathLookup(ApplicationLayerTest):
 			assert_that(res[4], has_entries('Class', 'PageInfo',
 											'NTIID', 'tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.lec:01.03_LESSON'))
 
-	def _do_clc_path_lookup(self, is_legacy=False, expected_status=200):
+	def _do_clc_path_lookup(self, expected_status=200):
 		# XXX: It's nice we have these for non-persistent courses, but
 		# we need these tests in persistent courses as well.
 		self._create_discussions()
@@ -463,4 +463,4 @@ class TestPathLookup(ApplicationLayerTest):
 		# TODO: We should test if lesson_overview is none (via fudging).
 		# and remove legacy code in library_views.py
 		self._do_cs1323_path_lookup(is_legacy=True)
-		self._do_clc_path_lookup(is_legacy=True)
+		self._do_clc_path_lookup()

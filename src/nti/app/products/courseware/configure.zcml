@@ -447,7 +447,7 @@
 
 	<subscriber factory=".decorators._ContentUnitLessonsContainerDecorator"
                 provides="nti.externalization.interfaces.IExternalObjectDecorator"
-                for="nti.contentlibrary.interfaces.IContentUnit
+                for="nti.contentlibrary.interfaces.IEditableContentUnit
                      pyramid.interfaces.IRequest" />
 
 	<!--

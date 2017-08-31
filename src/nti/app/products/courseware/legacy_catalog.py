@@ -147,7 +147,7 @@ def _content_package_registered(package, event):
 
     # Now, mark this (global, non-persistent) content package as being associated
     # directly with an active course/catalog
-    interface.alsoProvides(package, 
+    interface.alsoProvides(package,
                            ILegacyCourseConflatedContentPackageUsedAsCourse)
     # These shouldn't ever be persisted, but just in case...
     package._v_global_legacy_catalog_entry = catalog_entry

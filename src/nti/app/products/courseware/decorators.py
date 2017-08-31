@@ -61,7 +61,7 @@ from nti.assessment.interfaces import IQuestionSet
 
 from nti.common.hash import md5_base64_digest
 
-from nti.contentlibrary.interfaces import IContentUnit
+from nti.contentlibrary.interfaces import IEditableContentUnit
 
 from nti.contenttypes.courses.common import get_course_packages
 
@@ -805,10 +805,10 @@ class _AbstractLessonsContainerDecorator(AbstractAuthenticatedRequestAwareDecora
 		_links.append(link)
 
 
-@component.adapter(IContentUnit)
+# XXX: For now, only editable content units can be shared.
+@component.adapter(IEditableContentUnit)
 @interface.implementer(IExternalObjectDecorator)
 class _ContentUnitLessonsContainerDecorator(_AbstractLessonsContainerDecorator):
-
 
 	def _get_lessons(self, context):
 		return get_content_related_work_refs( context )

@@ -302,7 +302,7 @@ def create_topics(discussion, update=True, topics=None):
     for scope in scopes:
         data = discussions.get(scope)
         if not data:
-            logger.debug("No forum for scope %s was found", scope)
+            logger.warn("No forum for scope %s was found", scope)
             continue
         _, forum = data
 
