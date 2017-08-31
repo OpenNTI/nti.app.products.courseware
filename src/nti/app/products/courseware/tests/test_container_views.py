@@ -45,6 +45,7 @@ class TestContainerViews(ApplicationLayerTest):
         lessons_link = self.require_link_href_with_rel(res, VIEW_LESSONS_CONTAINERS)
         res = self.testapp.get(lessons_link)
         res = res.json_body
-        assert_that(res, has_entry(ITEMS, has_length(0)))
-        assert_that(res, has_entry(ITEM_COUNT, is_(0)))
+        # XXX: We do not allow lesson sharing on content-backed units currently.
+        #assert_that(res, has_entry(ITEMS, has_length(0)))
+        #assert_that(res, has_entry(ITEM_COUNT, is_(0)))
 
