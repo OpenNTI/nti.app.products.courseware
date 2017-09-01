@@ -6,7 +6,7 @@ Support for integrating with legacy course catalog information.
 .. $Id$
 """
 
-from __future__ import print_function, unicode_literals, absolute_import, division
+from __future__ import print_function, absolute_import, division
 __docformat__ = "restructuredtext en"
 
 logger = __import__('logging').getLogger(__name__)
@@ -19,7 +19,7 @@ from zope.lifecycleevent import IObjectAddedEvent
 from nti.app.products.courseware.interfaces import ICourseCatalogLegacyContentEntry
 from nti.app.products.courseware.interfaces import ILegacyCourseConflatedContentPackageUsedAsCourse
 
-from nti.base._compat import unicode_
+from nti.base._compat import text_
 
 from nti.contentlibrary.interfaces import IGlobalContentPackageLibrary
 from nti.contentlibrary.interfaces import ILegacyCourseConflatedContentPackage
@@ -35,12 +35,13 @@ from nti.externalization.externalization import to_external_object
 
 @interface.implementer(ICourseCatalogLegacyContentEntry)
 class CourseCatalogLegacyContentEntry(CourseCatalogLegacyEntry):
+
     __external_class_name__ = 'CourseCatalogLegacyEntry'
     __external_can_create__ = False
 
     ContentPackageNTIID = None
     Communities = ()  # Unused externally, deprecated internally
-    Term = ''
+    Term = u''
     legacy_content_package = None
 
     @property
@@ -52,7 +53,7 @@ class CourseCatalogLegacyContentEntry(CourseCatalogLegacyEntry):
 
 
 @component.adapter(ILegacyCourseConflatedContentPackage, IObjectAddedEvent)
-def _content_package_registered(package, event):
+def _content_package_registered(package, unused_event):
     # We only do this in the global library; anything added in a
     # persistent site-library should be handled by an actual course instance
     # directory using this as a content bundle; if we register twice
@@ -132,8 +133,8 @@ def _content_package_registered(package, event):
     # the package absolute
     ext_package_href = to_external_object(package)['href']
 
-    fill_entry_from_legacy_key(
-        catalog_entry, info_json_key, base_href=ext_package_href)
+    fill_entry_from_legacy_key(catalog_entry, info_json_key,
+                               base_href=ext_package_href)
 
     # XXX still have to do this (need a decorator to actually output)
     catalog_entry.ContentPackageNTIID = package.ntiid
@@ -141,9 +142,9 @@ def _content_package_registered(package, event):
     # For the convenience of others
     # XXX: still have to do this?
     catalog_entry.legacy_content_package = package
-    catalog_entry.Communities = \
-        [unicode_(x)
-         for x in package._v_toc_node.xpath('//course/scope[@type="public"]/entry/text()')]
+    catalog_entry.Communities = [
+        text_(x) for x in package._v_toc_node.xpath('//course/scope[@type="public"]/entry/text()')
+    ]
 
     # Now, mark this (global, non-persistent) content package as being associated
     # directly with an active course/catalog
