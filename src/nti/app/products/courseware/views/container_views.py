@@ -35,7 +35,7 @@ from nti.contenttypes.courses.interfaces import ICourseInstance
 
 from nti.contenttypes.courses.utils import get_courses_for_packages
 
-from nti.contenttypes.presentation.interfaces import INTIAssessmentRef
+from nti.contenttypes.presentation.interfaces import INTIAssignmentRef
 from nti.contenttypes.presentation.interfaces import INTIQuestionSetRef
 from nti.contenttypes.presentation.interfaces import INTILessonOverview
 
@@ -150,4 +150,4 @@ class QuestionSetContainersView(AbstractAssessmentContainersView):
                permission=nauth.ACT_CONTENT_EDIT)
 class AssignmentLessonsContainersView(AbstractAssessmentContainersView):
     # Some assignments are in question set refs...
-    provided = INTIAssessmentRef
+    provided = (INTIAssignmentRef, INTIQuestionSetRef)

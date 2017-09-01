@@ -64,7 +64,6 @@ from nti.contenttypes.courses.interfaces import ES_PUBLIC
 from nti.contenttypes.courses.interfaces import DESCRIPTION
 from nti.contenttypes.courses.interfaces import NTI_COURSE_FILE_SCHEME
 
-from nti.contenttypes.courses.interfaces import ICourseOutline
 from nti.contenttypes.courses.interfaces import ICourseInstance
 from nti.contenttypes.courses.interfaces import ICourseCatalogEntry
 
@@ -80,6 +79,8 @@ from nti.dataserver.interfaces import IMemcacheClient
 from nti.site.site import get_component_hierarchy_names
 
 from nti.traversal.traversal import find_interface
+
+from nti.zope_catalog.catalog import ResultSet
 
 #: Default memcache expiration time
 DEFAULT_EXP_TIME = 86400
@@ -261,43 +262,6 @@ def has_course_invitations(context):
     return bool(result)
 
 
-def _search_for_lessons(evaluation, provided, container_ntiids, catalog,
-                        valid_outlines, intids, sites):
-    """
-    Find lessons for the given evaluation, existing in our valid_outlines.
-    """
-    results = []
-    for item in catalog.search_objects(intids=intids,
-                                       provided=provided,
-                                       container_ntiids=container_ntiids,
-                                       container_all_of=False,
-                                       sites=sites):
-        if item.target == evaluation.ntiid:
-            lesson = find_interface(item,
-                                    INTILessonOverview,
-                                    strict=False)
-            if lesson is not None:
-                outline = find_interface(lesson, ICourseOutline, strict=False)
-                if outline is not None and outline in valid_outlines:
-                    results.append(lesson)
-    return results
-
-
-def _get_lessons_for_courses(container_ntiids):
-    """
-    Find lessons for the given evaluation, existing in our valid_outlines.
-    """
-    catalog = get_library_catalog()
-    intids = component.getUtility(IIntIds)
-    sites = get_component_hierarchy_names()
-    result_set = catalog.search_objects(intids=intids,
-                                        provided=INTILessonOverview,
-                                        container_ntiids=container_ntiids,
-                                        container_all_of=False,
-                                        sites=sites)
-    return set(result_set) if result_set else ()
-
-
 def _get_course_ntiids(courses):
     # Get any courses that match our outline; since the ref may have been
     # indexed or stored from any course.
@@ -312,15 +276,6 @@ def _get_course_ntiids(courses):
                 if entry is not None:
                     results.add(entry.ntiid)
     return results
-
-
-def _is_evaluation_in_lesson(lesson, target_ntiids, outline_provided):
-    for group in lesson or ():
-        for item in group or ():
-            if      outline_provided.providedBy(item) \
-                and item.target in target_ntiids:
-                return True
-    return False
 
 
 def _get_ref_target_ntiids(evaluation):
@@ -349,12 +304,22 @@ def get_evaluation_lessons(evaluation, outline_provided, courses=None, request=N
             courses = get_evaluation_courses(evaluation)
     target_ntiids = _get_ref_target_ntiids(evaluation)
     container_ntiids = _get_course_ntiids(courses)
-    lessons = _get_lessons_for_courses(container_ntiids)
-    result = set()
-    for lesson in lessons:
-        if _is_evaluation_in_lesson(lesson, target_ntiids, outline_provided):
-            result.add(lesson)
-    return result
+    catalog = get_library_catalog()
+    if not isinstance(outline_provided, (list, tuple)):
+        outline_provided = (outline_provided,)
+    outline_provided = [x.__name__ for x in outline_provided]
+    refs = catalog.get_references(target=target_ntiids,
+                                  provided=outline_provided,
+                                  container_ntiids=container_ntiids,
+                                  container_all_of=False)
+    intids = component.getUtility(IIntIds)
+    refs = ResultSet(refs, intids, True)
+    lessons = []
+    for ref in refs:
+        lesson = find_interface(ref, INTILessonOverview, strict=False)
+        if lesson is not None:
+            lessons.append(lesson)
+    return lessons
 
 
 def associate(obj, filer, key, bucket=None):
