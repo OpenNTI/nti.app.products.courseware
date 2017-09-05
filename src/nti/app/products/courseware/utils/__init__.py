@@ -295,7 +295,8 @@ def get_evaluation_lessons(evaluation, outline_provided, courses=None, request=N
     """
     request = get_current_request() if request is None else request
     if courses is None:
-        # XXX: If we have a request course, we use it. Do we want all courses?
+        # XXX: If we have a request course, we use it. 
+        # Do we want all courses?
         course = ICourseInstance(request, None)
         courses = (course,)
         if course is None:
@@ -305,7 +306,6 @@ def get_evaluation_lessons(evaluation, outline_provided, courses=None, request=N
     catalog = get_library_catalog()
     if not isinstance(outline_provided, (list, tuple)):
         outline_provided = (outline_provided,)
-    outline_provided = [x.__name__ for x in outline_provided]
     sites = get_component_hierarchy_names()
     objs = catalog.search_objects(sites=sites,
                                   target=target_ntiids,
