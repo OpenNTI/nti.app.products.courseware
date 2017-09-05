@@ -80,8 +80,6 @@ from nti.site.site import get_component_hierarchy_names
 
 from nti.traversal.traversal import find_interface
 
-from nti.zope_catalog.catalog import ResultSet
-
 #: Default memcache expiration time
 DEFAULT_EXP_TIME = 86400
 
@@ -308,14 +306,14 @@ def get_evaluation_lessons(evaluation, outline_provided, courses=None, request=N
     if not isinstance(outline_provided, (list, tuple)):
         outline_provided = (outline_provided,)
     outline_provided = [x.__name__ for x in outline_provided]
-    refs = catalog.get_references(target=target_ntiids,
+    sites = get_component_hierarchy_names()
+    objs = catalog.search_objects(sites=sites,
+                                  target=target_ntiids,
                                   provided=outline_provided,
                                   container_ntiids=container_ntiids,
                                   container_all_of=False)
-    intids = component.getUtility(IIntIds)
-    refs = ResultSet(refs, intids, True)
     lessons = []
-    for ref in refs:
+    for ref in objs:
         lesson = find_interface(ref, INTILessonOverview, strict=False)
         if lesson is not None:
             lessons.append(lesson)
