@@ -24,6 +24,8 @@ from nti.app.products.courseware.utils import get_vendor_info
 
 from nti.base._compat import text_
 
+from nti.base.interfaces import IFile
+
 from nti.common.iterables import to_list
 
 from nti.contenttypes.courses.discussions.interfaces import ICourseDiscussionTopic
@@ -63,9 +65,11 @@ from nti.dataserver.interfaces import ACE_DENY_ALL
 from nti.dataserver.interfaces import ACE_ACT_ALLOW
 from nti.dataserver.interfaces import ALL_PERMISSIONS
 
+from nti.dataserver.interfaces import ICanvas
 from nti.dataserver.interfaces import IACLProvider
+from nti.dataserver.interfaces import ICanvasURLShape
 
-from nti.dataserver.users import Entity
+from nti.dataserver.users.entity import Entity
 
 from nti.externalization.internalization import update_from_external_object
 
@@ -138,7 +142,7 @@ def _extract_content(body=()):
             name = "application/vnd.nextthought.embeddedvideo"
             video = component.getUtility(component.IFactory, name=name)()
             update_from_external_object(video, {'embedURL': vid_url,
-                                        'type': vid_type})
+                                                'type': vid_type})
             content = video
 
         if content:
@@ -296,7 +300,11 @@ def create_topics(discussion, update=True, topics=None):
         for i in post.body or ():
             if hasattr(i, '__parent__'):
                 i.__parent__ = post
-
+            # check for canvas objects
+            if ICanvas.providedBy(i):
+                for shape in i.shapeList or ():
+                    if ICanvasURLShape.providedBy(shape) and IFile.providedBy(shape.file):
+                        shape.file.__parent__ = shape.__parent__
     result = []
     content = extract_content(discussion)
     for scope in scopes:
