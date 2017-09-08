@@ -230,7 +230,7 @@ class CreateCourseDiscussionTopicsView(AbstractAuthenticatedView):
         auto_create_forums(course)  # always
         discussions = ICourseDiscussions(course)
         for discussion in discussions.values():
-            data.extend(create_topics(discussion, update=False))
+            data.extend(create_topics(discussion, False))
         result[TOTAL] = result[ITEM_COUNT] = len(data)
         return result
 
@@ -260,7 +260,7 @@ class SyncCourseDiscussionsView(AbstractAuthenticatedView,
         if root is not None:
             ds_bucket = root.getChildNamed(DISCUSSIONS)
             if ds_bucket is not None:
-                parse_discussions(course, ds_bucket, force=force)
+                parse_discussions(course, ds_bucket, force)
         return hexc.HTTPNoContent()
 
 
