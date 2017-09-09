@@ -558,5 +558,8 @@
 
 	<!-- Recordables -->
 	<utility factory=".recordables.CourseCatalogRecordables" name="courses" />
+	
+	<!-- Publishables -->
+	<utility factory=".publishables.CourseCatalogPublishables" name="courses" />
 
 </configure>
