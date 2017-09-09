@@ -32,6 +32,8 @@ from nti.app.contentfile import validate_sources
 
 from nti.app.contentfolder import ASSETS_FOLDER
 
+from nti.app.contentfolder.resources import is_internal_file_link
+
 from nti.app.contentfolder.utils import get_unique_file_name
 
 from nti.app.externalization.view_mixins import ModeledContentUploadRequestUtilsMixin
@@ -41,7 +43,6 @@ from nti.app.products.courseware.discussions import create_topics
 from nti.app.products.courseware.discussions import auto_create_forums
 
 from nti.app.products.courseware.resources.utils import get_course_filer
-from nti.app.products.courseware.resources.utils import is_internal_file_link
 
 from nti.app.products.courseware.views import VIEW_COURSE_DISCUSSIONS
 

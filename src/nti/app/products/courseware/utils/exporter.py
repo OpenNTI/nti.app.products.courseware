@@ -18,8 +18,8 @@ from nti.app.contentfolder import ASSETS_FOLDER
 from nti.app.contentfolder import IMAGES_FOLDER
 from nti.app.contentfolder import DOCUMENTS_FOLDER
 
-from nti.app.products.courseware.resources.utils import is_internal_file_link
-from nti.app.products.courseware.resources.utils import get_file_from_external_link
+from nti.app.contentfolder.resources import is_internal_file_link
+from nti.app.contentfolder.resources import get_file_from_external_link
 
 from nti.contenttypes.courses.interfaces import NTI_COURSE_FILE_SCHEME
 

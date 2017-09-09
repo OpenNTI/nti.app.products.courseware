@@ -15,11 +15,11 @@ from hamcrest import starts_with
 from hamcrest import has_property
 does_not = is_not
 
-from StringIO import StringIO
+from six import StringIO
+
+from nti.app.contentfolder.resources import is_internal_file_link
 
 from nti.app.products.courseware.resources.interfaces import ICourseSourceFiler
-
-from nti.app.products.courseware.resources.utils import is_internal_file_link
 
 from nti.contenttypes.courses.interfaces import ICourseInstance
 
