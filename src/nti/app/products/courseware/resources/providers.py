@@ -15,7 +15,7 @@ from pyramid.threadlocal import get_current_request
 
 from nti.app.contentfile.interfaces import IExternalLinkProvider
 
-from nti.app.products.courseware.resources.utils import to_external_cf_io_href
+from nti.app.contentfolder.resources import to_external_cf_io_href
 
 
 @interface.implementer(IExternalLinkProvider)

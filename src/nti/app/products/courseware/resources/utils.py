@@ -13,17 +13,9 @@ from zope import interface
 
 from nti.app.base.abstract_views import get_source_filer
 
-from nti.app.contentfile.view_mixins import is_oid_external_link
-from nti.app.contentfile.view_mixins import to_external_download_oid_href
-from nti.app.contentfile.view_mixins import get_file_from_oid_external_link
-
 from nti.app.contentfolder import ASSETS_FOLDER
 from nti.app.contentfolder import IMAGES_FOLDER
 from nti.app.contentfolder import DOCUMENTS_FOLDER
-
-from nti.app.contentfolder.utils import is_cf_io_href
-from nti.app.contentfolder.utils import to_external_cf_io_href
-from nti.app.contentfolder.utils import get_file_from_cf_io_url
 
 from nti.app.products.courseware.resources.interfaces import ICourseRootFolder
 from nti.app.products.courseware.resources.interfaces import ICourseSourceFiler
@@ -77,21 +69,3 @@ def get_images_folder(context):
 def get_course_filer(context, user=None, strict=False):
     course = get_course(context, strict=strict)
     return get_source_filer(course, user, ICourseSourceFiler)
-
-
-def is_internal_file_link(link):
-    return is_oid_external_link(link) or is_cf_io_href(link)
-
-
-def get_file_from_external_link(link):
-    if is_oid_external_link(link):
-        return get_file_from_oid_external_link(link)
-    elif is_cf_io_href(link):
-        return get_file_from_cf_io_url(link)
-    return None
-
-
-def to_external_file_link(context, oid=False):
-    if oid:
-        return to_external_download_oid_href(context)
-    return to_external_cf_io_href(context)
