@@ -47,7 +47,7 @@ class CourseCatalogPublishables(object):
         # forums
         for forum in course.Discussions.values():
             for topic in forum.values():
-                if IPublishable.providedBy(forum):
+                if IPublishable.providedBy(topic):
                     result.append(topic)
         return result
 
