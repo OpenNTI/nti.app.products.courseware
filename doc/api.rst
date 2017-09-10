@@ -5,119 +5,119 @@
 ACL
 ===
 
-.. automodule:: nti.products.courseware.acl
+.. automodule:: nti.app.products.courseware.acl
 
 Activity
 ========
 
-.. automodule:: nti.products.courseware.activity
+.. automodule:: nti.app.products.courseware.activity
 
 Adapters
 ========
 
-.. automodule:: nti.products.courseware.adapters
+.. automodule:: nti.app.products.courseware.adapters
 
 Catalog
 =======
 
-.. automodule:: nti.products.courseware.catalog
+.. automodule:: nti.app.products.courseware.catalog
 
 Decorators
 ==========
 
-.. automodule:: nti.products.courseware.decorators
+.. automodule:: nti.app.products.courseware.decorators
 
 Enrollment
 ==========
 
-.. automodule:: nti.products.courseware.enrollment
+.. automodule:: nti.app.products.courseware.enrollment
 
 Filters
 =======
 
-.. automodule:: nti.products.courseware.filters
+.. automodule:: nti.app.products.courseware.filters
 
 Interfaces
 ==========
 
-.. automodule:: nti.products.courseware.interfaces
+.. automodule:: nti.app.products.courseware.interfaces
 
 Legacy Catalog
 ==============
 
-.. automodule:: nti.products.courseware.legacy_catalog
+.. automodule:: nti.app.products.courseware.legacy_catalog
 
 Legacy Course
 =============
 
-.. automodule:: nti.products.courseware.legacy_course
+.. automodule:: nti.app.products.courseware.legacy_course
 
 Legacy Courses
 ==============
 
-.. automodule:: nti.products.courseware.legacy_courses
+.. automodule:: nti.app.products.courseware.legacy_courses
 
 Legacy Principal Role
 =====================
 
-.. automodule:: nti.products.courseware.legacy_principalrole
+.. automodule:: nti.app.products.courseware.legacy_principalrole
 
 Notables
 ========
 
-.. automodule:: nti.products.courseware.notables
+.. automodule:: nti.app.products.courseware.notables
 
 NTIIDs
 ======
 
-.. automodule:: nti.products.courseware.ntiids
+.. automodule:: nti.app.products.courseware.ntiids
 
 Policies
 ========
 
-.. automodule:: nti.products.courseware.policies
+.. automodule:: nti.app.products.courseware.policies
 
 Predicates
 ==========
 
-.. automodule:: nti.products.courseware.predicates
+.. automodule:: nti.app.products.courseware.predicates
 
 Publishables
 ============
 
-.. automodule:: nti.products.courseware.publishables
+.. automodule:: nti.app.products.courseware.publishables
 
 Recordables
 ===========
 
-.. automodule:: nti.products.courseware.recordables
+.. automodule:: nti.app.products.courseware.recordables
 
 Stream Ranking
 ==============
 
-.. automodule:: nti.products.courseware.stream_ranking
+.. automodule:: nti.app.products.courseware.stream_ranking
 
 Subscribers
 ===========
 
-.. automodule:: nti.products.courseware.subscribers
+.. automodule:: nti.app.products.courseware.subscribers
 
 Traversal
 =========
 
-.. automodule:: nti.products.courseware.traversal
+.. automodule:: nti.app.products.courseware.traversal
 
 Users
 =====
 
-.. automodule:: nti.products.courseware.users
+.. automodule:: nti.app.products.courseware.users
 
 Vendor Info
 ===========
 
-.. automodule:: nti.products.courseware.vendorinfo
+.. automodule:: nti.app.products.courseware.vendorinfo
 
 Workspaces
 ==========
 
-.. automodule:: nti.products.courseware.workspaces
+.. automodule:: nti.app.products.courseware.workspaces
