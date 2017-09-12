@@ -6,7 +6,7 @@ Views related to administration of courses.
 .. $Id$
 """
 
-from __future__ import print_function, unicode_literals, absolute_import, division
+from __future__ import print_function, absolute_import, division
 __docformat__ = "restructuredtext en"
 
 logger = __import__('logging').getLogger(__name__)
@@ -41,9 +41,13 @@ from pyramid.view import view_defaults
 
 from nti.app.base.abstract_views import AbstractAuthenticatedView
 
+from nti.app.externalization.error import raise_json_error
+
 from nti.app.externalization.internalization import read_body_as_external_object
 
 from nti.app.externalization.view_mixins import ModeledContentUploadRequestUtilsMixin
+
+from nti.app.products.courseware import MessageFactory as _
 
 from nti.app.products.courseware.interfaces import ICoursesWorkspace
 
@@ -108,15 +112,13 @@ ITEMS = StandardExternalFields.ITEMS
 TOTAL = StandardExternalFields.TOTAL
 ITEM_COUNT = StandardExternalFields.ITEM_COUNT
 
-# HELPER admin views
-
 
 class AbstractCourseEnrollView(AbstractAuthenticatedView,
                                ModeledContentUploadRequestUtilsMixin):
 
-    def readInput(self):
+    def readInput(self, value=None):
         if self.request.body:
-            values = read_body_as_external_object(self.request)
+            values = super(AbstractCourseEnrollView, self).readInput(value)
         else:
             values = self.request.params
         result = CaseInsensitiveDict(values)
@@ -141,15 +143,22 @@ class UserCourseEnrollView(AbstractCourseEnrollView):
         values = self.readInput()
         context, user = self.parseCommon(values)
         scope = values.get('scope', ES_PUBLIC)
-        if not scope or scope not in ENROLLMENT_SCOPE_VOCABULARY.by_token.keys():
-            raise hexc.HTTPUnprocessableEntity(detail='Invalid scope')
-
+        if not scope or scope not in ENROLLMENT_SCOPE_VOCABULARY.by_token:
+            raise_json_error(self.request,
+                             hexc.HTTPUnprocessableEntity,
+                             {
+                                 'message': _(u"Invalid scope."),
+                             },
+                             None)
         if is_instructor_in_hierarchy(context, user):
-            msg = 'User is an instructor in course hierarchy'
-            raise hexc.HTTPUnprocessableEntity(detail=msg)
-
+            msg = _(u'User is an instructor in course hierarchy')
+            raise_json_error(self.request,
+                             hexc.HTTPUnprocessableEntity,
+                             {
+                                 'message': msg,
+                             },
+                             None)
         interaction = is_true(values.get('email') or values.get('interaction'))
-
         # Make sure we don't have any interaction.
         if not interaction:
             endInteraction()
@@ -158,7 +167,6 @@ class UserCourseEnrollView(AbstractCourseEnrollView):
             service = IUserService(user)
             workspace = ICoursesWorkspace(service)
             parent = workspace['EnrolledCourses']
-
             entry = ICourseCatalogEntry(context, None)
             logger.info("Enrolling %s in %s",
                         user, getattr(entry, 'ntiid', None))
@@ -195,7 +203,6 @@ class UserCourseDropView(AbstractCourseEnrollView):
                             getattr(entry, 'ntiid', None))
         finally:
             restoreInteraction()
-
         return hexc.HTTPNoContent()
 
 
@@ -267,7 +274,7 @@ class UserCourseEnrollmentsView(AbstractAuthenticatedView):
                                                            CourseInstance=context)
                 items.append(context)
 
-        result['ItemCount'] = result['Total'] = len(items)
+        result[ITEM_COUNT] = result[TOTAL] = len(items)
         return result
 
 
@@ -285,36 +292,45 @@ class CourseEnrollmentMigrationView(AbstractAuthenticatedView):
     to do it for real.
     """
 
-    def readInput(self):
+    def readInput(self, value=None):
         if self.request.body:
-            values = read_body_as_external_object(self.request)
+            values = super(AbstractCourseEnrollView, self).readInput(value)
         else:
             values = self.request.params
         result = CaseInsensitiveDict(values)
         return result
 
     def _do_call(self):
-        try:
-            catalog = component.getUtility(ICourseCatalog)
-        except LookupError:
-            raise hexc.HTTPNotFound(detail='Catalog not found')
-
         params = {}
         values = self.readInput()
+        catalog = component.getUtility(ICourseCatalog)
         for name, alias in (('source', 'source'), ('target', 'dest')):
             ntiid = values.get(name) or values.get(alias)
             if not ntiid:
-                msg = 'No %s course entry specified' % name
-                raise hexc.HTTPUnprocessableEntity(detail=msg)
+                raise_json_error(self.request,
+                                 hexc.HTTPUnprocessableEntity,
+                                 {
+                                     'message': _(u'No course entry specified.'),
+                                 },
+                                 None)
             try:
                 entry = catalog.getCatalogEntry(ntiid)
                 params[name] = entry
             except KeyError:
-                raise hexc.HTTPUnprocessableEntity(detail='Course not found')
-
+                raise_json_error(self.request,
+                                 hexc.HTTPUnprocessableEntity,
+                                 {
+                                     'message': _(u'Course not found.'),
+                                 },
+                                 None)
         if params['source'] == params['target']:
-            msg = 'Source and target course are the same'
-            raise hexc.HTTPUnprocessableEntity(detail=msg)
+            msg = _(u'Source and target course are the same.')
+            raise_json_error(self.request,
+                             hexc.HTTPUnprocessableEntity,
+                             {
+                                 'message': msg,
+                             },
+                             None)
 
         result = LocatedExternalDict()
         users_moved = result['Users'] = list()
@@ -322,9 +338,10 @@ class CourseEnrollmentMigrationView(AbstractAuthenticatedView):
         result['Target'] = params['target'].ntiid
         source = ICourseInstance(params['source'])
         target = ICourseInstance(params['target'])
-        total = migrate_enrollments_from_course_to_course(source, target, verbose=True,
+        total = migrate_enrollments_from_course_to_course(source, target,
+                                                          verbose=True,
                                                           result=users_moved)
-        result['Total'] = total
+        result[ITEM_COUNT] = result[TOTAL] = total
         return result
 
     def __call__(self):
@@ -351,6 +368,8 @@ class CourseSectionEnrollmentMigrationView(AbstractAuthenticatedView):
     to do it for real.
     """
 
+    DEFAULT_SEAT_COUNT = 25
+
     def readInput(self):
         if self.request.body:
             values = read_body_as_external_object(self.request)
@@ -363,19 +382,35 @@ class CourseSectionEnrollmentMigrationView(AbstractAuthenticatedView):
         values = self.readInput()
         course = _parse_course(values)
         if not course:
-            raise hexc.HTTPUnprocessableEntity('No course found')
+            raise_json_error(self.request,
+                             hexc.HTTPUnprocessableEntity,
+                             {
+                                 'message': _(u'Course not found.'),
+                             },
+                             None)
 
         scope = values.get('Scope') or ES_PUBLIC
         if scope not in ENROLLMENT_SCOPE_NAMES:
-            raise hexc.HTTPUnprocessableEntity('Invalid scope')
+            raise_json_error(self.request,
+                             hexc.HTTPUnprocessableEntity,
+                             {
+                                 'message': _(u'Invalid scope.'),
+                             },
+                             None)
 
-        seats = values.get('Seats') or values.get('SeatCount') or \
-            values.get('MaxSeatCount') or values.get('max_seat_count') or 25
+        seats = values.get('Seats') or values.get('SeatCount') \
+             or values.get('MaxSeatCount') or values.get('max_seat_count') \
+             or self.DEFAULT_SEAT_COUNT
         try:
             seats = int(seats)
             assert seats > 0
         except Exception:
-            raise hexc.HTTPUnprocessableEntity('Invalid max seat count')
+            raise_json_error(self.request,
+                             hexc.HTTPUnprocessableEntity,
+                             {
+                                 'message': _(u'Invalid max seat count.'),
+                             },
+                             None)
 
         seen = set()
         sections = []
@@ -408,8 +443,6 @@ class CourseSectionEnrollmentMigrationView(AbstractAuthenticatedView):
             return self._do_call()
         finally:
             restoreInteraction()
-
-# REPORT admin views
 
 
 @view_config(name='CourseEnrollments')
@@ -465,22 +498,23 @@ class CourseEnrollmentsView(AbstractAuthenticatedView):
             scope = record.Scope
             username = user.username
 
-            created = getattr(
-                record, 'createdTime', None) or record.lastModified
-            created = isodate.datetime_isoformat(
-                datetime.fromtimestamp(created or 0))
+            created = getattr(record, 'createdTime', None)
+            created = created or record.lastModified or 0
+            created = datetime.fromtimestamp(created)
+            created = isodate.datetime_isoformat(created)
 
             profile = IUserProfile(user, None)
             email = getattr(profile, 'email', None)
             realname = getattr(profile, 'realname', None)
 
             row_data = [
-                self._replace(username), realname, email, scope, created]
+                self._replace(username), realname, email, scope, created
+            ]
             csv_writer.writerow([_tx_string(x) for x in row_data])
 
         response = self.request.response
         response.body = bio.getvalue()
-        response.content_disposition = b'attachment; filename="enrollments.csv"'
+        response.content_disposition = 'attachment; filename="enrollments.csv"'
         return response
 
 
@@ -530,7 +564,7 @@ class AllCourseEnrollmentRosterDownloadView(AbstractAuthenticatedView):
     def _make_enrollment_predicate(self):
         status_filter = self.request.GET.get('LegacyEnrollmentStatus')
         if not status_filter:
-            return lambda course, user: True
+            return lambda *unused_args: True
 
         def func(course, user):
             enrollment = component.getMultiAdapter((course, user),
@@ -595,7 +629,7 @@ class AllCourseEnrollmentRosterDownloadView(AbstractAuthenticatedView):
         writer.writerows(rows)
 
         self.request.response.body = buf.getvalue()
-        self.request.response.content_disposition = b'attachment; filename="enrollments.csv"'
+        self.request.response.content_disposition = 'attachment; filename="enrollments.csv"'
         return self.request.response
 
 
@@ -684,5 +718,5 @@ class FixBrokenEnrollmentsView(AbstractAuthenticatedView):
                     count += 1
                     if not dry_run:
                         unenroll(extra_record, extra_record.Principal)
-        result[TOTAL] = count
+        result[ITEM_COUNT] = result[TOTAL] = count
         return result

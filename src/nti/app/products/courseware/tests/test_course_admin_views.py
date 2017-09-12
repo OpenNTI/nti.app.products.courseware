@@ -14,7 +14,7 @@ from hamcrest import assert_that
 from hamcrest import has_entries
 does_not = is_not
 
-from nti.dataserver.users import User
+from nti.dataserver.users.users import User
 
 from nti.app.products.courseware.tests import PersistentInstructedCourseApplicationTestLayer
 
