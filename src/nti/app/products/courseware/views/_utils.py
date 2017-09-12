@@ -4,7 +4,7 @@
 .. $Id$
 """
 
-from __future__ import print_function, unicode_literals, absolute_import, division
+from __future__ import print_function, absolute_import, division
 __docformat__ = "restructuredtext en"
 
 logger = __import__('logging').getLogger(__name__)
@@ -14,6 +14,12 @@ import six
 from zope.component.hooks import getSite
 
 from pyramid import httpexceptions as hexc
+
+from pyramid.threadlocal import get_current_request
+
+from nti.app.externalization.error import raise_json_error
+
+from nti.app.products.courseware import MessageFactory as _
 
 from nti.app.products.courseware.utils import encode_keys
 from nti.app.products.courseware.utils import memcache_get
@@ -38,7 +44,7 @@ from nti.contenttypes.courses.legacy_catalog import ILegacyCourseInstance
 
 from nti.dataserver.interfaces import IUser
 
-from nti.dataserver.users import User
+from nti.dataserver.users.users import User
 
 from nti.ntiids.ntiids import find_object_with_ntiid
 
@@ -187,11 +193,21 @@ def _tx_string(s):
 def _parse_user(values):
     username = values.get('username') or values.get('user')
     if not username:
-        raise hexc.HTTPUnprocessableEntity(detail='No username')
+        raise_json_error(get_current_request(),
+                         hexc.HTTPUnprocessableEntity,
+                         {
+                             'message': _(u"No username."),
+                         },
+                         None)
 
     user = User.get_user(username)
     if not user or not IUser.providedBy(user):
-        raise hexc.HTTPUnprocessableEntity(detail='User not found')
+        raise_json_error(get_current_request(),
+                         hexc.HTTPUnprocessableEntity,
+                         {
+                             'message': _(u"User not found."),
+                         },
+                         None)
 
     return username, user
 
@@ -200,7 +216,12 @@ def _parse_courses(values):
     # get validate course entry
     ntiids = values.get('ntiid') or values.get('ntiids')
     if not ntiids:
-        raise hexc.HTTPUnprocessableEntity(detail='No course entry identifier')
+        raise_json_error(get_current_request(),
+                         hexc.HTTPUnprocessableEntity,
+                         {
+                             'message': _(u"No course entry identifier."),
+                         },
+                         None)
 
     if isinstance(ntiids, six.string_types):
         ntiids = ntiids.split()
@@ -218,5 +239,10 @@ def _parse_courses(values):
 def _parse_course(values):
     result = _parse_courses(values)
     if not result:
-        raise hexc.HTTPUnprocessableEntity(detail='Course not found')
+        raise_json_error(get_current_request(),
+                         hexc.HTTPUnprocessableEntity,
+                         {
+                             'message': _(u"Course not found."),
+                         },
+                         None)
     return result[0]
