@@ -12,7 +12,7 @@ from hamcrest import has_entry
 from hamcrest import has_length
 from hamcrest import assert_that
 
-import anyjson as json
+import simplejson as json
 
 from nti.ntiids.ntiids import find_object_with_ntiid
 
@@ -53,7 +53,7 @@ class TestCourseUGDViews(ApplicationLayerTest):
                 pages_href = link.get('href')
         course_ntiid = course_json.get('NTIID')
 
-        data = json.serialize({
+        data = json.dumps({
             'Class': 'Highlight',
             'MimeType': 'application/vnd.nextthought.highlight',
             'ContainerId': self.container_ntiid,
@@ -87,7 +87,7 @@ class TestCourseUGDViews(ApplicationLayerTest):
 
         # Add a highlight and associate its context_id with the container
         # context
-        data = json.serialize({
+        data = json.dumps({
             'Class': 'Highlight', 'MimeType': 'application/vnd.nextthought.highlight',
             'ContainerId': self.container_ntiid,
             'selectedText': "This is the selected text",
@@ -103,7 +103,7 @@ class TestCourseUGDViews(ApplicationLayerTest):
             # set context id
             highlight.context_id = response.json_body['ContainerContext']
 
-        data = json.serialize({
+        data = json.dumps({
             'Class': 'Highlight', 'MimeType': 'application/vnd.nextthought.highlight',
             'ContainerId': self.container_ntiid,
             'selectedText': "Different selected text",
