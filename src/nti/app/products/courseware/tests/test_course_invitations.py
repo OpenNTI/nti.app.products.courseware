@@ -31,9 +31,9 @@ from nti.dataserver.users.interfaces import IUserProfile
 
 from nti.externalization.externalization import StandardExternalFields
 
-from nti.externalization.oids import to_external_ntiid_oid
-
 from nti.ntiids.ntiids import find_object_with_ntiid
+
+from nti.ntiids.oids import to_external_ntiid_oid
 
 from nti.app.products.courseware.tests import PersistentInstructedCourseApplicationTestLayer
 

@@ -26,12 +26,13 @@ from nti.app.products.courseware.views.view_mixins import AbstractRecursiveTrans
 from nti.contenttypes.courses.interfaces import ICourseInstance
 from nti.contenttypes.courses.interfaces import ICourseEnrollmentManager
 
-from nti.dataserver.users import User
+from nti.dataserver.users.users import User
 
-from nti.externalization.externalization import to_external_ntiid_oid
 from nti.externalization.externalization import StandardExternalFields
 
 from nti.ntiids.ntiids import find_object_with_ntiid
+
+from nti.ntiids.oids import to_external_ntiid_oid
 
 from nti.recorder.record import TransactionRecord
 

@@ -76,9 +76,9 @@ from nti.datastructures.datastructures import LastModifiedCopyingUserList
 
 from nti.externalization.interfaces import LocatedExternalDict
 
-from nti.externalization.oids import to_external_ntiid_oid
-
 from nti.links.links import Link
+
+from nti.ntiids.oids import to_external_ntiid_oid
 
 from nti.property.property import alias
 

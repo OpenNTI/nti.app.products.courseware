@@ -20,9 +20,9 @@ from zope.component.hooks import site as current_site
 
 from zope.intid.interfaces import IIntIds
 
-from nti.app.products.courseware.resources.adapters import course_resources
+from nti.app.contentfolder.resources import to_external_file_link
 
-from nti.app.products.courseware.resources.utils import to_external_file_link
+from nti.app.products.courseware.resources.adapters import course_resources
 
 from nti.contentfolder.interfaces import INamedContainer
 
@@ -34,9 +34,9 @@ from nti.contenttypes.presentation.interfaces import INTIRelatedWorkRef
 from nti.dataserver.interfaces import IDataserver
 from nti.dataserver.interfaces import IOIDResolver
 
-from nti.externalization.oids import to_external_ntiid_oid
-
 from nti.ntiids.ntiids import is_valid_ntiid_string
+
+from nti.ntiids.oids import to_external_ntiid_oid
 
 from nti.site.hostpolicy import get_all_host_sites
 

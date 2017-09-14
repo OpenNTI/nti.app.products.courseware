@@ -53,7 +53,7 @@ from nti.dataserver.contenttypes.forums.forum import CommunityForum
 
 from nti.dataserver.contenttypes.media import EmbeddedVideo
 
-from nti.externalization.oids import to_external_ntiid_oid
+from nti.ntiids.oids import to_external_ntiid_oid
 
 from nti.app.products.courseware.tests import PersistentInstructedCourseApplicationTestLayer
 
