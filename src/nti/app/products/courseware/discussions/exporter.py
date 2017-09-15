@@ -47,7 +47,7 @@ class CourseDiscussionsExporter(BaseSectionExporter):
                                 ext_obj)
 
     def _ext_obj(self, discussion):
-        ext_obj = to_external_object(discussion, decorate=False)
+        ext_obj = to_external_object(discussion, decorate=False, name='exporter')
         decorateMimeType(discussion, ext_obj)
         [ext_obj.pop(x, None) for x in (NTIID, OID)]
         return ext_obj
