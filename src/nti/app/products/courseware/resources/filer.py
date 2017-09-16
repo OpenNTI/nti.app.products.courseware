@@ -136,17 +136,23 @@ class CourseSourceFiler(object):
         else:
             bucket = self.root
 
+        namedfile = None
         filename = text_(key)
         if overwrite:
             if filename in bucket:
-                bucket.remove(filename)
+                namedfile = bucket[filename]
         else:
             filename = get_unique_file_name(filename, bucket)
 
-        namedfile = get_namedfile_from_source(source, filename)
-        namedfile.creator = username or SYSTEM_USER_ID  # set creator
-        namedfile.contentType = contentType if contentType else namedfile.contentType
-        bucket.add(namedfile)
+        if namedfile is None:
+            namedfile = get_namedfile_from_source(source, filename)
+            namedfile.creator = username or SYSTEM_USER_ID  # set creator
+            bucket.add(namedfile)
+        else:
+            transfer_data(source, namedfile)
+
+        if contentType:
+            namedfile.contentType = contentType
 
         if context is not None:
             namedfile.add_association(context)
