@@ -136,6 +136,7 @@ class CourseSourceFiler(object):
         else:
             bucket = self.root
 
+        modified = False
         namedfile = None
         filename = text_(key)
         if overwrite:
@@ -149,13 +150,16 @@ class CourseSourceFiler(object):
             namedfile.creator = username or SYSTEM_USER_ID  # set creator
             bucket.add(namedfile)
         else:
+            modified = True
             transfer_data(source, namedfile)
 
         if contentType:
             namedfile.contentType = contentType
 
         if context is not None:
+            modified = True
             namedfile.add_association(context)
+        if modified:
             lifecycleevent.modified(namedfile)
 
         # return external link
