@@ -215,8 +215,9 @@ from nti.contenttypes.courses.enrollment import IDefaultCourseInstanceEnrollment
 from nti.contenttypes.courses.enrollment import DefaultCourseInstanceEnrollmentRecord
 from nti.contenttypes.courses.enrollment import global_course_catalog_enrollment_storage
 
-from nti.dataserver.users import Entity
 from nti.dataserver.interfaces import IEntityContainer
+
+from nti.dataserver.users.entity import Entity
 
 from .interfaces import ILegacyCommunityBasedCourseInstance
 

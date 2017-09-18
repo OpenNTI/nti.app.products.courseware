@@ -33,9 +33,9 @@ from nti.contenttypes.courses.interfaces import ICourseInstance
 from nti.contenttypes.courses.interfaces import ICourseCatalogEntry
 from nti.contenttypes.courses.interfaces import IJoinCourseInvitation
 
-from nti.dataserver.users import User
-
 from nti.dataserver.users.interfaces import IFriendlyNamed
+
+from nti.dataserver.users.users import User
 
 from nti.invitations.interfaces import IInvitationSentEvent
 

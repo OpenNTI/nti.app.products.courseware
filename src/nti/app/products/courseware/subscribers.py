@@ -66,9 +66,10 @@ from nti.contenttypes.courses.utils import get_course_hierarchy
 
 from nti.dataserver.interfaces import ICommunity
 
-from nti.dataserver.users import Entity
 from nti.dataserver.users.interfaces import IUserProfile
 from nti.dataserver.users.interfaces import IEmailAddressable
+
+from nti.dataserver.users.entity import Entity
 
 from nti.externalization.externalization import to_external_object
 

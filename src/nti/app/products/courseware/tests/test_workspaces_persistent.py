@@ -36,7 +36,7 @@ from nti.contenttypes.courses.interfaces import ICourseEnrollmentManager
 
 from nti.dataserver.authorization import ROLE_CONTENT_ADMIN
 
-from nti.dataserver.users import User
+from nti.dataserver.users.users import User
 
 from nti.dataserver.tests import mock_dataserver
 

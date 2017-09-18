@@ -57,7 +57,7 @@ from nti.dataserver.contenttypes.forums.post import CommunityHeadlinePost
 
 from nti.dataserver.contenttypes.forums.topic import CommunityHeadlineTopic
 
-from nti.dataserver.users import Entity
+from nti.dataserver.users.entity import Entity
 
 from nti.externalization.internalization import update_from_external_object
 

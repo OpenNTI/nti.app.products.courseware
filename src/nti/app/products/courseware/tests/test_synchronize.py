@@ -84,7 +84,7 @@ from nti.dataserver.authorization import CONTENT_ROLE_PREFIX
 from nti.dataserver.interfaces import IMutableGroupMember
 from nti.dataserver.interfaces import ISharingTargetEntityIterable
 
-from nti.dataserver.users import User
+from nti.dataserver.users.users import User
 
 from nti.externalization.tests import externalizes
 

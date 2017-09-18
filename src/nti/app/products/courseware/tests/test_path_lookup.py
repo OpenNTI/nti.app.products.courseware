@@ -34,7 +34,7 @@ from nti.contenttypes.courses.interfaces import ICourseEnrollmentManager
 
 from nti.contentfragments.interfaces import SanitizedHTMLContentFragment
 
-from nti.dataserver.users import User
+from nti.dataserver.users.users import User
 
 from nti.app.products.courseware.tests import PersistentInstructedCourseApplicationTestLayer
 

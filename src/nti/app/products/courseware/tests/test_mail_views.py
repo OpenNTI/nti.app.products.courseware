@@ -34,8 +34,9 @@ from nti.contenttypes.courses.interfaces import ES_CREDIT_DEGREE
 from nti.contenttypes.courses.interfaces import ICourseInstance
 from nti.contenttypes.courses.interfaces import ICourseEnrollmentManager
 
-from nti.dataserver.users import User
 from nti.dataserver.users.interfaces import IUserProfile
+
+from nti.dataserver.users.users import User
 
 from nti.ntiids.ntiids import find_object_with_ntiid
 

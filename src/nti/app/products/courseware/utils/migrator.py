@@ -27,7 +27,7 @@ from nti.contenttypes.courses.enrollment import IDefaultCourseInstanceEnrollment
 
 from nti.contenttypes.courses.utils import get_parent_course
 
-from nti.dataserver.users import User
+from nti.dataserver.users.users import User
 
 from nti.ntiids.ntiids import find_object_with_ntiid
 

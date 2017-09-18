@@ -41,7 +41,7 @@ from nti.contenttypes.courses.interfaces import InstructorEnrolledException
 from nti.dataserver.interfaces import IAccessProvider
 from nti.dataserver.interfaces import IGrantAccessException
 
-from nti.dataserver.users import User
+from nti.dataserver.users.users import User
 
 from nti.ntiids.ntiids import find_object_with_ntiid
 

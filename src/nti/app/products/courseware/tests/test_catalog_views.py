@@ -35,7 +35,7 @@ from nti.contenttypes.courses.interfaces import ICourseEnrollmentManager
 
 from nti.dataserver.tests import mock_dataserver
 
-from nti.dataserver.users import User
+from nti.dataserver.users.users import User
 
 from nti.externalization.interfaces import StandardExternalFields
 

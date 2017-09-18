@@ -56,14 +56,17 @@ from nti.contenttypes.courses.interfaces import CourseInstanceAvailableEvent
 
 from nti.contenttypes.courses.internalization import CourseCatalogLegacyEntryUpdater
 
-from nti.dataserver.users import User
-from nti.dataserver.users import Entity
-from nti.dataserver.users import Community
-from nti.dataserver.users.interfaces import IFriendlyNamed
-
 from nti.dataserver.interfaces import ICommunity
 from nti.dataserver.interfaces import EVERYONE_GROUP_NAME
 from nti.dataserver.interfaces import IUseNTIIDAsExternalUsername
+
+from nti.dataserver.users.communities import Community
+
+from nti.dataserver.users.entity import Entity
+
+from nti.dataserver.users.interfaces import IFriendlyNamed
+
+from nti.dataserver.users.users import User
 
 from nti.externalization.externalization import to_external_object
 

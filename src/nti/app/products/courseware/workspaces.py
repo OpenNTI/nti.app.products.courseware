@@ -70,7 +70,7 @@ from nti.dataserver.authorization_acl import has_permission
 from nti.dataserver.interfaces import IUser
 from nti.dataserver.interfaces import IDataserver
 
-from nti.dataserver.users import User
+from nti.dataserver.users.users import User
 
 from nti.datastructures.datastructures import LastModifiedCopyingUserList
 

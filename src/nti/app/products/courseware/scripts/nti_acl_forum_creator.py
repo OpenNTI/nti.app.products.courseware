@@ -39,7 +39,7 @@ from nti.dataserver.contenttypes.forums.interfaces import PERMISSIONS
 from nti.dataserver.contenttypes.forums.interfaces import READ_PERMISSION
 from nti.dataserver.contenttypes.forums.interfaces import WRITE_PERMISSION
 
-from nti.dataserver.users import Entity
+from nti.dataserver.users.entity import Entity
 
 from nti.dataserver.utils import run_with_dataserver
 from nti.dataserver.utils.base_script import set_site

@@ -34,9 +34,9 @@ from zope import lifecycleevent
 from nti.app.products.courseware import VIEW_COURSE_RECURSIVE
 from nti.app.products.courseware import VIEW_COURSE_RECURSIVE_BUCKET
 
-from nti.dataserver.users import User
-
 from nti.app.testing.decorators import WithSharedApplicationMockDS
+
+from nti.dataserver.users.users import User
 
 from nti.dataserver.tests import mock_dataserver
 

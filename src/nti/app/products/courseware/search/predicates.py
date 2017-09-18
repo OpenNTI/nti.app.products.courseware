@@ -47,7 +47,7 @@ from nti.dataserver.interfaces import IUserGeneratedData
 from nti.dataserver.authorization import ACT_NTI_ADMIN
 from nti.dataserver.authorization import ACT_CONTENT_EDIT
 
-from nti.dataserver.users import User
+from nti.dataserver.users.users import User
 
 from nti.traversal.traversal import find_interface
 
