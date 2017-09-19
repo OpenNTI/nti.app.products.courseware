@@ -19,7 +19,6 @@ from nti.contenttypes.courses.discussions.interfaces import ICourseDiscussionsSe
 
 from nti.contenttypes.courses.discussions.parser import path_to_discussions
 
-from nti.contenttypes.courses.exporter import export_proxy
 from nti.contenttypes.courses.exporter import BaseSectionExporter
 
 from nti.contenttypes.courses.interfaces import ICourseInstance
@@ -48,7 +47,7 @@ class CourseDiscussionsExporter(BaseSectionExporter):
                                 ext_obj)
 
     def _ext_obj(self, discussion, filer, backup=True, salt=None):
-        ext_obj = to_external_object(export_proxy(discussion, filer, backup, salt),
+        ext_obj = to_external_object(self.proxy(discussion, filer, backup, salt),
                                      decorate=False, 
                                      name='exporter')
         decorateMimeType(discussion, ext_obj)
