@@ -46,8 +46,8 @@ class CourseDiscussionsExporter(BaseSectionExporter):
                                 target_filer,
                                 ext_obj)
 
-    def _ext_obj(self, discussion, filer, backup=True, salt=None):
-        ext_obj = to_external_object(self.proxy(discussion, filer, backup, salt),
+    def _ext_obj(self, discussion):
+        ext_obj = to_external_object(discussion,
                                      decorate=False, 
                                      name='exporter')
         decorateMimeType(discussion, ext_obj)
@@ -59,7 +59,7 @@ class CourseDiscussionsExporter(BaseSectionExporter):
         discussions = ICourseDiscussions(course)
         filer.default_bucket = bucket = path_to_discussions(course)
         for name, discussion in list(discussions.items()):  # snapshot
-            ext_obj = self._ext_obj(discussion, filer, backup, salt)
+            ext_obj = self._ext_obj(discussion)
             self._process_resources(discussion, ext_obj, filer)
             source = self.dump(ext_obj)
             filer.save(name, source, contentType="application/json",
