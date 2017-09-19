@@ -19,6 +19,7 @@ from nti.contenttypes.courses.discussions.interfaces import ICourseDiscussionsSe
 
 from nti.contenttypes.courses.discussions.parser import path_to_discussions
 
+from nti.contenttypes.courses.exporter import export_proxy
 from nti.contenttypes.courses.exporter import BaseSectionExporter
 
 from nti.contenttypes.courses.interfaces import ICourseInstance
@@ -46,8 +47,10 @@ class CourseDiscussionsExporter(BaseSectionExporter):
                                 target_filer,
                                 ext_obj)
 
-    def _ext_obj(self, discussion):
-        ext_obj = to_external_object(discussion, decorate=False, name='exporter')
+    def _ext_obj(self, discussion, filer, backup=True, salt=None):
+        ext_obj = to_external_object(export_proxy(discussion, filer, backup, salt),
+                                     decorate=False, 
+                                     name='exporter')
         decorateMimeType(discussion, ext_obj)
         [ext_obj.pop(x, None) for x in (NTIID, OID)]
         return ext_obj
@@ -57,7 +60,7 @@ class CourseDiscussionsExporter(BaseSectionExporter):
         discussions = ICourseDiscussions(course)
         filer.default_bucket = bucket = path_to_discussions(course)
         for name, discussion in list(discussions.items()):  # snapshot
-            ext_obj = self._ext_obj(discussion)
+            ext_obj = self._ext_obj(discussion, filer, backup, salt)
             self._process_resources(discussion, ext_obj, filer)
             source = self.dump(ext_obj)
             filer.save(name, source, contentType="application/json",
