@@ -304,13 +304,33 @@ class TestPersistentWorkspaces(AbstractEnrollingBase, ApplicationLayerTest):
 								{'ntiid': self.enrollment_ntiid},
 								extra_environ=environ)
 		res = self.testapp.get(enroll_faves, extra_environ=environ)
-		
+
 		assert_that(res.json_body[ITEM_COUNT], is_(1))
 		assert_that(res.json_body[TOTAL], is_(1))
 		record = res.json_body[ITEMS][0]
 		assert_that(record,
 					has_entry('href',
 							  is_('%s/%s' % (enroll_href, self.enrollment_ntiid))))
+
+	@WithSharedApplicationMockDS(users=True, testapp=True)
+	def test_catalog_collection(self):
+		service_res = self.testapp.get('/dataserver2/service/')
+		service_res = service_res.json_body
+		workspaces = service_res['Items']
+		catalog_ws = next(x for x in workspaces if x['Title'] == 'Catalog')
+		assert_that(catalog_ws, not_none())
+		catalog_collections = catalog_ws['Items']
+		assert_that(catalog_collections, has_length(3))
+		courses_collection = next(x for x
+								  in catalog_collections
+								  if x['Title'] == 'Courses')
+		assert_that(courses_collection, not_none())
+		courses_href = courses_collection['href']
+		assert_that(courses_href, not_none())
+		available_courses = self.testapp.get(courses_href)
+		available_courses = available_courses.json_body
+		assert_that(available_courses['Title'], is_('Courses'))
+		assert_that(available_courses[ITEMS], has_length(8))
 
 	@WithSharedApplicationMockDS(users=True, testapp=True)
 	def test_windowed_links(self):

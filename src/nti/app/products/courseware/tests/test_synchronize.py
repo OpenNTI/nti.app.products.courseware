@@ -623,7 +623,7 @@ class TestFunctionalSynchronize(CourseLayerTest):
 		"""
 		# Make sure we're enrolled in sec03
 		class Container(object):
-			def __contains__(self, o): return True
+			def __contains__(self, unused_o): return True
 
 		mock_container.is_callable().returns(Container())
 		mock_rem_user.is_callable().returns(object())
@@ -743,7 +743,7 @@ class TestFunctionalSynchronize(CourseLayerTest):
 		"""
 		# Mock we have a user and they are in a scope
 		class Container(object):
-			def __contains__(self, o): return True
+			def __contains__(self, unused_o): return True
 		mock_container.is_callable().returns(Container())
 		mock_rem_user.is_callable().returns(object())
 

@@ -272,6 +272,10 @@
 	<adapter factory=".workspaces.CoursesWorkspace"
 			 provides=".interfaces.ICoursesWorkspace" />
 
+	<subscriber factory=".workspaces.CourseCatalogCollection"
+                provides="nti.appserver.workspaces.interfaces.ICatalogCollection"
+                for="nti.appserver.workspaces.interfaces.ICatalogWorkspace" />
+
 	<!-- And an adapter for security purposes -->
 	<adapter factory=".legacy_principalrole.LegacyCourseInstancePrincipalRoleMap" />
 
@@ -558,7 +562,7 @@
 
 	<!-- Recordables -->
 	<utility factory=".recordables.CourseCatalogRecordables" name="courses" />
-	
+
 	<!-- Publishables -->
 	<utility factory=".publishables.CourseCatalogPublishables" name="courses" />
 

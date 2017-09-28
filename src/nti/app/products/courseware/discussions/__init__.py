@@ -278,8 +278,8 @@ update_course_forums = create_course_forums
 
 def create_topics(discussion, update=True, topics=None):
     course = ICourseInstance(discussion)
-    all_fourms = create_course_forums(course)
-    discussions = all_fourms[u'discussions']
+    all_forums = create_course_forums(course)
+    discussions = all_forums[u'discussions']
     topics = dict() if topics is None else topics
 
     # get all scopes for topics
@@ -350,7 +350,7 @@ def create_topics(discussion, update=True, topics=None):
             # raise events and get intid
             lifecycleevent.created(post)
             lifecycleevent.added(post)
-            logger.info('Topic "%s" has been created in fourm "%s"',
+            logger.info('Topic "%s" has been created in forum "%s"',
                         title, forum.title)
 
         if is_nti_course_bundle(discussion):

@@ -120,7 +120,7 @@ class ICoursesWorkspace(IWorkspace):
     """
 
 
-class ICoursePagesContainerResource (IContainerResource):
+class ICoursePagesContainerResource(IContainerResource):
     """
     A pages resource on a course.
     """
