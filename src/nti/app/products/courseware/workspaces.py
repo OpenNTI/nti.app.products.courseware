@@ -35,6 +35,7 @@ from nti.app.products.courseware import VIEW_ALL_ENTRIES_WINDOWED
 from nti.app.products.courseware import VIEW_ADMINISTERED_WINDOWED
 
 from nti.app.products.courseware.interfaces import ICoursesWorkspace
+from nti.app.products.courseware.interfaces import ICoursesCatalogCollection
 from nti.app.products.courseware.interfaces import ICourseInstanceEnrollment
 from nti.app.products.courseware.interfaces import IEnrolledCoursesCollection
 from nti.app.products.courseware.interfaces import IAdministeredCoursesCollection
@@ -42,6 +43,7 @@ from nti.app.products.courseware.interfaces import ILegacyCourseInstanceEnrollme
 from nti.app.products.courseware.interfaces import ICourseCatalogLegacyContentEntry
 
 from nti.appserver.workspaces.interfaces import IUserService
+from nti.appserver.workspaces.interfaces import ICatalogWorkspace
 from nti.appserver.workspaces.interfaces import IContainerCollection
 
 from nti.contenttypes.courses.interfaces import ES_CREDIT
@@ -75,12 +77,18 @@ from nti.dataserver.users.users import User
 from nti.datastructures.datastructures import LastModifiedCopyingUserList
 
 from nti.externalization.interfaces import LocatedExternalDict
+from nti.externalization.interfaces import LocatedExternalList
+from nti.externalization.interfaces import StandardExternalFields
 
 from nti.links.links import Link
 
 from nti.ntiids.oids import to_external_ntiid_oid
 
 from nti.property.property import alias
+
+ITEMS = StandardExternalFields.ITEMS
+TOTAL = StandardExternalFields.TOTAL
+ITEM_COUNT = StandardExternalFields.ITEM_COUNT
 
 
 @interface.implementer(ICoursesWorkspace)
@@ -155,21 +163,24 @@ class AllCoursesCollection(Contained):
         self.__parent__ = parent
 
     @Lazy
-    def container(self):
-        parent = self.__parent__
-        user = parent.user
-        # To support ACLs limiting the available parts of the catalog,
-        # we filter out here.
-        # we could do this with a proxy, but it's easier right now
-        # just to copy. This is highly dependent on implementation.
-        # We also filter out sibling courses when we are already enrolled
-        # in one; this is probably inefficient
+    def catalog(self):
+        return self.__parent__.catalog
+
+    @Lazy
+    def available_entries(self):
+        """
+        Return a dict of course catalog entries the user is not enrolled
+        in and that are available to be enrolled in.
+        """
+        # To support ACLs limiting the available parts of the catalog, we
+        # filter out here. we could do this with a proxy, but it's easier right
+        # now just to copy. This is highly dependent on implementation. We also
+        # filter out sibling courses when we are already enrolled in one; this
+        # is probably inefficient
+        result = self._IteratingDict()
         my_enrollments = {}
-        container = result = self._IteratingDict()
-        container.__name__ = parent.catalog.__name__
-        container.__parent__ = parent.catalog.__parent__
-        container.lastModified = parent.catalog.lastModified
-        for x in parent.catalog.iterCatalogEntries():
+        user = self.__parent__.user
+        for x in self.catalog.iterCatalogEntries():
             if has_permission(ACT_READ, x, user):
                 # Note that we have to expose these by NTIID, not their
                 # __name__. Because the catalog can be reading from
@@ -179,7 +190,7 @@ class AllCoursesCollection(Contained):
                     enrollments = ICourseEnrollments(course)
                     if enrollments.get_enrollment_for_principal(user) is not None:
                         my_enrollments[x.ntiid] = course
-                container[x.ntiid] = x
+                result[x.ntiid] = x
         courses_to_remove = []
         for course in my_enrollments.values():
             if ICourseSubInstance.providedBy(course):
@@ -194,8 +205,17 @@ class AllCoursesCollection(Contained):
         for course in courses_to_remove:
             ntiid = ICourseCatalogEntry(course).ntiid
             if ntiid not in my_enrollments:
-                container.pop(ntiid, None)
+                result.pop(ntiid, None)
         return result
+
+    @Lazy
+    def container(self):
+        parent = self.__parent__
+        container = self.available_entries
+        container.__name__ = parent.catalog.__name__
+        container.__parent__ = parent.catalog.__parent__
+        container.lastModified = parent.catalog.lastModified
+        return container
 
     @property
     def links(self):
@@ -485,3 +505,46 @@ class CatalogEntryLocationInfo(LocationPhysicallyLocatable):
         if not IRoot.providedBy(parents[-1]):
             raise TypeError("Not enough context to get all parents")
         return parents
+
+
+@component.adapter(ICatalogWorkspace)
+@interface.implementer(ICoursesCatalogCollection)
+class CourseCatalogCollection(AllCoursesCollection):
+    """
+    A catalog collection that returns :class:``ICourseCatalogEntry`` items.
+    These will include all catalog entries that a user can enroll in (or is
+    enrolled in), sorted by entry title and startDate.
+    """
+
+    name = 'Courses'
+    __name__ = name
+    _workspace = alias('__parent__')
+    accepts = ()
+    links = ()
+
+    def __init__(self, catalog_workspace):
+        self.__parent__ = catalog_workspace
+
+    def _sort_key(self, entry):
+        title = entry.title and entry.title.lower()
+        start_date = entry.StartDate
+        return (title is not None, title, start_date is not None, start_date)
+
+    @Lazy
+    def catalog(self):
+        return component.queryUtility(ICourseCatalog)
+
+    @Lazy
+    def container(self):
+        # TODO: batching/filtering
+        result = LocatedExternalList()
+        entries = sorted(self.available_entries, key=self._sort_key)
+        result.extend(entries)
+        result.__name__ = self.catalog.__name__
+        result.__parent__ = self.catalog.__parent__
+        result.lastModified = self.catalog.lastModified
+        return result
+
+    def __len__(self):
+        return len(self.container)
+

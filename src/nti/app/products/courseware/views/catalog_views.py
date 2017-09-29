@@ -14,8 +14,6 @@ the workspace collections.
 from __future__ import print_function, absolute_import, division
 __docformat__ = "restructuredtext en"
 
-logger = __import__('logging').getLogger(__name__)
-
 from datetime import datetime
 
 from requests.structures import CaseInsensitiveDict
@@ -47,6 +45,7 @@ from nti.app.externalization.view_mixins import ModeledContentUploadRequestUtils
 
 from nti.app.products.courseware.interfaces import ICoursesWorkspace
 from nti.app.products.courseware.interfaces import ICourseInstanceEnrollment
+from nti.app.products.courseware.interfaces import ICoursesCatalogCollection
 from nti.app.products.courseware.interfaces import IEnrolledCoursesCollection
 from nti.app.products.courseware.interfaces import IAdministeredCoursesCollection
 
@@ -63,12 +62,16 @@ from nti.appserver.dataserver_pyramid_views import GenericGetView
 
 from nti.appserver.pyramid_authorization import can_create
 
+from nti.appserver.workspaces import VIEW_CATALOG_POPULAR
+from nti.appserver.workspaces import VIEW_CATALOG_FEATURED
+
 from nti.appserver.workspaces.interfaces import IUserService
 from nti.appserver.workspaces.interfaces import IContainerCollection
 
 from nti.contenttypes.courses.interfaces import ES_PUBLIC
 from nti.contenttypes.courses.interfaces import ICourseCatalog
 from nti.contenttypes.courses.interfaces import ICourseInstance
+from nti.contenttypes.courses.interfaces import ICourseEnrollments
 from nti.contenttypes.courses.interfaces import ICourseCatalogEntry
 from nti.contenttypes.courses.interfaces import ICourseEnrollmentManager
 from nti.contenttypes.courses.interfaces import INonPublicCourseInstance
@@ -100,6 +103,8 @@ TOTAL = StandardExternalFields.TOTAL
 ITEM_COUNT = StandardExternalFields.ITEM_COUNT
 
 INTERNAL_NTIID = StandardInternalFields.NTIID
+
+logger = __import__('logging').getLogger(__name__)
 
 
 @interface.implementer(IPathAdapter)
@@ -233,7 +238,7 @@ class enroll_course_view(AbstractAuthenticatedView,
         return enrollment
 
 
-class _AbstractFavoriteCoursesView(AbstractAuthenticatedView):
+class _AbstractSortingAndFilteringCoursesView(AbstractAuthenticatedView):
     """
     An abstract view to fetch the `favorite` courses of a user. All
     `current` courses will be returned, or the default minimum. Current
@@ -249,12 +254,27 @@ class _AbstractFavoriteCoursesView(AbstractAuthenticatedView):
     DEFAULT_RESULT_COUNT = 4
 
     @Lazy
-    def minimum_count(self):
+    def requested_count(self):
         params = CaseInsensitiveDict(self.request.params)
         result = params.get('count') \
               or params.get('limit') \
               or params.get('size')
-        return result or self.DEFAULT_RESULT_COUNT
+        if result:
+            try:
+                result = int(result)
+            except TypeError:
+                raise_json_error(self.request,
+                                 hexc.HTTPUnprocessableEntity,
+                                 {
+                                     'message': _(u'Invalid count param.'),
+                                     'code': 'InvalidCountParam'
+                                 },
+                                 None)
+        return result
+
+    @Lazy
+    def minimum_count(self):
+        return self.requested_count or self.DEFAULT_RESULT_COUNT
 
     def _sort_key(self, entry_tuple):
         start_date = entry_tuple[0].StartDate
@@ -291,6 +311,9 @@ class _AbstractFavoriteCoursesView(AbstractAuthenticatedView):
         return  (entry.StartDate is None or now > entry.StartDate) \
             and (entry.EndDate is None or now < entry.EndDate)
 
+    def _is_entry_upcoming(self, entry):
+        return entry.StartDate is not None and self.now < entry.StartDate
+
     @Lazy
     def sorted_current_entries_and_records(self):
         result = [x for x in self.sorted_entries_and_records
@@ -324,7 +347,7 @@ class _AbstractFavoriteCoursesView(AbstractAuthenticatedView):
         return result
 
 
-class _AbstractWindowedCoursesView(_AbstractFavoriteCoursesView):
+class _AbstractWindowedCoursesView(_AbstractSortingAndFilteringCoursesView):
     """
     Base for fetching courses in a more paged style. Request gives back courses
     that are between the notBefore and notAfter GET params. If neither of these
@@ -421,7 +444,7 @@ class WindowedFavoriteEnrolledCoursesView(_AbstractWindowedCoursesView):
              permission=nauth.ACT_READ,
              name=VIEW_COURSE_FAVORITES,
              renderer='rest')
-class FavoriteEnrolledCoursesView(_AbstractFavoriteCoursesView):
+class FavoriteEnrolledCoursesView(_AbstractSortingAndFilteringCoursesView):
     """
     A view into the `favorite` enrolled courses of a user. We want to sort
     by enrollment record here.
@@ -438,7 +461,7 @@ class FavoriteEnrolledCoursesView(_AbstractFavoriteCoursesView):
              permission=nauth.ACT_READ,
              name=VIEW_COURSE_FAVORITES,
              renderer='rest')
-class FavoriteAdministeredCoursesView(_AbstractFavoriteCoursesView):
+class FavoriteAdministeredCoursesView(_AbstractSortingAndFilteringCoursesView):
     """
     A view into the `favorite` administered courses of a user.
     """
@@ -592,7 +615,9 @@ class UserCourseCatalogFamiliesView(AbstractAuthenticatedView):
         return result
 
 
-class _AbstractFilteredCourseView(_AbstractFavoriteCoursesView):
+class _AbstractFilteredCourseView(_AbstractSortingAndFilteringCoursesView):
+
+    DESC_SORT_ORDER = True
 
     def _is_admin(self, course):
         return is_admin_or_content_admin(self.remoteUser) \
@@ -610,15 +635,21 @@ class _AbstractFilteredCourseView(_AbstractFavoriteCoursesView):
         entry = ICourseCatalogEntry(record, None)
         return entry
 
-    def _filter(self, entry):
+    def _include_filter(self, entry):
+        """
+        Subclasses may use this to filter courses.
+        """
         raise NotImplementedError()
 
     @Lazy
+    def filtered_entries(self):
+        return [x for x in self.entries_and_records if self._include_filter(x[0])]
+
+    @Lazy
     def sorted_filtered_entries_and_records(self):
-        result = sorted([x for x in self.entries_and_records
-                         if self._filter(x[0])],
+        result = sorted(self.filtered_entries,
                         key=self._sort_key,
-                        reverse=True)
+                        reverse=self.DESC_SORT_ORDER)
         return result
 
     def _get_items(self):
@@ -650,9 +681,8 @@ class UpcomingCoursesView(_AbstractFilteredCourseView):
     Fetch all upcoming courses in the collection
     """
 
-    def _filter(self, entry):
-        now = self.now
-        return entry.StartDate is not None and now < entry.StartDate
+    def _include_filter(self, entry):
+        return self._is_entry_upcoming(entry)
 
 
 @view_config(route_name='objects.generic.traversal',
@@ -665,7 +695,7 @@ class ArchivedCoursesView(_AbstractFilteredCourseView):
     Fetch all archived courses in the collection
     """
 
-    def _filter(self, entry):
+    def _include_filter(self, entry):
         now = self.now
         return entry.EndDate is not None and now > entry.EndDate
 
@@ -680,5 +710,131 @@ class CurrentCoursesView(_AbstractFilteredCourseView):
     Fetch all current courses in the collection
     """
 
-    def _filter(self, entry):
+    def _include_filter(self, entry):
         return self._is_entry_current(entry)
+
+
+@view_config(route_name='objects.generic.traversal',
+             context=ICoursesCatalogCollection,
+             request_method='GET',
+             permission=nauth.ACT_READ,
+             name=VIEW_CATALOG_POPULAR)
+class PopularCoursesView(_AbstractFilteredCourseView):
+    """
+    We want to return all `popular` courses, which by definition, are current
+    or upcoming, sorted by enrollment count.
+    """
+
+    DEFAULT_RESULT_COUNT = 3
+    MAXIMUM_RESULT_COUNT = 5
+
+    @Lazy
+    def minimum_popular_count(self):
+        return self.requested_count or self.DEFAULT_RESULT_COUNT
+
+    def _include_filter(self, entry):
+        return self._is_entry_current(entry) \
+            or self._is_entry_upcoming(entry)
+
+    def _sort_key(self, entry_tuple):
+        entry = entry_tuple[0]
+        course = ICourseInstance(entry, None)
+        enrollment_count = None
+        if course is not None:
+            enrollment_count = ICourseEnrollments(course).count_enrollments()
+        return (enrollment_count is not None, enrollment_count)
+
+    def should_return_popular_entries(self):
+        """
+        We only return if our collection is twice the size of the requested
+        popular item count (defaulting to 3).
+        """
+        return len(self.context.container) >= 2 * self.minimum_popular_count
+
+    def _raise_not_found(self):
+        raise_json_error(self.request,
+                         hexc.HTTPNotFound,
+                         {
+                             'message': _(u"There are no popular courses."),
+                             'code': 'NoPopularCoursesFoundError',
+                         },
+                         None)
+
+    def _get_items(self):
+        result = super(PopularCoursesView, self)._get_items()
+        return_count = self.requested_count
+        if not self.requested_count:
+            # If not a requested count, bound between 3 and 5.
+            item_count = len(result)
+            half_item_count = item_count // 2
+            return_count = min(half_item_count, self.MAXIMUM_RESULT_COUNT)
+            return_count = max(return_count, self.DEFAULT_RESULT_COUNT)
+        # Raise if we do not have our needed item count
+        if len(result) < return_count:
+            self._raise_not_found()
+        return result[:return_count]
+
+    def __call__(self):
+        if not self.should_return_popular_entries():
+            self._raise_not_found()
+        result = super(PopularCoursesView, self).__call__()
+        return result
+
+
+@view_config(route_name='objects.generic.traversal',
+             context=ICoursesCatalogCollection,
+             request_method='GET',
+             permission=nauth.ACT_READ,
+             name=VIEW_CATALOG_FEATURED)
+class FeaturedCoursesView(_AbstractFilteredCourseView):
+    """
+    We want to return all `featured` courses, which by definition, are the
+    upcoming courses closest to starting.
+    """
+
+    DEFAULT_RESULT_COUNT = 3
+    MINIMUM_RESULT_COUNT = 1
+    DESC_SORT_ORDER = False
+
+    @Lazy
+    def minimum_featured_count(self):
+        return self.requested_count or self.MINIMUM_RESULT_COUNT
+
+    def _include_filter(self, entry):
+        return self._is_entry_upcoming(entry)
+
+    def should_return_featured_entries(self):
+        """
+        We only return if our collection is twice the size of the requested
+        featured item count (defaulting to 3).
+        """
+        return len(self.context.container) >= 2 * self.minimum_featured_count
+
+    def _raise_not_found(self):
+        raise_json_error(self.request,
+                         hexc.HTTPNotFound,
+                         {
+                             'message': _(u"There are no featured courses."),
+                             'code': 'NoFeaturedCoursesFoundError',
+                         },
+                         None)
+
+    def _get_items(self):
+        result = super(FeaturedCoursesView, self)._get_items()
+        return_count = self.requested_count
+        if not self.requested_count:
+            # If not a requested count, bound between 1 and 3.
+            item_count = len(result)
+            half_item_count = item_count // 2
+            return_count = min(half_item_count, self.DEFAULT_RESULT_COUNT)
+            return_count = max(return_count, self.MINIMUM_RESULT_COUNT)
+        # Raise if we do not have our needed item count
+        if len(result) < return_count:
+            self._raise_not_found()
+        return result[:return_count]
+
+    def __call__(self):
+        if not self.should_return_featured_entries():
+            self._raise_not_found()
+        result = super(FeaturedCoursesView, self).__call__()
+        return result

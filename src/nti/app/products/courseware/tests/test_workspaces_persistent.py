@@ -19,6 +19,8 @@ from hamcrest import has_entries
 from hamcrest import greater_than_or_equal_to
 does_not = is_not
 
+import fudge
+
 from nti.testing.matchers import is_empty
 
 from zope import component
@@ -31,6 +33,9 @@ from nti.app.products.courseware import VIEW_ENROLLED_WINDOWED
 from nti.app.products.courseware import VIEW_ALL_COURSES_WINDOWED
 from nti.app.products.courseware import VIEW_ALL_ENTRIES_WINDOWED
 
+from nti.appserver.workspaces import VIEW_CATALOG_POPULAR
+from nti.appserver.workspaces import VIEW_CATALOG_FEATURED
+
 from nti.contenttypes.courses.interfaces import ICourseCatalog
 from nti.contenttypes.courses.interfaces import ICourseEnrollmentManager
 
@@ -42,10 +47,6 @@ from nti.dataserver.tests import mock_dataserver
 
 from nti.externalization.interfaces import StandardExternalFields
 
-ITEMS = StandardExternalFields.ITEMS
-TOTAL = StandardExternalFields.TOTAL
-ITEM_COUNT = StandardExternalFields.ITEM_COUNT
-
 from nti.app.products.courseware.tests import PersistentInstructedCourseApplicationTestLayer
 
 from nti.app.products.courseware.tests._workspaces import AbstractEnrollingBase
@@ -53,6 +54,11 @@ from nti.app.products.courseware.tests._workspaces import AbstractEnrollingBase
 from nti.app.testing.application_webtest import ApplicationLayerTest
 
 from nti.app.testing.decorators import WithSharedApplicationMockDS
+
+ITEMS = StandardExternalFields.ITEMS
+TOTAL = StandardExternalFields.TOTAL
+ITEM_COUNT = StandardExternalFields.ITEM_COUNT
+
 
 class TestPersistentWorkspaces(AbstractEnrollingBase, ApplicationLayerTest):
 
@@ -304,13 +310,97 @@ class TestPersistentWorkspaces(AbstractEnrollingBase, ApplicationLayerTest):
 								{'ntiid': self.enrollment_ntiid},
 								extra_environ=environ)
 		res = self.testapp.get(enroll_faves, extra_environ=environ)
-		
+
 		assert_that(res.json_body[ITEM_COUNT], is_(1))
 		assert_that(res.json_body[TOTAL], is_(1))
 		record = res.json_body[ITEMS][0]
 		assert_that(record,
 					has_entry('href',
 							  is_('%s/%s' % (enroll_href, self.enrollment_ntiid))))
+
+	def _get_course_collection(self):
+		service_res = self.testapp.get('/dataserver2/service/')
+		service_res = service_res.json_body
+		workspaces = service_res['Items']
+		catalog_ws = next(x for x in workspaces if x['Title'] == 'Catalog')
+		assert_that(catalog_ws, not_none())
+		catalog_collections = catalog_ws['Items']
+		assert_that(catalog_collections, has_length(3))
+		courses_collection = next(x for x
+								  in catalog_collections
+								  if x['Title'] == 'Courses')
+		assert_that(courses_collection, not_none())
+		return courses_collection
+
+	@WithSharedApplicationMockDS(users=True, testapp=True)
+	def test_catalog_collection(self):
+		"""
+		Test the courses catalog collection.
+		"""
+		courses_collection = self._get_course_collection()
+		courses_href = courses_collection['href']
+		assert_that(courses_href, not_none())
+		available_courses = self.testapp.get(courses_href)
+		available_courses = available_courses.json_body
+		assert_that(available_courses['Title'], is_('Courses'))
+		assert_that(available_courses[ITEMS], has_length(8))
+
+		# Now fetch popular items
+		popular_href = self.require_link_href_with_rel(courses_collection, VIEW_CATALOG_POPULAR)
+		popular_res = self.testapp.get(popular_href)
+		popular_res = popular_res.json_body
+		assert_that(popular_res[ITEMS], has_length(3))
+		popular_res = self.testapp.get(popular_href, params={'count': 1})
+		popular_res = popular_res.json_body
+		assert_that(popular_res[ITEMS], has_length(1))
+		# More than half the collection 404s
+		self.testapp.get(popular_href, params={'count': 5}, status=404)
+		featured_href = self.require_link_href_with_rel(courses_collection, VIEW_CATALOG_FEATURED)
+		self.testapp.get(featured_href, status=404)
+
+	@WithSharedApplicationMockDS(users=True, testapp=True)
+	@fudge.patch('nti.app.products.courseware.views.catalog_views.PopularCoursesView._include_filter')
+	def test_catalog_collection_popular_with_no_results(self, mock_include_filter):
+		"""
+		Test the courses catalog collection. Mocking that no courses are
+		available.
+		"""
+		mock_include_filter.is_callable().returns(False)
+		courses_collection = self._get_course_collection()
+
+		# Now fetch popular
+		popular_href = self.require_link_href_with_rel(courses_collection,
+													   VIEW_CATALOG_POPULAR)
+		self.testapp.get(popular_href, status=404)
+		self.testapp.get(popular_href, params={'count': 1}, status=404)
+
+	@WithSharedApplicationMockDS(users=True, testapp=True)
+	@fudge.patch('nti.app.products.courseware.views.catalog_views.FeaturedCoursesView._include_filter')
+	def test_catalog_collection_featured_with_results(self, mock_include_filter):
+		"""
+		Test the courses catalog collection featured view. All courses are
+		considered upcoming in this test (and thus in the featured returns).
+		"""
+		mock_include_filter.is_callable().returns(True)
+		courses_collection = self._get_course_collection()
+
+		# Now fetch featured
+		featured_href = self.require_link_href_with_rel(courses_collection,
+														VIEW_CATALOG_FEATURED)
+		featured_res = self.testapp.get(featured_href)
+		featured_res = featured_res.json_body
+		featured_items = featured_res[ITEMS]
+		assert_that(featured_items, has_length(3))
+		assert_that({x['StartDate'] for x in featured_items},
+					contains(u'2013-08-13T06:00:00Z'))
+
+		featured_res = self.testapp.get(featured_href, params={'count': 1})
+		featured_res = featured_res.json_body
+		featured_items = featured_res[ITEMS]
+		assert_that(featured_items, has_length(1))
+		assert_that({x['StartDate'] for x in featured_items},
+					contains(u'2013-08-13T06:00:00Z'))
+		self.testapp.get(featured_href, params={'count': 5}, status=404)
 
 	@WithSharedApplicationMockDS(users=True, testapp=True)
 	def test_windowed_links(self):
