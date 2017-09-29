@@ -14,8 +14,6 @@ the workspace collections.
 from __future__ import print_function, absolute_import, division
 __docformat__ = "restructuredtext en"
 
-logger = __import__('logging').getLogger(__name__)
-
 from datetime import datetime
 
 from requests.structures import CaseInsensitiveDict
@@ -105,6 +103,8 @@ TOTAL = StandardExternalFields.TOTAL
 ITEM_COUNT = StandardExternalFields.ITEM_COUNT
 
 INTERNAL_NTIID = StandardInternalFields.NTIID
+
+logger = __import__('logging').getLogger(__name__)
 
 
 @interface.implementer(IPathAdapter)
@@ -617,6 +617,8 @@ class UserCourseCatalogFamiliesView(AbstractAuthenticatedView):
 
 class _AbstractFilteredCourseView(_AbstractSortingAndFilteringCoursesView):
 
+    DESC_SORT_ORDER = True
+
     def _is_admin(self, course):
         return is_admin_or_content_admin(self.remoteUser) \
             or is_course_instructor_or_editor(course, self.remoteUser)
@@ -647,7 +649,7 @@ class _AbstractFilteredCourseView(_AbstractSortingAndFilteringCoursesView):
     def sorted_filtered_entries_and_records(self):
         result = sorted(self.filtered_entries,
                         key=self._sort_key,
-                        reverse=True)
+                        reverse=self.DESC_SORT_ORDER)
         return result
 
     def _get_items(self):
@@ -717,7 +719,7 @@ class CurrentCoursesView(_AbstractFilteredCourseView):
              request_method='GET',
              permission=nauth.ACT_READ,
              name=VIEW_CATALOG_POPULAR)
-class PopularAllCoursesView(_AbstractFilteredCourseView):
+class PopularCoursesView(_AbstractFilteredCourseView):
     """
     We want to return all `popular` courses, which by definition, are current
     or upcoming, sorted by enrollment count.
@@ -759,7 +761,7 @@ class PopularAllCoursesView(_AbstractFilteredCourseView):
                          None)
 
     def _get_items(self):
-        result = super(PopularAllCoursesView, self)._get_items()
+        result = super(PopularCoursesView, self)._get_items()
         return_count = self.requested_count
         if not self.requested_count:
             # If not a requested count, bound between 3 and 5.
@@ -775,5 +777,64 @@ class PopularAllCoursesView(_AbstractFilteredCourseView):
     def __call__(self):
         if not self.should_return_popular_entries():
             self._raise_not_found()
-        result = super(PopularAllCoursesView, self).__call__()
+        result = super(PopularCoursesView, self).__call__()
+        return result
+
+
+@view_config(route_name='objects.generic.traversal',
+             context=ICoursesCatalogCollection,
+             request_method='GET',
+             permission=nauth.ACT_READ,
+             name=VIEW_CATALOG_FEATURED)
+class FeaturedCoursesView(_AbstractFilteredCourseView):
+    """
+    We want to return all `featured` courses, which by definition, are the
+    upcoming courses closest to starting.
+    """
+
+    DEFAULT_RESULT_COUNT = 3
+    MINIMUM_RESULT_COUNT = 1
+    DESC_SORT_ORDER = False
+
+    @Lazy
+    def minimum_featured_count(self):
+        return self.requested_count or self.MINIMUM_RESULT_COUNT
+
+    def _include_filter(self, entry):
+        return self._is_entry_upcoming(entry)
+
+    def should_return_featured_entries(self):
+        """
+        We only return if our collection is twice the size of the requested
+        featured item count (defaulting to 3).
+        """
+        return len(self.context.container) >= 2 * self.minimum_featured_count
+
+    def _raise_not_found(self):
+        raise_json_error(self.request,
+                         hexc.HTTPNotFound,
+                         {
+                             'message': _(u"There are no featured courses."),
+                             'code': 'NoFeaturedCoursesFoundError',
+                         },
+                         None)
+
+    def _get_items(self):
+        result = super(FeaturedCoursesView, self)._get_items()
+        return_count = self.requested_count
+        if not self.requested_count:
+            # If not a requested count, bound between 1 and 3.
+            item_count = len(result)
+            half_item_count = item_count // 2
+            return_count = min(half_item_count, self.DEFAULT_RESULT_COUNT)
+            return_count = max(return_count, self.MINIMUM_RESULT_COUNT)
+        # Raise if we do not have our needed item count
+        if len(result) < return_count:
+            self._raise_not_found()
+        return result[:return_count]
+
+    def __call__(self):
+        if not self.should_return_featured_entries():
+            self._raise_not_found()
+        result = super(FeaturedCoursesView, self).__call__()
         return result

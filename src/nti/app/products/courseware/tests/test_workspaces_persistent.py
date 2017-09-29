@@ -356,10 +356,11 @@ class TestPersistentWorkspaces(AbstractEnrollingBase, ApplicationLayerTest):
 		# More than half the collection 404s
 		self.testapp.get(popular_href, params={'count': 5}, status=404)
 		featured_href = self.require_link_href_with_rel(courses_collection, VIEW_CATALOG_FEATURED)
+		self.testapp.get(featured_href, status=404)
 
 	@WithSharedApplicationMockDS(users=True, testapp=True)
-	@fudge.patch('nti.app.products.courseware.views.catalog_views.PopularAllCoursesView._include_filter')
-	def test_catalog_collection_with_results(self, mock_include_filter):
+	@fudge.patch('nti.app.products.courseware.views.catalog_views.PopularCoursesView._include_filter')
+	def test_catalog_collection_popular_with_no_results(self, mock_include_filter):
 		"""
 		Test the courses catalog collection. Mocking that no courses are
 		available.
@@ -367,10 +368,39 @@ class TestPersistentWorkspaces(AbstractEnrollingBase, ApplicationLayerTest):
 		mock_include_filter.is_callable().returns(False)
 		courses_collection = self._get_course_collection()
 
-		# Now fetch popular and featured
-		popular_href = self.require_link_href_with_rel(courses_collection, VIEW_CATALOG_POPULAR)
+		# Now fetch popular
+		popular_href = self.require_link_href_with_rel(courses_collection,
+													   VIEW_CATALOG_POPULAR)
 		self.testapp.get(popular_href, status=404)
 		self.testapp.get(popular_href, params={'count': 1}, status=404)
+
+	@WithSharedApplicationMockDS(users=True, testapp=True)
+	@fudge.patch('nti.app.products.courseware.views.catalog_views.FeaturedCoursesView._include_filter')
+	def test_catalog_collection_featured_with_results(self, mock_include_filter):
+		"""
+		Test the courses catalog collection featured view. All courses are
+		considered upcoming in this test (and thus in the featured returns).
+		"""
+		mock_include_filter.is_callable().returns(True)
+		courses_collection = self._get_course_collection()
+
+		# Now fetch featured
+		featured_href = self.require_link_href_with_rel(courses_collection,
+														VIEW_CATALOG_FEATURED)
+		featured_res = self.testapp.get(featured_href)
+		featured_res = featured_res.json_body
+		featured_items = featured_res[ITEMS]
+		assert_that(featured_items, has_length(3))
+		assert_that({x['StartDate'] for x in featured_items},
+					contains(u'2013-08-13T06:00:00Z'))
+
+		featured_res = self.testapp.get(featured_href, params={'count': 1})
+		featured_res = featured_res.json_body
+		featured_items = featured_res[ITEMS]
+		assert_that(featured_items, has_length(1))
+		assert_that({x['StartDate'] for x in featured_items},
+					contains(u'2013-08-13T06:00:00Z'))
+		self.testapp.get(featured_href, params={'count': 5}, status=404)
 
 	@WithSharedApplicationMockDS(users=True, testapp=True)
 	def test_windowed_links(self):
