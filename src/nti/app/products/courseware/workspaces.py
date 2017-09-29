@@ -35,6 +35,7 @@ from nti.app.products.courseware import VIEW_ALL_ENTRIES_WINDOWED
 from nti.app.products.courseware import VIEW_ADMINISTERED_WINDOWED
 
 from nti.app.products.courseware.interfaces import ICoursesWorkspace
+from nti.app.products.courseware.interfaces import ICoursesCatalogCollection
 from nti.app.products.courseware.interfaces import ICourseInstanceEnrollment
 from nti.app.products.courseware.interfaces import IEnrolledCoursesCollection
 from nti.app.products.courseware.interfaces import IAdministeredCoursesCollection
@@ -43,7 +44,6 @@ from nti.app.products.courseware.interfaces import ICourseCatalogLegacyContentEn
 
 from nti.appserver.workspaces.interfaces import IUserService
 from nti.appserver.workspaces.interfaces import ICatalogWorkspace
-from nti.appserver.workspaces.interfaces import ICatalogCollection
 from nti.appserver.workspaces.interfaces import IContainerCollection
 
 from nti.contenttypes.courses.interfaces import ES_CREDIT
@@ -508,7 +508,7 @@ class CatalogEntryLocationInfo(LocationPhysicallyLocatable):
 
 
 @component.adapter(ICatalogWorkspace)
-@interface.implementer(ICatalogCollection)
+@interface.implementer(ICoursesCatalogCollection)
 class CourseCatalogCollection(AllCoursesCollection):
     """
     A catalog collection that returns :class:``ICourseCatalogEntry`` items.
@@ -534,7 +534,7 @@ class CourseCatalogCollection(AllCoursesCollection):
     def catalog(self):
         return component.queryUtility(ICourseCatalog)
 
-    @property
+    @Lazy
     def container(self):
         # TODO: batching/filtering
         result = LocatedExternalList()
@@ -544,3 +544,7 @@ class CourseCatalogCollection(AllCoursesCollection):
         result.__parent__ = self.catalog.__parent__
         result.lastModified = self.catalog.lastModified
         return result
+
+    def __len__(self):
+        return len(self.container)
+

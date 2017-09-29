@@ -42,6 +42,7 @@ from nti.app.products.courseware import VIEW_COURSE_ENROLLMENT_ROSTER
 from nti.app.products.courseware.interfaces import ACT_VIEW_ACTIVITY
 
 from nti.app.products.courseware.interfaces import IOpenEnrollmentOption
+from nti.app.products.courseware.interfaces import ICoursesCatalogCollection
 from nti.app.products.courseware.interfaces import ICourseInstanceEnrollment
 
 from nti.app.products.courseware.utils import get_enrollment_options
@@ -55,6 +56,9 @@ from nti.app.renderers.decorators import AbstractAuthenticatedRequestAwareDecora
 from nti.appserver.pyramid_authorization import has_permission
 
 from nti.appserver.pyramid_renderers_edit_link_decorator import LinkRemoverDecorator
+
+from nti.appserver.workspaces import VIEW_CATALOG_POPULAR
+from nti.appserver.workspaces import VIEW_CATALOG_FEATURED
 
 from nti.assessment.interfaces import IQAssignment
 from nti.assessment.interfaces import IQuestionSet
@@ -848,7 +852,27 @@ class _AbstractAssessmentLessonsContainerDecorator(_AbstractLessonsContainerDeco
 class QuestionSetLessonsContainerDecorator(_AbstractAssessmentLessonsContainerDecorator):
 	provided = INTIQuestionSetRef
 
+
 @component.adapter(IQAssignment)
 @interface.implementer(IExternalObjectDecorator)
 class AssignmentLessonsContainerDecorator(_AbstractAssessmentLessonsContainerDecorator):
 	provided = (INTIAssignmentRef, INTIQuestionSetRef)
+
+
+@interface.implementer(IExternalObjectDecorator)
+@component.adapter(ICoursesCatalogCollection)
+class _CourseCatalogCollectionDecorator(AbstractAuthenticatedRequestAwareDecorator):
+	"""
+	Decorate the :class:``ICoursesCatalogCollection``.
+	"""
+
+	def _predicate(self, context, unused_result):
+		return len(context)
+
+	def _do_decorate_external(self, context, result):
+		_links = result.setdefault(LINKS, [])
+		for rel in (VIEW_CATALOG_POPULAR, VIEW_CATALOG_FEATURED):
+			link = Link(context,
+						rel=rel,
+						elements=('@@%s' % rel,))
+			_links.append(link)

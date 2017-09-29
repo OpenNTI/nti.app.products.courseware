@@ -29,6 +29,7 @@ from zope.security.permission import Permission
 from nti.appserver.interfaces import IContainerResource
 
 from nti.appserver.workspaces.interfaces import IWorkspace
+from nti.appserver.workspaces.interfaces import ICatalogCollection
 from nti.appserver.workspaces.interfaces import IContainerCollection
 
 from nti.base.interfaces import ILastModified
@@ -408,6 +409,11 @@ def get_course_publishable_vendor_info(context):
         result.update(info or {})
     return result
 
+
+class ICoursesCatalogCollection(ICatalogCollection):
+    """
+    The :class:``ICatalogCollection`` that contains course catalog entries.
+    """
 
 # deprecations
 

@@ -264,7 +264,6 @@
 				provides="nti.externalization.interfaces.IExternalObjectDecorator" />
 
 	<!-- Workspaces -->
-	<!-- A subscriber for enumeration -->
 	<subscriber factory=".workspaces.CoursesWorkspace"
 				provides=".interfaces.ICoursesWorkspace" />
 
@@ -275,6 +274,11 @@
 	<subscriber factory=".workspaces.CourseCatalogCollection"
                 provides="nti.appserver.workspaces.interfaces.ICatalogCollection"
                 for="nti.appserver.workspaces.interfaces.ICatalogWorkspace" />
+
+    <subscriber factory=".decorators._CourseCatalogCollectionDecorator"
+                provides="nti.externalization.interfaces.IExternalObjectDecorator"
+                for="nti.app.products.courseware.interfaces.ICoursesCatalogCollection
+                     pyramid.interfaces.IRequest"  />
 
 	<!-- And an adapter for security purposes -->
 	<adapter factory=".legacy_principalrole.LegacyCourseInstancePrincipalRoleMap" />
