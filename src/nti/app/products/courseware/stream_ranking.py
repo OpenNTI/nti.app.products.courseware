@@ -6,10 +6,9 @@ Views directly related to individual courses and course sub-objects.
 .. $Id$
 """
 
-from __future__ import print_function, absolute_import, division
-__docformat__ = "restructuredtext en"
-
-logger = __import__('logging').getLogger(__name__)
+from __future__ import division
+from __future__ import print_function
+from __future__ import absolute_import
 
 from zope import component
 from zope import interface
@@ -25,6 +24,8 @@ from nti.dataserver import liking
 from nti.externalization.interfaces import StandardInternalFields
 
 _DEFAULT_TIME_FIELD = StandardInternalFields.LAST_MODIFIED
+
+logger = __import__('logging').getLogger(__name__)
 
 
 def _get_likes(obj):
@@ -99,12 +100,10 @@ class StreamConfidenceRanker(object):
         if view_stats:
             view_count = view_stats.view_count
             interactions += view_stats.new_reply_count_for_user
-
         if view_count:
             score = (interactions * 1.0) / view_count
         else:
             score = interactions
-
         # The actual algorithm logarithmically adjusts the upvotes
         # (log10 makes votes 11-100 count as much as votes 1-10). For
         # our current scale, the pure ratio may be enough.

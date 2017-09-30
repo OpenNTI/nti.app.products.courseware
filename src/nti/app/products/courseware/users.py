@@ -4,10 +4,9 @@
 .. $Id$
 """
 
-from __future__ import print_function, absolute_import, division
-__docformat__ = "restructuredtext en"
-
-logger = __import__('logging').getLogger(__name__)
+from __future__ import division
+from __future__ import print_function
+from __future__ import absolute_import
 
 from zope import interface
 
@@ -39,12 +38,13 @@ from nti.dataserver.users.suggested_contacts import SuggestedContactRankingPolic
 
 from nti.property.property import alias
 
-
 ES_ORDER = {ES_CREDIT_DEGREE: 15,
             ES_CREDIT_NONDEGREE: 15,
             ES_CREDIT: 10,
             ES_PURCHASED: 10,
             ES_PUBLIC: 0}
+
+logger = __import__('logging').getLogger(__name__)
 
 
 class ClassmatesSuggestedContactRankingPolicy(SuggestedContactRankingPolicy):

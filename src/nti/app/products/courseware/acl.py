@@ -4,10 +4,9 @@
 .. $Id$
 """
 
-from __future__ import print_function, absolute_import, division
-__docformat__ = "restructuredtext en"
-
-logger = __import__('logging').getLogger(__name__)
+from __future__ import division
+from __future__ import print_function
+from __future__ import absolute_import
 
 from zope import component
 from zope import interface
@@ -26,6 +25,8 @@ from nti.dataserver.interfaces import IACLProvider
 from nti.dataserver.interfaces import ACE_DENY_ALL
 from nti.dataserver.interfaces import ALL_PERMISSIONS
 
+logger = __import__('logging').getLogger(__name__)
+
 
 @interface.implementer(IACLProvider)
 class CollectionACLProviderMixin(object):
@@ -36,9 +37,7 @@ class CollectionACLProviderMixin(object):
     @Lazy
     def __acl__(self):
         user = self.context.__parent__.user
-        aces = [ace_allowing(IPrincipal(user),
-                             (ALL_PERMISSIONS),
-                             CollectionACLProviderMixin)]
+        aces = [ace_allowing(IPrincipal(user), (ALL_PERMISSIONS), type(self))]
         aces.append(ACE_DENY_ALL)
         return acl_from_aces(aces)
 
