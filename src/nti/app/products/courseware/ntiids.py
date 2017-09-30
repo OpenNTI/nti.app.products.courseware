@@ -1,15 +1,12 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
-NTIID support.
-
 .. $Id$
 """
 
-from __future__ import print_function, absolute_import, division
-__docformat__ = "restructuredtext en"
-
-logger = __import__('logging').getLogger(__name__)
+from __future__ import division
+from __future__ import print_function
+from __future__ import absolute_import
 
 import calendar
 
@@ -42,6 +39,8 @@ from nti.ntiids.ntiids import escape_provider
 from nti.ntiids.ntiids import find_object_with_ntiid
 
 COURSE_NTIID_PREFIX = u'tag:nextthought.com,2011-10:NTI-CourseInfo-'
+
+logger = __import__('logging').getLogger(__name__)
 
 
 @interface.implementer(INTIIDResolver)
@@ -101,7 +100,7 @@ class _EnrolledCourseSectionTopicNTIIDResolver(object):
 
     def _escape_entry_provider(self, entry):
         result = None
-        if entry is not None:
+        if entry is not None and entry.ProviderUniqueID:
             result = escape_provider(entry.ProviderUniqueID)
         return result
 
@@ -180,10 +179,8 @@ class _EnrolledCourseSectionTopicNTIIDResolver(object):
         user = get_remote_user()
         if user is None:
             return
-
         provider_name = get_provider(ntiid)
         provider_name_ntiid = COURSE_NTIID_PREFIX + provider_name
-
         result = find_object_with_ntiid(provider_name_ntiid)
         if result is not None:
             # Ok we have a course, we should be able to definitively return based
@@ -207,7 +204,6 @@ class _EnrolledCourseSectionTopicNTIIDResolver(object):
 @interface.implementer(INTIIDResolver)
 @interface.named(NTIID_TYPE_COURSE_TOPIC)
 class _EnrolledCourseRootTopicNTIIDResolver(_EnrolledCourseSectionTopicNTIIDResolver):
-
     allow_section_match = False  # always the root
 
 
@@ -223,5 +219,4 @@ class _EnrolledCourseSectionForumNTIIDResolver(_EnrolledCourseSectionTopicNTIIDR
 @interface.implementer(INTIIDResolver)
 @interface.named(NTIID_TYPE_COURSE_FORUM)
 class _EnrolledCourseRootForumNTIIDResolver(_EnrolledCourseSectionForumNTIIDResolver):
-
     allow_section_match = False  # always the root
