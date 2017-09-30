@@ -691,8 +691,9 @@ class _LegacyCCEFieldDecorator(object):
 
 			if package is not None:
 				# Copied wholesale from legacy code
-				purch_id = context.ProviderUniqueID.replace(' ', '').split('-')[0]
-				if getattr(context, 'Term', ''):  # non interface, briefly seen field
+				purch_id = context.ProviderUniqueID or ''
+				purch_id = purch_id.replace(' ', '').split('-')[0]
+				if purch_id and getattr(context, 'Term', ''):  # non interface, briefly seen field
 					purch_id += context.Term.replace(' ', '').replace('-', '')
 
 				# We have to externalize the package to get correct URLs to
@@ -700,7 +701,7 @@ class _LegacyCCEFieldDecorator(object):
 				# in the purchasable.
 				ext_package = to_external_object(package)
 				# Make sure the package has info
-				if 'href' in ext_package:
+				if 'href' in ext_package and purch_id:
 					icon = urljoin(ext_package['href'],
 								   'images/' + purch_id + '_promo.png')
 					thumbnail = urljoin(ext_package['href'],
