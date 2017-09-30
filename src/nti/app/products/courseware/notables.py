@@ -6,10 +6,9 @@ Functions and architecture for general activity streams.
 .. $Id$
 """
 
-from __future__ import print_function, absolute_import, division
-__docformat__ = "restructuredtext en"
-
-logger = __import__('logging').getLogger(__name__)
+from __future__ import division
+from __future__ import print_function
+from __future__ import absolute_import
 
 from zope import component
 from zope import interface
@@ -38,8 +37,9 @@ from nti.dataserver.interfaces import INotableFilter
 from nti.dataserver.metadata.index import get_metadata_catalog
 from nti.dataserver.metadata.index import isTopLevelContentObjectFilter
 
-
 _FEEDBACK_MIME_TYPE = "application/vnd.nextthought.assessment.userscourseassignmenthistoryitemfeedback"
+
+logger = __import__('logging').getLogger(__name__)
 
 
 def _get_implied_course_scopes(course, scope):

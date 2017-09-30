@@ -6,10 +6,9 @@ Implementation of an Atom/OData workspace and collection for courses.
 .. $Id$
 """
 
-from __future__ import print_function, absolute_import, division
-__docformat__ = "restructuredtext en"
-
-logger = __import__('logging').getLogger(__name__)
+from __future__ import division
+from __future__ import print_function
+from __future__ import absolute_import
 
 from zope import component
 from zope import interface
@@ -89,6 +88,8 @@ from nti.property.property import alias
 ITEMS = StandardExternalFields.ITEMS
 TOTAL = StandardExternalFields.TOTAL
 ITEM_COUNT = StandardExternalFields.ITEM_COUNT
+
+logger = __import__('logging').getLogger(__name__)
 
 
 @interface.implementer(ICoursesWorkspace)
@@ -323,7 +324,7 @@ class _AbstractQueryBasedCoursesCollection(Contained):
             entry = ICourseCatalogEntry(o, None)
             if getattr(entry, 'ProviderUniqueID', None) == key:
                 logger.warning("Using legacy provider ID to match %s to %s",
-                                key, o)
+                               key, o)
                 return o
         raise KeyError(key)
 
@@ -439,6 +440,7 @@ class EnrolledCoursesCollection(_AbstractQueryBasedCoursesCollection):
             result.append(link)
         return result
 
+
 # administered courses
 
 
@@ -547,4 +549,3 @@ class CourseCatalogCollection(AllCoursesCollection):
 
     def __len__(self):
         return len(self.container)
-

@@ -1,13 +1,12 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
-.. $Id: recordables.py 117974 2017-07-22 19:00:33Z carlos.sanchez $
+.. $Id$
 """
 
-from __future__ import print_function, absolute_import, division
-__docformat__ = "restructuredtext en"
-
-logger = __import__('logging').getLogger(__name__)
+from __future__ import division
+from __future__ import print_function
+from __future__ import absolute_import
 
 from zope import component
 from zope import interface
@@ -19,6 +18,8 @@ from nti.contenttypes.presentation.interfaces import IPresentationAssetContainer
 
 from nti.recorder.interfaces import IRecordable
 from nti.recorder.interfaces import IRecordables
+
+logger = __import__('logging').getLogger(__name__)
 
 
 @interface.implementer(IRecordables)
