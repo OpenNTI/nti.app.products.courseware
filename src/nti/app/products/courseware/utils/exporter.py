@@ -4,10 +4,9 @@
 .. $Id$
 """
 
-from __future__ import print_function, absolute_import, division
-__docformat__ = "restructuredtext en"
-
-logger = __import__('logging').getLogger(__name__)
+from __future__ import division
+from __future__ import print_function
+from __future__ import absolute_import
 
 import os
 import six
@@ -22,6 +21,8 @@ from nti.app.contentfolder.resources import is_internal_file_link
 from nti.app.contentfolder.resources import get_file_from_external_link
 
 from nti.contenttypes.courses.interfaces import NTI_COURSE_FILE_SCHEME
+
+logger = __import__('logging').getLogger(__name__)
 
 
 def save_resource_to_filer(reference, filer, overwrite=True, context=None):

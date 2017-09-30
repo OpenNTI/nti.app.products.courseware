@@ -4,10 +4,9 @@
 .. $Id$
 """
 
-from __future__ import print_function, absolute_import, division
-__docformat__ = "restructuredtext en"
-
-logger = __import__('logging').getLogger(__name__)
+from __future__ import division
+from __future__ import print_function
+from __future__ import absolute_import
 
 from zope import component
 from zope import lifecycleevent
@@ -31,13 +30,15 @@ from nti.dataserver.users.users import User
 
 from nti.ntiids.ntiids import find_object_with_ntiid
 
+logger = __import__('logging').getLogger(__name__)
+
 
 def course_enrollment_migrator(context=None, ntiid=None, scope=ES_PUBLIC,
                                max_seat_count=25, sections=(),
                                dry_run=False, events=True, verbose=False):
 
     if context is None:
-        context = find_object_with_ntiid(ntiid or u'')
+        context = find_object_with_ntiid(ntiid or '')
         instance = ICourseInstance(context, None)
         if instance is None:
             catalog = component.getUtility(ICourseCatalog)
