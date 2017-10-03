@@ -74,7 +74,6 @@ from nti.contenttypes.courses.interfaces import ICourseInstance
 from nti.contenttypes.courses.interfaces import ICourseEnrollments
 from nti.contenttypes.courses.interfaces import ICourseCatalogEntry
 from nti.contenttypes.courses.interfaces import ICourseEnrollmentManager
-from nti.contenttypes.courses.interfaces import INonPublicCourseInstance
 from nti.contenttypes.courses.interfaces import InstructorEnrolledException
 from nti.contenttypes.courses.interfaces import IAnonymouslyAccessibleCourseInstance
 
@@ -503,11 +502,7 @@ class AllCatalogEntriesView(AbstractAuthenticatedView):
     def __call__(self):
         catalog = component.getUtility(ICourseCatalog)
         result = LocatedExternalDict()
-        items = result[ITEMS] = []
-        for e in catalog.iterCatalogEntries():
-            ext_obj = to_external_object(e)
-            ext_obj['is_non_public'] = INonPublicCourseInstance.providedBy(e)
-            items.append(ext_obj)
+        items = result[ITEMS] = tuple(catalog.iterCatalogEntries())
         result[TOTAL] = result[ITEM_COUNT] = len(items)
         return result
 
