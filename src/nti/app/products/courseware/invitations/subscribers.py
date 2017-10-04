@@ -22,10 +22,15 @@ from zope.dottedname import resolve as dottedname
 
 from zope.i18n import translate
 
+from zope.lifecycleevent.interfaces import IObjectRemovedEvent
+
 from pyramid.threadlocal import get_current_request
 
 from nti.app.products.courseware import MessageFactory as _
 from nti.app.products.courseware import ACCEPT_COURSE_INVITATIONS
+
+from nti.app.products.courseware.invitations.interfaces import ICourseInvitation
+from nti.app.products.courseware.invitations.interfaces import ICourseInvitations
 
 from nti.appserver.policies.interfaces import ISitePolicyUserEventListener
 
@@ -161,3 +166,15 @@ def _on_invitation_sent(invitation, event):
                           receiver_username=invitation.receiver,
                           message=invitation.message,
                           request=request)
+
+
+@component.adapter(ICourseInvitation, IObjectRemovedEvent)
+def _course_invitation_deleted(invitation, unused_event):
+    """
+    Remove the :class:`ICourseInvitation` from the course invitation container.
+    """
+    course = find_object_with_ntiid(invitation.course)
+    course = ICourseInstance(course, course)
+    if course is not None:
+        course_invitations = ICourseInvitations(course)
+        course_invitations.remove(invitation)

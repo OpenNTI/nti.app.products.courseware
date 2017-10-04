@@ -11,6 +11,8 @@ logger = __import__('logging').getLogger(__name__)
 
 from zope import interface
 
+from zope.container.interfaces import IContained
+
 from nti.schema.field import Bool
 from nti.schema.field import TextLine
 
@@ -21,7 +23,7 @@ class ICourseInvitation(interface.Interface):
 
     Scope = TextLine(title=u"The enrollment scope.", required=True)
 
-    Description = TextLine(title=u"The invitation description.", 
+    Description = TextLine(title=u"The invitation description.",
                            required=True)
 
     Course = TextLine(title=u"Course catalog entry NTIID.", required=False)
@@ -31,3 +33,27 @@ class ICourseInvitation(interface.Interface):
                      required=False,
                      default=False)
     IsGeneric.setTaggedValue('_ext_excluded_out', True)
+
+
+class ICourseInvitations(IContained):
+    """
+    Holds course invitations for a specific :class:``ICourseInstance``
+    """
+
+    def add(invitation):
+        """
+        Registers the given invitation with this object. This object is responsible for
+        assigning the invitation code and taking ownership of the invitation.
+        """
+    registerInvitation = add
+
+    def remove(invitation):
+        """
+        Remove the given invitation with this object.
+        """
+    removeInvitation = remove
+
+    def get_course_invitations(self):
+        """
+        Returns all course invitations in this container.
+        """
