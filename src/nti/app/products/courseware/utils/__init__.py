@@ -42,6 +42,8 @@ from nti.app.products.courseware.enrollment import EnrollmentOptions
 
 from nti.app.products.courseware.interfaces import IEnrollmentOptionProvider
 
+from nti.app.products.courseware.invitations.interfaces import ICourseInvitations
+
 from nti.app.products.courseware.invitations.model import CourseInvitation
 
 from nti.app.products.courseware.utils.decorators import PreviewCourseAccessPredicateDecorator
@@ -204,10 +206,7 @@ def get_vendor_thank_you_page(course, key):
     return None
 
 
-def get_course_invitations(context):
-    """
-    Fetch the invitations found in the course or parent, in that order.
-    """
+def _get_vendor_invitations(context):
     entry = ICourseCatalogEntry(context, None)
     if entry is None:
         return ()
@@ -225,11 +224,11 @@ def get_course_invitations(context):
             for value in invitations:
                 # simple string code
                 if isinstance(value, six.string_types):
-                    invitaion = CourseInvitation(Code=value,
+                    invitation = CourseInvitation(Code=value,
                                                  Scope=ES_PUBLIC,
                                                  Course=entry.ntiid,
                                                  Description=ES_PUBLIC)
-                    result.append(invitaion)
+                    result.append(invitation)
                 # fully modeled invitation
                 elif isinstance(value, Mapping):
                     value = CaseInsensitiveDict(value)
@@ -238,15 +237,34 @@ def get_course_invitations(context):
                     desc = value.get(DESCRIPTION) or scope
                     isGeneric = is_true(value.get('IsGeneric'))
                     if code:
-                        invitaion = CourseInvitation(Code=code,
+                        invitation = CourseInvitation(Code=code,
                                                      Scope=scope,
                                                      Description=desc,
                                                      Course=entry.ntiid,
                                                      IsGeneric=isGeneric)
-                        result.append(invitaion)
+                        result.append(invitation)
         if result:
             return result
     return ()
+
+
+def get_course_invitations(context):
+    """
+    Fetch the invitations found in the course or parent, in that order.
+    """
+    result = []
+    # Fetch persistent invitations
+    # XXX: Do we need to handle parent/section too?
+    course = ICourseInstance(context)
+    course_invitations = ICourseInvitations(course)
+    course_invitations = course_invitations.get_course_invitations()
+    if course_invitations:
+        result.extend(course_invitations)
+    # Now the vendor invitations
+    vendor_invitations = _get_vendor_invitations(context)
+    if vendor_invitations:
+        result.extend(vendor_invitations)
+    return result
 
 
 def get_course_invitation(context, code):
@@ -296,7 +314,7 @@ def get_evaluation_lessons(evaluation, outline_provided, courses=None, request=N
     """
     request = get_current_request() if request is None else request
     if courses is None:
-        # XXX: If we have a request course, we use it. 
+        # XXX: If we have a request course, we use it.
         # Do we want all courses?
         course = ICourseInstance(request, None)
         courses = (course,)

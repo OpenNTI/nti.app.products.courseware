@@ -8,6 +8,11 @@
 	<include package="zope.component" file="meta.zcml" />
 	<include package="zope.component" />
 
+    <!-- Adapters -->
+    <adapter factory=".adapters._CourseInvitations"
+             provides=".interfaces.ICourseInvitations"
+             for="nti.contenttypes.courses.interfaces.ICourseInstance" />
+
 	<!-- Decorators -->
 	<subscriber factory=".decorators._CourseInvitationsLinkDecorator"
 				provides="nti.externalization.interfaces.IExternalMappingDecorator"
@@ -20,6 +25,7 @@
 
 	<!-- Subscribers -->
 	<subscriber handler=".subscribers._on_invitation_sent" />
+	<subscriber handler=".subscribers._course_invitation_deleted" />
 
 	<!-- Externalization -->
 	<ext:registerAutoPackageIO
