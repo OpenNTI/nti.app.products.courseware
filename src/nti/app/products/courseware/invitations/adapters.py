@@ -17,9 +17,15 @@ from zope.annotation.factory import factory as an_factory
 
 from zope.container.contained import Contained
 
+from nti.app.authentication import get_remote_user
+
+from nti.app.products.courseware.invitations.interfaces import ICourseInvitation
 from nti.app.products.courseware.invitations.interfaces import ICourseInvitations
 
 from nti.contenttypes.courses.interfaces import ICourseInstance
+from nti.contenttypes.courses.interfaces import IJoinCourseInvitation
+
+from nti.contenttypes.courses.invitation import JoinCourseInvitation
 
 from nti.invitations.interfaces import IInvitationsContainer
 
@@ -64,6 +70,24 @@ class CourseInvitations(Contained):
     def __len__(self):
         return len(self.get_course_invitations())
 
+
 ANNOTATION_KEY = u'nti.app.products.courseware.invitations._CourseInvitations'
 _CourseInvitations = an_factory( CourseInvitations, ANNOTATION_KEY )
 
+
+@component.adapter(ICourseInvitation)
+@interface.implementer(IJoinCourseInvitation)
+def _create_join_course_invitation(course_invitation):
+    """
+    If we have a generic course invitation, adapt into a
+    :class:`IJoinCourseInvitation` specific to our remote user.
+    """
+    if course_invitation.IsGeneric:
+        user_invitation = JoinCourseInvitation()
+        user_invitation.scope = course_invitation.Scope
+        user_invitation.course = course_invitation.Course
+        user = get_remote_user()
+        user_invitation.receiver = getattr(user, 'username', '')
+        container = component.getUtility(IInvitationsContainer)
+        container.add(user_invitation)
+        return user_invitation

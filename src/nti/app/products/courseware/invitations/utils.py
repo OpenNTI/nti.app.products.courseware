@@ -23,6 +23,8 @@ def create_course_invitation(course, scope=ES_PUBLIC, is_generic=False, code=Non
     """
     Create a :class:`ICourseInvitation` and store it. The `code` will be
     auto-generated if it does not exist.
+
+    :raises: DuplicateInvitationCodeError
     """
     invitation = PersistentCourseInvitation()
     invitation.scope = scope
@@ -30,7 +32,6 @@ def create_course_invitation(course, scope=ES_PUBLIC, is_generic=False, code=Non
     invitation.course = entry.ntiid
     invitation.IsGeneric = is_generic
     if code is not None:
-        # XXX: We dont have safeguards yet for code collisions
         invitation.code = code
     course_invitations = ICourseInvitations(course)
     # This will autogenerate a code if none exists.
