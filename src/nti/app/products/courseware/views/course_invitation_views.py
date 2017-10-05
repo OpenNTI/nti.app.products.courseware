@@ -48,6 +48,8 @@ from nti.app.products.courseware import MessageFactory as _
 
 from nti.app.products.courseware.interfaces import ICourseInstanceEnrollment
 
+from nti.app.products.courseware.invitations.interfaces import ICourseInvitation
+
 from nti.app.products.courseware.utils import get_course_invitation
 from nti.app.products.courseware.utils import get_course_invitations
 
@@ -215,6 +217,7 @@ class UserAcceptCourseInvitationView(AcceptInvitationByCodeView):
                 yield course
 
     def _do_validation(self, code):
+        result = None
         invitation = self.invitations.get_invitation_by_code(code)
         if invitation is None:
             # Not targeted, so look through catalog for generic code.
@@ -222,10 +225,12 @@ class UserAcceptCourseInvitationView(AcceptInvitationByCodeView):
                 invitation = get_course_invitation(course, code)
                 if invitation is not None:
                     break
-        # If a generic ICourseInvitation, we need to convert into a user
-        # specific invitation, if possible.
-        result = IActionableInvitation(invitation, None)
-        # If nothing, let our super class handle validation.
+        if ICourseInvitation.providedBy(invitation):
+            # If a generic ICourseInvitation, we need to convert into a user
+            # specific invitation, if possible. If we do this, we do not
+            # need to validate invitation specifics.
+            result = IActionableInvitation(invitation, None)
+        # If nothing, the super class must handle validation.
         if result is None:
             result = super(UserAcceptCourseInvitationView, self)._do_validation(code)
         return result
