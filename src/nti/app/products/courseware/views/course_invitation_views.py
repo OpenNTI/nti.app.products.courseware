@@ -5,7 +5,6 @@
 """
 
 from __future__ import print_function, absolute_import, division
-from nti.app.products.courseware.invitations.interfaces import ICourseInvitation
 __docformat__ = "restructuredtext en"
 
 logger = __import__('logging').getLogger(__name__)
@@ -48,6 +47,8 @@ from nti.app.invitations.views import AcceptInvitationByCodeView
 from nti.app.products.courseware import MessageFactory as _
 
 from nti.app.products.courseware.interfaces import ICourseInstanceEnrollment
+
+from nti.app.products.courseware.invitations.interfaces import ICourseInvitation
 
 from nti.app.products.courseware.utils import get_course_invitation
 from nti.app.products.courseware.utils import get_course_invitations
