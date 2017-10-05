@@ -101,6 +101,9 @@ class TestInvitations(ApplicationLayerTest):
         """
         Test persistent course invitations.
         """
+        with mock_dataserver.mock_db_trans(self.ds):
+            user = self._create_user(u'ichigo')
+            IUserProfile(user).email = u'ichigo@bleach.org'
 
         with mock_dataserver.mock_db_trans(self.ds, site_name='platform.ou.edu'):
             entry = self.catalog_entry()
@@ -153,6 +156,12 @@ class TestInvitations(ApplicationLayerTest):
                 assert_that(invitation[LAST_MODIFIED], not_none())
         assert_that(invitations, has_item(has_entry('Code', code1)))
         assert_that(invitations, has_item(has_entry('Code', code2)))
+
+        # Validate accepting
+        accept_url = '/dataserver2/users/ichigo/accept-course-invitations?code=%s' % code2
+        user_environ = self._make_extra_environ(username='ichigo')
+        user_environ['HTTP_X_REQUESTED_WITH'] = 'XMLHttpRequest'
+        self.testapp.get(accept_url, extra_environ=user_environ)
 
         # Now remove both and re-fetch
         with mock_dataserver.mock_db_trans(self.ds, site_name='platform.ou.edu'):

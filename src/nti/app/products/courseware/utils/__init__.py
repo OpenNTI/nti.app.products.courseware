@@ -255,11 +255,12 @@ def get_course_invitations(context):
     result = []
     # Fetch persistent invitations
     # XXX: Do we need to handle parent/section too?
-    course = ICourseInstance(context)
-    course_invitations = ICourseInvitations(course)
-    course_invitations = course_invitations.get_course_invitations()
-    if course_invitations:
-        result.extend(course_invitations)
+    course = ICourseInstance(context, None)
+    if course is not None:
+        course_invitations = ICourseInvitations(course)
+        course_invitations = course_invitations.get_course_invitations()
+        if course_invitations:
+            result.extend(course_invitations)
     # Now the vendor invitations
     vendor_invitations = _get_vendor_invitations(context)
     if vendor_invitations:
