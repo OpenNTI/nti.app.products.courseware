@@ -218,10 +218,6 @@ class UserAcceptCourseInvitationView(AcceptInvitationByCodeView):
             return user_invitation
         return None
 
-    def get_course_invitation(self, context, code):
-        invitation = get_course_invitation(context, code)
-        return invitation
-
     def _get_courses_by_code(self, code):
         catalog = get_courses_catalog()
         query = {
@@ -238,7 +234,7 @@ class UserAcceptCourseInvitationView(AcceptInvitationByCodeView):
         if code not in self.invitations:
             # Not targeted, so look through catalog for generic code.
             for course in self._get_courses_by_code(code):
-                invitation = self.get_course_invitation(course, code)
+                invitation = get_course_invitation(course, code)
                 if invitation is not None:
                     break
         else:
