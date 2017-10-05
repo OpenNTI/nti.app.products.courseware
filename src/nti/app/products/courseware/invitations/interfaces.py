@@ -9,17 +9,15 @@ __docformat__ = "restructuredtext en"
 
 logger = __import__('logging').getLogger(__name__)
 
-from zope import interface
-
 from zope.container.interfaces import IContained
+
+from nti.invitations.interfaces import IUnActionableInvitation
 
 from nti.schema.field import Bool
 from nti.schema.field import TextLine
 
 
-class ICourseInvitation(interface.Interface):
-
-    Code = TextLine(title=u"Invitation code.", required=True)
+class ICourseInvitation(IUnActionableInvitation):
 
     Scope = TextLine(title=u"The enrollment scope.", required=True)
 

@@ -95,6 +95,7 @@ from nti.externalization.interfaces import StandardExternalFields
 
 from nti.invitations.interfaces import InvitationSentEvent
 from nti.invitations.interfaces import IInvitationsContainer
+from nti.invitations.interfaces import IActionableInvitation
 
 from nti.links.links import Link
 
@@ -204,20 +205,6 @@ class UserAcceptCourseInvitationView(AcceptInvitationByCodeView):
             return enrollment
         return accepted
 
-    def handle_course_invitation(self, course_invitation):
-        """
-        Return a user specific invitation if we have a generic course
-        invitation.
-        """
-        if course_invitation is not None and course_invitation.IsGeneric:
-            user_invitation = JoinCourseInvitation()
-            user_invitation.scope = course_invitation.Scope
-            user_invitation.course = course_invitation.Course
-            user_invitation.receiver = self.remoteUser.username
-            self.invitations.add(user_invitation)  # record a new invitation
-            return user_invitation
-        return None
-
     def _get_courses_by_code(self, code):
         catalog = get_courses_catalog()
         query = {
@@ -231,19 +218,19 @@ class UserAcceptCourseInvitationView(AcceptInvitationByCodeView):
 
     def _do_validation(self, code):
         result = None
-        if code not in self.invitations:
+        invitation = self.invitations.get_invitation_by_code(code)
+        if invitation is None:
             # Not targeted, so look through catalog for generic code.
             for course in self._get_courses_by_code(code):
                 invitation = get_course_invitation(course, code)
                 if invitation is not None:
                     break
-        else:
-            invitation = self.invitations.get_invitation_by_code(code)
-        # If a generic ICourseInvitation, we need to convert into a user
-        # specific invitation.
         if ICourseInvitation.providedBy(invitation):
-            result = self.handle_course_invitation(invitation)
-        # If nothing, let our super class handle validation.
+            # If a generic ICourseInvitation, we need to convert into a user
+            # specific invitation, if possible. If we do this, we do not
+            # need to validate invitation specifics.
+            result = IActionableInvitation(invitation, None)
+        # If nothing, the super class must handle validation.
         if result is None:
             result = super(UserAcceptCourseInvitationView, self)._do_validation(code)
         return result
@@ -401,6 +388,7 @@ class SendCourseInvitationsView(AbstractAuthenticatedView,
     def get_course_invitation(self, values):
         invitation = None
         code = values.get('code') or values.get('invitation')
+        # XXX: We could generate a course invitation here.
         if not code:
             invitations = get_course_invitations(self.context)
             if invitations:

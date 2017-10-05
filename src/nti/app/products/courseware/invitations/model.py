@@ -50,4 +50,13 @@ class PersistentCourseInvitation(PersistentCreatedModDateTrackingObject,
 
     _SET_CREATED_MODTIME_ON_INIT = True
 
+    __parent__ = None
+    __name__ = alias('code')
     mimeType = mime_type = "application/vnd.nextthought.courseware.courseinvitation"
+
+    def __str__(self):
+        return self.code
+
+    def __repr__(self):
+        return "%s(%s)" % (self.__class__.__name__,
+                           self.code)

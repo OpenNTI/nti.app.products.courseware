@@ -13,6 +13,10 @@
              provides=".interfaces.ICourseInvitations"
              for="nti.contenttypes.courses.interfaces.ICourseInstance" />
 
+    <adapter factory=".adapters._create_join_course_invitation"
+             provides="nti.invitations.interfaces.IActionableInvitation"
+             for=".interfaces.ICourseInvitation" />
+
 	<!-- Decorators -->
 	<subscriber factory=".decorators._CourseInvitationsLinkDecorator"
 				provides="nti.externalization.interfaces.IExternalMappingDecorator"
