@@ -255,7 +255,9 @@ def get_course_invitations(context):
     result = []
     # Fetch persistent invitations
     # XXX: Do we need to handle parent/section too?
-    course = ICourseInstance(context)
+    course = ICourseInstance(context, None)
+    if course is None:
+        return result
     course_invitations = ICourseInvitations(course)
     course_invitations = course_invitations.get_course_invitations()
     if course_invitations:
