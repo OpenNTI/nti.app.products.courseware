@@ -15,6 +15,8 @@ from hamcrest import has_length
 from hamcrest import assert_that
 does_not = is_not
 
+import fudge
+
 from nti.testing.matchers import validly_provides
 from nti.testing.matchers import verifiably_provides
 
@@ -26,14 +28,21 @@ from nti.contenttypes.courses.courses import CourseInstance
 
 from nti.app.products.courseware.tests import CourseLayerTest
 
+from nti.dataserver.tests import mock_dataserver
+
 from nti.dataserver.tests.mock_dataserver import WithMockDSTrans
 
 
 class TestAdapters(CourseLayerTest):
 
+    @fudge.patch('nti.app.products.courseware.invitations.subscribers.find_object_with_ntiid')
     @WithMockDSTrans
-    def test_course_invitations(self):
+    def test_course_invitations(self, mock_fown):
         course = CourseInstance()
+        mock_fown.is_callable().returns(course)
+
+        connection = mock_dataserver.current_transaction
+        connection.add(course)
         invitations = ICourseInvitations(course, None)
         assert_that(invitations, is_not(none()))
         
@@ -51,7 +60,7 @@ class TestAdapters(CourseLayerTest):
         assert_that(invitations.get_course_invitations(), 
                     has_length(1))
         
-        invitations.remove(model)
+        invitations.remove(model, True)
         assert_that(invitations, has_length(0))
         
         model = PersistentCourseInvitation(Code=u"1234-5",
@@ -60,8 +69,5 @@ class TestAdapters(CourseLayerTest):
                                            Course=u"tag:nextthought.com,2011-10:NTI-OID-0x12345",
                                            IsGeneric=False)
         invitations.add(model)
-        invitations.clear()
+        invitations.clear(True)
         assert_that(invitations, has_length(0))
-
-        
-        
