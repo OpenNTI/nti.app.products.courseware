@@ -8,14 +8,14 @@ from __future__ import division
 from __future__ import print_function
 from __future__ import absolute_import
 
-from BTrees.OOBTree import OOSet
-
 from zope import component
 from zope import interface
 
 from zope.annotation.factory import factory as an_factory
 
 from zope.container.contained import Contained
+
+import BTrees
 
 from nti.app.authentication import get_remote_user
 
@@ -38,9 +38,11 @@ logger = __import__('logging').getLogger(__name__)
 @interface.implementer(ICourseInvitations)
 class CourseInvitations(Contained):
 
+    family = BTrees.family64
+
     def __init__(self):
         super(CourseInvitations, self).__init__()
-        self._invitation_wrefs = OOSet()
+        self._invitation_wrefs = self.family.OO.OOSet()
 
     def add(self, invitation):
         # This is idempotent if the invitation already exists
