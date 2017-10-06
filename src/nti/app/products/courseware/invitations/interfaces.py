@@ -44,7 +44,7 @@ class ICourseInvitations(IContained):
         """
     registerInvitation = add
 
-    def remove(invitation):
+    def remove(invitation, propagate=False):
         """
         Remove the given invitation with this object.
         """
@@ -55,7 +55,7 @@ class ICourseInvitations(IContained):
         Returns all course invitations in this container.
         """
 
-    def clear():
+    def clear(propagate=False):
         """
         Remove all course invitations in this container.
         """
