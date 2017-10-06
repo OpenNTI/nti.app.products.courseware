@@ -4,10 +4,9 @@
 .. $Id$
 """
 
-from __future__ import print_function, absolute_import, division
-__docformat__ = "restructuredtext en"
-
-logger = __import__('logging').getLogger(__name__)
+from __future__ import division
+from __future__ import print_function
+from __future__ import absolute_import
 
 import os
 
@@ -34,6 +33,8 @@ from nti.contenttypes.courses.interfaces import ICourseRoleUpdatedEvent
 from nti.contenttypes.courses.interfaces import ICourseRolesSynchronized
 from nti.contenttypes.courses.interfaces import ICatalogEntrySynchronized
 from nti.contenttypes.courses.interfaces import ICourseVendorInfoSynchronized
+
+logger = __import__('logging').getLogger(__name__)
 
 
 @component.adapter(ICourseDiscussion, IObjectAddedEvent)
