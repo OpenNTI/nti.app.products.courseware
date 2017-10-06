@@ -190,4 +190,3 @@ def _on_course_deleted(course, unused_event):
     for invitation in invitations:
         container.remove(invitation,  False)
     invitations.clear()
-
