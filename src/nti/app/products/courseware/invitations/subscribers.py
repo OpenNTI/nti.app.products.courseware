@@ -4,17 +4,14 @@
 .. $Id$
 """
 
-from __future__ import print_function, absolute_import, division
-__docformat__ = "restructuredtext en"
-
-logger = __import__('logging').getLogger(__name__)
+from __future__ import division
+from __future__ import print_function
+from __future__ import absolute_import
 
 import os
 import isodate
 import datetime
-
-from urllib import urlencode
-from urlparse import urljoin
+from six.moves import urllib_parse
 
 from zope import component
 
@@ -43,10 +40,13 @@ from nti.dataserver.users.interfaces import IFriendlyNamed
 from nti.dataserver.users.users import User
 
 from nti.invitations.interfaces import IInvitationSentEvent
+from nti.invitations.interfaces import IInvitationsContainer
 
 from nti.mailer.interfaces import ITemplatedMailer
 
 from nti.ntiids.ntiids import find_object_with_ntiid
+
+logger = __import__('logging').getLogger(__name__)
 
 
 def get_ds2(request):
@@ -117,12 +117,12 @@ def send_invitation_email(invitation,
     informal_username = names.alias or names.realname or sender.username
 
     params = {'code': invitation.code}
-    query = urlencode(params)
+    query = urllib_parse.urlencode(params)
     url = '/%s/Objects/%s/%s?%s' % (get_ds2(request),
                                     entry.ntiid,
                                     ACCEPT_COURSE_INVITATIONS,
                                     query)
-    redemption_link = urljoin(request.application_url, url)
+    redemption_link = urllib_parse.urljoin(request.application_url, url)
     receiver_name = receiver_name or receiver_username
     args = {
         'sender_name': informal_username,
@@ -174,6 +174,20 @@ def _course_invitation_deleted(invitation, unused_event):
     Remove the :class:`ICourseInvitation` from the course invitation container.
     """
     course = find_object_with_ntiid(invitation.course)
+    course = ICourseInstance(course, course)
+    if course is not None:
+        course_invitations = ICourseInvitations(course)
+        course_invitations.remove(invitation)
+
+
+@component.adapter(ICourseInstance, IObjectRemovedEvent)
+def _on_course_deleted(course, unused_event):
+    """
+    Remove the :class:`ICourseInvitation` objecs from the invitation container.
+    """
+    container = component.getUtility(IInvitationsContainer)
+    for invitation in ICourseInvitations(course):
+        container.remove(invitation,  False)
     course = ICourseInstance(course, course)
     if course is not None:
         course_invitations = ICourseInvitations(course)
