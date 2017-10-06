@@ -12,6 +12,8 @@ from zope import interface
 
 from nti.app.products.courseware.invitations.interfaces import ICourseInvitation
 
+from nti.coremetadata.interfaces import SYSTEM_USER_ID
+
 from nti.dublincore.datastructures import PersistentCreatedModDateTrackingObject
 
 from nti.externalization.representation import WithRepr
@@ -33,11 +35,16 @@ logger = __import__('logging').getLogger(__name__)
 class CourseInvitation(SchemaConfigured):
     createDirectFieldProperties(ICourseInvitation)
 
+    __parent__ = None
+    __name__ = alias('code')
+
     code = alias('Code')
     scope = alias('Scope')
     course = alias('Course')
     isGeneric = alias('IsGeneric')
     description = alias('Description')
+
+    creator = SYSTEM_USER_ID
 
 
 @interface.implementer(ICourseInvitation)
@@ -51,8 +58,6 @@ class PersistentCourseInvitation(PersistentCreatedModDateTrackingObject,
 
     _SET_CREATED_MODTIME_ON_INIT = True
 
-    __parent__ = None
-    __name__ = alias('code')
     mimeType = mime_type = "application/vnd.nextthought.courseware.courseinvitation"
 
     def __str__(self):
