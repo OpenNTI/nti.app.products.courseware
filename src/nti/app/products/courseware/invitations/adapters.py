@@ -59,6 +59,11 @@ class CourseInvitations(Contained):
             return False
     removeInvitation = remove
 
+    def clear(self):
+        result = len(self._invitation_wrefs)
+        self._invitation_wrefs.clear()
+        return result
+
     def get_course_invitations(self):
         result = []
         for wref in self._invitation_wrefs:
@@ -67,12 +72,21 @@ class CourseInvitations(Contained):
                 result.append(invitation)
         return result
 
+    def __iter__(self):
+        return iter(self.get_course_invitations())
+
+    def __contains__(self, key):
+        container = component.getUtility(IInvitationsContainer)
+        invitation = container.get(key)
+        return ICourseInvitation.providedBy(invitation) \
+           and InvitationWeakRef(invitation) in self._invitation_wrefs
+
     def __len__(self):
         return len(self.get_course_invitations())
 
 
 ANNOTATION_KEY = u'nti.app.products.courseware.invitations._CourseInvitations'
-_CourseInvitations = an_factory( CourseInvitations, ANNOTATION_KEY )
+_CourseInvitations = an_factory(CourseInvitations, ANNOTATION_KEY)
 
 
 @component.adapter(ICourseInvitation)

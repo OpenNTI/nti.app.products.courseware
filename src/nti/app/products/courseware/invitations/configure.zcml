@@ -28,6 +28,7 @@
 				provides="nti.app.invitations.interfaces.IUserInvitationsLinkProvider"/>
 
 	<!-- Subscribers -->
+	<subscriber handler=".subscribers._on_course_deleted" />
 	<subscriber handler=".subscribers._on_invitation_sent" />
 	<subscriber handler=".subscribers._course_invitation_deleted" />
 
