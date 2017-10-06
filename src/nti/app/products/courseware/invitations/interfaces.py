@@ -70,7 +70,7 @@ class ICourseInvitations(IContained):
         check if the specified invitation key is in this container
         """
     
-    def __len__(self):
+    def __len__():
         """
         return the number of invitations in this container
         """
