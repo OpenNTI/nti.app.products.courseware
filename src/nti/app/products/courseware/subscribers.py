@@ -19,6 +19,8 @@ from zope.annotation.interfaces import IAnnotations
 
 from zope.dottedname import resolve as dottedname
 
+from zope.event import notify
+
 from zope.i18n import translate
 
 from zope.lifecycleevent.interfaces import IObjectAddedEvent
@@ -51,6 +53,8 @@ from nti.app.products.courseware.utils import get_enrollment_communities
 
 from nti.appserver.policies.interfaces import ISitePolicyUserEventListener
 
+from nti.contentlibrary.interfaces import IContentBundleUpdatedEvent
+
 from nti.contenttypes.courses.interfaces import ES_PUBLIC
 from nti.contenttypes.courses.interfaces import ICourseInstance
 from nti.contenttypes.courses.interfaces import ICourseEnrollments
@@ -58,7 +62,10 @@ from nti.contenttypes.courses.interfaces import ICourseSubInstance
 from nti.contenttypes.courses.interfaces import ICourseCatalogEntry
 from nti.contenttypes.courses.interfaces import IDenyOpenEnrollment
 from nti.contenttypes.courses.interfaces import ICourseEnrollmentManager
+from nti.contenttypes.courses.interfaces import ICourseContentPackageBundle
 from nti.contenttypes.courses.interfaces import ICourseInstanceEnrollmentRecord
+
+from nti.contenttypes.courses.interfaces import CourseBundleWillUpdateEvent
 
 from nti.contenttypes.courses.utils import get_parent_course
 from nti.contenttypes.courses.utils import get_course_hierarchy
@@ -75,6 +82,8 @@ from nti.externalization.externalization import to_external_object
 from nti.mailer.interfaces import ITemplatedMailer
 
 from nti.ntiids.ntiids import find_object_with_ntiid
+
+from nti.traversal.traversal import find_interface
 
 logger = __import__('logging').getLogger(__name__)
 
@@ -352,3 +361,11 @@ def course_traversal_context_subscriber(course, unused_event):
 @component.adapter(ICourseCatalogEntry, IBeforeTraverseEvent)
 def catalog_entry_traversal_context_subscriber(entry, event):
     course_traversal_context_subscriber(ICourseInstance(entry), event)
+
+
+@component.adapter(ICourseContentPackageBundle, IContentBundleUpdatedEvent)
+def _on_content_bundle_updated(bundle, event):
+    course = find_interface(bundle, ICourseInstance, strict=False)
+    added = event.added_packages
+    removed = event.removed_packages
+    notify(CourseBundleWillUpdateEvent(course, added, removed))
