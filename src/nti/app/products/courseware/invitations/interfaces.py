@@ -4,12 +4,11 @@
 .. $Id$
 """
 
-from __future__ import print_function, absolute_import, division
-__docformat__ = "restructuredtext en"
+from __future__ import division
+from __future__ import print_function
+from __future__ import absolute_import
 
-logger = __import__('logging').getLogger(__name__)
-
-from zope.container.interfaces import IContained
+from zope.location.interfaces import IContained
 
 from nti.invitations.interfaces import IUnActionableInvitation
 
@@ -51,7 +50,22 @@ class ICourseInvitations(IContained):
         """
     removeInvitation = remove
 
-    def get_course_invitations(self):
+    def get_course_invitations():
         """
         Returns all course invitations in this container.
+        """
+
+    def __iter__():
+        """
+        return an iterable with  all course invitations in this container.
+        """
+
+    def __contains__(key):
+        """
+        check if the specified invitation key is in this container
+        """
+    
+    def __len__(self):
+        """
+        return the number of invitations in this container
         """
