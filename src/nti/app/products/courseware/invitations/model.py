@@ -46,6 +46,9 @@ class CourseInvitation(SchemaConfigured):
 
     creator = SYSTEM_USER_ID
 
+    def __str__(self):
+        return self.code
+
 
 @interface.implementer(ICourseInvitation)
 class PersistentCourseInvitation(PersistentCreatedModDateTrackingObject,
@@ -59,10 +62,3 @@ class PersistentCourseInvitation(PersistentCreatedModDateTrackingObject,
     _SET_CREATED_MODTIME_ON_INIT = True
 
     mimeType = mime_type = "application/vnd.nextthought.courseware.courseinvitation"
-
-    def __str__(self):
-        return self.code
-
-    def __repr__(self):
-        return "%s(%s)" % (self.__class__.__name__,
-                           self.code)
