@@ -4,10 +4,9 @@
 .. $Id$
 """
 
-from __future__ import print_function, absolute_import, division
-__docformat__ = "restructuredtext en"
-
-logger = __import__('logging').getLogger(__name__)
+from __future__ import division
+from __future__ import print_function
+from __future__ import absolute_import
 
 import six
 from collections import namedtuple
@@ -87,6 +86,12 @@ NTI_FORUMS_PUBLIC = (OPEN, OPEN, ES_PUBLIC, ICourseInstancePublicScopedForum)
 NTI_FORUMS_FORCREDIT = (IN_CLASS, IN_CLASS_PREFIX,
                         ES_CREDIT, ICourseInstanceForCreditScopedForum)
 
+DISCUSSIONS = u'Discussions'
+ANNOUNCEMENTS = u'Announcements'
+
+logger = __import__('logging').getLogger(__name__)
+
+
 CourseForum = namedtuple('Forum', 'name scope display_name interface')
 
 
@@ -103,13 +108,12 @@ def auto_create_forums(context):
 _auto_create_forums = auto_create_forums
 
 
-def _forums_for_instance(context, name):
+def forums_for_instance(context, name, forum_types=None):
     forums = []
-    forum_types = get_forum_types(context)
     instance = ICourseInstance(context, None)
     if instance is None:
         return forums
-
+    forum_types = get_forum_types(context) if not forum_types else forum_types
     for prefix, key_prefix, scope, iface in (NTI_FORUMS_PUBLIC, NTI_FORUMS_FORCREDIT):
         has_key = u'Has' + key_prefix + name
         displayname_key = key_prefix + name + u'DisplayName'
@@ -121,6 +125,7 @@ def _forums_for_instance(context, name):
                                 iface)
             forums.append(forum)
     return forums
+_forums_for_instance = forums_for_instance
 
 
 def _extract_content(body=()):
@@ -154,12 +159,12 @@ def extract_content(discussion):
     return _extract_content(discussion.body)
 
 
-def announcements_forums(context):
-    return _forums_for_instance(context, u'Announcements')
+def announcements_forums(context, forum_types=None):
+    return forums_for_instance(context, ANNOUNCEMENTS, forum_types)
 
 
-def discussions_forums(context):
-    return _forums_for_instance(context, u'Discussions')
+def discussions_forums(context, forum_types=None):
+    return forums_for_instance(context, DISCUSSIONS, forum_types)
 
 
 def get_forums_for_discussion(discussion, context=None):
