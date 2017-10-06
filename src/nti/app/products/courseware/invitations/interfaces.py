@@ -44,7 +44,7 @@ class ICourseInvitations(IContained):
         """
     registerInvitation = add
 
-    def remove(invitation):
+    def remove(invitation, propagate=False):
         """
         Remove the given invitation with this object.
         """
@@ -53,6 +53,11 @@ class ICourseInvitations(IContained):
     def get_course_invitations():
         """
         Returns all course invitations in this container.
+        """
+
+    def clear(propagate=False):
+        """
+        Remove all course invitations in this container.
         """
 
     def __iter__():
@@ -65,7 +70,7 @@ class ICourseInvitations(IContained):
         check if the specified invitation key is in this container
         """
     
-    def __len__(self):
+    def __len__():
         """
         return the number of invitations in this container
         """

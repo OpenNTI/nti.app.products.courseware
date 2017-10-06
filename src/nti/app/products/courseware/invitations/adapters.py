@@ -8,14 +8,16 @@ from __future__ import division
 from __future__ import print_function
 from __future__ import absolute_import
 
-from BTrees.OOBTree import OOSet
-
 from zope import component
 from zope import interface
 
 from zope.annotation.factory import factory as an_factory
 
+from zope.cachedescriptors.property import Lazy
+
 from zope.container.contained import Contained
+
+import BTrees
 
 from nti.app.authentication import get_remote_user
 
@@ -38,31 +40,38 @@ logger = __import__('logging').getLogger(__name__)
 @interface.implementer(ICourseInvitations)
 class CourseInvitations(Contained):
 
+    family = BTrees.family64
+
     def __init__(self):
         super(CourseInvitations, self).__init__()
-        self._invitation_wrefs = OOSet()
+        self._invitation_wrefs = self.family.OO.OOSet()
+
+    @Lazy
+    def container(self):
+        return component.getUtility(IInvitationsContainer)
 
     def add(self, invitation):
         # This is idempotent if the invitation already exists
-        container = component.getUtility(IInvitationsContainer)
-        container.add(invitation)
+        self.container.add(invitation)
         wref = InvitationWeakRef(invitation)
         self._invitation_wrefs.add(wref)
     registerInvitation = append = add
 
-    def remove(self, invitation):
+    def remove(self, invitation, propagate=False):
         wref = InvitationWeakRef(invitation)
         try:
+            invitation = wref()
             self._invitation_wrefs.remove(wref)
+            if invitation is not None and propagate:
+                self.container.remove(invitation)
             return True
         except KeyError:
             return False
     removeInvitation = remove
 
-    def clear(self):
-        result = len(self._invitation_wrefs)
-        self._invitation_wrefs.clear()
-        return result
+    def clear(self, propagate=False):
+        for wref in list(self._invitation_wrefs):
+            self.remove(wref, propagate)
 
     def get_course_invitations(self):
         result = []
