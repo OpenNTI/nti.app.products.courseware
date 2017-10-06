@@ -61,7 +61,6 @@ from nti.dataserver.contenttypes.forums.post import CommunityHeadlinePost
 from nti.dataserver.contenttypes.forums.topic import CommunityHeadlineTopic
 
 from nti.dataserver.interfaces import ACE_DENY_ALL
-from nti.dataserver.interfaces import ACE_ACT_ALLOW
 from nti.dataserver.interfaces import ALL_PERMISSIONS
 
 from nti.dataserver.interfaces import ICanvas
@@ -79,8 +78,6 @@ from nti.ntiids.ntiids import make_provider_safe
 from nti.ntiids.ntiids import make_specific_safe
 
 from nti.publishing.interfaces import IDefaultPublished
-
-from nti.traversal.traversal import find_interface
 
 NTI_FORUMS_PUBLIC = (OPEN, OPEN, ES_PUBLIC, ICourseInstancePublicScopedForum)
 NTI_FORUMS_FORCREDIT = (IN_CLASS, IN_CLASS_PREFIX,
@@ -260,7 +257,7 @@ def create_forum(course, name, owner, display_name=None, entities=None, implemen
     return safe_name, forum
 
 
-def create_course_forums(context):
+def create_course_forums(context, forum_types=None):
     result = {u'discussions': {}, u'announcements': {}}
     course = ICourseInstance(context)
 
@@ -275,8 +272,8 @@ def create_course_forums(context):
                                          owner=forum.scope.NTIID)
             data[forum.scope.username] = (name, created)
 
-    _creator(result[u'discussions'], discussions_forums(course))
-    _creator(result[u'announcements'], announcements_forums(course))
+    _creator(result[u'discussions'], discussions_forums(course, forum_types))
+    _creator(result[u'announcements'], announcements_forums(course, forum_types))
     return result
 update_course_forums = create_course_forums
 
