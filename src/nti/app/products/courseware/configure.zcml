@@ -72,6 +72,8 @@
 	<!-- Events -->
 	<subscriber handler=".legacy_catalog._content_package_registered" />
 
+	<subscriber handler=".subscribers._on_content_bundle_updated" />
+
 	<subscriber handler=".subscribers._auto_enroll_on_enrollment_added" />
 	<subscriber handler=".subscribers._auto_enroll_on_enrollment_modified" />
 	<subscriber handler=".subscribers._join_communities_on_enrollment_added" />
