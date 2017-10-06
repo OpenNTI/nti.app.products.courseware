@@ -55,6 +55,11 @@ class ICourseInvitations(IContained):
         Returns all course invitations in this container.
         """
 
+    def clear():
+        """
+        Remove all course invitations in this container.
+        """
+
     def __iter__():
         """
         return an iterable with  all course invitations in this container.
