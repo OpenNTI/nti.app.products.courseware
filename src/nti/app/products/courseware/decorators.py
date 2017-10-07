@@ -10,7 +10,6 @@ from __future__ import division
 from __future__ import print_function
 from __future__ import absolute_import
 
-import six
 from six.moves.urllib_parse import urljoin
 
 from zope import component
@@ -110,7 +109,7 @@ from nti.externalization.interfaces import StandardExternalFields
 from nti.externalization.interfaces import IExternalObjectDecorator
 from nti.externalization.interfaces import IExternalMappingDecorator
 
-from nti.externalization.singleton import SingletonMetaclass
+from nti.externalization.singleton import Singleton
 
 from nti.links.links import Link
 
@@ -130,18 +129,14 @@ COURSE_CONTEXT_ANNOT_KEY = 'nti.app.products.course.context_key'
 logger = __import__('logging').getLogger(__name__)
 
 
-@six.add_metaclass(SingletonMetaclass)
 @component.adapter(ICourseInstance)
 @interface.implementer(IExternalMappingDecorator)
-class _CourseInstanceLinkDecorator(object):
+class _CourseInstanceLinkDecorator(Singleton):
     """
     If a course instance can find its catalog entry, return that as a link.
     Also make it return an href, even if it isn't top-level,
     and adds the enrollment stats (XXX That may be really slow.)
     """
-
-    def __init__(self, *args):
-        pass
 
     def decorateExternalMapping(self, context, result):
         # We have no way to know what order these will be
@@ -269,16 +264,12 @@ class _VendorThankYouInfoDecorator(AbstractAuthenticatedRequestAwareDecorator):
                 result['VendorThankYouPage'] = thank_you_page
 
 
-@six.add_metaclass(SingletonMetaclass)
 @component.adapter(ICourseInstance)
 @interface.implementer(IExternalMappingDecorator)
-class _CourseInstanceStreamLinkDecorator(object):
+class _CourseInstanceStreamLinkDecorator(Singleton):
     """
     Place the recursive stream links on the course.
     """
-
-    def __init__(self, *args):
-        pass
 
     def decorateExternalMapping(self, context, result):
         _links = result.setdefault(LINKS, [])
@@ -323,19 +314,15 @@ class _CourseOutlineContentsLinkDecorator(PreviewCourseAccessPredicateDecorator)
         _links.append(link)
 
 
-@six.add_metaclass(SingletonMetaclass)
 @interface.implementer(IExternalMappingDecorator)
 @component.adapter(ICourseInstanceEnrollment)
-class _CourseEnrollmentUserProfileDetailsDecorator(object):
+class _CourseEnrollmentUserProfileDetailsDecorator(Singleton):
     """
     Because we are now typically waking up the user profile from the
     database *anyway* when we request enrollment rosters (to sort on),
     it's relatively cheap and useful to the (current) UI to send back
     some extra details.
     """
-
-    def __init__(self, *args):
-        pass
 
     def decorateExternalMapping(self, context, result):
         entry = ICourseCatalogEntry(ICourseInstance(context, None), None)
@@ -350,16 +337,12 @@ class _CourseEnrollmentUserProfileDetailsDecorator(object):
             result['UserProfile'] = ext_profile
 
 
-@six.add_metaclass(SingletonMetaclass)
 @component.adapter(ICourseCatalogEntry)
 @interface.implementer(IExternalMappingDecorator)
-class _CourseCatalogEntryLegacyDecorator(object):
+class _CourseCatalogEntryLegacyDecorator(Singleton):
     """
     Restore some legacy fields used by existing applications.
     """
-
-    def __init__(self, *args):
-        pass
 
     def decorateExternalMapping(self, context, result):
         result['Title'] = context.title
@@ -666,26 +649,18 @@ class _AnnouncementsDecorator(PreviewCourseAccessPredicateDecorator,
             result['AnnouncementForums'] = items
 
 
-@six.add_metaclass(SingletonMetaclass)
 @component.adapter(ICourseCatalogEntry)
 @interface.implementer(IExternalObjectDecorator)
-class _CourseCatalogEntryProviderDecorator(object):
-
-    def __init__(self, *args):
-        pass
+class _CourseCatalogEntryProviderDecorator(Singleton):
 
     def decorateExternalObject(self, context, result):
         result['ProviderDisplayName'] = context.ProviderUniqueID
         result.pop('DisplayName', None)  # replace for legacy purposes
 
 
-@six.add_metaclass(SingletonMetaclass)
 @component.adapter(ICourseInstanceEnrollment)
 @interface.implementer(IExternalObjectDecorator)
-class _CourseInstanceEnrollmentDecorator(object):
-
-    def __init__(self, *args):
-        pass
+class _CourseInstanceEnrollmentDecorator(Singleton):
 
     def decorateExternalObject(self, context, result):
         if IUser(context, None) is not None:
@@ -694,13 +669,9 @@ class _CourseInstanceEnrollmentDecorator(object):
             result['href'] = context_link
 
 
-@six.add_metaclass(SingletonMetaclass)
 @component.adapter(ICourseCatalogEntry)
 @interface.implementer(IExternalObjectDecorator)
-class _LegacyCCEFieldDecorator(object):
-
-    def __init__(self, *args):
-        pass
+class _LegacyCCEFieldDecorator(Singleton):
 
     def _course_package(self, context):
         course = ICourseInstance(context, None)
