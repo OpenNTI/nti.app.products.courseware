@@ -675,12 +675,10 @@ class _LegacyCCEFieldDecorator(Singleton):
 
     def _course_package(self, context):
         course = ICourseInstance(context, None)
-        packages = get_course_packages(context)
-        if len(packages or ()) == 1:
-            package = packages[0]
-        else:
-            package = None
-        return course, package
+        for package in get_course_packages(context):
+            if not IEditableContentUnit.providedBy(package):
+                return course, package
+        return course, None
 
     def _content_bundle(self, context):
         course = ICourseInstance(context, None)
