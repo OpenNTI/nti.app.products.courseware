@@ -184,8 +184,8 @@ class _CourseMailLinkDecorator(AbstractAuthenticatedRequestAwareDecorator):
     """
 
     def _predicate(self, context, unused_result):
-        return  self._is_authenticated \
-            and is_course_instructor(context, self.remoteUser)
+        return self._is_authenticated \
+           and is_course_instructor(context, self.remoteUser)
 
     def _do_decorate_external(self, context, result):
         _links = result.setdefault(LINKS, [])
@@ -204,8 +204,8 @@ class BaseRecursiveAuditLogLinkDecorator(AbstractAuthenticatedRequestAwareDecora
     """
 
     def _predicate(self, context, unused_result):
-        return  self._is_authenticated \
-            and has_permission(ACT_CONTENT_EDIT, context, self.request)
+        return self._is_authenticated \
+           and has_permission(ACT_CONTENT_EDIT, context, self.request)
 
     def _do_decorate_external(self, context, result):
         _links = result.setdefault(LINKS, [])
@@ -234,9 +234,9 @@ class _RosterMailLinkDecorator(AbstractAuthenticatedRequestAwareDecorator):
         if not self._is_authenticated:
             return False
         course = ICourseInstance(context, None)
-        return  course is not None \
-            and IUser(context, None) is not None \
-            and is_course_instructor(course, self.remoteUser)
+        return course is not None \
+           and IUser(context, None) is not None \
+           and is_course_instructor(course, self.remoteUser)
 
     def _do_decorate_external(self, context, result):
         _links = result.setdefault(LINKS, [])
@@ -364,7 +364,7 @@ class _OpenEnrollmentOptionLinkDecorator(AbstractAuthenticatedRequestAwareDecora
     def _do_decorate_external(self, context, result):
         record = self._get_enrollment_record(context, self.remoteUser)
         result['IsAvailable'] = context.Enabled and record is None
-        result['IsEnrolled'] = bool(    record is not None 
+        result['IsEnrolled'] = bool(record is not None
                                     and record.Scope == ES_PUBLIC)
 
 
@@ -676,7 +676,10 @@ class _LegacyCCEFieldDecorator(Singleton):
     def _course_package(self, context):
         course = ICourseInstance(context, None)
         packages = get_course_packages(context)
-        package = packages[0] if packages else None
+        if len(packages or ()) == 1:
+            package = packages[0]
+        else:
+            package = None
         return course, package
 
     def _content_bundle(self, context):
@@ -697,15 +700,15 @@ class _LegacyCCEFieldDecorator(Singleton):
             bundle = self._content_bundle(context)
             if bundle is not None:
                 result['ContentPackageBundleNTIID'] = bundle.ntiid
-                
+
         if 'ContentPackageNTIID' not in result:
             course, package = self._course_package(context)
             checked = True
             if package is not None:
                 result['ContentPackageNTIID'] = package.ntiid
 
-        if not result.get('LegacyPurchasableIcon') \
-                or not result.get('LegacyPurchasableThumbnail'):
+        if     not result.get('LegacyPurchasableIcon') \
+            or not result.get('LegacyPurchasableThumbnail'):
 
             if not checked:
                 course, package = self._course_package(context)
