@@ -698,7 +698,7 @@ class _LegacyCCEFieldDecorator(Singleton):
 
         if 'ContentPackageBundleNTIID' not in result:
             bundle = self._content_bundle(context)
-            if bundle is not None:
+            if bundle is not None and getattr(bundle, 'ntiid', None):
                 result['ContentPackageBundleNTIID'] = bundle.ntiid
 
         if 'ContentPackageNTIID' not in result:
