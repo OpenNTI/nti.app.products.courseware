@@ -679,6 +679,13 @@ class _LegacyCCEFieldDecorator(Singleton):
         package = packages[0] if packages else None
         return course, package
 
+    def _content_bundle(self, context):
+        course = ICourseInstance(context, None)
+        try:
+            return course.ContentPackageBundle
+        except AttributeError:  # pragma: no cover
+            return None
+
     def decorateExternalObject(self, context, result):
         # All the possibly missing legacy fields hang off
         # an existing single content package. Can we get one of those?
@@ -686,6 +693,11 @@ class _LegacyCCEFieldDecorator(Singleton):
         package = None
         checked = False
 
+        if 'ContentPackageBundleNTIID' not in result:
+            bundle = self._content_bundle(context)
+            if bundle is not None:
+                result['ContentPackageBundleNTIID'] = bundle.ntiid
+                
         if 'ContentPackageNTIID' not in result:
             course, package = self._course_package(context)
             checked = True
