@@ -345,6 +345,15 @@ class TestPersistentWorkspaces(AbstractEnrollingBase, ApplicationLayerTest):
 		assert_that(available_courses['Title'], is_('Courses'))
 		assert_that(available_courses[ITEMS], has_length(8))
 
+		# Filter the collection
+		courses_filter_href = '%s?filter=%s' % (courses_href, 'nothing')
+		available_courses = self.testapp.get(courses_filter_href).json_body
+		assert_that(available_courses[ITEMS], has_length(0))
+
+		courses_filter_href = '%s?filter=%s' % (courses_href, 'clc')
+		available_courses = self.testapp.get(courses_filter_href).json_body
+		assert_that(available_courses[ITEMS], has_length(3))
+
 		# Now fetch popular items
 		popular_href = self.require_link_href_with_rel(courses_collection, VIEW_CATALOG_POPULAR)
 		popular_res = self.testapp.get(popular_href)
