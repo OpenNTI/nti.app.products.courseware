@@ -554,6 +554,15 @@
 				provides="nti.dataserver.interfaces.ICreatableObjectFilter"
 				for="nti.dataserver.interfaces.IUser" />
 
+    <!-- Catalog -->
+    <adapter factory=".catalog.AvailableCoursesProvider"
+             for="nti.dataserver.interfaces.IUser"
+             provides=".interfaces.IAvailableCoursesProvider" />
+
+    <subscriber factory=".catalog.FeaturedCatalogCoursesProvider"
+                for="nti.dataserver.interfaces.IUser"
+                provides="nti.appserver.workspaces.interfaces.IFeaturedCatalogCollectionProvider" />
+
 	<!-- Course Invitations -->
 	<include package=".invitations" />
 

@@ -415,6 +415,19 @@ class ICoursesCatalogCollection(ICatalogCollection):
     The :class:``ICatalogCollection`` that contains course catalog entries.
     """
 
+
+class IAvailableCoursesProvider(interface.Interface):
+    """
+    An adapter to fetch available courses for a user.
+    """
+
+    def get_available_entries(self):
+        """
+        Return a sequence of :class:`ICourseCatalogEntry` objects the user is
+        not enrolled in and that are available to be enrolled in.
+        """
+
+
 # deprecations
 
 

@@ -36,6 +36,7 @@ from nti.app.products.courseware import VIEW_ALL_ENTRIES_WINDOWED
 from nti.app.products.courseware import VIEW_ADMINISTERED_WINDOWED
 
 from nti.app.products.courseware.interfaces import ICoursesWorkspace
+from nti.app.products.courseware.interfaces import IAvailableCoursesProvider
 from nti.app.products.courseware.interfaces import ICoursesCatalogCollection
 from nti.app.products.courseware.interfaces import ICourseInstanceEnrollment
 from nti.app.products.courseware.interfaces import IEnrolledCoursesCollection
@@ -54,7 +55,6 @@ from nti.contenttypes.courses.interfaces import ES_CREDIT_NONDEGREE
 from nti.contenttypes.courses.interfaces import ICourseCatalog
 from nti.contenttypes.courses.interfaces import ICourseInstance
 from nti.contenttypes.courses.interfaces import ICourseEnrollments
-from nti.contenttypes.courses.interfaces import ICourseSubInstance
 from nti.contenttypes.courses.interfaces import ICourseCatalogEntry
 from nti.contenttypes.courses.interfaces import IPrincipalEnrollments
 from nti.contenttypes.courses.interfaces import ICourseInstanceEnrollmentRecord
@@ -68,7 +68,6 @@ from nti.dataserver.authorization import ACT_DELETE
 
 from nti.dataserver.authorization_acl import ace_allowing
 from nti.dataserver.authorization_acl import acl_from_aces
-from nti.dataserver.authorization_acl import has_permission
 
 from nti.dataserver.interfaces import IUser
 from nti.dataserver.interfaces import IDataserver
@@ -175,40 +174,10 @@ class AllCoursesCollection(Contained):
         Return a dict of course catalog entries the user is not enrolled
         in and that are available to be enrolled in.
         """
-        # To support ACLs limiting the available parts of the catalog, we
-        # filter out here. we could do this with a proxy, but it's easier right
-        # now just to copy. This is highly dependent on implementation. We also
-        # filter out sibling courses when we are already enrolled in one; this
-        # is probably inefficient
+        course_provider = IAvailableCoursesProvider(self.__parent__.user)
         result = self._IteratingDict()
-        my_enrollments = {}
-        user = self.__parent__.user
-        for x in self.catalog.iterCatalogEntries():
-            if has_permission(ACT_READ, x, user):
-                # Note that we have to expose these by NTIID, not their
-                # __name__. Because the catalog can be reading from
-                # multiple different sources, the __names__ might overlap
-                course = ICourseInstance(x, None)
-                if course is not None:
-                    enrollments = ICourseEnrollments(course)
-                    if enrollments.get_enrollment_for_principal(user) is not None:
-                        my_enrollments[x.ntiid] = course
-                result[x.ntiid] = x
-        courses_to_remove = []
-        for course in my_enrollments.values():
-            if ICourseSubInstance.providedBy(course):
-                # Look for parents and siblings to remove
-                # XXX: Too much knowledge
-                courses_to_remove.extend(course.__parent__.values())
-                courses_to_remove.append(course.__parent__.__parent__)
-            else:
-                # Look for children to remove
-                courses_to_remove.extend(course.SubInstances.values())
-
-        for course in courses_to_remove:
-            ntiid = ICourseCatalogEntry(course).ntiid
-            if ntiid not in my_enrollments:
-                result.pop(ntiid, None)
+        for entry in course_provider.get_available_entries():
+            result[entry.ntiid] = entry
         return result
 
     @Lazy
@@ -223,8 +192,11 @@ class AllCoursesCollection(Contained):
     @property
     def links(self):
         result = []
-        rels = [VIEW_ALL_COURSES_WINDOWED, VIEW_ALL_ENTRIES_WINDOWED,
-                VIEW_CURRENT_COURSES, VIEW_ARCHIVED_COURSES, VIEW_UPCOMING_COURSES]
+        rels = [VIEW_ALL_COURSES_WINDOWED,
+                VIEW_ALL_ENTRIES_WINDOWED,
+                VIEW_CURRENT_COURSES,
+                VIEW_ARCHIVED_COURSES,
+                VIEW_UPCOMING_COURSES]
         for rel in rels:
             link = Link(self,
                         rel=rel,
@@ -461,8 +433,11 @@ class AdministeredCoursesCollection(_AbstractQueryBasedCoursesCollection):
     @property
     def links(self):
         result = []
-        rels = [VIEW_ADMINISTERED_WINDOWED, VIEW_CURRENT_COURSES, VIEW_ARCHIVED_COURSES,
-                VIEW_UPCOMING_COURSES, VIEW_COURSE_FAVORITES]
+        rels = [VIEW_ADMINISTERED_WINDOWED,
+                VIEW_CURRENT_COURSES,
+                VIEW_ARCHIVED_COURSES,
+                VIEW_UPCOMING_COURSES,
+                VIEW_COURSE_FAVORITES]
         for rel in rels:
             link = Link(self,
                         rel=rel,
@@ -570,8 +545,8 @@ class CourseCatalogCollection(AllCoursesCollection):
             entries = filter(self.include_entry, entries)
         entries = sorted(entries, key=self._sort_key)
         result.extend(entries)
-        result.__name__ = self.catalog.__name__
-        result.__parent__ = self.catalog.__parent__
+        result.__name__ = self.__name__
+        result.__parent__ = self.__parent__
         result.lastModified = self.catalog.lastModified
         return result
 
