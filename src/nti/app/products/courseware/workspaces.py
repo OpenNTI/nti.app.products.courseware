@@ -10,6 +10,8 @@ from __future__ import division
 from __future__ import print_function
 from __future__ import absolute_import
 
+from requests.structures import CaseInsensitiveDict
+
 from zope import component
 from zope import interface
 
@@ -516,6 +518,9 @@ class CourseCatalogCollection(AllCoursesCollection):
     A catalog collection that returns :class:``ICourseCatalogEntry`` items.
     These will include all catalog entries that a user can enroll in (or is
     enrolled in), sorted by entry title and startDate.
+
+    params:
+        filter - include a catalog entry containing this str
     """
 
     name = 'Courses'
@@ -537,10 +542,33 @@ class CourseCatalogCollection(AllCoursesCollection):
         return component.queryUtility(ICourseCatalog)
 
     @Lazy
+    def _params(self):
+        request = get_current_request()
+        result = {}
+        if request is not None:
+            values = request.params
+            result = CaseInsensitiveDict(values)
+        return result
+
+    @Lazy
+    def filter_str(self):
+        result = self._params.get('filter')
+        return result and result.lower()
+
+    def include_entry(self, entry):
+        filter_str = self.filter_str
+        return (entry.title and filter_str in entry.title.lower()) \
+            or (entry.description and filter_str in entry.description.lower()) \
+            or (entry.ProviderUniqueID and filter_str in entry.ProviderUniqueID.lower()) \
+
+    @Lazy
     def container(self):
-        # TODO: batching/filtering
+        # TODO: batching
         result = LocatedExternalList()
-        entries = sorted(self.available_entries, key=self._sort_key)
+        entries = self.available_entries
+        if self.filter_str:
+            entries = filter(self.include_entry, entries)
+        entries = sorted(entries, key=self._sort_key)
         result.extend(entries)
         result.__name__ = self.catalog.__name__
         result.__parent__ = self.catalog.__parent__
