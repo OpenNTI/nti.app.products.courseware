@@ -318,7 +318,10 @@ class TestPersistentWorkspaces(AbstractEnrollingBase, ApplicationLayerTest):
 					has_entry('href',
 							  is_('%s/%s' % (enroll_href, self.enrollment_ntiid))))
 
-	def _get_course_collection(self):
+	def _get_catalog_collection(self, name='Courses'):
+		"""
+		Get the named collection in the `Catalog` workspace in the serivce doc.
+		"""
 		service_res = self.testapp.get('/dataserver2/service/')
 		service_res = service_res.json_body
 		workspaces = service_res['Items']
@@ -328,16 +331,16 @@ class TestPersistentWorkspaces(AbstractEnrollingBase, ApplicationLayerTest):
 		assert_that(catalog_collections, has_length(3))
 		courses_collection = next(x for x
 								  in catalog_collections
-								  if x['Title'] == 'Courses')
+								  if x['Title'] == name)
 		assert_that(courses_collection, not_none())
 		return courses_collection
 
 	@WithSharedApplicationMockDS(users=True, testapp=True)
-	def test_catalog_collection(self):
+	def test_catalog_courses_collection(self):
 		"""
 		Test the courses catalog collection.
 		"""
-		courses_collection = self._get_course_collection()
+		courses_collection = self._get_catalog_collection()
 		courses_href = courses_collection['href']
 		assert_that(courses_href, not_none())
 		available_courses = self.testapp.get(courses_href)
@@ -369,13 +372,13 @@ class TestPersistentWorkspaces(AbstractEnrollingBase, ApplicationLayerTest):
 
 	@WithSharedApplicationMockDS(users=True, testapp=True)
 	@fudge.patch('nti.app.products.courseware.views.catalog_views.PopularCoursesView._include_filter')
-	def test_catalog_collection_popular_with_no_results(self, mock_include_filter):
+	def test_catalog_courses_collection_popular_with_no_results(self, mock_include_filter):
 		"""
 		Test the courses catalog collection. Mocking that no courses are
 		available.
 		"""
 		mock_include_filter.is_callable().returns(False)
-		courses_collection = self._get_course_collection()
+		courses_collection = self._get_catalog_collection()
 
 		# Now fetch popular
 		popular_href = self.require_link_href_with_rel(courses_collection,
@@ -385,13 +388,13 @@ class TestPersistentWorkspaces(AbstractEnrollingBase, ApplicationLayerTest):
 
 	@WithSharedApplicationMockDS(users=True, testapp=True)
 	@fudge.patch('nti.app.products.courseware.views.catalog_views.FeaturedCoursesView._include_filter')
-	def test_catalog_collection_featured_with_results(self, mock_include_filter):
+	def test_catalog_courses_collection_featured_with_results(self, mock_include_filter):
 		"""
 		Test the courses catalog collection featured view. All courses are
 		considered upcoming in this test (and thus in the featured returns).
 		"""
 		mock_include_filter.is_callable().returns(True)
-		courses_collection = self._get_course_collection()
+		courses_collection = self._get_catalog_collection()
 
 		# Now fetch featured
 		featured_href = self.require_link_href_with_rel(courses_collection,
@@ -410,6 +413,34 @@ class TestPersistentWorkspaces(AbstractEnrollingBase, ApplicationLayerTest):
 		assert_that({x['StartDate'] for x in featured_items},
 					contains(u'2013-08-13T06:00:00Z'))
 		self.testapp.get(featured_href, params={'count': 5}, status=404)
+
+	@WithSharedApplicationMockDS(users=True, testapp=True)
+	@fudge.patch('nti.app.products.courseware.catalog.FeaturedCatalogCoursesProvider.include_filter')
+	def test_catalog_collection_featured_with_results(self, mock_include_filter):
+		"""
+		Test the catalog collection featured collection. All courses are
+		considered current or upcoming in this test (and thus in the featured
+		returns). This is slightly different from the featured view on the
+		:class:`ICoursesCatalogCollection', which only returns upcoming courses.
+		"""
+		mock_include_filter.is_callable().returns(True)
+		featured_collection = self._get_catalog_collection(name='Featured')
+		featured_href = featured_collection['href']
+
+		featured_res = self.testapp.get(featured_href)
+		featured_res = featured_res.json_body
+		featured_items = featured_res[ITEMS]
+		assert_that(featured_items, has_length(8))
+		start_date_order = [u'2013-08-13T06:00:00Z',
+						    u'2013-08-13T06:00:00Z',
+						 	u'2013-08-13T06:00:00Z',
+						    u'2014-01-13T06:00:00Z',
+						    u'2015-08-24T05:00:00Z',
+						    u'2015-08-24T05:00:00Z',
+						    u'2015-08-24T05:00:00Z',
+						    u'2015-08-24T05:00:00Z']
+		assert_that([x['StartDate'] for x in featured_items],
+					contains(*start_date_order))
 
 	@WithSharedApplicationMockDS(users=True, testapp=True)
 	def test_windowed_links(self):
