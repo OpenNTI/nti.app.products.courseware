@@ -1,8 +1,9 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from __future__ import print_function, absolute_import, division
-__docformat__ = "restructuredtext en"
+from __future__ import division
+from __future__ import print_function
+from __future__ import absolute_import
 
 # disable: accessing protected members, too many methods
 # pylint: disable=W0212,R0904
@@ -35,6 +36,11 @@ from nti.app.products.courseware.discussions import discussions_forums
 from nti.app.products.courseware.discussions import create_course_forums
 from nti.app.products.courseware.discussions import announcements_forums
 from nti.app.products.courseware.discussions import get_forums_for_discussion
+from nti.app.products.courseware.tests import PersistentInstructedCourseApplicationTestLayer
+
+from nti.app.testing.application_webtest import ApplicationLayerTest
+
+from nti.app.testing.decorators import WithSharedApplicationMockDS
 
 from nti.base._compat import text_
 
@@ -53,15 +59,9 @@ from nti.dataserver.contenttypes.forums.forum import CommunityForum
 
 from nti.dataserver.contenttypes.media import EmbeddedVideo
 
-from nti.ntiids.oids import to_external_ntiid_oid
-
-from nti.app.products.courseware.tests import PersistentInstructedCourseApplicationTestLayer
-
-from nti.app.testing.application_webtest import ApplicationLayerTest
-
-from nti.app.testing.decorators import WithSharedApplicationMockDS
-
 from nti.dataserver.tests import mock_dataserver
+
+from nti.ntiids.oids import to_external_ntiid_oid
 
 
 class TestDiscussions(ApplicationLayerTest):
@@ -204,9 +204,7 @@ class TestDiscussions(ApplicationLayerTest):
 
         path = os.path.join(os.path.dirname(__file__), 'discussion.json')
         with open(path, "r") as fp:
-            context = fp.read()
-            context = text_(context)
-            source = simplejson.loads(context)
+            source = simplejson.loads(text_(fp.read()))
 
         with mock_dataserver.mock_db_trans(self.ds, site_name='platform.ou.edu'):
             entry = self.catalog_entry()
@@ -218,3 +216,22 @@ class TestDiscussions(ApplicationLayerTest):
         assert_that(res.json_body,
                     has_entries('MimeType', 'application/vnd.nextthought.courses.discussion',
                                 'ID', contains_string('nti-course-bundle://Discussions/')))
+
+    @WithSharedApplicationMockDS(testapp=True, users=True)
+    def test_discussion_delete(self):
+
+        with mock_dataserver.mock_db_trans(self.ds, site_name='platform.ou.edu'):
+            entry = self.catalog_entry()
+            course = ICourseInstance(entry)
+            discussions = ICourseDiscussions(course)
+            discussions['foo'] = self.new_discussion()
+            course_ntiid = to_external_ntiid_oid(course)
+
+        url = '/dataserver2/Objects/%s/CourseDiscussions/foo' % course_ntiid
+        self.testapp.delete(url, status=204)
+
+        with mock_dataserver.mock_db_trans(self.ds, site_name='platform.ou.edu'):
+            entry = self.catalog_entry()
+            course = ICourseInstance(entry)
+            discussions = ICourseDiscussions(course)
+            assert_that(discussions, has_length(0))
