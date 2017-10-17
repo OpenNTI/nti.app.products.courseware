@@ -4,10 +4,9 @@
 .. $Id$
 """
 
-from __future__ import print_function, absolute_import, division
-__docformat__ = "restructuredtext en"
-
-logger = __import__('logging').getLogger(__name__)
+from __future__ import division
+from __future__ import print_function
+from __future__ import absolute_import
 
 import os
 
@@ -49,10 +48,12 @@ from nti.app.products.courseware.views import VIEW_COURSE_DISCUSSIONS
 from nti.appserver.dataserver_pyramid_views import GenericGetView
 
 from nti.appserver.ugd_edit_views import UGDPutView
+from nti.appserver.ugd_edit_views import UGDDeleteView
 
 from nti.common.string import is_true
 
 from nti.contenttypes.courses.discussions.interfaces import NTI_COURSE_BUNDLE
+
 from nti.contenttypes.courses.discussions.interfaces import ICourseDiscussion
 from nti.contenttypes.courses.discussions.interfaces import ICourseDiscussions
 
@@ -84,6 +85,8 @@ ITEMS = StandardExternalFields.ITEMS
 TOTAL = StandardExternalFields.TOTAL
 MIMETYPE = StandardExternalFields.MIMETYPE
 ITEM_COUNT = StandardExternalFields.ITEM_COUNT
+
+logger = __import__('logging').getLogger(__name__)
 
 
 def render_to_external_ref(resource):
@@ -209,6 +212,19 @@ class CourseDiscussionPutView(UGDPutView):
             _handle_multipart(self.context, self.remoteUser,
                               self.context, sources)
         return result
+
+
+@view_config(context=ICourseDiscussion)
+@view_defaults(route_name='objects.generic.traversal',
+               renderer='rest',
+               request_method='DELETE',
+               permission=nauth.ACT_CONTENT_EDIT)
+class CourseDiscussionDeleteView(UGDDeleteView):
+    
+    def _do_delete_object(self, theObject):
+        container = theObject.__parent__
+        del container[theObject.__name__]
+        return theObject
 
 
 # admin
