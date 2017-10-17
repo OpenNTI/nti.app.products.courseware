@@ -14,8 +14,8 @@ import hashlib
 import mimetypes
 
 from datetime import datetime
-from urlparse import urlparse
 from collections import Mapping
+from six.moves.urllib_parse import urlparse
 
 from requests.structures import CaseInsensitiveDict
 
