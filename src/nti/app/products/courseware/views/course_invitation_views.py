@@ -4,15 +4,14 @@
 .. $Id$
 """
 
-from __future__ import print_function, absolute_import, division
-__docformat__ = "restructuredtext en"
-
-logger = __import__('logging').getLogger(__name__)
+from __future__ import division
+from __future__ import print_function
+from __future__ import absolute_import
 
 import csv
 import six
-from urlparse import urljoin
 from collections import Mapping
+from six.moves.urllib_parse import urljoin
 
 from requests.structures import CaseInsensitiveDict
 
@@ -112,6 +111,8 @@ USER_COURSE_INVITATIONS_CLASS = 'UserCourseInvitations'
 COURSE_INVITATIONS_MIMETYPE = 'application/vnd.nextthought.courseware.courseinvitations'
 USER_COURSE_INVITATIONS_MIMETYPE = 'application/vnd.nextthought.courses.usercourseinvitations'
 COURSE_INVITATIONS_SENT_MIMETYPE = 'application/vnd.nextthought.courses.courseinvitationssent'
+
+logger = __import__('logging').getLogger(__name__)
 
 
 @view_config(context=ICourseInstance)
