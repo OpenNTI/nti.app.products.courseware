@@ -13,15 +13,16 @@ the following:
 .. $Id$
 """
 
-from __future__ import print_function, unicode_literals, absolute_import, division
-__docformat__ = "restructuredtext en"
+from __future__ import division
+from __future__ import print_function
+from __future__ import absolute_import
 
-logger = __import__('logging').getLogger(__name__)
-
-from urlparse import urljoin
+from six.moves.urllib_parse import urljoin
 
 from zope import component
 from zope import interface
+
+from zope.annotation.factory import factory as an_factory
 
 from zope.cachedescriptors.property import Lazy
 from zope.cachedescriptors.property import CachedProperty
@@ -32,7 +33,11 @@ from zope.event import notify
 
 from zope.lifecycleevent import IObjectAddedEvent
 
+from zope.schema.vocabulary import SimpleVocabulary
+
 from zope.security.interfaces import IPrincipal
+
+from pyramid.traversal import find_interface
 
 from BTrees import OOBTree
 
@@ -41,6 +46,9 @@ from persistent import Persistent
 from nti.app.products.courseware.interfaces import ICourseCatalogLegacyContentEntry
 from nti.app.products.courseware.interfaces import ILegacyCommunityBasedCourseInstance
 
+from nti.app.products.courseware.legacy_courses import get_scopes_from_course_element
+from nti.app.products.courseware.legacy_courses import get_scopes_for_purchasable_ntiid
+
 from nti.contentlibrary.bundle import DEFAULT_BUNDLE_MIME_TYPE
 
 from nti.contentlibrary.interfaces import IContentPackageLibrary
@@ -48,17 +56,38 @@ from nti.contentlibrary.interfaces import IContentPackageLibrary
 from nti.contenttypes.courses.courses import CourseInstance
 from nti.contenttypes.courses.courses import CourseAdministrativeLevel
 
+from nti.contenttypes.courses.interfaces import ES_CREDIT
+from nti.contenttypes.courses.interfaces import ES_PUBLIC
+from nti.contenttypes.courses.interfaces import ENROLLMENT_SCOPE_VOCABULARY
+
 from nti.contenttypes.courses.interfaces import ICourseCatalog
 from nti.contenttypes.courses.interfaces import ICourseInstance
 from nti.contenttypes.courses.interfaces import ICourseInstanceVendorInfo
 from nti.contenttypes.courses.interfaces import ICourseAdministrativeLevel
+from nti.contenttypes.courses.interfaces import ICourseInstanceSharingScopes
 from nti.contenttypes.courses.interfaces import CourseInstanceAvailableEvent
 
 from nti.contenttypes.courses.internalization import CourseCatalogLegacyEntryUpdater
 
-from nti.dataserver.interfaces import ICommunity
+from nti.contenttypes.courses.sharing import CourseInstanceSharingScopes
+
+from nti.dataserver.authorization import ACT_READ
+from nti.dataserver.authorization import ACT_UPDATE
+from nti.dataserver.authorization import ACT_CONTENT_EDIT
+
+from nti.dataserver.authorization_acl import ace_denying
+from nti.dataserver.authorization_acl import ace_allowing
+from nti.dataserver.authorization_acl import acl_from_aces
+
+from nti.dataserver.interfaces import ALL_PERMISSIONS
 from nti.dataserver.interfaces import EVERYONE_GROUP_NAME
+
+from nti.dataserver.interfaces import ICommunity
+from nti.dataserver.interfaces import IACLProvider
+from nti.dataserver.interfaces import IEntityContainer
 from nti.dataserver.interfaces import IUseNTIIDAsExternalUsername
+
+from nti.dataserver.contenttypes.forums.interfaces import ICommunityBoard
 
 from nti.dataserver.users.communities import Community
 
@@ -70,12 +99,16 @@ from nti.dataserver.users.users import User
 
 from nti.externalization.externalization import to_external_object
 
+from nti.externalization.persistence import NoPickle
+
 from nti.ntiids.ntiids import make_ntiid
 from nti.ntiids.ntiids import get_provider
 
 from nti.schema.field import TextLine
 
 from nti.wref.interfaces import IWeakRef
+
+logger = __import__('logging').getLogger(__name__)
 
 
 class ICourseCatalogLegacyEntryInstancePolicy(interface.Interface):
@@ -87,9 +120,9 @@ class ICourseCatalogLegacyEntryInstancePolicy(interface.Interface):
     """
 
     register_courses_in_components_named = TextLine(
-        title="If given, the ICourse objects will be registered in this components",
-        description="A non-persistent IComponents utility that will hold the courses."
-        " Any matching courses will be unregistered from it.")
+        title=u"If given, the ICourse objects will be registered in this components",
+        description=u"A non-persistent IComponents utility that will hold the courses."
+        u" Any matching courses will be unregistered from it.")
 
     def purch_id_for_entry(entry):
         """
@@ -138,7 +171,7 @@ class DefaultCourseCatalogLegacyEntryInstancePolicy(object):
 
         purch_id = entry.ProviderUniqueID.replace(' ', '').split('-')[0]
         if entry.Term:
-            purch_id += entry.Term.replace(' ', '').replace('-', '')
+            purch_id += entry.Term.replace(' ', u'').replace('-', u'')
 
         if not entry.Communities or not entry.Communities[0].startswith(purch_id):
             __traceback_info__ = purch_id, entry
@@ -150,11 +183,11 @@ class DefaultCourseCatalogLegacyEntryInstancePolicy(object):
         return entry.ProviderDepartmentTitle
 
     def extend_signature_for_instructor(self, instructor, sig_lines):
-        return
+        pass
 
 
 @component.adapter(ICourseCatalogLegacyContentEntry, IObjectAddedEvent)
-def _register_course_purchasable_from_catalog_entry(entry, event):
+def _register_course_purchasable_from_catalog_entry(entry, unused_event):
     """
     When a catalog entry is added to the course catalog,
     if it is a legacy catalog entry, and there is a registered
@@ -189,7 +222,7 @@ def _register_course_purchasable_from_catalog_entry(entry, event):
     if not entry.StartDate or not entry.EndDate:
         # Hmm...something very fishy about this one...ancient legacy?
         logger.warn("Course info has no start date and/or duration: %s",
-					entry)
+                    entry)
         old_rendering = True
     else:
         old_rendering = entry.StartDate.year == 2013
@@ -203,7 +236,7 @@ def _register_course_purchasable_from_catalog_entry(entry, event):
         sig_lines.append("")
     # always at least one instructor. take off the last trailing line
     del sig_lines[-1]
-    signature = '\n'.join(sig_lines)
+    signature = u'\n'.join(sig_lines)
     entry.InstructorsSignature = signature
     entry.ProviderDepartmentTitle = policy.department_title_for_entry(entry)
 
@@ -220,12 +253,12 @@ def _register_course_purchasable_from_catalog_entry(entry, event):
 
         specific = purch_id + ntiid_title
         purch_ntiid = make_ntiid(provider=provider,
-                                 nttype='course',
+                                 nttype=u'course',
                                  specific=specific)
 
     else:
         purch_ntiid = make_ntiid(provider=provider,
-                                 nttype='course',
+                                 nttype=u'course',
                                  specific=purch_id)
 
     logger.debug("Purchasable '%s' was created for course using content package'%s'",
@@ -332,12 +365,6 @@ def _update_vendor_info(course, bucket):
         vendor_info.createdTime = vendor_json_key.createdTime
 
 
-from pyramid.traversal import find_interface
-
-from nti.app.products.courseware.legacy_courses import get_scopes_from_course_element
-from nti.app.products.courseware.legacy_courses import get_scopes_for_purchasable_ntiid
-
-
 def _update_scopes(course, purchsable_ntiid, package):  # pylint:disable=I0011,W0212
     scopes = course.SharingScopes
     # Bypass __setitem__ because we already have parents,
@@ -416,15 +443,8 @@ class _LegacyCommunityBasedCourseAdministrativeLevel(CourseAdministrativeLevel):
 
 
 # The key becomes the __name__, which is useful for traversal
-from zope.annotation.factory import factory as an_factory
-
 _LegacyCommunityBasedCourseAdministrativeLevelFactory = an_factory(_LegacyCommunityBasedCourseAdministrativeLevel,
-                                                                   key='LegacyCourses')
-
-from nti.dataserver.interfaces import IEntityContainer
-from nti.dataserver.contenttypes.forums.interfaces import ICommunityBoard
-
-from nti.externalization.persistence import NoPickle
+                                                                   key=u'LegacyCourses')
 
 
 @NoPickle
@@ -433,31 +453,26 @@ class _LegacyCommunityBasedCourseInstanceFakeBundle(object):
     def __init__(self, content_packages):
         self.ContentPackages = content_packages
 
-    def toExternalObject(self, *args, **kwargs):
-        return {'ContentPackages': self.ContentPackages,
-                'Class': 'ContentPackageBundle',
-                'MimeType': DEFAULT_BUNDLE_MIME_TYPE}
+    def toExternalObject(self, *unused_args, **unused_kwargs):
+        return {
+            'ContentPackages': self.ContentPackages,
+            'Class': 'ContentPackageBundle',
+            'MimeType': DEFAULT_BUNDLE_MIME_TYPE
+        }
 
-
-from zope.schema.vocabulary import SimpleVocabulary
-
-from nti.contenttypes.courses.interfaces import ES_CREDIT
-from nti.contenttypes.courses.interfaces import ES_PUBLIC
-from nti.contenttypes.courses.interfaces import ENROLLMENT_SCOPE_VOCABULARY
-from nti.contenttypes.courses.interfaces import ICourseInstanceSharingScopes
-
-from nti.contenttypes.courses.sharing import CourseInstanceSharingScopes
 
 _LEGACY_ENROLLMENT_SCOPE_VOCABULARY = SimpleVocabulary(
-    [ENROLLMENT_SCOPE_VOCABULARY.getTerm(ES_CREDIT),
-     ENROLLMENT_SCOPE_VOCABULARY.getTerm(ES_PUBLIC)])
+    [
+        ENROLLMENT_SCOPE_VOCABULARY.getTerm(ES_CREDIT),
+        ENROLLMENT_SCOPE_VOCABULARY.getTerm(ES_PUBLIC)
+    ])
 
 
 @interface.implementer(ICourseInstanceSharingScopes)
 @NoPickle
 class _LegacyCommunityBasedCourseInstanceFakeSharingScopes(CourseInstanceSharingScopes):
 
-    __name__ = 'SharingScopes'
+    __name__ = u'SharingScopes'
     __external_class_name__ = 'CourseInstanceSharingScopes'
 
     def _vocabulary(self):
@@ -559,12 +574,16 @@ class _LegacyCommunityBasedCourseInstance(CourseInstance):
     @Lazy
     def LegacyScopes(self):
         scopes = self.SharingScopes
-        return {'public': scopes[ES_PUBLIC].NTIID,
-                'restricted': scopes[ES_CREDIT].NTIID}
+        return {
+            u'public': scopes[ES_PUBLIC].NTIID,
+            u'restricted': scopes[ES_CREDIT].NTIID
+        }
 
     @Lazy
     def _instructor_storage(self):
-        "A persistent set that holds weak references to entities"
+        """
+        A persistent set that holds weak references to entities
+        """
         self._p_changed = True
         return OOBTree.Set()
 
@@ -576,7 +595,6 @@ class _LegacyCommunityBasedCourseInstance(CourseInstance):
         be resolved to a real user, we will list it as an instructor.
         Anyone not listed will be removed.
         """
-
         found_instructors = set()
         community = self.legacy_community
         for i in catalog_entry.Instructors:
@@ -635,17 +653,6 @@ def _legacy_course_instance_to_catalog_entry(instance):
     return result
 
 
-from nti.dataserver.authorization import ACT_READ
-from nti.dataserver.authorization import ACT_UPDATE
-from nti.dataserver.authorization import ACT_CONTENT_EDIT
-from nti.dataserver.authorization_acl import ace_denying
-from nti.dataserver.authorization_acl import ace_allowing
-from nti.dataserver.authorization_acl import acl_from_aces
-
-from nti.dataserver.interfaces import IACLProvider
-from nti.dataserver.interfaces import ALL_PERMISSIONS
-
-
 @interface.implementer(IACLProvider)
 @component.adapter(_LegacyCommunityBasedCourseInstance)
 class _LegacyCourseInstanceACLProvider(object):
@@ -653,8 +660,10 @@ class _LegacyCourseInstanceACLProvider(object):
     def __init__(self, context):
         self.context = context
         # TODO: This isn't right. What are instructor permissions?
-        aces = [ace_allowing(x, ALL_PERMISSIONS)
-                for x in self.context.instructors]
+        aces = [
+            ace_allowing(x, ALL_PERMISSIONS)
+            for x in self.context.instructors or ()
+        ]
         aces.append(ace_allowing(self.context.legacy_community, ACT_READ))
         # Deny editing to everyone.
         aces.append(ace_denying(IPrincipal(EVERYONE_GROUP_NAME),
@@ -666,7 +675,7 @@ class _LegacyCourseInstanceACLProvider(object):
 
 @interface.implementer(ICourseCatalogLegacyContentEntry)
 class _CourseCatalogLegacyContentEntryUpdater(CourseCatalogLegacyEntryUpdater):
-    
+
     def transform(self, parsed):
         CourseCatalogLegacyEntryUpdater.transform(self, parsed)
         if 'ntiid' in parsed:
