@@ -786,8 +786,8 @@ class TestFunctionalSynchronize(CourseLayerTest):
 
 	@WithMockDS
 	@fudge.patch( 'nti.contenttypes.courses._synchronize._site_name',
-				  'nti.contenttypes.courses.sharing._adjust_scope_membership',
-				  'nti.contenttypes.courses.sharing.get_enrollments' )
+				  'nti.contenttypes.courses.utils.adjust_scope_membership',
+				  'nti.contenttypes.courses.utils.get_enrollments' )
 	def test_sync_with_multiple_packages(self, mock_get_site, mock_adjust_scope, mock_get_enroll):
 		"""
 		Test enrollment and permissioning when courses add content packages
