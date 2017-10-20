@@ -358,7 +358,8 @@ class TestPersistentWorkspaces(AbstractEnrollingBase, ApplicationLayerTest):
 		assert_that(available_courses[ITEMS], has_length(3))
 
 		# Now fetch popular items
-		popular_href = self.require_link_href_with_rel(courses_collection, VIEW_CATALOG_POPULAR)
+		popular_href = self.require_link_href_with_rel(courses_collection,
+													   VIEW_CATALOG_POPULAR)
 		popular_res = self.testapp.get(popular_href)
 		popular_res = popular_res.json_body
 		assert_that(popular_res[ITEMS], has_length(3))
@@ -367,8 +368,22 @@ class TestPersistentWorkspaces(AbstractEnrollingBase, ApplicationLayerTest):
 		assert_that(popular_res[ITEMS], has_length(1))
 		# More than half the collection 404s
 		self.testapp.get(popular_href, params={'count': 5}, status=404)
-		featured_href = self.require_link_href_with_rel(courses_collection, VIEW_CATALOG_FEATURED)
+		featured_href = self.require_link_href_with_rel(courses_collection,
+														VIEW_CATALOG_FEATURED)
 		self.testapp.get(featured_href, status=404)
+
+		# Add tags to a entry and filter on tags.
+		entry = self.testapp.put_json(self.expected_catalog_entry_href,
+									  {"tags": ('LAW',)})
+		entry = entry.json_body
+		assert_that(entry, has_entry('tags', contains('law')))
+
+		tagged_courses = self.testapp.get('%s?tag=%s' % (courses_href, 'law'))
+		tagged_courses = tagged_courses.json_body
+		assert_that(tagged_courses[ITEMS], has_length(1))
+		entry = tagged_courses[ITEMS][0]
+		entry_ntiid = 'tag:nextthought.com,2011-10:NTI-CourseInfo-Fall2013_CLC3403_LawAndJustice'
+		assert_that(entry['NTIID'], is_(entry_ntiid))
 
 	@WithSharedApplicationMockDS(users=True, testapp=True)
 	@fudge.patch('nti.app.products.courseware.views.catalog_views.PopularCoursesView._include_filter')

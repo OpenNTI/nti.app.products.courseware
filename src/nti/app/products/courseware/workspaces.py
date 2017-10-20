@@ -61,6 +61,7 @@ from nti.contenttypes.courses.interfaces import ICourseInstanceEnrollmentRecord
 from nti.contenttypes.courses.interfaces import ICourseInstanceAdministrativeRole
 from nti.contenttypes.courses.interfaces import IPrincipalAdministrativeRoleCatalog
 
+from nti.contenttypes.courses.utils import get_courses_for_tag
 from nti.contenttypes.courses.utils import AbstractInstanceWrapper as _AbstractInstanceWrapper
 
 from nti.dataserver.authorization import ACT_READ
@@ -146,6 +147,13 @@ def CoursesWorkspace(user_service):
 
 @interface.implementer(IContainerCollection)
 class AllCoursesCollection(Contained):
+    """
+    Returns all available courses.
+
+    params:
+        tag - (optional) only return catalog entries with the given tag
+        filter - (optional) include a catalog entry containing this str
+    """
 
     __name__ = u'AllCourses'
 
@@ -169,6 +177,44 @@ class AllCoursesCollection(Contained):
         return self.__parent__.catalog
 
     @Lazy
+    def _params(self):
+        request = get_current_request()
+        result = {}
+        if request is not None:
+            values = request.params
+            result = CaseInsensitiveDict(values)
+        return result
+
+    @Lazy
+    def tag_str(self):
+        result = self._params.get('tag')
+        return result and result.lower()
+
+    @Lazy
+    def filter_str(self):
+        result = self._params.get('filter')
+        return result and result.lower()
+
+    def include_entry(self, entry):
+        filter_str = self.filter_str
+        return (entry.title and filter_str in entry.title.lower()) \
+            or (entry.description and filter_str in entry.description.lower()) \
+            or (entry.ProviderUniqueID and filter_str in entry.ProviderUniqueID.lower()) \
+
+    def get_tagged_entries(self):
+        """
+        Return the available and tagged entries.
+        """
+        result = self.available_entries
+        if self.tag_str:
+            tagged_courses = get_courses_for_tag(self.tag_str)
+            tagged_entries = {ICourseCatalogEntry(x, None)
+                              for x in tagged_courses}
+            tagged_entries.discard(None)
+            result = set(self.available_entries) & tagged_entries
+        return result
+
+    @Lazy
     def available_entries(self):
         """
         Return a dict of course catalog entries the user is not enrolled
@@ -180,10 +226,19 @@ class AllCoursesCollection(Contained):
             result[entry.ntiid] = entry
         return result
 
+    def _get_filtered_entries(self):
+        """
+        Returns the filtered/tagged catalog entries of available courses.
+        """
+        entries = self.get_tagged_entries()
+        if self.filter_str:
+            entries = filter(self.include_entry, entries)
+        return entries
+
     @Lazy
     def container(self):
         parent = self.__parent__
-        container = self.available_entries
+        container = self._get_filtered_entries()
         container.__name__ = parent.catalog.__name__
         container.__parent__ = parent.catalog.__parent__
         container.lastModified = parent.catalog.lastModified
@@ -495,7 +550,11 @@ class CourseCatalogCollection(AllCoursesCollection):
     enrolled in), sorted by entry title and startDate.
 
     params:
-        filter - include a catalog entry containing this str
+        tag - (optional) only return catalog entries with the given tag
+        filter - (optional) include a catalog entry containing this str
+
+    This is slightly different from the `AllCoursesCollection` as we sort
+    by title.
     """
 
     name = 'Courses'
@@ -517,33 +576,10 @@ class CourseCatalogCollection(AllCoursesCollection):
         return component.queryUtility(ICourseCatalog)
 
     @Lazy
-    def _params(self):
-        request = get_current_request()
-        result = {}
-        if request is not None:
-            values = request.params
-            result = CaseInsensitiveDict(values)
-        return result
-
-    @Lazy
-    def filter_str(self):
-        result = self._params.get('filter')
-        return result and result.lower()
-
-    def include_entry(self, entry):
-        filter_str = self.filter_str
-        return (entry.title and filter_str in entry.title.lower()) \
-            or (entry.description and filter_str in entry.description.lower()) \
-            or (entry.ProviderUniqueID and filter_str in entry.ProviderUniqueID.lower()) \
-
-    @Lazy
     def container(self):
         # TODO: batching
         result = LocatedExternalList()
-        entries = self.available_entries
-        if self.filter_str:
-            entries = filter(self.include_entry, entries)
-        entries = sorted(entries, key=self._sort_key)
+        entries = sorted(self._get_filtered_entries(), key=self._sort_key)
         result.extend(entries)
         result.__name__ = self.__name__
         result.__parent__ = self.__parent__
