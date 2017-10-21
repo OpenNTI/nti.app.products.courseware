@@ -148,7 +148,10 @@ def CoursesWorkspace(user_service):
 @interface.implementer(IContainerCollection)
 class AllCoursesCollection(Contained):
     """
-    Returns all available courses.
+    Returns all available courses. If both tag and filter are provided, we
+    filter on the corresponding tagged entries. If we only have a filter,
+    we will only include available entries that have that filter str in
+    the title, description, ProviderUniqueID or tags.
 
     params:
         tag - (optional) only return catalog entries with the given tag
@@ -195,24 +198,26 @@ class AllCoursesCollection(Contained):
         result = self._params.get('filter')
         return result and result.lower()
 
+    @Lazy
+    def entries_with_tag_filter(self):
+        return self.get_tagged_entries(self.filter_str)
+
     def include_entry(self, entry):
         filter_str = self.filter_str
         return (entry.title and filter_str in entry.title.lower()) \
             or (entry.description and filter_str in entry.description.lower()) \
             or (entry.ProviderUniqueID and filter_str in entry.ProviderUniqueID.lower()) \
+            or entry in self.entries_with_tag_filter
 
-    def get_tagged_entries(self):
+    def get_tagged_entries(self, tag):
         """
-        Return the available and tagged entries.
+        Return the set of tagged entries for the given tag.
         """
-        result = self.available_entries
-        if self.tag_str:
-            tagged_courses = get_courses_for_tag(self.tag_str)
-            tagged_entries = {ICourseCatalogEntry(x, None)
-                              for x in tagged_courses}
-            tagged_entries.discard(None)
-            result = set(self.available_entries) & tagged_entries
-        return result
+        tagged_courses = get_courses_for_tag(tag)
+        tagged_entries = {ICourseCatalogEntry(x, None)
+                          for x in tagged_courses}
+        tagged_entries.discard(None)
+        return tagged_entries
 
     @Lazy
     def available_entries(self):
@@ -230,7 +235,10 @@ class AllCoursesCollection(Contained):
         """
         Returns the filtered/tagged catalog entries of available courses.
         """
-        entries = self.get_tagged_entries()
+        entries = self.available_entries
+        if self.tag_str:
+            tagged_entries = self.get_tagged_entries(self.tag_str)
+            entries = set(entries) & tagged_entries
         if self.filter_str:
             entries = filter(self.include_entry, entries)
         return entries
