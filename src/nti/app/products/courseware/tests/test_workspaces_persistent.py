@@ -385,6 +385,10 @@ class TestPersistentWorkspaces(AbstractEnrollingBase, ApplicationLayerTest):
 		entry_ntiid = 'tag:nextthought.com,2011-10:NTI-CourseInfo-Fall2013_CLC3403_LawAndJustice'
 		assert_that(entry['NTIID'], is_(entry_ntiid))
 
+		tagged_courses = self.testapp.get('%s?filter=%s' % (courses_href, 'law'))
+		tagged_courses = tagged_courses.json_body
+		assert_that(tagged_courses[ITEMS], has_length(3))
+
 	@WithSharedApplicationMockDS(users=True, testapp=True)
 	@fudge.patch('nti.app.products.courseware.views.catalog_views.PopularCoursesView._include_filter')
 	def test_catalog_courses_collection_popular_with_no_results(self, mock_include_filter):
