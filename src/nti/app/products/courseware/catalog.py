@@ -125,7 +125,7 @@ class FeaturedCatalogCoursesProvider(object):
         return self._is_entry_current(entry) \
             or self._is_entry_upcoming(entry)
 
-    def get_collection_iter(self, filter_string=None):
+    def get_collection_iter(self, unused_filter_string=None):
         """
         Returns an iterable over this collection provider, optionally
         filtering on the given string.
@@ -133,7 +133,9 @@ class FeaturedCatalogCoursesProvider(object):
         TODO: filtering
         TODO: caller sorting
         """
-        entries = filter(self.include_filter, self.available_entries)
+        entries = (
+            x for x in self.available_entries if self.include_filter(x)
+        )
         # Most recent first
         result = sorted(entries, key=self._sort_key)
         return result
