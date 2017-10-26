@@ -7,10 +7,9 @@ in the course catalog entry.
 .. $Id$
 """
 
-from __future__ import print_function, unicode_literals, absolute_import, division
-__docformat__ = "restructuredtext en"
-
-logger = __import__('logging').getLogger(__name__)
+from __future__ import division
+from __future__ import print_function
+from __future__ import absolute_import
 
 from zope import component
 from zope import interface
@@ -27,12 +26,14 @@ from nti.contenttypes.courses.interfaces import ICourseCatalogEntry
 
 from nti.contenttypes.courses.principalrole import CourseInstancePrincipalRoleMap
 
+logger = __import__('logging').getLogger(__name__)
+
 
 @interface.implementer(IPrincipalRoleMap)
 @component.adapter(ILegacyCommunityBasedCourseInstance)
 class LegacyCourseInstancePrincipalRoleMap(CourseInstancePrincipalRoleMap):
 
-    TA = 'Teaching Assistant'
+    TA = u'Teaching Assistant'
 
     @CachedProperty
     def _mapped_principals(self):
@@ -53,8 +54,9 @@ class LegacyCourseInstancePrincipalRoleMap(CourseInstancePrincipalRoleMap):
         for info in entry.Instructors:
             username = info.username.lower()
             if username in principals:
-                result.append((principals[username],
-                               RID_TA if info.JobTitle == self.TA else RID_INSTRUCTOR))
+                result.append(
+                    (principals[username], RID_TA if info.JobTitle == self.TA else RID_INSTRUCTOR)
+                )
         return result
 
     def _principals_for_ta(self):
