@@ -14,12 +14,6 @@ MessageFactory = zope.i18nmessageid.MessageFactory(__name__)
 #: User enrollment last mod annotation key
 USER_ENROLLMENT_LAST_MODIFIED_KEY = 'nti.app.products.courseware.UserEnrollmentLastModified'
 
-SEND_COURSE_INVITATIONS = 'SendCourseInvitations'
-CHECK_COURSE_INVITATIONS_CSV = 'CheckCourseInvitationsCSV'
-
-ACCEPT_COURSE_INVITATION = 'accept-course-invitation'
-ACCEPT_COURSE_INVITATIONS = 'accept-course-invitations'
-
 VIEW_CONTENTS = 'contents'
 VIEW_COURSE_MAIL = 'Mail'
 VIEW_RESOURCES = 'resources'
@@ -46,3 +40,9 @@ VIEW_ALL_ENTRIES_WINDOWED = 'WindowedAllCatalogEntries'
 VIEW_COURSE_ENROLLMENT_ROSTER = 'CourseEnrollmentRoster'
 VIEW_RECURSIVE_TX_HISTORY = 'RecursiveTransactionHistory'
 VIEW_COURSE_RECURSIVE_BUCKET = 'CourseRecursiveStreamByBucket'
+
+SEND_COURSE_INVITATIONS = 'SendCourseInvitations'
+CHECK_COURSE_INVITATIONS_CSV = 'CheckCourseInvitationsCSV'
+
+ACCEPT_COURSE_INVITATION = 'accept-course-invitation'
+ACCEPT_COURSE_INVITATIONS = 'accept-course-invitations'
