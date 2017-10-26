@@ -8,10 +8,9 @@ datastructures defined in :mod:`nti.app.products.courses`.
 .. $Id$
 """
 
-from __future__ import print_function, absolute_import, division
-__docformat__ = "restructuredtext en"
-
-logger = __import__('logging').getLogger(__name__)
+from __future__ import division
+from __future__ import print_function
+from __future__ import absolute_import
 
 # disable missing self
 # pylint:disable=I0011,E0213,E0211

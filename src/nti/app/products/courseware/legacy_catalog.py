@@ -6,13 +6,12 @@ Support for integrating with legacy course catalog information.
 .. $Id$
 """
 
-from __future__ import print_function, absolute_import, division
-__docformat__ = "restructuredtext en"
+from __future__ import division
+from __future__ import print_function
+from __future__ import absolute_import
 
-logger = __import__('logging').getLogger(__name__)
-
-from zope import interface
 from zope import component
+from zope import interface
 
 from zope.lifecycleevent import IObjectAddedEvent
 
@@ -31,6 +30,8 @@ from nti.contenttypes.courses.interfaces import ICourseCatalog
 from nti.contenttypes.courses.legacy_catalog import CourseCatalogLegacyEntry
 
 from nti.externalization.externalization import to_external_object
+
+logger = __import__('logging').getLogger(__name__)
 
 
 @interface.implementer(ICourseCatalogLegacyContentEntry)
