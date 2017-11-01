@@ -28,10 +28,7 @@ from nti.externalization.externalization import to_external_object
 
 from nti.externalization.interfaces import StandardExternalFields
 
-from nti.mimetype.externalization import decorateMimeType
-
 OID = StandardExternalFields.OID
-CLASS = StandardExternalFields.CLASS
 NTIID = StandardExternalFields.NTIID
 MIMETYPE = StandardExternalFields.MIMETYPE
 
@@ -51,7 +48,7 @@ class CourseDiscussionsExporter(BaseSectionExporter):
         ext_obj = to_external_object(discussion,
                                      decorate=False, 
                                      name='exporter')
-        decorateMimeType(discussion, ext_obj)
+        ext_obj[MIMETYPE] = discussion.mimeType
         [ext_obj.pop(x, None) for x in (NTIID, OID)]
         return ext_obj
 
