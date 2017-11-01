@@ -130,7 +130,13 @@ class ICoursePagesContainerResource(IContainerResource):
     ntiid = schema.TextLine(title=u"The NTIID of the container")
 
 
-class IEnrolledCoursesCollection(IContainerCollection):
+class ICoursesCollection(IContainerCollection):
+    """
+    A collection of courses.
+    """
+
+
+class IEnrolledCoursesCollection(ICoursesCollection):
     """
     A collection (local to a user) of courses he is enrolled in
     (:class:`.ICourseInstanceEnrollment`)
@@ -196,7 +202,7 @@ class IPrincipalEnrollmentCatalog(IPrincipalEnrollments):
         """
 
 
-class IAdministeredCoursesCollection(IContainerCollection):
+class IAdministeredCoursesCollection(ICoursesCollection):
     """
     A collection (local to a user) of courses he administers
     (:class:`nti.contenttypes.courses.interfaces.ICourseInstanceAdministrativeRole`)
