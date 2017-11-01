@@ -36,6 +36,7 @@ from nti.app.products.courseware import VIEW_ALL_ENTRIES_WINDOWED
 from nti.app.products.courseware import VIEW_ADMINISTERED_WINDOWED
 
 from nti.app.products.courseware.interfaces import ICoursesWorkspace
+from nti.app.products.courseware.interfaces import ICoursesCollection
 from nti.app.products.courseware.interfaces import IAvailableCoursesProvider
 from nti.app.products.courseware.interfaces import ICoursesCatalogCollection
 from nti.app.products.courseware.interfaces import ICourseInstanceEnrollment
@@ -46,7 +47,6 @@ from nti.app.products.courseware.interfaces import ICourseCatalogLegacyContentEn
 
 from nti.appserver.workspaces.interfaces import IUserService
 from nti.appserver.workspaces.interfaces import ICatalogWorkspace
-from nti.appserver.workspaces.interfaces import IContainerCollection
 
 from nti.contenttypes.courses.interfaces import ES_CREDIT
 from nti.contenttypes.courses.interfaces import ES_CREDIT_DEGREE
@@ -145,7 +145,7 @@ def CoursesWorkspace(user_service):
         return workspace
 
 
-@interface.implementer(IContainerCollection)
+@interface.implementer(ICoursesCollection)
 class AllCoursesCollection(Contained):
     """
     Returns all available courses. If both tag and filter are provided, we
@@ -166,7 +166,6 @@ class AllCoursesCollection(Contained):
 
     class _IteratingDict(LocatedExternalDict):
         # BWC : act like a dict, but iterate like a list
-
         _v_container_ext_as_list = True
 
         def __iter__(self):
@@ -585,7 +584,6 @@ class CourseCatalogCollection(AllCoursesCollection):
 
     @Lazy
     def container(self):
-        # TODO: batching
         result = LocatedExternalList()
         entries = sorted(self._get_filtered_entries(), key=self._sort_key)
         result.extend(entries)

@@ -41,9 +41,11 @@ from nti.app.base.abstract_views import AbstractAuthenticatedView
 
 from nti.app.externalization.error import raise_json_error
 
+from nti.app.externalization.view_mixins import BatchingUtilsMixin
 from nti.app.externalization.view_mixins import ModeledContentUploadRequestUtilsMixin
 
 from nti.app.products.courseware.interfaces import ICoursesWorkspace
+from nti.app.products.courseware.interfaces import ICoursesCollection
 from nti.app.products.courseware.interfaces import ICourseInstanceEnrollment
 from nti.app.products.courseware.interfaces import ICoursesCatalogCollection
 from nti.app.products.courseware.interfaces import IEnrolledCoursesCollection
@@ -832,4 +834,25 @@ class FeaturedCoursesView(_AbstractFilteredCourseView):
         if not self.should_return_featured_entries():
             self._raise_not_found()
         result = super(FeaturedCoursesView, self).__call__()
+        return result
+
+
+@view_config(route_name='objects.generic.traversal',
+             context=ICoursesCollection,
+             request_method='GET',
+             permission=nauth.ACT_READ)
+class CourseCollectionView(AbstractAuthenticatedView,
+                           BatchingUtilsMixin):
+    """
+    A generic view to return an :class:`ICoursesCollection` container, with
+    paging.
+    """
+
+    #: To maintain BWC; disable paging by default.
+    _DEFAULT_BATCH_SIZE = None
+    _DEFAULT_BATCH_START = None
+
+    def __call__(self):
+        result = to_external_object(self.context)
+        self._batch_items_iterable(result, result[ITEMS])
         return result
