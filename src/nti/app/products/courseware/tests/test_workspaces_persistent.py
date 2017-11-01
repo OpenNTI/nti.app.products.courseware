@@ -16,6 +16,7 @@ from hamcrest import has_entry
 from hamcrest import has_length
 from hamcrest import assert_that
 from hamcrest import has_entries
+from hamcrest import contains_inanyorder
 from hamcrest import greater_than_or_equal_to
 does_not = is_not
 
@@ -374,15 +375,22 @@ class TestPersistentWorkspaces(AbstractEnrollingBase, ApplicationLayerTest):
 
 		# Add tags to a entry and filter on tags.
 		entry = self.testapp.put_json(self.expected_catalog_entry_href,
-									  {"tags": ('LAW',)})
+									  {"tags": ('LAW', '.hidden')})
 		entry = entry.json_body
-		assert_that(entry, has_entry('tags', contains('law')))
+		assert_that(entry, has_entry('tags',
+									contains_inanyorder('law', '.hidden')))
 
 		tagged_courses = self.testapp.get('%s?tag=%s' % (courses_href, 'law'))
 		tagged_courses = tagged_courses.json_body
 		assert_that(tagged_courses[ITEMS], has_length(1))
 		entry = tagged_courses[ITEMS][0]
 		entry_ntiid = 'tag:nextthought.com,2011-10:NTI-CourseInfo-Fall2013_CLC3403_LawAndJustice'
+		assert_that(entry['NTIID'], is_(entry_ntiid))
+
+		tagged_courses = self.testapp.get('%s?tag=%s' % (courses_href, '.hidden'))
+		tagged_courses = tagged_courses.json_body
+		assert_that(tagged_courses[ITEMS], has_length(1))
+		entry = tagged_courses[ITEMS][0]
 		assert_that(entry['NTIID'], is_(entry_ntiid))
 
 		tagged_courses = self.testapp.get('%s?filter=%s' % (courses_href, 'law'))
