@@ -141,7 +141,10 @@ class OutlineContentsCacheController(AbstractReliableLastModifiedCacheController
 
 #: A simple structure to hold node content data.
 OutlineNodeContents = namedtuple("OutlineNodeContents",
-                                 ("node", "contents", "lesson_ntiid"))
+                                 ("node", "contents",
+                                  "lesson_ntiid",
+                                  "node_is_published",
+                                  "lesson_is_published"))
 
 
 @view_config(route_name='objects.generic.traversal',
@@ -166,7 +169,9 @@ class CourseOutlineContentsView(AbstractAuthenticatedView):
     @Lazy
     def _is_course_editor(self):
         # Course/outline editors should have access to edit all nodes
-        return has_permission(nauth.ACT_CONTENT_EDIT, self.context, self.request)
+        return has_permission(nauth.ACT_CONTENT_EDIT,
+                              self.context,
+                              self.request)
 
     @Lazy
     def show_unpublished(self):
@@ -179,22 +184,20 @@ class CourseOutlineContentsView(AbstractAuthenticatedView):
             omit_unpublished = is_true(value)
         except ValueError:
             pass
-        return not omit_unpublished
+        return not omit_unpublished and self._is_course_editor
 
     def _is_published(self, item):
         """
-        Node is published or we're an editor asking for unpublished.
+        Node is published.
         """
         return not IPublishable.providedBy(item) \
-            or item.is_published(principal=self.remoteUser, context=self.context) \
-            or (self.show_unpublished and self._is_course_editor)
-
-    _is_visible = _is_published
+            or item.is_published(principal=self.remoteUser,
+                                 context=self.context)
 
     def _get_node_lesson(self, node):
         return INTILessonOverview(node, None)
 
-    def _is_contents_available(self, item):
+    def _is_content_available(self, item):
         """
         Lesson is available if published or if we're an editor.
         """
@@ -211,14 +214,19 @@ class CourseOutlineContentsView(AbstractAuthenticatedView):
         result = []
         def _recur(the_list, the_nodes):
             for node in the_nodes:
-                if not self._is_visible(node):
+                node_is_published = self._is_published(node)
+                if not node_is_published and not self.show_unpublished:
                     continue
                 contents = None
                 lesson_ntiid = None
-                if self._is_contents_available(node):
+                lesson_is_published = self._is_content_available(node)
+                if lesson_is_published or self.show_unpublished:
                     contents = _recur([], node.values())
                     lesson_ntiid = node.LessonOverviewNTIID
-                node_contents = OutlineNodeContents(node, contents, lesson_ntiid)
+                node_contents = OutlineNodeContents(node, contents,
+                                                    lesson_ntiid,
+                                                    node_is_published,
+                                                    lesson_is_published)
                 the_list.append(node_contents)
             return the_list
         _recur(result, self.context.values())
@@ -247,18 +255,20 @@ class CourseOutlineContentsView(AbstractAuthenticatedView):
         return result
 
     @Lazy
-    def _visible_node_ntiids(self):
+    def _published_ntiids(self):
         """
-        All visible ntiids of our node structure.
+        All published ntiids of our node structure.The set of published ntiids
+        will be a subset of the set of visible nodes.
         """
         result = []
         def _recur(accum, outline_node):
             # Gather our node and lesson ntiids, and then underlying contents
             # (recursively) if available.
-            node_ntiid = getattr(outline_node.node, 'ntiid', '')
-            if node_ntiid:
-                accum.append(node_ntiid)
-            if outline_node.lesson_ntiid:
+            if outline_node.node_is_published:
+                node_ntiid = getattr(outline_node.node, 'ntiid', '')
+                if node_ntiid:
+                    accum.append(node_ntiid)
+            if outline_node.lesson_is_published:
                 accum.append(outline_node.lesson_ntiid)
             for child_outline_node in outline_node.contents or ():
                 _recur(accum, child_outline_node)
@@ -270,9 +280,9 @@ class CourseOutlineContentsView(AbstractAuthenticatedView):
         # Since we externalize ourselves, attempt to return early if we can.
         # This call can be expensive to externalize now that we have massive
         # course outlines in the wild. The etag is based on the set of ntiids
-        # of nodes and lessons that are visible to this user.
+        # of nodes and lessons that are published.
         cache_controller = OutlineContentsCacheController(self.context,
-                                                          visible_ntiids=self._visible_node_ntiids)
+                                                          visible_ntiids=self._published_ntiids)
         cache_controller(self.context, {'request': self.request})
 
     def externalize_node_contents(self, node):
