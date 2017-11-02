@@ -14,7 +14,11 @@ from hamcrest import has_length
 from hamcrest import assert_that
 does_not = is_not
 
+import fudge
+
 from zope import component
+
+from nti.app.products.courseware import VIEW_USER_ENROLLMENTS
 
 from nti.app.products.courseware.interfaces import IClassmatesSuggestedContactsProvider
 
@@ -24,6 +28,8 @@ from nti.contenttypes.courses.interfaces import ES_CREDIT_DEGREE
 
 from nti.dataserver.users import User
 
+from nti.externalization.externalization import StandardExternalFields
+
 from nti.app.products.courseware.tests import PersistentInstructedCourseApplicationTestLayer
 
 from nti.app.testing.application_webtest import ApplicationLayerTest
@@ -31,6 +37,9 @@ from nti.app.testing.application_webtest import ApplicationLayerTest
 from nti.app.testing.decorators import WithSharedApplicationMockDS
 
 from nti.dataserver.tests import mock_dataserver
+
+ITEMS = StandardExternalFields.ITEMS
+
 
 class TestCourseUserViews(ApplicationLayerTest):
 
@@ -136,3 +145,73 @@ class TestCourseUserViews(ApplicationLayerTest):
 		res = self.testapp.get(user_classmates_url, extra_environ=environ, status=200)
 		assert_that(res.json_body,
 					has_entry('Items', has_length(0)))
+
+	@WithSharedApplicationMockDS(testapp=True, users=True)
+	@fudge.patch('nti.appserver.usersearch_views._make_visibility_test')
+	def test_user_enrollments(self, mock_visibility):
+		def is_visible(unused_x, unused_y=True):
+			return True
+
+		mock_visibility.is_callable().returns(is_visible)
+		enroll_url = '/dataserver2/CourseAdmin/UserCourseEnroll'
+		instructor_environ = self._make_extra_environ(username='harp4162')
+		other_environ = self._make_extra_environ(username='other_user')
+		with mock_dataserver.mock_db_trans(self.ds):
+			self._create_user('student_user')
+			self._create_user('other_user')
+
+		# Base case
+		student_href = '/dataserver2/ResolveUser/student_user'
+		student_ext = self.testapp.get(student_href)
+		student_ext = student_ext.json_body[ITEMS][0]
+		self.forbid_link_with_rel(student_ext, VIEW_USER_ENROLLMENTS)
+
+		student_ext = self.testapp.get(student_href,
+									   extra_environ=instructor_environ)
+		student_ext = student_ext.json_body[ITEMS][0]
+		self.forbid_link_with_rel(student_ext, VIEW_USER_ENROLLMENTS)
+
+		student_ext = self.testapp.get(student_href,
+									   extra_environ=other_environ)
+		student_ext = student_ext.json_body[ITEMS][0]
+		self.forbid_link_with_rel(student_ext, VIEW_USER_ENROLLMENTS)
+
+		user_enrollments_href = '/dataserver2/users/student_user/UserEnrollments'
+		self.testapp.get(user_enrollments_href,
+						 status=404)
+		self.testapp.get(user_enrollments_href,
+						extra_environ=instructor_environ,
+						status=403)
+		self.testapp.get(user_enrollments_href,
+						 extra_environ=other_environ,
+						 status=403)
+
+		# Enroll
+		data = {'username':'student_user',
+				'ntiid': self.course_ntiid,
+				'scope':ES_PUBLIC}
+		self.testapp.post_json(enroll_url, data)
+
+		student_ext = self.testapp.get(student_href)
+		student_ext = student_ext.json_body[ITEMS][0]
+		user_enrollments_href = self.require_link_href_with_rel(student_ext,
+														   		VIEW_USER_ENROLLMENTS)
+
+		# Admin and instructor can see enrollments
+		student_ext = self.testapp.get(student_href,
+									   extra_environ=instructor_environ)
+		student_ext = student_ext.json_body[ITEMS][0]
+		self.require_link_href_with_rel(student_ext, VIEW_USER_ENROLLMENTS)
+
+		user_enrollments = self.testapp.get(user_enrollments_href)
+		user_enrollments = user_enrollments.json_body[ITEMS]
+		assert_that(user_enrollments, has_length(1))
+
+		user_enrollments = self.testapp.get(user_enrollments_href,
+											extra_environ=instructor_environ)
+		user_enrollments = user_enrollments.json_body[ITEMS]
+		assert_that(user_enrollments, has_length(1))
+
+		self.testapp.get(user_enrollments_href,
+						 extra_environ=other_environ,
+						 status=403)

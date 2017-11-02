@@ -7,14 +7,14 @@
 from __future__ import print_function, absolute_import, division
 __docformat__ = "restructuredtext en"
 
-logger = __import__('logging').getLogger(__name__)
-
 from zope import component
 
 from pyramid import httpexceptions as hexc
 
 from pyramid.view import view_config
 from pyramid.view import view_defaults
+
+from zope.cachedescriptors.property import Lazy
 
 from nti.app.base.abstract_views import AbstractAuthenticatedView
 
@@ -23,16 +23,23 @@ from nti.app.externalization.view_mixins import BatchingUtilsMixin
 from nti.app.products.courseware import MessageFactory as _
 
 from nti.app.products.courseware import VIEW_CLASSMATES
+from nti.app.products.courseware import VIEW_USER_ENROLLMENTS
 from nti.app.products.courseware import VIEW_COURSE_CLASSMATES
 
 from nti.app.products.courseware.interfaces import ICourseInstanceEnrollment
 from nti.app.products.courseware.interfaces import IClassmatesSuggestedContactsProvider
 
+from nti.app.products.courseware.views import raise_error
+
 from nti.contenttypes.courses.interfaces import ICourseInstance
 
 from nti.contenttypes.courses.utils import get_enrollment_record
+from nti.contenttypes.courses.utils import get_instructed_courses
+from nti.contenttypes.courses.utils import get_context_enrollment_records
 
 from nti.dataserver import authorization as nauth
+
+from nti.dataserver.authorization import is_admin_or_site_admin
 
 from nti.dataserver.interfaces import IUser
 
@@ -45,7 +52,10 @@ from nti.externalization.interfaces import StandardExternalFields
 
 ITEMS = StandardExternalFields.ITEMS
 LINKS = StandardExternalFields.LINKS
+TOTAL = StandardExternalFields.TOTAL
 ITEM_COUNT = StandardExternalFields.ITEM_COUNT
+
+logger = __import__('logging').getLogger(__name__)
 
 
 class BaseClassmatesView(AbstractAuthenticatedView, BatchingUtilsMixin):
@@ -109,4 +119,47 @@ class ClassmatesView(BaseClassmatesView):
         provider = component.getUtility(IClassmatesSuggestedContactsProvider)
         suggestions = provider.suggestions(self.remoteUser)
         self.export_suggestions(result, suggestions)
+        return result
+
+
+@view_config(route_name='objects.generic.traversal',
+             renderer='rest',
+             context=IUser,
+             name=VIEW_USER_ENROLLMENTS,
+             request_method='GET')
+class UserEnrollmentsView(AbstractAuthenticatedView,
+                          BatchingUtilsMixin):
+    """
+    A view that returns the user enrollment records. This view is
+    """
+
+    _DEFAULT_BATCH_START = 0
+    _DEFAULT_BATCH_SIZE = 10
+
+    @Lazy
+    def _is_admin(self):
+        return is_admin_or_site_admin(self.remoteUser)
+
+    def _predicate(self):
+        # 403 if not admin or instructor
+        return self._is_admin \
+            or get_instructed_courses(self.remoteUser)
+
+    def __call__(self):
+        records = get_context_enrollment_records(self.context, self.remoteUser)
+        if     not self._predicate() \
+            or (not records and not self._is_admin):
+            raise_error(
+                {'message': _(u"Cannot view user enrollments."),
+                 'code': 'CannotAccessUserEnrollmentsError',},
+                factory=hexc.HTTPForbidden)
+        if not records:
+            raise_error(
+                {'message': _(u"User enrollments not found."),
+                 'code': 'UserEnrollmentsNotFound',},
+                factory=hexc.HTTPNotFound)
+        result = LocatedExternalDict()
+        records = sorted(records, key=lambda x:x.createdTime, reverse=True)
+        result[TOTAL] = len(records)
+        self._batch_items_iterable(result, records)
         return result
