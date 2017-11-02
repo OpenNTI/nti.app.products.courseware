@@ -28,6 +28,7 @@ from nti.app.products.courseware import VIEW_CONTENTS
 from nti.app.products.courseware import VIEW_COURSE_MAIL
 from nti.app.products.courseware import VIEW_CATALOG_ENTRY
 from nti.app.products.courseware import VIEW_COURSE_ACTIVITY
+from nti.app.products.courseware import VIEW_USER_ENROLLMENTS
 from nti.app.products.courseware import VIEW_COURSE_RECURSIVE
 from nti.app.products.courseware import VIEW_COURSE_CLASSMATES
 from nti.app.products.courseware import VIEW_USER_COURSE_ACCESS
@@ -90,6 +91,7 @@ from nti.contenttypes.courses.utils import get_catalog_entry
 from nti.contenttypes.courses.utils import is_course_instructor
 from nti.contenttypes.courses.utils import get_enrollment_record
 from nti.contenttypes.courses.utils import get_course_subinstances
+from nti.contenttypes.courses.utils import get_context_enrollment_records
 
 from nti.contenttypes.presentation.interfaces import INTIAssignmentRef
 from nti.contenttypes.presentation.interfaces import INTIQuestionSetRef
@@ -906,3 +908,22 @@ class _CourseCatalogCollectionDecorator(AbstractAuthenticatedRequestAwareDecorat
                         rel=rel,
                         elements=('@@%s' % rel,))
             _links.append(link)
+
+
+@component.adapter(IUser)
+@interface.implementer(IExternalObjectDecorator)
+class _UserEnrollmentsDecorator(AbstractAuthenticatedRequestAwareDecorator):
+    """
+    Decorate the :class:``IUser``.
+    """
+
+    def _predicate(self, context, unused_result):
+        return  context != self.remoteUser \
+            and get_context_enrollment_records(context, self.remoteUser)
+
+    def _do_decorate_external(self, context, result):
+        _links = result.setdefault(LINKS, [])
+        link = Link(context,
+                    rel=VIEW_USER_ENROLLMENTS,
+                    elements=('@@%s' % VIEW_USER_ENROLLMENTS,))
+        _links.append(link)

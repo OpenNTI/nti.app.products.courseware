@@ -40,6 +40,7 @@ from nti.app.products.courseware import VIEW_ARCHIVED_COURSES
 from nti.app.products.courseware import VIEW_COURSE_FAVORITES
 from nti.app.products.courseware import VIEW_COURSE_RECURSIVE
 from nti.app.products.courseware import VIEW_UPCOMING_COURSES
+from nti.app.products.courseware import VIEW_USER_ENROLLMENTS
 from nti.app.products.courseware import SEND_COURSE_INVITATIONS
 from nti.app.products.courseware import VIEW_COURSE_DISCUSSIONS
 from nti.app.products.courseware import VIEW_LESSONS_CONTAINERS
