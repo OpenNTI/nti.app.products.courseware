@@ -127,7 +127,11 @@ class TestPersistentWorkspaces(AbstractEnrollingBase, ApplicationLayerTest):
 		# OTOH, section 01 does have its own assets
 		res = self.testapp.get(self.all_courses_href)
 
-		assert_that(res.json_body, has_entry('Items', has_length(greater_than_or_equal_to(self.expected_workspace_length))))
+		assert_that(res.json_body, has_entry(
+									'Items',
+									has_length(
+										greater_than_or_equal_to(
+											self.expected_workspace_length))))
 
 		main_entry, sect_entry = self._get_main_and_sect_entries(res)
 
@@ -319,11 +323,12 @@ class TestPersistentWorkspaces(AbstractEnrollingBase, ApplicationLayerTest):
 					has_entry('href',
 							  is_('%s/%s' % (enroll_href, self.enrollment_ntiid))))
 
-	def _get_catalog_collection(self, name='Courses'):
+	def _get_catalog_collection(self, name='Courses', environ=None):
 		"""
-		Get the named collection in the `Catalog` workspace in the serivce doc.
+		Get the named collection in the `Catalog` workspace in the service doc.
 		"""
-		service_res = self.testapp.get('/dataserver2/service/')
+		service_res = self.testapp.get('/dataserver2/service/',
+									   extra_environ=environ)
 		service_res = service_res.json_body
 		workspaces = service_res['Items']
 		catalog_ws = next(x for x in workspaces if x['Title'] == 'Catalog')
@@ -479,6 +484,35 @@ class TestPersistentWorkspaces(AbstractEnrollingBase, ApplicationLayerTest):
 						    u'2015-08-24T05:00:00Z']
 		assert_that([x['StartDate'] for x in featured_items],
 					contains(*start_date_order))
+
+	@WithSharedApplicationMockDS(users=('test_student',), testapp=True)
+	def test_catalog_collection_purchased_with_results(self):
+		"""
+		Test the catalog collection purchased collection. Any enrollment record
+		is considered 'purchased'.
+		"""
+		student_env = self._make_extra_environ('test_student')
+		purchased_collection = self._get_catalog_collection(name='Purchased',
+															environ=student_env)
+		purchased_href = purchased_collection['href']
+		purchased_res = self.testapp.get(purchased_href,
+										 extra_environ=student_env)
+		purchased_res = purchased_res.json_body
+		purchased_items = purchased_res[ITEMS]
+		assert_that(purchased_items, has_length(0))
+
+		enrolled_courses_href = '/dataserver2/users/test_student/Courses/EnrolledCourses'
+		enrollment_ntiid = 'tag:nextthought.com,2011-10:NTI-CourseInfo-Fall2013_CLC3403_LawAndJustice'
+		self.testapp.post_json(enrolled_courses_href,
+                               {'ntiid': enrollment_ntiid},
+                               status=201,
+                               extra_environ=student_env)
+
+		purchased_res = self.testapp.get(purchased_href,
+										 extra_environ=student_env)
+		purchased_res = purchased_res.json_body
+		purchased_items = purchased_res[ITEMS]
+		assert_that(purchased_items, has_length(1))
 
 	@WithSharedApplicationMockDS(users=True, testapp=True)
 	def test_windowed_links(self):

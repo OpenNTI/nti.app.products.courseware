@@ -563,6 +563,10 @@
                 for="nti.dataserver.interfaces.IUser"
                 provides="nti.appserver.workspaces.interfaces.IFeaturedCatalogCollectionProvider" />
 
+    <subscriber factory=".catalog.PurchasedCatalogCoursesProvider"
+                for="nti.dataserver.interfaces.IUser"
+                provides="nti.appserver.workspaces.interfaces.IPurchasedCatalogCollectionProvider" />
+
 	<!-- Course Invitations -->
 	<include package=".invitations" />
 

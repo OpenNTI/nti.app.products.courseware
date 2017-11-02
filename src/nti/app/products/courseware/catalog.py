@@ -18,12 +18,15 @@ from zope.cachedescriptors.property import Lazy
 from nti.app.products.courseware.interfaces import IAvailableCoursesProvider
 
 from nti.appserver.workspaces.interfaces import IFeaturedCatalogCollectionProvider
+from nti.appserver.workspaces.interfaces import IPurchasedCatalogCollectionProvider
 
 from nti.contenttypes.courses.interfaces import ICourseCatalog
 from nti.contenttypes.courses.interfaces import ICourseInstance
 from nti.contenttypes.courses.interfaces import ICourseEnrollments
 from nti.contenttypes.courses.interfaces import ICourseSubInstance
 from nti.contenttypes.courses.interfaces import ICourseCatalogEntry
+
+from nti.contenttypes.courses.utils import get_enrollments
 
 from nti.dataserver.authorization import ACT_READ
 
@@ -138,6 +141,35 @@ class FeaturedCatalogCoursesProvider(object):
         )
         # Most recent first
         result = sorted(entries, key=self._sort_key)
+        return result
+
+
+@component.adapter(IUser)
+@interface.implementer(IPurchasedCatalogCollectionProvider)
+class PurchasedCatalogCoursesProvider(object):
+    """
+    Returns 'purchased' objects, defined as any enrollment for this user.
+    """
+
+    def __init__(self, user):
+        self.user = user
+
+    def _sort_key(self, record):
+        return record.createdTime
+
+    @property
+    def enrollments(self):
+        return get_enrollments(self.user)
+
+    def get_collection_iter(self, unused_filter_string=None):
+        """
+        Returns an iterable over this collection provider, optionally
+        filtering on the given string.
+
+        TODO: filtering
+        """
+        # Most recent first
+        result = sorted(self.enrollments, key=self._sort_key, reverse=True)
         return result
 
 
