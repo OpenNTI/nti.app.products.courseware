@@ -494,6 +494,25 @@ class TestPersistentWorkspaces(AbstractEnrollingBase, ApplicationLayerTest):
 			assert_that(tag_items[ITEMS], has_length(0))
 			assert_that(tag_items[TOTAL], is_not(0))
 
+		# Drill down into a tag
+		by_tag_res = self.testapp.get('%s/%s' % (by_tag_href, 'no_tag_found'))
+		by_tag_res = by_tag_res.json_body
+		assert_that(by_tag_res[ITEMS], has_length(0))
+
+		by_tag_res = self.testapp.get('%s/%s' % (by_tag_href, 'law'))
+		by_tag_res = by_tag_res.json_body
+		assert_that(by_tag_res[ITEMS], has_length(1))
+		item_zero = by_tag_res[ITEMS][0]
+		assert_that(item_zero['Name'], is_('law'))
+		assert_that(item_zero[ITEMS], has_length(2))
+
+		by_tag_res = self.testapp.get('%s/%s' % (by_tag_href, 'child_tag'))
+		by_tag_res = by_tag_res.json_body
+		assert_that(by_tag_res[ITEMS], has_length(1))
+		item_zero = by_tag_res[ITEMS][0]
+		assert_that(item_zero['Name'], is_('child_tag'))
+		assert_that(item_zero[ITEMS], has_length(1))
+
 	@WithSharedApplicationMockDS(users=True, testapp=True)
 	@fudge.patch('nti.app.products.courseware.views.catalog_views.PopularCoursesView._include_filter')
 	def test_catalog_courses_collection_popular_with_no_results(self, mock_include_filter):

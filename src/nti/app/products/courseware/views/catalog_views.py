@@ -86,6 +86,7 @@ from nti.contenttypes.courses.interfaces import IAnonymouslyAccessibleCourseInst
 
 from nti.contenttypes.courses.utils import is_enrolled
 from nti.contenttypes.courses.utils import filter_hidden_tags
+from nti.contenttypes.courses.utils import get_courses_for_tag
 from nti.contenttypes.courses.utils import get_course_hierarchy
 from nti.contenttypes.courses.utils import is_course_instructor_or_editor
 
@@ -877,6 +878,12 @@ class CourseCatalogByTagView(AbstractAuthenticatedView):
 
     The tag buckets are sorted by number of underlying entries.
 
+    This view also supports a subpath drilldown into a specific tag
+    (e.g. `@@ByTag/tag_name`). This will return a single bucket of all
+    entries using that tag, if entries exist. No other tag buckets are
+    returned and `hidden_tags` is an unused param. `bucketSize`, if given,
+    will still be respected.
+
     params:
 
         bucketSize - (default None) the number of entries per tag to return.
@@ -890,6 +897,10 @@ class CourseCatalogByTagView(AbstractAuthenticatedView):
     @Lazy
     def _params(self):
         return CaseInsensitiveDict(self.request.params)
+
+    @Lazy
+    def _tag_drilldown(self):
+        return self.request.subpath[0] if self.request.subpath else None
 
     @Lazy
     def _bucket_size(self):
@@ -917,18 +928,43 @@ class CourseCatalogByTagView(AbstractAuthenticatedView):
             enrollment_count = ICourseEnrollments(course).count_enrollments()
         return (enrollment_count is not None, enrollment_count)
 
+    def _get_tagged_entries(self):
+        """
+        Return the set of tagged entries for the given tag.
+        """
+        tagged_courses = get_courses_for_tag(self._tag_drilldown)
+        tagged_entries = {ICourseCatalogEntry(x, None)
+                          for x in tagged_courses}
+        tagged_entries.discard(None)
+        return tagged_entries
+
+    def _get_entries(self):
+        entries = self.context.container or ()
+        if self._tag_drilldown:
+            tagged_entries = set(self._get_tagged_entries())
+            entries = set(entries) & tagged_entries
+        return entries
+
     @Lazy
     def _tag_buckets(self):
+        """
+        Build buckets of tag_name -> entries.
+        """
         result = defaultdict(list)
-        for entry in self.context.container or ():
-            entry_tags = entry.tags
-            if not self._include_hidden_tags:
-                entry_tags = filter_hidden_tags(entry_tags)
-            if entry_tags:
-                for entry_tag in entry_tags:
-                    result[entry_tag].append(entry)
-            else:
-                result[self.NO_TAG_NAME].append(entry)
+        entries = self._get_entries()
+        if self._tag_drilldown:
+            # If a specific tag is requested, this is easy.
+            result[self._tag_drilldown] = entries
+        else:
+            for entry in self._get_entries():
+                entry_tags = entry.tags
+                if not self._include_hidden_tags:
+                    entry_tags = filter_hidden_tags(entry_tags)
+                if entry_tags:
+                    for entry_tag in entry_tags:
+                        result[entry_tag].append(entry)
+                else:
+                    result[self.NO_TAG_NAME].append(entry)
         return result
 
     @Lazy
@@ -940,11 +976,13 @@ class CourseCatalogByTagView(AbstractAuthenticatedView):
         # Now sort/reduce our bucket size.
         for tag, entries in sorted_entry_tuples:
             tag_dict = dict()
-            result.append(tag_dict)
             sorted_entries = sorted(entries,
                                     key=self._bucket_sort_key,
                                     reverse=True)
             tag_entry_count = len(sorted_entries)
+            if not tag_entry_count:
+                # Skip any empty buckets.
+                continue
             if self._bucket_size:
                 # Bucket size acts as a min requested
                 if tag_entry_count >= self._bucket_size:
@@ -957,6 +995,7 @@ class CourseCatalogByTagView(AbstractAuthenticatedView):
             tag_dict[ITEMS] = sorted_entries
             tag_dict[TOTAL] = tag_entry_count
             tag_dict[ITEM_COUNT] = len(sorted_entries)
+            result.append(tag_dict)
         return result
 
     def __call__(self):
