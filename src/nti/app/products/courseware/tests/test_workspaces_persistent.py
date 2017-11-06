@@ -391,6 +391,10 @@ class TestPersistentWorkspaces(AbstractEnrollingBase, ApplicationLayerTest):
 		self.testapp.get(featured_href, status=404)
 
 		# Add tags to a entry and filter on tags.
+		entry_ntiid = 'tag:nextthought.com,2011-10:NTI-CourseInfo-Fall2013_CLC3403_LawAndJustice'
+		child1_ntiid = u'tag:nextthought.com,2011-10:NTI-CourseInfo-Fall2013_CLC3403_LawAndJustice_SubInstances_01'
+		child2_ntiid = u'tag:nextthought.com,2011-10:NTI-CourseInfo-Fall2013_CLC3403_LawAndJustice_SubInstances_02_Restricted'
+		all_ntiids = (entry_ntiid, child1_ntiid, child2_ntiid)
 		entry = self.testapp.put_json(self.expected_catalog_entry_href,
 									  {"tags": ('LAW', '.hidden')})
 		entry = entry.json_body
@@ -399,33 +403,70 @@ class TestPersistentWorkspaces(AbstractEnrollingBase, ApplicationLayerTest):
 
 		tagged_courses = self.testapp.get('%s?tag=%s' % (courses_href, 'law'))
 		tagged_courses = tagged_courses.json_body
-		assert_that(tagged_courses[ITEMS], has_length(1))
-		entry = tagged_courses[ITEMS][0]
-		entry_ntiid = 'tag:nextthought.com,2011-10:NTI-CourseInfo-Fall2013_CLC3403_LawAndJustice'
-		assert_that(entry['NTIID'], is_(entry_ntiid))
+		assert_that(tagged_courses[ITEMS], has_length(3))
+		tagged_ntiids = [x['NTIID'] for x in tagged_courses[ITEMS]]
+		assert_that(tagged_ntiids, contains_inanyorder(*all_ntiids))
 
 		tagged_courses = self.testapp.get('%s?tag=%s' % (courses_href, '.hidden'))
 		tagged_courses = tagged_courses.json_body
-		assert_that(tagged_courses[ITEMS], has_length(1))
-		entry = tagged_courses[ITEMS][0]
-		assert_that(entry['NTIID'], is_(entry_ntiid))
+		assert_that(tagged_courses[ITEMS], has_length(3))
+		tagged_ntiids = [x['NTIID'] for x in tagged_courses[ITEMS]]
+		assert_that(tagged_ntiids, contains_inanyorder(*all_ntiids))
 
 		tagged_courses = self.testapp.get('%s?filter=%s' % (courses_href, 'law'))
 		tagged_courses = tagged_courses.json_body
 		assert_that(tagged_courses[ITEMS], has_length(3))
+		tagged_ntiids = [x['NTIID'] for x in tagged_courses[ITEMS]]
+		assert_that(tagged_ntiids, contains_inanyorder(*all_ntiids))
 
-		# By tag view
+		# Now set child tag
+		child_entry_href = '/dataserver2/Objects/%s' % child2_ntiid
+		entry = self.testapp.get(child_entry_href).json_body
+		assert_that(entry, has_entry('tags',
+									contains_inanyorder('law', '.hidden')))
+
+		entry = self.testapp.put_json(child_entry_href,
+									{"tags": ('child_tag',)})
+		entry = entry.json_body
+		assert_that(entry, has_entry('tags', contains('child_tag')))
+
+		tagged_courses = self.testapp.get('%s?tag=%s' % (courses_href, 'law'))
+		tagged_courses = tagged_courses.json_body
+		assert_that(tagged_courses[ITEMS], has_length(2))
+		tagged_ntiids = [x['NTIID'] for x in tagged_courses[ITEMS]]
+		assert_that(tagged_ntiids, contains_inanyorder(entry_ntiid, child1_ntiid))
+
+		tagged_courses = self.testapp.get('%s?tag=%s' % (courses_href, '.hidden'))
+		tagged_courses = tagged_courses.json_body
+		assert_that(tagged_courses[ITEMS], has_length(2))
+		tagged_ntiids = [x['NTIID'] for x in tagged_courses[ITEMS]]
+		assert_that(tagged_ntiids, contains_inanyorder(entry_ntiid, child1_ntiid))
+
+		tagged_courses = self.testapp.get('%s?tag=%s' % (courses_href, 'child_tag'))
+		tagged_courses = tagged_courses.json_body
+		assert_that(tagged_courses[ITEMS], has_length(1))
+		tagged_ntiids = [x['NTIID'] for x in tagged_courses[ITEMS]]
+		assert_that(tagged_ntiids, contains(child2_ntiid))
+
+		# By tag view, ordered by most entries in tag
+		# Other has 5 entries; child_tag only has one item
 		by_tag_href = self.require_link_href_with_rel(courses_collection,
 													  VIEW_COURSE_BY_TAG)
 		by_tag_res = self.testapp.get(by_tag_href).json_body
 		by_tag_items = by_tag_res[ITEMS]
-		assert_that(by_tag_items, has_length(3))
+		assert_that(by_tag_items, has_length(4))
 		item_zero = by_tag_items[0]
 		assert_that(item_zero['Name'], is_('.nti_other'))
 		assert_that(item_zero[ITEMS], has_length(5))
+
+		last_item = by_tag_items[-1]
+		assert_that(last_item['Name'], is_('child_tag'))
+		assert_that(last_item[ITEMS], has_length(1))
+
 		by_tag_item_names = [x['Name'] for x in by_tag_items]
 		assert_that(by_tag_item_names, contains_inanyorder('.nti_other',
 													  	   'law',
+													  	   'child_tag',
 													       '.hidden'))
 
 		# Exclude hidden, bucket size of 1
@@ -434,13 +475,13 @@ class TestPersistentWorkspaces(AbstractEnrollingBase, ApplicationLayerTest):
 											  'bucket_size': 1})
 		by_tag_res = by_tag_res.json_body
 		by_tag_items = by_tag_res[ITEMS]
-		assert_that(by_tag_items, has_length(2))
+		assert_that(by_tag_items, has_length(3))
 		item_zero = by_tag_items[0]
 		assert_that(item_zero['Name'], is_('.nti_other'))
 		for tag_items in by_tag_items:
 			assert_that(tag_items[ITEMS], has_length(1))
 		by_tag_item_names = [x['Name'] for x in by_tag_items]
-		assert_that(by_tag_item_names, contains('.nti_other', 'law'))
+		assert_that(by_tag_item_names, contains('.nti_other', 'law', 'child_tag'))
 
 		# Empty due to bucket limits
 		by_tag_res = self.testapp.get(by_tag_href,
@@ -448,7 +489,7 @@ class TestPersistentWorkspaces(AbstractEnrollingBase, ApplicationLayerTest):
 		by_tag_res = by_tag_res.json_body
 		by_tag_items = by_tag_res[ITEMS]
 		# We have tags and counts, just not to our requested bucket size.
-		assert_that(by_tag_items, has_length(3))
+		assert_that(by_tag_items, has_length(4))
 		for tag_items in by_tag_items:
 			assert_that(tag_items[ITEMS], has_length(0))
 			assert_that(tag_items[TOTAL], is_not(0))

@@ -922,7 +922,7 @@ class CourseCatalogByTagView(AbstractAuthenticatedView):
         result = defaultdict(list)
         for entry in self.context.container or ():
             entry_tags = entry.tags
-            if not self._include_hidden_tags and entry_tags:
+            if not self._include_hidden_tags:
                 entry_tags = filter_hidden_tags(entry_tags)
             if entry_tags:
                 for entry_tag in entry_tags:
