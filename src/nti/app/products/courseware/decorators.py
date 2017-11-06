@@ -24,7 +24,7 @@ from nti.app.assessment.common.evaluations import get_course_from_evaluation
 
 from nti.app.assessment.utils import get_course_from_request
 
-from nti.app.products.courseware import VIEW_CONTENTS
+from nti.app.products.courseware import VIEW_CONTENTS, VIEW_COURSE_BY_TAG
 from nti.app.products.courseware import VIEW_COURSE_MAIL
 from nti.app.products.courseware import VIEW_CATALOG_ENTRY
 from nti.app.products.courseware import VIEW_COURSE_ACTIVITY
@@ -903,7 +903,9 @@ class _CourseCatalogCollectionDecorator(AbstractAuthenticatedRequestAwareDecorat
 
     def _do_decorate_external(self, context, result):
         _links = result.setdefault(LINKS, [])
-        for rel in (VIEW_CATALOG_POPULAR, VIEW_CATALOG_FEATURED):
+        for rel in (VIEW_CATALOG_POPULAR,
+                    VIEW_CATALOG_FEATURED,
+                    VIEW_COURSE_BY_TAG):
             link = Link(context,
                         rel=rel,
                         elements=('@@%s' % rel,))

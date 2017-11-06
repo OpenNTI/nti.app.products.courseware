@@ -126,7 +126,7 @@ class TestEnrollment(ApplicationLayerTest):
     def _get_last_mod(self):
         user = User.get_user(self.username)
         last_mod = None
-        for library_last_mod in component.subscribers((user,), 
+        for library_last_mod in component.subscribers((user,),
                                                       ILibraryPathLastModifiedProvider):
             last_mod = library_last_mod
         return last_mod
@@ -182,7 +182,7 @@ class TestEnrollment(ApplicationLayerTest):
             entry = find_object_with_ntiid(self.course_ntiid)
             course = ICourseInstance(entry)
             access_provider = IAccessProvider(course)
-            record = access_provider.grant_access(entity, 
+            record = access_provider.grant_access(entity,
                                                   access_context='purchased')
             assert_that(record, not_none())
             assert_that(record.Scope, is_(ES_PURCHASED))

@@ -14,6 +14,8 @@ the workspace collections.
 from __future__ import print_function, absolute_import, division
 __docformat__ = "restructuredtext en"
 
+from collections import defaultdict
+
 from datetime import datetime
 
 from requests.structures import CaseInsensitiveDict
@@ -54,6 +56,7 @@ from nti.app.products.courseware.interfaces import IAdministeredCoursesCollectio
 from nti.app.products.courseware.views import MessageFactory as _
 from nti.app.products.courseware.views import CourseAdminPathAdapter
 
+from nti.app.products.courseware.views import VIEW_COURSE_BY_TAG
 from nti.app.products.courseware.views import VIEW_CURRENT_COURSES
 from nti.app.products.courseware.views import VIEW_ARCHIVED_COURSES
 from nti.app.products.courseware.views import VIEW_COURSE_FAVORITES
@@ -70,6 +73,8 @@ from nti.appserver.workspaces import VIEW_CATALOG_FEATURED
 from nti.appserver.workspaces.interfaces import IUserService
 from nti.appserver.workspaces.interfaces import IContainerCollection
 
+from nti.common.string import is_false
+
 from nti.contenttypes.courses.interfaces import ES_PUBLIC
 from nti.contenttypes.courses.interfaces import ICourseCatalog
 from nti.contenttypes.courses.interfaces import ICourseInstance
@@ -80,6 +85,7 @@ from nti.contenttypes.courses.interfaces import InstructorEnrolledException
 from nti.contenttypes.courses.interfaces import IAnonymouslyAccessibleCourseInstance
 
 from nti.contenttypes.courses.utils import is_enrolled
+from nti.contenttypes.courses.utils import filter_hidden_tags
 from nti.contenttypes.courses.utils import get_course_hierarchy
 from nti.contenttypes.courses.utils import is_course_instructor_or_editor
 
@@ -855,4 +861,106 @@ class CourseCollectionView(AbstractAuthenticatedView,
     def __call__(self):
         result = to_external_object(self.context)
         self._batch_items_iterable(result, result[ITEMS])
+        return result
+
+
+@view_config(route_name='objects.generic.traversal',
+             context=ICoursesCollection,
+             request_method='GET',
+             name=VIEW_COURSE_BY_TAG,
+             permission=nauth.ACT_READ)
+class CourseCatalogByTagView(AbstractAuthenticatedView):
+    """
+    A view to return an :class:`ICoursesCollection` grouped by tag.
+
+    The entries within a bucket are sorted by enrollment count (desc).
+
+    The tag buckets are sorted by number of underlying entries.
+
+    params:
+
+        bucketSize - (default None) the number of entries per tag to return.
+            If we do not find this many entries in a bucket, the bucket will
+            return empty.
+        hidden_tags - bucket by hidden tags (default True)
+    """
+
+    NO_TAG_NAME = '.nti_other'
+
+    @Lazy
+    def _params(self):
+        return CaseInsensitiveDict(self.request.params)
+
+    @Lazy
+    def _bucket_size(self):
+        result =   self._params.get('bucket') \
+                or self._params.get('bucketSize') \
+                or self._params.get('bucket_size')
+        return result and int(result)
+
+    @Lazy
+    def _include_hidden_tags(self):
+        # Default True
+        result =   self._params.get('hidden_tag') \
+                or self._params.get('hidden_tags') \
+                or self._params.get('hiddenTags')
+        return not is_false(result)
+
+    def _tag_sort_key(self, item_tuple):
+        # Sort by number of underlying entries
+        return len(item_tuple[1])
+
+    def _bucket_sort_key(self, entry):
+        course = ICourseInstance(entry, None)
+        enrollment_count = None
+        if course is not None:
+            enrollment_count = ICourseEnrollments(course).count_enrollments()
+        return (enrollment_count is not None, enrollment_count)
+
+    @Lazy
+    def _tag_buckets(self):
+        result = defaultdict(list)
+        for entry in self.context.container or ():
+            entry_tags = entry.tags
+            if not self._include_hidden_tags and entry_tags:
+                entry_tags = filter_hidden_tags(entry_tags)
+            if entry_tags:
+                for entry_tag in entry_tags:
+                    result[entry_tag].append(entry)
+            else:
+                result[self.NO_TAG_NAME].append(entry)
+        return result
+
+    @Lazy
+    def _sorted_tag_buckets(self):
+        result = list()
+        sorted_entry_tuples = sorted(self._tag_buckets.items(),
+                                     key=self._tag_sort_key,
+                                     reverse=True)
+        # Now sort/reduce our bucket size.
+        for tag, entries in sorted_entry_tuples:
+            tag_dict = dict()
+            result.append(tag_dict)
+            sorted_entries = sorted(entries,
+                                    key=self._bucket_sort_key,
+                                    reverse=True)
+            tag_entry_count = len(sorted_entries)
+            if self._bucket_size:
+                # Bucket size acts as a min requested
+                if tag_entry_count >= self._bucket_size:
+                    sorted_entries = sorted_entries[:self._bucket_size]
+                else:
+                    # Otherwise, we exclude these items.
+                    sorted_entries = ()
+
+            tag_dict['Name'] = tag
+            tag_dict[ITEMS] = sorted_entries
+            tag_dict[TOTAL] = tag_entry_count
+            tag_dict[ITEM_COUNT] = len(sorted_entries)
+        return result
+
+    def __call__(self):
+        result = LocatedExternalDict()
+        result[ITEMS] = self._sorted_tag_buckets
+        result[TOTAL] = len(self._sorted_tag_buckets)
         return result
