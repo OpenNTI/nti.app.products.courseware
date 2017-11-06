@@ -28,6 +28,7 @@ from zope import component
 
 from zope.securitypolicy.principalrole import principalRoleManager
 
+from nti.app.products.courseware import VIEW_COURSE_BY_TAG
 from nti.app.products.courseware import VIEW_COURSE_FAVORITES
 from nti.app.products.courseware import VIEW_ADMINISTERED_WINDOWED
 from nti.app.products.courseware import VIEW_ENROLLED_WINDOWED
@@ -412,6 +413,45 @@ class TestPersistentWorkspaces(AbstractEnrollingBase, ApplicationLayerTest):
 		tagged_courses = self.testapp.get('%s?filter=%s' % (courses_href, 'law'))
 		tagged_courses = tagged_courses.json_body
 		assert_that(tagged_courses[ITEMS], has_length(3))
+
+		# By tag view
+		by_tag_href = self.require_link_href_with_rel(courses_collection,
+													  VIEW_COURSE_BY_TAG)
+		by_tag_res = self.testapp.get(by_tag_href).json_body
+		by_tag_items = by_tag_res[ITEMS]
+		assert_that(by_tag_items, has_length(3))
+		item_zero = by_tag_items[0]
+		assert_that(item_zero['Name'], is_('.nti_other'))
+		assert_that(item_zero[ITEMS], has_length(5))
+		by_tag_item_names = [x['Name'] for x in by_tag_items]
+		assert_that(by_tag_item_names, contains_inanyorder('.nti_other',
+													  	   'law',
+													       '.hidden'))
+
+		# Exclude hidden, bucket size of 1
+		by_tag_res = self.testapp.get(by_tag_href,
+									  params={'hidden_tags': 'false',
+											  'bucket_size': 1})
+		by_tag_res = by_tag_res.json_body
+		by_tag_items = by_tag_res[ITEMS]
+		assert_that(by_tag_items, has_length(2))
+		item_zero = by_tag_items[0]
+		assert_that(item_zero['Name'], is_('.nti_other'))
+		for tag_items in by_tag_items:
+			assert_that(tag_items[ITEMS], has_length(1))
+		by_tag_item_names = [x['Name'] for x in by_tag_items]
+		assert_that(by_tag_item_names, contains('.nti_other', 'law'))
+
+		# Empty due to bucket limits
+		by_tag_res = self.testapp.get(by_tag_href,
+									  params={'bucket_size': 10})
+		by_tag_res = by_tag_res.json_body
+		by_tag_items = by_tag_res[ITEMS]
+		# We have tags and counts, just not to our requested bucket size.
+		assert_that(by_tag_items, has_length(3))
+		for tag_items in by_tag_items:
+			assert_that(tag_items[ITEMS], has_length(0))
+			assert_that(tag_items[TOTAL], is_not(0))
 
 	@WithSharedApplicationMockDS(users=True, testapp=True)
 	@fudge.patch('nti.app.products.courseware.views.catalog_views.PopularCoursesView._include_filter')

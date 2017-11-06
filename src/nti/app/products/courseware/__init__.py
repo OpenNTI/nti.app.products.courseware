@@ -22,6 +22,7 @@ ACCEPT_COURSE_INVITATIONS = 'accept-course-invitations'
 
 VIEW_CONTENTS = 'contents'
 VIEW_COURSE_MAIL = 'Mail'
+VIEW_COURSE_BY_TAG = 'ByTag'
 VIEW_RESOURCES = 'resources'
 VIEW_CLASSMATES = 'Classmates'
 VIEW_CURRENT_COURSES = "Current"
