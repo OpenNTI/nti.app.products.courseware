@@ -6,10 +6,9 @@ Views directly related to individual courses and course sub-objects.
 .. $Id$
 """
 
-from __future__ import print_function, absolute_import, division
-__docformat__ = "restructuredtext en"
-
-logger = __import__('logging').getLogger(__name__)
+from __future__ import division
+from __future__ import print_function
+from __future__ import absolute_import
 
 import time
 from datetime import datetime
@@ -18,8 +17,6 @@ from datetime import timedelta
 from zope import component
 
 from zope.cachedescriptors.property import CachedProperty
-
-from zope.catalog.interfaces import ICatalog
 
 from zope.intid.interfaces import IIntIds
 
@@ -53,7 +50,8 @@ from nti.dataserver.interfaces import IUser
 from nti.dataserver.metadata.index import IX_TOPICS
 from nti.dataserver.metadata.index import TP_TOP_LEVEL_CONTENT
 from nti.dataserver.metadata.index import TP_DELETED_PLACEHOLDER
-from nti.dataserver.metadata.index import CATALOG_NAME as METADATA_CATALOG_NAME
+
+from nti.dataserver.metadata.index import get_metadata_catalog
 
 from nti.externalization.interfaces import LocatedExternalDict
 from nti.externalization.interfaces import LocatedExternalList
@@ -68,7 +66,9 @@ ITEMS = StandardExternalFields.ITEMS
 LINKS = StandardExternalFields.LINKS
 MIMETYPE = StandardExternalFields.MIMETYPE
 
-# TODO
+logger = __import__('logging').getLogger(__name__)
+
+# TODO:
 # - mimetype filter
 # - sorting params
 # - caching (memcache?)
@@ -148,7 +148,7 @@ class CourseDashboardRecursiveStreamView(AbstractAuthenticatedView,
 
     @CachedProperty
     def _catalog(self):
-        return component.getUtility(ICatalog, METADATA_CATALOG_NAME)
+        return get_metadata_catalog()
 
     @CachedProperty
     def _intids(self):
