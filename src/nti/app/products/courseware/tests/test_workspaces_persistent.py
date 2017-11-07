@@ -102,7 +102,7 @@ class TestPersistentWorkspaces(AbstractEnrollingBase, ApplicationLayerTest):
         self._do_enroll({'ntiid': self.enrollment_ntiid})
 
         res = self.search_users(username='CLC')
-        assert_that(res.json_body, 
+        assert_that(res.json_body,
 					has_entry('Items', contains(has_entry('alias', 'CLC 3403 - Open'))))
         scope = res.json_body['Items'][0]
 
@@ -142,10 +142,10 @@ class TestPersistentWorkspaces(AbstractEnrollingBase, ApplicationLayerTest):
         main_assets = '/sites/platform.ou.edu/CLC3403_LawAndJustice/presentation-assets/shared/v1/'
         sect_assets = '/sites/platform.ou.edu/Courses/Fall2013/CLC3403_LawAndJustice/Sections/01/presentation-assets/shared/v1/'
 
-        assert_that(main_entry, 
+        assert_that(main_entry,
 				    has_entry('PlatformPresentationResources',
                               has_item(has_entry('href', main_assets))))
-  
+
         assert_that(sect_entry,
                     has_entry('PlatformPresentationResources',
                               has_item(has_entry('href', sect_assets))))
@@ -174,17 +174,17 @@ class TestPersistentWorkspaces(AbstractEnrollingBase, ApplicationLayerTest):
         res = self.testapp.get(self.all_courses_href)
         main_entry, sect_entry = self._get_main_and_sect_entries(res)
 
-        assert_that(main_entry, 
+        assert_that(main_entry,
 					has_entry('ContentPackageNTIID',
 							  'tag:nextthought.com,2011-10:OU-HTML-CLC3403_LawAndJustice.clc_3403_law_and_justice'))
-        assert_that(sect_entry, 
+        assert_that(sect_entry,
 					has_entry('ContentPackageNTIID',
 							  'tag:nextthought.com,2011-10:OU-HTML-CLC3403_LawAndJustice.clc_3403_law_and_justice'))
 
-        assert_that(main_entry, 
+        assert_that(main_entry,
 					has_entry('LegacyPurchasableIcon',
 							  '/sites/platform.ou.edu/CLC3403_LawAndJustice/images/CLC3403_promo.png'))
-        assert_that(sect_entry, 
+        assert_that(sect_entry,
 					has_entry('LegacyPurchasableIcon',
 							  '/sites/platform.ou.edu/CLC3403_LawAndJustice/images/CLC3403_promo.png'))
 
@@ -203,7 +203,7 @@ class TestPersistentWorkspaces(AbstractEnrollingBase, ApplicationLayerTest):
 
         # now our enrollment:
         res = self.testapp.get(self.enrolled_courses_href)
-        assert_that(res.json_body, 
+        assert_that(res.json_body,
 					has_entry('Items', has_length(1)))
         enrollment_href = self.require_link_href_with_rel(res.json_body['Items'][0], 'edit')
         self.testapp.get(enrollment_href)
@@ -223,7 +223,7 @@ class TestPersistentWorkspaces(AbstractEnrollingBase, ApplicationLayerTest):
                                                             			     	'Title', 'Law and Justice',
                                                             		 	     	'CatalogFamilyID', not_none(),
                                                             		  	     	'PlatformPresentationResources', not_none())))))))
-        assert_that(res, 
+        assert_that(res,
 					has_entry('Items', has_item(has_entry('ProviderUniqueID', 'ENGR 1510-901'))))
 
         assert_that(res, has_entry('Items', has_length(6)))
@@ -248,8 +248,8 @@ class TestPersistentWorkspaces(AbstractEnrollingBase, ApplicationLayerTest):
         assert_that(res.json_body, has_entry('Items', has_length(0)))
 
         with mock_dataserver.mock_db_trans(self.ds):
-            principalRoleManager.assignRoleToPrincipal(ROLE_CONTENT_ADMIN.id, 
-													   'content_admin', 
+            principalRoleManager.assignRoleToPrincipal(ROLE_CONTENT_ADMIN.id,
+													   'content_admin',
 													   check=False)
 
         res = self.testapp.get('/dataserver2/users/content_admin/Courses/AdministeredCourses',
@@ -340,7 +340,7 @@ class TestPersistentWorkspaces(AbstractEnrollingBase, ApplicationLayerTest):
         catalog_ws = next(x for x in workspaces if x['Title'] == 'Catalog')
         assert_that(catalog_ws, not_none())
         catalog_collections = catalog_ws['Items']
-        assert_that(catalog_collections, has_length(3))
+        assert_that(catalog_collections, has_length(2))
         courses_collection = next(
 			x for x in catalog_collections if x['Title'] == name
 		)
@@ -394,14 +394,15 @@ class TestPersistentWorkspaces(AbstractEnrollingBase, ApplicationLayerTest):
         self.testapp.get(featured_href, status=404)
 
         # Add tags to a entry and filter on tags.
+        # Tags are de-dupated on update.
         entry_ntiid = u'tag:nextthought.com,2011-10:NTI-CourseInfo-Fall2013_CLC3403_LawAndJustice'
         child1_ntiid = u'tag:nextthought.com,2011-10:NTI-CourseInfo-Fall2013_CLC3403_LawAndJustice_SubInstances_01'
         child2_ntiid = u'tag:nextthought.com,2011-10:NTI-CourseInfo-Fall2013_CLC3403_LawAndJustice_SubInstances_02_Restricted'
         all_ntiids = (entry_ntiid, child1_ntiid, child2_ntiid)
         entry = self.testapp.put_json(self.expected_catalog_entry_href,
-                                      {"tags": ('LAW', '.hidden')})
+                                      {"tags": ('LAW', 'law', '.hidden')})
         entry = entry.json_body
-        assert_that(entry, 
+        assert_that(entry,
 					has_entry('tags', contains_inanyorder('law', '.hidden')))
 
         tagged_courses = self.testapp.get('%s?tag=%s' % (courses_href, 'law'))
@@ -429,32 +430,32 @@ class TestPersistentWorkspaces(AbstractEnrollingBase, ApplicationLayerTest):
                                      contains_inanyorder('law', '.hidden')))
 
         entry = self.testapp.put_json(child_entry_href,
-                                      {"tags": ('child_tag',)})
+                                      {"tags": ('child tag ',)})
         entry = entry.json_body
-        assert_that(entry, has_entry('tags', contains('child_tag')))
+        assert_that(entry, has_entry('tags', contains('child tag ')))
 
         tagged_courses = self.testapp.get('%s?tag=%s' % (courses_href, 'law'))
         tagged_courses = tagged_courses.json_body
         assert_that(tagged_courses[ITEMS], has_length(2))
         tagged_ntiids = [x['NTIID'] for x in tagged_courses[ITEMS]]
-        assert_that(tagged_ntiids, 
+        assert_that(tagged_ntiids,
 					contains_inanyorder(entry_ntiid, child1_ntiid))
 
         tagged_courses = self.testapp.get('%s?tag=%s' % (courses_href, '.hidden'))
         tagged_courses = tagged_courses.json_body
         assert_that(tagged_courses[ITEMS], has_length(2))
         tagged_ntiids = [x['NTIID'] for x in tagged_courses[ITEMS]]
-        assert_that(tagged_ntiids, 
+        assert_that(tagged_ntiids,
 					contains_inanyorder(entry_ntiid, child1_ntiid))
 
-        tagged_courses = self.testapp.get('%s?tag=%s' % (courses_href, 'child_tag'))
+        tagged_courses = self.testapp.get('%s?tag=%s' % (courses_href, 'child tag '))
         tagged_courses = tagged_courses.json_body
         assert_that(tagged_courses[ITEMS], has_length(1))
         tagged_ntiids = [x['NTIID'] for x in tagged_courses[ITEMS]]
         assert_that(tagged_ntiids, contains(child2_ntiid))
 
         # By tag view, ordered by most entries in tag
-        # Other has 5 entries; child_tag only has one item
+        # Other has 5 entries; child tag  only has one item
         by_tag_href = self.require_link_href_with_rel(courses_collection,
                                                       VIEW_COURSE_BY_TAG)
         by_tag_res = self.testapp.get(by_tag_href).json_body
@@ -465,12 +466,12 @@ class TestPersistentWorkspaces(AbstractEnrollingBase, ApplicationLayerTest):
         assert_that(item_zero[ITEMS], has_length(5))
 
         last_item = by_tag_items[-1]
-        assert_that(last_item['Name'], is_('child_tag'))
+        assert_that(last_item['Name'], is_('child tag '))
         assert_that(last_item[ITEMS], has_length(1))
 
         by_tag_item_names = [x['Name'] for x in by_tag_items]
-        assert_that(by_tag_item_names, 
-					contains_inanyorder('.nti_other', 'law', 'child_tag', '.hidden'))
+        assert_that(by_tag_item_names,
+					contains_inanyorder('.nti_other', 'law', 'child tag ', '.hidden'))
 
         # Exclude hidden, bucket size of 1
         by_tag_res = self.testapp.get(by_tag_href,
@@ -483,8 +484,8 @@ class TestPersistentWorkspaces(AbstractEnrollingBase, ApplicationLayerTest):
         for tag_items in by_tag_items:
             assert_that(tag_items[ITEMS], has_length(1))
         by_tag_item_names = [x['Name'] for x in by_tag_items]
-        assert_that(by_tag_item_names, 
-					contains('.nti_other', 'law', 'child_tag'))
+        assert_that(by_tag_item_names,
+					contains('.nti_other', 'law', 'child tag '))
 
         # Empty due to bucket limits
         by_tag_res = self.testapp.get(by_tag_href,
@@ -509,11 +510,11 @@ class TestPersistentWorkspaces(AbstractEnrollingBase, ApplicationLayerTest):
         assert_that(item_zero['Name'], is_('law'))
         assert_that(item_zero[ITEMS], has_length(2))
 
-        by_tag_res = self.testapp.get('%s/%s' % (by_tag_href, 'child_tag'))
+        by_tag_res = self.testapp.get('%s/%s' % (by_tag_href, 'child tag '))
         by_tag_res = by_tag_res.json_body
         assert_that(by_tag_res[ITEMS], has_length(1))
         item_zero = by_tag_res[ITEMS][0]
-        assert_that(item_zero['Name'], is_('child_tag'))
+        assert_that(item_zero['Name'], is_('child tag '))
         assert_that(item_zero[ITEMS], has_length(1))
 
     @WithSharedApplicationMockDS(users=True, testapp=True)
@@ -559,34 +560,6 @@ class TestPersistentWorkspaces(AbstractEnrollingBase, ApplicationLayerTest):
         assert_that({x['StartDate'] for x in featured_items},
                     contains('2013-08-13T06:00:00Z'))
         self.testapp.get(featured_href, params={'count': 5}, status=404)
-
-    @WithSharedApplicationMockDS(users=True, testapp=True)
-    @fudge.patch('nti.app.products.courseware.catalog.FeaturedCatalogCoursesProvider.include_filter')
-    def test_catalog_collection_featured_with_results(self, mock_include_filter):
-        """
-        Test the catalog collection featured collection. All courses are
-        considered current or upcoming in this test (and thus in the featured
-        returns). This is slightly different from the featured view on the
-        :class:`ICoursesCatalogCollection', which only returns upcoming courses.
-        """
-        mock_include_filter.is_callable().returns(True)
-        featured_collection = self._get_catalog_collection(name='Featured')
-        featured_href = featured_collection['href']
-
-        featured_res = self.testapp.get(featured_href)
-        featured_res = featured_res.json_body
-        featured_items = featured_res[ITEMS]
-        assert_that(featured_items, has_length(8))
-        start_date_order = ['2013-08-13T06:00:00Z',
-                            '2013-08-13T06:00:00Z',
-                            '2013-08-13T06:00:00Z',
-                            '2014-01-13T06:00:00Z',
-                            '2015-08-24T05:00:00Z',
-                            '2015-08-24T05:00:00Z',
-                            '2015-08-24T05:00:00Z',
-                            '2015-08-24T05:00:00Z']
-        assert_that([x['StartDate'] for x in featured_items],
-                    contains(*start_date_order))
 
     @WithSharedApplicationMockDS(users=('test_student',), testapp=True)
     def test_catalog_collection_purchased_with_results(self):
