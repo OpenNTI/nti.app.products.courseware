@@ -4,12 +4,9 @@
 .. $Id$
 """
 
-from __future__ import print_function, absolute_import, division
-__docformat__ = "restructuredtext en"
-
-logger = __import__('logging').getLogger(__name__)
-
-generation = 17
+from __future__ import division
+from __future__ import print_function
+from __future__ import absolute_import
 
 import six
 
@@ -32,6 +29,10 @@ from nti.dataserver.interfaces import IOIDResolver
 from nti.ntiids.ntiids import find_object_with_ntiid
 
 from nti.site.hostpolicy import get_all_host_sites
+
+generation = 17
+
+logger = __import__('logging').getLogger(__name__)
 
 
 @interface.implementer(IDataserver)

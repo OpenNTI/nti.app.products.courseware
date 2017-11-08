@@ -1,8 +1,9 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from __future__ import print_function, absolute_import, division
-__docformat__ = "restructuredtext en"
+from __future__ import division
+from __future__ import print_function
+from __future__ import absolute_import
 
 # disable: accessing protected members, too many methods
 # pylint: disable=W0212,R0904
@@ -20,17 +21,17 @@ from nti.app.products.courseware.resources.adapters import course_resources
 from nti.app.products.courseware.resources.model import CourseContentFile
 from nti.app.products.courseware.resources.model import CourseContentFolder
 
-from nti.contenttypes.courses.interfaces import ICourseInstance
-
-from nti.ntiids.ntiids import find_object_with_ntiid
-
 from nti.app.products.courseware.tests import PersistentInstructedCourseApplicationTestLayer
 
 from nti.app.testing.application_webtest import ApplicationLayerTest
 
 from nti.app.testing.decorators import WithSharedApplicationMockDS
 
+from nti.contenttypes.courses.interfaces import ICourseInstance
+
 from nti.dataserver.tests import mock_dataserver
+
+from nti.ntiids.ntiids import find_object_with_ntiid
 
 
 class TestEvolve18(ApplicationLayerTest):
@@ -60,7 +61,7 @@ class TestEvolve18(ApplicationLayerTest):
         with mock_dataserver.mock_db_trans(self.ds, site_name='platform.ou.edu'):
             resources = course_resources(course, create=False)
             evolve18.process_course_resources(resources)
-            
+
         with mock_dataserver.mock_db_trans(self.ds, site_name='platform.ou.edu'):
             resources = course_resources(course, create=False)
             bleach = resources['bleach']
@@ -69,7 +70,7 @@ class TestEvolve18(ApplicationLayerTest):
             assert_that(bleach, has_property('__name__', 'bleach'))
             assert_that(bleach.__dict__, does_not(has_key('filename')))
             assert_that(bleach.__dict__, does_not(has_key('use_blobs')))
-        
+
             ichigo = bleach['ichigo.txt']
             assert_that(ichigo, has_property('filename', 'ichigo.txt'))
             assert_that(ichigo, has_property('__name__', 'ichigo.txt'))

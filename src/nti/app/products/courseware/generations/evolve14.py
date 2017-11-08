@@ -4,12 +4,9 @@
 .. $Id$
 """
 
-from __future__ import print_function, absolute_import, division
-__docformat__ = "restructuredtext en"
-
-logger = __import__('logging').getLogger(__name__)
-
-generation = 14
+from __future__ import division
+from __future__ import print_function
+from __future__ import absolute_import
 
 from zope import component
 from zope import interface
@@ -21,9 +18,13 @@ from zope.intid.interfaces import IIntIds
 from nti.dataserver.interfaces import IDataserver
 from nti.dataserver.interfaces import IOIDResolver
 
-from nti.zope_catalog.interfaces import IMetadataCatalog
+from nti.zope_catalog.interfaces import IDeferredCatalog
 
 CATALOG_NAME = 'nti.dataserver.++etc++course-resources'
+
+generation = 14
+
+logger = __import__('logging').getLogger(__name__)
 
 
 @interface.implementer(IDataserver)
@@ -49,12 +50,12 @@ def do_evolve(context, generation=generation):
     component.provideUtility(mock_ds, IDataserver)
 
     with current_site(ds_folder):
-        assert  component.getSiteManager() == ds_folder.getSiteManager(), \
-                "Hooks not installed?"
+        assert component.getSiteManager() == ds_folder.getSiteManager(), \
+               "Hooks not installed?"
 
         lsm = ds_folder.getSiteManager()
         intids = lsm.getUtility(IIntIds)
-        catalog = lsm.queryUtility(IMetadataCatalog, name=CATALOG_NAME)
+        catalog = lsm.queryUtility(IDeferredCatalog, name=CATALOG_NAME)
         if catalog is not None:
             catalog.__parent__ = None
             intids.unregister(catalog)
@@ -66,7 +67,7 @@ def do_evolve(context, generation=generation):
                     index.clear()
                 except AttributeError:
                     pass
-            lsm.unregisterUtility(provided=IMetadataCatalog, name=CATALOG_NAME)
+            lsm.unregisterUtility(provided=IDeferredCatalog, name=CATALOG_NAME)
 
     component.getGlobalSiteManager().unregisterUtility(mock_ds, IDataserver)
     logger.info('Evolution %s done.', generation)
