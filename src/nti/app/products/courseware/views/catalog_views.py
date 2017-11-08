@@ -877,7 +877,7 @@ class CourseCatalogByTagView(AbstractAuthenticatedView):
 
     The entries within a bucket are sorted by enrollment count (desc).
 
-    The tag buckets are sorted by number of underlying entries.
+    The tag buckets are sorted by tag name, with hidden tags last.
 
     This view also supports a subpath drilldown into a specific tag
     (e.g. `@@ByTag/tag_name`). This will return a single bucket of all
@@ -919,8 +919,8 @@ class CourseCatalogByTagView(AbstractAuthenticatedView):
         return not is_false(result)
 
     def _tag_sort_key(self, item_tuple):
-        # Sort by number of underlying entries
-        return len(item_tuple[1])
+        # Sort by tag name
+        return item_tuple[0].lower()
 
     def _bucket_sort_key(self, entry):
         course = ICourseInstance(entry, None)
@@ -972,8 +972,7 @@ class CourseCatalogByTagView(AbstractAuthenticatedView):
     def _sorted_tag_buckets(self):
         result = list()
         sorted_entry_tuples = sorted(self._tag_buckets.items(),
-                                     key=self._tag_sort_key,
-                                     reverse=True)
+                                     key=self._tag_sort_key)
         # Now sort/reduce our bucket size.
         for tag, entries in sorted_entry_tuples:
             tag_dict = dict()
