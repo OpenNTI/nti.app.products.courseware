@@ -244,7 +244,13 @@
 	</class>
 
 	<!-- Enrollment -->
-    <adapter factory=".adapters._CourseAccessProvider" />
+    <adapter factory=".adapters._CourseAccessProvider"
+             for="nti.contenttypes.courses.interfaces.ICourseInstance"
+             provides="nti.dataserver.interfaces.IAccessProvider" />
+
+    <adapter factory=".adapters._CourseAccessProvider"
+             for="nti.contenttypes.courses.interfaces.ICourseCatalogEntry"
+             provides="nti.dataserver.interfaces.IAccessProvider" />
 
 	<!-- Outline update -->
 	<adapter factory=".traversal._OutlineNodeExternalFieldTraverser"

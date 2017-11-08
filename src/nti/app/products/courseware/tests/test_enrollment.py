@@ -169,10 +169,16 @@ class TestEnrollment(ApplicationLayerTest):
             entity = User.get_user(u'marco')
             entry = find_object_with_ntiid(self.course_ntiid)
             course = ICourseInstance(entry)
-            access_provider = IAccessProvider(course)
+            # Access via entry
+            access_provider = IAccessProvider(entry)
             record = access_provider.grant_access(entity)
             assert_that(record, not_none())
             assert_that(record.Scope, is_(ES_PUBLIC))
+
+            # Now by course, already enrolled
+            access_provider = IAccessProvider(course)
+            record = access_provider.grant_access(entity)
+            assert_that(record, is_(False))
 
             enrollments = ICourseEnrollments(course)
             assert_that(enrollments.is_principal_enrolled(entity), is_(True))

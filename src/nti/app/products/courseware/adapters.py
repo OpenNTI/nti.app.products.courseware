@@ -278,7 +278,7 @@ def _course_content_package_to_course(package):
     try:
         entry = package._v_global_legacy_catalog_entry
     except AttributeError:
-        logger.warn("Consistency issue? No attribute on global package %s", 
+        logger.warn("Consistency issue? No attribute on global package %s",
                     package)
         entry = None
 
@@ -664,6 +664,7 @@ def _course_from_request(request):
 
 
 @component.adapter(ICourseInstance)
+@component.adapter(ICourseCatalogEntry)
 @interface.implementer(IAccessProvider)
 class _CourseAccessProvider(object):
     """
@@ -672,11 +673,19 @@ class _CourseAccessProvider(object):
     """
 
     def __init__(self, context):
-        self.context = self.course = context
+        self.context = context
+
+    @Lazy
+    def course(self):
+        return ICourseInstance(self.context)
+
+    @Lazy
+    def entry(self):
+        return ICourseCatalogEntry(self.context)
 
     @Lazy
     def entry_ntiid(self):
-        return ICourseCatalogEntry(self.course).ntiid
+        return self.entry.ntiid
 
     def _scope_lookup(self, scope_name):
         """
