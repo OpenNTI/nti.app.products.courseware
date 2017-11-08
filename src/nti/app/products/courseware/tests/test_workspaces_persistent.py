@@ -430,9 +430,9 @@ class TestPersistentWorkspaces(AbstractEnrollingBase, ApplicationLayerTest):
                                      contains_inanyorder('law', '.hidden')))
 
         entry = self.testapp.put_json(child_entry_href,
-                                      {"tags": ('child tag ',)})
+                                      {"tags": ('child tag',)})
         entry = entry.json_body
-        assert_that(entry, has_entry('tags', contains('child tag ')))
+        assert_that(entry, has_entry('tags', contains('child tag')))
 
         tagged_courses = self.testapp.get('%s?tag=%s' % (courses_href, 'law'))
         tagged_courses = tagged_courses.json_body
@@ -448,7 +448,7 @@ class TestPersistentWorkspaces(AbstractEnrollingBase, ApplicationLayerTest):
         assert_that(tagged_ntiids,
 					contains_inanyorder(entry_ntiid, child1_ntiid))
 
-        tagged_courses = self.testapp.get('%s?tag=%s' % (courses_href, 'child tag '))
+        tagged_courses = self.testapp.get('%s?tag=%s' % (courses_href, 'child tag'))
         tagged_courses = tagged_courses.json_body
         assert_that(tagged_courses[ITEMS], has_length(1))
         tagged_ntiids = [x['NTIID'] for x in tagged_courses[ITEMS]]
@@ -461,21 +461,22 @@ class TestPersistentWorkspaces(AbstractEnrollingBase, ApplicationLayerTest):
         by_tag_res = self.testapp.get(by_tag_href).json_body
         by_tag_items = by_tag_res[ITEMS]
         assert_that(by_tag_items, has_length(4))
-        item_zero = by_tag_items[0]
-        assert_that(item_zero['Name'], is_('.nti_other'))
-        assert_that(item_zero[ITEMS], has_length(5))
-
-        last_item = by_tag_items[-1]
-        assert_that(last_item['Name'], is_('child tag '))
-        assert_that(last_item[ITEMS], has_length(1))
-
         by_tag_item_names = [x['Name'] for x in by_tag_items]
         assert_that(by_tag_item_names,
-					contains_inanyorder('.nti_other', 'law', 'child tag ', '.hidden'))
+					contains('.hidden', '.nti_other', 'child tag', 'law'))
+
+        child_items = by_tag_items[2]
+        assert_that(child_items['Name'], is_('child tag'))
+        assert_that(child_items[ITEMS], has_length(1))
+
+        no_tag_items = by_tag_items[1]
+        assert_that(no_tag_items['Name'], is_('.nti_other'))
+        assert_that(no_tag_items[ITEMS], has_length(5))
 
         # Exclude hidden, bucket size of 1
         by_tag_res = self.testapp.get(by_tag_href,
-                                      params={'hidden_tags': 'false', 'bucket_size': 1})
+                                      params={'hidden_tags': 'false',
+											  'bucket_size': 1})
         by_tag_res = by_tag_res.json_body
         by_tag_items = by_tag_res[ITEMS]
         assert_that(by_tag_items, has_length(3))
@@ -485,7 +486,7 @@ class TestPersistentWorkspaces(AbstractEnrollingBase, ApplicationLayerTest):
             assert_that(tag_items[ITEMS], has_length(1))
         by_tag_item_names = [x['Name'] for x in by_tag_items]
         assert_that(by_tag_item_names,
-					contains('.nti_other', 'law', 'child tag '))
+					contains('.nti_other', 'child tag', 'law'))
 
         # Empty due to bucket limits
         by_tag_res = self.testapp.get(by_tag_href,
@@ -510,11 +511,11 @@ class TestPersistentWorkspaces(AbstractEnrollingBase, ApplicationLayerTest):
         assert_that(item_zero['Name'], is_('law'))
         assert_that(item_zero[ITEMS], has_length(2))
 
-        by_tag_res = self.testapp.get('%s/%s' % (by_tag_href, 'child tag '))
+        by_tag_res = self.testapp.get('%s/%s' % (by_tag_href, 'child tag'))
         by_tag_res = by_tag_res.json_body
         assert_that(by_tag_res[ITEMS], has_length(1))
         item_zero = by_tag_res[ITEMS][0]
-        assert_that(item_zero['Name'], is_('child tag '))
+        assert_that(item_zero['Name'], is_('child tag'))
         assert_that(item_zero[ITEMS], has_length(1))
 
     @WithSharedApplicationMockDS(users=True, testapp=True)
