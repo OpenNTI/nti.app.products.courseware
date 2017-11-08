@@ -8,8 +8,6 @@ from __future__ import division
 from __future__ import print_function
 from __future__ import absolute_import
 
-generation = 12
-
 from six.moves.urllib_parse import unquote
 
 from zope import component
@@ -38,6 +36,8 @@ from nti.ntiids.ntiids import is_valid_ntiid_string
 from nti.ntiids.oids import to_external_ntiid_oid
 
 from nti.site.hostpolicy import get_all_host_sites
+
+generation = 12
 
 logger = __import__('logging').getLogger(__name__)
 

@@ -4,12 +4,9 @@
 .. $Id$
 """
 
-from __future__ import print_function, absolute_import, division
-__docformat__ = "restructuredtext en"
-
-logger = __import__('logging').getLogger(__name__)
-
-generation = 16
+from __future__ import division
+from __future__ import print_function
+from __future__ import absolute_import
 
 from zope import component
 from zope import interface
@@ -31,7 +28,12 @@ from nti.invitations.interfaces import IInvitationsContainer
 from nti.invitations.index import IX_SITE
 from nti.invitations.index import get_invitations_catalog
 
-from nti.site.hostpolicy import get_all_host_sites, get_host_site
+from nti.site.hostpolicy import get_host_site
+from nti.site.hostpolicy import get_all_host_sites
+
+generation = 16
+
+logger = __import__('logging').getLogger(__name__)
 
 
 @interface.implementer(IDataserver)
