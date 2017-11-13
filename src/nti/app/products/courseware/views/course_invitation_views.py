@@ -99,6 +99,7 @@ from nti.invitations.interfaces import IActionableInvitation
 from nti.links.links import Link
 
 from nti.ntiids.ntiids import find_object_with_ntiid
+from nti.dataserver.authorization import is_admin_or_content_admin_or_site_admin
 
 CLASS = StandardExternalFields.CLASS
 ITEMS = StandardExternalFields.ITEMS
@@ -130,7 +131,7 @@ class CourseInvitationsView(AbstractAuthenticatedView):
 
     def __call__(self):
         if      not is_course_instructor(self._course, self.remoteUser) \
-            and not has_permission(nauth.ACT_NTI_ADMIN, self._course, self.request):
+            and not is_admin_or_content_admin_or_site_admin(self.remoteUser):
             raise hexc.HTTPForbidden()
 
         result = LocatedExternalDict()
