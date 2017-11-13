@@ -170,6 +170,7 @@ class PurchasedCatalogCoursesProvider(object):
         """
         # Most recent first
         result = sorted(self.enrollments, key=self._sort_key, reverse=True)
+        result = [ICourseCatalogEntry(x.CourseInstance) for x in result]
         return result
 
 
