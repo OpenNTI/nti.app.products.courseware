@@ -22,8 +22,6 @@ from nti.app.products.courseware.utils import has_course_invitations
 
 from nti.app.renderers.decorators import AbstractAuthenticatedRequestAwareDecorator
 
-from nti.appserver.pyramid_authorization import has_permission
-
 from nti.contenttypes.courses.interfaces import ICourseInstance
 
 from nti.contenttypes.courses.legacy_catalog import ILegacyCourseInstance
@@ -31,7 +29,8 @@ from nti.contenttypes.courses.legacy_catalog import ILegacyCourseInstance
 from nti.contenttypes.courses.utils import is_enrolled
 from nti.contenttypes.courses.utils import is_course_instructor
 
-from nti.dataserver.authorization import ACT_NTI_ADMIN
+from nti.dataserver.authorization import is_content_admin
+from nti.dataserver.authorization import is_admin_or_site_admin
 
 from nti.externalization.interfaces import StandardExternalFields
 from nti.externalization.interfaces import IExternalMappingDecorator
@@ -54,22 +53,20 @@ class _CourseInvitationsLinkDecorator(AbstractAuthenticatedRequestAwareDecorator
     def _do_decorate_external(self, context, result):
         _links = result.setdefault(LINKS, [])
         if has_course_invitations(context):
-            # instructor or admin, it can send invitations
+            rels = ()
             if     is_course_instructor(context, self.remoteUser) \
-                or has_permission(ACT_NTI_ADMIN, context, self.request):
-                for name in (VIEW_COURSE_ACCESS_TOKENS,
-                             SEND_COURSE_INVITATIONS,
-                             CHECK_COURSE_INVITATIONS_CSV):
-                    link = Link(context, rel=name, elements=(name,))
-                    interface.alsoProvides(link, ILocation)
-                    link.__name__ = ''
-                    link.__parent__ = context
-                    _links.append(link)
-            # if not enrolled in course it can accept invites
+                or is_admin_or_site_admin(self.remoteUser):
+                rels = (VIEW_COURSE_ACCESS_TOKENS,
+                        SEND_COURSE_INVITATIONS,
+                        CHECK_COURSE_INVITATIONS_CSV)
+            elif is_content_admin(self.remoteUser):
+                rels = (VIEW_COURSE_ACCESS_TOKENS,)
             elif not is_enrolled(context, self.remoteUser):
-                link = Link(context, 
-                            rel=ACCEPT_COURSE_INVITATIONS,
-                            elements=('@@' + ACCEPT_COURSE_INVITATIONS,))
+                # if not enrolled in course it can accept invites
+                rels = (ACCEPT_COURSE_INVITATIONS,)
+
+            for rel in rels:
+                link = Link(context, rel=rel, elements=('@@' + rel,))
                 interface.alsoProvides(link, ILocation)
                 link.__name__ = ''
                 link.__parent__ = context

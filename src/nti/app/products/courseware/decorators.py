@@ -24,9 +24,10 @@ from nti.app.assessment.common.evaluations import get_course_from_evaluation
 
 from nti.app.assessment.utils import get_course_from_request
 
-from nti.app.products.courseware import VIEW_CONTENTS, VIEW_COURSE_BY_TAG
+from nti.app.products.courseware import VIEW_CONTENTS
 from nti.app.products.courseware import VIEW_COURSE_MAIL
 from nti.app.products.courseware import VIEW_CATALOG_ENTRY
+from nti.app.products.courseware import VIEW_COURSE_BY_TAG
 from nti.app.products.courseware import VIEW_COURSE_ACTIVITY
 from nti.app.products.courseware import VIEW_USER_ENROLLMENTS
 from nti.app.products.courseware import VIEW_COURSE_RECURSIVE
