@@ -48,26 +48,26 @@ class _CourseInvitationsLinkDecorator(AbstractAuthenticatedRequestAwareDecorator
 
     def _predicate(self, context, unused_result):
         return self._is_authenticated \
-           and not ILegacyCourseInstance.providedBy(context)
+           and not ILegacyCourseInstance.providedBy(context) \
+           and has_course_invitations(context)
 
     def _do_decorate_external(self, context, result):
         _links = result.setdefault(LINKS, [])
-        if has_course_invitations(context):
-            rels = ()
-            if     is_course_instructor(context, self.remoteUser) \
-                or is_admin_or_site_admin(self.remoteUser):
-                rels = (VIEW_COURSE_ACCESS_TOKENS,
-                        SEND_COURSE_INVITATIONS,
-                        CHECK_COURSE_INVITATIONS_CSV)
-            elif is_content_admin(self.remoteUser):
-                rels = (VIEW_COURSE_ACCESS_TOKENS,)
-            elif not is_enrolled(context, self.remoteUser):
-                # if not enrolled in course it can accept invites
-                rels = (ACCEPT_COURSE_INVITATIONS,)
+        rels = ()
+        if     is_course_instructor(context, self.remoteUser) \
+            or is_admin_or_site_admin(self.remoteUser):
+            rels = (VIEW_COURSE_ACCESS_TOKENS,
+                    SEND_COURSE_INVITATIONS,
+                    CHECK_COURSE_INVITATIONS_CSV)
+        elif is_content_admin(self.remoteUser):
+            rels = (VIEW_COURSE_ACCESS_TOKENS,)
+        elif not is_enrolled(context, self.remoteUser):
+            # If not enrolled in course, user can accept invites
+            rels = (ACCEPT_COURSE_INVITATIONS,)
 
-            for rel in rels:
-                link = Link(context, rel=rel, elements=('@@' + rel,))
-                interface.alsoProvides(link, ILocation)
-                link.__name__ = ''
-                link.__parent__ = context
-                _links.append(link)
+        for rel in rels:
+            link = Link(context, rel=rel, elements=('@@' + rel,))
+            interface.alsoProvides(link, ILocation)
+            link.__name__ = ''
+            link.__parent__ = context
+            _links.append(link)
