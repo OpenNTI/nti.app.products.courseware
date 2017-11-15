@@ -359,6 +359,9 @@ class TestPersistentWorkspaces(AbstractEnrollingBase, ApplicationLayerTest):
         available_courses = available_courses.json_body
         assert_that(available_courses['Title'], is_('Courses'))
         assert_that(available_courses[ITEMS], has_length(8))
+        for item in available_courses[ITEMS]:
+            assert_that(item['IsAdmin'], is_(True))
+            assert_that(item['IsEnrolled'], is_(False))
 
         # Filter the collection
         courses_filter_href = '%s?filter=%s' % (courses_href, 'nothing')
