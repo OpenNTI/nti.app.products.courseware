@@ -92,12 +92,15 @@ from nti.contenttypes.courses.utils import get_catalog_entry
 from nti.contenttypes.courses.utils import is_course_instructor
 from nti.contenttypes.courses.utils import get_enrollment_record
 from nti.contenttypes.courses.utils import get_course_subinstances
+from nti.contenttypes.courses.utils import is_course_instructor_or_editor
 from nti.contenttypes.courses.utils import get_context_enrollment_records
 
 from nti.contenttypes.presentation.interfaces import INTIAssignmentRef
 from nti.contenttypes.presentation.interfaces import INTIQuestionSetRef
 
 from nti.dataserver.authorization import ACT_CONTENT_EDIT
+
+from nti.dataserver.authorization import is_admin_or_content_admin_or_site_admin
 
 from nti.dataserver.contenttypes.forums.interfaces import ITopic
 
@@ -382,12 +385,23 @@ class _CourseCatalogEntryDecorator(AbstractAuthenticatedRequestAwareDecorator):
         enrollment = ICourseInstanceEnrollment(record)
         return getattr(enrollment, 'LegacyEnrollmentStatus', '')
 
+    def _is_admin(self, entry):
+        course = ICourseInstance(entry)
+        result =   is_course_instructor_or_editor(course, self.remoteUser) \
+                or is_admin_or_content_admin_or_site_admin(self.remoteUser)
+        return bool(result)
+
     def _do_decorate_external(self, context, result):
         record = get_enrollment_record(context, self.remoteUser)
+        is_admin = False
         if record is not None:
             result['RealEnrollmentStatus'] = record.Scope
             legacy_status = self._get_legacy_status(record)
             result['LegacyEnrollmentStatus'] = legacy_status
+        else:
+            is_admin = self._is_admin(context)
+        result['IsEnrolled'] = record is not None
+        result['IsAdmin'] = is_admin
 
         options = get_enrollment_options(context)
         if options:

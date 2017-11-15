@@ -359,6 +359,9 @@ class TestPersistentWorkspaces(AbstractEnrollingBase, ApplicationLayerTest):
         available_courses = available_courses.json_body
         assert_that(available_courses['Title'], is_('Courses'))
         assert_that(available_courses[ITEMS], has_length(8))
+        for item in available_courses[ITEMS]:
+            assert_that(item['IsAdmin'], is_(True))
+            assert_that(item['IsEnrolled'], is_(False))
 
         # Filter the collection
         courses_filter_href = '%s?filter=%s' % (courses_href, 'nothing')
@@ -387,8 +390,11 @@ class TestPersistentWorkspaces(AbstractEnrollingBase, ApplicationLayerTest):
         popular_res = self.testapp.get(popular_href, params={'count': 1})
         popular_res = popular_res.json_body
         assert_that(popular_res[ITEMS], has_length(1))
+
         # More than half the collection 404s
         self.testapp.get(popular_href, params={'count': 5}, status=404)
+
+        # No upcoming courses
         featured_href = self.require_link_href_with_rel(courses_collection,
                                                         VIEW_CATALOG_FEATURED)
         self.testapp.get(featured_href, status=404)

@@ -46,7 +46,7 @@ class TestCourseAdminViews(ApplicationLayerTest):
 
         enroll_url = '/dataserver2/CourseAdmin/UserCourseEnroll'
         data = {'username': student,
-                'ntiid': self.course_ntiid, 
+                'ntiid': self.course_ntiid,
                 'scope': 'ForCredit'}
         res = self.testapp.post_json(enroll_url, data, status=201)
         assert_that(res.json_body,
@@ -70,7 +70,7 @@ class TestCourseAdminViews(ApplicationLayerTest):
 
         # enroll again
         data = {'username': student,
-                'ntiid': self.course_ntiid, 
+                'ntiid': self.course_ntiid,
                 'scope': 'ForCredit'}
         res = self.testapp.post_json(enroll_url, data, status=201)
         assert_that(res.json_body,

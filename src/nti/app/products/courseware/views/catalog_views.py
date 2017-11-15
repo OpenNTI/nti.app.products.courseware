@@ -770,12 +770,11 @@ class PopularCoursesView(_AbstractFilteredCourseView):
         return_count = self.requested_count
         if not self.requested_count:
             # If not a requested count, bound between 3 and 5.
-            item_count = len(result)
+            item_count = len(self.context.container)
             half_item_count = item_count // 2
             return_count = min(half_item_count, self.MAXIMUM_RESULT_COUNT)
             return_count = max(return_count, self.DEFAULT_RESULT_COUNT)
-        # Raise if we do not have our needed item count
-        if len(result) < return_count:
+        if not result:
             self._raise_not_found()
         return result[:return_count]
 
@@ -833,8 +832,7 @@ class FeaturedCoursesView(_AbstractFilteredCourseView):
             half_item_count = item_count // 2
             return_count = min(half_item_count, self.DEFAULT_RESULT_COUNT)
             return_count = max(return_count, self.MINIMUM_RESULT_COUNT)
-        # Raise if we do not have our needed item count
-        if len(result) < return_count:
+        if not result:
             self._raise_not_found()
         return result[:return_count]
 
