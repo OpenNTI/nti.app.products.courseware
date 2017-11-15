@@ -829,7 +829,7 @@ class FeaturedCoursesView(_AbstractFilteredCourseView):
         return_count = self.requested_count
         if not self.requested_count:
             # If not a requested count, bound between 1 and 3.
-            item_count = len(result)
+            item_count = len(self.context.container)
             half_item_count = item_count // 2
             return_count = min(half_item_count, self.DEFAULT_RESULT_COUNT)
             return_count = max(return_count, self.MINIMUM_RESULT_COUNT)
