@@ -33,8 +33,6 @@ from nti.app.products.courseware.interfaces import IClassmatesSuggestedContactsP
 
 from nti.app.products.courseware.views import raise_error
 
-from nti.app.users.utils import get_user_creation_site
-
 from nti.contenttypes.courses.interfaces import ICourseInstance
 
 from nti.contenttypes.courses.utils import get_enrollment_record
@@ -47,6 +45,7 @@ from nti.dataserver.authorization import is_site_admin
 from nti.dataserver.authorization import is_admin_or_site_admin
 
 from nti.dataserver.interfaces import IUser
+from nti.dataserver.interfaces import ISiteAdminUtility
 
 from nti.dataserver.users.users import User
 
@@ -54,8 +53,6 @@ from nti.externalization.externalization import to_external_object
 
 from nti.externalization.interfaces import LocatedExternalDict
 from nti.externalization.interfaces import StandardExternalFields
-
-from nti.site.site import getSite
 
 ITEMS = StandardExternalFields.ITEMS
 LINKS = StandardExternalFields.LINKS
@@ -148,10 +145,11 @@ class UserEnrollmentsView(AbstractAuthenticatedView,
         return is_admin_or_site_admin(self.remoteUser)
 
     def _can_admin_user(self):
-        # Verify a site admin is admining a user in their site.
+        # Verify a site admin is administering a user in their site.
         result = True
         if is_site_admin(self.remoteUser):
-            result = getSite() == get_user_creation_site(self.context)
+            admin_utility = component.getUtility(ISiteAdminUtility)
+            result = admin_utility.can_administer_user(self.remoteUser, self.context)
         return result
 
     def _predicate(self):
