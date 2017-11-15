@@ -387,8 +387,11 @@ class TestPersistentWorkspaces(AbstractEnrollingBase, ApplicationLayerTest):
         popular_res = self.testapp.get(popular_href, params={'count': 1})
         popular_res = popular_res.json_body
         assert_that(popular_res[ITEMS], has_length(1))
+
         # More than half the collection 404s
         self.testapp.get(popular_href, params={'count': 5}, status=404)
+
+        # No upcoming courses
         featured_href = self.require_link_href_with_rel(courses_collection,
                                                         VIEW_CATALOG_FEATURED)
         self.testapp.get(featured_href, status=404)
