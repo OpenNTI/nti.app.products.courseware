@@ -576,7 +576,7 @@ class CourseCatalogCollection(AllCoursesCollection):
     def _sort_key(self, entry):
         title = entry.title and entry.title.lower()
         start_date = entry.StartDate
-        return (title is None, title, start_date is not None, start_date)
+        return (not title, title, start_date is not None, start_date)
 
     @Lazy
     def catalog(self):
