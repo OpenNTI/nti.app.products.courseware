@@ -63,6 +63,10 @@
         role="nti.roles.course_ta" />
 
     <grant
+        permission="nti.actions.courseware.view_activity"
+        role="role:nti.dataserver.site-admin" />
+
+    <grant
         permission="zope.View"
         role="nti.roles.course_instructor" />
 
