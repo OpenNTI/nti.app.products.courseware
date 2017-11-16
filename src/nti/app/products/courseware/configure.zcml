@@ -51,6 +51,10 @@
         role="nti.roles.course_ta" />
 
     <grant
+        permission="nti.actions.courseware.view_roster"
+        role="role:nti.dataserver.site-admin" />
+
+    <grant
         permission="nti.actions.courseware.view_activity"
         role="nti.roles.course_instructor" />
 
