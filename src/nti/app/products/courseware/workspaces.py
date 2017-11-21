@@ -10,8 +10,6 @@ from __future__ import division
 from __future__ import print_function
 from __future__ import absolute_import
 
-from requests.structures import CaseInsensitiveDict
-
 from zope import component
 from zope import interface
 
@@ -61,7 +59,6 @@ from nti.contenttypes.courses.interfaces import ICourseInstanceEnrollmentRecord
 from nti.contenttypes.courses.interfaces import ICourseInstanceAdministrativeRole
 from nti.contenttypes.courses.interfaces import IPrincipalAdministrativeRoleCatalog
 
-from nti.contenttypes.courses.utils import get_courses_for_tag
 from nti.contenttypes.courses.utils import AbstractInstanceWrapper as _AbstractInstanceWrapper
 
 from nti.dataserver.authorization import ACT_READ
@@ -78,7 +75,6 @@ from nti.dataserver.users.users import User
 from nti.datastructures.datastructures import LastModifiedCopyingUserList
 
 from nti.externalization.interfaces import LocatedExternalDict
-from nti.externalization.interfaces import LocatedExternalList
 from nti.externalization.interfaces import StandardExternalFields
 
 from nti.links.links import Link
@@ -179,46 +175,6 @@ class AllCoursesCollection(Contained):
         return self.__parent__.catalog
 
     @Lazy
-    def _params(self):
-        request = get_current_request()
-        result = {}
-        if request is not None:
-            values = request.params
-            result = CaseInsensitiveDict(values)
-        return result
-
-    @Lazy
-    def tag_str(self):
-        result = self._params.get('tag')
-        return result and result.lower()
-
-    @Lazy
-    def filter_str(self):
-        result = self._params.get('filter')
-        return result and result.lower()
-
-    @Lazy
-    def entries_with_tag_filter(self):
-        return self.get_tagged_entries(self.filter_str)
-
-    def include_entry(self, entry):
-        filter_str = self.filter_str
-        return (entry.title and filter_str in entry.title.lower()) \
-            or (entry.description and filter_str in entry.description.lower()) \
-            or (entry.ProviderUniqueID and filter_str in entry.ProviderUniqueID.lower()) \
-            or entry in self.entries_with_tag_filter
-
-    def get_tagged_entries(self, tag):
-        """
-        Return the set of tagged entries for the given tag.
-        """
-        tagged_courses = get_courses_for_tag(tag)
-        tagged_entries = {ICourseCatalogEntry(x, None)
-                          for x in tagged_courses}
-        tagged_entries.discard(None)
-        return tagged_entries
-
-    @Lazy
     def available_entries(self):
         """
         Return a dict of course catalog entries the user is not enrolled
@@ -230,25 +186,12 @@ class AllCoursesCollection(Contained):
             result[entry.ntiid] = entry
         return result
 
-    def _get_filtered_entries(self):
-        """
-        Returns the filtered/tagged catalog entries of available courses.
-        """
-        entries = self.available_entries
-        if self.tag_str:
-            tagged_entries = self.get_tagged_entries(self.tag_str)
-            entries = set(entries) & tagged_entries
-        if self.filter_str:
-            entries = filter(self.include_entry, entries)
-        return entries
-
     @Lazy
     def container(self):
-        parent = self.__parent__
-        container = self._get_filtered_entries()
-        container.__name__ = parent.catalog.__name__
-        container.__parent__ = parent.catalog.__parent__
-        container.lastModified = parent.catalog.lastModified
+        container = self.available_entries
+        container.__name__ = self.catalog.__name__
+        container.__parent__ = self.catalog.__parent__
+        container.lastModified = self.catalog.lastModified
         return container
 
     @property
@@ -554,14 +497,7 @@ class CourseCatalogCollection(AllCoursesCollection):
     """
     A catalog collection that returns :class:``ICourseCatalogEntry`` items.
     These will include all catalog entries that a user can enroll in (or is
-    enrolled in), sorted by entry title and startDate.
-
-    params:
-        tag - (optional) only return catalog entries with the given tag
-        filter - (optional) include a catalog entry containing this str
-
-    This is slightly different from the `AllCoursesCollection` as we sort
-    by title.
+    enrolled in).
     """
 
     name = 'Courses'
@@ -573,24 +509,9 @@ class CourseCatalogCollection(AllCoursesCollection):
     def __init__(self, catalog_workspace):
         self.__parent__ = catalog_workspace
 
-    def _sort_key(self, entry):
-        title = entry.title and entry.title.lower()
-        start_date = entry.StartDate
-        return (not title, title, start_date is not None, start_date)
-
     @Lazy
     def catalog(self):
         return component.queryUtility(ICourseCatalog)
-
-    @Lazy
-    def container(self):
-        result = LocatedExternalList()
-        entries = sorted(self._get_filtered_entries(), key=self._sort_key)
-        result.extend(entries)
-        result.__name__ = self.__name__
-        result.__parent__ = self.__parent__
-        result.lastModified = self.catalog.lastModified
-        return result
 
     def __len__(self):
         return len(self.container)

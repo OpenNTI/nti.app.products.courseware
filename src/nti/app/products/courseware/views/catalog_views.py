@@ -94,9 +94,12 @@ from nti.contenttypes.courses.utils import is_course_instructor_or_editor
 from nti.dataserver import authorization as nauth
 
 from nti.dataserver.authorization import is_admin_or_content_admin
+from nti.dataserver.authorization import is_admin_or_content_admin_or_site_admin
 
 from nti.dataserver.interfaces import IUser
 from nti.dataserver.interfaces import IDataserverFolder
+
+from nti.datastructures.datastructures import LastModifiedCopyingUserList
 
 from nti.externalization.externalization import to_external_object
 
@@ -843,25 +846,118 @@ class FeaturedCoursesView(_AbstractFilteredCourseView):
         return result
 
 
-@view_config(route_name='objects.generic.traversal',
-             context=ICoursesCollection,
-             request_method='GET',
-             permission=nauth.ACT_READ)
-class CourseCollectionView(AbstractAuthenticatedView,
+@view_config(context=ICoursesCollection)
+@view_config(context=ICoursesCatalogCollection)
+@view_defaults(route_name='objects.generic.traversal',
+               request_method='GET',
+               permission=nauth.ACT_READ)
+class CourseCollectionView(_AbstractFilteredCourseView,
                            BatchingUtilsMixin):
     """
     A generic view to return an :class:`ICoursesCollection` container, with
-    paging.
+    paging and filtering.
+
+    By default, we return sorted by the catalog entry title and start date.
+
+    params:
+        tag - (optional) only return catalog entries with the given tag
+        filter - (optional) include a catalog entry containing this str
+
     """
 
     #: To maintain BWC; disable paging by default.
     _DEFAULT_BATCH_SIZE = None
     _DEFAULT_BATCH_START = None
+    DESC_SORT_ORDER = False
+
+    @Lazy
+    def _params(self):
+        values = self.request.params
+        result = CaseInsensitiveDict(values)
+        return result
+
+    @Lazy
+    def tag_str(self):
+        result = self._params.get('tag')
+        return result and result.lower()
+
+    @Lazy
+    def filter_str(self):
+        result = self._params.get('filter')
+        return result and result.lower()
+
+    def get_tagged_entries(self, tag):
+        """
+        Return the set of tagged entries for the given tag.
+        """
+        tagged_courses = get_courses_for_tag(tag)
+        tagged_entries = {ICourseCatalogEntry(x, None)
+                          for x in tagged_courses}
+        tagged_entries.discard(None)
+        return tagged_entries
+
+    @Lazy
+    def entries_with_tag(self):
+        return self.get_tagged_entries(self.tag_str)
+
+    @Lazy
+    def entries_with_tag_filter(self):
+        return self.get_tagged_entries(self.filter_str)
+
+    def include_entry(self, entry):
+        if not self.filter_str and not self.tag_str:
+            return True
+        result = False
+        filter_str = self.filter_str
+        if filter_str:
+            result =   (entry.title and filter_str in entry.title.lower()) \
+                    or (entry.description and filter_str in entry.description.lower()) \
+                    or (entry.ProviderUniqueID and filter_str in entry.ProviderUniqueID.lower()) \
+                    or entry in self.entries_with_tag_filter
+        if not result and self.tag_str:
+            result = entry in self.entries_with_tag
+        return result
+    _include_filter = include_entry
+
+    def _sort_key(self, entry_tuple):
+        entry = entry_tuple[0]
+        title = entry.title and entry.title.lower()
+        start_date = entry.StartDate
+        return (not title, title, start_date is not None, start_date)
 
     def __call__(self):
+        new_items = self._get_items()
+        # Toggle our container and externalize for batching.
+        new_container = LastModifiedCopyingUserList()
+        new_container.extend(new_items)
+        self.context.container = new_container
         result = to_external_object(self.context)
         self._batch_items_iterable(result, result[ITEMS])
         return result
+
+
+@view_config(route_name='objects.generic.traversal',
+             context=IEnrolledCoursesCollection,
+             request_method='GET',
+             permission=nauth.ACT_READ)
+class EnrolledCourseCollectionView(CourseCollectionView):
+    """
+    A generic view to return an :class:`IEnrolledCoursesCollection` container, with
+    paging and filtering.
+
+    Sorted by the enrollment record time desc.
+    """
+
+    DESC_SORT_ORDER = True
+
+    def _sort_key(self, entry_tuple):
+        enrollment = entry_tuple[1]
+        return enrollment.createdTime
+
+    def _get_entry_for_record(self, record):
+        course = record.CourseInstance
+        entry = ICourseCatalogEntry(course, None)
+        return entry
 
 
 @view_config(route_name='objects.generic.traversal',
@@ -910,11 +1006,12 @@ class CourseCatalogByTagView(AbstractAuthenticatedView):
 
     @Lazy
     def _include_hidden_tags(self):
-        # Default True
+        # Default True; only available for admins
         result =   self._params.get('hidden_tag') \
                 or self._params.get('hidden_tags') \
                 or self._params.get('hiddenTags')
-        return not is_false(result)
+        return  not is_false(result) \
+            and is_admin_or_content_admin_or_site_admin(self.remoteUser)
 
     def _tag_sort_key(self, item_tuple):
         # Sort by tag name
