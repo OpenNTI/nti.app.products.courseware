@@ -232,13 +232,13 @@ class TestCatalogViews(ApplicationLayerTest):
 
         res = res.json_body
         assert_that(res, has_entry("ItemCount", 3))
-        assert_that(res["Items"][0], has_entry("isAdmin", True))
+        assert_that(res["Items"][0], has_entry("IsAdmin", True))
 
     @WithSharedApplicationMockDS(testapp=True, users=True, default_authenticate=True)
     def test_archived_course_view(self):
         archived_course_path = "/dataserver2/users/sjohnson%40nextthought.com/Courses/AdministeredCourses/@@" + VIEW_ARCHIVED_COURSES
-        
-        res = self.testapp.get(archived_course_path, 
+
+        res = self.testapp.get(archived_course_path,
                                status=200)
 
         res = res.json_body
@@ -247,8 +247,8 @@ class TestCatalogViews(ApplicationLayerTest):
     @WithSharedApplicationMockDS(testapp=True, users=True, default_authenticate=True)
     def test_current_course_view(self):
         archived_course_path = "/dataserver2/users/sjohnson%40nextthought.com/Courses/EnrolledCourses/@@" + VIEW_CURRENT_COURSES
-        
-        res = self.testapp.get(archived_course_path, 
+
+        res = self.testapp.get(archived_course_path,
                                status=200)
 
         res = res.json_body

@@ -508,21 +508,18 @@ class TestPersistentWorkspaces(AbstractEnrollingBase, ApplicationLayerTest):
         # Drill down into a tag
         by_tag_res = self.testapp.get('%s/%s' % (by_tag_href, 'no_tag_found'))
         by_tag_res = by_tag_res.json_body
+        assert_that(by_tag_res['Name'], is_('no_tag_found'))
         assert_that(by_tag_res[ITEMS], has_length(0))
 
         by_tag_res = self.testapp.get('%s/%s' % (by_tag_href, 'law'))
         by_tag_res = by_tag_res.json_body
-        assert_that(by_tag_res[ITEMS], has_length(1))
-        item_zero = by_tag_res[ITEMS][0]
-        assert_that(item_zero['Name'], is_('law'))
-        assert_that(item_zero[ITEMS], has_length(2))
+        assert_that(by_tag_res['Name'], is_('law'))
+        assert_that(by_tag_res[ITEMS], has_length(2))
 
         by_tag_res = self.testapp.get('%s/%s' % (by_tag_href, 'child tag'))
         by_tag_res = by_tag_res.json_body
         assert_that(by_tag_res[ITEMS], has_length(1))
-        item_zero = by_tag_res[ITEMS][0]
-        assert_that(item_zero['Name'], is_('child tag'))
-        assert_that(item_zero[ITEMS], has_length(1))
+        assert_that(by_tag_res['Name'], is_('child tag'))
 
     @WithSharedApplicationMockDS(users=True, testapp=True)
     @fudge.patch('nti.app.products.courseware.views.catalog_views.PopularCoursesView._include_filter')

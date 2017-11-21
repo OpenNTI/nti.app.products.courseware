@@ -627,18 +627,6 @@ class _AbstractFilteredCourseView(_AbstractSortingAndFilteringCoursesView):
 
     DESC_SORT_ORDER = True
 
-    def _is_admin(self, course):
-        return is_admin_or_content_admin(self.remoteUser) \
-            or is_course_instructor_or_editor(course, self.remoteUser)
-
-    def _attach_admin_info(self, courses):
-        result = []
-        for course in courses:
-            ext_obj = to_external_object(course)
-            ext_obj["isAdmin"] = self._is_admin(course)
-            result.append(ext_obj)
-        return result
-
     def _get_entry_for_record(self, record):
         entry = ICourseCatalogEntry(record, None)
         return entry
@@ -672,8 +660,6 @@ class _AbstractFilteredCourseView(_AbstractSortingAndFilteringCoursesView):
     def __call__(self):
         result = LocatedExternalDict()
         result[ITEMS] = items = self._get_items()
-        if self.context.__name__ == 'AllCourses':
-            result[ITEMS] = self._attach_admin_info(items)
         result[ITEM_COUNT] = len(items)
         result[TOTAL] = len(self.entries_and_records)
         return result
@@ -1095,6 +1081,16 @@ class CourseCatalogByTagView(AbstractAuthenticatedView):
 
     def __call__(self):
         result = LocatedExternalDict()
-        result[ITEMS] = self._sorted_tag_buckets
-        result[TOTAL] = len(self._sorted_tag_buckets)
+        buckets = self._sorted_tag_buckets
+        if self._tag_drilldown and buckets:
+            # Get our first dict if we have info.
+            result.update(buckets[0])
+        elif self._tag_drilldown:
+            # Empty requested bucket
+            result['Name'] = self._tag_drilldown
+            result[ITEMS] = ()
+            result[ITEM_COUNT] = result[TOTAL] = 0
+        else:
+            result[ITEMS] = buckets
+            result[TOTAL] = len(buckets)
         return result
