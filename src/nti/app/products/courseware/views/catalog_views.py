@@ -623,9 +623,12 @@ class UserCourseCatalogFamiliesView(AbstractAuthenticatedView):
         return result
 
 
-class _AbstractFilteredCourseView(_AbstractSortingAndFilteringCoursesView):
+class _AbstractFilteredCourseView(_AbstractSortingAndFilteringCoursesView,
+                                  BatchingUtilsMixin):
 
     DESC_SORT_ORDER = True
+    _DEFAULT_BATCH_START = None
+    _DEFAULT_BATCH_SIZE = None
 
     def _get_entry_for_record(self, record):
         entry = ICourseCatalogEntry(record, None)
@@ -662,6 +665,7 @@ class _AbstractFilteredCourseView(_AbstractSortingAndFilteringCoursesView):
         result[ITEMS] = items = self._get_items()
         result[ITEM_COUNT] = len(items)
         result[TOTAL] = len(self.entries_and_records)
+        self._batch_items_iterable(result, items)
         return result
 
 
@@ -757,15 +761,19 @@ class PopularCoursesView(_AbstractFilteredCourseView):
     def _get_items(self):
         result = super(PopularCoursesView, self)._get_items()
         return_count = self.requested_count
-        if not self.requested_count:
-            # If not a requested count, bound between 3 and 5.
+        unused_batch_size, batch_start = self._get_batch_size_start()
+        if not return_count and not batch_start:
+            # If not a requested count or batching, bound between 3 and 5
+            # by default.
             item_count = len(self.context.container)
             half_item_count = item_count // 2
             return_count = min(half_item_count, self.MAXIMUM_RESULT_COUNT)
             return_count = max(return_count, self.DEFAULT_RESULT_COUNT)
         if not result:
             self._raise_not_found()
-        return result[:return_count]
+        if return_count:
+            result = result[:return_count]
+        return result
 
     def __call__(self):
         if not self.should_return_popular_entries():
@@ -815,15 +823,18 @@ class FeaturedCoursesView(_AbstractFilteredCourseView):
     def _get_items(self):
         result = super(FeaturedCoursesView, self)._get_items()
         return_count = self.requested_count
-        if not self.requested_count:
-            # If not a requested count, bound between 1 and 3.
+        unused_batch_size, batch_start = self._get_batch_size_start()
+        if not return_count and not batch_start:
+            # If not a requested count and not a batch, bound between 1 and 3.
             item_count = len(self.context.container)
             half_item_count = item_count // 2
             return_count = min(half_item_count, self.DEFAULT_RESULT_COUNT)
             return_count = max(return_count, self.MINIMUM_RESULT_COUNT)
         if not result:
             self._raise_not_found()
-        return result[:return_count]
+        if return_count:
+            result = result[:return_count]
+        return result
 
     def __call__(self):
         if not self.should_return_featured_entries():

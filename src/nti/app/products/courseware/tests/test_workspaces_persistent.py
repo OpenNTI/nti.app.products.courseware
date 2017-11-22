@@ -394,6 +394,12 @@ class TestPersistentWorkspaces(AbstractEnrollingBase, ApplicationLayerTest):
         # More than half the collection 404s
         self.testapp.get(popular_href, params={'count': 5}, status=404)
 
+        popular_res = self.testapp.get(popular_href,
+                                       params={'batchStart': 0,
+                                               'batchSize': 1})
+        popular_res = popular_res.json_body
+        assert_that(popular_res[ITEMS], has_length(1))
+
         # No upcoming courses
         featured_href = self.require_link_href_with_rel(courses_collection,
                                                         VIEW_CATALOG_FEATURED)
@@ -577,6 +583,14 @@ class TestPersistentWorkspaces(AbstractEnrollingBase, ApplicationLayerTest):
         assert_that({x['StartDate'] for x in featured_items},
                     contains('2013-08-13T06:00:00Z'))
         self.testapp.get(featured_href, params={'count': 5}, status=404)
+
+        # Batching
+        featured_res = self.testapp.get(featured_href,
+                                        params={'batchStart': 0,
+                                                'batchSize': 1})
+        featured_res = featured_res.json_body
+        featured_items = featured_res[ITEMS]
+        assert_that(featured_items, has_length(1))
 
     @WithSharedApplicationMockDS(users=('test_student',), testapp=True)
     def test_catalog_collection_purchased_with_results(self):
