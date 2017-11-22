@@ -400,6 +400,9 @@
 	<subscriber factory=".decorators._CourseInstanceLinkDecorator"
 				provides="nti.externalization.interfaces.IExternalMappingDecorator" />
 
+	<subscriber factory=".decorators._CourseEnrollmentDecorator"
+                provides="nti.externalization.interfaces.IExternalMappingDecorator" />
+
 	<subscriber factory=".decorators._CourseInstanceStreamLinkDecorator"
 				provides="nti.externalization.interfaces.IExternalMappingDecorator" />
 

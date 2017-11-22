@@ -140,8 +140,7 @@ logger = __import__('logging').getLogger(__name__)
 class _CourseInstanceLinkDecorator(Singleton):
     """
     If a course instance can find its catalog entry, return that as a link.
-    Also make it return an href, even if it isn't top-level,
-    and adds the enrollment stats (XXX That may be really slow.)
+    Also make it return an href, even if it isn't top-level.
     """
 
     def decorateExternalMapping(self, context, result):
@@ -172,7 +171,18 @@ class _CourseInstanceLinkDecorator(Singleton):
             interface.alsoProvides(link, ILinkExternalHrefOnly)
             result['href'] = link
 
-        enrollments = ICourseEnrollments(context)
+
+@component.adapter(ICourseInstance)
+@component.adapter(ICourseCatalogEntry)
+@interface.implementer(IExternalMappingDecorator)
+class _CourseEnrollmentDecorator(Singleton):
+    """
+    Decorates the enrollment stats (XXX That may be really slow.)
+    """
+
+    def decorateExternalMapping(self, context, result):
+        course = ICourseInstance(context)
+        enrollments = ICourseEnrollments(course)
         result['TotalEnrolledCount'] = enrollments.count_enrollments()
         # Legacy, non-interface methods
         try:
