@@ -951,7 +951,7 @@ class EnrolledCourseCollectionView(CourseCollectionView):
              request_method='GET',
              name=VIEW_COURSE_BY_TAG,
              permission=nauth.ACT_READ)
-class CourseCatalogByTagView(AbstractAuthenticatedView):
+class CourseCatalogByTagView(AbstractAuthenticatedView, BatchingUtilsMixin):
     """
     A view to return an :class:`ICoursesCollection` grouped by tag.
 
@@ -960,10 +960,8 @@ class CourseCatalogByTagView(AbstractAuthenticatedView):
     The tag buckets are sorted by tag name, with hidden tags last.
 
     This view also supports a subpath drilldown into a specific tag
-    (e.g. `@@ByTag/tag_name`). This will return a single bucket of all
-    entries using that tag, if entries exist. No other tag buckets are
-    returned and `hidden_tags` is an unused param. `bucketSize`, if given,
-    will still be respected.
+    (e.g. `@@ByTag/tag_name`). `hidden_tags` is an unused param. `bucketSize`,
+    if given, will still be respected. The tag drilldown supports paging.
 
     params:
 
@@ -1023,8 +1021,12 @@ class CourseCatalogByTagView(AbstractAuthenticatedView):
     def _get_entries(self):
         entries = self.context.container or ()
         if self._tag_drilldown:
-            tagged_entries = set(self._get_tagged_entries())
-            entries = set(entries) & tagged_entries
+            if self._tag_drilldown == self.NO_TAG_NAME:
+                # Special case, fetch all un-tagged entries
+                entries = [x for x in entries if not x.tags]
+            else:
+                tagged_entries = set(self._get_tagged_entries())
+                entries = set(entries) & tagged_entries
         return entries
 
     @Lazy
@@ -1085,6 +1087,7 @@ class CourseCatalogByTagView(AbstractAuthenticatedView):
         if self._tag_drilldown and buckets:
             # Get our first dict if we have info.
             result.update(buckets[0])
+            self._batch_items_iterable(result, result[ITEMS])
         elif self._tag_drilldown:
             # Empty requested bucket
             result['Name'] = self._tag_drilldown

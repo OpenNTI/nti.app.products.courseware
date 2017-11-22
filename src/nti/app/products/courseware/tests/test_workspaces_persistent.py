@@ -521,6 +521,19 @@ class TestPersistentWorkspaces(AbstractEnrollingBase, ApplicationLayerTest):
         assert_that(by_tag_res[ITEMS], has_length(1))
         assert_that(by_tag_res['Name'], is_('child tag'))
 
+        # Can drill down into our pseudo-tag
+        by_tag_res = self.testapp.get('%s/%s' % (by_tag_href, '.nti_other'))
+        by_tag_res = by_tag_res.json_body
+        assert_that(by_tag_res[ITEMS], has_length(5))
+        assert_that(by_tag_res['Name'], is_('.nti_other'))
+
+        # Paging in drilldown
+        by_tag_res = self.testapp.get('%s/%s' % (by_tag_href, '.nti_other'),
+                                      params={'batchStart':0, 'batchSize':1})
+        by_tag_res = by_tag_res.json_body
+        assert_that(by_tag_res[ITEMS], has_length(1))
+        assert_that(by_tag_res['Name'], is_('.nti_other'))
+
     @WithSharedApplicationMockDS(users=True, testapp=True)
     @fudge.patch('nti.app.products.courseware.views.catalog_views.PopularCoursesView._include_filter')
     def test_catalog_courses_collection_popular_with_no_results(self, mock_include_filter):
