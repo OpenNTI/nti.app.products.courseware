@@ -1,5 +1,6 @@
 import codecs
-from setuptools import setup, find_packages
+from setuptools import setup
+from setuptools import find_packages
 
 entry_points = {
     'console_scripts': [
@@ -31,9 +32,13 @@ setup(
     author='Jason Madden',
     author_email='jason@nextthought.com',
     description="Umbrella product to support integrated courseware",
-    long_description=(_read('README.rst') + '\n\n' + _read('CHANGES.rst')),
+    long_description=(
+        _read('README.rst')
+        + '\n\n'
+        + _read("CHANGES.rst")
+    ),
     license='Apache',
-    keywords='pyramid products courses',
+    keywords='pyramid products courses integration',
     classifiers=[
         'Framework :: Zope',
         'Framework :: Pyramid',
@@ -43,6 +48,7 @@ setup(
         'Programming Language :: Python :: 2',
         'Programming Language :: Python :: 2.7',
         'Programming Language :: Python :: Implementation :: CPython',
+        'Programming Language :: Python :: Implementation :: PyPy',
     ],
     url="https://github.com/NextThought/nti.app.products.courseware",
     zip_safe=True,
