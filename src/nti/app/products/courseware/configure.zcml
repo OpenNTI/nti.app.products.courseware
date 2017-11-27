@@ -400,9 +400,6 @@
 	<subscriber factory=".decorators._CourseInstanceLinkDecorator"
 				provides="nti.externalization.interfaces.IExternalMappingDecorator" />
 
-	<subscriber factory=".decorators._CourseEnrollmentDecorator"
-                provides="nti.externalization.interfaces.IExternalMappingDecorator" />
-
 	<subscriber factory=".decorators._CourseInstanceStreamLinkDecorator"
 				provides="nti.externalization.interfaces.IExternalMappingDecorator" />
 
@@ -411,6 +408,14 @@
 
 	<subscriber factory=".decorators._CourseCatalogEntryLegacyDecorator"
 				provides="nti.externalization.interfaces.IExternalMappingDecorator" />
+
+    <subscriber factory=".decorators._CourseEnrollmentDecorator"
+                provides="nti.externalization.interfaces.IExternalMappingDecorator"
+                for="nti.contenttypes.courses.interfaces.ICourseInstance" />
+
+    <subscriber factory=".decorators._CourseEnrollmentDecorator"
+                provides="nti.externalization.interfaces.IExternalMappingDecorator"
+                for="nti.contenttypes.courses.interfaces.ICourseCatalogEntry" />
 
 	<subscriber factory=".decorators._CourseInstancePreviewExcludingDecorator"
 				provides="nti.externalization.interfaces.IExternalObjectDecorator"
