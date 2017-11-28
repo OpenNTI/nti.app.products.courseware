@@ -4,10 +4,9 @@
 .. $Id$
 """
 
-from __future__ import print_function, unicode_literals, absolute_import, division
-__docformat__ = "restructuredtext en"
-
-logger = __import__('logging').getLogger(__name__)
+from __future__ import division
+from __future__ import print_function
+from __future__ import absolute_import
 
 import os
 import sys
@@ -29,6 +28,8 @@ from nti.dataserver.utils.base_script import create_context
 from nti.site.hostpolicy import get_all_host_sites
 
 from nti.site.utils import unregisterUtility
+
+logger = __import__('logging').getLogger(__name__)
 
 
 def _lookupAll(main):
@@ -67,7 +68,7 @@ def _process_site(current, intids, seen):
         seen.add(ntiid)
 
 
-def _process_args(verbose=False):
+def _process_args(unused_verbose=False):
     seen = set()
     intids = component.getUtility(IIntIds)
     for current in get_all_host_sites():
