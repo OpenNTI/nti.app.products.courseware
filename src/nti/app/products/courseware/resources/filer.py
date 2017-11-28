@@ -4,13 +4,14 @@
 .. $Id$
 """
 
-from __future__ import print_function, absolute_import, division
-__docformat__ = "restructuredtext en"
-
-logger = __import__('logging').getLogger(__name__)
+from __future__ import division
+from __future__ import print_function
+from __future__ import absolute_import
 
 import os
 from mimetypes import guess_type
+
+from plone.namedfile.utils import getImageInfo
 
 from zope import interface
 from zope import lifecycleevent
@@ -49,9 +50,9 @@ from nti.contenttypes.courses.interfaces import ICourseInstance
 
 from nti.coremetadata.interfaces import SYSTEM_USER_ID
 
-from nti.namedfile.utils import getImageInfo
-
 from nti.traversal.traversal import find_interface
+
+logger = __import__('logging').getLogger(__name__)
 
 
 def get_namedfile_factory(source):
@@ -85,9 +86,9 @@ def is_image(key, contentType=None):
 
 @interface.implementer(ICourseSourceFiler)
 class CourseSourceFiler(object):
-    
+
     default_bucket = None
-        
+
     def __init__(self, context=None, user=None, oid=False):
         self.oid = oid
         self.user = user
