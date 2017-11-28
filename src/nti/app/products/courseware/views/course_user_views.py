@@ -174,5 +174,5 @@ class UserEnrollmentsView(AbstractAuthenticatedView,
         result = LocatedExternalDict()
         records = sorted(records, key=lambda x:x.createdTime, reverse=True)
         result[TOTAL] = len(records)
-        self._batch_items_iterable(result, records)
+        self._batch_items_iterable(result, records, selector=ICourseInstanceEnrollment)
         return result
