@@ -37,17 +37,17 @@
 			 provides="nti.namedfile.interfaces.IFileConstraints" />
 
 	<!-- index -->
-	<adapter factory=".adapters._course_contentfolder_containerId_adapter" />	
+	<adapter factory=".adapters._course_contentfolder_containerId_adapter" />
 	<adapter factory=".adapters._course_contentresource_containerId_adapter" />
 
-	<adapter factory=".providers.CourseFileExternalLinkProvider" 
-			 provides="nti.app.contentfile.interfaces.IExternalLinkProvider" 
+	<adapter factory=".providers.CourseFileExternalLinkProvider"
+			 provides="nti.app.contentfile.interfaces.IExternalLinkProvider"
 			 for=".interfaces.ICourseContentFile" />
-		
-	<adapter factory=".providers.CourseFileExternalLinkProvider" 
+
+	<adapter factory=".providers.CourseFileExternalLinkProvider"
 			 provides="nti.app.contentfile.interfaces.IExternalLinkProvider"
 			 for=".interfaces.ICourseContentImage" />
-	
+
 	<!-- Traversal -->
 	<adapter factory=".adapters._resources_for_course_path_adapter"
 			 for="nti.contenttypes.courses.interfaces.ICourseInstance pyramid.interfaces.IRequest"
@@ -85,8 +85,8 @@
 
 	<adapter factory=".datastructures.CourseContentImageObjectIO"
 			 for=".interfaces.ICourseContentImage"  />
-		
-	<!-- Utilities -->	 
+
+	<!-- Utilities -->
 	<utility factory=".predicates._CatalogContentResources" name="courses" />
 
 	<!-- Metadata -->
