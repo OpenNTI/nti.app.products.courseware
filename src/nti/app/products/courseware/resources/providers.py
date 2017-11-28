@@ -4,10 +4,9 @@
 .. $Id$
 """
 
-from __future__ import print_function, absolute_import, division
-__docformat__ = "restructuredtext en"
-
-logger = __import__('logging').getLogger(__name__)
+from __future__ import division
+from __future__ import print_function
+from __future__ import absolute_import
 
 from zope import interface
 
@@ -16,6 +15,8 @@ from pyramid.threadlocal import get_current_request
 from nti.app.contentfile.interfaces import IExternalLinkProvider
 
 from nti.app.contentfolder.resources import to_external_cf_io_href
+
+logger = __import__('logging').getLogger(__name__)
 
 
 @interface.implementer(IExternalLinkProvider)
