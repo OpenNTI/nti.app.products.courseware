@@ -491,7 +491,6 @@ class CatalogEntryLocationInfo(LocationPhysicallyLocatable):
         return parents
 
 
-@component.adapter(ICatalogWorkspace)
 @interface.implementer(ICoursesCatalogCollection)
 class CourseCatalogCollection(AllCoursesCollection):
     """
@@ -515,3 +514,32 @@ class CourseCatalogCollection(AllCoursesCollection):
 
     def __len__(self):
         return len(self.container)
+
+
+@component.adapter(ICatalogWorkspace)
+@interface.implementer(ICoursesCatalogCollection)
+def _catalog_course_collection(workspace):
+    """
+    Adapt to the :class:`ICoursesCatalogCollection`.
+    """
+    return ICoursesCatalogCollection(workspace, None)
+
+
+@component.adapter(ICatalogWorkspace)
+@interface.implementer(ICoursesCatalogCollection)
+def _catalog_course_collection_adapter(workspace):
+    """
+    Adapter to the :class:`ICoursesCatalogCollection`; this is the default
+    adapter.
+    """
+    return CourseCatalogCollection(workspace)
+
+
+@component.adapter(ICatalogWorkspace)
+@interface.implementer(ICoursesCatalogCollection)
+def _empty_catalog_course_collection_adapter(unused_workspace):
+    """
+    Empty adapter to the :class:`ICoursesCatalogCollection` for sites that
+    may not want this functionality.
+    """
+    pass
