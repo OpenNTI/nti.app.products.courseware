@@ -287,9 +287,7 @@
 	<adapter factory=".workspaces.CoursesWorkspace"
 			 provides=".interfaces.ICoursesWorkspace" />
 
-	<adapter factory=".workspaces._catalog_course_collection_adapter"
-             provides="nti.app.products.courseware.interfaces.ICoursesCatalogCollection"
-             for="nti.appserver.workspaces.interfaces.ICatalogWorkspace" />
+	<adapter factory=".workspaces._catalog_course_collection_adapter" />
 
 	<subscriber factory=".workspaces._catalog_course_collection"
                 provides="nti.appserver.workspaces.interfaces.ICatalogCollection"
