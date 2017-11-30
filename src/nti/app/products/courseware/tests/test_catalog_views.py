@@ -232,7 +232,7 @@ class TestCatalogViews(ApplicationLayerTest):
 
         res = res.json_body
         assert_that(res, has_entry("ItemCount", 3))
-        assert_that(res["Items"][0], has_entry("IsAdmin", True))
+        assert_that(res["Items"][0], has_entry("IsAdmin", False))
 
     @WithSharedApplicationMockDS(testapp=True, users=True, default_authenticate=True)
     def test_archived_course_view(self):

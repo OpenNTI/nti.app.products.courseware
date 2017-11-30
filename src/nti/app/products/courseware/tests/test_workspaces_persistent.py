@@ -258,6 +258,8 @@ class TestPersistentWorkspaces(AbstractEnrollingBase, ApplicationLayerTest):
         assert_that(res.json_body, has_entry('Items', has_length(7)))
         for course in res.json_body.get('Items'):
             assert_that(course, has_entry('RoleName', is_(self.editor_role)))
+            assert_that(course, has_entry('IsAdmin', is_(False)))
+            assert_that(course, has_entry('IsEnrolled', is_(False)))
 
         # Now validate our admin cannot add/update forums, topics and comments.
         course_ext = res.json_body['Items'][0]['CourseInstance']
@@ -360,7 +362,7 @@ class TestPersistentWorkspaces(AbstractEnrollingBase, ApplicationLayerTest):
         assert_that(available_courses['Title'], is_('Courses'))
         assert_that(available_courses[ITEMS], has_length(8))
         for item in available_courses[ITEMS]:
-            assert_that(item['IsAdmin'], is_(True))
+            assert_that(item['IsAdmin'], is_(False))
             assert_that(item['IsEnrolled'], is_(False))
 
         # Filter the collection

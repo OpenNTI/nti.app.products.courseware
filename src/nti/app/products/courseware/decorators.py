@@ -100,8 +100,6 @@ from nti.contenttypes.presentation.interfaces import INTIQuestionSetRef
 
 from nti.dataserver.authorization import ACT_CONTENT_EDIT
 
-from nti.dataserver.authorization import is_admin_or_content_admin_or_site_admin
-
 from nti.dataserver.contenttypes.forums.interfaces import ITopic
 
 from nti.dataserver.interfaces import IUser
@@ -396,9 +394,10 @@ class _CourseCatalogEntryDecorator(AbstractAuthenticatedRequestAwareDecorator):
         return getattr(enrollment, 'LegacyEnrollmentStatus', '')
 
     def _is_admin(self, entry):
+        # Decorated admin status is only if the user is a course instructor
+        # or editor.
         course = ICourseInstance(entry)
-        result =   is_course_instructor_or_editor(course, self.remoteUser) \
-                or is_admin_or_content_admin_or_site_admin(self.remoteUser)
+        result = is_course_instructor_or_editor(course, self.remoteUser)
         return bool(result)
 
     def _do_decorate_external(self, context, result):
@@ -962,8 +961,7 @@ class _UserEnrollmentsDecorator(AbstractAuthenticatedRequestAwareDecorator):
     """
 
     def _predicate(self, context, unused_result):
-        return  context != self.remoteUser \
-            and get_context_enrollment_records(context, self.remoteUser)
+        return get_context_enrollment_records(context, self.remoteUser)
 
     def _do_decorate_external(self, context, result):
         _links = result.setdefault(LINKS, [])

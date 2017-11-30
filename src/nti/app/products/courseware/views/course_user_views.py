@@ -153,8 +153,9 @@ class UserEnrollmentsView(AbstractAuthenticatedView,
         return result
 
     def _predicate(self):
-        # 403 if not admin or instructor
-        return (    self._is_admin \
+        # 403 if not admin or instructor or self
+        return (   self._is_admin \
+                or self.remoteUser == self.context \
                 or get_instructed_courses(self.remoteUser)) \
             and self._can_admin_user()
 

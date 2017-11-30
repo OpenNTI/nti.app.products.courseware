@@ -930,6 +930,8 @@ class CourseCollectionView(_AbstractFilteredCourseView,
         self.context.container = new_container
         result = to_external_object(self.context)
         self._batch_items_iterable(result, result[ITEMS])
+        result[TOTAL] = len(self.context)
+        result['FilteredTotalItemCount'] = len(new_items)
         return result
 
 
