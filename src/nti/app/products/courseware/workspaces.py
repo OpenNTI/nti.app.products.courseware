@@ -530,9 +530,11 @@ def _catalog_course_collection(workspace):
 def _catalog_course_collection_adapter(workspace):
     """
     Adapter to the :class:`ICoursesCatalogCollection`; this is the default
-    adapter.
+    adapter. Only return the CourseCatalogCollection if there are courses
+    to enroll in.
     """
-    return CourseCatalogCollection(workspace)
+    result = CourseCatalogCollection(workspace)
+    return result if len(result) else None
 
 
 @component.adapter(ICatalogWorkspace)
