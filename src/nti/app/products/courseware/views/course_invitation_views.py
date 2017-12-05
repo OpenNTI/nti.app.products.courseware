@@ -156,7 +156,7 @@ class UserAcceptCourseInvitationView(AcceptInvitationByCodeView):
         if isinstance(e, AlreadyEnrolledException):
             raise_json_error(
                 self.request,
-                hexc.HTTPConflict,
+                hexc.HTTPForbidden,
                 {
                     'message': str(e) or e.i18n_message,
                     'code': 'AlreadyEnrolledException',

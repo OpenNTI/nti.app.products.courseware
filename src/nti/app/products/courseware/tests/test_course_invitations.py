@@ -268,7 +268,7 @@ class TestInvitations(ApplicationLayerTest):
             assert_that(get_enrollments('ichigo'), has_length(1))
 
         # Already enrolled
-        self.testapp.get(accept_url, extra_environ=environ, status=409)
+        self.testapp.get(accept_url, extra_environ=environ, status=403)
 
     @WithSharedApplicationMockDS(testapp=True, users=True)
     def test_check_course_inv_csv(self):
