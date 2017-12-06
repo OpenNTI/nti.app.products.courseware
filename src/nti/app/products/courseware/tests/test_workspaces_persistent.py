@@ -533,6 +533,15 @@ class TestPersistentWorkspaces(AbstractEnrollingBase, ApplicationLayerTest):
         assert_that(by_tag_res[ITEMS], has_length(5))
         assert_that(by_tag_res['Name'], is_('.nti_other'))
 
+        #tags with slashes work if properly encoded
+        entry = self.testapp.put_json(child_entry_href,
+                                      {"tags": ('some/heirachry',)})
+        href = '%s/%s' % (by_tag_href, 'some%2Fheirachry')
+        by_tag_res = self.testapp.get(href, extra_environ={'RAW_URI': str(href)})
+        by_tag_res = by_tag_res.json_body
+        assert_that(by_tag_res['Name'], is_('some/heirachry'))
+        assert_that(by_tag_res[ITEMS], has_length(1))
+
         # Paging in drilldown
         by_tag_res = self.testapp.get('%s/%s' % (by_tag_href, '.nti_other'),
                                       params={'batchStart':0, 'batchSize':1})
