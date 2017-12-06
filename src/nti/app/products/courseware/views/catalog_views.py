@@ -15,13 +15,11 @@ from __future__ import division
 from __future__ import print_function
 from __future__ import absolute_import
 
+from datetime import datetime
+from six.moves import urllib_parse
 from collections import defaultdict
 
-from datetime import datetime
-
 from requests.structures import CaseInsensitiveDict
-
-import urllib
 
 from zope import component
 from zope import interface
@@ -330,6 +328,7 @@ class _AbstractSortingAndFilteringCoursesView(AbstractAuthenticatedView):
 
     @Lazy
     def sorted_current_entries_and_records(self):
+        # pylint: disable=not-an-iterable 
         result = [x for x in self.sorted_entries_and_records
                   if self._is_entry_current(x[0])]
         return result
@@ -339,16 +338,17 @@ class _AbstractSortingAndFilteringCoursesView(AbstractAuthenticatedView):
         Get our result set items, which will include the `current`
         enrollments backfilled with the most recent.
         """
+        # pylint: disable=not-an-iterable 
         result = self.sorted_current_entries_and_records
         if len(result) < self.minimum_count:
             # Backfill with most-recent items
             seen_entries = set(x[0] for x in result)
             for entry_tuple in self.sorted_entries_and_records:
                 if entry_tuple[0] not in seen_entries:
+                    # pylint: disable=no-member
                     result.append(entry_tuple)
                     if len(result) >= self.minimum_count:
                         break
-
         # Now grab the records we want
         result = [x[1] for x in result]
         return result
@@ -376,6 +376,7 @@ class _AbstractWindowedCoursesView(_AbstractSortingAndFilteringCoursesView):
         return CaseInsensitiveDict(self.request.params)
 
     def _get_param(self, param_name):
+        # pylint: disable=no-member 
         param_val = self._params.get(param_name)
         if param_val is None:
             return None
@@ -741,6 +742,7 @@ class PopularCoursesView(_AbstractFilteredCourseView):
         course = ICourseInstance(entry, None)
         enrollment_count = None
         if course is not None:
+            # pylint: disable=too-many-function-args
             enrollment_count = ICourseEnrollments(course).count_enrollments()
         return (enrollment_count is not None, enrollment_count)
 
@@ -867,6 +869,7 @@ class CourseCollectionView(_AbstractFilteredCourseView,
     #: To maintain BWC; disable paging by default.
     _DEFAULT_BATCH_SIZE = None
     _DEFAULT_BATCH_START = None
+
     DESC_SORT_ORDER = False
 
     @Lazy
@@ -877,11 +880,13 @@ class CourseCollectionView(_AbstractFilteredCourseView,
 
     @Lazy
     def tag_str(self):
+        # pylint: disable=no-member
         result = self._params.get('tag')
         return result and result.lower()
 
     @Lazy
     def filter_str(self):
+        # pylint: disable=no-member
         result = self._params.get('filter')
         return result and result.lower()
 
@@ -890,8 +895,9 @@ class CourseCollectionView(_AbstractFilteredCourseView,
         Return the set of tagged entries for the given tag.
         """
         tagged_courses = get_courses_for_tag(tag)
-        tagged_entries = {ICourseCatalogEntry(x, None)
-                          for x in tagged_courses}
+        tagged_entries = {
+            ICourseCatalogEntry(x, None) for x in tagged_courses
+        }
         tagged_entries.discard(None)
         return tagged_entries
 
@@ -908,6 +914,7 @@ class CourseCollectionView(_AbstractFilteredCourseView,
             return True
         result = False
         filter_str = self.filter_str
+        # pylint: disable=using-constant-test,unsupported-membership-test 
         if filter_str:
             result =   (entry.title and filter_str in entry.title.lower()) \
                     or (entry.description and filter_str in entry.description.lower()) \
@@ -1006,13 +1013,15 @@ class CourseCatalogByTagView(AbstractAuthenticatedView, BatchingUtilsMixin):
         try:
             encoded = self.request.environ['RAW_URI'].split('/')[-1]
             encoded = encoded.split('?')[0]
-            return urllib.unquote(encoded)
+            # pylint: disable=too-many-function-args
+            return urllib_parse.unquote(encoded)
         except KeyError:
             # No RAW_URI unit test? Use old behaviour
             return self.request.subpath[0]
 
     @Lazy
     def _bucket_size(self):
+        # pylint: disable=no-member
         result =   self._params.get('bucket') \
                 or self._params.get('bucketSize') \
                 or self._params.get('bucket_size')
@@ -1020,6 +1029,7 @@ class CourseCatalogByTagView(AbstractAuthenticatedView, BatchingUtilsMixin):
 
     @Lazy
     def _include_hidden_tags(self):
+        # pylint: disable=no-member
         # Default True; only available for admins
         result =   self._params.get('hidden_tag') \
                 or self._params.get('hidden_tags') \
@@ -1035,6 +1045,7 @@ class CourseCatalogByTagView(AbstractAuthenticatedView, BatchingUtilsMixin):
         course = ICourseInstance(entry, None)
         enrollment_count = None
         if course is not None:
+            # pylint: disable=too-many-function-args
             enrollment_count = ICourseEnrollments(course).count_enrollments()
         return (enrollment_count is not None, enrollment_count)
 
@@ -1084,6 +1095,7 @@ class CourseCatalogByTagView(AbstractAuthenticatedView, BatchingUtilsMixin):
     @Lazy
     def _sorted_tag_buckets(self):
         result = list()
+        # pylint: disable=no-member
         sorted_entry_tuples = sorted(self._tag_buckets.items(),
                                      key=self._tag_sort_key)
         # Now sort/reduce our bucket size.
@@ -1099,6 +1111,7 @@ class CourseCatalogByTagView(AbstractAuthenticatedView, BatchingUtilsMixin):
             if self._bucket_size:
                 # Bucket size acts as a min requested
                 if tag_entry_count >= self._bucket_size:
+                    # pylint: disable=invalid-slice-index
                     sorted_entries = sorted_entries[:self._bucket_size]
                 else:
                     # Otherwise, we exclude these items.
@@ -1116,6 +1129,7 @@ class CourseCatalogByTagView(AbstractAuthenticatedView, BatchingUtilsMixin):
         buckets = self._sorted_tag_buckets
         if self._tag_drilldown and buckets:
             # Get our first dict if we have info.
+            # pylint: disable=unsubscriptable-object
             result.update(buckets[0])
             self._batch_items_iterable(result, result[ITEMS])
         elif self._tag_drilldown:
