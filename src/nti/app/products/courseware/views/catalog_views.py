@@ -21,6 +21,8 @@ from datetime import datetime
 
 from requests.structures import CaseInsensitiveDict
 
+import urllib
+
 from zope import component
 from zope import interface
 
@@ -992,7 +994,22 @@ class CourseCatalogByTagView(AbstractAuthenticatedView, BatchingUtilsMixin):
 
     @Lazy
     def _tag_drilldown(self):
-        return self.request.subpath[0] if self.request.subpath else None
+        # The url is decoded before it is split
+        # into subpath (actually before webop PATH_INFO is defined). That means
+        # slashes end up giving us multiple subpaths. That will be helpful
+        # when we want the tags to nest (google style), but it is a pain right now.
+        # grab the tag out of the RAW_URI and then decode it so we get the
+        # full tag as one
+        if not self.request.subpath:
+            return None
+
+        try:
+            encoded = self.request.environ['RAW_URI'].split('/')[-1]
+            encoded = encoded.split('?')[0]
+            return urllib.unquote(encoded)
+        except KeyError:
+            # No RAW_URI unit test? Use old behaviour
+            return self.request.subpath[0]
 
     @Lazy
     def _bucket_size(self):
