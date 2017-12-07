@@ -170,6 +170,21 @@ class _CourseInstanceLinkDecorator(Singleton):
             result['href'] = link
 
 
+@component.adapter(ICourseCatalogEntry)
+@interface.implementer(IExternalObjectDecorator)
+class _EntryHrefDecorator(Singleton):
+    """
+    Decorate :class:`ICourseCatalogEntry` objects with hrefs, if needed. These
+    typically get added already via the IRecordable interface.
+    """
+
+    def decorateExternalObject(self, context, result):
+        if 'href' not in result:
+            link = Link(context)
+            interface.alsoProvides(link, ILinkExternalHrefOnly)
+            result['href'] = link
+
+
 @component.adapter(ICourseInstance)
 @component.adapter(ICourseCatalogEntry)
 @interface.implementer(IExternalMappingDecorator)
