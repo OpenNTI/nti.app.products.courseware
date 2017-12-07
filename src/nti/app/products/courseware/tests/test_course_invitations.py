@@ -226,7 +226,7 @@ class TestInvitations(ApplicationLayerTest):
         # Redirected to app form
         res = self.testapp.get(accept_url, extra_environ=environ, status=302)
         assert_that(res.location,
-                    is_('http://localhost/app/library/courses/available/invitations/accept/%s' % code))
+                    is_('http://localhost/app/catalog/redeem/%s' % code))
 
         # Now submitted
         environ['HTTP_X_REQUESTED_WITH'] = 'XMLHttpRequest'
@@ -258,7 +258,7 @@ class TestInvitations(ApplicationLayerTest):
         # Redirected to app form
         res = self.testapp.get(accept_url, extra_environ=environ, status=302)
         assert_that(res.location,
-                    is_('http://localhost/app/library/courses/available/invitations/accept/%s' % code))
+                    is_('http://localhost/app/catalog/redeem/%s' % code))
 
         # Now submitted
         environ['HTTP_X_REQUESTED_WITH'] = 'XMLHttpRequest'

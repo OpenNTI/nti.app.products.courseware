@@ -247,7 +247,7 @@ class UserAcceptCourseInvitationView(AcceptInvitationByCodeView):
         return web_root
 
     def _get_app_url(self, request, redemption_code):
-        url = 'library/courses/available/invitations/accept/%s' % redemption_code
+        url = 'catalog/redeem/%s' % redemption_code
         app_url = request.application_url
         redemption_link = urljoin(app_url, self._web_root())
         redemption_link = urljoin(redemption_link, url)
