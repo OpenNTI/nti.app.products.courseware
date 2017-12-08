@@ -58,6 +58,7 @@ from nti.contentlibrary.interfaces import IContentBundleUpdatedEvent
 from nti.contenttypes.courses.interfaces import ES_PUBLIC
 from nti.contenttypes.courses.interfaces import ICourseInstance
 from nti.contenttypes.courses.interfaces import ICourseEnrollments
+from nti.contenttypes.courses.interfaces import ICourseOutlineNode 
 from nti.contenttypes.courses.interfaces import ICourseSubInstance
 from nti.contenttypes.courses.interfaces import ICourseCatalogEntry
 from nti.contenttypes.courses.interfaces import IDenyOpenEnrollment
@@ -154,6 +155,7 @@ def _send_enrollment_confirmation(event, user, profile, email, course):
         formatter = dates.getFormatter('date', length='long')
         course_start_date = formatter.format(catalog_entry.StartDate)
 
+    # pylint: disable=no-member
     html_sig = catalog_entry.InstructorsSignature.replace('\n', "<br />")
 
     support_email = getattr(policy, 'SUPPORT_EMAIL', 'support@nextthought.com')
@@ -181,13 +183,15 @@ def _send_enrollment_confirmation(event, user, profile, email, course):
             'today': isodate.date_isoformat(datetime.datetime.now())}
 
     # Augment with our args providers
-    for unused, args_provider in list(component.getUtilitiesFor(ICourseEnrollmentEmailArgsProvider)):
+    providers = component.getUtilitiesFor(ICourseEnrollmentEmailArgsProvider)
+    for unused_name, args_provider in list(providers):
         util_args = args_provider.get_email_args(user)
         if util_args:
             args.update(util_args)
 
     bcc = []
-    for unused, bcc_provider in list(component.getUtilitiesFor(ICourseEnrollmentEmailBCCProvider)):
+    providers = component.getUtilitiesFor(ICourseEnrollmentEmailBCCProvider)
+    for unused_name, bcc_provider in list(providers):
         bcc_emails = bcc_provider.get_bcc_emails()
         if bcc_emails:
             bcc.extend(bcc_emails)
@@ -283,7 +287,7 @@ def _auto_enroll_on_enrollment_added(record, unused_event):
     }
     main_entries.discard(None)
 
-    # XXX Let's get the entries for the scope NTI/Enrollment/Scopes{scope}
+    # Let's get the entries for the scope NTI/Enrollment/Scopes{scope}
     entries = set(get_enrollment_for_scope(course, record.Scope))
     if not entries and ICourseSubInstance.providedBy(course):  # look at parent
         entries = set(get_enrollment_for_scope(parent, record.Scope))
@@ -313,9 +317,11 @@ def _auto_enroll_on_enrollment_added(record, unused_event):
                 continue
             # ready to enroll
             enrollments = ICourseEnrollments(course)
+            # pylint: disable=too-many-function-args
             enrollment = enrollments.get_enrollment_for_principal(user)
             if enrollment is None:
                 manager = ICourseEnrollmentManager(course)
+                # pylint: disable=redundant-keyword-arg
                 manager.enroll(user, scope=record.Scope)
     finally:
         if has_interaction:
@@ -324,7 +330,7 @@ def _auto_enroll_on_enrollment_added(record, unused_event):
 
 @component.adapter(ICourseInstanceEnrollmentRecord, IObjectModifiedEvent)
 def _auto_enroll_on_enrollment_modified(record, event):
-    # XXX: A user may have open-enrolled and then purchase/switch enrollment
+    # A user may have open-enrolled and then purchase/switch enrollment
     _auto_enroll_on_enrollment_added(record, event)
 
 
@@ -361,6 +367,12 @@ def course_traversal_context_subscriber(course, unused_event):
 @component.adapter(ICourseCatalogEntry, IBeforeTraverseEvent)
 def catalog_entry_traversal_context_subscriber(entry, event):
     course_traversal_context_subscriber(ICourseInstance(entry), event)
+
+
+@component.adapter(ICourseOutlineNode, IBeforeTraverseEvent)
+def outline_node_traversal_context_subscriber(node, event):
+    course = find_interface(node, ICourseInstance, strict=False)
+    course_traversal_context_subscriber(course, event)
 
 
 @component.adapter(ICourseContentPackageBundle, IContentBundleUpdatedEvent)
