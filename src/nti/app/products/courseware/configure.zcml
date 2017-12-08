@@ -90,6 +90,7 @@
 	<subscriber handler=".subscribers.update_enrollment_modified_on_drop" />
 
 	<subscriber handler=".subscribers.course_traversal_context_subscriber" />
+	<subscriber handler=".subscribers.outline_node_traversal_context_subscriber" />
 	<subscriber handler=".subscribers.catalog_entry_traversal_context_subscriber" />
 
 	<!-- Auto-gen course purchasables from content -->
