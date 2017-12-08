@@ -44,6 +44,7 @@ from nti.invitations.interfaces import IInvitationsContainer
 
 from nti.mailer.interfaces import ITemplatedMailer
 
+from nti.ntiids.ntiids import make_specific_safe
 from nti.ntiids.ntiids import find_object_with_ntiid
 
 logger = __import__('logging').getLogger(__name__)
@@ -68,7 +69,9 @@ def get_template_and_package(entry, base_template, default_package=None):
         return base_template, default_package
 
     package = dottedname.resolve(package)
+    # Safe ascii path
     provider_unique_id = entry.ProviderUniqueID.replace(' ', '').lower()
+    provider_unique_id = make_specific_safe(provider_unique_id)
     full_provider_id = provider_unique_id.replace('-', '')
     template = full_provider_id + "_" + base_template
 
