@@ -371,8 +371,10 @@ def catalog_entry_traversal_context_subscriber(entry, event):
 
 @component.adapter(ICourseOutlineNode, IBeforeTraverseEvent)
 def outline_node_traversal_context_subscriber(node, event):
-    course = find_interface(node, ICourseInstance, strict=False)
-    course_traversal_context_subscriber(course, event)
+    request = get_current_request()
+    if getattr(request, 'course_traversal_context', None) is None:
+        course = find_interface(node, ICourseInstance, strict=False)
+        course_traversal_context_subscriber(course, event)
 
 
 @component.adapter(ICourseContentPackageBundle, IContentBundleUpdatedEvent)
