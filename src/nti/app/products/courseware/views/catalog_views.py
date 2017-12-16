@@ -77,6 +77,7 @@ from nti.appserver.workspaces.interfaces import IContainerCollection
 from nti.common.string import is_false
 
 from nti.contenttypes.courses.interfaces import ES_PUBLIC
+
 from nti.contenttypes.courses.interfaces import ICourseCatalog
 from nti.contenttypes.courses.interfaces import ICourseInstance
 from nti.contenttypes.courses.interfaces import ICourseEnrollments
@@ -84,6 +85,7 @@ from nti.contenttypes.courses.interfaces import ICourseCatalogEntry
 from nti.contenttypes.courses.interfaces import ICourseEnrollmentManager
 from nti.contenttypes.courses.interfaces import InstructorEnrolledException
 from nti.contenttypes.courses.interfaces import IAnonymouslyAccessibleCourseInstance
+from nti.contenttypes.courses.interfaces import ICourseCatalogEntryFilterUtility
 
 from nti.contenttypes.courses.utils import is_enrolled
 from nti.contenttypes.courses.utils import filter_hidden_tags
@@ -328,7 +330,7 @@ class _AbstractSortingAndFilteringCoursesView(AbstractAuthenticatedView):
 
     @Lazy
     def sorted_current_entries_and_records(self):
-        # pylint: disable=not-an-iterable 
+        # pylint: disable=not-an-iterable
         result = [x for x in self.sorted_entries_and_records
                   if self._is_entry_current(x[0])]
         return result
@@ -338,7 +340,7 @@ class _AbstractSortingAndFilteringCoursesView(AbstractAuthenticatedView):
         Get our result set items, which will include the `current`
         enrollments backfilled with the most recent.
         """
-        # pylint: disable=not-an-iterable 
+        # pylint: disable=not-an-iterable
         result = self.sorted_current_entries_and_records
         if len(result) < self.minimum_count:
             # Backfill with most-recent items
@@ -376,7 +378,7 @@ class _AbstractWindowedCoursesView(_AbstractSortingAndFilteringCoursesView):
         return CaseInsensitiveDict(self.request.params)
 
     def _get_param(self, param_name):
-        # pylint: disable=no-member 
+        # pylint: disable=no-member
         param_val = self._params.get(param_name)
         if param_val is None:
             return None
@@ -861,7 +863,6 @@ class CourseCollectionView(_AbstractFilteredCourseView,
     By default, we return sorted by the catalog entry title and start date.
 
     params:
-        tag - (optional) only return catalog entries with the given tag
         filter - (optional) include a catalog entry containing this str
 
     """
@@ -879,51 +880,18 @@ class CourseCollectionView(_AbstractFilteredCourseView,
         return result
 
     @Lazy
-    def tag_str(self):
-        # pylint: disable=no-member
-        result = self._params.get('tag')
-        return result and result.lower()
-
-    @Lazy
     def filter_str(self):
         # pylint: disable=no-member
         result = self._params.get('filter')
         return result and result.lower()
 
-    def get_tagged_entries(self, tag):
-        """
-        Return the set of tagged entries for the given tag.
-        """
-        tagged_courses = get_courses_for_tag(tag)
-        tagged_entries = {
-            ICourseCatalogEntry(x, None) for x in tagged_courses
-        }
-        tagged_entries.discard(None)
-        return tagged_entries
-
     @Lazy
-    def entries_with_tag(self):
-        return self.get_tagged_entries(self.tag_str)
-
-    @Lazy
-    def entries_with_tag_filter(self):
-        return self.get_tagged_entries(self.filter_str)
-
-    def include_entry(self, entry):
-        if not self.filter_str and not self.tag_str:
-            return True
-        result = False
-        filter_str = self.filter_str
-        # pylint: disable=using-constant-test,unsupported-membership-test 
-        if filter_str:
-            result =   (entry.title and filter_str in entry.title.lower()) \
-                    or (entry.description and filter_str in entry.description.lower()) \
-                    or (entry.ProviderUniqueID and filter_str in entry.ProviderUniqueID.lower()) \
-                    or entry in self.entries_with_tag_filter
-        if not result and self.tag_str:
-            result = entry in self.entries_with_tag
-        return result
-    _include_filter = include_entry
+    def filtered_entries(self):
+        filter_utility = component.getUtility(ICourseCatalogEntryFilterUtility)
+        entries = (x[0] for x in self.entries_and_records)
+        entries = filter_utility.filter_entries(entries, self.filter_str)
+        entries = set(entries)
+        return [x for x in self.entries_and_records if x[0] in entries]
 
     def _sort_key(self, entry_tuple):
         entry = entry_tuple[0]
