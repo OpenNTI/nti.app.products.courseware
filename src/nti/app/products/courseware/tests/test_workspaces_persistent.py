@@ -417,18 +417,6 @@ class TestPersistentWorkspaces(AbstractEnrollingBase, ApplicationLayerTest):
         assert_that(entry,
 					has_entry('tags', contains_inanyorder('law', '.hidden')))
 
-        tagged_courses = self.testapp.get('%s?tag=%s' % (courses_href, 'law'))
-        tagged_courses = tagged_courses.json_body
-        assert_that(tagged_courses[ITEMS], has_length(3))
-        tagged_ntiids = [x['NTIID'] for x in tagged_courses[ITEMS]]
-        assert_that(tagged_ntiids, contains_inanyorder(*all_ntiids))
-
-        tagged_courses = self.testapp.get('%s?tag=%s' % (courses_href, '.hidden'))
-        tagged_courses = tagged_courses.json_body
-        assert_that(tagged_courses[ITEMS], has_length(3))
-        tagged_ntiids = [x['NTIID'] for x in tagged_courses[ITEMS]]
-        assert_that(tagged_ntiids, contains_inanyorder(*all_ntiids))
-
         tagged_courses = self.testapp.get('%s?filter=%s' % (courses_href, 'law'))
         tagged_courses = tagged_courses.json_body
         assert_that(tagged_courses[ITEMS], has_length(3))
@@ -445,26 +433,6 @@ class TestPersistentWorkspaces(AbstractEnrollingBase, ApplicationLayerTest):
                                       {"tags": ('child tag',)})
         entry = entry.json_body
         assert_that(entry, has_entry('tags', contains('child tag')))
-
-        tagged_courses = self.testapp.get('%s?tag=%s' % (courses_href, 'law'))
-        tagged_courses = tagged_courses.json_body
-        assert_that(tagged_courses[ITEMS], has_length(2))
-        tagged_ntiids = [x['NTIID'] for x in tagged_courses[ITEMS]]
-        assert_that(tagged_ntiids,
-					contains_inanyorder(entry_ntiid, child1_ntiid))
-
-        tagged_courses = self.testapp.get('%s?tag=%s' % (courses_href, '.hidden'))
-        tagged_courses = tagged_courses.json_body
-        assert_that(tagged_courses[ITEMS], has_length(2))
-        tagged_ntiids = [x['NTIID'] for x in tagged_courses[ITEMS]]
-        assert_that(tagged_ntiids,
-					contains_inanyorder(entry_ntiid, child1_ntiid))
-
-        tagged_courses = self.testapp.get('%s?tag=%s' % (courses_href, 'child tag'))
-        tagged_courses = tagged_courses.json_body
-        assert_that(tagged_courses[ITEMS], has_length(1))
-        tagged_ntiids = [x['NTIID'] for x in tagged_courses[ITEMS]]
-        assert_that(tagged_ntiids, contains(child2_ntiid))
 
         # By tag view, ordered by most entries in tag
         # Other has 5 entries; child tag  only has one item
@@ -625,6 +593,21 @@ class TestPersistentWorkspaces(AbstractEnrollingBase, ApplicationLayerTest):
                                extra_environ=student_env)
 
         purchased_res = self.testapp.get(purchased_href,
+                                         extra_environ=student_env)
+        purchased_res = purchased_res.json_body
+        purchased_items = purchased_res[ITEMS]
+        assert_that(purchased_items, has_length(1))
+
+        # Filtering
+        filter_href = '%s?filter=%s' % (purchased_href, 'does_not_exist')
+        purchased_res = self.testapp.get(filter_href,
+                                         extra_environ=student_env)
+        purchased_res = purchased_res.json_body
+        purchased_items = purchased_res[ITEMS]
+        assert_that(purchased_items, has_length(0))
+
+        filter_href = '%s?filter=%s' % (purchased_href, 'LAW')
+        purchased_res = self.testapp.get(filter_href,
                                          extra_environ=student_env)
         purchased_res = purchased_res.json_body
         purchased_items = purchased_res[ITEMS]

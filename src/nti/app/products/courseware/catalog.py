@@ -25,6 +25,7 @@ from nti.contenttypes.courses.interfaces import ICourseInstance
 from nti.contenttypes.courses.interfaces import ICourseEnrollments
 from nti.contenttypes.courses.interfaces import ICourseSubInstance
 from nti.contenttypes.courses.interfaces import ICourseCatalogEntry
+from nti.contenttypes.courses.interfaces import ICourseCatalogEntryFilterUtility
 
 from nti.contenttypes.courses.utils import get_enrollments
 
@@ -148,7 +149,8 @@ class FeaturedCatalogCoursesProvider(object):
 @interface.implementer(IPurchasedCatalogCollectionProvider)
 class PurchasedCatalogCoursesProvider(object):
     """
-    Returns 'purchased' objects, defined as any enrollment for this user.
+    Returns 'purchased' objects, defined as the :class:`ICourseCatalogEntry`
+    of each enrollment for this user.
     """
 
     def __init__(self, user):
@@ -161,16 +163,17 @@ class PurchasedCatalogCoursesProvider(object):
     def enrollments(self):
         return get_enrollments(self.user)
 
-    def get_collection_iter(self, unused_filter_string=None):
+    def get_collection_iter(self, filter_string=None):
         """
         Returns an iterable over this collection provider, optionally
         filtering on the given string.
-
-        TODO: filtering
         """
         # Most recent first
         result = sorted(self.enrollments, key=self._sort_key, reverse=True)
         result = [ICourseCatalogEntry(x.CourseInstance) for x in result]
+        if filter_string:
+            filter_utility = component.getUtility(ICourseCatalogEntryFilterUtility)
+            result = filter_utility.filter_entries(result, filter_string)
         return result
 
 
