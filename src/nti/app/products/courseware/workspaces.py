@@ -534,7 +534,7 @@ def _catalog_course_collection_adapter(workspace):
     to enroll in.
     """
     result = CourseCatalogCollection(workspace)
-    return result if len(result) else None
+    return result
 
 
 @component.adapter(ICatalogWorkspace)
