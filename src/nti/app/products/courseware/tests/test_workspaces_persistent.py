@@ -613,6 +613,21 @@ class TestPersistentWorkspaces(AbstractEnrollingBase, ApplicationLayerTest):
         purchased_items = purchased_res[ITEMS]
         assert_that(purchased_items, has_length(1))
 
+        # Paging
+        filter_href = '%s&batchStart=%s&batchSize=1' % (filter_href, 0)
+        purchased_res = self.testapp.get(filter_href,
+                                         extra_environ=student_env)
+        purchased_res = purchased_res.json_body
+        purchased_items = purchased_res[ITEMS]
+        assert_that(purchased_items, has_length(1))
+
+        filter_href = '%s&batchStart=%s&batchSize=1' % (filter_href, 1)
+        purchased_res = self.testapp.get(filter_href,
+                                         extra_environ=student_env)
+        purchased_res = purchased_res.json_body
+        purchased_items = purchased_res[ITEMS]
+        assert_that(purchased_items, has_length(0))
+
     @WithSharedApplicationMockDS(users=True, testapp=True)
     def test_windowed_links(self):
         administered_path = '/dataserver2/users/sjohnson@nextthought.com/Courses/AdministeredCourses'
