@@ -68,7 +68,7 @@ def _process_site(current, intids, seen):
         seen.add(ntiid)
 
 
-def _process_args(unused_verbose=False):
+def _process_args():
     seen = set()
     intids = component.getUtility(IIntIds)
     for current in get_all_host_sites():
@@ -92,7 +92,7 @@ def main():
                         xmlconfig_packages=conf_packages,
                         verbose=args.verbose,
                         context=context,
-                        function=lambda: _process_args(verbose=args.verbose))
+                        function=lambda: _process_args())
     sys.exit(0)
 
 
