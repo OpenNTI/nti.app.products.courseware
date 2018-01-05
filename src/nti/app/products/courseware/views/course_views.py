@@ -81,6 +81,7 @@ from nti.contenttypes.courses.interfaces import ICourseOutline
 from nti.contenttypes.courses.interfaces import ICourseInstance
 from nti.contenttypes.courses.interfaces import ICourseEnrollments
 from nti.contenttypes.courses.interfaces import ICourseCatalogEntry
+from nti.contenttypes.courses.interfaces import ENROLLMENT_SCOPE_MAP
 
 from nti.contenttypes.courses.utils import is_enrolled
 from nti.contenttypes.courses.utils import is_course_instructor_or_editor
@@ -504,6 +505,38 @@ class CourseEnrollmentRosterGetView(AbstractAuthenticatedView,
             i.CourseInstance = None
 
         # TODO: We have no last modified for this
+        return result
+
+@view_config(route_name='objects.generic.traversal',
+             renderer='rest',
+             request_method='GET',
+             context=CourseEnrollmentRosterPathAdapter,
+             permission=ACT_VIEW_ROSTER,
+             name='summary')
+class CourseRosterSummary(AbstractAuthenticatedView):
+
+    def __call__(self):
+        course = self.context.course
+        result = LocatedExternalDict()
+        result.__name__ = self.request.view_name
+        result.__parent__ = course
+
+        enrollments = ICourseEnrollments(course)
+        result['TotalEnrollments'] = enrollments.count_enrollments()
+
+        counts = {}
+        for scope in ENROLLMENT_SCOPE_MAP:
+            counts[scope] = enrollments.count_scope_enrollments(scope)
+
+        result['TotalEnrollmentsByScope'] = counts
+
+        # Legacy, non-interface methods
+        try:
+            result['TotalLegacyOpenEnrolledCount'] = enrollments.count_legacy_open_enrollments()
+            result['TotalLegacyForCreditEnrolledCount'] = enrollments.count_legacy_forcredit_enrollments()
+        except AttributeError:
+            pass
+
         return result
 
 
