@@ -30,6 +30,7 @@ from nti.app.products.courseware.utils import get_enrollment_options
 
 from nti.appserver.interfaces import ILibraryPathLastModifiedProvider
 
+from nti.contenttypes.courses.interfaces import ES_CREDIT
 from nti.contenttypes.courses.interfaces import ES_PUBLIC
 from nti.contenttypes.courses.interfaces import ES_PURCHASED
 
@@ -37,6 +38,7 @@ from nti.contenttypes.courses.interfaces import ICourseCatalog
 from nti.contenttypes.courses.interfaces import ICourseInstance
 from nti.contenttypes.courses.interfaces import ICourseEnrollments
 from nti.contenttypes.courses.interfaces import InstructorEnrolledException
+from nti.contenttypes.courses.interfaces import ICourseEnrollmentManager
 
 from nti.dataserver.interfaces import IAccessProvider
 from nti.dataserver.interfaces import IGrantAccessException
@@ -213,3 +215,37 @@ class TestEnrollment(ApplicationLayerTest):
                 access_provider.grant_access(entity)
             assert_that(exc.exception,
                         verifiably_provides(IGrantAccessException))
+
+
+
+    @WithSharedApplicationMockDS(testapp=True, users=True)
+    def test_enrollment_summary(self):
+        with mock_dataserver.mock_db_trans(self.ds):
+            self._create_user(u'marco')
+            self._create_user(u'alana')
+
+        with mock_dataserver.mock_db_trans(self.ds, site_name='platform.ou.edu'):
+            marco = User.get_user(u'marco')
+            alana = User.get_user(u'alana')
+
+            entry = find_object_with_ntiid(self.course_ntiid)
+            course = ICourseInstance(entry)
+
+            enrollment_manager = ICourseEnrollmentManager(course)
+            enrollment_manager.enroll(marco)
+            enrollment_manager.enroll(alana, scope=ES_CREDIT)
+
+        stats_href = '/dataserver2/++etc++hostsites/platform.ou.edu/++etc++site/Courses/Fall2013/CLC3403_LawAndJustice/CourseEnrollmentRoster/@@summary'
+
+        instructor_environ = self._make_extra_environ(username='harp4162')
+        resp = self.testapp.get(stats_href, extra_environ=instructor_environ)
+        resp = resp.json_body
+
+        assert_that(resp, has_entries('TotalEnrollments', 2,
+                                      'TotalEnrollmentsByScope', has_entries('ForCredit', 1,
+                                                                             'ForCreditDegree', 0,
+                                                                             'ForCreditNonDegree', 0,
+                                                                             'Public', 1,
+                                                                             'Purchased', 0),
+                                      'TotalLegacyForCreditEnrolledCount', 1,
+                                      'TotalLegacyOpenEnrolledCount', 1))
