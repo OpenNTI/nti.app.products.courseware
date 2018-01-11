@@ -184,6 +184,14 @@ class _EntryHrefDecorator(Singleton):
             interface.alsoProvides(link, ILinkExternalHrefOnly)
             result['href'] = link
 
+@component.adapter(ICourseCatalogEntry)
+@interface.implementer(IExternalObjectDecorator)
+class _RealPreviewDecorator(Singleton):
+
+    def decorateExternalMapping(self, context, result):
+        context._p_activate()
+        result['PreviewRawValue'] = context.__dict__.get('Preview', None)
+
 
 @component.adapter(ICourseInstance)
 @component.adapter(ICourseCatalogEntry)
