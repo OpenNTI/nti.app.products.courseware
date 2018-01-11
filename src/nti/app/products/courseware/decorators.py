@@ -189,8 +189,8 @@ class _EntryHrefDecorator(Singleton):
 class _RealPreviewDecorator(Singleton):
 
     def decorateExternalMapping(self, context, result):
-        context._p_activate()
-        result['PreviewRawValue'] = context.__dict__.get('Preview', None)
+        if hasattr(context, 'PreviewRawValue'):
+            result['PreviewRawValue'] = context.PreviewRawValue
 
 
 @component.adapter(ICourseInstance)
