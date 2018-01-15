@@ -23,6 +23,7 @@ from nti.contenttypes.courses.interfaces import ALL_COURSE_OUTLINE_INTERFACES
 from nti.contenttypes.courses.interfaces import iface_of_node
 
 from nti.dataserver.utils import run_with_dataserver
+
 from nti.dataserver.utils.base_script import create_context
 
 from nti.site.hostpolicy import get_all_host_sites
@@ -32,12 +33,13 @@ from nti.site.utils import unregisterUtility
 logger = __import__('logging').getLogger(__name__)
 
 
-def _lookupAll(main):
+def _lookupAll(registry):
     result = {}
     required = ()
     order = len(required)
-    for registry in main.utilities.ro:  # must keep order
-        byorder = registry._adapters
+    for ro in registry.utilities.ro:  # must keep order
+        # pylint: disable=protected-access
+        byorder = ro._adapters
         if order >= len(byorder):
             continue
         components = byorder[order]
@@ -92,7 +94,7 @@ def main():
                         xmlconfig_packages=conf_packages,
                         verbose=args.verbose,
                         context=context,
-                        function=lambda: _process_args())
+                        function=_process_args)
     sys.exit(0)
 
 
