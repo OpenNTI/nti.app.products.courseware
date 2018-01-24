@@ -433,10 +433,10 @@ class IAvailableCoursesProvider(interface.Interface):
         """
 
 
-class IAllCoursesCollectionAcceptsProvider(interface.Interface):
+class ICoursesCollectionAcceptsProvider(interface.Interface):
     """
     A subscriber which provides an `Iterable` of MIME types to use as elements
-    in an `AllCoursesCollection.accepts` `Iterable`.
+    in an `ICoursesCollection.accepts` `Iterable`.
     """
 
 # deprecations
