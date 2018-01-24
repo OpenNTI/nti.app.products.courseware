@@ -42,6 +42,7 @@ from nti.app.products.courseware.interfaces import IEnrolledCoursesCollection
 from nti.app.products.courseware.interfaces import IAdministeredCoursesCollection
 from nti.app.products.courseware.interfaces import ILegacyCourseInstanceEnrollment
 from nti.app.products.courseware.interfaces import ICourseCatalogLegacyContentEntry
+from nti.app.products.courseware.interfaces import ICoursesCollectionAcceptsProvider
 
 from nti.appserver.workspaces.interfaces import IUserService
 from nti.appserver.workspaces.interfaces import ICatalogWorkspace
@@ -156,7 +157,15 @@ class AllCoursesCollection(Contained):
 
     __name__ = u'AllCourses'
 
-    accepts = ()
+    @Lazy
+    def accepts(self):
+        accepted_types = []
+        providers = component.subscribers([self], ICoursesCollectionAcceptsProvider)
+        for mime_types in [provider() for provider in providers]:
+            for mime_type in mime_types:
+                if mime_type is not None:
+                    accepted_types.append(mime_type)
+        return set(accepted_types)
 
     name = alias('__name__', __name__)
 
