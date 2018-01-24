@@ -35,6 +35,7 @@ from nti.app.products.courseware import VIEW_ADMINISTERED_WINDOWED
 
 from nti.app.products.courseware.interfaces import ICoursesWorkspace
 from nti.app.products.courseware.interfaces import ICoursesCollection
+from nti.app.products.courseware.interfaces import IAllCoursesCollection
 from nti.app.products.courseware.interfaces import IAvailableCoursesProvider
 from nti.app.products.courseware.interfaces import ICoursesCatalogCollection
 from nti.app.products.courseware.interfaces import ICourseInstanceEnrollment
@@ -142,7 +143,7 @@ def CoursesWorkspace(user_service):
         return workspace
 
 
-@interface.implementer(ICoursesCollection)
+@interface.implementer(IAllCoursesCollection)
 class AllCoursesCollection(Contained):
     """
     Returns all available courses. If both tag and filter are provided, we
