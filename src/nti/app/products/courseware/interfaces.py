@@ -143,6 +143,12 @@ class IEnrolledCoursesCollection(ICoursesCollection):
     """
 
 
+class IAllCoursesCollection(ICoursesCollection):
+    """
+    A collection of all courses in a site.
+    """
+
+
 class ICourseInstanceEnrollment(IShouldHaveTraversablePath,
                                 IReportContext):
     """
