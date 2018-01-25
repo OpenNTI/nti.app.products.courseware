@@ -74,6 +74,8 @@ from nti.appserver.workspaces import VIEW_CATALOG_FEATURED
 from nti.appserver.workspaces.interfaces import IUserService
 from nti.appserver.workspaces.interfaces import IContainerCollection
 
+from nti.base._compat import text_
+
 from nti.common.string import is_false
 
 from nti.contenttypes.courses.interfaces import ES_PUBLIC
@@ -873,6 +875,9 @@ class CourseCollectionView(_AbstractFilteredCourseView,
 
     DESC_SORT_ORDER = False
 
+    def _include_filter(self, unused_entry):  # pylint: disable=arguments-differ
+        pass
+
     @Lazy
     def _params(self):
         values = self.request.params
@@ -887,6 +892,7 @@ class CourseCollectionView(_AbstractFilteredCourseView,
 
     @Lazy
     def filtered_entries(self):
+        # pylint: disable=not-an-iterable
         filter_utility = component.getUtility(ICourseCatalogEntryFilterUtility)
         entries = (x[0] for x in self.entries_and_records)
         entries = filter_utility.filter_entries(entries, self.filter_str)
@@ -983,7 +989,7 @@ class CourseCatalogByTagView(AbstractAuthenticatedView, BatchingUtilsMixin):
             encoded = encoded.split('?')[0]
             # pylint: disable=too-many-function-args
             tag = urllib_parse.unquote(encoded)
-            return tag.decode('utf-8') if tag else None
+            return text_(tag) if tag else None
         except KeyError:
             # No RAW_URI unit test? Use old behaviour
             return self.request.subpath[0]
