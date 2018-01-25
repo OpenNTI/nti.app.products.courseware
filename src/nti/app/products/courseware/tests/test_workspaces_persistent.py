@@ -510,6 +510,9 @@ class TestPersistentWorkspaces(AbstractEnrollingBase, ApplicationLayerTest):
         assert_that(by_tag_res['Name'], is_('some/heirachry'))
         assert_that(by_tag_res[ITEMS], has_length(1))
 
+        # Can drill down into unicode tags
+        by_tag_res = self.testapp.get('%s/%s' % (by_tag_href, '%F0%9F%98%80'))
+
         # Paging in drilldown
         by_tag_res = self.testapp.get('%s/%s' % (by_tag_href, '.nti_other'),
                                       params={'batchStart':0, 'batchSize':1})

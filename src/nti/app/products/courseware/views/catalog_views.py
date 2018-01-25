@@ -982,7 +982,8 @@ class CourseCatalogByTagView(AbstractAuthenticatedView, BatchingUtilsMixin):
             encoded = self.request.environ['RAW_URI'].split('/')[-1]
             encoded = encoded.split('?')[0]
             # pylint: disable=too-many-function-args
-            return urllib_parse.unquote(encoded)
+            tag = urllib_parse.unquote(encoded)
+            return tag.decode('utf-8') if tag else None
         except KeyError:
             # No RAW_URI unit test? Use old behaviour
             return self.request.subpath[0]
