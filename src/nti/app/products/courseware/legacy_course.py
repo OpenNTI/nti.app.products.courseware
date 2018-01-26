@@ -43,6 +43,9 @@ from BTrees import OOBTree
 
 from persistent import Persistent
 
+from nti.app.products.courseware.interfaces import ACT_VIEW_ROSTER
+from nti.app.products.courseware.interfaces import ACT_VIEW_ACTIVITY
+
 from nti.app.products.courseware.interfaces import ICourseCatalogLegacyContentEntry
 from nti.app.products.courseware.interfaces import ILegacyCommunityBasedCourseInstance
 
@@ -665,9 +668,10 @@ class _LegacyCourseInstanceACLProvider(object):
             for x in self.context.instructors or ()
         ]
         aces.append(ace_allowing(self.context.legacy_community, ACT_READ))
-        # Deny editing to everyone.
+        # Deny editing/roster to everyone.
         aces.append(ace_denying(IPrincipal(EVERYONE_GROUP_NAME),
-                                (ACT_CONTENT_EDIT, ACT_UPDATE),
+                                (ACT_CONTENT_EDIT, ACT_UPDATE,
+                                 ACT_VIEW_ROSTER, ACT_VIEW_ACTIVITY),
                                 type(self)))
 
         self.__acl__ = acl_from_aces(aces)
