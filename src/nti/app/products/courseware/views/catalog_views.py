@@ -294,7 +294,10 @@ class _AbstractSortingAndFilteringCoursesView(AbstractAuthenticatedView):
 
     def _sort_key(self, entry_tuple):
         start_date = entry_tuple[0].StartDate
-        return (start_date is not None, start_date)
+        return (start_date is not None, start_date, entry_tuple[0].ProviderUniqueID)
+
+    def _secondary_sort_key(self, entry_tuple):
+        return entry_tuple[0].ProviderUniqueID
 
     @Lazy
     def now(self):
@@ -316,8 +319,10 @@ class _AbstractSortingAndFilteringCoursesView(AbstractAuthenticatedView):
 
     @Lazy
     def sorted_entries_and_records(self):
-        # Want the most recent first
-        result = sorted(self.entries_and_records,
+        # Sort secondary key first, ascending alpha
+        result = sorted(self.entries_and_records, key=self._secondary_sort_key)
+        # Then primary key (date), most recent first
+        result = sorted(result,
                         key=self._sort_key,
                         reverse=True)
         return result
