@@ -43,6 +43,8 @@ from nti.contenttypes.reports.interfaces import IReportContext
 
 from nti.coremetadata.interfaces import IShouldHaveTraversablePath
 
+from nti.externalization.interfaces import IIterable
+
 from nti.ntiids.schema import ValidNTIID
 
 from nti.schema.field import Bool
@@ -439,7 +441,7 @@ class IAvailableCoursesProvider(interface.Interface):
         """
 
 
-class IAllCoursesCollectionAcceptsProvider(interface.Interface):
+class IAllCoursesCollectionAcceptsProvider(IIterable):
     """
     A subscriber which provides an `Iterable` of MIME types to use as elements
     in an `IAllCoursesCollection.accepts` `Iterable`.
