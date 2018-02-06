@@ -43,6 +43,8 @@ from nti.contenttypes.reports.interfaces import IReportContext
 
 from nti.coremetadata.interfaces import IShouldHaveTraversablePath
 
+from nti.externalization.interfaces import IIterable
+
 from nti.ntiids.schema import ValidNTIID
 
 from nti.schema.field import Bool
@@ -140,6 +142,12 @@ class IEnrolledCoursesCollection(ICoursesCollection):
     """
     A collection (local to a user) of courses he is enrolled in
     (:class:`.ICourseInstanceEnrollment`)
+    """
+
+
+class IAllCoursesCollection(ICoursesCollection):
+    """
+    A collection of all courses in a site.
     """
 
 
@@ -432,6 +440,12 @@ class IAvailableCoursesProvider(interface.Interface):
         not enrolled in and that are available to be enrolled in.
         """
 
+
+class IAllCoursesCollectionAcceptsProvider(IIterable):
+    """
+    A subscriber which provides an `Iterable` of MIME types to use as elements
+    in an `IAllCoursesCollection.accepts` `Iterable`.
+    """
 
 # deprecations
 

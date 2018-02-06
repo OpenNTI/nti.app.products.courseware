@@ -35,6 +35,7 @@ from nti.app.products.courseware import VIEW_ADMINISTERED_WINDOWED
 
 from nti.app.products.courseware.interfaces import ICoursesWorkspace
 from nti.app.products.courseware.interfaces import ICoursesCollection
+from nti.app.products.courseware.interfaces import IAllCoursesCollection
 from nti.app.products.courseware.interfaces import IAvailableCoursesProvider
 from nti.app.products.courseware.interfaces import ICoursesCatalogCollection
 from nti.app.products.courseware.interfaces import ICourseInstanceEnrollment
@@ -42,6 +43,7 @@ from nti.app.products.courseware.interfaces import IEnrolledCoursesCollection
 from nti.app.products.courseware.interfaces import IAdministeredCoursesCollection
 from nti.app.products.courseware.interfaces import ILegacyCourseInstanceEnrollment
 from nti.app.products.courseware.interfaces import ICourseCatalogLegacyContentEntry
+from nti.app.products.courseware.interfaces import IAllCoursesCollectionAcceptsProvider
 
 from nti.appserver.workspaces.interfaces import IUserService
 from nti.appserver.workspaces.interfaces import ICatalogWorkspace
@@ -141,7 +143,7 @@ def CoursesWorkspace(user_service):
         return workspace
 
 
-@interface.implementer(ICoursesCollection)
+@interface.implementer(IAllCoursesCollection)
 class AllCoursesCollection(Contained):
     """
     Returns all available courses. If both tag and filter are provided, we
@@ -156,7 +158,17 @@ class AllCoursesCollection(Contained):
 
     __name__ = u'AllCourses'
 
-    accepts = ()
+    @Lazy
+    def accepts(self):
+        accepted_types = []
+        providers = component.subscribers([self], IAllCoursesCollectionAcceptsProvider)
+        for provider in providers:
+            if provider is None:
+                continue
+            for mime_type in provider:
+                if mime_type is not None:
+                    accepted_types.append(mime_type)
+        return set(accepted_types)
 
     name = alias('__name__', __name__)
 
