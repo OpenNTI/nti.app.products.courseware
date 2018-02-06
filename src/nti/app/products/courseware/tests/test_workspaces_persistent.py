@@ -26,6 +26,7 @@ from nti.testing.matchers import is_empty
 import fudge
 
 from zope import component
+from zope import interface
 
 from zope.securitypolicy.principalrole import principalRoleManager
 
@@ -35,6 +36,9 @@ from nti.app.products.courseware import VIEW_ENROLLED_WINDOWED
 from nti.app.products.courseware import VIEW_ALL_COURSES_WINDOWED
 from nti.app.products.courseware import VIEW_ALL_ENTRIES_WINDOWED
 from nti.app.products.courseware import VIEW_ADMINISTERED_WINDOWED
+
+from nti.app.products.courseware.interfaces import IAllCoursesCollection
+from nti.app.products.courseware.interfaces import IAllCoursesCollectionAcceptsProvider
 
 from nti.app.products.courseware.tests import PersistentInstructedCourseApplicationTestLayer
 
@@ -62,8 +66,48 @@ ITEMS = StandardExternalFields.ITEMS
 TOTAL = StandardExternalFields.TOTAL
 ITEM_COUNT = StandardExternalFields.ITEM_COUNT
 
+logger = __import__('logging').getLogger(__name__)
+
+@component.adapter(IAllCoursesCollection)
+@interface.implementer(IAllCoursesCollectionAcceptsProvider)
+class _EmptyAllCoursesCollectionAcceptsProvider(object):
+
+    def __init__(self, courses_collection):
+        self.courses_collection = courses_collection
+
+    def __iter__(self):
+        return iter([])
+
+@component.adapter(IAllCoursesCollection)
+@interface.implementer(IAllCoursesCollectionAcceptsProvider)
+class _NonEmptyAllCoursesCollectionAcceptsProvider(object):
+
+    def __init__(self, courses_collection):
+        self.courses_collection = courses_collection
+
+    def __iter__(self):
+        return iter(["application/vnd.nextthought.courses.courseinstance"])
+
 
 class TestPersistentWorkspaces(AbstractEnrollingBase, ApplicationLayerTest):
+
+    def setUp(self):
+        gsm = component.getGlobalSiteManager()
+        gsm.registerSubscriptionAdapter(_EmptyAllCoursesCollectionAcceptsProvider,
+                                        (IAllCoursesCollection,),
+                                        IAllCoursesCollectionAcceptsProvider)
+        gsm.registerSubscriptionAdapter(_NonEmptyAllCoursesCollectionAcceptsProvider,
+                                        (IAllCoursesCollection,),
+                                        IAllCoursesCollectionAcceptsProvider)
+
+    def tearDown(self):
+        gsm = component.getGlobalSiteManager()
+        gsm.unregisterSubscriptionAdapter(_EmptyAllCoursesCollectionAcceptsProvider,
+                                        (IAllCoursesCollection,),
+                                        IAllCoursesCollectionAcceptsProvider)
+        gsm.unregisterSubscriptionAdapter(_NonEmptyAllCoursesCollectionAcceptsProvider,
+                                        (IAllCoursesCollection,),
+                                        IAllCoursesCollectionAcceptsProvider)
 
     layer = PersistentInstructedCourseApplicationTestLayer
 
@@ -341,6 +385,24 @@ class TestPersistentWorkspaces(AbstractEnrollingBase, ApplicationLayerTest):
         assert_that(catalog_ws, not_none())
         catalog_collections = catalog_ws['Items']
         assert_that(catalog_collections, has_length(2))
+        courses_collection = next(
+			x for x in catalog_collections if x['Title'] == name
+		)
+        assert_that(courses_collection, not_none())
+        return courses_collection
+
+    def _get_courses_collection(self, name='AllCourses', environ=None):
+        """
+        Get the named collection in the `Courses` workspace in the service doc.
+        """
+        service_res = self.testapp.get('/dataserver2/service/',
+                                       extra_environ=environ)
+        service_res = service_res.json_body
+        workspaces = service_res['Items']
+        catalog_ws = next(x for x in workspaces if x['Title'] == 'Courses')
+        assert_that(catalog_ws, not_none())
+        catalog_collections = catalog_ws['Items']
+        # assert_that(catalog_collections, has_length(2))
         courses_collection = next(
 			x for x in catalog_collections if x['Title'] == name
 		)
@@ -654,3 +716,11 @@ class TestPersistentWorkspaces(AbstractEnrollingBase, ApplicationLayerTest):
 
         self.require_link_href_with_rel(col, VIEW_ALL_COURSES_WINDOWED)
         self.require_link_href_with_rel(col, VIEW_ALL_ENTRIES_WINDOWED)
+
+    @WithSharedApplicationMockDS(users=True, testapp=True)
+    def test_all_courses_collection_accepts(self):
+        expected_items = ["application/vnd.nextthought.courses.courseinstance"]
+        all_courses = self._get_courses_collection()
+        accepts = all_courses['accepts']
+        logger.info(u'test_all_courses_collection_accepts: %s', accepts)
+        assert_that(accepts, is_(expected_items))
