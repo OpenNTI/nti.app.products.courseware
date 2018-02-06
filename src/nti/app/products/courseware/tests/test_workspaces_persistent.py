@@ -66,17 +66,6 @@ ITEMS = StandardExternalFields.ITEMS
 TOTAL = StandardExternalFields.TOTAL
 ITEM_COUNT = StandardExternalFields.ITEM_COUNT
 
-logger = __import__('logging').getLogger(__name__)
-
-@component.adapter(IAllCoursesCollection)
-@interface.implementer(IAllCoursesCollectionAcceptsProvider)
-class _EmptyAllCoursesCollectionAcceptsProvider(object):
-
-    def __init__(self, courses_collection):
-        self.courses_collection = courses_collection
-
-    def __iter__(self):
-        return iter([])
 
 @component.adapter(IAllCoursesCollection)
 @interface.implementer(IAllCoursesCollectionAcceptsProvider)
@@ -93,18 +82,12 @@ class TestPersistentWorkspaces(AbstractEnrollingBase, ApplicationLayerTest):
 
     def setUp(self):
         gsm = component.getGlobalSiteManager()
-        gsm.registerSubscriptionAdapter(_EmptyAllCoursesCollectionAcceptsProvider,
-                                        (IAllCoursesCollection,),
-                                        IAllCoursesCollectionAcceptsProvider)
         gsm.registerSubscriptionAdapter(_NonEmptyAllCoursesCollectionAcceptsProvider,
                                         (IAllCoursesCollection,),
                                         IAllCoursesCollectionAcceptsProvider)
 
     def tearDown(self):
         gsm = component.getGlobalSiteManager()
-        gsm.unregisterSubscriptionAdapter(_EmptyAllCoursesCollectionAcceptsProvider,
-                                        (IAllCoursesCollection,),
-                                        IAllCoursesCollectionAcceptsProvider)
         gsm.unregisterSubscriptionAdapter(_NonEmptyAllCoursesCollectionAcceptsProvider,
                                         (IAllCoursesCollection,),
                                         IAllCoursesCollectionAcceptsProvider)
@@ -721,6 +704,4 @@ class TestPersistentWorkspaces(AbstractEnrollingBase, ApplicationLayerTest):
     def test_all_courses_collection_accepts(self):
         expected_items = ["application/vnd.nextthought.courses.courseinstance"]
         all_courses = self._get_courses_collection()
-        accepts = all_courses['accepts']
-        logger.info(u'test_all_courses_collection_accepts: %s', accepts)
-        assert_that(accepts, is_(expected_items))
+        assert_that(all_courses['accepts'], is_(expected_items))
