@@ -162,8 +162,10 @@ class AllCoursesCollection(Contained):
     def accepts(self):
         accepted_types = []
         providers = component.subscribers([self], IAllCoursesCollectionAcceptsProvider)
-        for mime_types in [provider() for provider in providers]:
-            for mime_type in mime_types:
+        for provider in providers:
+            if provider is None:
+                continue
+            for mime_type in provider:
                 if mime_type is not None:
                     accepted_types.append(mime_type)
         return set(accepted_types)
