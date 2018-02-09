@@ -294,10 +294,11 @@ class _AbstractSortingAndFilteringCoursesView(AbstractAuthenticatedView):
 
     def _sort_key(self, entry_tuple):
         start_date = entry_tuple[0].StartDate
-        return (start_date is not None, start_date, entry_tuple[0].ProviderUniqueID)
+        return (start_date is not None, start_date)
 
     def _secondary_sort_key(self, entry_tuple):
-        return entry_tuple[0].ProviderUniqueID
+        result = entry_tuple[0].ProviderUniqueID
+        return result and result.lower()
 
     @Lazy
     def now(self):
