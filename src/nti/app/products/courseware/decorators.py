@@ -205,13 +205,6 @@ class _CourseEnrollmentDecorator(Singleton):
         course = ICourseInstance(context)
         enrollments = ICourseEnrollments(course)
         result['TotalEnrolledCount'] = enrollments.count_enrollments()
-        # Legacy, non-interface methods
-        try:
-            result['TotalLegacyOpenEnrolledCount'] = enrollments.count_legacy_open_enrollments()
-            result['TotalLegacyForCreditEnrolledCount'] = enrollments.count_legacy_forcredit_enrollments()
-        except AttributeError:
-            pass
-
 
 @component.adapter(ICourseInstance)
 @interface.implementer(IExternalMappingDecorator)
