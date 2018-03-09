@@ -275,7 +275,6 @@ class AbstractEnrollingBase(object):
     expected_instance_href = '/dataserver2/users/CLC3403.ou.nextthought.com/LegacyCourses/CLC3403'
     expected_catalog_entry_href = '/dataserver2/users/sjohnson%40nextthought.com/Courses/AllCourses/CourseCatalog/tag%3Anextthought.com%2C2011-10%3AOU-HTML-CLC3403_LawAndJustice.course_info'
     expected_instance_class = 'LegacyCommunityBasedCourseInstance'
-    expected_for_credit_count = 0
 
     def _do_enroll(self, postdata):
         # First, we are enrolled in nothing
@@ -305,8 +304,6 @@ class AbstractEnrollingBase(object):
                                                       'href', unquote(
                                                           instance_href),
                                                       'TotalEnrolledCount', 1,
-                                                      'TotalLegacyOpenEnrolledCount', 1,
-                                                      'TotalLegacyForCreditEnrolledCount', self.expected_for_credit_count,
                                                       'Outline', has_entry('Class', 'CourseOutline'),
                                                       'LegacyScopes', has_key(
                                                           'public'),
