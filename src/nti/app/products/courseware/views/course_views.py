@@ -406,6 +406,30 @@ class CourseEnrollmentRosterGetView(AbstractAuthenticatedView,
 
     """
 
+    def _externalize(self, record):
+        """
+        NOTE: Rendering the same CourseInstance over and over is hugely
+        expensive, and massively bloats the response...77 students
+        can generate 12MB of response. So we don't include the course
+        instance.
+
+        Because we are now typically waking up the user profile from the
+        database *anyway* when we request enrollment rosters (to sort on),
+        it's relatively cheap and useful to the (current) UI to send back
+        the user details.
+        """
+        record.CourseInstance = None
+        external = to_external_object(record)
+        
+        try:
+            user = IUser(record)
+        except TypeError:
+            pass
+        else:
+            ext_profile = to_external_object(user, name='summary')
+            external['UserProfile'] = ext_profile
+        return external
+
     def __call__(self):
         request = self.request
         context = request.context.course
@@ -495,14 +519,7 @@ class CourseEnrollmentRosterGetView(AbstractAuthenticatedView,
             result['FilteredTotalItemCount'] = len(items)
 
         self._batch_tuple_iterable(result, items,
-                                   selector=lambda x: x)
-
-        # NOTE: Rendering the same CourseInstance over and over is hugely
-        # expensive, and massively bloats the response...77 students
-        # can generate 12MB of response. So we don't include the course
-        # instance
-        for i in result[ITEMS]:
-            i.CourseInstance = None
+                                   selector=self._externalize)
 
         # TODO: We have no last modified for this
         return result
