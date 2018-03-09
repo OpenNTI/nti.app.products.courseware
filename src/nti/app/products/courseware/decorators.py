@@ -365,13 +365,6 @@ class _CourseEnrollmentUserProfileDetailsDecorator(Singleton):
         entry = ICourseCatalogEntry(ICourseInstance(context, None), None)
         if hasattr(entry, 'ntiid'):
             result['CatalogEntryNTIID'] = entry.ntiid
-        try:
-            user = IUser(context)
-        except TypeError:
-            pass
-        else:
-            ext_profile = to_external_object(user, name='summary')
-            result['UserProfile'] = ext_profile
 
 
 @component.adapter(ICourseCatalogEntry)
