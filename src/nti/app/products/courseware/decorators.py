@@ -345,8 +345,7 @@ class _CourseOutlineContentsLinkDecorator(PreviewCourseAccessPredicateDecorator)
 
 
 @interface.implementer(IExternalMappingDecorator)
-@component.adapter(ICourseInstanceEnrollment)
-class _CourseEnrollmentUserProfileDetailsDecorator(Singleton):
+class _CourseWrapperLinkDecorator(Singleton):
     """
     Because we are now typically waking up the user profile from the
     database *anyway* when we request enrollment rosters (to sort on),
@@ -354,10 +353,48 @@ class _CourseEnrollmentUserProfileDetailsDecorator(Singleton):
     some extra details.
     """
 
+    def _should_inline_instance(self, context):
+        # TODO: Once the apps aren't relying on the inlined info
+        # tweak this predicate.  Be sure for ipad (non updated apps)
+        # we continue to inline for bwc.
+        return bool(getattr(context, 'CourseInstance', None))
+
+    def _should_inline_entry(self, context):
+        # Action at a distance here, but piggy back off the fact
+        # that if we don't have an Instance set (someone nulled it out)
+        # for perf reasons (i.e. roster) we probably also don't want
+        # the catalog
+        return bool(getattr(context, 'CourseInstance', None))
+
     def decorateExternalMapping(self, context, result):
-        entry = ICourseCatalogEntry(ICourseInstance(context, None), None)
+        course = ICourseInstance(context, None)
+        entry = ICourseCatalogEntry(course, None)
+        
         if hasattr(entry, 'ntiid'):
             result['CatalogEntryNTIID'] = entry.ntiid
+            
+        _links = result.setdefault(LINKS, [])
+
+        if entry:
+            _links.append( Link(entry, rel=VIEW_CATALOG_ENTRY) )
+        if course:
+            _links.append( Link(course, rel='CourseInstance') )
+
+        # In the past we inlined the CourseInstance on these objects.
+        # This turns out to be very expensive and not all that useful in the
+        # majority of cases clients are consuming these objects.  They're
+        # most often showed in lists/grids as entrance points of the course.
+        # We'd much rather make that fast and defer the rendering/fetching of
+        # the course instance until needed (via the link).  We no longer
+        # externalize that by default (which is a backwords incompatible change) so restore it here
+        # in a conditional decorator. 2018-03-13 -cutz
+        if 'CourseInstance' not in result:
+            result['CourseInstance'] = course if self._should_inline_instance(context) else None
+
+        # On the other hand it is useful in the majority of cases (everyhwere but the
+        # roster) to inline the CatalogEntry.  Inline that here also.
+        if 'CatalogEntry' not in result:
+            result['CatalogEntry'] = entry if self._should_inline_entry(context) else None
 
 
 @component.adapter(ICourseCatalogEntry)
