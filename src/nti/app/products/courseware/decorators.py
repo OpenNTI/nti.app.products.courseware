@@ -357,14 +357,14 @@ class _CourseWrapperLinkDecorator(Singleton):
         # TODO: Once the apps aren't relying on the inlined info
         # tweak this predicate.  Be sure for ipad (non updated apps)
         # we continue to inline for bwc.
-        return bool(getattr(context, 'CourseInstance', None))
+        return getattr(context, 'CourseInstance', None) is not None
 
     def _should_inline_entry(self, context):
         # Action at a distance here, but piggy back off the fact
         # that if we don't have an Instance set (someone nulled it out)
         # for perf reasons (i.e. roster) we probably also don't want
         # the catalog
-        return bool(getattr(context, 'CourseInstance', None))
+        return getattr(context, 'CourseInstance', None) is not None
 
     def decorateExternalMapping(self, context, result):
         course = ICourseInstance(context, None)
