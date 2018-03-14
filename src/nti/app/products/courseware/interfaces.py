@@ -168,6 +168,7 @@ class ICourseInstanceEnrollment(IShouldHaveTraversablePath,
     __name__ = interface.Attribute("The name of the enrollment is the same as the CourseInstance.")
 
     CourseInstance = Object(ICourseInstance)
+    CourseInstance.setTaggedValue('_ext_excluded_out', True)
 
     Username = TextLine(title=u"The user this is about",
                         required=False,
