@@ -666,7 +666,6 @@ def _course_from_request(request):
         return None
 
 
-@component.adapter(ICompletableItem)
 @interface.implementer(ICompletionContext)
 def _course_from_completable_item(item):
     """
