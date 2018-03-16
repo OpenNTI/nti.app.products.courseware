@@ -614,6 +614,9 @@
                 for="nti.dataserver.interfaces.IUser"
                 provides="nti.appserver.workspaces.interfaces.IPurchasedCatalogCollectionProvider" />
 
+    <!-- Completion -->
+    <include package=".completion" />
+    
 	<!-- Course Invitations -->
 	<include package=".invitations" />
 
