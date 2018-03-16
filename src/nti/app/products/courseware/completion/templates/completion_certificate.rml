@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE document SYSTEM "rml.dtd">
+<document filename="certificate.pdf"
+	  invariant="1"
+	  compression="1"
+	  creator="NextThought"
+	  author="NextThought"
+	  xmlns:tal="http://xml.zope.org/namespaces/tal"
+	  xmlns:metal="http://xml.zope.org/namespaces/metal"
+	  tal:attributes="title options/Title">
+  <template pagesize="(842,595)" leftMargin="72" showBoundary="0">
+    <pageTemplate id="landscape">
+      <pageGraphics>
+	<image file="reports/cert-background-resized.png" x="0" y="0" height="595" width="842"/>
+      </pageGraphics>
+      <frame id="heading" x1="36" y1="450" width="770" height="75"/>
+      <frame id="name" x1="36" y1="325" width="770" height="100"/>
+      <frame id="course" x1="36" y1="186" width="770" height="100"/>
+      <frame id="date" x1="36" y1="86" width="770" height="100"/>
+      <frame id="credit" x1="36" y1="36" width="770" height="50"/>
+      
+    </pageTemplate>
+  </template>
+
+  <stylesheet>
+    <paraStyle name="heading" fontName="Helvetica-Bold" fontSize="50" spaceAfter="50" alignment="center"/>
+    <paraStyle name="name" fontName="Helvetica-Bold" fontSize="36"  spaceAfter="36" alignment="center"/>
+    <paraStyle name="course" fontName="Helvetica-Bold" fontSize="30"   spaceAfter="30" alignment="center"/>
+    <paraStyle name="date" fontName="Helvetica-Bold" fontSize="20"  spaceAfter="30" alignment="center"/>
+    <paraStyle name="normal" fontName="Helvetica" fontSize="16"  alignment="center"/>
+    <paraStyle name="subtext" fontName="Helvetica-Oblique" fontFamily="italic" fontSize="12" spaceAfter="10" alignment="center"/>
+  </stylesheet>
+  <story>
+    <h1 style="heading">Certificate of Completion</h1>
+    <nextFrame/>
+    <para style="subtext">This certificate of completion is presented to</para>
+    <h1 style="name" tal:content="options/Name">Name</h1>
+    <nextFrame/>
+    <para style="subtext">for succesfully completing the <ommitted tal:replace="options/Brand">Brand</ommitted> course</para>
+    <h1 style="course" tal:content="options/Course">Course Title</h1>
+    <nextFrame/>
+    <para style="subtext">on</para>
+    <h1 style="date" tal:content="options/Date">February 20, 2018</h1>
+    <nextFrame/>
+    <para style="normal" tal:condition="options/Hours">This <ommitted tal:replace="options/Brand">Brand</ommitted> course offers <ommitted tal:replace="options/Hours">1</ommitted> hour(s) of credit</para>
+  </story>
+</document>
