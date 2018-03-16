@@ -1,0 +1,39 @@
+<!-- -*- mode: nxml -*- -->
+<configure	xmlns="http://namespaces.zope.org/zope"
+		xmlns:i18n="http://namespaces.zope.org/i18n"
+		xmlns:ext="http://nextthought.com/ntp/ext"
+		xmlns:zcml="http://namespaces.zope.org/zcml"
+		xmlns:cap="http://nextthought.com/ntp/capabilities"
+		i18n_domain="zope">
+
+  <include package="zope.component" file="meta.zcml" />
+  <include package="zope.security" file="meta.zcml" />
+  <include package="zope.component" />
+  <include package="zope.security" />
+
+  <!-- CompletionContext adapters, must be explicit on type due to resolution order -->
+  <adapter factory=".adapters._course_from_completable_item"
+	   provides="nti.contenttypes.completion.interfaces.ICompletionContext"
+	   for="nti.contenttypes.completion.interfaces.ICompletableItem" />
+
+  <adapter factory=".adapters._course_from_completable_item"
+	   provides="nti.contenttypes.completion.interfaces.ICompletionContext"
+	   for="nti.contenttypes.presentation.interfaces.INTIRelatedWorkRef" />
+
+  <adapter factory=".adapters._course_from_completable_item"
+	   provides="nti.contenttypes.completion.interfaces.ICompletionContext"
+	   for="nti.contenttypes.presentation.interfaces.INTIVideo" />
+
+  <adapter factory=".adapters._course_from_completable_item"
+	   provides="nti.contenttypes.completion.interfaces.ICompletionContext"
+	   for="nti.assessment.interfaces.IQAssignment" />
+
+  <adapter factory=".adapters._course_from_completable_item"
+	   provides="nti.contenttypes.completion.interfaces.ICompletionContext"
+	   for="nti.assessment.interfaces.IQuestionSet" />
+
+  <adapter factory=".adapters._course_from_completable_item"
+	   provides="nti.contenttypes.completion.interfaces.ICompletionContext"
+	   for="nti.contentlibrary.interfaces.IContentUnit" />
+
+</configure>

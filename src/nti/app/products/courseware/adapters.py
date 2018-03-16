@@ -56,9 +56,6 @@ from nti.contentlibrary.indexed_data import get_library_catalog
 from nti.contentlibrary.interfaces import IContentUnit
 from nti.contentlibrary.interfaces import IContentPackageBundle
 
-from nti.contenttypes.completion.interfaces import ICompletableItem
-from nti.contenttypes.completion.interfaces import ICompletionContext
-
 from nti.contenttypes.courses.common import get_course_site_name
 
 from nti.contenttypes.courses.index import IX_SITE
@@ -664,29 +661,6 @@ def _course_from_request(request):
         return request.course_traversal_context
     except AttributeError:
         return None
-
-
-@interface.implementer(ICompletionContext)
-def _course_from_completable_item(item):
-    """
-    Find a :class:`ICourseInstance` from the given :class:`ICompletableItem`.
-    """
-    course = None
-    # We would always prefer to get this off of calling context
-    request = get_current_request()
-    if request is not None:
-        course = ICourseInstance(request, None)
-    if course is None:
-        # Otherwise, item/user might be a best guess
-        user = get_remote_user(request)
-        if user is not None:
-            course = component.queryMultiAdapter((item, user),
-                                                 ICourseInstance)
-    if course is None:
-        # Or we blindly guess on and item that may be shared across
-        # multiple courses
-        course = ICourseInstance(item, None)
-    return course
 
 
 @component.adapter(ICourseInstance)

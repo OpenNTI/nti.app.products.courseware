@@ -349,31 +349,6 @@
 			 provides="nti.contenttypes.courses.interfaces.ICourseInstance"
 			 for="pyramid.interfaces.IRequest" />
 
-    <!-- CompletionContext adapters, must be explicit on type due to resolution order -->
-    <adapter factory=".adapters._course_from_completable_item"
-             provides="nti.contenttypes.completion.interfaces.ICompletionContext"
-             for="nti.contenttypes.completion.interfaces.ICompletableItem" />
-
-    <adapter factory=".adapters._course_from_completable_item"
-             provides="nti.contenttypes.completion.interfaces.ICompletionContext"
-             for="nti.contenttypes.presentation.interfaces.INTIRelatedWorkRef" />
-
-    <adapter factory=".adapters._course_from_completable_item"
-             provides="nti.contenttypes.completion.interfaces.ICompletionContext"
-             for="nti.contenttypes.presentation.interfaces.INTIVideo" />
-
-    <adapter factory=".adapters._course_from_completable_item"
-             provides="nti.contenttypes.completion.interfaces.ICompletionContext"
-             for="nti.assessment.interfaces.IQAssignment" />
-
-    <adapter factory=".adapters._course_from_completable_item"
-             provides="nti.contenttypes.completion.interfaces.ICompletionContext"
-             for="nti.assessment.interfaces.IQuestionSet" />
-
-    <adapter factory=".adapters._course_from_completable_item"
-             provides="nti.contenttypes.completion.interfaces.ICompletionContext"
-             for="nti.contentlibrary.interfaces.IContentUnit" />
-
 	<!--
 		Application (request) specific traversal for course instances and enrollments, etc.
 		Primarily, we want to bring the usual automatic-conversion to path adapters into
@@ -639,6 +614,9 @@
                 for="nti.dataserver.interfaces.IUser"
                 provides="nti.appserver.workspaces.interfaces.IPurchasedCatalogCollectionProvider" />
 
+    <!-- Completion -->
+    <include package=".completion" />
+    
 	<!-- Course Invitations -->
 	<include package=".invitations" />
 
