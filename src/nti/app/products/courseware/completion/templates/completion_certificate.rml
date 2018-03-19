@@ -7,7 +7,7 @@
 	  author="NextThought"
 	  xmlns:tal="http://xml.zope.org/namespaces/tal"
 	  xmlns:metal="http://xml.zope.org/namespaces/metal"
-	  tal:attributes="title options/Title">
+	  tal:attributes="title view/Title">
   <template pagesize="(842,595)" leftMargin="72" showBoundary="0">
     <pageTemplate id="landscape">
       <pageGraphics>
