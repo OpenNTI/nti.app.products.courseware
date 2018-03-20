@@ -39,6 +39,39 @@ from nti.contenttypes.completion.interfaces import IProgress
 
 from nti.contenttypes.courses.interfaces import ICourseCatalogEntry
 
+class EnrollmentProgressViewMixin(object):
+
+    @Lazy
+    def course(self):
+        return self.context.CourseInstance
+
+    @Lazy
+    def user(self):
+        username = self.context.Username
+        return User.get_user(username)
+
+    @Lazy
+    def course_policy(self):
+        return ICompletionContextCompletionPolicy(self.course, None)
+
+    @Lazy
+    def progess(self):
+        return component.queryMultiAdapter((self.user, self.course), IProgress)
+
+
+@view_config(route_name='objects.generic.traversal',
+             renderer="templates/completion_certificate.rml",
+             request_method='GET',
+             context=ICourseInstanceEnrollment,
+             name="Progress",
+             permission=nauth.ACT_READ)
+class CourseProgressView(AbstractAuthenticatedView, EnrollmentProgressViewMixin):
+
+    def __call__(self):
+        if self.course_policy is None:
+            raise hexc.HTTPNotFound()
+        return self.progress
+
 
 @view_config(route_name='objects.generic.traversal',
              renderer="templates/completion_certificate.rml",
@@ -46,7 +79,7 @@ from nti.contenttypes.courses.interfaces import ICourseCatalogEntry
              context=ICourseInstanceEnrollment,
              name="Certificate",
              permission=nauth.ACT_READ)
-class CompletionCertificateView(AbstractAuthenticatedView):
+class CompletionCertificateView(AbstractAuthenticatedView, EnrollmentProgressViewMixin):
 
     Title = u'Completion Certificate'
 
@@ -80,12 +113,10 @@ class CompletionCertificateView(AbstractAuthenticatedView):
 
     @Lazy
     def _course_completable_item(self):
-        policy = ICompletionContextCompletionPolicy(self.course, None)
-        if policy is None:
+        if self.course_policy is None:
             return None
 
-        progress = component.queryMultiAdapter((self.course, self.user, self.course), IProgress)
-        return policy.is_complete(progress)
+        return self.course_policy.is_complete(self.progress)
 
     def _filename(self, entry, suffix='completion', ext='pdf'):
         filename = '%s %s %s' % (self.user, entry.ProviderUniqueID, suffix)
