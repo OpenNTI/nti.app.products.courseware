@@ -35,7 +35,7 @@ from nti.app.base.abstract_views import AbstractAuthenticatedView
 from nti.app.products.courseware.interfaces import ICourseInstanceEnrollment
 
 from nti.contenttypes.completion.interfaces import ICompletionContextCompletionPolicy
-from nti.contenttypes.completion.interfaces import ICompletedItem
+from nti.contenttypes.completion.interfaces import IProgress
 
 from nti.contenttypes.courses.interfaces import ICourseCatalogEntry
 
@@ -84,7 +84,8 @@ class CompletionCertificateView(AbstractAuthenticatedView):
         if policy is None:
             return None
 
-        return component.queryMultiAdapter((self.course, self.user, self.course), ICompletedItem)
+        progress = component.queryMultiAdapter((self.course, self.user, self.course), IProgress)
+        return policy.is_complete(progress)
 
     def _filename(self, entry, suffix='completion', ext='pdf'):
         filename = '%s %s %s' % (self.user, entry.ProviderUniqueID, suffix)
