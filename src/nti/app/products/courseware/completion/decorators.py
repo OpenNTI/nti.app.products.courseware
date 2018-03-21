@@ -19,6 +19,9 @@ from nti.contenttypes.completion.interfaces import IProgress
 from nti.dataserver.users import User
 
 from nti.externalization.interfaces import IExternalMappingDecorator
+from nti.externalization.interfaces import StandardExternalFields
+
+LINKS = StandardExternalFields.LINKS
 
 @component.adapter(ICourseInstanceEnrollment)
 @interface.implementer(IExternalMappingDecorator)
@@ -27,19 +30,19 @@ class _CourseProgressDecorator(AbstractAuthenticatedRequestAwareDecorator):
     Decorates progress information on a course
     """
 
-    @property
-    def course(self):
-        return self.context.CourseInstance
+    def course(self, context):
+        return context.CourseInstance
 
-    @property
-    def user(self):
-        return User.get_user(self.context.Username)
+    def user(self, context):
+        return User.get_user(context.Username)
 
     def _predicate(self, context, unused_result):
-        return ICompletionContextCompletionPolicy(self.course, None) != None        
+        return ICompletionContextCompletionPolicy(self.course(context), None) != None        
 
     def _do_decorate_external(self, context, result):
+        _links = result.setdefault(LINKS, [])
+        _links.append(Link(context, rel='Progress', elements=('Progress',)))
         if 'CourseProgress' not in result:
-            progress = component.queryMultiAdapter((self.user, self.course),
+            progress = component.queryMultiAdapter((self.user(context), self.course(context)),
                                                    IProgress)
             result['CourseProgress'] = progress
