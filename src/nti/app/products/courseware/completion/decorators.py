@@ -16,6 +16,8 @@ from nti.app.renderers.decorators import AbstractAuthenticatedRequestAwareDecora
 from nti.contenttypes.completion.interfaces import ICompletionContextCompletionPolicy
 from nti.contenttypes.completion.interfaces import IProgress
 
+from nti.contenttypes.courses.interfaces import ICourseInstance
+
 from nti.dataserver.users import User
 
 from nti.externalization.interfaces import IExternalMappingDecorator
@@ -48,3 +50,17 @@ class _CourseProgressDecorator(AbstractAuthenticatedRequestAwareDecorator):
             progress = component.queryMultiAdapter((self.user(context), self.course(context)),
                                                    IProgress)
             result['CourseProgress'] = progress
+
+@component.adapter(ICourseInstance)
+@interface.implementer(IExternalMappingDecorator)
+class _CourseProgressStatsDecorator(AbstractAuthenticatedRequestAwareDecorator):
+    """
+    Decorates a progress stats link on the course
+    """
+
+    def _predicate(self, context, unused_result):
+        return ICompletionContextCompletionPolicy(context, None) != None        
+
+    def _do_decorate_external(self, context, result):
+        _links = result.setdefault(LINKS, [])
+        _links.append(Link(context, rel='ProgressStats', elements=('ProgressStats',)))

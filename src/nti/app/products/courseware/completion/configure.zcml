@@ -40,6 +40,11 @@
   <subscriber factory=".decorators._CourseProgressDecorator"
 	      provides="nti.externalization.interfaces.IExternalMappingDecorator"
 	      for="nti.app.products.courseware.interfaces.ICourseInstanceEnrollment
+		   pyramid.interfaces.IRequest" />
+
+  <subscriber factory=".decorators._CourseProgressStatsDecorator"
+	      provides="nti.externalization.interfaces.IExternalMappingDecorator"
+	      for="nti.contenttypes.courses.interfaces.ICourseInstance
 					 pyramid.interfaces.IRequest" />
 
 </configure>
