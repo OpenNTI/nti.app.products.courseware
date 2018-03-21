@@ -702,6 +702,6 @@ class TestPersistentWorkspaces(AbstractEnrollingBase, ApplicationLayerTest):
 
     @WithSharedApplicationMockDS(users=True, testapp=True)
     def test_all_courses_collection_accepts(self):
-        expected_items = ["application/vnd.nextthought.courses.courseinstance"]
+        expected_item = "application/vnd.nextthought.courses.courseinstance"
         all_courses = self._get_courses_collection()
-        assert_that(all_courses['accepts'], is_(expected_items))
+        assert_that(all_courses['accepts'], has_item(expected_item))
