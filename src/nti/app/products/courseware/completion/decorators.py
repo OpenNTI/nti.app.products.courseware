@@ -21,6 +21,8 @@ from nti.dataserver.users import User
 from nti.externalization.interfaces import IExternalMappingDecorator
 from nti.externalization.interfaces import StandardExternalFields
 
+from nti.links.links import Link
+
 LINKS = StandardExternalFields.LINKS
 
 @component.adapter(ICourseInstanceEnrollment)

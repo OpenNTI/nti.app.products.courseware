@@ -55,12 +55,12 @@ class EnrollmentProgressViewMixin(object):
         return ICompletionContextCompletionPolicy(self.course, None)
 
     @Lazy
-    def progess(self):
+    def progress(self):
         return component.queryMultiAdapter((self.user, self.course), IProgress)
 
 
 @view_config(route_name='objects.generic.traversal',
-             renderer="templates/completion_certificate.rml",
+             renderer="rest",
              request_method='GET',
              context=ICourseInstanceEnrollment,
              name="Progress",
