@@ -50,7 +50,6 @@ class _CourseProgressDecorator(AbstractAuthenticatedRequestAwareDecorator):
         return IUser(self.context)
 
     def _predicate(self, unused_context, unused_result):
-        import pdb; pdb.set_trace()
         return ICompletionContextCompletionPolicy(self.course, None) != None
 
     def _do_decorate_external(self, context, result):
