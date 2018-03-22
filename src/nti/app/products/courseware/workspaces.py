@@ -34,7 +34,6 @@ from nti.app.products.courseware import VIEW_ALL_ENTRIES_WINDOWED
 from nti.app.products.courseware import VIEW_ADMINISTERED_WINDOWED
 
 from nti.app.products.courseware.interfaces import ICoursesWorkspace
-from nti.app.products.courseware.interfaces import ICoursesCollection
 from nti.app.products.courseware.interfaces import IAllCoursesCollection
 from nti.app.products.courseware.interfaces import IAvailableCoursesProvider
 from nti.app.products.courseware.interfaces import ICoursesCatalogCollection

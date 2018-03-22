@@ -9,6 +9,8 @@ Decorators for providing access to the various course pieces.
 from zope import component
 from zope import interface
 
+from zope.cachedescriptors.property import Lazy
+
 from nti.app.products.courseware.interfaces import ICourseInstanceEnrollment
 
 from nti.app.renderers.decorators import AbstractAuthenticatedRequestAwareDecorator
@@ -18,7 +20,7 @@ from nti.contenttypes.completion.interfaces import IProgress
 
 from nti.contenttypes.courses.interfaces import ICourseInstance
 
-from nti.dataserver.users import User
+from nti.coremetadata.interfaces import IUser
 
 from nti.externalization.interfaces import IExternalMappingDecorator
 from nti.externalization.interfaces import StandardExternalFields
@@ -27,6 +29,7 @@ from nti.links.links import Link
 
 LINKS = StandardExternalFields.LINKS
 
+
 @component.adapter(ICourseInstanceEnrollment)
 @interface.implementer(IExternalMappingDecorator)
 class _CourseProgressDecorator(AbstractAuthenticatedRequestAwareDecorator):
@@ -34,22 +37,30 @@ class _CourseProgressDecorator(AbstractAuthenticatedRequestAwareDecorator):
     Decorates progress information on a course
     """
 
-    def course(self, context):
-        return context.CourseInstance
+    def __init__(self, context, request):
+        super(_CourseProgressDecorator, self).__init__(context, request)
+        self.context = context
 
-    def user(self, context):
-        return User.get_user(context.Username)
+    @Lazy
+    def course(self):
+        return ICourseInstance(self.context)
 
-    def _predicate(self, context, unused_result):
-        return ICompletionContextCompletionPolicy(self.course(context), None) != None        
+    @Lazy
+    def user(self):
+        return IUser(self.context)
+
+    def _predicate(self, unused_context, unused_result):
+        import pdb; pdb.set_trace()
+        return ICompletionContextCompletionPolicy(self.course, None) != None
 
     def _do_decorate_external(self, context, result):
         _links = result.setdefault(LINKS, [])
         _links.append(Link(context, rel='Progress', elements=('Progress',)))
         if 'CourseProgress' not in result:
-            progress = component.queryMultiAdapter((self.user(context), self.course(context)),
+            progress = component.queryMultiAdapter((self.user, self.course),
                                                    IProgress)
             result['CourseProgress'] = progress
+
 
 @component.adapter(ICourseInstance)
 @interface.implementer(IExternalMappingDecorator)
@@ -59,7 +70,7 @@ class _CourseProgressStatsDecorator(AbstractAuthenticatedRequestAwareDecorator):
     """
 
     def _predicate(self, context, unused_result):
-        return ICompletionContextCompletionPolicy(context, None) != None        
+        return ICompletionContextCompletionPolicy(context, None) != None
 
     def _do_decorate_external(self, context, result):
         _links = result.setdefault(LINKS, [])
