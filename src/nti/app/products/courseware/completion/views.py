@@ -204,7 +204,7 @@ class ProgressStatsView(AbstractAuthenticatedView):
 
         result['MaxPossibleProgress'] = total_students
         result['AbsoluteProgress'] = accumulated_progress
-        result['Progress'] = accumulated_progress / total_students if total_students else None
+        result['PercentageProgress'] = accumulated_progress / total_students if total_students else 0.0
         result['TotalUsers'] = total_students
         result['CountHasProgress'] = count_started
         result['CountCompleted'] = count_completed
