@@ -12,6 +12,10 @@ from __future__ import absolute_import
 from zope import component
 from zope import interface
 
+from zope.cachedescriptors.property import Lazy
+
+from zope.intid.interfaces import IIntIds
+
 from pyramid.threadlocal import get_current_request
 
 from nti.app.authentication import get_remote_user
@@ -35,6 +39,8 @@ from nti.dataserver.authorization_acl import ace_allowing
 from nti.dataserver.interfaces import IPrincipal
 from nti.dataserver.interfaces import IUser
 from nti.dataserver.interfaces import ILengthEnumerableEntityContainer
+
+from nti.dataserver.users import User
 
 
 @interface.implementer(ICompletionContext)
@@ -96,7 +102,43 @@ class CourseCompletedItemsACLProvider(object):
         return acl_from_aces(aces)
 
 @interface.implementer(ICompletionContextCohort)
-def course_cohort(course, scope=ES_PUBLIC):
-    sharing_scopes = course.SharingScopes
-    sharing_scopes.initScopes()
-    return ILengthEnumerableEntityContainer(sharing_scopes[scope])
+class CourseStudentCohort(object):
+
+    def __init__(self, course, scope=ES_PUBLIC):
+        self.course = course
+        self.scope = scope
+
+    @Lazy
+    def entities(self):
+        sharing_scopes = self.course.SharingScopes
+        sharing_scopes.initScopes()
+        return sharing_scopes[self.scope]
+
+    @Lazy
+    def instructors(self):
+        return {User.get_user(inst.id) for inst in self.course.instructors}
+
+    def __iter__(self):
+        inst_entities = self.instructors
+        for entity in self.entities:
+            if entity not in inst_entities:
+                yield entity
+
+    def iter_usernames(self):
+        inst_usernames = {inst.username for inst in self.instructors}
+        for username in self.entities.iter_usernames:
+            if username not in inst_usernames:
+                yield username
+
+    def iter_intids(self):
+        intids = component.getUtility(IIntIds)
+        isnt_intids = {intids.getId(inst) for inst in self.instructors}
+        for intid in self.entities.iter_intids:
+            if intid not in inst_intids:
+                yield intid
+
+    def __contains__(self, entity):
+        if entity in self.instructors:
+            return False
+        return entity in self.entities
+

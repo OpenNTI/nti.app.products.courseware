@@ -40,7 +40,7 @@
 	   provides="nti.app.contenttypes.completion.interfaces.ICompletionContextACLProvider"
 	   for="nti.contenttypes.courses.interfaces.ICourseInstance *" />
 
-  <adapter factory=".adapters.course_cohort"
+  <adapter factory=".adapters.CourseStudentCohort"
 	   provides="nti.app.contenttypes.completion.interfaces.ICompletionContextCohort"
 	   for="nti.contenttypes.courses.interfaces.ICourseInstance" />
 
