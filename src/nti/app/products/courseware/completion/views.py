@@ -70,20 +70,6 @@ class EnrollmentProgressViewMixin(object):
 
 
 @view_config(route_name='objects.generic.traversal',
-             renderer="rest",
-             request_method='GET',
-             context=ICourseInstanceEnrollment,
-             name="Progress",
-             permission=nauth.ACT_READ)
-class CourseProgressView(AbstractAuthenticatedView, EnrollmentProgressViewMixin):
-
-    def __call__(self):
-        if self.course_policy is None:
-            raise hexc.HTTPNotFound()
-        return self.progress
-
-
-@view_config(route_name='objects.generic.traversal',
              renderer="templates/completion_certificate.rml",
              request_method='GET',
              context=ICourseInstanceEnrollment,
@@ -155,60 +141,3 @@ class CompletionCertificateView(AbstractAuthenticatedView, EnrollmentProgressVie
             u'Hours': None
         }
 
-@view_config(route_name='objects.generic.traversal',
-             renderer="rest",
-             request_method='GET',
-             context=ICourseInstance,
-             name="ProgressStats",
-             permission=nauth.ACT_READ)
-class ProgressStatsView(AbstractAuthenticatedView):
-
-    DISTRIBUTION_BUCKET_SIZE = 5
-    
-    @Lazy
-    def course_policy(self):
-        return ICompletionContextCompletionPolicy(self.context, None)
-    
-    def __call__(self):
-        if self.course_policy is None:
-            raise hexc.HTTPNotFound()
-
-        enrollments = ICourseEnrollments(self.context)
-        total_students = enrollments.count_enrollments()
-        accumulated_progress = 0
-        count_started = 0
-        count_completed = 0
-        distribution = Counter()
-
-        for enrollment in enrollments.iter_enrollments():
-            user = IUser(enrollment.Principal)
-            progress = component.queryMultiAdapter((user, self.context), IProgress)
-            if progress.MaxPossibleProgress:
-                percentage_complete = float(progress.AbsoluteProgress) / float(progress.MaxPossibleProgress)
-            else:
-                percentage_complete = 0
-            bucketed = self.DISTRIBUTION_BUCKET_SIZE * math.floor(percentage_complete * 100 / self.DISTRIBUTION_BUCKET_SIZE)
-            distribution[bucketed] += 1
-            
-
-            accumulated_progress += percentage_complete
-
-            if progress.AbsoluteProgress:
-                count_started += 1
-            if self.course_policy.is_complete(progress) is not None:
-                count_completed += 1
-
-        result = LocatedExternalDict()
-        result.__name__ = self.request.view_name
-        result.__parent__ = self.request.context
-
-        result['MaxPossibleProgress'] = total_students
-        result['AbsoluteProgress'] = accumulated_progress
-        result['PercentageProgress'] = accumulated_progress / total_students if total_students else 0.0
-        result['TotalUsers'] = total_students
-        result['CountHasProgress'] = count_started
-        result['CountCompleted'] = count_completed
-        result['ProgressDistribution'] = {k/100.0: distribution[k]
-                                          for k in range(0,101,self.DISTRIBUTION_BUCKET_SIZE)}
-            
-        return result
