@@ -9,6 +9,8 @@ Decorators for providing access to the various course pieces.
 from zope import component
 from zope import interface
 
+from zope.cachedescriptors.property import Lazy
+
 from nti.app.contenttypes.completion.views import completed_items_link
 
 from nti.app.products.courseware.interfaces import ICourseInstanceEnrollment
