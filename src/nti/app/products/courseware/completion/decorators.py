@@ -63,7 +63,7 @@ class _CourseProgressDecorator(AbstractAuthenticatedRequestAwareDecorator):
             result['CourseProgress'] = progress
 
         # Provide a link to the user's completed items
-        _links.append(completed_items_link(self.course(context), self.user(context)))
+        _links.append(completed_items_link(self.course, self.user))
 
 @component.adapter(ICourseInstance)
 @interface.implementer(IExternalMappingDecorator)
