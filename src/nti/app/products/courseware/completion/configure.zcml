@@ -38,8 +38,11 @@
 
   <adapter factory=".adapters.CourseCompletedItemsACLProvider"
 	   provides="nti.app.contenttypes.completion.interfaces.ICompletionContextACLProvider"
-	   for="nti.contenttypes.courses.interfaces.ICourseInstance
-		nti.app.contenttypes.completion.interfaces.ICompletedItemsContext" />
+	   for="nti.contenttypes.courses.interfaces.ICourseInstance *" />
+
+  <adapter factory=".adapters.course_cohort"
+	   provides="nti.app.contenttypes.completion.interfaces.ICompletionContextCohort"
+	   for="nti.contenttypes.courses.interfaces.ICourseInstance" />
 
   <!-- Decorate course progress on enrollment record -->
   <subscriber factory=".decorators._CourseProgressDecorator"

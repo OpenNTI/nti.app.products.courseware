@@ -12,6 +12,7 @@ from zope import interface
 from zope.cachedescriptors.property import Lazy
 
 from nti.app.contenttypes.completion.views import completed_items_link
+from nti.app.contenttypes.completion.views import progress_link
 
 from nti.app.products.courseware.interfaces import ICourseInstanceEnrollment
 
@@ -56,7 +57,7 @@ class _CourseProgressDecorator(AbstractAuthenticatedRequestAwareDecorator):
 
     def _do_decorate_external(self, context, result):
         _links = result.setdefault(LINKS, [])
-        _links.append(Link(context, rel='Progress', elements=('Progress',)))
+        _links.append(progress_link(self.course, user=self.user, rel='Progress'))
         if 'CourseProgress' not in result:
             progress = component.queryMultiAdapter((self.user, self.course),
                                                    IProgress)
@@ -77,4 +78,4 @@ class _CourseProgressStatsDecorator(AbstractAuthenticatedRequestAwareDecorator):
 
     def _do_decorate_external(self, context, result):
         _links = result.setdefault(LINKS, [])
-        _links.append(Link(context, rel='ProgressStats', elements=('ProgressStats',)))
+        _links.append(progress_link(context, rel='ProgressStats'))
