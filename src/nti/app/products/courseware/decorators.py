@@ -117,6 +117,8 @@ from nti.externalization.singleton import Singleton
 
 from nti.links.links import Link
 
+from nti.links.externalization import render_link
+
 from nti.ntiids.ntiids import make_specific_safe
 
 from nti.ntiids.oids import to_external_ntiid_oid
@@ -738,7 +740,7 @@ class _CourseInstanceEnrollmentDecorator(Singleton):
         if IUser(context, None) is not None:
             context_link = Link(context)
             interface.alsoProvides(context_link, ILinkExternalHrefOnly)
-            result['href'] = context_link
+            result['href'] = render_link(context_link)
 
 
 @component.adapter(ICourseCatalogEntry)
