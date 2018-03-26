@@ -7,6 +7,7 @@ __docformat__ = "restructuredtext en"
 # disable: accessing protected members, too many methods
 # pylint: disable=W0212,R0904
 
+from hamcrest import contains_string
 from hamcrest import is_
 from hamcrest import not_none
 from hamcrest import has_entry
@@ -116,6 +117,7 @@ class TestCatalogViews(ApplicationLayerTest):
             access = self.testapp.get(access_href, extra_environ=environ)
             access = access.json_body
             assert_that(access[CLASS], is_('CourseInstanceEnrollment'))
+            assert_that(access['href'], contains_string('EnrolledCourses'))
 
             # Admins
             entry = self.testapp.get('/dataserver2/Objects/%s' % entry_ntiid)
