@@ -36,10 +36,12 @@ from nti.dataserver.users.interfaces import IFriendlyNamed
 
 from nti.app.base.abstract_views import AbstractAuthenticatedView
 
+from nti.app.contenttypes.completion.adapters import CompletionContextProgressFactory
+
 from nti.app.products.courseware.interfaces import ICourseInstanceEnrollment
 
-from nti.contenttypes.completion.interfaces import ICompletionContextCompletionPolicy
 from nti.contenttypes.completion.interfaces import IProgress
+from nti.contenttypes.completion.interfaces import ICompletionContextCompletionPolicy
 
 from nti.contenttypes.courses.interfaces import ICourseCatalogEntry
 from nti.contenttypes.courses.interfaces import ICourseInstance
@@ -48,6 +50,7 @@ from nti.contenttypes.courses.interfaces import ICourseEnrollments
 from nti.dataserver.interfaces import IUser
 
 from nti.externalization.interfaces import LocatedExternalDict
+
 
 class EnrollmentProgressViewMixin(object):
 
@@ -164,11 +167,11 @@ class CompletionCertificateView(AbstractAuthenticatedView, EnrollmentProgressVie
 class ProgressStatsView(AbstractAuthenticatedView):
 
     DISTRIBUTION_BUCKET_SIZE = 5
-    
+
     @Lazy
     def course_policy(self):
         return ICompletionContextCompletionPolicy(self.context, None)
-    
+
     def __call__(self):
         if self.course_policy is None:
             raise hexc.HTTPNotFound()
@@ -179,24 +182,33 @@ class ProgressStatsView(AbstractAuthenticatedView):
         count_started = 0
         count_completed = 0
         distribution = Counter()
+        required_item_providers = None
 
         for enrollment in enrollments.iter_enrollments():
             user = IUser(enrollment.Principal)
-            progress = component.queryMultiAdapter((user, self.context), IProgress)
-            if progress.MaxPossibleProgress:
+
+            # Attempt to re-use providers, which
+            progress_factory = CompletionContextProgressFactory(user,
+                                                                self.context,
+                                                                required_item_providers)
+            progress = progress_factory()
+            if required_item_providers is None:
+                required_item_providers = progress_factory.required_item_providers
+
+            try:
                 percentage_complete = float(progress.AbsoluteProgress) / float(progress.MaxPossibleProgress)
-            else:
+            except (TypeError, ZeroDivisionError, AttributeError):
                 percentage_complete = 0
             bucketed = self.DISTRIBUTION_BUCKET_SIZE * math.floor(percentage_complete * 100 / self.DISTRIBUTION_BUCKET_SIZE)
             distribution[bucketed] += 1
-            
 
             accumulated_progress += percentage_complete
 
-            if progress.AbsoluteProgress:
-                count_started += 1
-            if self.course_policy.is_complete(progress) is not None:
-                count_completed += 1
+            if progress is not None:
+                if progress.AbsoluteProgress:
+                    count_started += 1
+                if self.course_policy.is_complete(progress) is not None:
+                    count_completed += 1
 
         result = LocatedExternalDict()
         result.__name__ = self.request.view_name
@@ -210,5 +222,5 @@ class ProgressStatsView(AbstractAuthenticatedView):
         result['CountCompleted'] = count_completed
         result['ProgressDistribution'] = {k/100.0: distribution[k]
                                           for k in range(0,101,self.DISTRIBUTION_BUCKET_SIZE)}
-            
+
         return result
