@@ -55,4 +55,9 @@
 	      for="nti.contenttypes.courses.interfaces.ICourseInstance
 					 pyramid.interfaces.IRequest" />
 
+  <!-- Default completion policy for new courses -->
+  <subscriber handler="nti.contenttypes.completion.subscribers.completion_context_default_policy"
+              for="nti.contenttypes.courses.interfaces.ICourseInstance
+                   zope.lifecycleevent.interfaces.IObjectAddedEvent"/>
+
 </configure>
