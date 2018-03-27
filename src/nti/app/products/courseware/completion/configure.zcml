@@ -45,7 +45,7 @@
 	   for="nti.contenttypes.courses.interfaces.ICourseInstance" />
 
   <!-- Decorate course progress on enrollment record -->
-  <subscriber factory=".decorators._CourseProgressDecorator"
+  <subscriber factory=".decorators._CourseCompletionDecorator"
 	      provides="nti.externalization.interfaces.IExternalMappingDecorator"
 	      for="nti.app.products.courseware.interfaces.ICourseInstanceEnrollment
 		   pyramid.interfaces.IRequest" />
