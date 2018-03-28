@@ -24,6 +24,9 @@ from nti.app.contenttypes.completion.interfaces import ICompletionContextACLProv
 from nti.app.contenttypes.completion.interfaces import ICompletionContextCohort
 from nti.app.contenttypes.completion.interfaces import ICompletedItemsContext
 
+from nti.contenttypes.completion.authorization import ACT_VIEW_PROGRESS
+from nti.contenttypes.completion.authorization import ACT_LIST_PROGRESS
+
 from nti.contenttypes.courses.interfaces import ES_PUBLIC
 from nti.contenttypes.courses.interfaces import ICourseInstance
 
@@ -33,9 +36,10 @@ from nti.contenttypes.completion.interfaces import ICompletionContext
 from nti.dataserver import authorization
 
 from nti.dataserver.authorization_acl import acl_from_aces
-from nti.dataserver.authorization_acl import ACE_DENY_ALL
 from nti.dataserver.authorization_acl import ace_allowing
+from nti.dataserver.authorization_acl import ace_denying
 
+from nti.dataserver.interfaces import EVERYONE_GROUP_NAME
 from nti.dataserver.interfaces import IPrincipal
 from nti.dataserver.interfaces import IUser
 from nti.dataserver.interfaces import ILengthEnumerableEntityContainer
@@ -76,28 +80,28 @@ class CourseCompletedItemsACLProvider(object):
     @property
     def __acl__(self):
         # Admins and instructors have read and list
-        aces = [ace_allowing(authorization.ROLE_ADMIN, authorization.ACT_READ, type(self)),
-                ace_allowing(authorization.ROLE_ADMIN, authorization.ACT_LIST, type(self))]
+        aces = [ace_allowing(authorization.ROLE_ADMIN, ACT_VIEW_PROGRESS, type(self)),
+                ace_allowing(authorization.ROLE_ADMIN, ACT_LIST_PROGRESS, type(self))]
 
         for i in self.course.instructors:
-            aces.append(ace_allowing(i, authorization.ACT_READ, type(self)))
+            aces.append(ace_allowing(i, ACT_VIEW_PROGRESS, type(self)))
+            aces.append(ace_allowing(i, ACT_LIST_PROGRESS, type(self)))
 
-        # If our context adapts to a user only that user can read and list.
-        # Otherwise anyone enrolled can read
+        # If our context adapts to a user only that user can read and list.  All others
+        # get explicitly denied
         user = IUser(self.subcontext, None)
         if user is not None:
-            aces.append(ace_allowing(user, authorization.ACT_READ, type(self)))
-            aces.append(ace_allowing(user, authorization.ACT_LIST, type(self)))
-        else:
+            aces.append(ace_allowing(user, ACT_VIEW_PROGRESS, type(self)))
+            aces.append(ace_allowing(user, ACT_LIST_PROGRESS, type(self)))
+            aces.append(ace_denying(EVERYONE_GROUP_NAME, ACT_VIEW_PROGRESS, type(self)))
+            aces.append(ace_denying(EVERYONE_GROUP_NAME, ACT_LIST_PROGRESS, type(self)))
+        else: #Otherwise all enrolled users have read
             sharing_scopes = self.course.SharingScopes
             sharing_scopes.initScopes()
             public_scope = sharing_scopes[ES_PUBLIC]
             aces.append(ace_allowing(IPrincipal(public_scope),
-                                     authorization.ACT_READ,
-                                     type(self)))
-
-        # Stop propogration up the tree
-        aces.append(ACE_DENY_ALL)  
+                                     ACT_VIEW_PROGRESS,
+                                     type(self))) 
             
         return acl_from_aces(aces)
 
