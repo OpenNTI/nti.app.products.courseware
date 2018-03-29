@@ -124,6 +124,15 @@ class CompletionCertificateView(AbstractAuthenticatedView, EnrollmentProgressVie
         completed = self._course_completable_item.CompletedDate
         return completed.strftime('%B %d, %Y')
 
+    def _facilitators(self, entry):
+        facilitators = []
+        for i in entry.Instructors:
+            facilitator = {}
+            for attr in ('Name', 'JobTitle'):
+                facilitator[attr] = getattr(i, attr, '')
+            facilitators.append(facilitator)
+        return facilitators[:6]
+
     def __call__(self):
         if self._course_completable_item is None:
             raise hexc.HTTPNotFound()
@@ -138,6 +147,6 @@ class CompletionCertificateView(AbstractAuthenticatedView, EnrollmentProgressVie
             u'Name': self._name,
             u'Course': entry.title,
             u'Date': self._completion_date_string,
-            u'Hours': None
+            u'Facilitators': self._facilitators(entry)
         }
 
