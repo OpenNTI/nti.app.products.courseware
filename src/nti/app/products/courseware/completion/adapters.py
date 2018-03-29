@@ -20,9 +20,8 @@ from pyramid.threadlocal import get_current_request
 
 from nti.app.authentication import get_remote_user
 
-from nti.app.contenttypes.completion.interfaces import ICompletionContextACLProvider
 from nti.app.contenttypes.completion.interfaces import ICompletionContextCohort
-from nti.app.contenttypes.completion.interfaces import ICompletedItemsContext
+from nti.app.contenttypes.completion.interfaces import ICompletionContextACLProvider
 
 from nti.contenttypes.completion.authorization import ACT_VIEW_PROGRESS
 from nti.contenttypes.completion.authorization import ACT_LIST_PROGRESS
@@ -30,7 +29,6 @@ from nti.contenttypes.completion.authorization import ACT_LIST_PROGRESS
 from nti.contenttypes.courses.interfaces import ES_PUBLIC
 from nti.contenttypes.courses.interfaces import ICourseInstance
 
-from nti.contenttypes.completion.interfaces import ICompletableItem
 from nti.contenttypes.completion.interfaces import ICompletionContext
 
 from nti.dataserver import authorization
@@ -40,9 +38,9 @@ from nti.dataserver.authorization_acl import ace_allowing
 from nti.dataserver.authorization_acl import ace_denying
 
 from nti.dataserver.interfaces import EVERYONE_GROUP_NAME
-from nti.dataserver.interfaces import IPrincipal
+
 from nti.dataserver.interfaces import IUser
-from nti.dataserver.interfaces import ILengthEnumerableEntityContainer
+from nti.dataserver.interfaces import IPrincipal
 
 from nti.dataserver.users import User
 
@@ -76,7 +74,7 @@ class CourseCompletedItemsACLProvider(object):
     def __init__(self, course, subcontext):
         self.course = course
         self.subcontext = subcontext
-    
+
     @property
     def __acl__(self):
         # Admins and instructors have read and list
@@ -101,8 +99,8 @@ class CourseCompletedItemsACLProvider(object):
             public_scope = sharing_scopes[ES_PUBLIC]
             aces.append(ace_allowing(IPrincipal(public_scope),
                                      ACT_VIEW_PROGRESS,
-                                     type(self))) 
-            
+                                     type(self)))
+
         return acl_from_aces(aces)
 
 @interface.implementer(ICompletionContextCohort)
@@ -136,7 +134,7 @@ class CourseStudentCohort(object):
 
     def iter_intids(self):
         intids = component.getUtility(IIntIds)
-        isnt_intids = {intids.getId(inst) for inst in self.instructors}
+        inst_intids = {intids.getId(inst) for inst in self.instructors}
         for intid in self.entities.iter_intids:
             if intid not in inst_intids:
                 yield intid
