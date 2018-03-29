@@ -8,40 +8,55 @@
 	  xmlns:tal="http://xml.zope.org/namespaces/tal"
 	  xmlns:metal="http://xml.zope.org/namespaces/metal"
 	  tal:attributes="title view/Title">
-  <template pagesize="(842,595)" leftMargin="72" showBoundary="0">
+
+  <docinit>
+    <registerTTFont faceName="OpenSans" fileName="[nti.app.products.courseware]/completion/templates/fonts/OpenSans-Regular.ttf" />
+    <registerTTFont faceName="OpenSansSemiBold" fileName="[nti.app.products.courseware]/completion/templates/fonts/OpenSans-Semibold.ttf" />
+    <registerTTFont faceName="OpenSansBold" fileName="[nti.app.products.courseware]/completion/templates/fonts/OpenSans-Bold.ttf" />
+    <registerTTFont faceName="OpenSansLight" fileName="[nti.app.products.courseware]/completion/templates/fonts/OpenSans-Light.ttf" />
+  </docinit>
+  
+  <template pagesize="(1100,850)" leftMargin="72" showBoundary="0">
     <pageTemplate id="landscape">
       <pageGraphics>
-	<image file="reports/cert-background-resized.png" x="0" y="0" height="595" width="842"/>
+	<image file="[nti.app.products.courseware]/completion/templates/assets/sidebar-graphic.png" x="40" y="0" height="850" width="260"/>
       </pageGraphics>
-      <frame id="heading" x1="36" y1="450" width="770" height="75"/>
-      <frame id="name" x1="36" y1="325" width="770" height="100"/>
-      <frame id="course" x1="36" y1="186" width="770" height="100"/>
-      <frame id="date" x1="36" y1="86" width="770" height="100"/>
-      <frame id="credit" x1="36" y1="36" width="770" height="50"/>
-      
+      <frame id="heading" x1="331" y1="360" width="740" height="390"/>
+      <frame id="instructor-0" x1="331" y1="260" width="340" height="100"/>
+      <frame id="instructor-1" x1="686" y1="260" width="340" height="100"/>
+      <frame id="instructor-2" x1="331" y1="160" width="340" height="100"/>
+      <frame id="instructor-3" x1="686" y1="160" width="340" height="100"/>
+      <frame id="instructor-4" x1="331" y1="60" width="340" height="100"/>
+      <frame id="instructor-5" x1="686" y1="60" width="340" height="100"/>
     </pageTemplate>
   </template>
 
   <stylesheet>
-    <paraStyle name="heading" fontName="Helvetica-Bold" fontSize="50" spaceAfter="50" alignment="center"/>
-    <paraStyle name="name" fontName="Helvetica-Bold" fontSize="36"  spaceAfter="36" alignment="center"/>
-    <paraStyle name="course" fontName="Helvetica-Bold" fontSize="30"   spaceAfter="30" alignment="center"/>
-    <paraStyle name="date" fontName="Helvetica-Bold" fontSize="20"  spaceAfter="30" alignment="center"/>
-    <paraStyle name="normal" fontName="Helvetica" fontSize="16"  alignment="center"/>
-    <paraStyle name="subtext" fontName="Helvetica-Oblique" fontFamily="italic" fontSize="12" spaceAfter="10" alignment="center"/>
+    <paraStyle name="header" fontName="OpenSansSemiBold" fontSize="18" leftIndent="25" rightIndent="25" spaceBefore="101" leading="24" textColor="#494949"/>
+    <paraStyle name="name" fontName="OpenSansLight" fontSize="56" leftIndent="25" rightIndent="25" spaceBefore="10" leading="76" textColor="#494949" />
+    <paraStyle name="course" fontName="OpenSans" fontSize="32" leftIndent="25" rightIndent="25" spaceBefore="10" leading="43" textColor="#494949" />
+    <paraStyle name="date" fontName="OpenSans" fontSize="18" leftIndent="25" rightIndent="25" spaceBefore="30" leading="24" textColor="#b8b8b8" />
+    <paraStyle name="facilitator-name" fontName="OpenSansSemiBold" fontSize="14" leftIndent="25" rightIndent="25" spaceBefore="10" leading="19" textColor="#494949" />
+    <paraStyle name="facilitator-title" fontName="OpenSans" fontSize="12" leftIndent="25" rightIndent="25" spaceBefore="10" leading="17" textColor="#757474" />
   </stylesheet>
   <story>
-    <h1 style="heading">Certificate of Completion</h1>
-    <nextFrame/>
-    <para style="subtext">This certificate of completion is presented to</para>
-    <h1 style="name" tal:content="options/Name">Name</h1>
-    <nextFrame/>
-    <para style="subtext">for succesfully completing the <ommitted tal:replace="options/Brand">Brand</ommitted> course</para>
-    <h1 style="course" tal:content="options/Course">Course Title</h1>
-    <nextFrame/>
-    <para style="subtext">on</para>
-    <h1 style="date" tal:content="options/Date">February 20, 2018</h1>
-    <nextFrame/>
-    <para style="normal" tal:condition="options/Hours">This <ommitted tal:replace="options/Brand">Brand</ommitted> course offers <ommitted tal:replace="options/Hours">1</ommitted> hour(s) of credit</para>
+    <h3 style="header">Certificate of Completion</h3>
+    <h1 style="name" tal:content="options/Name">Huey Sooner</h1>
+    <h3 style="header"><omitted tal:replace="options/Brand">Janux</omitted> Course</h3>
+    <h2 style="course" tal:content="options/Course">Course Title</h2>
+    <h5 style="date">Awarded on <ommitted tal:replace="options/Date">March 19, 2008</ommitted></h5>
+    <tal:block tal:define="rows python:3;
+			   cols python:2;
+			   count python:len(options['Facilitators']);
+			   start python: (rows - ((count / cols) + (count % cols))) * cols if count else 0">
+      <setNextFrame tal:attributes="name python:'instructor-'+str(start)"/>
+    </tal:block>
+    <tal:block tal:repeat="facilitator python: options['Facilitators']">
+      <nextFrame />
+      <h4 style="facilitator-name" tal:content="facilitator/Name">Instructor</h4>
+      <para style="facilitator-title" tal:content="facilitator/JobTitle">
+	Instructor
+      </para>
+    </tal:block>
   </story>
 </document>
