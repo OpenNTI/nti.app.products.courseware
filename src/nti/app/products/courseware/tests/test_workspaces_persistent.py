@@ -287,7 +287,9 @@ class TestPersistentWorkspaces(AbstractEnrollingBase, ApplicationLayerTest):
             assert_that(course, has_entry('RoleName', is_(self.editor_role)))
 
         # Now validate our admin cannot add/update forums, topics and comments.
-        course_ext = res.json_body['Items'][0]['CourseInstance']
+        course_href = self.require_link_href_with_rel(res.json_body['Items'][0], 'CourseInstance')
+        res = self.testapp.get(course_href, extra_environ=admin_environ)
+        course_ext = res.json_body
         discussions = course_ext.get('Discussions')
         self.forbid_link_with_rel(discussions, 'edit')
         self.forbid_link_with_rel(discussions, 'add')

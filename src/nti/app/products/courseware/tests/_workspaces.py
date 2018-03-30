@@ -105,7 +105,9 @@ class AbstractEnrollingBase(object):
 
         role = res.json_body['Items'][0]
         assert_that(role, has_entry('RoleName', 'instructor'))
-        course_instance = role['CourseInstance']
+        res = self.testapp.get(self.require_link_href_with_rel(role, 'CourseInstance'),
+                               extra_environ=instructor_env)
+        course_instance = res.json_body
 
         assert_that(course_instance,
                     has_entries('Class', self.expected_instance_class,
@@ -299,8 +301,12 @@ class AbstractEnrollingBase(object):
         assert_that(res.json_body,
                     has_entries(
                         'Class', 'CourseInstanceEnrollment',
-                        'href', unquote(enrollment_href),
-                        'CourseInstance', has_entries('Class', self.expected_instance_class,
+                        'href', unquote(enrollment_href)))
+        assert_that(res.location, 
+                    is_('http://localhost' + unquote(enrollment_href)))
+
+        course = self.testapp.get(self.require_link_href_with_rel(res.json_body, 'CourseInstance'))
+        assert_that(course.json_body, has_entries('Class', self.expected_instance_class,
                                                       'href', unquote(
                                                           instance_href),
                                                       'TotalEnrolledCount', 1,
@@ -310,9 +316,8 @@ class AbstractEnrollingBase(object):
                                                       'LegacyScopes', has_key(
                                                           'restricted'),
                                                       'Links', has_item(has_entries('rel', 'CourseCatalogEntry',
-                                                                                    'href', unquote(entry_href))))))
-        assert_that(res.location, 
-                    is_('http://localhost' + unquote(enrollment_href)))
+                                                                                    'href', unquote(entry_href)))))
+        
 
         # We can resolve the record by NTIID/OID
         record_ntiid = res.json_body['NTIID']

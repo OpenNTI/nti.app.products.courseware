@@ -144,6 +144,9 @@ class AbstractMixin(object):
 		res = self.post_user_data(enrolled_course_id,
 								  extra_path='/Courses/EnrolledCourses',
 								  status=201)
+                res = res.json_body
+                course_href = self.require_link_href_with_rel(res, 'CourseInstance')
+                res = self.testapp.get(course_href)
 		self._extra_student_checks(res, inst_env)
 
 		# ... makes a comment in one of those discussions...
@@ -200,7 +203,7 @@ class AbstractMixin(object):
 	def _extra_student_checks(self, res, inst_env):
 		# everybody can be resolved by the student
 		# XXX: This test doesn't exactly belong here, but it's convenient
-		for o in res.json_body['CourseInstance']['SharingScopes']['Items'].values():
+		for o in res.json_body['SharingScopes']['Items'].values():
 
 			self.resolve_user(username=o['NTIID'])
 			self.resolve_user(username=o['Username'])
