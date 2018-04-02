@@ -36,6 +36,8 @@ from nti.dataserver.users.interfaces import IFriendlyNamed
 
 from nti.app.base.abstract_views import AbstractAuthenticatedView
 
+from nti.app.products.courseware import VIEW_CERTIFICATE
+
 from nti.app.products.courseware.interfaces import ICourseInstanceEnrollment
 
 from nti.contenttypes.completion.interfaces import ICompletionContextCompletionPolicy
@@ -73,7 +75,7 @@ class EnrollmentProgressViewMixin(object):
              renderer="templates/completion_certificate.rml",
              request_method='GET',
              context=ICourseInstanceEnrollment,
-             name="Certificate",
+             name=VIEW_CERTIFICATE,
              permission=nauth.ACT_READ)
 class CompletionCertificateView(AbstractAuthenticatedView, EnrollmentProgressViewMixin):
 

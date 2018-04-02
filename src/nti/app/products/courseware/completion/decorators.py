@@ -14,6 +14,8 @@ from zope.cachedescriptors.property import Lazy
 from nti.app.contenttypes.completion.views import progress_link
 from nti.app.contenttypes.completion.views import completed_items_link
 
+from nti.app.products.courseware import VIEW_CERTIFICATE
+
 from nti.app.products.courseware.interfaces import ICourseInstanceEnrollment
 
 from nti.app.renderers.decorators import AbstractAuthenticatedRequestAwareDecorator
@@ -27,6 +29,8 @@ from nti.coremetadata.interfaces import IUser
 
 from nti.externalization.interfaces import IExternalMappingDecorator
 from nti.externalization.interfaces import StandardExternalFields
+
+from nti.links.links import Link
 
 LINKS = StandardExternalFields.LINKS
 
@@ -50,19 +54,29 @@ class _CourseCompletionDecorator(AbstractAuthenticatedRequestAwareDecorator):
     def user(self):
         return IUser(self.context)
 
-    def has_policy(self):
-        return ICompletionContextCompletionPolicy(self.course, None) != None
+    @Lazy
+    def policy(self):
+        return ICompletionContextCompletionPolicy(self.course, None)
 
-    def _do_decorate_external(self, unused_context, result):
+    def has_policy(self):
+        return self.policy != None
+
+    @Lazy
+    def progress(self):
+        return component.queryMultiAdapter((self.user, self.course),
+                                           IProgress)
+
+    def _do_decorate_external(self, context, result):
         _links = result.setdefault(LINKS, [])
         # Provide a link to the user's completed items
         _links.append(completed_items_link(self.course, self.user))
         if self.has_policy():
             _links.append(progress_link(self.course, user=self.user, rel='Progress'))
             if 'CourseProgress' not in result:
-                progress = component.queryMultiAdapter((self.user, self.course),
-                                                       IProgress)
-                result['CourseProgress'] = progress
+                result['CourseProgress'] = self.progress
+
+            if self.policy.is_complete(self.progress):
+                _links.append(Link(context, rel=VIEW_CERTIFICATE, elements=("@@"+VIEW_CERTIFICATE, )))
 
 
 @component.adapter(ICourseInstance)
