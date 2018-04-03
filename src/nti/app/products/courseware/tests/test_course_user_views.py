@@ -77,7 +77,7 @@ class TestCourseUserViews(ApplicationLayerTest):
 			data = {'username':student, 'ntiid': self.course_ntiid, 'scope':ES_PUBLIC}
 			res = self.testapp.post_json(enroll_url, data)
 			if not course_href:
-				course_href = res.json_body['CourseInstance']['href']
+				course_href = self.require_link_href_with_rel(res.json_body, 'CourseInstance')
 
 		for captain in captains:
 			with mock_dataserver.mock_db_trans(self.ds):

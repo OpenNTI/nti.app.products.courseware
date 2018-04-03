@@ -102,7 +102,8 @@ class TestCatalogViews(ApplicationLayerTest):
             record = res[ITEMS][0]
             entry_ntiid = record['CatalogEntryNTIID']
             assert_that(entry_ntiid, not_none())
-            course_ext = record['CourseInstance']
+            course_href = self.require_link_href_with_rel(record, 'CourseInstance')
+            course_ext = self.testapp.get(course_href, extra_environ=environ).json_body
 
             # Enrolled only have access to their entry, so nothing is returned.
             families_href = self.require_link_href_with_rel(course_ext,

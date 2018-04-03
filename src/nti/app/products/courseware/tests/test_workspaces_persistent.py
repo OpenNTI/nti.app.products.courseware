@@ -262,6 +262,30 @@ class TestPersistentWorkspaces(AbstractEnrollingBase, ApplicationLayerTest):
 
     editor_role = 'editor'
 
+    @WithSharedApplicationMockDS(users=('arbitrary@nextthought.com',), testapp=True)
+    def test_inlined_instance(self):
+        # NT admins are automatically part of the role.
+        admin_environ = self._make_extra_environ(username='arbitrary@nextthought.com')
+        admin_href = '/dataserver2/users/arbitrary@nextthought.com/Courses/AdministeredCourses'
+
+        res = self.testapp.get('/dataserver2/users/arbitrary@nextthought.com/Courses/AdministeredCourses',
+                               extra_environ=admin_environ).json_body
+
+        # Verify the CourseInstance is no longer inlined
+        course = res['Items'][0]
+        assert_that(course, has_entry('CourseInstance', is_(None)))
+
+        # Unless we are the ipad and then we are inlined for bwc
+        headers = {'User-Agent': 'NTIFoundation DataLoader NextThought/1.10.0/1104 (iPad5,3; 11.2.6)'}
+        res = self.testapp.get('/dataserver2/users/arbitrary@nextthought.com/Courses/AdministeredCourses',
+                               headers=headers,
+                               extra_environ=admin_environ).json_body
+
+        course = res['Items'][0]
+        assert_that(course, has_entry('CourseInstance', is_not(None)))
+        
+        
+
     @WithSharedApplicationMockDS(users=('content_admin',), testapp=True)
     def test_content_admin(self):
         """
@@ -287,7 +311,9 @@ class TestPersistentWorkspaces(AbstractEnrollingBase, ApplicationLayerTest):
             assert_that(course, has_entry('RoleName', is_(self.editor_role)))
 
         # Now validate our admin cannot add/update forums, topics and comments.
-        course_ext = res.json_body['Items'][0]['CourseInstance']
+        course_href = self.require_link_href_with_rel(res.json_body['Items'][0], 'CourseInstance')
+        res = self.testapp.get(course_href, extra_environ=admin_environ)
+        course_ext = res.json_body
         discussions = course_ext.get('Discussions')
         self.forbid_link_with_rel(discussions, 'edit')
         self.forbid_link_with_rel(discussions, 'add')

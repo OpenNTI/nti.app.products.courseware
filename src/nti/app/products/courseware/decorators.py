@@ -346,6 +346,8 @@ class _CourseOutlineContentsLinkDecorator(PreviewCourseAccessPredicateDecorator)
         _links.append(link)
 
 
+_LEGACY_INLINE_COURSE_UA = u'NTIFoundation DataLoader NextThought'
+
 @interface.implementer(IExternalMappingDecorator)
 class _CourseWrapperLinkDecorator(Singleton):
     """
@@ -355,11 +357,17 @@ class _CourseWrapperLinkDecorator(Singleton):
     some extra details.
     """
 
+    def _request_needs_inline_instance(self, request):
+        ua = request.environ.get('HTTP_USER_AGENT', '')
+        return _LEGACY_INLINE_COURSE_UA in ua
+
     def _should_inline_instance(self, context):
         # TODO: Once the apps aren't relying on the inlined info
         # tweak this predicate.  Be sure for ipad (non updated apps)
         # we continue to inline for bwc.
-        return getattr(context, 'CourseInstance', None) is not None
+        request = get_current_request()
+        inline = self._request_needs_inline_instance(request)
+        return inline and getattr(context, 'CourseInstance', None) is not None
 
     def _should_inline_entry(self, context):
         # Action at a distance here, but piggy back off the fact

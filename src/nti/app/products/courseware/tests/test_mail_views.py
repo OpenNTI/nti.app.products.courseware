@@ -235,7 +235,11 @@ class TestMailViews(ApplicationLayerTest):
                                extra_environ=instructor_env)
 
         role = res.json_body['Items'][0]
-        course_instance = role['CourseInstance']
+
+        res = self.testapp.get(self.require_link_href_with_rel(role, 'CourseInstance'),
+                               extra_environ=instructor_env)
+        
+        course_instance = res.json_body
         roster_link = self.require_link_href_with_rel(course_instance,
                                                       'CourseEnrollmentRoster')
         email_link = self.require_link_href_with_rel(course_instance, 
@@ -371,7 +375,10 @@ class TestMailViews(ApplicationLayerTest):
                                extra_environ=instructor_env)
 
         role = res.json_body['Items'][0]
-        course_instance = role['CourseInstance']
+
+        course_href = self.require_link_href_with_rel(role, 'CourseInstance')
+        course_instance = self.testapp.get(course_href, extra_environ=instructor_env).json_body
+        
         roster_link = self.require_link_href_with_rel(
             course_instance, 'CourseEnrollmentRoster')
         self.require_link_href_with_rel(course_instance, VIEW_COURSE_MAIL)
