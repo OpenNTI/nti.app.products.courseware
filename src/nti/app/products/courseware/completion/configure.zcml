@@ -60,4 +60,14 @@
               for="nti.contenttypes.courses.interfaces.ICourseInstance
                    zope.lifecycleevent.interfaces.IObjectAddedEvent"/>
 
+  <!-- Exporter -->
+  <utility factory=".exporter.CourseCompletionExporter"
+           provides="nti.contenttypes.courses.interfaces.ICourseCompletionSectionExporter"
+           name="040:Course_Completion" />
+
+  <!-- Importer -->
+  <!-- Completion objects should be imported after assets/assignments/etc -->
+  <utility factory=".importer.CourseCompletionImporter"
+           provides="nti.contenttypes.courses.interfaces.ICourseCompletionSectionImporter"
+           name="040:Course_Completion" />
 </configure>
