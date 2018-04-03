@@ -262,6 +262,30 @@ class TestPersistentWorkspaces(AbstractEnrollingBase, ApplicationLayerTest):
 
     editor_role = 'editor'
 
+    @WithSharedApplicationMockDS(users=('arbitrary@nextthought.com',), testapp=True)
+    def test_inlined_instance(self):
+        # NT admins are automatically part of the role.
+        admin_environ = self._make_extra_environ(username='arbitrary@nextthought.com')
+        admin_href = '/dataserver2/users/arbitrary@nextthought.com/Courses/AdministeredCourses'
+
+        res = self.testapp.get('/dataserver2/users/arbitrary@nextthought.com/Courses/AdministeredCourses',
+                               extra_environ=admin_environ).json_body
+
+        # Verify the CourseInstance is no longer inlined
+        course = res['Items'][0]
+        assert_that(course, has_entry('CourseInstance', is_(None)))
+
+        # Unless we are the ipad and then we are inlined for bwc
+        headers = {'User-Agent': 'NTIFoundation DataLoader NextThought/1.10.0/1104 (iPad5,3; 11.2.6)'}
+        res = self.testapp.get('/dataserver2/users/arbitrary@nextthought.com/Courses/AdministeredCourses',
+                               headers=headers,
+                               extra_environ=admin_environ).json_body
+
+        course = res['Items'][0]
+        assert_that(course, has_entry('CourseInstance', is_not(None)))
+        
+        
+
     @WithSharedApplicationMockDS(users=('content_admin',), testapp=True)
     def test_content_admin(self):
         """
