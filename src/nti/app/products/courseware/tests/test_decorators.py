@@ -7,10 +7,11 @@ __docformat__ = "restructuredtext en"
 # disable: accessing protected members, too many methods
 # pylint: disable=W0212,R0904
 
-from hamcrest import none
-from hamcrest import is_not
-from hamcrest import not_none
 from hamcrest import assert_that
+from hamcrest import has_entry
+from hamcrest import is_not
+from hamcrest import none
+from hamcrest import not_none
 does_not = is_not
 
 import fudge
@@ -41,10 +42,10 @@ class TestCoursePreviewExternalization(ApplicationLayerTest):
     enrollment_ntiid = 'tag:nextthought.com,2011-10:NTI-CourseInfo-Fall2013_CLC3403_LawAndJustice'
 
     def _do_enroll(self, environ):
-        self.testapp.post_json(self.enrolled_courses_href,
-                               {'ntiid': self.enrollment_ntiid},
-                               status=201,
-                               extra_environ=environ)
+        return self.testapp.post_json(self.enrolled_courses_href,
+                                      {'ntiid': self.enrollment_ntiid},
+                                      status=201,
+                                      extra_environ=environ)
 
     def _get_course_ext(self, environ):
         if not self.course_ntiid:
@@ -91,3 +92,16 @@ class TestCoursePreviewExternalization(ApplicationLayerTest):
 
         # Preview mode w/instructor
         self._test_course_ext(instructor_env, is_visible=True)
+
+    @WithSharedApplicationMockDS(users=('test_student',), testapp=True)
+    def test_type_on_instance_link(self):
+        student_env = self._make_extra_environ('test_student')
+        enrollment = self._do_enroll(student_env).json_body
+
+        link = self.link_with_rel(enrollment, 'CourseInstance')
+        assert_that(link, not_none())
+        assert_that(link, has_entry('type', 'application/vnd.nextthought.courses.courseinstance'))
+        
+
+        
+    

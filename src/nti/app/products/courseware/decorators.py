@@ -119,6 +119,8 @@ from nti.links.links import Link
 
 from nti.links.externalization import render_link
 
+from nti.mimetype.mimetype import nti_mimetype_from_object
+
 from nti.ntiids.ntiids import make_specific_safe
 
 from nti.ntiids.oids import to_external_ntiid_oid
@@ -388,7 +390,9 @@ class _CourseWrapperLinkDecorator(Singleton):
         if entry:
             _links.append( Link(entry, rel=VIEW_CATALOG_ENTRY) )
         if course:
-            _links.append( Link(course, rel='CourseInstance') )
+            _links.append( Link(course,
+                                rel='CourseInstance',
+                                target_mime_type=nti_mimetype_from_object(course)) )
 
         # In the past we inlined the CourseInstance on these objects.
         # This turns out to be very expensive and not all that useful in the
