@@ -28,8 +28,11 @@ from nti.contenttypes.completion.authorization import ACT_LIST_PROGRESS
 
 from nti.contenttypes.courses.interfaces import ES_PUBLIC
 from nti.contenttypes.courses.interfaces import ICourseInstance
+from nti.contenttypes.courses.interfaces import ICourseCatalogEntry
 
+from nti.contenttypes.completion.interfaces import ICompletedItem
 from nti.contenttypes.completion.interfaces import ICompletionContext
+from nti.contenttypes.completion.interfaces import IContextNTIIDAdapter
 
 from nti.dataserver import authorization
 
@@ -42,7 +45,11 @@ from nti.dataserver.interfaces import EVERYONE_GROUP_NAME
 from nti.dataserver.interfaces import IUser
 from nti.dataserver.interfaces import IPrincipal
 
-from nti.dataserver.users import User
+from nti.dataserver.users.users import User
+
+from nti.traversal.traversal import find_interface
+
+logger = __import__('logging').getLogger(__name__)
 
 
 @interface.implementer(ICompletionContext)
@@ -91,9 +98,11 @@ class CourseCompletedItemsACLProvider(object):
         if user is not None:
             aces.append(ace_allowing(user, ACT_VIEW_PROGRESS, type(self)))
             aces.append(ace_allowing(user, ACT_LIST_PROGRESS, type(self)))
-            aces.append(ace_denying(EVERYONE_GROUP_NAME, ACT_VIEW_PROGRESS, type(self)))
-            aces.append(ace_denying(EVERYONE_GROUP_NAME, ACT_LIST_PROGRESS, type(self)))
-        else: #Otherwise all enrolled users have read
+            aces.append(ace_denying(EVERYONE_GROUP_NAME,
+                                    ACT_VIEW_PROGRESS, type(self)))
+            aces.append(ace_denying(EVERYONE_GROUP_NAME,
+                                    ACT_LIST_PROGRESS, type(self)))
+        else:  # Otherwise all enrolled users have read
             sharing_scopes = self.course.SharingScopes
             sharing_scopes.initScopes()
             public_scope = sharing_scopes[ES_PUBLIC]
@@ -102,6 +111,7 @@ class CourseCompletedItemsACLProvider(object):
                                      type(self)))
 
         return acl_from_aces(aces)
+
 
 @interface.implementer(ICompletionContextCohort)
 class CourseStudentCohort(object):
@@ -121,18 +131,21 @@ class CourseStudentCohort(object):
         return {User.get_user(inst.id) for inst in self.course.instructors}
 
     def __iter__(self):
+        # pylint: disable=not-an-iterable,unsupported-membership-test
         inst_entities = self.instructors
         for entity in self.entities:
             if entity not in inst_entities:
                 yield entity
 
     def iter_usernames(self):
+        # pylint: disable=not-an-iterable,no-member
         inst_usernames = {inst.username for inst in self.instructors}
         for username in self.entities.iter_usernames:
             if username not in inst_usernames:
                 yield username
 
     def iter_intids(self):
+        # pylint: disable=not-an-iterable,no-member
         intids = component.getUtility(IIntIds)
         inst_intids = {intids.getId(inst) for inst in self.instructors}
         for intid in self.entities.iter_intids:
@@ -140,7 +153,28 @@ class CourseStudentCohort(object):
                 yield intid
 
     def __contains__(self, entity):
+        # pylint: disable=unsupported-membership-test
         if entity in self.instructors:
             return False
         return entity in self.entities
 
+
+# catalog
+
+
+class _NTIID(object):
+
+    __slots__ = ('ntiid',)
+
+    def __init__(self, ntiid):
+        self.ntiid = ntiid
+
+
+@component.adapter(ICompletedItem)
+@interface.implementer(IContextNTIIDAdapter)
+def _completed_item_to_context_ntiid(item):
+    context = find_interface(item, ICompletionContext, strict=False)
+    if ICourseInstance.providedBy(context):
+        context = ICourseCatalogEntry(context, None)
+    ntiid = getattr(context, 'ntiid', None)
+    return _NTIID(ntiid) if ntiid else None

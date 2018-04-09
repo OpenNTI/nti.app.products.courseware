@@ -6,68 +6,72 @@
 		xmlns:cap="http://nextthought.com/ntp/capabilities"
 		i18n_domain="zope">
 
-  <include package="zope.component" file="meta.zcml" />
-  <include package="zope.security" file="meta.zcml" />
-  <include package="zope.component" />
-  <include package="zope.security" />
+	<include package="zope.component" file="meta.zcml" />
+	<include package="zope.security" file="meta.zcml" />
+	<include package="zope.component" />
+	<include package="zope.security" />
 
-  <!-- CompletionContext adapters, must be explicit on type due to resolution order -->
-  <adapter factory=".adapters._course_from_completable_item"
-	   provides="nti.contenttypes.completion.interfaces.ICompletionContext"
-	   for="nti.contenttypes.completion.interfaces.ICompletableItem" />
+	<!-- CompletionContext adapters, must be explicit on type due to resolution order -->
+	<adapter factory=".adapters._course_from_completable_item"
+			 provides="nti.contenttypes.completion.interfaces.ICompletionContext"
+			 for="nti.contenttypes.completion.interfaces.ICompletableItem" />
 
-  <adapter factory=".adapters._course_from_completable_item"
-	   provides="nti.contenttypes.completion.interfaces.ICompletionContext"
-	   for="nti.contenttypes.presentation.interfaces.INTIRelatedWorkRef" />
+	<adapter factory=".adapters._course_from_completable_item"
+			 provides="nti.contenttypes.completion.interfaces.ICompletionContext"
+			 for="nti.contenttypes.presentation.interfaces.INTIRelatedWorkRef" />
 
-  <adapter factory=".adapters._course_from_completable_item"
-	   provides="nti.contenttypes.completion.interfaces.ICompletionContext"
-	   for="nti.contenttypes.presentation.interfaces.INTIVideo" />
+	<adapter factory=".adapters._course_from_completable_item"
+			 provides="nti.contenttypes.completion.interfaces.ICompletionContext"
+			 for="nti.contenttypes.presentation.interfaces.INTIVideo" />
 
-  <adapter factory=".adapters._course_from_completable_item"
-	   provides="nti.contenttypes.completion.interfaces.ICompletionContext"
-	   for="nti.assessment.interfaces.IQAssignment" />
+	<adapter factory=".adapters._course_from_completable_item"
+			 provides="nti.contenttypes.completion.interfaces.ICompletionContext"
+			 for="nti.assessment.interfaces.IQAssignment" />
 
-  <adapter factory=".adapters._course_from_completable_item"
-	   provides="nti.contenttypes.completion.interfaces.ICompletionContext"
-	   for="nti.assessment.interfaces.IQuestionSet" />
+	<adapter factory=".adapters._course_from_completable_item"
+			 provides="nti.contenttypes.completion.interfaces.ICompletionContext"
+			 for="nti.assessment.interfaces.IQuestionSet" />
 
-  <adapter factory=".adapters._course_from_completable_item"
-	   provides="nti.contenttypes.completion.interfaces.ICompletionContext"
-	   for="nti.contentlibrary.interfaces.IContentUnit" />
+	<adapter factory=".adapters._course_from_completable_item"
+			 provides="nti.contenttypes.completion.interfaces.ICompletionContext"
+			 for="nti.contentlibrary.interfaces.IContentUnit" />
 
-  <adapter factory=".adapters.CourseCompletedItemsACLProvider"
-	   provides="nti.app.contenttypes.completion.interfaces.ICompletionContextACLProvider"
-	   for="nti.contenttypes.courses.interfaces.ICourseInstance *" />
+	<adapter factory=".adapters.CourseCompletedItemsACLProvider"
+			 provides="nti.app.contenttypes.completion.interfaces.ICompletionContextACLProvider"
+			 for="nti.contenttypes.courses.interfaces.ICourseInstance *" />
 
-  <adapter factory=".adapters.CourseStudentCohort"
-	   provides="nti.app.contenttypes.completion.interfaces.ICompletionContextCohort"
-	   for="nti.contenttypes.courses.interfaces.ICourseInstance" />
+	<adapter factory=".adapters.CourseStudentCohort"
+			 provides="nti.app.contenttypes.completion.interfaces.ICompletionContextCohort"
+			 for="nti.contenttypes.courses.interfaces.ICourseInstance" />
 
-  <!-- Decorate course progress on enrollment record -->
-  <subscriber factory=".decorators._CourseCompletionDecorator"
-	      provides="nti.externalization.interfaces.IExternalMappingDecorator"
-	      for="nti.app.products.courseware.interfaces.ICourseInstanceEnrollment
-		   pyramid.interfaces.IRequest" />
+	<!-- Decorate course progress on enrollment record -->
+	<subscriber factory=".decorators._CourseCompletionDecorator"
+				provides="nti.externalization.interfaces.IExternalMappingDecorator"
+				for="nti.app.products.courseware.interfaces.ICourseInstanceEnrollment
+				pyramid.interfaces.IRequest" />
 
-  <subscriber factory=".decorators._CourseProgressStatsDecorator"
-	      provides="nti.externalization.interfaces.IExternalMappingDecorator"
-	      for="nti.contenttypes.courses.interfaces.ICourseInstance
+	<subscriber factory=".decorators._CourseProgressStatsDecorator"
+				provides="nti.externalization.interfaces.IExternalMappingDecorator"
+				for="nti.contenttypes.courses.interfaces.ICourseInstance
 					 pyramid.interfaces.IRequest" />
 
-  <!-- Default completion policy for new courses -->
-  <subscriber handler="nti.contenttypes.completion.subscribers.completion_context_default_policy"
-              for="nti.contenttypes.courses.interfaces.ICourseInstance
-                   zope.lifecycleevent.interfaces.IObjectAddedEvent"/>
+	<!-- Default completion policy for new courses -->
+	<subscriber handler="nti.contenttypes.completion.subscribers.completion_context_default_policy"
+				for="nti.contenttypes.courses.interfaces.ICourseInstance
+					 zope.lifecycleevent.interfaces.IObjectAddedEvent"/>
 
-  <!-- Exporter -->
-  <utility factory=".exporter.CourseCompletionExporter"
-           provides="nti.contenttypes.courses.interfaces.ICourseCompletionSectionExporter"
-           name="040:Course_Completion" />
+	<!-- Exporter -->
+	<utility factory=".exporter.CourseCompletionExporter"
+			 provides="nti.contenttypes.courses.interfaces.ICourseCompletionSectionExporter"
+			 name="040:Course_Completion" />
 
-  <!-- Importer -->
-  <!-- Completion objects should be imported after assets/assignments/etc -->
-  <utility factory=".importer.CourseCompletionImporter"
-           provides="nti.contenttypes.courses.interfaces.ICourseCompletionSectionImporter"
-           name="040:Course_Completion" />
+	<!-- Importer -->
+	<!-- Completion objects should be imported after assets/assignments/etc -->
+	<utility factory=".importer.CourseCompletionImporter"
+			 provides="nti.contenttypes.courses.interfaces.ICourseCompletionSectionImporter"
+			 name="040:Course_Completion" />
+
+	<!-- Catalog -->
+	<adapter factory=".adapters._completed_item_to_context_ntiid" />
+
 </configure>
