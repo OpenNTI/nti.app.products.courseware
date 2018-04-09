@@ -131,19 +131,21 @@ class CourseStudentCohort(object):
         return {User.get_user(inst.id) for inst in self.course.instructors}
 
     def __iter__(self):
-        # pylint: disable=not-an-iterable
+        # pylint: disable=not-an-iterable,unsupported-membership-test
         inst_entities = self.instructors
         for entity in self.entities:
             if entity not in inst_entities:
                 yield entity
 
     def iter_usernames(self):
+        # pylint: disable=not-an-iterable,no-member
         inst_usernames = {inst.username for inst in self.instructors}
         for username in self.entities.iter_usernames:
             if username not in inst_usernames:
                 yield username
 
     def iter_intids(self):
+        # pylint: disable=not-an-iterable,no-member
         intids = component.getUtility(IIntIds)
         inst_intids = {intids.getId(inst) for inst in self.instructors}
         for intid in self.entities.iter_intids:
@@ -151,6 +153,7 @@ class CourseStudentCohort(object):
                 yield intid
 
     def __contains__(self, entity):
+        # pylint: disable=unsupported-membership-test
         if entity in self.instructors:
             return False
         return entity in self.entities
