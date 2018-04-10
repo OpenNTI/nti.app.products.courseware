@@ -28,6 +28,8 @@ from nti.appserver.policies.interfaces import ISitePolicyUserEventListener
 
 from nti.appserver.policies.site_policies import guess_site_display_name
 
+from nti.common.string import is_true
+
 from nti.dataserver import authorization as nauth
 
 from nti.dataserver.users import User
@@ -141,8 +143,10 @@ class CompletionCertificateView(AbstractAuthenticatedView, EnrollmentProgressVie
 
         entry = ICourseCatalogEntry(self.course)
 
-        response = self.request.response
-        response.content_disposition = 'attachment; filename="%s"' % self._filename(entry)
+        download = is_true(self.request.params.get('download', False))
+        if download:
+            response = self.request.response
+            response.content_disposition = 'attachment; filename="%s"' % self._filename(entry)
 
         return {
             u'Brand': self._brand,
