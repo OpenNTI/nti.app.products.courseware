@@ -283,8 +283,8 @@ class TestPersistentWorkspaces(AbstractEnrollingBase, ApplicationLayerTest):
 
         course = res['Items'][0]
         assert_that(course, has_entry('CourseInstance', is_not(None)))
-        
-        
+
+
 
     @WithSharedApplicationMockDS(users=('content_admin',), testapp=True)
     def test_content_admin(self):
@@ -483,7 +483,7 @@ class TestPersistentWorkspaces(AbstractEnrollingBase, ApplicationLayerTest):
         child2_ntiid = u'tag:nextthought.com,2011-10:NTI-CourseInfo-Fall2013_CLC3403_LawAndJustice_SubInstances_02_Restricted'
         all_ntiids = (entry_ntiid, child1_ntiid, child2_ntiid)
         entry = self.testapp.put_json(self.expected_catalog_entry_href,
-                                      {"tags": ('LAW', 'law', '.hidden')})
+                                      {"tags": ('LAW', '  law  ', '.hidden')})
         entry = entry.json_body
         assert_that(entry,
 					has_entry('tags', contains_inanyorder('law', '.hidden')))
