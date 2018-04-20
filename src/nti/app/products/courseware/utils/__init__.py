@@ -87,6 +87,12 @@ DEFAULT_EXP_TIME = 86400
 #: 1970-01-1
 ZERO_DATETIME = datetime.utcfromtimestamp(0)
 
+#: Course meta-info file name.
+COURSE_META_NAME = u'meta_info.json'
+
+#: Course meta-info export-hash key.
+EXPORT_HASH_KEY  = u'ExportHash'
+
 # BWC exports
 PreviewCourseAccessPredicate = PreviewCourseAccessPredicateDecorator
 

@@ -11,7 +11,12 @@ from __future__ import absolute_import
 import os
 import six
 
+from zope import component
+from zope import interface
+
 from zope.interface.interfaces import IMethod
+
+from zope.intid.interfaces import IIntIds
 
 from nti.app.contentfolder import ASSETS_FOLDER
 from nti.app.contentfolder import IMAGES_FOLDER
@@ -20,7 +25,21 @@ from nti.app.contentfolder import DOCUMENTS_FOLDER
 from nti.app.contentfolder.resources import is_internal_file_link
 from nti.app.contentfolder.resources import get_file_from_external_link
 
+from nti.app.products.courseware.utils import EXPORT_HASH_KEY
+from nti.app.products.courseware.utils import COURSE_META_NAME
+
+from nti.contenttypes.courses.exporter import BaseSectionExporter
+
+from nti.contenttypes.courses.interfaces import ICourseInstance
+from nti.contenttypes.courses.interfaces import ICourseSubInstance
+from nti.contenttypes.courses.interfaces import ICourseSectionExporter
 from nti.contenttypes.courses.interfaces import NTI_COURSE_FILE_SCHEME
+
+from nti.externalization.externalization import to_external_object
+
+from nti.externalization.interfaces import StandardExternalFields
+
+MIMETYPE = StandardExternalFields.MIMETYPE
 
 logger = __import__('logging').getLogger(__name__)
 
@@ -79,3 +98,30 @@ def save_resources_to_filer(provided, obj, filer, ext_obj=None):
             if ext_obj is not None:
                 ext_obj[name] = internal
     return result
+
+
+@interface.implementer(ICourseSectionExporter)
+class CourseMetaInfoExporter(BaseSectionExporter):
+    
+    def _get_export_hash(self, course, salt):
+        # This should ensure we only ever import this course/salt combo once
+        # per environment.
+        intids = component.queryUtility(IIntIds)
+        course_intid = intids.getId(course)
+        return '%s_%s' % (course_intid, salt)
+    
+    def export(self, context, filer, backup=True, salt=None):
+        filer.default_bucket = None
+        course = ICourseInstance(context)
+        if ICourseSubInstance.providedBy(course):
+            return
+        export_hash = self._get_export_hash(course, salt)
+        data = {
+            MIMETYPE: course.mime_type,
+            EXPORT_HASH_KEY: export_hash
+        }
+        ext_obj = to_external_object(data, decorate=False)
+        source = self.dump(ext_obj)
+        filer.save(COURSE_META_NAME, source,
+                   contentType="application/json",
+                   overwrite=True)
