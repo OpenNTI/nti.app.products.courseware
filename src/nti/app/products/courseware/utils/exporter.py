@@ -116,15 +116,18 @@ class CourseMetaInfoExporter(BaseSectionExporter):
         course_intid = intids.getId(course)
         return '%s_%s' % (course_intid, salt)
     
+    def _get_remote_user(self):
+        request = get_current_request()
+        user = request.remote_user
+        return getattr(user, 'username', user)
+    
     def export(self, context, filer, backup=True, salt=None):
         filer.default_bucket = None
         course = ICourseInstance(context)
         if ICourseSubInstance.providedBy(course):
             return
         export_hash = self._get_export_hash(course, salt)
-        request = get_current_request()
-        user = request.remote_user
-        user = getattr(user, 'username', user)
+        user = self._get_remote_user()
         timestamp = datetime.utcnow()
         data = {
             MIMETYPE: course.mime_type,

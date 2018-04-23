@@ -33,10 +33,12 @@ from nti.contenttypes.courses.tests import CourseLayerTest
 
 class TestExporter(CourseLayerTest):
     
-    @fudge.patch('nti.app.products.courseware.utils.exporter.CourseMetaInfoExporter._get_export_hash')
-    def test_export_course_meta_info(self, mock_get_export_hash):
+    @fudge.patch('nti.app.products.courseware.utils.exporter.CourseMetaInfoExporter._get_export_hash',
+                 'nti.app.products.courseware.utils.exporter.CourseMetaInfoExporter._get_remote_user')
+    def test_export_course_meta_info(self, mock_get_export_hash, mock_get_remote_user):
         expected_export_hash = u'export_hash'
         mock_get_export_hash.is_callable().returns(expected_export_hash)
+        mock_get_remote_user.is_callable().returns(u'Heisenberg')
         path = os.path.join(os.path.dirname(__file__),
                             'TestSynchronizeWithSubInstances',
                             'Spring2014',
