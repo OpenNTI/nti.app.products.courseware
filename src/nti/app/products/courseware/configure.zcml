@@ -634,5 +634,8 @@
 
 	<!-- Publishables -->
 	<utility factory=".publishables.CourseCatalogPublishables" name="courses" />
+	
+	<!-- Exporter -->
+	<utility factory=".utils.exporter.CourseMetaInfoExporter" name="009:Course_Metainfo" />
 
 </configure>
