@@ -30,6 +30,10 @@ from nti.contenttypes.courses.courses import ContentCourseInstance
 
 from nti.contenttypes.courses.tests import CourseLayerTest
 
+from nti.externalization.interfaces import StandardExternalFields
+
+CREATOR = StandardExternalFields.CREATOR
+
 
 class TestExporter(CourseLayerTest):
     
@@ -38,7 +42,8 @@ class TestExporter(CourseLayerTest):
     def test_export_course_meta_info(self, mock_get_export_hash, mock_get_remote_user):
         expected_export_hash = u'export_hash'
         mock_get_export_hash.is_callable().returns(expected_export_hash)
-        mock_get_remote_user.is_callable().returns(u'Heisenberg')
+        expected_user = u'Heisenberg'
+        mock_get_remote_user.is_callable().returns(expected_user)
         path = os.path.join(os.path.dirname(__file__),
                             'TestSynchronizeWithSubInstances',
                             'Spring2014',
@@ -57,6 +62,8 @@ class TestExporter(CourseLayerTest):
             export_meta = json.load(filer.get(path))
             export_hash = export_meta[EXPORT_HASH_KEY]
             assert_that(export_hash, is_(expected_export_hash))
+            user = export_meta[CREATOR]
+            assert_that(user, is_(expected_user))
         finally:
             shutil.rmtree(tmp_dir)
             
