@@ -11,6 +11,10 @@ from __future__ import absolute_import
 import os
 import six
 
+from datetime import datetime
+
+from pyramid.threadlocal import get_current_request
+
 from zope import component
 from zope import interface
 
@@ -39,7 +43,9 @@ from nti.externalization.externalization import to_external_object
 
 from nti.externalization.interfaces import StandardExternalFields
 
+CREATOR = StandardExternalFields.CREATOR
 MIMETYPE = StandardExternalFields.MIMETYPE
+CREATED_TIME = StandardExternalFields.CREATED_TIME
 
 logger = __import__('logging').getLogger(__name__)
 
@@ -116,9 +122,15 @@ class CourseMetaInfoExporter(BaseSectionExporter):
         if ICourseSubInstance.providedBy(course):
             return
         export_hash = self._get_export_hash(course, salt)
+        request = get_current_request()
+        user = request.remote_user
+        user = getattr(user, 'username', user)
+        timestamp = datetime.utcnow()
         data = {
             MIMETYPE: course.mime_type,
-            EXPORT_HASH_KEY: export_hash
+            EXPORT_HASH_KEY: export_hash,
+            CREATOR: user,
+            CREATED_TIME: timestamp
         }
         ext_obj = to_external_object(data, decorate=False)
         source = self.dump(ext_obj)
