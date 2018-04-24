@@ -44,7 +44,8 @@ class CourseCompletionExporter(BaseSectionExporter):
         """
         result = ntiid
         obj = find_object_with_ntiid(ntiid)
-        if obj is not None and not IContentBackedPresentationAsset(obj):
+        if      obj is not None \
+            and not IContentBackedPresentationAsset.providedBy(obj):
             result = self.hash_ntiid(ntiid, salt)
         return result
 
