@@ -658,7 +658,7 @@ class _SharingScopesAndDiscussionDecorator(PreviewCourseAccessPredicateDecorator
             # For the default if you're not enrolled for credit, match what
             # flat clients do.
             default_sharing_scope_ntiid = ls['public']
-            if user is not None:
+            if user is not None and not is_course_instructor(context, user):
                 if ES_CREDIT in scopes and user in IEntityContainer(scopes[ES_CREDIT]):
                     default_sharing_scope_ntiid = ls.get('restricted')
                 elif ES_PURCHASED in scopes and user in IEntityContainer(scopes[ES_PURCHASED]):
