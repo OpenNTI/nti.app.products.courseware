@@ -71,12 +71,16 @@ class _CourseCompletionDecorator(AbstractAuthenticatedRequestAwareDecorator):
         # Provide a link to the user's completed items
         _links.append(completed_items_link(self.course, self.user))
         if self.has_policy():
-            _links.append(progress_link(self.course, user=self.user, rel='Progress'))
+            _links.append(progress_link(self.course,
+                                        user=self.user,
+                                        rel='Progress'))
             if 'CourseProgress' not in result:
                 result['CourseProgress'] = self.progress
 
             if self.policy.is_complete(self.progress):
-                _links.append(Link(context, rel=VIEW_CERTIFICATE, elements=("@@"+VIEW_CERTIFICATE, )))
+                _links.append(Link(context,
+                                   rel=VIEW_CERTIFICATE,
+                                   elements=("@@"+VIEW_CERTIFICATE,)))
 
 
 @component.adapter(ICourseInstance)
