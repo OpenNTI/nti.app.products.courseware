@@ -138,7 +138,8 @@ class CompletionCertificateView(AbstractAuthenticatedView, EnrollmentProgressVie
         return facilitators[:6]
 
     def __call__(self):
-        if self._course_completable_item is None:
+        if     self._course_completable_item is None \
+            or not self.course_policy.offers_completion_certificate:
             raise hexc.HTTPNotFound()
 
         entry = ICourseCatalogEntry(self.course)
