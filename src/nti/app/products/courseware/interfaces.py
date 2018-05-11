@@ -217,6 +217,7 @@ class IAdministeredCoursesCollection(ICoursesCollection):
     (:class:`nti.contenttypes.courses.interfaces.ICourseInstanceAdministrativeRole`)
     """
 
+
 from nti.contentlibrary.interfaces import ILegacyCourseConflatedContentPackage
 
 

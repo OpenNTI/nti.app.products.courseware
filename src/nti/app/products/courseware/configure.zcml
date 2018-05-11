@@ -127,6 +127,11 @@
 				provides="nti.appserver.interfaces.IJoinableContextProvider"
 				for="*"/>
 
+    <!-- Credit -->
+    <subscriber factory=".credit.CourseCreditTranscript"
+                provides="nti.contenttypes.credit.interfaces.ICreditTranscript"
+                for="nti.coremetadata.interfaces.IUser" />
+
 	<!-- Hierarchy for UGD -->
 	<adapter factory=".adapters._hierarchy_from_obj_and_course" />
 
@@ -416,7 +421,7 @@
 	<subscriber factory=".decorators._CourseWrapperLinkDecorator"
 		    for="nti.contenttypes.courses.interfaces.ICourseInstanceAdministrativeRole"
 		    provides="nti.externalization.interfaces.IExternalMappingDecorator" />
-	
+
 	<subscriber factory=".decorators._CourseCatalogEntryLegacyDecorator"
 				provides="nti.externalization.interfaces.IExternalMappingDecorator" />
 
@@ -616,7 +621,7 @@
 
     <!-- Completion -->
     <include package=".completion" />
-    
+
 	<!-- Course Invitations -->
 	<include package=".invitations" />
 
@@ -634,7 +639,7 @@
 
 	<!-- Publishables -->
 	<utility factory=".publishables.CourseCatalogPublishables" name="courses" />
-	
+
 	<!-- Exporter -->
 	<utility factory=".utils.exporter.CourseMetaInfoExporter" name="009:Course_Metainfo" />
 
