@@ -38,6 +38,8 @@ from nti.dataserver.users.interfaces import IFriendlyNamed
 
 from nti.app.base.abstract_views import AbstractAuthenticatedView
 
+from nti.contenttypes.credit.interfaces import ICreditTranscript
+
 from nti.app.products.courseware import VIEW_CERTIFICATE
 
 from nti.app.products.courseware.interfaces import ICourseInstanceEnrollment
@@ -137,14 +139,16 @@ class CompletionCertificateView(AbstractAuthenticatedView, EnrollmentProgressVie
             facilitators.append(facilitator)
         return facilitators[:6]
 
-    def _awarded_credit(self, entry):
+    def _awarded_credit(self, transcript):
+        if not transcript:
+            return ()
         def _for_display(awarded_credit):
             return {
-                u'Amount': u'1.00',
-                u'Type': u'CEU',
-                u'Units': u'Hours'
+                u'Amount': u'%.2f' % awarded_credit.Amount,
+                u'Type': awarded_credit.credit_definition.credit_type.capitalize(),
+                u'Units': awarded_credit.credit_definiation.credit_units
             }
-        return [_for_display(credit) for credit in [1]]
+        return [_for_display(credit) for credit in transcript.iter_awarded_credits()]
 
     def __call__(self):
         if self._course_completable_item is None:
@@ -157,12 +161,14 @@ class CompletionCertificateView(AbstractAuthenticatedView, EnrollmentProgressVie
             response = self.request.response
             response.content_disposition = 'attachment; filename="%s"' % self._filename(entry)
 
+        transcript = component.queryMultiAdapter((self.user, self.course), ICreditTranscript)
+            
         return {
             u'Brand': self._brand,
             u'Name': self._name,
             u'Course': entry.title,
             u'Date': self._completion_date_string,
             u'Facilitators': self._facilitators(entry),
-            u'Credit': self._awarded_credit(entry)
+            u'Credit': self._awarded_credit(transcript)
         }
 
