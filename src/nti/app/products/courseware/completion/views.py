@@ -137,6 +137,15 @@ class CompletionCertificateView(AbstractAuthenticatedView, EnrollmentProgressVie
             facilitators.append(facilitator)
         return facilitators[:6]
 
+    def _awarded_credit(self, entry):
+        def _for_display(awarded_credit):
+            return {
+                u'Amount': u'1.00',
+                u'Type': u'CEU',
+                u'Units': u'Hours'
+            }
+        return [_for_display(credit) for credit in [1]]
+
     def __call__(self):
         if self._course_completable_item is None:
             raise hexc.HTTPNotFound()
@@ -153,6 +162,7 @@ class CompletionCertificateView(AbstractAuthenticatedView, EnrollmentProgressVie
             u'Name': self._name,
             u'Course': entry.title,
             u'Date': self._completion_date_string,
-            u'Facilitators': self._facilitators(entry)
+            u'Facilitators': self._facilitators(entry),
+            u'Credit': self._awarded_credit(entry)
         }
 
