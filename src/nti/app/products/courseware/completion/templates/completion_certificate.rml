@@ -35,16 +35,22 @@
     <paraStyle name="header" fontName="OpenSansSemiBold" fontSize="18" leftIndent="25" rightIndent="25" spaceBefore="101" leading="24" textColor="#494949"/>
     <paraStyle name="name" fontName="OpenSansLight" fontSize="56" leftIndent="25" rightIndent="25" spaceBefore="10" leading="76" textColor="#494949" />
     <paraStyle name="course" fontName="OpenSans" fontSize="32" leftIndent="25" rightIndent="25" spaceBefore="10" leading="43" textColor="#494949" />
-    <paraStyle name="date" fontName="OpenSans" fontSize="18" leftIndent="25" rightIndent="25" spaceBefore="30" leading="24" textColor="#b8b8b8" />
+    <paraStyle name="date" fontName="OpenSans" fontSize="18" leftIndent="25" rightIndent="25" spaceBefore="10" leading="24" textColor="#b8b8b8" />
+    <paraStyle name="credit" fontName="OpenSansSemiBold" fontSize="14" leftIndent="25" rightIndent="25" spaceBefore="10" leading="19" textColor="#494949" />
     <paraStyle name="facilitator-name" fontName="OpenSansSemiBold" fontSize="14" leftIndent="25" rightIndent="25" spaceBefore="10" leading="19" textColor="#494949" />
     <paraStyle name="facilitator-title" fontName="OpenSans" fontSize="12" leftIndent="25" rightIndent="25" spaceBefore="10" leading="17" textColor="#757474" />
   </stylesheet>
   <story>
     <h3 style="header">Certificate of Completion</h3>
     <h1 style="name" tal:content="options/Name">Huey Sooner</h1>
+    <h5 style="date">Awarded on <ommitted tal:replace="options/Date">March 19, 2008</ommitted></h5>
     <h3 style="header"><omitted tal:replace="options/Brand">Janux</omitted> Course</h3>
     <h2 style="course" tal:content="options/Course">Course Title</h2>
-    <h5 style="date">Awarded on <ommitted tal:replace="options/Date">March 19, 2008</ommitted></h5>
+    <h4 style="credit" tal:condition="options/Credit | nothing">
+      <tal:block tal:repeat="credit options/Credit">
+	Earned <omitted tal:replace="credit/Amount"/>  <omitted tal:replace="credit/Units"/> of <omitted tal:replace="credit/Type"/><omitted tal:condition="not:repeat/credit/end">, </omitted>
+      </tal:block>
+    </h4>
     <tal:block tal:define="rows python:3;
 			   cols python:2;
 			   count python:len(options['Facilitators']);
