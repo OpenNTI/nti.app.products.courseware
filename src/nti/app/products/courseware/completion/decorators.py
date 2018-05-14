@@ -77,7 +77,8 @@ class _CourseCompletionDecorator(AbstractAuthenticatedRequestAwareDecorator):
             if 'CourseProgress' not in result:
                 result['CourseProgress'] = self.progress
 
-            if self.policy.is_complete(self.progress):
+            if      self.policy.is_complete(self.progress) \
+                and self.policy.offers_completion_certificate:
                 _links.append(Link(context,
                                    rel=VIEW_CERTIFICATE,
                                    elements=("@@"+VIEW_CERTIFICATE,)))
