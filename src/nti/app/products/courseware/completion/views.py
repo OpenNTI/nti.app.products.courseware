@@ -144,9 +144,9 @@ class CompletionCertificateView(AbstractAuthenticatedView, EnrollmentProgressVie
             return ()
         def _for_display(awarded_credit):
             return {
-                u'Amount': u'%.2f' % awarded_credit.Amount,
-                u'Type': awarded_credit.credit_definition.credit_type.capitalize(),
-                u'Units': awarded_credit.credit_definiation.credit_units
+                u'Amount': u'%.2f' % awarded_credit.amount,
+                u'Type': awarded_credit.credit_definition.credit_type,
+                u'Units': awarded_credit.credit_definition.credit_units.capitalize()
             }
         return [_for_display(credit) for credit in transcript.iter_awarded_credits()]
 
