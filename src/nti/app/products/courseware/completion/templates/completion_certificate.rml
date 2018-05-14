@@ -41,6 +41,7 @@
     <paraStyle name="facilitator-title" fontName="OpenSans" fontSize="12" leftIndent="25" rightIndent="25" spaceBefore="10" leading="17" textColor="#757474" />
   </stylesheet>
   <story>
+    <keepInFrame frame="heading" onOverflow="shrink">
     <h3 style="header">Certificate of Completion</h3>
     <h1 style="name" tal:content="options/Name">Huey Sooner</h1>
     <h5 style="date">Awarded on <ommitted tal:replace="options/Date">March 19, 2008</ommitted></h5>
@@ -51,6 +52,7 @@
 	Earned <omitted tal:replace="credit/Amount"/>  <omitted tal:replace="credit/Units"/> of <omitted tal:replace="credit/Type"/><omitted tal:condition="not:repeat/credit/end">, </omitted>
       </tal:block>
     </h4>
+    </keepInFrame>
     <tal:block tal:define="rows python:3;
 			   cols python:2;
 			   count python:len(options['Facilitators']);
