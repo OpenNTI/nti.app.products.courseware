@@ -23,8 +23,6 @@ from nti.contenttypes.courses.utils import get_enrollments
 
 from nti.contenttypes.credit.interfaces import ICreditTranscript
 
-from nti.contenttypes.credit.credit import AwardableCredit
-
 from nti.coremetadata.interfaces import IUser
 
 from nti.dataserver.interfaces import IEntityContainer
@@ -32,12 +30,13 @@ from nti.dataserver.interfaces import IEntityContainer
 logger = __import__('logging').getLogger(__name__)
 
 
-@component.adapter(IUser)
+@component.adapter(IUser, ICourseInstance)
 @interface.implementer(ICreditTranscript)
-class CourseCreditTranscript(AwardableCredit):
+class UserCourseCreditTranscript(object):
 
-    def __init__(self, user):
+    def __init__(self, user, course):
         self.user = user
+        self.course = course
 
     def _build_awarded_credit(self, awardable_credit, completed_item, entry):
         return CourseAwardedCredit(title=entry.title,
@@ -45,17 +44,18 @@ class CourseCreditTranscript(AwardableCredit):
                                    amount=awardable_credit.amount,
                                    awarded_date=completed_item.CompletedDate)
 
-    def _get_course_completed_item(self, course):
-        progress = component.queryMultiAdapter((self.user, course), IProgress)
+    def _get_course_completed_item(self):
+        progress = component.queryMultiAdapter((self.user, self.course),
+                                               IProgress)
         if progress is not None:
             return progress.CompletedItem
 
-    def _get_awardable_credits(self, course, entry):
+    def _get_awardable_credits(self, entry):
         """
         If the course is completable, return the awardable credits applicable
         to our user.
         """
-        completion_policy = ICompletionContextCompletionPolicy(course,
+        completion_policy = ICompletionContextCompletionPolicy(self.course,
                                                                None)
         if completion_policy is not None:
             result = []
@@ -63,7 +63,7 @@ class CourseCreditTranscript(AwardableCredit):
             for awardable_credit in awardable_credits:
                 if awardable_credit.scope:
                     try:
-                        scope = course.SharingScopes[awardable_credit.scope]
+                        scope = self.course.SharingScopes[awardable_credit.scope]
                     except KeyError:
                         scope = None
                     if      scope is not None \
@@ -76,23 +76,42 @@ class CourseCreditTranscript(AwardableCredit):
     def iter_awarded_credits(self):
         """
         Returns an iterator over the :class:`ICourseAwardedCredit` objects for
+        this user and course.
+        """
+        result = []
+        entry = ICourseCatalogEntry(self.course, None)
+        awardable_credits = self._get_awardable_credits(entry)
+        # Must have credits to grant
+        if awardable_credits:
+            # Course must be completed by user
+            completed_item = self._get_course_completed_item()
+            if completed_item:
+                for awardable_credit in awardable_credits or ():
+                    awarded_credit = self._build_awarded_credit(awardable_credit,
+                                                                completed_item,
+                                                                entry)
+                    result.append(awarded_credit)
+        return result
+
+
+@component.adapter(IUser)
+@interface.implementer(ICreditTranscript)
+class AllCourseCreditTranscript(object):
+
+    def __init__(self, user):
+        self.user = user
+
+    def iter_awarded_credits(self):
+        """
+        Returns an iterator over the :class:`ICourseAwardedCredit` objects for
         this user.
         """
         result = []
         enrollments = get_enrollments(self.user)
         for record in enrollments or ():
             course = ICourseInstance(record, None)
-            entry = ICourseCatalogEntry(course, None)
-            awardable_credits = self._get_awardable_credits(course, entry)
-            # Must have credits to grant
-            if awardable_credits:
-                # Course must be completed by user
-                completed_item = self._get_course_completed_item(course)
-                if completed_item:
-                    for awardable_credit in awardable_credits or ():
-                        awarded_credit = self._build_awarded_credit(awardable_credit,
-                                                                    completed_item,
-                                                                    entry)
-                        result.append(awarded_credit)
+            course_transcript = component.getMultiAdapter((self.user, course),
+                                                          ICreditTranscript)
+            result.extend(course_transcript.iter_awarded_credits())
         return result
 

@@ -128,7 +128,9 @@
 				for="*"/>
 
     <!-- Credit -->
-    <subscriber factory=".credit.CourseCreditTranscript"
+    <adapter factory=".credit.UserCourseCreditTranscript" />
+
+    <subscriber factory=".credit.AllCourseCreditTranscript"
                 provides="nti.contenttypes.credit.interfaces.ICreditTranscript"
                 for="nti.coremetadata.interfaces.IUser" />
 
