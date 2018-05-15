@@ -23,6 +23,7 @@ from nti.app.renderers.decorators import AbstractAuthenticatedRequestAwareDecora
 from nti.contenttypes.completion.interfaces import IProgress
 from nti.contenttypes.completion.interfaces import ICompletionContextCompletionPolicy
 
+from nti.contenttypes.courses.interfaces import ICourseCatalogEntry
 from nti.contenttypes.courses.interfaces import ICourseInstance
 
 from nti.coremetadata.interfaces import IUser
@@ -97,3 +98,19 @@ class _CourseProgressStatsDecorator(AbstractAuthenticatedRequestAwareDecorator):
     def _do_decorate_external(self, context, result):
         _links = result.setdefault(LINKS, [])
         _links.append(progress_link(context, rel='ProgressStats'))
+
+
+@component.adapter(ICourseCatalogEntry)
+@interface.implementer(IExternalMappingDecorator)
+class _CatalogCertificateDecorator(_CourseCompletionDecorator):
+    """
+    Decorates a progress stats link on the course
+    """
+
+    def _predicate(self, context, unused_result):
+        return self.policy is not None
+
+    def _do_decorate_external(self, context, result):
+        if 'AwardsCertificate' not in result \
+           and getattr(self.policy, 'offers_completion_certificate', False):
+            result['AwardsCertificate'] = True

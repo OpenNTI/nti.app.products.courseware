@@ -53,7 +53,12 @@
 	<subscriber factory=".decorators._CourseProgressStatsDecorator"
 				provides="nti.externalization.interfaces.IExternalMappingDecorator"
 				for="nti.contenttypes.courses.interfaces.ICourseInstance
-					 pyramid.interfaces.IRequest" />
+				     pyramid.interfaces.IRequest" />
+
+	<subscriber factory=".decorators._CatalogCertificateDecorator"
+		    provides="nti.externalization.interfaces.IExternalMappingDecorator"
+		    for="nti.contenttypes.courses.interfaces.ICourseCatalogEntry
+			 pyramid.interfaces.IRequest" />
 
 	<!-- Default completion policy for new courses -->
 	<subscriber handler="nti.contenttypes.completion.subscribers.completion_context_default_policy"
