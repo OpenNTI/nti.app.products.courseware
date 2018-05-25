@@ -440,7 +440,8 @@ class CourseEnrollmentRosterGetView(AbstractAuthenticatedView,
         result.__parent__ = course
         items = result[ITEMS] = []
 
-        enrollments_iter = ICourseEnrollments(course).iter_enrollments()
+        enrollments = ICourseEnrollments(course)
+        enrollments_iter = enrollments.iter_enrollments()
 
         filter_name = self.request.params.get('filter')
         sort_name = self.request.params.get('sortOn')
@@ -480,7 +481,7 @@ class CourseEnrollmentRosterGetView(AbstractAuthenticatedView,
                                                 ICourseInstanceEnrollment)
                       for x in enrollments_iter))
 
-        result['TotalItemCount'] = len(result['Items'])
+        result['TotalItemCount'] = enrollments.count_enrollments()
         result['FilteredTotalItemCount'] = result['TotalItemCount']
 
         # We could theoretically be more efficient with the user of
@@ -518,8 +519,13 @@ class CourseEnrollmentRosterGetView(AbstractAuthenticatedView,
             items = matched_items
             result['FilteredTotalItemCount'] = len(items)
 
-        self._batch_tuple_iterable(result, items,
-                                   selector=self._externalize)
+        self._batch_tuple_iterable(result, items, selector=lambda x: x)
+
+        # Notice we don't use `_batch_tuple_iterable`'s selector to perform the
+        # externalization. That selector gets called on every item from the beginnning
+        # of the iterable up to batchStart + batchSize.  That's a lot of unnecessary
+        # and expensive externalization.
+        result['Items'] = [self._externalize(x) for x in result['Items']]
 
         # TODO: We have no last modified for this
         return result
