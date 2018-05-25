@@ -529,9 +529,10 @@ class CourseEnrollmentRosterGetView(AbstractAuthenticatedView,
         # is good enough for now. Sorting is maintained from above.
         # Note that it will blow up once we have non-legacy courses.
 
-        record_filter = self._record_filter(filter_name, username_search_term)
-        enrollments_iter = [x for x in enrollments_iter if record_filter(x)]
-        result['FilteredTotalItemCount'] = len(enrollments_iter)
+        if filter_name or username_search_term: #avoid reifying the list again if we don't have to
+            record_filter = self._record_filter(filter_name, username_search_term)
+            enrollments_iter = [x for x in enrollments_iter if record_filter(x)]
+            result['FilteredTotalItemCount'] = len(enrollments_iter)
         
         self._batch_items_iterable(result, enrollments_iter)
 
