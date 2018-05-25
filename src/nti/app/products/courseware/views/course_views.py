@@ -15,6 +15,8 @@ from collections import namedtuple
 
 from numbers import Number
 
+import itertools
+
 from zope import component
 from zope import interface
 
@@ -330,6 +332,11 @@ class CourseEnrollmentRosterPathAdapter(Contained):
         raise KeyError(username)
 
 
+ENROLLMENT_STATUS_FILTER_MAP = {
+    'LegacyEnrollmentStatusForCredit' : 'ForCredit',
+    'LegacyEnrollmentStatusOpen': 'Open'
+}
+
 @view_config(route_name='objects.generic.traversal',
              renderer='rest',
              request_method='GET',
@@ -418,6 +425,7 @@ class CourseEnrollmentRosterGetView(AbstractAuthenticatedView,
         it's relatively cheap and useful to the (current) UI to send back
         the user details.
         """
+        record = ICourseInstanceEnrollment(record)
         record.CourseInstance = None
         external = to_external_object(record)
         
@@ -430,6 +438,39 @@ class CourseEnrollmentRosterGetView(AbstractAuthenticatedView,
             external['UserProfile'] = ext_profile
         return external
 
+    def _build_scope_filter(self, filter_name):
+        filter_legacy_status = None
+        if filter_name:
+            try:
+                filter_legacy_status = ENROLLMENT_STATUS_FILTER_MAP[filter_name]
+            except KeyError:
+                raise hexc.HTTPBadRequest("Unsupported filteroption")
+
+        if filter_legacy_status:
+            def _filter(x):
+                x = ICourseInstanceEnrollment(x)
+                return x.LegacyEnrollmentStatus == filter_legacy_status
+            return _filter
+        return lambda x: x
+
+    def _build_user_filter(self, username_search_term):
+        if username_search_term:
+            policy = component.getAdapter(self.remoteUser,
+                                          IIntIdUserSearchPolicy,
+                                          name='comprehensive')
+            id_util = component.getUtility(IIntIds)
+            matched_ids = policy.query_intids(username_search_term.lower())
+            def _filter(x):
+                uid = id_util.queryId(IUser(x, None))
+                return uid is not None and uid in matched_ids
+            return _filter
+        return lambda x: True
+
+    def _record_filter(self, filter_name, username_search_term):
+        scope = self._build_scope_filter(filter_name)
+        user = self._build_user_filter(username_search_term)
+        return lambda x: scope(x) and user(x)
+
     def __call__(self):
         request = self.request
         context = request.context.course
@@ -438,7 +479,7 @@ class CourseEnrollmentRosterGetView(AbstractAuthenticatedView,
         result = LocatedExternalDict()
         result.__name__ = request.view_name
         result.__parent__ = course
-        items = result[ITEMS] = []
+       
 
         enrollments = ICourseEnrollments(course)
         enrollments_iter = enrollments.iter_enrollments()
@@ -477,12 +518,8 @@ class CourseEnrollmentRosterGetView(AbstractAuthenticatedView,
             # before anybody noticed
             raise hexc.HTTPBadRequest("Unsupported sort option")
 
-        items.extend((component.getMultiAdapter((course, x),
-                                                ICourseInstanceEnrollment)
-                      for x in enrollments_iter))
 
         result['TotalItemCount'] = enrollments.count_enrollments()
-        result['FilteredTotalItemCount'] = result['TotalItemCount']
 
         # We could theoretically be more efficient with the user of
         # the IEnumerableEntity container and the scopes, especially
@@ -492,34 +529,11 @@ class CourseEnrollmentRosterGetView(AbstractAuthenticatedView,
         # is good enough for now. Sorting is maintained from above.
         # Note that it will blow up once we have non-legacy courses.
 
-        if filter_name == 'LegacyEnrollmentStatusForCredit':
-            items = [
-                x for x in items if x.LegacyEnrollmentStatus == 'ForCredit'
-            ]
-            result['FilteredTotalItemCount'] = len(items)
-        elif filter_name == 'LegacyEnrollmentStatusOpen':
-            items = [
-                x for x in items if x.LegacyEnrollmentStatus == 'Open'
-            ]
-            result['FilteredTotalItemCount'] = len(items)
-        elif filter_name:  # pragma: no cover
-            raise hexc.HTTPBadRequest("Unsupported filteroption")
-
-        if username_search_term:
-            matched_items = []
-            policy = component.getAdapter(self.remoteUser,
-                                          IIntIdUserSearchPolicy,
-                                          name='comprehensive')
-            id_util = component.getUtility(IIntIds)
-            matched_ids = policy.query_intids(username_search_term.lower())
-            for x in items:
-                uid = id_util.queryId(IUser(x, None))
-                if uid is not None and uid in matched_ids:
-                    matched_items.append(x)
-            items = matched_items
-            result['FilteredTotalItemCount'] = len(items)
-
-        self._batch_tuple_iterable(result, items, selector=lambda x: x)
+        record_filter = self._record_filter(filter_name, username_search_term)
+        enrollments_iter = [x for x in enrollments_iter if record_filter(x)]
+        result['FilteredTotalItemCount'] = len(enrollments_iter)
+        
+        self._batch_items_iterable(result, enrollments_iter)
 
         # Notice we don't use `_batch_tuple_iterable`'s selector to perform the
         # externalization. That selector gets called on every item from the beginnning
