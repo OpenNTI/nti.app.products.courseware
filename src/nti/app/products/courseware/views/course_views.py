@@ -15,8 +15,6 @@ from collections import namedtuple
 
 from numbers import Number
 
-import itertools
-
 from zope import component
 from zope import interface
 
