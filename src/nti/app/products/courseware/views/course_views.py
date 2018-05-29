@@ -534,7 +534,7 @@ class CourseEnrollmentRosterGetView(AbstractAuthenticatedView,
         
         self._batch_items_iterable(result, enrollments_iter)
 
-        # Notice we don't use `_batch_tuple_iterable`'s selector to perform the
+        # Notice we don't use `_batch_items_iterable`'s selector to perform the
         # externalization. That selector gets called on every item from the beginnning
         # of the iterable up to batchStart + batchSize.  That's a lot of unnecessary
         # and expensive externalization.
