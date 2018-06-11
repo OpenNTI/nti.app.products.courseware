@@ -240,7 +240,7 @@ class TestPathLookup(ApplicationLayerTest):
 				assert_that(res[1], has_entries('Class', 'CourseOutlineContentNode',
 												'NTIID', 'tag:nextthought.com,2011-10:NTI-NTICourseOutlineNode-Fall2015_CS_1323.2.1'))
 				assert_that(res[2], has_entries('Class', 'AssignmentRef',
-												'NTIID', 'tag:nextthought.com,2011-10:OU-NAQ-CS1323_F_2015_Intro_to_Computer_Programming.naq.asg.assignment:Project_1'))
+												'Target-NTIID', 'tag:nextthought.com,2011-10:OU-NAQ-CS1323_F_2015_Intro_to_Computer_Programming.naq.asg.assignment:Project_1'))
 				assert_that(res[3], has_entries('Class', 'PageInfo',
 												'NTIID', 'tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.project_1_(100_points)'))
 
