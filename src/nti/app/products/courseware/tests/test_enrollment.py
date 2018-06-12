@@ -13,6 +13,7 @@ from hamcrest import is_not
 from hamcrest import has_item
 from hamcrest import not_none
 from hamcrest import has_entry
+from hamcrest import has_length
 from hamcrest import assert_that
 from hamcrest import has_entries
 from hamcrest import has_property
@@ -25,6 +26,8 @@ from nti.testing.matchers import verifiably_provides
 from nti.testing.time import time_monotonically_increases
 
 from zope import component
+
+from nti.app.products.courseware import VIEW_ENROLLMENT_OPTIONS
 
 from nti.app.products.courseware.utils import get_enrollment_options
 
@@ -54,6 +57,10 @@ from nti.app.testing.application_webtest import ApplicationLayerTest
 from nti.app.testing.decorators import WithSharedApplicationMockDS
 
 from nti.dataserver.tests import mock_dataserver
+
+from nti.externalization.externalization import StandardExternalFields
+
+ITEMS = StandardExternalFields.ITEMS
 
 
 class TestEnrollmentOptions(ApplicationLayerTest):
@@ -249,3 +256,75 @@ class TestEnrollment(ApplicationLayerTest):
                                                                              'Purchased', 0),
                                       'TotalLegacyForCreditEnrolledCount', 1,
                                       'TotalLegacyOpenEnrolledCount', 1))
+
+
+    @WithSharedApplicationMockDS(testapp=True, users=True)
+    def test_enrollment_option_management(self):
+        with mock_dataserver.mock_db_trans(self.ds):
+            self._create_user(u'marco2')
+
+        with mock_dataserver.mock_db_trans(self.ds, site_name='platform.ou.edu'):
+            marco = User.get_user(u'marco2')
+            entry = find_object_with_ntiid(self.course_ntiid)
+            course = ICourseInstance(entry)
+            enrollment_manager = ICourseEnrollmentManager(course)
+            enrollment_manager.enroll(marco)
+
+        student_env = self._make_extra_environ(username='marco2')
+
+        course_url = '/dataserver2/++etc++hostsites/platform.ou.edu/++etc++site/Courses/Fall2013/CLC3403_LawAndJustice/'
+        entry_href = '%s/%s' % (course_url, 'CourseCatalogEntry')
+
+        res = self.testapp.get(entry_href).json_body
+        entry_options = res['EnrollmentOptions'][ITEMS]
+        assert_that(entry_options, has_length(4))
+        for option in entry_options.values():
+            # Vendor info options have no edit rel
+            self.forbid_link_with_rel(option, 'edit')
+        options_href = self.require_link_href_with_rel(res, VIEW_ENROLLMENT_OPTIONS)
+
+        res = self.testapp.get(options_href).json_body
+        assert_that(res[ITEMS], has_length(0))
+
+        # Add enrollment option
+        ext_dict = {'MimeType': 'application/vnd.nextthought.courseware.externalenrollmentoption',
+                    'enrollment_url': u'http://testurl'}
+        res = self.testapp.put_json(options_href, ext_dict)
+        res = res.json_body
+        assert_that(res.get('href'), not_none())
+        assert_that(res['NTIID'], not_none())
+        assert_that(res['enrollment_url'], is_(u'http://testurl'))
+        option_edit_href = self.require_link_href_with_rel(res, 'edit')
+
+        res = self.testapp.get(options_href).json_body
+        assert_that(res[ITEMS], has_length(1))
+
+        res = self.testapp.get(entry_href).json_body
+        entry_options = res['EnrollmentOptions'][ITEMS]
+        assert_that(entry_options, has_length(5))
+
+        # Edit
+        new_url = u"http://changed_url"
+        res = self.testapp.put_json(option_edit_href, {'enrollment_url': new_url})
+        res = res.json_body
+        assert_that(res['enrollment_url'], is_(new_url))
+
+        # 422
+        self.testapp.put_json(option_edit_href,
+                              {'enrollment_url': 'non_url'},
+                              status=422)
+        self.testapp.put_json(option_edit_href,
+                              {'enrollment_url': None},
+                              status=422)
+
+        # Test access
+        res = self.testapp.get(entry_href, extra_environ=student_env).json_body
+        self.forbid_link_with_rel(res, VIEW_ENROLLMENT_OPTIONS)
+        self.testapp.put_json(options_href, ext_dict,
+                              extra_environ=student_env, status=403)
+        self.testapp.put_json(option_edit_href, {'enrollment_url': new_url},
+                              extra_environ=student_env,
+                              status=403)
+
+        option_res = self.testapp.get(options_href, extra_environ=student_env).json_body
+        self.forbid_link_with_rel(option_res, 'edit')

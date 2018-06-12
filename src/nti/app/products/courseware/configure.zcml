@@ -387,6 +387,7 @@
 		root_interfaces=".interfaces.IEnrollmentOption
 						 .interfaces.IEnrollmentOptions
 						 .interfaces.ICourseInstanceEnrollment
+						 .interfaces.IExternalEnrollmentOption
 						 .interfaces.ICourseCatalogLegacyContentEntry
 						 .interfaces.ILegacyCommunityBasedCourseInstance"
 		modules=".enrollment .legacy_catalog .legacy_course .workspaces" />
@@ -536,14 +537,40 @@
 	<utility factory=".ntiids._EnrolledCourseSectionTopicNTIIDResolver" />
 
 	<!-- Enrollment Options -->
+	<adapter factory=".adapters.enrollment_container"
+             for="nti.contenttypes.courses.interfaces.ICourseInstance"
+             provides="nti.app.products.courseware.interfaces.IEnrollmentOptionContainer" />
+
+    <adapter factory=".adapters.enrollment_container"
+             for="nti.contenttypes.courses.interfaces.ICourseCatalogEntry"
+             provides="nti.app.products.courseware.interfaces.IEnrollmentOptionContainer" />
+
 	<subscriber	factory=".enrollment.OpenEnrollmentOptionProvider"
 				provides=".interfaces.IEnrollmentOptionProvider"
 				for="nti.contenttypes.courses.interfaces.ICourseCatalogEntry"/>
+
+	<subscriber factory=".enrollment.ContainerEnrollmentOptionProvider"
+                provides=".interfaces.IEnrollmentOptionProvider"
+                for="nti.contenttypes.courses.interfaces.ICourseCatalogEntry"/>
 
 	<subscriber factory=".decorators._OpenEnrollmentOptionLinkDecorator"
 				provides="nti.externalization.interfaces.IExternalObjectDecorator"
 				for=".interfaces.IOpenEnrollmentOption
 					 pyramid.interfaces.IRequest" />
+
+    <adapter factory=".enrollment.EnrollmentOptionContainerExternalizer"
+             for="nti.app.products.courseware.interfaces.IEnrollmentOptionContainer"
+             provides="nti.externalization.interfaces.IInternalObjectExternalizer" />
+
+    <subscriber factory="nti.appserver.pyramid_renderers_edit_link_decorator.EditLinkDecorator"
+                provides="nti.externalization.interfaces.IExternalMappingDecorator"
+                for="nti.app.products.courseware.interfaces.IEnrollmentOption
+                     pyramid.interfaces.IRequest" />
+
+    <subscriber factory=".decorators.AdminCatalogEntryDecorator"
+                provides="nti.externalization.interfaces.IExternalObjectDecorator"
+                for="nti.contenttypes.courses.interfaces.ICourseCatalogEntry
+                     pyramid.interfaces.IRequest"  />
 
 	<!-- Outline nodes-->
 	<adapter factory=".adapters._asset_to_nodes"
