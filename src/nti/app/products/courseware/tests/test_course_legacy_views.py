@@ -39,6 +39,8 @@ class TestCreateForums(AbstractMixin, ApplicationLayerTest):
 	open_path = '/dataserver2/%2B%2Betc%2B%2Bhostsites/platform.ou.edu/%2B%2Betc%2B%2Bsite/Courses/Fall2013/CLC3403_LawAndJustice/Discussions/Open_Discussions/A_clc_discussion'
 	default_path = '/dataserver2/%2B%2Betc%2B%2Bhostsites/platform.ou.edu/%2B%2Betc%2B%2Bsite/Courses/Fall2013/CLC3403_LawAndJustice/Discussions/Forum'
 
+        discussions_root = '/dataserver2/%2B%2Betc%2B%2Bhostsites/platform.ou.edu/%2B%2Betc%2B%2Bsite/Courses/Fall2013/CLC3403_LawAndJustice/Discussions'
+
 	enrollment_ntiid = 'tag:nextthought.com,2011-10:NTI-CourseInfo-Fall2013_CLC3403_LawAndJustice'
 
 	def _extra_post_csv_create_forums(self):
@@ -47,13 +49,18 @@ class TestCreateForums(AbstractMixin, ApplicationLayerTest):
 		assert_that(self.comment_res.json_body['ContainerId'],
 					 starts_with('tag:nextthought.com,2011-10:unknown-OID-0x'))
 
-	@WithSharedApplicationMockDS(users=True, testapp=True, default_authenticate=True)
+	@WithSharedApplicationMockDS(users=('sjohnson@nextthought.com',), testapp=True, default_authenticate=True)
 	@fudge.patch('nti.contenttypes.courses.catalog.CourseCatalogEntry.isCourseCurrentlyActive')
 	def test_create_topic_directly(self, fake_active):
 		# make it look like the course is in session
 		fake_active.is_callable().returns(True)
 
 		inst_env = self._make_extra_environ(username='harp4162')
+
+                self.testapp.post_json(self.discussions_root, {'MimeType':'application/vnd.nextthought.forums.communityforum',
+                                                           'title':'Forum'},
+                                       status=201,
+				       extra_environ=self._make_extra_environ(username='sjohnson@nextthought.com'))
 
 		topic_res = self.testapp.post_json(self.default_path,
 										   { 'Class': 'Post',
