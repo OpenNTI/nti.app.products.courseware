@@ -29,7 +29,6 @@ import simplejson
 
 from zope import component
 
-from nti.app.products.courseware.discussions import get_acl
 from nti.app.products.courseware.discussions import create_topics
 from nti.app.products.courseware.discussions import _extract_content
 from nti.app.products.courseware.discussions import discussions_forums
@@ -49,6 +48,7 @@ from nti.contentfragments.interfaces import SanitizedHTMLContentFragment
 from nti.contenttypes.courses.interfaces import ES_ALL
 from nti.contenttypes.courses.interfaces import ICourseCatalog
 from nti.contenttypes.courses.interfaces import ICourseInstance
+from nti.contenttypes.courses.interfaces import ICourseInstanceScopedForum
 
 from nti.contenttypes.courses.discussions.interfaces import NTI_COURSE_BUNDLE
 from nti.contenttypes.courses.discussions.interfaces import ICourseDiscussions
@@ -131,18 +131,6 @@ class TestDiscussions(ApplicationLayerTest):
             assert_that(discussions_forums(course), has_length(2))
             assert_that(announcements_forums(course), has_length(0))
 
-            acl = get_acl(course)
-            assert_that(acl, has_length(5))
-            acls = []
-            for ace in acl:
-                try:
-                    acls.append(ace.to_external_string())
-                except AttributeError:
-                    pass
-            assert_that(acls, has_items('Allow:role:nti.admin:All',
-                                        'Allow:harp4162:All',
-                                        "Allow:janux_courses:['zope.View']"))
-
             result = create_course_forums(course)
             assert_that(result, has_entry('discussions',
                                           has_entries('ForCredit',
@@ -156,8 +144,9 @@ class TestDiscussions(ApplicationLayerTest):
             discussion_hrefs = [x[1].NTIID for x in discussions.values()]
             for t in discussions.values():
                 _, forum = t
-                assert_that(forum, has_property('__acl__', has_length(6)))
                 assert_that(forum, has_property('__entities__', has_length(1)))
+                assert_that(hasattr(forum, '__acl__'), is_(False))
+                assert_that(ICourseInstanceScopedForum.providedBy(forum), is_(True))
 
             result = create_topics(discussion)
             assert_that(result,
