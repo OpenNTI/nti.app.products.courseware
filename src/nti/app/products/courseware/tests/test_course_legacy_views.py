@@ -39,6 +39,8 @@ class TestCreateForums(AbstractMixin, ApplicationLayerTest):
 	open_path = '/dataserver2/%2B%2Betc%2B%2Bhostsites/platform.ou.edu/%2B%2Betc%2B%2Bsite/Courses/Fall2013/CLC3403_LawAndJustice/Discussions/Open_Discussions/A_clc_discussion'
 	default_path = '/dataserver2/%2B%2Betc%2B%2Bhostsites/platform.ou.edu/%2B%2Betc%2B%2Bsite/Courses/Fall2013/CLC3403_LawAndJustice/Discussions/Forum'
 
+        discussions_root = '/dataserver2/%2B%2Betc%2B%2Bhostsites/platform.ou.edu/%2B%2Betc%2B%2Bsite/Courses/Fall2013/CLC3403_LawAndJustice/Discussions'
+
 	enrollment_ntiid = 'tag:nextthought.com,2011-10:NTI-CourseInfo-Fall2013_CLC3403_LawAndJustice'
 
 	def _extra_post_csv_create_forums(self):
@@ -54,6 +56,11 @@ class TestCreateForums(AbstractMixin, ApplicationLayerTest):
 		fake_active.is_callable().returns(True)
 
 		inst_env = self._make_extra_environ(username='harp4162')
+
+                self.testapp.post_json(self.discussions_root, {'MimeType':'application/vnd.nextthought.forums.communityforum',
+                                                           'title':'Forum'},
+                                       status=201,
+				       extra_environ=inst_env)
 
 		topic_res = self.testapp.post_json(self.default_path,
 										   { 'Class': 'Post',
