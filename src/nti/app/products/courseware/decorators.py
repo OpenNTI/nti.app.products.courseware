@@ -34,6 +34,7 @@ from nti.app.products.courseware import VIEW_COURSE_RECURSIVE
 from nti.app.products.courseware import VIEW_COURSE_CLASSMATES
 from nti.app.products.courseware import VIEW_USER_COURSE_ACCESS
 from nti.app.products.courseware import VIEW_LESSONS_CONTAINERS
+from nti.app.products.courseware import VIEW_ENROLLMENT_OPTIONS
 from nti.app.products.courseware import VIEW_RECURSIVE_AUDIT_LOG
 from nti.app.products.courseware import VIEW_COURSE_LOCKED_OBJECTS
 from nti.app.products.courseware import VIEW_COURSE_RECURSIVE_BUCKET
@@ -210,6 +211,7 @@ class _CourseEnrollmentDecorator(Singleton):
         enrollments = ICourseEnrollments(course)
         result['TotalEnrolledCount'] = enrollments.count_enrollments()
 
+
 @component.adapter(ICourseInstance)
 @interface.implementer(IExternalMappingDecorator)
 class _CourseMailLinkDecorator(AbstractAuthenticatedRequestAwareDecorator):
@@ -381,10 +383,10 @@ class _CourseWrapperLinkDecorator(Singleton):
     def decorateExternalMapping(self, context, result):
         course = ICourseInstance(context, None)
         entry = ICourseCatalogEntry(course, None)
-        
+
         if hasattr(entry, 'ntiid'):
             result['CatalogEntryNTIID'] = entry.ntiid
-            
+
         _links = result.setdefault(LINKS, [])
 
         if entry:
@@ -1028,4 +1030,26 @@ class _UserEnrollmentsDecorator(AbstractAuthenticatedRequestAwareDecorator):
         link = Link(context,
                     rel=VIEW_USER_ENROLLMENTS,
                     elements=('@@%s' % VIEW_USER_ENROLLMENTS,))
+        _links.append(link)
+
+
+@component.adapter(ICourseCatalogEntry)
+@interface.implementer(IExternalObjectDecorator)
+class AdminCatalogEntryDecorator(AbstractAuthenticatedRequestAwareDecorator):
+    """
+    Allow editors to attach :class:`IEnrollmentOption` objects to a course.
+    """
+
+    def _predicate(self, context, unused_result):
+        course = ICourseInstance(context, None)
+        if course is not None:
+            return has_permission(ACT_CONTENT_EDIT, course, self.request)
+
+    def _do_decorate_external(self, context, result):
+        course = ICourseInstance(context)
+        _links = result.setdefault(LINKS, [])
+        link = Link(course,
+                    rel=VIEW_ENROLLMENT_OPTIONS,
+                    method='PUT',
+                    elements=(VIEW_ENROLLMENT_OPTIONS,))
         _links.append(link)

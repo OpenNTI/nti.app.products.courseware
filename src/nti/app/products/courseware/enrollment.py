@@ -8,8 +8,16 @@ from __future__ import division
 from __future__ import print_function
 from __future__ import absolute_import
 
+import uuid
+
+from datetime import datetime
+
 from zope import component
 from zope import interface
+
+from zope.cachedescriptors.property import Lazy
+
+from zope.container.contained import Contained
 
 from zope.schema.fieldproperty import FieldPropertyStoredThroughField as FP
 
@@ -17,10 +25,19 @@ from nti.app.products.courseware.interfaces import IEnrollmentOption
 from nti.app.products.courseware.interfaces import IEnrollmentOptions
 from nti.app.products.courseware.interfaces import IOpenEnrollmentOption
 from nti.app.products.courseware.interfaces import IEnrollmentOptionProvider
+from nti.app.products.courseware.interfaces import IExternalEnrollmentOption
+from nti.app.products.courseware.interfaces import IEnrollmentOptionContainer
+from nti.app.products.courseware.interfaces import IAvailableEnrollmentOptionProvider
+
+from nti.containers.containers import CaseInsensitiveCheckingLastModifiedBTreeContainer
 
 from nti.contenttypes.courses.interfaces import ICourseCatalogEntry
 from nti.contenttypes.courses.interfaces import IDenyOpenEnrollment
 from nti.contenttypes.courses.interfaces import INonPublicCourseInstance
+
+from nti.coremetadata.interfaces import SYSTEM_USER_NAME
+
+from nti.dublincore.time_mixins import PersistentCreatedAndModifiedTimeObject
 
 from nti.externalization.externalization import to_external_object
 
@@ -32,15 +49,21 @@ from nti.externalization.persistence import NoPickle
 
 from nti.externalization.representation import WithRepr
 
+from nti.ntiids.ntiids import make_ntiid
+from nti.ntiids.ntiids import make_specific_safe
+
 from nti.property.property import alias
 
 from nti.schema.eqhash import EqHash
 
 from nti.schema.field import SchemaConfigured
 
+from nti.schema.fieldproperty import createDirectFieldProperties
+
 CLASS = StandardExternalFields.CLASS
 ITEMS = StandardExternalFields.ITEMS
 MIMETYPE = StandardExternalFields.MIMETYPE
+ITEM_COUNT = StandardExternalFields.ITEM_COUNT
 
 logger = __import__('logging').getLogger(__name__)
 
@@ -78,6 +101,53 @@ class OpenEnrollmentOption(EnrollmentOption):
     Enabled = FP(IOpenEnrollmentOption['Enabled'])
 
     IsEnabled = alias('Enabled')
+
+
+def _generate_ntiid(nttype, provider=u'NTI', now=None):
+    now = datetime.utcnow() if now is None else now
+    dstr = now.strftime("%Y%m%d%H%M%S %f")
+    rand = str(uuid.uuid4().time_low)
+    specific = make_specific_safe(u"%s_%s_%s" % (SYSTEM_USER_NAME, dstr, rand))
+    result = make_ntiid(provider=provider,
+                        nttype=nttype,
+                        specific=specific)
+    return result
+
+
+def generate_external_enrollment_ntiid(provider=u'NTI', now=None):
+    return _generate_ntiid('ExternalEnrollmentOption', provider, now)
+
+
+@interface.implementer(IExternalEnrollmentOption)
+class ExternalEnrollmentOption(EnrollmentOption,
+                               Contained,
+                               PersistentCreatedAndModifiedTimeObject):
+
+    createDirectFieldProperties(IExternalEnrollmentOption)
+
+    __external_can_create__ = True
+    __external_class_name__ = __name__ = u"ExternalEnrollment"
+    mime_type = mimeType = 'application/vnd.nextthought.courseware.externalenrollmentoption'
+
+    def __init__(self, *args, **kwargs):
+        super(ExternalEnrollmentOption, self).__init__(*args, **kwargs)
+        SchemaConfigured.__init__(self, *args, **kwargs)
+
+    @Lazy
+    def ntiid(self):
+        return generate_external_enrollment_ntiid()
+
+
+def get_available_enrollment_options():
+    """
+    Return the :class:`IEnrollmentOption` objects available to be
+    placed on a course.
+    """
+    result = list()
+    for provider in component.getAllUtilitiesRegisteredFor(IAvailableEnrollmentOptionProvider):
+        for option in provider.iter_options():
+            result.append(option)
+    return result
 
 
 @WithRepr
@@ -121,3 +191,54 @@ class OpenEnrollmentOptionProvider(object):
         result.Enabled = not INonPublicCourseInstance.providedBy(self.context) \
                      and not IDenyOpenEnrollment.providedBy(self.context)
         return (result,)
+
+
+@component.adapter(ICourseCatalogEntry)
+@interface.implementer(IEnrollmentOptionProvider)
+class ContainerEnrollmentOptionProvider(object):
+
+    def __init__(self, context):
+        self.context = context
+
+    def iter_options(self):
+        container = IEnrollmentOptionContainer(self.context)
+        return tuple(container.values())
+
+
+@interface.implementer(IEnrollmentOptionContainer)
+class EnrollmentOptionContainer(CaseInsensitiveCheckingLastModifiedBTreeContainer,
+                                SchemaConfigured):
+    createDirectFieldProperties(IEnrollmentOptionContainer)
+
+    __parent__ = None
+    __name__ = 'EnrollmentOptions'
+    __external_class_name__ = 'EnrollmentOptionContainer'
+    mimeType = 'application/vnd.nextthought.courseware.enrollmentoptioncontainer'
+
+
+@component.adapter(IEnrollmentOptionContainer)
+@interface.implementer(IEnrollmentOptionContainer, IInternalObjectExternalizer)
+class EnrollmentOptionContainerExternalizer(object):
+
+    def __init__(self, container):
+        self.container = container
+
+    def toExternalObject(self, *args, **kwargs):
+        result = LocatedExternalDict()
+        result[CLASS] = self.container.__external_class_name__
+        result[MIMETYPE] = self.container.mimeType
+        items = result[ITEMS] = []
+        for value in list(self.container.values()):
+            items.append(value)
+        result[ITEM_COUNT] = len(items)
+        result['AvailableEnrollmentOptions'] = get_available_enrollment_options()
+        return result
+
+
+@interface.implementer(IAvailableEnrollmentOptionProvider)
+class _AvailableEnrollmentOptionProvider(object):
+
+    def iter_options(self):
+        result = list()
+        result.append(ExternalEnrollmentOption(enrollment_url='https://'))
+        return result

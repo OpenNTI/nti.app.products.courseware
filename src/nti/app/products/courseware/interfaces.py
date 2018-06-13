@@ -19,6 +19,10 @@ from zope import schema
 from zope import component
 from zope import interface
 
+from zope.container.constraints import contains
+
+from zope.container.interfaces import IContainer
+
 from zope.interface.common.mapping import IEnumerableMapping
 
 from zope.location.interfaces import IContained
@@ -50,6 +54,7 @@ from nti.ntiids.schema import ValidNTIID
 from nti.schema.field import Bool
 from nti.schema.field import Dict
 from nti.schema.field import Object
+from nti.schema.field import ValidURI
 from nti.schema.field import ValidTextLine as TextLine
 
 ACT_VIEW_ROSTER = Permission('nti.actions.courseware.view_roster')
@@ -273,19 +278,35 @@ class IEnrollmentOption(IContained):
     CatalogEntryNTIID.setTaggedValue('_ext_excluded_out', True)
 
 
-class IOpenEnrollmentOption(IEnrollmentOption):
+class IExternalEnrollmentOption(IEnrollmentOption):
+    """
+    An :class:`IEnrollmentOption` that may point the user to an external URL
+    for enrollment into the course.
+    """
 
+    enrollment_url = ValidURI(title=u"Enrollment URL",
+                              required=True)
+
+
+class IEnrollmentOptionContainer(IContainer):
+    """
+    Container for persistent :class:`IEnrollmentOption` objects.
+    """
+
+    contains(IEnrollmentOption)
+
+
+class IOpenEnrollmentOption(IEnrollmentOption):
     """
     Open course/entry enrollment option
     """
 
-    Enabled = Bool(title=u"If the course allows open enrollemnt",
+    Enabled = Bool(title=u"If the course allows open enrollment",
                    required=False,
                    default=True)
 
 
 class IEnrollmentOptions(IEnumerableMapping):
-
     """
     Marker interface for an object that hold :class:`.IEnrollmentOption` objects
     for a course.
@@ -298,14 +319,26 @@ class IEnrollmentOptions(IEnumerableMapping):
 
 
 class IEnrollmentOptionProvider(interface.Interface):
-
     """
     subscriber for a course/entry enrollment options
     """
 
     def iter_options():
         """
-        return a iterable of :class:`.IEnrollmentOption` for the specified course
+        return an iterable of :class:`.IEnrollmentOption` for the specified
+        course
+        """
+
+
+class IAvailableEnrollmentOptionProvider(interface.Interface):
+    """
+    Returns available :class:`IEnrollmentOption` objects that could be set on
+    a course.
+    """
+
+    def iter_options():
+        """
+        return an iterable of :class:`.IEnrollmentOption` available
         """
 
 

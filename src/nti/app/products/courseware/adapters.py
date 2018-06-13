@@ -10,6 +10,8 @@ from __future__ import absolute_import
 
 import itertools
 
+from ZODB.interfaces import IConnection
+
 from zope import component
 from zope import interface
 
@@ -33,6 +35,10 @@ from nti.app.products.courseware import USER_ENROLLMENT_LAST_MODIFIED_KEY
 
 from nti.app.products.courseware._outline_path import OutlinePathFactory
 
+from nti.app.products.courseware.enrollment import EnrollmentOptionContainer
+
+
+from nti.app.products.courseware.interfaces import IEnrollmentOptionContainer
 from nti.app.products.courseware.interfaces import ILegacyCommunityBasedCourseInstance
 from nti.app.products.courseware.interfaces import ILegacyCourseConflatedContentPackageUsedAsCourse
 
@@ -115,6 +121,8 @@ from nti.site.site import get_component_hierarchy_names
 from nti.traversal.traversal import find_interface
 
 is_instructor = is_course_instructor  # BWC
+
+ENROLLMENT_OPTION_CONTAINER_KEY = 'nti.contenttypes.courses.interfaces.IEnrollmentOptionContainer'
 
 logger = __import__('logging').getLogger(__name__)
 
@@ -720,3 +728,22 @@ class _CourseAccessProvider(object):
         logger.info("User dropped course (%s) (%s)",
                     entity.username, self.entry_ntiid)
         return result
+
+
+@component.adapter(ICourseInstance)
+@interface.implementer(IEnrollmentOptionContainer)
+def enrollment_container(context):
+    course = ICourseInstance(context)
+    result = None
+    annotations = IAnnotations(course)
+    try:
+        result = annotations[ENROLLMENT_OPTION_CONTAINER_KEY]
+    except KeyError:
+        result = EnrollmentOptionContainer()
+        annotations[ENROLLMENT_OPTION_CONTAINER_KEY] = result
+        #result.__name__ = ENROLLMENT_OPTION_CONTAINER_KEY
+        result.__parent__ = course
+        # Deterministically add to our course db. Sectioned courses would give
+        # us multiple db error for some reason.
+        IConnection(course).add(result)
+    return result
