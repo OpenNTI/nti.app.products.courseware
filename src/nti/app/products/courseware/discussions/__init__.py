@@ -178,61 +178,14 @@ def get_forums_for_discussion(discussion, context=None):
     return result
 
 
-def get_acl(course, *entities):
-    # XXX: This seems fragile; we cannot adjust ACL easily for new
-    # instructors/editors.
-    aces = [ace_allowing(ROLE_ADMIN, ALL_PERMISSIONS)]
-
-    # Instructors get all
-    instructors = {
-        IPrincipal(x, None) for x in get_course_instructors(course)
-    }
-    instructors.discard(None)
-    for user in instructors:
-        aces.append(ace_allowing(user, ALL_PERMISSIONS))
-
-    # Editors get read perms
-    editors = set(get_course_editors(course) or ())
-    editors = editors - instructors
-    editors.discard(None)
-    for user in editors:
-        aces.append(ace_allowing(user, ACT_READ))
-
-    # Specified entities (e.g. students) get read permission
-    entities = {
-        IPrincipal(Entity.get_entity(e), None) for e in entities or ()
-    }
-    entities.discard(None)
-    aces.extend([ace_allowing(e, ACT_READ) for e in entities])
-
-    def _get_users(context):
-        course_users = {
-            IPrincipal(x, None) for x in get_course_instructors(context)
-        }
-        course_users.update(get_course_editors(context))
-        course_users.discard(None)
-        return course_users
-
-    # Subinstance instructors/editors get READ access.
-    for subinstance in get_course_subinstances(course):
-        for user in _get_users(subinstance):
-            aces.append(ace_allowing(user, ACT_READ))
-
-    aces.append(ACE_DENY_ALL)
-    acl = acl_from_aces(aces)
-    return acl
-
-
 def create_forum(course, name, owner, display_name=None, entities=None, implement=None):
     discussions = course.Discussions
     entities = to_list(entities, ())
-    acl = get_acl(course, *entities)
 
     safe_name = make_specific_safe(name)
     creator = Entity.get_entity(owner)
     try:
         forum = discussions[safe_name]
-        forum.__acl__ = acl
         if forum.creator is not creator:
             forum.creator = creator
     except KeyError:
@@ -241,13 +194,6 @@ def create_forum(course, name, owner, display_name=None, entities=None, implemen
         forum.title = display_name or name
         discussions[safe_name] = forum
         logger.info('Created forum %s', forum)
-
-    # Update ACL
-    old_acl = getattr(forum, '__acl__', None)
-    if old_acl != acl:
-        forum.__acl__ = acl
-    if acl:
-        interface.alsoProvides(forum, IACLProvider)
 
     # save entities
     forum.__entities__ = {str(x) for x in entities}
