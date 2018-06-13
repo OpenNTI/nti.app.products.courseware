@@ -285,6 +285,7 @@ class TestEnrollment(ApplicationLayerTest):
 
         res = self.testapp.get(options_href).json_body
         assert_that(res[ITEMS], has_length(0))
+        assert_that(res.get('AvailableEnrollmentOptions'), has_length(1))
 
         # Add enrollment option
         ext_dict = {'MimeType': 'application/vnd.nextthought.courseware.externalenrollmentoption',
@@ -298,6 +299,7 @@ class TestEnrollment(ApplicationLayerTest):
 
         res = self.testapp.get(options_href).json_body
         assert_that(res[ITEMS], has_length(1))
+        assert_that(res.get('AvailableEnrollmentOptions'), has_length(1))
 
         res = self.testapp.get(entry_href).json_body
         entry_options = res['EnrollmentOptions'][ITEMS]

@@ -27,6 +27,7 @@ from nti.app.products.courseware.interfaces import IOpenEnrollmentOption
 from nti.app.products.courseware.interfaces import IEnrollmentOptionProvider
 from nti.app.products.courseware.interfaces import IExternalEnrollmentOption
 from nti.app.products.courseware.interfaces import IEnrollmentOptionContainer
+from nti.app.products.courseware.interfaces import IAvailableEnrollmentOptionProvider
 
 from nti.containers.containers import CaseInsensitiveCheckingLastModifiedBTreeContainer
 
@@ -137,6 +138,18 @@ class ExternalEnrollmentOption(EnrollmentOption,
         return generate_external_enrollment_ntiid()
 
 
+def get_available_enrollment_options():
+    """
+    Return the :class:`IEnrollmentOption` objects available to be
+    placed on a course.
+    """
+    result = list()
+    for provider in component.getAllUtilitiesRegisteredFor(IAvailableEnrollmentOptionProvider):
+        for option in provider.iter_options():
+            result.append(option)
+    return result
+
+
 @WithRepr
 @NoPickle
 @interface.implementer(IEnrollmentOptions, IInternalObjectExternalizer)
@@ -218,4 +231,14 @@ class EnrollmentOptionContainerExternalizer(object):
         for value in list(self.container.values()):
             items.append(value)
         result[ITEM_COUNT] = len(items)
+        result['AvailableEnrollmentOptions'] = get_available_enrollment_options()
+        return result
+
+
+@interface.implementer(IAvailableEnrollmentOptionProvider)
+class _AvailableEnrollmentOptionProvider(object):
+
+    def iter_options(self):
+        result = list()
+        result.append(ExternalEnrollmentOption(enrollment_url='https://'))
         return result
