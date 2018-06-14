@@ -572,8 +572,9 @@
                 for="nti.contenttypes.courses.interfaces.ICourseCatalogEntry
                      pyramid.interfaces.IRequest"  />
 
-    <utility factory=".enrollment._AvailableEnrollmentOptionProvider"
-             provides=".interfaces.IAvailableEnrollmentOptionProvider" />
+    <subscriber factory=".enrollment._AvailableEnrollmentOptionProvider"
+                for="nti.contenttypes.courses.interfaces.ICourseInstance"
+                provides=".interfaces.IAvailableEnrollmentOptionProvider" />
 
 	<!-- Outline nodes-->
 	<adapter factory=".adapters._asset_to_nodes"

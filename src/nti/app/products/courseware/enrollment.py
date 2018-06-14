@@ -31,6 +31,7 @@ from nti.app.products.courseware.interfaces import IAvailableEnrollmentOptionPro
 
 from nti.containers.containers import CaseInsensitiveCheckingLastModifiedBTreeContainer
 
+from nti.contenttypes.courses.interfaces import ICourseInstance
 from nti.contenttypes.courses.interfaces import ICourseCatalogEntry
 from nti.contenttypes.courses.interfaces import IDenyOpenEnrollment
 from nti.contenttypes.courses.interfaces import INonPublicCourseInstance
@@ -59,6 +60,8 @@ from nti.schema.eqhash import EqHash
 from nti.schema.field import SchemaConfigured
 
 from nti.schema.fieldproperty import createDirectFieldProperties
+
+from nti.traversal.traversal import find_interface
 
 CLASS = StandardExternalFields.CLASS
 ITEMS = StandardExternalFields.ITEMS
@@ -138,13 +141,13 @@ class ExternalEnrollmentOption(EnrollmentOption,
         return generate_external_enrollment_ntiid()
 
 
-def get_available_enrollment_options():
+def get_available_enrollment_options(course):
     """
     Return the :class:`IEnrollmentOption` objects available to be
     placed on a course.
     """
     result = list()
-    for provider in component.getAllUtilitiesRegisteredFor(IAvailableEnrollmentOptionProvider):
+    for provider in component.subscribers((course,), IAvailableEnrollmentOptionProvider):
         for option in provider.iter_options():
             result.append(option)
     return result
@@ -231,12 +234,16 @@ class EnrollmentOptionContainerExternalizer(object):
         for value in list(self.container.values()):
             items.append(value)
         result[ITEM_COUNT] = len(items)
-        result['AvailableEnrollmentOptions'] = get_available_enrollment_options()
+        course = find_interface(self.container, ICourseInstance)
+        result['AvailableEnrollmentOptions'] = get_available_enrollment_options(course)
         return result
 
 
 @interface.implementer(IAvailableEnrollmentOptionProvider)
 class _AvailableEnrollmentOptionProvider(object):
+
+    def __init__(self, course):
+        self.course = course
 
     def iter_options(self):
         result = list()
