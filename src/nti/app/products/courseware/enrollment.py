@@ -77,6 +77,8 @@ logger = __import__('logging').getLogger(__name__)
 @interface.implementer(IEnrollmentOption)
 class EnrollmentOption(SchemaConfigured):
 
+    createDirectFieldProperties(IEnrollmentOption)
+
     __parent__ = None
     __external_can_create__ = False
     __external_class_name__ = "EnrollmentOption"

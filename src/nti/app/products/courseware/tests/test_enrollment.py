@@ -289,12 +289,16 @@ class TestEnrollment(ApplicationLayerTest):
 
         # Add enrollment option
         ext_dict = {'MimeType': 'application/vnd.nextthought.courseware.externalenrollmentoption',
-                    'enrollment_url': u'http://testurl'}
+                    'enrollment_url': u'http://testurl',
+                    'title': 'Login for test site',
+                    'description': 'a test login url'}
         res = self.testapp.put_json(options_href, ext_dict)
         res = res.json_body
         assert_that(res.get('href'), not_none())
         assert_that(res['NTIID'], not_none())
         assert_that(res['enrollment_url'], is_(u'http://testurl'))
+        assert_that(res['title'], is_(u'Login for test site'))
+        assert_that(res['description'], is_(u'a test login url'))
         option_edit_href = self.require_link_href_with_rel(res, 'edit')
 
         res = self.testapp.get(options_href).json_body

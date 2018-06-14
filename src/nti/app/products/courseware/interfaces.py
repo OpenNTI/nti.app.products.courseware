@@ -277,6 +277,12 @@ class IEnrollmentOption(IContained):
     CatalogEntryNTIID = TextLine(title=u"Catalog entry NTIID", required=False)
     CatalogEntryNTIID.setTaggedValue('_ext_excluded_out', True)
 
+    title = TextLine(title=u"Title",
+                     required=False)
+
+    description = TextLine(title=u"Description",
+                           required=False)
+
 
 class IExternalEnrollmentOption(IEnrollmentOption):
     """
