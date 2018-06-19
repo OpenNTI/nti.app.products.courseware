@@ -23,6 +23,11 @@
 				for="nti.contenttypes.courses.interfaces.ICourseInstance
 					 pyramid.interfaces.IRequest" />
 
+	<subscriber factory=".decorators._CourseInvitationDecorator"
+                provides="nti.externalization.interfaces.IExternalMappingDecorator"
+                for="nti.app.products.courseware.invitations.interfaces.ICourseInvitation
+                     pyramid.interfaces.IRequest" />
+
 	<!-- Link Providers -->
 	<subscriber	factory=".link_providers._CourseUserInvitationsLinkProvider"
 				provides="nti.app.invitations.interfaces.IUserInvitationsLinkProvider"/>

@@ -14,7 +14,9 @@ MessageFactory = zope.i18nmessageid.MessageFactory(__name__)
 #: User enrollment last mod annotation key
 USER_ENROLLMENT_LAST_MODIFIED_KEY = 'nti.app.products.courseware.UserEnrollmentLastModified'
 
+VIEW_ENABLE_INVITATION = 'EnableCourseInvitation'
 SEND_COURSE_INVITATIONS = 'SendCourseInvitations'
+VIEW_CREATE_COURSE_INVITATION = 'CreateCourseInvitation'
 CHECK_COURSE_INVITATIONS_CSV = 'CheckCourseInvitationsCSV'
 
 ACCEPT_COURSE_INVITATION = 'accept-course-invitation'
