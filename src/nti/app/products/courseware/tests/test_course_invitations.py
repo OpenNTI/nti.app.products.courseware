@@ -24,7 +24,11 @@ from quopri import decodestring
 
 from zope import component
 
+from nti.app.invitations import INVITATIONS
+
+from nti.app.products.courseware import VIEW_ENABLE_INVITATION
 from nti.app.products.courseware import VIEW_COURSE_ACCESS_TOKENS
+from nti.app.products.courseware import VIEW_CREATE_COURSE_INVITATION
 
 from nti.app.products.courseware.invitations.interfaces import ICourseInvitations
 
@@ -185,11 +189,59 @@ class TestInvitations(ApplicationLayerTest):
             assert_that(invitations._invitation_wrefs, has_length(0))
 
         res = self.testapp.get(access_token_href,
-                               extra_environ=environ,
-                               status=200)
+                               extra_environ=environ)
         res = res.json_body
         invitations = res[ITEMS]
         assert_that(invitations, has_length(1))
+
+        # Cannot delete/disable configured invitations
+        self.forbid_link_with_rel(invitations[0], 'delete')
+        res = self.testapp.get(access_token_href).json_body
+        invitations = res[ITEMS]
+        self.forbid_link_with_rel(invitations[0], 'delete')
+
+        # Create new
+        url = '/dataserver2/Objects/%s' % course_ntiid
+        res = self.testapp.get(url)
+        create_invitation_href = self.require_link_href_with_rel(res.json_body,
+                                                                 VIEW_CREATE_COURSE_INVITATION)
+        res = self.testapp.post(create_invitation_href)
+        res = res.json_body
+        new_href = res.get('href')
+        new_code = res.get('code')
+        new_ntiid = res.get('NTIID')
+        assert_that(new_href, not_none())
+        assert_that(new_code, not_none())
+        assert_that(new_ntiid, not_none())
+
+        del_invitation_href = self.require_link_href_with_rel(res, 'delete')
+        self.forbid_link_with_rel(res, VIEW_ENABLE_INVITATION)
+
+        res = self.testapp.get(access_token_href)
+        res = res.json_body
+        invitations = res[ITEMS]
+        assert_that(invitations, has_length(2))
+        invitation = next(x for x in invitations if x['code'] == new_code)
+        assert_that(invitation['NTIID'], is_(new_ntiid))
+
+        # Delete
+        self.testapp.delete(del_invitation_href)
+        res = self.testapp.get(access_token_href)
+        res = res.json_body
+        invitations = res[ITEMS]
+        assert_that(invitations, has_length(1))
+        assert_that(invitations[0]['code'], is_('CI-CLC-3403'))
+
+        # Reenable
+        res = self.testapp.get('/dataserver2/%s/%s' % (INVITATIONS, new_code))
+        enable_invitation_href = self.require_link_href_with_rel(res.json_body, VIEW_ENABLE_INVITATION)
+        self.testapp.post(enable_invitation_href)
+        res = self.testapp.get(access_token_href)
+        res = res.json_body
+        invitations = res[ITEMS]
+        assert_that(invitations, has_length(2))
+        invitation = next(x for x in invitations if x['code'] == new_code)
+        assert_that(invitation['NTIID'], is_(new_ntiid))
 
     @WithSharedApplicationMockDS(testapp=True, users=True)
     def test_send_accept_invitation(self):

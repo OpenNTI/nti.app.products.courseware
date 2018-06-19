@@ -45,7 +45,7 @@ class TestAdapters(CourseLayerTest):
         connection.add(course)
         invitations = ICourseInvitations(course, None)
         assert_that(invitations, is_not(none()))
-        
+
         assert_that(invitations, validly_provides(ICourseInvitations))
         assert_that(invitations, verifiably_provides(ICourseInvitations))
         model = PersistentCourseInvitation(Code=u"1234-5",
@@ -57,12 +57,12 @@ class TestAdapters(CourseLayerTest):
         assert_that(invitations, has_length(1))
         assert_that("1234-5", is_in(invitations))
         assert_that(list(invitations), has_length(1))
-        assert_that(invitations.get_course_invitations(), 
+        assert_that(invitations.get_course_invitations(),
                     has_length(1))
-        
+
         invitations.remove(model, True)
         assert_that(invitations, has_length(0))
-        
+
         model = PersistentCourseInvitation(Code=u"1234-5",
                                            Scope=u"Public",
                                            Description=u"Inviation to course",

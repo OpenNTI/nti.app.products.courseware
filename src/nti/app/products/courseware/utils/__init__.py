@@ -77,6 +77,8 @@ from nti.contenttypes.presentation.interfaces import INTIRelatedWorkRef
 
 from nti.dataserver.interfaces import IMemcacheClient
 
+from nti.invitations.interfaces import IDisabledInvitation
+
 from nti.site.site import get_component_hierarchy_names
 
 from nti.traversal.traversal import find_interface
@@ -257,6 +259,7 @@ def _get_vendor_invitations(context):
 def get_course_invitations(context):
     """
     Fetch the invitations found in the course or parent, in that order.
+    If an invitation is disable, it will not return here.
     """
     result = []
     # Fetch persistent invitations
@@ -271,7 +274,7 @@ def get_course_invitations(context):
     vendor_invitations = _get_vendor_invitations(context)
     if vendor_invitations:
         result.extend(vendor_invitations)
-    return result
+    return [x for x in result if not IDisabledInvitation.providedBy(x)]
 
 
 def get_course_invitation(context, code):

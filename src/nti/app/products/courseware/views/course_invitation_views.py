@@ -16,6 +16,7 @@ from six.moves.urllib_parse import urljoin
 from requests.structures import CaseInsensitiveDict
 
 from zope import component
+from zope import interface
 
 from zope.cachedescriptors.property import Lazy
 
@@ -49,14 +50,18 @@ from nti.app.products.courseware.interfaces import ICourseInstanceEnrollment
 
 from nti.app.products.courseware.invitations.interfaces import ICourseInvitation
 
+from nti.app.products.courseware.invitations.utils import create_course_invitation
+
 from nti.app.products.courseware.utils import get_course_invitation
 from nti.app.products.courseware.utils import get_course_invitations
 
+from nti.app.products.courseware.views import VIEW_ENABLE_INVITATION
 from nti.app.products.courseware.views import SEND_COURSE_INVITATIONS
 from nti.app.products.courseware.views import ACCEPT_COURSE_INVITATION
 from nti.app.products.courseware.views import ACCEPT_COURSE_INVITATIONS
 from nti.app.products.courseware.views import VIEW_COURSE_ACCESS_TOKENS
 from nti.app.products.courseware.views import CHECK_COURSE_INVITATIONS_CSV
+from nti.app.products.courseware.views import VIEW_CREATE_COURSE_INVITATION
 
 from nti.appserver.interfaces import IApplicationSettings
 
@@ -65,6 +70,9 @@ from nti.appserver.pyramid_authorization import has_permission
 from nti.common.string import TRUE_VALUES
 
 from nti.contenttypes.courses.index import IX_KEYWORDS
+
+from nti.contenttypes.courses.interfaces import ES_PUBLIC
+from nti.contenttypes.courses.interfaces import ENROLLMENT_SCOPE_NAMES
 
 from nti.contenttypes.courses.interfaces import ICourseInstance
 from nti.contenttypes.courses.interfaces import ICourseCatalogEntry
@@ -81,6 +89,10 @@ from nti.contenttypes.courses.utils import is_course_instructor
 
 from nti.dataserver import authorization as nauth
 
+from nti.dataserver.authorization import ACT_CONTENT_EDIT
+
+from nti.dataserver.authorization import is_admin_or_content_admin_or_site_admin
+
 from nti.dataserver.interfaces import IUser
 
 from nti.dataserver.users.interfaces import IUserProfile
@@ -93,13 +105,14 @@ from nti.externalization.interfaces import LocatedExternalDict
 from nti.externalization.interfaces import StandardExternalFields
 
 from nti.invitations.interfaces import InvitationSentEvent
+from nti.invitations.interfaces import IDisabledInvitation
 from nti.invitations.interfaces import IInvitationsContainer
 from nti.invitations.interfaces import IActionableInvitation
 
 from nti.links.links import Link
 
 from nti.ntiids.ntiids import find_object_with_ntiid
-from nti.dataserver.authorization import is_admin_or_content_admin_or_site_admin
+
 
 CLASS = StandardExternalFields.CLASS
 ITEMS = StandardExternalFields.ITEMS
@@ -587,7 +600,7 @@ class SendCourseInvitationsView(AbstractAuthenticatedView,
         # send invites
         message = values.get('message')
         entry_ntiid = ICourseCatalogEntry(self._course).ntiid
-        logger.info( 'Sending emails to %s users (%s)', len(all_users), entry_ntiid )
+        logger.info('Sending emails to %s users (%s)', len(all_users), entry_ntiid)
         sent = self.send_invitations(all_users,
                                      invitation.Course,
                                      invitation.Scope,
@@ -598,3 +611,121 @@ class SendCourseInvitationsView(AbstractAuthenticatedView,
         result[ITEMS] = sent
         result[TOTAL] = result[ITEM_COUNT] = len(sent)
         return result
+
+
+@view_config(context=ICourseInstance)
+@view_defaults(route_name='objects.generic.traversal',
+               renderer='rest',
+               request_method='POST',
+               name=VIEW_CREATE_COURSE_INVITATION,
+               permission=ACT_CONTENT_EDIT)
+class CreateGenericCourseInvitationView(AbstractAuthenticatedView,
+                                        ModeledContentUploadRequestUtilsMixin):
+    """
+    Create a generic :class:`ICourseInvitation` object.
+    """
+
+    def readInput(self, value=None):
+        if self.request.body:
+            result = super(CreateGenericCourseInvitationView, self).readInput(value)
+            result = CaseInsensitiveDict(result)
+        else:
+            result = dict()
+        return result
+
+    def _scope_lookup(self, scope_name):
+        """
+        Case insensitive lookup of given scope.
+        """
+        scope_dict = dict()
+        for scope in ENROLLMENT_SCOPE_NAMES:
+            scope_dict[scope.lower()] = scope
+        scope_name = scope_name.lower()
+        result = scope_dict.get(scope_name)
+        if result is None:
+            raise_json_error(
+                self.request,
+                hexc.HTTPUnprocessableEntity,
+                {
+                    'message': _(u'This is an invalid course invitation scope.'),
+                    'code': 'InvalidCourseInvitationScope',
+                },
+                None)
+        return result
+
+    def __call__(self):
+        params = self.readInput()
+        scope_name = params.get('scope')
+        if scope_name:
+            scope = self._scope_lookup(scope_name)
+        else:
+            scope = ES_PUBLIC
+        invitation = create_course_invitation(self.context, scope=scope, is_generic=True)
+        logger.info('Created course invitation (%s) (%s)',
+                    invitation.code,
+                    ICourseCatalogEntry(self.context).ntiid)
+        return invitation
+
+
+class InvitationEditMixin(object):
+
+    def check_access(self, context):
+        """
+        Can only edit persisted invitations as users with EDIT access
+        on the invitation course.
+        """
+        if not getattr(context, '_p_jar', None):
+            raise_json_error(
+                self.request,
+                hexc.HTTPUnprocessableEntity,
+                {
+                    'message': _(u'Cannot edit configured course invitation.'),
+                    'code': 'CannotEditConfiguredInvitationError',
+                },
+                None)
+        entry = find_object_with_ntiid(context.course)
+        course = ICourseInstance(entry, None)
+        if not has_permission(ACT_CONTENT_EDIT, course, self.request):
+            raise_json_error(
+                self.request,
+                hexc.HTTPForbidden,
+                {
+                    'message': _(u'Invalid permission for course invitation.'),
+                    'code': 'CourseInvitationAccessError',
+                },
+                None)
+
+@view_config(route_name='objects.generic.traversal',
+             renderer='rest',
+             context=ICourseInvitation,
+             request_method='DELETE',
+             permission=nauth.ACT_CONTENT_EDIT)
+class DisableInvitationView(AbstractAuthenticatedView, InvitationEditMixin):
+    """
+    A view to disable a course invitation.
+    """
+
+    def __call__(self):
+        self.check_access(self.context)
+        interface.alsoProvides(self.context, IDisabledInvitation)
+        logger.info('Disabled invitation (%s)', self.context.code)
+        return hexc.HTTPNoContent()
+
+
+@view_config(route_name='objects.generic.traversal',
+             renderer='rest',
+             context=ICourseInvitation,
+             request_method='POST',
+             name=VIEW_ENABLE_INVITATION,
+             permission=nauth.ACT_CONTENT_EDIT)
+class EnableInvitationView(AbstractAuthenticatedView, InvitationEditMixin):
+    """
+    A view to enable a disabled course invitation.
+    """
+
+    def __call__(self):
+        self.check_access(self.context)
+        if IDisabledInvitation.providedBy(self.context):
+            interface.noLongerProvides(self.context, IDisabledInvitation)
+        logger.info('Enabling disabled invitation (%s)', self.context.code)
+        return self.context
