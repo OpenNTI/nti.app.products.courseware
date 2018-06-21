@@ -195,10 +195,10 @@ class TestInvitations(ApplicationLayerTest):
         assert_that(invitations, has_length(1))
 
         # Cannot delete/disable configured invitations
-        self.forbid_link_with_rel(invitations[0], 'delete')
+        self.forbid_link_with_rel(invitations[0], 'edit')
         res = self.testapp.get(access_token_href).json_body
         invitations = res[ITEMS]
-        self.forbid_link_with_rel(invitations[0], 'delete')
+        self.forbid_link_with_rel(invitations[0], 'edit')
 
         # Create new
         url = '/dataserver2/Objects/%s' % course_ntiid
@@ -214,7 +214,7 @@ class TestInvitations(ApplicationLayerTest):
         assert_that(new_code, not_none())
         assert_that(new_ntiid, not_none())
 
-        del_invitation_href = self.require_link_href_with_rel(res, 'delete')
+        del_invitation_href = self.require_link_href_with_rel(res, 'edit')
         self.forbid_link_with_rel(res, VIEW_ENABLE_INVITATION)
 
         res = self.testapp.get(access_token_href)

@@ -112,8 +112,9 @@ class _CourseInvitationDecorator(AbstractAuthenticatedRequestAwareDecorator):
         _links = result.setdefault(LINKS, [])
         ds2 = find_interface(context, IDataserverFolder)
         if not IDisabledInvitation.providedBy(context):
+            # Client expects an 'edit' rel here.
             link = Link(ds2,
-                        rel='delete',
+                        rel='edit',
                         method='DELETE',
                         elements=(INVITATIONS,
                                   context.code,))
