@@ -224,7 +224,6 @@ class TestEnrollment(ApplicationLayerTest):
                         verifiably_provides(IGrantAccessException))
 
 
-
     @WithSharedApplicationMockDS(testapp=True, users=True)
     def test_enrollment_summary(self):
         with mock_dataserver.mock_db_trans(self.ds):
@@ -290,8 +289,11 @@ class TestEnrollment(ApplicationLayerTest):
         # Add enrollment option
         ext_dict = {'MimeType': 'application/vnd.nextthought.courseware.externalenrollmentoption',
                     'enrollment_url': u'http://testurl',
-                    'title': 'Login for test site',
-                    'description': 'a test login url'}
+                    'title': u'Login for test site',
+                    'drop_title': u'drop title',
+                    'drop_description': u'drop description',
+                    'drop_url': u'http://dropurl',
+                    'description': u'a test login url'}
         res = self.testapp.put_json(options_href, ext_dict)
         res = res.json_body
         assert_that(res.get('href'), not_none())
@@ -299,6 +301,9 @@ class TestEnrollment(ApplicationLayerTest):
         assert_that(res['enrollment_url'], is_(u'http://testurl'))
         assert_that(res['title'], is_(u'Login for test site'))
         assert_that(res['description'], is_(u'a test login url'))
+        assert_that(res['drop_url'], is_(u'http://dropurl'))
+        assert_that(res['drop_title'], is_(u'drop title'))
+        assert_that(res['drop_description'], is_(u'drop description'))
         option_edit_href = self.require_link_href_with_rel(res, 'edit')
 
         res = self.testapp.get(options_href).json_body
