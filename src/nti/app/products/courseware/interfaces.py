@@ -283,6 +283,12 @@ class IEnrollmentOption(IContained):
     description = TextLine(title=u"Description",
                            required=False)
 
+    drop_title = TextLine(title=u"Drop title",
+                          required=False)
+
+    drop_description = TextLine(title=u"Drop description",
+                                required=False)
+
 
 class IExternalEnrollmentOption(IEnrollmentOption):
     """
@@ -292,6 +298,9 @@ class IExternalEnrollmentOption(IEnrollmentOption):
 
     enrollment_url = ValidURI(title=u"Enrollment URL",
                               required=True)
+
+    drop_url = ValidURI(title=u"Drop URL",
+                        required=False)
 
 
 class IEnrollmentOptionContainer(IContainer):
