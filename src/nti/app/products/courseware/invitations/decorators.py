@@ -65,19 +65,20 @@ class _CourseInvitationsLinkDecorator(AbstractAuthenticatedRequestAwareDecorator
 
     def _predicate(self, context, unused_result):
         return self._is_authenticated \
-           and not ILegacyCourseInstance.providedBy(context) \
-           and has_course_invitations(context)
+           and not ILegacyCourseInstance.providedBy(context)
 
     def _do_decorate_external(self, context, result):
         _links = result.setdefault(LINKS, [])
         rels = set()
         if has_permission(ACT_CONTENT_EDIT, context, self.request):
-            rels.add(VIEW_COURSE_ACCESS_TOKENS)
+            if has_course_invitations(context):
+                rels.add(VIEW_COURSE_ACCESS_TOKENS)
             rels.add(VIEW_CREATE_COURSE_INVITATION)
 
         if     is_course_instructor(context, self.remoteUser) \
             or is_admin_or_site_admin(self.remoteUser):
-            rels.add(VIEW_COURSE_ACCESS_TOKENS)
+            if has_course_invitations(context):
+                rels.add(VIEW_COURSE_ACCESS_TOKENS)
             rels.add(SEND_COURSE_INVITATIONS)
             rels.add(CHECK_COURSE_INVITATIONS_CSV)
         elif not rels and not is_enrolled(context, self.remoteUser):
@@ -90,6 +91,8 @@ class _CourseInvitationsLinkDecorator(AbstractAuthenticatedRequestAwareDecorator
             link.__name__ = ''
             link.__parent__ = context
             _links.append(link)
+
+            has_course_invitations(context)
 
 
 @component.adapter(ICourseInvitation)
