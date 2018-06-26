@@ -71,14 +71,12 @@ class _CourseInvitationsLinkDecorator(AbstractAuthenticatedRequestAwareDecorator
         _links = result.setdefault(LINKS, [])
         rels = set()
         if has_permission(ACT_CONTENT_EDIT, context, self.request):
-            if has_course_invitations(context):
-                rels.add(VIEW_COURSE_ACCESS_TOKENS)
+            rels.add(VIEW_COURSE_ACCESS_TOKENS)
             rels.add(VIEW_CREATE_COURSE_INVITATION)
 
         if     is_course_instructor(context, self.remoteUser) \
             or is_admin_or_site_admin(self.remoteUser):
-            if has_course_invitations(context):
-                rels.add(VIEW_COURSE_ACCESS_TOKENS)
+            rels.add(VIEW_COURSE_ACCESS_TOKENS)
             rels.add(SEND_COURSE_INVITATIONS)
             rels.add(CHECK_COURSE_INVITATIONS_CSV)
         elif not rels and not is_enrolled(context, self.remoteUser):
