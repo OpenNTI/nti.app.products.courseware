@@ -240,6 +240,15 @@ class UserAcceptCourseInvitationView(AcceptInvitationByCodeView):
                 invitation = get_course_invitation(course, code)
                 if invitation is not None:
                     break
+        if IDisabledInvitation.providedBy(invitation):
+            raise_json_error(self.request,
+                             hexc.HTTPUnprocessableEntity,
+                             {
+                                 'message': _(u"Invitation code no longer valid."),
+                                 'code': 'InvalidInvitationCode',
+                             },
+                             None)
+
         if ICourseInvitation.providedBy(invitation):
             # If a generic ICourseInvitation, we need to convert into a user
             # specific invitation, if possible. If we do this, we do not
