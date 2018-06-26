@@ -8,6 +8,9 @@
 	<include package="zope.component" file="meta.zcml" />
 	<include package="zope.component" />
 
+    <!-- ACL -->
+    <adapter factory=".acl.CourseInvitationACLProvider" />
+
     <!-- Adapters -->
     <adapter factory=".adapters._CourseInvitations"
              provides=".interfaces.ICourseInvitations"
