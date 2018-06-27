@@ -86,6 +86,7 @@ from nti.contenttypes.courses.invitation import JoinCourseInvitation
 
 from nti.contenttypes.courses.utils import get_courses_catalog
 from nti.contenttypes.courses.utils import is_course_instructor
+from nti.contenttypes.courses.utils import is_course_instructor_or_editor
 
 from nti.dataserver import authorization as nauth
 
@@ -143,7 +144,7 @@ class CourseInvitationsView(AbstractAuthenticatedView):
         return ICourseInstance(self.context)
 
     def __call__(self):
-        if      not is_course_instructor(self._course, self.remoteUser) \
+        if      not is_course_instructor_or_editor(self._course, self.remoteUser) \
             and not is_admin_or_content_admin_or_site_admin(self.remoteUser):
             raise hexc.HTTPForbidden()
 
