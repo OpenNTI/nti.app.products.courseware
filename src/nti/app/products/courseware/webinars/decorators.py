@@ -43,7 +43,7 @@ class _CourseInstanceIntegrationsDecorator(AbstractAuthenticatedRequestAwareDeco
     def _predicate(self, context, unused_result):
         return has_permission(ACT_CONTENT_EDIT, context, self.request)
 
-    def decorateExternalMapping(self, context, result):
+    def _do_decorate_external(self, context, result):
         _links = result.setdefault(LINKS, [])
         _links.append(Link(context,
                            rel='Integrations',
