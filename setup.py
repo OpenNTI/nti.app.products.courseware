@@ -61,6 +61,7 @@ setup(
         'setuptools',
         'BTrees',
         'isodate',
+        'nti.app.products.webinar',
         'nti.base',
         'nti.contentlibrary',
         'nti.contenttypes.courses',
