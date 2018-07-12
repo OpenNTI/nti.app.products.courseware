@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE document SYSTEM "rml.dtd">
+<document filename="certificate.pdf"
+	  invariant="1"
+	  compression="1"
+	  creator="NextThought"
+	  author="NextThought"
+	  xmlns:tal="http://xml.zope.org/namespaces/tal"
+	  xmlns:metal="http://xml.zope.org/namespaces/metal"
+	  tal:attributes="title view/Title">
+
+<image metal:define-macro="certificate-branding-graphic" file="[nti.app.products.courseware]/completion/templates/assets/sidebar-graphic.png" x="40" y="0" height="850" width="260"/>
+</document>
