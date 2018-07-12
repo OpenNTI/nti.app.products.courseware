@@ -426,7 +426,7 @@ class CourseEnrollmentRosterGetView(AbstractAuthenticatedView,
         record = ICourseInstanceEnrollment(record)
         record.CourseInstance = None
         external = to_external_object(record)
-        
+
         try:
             user = IUser(record)
         except TypeError:
@@ -477,7 +477,7 @@ class CourseEnrollmentRosterGetView(AbstractAuthenticatedView,
         result = LocatedExternalDict()
         result.__name__ = request.view_name
         result.__parent__ = course
-       
+
 
         enrollments = ICourseEnrollments(course)
         enrollments_iter = enrollments.iter_enrollments()
@@ -531,7 +531,7 @@ class CourseEnrollmentRosterGetView(AbstractAuthenticatedView,
             record_filter = self._record_filter(filter_name, username_search_term)
             enrollments_iter = [x for x in enrollments_iter if record_filter(x)]
             result['FilteredTotalItemCount'] = len(enrollments_iter)
-        
+
         self._batch_items_iterable(result, enrollments_iter)
 
         # Notice we don't use `_batch_items_iterable`'s selector to perform the

@@ -667,6 +667,9 @@
 	<!-- Views -->
 	<include package=".views" />
 
+	<!-- Completion -->
+    <include package=".webinars" />
+
 	<!-- Recordables -->
 	<utility factory=".recordables.CourseCatalogRecordables" name="courses" />
 
