@@ -1,70 +1,7 @@
 <?xml version="1.0" encoding="utf-8" standalone="no"?>
 <!DOCTYPE document SYSTEM "rml.dtd">
-<document filename="certificate.pdf"
-	  invariant="1"
-	  compression="1"
-	  creator="NextThought"
-	  author="NextThought"
-	  xmlns:tal="http://xml.zope.org/namespaces/tal"
+<document xmlns:tal="http://xml.zope.org/namespaces/tal"
 	  xmlns:metal="http://xml.zope.org/namespaces/metal"
-	  tal:attributes="title view/Title">
+	  metal:use-macro="macro:certificate">
 
-  <docinit>
-    <registerTTFont faceName="OpenSans" fileName="[nti.app.products.courseware]/completion/templates/fonts/OpenSans-Regular.ttf" />
-    <registerTTFont faceName="OpenSansSemiBold" fileName="[nti.app.products.courseware]/completion/templates/fonts/OpenSans-Semibold.ttf" />
-    <registerTTFont faceName="OpenSansBold" fileName="[nti.app.products.courseware]/completion/templates/fonts/OpenSans-Bold.ttf" />
-    <registerTTFont faceName="OpenSansLight" fileName="[nti.app.products.courseware]/completion/templates/fonts/OpenSans-Light.ttf" />
-  </docinit>
-  
-  <template pagesize="(1100,850)" leftMargin="72" showBoundary="0">
-    <pageTemplate id="landscape">
-      <pageGraphics>
-	<image metal:use-macro="macro:certificate-branding-graphic" file="[nti.app.products.courseware]/completion/templates/assets/sidebar-graphic.png" x="40" y="0" height="850" width="260"/>
-      </pageGraphics>
-      <frame id="heading" x1="331" y1="360" width="740" height="390"/>
-      <frame id="instructor-0" x1="331" y1="260" width="340" height="100"/>
-      <frame id="instructor-1" x1="686" y1="260" width="340" height="100"/>
-      <frame id="instructor-2" x1="331" y1="160" width="340" height="100"/>
-      <frame id="instructor-3" x1="686" y1="160" width="340" height="100"/>
-      <frame id="instructor-4" x1="331" y1="60" width="340" height="100"/>
-      <frame id="instructor-5" x1="686" y1="60" width="340" height="100"/>
-    </pageTemplate>
-  </template>
-
-  <stylesheet>
-    <paraStyle name="header" fontName="OpenSansSemiBold" fontSize="18" leftIndent="25" rightIndent="25" spaceBefore="101" leading="24" textColor="#494949"/>
-    <paraStyle name="name" fontName="OpenSansLight" fontSize="56" leftIndent="25" rightIndent="25" spaceBefore="10" leading="76" textColor="#494949" />
-    <paraStyle name="course" fontName="OpenSans" fontSize="32" leftIndent="25" rightIndent="25" spaceBefore="10" leading="43" textColor="#494949" />
-    <paraStyle name="date" fontName="OpenSans" fontSize="18" leftIndent="25" rightIndent="25" spaceBefore="10" leading="24" textColor="#b8b8b8" />
-    <paraStyle name="credit" fontName="OpenSansSemiBold" fontSize="14" leftIndent="25" rightIndent="25" spaceBefore="10" leading="19" textColor="#494949" />
-    <paraStyle name="facilitator-name" fontName="OpenSansSemiBold" fontSize="14" leftIndent="25" rightIndent="25" spaceBefore="10" leading="19" textColor="#494949" />
-    <paraStyle name="facilitator-title" fontName="OpenSans" fontSize="12" leftIndent="25" rightIndent="25" spaceBefore="10" leading="17" textColor="#757474" />
-  </stylesheet>
-  <story>
-    <keepInFrame frame="heading" onOverflow="shrink">
-    <h3 style="header">Certificate of Completion</h3>
-    <h1 style="name" tal:content="options/Name">Huey Sooner</h1>
-    <h5 style="date">Awarded on <ommitted tal:replace="options/Date">March 19, 2008</ommitted></h5>
-    <h3 style="header"><omitted tal:replace="options/Brand">Janux</omitted> Course</h3>
-    <h2 style="course" tal:content="options/Course">Course Title</h2>
-    <h4 style="credit" tal:condition="options/Credit | nothing">
-      <tal:block tal:repeat="credit options/Credit">
-	Earned <omitted tal:replace="credit/Amount"/>  <omitted tal:replace="credit/Units"/> of <omitted tal:replace="credit/Type"/><omitted tal:condition="not:repeat/credit/end">, </omitted>
-      </tal:block>
-    </h4>
-    </keepInFrame>
-    <tal:block tal:define="rows python:3;
-			   cols python:2;
-			   count python:len(options['Facilitators']);
-			   start python: (rows - ((count / cols) + (count % cols))) * cols if count else 0">
-      <setNextFrame tal:attributes="name python:'instructor-'+str(start)"/>
-    </tal:block>
-    <tal:block tal:repeat="facilitator python: options['Facilitators']">
-      <nextFrame />
-      <h4 style="facilitator-name" tal:content="facilitator/Name">Instructor</h4>
-      <para style="facilitator-title" tal:content="facilitator/JobTitle">
-	Instructor
-      </para>
-    </tal:block>
-  </story>
 </document>
