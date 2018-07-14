@@ -112,6 +112,7 @@ from nti.externalization.interfaces import StandardExternalFields
 from nti.externalization.interfaces import StandardInternalFields
 
 from nti.traversal import traversal
+from nti.app.products.courseware.completion.utils import has_completed_course
 
 ITEMS = StandardExternalFields.ITEMS
 NTIID = StandardExternalFields.NTIID
@@ -507,9 +508,17 @@ class drop_course_view(AbstractAuthenticatedView):
     """
 
     def __call__(self):
-        course_instance = self.request.context.CourseInstance
-        catalog_entry = ICourseCatalogEntry(course_instance)
-        enrollments = get_enrollments(course_instance, self.request)
+        course = self.request.context.CourseInstance
+        if has_completed_course(self.remoteUser, course):
+            raise_json_error(self.request,
+                             hexc.HTTPForbidden,
+                             {
+                                 'message': _(u"Cannot drop a completed course."),
+                                 'code': 'CannotDropCompletedCourseError',
+                             },
+                             None)
+        catalog_entry = ICourseCatalogEntry(course)
+        enrollments = get_enrollments(course, self.request)
         enrollments.drop(self.remoteUser)
         logger.info("User %s has dropped from course %s",
                     self.remoteUser, catalog_entry.ntiid)

@@ -107,10 +107,10 @@ class _CatalogCertificateDecorator(_CourseCompletionDecorator):
     Decorates a progress stats link on the course
     """
 
-    def _predicate(self, context, unused_result):
+    def _predicate(self, unused_context, unused_result):
         return self.policy is not None
 
-    def _do_decorate_external(self, context, result):
-        if 'AwardsCertificate' not in result \
+    def _do_decorate_external(self, unused_context, result):
+        if     'AwardsCertificate' not in result \
            and getattr(self.policy, 'offers_completion_certificate', False):
             result['AwardsCertificate'] = True
