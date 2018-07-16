@@ -112,6 +112,7 @@ from nti.externalization.interfaces import StandardExternalFields
 from nti.externalization.interfaces import StandardInternalFields
 
 from nti.traversal import traversal
+from nti.app.products.courseware.completion.utils import has_completed_course
 
 ITEMS = StandardExternalFields.ITEMS
 NTIID = StandardExternalFields.NTIID
@@ -318,6 +319,12 @@ class _AbstractSortingAndFilteringCoursesView(AbstractAuthenticatedView):
                 result.append((entry, record))
         return result
 
+    def _include_filter(self, unused_entry):
+        """
+        Subclasses may use this to filter courses.
+        """
+        return True
+
     @Lazy
     def sorted_entries_and_records(self):
         # Sort secondary key first, ascending alpha
@@ -340,7 +347,7 @@ class _AbstractSortingAndFilteringCoursesView(AbstractAuthenticatedView):
     def sorted_current_entries_and_records(self):
         # pylint: disable=not-an-iterable
         result = [x for x in self.sorted_entries_and_records
-                  if self._is_entry_current(x[0])]
+                  if self._is_entry_current(x[0]) and self._include_filter(x[0])]
         return result
 
     def _get_items(self):
@@ -479,6 +486,16 @@ class FavoriteEnrolledCoursesView(_AbstractSortingAndFilteringCoursesView):
         enrollment = entry_tuple[1]
         return enrollment.createdTime
 
+    def _include_filter(self, entry):
+        """
+        We only want to return non-completed courses.
+        """
+        course = ICourseInstance(entry, None)
+        result = True
+        if course is not None:
+            result = not has_completed_course(self.remoteUser, course)
+        return result
+
 
 @view_config(route_name='objects.generic.traversal',
              context=IAdministeredCoursesCollection,
@@ -507,9 +524,17 @@ class drop_course_view(AbstractAuthenticatedView):
     """
 
     def __call__(self):
-        course_instance = self.request.context.CourseInstance
-        catalog_entry = ICourseCatalogEntry(course_instance)
-        enrollments = get_enrollments(course_instance, self.request)
+        course = self.request.context.CourseInstance
+        if has_completed_course(self.remoteUser, course):
+            raise_json_error(self.request,
+                             hexc.HTTPForbidden,
+                             {
+                                 'message': _(u"Cannot drop a completed course."),
+                                 'code': 'CannotDropCompletedCourseError',
+                             },
+                             None)
+        catalog_entry = ICourseCatalogEntry(course)
+        enrollments = get_enrollments(course, self.request)
         enrollments.drop(self.remoteUser)
         logger.info("User %s has dropped from course %s",
                     self.remoteUser, catalog_entry.ntiid)
@@ -646,12 +671,6 @@ class _AbstractFilteredCourseView(_AbstractSortingAndFilteringCoursesView,
     def _get_entry_for_record(self, record):
         entry = ICourseCatalogEntry(record, None)
         return entry
-
-    def _include_filter(self, entry):
-        """
-        Subclasses may use this to filter courses.
-        """
-        raise NotImplementedError()
 
     @Lazy
     def filtered_entries(self):

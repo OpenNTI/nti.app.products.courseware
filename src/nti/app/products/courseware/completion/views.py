@@ -8,10 +8,6 @@ from __future__ import division
 from __future__ import print_function
 from __future__ import absolute_import
 
-from collections import Counter
-
-import math
-
 from slugify import slugify
 
 from zope import component
@@ -48,12 +44,6 @@ from nti.contenttypes.completion.interfaces import ICompletionContextCompletionP
 from nti.contenttypes.completion.interfaces import IProgress
 
 from nti.contenttypes.courses.interfaces import ICourseCatalogEntry
-from nti.contenttypes.courses.interfaces import ICourseInstance
-from nti.contenttypes.courses.interfaces import ICourseEnrollments
-
-from nti.dataserver.interfaces import IUser
-
-from nti.externalization.interfaces import LocatedExternalDict
 
 class EnrollmentProgressViewMixin(object):
 
@@ -81,7 +71,8 @@ class EnrollmentProgressViewMixin(object):
              context=ICourseInstanceEnrollment,
              name=VIEW_CERTIFICATE,
              permission=nauth.ACT_READ)
-class CompletionCertificateView(AbstractAuthenticatedView, EnrollmentProgressViewMixin):
+class CompletionCertificateView(AbstractAuthenticatedView,
+                                EnrollmentProgressViewMixin):
 
     Title = u'Completion Certificate'
 
@@ -100,7 +91,8 @@ class CompletionCertificateView(AbstractAuthenticatedView, EnrollmentProgressVie
         name = IFriendlyNamed(self.user).realname
         if not name:
             # Otherwise just fallback to whatever is our display name generator
-            name = component.getMultiAdapter((self.user, self.request), IDisplayNameGenerator)()
+            name = component.getMultiAdapter((self.user, self.request),
+                                             IDisplayNameGenerator)()
         return name
 
     @Lazy
@@ -162,8 +154,9 @@ class CompletionCertificateView(AbstractAuthenticatedView, EnrollmentProgressVie
             response = self.request.response
             response.content_disposition = 'attachment; filename="%s"' % self._filename(entry)
 
-        transcript = component.queryMultiAdapter((self.user, self.course), ICreditTranscript)
-            
+        transcript = component.queryMultiAdapter((self.user, self.course),
+                                                 ICreditTranscript)
+
         return {
             u'Brand': self._brand,
             u'Name': self._name,
