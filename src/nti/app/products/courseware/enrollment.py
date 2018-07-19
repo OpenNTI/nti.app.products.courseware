@@ -71,6 +71,7 @@ logger = __import__('logging').getLogger(__name__)
 
 
 @WithRepr
+@NoPickle
 @EqHash('Name')
 @interface.implementer(IEnrollmentOption)
 class EnrollmentOption(SchemaConfigured):
