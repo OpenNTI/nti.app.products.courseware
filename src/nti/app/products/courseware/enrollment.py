@@ -34,7 +34,6 @@ from nti.containers.containers import CaseInsensitiveCheckingLastModifiedBTreeCo
 from nti.contenttypes.courses.interfaces import ICourseInstance
 from nti.contenttypes.courses.interfaces import ICourseCatalogEntry
 from nti.contenttypes.courses.interfaces import IDenyOpenEnrollment
-from nti.contenttypes.courses.interfaces import INonPublicCourseInstance
 
 from nti.coremetadata.interfaces import SYSTEM_USER_NAME
 
@@ -72,7 +71,6 @@ logger = __import__('logging').getLogger(__name__)
 
 
 @WithRepr
-@NoPickle
 @EqHash('Name')
 @interface.implementer(IEnrollmentOption)
 class EnrollmentOption(SchemaConfigured):
