@@ -44,6 +44,7 @@ from nti.app.products.courseware import VIEW_COURSE_ENROLLMENT_ROSTER
 from nti.app.products.courseware.interfaces import ACT_VIEW_ACTIVITY
 
 from nti.app.products.courseware.interfaces import IOpenEnrollmentOption
+from nti.app.products.courseware.interfaces import IExternalEnrollmentOption
 from nti.app.products.courseware.interfaces import ICoursesCatalogCollection
 from nti.app.products.courseware.interfaces import ICourseInstanceEnrollment
 
@@ -442,6 +443,17 @@ class _OpenEnrollmentOptionLinkDecorator(AbstractAuthenticatedRequestAwareDecora
         result['IsAvailable'] = context.Enabled and record is None
         result['IsEnrolled'] = bool(record is not None
                                     and record.Scope == ES_PUBLIC)
+
+
+@component.adapter(IExternalEnrollmentOption)
+@interface.implementer(IExternalObjectDecorator)
+class _ExternalEnrollmentOptionLinkDecorator(_OpenEnrollmentOptionLinkDecorator):
+
+    def _do_decorate_external(self, context, result):
+        record = self._get_enrollment_record(context, self.remoteUser)
+        result['IsAvailable'] = record is None
+        result['IsEnrolled'] = bool(record is not None
+                                    and record.Scope == ES_PURCHASED)
 
 
 @component.adapter(ICourseCatalogEntry)

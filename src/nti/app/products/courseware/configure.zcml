@@ -558,6 +558,11 @@
 				for=".interfaces.IOpenEnrollmentOption
 					 pyramid.interfaces.IRequest" />
 
+	<subscriber factory=".decorators._ExternalEnrollmentOptionLinkDecorator"
+                provides="nti.externalization.interfaces.IExternalObjectDecorator"
+                for=".interfaces.IExternalEnrollmentOption
+                     pyramid.interfaces.IRequest" />
+
     <adapter factory=".enrollment.EnrollmentOptionContainerExternalizer"
              for="nti.app.products.courseware.interfaces.IEnrollmentOptionContainer"
              provides="nti.externalization.interfaces.IInternalObjectExternalizer" />
