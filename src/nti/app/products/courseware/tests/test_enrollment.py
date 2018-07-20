@@ -284,7 +284,7 @@ class TestEnrollment(ApplicationLayerTest):
 
         res = self.testapp.get(options_href).json_body
         assert_that(res[ITEMS], has_length(0))
-        assert_that(res.get('AvailableEnrollmentOptions'), has_length(1))
+        assert_that(res.get('AvailableEnrollmentOptions'), has_length(0))
 
         # Add enrollment option
         ext_dict = {'MimeType': 'application/vnd.nextthought.courseware.externalenrollmentoption',
@@ -308,7 +308,7 @@ class TestEnrollment(ApplicationLayerTest):
 
         res = self.testapp.get(options_href).json_body
         assert_that(res[ITEMS], has_length(1))
-        assert_that(res.get('AvailableEnrollmentOptions'), has_length(1))
+        assert_that(res.get('AvailableEnrollmentOptions'), has_length(0))
 
         res = self.testapp.get(entry_href).json_body
         entry_options = res['EnrollmentOptions'][ITEMS]
@@ -339,3 +339,6 @@ class TestEnrollment(ApplicationLayerTest):
 
         option_res = self.testapp.get(options_href, extra_environ=student_env).json_body
         self.forbid_link_with_rel(option_res, 'edit')
+
+        # Edit catalog entry
+        self.testapp.put_json(entry_href, {'is_non_public': True})
