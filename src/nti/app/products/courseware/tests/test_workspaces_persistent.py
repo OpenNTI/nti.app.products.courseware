@@ -310,13 +310,13 @@ class TestPersistentWorkspaces(AbstractEnrollingBase, ApplicationLayerTest):
         for course in res.json_body.get('Items'):
             assert_that(course, has_entry('RoleName', is_(self.editor_role)))
 
-        # Now validate our admin cannot add/update forums, topics and comments.
+        # Now validate our admin *can* add/update forums and topics.
         course_href = self.require_link_href_with_rel(res.json_body['Items'][0], 'CourseInstance')
         res = self.testapp.get(course_href, extra_environ=admin_environ)
         course_ext = res.json_body
         discussions = course_ext.get('Discussions')
         self.forbid_link_with_rel(discussions, 'edit')
-        self.forbid_link_with_rel(discussions, 'add')
+        self.require_link_href_with_rel(discussions, 'add')
 
         discussion_contents_rel = self.require_link_href_with_rel(discussions, 'contents')
         discussion_contents = self.testapp.get(discussion_contents_rel,
@@ -325,7 +325,7 @@ class TestPersistentWorkspaces(AbstractEnrollingBase, ApplicationLayerTest):
 
         forum = discussion_contents['Items'][0]
         self.forbid_link_with_rel(forum, 'edit')
-        self.forbid_link_with_rel(forum, 'add')
+        self.require_link_href_with_rel(forum, 'add')
 
     @WithSharedApplicationMockDS(users=('arbitrary@nextthought.com',), testapp=True)
     def test_admin(self):
