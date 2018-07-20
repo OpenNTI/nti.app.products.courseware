@@ -73,7 +73,8 @@ logger = __import__('logging').getLogger(__name__)
 @WithRepr
 @EqHash('Name')
 @interface.implementer(IEnrollmentOption)
-class EnrollmentOption(SchemaConfigured):
+class EnrollmentOption(SchemaConfigured,
+                       PersistentCreatedAndModifiedTimeObject):
 
     createDirectFieldProperties(IEnrollmentOption)
 
@@ -123,8 +124,7 @@ def generate_external_enrollment_ntiid(provider=u'NTI', now=None):
 
 @interface.implementer(IExternalEnrollmentOption)
 class ExternalEnrollmentOption(EnrollmentOption,
-                               Contained,
-                               PersistentCreatedAndModifiedTimeObject):
+                               Contained):
 
     createDirectFieldProperties(IExternalEnrollmentOption)
 
@@ -168,7 +168,8 @@ class EnrollmentOptions(LocatedExternalDict):
     def __setitem__(self, key, value):
         assert IEnrollmentOption.providedBy(value)
         assert value.Name, 'Missing Enrollment option name'
-        value.__parent__ = self
+        if value.__parent__ is None:
+            value.__parent__ = self
         return LocatedExternalDict.__setitem__(self, key, value)
 
     def toExternalObject(self, *args, **kwargs):
