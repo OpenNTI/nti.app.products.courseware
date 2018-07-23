@@ -19,7 +19,11 @@ from nti.app.authentication import get_remote_user
 
 from nti.app.products.integration.interfaces import IIntegrationCollection
 
+from nti.app.products.courseware.webinars.interfaces import IWebinarAsset
+
 from nti.contenttypes.courses.interfaces import ICourseInstance
+
+from nti.traversal.traversal import find_interface
 
 logger = __import__('logging').getLogger(__name__)
 
@@ -36,3 +40,9 @@ def course_integration_collection(course, request):
     if collection is not None:
         collection.__parent__ = course
         return collection
+
+
+@interface.implementer(ICourseInstance)
+@component.adapter(IWebinarAsset)
+def asset_to_course(asset):
+    return find_interface(asset, ICourseInstance)
