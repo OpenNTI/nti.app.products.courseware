@@ -46,6 +46,11 @@
 
     <subscriber handler=".subscribers._on_webinar_asset_created" />
 
+    <!-- Internalization -->
+    <adapter factory=".internalization.WebinarAssetUpdater"
+             provides="nti.externalization.interfaces.IInternalObjectUpdater"
+             for=".interfaces.IWebinarAsset" />
+
     <!-- Traversal-ish stuff -->
     <utility factory=".ntiids._WebinarAssetResolver" name="NTIWebinarAsset" />
 
