@@ -33,6 +33,7 @@ class CourseWebinarContainer(CaseInsensitiveCheckingLastModifiedBTreeContainer,
     createDirectFieldProperties(ICourseWebinarContainer)
 
     __parent__ = None
+    __name__ = "webinars"
 
     def get_or_create_webinar(self, webinar):
         if webinar.__name__ not in self:
@@ -47,7 +48,6 @@ def course_to_webinar_container(course):
     if result is None:
         result = CourseWebinarContainer()
         result.__parent__ = course
-        result.__name__ = WEBINAR_CONTAINER_KEY
         annotations[WEBINAR_CONTAINER_KEY] = result
         IConnection(result).add(result)
     return result
