@@ -17,6 +17,12 @@
              factory=".adapters.course_integration_collection"
              provides="zope.traversing.interfaces.IPathAdapter" />
 
+    <adapter name="webinars"
+             for="nti.contenttypes.courses.interfaces.ICourseInstance
+                  pyramid.interfaces.IRequest"
+             factory=".adapters.course_webinars"
+             provides="zope.traversing.interfaces.IPathAdapter" />
+
     <adapter for="nti.app.products.courseware.webinars.interfaces.IWebinarAsset"
              factory=".adapters.asset_to_course"
              provides="nti.contenttypes.courses.interfaces.ICourseInstance" />

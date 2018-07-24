@@ -20,6 +20,7 @@ from nti.app.authentication import get_remote_user
 from nti.app.products.integration.interfaces import IIntegrationCollection
 
 from nti.app.products.courseware.webinars.interfaces import IWebinarAsset
+from nti.app.products.courseware.webinars.interfaces import ICourseWebinarContainer
 
 from nti.contenttypes.courses.interfaces import ICourseInstance
 
@@ -40,6 +41,12 @@ def course_integration_collection(course, request):
     if collection is not None:
         collection.__parent__ = course
         return collection
+
+
+@interface.implementer(IPathAdapter)
+@component.adapter(ICourseInstance, IRequest)
+def course_webinars(course, unused_request):
+    return ICourseWebinarContainer(course)
 
 
 @interface.implementer(ICourseInstance)
