@@ -15,8 +15,9 @@ from zope import component
 from zope import interface
 
 from nti.app.products.courseware.webinars.interfaces import IWebinarAsset
-from nti.app.products.courseware.webinars.interfaces import IWebinarProgressContainer
-from nti.app.products.courseware.webinars.interfaces import IUserWebinarProgressContainer
+
+from nti.app.products.webinar.interfaces import IWebinarProgressContainer
+from nti.app.products.webinar.interfaces import IUserWebinarProgressContainer
 
 from nti.app.products.webinar.progress import should_update_progress
 from nti.app.products.webinar.progress import update_webinar_progress
@@ -32,7 +33,7 @@ from nti.contenttypes.completion.utils import update_completion
 
 from nti.contenttypes.courses.interfaces import ICourseInstance
 
-from nti.coremetadata.users.interfaces import IUser
+from nti.coremetadata.interfaces import IUser
 
 from nti.dataserver.users import User
 
