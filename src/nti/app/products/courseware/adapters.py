@@ -37,7 +37,6 @@ from nti.app.products.courseware._outline_path import OutlinePathFactory
 
 from nti.app.products.courseware.enrollment import EnrollmentOptionContainer
 
-
 from nti.app.products.courseware.interfaces import IEnrollmentOptionContainer
 from nti.app.products.courseware.interfaces import ILegacyCommunityBasedCourseInstance
 from nti.app.products.courseware.interfaces import ILegacyCourseConflatedContentPackageUsedAsCourse

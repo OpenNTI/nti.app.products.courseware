@@ -10,8 +10,6 @@ from __future__ import absolute_import
 
 import six
 
-from pyramid.threadlocal import get_current_request
-
 from zope import component
 from zope import interface
 
@@ -38,8 +36,7 @@ class WebinarAssetUpdater(InterfaceObjectIO):
             # The client may give us a webinar key here instead of the
             # actual webinar object; if so, we must resolve it.
             webinar_integration = component.getUtility(IGoToWebinarAuthorizedIntegration)
-            client = component.queryMultiAdapter((webinar_integration, get_current_request()),
-                                                 IWebinarClient)
+            client = IWebinarClient(webinar_integration)
             webinar = client.get_webinar(webinar_data)
             if webinar is None:
                 # We'll fail validation if none

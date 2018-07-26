@@ -73,14 +73,14 @@ def webinar_asset_progress(user, asset, course):
     if webinar is None:
         return result
 
-    if should_update_progress(webinar):
-        # No progress (this needs to be in another process); update
-        # and store
-        logger.info('Updating webinar progress (%s)', webinar)
-        update_webinar_progress(webinar)
-        update_webinar_completion(asset, webinar, course)
-        request = get_current_request()
-        request.environ['nti.request_had_transaction_side_effects'] = 'True'
+#     if should_update_progress(webinar):
+#         # No progress (this needs to be in another process); update
+#         # and store
+#         logger.info('Updating webinar progress (%s)', webinar)
+#         update_webinar_progress(webinar)
+#         update_webinar_completion(asset, webinar, course)
+#         request = get_current_request()
+#         request.environ['nti.request_had_transaction_side_effects'] = 'True'
 
     user_container = component.queryMultiAdapter((user, webinar),
                                                  IUserWebinarProgressContainer)
