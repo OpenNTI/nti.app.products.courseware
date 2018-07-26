@@ -52,3 +52,5 @@ VIEW_COURSE_ENROLLMENT_ROSTER = 'CourseEnrollmentRoster'
 VIEW_RECURSIVE_TX_HISTORY = 'RecursiveTransactionHistory'
 VIEW_COURSE_RECURSIVE_BUCKET = 'CourseRecursiveStreamByBucket'
 VIEW_CERTIFICATE = 'Certificate'
+
+VIEW_UPDATE_WEBINAR_PROGRESS = 'UpdateCourseWebinars'

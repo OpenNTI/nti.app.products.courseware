@@ -10,17 +10,11 @@ from __future__ import absolute_import
 
 # pylint: disable=inherit-non-class,expression-not-assigned
 
-from zope import interface
-
 from zope.container.constraints import contains
 
-from zope.container.interfaces import IContained
 from zope.container.interfaces import IContainer
 
 from nti.app.products.webinar.interfaces import IWebinar
-
-from nti.base.interfaces import ICreated
-from nti.base.interfaces import ILastModified
 
 from nti.contenttypes.completion.interfaces import ICompletableItem
 
@@ -31,17 +25,7 @@ from nti.contenttypes.presentation.interfaces import INTIIDIdentifiable
 from nti.contenttypes.presentation.interfaces import INonExportableAsset
 from nti.contenttypes.presentation.interfaces import ICoursePresentationAsset
 
-from nti.coremetadata.interfaces import IUser
-
-from nti.schema.field import Int
-from nti.schema.field import Bool
-from nti.schema.field import Number
 from nti.schema.field import Object
-from nti.schema.field import HTTPURL
-from nti.schema.field import DateTime
-from nti.schema.field import ValidText
-from nti.schema.field import ListOrTuple
-from nti.schema.field import ValidDatetime
 from nti.schema.field import DecodingValidTextLine as ValidTextLine
 
 

@@ -36,6 +36,18 @@
              provides=".interfaces.ICourseWebinarContainer"
              for="nti.contenttypes.courses.interfaces.ICourseInstance" />
 
+    <!-- Completion -->
+    <adapter factory=".completion.webinar_asset_progress"
+             for="nti.coremetadata.interfaces.IUser
+                  .interfaces.IWebinarAsset
+                  nti.contenttypes.courses.interfaces.ICourseInstance"
+             provides="nti.contenttypes.completion.interfaces.IProgress" />
+
+    <adapter factory=".completion.WebinarAssetCompletionPolicy"
+             for=".interfaces.IWebinarAsset
+                  nti.contenttypes.courses.interfaces.ICourseInstance"
+             provides="nti.contenttypes.completion.interfaces.ICompletableItemCompletionPolicy" />
+
     <!-- Externalization -->
     <include package="nti.externalization" file="meta.zcml" />
     <include package="nti.externalization" />
