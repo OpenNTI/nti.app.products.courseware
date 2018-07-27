@@ -62,4 +62,8 @@ class WebinarAsset(PersistentPresentationAsset):
         except IntIdMissingError:
             self._webinar = value
 
+    @property
+    def target(self):
+        return getattr(self.webinar, 'ntiid', '')
+
 

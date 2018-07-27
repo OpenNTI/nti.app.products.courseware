@@ -80,11 +80,10 @@ class AllCourseWebinarProgressView(AbstractAuthenticatedView):
                 logger.info('Updating webinar progress (%s)', webinar)
                 update_webinar_progress(webinar)
                 update_webinar_completion(asset, webinar, course)
-        logger.info('Finished updating webinars in %.2f (asset_count=%s) (updated_count=%s)',
+        logger.info('Finished updating webinars in %.2fs (asset_count=%s) (updated_count=%s)',
                     time.time() - t0,
                     asset_count,
                     webinar_updated_count)
         result['asset_count'] = asset_count
         result['webinar_updated_count'] = webinar_updated_count
         return result
-
