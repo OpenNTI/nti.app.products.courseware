@@ -73,7 +73,7 @@ class AllCourseWebinarProgressView(AbstractAuthenticatedView):
         webinar = asset.webinar
         updated = False
         if webinar is None:
-            continue
+            return updated
         if should_update_progress(webinar):
             updated = True
             course = ICourseInstance(asset)
@@ -108,7 +108,7 @@ class AllCourseWebinarProgressView(AbstractAuthenticatedView):
              context=CourseAdminPathAdapter,
              name=VIEW_ALL_SITE_UPDATE_WEBINAR_PROGRESS,
              permission=nauth.ACT_NTI_ADMIN)
-class AllSiteCourseWebinarProgressUpdateView(AbstractAuthenticatedView):
+class AllSiteCourseWebinarProgressUpdateView(AllCourseWebinarProgressView):
     """
     A view to update progress for all webinars in all sites and courses.
     """
