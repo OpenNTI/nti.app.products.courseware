@@ -18,7 +18,9 @@ from pyramid.view import view_config
 
 from nti.app.base.abstract_views import AbstractAuthenticatedView
 
+from nti.app.products.courseware import VIEW_UPDATE_WEBINARS
 from nti.app.products.courseware import VIEW_UPDATE_WEBINAR_PROGRESS
+from nti.app.products.courseware import VIEW_ALL_SITE_UPDATE_WEBINARS
 from nti.app.products.courseware import VIEW_ALL_SITE_UPDATE_WEBINAR_PROGRESS
 
 from nti.app.products.courseware.views import CourseAdminPathAdapter
@@ -26,12 +28,16 @@ from nti.app.products.courseware.views import CourseAdminPathAdapter
 from nti.app.products.courseware.webinars.completion import update_webinar_completion
 
 from nti.app.products.courseware.webinars.interfaces import IWebinarAsset
+from nti.app.products.courseware.webinars.interfaces import ICourseWebinarContainer
+
+from nti.app.products.webinar.interfaces import IWebinarClient
 
 from nti.app.products.webinar.progress import should_update_progress
 from nti.app.products.webinar.progress import update_webinar_progress
 
 from nti.site.site import get_component_hierarchy_names
 
+from nti.contenttypes.courses.interfaces import ICourseCatalog
 from nti.contenttypes.courses.interfaces import ICourseInstance
 
 from nti.contentlibrary.indexed_data import get_library_catalog
@@ -39,6 +45,8 @@ from nti.contentlibrary.indexed_data import get_library_catalog
 from nti.dataserver import authorization as nauth
 
 from nti.externalization.interfaces import LocatedExternalDict
+
+from nti.externalization.internalization import update_from_external_object
 
 from nti.site.hostpolicy import run_job_in_all_host_sites
 
@@ -93,7 +101,7 @@ class AllCourseWebinarProgressView(AbstractAuthenticatedView):
             did_update = self.process_asset(asset)
             if did_update:
                 webinar_updated_count += 1
-        logger.info('Finished updating webinars in %.2fs (asset_count=%s) (updated_count=%s)',
+        logger.info('Finished updating webinar progress in %.2fs (asset_count=%s) (updated_count=%s)',
                     time.time() - t0,
                     asset_count,
                     webinar_updated_count)
@@ -135,11 +143,105 @@ class AllSiteCourseWebinarProgressUpdateView(AllCourseWebinarProgressView):
             site_dict['asset_count'] = asset_count
             site_dict['webinar_updated_count'] = webinar_updated_count
             result[site_name] = site_dict
-            logger.info('[%s] Finished updating webinars in %.2fs (asset_count=%s) (updated_count=%s)',
+            logger.info('[%s] Finished updating webinar progress in %.2fs (asset_count=%s) (updated_count=%s)',
                         getSite().__name__,
                         time.time() - t0,
                         asset_count,
                         webinar_updated_count)
 
         run_job_in_all_host_sites(update_site_progress)
+        return result
+
+
+@view_config(route_name='objects.generic.traversal',
+             renderer="rest",
+             request_method='POST',
+             context=CourseAdminPathAdapter,
+             name=VIEW_UPDATE_WEBINARS,
+             permission=nauth.ACT_NTI_ADMIN)
+class AllWebinarUpdateView(AbstractAuthenticatedView):
+    """
+    A view to update progress for all webinars in all courses, as necessary.
+    """
+
+    def process_webinar(self, webinar):
+        client = IWebinarClient(webinar)
+        webinar_ext = client.get_webinar(webinar.webinarKey, raw=True)
+        if webinar_ext:
+            update_from_external_object(webinar, webinar_ext)
+        else:
+            # What do we do here? Webinar is likely gone.
+            logger.warn('Webinar not found while updating (%s)', webinar)
+
+    def process_course(self, course):
+        webinar_container = ICourseWebinarContainer(course)
+        update_count = len(webinar_container)
+        for webinar in webinar_container.values():
+            self.process_webinar(webinar)
+        return update_count
+
+    def process_site_courses(self, seen, intids):
+        catalog = component.queryUtility(ICourseCatalog)
+        result_count = 0
+        course_count = 0
+        if catalog is None or catalog.isEmpty():
+            return result_count, course_count
+        for entry in catalog.iterCatalogEntries():
+            course = ICourseInstance(entry, None)
+            doc_id = intids.queryId(course)
+            if doc_id is None or doc_id in seen:
+                continue
+            seen.add(doc_id)
+            update_count = self.process_course(course)
+            if update_count:
+                course_count += 1
+            result_count += update_count
+        return result_count, course_count
+
+    def __call__(self):
+        t0 = time.time()
+        seen = set()
+        intids = component.getUtility(IIntIds)
+        update_count, course_count = self.process_site_courses(seen, intids)
+        result = LocatedExternalDict()
+        logger.info('Finished updating webinars in %.2fs (updated_count=%s) (course_count=%s)',
+                    time.time() - t0,
+                    update_count,
+                    course_count)
+        result['course_count'] = course_count
+        result['webinar_updated_count'] = update_count
+        return result
+
+
+@view_config(route_name='objects.generic.traversal',
+             renderer="rest",
+             request_method='POST',
+             context=CourseAdminPathAdapter,
+             name=VIEW_ALL_SITE_UPDATE_WEBINARS,
+             permission=nauth.ACT_NTI_ADMIN)
+class AllSiteWebinarUpdateView(AllWebinarUpdateView):
+    """
+    A view to update progress for all webinars in all sites and courses.
+    """
+
+    def __call__(self):
+        seen = set()
+        result = LocatedExternalDict()
+        intids = component.getUtility(IIntIds)
+
+        def update_site_webinars():
+            t0 = time.time()
+            update_count, course_count = self.process_site_courses(seen, intids)
+            site_name = getSite().__name__
+            site_dict = dict()
+            site_dict['course_count'] = course_count
+            site_dict['webinar_updated_count'] = update_count
+            result[site_name] = site_dict
+            logger.info('[%s] Finished updating webinars in %.2fs (updated_count=%s) (course_count=%s)',
+                        getSite().__name__,
+                        time.time() - t0,
+                        update_count,
+                        course_count)
+
+        run_job_in_all_host_sites(update_site_webinars)
         return result
