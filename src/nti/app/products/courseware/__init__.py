@@ -54,3 +54,4 @@ VIEW_COURSE_RECURSIVE_BUCKET = 'CourseRecursiveStreamByBucket'
 VIEW_CERTIFICATE = 'Certificate'
 
 VIEW_UPDATE_WEBINAR_PROGRESS = 'UpdateCourseWebinars'
+VIEW_ALL_SITE_UPDATE_WEBINAR_PROGRESS = 'UpdateAllSiteCourseWebinars'
