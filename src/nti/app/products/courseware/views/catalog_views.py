@@ -696,7 +696,7 @@ class _AbstractFilteredCourseView(_AbstractSortingAndFilteringCoursesView,
         result = LocatedExternalDict()
         result[ITEMS] = items = self._get_items()
         result[ITEM_COUNT] = len(items)
-        result[TOTAL] = len(self.entries_and_records)
+        result[TOTAL] = len(self.filtered_entries)
         self._batch_items_iterable(result, items)
         return result
 
