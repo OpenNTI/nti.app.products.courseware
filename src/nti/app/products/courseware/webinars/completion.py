@@ -8,8 +8,6 @@ from __future__ import division
 from __future__ import print_function
 from __future__ import absolute_import
 
-from pyramid.threadlocal import get_current_request
-
 from zope import component
 
 from zope import interface
@@ -18,9 +16,6 @@ from nti.app.products.courseware.webinars.interfaces import IWebinarAsset
 
 from nti.app.products.webinar.interfaces import IWebinarProgressContainer
 from nti.app.products.webinar.interfaces import IUserWebinarProgressContainer
-
-from nti.app.products.webinar.progress import should_update_progress
-from nti.app.products.webinar.progress import update_webinar_progress
 
 from nti.contenttypes.completion.completion import CompletedItem
 
@@ -72,15 +67,6 @@ def webinar_asset_progress(user, asset, course):
     webinar = asset.webinar
     if webinar is None:
         return result
-
-#     if should_update_progress(webinar):
-#         # No progress (this needs to be in another process); update
-#         # and store
-#         logger.info('Updating webinar progress (%s)', webinar)
-#         update_webinar_progress(webinar)
-#         update_webinar_completion(asset, webinar, course)
-#         request = get_current_request()
-#         request.environ['nti.request_had_transaction_side_effects'] = 'True'
 
     user_container = component.queryMultiAdapter((user, webinar),
                                                  IUserWebinarProgressContainer)
