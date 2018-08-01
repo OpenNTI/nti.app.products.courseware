@@ -10,6 +10,7 @@ from __future__ import absolute_import
 
 from zope import interface
 
+from zope.cachedescriptors.property import Lazy
 from zope.cachedescriptors.property import readproperty
 
 from zope.intid.interfaces import IntIdMissingError
@@ -67,5 +68,15 @@ class WebinarAsset(PersistentPresentationAsset):
     @property
     def target(self):
         return getattr(self.webinar, 'ntiid', '')
+
+    @Lazy
+    def title(self):
+        return getattr(self.webinar, 'subject', '')
+
+    @Lazy
+    def description(self):
+        return getattr(self.webinar, 'description', '')
+
+
 
 
