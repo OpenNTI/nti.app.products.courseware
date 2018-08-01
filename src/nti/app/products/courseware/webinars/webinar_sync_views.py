@@ -165,19 +165,28 @@ class AllWebinarUpdateView(AbstractAuthenticatedView):
     """
 
     def process_webinar(self, webinar):
-        client = IWebinarClient(webinar)
+        result = False
+        client = IWebinarClient(webinar, None)
+        if client is None:
+            logger.info("Cannot update webinar (%s) since we cannot obtain a client (unauthorized)",
+                        webinar)
+            return result
         webinar_ext = client.get_webinar(webinar.webinarKey, raw=True)
         if webinar_ext:
             update_from_external_object(webinar, webinar_ext)
+            result = True
         else:
             # What do we do here? Webinar is likely gone.
             logger.warn('Webinar not found while updating (%s)', webinar)
+        return result
 
     def process_course(self, course):
         webinar_container = ICourseWebinarContainer(course)
-        update_count = len(webinar_container)
+        update_count = 0
         for webinar in webinar_container.values():
-            self.process_webinar(webinar)
+            did_update = self.process_webinar(webinar)
+            if did_update:
+                update_count += 1
         return update_count
 
     def process_site_courses(self, seen, intids):
