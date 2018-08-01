@@ -66,4 +66,31 @@
     <!-- Traversal-ish stuff -->
     <utility factory=".ntiids._WebinarAssetResolver" name="NTIWebinarAsset" />
 
+    <!-- Searching -->
+    <include package="nti.solr" />
+
+    <subscriber handler=".subscribers._asset_added"
+                for=".interfaces.IWebinarAsset
+                     zc.intid.interfaces.IAfterIdAddedEvent"/>
+
+    <subscriber handler=".subscribers._asset_removed"
+                for=".interfaces.IWebinarAsset
+                     zope.intid.interfaces.IIntIdRemovedEvent"/>
+
+    <subscriber handler=".subscribers._asset_modified"
+                for=".interfaces.IWebinarAsset
+                     zope.lifecycleevent.interfaces.IObjectModifiedEvent"/>
+
+    <subscriber handler=".subscribers._asset_moved"
+                for=".interfaces.IWebinarAsset
+                     nti.contenttypes.presentation.interfaces.IPresentationAssetMovedEvent"/>
+
+    <subscriber handler=".subscribers._index_asset"
+                for=".interfaces.IWebinarAsset
+                     nti.solr.interfaces.IIndexObjectEvent"/>
+
+    <subscriber handler=".subscribers._unindex_asset"
+                for=".interfaces.IWebinarAsset
+                     nti.solr.interfaces.IUnindexObjectEvent"/>
+
 </configure>

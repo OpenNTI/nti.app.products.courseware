@@ -45,6 +45,15 @@ class WebinarAsset(PersistentPresentationAsset):
 
     nttype = u'NTIWebinarAsset'
 
+    def __init__(self, *args, **kwargs):
+        super(WebinarAsset, self).__init__(*args, **kwargs)
+        # SchemaConfigured initializes these to None if a value isn't given
+        # and breaks readproperty so they need to be explicitly removed
+        # if they were not intentionally set to None
+        for attr in ('title', 'description'):
+            if attr not in kwargs and not getattr(self, attr, self):
+                delattr(self, attr)
+
     @readproperty
     def ntiid(self):  # pylint: disable=method-hidden
         self.ntiid = self.generate_ntiid(self.nttype)
