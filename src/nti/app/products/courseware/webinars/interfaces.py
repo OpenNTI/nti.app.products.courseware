@@ -23,6 +23,7 @@ from nti.contenttypes.presentation.interfaces import IUserCreatedAsset
 from nti.contenttypes.presentation.interfaces import IGroupOverViewable
 from nti.contenttypes.presentation.interfaces import INTIIDIdentifiable
 from nti.contenttypes.presentation.interfaces import INonExportableAsset
+from nti.contenttypes.presentation.interfaces import IAssetTitleDescribed
 from nti.contenttypes.presentation.interfaces import ICoursePresentationAsset
 
 from nti.schema.field import Text
@@ -35,6 +36,7 @@ class IWebinarAsset(ICoursePresentationAsset,
                     IGroupOverViewable,
                     INTIIDIdentifiable,
                     INonExportableAsset,
+                    IAssetTitleDescribed,
                     ICompletableItem):
     """
     A presentation asset for webinars. These assets, since they are temporal,
@@ -51,7 +53,6 @@ class IWebinarAsset(ICoursePresentationAsset,
 
     icon = href_schema_field(title=u"Webinar asset icon href",
                              required=False)
-
 
 
 class ICourseWebinarContainer(IContainer):
