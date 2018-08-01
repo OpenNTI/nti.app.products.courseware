@@ -25,6 +25,7 @@ from nti.contenttypes.presentation.interfaces import INTIIDIdentifiable
 from nti.contenttypes.presentation.interfaces import INonExportableAsset
 from nti.contenttypes.presentation.interfaces import ICoursePresentationAsset
 
+from nti.schema.field import Text
 from nti.schema.field import Object
 from nti.schema.field import DecodingValidTextLine as ValidTextLine
 
@@ -43,8 +44,8 @@ class IWebinarAsset(ICoursePresentationAsset,
     title = ValidTextLine(title=u"The webinar asset title",
                           required=False)
 
-    description = ValidTextLine(title=u"The webinar asset description",
-                                required=False)
+    description = Text(title=u"The webinar asset description",
+                       required=False)
 
     webinar = Object(IWebinar, required=True)
 
