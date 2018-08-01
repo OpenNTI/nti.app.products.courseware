@@ -40,6 +40,7 @@ class WebinarAssetUpdater(InterfaceObjectIO):
             webinar = client.get_webinar(webinar_data)
             if webinar is None:
                 # We'll fail validation if none
-                logger.warn('Could not resolve webinar with key (%s)', webinar_data)
+                logger.warning('Could not resolve webinar with key (%s)',
+                               webinar_data)
             parsed['webinar'] = webinar
         return super(WebinarAssetUpdater, self).updateFromExternalObject(parsed, *args, **kwargs)
