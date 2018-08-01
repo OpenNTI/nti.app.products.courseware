@@ -14,6 +14,8 @@ from zope.cachedescriptors.property import readproperty
 
 from zope.intid.interfaces import IntIdMissingError
 
+from nti.app.products.courseware.webinars import WEBINAR_ASSET_MIME_TYPE
+
 from nti.app.products.courseware.webinars.interfaces import IWebinarAsset
 
 from nti.contenttypes.presentation.mixins import PersistentPresentationAsset
@@ -31,7 +33,7 @@ logger = __import__('logging').getLogger(__name__)
 class WebinarAsset(PersistentPresentationAsset):
 
     createDirectFieldProperties(IWebinarAsset)
-    mimeType = mime_type = 'application/vnd.nextthought.webinarasset'
+    mimeType = mime_type = WEBINAR_ASSET_MIME_TYPE
     __external_class_name__ = "WebinarAsset"
 
     Creator = alias('creator')
