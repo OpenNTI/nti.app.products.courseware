@@ -85,7 +85,3 @@ class WebinarAsset(PersistentPresentationAsset):
     @Lazy
     def description(self):
         return getattr(self.webinar, 'description', '')
-
-
-
-
