@@ -49,5 +49,6 @@ def course_to_webinar_container(course):
         result = CourseWebinarContainer()
         result.__parent__ = course
         annotations[WEBINAR_CONTAINER_KEY] = result
+        # pylint: disable=too-many-function-args
         IConnection(result).add(result)
     return result
