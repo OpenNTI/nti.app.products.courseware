@@ -75,7 +75,6 @@ setup(
         'nti.publishing',
         'nti.recorder',
         'nti.schema',
-        'nti.solr',
         'nti.traversal',
         'nti.wref',
         'nti.zodb',
