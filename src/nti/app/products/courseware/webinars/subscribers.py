@@ -43,6 +43,7 @@ def _on_webinar_asset_created(asset, unused_event):
     course = ICourseInstance(asset)
     container = ICourseWebinarContainer(course)
     original_webinar = asset.webinar
+    # pylint: disable=too-many-function-args
     normalized_webinar = container.get_or_create_webinar(original_webinar)
     asset.webinar = normalized_webinar
 

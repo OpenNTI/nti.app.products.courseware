@@ -8,10 +8,10 @@ from __future__ import division
 from __future__ import print_function
 from __future__ import absolute_import
 
-import six
-
 from zope import component
 from zope import interface
+
+import six
 
 from nti.app.products.courseware.webinars.interfaces import IWebinarAsset
 
@@ -40,6 +40,7 @@ class WebinarAssetUpdater(InterfaceObjectIO):
             webinar = client.get_webinar(webinar_data)
             if webinar is None:
                 # We'll fail validation if none
-                logger.warn('Could not resolve webinar with key (%s)', webinar_data)
+                logger.warning('Could not resolve webinar with key (%s)',
+                               webinar_data)
             parsed['webinar'] = webinar
         return super(WebinarAssetUpdater, self).updateFromExternalObject(parsed, *args, **kwargs)

@@ -171,18 +171,20 @@ class AllWebinarUpdateView(AbstractAuthenticatedView):
             logger.info("Cannot update webinar (%s) since we cannot obtain a client (unauthorized)",
                         webinar)
             return result
+        # pylint: disable=redundant-keyword-arg
         webinar_ext = client.get_webinar(webinar.webinarKey, raw=True)
         if webinar_ext:
             update_from_external_object(webinar, webinar_ext)
             result = True
         else:
             # What do we do here? Webinar is likely gone.
-            logger.warn('Webinar not found while updating (%s)', webinar)
+            logger.warning('Webinar not found while updating (%s)', webinar)
         return result
 
     def process_course(self, course):
         webinar_container = ICourseWebinarContainer(course)
         update_count = 0
+        # pylint: disable=too-many-function-args
         for webinar in webinar_container.values():
             did_update = self.process_webinar(webinar)
             if did_update:
