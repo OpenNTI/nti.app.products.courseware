@@ -165,29 +165,40 @@ class AllWebinarUpdateView(AbstractAuthenticatedView):
     A view to update progress for all webinars in all courses, as necessary.
     """
 
-    def process_webinar(self, webinar):
+    def process_webinar(self, webinar, webinar_ext_cache):
         result = False
         client = IWebinarClient(webinar, None)
         if client is None:
             logger.info("Cannot update webinar (%s) since we cannot obtain a client (unauthorized)",
                         webinar)
             return result
-        # pylint: disable=redundant-keyword-arg
-        webinar_ext = client.get_webinar(webinar.webinarKey, raw=True)
+
+        try:
+            key_to_webinar_dict = webinar_ext_cache[webinar.organizerKey]
+        except KeyError:
+            upcoming_webinars = client.get_upcoming_webinars(raw=True)
+            if upcoming_webinars:
+                key_to_webinar_dict = {unicode(x['webinarKey']):x for x in upcoming_webinars}
+            else:
+                key_to_webinar_dict = {}
+            webinar_ext_cache[webinar.organizerKey] = key_to_webinar_dict
+
+        webinar_ext = key_to_webinar_dict.get(webinar.webinarKey)
+
         if webinar_ext:
             update_from_external_object(webinar, webinar_ext)
             result = True
         else:
-            # What do we do here? Webinar is likely gone.
-            logger.warning('Webinar not found while updating (%s)', webinar)
+            # This is probably a webinar that has already past
+            logger.debug('Webinar not found while updating (%s)', webinar)
         return result
 
-    def process_course(self, course):
+    def process_course(self, course, webinar_ext_cache):
         webinar_container = ICourseWebinarContainer(course)
         update_count = 0
         # pylint: disable=too-many-function-args
         for webinar in webinar_container.values():
-            did_update = self.process_webinar(webinar)
+            did_update = self.process_webinar(webinar, webinar_ext_cache)
             if did_update:
                 update_count += 1
         return update_count
@@ -196,6 +207,7 @@ class AllWebinarUpdateView(AbstractAuthenticatedView):
         catalog = component.queryUtility(ICourseCatalog)
         result_count = 0
         course_count = 0
+        webinar_ext_cache = {}
         if catalog is None or catalog.isEmpty():
             return result_count, course_count
         for entry in catalog.iterCatalogEntries():
@@ -204,7 +216,7 @@ class AllWebinarUpdateView(AbstractAuthenticatedView):
             if doc_id is None or doc_id in seen:
                 continue
             seen.add(doc_id)
-            update_count = self.process_course(course)
+            update_count = self.process_course(course, webinar_ext_cache)
             if update_count:
                 course_count += 1
             result_count += update_count
