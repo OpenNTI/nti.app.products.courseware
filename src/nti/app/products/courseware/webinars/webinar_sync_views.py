@@ -138,11 +138,12 @@ class AllSiteCourseWebinarProgressUpdateView(AllCourseWebinarProgressView):
                 did_update = self.process_asset(asset)
                 if did_update:
                     webinar_updated_count += 1
-            site_name = getSite().__name__
-            site_dict = dict()
-            site_dict['asset_count'] = asset_count
-            site_dict['webinar_updated_count'] = webinar_updated_count
-            result[site_name] = site_dict
+            if webinar_updated_count:
+                site_name = getSite().__name__
+                site_dict = dict()
+                site_dict['asset_count'] = asset_count
+                site_dict['webinar_updated_count'] = webinar_updated_count
+                result[site_name] = site_dict
             logger.info('[%s] Finished updating webinar progress in %.2fs (asset_count=%s) (updated_count=%s)',
                         getSite().__name__,
                         time.time() - t0,
@@ -243,11 +244,12 @@ class AllSiteWebinarUpdateView(AllWebinarUpdateView):
         def update_site_webinars():
             t0 = time.time()
             update_count, course_count = self.process_site_courses(seen, intids)
-            site_name = getSite().__name__
-            site_dict = dict()
-            site_dict['course_count'] = course_count
-            site_dict['webinar_updated_count'] = update_count
-            result[site_name] = site_dict
+            if update_count:
+                site_name = getSite().__name__
+                site_dict = dict()
+                site_dict['course_count'] = course_count
+                site_dict['webinar_updated_count'] = update_count
+                result[site_name] = site_dict
             logger.info('[%s] Finished updating webinars in %.2fs (updated_count=%s) (course_count=%s)',
                         getSite().__name__,
                         time.time() - t0,
