@@ -101,12 +101,13 @@ class AllCourseWebinarProgressView(AbstractAuthenticatedView):
             did_update = self.process_asset(asset)
             if did_update:
                 webinar_updated_count += 1
-        logger.info('Finished updating webinar progress in %.2fs (asset_count=%s) (updated_count=%s)',
-                    time.time() - t0,
-                    asset_count,
-                    webinar_updated_count)
+        if webinar_updated_count:
+            logger.info('Finished updating webinar progress in %.2fs (asset_count=%s) (updated_count=%s)',
+                        time.time() - t0,
+                        asset_count,
+                        webinar_updated_count)
         result['asset_count'] = asset_count
-        result['webinar_updated_count'] = webinar_updated_count
+        result['webinar_progress_updated_count'] = webinar_updated_count
         return result
 
 
@@ -144,11 +145,11 @@ class AllSiteCourseWebinarProgressUpdateView(AllCourseWebinarProgressView):
                 site_dict['asset_count'] = asset_count
                 site_dict['webinar_progress_updated_count'] = webinar_updated_count
                 result[site_name] = site_dict
-            logger.info('[%s] Finished updating webinar progress in %.2fs (asset_count=%s) (updated_count=%s)',
-                        getSite().__name__,
-                        time.time() - t0,
-                        asset_count,
-                        webinar_updated_count)
+                logger.info('[%s] Finished updating webinar progress in %.2fs (asset_count=%s) (updated_count=%s)',
+                            getSite().__name__,
+                            time.time() - t0,
+                            asset_count,
+                            webinar_updated_count)
 
         run_job_in_all_host_sites(update_site_progress)
         return result
@@ -262,11 +263,11 @@ class AllSiteWebinarUpdateView(AllWebinarUpdateView):
                 site_dict['course_count'] = course_count
                 site_dict['webinar_updated_count'] = update_count
                 result[site_name] = site_dict
-            logger.info('[%s] Finished updating webinars in %.2fs (updated_count=%s) (course_count=%s)',
-                        getSite().__name__,
-                        time.time() - t0,
-                        update_count,
-                        course_count)
+                logger.info('[%s] Finished updating webinars in %.2fs (updated_count=%s) (course_count=%s)',
+                            getSite().__name__,
+                            time.time() - t0,
+                            update_count,
+                            course_count)
 
         run_job_in_all_host_sites(update_site_webinars)
         return result
