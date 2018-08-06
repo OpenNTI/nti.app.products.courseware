@@ -15,14 +15,16 @@ from zope import interface
 
 from zope.traversing.interfaces import IPathAdapter
 
-from nti.app.authentication import get_remote_user
+from nti.appserver.pyramid_authorization import has_permission
 
-from nti.app.products.integration.interfaces import IIntegrationCollection
+from nti.app.products.integration.workspaces import IntegrationCollection
 
 from nti.app.products.courseware.webinars.interfaces import IWebinarAsset
 from nti.app.products.courseware.webinars.interfaces import ICourseWebinarContainer
 
 from nti.contenttypes.courses.interfaces import ICourseInstance
+
+from nti.dataserver.authorization import ACT_CONTENT_EDIT
 
 from nti.traversal.traversal import find_interface
 
@@ -36,9 +38,8 @@ def course_integration_collection(course, request):
     Set the :class:`IIntegrationCollection` lineage as our course so
     that we can permission integration objects based on course permission.
     """
-    user = get_remote_user(request)
-    collection = IIntegrationCollection(user, None)
-    if collection is not None:
+    if has_permission(ACT_CONTENT_EDIT, course, request):
+        collection = IntegrationCollection(course)
         collection.__parent__ = course
         return collection
 
