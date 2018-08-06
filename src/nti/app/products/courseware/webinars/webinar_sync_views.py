@@ -142,7 +142,7 @@ class AllSiteCourseWebinarProgressUpdateView(AllCourseWebinarProgressView):
                 site_name = getSite().__name__
                 site_dict = dict()
                 site_dict['asset_count'] = asset_count
-                site_dict['webinar_updated_count'] = webinar_updated_count
+                site_dict['webinar_progress_updated_count'] = webinar_updated_count
                 result[site_name] = site_dict
             logger.info('[%s] Finished updating webinar progress in %.2fs (asset_count=%s) (updated_count=%s)',
                         getSite().__name__,
