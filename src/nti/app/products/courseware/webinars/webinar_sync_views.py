@@ -84,9 +84,9 @@ class AllCourseWebinarProgressView(AbstractAuthenticatedView):
             return updated
         if should_update_progress(webinar):
             course = ICourseInstance(asset)
-            logger.info('Updating webinar progress (%s)', webinar)
             updated = update_webinar_progress(webinar)
             if updated:
+                logger.info('Updating webinar progress (%s)', webinar)
                 update_webinar_completion(asset, webinar, course)
         return updated
 
