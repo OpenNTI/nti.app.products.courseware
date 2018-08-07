@@ -23,10 +23,11 @@ from nti.contenttypes.courses.exporter import BaseSectionExporter
 from nti.contenttypes.courses.interfaces import ICourseInstance
 from nti.contenttypes.courses.interfaces import ICourseCompletionSectionExporter
 
+from nti.contenttypes.presentation.interfaces import IContentBackedPresentationAsset
+
 from nti.externalization.externalization import to_external_object
 
 from nti.externalization.interfaces import StandardExternalFields
-from nti.contenttypes.presentation.interfaces import IContentBackedPresentationAsset
 
 from nti.ntiids.ntiids import find_object_with_ntiid
 

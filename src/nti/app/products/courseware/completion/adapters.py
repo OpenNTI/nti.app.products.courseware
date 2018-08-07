@@ -8,6 +8,7 @@ from __future__ import division
 from __future__ import print_function
 from __future__ import absolute_import
 
+from pyramid.threadlocal import get_current_request
 
 from zope import component
 from zope import interface
@@ -15,8 +16,6 @@ from zope import interface
 from zope.cachedescriptors.property import Lazy
 
 from zope.intid.interfaces import IIntIds
-
-from pyramid.threadlocal import get_current_request
 
 from nti.app.authentication import get_remote_user
 
@@ -36,9 +35,9 @@ from nti.contenttypes.completion.interfaces import IContextNTIIDAdapter
 
 from nti.dataserver import authorization
 
-from nti.dataserver.authorization_acl import acl_from_aces
-from nti.dataserver.authorization_acl import ace_allowing
 from nti.dataserver.authorization_acl import ace_denying
+from nti.dataserver.authorization_acl import ace_allowing
+from nti.dataserver.authorization_acl import acl_from_aces
 
 from nti.dataserver.interfaces import EVERYONE_GROUP_NAME
 

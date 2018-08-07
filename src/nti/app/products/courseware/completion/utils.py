@@ -10,8 +10,10 @@ from __future__ import absolute_import
 
 from zope import component
 
-from nti.contenttypes.completion.interfaces import ICompletionContextCompletionPolicy
 from nti.contenttypes.completion.interfaces import IProgress
+from nti.contenttypes.completion.interfaces import ICompletionContextCompletionPolicy
+
+logger = __import__('logging').getLogger(__name__)
 
 
 def has_completed_course(user, course):
