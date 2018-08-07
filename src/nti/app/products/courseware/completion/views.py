@@ -8,17 +8,23 @@ from __future__ import division
 from __future__ import print_function
 from __future__ import absolute_import
 
-from slugify import slugify
-
-from zope import component
-
 from pyramid import httpexceptions as hexc
 
 from pyramid.view import view_config
 
+from slugify import slugify
+
 from zc.displayname.interfaces import IDisplayNameGenerator
 
+from zope import component
+
 from zope.cachedescriptors.property import Lazy
+
+from nti.app.base.abstract_views import AbstractAuthenticatedView
+
+from nti.app.products.courseware import VIEW_CERTIFICATE
+
+from nti.app.products.courseware.interfaces import ICourseInstanceEnrollment
 
 from nti.appserver.policies.interfaces import ISitePolicyUserEventListener
 
@@ -26,24 +32,21 @@ from nti.appserver.policies.site_policies import guess_site_display_name
 
 from nti.common.string import is_true
 
-from nti.dataserver import authorization as nauth
+from nti.contenttypes.completion.interfaces import IProgress
+from nti.contenttypes.completion.interfaces import ICompletionContextCompletionPolicy
 
-from nti.dataserver.users import User
-
-from nti.dataserver.users.interfaces import IFriendlyNamed
-
-from nti.app.base.abstract_views import AbstractAuthenticatedView
+from nti.contenttypes.courses.interfaces import ICourseCatalogEntry
 
 from nti.contenttypes.credit.interfaces import ICreditTranscript
 
-from nti.app.products.courseware import VIEW_CERTIFICATE
+from nti.dataserver import authorization as nauth
 
-from nti.app.products.courseware.interfaces import ICourseInstanceEnrollment
+from nti.dataserver.users.interfaces import IFriendlyNamed
 
-from nti.contenttypes.completion.interfaces import ICompletionContextCompletionPolicy
-from nti.contenttypes.completion.interfaces import IProgress
+from nti.dataserver.users.users import User
 
-from nti.contenttypes.courses.interfaces import ICourseCatalogEntry
+logger = __import__('logging').getLogger(__name__)
+
 
 class EnrollmentProgressViewMixin(object):
 
@@ -165,4 +168,3 @@ class CompletionCertificateView(AbstractAuthenticatedView,
             u'Facilitators': self._facilitators(entry),
             u'Credit': self._awarded_credit(transcript)
         }
-
