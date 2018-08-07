@@ -14,6 +14,10 @@
 
 	<include package="z3c.macro" file="meta.zcml" />
 
+    <adapter factory=".adapters.section_to_container"
+             provides="nti.contenttypes.completion.interfaces.ICompletableItemContainer"
+             for="nti.contenttypes.courses.interfaces.ICourseSubInstance" />
+
 	<!-- CompletionContext adapters, must be explicit on type due to resolution order -->
 	<adapter factory=".adapters._course_from_completable_item"
 			 provides="nti.contenttypes.completion.interfaces.ICompletionContext"
