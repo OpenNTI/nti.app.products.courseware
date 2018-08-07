@@ -81,10 +81,12 @@ class CompletionCertificateView(AbstractAuthenticatedView,
 
     @Lazy
     def course(self):
+        # pylint: disable=no-member
         return self.context.CourseInstance
 
     @Lazy
     def user(self):
+        # pylint: disable=no-member
         username = self.context.Username
         return User.get_user(username)
 
@@ -112,7 +114,7 @@ class CompletionCertificateView(AbstractAuthenticatedView,
     def _course_completable_item(self):
         if self.course_policy is None:
             return None
-
+        # pylint: disable=no-member
         return self.course_policy.is_complete(self.progress)
 
     def _filename(self, entry, suffix='completion', ext='pdf'):
@@ -122,6 +124,7 @@ class CompletionCertificateView(AbstractAuthenticatedView,
 
     @property
     def _completion_date_string(self):
+        # pylint: disable=no-member
         completed = self._course_completable_item.CompletedDate
         return completed.strftime('%B %d, %Y')
 
@@ -146,6 +149,7 @@ class CompletionCertificateView(AbstractAuthenticatedView,
         return [_for_display(credit) for credit in transcript.iter_awarded_credits()]
 
     def __call__(self):
+        # pylint: disable=no-member
         if     self._course_completable_item is None \
             or not self.course_policy.offers_completion_certificate:
             raise hexc.HTTPNotFound()
