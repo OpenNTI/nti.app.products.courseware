@@ -44,7 +44,8 @@ class PreviewCourseAccessPredicateDecorator(AbstractAuthenticatedRequestAwareDec
         # We'll want acquisition derived courses for some objects...
         result = find_interface(self.context, ICourseInstance, strict=False)
         if result is None:
-            return ICourseInstance(self.context)
+            result = ICourseInstance(self.context)
+        return result
 
     @property
     def instructor_or_editor(self):
