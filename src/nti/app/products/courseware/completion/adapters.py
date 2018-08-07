@@ -266,9 +266,15 @@ class SubinstanceCompletableItemContainer(object):
 @component.adapter(ICourseSubInstance)
 @interface.implementer(ICompletableItemContainer)
 def section_to_container(course):
+    """
+    If we share an outline with our parent course, use a composite
+    completable item container.
+    """
     # Manually create container
     section_container = CompletableItemContainerFactory(course)
     parent_course = get_parent_course(course)
+    if parent_course.Outline != course.Outline:
+        return section_container
     parent_container = ICompletableItemContainer(parent_course)
     return SubinstanceCompletableItemContainer(section_container,
                                                parent_container)
