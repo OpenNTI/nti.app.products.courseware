@@ -19,6 +19,8 @@ from nti.dataserver.authorization import ACT_CONTENT_EDIT
 
 from nti.dataserver.authorization_acl import has_permission
 
+from nti.traversal.traversal import find_interface
+
 logger = __import__('logging').getLogger(__name__)
 
 
@@ -39,7 +41,10 @@ class PreviewCourseAccessPredicateDecorator(AbstractAuthenticatedRequestAwareDec
 
     @property
     def course(self):
-        return ICourseInstance(self.context)
+        # We'll want acquisition derived courses for some objects...
+        result = find_interface(self.context, ICourseInstance, strict=False)
+        if result is None:
+            return ICourseInstance(self.context)
 
     @property
     def instructor_or_editor(self):
