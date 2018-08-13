@@ -472,7 +472,6 @@ _LEGACY_ENROLLMENT_SCOPE_VOCABULARY = SimpleVocabulary(
 
 
 @interface.implementer(ICourseInstanceSharingScopes)
-@NoPickle
 class _LegacyCommunityBasedCourseInstanceFakeSharingScopes(CourseInstanceSharingScopes):
 
     __name__ = u'SharingScopes'
