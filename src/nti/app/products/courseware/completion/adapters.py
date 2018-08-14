@@ -53,6 +53,8 @@ from nti.dataserver.interfaces import IPrincipal
 
 from nti.dataserver.users.users import User
 
+from nti.ntiids.oids import to_external_ntiid_oid
+
 from nti.traversal.traversal import find_interface
 
 logger = __import__('logging').getLogger(__name__)
@@ -180,9 +182,11 @@ class _NTIID(object):
 @interface.implementer(IContextNTIIDAdapter)
 def _completed_item_to_context_ntiid(item):
     context = find_interface(item, ICompletionContext, strict=False)
+    # use course catalog entry for course
     if ICourseInstance.providedBy(context):
         context = ICourseCatalogEntry(context, None)
-    ntiid = getattr(context, 'ntiid', None)
+    # get ntiid or oid
+    ntiid = getattr(context, 'ntiid', None) or to_external_ntiid_oid(context)
     return _NTIID(ntiid) if ntiid else None
 
 
