@@ -57,6 +57,7 @@
         modules=".assets" />
 
     <subscriber handler=".subscribers._on_webinar_asset_created" />
+    <subscriber handler=".subscribers._on_webinar_asset_modified" />
 
     <!-- Internalization -->
     <adapter factory=".internalization.WebinarAssetUpdater"
