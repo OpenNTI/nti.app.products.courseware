@@ -13,6 +13,11 @@ import time
 import isodate
 import datetime
 
+from pyramid.threadlocal import get_current_request
+
+from zc.intid.interfaces import IAfterIdAddedEvent
+from zc.intid.interfaces import IBeforeIdRemovedEvent
+
 from zope import component
 
 from zope.annotation.interfaces import IAnnotations
@@ -32,11 +37,6 @@ from zope.security.interfaces import IPrincipal
 from zope.security.management import endInteraction
 from zope.security.management import queryInteraction
 from zope.security.management import restoreInteraction
-
-from zc.intid.interfaces import IAfterIdAddedEvent
-from zc.intid.interfaces import IBeforeIdRemovedEvent
-
-from pyramid.threadlocal import get_current_request
 
 from zope.traversing.interfaces import IBeforeTraverseEvent
 
@@ -71,6 +71,9 @@ from nti.contenttypes.courses.interfaces import CourseBundleWillUpdateEvent
 from nti.contenttypes.courses.utils import get_parent_course
 from nti.contenttypes.courses.utils import get_course_hierarchy
 
+from nti.coremetadata.interfaces import UserLastSeenEvent
+
+from nti.dataserver.interfaces import IUser
 from nti.dataserver.interfaces import ICommunity
 
 from nti.dataserver.users.interfaces import IUserProfile
@@ -132,8 +135,8 @@ def _send_enrollment_confirmation(event, user, profile, email, course):
     # as well as URL information.
     request = getattr(event, 'request', get_current_request())
     if not request or not email:
-        logger.warn("Not sending an enrollment email to %s because of no email or request",
-                    user)
+        logger.warning("Not sending an enrollment email to %s because of no email or request",
+                       user)
         return
 
     policy = component.getUtility(ISitePolicyUserEventListener)
@@ -151,7 +154,7 @@ def _send_enrollment_confirmation(event, user, profile, email, course):
 
     if catalog_entry.StartDate:
         locale = IBrowserRequest(request).locale
-        dates = locale.dates
+        dates = locale.dates # pylint: disable=no-member
         formatter = dates.getFormatter('date', length='long')
         course_start_date = formatter.format(catalog_entry.StartDate)
 
@@ -259,7 +262,7 @@ def _join_communities_on_enrollment_added(record, unused_event):
     for name in communities:
         community = Entity.get_entity(name)
         if community is None or not ICommunity.providedBy(community):
-            logger.warn("Community %s does not exists", name)
+            logger.warning("Community %s does not exists", name)
             continue
         user.record_dynamic_membership(community)
         user.follow(community)
@@ -306,7 +309,7 @@ def _auto_enroll_on_enrollment_added(record, unused_event):
         for name in entries:
             entry = ICourseCatalogEntry(find_object_with_ntiid(name), None)
             if entry is None:
-                logger.warn("Course entry %s does not exists", name)
+                logger.warning("Course entry %s does not exists", name)
                 continue
             # make sure avoid circles
             if entry in main_entries:
@@ -337,10 +340,16 @@ def _auto_enroll_on_enrollment_modified(record, event):
 def _update_enroll_last_modified(record):
     principal = IPrincipal(record.Principal, None)
     user = Entity.get_entity(principal.id) if principal else None
-    if user is None:
+    if user is None or not IUser.providedBy(user):
         return
+    # update enrollment
+    timestamp = time.time()
     annotations = IAnnotations(user)
-    annotations[USER_ENROLLMENT_LAST_MODIFIED_KEY] = time.time()
+    annotations[USER_ENROLLMENT_LAST_MODIFIED_KEY] = timestamp
+    # update last seen
+    if queryInteraction() is not None:
+        request = get_current_request()
+        notify(UserLastSeenEvent(user, timestamp, request))
 
 
 @component.adapter(ICourseInstanceEnrollmentRecord, IAfterIdAddedEvent)
