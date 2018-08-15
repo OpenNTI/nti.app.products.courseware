@@ -77,6 +77,9 @@
 			 provides="nti.contenttypes.courses.interfaces.ICourseCompletionSectionExporter"
 			 name="040:Course_Completion" />
 
+	<!-- Subscribers -->
+	<subscriber handler=".subscribers._on_course_deleted" />
+
 	<!-- Importer -->
 	<!-- Completion objects should be imported after assets/assignments/etc -->
 	<utility factory=".importer.CourseCompletionImporter"
