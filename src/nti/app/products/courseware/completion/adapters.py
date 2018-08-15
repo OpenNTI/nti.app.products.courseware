@@ -265,6 +265,9 @@ class SubinstanceCompletableItemContainer(object):
         """
         return len(self.get_optional_keys())
 
+    def clear(self):
+        pass
+
 
 @component.adapter(ICourseSubInstance)
 @interface.implementer(ICompletableItemContainer)
