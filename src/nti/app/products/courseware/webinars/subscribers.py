@@ -17,6 +17,8 @@ from nti.contenttypes.courses.interfaces import ICourseInstance
 
 from nti.contenttypes.presentation.interfaces import IPresentationAssetCreatedEvent
 
+from nti.externalization.interfaces import IObjectModifiedFromExternalEvent
+
 logger = __import__('logging').getLogger(__name__)
 
 
@@ -28,3 +30,11 @@ def _on_webinar_asset_created(asset, unused_event):
     # pylint: disable=too-many-function-args
     normalized_webinar = container.get_or_create_webinar(original_webinar)
     asset.webinar = normalized_webinar
+    # Ghost it?
+    # if normalized_webinar != original_webinar:
+    #     original_webinar._p_changed = None
+
+
+@component.adapter(IWebinarAsset, IObjectModifiedFromExternalEvent)
+def _on_webinar_asset_modified(asset, unused_event):
+    _on_webinar_asset_created(asset, unused_event)
