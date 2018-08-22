@@ -133,6 +133,7 @@ class CourseContentFolderACLProvider(ContentFolderACLProvider):
         for i in chain(course.instructors or (), get_course_editors(course)):
             aces.append(ace_allowing(i, ALL_PERMISSIONS, type(self)))
         _common_aces(course, aces, type(self))
+        aces.append(ace_denying_all())
         return acl_from_aces(aces)
 
 
@@ -147,4 +148,5 @@ class CourseContentFileACLProvider(ContentBaseFileACLProvider):
         for i in chain(course.instructors or (), get_course_editors(course)):
             aces.append(ace_allowing(i, ALL_PERMISSIONS, type(self)))
         _common_aces(course, aces, type(self))
+        aces.append(ace_denying_all())
         return acl_from_aces(aces)
