@@ -52,7 +52,7 @@ logger = __import__('logging').getLogger(__name__)
 def _common_aces(course, aces, provenance=None):
     # all scopes have read access
     course.SharingScopes.initScopes()
-    for scope in course.SharingScopes:
+    for scope in course.SharingScopes.values():
         aces.append(ace_allowing(IPrincipal(scope), ACT_READ, provenance))
 
     if ICourseSubInstance.providedBy(course):
@@ -102,7 +102,7 @@ class CourseLockedFolderACLProvider(object):
             yield i, (ACT_READ, ACT_UPDATE)
 
         course.SharingScopes.initScopes()
-        for scope in course.SharingScopes:
+        for scope in course.SharingScopes.values():
             yield IPrincipal(scope), (ACT_READ,)
 
         if ICourseSubInstance.providedBy(course):
