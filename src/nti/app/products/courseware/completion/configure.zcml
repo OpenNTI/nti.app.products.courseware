@@ -100,4 +100,7 @@
 			view="zope.interface.Interface"
 			layer="zope.interface.Interface" />
 
+	<!-- Utilities -->
+	<utility factory=".completables.CourseCatalogCompletables" name="courses" />
+
 </configure>

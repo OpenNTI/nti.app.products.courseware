@@ -33,7 +33,7 @@ class CourseCatalogRecordables(object):
     def _process_course(self, course, result):
         # assets
         container = IPresentationAssetContainer(course)
-        for asset in container.assets():
+        for asset in container.assets():  # pylint: disable=too-many-function-args
             if IRecordable.providedBy(asset):
                 result.append(asset)
         # nodes
