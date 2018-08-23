@@ -86,9 +86,6 @@
 			 provides="nti.contenttypes.courses.interfaces.ICourseCompletionSectionImporter"
 			 name="040:Course_Completion" />
 
-	<!-- Catalog -->
-	<adapter factory=".adapters._completed_item_to_context_ntiid" />
-
 	<z3c:macro
 			template="templates/certificate_macros.pt"
 			name="certificate-branding-graphic"

@@ -29,15 +29,12 @@ from nti.contenttypes.courses.interfaces import ES_PUBLIC
 
 from nti.contenttypes.courses.interfaces import ICourseInstance
 from nti.contenttypes.courses.interfaces import ICourseSubInstance
-from nti.contenttypes.courses.interfaces import ICourseCatalogEntry
 
 from nti.contenttypes.courses.utils import get_parent_course
 
 from nti.contenttypes.completion.adapters import CompletableItemContainerFactory
 
-from nti.contenttypes.completion.interfaces import ICompletedItem
 from nti.contenttypes.completion.interfaces import ICompletionContext
-from nti.contenttypes.completion.interfaces import IContextNTIIDAdapter
 from nti.contenttypes.completion.interfaces import ICompletableItemContainer
 
 from nti.dataserver import authorization
@@ -52,10 +49,6 @@ from nti.dataserver.interfaces import IUser
 from nti.dataserver.interfaces import IPrincipal
 
 from nti.dataserver.users.users import User
-
-from nti.ntiids.oids import to_external_ntiid_oid
-
-from nti.traversal.traversal import find_interface
 
 logger = __import__('logging').getLogger(__name__)
 
@@ -168,26 +161,6 @@ class CourseStudentCohort(object):
 
 
 # catalog
-
-
-class _NTIID(object):
-
-    __slots__ = ('ntiid',)
-
-    def __init__(self, ntiid):
-        self.ntiid = ntiid
-
-
-@component.adapter(ICompletedItem)
-@interface.implementer(IContextNTIIDAdapter)
-def _completed_item_to_context_ntiid(item):
-    context = find_interface(item, ICompletionContext, strict=False)
-    # use course catalog entry for course
-    if ICourseInstance.providedBy(context):
-        context = ICourseCatalogEntry(context, None)
-    # get ntiid or oid
-    ntiid = getattr(context, 'ntiid', None) or to_external_ntiid_oid(context)
-    return _NTIID(ntiid) if ntiid else None
 
 
 @interface.implementer(ICompletableItemContainer)
