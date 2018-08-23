@@ -16,6 +16,8 @@ does_not = is_not
 
 from zope import component
 
+from nti.contenttypes.completion.interfaces import ICompletables
+
 from nti.app.products.courseware.tests import PersistentInstructedCourseApplicationTestLayer
 
 from nti.app.testing.application_webtest import ApplicationLayerTest
@@ -24,19 +26,17 @@ from nti.app.testing.decorators import WithSharedApplicationMockDS
 
 from nti.dataserver.tests import mock_dataserver
 
-from nti.recorder.interfaces import IRecordables
 
-
-class TestRecordables(ApplicationLayerTest):
+class TestCompletables(ApplicationLayerTest):
 
     layer = PersistentInstructedCourseApplicationTestLayer
 
     default_origin = 'http://janux.ou.edu'
 
     @WithSharedApplicationMockDS(users=False, testapp=False)
-    def test_recordables(self):
+    def test_completables(self):
         with mock_dataserver.mock_db_trans(self.ds, site_name='janux.ou.edu'):
-            recordables = component.queryUtility(IRecordables, name="courses")
-            assert_that(recordables, is_not(none()))
-            assert_that(list(recordables.iter_objects()),
-                        has_length(greater_than(500)))
+            completables = component.queryUtility(ICompletables, name="courses")
+            assert_that(completables, is_not(none()))
+            assert_that(list(completables.iter_objects()),
+                        has_length(greater_than(1)))
