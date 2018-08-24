@@ -118,6 +118,8 @@ from nti.dataserver.interfaces import IHighlight
 from nti.dataserver.interfaces import IAccessProvider
 from nti.dataserver.interfaces import IUserGeneratedData
 
+from nti.dataserver.users import User
+
 from nti.ntiids.ntiids import find_object_with_ntiid
 
 from nti.site.site import get_component_hierarchy_names
@@ -761,3 +763,10 @@ def _course_last_seen_time_to_user(user, course):
         _dt = _container.get(ntiid) if ntiid else None
         return datetime.datetime.utcfromtimestamp(_dt) if _dt else None
     return None
+
+@component.adapter(ICourseInstanceEnrollmentRecord)
+@interface.implementer(ILastSeenProvider)
+def _course_enrollment_record_last_seen_time(record):
+    user = User.get_user(record.Principal)
+    course = record.CourseInstance
+    return component.queryMultiAdapter((user, course), ILastSeenProvider)

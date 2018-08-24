@@ -18,6 +18,8 @@ from nti.app.testing.application_webtest import ApplicationLayerTest
 
 from nti.contenttypes.courses.courses import CourseInstance
 
+from nti.contenttypes.courses.enrollment import DefaultCourseInstanceEnrollmentRecord
+
 from nti.coremetadata.interfaces import IContextLastSeenContainer
 from nti.coremetadata.interfaces import ILastSeenProvider
 
@@ -40,4 +42,25 @@ class TestAdapters(ApplicationLayerTest):
         _container[course.ntiid] = 1533445200
 
         lastSeen = component.queryMultiAdapter((user, course), ILastSeenProvider)
+        assert_that(lastSeen.strftime('%Y-%m-%d %H:%M:%S'), is_("2018-08-05 05:00:00"))
+
+    @WithMockDSTrans
+    @fudge.patch("nti.contenttypes.courses.courses.to_external_ntiid_oid")
+    def test_course_enrollment_record_last_seen_time(self, mock_to_external_ntiid_oid):
+        mock_to_external_ntiid_oid.is_callable().returns("ntiid_abc")
+        user = self._create_user(username=u'test001')
+        record = DefaultCourseInstanceEnrollmentRecord(Principal=user)
+        record.createdTime = None
+        class _MockStorage(object):
+            pass
+        record.__parent__ = _MockStorage()
+        record.__parent__.__parent__ = CourseInstance()
+
+        lastSeen = ILastSeenProvider(record, None)
+        assert_that(lastSeen, is_(None))
+
+        _container = IContextLastSeenContainer(user, None)
+        _container[u'ntiid_abc'] = 1533445200
+
+        lastSeen = ILastSeenProvider(record, None)
         assert_that(lastSeen.strftime('%Y-%m-%d %H:%M:%S'), is_("2018-08-05 05:00:00"))

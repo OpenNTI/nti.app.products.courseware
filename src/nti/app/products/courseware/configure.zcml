@@ -133,6 +133,10 @@
 			      nti.contenttypes.courses.interfaces.ICourseInstance"
 			 provides="nti.coremetadata.interfaces.ILastSeenProvider" />
 
+	<adapter factory=".adapters._course_enrollment_record_last_seen_time"
+			 for="nti.contenttypes.courses.interfaces.ICourseInstanceEnrollmentRecord"
+			 provides="nti.coremetadata.interfaces.ILastSeenProvider" />
+
     <!-- Credit -->
     <adapter factory=".credit.UserCourseCreditTranscript" />
 
