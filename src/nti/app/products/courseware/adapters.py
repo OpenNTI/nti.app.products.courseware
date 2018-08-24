@@ -756,13 +756,20 @@ def enrollment_container(context):
 
 @component.adapter(IUser, ICourseInstance)
 @interface.implementer(ILastSeenProvider)
-def _course_last_seen_time_to_user(user, course):
-    _container = IContextLastSeenContainer(user, None)
-    if _container:
-        ntiid = getattr(course, 'ntiid', None)
-        _dt = _container.get(ntiid) if ntiid else None
-        return datetime.datetime.utcfromtimestamp(_dt) if _dt else None
-    return None
+class _CourseLastSeenProvider(object):
+
+    def __init__(self, user, context):
+        self.user = user
+        self.context = context
+
+    @Lazy
+    def lastSeenTime(self):
+        _container = IContextLastSeenContainer(self.user, None)
+        if _container:
+            ntiid = getattr(self.context, 'ntiid', None)
+            _dt = _container.get(ntiid) if ntiid else None
+            return datetime.datetime.utcfromtimestamp(_dt) if _dt else None
+        return None
 
 @component.adapter(ICourseInstanceEnrollmentRecord)
 @interface.implementer(ILastSeenProvider)

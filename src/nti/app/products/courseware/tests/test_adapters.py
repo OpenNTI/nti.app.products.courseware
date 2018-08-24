@@ -35,14 +35,14 @@ class TestAdapters(ApplicationLayerTest):
         user = self._create_user(username=u'test001')
         course = CourseInstance()
 
-        lastSeen = component.queryMultiAdapter((user, course), ILastSeenProvider)
-        assert_that(lastSeen, is_(None))
+        provider = component.queryMultiAdapter((user, course), ILastSeenProvider)
+        assert_that(provider.lastSeenTime, is_(None))
 
         _container = IContextLastSeenContainer(user, None)
         _container[course.ntiid] = 1533445200
 
-        lastSeen = component.queryMultiAdapter((user, course), ILastSeenProvider)
-        assert_that(lastSeen.strftime('%Y-%m-%d %H:%M:%S'), is_("2018-08-05 05:00:00"))
+        provider = component.queryMultiAdapter((user, course), ILastSeenProvider)
+        assert_that(provider.lastSeenTime.strftime('%Y-%m-%d %H:%M:%S'), is_("2018-08-05 05:00:00"))
 
     @WithMockDSTrans
     @fudge.patch("nti.contenttypes.courses.courses.to_external_ntiid_oid")
@@ -56,11 +56,11 @@ class TestAdapters(ApplicationLayerTest):
         record.__parent__ = _MockStorage()
         record.__parent__.__parent__ = CourseInstance()
 
-        lastSeen = ILastSeenProvider(record, None)
-        assert_that(lastSeen, is_(None))
+        provider = ILastSeenProvider(record, None)
+        assert_that(provider.lastSeenTime, is_(None))
 
         _container = IContextLastSeenContainer(user, None)
         _container[u'ntiid_abc'] = 1533445200
 
-        lastSeen = ILastSeenProvider(record, None)
-        assert_that(lastSeen.strftime('%Y-%m-%d %H:%M:%S'), is_("2018-08-05 05:00:00"))
+        provider = ILastSeenProvider(record, None)
+        assert_that(provider.lastSeenTime.strftime('%Y-%m-%d %H:%M:%S'), is_("2018-08-05 05:00:00"))

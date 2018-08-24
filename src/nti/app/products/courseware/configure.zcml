@@ -128,7 +128,7 @@
 				for="*"/>
 
 	<!-- (User, Course) to lastseenprovider -->
-	<adapter factory=".adapters._course_last_seen_time_to_user"
+	<adapter factory=".adapters._CourseLastSeenProvider"
 			 for="nti.dataserver.interfaces.IUser
 			      nti.contenttypes.courses.interfaces.ICourseInstance"
 			 provides="nti.coremetadata.interfaces.ILastSeenProvider" />
