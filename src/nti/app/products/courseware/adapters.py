@@ -8,6 +8,8 @@ from __future__ import division
 from __future__ import print_function
 from __future__ import absolute_import
 
+import datetime
+
 import itertools
 
 from ZODB.interfaces import IConnection
@@ -98,6 +100,9 @@ from nti.contenttypes.presentation.interfaces import IPresentationAsset
 from nti.contenttypes.presentation.interfaces import INTIRelatedWorkRef
 from nti.contenttypes.presentation.interfaces import IItemAssetContainer
 from nti.contenttypes.presentation.interfaces import INTIRelatedWorkRefPointer
+
+from nti.coremetadata.interfaces import IContextLastSeenContainer
+from nti.coremetadata.interfaces import ILastSeenProvider
 
 from nti.dataserver.authorization import ACT_CONTENT_EDIT
 
@@ -746,3 +751,13 @@ def enrollment_container(context):
         # us multiple db error for some reason.
         IConnection(course).add(result)
     return result
+
+@component.adapter(IUser, ICourseInstance)
+@interface.implementer(ILastSeenProvider)
+def _course_last_seen_time_to_user(user, course):
+    _container = IContextLastSeenContainer(user, None)
+    if _container:
+        ntiid = getattr(course, 'ntiid', None)
+        _dt = _container.get(ntiid) if ntiid else None
+        return datetime.datetime.utcfromtimestamp(_dt) if _dt else None
+    return None
