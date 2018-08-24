@@ -8,6 +8,8 @@ from __future__ import division
 from __future__ import print_function
 from __future__ import absolute_import
 
+import datetime
+
 import itertools
 
 from ZODB.interfaces import IConnection
@@ -99,6 +101,9 @@ from nti.contenttypes.presentation.interfaces import INTIRelatedWorkRef
 from nti.contenttypes.presentation.interfaces import IItemAssetContainer
 from nti.contenttypes.presentation.interfaces import INTIRelatedWorkRefPointer
 
+from nti.coremetadata.interfaces import IContextLastSeenContainer
+from nti.coremetadata.interfaces import ILastSeenProvider
+
 from nti.dataserver.authorization import ACT_CONTENT_EDIT
 
 from nti.dataserver.authorization_acl import has_permission
@@ -112,6 +117,8 @@ from nti.dataserver.interfaces import IContained
 from nti.dataserver.interfaces import IHighlight
 from nti.dataserver.interfaces import IAccessProvider
 from nti.dataserver.interfaces import IUserGeneratedData
+
+from nti.dataserver.users import User
 
 from nti.ntiids.ntiids import find_object_with_ntiid
 
@@ -746,3 +753,27 @@ def enrollment_container(context):
         # us multiple db error for some reason.
         IConnection(course).add(result)
     return result
+
+@component.adapter(IUser, ICourseInstance)
+@interface.implementer(ILastSeenProvider)
+class _CourseLastSeenProvider(object):
+
+    def __init__(self, user, context):
+        self.user = user
+        self.context = context
+
+    @Lazy
+    def lastSeenTime(self):
+        _container = IContextLastSeenContainer(self.user, None)
+        if _container:
+            ntiid = getattr(self.context, 'ntiid', None)
+            _dt = _container.get(ntiid) if ntiid else None
+            return datetime.datetime.utcfromtimestamp(_dt) if _dt else None
+        return None
+
+@component.adapter(ICourseInstanceEnrollmentRecord)
+@interface.implementer(ILastSeenProvider)
+def _course_enrollment_record_last_seen_time(record):
+    user = User.get_user(record.Principal)
+    course = record.CourseInstance
+    return component.queryMultiAdapter((user, course), ILastSeenProvider)
