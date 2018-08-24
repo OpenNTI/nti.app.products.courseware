@@ -129,7 +129,7 @@ class CourseStudentCohort(object):
 
     @Lazy
     def instructors(self):
-        return {User.get_user(inst.id) for inst in self.course.instructors}
+        return {User.get_user(inst.id) for inst in self.course.instructors or ()}
 
     def __iter__(self):
         # pylint: disable=not-an-iterable,unsupported-membership-test
