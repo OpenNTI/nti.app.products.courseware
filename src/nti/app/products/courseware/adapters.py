@@ -12,6 +12,12 @@ import datetime
 
 import itertools
 
+from pyramid import httpexceptions as hexc
+
+from pyramid.threadlocal import get_current_request
+
+from pyramid.interfaces import IRequest
+
 from ZODB.interfaces import IConnection
 
 from zope import component
@@ -22,12 +28,6 @@ from zope.intid.interfaces import IIntIds
 from zope.annotation.interfaces import IAnnotations
 
 from zope.cachedescriptors.property import Lazy
-
-from pyramid import httpexceptions as hexc
-
-from pyramid.threadlocal import get_current_request
-
-from pyramid.interfaces import IRequest
 
 from nti.app.authentication import get_remote_user
 
@@ -101,8 +101,8 @@ from nti.contenttypes.presentation.interfaces import INTIRelatedWorkRef
 from nti.contenttypes.presentation.interfaces import IItemAssetContainer
 from nti.contenttypes.presentation.interfaces import INTIRelatedWorkRefPointer
 
-from nti.coremetadata.interfaces import IContextLastSeenContainer
 from nti.coremetadata.interfaces import ILastSeenProvider
+from nti.coremetadata.interfaces import IContextLastSeenContainer
 
 from nti.dataserver.authorization import ACT_CONTENT_EDIT
 
@@ -292,8 +292,8 @@ def _course_content_package_to_course(package):
     try:
         entry = package._v_global_legacy_catalog_entry
     except AttributeError:
-        logger.warn("Consistency issue? No attribute on global package %s",
-                    package)
+        logger.warning("Consistency issue? No attribute on global package %s",
+                       package)
         entry = None
 
     course = ICourseInstance(entry, None)
@@ -490,6 +490,7 @@ def _hierarchy_from_obj_and_user(obj, user):
         if caught_exception is not None:
             # No path found and this exception indicates the path goes through
             # an unpublished object.
+            # pylint: disable=raising-bad-type
             raise caught_exception
 
         # This means are content only exists in catalog entries
@@ -699,6 +700,7 @@ class _CourseAccessProvider(object):
 
     @Lazy
     def entry_ntiid(self):
+        # pylint: disable=no-member
         return self.entry.ntiid
 
     def _scope_lookup(self, scope_name):
@@ -720,6 +722,7 @@ class _CourseAccessProvider(object):
         if access_context:
             scope = self._scope_lookup(access_context)
         manager = ICourseEnrollmentManager(self.course)
+        # pylint: disable=redundant-keyword-arg
         result = manager.enroll(entity, scope=scope)
         logger.info("User enrolled in course (%s) (%s) (scope=%s)",
                     entity.username, self.entry_ntiid, scope)
@@ -730,6 +733,7 @@ class _CourseAccessProvider(object):
         Unenrolls the user from the course.
         """
         manager = ICourseEnrollmentManager(self.course)
+        # pylint: disable=too-many-function-args
         result = manager.drop(entity)
         logger.info("User dropped course (%s) (%s)",
                     entity.username, self.entry_ntiid)
@@ -751,8 +755,10 @@ def enrollment_container(context):
         result.__parent__ = course
         # Deterministically add to our course db. Sectioned courses would give
         # us multiple db error for some reason.
+        # pylint: disable=too-many-function-args
         IConnection(course).add(result)
     return result
+
 
 @component.adapter(IUser, ICourseInstance)
 @interface.implementer(ILastSeenProvider)
@@ -770,6 +776,7 @@ class _CourseLastSeenProvider(object):
             _dt = _container.get(ntiid) if ntiid else None
             return datetime.datetime.utcfromtimestamp(_dt) if _dt else None
         return None
+
 
 @component.adapter(ICourseInstanceEnrollmentRecord)
 @interface.implementer(ILastSeenProvider)
