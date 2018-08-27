@@ -90,7 +90,7 @@ from nti.contenttypes.presentation.interfaces import INTILessonOverview
 
 from nti.dataserver import authorization as nauth
 
-from nti.dataserver.authorization import is_admin_or_content_admin_or_site_admin
+from nti.dataserver.authorization import is_admin_or_content_admin
 
 from nti.dataserver.interfaces import IUser
 
@@ -782,8 +782,9 @@ class UserCourseAccessView(AbstractAuthenticatedView):
 
     @Lazy
     def _is_admin(self):
-        return is_admin_or_content_admin_or_site_admin(self.remoteUser) \
-            or is_course_instructor_or_editor(self._course, self.remoteUser)
+        return is_admin_or_content_admin(self.remoteUser) \
+            or is_course_instructor_or_editor(self._course, self.remoteUser) \
+            or has_permission(nauth.ACT_CONTENT_EDIT, self.context, self.request)
 
     def __call__(self):
         result = None
