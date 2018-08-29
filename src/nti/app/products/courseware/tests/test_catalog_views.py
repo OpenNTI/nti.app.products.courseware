@@ -256,3 +256,42 @@ class TestCatalogViews(ApplicationLayerTest):
 
         res = res.json_body
         assert_that(res, has_entry("ItemCount", 0))
+
+    @WithSharedApplicationMockDS(testapp=True, users=True, default_authenticate=True)
+    def test_administered_course_view(self):
+        administered_course_path = "/dataserver2/users/sjohnson%40nextthought.com/Courses/AdministeredCourses"
+        res = self.testapp.get(administered_course_path, status=200)
+        res = res.json_body
+        assert_that(res, has_entry("FilteredTotalItemCount", 7))
+
+        # sorting
+        res = self.testapp.get(administered_course_path, status=200, params={'sortOn': 'title', 'sortOrder': 'descending'})
+        res = [x['CatalogEntry']['title'] for x in res.json_body['Items']]
+        assert_that((res[0], res[6]), is_(('Law and Justice', 'Introduction to Computer Programming')))
+
+        res = self.testapp.get(administered_course_path, status=200, params={'sortOn': 'title'})
+        res = [x['CatalogEntry']['title'] for x in res.json_body['Items']]
+        assert_that((res[0], res[6]), is_(('Introduction to Computer Programming', 'Law and Justice')))
+
+        # StartDate
+        res = self.testapp.get(administered_course_path, status=200, params={'sortOn': 'StartDate', 'sortOrder': 'descending'})
+        res = [x['CatalogEntry']['StartDate'] for x in res.json_body['Items']]
+        assert_that((res[0], res[6]), is_(('2015-08-24T05:00:00Z', '2013-08-13T06:00:00Z')))
+
+        res = self.testapp.get(administered_course_path, status=200, params={'sortOn': 'StartDate', 'sortOrder': 'ascending'})
+        res = [x['CatalogEntry']['StartDate'] for x in res.json_body['Items']]
+        assert_that((res[0], res[6]), is_(('2013-08-13T06:00:00Z', '2015-08-24T05:00:00Z')))
+
+        # EndDate
+        res = self.testapp.get(administered_course_path, status=200, params={'sortOn': 'EndDate', 'sortOrder': 'descending'})
+        res = [x['CatalogEntry']['EndDate'] for x in res.json_body['Items']]
+        assert_that((res[0], res[6]), is_(('2032-10-12T06:00:00Z', '2015-12-20T05:00:00Z')))
+
+        res = self.testapp.get(administered_course_path, status=200, params={'sortOn': 'EndDate', 'sortOrder': 'ascending'})
+        res = [x['CatalogEntry']['EndDate'] for x in res.json_body['Items']]
+        assert_that((res[0], res[6]), is_(('2015-12-20T05:00:00Z', '2032-10-12T06:00:00Z')))
+
+        # Enrolled
+        res = self.testapp.get(administered_course_path, status=200, params={'sortOn': 'enrolled', 'sortOrder': 'descending'})
+        res = [x['CatalogEntry']['TotalEnrolledCount'] for x in res.json_body['Items']]
+        assert_that((res[0], res[6]), is_((0, 0)))

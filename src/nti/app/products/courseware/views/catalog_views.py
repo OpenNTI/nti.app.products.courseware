@@ -900,6 +900,11 @@ class CourseCollectionView(_AbstractFilteredCourseView,
 
     DESC_SORT_ORDER = False
 
+    _ALLOWED_SORTING = {'title': lambda x: x[0].title and x[0].title.lower(),
+                        'startdate': lambda x: (x[0].StartDate is not None, x[0].StartDate),
+                        'enddate': lambda x: (x[0].EndDate is not None, x[0].EndDate),
+                        'enrolled': lambda x: ICourseEnrollments(x[1].CourseInstance).count_enrollments()}
+
     def _include_filter(self, unused_entry):  # pylint: disable=arguments-differ
         pass
 
@@ -929,6 +934,26 @@ class CourseCollectionView(_AbstractFilteredCourseView,
         title = entry.title and entry.title.lower()
         start_date = entry.StartDate
         return (not title, title, start_date is not None, start_date)
+
+    @Lazy
+    def sortOn(self):
+        sortOn = self._params.get('sortOn')
+        sortOn = sortOn.lower() if sortOn else sortOn
+        return sortOn if sortOn in self._ALLOWED_SORTING else None
+
+    @Lazy
+    def sortOrder(self):
+        return self._params.get('sortOrder', 'ascending')
+
+    @Lazy
+    def sorted_filtered_entries_and_records(self):
+        sort_key = self._ALLOWED_SORTING.get(self.sortOn) if self.sortOn else self._sort_key
+        sort_reverse = self.sortOrder == 'descending' if self.sortOn else self.DESC_SORT_ORDER
+
+        result = sorted(self.filtered_entries,
+                        key=sort_key,
+                        reverse=sort_reverse)
+        return result
 
     def __call__(self):
         new_items = self._get_items()
