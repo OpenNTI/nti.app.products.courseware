@@ -8,7 +8,7 @@ from __future__ import division
 from __future__ import print_function
 from __future__ import absolute_import
 
-import datetime
+from datetime import datetime
 
 import itertools
 
@@ -79,6 +79,7 @@ from nti.contenttypes.courses.interfaces import ICourseOutlineNodes
 from nti.contenttypes.courses.interfaces import IContentCourseInstance
 from nti.contenttypes.courses.interfaces import INonPublicCourseInstance
 from nti.contenttypes.courses.interfaces import ICourseEnrollmentManager
+from nti.contenttypes.courses.interfaces import ICourseEnrollments
 from nti.contenttypes.courses.interfaces import ICourseInstanceEnrollmentRecord
 
 from nti.contenttypes.courses.utils import is_enrolled
@@ -770,12 +771,21 @@ class _CourseLastSeenProvider(object):
 
     @Lazy
     def lastSeenTime(self):
+        _dt = None
+
         _container = IContextLastSeenContainer(self.user, None)
         if _container:
             ntiid = getattr(self.context, 'ntiid', None)
             _dt = _container.get(ntiid) if ntiid else None
-            return datetime.datetime.utcfromtimestamp(_dt) if _dt else None
-        return None
+
+        if not _dt:
+            # Enrollment date.
+            enrollments = ICourseEnrollments(self.context)
+            record = enrollments.get_enrollment_for_principal(self.user)
+            if record and record.createdTime:
+                _dt = record.createdTime
+
+        return datetime.utcfromtimestamp(_dt) if _dt else None
 
 
 @component.adapter(ICourseInstanceEnrollmentRecord)

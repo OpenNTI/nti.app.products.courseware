@@ -9,6 +9,7 @@ __docformat__ = "restructuredtext en"
 
 from hamcrest import assert_that
 from hamcrest import has_entry
+from hamcrest import is_
 from hamcrest import is_not
 from hamcrest import none
 from hamcrest import not_none
@@ -24,6 +25,17 @@ from nti.app.testing.decorators import WithSharedApplicationMockDS
 
 from nti.app.products.courseware.tests import PersistentInstructedCourseApplicationTestLayer
 
+from nti.externalization.externalization import toExternalObject
+
+from nti.app.products.courseware.decorators import _CourseInstanceEnrollmentRecordDecorator
+
+from nti.contenttypes.courses.courses import CourseInstance
+
+from nti.contenttypes.courses.enrollment import DefaultCourseInstanceEnrollmentRecord
+
+from nti.coremetadata.interfaces import IContextLastSeenContainer
+
+from nti.dataserver.tests.mock_dataserver import WithMockDSTrans
 
 class TestCoursePreviewExternalization(ApplicationLayerTest):
     """
@@ -103,5 +115,29 @@ class TestCoursePreviewExternalization(ApplicationLayerTest):
         assert_that(link, has_entry('type', 'application/vnd.nextthought.courses.courseinstance'))
         
 
-        
-    
+class TestDecorators(ApplicationLayerTest):
+
+    def _decorate(self, decorator, context):
+        external = toExternalObject(context, decorate=False)
+        decorator = decorator(context, None)
+        decorator.decorateExternalObject(context, external)
+        return external
+
+    @WithMockDSTrans
+    @fudge.patch("nti.contenttypes.courses.courses.to_external_ntiid_oid")
+    def test_CourseInstanceEnrollmentRecordDecorator(self, mock_to_external_ntiid_oid):
+        mock_to_external_ntiid_oid.is_callable().returns("ntiid_abc")
+        user = self._create_user(username=u'test001')
+        record = DefaultCourseInstanceEnrollmentRecord(Principal=user)
+
+        class _MockStorage(object):
+            pass
+        record.__parent__ = _MockStorage()
+        record.__parent__.__parent__ = CourseInstance()
+
+        _container = IContextLastSeenContainer(user, None)
+        _container[u'ntiid_abc'] = 1533445200
+
+        external = self._decorate(_CourseInstanceEnrollmentRecordDecorator, record)
+        assert_that(external['LastSeenTime'].strftime('%Y-%m-%d %H:%M:%S'), is_("2018-08-05 05:00:00"))
+
