@@ -8,12 +8,12 @@ from __future__ import division
 from __future__ import print_function
 from __future__ import absolute_import
 
-from zope.event import notify
-
 from pyramid import httpexceptions as hexc
 
 from pyramid.view import view_config
 from pyramid.view import view_defaults
+
+from zope.event import notify
 
 from nti.app.externalization.error import raise_json_error
 
@@ -41,6 +41,7 @@ logger = __import__('logging').getLogger(__name__)
 class ContentPackageBundlePutView(UGDPutView):
 
     def __call__(self):
+        # pylint: disable=no-member
         old_packages = set(self.context.ContentPackages or ())
         try:
             result = UGDPutView.__call__(self)
@@ -59,5 +60,5 @@ class ContentPackageBundlePutView(UGDPutView):
             course = find_interface(result, ICourseInstance, strict=False)
             notify(CourseBundleWillUpdateEvent(course, added, removed))
         else:
-            logger.warn('Updating bundle without changing contents')
+            logger.warning('Updating bundle without changing contents')
         return result
