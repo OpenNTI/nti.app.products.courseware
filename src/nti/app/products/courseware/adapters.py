@@ -773,10 +773,10 @@ class _CourseLastSeenProvider(object):
     def lastSeenTime(self):
         _dt = None
 
-        _container = IContextLastSeenContainer(self.user, None)
-        if _container:
+        container = IContextLastSeenContainer(self.user, None)
+        if container:
             ntiid = getattr(self.context, 'ntiid', None)
-            _dt = _container.get(ntiid) if ntiid else None
+            _dt = container.get_timestamp(ntiid) if ntiid else None
 
         if not _dt:
             # Enrollment date.
