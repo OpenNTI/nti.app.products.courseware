@@ -291,6 +291,7 @@ def _course_content_package_to_course(package):
     # We go via the defined adapter from the catalog entry,
     # which we should have directly cached
     try:
+        # pylint: disable=protected-access
         entry = package._v_global_legacy_catalog_entry
     except AttributeError:
         logger.warning("Consistency issue? No attribute on global package %s",
@@ -323,11 +324,11 @@ def content_unit_to_courses(unit, include_sub_instances=True):
 def _content_unit_to_course(unit):
     # get all courses, don't include sections
     courses = content_unit_to_courses(unit, False)
-    # XXX: We probably need to check and see who's enrolled
+    # We probably need to check and see who's enrolled
     # to find the most specific course instance to return?
     # As it stands, we promise to return only a root course,
     # not a subinstance (section)
-    # XXX: FIXME: This requires a one-to-one mapping
+    # Warning!!! This requires a one-to-one mapping
     return courses[0] if courses else None
 
 
@@ -506,7 +507,7 @@ def _get_preferred_course(found_course):
     Prefer any enrolled subinstances to a board object found
     at a top-level course instance.
     """
-    # TODO: Do we need to do anything different for instructors?
+    # Do we need to do anything different for instructors?
     user = get_remote_user()
     if ICourseSubInstance.providedBy(found_course) or user is None:
         return found_course
@@ -712,7 +713,7 @@ class _CourseAccessProvider(object):
         for scope in ENROLLMENT_SCOPE_NAMES:
             scope_dict[scope.lower()] = scope
         scope_name = scope_name.lower()
-        # XXX: Should probably raise if we have a non-existent scope.
+        # Should probably raise if we have a non-existent scope.
         return scope_dict.get(scope_name, ES_PUBLIC)
 
     def grant_access(self, entity, access_context=None):
@@ -752,7 +753,7 @@ def enrollment_container(context):
     except KeyError:
         result = EnrollmentOptionContainer()
         annotations[ENROLLMENT_OPTION_CONTAINER_KEY] = result
-        #result.__name__ = ENROLLMENT_OPTION_CONTAINER_KEY
+        # result.__name__ = ENROLLMENT_OPTION_CONTAINER_KEY
         result.__parent__ = course
         # Deterministically add to our course db. Sectioned courses would give
         # us multiple db error for some reason.
@@ -772,7 +773,7 @@ class _CourseLastSeenProvider(object):
     @Lazy
     def lastSeenTime(self):
         _dt = None
-
+        # pylint: disable=too-many-function-args
         container = IContextLastSeenContainer(self.user, None)
         if container:
             ntiid = getattr(self.context, 'ntiid', None)
