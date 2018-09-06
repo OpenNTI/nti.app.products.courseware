@@ -412,6 +412,9 @@
 	<subscriber factory=".decorators._CourseInstanceEnrollmentDecorator"
                 provides="nti.externalization.interfaces.IExternalObjectDecorator" />
 
+	<subscriber factory=".decorators._CourseInstanceEnrollmentRecordDecorator"
+                provides="nti.externalization.interfaces.IExternalObjectDecorator" />
+
 	<subscriber factory=".decorators._LegacyCCEFieldDecorator"
 				provides="nti.externalization.interfaces.IExternalObjectDecorator" />
 

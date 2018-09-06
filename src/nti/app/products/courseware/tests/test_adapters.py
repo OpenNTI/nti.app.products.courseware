@@ -47,8 +47,9 @@ class TestAdapters(ApplicationLayerTest):
                     is_("2018-08-05 05:00:00"))
 
     @WithMockDSTrans
-    @fudge.patch("nti.contenttypes.courses.courses.to_external_ntiid_oid")
-    def test_course_enrollment_record_last_seen_time(self, mock_to_external_ntiid_oid):
+    @fudge.patch("nti.contenttypes.courses.courses.to_external_ntiid_oid",
+                 "nti.contenttypes.courses.enrollment.DefaultCourseEnrollments.get_enrollment_for_principal")
+    def test_course_enrollment_record_last_seen_time(self, mock_to_external_ntiid_oid, mock_enrollment):
         mock_to_external_ntiid_oid.is_callable().returns("ntiid_abc")
         user = self._create_user(username=u'test001')
         record = DefaultCourseInstanceEnrollmentRecord(Principal=user)
@@ -59,6 +60,8 @@ class TestAdapters(ApplicationLayerTest):
         record.__parent__ = _MockStorage()
         record.__parent__.__parent__ = CourseInstance()
 
+        mock_enrollment.is_callable().returns(record)
+
         provider = ILastSeenProvider(record, None)
         assert_that(provider.lastSeenTime, is_(None))
 
@@ -66,7 +69,14 @@ class TestAdapters(ApplicationLayerTest):
         container = IContextLastSeenContainer(user, None)
         container.append(u'ntiid_abc', 1533445200)
 
-        provider = ILastSeenProvider(record)
+        provider = ILastSeenProvider(record, None)
+        # pylint: disable=no-member  
+        assert_that(provider.lastSeenTime.strftime('%Y-%m-%d %H:%M:%S'), is_("2018-08-05 05:00:00"))
+
+        # Use enrollment date.
+        container.pop(u'ntiid_abc')
+        record.createdTime = 1533790800
+
+        provider = ILastSeenProvider(record, None)
         # pylint: disable=no-member
-        assert_that(provider.lastSeenTime.strftime('%Y-%m-%d %H:%M:%S'),
-                    is_("2018-08-05 05:00:00"))
+        assert_that(provider.lastSeenTime.strftime('%Y-%m-%d %H:%M:%S'), is_("2018-08-09 05:00:00"))
