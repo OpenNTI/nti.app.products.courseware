@@ -112,6 +112,7 @@ from nti.publishing.interfaces import IPublishable
 
 from nti.zodb.containers import bit64_int_to_time
 from nti.zodb.containers import time_to_64bit_int
+from nti.coremetadata.interfaces import IContextLastSeenContainer
 
 OID = StandardExternalFields.OID
 ITEMS = StandardExternalFields.ITEMS
@@ -373,7 +374,7 @@ class CourseEnrollmentRosterGetView(AbstractAuthenticatedView,
             The field to sort on. Options are ``realname`` to sort on the parts
             of the user's realname (\"lastname\" first; note that this is
             imprecise and likely to sort non-English names incorrectly.);
-            username``.
+            username;lastSeenTime (course last seen time)``.
 
     sortOrder
             The sort direction. Options are ``ascending`` and
@@ -414,6 +415,13 @@ class CourseEnrollmentRosterGetView(AbstractAuthenticatedView,
 
     """
 
+    @classmethod
+    def user_record(cls, record):
+        try:
+            return IUser(record, None)
+        except TypeError:
+            return None
+
     def _externalize(self, record):
         """
         NOTE: Rendering the same CourseInstance over and over is hugely
@@ -430,11 +438,8 @@ class CourseEnrollmentRosterGetView(AbstractAuthenticatedView,
         record.CourseInstance = None
         external = to_external_object(record)
 
-        try:
-            user = IUser(record)
-        except TypeError:
-            pass
-        else:
+        user = self.user_record(record)
+        if user is not None:
             ext_profile = to_external_object(user, name='summary')
             external['UserProfile'] = ext_profile
         return external
@@ -476,7 +481,8 @@ class CourseEnrollmentRosterGetView(AbstractAuthenticatedView,
         request = self.request
         context = request.context.course
         course = context
-
+        course_ntiid = context.ntiid
+        
         result = LocatedExternalDict()
         result.__name__ = request.view_name
         result.__parent__ = course
@@ -486,7 +492,7 @@ class CourseEnrollmentRosterGetView(AbstractAuthenticatedView,
         enrollments_iter = enrollments.iter_enrollments()
 
         filter_name = self.request.params.get('filter')
-        sort_name = self.request.params.get('sortOn')
+        sort_name = self.request.params.get('sortOn', '').lower()
         sort_reverse = self.request.params.get('sortOrder', 'ascending')
         sort_reverse = sort_reverse == 'descending'
         username_search_term = self.request.params.get('usernameSearchTerm')
@@ -498,18 +504,33 @@ class CourseEnrollmentRosterGetView(AbstractAuthenticatedView,
             # catalog (we have the name parts, but keyword indexes are
             # not sortable)
             def _key(record):
-                user = IUser(record)
-                parts = IFriendlyNamed(user).get_searchable_realname_parts()
-                if not parts:
-                    return ''
-                parts = reversed(parts)  # last name first
-                return ' '.join(parts).lower()
+                parts = None
+                user = self.user_record(record)
+                named = IFriendlyNamed(user, None)
+                if named is not None:
+                    parts = named.get_searchable_realname_parts()
+                parts = reversed(parts) if parts else parts # last name first
+                return ' '.join(parts).lower() if parts else ''
 
             enrollments_iter = sorted(enrollments_iter,
                                       key=_key,
                                       reverse=sort_reverse)
         elif sort_name == 'username':
-            def _key(x): return IUser(x).username
+            def _key(x): 
+                user = self.user_record(x)
+                return getattr(user, 'username', '')
+            enrollments_iter = sorted(enrollments_iter,
+                                      key=_key,
+                                      reverse=sort_reverse)
+            
+        elif sort_name == 'lastseentime':
+            def _key(x): 
+                result = None
+                user = self.user_record(x)
+                container = IContextLastSeenContainer(user, None)
+                if container:
+                    result = container.get_timestamp(course_ntiid)
+                return result or 0
             enrollments_iter = sorted(enrollments_iter,
                                       key=_key,
                                       reverse=sort_reverse)
