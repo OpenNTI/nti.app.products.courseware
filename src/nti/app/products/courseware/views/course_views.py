@@ -6,14 +6,24 @@ Views directly related to individual courses and course sub-objects.
 .. $Id$
 """
 
-from __future__ import print_function, unicode_literals, absolute_import, division
-__docformat__ = "restructuredtext en"
-
-logger = __import__('logging').getLogger(__name__)
+from __future__ import division
+from __future__ import print_function
+from __future__ import absolute_import
 
 from collections import namedtuple
 
 from numbers import Number
+
+import BTrees
+
+from pyramid import httpexceptions as hexc
+
+from pyramid.interfaces import IRequest
+
+from pyramid.view import view_config
+from pyramid.view import view_defaults
+
+from pyramid.threadlocal import get_current_request
 
 from zope import component
 from zope import interface
@@ -27,17 +37,6 @@ from zope.container.contained import Contained
 from zope.intid.interfaces import IIntIds
 
 from zope.traversing.interfaces import IPathAdapter
-
-import BTrees
-
-from pyramid import httpexceptions as hexc
-
-from pyramid.interfaces import IRequest
-
-from pyramid.view import view_config
-from pyramid.view import view_defaults
-
-from pyramid.threadlocal import get_current_request
 
 from nti.app.base.abstract_views import AbstractAuthenticatedView
 
@@ -117,8 +116,11 @@ from nti.zodb.containers import time_to_64bit_int
 OID = StandardExternalFields.OID
 ITEMS = StandardExternalFields.ITEMS
 LINKS = StandardExternalFields.LINKS
+LAST_MODIFIED = StandardExternalFields.LAST_MODIFIED
 
 union_operator = Operator.union
+
+logger = __import__('logging').getLogger(__name__)
 
 
 class OutlineContentsCacheController(AbstractReliableLastModifiedCacheController):
@@ -132,8 +134,7 @@ class OutlineContentsCacheController(AbstractReliableLastModifiedCacheController
     max_age = 0
 
     def __init__(self, context, request=None, visible_ntiids=()):
-        self.context = context
-        self.request = request
+        super(OutlineContentsCacheController, self).__init__(context, request)
         self.visible_ntiids = visible_ntiids or ()
 
     @property
@@ -273,6 +274,7 @@ class CourseOutlineContentsView(AbstractAuthenticatedView):
                 accum.append(outline_node.lesson_ntiid)
             for child_outline_node in outline_node.contents or ():
                 _recur(accum, child_outline_node)
+        # pylint: disable=not-an-iterable
         for outline_node in self._visible_nodes:
             _recur(result, outline_node)
         return result
@@ -308,7 +310,7 @@ class CourseEnrollmentRosterPathAdapter(Contained):
     for those objects.
     """
 
-    def __init__(self, course, request):
+    def __init__(self, course, unused_request=None):
         self.__parent__ = course
         self.__name__ = VIEW_COURSE_ENROLLMENT_ROSTER
 
@@ -316,17 +318,18 @@ class CourseEnrollmentRosterPathAdapter(Contained):
 
     def __getitem__(self, username):
         username = username.lower()
-        # XXX: We can do better than this interface now
-        enrollments_iter = ICourseEnrollments(
-            self.__parent__).iter_enrollments()
+        # We can do better than this interface now
+        # pylint: disable=too-many-function-args
+        enrollments_iter = ICourseEnrollments(self.__parent__).iter_enrollments()
         for record in enrollments_iter:
             user = IUser(record)
+            # pylint: disable=no-member
             if user.username.lower() == username:
                 enrollment = component.getMultiAdapter((self.__parent__, record),
                                                        ICourseInstanceEnrollment)
                 enrollment.CourseInstance = None
                 return enrollment
-
+        # not found
         raise KeyError(username)
 
 
@@ -462,7 +465,7 @@ class CourseEnrollmentRosterGetView(AbstractAuthenticatedView,
                 uid = id_util.queryId(IUser(x, None))
                 return uid is not None and uid in matched_ids
             return _filter
-        return lambda x: True
+        return lambda unused_x: True
 
     def _record_filter(self, filter_name, username_search_term):
         scope = self._build_scope_filter(filter_name)
@@ -478,8 +481,8 @@ class CourseEnrollmentRosterGetView(AbstractAuthenticatedView,
         result.__name__ = request.view_name
         result.__parent__ = course
 
-
         enrollments = ICourseEnrollments(course)
+        # pylint: disable=too-many-function-args
         enrollments_iter = enrollments.iter_enrollments()
 
         filter_name = self.request.params.get('filter')
@@ -538,9 +541,9 @@ class CourseEnrollmentRosterGetView(AbstractAuthenticatedView,
         # externalization. That selector gets called on every item from the beginnning
         # of the iterable up to batchStart + batchSize.  That's a lot of unnecessary
         # and expensive externalization.
-        result['Items'] = [self._externalize(x) for x in result['Items']]
+        result[ITEMS] = [self._externalize(x) for x in result[ITEMS]]
 
-        # TODO: We have no last modified for this
+        # We have no last modified for this
         return result
 
 @view_config(route_name='objects.generic.traversal',
@@ -552,11 +555,13 @@ class CourseEnrollmentRosterGetView(AbstractAuthenticatedView,
 class CourseRosterSummary(AbstractAuthenticatedView):
 
     def __call__(self):
+        # pylint: disable=no-member
         course = self.context.course
         result = LocatedExternalDict()
         result.__name__ = self.request.view_name
         result.__parent__ = course
 
+        # pylint: disable=too-many-function-args
         enrollments = ICourseEnrollments(course)
         result['TotalEnrollments'] = enrollments.count_enrollments()
 
@@ -578,13 +583,13 @@ class CourseRosterSummary(AbstractAuthenticatedView):
 
 @interface.implementer(IPathAdapter)
 @component.adapter(ICourseInstance, IRequest)
-def CourseActivityPathAdapter(context, request):
+def CourseActivityPathAdapter(context, unused_request=None):
     return ICourseInstanceActivity(context)
 
 
 @interface.implementer(IPathAdapter)
 @component.adapter(ICourseCatalogEntry, IRequest)
-def CatalogEntryActivityPathAdapter(context, request):
+def CatalogEntryActivityPathAdapter(context, unused_request=None):
     course = ICourseInstance(context)
     return ICourseInstanceActivity(course)
 
@@ -626,7 +631,7 @@ class CourseActivityGetView(AbstractAuthenticatedView,
 
         last_modified = max(activity.lastModified, result['lastViewed'])
         result.lastModified = last_modified
-        result['Last Modified'] = last_modified
+        result[LAST_MODIFIED] = last_modified
         return result
 
 
@@ -726,11 +731,10 @@ class RelevantUGDGetView(_RelevantUGDView):
     a context_id matching the course context from the request.
     """
 
-    def __init__(self, request, the_user=None, the_ntiid=None):
+    def __init__(self, request, unused_user=None, unused_ntiid=None):
+        # pylint: disable=no-member
         self.request = request
-        super(_RelevantUGDView, self).__init__(request,
-                                               the_user=self.remoteUser,
-                                               the_ntiid=self.context.ntiid)
+        _RelevantUGDView.__init__(self, request, self.remoteUser, self.context.ntiid)
 
     def _make_complete_predicate(self, operator=union_operator):
         predicate = _RelevantUGDView._make_complete_predicate(self, operator)
@@ -794,9 +798,9 @@ class UserCourseAccessView(AbstractAuthenticatedView):
             result = component.getMultiAdapter((self._course, self.remoteUser),
                                                ICourseInstanceEnrollment)
             if result is None:
-                logger.warn('User enrolled but no enrollment record (%s) (%s)',
-                            self.remoteUser,
-                            ICourseCatalogEntry(self._course).ntiid)
+                logger.warning('User enrolled but no enrollment record (%s) (%s)',
+                               self.remoteUser,
+                               ICourseCatalogEntry(self._course).ntiid)
         if result is None:
             msg = _('User does not have access to this course.')
             raise hexc.HTTPForbidden(msg)
