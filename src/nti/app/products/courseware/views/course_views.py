@@ -118,6 +118,7 @@ from nti.zodb.containers import time_to_64bit_int
 OID = StandardExternalFields.OID
 ITEMS = StandardExternalFields.ITEMS
 LINKS = StandardExternalFields.LINKS
+ITEM_COUNT = StandardExternalFields.ITEM_COUNT
 LAST_MODIFIED = StandardExternalFields.LAST_MODIFIED
 
 union_operator = Operator.union
@@ -541,7 +542,6 @@ class CourseEnrollmentRosterGetView(AbstractAuthenticatedView,
             # before anybody noticed
             raise hexc.HTTPBadRequest("Unsupported sort option")
 
-
         result['TotalItemCount'] = enrollments.count_enrollments()
 
         # We could theoretically be more efficient with the user of
@@ -564,7 +564,7 @@ class CourseEnrollmentRosterGetView(AbstractAuthenticatedView,
         # of the iterable up to batchStart + batchSize.  That's a lot of unnecessary
         # and expensive externalization.
         result[ITEMS] = [self._externalize(x) for x in result[ITEMS]]
-
+        result[ITEM_COUNT] = len(result[ITEMS])
         # We have no last modified for this
         return result
 
