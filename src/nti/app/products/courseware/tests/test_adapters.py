@@ -74,7 +74,7 @@ class TestAdapters(ApplicationLayerTest):
         assert_that(provider.lastSeenTime.strftime('%Y-%m-%d %H:%M:%S'), is_("2018-08-05 05:00:00"))
 
         # Use enrollment date.
-        del _container[u'ntiid_abc']
+        container.pop(u'ntiid_abc')
         record.createdTime = 1533790800
 
         provider = ILastSeenProvider(record, None)
