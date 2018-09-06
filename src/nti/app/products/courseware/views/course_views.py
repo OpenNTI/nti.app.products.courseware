@@ -87,6 +87,8 @@ from nti.contenttypes.courses.utils import is_course_instructor_or_editor
 
 from nti.contenttypes.presentation.interfaces import INTILessonOverview
 
+from nti.coremetadata.interfaces import IContextLastSeenContainer
+
 from nti.dataserver import authorization as nauth
 
 from nti.dataserver.authorization import is_admin_or_content_admin
@@ -112,7 +114,6 @@ from nti.publishing.interfaces import IPublishable
 
 from nti.zodb.containers import bit64_int_to_time
 from nti.zodb.containers import time_to_64bit_int
-from nti.coremetadata.interfaces import IContextLastSeenContainer
 
 OID = StandardExternalFields.OID
 ITEMS = StandardExternalFields.ITEMS
