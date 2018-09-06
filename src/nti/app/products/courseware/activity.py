@@ -12,6 +12,11 @@ from __future__ import absolute_import
 
 import time
 
+from BTrees import family64
+from BTrees.Length import Length
+
+from persistent import Persistent
+
 from zope import component
 from zope import interface
 
@@ -21,11 +26,6 @@ from zope.cachedescriptors.property import Lazy
 from zope.cachedescriptors.property import CachedProperty
 
 from zope.intid.interfaces import IIntIds
-
-from BTrees import family64
-from BTrees.Length import Length
-
-from persistent import Persistent
 
 from nti.app.products.courseware.interfaces import ICourseInstanceActivity
 
@@ -66,7 +66,7 @@ class _DefaultCourseActivity(Persistent):
     @Lazy
     def _storage(self):
         storage = self.family.II.BTree()
-        self._p_changed = True
+        self._p_changed = True  # pylint: disable=attribute-defined-outside-init
         return storage
 
     @Lazy
@@ -75,7 +75,7 @@ class _DefaultCourseActivity(Persistent):
         ol = len(self._storage)
         if ol > 0:
             l.change(ol)
-        self._p_changed = True
+        self._p_changed = True  # pylint: disable=attribute-defined-outside-init
         return l
 
     @CachedProperty
@@ -88,10 +88,12 @@ class _DefaultCourseActivity(Persistent):
     @property
     def lastModified(self):
         if len(self):
+            # pylint: disable=no-member
             return bit64_int_to_time(-self._storage.minKey())
         return 0
 
     def append(self, activity):
+        # pylint: disable=no-member
         value = self._intids.getId(activity)
         # Time is increasing, but we want
         # our default sort order to be descending, so we
@@ -100,14 +102,17 @@ class _DefaultCourseActivity(Persistent):
 
         # We do a poor job of probing to find a free time so as not to
         # overwrite
+        # pylint: disable=unsupported-membership-test
         while key in self._storage:
             key -= 1
 
+        # pylint: disable=unsupported-assignment-operation
         l = self.__len  # must capture pre-state
         self._storage[key] = value
         l.change(1)
 
     def remove(self, activity):
+        # pylint: disable=no-member
         value = self._intids.getId(activity)
         keys = []
         # This might be a use case for byValue?
@@ -119,10 +124,11 @@ class _DefaultCourseActivity(Persistent):
 
         l = self.__len
         for k in keys:
-            del self._storage[k]
+            del self._storage[k]  # pylint: disable=unsupported-delete-operation
         l.change(-len(keys))
 
     def items(self, min=None, max=None, excludemin=False, excludemax=False):
+        # pylint: disable=no-member
         intids = self._intids
         min = time_to_64bit_int(min) if min is not None else None
         max = time_to_64bit_int(max) if max is not None else None
@@ -136,6 +142,22 @@ class _DefaultCourseActivity(Persistent):
             # Even if the activity object has gone missing, still
             # yield None to be consistent with __len__
             yield when, activity
+
+    def trim(self):
+        # pylint: disable=no-member
+        removed = 0
+        intids = self._intids
+        for key, value in list(self._storage.items()):
+            activity = intids.queryObject(value)
+            if activity is None:
+                removed += 1
+                del self._storage[key]  # pylint: disable=unsupported-delete-operation
+        # reset length
+        if removed:
+            l = self.__len
+            l.change(-removed)
+        return removed
+
 
 _DefaultCourseActivityFactory = an_factory(_DefaultCourseActivity,
                                            u'CourseActivity')
