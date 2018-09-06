@@ -136,7 +136,7 @@ class TestDecorators(ApplicationLayerTest):
         record.__parent__.__parent__ = CourseInstance()
 
         _container = IContextLastSeenContainer(user, None)
-        _container[u'ntiid_abc'] = 1533445200
+        _container.append(u'ntiid_abc', 1533445200)
 
         external = self._decorate(_CourseInstanceEnrollmentRecordDecorator, record)
         assert_that(external['LastSeenTime'].strftime('%Y-%m-%d %H:%M:%S'), is_("2018-08-05 05:00:00"))
