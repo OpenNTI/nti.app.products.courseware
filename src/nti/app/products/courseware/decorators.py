@@ -778,7 +778,7 @@ class _CourseInstanceEnrollmentLastSeenDecorator(Singleton):
      def decorateExternalObject(self, context, result):
         if 'LastSeenTime' not in result:
             user = IUser(context, None)
-            inst = context.CourseInstance if context.CourseInstance is not None else context._private_course_instance
+            inst = ICourseInstance(context, None)
             provider = component.queryMultiAdapter((user, inst), ILastSeenProvider)
             result['LastSeenTime'] = provider.lastSeenTime if provider else None
 
