@@ -9,6 +9,7 @@ __docformat__ = "restructuredtext en"
 
 from hamcrest import none
 from hamcrest import is_not
+from hamcrest import not_none
 from hamcrest import has_entry
 from hamcrest import has_length
 from hamcrest import assert_that
@@ -206,6 +207,7 @@ class TestCourseUserViews(ApplicationLayerTest):
 		user_enrollments = self.testapp.get(user_enrollments_href)
 		user_enrollments = user_enrollments.json_body[ITEMS]
 		assert_that(user_enrollments, has_length(1))
+		assert_that(user_enrollments[0]['LastSeenTime'], not_none())
 
 		user_enrollments = self.testapp.get(user_enrollments_href,
 											extra_environ=instructor_environ)

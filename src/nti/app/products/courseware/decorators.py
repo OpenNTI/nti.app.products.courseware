@@ -76,7 +76,6 @@ from nti.contenttypes.courses.interfaces import ES_PUBLIC
 from nti.contenttypes.courses.interfaces import ES_CREDIT
 from nti.contenttypes.courses.interfaces import ES_PURCHASED
 from nti.contenttypes.courses.interfaces import ENROLLMENT_SCOPE_VOCABULARY
-from nti.contenttypes.courses.interfaces import ICourseInstanceEnrollmentRecord
 
 from nti.contenttypes.courses.interfaces import ICourseOutline
 from nti.contenttypes.courses.interfaces import ICourseInstance
@@ -772,13 +771,15 @@ class _CourseInstanceEnrollmentDecorator(Singleton):
             result['href'] = render_link(context_link)
 
 
-@component.adapter(ICourseInstanceEnrollmentRecord)
+@component.adapter(ICourseInstanceEnrollment)
 @interface.implementer(IExternalObjectDecorator)
-class _CourseInstanceEnrollmentRecordDecorator(Singleton):
+class _CourseInstanceEnrollmentLastSeenDecorator(Singleton):
 
-    def decorateExternalObject(self, context, result):
+     def decorateExternalObject(self, context, result):
         if 'LastSeenTime' not in result:
-            provider = ILastSeenProvider(context, None)
+            user = IUser(context, None)
+            inst = ICourseInstance(context, None)
+            provider = component.queryMultiAdapter((user, inst), ILastSeenProvider)
             result['LastSeenTime'] = provider.lastSeenTime if provider else None
 
 
