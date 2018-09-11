@@ -27,7 +27,9 @@ from nti.app.products.courseware.tests import PersistentInstructedCourseApplicat
 
 from nti.externalization.externalization import toExternalObject
 
-from nti.app.products.courseware.decorators import _CourseInstanceEnrollmentRecordDecorator
+from nti.app.products.courseware.decorators import _CourseInstanceEnrollmentLastSeenDecorator
+
+from nti.app.products.courseware.workspaces import DefaultCourseInstanceEnrollment
 
 from nti.contenttypes.courses.courses import CourseInstance
 
@@ -125,7 +127,7 @@ class TestDecorators(ApplicationLayerTest):
 
     @WithMockDSTrans
     @fudge.patch("nti.contenttypes.courses.courses.to_external_ntiid_oid")
-    def test_CourseInstanceEnrollmentRecordDecorator(self, mock_to_external_ntiid_oid):
+    def test_CourseInstanceEnrollmentDecorator(self, mock_to_external_ntiid_oid):
         mock_to_external_ntiid_oid.is_callable().returns("ntiid_abc")
         user = self._create_user(username=u'test001')
         record = DefaultCourseInstanceEnrollmentRecord(Principal=user)
@@ -135,9 +137,11 @@ class TestDecorators(ApplicationLayerTest):
         record.__parent__ = _MockStorage()
         record.__parent__.__parent__ = CourseInstance()
 
+        enrollment = DefaultCourseInstanceEnrollment(record)
+
         _container = IContextLastSeenContainer(user, None)
         _container.append(u'ntiid_abc', 1533445200)
 
-        external = self._decorate(_CourseInstanceEnrollmentRecordDecorator, record)
+        external = self._decorate(_CourseInstanceEnrollmentLastSeenDecorator, enrollment)
         assert_that(external['LastSeenTime'].strftime('%Y-%m-%d %H:%M:%S'), is_("2018-08-05 05:00:00"))
 
