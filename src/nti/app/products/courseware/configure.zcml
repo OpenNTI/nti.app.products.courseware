@@ -430,6 +430,9 @@
 	<subscriber factory=".decorators._CourseInstanceStreamLinkDecorator"
 				provides="nti.externalization.interfaces.IExternalMappingDecorator" />
 
+	<subscriber factory=".decorators._CourseTabPreferencesLinkDecorator"
+				provides="nti.externalization.interfaces.IExternalMappingDecorator" />
+
 	<subscriber factory=".decorators._CourseWrapperLinkDecorator"
 		    for="nti.app.products.courseware.interfaces.ICourseInstanceEnrollment"
 		    provides="nti.externalization.interfaces.IExternalMappingDecorator" />

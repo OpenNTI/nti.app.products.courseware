@@ -58,6 +58,7 @@ from nti.app.products.courseware.views import VIEW_CONTENTS
 from nti.app.products.courseware.views import VIEW_COURSE_ACTIVITY
 from nti.app.products.courseware.views import VIEW_USER_COURSE_ACCESS
 from nti.app.products.courseware.views import VIEW_COURSE_ENROLLMENT_ROSTER
+from nti.app.products.courseware.views import VIEW_COURSE_TAB_PREFERENCES
 
 from nti.app.renderers.caching import AbstractReliableLastModifiedCacheController
 
@@ -80,6 +81,7 @@ from nti.contenttypes.courses.interfaces import ICourseOutline
 from nti.contenttypes.courses.interfaces import ICourseInstance
 from nti.contenttypes.courses.interfaces import ICourseEnrollments
 from nti.contenttypes.courses.interfaces import ICourseCatalogEntry
+from nti.contenttypes.courses.interfaces import ICourseTabPreferences
 from nti.contenttypes.courses.interfaces import ENROLLMENT_SCOPE_MAP
 
 from nti.contenttypes.courses.utils import is_enrolled
@@ -827,3 +829,34 @@ class UserCourseAccessView(AbstractAuthenticatedView):
             msg = _('User does not have access to this course.')
             raise hexc.HTTPForbidden(msg)
         return result
+
+
+@view_defaults(route_name='objects.generic.traversal',
+               renderer='rest',
+               context=ICourseInstance,
+               name=VIEW_COURSE_TAB_PREFERENCES)
+class CourseTabPreferencesView(AbstractAuthenticatedView, ModeledContentUploadRequestUtilsMixin):
+
+    @Lazy
+    def _prefs(self):
+        return ICourseTabPreferences(self.context)
+
+    @view_config(request_method='POST', permission=nauth.ACT_CONTENT_EDIT)
+    def create(self):
+        try:
+            external = self.readInput()
+        except:
+            external = None
+        if external is not None:
+            self.updateContentObject(self._prefs, external)
+
+        return self._prefs
+
+    @view_config(request_method='PUT', permission=nauth.ACT_CONTENT_EDIT)
+    def update(self):
+        external = self.readInput()
+        return self.updateContentObject(self._prefs, external)
+
+    @view_config(request_method='GET', permission=nauth.ACT_READ)
+    def get(self):
+        return self._prefs

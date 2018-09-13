@@ -37,6 +37,7 @@ from nti.app.products.courseware import VIEW_LESSONS_CONTAINERS
 from nti.app.products.courseware import VIEW_ENROLLMENT_OPTIONS
 from nti.app.products.courseware import VIEW_RECURSIVE_AUDIT_LOG
 from nti.app.products.courseware import VIEW_COURSE_LOCKED_OBJECTS
+from nti.app.products.courseware import VIEW_COURSE_TAB_PREFERENCES
 from nti.app.products.courseware import VIEW_COURSE_RECURSIVE_BUCKET
 from nti.app.products.courseware import VIEW_COURSE_CATALOG_FAMILIES
 from nti.app.products.courseware import VIEW_COURSE_ENROLLMENT_ROSTER
@@ -318,6 +319,19 @@ class _CourseInstanceStreamLinkDecorator(Singleton):
             link.__name__ = ''
             link.__parent__ = context
             _links.append(link)
+
+
+@component.adapter(ICourseInstance)
+@interface.implementer(IExternalMappingDecorator)
+class _CourseTabPreferencesLinkDecorator(Singleton):
+
+    def decorateExternalMapping(self, context, result):
+        _links = result.setdefault(LINKS, [])
+        link = Link(context, rel=VIEW_COURSE_TAB_PREFERENCES, elements=(VIEW_COURSE_TAB_PREFERENCES,))
+        interface.alsoProvides(link, ILocation)
+        link.__name__ = ''
+        link.__parent__ = context
+        _links.append(link)
 
 
 @component.adapter(ICourseInstance)
