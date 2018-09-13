@@ -111,12 +111,12 @@ class TestCourseTabPreferencesView(ApplicationLayerTest):
 		params = { "names": {"1":"a", "2": "b"} }
 		result = self.testapp.put_json(url, params=params, status=200)
 		assert_that(result.json_body, has_entries({'names': has_entries({"1": "a", "2": "b"}),
-												   'order': contains_inanyorder("1", "2")}))
+												   'order': has_length(0)}))
 
 		params = { "names": {"3": "c"} }
 		result = self.testapp.put_json(url, params=params, status=200)
 		assert_that(result.json_body, has_entries({'names': has_entries({"3": "c"}),
-												   'order': contains_inanyorder("3")}))
+												   'order': has_length(0)}))
 
 		params = { "names": None }
 		result = self.testapp.put_json(url, params=params, status=200)
@@ -131,7 +131,7 @@ class TestCourseTabPreferencesView(ApplicationLayerTest):
 		params = { "names": "abc" }
 		result = self.testapp.put_json(url, params=params, status=422)
 
-		# order must be the same key set of names.
+		# order
 		params = { "names": {"1":"a", "2": "b", "3": "c"} , "order": ["1", "2", "3"] }
 		result = self.testapp.put_json(url, params=params, status=200)
 		assert_that(result.json_body, has_entries({'names': has_entries({"1": "a", "2": "b", "3": "c"}),
@@ -143,10 +143,14 @@ class TestCourseTabPreferencesView(ApplicationLayerTest):
 												   'order': contains("2", "1", "3")}))
 
 		params = { "order": ["2", "1"] }
-		result = self.testapp.put_json(url, params=params, status=422)
+		result = self.testapp.put_json(url, params=params, status=200)
+		assert_that(result.json_body, has_entries({'names': has_entries({"1": "a", "2": "b", "3": "c"}),
+												   'order': contains("2", "1")}))
 
 		params = { "order": ["2", "1", "3", "4"] }
-		result = self.testapp.put_json(url, params=params, status=422)
+		result = self.testapp.put_json(url, params=params, status=200)
+		assert_that(result.json_body, has_entries({'names': has_entries({"1": "a", "2": "b", "3": "c"}),
+												   'order': contains("2", "1", "3", "4")}))
 
 		params = { "order": "213" }
 		result = self.testapp.put_json(url, params=params, status=422)
@@ -154,4 +158,4 @@ class TestCourseTabPreferencesView(ApplicationLayerTest):
 		# read
 		result = self.testapp.get(url, status=200)
 		assert_that(result.json_body, has_entries({'names': has_entries({"1": "a", "2": "b", "3": "c"}),
-												   'order': contains("2", "1", "3")}))
+												   'order': contains("2", "1", "3", "4")}))
