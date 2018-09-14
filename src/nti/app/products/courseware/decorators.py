@@ -103,6 +103,7 @@ from nti.contenttypes.presentation.interfaces import INTIQuestionSetRef
 
 from nti.coremetadata.interfaces import ILastSeenProvider
 
+from nti.dataserver.authorization import ACT_READ
 from nti.dataserver.authorization import ACT_CONTENT_EDIT
 
 from nti.dataserver.contenttypes.forums.interfaces import ITopic
@@ -323,9 +324,13 @@ class _CourseInstanceStreamLinkDecorator(Singleton):
 
 @component.adapter(ICourseInstance)
 @interface.implementer(IExternalMappingDecorator)
-class _CourseTabPreferencesLinkDecorator(Singleton):
+class _CourseTabPreferencesLinkDecorator(AbstractAuthenticatedRequestAwareDecorator):
 
-    def decorateExternalMapping(self, context, result):
+    def _predicate(self, context, unused_result):
+        return self._is_authenticated \
+           and (has_permission(ACT_READ, context, self.request) or has_permission(ACT_CONTENT_EDIT, context, self.request))
+
+    def _do_decorate_external(self, context, result):
         _links = result.setdefault(LINKS, [])
         link = Link(context, rel=VIEW_COURSE_TAB_PREFERENCES, elements=(VIEW_COURSE_TAB_PREFERENCES,))
         interface.alsoProvides(link, ILocation)

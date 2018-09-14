@@ -69,6 +69,7 @@ from nti.appserver.pyramid_authorization import has_permission
 from nti.appserver.relevant_ugd_views import _RelevantUGDView
 
 from nti.appserver.ugd_edit_views import ContainerContextUGDPostView
+from nti.appserver.ugd_edit_views import UGDPutView
 
 from nti.appserver.ugd_query_views import Operator
 from nti.appserver.ugd_query_views import _combine_predicate
@@ -831,32 +832,36 @@ class UserCourseAccessView(AbstractAuthenticatedView):
         return result
 
 
-@view_defaults(route_name='objects.generic.traversal',
-               renderer='rest',
-               context=ICourseInstance,
-               name=VIEW_COURSE_TAB_PREFERENCES)
-class CourseTabPreferencesView(AbstractAuthenticatedView, ModeledContentUploadRequestUtilsMixin):
+@interface.implementer(IPathAdapter)
+@component.adapter(ICourseInstance, IRequest)
+class CourseTabPreferencesPathAdapter(Contained):
 
-    @Lazy
-    def _prefs(self):
-        return ICourseTabPreferences(self.context)
+    __name__ = VIEW_COURSE_TAB_PREFERENCES
 
-    @view_config(request_method='POST', permission=nauth.ACT_CONTENT_EDIT)
-    def create(self):
-        try:
-            external = self.readInput()
-        except:
-            external = None
-        if external is not None:
-            self.updateContentObject(self._prefs, external)
+    def __init__(self, context, request):
+        # Context is CourseInstance
+        self.context = context
+        self.request = request
+        self.__parent__ = context
 
-        return self._prefs
 
-    @view_config(request_method='PUT', permission=nauth.ACT_CONTENT_EDIT)
-    def update(self):
-        external = self.readInput()
-        return self.updateContentObject(self._prefs, external)
+@view_config(route_name='objects.generic.traversal',
+             renderer='rest',
+             context=CourseTabPreferencesPathAdapter,
+             request_method='GET',
+             permission=nauth.ACT_READ)
+class CourseTabPreferencesGetView(AbstractAuthenticatedView):
 
-    @view_config(request_method='GET', permission=nauth.ACT_READ)
-    def get(self):
-        return self._prefs
+    def __call__(self):
+        return ICourseTabPreferences(self.context.__parent__)
+
+
+@view_config(route_name='objects.generic.traversal',
+             renderer='rest',
+             context=CourseTabPreferencesPathAdapter,
+             request_method='PUT',
+             permission=nauth.ACT_CONTENT_EDIT)
+class CourseTabPreferencesUpdateView(UGDPutView):
+
+    def _get_object_to_update(self):
+        return ICourseTabPreferences(self.context.__parent__)

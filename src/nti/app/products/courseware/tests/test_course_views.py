@@ -30,6 +30,7 @@ from nti.contenttypes.courses.interfaces import ES_PURCHASED
 
 from nti.contenttypes.courses.interfaces import ICourseInstance
 from nti.contenttypes.courses.interfaces import ICourseEnrollmentManager
+from nti.contenttypes.courses.interfaces import ICourseTabPreferences
 
 
 from nti.dataserver.users.users import User
@@ -92,26 +93,34 @@ class TestCourseTabPreferencesView(ApplicationLayerTest):
 	course_url = '/dataserver2/++etc++hostsites/platform.ou.edu/++etc++site/Courses/Fall2013/CLC3403_LawAndJustice'
 
 	@WithSharedApplicationMockDS(testapp=True, users=True)
-	def test_post_read_update(self):
+	def test_update_and_read(self):
 		with mock_dataserver.mock_db_trans(self.ds, site_name='platform.ou.edu'):
 			entry = find_object_with_ntiid(self.course_ntiid)
 			course = ICourseInstance(entry)
 			assert_that('CourseTabPreferences' in IAnnotations(course), is_(False))
 
-		# post
-		url = self.course_url + "/@@CourseTabPreferences"
-		result = self.testapp.post_json(url, status=200)
+		# empty read
+		url = self.course_url + "/CourseTabPreferences"
+		result = self.testapp.get(url, status=200)
+		assert_that(result.json_body, has_entries({'names': has_length(0),
+												   'order': has_length(0)}))
 
-		with mock_dataserver.mock_db_trans(self.ds, site_name='platform.ou.edu'):
-			entry = find_object_with_ntiid(self.course_ntiid)
-			course = ICourseInstance(entry)
-			assert_that('CourseTabPreferences' in IAnnotations(course), is_(True))
+		# bad request
+		self.testapp.put_json(url, status=400)
 
 		# update
 		params = { "names": {"1":"a", "2": "b"} }
 		result = self.testapp.put_json(url, params=params, status=200)
 		assert_that(result.json_body, has_entries({'names': has_entries({"1": "a", "2": "b"}),
 												   'order': has_length(0)}))
+
+		with mock_dataserver.mock_db_trans(self.ds, site_name='platform.ou.edu'):
+			entry = find_object_with_ntiid(self.course_ntiid)
+			course = ICourseInstance(entry)
+			assert_that('CourseTabPreferences' in IAnnotations(course), is_(True))
+			prefs = ICourseTabPreferences(course)
+			assert_that(prefs._names, has_entries({"1": "a", "2": "b"}))
+			assert_that(prefs._order, has_length(0))
 
 		params = { "names": {"3": "c"} }
 		result = self.testapp.put_json(url, params=params, status=200)

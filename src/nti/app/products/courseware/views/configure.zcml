@@ -30,6 +30,12 @@
 			 factory=".course_views.CourseEnrollmentRosterPathAdapter"
 			 provides="zope.traversing.interfaces.IPathAdapter" />
 
+	<adapter name="CourseTabPreferences"
+			 for="nti.contenttypes.courses.interfaces.ICourseInstance
+                  pyramid.interfaces.IRequest"
+			 factory=".course_views.CourseTabPreferencesPathAdapter"
+			 provides="zope.traversing.interfaces.IPathAdapter" />
+
 	<adapter name="Courses" factory=".catalog_views.CoursesPathAdapter" />
 
 	<subscriber factory=".course_views.CourseActivityLastViewedDecorator"
