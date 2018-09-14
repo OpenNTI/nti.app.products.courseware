@@ -54,6 +54,7 @@ from nti.app.products.courseware.utils import get_vendor_thank_you_page
 from nti.app.products.courseware.utils import get_content_related_work_refs
 from nti.app.products.courseware.utils import PreviewCourseAccessPredicateDecorator
 
+from nti.app.renderers.decorators import AbstractRequestAwareDecorator
 from nti.app.renderers.decorators import AbstractAuthenticatedRequestAwareDecorator
 
 from nti.appserver.pyramid_authorization import has_permission
@@ -772,10 +773,10 @@ class _CourseInstanceEnrollmentDecorator(Singleton):
 
 
 @component.adapter(ICourseInstanceEnrollment)
-@interface.implementer(IExternalObjectDecorator)
-class _CourseInstanceEnrollmentLastSeenDecorator(Singleton):
+@interface.implementer(IExternalMappingDecorator)
+class _CourseInstanceEnrollmentLastSeenDecorator(AbstractRequestAwareDecorator):
 
-     def decorateExternalObject(self, context, result):
+    def _do_decorate_external(self, context, result):
         if 'LastSeenTime' not in result:
             user = IUser(context, None)
             inst = ICourseInstance(context, None)
