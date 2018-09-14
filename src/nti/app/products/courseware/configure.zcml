@@ -413,7 +413,9 @@
                 provides="nti.externalization.interfaces.IExternalObjectDecorator" />
 
 	<subscriber factory=".decorators._CourseInstanceEnrollmentLastSeenDecorator"
-                provides="nti.externalization.interfaces.IExternalObjectDecorator" />
+				provides="nti.externalization.interfaces.IExternalMappingDecorator"
+				for="nti.app.products.courseware.interfaces.ICourseInstanceEnrollment
+					 pyramid.interfaces.IRequest" />
 
 	<subscriber factory=".decorators._LegacyCCEFieldDecorator"
 				provides="nti.externalization.interfaces.IExternalObjectDecorator" />
