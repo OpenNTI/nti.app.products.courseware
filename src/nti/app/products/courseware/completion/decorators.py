@@ -35,6 +35,8 @@ from nti.links.links import Link
 
 LINKS = StandardExternalFields.LINKS
 
+logger = __import__('logging').getLogger(__name__)
+
 
 @component.adapter(ICourseInstanceEnrollment)
 @interface.implementer(IExternalMappingDecorator)
