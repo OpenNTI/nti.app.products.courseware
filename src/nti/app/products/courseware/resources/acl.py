@@ -128,6 +128,7 @@ class CourseContentFolderACLProvider(ContentFolderACLProvider):
 
     @Lazy
     def __acl__(self):
+        # pylint: disable=no-member
         aces = super(CourseContentFolderACLProvider, self).__aces__
         course = find_interface(self.context, ICourseInstance, strict=True)
         for i in chain(course.instructors or (), get_course_editors(course)):
@@ -143,6 +144,7 @@ class CourseContentFileACLProvider(ContentBaseFileACLProvider):
 
     @Lazy
     def __acl__(self):
+        # pylint: disable=no-member
         aces = super(CourseContentFileACLProvider, self).__aces__
         course = find_interface(self.context, ICourseInstance, strict=True)
         for i in chain(course.instructors or (), get_course_editors(course)):

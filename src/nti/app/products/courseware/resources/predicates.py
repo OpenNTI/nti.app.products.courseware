@@ -67,6 +67,9 @@ class _CourseFilesMixin(BasePrincipalObjects):
     def course_files(self, course):
         return course_files(course)
 
+    def iter_objects(self):
+        raise NotImplementedError()
+
 
 @component.adapter(IUser)
 class _CourseUserFileObjects(_CourseFilesMixin):

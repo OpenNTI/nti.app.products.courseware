@@ -8,6 +8,8 @@ from __future__ import division
 from __future__ import print_function
 from __future__ import absolute_import
 
+# pylint: disable=inherit-non-class
+
 from zope import interface
 
 from nti.cabinet.interfaces import ISourceFiler
