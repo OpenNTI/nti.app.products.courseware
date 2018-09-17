@@ -11,6 +11,9 @@ from __future__ import absolute_import
 import os
 import isodate
 import datetime
+
+from pyramid.threadlocal import get_current_request
+
 from six.moves import urllib_parse
 
 from zope import component
@@ -20,8 +23,6 @@ from zope.dottedname import resolve as dottedname
 from zope.i18n import translate
 
 from zope.lifecycleevent.interfaces import IObjectRemovedEvent
-
-from pyramid.threadlocal import get_current_request
 
 from nti.app.products.courseware import MessageFactory as _
 from nti.app.products.courseware import ACCEPT_COURSE_INVITATIONS
@@ -151,7 +152,7 @@ def send_invitation_email(invitation,
             request=request,
             package=package,
             text_template_extension='.mak')
-    except Exception:
+    except Exception:  # pylint: disable=broad-except
         logger.exception("Cannot send course invitation email to %s",
                          receiver_email)
         return False
