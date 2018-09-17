@@ -332,24 +332,27 @@ class _CourseTabPreferencesLinkDecorator(AbstractAuthenticatedRequestAwareDecora
     def _can_edit(self, context):
         return has_permission(ACT_CONTENT_EDIT, context, self.request)
 
+    def _make_link(self, context, rel, method):
+        link = Link(context,
+                    rel=rel,
+                    elements=(VIEW_COURSE_TAB_PREFERENCES,),
+                    method=method)
+        interface.alsoProvides(link, ILocation)
+        link.__name__ = ''
+        link.__parent__ = context
+        return link
+
     def _do_decorate_external(self, context, result):
-        _method = None
+        _links = result.setdefault(LINKS, [])
+        if self._can_read(context):
+            _links.append(self._make_link(context,
+                                          'GetCourseTabPreferences',
+                                          'GET'))
+
         if self._can_edit(context):
-            _method = 'PUT'
-        elif self._can_read(context):
-            _method = 'GET'
-
-        if _method is not None:
-            _links = result.setdefault(LINKS, [])
-            link = Link(context,
-                        rel=VIEW_COURSE_TAB_PREFERENCES,
-                        elements=(VIEW_COURSE_TAB_PREFERENCES,),
-                        method=_method)
-
-            interface.alsoProvides(link, ILocation)
-            link.__name__ = ''
-            link.__parent__ = context
-            _links.append(link)
+            _links.append(self._make_link(context,
+                                          'UpdateCourseTabPreferences',
+                                          'PUT'))
 
 
 @component.adapter(ICourseInstance)
