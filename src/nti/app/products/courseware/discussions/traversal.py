@@ -8,9 +8,9 @@ from __future__ import division
 from __future__ import print_function
 from __future__ import absolute_import
 
-from zope import component
-
 from pyramid.interfaces import IRequest
+
+from zope import component
 
 from nti.contenttypes.courses.discussions.interfaces import ICourseDiscussions
 
@@ -29,5 +29,5 @@ def _discussions_for_course_path_adapter(course, unused_request):
 @component.adapter(ICourseDiscussions, IRequest)
 class _CourseDiscussionsTraversable(ContainerAdapterTraversable):
 
-    def traverse(self, key, remaining_path):
+    def traverse(self, key, remaining_path):  # pylint: disable=useless-super-delegation
         return super(_CourseDiscussionsTraversable, self).traverse(key, remaining_path)

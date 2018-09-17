@@ -49,6 +49,7 @@ class CourseDiscussionsExporter(BaseSectionExporter):
                                      decorate=False, 
                                      name='exporter')
         ext_obj[MIMETYPE] = discussion.mimeType
+        # pylint: disable=expression-not-assigned
         [ext_obj.pop(x, None) for x in (NTIID, OID)]
         return ext_obj
 
@@ -56,6 +57,7 @@ class CourseDiscussionsExporter(BaseSectionExporter):
         course = ICourseInstance(context)
         discussions = ICourseDiscussions(course)
         filer.default_bucket = bucket = path_to_discussions(course)
+        # pylint: disable=too-many-function-args
         for name, discussion in list(discussions.items()):  # snapshot
             ext_obj = self._ext_obj(discussion)
             self._process_resources(discussion, ext_obj, filer)
