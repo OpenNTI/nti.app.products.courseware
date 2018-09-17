@@ -17,6 +17,8 @@ from nti.namedfile.constraints import FileConstraints
 
 from nti.namedfile.interfaces import IFileConstraints
 
+logger = __import__('logging').getLogger(__name__)
+
 
 @component.adapter(ICourseDiscussion)
 @interface.implementer(IFileConstraints)
