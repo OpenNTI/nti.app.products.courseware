@@ -56,9 +56,9 @@ from nti.property.property import alias
 
 from nti.schema.eqhash import EqHash
 
-from nti.schema.field import SchemaConfigured
-
 from nti.schema.fieldproperty import createDirectFieldProperties
+
+from nti.schema.schema import SchemaConfigured
 
 from nti.traversal.traversal import find_interface
 
@@ -206,6 +206,7 @@ class ContainerEnrollmentOptionProvider(object):
 
     def iter_options(self):
         container = IEnrollmentOptionContainer(self.context)
+        # pylint: disable=too-many-function-args
         return tuple(container.values())
 
 
@@ -227,7 +228,7 @@ class EnrollmentOptionContainerExternalizer(object):
     def __init__(self, container):
         self.container = container
 
-    def toExternalObject(self, *args, **kwargs):
+    def toExternalObject(self, *unused_args, **unused_kwargs):
         result = LocatedExternalDict()
         result[CLASS] = self.container.__external_class_name__
         result[MIMETYPE] = self.container.mimeType
