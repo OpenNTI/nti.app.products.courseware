@@ -31,8 +31,8 @@ logger = __import__('logging').getLogger(__name__)
 
 class AssociationsMixin(object):
 
-    def __init__(self, *args, **kwargs):
-        super(CourseContentResource, self).__init__(*args, **kwargs)
+    def __init__(self, *args, **kwargs):  # pylint: useless-super-delegation
+        super(AssociationsMixin, self).__init__(*args, **kwargs)
 
     def has_associations(self):
         result = False
@@ -54,7 +54,7 @@ class CourseRootFolder(RootFolder, AssociationsMixin):
 @interface.implementer(ICourseContentResource)
 class CourseContentResource(object):
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs):  # pylint: useless-super-delegation
         super(CourseContentResource, self).__init__(*args, **kwargs)
 
     @CachedProperty('__parent__', '__name__')
