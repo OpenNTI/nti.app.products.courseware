@@ -4,18 +4,17 @@
 .. $Id$
 """
 
-from __future__ import print_function, absolute_import, division
-__docformat__ = "restructuredtext en"
+from __future__ import division
+from __future__ import print_function
+from __future__ import absolute_import
 
-logger = __import__('logging').getLogger(__name__)
+from pyramid.view import view_config
+from pyramid.view import view_defaults
 
 from zope import component
 from zope import lifecycleevent
 
 from zope.intid.interfaces import IIntIds
-
-from pyramid.view import view_config
-from pyramid.view import view_defaults
 
 from nti.app.base.abstract_views import AbstractAuthenticatedView
 
@@ -62,6 +61,8 @@ TOTAL = StandardExternalFields.TOTAL
 ITEM_COUNT = StandardExternalFields.ITEM_COUNT
 LAST_MODIFIED = StandardExternalFields.LAST_MODIFIED
 
+logger = __import__('logging').getLogger(__name__)
+
 
 class CourseSyncLockedObjectsMixin(object):
 
@@ -87,6 +88,7 @@ class CourseSyncLockedObjectsMixin(object):
 
     def _get_course_pacakge_ntiids(self, course):
         result = set()
+
         def _recur(unit):
             for child in unit.children or ():
                 _recur(child)
@@ -122,6 +124,7 @@ class CourseSyncLockedObjectsMixin(object):
         # assesments in course
         catalog = ICourseAssessmentItemCatalog(course)
         obj_ids = {
+            # pylint: disable=too-many-function-args
             intids.queryId(item) for item in catalog.iter_assessment_items()
         }
         obj_ids.discard(None)
@@ -131,7 +134,7 @@ class CourseSyncLockedObjectsMixin(object):
         locked_intids = recorder_catalog[IX_LOCKED].apply({'any_of': (True,)})
         index = recorder_catalog[IX_CHILD_ORDER_LOCKED]
         child_order_locked_intids = index.apply({'any_of': (True,)})
-        
+
         union = [locked_intids, child_order_locked_intids]
         all_locked = recorder_catalog.family.IF.multiunion(union)
 
@@ -174,7 +177,7 @@ class CourseSyncLockedObjectsView(CourseSyncLockedObjectsMixin,
             result[LAST_MODIFIED] = max(
                 getattr(x, 'lastModified', 0) for x in items
             )
-            items.sort(key=lambda t: getattr(t, 'lastModified', 0), 
+            items.sort(key=lambda t: getattr(t, 'lastModified', 0),
                        reverse=self._sort_desc)
             result.lastModified = result[LAST_MODIFIED]
 
@@ -201,8 +204,7 @@ class UnlockCourseSyncLockedObjectsView(CourseSyncLockedObjectsMixin,
         for item in self._get_locked_objects(self.context):
             if item.isLocked():
                 item.unlock()
-            if      IRecordableContainer.providedBy(item) \
-                and item.isChildOrderLocked():
+            if IRecordableContainer.providedBy(item) and item.isChildOrderLocked():
                 item.childOrderUnlock()
             items.append(item.ntiid)
             lifecycleevent.modified(item)
