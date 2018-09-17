@@ -93,7 +93,7 @@ def _course_source_filer(context):
 
 
 @interface.implementer(IFileConstraints)
-def _CourseFolderFileConstraints(_):
+def _CourseFolderFileConstraints(unused_obj=None):
     result = FileConstraints()
     result.max_file_size = 104857600  # 100 MB
     return result
