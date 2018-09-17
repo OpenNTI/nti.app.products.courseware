@@ -58,3 +58,5 @@ VIEW_ALL_SITE_UPDATE_WEBINARS = 'UpdateAllSiteWebinars'
 
 VIEW_UPDATE_WEBINAR_PROGRESS = 'UpdateWebinarProgress'
 VIEW_ALL_SITE_UPDATE_WEBINAR_PROGRESS = 'UpdateAllSiteWebinarProgress'
+
+VIEW_COURSE_TAB_PREFERENCES = 'CourseTabPreferences'

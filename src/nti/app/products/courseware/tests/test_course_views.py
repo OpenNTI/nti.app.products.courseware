@@ -10,6 +10,7 @@ __docformat__ = "restructuredtext en"
 from hamcrest import is_
 from hamcrest import none
 from hamcrest import is_not
+from hamcrest import contains
 from hamcrest import has_item
 from hamcrest import not_none
 from hamcrest import has_entry
@@ -17,8 +18,11 @@ from hamcrest import has_length
 from hamcrest import assert_that
 from hamcrest import has_entries
 from hamcrest import has_property
+from hamcrest import contains_inanyorder
 
 from zope import component
+
+from zope.annotation.interfaces import IAnnotations
 
 from nti.contenttypes.courses.interfaces import ES_CREDIT
 from nti.contenttypes.courses.interfaces import ES_PUBLIC
@@ -26,6 +30,7 @@ from nti.contenttypes.courses.interfaces import ES_PURCHASED
 
 from nti.contenttypes.courses.interfaces import ICourseInstance
 from nti.contenttypes.courses.interfaces import ICourseEnrollmentManager
+from nti.contenttypes.courses.interfaces import ICourseTabPreferences
 
 
 from nti.dataserver.users.users import User
@@ -75,3 +80,91 @@ class TestCourseEnrollmentRosterGetView(ApplicationLayerTest):
 										 'ItemCount': 2,
 										 'TotalItemCount': 2}))
 		assert_that(result['Items'][0]['LastSeenTime'], not_none())
+
+
+class TestCourseTabPreferencesView(ApplicationLayerTest):
+
+	layer = PersistentInstructedCourseApplicationTestLayer
+
+	default_origin = 'http://janux.ou.edu'
+
+	course_ntiid = 'tag:nextthought.com,2011-10:NTI-CourseInfo-Fall2013_CLC3403_LawAndJustice'
+
+	course_url = '/dataserver2/++etc++hostsites/platform.ou.edu/++etc++site/Courses/Fall2013/CLC3403_LawAndJustice'
+
+	@WithSharedApplicationMockDS(testapp=True, users=True)
+	def test_update_and_read(self):
+		with mock_dataserver.mock_db_trans(self.ds, site_name='platform.ou.edu'):
+			entry = find_object_with_ntiid(self.course_ntiid)
+			course = ICourseInstance(entry)
+			assert_that('CourseTabPreferences' in IAnnotations(course), is_(False))
+
+		# empty read
+		url = self.course_url + "/CourseTabPreferences"
+		result = self.testapp.get(url, status=200)
+		assert_that(result.json_body, has_entries({'names': has_length(0),
+												   'order': has_length(0)}))
+
+		# bad request
+		self.testapp.put_json(url, status=400)
+
+		# update
+		params = { "names": {"1":"a", "2": "b"} }
+		result = self.testapp.put_json(url, params=params, status=200)
+		assert_that(result.json_body, has_entries({'names': has_entries({"1": "a", "2": "b"}),
+												   'order': has_length(0)}))
+
+		with mock_dataserver.mock_db_trans(self.ds, site_name='platform.ou.edu'):
+			entry = find_object_with_ntiid(self.course_ntiid)
+			course = ICourseInstance(entry)
+			assert_that('CourseTabPreferences' in IAnnotations(course), is_(True))
+			prefs = ICourseTabPreferences(course)
+			assert_that(prefs._names, has_entries({"1": "a", "2": "b"}))
+			assert_that(prefs._order, has_length(0))
+
+		params = { "names": {"3": "c"} }
+		result = self.testapp.put_json(url, params=params, status=200)
+		assert_that(result.json_body, has_entries({'names': has_entries({"3": "c"}),
+												   'order': has_length(0)}))
+
+		params = { "names": None }
+		result = self.testapp.put_json(url, params=params, status=200)
+		assert_that(result.json_body, has_entries({'names': has_length(0),
+												   'order': has_length(0)}))
+
+		params = { "names": {} }
+		result = self.testapp.put_json(url, params=params, status=200)
+		assert_that(result.json_body, has_entries({'names': has_length(0),
+												  'order': has_length(0)}))
+
+		params = { "names": "abc" }
+		result = self.testapp.put_json(url, params=params, status=422)
+
+		# order
+		params = { "names": {"1":"a", "2": "b", "3": "c"} , "order": ["1", "2", "3"] }
+		result = self.testapp.put_json(url, params=params, status=200)
+		assert_that(result.json_body, has_entries({'names': has_entries({"1": "a", "2": "b", "3": "c"}),
+												   'order': contains("1", "2", "3")}))
+
+		params = { "order": ["2", "1", "3"] }
+		result = self.testapp.put_json(url, params=params, status=200)
+		assert_that(result.json_body, has_entries({'names': has_entries({"1": "a", "2": "b", "3": "c"}),
+												   'order': contains("2", "1", "3")}))
+
+		params = { "order": ["2", "1"] }
+		result = self.testapp.put_json(url, params=params, status=200)
+		assert_that(result.json_body, has_entries({'names': has_entries({"1": "a", "2": "b", "3": "c"}),
+												   'order': contains("2", "1")}))
+
+		params = { "order": ["2", "1", "3", "4"] }
+		result = self.testapp.put_json(url, params=params, status=200)
+		assert_that(result.json_body, has_entries({'names': has_entries({"1": "a", "2": "b", "3": "c"}),
+												   'order': contains("2", "1", "3", "4")}))
+
+		params = { "order": "213" }
+		result = self.testapp.put_json(url, params=params, status=422)
+
+		# read
+		result = self.testapp.get(url, status=200)
+		assert_that(result.json_body, has_entries({'names': has_entries({"1": "a", "2": "b", "3": "c"}),
+												   'order': contains("2", "1", "3", "4")}))

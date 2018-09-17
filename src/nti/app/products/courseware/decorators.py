@@ -37,6 +37,7 @@ from nti.app.products.courseware import VIEW_LESSONS_CONTAINERS
 from nti.app.products.courseware import VIEW_ENROLLMENT_OPTIONS
 from nti.app.products.courseware import VIEW_RECURSIVE_AUDIT_LOG
 from nti.app.products.courseware import VIEW_COURSE_LOCKED_OBJECTS
+from nti.app.products.courseware import VIEW_COURSE_TAB_PREFERENCES
 from nti.app.products.courseware import VIEW_COURSE_RECURSIVE_BUCKET
 from nti.app.products.courseware import VIEW_COURSE_CATALOG_FAMILIES
 from nti.app.products.courseware import VIEW_COURSE_ENROLLMENT_ROSTER
@@ -103,6 +104,7 @@ from nti.contenttypes.presentation.interfaces import INTIQuestionSetRef
 
 from nti.coremetadata.interfaces import ILastSeenProvider
 
+from nti.dataserver.authorization import ACT_READ
 from nti.dataserver.authorization import ACT_CONTENT_EDIT
 
 from nti.dataserver.contenttypes.forums.interfaces import ITopic
@@ -319,6 +321,39 @@ class _CourseInstanceStreamLinkDecorator(Singleton):
             link.__name__ = ''
             link.__parent__ = context
             _links.append(link)
+
+
+@component.adapter(ICourseInstance)
+@interface.implementer(IExternalMappingDecorator)
+class _CourseTabPreferencesLinkDecorator(AbstractAuthenticatedRequestAwareDecorator):
+
+    def _can_read(self, context):
+        return has_permission(ACT_READ, context, self.request)
+
+    def _can_edit(self, context):
+        return has_permission(ACT_CONTENT_EDIT, context, self.request)
+
+    def _make_link(self, context, rel, method):
+        link = Link(context,
+                    rel=rel,
+                    elements=(VIEW_COURSE_TAB_PREFERENCES,),
+                    method=method)
+        interface.alsoProvides(link, ILocation)
+        link.__name__ = ''
+        link.__parent__ = context
+        return link
+
+    def _do_decorate_external(self, context, result):
+        _links = result.setdefault(LINKS, [])
+        if self._can_read(context):
+            _links.append(self._make_link(context,
+                                          'GetCourseTabPreferences',
+                                          'GET'))
+
+        if self._can_edit(context):
+            _links.append(self._make_link(context,
+                                          'UpdateCourseTabPreferences',
+                                          'PUT'))
 
 
 @component.adapter(ICourseInstance)

@@ -58,6 +58,7 @@ from nti.app.products.courseware.views import VIEW_CONTENTS
 from nti.app.products.courseware.views import VIEW_COURSE_ACTIVITY
 from nti.app.products.courseware.views import VIEW_USER_COURSE_ACCESS
 from nti.app.products.courseware.views import VIEW_COURSE_ENROLLMENT_ROSTER
+from nti.app.products.courseware.views import VIEW_COURSE_TAB_PREFERENCES
 
 from nti.app.renderers.caching import AbstractReliableLastModifiedCacheController
 
@@ -68,6 +69,7 @@ from nti.appserver.pyramid_authorization import has_permission
 from nti.appserver.relevant_ugd_views import _RelevantUGDView
 
 from nti.appserver.ugd_edit_views import ContainerContextUGDPostView
+from nti.appserver.ugd_edit_views import UGDPutView
 
 from nti.appserver.ugd_query_views import Operator
 from nti.appserver.ugd_query_views import _combine_predicate
@@ -80,6 +82,7 @@ from nti.contenttypes.courses.interfaces import ICourseOutline
 from nti.contenttypes.courses.interfaces import ICourseInstance
 from nti.contenttypes.courses.interfaces import ICourseEnrollments
 from nti.contenttypes.courses.interfaces import ICourseCatalogEntry
+from nti.contenttypes.courses.interfaces import ICourseTabPreferences
 from nti.contenttypes.courses.interfaces import ENROLLMENT_SCOPE_MAP
 
 from nti.contenttypes.courses.utils import is_enrolled
@@ -827,3 +830,38 @@ class UserCourseAccessView(AbstractAuthenticatedView):
             msg = _('User does not have access to this course.')
             raise hexc.HTTPForbidden(msg)
         return result
+
+
+@interface.implementer(IPathAdapter)
+@component.adapter(ICourseInstance, IRequest)
+class CourseTabPreferencesPathAdapter(Contained):
+
+    __name__ = VIEW_COURSE_TAB_PREFERENCES
+
+    def __init__(self, context, request):
+        # Context is CourseInstance
+        self.context = context
+        self.request = request
+        self.__parent__ = context
+
+
+@view_config(route_name='objects.generic.traversal',
+             renderer='rest',
+             context=CourseTabPreferencesPathAdapter,
+             request_method='GET',
+             permission=nauth.ACT_READ)
+class CourseTabPreferencesGetView(AbstractAuthenticatedView):
+
+    def __call__(self):
+        return ICourseTabPreferences(self.context.__parent__)
+
+
+@view_config(route_name='objects.generic.traversal',
+             renderer='rest',
+             context=CourseTabPreferencesPathAdapter,
+             request_method='PUT',
+             permission=nauth.ACT_CONTENT_EDIT)
+class CourseTabPreferencesUpdateView(UGDPutView):
+
+    def _get_object_to_update(self):
+        return ICourseTabPreferences(self.context.__parent__)
