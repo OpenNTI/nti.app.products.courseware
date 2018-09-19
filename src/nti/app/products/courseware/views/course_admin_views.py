@@ -6,19 +6,24 @@ Views related to administration of courses.
 .. $Id$
 """
 
-from __future__ import print_function, absolute_import, division
-__docformat__ = "restructuredtext en"
-
-logger = __import__('logging').getLogger(__name__)
+from __future__ import division
+from __future__ import print_function
+from __future__ import absolute_import
 
 import csv
-import six
 from io import BytesIO
 from datetime import datetime
 
+import isodate
+
+from pyramid import httpexceptions as hexc
+
+from pyramid.view import view_config
+from pyramid.view import view_defaults
+
 from requests.structures import CaseInsensitiveDict
 
-import isodate
+import six
 
 from zope import component
 
@@ -33,11 +38,6 @@ from zope.security.management import restoreInteraction
 
 from zope.securitypolicy.interfaces import Allow
 from zope.securitypolicy.interfaces import IPrincipalRoleMap
-
-from pyramid import httpexceptions as hexc
-
-from pyramid.view import view_config
-from pyramid.view import view_defaults
 
 from nti.app.base.abstract_views import AbstractAuthenticatedView
 
@@ -111,6 +111,8 @@ from nti.site.site import get_component_hierarchy_names
 ITEMS = StandardExternalFields.ITEMS
 TOTAL = StandardExternalFields.TOTAL
 ITEM_COUNT = StandardExternalFields.ITEM_COUNT
+
+logger = __import__('logging').getLogger(__name__)
 
 
 class AbstractCourseEnrollView(AbstractAuthenticatedView,
@@ -224,6 +226,7 @@ class DropAllCourseEnrollmentsView(AbstractCourseEnrollView):
         try:
             course_instance = ICourseInstance(context)
             manager = ICourseEnrollmentManager(course_instance)
+            # pylint: disable=too-many-function-args
             dropped_records = manager.drop_all()
             items = result[ITEMS] = []
             for record in dropped_records:
@@ -284,21 +287,13 @@ class UserCourseEnrollmentsView(AbstractAuthenticatedView):
                renderer='rest',
                context=CourseAdminPathAdapter,
                permission=nauth.ACT_NTI_ADMIN)
-class CourseEnrollmentMigrationView(AbstractAuthenticatedView):
+class CourseEnrollmentMigrationView(AbstractCourseEnrollView):
     """
     Migrates the enrollments from one course to antother
 
     Call this as a GET request for dry-run processing. POST to it
     to do it for real.
     """
-
-    def readInput(self, value=None):
-        if self.request.body:
-            values = super(AbstractCourseEnrollView, self).readInput(value)
-        else:
-            values = self.request.params
-        result = CaseInsensitiveDict(values)
-        return result
 
     def _do_call(self):
         params = {}
@@ -404,7 +399,7 @@ class CourseSectionEnrollmentMigrationView(AbstractAuthenticatedView):
         try:
             seats = int(seats)
             assert seats > 0
-        except Exception:
+        except Exception:  # pylint: disable=broad-except
             raise_json_error(self.request,
                              hexc.HTTPUnprocessableEntity,
                              {
@@ -462,6 +457,7 @@ class CourseEnrollmentsView(AbstractAuthenticatedView):
         substituter = self._substituter
         if substituter is None:
             return username
+        # pylint: disable=no-member
         result = substituter.replace(username) or username
         return result
 
@@ -551,6 +547,7 @@ class AllCourseEnrollmentRosterDownloadView(AbstractAuthenticatedView):
         substituter = self._substituter
         if substituter is None:
             return username
+        # pylint: disable=no-member
         result = substituter.replace(username) or username
         return result
 
@@ -698,6 +695,7 @@ class FixBrokenEnrollmentsView(AbstractAuthenticatedView):
 
         dataserver = component.getUtility(IDataserver)
         users_folder = IShardLayout(dataserver).users_folder
+        # pylint: disable=no-member
         for user in tuple(users_folder.values()):
             if not IUser.providedBy(user):
                 continue
