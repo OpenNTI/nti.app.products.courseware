@@ -21,8 +21,7 @@ from nti.contenttypes.courses.interfaces import ICourseInstance
 
 from nti.dataserver.authorization import ACT_CONTENT_EDIT
 
-from nti.externalization.externalization import StandardExternalFields
-
+from nti.externalization.interfaces import StandardExternalFields
 from nti.externalization.interfaces import IExternalMappingDecorator
 
 from nti.links.links import Link
