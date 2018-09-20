@@ -10,11 +10,13 @@ from __future__ import absolute_import
 
 import time
 
+from pyramid.view import view_config
+
+import six
+
 from zope import component
 
 from zope.intid.interfaces import IIntIds
-
-from pyramid.view import view_config
 
 from nti.app.base.abstract_views import AbstractAuthenticatedView
 
@@ -177,9 +179,12 @@ class AllWebinarUpdateView(AbstractAuthenticatedView):
         try:
             key_to_webinar_dict = webinar_ext_cache[webinar.organizerKey]
         except KeyError:
-            upcoming_webinars = client.get_upcoming_webinars(raw=True)
+            # pylint: disable=too-many-function-args
+            upcoming_webinars = client.get_upcoming_webinars(True)
             if upcoming_webinars:
-                key_to_webinar_dict = {unicode(x['webinarKey']):x for x in upcoming_webinars}
+                key_to_webinar_dict = {
+                    six.text_type(x['webinarKey']):x for x in upcoming_webinars
+                }
             else:
                 key_to_webinar_dict = {}
             webinar_ext_cache[webinar.organizerKey] = key_to_webinar_dict
