@@ -56,6 +56,7 @@
         root_interfaces=".interfaces.IWebinarAsset"
         modules=".assets" />
 
+	<subscriber handler=".subscribers._on_course_removed" />
     <subscriber handler=".subscribers._on_webinar_asset_created" />
     <subscriber handler=".subscribers._on_webinar_asset_modified" />
 
