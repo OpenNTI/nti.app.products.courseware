@@ -42,10 +42,10 @@ class CourseWebinarContainer(CaseInsensitiveCheckingLastModifiedBTreeContainer,
         return self[webinar.__name__]
 
 
-def course_to_webinar_container(course):
+def course_to_webinar_container(course, create=True):
     annotations = IAnnotations(course)
     result = annotations.get(WEBINAR_CONTAINER_KEY)
-    if result is None:
+    if result is None and create:
         result = CourseWebinarContainer()
         result.__parent__ = course
         annotations[WEBINAR_CONTAINER_KEY] = result
