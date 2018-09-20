@@ -48,6 +48,7 @@ from nti.app.products.courseware.interfaces import IOpenEnrollmentOption
 from nti.app.products.courseware.interfaces import IExternalEnrollmentOption
 from nti.app.products.courseware.interfaces import ICoursesCatalogCollection
 from nti.app.products.courseware.interfaces import ICourseInstanceEnrollment
+from nti.app.products.courseware.interfaces import ICourseTabConfigurationUtility
 
 from nti.app.products.courseware.utils import get_enrollment_options
 from nti.app.products.courseware.utils import get_evaluation_lessons
@@ -331,7 +332,9 @@ class _CourseTabPreferencesLinkDecorator(AbstractAuthenticatedRequestAwareDecora
         return has_permission(ACT_READ, context, self.request)
 
     def _can_edit(self, context):
-        return has_permission(ACT_CONTENT_EDIT, context, self.request)
+        config = component.queryUtility(ICourseTabConfigurationUtility)
+        username = self.authenticated_userid
+        return config and config.can_edit_tabs(username, context)
 
     def _make_link(self, context, rel, method):
         link = Link(context,

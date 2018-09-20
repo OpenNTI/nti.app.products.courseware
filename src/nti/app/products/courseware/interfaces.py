@@ -497,6 +497,17 @@ class IAllCoursesCollectionAcceptsProvider(IIterable):
     in an `IAllCoursesCollection.accepts` `Iterable`.
     """
 
+
+class ICourseTabConfigurationUtility(interface.Interface):
+    """
+    A utility that should be registered in site where it allows
+    permitted users access to the course tab configuration.
+    """
+    def can_edit_tabs(user, course):
+        """
+        Return True if the given user has access to the course tab configuration.
+        """
+
 # deprecations
 
 

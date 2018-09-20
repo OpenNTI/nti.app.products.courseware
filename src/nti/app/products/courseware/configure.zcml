@@ -673,6 +673,10 @@
                 for="nti.dataserver.interfaces.IUser"
                 provides="nti.appserver.workspaces.interfaces.IPurchasedCatalogCollectionProvider" />
 
+	<!-- tab preference -->
+	<utility factory=".tab_preference.DefaultCourseTabConfigurationUtility"
+			 provides="nti.app.products.courseware.interfaces.ICourseTabConfigurationUtility" />
+
     <!-- Completion -->
     <include package=".completion" />
 
