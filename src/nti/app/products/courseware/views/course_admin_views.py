@@ -100,13 +100,20 @@ from nti.dataserver.interfaces import IDataserver
 from nti.dataserver.interfaces import IShardLayout
 from nti.dataserver.interfaces import IUsernameSubstitutionPolicy
 
+from nti.dataserver.metadata.index import IX_MIMETYPE
+from nti.dataserver.metadata.index import get_metadata_catalog
+
 from nti.dataserver.users.interfaces import IUserProfile
 
 from nti.externalization.interfaces import LocatedExternalDict
 from nti.externalization.interfaces import StandardExternalFields
 
+from nti.intid.common import removeIntId
+
 from nti.site.site import getSite
 from nti.site.site import get_component_hierarchy_names
+
+from nti.traversal.traversal import find_interface
 
 ITEMS = StandardExternalFields.ITEMS
 TOTAL = StandardExternalFields.TOTAL
@@ -718,3 +725,36 @@ class FixBrokenEnrollmentsView(AbstractAuthenticatedView):
                         unenroll(extra_record, extra_record.Principal)
         result[ITEM_COUNT] = result[TOTAL] = count
         return result
+
+
+@view_config(context=IDataserverFolder)
+@view_config(context=CourseAdminPathAdapter)
+@view_defaults(route_name='objects.generic.traversal',
+               renderer='rest',
+               request_method='POST',
+               permission=nauth.ACT_NTI_ADMIN,
+               name='RemoveGhostCourseEnrollments')
+class RemoveGhostCourseEnrollmentsView(AbstractAuthenticatedView):
+
+    def __call__(self):
+        catalog = get_metadata_catalog()
+        intids = component.getUtility(IIntIds)
+        query = {
+            IX_MIMETYPE: {
+                'any_of': ('application/vnd.nextthought.courses.defaultcourseinstanceenrollmentrecord',)
+            },
+        }
+        for doc_id in catalog.apply(query) or ():
+            obj = intids.queryObject(doc_id)
+            if not ICourseInstanceEnrollmentRecord.providedBy(obj):
+                continue
+            course = find_interface(obj, ICourseInstance, strict=False)
+            doc_id = intids.queryId(course)
+            if doc_id is None:  # invalid course
+                # pylint: disable=too-many-function-args
+                manager = ICourseEnrollmentManager(course, None)
+                if manager is not None:
+                    manager.drop_all()
+                if intids.queryId(obj) is not None:
+                    removeIntId(obj)
+        return hexc.HTTPNoContent()
