@@ -53,4 +53,4 @@ def course_webinars(course, unused_request):
 @interface.implementer(ICourseInstance)
 @component.adapter(IWebinarAsset)
 def asset_to_course(asset):
-    return find_interface(asset, ICourseInstance)
+    return find_interface(asset, ICourseInstance, strict=False)
