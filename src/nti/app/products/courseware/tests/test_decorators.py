@@ -9,6 +9,7 @@ __docformat__ = "restructuredtext en"
 
 from hamcrest import assert_that
 from hamcrest import has_entry
+from hamcrest import has_item
 from hamcrest import is_
 from hamcrest import is_not
 from hamcrest import none
@@ -37,7 +38,16 @@ from nti.contenttypes.courses.enrollment import DefaultCourseInstanceEnrollmentR
 
 from nti.coremetadata.interfaces import IContextLastSeenContainer
 
+from nti.dataserver.authorization import ACT_CONTENT_EDIT
+from nti.dataserver.authorization import ACT_READ
+
+from nti.dataserver.authorization_acl import has_permission
+
+from nti.dataserver.tests import mock_dataserver
+
 from nti.dataserver.tests.mock_dataserver import WithMockDSTrans
+
+from nti.ntiids.ntiids import find_object_with_ntiid
 
 class TestCoursePreviewExternalization(ApplicationLayerTest):
     """
@@ -119,9 +129,15 @@ class TestCoursePreviewExternalization(ApplicationLayerTest):
 
 class TestDecorators(ApplicationLayerTest):
 
-    def _decorate(self, decorator, context):
+    layer = PersistentInstructedCourseApplicationTestLayer
+
+    default_origin = 'http://platform.ou.edu'
+
+    course_entry_href = '/dataserver2/Objects/tag:nextthought.com,2011-10:NTI-CourseInfo-Fall2013_CLC3403_LawAndJustice'
+
+    def _decorate(self, decorator, context, request=None):
         external = toExternalObject(context, decorate=False)
-        decorator = decorator(context, None)
+        decorator = decorator(context, request)
         decorator.decorateExternalObject(context, external)
         return external
 
@@ -145,3 +161,40 @@ class TestDecorators(ApplicationLayerTest):
         external = self._decorate(_CourseInstanceEnrollmentLastSeenDecorator, enrollment)
         assert_that(external['LastSeenTime'].strftime('%Y-%m-%d %H:%M:%S'), is_("2018-08-05 05:00:00"))
 
+    @WithSharedApplicationMockDS(users=('test_student', 'admin001@nextthought.com'), testapp=True)
+    def test_CourseTabPreferencesLinkDecorator(self):
+        student_env = self._make_extra_environ('test_student')
+        instructor_env = self._make_extra_environ('harp4162')
+        admin_env = self._make_extra_environ('admin001@nextthought.com')
+
+        def _course_ntiid(environ):
+            entry = self.testapp.get(self.course_entry_href, extra_environ=environ)
+            return entry.json_body['CourseNTIID']
+
+        course_ntiid = _course_ntiid(admin_env)
+        with mock_dataserver.mock_db_trans(self.ds, site_name='platform.ou.edu'):
+            course = find_object_with_ntiid(course_ntiid)
+            assert_that(has_permission(ACT_READ, course, 'test_student'), is_(True))
+            assert_that(has_permission(ACT_CONTENT_EDIT, course, 'test_student'), is_(False))
+
+            assert_that(has_permission(ACT_READ, course, 'harp4162'), is_(True))
+            assert_that(has_permission(ACT_CONTENT_EDIT, course, 'harp4162'), is_(True))
+
+            assert_that(has_permission(ACT_READ, course, 'admin001@nextthought.com'), is_(True))
+            assert_that(has_permission(ACT_CONTENT_EDIT, course, 'admin001@nextthought.com'), is_(True))
+
+        course_href = '/dataserver2/NTIIDs/' + course_ntiid
+        result = self.testapp.get(course_href, extra_environ=admin_env)
+        rels = [x['rel'] for x in result.json_body['Links']]
+        assert_that(rels, has_item('GetCourseTabPreferences'))
+        assert_that(rels, has_item('UpdateCourseTabPreferences'))
+
+        result = self.testapp.get(course_href, extra_environ=instructor_env)
+        rels = [x['rel'] for x in result.json_body['Links']]
+        assert_that(rels, has_item('GetCourseTabPreferences'))
+        assert_that(rels, is_not(has_item('UpdateCourseTabPreferences')))
+
+        result = self.testapp.get(course_href, extra_environ=student_env)
+        rels = [x['rel'] for x in result.json_body['Links']]
+        assert_that(rels, has_item('GetCourseTabPreferences'))
+        assert_that(rels, is_not(has_item('UpdateCourseTabPreferences')))
