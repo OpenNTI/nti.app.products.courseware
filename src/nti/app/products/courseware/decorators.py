@@ -333,8 +333,7 @@ class _CourseTabPreferencesLinkDecorator(AbstractAuthenticatedRequestAwareDecora
 
     def _can_edit(self, context):
         config = component.queryUtility(ICourseTabConfigurationUtility)
-        username = self.authenticated_userid
-        return config and config.can_edit_tabs(username, context)
+        return config and config.can_edit_tabs(self.remoteUser, context)
 
     def _make_link(self, context, rel, method):
         link = Link(context,
