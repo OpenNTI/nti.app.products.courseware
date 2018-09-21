@@ -21,7 +21,7 @@ class DefaultCourseTabConfigurationUtility(object):
 
 	def _allow_access(self, user):
 		username = getattr(user, 'username', user)
-		return username and username.endswith('@nextthought.com')
+		return username and username.lower().endswith('@nextthought.com')
 
 	def can_edit_tabs(self, user, course):
 		if has_permission(ACT_CONTENT_EDIT, course, user):
