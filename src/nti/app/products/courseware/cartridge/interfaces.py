@@ -26,12 +26,29 @@ class ICommonCartridge(interface.Interface):
     )
 
 
-class IManifestBuilder(interface.Interface):
+class IManifest(interface.Interface):
+    """
+    Represent a cartrige manifest file
+    """
     cartridge = Object(ICommonCartridge, title=u"The cartridge")
+
+
+class IManifestBuilder(interface.Interface):
+    manifest = Object(IManifest, title=u"The manifest")
 
 
 class IElementHandler(interface.Interface):
     """
     Adapter to handle an asset within a common cartridge
     """
-    cartridge = Object(ICommonCartridge, title=u"The cartridge")
+    manifest = Object(IManifest, title=u"The manifest")
+
+    def toXML():
+        """
+        returns the minidom implementation of the manifest element
+        """
+        
+    def write():
+        """
+        Write the necesary files to the archive
+        """
