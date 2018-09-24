@@ -1,19 +1,19 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from __future__ import print_function, absolute_import, division
-__docformat__ = "restructuredtext en"
+from __future__ import division
+from __future__ import print_function
+from __future__ import absolute_import
 
-# disable: accessing protected members, too many methods
-# pylint: disable=W0212,R0904
+# pylint: disable=protected-access,too-many-public-methods
 
-from hamcrest import assert_that
-from hamcrest import has_entry
-from hamcrest import has_item
 from hamcrest import is_
-from hamcrest import is_not
 from hamcrest import none
+from hamcrest import is_not
 from hamcrest import not_none
+from hamcrest import has_item
+from hamcrest import has_entry
+from hamcrest import assert_that
 does_not = is_not
 
 import fudge
@@ -21,6 +21,7 @@ import fudge
 from zope.component.hooks import getSite
 
 from zope.security.interfaces import IParticipation
+
 from zope.security.management import endInteraction
 from zope.security.management import newInteraction
 from zope.security.management import restoreInteraction
@@ -47,9 +48,9 @@ from nti.contenttypes.courses.enrollment import DefaultCourseInstanceEnrollmentR
 
 from nti.coremetadata.interfaces import IContextLastSeenContainer
 
-from nti.dataserver.authorization import ACT_CONTENT_EDIT
 from nti.dataserver.authorization import ACT_READ
 from nti.dataserver.authorization import ROLE_SITE_ADMIN
+from nti.dataserver.authorization import ACT_CONTENT_EDIT
 
 from nti.dataserver.authorization_acl import has_permission
 
@@ -57,9 +58,10 @@ from nti.dataserver.tests import mock_dataserver
 
 from nti.dataserver.tests.mock_dataserver import WithMockDSTrans
 
-from nti.dataserver.users import User
+from nti.dataserver.users.users import User
 
 from nti.ntiids.ntiids import find_object_with_ntiid
+
 
 class TestCoursePreviewExternalization(ApplicationLayerTest):
     """
@@ -136,8 +138,9 @@ class TestCoursePreviewExternalization(ApplicationLayerTest):
 
         link = self.link_with_rel(enrollment, 'CourseInstance')
         assert_that(link, not_none())
-        assert_that(link, has_entry('type', 'application/vnd.nextthought.courses.courseinstance'))
-        
+        assert_that(link,
+                    has_entry('type', 'application/vnd.nextthought.courses.courseinstance'))
+
 
 class TestDecorators(ApplicationLayerTest):
 
@@ -162,16 +165,21 @@ class TestDecorators(ApplicationLayerTest):
 
         class _MockStorage(object):
             pass
+        # pylint: disable=attribute-defined-outside-init
         record.__parent__ = _MockStorage()
         record.__parent__.__parent__ = CourseInstance()
 
         enrollment = DefaultCourseInstanceEnrollment(record)
 
         _container = IContextLastSeenContainer(user, None)
+        # pylint: disable=too-many-function-args
         _container.append(u'ntiid_abc', 1533445200)
 
-        external = self._decorate(_CourseInstanceEnrollmentLastSeenDecorator, enrollment)
-        assert_that(external['LastSeenTime'].strftime('%Y-%m-%d %H:%M:%S'), is_("2018-08-05 05:00:00"))
+        external = self._decorate(
+            _CourseInstanceEnrollmentLastSeenDecorator, enrollment
+        )
+        assert_that(external['LastSeenTime'].strftime('%Y-%m-%d %H:%M:%S'),
+                    is_("2018-08-05 05:00:00"))
 
     @WithSharedApplicationMockDS(users=('test_student', 'admin001@nextthought.com', 'site_username'), testapp=True)
     def test_CourseTabPreferencesLinkDecorator(self):
@@ -181,29 +189,39 @@ class TestDecorators(ApplicationLayerTest):
         site_admin_evn = self._make_extra_environ('site_username')
 
         def _course_ntiid(environ):
-            entry = self.testapp.get(self.course_entry_href, extra_environ=environ)
+            entry = self.testapp.get(self.course_entry_href,
+                                     extra_environ=environ)
             return entry.json_body['CourseNTIID']
 
         course_ntiid = _course_ntiid(admin_env)
         with mock_dataserver.mock_db_trans(self.ds, site_name='platform.ou.edu'):
+            # pylint: disable=too-many-function-args
             srm = IPrincipalRoleManager(getSite(), None)
             srm.assignRoleToPrincipal(ROLE_SITE_ADMIN.id, 'site_username')
 
             course = find_object_with_ntiid(course_ntiid)
-            assert_that(has_permission(ACT_READ, course, 'test_student'), is_(True))
-            assert_that(has_permission(ACT_CONTENT_EDIT, course, 'test_student'), is_(False))
+            assert_that(has_permission(ACT_READ, course, 'test_student'),
+                        is_(True))
+            assert_that(has_permission(ACT_CONTENT_EDIT,course, 'test_student'),
+                        is_(False))
 
-            assert_that(has_permission(ACT_READ, course, 'harp4162'), is_(True))
-            assert_that(has_permission(ACT_CONTENT_EDIT, course, 'harp4162'), is_(True))
+            assert_that(has_permission(ACT_READ, course, 'harp4162'),
+                        is_(True))
+            assert_that(has_permission(ACT_CONTENT_EDIT, course, 'harp4162'),
+                        is_(True))
 
-            assert_that(has_permission(ACT_READ, course, 'admin001@nextthought.com'), is_(True))
-            assert_that(has_permission(ACT_CONTENT_EDIT, course, 'admin001@nextthought.com'), is_(True))
+            assert_that(has_permission(ACT_READ, course, 'admin001@nextthought.com'),
+                        is_(True))
+            assert_that(has_permission(ACT_CONTENT_EDIT, course, 'admin001@nextthought.com'),
+                        is_(True))
 
             endInteraction()
             try:
                 newInteraction(IParticipation(User.get_user('site_username')))
-                assert_that(has_permission(ACT_READ, course, 'site_username'), is_(True))
-                assert_that(has_permission(ACT_CONTENT_EDIT, course, 'site_username'), is_(True))
+                assert_that(has_permission(ACT_READ, course, 'site_username'),
+                            is_(True))
+                assert_that(has_permission(ACT_CONTENT_EDIT,
+                                           course, 'site_username'), is_(True))
             finally:
                 restoreInteraction()
 
