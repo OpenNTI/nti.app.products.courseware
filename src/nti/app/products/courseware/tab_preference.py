@@ -14,8 +14,11 @@ from nti.app.products.courseware.interfaces import ICourseTabConfigurationUtilit
 
 from nti.dataserver.authorization import is_admin
 
+logger = __import__('logging').getLogger(__name__)
+
+
 @interface.implementer(ICourseTabConfigurationUtility)
 class DefaultCourseTabConfigurationUtility(object):
 
-	def can_edit_tabs(self, user, course):
-		return is_admin(user)
+    def can_edit_tabs(self, user, unused_course=None):
+        return is_admin(user)
