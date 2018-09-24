@@ -19,28 +19,16 @@ from nti.schema.field import Object
 from nti.schema.field import DecodingValidTextLine as TextLine
 
 
-class IManifest(interface.Interface):
-    """
-    Represent a cartrige manifest file
-    """
-    cartridge = Object(ICommonCartridge, title=u"The cartridge")
-
-
-class IManifestBuilder(interface.Interface):
-    manifest = Object(IManifest, title=u"The manifest")
-
-
-class IElementHandler(interface.Interface):
+class IBaseElementHandler(interface.Interface):
     """
     Adapter to handle an asset within a common cartridge
     """
-    manifest = Object(IManifest, title=u"The manifest")
 
     def toXML():
         """
         returns the minidom implementation of the manifest element
         """
-        
+
     def write():
         """
         Write the necesary files to the archive
@@ -56,7 +44,7 @@ class IGenerationNode(interface.Interface):
                      required=False,
                      default=False)
 
-    handler = Object(IElementHandler, title=u"XML generation handler")
+    handler = Object(IBaseElementHandler, title=u"XML generation handler")
 
     def get_items():
         """
@@ -76,3 +64,21 @@ class ICommonCartridge(interface.Interface):
     archive = TextLine(
         title=u"A valid directory location for the archive data"
     )
+
+
+class IManifest(interface.Interface):
+    """
+    Represent a cartrige manifest file
+    """
+    cartridge = Object(ICommonCartridge, title=u"The cartridge")
+
+
+class IManifestBuilder(interface.Interface):
+    manifest = Object(IManifest, title=u"The manifest")
+
+
+class IElementHandler(IBaseElementHandler):
+    """
+    Adapter to handle an asset within a common cartridge
+    """
+    manifest = Object(IManifest, title=u"The manifest")
