@@ -661,24 +661,24 @@
 				for="nti.dataserver.interfaces.IUser" />
 
     <!-- Catalog -->
-    <adapter factory=".catalog.AvailableCoursesProvider"
-             for="nti.dataserver.interfaces.IUser"
-             provides=".interfaces.IAvailableCoursesProvider" />
+	<adapter factory=".catalog.AvailableCoursesProvider"
+			 for="nti.dataserver.interfaces.IUser"
+			 provides=".interfaces.IAvailableCoursesProvider" />
 
-    <subscriber factory=".catalog.FeaturedCatalogCoursesProvider"
-                for="nti.dataserver.interfaces.IUser"
-                provides="nti.appserver.workspaces.interfaces.IFeaturedCatalogCollectionProvider" />
+	<subscriber factory=".catalog.FeaturedCatalogCoursesProvider"
+				for="nti.dataserver.interfaces.IUser"
+				provides="nti.appserver.workspaces.interfaces.IFeaturedCatalogCollectionProvider" />
 
-    <subscriber factory=".catalog.PurchasedCatalogCoursesProvider"
-                for="nti.dataserver.interfaces.IUser"
-                provides="nti.appserver.workspaces.interfaces.IPurchasedCatalogCollectionProvider" />
+	<subscriber factory=".catalog.PurchasedCatalogCoursesProvider"
+				for="nti.dataserver.interfaces.IUser"
+				provides="nti.appserver.workspaces.interfaces.IPurchasedCatalogCollectionProvider" />
 
 	<!-- tab preference -->
 	<utility factory=".tab_preference.DefaultCourseTabConfigurationUtility"
 			 provides="nti.app.products.courseware.interfaces.ICourseTabConfigurationUtility" />
 
-    <!-- Completion -->
-    <include package=".completion" />
+	<!-- Completion -->
+	<include package=".completion" />
 
 	<!-- Course Invitations -->
 	<include package=".invitations" />
@@ -693,7 +693,7 @@
 	<include package=".views" />
 
 	<!-- Completion -->
-    <include package=".webinars" />
+	<include package=".webinars" />
 
 	<!-- Recordables -->
 	<utility factory=".recordables.CourseCatalogRecordables" name="courses" />
