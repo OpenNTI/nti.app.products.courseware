@@ -695,6 +695,9 @@
 	<!-- Completion -->
 	<include package=".webinars" />
 
+	<!-- Cartridge -->
+	<include package=".cartridge" />
+
 	<!-- Recordables -->
 	<utility factory=".recordables.CourseCatalogRecordables" name="courses" />
 
