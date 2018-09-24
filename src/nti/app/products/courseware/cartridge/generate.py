@@ -16,7 +16,7 @@ def generate_archive(root, archive):
     DFS traversal of item structure.
     """
     # Generate XML with placeholder for items if necessary
-    xml = root.handler.toXML(archive)
+    xml = root.toXML(archive)
     # Get child items
     items = root.get_items()
     if items:
