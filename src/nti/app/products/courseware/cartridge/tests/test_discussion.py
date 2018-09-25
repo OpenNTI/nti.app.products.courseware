@@ -58,3 +58,8 @@ class TestDiscussion(ApplicationLayerTest):
             ref.target = to_external_ntiid_oid(topic)
             connection.add(ref)
             intids.register(ref)
+            
+            handler = IElementHandler(ref, None)
+            assert_that(handler, is_not(none()))
+            assert_that(handler, validly_provides(IBaseElementHandler))
+            assert_that(handler, verifiably_provides(IBaseElementHandler))
