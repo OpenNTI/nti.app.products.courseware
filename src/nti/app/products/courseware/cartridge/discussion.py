@@ -14,14 +14,21 @@ from zope import component
 
 from zope.cachedescriptors.property import Lazy
 
+from zope.interface.common.idatetime import IDateTime
+
 from nti.app.products.courseware.cartridge.mixins import AbstractElementHandler
 from nti.app.products.courseware.cartridge.mixins import resolve_modelcontent_body
 
 from nti.contenttypes.presentation.interfaces import INTIDiscussionRef
 
-from nti.dataserver.contenttypes.forums.interfaces import ITopic
+from nti.dataserver.contenttypes.forums.interfaces import IForum
+from nti.dataserver.contenttypes.forums.interfaces import ITopic 
+
+from nti.externalization.externalization.externalizer import to_external_object
 
 from nti.ntiids.ntiids import find_object_with_ntiid
+
+from nti.traversal.traversal import find_interface
 
 logger = __import__('logging').getLogger(__name__)
 
@@ -46,9 +53,8 @@ class TopicHandler(AbstractElementHandler):
                                 "http://www.imsglobal.org/profile/cc/ccv1p1/ccv1p1_imsdt_v1p1.xsd")
 
         # add title
-        node = xmldoc.createElement("title")
-        node.appendChild(xmldoc.createTextNode(self.to_plain_text(topic.title or '')))
-        doc_root.appendChild(node)
+        self.addTextNode(xmldoc, doc_root, "title",
+                         self.to_plain_text(topic.title or ''))
         # add content
         node = xmldoc.createElement("text")
         node.setAttributeNS(None, "texttype", "text/html")
@@ -70,10 +76,55 @@ class DiscussionRefHandler(AbstractElementHandler):
     def topic(self):
         return find_object_with_ntiid(self.context.target)
 
+    @Lazy
+    def createdTime(self):
+        return getattr(self.topic, 'createdTime', 0)
+
+    @Lazy
+    def position(self):
+        forum = find_interface(self.topic, IForum, strict=False)
+        if forum is not None:
+            count = 0
+            for t in forum.values():
+                if t == self.topic:
+                    return count
+        return 0
+
     def toXML(self):
-        """
-        returns the minidom implementation of the manifest element
-        """
+        DOMimpl = minidom.getDOMImplementation()
+        xmldoc = DOMimpl.createDocument(None, "topicMeta", None)
+        doc_root = xmldoc.documentElement
+        doc_root.setAttributeNS(None, "identifier", "%s" % self.doc_id)
+        doc_root.setAttributeNS(None, "xmlns",
+                                "http://canvas.instructure.com/xsd/cccv1p0")
+        doc_root.setAttributeNS(None, "xmlns:xsi",
+                                "http://www.w3.org/2001/XMLSchema-instance")
+        doc_root.setAttributeNS(None, "xsi:schemaLocation",
+                                "http://canvas.instructure.com/xsd/cccv1p0 "
+                                "http://canvas.instructure.com/xsd/cccv1p0.xsd")
+        # add fields
+        # pylint: disable=no-member
+        self.addTextNode(xmldoc, doc_root, "title", 
+                         self.to_plain_text(self.context.title or ''))
+        self.addTextNode(xmldoc, doc_root, "topic_id", 
+                         self.intids.queryId(self.topic))
+        
+        self.addTextNode(xmldoc, doc_root, "type", 'announcement')
+        self.addTextNode(xmldoc, doc_root, "allow_rating", 'false')
+        self.addTextNode(xmldoc, doc_root, "module_locked", 'active')
+        self.addTextNode(xmldoc, doc_root, "sort_by_rating", 'false')
+        self.addTextNode(xmldoc, doc_root, "workflow_state", 'active')
+        self.addTextNode(xmldoc, doc_root, "has_group_category", 'false')
+        self.addTextNode(xmldoc, doc_root, "only_graders_can_rate", 'false')
+        self.addTextNode(xmldoc, doc_root, "discussion_type", 'side_comment')
+
+        createdTime = IDateTime(self.createdTime)
+        createdTime = to_external_object(createdTime)
+        self.addTextNode(xmldoc, doc_root, "posted_at", createdTime)
+        self.addTextNode(xmldoc, doc_root, "delayed_post_at", createdTime)
+        
+        self.addTextNode(xmldoc, doc_root, "position", self.position)
+        return doc_root
 
     def write(self):
         """
