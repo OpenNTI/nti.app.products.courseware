@@ -35,6 +35,7 @@ from nti.contenttypes.courses.utils import get_parent_course
 from nti.contenttypes.completion.adapters import CompletableItemContainerFactory
 
 from nti.contenttypes.completion.interfaces import ICompletionContext
+from nti.contenttypes.completion.interfaces import ICompletionContextProvider
 from nti.contenttypes.completion.interfaces import ICompletableItemContainer
 
 from nti.dataserver import authorization
@@ -53,7 +54,6 @@ from nti.dataserver.users.users import User
 logger = __import__('logging').getLogger(__name__)
 
 
-@interface.implementer(ICompletionContext)
 def _course_from_completable_item(item):
     """
     Find a :class:`ICourseInstance` from the given :class:`ICompletableItem`.
@@ -74,6 +74,16 @@ def _course_from_completable_item(item):
         # multiple courses
         course = ICourseInstance(item, None)
     return course
+
+
+@interface.implementer(ICompletionContextProvider)
+class _CompletionContextProvider(object):
+
+    def __init__(self, completableItem):
+        self.item = completableItem
+
+    def __call__(self):
+        return _course_from_completable_item(self.item)
 
 
 @interface.implementer(ICompletionContextACLProvider)

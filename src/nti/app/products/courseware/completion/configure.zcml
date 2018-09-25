@@ -19,35 +19,9 @@
              for="nti.contenttypes.courses.interfaces.ICourseSubInstance" />
 
 	<!-- CompletionContext adapters, must be explicit on type due to resolution order -->
-	<adapter factory=".adapters._course_from_completable_item"
-			 provides="nti.contenttypes.completion.interfaces.ICompletionContext"
-			 for="nti.contenttypes.completion.interfaces.ICompletableItem"
-			 name="CompletionContext" />
-
-	<adapter factory=".adapters._course_from_completable_item"
-			 provides="nti.contenttypes.completion.interfaces.ICompletionContext"
-			 for="nti.contenttypes.presentation.interfaces.INTIRelatedWorkRef"
-			 name="CompletionContext" />
-
-	<adapter factory=".adapters._course_from_completable_item"
-			 provides="nti.contenttypes.completion.interfaces.ICompletionContext"
-			 for="nti.contenttypes.presentation.interfaces.INTIVideo"
-			 name="CompletionContext" />
-
-	<adapter factory=".adapters._course_from_completable_item"
-			 provides="nti.contenttypes.completion.interfaces.ICompletionContext"
-			 for="nti.assessment.interfaces.IQAssignment"
-			 name="CompletionContext" />
-
-	<adapter factory=".adapters._course_from_completable_item"
-			 provides="nti.contenttypes.completion.interfaces.ICompletionContext"
-			 for="nti.assessment.interfaces.IQuestionSet"
-			 name="CompletionContext" />
-
-	<adapter factory=".adapters._course_from_completable_item"
-			 provides="nti.contenttypes.completion.interfaces.ICompletionContext"
-			 for="nti.contentlibrary.interfaces.IContentUnit"
-			 name="CompletionContext" />
+	<adapter factory=".adapters._CompletionContextProvider"
+			 provides="nti.contenttypes.completion.interfaces.ICompletionContextProvider"
+			 for="nti.contenttypes.completion.interfaces.ICompletableItem" />
 
 	<adapter factory=".adapters.CourseCompletedItemsACLProvider"
 			 provides="nti.app.contenttypes.completion.interfaces.ICompletionContextACLProvider"
