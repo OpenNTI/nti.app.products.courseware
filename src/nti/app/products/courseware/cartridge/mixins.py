@@ -19,6 +19,8 @@ from zope.cachedescriptors.property import Lazy
 
 from nti.app.products.courseware.cartridge.interfaces import IElementHandler
 
+from nti.base._compat import text_
+
 from nti.contentfragments.interfaces import IPlainTextContentFragment
 from nti.contentfragments.interfaces import ISanitizedHTMLContentFragment
 
@@ -58,6 +60,11 @@ class AbstractElementHandler(object):
     @Lazy
     def course(self):
         return find_interface(self.context, ICourseInstance, strict=False)
+
+    def addTextNode(self, xmldoc, parent, name, value):
+        node = xmldoc.createElement(name)
+        node.appendChild(xmldoc.createTextNode(text_(value)))
+        parent.appendChild(node)
 
     @classmethod
     def to_plain_text(cls, content):
