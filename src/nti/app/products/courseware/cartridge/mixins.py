@@ -56,6 +56,7 @@ class AbstractElementHandler(object):
     def doc_id(self):
         # pylint: disable=no-member
         return self.intids.queryId(self.context)
+    identifier = doc_id
 
     @Lazy
     def course(self):
