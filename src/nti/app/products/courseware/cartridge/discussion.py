@@ -22,7 +22,7 @@ from nti.app.products.courseware.cartridge.mixins import resolve_modelcontent_bo
 from nti.contenttypes.presentation.interfaces import INTIDiscussionRef
 
 from nti.dataserver.contenttypes.forums.interfaces import IForum
-from nti.dataserver.contenttypes.forums.interfaces import ITopic 
+from nti.dataserver.contenttypes.forums.interfaces import ITopic
 
 from nti.externalization.externalization.externalizer import to_external_object
 
@@ -39,7 +39,7 @@ class TopicHandler(AbstractElementHandler):
     def iter_nodes(self):
         return ()
 
-    # cartridge 
+    # cartridge
 
     def topic(self):
         """
@@ -106,7 +106,8 @@ class DiscussionRefHandler(AbstractElementHandler):
         doc_root = xmldoc.documentElement
         doc_root.setAttributeNS(None, "identifier", "%s" % self.doc_id)
         doc_root.setAttributeNS(None, "href", "%s.xml" % self.doc_id)
-        doc_root.setAttributeNS(None, "type", "associatedcontent/imscc_xmlv1p1/learning-application-resource")
+        doc_root.setAttributeNS(None, "type",
+                                "associatedcontent/imscc_xmlv1p1/learning-application-resource")
         node = xmldoc.createElement("file")
         node.setAttributeNS(None, "href", "%s.xml" % self.doc_id)
         doc_root.appendChild(node)
@@ -150,11 +151,11 @@ class DiscussionRefHandler(AbstractElementHandler):
                                 "http://canvas.instructure.com/xsd/cccv1p0.xsd")
         # add fields
         # pylint: disable=no-member
-        self.addTextNode(xmldoc, doc_root, "title", 
+        self.addTextNode(xmldoc, doc_root, "title",
                          self.to_plain_text(self.context.title or ''))
-        self.addTextNode(xmldoc, doc_root, "topic_id", 
+        self.addTextNode(xmldoc, doc_root, "topic_id",
                          self.intids.queryId(self.topic))
-        
+
         self.addTextNode(xmldoc, doc_root, "type", 'announcement')
         self.addTextNode(xmldoc, doc_root, "allow_rating", 'false')
         self.addTextNode(xmldoc, doc_root, "module_locked", 'active')
@@ -168,7 +169,7 @@ class DiscussionRefHandler(AbstractElementHandler):
         createdTime = to_external_object(createdTime)
         self.addTextNode(xmldoc, doc_root, "posted_at", createdTime)
         self.addTextNode(xmldoc, doc_root, "delayed_post_at", createdTime)
-        
+
         self.addTextNode(xmldoc, doc_root, "position", self.position)
         return doc_root
 
