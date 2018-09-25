@@ -11,6 +11,9 @@ from __future__ import absolute_import
 from hamcrest import is_
 from hamcrest import is_not
 from hamcrest import assert_that
+from hamcrest import has_length
+from hamcrest import has_items
+
 does_not = is_not
 
 from zope import interface
@@ -20,6 +23,7 @@ from nti.app.products.courseware.tests import PersistentInstructedCourseApplicat
 from nti.app.testing.application_webtest import ApplicationLayerTest
 
 from nti.contenttypes.completion.interfaces import ICompletableItemContainer
+from nti.contenttypes.completion.interfaces import ICompletableItemDefaultRequiredPolicy
 
 from nti.contenttypes.completion.tests.interfaces import ITestCompletableItem
 
@@ -153,3 +157,49 @@ class TestSectionCourseCompletion(ApplicationLayerTest):
                     is_(False))
         assert_that(child_container.get_required_item_count(), is_(2))
         assert_that(child_container.get_optional_item_count(), is_(2))
+
+    @WithMockDSTrans
+    def test_section_default_required_policy(self):
+        """
+        Validate that child section course default required state inherits that of
+        the parent.
+        """
+        parent_course = ContentCourseInstance()
+        connection = mock_dataserver.current_transaction
+        connection.add(parent_course)
+
+        child_course = ContentCourseSubInstance()
+        parent_course.SubInstances['child1'] = child_course
+
+        child_course2 = ContentCourseSubInstance()
+        parent_course.SubInstances['child2'] = child_course2
+        child_course2.prepare_own_outline()
+
+        parent_policy = ICompletableItemDefaultRequiredPolicy(parent_course)
+        child_policy = ICompletableItemDefaultRequiredPolicy(child_course)
+        child_policy2 = ICompletableItemDefaultRequiredPolicy(child_course2)
+
+        assert_that(parent_policy.mime_types, has_length(0))
+        assert_that(child_policy.mime_types, has_length(0))
+        assert_that(child_policy2.mime_types, has_length(0))
+
+        parent_policy.add_mime_types(['a', 'b'])
+        assert_that(parent_policy.mime_types, has_items('a', 'b'))
+        assert_that(child_policy.mime_types, has_items('a', 'b'))
+        assert_that(child_policy2.mime_types, has_length(0))
+
+        child_policy.add_mime_types(['c'])
+        assert_that(parent_policy.mime_types, has_items('a', 'b'))
+        assert_that(child_policy.mime_types, has_items('a', 'b'))
+        assert_that(child_policy2.mime_types, has_length(0))
+
+        parent_policy.mime_types.clear()
+        assert_that(parent_policy.mime_types, has_length(0))
+        assert_that(child_policy.mime_types, has_length(0))
+        assert_that(child_policy.child_policy.mime_types, has_items('c'))
+        assert_that(child_policy2.mime_types, has_length(0))
+
+        child_policy2.add_mime_types(['e'])
+        assert_that(parent_policy.mime_types, has_length(0))
+        assert_that(child_policy.mime_types, has_length(0))
+        assert_that(child_policy2.mime_types, has_items('e'))
