@@ -10,7 +10,6 @@ from __future__ import absolute_import
 from hamcrest import none
 from hamcrest import is_not
 from hamcrest import assert_that
-from nti.ntiids.oids import to_external_ntiid_oid
 does_not = is_not
 
 from zope import component
@@ -32,6 +31,8 @@ from nti.dataserver.contenttypes.forums.forum import GeneralForum
 from nti.dataserver.contenttypes.forums.topic import GeneralHeadlineTopic
 
 from nti.dataserver.tests import mock_dataserver
+
+from nti.ntiids.oids import to_external_ntiid_oid
 
 
 class TestDiscussion(ApplicationLayerTest):
