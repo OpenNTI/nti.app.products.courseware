@@ -36,7 +36,7 @@ def resolve_modelcontent_body(data):
         if isinstance(item, six.string_types):
             item = ISanitizedHTMLContentFragment(item)
             result.append(item)
-    result = u'\n'.join(x for x in result if x is not None)
+    result = u'\n'.join(x for x in result if x)
     return result
 
 
