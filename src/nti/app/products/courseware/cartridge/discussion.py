@@ -36,10 +36,15 @@ logger = __import__('logging').getLogger(__name__)
 @component.adapter(ITopic)
 class TopicHandler(AbstractElementHandler):
 
-    def toXML(self):
-        pass
-    
-    def toArchiveXML(self):
+    def iter_nodes(self):
+        return ()
+
+    # cartridge 
+
+    def topic(self):
+        """
+        Return a minidom for the topic file
+        """
         topic = self.context
         DOMimpl = minidom.getDOMImplementation()
         xmldoc = DOMimpl.createDocument(None, "topic", None)
@@ -76,6 +81,43 @@ class DiscussionRefHandler(AbstractElementHandler):
     def topic(self):
         return find_object_with_ntiid(self.context.target)
 
+    def resource_topic_node(self):
+        topic = self.topic
+        # pylint: disable=no-member
+        doc_id = self.intids.queryId(topic)
+        DOMimpl = minidom.getDOMImplementation()
+        xmldoc = DOMimpl.createDocument(None, "resource", None)
+        doc_root = xmldoc.documentElement
+        doc_root.setAttributeNS(None, "type", "imsdt_xmlv1p1")
+        doc_root.setAttributeNS(None, "identifier", "%s" % doc_id)
+        # file
+        node = xmldoc.createElement("file")
+        node.setAttributeNS(None, "href", "%s.xml" % doc_id)
+        doc_root.appendChild(node)
+        # dependency
+        node = xmldoc.createElement("dependency")
+        node.setAttributeNS(None, "identifierref", "%s" % self.doc_id)
+        doc_root.appendChild(node)
+        return doc_root
+
+    def resource_reference_node(self):
+        DOMimpl = minidom.getDOMImplementation()
+        xmldoc = DOMimpl.createDocument(None, "resource", None)
+        doc_root = xmldoc.documentElement
+        doc_root.setAttributeNS(None, "identifier", "%s" % self.doc_id)
+        doc_root.setAttributeNS(None, "href", "%s.xml" % self.doc_id)
+        doc_root.setAttributeNS(None, "type", "associatedcontent/imscc_xmlv1p1/learning-application-resource")
+        node = xmldoc.createElement("file")
+        node.setAttributeNS(None, "href", "%s.xml" % self.doc_id)
+        doc_root.appendChild(node)
+        return doc_root
+
+    def iter_resources(self):
+        return (self.resource_topic_node(),
+                self.resource_reference_node())
+
+    # cartridge
+
     @Lazy
     def createdTime(self):
         return getattr(self.topic, 'createdTime', 0)
@@ -88,9 +130,13 @@ class DiscussionRefHandler(AbstractElementHandler):
             for t in forum.values():
                 if t == self.topic:
                     return count
+                count += 1
         return 0
 
-    def toXML(self):
+    def topicMeta(self):
+        """
+        Return a minidom for the topicMeta file
+        """
         DOMimpl = minidom.getDOMImplementation()
         xmldoc = DOMimpl.createDocument(None, "topicMeta", None)
         doc_root = xmldoc.documentElement

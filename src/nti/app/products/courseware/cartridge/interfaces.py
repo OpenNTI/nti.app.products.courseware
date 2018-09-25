@@ -24,9 +24,9 @@ class IBaseElementHandler(interface.Interface):
     Adapter to handle an asset within a common cartridge
     """
 
-    def toXML():
+    def iter_resources():
         """
-        returns the minidom implementation of the manifest element
+        returns an iterable of minidom elements for the manifest resources
         """
 
     def write():
@@ -71,6 +71,11 @@ class IManifest(interface.Interface):
     Represent a cartrige manifest file
     """
     cartridge = Object(ICommonCartridge, title=u"The cartridge")
+
+    def has_resource(iden):
+        """
+        check if the resource w/ the specified iden is in this manifest
+        """
 
 
 class IManifestBuilder(interface.Interface):
