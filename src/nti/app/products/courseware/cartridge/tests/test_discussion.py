@@ -24,9 +24,15 @@ from nti.app.products.courseware.cartridge.interfaces import IBaseElementHandler
 
 from nti.app.testing.application_webtest import ApplicationLayerTest
 
-from nti.dataserver.contenttypes.forums.topic import HeadlineTopic
+from nti.contenttypes.presentation.discussion import NTIDiscussionRef
+
+from nti.dataserver.contenttypes.forums.forum import GeneralForum
+
+from nti.dataserver.contenttypes.forums.topic import GeneralHeadlineTopic
 
 from nti.dataserver.tests import mock_dataserver
+
+from nti.ntiids.oids import to_external_ntiid_oid
 
 
 class TestDiscussion(ApplicationLayerTest):
@@ -35,11 +41,20 @@ class TestDiscussion(ApplicationLayerTest):
     def test_course_invitations(self):
         with mock_dataserver.mock_db_trans(self.ds) as connection:
             intids = component.getUtility(IIntIds)
-            topic = HeadlineTopic()
+            forum = GeneralForum()
+            connection.add(forum)
+            intids.register(forum)
+
+            topic = GeneralHeadlineTopic()
             connection.add(topic)
-            intids.register(topic)
-        
+            forum['mytopic'] = topic
+
             handler = IElementHandler(topic, None)
             assert_that(handler, is_not(none()))
             assert_that(handler, validly_provides(IBaseElementHandler))
             assert_that(handler, verifiably_provides(IBaseElementHandler))
+
+            ref = NTIDiscussionRef()
+            ref.target = to_external_ntiid_oid(topic)
+            connection.add(ref)
+            intids.register(ref)
