@@ -33,10 +33,12 @@ from nti.contenttypes.courses.interfaces import ICourseSubInstance
 from nti.contenttypes.courses.utils import get_parent_course
 
 from nti.contenttypes.completion.adapters import CompletableItemContainerFactory
+from nti.contenttypes.completion.adapters import CompletableItemDefaultRequiredFactory
 
 from nti.contenttypes.completion.interfaces import ICompletionContext
 from nti.contenttypes.completion.interfaces import ICompletionContextProvider
 from nti.contenttypes.completion.interfaces import ICompletableItemContainer
+from nti.contenttypes.completion.interfaces import ICompletableItemDefaultRequiredPolicy
 
 from nti.dataserver import authorization
 
@@ -50,6 +52,8 @@ from nti.dataserver.interfaces import IUser
 from nti.dataserver.interfaces import IPrincipal
 
 from nti.dataserver.users.users import User
+
+from nti.externalization.persistence import NoPickle
 
 logger = __import__('logging').getLogger(__name__)
 
@@ -269,3 +273,40 @@ def section_to_container(course):
     parent_container = ICompletableItemContainer(parent_course)
     return SubinstanceCompletableItemContainer(section_container,
                                                parent_container)
+
+
+@NoPickle
+@interface.implementer(ICompletableItemDefaultRequiredPolicy)
+class SubinstanceCompletableItemDefaultRequiredPolicy(object):
+
+    creator = None
+
+    def __init__(self, child_policy, parent_policy):
+        self.child_policy = child_policy
+        self.parent_policy = parent_policy
+
+    @property
+    def mime_types(self):
+        # currently only show parent mime_types
+        child = set(self.child_policy.mime_types)
+        parent = set(self.parent_policy.mime_types)
+        return tuple(child | parent)
+
+    def add_mime_types(self, mime_types):
+        self.child_policy.add_mime_types(mime_types)
+
+    def set_mime_types(self, mime_types):
+        self.child_policy.set_mime_types(mime_types)
+
+
+@component.adapter(ICourseSubInstance)
+@interface.implementer(ICompletableItemDefaultRequiredPolicy)
+def section_to_default_required_policy(course):
+    section_policy = CompletableItemDefaultRequiredFactory(course)
+    parent_course = get_parent_course(course)
+    if parent_course.Outline != course.Outline:
+        return section_policy
+
+    parent_policy = ICompletableItemDefaultRequiredPolicy(parent_course)
+    return SubinstanceCompletableItemDefaultRequiredPolicy(section_policy,
+                                                           parent_policy)

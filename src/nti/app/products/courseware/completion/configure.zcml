@@ -18,6 +18,10 @@
              provides="nti.contenttypes.completion.interfaces.ICompletableItemContainer"
              for="nti.contenttypes.courses.interfaces.ICourseSubInstance" />
 
+    <adapter factory=".adapters.section_to_default_required_policy"
+             provides="nti.contenttypes.completion.interfaces.ICompletableItemDefaultRequiredPolicy"
+             for="nti.contenttypes.courses.interfaces.ICourseSubInstance" />
+
 	<!-- CompletionContext adapters, must be explicit on type due to resolution order -->
 	<adapter factory=".adapters._CompletionContextProvider"
 			 provides="nti.contenttypes.completion.interfaces.ICompletionContextProvider"
