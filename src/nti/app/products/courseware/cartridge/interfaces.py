@@ -24,6 +24,12 @@ class IBaseElementHandler(interface.Interface):
     Adapter to handle an asset within a common cartridge
     """
 
+    def iter_items():
+        """
+        returns an iterable of minidom elements for an organization items
+        in the manifest file
+        """
+
     def iter_resources():
         """
         returns an iterable of minidom elements for the manifest resources
