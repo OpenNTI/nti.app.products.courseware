@@ -288,7 +288,9 @@ class SubinstanceCompletableItemDefaultRequiredPolicy(object):
     @property
     def mime_types(self):
         # currently only show parent mime_types
-        return self.parent_policy.mime_types
+        child = set(self.child_policy.mime_types)
+        parent = set(self.parent_policy.mime_types)
+        return tuple(child | parent)
 
     def add_mime_types(self, mime_types):
         self.child_policy.add_mime_types(mime_types)

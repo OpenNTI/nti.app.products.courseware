@@ -190,16 +190,17 @@ class TestSectionCourseCompletion(ApplicationLayerTest):
 
         child_policy.add_mime_types(['c'])
         assert_that(parent_policy.mime_types, has_items('a', 'b'))
-        assert_that(child_policy.mime_types, has_items('a', 'b'))
+        assert_that(child_policy.mime_types, has_items('a', 'b', 'c'))
         assert_that(child_policy2.mime_types, has_length(0))
 
         parent_policy.mime_types.clear()
         assert_that(parent_policy.mime_types, has_length(0))
-        assert_that(child_policy.mime_types, has_length(0))
+        assert_that(child_policy.mime_types, has_length(1))
         assert_that(child_policy.child_policy.mime_types, has_items('c'))
         assert_that(child_policy2.mime_types, has_length(0))
 
         child_policy2.add_mime_types(['e'])
         assert_that(parent_policy.mime_types, has_length(0))
-        assert_that(child_policy.mime_types, has_length(0))
+        assert_that(child_policy.mime_types, has_length(1))
         assert_that(child_policy2.mime_types, has_items('e'))
+        assert_that(child_policy2.mime_types, has_length(1))
