@@ -8,6 +8,8 @@ from __future__ import division
 from __future__ import print_function
 from __future__ import absolute_import
 
+import os
+
 from xml.dom import minidom
 
 from zope import component
@@ -68,10 +70,11 @@ class TopicHandler(AbstractElementHandler):
         doc_root.appendChild(node)
         return doc_root
 
-    def write(self):
-        """
-        Write the necesary files to the archive
-        """
+    def write_to(self, archive):
+        element = self.topic()
+        name = "%s.xml" % self.identifier
+        with open(os.path.join(archive, name), "w") as fp:
+            fp.write(element.toprettyxml())
 
 
 @component.adapter(INTIDiscussionRef)
@@ -173,7 +176,8 @@ class DiscussionRefHandler(AbstractElementHandler):
         self.addTextNode(xmldoc, doc_root, "position", self.position)
         return doc_root
 
-    def write(self):
-        """
-        Write the necesary files to the archive
-        """
+    def write_to(self, archive):
+        element = self.topicMeta()
+        name = "%s.xml" % self.identifier
+        with open(os.path.join(archive, name), "w") as fp:
+            fp.write(element.toprettyxml())

@@ -8,6 +8,9 @@ from __future__ import division
 from __future__ import print_function
 from __future__ import absolute_import
 
+import os
+import shutil
+
 from xml.dom import minidom
 
 import six
@@ -20,6 +23,9 @@ from nti.app.products.courseware.cartridge.interfaces import IElementHandler
 
 from nti.app.products.courseware.cartridge.mixins import AbstractElementHandler
 
+from nti.contentlibrary.interfaces import IContentPackage
+from nti.contentlibrary.interfaces import IFilesystemBucket
+
 from nti.contenttypes.presentation.interfaces import KALTURA_VIDEO_SERVICE
 from nti.contenttypes.presentation.interfaces import YOUTUBE_VIDEO_SERVICE
 
@@ -29,21 +35,47 @@ from nti.contenttypes.presentation.interfaces import INTITranscript
 
 from nti.ntiids.ntiids import find_object_with_ntiid
 
+from nti.traversal.traversal import find_interface
+
 logger = __import__('logging').getLogger(__name__)
+
+# transcripts
 
 
 @component.adapter(INTITranscript)
 class TranscriptHandler(AbstractElementHandler):
 
-    def iter_nodes(self):
+    def iter_items(self):
         return ()
+
+    def resource_node(self):
+        transcript = self.context
+        if not isinstance(transcript.src, six.string_types):
+            # ATM we don't support authored transcripts
+            doc_root = None
+        else:
+            DOMimpl = minidom.getDOMImplementation()
+            xmldoc = DOMimpl.createDocument(None, "resource", None)
+            doc_root = xmldoc.documentElement
+            doc_root.setAttribute("type", "webcontent")
+            doc_root.setAttribute("identifier", "%s" % self.identifier)
+            doc_root.setAttribute("href", "%s" % transcript.src)
+            # file
+            node = xmldoc.createElement("file")
+            node.setAttributeNS(None, "href", "%s" % transcript.src)
+            doc_root.appendChild(node)
+        return doc_root
+
+    def iter_resources(self):
+        node = self.resource_node()
+        return (node,) if node is not None else ()
 
     # cartridge
 
     @property
     def track(self):
         """
-        Return a minidom for the topic file
+        Return a minidom for the track element
         """
         transcript = self.context
         if isinstance(transcript.src, six.string_types):
@@ -55,14 +87,38 @@ class TranscriptHandler(AbstractElementHandler):
             doc_root = xmldoc.documentElement
             doc_root.setAttribute("src", transcript.src)
             return doc_root
+        else:  # pragma: no cover
+            # No support for authored transcripts
+            pass
 
-    def write(self):
-        """
-        Write the necesary files to the archive
-        """
+    def write_to(self, archive):
+        transcript = self.context
+        # find content package and copy the transcript file
+        package = find_interface(transcript, IContentPackage, strict=False)
+        if package is None:
+            logger.warning("Could not find content package for %s", transcript)
+        elif isinstance(transcript.src, six.string_types):
+            root = package.root
+            if not IFilesystemBucket.providedBy(root):
+                logger.warning("Unsupported bucket Boto?")
+            else:
+                source_path = os.path.join(root.absolute_path,
+                                           transcript.src)
+                target_path = os.path.join(archive,
+                                           transcript.src)
+                dirname = os.path.dirname(target_path)
+                if os.path.exists(dirname):
+                    os.makedirs(dirname)
+                shutil.copy(source_path, target_path)
 
+
+# video
 
 def youtube_element(video):
+    """
+    Return a minidom element to represent a youtube video file 
+    resource in a cartrige
+    """
     DOMimpl = minidom.getDOMImplementation()
     xmldoc = DOMimpl.createDocument(None, "html", None)
     doc_root = xmldoc.documentElement
@@ -104,6 +160,10 @@ uiconf_id/{{uiconf_id}}/partner_id/{{partner_id}}?autoembed=true&entry_id={{entr
 
 
 def kaltura_element(video, uiconf_id="15491291"):
+    """
+    Return a minidom element to represent a kaltura video file 
+    resource in a cartrige
+    """
     DOMimpl = minidom.getDOMImplementation()
     xmldoc = DOMimpl.createDocument(None, "html", None)
     doc_root = xmldoc.documentElement
@@ -142,8 +202,24 @@ def kaltura_element(video, uiconf_id="15491291"):
 @component.adapter(INTIVideo)
 class VideoHandler(AbstractElementHandler):
 
-    def iter_nodes(self):
+    def iter_items(self):
         return ()
+
+    def resource_node(self):
+        DOMimpl = minidom.getDOMImplementation()
+        xmldoc = DOMimpl.createDocument(None, "resource", None)
+        doc_root = xmldoc.documentElement
+        doc_root.setAttribute("type", "webcontent")
+        doc_root.setAttribute("identifier", "%s" % self.identifier)
+        doc_root.setAttribute("href", "content/%s.html" % self.identifier)
+        # file
+        node = xmldoc.createElement("file")
+        node.setAttributeNS(None, "href", "content/%s.html" % self.identifier)
+        doc_root.appendChild(node)
+        return doc_root
+
+    def iter_resources(self):
+        return (self.resource_node(),)
 
     # cartridge
 
@@ -153,7 +229,7 @@ class VideoHandler(AbstractElementHandler):
     def kaltura(self, video):
         return kaltura_element(video)
 
-    def video(self):
+    def video_element(self):
         """
         Return a minidom for the video file
         """
@@ -166,13 +242,22 @@ class VideoHandler(AbstractElementHandler):
             elif source.service == KALTURA_VIDEO_SERVICE:
                 result = self.kaltura(video)
             else:
-                logger.warning("Unsupported Video %s", video.ntiid)
+                logger.warning("Unsupported Video Service %s",
+                               video.ntiid)
         return result
 
-    def write(self):
-        """
-        Write the necesary files to the archive
-        """
+    def write_to(self, archive):
+        video = self.video_element()
+        if video is not None:
+            # write the html file under the content
+            # directory
+            path = os.path.join(archive, "content",
+                                "%s.html" % self.identifier)
+            dirname = os.path.dirname(path)
+            if os.path.exists(dirname):
+                os.makedirs(dirname)
+            with open(os.path.join(path), "w") as fp:
+                fp.write(video.toprettyxml())
 
 
 @component.adapter(INTIVideoRef)
