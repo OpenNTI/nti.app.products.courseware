@@ -35,7 +35,7 @@ class IBaseElementHandler(interface.Interface):
         returns an iterable of minidom elements for the manifest resources
         """
 
-    def write():
+    def write_to(archive):
         """
         Write the necesary files to the archive
         """
