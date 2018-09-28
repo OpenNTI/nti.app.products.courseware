@@ -90,4 +90,3 @@ class TestDiscussion(ApplicationLayerTest):
                 transaction.doom()
         finally:
             shutil.rmtree(archive, True)
-
