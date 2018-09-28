@@ -21,6 +21,9 @@ from zope.interface.common.idatetime import IDateTime
 from nti.app.products.courseware.cartridge.mixins import AbstractElementHandler
 from nti.app.products.courseware.cartridge.mixins import resolve_modelcontent_body
 
+from nti.app.products.courseware.cartridge.renderer import execute
+from nti.app.products.courseware.cartridge.renderer import get_renderer
+
 from nti.contenttypes.presentation.interfaces import INTIDiscussionRef
 
 from nti.dataserver.contenttypes.forums.interfaces import IForum
@@ -38,7 +41,10 @@ logger = __import__('logging').getLogger(__name__)
 @component.adapter(ITopic)
 class TopicHandler(AbstractElementHandler):
 
-    def iter_nodes(self):
+    def iter_items(self):
+        return ()
+
+    def iter_resources(self):
         return ()
 
     # cartridge
@@ -79,6 +85,9 @@ class TopicHandler(AbstractElementHandler):
 
 @component.adapter(INTIDiscussionRef)
 class DiscussionRefHandler(AbstractElementHandler):
+
+    def iter_items(self):
+        return ()
 
     @Lazy
     def topic(self):
@@ -139,45 +148,32 @@ class DiscussionRefHandler(AbstractElementHandler):
 
     def topicMeta(self):
         """
-        Return a minidom for the topicMeta file
+        Return a the content for the topicMeta file
         """
-        DOMimpl = minidom.getDOMImplementation()
-        xmldoc = DOMimpl.createDocument(None, "topicMeta", None)
-        doc_root = xmldoc.documentElement
-        doc_root.setAttributeNS(None, "identifier", "%s" % self.doc_id)
-        doc_root.setAttributeNS(None, "xmlns",
-                                "http://canvas.instructure.com/xsd/cccv1p0")
-        doc_root.setAttributeNS(None, "xmlns:xsi",
-                                "http://www.w3.org/2001/XMLSchema-instance")
-        doc_root.setAttributeNS(None, "xsi:schemaLocation",
-                                "http://canvas.instructure.com/xsd/cccv1p0 "
-                                "http://canvas.instructure.com/xsd/cccv1p0.xsd")
-        # add fields
         # pylint: disable=no-member
-        self.addTextNode(xmldoc, doc_root, "title",
-                         self.to_plain_text(self.context.title or ''))
-        self.addTextNode(xmldoc, doc_root, "topic_id",
-                         self.intids.queryId(self.topic))
-
-        self.addTextNode(xmldoc, doc_root, "type", 'announcement')
-        self.addTextNode(xmldoc, doc_root, "allow_rating", 'false')
-        self.addTextNode(xmldoc, doc_root, "module_locked", 'active')
-        self.addTextNode(xmldoc, doc_root, "sort_by_rating", 'false')
-        self.addTextNode(xmldoc, doc_root, "workflow_state", 'active')
-        self.addTextNode(xmldoc, doc_root, "has_group_category", 'false')
-        self.addTextNode(xmldoc, doc_root, "only_graders_can_rate", 'false')
-        self.addTextNode(xmldoc, doc_root, "discussion_type", 'side_comment')
-
         createdTime = IDateTime(self.createdTime)
         createdTime = to_external_object(createdTime)
-        self.addTextNode(xmldoc, doc_root, "posted_at", createdTime)
-        self.addTextNode(xmldoc, doc_root, "delayed_post_at", createdTime)
-
-        self.addTextNode(xmldoc, doc_root, "position", self.position)
-        return doc_root
+        renderer = get_renderer("topicMeta", ".pt")
+        context = {
+            'identifier': self.doc_id,
+            'title': self.to_plain_text(self.context.title or ''),
+            'topic_id': self.intids.queryId(self.topic),
+            'type': 'announcement',
+            "allow_rating": 'false',
+            "module_locked": 'active',
+            "sort_by_rating": 'false',
+            "workflow_state": 'active',
+            "has_group_category": 'false',
+            "only_graders_can_rate": 'false',
+            "discussion_type": 'side_comment',
+            'posted_at': createdTime,
+            "delayed_post_at": createdTime,
+            "position": self.position
+        }
+        return execute(renderer, {"context":context})
 
     def write_to(self, archive):
-        element = self.topicMeta()
+        content = self.topicMeta()
         name = "%s.xml" % self.identifier
         with open(os.path.join(archive, name), "w") as fp:
-            fp.write(element.toprettyxml())
+            fp.write(content)
