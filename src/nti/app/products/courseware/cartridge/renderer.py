@@ -71,7 +71,7 @@ def get_renderer(base_template, extension,
     return pyramid_get_renderer(template, package)
 
 
-def render(renderer, values, request=None):
+def execute(renderer, values, request=None, view=None):
     request = Request() if request is None else request
-    system_values = {"request": request, 'view': None}
+    system_values = {"request": request, 'view': view}
     return renderer(values, system_values)
