@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<topicMeta 	identifier="iden" 
+			tal:attributes="identifier context/identifier"
+			xmlns="http://canvas.instructure.com/xsd/cccv1p0" 
+			xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+			xsi:schemaLocation="http://canvas.instructure.com/xsd/cccv1p0 http://canvas.instructure.com/xsd/cccv1p0.xsd">
+	<topic_id tal:content="context/topic_id">iTopic</topic_id>
+ 	<title tal:content="context/title">Title</title>
+	<posted_at tal:content="context/posted_at">2016-06-03T04:01:00</posted_at>
+	<delayed_post_at tal:content="context/delayed_post_at">2016-06-03T04:01:00</delayed_post_at>
+	<position tal:content="context/position">0</position>
+	<type tal:content="context/announcement">announcement</type>
+	<discussion_type tal:content="context/discussion_type">side_comment</discussion_type>
+	<has_group_category tal:content="context/has_group_category">false</has_group_category>
+	<workflow_state tal:content="context/active">active</workflow_state>
+	<module_locked tal:content="context/module_locked">false</module_locked>
+	<allow_rating tal:content="context/allow_rating">false</allow_rating>
+	<only_graders_can_rate tal:content="context/only_graders_can_rate">false</only_graders_can_rate>
+	<sort_by_rating tal:content="context/sort_by_rating">false</sort_by_rating>
+</topicMeta>
