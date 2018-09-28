@@ -14,9 +14,23 @@ from pyramid.path import caller_package
 
 from pyramid.renderers import get_renderer as pyramid_get_renderer
 
+from zope import interface
+
 from zope.dottedname import resolve as dottedname
 
+from zope.publisher.interfaces.browser import IBrowserRequest
+
 logger = __import__('logging').getLogger(__name__)
+
+
+@interface.implementer(IBrowserRequest)
+class Request(object):
+    context = None
+    response = None
+    annotations = {}
+
+    def get(self, unused_key, default=None):
+        return default
 
 
 def get_renderer_spec_and_package(base_template, extension,
@@ -40,7 +54,7 @@ def get_renderer_spec_and_package(base_template, extension,
 
 
 def get_renderer(base_template, extension,
-                package=None, level=3):
+                 package=None, level=3):
     """
     Given a template name, find a renderer for it.
     For template name, we accept either a relative or absolute
@@ -55,3 +69,9 @@ def get_renderer(base_template, extension,
                                                       package=package, level=level + 1)
 
     return pyramid_get_renderer(template, package)
+
+
+def render(renderer, values, request=None):
+    request = Request() if request is None else request
+    system_values = {"request": request, 'view': None}
+    return renderer(values, system_values)
