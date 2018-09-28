@@ -10,6 +10,8 @@ from __future__ import absolute_import
 
 import os
 
+from six import StringIO
+
 from xml.dom import minidom
 
 from zope import component
@@ -54,33 +56,24 @@ class TopicHandler(AbstractElementHandler):
         Return a minidom for the topic file
         """
         topic = self.context
-        DOMimpl = minidom.getDOMImplementation()
-        xmldoc = DOMimpl.createDocument(None, "topic", None)
-        doc_root = xmldoc.documentElement
-        doc_root.setAttributeNS(None, "xmlns",
-                                "http://www.imsglobal.org/xsd/imsccv1p1/imsdt_v1p1")
-        doc_root.setAttributeNS(None, "xmlns:xsi",
-                                "http://www.w3.org/2001/XMLSchema-instance")
-        doc_root.setAttributeNS(None, "xsi:schemaLocation",
-                                "http://www.imsglobal.org/xsd/imsccv1p1/imsdt_v1p1 "
-                                "http://www.imsglobal.org/profile/cc/ccv1p1/ccv1p1_imsdt_v1p1.xsd")
-
-        # add title
-        self.addTextNode(xmldoc, doc_root, "title",
-                         self.to_plain_text(topic.title or ''))
-        # add content
-        node = xmldoc.createElement("text")
-        node.setAttributeNS(None, "texttype", "text/html")
-        content = resolve_modelcontent_body(topic.body)
-        node.appendChild(xmldoc.createTextNode(content))
-        doc_root.appendChild(node)
-        return doc_root
+        renderer = get_renderer("topic", ".pt")
+        context = {
+            'title': self.to_plain_text(topic.title or ''),
+        }
+        # write content
+        writer = StringIO()
+        element = minidom.Text()
+        element.data = resolve_modelcontent_body(topic.headline.body)
+        element.writexml(writer)
+        writer.seek(0)
+        context['text'] = writer.read()
+        return execute(renderer, {"context":context})
 
     def write_to(self, archive):
-        element = self.topic()
+        content = self.topic()
         name = "%s.xml" % self.identifier
         with open(os.path.join(archive, name), "w") as fp:
-            fp.write(element.toprettyxml())
+            fp.write(content)
 
 
 @component.adapter(INTIDiscussionRef)
