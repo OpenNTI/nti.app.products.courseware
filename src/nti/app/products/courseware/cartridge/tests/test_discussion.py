@@ -12,6 +12,9 @@ from hamcrest import is_not
 from hamcrest import assert_that
 does_not = is_not
 
+import shutil
+import tempfile
+
 from zope import component
 
 from zope.intid.interfaces import IIntIds
@@ -39,6 +42,7 @@ class TestDiscussion(ApplicationLayerTest):
 
     @mock_dataserver.WithMockDSTrans
     def test_course_invitations(self):
+
         with mock_dataserver.mock_db_trans(self.ds) as connection:
             intids = component.getUtility(IIntIds)
             forum = GeneralForum()
@@ -63,3 +67,11 @@ class TestDiscussion(ApplicationLayerTest):
             assert_that(handler, is_not(none()))
             assert_that(handler, validly_provides(IBaseElementHandler))
             assert_that(handler, verifiably_provides(IBaseElementHandler))
+            
+            archive = tempfile.mkdtemp()
+            try:
+                # pylint: disable=too-many-function-args
+                handler.write_to(archive)
+            finally:
+                shutil.rmtree(archive, True)
+
