@@ -9,10 +9,10 @@
 	<posted_at tal:content="context/posted_at">2016-06-03T04:01:00</posted_at>
 	<delayed_post_at tal:content="context/delayed_post_at">2016-06-03T04:01:00</delayed_post_at>
 	<position tal:content="context/position">0</position>
-	<type tal:content="context/announcement">announcement</type>
+	<type tal:content="context/type">announcement</type>
 	<discussion_type tal:content="context/discussion_type">side_comment</discussion_type>
 	<has_group_category tal:content="context/has_group_category">false</has_group_category>
-	<workflow_state tal:content="context/active">active</workflow_state>
+	<workflow_state tal:content="context/workflow_state">active</workflow_state>
 	<module_locked tal:content="context/module_locked">false</module_locked>
 	<allow_rating tal:content="context/allow_rating">false</allow_rating>
 	<only_graders_can_rate tal:content="context/only_graders_can_rate">false</only_graders_can_rate>
