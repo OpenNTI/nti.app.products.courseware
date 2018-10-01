@@ -45,7 +45,7 @@ from nti.ntiids.oids import to_external_ntiid_oid
 class TestDiscussion(ApplicationLayerTest):
 
     @mock_dataserver.WithMockDSTrans
-    def test_course_invitations(self):
+    def test_forums(self):
         archive = tempfile.mkdtemp()
         try:
             with mock_dataserver.mock_db_trans(self.ds) as connection:

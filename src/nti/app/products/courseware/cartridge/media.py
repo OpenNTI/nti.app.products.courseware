@@ -23,6 +23,9 @@ from nti.app.products.courseware.cartridge.interfaces import IElementHandler
 
 from nti.app.products.courseware.cartridge.mixins import AbstractElementHandler
 
+from nti.app.products.courseware.cartridge.renderer import execute
+from nti.app.products.courseware.cartridge.renderer import get_renderer
+
 from nti.contentlibrary.interfaces import IContentPackage
 from nti.contentlibrary.interfaces import IFilesystemBucket
 
@@ -75,21 +78,14 @@ class TranscriptHandler(AbstractElementHandler):
     @property
     def track(self):
         """
-        Return a minidom for the track element
+        Return the source for the transcript file
         """
         transcript = self.context
         if isinstance(transcript.src, six.string_types):
             # The source is the relative location in the
             # content package; it should be saved in the
             # same relative location in the cartridge
-            DOMimpl = minidom.getDOMImplementation()
-            xmldoc = DOMimpl.createDocument(None, "track", None)
-            doc_root = xmldoc.documentElement
-            doc_root.setAttribute("src", transcript.src)
-            return doc_root
-        else:  # pragma: no cover
-            # No support for authored transcripts
-            pass
+            return transcript.src
 
     def write_to(self, archive):
         transcript = self.context
@@ -116,40 +112,31 @@ class TranscriptHandler(AbstractElementHandler):
 
 def youtube_element(video):
     """
-    Return a minidom element to represent a youtube video file 
+    Return a string that represent a youtube video file 
     resource in a cartrige
     """
-    DOMimpl = minidom.getDOMImplementation()
-    xmldoc = DOMimpl.createDocument(None, "html", None)
-    doc_root = xmldoc.documentElement
-    body = xmldoc.createElement("body")
-    body.setAttribute("style", "padding: 20px")
-    doc_root.appendChild(body)
-    # source
     source = next(iter(video.sources))  # required
     source_id = next(iter(source.source))  # required
-    # iframe
-    iframe = xmldoc.createElement("iframe")
-    iframe.setAttribute("src",
-                        "https://www.youtube.com/embed/%s?rel=0" % source_id)
-    iframe.setAttribute("width", str(source.width))
-    iframe.setAttribute("height", str(source.height))
-    iframe.setAttribute("frameborder", "0")
-    iframe.setAttribute("allow", "autoplay; encrypted-media")
-    body.appendChild(iframe)
+    src_href = "https://www.youtube.com/embed/%s?rel=0" % source_id
+    renderer = get_renderer("youtube", ".pt")
+    context = {
+        'style': 'padding: 20px',
+        'src': src_href,
+        'width': source.width,
+        'height': source.height,
+        "frameborder": '0',
+        "allow": 'autoplay; encrypted-media',
+        'transcript': None,
+    }
     # track
     if video.transcripts:
         for transcript in video.transcripts:
             handler = IElementHandler(transcript, None)
             track = getattr(handler, "track", None)
-            if track is not None:
-                body.appendChild(track)
-                track_set = True
+            if track:
+                context['transcript'] = track
                 break
-        if not track_set:
-            logger.warning("Unsupported transcript source(s) for video %s",
-                           video.ntiid)
-    return doc_root
+    return execute(renderer, {"context": context})
 
 
 DEFAULT_KALTURA_SRC = """
@@ -161,19 +148,17 @@ uiconf_id/{{uiconf_id}}/partner_id/{{partner_id}}?autoembed=true&entry_id={{entr
 
 def kaltura_element(video, uiconf_id="15491291"):
     """
-    Return a minidom element to represent a kaltura video file 
+    Return a string that represent a kaltura video file 
     resource in a cartrige
     """
-    DOMimpl = minidom.getDOMImplementation()
-    xmldoc = DOMimpl.createDocument(None, "html", None)
-    doc_root = xmldoc.documentElement
-    body = xmldoc.createElement("body")
-    body.setAttribute("style", "padding: 20px")
-    doc_root.appendChild(body)
-    # source
     source = next(iter(video.sources))  # required
     source_id = next(iter(source.source))  # required
     entry_id, partner_id = source_id.split(':')
+    renderer = get_renderer("kaltura", ".pt")
+    context = {
+        'style': 'padding: 20px',
+        'transcript': None,
+    }
     # script
     kaltura_src = DEFAULT_KALTURA_SRC.replace(r'\n', '')
     kaltura_src = kaltura_src.replace("{{entry_id}}", entry_id)
@@ -181,22 +166,16 @@ def kaltura_element(video, uiconf_id="15491291"):
     kaltura_src = kaltura_src.replace("{{partner_id}}", partner_id)
     kaltura_src = kaltura_src.replace("{{width}}", str(source.width))
     kaltura_src = kaltura_src.replace("{{height}}", str(source.height))
-    script = xmldoc.createElement("script")
-    script.setAttribute("src", kaltura_src)
-    body.appendChild(script)
+    context['src'] = kaltura_src.strip()
     # track
     if video.transcripts:
         for transcript in video.transcripts:
             handler = IElementHandler(transcript, None)
             track = getattr(handler, "track", None)
-            if track is not None:
-                body.appendChild(track)
-                track_set = True
+            if track:
+                context['transcript'] = track
                 break
-        if not track_set:
-            logger.warning("Unsupported transcript source(s) for video %s",
-                           video.ntiid)
-    return doc_root
+    return execute(renderer, {"context": context})
 
 
 @component.adapter(INTIVideo)
@@ -254,10 +233,10 @@ class VideoHandler(AbstractElementHandler):
             path = os.path.join(archive, "content",
                                 "%s.html" % self.identifier)
             dirname = os.path.dirname(path)
-            if os.path.exists(dirname):
+            if not os.path.exists(dirname):
                 os.makedirs(dirname)
             with open(os.path.join(path), "w") as fp:
-                fp.write(video.toprettyxml())
+                fp.write(video)
 
 
 @component.adapter(INTIVideoRef)

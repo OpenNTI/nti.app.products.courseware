@@ -1,0 +1,17 @@
+<html>
+	<body style="padding: 20px" tal:attributes="style context/style">
+		<iframe src="https://www.youtube.com/embed/000?rel=0"
+        		width="300"
+        		height="300"
+        		frameborder="0"
+        		allow="autoplay; encrypted-media"
+        		tal:attributes="src context/src;
+        						width context/width;
+        						height context/height;
+        						frameborder context/frameborder;
+        						allow context/allow">
+		</iframe>
+		<track tal:condition="context/transcript"
+			   tal:attributes="src context/transcript" />
+	</body>
+</html>

@@ -16,4 +16,12 @@
 			 for="nti.contenttypes.presentation.interfaces.INTIDiscussionRef"
 			 provides=".interfaces.IElementHandler" />
 
+	<adapter factory=".media.TranscriptHandler"
+			 for="nti.contenttypes.presentation.interfaces.INTITranscript"
+			 provides=".interfaces.IElementHandler" />
+
+	<adapter factory=".media.VideoHandler"
+			 for="nti.contenttypes.presentation.interfaces.INTIVideo"
+			 provides=".interfaces.IElementHandler" />
+
 </configure>
