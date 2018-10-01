@@ -168,3 +168,38 @@ class TestCourseTabPreferencesView(ApplicationLayerTest):
 		result = self.testapp.get(url, status=200)
 		assert_that(result.json_body, has_entries({'names': has_entries({"1": "a", "2": "b", "3": "c"}),
 												   'order': contains("2", "1", "3", "4")}))
+
+		# section courses
+		with mock_dataserver.mock_db_trans(self.ds, site_name='platform.ou.edu'):
+			entry = find_object_with_ntiid(self.course_ntiid)
+			course = ICourseInstance(entry)
+			tab_pref = ICourseTabPreferences(course.SubInstances['01'])
+			assert_that(tab_pref.names, has_entries({"1": "a", "2": "b", "3": "c"}))
+			assert_that(tab_pref.order, contains("2", "1", "3", "4"))
+
+		url = self.course_url + "/SubInstances/01/CourseTabPreferences"
+		result = self.testapp.get(url, status=200)
+		assert_that(result.json_body, has_entries({'names': has_entries({"1": "a", "2": "b", "3": "c"}),
+												   'order': contains("2", "1", "3", "4")}))
+
+		params = { "names": {"1":"aa", "2": "b", "4": "z"}, "order": ["4", "3", "2"]}
+		result = self.testapp.put_json(url, params=params, status=200)
+		assert_that(result.json_body, has_entries({'names': has_entries({"1": "aa", "2": "b", "4": "z"}),
+												   'order': contains("4", "3", "2")}))
+
+		# clear section, inherit from parent
+		params = { "names": None, "order": None}
+		result = self.testapp.put_json(url, params=params, status=200)
+		assert_that(result.json_body, has_entries({'names': has_entries({"1": "a", "2": "b", "3": "c"}),
+												   'order': contains("2", "1", "3", "4")}))
+
+		# clear parent
+		with mock_dataserver.mock_db_trans(self.ds, site_name='platform.ou.edu'):
+			entry = find_object_with_ntiid(self.course_ntiid)
+			course = ICourseInstance(entry)
+			pref = ICourseTabPreferences(course)
+			pref.clear()
+
+		result = self.testapp.get(url, status=200)
+		assert_that(result.json_body, has_entries({'names': has_length(0),
+												   'order': has_length(0)}))
