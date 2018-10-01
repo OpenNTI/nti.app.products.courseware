@@ -20,7 +20,7 @@ from nti.contenttypes.courses.interfaces import ICourseTabPreferences
 
 from nti.contenttypes.courses.utils import get_parent_course
 
-from nti.contenttypes.courses.tab_preference import CourseTabPreferencesFactory
+from nti.contenttypes.courses.tab_preference import tab_prefereneces_for_course
 
 from nti.dataserver.authorization import is_admin
 
@@ -71,7 +71,7 @@ class SectioninstanceCourseTabPreferences(Contained):
 @component.adapter(ICourseSubInstance)
 @interface.implementer(ICourseTabPreferences)
 def _section_instance_course_tab_preferences(course):
-    section_prefs = CourseTabPreferencesFactory(course)
+    section_prefs = tab_prefereneces_for_course(course)
     parent_course = get_parent_course(course)
     if parent_course.Outline != course.Outline:
         return section_prefs
