@@ -1,0 +1,8 @@
+<html>
+	<body style="padding: 20px" tal:attributes="style context/style">
+		<script src="https://cdnapisec.kaltura.com" 
+				tal:attributes="src context/src" />
+		<track tal:condition="context/transcript"
+			   tal:attributes="src context/transcript" />
+	</body>
+</html>

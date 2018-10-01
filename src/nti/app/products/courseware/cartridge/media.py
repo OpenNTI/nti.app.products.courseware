@@ -148,19 +148,17 @@ uiconf_id/{{uiconf_id}}/partner_id/{{partner_id}}?autoembed=true&entry_id={{entr
 
 def kaltura_element(video, uiconf_id="15491291"):
     """
-    Return a minidom element to represent a kaltura video file 
+    Return a string that represent a kaltura video file 
     resource in a cartrige
     """
-    DOMimpl = minidom.getDOMImplementation()
-    xmldoc = DOMimpl.createDocument(None, "html", None)
-    doc_root = xmldoc.documentElement
-    body = xmldoc.createElement("body")
-    body.setAttribute("style", "padding: 20px")
-    doc_root.appendChild(body)
-    # source
     source = next(iter(video.sources))  # required
     source_id = next(iter(source.source))  # required
     entry_id, partner_id = source_id.split(':')
+    renderer = get_renderer("kaltura", ".pt")
+    context = {
+        'style': 'padding: 20px',
+        'transcript': None,
+    }
     # script
     kaltura_src = DEFAULT_KALTURA_SRC.replace(r'\n', '')
     kaltura_src = kaltura_src.replace("{{entry_id}}", entry_id)
@@ -168,22 +166,16 @@ def kaltura_element(video, uiconf_id="15491291"):
     kaltura_src = kaltura_src.replace("{{partner_id}}", partner_id)
     kaltura_src = kaltura_src.replace("{{width}}", str(source.width))
     kaltura_src = kaltura_src.replace("{{height}}", str(source.height))
-    script = xmldoc.createElement("script")
-    script.setAttribute("src", kaltura_src)
-    body.appendChild(script)
+    context['src'] = kaltura_src.strip()
     # track
     if video.transcripts:
         for transcript in video.transcripts:
             handler = IElementHandler(transcript, None)
             track = getattr(handler, "track", None)
-            if track is not None:
-                body.appendChild(track)
-                track_set = True
+            if track:
+                context['transcript'] = track
                 break
-        if not track_set:
-            logger.warning("Unsupported transcript source(s) for video %s",
-                           video.ntiid)
-    return doc_root
+    return execute(renderer, {"context": context})
 
 
 @component.adapter(INTIVideo)
