@@ -50,6 +50,9 @@ class SectioninstanceCourseTabPreferences(Contained):
     def update_order(self, order):
         self.section_prefs.update_order(order)
 
+    def reset(self):
+        self.section_prefs.reset()
+        
     def clear(self):
         self.section_prefs.clear()
 
@@ -66,6 +69,10 @@ class SectioninstanceCourseTabPreferences(Contained):
     @property
     def order(self):
         return self.section_prefs.order or self.parent_prefs.order
+
+    def __nonzero__(self):
+        return True
+    __bool__ = __nonzero__
 
 
 @component.adapter(ICourseSubInstance)
