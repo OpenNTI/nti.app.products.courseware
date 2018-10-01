@@ -56,7 +56,7 @@ class TopicHandler(AbstractElementHandler):
         Return a minidom for the topic file
         """
         topic = self.context
-        renderer = get_renderer("topic", ".pt")
+        renderer = get_renderer("discussion_topic", ".pt")
         context = {
             'title': self.to_plain_text(topic.title or ''),
         }
@@ -146,7 +146,7 @@ class DiscussionRefHandler(AbstractElementHandler):
         # pylint: disable=no-member
         createdTime = IDateTime(self.createdTime)
         createdTime = to_external_object(createdTime)
-        renderer = get_renderer("topicMeta", ".pt")
+        renderer = get_renderer("discussion_topic_meta", ".pt")
         context = {
             'identifier': self.doc_id,
             'title': self.to_plain_text(self.context.title or ''),

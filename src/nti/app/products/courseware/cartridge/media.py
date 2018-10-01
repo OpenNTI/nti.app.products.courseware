@@ -118,7 +118,7 @@ def youtube_element(video):
     source = next(iter(video.sources))  # required
     source_id = next(iter(source.source))  # required
     src_href = "https://www.youtube.com/embed/%s?rel=0" % source_id
-    renderer = get_renderer("youtube", ".pt")
+    renderer = get_renderer("video_youtube", ".pt")
     context = {
         'style': 'padding: 20px',
         'src': src_href,
@@ -154,7 +154,7 @@ def kaltura_element(video, uiconf_id="15491291"):
     source = next(iter(video.sources))  # required
     source_id = next(iter(source.source))  # required
     entry_id, partner_id = source_id.split(':')
-    renderer = get_renderer("kaltura", ".pt")
+    renderer = get_renderer("video_kaltura", ".pt")
     context = {
         'style': 'padding: 20px',
         'transcript': None,
