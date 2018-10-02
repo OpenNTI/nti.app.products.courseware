@@ -8,6 +8,8 @@ from __future__ import division
 from __future__ import print_function
 from __future__ import absolute_import
 
+from xml.dom import minidom
+
 import six
 
 from zope import component
@@ -72,3 +74,12 @@ class AbstractElementHandler(object):
         return component.getAdapter(content,
                                     IPlainTextContentFragment,
                                     name='text')
+
+    @classmethod
+    def safe_xml_text(cls, content):
+        writer = six.StringIO()
+        element = minidom.Text()
+        element.data = content
+        element.writexml(writer)
+        writer.seek(0)
+        return writer.read()

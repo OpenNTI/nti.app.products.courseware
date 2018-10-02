@@ -10,8 +10,6 @@ from __future__ import absolute_import
 
 import os
 
-from six import StringIO
-
 from xml.dom import minidom
 
 from zope import component
@@ -61,12 +59,8 @@ class TopicHandler(AbstractElementHandler):
             'title': self.to_plain_text(topic.title or ''),
         }
         # write content
-        writer = StringIO()
-        element = minidom.Text()
-        element.data = resolve_modelcontent_body(topic.headline.body)
-        element.writexml(writer)
-        writer.seek(0)
-        context['text'] = writer.read()
+        content = resolve_modelcontent_body(topic.headline.body)
+        context['text'] = self.safe_xml_text(content)
         return execute(renderer, {"context":context})
 
     def write_to(self, archive):
