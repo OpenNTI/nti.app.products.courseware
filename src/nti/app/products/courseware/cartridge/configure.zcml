@@ -8,6 +8,7 @@
 	<include package="zope.component" />
 
 	<!-- Adapters -->
+	<!-- Discussions -->
 	<adapter factory=".discussion.TopicHandler"
 			 for="nti.dataserver.contenttypes.forums.interfaces.ITopic"
 			 provides=".interfaces.IElementHandler" />
@@ -16,12 +17,18 @@
 			 for="nti.contenttypes.presentation.interfaces.INTIDiscussionRef"
 			 provides=".interfaces.IElementHandler" />
 
+	<!-- Media -->
 	<adapter factory=".media.TranscriptHandler"
 			 for="nti.contenttypes.presentation.interfaces.INTITranscript"
 			 provides=".interfaces.IElementHandler" />
 
 	<adapter factory=".media.VideoHandler"
 			 for="nti.contenttypes.presentation.interfaces.INTIVideo"
+			 provides=".interfaces.IElementHandler" />
+
+	<!-- Evaluations -->
+	<adapter factory=".question.FreeResponsePartHandler"
+			 for="nti.assessment.interfaces.IQNonGradableFreeResponsePart"
 			 provides=".interfaces.IElementHandler" />
 
 </configure>
