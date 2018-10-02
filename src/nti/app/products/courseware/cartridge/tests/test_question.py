@@ -29,8 +29,11 @@ from nti.app.testing.application_webtest import ApplicationLayerTest
 from nti.contentfragments.interfaces import ISanitizedHTMLContentFragment
 
 from nti.assessment.parts import QFreeResponsePart
+from nti.assessment.parts import QMultipleChoicePart
 
 from nti.assessment.question import QQuestion
+
+from nti.assessment.solution import QMultipleChoiceSolution
 
 from nti.dataserver.tests import mock_dataserver
 
@@ -38,7 +41,7 @@ from nti.dataserver.tests import mock_dataserver
 class TestQuestion(ApplicationLayerTest):
 
     @mock_dataserver.WithMockDSTrans
-    def test_free_response(self):
+    def xtest_free_response(self):
         with mock_dataserver.mock_db_trans(self.ds) as connection:
             intids = component.getUtility(IIntIds)
             question = QQuestion()
@@ -47,6 +50,32 @@ class TestQuestion(ApplicationLayerTest):
             part.content = ISanitizedHTMLContentFragment(u'my content')
             question.parts = [part]
             intids.register(question)
+
+            handler = IElementHandler(part, None)
+            assert_that(handler, is_not(none()))
+            assert_that(handler, validly_provides(IBaseElementHandler))
+            assert_that(handler, verifiably_provides(IBaseElementHandler))
+
+            handler.write_to()
+            transaction.doom()
+
+    @mock_dataserver.WithMockDSTrans
+    def test_multiple_choice(self):
+        with mock_dataserver.mock_db_trans(self.ds) as connection:
+            intids = component.getUtility(IIntIds)
+            question = QQuestion()
+            connection.add(question)
+            intids.register(question)
+            # parts
+            part = QMultipleChoicePart()
+            part.choices = [ISanitizedHTMLContentFragment(u'a'),
+                            ISanitizedHTMLContentFragment(u'b')]
+            part.content = ISanitizedHTMLContentFragment(u'my content')
+            question.parts = [part]
+            # solutions
+            solution = QMultipleChoiceSolution()
+            solution.value = u"0"
+            part.solutions = [solution]
 
             handler = IElementHandler(part, None)
             assert_that(handler, is_not(none()))

@@ -31,4 +31,12 @@
 			 for="nti.assessment.interfaces.IQNonGradableFreeResponsePart"
 			 provides=".interfaces.IElementHandler" />
 
+	<adapter factory=".question.NonGradableMultipleChoicePartHandler"
+			 for="nti.assessment.interfaces.IQNonGradableMultipleChoicePart"
+			 provides=".interfaces.IElementHandler" />
+
+	<adapter factory=".question.MultipleChoicePartHandler"
+			 for="nti.assessment.interfaces.IQMultipleChoicePart"
+			 provides=".interfaces.IElementHandler" />
+
 </configure>

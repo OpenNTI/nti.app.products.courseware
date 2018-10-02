@@ -14,7 +14,7 @@
 	</itemmetadata>
 	<presentation>
 		<material>
-			<mattext texttype="text/html" tal:content="context/mattext">Please</mattext>
+			<mattext texttype="text/html" tal:content="context/mattext">Content</mattext>
 		</material>
 		<response_str ident="response1" rcardinality="Single">
 			<render_fib>
