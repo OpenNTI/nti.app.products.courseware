@@ -10,6 +10,9 @@ from __future__ import absolute_import
 
 from zope import interface
 
+from nti.contenttypes.completion.adapters import CompletableItemContainerFactory
+from nti.contenttypes.completion.adapters import CompletableItemDefaultRequiredFactory
+
 from nti.app.products.courseware.completion import COMPLETION_POLICY_FILE_NAME
 from nti.app.products.courseware.completion import DEFAULT_REQUIRED_ITEMS_FILE_NAME
 from nti.app.products.courseware.completion import COMPLETABLE_ITEM_REQUIRED_FILE_NAME
@@ -22,6 +25,8 @@ from nti.contenttypes.courses.exporter import BaseSectionExporter
 
 from nti.contenttypes.courses.interfaces import ICourseInstance
 from nti.contenttypes.courses.interfaces import ICourseCompletionSectionExporter
+
+from nti.contenttypes.courses.utils import get_course_subinstances
 
 from nti.contenttypes.presentation.interfaces import IContentBackedPresentationAsset
 
@@ -74,13 +79,16 @@ class CourseCompletionExporter(BaseSectionExporter):
                        bucket=bucket,
                        contentType="application/x-json")
 
+        for sub_instance in get_course_subinstances(course):
+            self._export_policy(sub_instance, filer, backup, salt)
+
     def _export_required_items(self, course, filer, backup, salt):
         """
         Exports the required items given by the required container. We'll
         need to make sure we salt ntiid values if (a) not a backup and (b) the
         objects are not content-backed.
         """
-        required_container = ICompletableItemContainer(course)
+        required_container = CompletableItemContainerFactory(course)
         ext_container = to_external_object(required_container)
         if not backup:
             for required_type_key in ('required', 'optional'):
@@ -96,11 +104,14 @@ class CourseCompletionExporter(BaseSectionExporter):
                        bucket=bucket,
                        contentType="application/x-json")
 
+        for sub_instance in get_course_subinstances(course):
+            self._export_required_items(sub_instance, filer, backup, salt)
+
     def _export_default_required_items(self, course, filer):
         """
         Exports the default required (mimetypes) of this course completion context.
         """
-        default_required_container = ICompletableItemDefaultRequiredPolicy(course)
+        default_required_container = CompletableItemDefaultRequiredFactory(course)
         ext_policy = to_external_object(default_required_container)
         if ext_policy:
             source = self.dump(ext_policy)
@@ -110,6 +121,9 @@ class CourseCompletionExporter(BaseSectionExporter):
                        overwrite=True,
                        bucket=bucket,
                        contentType="application/x-json")
+
+        for sub_instance in get_course_subinstances(course):
+            self._export_default_required_items(sub_instance, filer)
 
     def export(self, context, filer, backup=True, salt=None):
         course = ICourseInstance(context)
