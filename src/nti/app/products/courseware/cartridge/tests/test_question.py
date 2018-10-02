@@ -41,7 +41,7 @@ from nti.dataserver.tests import mock_dataserver
 class TestQuestion(ApplicationLayerTest):
 
     @mock_dataserver.WithMockDSTrans
-    def xtest_free_response(self):
+    def test_free_response(self):
         with mock_dataserver.mock_db_trans(self.ds) as connection:
             intids = component.getUtility(IIntIds)
             question = QQuestion()

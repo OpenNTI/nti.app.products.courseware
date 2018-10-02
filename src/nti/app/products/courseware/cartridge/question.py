@@ -60,8 +60,8 @@ class AbstractResponsePartHandler(AbstractElementHandler):
 
     @property
     def content(self):
-        result = self.context.content or getattr(
-            self.evaluation, 'content', None)
+        result = self.context.content \
+              or getattr(self.evaluation, 'content', None)
         return self.safe_xml_text(result or u'')
 
     def item(self, package=None):
