@@ -9,6 +9,7 @@ from __future__ import print_function
 from __future__ import absolute_import
 
 import os
+import time
 import shutil
 
 from xml.dom import minidom
@@ -139,34 +140,27 @@ def youtube_element(video):
     return execute(renderer, {"context": context})
 
 
-DEFAULT_KALTURA_SRC = """
-https://cdnapisec.kaltura.com/p/{{partner_id}}/sp/{{partner_id}}00/embedIframeJs/
-uiconf_id/{{uiconf_id}}/partner_id/{{partner_id}}?autoembed=true&entry_id={{entry_id}}
-&playerId=kaltura_player_1377036702&cache_st=1377036702&width={{width}}&height={{height}}"
-"""
-
-
 def kaltura_element(video, uiconf_id="15491291"):
     """
     Return a string that represent a kaltura video file 
     resource in a cartrige
     """
+    current = int(time.time())
     source = next(iter(video.sources))  # required
     source_id = next(iter(source.source))  # required
     entry_id, partner_id = source_id.split(':')
     renderer = get_renderer("video_kaltura", ".pt")
     context = {
         'style': 'padding: 20px',
+        'entry_id': entry_id,
+        'uiconf_id': uiconf_id,
+        'partner_id': partner_id,
+        'width': source.width,
+        'height': source.height,
         'transcript': None,
+        'cache_st': current,
+        'playerId': 'kaltura_player_%s' % current
     }
-    # script
-    kaltura_src = DEFAULT_KALTURA_SRC.replace(r'\n', '')
-    kaltura_src = kaltura_src.replace("{{entry_id}}", entry_id)
-    kaltura_src = kaltura_src.replace("{{uiconf_id}}", uiconf_id)
-    kaltura_src = kaltura_src.replace("{{partner_id}}", partner_id)
-    kaltura_src = kaltura_src.replace("{{width}}", str(source.width))
-    kaltura_src = kaltura_src.replace("{{height}}", str(source.height))
-    context['src'] = kaltura_src.strip()
     # track
     if video.transcripts:
         for transcript in video.transcripts:

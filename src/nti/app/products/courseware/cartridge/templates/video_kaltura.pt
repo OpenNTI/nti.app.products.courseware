@@ -1,7 +1,14 @@
 <html>
 	<body style="padding: 20px" tal:attributes="style context/style">
-		<script src="https://cdnapisec.kaltura.com" 
-				tal:attributes="src context/src" />
+		<script src="https://cdnapisec.kaltura.com"
+				tal:define="partner_id context/partner_id;
+							uiconf_id context/uiconf_id;
+							entry_id context/entry_id;
+							width context/width;
+							height context/height;
+							playerId context/playerId;
+							cache_st context/cache_st"
+				tal:attributes="src string:https://cdnapisec.kaltura.com/p/${partner_id}/sp/${partner_id}00/embedIframeJs/uiconf_id/${uiconf_id}/partner_id/${partner_id}?autoembed=true&entry_id=${entry_id}&width=${width}&height=${height}&playerId=${playerId}&cache_st=${cache_st}" />
 		<track tal:condition="context/transcript"
 			   tal:attributes="src context/transcript" />
 	</body>
