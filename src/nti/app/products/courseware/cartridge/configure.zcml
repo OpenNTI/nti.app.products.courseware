@@ -17,13 +17,17 @@
 			 for="nti.contenttypes.presentation.interfaces.INTIDiscussionRef"
 			 provides=".interfaces.IElementHandler" />
 
-	<!-- Media -->
+	<!-- Assets -->
 	<adapter factory=".media.TranscriptHandler"
 			 for="nti.contenttypes.presentation.interfaces.INTITranscript"
 			 provides=".interfaces.IElementHandler" />
 
 	<adapter factory=".media.VideoHandler"
 			 for="nti.contenttypes.presentation.interfaces.INTIVideo"
+			 provides=".interfaces.IElementHandler" />
+
+	<adapter factory=".relatedwork.RelatedWorkHandler"
+			 for="nti.contenttypes.presentation.interfaces.INTIRelatedWorkRef"
 			 provides=".interfaces.IElementHandler" />
 
 	<!-- Evaluations -->
