@@ -35,7 +35,6 @@ from nti.contenttypes.courses.utils import get_parent_course
 from nti.contenttypes.completion.adapters import CompletableItemContainerFactory
 from nti.contenttypes.completion.adapters import CompletableItemDefaultRequiredFactory
 
-from nti.contenttypes.completion.interfaces import ICompletionContext
 from nti.contenttypes.completion.interfaces import ICompletionContextProvider
 from nti.contenttypes.completion.interfaces import ICompletableItemContainer
 from nti.contenttypes.completion.interfaces import ICompletableItemDefaultRequiredPolicy
@@ -143,7 +142,9 @@ class CourseStudentCohort(object):
 
     @Lazy
     def instructors(self):
-        result = {User.get_user(inst.id) for inst in self.course.instructors or ()}
+        result = {
+            User.get_user(inst.id) for inst in self.course.instructors or ()
+        }
         result.discard(None)
         return result
 
@@ -231,7 +232,7 @@ class SubinstanceCompletableItemContainer(object):
         Returns a bool if the given :class:`ICompletableItem` is required.
         """
         return self.subinstance_container.is_item_required(item) \
-            or (    not self.subinstance_container.is_item_optional(item) \
+            or (not self.subinstance_container.is_item_optional(item)
                 and self.parent_container.is_item_required(item))
 
     def get_required_item_count(self):
@@ -245,7 +246,7 @@ class SubinstanceCompletableItemContainer(object):
         Returns a bool if the given :class:`ICompletableItem` is optional.
         """
         return self.subinstance_container.is_item_optional(item) \
-            or (    not self.subinstance_container.is_item_required(item) \
+            or (not self.subinstance_container.is_item_required(item)
                 and self.parent_container.is_item_optional(item))
 
     def get_optional_item_count(self):
