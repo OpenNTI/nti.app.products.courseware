@@ -240,12 +240,13 @@ class VideoRefHandler(AbstractElementHandler):
     def video(self):
         return find_object_with_ntiid(self.context.target)
 
+    def iter_items(self):
+        return ()
+
     def iter_resources(self):
         return ()
 
     # cartridge
 
-    def write(self):
-        """
-        Write the necesary files to the archive
-        """
+    def write_to(self, unused_archive=None):
+        pass
