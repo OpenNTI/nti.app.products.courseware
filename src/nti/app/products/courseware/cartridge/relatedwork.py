@@ -11,6 +11,10 @@ from __future__ import absolute_import
 import os
 import shutil
 
+from xml.dom import minidom
+
+from six.moves import urllib_parse
+
 from zope import component
 
 from zope.cachedescriptors.property import Lazy
@@ -35,7 +39,7 @@ class RelatedWorkHandler(AbstractElementHandler):
     @Lazy
     def href(self):
         return self.context.href or ''
-    
+
     @Lazy
     def is_content(self):
         return "application/vnd.nextthought.content" == self.context.type
@@ -50,11 +54,42 @@ class RelatedWorkHandler(AbstractElementHandler):
         return self.is_external_link and self.href.startswith('resources/')
 
     @Lazy
+    def is_web_link(self):
+        if self.is_external_link:
+            href = self.context.href
+            return bool(urllib_parse.urlparse(href).scheme)
+
+    @Lazy
     def target(self):
         return find_object_with_ntiid(self.context.target)
 
     def iter_items(self):
         return ()
+
+    def resource_node(self):
+        DOMimpl = minidom.getDOMImplementation()
+        xmldoc = DOMimpl.createDocument(None, "resource", None)
+        doc_root = xmldoc.documentElement
+        node_type = "webcontent"
+        if self.is_content and self.target is not None:
+            # pylint: disable=no-member
+            href = self.target.href
+            # use the content unit intid as identifier
+            identifier = self.intids.queryId(self.target)
+        elif self.is_local_resource:
+            # use the related work intid as identifier
+            href = self.href
+            identifier = identifier
+        doc_root.setAttribute("type", node_type)
+        if identifier is not None:
+            doc_root.setAttribute("identifier", identifier)
+        if href:
+            doc_root.setAttribute("href", "%s" % href)
+            # assuming a local resource
+            node = xmldoc.createElement("file")
+            node.setAttributeNS(None, "href", href)
+            doc_root.appendChild(node)
+        return doc_root
 
     def iter_resources(self):
         return ()
