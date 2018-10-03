@@ -78,6 +78,11 @@ class IManifest(interface.Interface):
     """
     cartridge = Object(ICommonCartridge, title=u"The cartridge")
 
+    def mark_resource(iden):
+        """
+        mark a resource in this manifest
+        """
+        
     def has_resource(iden):
         """
         check if the resource w/ the specified iden is in this manifest
