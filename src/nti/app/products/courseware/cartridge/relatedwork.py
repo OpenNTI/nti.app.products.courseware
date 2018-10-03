@@ -85,7 +85,7 @@ class RelatedWorkHandler(AbstractElementHandler):
     def write_content(self, archive):
         unit = self.target
         package = find_interface(unit, IContentPackage, strict=False)
-        root = package.root
+        root = getattr(package, 'root', None)
         if not IFilesystemBucket.providedBy(root):
             logger.warning("Unsupported bucket Boto?")
         else:
