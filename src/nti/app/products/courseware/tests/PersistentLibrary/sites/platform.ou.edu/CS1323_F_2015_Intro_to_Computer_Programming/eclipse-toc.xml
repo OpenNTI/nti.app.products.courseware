@@ -3970,6 +3970,10 @@
 			target-ntiid="tag:nextthought.com,2011-10:NTI-UUID-cf31a3620d16ebc4493c9115da7a97a7"
 			type="application/vnd.nextthought.externallink" visibility="everyone"/>
 	</topic>
+	<topic NTIRelativeScrollHeight="204" 
+		   href="tag_nextthought_com_2011-10_OU-HTML-CS1323_S_2015_Intro_to_Computer_Programming_reading_Chortle_CH46.html" 
+		   label="Arrays" level="part" levelnum="1" 
+		   ntiid="tag:nextthought.com,2011-10:OU-HTML-CS1323_S_2015_Intro_to_Computer_Programming.reading:Chortle_CH46" />
 	<topic NTIRelativeScrollHeight="1348"
 		href="tag_nextthought_com_2011-10_OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming_lec_03_06_LESSON.html"
 		label="Classes with Generics" level="part" levelnum="1"

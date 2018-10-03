@@ -44,6 +44,8 @@ class TestRelatedWork(ApplicationLayerTest):
 
     local_ref = 'tag:nextthought.com,2011-10:OU-RelatedWorkRef-CS1323_F_2015_Intro_to_Computer_Programming.relatedworkref.relwk:04.02.04_rectangles_versus_triangles'
 
+    content_ref = 'tag:nextthought.com,2011-10:OU-RelatedWorkRef-CS1323_F_2015_Intro_to_Computer_Programming.relatedworkref.relwk:chortle.6'
+
     @WithSharedApplicationMockDS(testapp=False, users=False)
     def test_local_content(self):
         # pylint: disable=too-many-function-args
@@ -55,6 +57,20 @@ class TestRelatedWork(ApplicationLayerTest):
                 assert_that(handler, is_not(none()))
                 assert_that(handler, validly_provides(IBaseElementHandler))
                 assert_that(handler, verifiably_provides(IBaseElementHandler))
+                handler.write_to(archive)
+                # cancel
+                transaction.doom()
+        finally:
+            shutil.rmtree(archive, True)
+
+    @WithSharedApplicationMockDS(testapp=False, users=False)
+    def test_content_ref(self):
+        # pylint: disable=too-many-function-args
+        archive = tempfile.mkdtemp()
+        try:
+            with mock_dataserver.mock_db_trans(self.ds, 'platform.ou.edu'):
+                ref = find_object_with_ntiid(self.content_ref)
+                handler = IElementHandler(ref, None)
                 handler.write_to(archive)
                 # cancel
                 transaction.doom()
