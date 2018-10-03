@@ -51,7 +51,7 @@ class TopicHandler(AbstractElementHandler):
 
     def topic(self):
         """
-        Return a minidom for the topic file
+        Return the content for the topic file
         """
         topic = self.context
         renderer = get_renderer("discussion_topic", ".pt")
@@ -135,7 +135,7 @@ class DiscussionRefHandler(AbstractElementHandler):
 
     def topicMeta(self):
         """
-        Return a the content for the topicMeta file
+        Return the content for the topicMeta file
         """
         # pylint: disable=no-member
         createdTime = IDateTime(self.createdTime)

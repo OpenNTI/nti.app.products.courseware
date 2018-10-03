@@ -26,6 +26,10 @@
 			 for="nti.contenttypes.presentation.interfaces.INTIVideo"
 			 provides=".interfaces.IElementHandler" />
 
+	<adapter factory=".media.VideoRefHandler"
+			 for="nti.contenttypes.presentation.interfaces.INTIVideoRef"
+			 provides=".interfaces.IElementHandler" />
+
 	<adapter factory=".relatedwork.RelatedWorkHandler"
 			 for="nti.contenttypes.presentation.interfaces.INTIRelatedWorkRef"
 			 provides=".interfaces.IElementHandler" />
