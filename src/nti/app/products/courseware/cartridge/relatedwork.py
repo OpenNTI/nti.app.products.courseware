@@ -25,6 +25,7 @@ from nti.contentlibrary.interfaces import IContentPackage
 from nti.contentlibrary.interfaces import IFilesystemBucket
 
 from nti.contenttypes.presentation.interfaces import INTIRelatedWorkRef
+from nti.contenttypes.presentation.interfaces import INTIRelatedWorkRefPointer
 
 from nti.ntiids.ntiids import find_object_with_ntiid
 
@@ -74,15 +75,11 @@ class RelatedWorkHandler(AbstractElementHandler):
         if self.is_content and self.target is not None:
             # pylint: disable=no-member
             href = self.target.href
-            # use the content unit intid as identifier
-            identifier = self.intids.queryId(self.target)
         elif self.is_local_resource:
             # use the related work intid as identifier
             href = self.href
-            identifier = identifier
         doc_root.setAttribute("type", node_type)
-        if identifier is not None:
-            doc_root.setAttribute("identifier", identifier)
+        doc_root.setAttribute("identifier", self.identifier)
         if href:
             doc_root.setAttribute("href", "%s" % href)
             # assuming a local resource
@@ -134,3 +131,35 @@ class RelatedWorkHandler(AbstractElementHandler):
             self.write_content(archive)
         elif self.is_local_resource:
             self.write_local(archive)
+
+
+@component.adapter(INTIRelatedWorkRefPointer)
+class RelatedWorkPointerHandler(AbstractElementHandler):
+
+    @Lazy
+    def relatedwork(self):
+        return find_object_with_ntiid(self.context.target)
+
+    @Lazy
+    def relatedwork_id(self):
+        # pylint: disable=no-member
+        return self.intids.queryId(self.relatedwork)
+    
+    @Lazy
+    def title(self):
+        return getattr(self.relatedwork, 'title', None) or ''
+
+    def iter_items(self):
+        DOMimpl = minidom.getDOMImplementation()
+        xmldoc = DOMimpl.createDocument(None, "item", None)
+        doc_root = xmldoc.documentElement
+        doc_root.setAttributeNS(None, "identifier", "%s" % self.identifier)
+        doc_root.setAttributeNS(None, "identifierref", "%s" % self.relatedwork_id)
+        self.addTextNode(xmldoc, doc_root, "title", self.title)
+        return (doc_root,)
+
+    def iter_resources(self):
+        return ()
+    
+    def write_to(self, archive):
+        pass
