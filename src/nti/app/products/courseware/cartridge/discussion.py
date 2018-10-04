@@ -18,6 +18,7 @@ from zope.cachedescriptors.property import Lazy
 
 from zope.interface.common.idatetime import IDateTime
 
+from nti.app.products.courseware.cartridge.mixins import NullElementHandler
 from nti.app.products.courseware.cartridge.mixins import AbstractElementHandler
 from nti.app.products.courseware.cartridge.mixins import resolve_modelcontent_body
 
@@ -39,15 +40,7 @@ logger = __import__('logging').getLogger(__name__)
 
 
 @component.adapter(ITopic)
-class TopicHandler(AbstractElementHandler):
-
-    def iter_items(self):
-        return ()
-
-    def iter_resources(self):
-        return ()
-
-    # cartridge
+class TopicHandler(NullElementHandler):
 
     def topic(self):
         """
@@ -63,7 +56,7 @@ class TopicHandler(AbstractElementHandler):
         context['text'] = self.safe_xml_text(content)
         return execute(renderer, {"context":context})
 
-    def write_to(self, archive):
+    def write_to(self, archive):  # pylint: disable=signature-differs
         content = self.topic()
         name = "%s.xml" % self.identifier
         with open(os.path.join(archive, name), "w") as fp:
@@ -73,29 +66,37 @@ class TopicHandler(AbstractElementHandler):
 @component.adapter(INTIDiscussionRef)
 class DiscussionRefHandler(AbstractElementHandler):
 
-    def iter_items(self):
-        return ()
-
     @Lazy
     def topic(self):
         return find_object_with_ntiid(self.context.target)
 
-    def resource_topic_node(self):
-        topic = self.topic
+    @Lazy
+    def topic_id(self):
         # pylint: disable=no-member
-        doc_id = self.intids.queryId(topic)
+        return self.intids.queryId(self.topic)
+
+    def iter_items(self):
+        DOMimpl = minidom.getDOMImplementation()
+        xmldoc = DOMimpl.createDocument(None, "item", None)
+        doc_root = xmldoc.documentElement
+        doc_root.setAttributeNS(None, "identifier", "%s" % self.identifier)
+        doc_root.setAttributeNS(None, "identifierref", "%s" % self.topic_id)
+        self.addTextNode(xmldoc, doc_root, "title", self.context.title or '')
+        return (doc_root,)
+
+    def resource_topic_node(self):
         DOMimpl = minidom.getDOMImplementation()
         xmldoc = DOMimpl.createDocument(None, "resource", None)
         doc_root = xmldoc.documentElement
         doc_root.setAttributeNS(None, "type", "imsdt_xmlv1p1")
-        doc_root.setAttributeNS(None, "identifier", "%s" % doc_id)
+        doc_root.setAttributeNS(None, "identifier", "%s" % self.topic_id)
         # file
         node = xmldoc.createElement("file")
-        node.setAttributeNS(None, "href", "%s.xml" % doc_id)
+        node.setAttributeNS(None, "href", "%s.xml" % self.topic_id)
         doc_root.appendChild(node)
         # dependency
         node = xmldoc.createElement("dependency")
-        node.setAttributeNS(None, "identifierref", "%s" % self.doc_id)
+        node.setAttributeNS(None, "identifierref", "%s" % self.identifier)
         doc_root.appendChild(node)
         return doc_root
 
