@@ -75,6 +75,8 @@ class DiscussionRefHandler(AbstractElementHandler):
         # pylint: disable=no-member
         return self.intids.queryId(self.topic)
 
+    # manifest items
+
     def iter_items(self):
         DOMimpl = minidom.getDOMImplementation()
         xmldoc = DOMimpl.createDocument(None, "item", None)
@@ -83,6 +85,8 @@ class DiscussionRefHandler(AbstractElementHandler):
         doc_root.setAttributeNS(None, "identifierref", "%s" % self.topic_id)
         self.addTextNode(xmldoc, doc_root, "title", self.context.title or '')
         return (doc_root,)
+
+    # manifest resources
 
     def resource_topic_node(self):
         DOMimpl = minidom.getDOMImplementation()
