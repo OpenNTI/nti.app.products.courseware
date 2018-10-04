@@ -47,8 +47,9 @@ def resolve_modelcontent_body(data):
 @interface.implementer(IElementHandler)
 class AbstractElementHandler(object):
 
-    def __init__(self, context):
+    def __init__(self, context, manifest=None):
         self.context = context
+        self.manifest = manifest
 
     @Lazy
     def intids(self):
@@ -62,9 +63,24 @@ class AbstractElementHandler(object):
 
     @Lazy
     def course(self):
-        return find_interface(self.context, ICourseInstance, strict=False)
+        return getattr(self.manifest, 'course', None) \
+            or find_interface(self.context, ICourseInstance, strict=False)
 
-    def addTextNode(self, xmldoc, parent, name, value):
+    # handler
+
+    def mark_processed(self):
+        if self.manifest is not None:
+            self.manifest.mark_resource(self.identifier)
+
+    def is_processed(self):
+        result = self.manifest is not None \
+             and self.manifest.has_resource(self.identifier)
+        return result
+
+    # helpers
+
+    @classmethod
+    def addTextNode(cls, xmldoc, parent, name, value):
         node = xmldoc.createElement(name)
         node.appendChild(xmldoc.createTextNode(text_(value)))
         parent.appendChild(node)
@@ -94,5 +110,5 @@ class NullElementHandler(AbstractElementHandler):
     def iter_resources(self):
         return ()
 
-    def write_to(self, unused_archive=None):
+    def write_to(self, archive=None):
         pass
