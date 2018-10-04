@@ -64,20 +64,20 @@ class AbstractResponsePartHandler(AbstractElementHandler):
               or getattr(self.evaluation, 'content', None)
         return self.safe_xml_text(result or u'')
 
-    def item(self, package=None):
+    def qti_item(self, package=None):
         """
         Return the item source for this part
         """
         raise NotImplementedError()
 
     def write_to(self, unused_archive=None):
-        print(self.item())
+        print(self.qti_item())
 
 
 @component.adapter(IQNonGradableFreeResponsePart)
 class FreeResponsePartHandler(AbstractResponsePartHandler):
 
-    def item(self, package=None):
+    def qti_item(self, package=None):
         renderer = get_renderer("question_part_essay", ".pt", package)
         context = {
             'ident': self.ident,
@@ -111,7 +111,7 @@ class NonGradableMultipleChoicePartHandler(AbstractResponsePartHandler):
         }
         return context
 
-    def item(self, package=None):
+    def qti_item(self, package=None):
         renderer = get_renderer(self.template_name, ".pt", package)
         context = self.template_context()
         return execute(renderer, {"context": context})
@@ -136,7 +136,7 @@ class MultipleChoicePartHandler(NonGradableMultipleChoicePartHandler):
             context['respident'] = text_(respident)
         return context
 
-    def item(self, package=None):
+    def qti_item(self, package=None):
         renderer = get_renderer(self.template_name, ".pt", package)
         context = self.template_context()
         return execute(renderer, {"context": context})
