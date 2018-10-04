@@ -55,10 +55,10 @@ class AbstractElementHandler(object):
         return component.getUtility(IIntIds)
 
     @Lazy
-    def doc_id(self):
+    def identifier(self):
         # pylint: disable=no-member
         return self.intids.queryId(self.context)
-    identifier = doc_id
+    doc_id = identifier
 
     @Lazy
     def course(self):
