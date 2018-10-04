@@ -53,6 +53,8 @@ class IManifest(interface.Interface):
     """
     cartridge = Object(ICommonCartridge, title=u"The cartridge")
 
+    course = Object(ICourseInstance, title=u"The course", required=False)
+
     def mark_resource(iden):
         """
         mark a resource in this manifest
@@ -62,10 +64,21 @@ class IManifest(interface.Interface):
         """
         check if the resource w/ the specified iden is in this manifest
         """
-
+    __contains__ = has_resource
+    
 
 class IElementHandler(IBaseElementHandler):
     """
     Adapter to handle an asset within a common cartridge
     """
     manifest = Object(IManifest, title=u"The manifest")
+
+    def mark_processed():
+        """
+        Mark the adapted context as processed
+        """
+
+    def is_processed():
+        """
+        Returns if the adapted context has been processed
+        """
