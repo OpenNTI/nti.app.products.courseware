@@ -76,8 +76,15 @@ class AbstractElementHandler(object):
         result = self.manifest is not None \
              and self.manifest.has_resource(self.identifier)
         return result
+    
+    def write_to(self, archive):
+        raise NotImplementedError
 
     # helpers
+
+    def save(self):
+        if self.manifest is not None:
+            self.write_to(self.manifest.archive)
 
     @classmethod
     def addTextNode(cls, xmldoc, parent, name, value):

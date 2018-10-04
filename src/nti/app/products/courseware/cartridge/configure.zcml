@@ -8,6 +8,11 @@
 	<include package="zope.component" />
 
 	<!-- Adapters -->
+	<!-- Default -->
+	<adapter factory=".mixins.NullElementHandler"
+			 for="*"
+			 provides=".interfaces.IElementHandler" />
+
 	<!-- Discussions -->
 	<adapter factory=".discussion.TopicHandler"
 			 for="nti.dataserver.contenttypes.forums.interfaces.ITopic"
