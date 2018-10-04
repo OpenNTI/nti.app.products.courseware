@@ -83,3 +83,16 @@ class AbstractElementHandler(object):
         element.writexml(writer)
         writer.seek(0)
         return writer.read()
+
+
+@component.adapter(interface.Interface)
+class NullElementHandler(AbstractElementHandler):
+
+    def iter_items(self):
+        return ()
+
+    def iter_resources(self):
+        return ()
+
+    def write_to(self, unused_archive=None):
+        pass
