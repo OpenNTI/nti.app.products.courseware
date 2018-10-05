@@ -22,6 +22,7 @@ from zope.cachedescriptors.property import Lazy
 
 from nti.app.products.courseware.cartridge.interfaces import IElementHandler
 
+from nti.app.products.courseware.cartridge.mixins import NullElementHandler
 from nti.app.products.courseware.cartridge.mixins import AbstractElementHandler
 
 from nti.app.products.courseware.cartridge.renderer import execute
@@ -234,19 +235,8 @@ class VideoHandler(AbstractElementHandler):
 
 
 @component.adapter(INTIVideoRef)
-class VideoRefHandler(AbstractElementHandler):
+class VideoRefHandler(NullElementHandler):
 
     @Lazy
     def video(self):
         return find_object_with_ntiid(self.context.target)
-
-    def iter_items(self):
-        return ()
-
-    def iter_resources(self):
-        return ()
-
-    # cartridge
-
-    def write_to(self, unused_archive=None):
-        pass
