@@ -76,7 +76,6 @@ class RelatedWorkHandler(AbstractElementHandler):
             # pylint: disable=no-member
             href = self.target.href
         elif self.is_local_resource:
-            # use the related work intid as identifier
             href = self.href
         doc_root.setAttribute("type", node_type)
         doc_root.setAttribute("identifier", self.identifier)
@@ -90,6 +89,26 @@ class RelatedWorkHandler(AbstractElementHandler):
 
     def iter_resources(self):
         return ()
+
+    def mark_processed(self):
+        # mark the related work processed
+        super(RelatedWorkHandler, self).mark_processed()
+        if self.manifest is not None:
+            if self.is_content and self.target is not None:
+                # pylint: disable=no-member
+                # mark the content unit processed
+                doc_id = self.intids.queryId(self.target)
+                self.manifest.mark_resource(doc_id)
+
+    def is_processed(self):
+        result = super(RelatedWorkHandler, self).is_processed()
+        if not result and self.manifest is not None:
+            if self.is_content and self.target is not None:
+                # pylint: disable=no-member
+                # check for the content unit
+                doc_id = self.intids.queryId(self.target)
+                result = self.manifest.has_resource(doc_id)
+        return result
 
     # cartridge
 
