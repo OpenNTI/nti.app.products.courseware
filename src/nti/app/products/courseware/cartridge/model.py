@@ -56,7 +56,7 @@ class Manifest(object):
     __contains__ = has_resource
     
     def handler(self, context):
-        result = IElementHandler(context, None)
+        result = IElementHandler(context)
         result.manifest = self
         return result
     handler_factory = handler
