@@ -86,6 +86,7 @@ from nti.contenttypes.courses.interfaces import ICourseEnrollments
 from nti.contenttypes.courses.interfaces import ICourseCatalogEntry
 from nti.contenttypes.courses.interfaces import ICourseEnrollmentManager
 from nti.contenttypes.courses.interfaces import InstructorEnrolledException
+from nti.contenttypes.courses.interfaces import OpenEnrollmentNotAllowedException
 from nti.contenttypes.courses.interfaces import IAnonymouslyAccessibleCourseInstance
 from nti.contenttypes.courses.interfaces import ICourseCatalogEntryFilterUtility
 
@@ -241,6 +242,14 @@ class enroll_course_view(AbstractAuthenticatedView,
                              {
                                  'message': str(e) or e.i18n_message,
                                  'code': 'InstructorEnrolledError',
+                             },
+                             None)
+        except OpenEnrollmentNotAllowedException as e:
+            raise_json_error(self.request,
+                             hexc.HTTPUnprocessableEntity,
+                             {
+                                 'message': str(e) or e.i81n_message,
+                                 'code': 'OpenEnrollmentNotAllowedError'
                              },
                              None)
 
