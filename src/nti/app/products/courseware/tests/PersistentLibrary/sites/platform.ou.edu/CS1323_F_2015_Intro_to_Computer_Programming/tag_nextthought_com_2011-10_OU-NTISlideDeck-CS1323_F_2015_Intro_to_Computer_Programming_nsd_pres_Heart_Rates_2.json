@@ -1,0 +1,154 @@
+{
+  "MimeType": "application/vnd.nextthought.ntislidedeck",
+  "Videos": [
+    {
+      "MimeType": "application/vnd.nextthought.ntislidevideo",
+      "video-ntiid": "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_02.01.04_Heart_Rates",
+      "title": "Target Heart Rates: Iteration 2",
+      "creator": "Deborah Trytten",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Heart_Rates_2",
+      "thumbnail": "//www.kaltura.com/p/1500101/thumbnail/entry_id/0_ybli4oi7/width/640/",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Heart_Rates_2_video",
+      "class": "ntislidevideo"
+    }
+  ],
+  "creator": "Deborah Trytten",
+  "title": "Target Heart Rate: Iteration 2",
+  "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Heart_Rates_2",
+  "Slides": [
+    {
+      "MimeType": "application/vnd.nextthought.slide",
+      "slidevideoid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Heart_Rates_2_video",
+      "slidetitle": "Command Line Interaction",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Heart_Rates_2",
+      "slidevideostart": "0.0",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlide-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Heart_Rates_2_slide_1",
+      "slideimage": "resources/CS1323_F_2015_Intro_to_Computer_Programming/10e3f055be066d634eec402c315f01900c257054/fd35e23767020999111e1f49239199b4c5eff23e.png",
+      "slidevideoend": "7.0",
+      "slidenumber": "1",
+      "class": "slide"
+    },
+    {
+      "MimeType": "application/vnd.nextthought.slide",
+      "slidevideoid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Heart_Rates_2_video",
+      "slidetitle": "Problem Statement",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Heart_Rates_2",
+      "slidevideostart": "7.0",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlide-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Heart_Rates_2_slide_2",
+      "slideimage": "resources/CS1323_F_2015_Intro_to_Computer_Programming/a7303d3b31d06b58c5ec9a2c43b24fca3a9d5ab5/fd35e23767020999111e1f49239199b4c5eff23e.png",
+      "slidevideoend": "30.0",
+      "slidenumber": "2",
+      "class": "slide"
+    },
+    {
+      "MimeType": "application/vnd.nextthought.slide",
+      "slidevideoid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Heart_Rates_2_video",
+      "slidetitle": "Recall Chosen Variables",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Heart_Rates_2",
+      "slidevideostart": "30.0",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlide-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Heart_Rates_2_slide_3",
+      "slideimage": "resources/CS1323_F_2015_Intro_to_Computer_Programming/34efb0122c08c3bd147868f0dc2bcb91a51e1a38/fd35e23767020999111e1f49239199b4c5eff23e.png",
+      "slidevideoend": "76.0",
+      "slidenumber": "3",
+      "class": "slide"
+    },
+    {
+      "MimeType": "application/vnd.nextthought.slide",
+      "slidevideoid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Heart_Rates_2_video",
+      "slidetitle": "Create a Class",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Heart_Rates_2",
+      "slidevideostart": "76.0",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlide-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Heart_Rates_2_slide_4",
+      "slideimage": "resources/CS1323_F_2015_Intro_to_Computer_Programming/57ee00bbeb4d24c9292e286fb39a066a13bdd7a5/fd35e23767020999111e1f49239199b4c5eff23e.png",
+      "slidevideoend": "268.0",
+      "slidenumber": "4",
+      "class": "slide"
+    },
+    {
+      "MimeType": "application/vnd.nextthought.slide",
+      "slidevideoid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Heart_Rates_2_video",
+      "slidetitle": "Design a Program",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Heart_Rates_2",
+      "slidevideostart": "268.0",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlide-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Heart_Rates_2_slide_5",
+      "slideimage": "resources/CS1323_F_2015_Intro_to_Computer_Programming/a28dc13a5b5b114a47b150ef9cc21d976ab469d6/fd35e23767020999111e1f49239199b4c5eff23e.png",
+      "slidevideoend": "355.0",
+      "slidenumber": "5",
+      "class": "slide"
+    },
+    {
+      "MimeType": "application/vnd.nextthought.slide",
+      "slidevideoid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Heart_Rates_2_video",
+      "slidetitle": "Get Input from User",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Heart_Rates_2",
+      "slidevideostart": "355.0",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlide-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Heart_Rates_2_slide_6",
+      "slideimage": "resources/CS1323_F_2015_Intro_to_Computer_Programming/d35d8514c56fc878b8e48c1c99257d800b405edc/fd35e23767020999111e1f49239199b4c5eff23e.png",
+      "slidevideoend": "674.0",
+      "slidenumber": "6",
+      "class": "slide"
+    },
+    {
+      "MimeType": "application/vnd.nextthought.slide",
+      "slidevideoid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Heart_Rates_2_video",
+      "slidetitle": "Strategy",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Heart_Rates_2",
+      "slidevideostart": "674.0",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlide-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Heart_Rates_2_slide_7",
+      "slideimage": "resources/CS1323_F_2015_Intro_to_Computer_Programming/166d0013113f0c84be9c35966a06d16ddd14db1a/fd35e23767020999111e1f49239199b4c5eff23e.png",
+      "slidevideoend": "681.0",
+      "slidenumber": "7",
+      "class": "slide"
+    },
+    {
+      "MimeType": "application/vnd.nextthought.slide",
+      "slidevideoid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Heart_Rates_2_video",
+      "slidetitle": "What Happened?",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Heart_Rates_2",
+      "slidevideostart": "681.0",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlide-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Heart_Rates_2_slide_8",
+      "slideimage": "resources/CS1323_F_2015_Intro_to_Computer_Programming/5ae59056c8b7cbdaa61ae055b29e7a9d4d21f39d/fd35e23767020999111e1f49239199b4c5eff23e.png",
+      "slidevideoend": "721.0",
+      "slidenumber": "8",
+      "class": "slide"
+    },
+    {
+      "MimeType": "application/vnd.nextthought.slide",
+      "slidevideoid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Heart_Rates_2_video",
+      "slidetitle": "Recall Math",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Heart_Rates_2",
+      "slidevideostart": "721.0",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlide-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Heart_Rates_2_slide_9",
+      "slideimage": "resources/CS1323_F_2015_Intro_to_Computer_Programming/12193afdcddf70209541d80cb2403ca2e55b20ef/fd35e23767020999111e1f49239199b4c5eff23e.png",
+      "slidevideoend": "774.0",
+      "slidenumber": "9",
+      "class": "slide"
+    },
+    {
+      "MimeType": "application/vnd.nextthought.slide",
+      "slidevideoid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Heart_Rates_2_video",
+      "slidetitle": "Create Calculation",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Heart_Rates_2",
+      "slidevideostart": "774.0",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlide-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Heart_Rates_2_slide_10",
+      "slideimage": "resources/CS1323_F_2015_Intro_to_Computer_Programming/92a7f06a74a7b113158827968a25588a2e59deb6/fd35e23767020999111e1f49239199b4c5eff23e.png",
+      "slidevideoend": "1314.0",
+      "slidenumber": "10",
+      "class": "slide"
+    },
+    {
+      "MimeType": "application/vnd.nextthought.slide",
+      "slidevideoid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Heart_Rates_2_video",
+      "slidetitle": "Show Output",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Heart_Rates_2",
+      "slidevideostart": "1314.0",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlide-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Heart_Rates_2_slide_11",
+      "slideimage": "resources/CS1323_F_2015_Intro_to_Computer_Programming/a1df22e12e66fb897aa194a4ea486fd7f039964b/fd35e23767020999111e1f49239199b4c5eff23e.png",
+      "slidevideoend": "1329.0",
+      "slidenumber": "11",
+      "class": "slide"
+    }
+  ],
+  "ntiid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Heart_Rates_2",
+  "class": "ntislidedeck"
+}

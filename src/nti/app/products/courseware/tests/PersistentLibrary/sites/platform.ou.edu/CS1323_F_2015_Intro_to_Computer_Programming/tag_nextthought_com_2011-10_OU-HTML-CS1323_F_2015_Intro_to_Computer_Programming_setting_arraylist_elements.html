@@ -1,0 +1,43 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html lang="en"><head> <meta content="2015-12-11T16:56:47" http-equiv="last-modified" /> <meta content="1657" name="NTIRelativeScrollHeight" /> <meta content="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.setting_arraylist_elements" name="NTIID" /> <meta content="NextThought" name="generator" /> <meta content="text/html; charset=ascii" http-equiv="content-type" /> <title>Setting ArrayList Elements</title> <link href="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.adding_at_a_specific_index" rel="next" title="Adding at a Specific Index" /> <link href="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.adding_elements_to_an_arraylist" rel="prev" title="Adding Elements to an ArrayList" /> <link href="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.reading:Chortle_CH54" rel="up" title="ArrayList class" /> <link href="styles/styles.css" rel="stylesheet" /> <link href="styles/content.css" rel="stylesheet" /> </head> <body id="NTIContent"> <div class="page-contents"><div data-ntiid="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.setting_arraylist_elements" id="a0000000607" ntiid="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.setting_arraylist_elements"> <div class="chapter title">Setting <b class="bfseries"><tt class="ttfamily">ArrayList</tt></b> Elements</div> <p class="placeholder"></p> <a name="d7035838626e39354ee4d2e28254fc2b"></a> <div class="sidebar" data-ntiid="tag:nextthought.com,2011-10:OU-HTML:NTISidebar-CS1323_F_2015_Intro_to_Computer_Programming.sidebar.answer.268" ntiid="tag:nextthought.com,2011-10:OU-HTML:NTISidebar-CS1323_F_2015_Intro_to_Computer_Programming.sidebar.answer.268"> <div class="sidebar-title">Answer</div> <pre>size: 0
+new size: 3
+element 0: Amy
+element 1: Bob
+element 2: Cindy
+</pre> </div><a name="faefc750047011907c2ba5d26e6757e9"></a> <p class="par" id="faefc750047011907c2ba5d26e6757e9">The <b class="bfseries"><tt class="ttfamily">add(E elt)</tt></b> method adds to the end of a <b class="bfseries"><tt class="ttfamily">ArrayList</tt></b>. Sometimes you want to change the element at a particular index. </p> <a name="3a87f3fbe5f044784380b93305b45f24"></a> <pre>set( int index, E elt )
+</pre><a name="525b415575ef32746f4a1066b967238f"></a> <p class="par" id="525b415575ef32746f4a1066b967238f">The element previously at <b class="bfseries"><tt class="ttfamily">index</tt></b> is replaced with the reference <b class="bfseries"><tt class="ttfamily">elt</tt></b>. The index should be in the range 0 to size&#8722;1. An <b class="bfseries"><tt class="ttfamily">IndexOutOfBoundsException</tt></b> is thrown if the index is out of bounds. (For now, this means that the program will halt.) </p> <a name="e7d24354fd7376cbaf162a468b865e82"></a> <p class="par" id="e7d24354fd7376cbaf162a468b865e82">The index must be in the range 0 to size&#8722;1, which are the indexes of cells already occupied. This method can&#8217;t "skip over" empty cells when it adds an element. It can&#8217;t be used to make a list that has gaps in it. </p> <a name="dcaa2302f123963a02790b59245e42e7"></a> <pre>import java.util.* ;
+
+class ArrayListEgThree
+{
+
+  public static void main ( String[] args)
+  {
+    // Create an ArrayList that holds references to String
+    ArrayList&lt;String&gt; names = new ArrayList&lt;String&gt;();
+
+    // Add three String references
+    names.add("Amy");
+    names.add("Bob");
+    names.add("Cindy");
+       
+    // Access and print out the Objects
+    for ( int j=0; j&lt;names.size(); j++ )
+      System.out.println("element " + j + ": " + names.get(j) );
+
+    // Replace "Amy" with "Zoe"
+    names.set(0, "Zoe");
+    System.out.println();
+    
+    // Access and print out the Objects
+    for ( int j=0; j&lt;names.size(); j++ )
+      System.out.println("element " + j + ": " + names.get(j) );
+    
+  }
+}
+</pre><a name="07f3637b0a8ae5d337ebdf13ce6c7a03"></a> <p class="par" id="07f3637b0a8ae5d337ebdf13ce6c7a03"><span itemprop="nti-data-markupdisabled"> <img crossorigin="anonymous" data-nti-image-full="resources/CS1323_F_2015_Intro_to_Computer_Programming/881fd9f6d677b2be0f117a81989200b43ec9c380/fd35e23767020999111e1f49239199b4c5eff23e.gif" data-nti-image-half="resources/CS1323_F_2015_Intro_to_Computer_Programming/881fd9f6d677b2be0f117a81989200b43ec9c380/2cff8dc544afd32305107ce559484cb4ce1730df.gif" data-nti-image-quarter="resources/CS1323_F_2015_Intro_to_Computer_Programming/881fd9f6d677b2be0f117a81989200b43ec9c380/06aefff9765154841fac3704b0e59674fae7a005.gif" data-nti-image-size="actual" id="07f3637b0a8ae5d337ebdf13ce6c7a03.495" src="resources/CS1323_F_2015_Intro_to_Computer_Programming/881fd9f6d677b2be0f117a81989200b43ec9c380/fd35e23767020999111e1f49239199b4c5eff23e.gif" style="width:165px; height:236px" /> </span> </p> <a name="83fd72505f688d15a8d3a7ee91db5feb"></a> <p class="par" id="83fd72505f688d15a8d3a7ee91db5feb">The program first builds a list of three elements, then replaces the element at index zero. </p> <a name="51e915027ce2114b98678169948c9a34"></a> <div class="sidebar" data-ntiid="tag:nextthought.com,2011-10:OU-HTML:NTISidebar-CS1323_F_2015_Intro_to_Computer_Programming.sidebar.question.281" ntiid="tag:nextthought.com,2011-10:OU-HTML:NTISidebar-CS1323_F_2015_Intro_to_Computer_Programming.sidebar.question.281"> <div class="sidebar-title">Question</div> <a name="d91e2185125b5333e3ffa36fafd9d78e.496"></a> <p class="par" id="d91e2185125b5333e3ffa36fafd9d78e.496"> What does the program print out? </p> <a name="bf9bd35ca972e4dcb270456402e7014d"></a> <pre>element 0:
+element 1:
+element 2:
+
+element 0:
+element 1:
+element 2:
+</pre> </div> </div></div> </body></html>

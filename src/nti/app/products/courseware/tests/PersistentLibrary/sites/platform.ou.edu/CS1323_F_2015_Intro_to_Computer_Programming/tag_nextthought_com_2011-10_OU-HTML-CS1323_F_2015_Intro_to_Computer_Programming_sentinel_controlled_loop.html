@@ -1,0 +1,22 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html lang="en"><head> <meta content="2015-12-11T16:56:47" http-equiv="last-modified" /> <meta content="894" name="NTIRelativeScrollHeight" /> <meta content="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.sentinel_controlled_loop" name="NTIID" /> <meta content="NextThought" name="generator" /> <meta content="text/html; charset=ascii" http-equiv="content-type" /> <title>Sentinel Controlled Loop</title> <link href="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.omitting_the_test" rel="next" title="Omitting the Test" /> <link href="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.omitting_the_change" rel="prev" title="Omitting the change" /> <link href="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.reading:Chortle_CH41" rel="up" title="The Fantastic For Statement" /> <link href="styles/styles.css" rel="stylesheet" /> <link href="styles/content.css" rel="stylesheet" /> </head> <body id="NTIContent"> <div class="page-contents"><div data-ntiid="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.sentinel_controlled_loop" id="a0000000576" ntiid="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.sentinel_controlled_loop"> <div class="chapter title">Sentinel Controlled Loop</div> <p class="placeholder"></p> <a name="5966f21ab95b8f1560899fb34807e703"></a> <div class="sidebar" data-ntiid="tag:nextthought.com,2011-10:OU-HTML:NTISidebar-CS1323_F_2015_Intro_to_Computer_Programming.sidebar.answer.240" ntiid="tag:nextthought.com,2011-10:OU-HTML:NTISidebar-CS1323_F_2015_Intro_to_Computer_Programming.sidebar.answer.240"> <div class="sidebar-title">Answer</div> Yes. Now the <i class="itshape">test</i> part of the <b class="bfseries"><tt class="ttfamily">for</tt></b> will look for the sentinel. </div><a name="c1872ce36ff7be2ce754f1d70ecd661e"></a> <p class="par" id="c1872ce36ff7be2ce754f1d70ecd661e">In a <i class="itshape">sentinel controlled</i> loop the <i class="itshape">change</i> part depends on data from the user. It is awkward to do this inside a <b class="bfseries"><tt class="ttfamily">for</tt></b> statement. So the <i class="itshape">change</i> part is omitted from the <b class="bfseries"><tt class="ttfamily">for</tt></b> statement and put in a convenient location. Here is an example. The program keeps asking the user for x and printing the square root of x. The program ends when the user enters a negative number. </p> <a name="042d163d1a61ae7911a0c9dc8ed57096"></a> <pre>import java.util.Scanner;
+
+class evalSqrt
+{
+  public static void main (String[] args ) throws IOException
+  {
+    Scanner scan = new Scanner();
+    double x;
+
+    System.out.print("Enter a value for x or -1 to exit: ")  ;
+    x = scan.nextDouble();
+
+    for (    ; x &gt;= 0.0 ;   )  
+    {
+      System.out.println( "Square root of " + x + " is " + Math.sqrt( x ) ); 
+
+      System.out.print("Enter a value for x or -1 to exit: ")  ;
+      x =  scan.nextDouble();
+   }
+  }
+}
+</pre><a name="6cd73a03d051f826f1dc8bfbba317a4d"></a> <p class="par" id="6cd73a03d051f826f1dc8bfbba317a4d">This program would be better if a <b class="bfseries"><tt class="ttfamily">while</tt></b> statement were used in place of the <b class="bfseries"><tt class="ttfamily">for</tt></b> statement. </p> <a name="039c9a2c3a5ec0710df0b81c4193f090"></a> <div class="sidebar" data-ntiid="tag:nextthought.com,2011-10:OU-HTML:NTISidebar-CS1323_F_2015_Intro_to_Computer_Programming.sidebar.question.252" ntiid="tag:nextthought.com,2011-10:OU-HTML:NTISidebar-CS1323_F_2015_Intro_to_Computer_Programming.sidebar.question.252"> <div class="sidebar-title">Question</div> Do you think that the <i class="itshape">test</i> part of a <b class="bfseries"><tt class="ttfamily">for</tt></b> can be omitted? </div> </div></div> </body></html>

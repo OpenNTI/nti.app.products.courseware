@@ -1,0 +1,33 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html lang="en"><head> <meta content="2015-12-11T16:56:47" http-equiv="last-modified" /> <meta content="971" name="NTIRelativeScrollHeight" /> <meta content="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.boolean_expression" name="NTIID" /> <meta content="NextThought" name="generator" /> <meta content="text/html; charset=ascii" http-equiv="content-type" /> <title>Boolean Expression</title> <link href="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.factorial_calculator" rel="next" title="Factorial Calculator" /> <link href="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.complete_factorial_program" rel="prev" title="Complete Factorial Program" /> <link href="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.reading:Chortle_CH17" rel="up" title="Nesting Loops and Ifs" /> <link href="styles/styles.css" rel="stylesheet" /> <link href="styles/content.css" rel="stylesheet" /> </head> <body id="NTIContent"> <div class="page-contents"><div data-ntiid="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.boolean_expression" id="a0000000456" ntiid="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.boolean_expression"> <div class="chapter title">Boolean Expression</div> <p class="placeholder"></p> <a name="b702a8c529a93ddab090028320db041e"></a> <div class="sidebar" data-ntiid="tag:nextthought.com,2011-10:OU-HTML:NTISidebar-CS1323_F_2015_Intro_to_Computer_Programming.sidebar.answer.137" ntiid="tag:nextthought.com,2011-10:OU-HTML:NTISidebar-CS1323_F_2015_Intro_to_Computer_Programming.sidebar.answer.137"> <div class="sidebar-title">Answer</div> Change the condition in the <b class="bfseries"><tt class="ttfamily">if</tt></b> statement so that only integers in the range 0 to 20 are allowed. </div><a name="62ce69c73c5660ef7fe8c86c72a943fc"></a> <p class="par" id="62ce69c73c5660ef7fe8c86c72a943fc">Here is the corrected program: </p> <a name="9d993628dfe433d70066db885faff915"></a> <pre>import  java.util.Scanner;
+
+// User enters integer N.  
+// The program calculates N factorial.
+//
+class Factorial
+{
+  public static void main (String[] args ) 
+  {
+    Scanner scan = new Scanner( System.in );
+    long N, fact = 1; 
+
+    System.out.print( "Enter N: " );
+    N = scan.nextLong();
+
+    if ( N &gt;= 0 &amp;&amp; N &lt;= 20 )
+    {
+      while ( N &gt; 1 )    
+      {
+        fact = fact * N;
+        N    = N - 1;
+      }
+      System.out.println( "factorial is " + fact );
+    }
+    else
+    {
+      System.out.println("N must be between 0 and 20");
+      System.out.println("Factorial for N less than 0 is not defined.");
+      System.out.println("Factorial for N greater than 20 causes overflow.");
+    }
+  }
+}
+</pre><a name="87cc6ebd2e2dcb4c124ea77751002171"></a> <div class="sidebar" data-ntiid="tag:nextthought.com,2011-10:OU-HTML:NTISidebar-CS1323_F_2015_Intro_to_Computer_Programming.sidebar.question.143" ntiid="tag:nextthought.com,2011-10:OU-HTML:NTISidebar-CS1323_F_2015_Intro_to_Computer_Programming.sidebar.question.143"> <div class="sidebar-title">Question</div> This program calculates <b class="bfseries"><tt class="ttfamily">N!</tt></b> for a very limited range of <b class="bfseries"><tt class="ttfamily">N</tt></b>. Recall that variables of type <b class="bfseries"><tt class="ttfamily">double</tt></b> have a much greater range than integer types. Would using variables of type <b class="bfseries"><tt class="ttfamily">double</tt></b> solve the problem? </div> </div></div> </body></html>

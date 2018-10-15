@@ -1,0 +1,118 @@
+{
+  "MimeType": "application/vnd.nextthought.ntislidedeck",
+  "Videos": [
+    {
+      "MimeType": "application/vnd.nextthought.ntislidevideo",
+      "video-ntiid": "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_03.02.05_Words_With_Acquaintances",
+      "title": "Words With Acquaintances Cheat",
+      "creator": "Deborah Trytten",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Words_With_Acquaintances",
+      "thumbnail": "//www.kaltura.com/p/1500101/thumbnail/entry_id/1_pyt21c1t/width/640/",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Words_With_Acquaintances_video",
+      "class": "ntislidevideo"
+    }
+  ],
+  "creator": "Deborah Trytten",
+  "title": "Bigger Bytes: Prepackaged Data and More Operations",
+  "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Words_With_Acquaintances",
+  "Slides": [
+    {
+      "MimeType": "application/vnd.nextthought.slide",
+      "slidevideoid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Words_With_Acquaintances_video",
+      "slidetitle": "Words With Acquaintances Cheat",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Words_With_Acquaintances",
+      "slidevideostart": "0.0",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlide-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Words_With_Acquaintances_slide_1",
+      "slideimage": "resources/CS1323_F_2015_Intro_to_Computer_Programming/03fb8aecb552ef208f5dd1b1f899ab60bda952f5/fd35e23767020999111e1f49239199b4c5eff23e.png",
+      "slidevideoend": "10.0",
+      "slidenumber": "1",
+      "class": "slide"
+    },
+    {
+      "MimeType": "application/vnd.nextthought.slide",
+      "slidevideoid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Words_With_Acquaintances_video",
+      "slidetitle": "Problem Statement",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Words_With_Acquaintances",
+      "slidevideostart": "10.0",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlide-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Words_With_Acquaintances_slide_2",
+      "slideimage": "resources/CS1323_F_2015_Intro_to_Computer_Programming/bfedd0f027b759a346b10f3f33736eef6b446339/fd35e23767020999111e1f49239199b4c5eff23e.png",
+      "slidevideoend": "37.0",
+      "slidenumber": "2",
+      "class": "slide"
+    },
+    {
+      "MimeType": "application/vnd.nextthought.slide",
+      "slidevideoid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Words_With_Acquaintances_video",
+      "slidetitle": "Create Test Data",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Words_With_Acquaintances",
+      "slidevideostart": "37.0",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlide-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Words_With_Acquaintances_slide_3",
+      "slideimage": "resources/CS1323_F_2015_Intro_to_Computer_Programming/b8409ba8fdece7d52b503cdc2913f355e6827779/fd35e23767020999111e1f49239199b4c5eff23e.png",
+      "slidevideoend": "86.0",
+      "slidenumber": "3",
+      "class": "slide"
+    },
+    {
+      "MimeType": "application/vnd.nextthought.slide",
+      "slidevideoid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Words_With_Acquaintances_video",
+      "slidetitle": "First Method",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Words_With_Acquaintances",
+      "slidevideostart": "86.0",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlide-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Words_With_Acquaintances_slide_4",
+      "slideimage": "resources/CS1323_F_2015_Intro_to_Computer_Programming/a505b0001146a4b9ae5f44b78647f3b448ab9c2b/fd35e23767020999111e1f49239199b4c5eff23e.png",
+      "slidevideoend": "158.0",
+      "slidenumber": "4",
+      "class": "slide"
+    },
+    {
+      "MimeType": "application/vnd.nextthought.slide",
+      "slidevideoid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Words_With_Acquaintances_video",
+      "slidetitle": "Second Method",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Words_With_Acquaintances",
+      "slidevideostart": "158.0",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlide-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Words_With_Acquaintances_slide_5",
+      "slideimage": "resources/CS1323_F_2015_Intro_to_Computer_Programming/ed92c1e012699929492b83184d72da1b84981eba/fd35e23767020999111e1f49239199b4c5eff23e.png",
+      "slidevideoend": "443.0",
+      "slidenumber": "5",
+      "class": "slide"
+    },
+    {
+      "MimeType": "application/vnd.nextthought.slide",
+      "slidevideoid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Words_With_Acquaintances_video",
+      "slidetitle": "Third Method",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Words_With_Acquaintances",
+      "slidevideostart": "443.0",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlide-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Words_With_Acquaintances_slide_6",
+      "slideimage": "resources/CS1323_F_2015_Intro_to_Computer_Programming/c636e4bc86e47d8706c4a82def0dbf70a7ab8e3d/fd35e23767020999111e1f49239199b4c5eff23e.png",
+      "slidevideoend": "1744.0",
+      "slidenumber": "6",
+      "class": "slide"
+    },
+    {
+      "MimeType": "application/vnd.nextthought.slide",
+      "slidevideoid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Words_With_Acquaintances_video",
+      "slidetitle": "Test Program",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Words_With_Acquaintances",
+      "slidevideostart": "1744.0",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlide-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Words_With_Acquaintances_slide_7",
+      "slideimage": "resources/CS1323_F_2015_Intro_to_Computer_Programming/c5b840a0d9597ee1b481d57eaf4a2b32d218e4e0/fd35e23767020999111e1f49239199b4c5eff23e.png",
+      "slidevideoend": "1746.0",
+      "slidenumber": "7",
+      "class": "slide"
+    },
+    {
+      "MimeType": "application/vnd.nextthought.slide",
+      "slidevideoid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Words_With_Acquaintances_video",
+      "slidetitle": "Fix",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Words_With_Acquaintances",
+      "slidevideostart": "1746.0",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlide-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Words_With_Acquaintances_slide_8",
+      "slideimage": "resources/CS1323_F_2015_Intro_to_Computer_Programming/feeffe2541249a9a9c7c6cdddcc1e8269123e11d/fd35e23767020999111e1f49239199b4c5eff23e.png",
+      "slidevideoend": "2454.0",
+      "slidenumber": "8",
+      "class": "slide"
+    }
+  ],
+  "ntiid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Words_With_Acquaintances",
+  "class": "ntislidedeck"
+}

@@ -1,0 +1,45 @@
+jsonpReceiveContent({
+    "content": {
+        "MimeType": "application/vnd.nextthought.ntilessonoverview",
+        "Items": [
+            {
+                "MimeType": "application/vnd.nextthought.nticourseoverviewgroup",
+                "NTIID": "tag:nextthought.com,2011-10:OU-NTICourseOverviewGroup-CS1323_F_2015_Intro_to_Computer_Programming.lec:hmwk_18_LESSON.0",
+                "Items": [
+                    {
+                        "MimeType": "application/vnd.nextthought.discussion",
+                        "title": "Homework 6 Help",
+                        "label": "",
+                        "NTIID": "",
+                        "id": "nti-course-bundle://Discussions/Homework_6_Help.json",
+                        "icon": "resources/CS1323_F_2015_Intro_to_Computer_Programming/c85e628bfcbe007ef29a07da50be187419f24b1c/fd35e23767020999111e1f49239199b4c5eff23e.png"
+                    }
+                ],
+                "accentColor": "f5d420",
+                "title": "Discussions"
+            },
+            {
+                "MimeType": "application/vnd.nextthought.nticourseoverviewgroup",
+                "NTIID": "tag:nextthought.com,2011-10:OU-NTICourseOverviewGroup-CS1323_F_2015_Intro_to_Computer_Programming.lec:hmwk_18_LESSON.1",
+                "Items": [
+                    {
+                        "MimeType": "application/vnd.nextthought.assessment.assignment",
+                        "ContainerId": "tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.homework_6_(50_points)",
+                        "title": "Homework 6 (50 points)",
+                        "label": "Homework 6 (50 points)",
+                        "NTIID": "tag:nextthought.com,2011-10:OU-NAQ-CS1323_F_2015_Intro_to_Computer_Programming.naq.asg.assignment:Homework_6",
+                        "Target-NTIID": "tag:nextthought.com,2011-10:OU-NAQ-CS1323_F_2015_Intro_to_Computer_Programming.naq.asg.assignment:Homework_6"
+                    }
+                ],
+                "accentColor": "81c8dc",
+                "title": "Assignments"
+            }
+        ],
+        "title": "Homework 6",
+        "NTIID": "tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.lec:hmwk_18_LESSON"
+    },
+    "ntiid": "tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.lec:hmwk_18_LESSON",
+    "version": "1",
+    "Content-Type": "application/json",
+    "Content-Encoding": "json"
+});

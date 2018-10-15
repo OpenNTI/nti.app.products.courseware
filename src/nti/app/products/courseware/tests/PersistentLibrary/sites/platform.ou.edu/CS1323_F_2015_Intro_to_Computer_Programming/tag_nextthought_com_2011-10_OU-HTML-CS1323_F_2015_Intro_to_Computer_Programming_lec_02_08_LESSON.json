@@ -1,0 +1,214 @@
+{
+    "MimeType": "application/vnd.nextthought.ntilessonoverview",
+    "Items": [
+        {
+            "MimeType": "application/vnd.nextthought.nticourseoverviewgroup",
+            "NTIID": "tag:nextthought.com,2011-10:OU-NTICourseOverviewGroup-CS1323_F_2015_Intro_to_Computer_Programming.lec:02.08_LESSON.0",
+            "Items": [
+                {
+                    "MimeType": "application/vnd.nextthought.ntivideo",
+                    "NTIID": "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_02.02.04_Memory_Diagrams_Passing_By_Value",
+                    "visibility": "everyone",
+                    "poster": "//www.kaltura.com/p/1500101/thumbnail/entry_id/1_qcsms4kp/width/1280/",
+                    "label": "Parameter Passing"
+                },
+                {
+                    "MimeType": "application/vnd.nextthought.ntivideo",
+                    "NTIID": "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_02.02.04_Javabat",
+                    "visibility": "everyone",
+                    "poster": "//www.kaltura.com/p/1500101/thumbnail/entry_id/0_sujttowt/width/1280/",
+                    "label": "Javabat"
+                },
+                {
+                    "MimeType": "application/vnd.nextthought.ntivideo",
+                    "NTIID": "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_02.02.04_Cell",
+                    "visibility": "everyone",
+                    "poster": "//www.kaltura.com/p/1500101/thumbnail/entry_id/0_4qji4561/width/1280/",
+                    "label": "Choosing a Cell Phone Contract: Iteration 6"
+                },
+                {
+                    "MimeType": "application/vnd.nextthought.ntivideo",
+                    "NTIID": "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_02.02.04_Craps",
+                    "visibility": "everyone",
+                    "poster": "//www.kaltura.com/p/1500101/thumbnail/entry_id/0_dc8msbvf/width/1280/",
+                    "label": "Craps: Iteration 2"
+                }
+            ],
+            "accentColor": "81c8dc",
+            "title": "Videos"
+        },
+        {
+            "MimeType": "application/vnd.nextthought.nticourseoverviewgroup",
+            "NTIID": "tag:nextthought.com,2011-10:OU-NTICourseOverviewGroup-CS1323_F_2015_Intro_to_Computer_Programming.lec:02.08_LESSON.1",
+            "Items": [
+                {
+                    "MimeType": "application/vnd.nextthought.assessment.assignment",
+                    "ContainerId": "tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.turingscraft:_methods_(22_points)",
+                    "title": "Turingscraft: Methods (22 points)",
+                    "label": "Turingscraft: Methods (22 points)",
+                    "NTIID": "tag:nextthought.com,2011-10:OU-NAQ-CS1323_F_2015_Intro_to_Computer_Programming.naq.asg.assignment:Turingscraft_Methods_010",
+                    "Target-NTIID": "tag:nextthought.com,2011-10:OU-NAQ-CS1323_F_2015_Intro_to_Computer_Programming.naq.asg.assignment:Turingscraft_Methods_010"
+                },
+                {
+                    "MimeType": "application/vnd.nextthought.assessment.assignment",
+                    "ContainerId": "tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.turingscraft:_methods_(22_points).1",
+                    "title": "Turingscraft: Methods (22 points)",
+                    "label": "Turingscraft: Methods (22 points)",
+                    "NTIID": "tag:nextthought.com,2011-10:OU-NAQ-CS1323_F_2015_Intro_to_Computer_Programming.naq.asg.assignment:Turingscraft_Methods_001",
+                    "Target-NTIID": "tag:nextthought.com,2011-10:OU-NAQ-CS1323_F_2015_Intro_to_Computer_Programming.naq.asg.assignment:Turingscraft_Methods_001"
+                },
+                {
+                    "MimeType": "application/vnd.nextthought.assessment.assignment",
+                    "ContainerId": "tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.turingscraft:_methods_(22_points).2",
+                    "title": "Turingscraft: Methods (22 points)",
+                    "label": "Turingscraft: Methods (22 points)",
+                    "NTIID": "tag:nextthought.com,2011-10:OU-NAQ-CS1323_F_2015_Intro_to_Computer_Programming.naq.asg.assignment:Turingscraft_Methods_995",
+                    "Target-NTIID": "tag:nextthought.com,2011-10:OU-NAQ-CS1323_F_2015_Intro_to_Computer_Programming.naq.asg.assignment:Turingscraft_Methods_995"
+                },
+                {
+                    "MimeType": "application/vnd.nextthought.assessment.assignment",
+                    "ContainerId": "tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.problets:_behavior_of_functions_(10_points)",
+                    "title": "Problets: Behavior of Functions (10 points)",
+                    "label": "Problets: Behavior of Functions (10 points)",
+                    "NTIID": "tag:nextthought.com,2011-10:OU-NAQ-CS1323_F_2015_Intro_to_Computer_Programming.naq.asg.assignment:Problets_Behavior_of_Functions_010",
+                    "Target-NTIID": "tag:nextthought.com,2011-10:OU-NAQ-CS1323_F_2015_Intro_to_Computer_Programming.naq.asg.assignment:Problets_Behavior_of_Functions_010"
+                },
+                {
+                    "MimeType": "application/vnd.nextthought.assessment.assignment",
+                    "ContainerId": "tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.problets:_behavior_of_functions_(10_points).1",
+                    "title": "Problets: Behavior of Functions (10 points)",
+                    "label": "Problets: Behavior of Functions (10 points)",
+                    "NTIID": "tag:nextthought.com,2011-10:OU-NAQ-CS1323_F_2015_Intro_to_Computer_Programming.naq.asg.assignment:Problets_Behavior_of_Functions_995",
+                    "Target-NTIID": "tag:nextthought.com,2011-10:OU-NAQ-CS1323_F_2015_Intro_to_Computer_Programming.naq.asg.assignment:Problets_Behavior_of_Functions_995"
+                },
+                {
+                    "MimeType": "application/vnd.nextthought.assessment.assignment",
+                    "ContainerId": "tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.javabat:_methods_(10_points)",
+                    "title": "JavaBat: Methods (10 points)",
+                    "label": "JavaBat: Methods (10 points)",
+                    "NTIID": "tag:nextthought.com,2011-10:OU-NAQ-CS1323_F_2015_Intro_to_Computer_Programming.naq.asg.assignment:JavaBat_Methods",
+                    "Target-NTIID": "tag:nextthought.com,2011-10:OU-NAQ-CS1323_F_2015_Intro_to_Computer_Programming.naq.asg.assignment:JavaBat_Methods"
+                },
+                {
+                    "MimeType": "application/vnd.nextthought.assessment.assignment",
+                    "ContainerId": "tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.zybook:_methods_(82_points)",
+                    "title": "Zybook: Methods (82 points)",
+                    "label": "Zybook: Methods (82 points)",
+                    "NTIID": "tag:nextthought.com,2011-10:OU-NAQ-CS1323_F_2015_Intro_to_Computer_Programming.naq.asg.assignment:Zybook_Methods",
+                    "Target-NTIID": "tag:nextthought.com,2011-10:OU-NAQ-CS1323_F_2015_Intro_to_Computer_Programming.naq.asg.assignment:Zybook_Methods"
+                }
+            ],
+            "accentColor": "a5c959",
+            "title": "Assignments"
+        },
+        {
+            "MimeType": "application/vnd.nextthought.nticourseoverviewgroup",
+            "NTIID": "tag:nextthought.com,2011-10:OU-NTICourseOverviewGroup-CS1323_F_2015_Intro_to_Computer_Programming.lec:02.08_LESSON.2",
+            "Items": [
+                {
+                    "MimeType": "application/vnd.nextthought.relatedworkref",
+                    "targetMimeType": "application/vnd.nextthought.externallink",
+                    "creator": "zyBooks for University of Oklahoma CS 1323",
+                    "section": "additional",
+                    "visibility": "everyone",
+                    "label": "Programming in Java",
+                    "NTIID": "tag:nextthought.com,2011-10:OU-RelatedWorkRef-CS1323_F_2015_Intro_to_Computer_Programming.relatedworkref.relwk:02.02.04_zyante",
+                    "href": "https://zybooks.zyante.com/#/zybook/OUCS1323Fall2015/chapter/6/section/1",
+                    "target-NTIID": "tag:nextthought.com,2011-10:NTI-UUID-ab921a1cce5430c683d557f81df5c51e",
+                    "icon": "resources/CS1323_F_2015_Intro_to_Computer_Programming/671375790efa45b2948b77f2a9c4e91f27173a56/fd35e23767020999111e1f49239199b4c5eff23e.png",
+                    "desc": "This section covers methods."
+                }
+            ],
+            "accentColor": "f9824e",
+            "title": "Required Resources"
+        },
+        {
+            "MimeType": "application/vnd.nextthought.nticourseoverviewgroup",
+            "NTIID": "tag:nextthought.com,2011-10:OU-NTICourseOverviewGroup-CS1323_F_2015_Intro_to_Computer_Programming.lec:02.08_LESSON.3",
+            "Items": [
+                {
+                    "MimeType": "application/vnd.nextthought.relatedworkref",
+                    "targetMimeType": "application/vnd.nextthought.content",
+                    "creator": "Bradley Kjell",
+                    "section": "required",
+                    "visibility": "everyone",
+                    "label": "Chortle",
+                    "NTIID": "tag:nextthought.com,2011-10:OU-RelatedWorkRef-CS1323_F_2015_Intro_to_Computer_Programming.relatedworkref.relwk:chortle.5",
+                    "href": "tag:nextthought.com,2011-10:OU-HTML-CS1323_S_2015_Intro_to_Computer_Programming.reading:Chortle_CH30",
+                    "target-NTIID": "tag:nextthought.com,2011-10:OU-HTML-CS1323_S_2015_Intro_to_Computer_Programming.reading:Chortle_CH30",
+                    "icon": "resources/CS1323_F_2015_Intro_to_Computer_Programming/b06a4bdb19666c7afc685f0365fd59a988b154c2/fd35e23767020999111e1f49239199b4c5eff23e.png",
+                    "desc": ""
+                },
+                {
+                    "MimeType": "application/vnd.nextthought.relatedworkref",
+                    "targetMimeType": "application/vnd.nextthought.externallink",
+                    "creator": "Deborah Trytten",
+                    "section": "additional",
+                    "visibility": "everyone",
+                    "label": "Examples from the Videos",
+                    "NTIID": "tag:nextthought.com,2011-10:OU-RelatedWorkRef-CS1323_F_2015_Intro_to_Computer_Programming.relatedworkref.relwk:02.02.04_code_sample",
+                    "href": "resources/Lesson_2.2.4_Code.zip",
+                    "target-NTIID": "tag:nextthought.com,2011-10:NTI-UUID-3ae0c7ad9f77051da869590703975cd8",
+                    "icon": "resources/CS1323_F_2015_Intro_to_Computer_Programming/b9c4a1a1dc3d30c895df3b30c553fa40f972a2f5/fd35e23767020999111e1f49239199b4c5eff23e.png",
+                    "desc": "Java code developed in the videos from this lesson."
+                },
+                {
+                    "MimeType": "application/vnd.nextthought.relatedworkref",
+                    "targetMimeType": "application/vnd.nextthought.externallink",
+                    "creator": "Deborah Trytten",
+                    "section": "additional",
+                    "visibility": "everyone",
+                    "label": "Parameter Passing",
+                    "NTIID": "tag:nextthought.com,2011-10:OU-RelatedWorkRef-CS1323_F_2015_Intro_to_Computer_Programming.relatedworkref.relwk:02.02.04_memory_diagrams_passing_by_value",
+                    "href": "resources/Memory_Diagrams_Passing_By_Value.pptx",
+                    "target-NTIID": "tag:nextthought.com,2011-10:NTI-UUID-9f2e9e1341bb0803ddc34e54cdbadd7b",
+                    "icon": "resources/CS1323_F_2015_Intro_to_Computer_Programming/17f860f9921d29d578e2791d3ff00dcf689071c3/fd35e23767020999111e1f49239199b4c5eff23e.png",
+                    "desc": "Lecture presentation"
+                },
+                {
+                    "MimeType": "application/vnd.nextthought.relatedworkref",
+                    "targetMimeType": "application/vnd.nextthought.externallink",
+                    "creator": "Deborah Trytten",
+                    "section": "additional",
+                    "visibility": "everyone",
+                    "label": "JavaBat",
+                    "NTIID": "tag:nextthought.com,2011-10:OU-RelatedWorkRef-CS1323_F_2015_Intro_to_Computer_Programming.relatedworkref.relwk:02.02.04_how_to_use_javabat",
+                    "href": "resources/JavaBat.pptx",
+                    "target-NTIID": "tag:nextthought.com,2011-10:NTI-UUID-3e9c27394b0fd1b407a474fd63491bc3",
+                    "icon": "resources/CS1323_F_2015_Intro_to_Computer_Programming/17f860f9921d29d578e2791d3ff00dcf689071c3/fd35e23767020999111e1f49239199b4c5eff23e.png",
+                    "desc": "Lecture presentation"
+                },
+                {
+                    "MimeType": "application/vnd.nextthought.relatedworkref",
+                    "targetMimeType": "application/vnd.nextthought.externallink",
+                    "creator": "Deborah Trytten",
+                    "section": "additional",
+                    "visibility": "everyone",
+                    "label": "Choosing a Cell Phone Contract: Iteration 6",
+                    "NTIID": "tag:nextthought.com,2011-10:OU-RelatedWorkRef-CS1323_F_2015_Intro_to_Computer_Programming.relatedworkref.relwk:02.02.04_cell_phone_6",
+                    "href": "resources/Cell_Phone_Contract_Iteration_6.pptx",
+                    "target-NTIID": "tag:nextthought.com,2011-10:NTI-UUID-55bf98e625372170a482c317569318e5",
+                    "icon": "resources/CS1323_F_2015_Intro_to_Computer_Programming/17f860f9921d29d578e2791d3ff00dcf689071c3/fd35e23767020999111e1f49239199b4c5eff23e.png",
+                    "desc": "Lecture presentation"
+                },
+                {
+                    "MimeType": "application/vnd.nextthought.relatedworkref",
+                    "targetMimeType": "application/vnd.nextthought.externallink",
+                    "creator": "Deborah Trytten",
+                    "section": "additional",
+                    "visibility": "everyone",
+                    "label": "Craps: Iteration 2",
+                    "NTIID": "tag:nextthought.com,2011-10:OU-RelatedWorkRef-CS1323_F_2015_Intro_to_Computer_Programming.relatedworkref.relwk:02.02.04_craps_2",
+                    "href": "resources/Craps_Iteration_2.pptx",
+                    "target-NTIID": "tag:nextthought.com,2011-10:NTI-UUID-93ee36269eff768098317fefa375916d",
+                    "icon": "resources/CS1323_F_2015_Intro_to_Computer_Programming/17f860f9921d29d578e2791d3ff00dcf689071c3/fd35e23767020999111e1f49239199b4c5eff23e.png",
+                    "desc": "Lecture presentation"
+                }
+            ],
+            "accentColor": "ce78e0",
+            "title": "Additional Resources"
+        }
+    ],
+    "title": "Methods",
+    "NTIID": "tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.lec:02.08_LESSON"
+}

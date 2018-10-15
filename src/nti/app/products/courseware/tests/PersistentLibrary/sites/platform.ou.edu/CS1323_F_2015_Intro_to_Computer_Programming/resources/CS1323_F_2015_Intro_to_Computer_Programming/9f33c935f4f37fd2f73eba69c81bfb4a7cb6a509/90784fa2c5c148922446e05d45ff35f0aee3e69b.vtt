@@ -1,0 +1,377 @@
+WEBVTT
+Kind: captions
+Language: en
+
+00:00:01.400 --> 00:00:06.340
+&gt;&gt;Now let's take a look at memory diagrams
+to explain how passing by value works for
+
+00:00:06.340 --> 00:00:12.610
+primitive data. The first thing you need to
+know is the difference between arguments and
+
+00:00:12.610 --> 00:00:18.570
+parameters. When you 'call', which means use
+a method, the arguments are the raw materials
+
+00:00:18.570 --> 00:00:25.269
+that are used to calculate the result. So
+for example I can call the Math.abs function,
+
+00:00:25.269 --> 00:00:32.269
+abs stands for absolute value, with an argument
+of negative seven and it will return as seven.
+
+00:00:32.439 --> 00:00:38.270
+On the other hand I could've called it with
+a Math.abs seven, so the argument there is
+
+00:00:38.270 --> 00:00:42.980
+seven, and it will also return seven because
+the absolute value of both negative seven
+
+00:00:42.980 --> 00:00:47.100
+and seven is in fact seven.
+
+00:00:47.100 --> 00:00:52.120
+Parameters are different though. When you
+write a method, parameters are variables that
+
+00:00:52.120 --> 00:00:57.570
+will be assigned values from the arguments.
+So the parameters are fakes - they're just
+
+00:00:57.570 --> 00:01:02.530
+standing in for the arguments. We have to
+have a name because we don't know what argument
+
+00:01:02.530 --> 00:01:09.010
+is going to be passed in when we write the
+method. They only live as long as the method
+
+00:01:09.010 --> 00:01:14.440
+lives, so they have a very, very short life
+span usually. Now the parameter names are
+
+00:01:14.440 --> 00:01:19.909
+actually irrelevant, you could call them anything.
+But of course we always try to give our parameters
+
+00:01:19.909 --> 00:01:24.960
+meaningful names because it makes it easier
+for people to read the code. Local variables
+
+00:01:24.960 --> 00:01:30.610
+are similar to parameters but they're a little
+bit different because the parameters get initialized,
+
+00:01:30.610 --> 00:01:37.310
+that is given values from the arguments, whereas
+local variables don't.
+
+00:01:37.310 --> 00:01:43.090
+Now here's the big question: Do parameters
+change arguments? Well, it turns out that
+
+00:01:43.090 --> 00:01:49.700
+depends on several factors. First is the type
+of parameter. So the answer is different for
+
+00:01:49.700 --> 00:01:54.729
+primitive data types and objects. So primitive
+data types, which is what we're looking at
+
+00:01:54.729 --> 00:02:01.159
+now like int and double, work different than
+objects like string and scanner. Now the reason
+
+00:02:01.159 --> 00:02:06.940
+they work differently is because they're stored
+in memory differently. What's more, when we
+
+00:02:06.940 --> 00:02:12.659
+start talking about objects, it makes a difference
+where the object was constructed-- whether
+
+00:02:12.659 --> 00:02:16.980
+the object was constructed in the method or
+not. We'll handle this in the next section
+
+00:02:16.980 --> 00:02:20.719
+of the class.
+
+00:02:20.719 --> 00:02:25.290
+Turns out that memory diagrams are a perfect
+way to answer theses questions. So this is
+
+00:02:25.290 --> 00:02:30.400
+a good chance for you to see the advantages
+of learning this way, of visualizing what's
+
+00:02:30.400 --> 00:02:37.400
+happening inside a computer. So a memory diagram
+is a way of visualizing how programs work.
+
+00:02:37.439 --> 00:02:42.090
+Basically it shows how the memory is allocated
+in the computer. This is something that's
+
+00:02:42.090 --> 00:02:47.359
+very abstract and so it can be hard for people
+to understand it. By drawing a picture of
+
+00:02:47.359 --> 00:02:52.499
+it in a consistent and correct way, it helps
+you to really understand how computer memory
+
+00:02:52.499 --> 00:02:58.799
+is working. It's also an incredibly important
+debugging technique. When you get into a really
+
+00:02:58.799 --> 00:03:04.510
+bad situation with a computer program, drawing
+a memory diagram is one of the ways of understanding
+
+00:03:04.510 --> 00:03:06.659
+what it's doing.
+
+00:03:06.659 --> 00:03:12.739
+Let's talk a little bit about primitive data
+types. When we say int size is three, or double
+
+00:03:12.739 --> 00:03:19.010
+length equals two point seven, each variable
+is going to get a box. The name of the variable
+
+00:03:19.010 --> 00:03:25.159
+is on top and the contents of the box is the
+value. So you can see we've got size, it has
+
+00:03:25.159 --> 00:03:31.419
+it's own box and the value is three, because
+that's how we assigned it. Length on the other
+
+00:03:31.419 --> 00:03:37.109
+hand is a double and its value is two point
+seven. So this is how you draw primitive data
+
+00:03:37.109 --> 00:03:43.199
+types. Now here's the code we're going to
+trace. So let's read it first and try to make
+
+00:03:43.199 --> 00:03:48.900
+sense of what it's trying to do, and then
+see if it's actually successful in doing it.
+
+00:03:48.900 --> 00:03:53.459
+Now remember we could've answered this question
+by just running the program - but the problem
+
+00:03:53.459 --> 00:03:56.919
+with running the program is while it will
+tell you whether it's doing the correct thing
+
+00:03:56.919 --> 00:04:03.099
+or not it won't really offer you an explanation
+of what's going on so you won't really understand
+
+00:04:03.099 --> 00:04:07.900
+it. And if you don't understand it, then you
+won't be able to write the code correctly.
+
+00:04:07.900 --> 00:04:13.329
+So here we've got public class example and
+we've got our main program. It's always a
+
+00:04:13.329 --> 00:04:17.470
+good idea to read the main program first because
+that's where the action is, that's where things
+
+00:04:17.470 --> 00:04:23.360
+get started. So we've got two variables, called
+x and y and they're given values of zero and
+
+00:04:23.360 --> 00:04:29.960
+seven, respectively. And then we call this
+method that does a swap. And it takes x and
+
+00:04:29.960 --> 00:04:36.129
+y and we see if we look at the method that
+it takes the first value, now notice the names
+
+00:04:36.129 --> 00:04:42.349
+have changed here. So the zero from x is going
+to be passed into a as the value for parameter
+
+00:04:42.349 --> 00:04:49.349
+a. The seven from the argument y is going
+to be passed to b as the value for the parameter
+
+00:04:50.240 --> 00:04:56.370
+b. Now the reason they get passed in that
+order is because Java uses order to determine
+
+00:04:56.370 --> 00:05:00.879
+which one is where, so the first argument
+goes to the first parameter and the second
+
+00:05:00.879 --> 00:05:03.360
+argument goes to the second parameter.
+
+00:05:03.360 --> 00:05:09.319
+A is assigned to a location temp. Temp is
+local variable, so it isn't going to live
+
+00:05:09.319 --> 00:05:15.860
+very long. Then a get's assigned b's value
+and b get's assigned temp's value. Well you
+
+00:05:15.860 --> 00:05:20.250
+probably recognize that code because you've
+written it in Turingscraft several different
+
+00:05:20.250 --> 00:05:25.220
+ways. So that really does look like a swap.
+So from what we know at this point it seems
+
+00:05:25.220 --> 00:05:27.449
+that that method should work just fine.
+
+00:05:27.449 --> 00:05:34.020
+Here are some instructions for tracing code.
+You always start at the main program because
+
+00:05:34.020 --> 00:05:38.970
+like I said a few minutes ago - that's where
+the action is. Then you create something called
+
+00:05:38.970 --> 00:05:45.400
+the main stack frame. What that is, is the
+area where all of the variables that are local
+
+00:05:45.400 --> 00:05:51.580
+variables in the main program are stored.
+Then you execute the program one line at a
+
+00:05:51.580 --> 00:05:57.569
+time. As you encounter methods you go to them,
+you create a stack frame for each method,
+
+00:05:57.569 --> 00:06:02.360
+you copy the arguments into the parameters,
+and a lot of people forget to do that. Then
+
+00:06:02.360 --> 00:06:08.560
+you complete the execution of the method and
+return to the main program. Now remember a
+
+00:06:08.560 --> 00:06:13.159
+main program can and often does have more
+than one method in it. For right now we're
+
+00:06:13.159 --> 00:06:15.909
+just going to worry about one method.
+
+00:06:15.909 --> 00:06:20.189
+Once we've completed the execution of the
+main program. The program stops working and
+
+00:06:20.189 --> 00:06:26.539
+so at that point we can see what's happened.
+Now let's trace some code. So we go to the
+
+00:06:26.539 --> 00:06:33.539
+main program and we see there's int x equals
+five. So we create our main stack frame, and
+
+00:06:34.020 --> 00:06:41.020
+we create a location called x and we put five
+in it. Then we say int y equals seven. So
+
+00:06:42.050 --> 00:06:47.930
+there we create a location called y and we
+put the value seven in it. Now we're getting
+
+00:06:47.930 --> 00:06:54.930
+ready to swap x and y. We create the stack
+frame for swap and put the locations a and
+
+00:06:57.080 --> 00:07:04.080
+b in it. The value of the arguments x and
+y, five and seven, get passed to the parameters
+
+00:07:05.199 --> 00:07:09.849
+a and b, and are stored in the right location.
+
+00:07:09.849 --> 00:07:14.379
+Now we've got our local variable temp and
+it gets assigned a value that's an a, so it
+
+00:07:14.379 --> 00:07:21.379
+gets assigned a value that's a five. Now a
+gets the value of b. So the five is gone,
+
+00:07:23.349 --> 00:07:29.979
+and then b gets the value of temp. So b gets
+the value of five. So we can see that a and
+
+00:07:29.979 --> 00:07:36.979
+b were successfully swapped. But wait a minute:
+What happened to x and y? Well, our method
+
+00:07:37.219 --> 00:07:43.370
+is through now so at that point our swap stack
+frame goes away. Now I'm not going to cross
+
+00:07:43.370 --> 00:07:48.090
+that out or anything like that because it
+makes it hard to read this. But what we see
+
+00:07:48.090 --> 00:07:54.610
+is once swap is finished nothing got assigned
+to x and y in the main program. And so x and
+
+00:07:54.610 --> 00:08:01.610
+y didn't get swapped. Oh! That's a problem.
+Essentially out program didn't work. Well
+
+00:08:04.509 --> 00:08:09.699
+what does this mean? Well it means the method
+didn't do what it was supposed to do. It turns
+
+00:08:09.699 --> 00:08:15.860
+out that swap cannot be done in Java, not
+this way.
+
+00:08:15.860 --> 00:08:21.430
+This is because primitive data types are passed
+by value. Now I have to admit when I was first
+
+00:08:21.430 --> 00:08:27.199
+learning to program I found this concept really
+confusing, but the idea shows up very well
+
+00:08:27.199 --> 00:08:34.199
+in a memory diagram. When the values in x
+and y were copied to locations a and b we
+
+00:08:34.310 --> 00:08:40.060
+created a separate copy. Anything we do with
+a and b isn't going to impact x and y one
+
+00:08:40.060 --> 00:08:46.700
+little bit because they're at a different
+place in memory in a different stack frame.
+
+00:08:46.700 --> 00:08:53.000
+So changing the data in a and b had absolutely
+no impact whatsoever on x and y, and that
+
+00:08:53.000 --> 00:08:58.950
+is what passing by value means. So the moral
+of this story is that it is impossible to
+
+00:08:58.950 --> 00:09:05.950
+change a primitive data type value inside
+a method. So keep programming!
+

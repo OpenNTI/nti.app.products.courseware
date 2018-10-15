@@ -1,0 +1,133 @@
+WEBVTT
+Kind: captions
+Language: en
+
+00:00:00.140 --> 00:00:07.140
+&gt;&gt;Let's take a look at how to submit programs
+on Janux. In Eclipse you select the correct
+
+00:00:07.580 --> 00:00:14.580
+project, choose file, export, then general,
+file system, and then choose your files. Let
+
+00:00:17.140 --> 00:00:19.449
+me show you how it's done.
+
+00:00:19.449 --> 00:00:26.449
+Here we are in Eclipse. Let's submit some
+of the charity donation files for example.
+
+00:00:27.070 --> 00:00:34.070
+So we'll go to file, export, then we pick
+file system and click next. And then we have
+
+00:00:37.180 --> 00:00:44.180
+to navigate until we find the right files.
+So here are the source files that are available.
+
+00:00:44.440 --> 00:00:48.539
+That one's not a good one because we have
+lots of files in that case. So let's pick
+
+00:00:48.539 --> 00:00:55.539
+a different one, let's go to one of our cellphone
+examples. Here's our source file here, and
+
+00:00:56.350 --> 00:01:02.199
+so we're going to click just cellphone.java.
+You will only submit the dot java file. I
+
+00:01:02.199 --> 00:01:05.950
+don't need the settings or the bins or anything
+else.
+
+00:01:05.950 --> 00:01:12.409
+Now the other thing you need to do is to determine
+where you want it to be left. Now what I recommend
+
+00:01:12.409 --> 00:01:18.430
+you do is create a directory for this inside
+your class directory. So you might call it
+
+00:01:18.430 --> 00:01:23.890
+something like 'submitted files.' You need
+to be very careful not to overwrite previous
+
+00:01:23.890 --> 00:01:29.350
+files. We might need those files if there's
+a submission problem at some point. It's always
+
+00:01:29.350 --> 00:01:33.750
+nice to be able to look back at a student's
+computer and see that the file hasn't been
+
+00:01:33.750 --> 00:01:36.430
+modified. So please be careful.
+
+00:01:36.430 --> 00:01:40.369
+So let's say for example that I was going
+to do this on the desktop. That's not the
+
+00:01:40.369 --> 00:01:47.020
+smartest place to put files but it will do
+for now. I might create a folder called submitted
+
+00:01:47.020 --> 00:01:54.020
+files and then go to that folder. When I click
+finish now, it will put our Java file in that
+
+00:01:57.750 --> 00:02:04.750
+folder. So let's go and take a look at it.
+Here we go to the desktop and here are submitted
+
+00:02:05.340 --> 00:02:12.340
+files. And notice in it we've got cellphone.java.
+Now if I click in this, it's going to try
+
+00:02:13.400 --> 00:02:17.180
+to open it and it's going to get confused
+because it doesn't know what to do with Java
+
+00:02:17.180 --> 00:02:23.840
+files. So that's not a good thing but you
+can see it here in text mode, and that is
+
+00:02:23.840 --> 00:02:30.069
+in fact the correct file. Now at the point
+where you've done this you're really only
+
+00:02:30.069 --> 00:02:36.230
+halfway. So we went to the source directory
+and we chose the Java files and we chose our
+
+00:02:36.230 --> 00:02:42.260
+two directory. Make sure you do not overwrite
+files. Eclipse will warn you if you're going
+
+00:02:42.260 --> 00:02:47.050
+to overwrite files so don't say yes to that.
+
+00:02:47.050 --> 00:02:51.980
+Now on Janux what you're going to do is navigate
+to the assignment and upload the file that
+
+00:02:51.980 --> 00:02:57.680
+you just saved. Please remember that there
+is only one upload permitted for each assignment,
+
+00:02:57.680 --> 00:03:02.430
+so choose your files carefully. Often people
+get so worried about getting that file in
+
+00:03:02.430 --> 00:03:08.120
+right before the deadline that they choose
+the wrong file and that causes us endless
+
+00:03:08.120 --> 00:03:14.750
+grief. So please, please, please, choose carefully.
+If you do happen to upload the wrong file,
+
+00:03:14.750 --> 00:03:21.750
+just email me the right file: dtrytten@ou.edu.
+We'll work with you. So keep programming!
+

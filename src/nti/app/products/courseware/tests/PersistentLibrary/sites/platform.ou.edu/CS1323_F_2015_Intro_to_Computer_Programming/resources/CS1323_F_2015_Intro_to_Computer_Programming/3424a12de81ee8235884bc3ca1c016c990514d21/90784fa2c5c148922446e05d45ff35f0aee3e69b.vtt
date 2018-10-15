@@ -1,0 +1,499 @@
+WEBVTT
+Kind: captions
+Language: en
+
+00:00:01.189 --> 00:00:07.259
+&gt;&gt;Let's talk about identifying rectangles
+and triangles in nested loops. When you're
+
+00:00:07.259 --> 00:00:13.269
+trying to identify nested loops, you have
+to first recognize single loops. In general
+
+00:00:13.269 --> 00:00:18.130
+these are easy to identify, because they're
+linear. That is, they start at one point and they
+
+00:00:18.130 --> 00:00:22.810
+go to the other without too many interruptions
+in the middle. Now there are exceptions to
+
+00:00:22.810 --> 00:00:27.420
+that, binary search being an example of one
+that's different, but in general that's going
+
+00:00:27.420 --> 00:00:33.269
+to be true of single loops. Nested loops can
+be a little bit harder to identify. There
+
+00:00:33.269 --> 00:00:37.570
+are two common patterns that I want you to
+be familiar with. Now the names for these
+
+00:00:37.570 --> 00:00:42.269
+are sort of my own creations, they're not
+something that everybody has thought about
+
+00:00:42.269 --> 00:00:46.809
+and understood, but I think there are two
+useful categories for you to think about.
+
+00:00:46.809 --> 00:00:52.129
+The first one is what I call rectangular loops,
+and the second one is triangular. And I'll
+
+00:00:52.129 --> 00:00:58.159
+give you some examples and some explanation
+to help you identify these yourself. For rectangular
+
+00:00:58.159 --> 00:01:02.679
+loops each for loop, and I'm saying for loop
+here because they often are, but they don't
+
+00:01:02.679 --> 00:01:07.870
+have to be. While loops and for loops are
+completely equivalent. So these loops progress
+
+00:01:07.870 --> 00:01:13.870
+through indices, usually for an array or an
+ArrayList. The indices of the nested loops
+
+00:01:13.870 --> 00:01:19.330
+are independent. So what I mean is the counting
+in the outer for loop and the counting in
+
+00:01:19.330 --> 00:01:23.280
+the inner for loop aren't depending on each
+other.
+
+00:01:23.280 --> 00:01:28.210
+So here's an example of a nested for loop
+that's a rectangular pattern. So we have int
+
+00:01:28.210 --> 00:01:34.110
+first is zero, first less than five, plus
+plus first, and then int second equals zero,
+
+00:01:34.110 --> 00:01:38.520
+second less than three plus plus second. And
+here in the body of the inner loop all we're
+
+00:01:38.520 --> 00:01:43.790
+doing is printing out a single asterisk. Notice
+that's a print and not a print line. And then
+
+00:01:43.790 --> 00:01:49.960
+at the end after the inner for loop has completed,
+we're doing one new line. So let's think a
+
+00:01:49.960 --> 00:01:55.250
+little bit about what this means. So we start
+out with first is zero and we immediately
+
+00:01:55.250 --> 00:02:00.060
+dive into the inner loop. Now this inner loop
+is just going to repeat three times and it's
+
+00:02:00.060 --> 00:02:02.650
+going to print out three asterisks.
+
+00:02:02.650 --> 00:02:07.020
+So that's what the inner loop is doing is
+printing out a line of three asterisks. What
+
+00:02:07.020 --> 00:02:12.370
+the outer loop is doing is repeating five
+times. So what you'll have here is three lines
+
+00:02:12.370 --> 00:02:18.100
+of five asterisks each. So that looks like
+that. Well, if you think about it, that's
+
+00:02:18.100 --> 00:02:23.500
+what I mean by rectangular. So notice the
+fact that the outer loop is repeating five
+
+00:02:23.500 --> 00:02:28.330
+times didn't interact with the fact that the
+inner loop was repeating three times. It just
+
+00:02:28.330 --> 00:02:33.480
+controlled the number of lines. That's what
+I mean by independent, and that's a rectangular
+
+00:02:33.480 --> 00:02:39.200
+pattern. Now triangular nested loops are a
+little bit different. Here the index of the
+
+00:02:39.200 --> 00:02:45.160
+inner loop depends on the outer one. So let's
+take a look at an example here. Int first
+
+00:02:45.160 --> 00:02:50.260
+equals zero, first less than five, plus plus
+first. So the outer for loop is exactly the
+
+00:02:50.260 --> 00:02:55.590
+same as the one we had before. But look at
+the difference with the inner four loop. For
+
+00:02:55.590 --> 00:03:02.340
+int second equals first, second less than
+five, plus plus second. Now here second and
+
+00:03:02.340 --> 00:03:07.970
+first are interacting. So that inner loop
+is starting at a different point in each iteration
+
+00:03:07.970 --> 00:03:12.990
+in the outer loop. The body of the inner loop
+is the same, we're just printing single asterisks
+
+00:03:12.990 --> 00:03:17.450
+and when we get all of them printing out we're
+getting new line. So if you think about it,
+
+00:03:17.450 --> 00:03:23.230
+the first loop is going to print five asterisks:
+the second one four, the third one three and
+
+00:03:23.230 --> 00:03:28.900
+so on. What this means is the pattern of asterisks
+is going to look like this. So when you see
+
+00:03:28.900 --> 00:03:35.700
+that that's a triangular pattern and that's
+what I mean by a triangular nested loop. So
+
+00:03:35.700 --> 00:03:40.510
+let's take a look at a couple examples and
+see how these things play out in real methods.
+
+00:03:40.510 --> 00:03:45.530
+The first one I'm going to look at is disjoint.
+Now this is an array version of a method that's
+
+00:03:45.530 --> 00:03:52.180
+actually in the Collections class. Here's
+a signature for it, Boolean disjoint. And
+
+00:03:52.180 --> 00:03:57.510
+then we have two arrays: first and second.
+Now disjoint is a discrete mathematics term,
+
+00:03:57.510 --> 00:04:02.180
+one you may not be familiar with, and if you're
+not don't worry about it. So what it means
+
+00:04:02.180 --> 00:04:08.040
+is no elements are shared between the first
+and second arrays, that is when disjoint is
+
+00:04:08.040 --> 00:04:15.040
+true. So for example the first contained 9,
+1, 5, 7, 3, 9, 9 and second contained 2, 4,
+
+00:04:16.400 --> 00:04:23.020
+9. Disjoint with these two arguments would
+be false because they both contain a nine.
+
+00:04:23.020 --> 00:04:27.750
+If on the other hand first contained the same
+thing above but the second contained 2, 4,
+
+00:04:27.750 --> 00:04:32.820
+6, at that point the method would return true.
+None of the integers that are in the second
+
+00:04:32.820 --> 00:04:35.410
+array are also in the first array.
+
+00:04:35.410 --> 00:04:39.850
+Now one thing you're going to notice here
+is I'm implying perfect size arrays. I didn't
+
+00:04:39.850 --> 00:04:44.490
+say that in the description, but you can pick
+it up from the signature of the method. If
+
+00:04:44.490 --> 00:04:48.410
+these weren't perfect sized arrays we would
+have to know the size of the first and the
+
+00:04:48.410 --> 00:04:53.880
+size of the second. So you can tell whether
+there's a perfect or an oversized array just
+
+00:04:53.880 --> 00:04:59.530
+by looking at the signature of the method
+if you think it through. So, let's create
+
+00:04:59.530 --> 00:05:04.680
+a plan for figuring out whether we have disjoint
+or not. What we want to do is step through
+
+00:05:04.680 --> 00:05:08.280
+that second array and look at every element
+in the first array and see if they're the
+
+00:05:08.280 --> 00:05:13.660
+same. So for example we'll compare two to
+nine, then we'll compare two to one, then
+
+00:05:13.660 --> 00:05:18.690
+two to five, then two to seven. So what I'm
+doing is marching across that first row of
+
+00:05:18.690 --> 00:05:24.900
+the array. Once that's finished, we go to
+the second element of second, which is four.
+
+00:05:24.900 --> 00:05:29.840
+And we compare four to nine, then four to
+one and then four to five, then four to seven
+
+00:05:29.840 --> 00:05:35.620
+so, and so on throughout the rest of the array.
+So what we're seeing here is a rectangular
+
+00:05:35.620 --> 00:05:36.260
+pattern.
+
+00:05:36.260 --> 00:05:41.740
+Now let's take a look at what happens when
+we hit nine. We compare nine to nine and all
+
+00:05:41.740 --> 00:05:46.250
+of a sudden we know these aren't disjoint.
+So when we know they're not disjoint we want
+
+00:05:46.250 --> 00:05:51.139
+to quit and get out of there. So we're going
+to return at that point. So just because it
+
+00:05:51.139 --> 00:05:55.949
+returns at some point doesn't interrupt the
+pattern structure. So this is definitely a
+
+00:05:55.949 --> 00:06:00.580
+rectangular pattern. Let's take a look at
+the rectangular code.
+
+00:06:00.580 --> 00:06:07.370
+So, our outer for loop is stepping through
+the first array one element at a time. Starting
+
+00:06:07.370 --> 00:06:12.180
+at zero, going to less than first dot length.
+The inner for loop is marching through the
+
+00:06:12.180 --> 00:06:17.770
+second array. So it starts with the index
+of zero and then it stops at less than second
+
+00:06:17.770 --> 00:06:23.669
+dot length. What we do inside the inner for
+loop is we check to see if the chosen element
+
+00:06:23.669 --> 00:06:28.530
+in the first array and the chosen element
+in the second array are equal to each other.
+
+00:06:28.530 --> 00:06:32.979
+If they are we return false, so that means
+the method ends. So remember when those two
+
+00:06:32.979 --> 00:06:38.710
+nines hit in the example? That was where it
+stopped. If we get all the way to the end
+
+00:06:38.710 --> 00:06:43.500
+of both of those loops and we haven't returned
+false, then we know we didn't encounter anything
+
+00:06:43.500 --> 00:06:47.540
+that was equivalent. In other words, then
+we know that the two arrays were disjoint
+
+00:06:47.540 --> 00:06:53.300
+and we return true. So this is a typical rectangular
+pattern.
+
+00:06:53.300 --> 00:06:58.419
+So let's look at a second example. This one
+I'm calling elements unique. Here's the signature
+
+00:06:58.419 --> 00:07:04.740
+for it: public status Boolean, elements unique,
+and here we have just one array. So let's
+
+00:07:04.740 --> 00:07:11.139
+say our target array contained 1, 3, 4, 6,
+5, 9, 7, 7. At this point it would return
+
+00:07:11.139 --> 00:07:15.410
+false, and the reason is that there are two
+sevens in it so the elements aren't unique--
+
+00:07:15.410 --> 00:07:21.870
+one of the elements was repeated. If on the
+other hand target contained 1, 3, 4, 9, 7,
+
+00:07:21.870 --> 00:07:26.870
+5, 6, 2 then this method would return true.
+The reason it would return true is because
+
+00:07:26.870 --> 00:07:31.949
+none of the elements have been repeated. Now
+this is also a perfect size array and once
+
+00:07:31.949 --> 00:07:36.020
+again you can tell this from the signature,
+because they didn't tell you how many elements
+
+00:07:36.020 --> 00:07:42.560
+were stored in target. Now, here's a plan
+for how to calculate this. First we're going
+
+00:07:42.560 --> 00:07:47.830
+to compare the first element with all the
+other elements in the array. So one will be
+
+00:07:47.830 --> 00:07:53.229
+compared with three, four, six, five, nine,
+and both of the sevens. Since one isn't equal
+
+00:07:53.229 --> 00:07:59.199
+to any of those things we go on and compare
+the second element, three to four, six, five,
+
+00:07:59.199 --> 00:08:03.750
+nine, seven, seven. Notice we didn't need
+to compare three to one. Because we did that
+
+00:08:03.750 --> 00:08:09.110
+comparison in the previous iteration of the
+loop and so there's no reason to do it again.
+
+00:08:09.110 --> 00:08:14.199
+So what we have here is clearly a triangular
+pattern. Now this triangular pattern doesn't
+
+00:08:14.199 --> 00:08:19.169
+stop until the very last iteration. That's
+when we find that the first seven and the
+
+00:08:19.169 --> 00:08:25.660
+second seven are in fact equal to each other
+and that's when we return false.
+
+00:08:25.660 --> 00:08:31.199
+So let's take a look at this method now. Public
+static Boolean unique elements. Our outer
+
+00:08:31.199 --> 00:08:36.459
+for loop starts at first index is zero and
+stops when first index is less than first
+
+00:08:36.459 --> 00:08:43.440
+dot length and increments it. Now the second
+index does exactly the same thing, except
+
+00:08:43.440 --> 00:08:48.890
+it starts at a different position. It starts
+at first index plus one. Now that is really
+
+00:08:48.890 --> 00:08:53.390
+important to notice that we're not starting
+at first index, because if we compare the
+
+00:08:53.390 --> 00:08:58.750
+array at first index and second index when
+they're equal to each other-- that's going
+
+00:08:58.750 --> 00:09:03.640
+to be true every time and we won't get the
+right answer. So we have to start second index
+
+00:09:03.640 --> 00:09:07.940
+one position higher than the first index.
+If you were paying attention you may have
+
+00:09:07.940 --> 00:09:12.200
+noticed that in the table, that we didn't
+compare one to one and three to three, for
+
+00:09:12.200 --> 00:09:13.390
+example.
+
+00:09:13.390 --> 00:09:18.620
+Now, if the two elements are equal to each
+other we return false because then the elements
+
+00:09:18.620 --> 00:09:23.510
+aren't unique and only when we get to the
+end of the method do we return true. So this
+
+00:09:23.510 --> 00:09:29.700
+is classic triangular code. What makes it
+triangular is this first index plus one being
+
+00:09:29.700 --> 00:09:34.580
+the starting position for second index; the
+fact that that second index depends on the
+
+00:09:34.580 --> 00:09:38.820
+first one. So let's make some observations.
+
+00:09:38.820 --> 00:09:42.420
+The first thing is when you're dealing with
+nested loops you need a plan for discovering
+
+00:09:42.420 --> 00:09:48.740
+the structure of the nested loop. So don't'
+just dive into writing code. The critical
+
+00:09:48.740 --> 00:09:53.300
+step is slowing down your thinking enough
+so you can figure out how you're doing these
+
+00:09:53.300 --> 00:09:58.610
+operations. We're used to doing these things
+so fast in our head that you may not be used
+
+00:09:58.610 --> 00:10:03.810
+to really thinking about how exactly you're
+doing them. So even though you can do them,
+
+00:10:03.810 --> 00:10:10.480
+it's harder to see how they're done. Now working
+through a small example slowly helps. I also
+
+00:10:10.480 --> 00:10:14.740
+really do like to draw pictures, and I do
+that even when I'm not trying to explain things
+
+00:10:14.740 --> 00:10:19.570
+to students to see the structure of things
+and to see how they fit together and to figure
+
+00:10:19.570 --> 00:10:25.769
+out how to write the loops. As I said before,
+what you don't want to do is just hack a code.
+
+00:10:25.769 --> 00:10:29.750
+You don't want to just sit at the terminal
+and type, type, type, type, type and then
+
+00:10:29.750 --> 00:10:34.760
+test and fix and test and fix and test and
+fix. That's actually an extremely inefficient
+
+00:10:34.760 --> 00:10:40.370
+process. The thinking things through beforehand
+process, drawing a picture, trying to figure
+
+00:10:40.370 --> 00:10:46.510
+out what the right answer is, will save you
+many, many hours of programming. So keep programming!
+

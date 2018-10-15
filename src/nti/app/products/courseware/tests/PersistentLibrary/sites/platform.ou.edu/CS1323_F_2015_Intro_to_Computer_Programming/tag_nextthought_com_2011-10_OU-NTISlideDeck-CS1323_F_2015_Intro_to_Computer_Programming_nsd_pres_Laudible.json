@@ -1,0 +1,130 @@
+{
+  "MimeType": "application/vnd.nextthought.ntislidedeck",
+  "Videos": [
+    {
+      "MimeType": "application/vnd.nextthought.ntislidevideo",
+      "video-ntiid": "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_02.03.02_Laudible",
+      "title": "Laudible.com",
+      "creator": "Deborah Trytten",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Laudible",
+      "thumbnail": "//www.kaltura.com/p/1500101/thumbnail/entry_id/0_v8d1q1n6/width/640/",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Laudible_video",
+      "class": "ntislidevideo"
+    }
+  ],
+  "creator": "Deborah Trytten",
+  "title": "Choosing Cheap Audio Books",
+  "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Laudible",
+  "Slides": [
+    {
+      "MimeType": "application/vnd.nextthought.slide",
+      "slidevideoid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Laudible_video",
+      "slidetitle": "Choosing Cheap Audio Books",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Laudible",
+      "slidevideostart": "0.0",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlide-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Laudible_slide_1",
+      "slideimage": "resources/CS1323_F_2015_Intro_to_Computer_Programming/efe2a1b81f902efce186b1f8f0f6df4b9eebb658/fd35e23767020999111e1f49239199b4c5eff23e.png",
+      "slidevideoend": "8.0",
+      "slidenumber": "1",
+      "class": "slide"
+    },
+    {
+      "MimeType": "application/vnd.nextthought.slide",
+      "slidevideoid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Laudible_video",
+      "slidetitle": "Problem Statement",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Laudible",
+      "slidevideostart": "8.0",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlide-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Laudible_slide_2",
+      "slideimage": "resources/CS1323_F_2015_Intro_to_Computer_Programming/d407e0594e587f8f3cb8473c5aa0d5a797299638/fd35e23767020999111e1f49239199b4c5eff23e.png",
+      "slidevideoend": "46.0",
+      "slidenumber": "2",
+      "class": "slide"
+    },
+    {
+      "MimeType": "application/vnd.nextthought.slide",
+      "slidevideoid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Laudible_video",
+      "slidetitle": "Write Test Data For Program First",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Laudible",
+      "slidevideostart": "46.0",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlide-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Laudible_slide_3",
+      "slideimage": "resources/CS1323_F_2015_Intro_to_Computer_Programming/54e023a170729f77a13c01f0f7082acfe2279ad7/fd35e23767020999111e1f49239199b4c5eff23e.png",
+      "slidevideoend": "178.0",
+      "slidenumber": "3",
+      "class": "slide"
+    },
+    {
+      "MimeType": "application/vnd.nextthought.slide",
+      "slidevideoid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Laudible_video",
+      "slidetitle": "Create Class",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Laudible",
+      "slidevideostart": "178.0",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlide-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Laudible_slide_4",
+      "slideimage": "resources/CS1323_F_2015_Intro_to_Computer_Programming/a43294c4f9fbe599af4a2084bd926637563f7df3/fd35e23767020999111e1f49239199b4c5eff23e.png",
+      "slidevideoend": "327.0",
+      "slidenumber": "4",
+      "class": "slide"
+    },
+    {
+      "MimeType": "application/vnd.nextthought.slide",
+      "slidevideoid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Laudible_video",
+      "slidetitle": "Design Method Signature(s)",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Laudible",
+      "slidevideostart": "327.0",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlide-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Laudible_slide_5",
+      "slideimage": "resources/CS1323_F_2015_Intro_to_Computer_Programming/681171432cf8b444b15bff7b9c15ed492e3fb767/fd35e23767020999111e1f49239199b4c5eff23e.png",
+      "slidevideoend": "526.0",
+      "slidenumber": "5",
+      "class": "slide"
+    },
+    {
+      "MimeType": "application/vnd.nextthought.slide",
+      "slidevideoid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Laudible_video",
+      "slidetitle": "Read Input",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Laudible",
+      "slidevideostart": "526.0",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlide-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Laudible_slide_6",
+      "slideimage": "resources/CS1323_F_2015_Intro_to_Computer_Programming/73803dba11f9cf2453400df67b41e5d9a8fe2eee/fd35e23767020999111e1f49239199b4c5eff23e.png",
+      "slidevideoend": "894.0",
+      "slidenumber": "6",
+      "class": "slide"
+    },
+    {
+      "MimeType": "application/vnd.nextthought.slide",
+      "slidevideoid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Laudible_video",
+      "slidetitle": "Perform Calculation",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Laudible",
+      "slidevideostart": "894.0",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlide-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Laudible_slide_7",
+      "slideimage": "resources/CS1323_F_2015_Intro_to_Computer_Programming/7d5e1f8997839b814c38bc6297742b833a3821f1/fd35e23767020999111e1f49239199b4c5eff23e.png",
+      "slidevideoend": "1174.0",
+      "slidenumber": "7",
+      "class": "slide"
+    },
+    {
+      "MimeType": "application/vnd.nextthought.slide",
+      "slidevideoid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Laudible_video",
+      "slidetitle": "Test Program",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Laudible",
+      "slidevideostart": "1174.0",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlide-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Laudible_slide_8",
+      "slideimage": "resources/CS1323_F_2015_Intro_to_Computer_Programming/7fd7b3427a1801685b3f164d4bdc2f0c0017de84/fd35e23767020999111e1f49239199b4c5eff23e.png",
+      "slidevideoend": "1961.0",
+      "slidenumber": "8",
+      "class": "slide"
+    },
+    {
+      "MimeType": "application/vnd.nextthought.slide",
+      "slidevideoid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Laudible_video",
+      "slidetitle": "Is It Possible to Test Too Much?",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Laudible",
+      "slidevideostart": "1961.0",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlide-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Laudible_slide_9",
+      "slideimage": "resources/CS1323_F_2015_Intro_to_Computer_Programming/5716a0bec00ca95aaae4e89a195735ba17d20d09/fd35e23767020999111e1f49239199b4c5eff23e.png",
+      "slidevideoend": "2042.0",
+      "slidenumber": "9",
+      "class": "slide"
+    }
+  ],
+  "ntiid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Laudible",
+  "class": "ntislidedeck"
+}

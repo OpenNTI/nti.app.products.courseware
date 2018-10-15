@@ -1,0 +1,33 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html lang="en"><head> <meta content="2015-12-11T16:56:47" http-equiv="last-modified" /> <meta content="1021" name="NTIRelativeScrollHeight" /> <meta content="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.counting_loop_for_lines" name="NTIID" /> <meta content="NextThought" name="generator" /> <meta content="text/html; charset=ascii" http-equiv="content-type" /> <title>Counting Loop for Lines</title> <link href="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.number_of_lines_done_correctly" rel="next" title="Number of Lines Done Correctly" /> <link href="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.row_of_stars" rel="prev" title="Row of Stars" /> <link href="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.reading:Chortle_CH17" rel="up" title="Nesting Loops and Ifs" /> <link href="styles/styles.css" rel="stylesheet" /> <link href="styles/content.css" rel="stylesheet" /> </head> <body id="NTIContent"> <div class="page-contents"><div data-ntiid="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.counting_loop_for_lines" id="a0000000463" ntiid="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.counting_loop_for_lines"> <div class="chapter title">Counting Loop for Lines</div> <p class="placeholder"></p> <a name="279128cda80fa29c5646658b9ada1c42"></a> <div class="sidebar" data-ntiid="tag:nextthought.com,2011-10:OU-HTML:NTISidebar-CS1323_F_2015_Intro_to_Computer_Programming.sidebar.answer.144" ntiid="tag:nextthought.com,2011-10:OU-HTML:NTISidebar-CS1323_F_2015_Intro_to_Computer_Programming.sidebar.answer.144"> <div class="sidebar-title">Answer</div> Yes &#8211; if the user asks for five lines, a loop should count 1, 2, 3, 4, 5. </div><a name="d352fd00bb9b5e8385fc78a4bf00f087"></a> <p class="par" id="d352fd00bb9b5e8385fc78a4bf00f087">Here is the skeleton program, with the usual blanks. The skeleton focuses on getting the number of lines right, and leaves the rest for later. </p> <a name="1c1d43567642024e3c615546789f8561"></a> <pre>import java.util.Scanner;
+//
+class StarBlock
+{
+  public static void main (String[] args ) 
+  {
+    Scanner scan = new Scanner( System.in );
+    int numRows;      // the number of Rows
+    int numStars;     // the number of stars per row
+    int row;          // current row number
+
+    // collect input data from user
+    System.out.print( "How many Rows? " );
+    numRows = scan.nextInt() ;
+
+    System.out.print( "How many Stars per Row? " );
+    numStars = scan.nextInt() ;
+
+    __________ 
+    
+    while ( __________ )    
+    {
+
+       (more statements go here )
+
+         __________   
+    }
+  }
+}
+</pre><a name="623a2de096fb1e9b2994270000ff8645"></a> <p class="par" id="623a2de096fb1e9b2994270000ff8645">Some of the information collected from the user is not used yet. First concentrate on looping the correct number of times. </p> <a name="916055b524269db6558d1674c0531635"></a> <div class="sidebar" data-ntiid="tag:nextthought.com,2011-10:OU-HTML:NTISidebar-CS1323_F_2015_Intro_to_Computer_Programming.sidebar.question.150" ntiid="tag:nextthought.com,2011-10:OU-HTML:NTISidebar-CS1323_F_2015_Intro_to_Computer_Programming.sidebar.question.150"> <div class="sidebar-title">Question</div> <a name="70666a92aa72b379aa15006fb904e6b5"></a> <p class="par" id="70666a92aa72b379aa15006fb904e6b5"> Fill in the three blanks. Select from the following: </p> <a name="a12cf45767271e2b9b4c126df7d39cd6"></a> <pre>row &lt;= numRows
+row  =  1;
+row = row + 1;
+</pre> </div> </div></div> </body></html>

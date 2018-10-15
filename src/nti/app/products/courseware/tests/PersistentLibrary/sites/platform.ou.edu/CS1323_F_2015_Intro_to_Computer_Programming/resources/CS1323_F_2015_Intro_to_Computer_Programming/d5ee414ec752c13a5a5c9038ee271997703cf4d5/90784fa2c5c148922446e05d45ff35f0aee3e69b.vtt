@@ -1,0 +1,1356 @@
+WEBVTT
+Kind: captions
+Language: en
+
+00:00:00.580 --> 00:00:05.120
+&gt;&gt;Let's continue our study of control structures
+for arrays by looking at a program that will
+
+00:00:05.120 --> 00:00:12.120
+help you lie with statistics. Here's the problem
+statement. You've probably heard that there
+
+00:00:12.650 --> 00:00:17.100
+are lies, damn lies, and statistics, although
+the attribution of this quote is contested.
+
+00:00:17.100 --> 00:00:22.410
+In his wonderful book How to Lie with Statistics,
+Darrell Huff demonstrates how to lie with
+
+00:00:22.410 --> 00:00:28.320
+statistics by using the ambiguity in the word
+average. So let's write a program that automates
+
+00:00:28.320 --> 00:00:34.080
+this process. First off let's talk about what
+average means. What we're looking for is a
+
+00:00:34.080 --> 00:00:39.700
+single number that describes the middle of
+the data in some sense. So there are three
+
+00:00:39.700 --> 00:00:44.930
+candidate statistics. One is called the mean,
+and this is the sum of the values divided
+
+00:00:44.930 --> 00:00:49.860
+by the number of values. When most people
+think of an average, mean is actually what
+
+00:00:49.860 --> 00:00:54.540
+they think about. They're just not very precise
+in expressing themselves. But there are two
+
+00:00:54.540 --> 00:01:00.020
+other statistics that can be used too. There's
+the median, and what that is is the middle
+
+00:01:00.020 --> 00:01:04.140
+value. So if you were to sort the values in
+order, the median would be the one that's
+
+00:01:04.140 --> 00:01:09.180
+right in the center. And then there's the
+mode, and that's the most common value. So
+
+00:01:09.180 --> 00:01:13.530
+that's another way of looking at a value that
+might be in the middle in some sense.
+
+00:01:13.530 --> 00:01:20.530
+So let's take a look at an example. Suppose
+our values are 1, 2, 2, 4, and 5. The mean
+
+00:01:22.120 --> 00:01:29.120
+is (1+2+2+4+ 5)/5 because there are 5 values.
+Now that equals 2.8. Remember that I'm doing
+
+00:01:31.370 --> 00:01:37.540
+math here, not Java, so we're not seeing integer
+division. Now the median on the other hand
+
+00:01:37.540 --> 00:01:44.030
+is 2. If there are an even number of values,
+you take the mean of the center 2. The mode
+
+00:01:44.030 --> 00:01:48.979
+is also 2 because there are two 2's and only
+one of each of the other values. If there's
+
+00:01:48.979 --> 00:01:55.320
+a tie what you do is you take a mean of the
+tied values. Well, now why do we have three
+
+00:01:55.320 --> 00:02:00.250
+averages? Well, for most people the average
+is the mean, so what's going on with these
+
+00:02:00.250 --> 00:02:06.450
+other two? There's a problem when one value
+is sort of out of whack. So for example, if
+
+00:02:06.450 --> 00:02:13.450
+you find the mean of 1, 2, 3, 4, and 100,000,
+the mean is 20002. So that 100000 had a very
+
+00:02:15.700 --> 00:02:21.730
+disproportionate impact on the mean and is
+that really what the middle of that data is
+
+00:02:21.730 --> 00:02:28.650
+or is 3 closer to the mean? This gets to an
+important topic in statistics called robustness.
+
+00:02:28.650 --> 00:02:33.950
+It's very common to have automated equipment
+fail occasionally when you're capturing data.
+
+00:02:33.950 --> 00:02:38.440
+It's also common to have misunderstandings
+between different individuals who are collecting
+
+00:02:38.440 --> 00:02:43.260
+data. Sometimes they're purposeful, more often
+they're accidental, but either way sometimes
+
+00:02:43.260 --> 00:02:48.620
+you get a data value or two that are just
+completely out of whack and you need to fix
+
+00:02:48.620 --> 00:02:53.190
+that. So the nice thing about the median and
+the mode is they're less sensitive to these
+
+00:02:53.190 --> 00:02:58.360
+kinds of errors. So you get more reliable
+data even though some of the data is a little
+
+00:02:58.360 --> 00:03:04.709
+bit strange. Here's how you lie with averages.
+You calculate the mean, the median, and the
+
+00:03:04.709 --> 00:03:10.040
+mode. Then you select the statistic that best
+suits your purpose. You label it generically
+
+00:03:10.040 --> 00:03:13.500
+as the average to avoid detection.
+
+00:03:13.500 --> 00:03:17.989
+So let's take a look at an example. Suppose
+on my last examination in this class that
+
+00:03:17.989 --> 00:03:24.989
+we had a mean of 83, a median of 85, and a
+mode of 46. If you wanted to argue for the
+
+00:03:25.050 --> 00:03:30.230
+grades to be scaled, you know, some extra
+points added on, you might say that the average
+
+00:03:30.230 --> 00:03:35.739
+was only 46. On the other hand, if you're
+arguing that a project should be canceled
+
+00:03:35.739 --> 00:03:39.910
+because everybody already knows the material,
+then you'd say. "But wait a minute. The average
+
+00:03:39.910 --> 00:03:46.910
+was 85." So this can be a very useful life
+skill. Politicians are experts at using this
+
+00:03:46.970 --> 00:03:52.280
+data. Of course it's unethical to take advantage
+of the fact that people are somewhat innumerate
+
+00:03:52.280 --> 00:03:56.209
+sometimes, but on the other hand, you know,
+if you're politician or sometimes a student
+
+00:03:56.209 --> 00:04:01.800
+trying to get an advantage, you know, what's
+a little bit of unethical behavior? So the
+
+00:04:01.800 --> 00:04:06.050
+first thing we need to do as always is to
+create some test data. So we want to start
+
+00:04:06.050 --> 00:04:10.650
+with a small file, and we definitely want
+to use int values. Now you might think, "Why
+
+00:04:10.650 --> 00:04:14.500
+aren't we using doubles?" Well, the reason
+is if you think about it, for things like
+
+00:04:14.500 --> 00:04:19.989
+the mode, we have to do equality comparisons,
+and remember equality comparisons don't work
+
+00:04:19.989 --> 00:04:25.949
+very well with doubles. We also want to make
+sure we include some of the difficult cases,
+
+00:04:25.949 --> 00:04:32.639
+so even and odd number of elements, ties for
+the mode, things like that. A really good
+
+00:04:32.639 --> 00:04:39.639
+set of data to look at is 1 1 1 2 2 2 3 3
+3 4 4 4. So you have an even number of data
+
+00:04:40.719 --> 00:04:45.309
+elements, you've got ties all over the place,
+and better yet, the mean, the median, and
+
+00:04:45.309 --> 00:04:50.289
+the mode are all 2.5. So you know exactly
+what the answer should be. So that's kind
+
+00:04:50.289 --> 00:04:55.349
+of a clever test data set for us to use. So
+what we're going to do is put the number of
+
+00:04:55.349 --> 00:05:01.169
+values in the file first, and then enter the
+data themselves. That makes it easier because
+
+00:05:01.169 --> 00:05:07.619
+then we know how big to create our arrays.
+So here's the program structure. First we're
+
+00:05:07.619 --> 00:05:13.069
+going to read the data from a file. Then we're
+going to calculate the mean. Then we're going
+
+00:05:13.069 --> 00:05:18.979
+to calculate the median. And then we're going
+to calculate the mode. We'll ask if the desired
+
+00:05:18.979 --> 00:05:25.219
+value is the largest or the smallest one,
+and then we'll return the desired value.
+
+00:05:25.219 --> 00:05:30.939
+The median algorithm, the easy way, is to
+sort the data and choose the middle. That
+
+00:05:30.939 --> 00:05:37.169
+sounds like fun, but what if we can't sort
+the data? Well, why wouldn't we be able to
+
+00:05:37.169 --> 00:05:41.249
+sort the data? I mean, we've learned sorting
+algorithms. Certainly that's a possibility.
+
+00:05:41.249 --> 00:05:47.409
+Well, the problem is sometimes the position
+of the data in the array already means something,
+
+00:05:47.409 --> 00:05:51.949
+and so then if you sort it, you mess that
+up. So for example, we might have the data
+
+00:05:51.949 --> 00:05:56.979
+sorted another way. Maybe we're doing binary
+search on the data another way, and so we
+
+00:05:56.979 --> 00:06:01.110
+can't just go around sorting everything just
+because we feel like it. There's a way to
+
+00:06:01.110 --> 00:06:06.360
+work around that, and that is to copy the
+data and then sort the copy. That doesn't
+
+00:06:06.360 --> 00:06:11.949
+damage the sorting order in the original array,
+but there's a problem. That doubles the memory
+
+00:06:11.949 --> 00:06:16.899
+usage, and so in some programs that's not
+going to be acceptable when the arrays are
+
+00:06:16.899 --> 00:06:21.759
+large. Incidentally the little tiny arrays
+we're working with in our examples wouldn't
+
+00:06:21.759 --> 00:06:27.499
+have this as a problem, but in general sometimes
+sorting an array just isn't a possibility,
+
+00:06:27.499 --> 00:06:32.979
+so we're going to have to think through the
+details of another algorithm. This is a classic
+
+00:06:32.979 --> 00:06:38.490
+time/space trade-off problem by the way where
+we're having to exchange spending more time
+
+00:06:38.490 --> 00:06:44.029
+computing something to save a little bit of
+space in the memory. Sometimes those problems
+
+00:06:44.029 --> 00:06:47.919
+happen, sometimes they don't, sometimes you
+can find solutions that are good for both
+
+00:06:47.919 --> 00:06:54.919
+time and space just by thinking a little bit
+more about your algorithm. Here's the idea.
+
+00:06:56.059 --> 00:07:00.429
+We're going to step through the values until
+we find one with the same number of elements
+
+00:07:00.429 --> 00:07:06.429
+that are smaller and larger. That value is
+the median. Now this works for an odd-number
+
+00:07:06.429 --> 00:07:11.550
+of data, but it isn't going to work for an
+even number of data. So for an even number
+
+00:07:11.550 --> 00:07:17.629
+of data what we need to look at is to see
+if the number of smaller values +1 is equal
+
+00:07:17.629 --> 00:07:24.629
+to the number of larger. Or maybe or and smaller
+is going to equal the number of larger values
+
+00:07:25.990 --> 00:07:32.059
++1. So essentially what we need to do is count
+the number of smaller values, count the number
+
+00:07:32.059 --> 00:07:39.059
+of larger values, and then do a comparison.
+The problem case here is with ties. So what
+
+00:07:39.110 --> 00:07:44.649
+if we have the case like we do in our test
+data where we have ties right in the middle?
+
+00:07:44.649 --> 00:07:51.649
+Let's look at our test data: 1 1 1 2 2 2 3
+3 3 4 4 4. 1 has no smaller values and 9 larger
+
+00:07:54.149 --> 00:08:01.149
+values. 2 has 3 smaller values and 6 larger
+values. 3 has 6 smaller values and 3 larger
+
+00:08:03.249 --> 00:08:10.249
+values. And 4 has 9 smaller values and 0 larger
+values. So we have to find a way to make those
+
+00:08:10.490 --> 00:08:16.330
+numbers work. We need to consider how many
+values are actually equal to each other. So
+
+00:08:16.330 --> 00:08:23.330
+for example, 2 has 3 smaller and 6 larger,
+but it also has 3 equal values. 3 has 6 smaller
+
+00:08:24.419 --> 00:08:28.309
+and 3 larger, and it has 3 equal values.
+
+00:08:28.309 --> 00:08:33.630
+So now we can see how we can develop an algorithm
+that will make it possible to find the mode.
+
+00:08:33.630 --> 00:08:40.570
+We have to consider the smaller plus the equals
+equaling the larger, or the larger plus the
+
+00:08:40.570 --> 00:08:45.520
+equals equaling the smaller. Now I said equal,
+and we might want to think about whether that's
+
+00:08:45.520 --> 00:08:51.890
+the right comparison. So let's continue working
+on our algorithm for finding the median. We
+
+00:08:51.890 --> 00:08:56.530
+might think that the smaller plus equals has
+to be greater than or equal to larger, or
+
+00:08:56.530 --> 00:09:01.550
+maybe the larger plus equals has to be greater
+than or equal to smaller. But the problem
+
+00:09:01.550 --> 00:09:07.240
+here is that it doesn't handle the fact that
+we have to worry about how many values are
+
+00:09:07.240 --> 00:09:12.280
+in the array to make this work. What we need
+to have is that both sides of this are at
+
+00:09:12.280 --> 00:09:17.810
+least half. We have to consider when we think
+of half, should we be rounding up or rounding
+
+00:09:17.810 --> 00:09:24.030
+down? Math.round causes us problems here because
+what it does when you have a value that is
+
+00:09:24.030 --> 00:09:30.130
+right at .5 is that sometimes it rounds up
+and sometimes it rounds down. The details
+
+00:09:30.130 --> 00:09:35.210
+are in the Java API in the math class if you're
+interested in them, but we can't have that
+
+00:09:35.210 --> 00:09:40.710
+happening. We have to decide what should happen
+when we have half. We know that smaller plus
+
+00:09:40.710 --> 00:09:45.810
+equals is going to have to be greater than
+or equal to half, and larger plus equals is
+
+00:09:45.810 --> 00:09:50.060
+going to have to be greater than or equal
+to half. Now should this be an and or should
+
+00:09:50.060 --> 00:09:55.000
+this be an or? Do we want one of these conditions
+to be true or do we want both of them to be
+
+00:09:55.000 --> 00:10:00.100
+true? Well, that's clearly going to have to
+be and and. So we've got a little details
+
+00:10:00.100 --> 00:10:05.520
+to worry about when we're implementing this
+one, but at least now we have a concept.
+
+00:10:05.520 --> 00:10:09.970
+Let's stop for a minute before we go and jump
+into writing code and think about the process
+
+00:10:09.970 --> 00:10:15.160
+of what we've done here because this is the
+process of developing algorithms, and it turns
+
+00:10:15.160 --> 00:10:20.160
+out this is one of the hardest things to learn
+how to do in computer science. It's a very
+
+00:10:20.160 --> 00:10:25.360
+complicated thing to learn. The first thing
+you need to do is to fully understand the
+
+00:10:25.360 --> 00:10:31.380
+known algorithms. So for example, the things
+that we're using in class are well-known algorithms
+
+00:10:31.380 --> 00:10:37.210
+that you sort of add to your toolkit and then
+you modify to use for particular examples.
+
+00:10:37.210 --> 00:10:43.690
+Abstraction can really help here. For example,
+do you realize that the mode calculation that
+
+00:10:43.690 --> 00:10:49.430
+we're doing in this problem is actually the
+exact same thing we did in the Texas Infiltration
+
+00:10:49.430 --> 00:10:54.110
+problem? Well, it is. That's abstraction.
+Now if you missed that, don't worry about
+
+00:10:54.110 --> 00:10:58.330
+it. Abstraction is one of those things that
+you have to practice and get better at. So
+
+00:10:58.330 --> 00:11:03.090
+let's take a look at our progression through
+this problem. We started with a challenging
+
+00:11:03.090 --> 00:11:09.480
+example, then we considered a simple case
+first—that's where all the values were distinct—and
+
+00:11:09.480 --> 00:11:14.910
+then we considered the more challenging case.
+So we sort of worked up in degree of difficulty,
+
+00:11:14.910 --> 00:11:19.600
+we came up with ideas, we tested against our
+data, until we eventually found something
+
+00:11:19.600 --> 00:11:21.560
+that's going to work.
+
+00:11:21.560 --> 00:11:26.060
+So now let's go and implement some code. Okay,
+so I've written a lot of this program for
+
+00:11:26.060 --> 00:11:32.150
+you because a lot of this program is pretty
+routine. I've also Javadoc'd it, so I've saved
+
+00:11:32.150 --> 00:11:36.990
+you a whole bunch of work there. Here's our
+main program. Now notice the main program
+
+00:11:36.990 --> 00:11:43.990
+had us reading data from the file, so let's
+go find our data file. So here's our data
+
+00:11:47.490 --> 00:11:53.420
+file. I called it test data.txt. We have 12
+values, so that's what the 12 is doing in
+
+00:11:53.420 --> 00:12:00.280
+there, and then we have 1 1 1 2 2 2 3 3 3
+4 4 4. Now we might want to think about whether
+
+00:12:00.280 --> 00:12:04.940
+that's really a good way to put our data in.
+Because it's sorted, we might be taking advantage
+
+00:12:04.940 --> 00:12:11.940
+of some magical properties, so that's something
+we might want to twist around later. So we're
+
+00:12:12.040 --> 00:12:17.930
+going to read from the file. The read from
+file method returns an array of data. Then
+
+00:12:17.930 --> 00:12:21.910
+we're going to find the statistics, so we
+have the double that's the median the mean
+
+00:12:21.910 --> 00:12:28.150
+and the mode, and we have methods that returns
+each of those things. Then we ask the user
+
+00:12:28.150 --> 00:12:33.920
+if they'd like the highest or lowest value
+and read in their answer. If they say highest,
+
+00:12:33.920 --> 00:12:39.340
+we print out the largest one. Notice that
+I'm using the Math.max method here in order
+
+00:12:39.340 --> 00:12:44.440
+to get the largest, and if they ask for the
+smallest then we use the Math.min method.
+
+00:12:44.440 --> 00:12:48.980
+Now I've written the find mean method for
+us because it's very similar to the code we've
+
+00:12:48.980 --> 00:12:53.720
+already written. All you do is add up all
+the values in the array and then divide by
+
+00:12:53.720 --> 00:12:58.920
+the length. Do notice that I made the sum
+a double to start with. The reason I did that
+
+00:12:58.920 --> 00:13:02.850
+is so that when we did the division by the
+length we wouldn't run into our integer division
+
+00:13:02.850 --> 00:13:09.850
+problem that we've encountered so many times.
+So here's our place for the find median program.
+
+00:13:15.810 --> 00:13:20.660
+So the first thing we want to do is to put
+in some comments to describe our algorithm.
+
+00:13:20.660 --> 00:13:27.660
+We are going to count the number of values
+that are smaller and larger than each value,
+
+00:13:36.110 --> 00:13:43.110
+and if we find one where the number of smaller
+values plus the number of equal values is
+
+00:13:52.300 --> 00:13:59.300
+greater than half and the number of smaller
+values plus the number of equal values is
+
+00:14:07.810 --> 00:14:14.810
+greater than half—whoops and when I said
+smaller there, I meant larger values. Then
+
+00:14:22.220 --> 00:14:27.720
+we found one median. But remember we have
+to worry about the fact that we may actually
+
+00:14:27.720 --> 00:14:34.720
+have two median values. We're going to add
+the median to a summation value and keep track
+
+00:14:42.070 --> 00:14:49.070
+of the number of medians. Then we'll average
+the medians found, and return to the user.
+
+00:14:55.310 --> 00:15:00.240
+Okay, so now what we've done is basically
+taken all of the thoughts we had when we were
+
+00:15:00.240 --> 00:15:05.740
+developing the algorithm and moved them into
+comments. This helps us keep the code organized.
+
+00:15:05.740 --> 00:15:11.150
+It helps us remember what the code is supposed
+to do. It makes programming a lot less painless.
+
+00:15:11.150 --> 00:15:15.520
+Now if you're thinking that I have too many
+comments in there, not a chance. It's very
+
+00:15:15.520 --> 00:15:19.850
+unusual to have somebody that has too many
+comments in programming. Almost always they're
+
+00:15:19.850 --> 00:15:23.350
+going to be too few.
+
+00:15:23.350 --> 00:15:27.850
+Okay, so since we're counting the number of
+values that are smaller and larger than each
+
+00:15:27.850 --> 00:15:34.850
+value, we need to use a loop. So we'll start
+with i equals 0, i less than data.length and
+
+00:15:39.920 --> 00:15:46.920
+increment i. 
+So we have to figure out where this loop is
+going to end. So certainly counting the number
+
+00:15:50.180 --> 00:15:55.730
+of values for each number needs to be inside.
+The calculation of whether we found a median
+
+00:15:55.730 --> 00:16:01.790
+or not needs to be inside, and adding the
+median needs to be inside. But returning the
+
+00:16:01.790 --> 00:16:08.660
+median to the user does not need to be inside
+the loop. So that means now all of these lines
+
+00:16:08.660 --> 00:16:15.660
+need to be indented, so I highlight them and
+hit the tab. Okay, now to count the number
+
+00:16:16.300 --> 00:16:20.550
+of values that are smaller and larger, if
+you think about it, that means we need another
+
+00:16:20.550 --> 00:16:27.550
+loop. So here we're into a nested loop. I'm
+also going to make that a for loop. Now we
+
+00:16:28.170 --> 00:16:32.600
+need to be a little bit careful not to use
+the same counter, so I don't want to use i
+
+00:16:32.600 --> 00:16:38.070
+here but I probably also don't want to use
+j. In fact, I'm really thinking hard about
+
+00:16:38.070 --> 00:16:44.140
+whether i was a good choice. The reason is
+that it's very easy to confuse i and j, and
+
+00:16:44.140 --> 00:16:48.320
+that's going to make our algorithm wrong.
+Remember debugging is hard. It's much easier
+
+00:16:48.320 --> 00:16:53.940
+to write clean code, so let's change the number
+of that first variable and clean this up a
+
+00:16:53.940 --> 00:17:00.940
+little bit. So let's say that this is going
+to be our value, much likely to get less confused
+
+00:17:06.919 --> 00:17:13.919
+with more meaningful names for data. And this
+one I'm going to call our test. Now again,
+
+00:17:29.360 --> 00:17:35.320
+we're creating a nested loop here, so we're
+going to indent one more time.
+
+00:17:35.320 --> 00:17:39.600
+Now let's think about where the end of that
+test is going to be. For example, when we
+
+00:17:39.600 --> 00:17:44.309
+find the number of smaller values and equal
+values, this part of the code right here,
+
+00:17:44.309 --> 00:17:51.309
+the part that's on lines 83 through 85, that
+doesn't need to be in this loop. So our inner
+
+00:17:51.679 --> 00:17:58.679
+for loop actually ends right there. The other
+steps will be done after the for loop is complete.
+
+00:18:01.129 --> 00:18:05.710
+If we're going to count the number of smaller
+and larger values and use them afterwards,
+
+00:18:05.710 --> 00:18:10.590
+we need to declare the variables before the
+loop. If we declare them inside the for loop,
+
+00:18:10.590 --> 00:18:17.590
+we won't have access to them after the loop.
+So we'll call smaller equals zero, larger
+
+00:18:19.779 --> 00:18:26.779
+equals zero, and equals equals zero. Notice
+that I cleverly called my variable equals
+
+00:18:27.419 --> 00:18:34.419
+instead of equal to avoid ambiguity. Equal
+remember is a method that we use a lot. If
+
+00:18:36.570 --> 00:18:43.570
+data of test is less than data of value. Well,
+if that's true, we want to increment the number
+
+00:18:47.600 --> 00:18:54.600
+of smallers. Else if data of test equals data
+of value, then we went to increment the number
+
+00:19:06.639 --> 00:19:13.639
+that are equal and else we increment the number
+that are larger. Notice we don't need to put
+
+00:19:15.019 --> 00:19:19.600
+an if statement there because if something
+isn't smaller and something isn't equal, guess
+
+00:19:19.600 --> 00:19:22.759
+what, it's larger.
+
+00:19:22.759 --> 00:19:27.669
+So we now have the number of smaller, larger,
+and equal values. So we need to figure out
+
+00:19:27.669 --> 00:19:34.669
+how many values are going to be half. So let's
+create a variable called half, and now I've
+
+00:19:38.639 --> 00:19:43.860
+written int half equals data of length over
+2, but we want to pause and really think about
+
+00:19:43.860 --> 00:19:49.909
+that. So if there are 10 values in the array,
+half would be 5. So that's going to work fine,
+
+00:19:49.909 --> 00:19:56.149
+but what if there were 11? Should half be
+5 or should half be 6? If we leave it as it
+
+00:19:56.149 --> 00:20:02.200
+is right here, half would be 5 so we'd be
+looking for 5 values that are smaller or equal
+
+00:20:02.200 --> 00:20:09.200
+to and 5 values that are bigger than or equal
+to, so that sounds like it's going to work.
+
+00:20:11.879 --> 00:20:18.879
+So now it's time to put in the actual work
+of this code. So if smaller plus equals is
+
+00:20:22.419 --> 00:20:29.419
+greater than or equal to half, and larger
+plus equals is greater than or equal to half,
+
+00:20:33.619 --> 00:20:37.720
+at that point we have a candidate for our
+median. Now we're going to need to think about
+
+00:20:37.720 --> 00:20:43.690
+where that median needs to be. If we declare
+it here, it only will live between those curly
+
+00:20:43.690 --> 00:20:49.299
+braces, so that isn't going to work. If we
+declare it here, for example, like we did
+
+00:20:49.299 --> 00:20:54.529
+with half, then it will only live within our
+first for loop, but we need to return this
+
+00:20:54.529 --> 00:20:58.919
+at the end and that happens after the for
+loop. So we're going to have to go above the
+
+00:20:58.919 --> 00:21:05.610
+for loop to declare the variables. So here
+we go. There's our inner for loop, there's
+
+00:21:05.610 --> 00:21:12.610
+our outer for loop, and I'm going to create
+an int called medium sum and set it to zero.
+
+00:21:15.600 --> 00:21:20.919
+And I'm going to create an int called medium
+count and set it to zero. Now we might want
+
+00:21:20.919 --> 00:21:25.360
+to do a little bit of thinking about whether
+an int is such a good idea here. At the end
+
+00:21:25.360 --> 00:21:31.009
+we know we're going to be dividing median
+sum by median count. Well, those are two integers.
+
+00:21:31.009 --> 00:21:35.809
+If we divide them, we get an integer and that's
+going to truncate, don't want to do that.
+
+00:21:35.809 --> 00:21:42.769
+So let's just make this a double right now
+and initialize it to 0.0.
+
+00:21:42.769 --> 00:21:49.769
+Okay, so if those are true, then we have median
+sum plus equals data of value, and median
+
+00:22:00.700 --> 00:22:07.700
+count equals median count +1, but remember
+we have a neat little shorthand for that now.
+
+00:22:08.470 --> 00:22:15.470
+I see what Eclipse is unhappy about. I misspelled
+our variable name, and I guess I decided to
+
+00:22:17.129 --> 00:22:24.129
+add in an extra semicolon there too. Okay,
+so this is when we find a value that's going
+
+00:22:27.940 --> 00:22:34.940
+to be the median. And now outside of the for
+loop we're going to return median sum divided
+
+00:22:39.239 --> 00:22:46.239
+by median count. Now we haven't implemented
+our method for mode yet, but we could test
+
+00:22:46.330 --> 00:22:51.619
+our median method. And remember we always
+want to test as often and as soon as we can.
+
+00:22:51.619 --> 00:22:58.619
+So let's run the program. So that name of
+the file that contains the data is testdata.txt
+
+00:23:05.419 --> 00:23:12.419
+do we want the highest or the lowest value?
+Well, let's say the highest for now. The largest
+
+00:23:12.799 --> 00:23:17.739
+average is 2.5. We actually don't know that
+our median program is running correctly right
+
+00:23:17.739 --> 00:23:23.320
+now because we've hidden it, so what we need
+to do is put in some testing output. So let's
+
+00:23:23.320 --> 00:23:29.610
+go back to our main program and make an adjustment.
+Although it is kind of encouraging that the
+
+00:23:29.610 --> 00:23:36.610
+value we were expecting did come out. So here's
+where we were printing before. There's our
+
+00:23:40.409 --> 00:23:44.929
+three values being calculated: our mean, our
+median, and our mode. So let's just put in
+
+00:23:44.929 --> 00:23:51.929
+some debugging output right here. The mean
+is plus mean system out print line. The median
+
+00:24:03.169 --> 00:24:10.169
+is plus median system out print line. The
+mode is plus mode. So that way we'll be able
+
+00:24:18.350 --> 00:24:23.309
+to look at all three parts, and in fact I'm
+actually going to do something else here.
+
+00:24:23.309 --> 00:24:29.409
+I'm going to terminate the program at this
+point. Now I'm not taking out the code that's
+
+00:24:29.409 --> 00:24:36.340
+here. Ah yes, Eclipse is unhappy about that,
+and it's actually not going to be unhappy
+
+00:24:36.340 --> 00:24:41.190
+even if I fix what it's unhappy about. So
+what it's unhappy about is system exit actually
+
+00:24:41.190 --> 00:24:46.989
+takes an integer parameter. Now a parameter
+of zero means everything's okay, and a parameter
+
+00:24:46.989 --> 00:24:52.879
+of one means there's a problem. So this will
+fix it and that's a way to stop the program,
+
+00:24:52.879 --> 00:24:56.769
+but notice we then have unreachable code.
+I'm a little surprised that Eclipse isn't
+
+00:24:56.769 --> 00:25:01.690
+detecting this, but since it isn't, hey, what
+the heck, let's go ahead.
+
+00:25:01.690 --> 00:25:07.450
+So now we can run and actually get an idea
+of whether our program's working correctly.
+
+00:25:07.450 --> 00:25:14.450
+So this is test data.txt and the mean and
+median are both correct. So now we know we've
+
+00:25:14.450 --> 00:25:20.090
+got our program right, so that's good. Well,
+when I say we know we have our program right,
+
+00:25:20.090 --> 00:25:24.730
+that's always a hard thing to determine. Remember,
+for example, that we had our data in sorted
+
+00:25:24.730 --> 00:25:29.369
+order. We don't think that made any difference,
+but then again it might have. So you always
+
+00:25:29.369 --> 00:25:33.970
+have to consider those things. In other words,
+we haven't tested our program enough to really
+
+00:25:33.970 --> 00:25:39.340
+know whether it's right or wrong, but the
+early results are encouraging. So let's now
+
+00:25:39.340 --> 00:25:43.909
+think about the algorithm for the mode. We
+need to keep track of how many times the most
+
+00:25:43.909 --> 00:25:49.350
+common value has occurred. So for each value
+in the array, we're going to have to find
+
+00:25:49.350 --> 00:25:54.470
+the number of times that value occurred. Notice
+that we're relying on these values being integers
+
+00:25:54.470 --> 00:26:01.440
+so that we make equality comparisons meaningfully.
+Then we've got two different cases to consider.
+
+00:26:01.440 --> 00:26:06.029
+If the number of times this value occurred
+is equal to the maximum number of times that
+
+00:26:06.029 --> 00:26:11.239
+some other value has occurred, then we need
+to add to the running sum of the modal values
+
+00:26:11.239 --> 00:26:16.249
+and increment the number of modes that have
+been found. If this number is greater than
+
+00:26:16.249 --> 00:26:21.850
+the maximum, we need to reset the running
+sum and reset the number of maximum values
+
+00:26:21.850 --> 00:26:26.950
+that have occurred to one. So there's our
+algorithm. Once again, when we were doing
+
+00:26:26.950 --> 00:26:32.679
+the problem previously with our Texas Infiltration,
+we had sorted the data and so we were able
+
+00:26:32.679 --> 00:26:37.600
+to use some of the special properties in the
+sorting. Without those properties, then we
+
+00:26:37.600 --> 00:26:40.480
+need to be a little bit more clever.
+
+00:26:40.480 --> 00:26:44.499
+So let's talk about the design of the method
+signatures. When we're reading the data from
+
+00:26:44.499 --> 00:26:48.999
+the file we need to have the file name as
+an input, and we'll get our array of data
+
+00:26:48.999 --> 00:26:55.330
+back as a return value. Now that method I've
+already implemented for you as you saw. Find
+
+00:26:55.330 --> 00:27:01.080
+mean takes an integer array of data, the array
+that was read in by read data from file, and
+
+00:27:01.080 --> 00:27:07.159
+it returns a double that represents the mean.
+That method I also implemented for you. Now
+
+00:27:07.159 --> 00:27:12.559
+find median and find mode are also similar
+in that they take the array of data and return
+
+00:27:12.559 --> 00:27:19.019
+a double. Notice that I've kept the names
+of the methods and everything completely parallel.
+
+00:27:19.019 --> 00:27:25.549
+Everything's in the same order. By doing that
+it makes it much easier to use the code.
+
+00:27:25.549 --> 00:27:32.549
+Here's our method for finding the mode. So
+we need to find the number of times each value
+
+00:27:33.879 --> 00:27:40.879
+occurred in the array if our count is larger
+than the previous maximum, we need to replace
+
+00:27:51.279 --> 00:27:58.279
+the previous maximum. If our count is equal
+to the previous maximum, we need to increment
+
+00:28:07.070 --> 00:28:13.309
+our previous maximum. Well, so that gives
+us some ideas for what some of our variables
+
+00:28:13.309 --> 00:28:20.309
+should be. We're going to have a double, which
+I'll call mode sum, and an int I'll call mode
+
+00:28:20.340 --> 00:28:27.340
+count. Of course both of these variables need
+to be initialized to zero. So we're going
+
+00:28:30.509 --> 00:28:34.440
+to need to have a for loop here because we're
+going to need to step through every element
+
+00:28:34.440 --> 00:28:41.440
+in the array. And notice that I have fallen
+back once again into my bad habit of using
+
+00:28:44.460 --> 00:28:51.460
+i as a counter too many times. Let's fix that.
+Let's just do it right the first time here.
+
+00:29:12.789 --> 00:29:18.379
+We need to think about what's going to be
+inside this outer for loop. So these computations
+
+00:29:18.379 --> 00:29:23.320
+like our count being larger than the previous
+maximum are equal, those need to be inside
+
+00:29:23.320 --> 00:29:30.320
+the outer for loop. So all those should be
+indented, and that's where our for loop should
+
+00:29:34.799 --> 00:29:40.429
+end. Now remember we're going to have to do
+some computations afterwards. In particular,
+
+00:29:40.429 --> 00:29:47.429
+we're going to return our mode sum divided
+by our mode count. Okay, so those things are
+
+00:29:50.600 --> 00:29:53.450
+all set.
+
+00:29:53.450 --> 00:29:58.220
+Now let's return to our loop. We need to find
+the number of times that each value occurred
+
+00:29:58.220 --> 00:30:03.019
+in the array. Well, if you think about it,
+that's another loop, so once again a nested
+
+00:30:03.019 --> 00:30:10.019
+for loop. So this is our standard counting
+nested for loop, int count equals zero count
+
+00:30:20.419 --> 00:30:27.129
+less than data.length plus plus count. Now
+we need to think about where this loop is
+
+00:30:27.129 --> 00:30:32.789
+going to end. Our computation of the count
+is larger than the previous maximum has to
+
+00:30:32.789 --> 00:30:38.409
+occur after we've finished our count. So that
+means that our for loop should end here. Now
+
+00:30:38.409 --> 00:30:44.749
+I'm going to put a comment in there so we
+know exactly which for loop is ending and
+
+00:30:44.749 --> 00:30:51.749
+what we meant that parenthesis to do. So if
+data of value equals data of count, then we
+
+00:31:05.159 --> 00:31:10.389
+increment our count. Now we haven't actually
+created a variable for that, so we had better
+
+00:31:10.389 --> 00:31:17.389
+do that. So I'll call it count values is zero.
+So this is count values that gets incremented
+
+00:31:25.979 --> 00:31:32.700
+here. We might stop and think for just a minute
+whether it's okay to use equals equals there.
+
+00:31:32.700 --> 00:31:37.159
+Remember data of value is an integer and data
+of int is an integer, and it is okay to use
+
+00:31:37.159 --> 00:31:44.159
+equals equals with integer we use .equals
+remember with object types. Okay, so now we're
+
+00:31:45.440 --> 00:31:51.950
+ready to do our comparisons inside the first
+for loop and outside of the second one. So
+
+00:31:51.950 --> 00:31:58.950
+if count values is greater than or equal—oh,
+we said larger so remember that's just greater
+
+00:32:00.570 --> 00:32:07.570
+than. So if we found a value that's occurred
+more times than any value we've seen before,
+
+00:32:09.009 --> 00:32:16.009
+then what we do is we say mode count equals
+count values, and our mode sum equals data
+
+00:32:20.200 --> 00:32:27.200
+of—hmm, which data should we be using here?
+Let's think about that for a minute. Have
+
+00:32:29.779 --> 00:32:36.779
+we kept track of it? Well, we're inside a
+loop with data of value, so that's the one
+
+00:32:37.389 --> 00:32:44.389
+we want. Okay, here's our second case now.
+And remember we had a comment for that case,
+
+00:32:51.229 --> 00:32:56.499
+so let's go down below it so that we can see
+our nice comment. Our comment says if count
+
+00:32:56.499 --> 00:33:01.629
+is equal to the previous maximum, we need
+to increment the previous maximum. So this
+
+00:33:01.629 --> 00:33:08.629
+will be else if count values equals mode count—so
+that's the equality case—then mode count
+
+00:33:15.690 --> 00:33:22.690
+gets incremented so that's plus plus mode
+count, and mode sum equals mode sum plus data
+
+00:33:30.649 --> 00:33:35.629
+of value.
+
+00:33:35.629 --> 00:33:42.629
+Okay, and then at the end we return mode sum
+divided by mode count. So it looks like our
+
+00:33:45.129 --> 00:33:52.129
+method is done. So let's run a test and see
+how things are looking. So here's our test
+
+00:33:55.590 --> 00:34:02.590
+data.txt. Okay, so we have an unexpected result.
+Now we need to debug the program. So the first
+
+00:34:05.479 --> 00:34:09.290
+thing you do when you debug is you go back
+and you read carefully because that's how
+
+00:34:09.290 --> 00:34:13.860
+you find most of your mistakes. This is actually
+a research result. People have studied this
+
+00:34:13.860 --> 00:34:18.720
+and found that that's the best way to debug
+things, so remember to do that first. So let's
+
+00:34:18.720 --> 00:34:25.720
+go back and reread the code. We have our mode
+sum and our mode count both of which we remembered
+
+00:34:26.480 --> 00:34:33.050
+to initialize, so that's good. We stepped
+through the values one at a time. Then we
+
+00:34:33.050 --> 00:34:39.640
+initialized the count of the value to zero
+and found the number of times that occurred.
+
+00:34:39.640 --> 00:34:44.560
+We did that in a nested for loop and that
+code looks really good, very unlikely to be
+
+00:34:44.560 --> 00:34:49.720
+the source of the error. Let's take a look
+at what happened down here. Because this is
+
+00:34:49.720 --> 00:34:55.240
+logically more complicated code, it's much
+more likely to be the source of the problem.
+
+00:34:55.240 --> 00:35:01.090
+So we started with count values and we compared
+it to mode count, so then we reset mode count
+
+00:35:01.090 --> 00:35:06.420
+to count values and reset the mode sum to
+data of values. It looks like there's something
+
+00:35:06.420 --> 00:35:11.920
+wrong here because we're not keeping track
+of the maximum number of times the value occurred.
+
+00:35:11.920 --> 00:35:15.840
+Since we don't know that, we really don't
+know which case we're in. In other words,
+
+00:35:15.840 --> 00:35:20.350
+we forgot to declare a variable that we need.
+So let's go back and declare it and fix this
+
+00:35:20.350 --> 00:35:23.900
+code a little bit.
+
+00:35:23.900 --> 00:35:30.870
+So we'll have an int for the maximum mode
+count, and we're going to initialize that
+
+00:35:30.870 --> 00:35:37.320
+to zero too. Now the mode sum will keep track
+of the maximum every time it occurs, the mode
+
+00:35:37.320 --> 00:35:42.410
+count will keep track of the number of times
+it's occurred, and the maximum mode count
+
+00:35:42.410 --> 00:35:46.750
+will keep track of where we are so we know
+that if a new one is better than our existing
+
+00:35:46.750 --> 00:35:53.260
+one. So we needed three pieces, not two, pretty
+typical programming mistake. So now let's
+
+00:35:53.260 --> 00:36:00.260
+think through our logic very carefully. If
+the count value is higher than the maximum
+
+00:36:01.130 --> 00:36:08.130
+mode count, that's what we were missing last
+time, then we set the mode count to 1 because
+
+00:36:10.520 --> 00:36:17.090
+this mode has occurred just once. We set the
+mode sum to data of value, and we set the
+
+00:36:17.090 --> 00:36:24.090
+maximum mode count to count values. So now
+we have all three pieces of the puzzle taken
+
+00:36:25.860 --> 00:36:32.730
+care of. Now when they're—whoops, forgot
+an s in count values. Now when the two are
+
+00:36:32.730 --> 00:36:38.060
+equal, we want to increment the mode count
+and increment the mode sum. We don't want
+
+00:36:38.060 --> 00:36:43.030
+to reset the maximum mode count there because
+at this point the maximum mode count is the
+
+00:36:43.030 --> 00:36:49.400
+same. We basically have found another tie.
+so this looks much better now.
+
+00:36:49.400 --> 00:36:54.160
+So let's just finish reading our code. Remember
+mode sum was a double and mode count was an
+
+00:36:54.160 --> 00:37:00.360
+integer. We know that wasn't the problem because
+the mode we were calculating was 0.5. So it
+
+00:37:00.360 --> 00:37:07.360
+looks like we've probably found the problem.
+Let's run the code and see. Entering the test
+
+00:37:10.110 --> 00:37:17.110
+data file. Well, that was disappointing. We
+didn't fix the problem, so it's time to go
+
+00:37:20.630 --> 00:37:27.630
+back and carefully read the code again. So
+if the count values was greater than the maximum
+
+00:37:27.970 --> 00:37:34.070
+mode count, then we reset the mode count to
+1, we added the value to the mode sum and
+
+00:37:34.070 --> 00:37:39.890
+set the maximum mode count to count values.
+And now we see the problem in our next test.
+
+00:37:39.890 --> 00:37:45.090
+I remembered to change the top one to maximum
+mode count, but I forgot to change the next
+
+00:37:45.090 --> 00:37:52.090
+one, and so we were looking at the wrong value
+again. That looks better, so let's run our
+
+00:37:56.600 --> 00:38:03.600
+program again and see if things are working
+better. So here's the name of our file, and
+
+00:38:07.840 --> 00:38:14.010
+there we go. Well, thank goodness. That certainly
+was a struggle. Keep programming!
+

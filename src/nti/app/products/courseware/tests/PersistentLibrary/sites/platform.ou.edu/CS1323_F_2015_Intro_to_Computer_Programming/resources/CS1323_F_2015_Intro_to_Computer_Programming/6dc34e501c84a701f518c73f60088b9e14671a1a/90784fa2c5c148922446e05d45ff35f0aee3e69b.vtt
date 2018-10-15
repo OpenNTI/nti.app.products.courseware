@@ -1,0 +1,298 @@
+WEBVTT
+Kind: captions
+Language: en
+
+00:00:01.199 --> 00:00:05.939
+Let's continue our study of changing primitive
+data by examining the problem of swapping
+
+00:00:05.939 --> 00:00:12.299
+and rotating data. Here's the problem statement.
+Suppose you have two double values, first
+
+00:00:12.299 --> 00:00:17.540
+and second. How do you swap their values?
+Now, what I mean by that is if first contained
+
+00:00:17.540 --> 00:00:23.460
+2.1 and second contained 3.2 initially, how
+would you change it so first would contain
+
+00:00:23.460 --> 00:00:30.460
+3.2 and second would contain 2.1 at the end?
+Well, here's the obvious but unfortunately
+
+00:00:31.140 --> 00:00:37.910
+wrong answer. We declare first is a double
+equal to 2.1, declare second as a double equal
+
+00:00:37.910 --> 00:00:44.910
+to 3.2, and then we'd say first equals second
+and second equals first. That should work,
+
+00:00:45.170 --> 00:00:45.880
+right?
+
+00:00:45.880 --> 00:00:51.130
+Well, this is a very serious misunderstanding
+of an assignment statement. Just for your
+
+00:00:51.130 --> 00:00:55.060
+knowledge, assignment statements are one of
+the tricky things to get used to initially
+
+00:00:55.060 --> 00:00:59.399
+in computer programming, so this is something
+where you should really focus your attention
+
+00:00:59.399 --> 00:01:03.850
+right now. Let's take a look at what happens
+with those statements using a memory diagram
+
+00:01:03.850 --> 00:01:10.850
+to identify the problem. Well, first contains
+2.1, so remember first gets its own box because
+
+00:01:10.920 --> 00:01:17.920
+it's a double. Second contains 3.2. Now, when
+we say first equals second, what we do is
+
+00:01:18.060 --> 00:01:23.450
+we take the value that's in second, and we
+copy it to first. So the value that's in first
+
+00:01:23.450 --> 00:01:30.450
+is gone, gone forever. We cannot get it back.
+And the value in second now sits in first.
+
+00:01:30.729 --> 00:01:36.829
+So if you look at this at this point, we have
+two copies of 3.2 and no copies of 2.1. So
+
+00:01:36.829 --> 00:01:42.749
+when we try to do second equals first to get
+that 2.1 back, it doesn't work. All that happens
+
+00:01:42.749 --> 00:01:49.749
+is that 3.2 is copied to second. Well, second
+is already 3.2, so that simply cannot work.
+
+00:01:51.709 --> 00:01:57.399
+So swapping values is like swapping two big,
+heavy balls that are in your hands. You could
+
+00:01:57.399 --> 00:02:02.450
+juggle them, but the problem is we can't toss
+anything into the air because there is no
+
+00:02:02.450 --> 00:02:08.800
+air in a computer program. You could set a
+ball on a table, but we don't have a table
+
+00:02:08.800 --> 00:02:14.760
+either. So all we have is variables. What
+this means is that we have to create another
+
+00:02:14.760 --> 00:02:20.250
+variable to store one of the values. There
+is absolutely, positively no other way to
+
+00:02:20.250 --> 00:02:27.250
+swap values. So here's the trick. We need
+someplace to store one of the values temporarily.
+
+00:02:27.540 --> 00:02:34.439
+I usually call this temp, so we declare a
+double temp. Now we copy one of the values
+
+00:02:34.439 --> 00:02:40.439
+to the temporary location, so that would be,
+for example, temp equals first. That means
+
+00:02:40.439 --> 00:02:46.879
+take the value in first and store it to the
+location temp. Now we can replace the value
+
+00:02:46.879 --> 00:02:52.200
+stored in the temporary location with the
+other value, so we could say, for example,
+
+00:02:52.200 --> 00:02:57.659
+second equals first. This takes the value
+in second and overwrites the value in first.
+
+00:02:57.659 --> 00:03:02.239
+Now the reason we don't have the problem that
+we had previously is because we've saved the
+
+00:03:02.239 --> 00:03:08.189
+value in first to temp, so we still have it.
+Then what we do is copy the temporary value
+
+00:03:08.189 --> 00:03:15.189
+to its final location, so second equals temp.
+So now we get second from the location temp.
+
+00:03:15.980 --> 00:03:22.560
+Now, this exercise is a real test of assignment
+statements. Assignment statements do not work
+
+00:03:22.560 --> 00:03:28.420
+like equality in math. Remember the right-hand
+sides and the left-hand sides are different.
+
+00:03:28.420 --> 00:03:33.560
+So the value on the right is stored in the
+location on the left. This is a real problem
+
+00:03:33.560 --> 00:03:38.879
+right at the start in programming. Assignment
+dyslexia where you confuse the right-hand
+
+00:03:38.879 --> 00:03:43.829
+and left-hand sides is a very common problem
+in programming and one that it takes some
+
+00:03:43.829 --> 00:03:50.019
+people some time to get over. So saying first
+equals second and second equals first is not
+
+00:03:50.019 --> 00:03:55.969
+the same thing. First equals second means
+take the value in second and store it in location
+
+00:03:55.969 --> 00:04:01.819
+first. Second equals first means take the
+value stored in first and put it in the location
+
+00:04:01.819 --> 00:04:07.260
+second. These are completely different things.
+And so you really have to concentrate on what
+
+00:04:07.260 --> 00:04:12.359
+it means to be on the right-hand side versus
+the left-hand side. The other thing to remember
+
+00:04:12.359 --> 00:04:19.359
+here this is not an equality statement. This
+is a Java operator, not a mathematical operator.
+
+00:04:19.709 --> 00:04:22.580
+One of the things to know about these little
+programming tricks that I'm going to show
+
+00:04:22.580 --> 00:04:26.490
+you is that I don't think I ever would have
+thought of that if someone hadn't shown it
+
+00:04:26.490 --> 00:04:31.750
+to me first. I learned it from someone in
+a beginning programming class a very long
+
+00:04:31.750 --> 00:04:36.250
+time ago, and he probably learned it from
+somebody else, who learned it from somebody
+
+00:04:36.250 --> 00:04:40.910
+else. So if you didn't think of this trick,
+don't worry about it. None of us would've
+
+00:04:40.910 --> 00:04:45.780
+thought of this trick. Somebody showed all
+of us. The key is understanding the trick
+
+00:04:45.780 --> 00:04:52.410
+well enough to remember it so you can use
+it later. Let's think about how we might rotate
+
+00:04:52.410 --> 00:04:58.450
+three values left. Suppose we have three values
+first, second, and third, and we want to rotate
+
+00:04:58.450 --> 00:05:04.110
+the values so first contains what second had,
+second contains what third had, and third
+
+00:05:04.110 --> 00:05:09.100
+contains what first had. Well, guess what,
+the exact same trick works. In fact, this
+
+00:05:09.100 --> 00:05:13.850
+is a really good way of making sure you understand
+the trick is can you use it in a little different
+
+00:05:13.850 --> 00:05:18.790
+circumstance. So what we're going to do is
+save a value to a temporary location before
+
+00:05:18.790 --> 00:05:25.790
+overwriting it. So first we're going to save
+first to temporary value, so double temp equals
+
+00:05:26.630 --> 00:05:33.630
+first. Then we're going to give first second's
+value. Notice it's okay to overwrite first
+
+00:05:33.670 --> 00:05:40.210
+at this point because we've saved the value
+someplace else, to temp. So this is first
+
+00:05:40.210 --> 00:05:46.340
+equals second. That means take the value in
+second, and put it in location first. Then
+
+00:05:46.340 --> 00:05:53.090
+we give second third's value, so second equals
+third. Take the value in third, put it in
+
+00:05:53.090 --> 00:06:00.090
+location second. Then at the end we can give
+third the temporary value, so that is third
+
+00:06:00.470 --> 00:06:06.630
+equals temp. Take the value in temp and set
+it in third. Let's show a memory diagram to
+
+00:06:06.630 --> 00:06:12.940
+make sure you understand what happened here.
+Here are our three variable locations first,
+
+00:06:12.940 --> 00:06:17.620
+second, and third. Now I've just put integers
+in there. They could have been doubles, doesn't
+
+00:06:17.620 --> 00:06:24.620
+really matter. So when we say temp equals
+first, the value in first, which is one, gets
+
+00:06:25.430 --> 00:06:32.430
+moved into temp. Then we say first equals
+second. So the value one is removed from first,
+
+00:06:33.170 --> 00:06:39.690
+gone forever, cannot be retrieved, and the
+value two is written instead. Then, second
+
+00:06:39.690 --> 00:06:45.780
+equals third. Well, that takes the value three
+from third and copies it into second. This
+
+00:06:45.780 --> 00:06:51.660
+is okay because second's value has already
+been moved into first. Now we take temp's
+
+00:06:51.660 --> 00:06:57.150
+value and move it into third. So in the end,
+we have one copy of one, one copy of two,
+
+00:06:57.150 --> 00:07:02.740
+one copy of three. And in fact, if you follow
+along at every point in time, there's one
+
+00:07:02.740 --> 00:07:08.770
+copy of each of these values or more hanging
+around. That's what's necessary to make swapping
+
+00:07:08.770 --> 00:07:12.400
+a rotation work correctly. Keep programming!
+

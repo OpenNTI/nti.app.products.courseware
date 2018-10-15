@@ -1,0 +1,35 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html lang="en"><head> <meta content="2015-12-11T16:56:47" http-equiv="last-modified" /> <meta content="1125" name="NTIRelativeScrollHeight" /> <meta content="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.tostring()_method" name="NTIID" /> <meta content="NextThought" name="generator" /> <meta content="text/html; charset=ascii" http-equiv="content-type" /> <title>toString() Method</title> <link href="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.complete_class.1" rel="next" title="Complete Class" /> <link href="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.the_public_visibility_modifier" rel="prev" title="The public Visibility Modifier" /> <link href="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.reading:Chortle_CH33" rel="up" title="Encapsulation" /> <link href="styles/styles.css" rel="stylesheet" /> <link href="styles/content.css" rel="stylesheet" /> </head> <body id="NTIContent"> <div class="page-contents"><div data-ntiid="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.tostring()_method" id="a0000000540" ntiid="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.tostring()_method"> <div class="chapter title"><b class="bfseries"><tt class="ttfamily">toString()</tt></b> Method</div> <p class="placeholder"></p> <a name="21d476db8f82e1890a3dfbedc95aa772"></a> <div class="sidebar" data-ntiid="tag:nextthought.com,2011-10:OU-HTML:NTISidebar-CS1323_F_2015_Intro_to_Computer_Programming.sidebar.answer.211" ntiid="tag:nextthought.com,2011-10:OU-HTML:NTISidebar-CS1323_F_2015_Intro_to_Computer_Programming.sidebar.answer.211"> <div class="sidebar-title">Answer</div> <pre>class CheckingAccount
+{
+  private String accountNumber;
+  private String accountHolder;
+  private int    balance;
+  private int    useCount = 0;
+
+  public CheckingAccount( String accNumber, String holder, int start ) { . . . . }
+  private void incrementUse() { . . . . }
+  public int getBalance() { . . . . }
+  public void processDeposit( int amount ) { . . . . }
+  public void processCheck( int amount ) { . . . . }
+
+}
+</pre> </div><a name="678b5a16164eb15ae94e64290093f952"></a> <p class="par" id="678b5a16164eb15ae94e64290093f952">It would be nice to have a <b class="bfseries"><tt class="ttfamily">toString()</tt></b> method in this class that shows the use count as well as the other data. There is already a <b class="bfseries"><tt class="ttfamily">toString()</tt></b> method. All classes automatically have such a method. (This is done by inheritance, and subject of a upcoming chapter.) But the automatically supplied method may not do what you want. </p> <a name="bb9d34c0175879798692daef957471e8"></a> <p class="par" id="bb9d34c0175879798692daef957471e8">If you write your own <b class="bfseries"><tt class="ttfamily">toString()</tt></b> method it will replace the automatically supplied one. The method must look like this: </p> <a name="4cb10797c98505fd7eb60d81a200a1e8"></a> <pre>public String toString()
+{
+
+}
+</pre><a name="e8155123170c99f0cde8dc403362f9ff"></a> <p class="par" id="e8155123170c99f0cde8dc403362f9ff">The method must be declared to be <b class="bfseries"><tt class="ttfamily">public</tt></b> </p> <a name="913cc2d1ecbf25cc77402f7faf5f7e75"></a> <pre>class CheckingAccount
+{
+  private String accountNumber;
+  private String accountHolder;
+  private int    balance;
+  private int    useCount = 0;
+  . . . .
+
+  public String toString()
+  {
+     return  "Account: " + accountNumber + "\tName: " + accountHolder + 
+     
+             "\tBalance: " +  balance + "\tUse Count: " + __________  ;
+  }
+
+}
+</pre><a name="cdf3ba39f640a31f6e5f57c307305cb8"></a> <div class="sidebar" data-ntiid="tag:nextthought.com,2011-10:OU-HTML:NTISidebar-CS1323_F_2015_Intro_to_Computer_Programming.sidebar.question.223" ntiid="tag:nextthought.com,2011-10:OU-HTML:NTISidebar-CS1323_F_2015_Intro_to_Computer_Programming.sidebar.question.223"> <div class="sidebar-title">Question</div> Modify the method so that it also prints out the use count. </div> </div></div> </body></html>

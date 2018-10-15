@@ -1,0 +1,44 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html lang="en"><head> <meta content="2015-12-11T16:56:47" http-equiv="last-modified" /> <meta content="1081" name="NTIRelativeScrollHeight" /> <meta content="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.constructor_for_fleet" name="NTIID" /> <meta content="NextThought" name="generator" /> <meta content="text/html; charset=ascii" http-equiv="content-type" /> <title>Constructor for Fleet</title> <link href="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.constructors_used_inside_a_constructor" rel="next" title="Constructors used inside a Constructor" /> <link href="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.instance_variables_for_fleet" rel="prev" title="Instance Variables for Fleet" /> <link href="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.reading:Chortle_CH35" rel="up" title="Objects that Contain Objects" /> <link href="styles/styles.css" rel="stylesheet" /> <link href="styles/content.css" rel="stylesheet" /> </head> <body id="NTIContent"> <div class="page-contents"><div data-ntiid="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.constructor_for_fleet" id="a0000000553" ntiid="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.constructor_for_fleet"> <div class="chapter title">Constructor for <b class="bfseries"><tt class="ttfamily">Fleet</tt></b></div> <p class="placeholder"></p> <a name="0f1165215fea60e0b2d84053ac4d9f59"></a> <div class="sidebar" data-ntiid="tag:nextthought.com,2011-10:OU-HTML:NTISidebar-CS1323_F_2015_Intro_to_Computer_Programming.sidebar.answer.219" ntiid="tag:nextthought.com,2011-10:OU-HTML:NTISidebar-CS1323_F_2015_Intro_to_Computer_Programming.sidebar.answer.219"> <div class="sidebar-title">Answer</div> <pre>class FleetTester
+{
+  public static void main ( String[] args)
+  {
+    Fleet myCars = new Fleet( 1000, 1234, 10, 777, 999, 20  );
+  }
+}
+</pre> </div><a name="e724ce7a298fb2c7a1eb0dc13fe37f09"></a> <p class="par" id="e724ce7a298fb2c7a1eb0dc13fe37f09">In this program, the cars that make up a fleet are constructed when the fleet is constructed. Here is the program with some additional work: </p> <a name="d7214449dfbe5e4966b9a002903289e3"></a> <pre>class Fleet
+{
+  // data
+  Car town;
+  Car suv;
+
+  // constructor
+  Fleet( int start1, int end1, double gal1, 
+         int start2, int end2, double gal2 )
+  {
+    town = __________ ;
+    suv  = __________ ;
+  }
+
+  // method
+
+}
+
+class Car
+{
+  . . . .
+
+  Car(  int first, int last, double gals  )
+  {
+    . . . .
+  }
+}
+
+class FleetTester
+{
+  public static void main ( String[] args)
+  {
+    Fleet myCars = new Fleet( 1000, 1234, 10, 777, 999, 20 );
+  }
+
+}
+</pre><a name="f99b1d08d35d559443d8655544f55f59"></a> <div class="sidebar" data-ntiid="tag:nextthought.com,2011-10:OU-HTML:NTISidebar-CS1323_F_2015_Intro_to_Computer_Programming.sidebar.question.231" ntiid="tag:nextthought.com,2011-10:OU-HTML:NTISidebar-CS1323_F_2015_Intro_to_Computer_Programming.sidebar.question.231"> <div class="sidebar-title">Question</div> Fill in the blanks in the constructor for <b class="bfseries"><tt class="ttfamily">Fleet</tt></b>. It should construct each of the two cars. </div> </div></div> </body></html>

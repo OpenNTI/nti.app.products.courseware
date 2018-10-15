@@ -1,0 +1,801 @@
+WEBVTT
+Kind: captions
+Language: en
+
+00:00:01.550 --> 00:00:07.630
+&gt;&gt; Dr. Deborah Trytten: Let's install software
+on a PC running Windows. Now setup can be
+
+00:00:07.630 --> 00:00:11.700
+the trickiest part of this class. Don't give
+up hope! Here's the outline of what we're
+
+00:00:11.700 --> 00:00:16.449
+going to do. First you need to understand
+your computer's setup. You need to pick the
+
+00:00:16.449 --> 00:00:22.839
+right version of the software, install Java,
+then install Eclipse, then install the documentation
+
+00:00:22.839 --> 00:00:29.839
+(if this is necessary), and check the installation.
+We'll go through these steps one at a time.
+
+00:00:30.509 --> 00:00:35.149
+Now this demo was done on a Windows 7 computer.
+If you're running a different version of Windows,
+
+00:00:35.149 --> 00:00:39.710
+it will look a little different, but the essential
+steps are the same. Unfortunately, Microsoft,
+
+00:00:39.710 --> 00:00:46.399
+Google, and Mozilla are making changes to
+browsers constantly. Daily updates can, and
+
+00:00:46.399 --> 00:00:50.879
+sometimes do break things. So don't be too
+surprised if you go to bed one night with
+
+00:00:50.879 --> 00:00:55.769
+the program working and wake up the next morning
+without it working. These things happen in
+
+00:00:55.769 --> 00:00:57.949
+computer science.
+
+00:00:57.949 --> 00:01:04.940
+Hardware matters. Older computers can be 32
+bit. Most newer computers are 64 bit. To check
+
+00:01:04.940 --> 00:01:11.800
+whether your computer is 32 or 64 bit, go
+to Control Panel, System. So let's discover
+
+00:01:11.800 --> 00:01:18.800
+the configuration of our system. We go to
+this menu, and choose Control Panel. From
+
+00:01:20.130 --> 00:01:27.130
+the Control Panel, we choose System. Now this
+tells us that I'm running a 64 bit operating
+
+00:01:29.350 --> 00:01:34.530
+system, which tells you that the computer
+must also be 64 bits. So I could install an
+
+00:01:34.530 --> 00:01:41.100
+either 32 bit or 64, although I'm going to
+install on 64.
+
+00:01:41.100 --> 00:01:46.290
+To check whether your browser is 32 or 64
+bit, you need to know that Firefox can be
+
+00:01:46.290 --> 00:01:53.290
+either 32 or 64, Chrome is 32 bit, and Internet
+Explorer can be 32 bit or 64 bit. The Task
+
+00:01:54.560 --> 00:02:01.230
+Manager shows 32 bit software with an asterisk
+32 in the Processes tab under the Image Name
+
+00:02:01.230 --> 00:02:07.700
+column. Next we need to check our browsers.
+So we need to start the browsers first. This
+
+00:02:07.700 --> 00:02:14.700
+is Firefox, and here is Internet Explorer.
+Now we go to the Task Manager and what we
+
+00:02:18.840 --> 00:02:25.840
+see here, in the Processes tab under the Image
+Name column, is that Internet Explorer is
+
+00:02:25.870 --> 00:02:32.590
+running in 64 bit. Now you can tell that because
+there isn't a star 32 after it. Firefox, on
+
+00:02:32.590 --> 00:02:38.510
+the other hand, is running in 32 bit. So that
+means that if I install 64 bit Java, I won't
+
+00:02:38.510 --> 00:02:45.510
+be able to use 32 bit Firefox. Now you can
+run 32 bit software on a 64 bit computer,
+
+00:02:46.569 --> 00:02:52.560
+but you can't run 64 bit software on a 32
+bit computer. The software tools for this
+
+00:02:52.560 --> 00:02:59.350
+class need to match. So you need to strategically
+choose your configuration.
+
+00:02:59.350 --> 00:03:05.340
+Here's a good configuration for a 32 bit computer.
+Everything needs to be 32 bit. This includes
+
+00:03:05.340 --> 00:03:10.630
+Java, Eclipse, and your browsers. Now the
+good news is your browsers will be 32 bit
+
+00:03:10.630 --> 00:03:17.630
+automatically. So if you have a 32 bit computer,
+these are the choices you need to make. There
+
+00:03:17.910 --> 00:03:24.470
+are two possible good configurations for a
+64 bit computer. One is to install Java in
+
+00:03:24.470 --> 00:03:30.950
+32 bit, Eclipse in 32 bit, and choose a 32
+bit browser, which could be Firefox, Chrome,
+
+00:03:30.950 --> 00:03:35.709
+or even Internet Explorer installed in 32
+bit version if you don't have it already.
+
+00:03:35.709 --> 00:03:42.360
+Advantage of this configuration is if one
+browser breaks, you'll have lots of options.
+
+00:03:42.360 --> 00:03:49.360
+A second good configuration for a 64 bit computer
+is to install Java in 64 bit, Eclipse in 64
+
+00:03:50.360 --> 00:03:56.300
+bit, and choose a 64 bit browser, which could
+be either Internet explorer or Firefox if
+
+00:03:56.300 --> 00:04:01.140
+you don't have it already. It doesn't matter
+which one of these two configurations you
+
+00:04:01.140 --> 00:04:05.819
+choose. What matters is the consistency of
+the installation.
+
+00:04:05.819 --> 00:04:12.800
+So let's talk through the installation of
+Java. First, you'll go to http://java.sun.com.
+
+00:04:12.800 --> 00:04:17.449
+Choose the latest edition of Java. Now this
+is Java Standard Edition, which is called
+
+00:04:17.449 --> 00:04:24.449
+Java SE version 7 update 45 is what's available
+today. Now tomorrow it might be update 46
+
+00:04:25.490 --> 00:04:30.689
+and the day after it may be update 47. These
+small differences really don't matter for
+
+00:04:30.689 --> 00:04:36.599
+this class. You need to download the version
+without NetBeans, read and accept the license
+
+00:04:36.599 --> 00:04:43.599
+agreement, and then download the proper version.
+The x86 version is 32 bit, and the x64 is
+
+00:04:44.479 --> 00:04:46.330
+64 bit.
+
+00:04:46.330 --> 00:04:53.330
+Now let's download the latest version of Java.
+I'm going to Firefox, and then to java.sun.com.
+
+00:04:56.219 --> 00:05:03.219
+When we get here, we see over under new downloads
+is Java SE 7 Update 45. That's the version
+
+00:05:05.759 --> 00:05:12.759
+we want to download, so I click there. When
+we get here, we have two versions available
+
+00:05:13.499 --> 00:05:20.499
+- one is regular Java and one has NetBeans.
+We want regular Java. On this screen, we accept
+
+00:05:22.430 --> 00:05:27.379
+the license agreement - you may want to read
+it first - and then we pick the correct version
+
+00:05:27.379 --> 00:05:34.370
+of the software. So this'll be Windows x64,
+because I'm doing a 64 bit installation, so
+
+00:05:34.370 --> 00:05:41.370
+we click here. Now you need to save this file
+to someplace where you know where it is. I
+
+00:05:41.550 --> 00:05:48.550
+recommend either your Downloads folder or,
+better yet, to your desktop. So here's the
+
+00:05:48.889 --> 00:05:53.650
+desktop. Now you're going to want to click
+save. I'm going to click cancel because I've
+
+00:05:53.650 --> 00:05:58.469
+already downloaded the software. As you can
+see, it's right there.
+
+00:05:58.469 --> 00:06:02.789
+Now that you have the software downloaded,
+you'll save the executable to the desktop,
+
+00:06:02.789 --> 00:06:09.529
+and run the executable from the desktop. Install
+the default configuration in the default location,
+
+00:06:09.529 --> 00:06:14.589
+please. It's very important to have it in
+the default location because if we need to
+
+00:06:14.589 --> 00:06:19.729
+help you debug your installation, it's helpful
+to be able to find things and not have to
+
+00:06:19.729 --> 00:06:24.689
+search for them. Now we need both the Runtime
+Environment and the software development kit
+
+00:06:24.689 --> 00:06:30.619
+- and both of them will be installed. Now
+that we've downloaded the Java installation
+
+00:06:30.619 --> 00:06:37.619
+package to the desktop, we click on it to
+start installation. We definitely want to
+
+00:06:39.389 --> 00:06:44.960
+allow the following program to make changes.
+Now it's saying that the software's already
+
+00:06:44.960 --> 00:06:50.430
+been installed. That's because I've installed
+it previously. You probably won't see this
+
+00:06:50.430 --> 00:06:57.430
+screen. Windows is now configuring the software
+development kit, and now we go through the
+
+00:07:14.469 --> 00:07:21.469
+wizard. Remember, we're not making any changes
+here, just click next. And now we've successfully
+
+00:07:41.539 --> 00:07:45.270
+installed the software development kit.
+
+00:07:45.270 --> 00:07:51.789
+The next thing we need to do is to install
+Eclipse. So go to http://eclipse.org, choose
+
+00:07:51.789 --> 00:07:57.199
+download Eclipse, and I'll use Eclipse standard.
+You need to choose the proper version here
+
+00:07:57.199 --> 00:08:04.199
+too, either 32 bit or 64 bit, and download
+it to the desktop. Next, we're going to download
+
+00:08:05.259 --> 00:08:12.259
+Eclipse. I've gone to the Firefox browser,
+and I'll enter eclipse.org. This takes us
+
+00:08:21.899 --> 00:08:28.229
+to the homepage for Eclipse. We choose download
+Eclipse, right over here at the big yellow
+
+00:08:28.229 --> 00:08:35.229
+box, and here's the Eclipse Standard Version
+right at the top. Now I want the 64 bit version
+
+00:08:35.639 --> 00:08:42.639
+because I installed Java in 64 bits. You can
+choose whatever site you want. I usually just
+
+00:08:43.750 --> 00:08:50.750
+accept the default one. So now you're going
+to save the file. I recommend saving it to
+
+00:08:52.470 --> 00:08:57.709
+the desktop. As you can see, I've already
+saved it so I won't save it again. But you
+
+00:08:57.709 --> 00:09:03.940
+will click save, even though I'm clicking
+cancel. The next thing you need to do is to
+
+00:09:03.940 --> 00:09:09.120
+extract Eclipse. To do this you right click
+on the compressed Eclipse folder and select
+
+00:09:09.120 --> 00:09:16.019
+extract all. Then you browse for the proper
+folder. Now this'll be C:\Program Files (x86)
+
+00:09:16.019 --> 00:09:23.019
+or 32 bit software or C:\Program Files for
+64 bit software. At some point you'll have
+
+00:09:23.329 --> 00:09:28.110
+to accept administrator permissions to do
+this. This will create an Eclipse folder in
+
+00:09:28.110 --> 00:09:34.649
+the proper directory. The next thing you'll
+do is create an Eclipse shortcut. So you'll
+
+00:09:34.649 --> 00:09:39.269
+go to the Eclipse directory you created and
+create a shortcut by dragging the icon with
+
+00:09:39.269 --> 00:09:43.750
+the purple circle to your task bar. Now this
+is optional, but it's highly recommended.
+
+00:09:43.750 --> 00:09:48.779
+We'll be using Eclipse every single day in
+this class. You're going to want to have it
+
+00:09:48.779 --> 00:09:49.740
+handy.
+
+00:09:49.740 --> 00:09:56.740
+Now we'll extract Eclipse. So from the desktop,
+we right click and choose extract all. Now,
+
+00:09:58.500 --> 00:10:05.500
+we need to browse for the correct directory.
+This will go to the computer, the C drive,
+
+00:10:06.300 --> 00:10:13.300
+and then program files for the 64 bit version,
+which is the one I selected. Or program files
+
+00:10:14.470 --> 00:10:21.470
+x86 if you're downloading in 32 bit. Then
+choose extract. Now it's going to require
+
+00:10:25.339 --> 00:10:32.319
+security permission because we're downloading
+to the program files directory, and here it
+
+00:10:32.319 --> 00:10:39.319
+goes. Now to finish off our installation,
+we're going to go to the C directory, Program
+
+00:10:50.410 --> 00:10:57.410
+Files, Eclipse, and take our Eclipse icon
+- this little purple circle right here - and
+
+00:10:57.449 --> 00:11:04.360
+drag it onto the task bar. Right like that.
+That way we'll always have it available when
+
+00:11:04.360 --> 00:11:11.360
+we need it. The next thing we need to do is
+to access the Java API. Now API stands for
+
+00:11:12.139 --> 00:11:17.139
+Application Programmers Interface, and it's
+the description of resources that Java has
+
+00:11:17.139 --> 00:11:24.139
+for us to use. So if you go and click on it,
+you'll see what the API looks like. So here's
+
+00:11:30.459 --> 00:11:37.459
+the API showing up in my browser. I'll show
+you how to use it during the semester. I recommend
+
+00:11:38.870 --> 00:11:44.300
+that you bookmark this, so you can have easy
+access. Now, you also can install software
+
+00:11:44.300 --> 00:11:49.199
+for this on your computer. It isn't necessary
+if you have a good Internet connection most
+
+00:11:49.199 --> 00:11:52.959
+of the time. But if you don't have a good
+Internet connection, this is a step you'll
+
+00:11:52.959 --> 00:11:56.819
+definitely want to take.
+
+00:11:56.819 --> 00:12:00.860
+The next thing you want to do is to check
+your installation. So you'll start Eclipse
+
+00:12:00.860 --> 00:12:06.029
+from the task bar, create a workspace in a
+good location. So we'll browse and create
+
+00:12:06.029 --> 00:12:10.529
+a new folder in a directory that you reserve
+for your college courses, or if you don't
+
+00:12:10.529 --> 00:12:15.029
+have one of those, we'll make one. You need
+to get rid of the welcome screen, and create
+
+00:12:15.029 --> 00:12:22.029
+a project. So that's File, New, Java Project,
+and I'll call the project name Sample. And
+
+00:12:22.089 --> 00:12:29.089
+then you'll finish that. First, we start Eclipse
+from the task bar. We choose to run, although
+
+00:12:29.939 --> 00:12:36.939
+you might want to consider clicking that box
+so you don't get asked every time. Now we
+
+00:12:37.850 --> 00:12:43.490
+want to choose a new workspace. So we'll browse
+for that. The desktop is one reasonable place
+
+00:12:43.490 --> 00:12:48.699
+to put a workspace, but let's make sure we
+make a new folder. So this new folder will
+
+00:12:48.699 --> 00:12:55.699
+be called CS 1323 Workspace, and then we'll
+click OK. Eclipse will now open to the welcome
+
+00:13:06.360 --> 00:13:09.970
+screen. Now this is something you won't see
+every time, and it's not something that's
+
+00:13:09.970 --> 00:13:15.519
+particularly useful. What we need is the workbench
+and to get to it, you click the arrow right
+
+00:13:15.519 --> 00:13:22.519
+there. Inside of Eclipse we'll have many projects,
+so let's create our first one. We'll do File,
+
+00:13:24.139 --> 00:13:31.139
+New, Java Project, and I'll call this project
+Sample and click Finish. Now, if you click
+
+00:13:33.529 --> 00:13:37.620
+here under the package explorer, you'll see
+that Eclipse has saved several things for
+
+00:13:37.620 --> 00:13:39.879
+us.
+
+00:13:39.879 --> 00:13:45.759
+The next thing you need to do is to create
+a class. So you'll go to File, New, Class.
+
+00:13:45.759 --> 00:13:50.560
+The name of the class should be Computer Science
+Is Grand. Now notice there are no spaces between
+
+00:13:50.560 --> 00:13:55.610
+these words, and each word starts with a capital
+letter. That's called Camel Case, and that's
+
+00:13:55.610 --> 00:14:01.060
+how we write class names. Then you need to
+check the box to get public static void main
+
+00:14:01.060 --> 00:14:06.110
+string square brackets args. Those are where
+the instructions of the computer runs are
+
+00:14:06.110 --> 00:14:10.920
+put, so it's important that you have that
+method. Then I'll do some beautifying of the
+
+00:14:10.920 --> 00:14:15.860
+code. I'm going to move some curly braces
+around. I'm going to edit some comments and
+
+00:14:15.860 --> 00:14:22.860
+remove a to do line. So we go File, New, Class.
+And we're going to call this class Computer
+
+00:14:25.769 --> 00:14:31.249
+Science Is Grand. It's important that there
+are no spaces in this name and that it's in
+
+00:14:31.249 --> 00:14:38.249
+Camel Case. We're going to check the box here
+to get a main method and click Finish. Now
+
+00:14:39.939 --> 00:14:44.209
+unfortunately, Eclipse doesn't do things just
+the way I like. So I'm going to make a few
+
+00:14:44.209 --> 00:14:50.389
+little adjustments here to put things just
+the way I want them. The reason I like it
+
+00:14:50.389 --> 00:14:56.649
+this way is lining up curly braces makes it
+easier to see that your code is correct.
+
+00:14:56.649 --> 00:15:00.329
+The next thing we're going to do is add some
+output. So we'll go to the webpage for the
+
+00:15:00.329 --> 00:15:07.329
+Association of Computing Machinery and pick
+your favorite reason to study computer science.
+
+00:15:11.180 --> 00:15:16.199
+So here are the 10 reasons, so look for something
+that really resonates with you. Computing
+
+00:15:16.199 --> 00:15:21.220
+is part of everything we do -- boy, that's
+true. Expertise in computing enables you to
+
+00:15:21.220 --> 00:15:27.009
+solve complex and challenging problems - that's
+true too! Computing enables you to make a
+
+00:15:27.009 --> 00:15:31.279
+positive difference in the world - now that's
+something that really resonates with me, so
+
+00:15:31.279 --> 00:15:38.279
+that's what I'm going to put in my program.
+Now you'll add one line of code to the main
+
+00:15:38.370 --> 00:15:42.970
+program. It will be system out print line
+- Computing enables you to make a positive
+
+00:15:42.970 --> 00:15:48.610
+difference in the world in double quotes.
+Be very careful. Watch the capitalization,
+
+00:15:48.610 --> 00:15:54.540
+and the punctuation, and the spelling. It
+all has to be perfect. Notice that the start
+
+00:15:54.540 --> 00:15:58.949
+and end double quotes should be the same.
+Now PowerPoint makes them little sixes and
+
+00:15:58.949 --> 00:16:03.589
+nines, but those are not the ones you use
+in programming. So you have to be careful
+
+00:16:03.589 --> 00:16:09.939
+to use the ones that are near the enter key.
+Do not cut and paste from PowerPoint.
+
+00:16:09.939 --> 00:16:16.939
+Now we're going to put the body of the main
+method in. System out print line, computing
+
+00:16:22.290 --> 00:16:29.290
+enables you to make a positive difference
+in the world. Now we're a little short of
+
+00:16:34.029 --> 00:16:38.660
+space here, so let's clear some things out.
+We really don't need this outline, and that
+
+00:16:38.660 --> 00:16:44.279
+gives us some more space, and if we make it
+full screen we can see the whole line. Always
+
+00:16:44.279 --> 00:16:48.350
+make sure that you can see all of your lines
+because if you can't see them, it's hard to
+
+00:16:48.350 --> 00:16:51.519
+tell what's on them.
+
+00:16:51.519 --> 00:16:57.129
+So now it's time to run your program. Choose
+Run, Run to run your program. And you should
+
+00:16:57.129 --> 00:17:02.600
+see your chosen slogan in the console window.
+If it doesn't work, there's probably some
+
+00:17:02.600 --> 00:17:08.870
+small error in your program. Compare it very
+carefully to the example. Let's see, for example,
+
+00:17:08.870 --> 00:17:14.790
+what happens if we change System with a capital
+S to system with a little S. Now you'll notice
+
+00:17:14.790 --> 00:17:20.500
+Eclipse will give us a red X and that helps
+us find problems, sometimes. Also you can
+
+00:17:20.500 --> 00:17:24.300
+get help on Janux social media if you need
+it.
+
+00:17:24.300 --> 00:17:31.300
+Now it's time to run our program. So you can
+choose Run, Run from the menu. Click OK to
+
+00:17:32.390 --> 00:17:38.220
+the box, and you'll see our slogan printed
+out exactly as we entered it - computing enables
+
+00:17:38.220 --> 00:17:43.650
+you to make a positive difference in the world.
+Now, if you didn't see that, don't worry and
+
+00:17:43.650 --> 00:17:49.580
+don't panic. It's probably just some small
+typo. For example, maybe you put in a small
+
+00:17:49.580 --> 00:17:54.750
+S instead of a capital S in system. Now notice
+that Eclipse is trying to help you out by
+
+00:17:54.750 --> 00:18:00.160
+putting a little red X at the side. Sometimes
+Eclipse is right, sometimes it isn't. But
+
+00:18:00.160 --> 00:18:05.570
+if you're wondering, it's always a good idea
+to look. So when it says system can't be resolved,
+
+00:18:05.570 --> 00:18:09.900
+what that means is that it doesn't know what
+system is. That's a hint that you may have
+
+00:18:09.900 --> 00:18:15.150
+something spelled wrong or capitalized wrong
+or have the wrong punctuation in. Notice that
+
+00:18:15.150 --> 00:18:21.120
+if we change back to a capital S, Eclipse
+quickly becomes happy again. Now if you need
+
+00:18:21.120 --> 00:18:26.300
+more help, get help on Janux social media.
+
+00:18:26.300 --> 00:18:31.250
+The next thing we're going to do is check
+the installation. So we'll go to coding bat.
+
+00:18:31.250 --> 00:18:37.650
+Now if you're in the for credit class, you
+need to share your results with me at dtrytten@ou.edu.
+
+00:18:37.650 --> 00:18:41.670
+Please don't do this if you're in the open
+class. I can't look at your programs and see
+
+00:18:41.670 --> 00:18:47.540
+what you've done. I can only see if they are
+correct or not, so it's not helpful. To check
+
+00:18:47.540 --> 00:18:52.640
+the installation we'll go to warm-up one,
+choose sum double, and enter exactly this
+
+00:18:52.640 --> 00:18:59.640
+code between the curly braces: if A equals
+equals B return four times A semi-colon and
+
+00:19:00.270 --> 00:19:07.270
+return A plus B. Hit go. If you get a green
+check, that means it's installed correctly.
+
+00:19:07.340 --> 00:19:14.340
+Let's check the installation of Java Bat.
+First off, we bring up a web browser - I brought
+
+00:19:16.380 --> 00:19:23.380
+up Firefox, and we go to codingbat.com. Choose
+the sum double problem under warm-up one and
+
+00:19:29.210 --> 00:19:36.210
+enter this code between the curly braces:
+if A equals equals B return four times A return
+
+00:19:39.660 --> 00:19:46.660
+A plus B. Click Go. If you have a green check
+here, that means everything is working great
+
+00:19:49.020 --> 00:19:51.890
+with Java Bat.
+
+00:19:51.890 --> 00:19:58.710
+The next thing we do is to check problets.
+Go to http://problets.org, choose Topics,
+
+00:19:58.710 --> 00:20:03.290
+choose Java. You'll have to accept the risk
+of running the application. Now this won't
+
+00:20:03.290 --> 00:20:08.060
+happen in all browsers, but it may happen
+in yours. If you see a webpage that starts
+
+00:20:08.060 --> 00:20:14.050
+with "Please evaluate this expression," then
+everything's fine. Now we can check the installation
+
+00:20:14.050 --> 00:20:21.050
+of problets. Go to Firefox again, go to problets.org,
+choose Topics and Java. Now it says, "Please
+
+00:20:30.910 --> 00:20:35.060
+note that problet will appear in a separate
+window" - we'll need to look for that. We
+
+00:20:35.060 --> 00:20:39.910
+are going to have to accept the risk of running
+this application. Now let's go and look for
+
+00:20:39.910 --> 00:20:45.960
+that other window - right there it is. When
+you see "Please evaluate the expression" in
+
+00:20:45.960 --> 00:20:50.240
+a page that looks like this, it means that
+problets are going to work successfully on
+
+00:20:50.240 --> 00:20:54.190
+your computer.
+
+00:20:54.190 --> 00:21:00.030
+Now if the problets don't work, it's probably
+a security problem so try another browser.
+
+00:21:00.030 --> 00:21:05.300
+Make sure though that it's the correct browser
+that matches the bits on your installation.
+
+00:21:05.300 --> 00:21:09.690
+Now students taking the for credit class will
+need to create an account and sign in from
+
+00:21:09.690 --> 00:21:14.650
+the link for this semester's class (which
+is given on the course management system).
+
+00:21:14.650 --> 00:21:19.450
+Please use your full legal name (even if you
+don't like it) and your student number, not
+
+00:21:19.450 --> 00:21:26.340
+just your email. Remember, I don't know who
+sillyStudent@hotmail.org is. I only know your
+
+00:21:26.340 --> 00:21:32.470
+name. Now security issues can come up during
+the course of the semester. Browsers do periodically
+
+00:21:32.470 --> 00:21:38.570
+disable Java. You will have to enable Java
+to run at some point to get problets and to
+
+00:21:38.570 --> 00:21:44.540
+get some of the interactive exercises in the
+online textbook called Chortle. Now Turningscraft
+
+00:21:44.540 --> 00:21:48.620
+will always work because Java is run on their
+server, and Eclipse will work because it's
+
+00:21:48.620 --> 00:21:53.990
+running on your system. Javabat is also running
+on the system at another school, and so it
+
+00:21:53.990 --> 00:21:59.550
+will always work. So get ready to start programming!
+

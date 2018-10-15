@@ -1,0 +1,167 @@
+{
+    "MimeType": "application/vnd.nextthought.ntilessonoverview",
+    "Items": [
+        {
+            "MimeType": "application/vnd.nextthought.nticourseoverviewgroup",
+            "NTIID": "tag:nextthought.com,2011-10:OU-NTICourseOverviewGroup-CS1323_F_2015_Intro_to_Computer_Programming.lec:02.10_LESSON.0",
+            "Items": [
+                {
+                    "MimeType": "application/vnd.nextthought.ntivideo",
+                    "NTIID": "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_02.10.01_Dropping",
+                    "visibility": "everyone",
+                    "poster": "//www.kaltura.com/p/1500101/thumbnail/entry_id/0_2j5begap/width/1280/",
+                    "label": "Dropping the Lowest Midterm Grade"
+                },
+                {
+                    "MimeType": "application/vnd.nextthought.ntivideo",
+                    "NTIID": "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_02.03.02_Laudible",
+                    "visibility": "everyone",
+                    "poster": "//www.kaltura.com/p/1500101/thumbnail/entry_id/0_v8d1q1n6/width/1280/",
+                    "label": "Laudible.com"
+                }
+            ],
+            "accentColor": "81c8dc",
+            "title": "Videos"
+        },
+        {
+            "MimeType": "application/vnd.nextthought.nticourseoverviewgroup",
+            "NTIID": "tag:nextthought.com,2011-10:OU-NTICourseOverviewGroup-CS1323_F_2015_Intro_to_Computer_Programming.lec:02.10_LESSON.1",
+            "Items": [
+                {
+                    "MimeType": "application/vnd.nextthought.relatedworkref",
+                    "targetMimeType": "application/vnd.nextthought.externallink",
+                    "creator": "Deborah Trytten",
+                    "section": "required",
+                    "visibility": "everyone",
+                    "label": "Midterm 1 for Section 001",
+                    "NTIID": "tag:nextthought.com,2011-10:OU-RelatedWorkRef-CS1323_F_2015_Intro_to_Computer_Programming.relatedworkref.relwk:02.04.01_exam",
+                    "href": "resources/Midterm1_CS1323_Fall2015_Section001.docx",
+                    "target-NTIID": "tag:nextthought.com,2011-10:NTI-UUID-21e7d7de6d53f14542e3b391bdb0e00a",
+                    "icon": "resources/CS1323_F_2015_Intro_to_Computer_Programming/583b61b2202851bd80245dfddda3c5d88cadb0a1/fd35e23767020999111e1f49239199b4c5eff23e.png",
+                    "desc": "The examination that tests the topics covered in the first quarter of the course."
+                },
+                {
+                    "MimeType": "application/vnd.nextthought.relatedworkref",
+                    "targetMimeType": "application/vnd.nextthought.externallink",
+                    "creator": "Deborah Trytten",
+                    "section": "required",
+                    "visibility": "ForCredit",
+                    "label": "Midterm 1 Solution for Section 001",
+                    "NTIID": "tag:nextthought.com,2011-10:OU-RelatedWorkRef-CS1323_F_2015_Intro_to_Computer_Programming.relatedworkref.relwk:02.04.01_midterm_1_solution",
+                    "href": "resources/Midterm1_Solution_CS1323_Fall2015_Sections001.docx",
+                    "target-NTIID": "tag:nextthought.com,2011-10:NTI-UUID-56c50ef78ae030a44ebaf5c447da5723",
+                    "icon": "resources/CS1323_F_2015_Intro_to_Computer_Programming/583b61b2202851bd80245dfddda3c5d88cadb0a1/fd35e23767020999111e1f49239199b4c5eff23e.png",
+                    "desc": "The solution to Midterm 1."
+                },
+                {
+                    "MimeType": "application/vnd.nextthought.relatedworkref",
+                    "targetMimeType": "application/vnd.nextthought.externallink",
+                    "creator": "Deborah Trytten",
+                    "section": "required",
+                    "visibility": "everyone",
+                    "label": "Midterm 1 for Section 010 and 995",
+                    "NTIID": "tag:nextthought.com,2011-10:OU-RelatedWorkRef-CS1323_F_2015_Intro_to_Computer_Programming.relatedworkref.relwk:02.04.01_exam_010",
+                    "href": "resources/Midterm1_CS1323_Fall2015_Sections010_995.docx",
+                    "target-NTIID": "tag:nextthought.com,2011-10:NTI-UUID-6d1fe1f5932291392fc013f91e4763ab",
+                    "icon": "resources/CS1323_F_2015_Intro_to_Computer_Programming/583b61b2202851bd80245dfddda3c5d88cadb0a1/fd35e23767020999111e1f49239199b4c5eff23e.png",
+                    "desc": "The examination that tests the topics covered in the first quarter of the course."
+                },
+                {
+                    "MimeType": "application/vnd.nextthought.relatedworkref",
+                    "targetMimeType": "application/vnd.nextthought.externallink",
+                    "creator": "Deborah Trytten",
+                    "section": "required",
+                    "visibility": "ForCredit",
+                    "label": "Midterm 1 Solution for Section 010 and 995",
+                    "NTIID": "tag:nextthought.com,2011-10:OU-RelatedWorkRef-CS1323_F_2015_Intro_to_Computer_Programming.relatedworkref.relwk:02.04.01_midterm_1_solution_010",
+                    "href": "resources/Midterm1_Solution_CS1323_Fall2015_Sections010_995.docx",
+                    "target-NTIID": "tag:nextthought.com,2011-10:NTI-UUID-b931d586ca111d13114e394db9821c30",
+                    "icon": "resources/CS1323_F_2015_Intro_to_Computer_Programming/583b61b2202851bd80245dfddda3c5d88cadb0a1/fd35e23767020999111e1f49239199b4c5eff23e.png",
+                    "desc": "The solution to Midterm 1."
+                },
+                {
+                    "MimeType": "application/vnd.nextthought.relatedworkref",
+                    "targetMimeType": "application/vnd.nextthought.externallink",
+                    "creator": "Deborah Trytten",
+                    "section": "additional",
+                    "visibility": "everyone",
+                    "label": "Spring 2015 Midterm 1 Solution",
+                    "NTIID": "tag:nextthought.com,2011-10:OU-RelatedWorkRef-CS1323_F_2015_Intro_to_Computer_Programming.relatedworkref.relwk:02.04.01_exam_solutions",
+                    "href": "resources/Midterm_1_Solution_CS_1323_Spring_2015.docx",
+                    "target-NTIID": "tag:nextthought.com,2011-10:NTI-UUID-57a5cef699306683f608318f93e33b00",
+                    "icon": "resources/CS1323_F_2015_Intro_to_Computer_Programming/583b61b2202851bd80245dfddda3c5d88cadb0a1/fd35e23767020999111e1f49239199b4c5eff23e.png",
+                    "desc": "The solution to Midterm 1."
+                },
+                {
+                    "MimeType": "application/vnd.nextthought.relatedworkref",
+                    "targetMimeType": "application/vnd.nextthought.externallink",
+                    "creator": "Deborah Trytten",
+                    "section": "additional",
+                    "visibility": "everyone",
+                    "label": "Grading Rubric for the Last Problem",
+                    "NTIID": "tag:nextthought.com,2011-10:OU-RelatedWorkRef-CS1323_F_2015_Intro_to_Computer_Programming.relatedworkref.relwk:grade_last_problem.xlsx",
+                    "href": "resources/Grade_Last_Problem.xlsx",
+                    "target-NTIID": "tag:nextthought.com,2011-10:NTI-UUID-d677f77dbae75cc61f464c477c462076",
+                    "icon": "resources/CS1323_F_2015_Intro_to_Computer_Programming/7d5621bfe93d432ed22c2f7a0383582f62b1a8b1/fd35e23767020999111e1f49239199b4c5eff23e.png",
+                    "desc": "Grade Last Problem .xlsx file"
+                },
+                {
+                    "MimeType": "application/vnd.nextthought.relatedworkref",
+                    "targetMimeType": "application/vnd.nextthought.externallink",
+                    "creator": "Deborah Trytten",
+                    "section": "required",
+                    "visibility": "everyone",
+                    "label": "Sample Midterms",
+                    "NTIID": "tag:nextthought.com,2011-10:OU-RelatedWorkRef-CS1323_F_2015_Intro_to_Computer_Programming.relatedworkref.relwk:02.04.01_sample",
+                    "href": "resources/Sample_Midterm_1.zip",
+                    "target-NTIID": "tag:nextthought.com,2011-10:NTI-UUID-6636a0566771ad631f31aac97b22bc10",
+                    "icon": "resources/CS1323_F_2015_Intro_to_Computer_Programming/b9c4a1a1dc3d30c895df3b30c553fa40f972a2f5/fd35e23767020999111e1f49239199b4c5eff23e.png",
+                    "desc": "Five examples of examinations that test the topics covered in the first quarter of the course."
+                },
+                {
+                    "MimeType": "application/vnd.nextthought.relatedworkref",
+                    "targetMimeType": "application/vnd.nextthought.externallink",
+                    "creator": "Deborah Trytten",
+                    "section": "additional",
+                    "visibility": "everyone",
+                    "label": "Sample Midterm Solutions",
+                    "NTIID": "tag:nextthought.com,2011-10:OU-RelatedWorkRef-CS1323_F_2015_Intro_to_Computer_Programming.relatedworkref.relwk:02.04.01_sample_solutions",
+                    "href": "resources/Sample_Midterm_1_Solution.zip",
+                    "target-NTIID": "tag:nextthought.com,2011-10:NTI-UUID-3db013bbb23ee96a48d93a5b95168cef",
+                    "icon": "resources/CS1323_F_2015_Intro_to_Computer_Programming/b9c4a1a1dc3d30c895df3b30c553fa40f972a2f5/fd35e23767020999111e1f49239199b4c5eff23e.png",
+                    "desc": "Five example documents of Midterm 1 solutions."
+                },
+                {
+                    "MimeType": "application/vnd.nextthought.relatedworkref",
+                    "targetMimeType": "application/vnd.nextthought.externallink",
+                    "creator": "Deborah Trytten",
+                    "section": "additional",
+                    "visibility": "everyone",
+                    "label": "Examples from the Videos",
+                    "NTIID": "tag:nextthought.com,2011-10:OU-RelatedWorkRef-CS1323_F_2015_Intro_to_Computer_Programming.relatedworkref.relwk:02.02.05_code_sample",
+                    "href": "resources/Lesson_2.2.5_Code.zip",
+                    "target-NTIID": "tag:nextthought.com,2011-10:NTI-UUID-73f4d6c35231162cde436da025a8888f",
+                    "icon": "resources/CS1323_F_2015_Intro_to_Computer_Programming/b9c4a1a1dc3d30c895df3b30c553fa40f972a2f5/fd35e23767020999111e1f49239199b4c5eff23e.png",
+                    "desc": "Java code developed in the videos from this lesson."
+                },
+                {
+                    "MimeType": "application/vnd.nextthought.relatedworkref",
+                    "targetMimeType": "application/vnd.nextthought.externallink",
+                    "creator": "Deborah Trytten",
+                    "section": "additional",
+                    "visibility": "everyone",
+                    "label": "Dropping the Lowest Midterm Grade",
+                    "NTIID": "tag:nextthought.com,2011-10:OU-RelatedWorkRef-CS1323_F_2015_Intro_to_Computer_Programming.relatedworkref.relwk:02.04.01_midterm_1",
+                    "href": "resources/Dropping_Lowest_Midterm.pptx",
+                    "target-NTIID": "tag:nextthought.com,2011-10:NTI-UUID-b3866b41c5e340f85eff27e4743866c4",
+                    "icon": "resources/CS1323_F_2015_Intro_to_Computer_Programming/17f860f9921d29d578e2791d3ff00dcf689071c3/fd35e23767020999111e1f49239199b4c5eff23e.png",
+                    "desc": "Lecture presentation"
+                }
+            ],
+            "accentColor": "ce78e0",
+            "title": "Additional Resources"
+        }
+    ],
+    "title": "Review for First Midterm",
+    "NTIID": "tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.lec:02.10_LESSON"
+}

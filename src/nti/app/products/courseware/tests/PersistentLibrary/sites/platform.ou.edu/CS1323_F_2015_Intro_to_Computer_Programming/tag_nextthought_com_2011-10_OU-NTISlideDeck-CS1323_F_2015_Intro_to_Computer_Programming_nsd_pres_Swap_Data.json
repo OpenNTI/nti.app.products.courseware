@@ -1,0 +1,130 @@
+{
+  "MimeType": "application/vnd.nextthought.ntislidedeck",
+  "Videos": [
+    {
+      "MimeType": "application/vnd.nextthought.ntislidevideo",
+      "video-ntiid": "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_02.01.03_Swap_Data",
+      "title": "Swap and Rotate Data",
+      "creator": "Deborah Trytten",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Swap_Data",
+      "thumbnail": "//www.kaltura.com/p/1500101/thumbnail/entry_id/0_pzu51j9e/width/640/",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Swap_Data_video",
+      "class": "ntislidevideo"
+    }
+  ],
+  "creator": "Deborah Trytten",
+  "title": "Swapping and Rotating Data",
+  "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Swap_Data",
+  "Slides": [
+    {
+      "MimeType": "application/vnd.nextthought.slide",
+      "slidevideoid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Swap_Data_video",
+      "slidetitle": "Changing Primitive Data",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Swap_Data",
+      "slidevideostart": "0.0",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlide-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Swap_Data_slide_1",
+      "slideimage": "resources/CS1323_F_2015_Intro_to_Computer_Programming/814b280f27efb4407284da58522ee34908d78976/fd35e23767020999111e1f49239199b4c5eff23e.png",
+      "slidevideoend": "6.0",
+      "slidenumber": "1",
+      "class": "slide"
+    },
+    {
+      "MimeType": "application/vnd.nextthought.slide",
+      "slidevideoid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Swap_Data_video",
+      "slidetitle": "Problem Statement",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Swap_Data",
+      "slidevideostart": "6.0",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlide-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Swap_Data_slide_2",
+      "slideimage": "resources/CS1323_F_2015_Intro_to_Computer_Programming/942f3de0e4c515cc4dd997f91ce9acee82286170/fd35e23767020999111e1f49239199b4c5eff23e.png",
+      "slidevideoend": "27.0",
+      "slidenumber": "2",
+      "class": "slide"
+    },
+    {
+      "MimeType": "application/vnd.nextthought.slide",
+      "slidevideoid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Swap_Data_video",
+      "slidetitle": "Obvious, but Wrong, Answer",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Swap_Data",
+      "slidevideostart": "27.0",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlide-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Swap_Data_slide_3",
+      "slideimage": "resources/CS1323_F_2015_Intro_to_Computer_Programming/53980f090fa263dabb7f90914271d9928c38799b/fd35e23767020999111e1f49239199b4c5eff23e.png",
+      "slidevideoend": "72.0",
+      "slidenumber": "3",
+      "class": "slide"
+    },
+    {
+      "MimeType": "application/vnd.nextthought.slide",
+      "slidevideoid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Swap_Data_video",
+      "slidetitle": "Analogies",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Swap_Data",
+      "slidevideostart": "110.0",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlide-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Swap_Data_slide_4",
+      "slideimage": "resources/CS1323_F_2015_Intro_to_Computer_Programming/0fc2c68546f0a93209cbc58889594effb2291f6f/fd35e23767020999111e1f49239199b4c5eff23e.png",
+      "slidevideoend": "141.0",
+      "slidenumber": "4",
+      "class": "slide"
+    },
+    {
+      "MimeType": "application/vnd.nextthought.slide",
+      "slidevideoid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Swap_Data_video",
+      "slidetitle": "Trick",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Swap_Data",
+      "slidevideostart": "141.0",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlide-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Swap_Data_slide_5",
+      "slideimage": "resources/CS1323_F_2015_Intro_to_Computer_Programming/41f3c9a3e82944e6a91d93f7c1a3280e7fb01b9b/fd35e23767020999111e1f49239199b4c5eff23e.png",
+      "slidevideoend": "195.0",
+      "slidenumber": "5",
+      "class": "slide"
+    },
+    {
+      "MimeType": "application/vnd.nextthought.slide",
+      "slidevideoid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Swap_Data_video",
+      "slidetitle": "Assignment Reminders",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Swap_Data",
+      "slidevideostart": "195.0",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlide-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Swap_Data_slide_6",
+      "slideimage": "resources/CS1323_F_2015_Intro_to_Computer_Programming/49ca86dbb9e8fb138b37ce305a3eeef3c5406dd5/fd35e23767020999111e1f49239199b4c5eff23e.png",
+      "slidevideoend": "258.0",
+      "slidenumber": "6",
+      "class": "slide"
+    },
+    {
+      "MimeType": "application/vnd.nextthought.slide",
+      "slidevideoid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Swap_Data_video",
+      "slidetitle": "Programming Tricks",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Swap_Data",
+      "slidevideostart": "258.0",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlide-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Swap_Data_slide_7",
+      "slideimage": "resources/CS1323_F_2015_Intro_to_Computer_Programming/3327e2b626ea39dcb559e42f3716c086a45b573b/fd35e23767020999111e1f49239199b4c5eff23e.png",
+      "slidevideoend": "290.0",
+      "slidenumber": "7",
+      "class": "slide"
+    },
+    {
+      "MimeType": "application/vnd.nextthought.slide",
+      "slidevideoid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Swap_Data_video",
+      "slidetitle": "Rotate Three Values Left",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Swap_Data",
+      "slidevideostart": "290.0",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlide-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Swap_Data_slide_8",
+      "slideimage": "resources/CS1323_F_2015_Intro_to_Computer_Programming/7eeea41c2e9dfb460e47fa2ebe8360f2290ca3e7/fd35e23767020999111e1f49239199b4c5eff23e.png",
+      "slidevideoend": "320.0",
+      "slidenumber": "8",
+      "class": "slide"
+    },
+    {
+      "MimeType": "application/vnd.nextthought.slide",
+      "slidevideoid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Swap_Data_video",
+      "slidetitle": "Generalize Trick",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Swap_Data",
+      "slidevideostart": "320.0",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlide-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Swap_Data_slide_9",
+      "slideimage": "resources/CS1323_F_2015_Intro_to_Computer_Programming/1e1b18fb61f5688cf3fb1fe4ec7eea63eeca2277/fd35e23767020999111e1f49239199b4c5eff23e.png",
+      "slidevideoend": "437.0",
+      "slidenumber": "9",
+      "class": "slide"
+    }
+  ],
+  "ntiid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Swap_Data",
+  "class": "ntislidedeck"
+}

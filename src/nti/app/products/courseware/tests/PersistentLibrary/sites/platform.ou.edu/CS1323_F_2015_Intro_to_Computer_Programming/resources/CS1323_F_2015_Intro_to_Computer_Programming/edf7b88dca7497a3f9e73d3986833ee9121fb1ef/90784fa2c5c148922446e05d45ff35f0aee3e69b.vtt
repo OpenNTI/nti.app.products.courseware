@@ -1,0 +1,401 @@
+WEBVTT
+Kind: captions
+Language: en
+
+00:00:01.030 --> 00:00:07.309
+&gt;&gt;Let's talk about how to convert Strings
+to ints. So the problem we're looking at is
+
+00:00:07.309 --> 00:00:13.900
+changing the String, double quote 123 double
+quote which has three characters in it, into
+
+00:00:13.900 --> 00:00:20.170
+the int one hundred and twenty three. Now
+the difference between these two is very important
+
+00:00:20.170 --> 00:00:25.320
+to remember. Int is a primitive data type,
+String is an object type. These are very different
+
+00:00:25.320 --> 00:00:30.200
+types and you can do very different things
+with each. Now this is a problem that has
+
+00:00:30.200 --> 00:00:36.449
+a lot of solutions. We're going to examine
+five different options here. Now the reason
+
+00:00:36.449 --> 00:00:41.030
+that I think its good to examine different
+options is that sometimes one option is much
+
+00:00:41.030 --> 00:00:46.199
+better than another. It's a very common mistake
+for beginning programmers: if they can think
+
+00:00:46.199 --> 00:00:51.359
+of one way to do something, they kind of forget
+that sometimes there may be a much better
+
+00:00:51.359 --> 00:00:56.499
+way out there. Now in a sense I understand,
+because when you're first programming it is
+
+00:00:56.499 --> 00:01:01.609
+hard to think of all the possibilities. But
+it is a fun exercise and it does have more
+
+00:01:01.609 --> 00:01:03.550
+than just intellectual merit.
+
+00:01:03.550 --> 00:01:08.850
+Now, the way that I found the options here
+was by looking at the methods in the API that
+
+00:01:08.850 --> 00:01:15.850
+have String parameters and int or integer
+return values. So that's where I got started.
+
+00:01:16.270 --> 00:01:20.640
+Pay attention to the use of objects versus
+class methods, because that will make it much
+
+00:01:20.640 --> 00:01:25.600
+easier for you to understand what's going
+on. Remember that class methods have static
+
+00:01:25.600 --> 00:01:28.090
+in their signature.
+
+00:01:28.090 --> 00:01:33.060
+So here's the first way. And this way is almost
+a cheat, because it uses something we already
+
+00:01:33.060 --> 00:01:40.060
+know. We can actually use a String to construct
+a scanner object. So we could do String letters
+
+00:01:40.200 --> 00:01:46.719
+equals new String one hundred and twenty three.
+Then use that String to create a scanner.
+
+00:01:46.719 --> 00:01:52.520
+So we'll have scanner input is new scanner
+and then of letters. So instead of just putting
+
+00:01:52.520 --> 00:01:59.520
+system dot in there we're putting the String
+letters in. Then we have int number equals
+
+00:02:00.249 --> 00:02:06.259
+input dot next int. So that takes our scanner
+object input and pulls the next integer out
+
+00:02:06.259 --> 00:02:10.649
+of it. Well the next integer is a hundred
+and twenty three, and that's what gets stored
+
+00:02:10.649 --> 00:02:14.640
+in number. Here's the second way.
+
+00:02:14.640 --> 00:02:19.629
+Let's use a class method in the integer class.
+Now like I said before the class methods are
+
+00:02:19.629 --> 00:02:24.140
+labeled static. And when they when they're
+called they're called integer, that's the
+
+00:02:24.140 --> 00:02:29.590
+name of the class, and then period a method
+name. The arguments, if there are any, go
+
+00:02:29.590 --> 00:02:36.150
+in the parentheses. Now, there are two options
+that immediately spring to mind. One is int
+
+00:02:36.150 --> 00:02:43.150
+parse int with the parameter String source,
+and that converts decimal only. That's actually
+
+00:02:43.290 --> 00:02:48.010
+fine for our purposes because we're only using
+decimals at this point. Now there's another
+
+00:02:48.010 --> 00:02:55.010
+method called integer decode String source.
+So here instead of returning an int, we are
+
+00:02:55.120 --> 00:03:00.269
+returning an integer object. Now that's the
+type of object we haven't used yet, so we
+
+00:03:00.269 --> 00:03:04.819
+might be a little bit cautious about that.
+One thing that's nice about decode is it can
+
+00:03:04.819 --> 00:03:11.080
+handle decimal, hexadecimal, which is base
+16, and octal, which is base 8. Now when I
+
+00:03:11.080 --> 00:03:15.939
+say nice I mean nice for a professional programmer--
+I don't really mean nice for us. In fact the
+
+00:03:15.939 --> 00:03:19.189
+only thing we care about is that it can handle
+decimal.
+
+00:03:19.189 --> 00:03:24.659
+So, which option are we going to choose? Well,
+if we take an integer object we're going to
+
+00:03:24.659 --> 00:03:28.569
+have to figure out what to do with it. That's
+not impossible to do and in fact we're going
+
+00:03:28.569 --> 00:03:33.900
+to do it in a few minutes. But that first
+one that just returns an int value, that's
+
+00:03:33.900 --> 00:03:39.620
+really nice because we know what to do with
+an int. So right there is the code: Int number
+
+00:03:39.620 --> 00:03:46.620
+equals integer dot parse int and then the
+argument is the String 123. You also could've
+
+00:03:47.110 --> 00:03:53.370
+put a String reference there if you wanted
+to. So there's our second technique.
+
+00:03:53.370 --> 00:03:57.120
+Now before we go onto any further techniques,
+let's talk a little bit about the integer
+
+00:03:57.120 --> 00:04:04.120
+class. An integer object holds a single primitive
+data type int. Now, that might seem kind of
+
+00:04:04.340 --> 00:04:09.400
+weird, and the integer class is kind of a
+weird class. It's something called a wrapper
+
+00:04:09.400 --> 00:04:14.689
+class. And what it does is it wraps around
+a primitive data type. Now this might seem
+
+00:04:14.689 --> 00:04:19.100
+incredibly inefficient, and it is, but it
+turns out it does some really cool things
+
+00:04:19.100 --> 00:04:23.340
+later on. In order to see those cool things
+you're going to need to take a course like
+
+00:04:23.340 --> 00:04:30.229
+CS 2334: Programming Structures and Abstractions.
+So for right now we can just think of it as
+
+00:04:30.229 --> 00:04:35.580
+being a way of a primitive data type and moving
+it into an object type.
+
+00:04:35.580 --> 00:04:41.280
+So, if we construct an integer object like
+integer number equals new int and then in
+
+00:04:41.280 --> 00:04:48.110
+parentheses seven, so the argument is seven.
+This is what we get-- a reference to an integer
+
+00:04:48.110 --> 00:04:55.110
+object called number and a integer object
+that contains a seven. Well, this brings on
+
+00:04:55.800 --> 00:05:02.240
+the third and fourth way to perform our String
+and int task. We can use decode in the integer
+
+00:05:02.240 --> 00:05:09.240
+class. So we create our String, String num
+is new String double quotes 123. And then
+
+00:05:10.780 --> 00:05:15.770
+we create our integer object. So we'll have
+integer number, number as a reference to an
+
+00:05:15.770 --> 00:05:22.770
+integer remember, is integer dot decode of
+num. Now remember integer dot decode returned
+
+00:05:22.780 --> 00:05:28.240
+an integer object not an int type. Well we've
+got a little problem now. We're actually not
+
+00:05:28.240 --> 00:05:34.550
+finished, because we need to get our int value
+outside of this integer object. Now that's
+
+00:05:34.550 --> 00:05:40.569
+a method I the class if you look at the API
+you will find it. So what you do is this:
+
+00:05:40.569 --> 00:05:46.680
+Int value is number dot int value. So notice
+number is an integer object, so we're using
+
+00:05:46.680 --> 00:05:53.000
+the object reference period and then the method
+name in value. You can read about that more
+
+00:05:53.000 --> 00:05:54.380
+in the API.
+
+00:05:54.380 --> 00:05:59.639
+Now, as far as the fourth way, the fourth
+way is exactly like the third except for one
+
+00:05:59.639 --> 00:06:06.270
+thing. There is another method in the integer
+class that's called value of, and you can
+
+00:06:06.270 --> 00:06:11.970
+use that instead of decode. Other than that
+it works exactly the same way. Now you might
+
+00:06:11.970 --> 00:06:15.460
+think it's kind of weird that we have so many
+different methods that do kind of the same
+
+00:06:15.460 --> 00:06:19.780
+thing, but they have different purposes and
+they're used for different things. As you
+
+00:06:19.780 --> 00:06:24.030
+program more this will make more and more
+sense. For right now it's great to know one
+
+00:06:24.030 --> 00:06:26.210
+way to do things.
+
+00:06:26.210 --> 00:06:31.069
+And here's the fifth and final way. We can
+actually construct an integer object from
+
+00:06:31.069 --> 00:06:36.830
+the String. Now the way we know that's possible
+is by looking at the constructors in the Java
+
+00:06:36.830 --> 00:06:43.830
+API page for integer. Let's actually go and
+do that. Here's the Java API. I'm going to
+
+00:06:43.889 --> 00:06:49.550
+search for an integer object. Notice there
+are a number of classes that have the word
+
+00:06:49.550 --> 00:06:56.410
+integer in it. We want the one that's just
+integer by itself and right here is the summary
+
+00:06:56.410 --> 00:07:02.060
+of the constructors. So right here we have
+a second constructor that constructs a newly
+
+00:07:02.060 --> 00:07:08.580
+allocated integer object that represents the
+int value indicated by the String parameter.
+
+00:07:08.580 --> 00:07:13.949
+You will see the other methods that we've
+been using here. There's the decode method;
+
+00:07:13.949 --> 00:07:19.500
+our int value method that we used a few minutes
+ago is here. Notice that that is not a static
+
+00:07:19.500 --> 00:07:23.990
+method, that's an instance method. So instead
+of having the class name in front of it, it
+
+00:07:23.990 --> 00:07:30.259
+will have an integer object name when it gets
+called. Here's the parse int method we used
+
+00:07:30.259 --> 00:07:34.400
+earlier-- so there are lots of different possibilities
+there.
+
+00:07:34.400 --> 00:07:38.080
+It's a good ting to spend some time with the
+API and read around it even though it can
+
+00:07:38.080 --> 00:07:43.889
+be a little frustrating at first. We construct
+the integer object from the String. So String
+
+00:07:43.889 --> 00:07:50.310
+letters equals new String and then double
+quote 123. And here we're constructing the
+
+00:07:50.310 --> 00:07:56.690
+integer object from the String object. Integer
+number equals new integer of letters. We also
+
+00:07:56.690 --> 00:08:02.069
+could've put double quote 123 double quote
+there instead of the reference to letters.
+
+00:08:02.069 --> 00:08:09.069
+That would've been fine too. And then we'll
+do int value is number dot int value. So there
+
+00:08:09.289 --> 00:08:11.949
+is our fifth way to solve this problem.
+
+00:08:11.949 --> 00:08:18.210
+Now, the Java API has figured prominently
+in this discussion. All of these methods are
+
+00:08:18.210 --> 00:08:24.530
+documented in the API. The thing is reading
+the API can be very challenging at first.
+
+00:08:24.530 --> 00:08:28.849
+It's written for professional software engineers
+and it's not really written for beginners,
+
+00:08:28.849 --> 00:08:33.410
+and that's unfortunate. So the critical skill
+that you need to develop to work with the
+
+00:08:33.410 --> 00:08:38.730
+API is you just skip over things that don't
+make sense. There are corners of the API that
+
+00:08:38.730 --> 00:08:43.510
+don't make perfect sense to me-- I just skip
+them until I need to know them. When I really
+
+00:08:43.510 --> 00:08:47.480
+need to know them, that's when I work hard
+to know them, but a lot of the details you'll
+
+00:08:47.480 --> 00:08:51.820
+be exposed to at first are going to be things
+you don't really need to know. So don't let
+
+00:08:51.820 --> 00:08:56.380
+that stop you from reading and trying to get
+what you can out of it. Now the more you read
+
+00:08:56.380 --> 00:09:01.050
+the API the better you'll understand it, and
+in time it will be your best friend-- just
+
+00:09:01.050 --> 00:09:04.750
+probably not the first day. So keep programming!
+

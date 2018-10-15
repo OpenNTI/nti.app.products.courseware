@@ -1,0 +1,48 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html lang="en"><head> <meta content="2015-12-11T16:56:47" http-equiv="last-modified" /> <meta content="1359" name="NTIRelativeScrollHeight" /> <meta content="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.testing_the_method" name="NTIID" /> <meta content="NextThought" name="generator" /> <meta content="text/html; charset=ascii" http-equiv="content-type" /> <title>Testing the Method</title> <link href="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.method_to_accept_a_deposit" rel="next" title="Method to Accept a Deposit" /> <link href="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.implementing_the_method" rel="prev" title="Implementing the Method" /> <link href="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.reading:Chortle_CH32" rel="up" title="Class Design Example" /> <link href="styles/styles.css" rel="stylesheet" /> <link href="styles/content.css" rel="stylesheet" /> </head> <body id="NTIContent"> <div class="page-contents"><div data-ntiid="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.testing_the_method" id="a0000000518" ntiid="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.testing_the_method"> <div class="chapter title">Testing the Method</div> <p class="placeholder"></p> <a name="f4166ef8c0e4594059ff19e55e95aab3"></a> <div class="sidebar" data-ntiid="tag:nextthought.com,2011-10:OU-HTML:NTISidebar-CS1323_F_2015_Intro_to_Computer_Programming.sidebar.answer.191" ntiid="tag:nextthought.com,2011-10:OU-HTML:NTISidebar-CS1323_F_2015_Intro_to_Computer_Programming.sidebar.answer.191"> <div class="sidebar-title">Answer</div> <pre>class CheckingAccount
+{
+
+  // methods
+  int getBalance()
+  {
+     return balance;
+  }
+
+}
+</pre> </div><a name="6c451e28db33b7e863292c846cdc7705"></a> <p class="par" id="6c451e28db33b7e863292c846cdc7705">When the <b class="bfseries"><tt class="ttfamily">getBalance()</tt></b> method is added, the program can be run and tested. It is a good idea to alternate between writing and testing like this. By testing each part as it is added you catch problems early on, before they can cause further problems. Of course, it helps to have a good initial design. This is how houses are built, after all. You start with a good design, then lay the foundation. Then structures are built and tested until the house is complete. </p> <a name="c9ed9a1f201033c4ebedcaef1c5cdbb8"></a> <p class="par" id="c9ed9a1f201033c4ebedcaef1c5cdbb8">Here is a compilable and runable test program: </p> <a name="d8c3af0a54b539d65e16bd8ee2ec08f8"></a> <pre>class CheckingAccount
+{
+  // instance variables
+  String accountNumber;
+  String accountHolder;
+  int    balance;
+
+  //constructors
+  CheckingAccount( String accNumber, String holder, int start )
+  {
+    accountNumber = accNumber ;
+    accountHolder = holder ;
+    balance       = start ;
+  }
+
+  // methods
+  int getBalance()
+  {
+     return balance;
+  }
+}
+
+class CheckingAccountTester
+{
+  public static void main( String[] args )
+  {
+    CheckingAccount account1 = 
+        new CheckingAccount( "123", "Bob", 100 );
+    CheckingAccount account2 = 
+        new CheckingAccount( "92a-44-33", "Kathy Emerson", 0 );
+
+    System.out.println( account1.accountNumber + " " +
+        account1.accountHolder + " " + account1.getBalance() );
+    System.out.println( account2.accountNumber + " " +
+        account2.accountHolder + " " + account2.getBalance() );
+  }
+}
+</pre><a name="54ae5ebac541a33320c7497b84259145"></a> <p class="par" id="54ae5ebac541a33320c7497b84259145">This test program creates two objects, <b class="bfseries"><tt class="ttfamily">account1</tt></b> and <b class="bfseries"><tt class="ttfamily">account2</tt></b> of type <b class="bfseries"><tt class="ttfamily">CheckingAccount</tt></b>. </p> <a name="db5fe2f817aa38f372ba851863a79f58"></a> <div class="sidebar" data-ntiid="tag:nextthought.com,2011-10:OU-HTML:NTISidebar-CS1323_F_2015_Intro_to_Computer_Programming.sidebar.question.201" ntiid="tag:nextthought.com,2011-10:OU-HTML:NTISidebar-CS1323_F_2015_Intro_to_Computer_Programming.sidebar.question.201"> <div class="sidebar-title">Question</div> What will the program output when run? (Sketch out the answer, don&#8217;t worry about spaces.) </div> </div></div> </body></html>

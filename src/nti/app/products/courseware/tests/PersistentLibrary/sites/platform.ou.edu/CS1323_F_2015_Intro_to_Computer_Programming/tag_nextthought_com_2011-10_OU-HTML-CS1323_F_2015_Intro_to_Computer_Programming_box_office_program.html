@@ -1,0 +1,32 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html lang="en"><head> <meta content="2015-12-11T16:56:47" http-equiv="last-modified" /> <meta content="1394" name="NTIRelativeScrollHeight" /> <meta content="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.box_office_program" name="NTIID" /> <meta content="NextThought" name="generator" /> <meta content="text/html; charset=ascii" http-equiv="content-type" /> <title>Box Office Program</title> <link href="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.boolean_expressions" rel="next" title="Boolean Expressions" /> <link href="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.only_one_statement_per_branch" rel="prev" title="Only One Statement per Branch" /> <link href="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.reading:Chortle_CH12" rel="up" title="Decision Making" /> <link href="styles/styles.css" rel="stylesheet" /> <link href="styles/content.css" rel="stylesheet" /> </head> <body id="NTIContent"> <div class="page-contents"><div data-ntiid="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.box_office_program" id="a0000000403" ntiid="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.box_office_program"> <div class="chapter title">Box Office Program</div> <p class="placeholder"></p> <a name="7715aa9302c8f1c635854e972557b540"></a> <div class="sidebar" data-ntiid="tag:nextthought.com,2011-10:OU-HTML:NTISidebar-CS1323_F_2015_Intro_to_Computer_Programming.sidebar.answer.88" ntiid="tag:nextthought.com,2011-10:OU-HTML:NTISidebar-CS1323_F_2015_Intro_to_Computer_Programming.sidebar.answer.88"> <div class="sidebar-title">Answer</div> <a name="2210a333f11233cec6563efc2f9166a4"></a> <pre>if ( num &lt; 0 )
+  System.out.println("The number " + num + " is negative.");         // true-branch
+else
+{
+  System.out.println("The number " + num + " is zero or positive");  // false-branch
+  System.out.print  ("Positive numbers are greater ");               // false-branch   
+  System.out.println("or equal to zero. ");                          // false-branch
+}                      
+System.out.println("Good-bye for now");                      // always executed
+</pre><a name="509b62a131df2d69f6e875f93551b0fc"></a> <p class="par" id="509b62a131df2d69f6e875f93551b0fc">The true branch has one statement. The false branch has one statement, a block containing three statements. </p> </div><a name="ab5265873bf98ba9a5c14ad74dcc381e"></a> <p class="par" id="ab5265873bf98ba9a5c14ad74dcc381e">At a movie theater box office a person less than age 13 is charged the "child rate". Otherwise a person is charged the "adult rate." Here is the program: </p> <a name="ec5a2e9a16b03a6edd5e81f5b40b09b2"></a> <pre>import java.util.Scanner;
+class BoxOffice
+{
+  public static void main (String[] args) 
+  {
+    Scanner scan = new Scanner( System.in );
+    int age;
+ 
+    System.out.println("Enter your age:");
+    age = scan.nextInt();
+
+    if ( age &lt; 13  )
+    {
+      System.out.println("Child rate.");   
+    } 
+    else
+    {
+      System.out.println("Adult rate.");   
+    }
+    System.out.println("Enjoy the show.");    
+  }
+}
+</pre><a name="34a977cf34950d06cfd6d527ab955715"></a> <p class="par" id="34a977cf34950d06cfd6d527ab955715">In this program, the true branch and the false branch are both blocks. Each block contains only one statement, but this is OK. Often programmers do this for clarity. </p> <a name="59c79bfe80559742605a3991756013bf"></a> <p class="par" id="59c79bfe80559742605a3991756013bf">Here is what happens for one run of the program: </p> <a name="53bcddb7d3880c9dc33c55a3fcfde465"></a> <ol class="enumerate" start="1"> <li value="1"><a name="3e692232ace97370514227eb3322a787"></a> <p class="par" id="3e692232ace97370514227eb3322a787">The program prints "Enter your age". </p> </li> <li value="2"><a name="54fc6130ceb6a5ba4bf6a8ac2536798b"></a> <p class="par" id="54fc6130ceb6a5ba4bf6a8ac2536798b">The user enters an age: "21", for example. </p> </li> <li value="3"><a name="928cceacb59ea31b9e1a702ea5c95513"></a> <p class="par" id="928cceacb59ea31b9e1a702ea5c95513">The string "21" is converted from characters into an <b class="bfseries"><tt class="ttfamily">int</tt></b> and put into the variable <b class="bfseries"><tt class="ttfamily">age</tt></b>. </p> </li> <li value="4"><a name="0ec5c79501a03ef4d79c44f0f21429c5"></a> <p class="par" id="0ec5c79501a03ef4d79c44f0f21429c5">The condition <b class="bfseries"><tt class="ttfamily">age &lt; 13</tt></b> is tested. </p> </li> <li value="5"><a name="bbc1506e3bf078507cb54db867bad19d"></a> <p class="par" id="bbc1506e3bf078507cb54db867bad19d">21 &lt; 13 is <i class="itshape">false</i>. </p> </li> <li value="6"><a name="d91eef7efff20b26ac50631f11a1a59d"></a> <p class="par" id="d91eef7efff20b26ac50631f11a1a59d">The <i class="itshape">false branch</i> is executed: the program prints "adult rate". </p> </li> <li value="7"><a name="04d4d545d303f77cfda2879c4e6cd9ec"></a> <p class="par" id="04d4d545d303f77cfda2879c4e6cd9ec">Execution continues with the statement after the false branch: "Enjoy the show" is printed. </p> </li> </ol><a name="00f5334496c8a514bada7b9e3f4159de"></a> <div class="sidebar" data-ntiid="tag:nextthought.com,2011-10:OU-HTML:NTISidebar-CS1323_F_2015_Intro_to_Computer_Programming.sidebar.question.92" ntiid="tag:nextthought.com,2011-10:OU-HTML:NTISidebar-CS1323_F_2015_Intro_to_Computer_Programming.sidebar.question.92"> <div class="sidebar-title">Question</div> What does the program output if the user enters 11? </div> </div></div> </body></html>

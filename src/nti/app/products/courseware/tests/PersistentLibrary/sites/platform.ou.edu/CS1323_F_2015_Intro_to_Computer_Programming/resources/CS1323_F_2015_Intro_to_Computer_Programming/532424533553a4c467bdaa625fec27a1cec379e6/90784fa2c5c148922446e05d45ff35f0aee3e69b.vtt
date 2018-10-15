@@ -1,0 +1,1674 @@
+WEBVTT
+Kind: captions
+Language: en
+
+00:00:00.930 --> 00:00:04.770
+&gt;&gt;Dr. Deborah Trytten: Let's continue our
+study of searching by improving our list-making
+
+00:00:04.770 --> 00:00:10.470
+software. The original problem statement was
+we created a list-making program. It keeps
+
+00:00:10.470 --> 00:00:15.830
+track of a persistent list. Now what I mean
+by persistent is the data in the list is remembered
+
+00:00:15.830 --> 00:00:20.200
+between different executions of the program.
+So you can put some things in the list then
+
+00:00:20.200 --> 00:00:25.340
+you save it to a file and when you open the
+program it reads from that file. Remember
+
+00:00:25.340 --> 00:00:29.869
+that we retrieve data to and from a file,
+and we added and removed items and showed
+
+00:00:29.869 --> 00:00:36.869
+the list. Here are the new features. A feature
+that I found to be very useful is one that
+
+00:00:37.180 --> 00:00:42.989
+was inspired by Workflowy.com. What they do
+with their list-making software, amongst other
+
+00:00:42.989 --> 00:00:48.899
+clever amazing things, is they have hashtags
+on individual items. So for example you could
+
+00:00:48.899 --> 00:00:55.899
+say #Shopping or #Todo and then you can do
+search on those so you can pull up the things
+
+00:00:55.960 --> 00:01:01.239
+that are just on your shopping list or just
+on your to do list. Surprisingly handy. We
+
+00:01:01.239 --> 00:01:06.600
+also haven't done any reordering of list items,
+like moving items up and down or more general
+
+00:01:06.600 --> 00:01:11.000
+reordering you know taking the sixth item
+and moving it into the second space. These
+
+00:01:11.000 --> 00:01:17.220
+are features that are well within our grasp
+at this point, so let's add them in. Now here's
+
+00:01:17.220 --> 00:01:22.290
+our strategy: we're adding in three separate
+features. What we want to do is work on them
+
+00:01:22.290 --> 00:01:27.630
+one at a time, and I recommend that you work
+on the easiest one to the hardest in a case
+
+00:01:27.630 --> 00:01:32.650
+like this. Because the things that you learn
+doing the easy ones will make the harder cases
+
+00:01:32.650 --> 00:01:38.090
+easier. Now different people like different
+strategies and this is just my recommendation.
+
+00:01:38.090 --> 00:01:42.830
+There's no hard and fast rule that this is
+the way it absolutely must be done. So in
+
+00:01:42.830 --> 00:01:47.810
+my opinion the easiest feature is moving up
+and down. In fact you're going to be surprised
+
+00:01:47.810 --> 00:01:53.220
+how easy it is to implement that feature.
+Moving to a given position or more general
+
+00:01:53.220 --> 00:01:58.540
+reordering, that's going to be the second
+easiest feature and the hashtags are the third
+
+00:01:58.540 --> 00:02:03.600
+easiest feature. So that's the order in which
+I'm going to work through things. Working
+
+00:02:03.600 --> 00:02:08.939
+in these small separate iterations is really
+a good idea. One place where people get lost
+
+00:02:08.939 --> 00:02:13.519
+in programming is they try to do too much
+at once and then they end up with three things
+
+00:02:13.519 --> 00:02:17.819
+that are half finished instead of having one
+thing that's actually finished. So this is
+
+00:02:17.819 --> 00:02:22.849
+strategy I recommend that you adopt. And of
+course we'll want to test all the features
+
+00:02:22.849 --> 00:02:27.859
+after each feature is added. And when I say
+test all the features, I mean you have to
+
+00:02:27.859 --> 00:02:32.859
+test the ones you previously developed too
+because it is possible to break other things
+
+00:02:32.859 --> 00:02:38.180
+while you're adding in new things. So this
+is a very important part of testing. Now I've
+
+00:02:38.180 --> 00:02:42.689
+written the user interface in advance and
+written some of the signatures for the methods,
+
+00:02:42.689 --> 00:02:47.549
+just to help us move along a little bit and
+get to the interesting part of the coding.
+
+00:02:47.549 --> 00:02:52.279
+The first thing we do as always is design
+our test data from move. So of course we're
+
+00:02:52.279 --> 00:02:56.260
+going to run all the original tests again.
+That's very important to know that we didn't
+
+00:02:56.260 --> 00:03:01.589
+break other things while we were doing move.
+Now if we're moving up and down, we could
+
+00:03:01.589 --> 00:03:07.499
+do something like put A, B, C, D, E in a list
+then we could move E to the front one position
+
+00:03:07.499 --> 00:03:12.559
+at a time and then move E to the end one position
+at a time. If you think about it that will
+
+00:03:12.559 --> 00:03:19.139
+test all the possible cases that exist. So
+that's a pretty easy way to test the software.
+
+00:03:19.139 --> 00:03:24.129
+You'll recall that when we designed the original
+program we had some similar methods. So we
+
+00:03:24.129 --> 00:03:29.790
+had a method called "add item to list" and
+it took an ArrayList and a scanner as parameters
+
+00:03:29.790 --> 00:03:35.359
+and we had "delete item from list" and it
+also took an ArrayList and a scanner as parameters.
+
+00:03:35.359 --> 00:03:40.569
+We definitely want to keep our design consistent.
+So in both of these cases the user did the
+
+00:03:40.569 --> 00:03:46.049
+data entry inside the method. Now that isn't
+the only way this program could be written.
+
+00:03:46.049 --> 00:03:49.799
+And in fact a lot of people would tell you
+this program should be written with the user
+
+00:03:49.799 --> 00:03:55.639
+data entry outside of the methods. But, it
+is the way we did it previously and so we
+
+00:03:55.639 --> 00:03:59.719
+want to be consistent with that. We don't
+want to end up doing it half of one way and
+
+00:03:59.719 --> 00:04:04.479
+half of the other way because then we have
+to go back and change this program again it'll
+
+00:04:04.479 --> 00:04:11.040
+be hard to do. Here's what the signatures
+should look like. Now you'll see I've got
+
+00:04:11.040 --> 00:04:16.049
+two different design possibilities here. One
+has a method called "move up" and another
+
+00:04:16.049 --> 00:04:21.090
+has a method called "move down" so those would
+be one choice. Or we could create one move
+
+00:04:21.090 --> 00:04:25.610
+method and pass in a Boolean that would be
+"go up" which would be true when we're going
+
+00:04:25.610 --> 00:04:30.030
+up or false we we're going down. Now both
+of these are legitimate designs that could
+
+00:04:30.030 --> 00:04:35.280
+be correctly implemented. I've picked Design
+#1 as the one we're going to implement. My
+
+00:04:35.280 --> 00:04:41.009
+reasoning behind this is because we're doing
+data entry inside the methods, it makes a
+
+00:04:41.009 --> 00:04:46.939
+little more sense to separate move up and
+move down. Makes a little bit cleaner code.
+
+00:04:46.939 --> 00:04:50.930
+But if you chose the other way it could be
+fine too and in fact you might want to implement
+
+00:04:50.930 --> 00:04:57.930
+the other way. Let's think about how we're
+going to implement moving up and down. So
+
+00:04:58.419 --> 00:05:04.280
+suppose we have a list that contains A, B,
+C, D, E and we move B up one position. Well
+
+00:05:04.280 --> 00:05:11.280
+then we have B, A, C, D, E. Hmmm, the C, D,
+E remained the same but the A and B swap.
+
+00:05:12.349 --> 00:05:18.860
+Well that's a swap operation. And as it turns
+out, if you think back the collections class
+
+00:05:18.860 --> 00:05:23.229
+did have a swap method. Now we haven't used
+it before but that doesn't mean we can't use
+
+00:05:23.229 --> 00:05:29.039
+it now. Here's what the signature looked like:
+it returns a void, the name of the method
+
+00:05:29.039 --> 00:05:35.840
+is "swap" and it takes a list parameter. Remember
+it's okay to pass an ArrayList to any list
+
+00:05:35.840 --> 00:05:40.900
+parameter. It's also okay to pass them into
+collections and then you have int i and int
+
+00:05:40.900 --> 00:05:46.879
+j and those are the two indices that you want
+to swap. Remember the list of question mark?
+
+00:05:46.879 --> 00:05:51.349
+That's just some crazy syntax that we don't
+understand just yet so don't worry about that
+
+00:05:51.349 --> 00:05:55.719
+question mark too much. If it's a list things
+are going to be okay as long as you're doing
+
+00:05:55.719 --> 00:06:02.719
+things that make sense. So let's go and implement
+our method. So here we are back in Eclipse.
+
+00:06:04.659 --> 00:06:09.210
+You'll notice that I've renamed the class
+to list-maker with hashtags. Also as we look
+
+00:06:09.210 --> 00:06:15.069
+at our import statements we see that the collections
+class has not been imported yet so let's do
+
+00:06:15.069 --> 00:06:21.879
+that. That's Java dot util dot collections.
+Of course Eclipse is complaining that we haven't
+
+00:06:21.879 --> 00:06:27.180
+used it, but we know we're going to. You'll
+notice that I went and added a bunch of constants
+
+00:06:27.180 --> 00:06:33.610
+for all the different possibilities in our
+class. Here's our main program. So it's got
+
+00:06:33.610 --> 00:06:38.840
+a while loop where it's going through the
+choices then remember you select from a menu.
+
+00:06:38.840 --> 00:06:44.009
+That was a method that we wrote. And then
+you go through the choices one at a time so
+
+00:06:44.009 --> 00:06:50.689
+add, delete, show, move-up, move down, move
+to position, so on and so forth. The last
+
+00:06:50.689 --> 00:06:55.509
+thing we do is write the file to list. Basically
+I just added in parallel structures for our
+
+00:06:55.509 --> 00:07:02.509
+new methods. Here's our move down method.
+Now I've printed out to the user "Which item
+
+00:07:03.490 --> 00:07:07.639
+would like to move down?" and then we get
+the input from the keyboard. Remember that
+
+00:07:07.639 --> 00:07:12.229
+this will be unit indexed, because that's
+how the user is going to think about the list.
+
+00:07:12.229 --> 00:07:17.099
+So when we check the range we really want
+to think about how we want to do that. So
+
+00:07:17.099 --> 00:07:24.099
+what I recommend you do...is do index equals
+index minus 1. So we change back to zero indexing
+
+00:07:30.229 --> 00:07:34.800
+and notice that I'm making comments on these
+things. The reason I do that is because we
+
+00:07:34.800 --> 00:07:39.550
+might have to maintain the software someday
+and things like that look wrong if you don't
+
+00:07:39.550 --> 00:07:43.909
+realize why we're there. So you don't have
+to put a comment on every line but sometimes
+
+00:07:43.909 --> 00:07:49.529
+it really helps. So now when we check the
+range well if you think about it when you're
+
+00:07:49.529 --> 00:07:55.080
+going to move things down on the list, your
+possibilities are actually zero to the size
+
+00:07:55.080 --> 00:08:01.309
+minus 1 element. Well now wait a minute. Is
+it really size minus one? Because if we choose
+
+00:08:01.309 --> 00:08:07.080
+the last element on the list and ask to move
+it down that doesn't make sense. Now in this
+
+00:08:07.080 --> 00:08:12.409
+case I would beg for some compassion for the
+users. If they tell you to move the last item
+
+00:08:12.409 --> 00:08:18.069
+down just ignore it. Just don't do anything.
+Because that's a case that doesn't make any
+
+00:08:18.069 --> 00:08:22.610
+sense and there's no reason to give them some
+big elaborate error message and force them
+
+00:08:22.610 --> 00:08:26.900
+to remove things. They probably know they
+typed in the wrong number, so just don't make
+
+00:08:26.900 --> 00:08:33.900
+a big deal of it. So here's the range: if
+index is greater than or equal to zero and
+
+00:08:37.469 --> 00:08:44.469
+index is less than or equal to list dot size.
+Let's think through these very, very carefully.
+
+00:08:48.470 --> 00:08:55.470
+Moving down index zero certainly makes sense
+because it can go to index 1 or index 2. Moving
+
+00:08:57.449 --> 00:09:04.449
+down at index dot size does not, because remember
+the last item in the list is size minus 1.
+
+00:09:05.019 --> 00:09:12.019
+So when we put it this way size minus 1 would
+be acceptable but actually...we probably want
+
+00:09:12.130 --> 00:09:17.470
+to stop a little bit sooner than this because
+remember it doesn't make sense to move that
+
+00:09:17.470 --> 00:09:23.070
+last item down. Now there are lots of different
+ways to deal with this problem, but here is
+
+00:09:23.070 --> 00:09:30.070
+one possibility; if the index equals list
+dot size minus 1 return. So that way if they
+
+00:09:33.630 --> 00:09:37.980
+ask you to move down something that it doesn't
+make sense to move down you just don't do
+
+00:09:37.980 --> 00:09:43.410
+anything. I think that makes pretty good sense.
+Now we can see if index is greater than zero
+
+00:09:43.410 --> 00:09:50.410
+and index is less than size minus 1. If that's
+true well, that's when we went to be doing
+
+00:09:53.420 --> 00:10:00.420
+our move. So let's move our little comment
+up here, perform the move, and we decided
+
+00:10:07.180 --> 00:10:13.860
+we were going to use collections dot swap
+and we're going to swap in the list. So the
+
+00:10:13.860 --> 00:10:20.300
+index is the first position and we want to
+move it down so we're going to swap index
+
+00:10:20.300 --> 00:10:25.880
+and index plus 1. Now this gives us another
+chance to think about whether we're doing
+
+00:10:25.880 --> 00:10:30.850
+the right thing with the indices here. So
+let's think about what would happen if we
+
+00:10:30.850 --> 00:10:37.180
+pass in index of list dot size minus 2. Now
+that's going to be the largest number that's
+
+00:10:37.180 --> 00:10:44.180
+going to get inside this "if" statement successfully.
+Well at that point we'd be swapping list size
+
+00:10:44.810 --> 00:10:50.660
+minus 2 and list size minus 1, which is in
+fact the last two elements. So that looks
+
+00:10:50.660 --> 00:10:55.490
+like we're doing the right things too. Now
+in this case I'm not giving the user any feedback
+
+00:10:55.490 --> 00:11:00.410
+on errors they make. They would just be able
+to call the functions again. That's kind of
+
+00:11:00.410 --> 00:11:05.880
+a lean mean way, but it's also not as annoying
+for the users as being constantly prompted
+
+00:11:05.880 --> 00:11:11.910
+for errors that they're making. Okay, now
+because these are so short let's do move up
+
+00:11:11.910 --> 00:11:18.139
+at the same time. Of course we always could
+do the testing. We've got a pretty good idea
+
+00:11:18.139 --> 00:11:25.139
+here...so let's copy this code. [pause] But
+of course we want to think through the code
+
+00:11:34.899 --> 00:11:41.899
+one line at a time. So first we change back
+to zero indexing. Now when we're moving up,
+
+00:11:42.240 --> 00:11:48.459
+the case we need to worry about is the index
+being zero so if it's zero we just return
+
+00:11:48.459 --> 00:11:53.250
+'cause it doesn't make sense to try to move
+up the first one. Now, if index is greater
+
+00:11:53.250 --> 00:11:59.079
+than zero and index is less than size (so
+notice we've got a whole bunch of little off
+
+00:11:59.079 --> 00:12:05.649
+by one things we have to pay attention to)
+then we swap index and index plus 1. Well
+
+00:12:05.649 --> 00:12:10.709
+those aren't the right ones 'cause that would
+move it down. We want to swap index and index
+
+00:12:10.709 --> 00:12:15.920
+minus 1. Now because we have a minus 1 in
+there, we want to make sure that doesn't go
+
+00:12:15.920 --> 00:12:22.319
+out of range on our ArrayList. So the smallest
+index we can pass in is 1 because we tested
+
+00:12:22.319 --> 00:12:27.730
+to see if index was greater than zero. What
+that means is the two indices would be swapping
+
+00:12:27.730 --> 00:12:34.730
+our 1 and zero. And those are in fact the
+correct indices. So let's get rid of that
+
+00:12:35.790 --> 00:12:42.790
+extraneous comment and that looks good. We're
+now ready to test our software. So the first
+
+00:12:48.040 --> 00:12:55.040
+thing I'm going to do is add some items. I'm
+going to add B and we're going to add another
+
+00:12:58.339 --> 00:13:05.339
+item, and we're going to add another item,
+add another item, add another item and now
+
+00:13:22.000 --> 00:13:29.000
+we want to show our list. Because our user
+interface is taking up more space now we need
+
+00:13:29.630 --> 00:13:36.630
+a little more space to run our program. So
+we have A, B, C, D, E and then A. Did we add
+
+00:13:36.860 --> 00:13:43.860
+A in twice? That looks a little suspicious.
+So let's see go back and see what we did.
+
+00:13:45.000 --> 00:13:52.000
+So we entered "A" after item 0, then we entered
+"B" after item 1, "C" after item 2, "D" after
+
+00:13:52.839 --> 00:13:59.839
+item 3, and "E" after item 4 so I wonder where
+that extra A is coming from. Now we haven't
+
+00:14:03.560 --> 00:14:08.250
+actually used our moving program yet so we
+I might think about some possibilities of
+
+00:14:08.250 --> 00:14:13.440
+what could've gone wrong. I'm going to spare
+us a little bit of debugging time here...because
+
+00:14:13.440 --> 00:14:18.600
+what's really going wrong is if you'll remember
+we wrote out our data to a file. And since
+
+00:14:18.600 --> 00:14:23.589
+we've written out our data to a file we have
+left over data hanging around. In other words,
+
+00:14:23.589 --> 00:14:28.720
+we didn't clear our list when we started.
+Now we really should have done that. And we
+
+00:14:28.720 --> 00:14:33.579
+should have made sure that our list was clean
+to start with. In other words, the first thing
+
+00:14:33.579 --> 00:14:39.379
+we should done is "show." Having not done
+that that's where we got our extra list from.
+
+00:14:39.379 --> 00:14:43.750
+Now that is a really tricky thing to debug,
+my guess is it would've taken most people
+
+00:14:43.750 --> 00:14:50.750
+several hours to debug it. So I saved us a
+little bit of time here. Let's delete item
+
+00:14:51.550 --> 00:14:58.550
+two, I'm sorry let's delete item six, and
+then show our list again. So right now we
+
+00:15:00.750 --> 00:15:06.230
+have the list that we wanted to have. Now,
+the next thing we decided to do was to start
+
+00:15:06.230 --> 00:15:12.230
+with item E and move it back to the start
+and then push it back. So we're going to start
+
+00:15:12.230 --> 00:15:18.779
+moving an item up a list so that's option
+four and we're going to move item five up.
+
+00:15:18.779 --> 00:15:25.779
+And let's show. And we can see that it has
+been moved. Now we're going to move up again
+
+00:15:26.399 --> 00:15:33.399
+item four, and show, and it's been moved up.
+Move up again, item three, show, looking good.
+
+00:15:37.910 --> 00:15:44.910
+Move up again, item two, show. Whoops! Typed
+in the wrong thing. Now that may have caused
+
+00:15:49.899 --> 00:15:54.480
+us some problems with our file. Of course
+this is one of those errors that we can't
+
+00:15:54.480 --> 00:15:59.720
+deal with at this point, so let's run our
+program again. But the first thing we want
+
+00:15:59.720 --> 00:16:05.269
+to do definitely is show our list...and notice
+we've got just one element "A" in it. So now
+
+00:16:05.269 --> 00:16:12.269
+we're going to add in our other elements 
+so we're going to enter "C" after element
+2. We're going to add "D" after element 3,
+
+00:16:25.129 --> 00:16:32.129
+add "E" after element 4 and then show our
+list. So A, B, C, D, E now I'll try to do
+
+00:16:35.139 --> 00:16:39.899
+this again without messing up the user interface.
+So we're going to move an item up the list
+
+00:16:39.899 --> 00:16:46.899
+and we're going to start with 5. And then
+we're going to show. Then we're going to move
+
+00:16:47.100 --> 00:16:54.100
+an item up a list, move 4, and then show.
+So we see "E" is in fact moving up, move the
+
+00:16:55.790 --> 00:17:02.790
+item up the list, 3, show. Move an item up
+a list, we're going to move item 2 up and
+
+00:17:09.560 --> 00:17:16.050
+then show and there we go. We're at the start
+and now we're going to move down the list.
+
+00:17:16.050 --> 00:17:23.050
+So, move down the list from position 1 and
+show. Move down the list position 2 and show,
+
+00:17:29.640 --> 00:17:36.640
+move down the list position 3, show. Move
+down the list position 4, show. Now we might
+
+00:17:45.160 --> 00:17:52.160
+do move down the list from position 5 and
+just see what happens. Notice because we tested
+
+00:17:54.890 --> 00:18:00.400
+for that case we know that it's going to work
+out okay. So that's great. In fact we might
+
+00:18:00.400 --> 00:18:07.400
+try some more illegal values. So what if we
+try moving down item 0 let's see what happens.
+
+00:18:08.110 --> 00:18:14.240
+Nothing. So that's kind of a nice user interface.
+One thing we want to remember is that we do
+
+00:18:14.240 --> 00:18:18.190
+have a list that we're going to have at the
+start of our next run so we don't have that
+
+00:18:18.190 --> 00:18:24.500
+confusion again. Now let's design our test
+data for repositioning. Now the first thing
+
+00:18:24.500 --> 00:18:28.370
+we would always do is run all of our other
+tests again. I'm not going to show that part
+
+00:18:28.370 --> 00:18:32.880
+'cause it takes too much time, but really
+it will take you less time to debug properly
+
+00:18:32.880 --> 00:18:37.760
+if you check these things regularly. Then
+we're going to put A, B, C, D, E in our list.
+
+00:18:37.760 --> 00:18:42.280
+Of course we already have it there and because
+our list is persistent it will be there. Then
+
+00:18:42.280 --> 00:18:47.960
+we want to move A to position 2 and back to
+position 1 and repeat that for positions 3,
+
+00:18:47.960 --> 00:18:52.280
+4, and 5. The other thing we might want to
+try is moving A to position one when it's
+
+00:18:52.280 --> 00:18:57.630
+already in position 1. While that isn't a
+very sensible operation it's not harmful and
+
+00:18:57.630 --> 00:19:03.470
+so we'd like our software to work for that.
+The other thing is that nothing should happen
+
+00:19:03.470 --> 00:19:08.420
+if you try to move to position 0 or position
+6 on this list. So these are all the little
+
+00:19:08.420 --> 00:19:15.420
+borderline possibilities that we always consider.
+Next let's design a signature void reposition
+
+00:19:15.940 --> 00:19:21.500
+item ArrayList of string called list and scanner
+keyboard. So we're making the signature of
+
+00:19:21.500 --> 00:19:27.310
+this method match the signatures of the other
+method in the class. Now, we have to think
+
+00:19:27.310 --> 00:19:33.160
+about how to implement repositioning. So let's
+take a look at what happens when you reposition
+
+00:19:33.160 --> 00:19:38.120
+4 to position 1. So in other words that's
+putting "D" at the start of the list. The
+
+00:19:38.120 --> 00:19:43.120
+first thing you would do is remove from the
+current position. Now remember our remove
+
+00:19:43.120 --> 00:19:47.970
+method in the ArrayList class takes the elements
+that are higher up and moves them back into
+
+00:19:47.970 --> 00:19:54.030
+that position. So what we would get when we
+did that is A, B, C, E. Then we could add
+
+00:19:54.030 --> 00:20:01.030
+to the desired position moving the other ones
+out of the way: D, A, B, C, E and that in
+
+00:20:01.030 --> 00:20:06.240
+fact is what the add method does in the ArrayList
+class. Now if you didn't remember those details
+
+00:20:06.240 --> 00:20:12.440
+from the ArrayList class, what you would do
+now is go to the API and look for possibilities.
+
+00:20:12.440 --> 00:20:17.010
+So you might look for a "switch" possibility
+or a "swap" or something like that. Those
+
+00:20:17.010 --> 00:20:21.460
+are fine things to look for. This is just
+the first way that I thought of doing it not
+
+00:20:21.460 --> 00:20:25.980
+the only way it could possibly be done. So
+the add and remove methods in the ArrayList
+
+00:20:25.980 --> 00:20:32.980
+class are just perfect for what we want. So
+now we're back in Eclipse, and since we're
+
+00:20:33.970 --> 00:20:40.970
+going to be writing code we will move that
+down so here's our move to position method.
+
+00:20:41.070 --> 00:20:45.270
+I've already done the user input, so "Which
+item would you like to move and where would
+
+00:20:45.270 --> 00:20:51.390
+you like to move it?" The thing that we want
+to do here as in the other case is decrement
+
+00:20:51.390 --> 00:20:58.390
+these so we get them zero indexed. So source
+index equals source index minus 1 and destination
+
+00:21:03.160 --> 00:21:10.160
+index equals destination index minus 1. And
+I'm putting comments in to remind anybody
+
+00:21:13.920 --> 00:21:20.920
+who's reading this code, including you, that
+that's why we did it. Now for checking the
+
+00:21:23.890 --> 00:21:30.890
+range-- both source and destination need to
+be between zero and list dot size minus 1.
+
+00:21:34.150 --> 00:21:41.150
+And of course we need to think about the inclusion
+here. So if destination index is less than
+
+00:21:43.080 --> 00:21:50.080
+zero or destination index is greater than
+list dot size minus 1 if you're not remembering
+
+00:21:56.280 --> 00:22:02.010
+where that line of code comes from this is
+another use of De Morgan's laws. So I just
+
+00:22:02.010 --> 00:22:07.750
+did it automatically in my head but we could've
+done it out loud and that said to check that
+
+00:22:07.750 --> 00:22:12.970
+it's in range destination index would be greater
+than or equal to zero and it would be less
+
+00:22:12.970 --> 00:22:18.650
+than list dot size. So I just flipped it around
+automatically. Go back and do De Morgan's
+
+00:22:18.650 --> 00:22:24.360
+laws on paper if this doesn't make sense to
+you. So this is the case where the destination
+
+00:22:24.360 --> 00:22:30.170
+index doesn't work. So in that case we can
+just return. This is the pattern we're using
+
+00:22:30.170 --> 00:22:35.050
+in all the softwares if they ask you for something
+that doesn't make sense we just kind of ignore
+
+00:22:35.050 --> 00:22:42.050
+them. And we want to do the same thing for
+the source index. So if the source index is
+
+00:22:42.970 --> 00:22:49.970
+less than zero or the source index is greater
+than list dot size minus 1 we return. So what
+
+00:22:57.830 --> 00:23:04.220
+we know now is that both the source and the
+destination are in the appropriate range.
+
+00:23:04.220 --> 00:23:11.220
+We do list dot remove from the source index
+in list dot add at the destination index.
+
+00:23:20.850 --> 00:23:26.140
+So notice the list class is doing a lot of
+the hard work for us. Now I wonder why it's
+
+00:23:26.140 --> 00:23:33.140
+not happy about that destination index? Okay,
+so Eclipse has an interesting point here.
+
+00:23:34.160 --> 00:23:40.450
+"The method add takes an integer and a string
+parameter not just an integer parameter."
+
+00:23:40.450 --> 00:23:45.100
+So we need to remember how to save the element
+that was at the source, because if we don't
+
+00:23:45.100 --> 00:23:52.100
+save it we won't have it to retrieve. So we
+should do string element equals list dot get
+
+00:23:54.050 --> 00:24:01.050
+of source index. So that saves the element
+that was stored when we do our remove and
+
+00:24:01.550 --> 00:24:08.550
+now that element can be added there. So eclipse
+helped us out remembering something we needed
+
+00:24:10.470 --> 00:24:16.910
+to know. Now that's the only method we need
+to implement in this part. Let's go and run
+
+00:24:16.910 --> 00:24:23.910
+our program. The first thing I'm going to
+do is show our list so I make sure I know
+
+00:24:30.490 --> 00:24:37.180
+what's in it. Now we're going to take item
+1 and we're doing number 6 moving an item
+
+00:24:37.180 --> 00:24:44.180
+to a desired position and we're going to movie
+item 1 to position 2 and now we can show it
+
+00:24:45.770 --> 00:24:52.770
+and as we see item 1 is in position 2 then
+we're going to move item 2 back to position
+
+00:24:55.000 --> 00:25:02.000
+1 and show it. And we will now step through
+each one of these. So we're going to move
+
+00:25:02.660 --> 00:25:09.660
+item 1 to position 3 and then move...Whoops!
+Better show it and make sure it's right. And
+
+00:25:12.280 --> 00:25:19.280
+then move item 3 to position 1 and we have
+our list back. I'll do position 5 yet, even
+
+00:25:23.510 --> 00:25:30.510
+though you should check the next positions
+anyway. So 6 will move item 1 to position
+
+00:25:31.070 --> 00:25:38.070
+5 and then we'll move item 5 to position 1.
+So that's looking good too. And of course
+
+00:25:47.110 --> 00:25:54.110
+as always we should be going back and checking
+that all of our other methods work. Okay,
+
+00:25:54.460 --> 00:26:00.360
+so we remember we have A, B, C, D in our list.
+The next thing we need to do is design the
+
+00:26:00.360 --> 00:26:06.520
+test data for our hashtag case. So we're going
+to need to insert elements with several hashtags
+
+00:26:06.520 --> 00:26:13.520
+so here I've made a big group A #1, B #2,
+C that doesn't have any hashtags at all, D
+
+00:26:13.920 --> 00:26:20.920
+#3, E #1, F #1, #3 so notice F has two hashtags
+well that's kind of interesting, G #1 and
+
+00:26:22.530 --> 00:26:28.570
+H #14. And then we're going to need to do
+retrieves so some examples. If we retrieve
+
+00:26:28.570 --> 00:26:35.570
+#1 we should get A #1, E #1, F #1, #3, and
+G #1. If we retrieve hashtag #2 we should
+
+00:26:38.760 --> 00:26:45.760
+get just B #2. If we retrieve hashtag #3 we
+should get D #3 F #1, #3, and if we retrieve
+
+00:26:48.640 --> 00:26:55.640
+hashtag #13 we should get nothing. So those
+are some good possibilities to look at. The
+
+00:26:55.870 --> 00:27:01.440
+method signature should follow our standard
+design here: void find hashtag. We'll have
+
+00:27:01.440 --> 00:27:06.420
+an ArrayList of string called list and the
+scanner keyboard. Now inside of the method
+
+00:27:06.420 --> 00:27:10.600
+we're going to need to keep multiple matches
+so what we're going to need is a local variable
+
+00:27:10.600 --> 00:27:15.230
+that's an ArrayList of strings that will keep
+track of everything that's matched so that
+
+00:27:15.230 --> 00:27:22.230
+we can report on it. One thing we might want
+to consider is what if there are no matches?
+
+00:27:23.010 --> 00:27:25.960
+What are we going to return at that point?
+Well we certainly do need to give the user
+
+00:27:25.960 --> 00:27:30.510
+some feedback that there aren't any matches
+so they don't think our software is broken.
+
+00:27:30.510 --> 00:27:37.510
+So we're going to want to put that in our
+software too. As far as implementation goes,
+
+00:27:37.880 --> 00:27:42.420
+our strategy will be to step through the ArrayList
+one element at a time so that's going to be
+
+00:27:42.420 --> 00:27:47.280
+a while loop. And we're going to need a method
+for discovering whether a hashtag is in an
+
+00:27:47.280 --> 00:27:53.820
+ArrayList of string. The question is-- which
+class should we be looking at? Should we look
+
+00:27:53.820 --> 00:27:59.120
+at the ArrayList class or should we look at
+the string class? Well, we're trying to find
+
+00:27:59.120 --> 00:28:04.860
+part of a string and so that's a string class
+method not an ArrayList method. So the string
+
+00:28:04.860 --> 00:28:09.790
+class is where we should go to look. If we
+went to the API right now we'd find the same
+
+00:28:09.790 --> 00:28:16.340
+three methods that we've been using all along:
+starts with, ends with, and contains. A lot
+
+00:28:16.340 --> 00:28:21.340
+of our hashtags were at the end of the line
+but not all of them were particularly in the
+
+00:28:21.340 --> 00:28:27.240
+two hashtag case so starts with and ends with
+are not the right methods. Contains look like
+
+00:28:27.240 --> 00:28:34.240
+our best bet this time. So here we are in
+Eclipse ready to implement the search by hashtag
+
+00:28:34.630 --> 00:28:40.540
+function. We've had them enter their hashtag,
+and we've given instructions to include the
+
+00:28:40.540 --> 00:28:46.900
+pound sign and not to use spaces. I got using
+next instead of next line the reason I picked
+
+00:28:46.900 --> 00:28:52.240
+next was I didn't want them to enter multiple
+words because hashtags have to be contiguous.
+
+00:28:52.240 --> 00:28:57.040
+You can't have spaces in them. The other thing
+there was I got rid of the garbage by doing
+
+00:28:57.040 --> 00:29:01.470
+keyboard dot next line. So that cleans out
+all that other stuff so it doesn't mess up
+
+00:29:01.470 --> 00:29:07.000
+our user input. The next thing we need to
+do is to check the input. So let's say they
+
+00:29:07.000 --> 00:29:14.000
+enter something that doesn't have a pound
+sign in it. That's a typical error. If hashtag
+
+00:29:16.830 --> 00:29:23.830
+dot contains a pound sign well now this is
+not the trouble case here. The trouble case
+
+00:29:29.110 --> 00:29:33.880
+is when it doesn't contain a pound sign. So
+then we need to use a logical operator to
+
+00:29:33.880 --> 00:29:40.880
+switch that around. So in this case I would
+do system out print line, "You do not have
+
+00:29:45.310 --> 00:29:51.490
+a pound sign in your hashtag." So I'm giving
+the user a little bit of feedback in this
+
+00:29:51.490 --> 00:29:58.490
+case. That's a little inconsistent with what
+we've done previously, but I think it probably
+
+00:29:59.080 --> 00:30:04.270
+makes sense. We also might want to stop and
+think whether we really have to do this this
+
+00:30:04.270 --> 00:30:09.130
+way. For example, could we have a search function
+that just looked for anything that was on
+
+00:30:09.130 --> 00:30:13.390
+a list? That might be a really nice thing
+to do and it's an interesting way to expand
+
+00:30:13.390 --> 00:30:19.740
+this program. But for now let's keep with
+our original purpose and not get sidetracked.
+
+00:30:19.740 --> 00:30:26.440
+Now we need to perform the search. We were
+going to create an ArrayList of strings which
+
+00:30:26.440 --> 00:30:33.440
+I'll call "results." Of course we had to construct
+it as we always do. Now we're going to loop
+
+00:30:36.720 --> 00:30:43.720
+through...starting with the zero index. While
+index is less than list dot size those are
+
+00:30:48.620 --> 00:30:55.620
+the number of elements in the list. [pause]
+Of course we're going to want to increment
+
+00:31:01.090 --> 00:31:05.160
+index at the end of the list so I'm putting
+that in right now so we don't write another
+
+00:31:05.160 --> 00:31:12.160
+one of those darn infinite loops. So if list
+dot get of index now remember that returns
+
+00:31:18.230 --> 00:31:23.890
+a string. If it makes you uncomfortable to
+do a lot of operations at once, you can do
+
+00:31:23.890 --> 00:31:28.440
+these things separately. And in fact I think
+I'm going to model that this time because
+
+00:31:28.440 --> 00:31:34.030
+it does make it easier for a lot of people
+to implement. So we'll create a string which
+
+00:31:34.030 --> 00:31:41.030
+I'm going to call "list item" and that's going
+to equal list dot get of index. So then we
+
+00:31:45.850 --> 00:31:52.850
+can say, "If list item contains hashtag" well
+if in fact we have an item that contains the
+
+00:31:59.590 --> 00:32:06.110
+hashtag then what we want to do is to add
+it to our results. So it'll be results dot
+
+00:32:06.110 --> 00:32:13.110
+add list item. Eclipse is unhappy there because
+I put in a capital T where there was supposed
+
+00:32:14.280 --> 00:32:21.280
+to be a small one and I see that I've also
+forgotten an "s" on results and an "s" on
+
+00:32:26.210 --> 00:32:32.480
+contains. Okay, now the last thing we want
+to do is "show results." Now there are some
+
+00:32:32.480 --> 00:32:39.480
+cases we want to think about before we do
+this. One case is what if there are no results?
+
+00:32:42.710 --> 00:32:49.710
+So that's if results dot size is zero. Well
+in that case we can say, "There are no matches
+
+00:32:57.340 --> 00:33:04.340
+for your hashtag." And of course then we want
+to return. Now the next thing we're going
+
+00:33:12.570 --> 00:33:19.320
+to want to do is to write out the results
+if we have them. So int, oh! We already have
+
+00:33:19.320 --> 00:33:26.010
+an index variable let's just reuse that one.
+Index is zero. Now this time we're going to
+
+00:33:26.010 --> 00:33:33.010
+be stepping through the results array, not
+the list array. While index is less than results
+
+00:33:34.890 --> 00:33:41.890
+dot size we'll do system out print line 
+and we'll take results dot get of index. And
+of course index equals index plus 1. Okay,
+
+00:34:05.710 --> 00:34:12.710
+let's add our "s" to results there so Eclipse
+is happier. So one by one that will print
+
+00:34:14.000 --> 00:34:21.000
+out the matches. So there we go! We're now
+ready to try our list. Now before I get started
+
+00:34:29.460 --> 00:34:34.899
+in this, we had some pretty complicated test
+data and it was very thoughtfully designed
+
+00:34:34.899 --> 00:34:41.829
+test data so let's go to that test data and
+take a look at it. This is the data that we've
+
+00:34:41.829 --> 00:34:47.190
+been testing. So here's our test data for
+hashtags. I'm going to move that up on the
+
+00:34:47.190 --> 00:34:51.879
+screen so we can see that while we're running
+our program. You'll notice that I've been
+
+00:34:51.879 --> 00:34:56.730
+doing this consistently as we've been writing
+programs, putting in a text file that contains
+
+00:34:56.730 --> 00:35:01.769
+our test data. I think that's a really good
+strategy because that way you know how the
+
+00:35:01.769 --> 00:35:08.769
+program was tested 
+and I guess we can move it up just a little
+bit further to have as much space as possible.
+
+00:35:15.579 --> 00:35:22.579
+Okay, so now we're ready to run our program.
+Now the first thing I'm going to do is show
+
+00:35:28.940 --> 00:35:33.829
+list because we've got a bunch of stuff on
+that list that we didn't mean to have. Now
+
+00:35:33.829 --> 00:35:38.759
+those things don't really do any harm for
+us because we're mostly looking at the hashtags.
+
+00:35:38.759 --> 00:35:44.130
+So we could just start adding in our additional
+elements and that would be okay. So we can
+
+00:35:44.130 --> 00:35:51.130
+add an item it's going to be A #1 after item
+0 then we'll add an item and it will be B
+
+00:35:57.720 --> 00:36:04.720
+#2 after item one. I'm going to add an item
+again C and that one was just plain after
+
+00:36:08.839 --> 00:36:15.839
+item 2, add another item. D #3 after which
+item? Well that's going to be after item 3.
+
+00:36:22.700 --> 00:36:29.700
+Add an item E #1 after item 4, add an item
+F #1, #3 after item 5, and add an item G #1
+
+00:36:46.880 --> 00:36:53.880
+after item 6. Now let's take a look at what's
+on our list. And let's check and make sure
+
+00:36:54.160 --> 00:37:01.160
+we got it entered correctly. A #1, B #2, C,
+D #3, E #1, F #1, #3, G #1 and then we have
+
+00:37:04.109 --> 00:37:09.329
+these extra ABCDE's which aren't going to
+do us any harm. Now we're going to do our
+
+00:37:09.329 --> 00:37:16.329
+first search. And let's search for #1 and
+we see we got a A we got E, we got F and we
+
+00:37:21.180 --> 00:37:27.710
+got G. And that's exactly what we should've
+gotten, so that's looking good. Now let's
+
+00:37:27.710 --> 00:37:34.710
+do our search for #2 and we got B #2 which
+is what we were expecting. Now we do our search
+
+00:37:37.319 --> 00:37:44.319
+for #3 and we got D #3 and F #1, #3, that
+looks good. Now we do another search for #13.
+
+00:37:54.299 --> 00:37:59.670
+And it says there are no matches for the hashtag.
+Well that really looks great! We might think
+
+00:37:59.670 --> 00:38:04.599
+about whether there are any other cases that
+we should worry about. Like what if we had
+
+00:38:04.599 --> 00:38:11.599
+something with the hashtag of 13 and we tried
+to do a search for 1? So let's add that in.
+
+00:38:12.259 --> 00:38:19.259
+So I'm going to enter a...let's say "H" because
+we don't have and H yet, and #13. And let's
+
+00:38:22.289 --> 00:38:29.289
+put it right at the start of the list. Okay,
+and now we can do a search for #1. Uh oh!
+
+00:38:32.819 --> 00:38:38.509
+We've got a problem. Notice that our H #13
+was found as a match when we were searching
+
+00:38:38.509 --> 00:38:45.509
+for number one. That's an issue. If you think
+about it our number 13 starts with the #1
+
+00:38:46.279 --> 00:38:51.109
+and so our contains method isn't finding that.
+Now this is one of those things that's going
+
+00:38:51.109 --> 00:38:56.000
+to be a little trickier to solve because we're
+going to have to think about how those hashtags
+
+00:38:56.000 --> 00:39:02.339
+match or not. So the reason that 13 was not
+supposed to match is because it had a 3 where
+
+00:39:02.339 --> 00:39:09.339
+we were expecting a space. So that suggests
+a possibility for solving this problem. What
+
+00:39:09.960 --> 00:39:16.960
+if we put a space after our hashtag and then
+we'll need to match it? So there's a possible
+
+00:39:17.140 --> 00:39:24.140
+solution. Let's go back to our code and implement
+that. So here's "search by hashtag." Here
+
+00:39:29.390 --> 00:39:36.390
+we're going to put a space on the end. So
+hashtag, better spell it right though, equals
+
+00:39:38.599 --> 00:39:45.599
+hashtag plus space. Now this is the kind of
+thing that can get you into a lot of trouble
+
+00:39:46.440 --> 00:39:53.440
+so you definitely want to document it. So,
+"Add on a space so that partial hashtags aren't
+
+00:39:59.759 --> 00:40:06.759
+found." [pause] Okay so let's see what that
+does. By the way-- we really should've quit
+
+00:40:13.029 --> 00:40:17.170
+our program to make sure we get our file saved
+'cause that will save that nice test data
+
+00:40:17.170 --> 00:40:24.170
+that we've worked so hard to build up. So
+here we're running our program again. First
+
+00:40:25.160 --> 00:40:32.160
+thing we want to do is show our list. So,
+we've got a lot of stuff on the list. Let's
+
+00:40:36.859 --> 00:40:43.859
+see what happens now if we search for #1.
+Oh! We find the first #1 but we don't find
+
+00:40:47.559 --> 00:40:54.269
+any of our others. So we didn't find E, we
+didn't find G, we didn't find A now luckily
+
+00:40:54.269 --> 00:40:58.869
+we also didn't find H. So we did solve the
+problem that we tried to solve, but we didn't
+
+00:40:58.869 --> 00:41:04.019
+solve all the problems. This is pretty typical
+in software engineering. It turns out that
+
+00:41:04.019 --> 00:41:09.170
+when you fix an error in code, which is called
+"debugging", the probability of you introducing
+
+00:41:09.170 --> 00:41:15.349
+a new error is about 50%. It's not uncommon
+to have this happen at all. If we look at
+
+00:41:15.349 --> 00:41:20.809
+our data and think about it the reason "F"
+was found was because we have a space after
+
+00:41:20.809 --> 00:41:27.740
+this. Now with #1 we had a new line and so
+we don't have a space after the number 1 and
+
+00:41:27.740 --> 00:41:34.309
+that's why it wasn't found. So what we need
+to do is put a space at the end of our original
+
+00:41:34.309 --> 00:41:39.599
+contents in order for this to work. Now let's
+exit the program, so we save our nice test
+
+00:41:39.599 --> 00:41:46.599
+data in the file. and go back to our program
+and fix this bug. Now we've got to be really
+
+00:41:50.249 --> 00:41:55.569
+careful because we don't want to be adding
+spaces to the end all the time. We just want
+
+00:41:55.569 --> 00:42:02.029
+to do it while we're doing the search. We
+take our string list item and we get it from
+
+00:42:02.029 --> 00:42:09.029
+the list. Now let's append a space here. Notice
+by appending this outside of the list instead
+
+00:42:18.460 --> 00:42:23.579
+of trying to add it into the list I'm not
+damaging our list. It's really important to
+
+00:42:23.579 --> 00:42:30.329
+keep our list pristine. So this is a good
+way to fix it. Okay, let's run our code and
+
+00:42:30.329 --> 00:42:37.329
+see if things are better now. So first thing
+you want to do is show our list so we know
+
+00:42:40.519 --> 00:42:47.519
+what we're dealing with. And let's search
+for #1 and see what we get. A, E, F, G that
+
+00:42:53.579 --> 00:43:00.579
+looks good and we didn't get H, which is good.
+So it looks like we got everything there.
+
+00:43:01.799 --> 00:43:06.359
+Now of course we should be rerunning every
+bit of test code we ever have done at this
+
+00:43:06.359 --> 00:43:13.359
+point. So let's do a little bit more. So let's
+search for #3, and we get D and F. That looks
+
+00:43:13.900 --> 00:43:20.900
+good. Let's search for #13 and we get H #13.
+Let's do a search for something that isn't
+
+00:43:24.430 --> 00:43:31.430
+there. Whoops, I meant to type in 31. "There
+are no matches for your hashtag." So it looks
+
+00:43:33.869 --> 00:43:40.720
+like we finally got our program running correctly.
+The next thing we need to do to improve this
+
+00:43:40.720 --> 00:43:45.029
+program is to improve our error checking.
+We actually wrote the original version of
+
+00:43:45.029 --> 00:43:49.349
+this program before we knew about the wonders
+of "and" and "or" and so we didn't do any
+
+00:43:49.349 --> 00:43:54.160
+error checking of input and we really should
+fix this. So let's go back to our code and
+
+00:43:54.160 --> 00:44:01.160
+do one last fix. So the methods that we have
+not revisited since we've learn more are "add"
+
+00:44:03.529 --> 00:44:09.690
+and "delete". The read and write file there's
+no error checking to happen there so here's
+
+00:44:09.690 --> 00:44:14.650
+delete item from list. So notice here when
+the user entered an item number we just let
+
+00:44:14.650 --> 00:44:20.769
+them enter anything. We need to really think
+about where that would make sense. If they're
+
+00:44:20.769 --> 00:44:27.769
+deleting an item from a list, let's keep the
+pattern the same as what we did before. Index
+
+00:44:28.599 --> 00:44:35.599
+equals index minus 1 change to zero indexed.
+Now remember we need to remove the minus 1
+
+00:44:36.309 --> 00:44:41.269
+there because we've just made a change and
+now we can tell what methods would be legal
+
+00:44:41.269 --> 00:44:48.269
+easily. So if index is less than zero or index
+is greater than list dot size (now we might
+
+00:44:53.230 --> 00:44:58.559
+want to think a minute greater than or greater
+than or equal to?) if they tried to delete
+
+00:44:58.559 --> 00:45:02.829
+something at list dot size we've got a problem
+because there is no element there because
+
+00:45:02.829 --> 00:45:09.829
+this is zero indexed. If they tried to delete
+those, we're going to just return. Oh yes!
+
+00:45:11.269 --> 00:45:18.269
+And I see and I see we called our parameter
+my list, not list doesn't really make any
+
+00:45:18.480 --> 00:45:23.319
+difference and there's no reason to go back
+and change that so let's put in a comment
+
+00:45:23.319 --> 00:45:30.319
+here. "If the index is out of range" return,
+and now we can do the same thing for add.
+
+00:45:35.940 --> 00:45:42.559
+So we enter the name then we have them enter
+the item. Now in this case we didn't make
+
+00:45:42.559 --> 00:45:49.559
+a correction for the list being out of range
+because we want zero to be a legal item. If
+
+00:45:52.230 --> 00:45:59.230
+index is less than zero or index is greater
+than my list dot size, and we might want to
+
+00:46:02.230 --> 00:46:08.670
+think again, greater than, greater than or
+equal to? If it's equal to my list dot size
+
+00:46:08.670 --> 00:46:15.249
+that is not a legal place for them to add
+an item...or is it? Well now wait a minute.
+
+00:46:15.249 --> 00:46:20.990
+We're adding items to list. So initially they
+put it at item zero, and that goes into the
+
+00:46:20.990 --> 00:46:27.009
+first position of the list. If they add it
+after which item, so they would add it after
+
+00:46:27.009 --> 00:46:34.009
+the first item then that would be just greater
+than size. So we can see that this case is
+
+00:46:34.039 --> 00:46:39.099
+a little bit different. This is why you have
+to think through these cases individually
+
+00:46:39.099 --> 00:46:43.799
+instead of just sort of falling into the habit
+of repeating code that you've written before
+
+00:46:43.799 --> 00:46:50.279
+without thinking about it. So in this case
+we'll return. Now this code has gotten a little
+
+00:46:50.279 --> 00:46:57.279
+compact so let's spread it out. Check the
+validity of an index. So that's looking good.
+
+00:47:04.039 --> 00:47:08.319
+So now we should have all the error checking
+our little hearts desire in this program.
+
+00:47:08.319 --> 00:47:12.420
+So let's go back and particularly check those
+new methods we just added, although as I've
+
+00:47:12.420 --> 00:47:17.349
+said time and time again we should rerun all
+of our test data at this point. Anytime you
+
+00:47:17.349 --> 00:47:23.999
+change even a single line of code all of your
+test data really should be rerun. And I know
+
+00:47:23.999 --> 00:47:30.999
+it's a pain. Okay so first let's show our
+list now we're going to add, and I'm going
+
+00:47:34.200 --> 00:47:41.200
+to give it a name that's easy to spot like
+"new item" and add at position zero. So that
+
+00:47:41.819 --> 00:47:48.819
+added new item to the front of the list. Now
+let's add another new item and let's add it
+
+00:47:50.349 --> 00:47:57.349
+after position 8. So it's going to add after
+F #1, #3. Another new item after F #1, #3.
+
+00:48:04.289 --> 00:48:10.789
+Now let's go and delete those two items we
+just added. To delete an item so that'd be
+
+00:48:10.789 --> 00:48:17.789
+item #9 and we see that that's been deleted
+and let's delete item #1 and that's been deleted.
+
+00:48:22.440 --> 00:48:26.430
+One of the things that's failed in this error
+checking is I actually haven't checked any
+
+00:48:26.430 --> 00:48:31.670
+of our new code. Because I haven't made any
+mistakes of entering the wrong index. So let's
+
+00:48:31.670 --> 00:48:38.670
+check that part. Let's add an item which I'll
+call "stupid choice" after index negative
+
+00:48:42.160 --> 00:48:48.390
+1. Notice that didn't do anything and let's
+look at our list which appears to be undamaged.
+
+00:48:48.390 --> 00:48:55.390
+Now let's add an item too far out on the list
+and let's add it after item 27 for example.
+
+00:49:01.249 --> 00:49:05.559
+Well it didn't break, that's good. And when
+we show our list we'll see that it's not there
+
+00:49:05.559 --> 00:49:10.739
+so that's good too. So this is making a lot
+of sense. Now we might want to think about
+
+00:49:10.739 --> 00:49:15.119
+how the user is going to feel about that choice.
+So they told us to add it they gave us an
+
+00:49:15.119 --> 00:49:19.400
+illegal index, and we just kind of blew them
+off and we didn't tell them that that index
+
+00:49:19.400 --> 00:49:24.279
+was illegal. Another choice we could have
+made here is when they give us a index that's
+
+00:49:24.279 --> 00:49:29.009
+too big to just stick it on the end. That
+actually might be a nicer thing to do to the
+
+00:49:29.009 --> 00:49:34.640
+user. I'm sorry, not to the user, for the
+user. We do things for the user not to the
+
+00:49:34.640 --> 00:49:41.640
+user. So that's a way that you could continue
+to improve this code.
+
+00:49:44.140 --> 00:49:44.849
+Keep programming!
+

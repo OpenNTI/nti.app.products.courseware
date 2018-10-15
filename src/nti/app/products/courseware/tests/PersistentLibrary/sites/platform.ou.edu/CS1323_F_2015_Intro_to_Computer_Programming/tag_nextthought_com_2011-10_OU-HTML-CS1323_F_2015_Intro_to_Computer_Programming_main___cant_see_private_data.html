@@ -1,0 +1,21 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html lang="en"><head> <meta content="2015-12-11T16:56:47" http-equiv="last-modified" /> <meta content="742" name="NTIRelativeScrollHeight" /> <meta content="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.main()_cant_see_private_data" name="NTIID" /> <meta content="NextThought" name="generator" /> <meta content="text/html; charset=ascii" http-equiv="content-type" /> <title>main() Can&#8217;t See Private Data</title> <link href="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.careful_access_control" rel="next" title="Careful Access Control" /> <link href="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.access_methods" rel="prev" title="Access Methods" /> <link href="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.reading:Chortle_CH33" rel="up" title="Encapsulation" /> <link href="styles/styles.css" rel="stylesheet" /> <link href="styles/content.css" rel="stylesheet" /> </head> <body id="NTIContent"> <div class="page-contents"><div data-ntiid="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.main()_cant_see_private_data" id="a0000000532" ntiid="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.main()_cant_see_private_data"> <div class="chapter title"><b class="bfseries"><tt class="ttfamily">main()</tt></b> Can&#8217;t See Private Data</div> <p class="placeholder"></p> <a name="b8c9b8da2f008e73fb1519e9006b3260.422"></a> <div class="sidebar" data-ntiid="tag:nextthought.com,2011-10:OU-HTML:NTISidebar-CS1323_F_2015_Intro_to_Computer_Programming.sidebar.answer.203" ntiid="tag:nextthought.com,2011-10:OU-HTML:NTISidebar-CS1323_F_2015_Intro_to_Computer_Programming.sidebar.answer.203"> <div class="sidebar-title">Answer</div> Yes. </div><a name="6b95c4c9e845943610732e91135f0f0a"></a> <p class="par" id="6b95c4c9e845943610732e91135f0f0a">The <b class="bfseries"><tt class="ttfamily">main()</tt></b> method changes the <b class="bfseries"><tt class="ttfamily">CheckingAccount</tt></b> object by using the object&#8217;s access methods. Here is a different <b class="bfseries"><tt class="ttfamily">main()</tt></b> that does not use the access methods. </p> <a name="d1077f63d0822eac6295394c405f97b7"></a> <pre>class CheckingAccount
+{
+  private String accountNumber;
+  private String accountHolder;
+  private int    balance;
+  . . . .
+}
+
+class CheckingAccountTester
+{
+  public static void main( String[] args )
+  {
+    CheckingAccount bobsAccount = new CheckingAccount( "999", "Bob", 100 );
+
+    System.out.println( bobsAccount.balance );
+    bobsAccount.balance = bobsAccount.balance + 200;
+    System.out.println( bobsAccount.balance );
+ 
+  }
+}
+</pre><a name="5500ca24edc531ad78e8a67f582b7d6c"></a> <div class="sidebar" data-ntiid="tag:nextthought.com,2011-10:OU-HTML:NTISidebar-CS1323_F_2015_Intro_to_Computer_Programming.sidebar.question.215" ntiid="tag:nextthought.com,2011-10:OU-HTML:NTISidebar-CS1323_F_2015_Intro_to_Computer_Programming.sidebar.question.215"> <div class="sidebar-title">Question</div> Is there a problem with this program? </div> </div></div> </body></html>

@@ -1,0 +1,30 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html lang="en"><head> <meta content="2015-12-11T16:56:47" http-equiv="last-modified" /> <meta content="915" name="NTIRelativeScrollHeight" /> <meta content="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.complete_program" name="NTIID" /> <meta content="NextThought" name="generator" /> <meta content="text/html; charset=ascii" http-equiv="content-type" /> <title>Complete Program</title> <link href="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.loop_control_variable" rel="next" title="Loop Control Variable" /> <link href="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.relational_operators_are_tricky" rel="prev" title="Relational Operators are Tricky" /> <link href="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.reading:Chortle_CH15" rel="up" title="Loops" /> <link href="styles/styles.css" rel="stylesheet" /> <link href="styles/content.css" rel="stylesheet" /> </head> <body id="NTIContent"> <div class="page-contents"><div data-ntiid="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.complete_program" id="a0000000443" ntiid="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.complete_program"> <div class="chapter title">Complete Program</div> <p class="placeholder"></p> <a name="0c8d0aeeab1882a5b588f598f6c4aa4c"></a> <div class="sidebar" data-ntiid="tag:nextthought.com,2011-10:OU-HTML:NTISidebar-CS1323_F_2015_Intro_to_Computer_Programming.sidebar.answer.125" ntiid="tag:nextthought.com,2011-10:OU-HTML:NTISidebar-CS1323_F_2015_Intro_to_Computer_Programming.sidebar.answer.125"> <div class="sidebar-title">Answer</div> <pre>count is 0
+count is 1
+count is 2
+count is 3
+count is 4
+Done with the loop
+</pre> </div><a name="d55d86ba8f01a69a34a26a2a135c5737"></a> <p class="par" id="d55d86ba8f01a69a34a26a2a135c5737">Here is a complete program that lets the user pick the initial value and the limit value: </p> <a name="acce8117f0582c787d5554e0a95dfec0"></a> <pre>import java.util.Scanner;
+// User picks starting and ending value
+class loopExample
+{
+  public static void main (String[] args )  
+  {
+    Scanner scan = new Scanner( System.in );
+    int count, limit;
+
+    System.out.print( "Enter initial value: " );
+    count = scan.nextInt();
+
+    System.out.print( "Enter limit   value: " );
+    limit = scan.nextInt();
+
+    while ( count &lt;= limit )   // less-than-or-equal operator
+    {
+      System.out.println( "count is: " + count );
+      count = count + 1;
+    }
+    System.out.println( "Done with the loop" );
+  }
+}
+</pre><a name="417d73760ebfea9a9545ebd7d08738b0"></a> <p class="par" id="417d73760ebfea9a9545ebd7d08738b0">Of course, you will want to copy this to a file and run this in the usual way. </p> <a name="2d6c23c59159ec58a9ce6ad8f4edfdab"></a> <div class="sidebar" data-ntiid="tag:nextthought.com,2011-10:OU-HTML:NTISidebar-CS1323_F_2015_Intro_to_Computer_Programming.sidebar.question.130" ntiid="tag:nextthought.com,2011-10:OU-HTML:NTISidebar-CS1323_F_2015_Intro_to_Computer_Programming.sidebar.question.130"> <div class="sidebar-title">Question</div> If the user sets the initial value to -2 and the limit value to 1 what values will be printed out? </div> </div></div> </body></html>

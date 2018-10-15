@@ -1,0 +1,18 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html lang="en"><head> <meta content="2015-12-11T16:56:47" http-equiv="last-modified" /> <meta content="779" name="NTIRelativeScrollHeight" /> <meta content="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.writing_a_string_to_the_monitor" name="NTIID" /> <meta content="NextThought" name="generator" /> <meta content="text/html; charset=ascii" http-equiv="content-type" /> <title>Writing a String to the Monitor</title> <link href="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.avoiding_null" rel="next" title="Avoiding null" /> <link href="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.each_string_object_holds_its_own_data" rel="prev" title="Each String Object Holds its own Data" /> <link href="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.reading:Chortle_CH49B" rel="up" title="Arrays of Objects and Linear Search" /> <link href="styles/styles.css" rel="stylesheet" /> <link href="styles/content.css" rel="stylesheet" /> </head> <body id="NTIContent"> <div class="page-contents"><div data-ntiid="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.writing_a_string_to_the_monitor" id="a0000000597" ntiid="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.writing_a_string_to_the_monitor"> <div class="chapter title">Writing a <b class="bfseries"><tt class="ttfamily">String</tt></b> to the Monitor</div> <p class="placeholder"></p> <a name="36cebd75a10a6335571e36bc4ba66683"></a> <div class="sidebar" data-ntiid="tag:nextthought.com,2011-10:OU-HTML:NTISidebar-CS1323_F_2015_Intro_to_Computer_Programming.sidebar.answer.259" ntiid="tag:nextthought.com,2011-10:OU-HTML:NTISidebar-CS1323_F_2015_Intro_to_Computer_Programming.sidebar.answer.259"> <div class="sidebar-title">Answer</div> <a name="a18131af029b16b0121f7b2ae9348526"></a> <pre>String[] strArray = new String[8] ;  // combined statement
+
+. . . .
+
+strArray[ strArray.length-1 ] = "the end" ;
+</pre> </div><a name="87b30f90fed70757a603f6bfa8af3b0f"></a> <p class="par" id="87b30f90fed70757a603f6bfa8af3b0f">Here is a fragment that writes out the first two <b class="bfseries"><tt class="ttfamily">String</tt></b>s to the monitor: </p> <a name="8f2eca579d6110038304a41e09736ba7"></a> <pre>System.out.println( "cell 0: " + strArray[0] );
+System.out.println( "cell 1: " + strArray[1] );
+</pre><a name="7b99efbb1d09e59a17e96917b1f4480a"></a> <p class="par" id="7b99efbb1d09e59a17e96917b1f4480a">Nothing unusual here. Each array cell contains a <b class="bfseries"><tt class="ttfamily">String</tt></b> reference that can be used in the usual ways. Here is a fragment that writes each cell&#8217;s <b class="bfseries"><tt class="ttfamily">String</tt></b> (if there is one) to the monitor : </p> <a name="557874f70e92da9959337cf486db18b6"></a> <pre>String[] strArray = new String[8] ;  // combined statement
+
+. . . . .
+for (int j=0; j ________  strArray.length; j++ )
+{
+   if ( strArray[j] != ________ )
+	 System.out.println( "cell " + j + ": " + strArray[j] );
+   else
+     System.out.println( "cell " + j + ": " + "empty" );
+}
+</pre><a name="03aa87aba622b32de91e676e12081b59"></a> <div class="sidebar" data-ntiid="tag:nextthought.com,2011-10:OU-HTML:NTISidebar-CS1323_F_2015_Intro_to_Computer_Programming.sidebar.question.272" ntiid="tag:nextthought.com,2011-10:OU-HTML:NTISidebar-CS1323_F_2015_Intro_to_Computer_Programming.sidebar.question.272"> <div class="sidebar-title">Question</div> Fill in the blanks. </div> </div></div> </body></html>

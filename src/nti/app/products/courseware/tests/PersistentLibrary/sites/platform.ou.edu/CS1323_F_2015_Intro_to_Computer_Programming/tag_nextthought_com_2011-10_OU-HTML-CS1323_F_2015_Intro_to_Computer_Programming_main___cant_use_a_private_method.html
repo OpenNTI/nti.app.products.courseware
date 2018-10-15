@@ -1,0 +1,28 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html lang="en"><head> <meta content="2015-12-11T16:56:47" http-equiv="last-modified" /> <meta content="807" name="NTIRelativeScrollHeight" /> <meta content="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.main()_cant_use_a_private_method" name="NTIID" /> <meta content="NextThought" name="generator" /> <meta content="text/html; charset=ascii" http-equiv="content-type" /> <title>main() Can&#8217;t use a Private Method</title> <link href="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.compiler_complaints" rel="next" title="Compiler Complaints" /> <link href="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.private_methods" rel="prev" title="Private Methods" /> <link href="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.reading:Chortle_CH33" rel="up" title="Encapsulation" /> <link href="styles/styles.css" rel="stylesheet" /> <link href="styles/content.css" rel="stylesheet" /> </head> <body id="NTIContent"> <div class="page-contents"><div data-ntiid="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.main()_cant_use_a_private_method" id="a0000000537" ntiid="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.main()_cant_use_a_private_method"> <div class="chapter title"><b class="bfseries"><tt class="ttfamily">main()</tt></b> Can&#8217;t use a Private Method</div> <p class="placeholder"></p> <a name="6cbd7fe673e742d4ab8aeec24be34fd4"></a> <div class="sidebar" data-ntiid="tag:nextthought.com,2011-10:OU-HTML:NTISidebar-CS1323_F_2015_Intro_to_Computer_Programming.sidebar.answer.208" ntiid="tag:nextthought.com,2011-10:OU-HTML:NTISidebar-CS1323_F_2015_Intro_to_Computer_Programming.sidebar.answer.208"> <div class="sidebar-title">Answer</div> <pre>  private void incrementUse()
+  {
+    useCount = useCount + 1; 
+  }
+</pre> </div><a name="c3737fa8eda59c599d7659a619b341a7"></a> <p class="par" id="c3737fa8eda59c599d7659a619b341a7">Here is a <b class="bfseries"><tt class="ttfamily">main()</tt></b> that mistakenly tries to change <b class="bfseries"><tt class="ttfamily">useCount</tt></b>: </p> <a name="c8c75a6241112bf58780422154e63a5a"></a> <pre>class CheckingAccount
+{
+  private String accountNumber;
+  private String accountHolder;
+  private int    balance;
+  private int    useCount = 0;
+  . . . .
+
+  private void incrementUse()
+  . . . .
+}
+
+class CheckingAccountTester
+{
+  public static void main( String[] args )
+  {
+    CheckingAccount bobsAccount = new CheckingAccount( "999", "Bob", 100 );
+
+    bobsAccount.processCheck( 50 );
+    bobsAccount.incrementUse();
+    bobsAccount.useCount = 15;
+  }
+}
+</pre><a name="f6155a2c86eb3a51ad78a7ea7b49e1a9"></a> <div class="sidebar" data-ntiid="tag:nextthought.com,2011-10:OU-HTML:NTISidebar-CS1323_F_2015_Intro_to_Computer_Programming.sidebar.question.220" ntiid="tag:nextthought.com,2011-10:OU-HTML:NTISidebar-CS1323_F_2015_Intro_to_Computer_Programming.sidebar.question.220"> <div class="sidebar-title">Question</div> Will this program compile and execute? </div> </div></div> </body></html>

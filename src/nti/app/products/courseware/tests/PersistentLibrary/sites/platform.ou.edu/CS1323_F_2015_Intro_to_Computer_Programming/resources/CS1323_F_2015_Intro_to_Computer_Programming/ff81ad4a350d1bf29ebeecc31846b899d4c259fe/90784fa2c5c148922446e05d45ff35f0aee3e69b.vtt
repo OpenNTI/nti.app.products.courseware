@@ -1,0 +1,532 @@
+WEBVTT
+Kind: captions
+Language: en
+
+00:00:00.919 --> 00:00:04.440
+&gt;&gt;Dr. Deborah Trytten: Now that we know about
+using predefined objects in Java, let's create
+
+00:00:04.440 --> 00:00:11.440
+a program for Pay Best Shoes their BOGOF Sale.
+Here's the problem statement: Pay Best Shoes
+
+00:00:12.710 --> 00:00:17.810
+is having a Buy One, Get One Free Sale. The
+free item has to be equal or lesser value
+
+00:00:17.810 --> 00:00:22.609
+than the purchased item. So we need to write
+a program that allows the user to enter their
+
+00:00:22.609 --> 00:00:28.980
+purchases and calculate how much they'll pay.
+So the first thing we need to do is to create
+
+00:00:28.980 --> 00:00:35.980
+some test data. Suppose our items cost $3,
+$7, $9, $5, and $1. Well you've got to think
+
+00:00:36.909 --> 00:00:42.699
+this through carefully, because when you pay
+for the $9 item you're going to get the $7
+
+00:00:42.699 --> 00:00:47.149
+item for free. When you pay for the $5 item
+you're going to get to get the $3 item for
+
+00:00:47.149 --> 00:00:52.569
+free and then you're going to have to pay
+for the $1 item separately. So that means
+
+00:00:52.569 --> 00:00:59.569
+that you're going to pay for the $9, the $5,
+and the $1 item--$15. Suppose our items cost
+
+00:01:02.949 --> 00:01:09.949
+$12, $8, $4, $10, $6, and $2. Well we're going
+to pay for the $12 item, get the $10 item
+
+00:01:11.189 --> 00:01:18.189
+free, pay for the $8 item get the $6 item
+free, and pay for the $4 item--so that should
+
+00:01:18.530 --> 00:01:25.530
+be $24. Boundary cases we might want to consider
+well certainly if we buy zero items we want
+
+00:01:27.689 --> 00:01:34.689
+to pay zero dollars. If we buy only one item
+maybe a $10 item we want to pay $10. And if
+
+00:01:35.909 --> 00:01:41.850
+we have a $10 and a $8 item we're going to
+pay $10. One thing you may have noticed when
+
+00:01:41.850 --> 00:01:46.420
+I was talking through that creating the test
+data is it's actually giving us some ideas
+
+00:01:46.420 --> 00:01:52.200
+about how we might want to write the program.
+So I was doing was sort of sorting the data,
+
+00:01:52.200 --> 00:01:56.890
+and thinking about "I'd pay for the first
+one and then not for the next one most expensive
+
+00:01:56.890 --> 00:02:02.020
+one" so that strategy is the strategy we're
+going to use in the program. This is why it's
+
+00:02:02.020 --> 00:02:06.850
+so important to work through test data first
+because it can actually help you figure out
+
+00:02:06.850 --> 00:02:11.709
+how to write the program better. Let's choose
+our data types. We're going to need to store
+
+00:02:11.709 --> 00:02:16.540
+and manipulate the price of many items. We
+really have only one possible data type that
+
+00:02:16.540 --> 00:02:23.319
+could work for that--it would be an ArrayList
+of doubles. So let's go create our program
+
+00:02:23.319 --> 00:02:30.319
+and get our ArrayList of doubles in place.
+[pauses] So we're starting Eclipse. I'll create
+
+00:02:41.890 --> 00:02:47.099
+a new project. Notice that I always get rid
+of the code from the old project before I
+
+00:02:47.099 --> 00:02:51.810
+create a new one. That's very important because
+particularly if your projects have the same
+
+00:02:51.810 --> 00:02:58.230
+names, you can get confused and be entering
+the wrong project's code. That's a really
+
+00:02:58.230 --> 00:03:05.230
+serious problem. So here's our project. There's
+our source file. Here's our class. Which we
+
+00:03:22.480 --> 00:03:29.480
+will of course beautify as we always do. We
+know we're going to need an ArrayList of double
+
+00:03:39.329 --> 00:03:46.329
+in our code and I'll call it "sales." Eclipse
+is complaining because of course I have not
+
+00:03:46.390 --> 00:03:53.390
+imported the file for ArrayList yet. So we're
+going to import Java dot util dot ArrayList.
+
+00:03:56.609 --> 00:04:03.609
+That way, Eclipse can find the ArrayList instructions
+and is able to create the ArrayList object.
+
+00:04:04.989 --> 00:04:09.030
+Let's think about designing our methods first.
+This is different than what we did in the
+
+00:04:09.030 --> 00:04:14.629
+last chapter because this time we actually
+can store our data. So our input in calculations
+
+00:04:14.629 --> 00:04:18.610
+don't have to be done together. They can be
+done separately, which is actually a nice
+
+00:04:18.610 --> 00:04:24.320
+way to do it. So if we're going to get the
+user purchases, the input is probably going
+
+00:04:24.320 --> 00:04:29.670
+to be a scanner although we may want to think
+about that a little bit. The output the return
+
+00:04:29.670 --> 00:04:34.530
+type will be an ArrayList of doubles. This
+means that our ArrayList of double will be
+
+00:04:34.530 --> 00:04:40.130
+created inside "get user preferences" and
+then returned to the main program. This will
+
+00:04:40.130 --> 00:04:45.630
+be a static method as all of our methods have
+been so far. We also can create a "find sale
+
+00:04:45.630 --> 00:04:50.970
+price method" so this can be separate now.
+Because we have the ArrayList to store our
+
+00:04:50.970 --> 00:04:57.220
+data. The input will be our ArrayList and
+the output will be double, that will be the
+
+00:04:57.220 --> 00:05:02.970
+sale price it's getting past back. This is
+also a static method. So let's go and write
+
+00:05:02.970 --> 00:05:09.970
+those methods. I'll put in stubs first. Now
+we're going to have to think about whether
+
+00:05:18.130 --> 00:05:25.130
+we want a scanner here or not. So we'll deal
+with that problem in a minute. [typing] Okay,
+
+00:05:42.940 --> 00:05:47.820
+so let's think about the scanner issue. Is
+all of our interaction with the user going
+
+00:05:47.820 --> 00:05:53.410
+to occur in this one method? If so, the scanner
+can be a local variable in that method instead
+
+00:05:53.410 --> 00:05:59.010
+of being a parameter to it. Or you can always
+put your scanner in the main program. It really
+
+00:05:59.010 --> 00:06:03.340
+doesn't matter which way you do it, both ways
+work well. Because people get a little crazy
+
+00:06:03.340 --> 00:06:07.760
+about parameter passing I'm going to put the
+scanner in the main program and then pass
+
+00:06:07.760 --> 00:06:13.930
+it in as a parameter, just to get a little
+more practice. But either way would work just
+
+00:06:13.930 --> 00:06:18.830
+fine. Of course Eclipse is complaining about
+our scanner once again because we haven't
+
+00:06:18.830 --> 00:06:25.830
+done our import statement. [typing] So since
+we created it in the main program, we want
+
+00:06:38.870 --> 00:06:45.870
+to pass it in now to get user data. Now Eclipse
+is putting a lot of little red X's around
+
+00:06:46.620 --> 00:06:51.580
+and the reason it's doing that is because
+we haven't returned the types that we expect.
+
+00:06:51.580 --> 00:06:55.820
+So if you look at these little red X's what
+they say. "This method must return a result
+
+00:06:55.820 --> 00:07:01.460
+of type ArrayList of double." So one way to
+keep Eclipse quiet is to create that ArrayList
+
+00:07:01.460 --> 00:07:06.940
+and return a fake one for a while. That will
+keep Eclipse off our backs, so I like to do
+
+00:07:06.940 --> 00:07:13.940
+that. I'm constructing it with a constructor
+[pause] and then returning it. And now Eclipse
+
+00:07:26.740 --> 00:07:32.300
+is happy once again. Now in this method, we're
+just returning a double. Since double is a
+
+00:07:32.300 --> 00:07:39.300
+primitive datatype instead of an object we
+can just return 0.0 for now. So that will
+
+00:07:39.860 --> 00:07:46.860
+keep Eclipse happy. The next thing we need
+to do is to find the sale price. Now this
+
+00:07:48.060 --> 00:07:52.020
+one is a little bit tricky. First we need
+to sort the data from the smallest to the
+
+00:07:52.020 --> 00:07:56.580
+largest. Now you might say, "Wait a minute!
+When you were going through the data you looked
+
+00:07:56.580 --> 00:08:00.770
+from the largest to smallest." And that's
+true, that would be a really nice order to
+
+00:08:00.770 --> 00:08:05.640
+have. Unfortunately though, the methods that
+we have to do sorting are always going to
+
+00:08:05.640 --> 00:08:10.390
+sort in ascending order. That is from the
+smallest to the largest. So we're kind of
+
+00:08:10.390 --> 00:08:16.080
+stuck having to deal with the decisions that
+are made in Java. We're going to have to buy
+
+00:08:16.080 --> 00:08:21.530
+the most expensive item, so that one's going
+to be at the end of the list. The second one
+
+00:08:21.530 --> 00:08:27.710
+will be free so that's one position in. And
+then we'll do every other item. So if you
+
+00:08:27.710 --> 00:08:34.199
+think about it, we're going starting at the
+end and skipping alternate items. So that's
+
+00:08:34.199 --> 00:08:39.569
+a nice little while loop we're going to have.
+As far as our implementation choices--well
+
+00:08:39.569 --> 00:08:44.939
+sorting is always in ascending order. There
+is a method in the collections class that
+
+00:08:44.939 --> 00:08:50.800
+reverses data, and we could use that but there's
+really no reason to use that when we can do
+
+00:08:50.800 --> 00:08:55.259
+start at the far end of the array instead
+the near end. This is a possibility people
+
+00:08:55.259 --> 00:08:59.569
+sometimes forget to do when they're writing
+code. So let's go and write the find sale
+
+00:08:59.569 --> 00:09:06.569
+price method. So we take our ArrayList and
+we sort it, so that's [typing] collection
+
+00:09:09.490 --> 00:09:16.490
+dot sort purchases. Now we want a loop, so
+we're going to start at the far end so...let's
+
+00:09:21.660 --> 00:09:28.660
+call an index and that's going to be [typing]
+purchases dot size minus 1. Now that minus
+
+00:09:29.810 --> 00:09:34.689
+1 is easy to forget. Remember that size is
+unit indexed. That is, that it counts the
+
+00:09:34.689 --> 00:09:40.060
+number of elements that are in the ArrayList.
+But unfortunately the elements themselves
+
+00:09:40.060 --> 00:09:44.829
+are zero indexed and so we always have to
+subtract one in order to get it started in
+
+00:09:44.829 --> 00:09:51.829
+the right direction. So while index is greater
+than or equal to zero. Well we need to keep
+
+00:09:58.439 --> 00:10:05.439
+track of how much our cost is going to be.
+We'll start it at zero of course, while it's
+
+00:10:09.660 --> 00:10:16.660
+greater than or equal to zero we will add
+in the cost at that index so cost equals cost
+
+00:10:17.540 --> 00:10:24.540
+plus purchases dot get of index. And the next
+thing we need to do is to change the index.
+
+00:10:28.040 --> 00:10:31.970
+You may be tempted to subtract one from index
+'cause we've written so many loops where that's
+
+00:10:31.970 --> 00:10:37.829
+the correct answer but in this case, you need
+to skip items. So you need to subtract two,
+
+00:10:37.829 --> 00:10:44.829
+not one. Now instead of returning zero we'll
+return cost. Now we could run the program
+
+00:10:52.269 --> 00:10:55.709
+at this point but it's not going to be very
+interesting 'cause we haven't written our
+
+00:10:55.709 --> 00:11:02.709
+input method yet. So probably that's the one
+we should do next before we try to run. So
+
+00:11:03.790 --> 00:11:07.829
+here's our get user data method. We might
+want to think about how we're going to have
+
+00:11:07.829 --> 00:11:12.959
+to have the user enter data. This can't be
+a counter controlled loop, because we don't
+
+00:11:12.959 --> 00:11:17.410
+know how many purchases the user is going
+to make. It's really not nice to ask users
+
+00:11:17.410 --> 00:11:22.560
+for things like, "How many purchases are you
+going to make before you start?" and so instead
+
+00:11:22.560 --> 00:11:27.040
+it's better to use a sentinel. That is to
+have them enter some illegal value at the
+
+00:11:27.040 --> 00:11:31.139
+end so you know that they're through. In this
+case because they're entering the cost of
+
+00:11:31.139 --> 00:11:36.709
+items -1 makes a good sentinel. Because it's
+a sentinel controlled loop we're going to
+
+00:11:36.709 --> 00:11:43.709
+have to prime the reads. So here we go! [typing]
+System out print line enter the cost of your
+
+00:11:45.589 --> 00:11:52.589
+next purchase or -1 to stop. Then we'll have
+a double called "cost" and that will be [typing]
+
+00:11:59.089 --> 00:12:06.089
+keyboard dot next double. Because this is
+a priming read we want to include a comment
+
+00:12:13.240 --> 00:12:20.240
+so we'll have "While cost is greater than
+zero." Now this is an important point. You
+
+00:12:21.309 --> 00:12:26.480
+may have been tempted to write, "While cost
+is not equal to -1", but the problem is that
+
+00:12:26.480 --> 00:12:32.389
+cost is a double value. And we do not use
+equality comparisons with double values because
+
+00:12:32.389 --> 00:12:38.089
+doubles are not stored exactly in the computer
+using equality comparisons with doubles will
+
+00:12:38.089 --> 00:12:43.399
+sometimes work and sometimes not. We don't
+want to take risks like that with our program,
+
+00:12:43.399 --> 00:12:48.300
+so instead we'll just look to see if the value
+is less than zero by using less than we get
+
+00:12:48.300 --> 00:12:55.300
+around that problem. So now we're going to
+add the element to the array 
+and we're going to get our next input. Now
+
+00:13:04.889 --> 00:13:11.889
+we've already written our priming read input
+so let's copy and paste that into the loop.
+
+00:13:23.649 --> 00:13:29.610
+Of course we have to remove the second declaration
+'cause we're only allowed to declare a cost
+
+00:13:29.610 --> 00:13:36.610
+once. And let's check what we have at the
+end of the loop we're returning the result
+
+00:13:37.459 --> 00:13:44.180
+and so that's correct. So notice this was
+kind of a a lean, mean loop. Not a very long
+
+00:13:44.180 --> 00:13:50.540
+one. Let's go to our main program and make
+sure we have the pieces together correctly.
+
+00:13:50.540 --> 00:13:53.930
+Well we really don't have our pieces together
+correctly, because we haven't called any of
+
+00:13:53.930 --> 00:14:00.930
+our methods. So we'll say "Sales equals get
+user data of input." So that method is returning
+
+00:14:08.199 --> 00:14:15.199
+our ArrayList. Now we're ready to find the
+cost so we'll have, "Double cost equals" let's
+
+00:14:16.899 --> 00:14:23.899
+go and look for what the name of the method
+was "find cost", clever name. So we're going
+
+00:14:27.749 --> 00:14:34.749
+to "Find cost of sales and system out print
+line the cost of your purchases is plus cost."
+
+00:14:48.540 --> 00:14:55.540
+Well Eclipse is happy so let's see if our
+program is running. So let's start with some
+
+00:14:58.139 --> 00:15:05.139
+easy data. Let's just make one purchase of
+10 bucks. That worked, that's good! Now let's
+
+00:15:09.660 --> 00:15:16.660
+make two purchases of $10. This should be
+10 bucks right? And that worked too. How about
+
+00:15:22.600 --> 00:15:29.600
+$10 and $8? Purchase is $10. Remember the
+$8 item being free. Now $12, $10, $8, $6,
+
+00:15:39.269 --> 00:15:46.269
+$4, $2. So it'll be 12 plus 8, which is 20
+plus 4 so our answer here should be 24. And
+
+00:15:49.509 --> 00:15:55.459
+it is. Things are looking good. One thing
+I will say about our testing strategy so far,
+
+00:15:55.459 --> 00:15:59.790
+because I've had all the data in order, we're
+really not testing whether the sorting is
+
+00:15:59.790 --> 00:16:04.480
+working correctly or not. So let's try the
+data in the opposite order to make sure that
+
+00:16:04.480 --> 00:16:11.480
+our sorting algorithm is doing what it should.
+So $2, $4, $6, $8, $10, $12 and it's the same
+
+00:16:18.059 --> 00:16:22.649
+$24 cost. So this time we didn't make any
+mistakes while we were creating our program,
+
+00:16:22.649 --> 00:16:27.529
+more or less. One of the reasons we didn't
+is we had a good strategy to start with, and
+
+00:16:27.529 --> 00:16:32.490
+that strategy came from doing the test development
+first. So that's an idea you definitely want
+
+00:16:32.490 --> 00:16:38.600
+to consider when you're writing programs on
+your own. So we've checked our test data...and
+
+00:16:38.600 --> 00:16:39.569
+our program is finished.
+

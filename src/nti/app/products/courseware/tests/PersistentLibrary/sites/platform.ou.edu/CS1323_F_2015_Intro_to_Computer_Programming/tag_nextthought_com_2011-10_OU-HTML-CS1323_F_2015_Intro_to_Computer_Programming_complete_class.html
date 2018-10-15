@@ -1,0 +1,52 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html lang="en"><head> <meta content="2015-12-11T16:56:47" http-equiv="last-modified" /> <meta content="1168" name="NTIRelativeScrollHeight" /> <meta content="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.complete_class" name="NTIID" /> <meta content="NextThought" name="generator" /> <meta content="text/html; charset=ascii" http-equiv="content-type" /> <title>Complete Class</title> <link href="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.more_testing" rel="next" title="More Testing" /> <link href="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.method_to_process_checks" rel="prev" title="Method to Process Checks" /> <link href="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.reading:Chortle_CH32" rel="up" title="Class Design Example" /> <link href="styles/styles.css" rel="stylesheet" /> <link href="styles/content.css" rel="stylesheet" /> </head> <body id="NTIContent"> <div class="page-contents"><div data-ntiid="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.complete_class" id="a0000000521" ntiid="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.complete_class"> <div class="chapter title">Complete Class</div> <p class="placeholder"></p> <a name="f951e9f0fa521c506b2a87925e69a1b2"></a> <div class="sidebar" data-ntiid="tag:nextthought.com,2011-10:OU-HTML:NTISidebar-CS1323_F_2015_Intro_to_Computer_Programming.sidebar.answer.194" ntiid="tag:nextthought.com,2011-10:OU-HTML:NTISidebar-CS1323_F_2015_Intro_to_Computer_Programming.sidebar.answer.194"> <div class="sidebar-title">Answer</div> <pre>void processCheck( int amount )
+{
+  int charge;
+  if ( balance &lt; 100000 )
+
+    charge = 15;
+  else
+
+    charge = 0;
+
+  balance = balance - amount - charge ;
+
+}
+</pre> </div><a name="40533e9e4e54a2b16b03dfab7339f904"></a> <p class="par" id="40533e9e4e54a2b16b03dfab7339f904">The complete class is defined as: </p> <a name="8817d2075da0353383af7154a6046d88"></a> <pre>class CheckingAccount
+{
+  // instance variables
+  String accountNumber;
+  String accountHolder;
+  int    balance;
+
+  //constructors
+  CheckingAccount( String accNumber, String holder, int start )
+  {
+    accountNumber = accNumber ;
+    accountHolder = holder ;
+    balance       = start ;
+  }
+
+  // methods
+  int getBalance()
+  {
+    return balance ;
+  }
+
+  void  processDeposit( int amount )
+  {
+    balance = balance + amount ; 
+  }
+
+  void processCheck( int amount )
+  {
+    int charge;
+    if ( balance &lt; 100000 )
+      charge = 15; 
+    else
+      charge = 0;
+
+    balance =  balance - amount - charge  ;
+  }
+
+}
+</pre><a name="b923027738d81301ee6299b5401090cf"></a> <div class="sidebar" data-ntiid="tag:nextthought.com,2011-10:OU-HTML:NTISidebar-CS1323_F_2015_Intro_to_Computer_Programming.sidebar.question.204" ntiid="tag:nextthought.com,2011-10:OU-HTML:NTISidebar-CS1323_F_2015_Intro_to_Computer_Programming.sidebar.question.204"> <div class="sidebar-title">Question</div> Now that the coding is complete, are we done? </div> </div></div> </body></html>

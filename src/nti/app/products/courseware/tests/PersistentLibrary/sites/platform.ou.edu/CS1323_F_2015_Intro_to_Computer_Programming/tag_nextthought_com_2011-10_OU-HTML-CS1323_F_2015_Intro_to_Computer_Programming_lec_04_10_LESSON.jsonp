@@ -1,0 +1,88 @@
+jsonpReceiveContent({
+    "content": {
+        "MimeType": "application/vnd.nextthought.ntilessonoverview",
+        "Items": [
+            {
+                "MimeType": "application/vnd.nextthought.nticourseoverviewgroup",
+                "NTIID": "tag:nextthought.com,2011-10:OU-NTICourseOverviewGroup-CS1323_F_2015_Intro_to_Computer_Programming.lec:04.10_LESSON.0",
+                "Items": [
+                    {
+                        "MimeType": "application/vnd.nextthought.ntivideo",
+                        "NTIID": "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_04.02.06_Statistics",
+                        "visibility": "everyone",
+                        "poster": "//www.kaltura.com/p/1500101/thumbnail/entry_id/1_1gehv3f2/width/1280/",
+                        "label": "How to Lie With Statistics"
+                    }
+                ],
+                "accentColor": "81c8dc",
+                "title": "Videos"
+            },
+            {
+                "MimeType": "application/vnd.nextthought.nticourseoverviewgroup",
+                "NTIID": "tag:nextthought.com,2011-10:OU-NTICourseOverviewGroup-CS1323_F_2015_Intro_to_Computer_Programming.lec:04.10_LESSON.1",
+                "Items": [
+                    {
+                        "MimeType": "application/vnd.nextthought.relatedworkref",
+                        "targetMimeType": "application/vnd.nextthought.externallink",
+                        "creator": "Deborah Trytten",
+                        "section": "required",
+                        "visibility": "everyone",
+                        "label": "Midterm 3",
+                        "NTIID": "tag:nextthought.com,2011-10:OU-RelatedWorkRef-CS1323_F_2015_Intro_to_Computer_Programming.relatedworkref.relwk:04.04.01_exam",
+                        "href": "resources/Midterm3_Fall2015.docx",
+                        "target-NTIID": "tag:nextthought.com,2011-10:NTI-UUID-89baa2cd9d3b0f10a47e3c03f1438430",
+                        "icon": "resources/CS1323_F_2015_Intro_to_Computer_Programming/583b61b2202851bd80245dfddda3c5d88cadb0a1/fd35e23767020999111e1f49239199b4c5eff23e.png",
+                        "desc": "A examination that tests the topics covered in the third quarter of the course."
+                    },
+                    {
+                        "MimeType": "application/vnd.nextthought.relatedworkref",
+                        "targetMimeType": "application/vnd.nextthought.externallink",
+                        "creator": "Deborah Trytten",
+                        "section": "additional",
+                        "visibility": "everyone",
+                        "label": "Midterm 3 Solution",
+                        "NTIID": "tag:nextthought.com,2011-10:OU-RelatedWorkRef-CS1323_F_2015_Intro_to_Computer_Programming.relatedworkref.relwk:04.04.01_exam_solutions",
+                        "href": "resources/Midterm3_Solution_Fall2015.docx",
+                        "target-NTIID": "tag:nextthought.com,2011-10:NTI-UUID-4591f63ecc35cfab1aabb240b1b43d84",
+                        "icon": "resources/CS1323_F_2015_Intro_to_Computer_Programming/583b61b2202851bd80245dfddda3c5d88cadb0a1/fd35e23767020999111e1f49239199b4c5eff23e.png",
+                        "desc": "The solution to an examination that tests the topics covered in the third quarter of the course."
+                    },
+                    {
+                        "MimeType": "application/vnd.nextthought.relatedworkref",
+                        "targetMimeType": "application/vnd.nextthought.externallink",
+                        "creator": "Deborah Trytten",
+                        "section": "additional",
+                        "visibility": "everyone",
+                        "label": "Sample Midterms",
+                        "NTIID": "tag:nextthought.com,2011-10:OU-RelatedWorkRef-CS1323_F_2015_Intro_to_Computer_Programming.relatedworkref.relwk:sample_midterm_3",
+                        "href": "resources/Sample_Midterm_3.zip",
+                        "target-NTIID": "tag:nextthought.com,2011-10:NTI-UUID-027ae4836e2ae6d5930d26e23d443992",
+                        "icon": "resources/CS1323_F_2015_Intro_to_Computer_Programming/b9c4a1a1dc3d30c895df3b30c553fa40f972a2f5/fd35e23767020999111e1f49239199b4c5eff23e.png",
+                        "desc": "Several examples of examinations that test the topics covered in the third quarter of the course."
+                    },
+                    {
+                        "MimeType": "application/vnd.nextthought.relatedworkref",
+                        "targetMimeType": "application/vnd.nextthought.externallink",
+                        "creator": "Deborah Trytten",
+                        "section": "additional",
+                        "visibility": "everyone",
+                        "label": "Sample Midterm Solutions",
+                        "NTIID": "tag:nextthought.com,2011-10:OU-RelatedWorkRef-CS1323_F_2015_Intro_to_Computer_Programming.relatedworkref.relwk:sample_midterm_3_solutions",
+                        "href": "resources/Sample_Midterm_3_Solutions.zip",
+                        "target-NTIID": "tag:nextthought.com,2011-10:NTI-UUID-6d51cfc2ec63a53751553ddc7a886b52",
+                        "icon": "resources/CS1323_F_2015_Intro_to_Computer_Programming/b9c4a1a1dc3d30c895df3b30c553fa40f972a2f5/fd35e23767020999111e1f49239199b4c5eff23e.png",
+                        "desc": "Several example documents of Midterm solutions."
+                    }
+                ],
+                "accentColor": "ce78e0",
+                "title": "Additional Resources"
+            }
+        ],
+        "title": "Review for Third Midterm",
+        "NTIID": "tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.lec:04.10_LESSON"
+    },
+    "ntiid": "tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.lec:04.10_LESSON",
+    "version": "1",
+    "Content-Type": "application/json",
+    "Content-Encoding": "json"
+});

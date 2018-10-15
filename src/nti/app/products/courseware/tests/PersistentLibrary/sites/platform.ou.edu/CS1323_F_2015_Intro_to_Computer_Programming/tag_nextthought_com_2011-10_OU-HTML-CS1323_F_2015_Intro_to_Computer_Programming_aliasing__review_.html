@@ -1,0 +1,32 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html lang="en"><head> <meta content="2015-12-11T16:56:47" http-equiv="last-modified" /> <meta content="1020" name="NTIRelativeScrollHeight" /> <meta content="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.aliasing_(review)" name="NTIID" /> <meta content="NextThought" name="generator" /> <meta content="text/html; charset=ascii" http-equiv="content-type" /> <title>Aliasing (Review)</title> <link href="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.review_of___" rel="next" title="Review of ==" /> <link href="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.further_testing" rel="prev" title="Further Testing" /> <link href="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.reading:Chortle_CH32" rel="up" title="Class Design Example" /> <link href="styles/styles.css" rel="stylesheet" /> <link href="styles/content.css" rel="stylesheet" /> </head> <body id="NTIContent"> <div class="page-contents"><div data-ntiid="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.aliasing_(review)" id="a0000000526" ntiid="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.aliasing_(review)"> <div class="chapter title">Aliasing (Review)</div> <p class="placeholder"></p> <a name="22bc7418fc870b3204e83dc9c384932b"></a> <div class="sidebar" data-ntiid="tag:nextthought.com,2011-10:OU-HTML:NTISidebar-CS1323_F_2015_Intro_to_Computer_Programming.sidebar.question.209" ntiid="tag:nextthought.com,2011-10:OU-HTML:NTISidebar-CS1323_F_2015_Intro_to_Computer_Programming.sidebar.question.209"> <div class="sidebar-title">Question</div> <pre> public static void main( String[] args )
+  {
+     . . . . . .
+    
+    int check = 30000;
+    account2.processCheck( check );
+    account1.processDeposit( check );
+    account1.display();
+    account2.display();
+    
+  }
+</pre> </div><a name="711ee3b6c46338fb7e4a3fc3cb7cd73e"></a> <p class="par" id="711ee3b6c46338fb7e4a3fc3cb7cd73e">This is not really part of testing this class, but it is convenient to mention aliasing again. Recall that there can be more than one reference to a given object. Each reference is called an <b class="bfseries">alias</b>. Here is another test program, set up to show this: </p> <a name="abe135296ef97c00e6b40cc9a864161e"></a> <pre>class CheckingAccount
+{
+  . . . . 
+}
+
+class CheckingAccountTester
+{
+  public static void main( String[] args )
+  {
+    CheckingAccount account1 = new CheckingAccount( "123", "Bob", 100 );
+    CheckingAccount account2 = new CheckingAccount( "456", "Jill", 900 );
+    CheckingAccount account3; 
+    
+    account1.display() ;
+    account2.display() ;
+
+    account3 = account1;
+    account3.display() ;
+  }
+}
+</pre><a name="49a4fc9ca5639957f60723ae8067d78f"></a> <div class="sidebar" data-ntiid="tag:nextthought.com,2011-10:OU-HTML:NTISidebar-CS1323_F_2015_Intro_to_Computer_Programming.sidebar.question.210" ntiid="tag:nextthought.com,2011-10:OU-HTML:NTISidebar-CS1323_F_2015_Intro_to_Computer_Programming.sidebar.question.210"> <div class="sidebar-title">Question</div> <ul class="itemize"> <li><a name="2dd40bd2dc1c2f0a8b571185757d1533"></a> <p class="par" id="2dd40bd2dc1c2f0a8b571185757d1533">How many CheckingAccount objects are there? </p> </li> <li><a name="04b991a0cb6c93ae50c363e3c7028800"></a> <p class="par" id="04b991a0cb6c93ae50c363e3c7028800">How many object reference variables are there? </p> </li> <li><a name="bfb79df3ee7fdbb37b7bfff78b54359b"></a> <p class="par" id="bfb79df3ee7fdbb37b7bfff78b54359b">What will the program print out? </p> </li> </ul> </div> </div></div> </body></html>

@@ -1,0 +1,440 @@
+WEBVTT
+Kind: captions
+Language: en
+
+00:00:00.659 --> 00:00:06.939
+&gt;&gt;Let's continue our study of enforcing the
+contract by revisiting our pseudo ArrayList.
+
+00:00:06.939 --> 00:00:11.849
+In order to make sure that our data has integrity,
+that is that it's correct, we need to make
+
+00:00:11.849 --> 00:00:17.060
+sure that the data stored in every single
+object is correct. Now there are several strategies
+
+00:00:17.060 --> 00:00:22.880
+for this. The most important one is access
+modification, that is, control when methods
+
+00:00:22.880 --> 00:00:28.590
+and data can be used. We also need to check
+that all instance data is correct at the end
+
+00:00:28.590 --> 00:00:33.660
+of every method and make sure that we maintain
+the critical properties of the class. Now
+
+00:00:33.660 --> 00:00:38.200
+this is a big programming and testing effort
+we're talking about, but it's a very important
+
+00:00:38.200 --> 00:00:42.480
+effort if you want your programs to really
+be correct.
+
+00:00:42.480 --> 00:00:47.360
+First let's talk about access modifiers. Each
+data element and method can have an access
+
+00:00:47.360 --> 00:00:54.360
+modifier. Private means it's used only inside
+the class, and generally data are private.
+
+00:00:54.770 --> 00:00:58.930
+Publicly means it can be used both inside
+and outside of the class, and most methods
+
+00:00:58.930 --> 00:01:05.930
+are public. Constructors are also almost always
+public. In order to use access modifiers in
+
+00:01:06.440 --> 00:01:12.500
+UML you need to know the symbols. Plus means
+public and minus means private. Now recall
+
+00:01:12.500 --> 00:01:18.660
+underline means class data or methods. So
+here's what our updated UML will look like.
+
+00:01:18.660 --> 00:01:23.380
+Notice that a minus has been put in front
+of data, size, and default capacity, and a
+
+00:01:23.380 --> 00:01:29.950
+plus has been put in front of the two constructors.
+Here's what the class looks like now. The
+
+00:01:29.950 --> 00:01:36.150
+word "private" has been put before the three
+data elements: data, size, and default capacity,
+
+00:01:36.150 --> 00:01:41.460
+and public is before the two constructors.
+This has made a huge difference in our code.
+
+00:01:41.460 --> 00:01:45.690
+As our classes right now, we would be allowed
+to use the two constructors outside of the
+
+00:01:45.690 --> 00:01:50.840
+class. So other classes would be able to build
+objects for our class, but they wouldn't be
+
+00:01:50.840 --> 00:01:56.390
+able to modify the data. This makes a huge
+difference in our ability to be able to protect
+
+00:01:56.390 --> 00:02:00.750
+the integrity of the data, because now the
+only person who mess up the data is us. Of
+
+00:02:00.750 --> 00:02:03.210
+course, I guess that's bad enough.
+
+00:02:03.210 --> 00:02:09.160
+Now, is this efficient? Well keeping data
+private does prevent other classes from mangling
+
+00:02:09.160 --> 00:02:14.440
+the data, but it really doesn't ensure that
+the data is correct and it doesn't maintain
+
+00:02:14.440 --> 00:02:19.840
+the critical class properties. So the only
+way we can do these last two things is for
+
+00:02:19.840 --> 00:02:25.950
+the programmer to take personal responsibility
+for enforcing this contract. Now great programmers
+
+00:02:25.950 --> 00:02:31.290
+ought to make this, and if you're interested
+in that then you're going to love CS 2603
+
+00:02:31.290 --> 00:02:36.290
+- Applied Logic for Hardware and Software.
+We teach that, and by the way, the only prerequisite
+
+00:02:36.290 --> 00:02:42.450
+is this class. So you could even take that
+next semester if you wanted to. The method
+
+00:02:42.450 --> 00:02:46.340
+that we're going to use as an example is going
+to be the remove method. Now in the array
+
+00:02:46.340 --> 00:02:52.840
+API there is two versions: one that takes
+an index and one that takes a String. We're
+
+00:02:52.840 --> 00:02:57.640
+going to do the second version because it's
+a little more interesting. Couple of things
+
+00:02:57.640 --> 00:03:01.640
+we want to think about before we get started
+is what should happen if an item isn't in
+
+00:03:01.640 --> 00:03:08.640
+the list? Well what the API says in this case
+is that the list should not be modified. And,
+
+00:03:09.400 --> 00:03:13.760
+what happens if an item is in the list more
+than once? Well if it's in the list more than
+
+00:03:13.760 --> 00:03:18.680
+once the first one is supposed to be removed
+and not the others. So that gives us some
+
+00:03:18.680 --> 00:03:25.190
+guidance on our method to work too. So, if
+we're going to update our UML now we want
+
+00:03:25.190 --> 00:03:29.890
+to add the remove method. Notice I've put
+it at the bottom here, because it's a method
+
+00:03:29.890 --> 00:03:35.709
+that's public as most methods are -- that's
+what that little plus is for. Let's take a
+
+00:03:35.709 --> 00:03:38.740
+look at what happens if we go to remove g.
+
+00:03:38.740 --> 00:03:43.850
+Well first we're going to look at A and say,
+"Are you g?" Well, it's not. Then we'll look
+
+00:03:43.850 --> 00:03:50.280
+at C and say, "Are you g?" Well, it's not.
+Then we find our first g. Now once we found
+
+00:03:50.280 --> 00:03:56.720
+that value, things change. The next thing
+we need to do is move D over to cover up the
+
+00:03:56.720 --> 00:04:03.650
+spot where G was, and then we move F over
+into its position. So we can see there's sort
+
+00:04:03.650 --> 00:04:09.520
+of a two-phase thing going one. There's a
+phase for the method before we find G and
+
+00:04:09.520 --> 00:04:16.520
+then a phase after when we start doing the
+moves. So here's our first implementation.
+
+00:04:16.530 --> 00:04:23.350
+Notice the signature is there public because
+of the plus in front, UML, void String target.
+
+00:04:23.350 --> 00:04:28.850
+So we need to keep track of a Boolean that
+tells us if we've hit that transition, whether
+
+00:04:28.850 --> 00:04:35.400
+we've found our value or not. We step through
+the array one place at a time. The reason
+
+00:04:35.400 --> 00:04:41.419
+we stop at index at size minus one instead
+of size, is because when we're moving things
+
+00:04:41.419 --> 00:04:47.950
+over, we only want to move over one position.
+So we want to make sure that we don't go off
+
+00:04:47.950 --> 00:04:54.950
+the end of the array. So, if we've previously
+found the value data index is data index plus
+
+00:04:55.310 --> 00:05:00.960
+one, it's that index plus one that means we
+need to stop at less than size minus one instead
+
+00:05:00.960 --> 00:05:06.580
+of less than size. But if we haven't found
+things yet, then what we should do is check
+
+00:05:06.580 --> 00:05:12.419
+to see if data index equals target. If it
+does, then found should be set to true. So
+
+00:05:12.419 --> 00:05:18.190
+this is how our first implementation looks.
+And it's not bad, but it's not at all correct
+
+00:05:18.190 --> 00:05:23.139
+and we're going to step through the process
+of finding the problems. Let's see what really
+
+00:05:23.139 --> 00:05:28.490
+happens if we trace this code though. The
+D gets moved over successfully and the F gets
+
+00:05:28.490 --> 00:05:33.990
+moved over, but we didn't do anything with
+the F that was there originally. That extra
+
+00:05:33.990 --> 00:05:38.290
+F could cause problems later, particularly
+because of another mistake that we've made
+
+00:05:38.290 --> 00:05:40.960
+that we will see in a few minutes.
+
+00:05:40.960 --> 00:05:46.820
+So here's our second implementation. It needs
+to erase that F. Everything is the same in
+
+00:05:46.820 --> 00:05:51.930
+the four loop, but after we get out of the
+four loop what we do, if we found the value
+
+00:05:51.930 --> 00:05:58.930
+in the array, is we set data of size one minus
+null. That removes that last F -- so there's
+
+00:05:59.320 --> 00:06:05.280
+a big step forward. Well let's think about
+what happens if we were to remove the last
+
+00:06:05.280 --> 00:06:11.729
+element. That's a very important boundary
+case that we need to be worried about. Well
+
+00:06:11.729 --> 00:06:16.970
+what happens in this case is we're only replacing
+the last index with null if the value was
+
+00:06:16.970 --> 00:06:21.880
+already found. Well this value hasn't been
+found yet, so this case isn't working right
+
+00:06:21.880 --> 00:06:28.880
+now either. We never checked that last value.
+So here's our third implementation. Notice
+
+00:06:29.479 --> 00:06:35.979
+that I've added some code down here to look
+and see if data of size minus one equals target.
+
+00:06:35.979 --> 00:06:40.360
+Well if the last element of the array is the
+target, the only thing we need to do is to
+
+00:06:40.360 --> 00:06:47.360
+set data of size minus one to null. So we've
+now fixed a couple of big problems. But, we
+
+00:06:49.180 --> 00:06:54.060
+have a couple remaining. We've been paying
+a lot of attention to data, which is only
+
+00:06:54.060 --> 00:07:01.060
+one of the fields in this object. We haven't
+paid any attention to size. So going back
+
+00:07:01.340 --> 00:07:06.270
+after you're finished and thinking about every
+single data element and making sure that they're
+
+00:07:06.270 --> 00:07:11.290
+in a consistent state will catch a lot of
+mistakes, like the one that we're about to
+
+00:07:11.290 --> 00:07:17.040
+catch. Size never got modified, and this is
+a very serious error, particularly now that
+
+00:07:17.040 --> 00:07:23.410
+we've removed that last F and put in a null.
+What that means, if we haven't changed size,
+
+00:07:23.410 --> 00:07:27.610
+is that other programs are going to hit that
+null which means they'll produce no pointer
+
+00:07:27.610 --> 00:07:34.610
+exceptions. Horrible stuff. So here's our
+fourth implementation. Now after we set that
+
+00:07:35.169 --> 00:07:41.110
+last element in data size minus one to null,
+we have to decrement size -- decrease it by
+
+00:07:41.110 --> 00:07:47.000
+one. Notice that I did not automatically decrement
+size in all of the cases, because that wouldn't
+
+00:07:47.000 --> 00:07:52.330
+be correct if we didn't find the element.
+So our code is getting longer and longer and
+
+00:07:52.330 --> 00:07:59.330
+more and more complicated as we find all these
+little problems. Now, let's talk through these
+
+00:07:59.360 --> 00:08:02.380
+critical String ArrayList properties.
+
+00:08:02.380 --> 00:08:07.830
+Do we have homogeneity still? Well because
+we have an array of Strings we know we couldn't
+
+00:08:07.830 --> 00:08:14.169
+have put anything else in, so this has to
+be homogeneous at this time. Random access?
+
+00:08:14.169 --> 00:08:21.169
+Well that came from the array implementation,
+so that also needs to be there still. No gaps;
+
+00:08:21.310 --> 00:08:25.930
+this is a little trickier one to enforce.
+This is really the only one that could've
+
+00:08:25.930 --> 00:08:31.199
+been changed by this method. Well if you think
+about our implementation carefully you'll
+
+00:08:31.199 --> 00:08:36.209
+see that the only index that was set to null
+was the last one, so we couldn't have left
+
+00:08:36.209 --> 00:08:42.659
+any gaps in our array. So we know we have
+that property too. So let's talk about some
+
+00:08:42.659 --> 00:08:48.869
+strategies for success when implementing classes.
+First, work on one operation at a time and
+
+00:08:48.869 --> 00:08:54.839
+test it thoroughly. Test the boundary cases,
+and do it right at the start. Don't wait till
+
+00:08:54.839 --> 00:09:00.009
+later, because once you have five or six methods
+it's much harder to tell which one is causing
+
+00:09:00.009 --> 00:09:07.009
+the trouble. Usually I write the ad method
+first, and usually I write two Strings second.
+
+00:09:07.139 --> 00:09:12.160
+The reason is until you can add things in
+and until you can see what's in the array,
+
+00:09:12.160 --> 00:09:16.769
+it's really hard to know what's there. In
+fact, it's impossible.
+
+00:09:16.769 --> 00:09:21.639
+The other thing is checking every instance
+data element at the end of every method. So
+
+00:09:21.639 --> 00:09:26.470
+you write a method, go back and look at your
+instance data, and make sure that every single
+
+00:09:26.470 --> 00:09:31.050
+one of those things is correct. This will
+catch so many errors. And do it right at the
+
+00:09:31.050 --> 00:09:36.959
+start when you don't have to spend hours debugging
+it. And lastly, examine critical properties
+
+00:09:36.959 --> 00:09:41.889
+of the class every time. If those critical
+properties are maintained, that means your
+
+00:09:41.889 --> 00:09:48.889
+code is correct. Also, don't forget that constructors
+can contain errors. Constructors can become
+
+00:09:49.089 --> 00:09:54.119
+sort of invisible when you're programming
+-- you sometimes don't think about them much,
+
+00:09:54.119 --> 00:09:58.980
+and because when you make errors in constructors
+they sort of infect every part of the program
+
+00:09:58.980 --> 00:10:04.389
+because the data was never created correctly
+or wasn't initialized correctly. It's really
+
+00:10:04.389 --> 00:10:08.980
+hard to remember that those can have errors
+too. Some of the problems that students have
+
+00:10:08.980 --> 00:10:14.349
+most trouble debugging come from mistakes
+in constructors. So keep programming.
+

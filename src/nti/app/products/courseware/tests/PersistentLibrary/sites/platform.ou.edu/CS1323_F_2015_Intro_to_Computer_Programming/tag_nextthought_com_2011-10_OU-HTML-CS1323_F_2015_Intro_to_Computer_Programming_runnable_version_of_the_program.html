@@ -1,0 +1,72 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html lang="en"><head> <meta content="2015-12-11T16:56:47" http-equiv="last-modified" /> <meta content="1548" name="NTIRelativeScrollHeight" /> <meta content="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.runnable_version_of_the_program" name="NTIID" /> <meta content="NextThought" name="generator" /> <meta content="text/html; charset=ascii" http-equiv="content-type" /> <title>Runnable Version of the Program</title> <link href="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.blocker.20" rel="next" title="Blocker" /> <link href="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.fleets_fillup()_method" rel="prev" title="Fleet&#8217;s fillUp() Method" /> <link href="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.reading:Chortle_CH35" rel="up" title="Objects that Contain Objects" /> <link href="styles/styles.css" rel="stylesheet" /> <link href="styles/content.css" rel="stylesheet" /> </head> <body id="NTIContent"> <div class="page-contents"><div data-ntiid="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.runnable_version_of_the_program" id="a0000000563" ntiid="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.runnable_version_of_the_program"> <div class="chapter title">Runnable Version of the Program</div> <p class="placeholder"></p> <a name="48a157d99ce45fbd88a2c8216a1d3190.427"></a> <div class="sidebar" data-ntiid="tag:nextthought.com,2011-10:OU-HTML:NTISidebar-CS1323_F_2015_Intro_to_Computer_Programming.sidebar.answer.228" ntiid="tag:nextthought.com,2011-10:OU-HTML:NTISidebar-CS1323_F_2015_Intro_to_Computer_Programming.sidebar.answer.228"> <div class="sidebar-title">Answer</div> See below. </div><a name="de32be96352ac4363174d49f9c0e9a7e"></a> <p class="par" id="de32be96352ac4363174d49f9c0e9a7e">Here is the full version of the program with the new methods. It would be worth your time to study how things fit together. Notice how the big object (a Fleet) is made up of smaller objects (the Cars) and how the methods of the big object are made up from the methods of the smaller objects. </p> <a name="1ff9193b6438ef3c841f8885f501578c"></a> <pre>class Fleet
+{
+  // data
+  private Car town;
+  private Car suv;
+
+  // constructor
+  Fleet( int start1, int end1, double gal1, 
+         int start2, int end2, double gal2 )
+  {
+    town = new Car( start1, end1, gal1) ;
+    suv  = new Car( start2, end2, gal2) ;
+  }
+
+  // method
+  double calculateMPG()
+  {
+    double sumMPG; 
+    sumMPG = town.calculateMPG() + suv.calculateMPG() ;
+    return sumMPG/2.0;
+  }
+
+  void fillUp( int townOdo, double townGal, int suvOdo, double suvGal)
+  {
+
+    town.fillUp( townOdo, townGal );
+
+    suv .fillUp( suvOdo, suvGal );
+  }
+}
+
+class Car
+{
+  // data
+  private int startMiles;   // Stating odometer reading
+  private int endMiles;     // Ending odometer reading
+  private double gallons;   // Gallons of gas used between the readings
+
+  // constructor
+  Car(  int first, int last, double gals  )
+  {
+    startMiles = first ;
+    endMiles   = last ;
+    gallons    = gals ;
+  }
+
+  // methods
+  double calculateMPG()
+  {
+    return (endMiles - startMiles)/gallons ;
+  }
+
+  void fillUp(int newOdo, double fillUpGals )
+  {
+     startMiles  =  endMiles ;
+     endMiles    =  newOdo ;
+     gallons     =  fillUpGals ;
+  }
+}
+
+class FleetTester
+{
+  public static void main ( String[] args)
+  {
+    Fleet myCars = new Fleet( 1000, 1234, 10, 777, 999, 20 );
+    System.out.println("Fleet average MPG= " + myCars.calculateMPG() );
+
+    myCars.fillUp( 1434, 10, 1099, 10 );
+    System.out.println("new average MPG= " + myCars.calculateMPG() );
+  }
+}
+</pre><a name="3f1f2e04318511264061d2cb449b0c5f"></a> <p class="par" id="3f1f2e04318511264061d2cb449b0c5f"> </p> <a name="4e6472a4c816928c61d21a5e59a1030a"></a> <p class="par" id="4e6472a4c816928c61d21a5e59a1030a">For more information or to read these chapters in full, go to <a href="http://chortle.ccsu.edu/java5/Notes/chap35/ch35_1.html">Chortle Chapter 35</a> and <a href="http://chortle.ccsu.edu/java5/Notes/chap34A/ch34A_1.html">Chortle Chapter 34A</a>. </p> </div></div> </body></html>

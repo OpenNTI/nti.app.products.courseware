@@ -1,0 +1,33 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html lang="en"><head> <meta content="2015-12-11T16:56:47" http-equiv="last-modified" /> <meta content="1223" name="NTIRelativeScrollHeight" /> <meta content="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.more_than_one_statement_per_branch" name="NTIID" /> <meta content="NextThought" name="generator" /> <meta content="text/html; charset=ascii" http-equiv="content-type" /> <title>More than one Statement per Branch</title> <link href="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.outline_of_a_two_way_decision" rel="next" title="Outline of a Two-way Decision" /> <link href="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.the_program" rel="prev" title="The Program" /> <link href="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.reading:Chortle_CH12" rel="up" title="Decision Making" /> <link href="styles/styles.css" rel="stylesheet" /> <link href="styles/content.css" rel="stylesheet" /> </head> <body id="NTIContent"> <div class="page-contents"><div data-ntiid="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.more_than_one_statement_per_branch" id="a0000000400" ntiid="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.more_than_one_statement_per_branch"> <div class="chapter title">More than one Statement per Branch</div> <p class="placeholder"></p> <a name="3595da74c4b21117f2a63c4d3245a2b1"></a> <div class="sidebar" data-ntiid="tag:nextthought.com,2011-10:OU-HTML:NTISidebar-CS1323_F_2015_Intro_to_Computer_Programming.sidebar.answer.85" ntiid="tag:nextthought.com,2011-10:OU-HTML:NTISidebar-CS1323_F_2015_Intro_to_Computer_Programming.sidebar.answer.85"> <div class="sidebar-title">Answer</div> <pre>Enter an integer:
+-5
+The number -5 is negative
+Good-bye for now
+</pre> Only the true-branch was executed because the answer to the question <b class="bfseries"><tt class="ttfamily">num &lt; 0</tt></b> was true. </div><a name="20801b702c9f885f64dca3c114130e68"></a> <p class="par" id="20801b702c9f885f64dca3c114130e68">Here is the program again with some added statements: </p> <a name="75bc705372cfab32c7c9ea04d4926a3c"></a> <pre>import java.util.Scanner;
+
+class NumberTester
+{
+  public static void main (String[] args)
+  {
+    Scanner scan = new Scanner( System.in );
+    int num;
+
+    System.out.println("Enter an integer:");
+    num = scan.nextInt();
+
+    if ( num &lt; 0 )
+    {
+      System.out.println("The number " + num + " is negative.");   // true-branch
+      System.out.println("Negative numbers are less than zero.");  // true-branch
+    } 
+    else
+    {
+      System.out.println("The number " + num +                     // false-branch
+        " is zero or positive.");                                  // false-branch
+      System.out.print  ("Positive numbers are greater ");         // false-branch
+      System.out.println("than zero. ");                           // false-branch
+    }
+
+    System.out.println("Good-bye for now");    // always executed
+  }
+}
+</pre><a name="03936c99ad9c650dcd862af12d0dc3ba"></a> <p class="par" id="03936c99ad9c650dcd862af12d0dc3ba">To include more than one statement in a branch, enclose the statements with braces, <b class="bfseries"><tt class="ttfamily">{</tt></b> and <b class="bfseries"><tt class="ttfamily">}</tt></b>. A group of statements grouped together like this is called a <b class="bfseries">block statement</b>, (or usually, just <i class="itshape">block</i>). There can be as many statements as you want in a block. A block can go anyplace a single statement can go. All the statements in the <i class="itshape">true block</i> are executed when the answer to the question is <i class="itshape">true</i>. </p> <a name="bdeb073732397cb35f020c55132ef650"></a> <p class="par" id="bdeb073732397cb35f020c55132ef650">Of course, all the statements in the <i class="itshape">false block</i> are executed when the answer to the question is <i class="itshape">false</i>. The <i class="itshape">false block</i> consists of the block that follows the <b class="bfseries"><tt class="ttfamily">else</tt></b>. Notice that the very last statement in the program is not part of the false block. </p> <a name="ab717e49b7f4f5140755e54f7f7d9c79"></a> <div class="sidebar" data-ntiid="tag:nextthought.com,2011-10:OU-HTML:NTISidebar-CS1323_F_2015_Intro_to_Computer_Programming.sidebar.question.89" ntiid="tag:nextthought.com,2011-10:OU-HTML:NTISidebar-CS1323_F_2015_Intro_to_Computer_Programming.sidebar.question.89"> <div class="sidebar-title">Question</div> The user enters a 17. What will the new program print? </div> </div></div> </body></html>

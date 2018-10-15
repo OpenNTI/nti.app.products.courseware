@@ -1,0 +1,40 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html lang="en"><head> <meta content="2015-12-11T16:56:47" http-equiv="last-modified" /> <meta content="1382" name="NTIRelativeScrollHeight" /> <meta content="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.car_purchase_program" name="NTIID" /> <meta content="NextThought" name="generator" /> <meta content="text/html; charset=ascii" http-equiv="content-type" /> <title>Car Purchase Program</title> <link href="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.insulated_wall_problem" rel="next" title="Insulated Wall Problem" /> <link href="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.boolean_expressions_with_or" rel="prev" title="Boolean Expressions with OR" /> <link href="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.reading:Chortle_CH14" rel="up" title="Boolean Expressions" /> <link href="styles/styles.css" rel="stylesheet" /> <link href="styles/content.css" rel="stylesheet" /> </head> <body id="NTIContent"> <div class="page-contents"><div data-ntiid="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.car_purchase_program" id="a0000000427" ntiid="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.car_purchase_program"> <div class="chapter title">Car Purchase Program</div> <p class="placeholder"></p> <a name="101f75f571b93d7549ccdae6041a2a56"></a> <div class="sidebar" data-ntiid="tag:nextthought.com,2011-10:OU-HTML:NTISidebar-CS1323_F_2015_Intro_to_Computer_Programming.sidebar.answer.111" ntiid="tag:nextthought.com,2011-10:OU-HTML:NTISidebar-CS1323_F_2015_Intro_to_Computer_Programming.sidebar.answer.111"> <div class="sidebar-title">Answer</div> <a name="13b2d8f3cc479ea71cc182eabe68b0c0"></a> <p class="par" id="13b2d8f3cc479ea71cc182eabe68b0c0"> The boolean expression is true </p> <a name="9d24dc4e3703457a390550d5cb842203"></a> <pre>34 &gt; 2   ||   5 == 7
+------        -----
+ true         false
+   --------------
+       true
+</pre><a name="ff3b95b0b316380cf4fcb07d87afb68f"></a> <p class="par" id="ff3b95b0b316380cf4fcb07d87afb68f">because all OR needs is one true. </p> </div><a name="4ebccdf3b8da9bbaccfa0b2623092cb8"></a> <p class="par" id="4ebccdf3b8da9bbaccfa0b2623092cb8">The above expression evaluates to <i class="itshape">true</i> because at least one operand was <i class="itshape">true</i>. In fact, as soon as the first <i class="itshape">true</i> is detected, you know that the entire expression must be <i class="itshape">true</i>, because <i class="itshape">true</i> OR anything is <i class="itshape">true</i>. </p> <a name="959650fa927e847d8dc93b7704c69c2d"></a> <pre>34 &gt; 2   ||   5 == 7
+------        -----
+ true         does not matter
+   --------------
+       true
+</pre><a name="3954aa5ee5033e95059a0c42d5f3aea4"></a> <p class="par" id="3954aa5ee5033e95059a0c42d5f3aea4">As an optimization, Java evaluates an expression only as far as needed to determine its value. When program runs, as soon as <b class="bfseries"><tt class="ttfamily">34 &gt; 2</tt></b> is found to be <i class="itshape">true</i>, the entire expression is known to be <i class="itshape">true</i>, and evaluation goes no further. This type of optimization is called <b class="bfseries">short-circuit evaluation</b>. (Just as it is with AND.) </p> <a name="ba6623394c207839be419852a0f4b2c0"></a> <p class="par" id="ba6623394c207839be419852a0f4b2c0">Here is a full Java program that implements the car purchase decision. </p> <a name="3797183c090787bbae0a1bf9886686bc"></a> <pre>// Sports Car Purchase
+//
+// You need $25000 in cash or credit
+//
+import java.util.Scanner;
+
+class HotWheels
+{
+  public static void main (String[] args) 
+  { 
+    Scanner scan = new Scanner( System.in ); 
+    int cash, credit ; 
+
+    // get the cash
+    System.out.print("How much cash? ");
+    cash = scan.nextInt() ; 
+
+    // get the credit line
+    System.out.print("How much credit? ");
+    credit = scan.nextInt() ; 
+
+    // check that at least one qualification is met
+    if ( cash &gt;= 25000  ||  credit &gt;= 25000 )
+      System.out.println("Enough to buy this car!" );
+    else
+      System.out.println("What about a Yugo?" );
+
+  }
+}
+</pre><a name="b61e18b79e32969ddf7d7ed42361b88d"></a> <p class="par" id="b61e18b79e32969ddf7d7ed42361b88d">Compile and run the program with various values of cash and credit to check that you understand how OR works. </p> <a name="6abdbdc2f7310d0750a39be5533f46b2"></a> <div class="sidebar" data-ntiid="tag:nextthought.com,2011-10:OU-HTML:NTISidebar-CS1323_F_2015_Intro_to_Computer_Programming.sidebar.question.116" ntiid="tag:nextthought.com,2011-10:OU-HTML:NTISidebar-CS1323_F_2015_Intro_to_Computer_Programming.sidebar.question.116"> <div class="sidebar-title">Question</div> What does the program do if the user enters negative numbers? </div> </div></div> </body></html>

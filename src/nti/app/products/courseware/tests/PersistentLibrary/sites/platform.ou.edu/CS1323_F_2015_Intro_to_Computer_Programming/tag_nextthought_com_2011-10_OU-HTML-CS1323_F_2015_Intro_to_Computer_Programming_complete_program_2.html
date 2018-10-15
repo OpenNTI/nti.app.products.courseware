@@ -1,0 +1,33 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html lang="en"><head> <meta content="2015-12-11T16:56:47" http-equiv="last-modified" /> <meta content="1234" name="NTIRelativeScrollHeight" /> <meta content="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.complete_program.2" name="NTIID" /> <meta content="NextThought" name="generator" /> <meta content="text/html; charset=ascii" http-equiv="content-type" /> <title>Complete Program</title> <link href="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.row_of_stars" rel="next" title="Row of Stars" /> <link href="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.filling_in_the_formula" rel="prev" title="Filling in the Formula" /> <link href="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.reading:Chortle_CH17" rel="up" title="Nesting Loops and Ifs" /> <link href="styles/styles.css" rel="stylesheet" /> <link href="styles/content.css" rel="stylesheet" /> </head> <body id="NTIContent"> <div class="page-contents"><div data-ntiid="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.complete_program.2" id="a0000000461" ntiid="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.complete_program.2"> <div class="chapter title">Complete Program</div> <p class="placeholder"></p> <a name="7923f74a12f70a5ae8e1604f9c4c8b8b"></a> <div class="sidebar" data-ntiid="tag:nextthought.com,2011-10:OU-HTML:NTISidebar-CS1323_F_2015_Intro_to_Computer_Programming.sidebar.answer.142" ntiid="tag:nextthought.com,2011-10:OU-HTML:NTISidebar-CS1323_F_2015_Intro_to_Computer_Programming.sidebar.answer.142"> <div class="sidebar-title">Answer</div> The finished program is given below. </div><a name="d1b41ebcc0e0d0bcd7fe3c2f08be305a"></a> <p class="par" id="d1b41ebcc0e0d0bcd7fe3c2f08be305a">The complete program can be copied and pasted into an editor, and run in the usual way. </p> <a name="773baa062ab1a22f9ce7c83b165c2a35"></a> <pre>import java.util.Scanner;
+
+// User picks ending value for time, t.
+// The program calculates and prints 
+// the distance the brick has fallen for each t.
+//
+class FallingBrick
+{
+  public static void main (String[] args )  
+  {
+    final  double G = 9.80665;  // constant of gravitational acceleration
+    int    t, limit;            // time in seconds; ending value of time
+    double distance;            // the distance the brick has fallen
+    Scanner scan = new Scanner( System.in );
+
+    System.out.print( "Enter limit value: " );
+    limit = scan.nextInt();
+
+    // Print a table heading
+    System.out.println( "seconds\tDistance"  );  // '\t' is tab
+    System.out.println( "-------\t--------"  ); 
+
+    t = 0 ;
+    while (  t &lt;= limit )    
+    {
+      distance = (G * t * t)/2 ;
+      System.out.println( t + "\t" + distance );
+
+      t = t + 1 ;
+    }
+  }
+}
+</pre><a name="3d2d4d733803cde7b4870ea2b093aecf"></a> <p class="par" id="3d2d4d733803cde7b4870ea2b093aecf">You could also write </p> <a name="bc0317b6d11c98dcd199e732033bd332"></a> <blockquote class="quote"> <tt class="ttfamily">distance = 0.5*G*t*t</tt>; </blockquote><a name="f02c35895add0bdd701691bc31c9f75b"></a> <p class="par" id="f02c35895add0bdd701691bc31c9f75b">What were the two traps in translating the formula? If you translated it as <b class="bfseries"><tt class="ttfamily">(1/2)*G*t*t</tt></b>, you fell into the first trap. (1/2) asks for integer division of 1 by 2, resulting in zero. </p> <a name="adf719108107415689fcc9503883fe81"></a> <p class="par" id="adf719108107415689fcc9503883fe81">If you translated the formula as <b class="bfseries"><tt class="ttfamily">1/2*G*t*t</tt></b>, you fell into the second trap. To the compiler, this looks like the first wrong formula (because "/" has equal precedence to "*"). </p> <a name="7c6f98df41f5b1c31be25c32852472d5"></a> <p class="par" id="7c6f98df41f5b1c31be25c32852472d5">A third problem is computing the square. Do it as <b class="bfseries"><tt class="ttfamily">t</tt></b> multiplied by <b class="bfseries"><tt class="ttfamily">t</tt></b>. </p> <a name="e46f86fc639be76e7064d8e814a56608"></a> <div class="sidebar" data-ntiid="tag:nextthought.com,2011-10:OU-HTML:NTISidebar-CS1323_F_2015_Intro_to_Computer_Programming.sidebar.question.148" ntiid="tag:nextthought.com,2011-10:OU-HTML:NTISidebar-CS1323_F_2015_Intro_to_Computer_Programming.sidebar.question.148"> <div class="sidebar-title">Question</div> Now say that you want the table to show time increasing in steps of 0.1 seconds. Modify the program so that it does this with maximum accuracy. The user enters the limit in seconds. </div> </div></div> </body></html>

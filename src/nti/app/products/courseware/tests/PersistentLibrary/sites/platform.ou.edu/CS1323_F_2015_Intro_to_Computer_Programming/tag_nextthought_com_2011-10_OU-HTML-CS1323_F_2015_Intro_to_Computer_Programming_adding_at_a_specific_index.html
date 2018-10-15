@@ -1,0 +1,49 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html lang="en"><head> <meta content="2015-12-11T16:56:47" http-equiv="last-modified" /> <meta content="1336" name="NTIRelativeScrollHeight" /> <meta content="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.adding_at_a_specific_index" name="NTIID" /> <meta content="NextThought" name="generator" /> <meta content="text/html; charset=ascii" http-equiv="content-type" /> <title>Adding at a Specific Index</title> <link href="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.removing_an_element" rel="next" title="Removing an Element" /> <link href="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.setting_arraylist_elements" rel="prev" title="Setting ArrayList Elements" /> <link href="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.reading:Chortle_CH54" rel="up" title="ArrayList class" /> <link href="styles/styles.css" rel="stylesheet" /> <link href="styles/content.css" rel="stylesheet" /> </head> <body id="NTIContent"> <div class="page-contents"><div data-ntiid="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.adding_at_a_specific_index" id="a0000000608" ntiid="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.adding_at_a_specific_index"> <div class="chapter title">Adding at a Specific Index</div> <p class="placeholder"></p> <a name="60340cf6f9d81d23b2711b56c344fba2"></a> <div class="sidebar" data-ntiid="tag:nextthought.com,2011-10:OU-HTML:NTISidebar-CS1323_F_2015_Intro_to_Computer_Programming.sidebar.answer.269" ntiid="tag:nextthought.com,2011-10:OU-HTML:NTISidebar-CS1323_F_2015_Intro_to_Computer_Programming.sidebar.answer.269"> <div class="sidebar-title">Answer</div> <pre>element 0: Amy
+element 1: Bob
+element 2: Cindy
+element 0: Zoe
+element 1: Bob
+element 2: Cindy
+</pre> </div><a name="853f476e0a512b355dfdf87bbcc509dc"></a> <p class="par" id="853f476e0a512b355dfdf87bbcc509dc">You can insert an element at a specific index from <b class="bfseries"><tt class="ttfamily">0</tt></b> to <b class="bfseries"><tt class="ttfamily">size()&#8722;1</tt></b>. The newly added element is now located at the specified index, and all elements above that element have their index increased by one. </p> <a name="a153a71dccddf1f5b433f7d2d260a0cd"></a> <pre>void add(int index, E elt)  //  Inserts the element at index. Each element with 
+                            //  an index greater than index is shifted upward 
+                            //  and now has an index one greater than its previous value. 
+</pre><a name="c2aef47ac1ebe96530c35ce7e6c85aa2"></a> <p class="par" id="c2aef47ac1ebe96530c35ce7e6c85aa2">The method throws an <b class="bfseries"><tt class="ttfamily">IndexOutOfBoundsException</tt></b> if the index is out of bounds. No "gaps" in the list can be created by using this method. The following program uses this method: </p> <a name="8645a51bc28fb24b806f2a007b3d8c9c"></a> <pre>import java.util.* ;
+
+class ArrayListEgFour
+{
+
+  public static void main ( String[] args)
+  {
+    ArrayList&lt;String&gt; names = new ArrayList&lt;String&gt;();
+
+    names.add( "Amy" );
+    names.add( "Bob" );
+    names.add( "Chris" );
+
+    // Print original arrangement
+    System.out.println("Before adding at index 1:");
+    for ( int j=0; j &lt; names.size(); j++ )
+      System.out.println( j + ": " + names.get(j) ); 
+      
+    // Insert an element
+    names.add( 1, "Valerie");
+
+    // Print new arrangement
+    System.out.println("\nAfter adding at index 1:");
+    for ( int j=0; j &lt; names.size(); j++ )
+      System.out.println( j + ": " + names.get(j) ); 
+
+  }
+}
+</pre><a name="7404cb52c97bee3a0c1980df936b6287"></a> <pre>Before adding at index 1:
+0: Amy
+1: Bob
+2: Chris
+
+After adding at index 1:
+0: Amy
+1: Valerie
+2: Bob
+3: Chris
+</pre><a name="d2808738f528db6eefa34348d21f0be1"></a> <div class="sidebar" data-ntiid="tag:nextthought.com,2011-10:OU-HTML:NTISidebar-CS1323_F_2015_Intro_to_Computer_Programming.sidebar.question.282" ntiid="tag:nextthought.com,2011-10:OU-HTML:NTISidebar-CS1323_F_2015_Intro_to_Computer_Programming.sidebar.question.282"> <div class="sidebar-title">Question</div> <a name="aadc1f738040b5318ac6d37c1bca6aec"></a> <p class="par" id="aadc1f738040b5318ac6d37c1bca6aec"> Would the following statement work in the above program? </p> <a name="33e8e03fcca51a28669acfc3701c04a2"></a> <pre>names.add(5, "Gertrude");
+</pre> </div> </div></div> </body></html>

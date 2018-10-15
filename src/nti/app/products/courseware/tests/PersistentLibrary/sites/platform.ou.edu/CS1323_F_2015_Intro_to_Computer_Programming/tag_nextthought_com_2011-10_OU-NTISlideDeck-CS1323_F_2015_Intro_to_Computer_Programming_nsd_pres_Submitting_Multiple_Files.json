@@ -1,0 +1,82 @@
+{
+  "MimeType": "application/vnd.nextthought.ntislidedeck",
+  "Videos": [
+    {
+      "MimeType": "application/vnd.nextthought.ntislidevideo",
+      "video-ntiid": "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_HW.15_Submitting_Multiple_Files",
+      "title": "How to Submit Multiple Files on Janux",
+      "creator": "Deborah Trytten",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Submitting_Multiple_Files",
+      "thumbnail": "//www.kaltura.com/p/1500101/thumbnail/entry_id/0_bu14kcnb/width/640/",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Submitting_Multiple_Files_video",
+      "class": "ntislidevideo"
+    }
+  ],
+  "creator": "Deborah Trytten",
+  "title": "Submitting Multiple Program Files on Janux",
+  "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Submitting_Multiple_Files",
+  "Slides": [
+    {
+      "MimeType": "application/vnd.nextthought.slide",
+      "slidevideoid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Submitting_Multiple_Files_video",
+      "slidetitle": "Submitting Multiple Program Files on Janux",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Submitting_Multiple_Files",
+      "slidevideostart": "0.0",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlide-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Submitting_Multiple_Files_slide_1",
+      "slideimage": "resources/CS1323_F_2015_Intro_to_Computer_Programming/1697f76e0dbc80147edcde2037fae6b178e9bb05/fd35e23767020999111e1f49239199b4c5eff23e.png",
+      "slidevideoend": "4.0",
+      "slidenumber": "1",
+      "class": "slide"
+    },
+    {
+      "MimeType": "application/vnd.nextthought.slide",
+      "slidevideoid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Submitting_Multiple_Files_video",
+      "slidetitle": "In Eclipse",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Submitting_Multiple_Files",
+      "slidevideostart": "4.0",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlide-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Submitting_Multiple_Files_slide_2",
+      "slideimage": "resources/CS1323_F_2015_Intro_to_Computer_Programming/018ee17f4bf871e6e196d554b8231dc32adaf695/fd35e23767020999111e1f49239199b4c5eff23e.png",
+      "slidevideoend": "176.0",
+      "slidenumber": "2",
+      "class": "slide"
+    },
+    {
+      "MimeType": "application/vnd.nextthought.slide",
+      "slidevideoid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Submitting_Multiple_Files_video",
+      "slidetitle": "Choose Files",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Submitting_Multiple_Files",
+      "slidevideostart": "176.0",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlide-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Submitting_Multiple_Files_slide_3",
+      "slideimage": "resources/CS1323_F_2015_Intro_to_Computer_Programming/8988268f2d0de3dd847b83eacc792edeba2dd5d3/fd35e23767020999111e1f49239199b4c5eff23e.png",
+      "slidevideoend": "218.0",
+      "slidenumber": "3",
+      "class": "slide"
+    },
+    {
+      "MimeType": "application/vnd.nextthought.slide",
+      "slidevideoid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Submitting_Multiple_Files_video",
+      "slidetitle": "On Janux",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Submitting_Multiple_Files",
+      "slidevideostart": "218.0",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlide-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Submitting_Multiple_Files_slide_4",
+      "slideimage": "resources/CS1323_F_2015_Intro_to_Computer_Programming/145cfe069ef718a866d40435aacd507d4d2fe3de/fd35e23767020999111e1f49239199b4c5eff23e.png",
+      "slidevideoend": "237.0",
+      "slidenumber": "4",
+      "class": "slide"
+    },
+    {
+      "MimeType": "application/vnd.nextthought.slide",
+      "slidevideoid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Submitting_Multiple_Files_video",
+      "slidetitle": "Keep Programming!",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Submitting_Multiple_Files",
+      "slidevideostart": "237.0",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlide-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Submitting_Multiple_Files_slide_5",
+      "slideimage": "resources/CS1323_F_2015_Intro_to_Computer_Programming/624a970faaa12b874dba82b88fd0490b4fdf7f4c/fd35e23767020999111e1f49239199b4c5eff23e.png",
+      "slidevideoend": "247.0",
+      "slidenumber": "5",
+      "class": "slide"
+    }
+  ],
+  "ntiid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Submitting_Multiple_Files",
+  "class": "ntislidedeck"
+}

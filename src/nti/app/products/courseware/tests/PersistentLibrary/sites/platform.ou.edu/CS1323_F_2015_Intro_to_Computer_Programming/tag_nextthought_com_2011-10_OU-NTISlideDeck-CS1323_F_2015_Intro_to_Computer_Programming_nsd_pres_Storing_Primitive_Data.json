@@ -1,0 +1,130 @@
+{
+  "MimeType": "application/vnd.nextthought.ntislidedeck",
+  "Videos": [
+    {
+      "MimeType": "application/vnd.nextthought.ntislidevideo",
+      "video-ntiid": "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_02.01.02_Storing_Primitive_Data",
+      "title": "int and double",
+      "creator": "Deborah Trytten",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Storing_Primitive_Data",
+      "thumbnail": "//www.kaltura.com/p/1500101/thumbnail/entry_id/0_p6vf9qwj/width/640/",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Storing_Primitive_Data_video",
+      "class": "ntislidevideo"
+    }
+  ],
+  "creator": "Deborah Trytten",
+  "title": "Storing Primitive Data",
+  "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Storing_Primitive_Data",
+  "Slides": [
+    {
+      "MimeType": "application/vnd.nextthought.slide",
+      "slidevideoid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Storing_Primitive_Data_video",
+      "slidetitle": "int and double",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Storing_Primitive_Data",
+      "slidevideostart": "0.0",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlide-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Storing_Primitive_Data_slide_1",
+      "slideimage": "resources/CS1323_F_2015_Intro_to_Computer_Programming/94862bb963569a1d3c9573930655ddce922211fb/fd35e23767020999111e1f49239199b4c5eff23e.png",
+      "slidevideoend": "3.0",
+      "slidenumber": "1",
+      "class": "slide"
+    },
+    {
+      "MimeType": "application/vnd.nextthought.slide",
+      "slidevideoid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Storing_Primitive_Data_video",
+      "slidetitle": "Important Choice",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Storing_Primitive_Data",
+      "slidevideostart": "3.0",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlide-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Storing_Primitive_Data_slide_2",
+      "slideimage": "resources/CS1323_F_2015_Intro_to_Computer_Programming/dd736cfcccf9679405bfe8c41971aa6f9ac1248c/fd35e23767020999111e1f49239199b4c5eff23e.png",
+      "slidevideoend": "22.0",
+      "slidenumber": "2",
+      "class": "slide"
+    },
+    {
+      "MimeType": "application/vnd.nextthought.slide",
+      "slidevideoid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Storing_Primitive_Data_video",
+      "slidetitle": "Remember Algebra",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Storing_Primitive_Data",
+      "slidevideostart": "22.0",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlide-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Storing_Primitive_Data_slide_3",
+      "slideimage": "resources/CS1323_F_2015_Intro_to_Computer_Programming/647f2af2a467bcf874eb3a131e47dcdc8f6582f7/fd35e23767020999111e1f49239199b4c5eff23e.png",
+      "slidevideoend": "59.0",
+      "slidenumber": "3",
+      "class": "slide"
+    },
+    {
+      "MimeType": "application/vnd.nextthought.slide",
+      "slidevideoid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Storing_Primitive_Data_video",
+      "slidetitle": "Programming with Numbers",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Storing_Primitive_Data",
+      "slidevideostart": "59.0",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlide-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Storing_Primitive_Data_slide_4",
+      "slideimage": "resources/CS1323_F_2015_Intro_to_Computer_Programming/873f1665aa3e7d5200b237177c15756549c08b5f/fd35e23767020999111e1f49239199b4c5eff23e.png",
+      "slidevideoend": "101.0",
+      "slidenumber": "4",
+      "class": "slide"
+    },
+    {
+      "MimeType": "application/vnd.nextthought.slide",
+      "slidevideoid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Storing_Primitive_Data_video",
+      "slidetitle": "int Weirdness",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Storing_Primitive_Data",
+      "slidevideostart": "101.0",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlide-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Storing_Primitive_Data_slide_5",
+      "slideimage": "resources/CS1323_F_2015_Intro_to_Computer_Programming/385b6fdee8f977a318232a6389a847d8db18e734/fd35e23767020999111e1f49239199b4c5eff23e.png",
+      "slidevideoend": "181.0",
+      "slidenumber": "5",
+      "class": "slide"
+    },
+    {
+      "MimeType": "application/vnd.nextthought.slide",
+      "slidevideoid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Storing_Primitive_Data_video",
+      "slidetitle": "Let\u2019s Make Everything double!",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Storing_Primitive_Data",
+      "slidevideostart": "181.0",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlide-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Storing_Primitive_Data_slide_6",
+      "slideimage": "resources/CS1323_F_2015_Intro_to_Computer_Programming/0fd79732445113a23433c45e1b899b98797de4b9/fd35e23767020999111e1f49239199b4c5eff23e.png",
+      "slidevideoend": "230.0",
+      "slidenumber": "6",
+      "class": "slide"
+    },
+    {
+      "MimeType": "application/vnd.nextthought.slide",
+      "slidevideoid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Storing_Primitive_Data_video",
+      "slidetitle": "double Weirdness",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Storing_Primitive_Data",
+      "slidevideostart": "230.0",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlide-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Storing_Primitive_Data_slide_7",
+      "slideimage": "resources/CS1323_F_2015_Intro_to_Computer_Programming/c6b475d0a5a61fcce443eb2c2d9520c8071fd353/fd35e23767020999111e1f49239199b4c5eff23e.png",
+      "slidevideoend": "314.0",
+      "slidenumber": "7",
+      "class": "slide"
+    },
+    {
+      "MimeType": "application/vnd.nextthought.slide",
+      "slidevideoid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Storing_Primitive_Data_video",
+      "slidetitle": "Software Engineering Decision",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Storing_Primitive_Data",
+      "slidevideostart": "314.0",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlide-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Storing_Primitive_Data_slide_8",
+      "slideimage": "resources/CS1323_F_2015_Intro_to_Computer_Programming/9a065c2c2da2e46c09e4498d156e54bb15c9341f/fd35e23767020999111e1f49239199b4c5eff23e.png",
+      "slidevideoend": "347.0",
+      "slidenumber": "8",
+      "class": "slide"
+    },
+    {
+      "MimeType": "application/vnd.nextthought.slide",
+      "slidevideoid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Storing_Primitive_Data_video",
+      "slidetitle": "Keep Programming!",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Storing_Primitive_Data",
+      "slidevideostart": "347.0",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlide-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Storing_Primitive_Data_slide_9",
+      "slideimage": "resources/CS1323_F_2015_Intro_to_Computer_Programming/2f4886961a639e520ea2253e846e07eec0fbc8c4/fd35e23767020999111e1f49239199b4c5eff23e.png",
+      "slidevideoend": "353.0",
+      "slidenumber": "9",
+      "class": "slide"
+    }
+  ],
+  "ntiid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Storing_Primitive_Data",
+  "class": "ntislidedeck"
+}

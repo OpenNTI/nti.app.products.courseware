@@ -1,0 +1,1108 @@
+WEBVTT
+Kind: captions
+Language: en
+
+00:00:01.230 --> 00:00:08.230
+&gt;&gt;So now that we know some more control structures,
+let's figure out who's your best friend. Suppose
+
+00:00:10.230 --> 00:00:13.619
+you have a file that contains the name of
+the people who sent you text messages in the
+
+00:00:13.619 --> 00:00:20.130
+last month. The person who sent you the most
+messages is probably your best friend. As
+
+00:00:20.130 --> 00:00:23.919
+always with programs we're going to create
+the test data first. So let's say there were
+
+00:00:23.919 --> 00:00:29.820
+four text messages. If we had four of them
+from person A that person would be your best
+
+00:00:29.820 --> 00:00:35.430
+friend. If we had one from A then one from
+B then two from A that would be three from
+
+00:00:35.430 --> 00:00:40.260
+A and one from B and again, person A would
+be your best friend. Now the next case is
+
+00:00:40.260 --> 00:00:44.550
+a little trickier. What if we had one from
+A then one from B then one from A then one
+
+00:00:44.550 --> 00:00:50.100
+from B? Well that could be either A or B.
+We probably want to decide which. One way
+
+00:00:50.100 --> 00:00:54.739
+to decide that is to choose the one that gets
+there first. It doesn't really matter which
+
+00:00:54.739 --> 00:00:59.030
+way you choose as long as you're systematic
+about it. We could also have three from B
+
+00:00:59.030 --> 00:01:03.649
+and one from A. When that happens we would
+want person B to be the one who was your best
+
+00:01:03.649 --> 00:01:08.690
+friend, and of course we could have four messages
+from these. Boundary cases we might want to
+
+00:01:08.690 --> 00:01:13.390
+consider include having one text message,
+and of course the ties case we've already
+
+00:01:13.390 --> 00:01:20.260
+talked about, and all of our messages coming
+from the same person. The first thing we need
+
+00:01:20.260 --> 00:01:24.700
+to do is design some methods. So one method
+we're certainly going to want to have is read
+
+00:01:24.700 --> 00:01:30.960
+addresses from file. The input for that will
+be the filename. Now you might think that
+
+00:01:30.960 --> 00:01:35.270
+you could put the filename as a constant variable
+inside the method and that's true you can
+
+00:01:35.270 --> 00:01:40.390
+do that. But because filenames tend to change
+a lot I find it useful to leave them in the
+
+00:01:40.390 --> 00:01:44.970
+main program and pass them as a parameter.
+It's easy to find things in the main program
+
+00:01:44.970 --> 00:01:50.740
+particularly if you keep your main programs
+short as we usually do. The output is going
+
+00:01:50.740 --> 00:01:55.390
+to be an ArrayList of strings because that's
+the only structure we have for storing a group
+
+00:01:55.390 --> 00:02:01.540
+of strings at this point. The next method
+would be find most common element. So there
+
+00:02:01.540 --> 00:02:04.950
+we're going to step through our ArrayList
+of strings which means we're going to need
+
+00:02:04.950 --> 00:02:10.920
+that as an input parameter and we'll return
+a string that will be the name of the person
+
+00:02:10.920 --> 00:02:17.680
+who sent you the most text messages. Now we
+haven't read from file before so this is a
+
+00:02:17.680 --> 00:02:22.590
+new trick we're going to learn. The good news
+is that reading from file is exactly like
+
+00:02:22.590 --> 00:02:29.590
+keyboard input using a scanner. So you create
+scanner file equals new scanner new file and
+
+00:02:29.680 --> 00:02:34.980
+then the filename dot text in quotes. So the
+file name is a string. The only thing that's
+
+00:02:34.980 --> 00:02:41.200
+different than creating the scanner the way
+we've done in the past is this new file part.
+
+00:02:41.200 --> 00:02:47.209
+Now the import should come from the API, so
+let's go and look and see where the file class
+
+00:02:47.209 --> 00:02:54.209
+is located. So I'm going to Safari and I'm
+going to look up the Java API. We're using
+
+00:02:56.969 --> 00:03:02.889
+Java 7 but it really doesn't matter which
+version of the API you choose. All the classes
+
+00:03:02.889 --> 00:03:09.840
+are over here so you do control F and that
+will bring up your find box and you look for
+
+00:03:09.840 --> 00:03:15.849
+file. The word file is in a lot of class names
+so you just keep clicking forward until you
+
+00:03:15.849 --> 00:03:21.430
+find the one which is the right one. It's
+this one right here. The place you find the
+
+00:03:21.430 --> 00:03:27.219
+import statement is right up here so right
+at the top is where we see that the class
+
+00:03:27.219 --> 00:03:34.219
+file is in the Java dot I/O package so that's
+where we're going to have to get that from.
+
+00:03:34.389 --> 00:03:39.340
+Files are expected to be in your project directory
+not your source directory. Unfortunately Eclipse
+
+00:03:39.340 --> 00:03:43.359
+tends to put them in your source directory
+because that's where we put our other files.
+
+00:03:43.359 --> 00:03:47.560
+So these are things you have to pay attention
+to. Files tend to be a little troublesome
+
+00:03:47.560 --> 00:03:54.560
+to get set up the first time, so we'll pay
+attention to all those details. Files have
+
+00:03:54.590 --> 00:03:59.459
+some special properties. If you think about
+the console, the console and files are very
+
+00:03:59.459 --> 00:04:04.129
+much alike. For one thing they're sequential,
+so with the console when you're typing in
+
+00:04:04.129 --> 00:04:09.120
+characters you get the next characters that
+are typed in. You can't go back and read in
+
+00:04:09.120 --> 00:04:14.620
+previous characters. The same thing is true
+of files too. You read in things sequentially
+
+00:04:14.620 --> 00:04:19.010
+one at a time and you don't back up. Well
+that's fine because we have loops that do
+
+00:04:19.010 --> 00:04:26.010
+that. Has next line is a very important method
+to use in files. What it does is tells you
+
+00:04:26.920 --> 00:04:31.540
+whether there still is data left in the file
+that you need to open so that's how we'll
+
+00:04:31.540 --> 00:04:36.190
+tell when we hit the end. This is how we can
+get data out of a file without knowing how
+
+00:04:36.190 --> 00:04:43.190
+much is in there to start with. Let's go to
+Eclipse and write some code. So there's our
+
+00:04:51.760 --> 00:04:58.760
+workspace and we'll create a project called
+My Best Friend. We'll get it opened, select
+
+00:05:11.190 --> 00:05:18.190
+the source file, create a class, which I'll
+also call Mybestfriend but with no spaces
+
+00:05:19.420 --> 00:05:26.420
+because it's a class name. And we'll do our
+little cleanup work that we do every time.
+
+00:05:44.410 --> 00:05:51.410
+So we had a message that was going to return
+an ArrayList of strings that was called read
+
+00:05:53.140 --> 00:06:00.140
+addresses from file. The parameter was the
+filename. Now we're using the ArrayList again
+
+00:06:05.700 --> 00:06:12.700
+so we need to import that. So we import Java
+dot util dot ArrayList. We know we're going
+
+00:06:14.640 --> 00:06:21.640
+to need some other imports too, so lets put
+them there right now. We'll need our scanner
+
+00:06:24.970 --> 00:06:31.970
+and we're going to need our file class, Java
+dot I/O dot file. Now because we're up here
+
+00:06:32.960 --> 00:06:37.750
+I'm going to take a little shortcut and import
+one more class we're going to need later...that's
+
+00:06:37.750 --> 00:06:44.750
+we're going to need Java dot I/O dot file
+not found exception. We'll talk about exactly
+
+00:06:47.270 --> 00:06:51.840
+why we need that one in a few minutes. Now
+you'll notice that all of our classes that
+
+00:06:51.840 --> 00:06:56.640
+we're using come from two different packages.
+One is Java dot util and the other is Java
+
+00:06:56.640 --> 00:07:01.750
+dot I/O. There is another way that we can
+do these import statements that some people
+
+00:07:01.750 --> 00:07:06.180
+prefer. I'm going to show you that way because
+you may want to do it. Personally I like this
+
+00:07:06.180 --> 00:07:10.330
+way because it's very specific about what
+classes you're using but this is legal in
+
+00:07:10.330 --> 00:07:17.330
+Java too. Import Java dot util period asterisk.
+The asterisk is something that we call "a
+
+00:07:19.790 --> 00:07:24.080
+wildcard" in computer science and what that
+means is that it will find anything that's
+
+00:07:24.080 --> 00:07:29.210
+in the Java dot util package. So some people
+get lazy and do that. The reason that I like
+
+00:07:29.210 --> 00:07:34.370
+to put the file names in there is that it
+tells you exactly which classes are used.
+
+00:07:34.370 --> 00:07:39.080
+So let's say the next version of Java changes
+the scanner a little bit. If I know the scanner
+
+00:07:39.080 --> 00:07:43.890
+is used in this class it's very easy to tell
+from the import statements that I might have
+
+00:07:43.890 --> 00:07:50.890
+to maintain it. But I really don't care which
+way you do it. So we're going to create our
+
+00:07:52.330 --> 00:07:59.330
+scanner option. I'm going to call it filename
+because it's not the keyboard anymore. So
+
+00:08:01.120 --> 00:08:08.120
+here's the new scanner with a new file of
+the filename. You'll notice that immediately
+
+00:08:12.740 --> 00:08:17.730
+Eclipse went crazy lots of little red stuff
+all over the place. This may just because
+
+00:08:17.730 --> 00:08:23.270
+we haven't returned our object yet so let's
+do that. We know we're going to have to construct
+
+00:08:23.270 --> 00:08:30.270
+an ArrayList of strings. I usually call those
+result. And then at the end we'll return result.
+
+00:08:38.669 --> 00:08:42.629
+Eclipse is a little bit happier but it's not
+really happy yet. Let's take a look at the
+
+00:08:42.629 --> 00:08:49.240
+error message over here. It says the file
+is never closed which is true and it also
+
+00:08:49.240 --> 00:08:56.240
+says there's an unhandled exception type file
+not found. So, as far as closing the file
+
+00:09:00.029 --> 00:09:04.620
+that's how you solve that problem, file dot
+close. It is important to remember to close
+
+00:09:04.620 --> 00:09:08.959
+files and it's something that's very easy
+to forget. The reason you have to close them
+
+00:09:08.959 --> 00:09:13.860
+is your program's only allowed to have so
+many files open at the same time so basically
+
+00:09:13.860 --> 00:09:19.370
+you're using up a scarce resource and if you
+don't closure files you eventually will run
+
+00:09:19.370 --> 00:09:24.649
+out of files to open. Programs tend open a
+lot of files particularly as they get bigger
+
+00:09:24.649 --> 00:09:29.949
+and so managing that scarce resources is very
+important. But notice Eclipse is still not
+
+00:09:29.949 --> 00:09:35.170
+really happy yet. It still has a little red
+arrow and what it's complaining about, although
+
+00:09:35.170 --> 00:09:41.199
+not very articulately at this point, is the
+fact that because we're using a file there's
+
+00:09:41.199 --> 00:09:47.769
+a problem that can happen. Files cause lots
+and lots of trouble. They have a tendency
+
+00:09:47.769 --> 00:09:52.850
+to get misplaced and not open correctly so
+in addition to having to remember to close
+
+00:09:52.850 --> 00:09:59.129
+the file Java also has some protections in
+there that forces you to warn anybody who's
+
+00:09:59.129 --> 00:10:04.240
+using your method that it may not behave well
+because it may not find the file. The way
+
+00:10:04.240 --> 00:10:11.240
+we say that is throws file not found exception
+and what it means is this method may not be
+
+00:10:12.079 --> 00:10:18.100
+able to find a file it needs and so it may
+have to rely on you to help with the filename.
+
+00:10:18.100 --> 00:10:22.459
+That's what it's basically saying. Now Eclipse
+will help you with where you need to put these
+
+00:10:22.459 --> 00:10:27.529
+things in, but essentially it's any method
+where you open a file and any method that
+
+00:10:27.529 --> 00:10:32.670
+calls a method where you open a file. In other
+words this tends to propagate throughout your
+
+00:10:32.670 --> 00:10:39.670
+program. So here we go [pause] throws file
+not found exception. Now we're way off the
+
+00:10:45.209 --> 00:10:52.209
+screen at this point so we'll indent that
+part. When we call this method from the main
+
+00:10:55.709 --> 00:11:02.709
+program you'll see what happens. So let's
+create an ArrayList and we'll call this emails
+
+00:11:05.069 --> 00:11:12.069
+is read addresses from file of some filename.
+Of course we should create a filename so I'll
+
+00:11:21.499 --> 00:11:28.499
+call it email addresses dot TXT. If you're
+unaccustomed to paying attention to file extensions
+
+00:11:32.339 --> 00:11:38.990
+now is a good time to get used to it. So you've
+probably seen file extensions like .doc, or
+
+00:11:38.990 --> 00:11:45.300
+.docx, or .ppt. Well the ones we tend to use
+in programming are .java for Java code, .class
+
+00:11:45.300 --> 00:11:49.559
+now that one's created by Eclipse so you don't
+actually see it but you might see it in your
+
+00:11:49.559 --> 00:11:55.389
+directories if you look at them. The ones
+we use for reading files are .txt which stands
+
+00:11:55.389 --> 00:12:01.439
+for "text" so those are readable in something
+like Notepad or Word Pad on a Windows machine
+
+00:12:01.439 --> 00:12:05.399
+so let's go back and work on our program a
+little bit more. So you'll notice that read
+
+00:12:05.399 --> 00:12:10.779
+addresses from a file the program isn't happy
+with. Ah, look at that! We've made one of
+
+00:12:10.779 --> 00:12:15.410
+those mistakes again. We can't make a static
+reference to a nonstatic method. Well we know
+
+00:12:15.410 --> 00:12:22.410
+how to fix that now. We make our method static.
+And now that it's happy about that it's unhappy
+
+00:12:23.449 --> 00:12:29.749
+about something else. Unhandled file type
+file not found exception. So that's a Eclipse's
+
+00:12:29.749 --> 00:12:34.110
+way of expressing to you that you need to
+throw the file not found exception from the
+
+00:12:34.110 --> 00:12:41.110
+main program, because the main program called
+the other method. Now one thing I like to
+
+00:12:46.869 --> 00:12:53.869
+do when I'm creating files is to do a very
+simple read in first and then do what I want
+
+00:12:55.819 --> 00:13:01.259
+with the data. This handles all the problem
+with the file being located in the wrong position,
+
+00:13:01.259 --> 00:13:08.259
+so let's create a text file that we can use.
+To do that in Eclipse you create new and it
+
+00:13:09.910 --> 00:13:16.769
+says file. Now here's a place you want to
+be careful. It needs to be in the project
+
+00:13:16.769 --> 00:13:23.769
+directory not the source directory. So we
+can do that by clicking there and and the
+
+00:13:25.920 --> 00:13:32.920
+filename will be my text messages.txt. Remember
+to include the extension. Now this will create
+
+00:13:38.910 --> 00:13:45.910
+an empty file so I'm going to create some
+data. This is about what my day texting looks
+
+00:13:49.889 --> 00:13:56.889
+like. Susan is one of my good friends and
+Missy is my sister. Notice it's very important
+
+00:14:00.839 --> 00:14:06.009
+that everything's spelled correctly by using
+two names that had the same number of characters
+
+00:14:06.009 --> 00:14:11.179
+makes it a little easier to spot typos. Now
+I'm going to go to the file menu and save
+
+00:14:11.179 --> 00:14:18.179
+this file, because if we don't save it the
+program won't be able to use it. So now we're
+
+00:14:19.189 --> 00:14:26.189
+going to go back and rename this to my text
+messages.txt. I went back and renamed this
+
+00:14:27.920 --> 00:14:33.480
+to my text messages the same way I named the
+file so at this point it should open correctly.
+
+00:14:33.480 --> 00:14:36.980
+But let's actually write a little loop to
+just quickly read through the file and make
+
+00:14:36.980 --> 00:14:43.720
+sure everything's working before we try to
+work with the data. So we'll have while and
+
+00:14:43.720 --> 00:14:50.720
+we're going to have file dot has next line
+so that checks to see if we've ran out of
+
+00:14:57.240 --> 00:15:03.230
+characters in the file and then we'll do file
+dot next line. Notice I'm not even saving
+
+00:15:03.230 --> 00:15:08.850
+this anywhere. All I'm doing is making sure
+that we're reading the data correctly. Another
+
+00:15:08.850 --> 00:15:15.850
+thing we can do here if we want is to save
+this to a string and then print it out. We
+
+00:15:18.910 --> 00:15:23.709
+can do that because it gives us a better test
+to show that the program is working. Using
+
+00:15:23.709 --> 00:15:28.600
+system outprint line for debugging is kind
+of tacky it's not the way we want to do it
+
+00:15:28.600 --> 00:15:33.769
+all the time, but it's okay for cases like
+this where we're just doing a quick check.
+
+00:15:33.769 --> 00:15:40.769
+So let's run our program. Now notice this
+time it wasn't waiting for us. So let's take
+
+00:15:46.069 --> 00:15:53.069
+a look and see what it read in; we have 1,
+2, 3, 4 Susans and 1, 2, 3, 4, 5 Missys. Probably
+
+00:15:54.989 --> 00:15:59.160
+a good idea to go back and check the file
+just like everything else in computer science
+
+00:15:59.160 --> 00:16:06.160
+it's easy to get off by one. So we have 1,
+2, 3, 4 Susans and 1, 2, 3, 4, 5 Missys so
+
+00:16:07.879 --> 00:16:14.879
+it looks like our program is reading the text
+file perfectly. So now that we know that's
+
+00:16:15.759 --> 00:16:22.759
+all going perfectly we can quickly add the
+data in to the array. So we will have result
+
+00:16:24.959 --> 00:16:31.959
+dot add name. At this point we can run again
+just to be sure. Now our program isn't going
+
+00:16:34.600 --> 00:16:39.999
+to do anything but even though it's not showing
+us that it's doing anything, one of the things
+
+00:16:39.999 --> 00:16:44.410
+we know is that it didn't throw a file not
+found exception. So that means it was able
+
+00:16:44.410 --> 00:16:50.389
+to find the file successfully and able to
+read it in. So now that we have our data the
+
+00:16:50.389 --> 00:16:56.189
+next thing we want to do is to find the most
+common name. That's another method. This time
+
+00:16:56.189 --> 00:17:03.189
+we'll remember to make it public and static.
+It's going to return a string and take our
+
+00:17:04.569 --> 00:17:11.569
+ArrayList as a parameter. It doesn't really
+matter what you call the parameter as long
+
+00:17:17.959 --> 00:17:24.490
+as it's meaningful. To get Eclipse happy again
+let's just return an empty string. That will
+
+00:17:24.490 --> 00:17:31.490
+get rid of those annoying red X's [pause]
+and now we're at the point where we need a
+
+00:17:32.510 --> 00:17:37.190
+strategy. So let's think about how we can
+solve this problem. We could try to count
+
+00:17:37.190 --> 00:17:42.000
+the number of times the first person's address
+occurred and then count the number of times
+
+00:17:42.000 --> 00:17:45.850
+the second person occurred and then count
+the number of times the third person occurred,
+
+00:17:45.850 --> 00:17:49.549
+but that's getting into a very complicated
+structure for something that doesn't need
+
+00:17:49.549 --> 00:17:54.510
+to be that complicated. So let's think about
+a different structure. What if we took our
+
+00:17:54.510 --> 00:17:59.690
+ArrayList and sorted it? At that point all
+the names that are the same would be together
+
+00:17:59.690 --> 00:18:04.120
+and we would be able to figure out how many
+times each name occurred by stepping through
+
+00:18:04.120 --> 00:18:09.330
+the array once. It's really a good strategy
+even though it's tricky to get it set up so
+
+00:18:09.330 --> 00:18:13.940
+let's go and look at is a little bit. Now
+one of the rules that's very important to
+
+00:18:13.940 --> 00:18:19.320
+follow is when you're working with a nontrivial
+problem do not try to program anything that
+
+00:18:19.320 --> 00:18:23.590
+you can't describe how to do systematically
+by hand. If you don't know how to do it by
+
+00:18:23.590 --> 00:18:27.340
+hand you don't know how to program it and
+then you should invest your time in figuring
+
+00:18:27.340 --> 00:18:33.269
+out how to do it by hand first, and then translating
+that into code. Sometimes people get so anxious
+
+00:18:33.269 --> 00:18:38.019
+to get some code done and to have it look
+like they're making progress that they start
+
+00:18:38.019 --> 00:18:42.730
+sort of randomly substituting things into
+programs. That is not a strategy that has
+
+00:18:42.730 --> 00:18:47.890
+much success. So here's a better algorithm;
+now when I use the word algorithm that's a
+
+00:18:47.890 --> 00:18:52.470
+very important word in computer science. And
+it actually is a scientific word that has
+
+00:18:52.470 --> 00:18:57.260
+a very specific meaning. We're not going to
+worry too much about the meaning for now,
+
+00:18:57.260 --> 00:19:01.990
+but what you can think about algorithms is
+being a sequence of steps that solve a problem.
+
+00:19:01.990 --> 00:19:05.500
+That's a good place to start with the word.
+So the first thing we're going to do is sort
+
+00:19:05.500 --> 00:19:11.870
+the data and then count the number of times
+that each name has appeared. We're going to
+
+00:19:11.870 --> 00:19:15.980
+need to keep track of the previous name, because
+that's how we'll know when we're starting
+
+00:19:15.980 --> 00:19:20.919
+with a new name or continuing with an old
+name. We also need to keep track of the maximum
+
+00:19:20.919 --> 00:19:25.230
+number of matches that's occurred so that
+we know if a new name has more matches than
+
+00:19:25.230 --> 00:19:30.230
+old name and we're going to have to keep track
+of the name with the most matches. So there's
+
+00:19:30.230 --> 00:19:34.669
+going to be a lot of data hanging around here.
+So let's think through how this algorithm
+
+00:19:34.669 --> 00:19:39.440
+would work. Here's our data now I've already
+sorted the data so we have three A's followed
+
+00:19:39.440 --> 00:19:45.480
+by four B's. Let's trace through one step
+at a time how our algorithm might work. Our
+
+00:19:45.480 --> 00:19:50.340
+first element is A. There is no previous element
+at this point and our current count should
+
+00:19:50.340 --> 00:19:56.169
+be one because we just have one A. Our max
+count then will also become one, because that's
+
+00:19:56.169 --> 00:20:02.059
+the biggest one we've found so far and our
+max value will be A, the one we've found.
+
+00:20:02.059 --> 00:20:06.700
+When we get our second A it will match our
+previous A. That means the current count should
+
+00:20:06.700 --> 00:20:13.260
+be incremented to two which increments max
+count to two, and the max value stays at A.
+
+00:20:13.260 --> 00:20:19.919
+Here's our third A. The previous is still
+A, the current count gets incremented to three.
+
+00:20:19.919 --> 00:20:26.620
+The max count gets incremented to three and
+our max value remains at A. Here's the changeover.
+
+00:20:26.620 --> 00:20:32.570
+When we find our first B our previous is an
+A and that tells us we need to restart our
+
+00:20:32.570 --> 00:20:38.139
+current count at one. Our max count stays
+at three because one is less than three and
+
+00:20:38.139 --> 00:20:44.720
+our max value is still A. When we find our
+second B it now matches our previous value
+
+00:20:44.720 --> 00:20:50.429
+of B. Our current count gets incremented to
+two. Our max count stays at three and max
+
+00:20:50.429 --> 00:20:57.429
+value at A, because we haven't yet gone over
+that limit. Here's our third B. Our previous
+
+00:20:57.549 --> 00:21:02.669
+value is B so that means we increment our
+current count. Now at this point our current
+
+00:21:02.669 --> 00:21:07.480
+count is equal to max count, so that's that
+troublesome tie case that we worry about.
+
+00:21:07.480 --> 00:21:13.350
+I just left it at A. You could change it to
+B I don't really care which you do and here's
+
+00:21:13.350 --> 00:21:19.240
+what happens when we get our fourth B. The
+B matches the previous B that increments current
+
+00:21:19.240 --> 00:21:26.240
+count to four so max count then goes up to
+four and max value becomes B. Notice by creating
+
+00:21:26.309 --> 00:21:32.169
+this table I made it possible to think through
+the computation and exactly what variables
+
+00:21:32.169 --> 00:21:37.269
+I was going to need before writing any code.
+Now it may seem like we spent a lot of time
+
+00:21:37.269 --> 00:21:42.230
+doing this but believe me this is much faster
+than hacking away at code and hoping that
+
+00:21:42.230 --> 00:21:49.230
+something will magically work. So let's go
+and implement the method. So we know they
+
+00:21:49.710 --> 00:21:56.710
+we're going to need a string that holds our
+previous value and we know we need to initialize
+
+00:21:59.299 --> 00:22:03.929
+that to an empty string. Remember that two
+double quotes together is how we say empty
+
+00:22:03.929 --> 00:22:10.929
+string in Java. We know we need a current
+count and that that needed to be initialized
+
+00:22:12.789 --> 00:22:19.789
+to one. We know we needed a max count and
+that needed to be initialized to zero. We
+
+00:22:21.779 --> 00:22:28.779
+know we needed a string for max value and
+that needed to be initialized to the first
+
+00:22:29.950 --> 00:22:36.950
+element in the array so that's addresses dot
+get zero. So now we have our variables set
+
+00:22:39.669 --> 00:22:46.669
+up. One variable was each column in the table.
+So we're going to loop through our array.
+
+00:22:47.389 --> 00:22:54.389
+So we're going to have while current count...whoops
+whoops whoops! Wrong thing. Let's talk about
+
+00:22:58.169 --> 00:23:04.100
+that for a minute. We need to have an index
+that's stepping through our ArrayList one
+
+00:23:04.100 --> 00:23:08.679
+at a time. Now that's something we didn't
+figure out in our table because we weren't
+
+00:23:08.679 --> 00:23:15.679
+really looking at the ArrayList part of it
+so let's add in an index. The index of course
+
+00:23:19.309 --> 00:23:25.330
+should be initialized to zero because remember
+zero is our first element in our ArrayList.
+
+00:23:25.330 --> 00:23:31.700
+ArrayLists are zero indexed so we always start
+counting at zero. So while our index is less
+
+00:23:31.700 --> 00:23:38.700
+than addresses dot size. The other thing I
+like to do right at the start is to increment
+
+00:23:44.409 --> 00:23:49.710
+our index. That keeps you from writing infinite
+loops. Now we're going to want to have that
+
+00:23:49.710 --> 00:23:55.529
+incremented at the end. So the first thing
+we want to do is to compare our next element
+
+00:23:55.529 --> 00:24:02.529
+in the array to our previous one. So if addresses
+dot get of index equals previous notice that
+
+00:24:09.610 --> 00:24:13.980
+I'm using equals here because we're in the
+string class so you don't use two equals signs
+
+00:24:13.980 --> 00:24:20.980
+to compare strings. If it's the same as the
+previous one, we increment current count.
+
+00:24:23.649 --> 00:24:30.649
+Current count equals current count plus one.
+Then we need to check and see if we're now
+
+00:24:34.940 --> 00:24:41.940
+over the max value. So if current count is
+greater than max value then max value equals
+
+00:24:49.620 --> 00:24:56.620
+current count and max count equals current
+count. Now we might want to think about where
+
+00:25:04.360 --> 00:25:10.659
+we're starting here, because we started current
+count at one when we're doing our first comparison
+
+00:25:10.659 --> 00:25:17.659
+here we're not going to find that the addresses
+of get index equals previous and so that increment
+
+00:25:17.750 --> 00:25:23.799
+isn't going to be done. That actually is correct.
+But we do need to get set up for our next
+
+00:25:23.799 --> 00:25:30.799
+trip through the loop. And that is previous
+equals addresses dot get of index [pause]
+
+00:25:43.429 --> 00:25:48.039
+and we may be ready to go. Notice that we've
+gotten quite a few curly braces hanging around
+
+00:25:48.039 --> 00:25:54.019
+here some of them in the correct position
+and others not. So let's clean up that mess.
+
+00:25:54.019 --> 00:25:58.200
+The other thing I like to do when they get
+complicated like this, when you start getting
+
+00:25:58.200 --> 00:26:03.440
+a lot of nested statements, is to actually
+mention which curly braces we think that one
+
+00:26:03.440 --> 00:26:10.440
+is. This helps a lot in debugging later. So
+if current count greater than max value. This
+
+00:26:11.620 --> 00:26:18.620
+one on the other hand 
+addresses equals previous and this one is
+the end of the while statement. Once again
+
+00:26:24.259 --> 00:26:30.080
+a few comments go a long way. Now there's
+one thing that hasn't happened here and that's
+
+00:26:30.080 --> 00:26:34.960
+that we haven't dealt with the case of what
+happens when our address is not equal to the
+
+00:26:34.960 --> 00:26:40.909
+previous one. So that's something we definitely
+have to consider. That's the transition between
+
+00:26:40.909 --> 00:26:47.909
+A and B in the example we worked. So else
+when they're not...Whoops! Okay so I made
+
+00:26:51.429 --> 00:26:56.980
+a mistake there but let's talk about it. I
+had two if statements and I put the else with
+
+00:26:56.980 --> 00:27:03.980
+the wrong one. The reason I was able to spot
+that so quickly, by the way, was in part because
+
+00:27:05.730 --> 00:27:11.370
+I had the comments there telling me which
+else it was. So let's cut that out and move
+
+00:27:11.370 --> 00:27:18.370
+it down here. What if our next address is
+not equal to the previous one? Well at that
+
+00:27:20.720 --> 00:27:27.720
+point current count is going to equal zero.
+We're going to reinitialize it and we're ready
+
+00:27:28.000 --> 00:27:35.000
+to go. So let's put a little comment in here
+to end the else then we set up our previous,
+
+00:27:39.049 --> 00:27:44.860
+increment our index, looks like we've got
+a start. Now we've got some complaints from
+
+00:27:44.860 --> 00:27:51.860
+Eclipse. Oh yes, well this is just a silly
+mistake. Max value is storing our string so
+
+00:27:56.080 --> 00:28:03.080
+it should get addresses dot get of index.
+And let's take a look at this one. Ah, so
+
+00:28:06.389 --> 00:28:11.610
+it says the operator greater than is not defined
+for the argument types int and string. Well
+
+00:28:11.610 --> 00:28:16.490
+that's because I used max value instead of
+max count. Now both of these mistakes are
+
+00:28:16.490 --> 00:28:21.360
+telling me something about my variable name,
+that it might be smart to pay attention to.
+
+00:28:21.360 --> 00:28:25.450
+It looks like maybe it wasn't chosen very
+well because I made the same mistake twice
+
+00:28:25.450 --> 00:28:30.090
+of thinking it was max count instead of max
+value. If we continue to struggle with this
+
+00:28:30.090 --> 00:28:37.090
+code it may be something we want to go back
+and change. The one thing we need to fix before
+
+00:28:38.559 --> 00:28:45.100
+we test this and see if it's working is our
+return statement. If we get to the end what
+
+00:28:45.100 --> 00:28:52.100
+we should be returning is max value that is
+the value that was found the most often. So
+
+00:28:53.200 --> 00:29:00.200
+let's now see if our code is running. Notice
+without having to type it in. Oh! Ha ha. And
+
+00:29:04.929 --> 00:29:09.909
+we did something silly. So while we created
+the rest of the method, we forgot to do anything
+
+00:29:09.909 --> 00:29:14.669
+in the main program like for example call
+the method so our method hasn't even run at
+
+00:29:14.669 --> 00:29:21.669
+this point. So here we go-- find common name
+from emails and that result is going to be
+
+00:29:26.539 --> 00:29:33.539
+saved in a string. And then we're going to
+print it out. System out print line the most
+
+00:29:44.899 --> 00:29:51.899
+common email was plus common. Now when we
+run our program we should actually see something,
+
+00:29:57.210 --> 00:30:04.210
+which will probably make it more fun! So it
+says the most common name was Missy. 1, 2,
+
+00:30:09.350 --> 00:30:15.970
+3, 4 , 5 looks good. Let's see what happens
+with a tie. Notice one of the things that's
+
+00:30:15.970 --> 00:30:22.470
+nice about using files for input is that it's
+very fast to run the program multiple times.
+
+00:30:22.470 --> 00:30:27.889
+You don't have all that boring typing in the
+same data over and over and over. You do have
+
+00:30:27.889 --> 00:30:32.110
+to remember to save the file though. If you
+don't save the file the program won't know
+
+00:30:32.110 --> 00:30:36.909
+about it and it will run the old file. The
+problem there is you'll spend time debugging
+
+00:30:36.909 --> 00:30:41.929
+a program that's working correctly. So it's
+saving that file is really important so let's
+
+00:30:41.929 --> 00:30:48.299
+run again. Now the most common name was Susan.
+Well let's think about what we did and see
+
+00:30:48.299 --> 00:30:55.299
+if that's the correct answer. So the four
+Susans are found before the four Missys. In
+
+00:30:55.679 --> 00:31:02.679
+our code the place where we made that decision
+is actually right down here. So this line
+
+00:31:05.879 --> 00:31:11.559
+of code, line 32, is the one that tells us
+that the first person that gets to the count
+
+00:31:11.559 --> 00:31:16.360
+is the one that's going to be found. So in
+fact this program seems to be working just
+
+00:31:16.360 --> 00:31:22.190
+great. So we can go through and check all
+of our test data and I encourage you to do
+
+00:31:22.190 --> 00:31:27.629
+that. Remember to check the boundary cases
+for example one text. I think that's probably
+
+00:31:27.629 --> 00:31:34.629
+a good one to test right now. So we'll go
+back to our file. We remember to save it and
+
+00:31:41.259 --> 00:31:46.020
+run the program again. And that worked perfectly.
+

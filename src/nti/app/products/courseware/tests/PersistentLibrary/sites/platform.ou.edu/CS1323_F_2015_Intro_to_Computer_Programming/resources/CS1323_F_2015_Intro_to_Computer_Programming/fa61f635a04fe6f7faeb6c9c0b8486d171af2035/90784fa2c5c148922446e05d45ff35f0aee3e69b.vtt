@@ -1,0 +1,1034 @@
+WEBVTT
+Kind: captions
+Language: en
+
+00:00:00.969 --> 00:00:04.710
+&gt;&gt;Dr. Deborah Trytten: So now that we've studied
+methods, let's improve our cell phone contract
+
+00:00:04.710 --> 00:00:11.710
+program. This is our sixth and I promise our
+final iteration. So to remind you of the problem:
+
+00:00:12.630 --> 00:00:17.640
+suppose you want to compare the cost of several
+cell phone plans with ATV Telecommunications.
+
+00:00:17.640 --> 00:00:23.759
+Each plan has the same basic design: a flat
+charge gives a fixed quota of minutes a month,
+
+00:00:23.759 --> 00:00:28.449
+additional minutes are charged individually
+above the quota. We're going to write a program
+
+00:00:28.449 --> 00:00:32.340
+that compares a user-selected number of plans.
+
+00:00:32.340 --> 00:00:36.650
+Now the main shortcoming of our previous work
+is that our main program has gotten too long
+
+00:00:36.650 --> 00:00:43.440
+and complicated. Let me explain why this is
+a problem worth fixing. Once a program gets
+
+00:00:43.440 --> 00:00:47.810
+long, it's what we call spaghetti code. The
+reason we call it that is it's like trying
+
+00:00:47.810 --> 00:00:53.830
+to trace through a strand of spaghetti in
+a plate of pasta. It's really hard to follow.
+
+00:00:53.830 --> 00:00:58.020
+Once you've created code that's like that,
+simplifying it with methods is one of the
+
+00:00:58.020 --> 00:01:04.369
+ways of improving it. We also want to create
+chunks of code that can be reused instead
+
+00:01:04.369 --> 00:01:09.560
+of having to build everything from scratch
+every time, so that's another reason for fixing
+
+00:01:09.560 --> 00:01:16.560
+this problem. As it is right now our code
+is pretty much impossible to reuse.
+
+00:01:16.890 --> 00:01:21.860
+Let's examine the code. Now what we're looking
+for is segments of code that do a well-defined
+
+00:01:21.860 --> 00:01:28.600
+tasks and methods that can return only one
+thing. Now this turns out to be a big limitation.
+
+00:01:28.600 --> 00:01:32.600
+A lot of things we'd like to do with methods
+can't be done because we'd need to return
+
+00:01:32.600 --> 00:01:37.260
+more than one thing. When we're looking at
+our code, let's think, for example, about
+
+00:01:37.260 --> 00:01:41.960
+do negative numbers make any sense for this
+data? And does allowing only one mistake make
+
+00:01:41.960 --> 00:01:47.619
+sense? Because that might lead us to some
+good methods. Now I copied our code in from
+
+00:01:47.619 --> 00:01:52.979
+iteration five so we have that to work from.
+So looking through the code starting at the
+
+00:01:52.979 --> 00:01:59.979
+top, we see, for example, that we have a bunch
+of code here right in this area of the program
+
+00:02:03.119 --> 00:02:08.360
+that does a well-defined task. So we have
+the variable talk minutes. We prompt the user
+
+00:02:08.360 --> 00:02:14.510
+for what we want, and then we allow them to
+enter it repeatedly. Now in this case we're
+
+00:02:14.510 --> 00:02:20.230
+only letting them enter the data twice. That's
+a limitation we don't need to have. So this
+
+00:02:20.230 --> 00:02:24.700
+is a place where we might be able to put a
+method. Now the question is: are there other
+
+00:02:24.700 --> 00:02:30.870
+places where we could reuse it? Well, as we
+go down what we'll see is that we're entering
+
+00:02:30.870 --> 00:02:37.170
+things like the monthly cost, the plan minutes,
+the additional minute cost. None of these
+
+00:02:37.170 --> 00:02:44.170
+values should be negative either, and so it
+makes sense to use a method for that. Before
+
+00:02:44.680 --> 00:02:49.730
+we write a method, we always design the signature
+for the method, that is, the header for the
+
+00:02:49.730 --> 00:02:55.569
+method. So we consider the inputs; those will
+be the parameters. In this case the input
+
+00:02:55.569 --> 00:03:01.280
+would be a scanner that we could call something
+like keyboard. We'd also want to consider
+
+00:03:01.280 --> 00:03:08.069
+the method name. So a good method name might
+be get positive input. Methods remember are
+
+00:03:08.069 --> 00:03:14.489
+verbs, and so they usually start with a verb,
+like "get." Output is the return type, so
+
+00:03:14.489 --> 00:03:20.730
+in this case well, some of the variables we
+wanted to get were doubles and some were ints.
+
+00:03:20.730 --> 00:03:25.050
+It turns out that we can't have a method signature
+that sometimes returns a double and sometimes
+
+00:03:25.050 --> 00:03:30.190
+returns an int. It has to return one or the
+other. So we're going to have to reconsider
+
+00:03:30.190 --> 00:03:36.319
+our method name. Maybe instead of get positive
+input, we could have one method called get
+
+00:03:36.319 --> 00:03:43.050
+positive int and another method called get
+positive double. The rest of the signature
+
+00:03:43.050 --> 00:03:47.819
+is now correct. Now all of these methods are
+going to be public and static, at least for
+
+00:03:47.819 --> 00:03:52.340
+now. This is another one of those magical
+incantations that we'll understand in a few
+
+00:03:52.340 --> 00:03:57.940
+weeks, but for now we just have to remember
+to say it.
+
+00:03:57.940 --> 00:04:03.560
+Let's go and create the methods with the following
+signatures public static double get positive
+
+00:04:03.560 --> 00:04:10.280
+double (scanner keyboard) and public static
+int get positive int (scanner keyboard). One
+
+00:04:10.280 --> 00:04:15.239
+thing to notice before we get started is we
+have parallel construction here, so notice
+
+00:04:15.239 --> 00:04:19.260
+that the parameters are in the same order.
+Now in this case there's only one parameter
+
+00:04:19.260 --> 00:04:25.180
+so the order doesn't really matter. The names
+are the same, so get, and then positive, and
+
+00:04:25.180 --> 00:04:31.070
+then enter double. The capitalization is the
+same. Everything is exactly the same. That
+
+00:04:31.070 --> 00:04:35.100
+makes it easier for other people to use our
+methods when we have that type of parallel
+
+00:04:35.100 --> 00:04:36.949
+construction.
+
+00:04:36.949 --> 00:04:40.430
+One other thing we might think about when
+we're getting ready to create this method
+
+00:04:40.430 --> 00:04:45.930
+is do we really want positive data or do we
+want nonnegative data? Now that's a subtle
+
+00:04:45.930 --> 00:04:51.380
+difference. Positive means numbers that are
+bigger than zero, and nonnegative means numbers
+
+00:04:51.380 --> 00:04:56.250
+that are greater than or equal to zero. So
+the question is whether zero is valid data
+
+00:04:56.250 --> 00:05:01.580
+or not. For all of the things we're looking
+at zero doesn't make sense as data, and so
+
+00:05:01.580 --> 00:05:06.530
+we actually do want positive. This is an example
+of testing a boundary condition before we
+
+00:05:06.530 --> 00:05:10.550
+ever start writing code.
+
+00:05:10.550 --> 00:05:15.370
+So here we are in Eclipse. Now you can put
+your new methods anywhere you want. You can
+
+00:05:15.370 --> 00:05:20.160
+put them above the main program or below the
+main program. I like to have the main program
+
+00:05:20.160 --> 00:05:27.160
+up at the start, so I'm going to put mine
+below. So this is the end of the main program,
+
+00:05:29.259 --> 00:05:36.090
+and I'm adding a comment in so that I know
+that that's where the end of the main program
+
+00:05:36.090 --> 00:05:43.090
+is. Here are our methods public static int
+get positive int scanner. You can call the
+
+00:05:46.560 --> 00:05:52.880
+scanner anything we want. Remember does not
+have to match the argument name. Now until
+
+00:05:52.880 --> 00:05:57.000
+we write these methods, I'm just going to
+put in a stub. So I'm just going to return
+
+00:05:57.000 --> 00:06:02.680
+zero for now. We'll fix that when we actually
+write the body of the method. Public static
+
+00:06:02.680 --> 00:06:09.680
+double get positive double with a scanner
+input parameter. So here we'll return 0.0,
+
+00:06:18.930 --> 00:06:25.930
+and I'll add comments in to indicate where
+the methods end. And of course as always I'll
+
+00:06:37.930 --> 00:06:44.930
+have to do a little bit of cleanup work. So
+there we go. First we might want to think
+
+00:06:48.449 --> 00:06:53.590
+about what the body of one of these would
+look like. Now we could use an if statement
+
+00:06:53.590 --> 00:06:58.750
+like we did previously, but that will only
+let the user enter the data once. We'd like
+
+00:06:58.750 --> 00:07:03.759
+the user to be able to enter the data as many
+times as they continue to make mistakes, so
+
+00:07:03.759 --> 00:07:10.759
+what we want is a loop. So let's start with
+an integer value, which I'll call result.
+
+00:07:10.830 --> 00:07:15.250
+Now I'm going to set it to -1 to start with.
+The reason is we're going to want to get into
+
+00:07:15.250 --> 00:07:22.250
+the loop at the beginning so that we make
+sure the value is set at least once. So while
+
+00:07:23.410 --> 00:07:29.880
+result is less than zero--once again this
+is a good time to pause and think about whether
+
+00:07:29.880 --> 00:07:35.069
+we're doing the right thing. So if result
+is less then zero, we want to go through the
+
+00:07:35.069 --> 00:07:39.949
+loop. Well, let's think whether that should
+be less than or equal to. If the result was
+
+00:07:39.949 --> 00:07:44.289
+equal to zero, we would in fact went to get
+the data because we're trying to get a positive
+
+00:07:44.289 --> 00:07:51.139
+integer, not a nonnegative integer. So this
+in fact should be less than or equal to, not
+
+00:07:51.139 --> 00:07:57.780
+just less than. And here's the body of our
+loop. So once we're in the loop we're going
+
+00:07:57.780 --> 00:08:04.780
+to get one piece of data from the scanner
+so that will be result equals input dot next
+
+00:08:05.180 --> 00:08:12.180
+int. Now if somebody happens to enter a negative
+value, they need to get some feedback on that.
+
+00:08:13.800 --> 00:08:20.400
+So we're going to put in if statement that
+will give them that feedback. If result is
+
+00:08:20.400 --> 00:08:26.300
+less than or equal to zero--less than or equal
+to, not less than because the boundary condition
+
+00:08:26.300 --> 00:08:33.300
+of being equal to zero is not acceptable data--we'll
+do system out print line please re--let's
+
+00:08:35.759 --> 00:08:42.759
+say please enter a positive value. And of
+course at the end of the method we're going
+
+00:08:46.499 --> 00:08:53.499
+to return the result. So let's step through
+that method once and make sure it will work
+
+00:08:53.829 --> 00:08:59.970
+before we run it. So result is initially -1.
+Result less than or equal to zero would be
+
+00:08:59.970 --> 00:09:03.920
+true so we get into the loop. That's very
+important because we want to make sure we
+
+00:09:03.920 --> 00:09:10.160
+let the user enter the data at least once.
+So let's say our user enters -3 at the input
+
+00:09:10.160 --> 00:09:17.160
+dot next int on line 116. Result less than
+or equal to zero would be true so then the
+
+00:09:17.300 --> 00:09:22.329
+printout would say please enter a positive
+value, which is good feedback. Result would
+
+00:09:22.329 --> 00:09:27.129
+be -2, which is less than or equal to zero,
+and so the user would get another opportunity
+
+00:09:27.129 --> 00:09:32.860
+to reenter the data. Let's suppose the second
+time they enter 3. Well, result less than
+
+00:09:32.860 --> 00:09:38.309
+or equal to zero would be false then, so the
+system out print statement on line 119 would
+
+00:09:38.309 --> 00:09:45.110
+not be done and the loop would exit. We would
+then return result, so that looks good.
+
+00:09:45.110 --> 00:09:49.929
+We could copy and paste this in to get positive
+double and make a few cosmetic changes. But
+
+00:09:49.929 --> 00:09:55.019
+rather than doing that right now, let's actually
+test it first and make sure it's working.
+
+00:09:55.019 --> 00:09:59.019
+We have a place in the code where we've done
+something like this, and so we can replace
+
+00:09:59.019 --> 00:10:06.019
+that with this method. So here we go up above
+our while loop. Remember when we were entering
+
+00:10:08.389 --> 00:10:15.389
+the total number of talk minutes? All this
+can now be replaced by our one method call,
+
+00:10:18.779 --> 00:10:25.779
+so we'll say talk minutes equals get positive
+int. And it needed a scanner parameter we
+
+00:10:33.350 --> 00:10:40.350
+called scanner keyboard here, or I think we
+did. Yeah, we called it keyboard.
+
+00:10:42.759 --> 00:10:47.869
+So now we need to figure out why Eclipse isn't
+happy. So let's look at the little red X.
+
+00:10:47.869 --> 00:10:54.519
+It's undefined for this type. Well, what could
+have happened? Let's go down and take a look
+
+00:10:54.519 --> 00:11:01.519
+at the method we just wrote. Ah, I see what
+the problem is on line 103. Notice that I
+
+00:11:02.059 --> 00:11:07.809
+misspelled the word positive--I've been forgetting
+that i lately. We definitely need to have
+
+00:11:07.809 --> 00:11:14.199
+that in there. And you'll notice that our
+little red X has disappeared from our boundaries,
+
+00:11:14.199 --> 00:11:21.199
+so that's a sign that we fixed this successfully.
+Notice that our code got shorter when we entered
+
+00:11:21.959 --> 00:11:26.389
+the method, so that's a good thing. Now let's
+run the method and see if it's doing what
+
+00:11:26.389 --> 00:11:33.389
+it's supposed to do. Enter the number of minutes
+you talk each month: 500. Enter your plan
+
+00:11:39.709 --> 00:11:44.899
+name or end to get results, so that's working
+correctly. It's important not to just check
+
+00:11:44.899 --> 00:11:51.899
+the error cases but to check the regular ones
+too. Now let's try an error case. Enter the
+
+00:11:51.949 --> 00:11:58.949
+number of minutes you talk. Let's say I talked
+-10 minutes. Please enter a positive value.
+
+00:11:59.009 --> 00:12:06.009
+There's -3. Please enter a positive value,
+-5. Maybe it's time for me to get a clue.
+
+00:12:07.660 --> 00:12:08.609
+Enter your plan name.
+
+00:12:08.609 --> 00:12:13.160
+So that seems to be working very nicely at
+this point. Now there is one case we didn't
+
+00:12:13.160 --> 00:12:18.649
+test that we probably should, and that's the
+boundary case, the one at zero. So let's run
+
+00:12:18.649 --> 00:12:25.649
+that test too. So if we enter zero, it says
+please enter a positive value. If we enter
+
+00:12:26.040 --> 00:12:30.799
+one, it's perfectly happy. Now there's no
+reason to run the program any further because
+
+00:12:30.799 --> 00:12:36.139
+we just tested the piece of code that we finished
+writing. Now that that code has been tested
+
+00:12:36.139 --> 00:12:40.149
+and we think that it's working correctly,
+it makes sense to cut and paste it to the
+
+00:12:40.149 --> 00:12:46.329
+other method. Notice you always want to test
+before you do that. Now we're going to have
+
+00:12:46.329 --> 00:12:53.329
+to modify it a little bit of course. For example,
+our result will be a double, not an int. Now
+
+00:13:01.649 --> 00:13:08.049
+it's not necessary to change that to a -1.0
+because Java would promote it, but it is nicer
+
+00:13:08.049 --> 00:13:14.929
+to communicate correctly that that is a double.
+All these comparisons are exactly the same,
+
+00:13:14.929 --> 00:13:21.929
+and returning result is exactly the same,
+so we really got that method pretty cheaply.
+
+00:13:22.049 --> 00:13:29.049
+Now let's go back to our code and integrate
+the methods in the plan. So there's no real
+
+00:13:31.529 --> 00:13:37.809
+error that can happen with the plan name.
+This is on line 34 of the code. For the monthly
+
+00:13:37.809 --> 00:13:44.809
+cost in pennies, notice what we're going to
+do is to replace this next double with get
+
+00:13:50.669 --> 00:13:57.669
+positive double of keyboard. Now I see we
+have another error from Eclipse again. My
+
+00:14:02.489 --> 00:14:09.489
+guess is that's going to be another missing
+i and it is, so let's fix the method name.
+
+00:14:14.329 --> 00:14:18.199
+Now you might want to think for a minute about
+this next line statement. Does it still belong
+
+00:14:18.199 --> 00:14:24.100
+there or not? Well, it does still belong there
+because that's an extra new line that gets
+
+00:14:24.100 --> 00:14:29.549
+left over after the last double is read, so
+we don't want to erase that. We might want
+
+00:14:29.549 --> 00:14:33.600
+to think about whether we want to put that
+into the method or not. Sometimes it would
+
+00:14:33.600 --> 00:14:39.029
+make sense and sometimes it wouldn't, so we
+do not want to put that into the method.
+
+00:14:39.029 --> 00:14:46.029
+So here we will change this to get positive
+int of keyboard, and this one we will change
+
+00:14:53.499 --> 00:15:00.499
+to get positive int of keyboard. Now you'll
+notice our code didn't necessarily get any
+
+00:15:02.609 --> 00:15:07.739
+shorter here, but our code did get better
+because now we're doing error checking on
+
+00:15:07.739 --> 00:15:12.939
+every single one of these values, and so that's
+a step forward. It's not just about having
+
+00:15:12.939 --> 00:15:16.959
+short code; it's about having good code.
+
+00:15:16.959 --> 00:15:23.829
+Now because we primed our input, we're going
+to need to do this twice. So the next line
+
+00:15:23.829 --> 00:15:28.889
+for the keyboard, which is leading to the
+plan name--that one's fine as is. This one
+
+00:15:28.889 --> 00:15:35.889
+should be changed to get positive double of
+keyboard. This should be changed to get positive
+
+00:15:45.459 --> 00:15:52.459
+int of keyboard, and this one should be changed
+to get positive double of keyboard. So now
+
+00:16:03.179 --> 00:16:07.970
+we've done that with all of our lines. That's
+really nice. Our program has actually improved
+
+00:16:07.970 --> 00:16:12.329
+quite a bit because we've increased the amount
+of error checking without adding many lines
+
+00:16:12.329 --> 00:16:19.329
+of code. So we've reused these methods several
+times in the code. That's a good thing. Reusing
+
+00:16:21.559 --> 00:16:26.179
+code is exactly what methods are about. Remember
+the arguments are the ones that are in the
+
+00:16:26.179 --> 00:16:31.269
+program that calls the method, and the parameters
+are the ones that are in the method, the ones
+
+00:16:31.269 --> 00:16:38.259
+that get called. The value of the arguments
+are always passed to the matching parameters.
+
+00:16:38.259 --> 00:16:42.889
+Now one thing we might want to consider is
+why don't arguments have types? So let's go
+
+00:16:42.889 --> 00:16:49.889
+back to our code. For example, why didn't
+I have to put--this is on line 88--scanner
+
+00:16:50.589 --> 00:16:57.319
+keyboard? We're in the main program now and
+Java knows that the keyboard is a scanner.
+
+00:16:57.319 --> 00:17:03.579
+We've declared it above. Not only is scanner
+not helpful here, it's actually not even permitted
+
+00:17:03.579 --> 00:17:10.579
+to be here. So the keyboard that's in line
+88 is an argument. It doesn't have a type.
+
+00:17:10.699 --> 00:17:15.490
+Now let's compare that to what happens down
+here on line 103 when we're looking at the
+
+00:17:15.490 --> 00:17:21.939
+parameter. So scanner input is the parameter.
+Suppose we didn't have scanner in front of
+
+00:17:21.939 --> 00:17:28.690
+this. There's no way for Java to know that
+scanner was the correct type. Input could
+
+00:17:28.690 --> 00:17:32.610
+be an int. It could be a double. It could
+be something else we've never heard of. So
+
+00:17:32.610 --> 00:17:38.070
+parameters have to have types and arguments
+don't. This takes a little bit of practice
+
+00:17:38.070 --> 00:17:44.519
+too. Now another question that people sometimes
+ask is do the argument and parameter names
+
+00:17:44.519 --> 00:17:49.370
+have to match? No, they don't, and in fact
+if that they did have to match it would really
+
+00:17:49.370 --> 00:17:54.320
+be an unfortunate because it would mean that
+parameters would be absolutely useless. So
+
+00:17:54.320 --> 00:17:58.429
+we can call them anything they want. What
+is important is that they have meaning in
+
+00:17:58.429 --> 00:18:05.429
+the context that you're using them. Now do
+the argument and parameter types have to match?
+
+00:18:05.620 --> 00:18:10.509
+Yes, they do. There's one exception to that
+rule though, and that's that if a type can
+
+00:18:10.509 --> 00:18:16.110
+be promoted, so for example, if you pass in
+an integer argument to a double parameter
+
+00:18:16.110 --> 00:18:20.450
+because an integer could be promoted to a
+double that does work. But in this case we
+
+00:18:20.450 --> 00:18:27.059
+have scanners, and nothing gets promoted to
+a scanner. Let's go back to our program and
+
+00:18:27.059 --> 00:18:31.509
+run it and make sure it's working at this
+point. Any time you make changes, you always
+
+00:18:31.509 --> 00:18:36.039
+want to test it thoroughly. I'm going to sometimes
+shortcut the testing just to save us some
+
+00:18:36.039 --> 00:18:41.480
+time here, but testing code is extremely important
+so don't shortcut it when you're working on
+
+00:18:41.480 --> 00:18:48.480
+it. So we talk 500 minutes. Now this part
+we tested before. Now that's interesting.
+
+00:18:54.600 --> 00:18:59.080
+Look what happened there. I entered 500, and
+then it said enter your plan name or end and
+
+00:18:59.080 --> 00:19:04.309
+it went on. We probably know what that means.
+It looks to me like I might have erased a
+
+00:19:04.309 --> 00:19:07.450
+read line statement that I didn't mean to.
+
+00:19:07.450 --> 00:19:11.820
+So let's go and take a look at this. Now this
+is the one that's before the loop, so we know
+
+00:19:11.820 --> 00:19:17.610
+where that is. So here we go, enter the number
+of minutes you talk each month. And notice
+
+00:19:17.610 --> 00:19:24.610
+I did in fact erase that read line, so we
+need to fix that now. There we go: keyboard
+
+00:19:29.000 --> 00:19:36.000
+dot next line will erase the new line character
+at the end of the line. So I'll reenter 500
+
+00:19:41.659 --> 00:19:48.659
+minutes. That looks better. Plan one. Our
+monthly cost was 19.99. Oh my goodness, look
+
+00:19:50.950 --> 00:19:57.950
+at what we have here. Enter the monthly cost,
+and it says an input mismatch exception. The
+
+00:19:58.639 --> 00:20:04.159
+trick to doing these things is all of these
+are in the scanner, so what you want to spot
+
+00:20:04.159 --> 00:20:08.679
+is the highest one on the list that comes
+from your code. So in this case that's cell
+
+00:20:08.679 --> 00:20:14.129
+phone iteration 6, line 124. If you click
+on this in Eclipse, it will take you right
+
+00:20:14.129 --> 00:20:21.129
+to that line. Ah, so look what happened here.
+When we cut and pasted our code from get positive
+
+00:20:22.370 --> 00:20:28.200
+int into get positive double, we forgot to
+fix the method name. We don't want next int.
+
+00:20:28.200 --> 00:20:34.879
+What we want is next double. Well, that's
+looking better.
+
+00:20:34.879 --> 00:20:41.879
+Let's run the program again. Incidentally
+problems like that are very common with copy
+
+00:20:43.230 --> 00:20:47.460
+and paste, so common you may want to think
+about whether that's a good strategy to use
+
+00:20:47.460 --> 00:20:54.460
+in programs. So 500 minutes, plan one, monthly
+cost 19.99, the plan minutes 100, the additional
+
+00:21:00.720 --> 00:21:07.720
+minute cost .05--uh oh, and we've got another
+problem there. So I'm using the same strategy
+
+00:21:11.909 --> 00:21:17.529
+again. I'm going down to the first one that's
+in my code, which is this one on line 109
+
+00:21:17.529 --> 00:21:24.529
+and clicking on it. Now in this case, it says
+next int. Well, that's the correct thing,
+
+00:21:24.980 --> 00:21:31.980
+so maybe the problem isn't where we called
+it. So this is the additional minute cost
+
+00:21:35.230 --> 00:21:40.340
+right up in here, and we can see that what
+we did was we called the wrong method. This
+
+00:21:40.340 --> 00:21:47.340
+should have been a double. We could fix that
+one problem and move on, but that is the kind
+
+00:21:48.210 --> 00:21:55.210
+of mistake that I might have made twice, so
+let's actually check our second input. So
+
+00:21:55.730 --> 00:22:01.950
+notice the second time around I got it right.
+I put in get positive double.
+
+00:22:01.950 --> 00:22:08.950
+Let's run the program again, 500 minutes,
+plan one, 19.99, enter the plan minutes, that
+
+00:22:20.330 --> 00:22:26.289
+could be 100, the additional minute cost.
+So the first thing I did was check that the
+
+00:22:26.289 --> 00:22:31.639
+standard input was working correctly, things
+that were all legal. Now when I enter plan
+
+00:22:31.639 --> 00:22:38.639
+two, let's see what happens with negative
+data. So let's say you charge negative $200
+
+00:22:40.470 --> 00:22:47.470
+a month. It says please enter a positive value.
+So in this case, it looks like it's working
+
+00:22:50.600 --> 00:22:57.600
+just fine. Now let's check the plan minutes,
+and that's also catching the error of being
+
+00:22:57.960 --> 00:23:04.960
+too low. Let's even try zero on this one.
+That's looking good too. Enter the additional
+
+00:23:08.110 --> 00:23:15.110
+minute cost--please enter a positive value,
+please enter a positive value. All this is
+
+00:23:20.559 --> 00:23:27.090
+looking very good, and the total cost for
+plan two. So right now it looks like all of
+
+00:23:27.090 --> 00:23:33.870
+our input is working well, so we've successfully
+integrated methods into this program.
+
+00:23:33.870 --> 00:23:38.940
+Now let's design another signature and integrate
+another method. The calculation of costs could
+
+00:23:38.940 --> 00:23:45.940
+also be in a method. So the method name could
+be find plan cost in pennies. The inputs,
+
+00:23:46.389 --> 00:23:52.340
+which would be the parameters, would be our
+monthly cost in pennies, our monthly minutes,
+
+00:23:52.340 --> 00:23:56.879
+our extra minute cost in pennies, and the
+number of minutes that are talked. So those
+
+00:23:56.879 --> 00:24:03.529
+are the basic pieces that we would need to
+construct this. And the return type would
+
+00:24:03.529 --> 00:24:07.779
+be an int. Now the reason it's an int instead
+of a double is because we're finding the cost
+
+00:24:07.779 --> 00:24:14.779
+in pennies. And of course the method should
+still be public and static. So let's go and
+
+00:24:16.179 --> 00:24:22.279
+implement the method and call it, and of course
+we'll have to test our program again. You
+
+00:24:22.279 --> 00:24:26.659
+can put this method anywhere you'd like. You
+can put it before the main program or after
+
+00:24:26.659 --> 00:24:32.129
+it, or before or after get positive int. I'm
+choosing to put it between the main program
+
+00:24:32.129 --> 00:24:36.649
+and get positive int because that's a convenient
+place for me to find it.
+
+00:24:36.649 --> 00:24:43.649
+So it's public static int get plan cost in
+pennies. Now in this case, we're taking a
+
+00:24:47.889 --> 00:24:54.889
+calculation that we know is working and we
+want to bring it in. 
+
+00:25:03.549 --> 00:25:10.549
+Here's the calculation right there, so I'm
+going to cut that. If you're a more cautious
+
+00:25:14.009 --> 00:25:21.009
+sort, you might want to copy instead of cutting.
+And I'm going to bring that code down here.
+
+00:25:21.710 --> 00:25:27.299
+Now our total cost in pennies is our output,
+so we're going to want to have a local variable
+
+00:25:27.299 --> 00:25:34.299
+for that, which is what's on line 92. So we'll
+need int talk minutes, int plan minutes, int
+
+00:25:44.590 --> 00:25:51.590
+monthly cost pennies, and int additional minutes
+pennies. So you've probably been watching
+
+00:26:00.149 --> 00:26:07.149
+Eclipse getting less and less frustrated with
+me as I've entered more and more data.
+
+00:26:12.090 --> 00:26:19.090
+Here we're going to return the total cost
+in pennies. And let's see what Eclipse is
+
+00:26:22.610 --> 00:26:29.610
+unhappy about: insert a semicolon. Well, it
+does have a point there. Okay, so now that
+
+00:26:31.200 --> 00:26:38.200
+our method is written, we can go call it in
+the code. Now what I'm going to do is I'm
+
+00:26:38.669 --> 00:26:43.519
+going to copy it from here, mostly so that
+I get all of the parameters in the right order.
+
+00:26:43.519 --> 00:26:50.519
+I'm going to have to modify them to make them
+arguments, so here's where it goes. We're
+
+00:26:53.559 --> 00:27:00.559
+still going to need to declare an int total
+cost in pennies, and then we'll say that total
+
+00:27:04.009 --> 00:27:11.009
+cost in pennies equals 
+get plan cost. Now remember we took these
+variables exactly, and so we know we can reuse
+
+00:27:18.340 --> 00:27:23.639
+them, but because these are arguments, not
+parameters, they don't have the types in front
+
+00:27:23.639 --> 00:27:30.639
+of them, so I'm removing the types. And that
+got rid of a lot of bad stuff very fast. Of
+
+00:27:33.759 --> 00:27:38.919
+course we need a semicolon after it, as we
+do at the end of all lines in Java. And so
+
+00:27:38.919 --> 00:27:43.639
+that method's looking better. Notice that
+our while statement got quite a bit shorter
+
+00:27:43.639 --> 00:27:50.639
+here, so that's a good thing. Let's run our
+code again. So 500 minutes, plan one, 19.99,
+
+00:28:01.899 --> 00:28:08.899
+for 100 minutes, five cents. Let's enter plan
+two for 29.99 for 101 minutes and seven cents,
+
+00:28:19.299 --> 00:28:24.779
+and then enter end to end the program. And
+it says the cheapest plan was plan one, which
+
+00:28:24.779 --> 00:28:28.210
+we know to be correct.
+
+00:28:28.210 --> 00:28:32.080
+Now we could test our program more fully,
+and in fact we should test our program more
+
+00:28:32.080 --> 00:28:39.080
+fully. How do you know when to stop making
+methods? Well, in general one-line methods
+
+00:28:39.200 --> 00:28:42.990
+aren't used. There are some exceptions, and
+you're even going to see some of these exceptions
+
+00:28:42.990 --> 00:28:49.990
+before too long. In general good main programs
+tend to be about 10 to 30 lines long. Now
+
+00:28:50.499 --> 00:28:55.340
+it's not always possible or wise to reach
+this goal. For example, in this particular
+
+00:28:55.340 --> 00:29:00.389
+case we could take our whole sentinel loop
+and put it into a method, but would that really
+
+00:29:00.389 --> 00:29:05.999
+make our program easier to understand? Basically
+then our main program disappears, and the
+
+00:29:05.999 --> 00:29:11.139
+other method would get very long, and so that
+doesn't really make anything any better. So
+
+00:29:11.139 --> 00:29:15.460
+there's no reason to do that. So you don't
+put things in methods just for the fun of
+
+00:29:15.460 --> 00:29:19.320
+it. Well, unless, I mean, unless you're having
+a good time, it's okay. But in general it's
+
+00:29:19.320 --> 00:29:25.559
+not done for programming. In general beginning
+programmers tend to make too few methods,
+
+00:29:25.559 --> 00:29:29.980
+and they tend to make methods too long. I
+think this is because of parameter passing
+
+00:29:29.980 --> 00:29:35.679
+anxiety, and parameter passing is little bit
+uncomfortable at first. Keep practicing it
+
+00:29:35.679 --> 00:29:40.760
+though, and you'll get better at. And remember
+keep programming!
+

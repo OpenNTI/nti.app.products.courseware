@@ -1,0 +1,205 @@
+WEBVTT
+Kind: captions
+Language: en
+
+00:00:01.079 --> 00:00:05.149
+&gt;&gt;Today we're going to talk about learning
+to program a computer. So first off, what
+
+00:00:05.149 --> 00:00:10.679
+is programming? Well, programming's communication
+with a computer. Computers follow instructions
+
+00:00:10.679 --> 00:00:15.179
+that are written by people. The problem is
+that computers are incredibly literal, much
+
+00:00:15.179 --> 00:00:19.170
+more than people are. This is kind of bad
+news because it's hard to give instructions
+
+00:00:19.170 --> 00:00:24.250
+in general, even to people. For example, it
+can be hard to write driving directions clearly
+
+00:00:24.250 --> 00:00:29.920
+or to figure out how to build an IKEA bookcase
+from the instructions even if you read them,
+
+00:00:29.920 --> 00:00:34.339
+but people do understand better than computers.
+For example, if I made a small mistake while
+
+00:00:34.339 --> 00:00:38.940
+trying to communicate with you in English,
+you could probably figure out what I meant.
+
+00:00:38.940 --> 00:00:42.940
+You've probably read a note from a friend
+that had bad handwriting, for example. Even
+
+00:00:42.940 --> 00:00:47.080
+though you can't see all the characters, you
+could still figure out what the words are.
+
+00:00:47.080 --> 00:00:50.519
+Computers aren't smart enough to figure this
+out, so people have to be smart enough to
+
+00:00:50.519 --> 00:00:55.420
+communicate with a computer effectively. Now
+the good news here is that Java programming
+
+00:00:55.420 --> 00:01:01.080
+uses existing skills. So it uses both math
+and English skills together. Lots of things
+
+00:01:01.080 --> 00:01:05.670
+you've learned before will help you learn
+to program. For example, we give locations
+
+00:01:05.670 --> 00:01:10.730
+in the computer memory English names. If we
+were, for example, storing the number of text
+
+00:01:10.730 --> 00:01:16.310
+messages, we might call it texts, t-e-x-t-s.
+When we add two numbers together, we use a
+
+00:01:16.310 --> 00:01:22.710
+plus symbol that you probably learned in mathematics,
+so we would say 2+3. So lots of Java is going
+
+00:01:22.710 --> 00:01:25.460
+to look like things you've seen before.
+
+00:01:25.460 --> 00:01:30.200
+As far as programming and English, sometimes
+the rules are a little bit different. For
+
+00:01:30.200 --> 00:01:34.490
+example, in programming, small letters and
+capital letters are not the same thing. If
+
+00:01:34.490 --> 00:01:40.909
+we had a variable named Texts, T-e-x-t-s that
+starts with a capital T, and one named texts
+
+00:01:40.909 --> 00:01:45.409
+that starts with a little t, those are different
+things in programming. In English they might
+
+00:01:45.409 --> 00:01:51.000
+be the same or they might be different. Punctuation
+matters too. For example, semicolons and commas
+
+00:01:51.000 --> 00:01:55.300
+are not interchangeable. Now of course the
+truth is they're not interchangeable in English
+
+00:01:55.300 --> 00:02:00.420
+either, but they're more interchangeable in
+English than they are in programming. Spelling
+
+00:02:00.420 --> 00:02:04.990
+matters too. Now all of these things matter
+in English, but the thing is humans can get
+
+00:02:04.990 --> 00:02:08.200
+past little mistakes and computers can't.
+
+00:02:08.200 --> 00:02:12.770
+So let's talk a little bit about programming
+and math. Math symbols sometimes mean the
+
+00:02:12.770 --> 00:02:17.650
+same thing in programming. Sometimes they
+mean something completely different, and sometimes
+
+00:02:17.650 --> 00:02:22.450
+they mean something similar but a little bit
+different. For example, parentheses and curly
+
+00:02:22.450 --> 00:02:27.480
+braces both group things together in programming,
+just like they do in math, but in programming
+
+00:02:27.480 --> 00:02:31.990
+they each have a unique and specific meaning.
+So in math you can often substitute curly
+
+00:02:31.990 --> 00:02:37.250
+braces for parentheses, but not in programming.
+To give you another example, the equals sign
+
+00:02:37.250 --> 00:02:41.950
+means something totally different in programming
+than it does in math. In math it means that
+
+00:02:41.950 --> 00:02:46.220
+things on the right hand side and the left
+hand side are always exactly the same. But
+
+00:02:46.220 --> 00:02:50.840
+in programming it means the value on the right-hand
+side should be stored in the location on the
+
+00:02:50.840 --> 00:02:55.580
+left-hand side. In other words, right and
+left sides don't matter in math, but they
+
+00:02:55.580 --> 00:03:00.630
+do matter in programming. So you've really
+got to pay attention to details.
+
+00:03:00.630 --> 00:03:05.069
+The key to being successful in programming
+is to practice. To learn to program you must
+
+00:03:05.069 --> 00:03:10.630
+practice a lot. Frankly, practicing every
+day is really best. To help you with this,
+
+00:03:10.630 --> 00:03:16.060
+we've integrated three interactive tools.
+One is called Turingscraft. It is a paid site,
+
+00:03:16.060 --> 00:03:21.569
+but very well worth the price. Another is
+called Problets. And the third is called JavaBat.
+
+00:03:21.569 --> 00:03:27.739
+All three of the interactive tools have automatic
+grading, so you'll know if you're on track.
+
+00:03:27.739 --> 00:03:32.099
+Now let's talk about how I designed the learning
+materials. My design for learning for each
+
+00:03:32.099 --> 00:03:36.879
+class day has the following aspects. It's
+going to start with a reading assignment.
+
+00:03:36.879 --> 00:03:40.690
+The reading assignment has some little quiz
+questions embedded. You may want to do this
+
+00:03:40.690 --> 00:03:45.900
+first or maybe not. Then we have some work
+examples in video form where you'll see me
+
+00:03:45.900 --> 00:03:50.349
+actually solve computer science problems.
+Then we have assignments from one or more
+
+00:03:50.349 --> 00:03:55.150
+of our three interactive tools. Find some
+order of using these tools that works for
+
+00:03:55.150 --> 00:04:00.660
+you. So now we're ready to start programming.
+You've got the basics. Good luck and have
+
+00:04:00.660 --> 00:04:01.100
+fun.
+

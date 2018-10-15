@@ -1,0 +1,142 @@
+{
+  "MimeType": "application/vnd.nextthought.ntislidedeck",
+  "Videos": [
+    {
+      "MimeType": "application/vnd.nextthought.ntislidevideo",
+      "video-ntiid": "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_03.01.03_Texas_Infiltration",
+      "title": "Texas Infiltration",
+      "creator": "Deborah Trytten",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:MostPopularDomain",
+      "thumbnail": "//www.kaltura.com/p/1500101/thumbnail/entry_id/0_wwd946tt/width/640/",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:MostPopularDomain_video",
+      "class": "ntislidevideo"
+    }
+  ],
+  "creator": "Deborah Trytten",
+  "title": "Most Popular Domain",
+  "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:MostPopularDomain",
+  "Slides": [
+    {
+      "MimeType": "application/vnd.nextthought.slide",
+      "slidevideoid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:MostPopularDomain_video",
+      "slidetitle": "Accessing and Changing Objects",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:MostPopularDomain",
+      "slidevideostart": "0.0",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlide-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:MostPopularDomain_slide_1",
+      "slideimage": "resources/CS1323_F_2015_Intro_to_Computer_Programming/a8861ab3b51814963264ba182410611d3fb22740/fd35e23767020999111e1f49239199b4c5eff23e.png",
+      "slidevideoend": "4.0",
+      "slidenumber": "1",
+      "class": "slide"
+    },
+    {
+      "MimeType": "application/vnd.nextthought.slide",
+      "slidevideoid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:MostPopularDomain_video",
+      "slidetitle": "Problem Statement",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:MostPopularDomain",
+      "slidevideostart": "4.0",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlide-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:MostPopularDomain_slide_2",
+      "slideimage": "resources/CS1323_F_2015_Intro_to_Computer_Programming/fb68d6f17c5cbbf60dcade6e1ff8fa26520fa60a/fd35e23767020999111e1f49239199b4c5eff23e.png",
+      "slidevideoend": "34.0",
+      "slidenumber": "2",
+      "class": "slide"
+    },
+    {
+      "MimeType": "application/vnd.nextthought.slide",
+      "slidevideoid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:MostPopularDomain_video",
+      "slidetitle": "Email Addresses",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:MostPopularDomain",
+      "slidevideostart": "34.0",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlide-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:MostPopularDomain_slide_3",
+      "slideimage": "resources/CS1323_F_2015_Intro_to_Computer_Programming/f6418248376b60f3cbbb30443ee1fd28c15afa04/fd35e23767020999111e1f49239199b4c5eff23e.png",
+      "slidevideoend": "101.0",
+      "slidenumber": "3",
+      "class": "slide"
+    },
+    {
+      "MimeType": "application/vnd.nextthought.slide",
+      "slidevideoid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:MostPopularDomain_video",
+      "slidetitle": "Design Test Data",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:MostPopularDomain",
+      "slidevideostart": "101.0",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlide-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:MostPopularDomain_slide_4",
+      "slideimage": "resources/CS1323_F_2015_Intro_to_Computer_Programming/198c80be7287c73919fda0960ab47f0414a889c9/fd35e23767020999111e1f49239199b4c5eff23e.png",
+      "slidevideoend": "260.0",
+      "slidenumber": "4",
+      "class": "slide"
+    },
+    {
+      "MimeType": "application/vnd.nextthought.slide",
+      "slidevideoid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:MostPopularDomain_video",
+      "slidetitle": "Design Program",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:MostPopularDomain",
+      "slidevideostart": "260.0",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlide-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:MostPopularDomain_slide_5",
+      "slideimage": "resources/CS1323_F_2015_Intro_to_Computer_Programming/377a5f6e3d49998b51cb8dccdab177a4552426c0/fd35e23767020999111e1f49239199b4c5eff23e.png",
+      "slidevideoend": "336.0",
+      "slidenumber": "5",
+      "class": "slide"
+    },
+    {
+      "MimeType": "application/vnd.nextthought.slide",
+      "slidevideoid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:MostPopularDomain_video",
+      "slidetitle": "Choosing Files",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:MostPopularDomain",
+      "slidevideostart": "336.0",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlide-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:MostPopularDomain_slide_6",
+      "slideimage": "resources/CS1323_F_2015_Intro_to_Computer_Programming/ab104397bfc9d06bd05f747091e75964d828e284/fd35e23767020999111e1f49239199b4c5eff23e.png",
+      "slidevideoend": "889.0",
+      "slidenumber": "6",
+      "class": "slide"
+    },
+    {
+      "MimeType": "application/vnd.nextthought.slide",
+      "slidevideoid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:MostPopularDomain_video",
+      "slidetitle": "Improvements",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:MostPopularDomain",
+      "slidevideostart": "889.0",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlide-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:MostPopularDomain_slide_7",
+      "slideimage": "resources/CS1323_F_2015_Intro_to_Computer_Programming/84ea1ef4760215ac24781e18168f2cf63c9d670f/fd35e23767020999111e1f49239199b4c5eff23e.png",
+      "slidevideoend": "921.0",
+      "slidenumber": "7",
+      "class": "slide"
+    },
+    {
+      "MimeType": "application/vnd.nextthought.slide",
+      "slidevideoid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:MostPopularDomain_video",
+      "slidetitle": "Implement countEmailInDomain",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:MostPopularDomain",
+      "slidevideostart": "921.0",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlide-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:MostPopularDomain_slide_8",
+      "slideimage": "resources/CS1323_F_2015_Intro_to_Computer_Programming/282a48d0cb8ab92993ed1189749d5887ed0f66c4/fd35e23767020999111e1f49239199b4c5eff23e.png",
+      "slidevideoend": "1769.0",
+      "slidenumber": "8",
+      "class": "slide"
+    },
+    {
+      "MimeType": "application/vnd.nextthought.slide",
+      "slidevideoid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:MostPopularDomain_video",
+      "slidetitle": "Debug",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:MostPopularDomain",
+      "slidevideostart": "1769.0",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlide-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:MostPopularDomain_slide_9",
+      "slideimage": "resources/CS1323_F_2015_Intro_to_Computer_Programming/b7f2eb735e9d36bb46ffc83e25b563fd9a7b35e0/fd35e23767020999111e1f49239199b4c5eff23e.png",
+      "slidevideoend": "1781.0",
+      "slidenumber": "9",
+      "class": "slide"
+    },
+    {
+      "MimeType": "application/vnd.nextthought.slide",
+      "slidevideoid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:MostPopularDomain_video",
+      "slidetitle": "Keep Programming!",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:MostPopularDomain",
+      "slidevideostart": "1781.0",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlide-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:MostPopularDomain_slide_10",
+      "slideimage": "resources/CS1323_F_2015_Intro_to_Computer_Programming/39232ddc093fe8f7aafd554d36d1188b64229fb4/fd35e23767020999111e1f49239199b4c5eff23e.png",
+      "slidevideoend": "1788.0",
+      "slidenumber": "10",
+      "class": "slide"
+    }
+  ],
+  "ntiid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:MostPopularDomain",
+  "class": "ntislidedeck"
+}

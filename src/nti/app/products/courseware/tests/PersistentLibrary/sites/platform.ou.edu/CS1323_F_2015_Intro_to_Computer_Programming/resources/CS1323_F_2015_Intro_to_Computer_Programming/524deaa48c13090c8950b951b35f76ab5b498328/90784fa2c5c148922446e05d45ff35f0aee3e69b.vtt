@@ -1,0 +1,1094 @@
+WEBVTT
+Kind: captions
+Language: en
+
+00:00:00.810 --> 00:00:04.480
+&gt;&gt;Deborah Trytten: Let's continue our study
+of class methods by creating some GUI input
+
+00:00:04.480 --> 00:00:10.930
+tools. Here's our problem statement: Create
+a library of class methods that can be used
+
+00:00:10.930 --> 00:00:17.930
+to do simple Graphical User Interface (GUI)
+input. Use the JOptionPane class. Well the
+
+00:00:19.460 --> 00:00:24.269
+first thing we always need to do is to design
+our test data. So we're going to need to create
+
+00:00:24.269 --> 00:00:29.359
+some utility methods that can accept ints,
+doubles, chars, and Boolean. Now we actually
+
+00:00:29.359 --> 00:00:33.440
+could do all the primitive datatypes, and
+you may want to continue to do them after
+
+00:00:33.440 --> 00:00:39.120
+we stop. But since these are the ones we use
+the most often these are the best ones to
+
+00:00:39.120 --> 00:00:45.120
+have. Now that our test data is designed let's
+design our methods. Now it's very important
+
+00:00:45.120 --> 00:00:49.830
+when you're creating a utility class that
+other people are going to use that you really
+
+00:00:49.830 --> 00:00:54.470
+think carefully about the design. If you think
+about this, the thing you want to pass in
+
+00:00:54.470 --> 00:00:58.850
+is the prompt. That is - the words that you're
+going to display to the user to tell them
+
+00:00:58.850 --> 00:01:04.220
+what to enter. And the only thing you need
+to get back is the data of the type that you
+
+00:01:04.220 --> 00:01:10.249
+want. So for example, get int dialog would
+return an int, whereas get double dialog would
+
+00:01:10.249 --> 00:01:15.890
+return a double. Now notice I've kept the
+construction here very much parallel. They
+
+00:01:15.890 --> 00:01:21.759
+each start with a get then there's the type
+of the data and then it ends with dialog and
+
+00:01:21.759 --> 00:01:27.390
+the string prompt and on all the parameters.
+By keeping it parallel it's easier for other
+
+00:01:27.390 --> 00:01:31.450
+people to remember it. And if they have an
+easier time remembering it, they're more likely
+
+00:01:31.450 --> 00:01:37.990
+to use your class. Which is, after all, what
+every good software engineer wants. We're
+
+00:01:37.990 --> 00:01:43.020
+going to have to study the JOptionPane a little
+bit to do this. There are four kinds of dialogs
+
+00:01:43.020 --> 00:01:49.679
+that can be created. One is called a confirmation
+dialog those return either a yes or no answer.
+
+00:01:49.679 --> 00:01:54.829
+So that isn't really what we want. Then there's
+an input dialog. That one gets input from
+
+00:01:54.829 --> 00:02:00.329
+the user so that's a possibility. The next
+one is a message dialog. These show users
+
+00:02:00.329 --> 00:02:05.119
+a message but don't get any input. And then
+there's sort of a general catch-all that's
+
+00:02:05.119 --> 00:02:10.599
+called "option". We're not very interested
+in that. So given those four types the one
+
+00:02:10.599 --> 00:02:16.370
+that looks like we might be interested is
+the one that gets input from the user. Now,
+
+00:02:16.370 --> 00:02:20.110
+we're going to look through the API and what
+we'll see is there's some methods called "show
+
+00:02:20.110 --> 00:02:26.629
+input dialog." Now these don't look quite
+right because they take an object as a prompt.
+
+00:02:26.629 --> 00:02:30.810
+Object is a problem because we don't really
+know what that means right now. Well it turns
+
+00:02:30.810 --> 00:02:35.970
+out anything that isn't in a primitive data
+type is an object. So string for example is
+
+00:02:35.970 --> 00:02:41.090
+an object. Our methods are going to have a
+clearer interface than this. Let's go look
+
+00:02:41.090 --> 00:02:44.700
+at the API.
+
+00:02:44.700 --> 00:02:51.700
+So here's our API. We need to find the JOptionPane
+class. [pause] Here's our JOptionPane class.
+
+00:02:59.890 --> 00:03:06.760
+You'll notice at the top they've told us about
+the four different kinds of dialogs: the confirmation
+
+00:03:06.760 --> 00:03:12.860
+dialogs, the input dialogs, the message dialogs,
+and the option dialogs. Notice that this makes
+
+00:03:12.860 --> 00:03:18.260
+it possible for us to really zero in quickly
+on the methods that we need. So let's go look
+
+00:03:18.260 --> 00:03:25.260
+at show input dialog. You'll also notice as
+I'm scrolling down that this is a very large
+
+00:03:25.719 --> 00:03:32.719
+and complicated class. Don't let that bother
+you though, 'cause we're only going to use
+
+00:03:34.209 --> 00:03:40.459
+a little part of it. So right here are the
+methods that are called "show input dialog."
+
+00:03:40.459 --> 00:03:44.870
+Now we notice that these are all static methods,
+so that means we call them from the class
+
+00:03:44.870 --> 00:03:50.689
+name (this means they're class methods remember?)
+and that we do it with JOptionPane. So for
+
+00:03:50.689 --> 00:03:57.549
+example we'll do JOptionPane period show input
+dialog to call these methods. Now, what we
+
+00:03:57.549 --> 00:04:03.599
+want to look for is the simplest signature
+we can possibly find. So notice that here
+
+00:04:03.599 --> 00:04:09.420
+we've got one with two parameters, here's
+one of three parameters, one with four parameters,
+
+00:04:09.420 --> 00:04:15.499
+and so on. But if we go down - right here
+we have this nice little modest one that just
+
+00:04:15.499 --> 00:04:20.780
+has a message as the parameter. That one looks
+like it's going to be handy. Now the problem
+
+00:04:20.780 --> 00:04:27.060
+is that one returns a string. And we're going
+to return an int, a double, a Boolean, a char,
+
+00:04:27.060 --> 00:04:34.060
+so we're going to have to manipulate those
+strings and change the type of data. Let's
+
+00:04:34.900 --> 00:04:40.350
+think a little about how to change a string
+to an int. Well because this involves integers
+
+00:04:40.350 --> 00:04:45.090
+we're going to look in the integer wrapper
+class, because that has a lot of options.
+
+00:04:45.090 --> 00:04:50.000
+Now there are two basic options. We can use
+an integer object if we want, or we can use
+
+00:04:50.000 --> 00:04:54.680
+class methods. If we're going to use an integer
+object we're going to need to construct it
+
+00:04:54.680 --> 00:04:59.759
+from the string, and then we'll use the method
+int value. And notice int value doesn't have
+
+00:04:59.759 --> 00:05:05.300
+any parameters because it's going to return
+the value that's stored in the integer object.
+
+00:05:05.300 --> 00:05:09.910
+The other way, and this is the way we're actually
+going to do, it is using class methods. The
+
+00:05:09.910 --> 00:05:15.180
+problem is that we've got a whole bunch of
+different class method to choose from. We've
+
+00:05:15.180 --> 00:05:20.770
+got decode, we've got two different "value
+of" methods and we've got parse int. So in
+
+00:05:20.770 --> 00:05:27.770
+order to make choices between those we're
+going to need to look at the API. So here's
+
+00:05:37.000 --> 00:05:44.000
+the integer class in the API. Let's go and
+find the methods and read about them. So the
+
+00:05:45.139 --> 00:05:49.949
+first thing we have is this decode method.
+Well we notice that this returns an integer
+
+00:05:49.949 --> 00:05:54.460
+object. So if we're going to use that in our
+program we're going to have to take that integer
+
+00:05:54.460 --> 00:05:59.449
+object and change it into an int. Now we know
+how to do that, that's what the int value
+
+00:05:59.449 --> 00:06:03.960
+method does. So we we can do that if we want
+but let's see if there's something else in
+
+00:06:03.960 --> 00:06:10.960
+this. So notice in the documentation you only
+see the first sentence. When you click on
+
+00:06:11.470 --> 00:06:15.430
+the method you're going to see a lot more
+details. So this tells us that it accepts
+
+00:06:15.430 --> 00:06:21.720
+decimal, hexadecimal, and octal numbers given
+by the following grammar. Ahhhh! That looks
+
+00:06:21.720 --> 00:06:26.960
+awful how we know how to deal with all that
+stuff? Well what this kind of hints is that
+
+00:06:26.960 --> 00:06:31.819
+this may not be the best method for us to
+use. Because this method is used for things
+
+00:06:31.819 --> 00:06:36.419
+that we don't really understand like hex and
+octa. Now I know some of you may know what
+
+00:06:36.419 --> 00:06:40.580
+these things are, but that's not something
+I expect you to know at that this point. So
+
+00:06:40.580 --> 00:06:47.580
+let's back out of this method and go and look
+and see if there's another choice available.
+
+00:06:49.979 --> 00:06:55.770
+Remember we have this parse int method that
+we were looking at. So parse int is an interesting
+
+00:06:55.770 --> 00:07:00.770
+choice. Notice it's a static method, this
+takes a string and returns an int so that's
+
+00:07:00.770 --> 00:07:05.330
+nice. It's really nice to get the primitive
+data type that we wanted out instead of getting
+
+00:07:05.330 --> 00:07:09.780
+an integer object and then having to do a
+conversion. So let's see what the method's
+
+00:07:09.780 --> 00:07:15.860
+details are -- "Parse the string argument
+is a signed decimal integer. The characters
+
+00:07:15.860 --> 00:07:21.060
+in the string must all be decimal digits,
+except the first character may be ASCII minus
+
+00:07:21.060 --> 00:07:26.150
+sign." Well gee, doesn't that sound great?
+Notice this didn't get into a lot of complicated
+
+00:07:26.150 --> 00:07:32.120
+details that we can't understand. Although
+there's some stuff coming up that's like that.
+
+00:07:32.120 --> 00:07:34.960
+So that looks like a really good method to
+choose.
+
+00:07:34.960 --> 00:07:39.780
+Now I did mention that we had some other choices
+so let's go and look at those choices. Actually
+
+00:07:39.780 --> 00:07:44.669
+one of them was written right below here,
+so we can look at this value of. Now this
+
+00:07:44.669 --> 00:07:49.470
+is returning an integer object, not an int
+primitive datatype. So if we choose to use
+
+00:07:49.470 --> 00:07:56.229
+this method we're going to have to do something
+else after to change the integer into an int.
+
+00:07:56.229 --> 00:08:00.979
+So that's not so attractive. There's also
+the matter this "radix" thing. Now we don't
+
+00:08:00.979 --> 00:08:06.909
+really know what a radix is and so...that
+probably isn't the method we want. Now there's
+
+00:08:06.909 --> 00:08:11.229
+another value method right below it that's
+kind of interesting. This has a little more
+
+00:08:11.229 --> 00:08:15.830
+attractive signature. It has a string parameter,
+which is what we're looking for 'cause we're
+
+00:08:15.830 --> 00:08:21.919
+trying to change the string into an int but
+again it's returning an integer type. So that's
+
+00:08:21.919 --> 00:08:28.919
+not quite as nice. So it looks to me like
+this parseInt method is probably the best
+
+00:08:28.979 --> 00:08:33.380
+one for what we want. Now I'm not saying that
+this method couldn't be implemented with these
+
+00:08:33.380 --> 00:08:40.380
+other methods. In fact it could, and if you'd
+like to do that that's a fine exercise. So
+
+00:08:43.610 --> 00:08:50.610
+let's go to Eclipse and write "get int dialog"
+first. Now I've imported the JOptionPane class
+
+00:08:54.790 --> 00:08:59.850
+up above remember that's in Java x dot swing
+if you don't know where I got that from remember
+
+00:08:59.850 --> 00:09:05.200
+that's the package name that's listed above
+the class name in the API. So what we're going
+
+00:09:05.200 --> 00:09:12.200
+to do [typing] JOptionPane show input dialog
+with whatever prompt gets passed into the
+
+00:09:16.640 --> 00:09:23.640
+parameter. Now remember this returned a string.
+So we need to save that to a variable. The
+
+00:09:27.810 --> 00:09:32.390
+next thing we need to do is to convert that
+string to an integer and that's where our
+
+00:09:32.390 --> 00:09:38.890
+integer class comes in. So we'll have an int,
+which I'm going to call "result" and that's
+
+00:09:38.890 --> 00:09:45.890
+going to be [typing] integer dot parse int
+of the result string. So that takes the string
+
+00:09:51.670 --> 00:09:57.339
+that's handed back from JOptionPane and changes
+it into an integer. The last thing we need
+
+00:09:57.339 --> 00:10:04.339
+to do is to return the result. So now it looks
+like we have a working method. Before we go
+
+00:10:05.290 --> 00:10:10.790
+and write get double dialog, get string dialog,
+and get Boolean dialog, it's probably a pretty
+
+00:10:10.790 --> 00:10:15.459
+good idea to test this out to make sure it's
+still working. Let's create a little main
+
+00:10:15.459 --> 00:10:22.459
+program here. I'll talk about another testing
+option later. So here's our main program.
+
+00:10:25.480 --> 00:10:32.480
+Public static void main string square bracket
+args. So what we're going to do is [typing]
+
+00:10:32.950 --> 00:10:39.950
+GUI utilities get int dialog. And let's give
+the prompt [typing] enter an integer and let's
+
+00:10:50.389 --> 00:10:57.389
+just write it out system out print line. So
+that's about as simple as a test could possibly
+
+00:11:01.029 --> 00:11:08.029
+be. So when we run it we see that this little
+input dialog pops up. I've entered a three,
+
+00:11:15.010 --> 00:11:16.889
+it prints out a three.
+
+00:11:16.889 --> 00:11:22.970
+Now you might ask what happens if I enter
+something that isn't appropriate? Like for
+
+00:11:22.970 --> 00:11:29.970
+example "space space space three", can it
+handle that? Well it can't. And this is a
+
+00:11:30.779 --> 00:11:34.860
+real limitation of our programs at this point.
+In fact, we're not going to know how to work
+
+00:11:34.860 --> 00:11:39.550
+around this problem. So for now we have to
+assume our users are imperfect. That's a lot
+
+00:11:39.550 --> 00:11:44.889
+to expect of users and is actually patently
+unfair most the time [laughs]. Now that we
+
+00:11:44.889 --> 00:11:50.070
+know that our get int dialog method is working
+correctly, let's copy and paste and try to
+
+00:11:50.070 --> 00:11:57.070
+do the get double dialog. The plan is very
+likely to be the same. Except our result will
+
+00:12:02.899 --> 00:12:08.970
+be a double. And of course we're not going
+to want to use integer dot parse int. We could
+
+00:12:08.970 --> 00:12:15.970
+probably guess that the double class might
+have something to offer us. Notice there are
+
+00:12:17.970 --> 00:12:21.420
+a lot of classes that have double in their
+names so make sure you're picking the right
+
+00:12:21.420 --> 00:12:28.420
+one. We would really hope that we could find
+a parse double method, and look at that! There's
+
+00:12:32.949 --> 00:12:38.709
+a nice one created. Pay attention to what
+they're doing in the API here by giving names
+
+00:12:38.709 --> 00:12:44.079
+that were parallel, that were similar it made
+it much easier for us to find this method.
+
+00:12:44.079 --> 00:12:51.079
+Remember that when you're programming 'cause
+it's a considerate thing to do. So we were
+
+00:12:51.190 --> 00:12:56.940
+in the double class, so we'll change that
+integer to double [typing] and instead of
+
+00:12:56.940 --> 00:13:03.940
+parse int we will parse double. The only thing
+that needs to be changed is that I forgot
+
+00:13:08.769 --> 00:13:15.769
+to put the string prompt parameter in. We
+can see that the code is compiling. Let's
+
+00:13:16.930 --> 00:13:23.930
+change our little test program 
+and right now Eclipse isn't happy. Let's take
+a look and see what's wrong. "Can't make a
+
+00:13:29.769 --> 00:13:34.899
+static reference to a non-static method."
+Remember that's one of those crazy little...things
+
+00:13:34.899 --> 00:13:41.750
+in Eclipse that doesn't really give you very
+helpful information but this is what it's
+
+00:13:41.750 --> 00:13:47.320
+complaining about. Now, you can see that I've
+made that mistake in several different places.
+
+00:13:47.320 --> 00:13:54.320
+So let's just fix that right now. And in fact
+while we're here, [typing] let's put our parameter
+
+00:13:56.089 --> 00:14:03.089
+in too. Okay, Eclipse is happy now! So let's
+run the program. Enter a double. 24.798...24.798.
+
+00:14:18.540 --> 00:14:22.670
+That's looking good.
+Now! Let's think about this next one - get
+
+00:14:22.670 --> 00:14:29.160
+string dialog. It'll probably be similar to
+the double one, except if you think about
+
+00:14:29.160 --> 00:14:34.430
+it for a minute all that's going to happen
+is we're going to return the original string.
+
+00:14:34.430 --> 00:14:41.430
+So we probably don't need to copy all those
+lines of code. Let's just copy this one. And
+
+00:14:42.649 --> 00:14:49.649
+in fact (in this case) we don't need to save
+to a local variable. We can just [typing]
+
+00:14:54.290 --> 00:15:00.600
+return. So that's very simple. So notice we're
+not getting much value out of the get string
+
+00:15:00.600 --> 00:15:05.980
+dialog method, it's basically just calling
+the JOptionPane. But the value we're getting
+
+00:15:05.980 --> 00:15:11.170
+is by creating a complete set of methods that
+somebody can use. They're more likely to use
+
+00:15:11.170 --> 00:15:18.170
+them. So let's test, once again. Enter a string...um...my
+dog has fleas. (My dog doesn't have fleas
+
+00:15:35.339 --> 00:15:42.339
+by the way). Okay that's looking good. And
+the last thing we need is to get Boolean dialog.
+
+00:15:43.459 --> 00:15:50.459
+Now we might guess that's going to look pretty
+much the same as the int and double cases.
+
+00:15:54.769 --> 00:15:59.410
+The only thing is we're going to need to be
+able to parse a Boolean. Now we certainly
+
+00:15:59.410 --> 00:16:04.029
+would hope that the Boolean class is going
+to have a parse Boolean method in it. So let's
+
+00:16:04.029 --> 00:16:11.029
+go look for it. There's the Boolean class.
+And what do you know? Parse Boolean. Again,
+
+00:16:19.699 --> 00:16:25.190
+very good design of the Java API to use the
+same style of method names. Makes it much
+
+00:16:25.190 --> 00:16:32.190
+easier to do things like this. We'll get our
+result string here instead of result being
+
+00:16:33.470 --> 00:16:39.790
+a double. It's Boolean, the class name is
+Boolean, remember with a capital "B" because
+
+00:16:39.790 --> 00:16:46.790
+it's class. And we'll have parse Boolean!
+And then we'll return result. So now we'll
+
+00:16:55.259 --> 00:17:02.259
+get a Boolean dialog [typing] and let's see
+what happens. Enter a Boolean...and it hands
+
+00:17:14.580 --> 00:17:21.580
+back true. Now we might experiment with that
+a little bit. For example, can it handle true
+
+00:17:22.920 --> 00:17:28.580
+with a capital "T"? And notice it can, so
+that's kind of cool. What will happen if we
+
+00:17:28.580 --> 00:17:35.580
+put a space in front of it? So there's my
+space, and now "True." And that handed back
+
+00:17:38.010 --> 00:17:43.870
+false. Wasn't that strange? Well I think we
+better go and take a look at that parse Boolean
+
+00:17:43.870 --> 00:17:50.870
+method and see what's really going on. So
+here's parse Boolean. "Parses the string argument
+
+00:17:51.250 --> 00:17:57.320
+as a Boolean. The Boolean returned represents
+the value true if the string argument is not
+
+00:17:57.320 --> 00:18:03.020
+null and its equal ignoring case to the string
+true." Now notice they don't have any spaces
+
+00:18:03.020 --> 00:18:09.900
+in front of it. So parse Boolean capital true
+returns true and parse Boolean yes returns
+
+00:18:09.900 --> 00:18:14.640
+false. Okay, so there's some strange stuff
+going on there but it does look like that
+
+00:18:14.640 --> 00:18:19.400
+was working correctly. One thing you might
+want to remember when you're using this, is
+
+00:18:19.400 --> 00:18:24.080
+to make sure you tell the users to enter "true"
+or "false" because otherwise they might enter
+
+00:18:24.080 --> 00:18:30.760
+"yes" or "no" or something else like that.
+And that's going to be a problem.
+
+00:18:30.760 --> 00:18:34.890
+Now the next thing we might want to try is
+testing from another class. Remember we're
+
+00:18:34.890 --> 00:18:39.680
+creating utilities here, so we're hoping other
+people are going to use them from their classes.
+
+00:18:39.680 --> 00:18:45.340
+Putting a main program in this class to test?
+Not so nice. Let's make a separate class and
+
+00:18:45.340 --> 00:18:52.340
+see what we can do it that. So I'm going to
+cut my main program and now we're ready to
+
+00:18:57.800 --> 00:19:04.800
+create another class. So we're going to create
+[typing] test GUI utilities. And we can put
+
+00:19:11.730 --> 00:19:15.630
+a main program in that although come to think
+of it, since I copied the whole main program
+
+00:19:15.630 --> 00:19:22.630
+we probably don't want to do that this time.
+So here we go, there it is with enter Boolean.
+
+00:19:30.720 --> 00:19:37.720
+We'll do system. Actually let's just copy
+and paste. [typing] So enter int dialog, enter
+
+00:19:54.340 --> 00:20:01.340
+an integer, enter double dialog, enter a double,
+and get string dialog and enter a string.
+
+00:20:14.280 --> 00:20:21.280
+So here we go! Enter a Boolean, you know what
+to do this time. Now we enter an integer.
+
+00:20:25.640 --> 00:20:32.640
+Oh! I did a silly thing. I entered 5.7 for
+an integer. 5.7 is an integer. Well, that's
+
+00:20:35.570 --> 00:20:42.570
+my fault. Let's try it again. So here's our
+Boolean. Let's try true with a capital "T"
+
+00:20:43.730 --> 00:20:50.380
+'cause that one was supposed to work and it
+did. Now let's just try an integer five with
+
+00:20:50.380 --> 00:20:57.380
+a double that's when 5.7 make sense. Aaaaand
+here's our string. My dog does not have fleas.
+
+00:21:04.900 --> 00:21:09.760
+So looks like our code is working just fine
+at this point.
+
+00:21:09.760 --> 00:21:14.050
+Now the next thing we want to do, since we
+want other people to use our code, is to add
+
+00:21:14.050 --> 00:21:19.330
+Javadoc. When you make a class that's made
+to be used by other classes and other people
+
+00:21:19.330 --> 00:21:24.030
+you need to document the methods well but
+luckily we can create documentation that looks
+
+00:21:24.030 --> 00:21:31.030
+identical to the API using Javadoc. First
+off here's how you Javadoc methods. The first
+
+00:21:31.740 --> 00:21:37.240
+thing you do is a slash and two asterisks;
+then you describe the method. The first sentence
+
+00:21:37.240 --> 00:21:41.770
+is extremely important 'cause that's the one
+that goes in the table at the start. So it
+
+00:21:41.770 --> 00:21:46.580
+needs to be a summary and it needs to end
+with the period. The other sentences you add-in
+
+00:21:46.580 --> 00:21:52.680
+will be visible in the longer form. Then you
+do @ param, the parameter name and a description
+
+00:21:52.680 --> 00:21:57.180
+of the parameter for every single parameter.
+So there may be 10 of those or there may be
+
+00:21:57.180 --> 00:22:02.850
+none depending on whether you have parameters
+or not. And then @ return description. The
+
+00:22:02.850 --> 00:22:07.620
+Javadoc method ends with asterisk slash. Now
+the good news here is that Eclipse helps us
+
+00:22:07.620 --> 00:22:12.500
+with this by putting in the parameter in the
+return correctly. So let's go and document
+
+00:22:12.500 --> 00:22:19.500
+our methods. Now notice that I'm not documenting
+the test GUI utilities class. That was just
+
+00:22:19.710 --> 00:22:24.520
+for our use. That one's not so important.
+But the utilities that are meant to be used
+
+00:22:24.520 --> 00:22:31.520
+by other people, those should be well-documented.
+So here we got slash star star. Now don't
+
+00:22:33.160 --> 00:22:36.900
+let the fact that Eclipse is freaking out
+bother you. It just thinks everything's a
+
+00:22:36.900 --> 00:22:43.900
+comment now, it'll calm down when we finish
+our Javadoc. [typing] Create an input dialog
+
+00:22:46.850 --> 00:22:53.850
+with the given prompt that returns an int
+value. Now you might notice that when I hit
+
+00:22:59.370 --> 00:23:05.620
+return the rest of the asterisks and the @ param
+and the @ return all appeared right away.
+
+00:23:05.620 --> 00:23:12.620
+Eclipse did that for us. So prompt is "The
+instructions to the user and it returns the
+
+00:23:16.420 --> 00:23:22.350
+int value the user enters." Now we might want
+to think about what other things we could
+
+00:23:22.350 --> 00:23:26.390
+tell people that are going to use this method.
+One thing I think we should tell them is that
+
+00:23:26.390 --> 00:23:32.170
+it's not very robust so if the user makes
+a mistake in data entry the program breaks.
+
+00:23:32.170 --> 00:23:39.170
+So let's put that up here. "If the user makes
+a mistake in data entry like entering a double
+
+00:23:43.210 --> 00:23:50.210
+instead of an int the method will break."
+It's really good to own those things when
+
+00:23:53.760 --> 00:23:58.900
+you write them so people don't get surprised.
+Now as it happens our methods are very much
+
+00:23:58.900 --> 00:24:04.550
+alike. We're going to copy and paste our Javadoc.
+When you do this though, you really have to
+
+00:24:04.550 --> 00:24:09.640
+read carefully to make sure you don't have
+things that don't make any sense in there.
+
+00:24:09.640 --> 00:24:16.640
+So here we go. I'm going to go back and read
+these one at a time and make sure they make
+
+00:24:27.450 --> 00:24:33.120
+sense. "Create an input dialog with a given
+prompt that returns an int value." No, not
+
+00:24:33.120 --> 00:24:39.850
+an int value, a double value. "If the user
+makes a mistake in entry like entering a double
+
+00:24:39.850 --> 00:24:46.850
+instead of an int"...no, "like entering an
+int instead of a double the method will break."
+
+00:24:51.230 --> 00:24:58.230
+So this will be the double value the user
+enters. Okay, so that one looks good. And
+
+00:24:58.610 --> 00:25:05.610
+now we'll do the other two. "Create an input
+dialog with a given prompt that returns a...string."
+
+00:25:08.320 --> 00:25:15.320
+"If the user makes a mistake in data entry
+like entering a double instead of an int."
+
+00:25:16.540 --> 00:25:20.480
+Well now this doesn't actually make sense
+this time, because anything the user enters
+
+00:25:20.480 --> 00:25:27.480
+is going to be a string. So let's get that
+out of there. And [typing] the value the user
+
+00:25:31.040 --> 00:25:38.040
+enters. "Create an input dialog with a given
+prompt that returns a Boolean value". "If
+
+00:25:39.760 --> 00:25:44.570
+the user makes a mistake in data entry like
+entering double instead of an int" so...not
+
+00:25:44.570 --> 00:25:51.570
+an int but a Boolean "the method will break".
+The prompt is still the instructions to the
+
+00:25:51.820 --> 00:25:55.130
+user.
+
+00:25:55.130 --> 00:25:59.870
+We have some other information. We know that
+that parse Boolean is doing something weird,
+
+00:25:59.870 --> 00:26:06.870
+so we really have a responsibility to tell
+our users about this. "The method will accept
+
+00:26:07.520 --> 00:26:14.520
+'true' or 'True' as legal true values. Any
+other value will return false including space
+
+00:26:27.180 --> 00:26:34.180
+true." So notice I'm trying to give the user
+as much information as possible. Part of this
+
+00:26:34.850 --> 00:26:39.730
+is professionalism. When other people use
+my code I want them to know what to expect
+
+00:26:39.730 --> 00:26:44.320
+and I want them to think well of me as a professional.
+Being clear about these things really makes
+
+00:26:44.320 --> 00:26:48.860
+a difference. Now one thing you may notice
+is the documentation for this method is actually
+
+00:26:48.860 --> 00:26:54.110
+longer than the method is. That's very typical
+of professional code. In fact professional
+
+00:26:54.110 --> 00:26:58.890
+code should have at least 50% comments. Now
+we haven't been doing that up to this point
+
+00:26:58.890 --> 00:27:03.080
+because we're still beginners, but as you
+become more and more proficient you need to
+
+00:27:03.080 --> 00:27:07.490
+learn to document your programs properly.
+And so you're going to see more and more documentation
+
+00:27:07.490 --> 00:27:13.080
+going into programs as we go along. Well,
+this is all very exciting except we haven't
+
+00:27:13.080 --> 00:27:20.080
+actually seen the Javadoc yet. Well before
+we see the Javadoc, let's Javadoc the class.
+
+00:27:21.620 --> 00:27:26.790
+The preamble that we've been reading from
+the API comes from the Javadoc for the class.
+
+00:27:26.790 --> 00:27:33.710
+So it starts with a //** then gives a description
+of class then @ author and the author's name
+
+00:27:33.710 --> 00:27:39.870
+@ version and the version number. This would
+be version 1.0 because it's our first version
+
+00:27:39.870 --> 00:27:46.870
+and ends with an asterisk slash. So let's
+finish our documentation. So "We've created
+
+00:27:50.210 --> 00:27:57.210
+a class utility methods that wrap a JOptionPane
+and provide easy access to int, double, string,
+
+00:28:07.520 --> 00:28:14.520
+and Boolean types." Now as you see Eclipse
+has a strange name for me. That's not how
+
+00:28:15.800 --> 00:28:22.800
+I represent my name. And here, so there we
+have the rest of the documentation. So now
+
+00:28:26.280 --> 00:28:30.900
+we have a lot more documentation than we have
+code. That may look wasteful but it really
+
+00:28:30.900 --> 00:28:37.590
+isn't. The documentation is of the most important
+part. So the next thing we need to do is actually
+
+00:28:37.590 --> 00:28:43.490
+generate our Javadoc and take a look at it.
+So we go to project, generate Javadoc. We
+
+00:28:43.490 --> 00:28:47.630
+can just accept the defaults 'cause they're
+perfectly fine. And the Javadoc in the class
+
+00:28:47.630 --> 00:28:54.380
+will appear in a pane labeled Javadoc below
+will be in the tooltips also. Here we are
+
+00:28:54.380 --> 00:29:01.380
+back in Eclipse. Project, generate Javadoc.
+Like I say all the defaults are just fine.
+
+00:29:10.280 --> 00:29:16.690
+And so you see a lot of stuff scrolling by.
+Don't panic, and there we go. So now we go
+
+00:29:16.690 --> 00:29:23.010
+to Javadoc what we'll see is the Java that
+we just wrote. So for example if we go to
+
+00:29:23.010 --> 00:29:30.010
+this method. Get int dialog - there it is.
+Let's go to the long one that we wrote. Get
+
+00:29:32.070 --> 00:29:37.400
+Boolean dialog, so notice it's both in the
+tooltips that hover over here. And also in
+
+00:29:37.400 --> 00:29:44.400
+the Javadoc pane down here. The other place
+where you can see it is right here. And notice
+
+00:29:45.500 --> 00:29:51.860
+this one now looks exactly like the beautiful
+Javadoc pages that we've been using in the
+
+00:29:51.860 --> 00:29:58.320
+API. Javadoc is a really neat feature of Java
+and one that I enjoy using a lot. Not only
+
+00:29:58.320 --> 00:30:04.610
+when other people write it but when I write
+it too. Now the other thing that we probably
+
+00:30:04.610 --> 00:30:09.580
+need to learn about at this point is how to
+handle Eclipse windows and frames. You may
+
+00:30:09.580 --> 00:30:14.630
+already have run into the situation where
+you accidentally closed your package Explorer,
+
+00:30:14.630 --> 00:30:18.620
+and don't know how to get that back. That's
+a bad thing. So let me teach you a little
+
+00:30:18.620 --> 00:30:24.610
+bit of Eclipse vocabulary. "Views" are tools
+that show the data in your project in different
+
+00:30:24.610 --> 00:30:30.300
+ways. So for example your code can be shown
+as code, it can be shown in Javadoc, it can
+
+00:30:30.300 --> 00:30:36.010
+be shown as files in the package Explorer
+and IO can be shown in the console. These
+
+00:30:36.010 --> 00:30:41.150
+are all different ways of looking at the same
+piece of code. To go to views you select them
+
+00:30:41.150 --> 00:30:48.150
+from the window menu. Okay so let's say for
+example that I slipped and I got rid of my
+
+00:30:48.290 --> 00:30:55.290
+package Explorer. To get that back, I go to
+window, show view, package Explorer. And you
+
+00:30:59.510 --> 00:31:06.160
+notice it pops right back. Maybe I got rid
+of my Javadoc pane prematurely. So we'll do
+
+00:31:06.160 --> 00:31:13.160
+window, show view, Javadoc. And there it is
+back. Now the other thing you'll need to know
+
+00:31:17.850 --> 00:31:23.100
+about our perspectives. What perspectives
+are is arrangements of views. Now there are
+
+00:31:23.100 --> 00:31:27.880
+two basic ones that we usually use. One is
+called Java which is the default one and one
+
+00:31:27.880 --> 00:31:33.640
+is called debug is also very handy, as you
+will see soon. So let's take a look at those.
+
+00:31:33.640 --> 00:31:38.720
+So your perspectives are over here. This is
+the Java perspective, which is the standard
+
+00:31:38.720 --> 00:31:45.550
+one we've been using all semester, and right
+there is the debugging perspective. Now we
+
+00:31:45.550 --> 00:31:49.980
+don't know exactly what to do about this just
+exactly yet. So we're not going to use that
+
+00:31:49.980 --> 00:31:55.170
+perspective but do understand that perspectives
+are made up of views and views are the tools
+
+00:31:55.170 --> 00:31:59.960
+that allow you to look at your data. That'll
+make a lot less frustrating if you accidentally
+
+00:31:59.960 --> 00:32:04.050
+close something you wish you had back. So
+keep programming!
+

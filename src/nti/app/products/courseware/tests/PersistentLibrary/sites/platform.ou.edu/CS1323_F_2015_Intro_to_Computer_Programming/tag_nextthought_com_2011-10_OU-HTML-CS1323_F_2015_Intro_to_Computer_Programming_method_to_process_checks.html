@@ -1,0 +1,34 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html lang="en"><head> <meta content="2015-12-11T16:56:47" http-equiv="last-modified" /> <meta content="1140" name="NTIRelativeScrollHeight" /> <meta content="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.method_to_process_checks" name="NTIID" /> <meta content="NextThought" name="generator" /> <meta content="text/html; charset=ascii" http-equiv="content-type" /> <title>Method to Process Checks</title> <link href="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.complete_class" rel="next" title="Complete Class" /> <link href="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.method_to_accept_a_deposit" rel="prev" title="Method to Accept a Deposit" /> <link href="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.reading:Chortle_CH32" rel="up" title="Class Design Example" /> <link href="styles/styles.css" rel="stylesheet" /> <link href="styles/content.css" rel="stylesheet" /> </head> <body id="NTIContent"> <div class="page-contents"><div data-ntiid="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.method_to_process_checks" id="a0000000520" ntiid="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.method_to_process_checks"> <div class="chapter title">Method to Process Checks</div> <p class="placeholder"></p> <a name="b4305def4e2f236b0aa87068bd2fbe6b"></a> <div class="sidebar" data-ntiid="tag:nextthought.com,2011-10:OU-HTML:NTISidebar-CS1323_F_2015_Intro_to_Computer_Programming.sidebar.answer.193" ntiid="tag:nextthought.com,2011-10:OU-HTML:NTISidebar-CS1323_F_2015_Intro_to_Computer_Programming.sidebar.answer.193"> <div class="sidebar-title">Answer</div> <pre>class CheckingAccount
+{
+  // instance variables
+  String accountNumber;
+  String accountHolder;
+  int    balance;
+
+  //constructors
+  . . . .
+
+  // methods
+  . . . .
+
+  void processDeposit ( int amount )
+  {
+
+    balance = balance + amount ;
+  }
+
+}
+</pre> </div><a name="689f856dde004bfd4f74e7a23a63d4ef"></a> <p class="par" id="689f856dde004bfd4f74e7a23a63d4ef">If you have the previous test program in a file, it would be nice to add the <b class="bfseries"><tt class="ttfamily">processDeposit()</tt></b> method and test it. The method to process a check is slightly more complicated: </p> <a name="5332dac04adfd5a5be510dee2a1bceb9"></a> <ul class="itemize"> <li><a name="8cd7434485aad2d8b13f2ab407a2af29"></a> <p class="par" id="8cd7434485aad2d8b13f2ab407a2af29">Assume that the amount of a check is a positive value, expressed in cents. </p> </li> <li><a name="90d8bb27e4186cbcbc5ce0a8840dd64c"></a> <p class="par" id="90d8bb27e4186cbcbc5ce0a8840dd64c">If the current balance is less than $1000.00, there is a $0.15 processing charge. </p> </li> <li><a name="4f285aa8490717c8ccc3a53a94943149"></a> <p class="par" id="4f285aa8490717c8ccc3a53a94943149">The amount of the check and the processing charge (if any) are subtracted from the balance. </p> </li> <li><a name="1f3afc1ca5271418193d02fd55eb16e8"></a> <p class="par" id="1f3afc1ca5271418193d02fd55eb16e8">The return type is void. </p> </li> </ul><a name="745c536292070e90bc827814b5c9e19d"></a> <p class="par" id="745c536292070e90bc827814b5c9e19d">Here is a sketch of the method: </p> <a name="4f398cb449ee95539e699033aa5473cf"></a> <pre>void processCheck( int _______ )
+{
+  int charge;
+  if ( _______ &lt; 100000 )
+
+    charge = _______ ;
+  else
+
+    charge = _______ ;
+
+  balance = _______ - _______ -  _______;
+
+}
+</pre><a name="071be74609d4f0fb42e2e700fed7b477"></a> <div class="sidebar" data-ntiid="tag:nextthought.com,2011-10:OU-HTML:NTISidebar-CS1323_F_2015_Intro_to_Computer_Programming.sidebar.question.203" ntiid="tag:nextthought.com,2011-10:OU-HTML:NTISidebar-CS1323_F_2015_Intro_to_Computer_Programming.sidebar.question.203"> <div class="sidebar-title">Question</div> Fill in the blanks to complete the method. </div> </div></div> </body></html>

@@ -1,0 +1,100 @@
+WEBVTT
+Kind: captions
+Language: en
+
+00:00:00.940 --> 00:00:04.210
+&gt;&gt;Dr. Deborah Trytten: Now that we know how
+to store primitive data, let's write a program
+
+00:00:04.210 --> 00:00:11.210
+that examines target heart rates. Here's the
+problem statement. To get the maximum benefit
+
+00:00:11.759 --> 00:00:17.050
+from exercise, your heart rate needs to be
+increased. There's a formula that's widely
+
+00:00:17.050 --> 00:00:23.170
+used: subtract your age from 220, and your
+target heart rate should be between 65 and
+
+00:00:23.170 --> 00:00:30.170
+85 percent of this value. People usually count
+their pulse for only ten seconds. First let's
+
+00:00:30.910 --> 00:00:36.699
+do the computation by hand. Now this slide
+is written in math, not in Java. Let's say
+
+00:00:36.699 --> 00:00:43.699
+you're 19. Well, 220 minus 19 is 201. And
+201 times 65 divided by 100 is 130.65. 201
+
+00:00:50.690 --> 00:00:57.690
+times 85 divided by 100 is 170.85. So your
+target heart rate would be between 131 and
+
+00:00:59.940 --> 00:01:06.940
+171 beats per minute. Your ten-second pulse
+would be between 130.65 times 10 divided by
+
+00:01:09.390 --> 00:01:16.390
+60, which is 21.83, and 170.85 times 10 divided
+by 60, which is 28.5. Let's do some thinking
+
+00:01:23.470 --> 00:01:27.990
+about how we're going to put this into Java
+when we're able to. First, let's consider
+
+00:01:27.990 --> 00:01:34.990
+some types and identifiers. Well, age. Age
+is an integer, so we would declare this in
+
+00:01:36.440 --> 00:01:43.440
+Java as int age followed by a semicolon. 220
+is certainly an integer. There's no doubt
+
+00:01:44.780 --> 00:01:50.000
+about that, but we really don't know what
+it means in this problem, so we would call
+
+00:01:50.000 --> 00:01:56.670
+it final int weird constant equals 220. Now
+you may know what it means better than I do,
+
+00:01:56.670 --> 00:02:02.270
+in which case you could come up with a better
+name than that. Sixty-five percent--when we
+
+00:02:02.270 --> 00:02:07.810
+were calculating it by hand, we wrote as 65
+divided 100, but in a program it's going to
+
+00:02:07.810 --> 00:02:14.810
+be more convenient to make it a double. That
+would be .065. So final double low percent
+
+00:02:15.590 --> 00:02:22.590
+equals 0.65. Eighty-five percent is similar.
+Final double high percent equals .85 followed
+
+00:02:25.260 --> 00:02:32.260
+by a semicolon. Ten seconds I would write
+as final double ten seconds equals 0.166666667.
+
+00:02:37.319 --> 00:02:42.140
+Now what I've done there is divided 10 by
+60 and left it as a decimal because it will
+
+00:02:42.140 --> 00:02:47.370
+be more convenient to work with it like that.
+And of course, whenever you're interacting
+
+00:02:47.370 --> 00:02:52.490
+with people, you definitely want to save their
+names. Names are made up of multiple characters
+
+00:02:52.490 --> 00:02:59.490
+usually, and so string first name. There's
+a start on what our program will be.
+

@@ -1,0 +1,25 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html lang="en"><head> <meta content="2015-12-11T16:56:47" http-equiv="last-modified" /> <meta content="1293" name="NTIRelativeScrollHeight" /> <meta content="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.another_example" name="NTIID" /> <meta content="NextThought" name="generator" /> <meta content="text/html; charset=ascii" http-equiv="content-type" /> <title>Another Example</title> <link href="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.comments" rel="next" title="Comments" /> <link href="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.longer_example_program" rel="prev" title="Longer Example Program" /> <link href="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.reading:Chortle_CH6" rel="up" title="Small Java Programs" /> <link href="styles/styles.css" rel="stylesheet" /> <link href="styles/content.css" rel="stylesheet" /> </head> <body id="NTIContent"> <div class="page-contents"><div data-ntiid="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.another_example" id="a0000000378" ntiid="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.another_example"> <div class="chapter title">Another Example</div> <p class="placeholder"></p> <a name="bd3d0511158c68f473aa4421c2786292"></a> <div class="sidebar" data-ntiid="tag:nextthought.com,2011-10:OU-HTML:NTISidebar-CS1323_F_2015_Intro_to_Computer_Programming.sidebar.answer.66" ntiid="tag:nextthought.com,2011-10:OU-HTML:NTISidebar-CS1323_F_2015_Intro_to_Computer_Programming.sidebar.answer.66"> <div class="sidebar-title">Answer</div> <a name="837f81c5fd4c490f8968aab100d3db62"></a> <p class="par" id="837f81c5fd4c490f8968aab100d3db62"> Each <tt class="ttfamily">System.out.println</tt> statement writes out the characters inside the quote marks: </p> <a name="d218200f4f125921abeb988ca1f58ca7"></a> <pre>A bird came down the walk
+He did not know I saw;
+He bit an angle-worm in halves
+And ate the fellow, raw.
+</pre> </div><a name="179b7f4caffc0f77080eaaaa667c6ee2"></a> <p class="par" id="179b7f4caffc0f77080eaaaa667c6ee2">Now say that your assignment is to create a program that writes the following to the computer monitor: </p> <a name="201e41e65e460001057d75e7514a27cc"></a> <pre>On a withered branch
+A crow has just alighted:
+Nightfall in autumn.
+</pre><a name="94944d0b8b2225c095554d0e3430bcf8"></a> <p class="par" id="94944d0b8b2225c095554d0e3430bcf8">Below is the program that is to perform this task. Be sure that you put the quote marks where they belong. If you forget just one of them, the compiler will become confused and will not translate your program! </p> <a name="0d0eff8d329e5a7a06387c3bb2a37387"></a> <pre>class Haiku
+{
+  public static void main ( String[] args )
+  {
+    System.out.println("On a withered branch");
+    System.out.println("A crow has just alighted:");
+    System.out.println("Nightfall in autumn.");
+  }
+}
+</pre><a name="b6d27e864dccdbb9899e6e24fc667acd"></a> <p class="par" id="b6d27e864dccdbb9899e6e24fc667acd">If you have been creating the example programs and compiling and running them, you may have noticed that spaces and <i class="itshape">new lines</i> in the program are not critical. (However, you can&#8217;t put spaces in the middle of a word, and spaces inside the quote marks do matter.) For example, the following version of the program will compile correctly and will do exactly the same thing as the original version when it is run: </p> <a name="2679a3ab9e6f710130950a7d0f1b2378"></a> <pre>                    class     
+    Haiku{
+  public   static void main(String[] args )
+    {
+  System.out.   println(          "On a withered branch");
+    System  .  out.println("A crow has just alighted:"         );
+System.out.println("Nightfall in autumn.");
+  }}
+</pre><a name="07afdca292f72b752960a7efdab2003a"></a> <p class="par" id="07afdca292f72b752960a7efdab2003a">The compiler does not "see" the two dimensional layout of the program. It regards the program as a stream of characters, one following the other. </p> <a name="4c09510c00c4888849e891685cc9356a"></a> <p class="par" id="4c09510c00c4888849e891685cc9356a">However, humans are sensitive to the layout of text, and it is important to be neat and consistent when you create a source file. Although the second version of the program runs correctly, it is much harder for a person to understand. </p> <a name="f8db3ac5a2287fe613e83c46cd556bcf"></a> <div class="sidebar" data-ntiid="tag:nextthought.com,2011-10:OU-HTML:NTISidebar-CS1323_F_2015_Intro_to_Computer_Programming.sidebar.question.68" ntiid="tag:nextthought.com,2011-10:OU-HTML:NTISidebar-CS1323_F_2015_Intro_to_Computer_Programming.sidebar.question.68"> <div class="sidebar-title">Question</div> If there were a slight mistake in the poorly laid-out program, would it be easy to find? </div> </div></div> </body></html>

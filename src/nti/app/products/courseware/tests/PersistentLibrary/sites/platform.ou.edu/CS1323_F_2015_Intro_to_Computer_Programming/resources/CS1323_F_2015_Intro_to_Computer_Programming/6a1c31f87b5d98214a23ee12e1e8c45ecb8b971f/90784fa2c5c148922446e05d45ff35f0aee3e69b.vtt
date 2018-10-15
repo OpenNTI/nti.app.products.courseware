@@ -1,0 +1,1283 @@
+WEBVTT
+Kind: captions
+Language: en
+
+00:00:00.859 --> 00:00:07.859
+&gt;&gt;So now that we know a little bit about Arrays,
+let's create the Hall of Fame for a videogame.
+
+00:00:08.009 --> 00:00:12.379
+So here's our problem statement: most electronic
+games have a Hall of Fame that keeps track
+
+00:00:12.379 --> 00:00:17.010
+of the few players that have earned the highest
+scores. Let's implement a five person Hall
+
+00:00:17.010 --> 00:00:24.010
+of Fame for the latest and greatest game Zork:
+The Revenge of the Zerds. First we need to
+
+00:00:24.080 --> 00:00:29.400
+think about what our test data is going to
+be. So player A might get 10 points, and B
+
+00:00:29.400 --> 00:00:36.400
+20, and C 30, and D 40, and E 50, and F 60,
+and G 70, then only person C through G should
+
+00:00:37.050 --> 00:00:41.510
+be in our table. It should be in the reverse
+order. Now we also could put the data in the
+
+00:00:41.510 --> 00:00:48.510
+opposite order, so maybe G 70 is first and
+F 60 is second and E 50 is third and so on.
+
+00:00:48.829 --> 00:00:52.870
+This will give us the same result although
+the program will be doing different things
+
+00:00:52.870 --> 00:00:58.070
+and we also might want to try some random
+order, so maybe D 40 and then B 20 and E 50
+
+00:00:58.070 --> 00:01:03.910
+and A 10. Things like that. So that should
+be a good test of our program.
+
+00:01:03.910 --> 00:01:07.610
+The next thing we need to consider is a very
+important choice; do we want to use an Array
+
+00:01:07.610 --> 00:01:12.270
+or do we want to use an ArrayList? Remember
+that Arrays are generally more efficient than
+
+00:01:12.270 --> 00:01:17.640
+ArrayList because they have less overhead.
+So things like resizing, which the ArrayList
+
+00:01:17.640 --> 00:01:24.360
+does behind the scenes outside of your control
+can be very expensive. Also methods have a
+
+00:01:24.360 --> 00:01:29.619
+certain amount of overhead. To call a method
+there are usually 5 to 10 assembly language
+
+00:01:29.619 --> 00:01:35.659
+instructions that get executed to set up the
+parameter passing and handle the return values.
+
+00:01:35.659 --> 00:01:40.680
+Those things do cost money and so we don't
+want to do them needlessly. Basically the
+
+00:01:40.680 --> 00:01:45.430
+limitation of Arrays is that they have a fixed
+size. Now in this case a fixed size isn't
+
+00:01:45.430 --> 00:01:50.990
+a problem, because we only want to have five
+people in our Hall of Fame. So basically if
+
+00:01:50.990 --> 00:01:55.140
+you know what the size should be an Array's
+always the right choice. Sometimes an Array
+
+00:01:55.140 --> 00:02:00.040
+will be a good choice in other circumstances
+too.
+
+00:02:00.040 --> 00:02:04.170
+The next thing we need to do is consider the
+choices for our data. We have two things that
+
+00:02:04.170 --> 00:02:09.759
+are going to be stored. We have the name of
+the player and we also have the high score.
+
+00:02:09.759 --> 00:02:13.260
+Now later on we're going to have a better
+structure for storing that but for right now
+
+00:02:13.260 --> 00:02:17.830
+we really our only choice is something called
+a parallel Array. That is, we need an Array
+
+00:02:17.830 --> 00:02:23.920
+of names and we need an Array of scores. We
+also need to consider where these Arrays should
+
+00:02:23.920 --> 00:02:28.310
+be allocated. Frankly I'm going to allocate
+them in the main program because I think that's
+
+00:02:28.310 --> 00:02:32.319
+a good place for them. We also might want
+to think about whether we're going to store
+
+00:02:32.319 --> 00:02:37.450
+the scores in ascending order or descending
+order. Now that's a decision that can be made
+
+00:02:37.450 --> 00:02:43.510
+either way, it doesn't really matter but we
+have to make a choice. Ascending order is
+
+00:02:43.510 --> 00:02:48.379
+the typical order that we store our Arrays
+in, but in this case it would be sort of strange
+
+00:02:48.379 --> 00:02:53.440
+to have the lowest score at position zero
+and the highest at the end. So let's pick
+
+00:02:53.440 --> 00:03:00.209
+descending order. If our Arrays were not initialized
+we would have to keep track of the size, because
+
+00:03:00.209 --> 00:03:04.620
+when the first player plays there will only
+be one person in the Hall of Fame. This isn't
+
+00:03:04.620 --> 00:03:09.910
+something that's necessarily difficult but
+it complicates the program unnecessarily.
+
+00:03:09.910 --> 00:03:14.170
+There is a better strategy that's available.
+We could initialize the points Array with
+
+00:03:14.170 --> 00:03:18.580
+negative numbers and adjust the method that
+shows the Hall of Fame so that it doesn't
+
+00:03:18.580 --> 00:03:23.190
+display negative numbers. Notice that what
+we're doing is hiding some implementation
+
+00:03:23.190 --> 00:03:28.090
+details so people who are using the class
+will never know our little secrets. That's
+
+00:03:28.090 --> 00:03:35.090
+how we are in computer science! Let's go and
+get the program setup.
+
+00:03:38.360 --> 00:03:45.360
+[pause] So we're going to create a program
+called Hall of Fame Zork and then we'll create
+
+00:03:48.760 --> 00:03:55.760
+a class which I'll call Hall of Fame. After
+browsing for the correct directory [pause]
+
+00:04:07.870 --> 00:04:14.870
+we'll do our little fixes same as always.
+And here will be ours. We'll have a String
+
+00:04:28.289 --> 00:04:35.289
+Array for the winners' names and we'll have
+an Integer Array for high scores. If we're
+
+00:04:40.999 --> 00:04:45.979
+going to put data in high scores we might
+want to think about the order for initialization.
+
+00:04:45.979 --> 00:04:52.979
+So we're going to have int index is zero (remember,
+Arrays are zero indexed) while index is less
+
+00:04:57.119 --> 00:05:03.699
+than high scores dot length. Now that value
+doesn't make sense yet 'cause we haven't constructed
+
+00:05:03.699 --> 00:05:10.699
+the Array but we will in a minute. So we'll
+set high scores of index equal to negative
+
+00:05:15.889 --> 00:05:22.649
+index. So that means the first one will be
+zero, the second one will be -1, the third
+
+00:05:22.649 --> 00:05:28.430
+one will be -2, so we are creating this Array
+in descending order. The only thing that's
+
+00:05:28.430 --> 00:05:33.409
+bad about this setup is that the index zero
+was going have a value of zero in it. That's
+
+00:05:33.409 --> 00:05:39.379
+probably not a very good idea so let's fix
+that right now.
+
+00:05:39.379 --> 00:05:44.159
+So negative index minus one will mean the
+first index will be -1 and the second one
+
+00:05:44.159 --> 00:05:49.469
+-2 and so on. One more thing we want to think
+about in addition to the fact that we haven't
+
+00:05:49.469 --> 00:05:54.439
+constructed our Arrays, which we should do
+right now. Before we go and construct those
+
+00:05:54.439 --> 00:05:58.770
+Arrays let's think about the size a little
+bit. Right now we're thinking the size is
+
+00:05:58.770 --> 00:06:03.139
+five but that's kind of a small Hall of Fame.
+Remember people like to see their name in
+
+00:06:03.139 --> 00:06:07.379
+the Hall of Fame and because when people like
+to see their name and things like that they
+
+00:06:07.379 --> 00:06:11.009
+want to play the game more, and that's good
+for the company. We certainly want to make
+
+00:06:11.009 --> 00:06:16.270
+that possible. So let's create a constant
+for the size so when some marketing guy comes
+
+00:06:16.270 --> 00:06:20.749
+in in a couple months and tells us they want
+10 people in the Hall of Fame instead of five
+
+00:06:20.749 --> 00:06:27.689
+our code will only need one line of code changed.
+This is another anti-bugging strategy. Final
+
+00:06:27.689 --> 00:06:34.689
+int size equals five and now we can construct
+the Arrays. So for our String it will be new
+
+00:06:38.679 --> 00:06:45.679
+string of size and for high scores it will
+be new int of size. I'm still going to leave
+
+00:06:52.259 --> 00:06:57.479
+high scores dot length in the while loop even
+though I could put size there too, because
+
+00:06:57.479 --> 00:07:01.789
+that's a little bit more robust. That way
+whatever length the Array is is the length
+
+00:07:01.789 --> 00:07:08.300
+that's going to be used. It will work correctly
+either way though. So we now have our Arrays
+
+00:07:08.300 --> 00:07:13.589
+initialized or at least we have our high scores
+Array initialized. Probably not a bad idea
+
+00:07:13.589 --> 00:07:20.589
+to initialize the winners' names too. So we'll
+do winners names equals and then an empty
+
+00:07:24.919 --> 00:07:26.300
+String.
+
+00:07:26.300 --> 00:07:31.219
+This is kind of a clever trick and it's also
+an anti-bugging strategy. If we left the null
+
+00:07:31.219 --> 00:07:36.539
+references in the winners' names Array, we
+could trip on those and get Null Pointer Exceptions
+
+00:07:36.539 --> 00:07:41.199
+later in our program. By putting an empty
+string in there for one thing they won't show
+
+00:07:41.199 --> 00:07:46.919
+on the screen if somebody does happen to display
+them so that's kind of a neat trick. But also
+
+00:07:46.919 --> 00:07:51.099
+we won't have any risk of getting Null Pointer
+Exceptions 'cause there is a string object
+
+00:07:51.099 --> 00:07:58.099
+there so that's a good strategy. This time
+let's write our user I/O first so that way
+
+00:07:59.989 --> 00:08:05.239
+we can actually play with it as we're developing
+the program. One thing we might want to think
+
+00:08:05.239 --> 00:08:11.520
+about when we're looking at this code is that
+we actually have some things that could be
+
+00:08:11.520 --> 00:08:17.649
+put into a sub routine. That is, we could
+create a method for them. But there's a catch;
+
+00:08:17.649 --> 00:08:22.520
+if we try to put this code where we're creating
+the winners' names Array and the high scores
+
+00:08:22.520 --> 00:08:27.189
+Array into a method we actually can't do it
+because we would have to return two things
+
+00:08:27.189 --> 00:08:31.979
+from the method. So in this case let's just
+leave it there but let's put a comment on
+
+00:08:31.979 --> 00:08:38.979
+top of it to let people know what we're doing.
+So we'll say we're going to setup the Arrays
+
+00:08:42.099 --> 00:08:48.690
+and initialize them with data. So that's a
+nice way of bringing all that section of code
+
+00:08:48.690 --> 00:08:52.870
+together.
+So here's the user interface. We're going
+
+00:08:52.870 --> 00:08:59.230
+to have to have the Zork game played and get
+a score. Now we don't actually have that code.
+
+00:08:59.230 --> 00:09:03.100
+This is actually pretty typical of what happens
+when you're developing in a big programming
+
+00:09:03.100 --> 00:09:08.350
+project; somebody else somewhere in the company
+is working on the game and you don't really
+
+00:09:08.350 --> 00:09:13.120
+have access to it because they don't have
+their code finished. In fact, we have to do
+
+00:09:13.120 --> 00:09:18.250
+things in parallel like this where one person
+is working on one part and another person
+
+00:09:18.250 --> 00:09:23.500
+is working on a different part. So what we're
+going to do is create a stub for playing Zork
+
+00:09:23.500 --> 00:09:30.500
+and all its going to do is generate random
+data. That should work. So we'll have public
+
+00:09:35.389 --> 00:09:42.389
+static int play Zork definitely want to make
+some comments here. Return a random number.
+
+00:09:51.790 --> 00:09:58.790
+Now what I'm going to do is create a random
+number called high score, which is going to
+
+00:09:59.000 --> 00:10:05.269
+equal let's say 10,000. It really doesn't
+matter what it equals. You certainly wouldn't
+
+00:10:05.269 --> 00:10:09.339
+want it to be only 10, because you want to
+get more different scores than that so we
+
+00:10:09.339 --> 00:10:16.339
+get a better test of our code. So what we're
+going to return is math dot random which remember
+
+00:10:16.720 --> 00:10:23.720
+returns a number between 0 and 1 times 10,000.
+So that will return a number between 0 and
+
+00:10:25.060 --> 00:10:31.220
+9999... got a couple of little typos that
+need to be fixed here. First off, that's an
+
+00:10:31.220 --> 00:10:35.959
+int also remember math dot random returns
+a double and so this is going to need to be
+
+00:10:35.959 --> 00:10:41.980
+cast to an int to return. Now the second set
+of parentheses that I'm putting around the
+
+00:10:41.980 --> 00:10:48.279
+math dot random times 10,000 those are actually
+necessary, because other than that the cast
+
+00:10:48.279 --> 00:10:53.519
+would cling to math dot random and would truncated
+it down to zero and then you'll only get high
+
+00:10:53.519 --> 00:10:58.379
+scores of 0 out. I also notice that I did
+something silly here. I went and used the
+
+00:10:58.379 --> 00:11:05.379
+number even though I had constant for it.
+That's a bad idea let's fix that.
+
+00:11:10.029 --> 00:11:14.199
+Notice Eclipse was giving me a clue about
+that too with the little yellow line telling
+
+00:11:14.199 --> 00:11:21.199
+me that I had declared a constant that I hadn't
+used. I see there's also an error up in the
+
+00:11:24.610 --> 00:11:30.560
+initialization code where I forgot to put
+an index on the string. So now we have Eclipse
+
+00:11:30.560 --> 00:11:37.560
+happy once again. So what we're going to do
+is create a loop. So let's say we play 100
+
+00:11:47.569 --> 00:11:53.560
+games. Well now wait a minute, is 100 games
+a good number? We could play just 5 games,
+
+00:11:53.560 --> 00:11:58.439
+but 5 isn't a good number because all of the
+scores in the games will end up in the table.
+
+00:11:58.439 --> 00:12:03.300
+What we want to do instead is play a bigger
+number maybe 10 games, so that's a place to
+
+00:12:03.300 --> 00:12:10.300
+start. So while games less than 10 games equals
+games plus 1. Once again putting the increment
+
+00:12:20.620 --> 00:12:25.050
+in the loop right at the start so we don't
+forget it. So what we're going to do is play
+
+00:12:25.050 --> 00:12:32.050
+Zork, so we'll have a score that comes back.
+And we're probably going to want to write
+
+00:12:34.050 --> 00:12:41.050
+out that score mostly for testing purposes.
+Okay, now we can run our program at this point
+
+00:12:55.259 --> 00:12:59.670
+and the advantage of running it is so we can
+see if our play Zork method is working correctly.
+
+00:12:59.670 --> 00:13:04.459
+It's a good thing to know before we try to
+use it for testing.
+
+00:13:04.459 --> 00:13:10.839
+So here we run and the game seems to be hanging;
+basically we're in an infinite loop. Notice
+
+00:13:10.839 --> 00:13:15.209
+we've got a little red box here that tells
+us that our program is still running and we
+
+00:13:15.209 --> 00:13:20.509
+never saw any output. So let's stop the program
+and see what could be wrong because we know
+
+00:13:20.509 --> 00:13:24.790
+this is an infinite loop, the two places we
+need to check are the two loops we've written
+
+00:13:24.790 --> 00:13:31.149
+so far. So our while games less than 10 that
+loop looks just fine. But take a look up on
+
+00:13:31.149 --> 00:13:37.459
+line 14 and what happened in that loop. We
+have index less than high scores dot length
+
+00:13:37.459 --> 00:13:44.459
+but we never incremented index. So let's increment
+index 
+and run our program again and make sure everything's
+
+00:13:49.629 --> 00:13:56.629
+working. Well we can see that our code's a
+little bit ugly 'cause we missed a space,
+
+00:13:59.149 --> 00:14:06.149
+so we run again and let's take a look. It
+does look like these are random numbers. It
+
+00:14:07.550 --> 00:14:14.550
+does look like they're in the correct range,
+so everything's going well there. So next
+
+00:14:17.220 --> 00:14:22.220
+we need to implement the add to Hall of Fame
+method. The add to Hall of Fame method is
+
+00:14:22.220 --> 00:14:26.740
+going to need four parameters: it'll need
+the current players name and their score and
+
+00:14:26.740 --> 00:14:31.769
+two Arrays, one for the high scores and one
+for the players. Those Arrays will be changed
+
+00:14:31.769 --> 00:14:36.749
+inside the method. The other thing it needs
+to do is to return a Boolean. Not the reason
+
+00:14:36.749 --> 00:14:40.720
+I'm returning a Boolean here is players want
+to know if they're going in the Hall of Fame
+
+00:14:40.720 --> 00:14:45.339
+or not. And so returning true will mean that
+they did go into the Hall of Fame and false
+
+00:14:45.339 --> 00:14:50.420
+will mean they didn't. As far as the algorithm
+goes, we need to figure out a good way to
+
+00:14:50.420 --> 00:14:55.779
+do this. If we start from the beginning of
+the Array as we do in many loops we're going
+
+00:14:55.779 --> 00:15:00.889
+to have a little bit of problem. Because let's
+say that a player's new score is bigger than
+
+00:15:00.889 --> 00:15:05.899
+the fifth player's score, so you would skip
+over the first four but when you go to put
+
+00:15:05.899 --> 00:15:10.759
+it in the fifth position you're going to overwrite
+the data that's already there. Well the player
+
+00:15:10.759 --> 00:15:14.740
+that was in the fifth position needs to be
+moved to the sixth position but if you go
+
+00:15:14.740 --> 00:15:19.490
+to overwrite that player, well you've got
+the same problem again. And that's going to
+
+00:15:19.490 --> 00:15:24.620
+get very messy to deal with. There's a much
+nicer strategy if you start from the far end
+
+00:15:24.620 --> 00:15:30.439
+of the Array and figure out if that data is
+better and then move it forward one position
+
+00:15:30.439 --> 00:15:35.069
+at a time. Because we write so many loops
+that start at the beginning of the Array,
+
+00:15:35.069 --> 00:15:39.069
+it's hard to remember that starting at the
+end of the Array is actually a reasonable
+
+00:15:39.069 --> 00:15:46.069
+choice. But always consider that a possibility
+if you're having some challenges writing code.
+
+00:15:46.569 --> 00:15:53.569
+So let's go and write the method. So we'll
+have public static Boolean add to Hall of
+
+00:16:00.910 --> 00:16:07.910
+Fame. We'll have the player's name and we'll
+have the int first score and we moved to another
+
+00:16:15.029 --> 00:16:22.029
+line because it's getting too long so we'll
+have a Integer Array for the high scores and
+
+00:16:24.059 --> 00:16:31.059
+a String Array for the players. Now as always
+we're going to put in a return true that will
+
+00:16:36.730 --> 00:16:43.649
+keep Eclipse off our back for the time being.
+
+00:16:43.649 --> 00:16:50.649
+So we want to start at the far end of the
+Array, so the index will equal high scores
+
+00:16:51.720 --> 00:16:58.720
+dot length minus 1. Now this is an Array,
+not an ArrayList and not a string. So length
+
+00:17:00.689 --> 00:17:05.909
+is actually not a method in this case, it's
+a the data element so notice there are no
+
+00:17:05.909 --> 00:17:10.870
+parentheses after length. These are not big
+mistakes but they are things that can eat
+
+00:17:10.870 --> 00:17:17.770
+up a bunch of your programming time. So we
+want to stop when we get to the beginning
+
+00:17:17.770 --> 00:17:24.199
+where index is greater than or equal to 0.
+We definitely want to have equal to 0 here
+
+00:17:24.199 --> 00:17:29.770
+for a couple of reasons. First off is there's
+the standard Java idiom that when you start
+
+00:17:29.770 --> 00:17:34.520
+at length minus one you have to go back to
+0, and so that's important but also we want
+
+00:17:34.520 --> 00:17:38.960
+to make sure that each player has a chance
+to be in that coveted zero position which
+
+00:17:38.960 --> 00:17:44.510
+is the highest score in the Array. So now
+let's think about how we put data into the
+
+00:17:44.510 --> 00:17:51.510
+Array. If high scores of index is smaller
+than the new score that means that our new
+
+00:18:00.309 --> 00:18:05.120
+score is actually better than the one that's
+there already. If we find that high scores
+
+00:18:05.120 --> 00:18:10.480
+of index is in fact smaller than the current
+score, then score's going to go in to high
+
+00:18:10.480 --> 00:18:15.760
+scores of index. But we need to remember to
+do one thing first and that's move the high
+
+00:18:15.760 --> 00:18:21.220
+scores of index down a position in the Array.
+This way players only lose one position when
+
+00:18:21.220 --> 00:18:27.340
+somebody gets a higher score. There's also
+a special case we have to worry about where
+
+00:18:27.340 --> 00:18:33.890
+the last one could go off the end of the Array;
+and so we'll need to test for that too. So
+
+00:18:33.890 --> 00:18:40.890
+if index is less than high scores dot length
+minus one then what we want to do is to say,
+
+00:18:52.000 --> 00:18:59.000
+high scores of index plus one equals high
+scores of index. In either case high scores
+
+00:19:10.940 --> 00:19:17.940
+of index will then equal score. Now the order
+of these statements is extremely important
+
+00:19:21.480 --> 00:19:26.980
+if you reverse them you won't get the data
+in the right order. The other thing we might
+
+00:19:26.980 --> 00:19:31.620
+want to think about is we do have a parallel
+Array structure here. So in addition to moving
+
+00:19:31.620 --> 00:19:36.409
+high scores around we also have to be moving
+around the player names. So let's do that
+
+00:19:36.409 --> 00:19:43.409
+too. So players of index plus 1 equals players
+of index and players of index equals player
+
+00:20:03.480 --> 00:20:10.480
+name. So we're getting some pretty complicated
+nested logic here. Let's put in some comments
+
+00:20:11.470 --> 00:20:18.470
+to help people understand it. If we're not
+at the end of the Array 
+and this will be checked to see if the current
+
+00:20:25.519 --> 00:20:32.519
+player belongs in the Hall of Fame and this
+is getting too long so I'll go to another
+
+00:20:34.390 --> 00:20:41.390
+line. So there we go. Now we still have to
+figure out this return type, so we have to
+
+00:20:45.260 --> 00:20:52.169
+decide when we should set a value to true.
+Well if you think about it you can always
+
+00:20:52.169 --> 00:20:59.169
+start assuming that the player isn't going
+to be in the Hall of Fame. So we set that
+
+00:21:00.840 --> 00:21:07.840
+to false. If we get down into this loop where
+we actually see that the player is going to
+
+00:21:07.850 --> 00:21:14.850
+go into the Hall of Fame, then we can set
+Hall of Fame to true. And right down at the
+
+00:21:19.390 --> 00:21:26.390
+bottom of the code then we return Hall of
+Fame. Now we haven't called this method yet,
+
+00:21:29.340 --> 00:21:36.340
+so we're not ready to run our program so let's
+go up and call it. So here's where our game
+
+00:21:39.610 --> 00:21:46.610
+is being played. We've got a little challenge
+here because we haven't read in any player
+
+00:21:47.019 --> 00:21:51.899
+names yet and we definitely need some player
+names. In fact we haven't read in anything
+
+00:21:51.899 --> 00:21:55.990
+yet so we're going to have to create a new
+scanner in order to be able to get some player
+
+00:21:55.990 --> 00:22:01.220
+names. Now we could generate them randomly
+too, but that gets a little bit more complicated
+
+00:22:01.220 --> 00:22:08.220
+so let's not make things harder than they
+have to be. So we create our new scanner with
+
+00:22:09.510 --> 00:22:16.510
+system in and of course we'll have to import
+the scanner class just as we always do.
+
+00:22:23.720 --> 00:22:30.720
+We do a little bit of cleanup on the code
+so it stays looking pretty. Let's ask for
+
+00:22:38.120 --> 00:22:42.380
+the player's name before we tell them what
+they scored so they can't blame other players
+
+00:22:42.380 --> 00:22:49.380
+if they do a bad score. Besides, that's a
+convention in games that the players name
+
+00:22:55.220 --> 00:23:02.220
+is asked for first so we'll have a string
+name which will equal keyboard dot next line
+
+00:23:07.590 --> 00:23:14.590
+and then instead of the player we can say
+name scored that many points. If we run our
+
+00:23:20.370 --> 00:23:24.010
+program at this point which I'm going to do
+in just a minute, we're not actually going
+
+00:23:24.010 --> 00:23:28.460
+to see whether the logic is working correctly
+'cause we haven't written any output yet.
+
+00:23:28.460 --> 00:23:32.610
+But we will see whether the program is crashing
+and stepping off the end of the Array. That
+
+00:23:32.610 --> 00:23:39.610
+happens a lot when you're working with Arrays
+so it's an experiment that's worth running.
+
+00:23:50.220 --> 00:23:55.519
+This is a good sign that our program is not
+crashing. It doesn't mean it's working correctly,
+
+00:23:55.519 --> 00:23:59.679
+but at least we don't have a tough debugging
+problem to deal with. So now we need to write
+
+00:23:59.679 --> 00:24:03.360
+the code that prints out the Hall of Fame
+so we actually can check and see if our program
+
+00:24:03.360 --> 00:24:10.360
+is working correctly. Let's put it right after
+the main program. So we'll need our String
+
+00:24:20.570 --> 00:24:27.570
+Array with players and we'll need our Integer
+Array with high scores. So we'll have an int
+
+00:24:31.580 --> 00:24:38.580
+called index and it will start at 0 'cause
+that's where we put the high score while index
+
+00:24:40.200 --> 00:24:47.200
+is less than high scores dot length. But we've
+got another condition here. Remember that
+
+00:24:48.330 --> 00:24:52.899
+we used a negative value to indicate that
+there wasn't a high score? We don't want to
+
+00:24:52.899 --> 00:24:57.169
+display data when there isn't a high score
+in it, so we need to check for that case right
+
+00:24:57.169 --> 00:25:02.230
+now. This is also something we definitely
+want to document in our program because these
+
+00:25:02.230 --> 00:25:09.230
+kind of subtle things are very hard to find
+if somebody has to maintain it later. So and
+
+00:25:10.090 --> 00:25:17.090
+high scores of index 
+is greater than zero. It's very important
+that these test conditions are put in in that
+
+00:25:23.510 --> 00:25:28.710
+particular order. You have to check and make
+sure you're not off the end of the Array first
+
+00:25:28.710 --> 00:25:33.100
+and then if you're not off the end of the
+Array see if you have a negative value. If
+
+00:25:33.100 --> 00:25:37.330
+you put it in the opposite order the program
+will break. You could grab the code and try
+
+00:25:37.330 --> 00:25:44.330
+that if you want to see what would happen.
+So we will do system outprint line and we'll
+
+00:25:49.220 --> 00:25:56.220
+say players of index, so that's the name of
+the player with the high score...scored probably
+
+00:26:00.860 --> 00:26:07.860
+not a capital "s" and we certainly want a
+space there [pause] high scores of index.
+
+00:26:17.690 --> 00:26:24.690
+Now this line is getting long so I'm going
+to break it into two lines. And Eclipse is
+
+00:26:30.700 --> 00:26:34.010
+being very stubborn about this for a minute,
+so I'm going to go ahead and finish the line
+
+00:26:34.010 --> 00:26:41.010
+and then see if it will cooperate a little
+more. [pause] The thing that's missing from
+
+00:26:44.769 --> 00:26:49.710
+this is the actual rank of the player. People
+who play games are very competitive, they
+
+00:26:49.710 --> 00:26:54.889
+want to see that #1 rank so don't forget to
+put that out. Now we have to be a little bit
+
+00:26:54.889 --> 00:26:59.779
+careful here first we're going to need a legend
+on the table so we'll do system out print
+
+00:26:59.779 --> 00:27:06.779
+line Hall of Fame 
+and then we'll put in the players numbers.
+Now, there are lots of mistakes we can make
+
+00:27:13.649 --> 00:27:19.440
+here with this. Here is the first mistake.
+Now if we leave it this way and don't run
+
+00:27:19.440 --> 00:27:24.620
+it what you'll see is that index will get
+added to players index, because that plus
+
+00:27:24.620 --> 00:27:30.070
+sign is sitting between two integers that
+means they're added as integers not as strings.
+
+00:27:30.070 --> 00:27:35.450
+That is not what we want. There are several
+different ways that we can fix this. One way
+
+00:27:35.450 --> 00:27:42.450
+is very simple... 
+and that's to do an empty string plus. This
+plus sign right here will change index into
+
+00:27:47.630 --> 00:27:53.389
+a string and concatenate it and then this
+plus sign here will concatenate that string
+
+00:27:53.389 --> 00:27:58.850
+with that number so this will actually work
+correctly. But it is pretty subtle code. We
+
+00:27:58.850 --> 00:28:03.210
+also have another little problem and that's
+that if we think about it, index is starting
+
+00:28:03.210 --> 00:28:08.389
+at 0. Players may not be very happy hearing
+they're in position 0 when they're at the
+
+00:28:08.389 --> 00:28:13.269
+top of the game. We want them to start in
+position 1. So let's change to index plus
+
+00:28:13.269 --> 00:28:20.269
+1. That one I did had to put in parentheses
+because this is arithmetic addition we're
+
+00:28:21.840 --> 00:28:27.220
+adding two integers together. We don't want
+it to get involved with the strings so this
+
+00:28:27.220 --> 00:28:34.220
+plus sign here that plus sign is integer addition.
+This plus sign is string concatenation, which
+
+00:28:37.230 --> 00:28:43.850
+makes this plus sign string concatenation,
+which makes this plus sign string concatenation.
+
+00:28:43.850 --> 00:28:50.850
+It's all rather painful but that is the way
+it has to be done. Let me continue beautifying
+
+00:28:51.169 --> 00:28:57.620
+our code a little bit. Oh, I see that I also
+made a mistake in the while statement. Eclipse
+
+00:28:57.620 --> 00:29:03.240
+is pointing it out to me. Remember high scores
+is an Array not a string and so length doesn't
+
+00:29:03.240 --> 00:29:08.100
+have parentheses after it. If you're wondering
+about what happens when you make mistakes
+
+00:29:08.100 --> 00:29:12.240
+like that on a test, I don't even take off
+points for it because it's so unimportant.
+
+00:29:12.240 --> 00:29:19.240
+As long as you have an ID you can find those
+errors very easily. We now think we have this
+
+00:29:19.490 --> 00:29:26.490
+printing out correctly so let's call show
+Hall of Fame. We could do it after this loop
+
+00:29:27.460 --> 00:29:32.360
+is finished but frankly I want to see the
+progress in the Hall of Fame as it moves along
+
+00:29:32.360 --> 00:29:39.169
+so let's actually put it in here. We're going
+to want to know what the score is first, and
+
+00:29:39.169 --> 00:29:46.169
+then we'll have show Hall of Fame from players
+and scores. Whoops! Looks like I forgot the
+
+00:29:52.179 --> 00:29:59.179
+name of my Arrays in this main program. So
+our high scores and winner names. So let's
+
+00:30:03.470 --> 00:30:10.470
+fix those. Eclipse is still griping, wonder
+what I forgot? Ah, winners' names okay that's
+
+00:30:25.210 --> 00:30:29.779
+looking a little bit better so this will show
+what every single time we go through. Now
+
+00:30:29.779 --> 00:30:32.970
+we're going to see quite a bit of output coming
+out of this program and we're going to have
+
+00:30:32.970 --> 00:30:38.809
+to go back and analyze it pretty carefully.
+So what I'm going to do is put in another
+
+00:30:38.809 --> 00:30:45.809
+blank line which remember we just do with
+system out print line, because that way it'll
+
+00:30:45.889 --> 00:30:51.710
+give us some breaks when we're actually going
+back and looking at the data. I'm now going
+
+00:30:51.710 --> 00:30:58.710
+to give us lots of space, and here we go.
+Okay, so it looks like A not get very well
+
+00:31:04.940 --> 00:31:11.940
+into the Hall of Fame. Let's keep going and
+seeing if anybody got into the Hall of Fame.
+
+00:31:15.190 --> 00:31:19.779
+Okay so nobody got into the Hall of Fame.
+Notice that even though we thought our program
+
+00:31:19.779 --> 00:31:26.779
+was working correctly, it isn't. So let's
+just stop it right here and go back and debug.
+
+00:31:28.500 --> 00:31:31.870
+The first thing I want to check is that we
+called our method that put data into the Hall
+
+00:31:31.870 --> 00:31:37.399
+of Fame. It turns out that's actually the
+problem here so let's go and take a look at
+
+00:31:37.399 --> 00:31:42.690
+that method signature again add to Hall of
+Fame and make sure that we call it. So the
+
+00:31:42.690 --> 00:31:49.690
+parameters were the player name, the score,
+high scores, and the players. So we want to
+
+00:31:50.789 --> 00:31:57.789
+call that before we call show Hall of Fame.
+So the players name, which was name and their
+
+00:32:01.580 --> 00:32:08.580
+score, which is score and then the winners'
+names with that "s" on it that we forgot last
+
+00:32:10.559 --> 00:32:17.559
+time and high scores. Now in a way this is...Okay,
+so let's take a look at what Eclipse is telling
+
+00:32:22.450 --> 00:32:29.450
+us. So the order of parameters should have
+been string, int, int Array, string Array.
+
+00:32:29.730 --> 00:32:36.730
+Let's take a look at what I did. I did string,
+int, string Array, int Array. If you really
+
+00:32:37.259 --> 00:32:42.090
+think about it that order makes more sense
+because the string is coming before the int
+
+00:32:42.090 --> 00:32:47.250
+both times. Since this is the only place we've
+called this method, let's actually fix the
+
+00:32:47.250 --> 00:32:53.090
+method signature instead of fixing the arguments
+because really the method signature is what's
+
+00:32:53.090 --> 00:33:00.090
+wrong here. So...this parameter should come
+after that one. This is also part of having
+
+00:33:06.279 --> 00:33:13.279
+your code be easy for other people to use.
+This is a more logical ordering of the parameters.
+
+00:33:13.840 --> 00:33:18.049
+The bad news here is this means that when
+we thought we were testing our program before,
+
+00:33:18.049 --> 00:33:22.360
+we actually weren't testing at all because
+we didn't call the method. So we definitely
+
+00:33:22.360 --> 00:33:29.360
+want to run it again and see how things are
+working. So here's person A. Uh oh, we know
+
+00:33:35.549 --> 00:33:42.240
+what that means! That's an infinite loop.
+And now we really have a good idea at where
+
+00:33:42.240 --> 00:33:49.240
+that infinite loop has to be. It has to be
+in the method that we called. Well here's
+
+00:33:53.779 --> 00:33:58.629
+one of the methods we called. And when you
+look at the method what you see is we forgot
+
+00:33:58.629 --> 00:34:05.279
+once again to increment index. This is a real
+headache with while loops. We're going to
+
+00:34:05.279 --> 00:34:09.490
+see a different kind of loop where you don't
+forget this this often. It's called a for
+
+00:34:09.490 --> 00:34:16.490
+loop, it's one of my favorites. So let's see
+if that works better now. Uh oh! Still have
+
+00:34:27.840 --> 00:34:32.560
+an infinite loop. It's very likely we made
+that mistake someplace else.
+
+00:34:32.560 --> 00:34:39.560
+So let's look at add to Hall of Fame. Did
+index ever get incremented in that method?
+
+00:34:41.920 --> 00:34:48.190
+Well, and do we want to increment index in
+that method? Notice in this method we're starting
+
+00:34:48.190 --> 00:34:54.860
+index at the end and going back towards 0.
+So index should actually be decremented. Because
+
+00:34:54.860 --> 00:34:58.860
+we have some nested logic here, we want to
+do this pretty carefully. We don't want to
+
+00:34:58.860 --> 00:35:04.080
+just slap it in. We do not want to put the
+increment in the if statement because the
+
+00:35:04.080 --> 00:35:08.740
+if statement sometimes gets done and other
+times doesn't get done. So it needs to be
+
+00:35:08.740 --> 00:35:15.740
+after the if statement but inside the while
+loop. One of the reasons that I don't usually
+
+00:35:17.180 --> 00:35:22.580
+use while loops in programs is that I do tend
+to forget incrementing the index. It's actually
+
+00:35:22.580 --> 00:35:27.580
+kind of a serious mistake, so. Those other
+loops that we're going to do those are going
+
+00:35:27.580 --> 00:35:34.580
+to be really fun. Okay, running the program
+again. Okay so we see one thing that's not
+
+00:35:41.420 --> 00:35:45.990
+so pretty-- 1 and A got smashed together.
+But on the other hand our Hall of Fame is
+
+00:35:45.990 --> 00:35:52.990
+looking good so we know we're going to need
+to fix that. Oh, things are looking so good
+
+00:35:57.710 --> 00:36:04.710
+now. Notice all the scores are in order so
+I'm actually not going to go any further.
+
+00:36:07.900 --> 00:36:14.500
+I'm going to go back and fix the output in
+the main program. Well that output was done
+
+00:36:14.500 --> 00:36:21.500
+in the show Hall of Fame method, so we'll
+go down to the show Hall of Fame method. And
+
+00:36:21.880 --> 00:36:28.320
+what we see is we actually want a space between
+this index plus 1 and the player's name so
+
+00:36:28.320 --> 00:36:35.320
+let's add that in. Before we dash to run this
+code too quickly, remember we had a complicated
+
+00:36:35.880 --> 00:36:40.680
+precedence problem here between the integers
+and the strings. So let's think it through
+
+00:36:40.680 --> 00:36:47.510
+first rather than just haphazardly running
+the code. This plus is an integer plus, that's
+
+00:36:47.510 --> 00:36:54.510
+exactly what we want. This one is string concatenation
+because the left-hand argument is a string.
+
+00:36:54.790 --> 00:36:59.490
+This is string concatenation 'cause it will
+be between two strings and this will be string
+
+00:36:59.490 --> 00:37:05.090
+concatenation because it's between a string
+and an integer and so that's looking good.
+
+00:37:05.090 --> 00:37:12.090
+So now let's run again. There's our Hall of
+Fame that's looking good enter the name B
+
+00:37:17.340 --> 00:37:24.340
+that looking good. We want to keep running
+this for little while, don't just stop so
+
+00:37:24.870 --> 00:37:31.870
+quickly because up to this point we've just
+been filling in the Array. We really don't
+
+00:37:32.280 --> 00:37:36.690
+know if our code at the tail end of the Array
+is working yet because we've only run it five
+
+00:37:36.690 --> 00:37:41.040
+times and there are five elements in the Array.
+So the code could very well break on this
+
+00:37:41.040 --> 00:37:48.040
+next iteration. Now we haven't encountered
+anything that gets added in. I guess we need
+
+00:37:50.650 --> 00:37:57.650
+a little more console to see what these values
+are. So, G got put in the Array; let's keep
+
+00:37:57.990 --> 00:38:02.610
+going for a little while and make sure that
+things work. Notice H went up to the second
+
+00:38:02.610 --> 00:38:08.150
+position and I'm pretty well convinced now
+that our program works just fine. Now one
+
+00:38:08.150 --> 00:38:12.400
+thing that you're going to notice is we actually
+do have an infinite loop here, because we're
+
+00:38:12.400 --> 00:38:17.600
+continuing to add things into the Array. That's
+fine since our main program was just a testing
+
+00:38:17.600 --> 00:38:20.340
+program and this is going to be used in other
+code.
+

@@ -1,0 +1,1249 @@
+WEBVTT
+Kind: captions
+Language: en
+
+00:00:00.590 --> 00:00:06.740
+&gt;&gt;Let's continue our study as classes as a
+contract by looking at the game Frogger. Here's
+
+00:00:06.740 --> 00:00:11.860
+our problem statement: let's consider the
+design of some classes we could use to implement
+
+00:00:11.860 --> 00:00:16.930
+the arcade game Frogger. Here's a free version
+of Frogger to play if you're not familiar
+
+00:00:16.930 --> 00:00:23.930
+with the game. Wikipedia also has a good description
+of the Frogger game online. Now our Frogger
+
+00:00:24.980 --> 00:00:31.090
+is going to have to be simple. We'll have
+one frog, one truck for each line for a total
+
+00:00:31.090 --> 00:00:36.110
+of five trucks, and a grid that we're going
+to use to display Frogger and the trucks on
+
+00:00:36.110 --> 00:00:41.510
+the console. When we go to assemble these
+things we need to think about what classes
+
+00:00:41.510 --> 00:00:47.360
+we're going to need and what a class really
+means. So classes describe the state and the
+
+00:00:47.360 --> 00:00:54.280
+behavior of objects. Data are used to describe
+the state, methods are used to describe the
+
+00:00:54.280 --> 00:01:00.079
+behavior. And you can think about the behavior
+as being which changes in state are permitted.
+
+00:01:00.079 --> 00:01:05.639
+So for example, illegal change of state for
+the frog would be making it jump to the left
+
+00:01:05.639 --> 00:01:10.999
+or making it jump up or down. The frog isn't
+allowed to jump on the diagonal, that's a
+
+00:01:10.999 --> 00:01:17.209
+change in state that isn't allowed. It's really
+important to have a personal prototype for
+
+00:01:17.209 --> 00:01:24.209
+subtle concepts like classes. Now this could
+be the ArrayList, the String, or the StringBuilder,
+
+00:01:24.329 --> 00:01:29.109
+but maybe one of the classes that we described
+today will become your favorite prototype.
+
+00:01:29.109 --> 00:01:33.369
+Whichever one you choose isn't so important
+but it is important that you have a model
+
+00:01:33.369 --> 00:01:38.279
+to use for other classes that we're going
+to develop as we go along. Classes will eventually
+
+00:01:38.279 --> 00:01:43.859
+make a lot of sense, but at first a lot of
+people find them confusing. So let's talk
+
+00:01:43.859 --> 00:01:50.399
+about the frog class a little bit. Each frog
+needs to know where it is that is its position
+
+00:01:50.399 --> 00:01:56.459
+on the board and it needs to have a symbol
+to use to represent it, and that's really
+
+00:01:56.459 --> 00:02:02.719
+all there is to the state of the frog in this
+game. Now we need to have a way of expressing
+
+00:02:02.719 --> 00:02:08.410
+our designs so that we can look at them without
+having to read a bunch code. And something
+
+00:02:08.410 --> 00:02:14.799
+called UML is what we use for it. UML stands
+for the Unified Modeling Language. There are
+
+00:02:14.799 --> 00:02:19.159
+actually 12 different types of diagrams that
+are available. We're only going to use one
+
+00:02:19.159 --> 00:02:24.159
+type for this semester. As you advance in
+object-oriented programming you will learn
+
+00:02:24.159 --> 00:02:30.420
+these other types-- at least some of them.
+So what class diagrams do is they describe
+
+00:02:30.420 --> 00:02:36.299
+classes before implementation. Now it's really
+important to describe them before you implement
+
+00:02:36.299 --> 00:02:41.430
+them, because that's when you can have the
+really deep discussions about how the classes
+
+00:02:41.430 --> 00:02:45.939
+should be designed. If you wait until after
+things are implemented, everybody gets very
+
+00:02:45.939 --> 00:02:50.790
+attached to their implementation and nobody
+wants to go back and rework things even if
+
+00:02:50.790 --> 00:02:55.670
+it isn't a very good design. Now it does take
+a lot of discipline to design things before
+
+00:02:55.670 --> 00:02:59.999
+you implement them but it's a very important
+discipline to develop, because that's what
+
+00:02:59.999 --> 00:03:06.180
+a professional Software Engineer will need.
+There are three sections in a class diagram:
+
+00:03:06.180 --> 00:03:11.269
+the top section is the class name, the middle
+section is the data, and that's what describes
+
+00:03:11.269 --> 00:03:16.469
+the state of the objects, and the bottom section
+describes the methods, that is the behavior
+
+00:03:16.469 --> 00:03:23.299
+of the objects. UML allows a lot of flexibility,
+so it's legal in UML to have a class diagram
+
+00:03:23.299 --> 00:03:28.680
+that only has the class name in it or has
+just the class name and the data. You're allowed
+
+00:03:28.680 --> 00:03:34.969
+to fit it to the circumstances that you need
+in the design. So we'll do a lot of that.
+
+00:03:34.969 --> 00:03:40.870
+So here are the rules for UML. It's designed
+to be a single modeling tool for all object-oriented
+
+00:03:40.870 --> 00:03:47.260
+languages. In other words this isn't something
+that's specific to Java. So it avoids any
+
+00:03:47.260 --> 00:03:54.260
+Java specific syntax. Now that can be kind
+of annoying. Here's the syntax it uses: for
+
+00:03:54.579 --> 00:04:00.200
+data it puts the name first and then a colon
+and then the type, and for methods it puts
+
+00:04:00.200 --> 00:04:05.269
+the name of the method and then it puts the
+parameters in parentheses, again, the name
+
+00:04:05.269 --> 00:04:12.269
+first and then a colon and then a type separated
+by commas then after the parameters you close
+
+00:04:12.290 --> 00:04:16.810
+the parentheses, put a colon and the return
+type. Now to tell you the truth, although
+
+00:04:16.810 --> 00:04:22.250
+this is correct UML, I don't really care so
+much that you do it this way. I care very
+
+00:04:22.250 --> 00:04:27.360
+deeply that you do design because that's something
+that's a critical skill. These little nuances
+
+00:04:27.360 --> 00:04:34.360
+in UML, these aren't so important. Now formally
+UML doesn't show constructors, but I usually
+
+00:04:35.030 --> 00:04:39.220
+do. And the reason is that I've found that
+if I don't show constructors my students forget
+
+00:04:39.220 --> 00:04:44.130
+to write them. That's a problem because classes
+without constructors usually don't work the
+
+00:04:44.130 --> 00:04:51.130
+way they should. Here's our first UML for
+the frog class. So I have frog which is the
+
+00:04:51.460 --> 00:04:56.960
+name of the class on the top and then I have
+the state, which is the row and the column
+
+00:04:56.960 --> 00:05:01.250
+where the frog is going to be located and
+the symbol that's going to be used to describe
+
+00:05:01.250 --> 00:05:08.250
+the frog on the game board. Now we might do
+a little more thinking about our design here.
+
+00:05:08.860 --> 00:05:15.229
+There are some things that are shared amongst
+all the frog objects. For example, the symbol.
+
+00:05:15.229 --> 00:05:18.979
+If we're going to use an asterix to represent
+our frogs we're going to use it for all of
+
+00:05:18.979 --> 00:05:25.979
+the frogs and so it doesn't make sense to
+save a separate copy to every single instance.
+
+00:05:26.629 --> 00:05:31.900
+Remember that constants are almost always
+class data. Think back to things like math.pi
+
+00:05:31.900 --> 00:05:38.900
+or math.e. Now in UML class data is underlined,
+but there's no UML symbol for a constant.
+
+00:05:41.110 --> 00:05:46.660
+So what I use for that is all caps. Now again
+this isn't formal UML. This is a trick that
+
+00:05:46.660 --> 00:05:51.800
+I use using one of the Java code conventions
+to communicate something that isn't usually
+
+00:05:51.800 --> 00:05:58.800
+communicated by UML. So this is what our class
+design looks like now. Again, it's the frog
+
+00:05:59.169 --> 00:06:05.280
+class. The row and the column those are instance
+data. Every object will have its own row and
+
+00:06:05.280 --> 00:06:11.680
+it's own column, but symbol, that should be
+the same for all of the objects in the class.
+
+00:06:11.680 --> 00:06:18.680
+That's class data and that's why it's underlined.
+Now our frog class behavior is pretty simple.
+
+00:06:20.710 --> 00:06:25.800
+It can jump to the same column in the next
+to the previous row, so that would be a method
+
+00:06:25.800 --> 00:06:32.800
+move up and move down, or it can jump to the
+right or left within a row. That is move left
+
+00:06:33.919 --> 00:06:40.919
+or move right. Now that we have this method,
+we can see the complete UML for our frog class.
+
+00:06:41.169 --> 00:06:46.280
+The data is the row and the column, both of
+those are integers and the class data is the
+
+00:06:46.280 --> 00:06:51.710
+symbol that's shared amongst all the frogs.
+Then we have our constructor that constructs
+
+00:06:51.710 --> 00:06:58.270
+the frog in a given row and column and we
+can move up, move down, move left, move right.
+
+00:06:58.270 --> 00:07:02.569
+Now none of those methods have any parameters,
+because they're relative to the current position
+
+00:07:02.569 --> 00:07:09.330
+of the frog. Remember you can't have the frog
+just jump randomly across the board. He has
+
+00:07:09.330 --> 00:07:16.330
+to move logically from one position to another.
+Now it's time to implement the frog class.
+
+00:07:16.379 --> 00:07:21.599
+So we're going to create a new class in Eclipse.
+Now the data goes inside the class but outside
+
+00:07:21.599 --> 00:07:28.599
+of all of the methods. The class data will
+be static and the instance data is not. So
+
+00:07:28.860 --> 00:07:35.860
+here's Eclipse. I'm going to create a new
+class which is called frog. I'm not actually
+
+00:07:46.590 --> 00:07:51.030
+going to put Javadoc in the class while you
+watch because it's a little too time consuming,
+
+00:07:51.030 --> 00:07:55.969
+but that is something you would normally do.
+Now there's a lot of discussion in programming
+
+00:07:55.969 --> 00:07:59.909
+circles about whether instance data should
+go at the top of the class or the bottom of
+
+00:07:59.909 --> 00:08:04.860
+the class. It's not so important which way
+you choose to do it, but it's very important
+
+00:08:04.860 --> 00:08:09.300
+that you're consistent in how you do it. So
+I'm going to put the instance data and the
+
+00:08:09.300 --> 00:08:13.560
+class data up at the top. If you want to put
+it at the bottom that's fine, as long as you
+
+00:08:13.560 --> 00:08:20.560
+always do it that way. So our instance data
+for the frog is an integer for the row and
+
+00:08:21.689 --> 00:08:28.689
+an integer for the column. Our class data
+on the other hand, which remember is static
+
+00:08:33.700 --> 00:08:40.700
+and it's not an int, it's a char. Notice that
+I have our asterisk in single quotes. Remember
+
+00:08:47.580 --> 00:08:53.080
+this isn't a string, this is just a single
+character. The first thing we should do is
+
+00:08:53.080 --> 00:08:57.600
+create our constructor. It's a good idea to
+do the constructor first and to put it at
+
+00:08:57.600 --> 00:09:02.090
+the top of the class. That's a preference
+of mine, once again you don't have to do things
+
+00:09:02.090 --> 00:09:08.160
+the way I do them just as long as you keep
+things organized. So all constructors have
+
+00:09:08.160 --> 00:09:15.160
+the same name that the class has. Now I used
+r and c for the parameters because row and
+
+00:09:16.980 --> 00:09:23.980
+column have been used for the instance data,
+and so that will create confusion. So row
+
+00:09:24.290 --> 00:09:31.140
+will be initialized to r and column will be
+initialized to c. So what we're doing now
+
+00:09:31.140 --> 00:09:38.140
+is we're setting the values for all the instance
+data in the Frogger class. We had only four
+
+00:09:39.840 --> 00:09:46.840
+methods. We had move left, you'll recall the
+return type on that was void. We had move
+
+00:09:55.780 --> 00:10:02.780
+right, move up, and move down. Now in order
+to know how to change row and column we need
+
+00:10:13.710 --> 00:10:18.750
+to have a sense of where our coordinate system
+is. So I'm going to assume that row 0 is at
+
+00:10:18.750 --> 00:10:25.160
+the top of the screen and that row 7, 5 rows
+for the trucks and a starting and ending row,
+
+00:10:25.160 --> 00:10:30.570
+are going to be at the bottom. You could make
+other decisions than this. I'm going to assume
+
+00:10:30.570 --> 00:10:36.710
+that column 0 is on the left and the largest
+column is on the right. So when we move left,
+
+00:10:36.710 --> 00:10:43.710
+we'll go to column equals column -1. Whereas
+moving right will be column equals column
+
+00:10:45.950 --> 00:10:52.950
++1. When we move up, the row will be row -1
+and when we move down, the row will be row
+
+00:10:57.070 --> 00:11:04.070
+equals row +1. And that's really all there
+is to the frog class, at least for now. We'll
+
+00:11:05.330 --> 00:11:10.420
+see some more nuances a little bit later on.
+Now we've got a problem here, because although
+
+00:11:10.420 --> 00:11:16.460
+we have a class we haven't tested it. And
+that's always dangerous we know, so one of
+
+00:11:16.460 --> 00:11:22.000
+the ways we can test it is to put a main program
+in this class, even though this isn't our
+
+00:11:22.000 --> 00:11:29.000
+main game class. So let's do that. Public
+static void main string square brackets args.
+
+00:11:32.730 --> 00:11:39.730
+So we need to create a frog object and construct
+it. So let's put it at position 10, 10. Now
+
+00:11:43.200 --> 00:11:48.180
+the next thing we need to do is exercise these
+methods so we can see if the data is being
+
+00:11:48.180 --> 00:11:55.180
+recorded correctly. So for example, we could
+have while let's test it 10 times. So we'll
+
+00:11:59.300 --> 00:12:06.300
+start count of 0, count less than 10. And
+we could pick a random number, for example
+
+00:12:10.150 --> 00:12:17.150
+[typing] from math.random. If randis less
+than .25, let's move right. When we move right
+
+00:12:32.050 --> 00:12:39.050
+we have to tell it what to move right. So
+our frog is going to have to move right. Now
+
+00:12:40.520 --> 00:12:45.800
+remember our purpose of doing this is testing.
+So we need to tell the user where the frog
+
+00:12:45.800 --> 00:12:52.800
+is and that it's moving right. And so we'll
+take frog.row and then a space, frog.column.
+
+00:13:10.640 --> 00:13:17.640
+So let's print out where the frog started
+
+00:13:26.450 --> 00:13:33.450
+and to be consistent maybe we should put a
+comma in there. Now else if rand is less than
+
+00:13:39.110 --> 00:13:46.110
+.50, we're going to do something similar only
+maybe we'll move left. The bottom line is
+
+00:13:49.230 --> 00:13:56.230
+we just want to make sure we try all the different
+possibilities here 
+and make sure that our frog is moving around
+
+00:14:01.570 --> 00:14:08.570
+correctly. Else if rand is less than .75 frog.move
+up 
+and system out print line [typing] and I notice
+
+00:14:36.830 --> 00:14:41.420
+here that I forgot to change this to left.
+That's going to make it a lot harder to debug
+
+00:14:41.420 --> 00:14:48.420
+our program if we make mistakes like this.
+And our last possibility will be frog.move
+
+00:14:48.490 --> 00:14:55.490
+down and then system out print line down frog.row
+frog.col. So you know this isn't a very profound
+
+00:15:08.290 --> 00:15:13.300
+program, but it is enough for us to see if
+our frog is behaving reasonably. So let's
+
+00:15:13.300 --> 00:15:20.300
+run it and see if our frog is happy. Okay,
+so our program is going crazy and I'm sure
+
+00:15:25.440 --> 00:15:32.440
+you've already spotted the reason. I forgot
+to increment count. Okay, so let's try this
+
+00:15:34.490 --> 00:15:41.490
+again. Okay so it started at 10,10 then it
+went to the right and notice the row numbers
+
+00:15:45.510 --> 00:15:50.730
+stayed the same and the column went up by
+one. That's correct. It went to the right
+
+00:15:50.730 --> 00:15:56.820
+again, again the rows stayed the same, the
+column went up by one. When it went down the
+
+00:15:56.820 --> 00:16:02.170
+row number went up and the column stayed the
+same. It went down again, the row number stayed
+
+00:16:02.170 --> 00:16:07.720
+the same and if you follow through this you'll
+see that our frog is actually working correctly.
+
+00:16:07.720 --> 00:16:12.080
+There's always the temptation to remove this
+data, to remove this main program from this
+
+00:16:12.080 --> 00:16:16.990
+class, but it's kind of nice to have these
+things around. We'll probably going to have
+
+00:16:16.990 --> 00:16:22.020
+to modify this class later and we might like
+to make sure that it's still working after
+
+00:16:22.020 --> 00:16:27.630
+we do modifications. So if we find it's getting
+in our way, there are a couple things we can
+
+00:16:27.630 --> 00:16:34.630
+do. One is called folding where we just take
+it and compress it so that it's not taking
+
+00:16:35.010 --> 00:16:39.990
+up the whole screen anymore. Another possibility
+if it really starts to cause trouble is to
+
+00:16:39.990 --> 00:16:45.450
+comment it out, but I usually don't take things
+like that out because testing code always
+
+00:16:45.450 --> 00:16:52.450
+comes back and is useful again later on. So
+we tested the frog class by putting a main
+
+00:16:52.670 --> 00:16:57.500
+program in there. It's not going to be our
+game, it's only for testing. It's not permanent
+
+00:16:57.500 --> 00:17:03.230
+code really and we moved the frog around and
+showed the location. Now the next thing we
+
+00:17:03.230 --> 00:17:08.970
+need to do is design our truck class. Our
+truck is little bit different. Its state is
+
+00:17:08.970 --> 00:17:13.490
+the position on the board which will be the
+row and column again and whether it moves
+
+00:17:13.490 --> 00:17:18.240
+right or left. Remember that in Frogger once
+a truck starts moving in one direction it
+
+00:17:18.240 --> 00:17:23.220
+keeps moving in that direction. As far as
+our behavior, the behavior's actually really
+
+00:17:23.220 --> 00:17:28.429
+simple. It just needs to move. Now eventually
+when we get to the game we may want to do
+
+00:17:28.429 --> 00:17:32.970
+something like wraparound, so that when the
+truck goes off one edge it comes onto the
+
+00:17:32.970 --> 00:17:38.720
+other edge, but for right now we really don't
+need to do that. All we need to do is keep
+
+00:17:38.720 --> 00:17:45.230
+track of the position on the board, whether
+it's moving right or left. Here's the UML.
+
+00:17:45.230 --> 00:17:50.490
+Notice we've got a row. Now I've used 2 columns
+here. When I was looking at the art on the
+
+00:17:50.490 --> 00:17:55.269
+game, the trucks looked better if they were
+a little bit bigger than the frog and so I
+
+00:17:55.269 --> 00:18:00.259
+made them sit on two consecutive columns,
+the right column and the left column in a
+
+00:18:00.259 --> 00:18:06.269
+given row. That's an artistic choice you might
+want to do that differently. I also needed
+
+00:18:06.269 --> 00:18:10.629
+to keep track of whether they were going to
+the right or going to the left. So that's
+
+00:18:10.629 --> 00:18:15.940
+what is right does. Now symbol is different
+in the truck class than it was in the Frogger
+
+00:18:15.940 --> 00:18:21.320
+class. All the frogs are going to use the
+same symbol, but the truck isn't. If the truck
+
+00:18:21.320 --> 00:18:25.950
+is going to the right, I'm going to use a
+greater than sign and if the truck is going
+
+00:18:25.950 --> 00:18:30.529
+to the left I'm going to use a less than.
+This looks kind of cool in the game, so that's
+
+00:18:30.529 --> 00:18:35.889
+why I picked those. When we construct a truck
+we're going to give it a row and a column
+
+00:18:35.889 --> 00:18:40.460
+and of course, whether it's moving to the
+right or to the left. Then the only thing
+
+00:18:40.460 --> 00:18:46.279
+we have to do is move. Because trucks stay
+in one row only, their column changes when
+
+00:18:46.279 --> 00:18:52.129
+they move so this isn't going to be a very
+difficult class to implement. So we'll create
+
+00:18:52.129 --> 00:18:59.129
+a new class which we'll call truck. We put
+our instance data at the top, so we have a
+
+00:19:09.720 --> 00:19:16.720
+row and a left column and a right column.
+Remember we had a symbol and we had a Boolean
+
+00:19:21.690 --> 00:19:25.679
+for whether it was going to the right or to
+the left. So we have a little bit more instance
+
+00:19:25.679 --> 00:19:31.049
+data here. Now in this case we don't have
+any class data. We don't have to put a comment
+
+00:19:31.049 --> 00:19:36.480
+in here showing that it's empty, the user
+can see that or the programmer can see it.
+
+00:19:36.480 --> 00:19:43.480
+Next we need to create a constructor. Now
+we need to give it a row, a column, and a
+
+00:19:51.600 --> 00:19:57.850
+Boolean. Now I've done something here that's
+not always a great idea. I'd used the same
+
+00:19:57.850 --> 00:20:02.379
+name for the parameters that I've used for
+the instance data. Now I will show you how
+
+00:20:02.379 --> 00:20:07.460
+to work around it because some people like
+to do it this way, but probably changing the
+
+00:20:07.460 --> 00:20:14.460
+names of the parameters would be a good choice.
+Here's how you work around it. When you have
+
+00:20:15.980 --> 00:20:21.120
+instance data, there's always an instance
+object. This is similar to the implicit argument
+
+00:20:21.120 --> 00:20:26.169
+that shows up when we're using classes and
+by putting this in front what we're telling
+
+00:20:26.169 --> 00:20:33.169
+Java is "Hey look, use the instance data row
+not the parameter." So leftCol will equal
+
+00:20:37.059 --> 00:20:44.059
+Col and rightCol will equal Col +1. Now our
+symbol on the other hand is going to be set
+
+00:20:45.419 --> 00:20:52.419
+based on is right. So let's set is right first.
+You're welcome to change those parameter names
+
+00:20:55.460 --> 00:21:00.590
+when you get your hand on the code if this
+this thing is bothering you and now we need
+
+00:21:00.590 --> 00:21:07.509
+a conditional statement. If is right now because
+I didn't put this in front of it, that means
+
+00:21:07.509 --> 00:21:14.509
+I'm using the parameter is right not the instance
+data. Well if the truck is going to the right
+
+00:21:15.240 --> 00:21:22.240
+the symbol we're going to use is a greater
+than sign. Otherwise the symbol we use is
+
+00:21:25.860 --> 00:21:31.610
+a less than sign. Now one of the things you
+want to do when you finish a constructor is
+
+00:21:31.610 --> 00:21:36.980
+make sure that every single piece of instance
+data has been initialized. So we had five
+
+00:21:36.980 --> 00:21:43.980
+pieces of instance data here and all five
+are going to be initialized. That's good programming.
+
+00:21:44.159 --> 00:21:49.259
+The next thing we have is our move method.
+So this is our behavior. Now move will mean
+
+00:21:49.259 --> 00:21:56.259
+different things if we're going right or left
+so if is right. Now notice I didn't have to
+
+00:21:56.740 --> 00:22:02.169
+put this in front of it this time, because
+I don't have a parameter called is right there's
+
+00:22:02.169 --> 00:22:06.830
+really no confusion here. You can put this
+in front of it if you wish to but it's not
+
+00:22:06.830 --> 00:22:13.830
+necessary. So if we're going to go to the
+right then left column is left column +1 and
+
+00:22:20.909 --> 00:22:27.909
+right column equals right column +1. Now we
+want both of those things done, so remember
+
+00:22:27.909 --> 00:22:34.539
+we need to put curly braces around it. Otherwise,
+well if we're not going right, we're going
+
+00:22:34.539 --> 00:22:41.539
+left. So then left column is left column -1
+and right column equals right column -1. We
+
+00:22:46.309 --> 00:22:50.100
+don't change the row, we don't change the
+symbol, and we don't change the direction
+
+00:22:50.100 --> 00:22:55.129
+of the trucks. So that's all that has to be
+done in the move method other than maybe some
+
+00:22:55.129 --> 00:23:02.129
+Javadoc. So we've implemented our truck class.
+We implemented the instance data, the constructors
+
+00:23:03.210 --> 00:23:08.629
+and the method, and we could go and write
+another main program to test the truck class.
+
+00:23:08.629 --> 00:23:12.929
+Because it's so similar to the frog class
+I'm not going to do that here just to save
+
+00:23:12.929 --> 00:23:17.309
+us a little bit of time, but it's always a
+good idea to test your classes as you're writing
+
+00:23:17.309 --> 00:23:24.289
+them. It will really save you a lot of time
+in the long run. So if we were going to test
+
+00:23:24.289 --> 00:23:29.730
+the truck class, we'd create a main program,
+we'd construct a truck, move it repeatedly
+
+00:23:29.730 --> 00:23:34.169
+and show the location. In other words we'd
+do the same things we did in the frog class.
+
+00:23:34.169 --> 00:23:39.570
+Oh yes! And we would show the symbol too to
+make sure we've got it going in the right
+
+00:23:39.570 --> 00:23:45.929
+direction. Now the last piece that we need
+is our Frogger board. We're only going to
+
+00:23:45.929 --> 00:23:51.039
+implement the frog and the vehicles on a very
+small board. It's going to be 30 characters
+
+00:23:51.039 --> 00:23:57.940
+wide and just 7 rows tall. Now the way I picked
+7 rows is you have 5 truck lanes and then
+
+00:23:57.940 --> 00:24:03.110
+a safety zone at the top and the bottom. The
+way I picked 30 characters was just looking
+
+00:24:03.110 --> 00:24:07.470
+at sort of the general dimensions to make
+sure it was proportional. You don't want it
+
+00:24:07.470 --> 00:24:12.659
+to get too long or to be too short, so those
+looked okay to me. Now I'm no artist and it's
+
+00:24:12.659 --> 00:24:16.980
+a good idea to get people who are artists
+involved in these designs because sometimes
+
+00:24:16.980 --> 00:24:22.210
+when programmers do art it's not so pretty.
+One thing we need to think about is why do
+
+00:24:22.210 --> 00:24:27.320
+we need a grid at all? Well, we've got a huge
+problem when we're doing console output, and
+
+00:24:27.320 --> 00:24:34.220
+that's we can't backup. So for example if
+we put the frog in first, we can't go backwards
+
+00:24:34.220 --> 00:24:38.700
+to put the trucks over it. So assuming the
+frog starts at the bottom of the board as
+
+00:24:38.700 --> 00:24:45.450
+is typical in Frogger games, we've got a problem.
+So what we need to do is create a grid that
+
+00:24:45.450 --> 00:24:52.029
+stores a map of where everything is located.
+Then we can display the grid. In order to
+
+00:24:52.029 --> 00:24:57.119
+display the grid, we need to know how to create
+a rectangular group of characters. This is
+
+00:24:57.119 --> 00:25:01.200
+something called a two-dimensional array and
+we haven't done it previously so we need to
+
+00:25:01.200 --> 00:25:06.879
+talk about it a little bit. So for each step
+of time what we're going to do is clear the
+
+00:25:06.879 --> 00:25:12.730
+grid, then put all the objects in the grid,
+and then display the grid to the user, and
+
+00:25:12.730 --> 00:25:17.629
+that we will repeat every single step through
+the game. Now if you think you know that wouldn't
+
+00:25:17.629 --> 00:25:22.350
+it be faster rather than clearing the whole
+grid to just like erase the current position
+
+00:25:22.350 --> 00:25:28.249
+of the frog and draw the frog in a new position?
+Yes it would, but the truth is that compared
+
+00:25:28.249 --> 00:25:33.169
+to the user input being slow this game is
+going to be so fast we're actually going to
+
+00:25:33.169 --> 00:25:38.190
+have to end up slowing it down a little bit
+just to make it playable. So there's no reason
+
+00:25:38.190 --> 00:25:43.279
+to try to be really efficient, keep it simple.
+Keeping it simple is almost always a good
+
+00:25:43.279 --> 00:25:50.279
+programming strategy. If it turns out to be
+too inefficient later you can always fix it.
+
+00:25:50.350 --> 00:25:55.950
+So let's talk a little bit about two-dimensional
+arrays. When you construct a two-dimensional
+
+00:25:55.950 --> 00:26:00.490
+array, here's the code. Now these are going
+to be two-dimensional arrays of characters
+
+00:26:00.490 --> 00:26:05.129
+because that's how we're displaying our game.
+So you have character square brackets square
+
+00:26:05.129 --> 00:26:10.860
+brackets so there's four square brackets there
+and then the name of the array equals new
+
+00:26:10.860 --> 00:26:16.289
+character and then you give the number of
+rows first and then the number of columns
+
+00:26:16.289 --> 00:26:22.669
+and a semicolon. What that does is create
+something that looks like this. Now the light
+
+00:26:22.669 --> 00:26:28.210
+gray versus the white, that's just a PowerPoint
+thing. All the cells in the array are the
+
+00:26:28.210 --> 00:26:35.210
+same size just like they were in a one-dimensional
+array. The rows are horizontal. So for example
+
+00:26:35.309 --> 00:26:42.309
+row 0 goes alllllll the way across. Here's
+row 1 it's one of the darker gray rows, row
+
+00:26:43.039 --> 00:26:49.730
+2 is here. So notice we're zero indexing here.
+The columns on the other hand are vertical.
+
+00:26:49.730 --> 00:26:56.730
+So this is column 0. Here is column 1, column
+2. In order to access individual elements
+
+00:26:58.999 --> 00:27:04.929
+we used two indices: the left one for the
+row and the right one for the column. So for
+
+00:27:04.929 --> 00:27:11.710
+example the cell I just indicated? That's
+in row1 and column 2. This cell is in row
+
+00:27:11.710 --> 00:27:18.710
+3 and column 4, and so that's how we use a
+two-dimensional array. Here's a design for
+
+00:27:19.200 --> 00:27:25.070
+the grid class. The only instance data we
+need is the character array, the two-dimensional
+
+00:27:25.070 --> 00:27:30.129
+array, but we do need to know the number of
+rows and columns and those are going to be
+
+00:27:30.129 --> 00:27:35.429
+constants. We need to construct the grid.
+Now in this case because we know the number
+
+00:27:35.429 --> 00:27:40.980
+of rows and columns are constants, we don't
+need to pass them in as parameters. We need
+
+00:27:40.980 --> 00:27:45.590
+to be able to clear the grid. We need to be
+able to show the grid, and we need to be able
+
+00:27:45.590 --> 00:27:50.049
+to set it one cell at a time. And those are
+really the only things that the grid class
+
+00:27:50.049 --> 00:27:56.139
+needs to do for now. So let's go write the
+grid class. Now this is our third class in
+
+00:27:56.139 --> 00:28:03.139
+the same project. So we started with our instance
+data first. Here's our class data: final int
+
+00:28:24.879 --> 00:28:31.879
+rows equals 7 and final int cols equals 30.
+And remember, class data should always be
+
+00:28:36.889 --> 00:28:43.419
+static. So that means no matter how many grids
+we create, there's only going to be one copy
+
+00:28:43.419 --> 00:28:47.279
+of rows and columns. Now in this case it's
+not going to matter because we're only going
+
+00:28:47.279 --> 00:28:52.669
+to create one grid, but it's still good to
+create these things this way. Later on maybe
+
+00:28:52.669 --> 00:28:57.019
+we'll have a multiplayer version or something
+like that where we want to have multiple grids
+
+00:28:57.019 --> 00:29:02.279
+hanging around, and if we do the instance
+data versus class data correctly at the start
+
+00:29:02.279 --> 00:29:08.940
+we won't have to worry about it later. So
+we need a grid constructor. Remember it had
+
+00:29:08.940 --> 00:29:14.279
+no parameters. We have only one piece of instance
+data and so there's only one thing that needs
+
+00:29:14.279 --> 00:29:21.279
+to be allocated - a character array, rows
+and columns. Now remember this is a primitive
+
+00:29:32.320 --> 00:29:37.610
+data type not an object, so there's no two
+layer construction involved in this at all.
+
+00:29:37.610 --> 00:29:44.610
+In fact that's all there is to the constructor.
+To clear the grid all we have to do is step
+
+00:29:49.669 --> 00:29:56.139
+through the grid one position at a time and
+enter in something that can't be seen. A space
+
+00:29:56.139 --> 00:30:02.399
+is a good choice. Now in this particular case
+we're going to need to use to for loops: one
+
+00:30:02.399 --> 00:30:09.340
+for loop will go through the rows and the
+other will go through the columns. So for
+
+00:30:09.340 --> 00:30:16.340
+int r is 0 r less than rows ++r, and then
+we go through the columns inside that loop.
+
+00:30:25.279 --> 00:30:30.649
+Now this is one of our first nested for loops
+that we've done. So don't worry too much if
+
+00:30:30.649 --> 00:30:35.029
+this doesn't make a lot of sense to you, we'll
+do lots more nested for loops a little bit
+
+00:30:35.029 --> 00:30:42.029
+later. So grid of r c equals the space character
+and that's all there is to clearing the grid.
+
+00:30:54.320 --> 00:31:01.320
+To display the grid what we're going to do
+is just print it to the screen so once again
+
+00:31:01.999 --> 00:31:05.869
+we need a nested loop. And you know it occurs
+to me that by this time in the semester we
+
+00:31:05.869 --> 00:31:12.869
+actually have seen nested loops, so these
+shouldn't be completely foreign to you. So
+
+00:31:21.389 --> 00:31:28.389
+here are our nested loops going through the
+columns one at a time inside the rows. So
+
+00:31:32.190 --> 00:31:39.190
+what we're going to do here is system out
+print grid of r c. Now we don't want to put
+
+00:31:45.159 --> 00:31:50.029
+any spaces in here because we're just trying
+to print out the rows of the array, but we
+
+00:31:50.029 --> 00:31:57.029
+do need to print a new line every time we
+finish going through the columns. So that
+
+00:32:00.070 --> 00:32:07.070
+will be system out print line with nothing
+after it. So all of the columns will be printed
+
+00:32:08.200 --> 00:32:15.200
+out and then afterwards we'll have a new line,
+and that will take us to the new rows. The
+
+00:32:15.999 --> 00:32:21.749
+curly braces here are required. It might not
+be a bad idea to put another set of curly
+
+00:32:21.749 --> 00:32:27.649
+braces in, just to make sure that we support
+the way this indentation is done. We're going
+
+00:32:27.649 --> 00:32:32.549
+to print out the rows one column at a time,
+then do a print line and that will take us
+
+00:32:32.549 --> 00:32:38.149
+to the start of the next row. So there's our
+display method. The only other thing we needed
+
+00:32:38.149 --> 00:32:43.960
+to do was to be able to set a value in the
+grid. So again that's a void return type,
+
+00:32:43.960 --> 00:32:50.960
+we called it set grid and we needed to know
+which row, which column, and what symbol.
+
+00:32:57.289 --> 00:33:04.289
+The code here is pretty simple. Grid of row
+r, sort of bugs me that I made one of those
+
+00:33:07.070 --> 00:33:14.070
+a single letter variable and the other one
+multiple letters, so I'm going to change that.
+
+00:33:16.460 --> 00:33:20.629
+Let's think about this method a little bit.
+It would be possible that somebody would ask
+
+00:33:20.629 --> 00:33:25.929
+us to set a row and column location that isn't
+legal. And we really don't want to do that
+
+00:33:25.929 --> 00:33:32.929
+because if we do it our code will break. What
+we should do is check and see if 0 is less
+
+00:33:36.409 --> 00:33:43.409
+than or equal to r and r is less than rows,
+because those are the valid indices for a
+
+00:33:46.710 --> 00:33:53.710
+row. Now the other thing we need to check
+is whether columns is legal. So 0 less than
+
+00:33:57.009 --> 00:34:04.009
+or equal to c and c is less than columns.
+Now you could check those separately if you
+
+00:34:04.909 --> 00:34:11.909
+wanted to. If those two are legal, that's
+when we're going to set the grid. Now we have
+
+00:34:12.330 --> 00:34:16.980
+to decide what we're going to do if somebody
+makes an illegal choice. People tend to like
+
+00:34:16.980 --> 00:34:22.140
+to do things like system out print line here
+and that's really kind of awkward, although
+
+00:34:22.140 --> 00:34:27.200
+for debugging purposes it can be useful because
+we would not want to set an illegal position
+
+00:34:27.200 --> 00:34:33.730
+on the grid. So for now let's put that in
+here, but we may want to remove it later on.
+
+00:34:33.730 --> 00:34:40.730
+There are some more elegant solutions to this
+that you'll learn as you advance in programming.
+
+00:34:47.270 --> 00:34:50.429
+Usually when you start to debug a program,
+particularly one that might be a little bit
+
+00:34:50.429 --> 00:34:56.919
+bigger like this one might be at the end,
+any help you can get, any way you can make
+
+00:34:56.919 --> 00:35:03.919
+your job easier is worth it. So there we have
+our set grid method. Of course all of these
+
+00:35:05.410 --> 00:35:12.410
+classes should be Javadoc'd. So when we cleared
+the array we used a nested for loop. Now let's
+
+00:35:14.910 --> 00:35:19.670
+make some observations about what we've done
+so far. We've created three different classes
+
+00:35:19.670 --> 00:35:24.610
+that are going to be an integral part of a
+Frogger game. Having more classes actually
+
+00:35:24.610 --> 00:35:29.070
+makes programming easier. You've probably
+noticed that the logic in those three classes
+
+00:35:29.070 --> 00:35:35.300
+was not very complicated. It was really simple
+stuff. Well, guess what? That's what having
+
+00:35:35.300 --> 00:35:41.200
+more classes can do for you. The hard part
+is the design, is figuring out which class
+
+00:35:41.200 --> 00:35:47.510
+should do what. Selecting the classes, keeping
+the classes as a separate as possible, those
+
+00:35:47.510 --> 00:35:52.650
+are the things that then become the challenge.
+When the design is good, the implementation
+
+00:35:52.650 --> 00:35:58.760
+can be really simple. So learning good design
+is a very important goal for a programmer.
+
+00:35:58.760 --> 00:36:03.760
+One way to learn a great deal about design
+is by looking at the Java API. Remember those
+
+00:36:03.760 --> 00:36:08.270
+classes have been discussed by hundreds and
+hundreds of programmers. I'm not saying the
+
+00:36:08.270 --> 00:36:12.590
+designs are perfect, in fact, I've pointed
+out some places where the designs aren't,
+
+00:36:12.590 --> 00:36:18.140
+but really in general they're very, very good
+designs. So keep programming!
+

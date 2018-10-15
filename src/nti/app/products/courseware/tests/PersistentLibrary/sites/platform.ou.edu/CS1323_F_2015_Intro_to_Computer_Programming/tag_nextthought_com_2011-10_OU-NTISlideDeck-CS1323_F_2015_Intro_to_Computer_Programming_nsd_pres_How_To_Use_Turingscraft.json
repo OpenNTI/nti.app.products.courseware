@@ -1,0 +1,130 @@
+{
+  "MimeType": "application/vnd.nextthought.ntislidedeck",
+  "Videos": [
+    {
+      "MimeType": "application/vnd.nextthought.ntislidevideo",
+      "video-ntiid": "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_02.01.02_How_to_Turingscraft",
+      "title": "How to Work with Turingscraft",
+      "creator": "Deborah Trytten",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:How_To_Use_Turingscraft",
+      "thumbnail": "//www.kaltura.com/p/1500101/thumbnail/entry_id/0_oh2n8z0b/width/640/",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:How_To_Use_Turingscraft_video",
+      "class": "ntislidevideo"
+    }
+  ],
+  "creator": "Deborah Trytten",
+  "title": "How To Use Turingscraft Summer 2014",
+  "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:How_To_Use_Turingscraft",
+  "Slides": [
+    {
+      "MimeType": "application/vnd.nextthought.slide",
+      "slidevideoid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:How_To_Use_Turingscraft_video",
+      "slidetitle": "How To Use Turingscraft",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:How_To_Use_Turingscraft",
+      "slidevideostart": "0.0",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlide-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:How_To_Use_Turingscraft_slide_1",
+      "slideimage": "resources/CS1323_F_2015_Intro_to_Computer_Programming/f128a191a2b9297c0fb54e21848d51a92a466aae/fd35e23767020999111e1f49239199b4c5eff23e.png",
+      "slidevideoend": "4.0",
+      "slidenumber": "1",
+      "class": "slide"
+    },
+    {
+      "MimeType": "application/vnd.nextthought.slide",
+      "slidevideoid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:How_To_Use_Turingscraft_video",
+      "slidetitle": "Turingscraft",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:How_To_Use_Turingscraft",
+      "slidevideostart": "4.0",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlide-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:How_To_Use_Turingscraft_slide_2",
+      "slideimage": "resources/CS1323_F_2015_Intro_to_Computer_Programming/b90d20f9a7f6a78f1c0f6e9f6ae1ff25a226d756/fd35e23767020999111e1f49239199b4c5eff23e.png",
+      "slidevideoend": "49.0",
+      "slidenumber": "2",
+      "class": "slide"
+    },
+    {
+      "MimeType": "application/vnd.nextthought.slide",
+      "slidevideoid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:How_To_Use_Turingscraft_video",
+      "slidetitle": "Advantages",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:How_To_Use_Turingscraft",
+      "slidevideostart": "49.0",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlide-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:How_To_Use_Turingscraft_slide_3",
+      "slideimage": "resources/CS1323_F_2015_Intro_to_Computer_Programming/ec00ed6006878a2a6f0fd9567ffad5ec2c0ce591/fd35e23767020999111e1f49239199b4c5eff23e.png",
+      "slidevideoend": "117.0",
+      "slidenumber": "3",
+      "class": "slide"
+    },
+    {
+      "MimeType": "application/vnd.nextthought.slide",
+      "slidevideoid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:How_To_Use_Turingscraft_video",
+      "slidetitle": "Signing Up",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:How_To_Use_Turingscraft",
+      "slidevideostart": "117.0",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlide-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:How_To_Use_Turingscraft_slide_4",
+      "slideimage": "resources/CS1323_F_2015_Intro_to_Computer_Programming/48c5230e9e310d0f6efaac241c30ca2679c1e065/fd35e23767020999111e1f49239199b4c5eff23e.png",
+      "slidevideoend": "127.0",
+      "slidenumber": "4",
+      "class": "slide"
+    },
+    {
+      "MimeType": "application/vnd.nextthought.slide",
+      "slidevideoid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:How_To_Use_Turingscraft_video",
+      "slidetitle": "Sign Up Continued",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:How_To_Use_Turingscraft",
+      "slidevideostart": "127.0",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlide-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:How_To_Use_Turingscraft_slide_5",
+      "slideimage": "resources/CS1323_F_2015_Intro_to_Computer_Programming/ddbb1eb5a5a1c9afdb9a61e7850fa266823bb286/fd35e23767020999111e1f49239199b4c5eff23e.png",
+      "slidevideoend": "204.0",
+      "slidenumber": "5",
+      "class": "slide"
+    },
+    {
+      "MimeType": "application/vnd.nextthought.slide",
+      "slidevideoid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:How_To_Use_Turingscraft_video",
+      "slidetitle": "Perform Exercises",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:How_To_Use_Turingscraft",
+      "slidevideostart": "204.0",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlide-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:How_To_Use_Turingscraft_slide_6",
+      "slideimage": "resources/CS1323_F_2015_Intro_to_Computer_Programming/fb39d9c20d2a4448159dbfe4f8a2f6ca60876d0d/fd35e23767020999111e1f49239199b4c5eff23e.png",
+      "slidevideoend": "375.0",
+      "slidenumber": "6",
+      "class": "slide"
+    },
+    {
+      "MimeType": "application/vnd.nextthought.slide",
+      "slidevideoid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:How_To_Use_Turingscraft_video",
+      "slidetitle": "Understanding Symbols",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:How_To_Use_Turingscraft",
+      "slidevideostart": "375.0",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlide-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:How_To_Use_Turingscraft_slide_7",
+      "slideimage": "resources/CS1323_F_2015_Intro_to_Computer_Programming/c3d745e2e832cf6891c30bfadac0df5ff8ab656a/fd35e23767020999111e1f49239199b4c5eff23e.png",
+      "slidevideoend": "423.0",
+      "slidenumber": "7",
+      "class": "slide"
+    },
+    {
+      "MimeType": "application/vnd.nextthought.slide",
+      "slidevideoid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:How_To_Use_Turingscraft_video",
+      "slidetitle": "Grading Turingscraft",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:How_To_Use_Turingscraft",
+      "slidevideostart": "423.0",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlide-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:How_To_Use_Turingscraft_slide_8",
+      "slideimage": "resources/CS1323_F_2015_Intro_to_Computer_Programming/cfe083c0b49f502f8e326ab9444f370435bbf8c6/fd35e23767020999111e1f49239199b4c5eff23e.png",
+      "slidevideoend": "475.0",
+      "slidenumber": "8",
+      "class": "slide"
+    },
+    {
+      "MimeType": "application/vnd.nextthought.slide",
+      "slidevideoid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:How_To_Use_Turingscraft_video",
+      "slidetitle": "Keep Programming!",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:How_To_Use_Turingscraft",
+      "slidevideostart": "475.0",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlide-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:How_To_Use_Turingscraft_slide_9",
+      "slideimage": "resources/CS1323_F_2015_Intro_to_Computer_Programming/df4e365e6397ab4945ac959377bdab75ed667148/fd35e23767020999111e1f49239199b4c5eff23e.png",
+      "slidevideoend": "485.0",
+      "slidenumber": "9",
+      "class": "slide"
+    }
+  ],
+  "ntiid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:How_To_Use_Turingscraft",
+  "class": "ntislidedeck"
+}

@@ -1,0 +1,1977 @@
+WEBVTT
+Kind: captions
+Language: en
+
+00:00:00.580 --> 00:00:05.529
+&gt;&gt;Let's continue our study of relationships
+between classes by examining a program that
+
+00:00:05.529 --> 00:00:12.150
+tracks charity donations. Here's our problem
+statement: Most if not all charities accept
+
+00:00:12.150 --> 00:00:18.250
+cash donations. Some charities also collect
+goods for resale. Now this is generally a
+
+00:00:18.250 --> 00:00:23.689
+good thing. It prevents usable goods from
+going into a landfill, donors get credit for
+
+00:00:23.689 --> 00:00:29.119
+their taxes, and the charity gets money to
+do good deeds. We're going to implement a
+
+00:00:29.119 --> 00:00:34.590
+program that keeps track of the donations
+made by individuals to a charity. This will
+
+00:00:34.590 --> 00:00:40.500
+provide tax records of donations for donors,
+and provide a revenue summary to the charity.
+
+00:00:40.500 --> 00:00:47.460
+We'll also provide a list of donated items
+to the charity. We're taking a big step forward
+
+00:00:47.460 --> 00:00:51.570
+here that you may not notice if I don't point
+it out to you, and that's that we're talking
+
+00:00:51.570 --> 00:00:56.980
+about a generic charity instead of talking
+about a specific one. This is a very important
+
+00:00:56.980 --> 00:01:02.440
+step forward in programming. There are many
+organizations that have similar needs, so
+
+00:01:02.440 --> 00:01:07.860
+if you program for a group of organizations
+instead of for a single organization it makes
+
+00:01:07.860 --> 00:01:12.510
+it possible to sell your software to more
+people. This makes software more lucrative
+
+00:01:12.510 --> 00:01:17.640
+and often also makes the software better.
+Now to do this successfully, you really need
+
+00:01:17.640 --> 00:01:23.950
+to have several different but similar organizations
+to talk to about their needs. The problem
+
+00:01:23.950 --> 00:01:29.990
+is that every organization has its own little
+peculiarities and so if you create software
+
+00:01:29.990 --> 00:01:36.030
+for just one organization, it can be very
+hard to adapt it for a second organization.
+
+00:01:36.030 --> 00:01:40.890
+On the other hand if you create software for
+four or five organizations, sometimes that
+
+00:01:40.890 --> 00:01:46.420
+process is a little bit easier. It also keeps
+the cost down for the organizations and that
+
+00:01:46.420 --> 00:01:53.340
+can be good too. Let's think about what our
+test data should look like. We should probably
+
+00:01:53.340 --> 00:01:59.460
+have at least four donors: one should make
+only cash donations, one should donate items
+
+00:01:59.460 --> 00:02:06.170
+but no cash (so maybe two shirts one valued
+at $2 and one valued at 4), one should have
+
+00:02:06.170 --> 00:02:12.270
+both donated items and cash (so maybe two
+pairs of pants, one for $3, one for $5, one
+
+00:02:12.270 --> 00:02:19.260
+for $7 and then $50 in cash), and then one
+without any donations this year. Incidentally,
+
+00:02:19.260 --> 00:02:24.040
+when you're writing the software, it's quite
+important to keep track of how you treat people
+
+00:02:24.040 --> 00:02:28.750
+who didn't make any donations this year but
+who've made donations in the past. You want
+
+00:02:28.750 --> 00:02:33.099
+to treat them very respectfully. These people
+are potential future donors, even if they
+
+00:02:33.099 --> 00:02:37.380
+didn't donate this year. So you don't want
+to be saying things like: "Hey you deadbeat,
+
+00:02:37.380 --> 00:02:41.500
+where did you get off not giving me money
+this year?" because that pretty much guarantees
+
+00:02:41.500 --> 00:02:45.690
+they won't give you money next year. Now remember
+your clients at the charity will help you
+
+00:02:45.690 --> 00:02:50.090
+with things like that, because these are all
+lessons that they will know. One thing that's
+
+00:02:50.090 --> 00:02:56.030
+very important when you're designing software
+is to respect the expertise of your clients.
+
+00:02:56.030 --> 00:03:00.140
+Trust them to know their business. Don't think
+you know their business better than they do
+
+00:03:00.140 --> 00:03:07.140
+because you do not. Now each charity should
+have, at the end, $150 in cash and $21 of
+
+00:03:09.330 --> 00:03:13.730
+donations of five items. So those will be
+the test data we'll use when we get around
+
+00:03:13.730 --> 00:03:20.020
+to testing the software. The next thing we
+need to do is to talk about the design. So
+
+00:03:20.020 --> 00:03:23.709
+there are lots of different ways to do design,
+and the way that I'm suggesting that I'm going
+
+00:03:23.709 --> 00:03:27.989
+to model here is the way that I've learned
+to do it over the years. Certainly there are
+
+00:03:27.989 --> 00:03:32.069
+people who do it differently than this and
+still are very successful designers, so this
+
+00:03:32.069 --> 00:03:37.060
+is just one way to do it not necessarily the
+only way or the correct way. The first thing
+
+00:03:37.060 --> 00:03:43.560
+I do is pick the classes. Then I pick the
+data in the classes, and then I pick the relationships
+
+00:03:43.560 --> 00:03:49.400
+between the classes. After all that's done
+then I pick the methods and the constructors.
+
+00:03:49.400 --> 00:03:55.459
+Now the reason is this forces me to think
+about the big items, particularly the relationships,
+
+00:03:55.459 --> 00:04:00.690
+early in the design process. The later you
+get in the design process, the more ownership
+
+00:04:00.690 --> 00:04:05.310
+you're going to feel of the design and the
+harder it's going to be for you to make changes
+
+00:04:05.310 --> 00:04:10.840
+to it. And so you want to make sure that the
+big items are handled first. Like I say, it's
+
+00:04:10.840 --> 00:04:16.239
+not the only way to design, but it is a way
+that's worked very well for me over the years.
+
+00:04:16.239 --> 00:04:20.289
+Now there's lots of back and forth between
+steps, so while I've presented this as sort
+
+00:04:20.289 --> 00:04:26.620
+of a linear process it is nothing but linear.
+And in fact good design is very time-consuming
+
+00:04:26.620 --> 00:04:32.430
+and does take a lot of iterations, so don't
+expect it to be perfect the first time. The
+
+00:04:32.430 --> 00:04:38.240
+other thing that I do in design is I used
+UML extensively. This saves many, many, many
+
+00:04:38.240 --> 00:04:44.319
+hours of work, because once you've implemented
+things then you feel even more ownership of
+
+00:04:44.319 --> 00:04:49.110
+them. And when you feel ownership sometimes
+that clouds your decisions that you're making
+
+00:04:49.110 --> 00:04:53.800
+making during design. Now it does take some
+practice to learn how to visualize the UML
+
+00:04:53.800 --> 00:04:58.909
+and to learn to understand what the UML means,
+but I strongly recommend that you participate
+
+00:04:58.909 --> 00:05:05.830
+in the process. So let's think about what
+some of our classes should be. Well the classes
+
+00:05:05.830 --> 00:05:12.830
+are usually the nouns in the problem statement:
+donor, donation, charity. So right there we
+
+00:05:16.479 --> 00:05:20.319
+have some of the classes that are going to
+be involved. Now we actually don't have all
+
+00:05:20.319 --> 00:05:27.319
+the classes that we'll eventually have, and
+that's fine. This is a great place to start.
+
+00:05:27.499 --> 00:05:30.719
+The next thing we need to think about is how
+the relationships are going to be between
+
+00:05:30.719 --> 00:05:36.900
+classes there are two relationships we have
+at this time. One is called aggregation. The
+
+00:05:36.900 --> 00:05:42.669
+sort of nickname for aggregation is has or
+has-a, and so that's a good way to remember
+
+00:05:42.669 --> 00:05:48.249
+that when you can say a has a b, that that
+probably means that a and b are related by
+
+00:05:48.249 --> 00:05:54.869
+an aggregation relationship. Now in Java,
+how aggregation is implemented is a class
+
+00:05:54.869 --> 00:05:59.499
+with the data field from another class. So
+sometimes that will help you particularly
+
+00:05:59.499 --> 00:06:05.960
+as you're starting to really understand aggregation,
+to recognize when you're seeing that. The
+
+00:06:05.960 --> 00:06:12.249
+UML symbol for aggregation is an open diamond
+and then a long line. The diamond goes to
+
+00:06:12.249 --> 00:06:19.249
+the aggregating class, that is, the bigger
+class. The other relationship is called dependency
+
+00:06:19.270 --> 00:06:26.270
+or uses. And so uses is kind of the nickname
+for that. Now in Java, this relationship exists
+
+00:06:26.430 --> 00:06:32.020
+when a class has a local variable or a parameter
+from another class, but not a data field.
+
+00:06:32.020 --> 00:06:38.149
+So you can see uses is a much weaker relationship.
+Now one of the things about uses relationships
+
+00:06:38.149 --> 00:06:43.789
+is they often don't get documented in the
+UML unless they're very, very important. So
+
+00:06:43.789 --> 00:06:50.249
+a lot of these things tend to be sort of coincidental
+or minor. Remember with UML you always have
+
+00:06:50.249 --> 00:06:55.520
+the option of how many detail you're going
+to display. You don't have to show every single
+
+00:06:55.520 --> 00:07:01.529
+element in order to know that the UML is good.
+So the strategy of how much to show and how
+
+00:07:01.529 --> 00:07:08.529
+much not to show is very much a part of the
+UML design. The UML symbol, by the way, for
+
+00:07:08.839 --> 00:07:14.379
+dependency is a dotted line with an arrow
+on the end sort of a greater than sign or
+
+00:07:14.379 --> 00:07:21.379
+less than sign depending on which direction
+it's pointing in. Let's think about what our
+
+00:07:21.649 --> 00:07:28.649
+relationships between classes are now using
+the classes that we have. Well a charity has
+
+00:07:28.779 --> 00:07:35.779
+donors, so that means the relationship between
+charity and donor is an aggregation relationship.
+
+00:07:35.909 --> 00:07:42.580
+A charity also has donations, so that means
+the relationship between charity and donations
+
+00:07:42.580 --> 00:07:48.550
+is also aggregation. Now the relationship
+between donor and donations, that's ones a
+
+00:07:48.550 --> 00:07:54.580
+little bit more complicated. So this is what
+we have so far: the charity aggregates donor
+
+00:07:54.580 --> 00:08:01.580
+and donation, but we know that a donor has
+a donation, which would look like this, aggregating
+
+00:08:02.509 --> 00:08:09.509
+and a donation has a donor, which looks like
+that. Now I'm not saying that strategy is
+
+00:08:11.509 --> 00:08:17.419
+impossible, but notice we're getting a complicated
+relationship between those two classes. There's
+
+00:08:17.419 --> 00:08:21.879
+a lot happening there, so you really want
+to think about whether that's the right way
+
+00:08:21.879 --> 00:08:27.759
+to implement this software. These relationships
+are duplicative. One of the problems with
+
+00:08:27.759 --> 00:08:32.590
+duplicate relationships, where you have donor
+is part of a donation and donation is part
+
+00:08:32.590 --> 00:08:37.910
+of a donor, is keeping them updated when you
+make changes. It's very easy to change one
+
+00:08:37.910 --> 00:08:43.930
+and to forget to change the other. So this
+is a sign of a bad design. So let's think
+
+00:08:43.930 --> 00:08:48.300
+about which way this should really be, let's
+think about what our original specifications
+
+00:08:48.300 --> 00:08:54.220
+were. We were asked things like finding the
+value of the donors donation, so that means
+
+00:08:54.220 --> 00:09:00.080
+that the donor object needs to be able to
+access its donations directly. That suggests
+
+00:09:00.080 --> 00:09:05.050
+that the donor aggregating the donations is
+more important than the donations aggregating
+
+00:09:05.050 --> 00:09:10.910
+the donor. Now again, this is complicated
+stuff and there isn't necessarily one right
+
+00:09:10.910 --> 00:09:15.940
+answer, but to me that seems like the better
+relationship to keep. The other thing you
+
+00:09:15.940 --> 00:09:21.340
+might notice here is that even if we remove
+that second aggregation between donor and
+
+00:09:21.340 --> 00:09:27.200
+donation, the donation is still being aggregated
+by two classes. And you might wonder whether
+
+00:09:27.200 --> 00:09:34.200
+that's a good idea or not too. Well it depends;
+it can be fine and it can be bad. The good
+
+00:09:34.280 --> 00:09:39.020
+news here is that we don't have to make this
+decision forever right now. This is a decision
+
+00:09:39.020 --> 00:09:44.830
+we can revise later as we work more on developing
+the design. So don't get too hung up in the
+
+00:09:44.830 --> 00:09:49.970
+details and really think that you know later
+on we can go back and fix it if we decide
+
+00:09:49.970 --> 00:09:56.970
+that isn't a good decision. So the next thing
+we need to do is to design the donor class.
+
+00:09:57.140 --> 00:10:02.000
+Now here we're moving from designing the classes
+to designing the data in the classes. Remember
+
+00:10:02.000 --> 00:10:07.810
+that I prefer to design the data first and
+then put the methods in later. So we need
+
+00:10:07.810 --> 00:10:13.650
+a name, we need an address, and we need a
+list of donations. Now we might want to think
+
+00:10:13.650 --> 00:10:20.000
+for a minute if address should be a separate
+class. Well, I think it should. Addresses
+
+00:10:20.000 --> 00:10:24.940
+are very reusable. What's more there's a lot
+of error checking you can do in them, not
+
+00:10:24.940 --> 00:10:30.260
+that we're going to do that today. So for
+example you can check and see if an address
+
+00:10:30.260 --> 00:10:36.690
+has a state and a city that matches the ZIP
+code. That will prevent some typos on the
+
+00:10:36.690 --> 00:10:42.200
+ZIP code from sending your mail to odd places
+and costing you a bunch of money to get back
+
+00:10:42.200 --> 00:10:47.010
+the correct addresses, and so that's a good
+thing to consider. Even though we're not putting
+
+00:10:47.010 --> 00:10:52.460
+the error checking in now, by separating address
+into a separate class make it possible to
+
+00:10:52.460 --> 00:10:57.520
+do that later. In fact we might leave it listed
+as a to do in the software so people know
+
+00:10:57.520 --> 00:11:01.260
+that that's something that we think we would
+be a great idea to add on even if we don't
+
+00:11:01.260 --> 00:11:06.390
+have time to do it today. To go back to the
+design of the donor class you'll notice that
+
+00:11:06.390 --> 00:11:13.390
+we have the name, the address, and the donations
+as an ArrayList of donations. This is what
+
+00:11:15.260 --> 00:11:21.330
+the relationship looks like. Because we have
+an ArrayList of donations, the donor class
+
+00:11:21.330 --> 00:11:28.330
+aggregates donations. And because we're using
+an address field, just a single field, address
+
+00:11:29.340 --> 00:11:36.280
+is aggregated by donor. So notice the donor
+class is kept quite simple this way. The donor
+
+00:11:36.280 --> 00:11:43.280
+class is kept smaller but we have more classes.
+That's usually a good design decision. Now
+
+00:11:43.800 --> 00:11:50.800
+we need to design the donation class. Each
+donation can contain cash and several items.
+
+00:11:50.870 --> 00:11:55.110
+So this means our donation class is going
+to have money, which will be a double, and
+
+00:11:55.110 --> 00:12:00.850
+then items. Now notice I've made this an ArrayList
+of donated items. The reason I did that is
+
+00:12:00.850 --> 00:12:06.250
+we've got some pairings going on with the
+donated items. They have a name and they have
+
+00:12:06.250 --> 00:12:12.040
+a monetary value. So in order to collect those
+two things together into a single unit, I
+
+00:12:12.040 --> 00:12:18.190
+needed to create another class. So like I
+say, items have a cost and a value and so
+
+00:12:18.190 --> 00:12:24.940
+that creates the separated class donated item.
+Now you can see that donated item is aggregated
+
+00:12:24.940 --> 00:12:31.300
+by donation. So the relationship between classes
+is shown in this way in UML, with the open
+
+00:12:31.300 --> 00:12:38.300
+diamond. Now it's time to reconsider that
+relationship that we put in earlier that we
+
+00:12:38.420 --> 00:12:45.000
+weren't too sure about. We know that donor
+has a donation, and that donation has a donated
+
+00:12:45.000 --> 00:12:49.780
+item and that charity has a donor. So the
+figure on the right shows those relationships
+
+00:12:49.780 --> 00:12:56.780
+expressed in UML. We know that the charity
+needs to track donations. Now, do they need
+
+00:12:57.650 --> 00:13:03.730
+to track donations or maybe donated items?
+Are they just trying to keep an inventory
+
+00:13:03.730 --> 00:13:10.410
+of what's in the warehouse, for example, or
+what was in the warehouse? To me that makes
+
+00:13:10.410 --> 00:13:16.680
+more sense, is rather than tracking the donation,
+you're tracking the donated items. That also
+
+00:13:16.680 --> 00:13:21.610
+simplifies the design a little bit. Now notice
+donated item is still being aggregated by
+
+00:13:21.610 --> 00:13:27.400
+two classes, but the nice thing here is the
+donated item is a very simple class. Remember
+
+00:13:27.400 --> 00:13:32.120
+just two data fields, we'll probably write
+it in such a way that it's immutable and it
+
+00:13:32.120 --> 00:13:37.040
+can't be changed and that also improves things
+here. So there are some other dimensions to
+
+00:13:37.040 --> 00:13:43.170
+design that will come up as we get more advanced
+in designing. So now we have a pretty solid
+
+00:13:43.170 --> 00:13:49.730
+relationship. Notice that this is not circular.
+The reason I say it's not circular is because
+
+00:13:49.730 --> 00:13:54.470
+there's no class that's aggregating another
+class, like the link we had between donor
+
+00:13:54.470 --> 00:14:00.480
+and donation earlier that was circular. That's
+another sign of good design. When things get
+
+00:14:00.480 --> 00:14:06.320
+circular, updating them can be very hard.
+So let's examine the design of our charity
+
+00:14:06.320 --> 00:14:11.910
+class. The data would be a name for the charity,
+because remember, we're now writing the software
+
+00:14:11.910 --> 00:14:18.000
+for many charities not just for one. A list
+of donors, a list of donated items, and of
+
+00:14:18.000 --> 00:14:24.450
+course the amount of money they've collected.
+So here this is summarized in UML. So we see
+
+00:14:24.450 --> 00:14:30.490
+the name of the charity, the money, the ArrayList
+of donor for donors, and the ArrayList of
+
+00:14:30.490 --> 00:14:37.150
+donated items for donated items. So this is
+the expression of the charity class in a little
+
+00:14:37.150 --> 00:14:43.060
+bit more detail, the same charity class that
+was on the previous slide. Now let's talk
+
+00:14:43.060 --> 00:14:49.710
+about the design of methods. You do need to
+add in necessary accessor methods. So for
+
+00:14:49.710 --> 00:14:55.120
+example, we need to be able to access the
+amount donated by everyone, the amount donated
+
+00:14:55.120 --> 00:15:00.430
+by one donor. The thing that's important is
+you need to take a minimalist approach to
+
+00:15:00.430 --> 00:15:06.690
+accessing data fields. So weak designers tend
+to just put in accessor for everything, and
+
+00:15:06.690 --> 00:15:11.600
+that's not a good idea. It makes the software
+more complicated than it has to be and there's
+
+00:15:11.600 --> 00:15:17.800
+no reason for it. So wait and see how you
+need the accessor. So for example at the address
+
+00:15:17.800 --> 00:15:23.190
+field, probably the only accessor we need
+is a to string method. So don't put every
+
+00:15:23.190 --> 00:15:29.220
+accessor in there in the world, you probably
+won't use them. You need to choose mutator
+
+00:15:29.220 --> 00:15:34.470
+methods even more carefully than accessors,
+because mutators can change data. And when
+
+00:15:34.470 --> 00:15:39.930
+you change data is when mistakes get made
+that can't easily be fixed. So for example,
+
+00:15:39.930 --> 00:15:45.480
+we're going to need to be able to add donors
+and to make donations. So you're going to
+
+00:15:45.480 --> 00:15:51.430
+need to add Java idioms like to string now
+most classes should have a to string method
+
+00:15:51.430 --> 00:15:56.110
+there aren't a lot of other Java idioms that
+make sense in this code. So that's the main
+
+00:15:56.110 --> 00:16:03.110
+one to watch out for. Let's talk a little
+bit about the design of a driver class. There
+
+00:16:03.270 --> 00:16:07.779
+are lots of options here. Now I'm going to
+choose a different option than what I did
+
+00:16:07.779 --> 00:16:13.180
+in the last program just to give you some
+variety and to let you see a different style.
+
+00:16:13.180 --> 00:16:17.950
+In this case our charity object is going to
+be created as instance data in our driver
+
+00:16:17.950 --> 00:16:23.980
+class. Now because our driver class has instance
+data, that means we have to construct and
+
+00:16:23.980 --> 00:16:29.600
+use a driver object. Now this is something
+some people find confusing. And if you do,
+
+00:16:29.600 --> 00:16:35.080
+then just create another class that drives
+your driver. This class is going to contain
+
+00:16:35.080 --> 00:16:40.279
+the user interface to the program. It's going
+to be menu-driven, so the class is mostly
+
+00:16:40.279 --> 00:16:44.750
+going to be system out print line and scanner
+work. It's actually not a very interesting
+
+00:16:44.750 --> 00:16:50.470
+class in general, other than the main program
+so that's the part we'll develop later. Now
+
+00:16:50.470 --> 00:16:55.080
+the charity class really does most of the
+heavy lifting here, the driver is just the
+
+00:16:55.080 --> 00:16:59.440
+interface. When you're writing code you really
+want to separate the user interface from the
+
+00:16:59.440 --> 00:17:04.779
+rest of the code to the greatest degree that
+it's possible. User interfaces are often not
+
+00:17:04.779 --> 00:17:09.949
+reusable and have to be re-implemented from
+scratch, and so when you know that's a possibility
+
+00:17:09.949 --> 00:17:15.159
+you want to encapsulate it as much as is possible.
+Now because we're beginning programmers that
+
+00:17:15.159 --> 00:17:21.189
+may not be perfect, and that's okay. Now you
+may be wondering, "Why haven't I seen any
+
+00:17:21.189 --> 00:17:27.299
+uses relationships?" Well, one thing we haven't
+done is show the uses relationships in the
+
+00:17:27.299 --> 00:17:32.440
+diagram. For example, string class is used
+by many, many classes, in fact, virtually
+
+00:17:32.440 --> 00:17:37.309
+all of them, particularly because there are
+to string methods available. Because it is
+
+00:17:37.309 --> 00:17:42.340
+so ubiquitous, we usually don't show it in
+other words. Everybody knows that virtually
+
+00:17:42.340 --> 00:17:48.200
+every class uses the string object to put
+in the string class and to put an arrow from
+
+00:17:48.200 --> 00:17:53.090
+every single class to the string class makes
+it appear like the string class is the center
+
+00:17:53.090 --> 00:17:58.860
+of the universe in this program! It's not.
+It's just one more little tool that we use.
+
+00:17:58.860 --> 00:18:03.369
+And so there's a lot of judgment that's involved
+in what we show and don't show, so a lot of
+
+00:18:03.369 --> 00:18:08.309
+uses relationships don't actually get documented.
+The ones that need to be documented are the
+
+00:18:08.309 --> 00:18:13.799
+important ones, the ones where you have a
+big, important class that's just used in another
+
+00:18:13.799 --> 00:18:17.799
+class. This program doesn't happen to have
+any of those, and so you're not going to see
+
+00:18:17.799 --> 00:18:24.799
+any uses relationships documented. Now let's
+start to implement some of the simple classes.
+
+00:18:25.059 --> 00:18:29.999
+Now the strategy I'm using here that is starting
+and doing the simple classes first and then
+
+00:18:29.999 --> 00:18:35.610
+moving to the more complicated classes, or
+to use our new terminology, I'm implementing
+
+00:18:35.610 --> 00:18:41.519
+the classes that are being aggregated and
+then moving on later to the aggregating classes.
+
+00:18:41.519 --> 00:18:47.509
+That's a strategy I prefer, because I've had
+a lot of success writing programs that way.
+
+00:18:47.509 --> 00:18:50.929
+Different people are comfortable doing different
+things and there's no saying that this strategy
+
+00:18:50.929 --> 00:18:57.749
+is the only way to do it or the best way to
+do it. So for example, let's implement the
+
+00:18:57.749 --> 00:19:02.919
+donated item class. Now the address class
+is very similar to this class so I'm not actually
+
+00:19:02.919 --> 00:19:07.499
+going to implement it, it's just lots and
+lots of strings. So donated items is a little
+
+00:19:07.499 --> 00:19:13.580
+bit more interesting. So here we are in Eclipse.
+Notice I have all of my classes created. Now
+
+00:19:13.580 --> 00:19:20.580
+I did these from our designs, so we've got
+two instance data elements here, we've got
+
+00:19:22.720 --> 00:19:29.720
+a name, and we've got a price. So inside our
+constructor what we want to do is to set name
+
+00:19:31.830 --> 00:19:38.830
+to item. Now we've got a little problem, because
+we've called our parameter price and we also
+
+00:19:39.529 --> 00:19:45.309
+called our instance data price. So this is
+not what you want to do say price equals price.
+
+00:19:45.309 --> 00:19:50.149
+In fact, notice that Eclipse has actually
+flagged this with a warning. So although it's
+
+00:19:50.149 --> 00:19:55.509
+legal code, it's not a good idea. Now there
+are a couple different ways we could fix it.
+
+00:19:55.509 --> 00:20:02.509
+We could change the name of our parameter
+for example and that fixes it. Watch out for
+
+00:20:05.730 --> 00:20:09.989
+that mistake, because that can be a very hard
+one to debug if you decide to ignore that
+
+00:20:09.989 --> 00:20:16.549
+little yellow warning sign that Eclipse is
+giving us. When we get the item name, all
+
+00:20:16.549 --> 00:20:23.549
+we have to return is name. So notice this
+is an accessor, accessors usually start with
+
+00:20:24.769 --> 00:20:31.769
+get very simple to access this item. When
+we get the item price, all we return its price.
+
+00:20:35.789 --> 00:20:40.429
+In general there isn't a lot of error checking
+that occurs in accessors because we're supposed
+
+00:20:40.429 --> 00:20:44.239
+to do our error checking before we put the
+data in the program, not when we're accessing
+
+00:20:44.239 --> 00:20:50.299
+it. Now the other thing we're going to want
+to do is to create a to string. So a to string
+
+00:20:50.299 --> 00:20:55.350
+method is usually going to try to summarize
+all the data in some way that you can see
+
+00:20:55.350 --> 00:21:02.350
+it, particularly for debugging. So in this
+case what we're going to do is say item name
+
+00:21:04.789 --> 00:21:11.789
+colon plus name plus item price colon plus
+price, and we can return that. Now if having
+
+00:21:16.529 --> 00:21:22.239
+those pluses in the return statement bothers
+you, you could create a new string object
+
+00:21:22.239 --> 00:21:27.149
+and set the string object to that value and
+then return that string object. That's fine
+
+00:21:27.149 --> 00:21:32.129
+too, as always there are lots of ways to do
+it. So notice that the implementation of the
+
+00:21:32.129 --> 00:21:37.529
+donated items class was almost trivial. Now
+I put in the Javadoc and the method headers
+
+00:21:37.529 --> 00:21:43.090
+and things like that for you, which did make
+it shorter I will admit, but it really isn't
+
+00:21:43.090 --> 00:21:48.559
+conceptually very hard. The next thing we
+want to do is to implement the donor class.
+
+00:21:48.559 --> 00:21:54.529
+Now here we're going to look at the constructor
+get value of all donations and add donation,
+
+00:21:54.529 --> 00:22:00.450
+'cause those are the most interesting methods.
+So here we are in the donor class. Now the
+
+00:22:00.450 --> 00:22:05.769
+donor has a name and an address and the list
+of donations. So this is the instance data
+
+00:22:05.769 --> 00:22:11.970
+for the donor class. Let's take a look at
+our constructor first. The purpose of constructors
+
+00:22:11.970 --> 00:22:16.980
+is to make sure that every single item in
+this class, every single instance data, is
+
+00:22:16.980 --> 00:22:22.909
+ready to go. We could say name equals name.
+Now we made that mistake just a minute ago
+
+00:22:22.909 --> 00:22:27.230
+and notice we're getting our little Eclipse
+warning. This time I'm going to use a different
+
+00:22:27.230 --> 00:22:34.200
+strategy for fixing it. I'm going to say this.name
+= name. When you say this.name, you're telling
+
+00:22:34.200 --> 00:22:39.799
+Java that you want to use the instance data
+that's part of this class that version of
+
+00:22:39.799 --> 00:22:45.149
+name. And so that resolves the problem. Now
+some people like this and some people don't
+
+00:22:45.149 --> 00:22:49.289
+and I don't care if you like it or not, you
+can do it either way. Remember the other fix
+
+00:22:49.289 --> 00:22:53.549
+would have been to change the parameter name
+to something different that didn't match the
+
+00:22:53.549 --> 00:23:00.549
+instance data. And we can say this.address
+= address. Now this is where a lot of people
+
+00:23:03.070 --> 00:23:07.309
+would stop with that constructor and that
+wouldn't be correct, because although name
+
+00:23:07.309 --> 00:23:14.309
+and address are now correctly initialized,
+donations is not. So we need to construct
+
+00:23:17.409 --> 00:23:22.769
+the list of donations too. Now it's going
+to be empty, but you still want to construct
+
+00:23:22.769 --> 00:23:27.539
+it here. So later on when we go to add donations,
+we have a place to add it and we don't get
+
+00:23:27.539 --> 00:23:33.460
+a null pointer exception. So this is the trick
+to writing constructors correctly, is to methodically
+
+00:23:33.460 --> 00:23:38.639
+go through every single piece of instance
+data one at a time and make sure that that
+
+00:23:38.639 --> 00:23:45.639
+data got initialized. If you do that, you'll
+have no trouble with constructors. So we see
+
+00:23:45.929 --> 00:23:52.929
+we've got a couple of simple accessors here,
+so get name will return name and get address
+
+00:23:53.850 --> 00:24:00.690
+will return address. As always, accessors
+are extremely easy to write. Now here is get
+
+00:24:00.690 --> 00:24:06.269
+value of all donations. That's going to be
+a little bit more challenging to write. Let
+
+00:24:06.269 --> 00:24:13.269
+me remove our little stub here. So what we
+need to do is to step through all donations
+
+00:24:13.769 --> 00:24:20.769
+made by this person and add up both the money
+and the cost of the donated items, so there
+
+00:24:25.980 --> 00:24:31.379
+we have a strategy. We now recognize that
+this could be a for each loop because we're
+
+00:24:31.379 --> 00:24:38.379
+going to be stepping through our donations
+but not changing them. So for donation d:
+
+00:24:39.580 --> 00:24:45.950
+donations by the way, if for each loops make
+you uncomfortable, you could use a different
+
+00:24:45.950 --> 00:24:49.539
+kind of loop. You could use a regular for
+loop, you could use a while loop even if you
+
+00:24:49.539 --> 00:24:56.539
+wanted to. There's always more than one way
+to do these things. So since we're going to
+
+00:25:01.029 --> 00:25:06.460
+be returning the cost, which I'm going to
+put in at the bottom right at the start, just
+
+00:25:06.460 --> 00:25:13.460
+to keep Eclipse happy. Setting up a variable
+at the start is a good way to do this. So
+
+00:25:13.700 --> 00:25:20.700
+now we've got our first donation d, so we
+will have cost = cost + d.get and we need
+
+00:25:27.039 --> 00:25:34.039
+to go to our donation class and look and see
+what the name of our method is. So let's choose
+
+00:25:37.289 --> 00:25:44.289
+get money first. So this returns the amount
+of money that's donated by that person. The
+
+00:25:47.179 --> 00:25:54.179
+next thing we need to do is to get our next
+donated item. Now in this case, when we look
+
+00:26:03.549 --> 00:26:09.769
+at get donated items over here, we can see
+that that's going to return an ArrayList too.
+
+00:26:09.769 --> 00:26:16.769
+So we'll have ArrayList of donated item list
+= d.get donated items. Now we need to step
+
+00:26:28.259 --> 00:26:33.669
+through those donated items one at a time
+and add up the value of each. So we'll have
+
+00:26:33.669 --> 00:26:40.669
+another for loop, so this will be donated
+item. I'm just going to call that i: list,
+
+00:26:47.259 --> 00:26:54.259
+so we'll have cost = cost + i.get item price.
+Now if you don't remember the name for methods
+
+00:27:01.519 --> 00:27:05.919
+like that, remember you can always look them
+up by going over here in Eclipse and it will
+
+00:27:05.919 --> 00:27:12.919
+show you what the name of all your methods
+are. That can be very handy as we move along.
+
+00:27:14.039 --> 00:27:18.499
+So now for every donation we've added in the
+amount of money and we've added in the price
+
+00:27:18.499 --> 00:27:24.950
+of all the donations. So when we get to the
+end we return the cost, nested for loop, by
+
+00:27:24.950 --> 00:27:31.950
+the way. Now adding a donation for this donor
+that's actually pretty easy. Because our donations
+
+00:27:34.549 --> 00:27:41.549
+are kept in a ArrayList, we can use the ArrayList
+methods to handle it. So we're going to have
+
+00:27:44.600 --> 00:27:51.539
+donations.add d and that's really all there
+is to it. So that adds another individual
+
+00:27:51.539 --> 00:27:58.539
+donation to our list of donations for this
+person. Now as we go along, we should be testing
+
+00:27:58.950 --> 00:28:04.259
+these classes. In order to keep these videos
+a reasonable length I sometimes short-circuit
+
+00:28:04.259 --> 00:28:08.549
+that, but I really don't recommend it for
+you. Now is the perfect time to find errors
+
+00:28:08.549 --> 00:28:15.159
+in these classes. You really don't want to
+be waiting for the end. So the next class
+
+00:28:15.159 --> 00:28:19.789
+we should implement is our charity class.
+So we're going to implement the constructor
+
+00:28:19.789 --> 00:28:26.070
+because constructors tend to cause people
+problems. We're going to implement make donation,
+
+00:28:26.070 --> 00:28:31.090
+find value of all donations, and find value
+of one donor, and we're even going to find
+
+00:28:31.090 --> 00:28:36.210
+another little method that we're going to
+need to create called find donor. Now that's
+
+00:28:36.210 --> 00:28:40.720
+going to be a private method. The reason it's
+private is 'cause notice we didn't identify
+
+00:28:40.720 --> 00:28:45.690
+it when we were creating the design, but we
+are going to find it useful. So any time you're
+
+00:28:45.690 --> 00:28:50.019
+writing code in a class and you think, "Well
+I think I've written this code before" that's
+
+00:28:50.019 --> 00:28:55.820
+a hint that there may be a private method
+that you could make and reuse. So here's our
+
+00:28:55.820 --> 00:29:02.820
+charity class. I see that I forgot to remove
+my details for the constructor, so I guess
+
+00:29:12.749 --> 00:29:17.720
+we'll just look those over instead of rewriting
+them. So the constructor for the charity class
+
+00:29:17.720 --> 00:29:23.889
+only gave it the name. The list of donors,
+the list of donated items, and the money donated,
+
+00:29:23.889 --> 00:29:28.460
+all of those get initialized separately. So
+there's nothing to construct from those, 'cause
+
+00:29:28.460 --> 00:29:33.059
+when a charity starts out it doesn't have
+any donors, it doesn't have any donated items,
+
+00:29:33.059 --> 00:29:37.710
+and it doesn't have any money, so that's a
+good thing to do. Here's the little private
+
+00:29:37.710 --> 00:29:42.279
+method I was talking about and that's locating
+a donor that's already in the system. Now
+
+00:29:42.279 --> 00:29:47.129
+if you think about it it's just a for loop.
+So we step through all the possible donors
+
+00:29:47.129 --> 00:29:52.200
+and if their name equals the name that we're
+looking for, we return that donor. If we get
+
+00:29:52.200 --> 00:29:56.940
+to the end and we haven't found them we return
+null. So that's a very routine method, the
+
+00:29:56.940 --> 00:30:01.739
+kind of method we've written many, many times.
+I see I have it public here and that is not
+
+00:30:01.739 --> 00:30:06.830
+correct. It should have been a private method
+because we're only using it within this class.
+
+00:30:06.830 --> 00:30:11.899
+This isn't something somebody needs to be
+able to do outside of the class. And so since
+
+00:30:11.899 --> 00:30:16.720
+they don't need it we keep it in encapsulated.
+Now later on we may find we need it outside
+
+00:30:16.720 --> 00:30:21.720
+of the class, and if we do we make it public
+then. This is part of our strategy of implementing
+
+00:30:21.720 --> 00:30:27.759
+code conservatively. Doing it as simply as
+possible, not adding applications if we don't
+
+00:30:27.759 --> 00:30:34.759
+need them. Let's look at making a donation.
+So we've got a name for a donor and then we've
+
+00:30:35.539 --> 00:30:42.539
+got a donation. Well the first thing we need
+to do is find that donor object...and that's
+
+00:30:47.379 --> 00:30:53.330
+where our find donations method comes in.
+So that's kind of nice. Notice it can do the
+
+00:30:53.330 --> 00:31:00.330
+work for us. Now we'll do donor.add donation.
+Donation, that's the method we wrote just
+
+00:31:02.970 --> 00:31:08.769
+a few minutes ago in the donation class. So
+notice the work here again very simple, very
+
+00:31:08.769 --> 00:31:15.070
+straightforward. This is what comes from good
+design is short, simple methods. Now if you're
+
+00:31:15.070 --> 00:31:20.090
+thinking, "Well isn't two lines too short
+for a method?" No, not at all, in fact it's
+
+00:31:20.090 --> 00:31:27.090
+perfect this way-- short methods, good methods.
+Now let's find the value of one donor's donations.
+
+00:31:30.340 --> 00:31:34.710
+Now the reason I'm doing that before find
+value of all donations is that we're going
+
+00:31:34.710 --> 00:31:41.710
+to call this method in find value of all donations.
+Now unlike our find donor method this case
+
+00:31:42.259 --> 00:31:47.539
+this time we actually do want to have this
+method be public because remember this is
+
+00:31:47.539 --> 00:31:51.349
+one of the things we're supposed to be doing
+in the interface to the program. So we know
+
+00:31:51.349 --> 00:31:58.349
+the driver method is going to need to call
+this. So the first thing we do is donor find
+
+00:32:01.599 --> 00:32:07.899
+donor from the name. So once again we're reusing
+that find donor method. Now, if you hadn't
+
+00:32:07.899 --> 00:32:12.220
+thought to write that at the start, when you
+were writing this code you would have found
+
+00:32:12.220 --> 00:32:17.029
+that you were rewriting the code you had just
+written above in make donation. That sense
+
+00:32:17.029 --> 00:32:22.549
+of déjà vu, I've written this code before,
+that's what tells you you need a private method.
+
+00:32:22.549 --> 00:32:29.549
+So learn to listen to your instincts about
+that. In our donor class, whose design we
+
+00:32:32.289 --> 00:32:39.289
+might look at right now, notice that we have
+a method called get value of all donations.
+
+00:32:40.529 --> 00:32:47.529
+That is what we want to return. So don't go
+and redo work you don't have to do, so donor.get
+
+00:32:50.720 --> 00:32:57.720
+value of all donations. I suspect right now
+you're realizing why I leave the package explorer
+
+00:32:58.039 --> 00:33:03.779
+up on left-hand side of my window, so that
+I can access these things quickly and remember
+
+00:33:03.779 --> 00:33:10.779
+what all the methods are. Keeps you from redoing
+a lot of work the hard way. Okay, so now we
+
+00:33:13.309 --> 00:33:18.710
+need to find the value of all donations. Well
+that boils down to stepping through the loop
+
+00:33:18.710 --> 00:33:25.710
+and adding up the donations from every donor.
+So here we go. I'm going to use a for each
+
+00:33:26.369 --> 00:33:33.369
+loop again because we know we're stepping
+through all of the donors. Because we're returning
+
+00:33:39.529 --> 00:33:46.529
+a double, we know we're probably going to
+need one of those. And of course we'll initialize
+
+00:33:47.279 --> 00:33:54.279
+it to zero as always and we'll do d. hmmm.
+Well we could get value of all donations for
+
+00:33:58.739 --> 00:34:05.739
+the donor. That would be one way to do it.
+And remember, we want to add that to money,
+
+00:34:13.600 --> 00:34:19.730
+and of course at the end we're going to return
+money. So that's simple way to do it. Now
+
+00:34:19.730 --> 00:34:25.179
+a mistake that could very easily be made here
+is to add the money that the charity has in
+
+00:34:25.179 --> 00:34:29.830
+at this point, but that would be wrong 'cause
+remember all that money was coming from the
+
+00:34:29.830 --> 00:34:34.490
+donors so it's already been added in. These
+are the kind of things you'll notice when
+
+00:34:34.490 --> 00:34:39.940
+you test. And so notice even though I'm not
+testing and setting a very bad example here,
+
+00:34:39.940 --> 00:34:46.330
+this is definitely a place where testing could
+save you an awful lot of grief. So once again,
+
+00:34:46.330 --> 00:34:51.710
+notice very short methods in this class. Nothing's
+getting long and complicated. That happens
+
+00:34:51.710 --> 00:34:57.980
+'cause we've designed things well. Now here's
+the next thing and that's to implement the
+
+00:34:57.980 --> 00:35:02.940
+driver. This is something that causes people
+a lot of trouble, particularly the main method
+
+00:35:02.940 --> 00:35:08.480
+here. So that's the one that I'm going to
+implement. The thing that gets hard is that
+
+00:35:08.480 --> 00:35:13.940
+inside the method we need to construct an
+object from the driver class. It seems like
+
+00:35:13.940 --> 00:35:18.730
+that's circular but it really isn't. The reason
+we need to construct the object is because
+
+00:35:18.730 --> 00:35:23.110
+we made charity instance data. Now there are
+lots of different ways we could have worked
+
+00:35:23.110 --> 00:35:28.210
+around this. This is only one possible design,
+although it is a good design because it allows
+
+00:35:28.210 --> 00:35:33.120
+multiple charities to be created. And remember
+our goal here was to make this software for
+
+00:35:33.120 --> 00:35:38.230
+a lot of different charities, not just one.
+There's a loop in the main method that basically
+
+00:35:38.230 --> 00:35:44.730
+prints out the method and implements the choices.
+So let's go and write that. Here's our driver
+
+00:35:44.730 --> 00:35:51.730
+class. Notice we've got instance data here
+for our charity object and then I've got a
+
+00:35:55.370 --> 00:36:01.410
+decimal format, that's just for formatting
+some numbers as they're coming out. I made
+
+00:36:01.410 --> 00:36:05.430
+that static because it's going to be the same
+for every object so there's no reason to create
+
+00:36:05.430 --> 00:36:10.470
+a different one every time. We can have one
+for the class and share it amongst all the
+
+00:36:10.470 --> 00:36:14.650
+objects. Then I created a bunch of constants
+for the various things that we're going to
+
+00:36:14.650 --> 00:36:21.650
+need to do. This is a nice way to implement
+a menu-based system. Here is our driver class.
+
+00:36:22.530 --> 00:36:28.220
+We've got to be careful to make sure we implement
+the correct things. This is our driver constructor
+
+00:36:28.220 --> 00:36:34.080
+here. We have only one instance data object
+and it's a charity, and so we need to construct
+
+00:36:34.080 --> 00:36:39.110
+that object. I don't know what that little
+comment is doing there clearly I left some
+
+00:36:39.110 --> 00:36:44.840
+garbage hanging around so let's clear that
+out. So we've done our job in the constructor
+
+00:36:44.840 --> 00:36:51.840
+of creating the object. Here's the main program.
+The thing we need to do here is to construct
+
+00:36:52.370 --> 00:36:59.370
+a driver object. So I'm going to give this
+charity a name, one of my favorite charities
+
+00:37:05.060 --> 00:37:10.410
+because it's where I adopted two of my three
+dogs from. So there we go our charity now
+
+00:37:10.410 --> 00:37:16.990
+has a name and we have this object to use.
+Now this is just a menu-based system we have
+
+00:37:16.990 --> 00:37:23.280
+here, so the first thing we need to do...I'm
+going to move this up so you can see the methods
+
+00:37:23.280 --> 00:37:27.750
+that are available in the driver class in
+case you've forgotten them, is we need to
+
+00:37:27.750 --> 00:37:34.750
+get our menu and response. And that needs
+to call a scanner object, so we need to construct
+
+00:37:38.750 --> 00:37:45.750
+that. Of course we would also need to import
+the scanner class, but I've already done that.
+
+00:37:55.680 --> 00:37:59.990
+So there we go. We now have our choice from
+the menu system. Let me show you what that
+
+00:37:59.990 --> 00:38:05.590
+method looks like just so that you have a
+chance to see it. Here it is. What it does
+
+00:38:05.590 --> 00:38:11.230
+is it prints out the menu first, then it asks
+the user to make a choice. It reads in that
+
+00:38:11.230 --> 00:38:15.850
+next line and the reason you're doing that
+is to get rid of the new line after the integer
+
+00:38:15.850 --> 00:38:21.030
+so it doesn't mess up your future input, and
+then you force the user to reenter a choice
+
+00:38:21.030 --> 00:38:25.900
+until they have something that's legal. This
+is a very typical pattern for a menu-driven
+
+00:38:25.900 --> 00:38:32.900
+system. Okay, we have this choice is not equal
+to quit. And by the way, because we want to
+
+00:38:33.520 --> 00:38:40.520
+quit and not do anything else, that's why
+I did the priming read here. So if the choice
+
+00:38:40.640 --> 00:38:47.640
+is add donor well what are we going to do?
+Well we've got a method called add donor that's
+
+00:38:48.360 --> 00:38:55.360
+in this class. Notice that it is an instance
+method, and so we need to make sure that we
+
+00:38:55.650 --> 00:39:02.650
+call it from the instance. Now our instance
+was called pets and people.add donor and it
+
+00:39:04.990 --> 00:39:11.990
+needs our scanner and that's all we have to
+do here. The actual work of the add donor
+
+00:39:12.370 --> 00:39:17.250
+method the entering the name, the entering
+the address, and creating the objects, all
+
+00:39:17.250 --> 00:39:22.420
+that is done in the method. Now where people
+seem to have trouble with this is remembering
+
+00:39:22.420 --> 00:39:28.630
+to put the pets and people object in front
+of it. So this is an object of class driver
+
+00:39:28.630 --> 00:39:35.630
+and that's the donor that we're adding. Now,
+to add a donation we're going to use the add
+
+00:39:41.330 --> 00:39:48.320
+donation method. So once again inside that
+method what we have are a bunch of input and
+
+00:39:48.320 --> 00:39:53.530
+output lines, we construct some new objects
+and then we call methods that are in the charity
+
+00:39:53.530 --> 00:40:00.480
+class. We'll look at one of these at the end.
+Find charity value. When you look at that
+
+00:40:00.480 --> 00:40:04.700
+you realize, "Now wait a minute, we don't
+have a method for that down in the driver
+
+00:40:04.700 --> 00:40:10.740
+class." There's nothing here for that so we
+might take a look up at our charity class
+
+00:40:10.740 --> 00:40:14.900
+and see if there's something in our charity
+class that we could use. And notice in the
+
+00:40:14.900 --> 00:40:21.900
+charity class we have something called find
+value all donations. Well great. Here we're
+
+00:40:22.530 --> 00:40:28.740
+going to do pets and people, now this is in
+the charity class, so we need our charity
+
+00:40:28.740 --> 00:40:35.740
+object and then we call find value all donations.
+A method we wrote just a few minutes ago.
+
+00:40:40.370 --> 00:40:47.370
+Now because this is our final output here,
+we want to put some data in here. Now if we
+
+00:40:51.700 --> 00:40:58.700
+do it like this our output will be ugly. And
+the reason is because find value of all donations
+
+00:40:59.200 --> 00:41:03.820
+is returning a double. And remember that we'll
+get odd things, we won't get those nice two
+
+00:41:03.820 --> 00:41:09.320
+decimal places that we're looking for. This
+is where that static data for decimal format
+
+00:41:09.320 --> 00:41:16.320
+came in. So we have this dollar format and
+that's what we want to use to format this
+
+00:41:20.740 --> 00:41:27.740
+data. Now notice I did not have to say the
+class name in front of it because we're in
+
+00:41:35.490 --> 00:41:41.380
+the same class and it's not instance data.
+If you had put pets and people.dollar format
+
+00:41:41.380 --> 00:41:46.320
+in front of it, that's technically okay, it
+wouldn't confuse Java, but it's not the best
+
+00:41:46.320 --> 00:41:53.320
+way to write it. So this is a nice way to
+write that data. Now for find donor value,
+
+00:41:53.810 --> 00:42:00.810
+if you scroll or we can see our driver class,
+we can see we do have a method called find
+
+00:42:01.130 --> 00:42:08.130
+donor value. So we'll do pets and people 
+and of course like all these methods it needs
+to have the scanner so that it can interact
+
+00:42:20.030 --> 00:42:27.030
+with the user. This last else is a precautionary
+measure. So what we want to do in here is
+
+00:42:27.040 --> 00:42:34.040
+to put a system out print line unanticipated
+case. The reason you do that is that sometimes
+
+00:42:38.000 --> 00:42:42.450
+you'll go and you'll add more methods and
+more choices to the menu in later. In fact
+
+00:42:42.450 --> 00:42:47.210
+there are a lot of choices our menu really
+needs right now that it doesn't have, and
+
+00:42:47.210 --> 00:42:51.210
+if you forget to update this method nothing
+will work. So this way at least you'll get
+
+00:42:51.210 --> 00:42:56.410
+a useful error message that will help you
+find what the problem is. Now the other thing
+
+00:42:56.410 --> 00:43:03.410
+we need to do at the end of our while loop
+is to get another choice from our menu system.
+
+00:43:03.530 --> 00:43:10.530
+So that will be menu and response of input.
+Easy to forget that, and let's put that this
+
+00:43:13.240 --> 00:43:19.610
+is a priming read. So these little driver
+class main programs seem to cause students
+
+00:43:19.610 --> 00:43:26.290
+a lot of trouble. Now there are lots of other
+ways we could have implemented the driver
+
+00:43:26.290 --> 00:43:31.080
+class if you found what I just did confusing.
+One is we could have put the driver object
+
+00:43:31.080 --> 00:43:37.070
+in another class. Sometimes that doesn't confuse
+people so much because it's more similar to
+
+00:43:37.070 --> 00:43:42.670
+what we've done in the past. We also could
+have made the charity object class data instead
+
+00:43:42.670 --> 00:43:47.560
+of instance data. Now I've got to tell you,
+I don't like that choice as well. Because
+
+00:43:47.560 --> 00:43:52.220
+we were trying to implement a class that could
+be used by many charities and when you make
+
+00:43:52.220 --> 00:43:56.770
+it class data, well then there can only be
+one, and so I don't think that's as good a
+
+00:43:56.770 --> 00:44:01.460
+choice. On the other hand if it's what helps
+you get a program together, maybe that's an
+
+00:44:01.460 --> 00:44:08.460
+option you want to take. So let's talk a little
+bit about what good design is. If you noticed
+
+00:44:09.020 --> 00:44:13.720
+when we were implementing these methods it
+was really quite simple. None of our methods
+
+00:44:13.720 --> 00:44:18.750
+was more than a few lines long and that's
+really good. By the way, there is an exception
+
+00:44:18.750 --> 00:44:23.520
+to that. When you look over the driver class
+more carefully you will see that some of those
+
+00:44:23.520 --> 00:44:28.040
+methods are longer than the other methods.
+The reason is because you're interacting with
+
+00:44:28.040 --> 00:44:33.410
+the user, and that where you have to read
+in data and convert it and all of that, that
+
+00:44:33.410 --> 00:44:38.610
+tends to get lengthy. And that's okay. We
+know that code isn't highly reusable because
+
+00:44:38.610 --> 00:44:44.650
+that's probably going to be the interface
+for just one charity, but nonetheless, small
+
+00:44:44.650 --> 00:44:49.160
+independent classes is what we're looking
+for. Now you're more look likely to be able
+
+00:44:49.160 --> 00:44:55.380
+to reuse small classes. So for example when
+we pried the address class away from the donor
+
+00:44:55.380 --> 00:45:01.330
+class we created a smaller class that could
+be reused for a lot of things. For example
+
+00:45:01.330 --> 00:45:06.260
+charities purchase things, so vendors are
+going to have addresses, staff are going to
+
+00:45:06.260 --> 00:45:11.560
+have addresses, volunteers are going to have
+addresses, and as long as you make that class
+
+00:45:11.560 --> 00:45:16.390
+independent you could reuse it a lot. So this
+is where you start to see how you can make
+
+00:45:16.390 --> 00:45:22.760
+your life as a software engineer a lot easier.
+The other thing that's good about small classes
+
+00:45:22.760 --> 00:45:27.300
+is they tend to be more simple and they're
+more likely to work as expected. You know
+
+00:45:27.300 --> 00:45:31.910
+we haven't really done anything more complicated
+in any of these classes than stepping through
+
+00:45:31.910 --> 00:45:36.540
+an ArrayList, something we've been doing for
+a month or more now. And it's something that's
+
+00:45:36.540 --> 00:45:42.010
+very simple. So things that are simple and
+less likely to go wrong. So while software
+
+00:45:42.010 --> 00:45:48.560
+itself is complicated, the art of design is
+trying to keep things as simple as possible.
+
+00:45:48.560 --> 00:45:54.040
+The other thing we want to have is a small
+number of relationships between classes. In
+
+00:45:54.040 --> 00:45:59.040
+our current design, our donated item class
+is related to two classes which is not too
+
+00:45:59.040 --> 00:46:04.390
+bad. What you don't want to see is things
+related to every class. So we might think
+
+00:46:04.390 --> 00:46:09.380
+about whether we could remove one of these
+links, and actually we could. We could remove
+
+00:46:09.380 --> 00:46:15.340
+the link between the charity class and the
+donated items class and just get our donated
+
+00:46:15.340 --> 00:46:22.340
+items from the donors directly. Should we
+do it? That's actually a really hard question,
+
+00:46:22.360 --> 00:46:27.310
+and because our software is still pretty incomplete
+it's hard to know. My sense is that we're
+
+00:46:27.310 --> 00:46:32.460
+going to want to know what the donated items
+are just to keep track of what's in the warehouse.
+
+00:46:32.460 --> 00:46:38.300
+So my guess is that probably we want to leave
+it there, but of course the conservative approach
+
+00:46:38.300 --> 00:46:43.890
+is always to not have the relationship there
+and put it in later if we need it. So it's
+
+00:46:43.890 --> 00:46:50.760
+something to think about. So let's take a
+look at two typical designs, and let me explain
+
+00:46:50.760 --> 00:46:55.320
+what makes one of these designs better than
+the other. The design on the left is generally
+
+00:46:55.320 --> 00:47:00.980
+a bad design. You have a small number of classes,
+which could be okay if the problem is small,
+
+00:47:00.980 --> 00:47:06.590
+but the problem here is that every class has
+some relationship to every other class. When
+
+00:47:06.590 --> 00:47:11.340
+you have things that are tightly integrated
+like that, it means mistakes you make in one
+
+00:47:11.340 --> 00:47:15.790
+class are going to tend to mess things up
+in another class. And those are really hard
+
+00:47:15.790 --> 00:47:20.700
+to debug, because when you find an error in
+class a it's hard to remember that it may
+
+00:47:20.700 --> 00:47:25.440
+have happened in class b. Take a look at the
+design on the right, which is generally a
+
+00:47:25.440 --> 00:47:29.770
+better design. There are more classes and
+you might think "Well gee, that seems like
+
+00:47:29.770 --> 00:47:35.870
+a lot of classes." But it's not the number
+of classes that makes things complicated.
+
+00:47:35.870 --> 00:47:40.310
+It's the complexity of the relationship and
+the complexity of the classes. So as long
+
+00:47:40.310 --> 00:47:45.710
+as these classes are simple notice they have
+very simple relationships between them. So
+
+00:47:45.710 --> 00:47:49.110
+in general, the design that you're seeing
+on the right would be a better design than
+
+00:47:49.110 --> 00:47:55.270
+the one on your left. And you need to identify
+that when you're doing designs. The challenges
+
+00:47:55.270 --> 00:48:00.580
+that remain: one challenge is keeping the
+design and the code aligned. Now we could
+
+00:48:00.580 --> 00:48:05.690
+have done an UMLet diagram like we did in
+the Greyhound adoption. It's very easy to
+
+00:48:05.690 --> 00:48:11.780
+forget to update the design when you do this.
+There are software products that ease this
+
+00:48:11.780 --> 00:48:17.150
+process. What they do is they update the design
+when the code is changed. These are really
+
+00:48:17.150 --> 00:48:22.360
+cool things to have. Some of them can also
+create some of the code when the design is
+
+00:48:22.360 --> 00:48:26.860
+changed. So they'll do things like implement
+new methods by putting the signature in for
+
+00:48:26.860 --> 00:48:33.070
+you. That can be kind of useful, but it also
+can be kind of annoying. The only problem
+
+00:48:33.070 --> 00:48:37.790
+with these products is they tend to be quite
+expensive. Now as more and more software becomes
+
+00:48:37.790 --> 00:48:41.880
+available for free there may be some good
+things out there. I know the first time I
+
+00:48:41.880 --> 00:48:47.700
+used this in a company that I owned, we actually
+had to pay $10,000 a copy for software that
+
+00:48:47.700 --> 00:48:53.420
+did that. And frankly we did, because it was
+worth it to keep the designs in the code the
+
+00:48:53.420 --> 00:48:58.450
+same. When you have multiple people working
+on it, it's really important that everybody
+
+00:48:58.450 --> 00:49:03.580
+knows what's going on and keeping the design
+correct was very important. I was afraid my
+
+00:49:03.580 --> 00:49:07.920
+software engineers wouldn't do that, wouldn't
+remember to make those updates and that's
+
+00:49:07.920 --> 00:49:14.030
+why I paid all that money. Oh yeah, by the
+way, that was a yearly license fee not a permanent
+
+00:49:14.030 --> 00:49:20.710
+one. So you can see that I think the design
+is really important. So let's make some observations
+
+00:49:20.710 --> 00:49:25.070
+about where we're going with programming now.
+You'll probably notice there's a shift in
+
+00:49:25.070 --> 00:49:31.540
+time allocation happening. Design becomes
+the main activity with UML being the critical
+
+00:49:31.540 --> 00:49:37.490
+part. Good designs lead to fast and simple
+implementation and a lot less debugging. So
+
+00:49:37.490 --> 00:49:43.160
+the time you spend on design should save you
+time on implementation. Now obviously it takes
+
+00:49:43.160 --> 00:49:48.940
+some time to get to the point where that's
+really true. Now the mistakes I see students
+
+00:49:48.940 --> 00:49:54.970
+make in this case: one is rushing to implementation,
+often sometimes without even doing a design
+
+00:49:54.970 --> 00:49:59.470
+at all. You get so focused on having to get
+that problem done and get it submitted and
+
+00:49:59.470 --> 00:50:05.430
+get it in you forget that it could design
+is actually going to save you a lot of time.
+
+00:50:05.430 --> 00:50:10.490
+The big mistake I see is doing the implementation
+first and then doing the design after the
+
+00:50:10.490 --> 00:50:14.740
+fact, and that is a habit you have to get
+out of if you're going to be a professional
+
+00:50:14.740 --> 00:50:20.440
+in this field. Because the design, once you've
+implemented it, you're going to be very reluctant
+
+00:50:20.440 --> 00:50:26.230
+to change even if it's horrendously wrong
+and causing you a lot of grief. So do not
+
+00:50:26.230 --> 00:50:30.880
+get into the habit of implementing first and
+designing after-the-fact, or more accurately
+
+00:50:30.880 --> 00:50:36.090
+taking your implementation and writing it
+in UML after the fact. That is a horrible
+
+00:50:36.090 --> 00:50:40.240
+habit and one you should not learn. So keep
+programming!
+

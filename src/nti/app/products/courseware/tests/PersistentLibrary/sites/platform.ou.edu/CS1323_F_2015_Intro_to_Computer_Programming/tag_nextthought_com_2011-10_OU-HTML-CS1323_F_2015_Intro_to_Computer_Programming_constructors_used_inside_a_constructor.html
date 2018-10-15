@@ -1,0 +1,27 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html lang="en"><head> <meta content="2015-12-11T16:56:47" http-equiv="last-modified" /> <meta content="996" name="NTIRelativeScrollHeight" /> <meta content="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.constructors_used_inside_a_constructor" name="NTIID" /> <meta content="NextThought" name="generator" /> <meta content="text/html; charset=ascii" http-equiv="content-type" /> <title>Constructors used inside a Constructor</title> <link href="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.picture_of_a_fleet" rel="next" title="Picture of a Fleet" /> <link href="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.constructor_for_fleet" rel="prev" title="Constructor for Fleet" /> <link href="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.reading:Chortle_CH35" rel="up" title="Objects that Contain Objects" /> <link href="styles/styles.css" rel="stylesheet" /> <link href="styles/content.css" rel="stylesheet" /> </head> <body id="NTIContent"> <div class="page-contents"><div data-ntiid="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.constructors_used_inside_a_constructor" id="a0000000554" ntiid="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.constructors_used_inside_a_constructor"> <div class="chapter title">Constructors used inside a Constructor</div> <p class="placeholder"></p> <a name="48a157d99ce45fbd88a2c8216a1d3190"></a> <div class="sidebar" data-ntiid="tag:nextthought.com,2011-10:OU-HTML:NTISidebar-CS1323_F_2015_Intro_to_Computer_Programming.sidebar.answer.220" ntiid="tag:nextthought.com,2011-10:OU-HTML:NTISidebar-CS1323_F_2015_Intro_to_Computer_Programming.sidebar.answer.220"> <div class="sidebar-title">Answer</div> See below. </div><a name="0c782df73c77d85ebf86b792c3ba7bad"></a> <p class="par" id="0c782df73c77d85ebf86b792c3ba7bad">The constructor for <b class="bfseries"><tt class="ttfamily">Fleet</tt></b> is given (in its parameters) all the information it needs to build two cars. It uses the <b class="bfseries"><tt class="ttfamily">Car</tt></b> constructor for this (twice). The <b class="bfseries"><tt class="ttfamily">Car</tt></b> object references are kept safe in the instance variables of the <b class="bfseries"><tt class="ttfamily">Fleet</tt></b> objects. </p> <a name="5b4c8ccfe428449c29f94ad08770d675"></a> <pre>class Fleet
+{
+  // data
+  Car town;
+  Car suv;
+
+  // constructor
+  Fleet( int start1, int end1, double gal1, 
+         int start2, int end2, double gal2 )
+  {
+    town = new Car( start1, end1, gal1) ;
+    suv  = new Car( start2, end2, gal2) ;
+  }
+
+  // method
+
+
+}
+
+class FleetTester
+{
+  public static void main ( String[] args)
+  {
+    Fleet myCars = new Fleet( 1000, 1234, 10, 777, 999, 20 );
+  }
+}
+</pre><a name="8187290be59c36dc4b74abe893745d65"></a> <p class="par" id="8187290be59c36dc4b74abe893745d65">Usually you would say that <b class="bfseries"><tt class="ttfamily">myCars</tt></b> is a <b class="bfseries"><tt class="ttfamily">Fleet</tt></b> that contains two <b class="bfseries"><tt class="ttfamily">Car</tt></b> objects. But be careful: the class definition of <b class="bfseries"><tt class="ttfamily">Fleet</tt></b> does not contain the definition of <b class="bfseries"><tt class="ttfamily">Car</tt></b>. And at run time, the memory that makes up a <b class="bfseries"><tt class="ttfamily">Fleet</tt></b> object does not contain the memory that makes up its two <b class="bfseries"><tt class="ttfamily">Car</tt></b> objects. </p> <a name="7358755499ee72050223b144a3aafa5a"></a> <div class="sidebar" data-ntiid="tag:nextthought.com,2011-10:OU-HTML:NTISidebar-CS1323_F_2015_Intro_to_Computer_Programming.sidebar.question.232" ntiid="tag:nextthought.com,2011-10:OU-HTML:NTISidebar-CS1323_F_2015_Intro_to_Computer_Programming.sidebar.question.232"> <div class="sidebar-title">Question</div> If a <b class="bfseries"><tt class="ttfamily">Fleet</tt></b> object is constructed, how many new objects are there? </div> </div></div> </body></html>

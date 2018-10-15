@@ -1,0 +1,18 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html lang="en"><head> <meta content="2015-12-11T16:56:47" http-equiv="last-modified" /> <meta content="743" name="NTIRelativeScrollHeight" /> <meta content="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.using_a_constructor" name="NTIID" /> <meta content="NextThought" name="generator" /> <meta content="text/html; charset=ascii" http-equiv="content-type" /> <title>Using a Constructor</title> <link href="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.constructor_definition_syntax" rel="next" title="Constructor Definition Syntax" /> <link href="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.improved_class" rel="prev" title="Improved Class" /> <link href="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.reading:Chortle_CH30_2" rel="up" title="Defining Your Own Classes" /> <link href="styles/styles.css" rel="stylesheet" /> <link href="styles/content.css" rel="stylesheet" /> </head> <body id="NTIContent"> <div class="page-contents"><div data-ntiid="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.using_a_constructor" id="a0000000497" ntiid="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.using_a_constructor"> <div class="chapter title">Using a Constructor</div> <p class="placeholder"></p> <a name="ad22b628f360fb2279b934edc868ee0e"></a> <div class="sidebar" data-ntiid="tag:nextthought.com,2011-10:OU-HTML:NTISidebar-CS1323_F_2015_Intro_to_Computer_Programming.sidebar.answer.172" ntiid="tag:nextthought.com,2011-10:OU-HTML:NTISidebar-CS1323_F_2015_Intro_to_Computer_Programming.sidebar.answer.172"> <div class="sidebar-title">Answer</div> The near-complete class is below. </div><a name="c844b422529a5f37fc221a49ee1692e8"></a> <p class="par" id="c844b422529a5f37fc221a49ee1692e8">Here is the class with a <b class="bfseries"><tt class="ttfamily">String</tt></b> reference variable included. Of course, you may have used a different name for it. </p> <a name="b2207d277b8333cc329d3e8c25bbb901"></a> <pre>class HelloObject
+{
+  String greeting;
+
+  void speak()
+  {
+    System.out.println( greeting );
+  }
+}
+</pre><a name="5fea1a069b267ba59690ac94cb40fd48"></a> <p class="par continued" id="5fea1a069b267ba59690ac94cb40fd48"> The class is not complete because there is no way to initialize the greeting (we will get to this shortly). It would be ince if the object could used like this: </p><a name="9fa6e021f40048edb5f3ccef616b9392"></a> <pre>class HelloTester
+{
+  public static void main ( String[] args )
+  {
+    HelloObject anObject = new HelloObject("A Greeting!");
+    anObject.speak();
+  }
+}
+</pre><a name="c493bb8196a973f93a25bbb5bff70086"></a> <div class="sidebar" data-ntiid="tag:nextthought.com,2011-10:OU-HTML:NTISidebar-CS1323_F_2015_Intro_to_Computer_Programming.sidebar.question.181" ntiid="tag:nextthought.com,2011-10:OU-HTML:NTISidebar-CS1323_F_2015_Intro_to_Computer_Programming.sidebar.question.181"> <div class="sidebar-title">Question</div> Where in the above code is a constructor being used? What is its parameter? </div> </div></div> </body></html>

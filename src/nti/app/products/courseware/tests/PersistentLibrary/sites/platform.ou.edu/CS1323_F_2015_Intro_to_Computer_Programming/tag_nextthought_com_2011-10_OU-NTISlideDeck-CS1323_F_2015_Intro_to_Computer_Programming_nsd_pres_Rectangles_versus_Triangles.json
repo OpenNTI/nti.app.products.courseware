@@ -1,0 +1,165 @@
+{
+  "MimeType": "application/vnd.nextthought.ntislidedeck",
+  "Videos": [
+    {
+      "MimeType": "application/vnd.nextthought.ntislidevideo",
+      "video-ntiid": "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_04.02.04_Rectangles_versus_Triangles",
+      "title": "Rectangles versus Triangles",
+      "creator": "Deborah Trytten",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Rectangles_versus_Triangles",
+      "thumbnail": "//www.kaltura.com/p/1500101/thumbnail/entry_id/1_a0vkdva4/width/640/",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Rectangles_versus_Triangles_video",
+      "class": "ntislidevideo"
+    }
+  ],
+  "creator": "Deborah Trytten",
+  "title": "Nested Loops",
+  "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Rectangles_versus_Triangles",
+  "Slides": [
+    {
+      "MimeType": "application/vnd.nextthought.slide",
+      "slidevideoid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Rectangles_versus_Triangles_video",
+      "slidetitle": "Rectangles versus Triangles",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Rectangles_versus_Triangles",
+      "slidevideostart": "0.0",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlide-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Rectangles_versus_Triangles_slide_1",
+      "slideimage": "resources/CS1323_F_2015_Intro_to_Computer_Programming/9b46e124c53cecac28d442be40a1446e16ef335e/fd35e23767020999111e1f49239199b4c5eff23e.png",
+      "slidevideoend": "5.0",
+      "slidenumber": "1",
+      "class": "slide"
+    },
+    {
+      "MimeType": "application/vnd.nextthought.slide",
+      "slidevideoid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Rectangles_versus_Triangles_video",
+      "slidetitle": "Identifying Nested Loops",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Rectangles_versus_Triangles",
+      "slidevideostart": "5.0",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlide-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Rectangles_versus_Triangles_slide_2",
+      "slideimage": "resources/CS1323_F_2015_Intro_to_Computer_Programming/f7974c579a6ca9443fd4389a06aa26a67bc3c11f/fd35e23767020999111e1f49239199b4c5eff23e.png",
+      "slidevideoend": "55.0",
+      "slidenumber": "2",
+      "class": "slide"
+    },
+    {
+      "MimeType": "application/vnd.nextthought.slide",
+      "slidevideoid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Rectangles_versus_Triangles_video",
+      "slidetitle": "Rectangular Nested for Loops",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Rectangles_versus_Triangles",
+      "slidevideostart": "55.0",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlide-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Rectangles_versus_Triangles_slide_3",
+      "slideimage": "resources/CS1323_F_2015_Intro_to_Computer_Programming/f1b897cd4dc588df33970180845de2b5bb719e86/fd35e23767020999111e1f49239199b4c5eff23e.png",
+      "slidevideoend": "153.0",
+      "slidenumber": "3",
+      "class": "slide"
+    },
+    {
+      "MimeType": "application/vnd.nextthought.slide",
+      "slidevideoid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Rectangles_versus_Triangles_video",
+      "slidetitle": "Triangular Nested Loops",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Rectangles_versus_Triangles",
+      "slidevideostart": "153.0",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlide-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Rectangles_versus_Triangles_slide_4",
+      "slideimage": "resources/CS1323_F_2015_Intro_to_Computer_Programming/f11d2119753b1e61ee7187e7434131b895107519/fd35e23767020999111e1f49239199b4c5eff23e.png",
+      "slidevideoend": "214.0",
+      "slidenumber": "4",
+      "class": "slide"
+    },
+    {
+      "MimeType": "application/vnd.nextthought.slide",
+      "slidevideoid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Rectangles_versus_Triangles_video",
+      "slidetitle": "Example: disjoint",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Rectangles_versus_Triangles",
+      "slidevideostart": "214.0",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlide-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Rectangles_versus_Triangles_slide_5",
+      "slideimage": "resources/CS1323_F_2015_Intro_to_Computer_Programming/3a749a8e2407db2b5719a7940c8d89e9d7e11c05/fd35e23767020999111e1f49239199b4c5eff23e.png",
+      "slidevideoend": "297.0",
+      "slidenumber": "5",
+      "class": "slide"
+    },
+    {
+      "MimeType": "application/vnd.nextthought.slide",
+      "slidevideoid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Rectangles_versus_Triangles_video",
+      "slidetitle": "Plan Method disjoint",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Rectangles_versus_Triangles",
+      "slidevideostart": "297.0",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlide-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Rectangles_versus_Triangles_slide_6",
+      "slideimage": "resources/CS1323_F_2015_Intro_to_Computer_Programming/e6c199873708fac16d5dd7b637c65a324f0bfa4b/fd35e23767020999111e1f49239199b4c5eff23e.png",
+      "slidevideoend": "357.0",
+      "slidenumber": "6",
+      "class": "slide"
+    },
+    {
+      "MimeType": "application/vnd.nextthought.slide",
+      "slidevideoid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Rectangles_versus_Triangles_video",
+      "slidetitle": "Rectangle Code",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Rectangles_versus_Triangles",
+      "slidevideostart": "357.0",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlide-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Rectangles_versus_Triangles_slide_7",
+      "slideimage": "resources/CS1323_F_2015_Intro_to_Computer_Programming/f9b9fa24994db2c436cb32b4811a7c0b293e4307/fd35e23767020999111e1f49239199b4c5eff23e.png",
+      "slidevideoend": "412.0",
+      "slidenumber": "7",
+      "class": "slide"
+    },
+    {
+      "MimeType": "application/vnd.nextthought.slide",
+      "slidevideoid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Rectangles_versus_Triangles_video",
+      "slidetitle": "Example: elementsUnique",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Rectangles_versus_Triangles",
+      "slidevideostart": "412.0",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlide-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Rectangles_versus_Triangles_slide_8",
+      "slideimage": "resources/CS1323_F_2015_Intro_to_Computer_Programming/2aa6d2c8be5942b33a067f8f5dd2908bc85534fa/fd35e23767020999111e1f49239199b4c5eff23e.png",
+      "slidevideoend": "457.0",
+      "slidenumber": "8",
+      "class": "slide"
+    },
+    {
+      "MimeType": "application/vnd.nextthought.slide",
+      "slidevideoid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Rectangles_versus_Triangles_video",
+      "slidetitle": "Plan Method elementsUnique",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Rectangles_versus_Triangles",
+      "slidevideostart": "457.0",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlide-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Rectangles_versus_Triangles_slide_9",
+      "slideimage": "resources/CS1323_F_2015_Intro_to_Computer_Programming/34c57c22308755a17ac1a9fde77551cd038a35df/fd35e23767020999111e1f49239199b4c5eff23e.png",
+      "slidevideoend": "505.0",
+      "slidenumber": "9",
+      "class": "slide"
+    },
+    {
+      "MimeType": "application/vnd.nextthought.slide",
+      "slidevideoid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Rectangles_versus_Triangles_video",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Rectangles_versus_Triangles",
+      "slidevideostart": "505.0",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlide-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Rectangles_versus_Triangles_slide_10",
+      "slideimage": "resources/CS1323_F_2015_Intro_to_Computer_Programming/dde174a646b67991a2d2ca2e2890883f77dba3b9/fd35e23767020999111e1f49239199b4c5eff23e.png",
+      "slidevideoend": "576.0",
+      "slidenumber": "10",
+      "class": "slide"
+    },
+    {
+      "MimeType": "application/vnd.nextthought.slide",
+      "slidevideoid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Rectangles_versus_Triangles_video",
+      "slidetitle": "Observations",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Rectangles_versus_Triangles",
+      "slidevideostart": "576.0",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlide-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Rectangles_versus_Triangles_slide_11",
+      "slideimage": "resources/CS1323_F_2015_Intro_to_Computer_Programming/b69653121adebbee92ba01643015d636dd7d9532/fd35e23767020999111e1f49239199b4c5eff23e.png",
+      "slidevideoend": "644.0",
+      "slidenumber": "11",
+      "class": "slide"
+    },
+    {
+      "MimeType": "application/vnd.nextthought.slide",
+      "slidevideoid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Rectangles_versus_Triangles_video",
+      "slidetitle": "Keep Programming!",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Rectangles_versus_Triangles",
+      "slidevideostart": "644.0",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlide-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Rectangles_versus_Triangles_slide_12",
+      "slideimage": "resources/CS1323_F_2015_Intro_to_Computer_Programming/e0d146778a3c24adf3c9dbda7b87696194e39733/fd35e23767020999111e1f49239199b4c5eff23e.png",
+      "slidevideoend": "652.0",
+      "slidenumber": "12",
+      "class": "slide"
+    }
+  ],
+  "ntiid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Rectangles_versus_Triangles",
+  "class": "ntislidedeck"
+}

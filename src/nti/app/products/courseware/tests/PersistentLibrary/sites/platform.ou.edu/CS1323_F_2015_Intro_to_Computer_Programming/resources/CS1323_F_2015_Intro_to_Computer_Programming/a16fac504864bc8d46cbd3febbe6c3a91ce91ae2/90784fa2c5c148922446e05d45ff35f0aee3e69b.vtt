@@ -1,0 +1,273 @@
+WEBVTT
+Kind: captions
+Language: en
+
+00:00:01.520 --> 00:00:08.129
+&gt;&gt;Let's continue our study of logical operators
+by looking at an "or" statement. English and
+
+00:00:08.129 --> 00:00:14.510
+Java are very similar. Obviously, English
+usage inspired Java, and so the words can
+
+00:00:14.510 --> 00:00:20.610
+mean very similar things. An example of this
+is the and operator and the not operator.
+
+00:00:20.610 --> 00:00:26.200
+Now Java's a little more precise than English
+is, but basically they mean the same thing.
+
+00:00:26.200 --> 00:00:31.420
+But English and Java can be very different.
+An example of this is the word "static".
+
+00:00:31.420 --> 00:00:36.960
+Now we've seen the word static all over Java
+programs. You know, public static void main,
+
+00:00:36.960 --> 00:00:41.980
+but we really haven't discussed what it means.
+What I can tell you is it doesn't mean anything
+
+00:00:41.980 --> 00:00:47.420
+like the English word static means. Another
+example of a word that's different in Java
+
+00:00:47.420 --> 00:00:53.809
+than it is in English is or. So let's talk
+about "and" first. When we say: "I'll go to
+
+00:00:53.809 --> 00:01:00.079
+the movies and I'll go to the store," it's
+only true if you do both things. Now that's
+
+00:01:00.079 --> 00:01:06.759
+true in English, and it's also true in Java.
+So and works exactly like English in Java.
+
+00:01:06.759 --> 00:01:12.359
+"Or" is a little bit more complicated. If
+I say: "I'll go to the movies or I'll buy
+
+00:01:12.359 --> 00:01:19.149
+milk," the English usage is actually not completely
+clear. People figure out what it means from
+
+00:01:19.149 --> 00:01:24.380
+the context. Now that kind of behavior is
+okay in human language, but it would never
+
+00:01:24.380 --> 00:01:30.090
+be able to work in a computer. So most of
+the or's in English are what we call exclusive
+
+00:01:30.090 --> 00:01:35.310
+or's. And what that means is for the statement
+to be true, one or the other has to be true,
+
+00:01:35.310 --> 00:01:38.490
+but not both.
+
+00:01:38.490 --> 00:01:43.969
+The thing is though-- English is inconsistent.
+So suppose a retailer asks you the following
+
+00:01:43.969 --> 00:01:48.429
+question on a web survey. And by the way,
+I took this example from a real web survey
+
+00:01:48.429 --> 00:01:54.169
+that I filled out last week. They ask you:
+"Where do you shop for our brand? In the store
+
+00:01:54.169 --> 00:01:59.979
+or through the catalog, online or through
+the catalog, online or in the store?" Well
+
+00:01:59.979 --> 00:02:05.130
+in this case they clearly mean that to be
+an inclusive or-- that is, if you shop both
+
+00:02:05.130 --> 00:02:11.710
+through the store and in the catalog, that
+first choice would actually be true. So this
+
+00:02:11.710 --> 00:02:16.680
+is probably an inclusive or. But once again
+these things are hard to figure out in English
+
+00:02:16.680 --> 00:02:19.370
+and English isn't very precise.
+
+00:02:19.370 --> 00:02:24.120
+Now when you're dealing with programming with
+the Java or, programming languages have to
+
+00:02:24.120 --> 00:02:31.120
+be consistent. And the Java or is an inclusive
+or. So what that means is if we take the statement:
+
+00:02:31.610 --> 00:02:38.200
+x percent 2 equals equals equals 0, remember
+that's a fancy way of saying x is even? Or
+
+00:02:38.200 --> 00:02:45.160
+x percent 3 equals equals 0, which is the
+fancy way of saying x is divisible by 3. It's
+
+00:02:45.160 --> 00:02:50.350
+true for numbers that are divisible by 2,
+otherwise known as the even numbers. It's
+
+00:02:50.350 --> 00:02:55.790
+true for number's divisible by 3, and it's
+also true for numbers that are divisible by
+
+00:02:55.790 --> 00:03:02.070
+both 2 and 3, otherwise known as numbers that
+are divisible by 6. And of course if you have
+
+00:03:02.070 --> 00:03:07.850
+a number that's not divisible but 2 and not
+divisible by 3, the statement would be false.
+
+00:03:07.850 --> 00:03:14.810
+So that's an inclusive or. Let's talk about
+exclusive or's in Java. Suppose we want to
+
+00:03:14.810 --> 00:03:21.260
+find if an int value was outside of the ranger
+from one to a hundred, inclusive. Now this
+
+00:03:21.260 --> 00:03:26.319
+is actually an exclusive or, because there
+is no single value that's less than 1 and
+
+00:03:26.319 --> 00:03:33.319
+bigger than 100 at the same time. The thing
+is inclusive or works just fine here. We can
+
+00:03:33.590 --> 00:03:39.770
+say value less than 1 or value greater than
+100. The fact that these two statements can't
+
+00:03:39.770 --> 00:03:46.000
+be true at the same time really doesn't matter
+at all. It's immaterial.
+
+00:03:46.000 --> 00:03:50.819
+Now very rarely will we need an exclusive
+or operator, although there are some rare
+
+00:03:50.819 --> 00:03:56.480
+examples. Let's think about cryptography.
+In cryptography you need to sometimes find
+
+00:03:56.480 --> 00:04:01.530
+numbers that are not a multiple of two other
+numbers. And so in that case we might want
+
+00:04:01.530 --> 00:04:07.760
+to know if something is a multiple of 2 or
+3, but not a multiple of 6. Now this is kind
+
+00:04:07.760 --> 00:04:12.000
+of a hard explanation to give, 'cause we don't
+know that much about cryptography yet. But
+
+00:04:12.000 --> 00:04:16.150
+trust me - this is a real problem. Just the
+numbers aren't 2 and 3, they're bigger numbers
+
+00:04:16.150 --> 00:04:17.849
+than that.
+
+00:04:17.849 --> 00:04:22.330
+Now you could use a conditional statement
+to look for the case when both of these statements
+
+00:04:22.330 --> 00:04:28.680
+are true. And that's actually the most efficient
+way to do it. Java does in fact have an exclusive
+
+00:04:28.680 --> 00:04:34.189
+or operator. It's symbol is a carrot, a carrot
+looks like a little hat, there's one in the
+
+00:04:34.189 --> 00:04:39.069
+PowerPoint for you-- but it works slightly
+differently. And the slight difference is
+
+00:04:39.069 --> 00:04:44.889
+really beyond the scope of this class. The
+sort of colloquial name for this Xor, for
+
+00:04:44.889 --> 00:04:51.319
+an exclusive or, which means that one or the
+other is true, but not both. Let's take a
+
+00:04:51.319 --> 00:04:57.580
+look at the code for the cryptography example.
+We have public static Boolean divisible by
+
+00:04:57.580 --> 00:05:04.580
+2, Xor 3 int value. So what this is supposed
+to do is take the parameter value and determine
+
+00:05:05.309 --> 00:05:12.309
+whether it is or is not divisible by 2, exclusive
+or, whether value is divisible by 3.
+
+00:05:13.069 --> 00:05:19.379
+So first we'll create a variable divisible
+by 2 and we'll give it the value of value
+
+00:05:19.379 --> 00:05:26.379
+percent 2 equals equals zero. In other words,
+divisible by 2 will be true when value is
+
+00:05:26.659 --> 00:05:32.930
+even. Then we create another Boolean called
+Boolean divisible by 3. And it's going to
+
+00:05:32.930 --> 00:05:39.930
+get the value of value percent 3 equals equals
+zero. In other words it will be true when
+
+00:05:39.999 --> 00:05:46.860
+value if divisible by 3. Now we're going to
+have to do 2 separate tests. One to see if
+
+00:05:46.860 --> 00:05:52.270
+they're both true, and in that case we would
+return false. So that's that first conditional
+
+00:05:52.270 --> 00:05:59.270
+statement there. If divisible by 2 and divisible
+by 3, we return false. Now once we've done
+
+00:05:59.900 --> 00:06:06.819
+that we can use our regular exclusive or.
+So we'll say if divisible by 2 or divisible
+
+00:06:06.819 --> 00:06:12.819
+by 3, return true. Now something that's very
+important here is to realize that the order
+
+00:06:12.819 --> 00:06:18.749
+of these if statements is absolutely essential.
+You have to check for both of them first.
+
+00:06:18.749 --> 00:06:24.740
+You have to use the "and" first and then the
+"or". Because if you use divisible by 2 or
+
+00:06:24.740 --> 00:06:30.319
+divisible by 3 with that inclusive or and
+you do it first, you'll return true when you
+
+00:06:30.319 --> 00:06:36.300
+should be returning false. So that would be
+a serious problem. So keep programming.
+

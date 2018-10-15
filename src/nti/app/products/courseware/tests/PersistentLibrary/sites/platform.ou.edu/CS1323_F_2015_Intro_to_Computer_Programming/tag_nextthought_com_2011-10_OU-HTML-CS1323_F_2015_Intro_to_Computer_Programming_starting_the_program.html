@@ -1,0 +1,39 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html lang="en"><head> <meta content="2015-12-11T16:56:47" http-equiv="last-modified" /> <meta content="1542" name="NTIRelativeScrollHeight" /> <meta content="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.starting_the_program" name="NTIID" /> <meta content="NextThought" name="generator" /> <meta content="text/html; charset=ascii" http-equiv="content-type" /> <title>Starting the Program</title> <link href="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.complete_factorial_program" rel="next" title="Complete Factorial Program" /> <link href="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.flowchart_of_the_program" rel="prev" title="Flowchart of the Program" /> <link href="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.reading:Chortle_CH17" rel="up" title="Nesting Loops and Ifs" /> <link href="styles/styles.css" rel="stylesheet" /> <link href="styles/content.css" rel="stylesheet" /> </head> <body id="NTIContent"> <div class="page-contents"><div data-ntiid="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.starting_the_program" id="a0000000454" ntiid="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.starting_the_program"> <div class="chapter title">Starting the Program</div> <p class="placeholder"></p> <a name="c1b665c30c8d2e8f0cd98925f0515352"></a> <div class="sidebar" data-ntiid="tag:nextthought.com,2011-10:OU-HTML:NTISidebar-CS1323_F_2015_Intro_to_Computer_Programming.sidebar.answer.135" ntiid="tag:nextthought.com,2011-10:OU-HTML:NTISidebar-CS1323_F_2015_Intro_to_Computer_Programming.sidebar.answer.135"> <div class="sidebar-title">Answer</div> Yes. It is nice to check these cases out in advance before you start writing the program. </div><a name="59e54457fc82b05aacfa929d6f2e6f1d"></a> <p class="par" id="59e54457fc82b05aacfa929d6f2e6f1d">Here is a start to the program </p> <a name="575b628ecc329d9f95341ec1e21f1c29"></a> <pre>import  java.util.Scanner;
+
+// User enters integer N.  
+// The program calculates N factorial.
+//
+class Factorial
+{
+  public static void main (String[] args ) 
+  {
+    Scanner scan = new Scanner( System.in );
+    long N, fact = 1; 
+
+    System.out.print( "Enter N: " );
+    N = scan.nextLong();
+
+    if ( ____________ )
+    {
+      while ( ____________  )    
+      {
+ 
+       ____________  ;
+
+       ____________  ;
+      }
+      
+      System.out.println( "factorial is " + fact );
+    }
+    
+    else
+    {
+      System.out.println("N must be zero or greater");
+    }
+  }
+}
+</pre><a name="b30e104bbb39e7450bade9dcba982b50"></a> <p class="par" id="b30e104bbb39e7450bade9dcba982b50">Notice how the program matches the flowchart, especially how the <b class="bfseries"><tt class="ttfamily">while</tt></b> statement is nested in the <i class="itshape">true</i> branch of the <b class="bfseries"><tt class="ttfamily">if</tt></b> statement. The indenting (and the braces <b class="bfseries"><tt class="ttfamily">{}</tt></b> ) show this structure. </p> <a name="debaa6442e9b957293608d14022ef368"></a> <p class="par" id="debaa6442e9b957293608d14022ef368"><span itemprop="nti-data-markupdisabled"> <img crossorigin="anonymous" data-nti-image-full="resources/CS1323_F_2015_Intro_to_Computer_Programming/eb7c6f0d8e3076f3bfce35058a8b5148a4935568/fd35e23767020999111e1f49239199b4c5eff23e.gif" data-nti-image-half="resources/CS1323_F_2015_Intro_to_Computer_Programming/eb7c6f0d8e3076f3bfce35058a8b5148a4935568/2cff8dc544afd32305107ce559484cb4ce1730df.gif" data-nti-image-quarter="resources/CS1323_F_2015_Intro_to_Computer_Programming/eb7c6f0d8e3076f3bfce35058a8b5148a4935568/06aefff9765154841fac3704b0e59674fae7a005.gif" data-nti-image-size="actual" id="debaa6442e9b957293608d14022ef368.316" src="resources/CS1323_F_2015_Intro_to_Computer_Programming/eb7c6f0d8e3076f3bfce35058a8b5148a4935568/fd35e23767020999111e1f49239199b4c5eff23e.gif" style="width:200px; height:389px" /> </span> </p> <a name="abf6f03158fe462eef3ac7715f3d1fe4"></a> <div class="sidebar" data-ntiid="tag:nextthought.com,2011-10:OU-HTML:NTISidebar-CS1323_F_2015_Intro_to_Computer_Programming.sidebar.question.141" ntiid="tag:nextthought.com,2011-10:OU-HTML:NTISidebar-CS1323_F_2015_Intro_to_Computer_Programming.sidebar.question.141"> <div class="sidebar-title">Question</div> <a name="1a00e11a6980f41785e7f9a8bc7c1777"></a> <p class="par" id="1a00e11a6980f41785e7f9a8bc7c1777"> Fill in the four blanks to complete the program. Here are some phrases you might use: </p> <a name="82a6f2f613bc9b30e40643acda98effa"></a> <pre>fact = fact*N 
+N &gt; 1 
+N = N - 1  
+N &gt;= 0  
+</pre> </div> </div></div> </body></html>

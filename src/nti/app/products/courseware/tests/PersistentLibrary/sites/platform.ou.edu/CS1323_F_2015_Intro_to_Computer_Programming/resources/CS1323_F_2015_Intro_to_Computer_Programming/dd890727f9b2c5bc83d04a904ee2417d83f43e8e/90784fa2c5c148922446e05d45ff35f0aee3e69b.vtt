@@ -1,0 +1,150 @@
+WEBVTT
+Kind: captions
+Language: en
+
+00:00:00.979 --> 00:00:07.979
+&gt;&gt;Let's submit multiple program files on Janux.
+In Eclipse, first we need to select the correct
+
+00:00:08.290 --> 00:00:15.290
+project, then we need to choose file, export,
+then general, archive file. The reason this
+
+00:00:15.900 --> 00:00:21.310
+needs to be an archive file is when you're
+submitting multiple files, you have to combine
+
+00:00:21.310 --> 00:00:26.349
+them together into one package. If you don't
+do that you can't submit them on Janux because
+
+00:00:26.349 --> 00:00:33.349
+Janux will only accept one file. So let's
+go to Eclipse and do that.
+
+00:00:40.010 --> 00:00:47.010
+Here we are in Eclipse. Notice that in our
+Frogger project, we have multiple classes.
+
+00:00:49.519 --> 00:00:55.260
+In fact we have five of them here that we
+need to submit. So we're going to go to file,
+
+00:00:55.260 --> 00:01:02.260
+export, and now we're going to pick archive
+file. Not file system because we want Eclipse
+
+00:01:02.719 --> 00:01:09.719
+to put all these files together into one archive
+file-- in this case, a zip file. So now we
+
+00:01:10.450 --> 00:01:17.450
+go and select the correct files. So here's
+the project. Now, you need to be careful with
+
+00:01:18.330 --> 00:01:24.810
+this. I don't need your settings and I don't
+want your binary files. Bin stands for binary,
+
+00:01:24.810 --> 00:01:29.480
+those are the compiled files. It's not good
+for us to run those files on our computers
+
+00:01:29.480 --> 00:01:35.320
+because if your computer has a virus my computer
+will get it. So I tend to create the files
+
+00:01:35.320 --> 00:01:36.860
+myself.
+
+00:01:36.860 --> 00:01:41.150
+Now inside the source directory notice that
+all the .java files have been selected by
+
+00:01:41.150 --> 00:01:46.100
+default, if they weren't selected I would
+pick them. You're almost always going to want
+
+00:01:46.100 --> 00:01:53.100
+to submit all your files. Now we're going
+to browse for the submitted files folder we
+
+00:01:55.510 --> 00:02:01.540
+created before. Now I've put mine on the desktop
+that may not be the best place for it. And
+
+00:02:01.540 --> 00:02:08.379
+so we pick this directory. And we want to
+give a name to the file. So this might be
+
+00:02:08.379 --> 00:02:15.379
+Frogger.zip. So now we can see that it's going
+to be saved to an archive file in a location
+
+00:02:17.459 --> 00:02:23.310
+that we know and that we have only the minimum
+number of files that we would possibly need.
+
+00:02:23.310 --> 00:02:27.719
+Notice this little blue box with the minus
+sign in it? That's a way of saying that not
+
+00:02:27.719 --> 00:02:32.640
+everything has been selected, so that's actually
+correct. The check here means that everything
+
+00:02:32.640 --> 00:02:38.950
+has. So now we finish it and we're done.
+
+00:02:38.950 --> 00:02:45.950
+So let's go and see what it looks like on
+the desktop. Here we are in submitted files
+
+00:02:48.599 --> 00:02:55.599
+and notice what we have is Frogger.zip. That's
+the file we want to submit on Janux. So to
+
+00:02:58.400 --> 00:03:03.480
+refresh your memory, you open the project
+directory, go to the source, and choose the
+
+00:03:03.480 --> 00:03:10.480
+.java files only. Include as few files as
+possible in absolutely no dot class files.
+
+00:03:11.280 --> 00:03:16.299
+The dot class files can be tricky because
+they have the same names as the .java files.
+
+00:03:16.299 --> 00:03:20.599
+In fact those are the ones that are created
+by the compiler. But I don't want those files.
+
+00:03:20.599 --> 00:03:24.769
+I want your Java files. I want the ones I
+can easily read.
+
+00:03:24.769 --> 00:03:31.769
+Don't include files in dot settings, bin,
+or dock. Then choose your archive file carefully.
+
+00:03:32.109 --> 00:03:36.980
+Don't overwrite existing files, and make sure
+you leave your backup copy in tack just in
+
+00:03:36.980 --> 00:03:42.420
+case we need it later. After you've created
+your zip file, you're going to navigate to
+
+00:03:42.420 --> 00:03:48.459
+the file on Janux and upload the file. Please
+remember that only one upload is permitted
+
+00:03:48.459 --> 00:03:52.879
+at this time. That means that if you upload
+the wrong file you're going to email me the
+
+00:03:52.879 --> 00:03:58.769
+right file, dtrytten@ou.edu same as always.
+So keep programming!
+

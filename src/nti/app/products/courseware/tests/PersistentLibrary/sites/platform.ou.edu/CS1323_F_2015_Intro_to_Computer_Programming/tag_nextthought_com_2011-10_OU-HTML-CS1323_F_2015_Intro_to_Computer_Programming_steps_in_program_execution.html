@@ -1,0 +1,34 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html lang="en"><head> <meta content="2015-12-11T16:56:47" http-equiv="last-modified" /> <meta content="1172" name="NTIRelativeScrollHeight" /> <meta content="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.steps_in_program_execution" name="NTIID" /> <meta content="NextThought" name="generator" /> <meta content="text/html; charset=ascii" http-equiv="content-type" /> <title>Steps in Program Execution</title> <link href="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.picture_of_the_running_program" rel="next" title="Picture of the Running Program" /> <link href="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.completed_constructor" rel="prev" title="Completed Constructor" /> <link href="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.reading:Chortle_CH30_2" rel="up" title="Defining Your Own Classes" /> <link href="styles/styles.css" rel="stylesheet" /> <link href="styles/content.css" rel="stylesheet" /> </head> <body id="NTIContent"> <div class="page-contents"><div data-ntiid="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.steps_in_program_execution" id="a0000000501" ntiid="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.steps_in_program_execution"> <div class="chapter title">Steps in Program Execution</div> <p class="placeholder"></p> <a name="83ee73a32f906c55a930268eaa9f7f55"></a> <div class="sidebar" data-ntiid="tag:nextthought.com,2011-10:OU-HTML:NTISidebar-CS1323_F_2015_Intro_to_Computer_Programming.sidebar.answer.176" ntiid="tag:nextthought.com,2011-10:OU-HTML:NTISidebar-CS1323_F_2015_Intro_to_Computer_Programming.sidebar.answer.176"> <div class="sidebar-title">Answer</div> <a name="96d5fe34b7086dc8179e26a4a27395d6"></a> <p class="par" id="96d5fe34b7086dc8179e26a4a27395d6"> When run, the program will print: </p> <a name="2a3eb7694523764579e784537339d72a"></a> <pre>A Greeting!
+</pre><a name="066811129bed92e3b04cc51c64e890a6"></a> <p class="par" id="066811129bed92e3b04cc51c64e890a6">to the monitor. </p> </div><a name="13e027248c61c4cf9ada78cbcbe7f97c"></a> <p class="par" id="13e027248c61c4cf9ada78cbcbe7f97c">Here is how the program does this: </p> <a name="d17dca5c38ea27dafd84d70d178071b9"></a> <pre>class HelloObject                            // 3a.  the class definition is
+{                                            //      used to construct the object.
+  String greeting;
+
+  HelloObject( String st )                   // 3b.  the constructor is used to 
+  {                                          //      initialize the variable.
+    greeting = st;
+  }
+
+  void speak()                               // 4a.  an object has its own copy
+  {                                          //      of this method.
+    System.out.println( greeting );          // 4b.  the object's method uses
+  }                                          //      the data in its variable
+}                                            //      greeting.
+
+class HelloTester
+{
+  public static void main ( String[] args )   // 1.  main starts running
+  {
+    HelloObject anObject =                     
+        new HelloObject("A Greeting!");       // 2.  the String "A Greeting"
+                                              //     is constructed.
+                                                    
+                                              // 3.  A reference to the String is 
+                                              //     passed to the HelloObject
+                                              //     constructor.
+                                              //     A HelloObject is created.
+
+    anObject.speak();                         // 4.  the object's speak() 
+                                              //     method is activated.
+  }
+}
+</pre><a name="95d26e2f1a4d81d0692df5e2467e2c7d"></a> <p class="par continued" id="95d26e2f1a4d81d0692df5e2467e2c7d"> You usually don&#8217;t think about what is going on in such detail. But you should be able to do it when you need to. </p><a name="6f97eede9cdbc8f0281e48866e49e86e"></a> <p class="par" id="6f97eede9cdbc8f0281e48866e49e86e">Notice that a <b class="bfseries"><tt class="ttfamily">String</tt></b> object containing "A Greeting!" is constructed before the <b class="bfseries"><tt class="ttfamily">HelloObject</tt></b> constructor is even called. <b class="bfseries"><tt class="ttfamily">Strings</tt></b> are objects (of course) so they must be made with a constructor. Remember that <b class="bfseries"><tt class="ttfamily">Strings</tt></b> are special because an object can be constructed without using the <b class="bfseries"><tt class="ttfamily">new</tt></b> operator. This is what the literal "A Greeting!" does. </p> <a name="1c835e9183f5c4af9b7b2914bff25997"></a> <div class="sidebar" data-ntiid="tag:nextthought.com,2011-10:OU-HTML:NTISidebar-CS1323_F_2015_Intro_to_Computer_Programming.sidebar.question.185" ntiid="tag:nextthought.com,2011-10:OU-HTML:NTISidebar-CS1323_F_2015_Intro_to_Computer_Programming.sidebar.question.185"> <div class="sidebar-title">Question</div> (Trick Question:) How many objects exist just before this program stops running? Click here for a <a class="ntiglossaryentry" href="#a0000000502" name="ma0000000502">Hint</a>. </div> </div></div> <div class="glossary" id="glossary"> <ol> <li id="a0000000502"> <span>Strings are objects.</span> <a href="#ma0000000502">&#8617;</a> </li> </ol> </div> </body></html>

@@ -1,0 +1,596 @@
+WEBVTT
+Kind: captions
+Language: en
+
+00:00:01.370 --> 00:00:05.700
+&gt;&gt;Arrays are great when all your data are
+homogeneous, but the world is full of data
+
+00:00:05.700 --> 00:00:10.690
+that's not homogeneous. Let's think about
+how to design a program for a simple contact
+
+00:00:10.690 --> 00:00:16.190
+list for your cell phone. We'll consider several
+possible options. Considering other options
+
+00:00:16.190 --> 00:00:20.880
+is an important step in the design process.
+Beginning programmers tend to use the first
+
+00:00:20.880 --> 00:00:25.720
+design that comes to mind instead of trying
+to create several designs, compare the advantages
+
+00:00:25.720 --> 00:00:32.219
+of each and then decide which to implement.
+Each person has a name and a phone number.
+
+00:00:32.219 --> 00:00:37.170
+We could store our phone numbers as string,
+even though that may not be the best idea,
+
+00:00:37.170 --> 00:00:41.260
+and then a contact list could be a string
+array. If you have a hundred contacts you'd
+
+00:00:41.260 --> 00:00:46.519
+need an array that holds at least two hundred
+strings. This isn't a very natural way to
+
+00:00:46.519 --> 00:00:51.460
+store the data. Suppose we wanted to sort
+the data by name. We'd have to write some
+
+00:00:51.460 --> 00:00:56.399
+super special sorting algorithm just for this
+data, since we'd only want to use the even
+
+00:00:56.399 --> 00:01:00.879
+indices and would have to keep the adjacent
+data together. This is not going to be easy
+
+00:01:00.879 --> 00:01:05.500
+to write, and we won't be able to use the
+arrays.sort method that could do the work
+
+00:01:05.500 --> 00:01:11.230
+easily and perfectly. Another possible design
+would be to create two arrays. We could have
+
+00:01:11.230 --> 00:01:15.680
+an array of strings that holds the names,
+and a second array of ints or strings that
+
+00:01:15.680 --> 00:01:22.120
+holds the phone numbers. This design is called
+a parallel array, and it has problems. We're
+
+00:01:22.120 --> 00:01:27.130
+relying on the indices of the arrays to remain
+synchronized, to know which name goes with
+
+00:01:27.130 --> 00:01:32.660
+which phone number. If we sort one array and
+don't update the other in exactly the same
+
+00:01:32.660 --> 00:01:37.610
+way, suddenly the link between the name and
+the phone number is lost and the contact list
+
+00:01:37.610 --> 00:01:43.370
+is useless. We still couldn't use our arrays.sort
+algorithm with this, because even though it
+
+00:01:43.370 --> 00:01:49.480
+could sort the name array correctly, it wouldn't
+be able to keep the phone number array aligned.
+
+00:01:49.480 --> 00:01:53.340
+We need a way to group together names and
+phones numbers into a unit that can be put
+
+00:01:53.340 --> 00:01:59.090
+into an array. This is exactly what a class
+is. We've been using classes since the first
+
+00:01:59.090 --> 00:02:03.820
+week of the course. Every time we create a
+main program we have to put in some class
+
+00:02:03.820 --> 00:02:09.640
+somewhere, and we've used lots of classes
+in the Java API, but up until now we haven't
+
+00:02:09.640 --> 00:02:15.329
+written meaningful classes on our own. What
+we need to do is to create a class that stores
+
+00:02:15.329 --> 00:02:20.909
+a name and a phone number. By including these
+two data elements in a single class, we're
+
+00:02:20.909 --> 00:02:25.760
+grouping them together. The objects of this
+class will have one reference that will be
+
+00:02:25.760 --> 00:02:32.010
+used to access both data elements. When we
+design classes we use a standard notation
+
+00:02:32.010 --> 00:02:38.299
+called UML, for Unified Modeling Language.
+UML has twelve different kinds of diagrams
+
+00:02:38.299 --> 00:02:44.439
+that are used to design object oriented computer
+programs in many different languages. We're
+
+00:02:44.439 --> 00:02:49.379
+going to use only one kind of diagram, the
+UML Class Diagram. You'll learn the other
+
+00:02:49.379 --> 00:02:54.780
+diagrams as you need them, just not this semester.
+There's a neat plug-in for Eclipse that will
+
+00:02:54.780 --> 00:03:01.260
+generate UML diagrams that we'll use called
+Umlet. A UML Class Diagram is a box that's
+
+00:03:01.260 --> 00:03:07.200
+divided into three rectangles. The top box
+holds the name of the class. Class names always
+
+00:03:07.200 --> 00:03:13.069
+start with a capital letter and should be
+meaningful, so we'll call our class Contact.
+
+00:03:13.069 --> 00:03:16.870
+The middle box holds a description of the
+data elements that will be used to record
+
+00:03:16.870 --> 00:03:22.879
+the attributes of the class. In this case,
+our data will be called name and phone number.
+
+00:03:22.879 --> 00:03:27.159
+Name will be a string and phone number will
+be an int. The minus sign in front of the
+
+00:03:27.159 --> 00:03:32.459
+data means that the data is private. When
+data is private it's used only inside the
+
+00:03:32.459 --> 00:03:38.459
+class. The lowest box contains a description
+of the methods that this class will have.
+
+00:03:38.459 --> 00:03:44.879
+These methods generally fall into two categories:
+accessors and mutators. Accessors give people
+
+00:03:44.879 --> 00:03:51.079
+who are using a class a way to find out the
+properties of the object. Mutators allow people
+
+00:03:51.079 --> 00:03:55.739
+outside of the class to change the stored
+data, but only if we decide their changes
+
+00:03:55.739 --> 00:04:02.340
+make sense. I've put in four methods that
+are generally useful: getName, getPhoneNumber,
+
+00:04:02.340 --> 00:04:09.029
+toString and equals. You've seen toString
+and equals methods in lots of other classes,
+
+00:04:09.029 --> 00:04:13.499
+and these methods will do pretty much the
+same thing. The plus signs in front of the
+
+00:04:13.499 --> 00:04:17.840
+method names means that the methods are public.
+This means that people who use your class
+
+00:04:17.840 --> 00:04:22.690
+will be permitted to use these methods, even
+though they're not permitted to directly access
+
+00:04:22.690 --> 00:04:28.970
+your data, because it was private. I've also
+included a constructor in the lowest box.
+
+00:04:28.970 --> 00:04:33.560
+Now to be honest this isn't really standard
+UML, but I've found that my students tend
+
+00:04:33.560 --> 00:04:39.000
+to forget to write constructors if we don't
+include them in the UML design. If you don't
+
+00:04:39.000 --> 00:04:45.530
+write a constructor for a class, Java will
+write one for you. Now that may seem considerate,
+
+00:04:45.530 --> 00:04:49.580
+but the Java compiler really doesn't have
+a clue about what your class is supposed to
+
+00:04:49.580 --> 00:04:56.340
+do, so it can't write the constructor properly.
+This creates some serious debugging problems,
+
+00:04:56.340 --> 00:05:01.870
+and it's invisible to you. It's hard to debug
+something you can't see. Constructors are
+
+00:05:01.870 --> 00:05:07.500
+almost always public, so they get a plus in
+front of their names too. And remember constructor
+
+00:05:07.500 --> 00:05:13.819
+name always match the name of the class, including
+capitalization. This constructor is taking
+
+00:05:13.819 --> 00:05:18.289
+a string for the phone number instead of an
+int, even though the data is stored as an
+
+00:05:18.289 --> 00:05:23.690
+int. I did this because it would be convenient
+to use a constructor with a string parameter
+
+00:05:23.690 --> 00:05:29.039
+outside of the class. The world outside of
+our class does not need to know how we choose
+
+00:05:29.039 --> 00:05:33.740
+to store our phone number internally. Now
+if you still think have the compiler write
+
+00:05:33.740 --> 00:05:38.490
+a constructor is a good idea, remember the
+constructor could never pull off converting
+
+00:05:38.490 --> 00:05:43.539
+the phone number from a string to an int without
+a programmer's help. Compilers just aren't
+
+00:05:43.539 --> 00:05:48.919
+that clever. You're allowed to have lots of
+constructors for classes. They just need to
+
+00:05:48.919 --> 00:05:53.960
+have different parameters so the compiler
+doesn't get confused about which one to call.
+
+00:05:53.960 --> 00:05:58.439
+The string class for example has a lot of
+constructors, even though we haven't used
+
+00:05:58.439 --> 00:06:05.439
+most of them. The pattern of having private
+data and public methods and constructors is
+
+00:06:10.439 --> 00:06:15.280
+a good place to start with any class. We'll
+encounter exceptions, but don't focus on them
+
+00:06:15.280 --> 00:06:20.729
+too much for now. Data is private so we can
+be sure that it's correct. Methods are public
+
+00:06:20.729 --> 00:06:25.520
+so that other people can use our class. We
+could create an object from this class using
+
+00:06:25.520 --> 00:06:32.520
+the constructor. We would say contact friend
+equals new contact Jenny, 867--5309. The memory
+
+00:06:35.169 --> 00:06:40.509
+diagram for this object will have one box
+for every data field. These boxes represent
+
+00:06:40.509 --> 00:06:45.090
+the attributes of the object. Each object
+in the class could have different values for
+
+00:06:45.090 --> 00:06:51.039
+the attributes. The memory diagram for the
+constructed object looks like this. Remember
+
+00:06:51.039 --> 00:06:56.159
+that names is string, which is an object from
+the string class. Since objects are stored
+
+00:06:56.159 --> 00:07:01.090
+by reference, the contact object referenced
+by friend will store the reference of the
+
+00:07:01.090 --> 00:07:08.090
+string object. Every object in the same class
+will have the same attributes, but each attribute
+
+00:07:08.300 --> 00:07:12.879
+may have a different value. You can think
+of attributes as being the properties of the
+
+00:07:12.879 --> 00:07:19.879
+objects. So let's create another contact object.
+Contact sister equals new contact Missy, 555-1235.
+
+00:07:23.479 --> 00:07:28.069
+The sister object has the same attributes
+that the friend object that we created earlier
+
+00:07:28.069 --> 00:07:34.120
+had: a name and a phone number. Each object
+has its own value for each attribute. The
+
+00:07:34.120 --> 00:07:40.150
+friend object's name is Jenny, the sister
+object's name is Missy. Here is a memory diagram
+
+00:07:40.150 --> 00:07:46.069
+that shows the sister object and its reference.
+You may wonder what the code looks like that
+
+00:07:46.069 --> 00:07:51.400
+implements this class. Well, here's some of
+it. I prefer to show the data at the top of
+
+00:07:51.400 --> 00:07:57.030
+the class. I usually put the constructors
+next, then the accessor methods, and then
+
+00:07:57.030 --> 00:08:01.740
+the mutator methods. Another possible way
+to organize the methods is by putting them
+
+00:08:01.740 --> 00:08:06.479
+in alphabetical order. It isn't so important
+that you do things exactly the way that I
+
+00:08:06.479 --> 00:08:11.379
+do them, as it is that you're consistent.
+If your data is at the bottom, it should always
+
+00:08:11.379 --> 00:08:15.710
+be at the bottom. If you work for a company,
+they'll probably have instructions about how
+
+00:08:15.710 --> 00:08:21.330
+they want these things done, so don't get
+too attached to your personal preferences.
+
+00:08:21.330 --> 00:08:26.639
+The constructor's job is to be sure that every
+data field has been perfectly initialized.
+
+00:08:26.639 --> 00:08:31.389
+This is tricky in this case because there
+are lots that can go wrong with a phone number.
+
+00:08:31.389 --> 00:08:37.070
+I've checked three of the obvious ones: eight
+characters long, hyphen in the fourth position
+
+00:08:37.070 --> 00:08:42.800
+from the left, and made up of digits. There
+are other rules to phone numbers. For example,
+
+00:08:42.800 --> 00:08:48.570
+the 555 prefix is used to make fake phone
+numbers. They're a little too much for us
+
+00:08:48.570 --> 00:08:55.570
+now. Here's the code! Public class contact,
+now this is the data, each object is going
+
+00:08:56.820 --> 00:09:03.820
+to get its own copy. Private string name,
+private int phone number. The next thing we
+
+00:09:08.649 --> 00:09:14.980
+have is the Java doc for the constructor.
+Notice it starts with a slash star star, uses
+
+00:09:14.980 --> 00:09:21.820
+an at sign param for each one of the parameters.
+Constructors don't have a return value, so
+
+00:09:21.820 --> 00:09:28.820
+you won't see at sign return in the Java doc.
+Here's the constructor. Public contact string
+
+00:09:29.519 --> 00:09:36.519
+my name, string my number, name = my name,
+if my number length is not equal to eight,
+
+00:09:38.910 --> 00:09:45.410
+system error print line improper format for
+the phone number. Phone number equals -1,
+
+00:09:45.410 --> 00:09:50.310
+that indicates an error, and return, because
+we can't go any further if the phone number
+
+00:09:50.310 --> 00:09:57.310
+isn't correct. If my number.char at three
+is not equal to a hyphen, then system error
+
+00:09:57.579 --> 00:10:04.579
+print line improper format for phone number.
+Phone number equals -1 and return. Here's
+
+00:10:05.260 --> 00:10:12.260
+our last test. For int i is zero, i less than
+eight, plus plus i. If characters. is digit
+
+00:10:16.029 --> 00:10:23.029
+of my number.char ed of i, system error print
+line improper format for phone number. Phone
+
+00:10:24.050 --> 00:10:30.790
+number equals -1, return. What I did there
+is check that every single digit of the phone
+
+00:10:30.790 --> 00:10:36.870
+number was, in fact, a number, not a letter.
+That's an important thing to check. The rest
+
+00:10:36.870 --> 00:10:41.300
+of the class will contain accessor methods
+and mutator methods. We'll do those a little
+
+00:10:41.300 --> 00:10:47.320
+bit later. We're initializing the data fields
+to values that come from the arguments, via
+
+00:10:47.320 --> 00:10:52.959
+the parameters my name and my number. Notice
+that I didn't name the parameters for the
+
+00:10:52.959 --> 00:10:56.970
+constructor name and phone number, because
+then the parameters and the data fields would
+
+00:10:56.970 --> 00:11:01.959
+have the same name, which will confuse the
+compiler. There are other ways to work around
+
+00:11:01.959 --> 00:11:07.470
+this problem, but I think giving your parameters
+better names is the easiest way. The constructor
+
+00:11:07.470 --> 00:11:13.399
+in all the methods have Java doc style comments.
+We can process Java doc comments into cool
+
+00:11:13.399 --> 00:11:19.459
+webpages, just like the API in Eclipse. Just
+choose generate Java doc from the project
+
+00:11:19.459 --> 00:11:26.459
+menu in Eclipse. If your software is properly
+installed you'll be able to see your documentation
+
+00:11:47.060 --> 00:11:54.060
+when you hover the cursor over the method
+calls. Now let's write the to string accessor
+
+00:11:56.790 --> 00:12:02.110
+method. This method is supposed to return
+a single string that summarizes all of the
+
+00:12:02.110 --> 00:12:07.889
+data in the object. Here's the Java doc. This
+method will return a string representation
+
+00:12:07.889 --> 00:12:14.889
+of the contact object in the following form
+-- name: phone number, at returns a string
+
+00:12:15.790 --> 00:12:22.170
+representation of the contact object. That
+ends our Java doc. Here's the method. Public
+
+00:12:22.170 --> 00:12:29.170
+String toString return name plus colon plus
+phoneNumber divided by 10,000, plus hypen
+
+00:12:31.579 --> 00:12:38.579
+plus phoneNumber mod 10,000. Remember we use
+a percent and pronounce it mod. Most accessor
+
+00:12:39.190 --> 00:12:45.209
+methods are very simple like this one was.
+The Java doc is actually longer than the method.
+
+00:12:45.209 --> 00:12:50.600
+The shenanigans with dividing and moding by
+10,000 are converting our integer to a string
+
+00:12:50.600 --> 00:12:56.310
+with the expected format. Now mutator methods
+have the responsibility of making sure the
+
+00:12:56.310 --> 00:13:02.279
+integrity of the data in the class is maintained.
+In this particular class, we don't have any
+
+00:13:02.279 --> 00:13:07.240
+mutators. This design is fairly common in
+classes. For example the string class also
+
+00:13:07.240 --> 00:13:12.620
+doesn't have mutator methods. If someone wants
+to change a name or a phone number, they have
+
+00:13:12.620 --> 00:13:18.820
+to construct a new object. When we put these
+contact objects into the array, the name and
+
+00:13:18.820 --> 00:13:23.230
+the phone numbers are grouped together into
+a single unit. Now that we're able to create
+
+00:13:23.230 --> 00:13:28.790
+our own objects, we'll be able to keep our
+programs much better organized. We'll construct
+
+00:13:28.790 --> 00:13:35.320
+arrays of contacts just like we construct
+other arrays. Contact square brackets contactList
+
+00:13:35.320 --> 00:13:40.990
+equals new contact of a hundred. There is
+a difference, however, between constructing
+
+00:13:40.990 --> 00:13:45.790
+arrays of primitive data types and constructing
+arrays of objects. When we construct an array
+
+00:13:45.790 --> 00:13:51.630
+of objects, all of the references are initially
+null. We have to construct the objects in
+
+00:13:51.630 --> 00:13:56.949
+addition to the array. This is usually done
+in a loop. Let's write some code that will
+
+00:13:56.949 --> 00:14:03.949
+create our contact list. Scanner input equals
+new scanner system in, contact square brackets
+
+00:14:04.120 --> 00:14:11.120
+contactList equals new contact of 100. Int
+size equals 0, system out print line, enter
+
+00:14:12.269 --> 00:14:19.269
+a contact name or -1 to terminate program.
+String name equals input.nextline while not
+
+00:14:21.220 --> 00:14:28.220
+name equals -1. System out print line enter
+the phone number string phone equals input.nextline.
+
+00:14:31.670 --> 00:14:38.670
+Contact new person equals new contact name,
+phone. Contact list of size euqls new person
+
+00:14:40.300 --> 00:14:47.300
+++ size. System out print line enter a contact
+name or -1 to terminate the program string
+
+00:14:48.870 --> 00:14:55.540
+name equals input.nextline. Notice that I
+used a priming read there. Now that we have
+
+00:14:55.540 --> 00:15:00.519
+an array of contact objects, we can search
+and sort and do all sorts of wonderful things.
+

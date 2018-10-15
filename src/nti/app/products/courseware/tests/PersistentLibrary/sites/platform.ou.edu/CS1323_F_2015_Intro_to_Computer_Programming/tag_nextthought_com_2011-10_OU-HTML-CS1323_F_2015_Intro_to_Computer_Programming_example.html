@@ -1,0 +1,18 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html lang="en"><head> <meta content="2015-12-11T16:56:47" http-equiv="last-modified" /> <meta content="833" name="NTIRelativeScrollHeight" /> <meta content="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.example" name="NTIID" /> <meta content="NextThought" name="generator" /> <meta content="text/html; charset=ascii" http-equiv="content-type" /> <title>Example</title> <link href="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.precidence_of_not" rel="next" title="Precidence of NOT" /> <link href="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.not!" rel="prev" title="NOT!" /> <link href="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.reading:Chortle_CH14" rel="up" title="Boolean Expressions" /> <link href="styles/styles.css" rel="stylesheet" /> <link href="styles/content.css" rel="stylesheet" /> </head> <body id="NTIContent"> <div class="page-contents"><div data-ntiid="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.example" id="a0000000431" ntiid="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.example"> <div class="chapter title">Example</div> <p class="placeholder"></p> <a name="36a53b19357be72ca6beabce15115db8"></a> <div class="sidebar" data-ntiid="tag:nextthought.com,2011-10:OU-HTML:NTISidebar-CS1323_F_2015_Intro_to_Computer_Programming.sidebar.answer.115" ntiid="tag:nextthought.com,2011-10:OU-HTML:NTISidebar-CS1323_F_2015_Intro_to_Computer_Programming.sidebar.answer.115"> <div class="sidebar-title">Answer</div> <a name="c728a2263f03fd031f7838f94b242aa0"></a> <pre>if (  !(cost &lt; 50)  )
+  System.out.println("Reject these shoes");
+else
+  System.out.println("Acceptable shoes");
+</pre><a name="d289e1e76cc22b59c074e551f8d90459"></a> <p class="par" id="d289e1e76cc22b59c074e551f8d90459">(There are other ways to write this fragment. See below.) </p> </div><a name="c14165ad1ec0695d25d9d7b1ac099193"></a> <p class="par" id="c14165ad1ec0695d25d9d7b1ac099193">It is important to put parentheses around the entire expression so the NOT is applied correctly. Say that you are considering a pair of $35 shoes. Evaluation proceeds like this: </p> <a name="1584e312b2d5f52a3a4075bc2c581035"></a> <pre>! ( cost &lt; 50 )
+
+! (  35  &lt; 50 )
+    -----+----    
+         |                  
+! (      T    )
+------+--------
+      |
+      F
+</pre><a name="b67ec1da94f8cccdf442283446a264ac"></a> <p class="par" id="b67ec1da94f8cccdf442283446a264ac">The entire condition evaluates to false and so the false branch of the <b class="bfseries"><tt class="ttfamily">if</tt></b> statement is selected. The program prints out "Acceptable shoes". </p> <a name="2bd416d50f86f44a17a80877fe47b4d3"></a> <div class="sidebar" data-ntiid="tag:nextthought.com,2011-10:OU-HTML:NTISidebar-CS1323_F_2015_Intro_to_Computer_Programming.sidebar.question.120" ntiid="tag:nextthought.com,2011-10:OU-HTML:NTISidebar-CS1323_F_2015_Intro_to_Computer_Programming.sidebar.question.120"> <div class="sidebar-title">Question</div> <a name="08f24c4fe015b8b76a5e955114441b84"></a> <p class="par" id="08f24c4fe015b8b76a5e955114441b84"> Is the following program fragment correct? </p> <a name="26d0c4fc9c372acd5e3b2b6ba7aaf8b5"></a> <pre>if (  !cost &lt; 50  )
+  System.out.println("Reject these shoes");
+else
+  System.out.println("Acceptable shoes");
+</pre> </div> </div></div> </body></html>

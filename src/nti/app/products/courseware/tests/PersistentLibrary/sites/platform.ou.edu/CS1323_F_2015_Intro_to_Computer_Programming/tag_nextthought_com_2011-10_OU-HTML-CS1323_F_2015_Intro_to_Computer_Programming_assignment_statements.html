@@ -1,0 +1,30 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html lang="en"><head> <meta content="2015-12-11T16:56:47" http-equiv="last-modified" /> <meta content="1152" name="NTIRelativeScrollHeight" /> <meta content="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.assignment_statements" name="NTIID" /> <meta content="NextThought" name="generator" /> <meta content="text/html; charset=ascii" http-equiv="content-type" /> <title>Assignment Statements</title> <link href="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.assignment_statement_syntax" rel="next" title="Assignment Statement Syntax" /> <link href="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.several_lines_per_statement" rel="prev" title="Several Lines per Statement" /> <link href="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.reading:Chortle_CH9" rel="up" title="Variables and Assignment Statements" /> <link href="styles/styles.css" rel="stylesheet" /> <link href="styles/content.css" rel="stylesheet" /> </head> <body id="NTIContent"> <div class="page-contents"><div data-ntiid="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.assignment_statements" id="a0000000326" ntiid="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.assignment_statements"> <div class="chapter title">Assignment Statements</div> <p class="placeholder"></p> <a name="b274590b28e1c34929653b236c9d3808"></a> <div class="sidebar" data-ntiid="tag:nextthought.com,2011-10:OU-HTML:NTISidebar-CS1323_F_2015_Intro_to_Computer_Programming.sidebar.answer.23" ntiid="tag:nextthought.com,2011-10:OU-HTML:NTISidebar-CS1323_F_2015_Intro_to_Computer_Programming.sidebar.answer.23"> <div class="sidebar-title">Answer</div> <a name="b979f5c0e4bfcd3f2c0e0059f500a1e7"></a> <p class="par" id="b979f5c0e4bfcd3f2c0e0059f500a1e7"> No. The incorrect splitting is between lines 1 and 2, 10 and 11, and 13 and 14: </p> <a name="4035dd912f926bad7d14fb899617fd09"></a> <p class="par" id="4035dd912f926bad7d14fb899617fd09"><b class="bfseries">class</b> Example<br /></p><pre>01  cla
+02     ss Example
+03  {
+04  
+05    public static void main ( String[] args )
+06    {
+07      long   hoursWorked = 40;    
+08      double payRate = 10.0, taxRate = 0.10;    
+09  
+10      System.out.println("Hours Worked: " + hours
+11          Worked );
+12  
+13      System.out.println("pay Amount  : " + (hours
+14          Worked * payRate) );
+15  
+16      System.out.println("tax Amount  : " + (
+17          hoursWorked * payRate * taxRate) );
+18    }
+19  }
+</pre> <p></p> </div><a name="13bba8960c420650a70f1e416b75e60f"></a> <p class="par" id="13bba8960c420650a70f1e416b75e60f">So far, the example programs have been using the value initially put into a variable. Programs can change the value in a variable. An <b class="bfseries">assignment statement</b> changes the value that is held in a variable. Here is a program that uses an assignment statement: </p> <a name="11229112bc29ec0d68014433a2c0dde4"></a> <pre>class AssignmentExample
+{
+  public static void main ( String[] args )
+  {
+    long payAmount ;  // payAmount is declared without an initial value
+
+    payAmount = 123;  // an assignment statement
+    System.out.println("The variable contains: " + payAmount );
+  }
+}
+</pre><a name="2cf88191ac92bfab2a8df03d5a6554c9"></a> <p class="par" id="2cf88191ac92bfab2a8df03d5a6554c9">The assignment statement puts the value 123 into the variable. In other words, while the program is executing there will be a 64 bit section of memory that holds the value 123. </p> <a name="d445b4fffc9b9e9744a325e719f01e8c"></a> <p class="par" id="d445b4fffc9b9e9744a325e719f01e8c">Remember that the word "execute" is often used to mean "run". You speak of "executing a program" or "executing" a line of the program. </p> <a name="ff37049914650fca68b336f0942c3428"></a> <div class="sidebar" data-ntiid="tag:nextthought.com,2011-10:OU-HTML:NTISidebar-CS1323_F_2015_Intro_to_Computer_Programming.sidebar.question.24" ntiid="tag:nextthought.com,2011-10:OU-HTML:NTISidebar-CS1323_F_2015_Intro_to_Computer_Programming.sidebar.question.24"> <div class="sidebar-title">Question</div> What does the program print to the monitor? </div> </div></div> </body></html>

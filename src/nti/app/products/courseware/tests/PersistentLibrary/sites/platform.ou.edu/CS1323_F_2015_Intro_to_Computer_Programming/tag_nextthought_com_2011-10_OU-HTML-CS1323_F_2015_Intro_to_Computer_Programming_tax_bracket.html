@@ -1,0 +1,32 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html lang="en"><head> <meta content="2015-12-11T16:56:47" http-equiv="last-modified" /> <meta content="980" name="NTIRelativeScrollHeight" /> <meta content="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.tax_bracket" name="NTIID" /> <meta content="NextThought" name="generator" /> <meta content="text/html; charset=ascii" http-equiv="content-type" /> <title>Tax Bracket</title> <link href="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.complete_boolean_expressions" rel="next" title="Complete Boolean Expressions" /> <link href="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.a_run_of_the_program" rel="prev" title="A Run of the Program" /> <link href="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.reading:Chortle_CH14" rel="up" title="Boolean Expressions" /> <link href="styles/styles.css" rel="stylesheet" /> <link href="styles/content.css" rel="stylesheet" /> </head> <body id="NTIContent"> <div class="page-contents"><div data-ntiid="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.tax_bracket" id="a0000000419" ntiid="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.tax_bracket"> <div class="chapter title">Tax Bracket</div> <p class="placeholder"></p> <a name="30bd5bcbc6ce3fecd0ead202031b51c9"></a> <div class="sidebar" data-ntiid="tag:nextthought.com,2011-10:OU-HTML:NTISidebar-CS1323_F_2015_Intro_to_Computer_Programming.sidebar.answer.103" ntiid="tag:nextthought.com,2011-10:OU-HTML:NTISidebar-CS1323_F_2015_Intro_to_Computer_Programming.sidebar.answer.103"> <div class="sidebar-title">Answer</div> <a name="cc0790334f084d56550c1962e466577c"></a> <pre>How heavy is the boxer? 140
+In range!
+</pre><a name="57c13dee820ac36ce51dc1c4802ca0d2"></a> <p class="par" id="57c13dee820ac36ce51dc1c4802ca0d2">The and-operator gives <i class="itshape">true</i> because both sides are <i class="itshape">true</i>: </p> <a name="3159aea7fe53c4173935aef7035a448c"></a> <pre>weight &gt;= 136 &amp;&amp; weight &lt;= 147
+ 140   &gt;= 136 &amp;&amp;   140  &lt;= 147
+ ------------      -----------
+    true               true
+       -----------------
+             true
+</pre> </div><a name="9c6dce5d8c40c9c0804782222147d622"></a> <p class="par" id="9c6dce5d8c40c9c0804782222147d622">An unmarried taxpayer in the US with an income of $24,000 up to $58,150 (inclusive) falls into the 28% "tax bracket." Here is a program that tests if a taxpayer falls into this bracket. </p> <a name="2335febbe3561bd5031e68d292a41595"></a> <pre>// IRS Weigh-in
+//
+// Income between $24000 and $58150 inclusive
+//
+import java.util.Scanner;
+class TaxGouge
+{
+  public static void main (String[] args) 
+  { 
+    Scanner scan = new Scanner( System.in );
+    int income; 
+
+    // get the income
+    System.out.println("What is your income?");
+    income = scan.nextInt(); 
+
+    // check that the income is within range for the 28% bracket
+    if ( ______________________________ )
+      System.out.println("In the 28% bracket." );
+    else
+      System.out.println("Time for a tax audit!" );
+  }
+}
+</pre><a name="0d313fa5e81ca17a0fd67665eccac483"></a> <div class="sidebar" data-ntiid="tag:nextthought.com,2011-10:OU-HTML:NTISidebar-CS1323_F_2015_Intro_to_Computer_Programming.sidebar.question.108" ntiid="tag:nextthought.com,2011-10:OU-HTML:NTISidebar-CS1323_F_2015_Intro_to_Computer_Programming.sidebar.question.108"> <div class="sidebar-title">Question</div> Fill in the blank to test if the income is within this tax bracket. </div> </div></div> </body></html>

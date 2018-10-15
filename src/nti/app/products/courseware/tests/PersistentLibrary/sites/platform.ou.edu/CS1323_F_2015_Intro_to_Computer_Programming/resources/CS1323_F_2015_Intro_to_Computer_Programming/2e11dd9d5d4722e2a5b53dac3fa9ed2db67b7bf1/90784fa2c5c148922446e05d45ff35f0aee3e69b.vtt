@@ -1,0 +1,1064 @@
+WEBVTT
+Kind: captions
+Language: en
+
+00:00:00.760 --> 00:00:06.160
+&gt;&gt;Dr. Deborah Trytten: Let's continue our
+study of accessing and changing objects. Here's
+
+00:00:06.160 --> 00:00:12.250
+our problem statement--you run a University
+of Oklahoma sports website called OklahomaSports.com.
+
+00:00:12.250 --> 00:00:17.280
+You've posted some polls that are getting
+pretty odd results so you naturally suspect
+
+00:00:17.280 --> 00:00:22.000
+students from the University of Texas have
+infiltrated your website. You want to find
+
+00:00:22.000 --> 00:00:26.359
+the number of users from the University of
+Texas that have logged onto your website.
+
+00:00:26.359 --> 00:00:32.039
+Now their domain name is utexas.edu. Let's
+assume there is a file of user email addresses
+
+00:00:32.039 --> 00:00:37.690
+that's available for our use. Before we try
+to write this program you need to make sure
+
+00:00:37.690 --> 00:00:43.469
+we understand how email addresses work. Email
+addresses have three pieces so I've put my
+
+00:00:43.469 --> 00:00:49.940
+email address there dtrytten@ou.edu. The first
+part is an individual's name. Now that part
+
+00:00:49.940 --> 00:00:56.100
+may or may not be case-sensitive. What I mean
+by that is capital and small letters may or
+
+00:00:56.100 --> 00:01:01.229
+may not be counted as the same letter just
+depending on that particular email server.
+
+00:01:01.229 --> 00:01:06.800
+It's completely untrustworthy. The at sign
+however is always the same and the domain
+
+00:01:06.800 --> 00:01:13.800
+name is not case-sensitive. So if somebody
+put utexas.edu in all caps or utexas.edu in
+
+00:01:13.830 --> 00:01:19.470
+small letters both of those are from the same
+domain name. The other thing we need to know
+
+00:01:19.470 --> 00:01:26.330
+is that an email address like fan@cs.utexas.edu
+is in fact an email address from the University
+
+00:01:26.330 --> 00:01:33.330
+of Texas because it ends with utexas.edu whereas
+fan@utexas.edu.hotmail.com would not be an
+
+00:01:35.160 --> 00:01:40.250
+address from the University of Texas. That's
+an address from Hotmail.com which is a different
+
+00:01:40.250 --> 00:01:47.250
+website. Now we need to design our test data.
+We're certainly going to want to have several
+
+00:01:47.440 --> 00:01:53.650
+different files. A file with no data is always
+a good idea, a file with a single email address,
+
+00:01:53.650 --> 00:01:59.300
+one that's all utexas, one with no utexas,
+and a file with mixed data in it. Now to create
+
+00:01:59.300 --> 00:02:06.090
+these files we do file menu new file and make
+sure we save it with a .txt extension. Let's
+
+00:02:06.090 --> 00:02:08.879
+go to Eclipse and take a look.
+
+00:02:08.879 --> 00:02:13.480
+So we're in Eclipse and you'll notice that
+I have a large number of data files hanging
+
+00:02:13.480 --> 00:02:20.480
+around. Now I've stored these data files in
+the home directory of the project because
+
+00:02:20.980 --> 00:02:26.999
+that's a good place for data files. You'll
+notice a couple of them I forgot to give txt
+
+00:02:26.999 --> 00:02:33.999
+extensions. That may cause us some problems
+later so we'll have to pay attention for that.
+
+00:02:34.260 --> 00:02:39.870
+So for example, the file with no fans is an
+empty file. Now we may decide later that that
+
+00:02:39.870 --> 00:02:44.730
+file isn't fair, but certainly it'd be great
+if our program could work with that. Here's
+
+00:02:44.730 --> 00:02:51.599
+a file with one Texas address. Here's a file
+with one OU address. Here are five Texans.
+
+00:02:51.599 --> 00:02:58.599
+There are five Oklahomans. Now notice in that
+one I've put in some variations in capitalization
+
+00:02:59.159 --> 00:03:05.029
+to make sure we test that that stuff is working
+correctly. Here's a mixed OU and Texas and
+
+00:03:05.029 --> 00:03:10.159
+here's three OU and a Texan. Now in that one
+I put in all capital letters so I'm trying
+
+00:03:10.159 --> 00:03:15.129
+to mix it up and get the best possible test
+I can for our program. If you wanted to make
+
+00:03:15.129 --> 00:03:22.129
+another file you would go here, file, new
+file and give it a name, put data in it and
+
+00:03:25.169 --> 00:03:30.680
+make sure you save it. One thing I should
+point out is that when there's an asterisk
+
+00:03:30.680 --> 00:03:36.579
+in front of a filename, that means the file
+hasn't been saved. The risk for that is the
+
+00:03:36.579 --> 00:03:41.450
+file that has been saved that's on disk may
+be different than the one you're looking at.
+
+00:03:41.450 --> 00:03:47.169
+So when there's an asterisk in front, for
+example, let's say we went to this one and
+
+00:03:47.169 --> 00:03:53.019
+added and removed a space. Right now Eclipse
+thinks that file isn't saved because we've
+
+00:03:53.019 --> 00:03:58.279
+made changes to it since the last time it
+was saved. If we were to debug at this point
+
+00:03:58.279 --> 00:04:03.949
+maybe I put some other data in there like
+that, the problem is that the file it saved
+
+00:04:03.949 --> 00:04:10.949
+on disk only has that first email address.
+So this is a very difficult problem to find.
+
+00:04:11.419 --> 00:04:18.419
+In other words, remember to save your files.
+So here's file and save. The next thing we
+
+00:04:20.750 --> 00:04:25.460
+need to do is design our program. We're going
+to have two methods that we need. The first
+
+00:04:25.460 --> 00:04:30.070
+one will be count email in domain because
+that's clearly one of the functions that we're
+
+00:04:30.070 --> 00:04:35.890
+going to need to have separated out. Now the
+parameters on this are a little bit challenging
+
+00:04:35.890 --> 00:04:40.910
+because we could have a scanner, we could
+have a string for the file name, or we could
+
+00:04:40.910 --> 00:04:46.050
+have a file object. Anyone of those would
+be acceptable. The question is which one is
+
+00:04:46.050 --> 00:04:51.570
+best and I don't think every Java programmer
+would agree on this. My preference is to pass
+
+00:04:51.570 --> 00:04:57.310
+in the scanner because what it does is conceals
+the details of the file name in the file from
+
+00:04:57.310 --> 00:05:01.840
+the count email and domain method. So all
+that method needs to do is that it needs to
+
+00:05:01.840 --> 00:05:07.020
+get a scanner from somewhere in order to open
+the file. It doesn't commit it to having to
+
+00:05:07.020 --> 00:05:11.750
+read a file on disk. So for example we could
+attach a scanner to the input and have it
+
+00:05:11.750 --> 00:05:17.170
+still work. Making methods as general as possible
+is one of the things that computer scientists
+
+00:05:17.170 --> 00:05:21.990
+like to do. The other thing we're going to
+need is a string for the domain and of course
+
+00:05:21.990 --> 00:05:27.410
+the return type will be int because counting
+is going to return an integer. The second
+
+00:05:27.410 --> 00:05:32.140
+method that we're going to want is get scanner.
+So if I'm taking a scanner as an input to
+
+00:05:32.140 --> 00:05:39.110
+count email and domain then this method needs
+to return a scanner.
+
+00:05:39.110 --> 00:05:43.990
+Now at this point we could type in filenames
+like we'e done in the past but that is really
+
+00:05:43.990 --> 00:05:49.580
+error-prone. It's so easy to make little mistakes.
+So let's find a different way to do it. We're
+
+00:05:49.580 --> 00:05:55.590
+going to use a J file chooser. Now this is
+another class in the Java API. This is what
+
+00:05:55.590 --> 00:06:02.590
+we call a GUI class. GUI even though it sounds
+funny stands for GUI which is a graphical
+
+00:06:02.770 --> 00:06:09.050
+user interface. Now most of the Java GUI classes
+are too complicated for a beginning programmer
+
+00:06:09.050 --> 00:06:14.830
+to use. But this one's okay as long as you
+don't pay too much attention to all of the
+
+00:06:14.830 --> 00:06:19.550
+possible things that this class could do.
+So let's go and read about it and see what's
+
+00:06:19.550 --> 00:06:23.640
+available to us.
+
+00:06:23.640 --> 00:06:30.640
+Here's the Java API. I'm going to do control
+f and select a J file chooser right there
+
+00:06:34.520 --> 00:06:39.550
+and we can read the preamble on it. Well the
+first thing we want to notice is what package
+
+00:06:39.550 --> 00:06:45.340
+is it in? Well, it's in Javax.swing. Well,
+that's kind of different than what we've seen
+
+00:06:45.340 --> 00:06:51.280
+in the past because our other classes have
+usually been in Java.lang or Java.util or
+
+00:06:51.280 --> 00:06:57.670
+Java dot something. This is Java X. Well,
+what that X stands for is extensions and that's
+
+00:06:57.670 --> 00:07:02.750
+a warning that this class is not part of the
+standard Java. It is a very commonly used
+
+00:07:02.750 --> 00:07:07.870
+class though. It comes from Oracle just like
+the other Java classes and so even though
+
+00:07:07.870 --> 00:07:14.870
+it's an extension to Java it's not that big
+an extension. So let's read the the details.
+
+00:07:15.450 --> 00:07:20.770
+J file chooser provides a simple mechanism
+for the user to choose a file. The information
+
+00:07:20.770 --> 00:07:26.930
+about using J file chooser see "How to use
+file choosers"- a section in the Java tutorial.
+
+00:07:26.930 --> 00:07:30.590
+Now I don't actually recommend that you go
+there because the Java tutorial is made for
+
+00:07:30.590 --> 00:07:34.770
+more experienced programmers, so it's going
+talk about a lot of things that aren't going
+
+00:07:34.770 --> 00:07:41.230
+to make any sense and make this more complicated
+than it needs to be. The following code pops
+
+00:07:41.230 --> 00:07:47.550
+up a file chooser for the users home directory
+that sees only JPEG and GIF images. Hey wait
+
+00:07:47.550 --> 00:07:52.340
+a minute we've got something we can work with
+here. J file chooser chooser equals new J
+
+00:07:52.340 --> 00:07:57.270
+file chooser so we know what that is, that's
+a constructor. So we're going to construct
+
+00:07:57.270 --> 00:08:03.500
+a J file chooser object. Now those next two
+lines of code have to do with selecting JPEG
+
+00:08:03.500 --> 00:08:08.450
+files and we're not going to do anything fancy
+like that so we can just skip over those.
+
+00:08:08.450 --> 00:08:15.300
+Then we see int return val equals chooser
+dot show open dialogue of parent that's the
+
+00:08:15.300 --> 00:08:21.050
+method that allows the user to choose which
+file they want. If that method returns this
+
+00:08:21.050 --> 00:08:26.650
+constant here, J file chooser dot approve
+option, then they've printed out the filename.
+
+00:08:26.650 --> 00:08:31.150
+Now that isn't exactly what we want to do
+but this is certainly some good code to get
+
+00:08:31.150 --> 00:08:38.150
+us started. So let's grab it, copy it, paste
+into our program, and manipulate it a little
+
+00:08:38.180 --> 00:08:43.580
+bit.
+
+00:08:43.580 --> 00:08:48.550
+So here's the shell of a program that I've
+started. This is the get scanner method, starting
+
+00:08:48.550 --> 00:08:55.550
+about line 20, and there's the code we got.
+You'll notice that Eclipse is complaining
+
+00:08:57.140 --> 00:09:02.810
+about a couple lines of code. Well luckily
+for us those are the lines of code that we
+
+00:09:02.810 --> 00:09:07.890
+don't need so we can just get rid of those.
+Now the reason that Eclipse is not complaining
+
+00:09:07.890 --> 00:09:13.420
+about the existence of the J file chooser
+is I've done the import statement up above.
+
+00:09:13.420 --> 00:09:17.750
+Right now Eclipse has folded it. The way to
+tell that Eclipse did that is because there's
+
+00:09:17.750 --> 00:09:21.950
+a little plus over here
+Near line one and because it skips from line
+
+00:09:21.950 --> 00:09:28.950
+1 to line 5. If you always want all those
+things viewed leave the minus open. Okay now
+
+00:09:29.110 --> 00:09:33.460
+Eclipse is complaining about something here
+and that's the fact that we don't have a parent
+
+00:09:33.460 --> 00:09:39.680
+window. Well a parent window would get into
+some complicated GUI programming so we don't
+
+00:09:39.680 --> 00:09:44.690
+want to do that. It turns out there's a little
+trick we can use and that's that show open
+
+00:09:44.690 --> 00:09:49.950
+dialogue does accept a null parameter so that
+means we don't have a parent. In other words,
+
+00:09:49.950 --> 00:09:54.940
+this J file chooser is going to be the only
+window in our program.
+
+00:09:54.940 --> 00:09:58.670
+Now the next thing we might want to think
+about is what we're going to do with this.
+
+00:09:58.670 --> 00:10:04.670
+Well if we approve it instead of printing
+out this, what we want to do is to create
+
+00:10:04.670 --> 00:10:11.670
+our scanner object. So this returns the filename
+and what we want to do is return a new scanner
+
+00:10:13.880 --> 00:10:20.880
+made up of a new file from that particular
+filename. If you don't like putting all of
+
+00:10:27.220 --> 00:10:31.790
+that on one line of code you certainly could
+separate it into two lines of code. You'll
+
+00:10:31.790 --> 00:10:36.510
+see that the API is also using the curly braces
+that I don't like so I'm going to fix that
+
+00:10:36.510 --> 00:10:43.510
+too. Now is a great time to run the program
+and make sure it's working again. Oh wow look
+
+00:10:48.089 --> 00:10:54.050
+at that. We got a file chooser. So we can
+pick a file like this and open it. Uh oh something
+
+00:10:54.050 --> 00:11:00.089
+went wrong. Notice that threw a file not found
+exception. We picked the file in the file
+
+00:11:00.089 --> 00:11:05.490
+chooser so we know the file is there. Don't
+worry about what file it was by the way. The
+
+00:11:05.490 --> 00:11:10.310
+problem here is that Java was looking at the
+wrong place to find the file. It was actually
+
+00:11:10.310 --> 00:11:15.779
+looking in my home directory when we wanted
+it to be looking in the project directory.
+
+00:11:15.779 --> 00:11:20.540
+Well we're going to have to figure out how
+to fix that. So let's go and look at the API
+
+00:11:20.540 --> 00:11:27.540
+and see what we can do. Well looking at the
+API gets really complicated here because this
+
+00:11:28.310 --> 00:11:34.040
+is a complicated class. We don't know what
+nested classes are so we're just going to
+
+00:11:34.040 --> 00:11:40.390
+slip over that and we really don't know about
+these fields just yet but we do know about
+
+00:11:40.390 --> 00:11:45.320
+constructors. So let's see if there's a constructor
+that could help us out. Well take a look at
+
+00:11:45.320 --> 00:11:50.570
+the second constructor. The first one is the
+one we use and notice it constructs a J file
+
+00:11:50.570 --> 00:11:56.980
+chooser that points to the user's default
+directory. Well that wasn't actually the directory
+
+00:11:56.980 --> 00:12:02.800
+we wanted. What we needed was a J file chooser
+that points to a current directory that is
+
+00:12:02.800 --> 00:12:08.820
+one that we wanted to pick. So right there
+is the constructor we want. The only question
+
+00:12:08.820 --> 00:12:15.200
+we have here is what's the name of the current
+directory. Well it turns out the name of the
+
+00:12:15.200 --> 00:12:21.820
+current directory inside this eclipse project
+is just period. Java knows which directory
+
+00:12:21.820 --> 00:12:27.240
+is our home directory for this project, that
+is this Texas infiltration directory inside
+
+00:12:27.240 --> 00:12:31.570
+our project directory and so that will solve
+this problem.
+
+00:12:31.570 --> 00:12:38.570
+Now let's run the program again. By the way
+we need to stop this. If you don't do that,
+
+00:12:39.480 --> 00:12:46.480
+that causes problems later. So let's run the
+program again and see what we get. Now look
+
+00:12:50.680 --> 00:12:56.810
+what happened. It opened the files in our
+current directory. Now we're not seeing anything
+
+00:12:56.810 --> 00:13:01.520
+from it because we're not doing anything with
+the file just yet. The next thing we might
+
+00:13:01.520 --> 00:13:06.620
+want to think about is what's going on with
+this return null? That doesn't sound like
+
+00:13:06.620 --> 00:13:11.490
+a good thing to be returning if we're counting
+on the scanner to be able to do our work later.
+
+00:13:11.490 --> 00:13:17.149
+So what we really need to do is figure out
+what to do if the user clicks cancel instead
+
+00:13:17.149 --> 00:13:24.149
+of accept. Well what we need to do is to loop
+here until the user accepts. Now I'm putting
+
+00:13:26.080 --> 00:13:33.080
+this in another one of those weird infinite
+loops 
+because now if we don't return, we go back
+
+00:13:38.820 --> 00:13:45.820
+and open the chooser dialog again. You notice
+Eclipse is now unhappy about this return null,
+
+00:13:49.910 --> 00:13:55.640
+but that quiets it down. I'm going to add
+a comment in that this is the end of the while
+
+00:13:55.640 --> 00:14:00.339
+because that will make it easier to find our
+way around this code. So let's see what happens
+
+00:14:00.339 --> 00:14:07.339
+now when we run the program.
+
+00:14:11.649 --> 00:14:18.390
+So we're going to pick our file and open it
+and nothing happens. Well that's good, just
+
+00:14:18.390 --> 00:14:25.390
+exactly what we wanted. So the next thing
+we're going to need to do is to create a scanner
+
+00:14:25.830 --> 00:14:32.830
+object and store it in the main program, so
+that's our communication back. Notice also
+
+00:14:36.899 --> 00:14:42.790
+that I've made our getScanner method and our
+main method throw a file not found exception.
+
+00:14:42.790 --> 00:14:47.339
+Remember that's always necessary when you
+open a file because Java is so paranoid that
+
+00:14:47.339 --> 00:14:54.180
+file opening is going to cause trouble. So
+these are the improvements that we've made.
+
+00:14:54.180 --> 00:14:59.490
+To return the file we had to include a file
+not found exception and propagate it not only
+
+00:14:59.490 --> 00:15:04.300
+in the given method but in the main program.
+If the user didn't approve we added a while
+
+00:15:04.300 --> 00:15:10.339
+loop so they could repeatedly select another
+file and then we selected the project directory
+
+00:15:10.339 --> 00:15:15.480
+instead of the default directory. Now we actually
+didn't use a mutator method to do this although
+
+00:15:15.480 --> 00:15:21.920
+you could and remember the name of the project
+directory was just a period by itself.
+
+00:15:21.920 --> 00:15:27.000
+So the next thing we need to do is implement
+countEmailInDomain. We know the email addresses
+
+00:15:27.000 --> 00:15:31.779
+will be read as strings because that's what
+email is and the address will have to be in
+
+00:15:31.779 --> 00:15:38.779
+the domain. So let's go to the API and see
+what the string class has to offer. So here's
+
+00:15:48.440 --> 00:15:53.200
+the string class we want and now we need to
+go down and look at the methods and see what's
+
+00:15:53.200 --> 00:15:58.560
+available. Notice that the string class has
+a tremendous number of constructors most of
+
+00:15:58.560 --> 00:16:04.850
+which make absolutely no sense to us at this
+point. So here are the methods, we've got
+
+00:16:04.850 --> 00:16:09.240
+charAt so that returns an individual character
+but we probably don't want to deal with this
+
+00:16:09.240 --> 00:16:15.470
+one character at a time. A method we might
+want to consider is contains. Now contains
+
+00:16:15.470 --> 00:16:20.630
+says it takes a char sequence and it turns
+out a string is a special kind of char sequence
+
+00:16:20.630 --> 00:16:26.070
+so that would work. The problem with using
+contains here though is that if the domain
+
+00:16:26.070 --> 00:16:31.519
+name is in the middle, not at the end, that's
+going to return true and that isn't what we
+
+00:16:31.519 --> 00:16:38.390
+want because that isn't how domain names work.
+If, on the other hand, you look at endsWith,
+
+00:16:38.390 --> 00:16:43.240
+we need to test if the string ends with the
+specified suffix. So that actually is the
+
+00:16:43.240 --> 00:16:48.130
+right method. There's also another method
+called begins with so we have a lot of options
+
+00:16:48.130 --> 00:16:54.430
+to choose but endsWith is the one that's really
+going to work for us. So now we're going to
+
+00:16:54.430 --> 00:17:01.430
+go to this method and we're going to loop
+through the file so while input dot hasnext,
+
+00:17:08.049 --> 00:17:13.959
+remember that all of our emails are going
+to be one single word, so hasnext works. We
+
+00:17:13.959 --> 00:17:18.939
+don't need to use next line and worry about
+all that end of line nonsense. So we'll have
+
+00:17:18.939 --> 00:17:25.939
+a string email equals input.next and if email.endsWith
+the domain that we asked for, that's when
+
+00:17:37.500 --> 00:17:42.480
+we want to increment our counter. We haven't
+actually created our counter yet so we better
+
+00:17:42.480 --> 00:17:44.280
+do that.
+
+00:17:44.280 --> 00:17:47.820
+Remember that local variables and methods
+like count is here have to be initialized.
+
+00:17:47.820 --> 00:17:54.820
+So 
+
+00:17:59.240 --> 00:18:05.400
+there we go, count equals count plus one and
+then instead of returning zero at the end,
+
+00:18:05.400 --> 00:18:10.970
+we'll return count. So this is actually a
+rather simple use of the string class. We
+
+00:18:10.970 --> 00:18:17.970
+now need to call this method up in our main
+program. So we'll say int count equals count
+
+00:18:19.110 --> 00:18:26.110
+EmailInDomain. We're going to use the scanner
+that we created earlier and look for utexas.edu.
+
+00:18:26.929 --> 00:18:33.929
+And of course we want to show some some output
+to the reader. There are plus count plus users
+
+00:18:48.820 --> 00:18:55.820
+from utexas.edu in the system. So there we
+go.
+
+00:19:00.090 --> 00:19:07.090
+So let's run the program now. So let's start
+with one OU email address. Now we know that
+
+00:19:12.010 --> 00:19:18.780
+we're not going to find any Texans there,
+so there are no users from Texas in the system.
+
+00:19:18.780 --> 00:19:25.780
+That sounds good. Now let's run the one with
+one Texan. There's one user from utexas in
+
+00:19:29.010 --> 00:19:35.780
+the system and notice that we've got a little
+problem here with there is versus there are.
+
+00:19:35.780 --> 00:19:39.970
+That's something we might want to fix if we're
+going to get super super picky, but let's
+
+00:19:39.970 --> 00:19:46.970
+let it go for now. Let's see what happens
+with no fans. Wow that one worked too. So
+
+00:19:51.830 --> 00:19:55.929
+notice by being a little bit more ambitious
+we actually have a more general program so
+
+00:19:55.929 --> 00:20:02.929
+that's great. Now let's go and see what happens
+with five Texans. Uh oh there are only three
+
+00:20:06.049 --> 00:20:10.880
+users from utexas in the system. We better
+take a look at that data file and see what's
+
+00:20:10.880 --> 00:20:16.650
+up. Well, if you look and see what happened
+in this data file, there are in fact five
+
+00:20:16.650 --> 00:20:21.150
+Texans there. The thing is that some of these
+have capital letters in their domain name
+
+00:20:21.150 --> 00:20:25.710
+as they're allowed to and some don't. The
+ones that don't have capital letters were
+
+00:20:25.710 --> 00:20:30.980
+counted just fine and the ones that do have
+capital letters were not. So we need to think
+
+00:20:30.980 --> 00:20:37.980
+of a strategy for dealing with this problem.
+So here when we get our next value we might
+
+00:20:38.510 --> 00:20:45.510
+want to look just at strings that are in lowercase.
+Now changing a string to lower case could
+
+00:20:45.929 --> 00:20:51.230
+be a lot of work but then again the string
+class might have something special for us.
+
+00:20:51.230 --> 00:20:53.799
+So let's go and take a look.
+
+00:20:53.799 --> 00:20:59.610
+As you get down here you'll see that there's
+a method called toLowercase. Now we're going
+
+00:20:59.610 --> 00:21:04.770
+to have to think carefully about how this
+method should work because if we just call
+
+00:21:04.770 --> 00:21:11.770
+this 
+like that email.toLowercase. Let's see if
+that actually fixed the problem. It seems
+
+00:21:20.610 --> 00:21:25.429
+like it should right because we've asked it
+to change email to lowercase. Now this five
+
+00:21:25.429 --> 00:21:31.840
+Texans was the one that caused trouble and
+we still have only three users. Uh oh we've
+
+00:21:31.840 --> 00:21:38.410
+got a problem. Well, let's think about this
+for a minute. Remember that string objects
+
+00:21:38.410 --> 00:21:45.010
+are immutable that is they can't be changed.
+So email.toLowercase cannot possibly change
+
+00:21:45.010 --> 00:21:50.049
+the contents of email to being lowercase.
+We need to read our documentation a little
+
+00:21:50.049 --> 00:21:57.049
+bit more carefully. So here's the documentation
+back in the API. This converts all of the
+
+00:21:57.440 --> 00:22:02.370
+characters in the string to lowercase using
+the rules of the default locale. Now all of
+
+00:22:02.370 --> 00:22:07.370
+that default locale stuff means is that it's
+going to work like American English does for
+
+00:22:07.370 --> 00:22:13.860
+us. So that will be fine. This method is locale
+sensitive yeah yeah yeah, we don't need all
+
+00:22:13.860 --> 00:22:18.630
+that stuff. That's much more advanced programming
+than what we're worried about, but look at
+
+00:22:18.630 --> 00:22:24.980
+what it tells us it returns. The string converted
+to lowercase, so basically we needed to take
+
+00:22:24.980 --> 00:22:30.030
+advantage of that return value. The string
+itself was not modified because no string
+
+00:22:30.030 --> 00:22:37.030
+can be modified. This is what we need to do
+is to save that string that was returned and
+
+00:22:38.330 --> 00:22:45.330
+then convert it to lowercase. So let's see
+what happens now.
+
+00:22:46.120 --> 00:22:53.120
+So we're still sweating out our five Texans
+data set. Ah, that one's working just great.
+
+00:22:54.880 --> 00:22:59.460
+Let's go back and make sure one Texan is still
+working. You know, you never trust anything
+
+00:22:59.460 --> 00:23:06.460
+to be working. One user from Texas, that looks
+good. Let's see about our mixed OU/Texas.
+
+00:23:10.160 --> 00:23:15.059
+Well it says there are five utexas users from
+the system, so let's see if that's correct.
+
+00:23:15.059 --> 00:23:20.750
+Well, I'm certainly not from University of
+Texas but there's one on the second line,
+
+00:23:20.750 --> 00:23:27.260
+not the third line, the second one is on the
+fourth line, the third one is on the sixth
+
+00:23:27.260 --> 00:23:33.419
+line, the seventh line, and the eight line
+all have utexas people so that is in fact
+
+00:23:33.419 --> 00:23:39.910
+five, which is the correct number of users
+in the system. Now we could go on testing
+
+00:23:39.910 --> 00:23:44.090
+and testing this program but we actually have
+it working at this point.
+
+00:23:44.090 --> 00:23:48.080
+One thing we might want to do though is to
+make our program a little bit more useful
+
+00:23:48.080 --> 00:23:52.360
+because right now it's just dealing with the
+University of Texas when really it should
+
+00:23:52.360 --> 00:23:59.220
+be dealing with any university or in fact
+any domain in general. So let's generalize
+
+00:23:59.220 --> 00:24:06.220
+a little bit. Enter the domain you're searching
+for. Now here we're going to need a second
+
+00:24:13.760 --> 00:24:20.760
+scanner because this is the keyboard we need
+to get a response from so we need two different
+
+00:24:22.330 --> 00:24:29.330
+scanner objects 
+so we'll now say string domain equals keyboard.next.
+We know that domains have to be a single word
+
+00:24:41.549 --> 00:24:48.549
+so that's a good thing to choose there. And
+then here, instead of utexas, we'll put in
+
+00:24:50.280 --> 00:24:57.280
+our domain and here we'll also include it.
+Let's see what Eclipse is unhappy about now.
+
+00:25:07.940 --> 00:25:13.049
+It says we have a double quote together let's
+look and see if that's true. Oh I see what
+
+00:25:13.049 --> 00:25:20.049
+the real problem is, I forgot a plus sign.
+There we go, now Eclipse is again. So we should
+
+00:25:20.460 --> 00:25:27.460
+now run all of our test data again. So let's
+take five Texans, since that was the problem
+
+00:25:35.679 --> 00:25:42.679
+one before. Enter the domain you're searching
+for. Uh oh, no users. Wait a minute, we had
+
+00:25:49.940 --> 00:25:55.620
+five a few minutes ago. That's bad. Well if
+you pay attention to what I did, I tested
+
+00:25:55.620 --> 00:26:01.840
+with all caps. So what we forgot to do here
+was to change the domain name to small characters
+
+00:26:01.840 --> 00:26:06.559
+so that when we change the domain names below
+to small characters they'd match. Well we
+
+00:26:06.559 --> 00:26:13.559
+know how to do that now so let's fix it. Domain.toLowercase.
+Here we go again. Five Texans, the domain
+
+00:26:28.260 --> 00:26:35.260
+we're searching for is utexas.edu, and we're
+now getting five users from Texas. The only
+
+00:26:39.830 --> 00:26:44.400
+thing that's a little bit awkward about this
+is that notice the domain name that spit out
+
+00:26:44.400 --> 00:26:48.679
+isn't the same one that's entered. That might
+confuse some users if you had people that
+
+00:26:48.679 --> 00:26:53.270
+weren't very sophisticated. So maybe we should
+fix that a little bit and make it a little
+
+00:26:53.270 --> 00:27:00.270
+prettier and let's call this string lowercase
+domain. So we can look for lowercase domain
+
+00:27:07.320 --> 00:27:13.450
+there. Now let's think about this for a minute.
+Is this really something we want in the main
+
+00:27:13.450 --> 00:27:18.840
+program or is this something that should've
+been in the countEmailInDomain? Well if you
+
+00:27:18.840 --> 00:27:23.070
+really think about it it makes a lot more
+sense to do this type of manipulation inside
+
+00:27:23.070 --> 00:27:28.110
+of countEmailInDomain because that way if
+somebody uses this chunk of code somewhere
+
+00:27:28.110 --> 00:27:33.049
+else they'll get the benefit of it. So let's
+be a little smarter about what we're doing
+
+00:27:33.049 --> 00:27:40.049
+here. Let's pass in our domain as it was and
+print out our domain as it was but inside
+
+00:27:43.240 --> 00:27:50.240
+here let's make our domain lowercase. Again
+remembering to save it in the domain object.
+
+00:27:55.429 --> 00:27:59.280
+This is not going to change the domain object
+that's in the main program. These are two
+
+00:27:59.280 --> 00:28:03.309
+different references and remember it's a string
+anyway so you know it can't be changed so
+
+00:28:03.309 --> 00:28:09.400
+everything's okay. But let's make some comments
+here so people understand what we're up to.
+
+00:28:09.400 --> 00:28:16.400
+Change the domain to lowercase since domain
+names are not case sensitive and now we can
+
+00:28:19.409 --> 00:28:26.409
+also put a comment down here, change the input
+to lowercase too.
+
+00:28:34.440 --> 00:28:41.440
+So after beautifying a little bit, let's run
+it one more time. So five Texans now. Enter
+
+00:28:50.480 --> 00:28:57.480
+the domain name you're searching for 
+utexas.edu. There are five users from utexas.
+So now its spitting it out in the same language
+
+00:29:02.059 --> 00:29:09.059
+the user included it. Let's run it again and
+see if it works with lowercase letters. Now
+
+00:29:17.620 --> 00:29:22.580
+really we should go back and rerun all of
+our test files. Anytime you change anything
+
+00:29:22.580 --> 00:29:26.980
+it has a risk of messing up your code and
+so you have to be careful about repeatedly
+
+00:29:26.980 --> 00:29:33.770
+rerunning your code. The debugging problem
+we had was a problem with the case of data
+
+00:29:33.770 --> 00:29:38.679
+and our strategy was to pull the domain out
+of the email address, change it to lowercase,
+
+00:29:38.679 --> 00:29:44.220
+and check to see if it ends with the proper
+domain. So we've now solved our problems.
+
+00:29:44.220 --> 00:29:45.030
+Keep programming!
+

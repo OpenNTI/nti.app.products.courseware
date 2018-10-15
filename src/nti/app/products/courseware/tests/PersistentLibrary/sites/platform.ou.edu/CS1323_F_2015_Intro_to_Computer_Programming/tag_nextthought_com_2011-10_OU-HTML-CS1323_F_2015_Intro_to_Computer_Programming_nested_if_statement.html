@@ -1,0 +1,38 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html lang="en"><head> <meta content="2015-12-11T16:56:47" http-equiv="last-modified" /> <meta content="1092" name="NTIRelativeScrollHeight" /> <meta content="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.nested_if_statement" name="NTIID" /> <meta content="NextThought" name="generator" /> <meta content="text/html; charset=ascii" http-equiv="content-type" /> <title>Nested if Statement</title> <link href="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.complete_program.1" rel="next" title="Complete Program" /> <link href="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.my_three_sums" rel="prev" title="My Three Sums" /> <link href="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.reading:Chortle_CH17" rel="up" title="Nesting Loops and Ifs" /> <link href="styles/styles.css" rel="stylesheet" /> <link href="styles/content.css" rel="stylesheet" /> </head> <body id="NTIContent"> <div class="page-contents"><div data-ntiid="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.nested_if_statement" id="a0000000450" ntiid="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.nested_if_statement"> <div class="chapter title">Nested if Statement</div> <p class="placeholder"></p> <a name="e48fd7d85d515c1b46645cacde756485"></a> <div class="sidebar" data-ntiid="tag:nextthought.com,2011-10:OU-HTML:NTISidebar-CS1323_F_2015_Intro_to_Computer_Programming.sidebar.answer.131" ntiid="tag:nextthought.com,2011-10:OU-HTML:NTISidebar-CS1323_F_2015_Intro_to_Computer_Programming.sidebar.answer.131"> <div class="sidebar-title">Answer</div> Sounds like a good place for an if statement. </div><a name="a02c66a9d91d25e066da0ea745caa04c"></a> <p class="par" id="a02c66a9d91d25e066da0ea745caa04c">Here is the not-quite finished program: </p> <a name="8e6a5a0693e0b9b5103caee07f881b43"></a> <pre>import  java.util.Scanner;
+
+// User enters a value N
+// Add up odd integers,  
+// even  integers, and all integers 1 to N
+//
+class AddUpIntegers
+{
+  public static void main (String[] args ) 
+  {
+    Scanner scan = new Scanner( System.in );
+    int N, sumAll = 0, sumEven = 0, sumOdd = 0;
+
+    System.out.print( "Enter limit value: " );
+    N = scan.nextInt();
+
+    int count = 1 ;
+ 
+    while (  count &lt;= N )    
+    {
+      sumAll = _____________
+      
+      if ( _____________ )
+
+        sumEven = _____________ ;
+
+      else
+        sumOdd = _____________ ;
+
+      count = count + 1 ;
+    }
+
+    System.out.print  ( "Sum of all : " + sumAll  );
+    System.out.print  ( "\tSum of even: " + sumEven );
+    System.out.println( "\tSum of odd : " + sumOdd  );
+  }
+}
+</pre><a name="a731493d8502b43e9fb38d4defc32399"></a> <p class="par" id="a731493d8502b43e9fb38d4defc32399">The loop body in this program contains an <b class="bfseries"><tt class="ttfamily">if</tt></b> statement. This is fine. An <b class="bfseries"><tt class="ttfamily">if</tt></b> statement inside of a loop body is called a <b class="bfseries">nested if</b>. There is nothing special about it; it works just as it would outside of the loop body. </p> <a name="5c49e1394b3660ba2ac2bb440d5d86a0"></a> <div class="sidebar" data-ntiid="tag:nextthought.com,2011-10:OU-HTML:NTISidebar-CS1323_F_2015_Intro_to_Computer_Programming.sidebar.question.137" ntiid="tag:nextthought.com,2011-10:OU-HTML:NTISidebar-CS1323_F_2015_Intro_to_Computer_Programming.sidebar.question.137"> <div class="sidebar-title">Question</div> Fill in the four blanks to finish the program. (Hint: use the remainder operator, <b class="bfseries"><tt class="ttfamily">%</tt></b> in the <b class="bfseries"><tt class="ttfamily">if</tt></b> statement. The remainder of an odd number divided by two is one.) </div> </div></div> </body></html>

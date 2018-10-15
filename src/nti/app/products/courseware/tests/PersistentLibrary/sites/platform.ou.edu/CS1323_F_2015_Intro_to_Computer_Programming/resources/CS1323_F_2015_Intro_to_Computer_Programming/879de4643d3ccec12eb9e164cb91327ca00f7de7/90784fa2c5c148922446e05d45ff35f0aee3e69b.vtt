@@ -1,0 +1,279 @@
+WEBVTT
+Kind: captions
+Language: en
+
+00:00:01.010 --> 00:00:05.970
+&gt;&gt;Java's application programmer's interface,
+called the API, is one of the best things
+
+00:00:05.970 --> 00:00:10.620
+about Java. In this chapter we're going to
+start to learn how to use classes and objects
+
+00:00:10.620 --> 00:00:16.029
+in the API to make our programs better. You've
+probably heard that Java is an object-oriented
+
+00:00:16.029 --> 00:00:21.630
+language. Objects in Java represent things
+in the world. In general, objects are nouns.
+
+00:00:21.630 --> 00:00:27.710
+A good example class is the string class.
+A string object is a sequence of characters.
+
+00:00:27.710 --> 00:00:34.579
+We can create a string by saying: string myDog
+equals new string and then in double quotes
+
+00:00:34.579 --> 00:00:41.579
+Abby. We can create another string by saying:
+string mySistersDog equals new string and
+
+00:00:41.870 --> 00:00:47.539
+in double quotes Zena. Each string object
+has its own sequence of characters given in
+
+00:00:47.539 --> 00:00:52.780
+the constructor above by the characters between
+the quotes. The rules about how these objects
+
+00:00:52.780 --> 00:00:57.530
+will behave are given by the string class.
+The job of the class is to determine what
+
+00:00:57.530 --> 00:01:03.260
+data has to be stored to create the object
+and how the objects will behave. For example,
+
+00:01:03.260 --> 00:01:07.960
+the string class is used for storing text
+that will not be modified. If you want to
+
+00:01:07.960 --> 00:01:12.730
+store a sequence of characters that can be
+modified, you need to use a different class
+
+00:01:12.730 --> 00:01:18.780
+called the StringBuilder. The variables my
+dog and my sister's dog are string references.
+
+00:01:18.780 --> 00:01:24.660
+A reference is the location of an object in
+the computer's memory. So myDog and mySistersDog
+
+00:01:24.660 --> 00:01:29.500
+contain different references because they
+refer to different objects. We draw pictures
+
+00:01:29.500 --> 00:01:35.090
+of these objects using memory diagrams. The
+references get an empty box. The objects get
+
+00:01:35.090 --> 00:01:40.160
+their own box with the name of the class for
+the object at the top. Inside the class box
+
+00:01:40.160 --> 00:01:44.550
+is another box that represents the data. In
+the case of the string class this will be
+
+00:01:44.550 --> 00:01:49.600
+the contents of the string objects. We draw
+an arrow between the reference box and the
+
+00:01:49.600 --> 00:01:55.640
+box that contains the object to show that
+a particular reference refers to a given object.
+
+00:01:55.640 --> 00:02:00.630
+Having a way to picture objects makes it easier
+to understand exactly what a program is doing
+
+00:02:00.630 --> 00:02:06.420
+and to debug it. The string objects are created
+using a constructor. The syntax contains the
+
+00:02:06.420 --> 00:02:11.629
+word new and the class name. If you don't
+construct an object for a reference, the reference
+
+00:02:11.629 --> 00:02:17.189
+is called Null. A reference without an object
+is useless and tends to cause a problem called
+
+00:02:17.189 --> 00:02:21.889
+a NullPointerException. Anytime you get one
+of these it will be because you forgot to
+
+00:02:21.889 --> 00:02:28.370
+call a constructor on an object somewhere.
+The string class has some very special syntax.
+
+00:02:28.370 --> 00:02:33.459
+We're allowed to construct strings without
+using the word 'new.' This is the only class
+
+00:02:33.459 --> 00:02:40.370
+in Java that has this privilege. So for example,
+we can say string my other dog equals Raven
+
+00:02:40.370 --> 00:02:45.889
+in double quotes. This is also a constructor
+call. In fact, we were constructing strings
+
+00:02:45.889 --> 00:02:50.529
+without thinking about it when we were doing
+things like system out print line this price
+
+00:02:50.529 --> 00:02:56.629
+is plus price. This string "This price is"
+is called an anonymous string because it doesn't
+
+00:02:56.629 --> 00:03:01.999
+have a named reference. The plus operator
+represents concatenation, which means that
+
+00:03:01.999 --> 00:03:06.680
+the anonymous string object that contains
+"The price is" is combined with the character
+
+00:03:06.680 --> 00:03:12.260
+representation of the variable price and placed
+into another anonymous string that's then
+
+00:03:12.260 --> 00:03:17.620
+printed out on the consul. I think it's fascinating
+that synthetic languages like Java do the
+
+00:03:17.620 --> 00:03:23.099
+same thing that human languages do. In human
+languages the most commonly used verbs tend
+
+00:03:23.099 --> 00:03:28.819
+to be irregular and less commonly used ones
+tend to follow a more predictable pattern.
+
+00:03:28.819 --> 00:03:35.819
+Think about the English verb "to be:" I am,
+you are, she is. That's irregular. The same
+
+00:03:36.099 --> 00:03:40.879
+is true in French and in many other languages.
+In Java, string is one of the most commonly
+
+00:03:40.879 --> 00:03:45.689
+used classes and it's irregular by virtue
+of having a special constructor and being
+
+00:03:45.689 --> 00:03:50.749
+allowed to use plus to mean concatenation.
+Now that we have objects, we need to be able
+
+00:03:50.749 --> 00:03:55.519
+to do things with them. Methods in Java are
+actions, and are how we get information about
+
+00:03:55.519 --> 00:04:01.419
+objects and modify them. So if objects are
+nouns, methods are verbs. Each class in Java
+
+00:04:01.419 --> 00:04:06.180
+describes how objects of that class can be
+used. This is documented for the standard
+
+00:04:06.180 --> 00:04:13.180
+classes in the Java API. The method charAt,
+for example, has the following documentation:
+
+00:04:15.260 --> 00:04:20.180
+to get to this method, you'll open the Java
+API on your computer. Find the string class
+
+00:04:20.180 --> 00:04:26.220
+in the frame on the lower left. Search for
+the string class: control F on a PC, or command
+
+00:04:26.220 --> 00:04:31.620
+F on a Mac, and scroll down until you find
+a table that summarizes the methods. If you
+
+00:04:31.620 --> 00:04:36.050
+click on the charAt method, you'll find this
+information. It may look a little different
+
+00:04:36.050 --> 00:04:41.150
+if you're using a different browser or use
+a different size window or font, but the information
+
+00:04:41.150 --> 00:04:47.140
+should be the same. The API contains lots
+of information about methods. In fact, it
+
+00:04:47.140 --> 00:04:52.210
+really contains too much for beginning programmers,
+so you need to get used to skipping over the
+
+00:04:52.210 --> 00:04:57.630
+parts that don't make sense just yet. For
+example, we have no idea what a char sequence
+
+00:04:57.630 --> 00:05:03.200
+might be, although it's okay to guess, and
+this time you'd probably be right. Or even
+
+00:05:03.200 --> 00:05:08.440
+what throws mean. So we just ignore that part.
+The critical information that we learn is
+
+00:05:08.440 --> 00:05:12.870
+that charAt needs an argument that will be
+used to tell us which character in the string
+
+00:05:12.870 --> 00:05:19.600
+is desired. This is shown in the API by the
+parameter int index. We also learned something
+
+00:05:19.600 --> 00:05:26.600
+odd about Java. In Java we usually start counting
+at zero, not at one. This is called zero-indexing.
+
+00:05:26.990 --> 00:05:31.050
+We also learned that the method is going to
+return a single character. This shows up in
+
+00:05:31.050 --> 00:05:36.910
+the API by the word char before the method
+name. So if we're to create a string, string
+
+00:05:36.910 --> 00:05:43.910
+myDog equals Abby in double quotes system
+out print line myDog dot charAt of zero prints
+
+00:05:45.410 --> 00:05:50.710
+the character capital A on a line by itself
+on the console. You have to tell the computer
+
+00:05:50.710 --> 00:05:57.090
+which object charAt applies to. This is done
+with period notation. I usually pronounce
+
+00:05:57.090 --> 00:06:03.480
+this as dot. The method charAt when called
+on the object myDog returns a single character.
+
+00:06:03.480 --> 00:06:08.300
+You can see that in the documentation by the
+word char before the method name. As you get
+
+00:06:08.300 --> 00:06:12.260
+more experience with Java, you'll get better
+and better at using objects from the Java
+
+00:06:12.260 --> 00:06:18.170
+API. We'll learn how to use lots of interesting
+classes in this section, including math, array
+
+00:06:18.170 --> 00:06:20.080
+list, collections, and JOptionPane.
+

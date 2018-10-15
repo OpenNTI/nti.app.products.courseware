@@ -1,0 +1,35 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html lang="en"><head> <meta content="2015-12-11T16:56:47" http-equiv="last-modified" /> <meta content="1224" name="NTIRelativeScrollHeight" /> <meta content="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.private_methods" name="NTIID" /> <meta content="NextThought" name="generator" /> <meta content="text/html; charset=ascii" http-equiv="content-type" /> <title>Private Methods</title> <link href="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.main()_cant_use_a_private_method" rel="next" title="main() Can&#8217;t use a Private Method" /> <link href="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.encapsulation" rel="prev" title="Encapsulation" /> <link href="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.reading:Chortle_CH33" rel="up" title="Encapsulation" /> <link href="styles/styles.css" rel="stylesheet" /> <link href="styles/content.css" rel="stylesheet" /> </head> <body id="NTIContent"> <div class="page-contents"><div data-ntiid="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.private_methods" id="a0000000536" ntiid="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.private_methods"> <div class="chapter title">Private Methods</div> <p class="placeholder"></p> <a name="ec8454930176ebfa533e6f93f40b4e4a"></a> <div class="sidebar" data-ntiid="tag:nextthought.com,2011-10:OU-HTML:NTISidebar-CS1323_F_2015_Intro_to_Computer_Programming.sidebar.answer.207" ntiid="tag:nextthought.com,2011-10:OU-HTML:NTISidebar-CS1323_F_2015_Intro_to_Computer_Programming.sidebar.answer.207"> <div class="sidebar-title">Answer</div> Yes. The idea of encapsulation is to hide the details of an object from other sections of the software. Some of the details might be methods. </div><a name="695ecb36b3b7c6f232bc90e2dbb8f0d0"></a> <p class="par" id="695ecb36b3b7c6f232bc90e2dbb8f0d0">A <b class="bfseries">private method</b> of an object can be used only by the other methods of the object. Parts of a program outside of the object cannot directly use a private method of the object. </p> <a name="dc3bc3a540db548bfe02112d93998707"></a> <p class="par" id="dc3bc3a540db548bfe02112d93998707">Say that the bank wants to keep track of how many times each the balance of checking account has been altered. (This might be done as a security measure.) To do this, a <b class="bfseries">use count</b> is added to the data of the <b class="bfseries"><tt class="ttfamily">CheckingAccount</tt></b> class. </p> <a name="83fd488e69bd2448f394037e6031e1ca"></a> <pre>class CheckingAccount
+{
+  // data-declarations
+  private String accountNumber;
+  private String accountHolder;
+  private int    balance;
+  private int    useCount = 0;
+
+  private void incrementUse()
+  {
+     ___________________
+  }
+
+  void  processDeposit( int amount )
+  {
+    incrementUse();
+    balance = balance + amount ; 
+  }
+
+  void processCheck( int amount )
+  {
+    int charge;
+    incrementUse();
+    if ( balance &lt; 100000 )
+      charge = 15; 
+    else
+      charge = 0;
+
+    balance =  balance - amount - charge  ;
+  }
+  
+  // other methods
+  . . .
+}
+</pre><a name="fb11c74675e653ceb35523a0c6eb906c"></a> <p class="par" id="fb11c74675e653ceb35523a0c6eb906c">The <b class="bfseries"><tt class="ttfamily">processDeposit()</tt></b> and <b class="bfseries"><tt class="ttfamily">processCheck()</tt></b> methods call <b class="bfseries"><tt class="ttfamily">incrementUse()</tt></b> to increment the use count each time they are used. We want the use count to change for these two reasons only, so the <b class="bfseries"><tt class="ttfamily">incrementUse()</tt></b> method and the variable <b class="bfseries"><tt class="ttfamily">useCount</tt></b> are made <b class="bfseries"><tt class="ttfamily">private</tt></b>. </p> <a name="10a3a6cc6276e625c7f8935a4e1baffa"></a> <div class="sidebar" data-ntiid="tag:nextthought.com,2011-10:OU-HTML:NTISidebar-CS1323_F_2015_Intro_to_Computer_Programming.sidebar.question.219" ntiid="tag:nextthought.com,2011-10:OU-HTML:NTISidebar-CS1323_F_2015_Intro_to_Computer_Programming.sidebar.question.219"> <div class="sidebar-title">Question</div> Fill in the blank so that the new private method increments the use count. </div> </div></div> </body></html>

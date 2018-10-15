@@ -1,0 +1,22 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html lang="en"><head> <meta content="2015-12-11T16:56:47" http-equiv="last-modified" /> <meta content="923" name="NTIRelativeScrollHeight" /> <meta content="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.method_using_a_double_parameter" name="NTIID" /> <meta content="NextThought" name="generator" /> <meta content="text/html; charset=ascii" http-equiv="content-type" /> <title>Method using a double Parameter</title> <link href="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.examples_with_floating_point_types" rel="next" title="Examples with Floating Point Types" /> <link href="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.example_method_calls" rel="prev" title="Example Method Calls" /> <link href="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.reading:Chortle_CH28_2" rel="up" title="Parameters Must be the Correct Type" /> <link href="styles/styles.css" rel="stylesheet" /> <link href="styles/content.css" rel="stylesheet" /> </head> <body id="NTIContent"> <div class="page-contents"><div data-ntiid="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.method_using_a_double_parameter" id="a0000000477" ntiid="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.method_using_a_double_parameter"> <div class="chapter title">Method using a <b class="bfseries"><tt class="ttfamily">double</tt></b> Parameter</div> <p class="placeholder"></p> <a name="733811fae8e4f2b3fb31671a28c9ece4"></a> <div class="sidebar" data-ntiid="tag:nextthought.com,2011-10:OU-HTML:NTISidebar-CS1323_F_2015_Intro_to_Computer_Programming.sidebar.answer.155" ntiid="tag:nextthought.com,2011-10:OU-HTML:NTISidebar-CS1323_F_2015_Intro_to_Computer_Programming.sidebar.answer.155"> <div class="sidebar-title">Answer</div> <pre>Point  A = new Point();
+
+short  a = 93,    b = 92;
+int    i = 12,    j = 13;
+long   x =  0,    y = 44;
+double u = 13.45, v = 99.2;
+
+A.move( i, b );   // OK --- b can be converted to int without loss 
+A.move( a, x );   // NOT OK --- converting x to int may lose magnitude and precision 
+A.move( u, b );   // NOT OK --- converting u to int may lose magnitude and precision 
+</pre> </div><a name="10d42a245bc6eef4bd523c02985ae1f9"></a> <p class="par" id="10d42a245bc6eef4bd523c02985ae1f9">The <b class="bfseries"><tt class="ttfamily">cos()</tt></b> method is a static method of the Math class. (Remember that a static method is a method that belongs to the definition of the class; you do not need an object to use it.) Here is how the method looks in the documentation for the Math class: </p> <a name="d268f8a2d524909d94a645d51bc0288d"></a> <pre>public static double cos( double num )
+</pre><a name="abd0a09cd5eab02858a00efdeb15f9ee"></a> <p class="par" id="abd0a09cd5eab02858a00efdeb15f9ee">The method requires a parameter of type <b class="bfseries"><tt class="ttfamily">double</tt></b>. It evaluates to (returns) a <b class="bfseries"><tt class="ttfamily">double</tt></b>, the cosine of the parameter. The parameter is in radians (not degrees.) Here is it being used in a program: </p> <a name="84f53ed673be4a83f892f181d1a7f973"></a> <pre>class CosEg
+{
+
+  public static void main ( String arg[] )
+  {
+    double x = 0.0;
+ 
+    System.out.println( "cos is:" + Math.cos( x ) );
+  }
+}
+</pre><a name="7a139a24b7cf3d8e9648abb8293683e8"></a> <div class="sidebar" data-ntiid="tag:nextthought.com,2011-10:OU-HTML:NTISidebar-CS1323_F_2015_Intro_to_Computer_Programming.sidebar.question.163" ntiid="tag:nextthought.com,2011-10:OU-HTML:NTISidebar-CS1323_F_2015_Intro_to_Computer_Programming.sidebar.question.163"> <div class="sidebar-title">Question</div> Is the parameter in the method call the correct type? </div> </div></div> </body></html>

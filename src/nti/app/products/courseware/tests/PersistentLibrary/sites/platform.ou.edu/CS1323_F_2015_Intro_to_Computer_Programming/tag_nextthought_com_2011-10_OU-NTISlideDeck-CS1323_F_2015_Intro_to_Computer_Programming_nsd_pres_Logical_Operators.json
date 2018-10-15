@@ -1,0 +1,202 @@
+{
+  "MimeType": "application/vnd.nextthought.ntislidedeck",
+  "Videos": [
+    {
+      "MimeType": "application/vnd.nextthought.ntislidevideo",
+      "video-ntiid": "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_03.02.03_Logical_Operators",
+      "title": "GUI Utilities With Ranges",
+      "creator": "Deborah Trytten",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Logical_Operators",
+      "thumbnail": "//www.kaltura.com/p/1500101/thumbnail/entry_id/0_d4ytcpqw/width/640/",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Logical_Operators_video",
+      "class": "ntislidevideo"
+    }
+  ],
+  "creator": "Deborah Trytten",
+  "title": "Logical Operators",
+  "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Logical_Operators",
+  "Slides": [
+    {
+      "MimeType": "application/vnd.nextthought.slide",
+      "slidevideoid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Logical_Operators_video",
+      "slidetitle": "Improving our GUI Utilities",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Logical_Operators",
+      "slidevideostart": "0.0",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlide-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Logical_Operators_slide_1",
+      "slideimage": "resources/CS1323_F_2015_Intro_to_Computer_Programming/2fa670e16ff271831d5f3615ab53b56b910a8fdb/fd35e23767020999111e1f49239199b4c5eff23e.png",
+      "slidevideoend": "5.0",
+      "slidenumber": "1",
+      "class": "slide"
+    },
+    {
+      "MimeType": "application/vnd.nextthought.slide",
+      "slidevideoid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Logical_Operators_video",
+      "slidetitle": "Problem Statement",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Logical_Operators",
+      "slidevideostart": "5.0",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlide-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Logical_Operators_slide_2",
+      "slideimage": "resources/CS1323_F_2015_Intro_to_Computer_Programming/e7bfaabb39aa6276e62c5c86b1307479473d4f08/fd35e23767020999111e1f49239199b4c5eff23e.png",
+      "slidevideoend": "18.0",
+      "slidenumber": "2",
+      "class": "slide"
+    },
+    {
+      "MimeType": "application/vnd.nextthought.slide",
+      "slidevideoid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Logical_Operators_video",
+      "slidetitle": "Design Methods",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Logical_Operators",
+      "slidevideostart": "18.0",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlide-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Logical_Operators_slide_3",
+      "slideimage": "resources/CS1323_F_2015_Intro_to_Computer_Programming/ef17c46de773cbd76a7a8a42cbd0fc994a5d72a7/fd35e23767020999111e1f49239199b4c5eff23e.png",
+      "slidevideoend": "39.0",
+      "slidenumber": "3",
+      "class": "slide"
+    },
+    {
+      "MimeType": "application/vnd.nextthought.slide",
+      "slidevideoid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Logical_Operators_video",
+      "slidetitle": "Method Overloading",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Logical_Operators",
+      "slidevideostart": "39.0",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlide-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Logical_Operators_slide_4",
+      "slideimage": "resources/CS1323_F_2015_Intro_to_Computer_Programming/55323c5028052d0048236b79c1858be8f25ab240/fd35e23767020999111e1f49239199b4c5eff23e.png",
+      "slidevideoend": "96.0",
+      "slidenumber": "4",
+      "class": "slide"
+    },
+    {
+      "MimeType": "application/vnd.nextthought.slide",
+      "slidevideoid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Logical_Operators_video",
+      "slidetitle": "Change The Method Name",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Logical_Operators",
+      "slidevideostart": "96.0",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlide-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Logical_Operators_slide_5",
+      "slideimage": "resources/CS1323_F_2015_Intro_to_Computer_Programming/0f51531c36fd715ebfc340705ebf9a30f6b3d9b7/fd35e23767020999111e1f49239199b4c5eff23e.png",
+      "slidevideoend": "274.0",
+      "slidenumber": "5",
+      "class": "slide"
+    },
+    {
+      "MimeType": "application/vnd.nextthought.slide",
+      "slidevideoid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Logical_Operators_video",
+      "slidetitle": "Choose Design",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Logical_Operators",
+      "slidevideostart": "274.0",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlide-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Logical_Operators_slide_6",
+      "slideimage": "resources/CS1323_F_2015_Intro_to_Computer_Programming/81cf3140cae36887642955d523d08f4674405d34/fd35e23767020999111e1f49239199b4c5eff23e.png",
+      "slidevideoend": "433.0",
+      "slidenumber": "6",
+      "class": "slide"
+    },
+    {
+      "MimeType": "application/vnd.nextthought.slide",
+      "slidevideoid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Logical_Operators_video",
+      "slidetitle": "Write Test Data",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Logical_Operators",
+      "slidevideostart": "433.0",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlide-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Logical_Operators_slide_7",
+      "slideimage": "resources/CS1323_F_2015_Intro_to_Computer_Programming/7af4d09c2a726647e5e873afcc4dc315311e835b/fd35e23767020999111e1f49239199b4c5eff23e.png",
+      "slidevideoend": "478.0",
+      "slidenumber": "7",
+      "class": "slide"
+    },
+    {
+      "MimeType": "application/vnd.nextthought.slide",
+      "slidevideoid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Logical_Operators_video",
+      "slidetitle": "Implement Design",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Logical_Operators",
+      "slidevideostart": "478.0",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlide-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Logical_Operators_slide_8",
+      "slideimage": "resources/CS1323_F_2015_Intro_to_Computer_Programming/3888fac0f4674b3d9088afd08ae4567b9cdbbe3d/fd35e23767020999111e1f49239199b4c5eff23e.png",
+      "slidevideoend": "732.0",
+      "slidenumber": "8",
+      "class": "slide"
+    },
+    {
+      "MimeType": "application/vnd.nextthought.slide",
+      "slidevideoid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Logical_Operators_video",
+      "slidetitle": "Consider loop",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Logical_Operators",
+      "slidevideostart": "732.0",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlide-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Logical_Operators_slide_9",
+      "slideimage": "resources/CS1323_F_2015_Intro_to_Computer_Programming/73350a102679d7b332861a81e803a5d926899098/fd35e23767020999111e1f49239199b4c5eff23e.png",
+      "slidevideoend": "820.0",
+      "slidenumber": "9",
+      "class": "slide"
+    },
+    {
+      "MimeType": "application/vnd.nextthought.slide",
+      "slidevideoid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Logical_Operators_video",
+      "slidetitle": "Rationale",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Logical_Operators",
+      "slidevideostart": "820.0",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlide-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Logical_Operators_slide_10",
+      "slideimage": "resources/CS1323_F_2015_Intro_to_Computer_Programming/c1ced831218d5e7df9e67a0840b85a40c8058642/fd35e23767020999111e1f49239199b4c5eff23e.png",
+      "slidevideoend": "938.0",
+      "slidenumber": "10",
+      "class": "slide"
+    },
+    {
+      "MimeType": "application/vnd.nextthought.slide",
+      "slidevideoid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Logical_Operators_video",
+      "slidetitle": "DeMorgan\u2019s Laws",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Logical_Operators",
+      "slidevideostart": "938.0",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlide-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Logical_Operators_slide_11",
+      "slideimage": "resources/CS1323_F_2015_Intro_to_Computer_Programming/878760aa47634ebc6d247f67fa9da2f3613be8ab/fd35e23767020999111e1f49239199b4c5eff23e.png",
+      "slidevideoend": "1029.0",
+      "slidenumber": "11",
+      "class": "slide"
+    },
+    {
+      "MimeType": "application/vnd.nextthought.slide",
+      "slidevideoid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Logical_Operators_video",
+      "slidetitle": "Using DeMorgan\u2019s Laws",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Logical_Operators",
+      "slidevideostart": "1029.0",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlide-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Logical_Operators_slide_12",
+      "slideimage": "resources/CS1323_F_2015_Intro_to_Computer_Programming/c89173fc51acd384340e1be931562c7c33a2619e/fd35e23767020999111e1f49239199b4c5eff23e.png",
+      "slidevideoend": "1473.0",
+      "slidenumber": "12",
+      "class": "slide"
+    },
+    {
+      "MimeType": "application/vnd.nextthought.slide",
+      "slidevideoid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Logical_Operators_video",
+      "slidetitle": "Other Methods",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Logical_Operators",
+      "slidevideostart": "1473.0",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlide-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Logical_Operators_slide_13",
+      "slideimage": "resources/CS1323_F_2015_Intro_to_Computer_Programming/1843a474340a3bf8e0890398f21087fde8af6cf1/fd35e23767020999111e1f49239199b4c5eff23e.png",
+      "slidevideoend": "1793.0",
+      "slidenumber": "13",
+      "class": "slide"
+    },
+    {
+      "MimeType": "application/vnd.nextthought.slide",
+      "slidevideoid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Logical_Operators_video",
+      "slidetitle": "Write a Test Harness",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Logical_Operators",
+      "slidevideostart": "1793.0",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlide-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Logical_Operators_slide_14",
+      "slideimage": "resources/CS1323_F_2015_Intro_to_Computer_Programming/3bcfd6af54f9af2a7cfe98c47a987db43c707aca/fd35e23767020999111e1f49239199b4c5eff23e.png",
+      "slidevideoend": "2946.0",
+      "slidenumber": "14",
+      "class": "slide"
+    },
+    {
+      "MimeType": "application/vnd.nextthought.slide",
+      "slidevideoid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Logical_Operators_video",
+      "slidetitle": "Keep Programming!",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Logical_Operators",
+      "slidevideostart": "2946.0",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlide-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Logical_Operators_slide_15",
+      "slideimage": "resources/CS1323_F_2015_Intro_to_Computer_Programming/1df6dcc4305c6dc95b7e0d6d6a6e6c76aaf95042/fd35e23767020999111e1f49239199b4c5eff23e.png",
+      "slidevideoend": "2952.0",
+      "slidenumber": "15",
+      "class": "slide"
+    }
+  ],
+  "ntiid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Logical_Operators",
+  "class": "ntislidedeck"
+}

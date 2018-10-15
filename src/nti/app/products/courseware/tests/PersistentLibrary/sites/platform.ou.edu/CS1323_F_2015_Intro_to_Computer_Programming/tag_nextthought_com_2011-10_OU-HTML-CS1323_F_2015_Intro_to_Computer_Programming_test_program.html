@@ -1,0 +1,40 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html lang="en"><head> <meta content="2015-12-11T16:56:47" http-equiv="last-modified" /> <meta content="1108" name="NTIRelativeScrollHeight" /> <meta content="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.test_program" name="NTIID" /> <meta content="NextThought" name="generator" /> <meta content="text/html; charset=ascii" http-equiv="content-type" /> <title>Test Program</title> <link href="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.what_members_of_an_object_can_be_seen_" rel="next" title="What Members of an Object can be Seen?" /> <link href="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.completing_the_constructor" rel="prev" title="Completing the Constructor" /> <link href="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.reading:Chortle_CH32" rel="up" title="Class Design Example" /> <link href="styles/styles.css" rel="stylesheet" /> <link href="styles/content.css" rel="stylesheet" /> </head> <body id="NTIContent"> <div class="page-contents"><div data-ntiid="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.test_program" id="a0000000513" ntiid="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.test_program"> <div class="chapter title">Test Program</div> <p class="placeholder"></p> <a name="be05fbe5e450a08d0ebecfb75a12c0c1"></a> <div class="sidebar" data-ntiid="tag:nextthought.com,2011-10:OU-HTML:NTISidebar-CS1323_F_2015_Intro_to_Computer_Programming.sidebar.answer.186" ntiid="tag:nextthought.com,2011-10:OU-HTML:NTISidebar-CS1323_F_2015_Intro_to_Computer_Programming.sidebar.answer.186"> <div class="sidebar-title">Answer</div> <pre>  //constructors
+  CheckingAccount( String accNumber, String holder, int start )
+  {
+    accountNumber = accNumber ;
+    accountHolder = holder ;
+    balance       = start ;
+  }
+</pre> </div><a name="3ff1aecb8214a1afab2783ac6c1e5375"></a> <p class="par" id="3ff1aecb8214a1afab2783ac6c1e5375">We have enough code to put together a test program. The test program will not do much, but it will compile and run. </p> <a name="c8e39779c6bbaf336bb7aa165b263e98"></a> <pre>class CheckingAccount
+{
+  // instance variables
+  String accountNumber;
+  String accountHolder;
+  int    balance;
+
+  //constructors
+  CheckingAccount( String accNumber, String holder, int start )
+  {
+    accountNumber = accNumber ;
+    accountHolder = holder ;
+    balance       = start ;
+  }
+
+  // methods
+}
+
+class CheckingAccountTester
+{
+  public static void main( String[] args )
+  {
+    CheckingAccount account1 
+            = new CheckingAccount( "123", "Bob", 100 );
+
+    System.out.println( account1.accountNumber + " " +
+        account1.accountHolder + " " + account1.balance );
+  }
+}
+</pre><a name="6cda300c3121541f5825ad3c8045d09a"></a> <p class="par" id="6cda300c3121541f5825ad3c8045d09a">This program can be copied to a file, compiled, and run in the usual way. The output will be: </p> <a name="b6d3333c08f6ea92681debc30e88ef93"></a> <pre>C:\chap32&gt;java CheckingAccountTester
+
+123 Bob 100
+</pre><a name="013ff9838f4dd776e18fc7ed3fe05bb5"></a> <div class="sidebar" data-ntiid="tag:nextthought.com,2011-10:OU-HTML:NTISidebar-CS1323_F_2015_Intro_to_Computer_Programming.sidebar.question.196" ntiid="tag:nextthought.com,2011-10:OU-HTML:NTISidebar-CS1323_F_2015_Intro_to_Computer_Programming.sidebar.question.196"> <div class="sidebar-title">Question</div> What does the expression <b class="bfseries"><tt class="ttfamily">account1.accountNumber</tt></b> mean? (Look in the <b class="bfseries"><tt class="ttfamily">println</tt></b> statement to see where this expression was used.) </div> </div></div> </body></html>

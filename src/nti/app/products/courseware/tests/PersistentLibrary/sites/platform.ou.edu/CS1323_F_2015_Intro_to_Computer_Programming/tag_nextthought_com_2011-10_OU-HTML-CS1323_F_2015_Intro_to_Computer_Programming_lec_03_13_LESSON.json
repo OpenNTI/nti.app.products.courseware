@@ -1,0 +1,115 @@
+{
+    "MimeType": "application/vnd.nextthought.ntilessonoverview",
+    "Items": [
+        {
+            "MimeType": "application/vnd.nextthought.nticourseoverviewgroup",
+            "NTIID": "tag:nextthought.com,2011-10:OU-NTICourseOverviewGroup-CS1323_F_2015_Intro_to_Computer_Programming.lec:03.13_LESSON.0",
+            "Items": [
+                {
+                    "MimeType": "application/vnd.nextthought.ntivideo",
+                    "NTIID": "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_03.02.05_Best_Friend",
+                    "visibility": "everyone",
+                    "poster": "//www.kaltura.com/p/1500101/thumbnail/entry_id/0_pjufjnul/width/1280/",
+                    "label": "Who\u2019s Your Best Friend?"
+                },
+                {
+                    "MimeType": "application/vnd.nextthought.ntivideo",
+                    "NTIID": "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_03.02.05_Words_With_Acquaintances",
+                    "visibility": "everyone",
+                    "poster": "//www.kaltura.com/p/1500101/thumbnail/entry_id/1_pyt21c1t/width/1280/",
+                    "label": "Words With Acquaintances Cheat"
+                }
+            ],
+            "accentColor": "81c8dc",
+            "title": "Videos"
+        },
+        {
+            "MimeType": "application/vnd.nextthought.nticourseoverviewgroup",
+            "NTIID": "tag:nextthought.com,2011-10:OU-NTICourseOverviewGroup-CS1323_F_2015_Intro_to_Computer_Programming.lec:03.13_LESSON.1",
+            "Items": [
+                {
+                    "MimeType": "application/vnd.nextthought.relatedworkref",
+                    "targetMimeType": "application/vnd.nextthought.externallink",
+                    "creator": "Deborah Trytten",
+                    "section": "required",
+                    "visibility": "everyone",
+                    "label": "Midterm 2",
+                    "NTIID": "tag:nextthought.com,2011-10:OU-RelatedWorkRef-CS1323_F_2015_Intro_to_Computer_Programming.relatedworkref.relwk:midterm_2",
+                    "href": "resources/Midterm_2.docx",
+                    "target-NTIID": "tag:nextthought.com,2011-10:NTI-UUID-1a0897f16a2526c75f07685ef7b0b54e",
+                    "icon": "resources/CS1323_F_2015_Intro_to_Computer_Programming/583b61b2202851bd80245dfddda3c5d88cadb0a1/fd35e23767020999111e1f49239199b4c5eff23e.png",
+                    "desc": "CS 1323 Fall 2015 Midterm 2"
+                },
+                {
+                    "MimeType": "application/vnd.nextthought.relatedworkref",
+                    "targetMimeType": "application/vnd.nextthought.externallink",
+                    "creator": "Deborah Trytten",
+                    "section": "required",
+                    "visibility": "everyone",
+                    "label": "Midterm 2 Solution",
+                    "NTIID": "tag:nextthought.com,2011-10:OU-RelatedWorkRef-CS1323_F_2015_Intro_to_Computer_Programming.relatedworkref.relwk:solution_midterm_2",
+                    "href": "resources/Solution_Midterm_2.docx",
+                    "target-NTIID": "tag:nextthought.com,2011-10:NTI-UUID-a87e1bf8af259808f0929d42daacd5eb",
+                    "icon": "resources/CS1323_F_2015_Intro_to_Computer_Programming/583b61b2202851bd80245dfddda3c5d88cadb0a1/fd35e23767020999111e1f49239199b4c5eff23e.png",
+                    "desc": "CS 1323 Fall 2015 solution to Midterm 2"
+                },
+                {
+                    "MimeType": "application/vnd.nextthought.relatedworkref",
+                    "targetMimeType": "application/vnd.nextthought.externallink",
+                    "creator": "Deborah Trytten",
+                    "section": "required",
+                    "visibility": "everyone",
+                    "label": "Sample Midterms",
+                    "NTIID": "tag:nextthought.com,2011-10:OU-RelatedWorkRef-CS1323_F_2015_Intro_to_Computer_Programming.relatedworkref.relwk:03.02.05_midterm_2_samples",
+                    "href": "resources/Sample_Midterm_2.zip",
+                    "target-NTIID": "tag:nextthought.com,2011-10:NTI-UUID-7fa2620101b1b87a78cc3cbd39a05900",
+                    "icon": "resources/CS1323_F_2015_Intro_to_Computer_Programming/b9c4a1a1dc3d30c895df3b30c553fa40f972a2f5/fd35e23767020999111e1f49239199b4c5eff23e.png",
+                    "desc": "Several examples of examinations that test the topics covered in the second quarter of the course."
+                },
+                {
+                    "MimeType": "application/vnd.nextthought.relatedworkref",
+                    "targetMimeType": "application/vnd.nextthought.externallink",
+                    "creator": "Deborah Trytten",
+                    "section": "required",
+                    "visibility": "everyone",
+                    "label": "Sample Midterm Solutions",
+                    "NTIID": "tag:nextthought.com,2011-10:OU-RelatedWorkRef-CS1323_F_2015_Intro_to_Computer_Programming.relatedworkref.relwk:03.02.05_midterm_2_solutions",
+                    "href": "resources/Sample_Midterm_2_Solutions.zip",
+                    "target-NTIID": "tag:nextthought.com,2011-10:NTI-UUID-732c22444005a1de0687515ea8b42612",
+                    "icon": "resources/CS1323_F_2015_Intro_to_Computer_Programming/b9c4a1a1dc3d30c895df3b30c553fa40f972a2f5/fd35e23767020999111e1f49239199b4c5eff23e.png",
+                    "desc": "Several example documents of Midterm solutions."
+                },
+                {
+                    "MimeType": "application/vnd.nextthought.relatedworkref",
+                    "targetMimeType": "application/vnd.nextthought.externallink",
+                    "creator": "Deborah Trytten",
+                    "section": "additional",
+                    "visibility": "everyone",
+                    "label": "Class Paper",
+                    "NTIID": "tag:nextthought.com,2011-10:OU-RelatedWorkRef-CS1323_F_2015_Intro_to_Computer_Programming.relatedworkref.relwk:paper_midterm_2",
+                    "href": "resources/Paper_Java_Platform_SE7.pdf",
+                    "target-NTIID": "tag:nextthought.com,2011-10:NTI-UUID-93b9bef67c58c604df6fe685a28756aa",
+                    "icon": "resources/CS1323_F_2015_Intro_to_Computer_Programming/9589546a9590252b173b0f940b26cc1a95c83246/fd35e23767020999111e1f49239199b4c5eff23e.png",
+                    "desc": "Class Paper for the midterm."
+                },
+                {
+                    "MimeType": "application/vnd.nextthought.relatedworkref",
+                    "targetMimeType": "application/vnd.nextthought.externallink",
+                    "creator": "Deborah Trytten",
+                    "section": "additional",
+                    "visibility": "everyone",
+                    "label": "Class TabStop",
+                    "NTIID": "tag:nextthought.com,2011-10:OU-RelatedWorkRef-CS1323_F_2015_Intro_to_Computer_Programming.relatedworkref.relwk:tabstop_midterm_2",
+                    "href": "resources/TabStop_Java_Platform_SE7.pdf",
+                    "target-NTIID": "tag:nextthought.com,2011-10:NTI-UUID-8ba89a87c9352b6c9a567367ab4db062",
+                    "icon": "resources/CS1323_F_2015_Intro_to_Computer_Programming/9589546a9590252b173b0f940b26cc1a95c83246/fd35e23767020999111e1f49239199b4c5eff23e.png",
+                    "desc": "Class TabStop for the midterm."
+                }
+            ],
+            "accentColor": "ce78e0",
+            "title": "Additional Resources"
+        }
+    ],
+    "title": "Review for Second Midterm",
+    "NTIID": "tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.lec:03.13_LESSON"
+}

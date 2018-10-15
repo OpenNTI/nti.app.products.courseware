@@ -1,0 +1,269 @@
+WEBVTT
+Kind: captions
+Language: en
+
+00:00:00.810 --> 00:00:05.379
+Now we'll talk about building and designing
+programs. This is a complicated topic that
+
+00:00:05.379 --> 00:00:10.340
+we'll revisit many times. The general idea
+is that we need to find a way to strategically
+
+00:00:10.340 --> 00:00:15.090
+develop programs. As an analogy, we don't
+write an English essay by sitting down and
+
+00:00:15.090 --> 00:00:19.640
+just typing. Or at least, you shouldn't. You
+need to organize your thoughts first. Write
+
+00:00:19.640 --> 00:00:24.599
+an outline, develop topic sentences in your
+main arguments, and then smooth it out. We
+
+00:00:24.599 --> 00:00:28.810
+need to do something similar in programming.
+The strategy we're going to use is called
+
+00:00:28.810 --> 00:00:33.790
+test-driven development. Before you write
+the program, what you do is decide exactly
+
+00:00:33.790 --> 00:00:39.250
+what you want the program to do. You create
+specific test data that covers all the cases,
+
+00:00:39.250 --> 00:00:43.910
+or at least as many as is practical. Spreadsheets
+can be great for this.
+
+00:00:43.910 --> 00:00:48.600
+Let's take an example. We'll write a program
+that reads in the number of Facebook status
+
+00:00:48.600 --> 00:00:53.110
+updates you make each day for seven days,
+and then projects how many you'd make in a
+
+00:00:53.110 --> 00:00:58.490
+year. The first thing we do is develop the
+test data. So let's look for some easy cases
+
+00:00:58.490 --> 00:01:04.040
+first. We call these boundary cases in programming.
+For example, if there are no status updates
+
+00:01:04.040 --> 00:01:09.859
+made in seven days, you'd expect no status
+updates made in a year. That's an easy case.
+
+00:01:09.859 --> 00:01:14.350
+It's also easy to look at what happens if
+you make one status update each day. Then
+
+00:01:14.350 --> 00:01:20.259
+you'd expect 365 in a year. Let's look for
+some more interesting data though. Suppose
+
+00:01:20.259 --> 00:01:25.579
+you made one the first day, two the second
+day, three the third day, and so on. The average
+
+00:01:25.579 --> 00:01:32.579
+of those numbers is four, and so you'd make
+4 times 365, or 1460 status updates in a year.
+
+00:01:34.229 --> 00:01:38.549
+Let's think about some harder cases now. What
+if the average doesn't work out nicely to
+
+00:01:38.549 --> 00:01:44.560
+an integer? You might make one status update
+the first three days and two the last four.
+
+00:01:44.560 --> 00:01:51.560
+The average of those numbers is 1.57. So if
+we take 1.57 and multiply by 365, we'll get
+
+00:01:52.259 --> 00:01:59.259
+573.5714. But should we show a decimal? It
+doesn't really make sense because you can't
+
+00:02:00.149 --> 00:02:05.029
+post half a status update. Could we round?
+Well, we don't know how to do that yet, so
+
+00:02:05.029 --> 00:02:10.090
+that's not a possibility. We do know how to
+truncate, so let's do that. We now have a
+
+00:02:10.090 --> 00:02:14.970
+test table of data. You may be starting to
+see some of the advantages. For example, we've
+
+00:02:14.970 --> 00:02:18.769
+thought about one of the problems we're going
+to run into when writing the code. That's
+
+00:02:18.769 --> 00:02:23.459
+one of the points of test-driven development.
+We could add more test cases, and we really
+
+00:02:23.459 --> 00:02:26.610
+should, but this is enough to get us started.
+
+00:02:26.610 --> 00:02:31.579
+Now it's time to design our program. We usually
+design small programs by writing comments
+
+00:02:31.579 --> 00:02:36.900
+that describe what the code will do. Here
+are some comments that I would think of. First
+
+00:02:36.900 --> 00:02:42.299
+you would read in seven values from the user,
+keeping a running sum of the number of status
+
+00:02:42.299 --> 00:02:47.640
+updates. Then calculate the average number
+of updates per day. Then calculate the number
+
+00:02:47.640 --> 00:02:51.970
+of updates per year, and show the user the
+result.
+
+00:02:51.970 --> 00:02:57.890
+Now let's finish the program. Now it's time
+to actually write the code. Do it slowly.
+
+00:02:57.890 --> 00:03:03.040
+Check that it compiles and runs as often as
+possible, even if it doesn't do anything yet.
+
+00:03:03.040 --> 00:03:08.090
+Usually, you're going to have some syntax
+errors. Then the code won't compile. You see
+
+00:03:08.090 --> 00:03:13.120
+this in the clips by words that are underlined
+with little red squigglies. The first thing
+
+00:03:13.120 --> 00:03:18.959
+to do is read your code carefully. Look for
+mistakes in spelling, punctuation, capitalization,
+
+00:03:18.959 --> 00:03:23.409
+forgetting asterisks for multiplication, and
+substituting curly braces, parentheses, and
+
+00:03:23.409 --> 00:03:28.920
+square brackets. You may need to compare to
+programs that do run to see the differences.
+
+00:03:28.920 --> 00:03:32.810
+You may even have to get help from somebody
+else at first. But don't worry. Eventually
+
+00:03:32.810 --> 00:03:33.890
+this gets easy.
+
+00:03:33.890 --> 00:03:38.530
+Once your code compiles, you need to test
+it. You test it using the data that you've
+
+00:03:38.530 --> 00:03:42.900
+already developed. When your test data doesn't
+match what your program puts out, it's time
+
+00:03:42.900 --> 00:03:47.739
+to debug your program. The word "debugging"
+has an interesting story behind it. It was
+
+00:03:47.739 --> 00:03:52.609
+coined by Admiral Grace Hopper when she found
+a moth that was stuck in the computer was
+
+00:03:52.609 --> 00:03:57.849
+ruining her program, and we've called it debugging
+ever since. You can read more about this amazing
+
+00:03:57.849 --> 00:04:00.689
+woman, and I encourage you to do so.
+
+00:04:00.689 --> 00:04:05.629
+So let's talk about some debugging strategies.
+First, read your code carefully. Think about
+
+00:04:05.629 --> 00:04:11.049
+the nuances of Java. Some common problems
+you want to consider are repeating loops one
+
+00:04:11.049 --> 00:04:16.329
+too many time or one too few times. This has
+a special name too. That's called an off-by-one
+
+00:04:16.329 --> 00:04:21.090
+bug. The likely mistake in this program would
+be having the while loop repeat six or eight
+
+00:04:21.090 --> 00:04:26.650
+times instead of seven. It's also easy to
+make mistakes with integer and floating-point
+
+00:04:26.650 --> 00:04:30.639
+operations. A likely mistake in this program
+would be forgetting that integer division
+
+00:04:30.639 --> 00:04:36.590
+truncates the result. So, for example, suppose
+you have an int called totalUpdates and a
+
+00:04:36.590 --> 00:04:42.960
+double called averageUpdatesPerDay. You could
+write averageUpdatesPerDay equals totalUpdates
+
+00:04:42.960 --> 00:04:48.060
+divided by seven. This would be incorrect
+because totalUpdates is an integer and seven
+
+00:04:48.060 --> 00:04:52.660
+is an integer. So the division is going to
+truncate. You do have to remember that the
+
+00:04:52.660 --> 00:04:58.919
+test data can be wrong too. But the code is
+usually the problem, so consider that first.
+
+00:04:58.919 --> 00:05:02.490
+Sometimes you're going to need help with debugging
+because it is complicated to learn how to
+
+00:05:02.490 --> 00:05:08.080
+do. The most important strategy is to start
+early. Even great programmers sometimes need
+
+00:05:08.080 --> 00:05:14.150
+help with tricky bugs. For example, I once
+spent six weeks looking for a bug in my program.
+
+00:05:14.150 --> 00:05:19.210
+I had replaced an 'm' with an 'n'. It was
+a pretty painful six weeks. Create your test
+
+00:05:19.210 --> 00:05:23.460
+data first. Design your program by writing
+comments to describe what the code should
+
+00:05:23.460 --> 00:05:29.310
+do. Write the code a few lines at the time.
+Make sure it compiles as you go along. Run
+
+00:05:29.310 --> 00:05:34.870
+your program as soon as possible and as often
+as possible, and check your test data carefully.
+
+00:05:34.870 --> 00:05:37.259
+That should get you started on writing programs
+properly.
+

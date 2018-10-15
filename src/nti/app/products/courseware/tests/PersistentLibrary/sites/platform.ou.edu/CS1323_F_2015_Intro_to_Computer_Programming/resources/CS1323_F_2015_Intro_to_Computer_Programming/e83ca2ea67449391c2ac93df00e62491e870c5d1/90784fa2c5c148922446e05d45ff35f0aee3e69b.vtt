@@ -1,0 +1,252 @@
+WEBVTT
+Kind: captions
+Language: en
+
+00:00:00.659 --> 00:00:04.529
+So now that you know how to store primitive
+data, it's time to change it. Let's return
+
+00:00:04.529 --> 00:00:09.929
+to our cell phone contract example. You probably
+remember the problem statement, we're comparing
+
+00:00:09.929 --> 00:00:15.019
+the cost of two cell phone plans. We have
+our Super Saver Plan, and we have our Big
+
+00:00:15.019 --> 00:00:20.859
+Talker Plan. If you talk for 1200 minutes
+a month, which plan should you choose? Now
+
+00:00:20.859 --> 00:00:25.670
+the next thing we need to do is to select
+some operations. Choosing a cell phone contract
+
+00:00:25.670 --> 00:00:30.509
+requires mathematical operations, so the first
+thing we need to do is to remember what our
+
+00:00:30.509 --> 00:00:35.710
+variables were called. We chose these in the
+last version of this program. There's int
+
+00:00:35.710 --> 00:00:42.710
+planMinutes; int talkMinutes; int monthlyCostPennies;
+int additionalMinutesPennies; int planName;
+
+00:00:46.280 --> 00:00:51.280
+and what we want to do is assign values to
+the variables for the Super Saver Plan. Now,
+
+00:00:51.280 --> 00:00:54.750
+if you wonder why I'm looking at the Super
+Saver instead of the Big Talker, it doesn't
+
+00:00:54.750 --> 00:00:59.199
+really matter which one I look at, but it
+does matter that we pick one and stick with
+
+00:00:59.199 --> 00:01:03.620
+it. The other thing to notice right now: you
+may have thought that I was a little crazy
+
+00:01:03.620 --> 00:01:08.970
+with the variable names, making them unnecessarily
+long and complicated, but now that you're
+
+00:01:08.970 --> 00:01:13.880
+looking at this a little bit later, isn't
+it nice to have variable names that mean something?
+
+00:01:13.880 --> 00:01:18.030
+That's why we pick the long variable names
+to start with and why you should do the same.
+
+00:01:18.030 --> 00:01:25.030
+So here are the initializations. The plan
+minutes are 500. The talk minutes are 1200.
+
+00:01:25.570 --> 00:01:31.410
+The monthly cost in pennies is 3999. Notice
+there's no decimal point in that, because
+
+00:01:31.410 --> 00:01:36.700
+remember we decide to store it in pennies.
+Our additional minutes in pennies are five,
+
+00:01:36.700 --> 00:01:41.380
+and our plan name is Super Saver. Remember
+double quotes not single quotes, because we
+
+00:01:41.380 --> 00:01:47.330
+have a string. So there are all of our variables
+are now assigned. Now, what we'll do when
+
+00:01:47.330 --> 00:01:52.290
+we put in the Big Talker Plan is just change
+the constants. We won't have to change the
+
+00:01:52.290 --> 00:01:58.030
+variable names at all. We know that the cost
+is the sum of the monthly cost of the plan
+
+00:01:58.030 --> 00:02:03.520
+and the cost of additional minutes. So we're
+going to need to store our result. This means
+
+00:02:03.520 --> 00:02:09.789
+we need another variable, so we'll say int
+totalCostInPennies;. Notice that I'm keeping
+
+00:02:09.789 --> 00:02:14.720
+the name pennies in there because I'm storing
+it as an integer. We need to initialize the
+
+00:02:14.720 --> 00:02:21.720
+cost of the monthly plan, so that is total
+cost in pennies equals monthly cost in pennies.
+
+00:02:22.860 --> 00:02:28.390
+Remember that assignment works from the right
+to the left so when you have the monthly cost
+
+00:02:28.390 --> 00:02:33.920
+in pennies on the right that gets stored in
+the total cost on the left. It's pretty common
+
+00:02:33.920 --> 00:02:38.470
+for new programmers to get confused about
+that. It actually even has a name it's so
+
+00:02:38.470 --> 00:02:43.090
+common, it's called "assignment dyslexia."
+So pay attention to which one is on the right
+
+00:02:43.090 --> 00:02:48.240
+and on the left because it really matters.
+Now let's add in the additional minutes. The
+
+00:02:48.240 --> 00:02:54.150
+number of additional minutes is talk minutes
+minus plan minutes. The cost of these minutes
+
+00:02:54.150 --> 00:02:59.450
+is additional minutes in pennies times talk
+minutes minus plan minutes. Notice that I
+
+00:02:59.450 --> 00:03:04.420
+put parentheses around talk minutes minus
+plan minutes. Those parentheses are necessary
+
+00:03:04.420 --> 00:03:09.380
+because remember that multiplication has higher
+precedence than subtraction, so if we didn't
+
+00:03:09.380 --> 00:03:13.590
+have the parentheses there, the additional
+minutes in pennies would only be multiplying
+
+00:03:13.590 --> 00:03:18.150
+the talk minutes. The subtraction of the plan
+minutes wouldn't have happened correctly,
+
+00:03:18.150 --> 00:03:23.150
+so that would be a problem. Now let's add
+to the plan cost. There are two different
+
+00:03:23.150 --> 00:03:29.770
+ways we can do it. We can say total cost in
+pennies is total cost in pennies plus additional
+
+00:03:29.770 --> 00:03:35.550
+minutes in pennies times talk minutes minus
+plan minutes in parentheses. Or we could say
+
+00:03:35.550 --> 00:03:41.300
+the total cost in pennies is the monthly cost
+in pennies plus additional minutes in pennies
+
+00:03:41.300 --> 00:03:46.340
+times talk minutes minus plan minutes. This
+is pretty typical in programming where there
+
+00:03:46.340 --> 00:03:50.290
+are often lots of different ways that you
+can do things, and neither way is necessarily
+
+00:03:50.290 --> 00:03:55.400
+right or wrong. If I were going to do it myself,
+I'd probably pick the second way because it
+
+00:03:55.400 --> 00:04:01.280
+doesn't depend on total cost in pennies having
+been initialized correctly. So here's some
+
+00:04:01.280 --> 00:04:07.060
+food for thought: first off, why didn't I
+use shorter variable names? Often, my beginning
+
+00:04:07.060 --> 00:04:11.530
+students want to call everything X, Y, and
+Z. They think they're saving a lot of time
+
+00:04:11.530 --> 00:04:16.209
+because it's easy to type X, Y, and Z. But
+the truth is the big time that you spend in
+
+00:04:16.209 --> 00:04:20.970
+programming isn't the typing. It's finding
+mistakes in your program, and it's a lot harder
+
+00:04:20.970 --> 00:04:25.940
+to find mistakes if you don't know what the
+variables mean. Now the other question you
+
+00:04:25.940 --> 00:04:30.630
+might have at this point is, "How did I figure
+out the operations?" The easiest way to do
+
+00:04:30.630 --> 00:04:35.210
+this is to think of how you would do it by
+hand using numbers, and then substitute in
+
+00:04:35.210 --> 00:04:42.169
+the variables. So for example, if you knew
+that this calculation was done 39.99 plus
+
+00:04:42.169 --> 00:04:49.169
+1200 minus 500 times .05, you'd be in great
+shape because you could just look and see
+
+00:04:49.350 --> 00:04:54.440
+what we called those numbers and substitute
+them in. Now, one other thing you might want
+
+00:04:54.440 --> 00:04:59.260
+to think about is: what happens if we only
+talk 400 minutes? Well, if you look at the
+
+00:04:59.260 --> 00:05:06.260
+formula above, you'll see you'd get 3999 plus
+400 minus 500 times .05, and that is a bit
+
+00:05:08.040 --> 00:05:14.680
+of a problem. The problem is that 400 minus
+500 is negative, and what that means is that
+
+00:05:14.680 --> 00:05:18.850
+you're going to get a refund back on those
+additional minutes. Now, I don't know how
+
+00:05:18.850 --> 00:05:23.699
+well you all know cell phone companies, but
+let me assure you that is not how that happens.
+
+00:05:23.699 --> 00:05:28.230
+So we've got a problem, and we actually don't
+have the tools to solve it yet. But the good
+
+00:05:28.230 --> 00:05:31.840
+news is we will in one more section. So be
+patient and we'll get there.
+

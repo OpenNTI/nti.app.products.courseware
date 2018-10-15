@@ -1,0 +1,19 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html lang="en"><head> <meta content="2015-12-11T16:56:47" http-equiv="last-modified" /> <meta content="822" name="NTIRelativeScrollHeight" /> <meta content="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.example_main()" name="NTIID" /> <meta content="NextThought" name="generator" /> <meta content="text/html; charset=ascii" http-equiv="content-type" /> <title>Example main()</title> <link href="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.default_visibility" rel="next" title="Default Visibility" /> <link href="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.complete_class.1" rel="prev" title="Complete Class" /> <link href="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.reading:Chortle_CH33" rel="up" title="Encapsulation" /> <link href="styles/styles.css" rel="stylesheet" /> <link href="styles/content.css" rel="stylesheet" /> </head> <body id="NTIContent"> <div class="page-contents"><div data-ntiid="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.example_main()" id="a0000000542" ntiid="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.example_main()"> <div class="chapter title">Example <b class="bfseries"><tt class="ttfamily">main()</tt></b></div> <p class="placeholder"></p> <a name="04b363d080c569142a3239a286a037fb"></a> <div class="sidebar" data-ntiid="tag:nextthought.com,2011-10:OU-HTML:NTISidebar-CS1323_F_2015_Intro_to_Computer_Programming.sidebar.answer.213" ntiid="tag:nextthought.com,2011-10:OU-HTML:NTISidebar-CS1323_F_2015_Intro_to_Computer_Programming.sidebar.answer.213"> <div class="sidebar-title">Answer</div> The number of times each individual object has been used. (If this is not clear, look at the class definition again to see that the variable <b class="bfseries"><tt class="ttfamily">useCount</tt></b> is part of each object, and that each object has its own method <b class="bfseries"><tt class="ttfamily">incrementUse()</tt></b> which increments its own variable.) </div><a name="1842150c699318cfc07991a757f1a1a2"></a> <p class="par" id="1842150c699318cfc07991a757f1a1a2">Here is a <b class="bfseries"><tt class="ttfamily">main()</tt></b> that shows these ideas: </p> <a name="cb6398fc0aa72f899c068fbe029c9ed7"></a> <pre>class CheckingAccountTester
+{
+  public static void main( String[] args )
+  {
+    CheckingAccount bobsAccount  = new CheckingAccount( "999", "Bob", 100 );
+    CheckingAccount jillsAccount = new CheckingAccount( "111", "Jill", 500 );
+
+    bobsAccount.processCheck( 50 );
+    System.out.println( bobsAccount.toString() );
+
+    jillsAccount.processDeposit( 500 );
+    jillsAccount.processCheck( 100 );
+    jillsAccount.processCheck( 100 );
+    jillsAccount.processDeposit( 100 );
+
+    System.out.println( jillsAccount.toString() );
+  }
+}
+</pre><a name="ae400e4534514733184e4bb7df3aa38f"></a> <div class="sidebar" data-ntiid="tag:nextthought.com,2011-10:OU-HTML:NTISidebar-CS1323_F_2015_Intro_to_Computer_Programming.sidebar.question.225" ntiid="tag:nextthought.com,2011-10:OU-HTML:NTISidebar-CS1323_F_2015_Intro_to_Computer_Programming.sidebar.question.225"> <div class="sidebar-title">Question</div> <a name="94a1c68d4e5ea410f80f373762a3c1fd"></a> <p class="par" id="94a1c68d4e5ea410f80f373762a3c1fd"> How may times has Bob&#8217;s account been used? </p> <a name="d6c30ca7bb3af24ddc174bf5896c8968"></a> <p class="par" id="d6c30ca7bb3af24ddc174bf5896c8968">How may times has Jill&#8217;s account been used? </p> </div> </div></div> </body></html>

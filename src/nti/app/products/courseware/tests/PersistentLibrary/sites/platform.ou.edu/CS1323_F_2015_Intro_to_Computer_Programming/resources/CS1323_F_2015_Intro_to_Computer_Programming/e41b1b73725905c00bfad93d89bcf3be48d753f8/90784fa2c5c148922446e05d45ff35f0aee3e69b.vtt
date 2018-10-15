@@ -1,0 +1,1385 @@
+WEBVTT
+Kind: captions
+Language: en
+
+00:00:00.810 --> 00:00:03.810
+so now we're getting to the exciting
+part we're actually going to be able to
+
+00:00:03.810 --> 00:00:05.420
+interact with the command line
+
+00:00:05.420 --> 00:00:09.730
+and write a real program that runs for
+continuing with our cell phone contract
+
+00:00:09.730 --> 00:00:10.800
+example
+
+00:00:10.800 --> 00:00:15.370
+you may remember that we were comparing
+the cost have two cell phone plans with
+
+00:00:15.370 --> 00:00:17.300
+ATV telecommunications
+
+00:00:17.300 --> 00:00:21.100
+we had our super saver plan for $39.99 a
+month
+
+00:00:21.100 --> 00:00:24.800
+and we had our big talker plan for
+$59.99 a month
+
+00:00:24.800 --> 00:00:29.029
+and we were talking 1200 minutes now
+
+00:00:29.029 --> 00:00:33.219
+let's review some other shortcomings in
+our previous work we can see the results
+
+00:00:33.219 --> 00:00:34.100
+on the screen
+
+00:00:34.100 --> 00:00:37.000
+that's really frustrating and
+disappointing cuz one other things it's
+
+00:00:37.000 --> 00:00:38.570
+really fun about programming
+
+00:00:38.570 --> 00:00:41.780
+is getting to see what the program does
+right that very minute
+
+00:00:41.780 --> 00:00:45.200
+but we just don't have a complete
+program yet
+
+00:00:45.200 --> 00:00:49.100
+the other thing is that we haven't
+handled what happens when you start
+
+00:00:49.100 --> 00:00:50.969
+talking more less very well
+
+00:00:50.969 --> 00:00:54.760
+so at this point everything's just a
+constant so that's born to
+
+00:00:54.760 --> 00:00:58.149
+so now we're going to create a whole
+program
+
+00:00:58.149 --> 00:01:02.510
+first for an open eclipsed democratic
+create a project
+
+00:01:02.510 --> 00:01:07.210
+democratic create a class now classrooms
+always start with capital letters and
+
+00:01:07.210 --> 00:01:09.750
+have curly braces to hold the class body
+
+00:01:09.750 --> 00:01:13.119
+and we're going to create a main program
+the main program
+
+00:01:13.119 --> 00:01:17.920
+is public static void main print the
+c-string square bracket Arg spread the
+
+00:01:17.920 --> 00:01:18.299
+sea
+
+00:01:18.299 --> 00:01:23.159
+that's a lot to think about and to make
+matters worse for right now it's just
+
+00:01:23.159 --> 00:01:25.460
+gonna have to be a magical incantation
+
+00:01:25.460 --> 00:01:30.380
+because that's how old programming works
+the curly braces also hold the body at
+
+00:01:30.380 --> 00:01:31.450
+the main program
+
+00:01:31.450 --> 00:01:37.200
+so let's go to a clips and get started
+here I'm exiting PowerPoint
+
+00:01:37.200 --> 00:01:44.200
+I'm going to the launch pad to start
+Eclipse this is the workspace that we
+
+00:01:44.490 --> 00:01:46.680
+set up twenty were setting up your
+computer
+
+00:01:46.680 --> 00:01:50.970
+I like to use one workspace for the
+whole semester if I possibly can cause
+
+00:01:50.970 --> 00:01:52.840
+that I can go back and look at programs
+
+00:01:52.840 --> 00:01:56.850
+now I've got mauled code there that I
+don't wanna look at so I'm gonna get rid
+
+00:01:56.850 --> 00:01:57.520
+of that
+
+00:01:57.520 --> 00:02:01.070
+it's always best to start with a clean
+slate whenever you can
+
+00:02:01.070 --> 00:02:05.100
+now we're going to create a projects we
+go to File
+
+00:02:05.100 --> 00:02:09.470
+new java project you can name projects
+whatever you want
+
+00:02:09.470 --> 00:02:12.580
+but I recommend that you name them
+something meaningful
+
+00:02:12.580 --> 00:02:16.170
+the spelling it right helps too
+
+00:02:16.170 --> 00:02:22.330
+some calling this iteration three cuz
+this is the third time that we visited
+
+00:02:22.330 --> 00:02:23.400
+this project
+
+00:02:23.400 --> 00:02:29.620
+now we're gonna finish and you'll notice
+it appeared over here in our list
+
+00:02:29.620 --> 00:02:34.030
+I hate that little triangle it creates a
+directory called source
+
+00:02:34.030 --> 00:02:38.459
+and sources where we want to store our
+class file of the easiest way to create
+
+00:02:38.459 --> 00:02:41.269
+a class is right up here with this
+little green target
+
+00:02:41.269 --> 00:02:46.230
+so we create a new Java class now class
+names are much more particular them
+
+00:02:46.230 --> 00:02:47.269
+project names
+
+00:02:47.269 --> 00:02:50.760
+they can't have spaces in the man they
+should start with the capital letter
+
+00:02:50.760 --> 00:02:54.940
+so here is a cell phone
+
+00:02:54.940 --> 00:02:58.239
+and notice it's giving me a choice to
+create a
+
+00:02:58.239 --> 00:03:02.310
+main program on its own this kind of a
+mixed blessing because it doesn't always
+
+00:03:02.310 --> 00:03:04.340
+created just the way you would want it
+
+00:03:04.340 --> 00:03:07.560
+but it's kinda nice not to have to
+memorize the words for now
+
+00:03:07.560 --> 00:03:10.849
+just remember you do have to remember
+them eventually
+
+00:03:10.849 --> 00:03:13.940
+so now we have our public class
+
+00:03:13.940 --> 00:03:17.349
+cell phone unfortunately clips makes
+things
+
+00:03:17.349 --> 00:03:21.700
+a way that I don't like them and so I'm
+gonna make a few changes here
+
+00:03:21.700 --> 00:03:24.739
+the first thing I'm doing is lighting up
+the curly braces
+
+00:03:24.739 --> 00:03:28.319
+that really helps you see what the
+structure the program is
+
+00:03:28.319 --> 00:03:32.470
+and it's something that I recommend you
+do till believe it or not computer
+
+00:03:32.470 --> 00:03:35.540
+scientists are really in saying about
+this curly brace thing
+
+00:03:35.540 --> 00:03:39.780
+and have very strong opinions about it
+so don't be surprised if the next person
+
+00:03:39.780 --> 00:03:40.870
+that you take a lil
+
+00:03:40.870 --> 00:03:45.780
+programming class from has different
+preferences about curly braces than mine
+
+00:03:45.780 --> 00:03:49.319
+but I find the mine work really well for
+beginning programmers
+
+00:03:49.319 --> 00:03:56.319
+so right here we have the bases are cell
+phone program
+
+00:03:57.860 --> 00:04:00.700
+the next thing you want to do is to
+include our previous work
+
+00:04:00.700 --> 00:04:04.709
+now we have done a lot to work on this
+program a summarized here on the power
+
+00:04:04.709 --> 00:04:05.700
+point slide
+
+00:04:05.700 --> 00:04:11.270
+and so I'm gonna grab it and copy it
+into our program here's the grab
+
+00:04:11.270 --> 00:04:16.359
+you know we'll have to clean this up a
+little bit but it's better than having
+
+00:04:16.359 --> 00:04:17.799
+to type it all again
+
+00:04:17.799 --> 00:04:20.889
+and here we go over to a clips
+
+00:04:20.889 --> 00:04:27.889
+the copy it in okay
+
+00:04:28.070 --> 00:04:32.510
+now some strange things happened noticed
+these little red X's over here
+
+00:04:32.510 --> 00:04:37.770
+that tells you when eclipse is unhappy
+in this case what its unhappy about
+
+00:04:37.770 --> 00:04:41.250
+is the power point does something weird
+with
+
+00:04:41.250 --> 00:04:46.350
+double quotes it makes the little fixes
+a little mines
+
+00:04:46.350 --> 00:04:49.669
+which looks nice and PowerPoint business
+so nice for programming
+
+00:04:49.669 --> 00:04:53.110
+cousin programming double quotes have to
+be exactly the same
+
+00:04:53.110 --> 00:04:56.930
+and so that should settle it down oh yes
+the other thing
+
+00:04:56.930 --> 00:05:01.880
+I see when I wrote this I made a little
+mistake plan name was imminent it was a
+
+00:05:01.880 --> 00:05:02.620
+string
+
+00:05:02.620 --> 00:05:06.520
+and that's why it didn't like being
+assigned the value of double quote Super
+
+00:05:06.520 --> 00:05:07.740
+Saver double quote
+
+00:05:07.740 --> 00:05:11.950
+because that is in the legal value for
+integers so noticed that eclipse is
+
+00:05:11.950 --> 00:05:15.180
+actually helping us find the problems
+that we have in this cold
+
+00:05:15.180 --> 00:05:19.400
+that was a heading so we certainly
+didn't need that
+
+00:05:19.400 --> 00:05:23.330
+and you'll notice that our line of code
+here is going off the screen
+
+00:05:23.330 --> 00:05:27.900
+now that's a problem too the way that I
+like to fix that
+
+00:05:27.900 --> 00:05:31.720
+is right here bottom line
+
+00:05:31.720 --> 00:05:35.810
+you cannot decode code you can't see so
+having cold though of the screen is
+
+00:05:35.810 --> 00:05:37.240
+always a bad thing
+
+00:05:37.240 --> 00:05:40.830
+now if you think that I'm being very
+particular about how these things are
+
+00:05:40.830 --> 00:05:41.460
+done
+
+00:05:41.460 --> 00:05:46.160
+absolutely you are correct because
+keeping code meeting organized makes it
+
+00:05:46.160 --> 00:05:48.380
+much easier to use in the long run
+
+00:05:48.380 --> 00:05:52.169
+I don't know exactly what this is
+unhappy about right now
+
+00:05:52.169 --> 00:05:55.190
+so let's go and look over at this little
+axe
+
+00:05:55.190 --> 00:06:00.990
+and see what's going on invalid
+character so this is probably another
+
+00:06:00.990 --> 00:06:03.479
+one of those little PowerPoint crazy
+things
+
+00:06:03.479 --> 00:06:08.159
+so if you're getting the idea that
+
+00:06:08.159 --> 00:06:11.930
+these things are difficult to do they
+can be you can make a lot of little airs
+
+00:06:11.930 --> 00:06:13.560
+that are very hard to find
+
+00:06:13.560 --> 00:06:18.010
+now you Lotus right now that eclipse is
+telling us the couple's little warnings
+
+00:06:18.010 --> 00:06:18.860
+over here
+
+00:06:18.860 --> 00:06:23.080
+so let's take a look at what those
+warnings are says the value of the local
+
+00:06:23.080 --> 00:06:25.260
+variable plan name is not used
+
+00:06:25.260 --> 00:06:28.669
+and in fact that's correct we have it is
+the plan name yet
+
+00:06:28.669 --> 00:06:31.770
+in here it says the valuable
+
+00:06:31.770 --> 00:06:35.270
+local variable total cost in pennies is
+not used
+
+00:06:35.270 --> 00:06:38.919
+now you might think it's wrong about
+that because we did a sign something the
+
+00:06:38.919 --> 00:06:40.590
+total cost in pennies here
+
+00:06:40.590 --> 00:06:43.890
+but we didn't do anything after be
+assigned it and that's what it's
+
+00:06:43.890 --> 00:06:44.950
+complaining about
+
+00:06:44.950 --> 00:06:49.340
+so what this tells you about eclipses
+the clips is a little bit of an alarmist
+
+00:06:49.340 --> 00:06:52.690
+and its gonna tell you about problems
+that aren't real problems
+
+00:06:52.690 --> 00:06:56.490
+particularly in the warnings so you
+don't want to spend too much time
+
+00:06:56.490 --> 00:06:58.010
+looking at those warnings
+
+00:06:58.010 --> 00:07:01.729
+because sometimes there correct and
+sometimes they're not in this case we
+
+00:07:01.729 --> 00:07:03.640
+just haven't finished our program yet
+
+00:07:03.640 --> 00:07:08.970
+the next thing we need to do is to add
+some comments to improve the cold
+
+00:07:08.970 --> 00:07:13.440
+now if you're thinking to yourself the
+comments can't possibly improve code
+
+00:07:13.440 --> 00:07:17.800
+oh my goodness are you wrong comments
+always improve the code particularly
+
+00:07:17.800 --> 00:07:19.659
+when you have to go back to it later
+
+00:07:19.659 --> 00:07:23.570
+and we are going back to this program
+later so let's put some in
+
+00:07:23.570 --> 00:07:30.570
+sober declaring variables at the top and
+so that's what I've put in as the
+
+00:07:33.380 --> 00:07:34.200
+comment
+
+00:07:34.200 --> 00:07:37.360
+this is a great place to make a comment
+
+00:07:37.360 --> 00:07:40.870
+about why we decided to store the money
+in pennies
+
+00:07:40.870 --> 00:07:46.180
+so we decided to store money in pennies
+
+00:07:46.180 --> 00:07:49.490
+because pennies
+
+00:07:49.490 --> 00:07:55.180
+are indivisible if you ever have to
+maintain somebody's
+
+00:07:55.180 --> 00:07:58.789
+looks apparently I spelled that wrong
+although I guess it must be close enough
+
+00:07:58.789 --> 00:07:59.880
+for government work
+
+00:07:59.880 --> 00:08:06.880
+and the rest to this looks just fine so
+here will make a comment
+
+00:08:09.039 --> 00:08:13.229
+calculate the total cost
+
+00:08:13.229 --> 00:08:16.349
+now you may not think our programs any
+better but it really is quite a bit
+
+00:08:16.349 --> 00:08:17.070
+better
+
+00:08:17.070 --> 00:08:24.070
+because now we can actually see what the
+various parts of Kotor doing
+
+00:08:30.589 --> 00:08:33.750
+the next part is really the exciting
+part we're finally going to get a chance
+
+00:08:33.750 --> 00:08:35.260
+to write output
+
+00:08:35.260 --> 00:08:38.500
+now this output is so short I'm not even
+gonna cut and paste and I'll just type
+
+00:08:38.500 --> 00:08:45.500
+it in when we get to eclipse
+
+00:08:48.180 --> 00:08:52.630
+system out
+
+00:08:52.630 --> 00:08:57.330
+print line you'll notice that eclipses
+making lotsa lotsa suggestions
+
+00:08:57.330 --> 00:09:03.529
+some good suggestions some really bad
+suggestions
+
+00:09:03.529 --> 00:09:07.620
+so I tend to ignore those suggestions
+and just type the code I wanna type
+
+00:09:07.620 --> 00:09:11.950
+so I said the total cost is and total
+cost
+
+00:09:11.950 --> 00:09:15.510
+pennies and there we go
+
+00:09:15.510 --> 00:09:19.709
+we finally have a program that we can
+run notice also
+
+00:09:19.709 --> 00:09:23.740
+that one of our little yellow warnings
+went away because now we've used total
+
+00:09:23.740 --> 00:09:25.100
+cost
+
+00:09:25.100 --> 00:09:28.790
+now eclipse actually has a point in what
+it's saying about Super Saver
+
+00:09:28.790 --> 00:09:32.880
+we haven't used that yet so let's add
+that in
+
+00:09:32.880 --> 00:09:37.330
+the total cost for the
+
+00:09:37.330 --> 00:09:41.649
+now we're going to break this and you
+plus
+
+00:09:41.649 --> 00:09:45.270
+plan name plus
+
+00:09:45.270 --> 00:09:48.910
+is
+
+00:09:48.910 --> 00:09:54.310
+loops get where we can see it
+
+00:09:54.310 --> 00:09:58.980
+and once again we've got off the screen
+
+00:09:58.980 --> 00:10:02.820
+so let me put it back on the screen
+noticed that I did the same way both
+
+00:10:02.820 --> 00:10:03.760
+times
+
+00:10:03.760 --> 00:10:07.690
+I put the operator on the left hand side
+instead about on the right
+
+00:10:07.690 --> 00:10:12.399
+I like to do that's that I know exactly
+how it's related to the previous text
+
+00:10:12.399 --> 00:10:16.240
+these little nuances do make a
+difference when your programming
+
+00:10:16.240 --> 00:10:23.240
+okay are you ready let's run the program
+
+00:10:24.550 --> 00:10:29.770
+the total cost for the Super Saver with
+7,000 499 dollars
+
+00:10:29.770 --> 00:10:35.130
+huh well there's a problem that's a
+pretty high cell phone bill
+
+00:10:35.130 --> 00:10:38.850
+so what went wrong here is that we had
+stored our money in pennies
+
+00:10:38.850 --> 00:10:42.600
+and we forgot to take care that we're
+doing the output at the program
+
+00:10:42.600 --> 00:10:45.850
+these things happen all the time in
+programming and it's not necessarily a
+
+00:10:45.850 --> 00:10:47.000
+big deal
+
+00:10:47.000 --> 00:10:51.560
+so let's go back and fix it to change
+pennies and the dollars which is what
+
+00:10:51.560 --> 00:10:53.529
+most people would be expecting
+
+00:10:53.529 --> 00:10:57.820
+you divide by 100
+
+00:10:57.820 --> 00:11:04.120
+now let's run the program again
+
+00:11:04.120 --> 00:11:07.940
+well that was what we were expecting
+either notice what happened now is that
+
+00:11:07.940 --> 00:11:10.410
+are 99 cents disappeared
+
+00:11:10.410 --> 00:11:14.750
+now if you would think back to your
+knowledge about how primitive data type
+
+00:11:14.750 --> 00:11:16.310
+operations work
+
+00:11:16.310 --> 00:11:20.260
+you'll realize that we're dividing total
+cost in pennies which is an int
+
+00:11:20.260 --> 00:11:24.630
+by 100 which is another Int and remember
+that that truncates
+
+00:11:24.630 --> 00:11:28.690
+that wasn't what we wanted to do because
+dollars have a decimal point in them
+
+00:11:28.690 --> 00:11:34.410
+there's a really easy way to fix this
+and that is to change a hundred 200.0
+
+00:11:34.410 --> 00:11:39.279
+when you do that you're dividing it by a
+double the end gets promoted to a double
+
+00:11:39.279 --> 00:11:42.709
+and we should see a double on the screen
+okay
+
+00:11:42.709 --> 00:11:47.250
+one more time
+
+00:11:47.250 --> 00:11:51.690
+in their ego $74.99 and that looks like
+a good result
+
+00:11:51.690 --> 00:11:55.399
+thank goodness
+
+00:11:55.399 --> 00:11:58.610
+now you can get a lot of these
+disappointing results to one of the
+
+00:11:58.610 --> 00:12:00.269
+reasons you need to start programs
+
+00:12:00.269 --> 00:12:04.459
+really early is so that you have time to
+eat figure out what's going wrong
+
+00:12:04.459 --> 00:12:11.459
+even get other people to help if you
+need that to be done
+
+00:12:13.070 --> 00:12:16.660
+so we run our program we fixed are
+disappointing results
+
+00:12:16.660 --> 00:12:19.830
+the next thing we need to do is to get
+input from the user
+
+00:12:19.830 --> 00:12:23.370
+because that's when programs really get
+exciting is when you can control what
+
+00:12:23.370 --> 00:12:24.620
+they're doing
+
+00:12:24.620 --> 00:12:29.050
+now this uses the scanner object which
+the attached to a keyboard
+
+00:12:29.050 --> 00:12:32.910
+so that looks like this scanner keyboard
+equals new scanner
+
+00:12:32.910 --> 00:12:36.540
+up system in so there you're saying
+create
+
+00:12:36.540 --> 00:12:41.060
+a keyboard object so that I can get
+input from my keyboard
+
+00:12:41.060 --> 00:12:45.720
+each program should do this only once
+and that turns out to be important
+
+00:12:45.720 --> 00:12:49.459
+the other thing is we have to tell job
+over 25 in the scanner
+
+00:12:49.459 --> 00:12:54.269
+we do that before the class declaration
+that is before the public class thing
+
+00:12:54.269 --> 00:12:56.040
+that we wrote earlier
+
+00:12:56.040 --> 00:13:00.769
+and it looks like this import java.util
+scanner
+
+00:13:00.769 --> 00:13:04.069
+and then we need to prompt the user to
+enter data that's something that
+
+00:13:04.069 --> 00:13:06.300
+beginners forget to do often
+
+00:13:06.300 --> 00:13:10.040
+it's hard to know what to enter into a
+program if you don't have any data
+
+00:13:10.040 --> 00:13:13.680
+so that will be system.out.print line
+enter the number of minutes to talk each
+
+00:13:13.680 --> 00:13:14.930
+month
+
+00:13:14.930 --> 00:13:19.199
+and then we gonna get the input from the
+user and that is talk minutes equals
+
+00:13:19.199 --> 00:13:21.480
+keyboard that an extent
+
+00:13:21.480 --> 00:13:26.639
+so they're the peace on earth let's go
+put him in our program
+
+00:13:26.639 --> 00:13:30.399
+going back to eclipse now we need to
+think about
+
+00:13:30.399 --> 00:13:35.569
+where we're going to put the men the
+stock minutes equals 1200
+
+00:13:35.569 --> 00:13:39.819
+that's the variable that we want to get
+from the keyboard
+
+00:13:39.819 --> 00:13:43.779
+now notice that Eclipse got upset it has
+a little red line there under talk
+
+00:13:43.779 --> 00:13:46.790
+minutes because talk minutes hasn't been
+initialized
+
+00:13:46.790 --> 00:13:51.110
+that's okay cuz we know we're going to
+initialize it in just a minute
+
+00:13:51.110 --> 00:13:56.149
+so let's start from the top we needed to
+import statement
+
+00:13:56.149 --> 00:13:59.980
+so we're gonna import with 1m
+
+00:13:59.980 --> 00:14:05.449
+Java dot you till that scanner
+
+00:14:05.449 --> 00:14:12.449
+then we're gonna create a scanner object
+
+00:14:12.610 --> 00:14:17.850
+which were calling keyboard equals new
+scanner
+
+00:14:17.850 --> 00:14:24.339
+system that in
+
+00:14:24.339 --> 00:14:28.470
+now all these things are staying the
+same
+
+00:14:28.470 --> 00:14:32.060
+right down here will make a comment
+
+00:14:32.060 --> 00:14:36.439
+get input from the user and we will say
+
+00:14:36.439 --> 00:14:39.790
+talk minutes equal of
+
+00:14:39.790 --> 00:14:43.350
+keyboard dot next
+
+00:14:43.350 --> 00:14:46.839
+int what's up wrong thing
+
+00:14:46.839 --> 00:14:50.980
+next in with practices after it
+
+00:14:50.980 --> 00:14:54.019
+now wait a minute what did I forget to
+do
+
+00:14:54.019 --> 00:14:57.610
+I forgot to put in the prop system
+
+00:14:57.610 --> 00:15:01.339
+out print line
+
+00:15:01.339 --> 00:15:04.470
+NT LAN
+
+00:15:04.470 --> 00:15:07.649
+enter the number I love minutes
+
+00:15:07.649 --> 00:15:13.769
+you talk each what
+
+00:15:13.769 --> 00:15:16.889
+never hurts to spend an extra minute
+looking at those things and making sure
+
+00:15:16.889 --> 00:15:22.249
+you have been spelled exactly correctly
+
+00:15:22.249 --> 00:15:26.720
+okay so now our talk minutes has been
+initialized and notice the job is happy
+
+00:15:26.720 --> 00:15:28.069
+again
+
+00:15:28.069 --> 00:15:31.600
+there's one little red thing over here
+
+00:15:31.600 --> 00:15:35.930
+0 I see what went wrong I made a mistake
+
+00:15:35.930 --> 00:15:39.920
+look at where I put our import statement
+now I should have spotted this a little
+
+00:15:39.920 --> 00:15:43.860
+bit earlier because there was an
+indentation it was incorrect
+
+00:15:43.860 --> 00:15:46.430
+you know these are the things that
+happen when you program in there no big
+
+00:15:46.430 --> 00:15:47.129
+deal
+
+00:15:47.129 --> 00:15:50.040
+in fact learning how to work around
+these things is the big party doing
+
+00:15:50.040 --> 00:15:51.410
+programming
+
+00:15:51.410 --> 00:15:55.610
+so what I need to do here is to take
+this
+
+00:15:55.610 --> 00:16:00.800
+and cut it and move it where it should
+have been in the first place
+
+00:16:00.800 --> 00:16:05.040
+which is before the main program notice
+now eclipse is happy with everything
+
+00:16:05.040 --> 00:16:07.399
+right now
+
+00:16:07.399 --> 00:16:11.339
+so there we have it we have our input in
+place which prompted for it
+
+00:16:11.339 --> 00:16:17.749
+I think we're ready so let's run the
+program
+
+00:16:17.749 --> 00:16:20.850
+the first thing we want to do is under
+1200
+
+00:16:20.850 --> 00:16:26.529
+because that's the number I've minutes
+that we talked the total cost to $74.99
+
+00:16:26.529 --> 00:16:29.740
+now when I look at this time I see that
+there's something missing
+
+00:16:29.740 --> 00:16:32.920
+usually put dollar signs in front of
+dollars
+
+00:16:32.920 --> 00:16:36.540
+so what's goin' fix that in our program
+
+00:16:36.540 --> 00:16:40.519
+yes I know I'm being picky but this is
+what makes you a good software engineers
+
+00:16:40.519 --> 00:16:42.959
+when you pay attention to these little
+details
+
+00:16:42.959 --> 00:16:47.709
+and get them exactly right so I put it
+there notice I didn't put a space before
+
+00:16:47.709 --> 00:16:48.519
+it
+
+00:16:48.519 --> 00:16:52.829
+and let's run the program again always
+remember to run your program after you
+
+00:16:52.829 --> 00:16:53.199
+make
+
+00:16:53.199 --> 00:16:57.790
+even the most inconsequential change
+because it's so easy to break things and
+
+00:16:57.790 --> 00:16:59.399
+have them not work
+
+00:16:59.399 --> 00:17:03.149
+every semester I will have students will
+turn things in the me who like added one
+
+00:17:03.149 --> 00:17:04.790
+common in a program
+
+00:17:04.790 --> 00:17:08.329
+and didn't check that the program was
+still running and they can lose credit
+
+00:17:08.329 --> 00:17:09.180
+for that
+
+00:17:09.180 --> 00:17:12.350
+so that's not a good thing so let's run
+one more time
+
+00:17:12.350 --> 00:17:15.439
+see if we got our dollar sign in the
+right place
+
+00:17:15.439 --> 00:17:19.490
+enter the numbers minutes 1200
+
+00:17:19.490 --> 00:17:22.689
+the cost books what happened
+
+00:17:22.689 --> 00:17:26.809
+put it in the wrong place see that's
+what happens all the time
+
+00:17:26.809 --> 00:17:31.690
+like I say these are not big problems it
+should have been
+
+00:17:31.690 --> 00:17:35.300
+right there you like what mistakes like
+that too when your programming
+
+00:17:35.300 --> 00:17:39.380
+don't worry about it it's not a big deal
+the big deal is whether you can fix it
+
+00:17:39.380 --> 00:17:40.880
+or not
+
+00:17:40.880 --> 00:17:44.800
+enter the number a minute to talk 1200
+
+00:17:44.800 --> 00:17:50.280
+total cost $74.99 that looks really good
+it could have a period after it
+
+00:17:50.280 --> 00:17:57.280
+be %uh there comes a point to move on
+with other problems
+
+00:17:58.520 --> 00:18:04.370
+sold we did all those nice things
+
+00:18:04.370 --> 00:18:08.000
+so up to this point we've only work with
+the super saver plan
+
+00:18:08.000 --> 00:18:12.100
+you might remember we actually had to
+plan
+
+00:18:12.100 --> 00:18:16.150
+so the big talker was $59.99 a month for
+1000 minutes
+
+00:18:16.150 --> 00:18:19.450
+additional minutes cost three cents each
+
+00:18:19.450 --> 00:18:26.450
+so let's go in at the big talker plan to
+the program
+
+00:18:27.650 --> 00:18:32.460
+okay let's think strategically about
+this
+
+00:18:32.460 --> 00:18:35.910
+where do we want a copy and paste
+
+00:18:35.910 --> 00:18:39.500
+we don't want a copy and paste I love
+this stuff
+
+00:18:39.500 --> 00:18:42.510
+because if we're gonna make a fair
+comparison we should be using the same
+
+00:18:42.510 --> 00:18:44.790
+numbers minutes in both plants
+
+00:18:44.790 --> 00:18:48.480
+so we don't need that stuff copied what
+we need to do
+
+00:18:48.480 --> 00:18:52.000
+is after we have calculated the first
+name
+
+00:18:52.000 --> 00:18:57.420
+we need to just recalculate the second
+one our monthly
+
+00:18:57.420 --> 00:19:02.290
+cost in pennies is going to be
+reassigned
+
+00:19:02.290 --> 00:19:05.980
+the $59.99
+
+00:19:05.980 --> 00:19:09.280
+are additional minutes
+
+00:19:09.280 --> 00:19:13.050
+in pennies is gonna be assigned
+
+00:19:13.050 --> 00:19:17.900
+to 3
+
+00:19:17.900 --> 00:19:21.559
+our plan name is gonna be reassigned
+
+00:19:21.559 --> 00:19:25.040
+to the big talker
+
+00:19:25.040 --> 00:19:28.300
+and there should be one more of those
+
+00:19:28.300 --> 00:19:32.260
+so let's go look for it I was the plan
+minutes
+
+00:19:32.260 --> 00:19:35.280
+by the way let's fix that
+
+00:19:35.280 --> 00:19:39.110
+noticed that one other parameters that
+the plan was a little different position
+
+00:19:39.110 --> 00:19:44.300
+and that kind of awkward so let's cut
+this
+
+00:19:44.300 --> 00:19:51.110
+and move it down here where it makes
+more sense
+
+00:19:51.110 --> 00:19:54.429
+and of course beautify the coat
+
+00:19:54.429 --> 00:19:57.480
+what's more it might make more sense to
+declare
+
+00:19:57.480 --> 00:20:04.480
+talk variables where we actually use it
+
+00:20:08.059 --> 00:20:11.150
+so there we go of course we now have
+this upward by
+
+00:20:11.150 --> 00:20:14.790
+space we certainly don't want to have
+that hanging around cuz that doesn't
+
+00:20:14.790 --> 00:20:19.320
+look good
+
+00:20:19.320 --> 00:20:22.760
+and let scroll down and take a look
+around and see what's going on
+
+00:20:22.760 --> 00:20:26.870
+so there's the cost for the Super Saver
+plan being printed out
+
+00:20:26.870 --> 00:20:31.150
+hear our prayer matters
+
+00:20:31.150 --> 00:20:34.540
+now it turns out our cost is exactly the
+same
+
+00:20:34.540 --> 00:20:38.780
+and this is exactly the same so we can
+just copy that code
+
+00:20:38.780 --> 00:20:45.780
+and pasted in
+
+00:20:48.440 --> 00:20:52.330
+okay so do we have all our parameters
+here
+
+00:20:52.330 --> 00:20:57.660
+well notice we only have to love them we
+don't have our monthly minutes so let's
+
+00:20:57.660 --> 00:21:01.160
+go and take a look at how many minutes
+the big talker headed have 1000 minutes
+
+00:21:01.160 --> 00:21:05.420
+so put that in up
+
+00:21:05.420 --> 00:21:09.430
+whoops
+
+00:21:09.430 --> 00:21:13.390
+right there and there's our big talker
+
+00:21:13.390 --> 00:21:17.710
+one other things I'm doing what I'm
+looking at this code is making sure I
+
+00:21:17.710 --> 00:21:20.380
+changed every single thing that should
+be changed
+
+00:21:20.380 --> 00:21:24.950
+so monthly cost in pennies got changed
+additional minutes in pennies got
+
+00:21:24.950 --> 00:21:25.790
+changed
+
+00:21:25.790 --> 00:21:30.540
+and plan minutes got changed the top
+minutes didn't get change because we're
+
+00:21:30.540 --> 00:21:32.350
+trying to make a fair comparison
+
+00:21:32.350 --> 00:21:36.620
+so were at the moment of truth for
+finally gonna see which plan we should
+
+00:21:36.620 --> 00:21:37.200
+choose
+
+00:21:37.200 --> 00:21:43.490
+a drum roll please here we go
+
+00:21:43.490 --> 00:21:48.030
+the numbers minutes we talk was 1200
+
+00:21:48.030 --> 00:21:51.350
+the total cost for the Super Saver
+
+00:21:51.350 --> 00:21:56.800
+was $74.99 in the total cost for the big
+talkers $65.99
+
+00:21:56.800 --> 00:22:00.570
+and when I look at that guess what we
+see another mistake
+
+00:22:00.570 --> 00:22:04.410
+%uh we left outer space after the
+
+00:22:04.410 --> 00:22:08.330
+and that's why things are smashed
+together the mistake that happens all
+
+00:22:08.330 --> 00:22:09.030
+the time
+
+00:22:09.030 --> 00:22:15.470
+let's run again unit 1200
+
+00:22:15.470 --> 00:22:20.090
+in there we go what's
+
+00:22:20.090 --> 00:22:23.490
+and there's a problem with cutting and
+pasting
+
+00:22:23.490 --> 00:22:26.680
+notice that I changed one but I forgot
+to change the other one
+
+00:22:26.680 --> 00:22:31.250
+well this is really getting annoying the
+programming is like that Sunday's
+
+00:22:31.250 --> 00:22:35.750
+so one more time what
+
+00:22:35.750 --> 00:22:39.720
+except the course would be nice if I
+entered the 1200 in the right place on
+
+00:22:39.720 --> 00:22:40.400
+the screen
+
+00:22:40.400 --> 00:22:45.710
+there we go with the satisfying answer
+
+00:22:45.710 --> 00:22:52.710
+so we can see the big talker is the plan
+we really wanted
+
+00:22:53.450 --> 00:22:56.340
+so let's make some observations about
+this program
+
+00:22:56.340 --> 00:23:00.370
+first of notice that I didn't need to
+add in any additional variables when we
+
+00:23:00.370 --> 00:23:01.770
+added in the big talker
+
+00:23:01.770 --> 00:23:04.840
+that keeps the program a little cleaner
+in need ur
+
+00:23:04.840 --> 00:23:07.970
+which as you probably figured out is
+something that's kinda important to me
+
+00:23:07.970 --> 00:23:11.630
+we could have created a second set of
+variables if we wanted to
+
+00:23:11.630 --> 00:23:14.929
+but that are variable names that have to
+get longer because we'd have to put
+
+00:23:14.929 --> 00:23:17.260
+super saver or maybe s
+
+00:23:17.260 --> 00:23:21.130
+after one set in BTR big talker after
+the other
+
+00:23:21.130 --> 00:23:24.539
+so there was really no advantage of
+having to set the variable
+
+00:23:24.539 --> 00:23:28.210
+so I really like to keep the program a
+little bit leaner and meaner
+
+00:23:28.210 --> 00:23:33.640
+although you could do a both ways the
+other thing to notice here
+
+00:23:33.640 --> 00:23:37.460
+is the strategy that I'm using notice
+that on building the program a little
+
+00:23:37.460 --> 00:23:38.470
+bit at a time
+
+00:23:38.470 --> 00:23:43.309
+that I'm compiling and running really
+often those are good strategies to use
+
+00:23:43.309 --> 00:23:46.929
+sometimes when I was learning to program
+I might write three or four pages of
+
+00:23:46.929 --> 00:23:47.610
+code
+
+00:23:47.610 --> 00:23:51.340
+and then try to go in and compile and
+run it and that just makes it a lot
+
+00:23:51.340 --> 00:23:53.010
+harder than it needs to be
+
+00:23:53.010 --> 00:23:56.070
+so work a little bit at a time you find
+it a lot easier
+
+00:23:56.070 --> 00:23:58.220
+it also makes it easier to find the
+mistakes
+

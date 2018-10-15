@@ -1,0 +1,19 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html lang="en"><head> <meta content="2015-12-11T16:56:47" http-equiv="last-modified" /> <meta content="797" name="NTIRelativeScrollHeight" /> <meta content="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.searching_for_an_element" name="NTIID" /> <meta content="NextThought" name="generator" /> <meta content="text/html; charset=ascii" http-equiv="content-type" /> <title>Searching for an Element</title> <link href="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.the_end.8" rel="next" title="The End" /> <link href="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.isempty()" rel="prev" title="isEmpty()" /> <link href="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.reading:Chortle_CH54" rel="up" title="ArrayList class" /> <link href="styles/styles.css" rel="stylesheet" /> <link href="styles/content.css" rel="stylesheet" /> </head> <body id="NTIContent"> <div class="page-contents"><div data-ntiid="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.searching_for_an_element" id="a0000000611" ntiid="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.searching_for_an_element"> <div class="chapter title">Searching for an Element</div> <p class="placeholder"></p> <a name="f31caab8867d9b4885bd35c0a80771e9"></a> <div class="sidebar" data-ntiid="tag:nextthought.com,2011-10:OU-HTML:NTISidebar-CS1323_F_2015_Intro_to_Computer_Programming.sidebar.answer.272" ntiid="tag:nextthought.com,2011-10:OU-HTML:NTISidebar-CS1323_F_2015_Intro_to_Computer_Programming.sidebar.answer.272"> <div class="sidebar-title">Answer</div> Linear Search </div><a name="073d6c0f3c7f58dd9f643d753c9b2704"></a> <p class="par" id="073d6c0f3c7f58dd9f643d753c9b2704">Linear search starts at the first element and examines elements one by one until the target element is found. You could write linear search for an <b class="bfseries"><tt class="ttfamily">ArrayList</tt></b> but there is a method that does this for you: </p> <a name="43a494dec600807080cce9a24591142e"></a> <pre>int indexOf(Object element)    //  Search for the first occurrence of 
+                               //  element, testing for equality 
+                               //  using the equals(Object) method of element.
+</pre><a name="74176e3675d8b56475e7a52ca5b6ae21"></a> <p class="par" id="74176e3675d8b56475e7a52ca5b6ae21">The method returns the index of the first occurrence of <b class="bfseries"><tt class="ttfamily">element</tt></b> or &#8722;1 if <b class="bfseries"><tt class="ttfamily">element</tt></b> is not found. </p> <a name="0e88d51c77616b36c277d90f6070d8cc"></a> <div class="sidebar" data-ntiid="tag:nextthought.com,2011-10:OU-HTML:NTISidebar-CS1323_F_2015_Intro_to_Computer_Programming.sidebar.question.285" ntiid="tag:nextthought.com,2011-10:OU-HTML:NTISidebar-CS1323_F_2015_Intro_to_Computer_Programming.sidebar.question.285"> <div class="sidebar-title">Question</div> <a name="193e09229a1c2539325d43965a8caac5.498"></a> <p class="par" id="193e09229a1c2539325d43965a8caac5.498"> Examine the following program. What will it print? </p> <a name="54499e68cec7963e7074af5725055367"></a> <pre>import java.util.* ;
+class SearchEg
+{
+  public static void main ( String[] args)
+  {
+    ArrayList&lt;String&gt; names = new ArrayList&lt;String&gt;();
+
+    names.add( "Amy" );     names.add( "Bob" );
+    names.add( "Chris" );   names.add( "Deb" );
+    names.add( "Elaine" );  names.add( "Joe" );
+
+    System.out.println( names.indexOf( "Elaine" ) ); 
+    System.out.println( names.indexOf( "Zoe" ) ); 
+  }
+}
+</pre> </div> </div></div> </body></html>

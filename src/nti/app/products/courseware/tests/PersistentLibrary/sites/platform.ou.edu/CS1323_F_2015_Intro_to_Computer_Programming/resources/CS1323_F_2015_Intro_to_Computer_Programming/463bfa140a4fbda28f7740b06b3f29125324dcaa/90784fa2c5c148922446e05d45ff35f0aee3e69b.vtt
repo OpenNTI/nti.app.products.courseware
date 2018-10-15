@@ -1,0 +1,1042 @@
+WEBVTT
+Kind: captions
+Language: en
+
+00:00:00.570 --> 00:00:05.629
+now let's improve our program with
+conditional statement you probably
+
+00:00:05.629 --> 00:00:07.240
+remember the problem statement
+
+00:00:07.240 --> 00:00:10.530
+we're still comparing the cost to to
+cell phone plans from
+
+00:00:10.530 --> 00:00:14.639
+ATT telecommunications we have our super
+saver plan
+
+00:00:14.639 --> 00:00:19.390
+enter big talker plan and we need to
+consider which plan we're gonna choose
+
+00:00:19.390 --> 00:00:24.010
+remember shortcoming of our previous
+work was that if we only talk
+
+00:00:24.010 --> 00:00:27.609
+300 minutes we'd pay less than the
+monthly cost
+
+00:00:27.609 --> 00:00:34.239
+let's go to clips show that to you can
+see it so here we're gonna run our
+
+00:00:34.239 --> 00:00:35.300
+program again
+
+00:00:35.300 --> 00:00:42.280
+maybe raise it up so you can see the
+input coming in
+
+00:00:42.280 --> 00:00:49.280
+so notice when we have 300 minutes we're
+now only paying $29.99 a month
+
+00:00:49.450 --> 00:00:52.670
+loop better fix that problem
+
+00:00:52.670 --> 00:00:56.600
+because that's not how cell phone plans
+work
+
+00:00:56.600 --> 00:01:00.070
+so here's the key to knowing how to fix
+the problem
+
+00:01:00.070 --> 00:01:03.219
+listen to how you describe it if
+
+00:01:03.219 --> 00:01:06.220
+you talk less than the plan minutes
+there's no additional charge
+
+00:01:06.220 --> 00:01:10.700
+no credit either the fact that we're
+using the word if in english is not
+
+00:01:10.700 --> 00:01:11.710
+accidental
+
+00:01:11.710 --> 00:01:16.000
+that is the same if that's in Java just
+for the little more technical reason
+
+00:01:16.000 --> 00:01:20.530
+so the if shows up naturally in the
+discussion
+
+00:01:20.530 --> 00:01:25.790
+and that's a hint that the conditional
+statement is what's needed so
+
+00:01:25.790 --> 00:01:29.829
+recall our previous code we have our
+plan minutes our talk minutes our
+
+00:01:29.829 --> 00:01:33.470
+monthly cost are additional minutes our
+total cost in pennies
+
+00:01:33.470 --> 00:01:37.079
+and we have our formula all of those
+things stay the same
+
+00:01:37.079 --> 00:01:40.350
+in fact we can reuse all of the code
+we've done before
+
+00:01:40.350 --> 00:01:45.460
+the original formulas correct only when
+the talk minutes is more than the plan
+
+00:01:45.460 --> 00:01:46.060
+minutes
+
+00:01:46.060 --> 00:01:50.350
+now there's more than one way to fix
+this code
+
+00:01:50.350 --> 00:01:53.700
+and so we want to pay attention to that
+if you fixed it a different way that
+
+00:01:53.700 --> 00:01:55.090
+could be just fine too
+
+00:01:55.090 --> 00:01:58.820
+as long as the code works correctly so
+let's go to a clip
+
+00:01:58.820 --> 00:02:04.869
+the first thing you want to do is to
+make sure we're in the right part to the
+
+00:02:04.869 --> 00:02:06.009
+code to start with
+
+00:02:06.009 --> 00:02:10.119
+so if we're looking at the Super Saver
+plan which is what we've been working on
+
+00:02:10.119 --> 00:02:13.209
+first than what we should probably do
+
+00:02:13.209 --> 00:02:17.870
+is to comment out the other plan
+
+00:02:17.870 --> 00:02:21.940
+there's any way to do this in Java what
+you do
+
+00:02:21.940 --> 00:02:27.209
+is put
+
+00:02:27.209 --> 00:02:30.970
+slash asterisk before it
+
+00:02:30.970 --> 00:02:35.830
+an asterisk flash after it that
+essentially disable that section of code
+
+00:02:35.830 --> 00:02:38.239
+so it's not going to get our way in
+cause us trouble
+
+00:02:38.239 --> 00:02:42.349
+one thing to notice when you do that is
+that the code turned green
+
+00:02:42.349 --> 00:02:46.010
+that is eclipses way of telling you that
+that's a comment now
+
+00:02:46.010 --> 00:02:49.760
+and so that helps you see that you're
+not actually running that code
+
+00:02:49.760 --> 00:02:53.410
+so do pay attention to the colors that
+things turned out an eclipse
+
+00:02:53.410 --> 00:02:57.440
+now we can get up to the right part in
+the code here's where we're looking at
+
+00:02:57.440 --> 00:02:58.900
+the total cost to the pen
+
+00:02:58.900 --> 00:03:03.159
+so this is the statement that we want to
+put the if statement a route
+
+00:03:03.159 --> 00:03:06.879
+so if our talk minutes
+
+00:03:06.879 --> 00:03:13.879
+is more than the plan minutes now we
+could leave our code like that but it's
+
+00:03:14.640 --> 00:03:15.780
+a little bit messy
+
+00:03:15.780 --> 00:03:19.500
+what we'd like to do is to tab over
+
+00:03:19.500 --> 00:03:23.930
+that indentation shows that the total
+cost for pennies assignment statement
+
+00:03:23.930 --> 00:03:28.799
+is inside the conditional statement the
+other thing that I like to do is I like
+
+00:03:28.799 --> 00:03:30.790
+to put curly braces around here
+
+00:03:30.790 --> 00:03:35.010
+it turns out that it's really easy to
+make a mistake
+
+00:03:35.010 --> 00:03:38.190
+and read the indentation
+
+00:03:38.190 --> 00:03:42.549
+instead reading the curly braces when
+the indentation the curly braces don't
+
+00:03:42.549 --> 00:03:43.190
+match
+
+00:03:43.190 --> 00:03:47.739
+guess what the curly braces are correct
+indentation is wrong
+
+00:03:47.739 --> 00:03:52.390
+so it's important to have those things
+matching I find that putting extra curly
+
+00:03:52.390 --> 00:03:55.290
+braces and actually saves me time
+programming
+
+00:03:55.290 --> 00:03:59.519
+but you may find something different and
+I don't care which way do it
+
+00:03:59.519 --> 00:04:03.409
+now you'll notice that eclipses unhappy
+with us right now
+
+00:04:03.409 --> 00:04:07.780
+the way you can see that is there's this
+little red indication right over there
+
+00:04:07.780 --> 00:04:13.480
+in saying the local variable total cost
+pennies has not been initialized
+
+00:04:13.480 --> 00:04:18.030
+well you might save yourself but wait a
+minute it was initialized right there
+
+00:04:18.030 --> 00:04:21.669
+well it turns out that eclipses actually
+smart enough to know
+
+00:04:21.669 --> 00:04:25.919
+that it's possible that this condition
+is it true and when that condition is it
+
+00:04:25.919 --> 00:04:26.669
+true
+
+00:04:26.669 --> 00:04:29.940
+total cost in pennies really hasn't been
+initialized
+
+00:04:29.940 --> 00:04:33.880
+and that's what it's trying to say deal
+in other words in this case it actually
+
+00:04:33.880 --> 00:04:35.600
+did find a mistake
+
+00:04:35.600 --> 00:04:39.330
+so let's fix that mistake will put it
+out statement
+
+00:04:39.330 --> 00:04:46.100
+now this time I'm gonna get smart just
+put in my curly braces to start with
+
+00:04:46.100 --> 00:04:49.580
+if the talk minutes are smaller than the
+planet's
+
+00:04:49.580 --> 00:04:53.710
+total cost in pennies up
+
+00:04:53.710 --> 00:04:59.449
+should be monthly cost in pennies
+
+00:04:59.449 --> 00:05:05.990
+in there we go so now we're ready to run
+
+00:05:05.990 --> 00:05:09.400
+now we've got a couple of different
+cases that we have to chap
+
+00:05:09.400 --> 00:05:13.870
+first thing let's check with 100 minutes
+
+00:05:13.870 --> 00:05:16.699
+now you need to think about what you
+think the answer is going to be before
+
+00:05:16.699 --> 00:05:18.320
+the computer tells you
+
+00:05:18.320 --> 00:05:22.190
+because if you don't think about that
+it's too easy to accept the computers
+
+00:05:22.190 --> 00:05:23.500
+answers be incorrect
+
+00:05:23.500 --> 00:05:29.820
+even when it isn't so I think it should
+be charging us $39.99 at this point
+
+00:05:29.820 --> 00:05:33.130
+and there it is that's a good sign
+
+00:05:33.130 --> 00:05:36.740
+now let's run it again with exactly
+
+00:05:36.740 --> 00:05:42.539
+500 minutes notice that the boundary
+between the two conditions
+
+00:05:42.539 --> 00:05:47.289
+the total cost us $39.99 that looks good
+too
+
+00:05:47.289 --> 00:05:51.259
+now let's when our regional example
+where we had twelve hundred men
+
+00:05:51.259 --> 00:05:57.310
+lots and lots of those expensive extra
+minutes and we see we get $74.99 back
+
+00:05:57.310 --> 00:06:02.050
+that looks good now we need to remember
+though that we didn't fix both parts for
+
+00:06:02.050 --> 00:06:04.300
+the coat
+
+00:06:04.300 --> 00:06:11.300
+so let's copy this party the code
+
+00:06:11.319 --> 00:06:16.620
+and go down and fix that code that we
+commented out
+
+00:06:16.620 --> 00:06:20.639
+so this is the code that we're replacing
+
+00:06:20.639 --> 00:06:25.000
+and we're gonna pay star code in there
+
+00:06:25.000 --> 00:06:28.960
+we also need to remember to remove the
+comments because otherwise
+
+00:06:28.960 --> 00:06:32.360
+we won't be able to see what we've done
+
+00:06:32.360 --> 00:06:35.370
+so there's one of our common markers to
+remove
+
+00:06:35.370 --> 00:06:38.440
+and there's another one up at the top
+don't let the little red squiggles
+
+00:06:38.440 --> 00:06:43.750
+bother you right now
+
+00:06:43.750 --> 00:06:48.990
+because now they're gone one other thing
+I noticed when I was growing around
+
+00:06:48.990 --> 00:06:53.699
+is that I don't have a space after the
+Alps now it turns out that leaving blank
+
+00:06:53.699 --> 00:06:56.660
+lines in programs makes them a lot
+easier to read
+
+00:06:56.660 --> 00:07:00.270
+and so sort of an important skill to
+develop different people have different
+
+00:07:00.270 --> 00:07:01.319
+standards
+
+00:07:01.319 --> 00:07:04.860
+but I like to sort a complete one fought
+without extra lines
+
+00:07:04.860 --> 00:07:08.360
+and then have another thought
+
+00:07:08.360 --> 00:07:13.370
+so here in this part of the code the
+thought is calculation
+
+00:07:13.370 --> 00:07:17.080
+this part the code on the other hand is
+about the output
+
+00:07:17.080 --> 00:07:20.900
+and so it makes sense for those to be in
+different thoughts in putting one blank
+
+00:07:20.900 --> 00:07:22.370
+line between them
+
+00:07:22.370 --> 00:07:27.479
+that tells you that they're different
+thoughts
+
+00:07:27.479 --> 00:07:30.490
+oh yes we should run our program again
+
+00:07:30.490 --> 00:07:33.669
+remember never trust code that you
+haven't run at least once
+
+00:07:33.669 --> 00:07:36.949
+and usually many many more times than
+once
+
+00:07:36.949 --> 00:07:40.970
+so let's think about 500 minutes we
+decided that worked well in our Super
+
+00:07:40.970 --> 00:07:42.349
+Saver case
+
+00:07:42.349 --> 00:07:46.930
+that would be less than than minimum
+minutes in our big talker case
+
+00:07:46.930 --> 00:07:50.590
+in there we go the big talkers $59.99
+
+00:07:50.590 --> 00:07:54.120
+now let's bounce up to 1000 minutes and
+see what happens
+
+00:07:54.120 --> 00:07:59.069
+so will run again
+
+00:07:59.069 --> 00:08:02.910
+okay the Super Saver is no longer so
+cheap because we're paying for a lot of
+
+00:08:02.910 --> 00:08:04.120
+extra minutes
+
+00:08:04.120 --> 00:08:09.740
+the big talker on the other hand is just
+on the boundary so it still $59.99
+
+00:08:09.740 --> 00:08:12.960
+and now lets do 1200 minutes
+
+00:08:12.960 --> 00:08:16.849
+are original example in their ego
+
+00:08:16.849 --> 00:08:19.940
+$74.99 $65.99
+
+00:08:19.940 --> 00:08:23.220
+so it looks like everything's working
+correctly
+
+00:08:23.220 --> 00:08:27.599
+now there's another shortcoming to our
+Code what happens if somebody says they
+
+00:08:27.599 --> 00:08:30.569
+talk negative minutes
+
+00:08:30.569 --> 00:08:33.519
+now you might say people would never
+make a mistake like that but actually
+
+00:08:33.519 --> 00:08:36.870
+people make mistakes of computer
+programs all the time
+
+00:08:36.870 --> 00:08:40.550
+so what will be nice to do if they said
+they talk negative minutes
+
+00:08:40.550 --> 00:08:45.950
+is to let them enter the date again so
+let's go and put that into the code
+
+00:08:45.950 --> 00:08:51.170
+back to eclipse now that's gonna be up
+at the top
+
+00:08:51.170 --> 00:08:55.410
+so will scroll up there
+
+00:08:55.410 --> 00:08:59.300
+above are too carefully crafted if
+statements
+
+00:08:59.300 --> 00:09:06.050
+right here is where we're entering the
+minutes to talk
+
+00:09:06.050 --> 00:09:10.170
+so yep talk minutes
+
+00:09:10.170 --> 00:09:17.170
+is less than 0
+
+00:09:18.399 --> 00:09:22.810
+what we're gonna wanna do is to let
+people reenter at
+
+00:09:22.810 --> 00:09:26.430
+so usually it's a good idea
+
+00:09:26.430 --> 00:09:30.089
+to give the User some idea of what they
+did wrong
+
+00:09:30.089 --> 00:09:33.130
+negative minutes for talk
+
+00:09:33.130 --> 00:09:38.490
+does not make sense we also want to be
+polite to users
+
+00:09:38.490 --> 00:09:43.000
+so don't say mean things to them
+
+00:09:43.000 --> 00:09:48.690
+the next thing to do is to grab our
+input
+
+00:09:48.690 --> 00:09:52.149
+and pasted in there
+
+00:09:52.149 --> 00:09:56.339
+enter the numbers minute to talk and
+enter it again
+
+00:09:56.339 --> 00:10:03.339
+okay so let's go and see what happens
+with their program now
+
+00:10:05.490 --> 00:10:08.240
+so the first thing we want to check is
+that we didn't break anything that was
+
+00:10:08.240 --> 00:10:11.700
+working
+
+00:10:11.700 --> 00:10:18.079
+crow that looks good now let's check for
+the case we actually implemented new
+
+00:10:18.079 --> 00:10:22.470
+so let's say we entered -100 minutes
+
+00:10:22.470 --> 00:10:26.440
+negative minutes for talk does not make
+sense enter the numbers minutes
+
+00:10:26.440 --> 00:10:30.350
+and now we can enter our 1200 and
+everything's working fine
+
+00:10:30.350 --> 00:10:36.800
+so that problem is solved sort of we'll
+talk about the sort of in a few minutes
+
+00:10:36.800 --> 00:10:40.089
+well guess what there's another
+shortcoming to our Code we really
+
+00:10:40.089 --> 00:10:42.089
+haven't made the decision for the user
+
+00:10:42.089 --> 00:10:46.560
+about which plan they should choose
+thats unfortunate you know you wanna do
+
+00:10:46.560 --> 00:10:48.940
+as much work for the users as you can
+
+00:10:48.940 --> 00:10:52.480
+in comparing numbers is one other things
+computers are really good at
+
+00:10:52.480 --> 00:10:57.870
+so let's make the comparison and let the
+user draw their conclusion
+
+00:10:57.870 --> 00:11:03.110
+back to eclipse
+
+00:11:03.110 --> 00:11:07.339
+now if you've been paying attention
+about you what we've been doing
+
+00:11:07.339 --> 00:11:11.149
+you're gonna realize we've got a little
+problem here because when we were
+
+00:11:11.149 --> 00:11:13.829
+creating the cost
+
+00:11:13.829 --> 00:11:18.190
+our total cost in pennies we created it
+first
+
+00:11:18.190 --> 00:11:22.010
+then we calculated it for super saver
+plan
+
+00:11:22.010 --> 00:11:27.390
+then we printed it out then we we use
+that same cost
+
+00:11:27.390 --> 00:11:30.760
+for our big talker plan that's a problem
+
+00:11:30.760 --> 00:11:34.959
+because now when we want to print out to
+make a comparison to those we don't have
+
+00:11:34.959 --> 00:11:36.750
+them at the same time
+
+00:11:36.750 --> 00:11:40.190
+there's a very important principle here
+that I want you to remember
+
+00:11:40.190 --> 00:11:44.890
+and that is that a variable can only
+hold one thing at one time
+
+00:11:44.890 --> 00:11:49.660
+so when you have a super saver plan and
+it gets overridden by the big talker
+
+00:11:49.660 --> 00:11:53.050
+there's no way to get the Super Saver
+planned total back
+
+00:11:53.050 --> 00:11:57.519
+so what we need to do is to put two
+different variables in
+
+00:11:57.519 --> 00:12:01.149
+so we're gonna go up to the top and
+change the name
+
+00:12:01.149 --> 00:12:04.589
+have total cost in pennies total cost
+
+00:12:04.589 --> 00:12:11.589
+in pennies Super Saver yes the name is
+getting long
+
+00:12:13.709 --> 00:12:18.120
+if you do this correctly eclipse will
+actually show you all of the places
+
+00:12:18.120 --> 00:12:19.680
+where you need to change it
+
+00:12:19.680 --> 00:12:25.990
+by putting his little red boxes at the
+side so that's really helpful
+
+00:12:25.990 --> 00:12:29.019
+so this is super saver whoops
+
+00:12:29.019 --> 00:12:33.149
+control C
+
+00:12:33.149 --> 00:12:40.149
+sorry about that here we go
+
+00:12:41.529 --> 00:12:47.079
+and here's the last one up
+
+00:12:47.079 --> 00:12:50.709
+now with the big talker we're gonna need
+to have its own variable
+
+00:12:50.709 --> 00:12:54.950
+so we're gonna make an int call total
+cost
+
+00:12:54.950 --> 00:13:01.190
+pennies big talker
+
+00:13:01.190 --> 00:13:04.630
+and we're gonna go down and fix these
+other
+
+00:13:04.630 --> 00:13:10.360
+variable names so there's big talker
+
+00:13:10.360 --> 00:13:15.130
+here's big talker and
+
+00:13:15.130 --> 00:13:18.930
+here's big talker if you've been
+watching the little red boxes at the
+
+00:13:18.930 --> 00:13:22.300
+cider disappearing as I go down and work
+on that
+
+00:13:22.300 --> 00:13:25.820
+and now we're ready to make our big
+comparison
+
+00:13:25.820 --> 00:13:28.850
+yes total cost
+
+00:13:28.850 --> 00:13:32.450
+pennies big talker
+
+00:13:32.450 --> 00:13:37.560
+is less then total cost
+
+00:13:37.560 --> 00:13:41.639
+pennies Super Saver
+
+00:13:41.639 --> 00:13:46.899
+well in that case what we want to deal
+
+00:13:46.899 --> 00:13:53.899
+only one to print out the big talker
+plan is cheaper
+
+00:14:00.060 --> 00:14:03.480
+don't wanna leave an extra line there so
+let's clean that up
+
+00:14:03.480 --> 00:14:09.560
+and here's a now of in this case
+
+00:14:09.560 --> 00:14:13.899
+we will do system.out.print line
+
+00:14:13.899 --> 00:14:17.170
+the Super Saver
+
+00:14:17.170 --> 00:14:24.170
+plan is cheaper
+
+00:14:24.310 --> 00:14:30.269
+okay ready to run
+
+00:14:30.269 --> 00:14:34.430
+webster okay I'm actually kinda glad
+this happened
+
+00:14:34.430 --> 00:14:37.860
+because these are the kind of things
+that people sometimes go and click
+
+00:14:37.860 --> 00:14:39.420
+Proceed on
+
+00:14:39.420 --> 00:14:43.170
+is really important you don't do that
+because when you do that you're actually
+
+00:14:43.170 --> 00:14:45.750
+running an old version of your program
+
+00:14:45.750 --> 00:14:49.310
+you're not running the reversion that's
+on the screen this makes it
+
+00:14:49.310 --> 00:14:54.220
+absolutely impossible to debug so
+whenever that happens cancel immediately
+
+00:14:54.220 --> 00:14:56.170
+and go and fix the problem
+
+00:14:56.170 --> 00:15:00.300
+so what's the WoW and it's pretty
+obvious what the problem is
+
+00:15:00.300 --> 00:15:04.300
+now this is an interesting situation
+till
+
+00:15:04.300 --> 00:15:07.649
+eclipse is complaining about this last
+curly brace
+
+00:15:07.649 --> 00:15:12.060
+because that's where it's detecting the
+problem but that is where the problem is
+
+00:15:12.060 --> 00:15:16.470
+the problem is actually here I got a
+little bit absent minded in Edina curly
+
+00:15:16.470 --> 00:15:18.519
+brace when I didn't need one
+
+00:15:18.519 --> 00:15:22.290
+this is why you cannot just accept
+eclipses word for what you should do and
+
+00:15:22.290 --> 00:15:23.760
+what you should fix
+
+00:15:23.760 --> 00:15:26.839
+the one that needs to be removed is that
+one there
+
+00:15:26.839 --> 00:15:30.800
+notice that when I removed that it fixes
+the complaint eclipse had
+
+00:15:30.800 --> 00:15:35.509
+and now we're ready to run you may
+notice that this little red X's right up
+
+00:15:35.509 --> 00:15:36.779
+here still
+
+00:15:36.779 --> 00:15:41.070
+that's because the file has been safety
+at once the file is saved eclipse will
+
+00:15:41.070 --> 00:15:43.110
+know that our code is alright
+
+00:15:43.110 --> 00:15:47.829
+so here we go
+
+00:15:47.829 --> 00:15:52.949
+1k so if we talk 100 minutes we're
+certainly expecting our super saver plan
+
+00:15:52.949 --> 00:15:54.899
+to be cheaper
+
+00:15:54.899 --> 00:15:58.949
+and that's what our program says
+
+00:15:58.949 --> 00:16:05.220
+if we talk 500 minutes again the Super
+Saver should be cheaper
+
+00:16:05.220 --> 00:16:11.420
+if we talk at thousand men %uh
+
+00:16:11.420 --> 00:16:18.350
+the big talkers cheaper and if we go to
+our 1200 minutes
+
+00:16:18.350 --> 00:16:22.360
+the big talker plan is cheaper to it
+looks like we finally got our program
+
+00:16:22.360 --> 00:16:28.260
+working correctly
+
+00:16:28.260 --> 00:16:31.350
+so for the remaining shortcomings in
+this program
+
+00:16:31.350 --> 00:16:34.560
+well one thing that's wrong is that if
+the user makes
+
+00:16:34.560 --> 00:16:38.120
+in illegal David the entry twice we
+can't fix it
+
+00:16:38.120 --> 00:16:42.170
+in fact we don't have the software tools
+to do that just yet but we will soon
+
+00:16:42.170 --> 00:16:46.890
+now we could ask them to enter the data
+third time
+
+00:16:46.890 --> 00:16:50.520
+and then try to fix it and asked them to
+enter a fourth and try to fix that
+
+00:16:50.520 --> 00:16:54.130
+and we would get many deeply nested if
+health
+
+00:16:54.130 --> 00:16:58.100
+and eventually what's more we're going
+to have to stop so this is really not
+
+00:16:58.100 --> 00:17:01.330
+the right way to fix that problem
+although it is tempting to try
+
+00:17:01.330 --> 00:17:05.900
+the other thing is what happens if the
+user enters something like a word
+
+00:17:05.900 --> 00:17:07.010
+instead of the number
+
+00:17:07.010 --> 00:17:11.030
+you might think that users wouldn't do
+things like that but it turns out they
+
+00:17:11.030 --> 00:17:11.550
+do
+
+00:17:11.550 --> 00:17:15.150
+and unfortunately we can't solve their
+problem right now
+
+00:17:15.150 --> 00:17:18.339
+that one's gonna have to wait till next
+semester you're gonna have to program
+
+00:17:18.339 --> 00:17:20.410
+quite a while they know how to fix that
+one
+
+00:17:20.410 --> 00:17:24.089
+let's talk a little bit about the
+culture of computer science
+
+00:17:24.089 --> 00:17:27.390
+why our computer scientist so obsessed
+
+00:17:27.390 --> 00:17:31.640
+with every crazy little thing that could
+possibly go wrong in a program
+
+00:17:31.640 --> 00:17:36.290
+well first off we have a social
+responsibility to make software work
+
+00:17:36.290 --> 00:17:37.200
+properly
+
+00:17:37.200 --> 00:17:41.580
+when software sales people can get hurt
+infect people can get killed
+
+00:17:41.580 --> 00:17:45.400
+and have been killed by software if
+you're interested in that
+
+00:17:45.400 --> 00:17:49.370
+do a Google search on their act 25 and
+you'll see what I'm talking about
+
+00:17:49.370 --> 00:17:53.010
+so it's very important that we have a
+social responsibility
+
+00:17:53.010 --> 00:17:56.420
+to the people who use our software to
+make sure it works properly
+
+00:17:56.420 --> 00:18:00.240
+but beyond that we also have a
+professional responsibility
+
+00:18:00.240 --> 00:18:03.630
+to make sure that our software works
+properly so
+
+00:18:03.630 --> 00:18:07.370
+getting things exactly perfect is part
+of our way of expressing
+
+00:18:07.370 --> 00:18:11.540
+who we are as professionals what's more
+
+00:18:11.540 --> 00:18:15.660
+if our software doesn't work correctly
+employers will eventually fire
+
+00:18:15.660 --> 00:18:20.820
+and so that's a good motivation to
+another thing I want to talk a little
+
+00:18:20.820 --> 00:18:22.720
+bit about his respect for users
+
+00:18:22.720 --> 00:18:26.400
+isn't really the user's fault if they
+enter the wrong thing
+
+00:18:26.400 --> 00:18:31.170
+yeah maybe if we communicated our
+expectations
+
+00:18:31.170 --> 00:18:34.200
+perfectly if the user understood
+
+00:18:34.200 --> 00:18:37.790
+perfectly and if their fingers to the
+slip on the keyboard
+
+00:18:37.790 --> 00:18:41.800
+frustrating users is very unprofessional
+behavior
+
+00:18:41.800 --> 00:18:45.240
+users pay your salary when your software
+engineer
+
+00:18:45.240 --> 00:18:50.240
+we love users so make their world easier
+and they'll make your world easier to by
+
+00:18:50.240 --> 00:18:51.280
+giving you more money
+
+00:18:51.280 --> 00:18:52.980
+thank you very much
+

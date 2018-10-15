@@ -1,0 +1,268 @@
+WEBVTT
+Kind: captions
+Language: en
+
+00:00:00.919 --> 00:00:05.000
+Now that we have some interesting objects
+to work with, we need to increase our ability
+
+00:00:05.000 --> 00:00:09.910
+to control the order statements in the program
+are performed by the computer. When statements
+
+00:00:09.910 --> 00:00:15.190
+are done by the computer, we say they were
+executed, even though it sounds kind of grizzly.
+
+00:00:15.190 --> 00:00:21.480
+We've used three types of control structures
+so far: if statements, while loops, and methods.
+
+00:00:21.480 --> 00:00:25.160
+What all of these control statements have
+in common is that they change the order in
+
+00:00:25.160 --> 00:00:30.660
+which the statements are executed. If statements
+change the order of execution by deciding
+
+00:00:30.660 --> 00:00:35.559
+whether a statement will be executed or not.
+While loops change the order of execution
+
+00:00:35.559 --> 00:00:40.329
+by deciding how many times a statement will
+be executed, and methods change the order
+
+00:00:40.329 --> 00:00:45.280
+of execution by causing the program to do
+their instructions before continuing on with
+
+00:00:45.280 --> 00:00:51.139
+code. We're allowed to put one type of statement
+within another. For example, we can put an
+
+00:00:51.139 --> 00:00:56.089
+if statement inside a while loop, or a method
+inside a while loop. This is called nesting
+
+00:00:56.089 --> 00:01:01.389
+control statements. Consider the code below
+that calculates the number of days in a month
+
+00:01:01.389 --> 00:01:07.109
+that you get more than 100 text messages.
+We'll end the data using the sentinel value,
+
+00:01:07.109 --> 00:01:11.170
+negative one. We can't just count the number
+of days in a month since different months
+
+00:01:11.170 --> 00:01:15.609
+have different numbers of days. Negative one
+is a good choice for a sentinel because you
+
+00:01:15.609 --> 00:01:22.609
+can't get -1 texts. Int lots of text days
+equals zero final int lots of texts equals
+
+00:01:24.359 --> 00:01:31.179
+100 scanner input equals new scanner system
+in. System outprint line enter the number
+
+00:01:31.179 --> 00:01:38.179
+of texts each day this month followed by a
+-1. Int texts equals input next int. While
+
+00:01:39.990 --> 00:01:46.990
+texts not equal to -1. If text greater than
+lots of texts lots of texts days equals lots
+
+00:01:47.549 --> 00:01:54.549
+of text days +1. Texts equals input dot next
+int. System out print line you got more than
+
+00:01:56.840 --> 00:02:03.840
+lots of texts plus texts in a single day plus
+lots of text days plus times. There are a
+
+00:02:05.100 --> 00:02:10.420
+few things to notice about this code. This
+code uses a technique that's called a priming
+
+00:02:10.420 --> 00:02:16.120
+read. I read the first value for text before
+the loop started. That may look wrong, but
+
+00:02:16.120 --> 00:02:20.200
+it's a logical order when you're dealing with
+a sentinel, since it would be possible that
+
+00:02:20.200 --> 00:02:24.730
+someone would enter the sentinel value first.
+In that case the loop wouldn't be entered
+
+00:02:24.730 --> 00:02:29.650
+at all, and the correct results would be shown.
+The value for the second iteration of the
+
+00:02:29.650 --> 00:02:34.900
+loop is read at the end of the first iteration.
+The reason you do this with a sentinel is
+
+00:02:34.900 --> 00:02:39.569
+that you want to exit the loop immediately
+when the sentinel has been entered. If you're
+
+00:02:39.569 --> 00:02:44.430
+wondering why we call this a priming read,
+it's similar to priming a pump. If you've
+
+00:02:44.430 --> 00:02:49.010
+ever had to pump water from a well manually,
+you probably know that you sometimes have
+
+00:02:49.010 --> 00:02:53.959
+to pour water down a pump to pump water up.
+The read before the loop is like pouring the
+
+00:02:53.959 --> 00:02:58.739
+water down the pump. I admit the analogy isn't
+perfect.
+
+00:02:58.739 --> 00:03:03.750
+Nesting is a profound idea of computer science.
+You've seen nesting before if you store files
+
+00:03:03.750 --> 00:03:09.489
+and folders on your computer. Folders contain
+files and other folders, and those folders
+
+00:03:09.489 --> 00:03:15.290
+contain files and other folders, and so on.
+The fact that a folder can contain a folder,
+
+00:03:15.290 --> 00:03:19.650
+and that that folder can contain yet more
+folders is a particularly elegant example
+
+00:03:19.650 --> 00:03:25.140
+of nesting. This shows up really nicely on
+a Macintosh computer where each layer of folders
+
+00:03:25.140 --> 00:03:31.370
+is in a vertical list and moves left to right
+as the folders are opened and closed.
+
+00:03:31.370 --> 00:03:35.890
+Another way we can improve our use of control
+structures is to learn to combine Boolean
+
+00:03:35.890 --> 00:03:42.230
+variables together. There are three essential
+operators for Boolean variables: and, or,
+
+00:03:42.230 --> 00:03:48.659
+and not. The symbol for and in Java is a pair
+of ampersands. The symbol for or in Java is
+
+00:03:48.659 --> 00:03:53.469
+two vertical lines. The vertical line key
+is usually on the right-hand side of the keyboard
+
+00:03:53.469 --> 00:03:59.980
+above the enter key. Not is an exclamation
+point. While we use these words in English
+
+00:03:59.980 --> 00:04:06.019
+all the time, their computer science meaning
+is much more precise, particularly with or.
+
+00:04:06.019 --> 00:04:10.799
+If I say I'm going to the store or picking
+up burgers, you'd probably be surprised if
+
+00:04:10.799 --> 00:04:17.690
+I did both. But in Java or is true when either
+one or both of the Boolean operands are true.
+
+00:04:17.690 --> 00:04:23.630
+The and operator works pretty much the same
+in English in Java, as does the not operator.
+
+00:04:23.630 --> 00:04:27.700
+Suppose we want to count the number of words
+in an array list of strings that start with
+
+00:04:27.700 --> 00:04:33.290
+a capital letter. You might think we could
+do something like this: if A is less than
+
+00:04:33.290 --> 00:04:38.310
+or equal to letter, which is less than or
+equal to Z. But that doesn't work in Java.
+
+00:04:38.310 --> 00:04:43.250
+The problem is that A less than or equal to
+letter is a Boolean, and true less than or
+
+00:04:43.250 --> 00:04:48.770
+equal to Z doesn't make any sense. So we have
+to use logic operators to combine the test
+
+00:04:48.770 --> 00:04:53.200
+of whether the letter is bigger than the character
+capital A, and the letter is smaller than
+
+00:04:53.200 --> 00:05:00.200
+the character capital Z. Let's look at some
+code. Int count equals zero int starts with
+
+00:05:00.210 --> 00:05:06.310
+cap equals zero array list of string list.
+Let's assume this list is constructed and
+
+00:05:06.310 --> 00:05:13.310
+data was entered elsewhere. While count is
+less than list dot size char letter equals
+
+00:05:14.220 --> 00:05:20.480
+list dot get of count char at of zero if A
+is less than or equal to letter and letter
+
+00:05:20.480 --> 00:05:27.190
+is less than or equal to Z starts with cap
+equal starts with cap +1 count equals count
+
+00:05:27.190 --> 00:05:33.800
++1. This code steps through the array list
+of strings named list one element at a time.
+
+00:05:33.800 --> 00:05:38.320
+It takes the first letter off the string and
+stores it in letter. Notice that I have two
+
+00:05:38.320 --> 00:05:44.350
+dot operators together on one line. The left
+dot operator applies to the list, and the
+
+00:05:44.350 --> 00:05:49.490
+right one applies to the string that's returned
+by the list dot get method. If you find that
+
+00:05:49.490 --> 00:05:54.040
+syntax confusing, you can pull the string
+out of the list in one step and store it in
+
+00:05:54.040 --> 00:05:59.250
+a variable. Once we have the letter, we can
+test to see if it's between capital A and
+
+00:05:59.250 --> 00:06:04.880
+capital Z and increment the counter if it
+is. Now that you know how to nest control
+
+00:06:04.880 --> 00:06:09.370
+statements and use logical operators, we'll
+be able to create bigger and better programs.
+

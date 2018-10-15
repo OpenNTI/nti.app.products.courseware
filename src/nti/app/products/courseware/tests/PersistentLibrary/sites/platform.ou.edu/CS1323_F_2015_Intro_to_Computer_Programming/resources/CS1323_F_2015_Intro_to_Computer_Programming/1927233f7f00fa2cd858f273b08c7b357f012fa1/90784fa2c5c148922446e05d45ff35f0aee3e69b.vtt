@@ -1,0 +1,370 @@
+WEBVTT
+Kind: captions
+Language: en
+
+00:00:01.100 --> 00:00:06.439
+&gt;&gt;Let's take a look at file redaction as we
+continue our study of searching. Here's our
+
+00:00:06.439 --> 00:00:12.910
+problem statement: Sometimes when documents
+are made public they have sensitive data removed.
+
+00:00:12.910 --> 00:00:19.010
+If you do an Internet search on redaction
+you'll see lots and lots of examples of this.
+
+00:00:19.010 --> 00:00:23.960
+Now an example that I'm familiar with is accreditation
+documents. In order for our program to be
+
+00:00:23.960 --> 00:00:28.789
+accredited we have to make copies of student
+work. But it's nobody's business which student
+
+00:00:28.789 --> 00:00:33.609
+did that work. So we have to copy out the
+names. The way we do it is sometimes with
+
+00:00:33.609 --> 00:00:39.030
+a black marker or sometimes with Adobe Acrobat
+or some software like that. But that's how
+
+00:00:39.030 --> 00:00:44.829
+we actually remove the student names from
+the papers to protect the privacy of the students.
+
+00:00:44.829 --> 00:00:49.749
+Now this process is called redaction. It's
+actually very common, particularly in government
+
+00:00:49.749 --> 00:00:56.749
+security. So let's redact a file by removing
+all the int values. Now you might be wondering
+
+00:00:56.850 --> 00:01:01.449
+"Why would you do something like this?" Well
+one of the big reasons now is to remove social
+
+00:01:01.449 --> 00:01:05.930
+security numbers. You really don't want to
+have sensitive data like that any place that
+
+00:01:05.930 --> 00:01:11.170
+somebody can get at it because of security
+reasons. There are some very important protections
+
+00:01:11.170 --> 00:01:16.960
+of privacy that computer scientists are responsible
+for, and this is a big one.
+
+00:01:16.960 --> 00:01:21.990
+The first step we're going to do is read the
+input from one file and write it to another
+
+00:01:21.990 --> 00:01:26.880
+file. Now this is a process we haven't done
+before, and it's a good idea to start with
+
+00:01:26.880 --> 00:01:33.670
+this first before we start dealing with the
+redaction. So the question is how do you know
+
+00:01:33.670 --> 00:01:39.329
+when the file ends? Well there's a method
+called hasNextLine that tells you when you
+
+00:01:39.329 --> 00:01:43.640
+run out of file. This method doesn't work
+when you're reading from the keyboard with
+
+00:01:43.640 --> 00:01:48.729
+a Scanner, because the keyboard never ends.
+But files do end-- there are only so many
+
+00:01:48.729 --> 00:01:54.479
+characters in them, and so this makes sense
+to use with files. Now all of the Scanner
+
+00:01:54.479 --> 00:02:00.990
+methods have a paired method. So for example
+there's a hasNextInt there's a hasNextDouble,
+
+00:02:00.990 --> 00:02:05.579
+there's a hasNext, which just looks to see
+whether the next operator will be successful
+
+00:02:05.579 --> 00:02:11.730
+or not. What these methods are doing is a
+peek. They're looking ahead to see if that
+
+00:02:11.730 --> 00:02:17.100
+next operation will be successful. So that's
+kind of nice, because with files you can't
+
+00:02:17.100 --> 00:02:23.110
+go backwards. Now writing files is something
+else we haven't done. There's a class called
+
+00:02:23.110 --> 00:02:28.500
+PrintWriter that we're going to use for this.
+It's constructed similar to a Scanner so you'll
+
+00:02:28.500 --> 00:02:34.850
+do PrintWriter writer equals new PrintWriter
+of new file and then the file name, the file
+
+00:02:34.850 --> 00:02:39.690
+name of course being a String. Now this file
+is going to be place in your project home
+
+00:02:39.690 --> 00:02:44.440
+directory in Eclipse. If you need it to be
+place somewhere else, then you have to give
+
+00:02:44.440 --> 00:02:50.200
+a full path for it. Now there are lots and
+lots of print methods in the API. They're
+
+00:02:50.200 --> 00:02:55.120
+called print and printline and they work very
+much like system out print line. They're slightly
+
+00:02:55.120 --> 00:02:59.930
+different in subtle ways but they work the
+same. One big difference is system out print
+
+00:02:59.930 --> 00:03:05.360
+line requires everything to be a String, print
+and printline don't. You can print any kind
+
+00:03:05.360 --> 00:03:11.060
+of data you want: ints, doubles, Strings,
+whatever. If you're interested in it go and
+
+00:03:11.060 --> 00:03:15.260
+read the Java API. This part of the API is
+quite readable.
+
+00:03:15.260 --> 00:03:20.230
+Now, these methods are going to have to throw
+a file not found exception, because any time
+
+00:03:20.230 --> 00:03:24.810
+you're writing to a file, just like when you're
+reading one it's possible that this operation
+
+00:03:24.810 --> 00:03:29.540
+could fail. Maybe for example you're trying
+to write to a directory where you don't have
+
+00:03:29.540 --> 00:03:34.730
+permissions. And so Java insists that you
+throw a file not found exception not only
+
+00:03:34.730 --> 00:03:39.080
+from the method that opens the file, but from
+any method that calls the method that opens
+
+00:03:39.080 --> 00:03:44.420
+the file. In other words, it works very much
+like the Scanner does when we're reading the
+
+00:03:44.420 --> 00:03:50.500
+files. So let's take a look at a program that
+reads in one file and writes it out to another
+
+00:03:50.500 --> 00:03:56.150
+file. So we have public static void. Now I've
+called it redact numbers because that's what
+
+00:03:56.150 --> 00:04:01.230
+it's eventually going to be. And we're taking
+a string file name and throwing a file not
+
+00:04:01.230 --> 00:04:07.240
+found exception. So the first thing we do
+is open a Scanner for the input file, and
+
+00:04:07.240 --> 00:04:13.190
+then we open a PrintWriter for the output
+file. So notice the output file I've put redacted
+
+00:04:13.190 --> 00:04:18.930
+text, because that's what it's going to be
+eventually. So all of the method body looks
+
+00:04:18.930 --> 00:04:24.960
+like is just reading in one line at a time
+and writing that same line out. So as long
+
+00:04:24.960 --> 00:04:31.960
+as our input file has more lines, we read
+it using NextLine and then we do output file.print
+
+00:04:32.790 --> 00:04:38.490
+line, of that line that's just read in. Then
+at the end remember we close the input file
+
+00:04:38.490 --> 00:04:43.300
+and close the output file. It's especially
+important to remember to close those output
+
+00:04:43.300 --> 00:04:47.770
+files, because if you don't close them they
+won't be saved. And if they're not saved you're
+
+00:04:47.770 --> 00:04:51.120
+not going to be able to see them and you're
+going to think your program isn't working
+
+00:04:51.120 --> 00:04:56.220
+when it's actually just a very simple mistake.
+
+00:04:56.220 --> 00:05:00.490
+Now we're ready to move to thinking about
+the redaction. What we're going to have to
+
+00:05:00.490 --> 00:05:06.490
+do is read in lines with a Scanner just like
+we've done in the previous program, but now
+
+00:05:06.490 --> 00:05:10.860
+we're going to have to pull the line apart
+a little bit at a time. So we're going to
+
+00:05:10.860 --> 00:05:17.630
+repeat while the line has words left using
+hasNext and then check to see if the next
+
+00:05:17.630 --> 00:05:24.630
+word is an int. Now the way you do that is
+using hasNextInt. If so, then you redact it.
+
+00:05:27.210 --> 00:05:31.680
+Now when you redact files you don't just remove
+the data-- you have to put a mark in there
+
+00:05:31.680 --> 00:05:36.550
+showing that it's redacted. So I'm going to
+put the word "redact" in so that way people
+
+00:05:36.550 --> 00:05:41.060
+will know that data was removed from the file.
+This is the proper way to do this. We're not
+
+00:05:41.060 --> 00:05:46.960
+trying to do anything sneaky, we're just trying
+to protect people's privacy. Otherwise if
+
+00:05:46.960 --> 00:05:52.510
+it isn't going to be redacted, you just print
+the word. So this is an easy way to do this.
+
+00:05:52.510 --> 00:05:57.850
+Here's a method that does it. This is going
+to be public static void redact line. And
+
+00:05:57.850 --> 00:06:02.470
+it's going to take the String line, so we're
+letting the other method do the reading, and
+
+00:06:02.470 --> 00:06:09.210
+a PrintWriter for the output file. So we'll
+have a Scanner input line as new Scanner of
+
+00:06:09.210 --> 00:06:14.650
+line. So what's happening is we're using a
+second Scanner to pull apart the line and
+
+00:06:14.650 --> 00:06:21.650
+the file, one word at a time. Then we'll say
+while input line hasNext, so we're looking
+
+00:06:22.190 --> 00:06:26.910
+to see if there are still more words that
+are left on the line, and then we look and
+
+00:06:26.910 --> 00:06:33.910
+see is the next thing that's going to be read
+in an integer? If it is, we write out "redacted"
+
+00:06:34.639 --> 00:06:40.889
+with a space after it. And then we do input
+line dot NextInt. So what we're doing here
+
+00:06:40.889 --> 00:06:46.930
+is skipping over the next integer that's in
+the input line, and in the output file putting
+
+00:06:46.930 --> 00:06:53.300
+redacted. Otherwise we do what we did before.
+We take the word and we read it in using next
+
+00:06:53.300 --> 00:06:59.370
+and then do output file dot write and then
+the word plus a space. That's the end of the
+
+00:06:59.370 --> 00:07:04.460
+while loop. And that's how we redact a single
+line. Of course we would have to call this
+
+00:07:04.460 --> 00:07:10.460
+method in another method that's reading in
+the file one line at a time. Now there are
+
+00:07:10.460 --> 00:07:15.880
+some very serious shortcomings to this code.
+Remember the Scanner separates words on a
+
+00:07:15.880 --> 00:07:22.639
+line using tabs and spaces. And we restored
+it using only spaces, so this could actually
+
+00:07:22.639 --> 00:07:29.090
+change the contents of the file because basically
+what we're doing is replacing tabs with spaces.
+
+00:07:29.090 --> 00:07:33.270
+That's not a good thing. Unfortunately though
+to do a better job at this, we would have
+
+00:07:33.270 --> 00:07:38.650
+to write a much more complicated program.
+We also have an extra space at the end of
+
+00:07:38.650 --> 00:07:44.500
+each line. Now things like this can be very
+hard to see. For example tabs and spaces,
+
+00:07:44.500 --> 00:07:49.370
+just depending on how things line up might
+not be visible at all. And the extra space
+
+00:07:49.370 --> 00:07:54.710
+at the end of the line is only going to be
+visible if, in fact, you look through it with
+
+00:07:54.710 --> 00:08:00.060
+an editor to see that that space is there.
+So these are very subtle problems that could
+
+00:08:00.060 --> 00:08:07.060
+exist. And there is another shortcoming too.
+Suppose we had ABC123. HasNextInt is going
+
+00:08:08.070 --> 00:08:13.160
+to return faults with that, because it can't
+read in the ABC part. So we're probably not
+
+00:08:13.160 --> 00:08:17.810
+going to get all the numbers out of the file
+either. So this isn't perfect code, but it
+
+00:08:17.810 --> 00:08:21.850
+does show you how to use some great methods
+in the Scanner class and shows you how to
+
+00:08:21.850 --> 00:08:25.999
+search for integers in a file. So keep programming.
+

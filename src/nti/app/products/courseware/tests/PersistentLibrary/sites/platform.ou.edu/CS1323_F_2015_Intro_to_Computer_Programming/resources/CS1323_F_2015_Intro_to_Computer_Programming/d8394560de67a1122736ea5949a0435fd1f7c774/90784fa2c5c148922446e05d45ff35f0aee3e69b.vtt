@@ -1,0 +1,236 @@
+WEBVTT
+Kind: captions
+Language: en
+
+00:00:01.170 --> 00:00:06.040
+&gt;&gt;Deborah Trytten: Let's talk a little bit
+about assignment statements. Computer science
+
+00:00:06.040 --> 00:00:10.650
+is actually part of mathematics, and there's
+a deep relationship between computer science
+
+00:00:10.650 --> 00:00:15.550
+and mathematics. It's not at all unusual for
+computer scientists to have strong backgrounds
+
+00:00:15.550 --> 00:00:20.109
+in mathematics. For example my college degree
+and my first master's degree are actually
+
+00:00:20.109 --> 00:00:26.270
+in math, not computer science. The notation
+is often very similar between computer science
+
+00:00:26.270 --> 00:00:32.320
+and mathematics, and that can be really helpful.
+The problem is there are both subtle and profound
+
+00:00:32.320 --> 00:00:37.359
+differences in meaning for some mathematical
+symbols when they're used in programming--
+
+00:00:37.359 --> 00:00:41.280
+and that is a possible source in confusion.
+
+00:00:41.280 --> 00:00:46.219
+So let's talk a little bit about what the
+equal sign means in mathematics. When we say
+
+00:00:46.219 --> 00:00:53.219
+x equals sign three, we mean x is three. That
+is the variable of x has a value of three
+
+00:00:54.690 --> 00:01:01.579
+forever and ever and ever. When we say x is
+three and x is four that's actually inconsistent,
+
+00:01:01.579 --> 00:01:06.729
+because once x has a value of three forever
+it can't have a value of four forever, and
+
+00:01:06.729 --> 00:01:12.820
+so that's really a problem. The other thing
+is that three equals x and that x equals three
+
+00:01:12.820 --> 00:01:18.460
+actually mean the same thing. Now there's
+a name for that property, it's called symmetry.
+
+00:01:18.460 --> 00:01:23.259
+And this is one of the critical properties
+of equality in mathematics.
+
+00:01:23.259 --> 00:01:27.969
+Now let's talk about the assignment statement
+in programming. The symbol is an equal sign,
+
+00:01:27.969 --> 00:01:33.579
+which is the same symbol that we use for equality
+in mathematics. The problem is that the assignment
+
+00:01:33.579 --> 00:01:40.579
+statement doesn't mean equality. When we say
+int x equals three, we mean the location in
+
+00:01:41.240 --> 00:01:47.460
+memory that we've called x gets the value
+of three-- that is that three is moved into
+
+00:01:47.460 --> 00:01:54.460
+that memory location. Right now: not before,
+not after. [laughs] This means that the location
+
+00:01:55.979 --> 00:02:01.319
+x may have a different value earlier or later.
+We really don't know. So there's a sense of
+
+00:02:01.319 --> 00:02:07.429
+timing in the assignment statement that equality
+doesn't have. Assignment statements in computer
+
+00:02:07.429 --> 00:02:14.390
+science are actions: do this, move this there,
+whereas equality is the statement of properties,
+
+00:02:14.390 --> 00:02:17.159
+of being.
+
+00:02:17.159 --> 00:02:23.000
+Now let's talk a little bit about the asymmetry.
+When we say int x equals three, we mean take
+
+00:02:23.000 --> 00:02:27.360
+the value on the right, that's the three and
+store it in the location on the left, that's
+
+00:02:27.360 --> 00:02:33.930
+the x. But it's asymmetric-- notice that in
+my description right and left matter. I have
+
+00:02:33.930 --> 00:02:39.720
+to tell you which side to interpret which
+way. Three equals x doesn't actually make
+
+00:02:39.720 --> 00:02:46.599
+any sense, because that would say take the
+value in location x and store it in location
+
+00:02:46.599 --> 00:02:52.170
+3. Well three isn't a legal name for a location.
+Remember that all of our variable names have
+
+00:02:52.170 --> 00:02:56.400
+to start with letters, they can't start with
+numbers, and so this just isn't sensible.
+
+00:02:56.400 --> 00:03:02.709
+It doesn't make sense. Confusing x equals
+three and three equals x is called assignment
+
+00:03:02.709 --> 00:03:07.700
+dyslexia, and it's something that beginning
+programmers sometimes have trouble with. So
+
+00:03:07.700 --> 00:03:12.659
+really think carefully about what it means
+and how right and left play into that. So
+
+00:03:12.659 --> 00:03:18.170
+three equals x doesn't make sense. x equals
+three? You bet.
+
+00:03:18.170 --> 00:03:23.420
+Let's take an example of what asymmetry means
+to help you with this concept a little bit.
+
+00:03:23.420 --> 00:03:28.810
+Suppose I've declared an integer x and assigned
+the value of ten and another integer y and
+
+00:03:28.810 --> 00:03:35.060
+assigned the value of twenty. Are the two
+statements below the same? Is x equals y the
+
+00:03:35.060 --> 00:03:40.049
+same as y equals x? Well to answer this question
+I'm going to use something called a memory
+
+00:03:40.049 --> 00:03:47.049
+diagram, very important tool for understanding
+programming. When we say x equals ten we create
+
+00:03:47.989 --> 00:03:53.430
+a location in memory, we show that as a box,
+and we label it x because that's what we're
+
+00:03:53.430 --> 00:03:59.189
+going to call it, and then we put the value
+ten in that box. That's what int x equals
+
+00:03:59.189 --> 00:04:06.189
+ten does. Int y equals twenty is the box on
+the right. So we create the location in memory
+
+00:04:06.400 --> 00:04:13.209
+called y and we store the value twenty into
+it. Now, when we say x equals y we mean they
+
+00:04:13.209 --> 00:04:19.170
+take the value in location y and store it
+in location x. Okay, pay attention to x because
+
+00:04:19.170 --> 00:04:25.350
+it's about to change. There it goes, now it
+has twenty in it. Let's take a look at what
+
+00:04:25.350 --> 00:04:31.730
+happens when we say y equals x. The set up
+is the same before, but now we're going to
+
+00:04:31.730 --> 00:04:38.730
+take the location in x and store it in y.
+Pay attention to y - it's going to change.
+
+00:04:39.390 --> 00:04:45.410
+There it goes. So notice that x equals y and
+y equals x mean different things. Now the
+
+00:04:45.410 --> 00:04:49.630
+values are equivalent tin the mathematical
+sense after these operations are done but
+
+00:04:49.630 --> 00:04:54.820
+the values are different. And that's what's
+critical. So left and right really matter
+
+00:04:54.820 --> 00:04:57.050
+here.
+
+00:04:57.050 --> 00:05:01.790
+Now the technique that I'm trying to show
+you here is called paraphrasing code. So for
+
+00:05:01.790 --> 00:05:06.820
+example, when we say int size in a program
+what you should be thinking in your head and
+
+00:05:06.820 --> 00:05:11.910
+what you may even want to say out loud is
+set a side enough space and memory to store
+
+00:05:11.910 --> 00:05:18.910
+one int., call that size. That's what int
+size means. And there's what it looks like
+
+00:05:20.210 --> 00:05:27.210
+as a memory diagram. When we say size is three,
+we're saying take the value three and store
+
+00:05:27.440 --> 00:05:32.840
+it in location size. And right there is what
+that looks like. The value three goes into
+
+00:05:32.840 --> 00:05:36.520
+the memory diagram. Keep programming!
+

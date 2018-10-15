@@ -1,0 +1,154 @@
+{
+  "MimeType": "application/vnd.nextthought.ntislidedeck",
+  "Videos": [
+    {
+      "MimeType": "application/vnd.nextthought.ntislidevideo",
+      "video-ntiid": "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_02.10.01_Dropping",
+      "title": "Dropping the Lowest Midterm Grade",
+      "creator": "Deborah Trytten",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Dropping",
+      "thumbnail": "//www.kaltura.com/p/1500101/thumbnail/entry_id/0_2j5begap/width/640/",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Dropping_video",
+      "class": "ntislidevideo"
+    }
+  ],
+  "creator": "Deborah Trytten",
+  "title": "Dropping the Lowest Midterm Grade",
+  "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Dropping",
+  "Slides": [
+    {
+      "MimeType": "application/vnd.nextthought.slide",
+      "slidevideoid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Dropping_video",
+      "slidetitle": "Dropping the Lowest Midterm Grade",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Dropping",
+      "slidevideostart": "0.0",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlide-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Dropping_slide_1",
+      "slideimage": "resources/CS1323_F_2015_Intro_to_Computer_Programming/38c6d734275c720732cbae05b684e1f78603b8b3/fd35e23767020999111e1f49239199b4c5eff23e.png",
+      "slidevideoend": "12.0",
+      "slidenumber": "1",
+      "class": "slide"
+    },
+    {
+      "MimeType": "application/vnd.nextthought.slide",
+      "slidevideoid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Dropping_video",
+      "slidetitle": "Problem Statement",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Dropping",
+      "slidevideostart": "12.0",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlide-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Dropping_slide_2",
+      "slideimage": "resources/CS1323_F_2015_Intro_to_Computer_Programming/ab77dd40b4b9758a0a64bad6523cb484d2993124/fd35e23767020999111e1f49239199b4c5eff23e.png",
+      "slidevideoend": "35.0",
+      "slidenumber": "2",
+      "class": "slide"
+    },
+    {
+      "MimeType": "application/vnd.nextthought.slide",
+      "slidevideoid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Dropping_video",
+      "slidetitle": "Create Class",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Dropping",
+      "slidevideostart": "35.0",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlide-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Dropping_slide_3",
+      "slideimage": "resources/CS1323_F_2015_Intro_to_Computer_Programming/df95f73f9d191ec22fd8a7c59e6628783b31ba0d/fd35e23767020999111e1f49239199b4c5eff23e.png",
+      "slidevideoend": "153.0",
+      "slidenumber": "3",
+      "class": "slide"
+    },
+    {
+      "MimeType": "application/vnd.nextthought.slide",
+      "slidevideoid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Dropping_video",
+      "slidetitle": "Choose Method Signatures(s)",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Dropping",
+      "slidevideostart": "153.0",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlide-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Dropping_slide_4",
+      "slideimage": "resources/CS1323_F_2015_Intro_to_Computer_Programming/8b5edb4b44f312b757c1954f0817fe1da8d7ca01/fd35e23767020999111e1f49239199b4c5eff23e.png",
+      "slidevideoend": "194.0",
+      "slidenumber": "4",
+      "class": "slide"
+    },
+    {
+      "MimeType": "application/vnd.nextthought.slide",
+      "slidevideoid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Dropping_video",
+      "slidetitle": "Find A Method",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Dropping",
+      "slidevideostart": "194.0",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlide-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Dropping_slide_5",
+      "slideimage": "resources/CS1323_F_2015_Intro_to_Computer_Programming/3239f3517c847b4ae7a7b811cc0c586bdfc82a6f/fd35e23767020999111e1f49239199b4c5eff23e.png",
+      "slidevideoend": "515.0",
+      "slidenumber": "5",
+      "class": "slide"
+    },
+    {
+      "MimeType": "application/vnd.nextthought.slide",
+      "slidevideoid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Dropping_video",
+      "slidetitle": "Make Decisions about Data",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Dropping",
+      "slidevideostart": "515.0",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlide-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Dropping_slide_6",
+      "slideimage": "resources/CS1323_F_2015_Intro_to_Computer_Programming/8623b30c3a24fc935ee5fafd530b1b69e443d6ea/fd35e23767020999111e1f49239199b4c5eff23e.png",
+      "slidevideoend": "698.0",
+      "slidenumber": "6",
+      "class": "slide"
+    },
+    {
+      "MimeType": "application/vnd.nextthought.slide",
+      "slidevideoid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Dropping_video",
+      "slidetitle": "First Try at Method",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Dropping",
+      "slidevideostart": "698.0",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlide-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Dropping_slide_7",
+      "slideimage": "resources/CS1323_F_2015_Intro_to_Computer_Programming/5e48b6fce6edc2b178478339fb8f933f49fee1a5/fd35e23767020999111e1f49239199b4c5eff23e.png",
+      "slidevideoend": "1086.0",
+      "slidenumber": "7",
+      "class": "slide"
+    },
+    {
+      "MimeType": "application/vnd.nextthought.slide",
+      "slidevideoid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Dropping_video",
+      "slidetitle": "Implement Real Method",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Dropping",
+      "slidevideostart": "1086.0",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlide-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Dropping_slide_8",
+      "slideimage": "resources/CS1323_F_2015_Intro_to_Computer_Programming/fdd7f9cc4a03152a2526234f2d0520fb39ff1c3a/fd35e23767020999111e1f49239199b4c5eff23e.png",
+      "slidevideoend": "1096.0",
+      "slidenumber": "8",
+      "class": "slide"
+    },
+    {
+      "MimeType": "application/vnd.nextthought.slide",
+      "slidevideoid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Dropping_video",
+      "slidetitle": "Write the Main Program",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Dropping",
+      "slidevideostart": "1096.0",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlide-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Dropping_slide_9",
+      "slideimage": "resources/CS1323_F_2015_Intro_to_Computer_Programming/5bd41eaaab0849d3492b6d229e5774d8c0420415/fd35e23767020999111e1f49239199b4c5eff23e.png",
+      "slidevideoend": "1313.0",
+      "slidenumber": "9",
+      "class": "slide"
+    },
+    {
+      "MimeType": "application/vnd.nextthought.slide",
+      "slidevideoid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Dropping_video",
+      "slidetitle": "Test",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Dropping",
+      "slidevideostart": "1313.0",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlide-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Dropping_slide_10",
+      "slideimage": "resources/CS1323_F_2015_Intro_to_Computer_Programming/8c20be94336680da503f8a25dd2e2592e719883d/fd35e23767020999111e1f49239199b4c5eff23e.png",
+      "slidevideoend": "1708.0",
+      "slidenumber": "10",
+      "class": "slide"
+    },
+    {
+      "MimeType": "application/vnd.nextthought.slide",
+      "slidevideoid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Dropping_video",
+      "slidetitle": "Off By One Bugs",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Dropping",
+      "slidevideostart": "1708.0",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlide-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Dropping_slide_11",
+      "slideimage": "resources/CS1323_F_2015_Intro_to_Computer_Programming/014dd176c5c2ce2fba0fa22c0790a340bcdc76f5/fd35e23767020999111e1f49239199b4c5eff23e.png",
+      "slidevideoend": "1806.0",
+      "slidenumber": "11",
+      "class": "slide"
+    }
+  ],
+  "ntiid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Dropping",
+  "class": "ntislidedeck"
+}

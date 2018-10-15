@@ -1,0 +1,1071 @@
+WEBVTT
+Kind: captions
+Language: en
+
+00:00:00.840 --> 00:00:03.959
+&gt;&gt;Dr. Deborah Trytten: Now that we know some
+control structures, it's time to put together
+
+00:00:03.959 --> 00:00:08.820
+a program that will use them. Let's look at
+what happens when you drop the lowest midterm
+
+00:00:08.820 --> 00:00:15.470
+grade--a strategy my students always seem
+to be in favor of. First off here's the problem
+
+00:00:15.470 --> 00:00:21.340
+statement: write a program to calculate your
+grade in a class. There are five midterm examinations
+
+00:00:21.340 --> 00:00:26.060
+worth 100 points each. You're going to drop
+the lowest examination, and the others are
+
+00:00:26.060 --> 00:00:32.230
+equally weighted. The grade structure will
+be that if you get 70 or over you pass, and
+
+00:00:32.230 --> 00:00:39.230
+if your grade is below 70 you fail. So the
+first thing we need to do is create a class.
+
+00:00:40.500 --> 00:00:45.870
+So we'll open Eclipse, create a project, create
+a class, create a main method. These are all
+
+00:00:45.870 --> 00:00:52.870
+things we've done before. So here we're going
+to open Eclipse. We'll choose our default
+
+00:00:56.129 --> 00:01:03.129
+workspace. We'll create a new project, which
+I'll call Midterm Grades. Remember spaces
+
+00:01:14.380 --> 00:01:21.380
+are legal in project names. And now we'll
+create a new class. Now when I create the
+
+00:01:25.609 --> 00:01:31.399
+class name, notice I can't put the space between
+midterm and grades because that isn't legal.
+
+00:01:31.399 --> 00:01:36.159
+I'm going to have the computer create public
+static void main. If you're not proficient
+
+00:01:36.159 --> 00:01:39.649
+with that yet, do it yourself. Don't let the
+computer do it until you're sure you know
+
+00:01:39.649 --> 00:01:46.649
+how to do it on your own. Now as usual Eclipse
+has made a mess of this code, so I'm going
+
+00:01:47.819 --> 00:01:54.819
+to adjust it right away to the way I like
+it. Let's get their little comments out of
+
+00:01:56.060 --> 00:02:03.060
+there, get the curly braces in order, and
+go back to the PowerPoint, and grab our problem
+
+00:02:09.129 --> 00:02:16.129
+statement, and put that in the code. That
+is such a handy thing to have around. We don't
+
+00:02:16.760 --> 00:02:23.760
+want to live without it. So I'll start the
+comment: paste, and there we go. We're all
+
+00:02:31.239 --> 00:02:37.299
+set up. The next thing we want to do is choose
+our method signatures. Now I like to think
+
+00:02:37.299 --> 00:02:41.659
+about the methods first when I'm designing
+programs because that keeps the code better
+
+00:02:41.659 --> 00:02:46.430
+organized. Some people like to write big long
+main programs and then break out the methods
+
+00:02:46.430 --> 00:02:51.719
+later, but I find that tends to get messy
+and disorganized and tends to make it bigger
+
+00:02:51.719 --> 00:02:56.290
+and more complicated than it needs to be.
+So what we're going to do is look for small
+
+00:02:56.290 --> 00:03:02.409
+self-contained tasks that we can group together
+in a method. So the inputs to the subtask
+
+00:03:02.409 --> 00:03:08.170
+will be the parameters, and the single output
+will be the return type. Local variables are
+
+00:03:08.170 --> 00:03:12.409
+for details that can be hidden inside the
+method, and remember we want to hide as much
+
+00:03:12.409 --> 00:03:16.010
+as we possibly can.
+
+00:03:16.010 --> 00:03:20.739
+So let's find a method. There are several
+possibilities: reading in the grades would
+
+00:03:20.739 --> 00:03:26.209
+be one possibility, calculating the grades
+would be another, and interpreting the calculated
+
+00:03:26.209 --> 00:03:30.780
+grades as pass or fail would be a third. Now
+we really need to think this through before
+
+00:03:30.780 --> 00:03:36.010
+we just start hacking away at code. We've
+got a problem if reading grades becomes a
+
+00:03:36.010 --> 00:03:40.829
+method because at this point we don't know
+how to store the things that we read in, and
+
+00:03:40.829 --> 00:03:46.150
+so what that means is if we read them in in
+one method, we won't have access to them.
+
+00:03:46.150 --> 00:03:51.540
+So that isn't going to work. Calculating the
+grades has the same problem. So if we're going
+
+00:03:51.540 --> 00:03:55.739
+to create a method, we're going to have to
+both read in the grades and calculate the
+
+00:03:55.739 --> 00:04:01.719
+grades in the method. We can't separate them
+out. As far as interpreting the calculated
+
+00:04:01.719 --> 00:04:07.029
+grades as pass and fail, well that would be
+an okay method. The only thing is it's only
+
+00:04:07.029 --> 00:04:11.950
+going to be two lines long. In general we
+don't make two line methods, particularly
+
+00:04:11.950 --> 00:04:16.769
+when all they would contain is one if statement.
+You can do it, but usually we don't. Because
+
+00:04:16.769 --> 00:04:21.810
+it takes one line to call a method, you don't
+really get much efficiency from that. So what
+
+00:04:21.810 --> 00:04:26.819
+our method is going to have to do is read
+in and calculate the grades, and what should
+
+00:04:26.819 --> 00:04:33.819
+be returned is the grade. So let's create
+the signature for the method and write a stub.
+
+00:04:36.490 --> 00:04:43.259
+Remember that when you're writing methods,
+they are outside of the main program. Now
+
+00:04:43.259 --> 00:04:48.440
+all of our methods at this point are going
+to be public and static. The return type is
+
+00:04:48.440 --> 00:04:53.740
+something we might want to think about. So
+if we calculate a grade, do we want to return
+
+00:04:53.740 --> 00:04:58.270
+an int or do we want to return a double? Well,
+I've been teaching for a long time, and I
+
+00:04:58.270 --> 00:05:02.819
+can tell you you darn well better return a
+double because if you cut off somebody's half-point
+
+00:05:02.819 --> 00:05:07.099
+on a grade, believe me they're going to be
+emailing you the next morning. So double is
+
+00:05:07.099 --> 00:05:14.099
+our return value. Our method name will be
+read and calculate grades, and we'll have
+
+00:05:17.370 --> 00:05:21.509
+to think about our parameters. There are a
+couple of different ways we could do this,
+
+00:05:21.509 --> 00:05:26.569
+and both of them are okay. If we put our scanner
+in the main method, we'll have to pass it
+
+00:05:26.569 --> 00:05:31.190
+in as a parameter so we can use it here. In
+fact, let's do that to get some practice with
+
+00:05:31.190 --> 00:05:36.639
+parameter passing. First, I'm putting in some
+curly braces around the method to calm down
+
+00:05:36.639 --> 00:05:42.660
+Eclipse. The other thing I'm going to do is
+I'm going to put in a return statement. Now
+
+00:05:42.660 --> 00:05:47.970
+this is something called the stub. That is
+not actually the value I plan to return, but
+
+00:05:47.970 --> 00:05:52.060
+it does keep Eclipse quiet so that I don't
+have the little red X's distracting me from
+
+00:05:52.060 --> 00:05:59.060
+doing my job all the time. Here's our scanner
+in the main program. Now we're getting the
+
+00:06:08.259 --> 00:06:15.259
+little underlines again because we haven't
+done an import statement. Scanner's in the
+
+00:06:16.729 --> 00:06:23.729
+Java dot util package, so we import Java util
+scanner. And we can now call this method.
+
+00:06:32.860 --> 00:06:36.550
+Now if you think that I'm really being odd
+about calling this method before we've ever
+
+00:06:36.550 --> 00:06:43.550
+written it, don't worry, it works just fine.
+So let's create a variable called calculated
+
+00:06:48.680 --> 00:06:53.370
+grade and assignment from reading calculate
+grades.
+
+00:06:53.370 --> 00:06:57.539
+Now the other thing we talked about is the
+fact that we're going need to use our scanner
+
+00:06:57.539 --> 00:07:03.580
+inside reading calculate grades, so that becomes
+a parameter. Now I'm going to call it something
+
+00:07:03.580 --> 00:07:09.129
+different in the method than I called it in
+the original program. There's a good reason
+
+00:07:09.129 --> 00:07:13.009
+that I do this, and that's to point out to
+you that they don't have to have the same
+
+00:07:13.009 --> 00:07:18.819
+name. If parameters and arguments had to have
+the same name, they'd be completely useless.
+
+00:07:18.819 --> 00:07:23.129
+So let's give it a different name for some
+variety. Now you'll notice the main program
+
+00:07:23.129 --> 00:07:29.289
+now has the method name underlined in red
+because we haven't put the argument in yet.
+
+00:07:29.289 --> 00:07:35.009
+The argument is input. One thing that confuses
+beginning programmers is a lot of people want
+
+00:07:35.009 --> 00:07:41.639
+to do this. They want to go scanner input.
+Because the parameters, which is scanner keyboard
+
+00:07:41.639 --> 00:07:48.639
+down here, have a type and a name, it's tempting
+to want to do that in the arguments too. But
+
+00:07:49.189 --> 00:07:54.830
+let's think about it a little bit. Without
+scanner in front of it, do we know what type
+
+00:07:54.830 --> 00:08:01.830
+input is? Well, of course we know what type
+input is. We declared it right up there. So
+
+00:08:02.719 --> 00:08:07.090
+there's no reason we have to put scanner there,
+and in fact, as Eclipse was telling us, it's
+
+00:08:07.090 --> 00:08:09.560
+syntactically incorrect.
+
+00:08:09.560 --> 00:08:15.500
+Okay, so we have our method signature, and
+we have our stub. Remember the stub part is
+
+00:08:15.500 --> 00:08:21.960
+the return 0.0. Now we could even run the
+program at this point. You might wonder why
+
+00:08:21.960 --> 00:08:27.849
+we would do something like that. We're not
+going to see much from it, but it is sort
+
+00:08:27.849 --> 00:08:33.010
+of a confirmation that everything is kind
+of on the right track in the program--run
+
+00:08:33.010 --> 00:08:39.560
+early, run often. The next thing we need to
+do is make decisions about data, so let's
+
+00:08:39.560 --> 00:08:45.360
+pick out the types for the individual examination
+grades, the lowest examination grade, the
+
+00:08:45.360 --> 00:08:51.290
+average examination grade, the borderline
+between grades, the course grade, and the
+
+00:08:51.290 --> 00:08:55.650
+scanner. Well, we've already picked the scanner,
+so we don't have to do that one now.
+
+00:08:55.650 --> 00:09:00.250
+The individual examination grades will definitely
+be an int. There are some professors that
+
+00:09:00.250 --> 00:09:04.470
+use partial points, but frankly I think that's
+kind of crazy, so we're going to make ours
+
+00:09:04.470 --> 00:09:10.850
+int. The lowest examination grade should also
+be an int. The average examination grade should
+
+00:09:10.850 --> 00:09:15.690
+definitely be a double because we want to
+keep track of those partial points of grades.
+
+00:09:15.690 --> 00:09:20.450
+Students live or die on those things. The
+borderline between grades is probably going
+
+00:09:20.450 --> 00:09:26.910
+to be a whole number, so that will be an int
+too. The course grade is pass or fail, so
+
+00:09:26.910 --> 00:09:31.670
+that one's going to be a string. So now we
+know what all of our data are. The next thing
+
+00:09:31.670 --> 00:09:36.470
+we need to think about is where should these
+data elements reside? Now we could put them
+
+00:09:36.470 --> 00:09:40.890
+all in the main program, but remember when
+we create methods, we're trying to keep our
+
+00:09:40.890 --> 00:09:47.160
+main program lean and mean. So we really don't
+want to do that. We want to have each variable
+
+00:09:47.160 --> 00:09:52.130
+in the smallest scope it can possibly be in,
+and so we're going to put the variables that
+
+00:09:52.130 --> 00:09:57.940
+can be encapsulated in our method where we're
+reading and calculating grades down there,
+
+00:09:57.940 --> 00:10:01.310
+and put only the minimal number of things
+in the main method.
+
+00:10:01.310 --> 00:10:05.330
+Now this is something that students struggle
+with at first is where to put the data. If
+
+00:10:05.330 --> 00:10:10.990
+you just think about the smallest scope possible,
+you'll usually make the right decision. Since
+
+00:10:10.990 --> 00:10:17.990
+we're reading and calculating data, we'll
+need an int for the next midterm grade. We
+
+00:10:20.330 --> 00:10:27.330
+will need a double for the calculated grade.
+I think we may already have that one. Maybe
+
+00:10:28.520 --> 00:10:35.520
+we should go and look for that--oh no, we
+didn't create that one. Now I'm going to initialize
+
+00:10:38.000 --> 00:10:44.460
+that one to zero. You'll see why in a few
+minutes. We'll need an int for our lowest
+
+00:10:44.460 --> 00:10:51.460
+midterm grade, and instead of returning zero,
+let's return our calculated grade. Now we
+
+00:10:58.060 --> 00:11:03.350
+had some other variables. Remember there was
+our scanner, so it's already up in the main
+
+00:11:03.350 --> 00:11:10.350
+program. And we need our borderline between
+grades, so that's going to be an int. I'll
+
+00:11:13.740 --> 00:11:20.360
+call it borderline between grades, and remember
+that was occurring at 70. So now we've got
+
+00:11:20.360 --> 00:11:24.980
+our grades in the program. Notice the next
+midterm grade and the lowest midterm grade
+
+00:11:24.980 --> 00:11:28.930
+are things the program doesn't need to know
+about, and so we're keeping them out of the
+
+00:11:28.930 --> 00:11:33.730
+main program and hiding them away in read
+and calculate grades. During this keeps your
+
+00:11:33.730 --> 00:11:39.190
+code clean and uncomplicated, and it's a great
+idea.
+
+00:11:39.190 --> 00:11:43.760
+Now let's make our first try at a method.
+So the first thing we want to do is to simplify
+
+00:11:43.760 --> 00:11:48.170
+the method as much as possible. That let's
+us make sure that our parameter passing is
+
+00:11:48.170 --> 00:11:53.790
+working successfully. Then later on we can
+go and implement the lowest grade part. This
+
+00:11:53.790 --> 00:11:58.830
+is an important step to learning programming,
+is how to create simpler problems to solve
+
+00:11:58.830 --> 00:12:04.600
+and work your way up to more complicated problems
+a little bit at a time. So here we are in
+
+00:12:04.600 --> 00:12:11.600
+our method. We need to think about what our
+control structure is going to be. Now we have
+
+00:12:15.200 --> 00:12:21.750
+five grades that we're going to read in, so
+we could just read them in 1, 2, 3, 4, 5 times,
+
+00:12:21.750 --> 00:12:25.790
+but that seems kind of silly considering that
+we are already know about loops. So instead
+
+00:12:25.790 --> 00:12:29.890
+let's write a loop. So we're going to need
+to keep track of how many times we go through
+
+00:12:29.890 --> 00:12:35.130
+the loop, so we want to loop through five
+times. That means we're going to need a counter
+
+00:12:35.130 --> 00:12:42.130
+variable. I'm going to call it count and set
+its value to one. Then we'll have while count
+
+00:12:44.440 --> 00:12:51.440
+is less than or equal to five, and and right
+there is the body of our loop. One thing it's
+
+00:12:53.370 --> 00:12:59.810
+a good idea to do right when you create the
+loop is to do count equals count plus one.
+
+00:12:59.810 --> 00:13:04.730
+I cannot tell you how many times I have forgotten
+to put that in. If you don't put that in,
+
+00:13:04.730 --> 00:13:09.450
+you'll get an infinite loop. In fact, we might
+want to experiment with that right now and
+
+00:13:09.450 --> 00:13:13.700
+see what an infinite loop looks like because
+sooner or later you are definitely going to
+
+00:13:13.700 --> 00:13:20.700
+program one of these. So here's what happens
+when you run an infinite loop—nothing [laughs].
+
+00:13:25.920 --> 00:13:30.250
+Now you might think everything's okay here
+except for one little thing. Do you notice
+
+00:13:30.250 --> 00:13:35.540
+that little red box there? That is actually
+the little button that you push to terminate
+
+00:13:35.540 --> 00:13:40.540
+a program. The fact that it's red means that
+your program is running right now, so right
+
+00:13:40.540 --> 00:13:47.540
+now my computer is going absolutely crazy
+running a loop that's doing absolutely nothing.
+
+00:13:48.330 --> 00:13:53.140
+How you stop the program from running is doing
+that. So the way that you identify an infinite
+
+00:13:53.140 --> 00:13:57.970
+loop in your program is that that little red
+button stays on, and that your program isn't
+
+00:13:57.970 --> 00:14:02.370
+spitting anything out. Now if we had put system
+out print line in the middle of the loop,
+
+00:14:02.370 --> 00:14:07.930
+we would have seen that. But very often the
+loops that are running so many times are ones
+
+00:14:07.930 --> 00:14:13.080
+that don't have output in them that you can't
+see. It's very obvious when one that has output
+
+00:14:13.080 --> 00:14:20.080
+is in an infinite loop. In fact, let's do
+that too. So we'll have it print out something
+
+00:14:27.260 --> 00:14:34.260
+clever, and we'll run it. And as you can see,
+it's flying by. So again we stop with the
+
+00:14:39.230 --> 00:14:45.280
+little red button. Now I hope you don't print
+out too many infinite loops in your life,
+
+00:14:45.280 --> 00:14:49.100
+but I've certainly written a few of them,
+and I imagine you will too.
+
+00:14:49.100 --> 00:14:54.130
+So there's the basis for our loop. So the
+first thing we want to do is to read in the
+
+00:14:54.130 --> 00:15:01.130
+midterm grade. So next midterm grade equals
+keyboard dot next int. Now one thing I didn't
+
+00:15:05.360 --> 00:15:09.740
+do there before was I didn't prompt the user.
+If we don't tell the user what to enter, they
+
+00:15:09.740 --> 00:15:16.740
+really don't have a clue, so that isn't fair.
+So let's system out print line enter the next
+
+00:15:17.120 --> 00:15:22.530
+grade. Now notice I didn't say the first grade
+here because this is a loop, so it's going
+
+00:15:22.530 --> 00:15:27.910
+to be repeated five times. If I said enter
+the first grade, we would see enter the first
+
+00:15:27.910 --> 00:15:34.910
+grade repeated five times. That wouldn't look
+good. So instead I said enter the next grade.
+
+00:15:36.640 --> 00:15:43.640
+Now we know our calculated grade is going
+to be our calculated grade plus the next midterm
+
+00:15:49.150 --> 00:15:56.150
+grade. If we return calculated grade at this
+point, what we're going to see is the sum
+
+00:15:58.250 --> 00:16:05.250
+of the five midterms. That may not be what
+we want, so let's instead divide by 5. Now
+
+00:16:06.780 --> 00:16:11.000
+you probably remember that division tends
+to get us in trouble in Java, so let's think
+
+00:16:11.000 --> 00:16:14.550
+for a minute about whether we really want
+to divide by five or whether we went to divide
+
+00:16:14.550 --> 00:16:21.550
+by 5.0. Calculated grade is of type double,
+and so we definitely want to be dividing by
+
+00:16:21.610 --> 00:16:28.610
+5.0 because we're returning a double. If we
+left the 5 in there, Java would promote the
+
+00:16:30.230 --> 00:16:35.040
+int to double, but remember we're always trying
+to communicate as clearly as possible and
+
+00:16:35.040 --> 00:16:38.190
+so that really should be a 5.0.
+
+00:16:38.190 --> 00:16:44.550
+Let's go up to our main program and print
+out our result so that we'll be able to see
+
+00:16:44.550 --> 00:16:51.550
+what's going on. The average grade was plus
+calculated grade. So this is a way that we
+
+00:16:59.720 --> 00:17:04.179
+can check that our parameter passing and returning
+is working properly. This is a great time
+
+00:17:04.179 --> 00:17:11.179
+to check it before the method gets so complicated
+with the dropping the lowest grade. Here are
+
+00:17:16.559 --> 00:17:23.559
+some easy grades to average. All my students
+get this by the way--all hundreds. The average
+
+00:17:24.879 --> 00:17:31.879
+is 100.0. Looks good to me. Obviously not
+very rigorous testing, but that's okay. We
+
+00:17:32.120 --> 00:17:39.120
+might run it one more time just to be good
+sports. What if we did 100, 90, 80, 70, 60?
+
+00:17:44.230 --> 00:17:47.860
+Now before I hit return, I want to think to
+myself what I think that answer is going to
+
+00:17:47.860 --> 00:17:51.779
+be. I think the average grade is going to
+be 80 because that's the one that was in the
+
+00:17:51.779 --> 00:17:57.090
+middle of those. And the average grade is
+80. Notice if you think first, you're not
+
+00:17:57.090 --> 00:18:01.710
+tricked by the computer giving a number and
+you just assuming that it's okay. When you
+
+00:18:01.710 --> 00:18:06.820
+just assume it's okay, then you're really
+not testing anything.
+
+00:18:06.820 --> 00:18:11.570
+So now we're ready to implement the real method.
+We've chosen the control structure. It definitely
+
+00:18:11.570 --> 00:18:15.799
+needed to be a loop, and we've written some
+code for that. We even tested it a little
+
+00:18:15.799 --> 00:18:22.799
+bit, but what we haven't done is dropping
+lowest grade. So let's go and do that part.
+
+00:18:26.750 --> 00:18:31.309
+So we know we have to do something in the
+loop, and we're going to have to think about
+
+00:18:31.309 --> 00:18:38.309
+it a little bit before we just jump ahead
+to writing code. Giving us little more space
+
+00:18:38.799 --> 00:18:45.340
+to work. If we start the lowest midterm grade
+at zero, when we get inside of the loop, we're
+
+00:18:45.340 --> 00:18:49.799
+going to have to do a comparison to whether
+the current grade is lower than the lowest
+
+00:18:49.799 --> 00:18:54.700
+one. Well, since presumably professors aren't
+giving out negative grades, or at least the
+
+00:18:54.700 --> 00:19:00.539
+nice ones aren't, we need to think of a different
+strategy because nothing is going to be lower
+
+00:19:00.539 --> 00:19:06.110
+than zero. So instead we need to start the
+lowest midterm grade at the biggest number
+
+00:19:06.110 --> 00:19:12.360
+possible and then move it down. Now there
+is an integer that's available for this. It's
+
+00:19:12.360 --> 00:19:19.360
+called integer dot max value. This is something
+you wouldn't have known about from the readings
+
+00:19:19.450 --> 00:19:25.070
+so far because we haven't encountered it yet.
+Well, what that is basically the biggest integer
+
+00:19:25.070 --> 00:19:29.419
+there could possibly be. That way we know
+that the first grade is going to be lower
+
+00:19:29.419 --> 00:19:34.990
+than that integer, and the code's going to
+work. Once we've gotten the next midterm grade,
+
+00:19:34.990 --> 00:19:41.990
+we want to see if next midterm grade is smaller
+than lowest midterm grade. If that's true,
+
+00:19:49.559 --> 00:19:56.559
+then we let the lowest midterm grade equal
+the next midterm grade. Eclipse is unhappy
+
+00:20:00.919 --> 00:20:07.919
+right now because I forgot a capital G. And
+it is now placated. And I see I added an extra
+
+00:20:08.220 --> 00:20:15.220
+parenthesis in too. Okay, now we don't want
+to subtract out the lowest midterm grade right
+
+00:20:16.370 --> 00:20:22.230
+now inside the loop because if we do that,
+we'll subtract it out every single time. So
+
+00:20:22.230 --> 00:20:26.289
+that's going to take away a lot of points
+that students earned and that they deserve.
+
+00:20:26.289 --> 00:20:32.580
+So instead what we're going to do is subtract
+it out after the loop is over. So we will
+
+00:20:32.580 --> 00:20:39.580
+do calculated grade equals calculated grade
+minus lowest midterm grade. That takes the
+
+00:20:51.929 --> 00:20:56.830
+lowest one out of the formula. Now there's
+one other thing we better change, and that's
+
+00:20:56.830 --> 00:21:02.409
+that we can't divide by five anymore because
+now we've only had four grades in our formula.
+
+00:21:02.409 --> 00:21:06.350
+So let's divide by four.
+
+00:21:06.350 --> 00:21:13.350
+And we're now ready to run. Whoops--and I
+just made a mistake. I typed return when I
+
+00:21:20.450 --> 00:21:25.440
+didn't mean to. That can mess things up, so
+let's just start the program all over. Enter
+
+00:21:25.440 --> 00:21:32.440
+the next grade. Let's go to 100, 90, 80, 70,
+60. Now in this case we're going to be dropping
+
+00:21:37.379 --> 00:21:44.379
+the 60, so what we're going to average is
+100, 90, 80 and 70. So what's our average
+
+00:21:44.610 --> 00:21:51.610
+going to be? Well, I think our average is
+going to be 85. And there it is, good. Program's
+
+00:21:51.879 --> 00:21:57.679
+looking good at this point. We can test some
+easy cases like all the midterms being the
+
+00:21:57.679 --> 00:22:03.149
+same, but that really isn't enough, so we
+want to test some harder cases. We've already
+
+00:22:03.149 --> 00:22:08.340
+tested the case where the midterms have different
+values. One case we should test is having
+
+00:22:08.340 --> 00:22:13.450
+the smallest value in each position—have
+it first, have it second, have it third, have
+
+00:22:13.450 --> 00:22:18.799
+it fourth, have it fifth. That turns out to
+be really important. Now the other thing I
+
+00:22:18.799 --> 00:22:23.889
+notice in my next test case that we identified
+is that we haven't actually finished this
+
+00:22:23.889 --> 00:22:27.909
+program just yet because remember we were
+supposed to figure out whether the student
+
+00:22:27.909 --> 00:22:33.289
+was passing or failing based on the average.
+So we better go back and do that. That's going
+
+00:22:33.289 --> 00:22:40.289
+to be in the main program. So students always
+want to know their average grade so we certainly
+
+00:22:40.549 --> 00:22:47.549
+want to show that on the screen, and now we're
+going to say if calculated grade is less than
+
+00:22:50.999 --> 00:22:57.999
+borderline between grades, we need to system
+out print line say something nice to students:
+
+00:23:05.289 --> 00:23:12.289
+"I'm sorry, but you failed the class" otherwise
+system out print line "Congratulations, you
+
+00:23:28.429 --> 00:23:34.710
+passed the class."
+
+00:23:34.710 --> 00:23:41.710
+So let's run our now finished program. So
+let's do our 100, then maybe 60, then 70,
+
+00:23:49.419 --> 00:23:56.419
+80, 90. The 
+average grade was 85, which we agreed on earlier,
+and it says you passed. The one case that
+
+00:24:03.119 --> 00:24:07.950
+we definitely want to check is what's happening
+right at the borderline. So let's think of
+
+00:24:07.950 --> 00:24:14.950
+some clever test data that would check that.
+Suppose you had five 69s. Then your average
+
+00:24:16.279 --> 00:24:22.350
+would be 69, and you would have failed the
+class. If you had four 69s and one 70, your
+
+00:24:22.350 --> 00:24:29.350
+average would be 69.25 and you still failed.
+If your average was 69.5 on the other hand,
+
+00:24:30.860 --> 00:24:36.080
+my students would have wanted to pass. So
+these are the test cases we want to examine
+
+00:24:36.080 --> 00:24:43.080
+next. Let's do all 69s first. We're expecting
+to see failure here. The average grade was
+
+00:24:49.029 --> 00:24:54.379
+69. You failed the class. So I'm poking right
+around the edges because that's the place
+
+00:24:54.379 --> 00:25:01.379
+where things tend to go wrong. Now let's put
+in one 70 and four 69s. The average was 69.25.
+
+00:25:11.869 --> 00:25:18.869
+You failed the class. That's actually correct.
+Enter the next grade. So here we're going
+
+00:25:20.379 --> 00:25:27.379
+to do two 70s and two 69s--I'm sorry three
+69s, uh oh, we've got a problem here. The
+
+00:25:33.090 --> 00:25:38.340
+average grade was 69.5, so we know our average
+grade is being calculated correctly, but it's
+
+00:25:38.340 --> 00:25:44.740
+showing that you still failed the class. So
+let's think about this for a minute. Our borderline
+
+00:25:44.740 --> 00:25:51.490
+between grades was at 70. So if your average
+is 69.5, we don't have this quite right.
+
+00:25:51.490 --> 00:25:56.440
+There are a couple of different ways we could
+fix this. One way would be to change the borderline
+
+00:25:56.440 --> 00:26:03.440
+between grades to 69.5. The other way, and
+by the way if we do that we'll also have to
+
+00:26:03.600 --> 00:26:09.690
+change it to a double instead of an int because
+69.5 is not an int. The other way we could
+
+00:26:09.690 --> 00:26:16.690
+fix it is to fix it here in the if statement
+to recognize that we're not going to cheat
+
+00:26:16.730 --> 00:26:23.330
+students when they're half a point away. Both
+of these are reasonable solutions, and both
+
+00:26:23.330 --> 00:26:29.220
+could work, but I think this one maybe is
+a little bit more clear. So if the calculated
+
+00:26:29.220 --> 00:26:36.220
+grade is less than the borderline between
+grades -0.5. And notice that I'm using less
+
+00:26:39.389 --> 00:26:44.240
+than here, not less than or equal to. That
+turns out to be really important on these
+
+00:26:44.240 --> 00:26:49.820
+things. So we think we have a solution here.
+Now something like that is really confusing
+
+00:26:49.820 --> 00:26:54.639
+to look at if you go back to the code later,
+so let's put in a comment so that everybody
+
+00:26:54.639 --> 00:27:01.639
+knows what we're doing about. The -0.5 has
+to be used to avoid having students with grades
+
+00:27:10.090 --> 00:27:17.090
+of 69.5 failing the class. It never hurts
+to add in an extra comment.
+
+00:27:19.529 --> 00:27:26.529
+We're going to run our same program again
+and see if we got things fixed now. So we're
+
+00:27:27.600 --> 00:27:34.600
+going to do a 70, and another 70, and then
+three 69s. Your average was 69.5, and now
+
+00:27:37.100 --> 00:27:43.749
+you're passing the class. Now it's just as
+important that we not pass people in the class
+
+00:27:43.749 --> 00:27:50.749
+who didn't get the right grade, so let's look
+at what happens when you have one 70, and
+
+00:27:51.730 --> 00:27:58.730
+four 69s--69.25. Sorry, you failed the class.
+Remember when you change the program all of
+
+00:28:01.259 --> 00:28:06.159
+the test data you've used before doesn't count
+because you're running a different program,
+
+00:28:06.159 --> 00:28:10.259
+and so just because it worked before doesn't
+mean it works now. So you actually have to
+
+00:28:10.259 --> 00:28:14.909
+go back and run it. Now if you're wondering
+how they do this in industry, they actually
+
+00:28:14.909 --> 00:28:20.110
+have quality assurance people who do nothing
+but continuously check that all of these cases
+
+00:28:20.110 --> 00:28:24.450
+are running correctly. I'm awfully glad I'm
+not one of those people, but some people really
+
+00:28:24.450 --> 00:28:31.450
+love doing that. One of the problems that
+happens a lot in loop are off by one bugs.
+
+00:28:31.940 --> 00:28:37.409
+It's very easy to repeat a loop too many times
+or too few times, particularly, for example,
+
+00:28:37.409 --> 00:28:42.389
+to repeat it four times instead of five or
+six times instead of five. So that's something
+
+00:28:42.389 --> 00:28:47.110
+you always want to check for. One of the easy
+ways to make sure that you don't write off
+
+00:28:47.110 --> 00:28:52.350
+by one bugs in loops is to look at one of
+the Java idoms. So let's go and take a look
+
+00:28:52.350 --> 00:28:59.350
+at our program and see how we wrote our while
+loop. Our while loop is down here in the method,
+
+00:29:03.749 --> 00:29:10.159
+and notice that I started count at one and
+I stopped it at less than or equal to five.
+
+00:29:10.159 --> 00:29:17.159
+That pair of operations works really well--start
+at one, stop using less than or equal to.
+
+00:29:17.409 --> 00:29:22.759
+The other pair that you'll see a lot is starting
+at zero and ending at less than. Now I'm not
+
+00:29:22.759 --> 00:29:28.269
+saying that every loop works correctly that
+way because it doesn't. But most of the loops
+
+00:29:28.269 --> 00:29:33.499
+do, and so if you follow those idioms, you'll
+have fewer problems with off by one bugs.
+
+00:29:33.499 --> 00:29:39.039
+You still need to test for them very carefully
+though. So careful testing is still going
+
+00:29:39.039 --> 00:29:44.779
+to be our main strategy. As far as a really
+good strategy, one of the things you can do
+
+00:29:44.779 --> 00:29:50.460
+is try having the loops repeat zero, one,
+two, and three times. If all of those numbers
+
+00:29:50.460 --> 00:29:56.119
+work, things tend to be right. When the repetitions
+get larger than three, it's too easy to get
+
+00:29:56.119 --> 00:30:00.539
+off by one when you're counting the test data,
+and then your test data doesn't show whether
+
+00:30:00.539 --> 00:30:02.259
+your program is actually working.
+

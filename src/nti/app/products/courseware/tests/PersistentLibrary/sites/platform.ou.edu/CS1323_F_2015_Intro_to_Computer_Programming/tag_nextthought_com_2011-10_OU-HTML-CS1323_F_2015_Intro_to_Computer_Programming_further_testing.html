@@ -1,0 +1,20 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html lang="en"><head> <meta content="2015-12-11T16:56:47" http-equiv="last-modified" /> <meta content="716" name="NTIRelativeScrollHeight" /> <meta content="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.further_testing" name="NTIID" /> <meta content="NextThought" name="generator" /> <meta content="text/html; charset=ascii" http-equiv="content-type" /> <title>Further Testing</title> <link href="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.aliasing_(review)" rel="next" title="Aliasing (Review)" /> <link href="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.using_the_display()_method" rel="prev" title="Using the display() Method" /> <link href="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.reading:Chortle_CH32" rel="up" title="Class Design Example" /> <link href="styles/styles.css" rel="stylesheet" /> <link href="styles/content.css" rel="stylesheet" /> </head> <body id="NTIContent"> <div class="page-contents"><div data-ntiid="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.further_testing" id="a0000000525" ntiid="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.further_testing"> <div class="chapter title">Further Testing</div> <p class="placeholder"></p> <a name="d4886efa4301ced05962c9fd0eb5cce0"></a> <div class="sidebar" data-ntiid="tag:nextthought.com,2011-10:OU-HTML:NTISidebar-CS1323_F_2015_Intro_to_Computer_Programming.sidebar.answer.198" ntiid="tag:nextthought.com,2011-10:OU-HTML:NTISidebar-CS1323_F_2015_Intro_to_Computer_Programming.sidebar.answer.198"> <div class="sidebar-title">Answer</div> <pre>  public static void main( String[] args )
+  {
+    CheckingAccount account1 = new CheckingAccount( "123", "Bob", 100 );
+    account1.display() ;
+    account1.processDeposit( 2000 );
+    account1.processCheck( 1500 );
+    account1.display() ;
+    
+    CheckingAccount account2 = new CheckingAccount( "007", "James Bond", 50000 );
+    account2.display() ;
+    account2.processDeposit( 70000 );
+    account2.processCheck( 10000 );
+    account2.display() ;
+    
+  }
+</pre> </div><a name="6df40f5f1c771e6110f37d88685b5366"></a> <p class="par" id="6df40f5f1c771e6110f37d88685b5366">When the program is run, you will see: </p> <a name="3aa55a324d82d75bfb55ecad5f880052"></a> <pre>123     Bob     100
+123     Bob     585
+007     James Bond      50000
+007     James Bond      110000
+</pre><a name="8787e88f31849b96571c3bfff903d085"></a> <div class="sidebar" data-ntiid="tag:nextthought.com,2011-10:OU-HTML:NTISidebar-CS1323_F_2015_Intro_to_Computer_Programming.sidebar.question.208" ntiid="tag:nextthought.com,2011-10:OU-HTML:NTISidebar-CS1323_F_2015_Intro_to_Computer_Programming.sidebar.question.208"> <div class="sidebar-title">Question</div> Now try to do something a little bit tricky. Say that James wrote out a $300 check to Bob, and that Bob deposited the check in Bob&#8217;s account. Add statements (after all the others in the main method) that do this. </div> </div></div> </body></html>

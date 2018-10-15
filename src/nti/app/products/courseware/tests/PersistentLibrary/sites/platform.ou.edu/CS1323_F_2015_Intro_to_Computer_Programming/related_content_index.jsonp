@@ -75,6 +75,19 @@ jsonpReceiveContent({
                 "visibility": "everyone",
                 "label": "Examples from the Videos"
             },
+            "tag:nextthought.com,2011-10:OU-RelatedWorkRef-CS1323_F_2015_Intro_to_Computer_Programming.relatedworkref.relwk:05.01.03_zyante": {
+                "creator": "zyBooks for University of Oklahoma CS 1323",
+                "visibility": "everyone",
+                "ntiid": "tag:nextthought.com,2011-10:OU-RelatedWorkRef-CS1323_F_2015_Intro_to_Computer_Programming.relatedworkref.relwk:05.01.03_zyante",
+                "href": "https://zybooks.zyante.com/#/zybook/OUCS1323Fall2015/chapter/20/section/1",
+                "desc": "     This section covers encapsulation. ",
+                "MimeType": "application/vnd.nextthought.relatedworkref",
+                "section": "additional",
+                "label": "Programming in Java",
+                "target-ntiid": "tag:nextthought.com,2011-10:NTI-UUID-83db6a0a2b988d53df428ab2391b2686",
+                "icon": "resources/CS1323_F_2015_Intro_to_Computer_Programming/671375790efa45b2948b77f2a9c4e91f27173a56/fd35e23767020999111e1f49239199b4c5eff23e.png",
+                "type": "application/vnd.nextthought.externallink"
+            },
             "tag:nextthought.com,2011-10:OU-RelatedWork-CS1323_F_2015_Intro_to_Computer_Programming.relatedwork.relwk:04.02.05_Code_Sample": {
                 "MimeType": "application/vnd.nextthought.relatedworkref",
                 "ntiid": "tag:nextthought.com,2011-10:OU-RelatedWork-CS1323_F_2015_Intro_to_Computer_Programming.relatedwork.relwk:04.02.05_Code_Sample",
@@ -99,6 +112,19 @@ jsonpReceiveContent({
                 "visibility": "everyone",
                 "label": "JavaBat"
             },
+            "tag:nextthought.com,2011-10:OU-RelatedWorkRef-CS1323_F_2015_Intro_to_Computer_Programming.relatedworkref.relwk:05.01.02_frogger_1": {
+                "creator": "Deborah Trytten",
+                "visibility": "everyone",
+                "ntiid": "tag:nextthought.com,2011-10:OU-RelatedWorkRef-CS1323_F_2015_Intro_to_Computer_Programming.relatedworkref.relwk:05.01.02_frogger_1",
+                "href": "resources/Frogger_Iteration_1.pptx",
+                "desc": "     Lecture presentation ",
+                "MimeType": "application/vnd.nextthought.relatedworkref",
+                "section": "additional",
+                "label": "Frogger: Iteration 1",
+                "target-ntiid": "tag:nextthought.com,2011-10:NTI-UUID-1cb0719542b4d913479eb4d4eb48e768",
+                "icon": "resources/CS1323_F_2015_Intro_to_Computer_Programming/17f860f9921d29d578e2791d3ff00dcf689071c3/fd35e23767020999111e1f49239199b4c5eff23e.png",
+                "type": "application/vnd.nextthought.externallink"
+            },
             "tag:nextthought.com,2011-10:OU-RelatedWork-CS1323_F_2015_Intro_to_Computer_Programming.relatedwork.relwk:02.01.05_E_Commerce": {
                 "MimeType": "application/vnd.nextthought.relatedworkref",
                 "ntiid": "tag:nextthought.com,2011-10:OU-RelatedWork-CS1323_F_2015_Intro_to_Computer_Programming.relatedwork.relwk:02.01.05_E_Commerce",
@@ -110,6 +136,19 @@ jsonpReceiveContent({
                 "type": "application/vnd.nextthought.externallink",
                 "visibility": "everyone",
                 "label": "Write an E-Commerce Purchase Program"
+            },
+            "tag:nextthought.com,2011-10:OU-RelatedWorkRef-CS1323_F_2015_Intro_to_Computer_Programming.relatedworkref.relwk:midterm_2": {
+                "creator": "Deborah Trytten",
+                "visibility": "everyone",
+                "ntiid": "tag:nextthought.com,2011-10:OU-RelatedWorkRef-CS1323_F_2015_Intro_to_Computer_Programming.relatedworkref.relwk:midterm_2",
+                "href": "resources/Midterm_2.docx",
+                "desc": "     CS 1323 Fall 2015 Midterm 2 ",
+                "MimeType": "application/vnd.nextthought.relatedworkref",
+                "section": "required",
+                "label": "Midterm 2",
+                "target-ntiid": "tag:nextthought.com,2011-10:NTI-UUID-1a0897f16a2526c75f07685ef7b0b54e",
+                "icon": "resources/CS1323_F_2015_Intro_to_Computer_Programming/583b61b2202851bd80245dfddda3c5d88cadb0a1/fd35e23767020999111e1f49239199b4c5eff23e.png",
+                "type": "application/vnd.nextthought.externallink"
             },
             "tag:nextthought.com,2011-10:OU-RelatedWork-CS1323_F_2015_Intro_to_Computer_Programming.relatedwork.relwk:02.02.03_Turingscraft": {
                 "MimeType": "application/vnd.nextthought.relatedworkref",
@@ -268,6 +307,19 @@ jsonpReceiveContent({
                 "label": "Programming in Java",
                 "target-ntiid": "tag:nextthought.com,2011-10:NTI-UUID-3741ab8668768bcc8e87d61844a6930f",
                 "icon": "resources/CS1323_F_2015_Intro_to_Computer_Programming/671375790efa45b2948b77f2a9c4e91f27173a56/fd35e23767020999111e1f49239199b4c5eff23e.png",
+                "type": "application/vnd.nextthought.externallink"
+            },
+            "tag:nextthought.com,2011-10:OU-RelatedWorkRef-CS1323_F_2015_Intro_to_Computer_Programming.relatedworkref.relwk:04.04.01_exam_solutions": {
+                "creator": "Deborah Trytten",
+                "visibility": "everyone",
+                "ntiid": "tag:nextthought.com,2011-10:OU-RelatedWorkRef-CS1323_F_2015_Intro_to_Computer_Programming.relatedworkref.relwk:04.04.01_exam_solutions",
+                "href": "resources/Midterm3_Solution_Fall2015.docx",
+                "desc": "     The solution to an examination that tests the topics covered in the third quarter of the course. ",
+                "MimeType": "application/vnd.nextthought.relatedworkref",
+                "section": "additional",
+                "label": "Midterm 3 Solution",
+                "target-ntiid": "tag:nextthought.com,2011-10:NTI-UUID-4591f63ecc35cfab1aabb240b1b43d84",
+                "icon": "resources/CS1323_F_2015_Intro_to_Computer_Programming/583b61b2202851bd80245dfddda3c5d88cadb0a1/fd35e23767020999111e1f49239199b4c5eff23e.png",
                 "type": "application/vnd.nextthought.externallink"
             },
             "tag:nextthought.com,2011-10:OU-RelatedWork-CS1323_F_2015_Intro_to_Computer_Programming.relatedwork.relwk:05.01.05_Code_Sample": {
@@ -516,6 +568,18 @@ jsonpReceiveContent({
                 "visibility": "everyone",
                 "label": "Encapsulation"
             },
+            "tag:nextthought.com,2011-10:OU-RelatedWork-CS1323_F_2015_Intro_to_Computer_Programming.relatedwork.relwk:Homework_5_Solution": {
+                "MimeType": "application/vnd.nextthought.relatedworkref",
+                "ntiid": "tag:nextthought.com,2011-10:OU-RelatedWork-CS1323_F_2015_Intro_to_Computer_Programming.relatedwork.relwk:Homework_5_Solution",
+                "href": "resources/Solution_Homework_5.docx",
+                "target-ntiid": "tag:nextthought.com,2011-10:NTI-UUID-ac7a10242404f1210c445cb198fa209c",
+                "creator": "Deborah Trytten",
+                "desc": "     The solution to Homework 5. ",
+                "icon": "resources/CS1323_F_2015_Intro_to_Computer_Programming/583b61b2202851bd80245dfddda3c5d88cadb0a1/fd35e23767020999111e1f49239199b4c5eff23e.png",
+                "type": "application/vnd.nextthought.externallink",
+                "visibility": "everyone",
+                "label": "Homework 5 Solution"
+            },
             "tag:nextthought.com,2011-10:OU-RelatedWorkRef-CS1323_F_2015_Intro_to_Computer_Programming.relatedworkref.relwk:04.02.05_partial_sorting": {
                 "creator": "Deborah Trytten",
                 "visibility": "everyone",
@@ -565,6 +629,19 @@ jsonpReceiveContent({
                 "label": "References and Constructors",
                 "target-ntiid": "tag:nextthought.com,2011-10:NTI-UUID-a8a7275e20d55b8f6c6d3f4cdd3c09a9",
                 "icon": "resources/CS1323_F_2015_Intro_to_Computer_Programming/17f860f9921d29d578e2791d3ff00dcf689071c3/fd35e23767020999111e1f49239199b4c5eff23e.png",
+                "type": "application/vnd.nextthought.externallink"
+            },
+            "tag:nextthought.com,2011-10:OU-RelatedWorkRef-CS1323_F_2015_Intro_to_Computer_Programming.relatedworkref.relwk:zyante_aggregation": {
+                "creator": "zyBooks for University of Oklahoma CS 1323",
+                "visibility": "everyone",
+                "ntiid": "tag:nextthought.com,2011-10:OU-RelatedWorkRef-CS1323_F_2015_Intro_to_Computer_Programming.relatedworkref.relwk:zyante_aggregation",
+                "href": "https://zybooks.zyante.com/#/zybook/OUCS1323Fall2015/chapter/21/section/1",
+                "desc": "     This section covers aggregation. ",
+                "MimeType": "application/vnd.nextthought.relatedworkref",
+                "section": "required",
+                "label": "Programming in Java",
+                "target-ntiid": "tag:nextthought.com,2011-10:NTI-UUID-4f4273dd2db8fe71f2df80463945d801",
+                "icon": "resources/CS1323_F_2015_Intro_to_Computer_Programming/671375790efa45b2948b77f2a9c4e91f27173a56/fd35e23767020999111e1f49239199b4c5eff23e.png",
                 "type": "application/vnd.nextthought.externallink"
             },
             "tag:nextthought.com,2011-10:OU-RelatedWork-CS1323_F_2015_Intro_to_Computer_Programming.relatedwork.relwk:02.02.04_Craps_2": {
@@ -787,17 +864,17 @@ jsonpReceiveContent({
                 "visibility": "everyone",
                 "label": "ProctorU Test Taker Handout"
             },
-            "tag:nextthought.com,2011-10:OU-RelatedWork-CS1323_F_2015_Intro_to_Computer_Programming.relatedwork.relwk:02.04.01_Midterm_1": {
+            "tag:nextthought.com,2011-10:OU-RelatedWork-CS1323_F_2015_Intro_to_Computer_Programming.relatedwork.relwk:final_exam_Sample": {
                 "MimeType": "application/vnd.nextthought.relatedworkref",
-                "ntiid": "tag:nextthought.com,2011-10:OU-RelatedWork-CS1323_F_2015_Intro_to_Computer_Programming.relatedwork.relwk:02.04.01_Midterm_1",
-                "href": "resources/Dropping_Lowest_Midterm.pptx",
-                "target-ntiid": "tag:nextthought.com,2011-10:NTI-UUID-b3866b41c5e340f85eff27e4743866c4",
+                "ntiid": "tag:nextthought.com,2011-10:OU-RelatedWork-CS1323_F_2015_Intro_to_Computer_Programming.relatedwork.relwk:final_exam_Sample",
+                "href": "resources/Final_Exam_CS1323_Spring2015_Section001.docx",
+                "target-ntiid": "tag:nextthought.com,2011-10:NTI-UUID-f28ecadd1132123e2b7ddc0623ef3106",
                 "creator": "Deborah Trytten",
-                "desc": "     Lecture presentation ",
-                "icon": "resources/CS1323_F_2015_Intro_to_Computer_Programming/17f860f9921d29d578e2791d3ff00dcf689071c3/fd35e23767020999111e1f49239199b4c5eff23e.png",
+                "desc": "     A examination that tests the topics covered in the course. ",
+                "icon": "resources/CS1323_F_2015_Intro_to_Computer_Programming/583b61b2202851bd80245dfddda3c5d88cadb0a1/fd35e23767020999111e1f49239199b4c5eff23e.png",
                 "type": "application/vnd.nextthought.externallink",
                 "visibility": "everyone",
-                "label": "Dropping the Lowest Midterm Grade"
+                "label": "Spring 2015 Final Exam Section 001"
             },
             "tag:nextthought.com,2011-10:OU-RelatedWork-CS1323_F_2015_Intro_to_Computer_Programming.relatedwork.relwk:04.01.04_Code_Sample": {
                 "MimeType": "application/vnd.nextthought.relatedworkref",
@@ -922,6 +999,18 @@ jsonpReceiveContent({
                 "type": "application/vnd.nextthought.externallink",
                 "visibility": "everyone",
                 "label": "Problets"
+            },
+            "tag:nextthought.com,2011-10:OU-RelatedWork-CS1323_F_2015_Intro_to_Computer_Programming.relatedwork.relwk:Zyante_Aggregation": {
+                "MimeType": "application/vnd.nextthought.relatedworkref",
+                "ntiid": "tag:nextthought.com,2011-10:OU-RelatedWork-CS1323_F_2015_Intro_to_Computer_Programming.relatedwork.relwk:Zyante_Aggregation",
+                "href": "https://zybooks.zyante.com/#/zybook/OUCS1323Fall2015/chapter/21/section/1",
+                "target-ntiid": "tag:nextthought.com,2011-10:NTI-UUID-4f4273dd2db8fe71f2df80463945d801",
+                "creator": "zyBooks for University of Oklahoma CS 1323",
+                "desc": "     This section covers aggregation. ",
+                "icon": "resources/CS1323_F_2015_Intro_to_Computer_Programming/671375790efa45b2948b77f2a9c4e91f27173a56/fd35e23767020999111e1f49239199b4c5eff23e.png",
+                "type": "application/vnd.nextthought.externallink",
+                "visibility": "everyone",
+                "label": "Programming in Java"
             },
             "tag:nextthought.com,2011-10:OU-RelatedWork-CS1323_F_2015_Intro_to_Computer_Programming.relatedwork.relwk:05.01.04_Two_Patterns_Aggregation": {
                 "MimeType": "application/vnd.nextthought.relatedworkref",
@@ -1069,6 +1158,19 @@ jsonpReceiveContent({
                 "type": "application/vnd.nextthought.externallink",
                 "visibility": "everyone",
                 "label": "Laboratory 14 Solution"
+            },
+            "tag:nextthought.com,2011-10:OU-RelatedWorkRef-CS1323_F_2015_Intro_to_Computer_Programming.relatedworkref.relwk:05.01.03_frogger_2": {
+                "creator": "Deborah Trytten",
+                "visibility": "everyone",
+                "ntiid": "tag:nextthought.com,2011-10:OU-RelatedWorkRef-CS1323_F_2015_Intro_to_Computer_Programming.relatedworkref.relwk:05.01.03_frogger_2",
+                "href": "resources/Frogger_Iteration_2.pptx",
+                "desc": "     Lecture presentation ",
+                "MimeType": "application/vnd.nextthought.relatedworkref",
+                "section": "additional",
+                "label": "Frogger: Iteration 2",
+                "target-ntiid": "tag:nextthought.com,2011-10:NTI-UUID-ab6185a13b0fc5b835e9fea59ad62bdb",
+                "icon": "resources/CS1323_F_2015_Intro_to_Computer_Programming/17f860f9921d29d578e2791d3ff00dcf689071c3/fd35e23767020999111e1f49239199b4c5eff23e.png",
+                "type": "application/vnd.nextthought.externallink"
             },
             "tag:nextthought.com,2011-10:OU-RelatedWork-CS1323_F_2015_Intro_to_Computer_Programming.relatedwork.relwk:03.02.05_Words_With_Acquaintances": {
                 "MimeType": "application/vnd.nextthought.relatedworkref",
@@ -1356,6 +1458,19 @@ jsonpReceiveContent({
                 "icon": "resources/CS1323_F_2015_Intro_to_Computer_Programming/671375790efa45b2948b77f2a9c4e91f27173a56/fd35e23767020999111e1f49239199b4c5eff23e.png",
                 "type": "application/vnd.nextthought.externallink"
             },
+            "tag:nextthought.com,2011-10:OU-RelatedWorkRef-CS1323_F_2015_Intro_to_Computer_Programming.relatedworkref.relwk:final_exam_sample_010": {
+                "creator": "Deborah Trytten",
+                "visibility": "everyone",
+                "ntiid": "tag:nextthought.com,2011-10:OU-RelatedWorkRef-CS1323_F_2015_Intro_to_Computer_Programming.relatedworkref.relwk:final_exam_sample_010",
+                "href": "resources/Final_Exam_CS1323_Spring2015_Section010.docx",
+                "desc": "     A examination that tests the topics covered in the course. ",
+                "MimeType": "application/vnd.nextthought.relatedworkref",
+                "section": "required",
+                "label": "Spring 2015 Final Exam Section 010",
+                "target-ntiid": "tag:nextthought.com,2011-10:NTI-UUID-e2bab727cfb55837a310f513bfc59361",
+                "icon": "resources/CS1323_F_2015_Intro_to_Computer_Programming/583b61b2202851bd80245dfddda3c5d88cadb0a1/fd35e23767020999111e1f49239199b4c5eff23e.png",
+                "type": "application/vnd.nextthought.externallink"
+            },
             "tag:nextthought.com,2011-10:OU-RelatedWork-CS1323_F_2015_Intro_to_Computer_Programming.relatedwork.relwk:02.04.01_Exam_010": {
                 "MimeType": "application/vnd.nextthought.relatedworkref",
                 "ntiid": "tag:nextthought.com,2011-10:OU-RelatedWork-CS1323_F_2015_Intro_to_Computer_Programming.relatedwork.relwk:02.04.01_Exam_010",
@@ -1453,18 +1568,17 @@ jsonpReceiveContent({
                 "visibility": "everyone",
                 "label": "Examples from the Videos"
             },
-            "tag:nextthought.com,2011-10:OU-RelatedWorkRef-CS1323_F_2015_Intro_to_Computer_Programming.relatedworkref.relwk:04.02.04_reading_levels": {
-                "creator": "Deborah Trytten",
-                "visibility": "everyone",
-                "ntiid": "tag:nextthought.com,2011-10:OU-RelatedWorkRef-CS1323_F_2015_Intro_to_Computer_Programming.relatedworkref.relwk:04.02.04_reading_levels",
-                "href": "resources/Reading_Levels.pptx",
-                "desc": "     Lecture presentation ",
+            "tag:nextthought.com,2011-10:OU-RelatedWork-CS1323_F_2015_Intro_to_Computer_Programming.relatedwork.relwk:02.04.01_Midterm_1": {
                 "MimeType": "application/vnd.nextthought.relatedworkref",
-                "section": "additional",
-                "label": "Reading Levels",
-                "target-ntiid": "tag:nextthought.com,2011-10:NTI-UUID-626d824b5d13608fb3f550cf6e7baf90",
+                "ntiid": "tag:nextthought.com,2011-10:OU-RelatedWork-CS1323_F_2015_Intro_to_Computer_Programming.relatedwork.relwk:02.04.01_Midterm_1",
+                "href": "resources/Dropping_Lowest_Midterm.pptx",
+                "target-ntiid": "tag:nextthought.com,2011-10:NTI-UUID-b3866b41c5e340f85eff27e4743866c4",
+                "creator": "Deborah Trytten",
+                "desc": "     Lecture presentation ",
                 "icon": "resources/CS1323_F_2015_Intro_to_Computer_Programming/17f860f9921d29d578e2791d3ff00dcf689071c3/fd35e23767020999111e1f49239199b4c5eff23e.png",
-                "type": "application/vnd.nextthought.externallink"
+                "type": "application/vnd.nextthought.externallink",
+                "visibility": "everyone",
+                "label": "Dropping the Lowest Midterm Grade"
             },
             "tag:nextthought.com,2011-10:OU-RelatedWork-CS1323_F_2015_Intro_to_Computer_Programming.relatedwork.relwk:02.02.04_Code_Sample": {
                 "MimeType": "application/vnd.nextthought.relatedworkref",
@@ -1477,6 +1591,18 @@ jsonpReceiveContent({
                 "type": "application/vnd.nextthought.externallink",
                 "visibility": "everyone",
                 "label": "Examples from the Videos"
+            },
+            "tag:nextthought.com,2011-10:OU-RelatedWork-CS1323_F_2015_Intro_to_Computer_Programming.relatedwork.relwk:05.01.02_Turingscraft": {
+                "MimeType": "application/vnd.nextthought.relatedworkref",
+                "ntiid": "tag:nextthought.com,2011-10:OU-RelatedWork-CS1323_F_2015_Intro_to_Computer_Programming.relatedwork.relwk:05.01.02_Turingscraft",
+                "href": "http://turingscraft.com",
+                "target-ntiid": "tag:nextthought.com,2011-10:NTI-UUID-1e5721f16e6f9d8876151da9dc723284",
+                "creator": "David Arnow and Gerald Weiss",
+                "desc": "     Turingscraft exercises on classes as state and behavior. First exercise, 20626. ",
+                "icon": "resources/CS1323_F_2015_Intro_to_Computer_Programming/a76c7b008d42a0f6343bf8ce104b0bdced527f24/fd35e23767020999111e1f49239199b4c5eff23e.png",
+                "type": "application/vnd.nextthought.externallink",
+                "visibility": "everyone",
+                "label": "Turingscraft"
             },
             "tag:nextthought.com,2011-10:OU-RelatedWork-CS1323_F_2015_Intro_to_Computer_Programming.relatedwork.relwk:02.04.01_Midterm_1_Solution": {
                 "MimeType": "application/vnd.nextthought.relatedworkref",
@@ -1626,6 +1752,18 @@ jsonpReceiveContent({
                 "visibility": "everyone",
                 "label": "Homework 3 Solution"
             },
+            "tag:nextthought.com,2011-10:OU-RelatedWork-CS1323_F_2015_Intro_to_Computer_Programming.relatedwork.relwk:final_exam_Sample_010": {
+                "MimeType": "application/vnd.nextthought.relatedworkref",
+                "ntiid": "tag:nextthought.com,2011-10:OU-RelatedWork-CS1323_F_2015_Intro_to_Computer_Programming.relatedwork.relwk:final_exam_Sample_010",
+                "href": "resources/Final_Exam_CS1323_Spring2015_Section010.docx",
+                "target-ntiid": "tag:nextthought.com,2011-10:NTI-UUID-e2bab727cfb55837a310f513bfc59361",
+                "creator": "Deborah Trytten",
+                "desc": "     A examination that tests the topics covered in the course. ",
+                "icon": "resources/CS1323_F_2015_Intro_to_Computer_Programming/583b61b2202851bd80245dfddda3c5d88cadb0a1/fd35e23767020999111e1f49239199b4c5eff23e.png",
+                "type": "application/vnd.nextthought.externallink",
+                "visibility": "everyone",
+                "label": "Spring 2015 Final Exam Section 010"
+            },
             "tag:nextthought.com,2011-10:OU-RelatedWork-CS1323_F_2015_Intro_to_Computer_Programming.relatedwork.relwk:03.01.04_GUI_Input_Tools": {
                 "MimeType": "application/vnd.nextthought.relatedworkref",
                 "ntiid": "tag:nextthought.com,2011-10:OU-RelatedWork-CS1323_F_2015_Intro_to_Computer_Programming.relatedwork.relwk:03.01.04_GUI_Input_Tools",
@@ -1662,18 +1800,17 @@ jsonpReceiveContent({
                 "visibility": "everyone",
                 "label": "Class Methods (and Data)"
             },
-            "tag:nextthought.com,2011-10:OU-RelatedWorkRef-CS1323_F_2015_Intro_to_Computer_Programming.relatedworkref.relwk:03.01.04_notes": {
-                "creator": "Deborah Trytten",
-                "visibility": "everyone",
-                "ntiid": "tag:nextthought.com,2011-10:OU-RelatedWorkRef-CS1323_F_2015_Intro_to_Computer_Programming.relatedworkref.relwk:03.01.04_notes",
-                "href": "resources/Class_Methods_Content.docx",
-                "desc": "     ",
+            "tag:nextthought.com,2011-10:OU-RelatedWork-CS1323_F_2015_Intro_to_Computer_Programming.relatedwork.relwk:Sample_Midterm_3_Solutions": {
                 "MimeType": "application/vnd.nextthought.relatedworkref",
-                "section": "additional",
-                "label": "Notes on Class Methods",
-                "target-ntiid": "tag:nextthought.com,2011-10:NTI-UUID-9f20623b742b968d7fe5de9c72c77949",
-                "icon": "resources/CS1323_F_2015_Intro_to_Computer_Programming/583b61b2202851bd80245dfddda3c5d88cadb0a1/fd35e23767020999111e1f49239199b4c5eff23e.png",
-                "type": "application/vnd.nextthought.externallink"
+                "ntiid": "tag:nextthought.com,2011-10:OU-RelatedWork-CS1323_F_2015_Intro_to_Computer_Programming.relatedwork.relwk:Sample_Midterm_3_Solutions",
+                "href": "resources/Sample_Midterm_3_Solutions.zip",
+                "target-ntiid": "tag:nextthought.com,2011-10:NTI-UUID-6d51cfc2ec63a53751553ddc7a886b52",
+                "creator": "Deborah Trytten",
+                "desc": "     Several example documents of Midterm solutions. ",
+                "icon": "resources/CS1323_F_2015_Intro_to_Computer_Programming/b9c4a1a1dc3d30c895df3b30c553fa40f972a2f5/fd35e23767020999111e1f49239199b4c5eff23e.png",
+                "type": "application/vnd.nextthought.externallink",
+                "visibility": "everyone",
+                "label": "Sample Midterm Solutions"
             },
             "tag:nextthought.com,2011-10:OU-RelatedWorkRef-CS1323_F_2015_Intro_to_Computer_Programming.relatedworkref.relwk:02.02.04_how_to_use_javabat": {
                 "creator": "Deborah Trytten",
@@ -1772,17 +1909,18 @@ jsonpReceiveContent({
                 "visibility": "everyone",
                 "label": "Laboratory 7 Solution"
             },
-            "tag:nextthought.com,2011-10:OU-RelatedWork-CS1323_F_2015_Intro_to_Computer_Programming.relatedwork.relwk:05.01.02_Turingscraft": {
-                "MimeType": "application/vnd.nextthought.relatedworkref",
-                "ntiid": "tag:nextthought.com,2011-10:OU-RelatedWork-CS1323_F_2015_Intro_to_Computer_Programming.relatedwork.relwk:05.01.02_Turingscraft",
-                "href": "http://turingscraft.com",
-                "target-ntiid": "tag:nextthought.com,2011-10:NTI-UUID-1e5721f16e6f9d8876151da9dc723284",
-                "creator": "David Arnow and Gerald Weiss",
-                "desc": "     Turingscraft exercises on classes as state and behavior. First exercise, 20626. ",
-                "icon": "resources/CS1323_F_2015_Intro_to_Computer_Programming/a76c7b008d42a0f6343bf8ce104b0bdced527f24/fd35e23767020999111e1f49239199b4c5eff23e.png",
-                "type": "application/vnd.nextthought.externallink",
+            "tag:nextthought.com,2011-10:OU-RelatedWorkRef-CS1323_F_2015_Intro_to_Computer_Programming.relatedworkref.relwk:04.02.04_reading_levels": {
+                "creator": "Deborah Trytten",
                 "visibility": "everyone",
-                "label": "Turingscraft"
+                "ntiid": "tag:nextthought.com,2011-10:OU-RelatedWorkRef-CS1323_F_2015_Intro_to_Computer_Programming.relatedworkref.relwk:04.02.04_reading_levels",
+                "href": "resources/Reading_Levels.pptx",
+                "desc": "     Lecture presentation ",
+                "MimeType": "application/vnd.nextthought.relatedworkref",
+                "section": "additional",
+                "label": "Reading Levels",
+                "target-ntiid": "tag:nextthought.com,2011-10:NTI-UUID-626d824b5d13608fb3f550cf6e7baf90",
+                "icon": "resources/CS1323_F_2015_Intro_to_Computer_Programming/17f860f9921d29d578e2791d3ff00dcf689071c3/fd35e23767020999111e1f49239199b4c5eff23e.png",
+                "type": "application/vnd.nextthought.externallink"
             },
             "tag:nextthought.com,2011-10:OU-RelatedWork-CS1323_F_2015_Intro_to_Computer_Programming.relatedwork.relwk:Sample_Midterm_2_CS_1323_Spring_2014": {
                 "MimeType": "application/vnd.nextthought.relatedworkref",
@@ -2047,6 +2185,19 @@ jsonpReceiveContent({
                 "visibility": "everyone",
                 "label": "Programming in Java"
             },
+            "tag:nextthought.com,2011-10:OU-RelatedWorkRef-CS1323_F_2015_Intro_to_Computer_Programming.relatedworkref.relwk:solution_midterm_2": {
+                "creator": "Deborah Trytten",
+                "visibility": "everyone",
+                "ntiid": "tag:nextthought.com,2011-10:OU-RelatedWorkRef-CS1323_F_2015_Intro_to_Computer_Programming.relatedworkref.relwk:solution_midterm_2",
+                "href": "resources/Solution_Midterm_2.docx",
+                "desc": "     CS 1323 Fall 2015 solution to Midterm 2 ",
+                "MimeType": "application/vnd.nextthought.relatedworkref",
+                "section": "required",
+                "label": "Midterm 2 Solution",
+                "target-ntiid": "tag:nextthought.com,2011-10:NTI-UUID-a87e1bf8af259808f0929d42daacd5eb",
+                "icon": "resources/CS1323_F_2015_Intro_to_Computer_Programming/583b61b2202851bd80245dfddda3c5d88cadb0a1/fd35e23767020999111e1f49239199b4c5eff23e.png",
+                "type": "application/vnd.nextthought.externallink"
+            },
             "tag:nextthought.com,2011-10:OU-RelatedWorkRef-CS1323_F_2015_Intro_to_Computer_Programming.relatedworkref.relwk:02.04.01_sample": {
                 "creator": "Deborah Trytten",
                 "visibility": "everyone",
@@ -2084,6 +2235,19 @@ jsonpReceiveContent({
                 "type": "application/vnd.nextthought.externallink",
                 "visibility": "everyone",
                 "label": "Programming in Java"
+            },
+            "tag:nextthought.com,2011-10:OU-RelatedWorkRef-CS1323_F_2015_Intro_to_Computer_Programming.relatedworkref.relwk:05.01.02_zyante": {
+                "creator": "zyBooks for University of Oklahoma CS 1323",
+                "visibility": "everyone",
+                "ntiid": "tag:nextthought.com,2011-10:OU-RelatedWorkRef-CS1323_F_2015_Intro_to_Computer_Programming.relatedworkref.relwk:05.01.02_zyante",
+                "href": "https://zybooks.zyante.com/#/zybook/OUCS1323Fall2015/chapter/19/section/1",
+                "desc": "     This section covers classes as a contract. ",
+                "MimeType": "application/vnd.nextthought.relatedworkref",
+                "section": "additional",
+                "label": "Programming in Java",
+                "target-ntiid": "tag:nextthought.com,2011-10:NTI-UUID-f29b131813460ebc1843a1ae71bdefd3",
+                "icon": "resources/CS1323_F_2015_Intro_to_Computer_Programming/671375790efa45b2948b77f2a9c4e91f27173a56/fd35e23767020999111e1f49239199b4c5eff23e.png",
+                "type": "application/vnd.nextthought.externallink"
             },
             "tag:nextthought.com,2011-10:OU-RelatedWork-CS1323_F_2015_Intro_to_Computer_Programming.relatedwork.relwk:02.02.02_Problets": {
                 "MimeType": "application/vnd.nextthought.relatedworkref",
@@ -2126,8 +2290,8 @@ jsonpReceiveContent({
             "tag:nextthought.com,2011-10:OU-RelatedWork-CS1323_F_2015_Intro_to_Computer_Programming.relatedwork.relwk:04.04.01_Exam_Solutions": {
                 "MimeType": "application/vnd.nextthought.relatedworkref",
                 "ntiid": "tag:nextthought.com,2011-10:OU-RelatedWork-CS1323_F_2015_Intro_to_Computer_Programming.relatedwork.relwk:04.04.01_Exam_Solutions",
-                "href": "resources/Midterm_3_Solution.docx",
-                "target-ntiid": "tag:nextthought.com,2011-10:NTI-UUID-7eae9b19b52c7f3ab0d0274e0c07762f",
+                "href": "resources/Midterm3_Solution_Fall2015.docx",
+                "target-ntiid": "tag:nextthought.com,2011-10:NTI-UUID-4591f63ecc35cfab1aabb240b1b43d84",
                 "creator": "Deborah Trytten",
                 "desc": "     The solution to an examination that tests the topics covered in the third quarter of the course. ",
                 "icon": "resources/CS1323_F_2015_Intro_to_Computer_Programming/583b61b2202851bd80245dfddda3c5d88cadb0a1/fd35e23767020999111e1f49239199b4c5eff23e.png",
@@ -2419,6 +2583,19 @@ jsonpReceiveContent({
                 "visibility": "everyone",
                 "label": "Or in Java"
             },
+            "tag:nextthought.com,2011-10:OU-RelatedWorkRef-CS1323_F_2015_Intro_to_Computer_Programming.relatedworkref.relwk:05.01.04_two_patterns_aggregation": {
+                "creator": "Deborah Trytten",
+                "visibility": "everyone",
+                "ntiid": "tag:nextthought.com,2011-10:OU-RelatedWorkRef-CS1323_F_2015_Intro_to_Computer_Programming.relatedworkref.relwk:05.01.04_two_patterns_aggregation",
+                "href": "resources/Two_Patterns_Aggregation.pptx",
+                "desc": "     Lecture presentation ",
+                "MimeType": "application/vnd.nextthought.relatedworkref",
+                "section": "additional",
+                "label": "Two Patterns",
+                "target-ntiid": "tag:nextthought.com,2011-10:NTI-UUID-671bed893a6659021098a0e08dad0e07",
+                "icon": "resources/CS1323_F_2015_Intro_to_Computer_Programming/17f860f9921d29d578e2791d3ff00dcf689071c3/fd35e23767020999111e1f49239199b4c5eff23e.png",
+                "type": "application/vnd.nextthought.externallink"
+            },
             "tag:nextthought.com,2011-10:OU-RelatedWork-CS1323_F_2015_Intro_to_Computer_Programming.relatedwork.relwk:02.02.04_Cell_Phone_6": {
                 "MimeType": "application/vnd.nextthought.relatedworkref",
                 "ntiid": "tag:nextthought.com,2011-10:OU-RelatedWork-CS1323_F_2015_Intro_to_Computer_Programming.relatedwork.relwk:02.02.04_Cell_Phone_6",
@@ -2479,6 +2656,19 @@ jsonpReceiveContent({
                 "section": "additional",
                 "label": "How to Work with Turingscraft",
                 "target-ntiid": "tag:nextthought.com,2011-10:NTI-UUID-e38eda2dcd32c88b49d9968d59ff1e90",
+                "icon": "resources/CS1323_F_2015_Intro_to_Computer_Programming/17f860f9921d29d578e2791d3ff00dcf689071c3/fd35e23767020999111e1f49239199b4c5eff23e.png",
+                "type": "application/vnd.nextthought.externallink"
+            },
+            "tag:nextthought.com,2011-10:OU-RelatedWorkRef-CS1323_F_2015_Intro_to_Computer_Programming.relatedworkref.relwk:05.02.04_set_tutor": {
+                "creator": "Deborah Trytten",
+                "visibility": "everyone",
+                "ntiid": "tag:nextthought.com,2011-10:OU-RelatedWorkRef-CS1323_F_2015_Intro_to_Computer_Programming.relatedworkref.relwk:05.02.04_set_tutor",
+                "href": "resources/Set_Tutor.pptx",
+                "desc": "     Lecture presentation ",
+                "MimeType": "application/vnd.nextthought.relatedworkref",
+                "section": "additional",
+                "label": "Set Tutor",
+                "target-ntiid": "tag:nextthought.com,2011-10:NTI-UUID-dd0f5e00400b7167a5ff3667b9423964",
                 "icon": "resources/CS1323_F_2015_Intro_to_Computer_Programming/17f860f9921d29d578e2791d3ff00dcf689071c3/fd35e23767020999111e1f49239199b4c5eff23e.png",
                 "type": "application/vnd.nextthought.externallink"
             },
@@ -2568,6 +2758,19 @@ jsonpReceiveContent({
                 "icon": "resources/CS1323_F_2015_Intro_to_Computer_Programming/17f860f9921d29d578e2791d3ff00dcf689071c3/fd35e23767020999111e1f49239199b4c5eff23e.png",
                 "type": "application/vnd.nextthought.externallink"
             },
+            "tag:nextthought.com,2011-10:OU-RelatedWorkRef-CS1323_F_2015_Intro_to_Computer_Programming.relatedworkref.relwk:05.01.04_charity_donations": {
+                "creator": "Deborah Trytten",
+                "visibility": "everyone",
+                "ntiid": "tag:nextthought.com,2011-10:OU-RelatedWorkRef-CS1323_F_2015_Intro_to_Computer_Programming.relatedworkref.relwk:05.01.04_charity_donations",
+                "href": "resources/Charity_Donations.pptx",
+                "desc": "     Lecture presentation ",
+                "MimeType": "application/vnd.nextthought.relatedworkref",
+                "section": "additional",
+                "label": "Charity Donations",
+                "target-ntiid": "tag:nextthought.com,2011-10:NTI-UUID-74840762b12c5bd237eb65699a086c25",
+                "icon": "resources/CS1323_F_2015_Intro_to_Computer_Programming/17f860f9921d29d578e2791d3ff00dcf689071c3/fd35e23767020999111e1f49239199b4c5eff23e.png",
+                "type": "application/vnd.nextthought.externallink"
+            },
             "tag:nextthought.com,2011-10:OU-RelatedWork-CS1323_F_2015_Intro_to_Computer_Programming.relatedwork.relwk:04.02.03_Problets": {
                 "MimeType": "application/vnd.nextthought.relatedworkref",
                 "ntiid": "tag:nextthought.com,2011-10:OU-RelatedWork-CS1323_F_2015_Intro_to_Computer_Programming.relatedwork.relwk:04.02.03_Problets",
@@ -2591,6 +2794,18 @@ jsonpReceiveContent({
                 "type": "application/vnd.nextthought.externallink",
                 "visibility": "everyone",
                 "label": "Chortle"
+            },
+            "tag:nextthought.com,2011-10:OU-RelatedWork-CS1323_F_2015_Intro_to_Computer_Programming.relatedwork.relwk:02.01.03_Changing_Primitive_Data": {
+                "MimeType": "application/vnd.nextthought.relatedworkref",
+                "ntiid": "tag:nextthought.com,2011-10:OU-RelatedWork-CS1323_F_2015_Intro_to_Computer_Programming.relatedwork.relwk:02.01.03_Changing_Primitive_Data",
+                "href": "resources/Asssignment_Statement.pptx",
+                "target-ntiid": "tag:nextthought.com,2011-10:NTI-UUID-901a41976bbd201440c79f955db3bbdf",
+                "creator": "Deborah Trytten",
+                "desc": "     Lecture presentation ",
+                "icon": "resources/CS1323_F_2015_Intro_to_Computer_Programming/17f860f9921d29d578e2791d3ff00dcf689071c3/fd35e23767020999111e1f49239199b4c5eff23e.png",
+                "type": "application/vnd.nextthought.externallink",
+                "visibility": "everyone",
+                "label": "Asssignment Statement"
             },
             "tag:nextthought.com,2011-10:OU-RelatedWorkRef-CS1323_F_2015_Intro_to_Computer_Programming.relatedworkref.relwk:homework_2_1_solution": {
                 "creator": "Deborah Trytten",
@@ -2641,6 +2856,19 @@ jsonpReceiveContent({
                 "label": "Spring 2015 Midterm 1 Solution",
                 "target-ntiid": "tag:nextthought.com,2011-10:NTI-UUID-57a5cef699306683f608318f93e33b00",
                 "icon": "resources/CS1323_F_2015_Intro_to_Computer_Programming/583b61b2202851bd80245dfddda3c5d88cadb0a1/fd35e23767020999111e1f49239199b4c5eff23e.png",
+                "type": "application/vnd.nextthought.externallink"
+            },
+            "tag:nextthought.com,2011-10:OU-RelatedWorkRef-CS1323_F_2015_Intro_to_Computer_Programming.relatedworkref.relwk:05.01.04_code_sample": {
+                "creator": "Deborah Trytten",
+                "visibility": "everyone",
+                "ntiid": "tag:nextthought.com,2011-10:OU-RelatedWorkRef-CS1323_F_2015_Intro_to_Computer_Programming.relatedworkref.relwk:05.01.04_code_sample",
+                "href": "resources/Lesson_5.1.4_Code.zip",
+                "desc": "     Java code developed in the video from this lesson. ",
+                "MimeType": "application/vnd.nextthought.relatedworkref",
+                "section": "additional",
+                "label": "Example from the Video",
+                "target-ntiid": "tag:nextthought.com,2011-10:NTI-UUID-e0fca77e8e51bd884dfbe45466f3f6aa",
+                "icon": "resources/CS1323_F_2015_Intro_to_Computer_Programming/b9c4a1a1dc3d30c895df3b30c553fa40f972a2f5/fd35e23767020999111e1f49239199b4c5eff23e.png",
                 "type": "application/vnd.nextthought.externallink"
             },
             "tag:nextthought.com,2011-10:OU-RelatedWork-CS1323_F_2015_Intro_to_Computer_Programming.relatedwork.relwk:03.01.03_MostPopularDomain": {
@@ -2703,17 +2931,18 @@ jsonpReceiveContent({
                 "visibility": "everyone",
                 "label": "Refining Search"
             },
-            "tag:nextthought.com,2011-10:OU-RelatedWork-CS1323_F_2015_Intro_to_Computer_Programming.relatedwork.relwk:04.02.05_Selection_Sort": {
-                "MimeType": "application/vnd.nextthought.relatedworkref",
-                "ntiid": "tag:nextthought.com,2011-10:OU-RelatedWork-CS1323_F_2015_Intro_to_Computer_Programming.relatedwork.relwk:04.02.05_Selection_Sort",
-                "href": "resources/Selection_Sort.pptx",
-                "target-ntiid": "tag:nextthought.com,2011-10:NTI-UUID-1cfb34f28b6d676fa14cdf0ad3ee7725",
+            "tag:nextthought.com,2011-10:OU-RelatedWorkRef-CS1323_F_2015_Intro_to_Computer_Programming.relatedworkref.relwk:03.02.05_midterm_2_samples": {
                 "creator": "Deborah Trytten",
-                "desc": "     Lecture presentation ",
-                "icon": "resources/CS1323_F_2015_Intro_to_Computer_Programming/17f860f9921d29d578e2791d3ff00dcf689071c3/fd35e23767020999111e1f49239199b4c5eff23e.png",
-                "type": "application/vnd.nextthought.externallink",
                 "visibility": "everyone",
-                "label": "Selection Sort"
+                "ntiid": "tag:nextthought.com,2011-10:OU-RelatedWorkRef-CS1323_F_2015_Intro_to_Computer_Programming.relatedworkref.relwk:03.02.05_midterm_2_samples",
+                "href": "resources/Sample_Midterm_2.zip",
+                "desc": "     Several examples of examinations that test the topics covered in the second quarter of the course. ",
+                "MimeType": "application/vnd.nextthought.relatedworkref",
+                "section": "required",
+                "label": "Sample Midterms",
+                "target-ntiid": "tag:nextthought.com,2011-10:NTI-UUID-7fa2620101b1b87a78cc3cbd39a05900",
+                "icon": "resources/CS1323_F_2015_Intro_to_Computer_Programming/b9c4a1a1dc3d30c895df3b30c553fa40f972a2f5/fd35e23767020999111e1f49239199b4c5eff23e.png",
+                "type": "application/vnd.nextthought.externallink"
             },
             "tag:nextthought.com,2011-10:OU-RelatedWork-CS1323_F_2015_Intro_to_Computer_Programming.relatedwork.relwk:04.01.02_Yahtzee_1": {
                 "MimeType": "application/vnd.nextthought.relatedworkref",
@@ -2775,17 +3004,17 @@ jsonpReceiveContent({
                 "visibility": "everyone",
                 "label": "Example from the Video"
             },
-            "tag:nextthought.com,2011-10:OU-RelatedWork-CS1323_F_2015_Intro_to_Computer_Programming.relatedwork.relwk:04.02.04_Rectangles_versus_Triangles": {
+            "tag:nextthought.com,2011-10:OU-RelatedWork-CS1323_F_2015_Intro_to_Computer_Programming.relatedwork.relwk:01.01_Syllabus_1": {
                 "MimeType": "application/vnd.nextthought.relatedworkref",
-                "ntiid": "tag:nextthought.com,2011-10:OU-RelatedWork-CS1323_F_2015_Intro_to_Computer_Programming.relatedwork.relwk:04.02.04_Rectangles_versus_Triangles",
-                "href": "resources/Rectangles_versus_Triangles.pptx",
-                "target-ntiid": "tag:nextthought.com,2011-10:NTI-UUID-a58a0503efce305c6bbd269e2cbd0c92",
+                "ntiid": "tag:nextthought.com,2011-10:OU-RelatedWork-CS1323_F_2015_Intro_to_Computer_Programming.relatedwork.relwk:01.01_Syllabus_1",
+                "href": "resources/CS_1323_Syllabus_Fall_2015.pdf",
+                "target-ntiid": "tag:nextthought.com,2011-10:NTI-UUID-efd6f6ee1a7c08dc02d60c1ee40d9c46",
                 "creator": "Deborah Trytten",
-                "desc": "     Lecture presentation ",
-                "icon": "resources/CS1323_F_2015_Intro_to_Computer_Programming/17f860f9921d29d578e2791d3ff00dcf689071c3/fd35e23767020999111e1f49239199b4c5eff23e.png",
+                "desc": "     ",
+                "icon": "resources/CS1323_F_2015_Intro_to_Computer_Programming/ba1d27596d509fc1e8324632f4304888086b4732/fd35e23767020999111e1f49239199b4c5eff23e.png",
                 "type": "application/vnd.nextthought.externallink",
                 "visibility": "everyone",
-                "label": "Rectangles versus Triangles"
+                "label": "Section 1 Syllabus"
             },
             "tag:nextthought.com,2011-10:OU-RelatedWork-CS1323_F_2015_Intro_to_Computer_Programming.relatedwork.relwk:02.04.01_Exam_Solutions": {
                 "MimeType": "application/vnd.nextthought.relatedworkref",
@@ -2863,18 +3092,18 @@ jsonpReceiveContent({
                 "icon": "resources/CS1323_F_2015_Intro_to_Computer_Programming/b06a4bdb19666c7afc685f0365fd59a988b154c2/fd35e23767020999111e1f49239199b4c5eff23e.png",
                 "type": "application/vnd.nextthought.content"
             },
-            "tag:nextthought.com,2011-10:OU-RelatedWorkRef-CS1323_F_2015_Intro_to_Computer_Programming.relatedworkref.relwk:chortle.2": {
-                "creator": "Bradley Kjell",
+            "tag:nextthought.com,2011-10:OU-RelatedWorkRef-CS1323_F_2015_Intro_to_Computer_Programming.relatedworkref.relwk:05.01.03_code_sample": {
+                "creator": "Deborah Trytten",
                 "visibility": "everyone",
-                "ntiid": "tag:nextthought.com,2011-10:OU-RelatedWorkRef-CS1323_F_2015_Intro_to_Computer_Programming.relatedworkref.relwk:chortle.2",
-                "href": "tag:nextthought.com,2011-10:OU-HTML-CS1323_S_2015_Intro_to_Computer_Programming.reading:Chortle_CH6",
-                "desc": "Introduction to creating programs, reading input and writing output.",
+                "ntiid": "tag:nextthought.com,2011-10:OU-RelatedWorkRef-CS1323_F_2015_Intro_to_Computer_Programming.relatedworkref.relwk:05.01.03_code_sample",
+                "href": "resources/Lesson_5.1.3_Code.zip",
+                "desc": "     Java code developed in the video from this lesson. ",
                 "MimeType": "application/vnd.nextthought.relatedworkref",
-                "section": "required",
-                "label": "Chortle",
-                "target-ntiid": "tag:nextthought.com,2011-10:OU-HTML-CS1323_S_2015_Intro_to_Computer_Programming.reading:Chortle_CH6",
-                "icon": "resources/CS1323_F_2015_Intro_to_Computer_Programming/b06a4bdb19666c7afc685f0365fd59a988b154c2/fd35e23767020999111e1f49239199b4c5eff23e.png",
-                "type": "application/vnd.nextthought.content"
+                "section": "additional",
+                "label": "Example from the Video",
+                "target-ntiid": "tag:nextthought.com,2011-10:NTI-UUID-3257efc41898b5686afad3372f285c73",
+                "icon": "resources/CS1323_F_2015_Intro_to_Computer_Programming/b9c4a1a1dc3d30c895df3b30c553fa40f972a2f5/fd35e23767020999111e1f49239199b4c5eff23e.png",
+                "type": "application/vnd.nextthought.externallink"
             },
             "tag:nextthought.com,2011-10:OU-RelatedWorkRef-CS1323_F_2015_Intro_to_Computer_Programming.relatedworkref.relwk:chortle.5": {
                 "creator": "Bradley Kjell",
@@ -2952,6 +3181,18 @@ jsonpReceiveContent({
                 "type": "application/vnd.nextthought.externallink",
                 "visibility": "everyone",
                 "label": "Building a Sorted ArrayList"
+            },
+            "tag:nextthought.com,2011-10:OU-RelatedWork-CS1323_F_2015_Intro_to_Computer_Programming.relatedwork.relwk:final_exam_Sample_solution_010": {
+                "MimeType": "application/vnd.nextthought.relatedworkref",
+                "ntiid": "tag:nextthought.com,2011-10:OU-RelatedWork-CS1323_F_2015_Intro_to_Computer_Programming.relatedwork.relwk:final_exam_Sample_solution_010",
+                "href": "resources/Solution_Final_Exam_CS1323_Spring2015_Section010.docx",
+                "target-ntiid": "tag:nextthought.com,2011-10:NTI-UUID-746175b6ee57a63c0dbc91283ab8658a",
+                "creator": "Deborah Trytten",
+                "desc": "     Solution to examination that tests the topics covered in the course. ",
+                "icon": "resources/CS1323_F_2015_Intro_to_Computer_Programming/583b61b2202851bd80245dfddda3c5d88cadb0a1/fd35e23767020999111e1f49239199b4c5eff23e.png",
+                "type": "application/vnd.nextthought.externallink",
+                "visibility": "everyone",
+                "label": "Spring 2015 Final Exam Solution Section 010"
             },
             "tag:nextthought.com,2011-10:OU-RelatedWork-CS1323_F_2015_Intro_to_Computer_Programming.relatedwork.relwk:02.01.04_Heart_Rates_2": {
                 "MimeType": "application/vnd.nextthought.relatedworkref",
@@ -3261,6 +3502,18 @@ jsonpReceiveContent({
                 "visibility": "everyone",
                 "label": "Example from the Video"
             },
+            "tag:nextthought.com,2011-10:OU-RelatedWork-CS1323_F_2015_Intro_to_Computer_Programming.relatedwork.relwk:final_exam_Sample_solution": {
+                "MimeType": "application/vnd.nextthought.relatedworkref",
+                "ntiid": "tag:nextthought.com,2011-10:OU-RelatedWork-CS1323_F_2015_Intro_to_Computer_Programming.relatedwork.relwk:final_exam_Sample_solution",
+                "href": "resources/Solution_Final_Exam_CS1323_Spring2015_Section001.docx",
+                "target-ntiid": "tag:nextthought.com,2011-10:NTI-UUID-ef201e25656031d28f330b2ea2777452",
+                "creator": "Deborah Trytten",
+                "desc": "     Solution to examination that tests the topics covered in the course. ",
+                "icon": "resources/CS1323_F_2015_Intro_to_Computer_Programming/583b61b2202851bd80245dfddda3c5d88cadb0a1/fd35e23767020999111e1f49239199b4c5eff23e.png",
+                "type": "application/vnd.nextthought.externallink",
+                "visibility": "everyone",
+                "label": "Spring 2015 Final Exam Solution Section 001"
+            },
             "tag:nextthought.com,2011-10:OU-RelatedWork-CS1323_F_2015_Intro_to_Computer_Programming.relatedwork.relwk:Laboratory_11_Solution": {
                 "MimeType": "application/vnd.nextthought.relatedworkref",
                 "ntiid": "tag:nextthought.com,2011-10:OU-RelatedWork-CS1323_F_2015_Intro_to_Computer_Programming.relatedwork.relwk:Laboratory_11_Solution",
@@ -3296,6 +3549,19 @@ jsonpReceiveContent({
                 "label": "Programming in Java",
                 "target-ntiid": "tag:nextthought.com,2011-10:NTI-UUID-b525528504067b2dcb1b35cded059adb",
                 "icon": "resources/CS1323_F_2015_Intro_to_Computer_Programming/671375790efa45b2948b77f2a9c4e91f27173a56/fd35e23767020999111e1f49239199b4c5eff23e.png",
+                "type": "application/vnd.nextthought.externallink"
+            },
+            "tag:nextthought.com,2011-10:OU-RelatedWorkRef-CS1323_F_2015_Intro_to_Computer_Programming.relatedworkref.relwk:06.01.01_sample": {
+                "creator": "Deborah Trytten",
+                "visibility": "everyone",
+                "ntiid": "tag:nextthought.com,2011-10:OU-RelatedWorkRef-CS1323_F_2015_Intro_to_Computer_Programming.relatedworkref.relwk:06.01.01_sample",
+                "href": "resources/Sample_Final_Exam_CS_1323_Spring_2014.docx",
+                "desc": "     A examination that tests the topics covered in the course. ",
+                "MimeType": "application/vnd.nextthought.relatedworkref",
+                "section": "required",
+                "label": "Sample Final Exam",
+                "target-ntiid": "tag:nextthought.com,2011-10:NTI-UUID-f46b7a4d68d2c09c749fedfe82f9efe3",
+                "icon": "resources/CS1323_F_2015_Intro_to_Computer_Programming/583b61b2202851bd80245dfddda3c5d88cadb0a1/fd35e23767020999111e1f49239199b4c5eff23e.png",
                 "type": "application/vnd.nextthought.externallink"
             },
             "tag:nextthought.com,2011-10:OU-RelatedWork-CS1323_F_2015_Intro_to_Computer_Programming.relatedwork.relwk:05.01.03_Turingscraft": {
@@ -3349,8 +3615,8 @@ jsonpReceiveContent({
             "tag:nextthought.com,2011-10:OU-RelatedWork-CS1323_F_2015_Intro_to_Computer_Programming.relatedwork.relwk:04.04.01_Exam": {
                 "MimeType": "application/vnd.nextthought.relatedworkref",
                 "ntiid": "tag:nextthought.com,2011-10:OU-RelatedWork-CS1323_F_2015_Intro_to_Computer_Programming.relatedwork.relwk:04.04.01_Exam",
-                "href": "resources/Midterm_3.docx",
-                "target-ntiid": "tag:nextthought.com,2011-10:NTI-UUID-8768176a15c4f42f60a0482ee55e5f8e",
+                "href": "resources/Midterm3_Fall2015.docx",
+                "target-ntiid": "tag:nextthought.com,2011-10:NTI-UUID-89baa2cd9d3b0f10a47e3c03f1438430",
                 "creator": "Deborah Trytten",
                 "desc": "     A examination that tests the topics covered in the third quarter of the course. ",
                 "icon": "resources/CS1323_F_2015_Intro_to_Computer_Programming/583b61b2202851bd80245dfddda3c5d88cadb0a1/fd35e23767020999111e1f49239199b4c5eff23e.png",
@@ -3383,6 +3649,19 @@ jsonpReceiveContent({
                 "visibility": "everyone",
                 "label": "Programming in Java"
             },
+            "tag:nextthought.com,2011-10:OU-RelatedWorkRef-CS1323_F_2015_Intro_to_Computer_Programming.relatedworkref.relwk:06.01.01_sample_solutions": {
+                "creator": "Deborah Trytten",
+                "visibility": "everyone",
+                "ntiid": "tag:nextthought.com,2011-10:OU-RelatedWorkRef-CS1323_F_2015_Intro_to_Computer_Programming.relatedworkref.relwk:06.01.01_sample_solutions",
+                "href": "resources/Solution_Sample_Final_Exam_CS_1323_Spring_2014.docx",
+                "desc": "     The solution to an examination that tests the topics covered in the course. ",
+                "MimeType": "application/vnd.nextthought.relatedworkref",
+                "section": "additional",
+                "label": "Sample Final Exam Solutions",
+                "target-ntiid": "tag:nextthought.com,2011-10:NTI-UUID-30b67e2cda203425e4be28adf5c5e0de",
+                "icon": "resources/CS1323_F_2015_Intro_to_Computer_Programming/583b61b2202851bd80245dfddda3c5d88cadb0a1/fd35e23767020999111e1f49239199b4c5eff23e.png",
+                "type": "application/vnd.nextthought.externallink"
+            },
             "tag:nextthought.com,2011-10:OU-RelatedWorkRef-CS1323_F_2015_Intro_to_Computer_Programming.relatedworkref.relwk:04.01.02_zyante": {
                 "creator": "zyBooks for University of Oklahoma CS 1323",
                 "visibility": "everyone",
@@ -3409,17 +3688,18 @@ jsonpReceiveContent({
                 "icon": "resources/CS1323_F_2015_Intro_to_Computer_Programming/9589546a9590252b173b0f940b26cc1a95c83246/fd35e23767020999111e1f49239199b4c5eff23e.png",
                 "type": "application/vnd.nextthought.externallink"
             },
-            "tag:nextthought.com,2011-10:OU-RelatedWork-CS1323_F_2015_Intro_to_Computer_Programming.relatedwork.relwk:02.01.03_Changing_Primitive_Data": {
-                "MimeType": "application/vnd.nextthought.relatedworkref",
-                "ntiid": "tag:nextthought.com,2011-10:OU-RelatedWork-CS1323_F_2015_Intro_to_Computer_Programming.relatedwork.relwk:02.01.03_Changing_Primitive_Data",
-                "href": "resources/Asssignment_Statement.pptx",
-                "target-ntiid": "tag:nextthought.com,2011-10:NTI-UUID-901a41976bbd201440c79f955db3bbdf",
+            "tag:nextthought.com,2011-10:OU-RelatedWorkRef-CS1323_F_2015_Intro_to_Computer_Programming.relatedworkref.relwk:final_exam_sample_solution_010": {
                 "creator": "Deborah Trytten",
-                "desc": "     Lecture presentation ",
-                "icon": "resources/CS1323_F_2015_Intro_to_Computer_Programming/17f860f9921d29d578e2791d3ff00dcf689071c3/fd35e23767020999111e1f49239199b4c5eff23e.png",
-                "type": "application/vnd.nextthought.externallink",
                 "visibility": "everyone",
-                "label": "Asssignment Statement"
+                "ntiid": "tag:nextthought.com,2011-10:OU-RelatedWorkRef-CS1323_F_2015_Intro_to_Computer_Programming.relatedworkref.relwk:final_exam_sample_solution_010",
+                "href": "resources/Solution_Final_Exam_CS1323_Spring2015_Section010.docx",
+                "desc": "     Solution to examination that tests the topics covered in the course. ",
+                "MimeType": "application/vnd.nextthought.relatedworkref",
+                "section": "required",
+                "label": "Spring 2015 Final Exam Solution Section 010",
+                "target-ntiid": "tag:nextthought.com,2011-10:NTI-UUID-746175b6ee57a63c0dbc91283ab8658a",
+                "icon": "resources/CS1323_F_2015_Intro_to_Computer_Programming/583b61b2202851bd80245dfddda3c5d88cadb0a1/fd35e23767020999111e1f49239199b4c5eff23e.png",
+                "type": "application/vnd.nextthought.externallink"
             },
             "tag:nextthought.com,2011-10:OU-RelatedWorkRef-CS1323_F_2015_Intro_to_Computer_Programming.relatedworkref.relwk:04.02.05_code_sample": {
                 "creator": "Deborah Trytten",
@@ -3582,6 +3862,19 @@ jsonpReceiveContent({
                 "visibility": "everyone",
                 "label": "Laboratory 6 Solution"
             },
+            "tag:nextthought.com,2011-10:OU-RelatedWorkRef-CS1323_F_2015_Intro_to_Computer_Programming.relatedworkref.relwk:05.01.03_pseudo_arraylist_enforcing_the_contract": {
+                "creator": "Deborah Trytten",
+                "visibility": "everyone",
+                "ntiid": "tag:nextthought.com,2011-10:OU-RelatedWorkRef-CS1323_F_2015_Intro_to_Computer_Programming.relatedworkref.relwk:05.01.03_pseudo_arraylist_enforcing_the_contract",
+                "href": "resources/Pseudo_ArrayList_Enforcing_the_Contract.pptx",
+                "desc": "     Lecture presentation ",
+                "MimeType": "application/vnd.nextthought.relatedworkref",
+                "section": "additional",
+                "label": "Pseudo ArrayList",
+                "target-ntiid": "tag:nextthought.com,2011-10:NTI-UUID-5dce367c4a2fe7c84546ce09fec851fa",
+                "icon": "resources/CS1323_F_2015_Intro_to_Computer_Programming/17f860f9921d29d578e2791d3ff00dcf689071c3/fd35e23767020999111e1f49239199b4c5eff23e.png",
+                "type": "application/vnd.nextthought.externallink"
+            },
             "tag:nextthought.com,2011-10:OU-RelatedWorkRef-CS1323_F_2015_Intro_to_Computer_Programming.relatedworkref.relwk:02.02.04_cell_phone_6": {
                 "creator": "Deborah Trytten",
                 "visibility": "everyone",
@@ -3608,18 +3901,17 @@ jsonpReceiveContent({
                 "icon": "resources/CS1323_F_2015_Intro_to_Computer_Programming/671375790efa45b2948b77f2a9c4e91f27173a56/fd35e23767020999111e1f49239199b4c5eff23e.png",
                 "type": "application/vnd.nextthought.externallink"
             },
-            "tag:nextthought.com,2011-10:OU-RelatedWorkRef-CS1323_F_2015_Intro_to_Computer_Programming.relatedworkref.relwk:03.02.05_midterm_2_samples": {
-                "creator": "Deborah Trytten",
-                "visibility": "everyone",
-                "ntiid": "tag:nextthought.com,2011-10:OU-RelatedWorkRef-CS1323_F_2015_Intro_to_Computer_Programming.relatedworkref.relwk:03.02.05_midterm_2_samples",
-                "href": "resources/Sample_Midterm_2.zip",
-                "desc": "     Several examples of examinations that test the topics covered in the second quarter of the course. ",
+            "tag:nextthought.com,2011-10:OU-RelatedWork-CS1323_F_2015_Intro_to_Computer_Programming.relatedwork.relwk:04.02.05_Selection_Sort": {
                 "MimeType": "application/vnd.nextthought.relatedworkref",
-                "section": "required",
-                "label": "Sample Midterms",
-                "target-ntiid": "tag:nextthought.com,2011-10:NTI-UUID-7fa2620101b1b87a78cc3cbd39a05900",
-                "icon": "resources/CS1323_F_2015_Intro_to_Computer_Programming/b9c4a1a1dc3d30c895df3b30c553fa40f972a2f5/fd35e23767020999111e1f49239199b4c5eff23e.png",
-                "type": "application/vnd.nextthought.externallink"
+                "ntiid": "tag:nextthought.com,2011-10:OU-RelatedWork-CS1323_F_2015_Intro_to_Computer_Programming.relatedwork.relwk:04.02.05_Selection_Sort",
+                "href": "resources/Selection_Sort.pptx",
+                "target-ntiid": "tag:nextthought.com,2011-10:NTI-UUID-1cfb34f28b6d676fa14cdf0ad3ee7725",
+                "creator": "Deborah Trytten",
+                "desc": "     Lecture presentation ",
+                "icon": "resources/CS1323_F_2015_Intro_to_Computer_Programming/17f860f9921d29d578e2791d3ff00dcf689071c3/fd35e23767020999111e1f49239199b4c5eff23e.png",
+                "type": "application/vnd.nextthought.externallink",
+                "visibility": "everyone",
+                "label": "Selection Sort"
             },
             "tag:nextthought.com,2011-10:OU-RelatedWorkRef-CS1323_F_2015_Intro_to_Computer_Programming.relatedworkref.relwk:04.02.04_code_sample": {
                 "creator": "Deborah Trytten",
@@ -3658,6 +3950,19 @@ jsonpReceiveContent({
                 "type": "application/vnd.nextthought.externallink",
                 "visibility": "everyone",
                 "label": "Example from the Video"
+            },
+            "tag:nextthought.com,2011-10:OU-RelatedWorkRef-CS1323_F_2015_Intro_to_Computer_Programming.relatedworkref.relwk:04.04.01_exam": {
+                "creator": "Deborah Trytten",
+                "visibility": "everyone",
+                "ntiid": "tag:nextthought.com,2011-10:OU-RelatedWorkRef-CS1323_F_2015_Intro_to_Computer_Programming.relatedworkref.relwk:04.04.01_exam",
+                "href": "resources/Midterm3_Fall2015.docx",
+                "desc": "     A examination that tests the topics covered in the third quarter of the course. ",
+                "MimeType": "application/vnd.nextthought.relatedworkref",
+                "section": "required",
+                "label": "Midterm 3",
+                "target-ntiid": "tag:nextthought.com,2011-10:NTI-UUID-89baa2cd9d3b0f10a47e3c03f1438430",
+                "icon": "resources/CS1323_F_2015_Intro_to_Computer_Programming/583b61b2202851bd80245dfddda3c5d88cadb0a1/fd35e23767020999111e1f49239199b4c5eff23e.png",
+                "type": "application/vnd.nextthought.externallink"
             },
             "tag:nextthought.com,2011-10:OU-RelatedWork-CS1323_F_2015_Intro_to_Computer_Programming.relatedwork.relwk:Laboratory_2_Solution": {
                 "MimeType": "application/vnd.nextthought.relatedworkref",
@@ -3710,11 +4015,11 @@ jsonpReceiveContent({
             "tag:nextthought.com,2011-10:OU-RelatedWork-CS1323_F_2015_Intro_to_Computer_Programming.relatedwork.relwk:Midterm_2": {
                 "MimeType": "application/vnd.nextthought.relatedworkref",
                 "ntiid": "tag:nextthought.com,2011-10:OU-RelatedWork-CS1323_F_2015_Intro_to_Computer_Programming.relatedwork.relwk:Midterm_2",
-                "href": "resources/Midterm_2.zip",
-                "target-ntiid": "tag:nextthought.com,2011-10:NTI-UUID-d2566438b68f93c04f88fd47a11d8ca6",
+                "href": "resources/Midterm_2.docx",
+                "target-ntiid": "tag:nextthought.com,2011-10:NTI-UUID-1a0897f16a2526c75f07685ef7b0b54e",
                 "creator": "Deborah Trytten",
-                "desc": "     CS 1323 Spring 2015 Midterm 2 ",
-                "icon": "resources/CS1323_F_2015_Intro_to_Computer_Programming/b9c4a1a1dc3d30c895df3b30c553fa40f972a2f5/fd35e23767020999111e1f49239199b4c5eff23e.png",
+                "desc": "     CS 1323 Fall 2015 Midterm 2 ",
+                "icon": "resources/CS1323_F_2015_Intro_to_Computer_Programming/583b61b2202851bd80245dfddda3c5d88cadb0a1/fd35e23767020999111e1f49239199b4c5eff23e.png",
                 "type": "application/vnd.nextthought.externallink",
                 "visibility": "everyone",
                 "label": "Midterm 2"
@@ -3804,6 +4109,19 @@ jsonpReceiveContent({
                 "visibility": "everyone",
                 "label": "Primitive Data Types"
             },
+            "tag:nextthought.com,2011-10:OU-RelatedWorkRef-CS1323_F_2015_Intro_to_Computer_Programming.relatedworkref.relwk:04.02.02_code_sample": {
+                "creator": "Deborah Trytten",
+                "visibility": "everyone",
+                "ntiid": "tag:nextthought.com,2011-10:OU-RelatedWorkRef-CS1323_F_2015_Intro_to_Computer_Programming.relatedworkref.relwk:04.02.02_code_sample",
+                "href": "resources/Lesson_4.2.2_Code.zip",
+                "desc": "     Java code developed in the video from this lesson. ",
+                "MimeType": "application/vnd.nextthought.relatedworkref",
+                "section": "additional",
+                "label": "Example from the Video",
+                "target-ntiid": "tag:nextthought.com,2011-10:NTI-UUID-bc571d220ee11a7ba8e195ac8f221b3b",
+                "icon": "resources/CS1323_F_2015_Intro_to_Computer_Programming/b9c4a1a1dc3d30c895df3b30c553fa40f972a2f5/fd35e23767020999111e1f49239199b4c5eff23e.png",
+                "type": "application/vnd.nextthought.externallink"
+            },
             "tag:nextthought.com,2011-10:OU-RelatedWork-CS1323_F_2015_Intro_to_Computer_Programming.relatedwork.relwk:SittingTime.java": {
                 "MimeType": "application/vnd.nextthought.relatedworkref",
                 "ntiid": "tag:nextthought.com,2011-10:OU-RelatedWork-CS1323_F_2015_Intro_to_Computer_Programming.relatedwork.relwk:SittingTime.java",
@@ -3891,17 +4209,17 @@ jsonpReceiveContent({
                 "icon": "resources/CS1323_F_2015_Intro_to_Computer_Programming/17f860f9921d29d578e2791d3ff00dcf689071c3/fd35e23767020999111e1f49239199b4c5eff23e.png",
                 "type": "application/vnd.nextthought.externallink"
             },
-            "tag:nextthought.com,2011-10:OU-RelatedWork-CS1323_F_2015_Intro_to_Computer_Programming.relatedwork.relwk:01.01_Syllabus_1": {
+            "tag:nextthought.com,2011-10:OU-RelatedWork-CS1323_F_2015_Intro_to_Computer_Programming.relatedwork.relwk:04.02.04_Rectangles_versus_Triangles": {
                 "MimeType": "application/vnd.nextthought.relatedworkref",
-                "ntiid": "tag:nextthought.com,2011-10:OU-RelatedWork-CS1323_F_2015_Intro_to_Computer_Programming.relatedwork.relwk:01.01_Syllabus_1",
-                "href": "resources/CS_1323_Syllabus_Fall_2015.pdf",
-                "target-ntiid": "tag:nextthought.com,2011-10:NTI-UUID-efd6f6ee1a7c08dc02d60c1ee40d9c46",
+                "ntiid": "tag:nextthought.com,2011-10:OU-RelatedWork-CS1323_F_2015_Intro_to_Computer_Programming.relatedwork.relwk:04.02.04_Rectangles_versus_Triangles",
+                "href": "resources/Rectangles_versus_Triangles.pptx",
+                "target-ntiid": "tag:nextthought.com,2011-10:NTI-UUID-a58a0503efce305c6bbd269e2cbd0c92",
                 "creator": "Deborah Trytten",
-                "desc": "     ",
-                "icon": "resources/CS1323_F_2015_Intro_to_Computer_Programming/ba1d27596d509fc1e8324632f4304888086b4732/fd35e23767020999111e1f49239199b4c5eff23e.png",
+                "desc": "     Lecture presentation ",
+                "icon": "resources/CS1323_F_2015_Intro_to_Computer_Programming/17f860f9921d29d578e2791d3ff00dcf689071c3/fd35e23767020999111e1f49239199b4c5eff23e.png",
                 "type": "application/vnd.nextthought.externallink",
                 "visibility": "everyone",
-                "label": "Section 1 Syllabus"
+                "label": "Rectangles versus Triangles"
             },
             "tag:nextthought.com,2011-10:OU-RelatedWork-CS1323_F_2015_Intro_to_Computer_Programming.relatedwork.relwk:Project_8_Java": {
                 "MimeType": "application/vnd.nextthought.relatedworkref",
@@ -3914,6 +4232,19 @@ jsonpReceiveContent({
                 "type": "application/vnd.nextthought.externallink",
                 "visibility": "everyone",
                 "label": "Java File for Assignment"
+            },
+            "tag:nextthought.com,2011-10:OU-RelatedWorkRef-CS1323_F_2015_Intro_to_Computer_Programming.relatedworkref.relwk:05.01.02_code_sample": {
+                "creator": "Deborah Trytten",
+                "visibility": "everyone",
+                "ntiid": "tag:nextthought.com,2011-10:OU-RelatedWorkRef-CS1323_F_2015_Intro_to_Computer_Programming.relatedworkref.relwk:05.01.02_code_sample",
+                "href": "resources/Lesson_5.1.2_Code.zip",
+                "desc": "     Java code developed in the video from this lesson. ",
+                "MimeType": "application/vnd.nextthought.relatedworkref",
+                "section": "additional",
+                "label": "Example from the Video",
+                "target-ntiid": "tag:nextthought.com,2011-10:NTI-UUID-a240eb3530da880ac1a02e006d0a1bc0",
+                "icon": "resources/CS1323_F_2015_Intro_to_Computer_Programming/b9c4a1a1dc3d30c895df3b30c553fa40f972a2f5/fd35e23767020999111e1f49239199b4c5eff23e.png",
+                "type": "application/vnd.nextthought.externallink"
             },
             "tag:nextthought.com,2011-10:OU-RelatedWork-CS1323_F_2015_Intro_to_Computer_Programming.relatedwork.relwk:03.02.04_Code_Sample": {
                 "MimeType": "application/vnd.nextthought.relatedworkref",
@@ -3987,17 +4318,18 @@ jsonpReceiveContent({
                 "visibility": "everyone",
                 "label": "Homework 6 Solution"
             },
-            "tag:nextthought.com,2011-10:OU-RelatedWork-CS1323_F_2015_Intro_to_Computer_Programming.relatedwork.relwk:Sample_Midterm_3_Solutions": {
-                "MimeType": "application/vnd.nextthought.relatedworkref",
-                "ntiid": "tag:nextthought.com,2011-10:OU-RelatedWork-CS1323_F_2015_Intro_to_Computer_Programming.relatedwork.relwk:Sample_Midterm_3_Solutions",
-                "href": "resources/Sample_Midterm_3_Solutions.zip",
-                "target-ntiid": "tag:nextthought.com,2011-10:NTI-UUID-6d51cfc2ec63a53751553ddc7a886b52",
+            "tag:nextthought.com,2011-10:OU-RelatedWorkRef-CS1323_F_2015_Intro_to_Computer_Programming.relatedworkref.relwk:03.01.04_notes": {
                 "creator": "Deborah Trytten",
-                "desc": "     Several example documents of Midterm solutions. ",
-                "icon": "resources/CS1323_F_2015_Intro_to_Computer_Programming/b9c4a1a1dc3d30c895df3b30c553fa40f972a2f5/fd35e23767020999111e1f49239199b4c5eff23e.png",
-                "type": "application/vnd.nextthought.externallink",
                 "visibility": "everyone",
-                "label": "Sample Midterm Solutions"
+                "ntiid": "tag:nextthought.com,2011-10:OU-RelatedWorkRef-CS1323_F_2015_Intro_to_Computer_Programming.relatedworkref.relwk:03.01.04_notes",
+                "href": "resources/Class_Methods_Content.docx",
+                "desc": "     ",
+                "MimeType": "application/vnd.nextthought.relatedworkref",
+                "section": "additional",
+                "label": "Notes on Class Methods",
+                "target-ntiid": "tag:nextthought.com,2011-10:NTI-UUID-9f20623b742b968d7fe5de9c72c77949",
+                "icon": "resources/CS1323_F_2015_Intro_to_Computer_Programming/583b61b2202851bd80245dfddda3c5d88cadb0a1/fd35e23767020999111e1f49239199b4c5eff23e.png",
+                "type": "application/vnd.nextthought.externallink"
             },
             "tag:nextthought.com,2011-10:OU-RelatedWorkRef-CS1323_F_2015_Intro_to_Computer_Programming.relatedworkref.relwk:homework_4_solution": {
                 "creator": "Deborah Trytten",
@@ -4018,7 +4350,7 @@ jsonpReceiveContent({
                 "href": "resources/Solution_Midterm_2.docx",
                 "target-ntiid": "tag:nextthought.com,2011-10:NTI-UUID-a87e1bf8af259808f0929d42daacd5eb",
                 "creator": "Deborah Trytten",
-                "desc": "     CS 1323 Spring 2015 solution to Midterm 2 ",
+                "desc": "     CS 1323 Fall 2015 solution to Midterm 2 ",
                 "icon": "resources/CS1323_F_2015_Intro_to_Computer_Programming/583b61b2202851bd80245dfddda3c5d88cadb0a1/fd35e23767020999111e1f49239199b4c5eff23e.png",
                 "type": "application/vnd.nextthought.externallink",
                 "visibility": "everyone",
@@ -4060,6 +4392,19 @@ jsonpReceiveContent({
                 "type": "application/vnd.nextthought.externallink",
                 "visibility": "everyone",
                 "label": "Spring 2014 Midterm 2 Solution"
+            },
+            "tag:nextthought.com,2011-10:OU-RelatedWorkRef-CS1323_F_2015_Intro_to_Computer_Programming.relatedworkref.relwk:chortle.2": {
+                "creator": "Bradley Kjell",
+                "visibility": "everyone",
+                "ntiid": "tag:nextthought.com,2011-10:OU-RelatedWorkRef-CS1323_F_2015_Intro_to_Computer_Programming.relatedworkref.relwk:chortle.2",
+                "href": "tag:nextthought.com,2011-10:OU-HTML-CS1323_S_2015_Intro_to_Computer_Programming.reading:Chortle_CH6",
+                "desc": "Introduction to creating programs, reading input and writing output.",
+                "MimeType": "application/vnd.nextthought.relatedworkref",
+                "section": "required",
+                "label": "Chortle",
+                "target-ntiid": "tag:nextthought.com,2011-10:OU-HTML-CS1323_S_2015_Intro_to_Computer_Programming.reading:Chortle_CH6",
+                "icon": "resources/CS1323_F_2015_Intro_to_Computer_Programming/b06a4bdb19666c7afc685f0365fd59a988b154c2/fd35e23767020999111e1f49239199b4c5eff23e.png",
+                "type": "application/vnd.nextthought.content"
             },
             "tag:nextthought.com,2011-10:OU-RelatedWork-CS1323_F_2015_Intro_to_Computer_Programming.relatedwork.relwk:Project_7_Solution": {
                 "MimeType": "application/vnd.nextthought.relatedworkref",
@@ -4109,17 +4454,18 @@ jsonpReceiveContent({
                 "visibility": "everyone",
                 "label": "Split"
             },
-            "tag:nextthought.com,2011-10:OU-RelatedWork-CS1323_F_2015_Intro_to_Computer_Programming.relatedwork.relwk:Homework_5_Solution_Part1": {
-                "MimeType": "application/vnd.nextthought.relatedworkref",
-                "ntiid": "tag:nextthought.com,2011-10:OU-RelatedWork-CS1323_F_2015_Intro_to_Computer_Programming.relatedwork.relwk:Homework_5_Solution_Part1",
-                "href": "resources/Solution_Homework_5_Part_1.docx",
-                "target-ntiid": "tag:nextthought.com,2011-10:NTI-UUID-843eb1cac5b70fdf95e7f816b427fa5f",
+            "tag:nextthought.com,2011-10:OU-RelatedWorkRef-CS1323_F_2015_Intro_to_Computer_Programming.relatedworkref.relwk:final_exam_sample_solution": {
                 "creator": "Deborah Trytten",
-                "desc": "     The solution to Homework 5 Part 1. ",
-                "icon": "resources/CS1323_F_2015_Intro_to_Computer_Programming/583b61b2202851bd80245dfddda3c5d88cadb0a1/fd35e23767020999111e1f49239199b4c5eff23e.png",
-                "type": "application/vnd.nextthought.externallink",
                 "visibility": "everyone",
-                "label": "Homework 5 Part 1 Solution"
+                "ntiid": "tag:nextthought.com,2011-10:OU-RelatedWorkRef-CS1323_F_2015_Intro_to_Computer_Programming.relatedworkref.relwk:final_exam_sample_solution",
+                "href": "resources/Solution_Final_Exam_CS1323_Spring2015_Section001.docx",
+                "desc": "     Solution to examination that tests the topics covered in the course. ",
+                "MimeType": "application/vnd.nextthought.relatedworkref",
+                "section": "required",
+                "label": "Spring 2015 Final Exam Solution Section 001",
+                "target-ntiid": "tag:nextthought.com,2011-10:NTI-UUID-ef201e25656031d28f330b2ea2777452",
+                "icon": "resources/CS1323_F_2015_Intro_to_Computer_Programming/583b61b2202851bd80245dfddda3c5d88cadb0a1/fd35e23767020999111e1f49239199b4c5eff23e.png",
+                "type": "application/vnd.nextthought.externallink"
             },
             "tag:nextthought.com,2011-10:OU-RelatedWorkRef-CS1323_F_2015_Intro_to_Computer_Programming.relatedworkref.relwk:02.02.03_cell_phone_5": {
                 "creator": "Deborah Trytten",
@@ -4223,6 +4569,19 @@ jsonpReceiveContent({
                 "icon": "resources/CS1323_F_2015_Intro_to_Computer_Programming/b06a4bdb19666c7afc685f0365fd59a988b154c2/fd35e23767020999111e1f49239199b4c5eff23e.png",
                 "type": "application/vnd.nextthought.content"
             },
+            "tag:nextthought.com,2011-10:OU-RelatedWorkRef-CS1323_F_2015_Intro_to_Computer_Programming.relatedworkref.relwk:chortle.15": {
+                "creator": "Bradley Kjell",
+                "visibility": "everyone",
+                "ntiid": "tag:nextthought.com,2011-10:OU-RelatedWorkRef-CS1323_F_2015_Intro_to_Computer_Programming.relatedworkref.relwk:chortle.15",
+                "href": "http://chortle.ccsu.edu/CS151/cs151java.html",
+                "desc": "An introduction to how objects are designed and created.",
+                "MimeType": "application/vnd.nextthought.relatedworkref",
+                "section": "required",
+                "label": "Chortle",
+                "target-ntiid": "tag:nextthought.com,2011-10:NTI-UUID-ebc45eae3454de7ddc5deabddb38c3e0",
+                "icon": "resources/CS1323_F_2015_Intro_to_Computer_Programming/b06a4bdb19666c7afc685f0365fd59a988b154c2/fd35e23767020999111e1f49239199b4c5eff23e.png",
+                "type": "application/vnd.nextthought.externallink"
+            },
             "tag:nextthought.com,2011-10:OU-RelatedWorkRef-CS1323_F_2015_Intro_to_Computer_Programming.relatedworkref.relwk:chortle.14": {
                 "creator": "Bradley Kjell",
                 "visibility": "everyone",
@@ -4235,6 +4594,32 @@ jsonpReceiveContent({
                 "target-ntiid": "tag:nextthought.com,2011-10:OU-HTML-CS1323_S_2015_Intro_to_Computer_Programming.reading:Chortle_CH54",
                 "icon": "resources/CS1323_F_2015_Intro_to_Computer_Programming/b06a4bdb19666c7afc685f0365fd59a988b154c2/fd35e23767020999111e1f49239199b4c5eff23e.png",
                 "type": "application/vnd.nextthought.content"
+            },
+            "tag:nextthought.com,2011-10:OU-RelatedWorkRef-CS1323_F_2015_Intro_to_Computer_Programming.relatedworkref.relwk:chortle.17": {
+                "creator": "Bradley Kjell",
+                "visibility": "everyone",
+                "ntiid": "tag:nextthought.com,2011-10:OU-RelatedWorkRef-CS1323_F_2015_Intro_to_Computer_Programming.relatedworkref.relwk:chortle.17",
+                "href": "http://chortle.ccsu.edu/CS151/cs151java.html",
+                "desc": "Explanation of how objects can contain and use objects.",
+                "MimeType": "application/vnd.nextthought.relatedworkref",
+                "section": "required",
+                "label": "Chortle",
+                "target-ntiid": "tag:nextthought.com,2011-10:NTI-UUID-ebc45eae3454de7ddc5deabddb38c3e0",
+                "icon": "resources/CS1323_F_2015_Intro_to_Computer_Programming/b06a4bdb19666c7afc685f0365fd59a988b154c2/fd35e23767020999111e1f49239199b4c5eff23e.png",
+                "type": "application/vnd.nextthought.externallink"
+            },
+            "tag:nextthought.com,2011-10:OU-RelatedWorkRef-CS1323_F_2015_Intro_to_Computer_Programming.relatedworkref.relwk:chortle.16": {
+                "creator": "Bradley Kjell",
+                "visibility": "everyone",
+                "ntiid": "tag:nextthought.com,2011-10:OU-RelatedWorkRef-CS1323_F_2015_Intro_to_Computer_Programming.relatedworkref.relwk:chortle.16",
+                "href": "http://chortle.ccsu.edu/CS151/cs151java.html",
+                "desc": "Explanation of how classes encapsulate data.",
+                "MimeType": "application/vnd.nextthought.relatedworkref",
+                "section": "required",
+                "label": "Chortle",
+                "target-ntiid": "tag:nextthought.com,2011-10:NTI-UUID-ebc45eae3454de7ddc5deabddb38c3e0",
+                "icon": "resources/CS1323_F_2015_Intro_to_Computer_Programming/b06a4bdb19666c7afc685f0365fd59a988b154c2/fd35e23767020999111e1f49239199b4c5eff23e.png",
+                "type": "application/vnd.nextthought.externallink"
             },
             "tag:nextthought.com,2011-10:OU-RelatedWork-CS1323_F_2015_Intro_to_Computer_Programming.relatedwork.relwk:06.01.01_Sample": {
                 "MimeType": "application/vnd.nextthought.relatedworkref",
@@ -4357,17 +4742,17 @@ jsonpReceiveContent({
                 "visibility": "everyone",
                 "label": "Putting it Together"
             },
-            "tag:nextthought.com,2011-10:OU-RelatedWorkRef-CS1323_F_2015_Intro_to_Computer_Programming.relatedworkref.relwk:04.02.02_code_sample": {
+            "tag:nextthought.com,2011-10:OU-RelatedWorkRef-CS1323_F_2015_Intro_to_Computer_Programming.relatedworkref.relwk:homework_5_solution": {
                 "creator": "Deborah Trytten",
                 "visibility": "everyone",
-                "ntiid": "tag:nextthought.com,2011-10:OU-RelatedWorkRef-CS1323_F_2015_Intro_to_Computer_Programming.relatedworkref.relwk:04.02.02_code_sample",
-                "href": "resources/Lesson_4.2.2_Code.zip",
-                "desc": "     Java code developed in the video from this lesson. ",
+                "ntiid": "tag:nextthought.com,2011-10:OU-RelatedWorkRef-CS1323_F_2015_Intro_to_Computer_Programming.relatedworkref.relwk:homework_5_solution",
+                "href": "resources/Solution_Homework_5.docx",
+                "desc": "     The solution to Homework 5. ",
                 "MimeType": "application/vnd.nextthought.relatedworkref",
                 "section": "additional",
-                "label": "Example from the Video",
-                "target-ntiid": "tag:nextthought.com,2011-10:NTI-UUID-bc571d220ee11a7ba8e195ac8f221b3b",
-                "icon": "resources/CS1323_F_2015_Intro_to_Computer_Programming/b9c4a1a1dc3d30c895df3b30c553fa40f972a2f5/fd35e23767020999111e1f49239199b4c5eff23e.png",
+                "label": "Homework 5 Solution",
+                "target-ntiid": "tag:nextthought.com,2011-10:NTI-UUID-ac7a10242404f1210c445cb198fa209c",
+                "icon": "resources/CS1323_F_2015_Intro_to_Computer_Programming/583b61b2202851bd80245dfddda3c5d88cadb0a1/fd35e23767020999111e1f49239199b4c5eff23e.png",
                 "type": "application/vnd.nextthought.externallink"
             },
             "tag:nextthought.com,2011-10:OU-RelatedWork-CS1323_F_2015_Intro_to_Computer_Programming.relatedwork.relwk:Homework_2_2_Solution": {
@@ -4381,6 +4766,19 @@ jsonpReceiveContent({
                 "type": "application/vnd.nextthought.externallink",
                 "visibility": "everyone",
                 "label": "Homework 2 Part 2 Solution"
+            },
+            "tag:nextthought.com,2011-10:OU-RelatedWorkRef-CS1323_F_2015_Intro_to_Computer_Programming.relatedworkref.relwk:05.02.04_code_sample": {
+                "creator": "Deborah Trytten",
+                "visibility": "everyone",
+                "ntiid": "tag:nextthought.com,2011-10:OU-RelatedWorkRef-CS1323_F_2015_Intro_to_Computer_Programming.relatedworkref.relwk:05.02.04_code_sample",
+                "href": "resources/Lesson_5.2.4_Code.zip",
+                "desc": "     Java code developed in the video from this lesson. ",
+                "MimeType": "application/vnd.nextthought.relatedworkref",
+                "section": "additional",
+                "label": "Example from the Video",
+                "target-ntiid": "tag:nextthought.com,2011-10:NTI-UUID-5fbe524c40901517ff2acaee5b2aadde",
+                "icon": "resources/CS1323_F_2015_Intro_to_Computer_Programming/b9c4a1a1dc3d30c895df3b30c553fa40f972a2f5/fd35e23767020999111e1f49239199b4c5eff23e.png",
+                "type": "application/vnd.nextthought.externallink"
             },
             "tag:nextthought.com,2011-10:OU-RelatedWork-CS1323_F_2015_Intro_to_Computer_Programming.relatedwork.relwk:03.01.05_Turingscraft": {
                 "MimeType": "application/vnd.nextthought.relatedworkref",
@@ -4443,6 +4841,32 @@ jsonpReceiveContent({
                 "visibility": "everyone",
                 "label": "Examples from the Videos"
             },
+            "tag:nextthought.com,2011-10:OU-RelatedWorkRef-CS1323_F_2015_Intro_to_Computer_Programming.relatedworkref.relwk:final_exam_sample": {
+                "creator": "Deborah Trytten",
+                "visibility": "everyone",
+                "ntiid": "tag:nextthought.com,2011-10:OU-RelatedWorkRef-CS1323_F_2015_Intro_to_Computer_Programming.relatedworkref.relwk:final_exam_sample",
+                "href": "resources/Final_Exam_CS1323_Spring2015_Section001.docx",
+                "desc": "     A examination that tests the topics covered in the course. ",
+                "MimeType": "application/vnd.nextthought.relatedworkref",
+                "section": "required",
+                "label": "Spring 2015 Final Exam Section 001",
+                "target-ntiid": "tag:nextthought.com,2011-10:NTI-UUID-f28ecadd1132123e2b7ddc0623ef3106",
+                "icon": "resources/CS1323_F_2015_Intro_to_Computer_Programming/583b61b2202851bd80245dfddda3c5d88cadb0a1/fd35e23767020999111e1f49239199b4c5eff23e.png",
+                "type": "application/vnd.nextthought.externallink"
+            },
+            "tag:nextthought.com,2011-10:OU-RelatedWorkRef-CS1323_F_2015_Intro_to_Computer_Programming.relatedworkref.relwk:05.01.02_pseudo_arraylist_classes_as_contract": {
+                "creator": "Deborah Trytten",
+                "visibility": "everyone",
+                "ntiid": "tag:nextthought.com,2011-10:OU-RelatedWorkRef-CS1323_F_2015_Intro_to_Computer_Programming.relatedworkref.relwk:05.01.02_pseudo_arraylist_classes_as_contract",
+                "href": "resources/Pseudo_ArrayList_Classes_as_Contract.pptx",
+                "desc": "     Lecture presentation ",
+                "MimeType": "application/vnd.nextthought.relatedworkref",
+                "section": "additional",
+                "label": "Pseudo ArrayList",
+                "target-ntiid": "tag:nextthought.com,2011-10:NTI-UUID-169c7acc2ef32935174fd4b19eb34a10",
+                "icon": "resources/CS1323_F_2015_Intro_to_Computer_Programming/17f860f9921d29d578e2791d3ff00dcf689071c3/fd35e23767020999111e1f49239199b4c5eff23e.png",
+                "type": "application/vnd.nextthought.externallink"
+            },
             "tag:nextthought.com,2011-10:OU-RelatedWork-CS1323_F_2015_Intro_to_Computer_Programming.relatedwork.relwk:03.02.04_Turingscraft": {
                 "MimeType": "application/vnd.nextthought.relatedworkref",
                 "ntiid": "tag:nextthought.com,2011-10:OU-RelatedWork-CS1323_F_2015_Intro_to_Computer_Programming.relatedwork.relwk:03.02.04_Turingscraft",
@@ -4495,6 +4919,9 @@ jsonpReceiveContent({
             ],
             "tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.lec:hmwk_13_LESSON": [
                 "tag:nextthought.com,2011-10:OU-RelatedWorkRef-CS1323_F_2015_Intro_to_Computer_Programming.relatedworkref.relwk:homework_4_solution"
+            ],
+            "tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.lec:hmwk_16_LESSON": [
+                "tag:nextthought.com,2011-10:OU-RelatedWorkRef-CS1323_F_2015_Intro_to_Computer_Programming.relatedworkref.relwk:homework_5_solution"
             ],
             "tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.lec:02.02_LESSON": [
                 "tag:nextthought.com,2011-10:OU-RelatedWorkRef-CS1323_F_2015_Intro_to_Computer_Programming.relatedworkref.relwk:02.01.02_zyante",
@@ -4607,6 +5034,8 @@ jsonpReceiveContent({
                 "tag:nextthought.com,2011-10:OU-RelatedWorkRef-CS1323_F_2015_Intro_to_Computer_Programming.relatedworkref.relwk:04.02.05_partial_sorting"
             ],
             "tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.lec:03.13_LESSON": [
+                "tag:nextthought.com,2011-10:OU-RelatedWorkRef-CS1323_F_2015_Intro_to_Computer_Programming.relatedworkref.relwk:midterm_2",
+                "tag:nextthought.com,2011-10:OU-RelatedWorkRef-CS1323_F_2015_Intro_to_Computer_Programming.relatedworkref.relwk:solution_midterm_2",
                 "tag:nextthought.com,2011-10:OU-RelatedWorkRef-CS1323_F_2015_Intro_to_Computer_Programming.relatedworkref.relwk:03.02.05_midterm_2_samples",
                 "tag:nextthought.com,2011-10:OU-RelatedWorkRef-CS1323_F_2015_Intro_to_Computer_Programming.relatedworkref.relwk:03.02.05_midterm_2_solutions",
                 "tag:nextthought.com,2011-10:OU-RelatedWorkRef-CS1323_F_2015_Intro_to_Computer_Programming.relatedworkref.relwk:paper_midterm_2",
@@ -4642,8 +5071,41 @@ jsonpReceiveContent({
                 "tag:nextthought.com,2011-10:OU-RelatedWorkRef-CS1323_F_2015_Intro_to_Computer_Programming.relatedworkref.relwk:03.01.05_list_maker"
             ],
             "tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.lec:04.10_LESSON": [
+                "tag:nextthought.com,2011-10:OU-RelatedWorkRef-CS1323_F_2015_Intro_to_Computer_Programming.relatedworkref.relwk:04.04.01_exam",
+                "tag:nextthought.com,2011-10:OU-RelatedWorkRef-CS1323_F_2015_Intro_to_Computer_Programming.relatedworkref.relwk:04.04.01_exam_solutions",
                 "tag:nextthought.com,2011-10:OU-RelatedWorkRef-CS1323_F_2015_Intro_to_Computer_Programming.relatedworkref.relwk:sample_midterm_3",
                 "tag:nextthought.com,2011-10:OU-RelatedWorkRef-CS1323_F_2015_Intro_to_Computer_Programming.relatedworkref.relwk:sample_midterm_3_solutions"
+            ],
+            "tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.lec:05.02_LESSON": [
+                "tag:nextthought.com,2011-10:OU-RelatedWorkRef-CS1323_F_2015_Intro_to_Computer_Programming.relatedworkref.relwk:05.01.02_zyante",
+                "tag:nextthought.com,2011-10:OU-RelatedWorkRef-CS1323_F_2015_Intro_to_Computer_Programming.relatedworkref.relwk:chortle.15",
+                "tag:nextthought.com,2011-10:OU-RelatedWorkRef-CS1323_F_2015_Intro_to_Computer_Programming.relatedworkref.relwk:05.01.02_code_sample",
+                "tag:nextthought.com,2011-10:OU-RelatedWorkRef-CS1323_F_2015_Intro_to_Computer_Programming.relatedworkref.relwk:05.01.02_pseudo_arraylist_classes_as_contract",
+                "tag:nextthought.com,2011-10:OU-RelatedWorkRef-CS1323_F_2015_Intro_to_Computer_Programming.relatedworkref.relwk:05.01.02_frogger_1"
+            ],
+            "tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.lec:05.03_LESSON": [
+                "tag:nextthought.com,2011-10:OU-RelatedWorkRef-CS1323_F_2015_Intro_to_Computer_Programming.relatedworkref.relwk:05.01.03_zyante",
+                "tag:nextthought.com,2011-10:OU-RelatedWorkRef-CS1323_F_2015_Intro_to_Computer_Programming.relatedworkref.relwk:chortle.16",
+                "tag:nextthought.com,2011-10:OU-RelatedWorkRef-CS1323_F_2015_Intro_to_Computer_Programming.relatedworkref.relwk:05.01.03_code_sample",
+                "tag:nextthought.com,2011-10:OU-RelatedWorkRef-CS1323_F_2015_Intro_to_Computer_Programming.relatedworkref.relwk:05.01.03_pseudo_arraylist_enforcing_the_contract",
+                "tag:nextthought.com,2011-10:OU-RelatedWorkRef-CS1323_F_2015_Intro_to_Computer_Programming.relatedworkref.relwk:05.01.03_frogger_2"
+            ],
+            "tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.lec:05.04_LESSON": [
+                "tag:nextthought.com,2011-10:OU-RelatedWorkRef-CS1323_F_2015_Intro_to_Computer_Programming.relatedworkref.relwk:zyante_aggregation",
+                "tag:nextthought.com,2011-10:OU-RelatedWorkRef-CS1323_F_2015_Intro_to_Computer_Programming.relatedworkref.relwk:chortle.17",
+                "tag:nextthought.com,2011-10:OU-RelatedWorkRef-CS1323_F_2015_Intro_to_Computer_Programming.relatedworkref.relwk:05.01.04_code_sample",
+                "tag:nextthought.com,2011-10:OU-RelatedWorkRef-CS1323_F_2015_Intro_to_Computer_Programming.relatedworkref.relwk:05.01.04_two_patterns_aggregation",
+                "tag:nextthought.com,2011-10:OU-RelatedWorkRef-CS1323_F_2015_Intro_to_Computer_Programming.relatedworkref.relwk:05.01.04_charity_donations"
+            ],
+            "tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.lec:05.08_LESSON": [
+                "tag:nextthought.com,2011-10:OU-RelatedWorkRef-CS1323_F_2015_Intro_to_Computer_Programming.relatedworkref.relwk:final_exam_sample_010",
+                "tag:nextthought.com,2011-10:OU-RelatedWorkRef-CS1323_F_2015_Intro_to_Computer_Programming.relatedworkref.relwk:final_exam_sample_solution_010",
+                "tag:nextthought.com,2011-10:OU-RelatedWorkRef-CS1323_F_2015_Intro_to_Computer_Programming.relatedworkref.relwk:final_exam_sample",
+                "tag:nextthought.com,2011-10:OU-RelatedWorkRef-CS1323_F_2015_Intro_to_Computer_Programming.relatedworkref.relwk:final_exam_sample_solution",
+                "tag:nextthought.com,2011-10:OU-RelatedWorkRef-CS1323_F_2015_Intro_to_Computer_Programming.relatedworkref.relwk:06.01.01_sample",
+                "tag:nextthought.com,2011-10:OU-RelatedWorkRef-CS1323_F_2015_Intro_to_Computer_Programming.relatedworkref.relwk:06.01.01_sample_solutions",
+                "tag:nextthought.com,2011-10:OU-RelatedWorkRef-CS1323_F_2015_Intro_to_Computer_Programming.relatedworkref.relwk:05.02.04_code_sample",
+                "tag:nextthought.com,2011-10:OU-RelatedWorkRef-CS1323_F_2015_Intro_to_Computer_Programming.relatedworkref.relwk:05.02.04_set_tutor"
             ],
             "tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.introduction_to_computer_programming": [
                 "tag:nextthought.com,2011-10:OU-RelatedWork-CS1323_F_2015_Intro_to_Computer_Programming.relatedwork.relwk:Chortle",
@@ -4674,7 +5136,7 @@ jsonpReceiveContent({
                 "tag:nextthought.com,2011-10:OU-RelatedWork-CS1323_F_2015_Intro_to_Computer_Programming.relatedwork.relwk:Project_4_Solution",
                 "tag:nextthought.com,2011-10:OU-RelatedWork-CS1323_F_2015_Intro_to_Computer_Programming.relatedwork.relwk:Homework_3_Solution",
                 "tag:nextthought.com,2011-10:OU-RelatedWork-CS1323_F_2015_Intro_to_Computer_Programming.relatedwork.relwk:Homework_4_Solution",
-                "tag:nextthought.com,2011-10:OU-RelatedWork-CS1323_F_2015_Intro_to_Computer_Programming.relatedwork.relwk:Homework_5_Solution_Part1",
+                "tag:nextthought.com,2011-10:OU-RelatedWork-CS1323_F_2015_Intro_to_Computer_Programming.relatedwork.relwk:Homework_5_Solution",
                 "tag:nextthought.com,2011-10:OU-RelatedWork-CS1323_F_2015_Intro_to_Computer_Programming.relatedwork.relwk:Homework_5_Solution_Part2",
                 "tag:nextthought.com,2011-10:OU-RelatedWork-CS1323_F_2015_Intro_to_Computer_Programming.relatedwork.relwk:Project_5_Solution",
                 "tag:nextthought.com,2011-10:OU-RelatedWork-CS1323_F_2015_Intro_to_Computer_Programming.relatedwork.relwk:Project_6_Solution",
@@ -4882,6 +5344,11 @@ jsonpReceiveContent({
                 "tag:nextthought.com,2011-10:OU-RelatedWork-CS1323_F_2015_Intro_to_Computer_Programming.relatedwork.relwk:05.02.02_Turingscraft",
                 "tag:nextthought.com,2011-10:OU-RelatedWork-CS1323_F_2015_Intro_to_Computer_Programming.relatedwork.relwk:05.02.02_Code_Sample",
                 "tag:nextthought.com,2011-10:OU-RelatedWork-CS1323_F_2015_Intro_to_Computer_Programming.relatedwork.relwk:05.02.04_Code_Sample",
+                "tag:nextthought.com,2011-10:OU-RelatedWork-CS1323_F_2015_Intro_to_Computer_Programming.relatedwork.relwk:Zyante_Aggregation",
+                "tag:nextthought.com,2011-10:OU-RelatedWork-CS1323_F_2015_Intro_to_Computer_Programming.relatedwork.relwk:final_exam_Sample_010",
+                "tag:nextthought.com,2011-10:OU-RelatedWork-CS1323_F_2015_Intro_to_Computer_Programming.relatedwork.relwk:final_exam_Sample_solution_010",
+                "tag:nextthought.com,2011-10:OU-RelatedWork-CS1323_F_2015_Intro_to_Computer_Programming.relatedwork.relwk:final_exam_Sample",
+                "tag:nextthought.com,2011-10:OU-RelatedWork-CS1323_F_2015_Intro_to_Computer_Programming.relatedwork.relwk:final_exam_Sample_solution",
                 "tag:nextthought.com,2011-10:OU-RelatedWork-CS1323_F_2015_Intro_to_Computer_Programming.relatedwork.relwk:06.01.01_Sample",
                 "tag:nextthought.com,2011-10:OU-RelatedWork-CS1323_F_2015_Intro_to_Computer_Programming.relatedwork.relwk:06.01.01_Sample_Solutions",
                 "tag:nextthought.com,2011-10:OU-RelatedWork-CS1323_F_2015_Intro_to_Computer_Programming.relatedwork.relwk:05.02.04_Set_Tutor"

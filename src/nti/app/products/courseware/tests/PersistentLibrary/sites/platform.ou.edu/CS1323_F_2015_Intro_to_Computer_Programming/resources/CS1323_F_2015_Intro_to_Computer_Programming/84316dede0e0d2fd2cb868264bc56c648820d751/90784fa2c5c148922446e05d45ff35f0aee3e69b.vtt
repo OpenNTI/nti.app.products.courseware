@@ -1,0 +1,164 @@
+WEBVTT
+Kind: captions
+Language: en
+
+00:00:01.140 --> 00:00:06.499
+&gt;&gt;This course uses the Java computer programming
+language. People talk a lot about which programming
+
+00:00:06.499 --> 00:00:10.600
+language is the best to teach beginning programmers,
+sometimes with the strength of conviction
+
+00:00:10.600 --> 00:00:15.450
+that is usually reserved for discussions of
+religion and politics. And just like discussions
+
+00:00:15.450 --> 00:00:20.099
+of religion and politics, the conversation
+can create more heat than light.
+
+00:00:20.099 --> 00:00:24.980
+Java has some good things going for it. First,
+it's platform independent. This means that
+
+00:00:24.980 --> 00:00:30.079
+we can take the same program and run it on
+a PC and on a Mac. That's great for this class
+
+00:00:30.079 --> 00:00:34.070
+because it means that different students can
+write the same program on their own preferred
+
+00:00:34.070 --> 00:00:39.690
+computer without special problems coming up.
+Java is also from the family of object-oriented
+
+00:00:39.690 --> 00:00:45.329
+programming languages. Lots of programming
+languages that are used commercially are object-oriented,
+
+00:00:45.329 --> 00:00:50.309
+so learning Java makes it easier to learn
+these other languages. Examples of other object-oriented
+
+00:00:50.309 --> 00:00:56.129
+languages include C++, C#, Objective C, and
+Ruby.
+
+00:00:56.129 --> 00:01:00.449
+Java is a modern programming language. It
+was designed when it was clear that languages
+
+00:01:00.449 --> 00:01:05.519
+would have to deal with some surprisingly
+tough problems like security, creating graphical
+
+00:01:05.519 --> 00:01:10.890
+user interfaces on many different computer
+platforms, and using multiple languages including
+
+00:01:10.890 --> 00:01:16.590
+pictographic languages like Mandarin and languages
+that are organized differently from English.
+
+00:01:16.590 --> 00:01:22.350
+Java also allows programs to be multi-threaded.
+A thread is a sequence of operations. When
+
+00:01:22.350 --> 00:01:27.399
+you have a multi-threaded program, the program
+can be doing many different sequences of operations
+
+00:01:27.399 --> 00:01:31.399
+at the same time. You've probably seen this
+in programs, although you may not have known
+
+00:01:31.399 --> 00:01:36.250
+what to call it. For example, when you use
+an email program, you can usually write one
+
+00:01:36.250 --> 00:01:41.000
+email for a while, then read other emails
+and bounce back and forth. Each email has
+
+00:01:41.000 --> 00:01:45.539
+its own thread. This is a great thing to be
+able to do with your programs, and Java makes
+
+00:01:45.539 --> 00:01:50.930
+it relatively easy. Java also has a very advanced
+feature called reflection that is really cool—although
+
+00:01:50.930 --> 00:01:56.079
+it's bit beyond the scope of this discussion.
+One of the nicest things about Java is that
+
+00:01:56.079 --> 00:02:00.969
+it has a wonderful and rich library of resources
+available. This is called the Application
+
+00:02:00.969 --> 00:02:06.840
+Programmers Interface or API. Best of all,
+the API is well documented with beautifully
+
+00:02:06.840 --> 00:02:12.050
+designed web pages that describe what's available.
+It takes practice to learn how to use these
+
+00:02:12.050 --> 00:02:16.340
+powerful tools, but the practice pays off
+with being able to do more interesting and
+
+00:02:16.340 --> 00:02:20.019
+fun programs sooner.
+If you keep programming, you'll learn lots
+
+00:02:20.019 --> 00:02:24.819
+of languages. Every language you learn makes
+learning the next language a little easier.
+
+00:02:24.819 --> 00:02:30.000
+I program in about twenty languages now and
+can learn a new language in just a few days.
+
+00:02:30.000 --> 00:02:33.310
+You'll be able to do the same in time, if
+you want to.
+
+00:02:33.310 --> 00:02:37.550
+Some languages make it harder to learn programming.
+For example, I think that it's harder to learn
+
+00:02:37.550 --> 00:02:43.560
+languages like C and C++ because success in
+these languages depends upon a detailed understanding
+
+00:02:43.560 --> 00:02:48.370
+of how computer memory works. Since most students
+who are starting to program don't know much
+
+00:02:48.370 --> 00:02:53.140
+about computer hardware, this makes it harder
+to learn to program. So I don't like to teach
+
+00:02:53.140 --> 00:02:58.560
+beginning programmers C or C++, even though
+they are two of my favorite languages to use
+
+00:02:58.560 --> 00:03:02.349
+and should be a part of any computing professionals'
+toolkit.
+
+00:03:02.349 --> 00:03:06.489
+Here's my take on the big programming language
+debate. Don't get too worried about whether
+
+00:03:06.489 --> 00:03:11.700
+Java is the perfect language for a beginner
+or not. I can teach someone to be a good programmer
+
+00:03:11.700 --> 00:03:15.190
+in almost any language. So relax and enjoy
+Java!
+

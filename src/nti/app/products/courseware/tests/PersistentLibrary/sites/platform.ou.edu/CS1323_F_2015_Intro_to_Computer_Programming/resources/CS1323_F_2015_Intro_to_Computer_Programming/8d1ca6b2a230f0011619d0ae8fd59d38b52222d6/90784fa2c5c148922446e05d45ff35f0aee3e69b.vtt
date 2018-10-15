@@ -1,0 +1,447 @@
+WEBVTT
+Kind: captions
+Language: en
+
+00:00:00.820 --> 00:00:05.390
+&gt;&gt;At this point we've seen two ways to build
+a data structure that can hold multiple copies
+
+00:00:05.390 --> 00:00:10.769
+of data of the same type: the array and the
+ArrayList. We haven't talked about ArrayList
+
+00:00:10.769 --> 00:00:15.940
+in a while even though it was the first array-like
+thing we studied. Recall that ArrayList did
+
+00:00:15.940 --> 00:00:21.859
+something that arrays cannot. It automatically
+resizes itself. This is a very handy feature
+
+00:00:21.859 --> 00:00:26.330
+so you might think that we should always use
+ArrayList. You may have wondered why we bother
+
+00:00:26.330 --> 00:00:31.570
+to study arrays at all when we have something
+as wonderful as an ArrayList available. Well,
+
+00:00:31.570 --> 00:00:36.110
+in programming you don't get something for
+nothing. While automatic resizing is a very
+
+00:00:36.110 --> 00:00:40.820
+convenient feature, it's not free. As you've
+probably guessed from the name, an ArrayList
+
+00:00:40.820 --> 00:00:46.469
+contains an array. The array inside the ArrayList
+has a size that's fixed at construction just
+
+00:00:46.469 --> 00:00:51.370
+like every other array in Java. The ArrayList
+works around this constraint to create the
+
+00:00:51.370 --> 00:00:56.510
+illusion that the size of the array is changing
+by reallocating a larger array when it needs
+
+00:00:56.510 --> 00:01:02.429
+one and copying the existing data to it. If
+those operations sound expensive, they can
+
+00:01:02.429 --> 00:01:07.740
+be, particularly when the array is large.
+This is a great example of hiding the details
+
+00:01:07.740 --> 00:01:12.299
+of how a class works so successfully that
+you don't realize what's happening behind
+
+00:01:12.299 --> 00:01:13.890
+the scenes.
+
+00:01:13.890 --> 00:01:18.740
+There is another hidden expense of the ArrayList.
+You may have noticed that when we create an
+
+00:01:18.740 --> 00:01:25.659
+ArrayList, we can't say ArrayList of int but
+have to say ArrayList of integer. The integer
+
+00:01:25.659 --> 00:01:31.399
+class is called a wrapper class because what
+it does is conceal one primitive data element,
+
+00:01:31.399 --> 00:01:36.530
+int, inside a class structure. Why we have
+to have wrapper classes is the kind of thing
+
+00:01:36.530 --> 00:01:41.479
+you'll learn in more advanced programming
+classes. Even if the class itself took no
+
+00:01:41.479 --> 00:01:47.500
+additional memory, the ArrayList is storing
+an array of references to integer objects.
+
+00:01:47.500 --> 00:01:53.070
+Compare the memory use of the array primitive
+array to the ArrayList of integer object array
+
+00:01:53.070 --> 00:01:59.340
+in the memory diagram. Int square brackets
+primitive array equals new int of five ArrayList
+
+00:01:59.340 --> 00:02:06.340
+of integer object array equals new ArrayList
+of integer of 5 for int i equals zero i less
+
+00:02:07.500 --> 00:02:14.500
+than 5 ++ i primitive array of i equals i
+object array i of i. This is actually adding
+
+00:02:16.420 --> 00:02:21.720
+an integer object to the object array. In
+most computers the reference is about the
+
+00:02:21.720 --> 00:02:27.000
+same size as the int value, so we've at least
+doubled the amount of storage space that the
+
+00:02:27.000 --> 00:02:32.450
+array will take by using the ArrayList instead
+of the array. In many applications this won't
+
+00:02:32.450 --> 00:02:37.390
+make any difference at all, but if memory
+is limited or the arrays are extremely large,
+
+00:02:37.390 --> 00:02:41.750
+this can be a problem. The main debugging
+problems that occur when using arrays are
+
+00:02:41.750 --> 00:02:46.810
+off by one bugs. If you've been doing the
+assigned exercises up to this point, you've
+
+00:02:46.810 --> 00:02:52.650
+undoubtedly created an OBOB or two by now.
+Some OBOBs are easier to find than others.
+
+00:02:52.650 --> 00:02:57.190
+For example, going one too many positions
+in an array is usually pretty easy to find
+
+00:02:57.190 --> 00:03:02.500
+because Java will stop your program right
+then and there. Going one to few positions
+
+00:03:02.500 --> 00:03:07.560
+in an array is much harder problem to discover,
+particularly if you don't test your code carefully
+
+00:03:07.560 --> 00:03:09.280
+enough.
+
+00:03:09.280 --> 00:03:13.420
+Suppose that I've asked you to create an array
+with 10,000 random integers between zero and
+
+00:03:13.420 --> 00:03:20.420
+100,000. Is the code below correct? Final
+int size is 10000 final int range is 100000
+
+00:03:22.630 --> 00:03:29.630
+int square brackets random equals new into
+of size for int i is zero i less than random
+
+00:03:29.760 --> 00:03:36.760
+length + + i random of i equals int math random
+times range. The loop looks great. It uses
+
+00:03:39.060 --> 00:03:44.320
+the Java idiom where you start the index at
+zero and stop with less than the array length,
+
+00:03:44.320 --> 00:03:49.930
+and that usually works. And if you run the
+program, everything will look just fine. The
+
+00:03:49.930 --> 00:03:54.540
+data will be random enough, the array will
+be full but not overflow. But everything is
+
+00:03:54.540 --> 00:04:00.090
+not fine here. Even if you ran this program
+over and over, you might not notice that the
+
+00:04:00.090 --> 00:04:06.060
+value 100,000 will never be chosen as it was
+supposed to be. Remember that math.random
+
+00:04:06.060 --> 00:04:13.060
+returns the value between zero inclusive and
+one exclusive. So think of the largest value
+
+00:04:13.450 --> 00:04:20.450
+as .999999999. When this is multiplied by
+100,000, it will be 99,999.999. The int cast
+
+00:04:24.980 --> 00:04:31.980
+will truncate this to 99,999, and we're off
+by one. So how do you discover a problem that
+
+00:04:33.780 --> 00:04:40.690
+is this subtle? A great trick is to change
+the constant range to 10 instead of 100,000.
+
+00:04:40.690 --> 00:04:45.300
+If you print 100 elements in the array, you'll
+quickly see that there are no values of 10,
+
+00:04:45.300 --> 00:04:47.370
+and you'll find the mistake.
+
+00:04:47.370 --> 00:04:51.880
+When we're creating test data, we need to
+be sure to test every possible boundary condition
+
+00:04:51.880 --> 00:04:57.430
+we can think of. Suppose we had written a
+binary search method. We should check that
+
+00:04:57.430 --> 00:05:01.730
+the first element in the array can be found.
+We should check that the last element in the
+
+00:05:01.730 --> 00:05:07.220
+array can be found. In fact, we could write
+a test that checks every item in the array
+
+00:05:07.220 --> 00:05:14.170
+can be found just like the test below: int
+square brackets data equals 1, 3, 5, 7, 9,
+
+00:05:14.170 --> 00:05:21.170
+11, 13, 15, 17 for int i is zero i less than
+data.length plus plus i if my class.binary
+
+00:05:23.410 --> 00:05:30.410
+search of data for data of i is not equal
+to i system error print line element i in
+
+00:05:32.090 --> 00:05:38.950
+the array was not found. Is that enough testing?
+Well, no. We haven't tested to see that things
+
+00:05:38.950 --> 00:05:44.900
+that are not in the array are not found. Let's
+add the test below. With the data we've chosen,
+
+00:05:44.900 --> 00:05:49.350
+this test will see that the values that are
+between every pair of values are not being
+
+00:05:49.350 --> 00:05:56.350
+found when they're not there. For int i is
+0 Iiless than data.length ++ i if my class
+
+00:05:58.510 --> 00:06:05.510
+binary search of data data of i + 1 is greater
+than or equal to 0 system error.print line
+
+00:06:06.020 --> 00:06:10.590
+the binary search is finding things that are
+not in the array.
+
+00:06:10.590 --> 00:06:14.930
+This is much better, but it's still missing
+an important case, data that's smaller than
+
+00:06:14.930 --> 00:06:20.370
+the first element. And of course as always
+we should select all this test data before
+
+00:06:20.370 --> 00:06:25.490
+we begin writing the binary search method.
+Would it make sense to test what happens if
+
+00:06:25.490 --> 00:06:32.490
+the array isn't sorted? Well, not really.
+Binary search only makes sense on sorted arrays.
+
+00:06:32.850 --> 00:06:36.800
+Another boundary condition to consider is
+what the code should do if the array is of
+
+00:06:36.800 --> 00:06:43.060
+length zero. Sometimes the zero length array
+doesn't make sense. For example, what would
+
+00:06:43.060 --> 00:06:48.000
+the maximum of the values in a zero length
+array be? It's hard to think of any value
+
+00:06:48.000 --> 00:06:52.320
+that would be meaningful, so it's best to
+add a sentence to the Javadoc for the method
+
+00:06:52.320 --> 00:06:57.690
+saying that the array must be of length greater
+than or equal to one, but sometimes a zero
+
+00:06:57.690 --> 00:07:03.320
+length array does make sense. For example,
+a zero length array can be sorted and searched
+
+00:07:03.320 --> 00:07:09.090
+just fine. Sorting should produce the same
+zero length array without breaking, and searching
+
+00:07:09.090 --> 00:07:14.580
+should return false, since there will be no
+values found in a zero length array. Try to
+
+00:07:14.580 --> 00:07:19.860
+make your methods handle as many of these
+special cases in simple, elegant, and thoughtful
+
+00:07:19.860 --> 00:07:25.740
+ways as possible. In a similar vein, arrays
+of length one are also an important special
+
+00:07:25.740 --> 00:07:32.120
+case to consider. In most cases an array of
+length one is meaningful. There is a special
+
+00:07:32.120 --> 00:07:36.950
+case that we don't usually consider, an array
+that has not been constructed. If someone
+
+00:07:36.950 --> 00:07:41.080
+asked you to search a null pointer, there
+isn't much you can do. And frankly when the
+
+00:07:41.080 --> 00:07:45.949
+program fails, it isn't your fault. We don't
+usually document the fact that the program
+
+00:07:45.949 --> 00:07:51.020
+will fail if you give arrays of objects that
+haven't been constructed, since this is considered
+
+00:07:51.020 --> 00:07:53.570
+blatantly obvious.
+
+00:07:53.570 --> 00:07:59.400
+One good place to look for good examples of
+how programs are tested is JavaBat and Turingscraft.
+
+00:07:59.400 --> 00:08:04.180
+The test cases that are in the tables on the
+right-hand side of JavaBat show you how an
+
+00:08:04.180 --> 00:08:08.810
+expert programmer chose to test the code,
+although they don't show all of the cases
+
+00:08:08.810 --> 00:08:13.410
+that are tested. Think about why each one
+of these cases was chosen, and you'll learn
+
+00:08:13.410 --> 00:08:18.250
+some of the tricks of the testing trade. The
+code that generated the test table was supposed
+
+00:08:18.250 --> 00:08:23.970
+to return true if the array had six in either
+the first or last place. Would you have chosen
+
+00:08:23.970 --> 00:08:29.100
+this many test cases? If not, you probably
+didn't test your program enough. Notice the
+
+00:08:29.100 --> 00:08:33.990
+table didn't test the zero length array, although
+that might have been tested in other test
+
+00:08:33.990 --> 00:08:37.460
+cases. I would have tested that case.
+
+00:08:37.460 --> 00:08:42.029
+Now that we've discussed mistakes that are
+often made implementing programs with arrays,
+
+00:08:42.029 --> 00:08:46.750
+let's talk a little about common mistakes
+when designing programs. You've probably heard
+
+00:08:46.750 --> 00:08:51.390
+that when you have a hammer, everything looks
+like a nail. Well, when students first start
+
+00:08:51.390 --> 00:08:56.310
+to program with arrays, they tend to make
+everything an array. So let's look at a couple
+
+00:08:56.310 --> 00:09:02.070
+of cases where arrays shouldn't be used. Suppose
+you want to find the number of times a given
+
+00:09:02.070 --> 00:09:07.370
+hashtag was used in a file of tweets, one
+tweet to a line. You could store the tweets
+
+00:09:07.370 --> 00:09:11.920
+in an array, and then you could search the
+array for the hashtag. You could even sort
+
+00:09:11.920 --> 00:09:17.610
+the array, and then use binary search to find
+the hashtag. That's great programming, right?
+
+00:09:17.610 --> 00:09:22.610
+Well, not really. You could just read in the
+tweets one at a time and keep a count with
+
+00:09:22.610 --> 00:09:29.580
+a running sum: no array, no sorting, no binary
+search. As a general rule in programming,
+
+00:09:29.580 --> 00:09:35.130
+you want to keep everything as simple as it
+possibly can be. One loop almost always beats
+
+00:09:35.130 --> 00:09:40.510
+adding in all sorts of unnecessary bells and
+whistles. Another place where arrays should
+
+00:09:40.510 --> 00:09:47.010
+not be used is to store data that is superficially
+all of the same type, but not really homogenous.
+
+00:09:47.010 --> 00:09:52.430
+For example, we don't usually store an address
+as an array of strings, since a person's name,
+
+00:09:52.430 --> 00:09:57.490
+street address, city, state, and ZIP Code
+aren't really all that similar even though
+
+00:09:57.490 --> 00:10:02.390
+they all could be represented as strings.
+If we did use an array of strings to hold
+
+00:10:02.390 --> 00:10:08.060
+an address, what exactly would address of
+three mean? Is that the city, the second line
+
+00:10:08.060 --> 00:10:12.550
+of the street address, or something else?
+These subtle and important distinctions will
+
+00:10:12.550 --> 00:10:16.020
+become more obvious once we've seen the next
+way to organize data: the class.
+

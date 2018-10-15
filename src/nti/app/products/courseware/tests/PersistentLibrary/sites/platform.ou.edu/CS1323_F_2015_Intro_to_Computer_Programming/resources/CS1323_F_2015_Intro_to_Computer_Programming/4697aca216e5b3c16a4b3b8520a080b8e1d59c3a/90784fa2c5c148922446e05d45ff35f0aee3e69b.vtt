@@ -1,0 +1,1176 @@
+WEBVTT
+Kind: captions
+Language: en
+
+00:00:01.220 --> 00:00:04.340
+&gt;&gt;Dr. Deborah Trytten: Let's continue our
+study of nesting loops by looking at reading
+
+00:00:04.340 --> 00:00:10.100
+levels. Here's the problem statement: write
+a program that finds the U.S. grade level
+
+00:00:10.100 --> 00:00:15.490
+when children will be able to read Lewis Carroll's
+Alice in Wonderland. Now if you're not from
+
+00:00:15.490 --> 00:00:22.490
+the U.S., age 6 is about first grade and age
+18 is about twelfth grade. So the test data
+
+00:00:22.689 --> 00:00:29.480
+for this project will be available from Project
+Gutenberg for free. Now this is free of U.S.
+
+00:00:29.480 --> 00:00:34.860
+copyright. That does not mean that it's free
+of copyright internationally, so let's talk
+
+00:00:34.860 --> 00:00:39.700
+a little bit about copyright because that's
+actually pretty important to computer scientists.
+
+00:00:39.700 --> 00:00:44.370
+This is the system we use to reward people
+for intellectual activity, so this allows
+
+00:00:44.370 --> 00:00:49.610
+authors to charge other people for their work.
+It basically gives them exclusive rights.
+
+00:00:49.610 --> 00:00:54.850
+Now this book is old enough to be freely available,
+at least in the U.S. Remember the rules do
+
+00:00:54.850 --> 00:00:59.490
+vary from one country to another, so if you're
+outside of the U.S., check whether this book
+
+00:00:59.490 --> 00:01:05.290
+is copyrighted or not according to your country's
+rules and behave accordingly. Project Gutenberg
+
+00:01:05.290 --> 00:01:09.370
+has many, many books on it, including some
+very, very old ones that are certainly free
+
+00:01:09.370 --> 00:01:16.250
+from copyright in any country. Now computer
+software is often protected by copyright too,
+
+00:01:16.250 --> 00:01:20.670
+although some software is protected by patent.
+Now what this tells you is that copyright
+
+00:01:20.670 --> 00:01:24.700
+is something that's very important to many
+computer scientists because this is how we
+
+00:01:24.700 --> 00:01:31.170
+make our living. So respecting copyright is
+part of the culture of our discipline.
+
+00:01:31.170 --> 00:01:36.280
+Let's examine the data. Now we can import
+the full text into Eclipse, and you need to
+
+00:01:36.280 --> 00:01:40.590
+consider what data you're going to use. When
+you look at this, you'll see header data,
+
+00:01:40.590 --> 00:01:45.140
+you'll see blank lines, you'll see chapter
+headings. There's a legal document attached
+
+00:01:45.140 --> 00:01:51.670
+to the end and some weird asterisk things
+in the middle. The text also contains poems.
+
+00:01:51.670 --> 00:01:56.700
+That's Lewis Carroll for you. There are several
+options that we have available. One is to
+
+00:01:56.700 --> 00:02:01.240
+clean the data manually, and the other is
+to try to automate the data cleaning. Now
+
+00:02:01.240 --> 00:02:06.400
+cleaning the data manually is very time-consuming
+and error-prone. For example, making sure
+
+00:02:06.400 --> 00:02:11.069
+that you get all the chapter headings can
+be a problem. On the other hand, automating
+
+00:02:11.069 --> 00:02:16.640
+data cleaning is also time-consuming and error-prone.
+In fact, I think it's sometimes hard to automate
+
+00:02:16.640 --> 00:02:23.060
+it than it is to do it by hand. So what I
+decided to do was to perform the manual cleaning.
+
+00:02:23.060 --> 00:02:28.560
+These were the decisions I've made. As a result,
+some of the levels that we find may be a little
+
+00:02:28.560 --> 00:02:32.260
+bit different than those published on the
+Internet because they may have made slightly
+
+00:02:32.260 --> 00:02:37.380
+different decisions than I made. So I removed
+the chapter headings. I removed the text at
+
+00:02:37.380 --> 00:02:43.380
+beginning and the end, particularly the legal
+stuff. I removed anything weird. So for example,
+
+00:02:43.380 --> 00:02:49.069
+there were some lines with only asterisks.
+Those I took out, and I also removed the poetry.
+
+00:02:49.069 --> 00:02:52.319
+I don't know if that's right thing to do or
+not according to the reading level, but it
+
+00:02:52.319 --> 00:02:58.660
+seemed reasonable because this index is not
+intended to be used on poetry. Now this took
+
+00:02:58.660 --> 00:03:03.470
+about 10 minutes to do, and I certainly don't
+guarantee that I've done a perfect job of
+
+00:03:03.470 --> 00:03:04.709
+it.
+
+00:03:04.709 --> 00:03:07.770
+Although we're eventually going to want to
+run this program on the whole book, that is
+
+00:03:07.770 --> 00:03:12.530
+not good test data. What we need to do is
+to take an excerpt that's a little bit easier
+
+00:03:12.530 --> 00:03:18.010
+to count and make comparisons to make sure
+that things are working properly. Here's the
+
+00:03:18.010 --> 00:03:24.020
+algorithm. It's described in full on Wikipedia.
+So you take .39 times the number of words
+
+00:03:24.020 --> 00:03:29.379
+divided by the number of sentences, and then
+you add in 11.8 times the number of syllables
+
+00:03:29.379 --> 00:03:35.840
+divided by the number of words, and then you
+subtract 15.59. Finding words and sentences
+
+00:03:35.840 --> 00:03:41.290
+is relatively easy. Sentences end with periods,
+question marks, and exclamation points, for
+
+00:03:41.290 --> 00:03:46.500
+example. Finding syllables is a little bit
+trickier. Now before we go on, we want to
+
+00:03:46.500 --> 00:03:51.030
+make sure that this formula makes a degree
+of sense because that's very important when
+
+00:03:51.030 --> 00:03:56.190
+you're coding things. So when you look at
+the number of words divided by sentences,
+
+00:03:56.190 --> 00:04:01.830
+think about it. Does having a lot of words
+in the sentence make things easier or harder?
+
+00:04:01.830 --> 00:04:07.470
+Well, lots of words generally makes things
+harder and so .39, notice there's a positive
+
+00:04:07.470 --> 00:04:12.330
+factor there, tells you that the more words
+you have in the sentence, the higher the grade
+
+00:04:12.330 --> 00:04:18.519
+level is going to be. That make sense. Let's
+also think about syllables divided by words.
+
+00:04:18.519 --> 00:04:22.970
+Generally, the more syllables you have in
+a word, the harder it is to understand, and
+
+00:04:22.970 --> 00:04:28.990
+notice that's really borne out by how big
+that factor is. 11.8 is a big ol' factor.
+
+00:04:28.990 --> 00:04:33.710
+That tells us that having many words with
+a lot of syllables in them makes things hard
+
+00:04:33.710 --> 00:04:40.710
+to read, so that makes sense. Now as far as
+why you have .39 and 11.8 and 15.59, these
+
+00:04:41.840 --> 00:04:45.840
+were determined what we call empirically.
+That is, there's a researcher who figured
+
+00:04:45.840 --> 00:04:49.930
+these factors out, really beyond the scope
+of what we do. For right now, we're going
+
+00:04:49.930 --> 00:04:53.350
+to treat them just as if they're the truth.
+
+00:04:53.350 --> 00:04:58.430
+So how do you find syllables? Well, to do
+this exactly you'd have to have access to
+
+00:04:58.430 --> 00:05:03.400
+a complete syllable dictionary, that is, one
+that tells you exactly how many syllables
+
+00:05:03.400 --> 00:05:09.979
+each word has, but there's a problem. Alice
+in Wonderland has some weird stuff, so just
+
+00:05:09.979 --> 00:05:15.759
+a general syllable dictionary may not do it.
+So what we're going to do is use a heuristic.
+
+00:05:15.759 --> 00:05:19.500
+Now we've talked about the fact that heuristics
+aren't perfect, but they can give you pretty
+
+00:05:19.500 --> 00:05:24.090
+good results. Let's take a look at some words
+and think about what our heuristic should
+
+00:05:24.090 --> 00:05:29.360
+be. So look at the word "condition." It has
+three syllables—you probably heard that
+
+00:05:29.360 --> 00:05:36.360
+when I said it—and it has four vowels. There's
+the o, the i, and then the i and the o, and
+
+00:05:36.509 --> 00:05:41.380
+one of those vowels is a consecutive pair.
+Think about the word "index." There are two
+
+00:05:41.380 --> 00:05:47.419
+syllables and two vowels. Think about the
+word "count." There's one syllable and two
+
+00:05:47.419 --> 00:05:53.880
+vowels, and they're together in a consecutive
+pair. Now this suggests an algorithm. It suggests
+
+00:05:53.880 --> 00:05:59.580
+that for each word we should remove repeated
+vowels and count the remaining ones. Remember
+
+00:05:59.580 --> 00:06:04.509
+that vowels are going to be a, e, i, o, u,
+but also y because it does work as a vowel
+
+00:06:04.509 --> 00:06:07.220
+in English usually.
+
+00:06:07.220 --> 00:06:14.090
+Now where does this fail? Well, think about
+"like." That only has one syllable, but with
+
+00:06:14.090 --> 00:06:20.060
+our current algorithm we're going to get two
+vowel groups. Think about "technique." Now
+
+00:06:20.060 --> 00:06:26.130
+that has three vowel groups and only two syllables.
+So the adjustment is to remove the trailing
+
+00:06:26.130 --> 00:06:32.139
+vowels. That creates a problem for the because
+when we remove the trailing e, we end up with
+
+00:06:32.139 --> 00:06:37.020
+just th, which has no vowels in it, so we
+need to remember that we're always going to
+
+00:06:37.020 --> 00:06:39.389
+have a least one syllable.
+
+00:06:39.389 --> 00:06:46.020
+So now we can go forward. Let's look at how
+this works. So what I did was I went and grabbed
+
+00:06:46.020 --> 00:06:51.069
+a paragraph from Alice in Wonderland and just
+tried to find places where it worked and where
+
+00:06:51.069 --> 00:06:55.919
+it didn't. The words I've underlined are the
+ones that I quickly determined had not been
+
+00:06:55.919 --> 00:07:02.289
+correct. "Jury," for example, has two vowels
+but when we remove the trailing y, we lose
+
+00:07:02.289 --> 00:07:07.699
+that. "Little," for example, that has too
+few syllables again because we've removed
+
+00:07:07.699 --> 00:07:14.160
+one of those trailing e's. "Recovered," on
+the other hand, that has too many syllables.
+
+00:07:14.160 --> 00:07:19.199
+So we can see that there's sort of a give-and-take
+here. Now when we look at the words that I
+
+00:07:19.199 --> 00:07:26.150
+identified that have too few syllables, notice
+how many of them end in y. That's interesting.
+
+00:07:26.150 --> 00:07:30.830
+If we did it just the way we've described
+it so far, we would've been missing just three
+
+00:07:30.830 --> 00:07:35.630
+syllables. That's not bad actually for a paragraph
+that's this long, but let's think if maybe
+
+00:07:35.630 --> 00:07:38.419
+we could do a little bit better.
+
+00:07:38.419 --> 00:07:43.600
+Let's make one more important improvement.
+Four of our five words that had too few syllables
+
+00:07:43.600 --> 00:07:50.289
+ended in y, so let's adjust our heuristic
+to not remove ending y vowels. Now we have
+
+00:07:50.289 --> 00:07:55.349
+only two words with too few syllables and
+only one with too many. In other words, we're
+
+00:07:55.349 --> 00:08:02.349
+only off by one syllable in this paragraph.
+That's a pretty good heuristic. The next thing
+
+00:08:02.400 --> 00:08:07.050
+we need to think about is how we're going
+to store data. We've got a problem here. You
+
+00:08:07.050 --> 00:08:11.910
+might think that we need an array of strings
+to hold all the lines in the file, but you're
+
+00:08:11.910 --> 00:08:16.199
+missing something if you're thinking that.
+And that is we don't have to store all the
+
+00:08:16.199 --> 00:08:21.870
+lines. We only have to store the one line
+we're working on at a time. Now this is a
+
+00:08:21.870 --> 00:08:26.310
+beginning designer's mistake is once you've
+seen an array to want to put everything in
+
+00:08:26.310 --> 00:08:31.160
+the world into an array and forget that you
+really don't need an array here. Now if you're
+
+00:08:31.160 --> 00:08:35.749
+thinking to yourself, "But wait a minute.
+This is a chapter on arrays. Why are we not
+
+00:08:35.749 --> 00:08:40.869
+seeing it?" Well, there is an array here.
+When you break the line into words, this would
+
+00:08:40.869 --> 00:08:45.179
+use the split method, it's going to return
+an array of strings. So there is an array
+
+00:08:45.179 --> 00:08:51.509
+hanging around, it's just not one that holds
+all the lines in the file.
+
+00:08:51.509 --> 00:08:55.819
+Let's talk a little about our methods. So
+reading and calculating are going to have
+
+00:08:55.819 --> 00:09:00.149
+to be combined into a single method, and the
+reason is that we're going to read a line,
+
+00:09:00.149 --> 00:09:05.040
+calculate, read a line, calculate. So we can't
+separate those out. So we're going to want
+
+00:09:05.040 --> 00:09:10.160
+a method called something like find index
+for the string filename, and we're going to
+
+00:09:10.160 --> 00:09:14.829
+need a method called count syllables that
+will take an individual word. And I've put
+
+00:09:14.829 --> 00:09:21.029
+in a couple of little utility methods called
+is vowel and is vowel except y. Now you might
+
+00:09:21.029 --> 00:09:24.769
+want to look for those and see if they're
+available in the character class, and believe
+
+00:09:24.769 --> 00:09:30.459
+me I did. The thing is it doesn't make sense
+to have those in the character class because
+
+00:09:30.459 --> 00:09:37.459
+those are specific to U.S. English. And remember
+that Java is not designed just for U.S. English.
+
+00:09:37.499 --> 00:09:41.800
+It's an international programming language,
+so having things that are very specific to
+
+00:09:41.800 --> 00:09:46.499
+a given language really isn't consistent with
+the design of the language.
+
+00:09:46.499 --> 00:09:52.029
+Let's go and write a program. So as usual
+I've done part of this in advance. Here's
+
+00:09:52.029 --> 00:09:57.759
+our main program. We create a scanner for
+the keyboard on line 22. We have the user
+
+00:09:57.759 --> 00:10:03.040
+enter the filename, and then we print out
+the results. Now this is a pretty short main
+
+00:10:03.040 --> 00:10:08.290
+program, but on the other hand it's a pretty
+simple program. I've left most of writing
+
+00:10:08.290 --> 00:10:15.290
+the index for us to do together and all of
+the syllable counting to do together. Here's
+
+00:10:15.660 --> 00:10:22.399
+the is vowel method. Notice it's just a simple
+test. Do we have an a, an e, an i, an o, a
+
+00:10:22.399 --> 00:10:29.199
+u, a y? The is vowel except y I used is vowel,
+the one I had written previously, and said
+
+00:10:29.199 --> 00:10:35.389
+if it's not equal to y. Now you could've written
+it a couple of different ways, but that works.
+
+00:10:35.389 --> 00:10:40.329
+So we have to think now what our strategy
+is going to be. Do you want to write count
+
+00:10:40.329 --> 00:10:45.489
+syllables first or do we want to deal with
+the file stuff? Well, let's deal with the
+
+00:10:45.489 --> 00:10:52.489
+file stuff. We've got a file opened. Notice
+we're throwing the file not found exception
+
+00:10:52.739 --> 00:10:58.679
+again, and we've got a line for holding the
+line, an array for holding the words in the
+
+00:10:58.679 --> 00:11:04.209
+line. We've got word count, sentence count,
+syllable count. So we've got the basics that
+
+00:11:04.209 --> 00:11:08.220
+we need to do our job, and notice I've even
+put in the little formula that came from the
+
+00:11:08.220 --> 00:11:15.220
+website. While file dot has next line. We
+don't know how long this file is, so all we
+
+00:11:19.679 --> 00:11:26.679
+can do is read until we run out of file, so
+line equals file dot next line. Now something
+
+00:11:28.470 --> 00:11:34.209
+we might want to consider is are any of these
+lines empty? Well, to make that consideration,
+
+00:11:34.209 --> 00:11:39.209
+let's go and look. And as you can see, we
+do have some empty lines here. Now we might
+
+00:11:39.209 --> 00:11:44.489
+check and make sure that they're really empty
+and they're not just single spaces and then
+
+00:11:44.489 --> 00:11:49.819
+a new line character because those will show
+up differently in the data. And as you can
+
+00:11:49.819 --> 00:11:55.420
+see, these lines really are empty. Now the
+way you can see that is notice when I click
+
+00:11:55.420 --> 00:11:59.839
+the cursor on it even though I'm way out on
+the line, it brings it right next to the line
+
+00:11:59.839 --> 00:12:05.009
+number in the editor. So that's the best way
+of telling that the lines are really truly
+
+00:12:05.009 --> 00:12:12.009
+empty. If line is empty—well, now that's
+not quite what we want. We want to process
+
+00:12:18.749 --> 00:12:25.749
+it when the line isn't empty. We're going
+to break it apart into words. So words equals
+
+00:12:28.850 --> 00:12:35.850
+line dot split--that's this cool little split
+method that's in the string class. Now we're
+
+00:12:37.249 --> 00:12:42.839
+splitting on spaces because that's how we
+separate words.
+
+00:12:42.839 --> 00:12:47.639
+So now we have an array of words and we're
+going to need to process those one at a time.
+
+00:12:47.639 --> 00:12:52.269
+This is where our nested loop comes in. So
+the doing one line of the file at the time
+
+00:12:52.269 --> 00:12:59.269
+is one loop, and inside that we're going to
+process one word at a time. So for int index
+
+00:13:00.799 --> 00:13:07.799
+is zero index less than words dot length plus
+plus index. So every word gets the same treatment.
+
+00:13:13.529 --> 00:13:18.109
+Now we've got three things we need to count:
+the number of words, the number of sentences,
+
+00:13:18.109 --> 00:13:25.109
+and the number of syllables. So we know we've
+got a word, so we're going to add one to the
+
+00:13:27.420 --> 00:13:34.420
+word count. As far as sentences, we need to
+look for our punctuation. So if words of index
+
+00:13:39.199 --> 00:13:46.199
+contains a period, or words of index contains
+a question mark, or words of index contains
+
+00:14:11.169 --> 00:14:18.169
+an exclamation point, then we have another
+sentence. So we add one to the sentence count.
+
+00:14:23.339 --> 00:14:27.459
+We haven't written our count syllabuses method
+yet, but that doesn't mean we can't use it
+
+00:14:27.459 --> 00:14:34.459
+here. It just means it won't work. So syllabus
+count plus equals count syllabus—syllabus,
+
+00:14:36.290 --> 00:14:43.290
+whoops, I'm thinking too academic. Let's try
+syllable. So we're going to count the syllables
+
+00:14:58.189 --> 00:15:05.189
+in this word. I see I've missed an s in contains,
+and this should be words instead of word.
+
+00:15:12.220 --> 00:15:19.220
+Okay, as usual I've forgotten what my method
+name is, so let's go and look. It's count
+
+00:15:21.749 --> 00:15:28.749
+syllables instead of count syllable. I looked
+that up over in the package explorer, so that
+
+00:15:29.239 --> 00:15:31.499
+looks pretty good.
+
+00:15:31.499 --> 00:15:37.859
+If we think about it at this point, all of
+our syllables should be zero because we haven't
+
+00:15:37.859 --> 00:15:42.470
+implemented anything count syllables yet,
+and we're just returning zero. So let's think
+
+00:15:42.470 --> 00:15:48.600
+about what value we would get if we ran this
+file. Well, the word count would be okay,
+
+00:15:48.600 --> 00:15:53.639
+the sentence count would be okay, but the
+syllable count would not. So we wouldn't necessarily
+
+00:15:53.639 --> 00:15:58.259
+get anything very useful, but that doesn't
+mean it isn't a good idea to run the program
+
+00:15:58.259 --> 00:16:02.369
+anyways. So even though we're going to get
+garbage as output, it will tell us that our
+
+00:16:02.369 --> 00:16:09.049
+file is working. Now as it happens, the whole
+book is probably not the best test data, so
+
+00:16:09.049 --> 00:16:14.290
+I picked out just one paragraph. In fact,
+it's that little paragraph we analyzed earlier,
+
+00:16:14.290 --> 00:16:19.069
+and we're going to use that one. Another one
+I picked out was this one right here. Now
+
+00:16:19.069 --> 00:16:24.669
+this one comes from the Wikipedia website
+where we know what the value is. This sentence
+
+00:16:24.669 --> 00:16:29.979
+they said was at 13, but they counted real
+syllables instead of using the heuristic like
+
+00:16:29.979 --> 00:16:34.939
+we did. So we're going to get grade level
+twelve when we do this correctly, and by the
+
+00:16:34.939 --> 00:16:38.749
+way, I calculated those things by hand.
+
+00:16:38.749 --> 00:16:45.749
+Let's run the program and just make sure nothing's
+breaking. So first we'll enter sentence dot
+
+00:16:52.479 --> 00:16:59.479
+text. That's the shortest one. -11, well,
+like I say, we weren't expecting the correct
+
+00:16:59.739 --> 00:17:06.739
+value, but the program didn't break so that's
+good. Now excerpt dot text. Okay, surprisingly
+
+00:17:12.789 --> 00:17:19.789
+high value for Alice in Wonderland, and again
+the program didn't break. And here's for the
+
+00:17:23.730 --> 00:17:28.840
+whole book. Well, the value is garbage, but
+on the other hand it didn't break, so things
+
+00:17:28.840 --> 00:17:31.179
+are looking pretty good there.
+
+00:17:31.179 --> 00:17:38.179
+Next we need to count syllables. The first
+thing we need to do is to remove consecutive
+
+00:17:42.860 --> 00:17:49.860
+vowels. Then we need to remove trailing vowels
+except y, and then we need to count vowels.
+
+00:18:03.370 --> 00:18:09.500
+Those were the basic steps in our algorithm.
+If we think about removing consecutive vowels,
+
+00:18:09.500 --> 00:18:12.980
+we're going to step through the string one
+at a time. Now we're going to need to delete
+
+00:18:12.980 --> 00:18:18.409
+characters from a string, and remember strings
+are immutable, so that doesn't make sense.
+
+00:18:18.409 --> 00:18:23.539
+So the thing that's string-like that we can
+mutate is a string builder. So let's create
+
+00:18:23.539 --> 00:18:30.539
+one of those to use. I'll just call it SB.
+So when we remove consecutive vowels, we're
+
+00:18:43.789 --> 00:18:50.789
+going to have to step through one at the time.
+That's a loop. If SB dot char at of i is a
+
+00:19:10.840 --> 00:19:17.840
+vowel, so remember that's the is vowel method
+that we wrote—well, actually I wrote it.
+
+00:19:21.340 --> 00:19:28.340
+So if the current character is a vowel and
+the previous one is too. Maybe we have some
+
+00:19:41.539 --> 00:19:48.539
+parentheses off here. So is vowel--that needed
+one more parenthesis--and is vowel so this
+
+00:19:53.639 --> 00:19:58.470
+is the one that ends char at, that's the one
+that ends is vowel, that's the one that ends
+
+00:19:58.470 --> 00:20:04.909
+the if. So those are probably okay. So if
+that's true, what we're going to do is delete
+
+00:20:04.909 --> 00:20:08.330
+one of them. Now it doesn't really matter
+which one we delete, so I'm going to delete
+
+00:20:08.330 --> 00:20:15.330
+the second one. So that will be delete char
+at i. Now if you didn't remember the name
+
+00:20:17.799 --> 00:20:21.110
+for the method, it's just fine to go and look
+it up.
+
+00:20:21.110 --> 00:20:25.269
+Now we might want to think a little bit about
+whether we're causing problems here. For example,
+
+00:20:25.269 --> 00:20:30.929
+do we have an off by one bug? So let's take
+a look. When I is 0 we're comparing char at
+
+00:20:30.929 --> 00:20:37.929
+0 and char at -1—oops, no good. We really
+want to start at character 1 and the reason
+
+00:20:38.740 --> 00:20:42.970
+is because there is no previous vowel if you
+don't start there. So this is one of those
+
+00:20:42.970 --> 00:20:48.940
+cases where we break our usual pattern of
+starting at index 0 and going to less than
+
+00:20:48.940 --> 00:20:55.940
+the length. So there we've deleted our vowels.
+Now we need to remove the trailing vowels,
+
+00:20:59.039 --> 00:21:06.039
+so if is vowel except y for SB dot char at
+SB dot length -1. Now that is a lot of work
+
+00:21:17.759 --> 00:21:24.759
+in one line of code, and a lot of SB's hanging
+around. So if that's true, we do SB dot delete
+
+00:21:26.289 --> 00:21:33.289
+char at of SB dot length minus 1. Notice I'm
+being very careful to remember that these
+
+00:21:35.870 --> 00:21:40.539
+things are zero indexed. Now if all of this
+makes you a little bit uncomfortable, what
+
+00:21:40.539 --> 00:21:44.539
+you can do is put in some more variables.
+So let me show you a way that this could be
+
+00:21:44.539 --> 00:21:51.539
+rewritten that might be easier to read. So
+we'll create the length to SB dot length.
+
+00:21:54.379 --> 00:22:01.379
+Or better yet, let's create the last character
+to SB dot length minus 1. That looks better.
+
+00:22:08.080 --> 00:22:15.080
+Then we can put last character in there and
+last character in there. So notice that may
+
+00:22:28.909 --> 00:22:33.909
+make it a little bit easier to read. You could
+even go a step further and create a variable
+
+00:22:33.909 --> 00:22:37.809
+called less character—well, we wouldn't
+want to call it less character, we've already
+
+00:22:37.809 --> 00:22:42.610
+used that, but create another variable to
+store the last character. Do that as often
+
+00:22:42.610 --> 00:22:46.980
+as you need. There's nothing wrong with it.
+In fact, it can be very hard to read lines
+
+00:22:46.980 --> 00:22:51.269
+of code when you get things very deeply nested
+even though it does feel kind of cool when
+
+00:22:51.269 --> 00:22:58.269
+you're writing it. Okay, now the last thing
+we have to do is count vowels. So that will
+
+00:22:59.059 --> 00:23:06.059
+be another forloop. i is zero i less than
+SB dot length plus plus i. So we're going
+
+00:23:15.740 --> 00:23:22.740
+to need to keep track of a count. So we'll
+set up a count at zero, and then we'll say
+
+00:23:25.210 --> 00:23:32.210
+if SB dot char at of i is a vowel so that's
+that is vowel method. Remember we do want
+
+00:23:38.240 --> 00:23:45.240
+to count y's here, so we don't want to use
+the one that excludes the y's. We increment
+
+00:23:46.990 --> 00:23:53.990
+count. And then when we get to the end, we're
+going to return the count.
+
+00:24:03.769 --> 00:24:09.409
+Wow, that's a pretty complicated chunk of
+code. We might think to ourself whether we
+
+00:24:09.409 --> 00:24:14.549
+want to make some smaller methods from it,
+and the question is do we really think this
+
+00:24:14.549 --> 00:24:19.990
+is going to be reused a lot. And my answer
+for that is probably not, so I don't think
+
+00:24:19.990 --> 00:24:25.799
+I would invest the effort in making this smaller.
+Now if you were going to make it smaller,
+
+00:24:25.799 --> 00:24:31.970
+notice our comments are really directing us
+to where these variables could be. So there,
+
+00:24:31.970 --> 00:24:36.419
+for example, that could be a method. Count
+vowels could be a method. Remove consecutive
+
+00:24:36.419 --> 00:24:41.249
+vowels could be a method. The methods are
+getting pretty small and because we have it
+
+00:24:41.249 --> 00:24:45.870
+very well documented, this isn't necessarily
+too long. Notice it's still quite a bit less
+
+00:24:45.870 --> 00:24:48.129
+than our one page in length.
+
+00:24:48.129 --> 00:24:55.129
+So now we can run the program. So the first
+thing we want to do always, always, always
+
+00:24:56.259 --> 00:25:03.259
+is test the data we know. So first we're going
+to try a sentence. Now the work there is 9...9?
+
+00:25:11.710 --> 00:25:18.419
+That should've been 12. Hmm, so we're going
+to have to think through now what's going
+
+00:25:18.419 --> 00:25:25.419
+wrong. The first thing we need to do is to
+go and check our method where we were reading
+
+00:25:30.799 --> 00:25:35.360
+in the file and make sure things are being
+added up correctly. So we initialized our
+
+00:25:35.360 --> 00:25:39.590
+variables to zero. Of course, Eclipse would've
+noticed that if we hadn't because those are
+
+00:25:39.590 --> 00:25:46.590
+local variables. We read a line. If the line
+isn't empty, we split it up using spaces.
+
+00:25:48.799 --> 00:25:55.049
+We go from zero to less than index. That looks
+correct. And we increment index. I don't like
+
+00:25:55.049 --> 00:25:59.990
+that space in there, so I'm going to remove
+it. We've read one word so we add one to word
+
+00:25:59.990 --> 00:26:06.990
+count. If the word contains a period, a question
+mark, or an exclamation point, we add one
+
+00:26:07.299 --> 00:26:12.929
+to the sentence count, and then we add the
+number syllables to count syllables to this
+
+00:26:12.929 --> 00:26:13.870
+word.
+
+00:26:13.870 --> 00:26:20.870
+Hmm, that looks pretty good, and this formula
+looks correct too. Now one thing we might
+
+00:26:22.029 --> 00:26:27.019
+want to be very careful about looking at the
+formula is to make sure that we haven't made
+
+00:26:27.019 --> 00:26:32.440
+mistakes with integers. So for example, when
+we multiply this double by the integer word
+
+00:26:32.440 --> 00:26:37.360
+count we get a double, and then we divide
+by sentence count. The sentence count will
+
+00:26:37.360 --> 00:26:42.019
+be promoted to a double, and that will be
+a double. So there are no obvious errors in
+
+00:26:42.019 --> 00:26:49.019
+that. So let's go and read our count syllables
+again. We've got our new string builder. We
+
+00:26:50.679 --> 00:26:54.840
+remove our consecutive vowels. We started
+at one because we didn't want to have the
+
+00:26:54.840 --> 00:27:01.679
+program crash, and incidentally notice that
+the program didn't crash, so that is good.
+
+00:27:01.679 --> 00:27:08.570
+If we find it, we're deleting the second one
+here. That's probably a good one to delete.
+
+00:27:08.570 --> 00:27:15.570
+Then we remove the trailing vowels, so we
+take length minus one. And if we have a vowel,
+
+00:27:16.610 --> 00:27:23.610
+we delete the last character, so that looks
+good. Then we count the vowels. So we go from
+
+00:27:23.690 --> 00:27:30.389
+zero to length. And we say if it's a vowel,
+we increment count. Then we get to the end
+
+00:27:30.389 --> 00:27:36.619
+and we return count. Hmm, that's all looking
+pretty good.
+
+00:27:36.619 --> 00:27:42.240
+Now there are lots of ways we could debug
+at this point. The syllable account of course
+
+00:27:42.240 --> 00:27:47.789
+is the thing we're always very suspicious
+of. Let's actually put in some debugging output
+
+00:27:47.789 --> 00:27:54.779
+here. Now this is not the most sophisticated
+debugging we could possibly do, but on the
+
+00:27:54.779 --> 00:28:01.779
+other hand, it's a good place to start. So
+we're going to print out the word, and then
+
+00:28:03.470 --> 00:28:10.470
+a colon, and then count syllables of words
+of index. So this way we'll be able to see
+
+00:28:22.730 --> 00:28:29.730
+the words and see how many syllables we had.
+That's a good place to start looking. So "the"
+
+00:28:42.830 --> 00:28:49.830
+has zero syllables. Huh, what went wrong there?
+Well, what went wrong is we forgot one of
+
+00:28:49.909 --> 00:28:56.909
+our rules, and that's that every word has
+to have at least one syllable. Let's go down
+
+00:28:57.419 --> 00:29:04.419
+here to the bottom and see if count is zero
+we're going to return one, and otherwise we're
+
+00:29:07.429 --> 00:29:11.379
+going to return count. So that looks like
+maybe that's going to give us some better
+
+00:29:11.379 --> 00:29:18.379
+data. So we're still looking at sentence dot
+text. Ahhh, and now we're getting a grade
+
+00:29:27.119 --> 00:29:34.119
+level of twelve, so that's better. Now let's
+try our excerpt from Alice in Wonderland.
+
+00:29:36.070 --> 00:29:43.070
+Now we might want to remove that debugging
+output pretty soon. Now it says the grade
+
+00:29:44.480 --> 00:29:49.049
+level for this work is 27, which I guess means
+that I should be the only person around that
+
+00:29:49.049 --> 00:29:54.419
+can read it, or just a handful of college
+professors, or something like that. Why would
+
+00:29:54.419 --> 00:30:01.149
+that be? Let's take a look at this. This is
+a really hideous paragraph. For one thing,
+
+00:30:01.149 --> 00:30:06.639
+notice it's only one sentence. That's pretty
+crazy, so we might expect that that's going
+
+00:30:06.639 --> 00:30:12.619
+to be complicated to read. So let's not worry
+about that one too much. Now before we go
+
+00:30:12.619 --> 00:30:19.159
+through all of Alice in Wonderland, I think
+we better remove that debugging output, which
+
+00:30:19.159 --> 00:30:20.970
+is right here.
+
+00:30:20.970 --> 00:30:24.309
+Now some people when they put things like
+this in the code are going to leave it there
+
+00:30:24.309 --> 00:30:28.940
+with the thought being that they're going
+to be debugging it later anyways, but my thought
+
+00:30:28.940 --> 00:30:35.940
+is that we've done this perfectly. See, I'm
+an optimist. So let's take that out and see
+
+00:30:39.059 --> 00:30:43.769
+what Alice in Wonderland should be. Now I
+actually looked this up online, and they think
+
+00:30:43.769 --> 00:30:50.379
+it's usually between fifth and sixth grade
+level. Seems harder than that to me, but hmm,
+
+00:30:50.379 --> 00:30:57.379
+maybe I'm trying to read it more deeply, yet
+another positive spin. So here's Alice in
+
+00:31:09.419 --> 00:31:16.419
+Wonderland. Oh, well, that was disappointing.
+So we need to go and debug. Now remember what
+
+00:31:17.029 --> 00:31:22.980
+we look for is the highest level method that
+we wrote. So let's see what's going on right
+
+00:31:22.980 --> 00:31:29.980
+there. So we need to remove trailing vowels
+except y. So what could've gone wrong at this
+
+00:31:31.149 --> 00:31:38.149
+point? Well, what if we remove all the vowels?
+What if we have no length of the string left?
+
+00:31:40.899 --> 00:31:45.539
+Now this would be kind of a strange thing
+for a split to do, but split does some strange
+
+00:31:45.539 --> 00:31:50.460
+things. Remember that we're using regular
+expressions, and we really don't understand
+
+00:31:50.460 --> 00:31:56.779
+regular expressions. So if SB dot length was
+0, that's the only way the last character
+
+00:31:56.779 --> 00:32:03.779
+could be -1. And we see that we were calling
+an index -1. What we need to do here is to
+
+00:32:04.659 --> 00:32:11.659
+get out a little bit more quickly. If the
+SB dot length is 0, we need to return 0. If
+
+00:32:22.299 --> 00:32:25.869
+there were no characters in the string, we
+don't want to be figuring out how many syllables
+
+00:32:25.869 --> 00:32:31.080
+there were. Now notice if we had two vowels
+in a row only one of them should have been
+
+00:32:31.080 --> 00:32:38.080
+removed, and so we shouldn't have completely
+annihilated any words. And the Flesch-Kincaid
+
+00:32:52.340 --> 00:32:59.340
+grade level for this work is six. Yay! So
+let's talk a little bit about what's going
+
+00:32:59.869 --> 00:33:05.929
+on now. You'll notice that our programming
+is changing in nature. We're considering more
+
+00:33:05.929 --> 00:33:10.799
+options and possibilities and talking more
+about what we're going to implement rather
+
+00:33:10.799 --> 00:33:15.860
+than just jumping into code right away. This
+pattern is generally going to continue as
+
+00:33:15.860 --> 00:33:19.929
+you progress as a programmer where you're
+not just spending all your time pounding at
+
+00:33:19.929 --> 00:33:24.749
+the keyboard. A lot of it's going to be spent
+thinking, and strategizing, and planning,
+
+00:33:24.749 --> 00:33:29.230
+and doing things like that. If you learn to
+do that better, you'll really improve your
+
+00:33:29.230 --> 00:33:32.130
+programming a lot. So keep programming!
+

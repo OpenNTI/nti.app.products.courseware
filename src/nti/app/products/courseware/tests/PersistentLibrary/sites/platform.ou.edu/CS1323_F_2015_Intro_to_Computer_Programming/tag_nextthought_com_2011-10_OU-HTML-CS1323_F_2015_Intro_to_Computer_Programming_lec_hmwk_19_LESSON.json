@@ -1,0 +1,39 @@
+{
+    "MimeType": "application/vnd.nextthought.ntilessonoverview",
+    "Items": [
+        {
+            "MimeType": "application/vnd.nextthought.nticourseoverviewgroup",
+            "NTIID": "tag:nextthought.com,2011-10:OU-NTICourseOverviewGroup-CS1323_F_2015_Intro_to_Computer_Programming.lec:hmwk_19_LESSON.0",
+            "Items": [
+                {
+                    "MimeType": "application/vnd.nextthought.discussion",
+                    "title": "Project 12 Help",
+                    "label": "",
+                    "NTIID": "",
+                    "id": "nti-course-bundle://Discussions/Project_12_Help.json",
+                    "icon": "resources/CS1323_F_2015_Intro_to_Computer_Programming/2944092b443253ad83b3a283506b230b9d539f40/fd35e23767020999111e1f49239199b4c5eff23e.png"
+                }
+            ],
+            "accentColor": "f5d420",
+            "title": "Discussions"
+        },
+        {
+            "MimeType": "application/vnd.nextthought.nticourseoverviewgroup",
+            "NTIID": "tag:nextthought.com,2011-10:OU-NTICourseOverviewGroup-CS1323_F_2015_Intro_to_Computer_Programming.lec:hmwk_19_LESSON.1",
+            "Items": [
+                {
+                    "MimeType": "application/vnd.nextthought.assessment.assignment",
+                    "ContainerId": "tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.project_12_(100_points)",
+                    "title": "Project 12 (100 points)",
+                    "label": "Project 12 (100 points)",
+                    "NTIID": "tag:nextthought.com,2011-10:OU-NAQ-CS1323_F_2015_Intro_to_Computer_Programming.naq.asg.assignment:Lab_12",
+                    "Target-NTIID": "tag:nextthought.com,2011-10:OU-NAQ-CS1323_F_2015_Intro_to_Computer_Programming.naq.asg.assignment:Lab_12"
+                }
+            ],
+            "accentColor": "81c8dc",
+            "title": "Assignments"
+        }
+    ],
+    "title": "Project 12",
+    "NTIID": "tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.lec:hmwk_19_LESSON"
+}

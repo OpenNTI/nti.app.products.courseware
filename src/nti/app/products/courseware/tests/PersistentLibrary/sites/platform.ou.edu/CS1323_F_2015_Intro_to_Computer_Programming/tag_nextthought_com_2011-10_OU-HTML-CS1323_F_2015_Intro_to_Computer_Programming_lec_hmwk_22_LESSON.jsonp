@@ -1,0 +1,45 @@
+jsonpReceiveContent({
+    "content": {
+        "MimeType": "application/vnd.nextthought.ntilessonoverview",
+        "Items": [
+            {
+                "MimeType": "application/vnd.nextthought.nticourseoverviewgroup",
+                "NTIID": "tag:nextthought.com,2011-10:OU-NTICourseOverviewGroup-CS1323_F_2015_Intro_to_Computer_Programming.lec:hmwk_22_LESSON.0",
+                "Items": [
+                    {
+                        "MimeType": "application/vnd.nextthought.discussion",
+                        "title": "Project 14 Help",
+                        "label": "",
+                        "NTIID": "",
+                        "id": "nti-course-bundle://Discussions/Project_14_Help.json",
+                        "icon": "resources/CS1323_F_2015_Intro_to_Computer_Programming/812300fad821b228e079d4417668b9c8a7b3e258/fd35e23767020999111e1f49239199b4c5eff23e.png"
+                    }
+                ],
+                "accentColor": "f5d420",
+                "title": "Discussions"
+            },
+            {
+                "MimeType": "application/vnd.nextthought.nticourseoverviewgroup",
+                "NTIID": "tag:nextthought.com,2011-10:OU-NTICourseOverviewGroup-CS1323_F_2015_Intro_to_Computer_Programming.lec:hmwk_22_LESSON.1",
+                "Items": [
+                    {
+                        "MimeType": "application/vnd.nextthought.assessment.assignment",
+                        "ContainerId": "tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.project_14_(100_points)",
+                        "title": "Project 14 (100 points)",
+                        "label": "Project 14 (100 points)",
+                        "NTIID": "tag:nextthought.com,2011-10:OU-NAQ-CS1323_F_2015_Intro_to_Computer_Programming.naq.asg.assignment:Lab_14",
+                        "Target-NTIID": "tag:nextthought.com,2011-10:OU-NAQ-CS1323_F_2015_Intro_to_Computer_Programming.naq.asg.assignment:Lab_14"
+                    }
+                ],
+                "accentColor": "81c8dc",
+                "title": "Assignments"
+            }
+        ],
+        "title": "Project 14",
+        "NTIID": "tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.lec:hmwk_22_LESSON"
+    },
+    "ntiid": "tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.lec:hmwk_22_LESSON",
+    "version": "1",
+    "Content-Type": "application/json",
+    "Content-Encoding": "json"
+});

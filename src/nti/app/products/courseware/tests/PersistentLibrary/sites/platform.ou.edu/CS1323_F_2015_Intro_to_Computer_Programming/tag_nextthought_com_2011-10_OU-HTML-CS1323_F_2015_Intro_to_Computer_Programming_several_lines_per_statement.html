@@ -1,0 +1,52 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html lang="en"><head> <meta content="2015-12-11T16:56:47" http-equiv="last-modified" /> <meta content="1457" name="NTIRelativeScrollHeight" /> <meta content="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.several_lines_per_statement" name="NTIID" /> <meta content="NextThought" name="generator" /> <meta content="text/html; charset=ascii" http-equiv="content-type" /> <title>Several Lines per Statement</title> <link href="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.assignment_statements" rel="next" title="Assignment Statements" /> <link href="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.calculation" rel="prev" title="Calculation" /> <link href="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.reading:Chortle_CH9" rel="up" title="Variables and Assignment Statements" /> <link href="styles/styles.css" rel="stylesheet" /> <link href="styles/content.css" rel="stylesheet" /> </head> <body id="NTIContent"> <div class="page-contents"><div data-ntiid="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.several_lines_per_statement" id="a0000000325" ntiid="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.several_lines_per_statement"> <div class="chapter title">Several Lines per Statement</div> <p class="placeholder"></p> <a name="b8c9b8da2f008e73fb1519e9006b3260.71"></a> <div class="sidebar" data-ntiid="tag:nextthought.com,2011-10:OU-HTML:NTISidebar-CS1323_F_2015_Intro_to_Computer_Programming.sidebar.answer.22" ntiid="tag:nextthought.com,2011-10:OU-HTML:NTISidebar-CS1323_F_2015_Intro_to_Computer_Programming.sidebar.answer.22"> <div class="sidebar-title">Answer</div> Yes. </div><a name="ad90343e90a87024480ad42c6df0579b"></a> <p class="par" id="ad90343e90a87024480ad42c6df0579b">You can use several lines for a statement. Anywhere a space character is OK you can split a statement. This means you can&#8217;t split a statement in the middle of a name, nor between the quote marks of a string literal, nor in the middle of a numeric literal. Here is the program with some statements correctly put on two lines: </p> <a name="97a33141c702658a511e2675bfb10391"></a> <pre>class Example
+{
+  public static void main ( String[] args )
+  {
+    long   hoursWorked = 40;    
+    double payRate = 10.0, 
+           taxRate = 0.10;    
+
+    System.out.println("Hours Worked: " + 
+hoursWorked );
+    System.out.println("pay Amount  : " 
++ (hoursWorked * payRate) );
+    System.out.println("tax Amount  : " + (hoursWorked 
+* payRate * taxRate) );
+  }
+}
+</pre><a name="59e8b14ea1f41fc57f19f57e49190b2f"></a> <p class="par" id="59e8b14ea1f41fc57f19f57e49190b2f">Although correct, the division of statements is confusing to humans. It is also true that anywhere one space is OK any number of spaces are OK. Here is a better style for the program: </p> <a name="db794e0d705116a3f2a1b255c8063b11"></a> <pre>class Example
+{
+  public static void main ( String[] args )
+  {
+    long   hoursWorked = 40;    
+    double payRate = 10.0, 
+           taxRate = 0.10;    
+
+    System.out.println("Hours Worked: " + 
+        hoursWorked );
+    System.out.println("pay Amount  : " + 
+        (hoursWorked * payRate) );
+    System.out.println("tax Amount  : " + 
+        (hoursWorked * payRate * taxRate) );
+  }
+}
+</pre><a name="50a47aec4c2508f5afca84aebd45acc2"></a> <p class="par" id="50a47aec4c2508f5afca84aebd45acc2">It is a good idea to indent the second half of a split statement further than the start of the statement. </p> <a name="22b5d6874ea74572d50c449ace4ebf4d"></a> <div class="sidebar" data-ntiid="tag:nextthought.com,2011-10:OU-HTML:NTISidebar-CS1323_F_2015_Intro_to_Computer_Programming.sidebar.question.23" ntiid="tag:nextthought.com,2011-10:OU-HTML:NTISidebar-CS1323_F_2015_Intro_to_Computer_Programming.sidebar.question.23"> <div class="sidebar-title">Question</div> <a name="5fe5b908e31d2c7218cc8b5bbcd11723.72"></a> <p class="par" id="5fe5b908e31d2c7218cc8b5bbcd11723.72"> Is the following correct? </p> <a name="59f90bc0299929bb1004b2d23e80c13c"></a> <pre>01  cla
+02     ss Example
+03  {
+04  
+05    public static void main ( String[] args )
+06    {
+07      long   hoursWorked = 40;    
+08      double payRate = 10.0, taxRate = 0.10;    
+09  
+10      System.out.println("Hours Worked: " + hours
+11          Worked );
+12  
+13      System.out.println("pay Amount  : " + (hours
+14          Worked * payRate) );
+15  
+16      System.out.println("tax Amount  : " + (
+17          hoursWorked * payRate * taxRate) );
+18    }
+19  }
+</pre> </div> </div></div> </body></html>

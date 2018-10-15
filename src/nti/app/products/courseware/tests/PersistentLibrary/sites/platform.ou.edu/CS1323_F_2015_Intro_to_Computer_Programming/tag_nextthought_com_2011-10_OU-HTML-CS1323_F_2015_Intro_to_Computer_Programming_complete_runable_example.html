@@ -1,0 +1,29 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html lang="en"><head> <meta content="2015-12-11T16:56:47" http-equiv="last-modified" /> <meta content="970" name="NTIRelativeScrollHeight" /> <meta content="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.complete_runable_example" name="NTIID" /> <meta content="NextThought" name="generator" /> <meta content="text/html; charset=ascii" http-equiv="content-type" /> <title>Complete Runable Example</title> <link href="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.the_end.7" rel="next" title="The End" /> <link href="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.avoiding_null" rel="prev" title="Avoiding null" /> <link href="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.reading:Chortle_CH49B" rel="up" title="Arrays of Objects and Linear Search" /> <link href="styles/styles.css" rel="stylesheet" /> <link href="styles/content.css" rel="stylesheet" /> </head> <body id="NTIContent"> <div class="page-contents"><div data-ntiid="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.complete_runable_example" id="a0000000599" ntiid="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.complete_runable_example"> <div class="chapter title">Complete Runable Example</div> <p class="placeholder"></p> <a name="a74cff1273e708737866ad139f522d35"></a> <div class="sidebar" data-ntiid="tag:nextthought.com,2011-10:OU-HTML:NTISidebar-CS1323_F_2015_Intro_to_Computer_Programming.sidebar.answer.261" ntiid="tag:nextthought.com,2011-10:OU-HTML:NTISidebar-CS1323_F_2015_Intro_to_Computer_Programming.sidebar.answer.261"> <div class="sidebar-title">Answer</div> No. Sometimes <b class="bfseries"><tt class="ttfamily">strArray[j].length()</tt></b> will ask for the length of a non-existent <b class="bfseries"><tt class="ttfamily">String</tt></b>. </div><a name="b2373a3afe19c345f9aa143f8370081b"></a> <p class="par" id="b2373a3afe19c345f9aa143f8370081b">Here is the complete program: </p> <a name="5f2485e4af62215c0c7f75bbc2b20f5b"></a> <pre>class StringArray
+{
+  public static void main ( String[] args )
+  {
+    String[] strArray = new String[8] ;  
+
+    strArray[0] = "Hello" ;
+    strArray[1] = "World" ;
+    strArray[2] = "Greetings" ;
+    strArray[3] = "Jupiter" ;
+    strArray[ strArray.length-1 ] = "the end" ;
+
+    for (int j=0; j  &lt; strArray.length; j++ )
+      if ( strArray[j] != null )
+        System.out.println( "cell " + j + ": " + strArray[j] );
+      else
+        System.out.println( "cell " + j + ": " + "empty" );
+  }
+}
+</pre><a name="f6a19595f351cbc6d1cadbfe40cce270"></a> <p class="par" id="f6a19595f351cbc6d1cadbfe40cce270">You may wish to copy this program to your editor and run it. First-string programmers that run this code will see: </p> <a name="8df53c5a65321efb8b498757bb2bdd3d"></a> <pre>cell 0: Hello
+cell 1: World
+cell 2: Greetings
+cell 3: Jupiter
+cell 4: empty
+cell 5: empty
+cell 6: empty
+cell 7: the end
+</pre><a name="d3631f0123231f76d7cb2b65bc8297c4"></a> <div class="sidebar" data-ntiid="tag:nextthought.com,2011-10:OU-HTML:NTISidebar-CS1323_F_2015_Intro_to_Computer_Programming.sidebar.question.274" ntiid="tag:nextthought.com,2011-10:OU-HTML:NTISidebar-CS1323_F_2015_Intro_to_Computer_Programming.sidebar.question.274"> <div class="sidebar-title">Question</div> <a name="f47e1e2dba0a98d0bea26ca0b170a263"></a> <p class="par" id="f47e1e2dba0a98d0bea26ca0b170a263"> What will the following statement do? Assume that it immediately follows the last line of the program: </p> <a name="5eceeaa6f40e6667b2aa1f3d0ca223a6"></a> <pre>strArray[0] = "Good-by" ;
+</pre> </div> </div></div> </body></html>

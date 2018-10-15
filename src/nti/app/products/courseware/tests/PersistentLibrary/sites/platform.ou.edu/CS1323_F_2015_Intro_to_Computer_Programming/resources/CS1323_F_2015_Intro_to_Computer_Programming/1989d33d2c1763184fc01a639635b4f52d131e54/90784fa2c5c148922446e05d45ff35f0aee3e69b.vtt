@@ -1,0 +1,505 @@
+WEBVTT
+Kind: captions
+Language: en
+
+00:00:01.300 --> 00:00:06.200
+&gt;&gt;Let's take a look at an example of a sorted
+ArrayList, as we continue our study of classes
+
+00:00:06.220 --> 00:00:13.030
+with generics. Now sorted data plays a very
+important part in computer science, and if
+
+00:00:13.030 --> 00:00:17.560
+you think about it that's pretty logical.
+Think of an old-fashioned phone book. You
+
+00:00:17.560 --> 00:00:22.830
+know, one that's paper? All the data in
+that phone book is in sorted order. Would
+
+00:00:22.830 --> 00:00:27.090
+you be able to find somebody's phone number
+in New York City if the phone book wasn't
+
+00:00:27.090 --> 00:00:32.509
+sorted? No, of course not. By putting things
+in sorted order it makes it enormously easier
+
+00:00:32.509 --> 00:00:37.010
+to search for them—and this is true in computer
+science too.
+
+00:00:37.010 --> 00:00:41.649
+In computer science when things are sorted
+we can use a very powerful search strategy
+
+00:00:41.649 --> 00:00:48.600
+called binary search. Here's how it works:
+You repeatedly probe the middle of the remaining
+
+00:00:48.600 --> 00:00:53.949
+elements. If the target value you're looking
+for is smaller than the middle element, you
+
+00:00:53.949 --> 00:00:59.039
+search only the lower half. If the target
+is equal to the middle element, then you've
+
+00:00:59.039 --> 00:01:03.909
+found your result and you're done. If the
+target is bigger than the middle element,
+
+00:01:03.909 --> 00:01:09.520
+then you search only the upper half. This
+is an unbelievably powerful strategy. Let
+
+00:01:09.520 --> 00:01:14.140
+me show you an example. Let's talk about the
+efficiency here.
+
+00:01:14.140 --> 00:01:18.799
+Suppose we're searching a list that has a
+million elements in it. Now a million elements
+
+00:01:18.799 --> 00:01:23.250
+sounds like a lot of elements, but in the
+context of today's computer science this is
+
+00:01:23.250 --> 00:01:29.020
+not an especially large group of data. The
+first probe removes half a million elements
+
+00:01:29.020 --> 00:01:34.829
+from consideration. So you do one comparison
+and you know that a half of the million elements
+
+00:01:34.829 --> 00:01:40.649
+aren't it. That's getting a good bang for
+your buck! Now the second probe only removes
+
+00:01:40.649 --> 00:01:45.939
+a quarter of a million options, but still
+you're getting a lot of value here. The third
+
+00:01:45.939 --> 00:01:51.539
+one will remove one hundred and twenty-five
+thousand. With just three probes, we've remove
+
+00:01:51.539 --> 00:01:57.439
+eight hundred and seventy-five thousand choices
+out of a million. That is a tremendous increase
+
+00:01:57.439 --> 00:02:03.090
+in efficiency over stepping through an Array
+one position at a time. That's called linear
+
+00:02:03.090 --> 00:02:08.759
+search, and with that each probe would remove
+only one value-- so we could do as many as
+
+00:02:08.759 --> 00:02:15.300
+a million probes. So this is really a fantastic
+strategy. But the thing is, binary search
+
+00:02:15.300 --> 00:02:22.140
+only works with sorted data, and so having
+the data sorted is really, really important.
+
+00:02:22.140 --> 00:02:25.360
+So the question then becomes how do we sort
+data?
+
+00:02:25.360 --> 00:02:30.110
+Well if the data is already in an ArrayList,
+this is kind of a tricky problem. We're going
+
+00:02:30.110 --> 00:02:34.960
+to address it in the next quarter of the class
+once we have nested loops available for our
+
+00:02:34.960 --> 00:02:41.570
+use. But, there's another strategy that we
+can do now, and that is to insert the data
+
+00:02:41.570 --> 00:02:47.020
+in such a way that it remains sorted while
+it's being inserted, and that's something
+
+00:02:47.020 --> 00:02:52.370
+that's within our grasp at this point. Now
+the method signature for this will be void,
+
+00:02:52.370 --> 00:02:59.370
+add, ArrayList string of list. So we're adding
+to an ArrayList of Strings our target string.
+
+00:03:02.070 --> 00:03:05.290
+Let's talk a little bit about how the algorithm
+would work.
+
+00:03:05.290 --> 00:03:10.170
+Well, first off we're going to need to use
+methods from the Java API, because our list
+
+00:03:10.170 --> 00:03:15.670
+is an ArrayList of Strings. Now the first
+thing we probably want to look for is to see
+
+00:03:15.670 --> 00:03:20.890
+if there is a method that does this. There
+are lots of methods in the API, so let's go
+
+00:03:20.890 --> 00:03:26.230
+and take a look and see if anything looks
+promising. Here's the ArrayList class. I'm
+
+00:03:26.230 --> 00:03:32.370
+going to scroll down until I find the methods,
+and we see right up that we have some add
+
+00:03:32.370 --> 00:03:38.040
+methods. There are two of them, and then some
+add all methods (those are not the right ones).
+
+00:03:38.040 --> 00:03:44.440
+So the first method adds an element at the
+end of the list, and the second one adds a
+
+00:03:44.440 --> 00:03:49.940
+specified element at a specified position
+in the list. Well neither one of those is
+
+00:03:49.940 --> 00:03:56.220
+saying anything about sorting. Now it's not
+a bad idea to actually click on these and
+
+00:03:56.220 --> 00:04:02.170
+make sure you understand what it's doing.
+So, let's read all the instructions.
+
+00:04:02.170 --> 00:04:06.700
+This inserts the specified element at the
+specified position in the list. It shifts
+
+00:04:06.700 --> 00:04:11.750
+the element currently at that position, if
+there is any, and any subsequent elements
+
+00:04:11.750 --> 00:04:18.329
+to the right by adding one to their indices.
+Huh, so that's sort of interesting. Notice
+
+00:04:18.329 --> 00:04:23.420
+that we're going to get an index out of bound
+exception, which is Java's way of saying that
+
+00:04:23.420 --> 00:04:28.970
+this just isn't going to work if the index
+is less than zero or is greater than size.
+
+00:04:28.970 --> 00:04:34.350
+Now something to pay attention to here is
+that it was not greater than or equal to size—the
+
+00:04:34.350 --> 00:04:39.380
+index being equal to size is actually OK.
+These are the kinds of boundary conditions
+
+00:04:39.380 --> 00:04:43.340
+that you need to watch for very, very carefully
+when you're doing code.
+
+00:04:43.340 --> 00:04:49.750
+So for all of our work reading the API, the
+thing we know at this point is that the API
+
+00:04:49.750 --> 00:04:55.380
+doesn't have any way of keeping data in sorted
+order. So, our looking for one that adds it
+
+00:04:55.380 --> 00:05:01.210
+in sorted order just didn't pan out. That
+happens sometimes. So what we have to do is
+
+00:05:01.210 --> 00:05:07.200
+work with the tools that are in the API. Now
+that first add command, that one isn't going
+
+00:05:07.200 --> 00:05:11.910
+to help us out, because that's just putting
+things at the end of the list. So unless our
+
+00:05:11.910 --> 00:05:17.240
+data happens to magically, automatically always
+be in sorted order, that isn't going to work
+
+00:05:17.240 --> 00:05:22.220
+either. So that second add method, the one
+with the index in it, that has to be the one
+
+00:05:22.220 --> 00:05:28.060
+we want to use. So what we're going to need
+to do is find the correct index for the data
+
+00:05:28.060 --> 00:05:31.220
+and then insert a new element at that index.
+
+00:05:31.220 --> 00:05:35.560
+Now we need to make sure the method shifts
+data aside. Well guess what? It does, we just
+
+00:05:35.560 --> 00:05:42.560
+read the Java API to know that. So then the
+question becomes how do we find the index?
+
+00:05:42.860 --> 00:05:47.860
+This is a little trickier. There is a method
+in the String class that's called compareTo,
+
+00:05:47.860 --> 00:05:53.110
+and we haven't used it before so now it's
+time to really talk about what this means.
+
+00:05:53.110 --> 00:05:59.139
+It uses something called lexicographic ordering.
+Now this is kind of the same as alphabetical
+
+00:05:59.139 --> 00:06:03.800
+order, but it's a little bit different. And
+the reason it's different is because uppercase
+
+00:06:03.800 --> 00:06:09.010
+and lowercase letters are different in ASCII,
+and they aren't in English. So let's go back
+
+00:06:09.010 --> 00:06:12.990
+and look at an ASCII table again and sort
+of refresh our memory on this.
+
+00:06:12.990 --> 00:06:18.180
+Here's an ASCII table, and notice over here
+are our capital letters: capital A through
+
+00:06:18.180 --> 00:06:24.760
+capital Z, and over here are our small letters
+-- little A through little Z. So the capital
+
+00:06:24.760 --> 00:06:30.310
+letters come first. They're at smaller decimal
+values, which is what this leftmost column
+
+00:06:30.310 --> 00:06:36.389
+is, than the smaller letters. So in other
+words-- capital A and little A are two different
+
+00:06:36.389 --> 00:06:43.389
+things, and capital A comes before little
+A. So that's how lexicographic ordering is
+
+00:06:44.280 --> 00:06:47.710
+different than alphabetical ordering.
+
+00:06:47.710 --> 00:06:52.810
+So the way lexicographic ordering works is
+Strings are compared one character at a time
+
+00:06:52.810 --> 00:06:59.090
+until a non-matching character is found. Now
+it starts from the left. Which makes sense,
+
+00:06:59.090 --> 00:07:04.510
+that's similar to alphabetic ordering. If
+all the characters match then the length is
+
+00:07:04.510 --> 00:07:10.460
+compared. Let's take a look at how all the
+details work here. So let's say we have a
+
+00:07:10.460 --> 00:07:17.460
+String first which has Abby in it, and then
+a String second that has Abigail. Now we know
+
+00:07:17.560 --> 00:07:22.520
+in alphabetic ordering that Abby would be
+before Abigail—let's see if that's true
+
+00:07:22.520 --> 00:07:29.340
+in lexicographic ordering. So we're going
+to do first.compareTo(second).
+
+00:07:29.340 --> 00:07:33.560
+Well what's going to happen is the capital
+A in Abby is going to be compared to the capital
+
+00:07:33.560 --> 00:07:40.560
+A in Abigail. Both letters are the same. So
+then they compare an index one. The B in Abby
+
+00:07:40.949 --> 00:07:46.530
+will be compared to the B in Abigail. Those
+letters are the same, and so we're still having
+
+00:07:46.530 --> 00:07:53.530
+a zero here. Then we compare the second B
+in Abby to the I in Abigail. If you take the
+
+00:07:53.900 --> 00:08:00.120
+number that the letter B represents and you
+subtract the number that the letter I represents,
+
+00:08:00.120 --> 00:08:05.020
+this will be a negative number. And because
+it's negative that means Abby with come before
+
+00:08:05.020 --> 00:08:11.570
+Abigail. So this is how lexicographic ordering
+works.
+
+00:08:11.570 --> 00:08:15.979
+Let's look at another example. Now I'm using
+a little bit of different syntax here and
+
+00:08:15.979 --> 00:08:22.479
+one you may not have seen before. It's actually
+legal to use double quote ABC double quote
+
+00:08:22.479 --> 00:08:27.310
+where you would have a String identifier and
+use the compareTo method. This can be kind
+
+00:08:27.310 --> 00:08:34.310
+of handy to know it sometimes. So let's see
+what happens when we compare ABC to ABCDE.
+
+00:08:34.709 --> 00:08:41.249
+Well, the little A is compared to the little
+A first -- they match. The little B is compared
+
+00:08:41.249 --> 00:08:48.249
+to the little B -- they match. The C is compared
+to the C -- they match. When all the characters
+
+00:08:48.839 --> 00:08:53.980
+match like that and one of the Strings has
+ended, what Java does is it uses the difference
+
+00:08:53.980 --> 00:09:00.619
+in length to determine the result. So it takes
+the length of ABC, which is three and subtracts
+
+00:09:00.619 --> 00:09:06.470
+the length of ABCDE, which is five, which
+gives us a negative value. Remember that a
+
+00:09:06.470 --> 00:09:13.470
+negative value means that ABC will come before
+ABCDE. So we know now that the shorter String
+
+00:09:15.279 --> 00:09:18.129
+object comes first.
+
+00:09:18.129 --> 00:09:23.889
+Now when Strings have all of the same characters
+and are the same length, then zero is returned.
+
+00:09:23.889 --> 00:09:30.889
+So compareTo contains a negative number when
+the first String is less than the second one,
+
+00:09:30.910 --> 00:09:37.670
+when it comes before. Zero when it's the same,
+positive when the first String is greater
+
+00:09:37.670 --> 00:09:43.730
+than the second one. Now if all that is confusing
+remember that it's documented in the API.
+
+00:09:43.730 --> 00:09:48.279
+It's a little bit hard to read, but you can
+do it. Let's take a look at what this method
+
+00:09:48.279 --> 00:09:50.360
+would look like.
+
+00:09:50.360 --> 00:09:56.809
+First we'll have public static void add, ArrayList
+String list, and String target. So that's
+
+00:09:56.809 --> 00:10:01.889
+the signature we talked about earlier. Now
+what we need to do is we need to step through
+
+00:10:01.889 --> 00:10:08.709
+the list one element at a time and see if
+we found the right place to insert it. So
+
+00:10:08.709 --> 00:10:14.360
+we start with an index at zero, and we make
+sure that our index doesn't go greater than
+
+00:10:14.360 --> 00:10:21.360
+the size of the list, which is list.size.
+Now inside that loop we compare list.getOfIndex,
+
+00:10:23.529 --> 00:10:29.720
+so that's the String at that index to the
+target. If it's less than zero, what that
+
+00:10:29.720 --> 00:10:36.720
+means is the value at that index comes before
+the target. Well in that case you want to
+
+00:10:36.910 --> 00:10:40.800
+keep moving on, so we increment the index.
+
+00:10:40.800 --> 00:10:46.170
+Now the first time that you find a value that's
+bigger than the target—well guess what?
+
+00:10:46.170 --> 00:10:50.740
+That means you've found the place where you
+want to do your insertion. So to do the insertion
+
+00:10:50.740 --> 00:10:57.740
+you use list.addIndex, target. So that's the
+add method we looked at in the Java API, and
+
+00:10:58.850 --> 00:11:03.869
+then we return. Now what the return does is
+it takes us outside of this method -- so at
+
+00:11:03.869 --> 00:11:06.160
+that point we know we're finished.
+
+00:11:06.160 --> 00:11:12.220
+Now, if we get all the way through that while
+loop and we have not found a place where our
+
+00:11:12.220 --> 00:11:17.529
+target value is smaller than one of the values
+in it that means we need to add it onto the
+
+00:11:17.529 --> 00:11:23.829
+end. And so that's what's happening way down
+at the bottom, we have list.AddOfIndex and
+
+00:11:23.829 --> 00:11:29.360
+target. Now if you think of what value index
+will have at that point, the index less than
+
+00:11:29.360 --> 00:11:36.360
+list.size, that test has just failed. So that
+means the index is going to be equal to list.size.
+
+00:11:37.839 --> 00:11:41.920
+Remember when we were looking at the API?
+We determined that that was actually a legal
+
+00:11:41.920 --> 00:11:46.679
+condition, that's how you add things onto
+the end of the list. And so that's how you
+
+00:11:46.679 --> 00:11:50.629
+keep a list in sorted order. So keep programming.
+

@@ -1,0 +1,672 @@
+WEBVTT
+Kind: captions
+Language: en
+
+00:00:01.000 --> 00:00:04.000
+&gt;&gt;Dr. Deborah Trytten: Now that you've learned
+about command line interaction, let's use
+
+00:00:04.000 --> 00:00:11.000
+it to improve our target heart rate program.
+Here's the problem statement again: to get
+
+00:00:11.349 --> 00:00:16.270
+the maximum benefit from exercise, your heart
+rate needs to be increased. There's a formula
+
+00:00:16.270 --> 00:00:22.000
+that's widely used. Subtract your age from
+220, and your target heart rate should be
+
+00:00:22.000 --> 00:00:27.920
+between 65 and 85% of this value. And we need
+to remember that people count their pulse
+
+00:00:27.920 --> 00:00:34.920
+usually for only 10 seconds. Recall that we
+had some chosen variables. We had age, which
+
+00:00:35.550 --> 00:00:40.980
+was an integer. We had our weird constant
+that was also an integer, a double for low
+
+00:00:40.980 --> 00:00:46.739
+percent and high percent, a double for 10
+seconds. Now, at the time we actually said
+
+00:00:46.739 --> 00:00:53.660
+1.6666667, but remember we didn't know how
+to divide then. One thing I want you to notice
+
+00:00:53.660 --> 00:01:00.660
+is that I divided 10.0 by 60.0. I didn't divide
+10 by 60. When you divide 10 by 60, you get
+
+00:01:01.920 --> 00:01:07.680
+zero because 10 and 60 are both integers,
+so even though it's a fractional part, remember
+
+00:01:07.680 --> 00:01:14.680
+it gets truncated to zero. So we definitely
+want 10.0 divided by 60.0. And we had a string
+
+00:01:15.049 --> 00:01:19.040
+called first name.
+
+00:01:19.040 --> 00:01:22.420
+Now if we're going to write a program for
+this, the first thing we need to do is to
+
+00:01:22.420 --> 00:01:29.420
+create a class. There are four basic pieces
+to this. We open Eclipse, create a new project,
+
+00:01:29.520 --> 00:01:36.520
+then create a new class, and create a main
+program. So let's go and do that. Here's Eclipse
+
+00:01:38.439 --> 00:01:45.439
+opening up... 
+Here's the workspace... Next, we create a
+new project, so that's File, New, Java project.
+
+00:02:04.299 --> 00:02:11.299
+Let's call this "Target Heart Rate Iteration
+2." You'll notice that our project appeared
+
+00:02:19.150 --> 00:02:24.280
+here in the package explorer. Now you can
+turn the package explorer on and off if you
+
+00:02:24.280 --> 00:02:29.060
+wish. For example, if you like to have more
+space on your screen, sometimes it helps to
+
+00:02:29.060 --> 00:02:36.060
+not have the package explorer showing. That's
+controlled under Window, Package Explorer,
+
+00:02:39.260 --> 00:02:43.790
+so that's how you'd get it back if you decided
+to get rid of it with the little x. For right
+
+00:02:43.790 --> 00:02:49.599
+now it's kind of nice to have it around. I'm
+going to click on the source directory in
+
+00:02:49.599 --> 00:02:56.050
+my project because that's where I want my
+Java files to be saved. The little green bull's-eye
+
+00:02:56.050 --> 00:03:01.819
+here is how you create a new Java class. You
+can also do it from the file menu if you wish
+
+00:03:01.819 --> 00:03:08.819
+to—File, New, and then Class. But the green
+target's quicker. I'm going to call my class
+
+00:03:15.019 --> 00:03:22.019
+Target Heart Rate. Now, we do want to have
+a main program in our class, and so I've checked
+
+00:03:23.440 --> 00:03:28.900
+the box here. The box is checked by default
+by the way. Do remember that you need to know
+
+00:03:28.900 --> 00:03:33.299
+how to create a main program on your own,
+so you probably want to wait a little while
+
+00:03:33.299 --> 00:03:40.299
+before checking this box. In fact, let's uncheck
+it, and I'll create it with you. So here's
+
+00:03:42.470 --> 00:03:44.030
+our class.
+
+00:03:44.030 --> 00:03:49.330
+Now Eclipse and I don't agree on where curly
+braces belong. I like my curly braces to line
+
+00:03:49.330 --> 00:03:54.349
+up on the left-hand side. Eclipse likes them
+in the other place. I don't really care which
+
+00:03:54.349 --> 00:04:00.909
+way you do it. There are certainly good programmers
+who are members of both camps. Let's create
+
+00:04:00.909 --> 00:04:07.909
+a main program: public static void main string
+square brackets args. Now unfortunately this
+
+00:04:13.560 --> 00:04:17.989
+isn't going to make any sense at this point.
+It's kind of a magic incantation that keeps
+
+00:04:17.989 --> 00:04:24.139
+your program running, but what the computer
+does is it finds the main program and it executes
+
+00:04:24.139 --> 00:04:31.139
+the instructions in them one instruction at
+a time. The next thing we should do is design
+
+00:04:31.910 --> 00:04:37.410
+the program. Now sometimes people get so excited
+to be programming they forget to actually
+
+00:04:37.410 --> 00:04:41.720
+think about what they're doing first, and
+I like to do that. I found that it saves me
+
+00:04:41.720 --> 00:04:46.280
+a lot of time in the long run. So we're going
+to use comments to describe what the program
+
+00:04:46.280 --> 00:04:50.800
+should do. Now virtually all of our programs
+are going to do the same thing now. They're
+
+00:04:50.800 --> 00:04:56.500
+going to get input from the user, perform
+some calculation, and show output to the user.
+
+00:04:56.500 --> 00:05:02.910
+So let's implement this one step at a time.
+The first thing we'll implement is getting
+
+00:05:02.910 --> 00:05:09.910
+input from the user. We'll do that after we
+put comments in our code. So here's Eclipse.
+
+00:05:12.380 --> 00:05:19.380
+The input we need from the user is their age
+and their name. So that will be what our comment
+
+00:05:23.250 --> 00:05:28.300
+is. Notice that Eclipse makes comments green
+by default, so that's one of the ways you
+
+00:05:28.300 --> 00:05:35.300
+can tell when something's in a comment. Calculate
+the user's heart rate minimum and maximum,
+
+00:05:43.650 --> 00:05:50.650
+and show the target heart rates to the user.
+So those are our comments that give some structure
+
+00:05:50.930 --> 00:05:57.930
+to our program. To actually get the input
+from the user, we need to construct a scanner
+
+00:05:58.470 --> 00:06:04.819
+object. And remember that age is an integer,
+so we'll get it using next int and name as
+
+00:06:04.819 --> 00:06:11.259
+a string, and we'll get it using next line.
+In Eclipse our scanner object usually goes
+
+00:06:11.259 --> 00:06:17.160
+right at the start of the main program. We
+can call it whatever we want. I often call
+
+00:06:17.160 --> 00:06:24.160
+mine keyboard, but not always. Scanner keyboard
+equals new scanner of system dot in semicolon
+
+00:06:27.449 --> 00:06:32.789
+after it, of course. Now you'll notice Eclipse
+isn't happy right now. It has a little red
+
+00:06:32.789 --> 00:06:38.110
+line under scanner. This is because we have
+not told Eclipse where to find the scanner
+
+00:06:38.110 --> 00:06:45.110
+class. To tell it that, we say import Java
+dot util dot scanner, and now Eclipse is happy
+
+00:06:52.500 --> 00:06:58.330
+again. Well, actually it's only kind of happy.
+Notice it does have a little yellow warning.
+
+00:06:58.330 --> 00:07:02.669
+Now, you don't actually have to pay attention
+to yellow warnings, but sometimes they have
+
+00:07:02.669 --> 00:07:08.419
+valuable information, so it's not a bad idea.
+In this case what we're being warned about
+
+00:07:08.419 --> 00:07:13.910
+is the fact that we haven't used the keyboard
+to do anything. Eclipse worries about that
+
+00:07:13.910 --> 00:07:16.930
+because that tends to be a mistake.
+
+00:07:16.930 --> 00:07:23.930
+So now we're going to get the user's name
+and age. Remember the name was a string, and
+
+00:07:24.680 --> 00:07:30.180
+the age was an int. When we get input from
+users, we always have to prompt them and tell
+
+00:07:30.180 --> 00:07:37.180
+them what to enter, so let's do that. To prompt
+the user, you use system out print line, and
+
+00:07:41.509 --> 00:07:48.509
+we'll say enter your age. So age is keyboard,
+which is the name of our scanner object, dot
+
+00:07:55.449 --> 00:08:02.449
+next int. The next thing we want to get is
+the person's name, system out print line enter
+
+00:08:07.740 --> 00:08:14.740
+your name. So name equals keyboard dot next
+line. Now the reason we're using next line
+
+00:08:24.669 --> 00:08:29.430
+there is that people's names can have more
+than one part. You could have a first name
+
+00:08:29.430 --> 00:08:36.229
+and a middle name and a last name, for example,
+and this will get all those different parts.
+
+00:08:36.229 --> 00:08:41.630
+Particularly when you're new to programming,
+it's a good idea to echo your input, so let's
+
+00:08:41.630 --> 00:08:48.630
+do that. So your name is, and this is in a
+system out print line statement, name, and
+
+00:08:57.740 --> 00:09:04.740
+system dot out dot print line your age is
+plus age. We're now ready to run our program.
+
+00:09:10.959 --> 00:09:15.899
+Running a program goes with the little arrow
+key up here. You can also call it from a menu
+
+00:09:15.899 --> 00:09:21.420
+if you want. It's the run menu right here.
+It's the first choice in it. But I find the
+
+00:09:21.420 --> 00:09:28.420
+little arrow to be much more convenient. So
+we're going to enter your age. I'm going to
+
+00:09:31.470 --> 00:09:38.360
+lie egregiously and say that I'm 19. And oh
+my goodness, our program did something wrong.
+
+00:09:38.360 --> 00:09:42.830
+Notice it didn't wait to get my name. And
+now it says my name is blank, and my age is
+
+00:09:42.830 --> 00:09:47.450
+19. So the age is being entered all right,
+but the name isn't.
+
+00:09:47.450 --> 00:09:52.260
+Now, let me be honest. Normally you enter
+the name first, then the age. And the reason
+
+00:09:52.260 --> 00:09:56.410
+I did it in this order was to show you this
+problem because it's a very common problem
+
+00:09:56.410 --> 00:10:03.410
+to have come up. What's happened here is after
+we entered 19, we hit the carriage return.
+
+00:10:04.410 --> 00:10:10.300
+That probably looks like an enter on your
+keyboard. The next line method reads that
+
+00:10:10.300 --> 00:10:16.680
+carriage return as the next character to be
+read, and as a result it doesn't have a name
+
+00:10:16.680 --> 00:10:22.180
+at all. The name is empty at this point. So
+we have to do this a little bit differently.
+
+00:10:22.180 --> 00:10:29.180
+To fix this problem, what we do is explicitly
+read in the carriage return right after the
+
+00:10:31.720 --> 00:10:37.529
+integer. That way when the name is entered,
+it will be on the next line and will be read
+
+00:10:37.529 --> 00:10:44.529
+in properly. Let's run our program again.
+The age is 19, the name, Deborah. Name is
+
+00:10:52.790 --> 00:10:58.640
+Deborah, age is 19. I think you can see some
+of the advantages of working on programs a
+
+00:10:58.640 --> 00:11:04.320
+little bit at a time now. If we hadn't done
+this work, if we hadn't printed things out,
+
+00:11:04.320 --> 00:11:09.470
+we wouldn't know that we had made that mistake
+until much later. It is much easier to debug
+
+00:11:09.470 --> 00:11:14.850
+three lines of code than it is to debug ten
+lines of code.
+
+00:11:14.850 --> 00:11:19.480
+So our strategy is going to be check early
+and check often. We wanted to make sure the
+
+00:11:19.480 --> 00:11:26.390
+input's working, and now it is. Here's another
+explanation of what happened in our code.
+
+00:11:26.390 --> 00:11:32.010
+When the program prompted enter your age,
+I entered 19 and then the enter key. It then
+
+00:11:32.010 --> 00:11:38.370
+prompted enter your first name, and I entered
+Deborah and the enter key. The 19 was read
+
+00:11:38.370 --> 00:11:44.610
+by the next int, and the enter was originally
+read by the next line. We fixed it by reading
+
+00:11:44.610 --> 00:11:51.610
+the enter by the next line, and then using
+another next line statement to get the name.
+
+00:12:01.730 --> 00:12:08.730
+Let's recall the math. Let's say you're 19.
+220 minus 19 is 201. 201 times 65 divided
+
+00:12:11.899 --> 00:12:18.899
+by 100 is 130.65. 201 times 85 divided by
+100 is 170.85. So your target heart rate would
+
+00:12:22.529 --> 00:12:29.529
+be between 131 and 171 beats per minute. This
+means your ten second pulse would be between
+
+00:12:30.480 --> 00:12:37.480
+130.65 times 10 divided by 60, which is 21.83,
+and 170.85 times 10 divided by 60, which is
+
+00:12:44.740 --> 00:12:49.700
+28.5. Now remember this slide is written in
+math, not Java, so we're not thinking about
+
+00:12:49.700 --> 00:12:54.149
+things like integer division versus double
+division.
+
+00:12:54.149 --> 00:12:59.310
+Let's create this calculation. Now, we want
+to perform and check one step at a time, and
+
+00:12:59.310 --> 00:13:03.880
+we want to be very careful about the differences
+between double and int. Remember that these
+
+00:13:03.880 --> 00:13:08.920
+do not work the same in computer science that
+they do in math. Division is particularly
+
+00:13:08.920 --> 00:13:13.850
+troublesome, so it always pays to take an
+extra second to consider division when you're
+
+00:13:13.850 --> 00:13:20.850
+writing code. Now we had some constants. We
+had crazy constant, which equaled 220. We
+
+00:13:32.540 --> 00:13:39.540
+had double low percent, which equaled 0.65.
+Now that zero actually isn't required there,
+
+00:13:45.600 --> 00:13:49.550
+but I like to put it in when I have doubles
+to make it very clear that I'm dealing with
+
+00:13:49.550 --> 00:13:55.230
+a double. Periods can be very small on the
+screen, and so it helps to put the zero there
+
+00:13:55.230 --> 00:14:02.230
+so you can see that there's a period more
+easily. Then we'll have final double high
+
+00:14:02.760 --> 00:14:09.760
+percent is 0.85. So the first thing we did
+is we have our value, which we're going to
+
+00:14:16.760 --> 00:14:23.760
+call an int, which is crazy constant minus
+age. Now the parentheses there are not necessary,
+
+00:14:31.690 --> 00:14:38.690
+and in fact I'm not sure they're helpful,
+so I'm going to take them out. Now we'll have
+
+00:14:44.389 --> 00:14:51.389
+a double, which I'll call low heart rate,
+and that's going to equal value times low
+
+00:14:54.570 --> 00:15:01.570
+percent. And we'll have a double called high
+heart rate, and it will equal value times
+
+00:15:07.709 --> 00:15:14.709
+high percent. Looking at the code here, I
+see that I forgot a space before low percent.
+
+00:15:14.820 --> 00:15:18.959
+It doesn't actually matter to how the code
+works, but on the other hand you want to keep
+
+00:15:18.959 --> 00:15:24.370
+your code as beautiful as you possibly can.
+It's very well worth the time you spend beautifying
+
+00:15:24.370 --> 00:15:31.370
+code. Now these are doubles, and we need to
+change them to 10 second heart rates before
+
+00:15:32.889 --> 00:15:37.509
+we can print them out. It might not be a bad
+idea to print them out right now just to make
+
+00:15:37.509 --> 00:15:44.509
+sure that everything's going okay. So let's
+do system out print line low is plus low heart
+
+00:15:48.800 --> 00:15:55.800
+rate, and system out print line high is and
+then high heart rate. We probably aren't going
+
+00:16:03.630 --> 00:16:08.509
+to keep this in the program permanently. We're
+just doing it to check as we go along. This
+
+00:16:08.509 --> 00:16:15.509
+is the "write a little, compile a little,
+test a little" strategy. So when we run again,
+
+00:16:18.529 --> 00:16:25.529
+we'll see enter your age, which I will once
+again set at 19, very falsely, and we see
+
+00:16:30.350 --> 00:16:37.350
+we're between 130.65 and 170.85. So it looks
+like everything's going just fine. So let's
+
+00:16:38.220 --> 00:16:45.220
+get rid of those. We might also get rid of
+the your name is Deborah and your age is 18
+
+00:16:46.050 --> 00:16:50.600
+because those were also just debugging code.
+Now there are some people that like to just
+
+00:16:50.600 --> 00:16:55.670
+comment things like that out, and sometimes
+that can be a good idea. I think it tends
+
+00:16:55.670 --> 00:17:00.630
+to make the code look messy though, and so
+I don't like it. I like my code to be clean
+
+00:17:00.630 --> 00:17:07.630
+and easy to read. Now we need to change to
+a 10 second heart rate. So we had a final,
+
+00:17:13.319 --> 00:17:20.319
+which is a double, and we called it something
+like 10 seconds, and it equals 10.0 divided
+
+00:17:22.650 --> 00:17:29.510
+by 60.0. Remember we put the point zeros in
+there to keep this as a double division. If
+
+00:17:29.510 --> 00:17:36.510
+we made it an integer, it would be zero, and
+that would not be helpful. Now, when people
+
+00:17:42.559 --> 00:17:48.490
+count heart rates, they usually count an integral
+number of beats per 10 seconds. They don't
+
+00:17:48.490 --> 00:17:53.020
+count 10 and a third beats, and in fact, it's
+very hard to do that. So we're going to have
+
+00:17:53.020 --> 00:18:00.020
+to think about how we're going to get our
+10 second heartbeats. Let's do int 10 second
+
+00:18:00.179 --> 00:18:07.179
+low equals—well, we're going to take our
+low heart rate and multiply by 10 seconds.
+
+00:18:11.780 --> 00:18:18.100
+Now, you can see Eclipse isn't happy because
+it has a red line under low heart rate times
+
+00:18:18.100 --> 00:18:24.150
+10 seconds. The reason it's unhappy is because
+of the types. Low heart rate is a double,
+
+00:18:24.150 --> 00:18:29.850
+and 10 seconds is a double. When we multiply
+two doubles together, we get a double, and
+
+00:18:29.850 --> 00:18:34.880
+we're trying to store a double in an integer
+variable. That doesn't work. Java can't figure
+
+00:18:34.880 --> 00:18:38.850
+out whether you want to round or anything
+like that on its own. You have to give it
+
+00:18:38.850 --> 00:18:44.990
+very explicit instructions. So what we're
+going to do is round. So we're going to add
+
+00:18:44.990 --> 00:18:51.990
+0.5 and then truncate. Now, the way you truncate
+in Java is with an integer cast.
+
+00:19:03.919 --> 00:19:10.919
+Probably a good idea for us to print this
+out right now. We can perfect it later 
+just to make sure our program is going in
+
+00:19:21.289 --> 00:19:28.289
+the right direction before we make the same
+mistake twice. Age is 19, still Deborah, and
+
+00:19:37.460 --> 00:19:43.020
+our low is 22. And by the way, in that code
+I made one of the classic mistakes that programmers
+
+00:19:43.020 --> 00:19:48.570
+make a lot. I forgot to put a space before
+low. It's also not very well written, but
+
+00:19:48.570 --> 00:19:55.160
+we were just testing code, so it doesn't matter
+so much. Since that answer we know is correct,
+
+00:19:55.160 --> 00:20:01.820
+we can now do the same thing with the high
+heart rate, so we'll have an int, which I'll
+
+00:20:01.820 --> 00:20:08.820
+call 10 second high, equals and the code will
+be just exactly the same. In fact, you could
+
+00:20:09.260 --> 00:20:16.260
+cut and paste it if you wanted to. We'll learn
+other methods for rounding as we go along.
+
+00:20:22.130 --> 00:20:29.130
+So now let's write some output for our user.
+Your heart should beat between--I'll remember
+
+00:20:34.520 --> 00:20:41.520
+my space this time--10 second low, space,
+and, space, plus 10 second high 
+in 10 seconds. And now we're ready to run
+
+00:21:02.400 --> 00:21:08.280
+our program for the last time. Well, maybe
+it'll be the last time. It's only the last
+
+00:21:08.280 --> 00:21:15.280
+time if we get the answer right. Once again,
+19. Still Deborah. Your heart should beat
+
+00:21:22.210 --> 00:21:27.860
+between 22 and 28 in 10 seconds. Well, that
+doesn't look very pretty. So much for it being
+
+00:21:27.860 --> 00:21:34.860
+the last time. So let's put times in 10 seconds
+and run the program again. It's important
+
+00:21:38.350 --> 00:21:42.380
+that you always rerun the program even when
+you think you made a change that isn't going
+
+00:21:42.380 --> 00:21:49.380
+to matter because it's so easy to make little
+mistakes. Your heart should beat between 22
+
+00:21:50.110 --> 00:21:57.110
+and 28 times in 10 seconds. That looks good.
+So we've shown our output. We've made sure
+
+00:21:57.179 --> 00:22:01.570
+that our output was spelled properly, and
+that the spacing was attractive. Things like
+
+00:22:01.570 --> 00:22:06.039
+that are part of professionalism and are very
+important to computer scientists.
+

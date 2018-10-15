@@ -1,0 +1,36 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html lang="en"><head> <meta content="2015-12-11T16:56:47" http-equiv="last-modified" /> <meta content="1619" name="NTIRelativeScrollHeight" /> <meta content="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.complete_program.1" name="NTIID" /> <meta content="NextThought" name="generator" /> <meta content="text/html; charset=ascii" http-equiv="content-type" /> <title>Complete Program</title> <link href="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.factorial" rel="next" title="Factorial" /> <link href="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.nested_if_statement" rel="prev" title="Nested if Statement" /> <link href="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.reading:Chortle_CH17" rel="up" title="Nesting Loops and Ifs" /> <link href="styles/styles.css" rel="stylesheet" /> <link href="styles/content.css" rel="stylesheet" /> </head> <body id="NTIContent"> <div class="page-contents"><div data-ntiid="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.complete_program.1" id="a0000000451" ntiid="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.complete_program.1"> <div class="chapter title">Complete Program</div> <p class="placeholder"></p> <a name="1bf41c76bc14b11e7e451c18063bc923"></a> <div class="sidebar" data-ntiid="tag:nextthought.com,2011-10:OU-HTML:NTISidebar-CS1323_F_2015_Intro_to_Computer_Programming.sidebar.answer.132" ntiid="tag:nextthought.com,2011-10:OU-HTML:NTISidebar-CS1323_F_2015_Intro_to_Computer_Programming.sidebar.answer.132"> <div class="sidebar-title">Answer</div> The completed program is given below. </div><a name="7c48270a136a0723e398c04a9d6075d0"></a> <p class="par" id="7c48270a136a0723e398c04a9d6075d0">Here is the complete program that adds up even and odd integers from zero the limit, N, specified by the user: </p> <a name="df83f4b52715760fad02bc7f7b8bfd83"></a> <pre>import  java.util.Scanner;
+
+// User enters a value N
+// Add up odd integers,  
+// even  integers, and all integers 1 to N
+//
+class AddUpIntegers
+{
+  public static void main (String[] args ) 
+  {
+    Scanner scan = new Scanner( System.in );
+    int N, sumAll = 0, sumEven = 0, sumOdd = 0;
+
+    System.out.print( "Enter limit value: " );
+    N = scan.nextInt();
+
+    int count = 1;
+    while (  count &lt;= N )    
+    {
+      sumAll = sumAll + count ;
+      
+      if ( count % 2 == 0  )
+        sumEven = sumEven + count ;
+
+      else
+        sumOdd  = sumOdd  + count ;
+
+      count = count + 1 ;
+    }
+
+    System.out.print  ( "Sum of all : " + sumAll  );
+    System.out.print  ( "\tSum of even: " + sumEven );
+    System.out.println( "\tSum of odd : " + sumOdd  );
+  }
+}
+</pre><a name="0efe7bf4fd048f572322fd3b03ee61e9.313"></a> <p class="par" id="0efe7bf4fd048f572322fd3b03ee61e9.313"><span itemprop="nti-data-markupdisabled"> <img crossorigin="anonymous" data-nti-image-full="resources/CS1323_F_2015_Intro_to_Computer_Programming/3f4c1fa390e3ced70b190ccb7ad9fda196c74a37/fd35e23767020999111e1f49239199b4c5eff23e.gif" data-nti-image-half="resources/CS1323_F_2015_Intro_to_Computer_Programming/3f4c1fa390e3ced70b190ccb7ad9fda196c74a37/2cff8dc544afd32305107ce559484cb4ce1730df.gif" data-nti-image-quarter="resources/CS1323_F_2015_Intro_to_Computer_Programming/3f4c1fa390e3ced70b190ccb7ad9fda196c74a37/06aefff9765154841fac3704b0e59674fae7a005.gif" data-nti-image-size="actual" id="0efe7bf4fd048f572322fd3b03ee61e9.314" src="resources/CS1323_F_2015_Intro_to_Computer_Programming/3f4c1fa390e3ced70b190ccb7ad9fda196c74a37/fd35e23767020999111e1f49239199b4c5eff23e.gif" style="width:234px; height:545px" /> </span> </p> <a name="3d1624e64ac4b2486224d34257a444ef"></a> <p class="par" id="3d1624e64ac4b2486224d34257a444ef">It would be odd if you did not copy and paste this program to Notepad, save it to a file, and run it. An even better idea would be to pretend you had not seen it, and to try to create it from scratch. </p> <a name="1c880445a201c0092cdb75c97d7241a0"></a> <div class="sidebar" data-ntiid="tag:nextthought.com,2011-10:OU-HTML:NTISidebar-CS1323_F_2015_Intro_to_Computer_Programming.sidebar.question.138" ntiid="tag:nextthought.com,2011-10:OU-HTML:NTISidebar-CS1323_F_2015_Intro_to_Computer_Programming.sidebar.question.138"> <div class="sidebar-title">Question</div> Which is larger: the sum of evens or the sum of odds? Does the answer to this question change if N is even or odd? </div> </div></div> </body></html>
