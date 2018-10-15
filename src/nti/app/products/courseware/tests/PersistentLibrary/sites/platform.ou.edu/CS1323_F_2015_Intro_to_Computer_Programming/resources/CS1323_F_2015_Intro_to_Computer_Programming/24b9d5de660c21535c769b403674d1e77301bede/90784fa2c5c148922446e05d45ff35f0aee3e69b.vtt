@@ -1,0 +1,379 @@
+WEBVTT
+Kind: captions
+Language: en
+
+00:00:01.000 --> 00:00:07.580
+&gt;&gt;Let's continue our study of perfect and
+oversize arrays by examining a split method.
+
+00:00:07.580 --> 00:00:12.610
+Well first off let's talk about what split
+does. This method was inspired by a method
+
+00:00:12.610 --> 00:00:17.160
+that's in the String class. Now the String
+class method uses something called a regular
+
+00:00:17.160 --> 00:00:21.900
+expression. A fascinating part of computer
+science, but unfortunately something that's
+
+00:00:21.900 --> 00:00:27.019
+beyond the scope of our class. The signature
+for this method depends on how we allocate
+
+00:00:27.019 --> 00:00:31.859
+the array, so we'll discuss what it should
+be a little bit later. What split should do
+
+00:00:31.859 --> 00:00:38.859
+for example is to take a String like 'abc,'
+'def,' 'ghi,' and return an array containing
+
+00:00:40.160 --> 00:00:45.750
+three different Strings. The first, abc, it
+stopped at the c because of the white space.
+
+00:00:45.750 --> 00:00:52.750
+Then def, and it stopped there because of
+the white space, and lastly ghi. Now this
+
+00:00:52.760 --> 00:00:57.940
+array might have three elements, which would
+be perfect, or maybe it could have more. And
+
+00:00:57.940 --> 00:01:02.100
+that's where the complication comes in with
+the signatures.
+
+00:01:02.100 --> 00:01:07.770
+So let's talk about strategy number one, and
+that's a perfect size array. The idea here
+
+00:01:07.770 --> 00:01:12.740
+is you construct the array to the perfect
+size. But this is a little challenging, because
+
+00:01:12.740 --> 00:01:16.750
+in order to construct an array the perfect
+size you have to know what the perfect size
+
+00:01:16.750 --> 00:01:22.140
+is. So you basically have to compute the size
+in advance, and then you can't change the
+
+00:01:22.140 --> 00:01:28.479
+number of elements. The signature of the method
+will be this: String square bracket split
+
+00:01:28.479 --> 00:01:34.450
+from String source. So source is going to
+be the String, sort of like the abc, def,
+
+00:01:34.450 --> 00:01:39.759
+ghi in the last slide, and the String array
+is what's going to be returned. Now in this
+
+00:01:39.759 --> 00:01:44.840
+case the String array has to be the perfect
+size, because if it isn't the perfect size
+
+00:01:44.840 --> 00:01:50.399
+we don't know what size it is-- and that's
+going to make it difficult to interpret.
+
+00:01:50.399 --> 00:01:55.579
+Now the length of the array is going to be
+returned in the dot length field. So this
+
+00:01:55.579 --> 00:02:00.790
+is kind of a sneaky way of returning two things.
+We get the array and it's contents but also
+
+00:02:00.790 --> 00:02:06.820
+the length. So we're getting a little two-for-one
+deal here. So let's talk about what the algorithm
+
+00:02:06.820 --> 00:02:11.810
+will be. The first thing we have to do is
+to figure out the size of the array. Now we
+
+00:02:11.810 --> 00:02:16.190
+can use the scanner for this. We've done this
+trick before where we use a scanner to break
+
+00:02:16.190 --> 00:02:23.190
+up a String based on white space. Then we
+allocate the array to the perfect size, and
+
+00:02:23.230 --> 00:02:28.680
+then we store the result in array. Now unfortunately
+what we have to do at this point is to go
+
+00:02:28.680 --> 00:02:33.840
+through again with the scanner and re-scan
+the whole String. Now in the case of three
+
+00:02:33.840 --> 00:02:38.010
+little Strings this is and insignificant amount
+of effort. If there were more Strings this
+
+00:02:38.010 --> 00:02:40.340
+might be a problem, though.
+
+00:02:40.340 --> 00:02:45.629
+Let's take a look at the code. So here's our
+split method. It's returning a String array
+
+00:02:45.629 --> 00:02:50.530
+and it's taking a String called source. So
+the first thing we do is we use the scanner
+
+00:02:50.530 --> 00:02:55.530
+to break up the source. Now we need to keep
+track of how many elements are going to be
+
+00:02:55.530 --> 00:03:00.650
+in this breakup, because that's how we'll
+know how to allocate the array. So we create
+
+00:03:00.650 --> 00:03:07.650
+a variable called count, we set it to zero,
+and while input.hasNext we read input.next.
+
+00:03:09.209 --> 00:03:15.519
+So this way we'll read, separating a white
+space every single time, and we'll know how
+
+00:03:15.519 --> 00:03:20.260
+many elements should be in the array. The
+next thing we do is we allocate the array
+
+00:03:20.260 --> 00:03:26.790
+to the perfect size. So this is String square
+bracket result equals new String of count.
+
+00:03:26.790 --> 00:03:31.959
+So now we have the perfect size array. The
+only thing we have to do is to recreate that
+
+00:03:31.959 --> 00:03:37.330
+scanner object by reconstructing it, and then
+by stepping through it one more time. Only
+
+00:03:37.330 --> 00:03:42.849
+this time instead of adding one to count,
+we're going to put the data into the array.
+
+00:03:42.849 --> 00:03:48.340
+That's what the second four loop does. And
+the last thing we do of course is return result.
+
+00:03:48.340 --> 00:03:52.769
+So notice we're having to duplicate our efforts
+here. And this is a problem that tends to
+
+00:03:52.769 --> 00:03:56.580
+occur with perfect size arrays.
+
+00:03:56.580 --> 00:04:01.840
+Now here's strategy number two - call an oversize
+array. This is the strategy that's used in
+
+00:04:01.840 --> 00:04:07.580
+the array list class, so it might sound a
+little bit familiar. You use the strategy
+
+00:04:07.580 --> 00:04:13.080
+if the size of the array can't be known in
+advance, or if it has to change. The fact
+
+00:04:13.080 --> 00:04:18.329
+that it has to change is the case that causes
+the array list to be done like this. So what
+
+00:04:18.329 --> 00:04:23.400
+you do is you construct an array with extra
+space in it. We call this capacity instead
+
+00:04:23.400 --> 00:04:29.220
+of size, and we often put in lots and lots
+of extra space. Now that extra space can be
+
+00:04:29.220 --> 00:04:35.160
+a problem too. Even though our computers and
+even our cellphones now have a lot of memory,
+
+00:04:35.160 --> 00:04:39.310
+when you're an engineer you don't want to
+be wasteful of any kind of resource-- even
+
+00:04:39.310 --> 00:04:44.910
+if that resource is memory, because eventually
+it will cause problems. Then we have to keep
+
+00:04:44.910 --> 00:04:49.910
+track of how much the array has been used
+in a separate variable. This I usually call
+
+00:04:49.910 --> 00:04:55.580
+the active side of the array, and I usually
+use the name size for it. So now we've got
+
+00:04:55.580 --> 00:05:01.530
+two things: the array reference, which has
+array allocated with a certain capacity, an
+
+00:05:01.530 --> 00:05:07.000
+extra large capacity. And then we have this
+integer variable that's called size that's
+
+00:05:07.000 --> 00:05:13.330
+keeping track of how much of the array has
+been used. So here's an example of an oversized
+
+00:05:13.330 --> 00:05:19.650
+array. First we allocate the integer array
+data to ten new positions, we set size to
+
+00:05:19.650 --> 00:05:25.870
+zero, and then we're going to put the data
+one two three in the first three positions.
+
+00:05:25.870 --> 00:05:30.130
+Now notice those are indices zero, one, and
+two, that's what that I minus one is doing
+
+00:05:30.130 --> 00:05:36.020
+in the loop. So when we're finished our data
+array has ten positions but only the first
+
+00:05:36.020 --> 00:05:42.160
+three have been used. Our variable size on
+the other hand, it contains the value of three.
+
+00:05:42.160 --> 00:05:47.199
+And so that tells you that three positions
+in the array are actually alive at this point
+
+00:05:47.199 --> 00:05:50.310
+in time.
+
+00:05:50.310 --> 00:05:54.940
+Now let's think about the signature for split
+is going to have to look like. We know we're
+
+00:05:54.940 --> 00:05:59.759
+going to have to return the number of elements
+in the array, because we have no way of pre-calculating
+
+00:05:59.759 --> 00:06:05.960
+that. So that means the return type for the
+method is going to have to be an int. Now
+
+00:06:05.960 --> 00:06:10.710
+this presents a problem because we've got
+to get that array back too. And we know we
+
+00:06:10.710 --> 00:06:15.620
+can't return an array allocated in a method.
+Well we could return it as the return type
+
+00:06:15.620 --> 00:06:20.419
+but remember we're only allowed one return
+type, and since our return type has to be
+
+00:06:20.419 --> 00:06:27.419
+int it can't be a String array. So this is
+a problem. The array has to be allocated in
+
+00:06:27.669 --> 00:06:33.169
+advance, that is before the method starts
+and then passed in as a parameter. That way
+
+00:06:33.169 --> 00:06:38.039
+we can use it. Now if this strategy isn't
+clear to you, make sure you listen to the
+
+00:06:38.039 --> 00:06:43.240
+next lecture in this series because it's going
+to go through this decision in enormous detail
+
+00:06:43.240 --> 00:06:48.360
+and show memory diagrams of what would happen
+if you tried to do this. So here's what the
+
+00:06:48.360 --> 00:06:54.360
+signature is going to have to look like: Int
+split String source. So the String source
+
+00:06:54.360 --> 00:06:59.710
+is the same as it was in the other case, and
+then we have to pass in an array String square
+
+00:06:59.710 --> 00:07:05.830
+bracket result. And that array has to have
+already been allocated. Let's take a look
+
+00:07:05.830 --> 00:07:07.860
+at what the code would look like.
+
+00:07:07.860 --> 00:07:11.680
+Now the first thing you'll notice when you
+look at this code is it's quite a bit shorter.
+
+00:07:11.680 --> 00:07:15.990
+The reason it's shorter is because we don't
+have to calculate the size in advance. Our
+
+00:07:15.990 --> 00:07:21.509
+resolved array has already been allocated.
+So we create the scanner from the source String
+
+00:07:21.509 --> 00:07:26.639
+and then step through it one at a time. Now
+you'll notice that the four loop here has
+
+00:07:26.639 --> 00:07:32.970
+one extra condition in it-- it has to go through
+while input has next, but also we can't step
+
+00:07:32.970 --> 00:07:39.009
+off the end of the array. So that's what index
+less than result dot length is doing. So by
+
+00:07:39.009 --> 00:07:44.410
+checking those two conditions we make sure
+that we have enough space in our array. Then
+
+00:07:44.410 --> 00:07:50.129
+at the end we just return index. So it's quite
+a bit simpler to do it with the oversized
+
+00:07:50.129 --> 00:07:56.990
+array, but the signature looks a little funny.
+So let's make a comparison here. For the perfect
+
+00:07:56.990 --> 00:08:02.810
+size array we have to scan the String twice.
+What's more, the size of the active part of
+
+00:08:02.810 --> 00:08:09.750
+the array is the capacity of the array. And
+the array was allocated inside the split method.
+
+00:08:09.750 --> 00:08:14.770
+With the oversized array we only scan the
+String once. The capacity of the array was
+
+00:08:14.770 --> 00:08:20.379
+larger than the size of the array and the
+array had to be allocated before the method.
+
+00:08:20.379 --> 00:08:24.330
+So the way you allocate the array makes a
+huge difference in how this computation is
+
+00:08:24.330 --> 00:08:26.779
+done. Keep programming!
+

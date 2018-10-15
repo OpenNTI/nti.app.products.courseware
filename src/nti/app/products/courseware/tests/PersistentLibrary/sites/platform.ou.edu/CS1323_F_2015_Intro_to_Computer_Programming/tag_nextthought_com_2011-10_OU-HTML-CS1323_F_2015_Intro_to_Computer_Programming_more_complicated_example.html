@@ -1,0 +1,23 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html lang="en"><head> <meta content="2015-12-11T16:56:47" http-equiv="last-modified" /> <meta content="734" name="NTIRelativeScrollHeight" /> <meta content="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.more_complicated_example" name="NTIID" /> <meta content="NextThought" name="generator" /> <meta content="text/html; charset=ascii" http-equiv="content-type" /> <title>More Complicated Example</title> <link href="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.initializer_lists" rel="next" title="Initializer Lists" /> <link href="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.using_an_expression_as_an_index" rel="prev" title="Using an Expression as an Index" /> <link href="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.reading:Chortle_CH46" rel="up" title="Arrays" /> <link href="styles/styles.css" rel="stylesheet" /> <link href="styles/content.css" rel="stylesheet" /> </head> <body id="NTIContent"> <div class="page-contents"><div data-ntiid="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.more_complicated_example" id="a0000000587" ntiid="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.more_complicated_example"> <div class="chapter title">More Complicated Example</div> <p class="placeholder"></p> <a name="cb4143c768c1f081747d3430db2efa6a"></a> <div class="sidebar" data-ntiid="tag:nextthought.com,2011-10:OU-HTML:NTISidebar-CS1323_F_2015_Intro_to_Computer_Programming.sidebar.answer.250" ntiid="tag:nextthought.com,2011-10:OU-HTML:NTISidebar-CS1323_F_2015_Intro_to_Computer_Programming.sidebar.answer.250"> <div class="sidebar-title">Answer</div> <pre>C:\users\default&gt;java ArrayEg2
+
+cell 3: 0.0
+cell 2: 2.98
+cell 1: 1.43
+</pre> </div><a name="5af3a2bde118fbaf5f7a099c29a7527d"></a> <p class="par" id="5af3a2bde118fbaf5f7a099c29a7527d">Here is a more complicated example of array subscripting: </p> <a name="3fd55ca8aba950e547317e44ec3ba360"></a> <pre>class ArrayEg3
+{
+  public static void main ( String[] args )
+  {
+    double[] val = new double[4];  
+
+    val[0] =  1.5;
+    val[1] = 10.0;
+    val[2] = 15.5;
+
+    int j  = 3;
+    val[j] = val[j-1] + val[j-2];   // same as val[3] = val[2] + val[1]
+
+    System.out.println( "val[" + j + "] == " + val[j] );
+ 
+   }
+}
+</pre><a name="6817c558f94f52b0814116e80a13219e"></a> <div class="sidebar" data-ntiid="tag:nextthought.com,2011-10:OU-HTML:NTISidebar-CS1323_F_2015_Intro_to_Computer_Programming.sidebar.question.263" ntiid="tag:nextthought.com,2011-10:OU-HTML:NTISidebar-CS1323_F_2015_Intro_to_Computer_Programming.sidebar.question.263"> <div class="sidebar-title">Question</div> <a name="1f169b52162c0c20f71dea75b808e974"></a> <p class="par" id="1f169b52162c0c20f71dea75b808e974"> What does the above program print out? </p> <a name="4d95ffa993c855993634b085dd33870c"></a> <blockquote class="quote"> <tt class="ttfamily">val[ ? ] = ?</tt> </blockquote> </div> </div></div> </body></html>

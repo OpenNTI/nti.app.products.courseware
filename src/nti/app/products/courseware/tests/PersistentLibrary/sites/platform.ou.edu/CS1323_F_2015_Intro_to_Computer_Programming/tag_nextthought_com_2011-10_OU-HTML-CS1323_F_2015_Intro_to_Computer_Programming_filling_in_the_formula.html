@@ -1,0 +1,36 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html lang="en"><head> <meta content="2015-12-11T16:56:47" http-equiv="last-modified" /> <meta content="1212" name="NTIRelativeScrollHeight" /> <meta content="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.filling_in_the_formula" name="NTIID" /> <meta content="NextThought" name="generator" /> <meta content="text/html; charset=ascii" http-equiv="content-type" /> <title>Filling in the Formula</title> <link href="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.complete_program.2" rel="next" title="Complete Program" /> <link href="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.gravity_program_skeleton" rel="prev" title="Gravity Program Skeleton" /> <link href="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.reading:Chortle_CH17" rel="up" title="Nesting Loops and Ifs" /> <link href="styles/styles.css" rel="stylesheet" /> <link href="styles/content.css" rel="stylesheet" /> </head> <body id="NTIContent"> <div class="page-contents"><div data-ntiid="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.filling_in_the_formula" id="a0000000460" ntiid="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.filling_in_the_formula"> <div class="chapter title">Filling in the Formula</div> <p class="placeholder"></p> <a name="e1672027dce7ea7c7333190d9e638ec6"></a> <div class="sidebar" data-ntiid="tag:nextthought.com,2011-10:OU-HTML:NTISidebar-CS1323_F_2015_Intro_to_Computer_Programming.sidebar.answer.141" ntiid="tag:nextthought.com,2011-10:OU-HTML:NTISidebar-CS1323_F_2015_Intro_to_Computer_Programming.sidebar.answer.141"> <div class="sidebar-title">Answer</div> Did you get the condition exactly correct? Check below. </div><a name="ab6f6ade10ea5bb5862a86e0cb5719e4"></a> <p class="par" id="ab6f6ade10ea5bb5862a86e0cb5719e4">The program so far: </p> <a name="ed5613c24c54250cb49cad2f63a1aef9"></a> <pre>import java.util.Scanner;
+
+// User picks ending value for time, t.
+// The program calculates and prints 
+// the distance the brick has fallen for each t.
+//
+class FallingBrick
+{
+  public static void main (String[] args )  
+  {
+    final  double G = 9.80665;  // constant of gravitational acceleration
+    int    t, limit;            // time in seconds; ending value of time
+    double distance;            // the distance the brick has fallen
+    Scanner scan = new Scanner( System.in );
+
+    System.out.print( "Enter limit value: " );
+    limit = scan.nextInt();
+
+    // Print a table heading
+    System.out.println( "seconds\tDistance"  );  // '\t' is tab
+    System.out.println( "-------\t--------"  ); 
+
+    t  =  0 ;
+    while (  t &lt;= limit )    
+    {
+
+      ____________  // calculate distance
+
+      ____________  // output result
+
+      t = t + 1 ;
+    }
+
+  }
+}
+</pre><a name="d357d3679ad61af5de34e6f086b85a07"></a> <p class="par" id="d357d3679ad61af5de34e6f086b85a07">The loop body will execute for <b class="bfseries"><tt class="ttfamily">t</tt></b> = 0, 1, 2, ..., limit. At the end of the last execution, <b class="bfseries"><tt class="ttfamily">t</tt></b> is changed to <b class="bfseries"><tt class="ttfamily">(limit+1)</tt></b>. But the conditional expression will not allow execution back into the loop body when <b class="bfseries"><tt class="ttfamily">t</tt></b> is <b class="bfseries"><tt class="ttfamily">(limit+1)</tt></b>. </p> <a name="f12b2c6f8c7bd2337c57ec0f90655698"></a> <p class="par" id="f12b2c6f8c7bd2337c57ec0f90655698">Now let us calculated the distance for each value of <b class="bfseries"><tt class="ttfamily">t</tt></b> using the formula: </p> <a name="46b2127b1a831c944bfb822ca16c5a5d.320"></a> <blockquote class="quote"> <tt class="ttfamily">distance = (1/2)*G*t</tt><sup>2</sup> </blockquote><a name="cb9afdd1b21bb27c6cd52929b67ace05"></a> <p class="par" id="cb9afdd1b21bb27c6cd52929b67ace05">Translate the formula into a Java statement to fill the first blank. </p> <a name="dccc65d900f049881a2981796c720d3c"></a> <div class="sidebar" data-ntiid="tag:nextthought.com,2011-10:OU-HTML:NTISidebar-CS1323_F_2015_Intro_to_Computer_Programming.sidebar.question.147" ntiid="tag:nextthought.com,2011-10:OU-HTML:NTISidebar-CS1323_F_2015_Intro_to_Computer_Programming.sidebar.question.147"> <div class="sidebar-title">Question</div> Fill in the two blanks. Use a tab character in the output statement. Watch out: there are <b class="bfseries">two traps!</b> </div> </div></div> </body></html>

@@ -1,0 +1,253 @@
+WEBVTT
+Kind: captions
+Language: en
+
+00:00:00.780 --> 00:00:05.500
+&gt;&gt; Deborah Trytten: Let's talk a little bit
+about the difference between int and double.
+
+00:00:05.500 --> 00:00:09.500
+Every time we declare a numeric variable,
+we've got to decide whether we're going to
+
+00:00:09.500 --> 00:00:15.929
+create an int, which has no decimal point
+or a double, which has a decimal point. Now
+
+00:00:15.929 --> 00:00:20.740
+you've never had to make this choice before
+probably, so you may be wondering, "Why exactly
+
+00:00:20.740 --> 00:00:26.800
+do we have to make the choice now?" You probably
+remember from algebra that two and two point
+
+00:00:26.800 --> 00:00:33.230
+zero are the same thing. But algebra is done
+with real numbers, and real numbers have this
+
+00:00:33.230 --> 00:00:38.550
+really cool property that between every two
+real numbers there's another one. This is
+
+00:00:38.550 --> 00:00:43.550
+called continuity and it's totally amazing.
+It's one of the really special and fantastic
+
+00:00:43.550 --> 00:00:50.370
+things about that part of mathematics. But
+the problem is, the continuity is only possible
+
+00:00:50.370 --> 00:00:56.350
+if you have an infinite number of numbers
+available. Well nothing is infinite in a computer,
+
+00:00:56.350 --> 00:01:02.359
+and so we don't have real numbers and we don't
+have continuity. So since the numbers in programs
+
+00:01:02.359 --> 00:01:07.880
+are not continuous, we have to store the numbers
+using bits because bits are all we have in
+
+00:01:07.880 --> 00:01:13.719
+a computer. Now when I say a bit I mean a
+single zero or one. So if we were going to
+
+00:01:13.719 --> 00:01:19.610
+use two bits to store integers we would only
+have four numbers. They would be zero, which
+
+00:01:19.610 --> 00:01:26.469
+would be stored as zero zero, one which would
+be stored as zero one, negative one would
+
+00:01:26.469 --> 00:01:31.990
+be stored as one zero. This is called two's
+compliment notation if you want to look at
+
+00:01:31.990 --> 00:01:37.229
+it online, but we're not going to cover it
+in this class. And one one means negative
+
+00:01:37.229 --> 00:01:43.649
+two. So notice when we have only two bits
+we have a very limited range of ints. Now
+
+00:01:43.649 --> 00:01:48.450
+there's some real weirdness that happens as
+a result of that. Each int in our program
+
+00:01:48.450 --> 00:01:53.630
+is going to be allocated thirty-two bits,
+and this limits the range of integers. It
+
+00:01:53.630 --> 00:01:58.499
+limits them to about negative two billion
+to positive two billion. Now that's a lot
+
+00:01:58.499 --> 00:02:02.320
+of integers and it's really not going be a
+problem in most of the programs were going
+
+00:02:02.320 --> 00:02:08.979
+write this semester and maybe even all of
+them. But it does cause trouble sometimes.
+
+00:02:08.979 --> 00:02:14.159
+So what happens if we try to store a number
+that's too big or too small in an int? Well
+
+00:02:14.159 --> 00:02:21.000
+integers do something that's called wrap around.
+That is if you add one to the biggest possible
+
+00:02:21.000 --> 00:02:27.480
+int, you get the smallest negative int. It
+actually changes signs. Now this is a huge
+
+00:02:27.480 --> 00:02:32.230
+problem. When this happens it's usually pretty
+disastrous for the program and it's made worse
+
+00:02:32.230 --> 00:02:37.480
+by the fact that Java doesn't flag, Java doesn't
+tell you that this has happened, so this is
+
+00:02:37.480 --> 00:02:42.420
+something you have to be very careful about.
+If we have students who are majoring in meteorology
+
+00:02:42.420 --> 00:02:48.760
+for example, your discipline is the kind of
+discipline where this causes a problem. What's
+
+00:02:48.760 --> 00:02:53.959
+more if we subtract one from the smallest
+negative int, you get the biggest positive
+
+00:02:53.959 --> 00:02:59.110
+int. So it's sort of as if the ints were in
+a circle. And you can be anywhere on that
+
+00:02:59.110 --> 00:03:03.430
+circle but you can't get off it.
+
+00:03:03.430 --> 00:03:08.730
+Well my students usually say "Well great!
+Let's make everything double." There's a problem
+
+00:03:08.730 --> 00:03:15.730
+with that too. The problem is the double values
+are not exact. For example we can't represent
+
+00:03:15.950 --> 00:03:21.239
+one third exactly. Now you're actually familiar
+with that from algebra, because you can do
+
+00:03:21.239 --> 00:03:25.900
+like point three, three, three, and then you
+put a little bar over it to indicate that
+
+00:03:25.900 --> 00:03:30.769
+the three repeats forever? Well we don't have
+anything like that available in the computer,
+
+00:03:30.769 --> 00:03:36.500
+again because we have to use a finite number
+of bits - sixty-four in this case.
+
+00:03:36.500 --> 00:03:43.430
+Now Java doesn't have any fractions either,
+all we have are decimals. Now int values on
+
+00:03:43.430 --> 00:03:48.430
+the other hand are exact. There's no one and
+a half or two and a half in ints. You have
+
+00:03:48.430 --> 00:03:55.430
+one; you have two. So this produces some weirdness
+in the part of doubles too. The doubles get
+
+00:03:55.629 --> 00:04:01.540
+sixty-four bits and they're stored in scientific
+notation. Now the exact details in how doubles
+
+00:04:01.540 --> 00:04:06.980
+are stored is extremely complicated. You have
+a mantissa just like you do in scientific
+
+00:04:06.980 --> 00:04:12.579
+notation, and then times two to the exponent.
+Now you've probably seen ten to the exponent
+
+00:04:12.579 --> 00:04:17.370
+before and that because that's more typical
+in algebra. But in computer science because
+
+00:04:17.370 --> 00:04:22.389
+we're doing things in the binary, in the bits
+with zeros and ones, we tend to use twos a
+
+00:04:22.389 --> 00:04:24.350
+lot instead of tens.
+
+00:04:24.350 --> 00:04:31.350
+Now what we get are about fifteen decimal
+digits in the mantissa-- but only fifteen.
+
+00:04:32.030 --> 00:04:36.660
+So let's think about how the numbers below
+would compare in programming. So they're the
+
+00:04:36.660 --> 00:04:41.120
+same number except for the last digit, but
+let's take a look at how many digits they
+
+00:04:41.120 --> 00:04:46.860
+have. We see that we have groups of three
+digits, and there are one, two, three, four,
+
+00:04:46.860 --> 00:04:53.060
+five, six of them. So three times six in eighteen
+and when you add in the two at the start that's
+
+00:04:53.060 --> 00:04:58.330
+nineteen digits. So the three and the four
+that are different in the end are in the nineteenth
+
+00:04:58.330 --> 00:05:03.830
+digit, they're not stored in the computer
+at all. So these values might be exactly the
+
+00:05:03.830 --> 00:05:09.860
+same in the computer. Well that's a problem
+too, because losing even a little bit like
+
+00:05:09.860 --> 00:05:16.690
+that sometimes can be a big deal. Once again
+meteorology majors, pay attention. What this
+
+00:05:16.690 --> 00:05:21.620
+means is that every time we do a program we've
+got this critical software engineering decision
+
+00:05:21.620 --> 00:05:27.060
+we have to make; we have to choose whether
+it's better to have a smaller a range but
+
+00:05:27.060 --> 00:05:34.060
+have things be exact, or have a larger range
+and approximate. Now this decision has a profound
+
+00:05:34.419 --> 00:05:40.569
+influence on how programs are going to work,
+and so we have to make it carefully. And that's
+
+00:05:40.569 --> 00:05:45.080
+why it has to be made by the programmer, that's
+why Java can't make it for you. Because remember
+
+00:05:45.080 --> 00:05:49.680
+Java isn't intelligent, you are. So keep programming!
+

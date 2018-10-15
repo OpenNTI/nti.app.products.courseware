@@ -1,0 +1,23 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html lang="en"><head> <meta content="2015-12-11T16:56:47" http-equiv="last-modified" /> <meta content="1130" name="NTIRelativeScrollHeight" /> <meta content="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.a_tiny_example" name="NTIID" /> <meta content="NextThought" name="generator" /> <meta content="text/html; charset=ascii" http-equiv="content-type" /> <title>A Tiny Example</title> <link href="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.method_definition" rel="next" title="Method Definition" /> <link href="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.syntax_of_a_class_definition" rel="prev" title="Syntax of a Class Definition" /> <link href="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.reading:Chortle_CH30_2" rel="up" title="Defining Your Own Classes" /> <link href="styles/styles.css" rel="stylesheet" /> <link href="styles/content.css" rel="stylesheet" /> </head> <body id="NTIContent"> <div class="page-contents"><div data-ntiid="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.a_tiny_example" id="a0000000488" ntiid="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.a_tiny_example"> <div class="chapter title">A Tiny Example</div> <p class="placeholder"></p> <a name="b540a7ea52c7cc0c9cf9fdbf093cd085"></a> <div class="sidebar" data-ntiid="tag:nextthought.com,2011-10:OU-HTML:NTISidebar-CS1323_F_2015_Intro_to_Computer_Programming.sidebar.answer.163" ntiid="tag:nextthought.com,2011-10:OU-HTML:NTISidebar-CS1323_F_2015_Intro_to_Computer_Programming.sidebar.answer.163"> <div class="sidebar-title">Answer</div> No. You need only one <b class="bfseries"><tt class="ttfamily">main()</tt></b> method for the Java virtual machine to use in starting your program. </div><a name="c5c727e977f8aaaee9e2fdc0903d8d5b"></a> <pre>class HelloObject
+{
+  // method definition
+  void speak()
+  {
+    System.out.println("Hello from an object!");
+  }
+}
+
+class HelloTester
+{
+  public static void main ( String[] args )
+  {
+    HelloObject anObject = new HelloObject();
+    
+    anObject.speak();
+  }
+}
+</pre><a name="b302dc91351413b1efb05f649fbe2e90"></a> <p class="par" id="b302dc91351413b1efb05f649fbe2e90">Above is a complete program which includes two class definitions. The definition of class <b class="bfseries"><tt class="ttfamily">HelloObject</tt></b> includes a method but no instance variables, so objects of class <b class="bfseries"><tt class="ttfamily">HelloObject</tt></b> have no instance variables. The class does have a constructor but it is not explicitly defined in the code (this will be discussed further). </p> <a name="ab0d2733aeea16f823b0717f436b6e80"></a> <p class="par" id="ab0d2733aeea16f823b0717f436b6e80">The definition of class <b class="bfseries"><tt class="ttfamily">HelloTester</tt></b> contains only the static <b class="bfseries"><tt class="ttfamily">main()</tt></b> method. When the <b class="bfseries"><tt class="ttfamily">main()</tt></b> method starts, it constructs a HelloObject and then invokes that object&#8217;s speak() method. </p> <a name="ee6d7d723522f7015666515bdee2dedf"></a> <p class="par" id="ee6d7d723522f7015666515bdee2dedf">Remember that name of the file must match the name of the class that contains the <b class="bfseries"><tt class="ttfamily">main()</tt></b> method. (Also remember that upper and lower case are important both in the file name and in the class name.) Here is an example run: </p> <a name="ef3adb00a3e043a5d93eefa8a757eebd"></a> <pre>C:\&gt;javac HelloTester.java
+C:\&gt;java HelloTester
+Hello from an object!
+C:\&gt;
+</pre><a name="29eb5cfe790b9e4a6e74e8b8d7eed7e2"></a> <div class="sidebar" data-ntiid="tag:nextthought.com,2011-10:OU-HTML:NTISidebar-CS1323_F_2015_Intro_to_Computer_Programming.sidebar.question.172" ntiid="tag:nextthought.com,2011-10:OU-HTML:NTISidebar-CS1323_F_2015_Intro_to_Computer_Programming.sidebar.question.172"> <div class="sidebar-title">Question</div> <ul class="itemize"> <li><a name="f9fb521325df324cf258741050bb6fa9"></a> <p class="par" id="f9fb521325df324cf258741050bb6fa9">What two classes are defined in this code? </p> </li> <li><a name="40e0749c9153d91b771f4f4e01a87c35"></a> <p class="par" id="40e0749c9153d91b771f4f4e01a87c35">What method is defined in the first class? </p> </li> </ul> </div> </div></div> </body></html>

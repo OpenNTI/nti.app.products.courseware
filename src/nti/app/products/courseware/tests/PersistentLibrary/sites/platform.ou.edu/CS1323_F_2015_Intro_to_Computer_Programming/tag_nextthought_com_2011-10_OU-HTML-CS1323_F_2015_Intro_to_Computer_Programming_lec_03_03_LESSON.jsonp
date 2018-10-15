@@ -1,0 +1,177 @@
+jsonpReceiveContent({
+    "content": {
+        "MimeType": "application/vnd.nextthought.ntilessonoverview",
+        "Items": [
+            {
+                "MimeType": "application/vnd.nextthought.nticourseoverviewgroup",
+                "NTIID": "tag:nextthought.com,2011-10:OU-NTICourseOverviewGroup-CS1323_F_2015_Intro_to_Computer_Programming.lec:03.03_LESSON.0",
+                "Items": [
+                    {
+                        "MimeType": "application/vnd.nextthought.ntivideo",
+                        "NTIID": "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_03.01.03a_StringBuilder_vs_String",
+                        "visibility": "everyone",
+                        "poster": "//www.kaltura.com/p/1500101/thumbnail/entry_id/0_bdkozlu7/width/1280/",
+                        "label": "StringBuilder vs String"
+                    },
+                    {
+                        "MimeType": "application/vnd.nextthought.ntivideo",
+                        "NTIID": "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_03.01.03_Texas_Infiltration",
+                        "visibility": "everyone",
+                        "poster": "//www.kaltura.com/p/1500101/thumbnail/entry_id/0_wwd946tt/width/1280/",
+                        "label": "Texas Infiltration"
+                    }
+                ],
+                "accentColor": "81c8dc",
+                "title": "Videos"
+            },
+            {
+                "MimeType": "application/vnd.nextthought.nticourseoverviewgroup",
+                "NTIID": "tag:nextthought.com,2011-10:OU-NTICourseOverviewGroup-CS1323_F_2015_Intro_to_Computer_Programming.lec:03.03_LESSON.1",
+                "Items": [
+                    {
+                        "MimeType": "application/vnd.nextthought.assessment.assignment",
+                        "ContainerId": "tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.turingscraft:_accessing_and_changing_objects_(45_points)",
+                        "title": "Turingscraft: Accessing and Changing Objects (45 points)",
+                        "label": "Turingscraft: Accessing and Changing Objects (45 points)",
+                        "NTIID": "tag:nextthought.com,2011-10:OU-NAQ-CS1323_F_2015_Intro_to_Computer_Programming.naq.asg.assignment:Turingscraft_Modify_Objects_010",
+                        "Target-NTIID": "tag:nextthought.com,2011-10:OU-NAQ-CS1323_F_2015_Intro_to_Computer_Programming.naq.asg.assignment:Turingscraft_Modify_Objects_010"
+                    },
+                    {
+                        "MimeType": "application/vnd.nextthought.assessment.assignment",
+                        "ContainerId": "tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.turingscraft:_accessing_and_changing_objects_(45_points).1",
+                        "title": "Turingscraft: Accessing and Changing Objects (45 points)",
+                        "label": "Turingscraft: Accessing and Changing Objects (45 points)",
+                        "NTIID": "tag:nextthought.com,2011-10:OU-NAQ-CS1323_F_2015_Intro_to_Computer_Programming.naq.asg.assignment:Turingscraft_Modify_Objects_001",
+                        "Target-NTIID": "tag:nextthought.com,2011-10:OU-NAQ-CS1323_F_2015_Intro_to_Computer_Programming.naq.asg.assignment:Turingscraft_Modify_Objects_001"
+                    },
+                    {
+                        "MimeType": "application/vnd.nextthought.assessment.assignment",
+                        "ContainerId": "tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.turingscraft:_accessing_and_changing_objects_(45_points).2",
+                        "title": "Turingscraft: Accessing and Changing Objects (45 points)",
+                        "label": "Turingscraft: Accessing and Changing Objects (45 points)",
+                        "NTIID": "tag:nextthought.com,2011-10:OU-NAQ-CS1323_F_2015_Intro_to_Computer_Programming.naq.asg.assignment:Turingscraft_Modify_Objects_995",
+                        "Target-NTIID": "tag:nextthought.com,2011-10:OU-NAQ-CS1323_F_2015_Intro_to_Computer_Programming.naq.asg.assignment:Turingscraft_Modify_Objects_995"
+                    },
+                    {
+                        "MimeType": "application/vnd.nextthought.assessment.assignment",
+                        "ContainerId": "tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.javabat:_accessing_and_changing_objects_(10_points)",
+                        "title": "Javabat: Accessing and Changing Objects (10 points)",
+                        "label": "Javabat: Accessing and Changing Objects (10 points)",
+                        "NTIID": "tag:nextthought.com,2011-10:OU-NAQ-CS1323_F_2015_Intro_to_Computer_Programming.naq.asg.assignment:JavaBat_Accessing_and_Changing_Objects",
+                        "Target-NTIID": "tag:nextthought.com,2011-10:OU-NAQ-CS1323_F_2015_Intro_to_Computer_Programming.naq.asg.assignment:JavaBat_Accessing_and_Changing_Objects"
+                    },
+                    {
+                        "MimeType": "application/vnd.nextthought.assessment.assignment",
+                        "ContainerId": "tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.zybook:_accessing_and_changing_objects_(36_point)",
+                        "title": "Zybook: Accessing and Changing Objects (36 point)",
+                        "label": "Zybook: Accessing and Changing Objects (36 point)",
+                        "NTIID": "tag:nextthought.com,2011-10:OU-NAQ-CS1323_F_2015_Intro_to_Computer_Programming.naq.asg.assignment:Zybook_Accessing_and_Changing_Objects",
+                        "Target-NTIID": "tag:nextthought.com,2011-10:OU-NAQ-CS1323_F_2015_Intro_to_Computer_Programming.naq.asg.assignment:Zybook_Accessing_and_Changing_Objects"
+                    }
+                ],
+                "accentColor": "a5c959",
+                "title": "Assignments"
+            },
+            {
+                "MimeType": "application/vnd.nextthought.nticourseoverviewgroup",
+                "NTIID": "tag:nextthought.com,2011-10:OU-NTICourseOverviewGroup-CS1323_F_2015_Intro_to_Computer_Programming.lec:03.03_LESSON.2",
+                "Items": [
+                    {
+                        "MimeType": "application/vnd.nextthought.relatedworkref",
+                        "targetMimeType": "application/vnd.nextthought.externallink",
+                        "creator": "zyBooks for University of Oklahoma CS 1323",
+                        "section": "additional",
+                        "visibility": "everyone",
+                        "label": "Programming in Java",
+                        "NTIID": "tag:nextthought.com,2011-10:OU-RelatedWorkRef-CS1323_F_2015_Intro_to_Computer_Programming.relatedworkref.relwk:03.01.03_zyante",
+                        "href": "https://zybooks.zyante.com/#/zybook/OUCS1323Fall2015/chapter/16/section/1",
+                        "target-NTIID": "tag:nextthought.com,2011-10:NTI-UUID-11df87a6f93cf9bc47434b3065c4d8f6",
+                        "icon": "resources/CS1323_F_2015_Intro_to_Computer_Programming/671375790efa45b2948b77f2a9c4e91f27173a56/fd35e23767020999111e1f49239199b4c5eff23e.png",
+                        "desc": "This section covers accessing and changing objects."
+                    }
+                ],
+                "accentColor": "f9824e",
+                "title": "Required Resources"
+            },
+            {
+                "MimeType": "application/vnd.nextthought.nticourseoverviewgroup",
+                "NTIID": "tag:nextthought.com,2011-10:OU-NTICourseOverviewGroup-CS1323_F_2015_Intro_to_Computer_Programming.lec:03.03_LESSON.3",
+                "Items": [
+                    {
+                        "MimeType": "application/vnd.nextthought.relatedworkref",
+                        "targetMimeType": "application/vnd.nextthought.content",
+                        "creator": "Bradley Kjell",
+                        "section": "required",
+                        "visibility": "everyone",
+                        "label": "Chortle",
+                        "NTIID": "tag:nextthought.com,2011-10:OU-RelatedWorkRef-CS1323_F_2015_Intro_to_Computer_Programming.relatedworkref.relwk:chortle.12",
+                        "href": "tag:nextthought.com,2011-10:OU-HTML-CS1323_S_2015_Intro_to_Computer_Programming.reading:Chortle_CH9C_2",
+                        "target-NTIID": "tag:nextthought.com,2011-10:OU-HTML-CS1323_S_2015_Intro_to_Computer_Programming.reading:Chortle_CH9C_2",
+                        "icon": "resources/CS1323_F_2015_Intro_to_Computer_Programming/b06a4bdb19666c7afc685f0365fd59a988b154c2/fd35e23767020999111e1f49239199b4c5eff23e.png",
+                        "desc": "Introduction to accessing and changing the properties of objects."
+                    },
+                    {
+                        "MimeType": "application/vnd.nextthought.relatedworkref",
+                        "targetMimeType": "application/vnd.nextthought.externallink",
+                        "creator": "Deborah Trytten",
+                        "section": "additional",
+                        "visibility": "everyone",
+                        "label": "Texas Infiltration Java Code",
+                        "NTIID": "tag:nextthought.com,2011-10:OU-RelatedWorkRef-CS1323_F_2015_Intro_to_Computer_Programming.relatedworkref.relwk:03.01.03_code_sample",
+                        "href": "resources/Lesson_3.1.3_Code.zip",
+                        "target-NTIID": "tag:nextthought.com,2011-10:NTI-UUID-31dd59223ef0e49167ea12191d193a12",
+                        "icon": "resources/CS1323_F_2015_Intro_to_Computer_Programming/b9c4a1a1dc3d30c895df3b30c553fa40f972a2f5/fd35e23767020999111e1f49239199b4c5eff23e.png",
+                        "desc": "The Java code for a program that counts the number of email addresses from a given domain."
+                    },
+                    {
+                        "MimeType": "application/vnd.nextthought.relatedworkref",
+                        "targetMimeType": "application/vnd.nextthought.externallink",
+                        "creator": "Deborah Trytten",
+                        "section": "additional",
+                        "visibility": "everyone",
+                        "label": "Test Data from the Videos",
+                        "NTIID": "tag:nextthought.com,2011-10:OU-RelatedWorkRef-CS1323_F_2015_Intro_to_Computer_Programming.relatedworkref.relwk:03.01.03_test_data",
+                        "href": "resources/Lesson_3.1.3_Test_Data.zip",
+                        "target-NTIID": "tag:nextthought.com,2011-10:NTI-UUID-5fe984d0f8eb625c8b64d891e95fb9cb",
+                        "icon": "resources/CS1323_F_2015_Intro_to_Computer_Programming/b9c4a1a1dc3d30c895df3b30c553fa40f972a2f5/fd35e23767020999111e1f49239199b4c5eff23e.png",
+                        "desc": "The test data for a program that counts the number of email addresses from a given domain name."
+                    },
+                    {
+                        "MimeType": "application/vnd.nextthought.relatedworkref",
+                        "targetMimeType": "application/vnd.nextthought.externallink",
+                        "creator": "Deborah Trytten",
+                        "section": "additional",
+                        "visibility": "everyone",
+                        "label": "StringBuilder vs String",
+                        "NTIID": "tag:nextthought.com,2011-10:OU-RelatedWorkRef-CS1323_F_2015_Intro_to_Computer_Programming.relatedworkref.relwk:03.01.03_stringbuilder_vs_string",
+                        "href": "resources/Accessing_and_Changing_Object.pptx",
+                        "target-NTIID": "tag:nextthought.com,2011-10:NTI-UUID-066600d2855792d2ad8a5233e89b6b01",
+                        "icon": "resources/CS1323_F_2015_Intro_to_Computer_Programming/17f860f9921d29d578e2791d3ff00dcf689071c3/fd35e23767020999111e1f49239199b4c5eff23e.png",
+                        "desc": "Lecture presentation"
+                    },
+                    {
+                        "MimeType": "application/vnd.nextthought.relatedworkref",
+                        "targetMimeType": "application/vnd.nextthought.externallink",
+                        "creator": "Deborah Trytten",
+                        "section": "additional",
+                        "visibility": "everyone",
+                        "label": "Texas Infiltration",
+                        "NTIID": "tag:nextthought.com,2011-10:OU-RelatedWorkRef-CS1323_F_2015_Intro_to_Computer_Programming.relatedworkref.relwk:03.01.03_mostpopulardomain",
+                        "href": "resources/Texas_Infiltration.pptx",
+                        "target-NTIID": "tag:nextthought.com,2011-10:NTI-UUID-9b18ae052b54ff5820e672e10abcf06b",
+                        "icon": "resources/CS1323_F_2015_Intro_to_Computer_Programming/17f860f9921d29d578e2791d3ff00dcf689071c3/fd35e23767020999111e1f49239199b4c5eff23e.png",
+                        "desc": "Lecture presentation"
+                    }
+                ],
+                "accentColor": "ce78e0",
+                "title": "Additional Resources"
+            }
+        ],
+        "title": "Accessing and Changing Objects",
+        "NTIID": "tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.lec:03.03_LESSON"
+    },
+    "ntiid": "tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.lec:03.03_LESSON",
+    "version": "1",
+    "Content-Type": "application/json",
+    "Content-Encoding": "json"
+});

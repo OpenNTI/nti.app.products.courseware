@@ -1,0 +1,38 @@
+{
+    "MimeType": "application/vnd.nextthought.ntilessonoverview",
+    "Items": [
+        {
+            "MimeType": "application/vnd.nextthought.nticourseoverviewgroup",
+            "NTIID": "tag:nextthought.com,2011-10:OU-NTICourseOverviewGroup-CS1323_F_2015_Intro_to_Computer_Programming.lec:hmwk_04_LESSON.0",
+            "Items": [
+                {
+                    "MimeType": "application/vnd.nextthought.discussion",
+                    "title": "Project 2 Help",
+                    "label": "",
+                    "NTIID": "",
+                    "id": "nti-course-bundle://Discussions/Project_2_Help.json",
+                    "icon": "resources/CS1323_F_2015_Intro_to_Computer_Programming/52d0f17defa337c69d6bcd9fd2a02ef5aa34e11f/fd35e23767020999111e1f49239199b4c5eff23e.png"
+                }
+            ],
+            "accentColor": "f5d420",
+            "title": "Discussions"
+        },
+        {
+            "MimeType": "application/vnd.nextthought.nticourseoverviewgroup",
+            "NTIID": "tag:nextthought.com,2011-10:OU-NTICourseOverviewGroup-CS1323_F_2015_Intro_to_Computer_Programming.lec:hmwk_04_LESSON.1",
+            "Items": [
+                {
+                    "MimeType": "application/vnd.nextthought.naquestionset",
+                    "question-count": "1",
+                    "Target-NTIID": "tag:nextthought.com,2011-10:OU-NAQ-CS1323_F_2015_Intro_to_Computer_Programming.naq.set.qset:Lab_2",
+                    "NTIID": "tag:nextthought.com,2011-10:OU-NAQ-CS1323_F_2015_Intro_to_Computer_Programming.naq.set.qset:Lab_2",
+                    "label": "Project 2 (100 points)"
+                }
+            ],
+            "accentColor": "81c8dc",
+            "title": "Assignments"
+        }
+    ],
+    "title": "Project 2",
+    "NTIID": "tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.lec:hmwk_04_LESSON"
+}

@@ -1,0 +1,39 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html lang="en"><head> <meta content="2015-12-11T16:56:47" http-equiv="last-modified" /> <meta content="1243" name="NTIRelativeScrollHeight" /> <meta content="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.the_private_visibility_modifier" name="NTIID" /> <meta content="NextThought" name="generator" /> <meta content="text/html; charset=ascii" http-equiv="content-type" /> <title>The Private Visibility Modifier</title> <link href="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.access_methods" rel="next" title="Access Methods" /> <link href="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.reading:Chortle_CH33" rel="prev" title="Encapsulation" /> <link href="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.reading:Chortle_CH33" rel="up" title="Encapsulation" /> <link href="styles/styles.css" rel="stylesheet" /> <link href="styles/content.css" rel="stylesheet" /> </head> <body id="NTIContent"> <div class="page-contents"><div data-ntiid="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.the_private_visibility_modifier" id="a0000000530" ntiid="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.the_private_visibility_modifier"> <div class="chapter title">The <b class="bfseries"><tt class="ttfamily">Private</tt></b> Visibility Modifier</div> <p class="placeholder"></p> <a name="10269e5ca74a3730563437a4121354f8"></a> <div class="sidebar" data-ntiid="tag:nextthought.com,2011-10:OU-HTML:NTISidebar-CS1323_F_2015_Intro_to_Computer_Programming.sidebar.answer.201" ntiid="tag:nextthought.com,2011-10:OU-HTML:NTISidebar-CS1323_F_2015_Intro_to_Computer_Programming.sidebar.answer.201"> <div class="sidebar-title">Answer</div> <a name="47db3f70a5879baee54181ea2463546b"></a> <p class="par" id="47db3f70a5879baee54181ea2463546b"> Do you want to keep hackers out of your checking account? </p> <a name="b127099c71415d532da3a26ed73eb041.421"></a> <p class="par" id="b127099c71415d532da3a26ed73eb041.421">Yes. </p> </div><a name="9ec93086f4ad0bde911be483779aeccc"></a> <p class="par" id="9ec93086f4ad0bde911be483779aeccc">When a member of a class is declared <b class="bfseries"><tt class="ttfamily">private</tt></b> it can be used only by the methods of that class. Here is the checking account class definition from the last chapter with each of its variables declared to be <b class="bfseries"><tt class="ttfamily">private</tt></b>. </p> <a name="6afce3563ccb3e4ce83d0de993f306af"></a> <pre>class CheckingAccount
+{
+  // variable declarations
+  private String accountNumber;
+  private String accountHolder;
+  private int    balance;
+
+  //constructor
+  CheckingAccount( String accNumber, String holder, int start )
+  {
+    accountNumber = accNumber ;
+    accountHolder = holder ;
+    balance       = start ;
+  }
+
+  // methods
+  int getBalance()
+  {
+    return balance ;
+  }
+
+  void  processDeposit( int amount )
+  {
+    balance = balance + amount ; 
+  }
+
+  void processCheck( int amount )
+  {
+    int charge;
+    if ( balance &lt; 100000 )
+      charge = 15; 
+    else
+      charge = 0;
+
+    balance =  balance - amount - charge  ;
+  }
+
+}
+</pre><a name="fbf2211c29af804763bfc6c0731d3551"></a> <p class="par" id="fbf2211c29af804763bfc6c0731d3551">Now only the methods of a <b class="bfseries"><tt class="ttfamily">CheckingAccount</tt></b> object can "see" <b class="bfseries"><tt class="ttfamily">accountNumber</tt></b>, <b class="bfseries"><tt class="ttfamily">accountHolder</tt></b>, and <b class="bfseries"><tt class="ttfamily">balance</tt></b>. </p> <a name="480bda7bce72c421cf2fe0ab74845280"></a> <div class="sidebar" data-ntiid="tag:nextthought.com,2011-10:OU-HTML:NTISidebar-CS1323_F_2015_Intro_to_Computer_Programming.sidebar.question.213" ntiid="tag:nextthought.com,2011-10:OU-HTML:NTISidebar-CS1323_F_2015_Intro_to_Computer_Programming.sidebar.question.213"> <div class="sidebar-title">Question</div> It is useless to have a checking account if the balance cannot be changed. How can you change the balance in a <b class="bfseries"><tt class="ttfamily">CheckingAccount</tt></b> object? </div> </div></div> </body></html>

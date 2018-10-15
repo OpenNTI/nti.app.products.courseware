@@ -1,0 +1,30 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html lang="en"><head> <meta content="2015-12-11T16:56:47" http-equiv="last-modified" /> <meta content="971" name="NTIRelativeScrollHeight" /> <meta content="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.my_three_sums" name="NTIID" /> <meta content="NextThought" name="generator" /> <meta content="text/html; charset=ascii" http-equiv="content-type" /> <title>My Three Sums</title> <link href="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.nested_if_statement" rel="next" title="Nested if Statement" /> <link href="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.adding_up_even_and_odd_integers" rel="prev" title="Adding Up Even and Odd Integers" /> <link href="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.reading:Chortle_CH17" rel="up" title="Nesting Loops and Ifs" /> <link href="styles/styles.css" rel="stylesheet" /> <link href="styles/content.css" rel="stylesheet" /> </head> <body id="NTIContent"> <div class="page-contents"><div data-ntiid="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.my_three_sums" id="a0000000449" ntiid="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.my_three_sums"> <div class="chapter title">My Three Sums</div> <p class="placeholder"></p> <a name="130cc197793678d357815766215fc8bd"></a> <div class="sidebar" data-ntiid="tag:nextthought.com,2011-10:OU-HTML:NTISidebar-CS1323_F_2015_Intro_to_Computer_Programming.sidebar.answer.130" ntiid="tag:nextthought.com,2011-10:OU-HTML:NTISidebar-CS1323_F_2015_Intro_to_Computer_Programming.sidebar.answer.130"> <div class="sidebar-title">Answer</div> The partially completed program is below. </div><a name="45a1631cb5c9dbd864482d941a21ad8f"></a> <pre>import  java.util.Scanner;
+
+// User enters a value N
+// Add up odd integers,  
+// even  integers, and all integers 1 to N
+//
+class AddUpIntegers
+{
+  public static void main (String[] args ) 
+  {
+    Scanner scan = new Scanner( System.in );
+    int N, sumAll = 0, sumEven = 0, sumOdd = 0;
+
+    System.out.print( "Enter limit value: " );
+    N = scan.nextInt();
+
+    int count = 1 ;
+    while (  count &lt;= N )    
+    {
+      (more statements  go here )
+
+      count = count + 1 ;
+    }
+
+    System.out.print  ( "Sum of all : " + sumAll  );
+    System.out.print  ( "\tSum of even: " + sumEven );
+    System.out.println( "\tSum of odd : " + sumOdd  );
+  }
+}
+</pre><a name="220f1565d0ab83897b10d8f1414532ab"></a> <p class="par" id="220f1565d0ab83897b10d8f1414532ab">The loop counts through the integers we are interested in, but it does not yet do anything with them. This is what we want to happen: </p> <a name="b3f1944361c63ca055d284ccb5b9423f"></a> <ul class="itemize"> <li><a name="8b16f245ec96496d16b6d836bbc42dca"></a> <p class="par" id="8b16f245ec96496d16b6d836bbc42dca">Each integer added to <b class="bfseries"><tt class="ttfamily">sumAll</tt></b>. </p> </li> <li><a name="67bcaa10681cbfefee3e10a05ef46786"></a> <p class="par" id="67bcaa10681cbfefee3e10a05ef46786">Each odd integer added to <b class="bfseries"><tt class="ttfamily">sumOdd</tt></b>. </p> </li> <li><a name="779443c0be60521ef28c92e814b5409a"></a> <p class="par" id="779443c0be60521ef28c92e814b5409a">Each even integer added to <b class="bfseries"><tt class="ttfamily">sumEven</tt></b>. </p> </li> </ul><a name="9210f65df8fc487b57efcbf2dbd4dca8"></a> <div class="sidebar" data-ntiid="tag:nextthought.com,2011-10:OU-HTML:NTISidebar-CS1323_F_2015_Intro_to_Computer_Programming.sidebar.question.136" ntiid="tag:nextthought.com,2011-10:OU-HTML:NTISidebar-CS1323_F_2015_Intro_to_Computer_Programming.sidebar.question.136"> <div class="sidebar-title">Question</div> How do you decide which sum (<b class="bfseries"><tt class="ttfamily">sumAll</tt></b> or <b class="bfseries"><tt class="ttfamily">sumEven</tt></b>) to add an integer to? </div> </div></div> </body></html>

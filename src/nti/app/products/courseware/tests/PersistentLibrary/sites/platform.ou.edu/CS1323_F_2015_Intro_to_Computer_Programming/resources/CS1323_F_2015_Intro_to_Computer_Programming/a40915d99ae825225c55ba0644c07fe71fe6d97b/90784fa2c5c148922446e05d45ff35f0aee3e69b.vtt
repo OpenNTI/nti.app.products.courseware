@@ -1,0 +1,2478 @@
+WEBVTT
+Kind: captions
+Language: en
+
+00:00:00.459 --> 00:00:07.359
+&gt;&gt;Let's continue our study of Arrays of primitive
+data by designing a program to play Yahtzee.
+
+00:00:07.359 --> 00:00:12.950
+Here's the problem statement: implement part
+of the game of Yahtzee as a two-player game.
+
+00:00:12.950 --> 00:00:18.109
+Use only the above line scores. Now you need
+to be familiar with the rules of Yahtzee to
+
+00:00:18.109 --> 00:00:25.109
+do this. If you haven't played the game before,
+go to Wikipedia and read about the rules.
+
+00:00:25.339 --> 00:00:29.609
+Here's a summary for those of you who've played
+the game in the past but maybe not that recently.
+
+00:00:29.609 --> 00:00:36.440
+Each player rolls five dice up to three times.
+They try to match the number on the dice,
+
+00:00:36.440 --> 00:00:41.989
+and the score's the total of the matching
+dice only. The other dice don't get counted
+
+00:00:41.989 --> 00:00:47.079
+and you can only score once for each of the
+six numbers, so you can match one's once,
+
+00:00:47.079 --> 00:00:53.219
+two's once, three's once and so on. This should
+give you a little review. Now, what should
+
+00:00:53.219 --> 00:00:57.429
+you do if you don't know the game? Well if
+you don't know Yahtzee you need to learn the
+
+00:00:57.429 --> 00:01:02.429
+rules before implementing it. Never try to
+program something you don't understand; it
+
+00:01:02.429 --> 00:01:07.710
+doesn't work. So reading Wikipedia is one
+place to start but there are other options,
+
+00:01:07.710 --> 00:01:13.049
+too. One is to find a friend and play the
+game. This is a very common game in the United
+
+00:01:13.049 --> 00:01:18.299
+States and so it's likely that one of your
+friends will know how to play. The other thing
+
+00:01:18.299 --> 00:01:22.610
+you could do is look for an online version
+and play it. Make sure you know the rules
+
+00:01:22.610 --> 00:01:29.610
+before trying to proceed. Don't program things
+you don't understand! Usually we write test
+
+00:01:31.930 --> 00:01:37.880
+data first but this is a problem because this
+program is completely dominated by randomness,
+
+00:01:37.880 --> 00:01:43.780
+so there's really no way to systematically
+write test data in advance. So this means
+
+00:01:43.780 --> 00:01:50.780
+we're going to need to check the output carefully
+and frequently--very carefully, very frequently.
+
+00:01:51.750 --> 00:01:56.229
+We've got to consider our options for storing
+data. Now there are two Arrays of primitive
+
+00:01:56.229 --> 00:02:01.729
+data types that are going to show up in this
+problem: one is the score for the six elements
+
+00:02:01.729 --> 00:02:05.960
+and the other is the five dice. Now we're
+going to want to create constants for the
+
+00:02:05.960 --> 00:02:10.250
+size of the Array. That may seem a little
+silly since it's likely that we'll be playing
+
+00:02:10.250 --> 00:02:14.750
+with six sided dice for a while and because
+the logic of the game dictates that there
+
+00:02:14.750 --> 00:02:21.750
+would be six scores, but it's still a nice
+thing to do. The dice will have to be set
+
+00:02:22.140 --> 00:02:26.890
+randomly. We've worked through the logic of
+this earlier in the semester. So let's go
+
+00:02:26.890 --> 00:02:31.980
+to our program and add those elements in.
+So our main program is where we're going to
+
+00:02:31.980 --> 00:02:37.040
+want to put the scores. Notice that I've already
+asked for the players to enter their names.
+
+00:02:37.040 --> 00:02:44.040
+So we'll have an Integer Array for player
+one scores and an Integer Array for player
+
+00:02:47.200 --> 00:02:54.200
+two scores. Now what I created there, remember,
+are not actually Arrays. They're references.
+
+00:02:56.300 --> 00:03:02.840
+So in order to create the Arrays we have to
+call in new operator. Let's do that here.
+
+00:03:02.840 --> 00:03:09.840
+Player one scores equals new int of...well
+in order to know it how big it should be we
+
+00:03:09.840 --> 00:03:14.640
+need to know the name of the constants. So
+let's go up and take a look. It looks like
+
+00:03:14.640 --> 00:03:21.640
+our constant is turns. So that's what we'll
+use there. Now you'll notice I put the constants
+
+00:03:24.790 --> 00:03:30.090
+outside of the main program but inside the
+class. That's the proper position for these
+
+00:03:30.090 --> 00:03:37.090
+constants, and then player two scores is going
+to be new int of turns. Now the dice array
+
+00:03:42.540 --> 00:03:46.860
+is a little bit different because it's going
+to up somewhere else in the program. So we're
+
+00:03:46.860 --> 00:03:51.640
+going to have to think through where that
+belongs later. Now we're going to have to
+
+00:03:51.640 --> 00:03:55.920
+think also about how we're going to store
+the scores. Remember that in Yahtzee you're
+
+00:03:55.920 --> 00:04:02.260
+only allowed to score each category one time.
+What this means is there's a difference between
+
+00:04:02.260 --> 00:04:07.150
+having a score of zero and not having scored
+the category, because when you have a score
+
+00:04:07.150 --> 00:04:12.810
+of zero for example, if none of your dice
+match the number you were trying to match,
+
+00:04:12.810 --> 00:04:18.370
+that category can't be re-scored later but
+if you haven't scored for that number it can
+
+00:04:18.370 --> 00:04:24.180
+so we really have to separate these things.
+The way that I would do that is by initializing
+
+00:04:24.180 --> 00:04:29.990
+the scores array to negative one, negative
+one meaning that it hasn't been scored. Now
+
+00:04:29.990 --> 00:04:35.800
+this could also be a constant if you wanted
+in your program. Now the Arrays class, which
+
+00:04:35.800 --> 00:04:40.990
+is a similar class to collections only for
+Arrays instead of for collections, has a useful
+
+00:04:40.990 --> 00:04:47.990
+methods. So let's go and look for it. Here
+we are in the Java API...and here's the Arrays
+
+00:04:55.849 --> 00:05:01.249
+class. So the first thing we want to notice
+is what package it's in since we'll need the
+
+00:05:01.249 --> 00:05:06.360
+package when we use it. It's in Java util
+that probably shouldn't have been a surprise
+
+00:05:06.360 --> 00:05:11.800
+since it's similar to the collections class.
+So let's read a little bit about the preamble.
+
+00:05:11.800 --> 00:05:17.710
+This class contains various methods for manipulating
+Arrays such as sorting and searching. It also
+
+00:05:17.710 --> 00:05:22.490
+contains a static factory, hmmm, ok now that's
+getting beyond the scope of what we know so
+
+00:05:22.490 --> 00:05:27.919
+we're just going to skip over this. The methods
+in this class all throw a null point or exception
+
+00:05:27.919 --> 00:05:33.240
+if the specified Array reference is null except
+where noted. So that's a warning that if you
+
+00:05:33.240 --> 00:05:36.659
+try to call these methods on an Array that
+hasn't been constructed they're not going
+
+00:05:36.659 --> 00:05:43.659
+to work. Logic would dictate that that would
+have to be true. So let's go and look for
+
+00:05:44.159 --> 00:05:48.939
+a method that looks promising. Now one thing
+you'll notice that's different about the Arrays
+
+00:05:48.939 --> 00:05:54.550
+class than the collections class is the methods
+are very, very heavily overloaded. For example
+
+00:05:54.550 --> 00:05:59.460
+right now I've got almost a whole page of
+binary search methods. The reason that this
+
+00:05:59.460 --> 00:06:05.810
+is true is that in the collections class they
+use a generic for the objects. And so that
+
+00:06:05.810 --> 00:06:11.469
+means that one version for example of binary
+search, can work for all the different types
+
+00:06:11.469 --> 00:06:16.699
+of Arrays. But the Arrays classes is for Arrays
+of primitive datatypes as well as Arrays of
+
+00:06:16.699 --> 00:06:22.169
+objects and so that means that every one of
+these has to be different. So notice there's
+
+00:06:22.169 --> 00:06:27.039
+a version of binary search for double, and
+in fact there are two versions of it. One
+
+00:06:27.039 --> 00:06:31.759
+that searches the whole Array and one that
+searches a range. Here's one for float, here's
+
+00:06:31.759 --> 00:06:37.930
+one for int, here's one for long. So this
+class has a huge number of methods in it.
+
+00:06:37.930 --> 00:06:43.779
+Now we're going to go looking for something
+that looks useful. Copy of could be a possibility
+
+00:06:43.779 --> 00:06:49.139
+but there's actually something better hanging
+around. Let's take a look at fill. So what
+
+00:06:49.139 --> 00:06:54.639
+it does is assigns a specified value to each
+element in the specified array. Ohhhh, that's
+
+00:06:54.639 --> 00:06:59.659
+exactly what want to do. Now I know you're
+thinking to yourself but wait a minute this
+
+00:06:59.659 --> 00:07:05.620
+is just one loop. Why are we working so hard
+to avoid one loop? Well we're not, but I did
+
+00:07:05.620 --> 00:07:11.909
+want you to see the Arrays package so I know
+you could implement this on your own. Oh yes!
+
+00:07:11.909 --> 00:07:17.159
+The other thing we need to pay attention to
+when we're looking at this class. All of these
+
+00:07:17.159 --> 00:07:21.469
+methods are static methods. That's similar
+to the collections class too, remember the
+
+00:07:21.469 --> 00:07:26.460
+math class was like that. So in general these
+utility classes tend to have a lot of static
+
+00:07:26.460 --> 00:07:33.460
+methods in them, so let's go and implement
+that in our code. So we'll do Arrays dot fill
+
+00:07:39.050 --> 00:07:46.050
+player one scores with negative one and Arrays
+dot fill player two scores with negative one.
+
+00:07:57.069 --> 00:08:03.949
+I have included the package up at the top.
+Let me show you import Java dot util dot Arrays.
+
+00:08:03.949 --> 00:08:07.449
+I've also got the scanner included since we
+know we're going to need that to interact
+
+00:08:07.449 --> 00:08:14.449
+with the user. And notice that I put all this
+in the main method. Now one thing we're going
+
+00:08:15.930 --> 00:08:19.559
+to do differently here than we've done in
+many of our other programs is we're going
+
+00:08:19.559 --> 00:08:24.870
+to call methods multiple times. The reason
+is that both players turns are identical,
+
+00:08:24.870 --> 00:08:29.419
+and it's actually quite important to the fairness
+of the game that the turns are absolutely
+
+00:08:29.419 --> 00:08:35.060
+positively identical. So we'll write a method
+that plays a single player turn and then call
+
+00:08:35.060 --> 00:08:40.870
+it twice, once for each user. Almost all the
+methods should be called once for player one
+
+00:08:40.870 --> 00:08:45.380
+and once for player two. So you're going to
+use different arguments to control which player
+
+00:08:45.380 --> 00:08:49.570
+is playing. Now this is very different than
+the single call methods that we've created
+
+00:08:49.570 --> 00:08:54.260
+previously and is actually a more sophisticated
+programming structure that we will continue
+
+00:08:54.260 --> 00:09:01.260
+to explore. A lot of the loops in this program
+should be encapsulated into small reusable
+
+00:09:01.870 --> 00:09:07.470
+methods. So let's talk about what some of
+our utility methods should be. Well one of
+
+00:09:07.470 --> 00:09:12.530
+them is show current scorecard, so that's
+going to take the scores array and show it
+
+00:09:12.530 --> 00:09:17.540
+to the user in a pretty format. Now what you're
+basically doing is displaying the contents
+
+00:09:17.540 --> 00:09:23.450
+of the Array, so that's going to be a single
+loop and the output of course needs to be
+
+00:09:23.450 --> 00:09:29.900
+formatted nicely so that it's pretty. Another
+method that's useful is roll all dice. So
+
+00:09:29.900 --> 00:09:34.290
+that's going to take the dice array the one
+we haven't created yet and roll all those
+
+00:09:34.290 --> 00:09:41.290
+dice at once. So notice this is a way of encapsulating
+a loop into a method. Another method we'll
+
+00:09:42.920 --> 00:09:48.210
+need is going to be called show dice. So that's
+going to take the dice and show them to the
+
+00:09:48.210 --> 00:09:53.790
+user. They have to know what the dice are
+in order to be able to play Yahtzee. We're
+
+00:09:53.790 --> 00:09:57.640
+also going to need a method for calculating
+the total scores. Now that's going to take
+
+00:09:57.640 --> 00:10:02.180
+the scores array and return an integer. In
+this case we're going to have to deal with
+
+00:10:02.180 --> 00:10:06.720
+the challenge because remember that when a
+score is negative one that means it doesn't
+
+00:10:06.720 --> 00:10:11.460
+count. We're using negative one as a flag,
+not as a score, and so we're going to have
+
+00:10:11.460 --> 00:10:18.380
+to take care of that. The other thing we need
+is sum of dice so there's integer dice and
+
+00:10:18.380 --> 00:10:25.060
+an int number. The reason we need sum of dice
+is in order to calculate the final score.
+
+00:10:25.060 --> 00:10:29.600
+So notice that these are very small methods.
+A lot of these methods are going to be between
+
+00:10:29.600 --> 00:10:35.400
+five and ten lines long. That's actually an
+ideal size for a method. Don't get it in your
+
+00:10:35.400 --> 00:10:40.690
+head that methods have to be big complicated
+things. The smaller and more reusable methods
+
+00:10:40.690 --> 00:10:46.990
+are actually the better ones. Now there are
+some harder methods to be written too. For
+
+00:10:46.990 --> 00:10:52.160
+example there's play one game and play one
+turn and reroll the dice. So we're going to
+
+00:10:52.160 --> 00:10:57.890
+do those after we do some of our little utility
+methods so that we get a chance to experiment
+
+00:10:57.890 --> 00:11:04.640
+with using loops with Arrays before we try
+to do more challenging things. Now I put the
+
+00:11:04.640 --> 00:11:09.310
+main methods, the ones that are harder to
+write up at the top and we're going to go
+
+00:11:09.310 --> 00:11:14.570
+down and do some of the easier ones. So play
+one turn is not one of the easier methods
+
+00:11:14.570 --> 00:11:19.580
+and neither is reroll dice, but calculate
+total score on the other hand, that's pretty
+
+00:11:19.580 --> 00:11:24.730
+simple method to write. So we've got our score
+array and what we're going to do is add anything
+
+00:11:24.730 --> 00:11:31.730
+up that isn't an equal to negative one. Here's
+how that goes. We'll create an integer sum
+
+00:11:33.380 --> 00:11:39.640
+and initialize it to zero. Now remember that
+with local variables like sum local variables
+
+00:11:39.640 --> 00:11:44.430
+only live within the method and they don't
+get initialized unless you initialize them.
+
+00:11:44.430 --> 00:11:51.430
+Eclipse will nag about this if you don't take
+care of it. We're also going to need a counter.
+
+00:11:52.000 --> 00:11:56.240
+And that's going to start at zero. Now you
+can call it count but maybe a better thing
+
+00:11:56.240 --> 00:12:02.130
+to call it is index, because that's what it
+really represents. Now there are two ways
+
+00:12:02.130 --> 00:12:07.140
+we could write this method: we could write
+it using the length of the array that remember
+
+00:12:07.140 --> 00:12:12.890
+is past with the array or we could use it
+using the constant turns. I think it's better
+
+00:12:12.890 --> 00:12:18.080
+to use the length of the array that's past
+because then if turns change it automatically
+
+00:12:18.080 --> 00:12:25.080
+gets updated, so while index is less than
+score dot length. Another thing to remember
+
+00:12:29.370 --> 00:12:35.870
+is that score dot length with Arrays is not
+a method its actually a data field. So that's
+
+00:12:35.870 --> 00:12:41.260
+a problem because you're used to using score
+dot size which is a method in the Array List
+
+00:12:41.260 --> 00:12:46.120
+class. Now these are not very important mistakes
+in fact if you made that mistake on the exam
+
+00:12:46.120 --> 00:12:50.430
+I wouldn't even take off a point because it's
+so unimportant. But it is something to watch
+
+00:12:50.430 --> 00:12:57.430
+out for. So if score of index is not equal
+to negative one we'll do sum equals sum plus
+
+00:13:08.380 --> 00:13:15.380
+score of index. Now you could put curly braces
+there if you want. In fact let's do it. It's
+
+00:13:17.340 --> 00:13:23.300
+usually better to have some extra curly braces
+hanging around, and of course we need to increment
+
+00:13:23.300 --> 00:13:30.300
+index. At the end we return sum. So let's
+think about what would happen, for example,
+
+00:13:36.690 --> 00:13:42.010
+if we called this method when the score was
+all negative ones. We would step through one
+
+00:13:42.010 --> 00:13:48.000
+at a time, and let's think about whether our
+while loop is correct or not. So we started
+
+00:13:48.000 --> 00:13:53.250
+the index at zero and we're going to less
+than score dot length. That is a typical Java
+
+00:13:53.250 --> 00:14:00.250
+idiom and so that's probably correct. So this
+line, where you have if right here, if all
+
+00:14:03.120 --> 00:14:08.860
+the scores were negative one none of that
+would ever be executed and so what that means
+
+00:14:08.860 --> 00:14:13.600
+is we'd return a score of zero. Which is the
+correct score to return, so the only thing
+
+00:14:13.600 --> 00:14:20.280
+that's missing here is maybe a little bit
+of comments. So let's put in two comments:
+
+00:14:20.280 --> 00:14:27.280
+add up everything that is not negative one.
+So scores of negative one flag unused rows.
+
+00:14:38.070 --> 00:14:44.030
+That's a way of saying it. So there we've
+got a nice little method. Now we know Eclipse
+
+00:14:44.030 --> 00:14:48.630
+is happy with it. It might not be a bad idea
+to go to the main program and test the method
+
+00:14:48.630 --> 00:14:55.630
+just a little bit on its own. So let's do
+that. Forgot what the method name is. Calculate
+
+00:15:02.860 --> 00:15:09.860
+total score, very logical method name. [typing]
+So I'm trying to just do a quick and dirty
+
+00:15:25.510 --> 00:15:32.510
+score here. One of the tricks that I use is
+this when I'm doing this kind of testing.
+
+00:15:37.320 --> 00:15:41.790
+I say what I expected, that way I don't have
+to rethink through it when I'm looking at
+
+00:15:41.790 --> 00:15:48.790
+the data-- handy little trick. So let's run
+the program see what we get. Zero, and we
+
+00:15:59.410 --> 00:16:06.100
+expected zero. So that's good, that means
+that method is working. Let's go and do another
+
+00:16:06.100 --> 00:16:12.490
+well...okay that was an exaggeration. We really
+don't know that that method is working and
+
+00:16:12.490 --> 00:16:16.780
+in fact we probably should put some better
+data in to check it. So now I'm putting test
+
+00:16:16.780 --> 00:16:23.780
+data into this program. This is data that
+I'm going to remove immediately. [typing]
+
+00:16:41.710 --> 00:16:45.980
+So I'm putting in some data here, now the
+data doesn't necessarily make sense. So I'm
+
+00:16:45.980 --> 00:16:50.350
+going through and looping through the player
+one scores array and setting each value to
+
+00:16:50.350 --> 00:16:57.350
+the index and then of course incrementing
+the index. So what we're expecting now to
+
+00:17:00.490 --> 00:17:06.889
+see from player one scores is zero plus one
+plus two plus three plus four plus five. So
+
+00:17:06.889 --> 00:17:12.059
+one plus two is three, plus three is six.
+Six plus four is ten, ten plus five is fifteen.
+
+00:17:12.059 --> 00:17:19.059
+So now we're expecting to see fifteen. If
+you're wondering who Maggie is, it's one of
+
+00:17:28.079 --> 00:17:33.379
+my dogs. Okay so now we have a little better
+feeling that this is running correctly. Now
+
+00:17:33.379 --> 00:17:37.690
+remember it was never our intention to leave
+this code in here. Some people comment things
+
+00:17:37.690 --> 00:17:42.870
+like that out, but frankly I don't like to
+see those things in code. It makes the code
+
+00:17:42.870 --> 00:17:46.929
+longer, and it makes you wonder if somebody
+was debugging it. It just creates all kinds
+
+00:17:46.929 --> 00:17:53.249
+of sort of bad karma in the code. So I usually
+take those out rather than commenting them,
+
+00:17:53.249 --> 00:17:57.409
+but they're different people that do that
+differently. So let's find another one of
+
+00:17:57.409 --> 00:18:03.499
+these little methods like sum of dice. Now
+remember the thing that's unusual in the sum
+
+00:18:03.499 --> 00:18:08.990
+of dice methods is only the values that are
+equal to number count. So we're going to do
+
+00:18:08.990 --> 00:18:15.509
+the same thing we did before. We'll create
+a sum, which is initially zero and we'll create
+
+00:18:15.509 --> 00:18:22.509
+an index also initially zero. We'll step through
+the data one element at a time. Notice again
+
+00:18:26.399 --> 00:18:32.590
+that I used dice dot length, not the constant
+dice. That keeps the code a little bit cleaner
+
+00:18:32.590 --> 00:18:39.590
+so if dice of index equals number because
+you only get to count the values that are
+
+00:18:44.710 --> 00:18:51.710
+the same then we're going to do sum equals
+sum plus dice of index and of course when
+
+00:18:57.220 --> 00:19:02.700
+we get to the end of the method we'll return
+some. Now let's think a little bit about how
+
+00:19:02.700 --> 00:19:09.419
+we might comment this. The line that's the
+most obviously in need of commenting is this:
+
+00:19:09.419 --> 00:19:16.419
+only dice that equal the given number count.
+Okay, so there's our sum of dice method. Now
+
+00:19:19.779 --> 00:19:23.980
+we could test this one separately too. The
+only problem for testing this one is we don't
+
+00:19:23.980 --> 00:19:30.980
+actually have a dice array at this point.
+Now the show dice method I've actually written
+
+00:19:32.370 --> 00:19:37.019
+for you. It's a pretty simple method it has
+the same loop just like we've done with our
+
+00:19:37.019 --> 00:19:43.049
+other loops. The difference is it now writes
+out the value on each dice. One thing that
+
+00:19:43.049 --> 00:19:48.659
+you'll notice is because I'm interacting with
+the user I'm not showing zero indexing so
+
+00:19:48.659 --> 00:19:54.279
+what I'm doing with index plus one is unit
+indexing the dice. The user has to have a
+
+00:19:54.279 --> 00:20:00.749
+name for the dice so he or she can choose
+which ones to be rerolled again. And so that's
+
+00:20:00.749 --> 00:20:05.659
+what's going on here. Another thing to notice
+is that I did have to put that index plus
+
+00:20:05.659 --> 00:20:12.659
+one in parentheses. If you don't do that,
+that plus...well you know what actually in
+
+00:20:12.759 --> 00:20:19.259
+this case it would work. The reason is that
+remember pluses associate left to right. Which
+
+00:20:19.259 --> 00:20:24.159
+means this plus would be done first. Well
+this plus is between two integers and so it's
+
+00:20:24.159 --> 00:20:30.789
+an integer plus. Then when you have this plus
+done is when it becomes string concatenation.
+
+00:20:30.789 --> 00:20:37.789
+Nonetheless, I like the look of the parentheses
+there and I'm going to leave them. I see that
+
+00:20:38.029 --> 00:20:43.600
+I didn't write the roll all dice method for
+you so let's do that. So once again we're
+
+00:20:43.600 --> 00:20:49.059
+going to step through the elements of the
+array one at a time. So we'll have an int
+
+00:20:49.059 --> 00:20:56.059
+for an index and we'll set our index to zero.
+Guess we can just do that on one line. Now
+
+00:20:58.629 --> 00:21:05.629
+while index is less than dice dot length.
+We're going to do dice of index equals. Now
+
+00:21:11.499 --> 00:21:16.649
+earlier in the semester we had a program that
+rolled dice and so we know exactly what this
+
+00:21:16.649 --> 00:21:21.190
+math expression is, or at least I do. You
+might have to go back and look it up in your
+
+00:21:21.190 --> 00:21:26.450
+code and it's okay to do that if you want.
+Remember we had math dot random, which generated
+
+00:21:26.450 --> 00:21:33.450
+a value between zero and one where one was
+not included. We multiplied by the number
+
+00:21:34.350 --> 00:21:41.350
+of sides on the dice, which is what turns
+is. Then we cast it to an integer 
+and added one. Now you may not have remembered
+
+00:21:50.809 --> 00:21:55.399
+that right offhand, you certainly could've
+gone and looked it up. Of course it would
+
+00:21:55.399 --> 00:21:59.850
+be nice if we had made it a method because
+then we could reuse it, but we don't really
+
+00:21:59.850 --> 00:22:06.850
+know much about doing that yet so. I'm being
+rather careful to make sure I put increments
+
+00:22:07.220 --> 00:22:12.659
+in all these while loops so we don't have
+a whole bunch of infinite loops to debug.
+
+00:22:12.659 --> 00:22:16.860
+Here's the method for showing the user their
+current score. I wrote this one in advance
+
+00:22:16.860 --> 00:22:21.710
+too. This kind of code tends to be kind of
+sticky to write, not because it's logically
+
+00:22:21.710 --> 00:22:27.200
+complicated but because you want it to be
+pretty for the user and that kind of stuff
+
+00:22:27.200 --> 00:22:32.179
+takes some time. So I'll give you an easy
+way out this morning. So here we have count
+
+00:22:32.179 --> 00:22:37.720
+of zero, count less than turns. Now we might
+want to think about how I wrote that, because
+
+00:22:37.720 --> 00:22:42.919
+in all of our other Arrays we've been using
+a variable called index instead of count that's
+
+00:22:42.919 --> 00:22:47.580
+okay actually, but we've been using the length
+of the array. And I really think that's a
+
+00:22:47.580 --> 00:22:54.299
+better way to do things so I am going to change
+that. If the score of count is not equal to
+
+00:22:54.299 --> 00:23:00.450
+negative one that means that the person has
+scored it already and so the current score
+
+00:23:00.450 --> 00:23:05.330
+for the die and then the number of the die.
+Notice that although our array is zero indexed
+
+00:23:05.330 --> 00:23:10.779
+when we're talking with the user we have to
+unit index things. And in this case the parentheses
+
+00:23:10.779 --> 00:23:16.279
+around count plus one are really necessary,
+because otherwise this left most plus is going
+
+00:23:16.279 --> 00:23:23.279
+to become concatenation between this string
+current score for die and count, and then
+
+00:23:23.320 --> 00:23:28.570
+the plus one there will become another concatenation
+and we'll end up with something we did not
+
+00:23:28.570 --> 00:23:34.230
+anticipate. So because we want the two integers
+to be added first, we communicate that to
+
+00:23:34.230 --> 00:23:40.039
+Java with the parentheses. And then we've
+got the score of count. Now notice the negative
+
+00:23:40.039 --> 00:23:45.080
+one score in the program - we do want to show
+that stuff to users. Those are the internal
+
+00:23:45.080 --> 00:23:50.499
+logical details of the program. Users should
+not be burdened by them, in fact it's quite
+
+00:23:50.499 --> 00:23:55.600
+annoying as a user to have weird stuff like
+that showing up. So what I put out instead
+
+00:23:55.600 --> 00:24:00.960
+when we have a negative one score is that
+that category has not been used yet. So that's
+
+00:24:00.960 --> 00:24:07.149
+kind of a nice way to do it. So now we've
+got our little methods together and of course
+
+00:24:07.149 --> 00:24:14.149
+we could test all of them like we tested our
+first method so we're going to have to deal
+
+00:24:14.210 --> 00:24:18.789
+with one of our big methods. Now there are
+two different ways you can approach this.
+
+00:24:18.789 --> 00:24:24.039
+You could approach what we call bottom-up,
+that is by working on the little details first
+
+00:24:24.039 --> 00:24:28.610
+or you could approach it from the top down;
+that is working with the big picture and then
+
+00:24:28.610 --> 00:24:33.340
+working towards the little details. Neither
+answer is really right or wrong here either
+
+00:24:33.340 --> 00:24:37.960
+one will work perfectly fine. It's up to you
+to decide which one you're more comfortable
+
+00:24:37.960 --> 00:24:43.409
+with. Now in this case I think I want to work
+top-down. So I'm going to start from the main
+
+00:24:43.409 --> 00:24:49.970
+program and work down to playing a game and
+then playing a turn. Now we're going to use
+
+00:24:49.970 --> 00:24:54.019
+fact that we have stubs for these methods
+that we can call, because that will make it
+
+00:24:54.019 --> 00:25:00.239
+easier for us to run the program. Let's take
+a look at play one game. Well let's go back
+
+00:25:00.239 --> 00:25:04.999
+up to the main program first and make sure
+we know where we are. So here's the main.
+
+00:25:04.999 --> 00:25:11.090
+We have the players enter their names first
+then we created the arrays of scores. We filled
+
+00:25:11.090 --> 00:25:16.980
+them with negative ones we didn't put any
+comments there, that was kind of unfortunate.
+
+00:25:16.980 --> 00:25:23.980
+A negative one value means that the category
+has not been played. So we know that what
+
+00:25:32.129 --> 00:25:38.450
+we're going to do here is play one game. Now
+we can see that play one game method on the
+
+00:25:38.450 --> 00:25:45.450
+screen, so let's put in the names for the
+players and the Arrays. So we've got the name
+
+00:25:49.549 --> 00:25:56.549
+of player one and then player one's scores
+and the name of player two and player two's
+
+00:26:03.559 --> 00:26:10.559
+scores and of course the scanner. Now I created
+a scanner called keyboard up the top so we'll
+
+00:26:12.759 --> 00:26:19.759
+include that too. So that's going to play
+the whole game. So now let's go down and take
+
+00:26:20.559 --> 00:26:25.489
+a look at what playing the game consists of.
+Now I've put in a comment here for play the
+
+00:26:25.489 --> 00:26:31.580
+game in turns; that's the code we're going
+to have to write. The code that I didn't comment
+
+00:26:31.580 --> 00:26:37.259
+out that I didn't remove before we started
+working on this was calculate total score.
+
+00:26:37.259 --> 00:26:40.960
+So after you finish playing the game you're
+going to calculate the scores for player one
+
+00:26:40.960 --> 00:26:46.049
+and player two. Notice I'm calling the same
+method with two different Arrays, and that
+
+00:26:46.049 --> 00:26:52.159
+makes it work differently. So for example
+we passed the argument player one score to
+
+00:26:52.159 --> 00:26:58.009
+the calculate total score parameter and that's
+the one that gets used to find score one.
+
+00:26:58.009 --> 00:27:03.049
+When we call calculate total score with player
+two score on the other hand, we're calculating
+
+00:27:03.049 --> 00:27:07.720
+the score from the secondary array. So this
+code reviews, this is the way things are supposed
+
+00:27:07.720 --> 00:27:14.100
+to be done. And then all I have here is just
+an if statement that's telling who won, probably
+
+00:27:14.100 --> 00:27:17.320
+would be nice to tell people what the total
+score is too because people tend to be kind
+
+00:27:17.320 --> 00:27:23.009
+of competitive about things like that. That's
+something we could improve in the program.
+
+00:27:23.009 --> 00:27:28.100
+Okay so let's think about how we're going
+to play the game in turns. Well first off,
+
+00:27:28.100 --> 00:27:33.739
+how many turns are there? If you think about
+it there are six lines on the scorecard. Every
+
+00:27:33.739 --> 00:27:39.070
+single turn you use up one of those lines,
+so you're going to have to have six turns.
+
+00:27:39.070 --> 00:27:46.070
+So int turns is zero while turns is less than
+remember we had a constant for turns and then
+
+00:27:53.590 --> 00:28:00.590
+turns equals turns plus one. Okay, so what
+should we do here? Well remember that we have
+
+00:28:02.899 --> 00:28:09.899
+a method that we're going to write later it's
+just a stub right now called play one turn.
+
+00:28:09.989 --> 00:28:14.489
+Also notice while we're looking play one turn,
+that play one turn doesn't have the name of
+
+00:28:14.489 --> 00:28:19.570
+the player. So if we're going to give any
+feedback on who's playing to the user we need
+
+00:28:19.570 --> 00:28:26.570
+to do it in this method. So let's say system
+out print line player one what should we call
+
+00:28:31.429 --> 00:28:38.429
+it? Oh, we just called it name one here. So
+we're telling the user who's going to to play
+
+00:28:47.359 --> 00:28:52.820
+first so we're going to just have name one
+place first and name two play second. It actually
+
+00:28:52.820 --> 00:28:56.679
+doesn't matter what order turns are in in
+Yahtzee, there's no advantage to being the
+
+00:28:56.679 --> 00:29:03.679
+one who plays first. So then we'll say play
+one turn and that's going to take player one's
+
+00:29:05.859 --> 00:29:12.859
+score and of course the scanner. Now, here's
+the second player. System out print line you
+
+00:29:16.919 --> 00:29:23.919
+could copy and paste for this too, right?
+And then we'll play one turn, player two's
+
+00:29:30.200 --> 00:29:37.200
+score from the keyboard. Well, that's actually
+all there is to playing the game. [laughs]
+
+00:29:40.220 --> 00:29:45.499
+Of course the reason it's so easy to write
+this method is because we have delayed the
+
+00:29:45.499 --> 00:29:51.070
+details of playing one turn into the next
+method. So notice this breaking things apart
+
+00:29:51.070 --> 00:29:56.230
+into small pieces actually makes the code
+writing quite straightforward, so all we have
+
+00:29:56.230 --> 00:30:02.149
+here is a simple while loop. So it's probably
+a good time to run the program and make sure
+
+00:30:02.149 --> 00:30:06.899
+things are working the way we expected. Now
+let's think about what we expect. There is
+
+00:30:06.899 --> 00:30:13.859
+no actual turn here, so what we should see
+is Deborah and Maggie it is your turn alternating
+
+00:30:13.859 --> 00:30:19.399
+for six times and then we should see calculate
+total score returning zero and it should be
+
+00:30:19.399 --> 00:30:25.369
+a tie. Now I've gone through that rather quickly,
+but notice the code is all here so you can
+
+00:30:25.369 --> 00:30:32.369
+go through more slowly at your leisure. So
+the first player's name is Deborah. I'll still
+
+00:30:39.789 --> 00:30:46.789
+play the family dog. So let's take a look
+and make sure everything looks right. So we
+
+00:30:47.639 --> 00:30:54.639
+have one, two, three, four, five, six Deborah's...one,
+two, three, four, five, six Maggie's, and
+
+00:30:55.570 --> 00:30:59.840
+in fact we did get a tie. You might also notice
+that it is little frustrating to not know
+
+00:30:59.840 --> 00:31:06.840
+the scores so let's actually put that in too.
+So let's say system out print line name one
+
+00:31:09.669 --> 00:31:16.669
+your...whoops, no capital, your score is plus
+score one. Now this time I am going to copy
+
+00:31:24.479 --> 00:31:31.479
+and paste this code. Let's put in a little
+comment here. The reason I'm copying and pasting
+
+00:31:40.220 --> 00:31:47.220
+the code is to make sure that it's absolutely
+parallel. So name two your score is score
+
+00:31:50.779 --> 00:31:57.779
+two...and let's make some comments up here.
+So the game has one turn for every possible
+
+00:32:07.809 --> 00:32:14.809
+outcome and players alternate playing. There
+is no advantage to playing first because this
+
+00:32:24.299 --> 00:32:29.129
+is dominated by randomness. So notice I'm
+taking some of the things that we talked about
+
+00:32:29.129 --> 00:32:33.529
+while we were writing the code and putting
+it in. The other thing to notice is that I'm
+
+00:32:33.529 --> 00:32:39.029
+documenting the code when I write it. Sometimes
+students get into the bad habit of writing
+
+00:32:39.029 --> 00:32:44.229
+tons of code, and then trying to go back at
+the end and document it. That's really a bad
+
+00:32:44.229 --> 00:32:48.460
+habit. For one thing writing code without
+documenting it while you're doing it is a
+
+00:32:48.460 --> 00:32:53.379
+bad habit. Also when you go back later you
+don't really know exactly what you were thinking,
+
+00:32:53.379 --> 00:33:00.169
+and so that makes it hard too. So really focus
+on making sure you have documentation in the
+
+00:33:00.169 --> 00:33:04.840
+code. As a general rule for every thought
+in the program for example, the while loop
+
+00:33:04.840 --> 00:33:09.759
+is a thought, you want to have a comment that
+describes what you were thinking. There's
+
+00:33:09.759 --> 00:33:14.019
+a saying in computer science that when the
+code doesn't match the comments they're usually
+
+00:33:14.019 --> 00:33:20.269
+both wrong. And the reason is that when somebody
+writes code and doesn't comment it that probably
+
+00:33:20.269 --> 00:33:24.369
+means they were trying to work quickly. And
+when you work quickly you tend to make a lot
+
+00:33:24.369 --> 00:33:30.720
+of mistakes, plus when you go back later and
+put things in here you have code that's likely
+
+00:33:30.720 --> 00:33:34.700
+to have mistakes in it and you're just kind
+of slapping comments on top of it. So it's
+
+00:33:34.700 --> 00:33:40.809
+a sign of a professional lapse, one that computer
+scientists actually take pretty seriously.
+
+00:33:40.809 --> 00:33:47.809
+So let's see if our program's a little more
+satisfying to play now. Okay well that actually
+
+00:33:55.559 --> 00:34:00.639
+does feel a little more satisfying is to know
+what the scores are. But let's count again
+
+00:34:00.639 --> 00:34:07.639
+one, two, three, four, five, six Deborah's...one,
+two, three, four, five, six Maggie's, scores
+
+00:34:07.979 --> 00:34:14.179
+are both zero it's a tie. One thing I do notice
+is that I have a period after it's a tie but
+
+00:34:14.179 --> 00:34:21.179
+not after the scores, and not after the turns.
+I know these are little things, but remember
+
+00:34:22.520 --> 00:34:29.520
+I'm a professional and I want my work to always
+look beautiful. This is part of looking beautiful,
+
+00:34:39.879 --> 00:34:45.399
+and you know these even though we haven't
+tested these yet we are going to want those
+
+00:34:45.399 --> 00:34:52.399
+to look beautiful too. Okay so we've done
+some more work so let's run it again. Particularly
+
+00:34:58.089 --> 00:35:05.089
+because running it isn't very hard at this
+point. Okay, so that's looking pretty good.
+
+00:35:11.210 --> 00:35:15.950
+Now the rubber is getting ready to meet the
+road. Let's talk about what consists of playing
+
+00:35:15.950 --> 00:35:22.950
+one turn. Well let's put in comments. So let's
+think through what a turn of Yahtzee looks
+
+00:35:23.440 --> 00:35:30.420
+like. You're going to need to show the user
+their scorecard. The reason they need to know
+
+00:35:30.420 --> 00:35:35.780
+their scorecard is so that they can strategize
+how they're going to play their roles. Then
+
+00:35:35.780 --> 00:35:42.780
+you need to roll all of the dice, show the
+dice to the user, let them reroll the dice,
+
+00:35:53.220 --> 00:36:00.220
+then show them the dice again 
+and let them reroll again. Remember there
+are three possibilities. Now, the other thing
+
+00:36:15.160 --> 00:36:22.160
+we have to do is to score the rolls. So we
+might think about how we're going to do that.
+
+00:36:26.250 --> 00:36:30.309
+Now, this does sound like something that might
+be a little more complicated so we might think
+
+00:36:30.309 --> 00:36:35.349
+about whether this should be a separate method.
+But for now let's leave it here. So what we
+
+00:36:35.349 --> 00:36:42.349
+would do is show the user the dice, ask them
+for a category to score and score that category.
+
+00:36:52.319 --> 00:36:59.319
+Wow, it looks like so much. But remember we
+have a whole bunch of really cool methods
+
+00:37:00.520 --> 00:37:05.869
+written for doing this, so it's actually not
+going to be that much work. In fact we might
+
+00:37:05.869 --> 00:37:11.579
+end up removing some of these comments because
+if you think about it, they're virtually identical
+
+00:37:11.579 --> 00:37:16.549
+to the names of the methods we've written
+previously. Now, as for how I created those
+
+00:37:16.549 --> 00:37:22.309
+method names I actually was writing this method
+and every time I would write something like
+
+00:37:22.309 --> 00:37:26.760
+show the user their scorecard I'd think, "Oh!
+That should be a method" and so then I'd create
+
+00:37:26.760 --> 00:37:32.260
+the signature for the method. So let's go
+and find these methods one at a time and put
+
+00:37:32.260 --> 00:37:39.260
+in the correct values. So show the user their
+scorecard is called show current scorecard,
+
+00:37:41.049 --> 00:37:48.049
+and it takes an argument that's a score. I
+bet that's a capital C. Okay, Eclipse looks
+
+00:38:00.260 --> 00:38:07.260
+happier now. Then we have roll all the dice.
+Well, wait a minute what dice? Well now's
+
+00:38:08.859 --> 00:38:15.289
+the time we need to actually create some dice.
+So we'll have an integer array, which I'm
+
+00:38:15.289 --> 00:38:22.289
+going to call dice. And let's construct it,
+new int. There are five dice in Yahtzee. So
+
+00:38:29.150 --> 00:38:36.150
+now when we go to roll all the dice, which
+was another one of the methods we wrote, we
+
+00:38:37.099 --> 00:38:44.099
+can give it the dice array. Now I think you
+may see what I'm talking about with the comments
+
+00:38:45.190 --> 00:38:50.740
+here that we've done such a good job of creating
+descriptive method names that these comments
+
+00:38:50.740 --> 00:38:56.960
+are not really helping us out much. So that,
+those are comments you might think about removing.
+
+00:38:56.960 --> 00:39:03.960
+Now show the dice to the user, I believe we
+called that show dice. Now the reroll of the
+
+00:39:12.869 --> 00:39:19.869
+dice that method's down here, we haven't written
+that one yet. So we call it reroll dice. Now
+
+00:39:23.299 --> 00:39:29.390
+rerolling the dice requires interaction with
+the user so we know that's going to need to
+
+00:39:29.390 --> 00:39:36.390
+have the keyboard as an argument. Then we
+show the dice to the user. So notice that
+
+00:39:39.799 --> 00:39:46.000
+even though this is quite a complicated method,
+it's not very hard to do. Then we reroll the
+
+00:39:46.000 --> 00:39:53.000
+dice again. So really the only part that's
+complicated is scoring the rolls. So let's
+
+00:40:06.010 --> 00:40:10.990
+think a little bit about some other structural
+changes we might want to make. Do you notice
+
+00:40:10.990 --> 00:40:17.760
+that we repeated several lines of code? So
+for example we had: roll all dice, show dice,
+
+00:40:17.760 --> 00:40:24.109
+reroll dice, show dice, reroll dice and we're
+going to have a show dice right down in here.
+
+00:40:24.109 --> 00:40:29.250
+We could create that as a loop, but frankly
+because it's only two times that's really
+
+00:40:29.250 --> 00:40:34.180
+not worth it. We would have to have an index,
+we'd have to have a counter in the loop. So
+
+00:40:34.180 --> 00:40:39.010
+that makes it a little bit more complicated,
+so let's just improve the documentation a
+
+00:40:39.010 --> 00:40:46.010
+little bit. So we need to show the user the
+dice. We know how to do that and now ask them
+
+00:40:51.029 --> 00:40:58.029
+for a category to score. So system out print
+line which category would you like to score
+
+00:41:01.490 --> 00:41:08.490
+in 
+and then we'll get input from the keyboard.
+Now we've got a problem here, because the
+
+00:41:20.740 --> 00:41:24.920
+user might try to score in a category where
+they've already scored. It's very painful
+
+00:41:24.920 --> 00:41:30.650
+to get five sixes and know that you've already
+used your sixes category. So we probably want
+
+00:41:30.650 --> 00:41:34.690
+to do some error checking, and we also should
+not assume that they're going to always type
+
+00:41:34.690 --> 00:41:39.890
+things in accurately. So there's some mistakes
+we can't catch like typing in a different
+
+00:41:39.890 --> 00:41:44.230
+category than what you meant but typing in
+things that are out of bounds that are going
+
+00:41:44.230 --> 00:41:48.730
+to break the program or typing in a category
+that's already been used are things you want
+
+00:41:48.730 --> 00:41:55.730
+to look for. So while now remember we're repeating
+this loop when fail. So what are the failing
+
+00:41:57.369 --> 00:42:04.369
+conditions? Well the category less than zero
+is one of them, or the category greater than
+
+00:42:07.460 --> 00:42:13.480
+turns is another one. So those are the out
+of bounds conditions. We might also want to
+
+00:42:13.480 --> 00:42:17.380
+think whether we're using less than, greater
+than, or less than or equal, or greater than
+
+00:42:17.380 --> 00:42:24.109
+or equal to. So a category of zero is a legal
+category which means the illegal condition
+
+00:42:24.109 --> 00:42:30.450
+is in fact less than, but when we look at
+category turns, turns is not legal. Remember
+
+00:42:30.450 --> 00:42:36.289
+our Arrays stops at turns minus one because
+of this crazy zero indexing thing? So in this
+
+00:42:36.289 --> 00:42:42.029
+case we'll have category greater than or equal
+to turns. Now the other thing that we might
+
+00:42:42.029 --> 00:42:48.630
+consider is whether it's already been used.
+So that's the other way this could go wrong
+
+00:42:48.630 --> 00:42:55.630
+is to have score of category 
+equals whoops, sorry! Not equals but not equal
+to negative one. Remember that the only categories
+
+00:43:09.770 --> 00:43:15.760
+you're allowed to score in are the ones where
+it's negative one. So we're putting a little
+
+00:43:15.760 --> 00:43:22.760
+while loop in here. We need to give the user
+some feedback [typing] and let's remind them
+
+00:43:31.029 --> 00:43:38.029
+about the scoring rules. And then let them
+enter the data again. So let's give them another
+
+00:43:50.609 --> 00:43:57.609
+line of output for that. So we'll say category
+equals keyboard dot next int. So that will
+
+00:44:18.990 --> 00:44:25.069
+keep them there until they score it correctly.
+Now once they've entered it correctly and
+
+00:44:25.069 --> 00:44:32.069
+we get down here we need to know that score
+of category equals...well what is the score
+
+00:44:37.760 --> 00:44:42.859
+for that category? Well remember we had that
+nice little method that we probably called
+
+00:44:42.859 --> 00:44:49.859
+something like sum all dice, don't remember
+exactly so let's go and look for it. Sum of
+
+00:44:49.960 --> 00:44:56.960
+dice, and so we need the dice and we need
+the number. Let me show you another trick
+
+00:45:00.950 --> 00:45:07.950
+that you can use in Eclipse for keeping track
+of some of these method names. Right here
+
+00:45:12.260 --> 00:45:17.619
+in the package explorer if you click on it,
+it will actually show you all of your method
+
+00:45:17.619 --> 00:45:23.079
+names right there. As programs get larger,
+it's nicer and nicer to be able to read all
+
+00:45:23.079 --> 00:45:27.599
+those signatures. Now of course this does
+take up some screen space so you have to sort
+
+00:45:27.599 --> 00:45:33.079
+of play off it and decide which one you like,
+but it is a very nice feature and it's also
+
+00:45:33.079 --> 00:45:39.980
+a very good incentive to create those method
+signatures first. Okay, so let's think about
+
+00:45:39.980 --> 00:45:45.460
+what we're doing here. What should the play
+look like if we ran the program at this point?
+
+00:45:45.460 --> 00:45:50.950
+Well we're going to be asked to score categories
+but we're not going to be able to reroll dice.
+
+00:45:50.950 --> 00:45:56.410
+So we'll see the original dice probably three
+times pretty quickly, and then we're going
+
+00:45:56.410 --> 00:46:01.760
+to ask to score the category. So that gives
+us an idea of what we're expecting. Now what
+
+00:46:01.760 --> 00:46:06.980
+we could do is choose a category where things
+don't score, and then we'd know what the score
+
+00:46:06.980 --> 00:46:11.750
+would be. Now that's not always possible because
+it is possible that we get one, two, three,
+
+00:46:11.750 --> 00:46:16.369
+four, five. Oh it is impossible that we get
+one, two, three, four, five, six! I think
+
+00:46:16.369 --> 00:46:19.710
+we're going to have trouble creating that
+zero score, though. So what we're going to
+
+00:46:19.710 --> 00:46:24.190
+have to do is just follow through and make
+sure things are in the right place. So notice
+
+00:46:24.190 --> 00:46:28.520
+we can do all this without the reroll dice
+which by the way is kind of a sticky method
+
+00:46:28.520 --> 00:46:35.520
+to implement-- being implemented. So here
+we go. Well that was strange. What happened
+
+00:46:42.549 --> 00:46:47.329
+there is that I had accidentally clicked on
+a different project, and so Eclipse was running
+
+00:46:47.329 --> 00:46:54.329
+that project. This looks more like it. Okay.
+So here's the turn, we have category one has
+
+00:47:07.809 --> 00:47:12.779
+not been used yet so it's showing my scorecard.
+We might want to put a little label in that
+
+00:47:12.779 --> 00:47:17.569
+so that we know that that's the scorecard
+coming up then what you'll see is we have
+
+00:47:17.569 --> 00:47:23.460
+five dice that have been rolled and rerolled
+and rerolled. Notice they're remaining the
+
+00:47:23.460 --> 00:47:28.190
+same through all three rolls so that's good.
+Now which category would we like to score
+
+00:47:28.190 --> 00:47:32.049
+in? Well you know what I think I'd like to
+score category six because I see I've got
+
+00:47:32.049 --> 00:47:39.049
+a couple of sixes. And those sixes are kind
+of important in Yahtzee. Now it says that's
+
+00:47:39.089 --> 00:47:44.859
+not a legal category. Remember, you can't
+rescore in a category. Well that's kind of
+
+00:47:44.859 --> 00:47:51.859
+odd, so we need to go back to our code and
+check and see what happened. Well if you'll
+
+00:47:53.819 --> 00:47:58.970
+notice what happened this is the code we're
+looking at right here, right where we're throwing
+
+00:47:58.970 --> 00:48:05.970
+out categories. The categories here are zero
+indexed. And we really didn't take that into
+
+00:48:06.240 --> 00:48:13.240
+consideration. So once they score here let's
+make some comments. When you communicate with
+
+00:48:15.059 --> 00:48:19.630
+the user you have to use unit indexing, but
+then when you go to communicate with the program
+
+00:48:19.630 --> 00:48:26.630
+we need to change it to zero indexing. So
+that's how we can do that. Now remember we
+
+00:48:29.470 --> 00:48:36.470
+need to do that here, too. Okay let me change
+that minus sign to an equal and make Eclipse
+
+00:48:43.890 --> 00:48:50.890
+happy, and then we'll run the program again.
+Okay three, five, six, two, three, three,
+
+00:49:00.799 --> 00:49:05.619
+five, six, two, three, three, five, six, two,
+three so we're not doing any rerolling we
+
+00:49:05.619 --> 00:49:12.619
+knew that already. So let's score that in
+category four and see what happens. Uh oh!
+
+00:49:15.990 --> 00:49:22.990
+We're stuck. So we need to think about that,
+where might we be stuck? Well it can't be
+
+00:49:27.980 --> 00:49:34.720
+in reroll dice because we don't have any reroll
+here. We know that we got out of this, because
+
+00:49:34.720 --> 00:49:41.039
+we know that the category was read. So we
+might think about sum of dice and see if something
+
+00:49:41.039 --> 00:49:45.890
+went wrong there. That looks like the first
+place where we could have lost something.
+
+00:49:45.890 --> 00:49:50.150
+So let's take a look at sum of dice and see
+if anything's wrong. And of course I'm sure
+
+00:49:50.150 --> 00:49:57.150
+you recognize one of my famous mistakes I
+forgot to increment the index. Now this is
+
+00:49:58.250 --> 00:50:02.940
+something that we could have done better earlier.
+For example, if we had tested the program
+
+00:50:02.940 --> 00:50:08.069
+we probably would have found it early instead
+of finding the infinite loop now. But would
+
+00:50:08.069 --> 00:50:15.069
+found it one way or another so I guess we're
+okay. So here we go again. Okay, none of the
+
+00:50:22.190 --> 00:50:27.750
+categories have been used. It's my turn. Five,
+four, five, one, three, five, four, five,
+
+00:50:27.750 --> 00:50:34.319
+one three, five, four, five, one, three, let's
+score that in category six. Now the score
+
+00:50:34.319 --> 00:50:41.319
+here should be zero. So let's see what happens
+there. Well, we're now at Maggie's turns so
+
+00:50:42.769 --> 00:50:48.559
+remember none of her things have been scored
+yet so we'll have two, five, two, five, one,
+
+00:50:48.559 --> 00:50:54.779
+and that's been repeated correctly. Let's
+score that in category three. So both Maggie
+
+00:50:54.779 --> 00:51:01.779
+and I should have a zero in one of our categories.
+So the current score for dice six is ten.
+
+00:51:06.510 --> 00:51:11.990
+Wait a minute, what happened there? That isn't
+correct, so let's stop the program and go
+
+00:51:11.990 --> 00:51:17.910
+and look at it. Now this is going to be our
+sum of dice method again. So notice the method
+
+00:51:17.910 --> 00:51:22.380
+that we did not test thoroughly is the one
+that's causing us the grief now, so let's
+
+00:51:22.380 --> 00:51:29.380
+see what happened here. Well if dice dot index
+equals number. Well now did we store the dice
+
+00:51:31.569 --> 00:51:38.319
+unit indexed or zero indexed? These are the
+kinds of things that are going to go wrong.
+
+00:51:38.319 --> 00:51:43.609
+So let's think about what we're doing here.
+Sum of dice is actually looking pretty good
+
+00:51:43.609 --> 00:51:49.809
+at this point. We start the index at zero,
+we step through the index one unit at a time.
+
+00:51:49.809 --> 00:51:56.170
+If it is the number we add it to the sum,
+otherwise we don't do anything and in either
+
+00:51:56.170 --> 00:52:02.900
+case we increment the index so that looks
+good. Maybe we should go back and make sure
+
+00:52:02.900 --> 00:52:09.390
+that...well okay, we know the current score
+for dice six can't be ten. Let's look and
+
+00:52:09.390 --> 00:52:15.339
+see what happened in that turn. One thing
+you may be noticing here is that it's a little
+
+00:52:15.339 --> 00:52:20.390
+hard to do this kind of debugging because
+of the alternating of turns. So let's actually
+
+00:52:20.390 --> 00:52:26.019
+go and modify the program a little bit. Let's
+remove the alternating turns, because then
+
+00:52:26.019 --> 00:52:31.920
+we'll be able to just play with one player.
+That's probably a better strategy. So here
+
+00:52:31.920 --> 00:52:38.920
+we go. So I'm disabling the second player's
+turn now. Once we get turns working it will
+
+00:52:50.460 --> 00:52:56.210
+be very easy to enable that again. The other
+thing I'm going to disable at this point is
+
+00:52:56.210 --> 00:53:03.210
+rerolling and the reason is that we haven't
+written that method yet. So let's just disable
+
+00:53:04.779 --> 00:53:11.779
+these for the moment and this will make it
+a lot easier to debug our program so part
+
+00:53:11.849 --> 00:53:18.849
+of debugging is finding good ways to make
+things simple. Okay. Now we're still going
+
+00:53:23.079 --> 00:53:28.410
+to be asked for two player names because we
+didn't disable that part. My turn categories
+
+00:53:28.410 --> 00:53:35.410
+haven't been used so we see our dice they're
+the same. Let's score them in category six,
+
+00:53:35.450 --> 00:53:41.549
+so now category six should have a score of
+twelve. And it says the current score for
+
+00:53:41.549 --> 00:53:48.549
+die six is zero. Well isn't that weird? So
+that actually is not correct. So now it's
+
+00:53:49.079 --> 00:53:56.079
+time to go through and look very carefully
+and see what might've gone wrong. So let's
+
+00:53:59.510 --> 00:54:06.510
+look at how we're showing the dice just to
+make sure we understand how they've been scored.
+
+00:54:06.769 --> 00:54:13.769
+So we're showing the actual dice at that index.
+Okay, that looks correct. That tells us we
+
+00:54:14.180 --> 00:54:18.740
+didn't score the dice zero indexed, which
+would be a silly thing to do but would be
+
+00:54:18.740 --> 00:54:25.740
+the kinds of things that might work out. So
+let's look again at that number not in the
+
+00:54:26.519 --> 00:54:33.519
+sum of dice method, because that one's looking
+good...but right up here. So when we pass
+
+00:54:35.430 --> 00:54:42.029
+in the category is the category unit indexed
+or zero indexed? Well at this point remember,
+
+00:54:42.029 --> 00:54:49.029
+we've changed it so that it's zero indexed.
+Notice this is where having some comments
+
+00:54:50.160 --> 00:54:56.900
+really makes a difference. So what we should've
+done, because the dice are unit indexed, is
+
+00:54:56.900 --> 00:55:03.900
+put in category plus one. And let's actually
+make a comment here that the category has
+
+00:55:08.529 --> 00:55:15.529
+to be unit indexed in the method. So the zero
+indexing versus unit indexing causes a lot
+
+00:55:15.599 --> 00:55:22.599
+of challenges. Let's see if things are looking
+a little better now. Running the program again,
+
+00:55:30.309 --> 00:55:37.309
+so let's put this in category six. Now this
+should score six points in category six. That's
+
+00:55:38.069 --> 00:55:45.069
+looking good. Let's score this in category
+six too and see happens. That's not a legal
+
+00:55:46.700 --> 00:55:53.259
+category, remember you can't rescore. Good.
+Let's try category negative one, that's not
+
+00:55:53.259 --> 00:55:59.369
+a legal category. Let's try category zero,
+that's not a legal category. How about category
+
+00:55:59.369 --> 00:56:06.369
+five? Now that should score zero, which is
+actually what it did. Now in this one we've
+
+00:56:06.430 --> 00:56:13.430
+got a couple of numbers that are the same
+so let's score that in category one. Now why
+
+00:56:19.259 --> 00:56:23.349
+is category one not a legal category at this
+point? Oh because we've already scored in
+
+00:56:23.349 --> 00:56:28.339
+that category. Sorry, the program jumped ahead
+a turn. So our categories that are available
+
+00:56:28.339 --> 00:56:35.339
+are two, three, and four. Let's go to two.
+Okay, so we've got categories three and four
+
+00:56:39.660 --> 00:56:46.660
+left let's score this in category three. And
+score in category four, which is our only
+
+00:56:47.619 --> 00:56:52.140
+one that's remaining. We're not playing a
+very good game of Yahtzee here by the way,
+
+00:56:52.140 --> 00:56:57.029
+our score is seventeen. Let's add up and see
+if that's actually correct. So the score on
+
+00:56:57.029 --> 00:57:04.029
+the last one should have been four so we have
+two, four, seven, eleven, and six is seventeen.
+
+00:57:05.349 --> 00:57:11.200
+So that looks like it's scoring really well.
+Now at this point we could turn back on the
+
+00:57:11.200 --> 00:57:17.160
+second player, but it's using identical logic
+so we don't think that's going to be any different.
+
+00:57:17.160 --> 00:57:21.750
+Instead the logic that we should test next
+is the reroll method, because that one's going
+
+00:57:21.750 --> 00:57:27.470
+to be a little bit trickier. So we show the
+dice to the user. We're going to have to ask
+
+00:57:27.470 --> 00:57:34.470
+them which dice would you like to reroll and
+there we run into a challenge. Let's talk
+
+00:57:38.569 --> 00:57:44.210
+about rerolling dice a little bit. Handling
+the user interaction is a little bit tricky.
+
+00:57:44.210 --> 00:57:48.440
+So first off you have to consider the possibility
+that the user's going to be satisfied with
+
+00:57:48.440 --> 00:57:53.170
+their dice and not wish to reroll them, so
+we'll have to use a negative one flag for
+
+00:57:53.170 --> 00:57:58.579
+that or some other flag that was the first
+one that came to my mind. But there's also
+
+00:57:58.579 --> 00:58:04.119
+another problem, and that's that we don't
+know how many dice they want to reroll. Now
+
+00:58:04.119 --> 00:58:08.210
+we could come up with some elaborate way to
+work around this but it really make sense
+
+00:58:08.210 --> 00:58:12.799
+to have the user tell you which ones they
+want to reroll. Now your first thought to
+
+00:58:12.799 --> 00:58:19.069
+this might be that we should use has next
+int in the scanner class but this actually
+
+00:58:19.069 --> 00:58:26.069
+doesn't work. Let me go to the documentation
+and show you what the problem is. Going to
+
+00:58:27.960 --> 00:58:34.960
+the scanner class, and let's look at has next
+int. It's right here. Returns true if the
+
+00:58:45.720 --> 00:58:51.940
+next token in the scanner's input can be interpreted
+as an int value in the default radix. Now
+
+00:58:51.940 --> 00:58:58.289
+when they say this default radix stuff what
+they mean is base ten, in our case. The scanner
+
+00:58:58.289 --> 00:59:05.230
+does not advance past any input. So the problem
+with using a scanner for this, using has next
+
+00:59:05.230 --> 00:59:11.950
+int, is that it will wait to see what the
+next value is. Well the next value occurs
+
+00:59:11.950 --> 00:59:17.200
+later on in the program so this will actually
+hang you program if you try to use next int.
+
+00:59:17.200 --> 00:59:24.200
+So we need a clever workaround. What the solution
+is is to read all the values into a string
+
+00:59:24.940 --> 00:59:29.480
+and then create a scanner for the string.
+Now it turns out when you create a scanner
+
+00:59:29.480 --> 00:59:34.119
+from a string, it does know that it doesn't
+have another integer because it knows where
+
+00:59:34.119 --> 00:59:41.119
+the string ends and so that fixes the problem.
+So let's go and implement. So I'm going to
+
+00:59:45.259 --> 00:59:50.960
+create a string which I'm going to call input
+line, and that's going to be keyboard dot
+
+00:59:50.960 --> 00:59:57.960
+next line. We might tell them to enter negative
+one if you do not wish to reroll. So we get
+
+01:00:07.099 --> 01:00:14.099
+our next line then we're going to create a
+scanner, which I'm going to call...dice number.
+
+01:00:16.089 --> 01:00:23.089
+I don't like that. Let's see, what are we
+going to call that scanner? I'll call it just
+
+01:00:27.369 --> 01:00:34.369
+line. So I'm creating the scanner with a different
+constructor than the one we usually use. So
+
+01:00:35.559 --> 01:00:40.000
+rather than attaching it to the keyboard I'm
+attaching it to the string that's the next
+
+01:00:40.000 --> 01:00:46.750
+input line. We're going to need to get the
+first dice value out. Now we can't call it
+
+01:00:46.750 --> 01:00:53.750
+dice because that's the name of the array,
+so I'll call it reroll value and that's going
+
+01:00:54.599 --> 01:01:01.599
+to be line dot next int. Now if the reroll
+value is negative one that means they've said
+
+01:01:08.250 --> 01:01:14.539
+that they don't want to reroll any of the
+dice, and so what we should do at that point
+
+01:01:14.539 --> 01:01:19.099
+is return. And I see that I missed an equal
+sign here. This is an equality comparison,
+
+01:01:19.099 --> 01:01:26.099
+right, not an assignment statement. So that's
+a nice way to get out of there. Now we're
+
+01:01:27.359 --> 01:01:34.359
+going to have to consider what happens if
+it's not negative one. So while line dot has
+
+01:01:35.869 --> 01:01:42.190
+next int so as those long as there's still
+data to process. Now we're going to have to
+
+01:01:42.190 --> 01:01:49.190
+think about what we want to do here. For example,
+should this stuff right here being inside
+
+01:01:50.279 --> 01:01:57.039
+this loop? So let's think through the logic
+carefully. If they enter a negative one we
+
+01:01:57.039 --> 01:02:02.670
+definitely want to get out of there, but we
+can get out inside of the while loop, too.
+
+01:02:02.670 --> 01:02:07.329
+If we don't move that stuff in there we're
+going to have to prime our input but that's
+
+01:02:07.329 --> 01:02:12.410
+a problem because then has next int won't
+fail at the correct time so let's cut this
+
+01:02:12.410 --> 01:02:18.349
+and move it into the loop. This is a case
+where we do not want to prime our input and
+
+01:02:18.349 --> 01:02:25.349
+that's dictated by the logic of has next int.
+Otherwise, what we're going to do is dice
+
+01:02:28.809 --> 01:02:35.809
+of reroll value minus one because remember
+unit indexed. So let's actually document this
+
+01:02:39.099 --> 01:02:46.099
+so dice of reroll value mius one is going
+to equal and then we just need to generate
+
+01:02:51.799 --> 01:02:58.799
+another random number so we know what that
+looks like, having done it a couple of times
+
+01:03:04.960 --> 01:03:11.960
+now. Now we also might want to consider what
+happens if the user makes a mistake in the
+
+01:03:13.480 --> 01:03:20.029
+input. That is, what if that value isn't legal?
+Well in my opinion in this particular case
+
+01:03:20.029 --> 01:03:26.749
+we may just tell them they messed up and not
+let them reroll. Now this makes our programming
+
+01:03:26.749 --> 01:03:31.490
+easier but also it makes the user pay attention
+to what they're doing. That seems kind of
+
+01:03:31.490 --> 01:03:34.880
+mean-spirited and it may not be a good idea,
+we'll have to see how it feels when we're
+
+01:03:34.880 --> 01:03:41.880
+playing the game. If reroll value is less
+than zero or reroll value is greater than
+
+01:03:51.920 --> 01:03:58.920
+or equal to turns what we're going to do is
+say system out print line that is not a legal
+
+01:04:00.410 --> 01:04:07.410
+value, no dice will be rerolled or rolled
+again. I guess that's little bit nicer. Now,
+
+01:04:24.589 --> 01:04:31.589
+in order for that to actually be true this
+needs to go in an else and in fact this else
+
+01:04:33.880 --> 01:04:39.920
+is actually quite important because if we
+didn't have that, what would happen is that
+
+01:04:39.920 --> 01:04:43.839
+it would try to roll it again well we know
+the value they've given us isn't legal and
+
+01:04:43.839 --> 01:04:50.839
+so that wouldn't work. Oh yeah! We might want
+to think here about turns versus dice. So
+
+01:04:51.109 --> 01:04:56.749
+is it the number of dice they're re-rolling
+or the number of turns? I'm pretty sure that's
+
+01:04:56.749 --> 01:05:02.589
+number of dice. Of course some of these things
+will come out in testing as we move along.
+
+01:05:02.589 --> 01:05:08.799
+Okay, let's think through the logic again
+just to be sure we're doing the right thing.
+
+01:05:08.799 --> 01:05:15.769
+We create a scanner from the string that has
+all of the values on it. Then we read the
+
+01:05:15.769 --> 01:05:22.769
+first integer if there is one. If there is
+a negative one that's read in we get out of
+
+01:05:24.789 --> 01:05:29.269
+there because that means they didn't want
+to reroll anything. If the value is out of
+
+01:05:29.269 --> 01:05:35.660
+range, we tell them they messed up otherwise
+we reroll the dice and we do that as long
+
+01:05:35.660 --> 01:05:41.349
+as there's input. So that looks pretty good.
+Now notice we're changing our dice array that's
+
+01:05:41.349 --> 01:05:45.779
+fine, it's okay to change an array in a method
+and those changes to get reflected in the
+
+01:05:45.779 --> 01:05:52.779
+main method. Let's go 
+and play our game. Now I'm going to give us
+a little more space because this is going
+
+01:05:55.900 --> 01:06:00.440
+to get longer and you know what, I'm going
+to stop it right away because I believe we
+
+01:06:00.440 --> 01:06:06.359
+still have our rerolling commented out. So
+let's go and enable that part of the game
+
+01:06:06.359 --> 01:06:13.359
+again 
+and now we can play. I have not enabled two-player
+play at this point, again to keep things a
+
+01:06:24.759 --> 01:06:31.759
+little bit simpler. So it's my turn, no categories
+have been used well we've got a couple of
+
+01:06:38.170 --> 01:06:45.170
+fives there so let's reroll one, two, and
+five. Now that's a problem. So that says which
+
+01:06:46.390 --> 01:06:50.869
+dice would you like to reroll enter negative
+one. I entered one, two and five and it didn't
+
+01:06:50.869 --> 01:06:56.109
+really tell us which one was illegal. What's
+more it lied about some of the dice being
+
+01:06:56.109 --> 01:07:00.490
+re-rolled. In fact we can kind of see which
+ones were rerolled so one got reroll because
+
+01:07:00.490 --> 01:07:06.720
+it changed values, two got rerolled but five
+looks like the one that didn't. So that's
+
+01:07:06.720 --> 01:07:12.700
+probably an off by one bug that we're going
+to want to check on. Let's do negative one
+
+01:07:12.700 --> 01:07:17.809
+and see what happens one, five, five, five,
+three, so that looks good and we'll score
+
+01:07:17.809 --> 01:07:24.809
+that in category five. Okay so let's go and
+look for our off by one bug. So it looks like
+
+01:07:25.190 --> 01:07:32.190
+category five is not being treated correctly.
+Let's think about the categories now. The
+
+01:07:37.829 --> 01:07:44.829
+category here is zero indexed. Oh! Wrong place,
+should've been rerolling the dice. So if it's
+
+01:07:45.369 --> 01:07:51.740
+less than zero or value is greater than or
+equal to dice. Well let's think about it this
+
+01:07:51.740 --> 01:07:57.470
+is unit indexed well then less than zero isn't
+correct. That should be less than or equal
+
+01:07:57.470 --> 01:08:04.470
+to zero, and this should be greater than dice.
+So this unit indexing versus zero indexing
+
+01:08:05.079 --> 01:08:10.990
+has the potential for causing all kinds of
+problems with Arrays. So notice here we change
+
+01:08:10.990 --> 01:08:17.319
+it to zero indexing when we store it. But
+at this point its unit indexed. Now, we could
+
+01:08:17.319 --> 01:08:21.529
+rewrite the logic so that we could change
+it to zero indexing sooner but remember that
+
+01:08:21.529 --> 01:08:25.859
+that will then mess up this return value.
+so we need to be careful when we do these
+
+01:08:25.859 --> 01:08:32.859
+things. Let's see if things are working a
+little better now. Okay, so we've got three
+
+01:08:45.239 --> 01:08:52.239
+threes that looks nice. So let's reroll dice
+number one and dice number five. Okay, those
+
+01:08:53.089 --> 01:08:59.259
+are the correct ones that got rerolled let's
+try some illegal values here like zero and
+
+01:08:59.259 --> 01:09:06.170
+six. So we've got two illegal values, that's
+good. And which category would we like to
+
+01:09:06.170 --> 01:09:10.869
+score in. Well I think I'd like to score that
+in category three and we scored three threes,
+
+01:09:10.869 --> 01:09:17.869
+which is nine so that's looking good. Now
+here we have some dice got one five, one six,
+
+01:09:18.259 --> 01:09:25.259
+two ones, let's go for some more fives. So
+let's reroll one, two, four, and five. So
+
+01:09:28.259 --> 01:09:33.230
+you can see one got rerolled, it's hard to
+tell with two remember it is randomly possible
+
+01:09:33.230 --> 01:09:38.529
+to get the same thing. Three did not get rerolled
+and we can see that four and five did so that
+
+01:09:38.529 --> 01:09:45.529
+looks like that's going well. Let's score
+that in category four. And it scored an eight
+
+01:09:46.040 --> 01:09:50.880
+so that's looking good. Now we could continue
+playing this game and notice that we're going
+
+01:09:50.880 --> 01:09:57.730
+to have to check it very, very carefully in
+order to make it work. Now if you've been
+
+01:09:57.730 --> 01:10:03.110
+watching really carefully you may have noticed
+that something is actually going wrong here.
+
+01:10:03.110 --> 01:10:10.110
+Do you notice how we're skipping ahead on
+some of these rerolls? Well, we probably know
+
+01:10:10.630 --> 01:10:15.690
+what the problem is. That's going to be a
+problem with forgetting to read in a new line.
+
+01:10:15.690 --> 01:10:22.690
+So let's go and fix that one and get our interaction
+working exactly right. Now we don't know exactly
+
+01:10:23.989 --> 01:10:29.429
+where the problem is. So we know the problem
+comes in when you read in an integer, so we're
+
+01:10:29.429 --> 01:10:36.429
+going to look for places where we called read
+int. So there are no integers entered there.
+
+01:10:40.940 --> 01:10:47.940
+This is all output not input. Right here is
+where we read in an integer. So we should
+
+01:10:49.969 --> 01:10:56.969
+do is keyboard dot next line. [typing] So
+that's one possibility it's here again, so
+
+01:11:07.280 --> 01:11:14.280
+we'll do keyboard dot next line and let's
+just keep looking through our program. Now
+
+01:11:21.070 --> 01:11:26.320
+this one is reading a whole string so this
+one is reading end of line correctly. So we
+
+01:11:26.320 --> 01:11:30.969
+don't have to worry about it in there and
+we only have to look at other methods that
+
+01:11:30.969 --> 01:11:36.260
+actually have a scanner in them. So we don't
+have to examine this one or that one because
+
+01:11:36.260 --> 01:11:40.170
+if there is no scanner we weren't reading
+any input. And in fact if you think about
+
+01:11:40.170 --> 01:11:47.170
+it most of these methods weren't reading input,
+so we probably have that fixed. Let's give
+
+01:11:48.409 --> 01:11:53.270
+ourselves some room and play again and see
+if the interaction is better. Remember I'm
+
+01:11:53.270 --> 01:12:00.270
+still playing in one user mode. Now if you
+missed that, you probably wouldn't have if
+
+01:12:03.949 --> 01:12:09.989
+you were sitting at the keyboard and playing
+the game. Ah, let's see. Let's reroll dice
+
+01:12:09.989 --> 01:12:16.989
+one, three, and four. Oh, got another six!
+Now we're going to reroll dice one and four,
+
+01:12:18.889 --> 01:12:24.980
+eh still that's pretty good. So let's score
+it category six. We've got three sixes that's
+
+01:12:24.980 --> 01:12:31.980
+looking good so let's go for may be category
+five next so two, three, four, five would
+
+01:12:33.380 --> 01:12:40.380
+be the dice we'd reroll. Got one a least.
+So let's reroll now two, three, and five.
+
+01:12:41.210 --> 01:12:48.210
+Well we still got two fives. So let's score
+that in category five, two fives scoring a
+
+01:12:51.510 --> 01:12:57.130
+ten and we can go on like this. So here's
+a good one to start for category two so let's
+
+01:12:57.130 --> 01:13:04.130
+just reroll two and three and then just reroll
+three and score it in category two. Notice
+
+01:13:05.020 --> 01:13:12.020
+we've got four of those, so the score is eight.
+Now let's go for category three so we'll go
+
+01:13:12.230 --> 01:13:19.230
+one, two, four, five. Ooh, and now two and
+five. Look at that. So let's score that in
+
+01:13:22.860 --> 01:13:27.960
+category three. Category four and one are
+the ones that are remaining. Let's go for
+
+01:13:27.960 --> 01:13:34.960
+category one next since we've got a couple
+of ones, one, two, three. Well you don't really
+
+01:13:38.920 --> 01:13:43.420
+make much money off category one, one way
+or another so the last thing we're going to
+
+01:13:43.420 --> 01:13:50.260
+do is category four. Now unfortunately we
+need to reroll all the dice at least we got
+
+01:13:50.260 --> 01:13:57.260
+two fours out of that. So let's reroll one,
+two and four and now we've got three fours
+
+01:13:57.580 --> 01:14:03.440
+and we'll score in category four and poor
+little Maggie didn't get any score. Notice
+
+01:14:03.440 --> 01:14:08.570
+that we do seem to have some junk on the line
+with Maggie score. So we might want to go
+
+01:14:08.570 --> 01:14:15.570
+and fix that, and then re-enable two-player
+play and play it again. So we know that score
+
+01:14:19.980 --> 01:14:26.780
+was printed out in play one game. Oh, and
+look at that! Right there it is an ugly little
+
+01:14:26.780 --> 01:14:33.780
+extra quote. So this is all we have to re-enable
+to be playing the full program. Now of course
+
+01:14:38.500 --> 01:14:43.170
+we would run the whole thing meticulously
+checking every single line to make sure everything
+
+01:14:43.170 --> 01:14:49.409
+was perfect but it looks to me like we've
+got it done. So keep programming!
+

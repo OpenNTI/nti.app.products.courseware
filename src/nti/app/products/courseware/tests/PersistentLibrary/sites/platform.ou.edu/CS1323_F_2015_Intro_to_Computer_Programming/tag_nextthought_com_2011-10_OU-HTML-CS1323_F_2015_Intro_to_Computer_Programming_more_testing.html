@@ -1,0 +1,21 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html lang="en"><head> <meta content="2015-12-11T16:56:47" http-equiv="last-modified" /> <meta content="970" name="NTIRelativeScrollHeight" /> <meta content="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.more_testing" name="NTIID" /> <meta content="NextThought" name="generator" /> <meta content="text/html; charset=ascii" http-equiv="content-type" /> <title>More Testing</title> <link href="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.scaffolding" rel="next" title="Scaffolding" /> <link href="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.complete_class" rel="prev" title="Complete Class" /> <link href="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.reading:Chortle_CH32" rel="up" title="Class Design Example" /> <link href="styles/styles.css" rel="stylesheet" /> <link href="styles/content.css" rel="stylesheet" /> </head> <body id="NTIContent"> <div class="page-contents"><div data-ntiid="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.more_testing" id="a0000000522" ntiid="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.more_testing"> <div class="chapter title">More Testing</div> <p class="placeholder"></p> <a name="232d0e4c1456a38529ab2e97189f573a"></a> <div class="sidebar" data-ntiid="tag:nextthought.com,2011-10:OU-HTML:NTISidebar-CS1323_F_2015_Intro_to_Computer_Programming.sidebar.answer.195" ntiid="tag:nextthought.com,2011-10:OU-HTML:NTISidebar-CS1323_F_2015_Intro_to_Computer_Programming.sidebar.answer.195"> <div class="sidebar-title">Answer</div> Of course not. Now there is all the fun of testing the implementation. </div><a name="a9cc1c145c17788e2a0f5fa4ae70b95e"></a> <p class="par" id="a9cc1c145c17788e2a0f5fa4ae70b95e">Here is an expanded test program for the class. The class itself is given in the previous page, so if you are going to run this program (could there be any doubt?) you will have to copy and paste two things into your text editor. </p> <a name="96c4126f170aa5b9cda111a6c6d4133b"></a> <pre>class CheckingAccount
+{
+  . . . .
+}
+
+class CheckingAccountTester
+{
+  public static void main( String[] args )
+  {
+    CheckingAccount account1 = new CheckingAccount( "123", "Bob", 100 );
+
+    System.out.println( account1.getBalance() );
+    account1.processDeposit( 2000 );
+    account1.processCheck( 1500 );
+    System.out.println( account1.getBalance() );
+
+  }
+}
+</pre><a name="003b820b0617f7448999b2973d6b79c3"></a> <p class="par" id="003b820b0617f7448999b2973d6b79c3">Another way to organize this program is to copy the <b class="bfseries"><tt class="ttfamily">CheckingAccount</tt></b> class into a file <b class="bfseries"><tt class="ttfamily">CheckingAccount.java</tt></b>. Then copy the <b class="bfseries"><tt class="ttfamily">CheckingAccountTester</tt></b> class on this page into a file <b class="bfseries"><tt class="ttfamily">CheckingAccountTester.java</tt></b> in the same disk directory. Then enter the commands </p> <a name="5548236b90627246171142110f24c5d4"></a> <pre>C:\chap32\&gt; javac CheckingAccount.java CheckingAccountTester.java
+C:\chap32\&gt; java CheckingAccountTester
+</pre><a name="9b947a8aa9881c0077accea28c4bd2aa"></a> <p class="par" id="9b947a8aa9881c0077accea28c4bd2aa">The name of the file for the <b class="bfseries"><tt class="ttfamily">java</tt></b> command is the one that contains <b class="bfseries"><tt class="ttfamily">main()</tt></b>. </p> <a name="9cb04a9eebaff2314915ebfee992fab2"></a> <div class="sidebar" data-ntiid="tag:nextthought.com,2011-10:OU-HTML:NTISidebar-CS1323_F_2015_Intro_to_Computer_Programming.sidebar.question.205" ntiid="tag:nextthought.com,2011-10:OU-HTML:NTISidebar-CS1323_F_2015_Intro_to_Computer_Programming.sidebar.question.205"> <div class="sidebar-title">Question</div> What does the output of this test program look like? </div> </div></div> </body></html>

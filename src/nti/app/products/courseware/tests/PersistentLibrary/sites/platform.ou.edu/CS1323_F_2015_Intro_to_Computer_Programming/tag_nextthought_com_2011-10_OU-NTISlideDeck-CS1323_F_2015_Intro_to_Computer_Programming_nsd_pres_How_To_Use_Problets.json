@@ -1,0 +1,94 @@
+{
+  "MimeType": "application/vnd.nextthought.ntislidedeck",
+  "Videos": [
+    {
+      "MimeType": "application/vnd.nextthought.ntislidevideo",
+      "video-ntiid": "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_02.01.03_How_to_Problets",
+      "title": "How to Work with Problets",
+      "creator": "Deborah Trytten",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:How_To_Use_Problets",
+      "thumbnail": "//www.kaltura.com/p/1500101/thumbnail/entry_id/0_1rhpnhmc/width/640/",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:How_To_Use_Problets_video",
+      "class": "ntislidevideo"
+    }
+  ],
+  "creator": "Deborah Trytten",
+  "title": "How To Use Problets Summer 2014",
+  "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:How_To_Use_Problets",
+  "Slides": [
+    {
+      "MimeType": "application/vnd.nextthought.slide",
+      "slidevideoid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:How_To_Use_Problets_video",
+      "slidetitle": "How To Use Problets",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:How_To_Use_Problets",
+      "slidevideostart": "0.0",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlide-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:How_To_Use_Problets_slide_1",
+      "slideimage": "resources/CS1323_F_2015_Intro_to_Computer_Programming/9b4cc4419ba682963a72a1c6e66633c37fbbd310/fd35e23767020999111e1f49239199b4c5eff23e.png",
+      "slidevideoend": "4.0",
+      "slidenumber": "1",
+      "class": "slide"
+    },
+    {
+      "MimeType": "application/vnd.nextthought.slide",
+      "slidevideoid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:How_To_Use_Problets_video",
+      "slidetitle": "What are Problets",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:How_To_Use_Problets",
+      "slidevideostart": "4.0",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlide-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:How_To_Use_Problets_slide_2",
+      "slideimage": "resources/CS1323_F_2015_Intro_to_Computer_Programming/b3ead7e6dfaa75e087f3a0977ead1ec0f422f0b6/fd35e23767020999111e1f49239199b4c5eff23e.png",
+      "slidevideoend": "26.0",
+      "slidenumber": "2",
+      "class": "slide"
+    },
+    {
+      "MimeType": "application/vnd.nextthought.slide",
+      "slidevideoid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:How_To_Use_Problets_video",
+      "slidetitle": "The Phases",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:How_To_Use_Problets",
+      "slidevideostart": "26.0",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlide-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:How_To_Use_Problets_slide_3",
+      "slideimage": "resources/CS1323_F_2015_Intro_to_Computer_Programming/2e031850afe96a4f9322dd28eaf4a9cc75b8e6d2/fd35e23767020999111e1f49239199b4c5eff23e.png",
+      "slidevideoend": "62.0",
+      "slidenumber": "3",
+      "class": "slide"
+    },
+    {
+      "MimeType": "application/vnd.nextthought.slide",
+      "slidevideoid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:How_To_Use_Problets_video",
+      "slidetitle": "Login to Problets",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:How_To_Use_Problets",
+      "slidevideostart": "62.0",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlide-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:How_To_Use_Problets_slide_4",
+      "slideimage": "resources/CS1323_F_2015_Intro_to_Computer_Programming/d51ffad5eef637153de5a303e254ffca73c0f151/fd35e23767020999111e1f49239199b4c5eff23e.png",
+      "slidevideoend": "125.0",
+      "slidenumber": "4",
+      "class": "slide"
+    },
+    {
+      "MimeType": "application/vnd.nextthought.slide",
+      "slidevideoid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:How_To_Use_Problets_video",
+      "slidetitle": "Working a Problet",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:How_To_Use_Problets",
+      "slidevideostart": "125.0",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlide-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:How_To_Use_Problets_slide_5",
+      "slideimage": "resources/CS1323_F_2015_Intro_to_Computer_Programming/335782db169723e765c5346dfceeba17dcf39a81/fd35e23767020999111e1f49239199b4c5eff23e.png",
+      "slidevideoend": "143.0",
+      "slidenumber": "5",
+      "class": "slide"
+    },
+    {
+      "MimeType": "application/vnd.nextthought.slide",
+      "slidevideoid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:How_To_Use_Problets_video",
+      "slidetitle": "Keep Programming!",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:How_To_Use_Problets",
+      "slidevideostart": "143.0",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlide-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:How_To_Use_Problets_slide_6",
+      "slideimage": "resources/CS1323_F_2015_Intro_to_Computer_Programming/bc1301a221a1468c26f5996b4a1ac7d1f0a7b81a/fd35e23767020999111e1f49239199b4c5eff23e.png",
+      "slidevideoend": "153.0",
+      "slidenumber": "6",
+      "class": "slide"
+    }
+  ],
+  "ntiid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:How_To_Use_Problets",
+  "class": "ntislidedeck"
+}

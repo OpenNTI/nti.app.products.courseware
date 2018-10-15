@@ -1,0 +1,412 @@
+WEBVTT
+Kind: captions
+Language: en
+
+00:00:01.060 --> 00:00:07.129
+&gt;&gt;Let's continue our study of sorting algorithms
+by examining selection sort in detail. Here's
+
+00:00:07.129 --> 00:00:12.430
+the idea behind selection sort: You want to
+find the smallest element and swap so that
+
+00:00:12.430 --> 00:00:17.029
+it's in the first position. Then find the
+second smallest element and swap into the
+
+00:00:17.029 --> 00:00:23.070
+second position. And you repeat until all
+elements are in their proper positions. So
+
+00:00:23.070 --> 00:00:28.150
+the way you remember the name for the algorithm
+here is that we're selecting the next element
+
+00:00:28.150 --> 00:00:33.660
+to put in its proper position. It turns out
+it's very important to remember the name and
+
+00:00:33.660 --> 00:00:38.230
+the steps in the algorithm and get those things
+attached together, because that's how computer
+
+00:00:38.230 --> 00:00:42.820
+scientists talk about these algorithms. So
+you really do need to know that the name of
+
+00:00:42.820 --> 00:00:48.780
+this particular process that I'm describing
+is selection sort and not something else.
+
+00:00:48.780 --> 00:00:53.010
+Let's take a look at an example so you can
+see how this would work. The top element of
+
+00:00:53.010 --> 00:01:00.010
+these tables is the array. So the array contains
+3, 6, 9, 4, 2, 1, 5. The bottom of the table
+
+00:01:00.960 --> 00:01:06.840
+contains the minimum value as we're stepping
+across. So three starts out as the minimum.
+
+00:01:06.840 --> 00:01:12.009
+It's smaller than six and nine and four, but
+notice when we hit two, two is smaller than
+
+00:01:12.009 --> 00:01:17.369
+three, so two becomes the new minimum. Then
+we hit one and one becomes the new minimum.
+
+00:01:17.369 --> 00:01:22.340
+Since one is smaller than five, one is finally
+the final minimum. So one is going to be swapped
+
+00:01:22.340 --> 00:01:27.210
+into the first position. This means the value
+three that's currently in the first position
+
+00:01:27.210 --> 00:01:33.049
+is going to end up where one is. So here's
+what the array looks like. Now once one has
+
+00:01:33.049 --> 00:01:36.869
+been swapped into that position it's never
+going to move, because it's in the perfect
+
+00:01:36.869 --> 00:01:41.819
+position. So when we go and look for the second
+smallest element we're not going to have to
+
+00:01:41.819 --> 00:01:46.880
+examine the first position anymore. So six
+starts out as the smallest-- it's smaller
+
+00:01:46.880 --> 00:01:51.740
+than nine. Then we hit four, which is smaller
+then two, which is smaller, and two remains
+
+00:01:51.740 --> 00:01:55.030
+the smallest because it's smaller than three
+and five.
+
+00:01:55.030 --> 00:02:00.130
+So now we're going to swap two and six. Now
+at this point both one and two are in the
+
+00:02:00.130 --> 00:02:05.499
+smaller position. If you've been paying attention
+to what we're doing here, you probably notice
+
+00:02:05.499 --> 00:02:10.369
+what kind of pattern we're getting. This looks
+like a triangular pattern, and so we know
+
+00:02:10.369 --> 00:02:14.870
+what to expect the for loops to look like
+when we get around to writing the code. Let's
+
+00:02:14.870 --> 00:02:19.530
+do a few more iterations just to make sure
+you understand what's going on. Well nine
+
+00:02:19.530 --> 00:02:23.920
+starts out as the smallest. Four is smaller
+than nine, so it's the smallest for a couple
+
+00:02:23.920 --> 00:02:30.739
+of steps. Then three becomes the smallest.
+So now three and nine are going to swap. So
+
+00:02:30.739 --> 00:02:33.760
+one, two, and three are now in the final positions.
+
+00:02:33.760 --> 00:02:38.599
+Now this next one is kind of interesting.
+Four starts out as the smallest and it remains
+
+00:02:38.599 --> 00:02:44.739
+the smallest all the way along. Now whether
+we want to do a swap here or not in the method,
+
+00:02:44.739 --> 00:02:49.780
+that gets to be a hard thing to choose. The
+reason is because sometimes testing to see
+
+00:02:49.780 --> 00:02:55.439
+that you don't need to do a swap is actually
+more expensive in terms of the computing because
+
+00:02:55.439 --> 00:03:00.469
+you have to do the test every single time,
+even when you need to do it. Don't worry about
+
+00:03:00.469 --> 00:03:05.819
+this kind of optimization at this point. We
+can just go ahead and do the swap if we want.
+
+00:03:05.819 --> 00:03:10.579
+So now one, two, three, four are in the proper
+positions. Six starts as the smallest, six
+
+00:03:10.579 --> 00:03:15.469
+is smaller than nine, and we end up with five
+being the smallest. So five and six switch
+
+00:03:15.469 --> 00:03:21.409
+positions, and now nine starts out as the
+smallest and then six ends up as the smallest.
+
+00:03:21.409 --> 00:03:28.409
+And so we end up with the array in sorted
+order. So let's design the loops now. We notice
+
+00:03:30.079 --> 00:03:34.400
+that the outer loop initially starts at the
+first element and that it proceeds to the
+
+00:03:34.400 --> 00:03:40.579
+end of the array. So we're searching a smaller
+and smaller number of elements each time.
+
+00:03:40.579 --> 00:03:44.689
+The outer for loop also stops at the next
+to the last position, because when you get
+
+00:03:44.689 --> 00:03:50.010
+to the last position the element has to be
+in the right place. Now I said a for loop
+
+00:03:50.010 --> 00:03:54.659
+here, and that's usually a good choice for
+this because we're sequentially going through
+
+00:03:54.659 --> 00:04:00.549
+an array one element at a time. Let's think
+about the inner loop for a minute. It starts
+
+00:04:00.549 --> 00:04:05.069
+at the index of the outer loop -- that's the
+triangular part -- and it proceeds to the
+
+00:04:05.069 --> 00:04:11.189
+end of the array. The body contains the minimum
+comparison, and the swap is done after the
+
+00:04:11.189 --> 00:04:17.269
+inner loop is complete. So that really describes
+the structure of the code very well. Now if
+
+00:04:17.269 --> 00:04:21.590
+you're wondering where I got that from, I
+got it by looking at the example and drawing
+
+00:04:21.590 --> 00:04:24.289
+conclusions from it.
+
+00:04:24.289 --> 00:04:28.800
+Let's talk a little bit about one last detail
+of this algorithm-- and that is storing the
+
+00:04:28.800 --> 00:04:34.520
+minimum versus storing the index of the minimum.
+In the tables that I showed, I showed you
+
+00:04:34.520 --> 00:04:39.419
+the minimum value explicitly. That is the
+thing that was written in the table, but what
+
+00:04:39.419 --> 00:04:44.840
+was implicit in it was where the index was.
+So when we went to do the swaps, we have to
+
+00:04:44.840 --> 00:04:50.669
+know those indices. Now it turns out that
+storing both the minimum value and the minimum
+
+00:04:50.669 --> 00:04:55.830
+index is unnecessary. If you know the index
+to the minimum, guess what? You know what
+
+00:04:55.830 --> 00:05:01.020
+the value is, because you can look it up in
+the array. So that's a really important thing
+
+00:05:01.020 --> 00:05:06.419
+to realize is we don't need to store the minimum
+at all. We just store the minimum index. This
+
+00:05:06.419 --> 00:05:10.880
+makes the code a little bit tighter, a little
+bit smaller, a little bit more elegant. If
+
+00:05:10.880 --> 00:05:14.949
+it makes you uncomfortable however, you're
+free to store the minimum. Just remember you
+
+00:05:14.949 --> 00:05:18.150
+need to store the minimum index too.
+
+00:05:18.150 --> 00:05:23.419
+So here's the code for selection sort. We're
+passing in an integer array, as I said we
+
+00:05:23.419 --> 00:05:28.800
+start at position zero and go to one less
+than the length of the array. The reason we
+
+00:05:28.800 --> 00:05:34.360
+stop at that point is remember we don't have
+to do that last swap. There's no reason to
+
+00:05:34.360 --> 00:05:38.789
+figure out that the last element of the array
+is always the largest one, because we know
+
+00:05:38.789 --> 00:05:44.910
+what it has to be at that point. So we let
+our minIndex initially be start and then we
+
+00:05:44.910 --> 00:05:49.880
+start the rest of the start plus one. So we
+don't' have to make a comparison between start
+
+00:05:49.880 --> 00:05:55.590
+and start, it doesn't make sense. Stopping
+at the end of the array. So all of these things
+
+00:05:55.590 --> 00:06:00.940
+I got from those tables that I showed you
+earlier. If the data of the minIndex is greater
+
+00:06:00.940 --> 00:06:05.949
+than the data of the rest, well, that means
+that the rest is the new minIndex. So that's
+
+00:06:05.949 --> 00:06:11.340
+what's done in the inner body of the loop.
+After we get to the end, then we do a swap
+
+00:06:11.340 --> 00:06:17.080
+between data of minIndex and data of start.
+And that's what puts the value into position.
+
+00:06:17.080 --> 00:06:22.669
+So notice this is very tight small code. It's
+really not very hard to write, and this is
+
+00:06:22.669 --> 00:06:29.090
+a pretty darn good algorithm. But let's talk
+a little bit about the story of sorting.
+
+00:06:29.090 --> 00:06:34.490
+First off, it's a very old problem in computer
+science and a very common one. The reason
+
+00:06:34.490 --> 00:06:39.440
+it's old is we immediately realized in computer
+science that if we could put things into sorted
+
+00:06:39.440 --> 00:06:45.840
+order we could find things more quickly. So
+very, very early on this became important.
+
+00:06:45.840 --> 00:06:51.550
+The interesting thing is that it's sort of
+like a graphic novel—it's kind of exciting.
+
+00:06:51.550 --> 00:06:56.710
+So we have these very simple algorithms, for
+example, selection sort is one of the simpler
+
+00:06:56.710 --> 00:07:01.220
+algorithms, but they tend to be inefficient.
+There's an algorithm called Bubblesort that
+
+00:07:01.220 --> 00:07:06.759
+is absolutely the worst. In fact, it's so
+bad I don't even teach people to do it anymore.
+
+00:07:06.759 --> 00:07:10.550
+If you want to learn that algorithm you can
+look it up on Wikipedia. Just remember, I
+
+00:07:10.550 --> 00:07:16.009
+don't approve. [laughs] So it's a very simple
+algorithm if you implement it correctly. It
+
+00:07:16.009 --> 00:07:20.590
+gets used all the time. I have to admit, as
+a professional software engineer, when I see
+
+00:07:20.590 --> 00:07:26.669
+somebody using Bubblesort I sort of demote
+their skill in programming by a level immediately
+
+00:07:26.669 --> 00:07:28.909
+because it's just really so bad.
+
+00:07:28.909 --> 00:07:35.909
+Then there's our hero, which is Quicksort.
+And Quicksort is great almost always, but
+
+00:07:36.039 --> 00:07:40.919
+there's this problem. It has what's called
+a "tragic flaw" in literature. So for example,
+
+00:07:40.919 --> 00:07:45.550
+if you've read about Oedipus, his tragic flaw
+was being so clever. It led him to try to
+
+00:07:45.550 --> 00:07:49.419
+be clever when he shouldn't have been clever.
+Well Quicksort is like that. Quicksort is
+
+00:07:49.419 --> 00:07:55.189
+our hero with a tragic flaw. Generally it's
+the best algorithm going, but every now and
+
+00:07:55.189 --> 00:07:59.909
+then there's a case where it behaves really
+badly. In fact, it can behave as badly as
+
+00:07:59.909 --> 00:08:04.720
+Bubblesort or selection sort. So that's a
+pretty tragic flaw.
+
+00:08:04.720 --> 00:08:10.289
+Now it turns out that merge sort is an algorithm
+that's best in theory. So here's our hero
+
+00:08:10.289 --> 00:08:15.289
+right? Well but this one has a tragic flaw
+too, and that's that it requires twice as
+
+00:08:15.289 --> 00:08:20.039
+much storage space. Now both Quicksort and
+merge sort use a programming technique that's
+
+00:08:20.039 --> 00:08:24.470
+beyond the scope of this class, so we're not
+going to learn them. It's kind of interesting
+
+00:08:24.470 --> 00:08:29.039
+that there isn't one right answer. As much
+time as we've spent working with this problem
+
+00:08:29.039 --> 00:08:36.039
+and trying to solve it, we don't have one
+answer. So what it means is that we need to
+
+00:08:36.190 --> 00:08:40.469
+have some tools to understand this. And we
+don't really know what these tools are just
+
+00:08:40.469 --> 00:08:44.630
+yet and we wont' know till the end of the
+semester, but this is what makes sorting a
+
+00:08:44.630 --> 00:08:50.100
+really interesting problem; it has a really
+great story. So keep programming!
+

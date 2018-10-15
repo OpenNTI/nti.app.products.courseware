@@ -1,0 +1,130 @@
+{
+  "MimeType": "application/vnd.nextthought.ntislidedeck",
+  "Videos": [
+    {
+      "MimeType": "application/vnd.nextthought.ntislidevideo",
+      "video-ntiid": "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_02.02.03_Craps",
+      "title": "Craps: Iteration 1",
+      "creator": "Deborah Trytten",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Craps_1",
+      "thumbnail": "//www.kaltura.com/p/1500101/thumbnail/entry_id/0_zbv75ggi/width/640/",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Craps_1_video",
+      "class": "ntislidevideo"
+    }
+  ],
+  "creator": "Deborah Trytten",
+  "title": "Craps: Iteration 1",
+  "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Craps_1",
+  "Slides": [
+    {
+      "MimeType": "application/vnd.nextthought.slide",
+      "slidevideoid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Craps_1_video",
+      "slidetitle": "Repetition: While",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Craps_1",
+      "slidevideostart": "0.0",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlide-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Craps_1_slide_1",
+      "slideimage": "resources/CS1323_F_2015_Intro_to_Computer_Programming/9d27d90b820d8da6239a8b32db7b68791b45132c/fd35e23767020999111e1f49239199b4c5eff23e.png",
+      "slidevideoend": "5.0",
+      "slidenumber": "1",
+      "class": "slide"
+    },
+    {
+      "MimeType": "application/vnd.nextthought.slide",
+      "slidevideoid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Craps_1_video",
+      "slidetitle": "Problem Statement",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Craps_1",
+      "slidevideostart": "5.0",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlide-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Craps_1_slide_2",
+      "slideimage": "resources/CS1323_F_2015_Intro_to_Computer_Programming/25c1a1133829143860c6a97a05d74b4f150bac6a/fd35e23767020999111e1f49239199b4c5eff23e.png",
+      "slidevideoend": "30.0",
+      "slidenumber": "2",
+      "class": "slide"
+    },
+    {
+      "MimeType": "application/vnd.nextthought.slide",
+      "slidevideoid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Craps_1_video",
+      "slidetitle": "Design Test Data",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Craps_1",
+      "slidevideostart": "30.0",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlide-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Craps_1_slide_3",
+      "slideimage": "resources/CS1323_F_2015_Intro_to_Computer_Programming/0279b99ed9681cf2d216a4b205f29ecd3ff943bc/fd35e23767020999111e1f49239199b4c5eff23e.png",
+      "slidevideoend": "123.0",
+      "slidenumber": "3",
+      "class": "slide"
+    },
+    {
+      "MimeType": "application/vnd.nextthought.slide",
+      "slidevideoid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Craps_1_video",
+      "slidetitle": "Get Started",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Craps_1",
+      "slidevideostart": "123.0",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlide-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Craps_1_slide_4",
+      "slideimage": "resources/CS1323_F_2015_Intro_to_Computer_Programming/1c723ba057efe663ac8207bb0774a4df4deaed09/fd35e23767020999111e1f49239199b4c5eff23e.png",
+      "slidevideoend": "185.0",
+      "slidenumber": "4",
+      "class": "slide"
+    },
+    {
+      "MimeType": "application/vnd.nextthought.slide",
+      "slidevideoid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Craps_1_video",
+      "slidetitle": "Rolling the Dice",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Craps_1",
+      "slidevideostart": "185.0",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlide-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Craps_1_slide_5",
+      "slideimage": "resources/CS1323_F_2015_Intro_to_Computer_Programming/498a4a33eeebefc31969ca884e1e40ae5def21d0/fd35e23767020999111e1f49239199b4c5eff23e.png",
+      "slidevideoend": "276.0",
+      "slidenumber": "5",
+      "class": "slide"
+    },
+    {
+      "MimeType": "application/vnd.nextthought.slide",
+      "slidevideoid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Craps_1_video",
+      "slidetitle": "Improve the Strategy",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Craps_1",
+      "slidevideostart": "276.0",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlide-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Craps_1_slide_6",
+      "slideimage": "resources/CS1323_F_2015_Intro_to_Computer_Programming/b0639a200570b694b9a8ff0c101fb3678ac89733/fd35e23767020999111e1f49239199b4c5eff23e.png",
+      "slidevideoend": "330.0",
+      "slidenumber": "6",
+      "class": "slide"
+    },
+    {
+      "MimeType": "application/vnd.nextthought.slide",
+      "slidevideoid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Craps_1_video",
+      "slidetitle": "Technique",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Craps_1",
+      "slidevideostart": "330.0",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlide-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Craps_1_slide_7",
+      "slideimage": "resources/CS1323_F_2015_Intro_to_Computer_Programming/694d2df05356f744183a8a9b9073c8005cbc781b/fd35e23767020999111e1f49239199b4c5eff23e.png",
+      "slidevideoend": "520.0",
+      "slidenumber": "7",
+      "class": "slide"
+    },
+    {
+      "MimeType": "application/vnd.nextthought.slide",
+      "slidevideoid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Craps_1_video",
+      "slidetitle": "Second Control Structure",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Craps_1",
+      "slidevideostart": "520.0",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlide-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Craps_1_slide_8",
+      "slideimage": "resources/CS1323_F_2015_Intro_to_Computer_Programming/4d51fa99313f7aa99c8b9318f527f566634533c1/fd35e23767020999111e1f49239199b4c5eff23e.png",
+      "slidevideoend": "1178.0",
+      "slidenumber": "8",
+      "class": "slide"
+    },
+    {
+      "MimeType": "application/vnd.nextthought.slide",
+      "slidevideoid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Craps_1_video",
+      "slidetitle": "First Control Structure",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Craps_1",
+      "slidevideostart": "1178.0",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlide-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Craps_1_slide_9",
+      "slideimage": "resources/CS1323_F_2015_Intro_to_Computer_Programming/21edcbb8ff7e03ecf0359d0098a564413475dc2a/fd35e23767020999111e1f49239199b4c5eff23e.png",
+      "slidevideoend": "1211.0",
+      "slidenumber": "9",
+      "class": "slide"
+    }
+  ],
+  "ntiid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Craps_1",
+  "class": "ntislidedeck"
+}

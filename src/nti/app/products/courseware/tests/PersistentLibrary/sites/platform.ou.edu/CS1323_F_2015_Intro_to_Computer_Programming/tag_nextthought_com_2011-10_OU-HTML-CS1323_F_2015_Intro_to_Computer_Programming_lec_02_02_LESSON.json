@@ -1,0 +1,177 @@
+{
+    "MimeType": "application/vnd.nextthought.ntilessonoverview",
+    "Items": [
+        {
+            "MimeType": "application/vnd.nextthought.nticourseoverviewgroup",
+            "NTIID": "tag:nextthought.com,2011-10:OU-NTICourseOverviewGroup-CS1323_F_2015_Intro_to_Computer_Programming.lec:02.02_LESSON.0",
+            "Items": [
+                {
+                    "MimeType": "application/vnd.nextthought.ntivideo",
+                    "NTIID": "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_02.01.02_How_to_Turingscraft",
+                    "visibility": "everyone",
+                    "poster": "//www.kaltura.com/p/1500101/thumbnail/entry_id/0_oh2n8z0b/width/1280/",
+                    "label": "How to Work with Turingscraft"
+                },
+                {
+                    "MimeType": "application/vnd.nextthought.ntivideo",
+                    "NTIID": "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_02.01.02_Storing_Primitive_Data",
+                    "visibility": "everyone",
+                    "poster": "//www.kaltura.com/p/1500101/thumbnail/entry_id/0_p6vf9qwj/width/1280/",
+                    "label": "int and double"
+                },
+                {
+                    "MimeType": "application/vnd.nextthought.ntivideo",
+                    "NTIID": "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_02.01.02_Cell_Phone",
+                    "visibility": "everyone",
+                    "poster": "//www.kaltura.com/p/1500101/thumbnail/entry_id/0_d6zvpwma/width/1280/",
+                    "label": "Choosing a Cell Phone Contract: Iteration 1"
+                },
+                {
+                    "MimeType": "application/vnd.nextthought.ntivideo",
+                    "NTIID": "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_02.01.02_Heart_Rates",
+                    "visibility": "everyone",
+                    "poster": "//www.kaltura.com/p/1500101/thumbnail/entry_id/0_4qjfvh9d/width/1280/",
+                    "label": "Target Heart Rates: Iteration 1"
+                }
+            ],
+            "accentColor": "81c8dc",
+            "title": "Videos"
+        },
+        {
+            "MimeType": "application/vnd.nextthought.nticourseoverviewgroup",
+            "NTIID": "tag:nextthought.com,2011-10:OU-NTICourseOverviewGroup-CS1323_F_2015_Intro_to_Computer_Programming.lec:02.02_LESSON.1",
+            "Items": [
+                {
+                    "MimeType": "application/vnd.nextthought.assessment.assignment",
+                    "ContainerId": "tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.turingscraft:_storing_primitive_data_(15_points)",
+                    "title": "Turingscraft: Storing Primitive Data (15 points)",
+                    "label": "Turingscraft: Storing Primitive Data (15 points)",
+                    "NTIID": "tag:nextthought.com,2011-10:OU-NAQ-CS1323_F_2015_Intro_to_Computer_Programming.naq.asg.assignment:TC_storing_primitive_data_001",
+                    "Target-NTIID": "tag:nextthought.com,2011-10:OU-NAQ-CS1323_F_2015_Intro_to_Computer_Programming.naq.asg.assignment:TC_storing_primitive_data_001"
+                },
+                {
+                    "MimeType": "application/vnd.nextthought.assessment.assignment",
+                    "ContainerId": "tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.turingscraft:_storing_primitive_data_(15_points).1",
+                    "title": "Turingscraft: Storing Primitive Data (15 points)",
+                    "label": "Turingscraft: Storing Primitive Data (15 points)",
+                    "NTIID": "tag:nextthought.com,2011-10:OU-NAQ-CS1323_F_2015_Intro_to_Computer_Programming.naq.asg.assignment:TC_storing_primitive_data_010",
+                    "Target-NTIID": "tag:nextthought.com,2011-10:OU-NAQ-CS1323_F_2015_Intro_to_Computer_Programming.naq.asg.assignment:TC_storing_primitive_data_010"
+                },
+                {
+                    "MimeType": "application/vnd.nextthought.assessment.assignment",
+                    "ContainerId": "tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.turingscraft:_storing_primitive_data_(15_points).2",
+                    "title": "Turingscraft: Storing Primitive Data (15 points)",
+                    "label": "Turingscraft: Storing Primitive Data (15 points)",
+                    "NTIID": "tag:nextthought.com,2011-10:OU-NAQ-CS1323_F_2015_Intro_to_Computer_Programming.naq.asg.assignment:TC_storing_primitive_data_995",
+                    "Target-NTIID": "tag:nextthought.com,2011-10:OU-NAQ-CS1323_F_2015_Intro_to_Computer_Programming.naq.asg.assignment:TC_storing_primitive_data_995"
+                },
+                {
+                    "MimeType": "application/vnd.nextthought.assessment.assignment",
+                    "ContainerId": "tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.zybook:_storing_primitive_data_(70_points)",
+                    "title": "Zybook: Storing Primitive Data (70 points)",
+                    "label": "Zybook: Storing Primitive Data (70 points)",
+                    "NTIID": "tag:nextthought.com,2011-10:OU-NAQ-CS1323_F_2015_Intro_to_Computer_Programming.naq.asg.assignment:Zybook_Storing_Primitive_Data",
+                    "Target-NTIID": "tag:nextthought.com,2011-10:OU-NAQ-CS1323_F_2015_Intro_to_Computer_Programming.naq.asg.assignment:Zybook_Storing_Primitive_Data"
+                }
+            ],
+            "accentColor": "a5c959",
+            "title": "Assignments"
+        },
+        {
+            "MimeType": "application/vnd.nextthought.nticourseoverviewgroup",
+            "NTIID": "tag:nextthought.com,2011-10:OU-NTICourseOverviewGroup-CS1323_F_2015_Intro_to_Computer_Programming.lec:02.02_LESSON.2",
+            "Items": [
+                {
+                    "MimeType": "application/vnd.nextthought.relatedworkref",
+                    "targetMimeType": "application/vnd.nextthought.externallink",
+                    "creator": "zyBooks for University of Oklahoma CS 1323",
+                    "section": "additional",
+                    "visibility": "everyone",
+                    "label": "Programming in Java",
+                    "NTIID": "tag:nextthought.com,2011-10:OU-RelatedWorkRef-CS1323_F_2015_Intro_to_Computer_Programming.relatedworkref.relwk:02.01.02_zyante",
+                    "href": "https://zybooks.zyante.com/#/zybook/OUCS1323Fall2015/chapter/1/section/1",
+                    "target-NTIID": "tag:nextthought.com,2011-10:NTI-UUID-11b60aa977fdcaf83b47b42dd6daa443",
+                    "icon": "resources/CS1323_F_2015_Intro_to_Computer_Programming/671375790efa45b2948b77f2a9c4e91f27173a56/fd35e23767020999111e1f49239199b4c5eff23e.png",
+                    "desc": "This section covers storing primitive data."
+                }
+            ],
+            "accentColor": "f9824e",
+            "title": "Required Resources"
+        },
+        {
+            "MimeType": "application/vnd.nextthought.nticourseoverviewgroup",
+            "NTIID": "tag:nextthought.com,2011-10:OU-NTICourseOverviewGroup-CS1323_F_2015_Intro_to_Computer_Programming.lec:02.02_LESSON.3",
+            "Items": [
+                {
+                    "MimeType": "application/vnd.nextthought.relatedworkref",
+                    "targetMimeType": "application/vnd.nextthought.content",
+                    "creator": "Bradley Kjell",
+                    "section": "required",
+                    "visibility": "everyone",
+                    "label": "Chortle",
+                    "NTIID": "tag:nextthought.com,2011-10:OU-RelatedWorkRef-CS1323_F_2015_Intro_to_Computer_Programming.relatedworkref.relwk:chortle",
+                    "href": "tag:nextthought.com,2011-10:OU-HTML-CS1323_S_2015_Intro_to_Computer_Programming.reading:Chortle_CH8",
+                    "target-NTIID": "tag:nextthought.com,2011-10:OU-HTML-CS1323_S_2015_Intro_to_Computer_Programming.reading:Chortle_CH8",
+                    "icon": "resources/CS1323_F_2015_Intro_to_Computer_Programming/b06a4bdb19666c7afc685f0365fd59a988b154c2/fd35e23767020999111e1f49239199b4c5eff23e.png",
+                    "desc": "An introduction to primitive data types, identifiers, variables and constants."
+                },
+                {
+                    "MimeType": "application/vnd.nextthought.relatedworkref",
+                    "targetMimeType": "application/vnd.nextthought.externallink",
+                    "creator": "Deborah Trytten",
+                    "section": "additional",
+                    "visibility": "everyone",
+                    "label": "How to Work with Turingscraft",
+                    "NTIID": "tag:nextthought.com,2011-10:OU-RelatedWorkRef-CS1323_F_2015_Intro_to_Computer_Programming.relatedworkref.relwk:02.01.02_how_to_use_turingscraft",
+                    "href": "resources/Turingscraft.pptx",
+                    "target-NTIID": "tag:nextthought.com,2011-10:NTI-UUID-e38eda2dcd32c88b49d9968d59ff1e90",
+                    "icon": "resources/CS1323_F_2015_Intro_to_Computer_Programming/17f860f9921d29d578e2791d3ff00dcf689071c3/fd35e23767020999111e1f49239199b4c5eff23e.png",
+                    "desc": "Lecture presentation"
+                },
+                {
+                    "MimeType": "application/vnd.nextthought.relatedworkref",
+                    "targetMimeType": "application/vnd.nextthought.externallink",
+                    "creator": "Deborah Trytten",
+                    "section": "additional",
+                    "visibility": "everyone",
+                    "label": "int and double",
+                    "NTIID": "tag:nextthought.com,2011-10:OU-RelatedWorkRef-CS1323_F_2015_Intro_to_Computer_Programming.relatedworkref.relwk:02.01.02_storing_primitive_data",
+                    "href": "resources/int_and_double.pptx",
+                    "target-NTIID": "tag:nextthought.com,2011-10:NTI-UUID-f53440cf753b40b50d4c88403437402f",
+                    "icon": "resources/CS1323_F_2015_Intro_to_Computer_Programming/17f860f9921d29d578e2791d3ff00dcf689071c3/fd35e23767020999111e1f49239199b4c5eff23e.png",
+                    "desc": "Lecture presentation"
+                },
+                {
+                    "MimeType": "application/vnd.nextthought.relatedworkref",
+                    "targetMimeType": "application/vnd.nextthought.externallink",
+                    "creator": "Deborah Trytten",
+                    "section": "additional",
+                    "visibility": "everyone",
+                    "label": "Choosing a Cell Phone Contract: Iteration 1",
+                    "NTIID": "tag:nextthought.com,2011-10:OU-RelatedWorkRef-CS1323_F_2015_Intro_to_Computer_Programming.relatedworkref.relwk:02.01.02_cell_phone_1",
+                    "href": "resources/Cell_Phone_Contract_Iteration_1.pptx",
+                    "target-NTIID": "tag:nextthought.com,2011-10:NTI-UUID-231a3979c8f98d02d35679735674b50b",
+                    "icon": "resources/CS1323_F_2015_Intro_to_Computer_Programming/17f860f9921d29d578e2791d3ff00dcf689071c3/fd35e23767020999111e1f49239199b4c5eff23e.png",
+                    "desc": "Lecture presentation"
+                },
+                {
+                    "MimeType": "application/vnd.nextthought.relatedworkref",
+                    "targetMimeType": "application/vnd.nextthought.externallink",
+                    "creator": "Deborah Trytten",
+                    "section": "additional",
+                    "visibility": "everyone",
+                    "label": "Target Heart Rates: Iteration 1",
+                    "NTIID": "tag:nextthought.com,2011-10:OU-RelatedWorkRef-CS1323_F_2015_Intro_to_Computer_Programming.relatedworkref.relwk:02.01.02_heart_rates_1",
+                    "href": "resources/Heart_Rates_Iteration_1.pptx",
+                    "target-NTIID": "tag:nextthought.com,2011-10:NTI-UUID-e1b4c5d4b57f393e34fd5560fb6b5f42",
+                    "icon": "resources/CS1323_F_2015_Intro_to_Computer_Programming/17f860f9921d29d578e2791d3ff00dcf689071c3/fd35e23767020999111e1f49239199b4c5eff23e.png",
+                    "desc": "Lecture presentation"
+                }
+            ],
+            "accentColor": "ce78e0",
+            "title": "Additional Resources"
+        }
+    ],
+    "title": "Storing Primitive Data",
+    "NTIID": "tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.lec:02.02_LESSON"
+}

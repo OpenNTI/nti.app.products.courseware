@@ -1,0 +1,165 @@
+jsonpReceiveContent({
+    "content": {
+        "MimeType": "application/vnd.nextthought.ntilessonoverview",
+        "Items": [
+            {
+                "MimeType": "application/vnd.nextthought.nticourseoverviewgroup",
+                "NTIID": "tag:nextthought.com,2011-10:OU-NTICourseOverviewGroup-CS1323_F_2015_Intro_to_Computer_Programming.lec:04.08_LESSON.0",
+                "Items": [
+                    {
+                        "MimeType": "application/vnd.nextthought.ntivideo",
+                        "NTIID": "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_04.02.05_Selection_Sort",
+                        "visibility": "everyone",
+                        "poster": "//www.kaltura.com/p/1500101/thumbnail/entry_id/1_251liukw/width/1280/",
+                        "label": "Selection Sort"
+                    },
+                    {
+                        "MimeType": "application/vnd.nextthought.ntivideo",
+                        "NTIID": "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_04.02.05_Insertion_Sort",
+                        "visibility": "everyone",
+                        "poster": "//www.kaltura.com/p/1500101/thumbnail/entry_id/1_x81pdhts/width/1280/",
+                        "label": "Insertion Sort"
+                    },
+                    {
+                        "MimeType": "application/vnd.nextthought.ntivideo",
+                        "NTIID": "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_04.02.05_Partial_Sorting",
+                        "visibility": "everyone",
+                        "poster": "//www.kaltura.com/p/1500101/thumbnail/entry_id/0_wuvz13rz/width/1280/",
+                        "label": "Partially Sorted Data"
+                    }
+                ],
+                "accentColor": "81c8dc",
+                "title": "Videos"
+            },
+            {
+                "MimeType": "application/vnd.nextthought.nticourseoverviewgroup",
+                "NTIID": "tag:nextthought.com,2011-10:OU-NTICourseOverviewGroup-CS1323_F_2015_Intro_to_Computer_Programming.lec:04.08_LESSON.1",
+                "Items": [
+                    {
+                        "MimeType": "application/vnd.nextthought.assessment.assignment",
+                        "ContainerId": "tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.zybook:_sorting_algorithms___selection_sort_(14_points)",
+                        "title": "Zybook: Sorting Algorithms - Selection Sort (14 points)",
+                        "label": "Zybook: Sorting Algorithms - Selection Sort (14 points)",
+                        "NTIID": "tag:nextthought.com,2011-10:OU-NAQ-CS1323_F_2015_Intro_to_Computer_Programming.naq.asg.assignment:Zybook_Sorting_Algorithms_Selection_Sort",
+                        "Target-NTIID": "tag:nextthought.com,2011-10:OU-NAQ-CS1323_F_2015_Intro_to_Computer_Programming.naq.asg.assignment:Zybook_Sorting_Algorithms_Selection_Sort"
+                    }
+                ],
+                "accentColor": "a5c959",
+                "title": "Assignments"
+            },
+            {
+                "MimeType": "application/vnd.nextthought.nticourseoverviewgroup",
+                "NTIID": "tag:nextthought.com,2011-10:OU-NTICourseOverviewGroup-CS1323_F_2015_Intro_to_Computer_Programming.lec:04.08_LESSON.2",
+                "Items": [
+                    {
+                        "MimeType": "application/vnd.nextthought.relatedworkref",
+                        "targetMimeType": "application/vnd.nextthought.externallink",
+                        "creator": "zyBooks for University of Oklahoma CS 1323",
+                        "section": "additional",
+                        "visibility": "everyone",
+                        "label": "Programming in Java",
+                        "NTIID": "tag:nextthought.com,2011-10:OU-RelatedWorkRef-CS1323_F_2015_Intro_to_Computer_Programming.relatedworkref.relwk:04.02.05_zyante",
+                        "href": "https://zybooks.zyante.com/#/zybook/OUCS1323Fall2015/chapter/13/section/1",
+                        "target-NTIID": "tag:nextthought.com,2011-10:NTI-UUID-150237f6bf374d41ea55aef2f9dd781d",
+                        "icon": "resources/CS1323_F_2015_Intro_to_Computer_Programming/671375790efa45b2948b77f2a9c4e91f27173a56/fd35e23767020999111e1f49239199b4c5eff23e.png",
+                        "desc": "This section covers selection sort."
+                    },
+                    {
+                        "MimeType": "application/vnd.nextthought.relatedworkref",
+                        "targetMimeType": "application/vnd.nextthought.externallink",
+                        "creator": "Wikipedia",
+                        "section": "required",
+                        "visibility": "everyone",
+                        "label": "Insertion Sort",
+                        "NTIID": "tag:nextthought.com,2011-10:OU-RelatedWorkRef-CS1323_F_2015_Intro_to_Computer_Programming.relatedworkref.relwk:insertion_sort",
+                        "href": "http://en.wikipedia.org/wiki/Insertion_sort",
+                        "target-NTIID": "tag:nextthought.com,2011-10:NTI-UUID-beed97dda87ff8cc892cdc73240eae39",
+                        "icon": "resources/CS1323_F_2015_Intro_to_Computer_Programming/81e8230bc30819e55db939de7da5691c9126a142/fd35e23767020999111e1f49239199b4c5eff23e.png",
+                        "desc": "Explanation and visualizations of the insertion sort algorithm."
+                    },
+                    {
+                        "MimeType": "application/vnd.nextthought.relatedworkref",
+                        "targetMimeType": "application/vnd.nextthought.externallink",
+                        "creator": "Wikipedia",
+                        "section": "required",
+                        "visibility": "everyone",
+                        "label": "Selection Sort",
+                        "NTIID": "tag:nextthought.com,2011-10:OU-RelatedWorkRef-CS1323_F_2015_Intro_to_Computer_Programming.relatedworkref.relwk:selection_sort",
+                        "href": "http://en.wikipedia.org/wiki/Selection_sort",
+                        "target-NTIID": "tag:nextthought.com,2011-10:NTI-UUID-7b9448eb38c51bd7688d2f53f7f9f6c8",
+                        "icon": "resources/CS1323_F_2015_Intro_to_Computer_Programming/81e8230bc30819e55db939de7da5691c9126a142/fd35e23767020999111e1f49239199b4c5eff23e.png",
+                        "desc": "Explanation and visualizations of the selection sort algorithm."
+                    }
+                ],
+                "accentColor": "f9824e",
+                "title": "Required Resources"
+            },
+            {
+                "MimeType": "application/vnd.nextthought.nticourseoverviewgroup",
+                "NTIID": "tag:nextthought.com,2011-10:OU-NTICourseOverviewGroup-CS1323_F_2015_Intro_to_Computer_Programming.lec:04.08_LESSON.3",
+                "Items": [
+                    {
+                        "MimeType": "application/vnd.nextthought.relatedworkref",
+                        "targetMimeType": "application/vnd.nextthought.externallink",
+                        "creator": "Deborah Trytten",
+                        "section": "additional",
+                        "visibility": "everyone",
+                        "label": "Example from the Video",
+                        "NTIID": "tag:nextthought.com,2011-10:OU-RelatedWorkRef-CS1323_F_2015_Intro_to_Computer_Programming.relatedworkref.relwk:04.02.05_code_sample",
+                        "href": "resources/Lesson_4.2.5_Code.zip",
+                        "target-NTIID": "tag:nextthought.com,2011-10:NTI-UUID-31f95412353c02707652aac54e8e66b0",
+                        "icon": "resources/CS1323_F_2015_Intro_to_Computer_Programming/b9c4a1a1dc3d30c895df3b30c553fa40f972a2f5/fd35e23767020999111e1f49239199b4c5eff23e.png",
+                        "desc": "Java code developed in the video from this lesson."
+                    },
+                    {
+                        "MimeType": "application/vnd.nextthought.relatedworkref",
+                        "targetMimeType": "application/vnd.nextthought.externallink",
+                        "creator": "Deborah Trytten",
+                        "section": "additional",
+                        "visibility": "everyone",
+                        "label": "Selection Sort",
+                        "NTIID": "tag:nextthought.com,2011-10:OU-RelatedWorkRef-CS1323_F_2015_Intro_to_Computer_Programming.relatedworkref.relwk:04.02.05_selection_sort",
+                        "href": "resources/Selection_Sort.pptx",
+                        "target-NTIID": "tag:nextthought.com,2011-10:NTI-UUID-1cfb34f28b6d676fa14cdf0ad3ee7725",
+                        "icon": "resources/CS1323_F_2015_Intro_to_Computer_Programming/17f860f9921d29d578e2791d3ff00dcf689071c3/fd35e23767020999111e1f49239199b4c5eff23e.png",
+                        "desc": "Lecture presentation"
+                    },
+                    {
+                        "MimeType": "application/vnd.nextthought.relatedworkref",
+                        "targetMimeType": "application/vnd.nextthought.externallink",
+                        "creator": "Deborah Trytten",
+                        "section": "additional",
+                        "visibility": "everyone",
+                        "label": "Insertion Sort",
+                        "NTIID": "tag:nextthought.com,2011-10:OU-RelatedWorkRef-CS1323_F_2015_Intro_to_Computer_Programming.relatedworkref.relwk:04.02.05_insertion_sort",
+                        "href": "resources/Insertion_Sort.pptx",
+                        "target-NTIID": "tag:nextthought.com,2011-10:NTI-UUID-142efd7b62ffacf16719d73f39a8fb6a",
+                        "icon": "resources/CS1323_F_2015_Intro_to_Computer_Programming/17f860f9921d29d578e2791d3ff00dcf689071c3/fd35e23767020999111e1f49239199b4c5eff23e.png",
+                        "desc": "Lecture presentation"
+                    },
+                    {
+                        "MimeType": "application/vnd.nextthought.relatedworkref",
+                        "targetMimeType": "application/vnd.nextthought.externallink",
+                        "creator": "Deborah Trytten",
+                        "section": "additional",
+                        "visibility": "everyone",
+                        "label": "Partially Sorted Data",
+                        "NTIID": "tag:nextthought.com,2011-10:OU-RelatedWorkRef-CS1323_F_2015_Intro_to_Computer_Programming.relatedworkref.relwk:04.02.05_partial_sorting",
+                        "href": "resources/Partial_Sorting.pptx",
+                        "target-NTIID": "tag:nextthought.com,2011-10:NTI-UUID-99f1d6fd61a31d617e6cf24fc22b8779",
+                        "icon": "resources/CS1323_F_2015_Intro_to_Computer_Programming/17f860f9921d29d578e2791d3ff00dcf689071c3/fd35e23767020999111e1f49239199b4c5eff23e.png",
+                        "desc": "Lecture presentation"
+                    }
+                ],
+                "accentColor": "ce78e0",
+                "title": "Additional Resources"
+            }
+        ],
+        "title": "Sorting Algorithms",
+        "NTIID": "tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.lec:04.08_LESSON"
+    },
+    "ntiid": "tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.lec:04.08_LESSON",
+    "version": "1",
+    "Content-Type": "application/json",
+    "Content-Encoding": "json"
+});

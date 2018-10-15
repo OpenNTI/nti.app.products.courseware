@@ -1,0 +1,959 @@
+WEBVTT
+Kind: captions
+Language: en
+
+00:00:00.750 --> 00:00:04.330
+&gt;&gt;Dr. Deborah Trytten: Let's enhance our understanding
+of predefined objects by working little with
+
+00:00:04.330 --> 00:00:10.240
+the API. So here's our problem statement:
+we're going to start learning to read the
+
+00:00:10.240 --> 00:00:15.780
+Java API and discover how memory is allocated
+to store data in Java. Now this is going to
+
+00:00:15.780 --> 00:00:20.590
+include primitive data types that we've previously
+studied, wrapper classes that are something
+
+00:00:20.590 --> 00:00:26.869
+new, and the string class that we've used
+but not really studied. So first off what
+
+00:00:26.869 --> 00:00:33.869
+is the Java API? Well API stands for Application
+Programmers Interface. Now Java has an API
+
+00:00:34.059 --> 00:00:40.050
+but lots of other software has API's too.
+This is a very common computer science thing.
+
+00:00:40.050 --> 00:00:46.030
+What it is is thousands of useful classes
+that are implemented, fully tested, widely
+
+00:00:46.030 --> 00:00:53.030
+used, and well documented. The well-documented
+part being particularly important and useful.
+
+00:00:53.260 --> 00:00:58.430
+Here's the link for it let me explain what
+the link means Oracle.com is the company that
+
+00:00:58.430 --> 00:01:05.430
+owns Java. Java SE for Java Standard Edition,
+seven because that's the version of Java we're
+
+00:01:05.610 --> 00:01:12.610
+programming in, docs because it's documentation,
+API because it's the API, and index.html which
+
+00:01:14.270 --> 00:01:19.909
+is the name of the file where all this documentation
+is stored. Now we're going to strategically
+
+00:01:19.909 --> 00:01:25.869
+pick and choose a few classes to study. So
+let's for example find the string class because
+
+00:01:25.869 --> 00:01:29.549
+that's the one that we've worked with the
+most. So we're going to go to the lower left
+
+00:01:29.549 --> 00:01:35.729
+frame of the API webpage. I'll enter command
+f for find because I'm using a Macintosh.
+
+00:01:35.729 --> 00:01:42.630
+If you're using a PC you can use control f
+to do this function. Now on my Safari I've
+
+00:01:42.630 --> 00:01:48.200
+actually put in a bookmark for the Java API
+because I use it so often. So I'll use the
+
+00:01:48.200 --> 00:01:53.630
+bookmark to access it. I really do recommend
+that you use a bookmark too. We go to this
+
+00:01:53.630 --> 00:02:00.630
+frame in the lower left part and do control
+f. That pops open the find box and we're going
+
+00:02:01.740 --> 00:02:06.700
+to enter string. Now you'll notice that it's
+bringing us to classes that have string in
+
+00:02:06.700 --> 00:02:11.810
+the name which are not necessarily the ones
+we want. So I didn't ask you to find attributed
+
+00:02:11.810 --> 00:02:18.810
+string I asked you to find string. So we will
+navigate until we find the right string class.
+
+00:02:19.560 --> 00:02:24.510
+So there are lots of string classes hanging
+around. This one right here is the one we
+
+00:02:24.510 --> 00:02:28.629
+want, just string with nothing else in it.
+
+00:02:28.629 --> 00:02:32.970
+Now the first thing we should do is read the
+preamble of the proper string class and we
+
+00:02:32.970 --> 00:02:39.150
+want to find the package that contains the
+class because that's necessary for us to program.
+
+00:02:39.150 --> 00:02:45.629
+So here's the string class, the package is
+right up here so see that Java.lang now it
+
+00:02:45.629 --> 00:02:50.720
+turns out Java.lang is a package that's always
+imported. That means that we already have
+
+00:02:50.720 --> 00:02:55.400
+this class available and we don't have to
+do anything special to get it. Remember when
+
+00:02:55.400 --> 00:03:02.400
+you import things like Java.util.scanner that
+means that Java scanner class is in the Java.util
+
+00:03:02.690 --> 00:03:09.690
+package. So that's a useful thing to know.
+Here's the preamble for the class. The string
+
+00:03:11.840 --> 00:03:18.730
+class represents character strings all string
+literals in Java programs such as "abc" are
+
+00:03:18.730 --> 00:03:24.310
+implemented as instances of this class. So
+there's some useful information. Strings are
+
+00:03:24.310 --> 00:03:30.950
+constant their values can't be changed after
+they're created. That's some critical information.
+
+00:03:30.950 --> 00:03:36.269
+String buffers support mutable strings because
+string objects are immutable they can be shared.
+
+00:03:36.269 --> 00:03:41.909
+For example, string string equals ABC is equivalent
+to and then it puts in a bunch of code that
+
+00:03:41.909 --> 00:03:46.840
+doesn't really make sense to us at this point
+so you're going to skip over that code. This
+
+00:03:46.840 --> 00:03:51.670
+is really the key to understanding working
+with the API at first. Remember that it's
+
+00:03:51.670 --> 00:03:56.260
+written for professional programmers and because
+it's written for professional programmers
+
+00:03:56.260 --> 00:04:02.920
+it contains a lot of detail and is written
+in a very concise and condensed way that has
+
+00:04:02.920 --> 00:04:07.000
+the things that professionals would be looking
+for. That means it sometimes doesn't have
+
+00:04:07.000 --> 00:04:11.250
+the things that beginners are looking for
+and often has a lot of detail that you won't
+
+00:04:11.250 --> 00:04:18.250
+care about, but that's okay don't let it bother
+you—just look for the parts that make sense.
+
+00:04:18.400 --> 00:04:23.590
+So we say, going on to the next paragraph,
+the class string includes methods for examining
+
+00:04:23.590 --> 00:04:28.770
+individual characters for comparing strings,
+for searching strings, for extracting sub
+
+00:04:28.770 --> 00:04:34.800
+strings, and so on. Okay so that's interesting.
+Java language provides special support for
+
+00:04:34.800 --> 00:04:41.530
+the string concatenation operator (+) and
+for conversion of other objects to strings.
+
+00:04:41.530 --> 00:04:46.020
+Now give some details about how exactly that's
+implemented. We don't care about those so
+
+00:04:46.020 --> 00:04:51.580
+I'm going to skip over them. Unless otherwise
+noted passing a null argument to a constructor
+
+00:04:51.580 --> 00:04:57.020
+or method in this class will cause a null
+pointer exception to be thrown. Now we don't
+
+00:04:57.020 --> 00:05:02.000
+know what a null reference is just yet so
+that may not make sense but it's going to
+
+00:05:02.000 --> 00:05:07.160
+make sense in just a few minutes and then
+it goes on to say a string represents a string
+
+00:05:07.160 --> 00:05:14.150
+in UTF-16 lot a...lot a...lot a. Just skip
+over that part and this is the key is to pull
+
+00:05:14.150 --> 00:05:19.710
+out parts that make sense and leave behind
+the parts that don't.
+
+00:05:19.710 --> 00:05:25.800
+Here's what the API didn't say directly, string
+objects are sequences of characters. Now it
+
+00:05:25.800 --> 00:05:30.680
+implies it but it doesn't really say it. The
+word sequence is a very important computer
+
+00:05:30.680 --> 00:05:35.490
+science word. What it means is that order
+is important. Sometimes order is important
+
+00:05:35.490 --> 00:05:41.389
+and sometimes it isn't. For example, programs
+are sequences of statements. In the case of
+
+00:05:41.389 --> 00:05:45.410
+programs, order is critically important because
+if you didn't have a sequence of statements
+
+00:05:45.410 --> 00:05:51.990
+if they were in random order we couldn't control
+what they do as well. The other thing it doesn't
+
+00:05:51.990 --> 00:05:55.919
+say directly although it does say it sort
+of indirectly if you read through the whole
+
+00:05:55.919 --> 00:06:02.120
+thing is that indices of characters start
+counting at zero. Now that is a very odd choice
+
+00:06:02.120 --> 00:06:06.690
+but as you'll see it's very consistent with
+what we do in Java and in many other programming
+
+00:06:06.690 --> 00:06:13.330
+languages too. So why isn't the API more clear?
+Well the things that we're talking about on
+
+00:06:13.330 --> 00:06:17.639
+this slide are things that every professional
+programmer would know so they're not things
+
+00:06:17.639 --> 00:06:21.800
+that you would have to tell them, but they
+are things that beginners need to know and
+
+00:06:21.800 --> 00:06:26.440
+frankly I think that's one of the shortcomings
+of the API even though learning to use the
+
+00:06:26.440 --> 00:06:30.800
+API is critically important even for a beginning
+programmer.
+
+00:06:30.800 --> 00:06:36.819
+Here's a summary of the sensible things that
+came from the API. We know that "abc" is in
+
+00:06:36.819 --> 00:06:43.240
+fact a string object. We know that string
+objects are what we call immutable that is
+
+00:06:43.240 --> 00:06:48.509
+that they can't be changed and that is really
+important although it may not be clear exactly
+
+00:06:48.509 --> 00:06:55.509
+why just yet. It says that Java allows strings
+to be concatenated using +. We knew that already.
+
+00:06:57.259 --> 00:07:02.039
+And that StringBuilder and StringBuffer are
+related classes. So those are the sensible
+
+00:07:02.039 --> 00:07:07.460
+things that the API said. Now, it said a couple
+of things that are going to make sense soon
+
+00:07:07.460 --> 00:07:12.759
+in fact they'll make sense by the end of this
+presentation. One is that passing null objects
+
+00:07:12.759 --> 00:07:18.550
+to string methods will probably fail. The
+other thing it said is that Java converts
+
+00:07:18.550 --> 00:07:23.569
+other things to string objects through two
+string methods in other classes, so we might
+
+00:07:23.569 --> 00:07:27.410
+want to see where some of those might be.
+
+00:07:27.410 --> 00:07:31.690
+In order to understand what's going on we
+need to really talk a little bit about computer
+
+00:07:31.690 --> 00:07:35.990
+memory. Now this is a complicated topic and
+something you may want to revisit a couple
+
+00:07:35.990 --> 00:07:41.759
+of times so this is a discussion you may want
+to bookmark and come back to again in a week
+
+00:07:41.759 --> 00:07:48.020
+or in two weeks to make sure you really understand
+it because it's very important. Computer memory
+
+00:07:48.020 --> 00:07:52.910
+is a bunch of locations where things can be
+stored. You can think of it as like boxes
+
+00:07:52.910 --> 00:07:59.910
+that contain data. Each box is the same size
+and it has a numeric address. What's more
+
+00:08:00.610 --> 00:08:05.389
+each box can contain only one thing at a time.
+Now we discovered that when we were working
+
+00:08:05.389 --> 00:08:11.539
+with assignment statements, particularly when
+we were swapping and rotating data. The addresses
+
+00:08:11.539 --> 00:08:16.080
+of the boxes are in order. Of course that
+makes sense because computer scientists tend
+
+00:08:16.080 --> 00:08:22.699
+to be very structured and ordered, and each
+type of data takes a specific number of boxes.
+
+00:08:22.699 --> 00:08:28.259
+Now I'm showing these calculations on a 32-bit
+architecture. If you have a 64-bit architecture
+
+00:08:28.259 --> 00:08:33.039
+the numbers will be different but the truth
+is the numbers don't matter so much. So int
+
+00:08:33.039 --> 00:08:39.320
+and float take one box each. Double actually
+takes two boxes and two characters can fit
+
+00:08:39.320 --> 00:08:45.540
+in one box. So that gives you sort of a global
+idea of how these things fit together. Don't
+
+00:08:45.540 --> 00:08:50.240
+worry about memorizing those numbers because
+it's not important that you remember them.
+
+00:08:50.240 --> 00:08:54.990
+So let's take an example of code. Now this
+code uses primitive data types and see what's
+
+00:08:54.990 --> 00:09:01.990
+happening in the memory of computer. So we'll
+declare a char w equals a. Well even though
+
+00:09:03.120 --> 00:09:08.350
+w the character only takes up half a box because
+there's only one of it it's going to get a
+
+00:09:08.350 --> 00:09:15.350
+whole box. So at address 100 w stores a. So
+100 is the address, a is the contents of memory
+
+00:09:18.019 --> 00:09:25.019
+location 100 and notice we have this little
+table over to the side. Java uses this table
+
+00:09:25.589 --> 00:09:31.570
+to find names in the address space. So it's
+keeping track of the fact that w is stored
+
+00:09:31.570 --> 00:09:38.570
+at address 100. Then we have int x equals
+3. Well that will be stored at address 101
+
+00:09:38.950 --> 00:09:45.950
+and the number 3 goes in the box and our lookup
+table has x stored at 101. So this is really
+
+00:09:46.940 --> 00:09:53.940
+the behind-the-scenes view of memory. Now
+we have a float y which equals 7.4f. Remember
+
+00:09:54.140 --> 00:09:58.980
+when you declare a float and just say 7.4
+it's automatically a double and that doesn't
+
+00:09:58.980 --> 00:10:05.980
+work. So we have to put that little f after
+it. So y will be allocated at location 102
+
+00:10:07.310 --> 00:10:13.620
+and you can see the contents of the memory
+are 4. Then we have int z equals 9 so z gets
+
+00:10:13.620 --> 00:10:19.730
+stored at location 103 and as you can see
+the value of 9 is stored in memory. So this
+
+00:10:19.730 --> 00:10:23.890
+is what's going on behind the scenes.
+
+00:10:23.890 --> 00:10:27.550
+So let's revisit assignment statements for
+a minute because we now know something that's
+
+00:10:27.550 --> 00:10:32.490
+going to make it easier to understand what
+an assignment statement is doing. So let's
+
+00:10:32.490 --> 00:10:38.050
+consider the assignment statement x equals
+z. Now we know that the right-hand side and
+
+00:10:38.050 --> 00:10:43.060
+the left hand side are different. I've told
+you several times that what that means is
+
+00:10:43.060 --> 00:10:49.079
+that you take the value in z and store it
+in the location x. So the right-hand side
+
+00:10:49.079 --> 00:10:55.600
+is talking about the contents of the box and
+the left-hand side is talking about the address
+
+00:10:55.600 --> 00:11:01.820
+of the box. So we're going to take the contents
+of location z and store it in the address
+
+00:11:01.820 --> 00:11:08.820
+where x is. Now let's construct some string
+objects. The first thing we have to do is
+
+00:11:10.140 --> 00:11:15.820
+declare a string reference. Now I'm going
+to call this one day and all that a reference
+
+00:11:15.820 --> 00:11:22.310
+is a place in memory to store the address
+of a string object. So we'll say string day.
+
+00:11:22.310 --> 00:11:26.730
+Now this reference is currently null. We don't
+actually have a string object that's attached
+
+00:11:26.730 --> 00:11:33.149
+to it. This is what this looks like in memory.
+The slash through the box means that it's
+
+00:11:33.149 --> 00:11:37.959
+a reference that's null so it's a warning
+that that reference isn't going to work because
+
+00:11:37.959 --> 00:11:44.160
+we don't have a string object there, it doesn't
+make sense to use it at this point. The next
+
+00:11:44.160 --> 00:11:49.910
+thing we do is construct a string object so
+we'll say day equals new string and then Friday
+
+00:11:49.910 --> 00:11:55.180
+in double quotes. Now we also could have done
+this by saying day equals Friday in double
+
+00:11:55.180 --> 00:12:02.180
+quotes. I don't like to use that syntax so
+much because it's a special string only syntax
+
+00:12:02.240 --> 00:12:06.579
+and because it doesn't contain the word new,
+it's easy for beginners to forget that they
+
+00:12:06.579 --> 00:12:11.149
+actually are calling a constructor when they're
+doing that. So I think it's kind of important
+
+00:12:11.149 --> 00:12:15.740
+to use the new string syntax. I understand
+if you want to use the shortcut just make
+
+00:12:15.740 --> 00:12:20.320
+sure you know what you're doing. So when we
+construct the string object this is what's
+
+00:12:20.320 --> 00:12:26.899
+happened. We remove the slash from the box,
+I'm showing that with a little x, and then
+
+00:12:26.899 --> 00:12:32.880
+we construct the string object. So a few things
+to notice about memory diagrams--the name
+
+00:12:32.880 --> 00:12:39.110
+of the class is at the top of the memory diagram.
+It has a colon before it and it's underlined.
+
+00:12:39.110 --> 00:12:43.060
+Now I don't get too fussy about these things
+if you forget to underline if you forget the
+
+00:12:43.060 --> 00:12:47.899
+colon but it is nice to have them perfect.
+You've probably noticed computer scientists
+
+00:12:47.899 --> 00:12:53.100
+are a little fussy about details. Then there's
+a box, that's the data that's contained in
+
+00:12:53.100 --> 00:12:58.579
+that object. Now we don't really know how
+this data is stored, but we do know that it
+
+00:12:58.579 --> 00:13:03.260
+contains the characters for Friday so I'm
+putting Friday in there. So it's sort of our
+
+00:13:03.260 --> 00:13:08.600
+best guess at what the data looks like. When
+we create our own classes much later in the
+
+00:13:08.600 --> 00:13:13.450
+semester, we'll know what's in those boxes
+but for right now we kind of have to guess
+
+00:13:13.450 --> 00:13:17.370
+based on what the API tells us.
+
+00:13:17.370 --> 00:13:22.070
+What is stored in a reference? Well a null
+reference stores zero and that means there's
+
+00:13:22.070 --> 00:13:28.649
+no object attached. Null references tend to
+break programs by creating null pointer exceptions
+
+00:13:28.649 --> 00:13:33.550
+and that's what the Java API in the string
+class was trying to tell you is that if you
+
+00:13:33.550 --> 00:13:38.649
+pass null references around bad things are
+going to happen. Actually I'm little surprised
+
+00:13:38.649 --> 00:13:43.529
+they documented that in the class because
+that's something most programmers know but
+
+00:13:43.529 --> 00:13:46.839
+it is kind of nice for beginners so this is
+a case where they were pretty considerate
+
+00:13:46.839 --> 00:13:53.839
+of you. A non-null reference on the other
+hand contains the address of another box that
+
+00:13:54.459 --> 00:14:01.300
+is the place where another group of data is
+located. So here's the whole picture of what
+
+00:14:01.300 --> 00:14:07.880
+it looks like when we declared day we put
+it at address 100. Now day was a reference,
+
+00:14:07.880 --> 00:14:13.579
+a string reference, so the only thing that's
+going to be contained in that box is the address
+
+00:14:13.579 --> 00:14:20.110
+of another box. So in this case, that other
+box contains 102 and you'll notice the characters
+
+00:14:20.110 --> 00:14:27.110
+at 102, 103, 104 are Fr, id, ay because we
+fit two characters into each box. So these
+
+00:14:28.910 --> 00:14:34.440
+are the three ways of looking at it. We've
+got the exact locations in the memory along
+
+00:14:34.440 --> 00:14:39.230
+with this lookup table that tells us where
+the references are and then we have this sort
+
+00:14:39.230 --> 00:14:43.649
+of stylized version on the right-hand side
+which is the way that I usually draw them
+
+00:14:43.649 --> 00:14:50.560
+in class. Now I don't usually put the numbers
+in here, like the 102, because those numbers
+
+00:14:50.560 --> 00:14:54.980
+are kind of made up and they confuse some
+people when they can't see them but if you
+
+00:14:54.980 --> 00:14:59.600
+find it easier to put numbers in there so
+that you remember that that's an address,
+
+00:14:59.600 --> 00:15:05.899
+that's fine. Just make up the numbers yourself.
+Either way is okay with me.
+
+00:15:05.899 --> 00:15:12.779
+So let's do a comparison to primitive data.
+When we say int day number equals 27 the number
+
+00:15:12.779 --> 00:15:19.000
+27 is stored directly in the box with day
+number. When we say string day equals new
+
+00:15:19.000 --> 00:15:26.000
+string Friday, day is the reference, that's
+the box, and the new string is right here.
+
+00:15:26.870 --> 00:15:33.870
+It's this object. So they're basically our
+two pieces. Well what is going on here? Why
+
+00:15:34.540 --> 00:15:39.810
+do these things have to be stored differently?
+Well in order for Java to allocate space for
+
+00:15:39.810 --> 00:15:45.980
+something, it has to know the size in advance.
+So the size of primitive datatypes and references
+
+00:15:45.980 --> 00:15:52.860
+are known in advance and they're fixed. This
+means Java can allocate space for primitive
+
+00:15:52.860 --> 00:15:59.040
+data and references before the program runs.
+Objects are different though. The size of
+
+00:15:59.040 --> 00:16:04.339
+an object is unknown until the program runs.
+So for example if we had the user enter some
+
+00:16:04.339 --> 00:16:08.790
+characters and create a string, we have no
+idea how many characters they're going to
+
+00:16:08.790 --> 00:16:14.660
+enter so Java can't figure out how to store
+that successfully. That means the memory has
+
+00:16:14.660 --> 00:16:19.720
+to be allocated while the program is running.
+So those little boxes with the object names
+
+00:16:19.720 --> 00:16:26.720
+in them, those are allocated while the program
+is doing its business. This is a very simple
+
+00:16:27.269 --> 00:16:32.970
+difference but incredibly profound and understanding
+this difference is the key to understanding
+
+00:16:32.970 --> 00:16:38.380
+a lot of Java. This is one reason that you
+may want to review this presentation again
+
+00:16:38.380 --> 00:16:42.660
+in a week or two weeks when you have a little
+better understanding of objects.
+
+00:16:42.660 --> 00:16:49.149
+Some notes on memory diagrams. The arrows
+in memory diagrams mean only one thing, that
+
+00:16:49.149 --> 00:16:54.209
+there's a reference. Do not use them to show
+assignment statements or other operations.
+
+00:16:54.209 --> 00:16:59.850
+So sometimes people use them to show sort
+of how data is moving or something like that.
+
+00:16:59.850 --> 00:17:05.860
+That isn't what those arrows mean. The arrows
+just mean reference. Now the tail of the arrow
+
+00:17:05.860 --> 00:17:11.280
+is at a box that contains the reference and
+the head of the arrow is at the box that contains
+
+00:17:11.280 --> 00:17:17.000
+the object. If you remember those three things
+you'll make a lot fewer mistakes doing memory
+
+00:17:17.000 --> 00:17:17.939
+diagrams.
+
+00:17:17.939 --> 00:17:22.660
+There are lots of other useful classes in
+Java. I want to bring a few of them to your
+
+00:17:22.660 --> 00:17:27.980
+attention now because there's a special set
+of classes that are called wrapper classes.
+
+00:17:27.980 --> 00:17:32.370
+So they're used to change primitive data type
+into objects. So you can think of them as
+
+00:17:32.370 --> 00:17:38.059
+being like a conversion. Well why is this
+even necessary? Well there are some really
+
+00:17:38.059 --> 00:17:42.360
+cool things we can do with objects that we
+can't do with primitive data. For example
+
+00:17:42.360 --> 00:17:47.080
+we're going to use an ArrayList soon. Really,
+really cool thing, but it doesn't work with
+
+00:17:47.080 --> 00:17:52.789
+primitive data. So that's why we need to know
+that these classes are out there. Now the
+
+00:17:52.789 --> 00:17:56.820
+names of wrapper classes are very similar
+to the names of the primitive data type that
+
+00:17:56.820 --> 00:18:03.549
+they wrap. So for example, int is wrapped
+into Integer, double is wrapped into Double--notice
+
+00:18:03.549 --> 00:18:08.770
+that double the primitive data type has a
+little d and double the wrapper class has
+
+00:18:08.770 --> 00:18:14.309
+a capital D. These capital letters versus
+little letters are very very important. You're
+
+00:18:14.309 --> 00:18:19.470
+really going to mess things up if you don't
+pay attention to them. Character wraps the
+
+00:18:19.470 --> 00:18:25.650
+primitive datatype char and Boolean with a
+capital B wraps the primitive data type boolean
+
+00:18:25.650 --> 00:18:29.840
+with a little b. So the names aren't quite
+exactly the same but you can kind of guess
+
+00:18:29.840 --> 00:18:32.710
+what they are.
+
+00:18:32.710 --> 00:18:37.070
+So let's take a look at objects in the integer
+class. Now I'm going to go back to the API
+
+00:18:37.070 --> 00:18:44.070
+again. Now that I'm in the API I'm going to
+search for integer. Whoops, it's searching
+
+00:18:51.450 --> 00:18:58.450
+the wrong thing. I used command f to tell
+it to search the lower left corner because
+
+00:19:03.110 --> 00:19:07.330
+that's where all the class names are. Now
+you'll notice there are a lot of classes that
+
+00:19:07.330 --> 00:19:13.289
+have integer in its name too, but we're looking
+for the one that just contains integer, which
+
+00:19:13.289 --> 00:19:20.289
+is right there. Here's the preamble for the
+class. Notice the class is in Java.lang. You
+
+00:19:20.720 --> 00:19:27.280
+find that up here. The Integer class wraps
+the value of the primitive data type int in
+
+00:19:27.280 --> 00:19:33.600
+an object. An object of type Integer contains
+a single field whose type is int. So in this
+
+00:19:33.600 --> 00:19:39.940
+case the API has been extremely clear about
+exactly what's in that class. Now, in addition
+
+00:19:39.940 --> 00:19:44.650
+this class provides several methods for converting
+an int to a string and a string to an int
+
+00:19:44.650 --> 00:19:49.460
+as well as other constants and methods that
+are useful when dealing with an int. So in
+
+00:19:49.460 --> 00:19:53.970
+other words, this class is one place that
+you could look to find things that are useful
+
+00:19:53.970 --> 00:19:59.320
+when working with integers. Now it's got some
+implementation notes there--those aren't going
+
+00:19:59.320 --> 00:20:04.360
+to make any sense so we're just going to skip
+over them. So notice in this case the preamble
+
+00:20:04.360 --> 00:20:11.140
+was mercifully short. So we've read the API
+for Integer. What it described was what the
+
+00:20:11.140 --> 00:20:18.140
+memory diagram contains. So when we say Integer
+size equals new Integer of three, remember
+
+00:20:18.530 --> 00:20:24.200
+size is the reference to the Integer object,
+so size is containing an address. Three is
+
+00:20:24.200 --> 00:20:30.690
+the contents of the integer object. This is
+what the picture looks like--so the Integer
+
+00:20:30.690 --> 00:20:37.690
+class object is wrapping around a value 3
+and size is the reference for it. Now this
+
+00:20:41.980 --> 00:20:47.280
+class has a two String method. That's the
+thing that the String class was telling us
+
+00:20:47.280 --> 00:20:52.370
+about. So it's used to convert int and Integer
+to string and we'll learn how to do that a
+
+00:20:52.370 --> 00:20:56.320
+little bit later. Now is not the time.
+
+00:20:56.320 --> 00:21:01.409
+So let's talk a little bit about the relationship
+between classes and objects. Well each class
+
+00:21:01.409 --> 00:21:07.650
+usually has many objects so one way to think
+about that is classes are like cookie cutters
+
+00:21:07.650 --> 00:21:13.020
+and objects are like cookies. So you can take
+one class, one cookie cutter, and cut out
+
+00:21:13.020 --> 00:21:18.000
+hundreds or thousands or even millions of
+objects and in fact we've already cut quite
+
+00:21:18.000 --> 00:21:23.320
+a few objects from one particular cookie cutter--we've
+used the String class a lot. So there's one
+
+00:21:23.320 --> 00:21:30.320
+String class, many many string objects. Now
+objects do know which class they come from
+
+00:21:31.419 --> 00:21:36.809
+and we show this in the memory diagram by
+using the colon and the underlining. So it's
+
+00:21:36.809 --> 00:21:41.490
+very important that objects know which class
+they're from because that determines what
+
+00:21:41.490 --> 00:21:44.780
+they're able to do.
+
+00:21:44.780 --> 00:21:49.720
+Now the last thing we want to talk about is
+learning the API. A professional Java programmer
+
+00:21:49.720 --> 00:21:55.370
+will have the API open on their desktop most
+of the time. When I'm programming in Java
+
+00:21:55.370 --> 00:22:00.159
+I open it up right at the start. Sometimes
+even before I open Eclipse or before I know
+
+00:22:00.159 --> 00:22:06.010
+that I'm going to need it because it's so
+common to need it. The important skills to
+
+00:22:06.010 --> 00:22:12.380
+learn in the Java API are finding things in
+the API, and interpreting the API. That's
+
+00:22:12.380 --> 00:22:18.860
+really critical. The skills that are not important
+are memorizing details of the API. So don't
+
+00:22:18.860 --> 00:22:23.640
+stay up late night with some cheat sheet tried
+to memorize things. You will memorize some
+
+00:22:23.640 --> 00:22:28.049
+things automatically just because you'll look
+them up so many times and use them so many
+
+00:22:28.049 --> 00:22:33.539
+times that you'll figure out where they are,
+but don't go out of your way to memorize.
+
+00:22:33.539 --> 00:22:38.600
+Memorization is not important and in fact
+I don't memorize the Java API. When I need
+
+00:22:38.600 --> 00:22:43.659
+something I look it up and I really think
+that's a good practice. When you try to memorize
+
+00:22:43.659 --> 00:22:49.940
+sometimes you forget some of the details and
+details tend to be really important in programming.
+
+00:22:49.940 --> 00:22:50.860
+So keep programming!
+

@@ -1,0 +1,57 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html lang="en"><head> <meta content="2015-12-11T16:56:47" http-equiv="last-modified" /> <meta content="1374" name="NTIRelativeScrollHeight" /> <meta content="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.complete_fleet" name="NTIID" /> <meta content="NextThought" name="generator" /> <meta content="text/html; charset=ascii" http-equiv="content-type" /> <title>Complete Fleet</title> <link href="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.better_encapsulated_program" rel="next" title="Better Encapsulated Program" /> <link href="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.calculatempg()_method" rel="prev" title="calculateMPG() Method" /> <link href="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.reading:Chortle_CH35" rel="up" title="Objects that Contain Objects" /> <link href="styles/styles.css" rel="stylesheet" /> <link href="styles/content.css" rel="stylesheet" /> </head> <body id="NTIContent"> <div class="page-contents"><div data-ntiid="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.complete_fleet" id="a0000000557" ntiid="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.complete_fleet"> <div class="chapter title">Complete Fleet</div> <p class="placeholder"></p> <a name="1bf41c76bc14b11e7e451c18063bc923.426"></a> <div class="sidebar" data-ntiid="tag:nextthought.com,2011-10:OU-HTML:NTISidebar-CS1323_F_2015_Intro_to_Computer_Programming.sidebar.answer.223" ntiid="tag:nextthought.com,2011-10:OU-HTML:NTISidebar-CS1323_F_2015_Intro_to_Computer_Programming.sidebar.answer.223"> <div class="sidebar-title">Answer</div> The completed program is given below. </div><a name="899af27fa42f0b056223b8fb616c0169"></a> <p class="par" id="899af27fa42f0b056223b8fb616c0169">Of course, you will copy this program to your editor and run it. </p> <a name="36e47fbbe236e5af0f8f11071b9b544b"></a> <pre>class Fleet
+{
+  // data
+  Car town;
+  Car suv;
+
+  // constructor
+  Fleet( int start1, int end1, double gal1, 
+         int start2, int end2, double gal2 )
+  {
+    town = new Car( start1, end1, gal1) ;
+    suv  = new Car( start2, end2, gal2) ;
+  }
+
+  // method
+  double calculateMPG()
+  {
+    double sumMPG; 
+
+    sumMPG = town.calculateMPG() + suv.calculateMPG() ;
+
+    return sumMPG/2.0;
+  }
+}
+
+class Car
+{
+  // data
+  int startMiles;   // Starting odometer reading
+  int endMiles;     // Ending   odometer reading
+  double gallons;   // Gallons of gas used between the readings
+
+  // constructor
+  Car(  int first, int last, double gals  )
+  {
+    startMiles = first ;
+    endMiles   = last ;
+    gallons    = gals ;
+  }
+
+  // methods
+  double calculateMPG()
+  {
+    return (endMiles - startMiles)/gallons ;
+  }
+
+}
+
+class FleetTester
+{
+  public static void main ( String[] args)
+  {
+    Fleet myCars = new Fleet( 1000, 1234, 10, 777, 999, 20 );
+    System.out.println("Fleet average MPG= " + myCars.calculateMPG() );
+  }
+}
+</pre><a name="86d83c9c338c08602751ac02bf55f851"></a> <p class="par" id="86d83c9c338c08602751ac02bf55f851">This is not a practical program because it only works with the particular numbers that <b class="bfseries"><tt class="ttfamily">main()</tt></b> uses in the constructor. User interaction can be added, but let us keep it simple. </p> <a name="aa6ea41e21d52c402a262bf3f7b29cba"></a> <div class="sidebar" data-ntiid="tag:nextthought.com,2011-10:OU-HTML:NTISidebar-CS1323_F_2015_Intro_to_Computer_Programming.sidebar.question.235" ntiid="tag:nextthought.com,2011-10:OU-HTML:NTISidebar-CS1323_F_2015_Intro_to_Computer_Programming.sidebar.question.235"> <div class="sidebar-title">Question</div> (Review: ) Mentally mark as <b class="bfseries"><tt class="ttfamily">private</tt></b> all instance variables(of both classes) in the program. Will the program still run? </div> </div></div> </body></html>

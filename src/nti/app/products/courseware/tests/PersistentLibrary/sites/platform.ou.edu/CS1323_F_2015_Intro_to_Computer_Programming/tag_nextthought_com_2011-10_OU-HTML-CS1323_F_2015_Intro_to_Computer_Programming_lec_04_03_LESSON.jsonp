@@ -1,0 +1,132 @@
+jsonpReceiveContent({
+    "content": {
+        "MimeType": "application/vnd.nextthought.ntilessonoverview",
+        "Items": [
+            {
+                "MimeType": "application/vnd.nextthought.nticourseoverviewgroup",
+                "NTIID": "tag:nextthought.com,2011-10:OU-NTICourseOverviewGroup-CS1323_F_2015_Intro_to_Computer_Programming.lec:04.03_LESSON.0",
+                "Items": [
+                    {
+                        "MimeType": "application/vnd.nextthought.ntivideo",
+                        "NTIID": "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_04.01.03_Split",
+                        "visibility": "everyone",
+                        "poster": "//www.kaltura.com/p/1500101/thumbnail/entry_id/1_8xn364f2/width/1280/",
+                        "label": "Split"
+                    },
+                    {
+                        "MimeType": "application/vnd.nextthought.ntivideo",
+                        "NTIID": "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_04.01.03_Predicting_Weather",
+                        "visibility": "everyone",
+                        "poster": "//www.kaltura.com/p/1500101/thumbnail/entry_id/0_rc1hwlgu/width/1280/",
+                        "label": "Predicting Weather"
+                    }
+                ],
+                "accentColor": "81c8dc",
+                "title": "Videos"
+            },
+            {
+                "MimeType": "application/vnd.nextthought.nticourseoverviewgroup",
+                "NTIID": "tag:nextthought.com,2011-10:OU-NTICourseOverviewGroup-CS1323_F_2015_Intro_to_Computer_Programming.lec:04.03_LESSON.1",
+                "Items": [
+                    {
+                        "MimeType": "application/vnd.nextthought.assessment.assignment",
+                        "ContainerId": "tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.zybook:_perfect_size_and_oversize_arrays_(7_points)",
+                        "title": "Zybook: Perfect Size and Oversize Arrays (7 points)",
+                        "label": "Zybook: Perfect Size and Oversize Arrays (7 points)",
+                        "NTIID": "tag:nextthought.com,2011-10:OU-NAQ-CS1323_F_2015_Intro_to_Computer_Programming.naq.asg.assignment:Zybook_Perfect_Size_and_Oversize_Arrays",
+                        "Target-NTIID": "tag:nextthought.com,2011-10:OU-NAQ-CS1323_F_2015_Intro_to_Computer_Programming.naq.asg.assignment:Zybook_Perfect_Size_and_Oversize_Arrays"
+                    }
+                ],
+                "accentColor": "a5c959",
+                "title": "Assignments"
+            },
+            {
+                "MimeType": "application/vnd.nextthought.nticourseoverviewgroup",
+                "NTIID": "tag:nextthought.com,2011-10:OU-NTICourseOverviewGroup-CS1323_F_2015_Intro_to_Computer_Programming.lec:04.03_LESSON.2",
+                "Items": [
+                    {
+                        "MimeType": "application/vnd.nextthought.relatedworkref",
+                        "targetMimeType": "application/vnd.nextthought.externallink",
+                        "creator": "zyBooks for University of Oklahoma CS 1323",
+                        "section": "additional",
+                        "visibility": "everyone",
+                        "label": "Programming in Java",
+                        "NTIID": "tag:nextthought.com,2011-10:OU-RelatedWorkRef-CS1323_F_2015_Intro_to_Computer_Programming.relatedworkref.relwk:04.01.03_zyante",
+                        "href": "https://zybooks.zyante.com/#/zybook/OUCS1323Fall2015/chapter/11/section/1",
+                        "target-NTIID": "tag:nextthought.com,2011-10:NTI-UUID-2b0897c5187a876f973831bff802427e",
+                        "icon": "resources/CS1323_F_2015_Intro_to_Computer_Programming/671375790efa45b2948b77f2a9c4e91f27173a56/fd35e23767020999111e1f49239199b4c5eff23e.png",
+                        "desc": "This section covers perfect and oversize arrays."
+                    }
+                ],
+                "accentColor": "f9824e",
+                "title": "Required Resources"
+            },
+            {
+                "MimeType": "application/vnd.nextthought.nticourseoverviewgroup",
+                "NTIID": "tag:nextthought.com,2011-10:OU-NTICourseOverviewGroup-CS1323_F_2015_Intro_to_Computer_Programming.lec:04.03_LESSON.3",
+                "Items": [
+                    {
+                        "MimeType": "application/vnd.nextthought.relatedworkref",
+                        "targetMimeType": "application/vnd.nextthought.content",
+                        "creator": "Bradley Kjell",
+                        "section": "required",
+                        "visibility": "everyone",
+                        "label": "Chortle",
+                        "NTIID": "tag:nextthought.com,2011-10:OU-RelatedWorkRef-CS1323_F_2015_Intro_to_Computer_Programming.relatedworkref.relwk:chortle.10",
+                        "href": "tag:nextthought.com,2011-10:OU-HTML-CS1323_S_2015_Intro_to_Computer_Programming.reading:Chortle_CH49B",
+                        "target-NTIID": "tag:nextthought.com,2011-10:OU-HTML-CS1323_S_2015_Intro_to_Computer_Programming.reading:Chortle_CH49B",
+                        "icon": "resources/CS1323_F_2015_Intro_to_Computer_Programming/b06a4bdb19666c7afc685f0365fd59a988b154c2/fd35e23767020999111e1f49239199b4c5eff23e.png",
+                        "desc": "Memory allocation for arrays of objects explained."
+                    },
+                    {
+                        "MimeType": "application/vnd.nextthought.relatedworkref",
+                        "targetMimeType": "application/vnd.nextthought.externallink",
+                        "creator": "Deborah Trytten",
+                        "section": "additional",
+                        "visibility": "everyone",
+                        "label": "Example from the Video",
+                        "NTIID": "tag:nextthought.com,2011-10:OU-RelatedWorkRef-CS1323_F_2015_Intro_to_Computer_Programming.relatedworkref.relwk:04.01.03_code_sample",
+                        "href": "resources/Lesson_4.1.3_Code.zip",
+                        "target-NTIID": "tag:nextthought.com,2011-10:NTI-UUID-672225803edaa87110de1ced3e2afd68",
+                        "icon": "resources/CS1323_F_2015_Intro_to_Computer_Programming/b9c4a1a1dc3d30c895df3b30c553fa40f972a2f5/fd35e23767020999111e1f49239199b4c5eff23e.png",
+                        "desc": "Java code developed in the video from this lesson."
+                    },
+                    {
+                        "MimeType": "application/vnd.nextthought.relatedworkref",
+                        "targetMimeType": "application/vnd.nextthought.externallink",
+                        "creator": "Deborah Trytten",
+                        "section": "additional",
+                        "visibility": "everyone",
+                        "label": "Split",
+                        "NTIID": "tag:nextthought.com,2011-10:OU-RelatedWorkRef-CS1323_F_2015_Intro_to_Computer_Programming.relatedworkref.relwk:04.01.03_split",
+                        "href": "resources/Split_Perfect_Size_and_Oversize_Arrays.pptx",
+                        "target-NTIID": "tag:nextthought.com,2011-10:NTI-UUID-92c3b28bd09a6a156fa208682207bbf2",
+                        "icon": "resources/CS1323_F_2015_Intro_to_Computer_Programming/17f860f9921d29d578e2791d3ff00dcf689071c3/fd35e23767020999111e1f49239199b4c5eff23e.png",
+                        "desc": "Lecture presentation"
+                    },
+                    {
+                        "MimeType": "application/vnd.nextthought.relatedworkref",
+                        "targetMimeType": "application/vnd.nextthought.externallink",
+                        "creator": "Deborah Trytten",
+                        "section": "additional",
+                        "visibility": "everyone",
+                        "label": "Predicting Weather",
+                        "NTIID": "tag:nextthought.com,2011-10:OU-RelatedWorkRef-CS1323_F_2015_Intro_to_Computer_Programming.relatedworkref.relwk:04.01.03_predicting_weather",
+                        "href": "resources/Predicting_Weather.pptx",
+                        "target-NTIID": "tag:nextthought.com,2011-10:NTI-UUID-6ca6f27051602d661ca36e3e879db4e7",
+                        "icon": "resources/CS1323_F_2015_Intro_to_Computer_Programming/17f860f9921d29d578e2791d3ff00dcf689071c3/fd35e23767020999111e1f49239199b4c5eff23e.png",
+                        "desc": "Lecture presentation"
+                    }
+                ],
+                "accentColor": "ce78e0",
+                "title": "Additional Resources"
+            }
+        ],
+        "title": "Perfect Size and Oversize Arrays",
+        "NTIID": "tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.lec:04.03_LESSON"
+    },
+    "ntiid": "tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.lec:04.03_LESSON",
+    "version": "1",
+    "Content-Type": "application/json",
+    "Content-Encoding": "json"
+});

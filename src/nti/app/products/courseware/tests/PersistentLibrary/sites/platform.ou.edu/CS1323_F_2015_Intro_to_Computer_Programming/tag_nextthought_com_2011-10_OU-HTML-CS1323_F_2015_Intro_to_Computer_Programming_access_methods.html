@@ -1,0 +1,21 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html lang="en"><head> <meta content="2015-12-11T16:56:47" http-equiv="last-modified" /> <meta content="942" name="NTIRelativeScrollHeight" /> <meta content="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.access_methods" name="NTIID" /> <meta content="NextThought" name="generator" /> <meta content="text/html; charset=ascii" http-equiv="content-type" /> <title>Access Methods</title> <link href="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.main()_cant_see_private_data" rel="next" title="main() Can&#8217;t See Private Data" /> <link href="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.the_private_visibility_modifier" rel="prev" title="The Private Visibility Modifier" /> <link href="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.reading:Chortle_CH33" rel="up" title="Encapsulation" /> <link href="styles/styles.css" rel="stylesheet" /> <link href="styles/content.css" rel="stylesheet" /> </head> <body id="NTIContent"> <div class="page-contents"><div data-ntiid="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.access_methods" id="a0000000531" ntiid="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.access_methods"> <div class="chapter title">Access Methods</div> <p class="placeholder"></p> <a name="59bb3ee35f79a86edf7b9c53660a4204"></a> <div class="sidebar" data-ntiid="tag:nextthought.com,2011-10:OU-HTML:NTISidebar-CS1323_F_2015_Intro_to_Computer_Programming.sidebar.answer.202" ntiid="tag:nextthought.com,2011-10:OU-HTML:NTISidebar-CS1323_F_2015_Intro_to_Computer_Programming.sidebar.answer.202"> <div class="sidebar-title">Answer</div> Use <b class="bfseries"><tt class="ttfamily">processDeposit()</tt></b> or <b class="bfseries"><tt class="ttfamily">processCheck()</tt></b>. </div><a name="19d3763ab5c3f487585d96f27c2257eb"></a> <p class="par" id="19d3763ab5c3f487585d96f27c2257eb">A class with private data provides access to that data through access methods. An <b class="bfseries">access method</b> is a method which uses the private data of its object and is visible to other classes. Some access methods alter data; others return a value but don&#8217;t alter data. Here is a <b class="bfseries"><tt class="ttfamily">main()</tt></b> that uses the access methods of a <b class="bfseries"><tt class="ttfamily">CheckingAccount</tt></b> object. </p> <a name="bc262a20359c4d6932ff10e6a26b5361"></a> <pre>class CheckingAccount
+{
+  private String accountNumber;
+  private String accountHolder;
+  private int    balance;
+  . . . .
+}
+
+class CheckingAccountTester
+{
+  public static void main( String[] args )
+  {
+    CheckingAccount bobsAccount = new CheckingAccount( "999", "Bob", 100 );
+
+    System.out.println( bobsAccount.getBalance() );
+    bobsAccount.processDeposit( 200 );
+    System.out.println( bobsAccount.getBalance() );
+
+  }
+}
+</pre><a name="f0f861f6fe22ee7bfb70f2495b2a7693"></a> <p class="par" id="f0f861f6fe22ee7bfb70f2495b2a7693">This <b class="bfseries"><tt class="ttfamily">main()</tt></b> program uses access methods of the <b class="bfseries"><tt class="ttfamily">CheckingAccount</tt></b> object to change the object&#8217;s data. This is (usually) the correct way to use an object. The methods of an object know best how to change its instance variables. The idea of <b class="bfseries"><tt class="ttfamily">private</tt></b> is to <b class="bfseries"><b class="bfseries">enforce</b></b> this correct use. </p> <a name="55f0763c04dc7e4edc4914a81a733803"></a> <div class="sidebar" data-ntiid="tag:nextthought.com,2011-10:OU-HTML:NTISidebar-CS1323_F_2015_Intro_to_Computer_Programming.sidebar.question.214" ntiid="tag:nextthought.com,2011-10:OU-HTML:NTISidebar-CS1323_F_2015_Intro_to_Computer_Programming.sidebar.question.214"> <div class="sidebar-title">Question</div> Could an access method check for errors and change instance variables only if the data is correct? </div> </div></div> </body></html>

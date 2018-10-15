@@ -1,0 +1,106 @@
+{
+  "MimeType": "application/vnd.nextthought.ntislidedeck",
+  "Videos": [
+    {
+      "MimeType": "application/vnd.nextthought.ntislidevideo",
+      "video-ntiid": "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_02.02.02_Vending_Machine",
+      "title": "Create a Vending Machine",
+      "creator": "Deborah Trytten",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Vending_Machine",
+      "thumbnail": "//www.kaltura.com/p/1500101/thumbnail/entry_id/0_tt9d0kuk/width/640/",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Vending_Machine_video",
+      "class": "ntislidevideo"
+    }
+  ],
+  "creator": "Deborah Trytten",
+  "title": "The Vending Machine",
+  "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Vending_Machine",
+  "Slides": [
+    {
+      "MimeType": "application/vnd.nextthought.slide",
+      "slidevideoid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Vending_Machine_video",
+      "slidetitle": "Conditional Structures and Relational Operators",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Vending_Machine",
+      "slidevideostart": "0.0",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlide-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Vending_Machine_slide_1",
+      "slideimage": "resources/CS1323_F_2015_Intro_to_Computer_Programming/985da7d51fbdded6234f8602d900ce1bff283a75/fd35e23767020999111e1f49239199b4c5eff23e.png",
+      "slidevideoend": "7.0",
+      "slidenumber": "1",
+      "class": "slide"
+    },
+    {
+      "MimeType": "application/vnd.nextthought.slide",
+      "slidevideoid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Vending_Machine_video",
+      "slidetitle": "Problem Statement",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Vending_Machine",
+      "slidevideostart": "7.0",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlide-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Vending_Machine_slide_2",
+      "slideimage": "resources/CS1323_F_2015_Intro_to_Computer_Programming/20a65cdf138496d673de9d66c3b01a0611db3498/fd35e23767020999111e1f49239199b4c5eff23e.png",
+      "slidevideoend": "31.0",
+      "slidenumber": "2",
+      "class": "slide"
+    },
+    {
+      "MimeType": "application/vnd.nextthought.slide",
+      "slidevideoid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Vending_Machine_video",
+      "slidetitle": "Get Started",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Vending_Machine",
+      "slidevideostart": "31.0",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlide-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Vending_Machine_slide_3",
+      "slideimage": "resources/CS1323_F_2015_Intro_to_Computer_Programming/8efc8cbd8039992f9a5e9ca3325d10904b81fcec/fd35e23767020999111e1f49239199b4c5eff23e.png",
+      "slidevideoend": "47.0",
+      "slidenumber": "3",
+      "class": "slide"
+    },
+    {
+      "MimeType": "application/vnd.nextthought.slide",
+      "slidevideoid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Vending_Machine_video",
+      "slidetitle": "Choose data",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Vending_Machine",
+      "slidevideostart": "47.0",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlide-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Vending_Machine_slide_4",
+      "slideimage": "resources/CS1323_F_2015_Intro_to_Computer_Programming/1f219da7a047df1fa8c767874c0f6445c1fdc20b/fd35e23767020999111e1f49239199b4c5eff23e.png",
+      "slidevideoend": "293.0",
+      "slidenumber": "4",
+      "class": "slide"
+    },
+    {
+      "MimeType": "application/vnd.nextthought.slide",
+      "slidevideoid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Vending_Machine_video",
+      "slidetitle": "Identify Control Structure",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Vending_Machine",
+      "slidevideostart": "293.0",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlide-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Vending_Machine_slide_5",
+      "slideimage": "resources/CS1323_F_2015_Intro_to_Computer_Programming/95f60a3fb58ead9b608a0da9801f791b880b64f2/fd35e23767020999111e1f49239199b4c5eff23e.png",
+      "slidevideoend": "586.0",
+      "slidenumber": "5",
+      "class": "slide"
+    },
+    {
+      "MimeType": "application/vnd.nextthought.slide",
+      "slidevideoid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Vending_Machine_video",
+      "slidetitle": "Test the Program",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Vending_Machine",
+      "slidevideostart": "586.0",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlide-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Vending_Machine_slide_6",
+      "slideimage": "resources/CS1323_F_2015_Intro_to_Computer_Programming/f700d3a3527b29585d620d68277cd4a158369a7e/fd35e23767020999111e1f49239199b4c5eff23e.png",
+      "slidevideoend": "688.0",
+      "slidenumber": "6",
+      "class": "slide"
+    },
+    {
+      "MimeType": "application/vnd.nextthought.slide",
+      "slidevideoid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Vending_Machine_video",
+      "slidetitle": "Problem",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Vending_Machine",
+      "slidevideostart": "688.0",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlide-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Vending_Machine_slide_7",
+      "slideimage": "resources/CS1323_F_2015_Intro_to_Computer_Programming/766334063270bb5daaf9b514f2834975fb567629/fd35e23767020999111e1f49239199b4c5eff23e.png",
+      "slidevideoend": "1014.0",
+      "slidenumber": "7",
+      "class": "slide"
+    }
+  ],
+  "ntiid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Vending_Machine",
+  "class": "ntislidedeck"
+}

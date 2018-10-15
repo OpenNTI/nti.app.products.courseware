@@ -1,0 +1,164 @@
+{
+  "MimeType": "application/vnd.nextthought.ntislidedeck",
+  "Videos": [
+    {
+      "MimeType": "application/vnd.nextthought.ntislidevideo",
+      "video-ntiid": "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_04.02.02_Tracing_Parameter_Passing",
+      "title": "Tracing Parameter Passing",
+      "creator": "Deborah Trytten",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Tracing_Parameter_Passing",
+      "thumbnail": "//www.kaltura.com/p/1500101/thumbnail/entry_id/1_c34ca11x/width/640/",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Tracing_Parameter_Passing_video",
+      "class": "ntislidevideo"
+    }
+  ],
+  "creator": "Deborah Trytten",
+  "title": "Methods and References",
+  "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Tracing_Parameter_Passing",
+  "Slides": [
+    {
+      "MimeType": "application/vnd.nextthought.slide",
+      "slidevideoid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Tracing_Parameter_Passing_video",
+      "slidetitle": "Tracing Parameter Passing",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Tracing_Parameter_Passing",
+      "slidevideostart": "0.0",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlide-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Tracing_Parameter_Passing_slide_1",
+      "slideimage": "resources/CS1323_F_2015_Intro_to_Computer_Programming/b6a91a953ad4252776991788108d5477f4cca1e8/fd35e23767020999111e1f49239199b4c5eff23e.png",
+      "slidevideoend": "6.0",
+      "slidenumber": "1",
+      "class": "slide"
+    },
+    {
+      "MimeType": "application/vnd.nextthought.slide",
+      "slidevideoid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Tracing_Parameter_Passing_video",
+      "slidetitle": "Analysis of Code",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Tracing_Parameter_Passing",
+      "slidevideostart": "6.0",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlide-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Tracing_Parameter_Passing_slide_2",
+      "slideimage": "resources/CS1323_F_2015_Intro_to_Computer_Programming/d89dc136f7b814bdf4e81e4b75cfc6aea35e34ab/fd35e23767020999111e1f49239199b4c5eff23e.png",
+      "slidevideoend": "31.0",
+      "slidenumber": "2",
+      "class": "slide"
+    },
+    {
+      "MimeType": "application/vnd.nextthought.slide",
+      "slidevideoid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Tracing_Parameter_Passing_video",
+      "slidetitle": "Split with Oversize Array",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Tracing_Parameter_Passing",
+      "slidevideostart": "31.0",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlide-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Tracing_Parameter_Passing_slide_3",
+      "slideimage": "resources/CS1323_F_2015_Intro_to_Computer_Programming/19820955b4a5dec96acfd50b44fa0285299edb6f/fd35e23767020999111e1f49239199b4c5eff23e.png",
+      "slidevideoend": "66.0",
+      "slidenumber": "3",
+      "class": "slide"
+    },
+    {
+      "MimeType": "application/vnd.nextthought.slide",
+      "slidevideoid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Tracing_Parameter_Passing_video",
+      "slidetitle": "Call Method",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Tracing_Parameter_Passing",
+      "slidevideostart": "66.0",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlide-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Tracing_Parameter_Passing_slide_4",
+      "slideimage": "resources/CS1323_F_2015_Intro_to_Computer_Programming/bb246c36a224ff78d1b1f2c5e76bb6ecf636ca7c/fd35e23767020999111e1f49239199b4c5eff23e.png",
+      "slidevideoend": "144.0",
+      "slidenumber": "4",
+      "class": "slide"
+    },
+    {
+      "MimeType": "application/vnd.nextthought.slide",
+      "slidevideoid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Tracing_Parameter_Passing_video",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Tracing_Parameter_Passing",
+      "slidevideostart": "144.0",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlide-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Tracing_Parameter_Passing_slide_5",
+      "slideimage": "resources/CS1323_F_2015_Intro_to_Computer_Programming/e58bc74b7118129bcee126da9f725430bf128362/fd35e23767020999111e1f49239199b4c5eff23e.png",
+      "slidevideoend": "278.0",
+      "slidenumber": "5",
+      "class": "slide"
+    },
+    {
+      "MimeType": "application/vnd.nextthought.slide",
+      "slidevideoid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Tracing_Parameter_Passing_video",
+      "slidetitle": "Main Method",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Tracing_Parameter_Passing",
+      "slidevideostart": "278.0",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlide-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Tracing_Parameter_Passing_slide_6",
+      "slideimage": "resources/CS1323_F_2015_Intro_to_Computer_Programming/691d5a22cf2085b3fac86b0b115829ee90c70943/fd35e23767020999111e1f49239199b4c5eff23e.png",
+      "slidevideoend": "314.0",
+      "slidenumber": "6",
+      "class": "slide"
+    },
+    {
+      "MimeType": "application/vnd.nextthought.slide",
+      "slidevideoid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Tracing_Parameter_Passing_video",
+      "slidetitle": "Change the Code",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Tracing_Parameter_Passing",
+      "slidevideostart": "314.0",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlide-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Tracing_Parameter_Passing_slide_7",
+      "slideimage": "resources/CS1323_F_2015_Intro_to_Computer_Programming/573a0cd2b35c1e79c22f3ae1af05ba79cf61da0d/fd35e23767020999111e1f49239199b4c5eff23e.png",
+      "slidevideoend": "358.0",
+      "slidenumber": "7",
+      "class": "slide"
+    },
+    {
+      "MimeType": "application/vnd.nextthought.slide",
+      "slidevideoid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Tracing_Parameter_Passing_video",
+      "slidetitle": "Call Method",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Tracing_Parameter_Passing",
+      "slidevideostart": "358.0",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlide-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Tracing_Parameter_Passing_slide_8",
+      "slideimage": "resources/CS1323_F_2015_Intro_to_Computer_Programming/4ee2e1861be54eb365ae2ad086763f33c1194afd/fd35e23767020999111e1f49239199b4c5eff23e.png",
+      "slidevideoend": "379.0",
+      "slidenumber": "8",
+      "class": "slide"
+    },
+    {
+      "MimeType": "application/vnd.nextthought.slide",
+      "slidevideoid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Tracing_Parameter_Passing_video",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Tracing_Parameter_Passing",
+      "slidevideostart": "379.0",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlide-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Tracing_Parameter_Passing_slide_9",
+      "slideimage": "resources/CS1323_F_2015_Intro_to_Computer_Programming/a25c52c111e5eb54151d8a504bb741b62879a69e/fd35e23767020999111e1f49239199b4c5eff23e.png",
+      "slidevideoend": "490.0",
+      "slidenumber": "9",
+      "class": "slide"
+    },
+    {
+      "MimeType": "application/vnd.nextthought.slide",
+      "slidevideoid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Tracing_Parameter_Passing_video",
+      "slidetitle": "Main Method",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Tracing_Parameter_Passing",
+      "slidevideostart": "490.0",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlide-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Tracing_Parameter_Passing_slide_10",
+      "slideimage": "resources/CS1323_F_2015_Intro_to_Computer_Programming/3498e0b8e88ecbba36d68165ad67c86aee680fce/fd35e23767020999111e1f49239199b4c5eff23e.png",
+      "slidevideoend": "506.0",
+      "slidenumber": "10",
+      "class": "slide"
+    },
+    {
+      "MimeType": "application/vnd.nextthought.slide",
+      "slidevideoid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Tracing_Parameter_Passing_video",
+      "slidetitle": "Parameter Passing Rules",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Tracing_Parameter_Passing",
+      "slidevideostart": "506.0",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlide-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Tracing_Parameter_Passing_slide_11",
+      "slideimage": "resources/CS1323_F_2015_Intro_to_Computer_Programming/d4da85f18e916823fe0555ef2ff7b3c087f90f32/fd35e23767020999111e1f49239199b4c5eff23e.png",
+      "slidevideoend": "550.0",
+      "slidenumber": "11",
+      "class": "slide"
+    },
+    {
+      "MimeType": "application/vnd.nextthought.slide",
+      "slidevideoid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Tracing_Parameter_Passing_video",
+      "slidetitle": "Keep Programming!",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Tracing_Parameter_Passing",
+      "slidevideostart": "550.0",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlide-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Tracing_Parameter_Passing_slide_12",
+      "slideimage": "resources/CS1323_F_2015_Intro_to_Computer_Programming/811454e5338bbd24aa0f7d37c2aa62a090464415/fd35e23767020999111e1f49239199b4c5eff23e.png",
+      "slidevideoend": "560.0",
+      "slidenumber": "12",
+      "class": "slide"
+    }
+  ],
+  "ntiid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Tracing_Parameter_Passing",
+  "class": "ntislidedeck"
+}

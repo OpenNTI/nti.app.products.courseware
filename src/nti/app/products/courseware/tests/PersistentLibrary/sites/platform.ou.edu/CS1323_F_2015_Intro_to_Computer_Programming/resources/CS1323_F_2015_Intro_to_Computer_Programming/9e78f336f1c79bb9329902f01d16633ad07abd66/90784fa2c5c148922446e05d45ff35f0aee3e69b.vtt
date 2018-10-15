@@ -1,0 +1,221 @@
+WEBVTT
+Kind: captions
+Language: en
+
+00:00:00.719 --> 00:00:04.779
+&gt;&gt;Deborah Trytten: Let's talk about reading
+invisible characters. The first question you
+
+00:00:04.779 --> 00:00:11.260
+might have is, "Well what exactly is an invisible
+character?" Well, let me tell you about that.
+
+00:00:11.260 --> 00:00:16.139
+When you type at the keyboard, you hit enter
+to end one line and to start another. You've
+
+00:00:16.139 --> 00:00:21.200
+probably done this millions of times without
+thinking about it at all. This really does
+
+00:00:21.249 --> 00:00:26.600
+put a character in the computer that we have
+to deal with. Now the character is called
+
+00:00:26.699 --> 00:00:33.699
+backslash n, and it stands for newline. And
+this character isn't visible other than indirectly.
+
+00:00:33.860 --> 00:00:39.440
+So we can see that there's a newline that
+starts, what we can't see is there's actually
+
+00:00:39.440 --> 00:00:45.500
+a little hidden character that causes the newline to start. Now this character is the source
+
+00:00:45.570 --> 00:00:49.970
+of a lot of trouble in programming. There
+are two other characters that quite similar
+
+00:00:49.970 --> 00:00:56.900
+to it. One is the tab, backslash t, and the
+other is the return, which is backslash r.
+
+00:00:56.900 --> 00:01:01.850
+There are some very subtle differences between
+newlines and returns that have to do with
+
+00:01:01.850 --> 00:01:07.120
+whether you're using a PC or a Macintosh. Luckily Java hides those from us so we don't have
+
+00:01:07.120 --> 00:01:13.540
+to deal with them, but ordinarily in programming
+you do. When we go to read things in we use
+
+00:01:13.540 --> 00:01:19.070
+a scanner object. And first we construct it.
+So we create a scanner to read in things from
+
+00:01:19.070 --> 00:01:26.020
+the keyboard, which I usually call keyboard,
+and that equals new scanner of system.in.
+
+00:01:26.020 --> 00:01:33.020
+System.in is the fancy computer name for the
+keyboard, and so this sets up a usual keyboard.
+
+00:01:33.770 --> 00:01:38.350
+Now this scanner object will allow us to read
+in characters entered at the keyboard and
+
+00:01:38.350 --> 00:01:44.770
+interpret them as different types. So for
+example we can read in Strings, int, and doubles.
+
+00:01:44.770 --> 00:01:48.770
+Those are the ones we'll read in the most.
+
+00:01:48.770 --> 00:01:53.130
+There are a couple of different methods that
+cause a lot of confusion. One is next and
+
+00:01:53.130 --> 00:01:58.110
+the other is nextLine. Now the reason there's
+confusion here is because the methods behave
+
+00:01:58.110 --> 00:02:04.460
+differently. So let's talk about exactly what
+they do. Next reads characters until it finds
+
+00:02:04.460 --> 00:02:11.460
+a white space. Now when I say white space
+I mean a space, a tab, a newline, or a return.
+
+00:02:12.260 --> 00:02:17.510
+These are all white space characters. The
+thing about next is it doesn't remove the
+
+00:02:17.510 --> 00:02:24.510
+white space. So it uses it to separate things,
+but it doesn't actually take it out. nextLine
+
+00:02:25.450 --> 00:02:31.370
+on the other hand reads characters until a
+newline is found. So it doesn't separate things
+
+00:02:31.370 --> 00:02:38.370
+with spaces and tabs and returns, only with
+newlines. But here's the tricky part: nextLine
+
+00:02:38.970 --> 00:02:45.970
+actually does get rid of the newline. So let's
+look at an example, let's read some data.
+
+00:02:46.750 --> 00:02:51.709
+Suppose we have a line that starts out one
+of Robert Frost's most famous poems. Whose
+
+00:02:51.709 --> 00:02:57.310
+woods and then there's an enter. Now remember
+you're not used to seeing that enter there
+
+00:02:57.310 --> 00:03:02.379
+and it isn't going to show up when you enter
+things into your computer but it is there.
+
+00:03:02.379 --> 00:03:09.379
+That is the newline character. So keyboard.next
+would read "whose." Now I'm being extremely
+
+00:03:10.069 --> 00:03:14.959
+precise in how I show this, and you need to
+be precise in how you think about it. It does
+
+00:03:14.959 --> 00:03:21.959
+not read in the space after whose, that's
+a white space character and that one is left.
+
+00:03:22.530 --> 00:03:29.530
+This leaves space woods backslash n behind.
+The space is there.
+
+00:03:30.349 --> 00:03:37.349
+Now, if we call keyboard.next again it will
+read in "woods." So it removes the space and
+
+00:03:37.620 --> 00:03:42.080
+then it takes that next characters until the
+following white space character, which is
+
+00:03:42.080 --> 00:03:48.989
+a newline character and then it leaved the
+newline behind. If instead of calling next
+
+00:03:48.989 --> 00:03:54.480
+we had called nextLine it would've read in
+"whose woods" and it would've removed the
+
+00:03:54.480 --> 00:04:00.159
+newline. So that's the difference between
+the two commands.
+
+00:04:00.159 --> 00:04:06.010
+Now let's talk about integer and newlines.
+Suppose you want to read an age and a name.
+
+00:04:06.010 --> 00:04:11.940
+So maybe 14 enter and then Maggie enter. So
+when this is in the computer it will be 14
+
+00:04:11.940 --> 00:04:18.940
+backslash n, Maggie backslash n. So if we
+call keyboard.next int first it will read
+
+00:04:20.400 --> 00:04:27.190
+in 14 because next int reads in integers,
+again using white space separators. So next
+
+00:04:27.190 --> 00:04:34.190
+int works exactly the same way that next does.
+This leaves the newline behind. Now if we
+
+00:04:35.550 --> 00:04:42.550
+read keyboard.nextLine, this removes the newline.
+If you use keyboard.next to read "Maggie,"
+
+00:04:44.840 --> 00:04:50.780
+well, guess what? That leaves the newline
+behind again. So a better choice would've
+
+00:04:50.780 --> 00:04:57.780
+been to use keyboard.nextLine. That would've
+given you "Maggie," but also remove the line
+
+00:04:59.210 --> 00:05:03.790
+characters so it doesn't cause you trouble.
+Very subtle difference, but one that makes
+
+00:05:03.790 --> 00:05:08.900
+a big difference when you're doing input.
+So here are the rules. When you're reading
+
+00:05:08.900 --> 00:05:13.150
+data form the keyboard, you really need to
+think about where those newline characters
+
+00:05:13.150 --> 00:05:19.590
+are all the time. So the best strategy that
+I know is to read in the newline characters
+
+00:05:19.590 --> 00:05:24.430
+just as carefully as you do the data. If you
+think about where they are, you can just read
+
+00:05:24.430 --> 00:05:28.630
+them in automatically with the nextLine and
+then they're not going to cause you bugs in
+
+00:05:28.630 --> 00:05:34.060
+your program. Trust me - it's easier this
+way. So keep programming!
+

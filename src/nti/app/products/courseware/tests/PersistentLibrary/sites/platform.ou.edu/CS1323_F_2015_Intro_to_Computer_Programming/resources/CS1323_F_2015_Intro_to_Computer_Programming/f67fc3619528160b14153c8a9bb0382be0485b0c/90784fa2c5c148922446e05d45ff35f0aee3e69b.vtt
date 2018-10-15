@@ -1,0 +1,163 @@
+WEBVTT
+Kind: captions
+Language: en
+
+00:00:00.989 --> 00:00:05.499
+Now that you've learned about primitive data
+types let's do a sample program. We're going
+
+00:00:05.499 --> 00:00:12.049
+to choose a cell phone contract. Suppose you
+want to compare the cost of two cell phone
+
+00:00:12.049 --> 00:00:18.050
+plans with ATV Telecommunications. There's
+the Super Saver, which costs 39.99 a month
+
+00:00:18.050 --> 00:00:23.170
+for 500 minutes with additional minutes costing
+five cents each and there's the Big Talker
+
+00:00:23.170 --> 00:00:29.400
+costing 59.99 a month for 1000 minutes with
+additional minutes costing three cents each.
+
+00:00:29.400 --> 00:00:35.060
+If you talk for 1200 minutes a month which
+plan should you choose? Well we're not really
+
+00:00:35.060 --> 00:00:38.770
+ready to write a program yet so what we're
+going to do instead is make some decisions
+
+00:00:38.770 --> 00:00:42.950
+that we're going to use in a program that
+we're going to write eventually. First, let's
+
+00:00:42.950 --> 00:00:49.060
+choose some variables. So we're going to need
+to choose both a type and an identifier. For
+
+00:00:49.060 --> 00:00:54.300
+first off time we have two variables that
+are involved with time. There' the number
+
+00:00:54.300 --> 00:00:59.280
+of minutes per month and the number of minutes
+you talk every month. Both of these variables
+
+00:00:59.280 --> 00:01:05.409
+should be of the same type. Our choices really
+are int and double because they're both numeric.
+
+00:01:05.409 --> 00:01:09.450
+Now int would be used for things without a
+decimal point and double would be used for
+
+00:01:09.450 --> 00:01:14.630
+things with a decimal point. Because these
+are both integral that is they don't have
+
+00:01:14.630 --> 00:01:19.310
+a decimal point at least in the view of the
+cell phone company both of these should be
+
+00:01:19.310 --> 00:01:26.310
+integers. So our variable should be int plan
+minutes and int talk minutes. We also have
+
+00:01:27.909 --> 00:01:32.530
+money in this problem. Now at first you might
+think well dollars have a decimal point in
+
+00:01:32.530 --> 00:01:37.049
+them so definitely they should be a double
+but it's a little more complicated than that.
+
+00:01:37.049 --> 00:01:42.670
+Even though dollars have a decimal point pennies
+don't and pennies are indivisible that is
+
+00:01:42.670 --> 00:01:47.069
+you can't charge half a penny for something
+so this means that our monthly cost and our
+
+00:01:47.069 --> 00:01:52.639
+cost for additional minutes should be integral
+not double. They should be ints. So we'll
+
+00:01:52.639 --> 00:01:59.639
+have int monthly cost pennies and int additional
+minute pennies. Notice that I've put the unit
+
+00:01:59.979 --> 00:02:04.159
+in the name of the variable. This helps you
+remember that you stored it in pennies instead
+
+00:02:04.159 --> 00:02:09.130
+of thinking that it's dollars later. And of
+course we're going to need the name for our
+
+00:02:09.130 --> 00:02:13.060
+plan. That's going to be a string because
+they're multiple characters in it. So it will
+
+00:02:13.060 --> 00:02:18.530
+be string plan name. So here are the rules
+that we've come up with: numbers are either
+
+00:02:18.530 --> 00:02:23.130
+int or double depending on where the decimal
+point should be placed, and you have to think
+
+00:02:23.130 --> 00:02:28.280
+very carefully about things like money. Single
+characters are char but we didn't have any
+
+00:02:28.280 --> 00:02:34.110
+of those. What we have are multiple characters
+and those are stored in a string. So here's
+
+00:02:34.110 --> 00:02:38.860
+some food for thought--every semester I have
+a student that asks me why don't we just make
+
+00:02:38.860 --> 00:02:42.780
+everything double? Well there's a really good
+reason and you'll see it as we work through
+
+00:02:42.780 --> 00:02:48.430
+some of the examples later on. When things
+are double its hard to do equality comparisons
+
+00:02:48.430 --> 00:02:52.650
+because doubles aren't stored exactly in the
+computer they're stored approximately and
+
+00:02:52.650 --> 00:02:56.640
+so equality doesn't work the way it should
+whereas with integers because integers are
+
+00:02:56.640 --> 00:03:03.400
+stored exactly equality works correctly so
+that turns out to be really important. And
+
+00:03:03.400 --> 00:03:07.900
+why didn't we consider things like long short
+and float? You probably read about those in
+
+00:03:07.900 --> 00:03:13.320
+the in the textbook. Well there's a good reason
+to not consider those and that's that it simply
+
+00:03:13.320 --> 00:03:17.300
+doesn't matter. There really is no difference
+in the amount of memory that's used that's
+
+00:03:17.300 --> 00:03:23.120
+worth talking about and so we usually make
+everything that's integral int and everything
+
+00:03:23.120 --> 00:03:24.540
+that's floating point double.
+

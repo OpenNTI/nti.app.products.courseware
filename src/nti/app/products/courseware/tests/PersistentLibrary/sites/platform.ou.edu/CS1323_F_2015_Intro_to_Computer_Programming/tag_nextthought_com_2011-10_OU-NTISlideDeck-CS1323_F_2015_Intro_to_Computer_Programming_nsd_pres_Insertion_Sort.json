@@ -1,0 +1,177 @@
+{
+  "MimeType": "application/vnd.nextthought.ntislidedeck",
+  "Videos": [
+    {
+      "MimeType": "application/vnd.nextthought.ntislidevideo",
+      "video-ntiid": "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_04.02.05_Insertion_Sort",
+      "title": "Insertion Sort",
+      "creator": "Deborah Trytten",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Insertion_Sort",
+      "thumbnail": "//www.kaltura.com/p/1500101/thumbnail/entry_id/1_x81pdhts/width/640/",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Insertion_Sort_video",
+      "class": "ntislidevideo"
+    }
+  ],
+  "creator": "Deborah Trytten",
+  "title": "Sorting Algorithms",
+  "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Insertion_Sort",
+  "Slides": [
+    {
+      "MimeType": "application/vnd.nextthought.slide",
+      "slidevideoid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Insertion_Sort_video",
+      "slidetitle": "Insertion Sort",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Insertion_Sort",
+      "slidevideostart": "0.0",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlide-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Insertion_Sort_slide_1",
+      "slideimage": "resources/CS1323_F_2015_Intro_to_Computer_Programming/eb4238a0394b00844004732f506dc5a9e4d7fd1a/fd35e23767020999111e1f49239199b4c5eff23e.png",
+      "slidevideoend": "5.0",
+      "slidenumber": "1",
+      "class": "slide"
+    },
+    {
+      "MimeType": "application/vnd.nextthought.slide",
+      "slidevideoid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Insertion_Sort_video",
+      "slidetitle": "Algorithm",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Insertion_Sort",
+      "slidevideostart": "5.0",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlide-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Insertion_Sort_slide_2",
+      "slideimage": "resources/CS1323_F_2015_Intro_to_Computer_Programming/417ca7372aa3b9f3b2def5a2928cfb2b822cfe2a/fd35e23767020999111e1f49239199b4c5eff23e.png",
+      "slidevideoend": "58.0",
+      "slidenumber": "2",
+      "class": "slide"
+    },
+    {
+      "MimeType": "application/vnd.nextthought.slide",
+      "slidevideoid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Insertion_Sort_video",
+      "slidetitle": "Example: First Iteration",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Insertion_Sort",
+      "slidevideostart": "58.0",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlide-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Insertion_Sort_slide_3",
+      "slideimage": "resources/CS1323_F_2015_Intro_to_Computer_Programming/33e90fe88f4231c4db2f490f408f8184153fadbf/fd35e23767020999111e1f49239199b4c5eff23e.png",
+      "slidevideoend": "124.0",
+      "slidenumber": "3",
+      "class": "slide"
+    },
+    {
+      "MimeType": "application/vnd.nextthought.slide",
+      "slidevideoid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Insertion_Sort_video",
+      "slidetitle": "Example: Second Iteration",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Insertion_Sort",
+      "slidevideostart": "124.0",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlide-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Insertion_Sort_slide_4",
+      "slideimage": "resources/CS1323_F_2015_Intro_to_Computer_Programming/0165e4e2244fb3ad545d2c340307c5ca1210942d/fd35e23767020999111e1f49239199b4c5eff23e.png",
+      "slidevideoend": "150.0",
+      "slidenumber": "4",
+      "class": "slide"
+    },
+    {
+      "MimeType": "application/vnd.nextthought.slide",
+      "slidevideoid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Insertion_Sort_video",
+      "slidetitle": "Example: Third Iteration",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Insertion_Sort",
+      "slidevideostart": "150.0",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlide-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Insertion_Sort_slide_5",
+      "slideimage": "resources/CS1323_F_2015_Intro_to_Computer_Programming/eaf2411c9944690c2ff39ff0f360df63f254eb36/fd35e23767020999111e1f49239199b4c5eff23e.png",
+      "slidevideoend": "170.0",
+      "slidenumber": "5",
+      "class": "slide"
+    },
+    {
+      "MimeType": "application/vnd.nextthought.slide",
+      "slidevideoid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Insertion_Sort_video",
+      "slidetitle": "Example: Fourth Iteration",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Insertion_Sort",
+      "slidevideostart": "170.0",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlide-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Insertion_Sort_slide_6",
+      "slideimage": "resources/CS1323_F_2015_Intro_to_Computer_Programming/2c15855af744e1fb13fcd523dadfa9fbea439848/fd35e23767020999111e1f49239199b4c5eff23e.png",
+      "slidevideoend": "193.0",
+      "slidenumber": "6",
+      "class": "slide"
+    },
+    {
+      "MimeType": "application/vnd.nextthought.slide",
+      "slidevideoid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Insertion_Sort_video",
+      "slidetitle": "Example: Fifth Iteration",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Insertion_Sort",
+      "slidevideostart": "193.0",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlide-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Insertion_Sort_slide_7",
+      "slideimage": "resources/CS1323_F_2015_Intro_to_Computer_Programming/0317eacdeeb0006c72d1d40c241f0ffdb5a7f8d7/fd35e23767020999111e1f49239199b4c5eff23e.png",
+      "slidevideoend": "220.0",
+      "slidenumber": "7",
+      "class": "slide"
+    },
+    {
+      "MimeType": "application/vnd.nextthought.slide",
+      "slidevideoid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Insertion_Sort_video",
+      "slidetitle": "Example: First Four Iteration",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Insertion_Sort",
+      "slidevideostart": "220.0",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlide-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Insertion_Sort_slide_8",
+      "slideimage": "resources/CS1323_F_2015_Intro_to_Computer_Programming/1a1a2d232e53cd327d7f2438767b98c408bf643e/fd35e23767020999111e1f49239199b4c5eff23e.png",
+      "slidevideoend": "279.0",
+      "slidenumber": "8",
+      "class": "slide"
+    },
+    {
+      "MimeType": "application/vnd.nextthought.slide",
+      "slidevideoid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Insertion_Sort_video",
+      "slidetitle": "Example: Last Two Iterations",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Insertion_Sort",
+      "slidevideostart": "279.0",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlide-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Insertion_Sort_slide_9",
+      "slideimage": "resources/CS1323_F_2015_Intro_to_Computer_Programming/58d3e1a4a50d75e0a5f37529c33bfd499f7748cb/fd35e23767020999111e1f49239199b4c5eff23e.png",
+      "slidevideoend": "317.0",
+      "slidenumber": "9",
+      "class": "slide"
+    },
+    {
+      "MimeType": "application/vnd.nextthought.slide",
+      "slidevideoid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Insertion_Sort_video",
+      "slidetitle": "Design Loops",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Insertion_Sort",
+      "slidevideostart": "317.0",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlide-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Insertion_Sort_slide_10",
+      "slideimage": "resources/CS1323_F_2015_Intro_to_Computer_Programming/03044425910d0dbdeeb4fc10e21f3cad14e70013/fd35e23767020999111e1f49239199b4c5eff23e.png",
+      "slidevideoend": "354.0",
+      "slidenumber": "10",
+      "class": "slide"
+    },
+    {
+      "MimeType": "application/vnd.nextthought.slide",
+      "slidevideoid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Insertion_Sort_video",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Insertion_Sort",
+      "slidevideostart": "354.0",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlide-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Insertion_Sort_slide_11",
+      "slideimage": "resources/CS1323_F_2015_Intro_to_Computer_Programming/e3573369b10854aea33ccaf31260b51ff1384069/fd35e23767020999111e1f49239199b4c5eff23e.png",
+      "slidevideoend": "398.0",
+      "slidenumber": "11",
+      "class": "slide"
+    },
+    {
+      "MimeType": "application/vnd.nextthought.slide",
+      "slidevideoid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Insertion_Sort_video",
+      "slidetitle": "Why Study Sorting Algorithms?",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Insertion_Sort",
+      "slidevideostart": "398.0",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlide-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Insertion_Sort_slide_12",
+      "slideimage": "resources/CS1323_F_2015_Intro_to_Computer_Programming/ab9dc4f2f654db80a7af9fb7adae674558bf10d9/fd35e23767020999111e1f49239199b4c5eff23e.png",
+      "slidevideoend": "471.0",
+      "slidenumber": "12",
+      "class": "slide"
+    },
+    {
+      "MimeType": "application/vnd.nextthought.slide",
+      "slidevideoid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Insertion_Sort_video",
+      "slidetitle": "Keep Programming!",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Insertion_Sort",
+      "slidevideostart": "471.0",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlide-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Insertion_Sort_slide_13",
+      "slideimage": "resources/CS1323_F_2015_Intro_to_Computer_Programming/577cd0d640309f1334443d7a8de4269c7ede3b73/fd35e23767020999111e1f49239199b4c5eff23e.png",
+      "slidevideoend": "481.0",
+      "slidenumber": "13",
+      "class": "slide"
+    }
+  ],
+  "ntiid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Insertion_Sort",
+  "class": "ntislidedeck"
+}

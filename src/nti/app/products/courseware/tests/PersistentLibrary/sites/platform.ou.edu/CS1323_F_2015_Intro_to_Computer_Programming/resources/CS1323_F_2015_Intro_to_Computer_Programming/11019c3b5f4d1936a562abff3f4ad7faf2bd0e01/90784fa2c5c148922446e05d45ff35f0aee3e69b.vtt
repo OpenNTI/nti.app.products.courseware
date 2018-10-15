@@ -1,0 +1,295 @@
+WEBVTT
+Kind: captions
+Language: en
+
+00:00:01.020 --> 00:00:06.509
+&gt;&gt;Let's talk a little about references and
+constructors. First let's talk about the difference
+
+00:00:06.509 --> 00:00:12.090
+between objects and primitive data types.
+When we have primitive data, and by primitive
+
+00:00:12.090 --> 00:00:19.030
+data I'm referring to types like int and double,
+they're stored in a fixed size in memory.
+
+00:00:19.030 --> 00:00:24.610
+Strings on the other hand are not fixed in
+size. So you see two Strings below. One, 'I
+
+00:00:24.610 --> 00:00:30.500
+have lots of characters and need lots of space.'
+And the other, 'not me.' These two Strings
+
+00:00:30.500 --> 00:00:35.140
+are stored in different amounts of memory.
+The longer String takes more memory and the
+
+00:00:35.140 --> 00:00:42.110
+shorter String takes less memory. So a fixed
+size memory doesn't work for Strings. Now
+
+00:00:42.110 --> 00:00:47.020
+sometimes also with Strings the size isn't
+known until the program runs. So for example
+
+00:00:47.020 --> 00:00:51.200
+when you read a String in from a scanner object,
+you don't know if the user's going to enter
+
+00:00:51.200 --> 00:00:55.770
+one character or a million characters. So
+the differences in the size of Strings can
+
+00:00:55.770 --> 00:01:01.680
+be extremely large. This is why Strings are
+an object instead of being primitive data
+
+00:01:01.680 --> 00:01:04.100
+in Java.
+
+00:01:04.100 --> 00:01:08.859
+Objects and primitive data are handled differently.
+Now a lot of it looks the same, but it has
+
+00:01:08.859 --> 00:01:12.729
+different meanings. And so one thing that
+I want you to understand is the difference
+
+00:01:12.729 --> 00:01:19.729
+in meaning between how objects are handled
+and how primitive data is. So here's how objects
+
+00:01:20.639 --> 00:01:27.639
+work in Java. Objects are stored on the heap.
+Now what the heap is is a glob of memory that's
+
+00:01:28.009 --> 00:01:34.189
+reserved for use by a program while it's running.
+Anything that's allocated with news is always
+
+00:01:34.189 --> 00:01:40.469
+stored on the heap-- so there could be a lot
+of memory on the heap. The reference is an
+
+00:01:40.469 --> 00:01:47.289
+address where an object is stored on the heap.
+And references get identifiers. Remember when
+
+00:01:47.289 --> 00:01:52.569
+we had primitive data, we used an identifier
+to refer to it's location in memory too. But
+
+00:01:52.569 --> 00:01:57.359
+there's a little difference here that you'll
+see when we draw the memory diagrams.
+
+00:01:57.359 --> 00:02:04.209
+So let's declare and construct an object.
+So String name; - this creates a reference
+
+00:02:04.209 --> 00:02:11.209
+name, which will hold the reference for a
+String object. That's what it looks like in
+
+00:02:12.110 --> 00:02:18.910
+memory. Now at this point, the reference is
+null. What I mean by null is there is no object
+
+00:02:18.910 --> 00:02:23.590
+attached to it yet. So if you tried to do
+something with the String name at this point
+
+00:02:23.590 --> 00:02:28.410
+it's not going to work. The way we show this
+in a memory diagram is by putting a slash
+
+00:02:28.410 --> 00:02:33.920
+through the box. A slash through the box doesn't
+mean anything with primitive data, but with
+
+00:02:33.920 --> 00:02:38.810
+objects what it means is the reference is
+null. That is that it's not a legal reference
+
+00:02:38.810 --> 00:02:42.140
+and that there is no object attached.
+
+00:02:42.140 --> 00:02:46.940
+When we construct a String, so we'll do name
+equals new String and then we'll do double
+
+00:02:46.940 --> 00:02:53.940
+quote Sadie. This constructs an object on
+the heap. So that's what that looks like,
+
+00:02:55.820 --> 00:03:01.250
+and then it stores the reference location
+name. So now instead of having null in it,
+
+00:03:01.250 --> 00:03:08.250
+name is going to have the address of the String
+object Sadie. Now sometimes I show addresses
+
+00:03:08.720 --> 00:03:12.730
+when I'm doing this. For some people this
+makes a lot of sense and for other people
+
+00:03:12.730 --> 00:03:17.350
+they find it confusing. I don't care which
+way you do it, the address that I'm showing
+
+00:03:17.350 --> 00:03:22.840
+there is completely arbitrary. I usually choose
+numbers between one and nine hundred and ninety
+
+00:03:22.840 --> 00:03:27.850
+nine, but it could be anything you want. So
+two thirty five doesn't mean anything. It
+
+00:03:27.850 --> 00:03:33.680
+just is the address in memory where this particular
+String happened to be located. And the two
+
+00:03:33.680 --> 00:03:38.850
+thirty five is what's stored in the box. Sometimes
+understanding that can really help make more
+
+00:03:38.850 --> 00:03:43.010
+sense out of these memory diagrams.
+
+00:03:43.010 --> 00:03:48.960
+So let's make a comparison. When we have int
+length, this is what it looks like. Now into
+
+00:03:48.960 --> 00:03:54.330
+the primitive data type-- so we're not going
+to have any arrows coming out of this box.
+
+00:03:54.330 --> 00:04:00.120
+When we say length equals three, three goes
+into the box right there. With a String on
+
+00:04:00.120 --> 00:04:06.650
+the other hand we'll say String size. Now
+that creates a reference called size, and
+
+00:04:06.650 --> 00:04:11.530
+here's where things start looking different.
+When we say size equals new String double
+
+00:04:11.530 --> 00:04:18.249
+quote ABC double quote this is what happens.
+We get a new object that's allocated on the
+
+00:04:18.249 --> 00:04:23.849
+heap and its reference is stored in size.
+We show that by putting an arrow between the
+
+00:04:23.849 --> 00:04:28.449
+box which contains size and the String object
+on the heap.
+
+00:04:28.449 --> 00:04:35.449
+Now, let's suppose we say size equals DEF.
+Now this one is kind of tricky, because double
+
+00:04:35.629 --> 00:04:41.259
+quote DEF double quote is a hidden constructor.
+This is one of the sneaky things that Java
+
+00:04:41.259 --> 00:04:46.620
+does that I really wish it didn't do, at least
+for beginning programmers. So this is actually
+
+00:04:46.620 --> 00:04:52.240
+the same thing as calling new String constructor.
+So what's going to happen is we're going to
+
+00:04:52.240 --> 00:04:59.050
+get a new String object and its reference
+is going to be put into the box labeled size.
+
+00:04:59.050 --> 00:05:04.819
+Now notice at this point the box labeled size
+doesn't refer to the String ABC anymore. That
+
+00:05:04.819 --> 00:05:09.979
+String now is sort of loose in memory. Eventually
+it will go through something called garbage
+
+00:05:09.979 --> 00:05:15.629
+collection. When Java runs out of memory,
+it runs around picks up all the leftover memory
+
+00:05:15.629 --> 00:05:19.550
+that you've left wasted at the side and reuses
+it.
+
+00:05:19.550 --> 00:05:23.629
+Now most of our programs are so small that
+there isn't any real garbage collection going
+
+00:05:23.629 --> 00:05:28.550
+on, and garbage collection is very much not
+under the control of the programmer. Java
+
+00:05:28.550 --> 00:05:33.409
+actually has some methods in it that pretend
+that you can control the garbage collection
+
+00:05:33.409 --> 00:05:37.870
+- but the truth is they usually ignore what
+you're doing if you look at the code.
+
+00:05:37.870 --> 00:05:44.159
+So at this point the reference size points
+to the String DEF. The String ABC has been
+
+00:05:44.159 --> 00:05:47.939
+abandoned. Even if we wanted to use it in
+the future we can't get back to it, because
+
+00:05:47.939 --> 00:05:52.870
+we don't have it's reference anymore. So you
+can think of objects as being little bit like
+
+00:05:52.870 --> 00:05:58.680
+helium balloons and that if you release the
+String up they go, they're gone. It's not
+
+00:05:58.680 --> 00:06:02.569
+that they're not there, they're still there,
+but you can't get to them so keeping track
+
+00:06:02.569 --> 00:06:05.599
+of references is very important.
+
+00:06:05.599 --> 00:06:10.069
+So let's make some observations. There are
+subtle differences between the storage of
+
+00:06:10.069 --> 00:06:15.659
+primitive data types and objects. For example
+we have to construct objects where as we don't
+
+00:06:15.659 --> 00:06:22.659
+construct primitive data types. The constructor,
+remember, is what we call when we call new.
+
+00:06:22.749 --> 00:06:28.650
+Objects around the heap, not in the stack
+frame as they usually are. And objects have
+
+00:06:28.650 --> 00:06:33.639
+references. Now what this all means when you
+put it together is that parameter passing
+
+00:06:33.639 --> 00:06:40.449
+is going to work differently. So this is going
+to have some very important consequences shortly.
+
+00:06:40.449 --> 00:06:41.129
+Keep programming!
+

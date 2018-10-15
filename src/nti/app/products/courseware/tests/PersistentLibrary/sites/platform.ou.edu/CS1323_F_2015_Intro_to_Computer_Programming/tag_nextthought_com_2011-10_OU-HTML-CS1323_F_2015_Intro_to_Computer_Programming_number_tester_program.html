@@ -1,0 +1,37 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html lang="en"><head> <meta content="2015-12-11T16:56:47" http-equiv="last-modified" /> <meta content="1101" name="NTIRelativeScrollHeight" /> <meta content="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.number_tester_program" name="NTIID" /> <meta content="NextThought" name="generator" /> <meta content="text/html; charset=ascii" http-equiv="content-type" /> <title>Number Tester Program</title> <link href="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.blocker.10" rel="next" title="Blocker" /> <link href="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.flowchart" rel="prev" title="Flowchart" /> <link href="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.reading:Chortle_CH12" rel="up" title="Decision Making" /> <link href="styles/styles.css" rel="stylesheet" /> <link href="styles/content.css" rel="stylesheet" /> </head> <body id="NTIContent"> <div class="page-contents"><div data-ntiid="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.number_tester_program" id="a0000000408" ntiid="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.number_tester_program"> <div class="chapter title">Number Tester Program</div> <p class="placeholder"></p> <a name="51412a3d32a7ec3185b7ebc96eb475d9"></a> <div class="sidebar" data-ntiid="tag:nextthought.com,2011-10:OU-HTML:NTISidebar-CS1323_F_2015_Intro_to_Computer_Programming.sidebar.answer.93" ntiid="tag:nextthought.com,2011-10:OU-HTML:NTISidebar-CS1323_F_2015_Intro_to_Computer_Programming.sidebar.answer.93"> <div class="sidebar-title">Answer</div> Yes. There are other tests that divide the integers into these three groups. But you will always need two tests, whatever they are. </div><a name="bab0d209438da1fde31258ecf0c8a56f"></a> <p class="par" id="bab0d209438da1fde31258ecf0c8a56f">Here is a program that implements the flowchart. The part that corresponds to the nested decision of the flow chart is identified below. This is called a <b class="bfseries">nested if statement</b> because it is nested in a branch of an outer <b class="bfseries"><tt class="ttfamily">if</tt></b> statement. </p> <a name="1ca9b28f249396c0bb4b12ba60eb89c2"></a> <pre>import java.util.Scanner;
+
+class NumberTester
+{
+  public static void main (String[] args)  
+  {
+    Scanner scan = new Scanner( System.in );
+    int num;
+
+    System.out.println("Enter an integer:");
+    num = scan.nextInt();
+
+    if ( num &lt; 0 )
+    {
+      // true-branch
+      System.out.println("The number " + num + " is negative");
+
+    } 
+    else
+    { 
+      if ( num &gt; 0 )
+      { 
+        // nested true-branch
+        System.out.println("The number " + num + " is positive"); 
+      } 
+      else
+      {
+        // nested false-branch
+        System.out.println("The number " + num + " is zero");
+      }
+
+    }
+
+    System.out.println("Good-bye for now");    // always executed
+  }
+}
+</pre><a name="6209db759a05c981e4257062ca2b618c"></a> <div class="sidebar" data-ntiid="tag:nextthought.com,2011-10:OU-HTML:NTISidebar-CS1323_F_2015_Intro_to_Computer_Programming.sidebar.question.97" ntiid="tag:nextthought.com,2011-10:OU-HTML:NTISidebar-CS1323_F_2015_Intro_to_Computer_Programming.sidebar.question.97"> <div class="sidebar-title">Question</div> Could an <b class="bfseries"><tt class="ttfamily">if</tt></b> statement be nested inside the <span class="underline">true</span> branch of another <b class="bfseries"><tt class="ttfamily">if</tt></b> statement? </div><a name="098ac3f31192042c6bcaf1fff8a0f2e8"></a> <p class="par" id="098ac3f31192042c6bcaf1fff8a0f2e8"> </p> <a name="96e58b35a1a17b0048762e565c3ae23d"></a> <p class="par" id="96e58b35a1a17b0048762e565c3ae23d">For more information or to read these chapters in full, go to <a href="http://chortle.ccsu.edu/java5/Notes/chap12/ch12_1.html">Chortle Chapter 12</a> and <a href="http://chortle.ccsu.edu/java5/Notes/chap13/ch13_1.html">Chortle Chapter 13</a>. </p> </div></div> </body></html>

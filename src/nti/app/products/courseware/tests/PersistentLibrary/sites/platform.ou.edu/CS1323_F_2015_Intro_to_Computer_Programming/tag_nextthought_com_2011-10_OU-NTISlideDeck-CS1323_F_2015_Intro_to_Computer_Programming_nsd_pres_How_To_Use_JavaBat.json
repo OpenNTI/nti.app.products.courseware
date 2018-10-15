@@ -1,0 +1,106 @@
+{
+  "MimeType": "application/vnd.nextthought.ntislidedeck",
+  "Videos": [
+    {
+      "MimeType": "application/vnd.nextthought.ntislidevideo",
+      "video-ntiid": "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_02.02.04_Javabat",
+      "title": "Javabat",
+      "creator": "Deborah Trytten",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:How_To_Use_JavaBat",
+      "thumbnail": "//www.kaltura.com/p/1500101/thumbnail/entry_id/0_sujttowt/width/640/",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:How_To_Use_JavaBat_video",
+      "class": "ntislidevideo"
+    }
+  ],
+  "creator": "Deborah Trytten",
+  "title": "How To Use JavaBat Summer 2014",
+  "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:How_To_Use_JavaBat",
+  "Slides": [
+    {
+      "MimeType": "application/vnd.nextthought.slide",
+      "slidevideoid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:How_To_Use_JavaBat_video",
+      "slidetitle": "How To Use JavaBat",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:How_To_Use_JavaBat",
+      "slidevideostart": "0.0",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlide-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:How_To_Use_JavaBat_slide_1",
+      "slideimage": "resources/CS1323_F_2015_Intro_to_Computer_Programming/e7fe202766f01eeba361ea45fd91e2a19a5cf095/fd35e23767020999111e1f49239199b4c5eff23e.png",
+      "slidevideoend": "4.0",
+      "slidenumber": "1",
+      "class": "slide"
+    },
+    {
+      "MimeType": "application/vnd.nextthought.slide",
+      "slidevideoid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:How_To_Use_JavaBat_video",
+      "slidetitle": "What is JavaBat",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:How_To_Use_JavaBat",
+      "slidevideostart": "4.0",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlide-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:How_To_Use_JavaBat_slide_2",
+      "slideimage": "resources/CS1323_F_2015_Intro_to_Computer_Programming/ae9b9af988c74b3fc4b574d097db1299d3f04382/fd35e23767020999111e1f49239199b4c5eff23e.png",
+      "slidevideoend": "33.0",
+      "slidenumber": "2",
+      "class": "slide"
+    },
+    {
+      "MimeType": "application/vnd.nextthought.slide",
+      "slidevideoid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:How_To_Use_JavaBat_video",
+      "slidetitle": "Set Up JavaBat",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:How_To_Use_JavaBat",
+      "slidevideostart": "33.0",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlide-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:How_To_Use_JavaBat_slide_3",
+      "slideimage": "resources/CS1323_F_2015_Intro_to_Computer_Programming/967fec950cd7bf0603b759deaebb349a5e6dc28c/fd35e23767020999111e1f49239199b4c5eff23e.png",
+      "slidevideoend": "93.0",
+      "slidenumber": "3",
+      "class": "slide"
+    },
+    {
+      "MimeType": "application/vnd.nextthought.slide",
+      "slidevideoid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:How_To_Use_JavaBat_video",
+      "slidetitle": "Sharing Your Work",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:How_To_Use_JavaBat",
+      "slidevideostart": "93.0",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlide-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:How_To_Use_JavaBat_slide_4",
+      "slideimage": "resources/CS1323_F_2015_Intro_to_Computer_Programming/5a5afdc099655560aea1bb97ae6f27f8aaad6014/fd35e23767020999111e1f49239199b4c5eff23e.png",
+      "slidevideoend": "135.0",
+      "slidenumber": "4",
+      "class": "slide"
+    },
+    {
+      "MimeType": "application/vnd.nextthought.slide",
+      "slidevideoid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:How_To_Use_JavaBat_video",
+      "slidetitle": "Work a Problem",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:How_To_Use_JavaBat",
+      "slidevideostart": "135.0",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlide-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:How_To_Use_JavaBat_slide_5",
+      "slideimage": "resources/CS1323_F_2015_Intro_to_Computer_Programming/ef6650a203c0b808fdb43929b7e0e67fb98b6c63/fd35e23767020999111e1f49239199b4c5eff23e.png",
+      "slidevideoend": "276.0",
+      "slidenumber": "5",
+      "class": "slide"
+    },
+    {
+      "MimeType": "application/vnd.nextthought.slide",
+      "slidevideoid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:How_To_Use_JavaBat_video",
+      "slidetitle": "Grading JavaBat",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:How_To_Use_JavaBat",
+      "slidevideostart": "276.0",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlide-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:How_To_Use_JavaBat_slide_6",
+      "slideimage": "resources/CS1323_F_2015_Intro_to_Computer_Programming/bfbed3070673f070ab0d595a1a80db7919dce32b/fd35e23767020999111e1f49239199b4c5eff23e.png",
+      "slidevideoend": "307.0",
+      "slidenumber": "6",
+      "class": "slide"
+    },
+    {
+      "MimeType": "application/vnd.nextthought.slide",
+      "slidevideoid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:How_To_Use_JavaBat_video",
+      "slidetitle": "Keep Programming!",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:How_To_Use_JavaBat",
+      "slidevideostart": "307.0",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlide-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:How_To_Use_JavaBat_slide_7",
+      "slideimage": "resources/CS1323_F_2015_Intro_to_Computer_Programming/7706495301575fa24c57f113addb381827daf0d1/fd35e23767020999111e1f49239199b4c5eff23e.png",
+      "slidevideoend": "317.0",
+      "slidenumber": "7",
+      "class": "slide"
+    }
+  ],
+  "ntiid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:How_To_Use_JavaBat",
+  "class": "ntislidedeck"
+}

@@ -1,0 +1,59 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html lang="en"><head> <meta content="2015-12-11T16:56:47" http-equiv="last-modified" /> <meta content="1388" name="NTIRelativeScrollHeight" /> <meta content="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.complete_class.1" name="NTIID" /> <meta content="NextThought" name="generator" /> <meta content="text/html; charset=ascii" http-equiv="content-type" /> <title>Complete Class</title> <link href="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.example_main()" rel="next" title="Example main()" /> <link href="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.tostring()_method" rel="prev" title="toString() Method" /> <link href="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.reading:Chortle_CH33" rel="up" title="Encapsulation" /> <link href="styles/styles.css" rel="stylesheet" /> <link href="styles/content.css" rel="stylesheet" /> </head> <body id="NTIContent"> <div class="page-contents"><div data-ntiid="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.complete_class.1" id="a0000000541" ntiid="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.complete_class.1"> <div class="chapter title">Complete Class</div> <p class="placeholder"></p> <a name="d54e1ef6bcf6f3e668a5dda15516d1e7"></a> <div class="sidebar" data-ntiid="tag:nextthought.com,2011-10:OU-HTML:NTISidebar-CS1323_F_2015_Intro_to_Computer_Programming.sidebar.answer.212" ntiid="tag:nextthought.com,2011-10:OU-HTML:NTISidebar-CS1323_F_2015_Intro_to_Computer_Programming.sidebar.answer.212"> <div class="sidebar-title">Answer</div> <pre>  public String toString()
+  {
+    return  "Account: " + accountNumber + "\tName: " + accountHolder + 
+            "\tBalance: " +  balance + "\tUse Count: " + useCount;
+  }
+</pre> </div><a name="6b5588888f7528395988cdb1367b1fd2"></a> <p class="par" id="6b5588888f7528395988cdb1367b1fd2">Here is the complete class: </p> <a name="aed5afd46c7c62a76f670b11ab4ccb1b"></a> <pre>class CheckingAccount
+{
+  // data-declarations
+  private String accountNumber;
+  private String accountHolder;
+  private int    balance;
+  private int    useCount = 0;
+
+  //constructors
+  CheckingAccount( String accNumber, String holder, int start )
+  {
+    accountNumber = accNumber ;
+    accountHolder = holder ;
+    balance       = start ;
+  }
+
+  // methods
+  private void incrementUse()
+  {
+    useCount = useCount + 1;
+  }
+
+  int getBalance()
+  {
+    return balance ;
+  }
+
+  void  processDeposit( int amount )
+  {
+    incrementUse();
+    balance = balance + amount ; 
+  }
+
+  void processCheck( int amount )
+  {
+    int charge;
+
+    incrementUse();
+    if ( balance &lt; 100000 )
+      charge = 15; 
+    else
+      charge = 0;
+
+    balance =  balance - amount - charge  ;
+  }
+
+  public String toString()
+  {
+    return  "Account: " + accountNumber + "\tName: " + accountHolder + 
+            "\tBalance: " +  balance + "\tUse Count: " + useCount;
+  }
+
+}
+</pre><a name="b2e5aa7b03c6b4dd08cbe3b6dee1ff35"></a> <div class="sidebar" data-ntiid="tag:nextthought.com,2011-10:OU-HTML:NTISidebar-CS1323_F_2015_Intro_to_Computer_Programming.sidebar.question.224" ntiid="tag:nextthought.com,2011-10:OU-HTML:NTISidebar-CS1323_F_2015_Intro_to_Computer_Programming.sidebar.question.224"> <div class="sidebar-title">Question</div> What does the <b class="bfseries"><tt class="ttfamily">useCount</tt></b> keep track of: <ul class="itemize"> <li><a name="ac591e3ad0bf93a46a077b6fa82d9865"></a> <p class="par" id="ac591e3ad0bf93a46a077b6fa82d9865">The number of times an individual <span class="underline">object</span> has been used, or </p> </li> <li><a name="15ec52d815e7d2e806a75d13f6f0c2f1"></a> <p class="par" id="15ec52d815e7d2e806a75d13f6f0c2f1">The number of times the entire <span class="underline">class</span> has been used? </p> </li> </ul> </div> </div></div> </body></html>

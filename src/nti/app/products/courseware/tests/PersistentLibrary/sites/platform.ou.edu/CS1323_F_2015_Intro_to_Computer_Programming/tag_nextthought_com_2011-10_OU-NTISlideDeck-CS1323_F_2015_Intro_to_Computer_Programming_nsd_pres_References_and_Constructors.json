@@ -1,0 +1,106 @@
+{
+  "MimeType": "application/vnd.nextthought.ntislidedeck",
+  "Videos": [
+    {
+      "MimeType": "application/vnd.nextthought.ntislidevideo",
+      "video-ntiid": "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_03.01.02a_References_and_Constructors",
+      "title": " References and Constructors",
+      "creator": "Deborah Trytten",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:References_and_Constructors",
+      "thumbnail": "//www.kaltura.com/p/1500101/thumbnail/entry_id/0_56tt7sxc/width/640/",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:References_and_Constructors_video",
+      "class": "ntislidevideo"
+    }
+  ],
+  "creator": "Deborah Trytten",
+  "title": "Storing and Constructing Objects",
+  "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:References_and_Constructors",
+  "Slides": [
+    {
+      "MimeType": "application/vnd.nextthought.slide",
+      "slidevideoid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:References_and_Constructors_video",
+      "slidetitle": "References and Constructors",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:References_and_Constructors",
+      "slidevideostart": "0.0",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlide-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:References_and_Constructors_slide_1",
+      "slideimage": "resources/CS1323_F_2015_Intro_to_Computer_Programming/11296b02e2b63aab330e59c32e761bb870fad4e4/fd35e23767020999111e1f49239199b4c5eff23e.png",
+      "slidevideoend": "3.0",
+      "slidenumber": "1",
+      "class": "slide"
+    },
+    {
+      "MimeType": "application/vnd.nextthought.slide",
+      "slidevideoid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:References_and_Constructors_video",
+      "slidetitle": "Objects vs. Primitive Data",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:References_and_Constructors",
+      "slidevideostart": "3.0",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlide-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:References_and_Constructors_slide_2",
+      "slideimage": "resources/CS1323_F_2015_Intro_to_Computer_Programming/ba249e7fb879a7a3b47608238bae5e67a48b23a9/fd35e23767020999111e1f49239199b4c5eff23e.png",
+      "slidevideoend": "78.0",
+      "slidenumber": "2",
+      "class": "slide"
+    },
+    {
+      "MimeType": "application/vnd.nextthought.slide",
+      "slidevideoid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:References_and_Constructors_video",
+      "slidetitle": "Objects in Java",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:References_and_Constructors",
+      "slidevideostart": "78.0",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlide-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:References_and_Constructors_slide_3",
+      "slideimage": "resources/CS1323_F_2015_Intro_to_Computer_Programming/0b6489df4672b997b2f6192b9a3a966d11488256/fd35e23767020999111e1f49239199b4c5eff23e.png",
+      "slidevideoend": "116.0",
+      "slidenumber": "3",
+      "class": "slide"
+    },
+    {
+      "MimeType": "application/vnd.nextthought.slide",
+      "slidevideoid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:References_and_Constructors_video",
+      "slidetitle": "Declare and Construct Object",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:References_and_Constructors",
+      "slidevideostart": "116.0",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlide-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:References_and_Constructors_slide_4",
+      "slideimage": "resources/CS1323_F_2015_Intro_to_Computer_Programming/fb699ef1cc5399947e851c146cc9a75f7b80640f/fd35e23767020999111e1f49239199b4c5eff23e.png",
+      "slidevideoend": "221.0",
+      "slidenumber": "4",
+      "class": "slide"
+    },
+    {
+      "MimeType": "application/vnd.nextthought.slide",
+      "slidevideoid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:References_and_Constructors_video",
+      "slidetitle": "Comparison",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:References_and_Constructors",
+      "slidevideostart": "221.0",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlide-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:References_and_Constructors_slide_5",
+      "slideimage": "resources/CS1323_F_2015_Intro_to_Computer_Programming/7bcf5df42c05d77f22e476fec3ebd031c1c6bd81/fd35e23767020999111e1f49239199b4c5eff23e.png",
+      "slidevideoend": "363.0",
+      "slidenumber": "5",
+      "class": "slide"
+    },
+    {
+      "MimeType": "application/vnd.nextthought.slide",
+      "slidevideoid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:References_and_Constructors_video",
+      "slidetitle": "Observation",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:References_and_Constructors",
+      "slidevideostart": "363.0",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlide-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:References_and_Constructors_slide_6",
+      "slideimage": "resources/CS1323_F_2015_Intro_to_Computer_Programming/d623e0cf3616a92c3624ee0a255c5a3323119448/fd35e23767020999111e1f49239199b4c5eff23e.png",
+      "slidevideoend": "400.0",
+      "slidenumber": "6",
+      "class": "slide"
+    },
+    {
+      "MimeType": "application/vnd.nextthought.slide",
+      "slidevideoid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:References_and_Constructors_video",
+      "slidetitle": "Keep Programming!",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:References_and_Constructors",
+      "slidevideostart": "400.0",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlide-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:References_and_Constructors_slide_7",
+      "slideimage": "resources/CS1323_F_2015_Intro_to_Computer_Programming/034db186015b8a4f94ab261cf9165b2307e68f41/fd35e23767020999111e1f49239199b4c5eff23e.png",
+      "slidevideoend": "409.0",
+      "slidenumber": "7",
+      "class": "slide"
+    }
+  ],
+  "ntiid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:References_and_Constructors",
+  "class": "ntislidedeck"
+}

@@ -1,0 +1,359 @@
+WEBVTT
+Kind: captions
+Language: en
+
+00:00:01.490 --> 00:00:08.490
+&gt;&gt;Let's continue our study of arrays of primitive
+data by looking at allocation and access issues.
+
+00:00:09.500 --> 00:00:14.370
+Here are the critical properties of arrays.
+All of the elements of an array must be of
+
+00:00:14.370 --> 00:00:19.949
+the same type. Now this could be a primitive
+data type, something like int of double with
+
+00:00:19.949 --> 00:00:26.170
+a little d. Or it could be references to a
+type of object. For example: references to
+
+00:00:26.170 --> 00:00:33.030
+Strings. Array elements have to be placed
+into contiguous memory in the computer. This
+
+00:00:33.030 --> 00:00:37.470
+is a very important limitation and is the
+cause of a lot of challenges we have working
+
+00:00:37.470 --> 00:00:44.470
+with arrays. What's more, the number of elements
+must be known in advance and can't be changed.
+
+00:00:44.500 --> 00:00:50.170
+The reason this is true is because the array
+elements have to be placed in contiguous memory.
+
+00:00:50.170 --> 00:00:56.690
+So for example suppose we put elements in
+locations 100 to 105 and then we needed to
+
+00:00:56.690 --> 00:01:03.410
+increase the size. There's no way for us to
+know that locations 106, 107, 108 haven't
+
+00:01:03.410 --> 00:01:07.960
+been used for something else. So there's no
+way that we can make it bigger. This is a
+
+00:01:07.960 --> 00:01:10.179
+real limitation.
+
+00:01:10.179 --> 00:01:14.420
+Now there is a way to work around it, and
+that's you can construct a new array and then
+
+00:01:14.420 --> 00:01:19.170
+copy everything over. But remember that's
+going to be expensive. While a lot of the
+
+00:01:19.170 --> 00:01:24.390
+arrays that we've looked at in these examples
+are small, often three five elements mostly
+
+00:01:24.390 --> 00:01:29.479
+so that I can draw them for you easily, arrays
+in the real world tend to be millions or even
+
+00:01:29.479 --> 00:01:36.479
+billions of elements. Reallocating memory
+and copying things over gets to be very expensive.
+
+00:01:37.119 --> 00:01:42.899
+So let's take a look at the mechanics of array
+allocation. Arrays are stored like objects.
+
+00:01:42.899 --> 00:01:47.929
+Now what I mean by that is you create a reference
+and then you allocate them on the heap using
+
+00:01:47.929 --> 00:01:54.700
+a constructor. Remember constructors always
+use the word new. So for example, int square
+
+00:01:54.700 --> 00:02:01.700
+bracket data equals new int square bracket
+five. This is what this looks like in memory.
+
+00:02:02.569 --> 00:02:08.140
+Data is a reference, and then we allocate
+five places on the heap. Now these five places
+
+00:02:08.140 --> 00:02:14.590
+are going to hold integers. The arrow between
+data and the five places on the heap indicates
+
+00:02:14.590 --> 00:02:19.790
+that the reference for data points to that
+location in memory. In other words the first
+
+00:02:19.790 --> 00:02:22.640
+address is what's sitting in data.
+
+00:02:22.640 --> 00:02:28.880
+As far as indexing arrays goes, well arrays
+are zero indexed. Now this should be expected
+
+00:02:28.880 --> 00:02:35.210
+because you've seen this in array list Strings.
+Because array list and Strings contain arrays,
+
+00:02:35.210 --> 00:02:39.500
+they're indexing is the same as arrays. This
+is actually kind of helpful because at least
+
+00:02:39.500 --> 00:02:46.020
+everything works the same way. The reference
+list contains the address of the first element.
+
+00:02:46.020 --> 00:02:51.060
+To get the address of other elements what
+you do is you add the address in the index.
+
+00:02:51.060 --> 00:02:53.540
+Let's take a look at how this works.
+
+00:02:53.540 --> 00:03:00.110
+So here we have data. Now the 372 that I'm
+showing in the data box is the reference to
+
+00:03:00.110 --> 00:03:04.820
+the first element under the array. The number
+itself doesn't have any significance; it's
+
+00:03:04.820 --> 00:03:10.630
+just an array address. And notice because
+they're in contiguous memory locations, the
+
+00:03:10.630 --> 00:03:17.630
+second is at 373, the third is at 374, the
+fourth is at 375 and so on. So the way that
+
+00:03:18.380 --> 00:03:25.200
+you get to the location in memory is you take
+272, the address of the first element, and
+
+00:03:25.200 --> 00:03:32.200
+then you add the index. So for example, the
+address 374 comes from adding two to 372.
+
+00:03:33.820 --> 00:03:39.860
+This is actually why we zero index things--
+it's so this little equation works. What it
+
+00:03:39.860 --> 00:03:44.980
+does is it makes it possible to jump to any
+place in the array with just one addition
+
+00:03:44.980 --> 00:03:50.790
+operation. That property is called random
+access, and it's critically important for
+
+00:03:50.790 --> 00:03:57.230
+programming. Now arrays do have a data feel
+that gives the number of elements that have
+
+00:03:57.230 --> 00:04:02.980
+been allocated. So if we do int square bracket
+data equals new int square bracket five, same
+
+00:04:02.980 --> 00:04:09.220
+as we've been doing all along data dot length
+is going to be five. Now first off notice
+
+00:04:09.220 --> 00:04:15.780
+this is unit indexed not zero indexed. What's
+more there are no parentheses. Now the reason
+
+00:04:15.780 --> 00:04:20.939
+there are no parentheses here is because length
+isn't a method. It's data that's stored in
+
+00:04:20.939 --> 00:04:25.770
+the array. This is kind of a weird operation,
+and don't get worried about making mistakes
+
+00:04:25.770 --> 00:04:31.080
+like this on tests. I won't take off points
+for it because it's such a minor error-- but
+
+00:04:31.080 --> 00:04:37.099
+it is kind of an important point. The other
+thing to remember is there is no data square
+
+00:04:37.099 --> 00:04:42.789
+brackets of five. Now that seems really odd,
+but remember the five in this data of square
+
+00:04:42.789 --> 00:04:49.789
+brackets that is the index. Well indices are
+zero indexed, whereas length is unit indexed.
+
+00:04:50.370 --> 00:04:54.550
+This stuff drives you crazy at first but you
+do get used to it after a very short period
+
+00:04:54.550 --> 00:05:00.969
+of time. Now Java does check to make sure
+you're not going over the end of the array.
+
+00:05:00.969 --> 00:05:05.789
+This is a very nice thing for beginning programmers
+because one of the hardest mistakes to find
+
+00:05:05.789 --> 00:05:10.710
+is stepping over the end of the array. If
+you do happen to do this accidentally, you'll
+
+00:05:10.710 --> 00:05:17.710
+see an array index out of bounds exception.
+Let's look at some typical loop operations.
+
+00:05:20.080 --> 00:05:26.219
+If we have our same array that we've been
+allocating all along, for int index equals
+
+00:05:26.219 --> 00:05:32.770
+zero index less than data dot length plus
+plus index. Remember data dot length is the
+
+00:05:32.770 --> 00:05:37.599
+number of elements in the array. Because it's
+unit indexed we want to use less than, not
+
+00:05:37.599 --> 00:05:42.389
+less than or equal too. And then we can do
+whatever we want in the array. In this case
+
+00:05:42.389 --> 00:05:47.650
+I've just done a system out print line for
+a data element. So that's a very typical for
+
+00:05:47.650 --> 00:05:53.169
+loop. And it's really the most flexible and
+useful one. So the pattern you're seeing here
+
+00:05:53.169 --> 00:05:57.990
+is you start with zero and you end with less
+than and the data dot length. That pattern
+
+00:05:57.990 --> 00:06:04.469
+holds because of the differences between unit
+indexing and zero indexing. Here's another
+
+00:06:04.469 --> 00:06:09.699
+option though. Now this one has sort of a
+strange name - it's called a for each loop.
+
+00:06:09.699 --> 00:06:16.699
+So you do for int I colon data. So data's
+the name of the array, or to be more precise
+
+00:06:17.389 --> 00:06:23.009
+it's the reference to the array. And we have
+int I because it's an array of integers. Now
+
+00:06:23.009 --> 00:06:28.259
+when you do system out print line you can
+just use I instead of indices. So this isn't
+
+00:06:28.259 --> 00:06:33.569
+stepping through indices, it's actually stepping
+through elements of the array. Now why this
+
+00:06:33.569 --> 00:06:39.400
+is called a for each loop is mostly due to
+historical reasons. When this was first proposed
+
+00:06:39.400 --> 00:06:44.409
+to be part of Java, people wanted it to be
+called for each to have a different name.
+
+00:06:44.409 --> 00:06:49.800
+But people who implement Java decided it would
+be easier to do this with just the for. Unfortunately
+
+00:06:49.800 --> 00:06:55.039
+the name stuck, so you'll just have to deal
+with the subtle difference. Now there is a
+
+00:06:55.039 --> 00:07:00.029
+limitation to for each loops and that is you're
+only allowed to access the elements you're
+
+00:07:00.029 --> 00:07:06.319
+not allowed to change them. So for example
+we can't do add or remove to the array inside
+
+00:07:06.319 --> 00:07:09.449
+the loop.
+
+00:07:09.449 --> 00:07:14.400
+So let's talk a little bit about how arrays
+and array lists are different. Now array list
+
+00:07:14.400 --> 00:07:19.729
+objects do contain a hidden array. You can
+sort of guess that from the name. Primitive
+
+00:07:19.729 --> 00:07:25.729
+data types however aren't allowed. Now this
+is hard to see, because Java does a little
+
+00:07:25.729 --> 00:07:30.900
+trick with wrapper classes. So instead of
+putting an array of ints it puts an array
+
+00:07:30.900 --> 00:07:37.550
+of integer, integer is the wrapper class that
+matches the primitive data type int. This
+
+00:07:37.550 --> 00:07:42.680
+is concealed from you by a trick that's called
+auto boxing. It's a little beyond the scope
+
+00:07:42.680 --> 00:07:46.710
+of the class so we're not going to worry about
+it too much. If you want to look into it a
+
+00:07:46.710 --> 00:07:53.259
+search on auto boxing will give you lots of
+details. Array list objects resize the array
+
+00:07:53.259 --> 00:07:58.740
+when you run out of space. Now you'll remember
+that I said arrays couldn't be resized-- that
+
+00:07:58.740 --> 00:08:03.869
+is without reconstruction. So what the array
+list is really doing is reconstructing the
+
+00:08:03.869 --> 00:08:10.360
+array and copying things over. Now these details
+are concealed from a naïve programmer and
+
+00:08:10.360 --> 00:08:15.099
+this can be a hidden expense. In fact when
+my former students call me up and ask me for
+
+00:08:15.099 --> 00:08:20.589
+help on a program, this particular problem
+is one that shows up a lot. So be aware of
+
+00:08:20.589 --> 00:08:26.960
+the fact that the array list has this hidden
+expense, so it doesn't surprise you someday.
+
+00:08:26.960 --> 00:08:27.789
+Keep programming!
+

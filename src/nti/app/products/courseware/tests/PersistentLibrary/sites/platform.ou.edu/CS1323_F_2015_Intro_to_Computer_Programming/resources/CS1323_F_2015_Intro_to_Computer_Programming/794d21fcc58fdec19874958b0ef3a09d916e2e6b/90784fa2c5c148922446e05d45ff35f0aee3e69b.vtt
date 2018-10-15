@@ -1,0 +1,288 @@
+WEBVTT
+Kind: captions
+Language: en
+
+00:00:00.909 --> 00:00:04.910
+&gt;&gt;You may have noticed that many of the programs
+we've created so far have multiple copies
+
+00:00:04.910 --> 00:00:11.549
+of similar variables. If we're going to compare
+three cell phone rate plans, we may have double
+
+00:00:11.549 --> 00:00:17.300
+cost1, cost2, cost3;
+This organization is so common that Java has
+
+00:00:17.300 --> 00:00:24.300
+a mechanism to group this kind of data together,
+called an array. To create an array with 3
+
+00:00:24.369 --> 00:00:31.250
+elements to store our costs we say: double[]
+costs = new double[3];
+
+00:00:31.250 --> 00:00:35.620
+That syntax may look a little familiar, since
+it uses the new operator that we've used to
+
+00:00:35.620 --> 00:00:42.350
+create objects. Just as with objects, costs
+is a reference to the array. The memory diagram
+
+00:00:42.350 --> 00:00:49.350
+shows what this looks like in the computer
+memory.
+
+00:00:49.940 --> 00:00:54.719
+Arrays must always consist of one type of
+data. So we can't have an array that contains
+
+00:00:54.719 --> 00:01:00.960
+both int and double. The name for this property
+is homogeneity, just like we call milk homogenous
+
+00:01:00.960 --> 00:01:05.770
+when it's been specially mixed together so
+the cream can't float to the top.
+
+00:01:05.770 --> 00:01:11.360
+The other special property of arrays is that
+they must be stored in contiguous memory locations.
+
+00:01:11.360 --> 00:01:16.310
+We showed this in the memory diagram by setting
+the three boxes for the elements next to each
+
+00:01:16.310 --> 00:01:21.350
+other. This property is troublesome in practice,
+because it can be hard to guess how big an
+
+00:01:21.350 --> 00:01:25.000
+array should be.
+For example, if we were going to write a program
+
+00:01:25.000 --> 00:01:29.810
+to keep track of contacts on your cell phone,
+we'd have to guess how many people you would
+
+00:01:29.810 --> 00:01:35.830
+contact. For one person, 100 contacts might
+be enough. Another person might use 10,000
+
+00:01:35.830 --> 00:01:40.960
+contacts. The ArrayList class hides a clever
+solution to this problem that you'll discover
+
+00:01:40.960 --> 00:01:45.660
+if and when you take a data structures course.
+The reason for the requirement that array
+
+00:01:45.660 --> 00:01:51.110
+elements be in contiguous memory is so we
+can find the elements in the array quickly.
+
+00:01:51.110 --> 00:01:56.060
+To explain how this works, it helps to know
+a little bit more about computer memory.
+
+00:01:56.060 --> 00:02:01.210
+Computer memory is like a row of numbered
+shoeboxes. Each box can contain one pair of
+
+00:02:01.210 --> 00:02:07.310
+shoes. And each box has its own address, the
+number written on top of it. Computer memory
+
+00:02:07.310 --> 00:02:13.330
+consists of groups of bits. The computer can
+set each bit to be either 0 or 1, and nothing
+
+00:02:13.330 --> 00:02:20.330
+else. Each group usually contains 32 or 64
+bits and has a single address for those bits.
+
+00:02:21.210 --> 00:02:25.290
+You can think of a reference as the address
+of the array in memory.
+
+00:02:25.290 --> 00:02:31.290
+Suppose the first element of our array is
+at address 942. This means the next two elements
+
+00:02:31.290 --> 00:02:38.290
+will be at addresses 943 and 944.
+If we want to store something in the first
+
+00:02:38.720 --> 00:02:45.720
+element of the array we say: costs[0] = 5.32;
+To put 6.41 in the second element of the array
+
+00:02:49.570 --> 00:02:56.570
+we say: costs[1] = 6.41;
+To put 4.87 in the third element of the array,
+
+00:02:58.670 --> 00:03:05.670
+we say: costs[2] = 4.87;
+Notice that we use the index zero to access
+
+00:03:06.260 --> 00:03:12.120
+the first element of the array. The array
+indices are shown below the array. Starting
+
+00:03:12.120 --> 00:03:17.430
+counting at zero doesn't make much sense until
+you look at how the references work. To get
+
+00:03:17.430 --> 00:03:24.430
+the address of the first element, we add the
+index 0 to the reference costs. 0 + 942 is
+
+00:03:26.080 --> 00:03:31.000
+942, the address of the first element.
+To get the address of the second element,
+
+00:03:31.000 --> 00:03:38.000
+we add the index 1 to the reference costs.
+942 + 1 equals 943.
+
+00:03:38.790 --> 00:03:45.790
+If we try to use the index 3 for this array,
+we get 942 + 3 = 945. Address 945 is not part
+
+00:03:48.569 --> 00:03:55.569
+of the array, so we have a problem. This problem
+is called the ArrayIndexOutOfBoundsException.
+
+00:03:55.680 --> 00:04:00.560
+This is a very common mistake for beginners
+to make. To avoid making this mistake, programmers
+
+00:04:00.560 --> 00:04:05.340
+spend a lot of time thinking about whether
+the first and last elements that were processed
+
+00:04:05.340 --> 00:04:10.040
+were the right ones. This is called a boundary
+condition.
+
+00:04:10.040 --> 00:04:14.640
+Notice that when we constructed the array,
+we had a 3 between the brackets. But we can't
+
+00:04:14.640 --> 00:04:19.930
+use an index of three because it's off the
+end of the array. We describe this by saying
+
+00:04:19.930 --> 00:04:26.930
+that array indices are zero indexed and array
+sizes are unit indexed. Zero indexing means
+
+00:04:27.120 --> 00:04:33.270
+that the first element is zero, not one. Unit
+indexing means the first element is one. This
+
+00:04:33.270 --> 00:04:37.780
+is confusing at first, but it'll be second
+nature soon.
+
+00:04:37.780 --> 00:04:43.030
+Arrays are often processed using loops. Let's
+read the contents of a 4-element array of
+
+00:04:43.030 --> 00:04:50.030
+ints from the keyboard. Scanner keyboard = new
+Scanner(System.in); int[] data = new int[4];
+
+00:04:52.980 --> 00:04:59.980
+int index = 0; while (index &lt; 4) { data[index]
+= keyboard.nextInt(); ++index; }
+
+00:05:03.250 --> 00:05:08.000
+Zero and unit indexing are the source of lots
+of software bugs. In fact, there is a special
+
+00:05:08.000 --> 00:05:14.430
+kind of bug that is caused by indexing confusion.
+It's called an off by one bug, or an OBOB.
+
+00:05:14.430 --> 00:05:21.169
+The loop below has an OBOB. int[]data = new
+int[5]; —notice that I'm giving you bad
+
+00:05:21.169 --> 00:05:28.169
+code here— int count = 1; while (count &lt;= 5){
+data[count] = count; ++count; }
+
+00:05:31.750 --> 00:05:38.230
+The problem is that we are setting data[1]
+to data[5], instead of data[0] to data[4].
+
+00:05:38.230 --> 00:05:43.090
+One rule that can help you remember this is
+that we usually start our index at 0 and go
+
+00:05:43.090 --> 00:05:47.070
+to less than—not less than or equal—the
+length of the array.
+
+00:05:47.070 --> 00:05:52.270
+We can have arrays of objects too. These are
+stored differently, since objects are stored
+
+00:05:52.270 --> 00:05:58.080
+by reference. To store an array of StringBuilder
+objects, we first construct the array and
+
+00:05:58.080 --> 00:06:02.120
+then construct the StringBuilder objects in
+a loop.
+
+00:06:02.120 --> 00:06:09.120
+StringBuilder[] names = new StringBuilder[4];
+int index = 0; while (index &lt; 4){ names[index]
+
+00:06:12.300 --> 00:06:18.210
+= new StringBuilder(); ++index; }
+I call this a two level constructor, since
+
+00:06:18.210 --> 00:06:23.290
+you have to construct the array first, and
+then construct the objects. In this case,
+
+00:06:23.290 --> 00:06:28.290
+we called five different constructors. If
+you forget to construct the objects, all of
+
+00:06:28.290 --> 00:06:33.550
+the references in the array will be null and
+you will get NullPointerExceptions. The memory
+
+00:06:33.550 --> 00:06:38.889
+diagram shows what the constructed array looks
+like.
+
+00:06:38.889 --> 00:06:42.350
+Both the array and the StringBuilder objects
+are allocated on the heap.
+
+00:06:42.350 --> 00:06:47.590
+Arrays are the first real data structure that
+we've encountered. Data structures is the
+
+00:06:47.590 --> 00:06:52.660
+many clever and interesting ways that computer
+scientists have found to store data in computer
+
+00:06:52.660 --> 00:06:57.900
+memory. The way that we organize data has
+a tremendous impact on how efficiently we
+
+00:06:57.900 --> 00:07:03.199
+can retrieve and use it. Data structures is
+a very important topic in computer science,
+
+00:07:03.199 --> 00:07:07.880
+and is a really fun class that you'll be able
+to take once you're a more proficient programmer.
+

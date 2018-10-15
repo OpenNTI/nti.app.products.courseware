@@ -1,0 +1,70 @@
+{
+  "MimeType": "application/vnd.nextthought.ntislidedeck",
+  "Videos": [
+    {
+      "MimeType": "application/vnd.nextthought.ntislidevideo",
+      "video-ntiid": "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_02.01.02_Heart_Rates",
+      "title": "Target Heart Rates: Iteration 1",
+      "creator": "Deborah Trytten",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Heart_Rates_1",
+      "thumbnail": "//www.kaltura.com/p/1500101/thumbnail/entry_id/0_4qjfvh9d/width/640/",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Heart_Rates_1_video",
+      "class": "ntislidevideo"
+    }
+  ],
+  "creator": "Deborah Trytten",
+  "title": "Target Heart Rates",
+  "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Heart_Rates_1",
+  "Slides": [
+    {
+      "MimeType": "application/vnd.nextthought.slide",
+      "slidevideoid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Heart_Rates_1_video",
+      "slidetitle": "Storing Primitive Data",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Heart_Rates_1",
+      "slidevideostart": "0.0",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlide-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Heart_Rates_1_slide_1",
+      "slideimage": "resources/CS1323_F_2015_Intro_to_Computer_Programming/57ac6c728c6e90ba2a504039d56ab450fbee7ef0/fd35e23767020999111e1f49239199b4c5eff23e.png",
+      "slidevideoend": "7.0",
+      "slidenumber": "1",
+      "class": "slide"
+    },
+    {
+      "MimeType": "application/vnd.nextthought.slide",
+      "slidevideoid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Heart_Rates_1_video",
+      "slidetitle": "Problem Statement",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Heart_Rates_1",
+      "slidevideostart": "7.0",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlide-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Heart_Rates_1_slide_2",
+      "slideimage": "resources/CS1323_F_2015_Intro_to_Computer_Programming/dd39b1ac0cfd8e2029f976cd3566e53cdf869feb/fd35e23767020999111e1f49239199b4c5eff23e.png",
+      "slidevideoend": "29.0",
+      "slidenumber": "2",
+      "class": "slide"
+    },
+    {
+      "MimeType": "application/vnd.nextthought.slide",
+      "slidevideoid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Heart_Rates_1_video",
+      "slidetitle": "Work by Hand",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Heart_Rates_1",
+      "slidevideostart": "29.0",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlide-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Heart_Rates_1_slide_3",
+      "slideimage": "resources/CS1323_F_2015_Intro_to_Computer_Programming/579dd79070715627d327cf7b57cd69ea266006c1/fd35e23767020999111e1f49239199b4c5eff23e.png",
+      "slidevideoend": "81.0",
+      "slidenumber": "3",
+      "class": "slide"
+    },
+    {
+      "MimeType": "application/vnd.nextthought.slide",
+      "slidevideoid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Heart_Rates_1_video",
+      "slidetitle": "Choose Variables",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Heart_Rates_1",
+      "slidevideostart": "81.0",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlide-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Heart_Rates_1_slide_4",
+      "slideimage": "resources/CS1323_F_2015_Intro_to_Computer_Programming/0591f3437ccc8ee90cd31f954ea35512069111f2/fd35e23767020999111e1f49239199b4c5eff23e.png",
+      "slidevideoend": "183.0",
+      "slidenumber": "4",
+      "class": "slide"
+    }
+  ],
+  "ntiid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Heart_Rates_1",
+  "class": "ntislidedeck"
+}

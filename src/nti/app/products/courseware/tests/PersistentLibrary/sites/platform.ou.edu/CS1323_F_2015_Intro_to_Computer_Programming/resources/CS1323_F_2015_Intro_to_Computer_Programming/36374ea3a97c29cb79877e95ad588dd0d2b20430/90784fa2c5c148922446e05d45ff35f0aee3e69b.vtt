@@ -1,0 +1,1363 @@
+WEBVTT
+Kind: captions
+Language: en
+
+00:00:00.710 --> 00:00:03.830
+&gt;&gt;Dr. Deborah Trytten: Let's continue our
+study of sorting by looking at partially sorted
+
+00:00:03.830 --> 00:00:10.830
+data. Here's the problem statement. You work
+for TextBooksAreUs, a company that sells college
+
+00:00:10.970 --> 00:00:16.279
+textbooks. TextBooksAreUs has just purchased
+a small company, LittleTexts, that also sells
+
+00:00:16.279 --> 00:00:21.449
+college textbooks. You've been asked to merge
+two lists of email addresses. TextBooksAreUs's
+
+00:00:21.449 --> 00:00:27.429
+is sorted by email address, but LittleTexts's
+list is sorted by domain. The final list is
+
+00:00:27.429 --> 00:00:33.070
+supposed to be sorted by email address. Now
+the first thing we want to do is consider
+
+00:00:33.070 --> 00:00:38.710
+whether this problem can be abstracted. So
+for example, does this problem really have
+
+00:00:38.710 --> 00:00:43.760
+anything to do with email addresses or could
+we write a general program that merges a sorted
+
+00:00:43.760 --> 00:00:50.460
+and unsorted set of data? It would be different
+if we needed to sort by domain name because
+
+00:00:50.460 --> 00:00:56.140
+then the fact that they're email addresses
+really matters. So you want to look for opportunities
+
+00:00:56.140 --> 00:01:00.350
+to make your program as general as possible
+when you're writing it.
+
+00:01:00.350 --> 00:01:05.799
+So let's select our test data. We'll call
+the larger sorted data set sortedData, so
+
+00:01:05.799 --> 00:01:12.799
+I've created a little table to show some of
+it. We'll call the smaller unsorted data unsortedData,
+
+00:01:13.020 --> 00:01:20.020
+and of course the results should be the two
+sets merged together and in sorted order.
+
+00:01:20.829 --> 00:01:25.810
+Now before we go too far, we might want to
+think a little more. It is virtually certain
+
+00:01:25.810 --> 00:01:29.909
+that these lists are going to contain duplicate
+values because people who buy stuff on the
+
+00:01:29.909 --> 00:01:34.979
+Internet can buy a lot of stuff on the Internet.
+So we've got to come up with some ideas on
+
+00:01:34.979 --> 00:01:40.659
+how we're going to deal with that. One possibility
+would be to remove them from unsortedData
+
+00:01:40.659 --> 00:01:46.000
+by performing a binary search on sortedData,
+and that's certainly a legitimate way that
+
+00:01:46.000 --> 00:01:52.909
+could be pursued. So we could use arrays dot
+binary search for this. The arrays class is
+
+00:01:52.909 --> 00:01:58.659
+similar to the collections class, only it
+has utilities for arrays. The other thing
+
+00:01:58.659 --> 00:02:02.880
+we could do is just go ahead and sort and
+then remove the duplicates when we're writing
+
+00:02:02.880 --> 00:02:09.880
+the file. So we need to select a strategy
+here. Now binary search is much cheaper than
+
+00:02:10.630 --> 00:02:17.070
+linear search, but it still takes time. This
+is especially true because sorted data is
+
+00:02:17.070 --> 00:02:21.670
+large. So when you have large data sets, you
+need to be much more careful about wasting
+
+00:02:21.670 --> 00:02:27.190
+time, so that's probably not a good choice.
+Now removing duplicates when you're writing
+
+00:02:27.190 --> 00:02:32.800
+the file is easy, so that would be a great
+choice. The thing is this decision might be
+
+00:02:32.800 --> 00:02:37.870
+wrong if there are lots of duplicates. So
+maybe all of the email addresses are duplicates,
+
+00:02:37.870 --> 00:02:43.480
+for example. In that case we probably have
+made the wrong choice, so this brings up an
+
+00:02:43.480 --> 00:02:48.090
+important point. We need a better way to make
+these comparisons. Now we're not going to
+
+00:02:48.090 --> 00:02:52.480
+develop it this semester. The class that it's
+developed in is one called Data Structures,
+
+00:02:52.480 --> 00:02:58.900
+a class that you'll certainly take if you
+continue to study computer programming.
+
+00:02:58.900 --> 00:03:02.980
+Now we need to improve our test data. Since
+we know we're going to have duplicates around,
+
+00:03:02.980 --> 00:03:08.630
+we want to include that in the test data.
+So what I've done here is added to the unsortedData
+
+00:03:08.630 --> 00:03:14.790
+j. So that way we have a value that's in both
+the sorted and unsorted data, and we know
+
+00:03:14.790 --> 00:03:19.940
+the result in the array should then have two
+j's in it but the file should only have one
+
+00:03:19.940 --> 00:03:23.430
+j.
+
+00:03:23.430 --> 00:03:29.140
+We need to think about the format of the files.
+Here's a format that makes a lot of sense.
+
+00:03:29.140 --> 00:03:33.340
+First you'll have the number of email addresses,
+and then you'll have the email addresses one
+
+00:03:33.340 --> 00:03:38.680
+to a line. This is a very common way to write
+files, and file formats are something that
+
+00:03:38.680 --> 00:03:44.260
+are very important to pay attention to. The
+advantage of this particular choice is because
+
+00:03:44.260 --> 00:03:48.560
+we know the number of email addresses. That
+makes it possible to directly construct the
+
+00:03:48.560 --> 00:03:53.480
+array instead of having to read through the
+file once to figure out how much data is in
+
+00:03:53.480 --> 00:03:58.120
+it, and then construct the array and read
+the data again. So that's one of the reasons
+
+00:03:58.120 --> 00:04:04.320
+that this format is rather common. Now there's
+some boundary cases we need to consider. We
+
+00:04:04.320 --> 00:04:08.730
+might consider what happens if there's no
+sorted data. Now in this case the file would
+
+00:04:08.730 --> 00:04:13.300
+just contain zero. It wouldn't be an empty
+file because it was just an empty file that
+
+00:04:13.300 --> 00:04:18.900
+wouldn't follow our file formatting specifications.
+We might consider what happens with no unsorted
+
+00:04:18.900 --> 00:04:24.210
+data. What if only one element is in sorted
+or only one in unsorted and maybe only one
+
+00:04:24.210 --> 00:04:29.930
+element in both? So these are boundary cases
+as always that we should be testing.
+
+00:04:29.930 --> 00:04:34.469
+Now there's a very easy algorithm to do this.
+That's put all the data in a single array
+
+00:04:34.469 --> 00:04:40.419
+and call arrays dot sort. What could be better
+than that? Well, that's really not the best
+
+00:04:40.419 --> 00:04:45.199
+thing to do. The thing is these lists are
+likely to be enormous, and you're not taking
+
+00:04:45.199 --> 00:04:50.620
+advantage of the fact that the existing data
+is already sorted. Particularly when you have
+
+00:04:50.620 --> 00:04:56.759
+the large data set, you want to look for ways
+to do these things more efficiently. On the
+
+00:04:56.759 --> 00:05:01.759
+other hand, this would be a good choice if
+the main constraint is the time to write the
+
+00:05:01.759 --> 00:05:06.180
+program. This would certainly be the shortest
+way to write the program, and sometimes that
+
+00:05:06.180 --> 00:05:08.860
+is the case.
+
+00:05:08.860 --> 00:05:13.680
+Let's consider another possibility. How could
+we adapt the sorting algorithms that we already
+
+00:05:13.680 --> 00:05:19.770
+know to this new circumstance? Well, I have
+basically three ideas to work from. The first
+
+00:05:19.770 --> 00:05:25.599
+one is to adapt selection sort, the second
+one is to adapt insertion sort, and the third
+
+00:05:25.599 --> 00:05:30.499
+one is what's called a two finger merge. Now
+this is actually part of a different sorting
+
+00:05:30.499 --> 00:05:34.110
+algorithm that we haven't covered yet, and
+we'll talk about why it may not be the best
+
+00:05:34.110 --> 00:05:38.990
+way to do things, and I'll even explain what
+it means. Let's think about how we would adapt
+
+00:05:38.990 --> 00:05:44.749
+selection sort. Well, we know that selection
+sort first looks for the smallest element
+
+00:05:44.749 --> 00:05:50.840
+so that could be the first element in sortedData
+or it could be any element in unsortedData.
+
+00:05:50.840 --> 00:05:56.889
+Then we need to think about what's going to
+happen when swaps occur. Now when I first
+
+00:05:56.889 --> 00:06:01.259
+started thinking about this, I thought it
+was going to be a real mess. But I needed
+
+00:06:01.259 --> 00:06:05.590
+to draw a picture of it to see that there's
+a pretty good way to do this, so let's take
+
+00:06:05.590 --> 00:06:09.419
+a look at the algorithm. Now I've put this
+in a table and we'll go through the table
+
+00:06:09.419 --> 00:06:15.479
+one line at a time to talk about how the algorithm
+would work before we try to program it. As
+
+00:06:15.479 --> 00:06:22.240
+always, you must understand the details of
+how things work before you start writing code.
+
+00:06:22.240 --> 00:06:29.169
+So here is the table that shows selection
+sort. We would start with value a. A would
+
+00:06:29.169 --> 00:06:35.749
+be the smallest, and we would compare it then
+to u, j, and k. Well, since a is the smallest,
+
+00:06:35.749 --> 00:06:41.960
+it stays in its position. The same thing would
+be true of everything all the way up to j.
+
+00:06:41.960 --> 00:06:46.960
+The first time things are going to change
+is when we hit m because we're going to compare
+
+00:06:46.960 --> 00:06:53.960
+m to u, j, and k and find out that j is smaller.
+So now a swap needs to occur. So we swap j
+
+00:06:54.819 --> 00:07:01.819
+here and m there. Next we need to go to p.
+We can see that p is smaller than k, and so
+
+00:07:03.189 --> 00:07:09.349
+k and p get swapped, and this process continues
+all the way through. Now when we get right
+
+00:07:09.349 --> 00:07:12.909
+down to the end, you'll notice the last two
+are already in the correct position, so no
+
+00:07:12.909 --> 00:07:17.919
+swaps occur. So essentially once we start
+swapping, we're going to be doing a lot of
+
+00:07:17.919 --> 00:07:19.979
+swapping.
+
+00:07:19.979 --> 00:07:24.990
+So let's make some observations. Once the
+first swap is made, the sorted data starts
+
+00:07:24.990 --> 00:07:31.129
+getting mixed with the unsorted data. But
+are we losing the value of having the data
+
+00:07:31.129 --> 00:07:36.430
+sorted? Let's go back and take another look
+at that table. So here's the table again.
+
+00:07:36.430 --> 00:07:42.900
+Notice, for example, when we swap that m,
+we're putting it into a place of values that
+
+00:07:42.900 --> 00:07:47.680
+are still bigger than any place we are in
+the algorithm. In other words, we're not really
+
+00:07:47.680 --> 00:07:53.719
+losing the value of having that data sorted.
+We're just moving positions around. Now this
+
+00:07:53.719 --> 00:07:58.860
+could be complex to code. We're going to have
+two phases of the algorithm, one where it's
+
+00:07:58.860 --> 00:08:03.039
+stepping through the sorted data, and then
+a second one where it's stepping through the
+
+00:08:03.039 --> 00:08:07.229
+unsorted data. That second one is going to
+look very much like our original selection
+
+00:08:07.229 --> 00:08:12.120
+sort. So that might be complicated, and complexity
+is something you definitely want to worry
+
+00:08:12.120 --> 00:08:17.979
+about. It's much harder to write complex algorithms
+correctly.
+
+00:08:17.979 --> 00:08:22.629
+Now let's think about what would happen if
+we adapted insertion sort. Now remember with
+
+00:08:22.629 --> 00:08:27.449
+insertion sort, you start with a group of
+sorted data and then you add unsorted elements
+
+00:08:27.449 --> 00:08:33.750
+to it one at a time. So when we find our u
+in the insertion sort unsorted data, notice
+
+00:08:33.750 --> 00:08:38.450
+it's already bigger than t, and so it's in
+its correct position already. Well, that was
+
+00:08:38.450 --> 00:08:45.020
+kind of cool. Now for j we set j to the side,
+and we notice that u is bigger than j, and
+
+00:08:45.020 --> 00:08:50.460
+t is bigger than j, and r is bigger than j,
+and q is bigger than j, and p is bigger than
+
+00:08:50.460 --> 00:08:55.980
+j, and m is bigger than j, and finally we
+find that other j, and that's when we swap
+
+00:08:55.980 --> 00:09:00.700
+the j into that position that we set aside.
+Now notice we're not done yet. We would do
+
+00:09:00.700 --> 00:09:05.720
+that exact same thing for k, and it would
+look pretty much the same. So there's a lot
+
+00:09:05.720 --> 00:09:11.030
+of swapping going on here. Remember that the
+size in the data elements here. You know,
+
+00:09:11.030 --> 00:09:15.830
+I'm showing ten and three elements. These
+are likely to be millions of elements, not
+
+00:09:15.830 --> 00:09:22.640
+ten and three. Some observations on that one:
+this is essentially starting insertion sort
+
+00:09:22.640 --> 00:09:28.490
+at a midway point, and that means that virtually
+no code would need to change. It's just one
+
+00:09:28.490 --> 00:09:34.430
+starting condition on a loop, so that's a
+big advantage. We're also never losing the
+
+00:09:34.430 --> 00:09:39.240
+value of any of our unsorted data, but then
+again we weren't losing it in the other algorithm
+
+00:09:39.240 --> 00:09:44.640
+either. And it looks like we could get into
+a lot of swapping, and so that's definitely
+
+00:09:44.640 --> 00:09:47.940
+a problem because swapping is expensive.
+
+00:09:47.940 --> 00:09:54.450
+Now let's look at a third choice. This choice
+is called two finger merge. The idea behind
+
+00:09:54.450 --> 00:10:00.790
+it is you should sort the smaller array too.
+Now that we could use arrays dot sort for,
+
+00:10:00.790 --> 00:10:05.630
+and then merge the two arrays together. So
+what you'd do is choose the smallest value
+
+00:10:05.630 --> 00:10:11.880
+from the end of either array and put that
+in the result array. Let me show you a picture.
+
+00:10:11.880 --> 00:10:17.200
+So we've got our first values that are sorted
+in the blue on the left, and in the orange
+
+00:10:17.200 --> 00:10:24.200
+we had u, j, k. So we call the sorting algorithm
+and get them sorted into j, k, u, and then
+
+00:10:24.740 --> 00:10:30.600
+we start making these comparisons. So we compare
+a to j. Now notice we don't need to compare
+
+00:10:30.600 --> 00:10:36.180
+any k and u now because we know j is the smallest
+value in the orange set, and a gets moved
+
+00:10:36.180 --> 00:10:43.180
+in. Then we compare b to j, and b gets moved
+in. Then we compare f to j, and f gets moved
+
+00:10:44.840 --> 00:10:51.840
+in, g to j, g gets moved in, j to j, whichever
+it doesn't really matter. Now you're comparing
+
+00:10:53.990 --> 00:10:59.790
+m and j, so that means that the j from the
+second set is going to have to move then.
+
+00:10:59.790 --> 00:11:04.600
+The next thing that will move in is k from
+the second set because k is smaller than m,
+
+00:11:04.600 --> 00:11:09.940
+and then m will go back. The most important
+observation here is that when you're approaching
+
+00:11:09.940 --> 00:11:16.320
+merging, this requires a second array to store
+the results. That's a problem because it doubles
+
+00:11:16.320 --> 00:11:21.480
+the amount of storage. Remember these are
+enormous arrays in all probability, so you
+
+00:11:21.480 --> 00:11:25.040
+don't want to double the amount of storage.
+It might mean that the program doesn't work
+
+00:11:25.040 --> 00:11:30.050
+at all, so that's really a deal breaker.
+
+00:11:30.050 --> 00:11:34.800
+So now we've got to make a decision. Selection
+sort and insertion sort won out because they
+
+00:11:34.800 --> 00:11:41.580
+required only one array instead of two arrays,
+and choosing between them is kind of a toss-up.
+
+00:11:41.580 --> 00:11:45.680
+It looks like selection sort may end up being
+a little more efficient, but it also might
+
+00:11:45.680 --> 00:11:49.920
+be harder to implement, whereas insertion
+sort is easier to implement because it's a
+
+00:11:49.920 --> 00:11:55.820
+minor change to an existing algorithm. But
+in this particular case efficiency is what's
+
+00:11:55.820 --> 00:12:00.820
+driving it because remember the reason we
+didn't just do this arrays dot sort at the
+
+00:12:00.820 --> 00:12:07.820
+start was because we wanted to be more efficient,
+and so that argues for selection sort. And
+
+00:12:07.850 --> 00:12:12.730
+once again, we clearly need some better tools
+for comparisons, and computer scientists have
+
+00:12:12.730 --> 00:12:15.220
+them. We just don't have them yet.
+
+00:12:15.220 --> 00:12:19.440
+The next challenge we have is designing the
+methods. Now you might think it'd be nice
+
+00:12:19.440 --> 00:12:24.540
+to do string square brackets read file and
+then give the file name. We could call that
+
+00:12:24.540 --> 00:12:29.650
+method twice. That would be good. That would
+be reusing code. But we've got a little problem
+
+00:12:29.650 --> 00:12:34.580
+here, and that's that we would then have to
+store the data twice because we would read
+
+00:12:34.580 --> 00:12:40.050
+the first sorted data into one array and then
+the second unsorted data into another and
+
+00:12:40.050 --> 00:12:45.680
+then have to combine them together. Oops,
+that's doubling the storage space. Remember
+
+00:12:45.680 --> 00:12:49.970
+we're trying to be efficient in this particular
+program, and doubling the storage space is
+
+00:12:49.970 --> 00:12:56.360
+not efficient. So we need to consider a different
+design. We could write one method that reads
+
+00:12:56.360 --> 00:13:01.840
+both files and it would get the sorted filename
+and the unsorted file name and it would return
+
+00:13:01.840 --> 00:13:08.840
+a string array. Well, that sounds good, but
+we've got a return value problem. We certainly
+
+00:13:09.290 --> 00:13:13.970
+need to return the array. I mean, that's the
+whole purpose of reading the files, right.
+
+00:13:13.970 --> 00:13:17.610
+But you also need to return the size of the
+first file because you have to know where
+
+00:13:17.610 --> 00:13:22.280
+that division is. Now you could say, "Well,
+I could write a method that goes and finds
+
+00:13:22.280 --> 00:13:29.060
+it." And I agree, you could do that. But once
+again, that's getting expensive, so this signature
+
+00:13:29.060 --> 00:13:31.820
+really doesn't work.
+
+00:13:31.820 --> 00:13:35.950
+Now this is the solution I came up with, and
+I've got to say I think it's kind of an ugly
+
+00:13:35.950 --> 00:13:41.130
+solution, but when you're trying to be efficient
+sometimes you do things that are ugly. And
+
+00:13:41.130 --> 00:13:46.370
+that's to read the file sizes in the main
+method and read the data in another method.
+
+00:13:46.370 --> 00:13:51.890
+That way we have the file sizes when we need
+them for calling other methods. This is what
+
+00:13:51.890 --> 00:13:56.450
+the signature would look like. We would have
+read files, and it would take a scanner from
+
+00:13:56.450 --> 00:14:02.510
+the sortedFile, a scanner from the unsortedFile,
+and then pass in the number of data in each
+
+00:14:02.510 --> 00:14:07.260
+file, and this would return a string array.
+I can't tell you that I love this design because
+
+00:14:07.260 --> 00:14:14.130
+I don't, but on the other hand it does accomplish
+the basic goals, and it does it efficiently.
+
+00:14:14.130 --> 00:14:16.760
+There's some other methods we're going to
+need. We're certainly going to have to write
+
+00:14:16.760 --> 00:14:22.540
+a method to save to a file, so it will take
+an output file name in the data array. Remember
+
+00:14:22.540 --> 00:14:26.720
+we're going to have to deal with duplicates
+in that method, and we're going to have to
+
+00:14:26.720 --> 00:14:31.490
+write our sort merged data, so expect that
+to be sort of the interesting part of the
+
+00:14:31.490 --> 00:14:33.060
+algorithm to write.
+
+00:14:33.060 --> 00:14:37.070
+So let's go to Eclipse and start writing these
+methods. Now I've written the main method
+
+00:14:37.070 --> 00:14:42.260
+already. So notice I created a scanner to
+interact with the keyboard so we could talk
+
+00:14:42.260 --> 00:14:47.490
+to the user. Then we've got these three file
+names, and we get those file names from the
+
+00:14:47.490 --> 00:14:54.120
+user. Then I create a scanner to read the
+sorted file and read in the size first because
+
+00:14:54.120 --> 00:14:58.740
+remember that's the first thing written in
+the file. The other thing I'm doing here is
+
+00:14:58.740 --> 00:15:02.950
+reading in the next line. You know, that's
+to remove that end of line character that
+
+00:15:02.950 --> 00:15:09.060
+we always have so much trouble with. We do
+the same thing for the unsorted file. Here
+
+00:15:09.060 --> 00:15:13.790
+we're calling the read file methods. So notice
+it's taking the sorted file, the unsorted
+
+00:15:13.790 --> 00:15:18.900
+file, the sorted size, and the unsorted size.
+The next thing I'm doing is closing both of
+
+00:15:18.900 --> 00:15:23.410
+those files. Now that's going to turn out
+to be really important. You always want to
+
+00:15:23.410 --> 00:15:28.570
+remember to close files. Then we're going
+to sort the merged data, which will take the
+
+00:15:28.570 --> 00:15:35.130
+data array and the sorted size, and lastly
+save things to a file. So those are the way
+
+00:15:35.130 --> 00:15:37.350
+the methods are going to fit together.
+
+00:15:37.350 --> 00:15:44.130
+Now let's go and write the little methods.
+So we could write any one first, but I think
+
+00:15:44.130 --> 00:15:48.480
+it probably makes sense to write the read
+file method first, so sort of stepping through
+
+00:15:48.480 --> 00:15:53.980
+things in the order they would be implemented.
+This is also good for testing. So we know
+
+00:15:53.980 --> 00:15:58.180
+that we're going to need to create a string
+array of sorted size plus unsorted size. Notice
+
+00:15:58.180 --> 00:16:03.380
+I constructed the references to the strings
+here, and we know we're going to have to return
+
+00:16:03.380 --> 00:16:09.380
+it. Now the challenge here is we're reading
+two files into one array, so we can't just
+
+00:16:09.380 --> 00:16:15.510
+use our regular for loops. We're going to
+need to start with an index, which is zero,
+
+00:16:15.510 --> 00:16:19.980
+and then we'll have one for loop that reads
+in the sorted data first and then a second
+
+00:16:19.980 --> 00:16:24.960
+for loop that reads in the unsorted data.
+The thing that's a little different here is
+
+00:16:24.960 --> 00:16:29.790
+we need to use this index in both of those
+for loops. So we can't declare it in the first
+
+00:16:29.790 --> 00:16:36.790
+for loop because if I put int index equals
+zero here on line 87 instead of on line 86,
+
+00:16:36.920 --> 00:16:41.290
+what's going to happen is that that will be
+part of that for loop, and then we'll have
+
+00:16:41.290 --> 00:16:46.060
+to worry about where to start the second one.
+Since there's no initialization, what we do
+
+00:16:46.060 --> 00:16:50.480
+there is put just a semicolon. Now another
+option here would be to write this is as a
+
+00:16:50.480 --> 00:16:54.850
+while loop, but frankly I like for loops better
+than while loops, so we're going to do it
+
+00:16:54.850 --> 00:17:01.850
+this way. So we're going to say index is less
+than sorted size and then index plus plus
+
+00:17:07.720 --> 00:17:14.720
+index. So result of index is going to equal
+sorted file dot next line. So that's all it
+
+00:17:28.879 --> 00:17:31.230
+takes to read in the first file.
+
+00:17:31.230 --> 00:17:38.230
+Now we need to read in the second file. Again,
+we're not going to create a variable for index.
+
+00:17:40.409 --> 00:17:46.499
+We're going to use the one we already have.
+Now that index is going to have to stop. It's
+
+00:17:46.499 --> 00:17:53.499
+sorted size plus unsorted size, and then of
+course we'll increment the index again. So
+
+00:18:01.110 --> 00:18:08.110
+result of index equals unsorted file dot next
+line, and then we return the result. Now one
+
+00:18:16.299 --> 00:18:21.409
+thing we might want to worry about here is
+that files do sometimes get corrupted. That
+
+00:18:21.409 --> 00:18:26.200
+might mean that they might be missing data
+or have extra data or something like that,
+
+00:18:26.200 --> 00:18:33.200
+and so we could put another little test here,
+and that's and sorted file dot has next line.
+
+00:18:40.769 --> 00:18:44.419
+That's kind of a nice way to do things, but
+remember that we're going to have to make
+
+00:18:44.419 --> 00:18:51.419
+sure that the user is warned if the files
+are corrupted. Because if the files have been
+
+00:18:51.559 --> 00:18:55.340
+corrupted, this program isn't going to work
+correctly, not because our program isn't correct,
+
+00:18:55.340 --> 00:18:59.929
+but because somebody else's wasn't. And so
+we definitely want to be careful about doing
+
+00:18:59.929 --> 00:19:04.759
+things like this. So this could be kind of
+nice. The question is: how are we going to
+
+00:19:04.759 --> 00:19:11.759
+flag to the user that something's gone wrong?
+So let's say if index is not equal to sorted
+
+00:19:14.909 --> 00:19:21.909
+size. We could print out an error message,
+and we can do the same thing on the second
+
+00:19:34.879 --> 00:19:40.350
+for loop. Now we're probably going to want
+to put some parentheses around not because
+
+00:19:40.350 --> 00:19:44.629
+they're necessary—they actually are not—but
+just because it makes the code a little bit
+
+00:19:44.629 --> 00:19:51.629
+easier to read. Then we'll copy this and do
+a test here before we return. Of course it's
+
+00:20:06.320 --> 00:20:13.320
+not index not equal to sorted size. It's index
+not equal to sorted size plus unsorted size.
+
+00:20:15.990 --> 00:20:20.490
+So now we've been appropriately cautious.
+Now I've created some data. Let me show you
+
+00:20:20.490 --> 00:20:25.230
+what it looks like. Here's our sorted data.
+There are ten elements in it. It's the test
+
+00:20:25.230 --> 00:20:32.230
+data we developed in the PowerPoint. Here's
+our unsorted data. That final data dot text
+
+00:20:32.830 --> 00:20:37.210
+is the one we're going to be overwriting eventually.
+
+00:20:37.210 --> 00:20:44.210
+So let's run our program. So this is sorted
+data dot text, unsorted data dot text, and
+
+00:20:54.950 --> 00:21:01.309
+we'll call it final data dot text. Now nothing
+happened, so we really don't know that our
+
+00:21:01.309 --> 00:21:06.960
+code is working correctly. On the other hand,
+it also didn't break. So it seems like it
+
+00:21:06.960 --> 00:21:12.610
+found the files okay. Probably everything's
+all right, and we didn't get any error messages.
+
+00:21:12.610 --> 00:21:18.159
+So we don't really know, but we're kind of
+hoping for the best. I think probably the
+
+00:21:18.159 --> 00:21:24.299
+next thing we might want to do is to write
+the save to file method because really that's
+
+00:21:24.299 --> 00:21:29.559
+going to be important for us testing. So we
+could save it to the file without the data
+
+00:21:29.559 --> 00:21:34.619
+being sorted, and check and make sure that
+our method is working correctly. So this is
+
+00:21:34.619 --> 00:21:41.619
+a pretty simple method. Notice we're taking
+a file name, so we'll need a scanner that
+
+00:21:43.499 --> 00:21:50.499
+comes from a file with a given file name.
+You'll notice I already have this method throwing
+
+00:21:52.559 --> 00:21:59.559
+a file not found exception, so we don't have
+to worry about that part. So now we will write
+
+00:22:02.960 --> 00:22:09.960
+out...oh, silly me. Scanner is for input.
+We're doing output. So we need a print writer.
+
+00:22:15.580 --> 00:22:22.580
+Okay, that looks a little bit better. So now
+we're going to do file dot print line of data
+
+00:22:26.999 --> 00:22:32.110
+dot length, the number of elements that were
+in the array, and then we're going to step
+
+00:22:32.110 --> 00:22:39.110
+through the array one element at a time and
+write out the file. So we'll do file dot print
+
+00:22:42.129 --> 00:22:49.129
+line data of i. And of course at the end of
+the method we're going to do file dot close.
+
+00:22:55.980 --> 00:23:02.980
+Okay, so that's how you save to a file, pretty
+simple code. Let's run again. Okay, so now
+
+00:23:20.950 --> 00:23:25.440
+we can look at final data and see if it contains
+the right things. Now we're not expecting
+
+00:23:25.440 --> 00:23:30.600
+it to be sorted, and you'll notice that it
+isn't sorted, but it does have the right stuff
+
+00:23:30.600 --> 00:23:35.909
+in it. It has fourteen lines, which is good
+because we have thirteen data elements. So
+
+00:23:35.909 --> 00:23:41.730
+it looks like that part is working just fine.
+Now the next thing we need to do is to wrestle
+
+00:23:41.730 --> 00:23:45.869
+this sorting algorithm. So we're going to
+have to really think through how we're going
+
+00:23:45.869 --> 00:23:52.119
+to proceed. So the first thing we're going
+to do is we're going to have to step through
+
+00:23:52.119 --> 00:23:59.119
+the data one element at a time. This is selection
+sort, remember. So for int index is zero.
+
+00:24:11.059 --> 00:24:14.659
+So we know eventually we're going to have
+to step through every single element in the
+
+00:24:14.659 --> 00:24:21.659
+array. So that's definitely the outside for
+loop we want. Now we need to find the next
+
+00:24:24.369 --> 00:24:31.369
+minimum value and put it in the proper position
+because that's what selection sort does. So
+
+00:24:34.559 --> 00:24:41.559
+let's put some comments in here. Okay, well,
+if the index is less than the sorted size,
+
+00:24:51.450 --> 00:24:58.450
+our minimum index, which by the way we need
+to declare, would be the current index. Remember
+
+00:25:10.239 --> 00:25:15.009
+that before the sorted size we're always comparing
+just the next element in the array with all
+
+00:25:15.009 --> 00:25:22.009
+the ones in the unsorted category. Now let's
+think about what would happen if we're in
+
+00:25:22.330 --> 00:25:29.330
+the unsorted category. Is our first minimum
+index going to be index? Well, I think it
+
+00:25:29.950 --> 00:25:36.950
+is. So maybe we don't need this test at all.
+Whether we're in the sorted or unsorted category,
+
+00:25:38.340 --> 00:25:45.340
+our first minimum is going to start at index.
+Here's the second for loop. So we're going
+
+00:25:59.169 --> 00:26:05.869
+to start at—well, we've got two possibilities.
+If we're still in the sorted part of the data,
+
+00:26:05.869 --> 00:26:11.399
+we are going to start at the unsorted part
+of the data. If we're in the unsorted part
+
+00:26:11.399 --> 00:26:15.889
+of the data, we're just going to start at
+the next index. So we have to think about
+
+00:26:15.889 --> 00:26:22.210
+how to say that. Let's do it in an if statement
+and create next outside of this loop to keep
+
+00:26:22.210 --> 00:26:29.210
+things a little bit cleaner. If the index
+is less than the sorted size, next equals
+
+00:26:36.409 --> 00:26:43.409
+sorted size. So we're searching the unsorted
+data. Otherwise next equals index plus one.
+
+00:26:51.059 --> 00:26:54.320
+So we don't want to make the comparison to
+the current index because we've already done
+
+00:26:54.320 --> 00:27:01.320
+that. So for now we've got next created, so
+we don't have to initialize that. Next is
+
+00:27:05.789 --> 00:27:12.789
+going to have to be less than data dot length,
+and we're going through next one at a time.
+
+00:27:19.330 --> 00:27:26.330
+If data of next is less than data of min index,
+then min index equals next.
+
+00:27:51.869 --> 00:27:55.980
+So let's put some comments in here. Notice
+this is a little more involved algorithm than
+
+00:27:55.980 --> 00:28:01.139
+some of the ones we've written, so that's
+when writing a few extra comments really pays
+
+00:28:01.139 --> 00:28:08.139
+off. If we're still in the unsorted—whoops—still
+in the sorted data start at the next element
+
+00:28:16.519 --> 00:28:23.519
+in the array. If we're in the unsorted data,
+no, we start here at the first element in
+
+00:28:32.519 --> 00:28:39.519
+the unsorted data. If we're at unsorted data,
+start at the next element. Okay, so you really
+
+00:28:44.450 --> 00:28:48.710
+while you're thinking about these things want
+to put in as many comments as possible because
+
+00:28:48.710 --> 00:28:52.169
+this is the kind of code when people look
+at it that they're going to think it's not
+
+00:28:52.169 --> 00:28:59.169
+right even when it is. So let's see what Eclipse
+is unhappy about here. Oh, now Eclipse has
+
+00:29:01.369 --> 00:29:08.369
+a point. Somehow I managed to forget that
+we're dealing with strings, so we can't use
+
+00:29:08.879 --> 00:29:15.549
+less than. We have to use compare to. Now
+remember compare to returns a negative number
+
+00:29:15.549 --> 00:29:22.549
+when the implicit variable, that is, when
+data dot next is less than data dot min index.
+
+00:29:24.519 --> 00:29:31.519
+So when this is less than zero, it's when
+want to do that. Now the last thing we want
+
+00:29:32.499 --> 00:29:39.499
+to do is swap the data. So if min index is
+not equal to index, remember if those two
+
+00:29:45.480 --> 00:29:49.879
+are equal, we don't want to do a swap so we'll
+have a string, which we call temp. You've
+
+00:29:49.879 --> 00:29:56.879
+seen swaps all over the place, so this is
+easy. So this will be data of min index, then
+
+00:30:00.419 --> 00:30:07.419
+data of min index equals data of index, and
+data of index equals temp. If you're thinking
+
+00:30:15.230 --> 00:30:19.100
+to yourself, "Wait a minute. Didn't we have
+a swap method?" we did. The problem is it's
+
+00:30:19.100 --> 00:30:23.409
+in the collections class. The arrays class
+didn't have a parallel method, and believe
+
+00:30:23.409 --> 00:30:25.899
+me I went and looked for it.
+
+00:30:25.899 --> 00:30:32.899
+Okay, so we kind of hope maybe we've got our
+program done. Wow. Notice that although this
+
+00:30:33.289 --> 00:30:37.830
+algorithm sounded like it was going to be
+complicated to write, it really isn't that
+
+00:30:37.830 --> 00:30:44.830
+bad. It's just a couple of nested for loops.
+So our console went to a strange place, but
+
+00:30:51.259 --> 00:30:58.259
+that's fine. We can work with that. Unsorted
+data dot text, and we're going to end up with
+
+00:31:01.759 --> 00:31:08.759
+final data dot text. Well, nothing broke.
+That was exciting. So let's look at final
+
+00:31:09.169 --> 00:31:14.489
+data. Now notice I'm getting an error message
+here from Eclipse. It says, "This file has
+
+00:31:14.489 --> 00:31:20.279
+been changed on the file system. Do you want
+to replace the editor cotents with these changes?"
+
+00:31:20.279 --> 00:31:24.289
+So what Eclipse is saying here is, "Wait a
+minute. I didn't change this file, and it
+
+00:31:24.289 --> 00:31:29.989
+has different stuff in it," so yes, we do.
+We know we changed that file. So when we take
+
+00:31:29.989 --> 00:31:34.779
+a look at the data, we see something cool,
+and that is that we've actually gotten our
+
+00:31:34.779 --> 00:31:38.940
+data sorted correctly. That's pretty amazing
+for running this program once because this
+
+00:31:38.940 --> 00:31:44.859
+is kind of a complicated algorithm. But we
+also see that we made a mistake. That's the
+
+00:31:44.859 --> 00:31:49.419
+two j's are showing up in the file. So in
+our excitement to get the code written, we
+
+00:31:49.419 --> 00:31:56.419
+forgot to deal with the duplicate problem.
+So let's go back and deal with that problem.
+
+00:31:57.179 --> 00:32:04.179
+Now that's going to be in the file writing.
+So that was that nice little short method
+
+00:32:04.559 --> 00:32:11.559
+that we wrote. So here's the problem. We've
+got to worry about when to get the data out.
+
+00:32:14.389 --> 00:32:21.389
+If data of i is not equal to data of i minus
+one—We've already been caught once with
+
+00:32:25.729 --> 00:32:30.549
+string problems. So we know we're working
+with strings, and remember when you work with
+
+00:32:30.549 --> 00:32:37.549
+strings, you have to use the equals method
+and of course an exclamation point in front.
+
+00:32:43.700 --> 00:32:50.700
+So that's when you want to print this out.
+Now let's think a little bit about what's
+
+00:32:51.600 --> 00:32:55.899
+going to happen the first time through the
+loop. So when i is zero, it's going to try
+
+00:32:55.899 --> 00:33:01.139
+to compare data of zero and data of negative
+one, so that isn't going to work. We're going
+
+00:33:01.139 --> 00:33:08.139
+to have to say here i is greater than zero,
+and those two are not equal to each other.
+
+00:33:12.450 --> 00:33:17.529
+Now the thing about this remember that that
+double ampersand does something called shortcutting.
+
+00:33:17.529 --> 00:33:22.729
+So if it doesn't find that array is greater
+than zero, then it's not going to try to calculate
+
+00:33:22.729 --> 00:33:27.489
+this part. The other thing we might want to
+worry about is where do we print out data
+
+00:33:27.489 --> 00:33:34.489
+of zero? Hmm. Well, one possibility would
+be to do it before the loop, and that's okay
+
+00:33:37.450 --> 00:33:42.269
+as long as you put a conditional statement
+in there so that if the final file has zero
+
+00:33:42.269 --> 00:33:49.169
+length, you don't try to print something that
+isn't there. The other thing we could do if
+
+00:33:49.169 --> 00:33:53.879
+these two things aren't true is maybe put
+in an else statement. Now we have to be a
+
+00:33:53.879 --> 00:34:00.879
+little careful with that too, so let's handle
+the zero case before. If data dot length is
+
+00:34:06.979 --> 00:34:13.979
+not equal to zero, then we'll do file dot
+print line data of zero. That's better than
+
+00:34:17.859 --> 00:34:21.359
+putting it in the loop. The reason you don't
+want to put it in the loop is if you put it
+
+00:34:21.359 --> 00:34:26.250
+in the loop, the statement's going to be executed
+every time when it's just a special case we
+
+00:34:26.250 --> 00:34:30.950
+need to worry about right at the start. Now
+the other thing we could do here is even clean
+
+00:34:30.950 --> 00:34:36.649
+up the code a little bit better now. We don't
+need to start at zero anymore, and that means
+
+00:34:36.649 --> 00:34:43.649
+we don't have to test for zero. So that actually
+ended up making the code quite a bit cleaner.
+
+00:34:44.030 --> 00:34:51.030
+Okay, so let's run it and see what happens.
+So sorted data dot text, unsorted data dot
+
+00:35:02.170 --> 00:35:09.170
+text, and final data dot text. Everything
+seemed to run just fine. We go and look at
+
+00:35:10.200 --> 00:35:14.990
+it. We're getting the same error message as
+always, but now we have a problem. And this
+
+00:35:14.990 --> 00:35:19.260
+problem is subtle, so you might miss it if
+you weren't really paying attention. Notice
+
+00:35:19.260 --> 00:35:25.789
+that I say we have thirteen elements in the
+file, but we really only have twelve. We forgot
+
+00:35:25.789 --> 00:35:30.039
+to handle the duplicate case when we were
+printing out the file, so we've got another
+
+00:35:30.039 --> 00:35:34.980
+little problem here. So we can't just go and
+print out the data dot length. We're going
+
+00:35:34.980 --> 00:35:41.980
+to have to count the duplicates first. We've
+got some pretty good code for finding duplicates.
+
+00:35:45.589 --> 00:35:52.589
+So let's use that code. But instead of printing
+out to the file here, what we're going to
+
+00:36:05.140 --> 00:36:12.140
+do is increment duplicates. So then when we
+print out the file, it'll be data length minus
+
+00:36:14.440 --> 00:36:21.440
+duplicates. Okay, let's see if our program
+runs now. Entering the file names again. Nothing
+
+00:36:43.450 --> 00:36:50.450
+broke. That's always nice, and let's look
+at our final data. Two? That's kind of weird.
+
+00:36:54.609 --> 00:37:01.119
+We must've done something strange. Ah, we
+forgot to change our logic. We're counting
+
+00:37:01.119 --> 00:37:07.039
+duplicates, not things that aren't duplicates,
+so that shouldn't have been a not sign in
+
+00:37:07.039 --> 00:37:14.039
+there. It should've been just when they're
+equal that they're duplicates. So here we
+
+00:37:16.380 --> 00:37:23.380
+go again, and now we have twelve values, the
+correct number. And in fact, this code is
+
+00:37:35.119 --> 00:37:40.039
+going to pass all the other tests if we were
+to run them. Let's talk about algorithms a
+
+00:37:40.039 --> 00:37:44.930
+little bit. When we were looking at insertion
+sort and selection sort, you might've wondered
+
+00:37:44.930 --> 00:37:50.500
+why you need to know the details of the algorithms
+when they're methods in the API. Well, the
+
+00:37:50.500 --> 00:37:55.230
+reason is that algorithms are building blocks
+for programs and knowing the details of the
+
+00:37:55.230 --> 00:37:59.619
+algorithm gives you a better set of blocks
+to play with. For example, if we had to approach
+
+00:37:59.619 --> 00:38:04.390
+this problem and we didn't know selection
+sort or insertion sort, the only thing we
+
+00:38:04.390 --> 00:38:08.500
+could do is call the arrays dot sort method,
+and that's not the most efficient way to do
+
+00:38:08.500 --> 00:38:13.460
+it. And that's why you need to know the details
+of algorithms, even when you don't necessarily
+
+00:38:13.460 --> 00:38:19.400
+implement them every day and even when it's
+good to call things from the API. So keep
+
+00:38:19.400 --> 00:38:19.670
+programming!
+

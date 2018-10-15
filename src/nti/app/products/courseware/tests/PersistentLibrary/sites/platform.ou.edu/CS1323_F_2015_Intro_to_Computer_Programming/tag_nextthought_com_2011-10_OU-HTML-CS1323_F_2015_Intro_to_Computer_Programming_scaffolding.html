@@ -1,0 +1,23 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html lang="en"><head> <meta content="2015-12-11T16:56:47" http-equiv="last-modified" /> <meta content="1138" name="NTIRelativeScrollHeight" /> <meta content="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.scaffolding" name="NTIID" /> <meta content="NextThought" name="generator" /> <meta content="text/html; charset=ascii" http-equiv="content-type" /> <title>Scaffolding</title> <link href="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.using_the_display()_method" rel="next" title="Using the display() Method" /> <link href="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.more_testing" rel="prev" title="More Testing" /> <link href="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.reading:Chortle_CH32" rel="up" title="Class Design Example" /> <link href="styles/styles.css" rel="stylesheet" /> <link href="styles/content.css" rel="stylesheet" /> </head> <body id="NTIContent"> <div class="page-contents"><div data-ntiid="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.scaffolding" id="a0000000523" ntiid="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.scaffolding"> <div class="chapter title">Scaffolding</div> <p class="placeholder"></p> <a name="f98211b3a9ba9b3a24bc76a58feb6651"></a> <div class="sidebar" data-ntiid="tag:nextthought.com,2011-10:OU-HTML:NTISidebar-CS1323_F_2015_Intro_to_Computer_Programming.sidebar.answer.196" ntiid="tag:nextthought.com,2011-10:OU-HTML:NTISidebar-CS1323_F_2015_Intro_to_Computer_Programming.sidebar.answer.196"> <div class="sidebar-title">Answer</div> <a name="8abdef6e7f1bb6c754e93b73cbc7b0f2"></a> <pre>100
+585
+</pre><a name="ec4c45cdabe3856755e72f3e6e221b9a"></a> <p class="par" id="ec4c45cdabe3856755e72f3e6e221b9a">(Remember to subtract the 15 cent service charge.) </p> </div><a name="24894e85cf086b5afe59bad346a53980"></a> <p class="par" id="24894e85cf086b5afe59bad346a53980">If this class were to be used in an actual bank, it would need a great deal more testing. Usually testing involves placing statements that write out information to the terminal as the program is being run. Thoughtful placement of these statements can greatly ease software development. These statements (and other statements intended to be used for testing and program development) are sometimes called <b class="bfseries">scaffolding</b>. They are put in place as the program is being written and tested, and are removed when testing is finished. This is similar to the scaffolding used when a building is being constructed. Well-placed scaffolding greatly aids the carpenters, roofers, painters and other trades that work on the building. Programmers should do the same for themselves. </p> <a name="76245d83fa4e727cfc7cb067156c778e"></a> <pre>class CheckingAccount
+{
+  // instance variables
+  String accountNumber;
+  String accountHolder;
+  int    balance;
+
+  //constructors
+  . . . .
+
+  // methods
+  . . . .
+
+  void display()
+  {
+    System.out.println( _______ );
+  }
+}
+</pre><a name="433a74a1ea8a34d288ec468fd0b5498d"></a> <p class="par" id="433a74a1ea8a34d288ec468fd0b5498d">The statements that write out the state of a <b class="bfseries"><tt class="ttfamily">CheckingAccount</tt></b> object are somewhat awkward: </p> <a name="2073b38351c44abf2ff010efae52dbfc"></a> <pre>System.out.println( account1.accountNumber + " " +
+    account1.accountHolder + " " + account1.getBalance() );
+</pre><a name="d50daacaac300ab9be349b9042b60fd0"></a> <p class="par" id="d50daacaac300ab9be349b9042b60fd0">It would aid in testing if a <b class="bfseries"><tt class="ttfamily">CheckingAccount</tt></b> itself could be asked to do this. This is a <b class="bfseries"><i class="itshape">display</i></b> method which can be added to the class, as seen above. </p> <a name="8584732ec27535f5958962102c9c6a1e"></a> <div class="sidebar" data-ntiid="tag:nextthought.com,2011-10:OU-HTML:NTISidebar-CS1323_F_2015_Intro_to_Computer_Programming.sidebar.question.206" ntiid="tag:nextthought.com,2011-10:OU-HTML:NTISidebar-CS1323_F_2015_Intro_to_Computer_Programming.sidebar.question.206"> <div class="sidebar-title">Question</div> Write a complete <b class="bfseries"><tt class="ttfamily">display()</tt></b> method. </div> </div></div> </body></html>

@@ -1,0 +1,21 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html lang="en"><head> <meta content="2015-12-11T16:56:47" http-equiv="last-modified" /> <meta content="926" name="NTIRelativeScrollHeight" /> <meta content="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.reading:Chortle_CH11A" name="NTIID" /> <meta content="NextThought" name="generator" /> <meta content="text/html; charset=ascii" http-equiv="content-type" /> <title>Java as a Calculator</title> <link href="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.sqrt()_method" rel="next" title="sqrt() Method" /> <link href="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.blocker.8" rel="prev" title="Blocker" /> <link href="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.introduction_to_computer_programming" rel="up" title="Introduction to Computer Programming" /> <link href="styles/styles.css" rel="stylesheet" /> <link href="styles/content.css" rel="stylesheet" /> </head> <body id="NTIContent"> <div class="page-contents"><div data-ntiid="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.reading:Chortle_CH11A" id="reading:Chortle_CH11A" ntiid="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.reading:Chortle_CH11A"> <div class="chapter title">Java as a Calculator</div> <p class="placeholder"></p> <p class="par"><a name="reading:Chortle_CH11A"></a> </p> <a name="14f013788c4f17586da45e0b3162c506"></a> <p class="par" id="14f013788c4f17586da45e0b3162c506">All of the familiar mathematical functions found on an electronic calculator such as <i class="itshape">sine, log</i>, and <i class="itshape">square root</i> are available in the Java <b class="bfseries"><tt class="ttfamily">Math</tt></b> class. Typically these functions expect data type <b class="bfseries"><tt class="ttfamily">double</tt></b> as a parameter and return a <b class="bfseries"><tt class="ttfamily">double</tt></b> value. </p> <a name="b5b5e19c11b1a5e6168ee8d014d7dac4"></a> <p class="par" id="b5b5e19c11b1a5e6168ee8d014d7dac4">Here is a program that reads a floating point number from the keyboard and prints out its square root: </p> <a name="6b2d4fee1d0265393f50879d5e427767"></a> <pre>import java.util.Scanner;
+
+class SquareRoot
+{
+  public static void main (String[] args)
+  {
+    Scanner scan = new Scanner( System.in );
+    double value;
+
+    // read in a double
+    System.out.print  ("Enter a double:");
+    value = scan.nextDouble();
+    
+    // calculate its square root
+    double result = Math.sqrt( value );
+    
+    // write out the result
+    System.out.println("square root: " + result );
+  }
+}
+</pre><a name="4dd587a1698f82579b7ded4e9707cd54"></a> <p class="par" id="4dd587a1698f82579b7ded4e9707cd54">The assignment statement (in blue) uses the <b class="bfseries"><tt class="ttfamily">sqrt()</tt></b> method of the class <b class="bfseries"><tt class="ttfamily">Math</tt></b>. This is a static method, which means that you ask for it using the name of a class and a dot operator, like this: </p> <a name="15ba830b9eeacdafe650de00ad736659"></a> <blockquote class="quote"> <tt class="ttfamily">Class . method ( parameters )</tt> </blockquote><a name="e548d893246c9df81b49fccac0e1e418"></a> <p class="par" id="e548d893246c9df81b49fccac0e1e418">This looks the same as calling a method of an object, but here a class name is used, not an object name. </p> <a name="1be85c2c77759e55333b3204b4404db2"></a> <div class="sidebar" data-ntiid="tag:nextthought.com,2011-10:OU-HTML:NTISidebar-CS1323_F_2015_Intro_to_Computer_Programming.sidebar.question.75" ntiid="tag:nextthought.com,2011-10:OU-HTML:NTISidebar-CS1323_F_2015_Intro_to_Computer_Programming.sidebar.question.75"> <div class="sidebar-title">Question</div> The class <b class="bfseries"><tt class="ttfamily">Math</tt></b> also has a <b class="bfseries"><tt class="ttfamily">log</tt></b> method that returns the natural logarithm of its argument. Mentally modify the program so that it returns the log of the input value. </div> </div></div> </body></html>

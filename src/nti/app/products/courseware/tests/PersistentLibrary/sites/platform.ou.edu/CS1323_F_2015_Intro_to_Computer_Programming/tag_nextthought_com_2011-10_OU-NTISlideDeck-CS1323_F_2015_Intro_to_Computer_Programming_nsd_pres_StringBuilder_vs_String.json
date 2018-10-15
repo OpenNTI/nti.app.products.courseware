@@ -1,0 +1,130 @@
+{
+  "MimeType": "application/vnd.nextthought.ntislidedeck",
+  "Videos": [
+    {
+      "MimeType": "application/vnd.nextthought.ntislidevideo",
+      "video-ntiid": "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_03.01.03a_StringBuilder_vs_String",
+      "title": "StringBuilder vs String",
+      "creator": "Deborah Trytten",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:StringBuilder_vs_String",
+      "thumbnail": "//www.kaltura.com/p/1500101/thumbnail/entry_id/0_bdkozlu7/width/640/",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:StringBuilder_vs_String_video",
+      "class": "ntislidevideo"
+    }
+  ],
+  "creator": "Deborah Trytten",
+  "title": "Accessing and Changing Objects",
+  "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:StringBuilder_vs_String",
+  "Slides": [
+    {
+      "MimeType": "application/vnd.nextthought.slide",
+      "slidevideoid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:StringBuilder_vs_String_video",
+      "slidetitle": "StringBuilder vs String",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:StringBuilder_vs_String",
+      "slidevideostart": "0.0",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlide-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:StringBuilder_vs_String_slide_1",
+      "slideimage": "resources/CS1323_F_2015_Intro_to_Computer_Programming/9e723d615ce26fa36e8b76cb6798edd9763695da/fd35e23767020999111e1f49239199b4c5eff23e.png",
+      "slidevideoend": "3.0",
+      "slidenumber": "1",
+      "class": "slide"
+    },
+    {
+      "MimeType": "application/vnd.nextthought.slide",
+      "slidevideoid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:StringBuilder_vs_String_video",
+      "slidetitle": "Three String-like Classes",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:StringBuilder_vs_String",
+      "slidevideostart": "3.0",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlide-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:StringBuilder_vs_String_slide_2",
+      "slideimage": "resources/CS1323_F_2015_Intro_to_Computer_Programming/4bbe317b0f5f3c4728e5c9fdd902e29b773a0b08/fd35e23767020999111e1f49239199b4c5eff23e.png",
+      "slidevideoend": "120.0",
+      "slidenumber": "2",
+      "class": "slide"
+    },
+    {
+      "MimeType": "application/vnd.nextthought.slide",
+      "slidevideoid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:StringBuilder_vs_String_video",
+      "slidetitle": "Accessing String Properties",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:StringBuilder_vs_String",
+      "slidevideostart": "120.0",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlide-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:StringBuilder_vs_String_slide_3",
+      "slideimage": "resources/CS1323_F_2015_Intro_to_Computer_Programming/d55d5b7faeca9d5e0c59cbaa8dcd253d15dbfe26/fd35e23767020999111e1f49239199b4c5eff23e.png",
+      "slidevideoend": "203.0",
+      "slidenumber": "3",
+      "class": "slide"
+    },
+    {
+      "MimeType": "application/vnd.nextthought.slide",
+      "slidevideoid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:StringBuilder_vs_String_video",
+      "slidetitle": "toLowerCase()",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:StringBuilder_vs_String",
+      "slidevideostart": "203.0",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlide-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:StringBuilder_vs_String_slide_4",
+      "slideimage": "resources/CS1323_F_2015_Intro_to_Computer_Programming/9e998635d6b2b9423457ffe799effd2235cfdafe/fd35e23767020999111e1f49239199b4c5eff23e.png",
+      "slidevideoend": "239.0",
+      "slidenumber": "4",
+      "class": "slide"
+    },
+    {
+      "MimeType": "application/vnd.nextthought.slide",
+      "slidevideoid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:StringBuilder_vs_String_video",
+      "slidetitle": "Memory Diagram",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:StringBuilder_vs_String",
+      "slidevideostart": "239.0",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlide-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:StringBuilder_vs_String_slide_5",
+      "slideimage": "resources/CS1323_F_2015_Intro_to_Computer_Programming/8a79af34e559c02d232ed4f67b29a07a0ceefa1f/fd35e23767020999111e1f49239199b4c5eff23e.png",
+      "slidevideoend": "320.0",
+      "slidenumber": "5",
+      "class": "slide"
+    },
+    {
+      "MimeType": "application/vnd.nextthought.slide",
+      "slidevideoid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:StringBuilder_vs_String_video",
+      "slidetitle": "StringBuilder",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:StringBuilder_vs_String",
+      "slidevideostart": "320.0",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlide-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:StringBuilder_vs_String_slide_6",
+      "slideimage": "resources/CS1323_F_2015_Intro_to_Computer_Programming/0ded6b1367bd4ffd25b70ffdec17bf53d8656dbb/fd35e23767020999111e1f49239199b4c5eff23e.png",
+      "slidevideoend": "382.0",
+      "slidenumber": "6",
+      "class": "slide"
+    },
+    {
+      "MimeType": "application/vnd.nextthought.slide",
+      "slidevideoid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:StringBuilder_vs_String_video",
+      "slidetitle": "Mutating",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:StringBuilder_vs_String",
+      "slidevideostart": "382.0",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlide-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:StringBuilder_vs_String_slide_7",
+      "slideimage": "resources/CS1323_F_2015_Intro_to_Computer_Programming/7ec4e54cbc849c43ea9f914a78b8571da24e5d97/fd35e23767020999111e1f49239199b4c5eff23e.png",
+      "slidevideoend": "422.0",
+      "slidenumber": "7",
+      "class": "slide"
+    },
+    {
+      "MimeType": "application/vnd.nextthought.slide",
+      "slidevideoid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:StringBuilder_vs_String_video",
+      "slidetitle": "Software Engineering Decision",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:StringBuilder_vs_String",
+      "slidevideostart": "422.0",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlide-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:StringBuilder_vs_String_slide_8",
+      "slideimage": "resources/CS1323_F_2015_Intro_to_Computer_Programming/1767d45487bda1b53ba9c5bad79cf8cf01e30ea7/fd35e23767020999111e1f49239199b4c5eff23e.png",
+      "slidevideoend": "466.0",
+      "slidenumber": "8",
+      "class": "slide"
+    },
+    {
+      "MimeType": "application/vnd.nextthought.slide",
+      "slidevideoid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:StringBuilder_vs_String_video",
+      "slidetitle": "Keep Programming!",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:StringBuilder_vs_String",
+      "slidevideostart": "466.0",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlide-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:StringBuilder_vs_String_slide_9",
+      "slideimage": "resources/CS1323_F_2015_Intro_to_Computer_Programming/19c1e7bc1a1ca7596aaf044a3dd4a8709b8bc41d/fd35e23767020999111e1f49239199b4c5eff23e.png",
+      "slidevideoend": "476.0",
+      "slidenumber": "9",
+      "class": "slide"
+    }
+  ],
+  "ntiid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:StringBuilder_vs_String",
+  "class": "ntislidedeck"
+}

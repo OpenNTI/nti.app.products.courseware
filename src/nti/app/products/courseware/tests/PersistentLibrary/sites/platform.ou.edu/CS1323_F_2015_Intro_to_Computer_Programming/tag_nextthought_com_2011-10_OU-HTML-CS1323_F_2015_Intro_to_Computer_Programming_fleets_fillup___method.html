@@ -1,0 +1,31 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html lang="en"><head> <meta content="2015-12-11T16:56:47" http-equiv="last-modified" /> <meta content="999" name="NTIRelativeScrollHeight" /> <meta content="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.fleets_fillup()_method" name="NTIID" /> <meta content="NextThought" name="generator" /> <meta content="text/html; charset=ascii" http-equiv="content-type" /> <title>Fleet&#8217;s fillUp() Method</title> <link href="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.runnable_version_of_the_program" rel="next" title="Runnable Version of the Program" /> <link href="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.completed_method" rel="prev" title="Completed Method" /> <link href="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.reading:Chortle_CH35" rel="up" title="Objects that Contain Objects" /> <link href="styles/styles.css" rel="stylesheet" /> <link href="styles/content.css" rel="stylesheet" /> </head> <body id="NTIContent"> <div class="page-contents"><div data-ntiid="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.fleets_fillup()_method" id="a0000000562" ntiid="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.fleets_fillup()_method"> <div class="chapter title">Fleet&#8217;s <b class="bfseries"><tt class="ttfamily">fillUp()</tt></b> Method</div> <p class="placeholder"></p> <a name="2f76962501bc4269e1f7bdde3417023e"></a> <div class="sidebar" data-ntiid="tag:nextthought.com,2011-10:OU-HTML:NTISidebar-CS1323_F_2015_Intro_to_Computer_Programming.sidebar.answer.227" ntiid="tag:nextthought.com,2011-10:OU-HTML:NTISidebar-CS1323_F_2015_Intro_to_Computer_Programming.sidebar.answer.227"> <div class="sidebar-title">Answer</div> Since there are two cars in the Fleet, there should be an odometer reading and a number of gallons for each car&#8217;s <b class="bfseries"><tt class="ttfamily">fillUp()</tt></b>. </div><a name="7137e9f8f8af25aa4f18da582c7b02e2"></a> <p class="par" id="7137e9f8f8af25aa4f18da582c7b02e2">Assume that at the end of a week each car in the Fleet is filled with gasoline and its new odometer reading is noted. The <b class="bfseries"><tt class="ttfamily">fillUp()</tt></b> method for <b class="bfseries"><tt class="ttfamily">Fleet</tt></b> will get this data. The first two parameters will be for the town car and the last two will be for the sports utility vehicle. </p> <a name="b13e5b1d71c935fe337eb391eb6b66be"></a> <pre>class Fleet
+{
+  // data
+  Car town;
+  Car suv;
+
+  // constructor
+  Fleet( int start1, int end1, double gal1, 
+         int start2, int end2, double gal2 )
+  {
+    town = new Car( start1, end1, gal1) ;
+    suv  = new Car( start2, end2, gal2) ;
+  }
+
+  // method
+  double calculateMPG()
+  {
+    double sumMPG; 
+    sumMPG = town.calculateMPG() + suv.calculateMPG() ;
+    return sumMPG/2.0;
+  }
+
+  void fillUp( int townOdo, double townGal, int suvOdo, double suvGal )
+  {
+
+    town.fillUp( _______ , _______ );
+
+    suv .fillUp( _______ , _______ );
+  }
+}
+</pre><a name="e3fce1e24237aca60bd6cb70249f3c77"></a> <p class="par" id="e3fce1e24237aca60bd6cb70249f3c77">Of course the <b class="bfseries"><tt class="ttfamily">Fleet.fillUp()</tt></b> method is written in terms of the <b class="bfseries"><tt class="ttfamily">Car.fillUp()</tt></b> method. </p> <a name="59685f295f08a418dbdba48e9c649c8f"></a> <div class="sidebar" data-ntiid="tag:nextthought.com,2011-10:OU-HTML:NTISidebar-CS1323_F_2015_Intro_to_Computer_Programming.sidebar.question.239" ntiid="tag:nextthought.com,2011-10:OU-HTML:NTISidebar-CS1323_F_2015_Intro_to_Computer_Programming.sidebar.question.239"> <div class="sidebar-title">Question</div> Fill up the blanks. </div> </div></div> </body></html>

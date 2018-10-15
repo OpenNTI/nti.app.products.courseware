@@ -1,0 +1,1096 @@
+WEBVTT
+Kind: captions
+Language: en
+
+00:00:00.820 --> 00:00:03.790
+&gt;&gt;Dr. Deborah Trytten: So now that we know
+primitive data type and basic control statements,
+
+00:00:03.790 --> 00:00:07.550
+we're going to put them together to write
+a program that will allow us to choose cheap
+
+00:00:07.550 --> 00:00:14.550
+audiobooks. Here's the problem statement:
+I have a subscription to Laudible.com, an
+
+00:00:14.639 --> 00:00:19.630
+online retailer that sells audiobooks. Each
+month I get one credit for a fixed fee of
+
+00:00:19.630 --> 00:00:25.420
+$14.95. Each book has a title, a length in
+hours and minutes, and a number of credits.
+
+00:00:25.420 --> 00:00:29.500
+We're going to write a program that reads
+the data for the books and chooses the ones
+
+00:00:29.500 --> 00:00:34.460
+that's the best value. What I mean by the
+best value is the one where you get the most
+
+00:00:34.460 --> 00:00:39.500
+number of minutes of time for the given credits.
+That's probably not a very good way to choose
+
+00:00:39.500 --> 00:00:43.489
+audiobooks, but it's what we're going to do
+this morning anyways, and we'll end the input
+
+00:00:43.489 --> 00:00:46.879
+with the Sentinel of END.
+
+00:00:46.879 --> 00:00:52.809
+Now that we're doing test-driven development,
+we want to write the test data for the program
+
+00:00:52.809 --> 00:00:59.809
+first. So here's some possible input. Let's
+say A Tale of Two Cities took 150 hours and
+
+00:01:00.030 --> 00:01:03.960
+5 minutes and cost one credit. Now I don't
+know if it really took that long, but it probably
+
+00:01:03.960 --> 00:01:09.439
+seemed like it took that long. A Tale of Three
+Cities could take 100 hours and 55 minutes
+
+00:01:09.439 --> 00:01:14.420
+and cost one credit. A Tale of Four Cities
+could take 50 hours and 20 minutes and cost
+
+00:01:14.420 --> 00:01:20.420
+two credits, and A Tale of Five Cities could
+take 150 hours and 5 minutes and cost three
+
+00:01:20.420 --> 00:01:24.290
+credits. When we look at these, we can see
+that A Tale of Two Cities is the one that's
+
+00:01:24.290 --> 00:01:29.740
+going to be the best value, and so that's
+the one we'll have as the output.
+
+00:01:29.740 --> 00:01:34.170
+Notice that there is some unnecessary information
+in this problem statement. This is actually
+
+00:01:34.170 --> 00:01:37.909
+very typical of what you get when you talk
+to people who want you to design software
+
+00:01:37.909 --> 00:01:42.360
+for things. They tell you all kinds of stuff
+that you don't need to know, and then you
+
+00:01:42.360 --> 00:01:47.189
+have to pull out the things that are really
+relevant. In this case, the fact that a monthly
+
+00:01:47.189 --> 00:01:54.189
+subscription costs $14.95 is irrelevant. It's
+all about credits. We might consider some
+
+00:01:56.130 --> 00:02:00.649
+boundary cases here, like what happens if
+there aren't any audiobooks. I guess that
+
+00:02:00.649 --> 00:02:04.070
+case doesn't particularly make sense because
+if there aren't any, you're not going to buy
+
+00:02:04.070 --> 00:02:08.920
+any. If there's one, it will be the best deal
+automatically, so those are some good boundary
+
+00:02:08.920 --> 00:02:15.050
+cases this time. We might also consider what
+happens with ties. Ties are one of those things
+
+00:02:15.050 --> 00:02:21.410
+that tend to be a problem in computer science.
+One strategy that you can use is sort of first-come,
+
+00:02:21.410 --> 00:02:27.160
+first-serve. That is, if you find another
+value later that ties your first one, the
+
+00:02:27.160 --> 00:02:31.660
+first one is the one that remains. It really
+doesn't matter which way you settle ties,
+
+00:02:31.660 --> 00:02:35.470
+but it's very important that you let people
+know how they're settled, so they know what
+
+00:02:35.470 --> 00:02:37.970
+to expect.
+
+00:02:37.970 --> 00:02:42.920
+Here's a tough question: how much test data
+is enough? I've only put one piece of test
+
+00:02:42.920 --> 00:02:47.750
+data here, and that probably isn't enough,
+but you could go on writing test data all
+
+00:02:47.750 --> 00:02:53.370
+day and all night and so you have to balance
+that. For this program given that it's a relatively
+
+00:02:53.370 --> 00:03:00.090
+simple program, probably this is sufficient
+test data. We can always test more later.
+
+00:03:00.090 --> 00:03:05.080
+The next thing we're going to do is create
+our class, so let's go to Eclipse. I'm opening
+
+00:03:05.080 --> 00:03:12.080
+Eclipse from the launchpad, entering our workspace.
+So let's create a new project for Laudible.com.
+
+00:03:24.340 --> 00:03:28.650
+Remember project names are allowed to have
+periods in them, so this will work fine. When
+
+00:03:28.650 --> 00:03:35.570
+we get to creating our class, however, we're
+only going to be able to use Laudible. Once
+
+00:03:35.570 --> 00:03:40.620
+again, I'm having a main program put in the
+class. Now in this case I forgot to select
+
+00:03:40.620 --> 00:03:45.740
+the source directory when I started in, so
+I'm going to have to browse for it now. So
+
+00:03:45.740 --> 00:03:51.790
+I'm going to find the Laudible.com project
+and select the source directory as the place
+
+00:03:51.790 --> 00:03:56.790
+where I want my class file. One thing you'll
+notice is that Eclipse is giving us a little
+
+00:03:56.790 --> 00:04:02.400
+warning here. It's saying the use of the default
+package is discouraged, and actually Eclipse
+
+00:04:02.400 --> 00:04:07.150
+is right on this one, but it's okay for beginning
+programmers. We'll learn how to work around
+
+00:04:07.150 --> 00:04:14.150
+that later. So here's our class, and as always
+we're going to need to beautify it a little
+
+00:04:16.630 --> 00:04:23.630
+bit. And it's been pretty handy having our
+problem statement moved in, so let's go and
+
+00:04:33.000 --> 00:04:40.000
+grab that from our PowerPoint 
+
+00:04:44.970 --> 00:04:51.970
+and put that as a comment at the top. Now
+that got a little bit ugly, so we're going
+
+00:04:58.040 --> 00:05:05.040
+to beautify it a little bit too. Notice that
+I'm keeping it well within the bounds of the
+
+00:05:17.680 --> 00:05:24.680
+code that we can see. That's always a good
+strategy.
+
+00:05:29.210 --> 00:05:33.430
+The next thing to notice is the input and
+calculation are intertwined here as they have
+
+00:05:33.430 --> 00:05:37.890
+been in our last several programs. Don't worry,
+we're going to stop having that soon, and
+
+00:05:37.890 --> 00:05:42.200
+so you'll see something different. But for
+right now they're together, and so this means
+
+00:05:42.200 --> 00:05:47.200
+that both the input and calculation are going
+to have to be part of our method signature.
+
+00:05:47.200 --> 00:05:51.020
+The parameter once again is going to be the
+scanner object that we bring in from the main
+
+00:05:51.020 --> 00:05:56.480
+program, and we might want to think about
+the return type. What exactly is it that we
+
+00:05:56.480 --> 00:06:01.180
+want to get? Well, if you look back at our
+output data that we did in our test-driven
+
+00:06:01.180 --> 00:06:06.080
+development, you'll see that our output was
+A Tale of Two Cities. That's a string, and
+
+00:06:06.080 --> 00:06:09.050
+so that's definitely what we want to have.
+
+00:06:09.050 --> 00:06:16.050
+Let's look at our method name inside the program.
+Remember that the methods go outside of the
+
+00:06:16.680 --> 00:06:22.280
+main method but inside the class. Now I'm
+going to make a mistake here on purpose because
+
+00:06:22.280 --> 00:06:26.680
+there's a very simple thing to forget, and
+that's to put public and static in front of
+
+00:06:26.680 --> 00:06:32.310
+methods. And it gives a really crazy message,
+so I want you to see that message once. So
+
+00:06:32.310 --> 00:06:39.310
+our return type was going to be string. We're
+going to read and find cheapest book, and
+
+00:06:43.170 --> 00:06:50.170
+we're going to have an input scanner. Now
+as always, we need to remember to import Java
+
+00:06:55.840 --> 00:07:02.840
+dot util dot scanner, so that the program
+doesn't complain. And here let's just return
+
+00:07:10.260 --> 00:07:16.730
+'help me.'
+
+00:07:16.730 --> 00:07:23.370
+So we're going to call this from our main
+program now. We're going to need to create
+
+00:07:23.370 --> 00:07:30.370
+our scanner object here. New scanner system
+in same as usual, and we'll call our 
+read and find cheapest book stub from keyboard,
+
+00:07:50.550 --> 00:07:55.470
+and you'll notice right now that Eclipse still
+has a red X. You'll see this red X a lot.
+
+00:07:55.470 --> 00:08:00.780
+This is a very common mistake to make, so
+let's look at the error message--cannot make
+
+00:08:00.780 --> 00:08:06.340
+a static reference to the non-static method
+read and find cheapest book of scanner from
+
+00:08:06.340 --> 00:08:13.330
+the type Laudible. That's really not a very
+helpful message, but it does have a couple
+
+00:08:13.330 --> 00:08:18.120
+of keywords in it that will help you remember
+how to fix it. When it was talking about static
+
+00:08:18.120 --> 00:08:24.210
+and non-static, what it was trying to say
+was that this method that we're calling here
+
+00:08:24.210 --> 00:08:31.210
+the read and find cheapest book is not a static
+method, and we called it from a static method.
+
+00:08:31.639 --> 00:08:38.510
+That combination isn't allowed. The way you
+fix that problem is by putting public static
+
+00:08:38.510 --> 00:08:42.990
+in front of the method. Later on we'll have
+different strategies, but for right now all
+
+00:08:42.990 --> 00:08:49.089
+of our methods will be public and static.
+The next thing we need to do is to read our
+
+00:08:49.089 --> 00:08:54.610
+input in. We'll have a title, and that should
+be on one line, and then the numbers of hours
+
+00:08:54.610 --> 00:08:59.260
+and minutes and credits. Now there is a problem
+if you put the hours, and minutes, and credits
+
+00:08:59.260 --> 00:09:05.500
+on the same line as the title. That doesn't
+work because when we read in our choices are
+
+00:09:05.500 --> 00:09:09.660
+to read in things between spaces, in which
+case we would only get the first word of the
+
+00:09:09.660 --> 00:09:15.750
+title, or to read in whole lines, in which
+case we'd get the title and the hours, minutes,
+
+00:09:15.750 --> 00:09:22.380
+and credits, so we have to have those things
+on two separate lines.
+
+00:09:22.380 --> 00:09:26.839
+The other thing we need to think about is
+do we have our next versus next line problem
+
+00:09:26.839 --> 00:09:31.990
+again? We talked about this problem in a previous
+video and it's a constant thorn in our side
+
+00:09:31.990 --> 00:09:37.170
+when it comes to reading input, so we'll think
+about that when we're writing our code. So
+
+00:09:37.170 --> 00:09:44.170
+let's go and write our code. So inside the
+method we're going to create a string for
+
+00:09:45.860 --> 00:09:52.860
+the title, an int for the hours, an int for
+the minutes, and an int for the credits because
+
+00:09:56.860 --> 00:10:03.860
+all of those things are integral. We're going
+to need a loop. Let me move our counsel out
+
+00:10:07.940 --> 00:10:14.730
+of the way so we have a little bit more space
+to work. Now in this case even though we're
+
+00:10:14.730 --> 00:10:19.210
+still going to have a while loop, this is
+a sentinel controlled loop instead of a counter
+
+00:10:19.210 --> 00:10:24.700
+controlled loop. And so we're going to have
+to use priming reads to make this work. So
+
+00:10:24.700 --> 00:10:28.670
+that means we're going to prompt the user
+before the loop and get data before we enter
+
+00:10:28.670 --> 00:10:34.620
+the loop. Then we'll start our while loop,
+and inside the while loop at the bottom is
+
+00:10:34.620 --> 00:10:39.820
+when we'll read the data for the next execution.
+That's the only way that you can get sentinels
+
+00:10:39.820 --> 00:10:42.290
+to work properly in code.
+
+00:10:42.290 --> 00:10:49.290
+So we'll do system output line enter the title
+of your book on one line, and system out print
+
+00:10:58.670 --> 00:11:05.670
+line and the hours, minutes, and credits on
+another line. Notice I'm giving the user some
+
+00:11:10.420 --> 00:11:16.490
+very specific instructions because it makes
+a big difference that they enter things correctly.
+
+00:11:16.490 --> 00:11:23.490
+So title will equal input dot next line because
+we know it's on a line by itself. Hours will
+
+00:11:27.500 --> 00:11:34.500
+equal input dot next int because it's an integer.
+Minutes will equal input dot next int, and
+
+00:11:37.970 --> 00:11:44.970
+credits will equal input dot next int. So
+there we have all of our data. Now it's time
+
+00:11:45.140 --> 00:11:50.940
+to think about whether we have the next versus
+next line problem. After we finish reading
+
+00:11:50.940 --> 00:11:55.750
+credits, there is a new line character that's
+sitting on the screen. That's what gets entered
+
+00:11:55.750 --> 00:12:01.839
+when you hit enter on your keyboard. So if
+we go and read the title now using next line,
+
+00:12:01.839 --> 00:12:06.980
+it will get that empty character, and it won't
+get the title correctly. And then our program
+
+00:12:06.980 --> 00:12:08.790
+will break immediately.
+
+00:12:08.790 --> 00:12:14.740
+So we have the next line problem, and we need
+to use next line again to get rid of it. So
+
+00:12:14.740 --> 00:12:20.850
+we do input dot next line. Now things like
+that are really hard to figure out when you're
+
+00:12:20.850 --> 00:12:25.390
+reading the code, so you definitely want to
+put a comment there to explain what's going
+
+00:12:25.390 --> 00:12:32.390
+on. I'm going to put this one on the side.
+Read in the carriage return at the end of
+
+00:12:35.330 --> 00:12:40.709
+the line. You don't always think of doing
+things like this when you're reading input
+
+00:12:40.709 --> 00:12:44.160
+initially, but you'll remember to do it once
+you've programmed a bit and had your programs
+
+00:12:44.160 --> 00:12:51.160
+break every time you forget. So this is before
+the while loop. Now we need our while loop.
+
+00:12:53.320 --> 00:13:00.320
+Title equals end. And we want a not in front
+of that of course because we want to stop
+
+00:13:08.410 --> 00:13:14.200
+when the title equals end. We want to continue
+when the title is not equal to end. Remember
+
+00:13:14.200 --> 00:13:20.560
+that we use equals because we're comparing
+strings here, and so that makes a difference.
+
+00:13:20.560 --> 00:13:24.160
+The other thing that we might notice is that
+we didn't actually tell the user about that
+
+00:13:24.160 --> 00:13:31.160
+end thing. That's going to cause problems
+because they won't know what to do. System
+
+00:13:32.310 --> 00:13:39.310
+out print line enter end when the program
+is finished. So now we've given the user correct
+
+00:13:46.950 --> 00:13:48.060
+instructions.
+
+00:13:48.060 --> 00:13:54.620
+Oh, I see Eclipse is unhappy once again about
+credit. That's because I called it credits
+
+00:13:54.620 --> 00:14:01.620
+above instead of credit. We can fix it either
+way, but that will get rid of the little red
+
+00:14:03.220 --> 00:14:10.220
+X. Okay, so here's our while statement. The
+other comment we haven't put in here is that
+
+00:14:16.010 --> 00:14:22.310
+we're doing priming reads. You definitely
+want to tell somebody who's reading the code
+
+00:14:22.310 --> 00:14:29.310
+about that. Remember all this stuff is going
+to go at the end of the loop too, so we will
+
+00:14:30.540 --> 00:14:37.540
+copy it. Notice I even copied the comment
+in and put it in there. We're trying to find
+
+00:14:41.510 --> 00:14:47.360
+the cheapest book. We've read in the number
+of hours, the number of minutes, and the credits,
+
+00:14:47.360 --> 00:14:53.060
+and so what we need to calculate is the cost
+per minute in terms of credits. So let's make
+
+00:14:53.060 --> 00:15:00.060
+a comment about that. So we need a double
+for the cost per minutes. The value of that
+
+00:15:10.899 --> 00:15:17.899
+will equal the number of hours times 60 plus
+the number of minutes divided by the credits.
+
+00:15:21.420 --> 00:15:26.660
+We want to think about our precedence a little
+bit because we may not have the precedence
+
+00:15:26.660 --> 00:15:32.649
+correct. So remember multiplicative operators
+like times and divide get done before additive
+
+00:15:32.649 --> 00:15:39.649
+operators, so we definitely want to put some
+parentheses around here. I actually like to
+
+00:15:40.490 --> 00:15:45.180
+put in a lot of parentheses in my programs
+anyways because it makes it clear what your
+
+00:15:45.180 --> 00:15:52.180
+intention was. This is what we want: the total
+number of minutes to be calculated first and
+
+00:15:53.970 --> 00:15:57.430
+then the credits to be divided out at the
+end.
+
+00:15:57.430 --> 00:16:02.279
+The next thing we need to do is to find the
+minimum. Now we've done the minimum thing
+
+00:16:02.279 --> 00:16:09.279
+before, so we know we need a variable to keep
+track of the minimum. So we'll call it minimum
+
+00:16:14.800 --> 00:16:21.800
+cost per minute, and we have to think about
+what this value should be set to. Now this
+
+00:16:22.149 --> 00:16:27.709
+is a double value, so we can't use integer
+max value like we did before. That isn't going
+
+00:16:27.709 --> 00:16:32.550
+to work, and it turns out the double class
+doesn't have a maximum value. So we might
+
+00:16:32.550 --> 00:16:38.290
+want to think about how we could initialize
+this. Well, one easy way to do it is to initialize
+
+00:16:38.290 --> 00:16:44.600
+it to the cost per minute of the first value.
+That way we know we'll have a legal value.
+
+00:16:44.600 --> 00:16:50.700
+We can grab that right from here. We can't
+use cost per minute up there because it's
+
+00:16:50.700 --> 00:16:56.060
+declared inside the loop, and so it's out
+of scope at this point, but the other values
+
+00:16:56.060 --> 00:16:59.110
+still work.
+
+00:16:59.110 --> 00:17:02.980
+Now if you think about it, in addition to
+knowing the minimum cost, we also want to
+
+00:17:02.980 --> 00:17:09.980
+know which book had the minimum cost, so we're
+going to need a string to store that. So we'll
+
+00:17:10.839 --> 00:17:17.839
+call it cheapest book so far, and that's going
+to be the title of the first one. Inside the
+
+00:17:23.869 --> 00:17:30.869
+loop if the cost per minute is greater than—whoops,
+I'm sorry—less than cheapest book so far,
+
+00:17:37.029 --> 00:17:44.029
+what that means is we found a new book that's
+cheaper. So cheapest book so far will get
+
+00:17:44.549 --> 00:17:51.549
+the value of cost per minute, and—oh, I'm
+sorry, I'm using the wrong variable. Cheapest
+
+00:17:54.090 --> 00:18:01.090
+book so far is our string, so that should
+get the value of title, not cost per minute.
+
+00:18:01.480 --> 00:18:05.220
+Notice that Eclipse was telling me that I
+was making a mistake there, and if I'd paid
+
+00:18:05.220 --> 00:18:10.039
+attention to it a little bit sooner, I might
+not have typed so much stuff wrong. Cost per
+
+00:18:10.039 --> 00:18:17.039
+minute has to be less than 
+minimum cost per minute. I expect Eclipse
+is about to be happier soon. Minimum cost
+
+00:18:26.259 --> 00:18:33.259
+per minute equals cost per minute. So we've
+got an interesting structure here between
+
+00:18:38.090 --> 00:18:42.109
+the priming reads and the if statement in
+the middle of the while loop. We've got a
+
+00:18:42.109 --> 00:18:47.269
+pretty substantial while loop, so let's put
+in some more comments to help it make more
+
+00:18:47.269 --> 00:18:54.269
+sense. So find the let's say find whether
+the current element is the minimum. So notice
+
+00:18:59.970 --> 00:19:04.159
+we've got two or three lines of code and a
+comment before each. That's a really nice
+
+00:19:04.159 --> 00:19:11.159
+balance in code. Then we've got our priming
+reads, and now instead of returning 'help
+
+00:19:14.519 --> 00:19:21.519
+me,' we can return cheapest book so far. So
+it looks like we may have our method done,
+
+00:19:23.159 --> 00:19:27.409
+or at least we will when I put the c back
+in cheapest.
+
+00:19:27.409 --> 00:19:34.409
+Now is a good time to test. So here we go.
+So we have A Tale of Two Cities, and it's
+
+00:19:43.220 --> 00:19:50.220
+going to run for 500 hours and 5 minutes and
+cost one credit. Then we have A Tale of Three
+
+00:19:51.419 --> 00:19:58.419
+Cities, and it's going to run for 250 minutes
+or hours and 10 minutes and cost one credit,
+
+00:20:00.940 --> 00:20:07.940
+and then we have A Tale of Four Cities, and
+it's going to run for 100 hours and 55 minutes
+
+00:20:08.570 --> 00:20:15.570
+and cost five credits, and then we're at the
+end. Uh oh, something went wrong. We don't
+
+00:20:18.559 --> 00:20:23.759
+see any output. Now what's happened here is
+actually an input problem, and we're going
+
+00:20:23.759 --> 00:20:28.440
+to have to go to the code to see it. One of
+the things that you can notice here is that
+
+00:20:28.440 --> 00:20:33.009
+this little red box is still lighted up. That
+means our program is still running. The real
+
+00:20:33.009 --> 00:20:37.859
+problem here is we didn't give the user very
+good instructions because when they enter
+
+00:20:37.859 --> 00:20:44.859
+end, as you'll see when we look at the code,
+the title gets read and then the computer
+
+00:20:48.109 --> 00:20:52.720
+is waiting to read the hours and minutes and
+credits. It can't tell that end has been read
+
+00:20:52.720 --> 00:20:59.720
+if we don't tell it, and so we need to put
+an if statement in here to fix it. So if title
+
+00:21:00.899 --> 00:21:07.899
+equals end, a curly brace to start and a curly
+brace to end. We're going to move those over.
+
+00:21:22.700 --> 00:21:28.869
+Now we might want to think about it very carefully.
+Do we want to do this when titles equals end
+
+00:21:28.869 --> 00:21:33.999
+or when title is not equal to end? Well, we
+go on and read the input when title is not
+
+00:21:33.999 --> 00:21:40.070
+equal to end, so that means we need a little
+exclamation point here to say not. So now
+
+00:21:40.070 --> 00:21:44.639
+if we get end, we don't try to read the other
+things. Now there are other ways that you
+
+00:21:44.639 --> 00:21:49.399
+can have tried to fix this program. For example,
+you could have prompted the user to enter
+
+00:21:49.399 --> 00:21:53.350
+end and then to enter fake data, but that
+isn't respectful to users, and it makes your
+
+00:21:53.350 --> 00:21:57.200
+programs look unprofessional. So we don't
+do things that way.
+
+00:21:57.200 --> 00:22:04.200
+Let's run the program again and see if it
+works. Here we go. A Tale of Two Cities, 500
+
+00:22:12.440 --> 00:22:19.440
+hours, 5 minutes, one credit. A Tale of Three
+Cities, 250 hours, 10 minutes, one credit.
+
+00:22:27.119 --> 00:22:34.119
+A Tale of Four Cities, 100 hours, 55 minutes,
+two credits, and A Tale of Five Cities, 50
+
+00:22:37.330 --> 00:22:44.330
+hours, 25 minutes, and three credits. Here
+comes the moment of truth. We're entering
+
+00:22:45.210 --> 00:22:51.970
+end, and our program stopped. Now why did
+our program not give any output? Well, that's
+
+00:22:51.970 --> 00:22:56.350
+easy. We didn't write any output for it to
+give, so we need to go back to our main program
+
+00:22:56.350 --> 00:23:03.350
+and fix that. Some people when they develop
+programs write the output first, and then
+
+00:23:03.679 --> 00:23:08.759
+write the calculation, and then write the
+input. That strategy is called backward chaining,
+
+00:23:08.759 --> 00:23:13.799
+and it can work really well. So notice here
+even though we returned the title we didn't
+
+00:23:13.799 --> 00:23:20.799
+store it in a variable, and we didn't print
+it out. Let's store it in a variable. Best
+
+00:23:21.340 --> 00:23:28.340
+title equals, and then print something out
+to the user system out print line 
+the cheapest book is 
+best title. Notice that I was careful to add
+
+00:23:48.529 --> 00:23:54.109
+in a space after the cheapest book is so all
+the words didn't get smashed together. I notice
+
+00:23:54.109 --> 00:23:59.979
+though that I've gotten a couple of extra
+little lines, so we want to get rid of those.
+
+00:23:59.979 --> 00:24:06.979
+We're ready to run again. Here we go—A Tale
+of Two Cities, A Tale of Three Cities, A Tale
+
+00:24:22.570 --> 00:24:29.570
+of Four Cities, and A Tale of Five Cities,
+and the cheapest book is A Tale of Five Cities.
+
+00:24:38.679 --> 00:24:45.679
+Uh oh, what happened? We need to go back and
+look at the logic in our program again. So
+
+00:24:47.940 --> 00:24:54.940
+we know this has to do the calculation. So
+we have the hours times 60 plus minutes. Now
+
+00:24:59.279 --> 00:25:05.580
+let's think carefully about what's going on
+here. When we have the hours times 60 plus
+
+00:25:05.580 --> 00:25:11.279
+minutes, all of these things were integers
+as were the credits. That means that we did
+
+00:25:11.279 --> 00:25:16.529
+integer division. Remember that's one of those
+troublesome operations, so we might want to
+
+00:25:16.529 --> 00:25:22.379
+think about how we could fix that. Well, the
+easiest way is to make one of the values integers.
+
+00:25:22.379 --> 00:25:27.859
+One way that people sometimes try to fix it
+is by casting to double early on, and that
+
+00:25:27.859 --> 00:25:34.859
+can work, but where I like to cast is right
+here. I like to cast the denominator. So that
+
+00:25:34.999 --> 00:25:40.519
+tells it to use the number of credits. So
+we fixed one problem. Let's see if that solves
+
+00:25:40.519 --> 00:25:47.519
+the issue. Remember there's often more than
+one problem in code.
+
+00:25:59.859 --> 00:26:06.859
+So here's our test data being entered again.
+Uh oh, it's still A Tale of Five Cities. So
+
+00:26:22.349 --> 00:26:26.820
+even though we fixed one problem, we didn't
+fix all the problems. This is very typical
+
+00:26:26.820 --> 00:26:33.820
+of program development. So we think that this
+may be correct, so let's look at this comparison.
+
+00:26:34.259 --> 00:26:39.869
+If the cost per minute is less than the minimum
+cost per minute, then the minimum cost per
+
+00:26:39.869 --> 00:26:45.669
+minute becomes cost per minute. That seems
+correct, so that probably isn't the problem.
+
+00:26:45.669 --> 00:26:50.070
+Let's look and see how we initialized cost
+per minute and see if we did that correctly.
+
+00:26:50.070 --> 00:26:56.200
+Well, the minimum cost per minute was originally
+set to hours times 60 plus minutes divide
+
+00:26:56.200 --> 00:27:02.519
+by credits. Uh oh, we used that formula over
+and we didn't fix it. So let's fix this one
+
+00:27:02.519 --> 00:27:07.710
+too. Now we don't know if this is the ultimate
+problem, but it's one more problem with a
+
+00:27:07.710 --> 00:27:10.109
+code that we're fixing.
+
+00:27:10.109 --> 00:27:17.109
+Here we go. Same old data. And you may figured
+out what's wrong with the problem all—I'm
+
+00:27:37.269 --> 00:27:44.269
+sorry, what's wrong with the problem already,
+in which case good for you. That's a skill
+
+00:27:45.869 --> 00:27:52.869
+you learn. We're still at A Tale of Five Cities.
+Well, let's give it a little bit more thought
+
+00:27:54.559 --> 00:28:01.559
+here about what we've done. Did we really
+calculate the cost per minute or did we calculate
+
+00:28:01.700 --> 00:28:07.950
+the minutes per credit? We have our equation
+upside down. These are the mistakes you make
+
+00:28:07.950 --> 00:28:12.609
+all the time when you're programming, and
+you definitely need to learn to spot them.
+
+00:28:12.609 --> 00:28:18.019
+There are a couple of different ways we could
+figure it. One is we could change our calculation
+
+00:28:18.019 --> 00:28:23.039
+to look for the maximum number of minutes
+per credit. That's probably a really good
+
+00:28:23.039 --> 00:28:27.399
+solution here. Then we don't have to turn
+our mathematical equation that we spent so
+
+00:28:27.399 --> 00:28:32.570
+much time working on upside down. Now I hasten
+to add that the two errors we found in the
+
+00:28:32.570 --> 00:28:37.460
+program before were real mistakes, and we
+were going to have to fix those sooner or
+
+00:28:37.460 --> 00:28:42.389
+later, so the fact that we fix them before
+this one instead of after that doesn't matter.
+
+00:28:42.389 --> 00:28:47.029
+So let's go and change some variable names
+and get our program doing the right thing.
+
+00:28:47.029 --> 00:28:54.029
+What we're going to want now is the maximum
+minutes per credit. Now see that makes a lot
+
+00:28:57.960 --> 00:29:03.149
+more sense one way or another because you've
+got minutes in the numerator and credits in
+
+00:29:03.149 --> 00:29:07.590
+the denominator. Although notice our credits
+have scrolled off screen, which makes them
+
+00:29:07.590 --> 00:29:13.340
+hard to read, so we're going to move them
+over. Now our cheapest book so far, that part
+
+00:29:13.340 --> 00:29:20.340
+is okay. Instead of cost per minute, we'll
+change this to minutes per credit, and we'll
+
+00:29:37.059 --> 00:29:44.059
+have to move this and change it all the way
+down. So this is now maximum minutes per credit,
+
+00:29:49.499 --> 00:29:56.499
+and this is now minutes per credit. And we'll
+have to change these too, and everything else
+
+00:30:20.200 --> 00:30:21.179
+looks fine.
+
+00:30:21.179 --> 00:30:25.639
+When you make those kind of changes, make
+sure you check over to the side to make sure
+
+00:30:25.639 --> 00:30:30.249
+there are no little red boxes, and over on
+this side for red X's because Eclipse will
+
+00:30:30.249 --> 00:30:35.229
+tell you if you found everything or not. Okay,
+so maybe our program is going to work this
+
+00:30:35.229 --> 00:30:42.229
+time. 500 hours, 5 minutes, one credit. Cross
+your fingers. The cheapest book is A Tale
+
+00:31:09.889 --> 00:31:15.989
+of Five Cities still. Okay, so we really have
+a problem here. So we need to look and see
+
+00:31:15.989 --> 00:31:22.989
+what's going on. Well, we think we fixed that
+okay, but look at what we did in this part
+
+00:31:23.379 --> 00:31:29.179
+of the statement right here. We changed our
+words to be maximum instead of minimum, but
+
+00:31:29.179 --> 00:31:34.769
+we forgot to change our mathematical symbol,
+and that's why it didn't get fixed. When we're
+
+00:31:34.769 --> 00:31:41.769
+finding a maximum, we want to change it when
+it's greater, not when it's smaller. The other
+
+00:31:41.899 --> 00:31:46.710
+thing to think about is how we initialize
+that to start with. Now it happens that we
+
+00:31:46.710 --> 00:31:51.830
+initialized it to the first value, and so
+that should still work okay. If we had initialized
+
+00:31:51.830 --> 00:31:58.539
+it to a small number, we would have to reconsider
+that when we change it to minimum to maximum.
+
+00:31:58.539 --> 00:32:05.539
+One more time. A Tale of Two Cities, hallelujah!
+Notice also that having our test data in advance
+
+00:32:34.929 --> 00:32:38.049
+really helped us out here because then when
+we made a mistake in the program, we were
+
+00:32:38.049 --> 00:32:44.509
+able to find it. Here's something to think
+about with a program—is it possible to test
+
+00:32:44.509 --> 00:32:51.299
+a program too much? Well, yes, but no one
+ever really does. In fact, testing programs
+
+00:32:51.299 --> 00:32:55.450
+is not really the greatest way to check and
+see that they're working or not. There is
+
+00:32:55.450 --> 00:33:00.379
+a better way to make sure that your programs
+are correct. It's actually possible to prove
+
+00:33:00.379 --> 00:33:04.700
+that a program is correct. Now this is a very
+advanced technique. It's not something that
+
+00:33:04.700 --> 00:33:09.369
+beginning programmers usually learn, but it's
+a really great idea, and it is important because
+
+00:33:09.369 --> 00:33:15.999
+so much of what we do with software now depends
+on the software working correctly. Is it really
+
+00:33:15.999 --> 00:33:20.529
+possible to prove that programs are correct?
+Well, yes, not only is it possible, you could
+
+00:33:20.529 --> 00:33:25.599
+even automate the process. If you're interested
+in things like this, you're going to want
+
+00:33:25.599 --> 00:33:29.909
+to learn a language where it's a little easier
+to do this. One of the easiest languages to
+
+00:33:29.909 --> 00:33:34.919
+learn that does this is a language called
+Lisp. I actually wrote my doctoral dissertation
+
+00:33:34.919 --> 00:33:41.419
+research code in Lisp. It's a wonderful language
+to use. It's called ACL2 if you look for it
+
+00:33:41.419 --> 00:33:46.379
+online, and it's a really good language for
+proving that programs are correct. If you're
+
+00:33:46.379 --> 00:33:51.940
+interested in this part of computer science,
+you may want to take CS 2603 Applied Logic
+
+00:33:51.940 --> 00:33:56.940
+for Hardware and Software. That class has
+this class as a prerequisite so you could
+
+00:33:56.940 --> 00:33:58.110
+do it next semester.
+

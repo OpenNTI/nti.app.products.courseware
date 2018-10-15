@@ -1,0 +1,57 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html lang="en"><head> <meta content="2015-12-11T16:56:47" http-equiv="last-modified" /> <meta content="1377" name="NTIRelativeScrollHeight" /> <meta content="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.better_encapsulated_program" name="NTIID" /> <meta content="NextThought" name="generator" /> <meta content="text/html; charset=ascii" http-equiv="content-type" /> <title>Better Encapsulated Program</title> <link href="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.adding_a_fillup()_method" rel="next" title="Adding a fillUp() Method" /> <link href="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.complete_fleet" rel="prev" title="Complete Fleet" /> <link href="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.reading:Chortle_CH35" rel="up" title="Objects that Contain Objects" /> <link href="styles/styles.css" rel="stylesheet" /> <link href="styles/content.css" rel="stylesheet" /> </head> <body id="NTIContent"> <div class="page-contents"><div data-ntiid="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.better_encapsulated_program" id="a0000000558" ntiid="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.better_encapsulated_program"> <div class="chapter title">Better Encapsulated Program</div> <p class="placeholder"></p> <a name="77d0afa81a44728a5420a2ff8dacd322"></a> <div class="sidebar" data-ntiid="tag:nextthought.com,2011-10:OU-HTML:NTISidebar-CS1323_F_2015_Intro_to_Computer_Programming.sidebar.answer.224" ntiid="tag:nextthought.com,2011-10:OU-HTML:NTISidebar-CS1323_F_2015_Intro_to_Computer_Programming.sidebar.answer.224"> <div class="sidebar-title">Answer</div> The improved version of the program is below. It will run just fine. </div><a name="74ac3df501113956d4e820a0a9a7c394"></a> <p class="par" id="74ac3df501113956d4e820a0a9a7c394">Logically the program is the same as before, but with the instance variables made <b class="bfseries"><tt class="ttfamily">private</tt></b> there is a greater enforcement of encapsulation. </p> <a name="e03e755a0607bb3683ab589253e1061f"></a> <pre>class Fleet
+{
+  // data
+  private Car town;
+  private Car suv;
+
+  // constructor
+  Fleet( int start1, int end1, double gal1, 
+         int start2, int end2, double gal2 )
+  {
+    town = new Car( start1, end1, gal1) ;
+    suv  = new Car( start2, end2, gal2) ;
+  }
+
+  // method
+  double calculateMPG()
+  {
+    double sumMPG; 
+
+    sumMPG = town.calculateMPG() + suv.calculateMPG() ;
+
+    return sumMPG/2.0;
+  }
+}
+
+class Car
+{
+  // data
+  private int startMiles;   // Stating odometer reading
+  private int endMiles;     // Ending odometer reading
+  private double gallons;   // Gallons of gas used between the readings
+
+  // constructor
+  Car(  int first, int last, double gals  )
+  {
+    startMiles = first ;
+    endMiles   = last ;
+    gallons    = gals ;
+  }
+
+  // methods
+  double calculateMPG()
+  {
+    return (endMiles - startMiles)/gallons ;
+  }
+
+}
+
+class FleetTester
+{
+  public static void main ( String[] args)
+  {
+    Fleet myCars = new Fleet( 1000, 1234, 10, 777, 999, 20 );
+    System.out.println("Fleet average MPG= " + myCars.calculateMPG() );
+  }
+}
+</pre><a name="1b44f046050de753ff311a15f30d48f6"></a> <div class="sidebar" data-ntiid="tag:nextthought.com,2011-10:OU-HTML:NTISidebar-CS1323_F_2015_Intro_to_Computer_Programming.sidebar.question.236" ntiid="tag:nextthought.com,2011-10:OU-HTML:NTISidebar-CS1323_F_2015_Intro_to_Computer_Programming.sidebar.question.236"> <div class="sidebar-title">Question</div> Is it possible (in the new version of the program) for the values of the odometer readings of the cars to change? </div> </div></div> </body></html>

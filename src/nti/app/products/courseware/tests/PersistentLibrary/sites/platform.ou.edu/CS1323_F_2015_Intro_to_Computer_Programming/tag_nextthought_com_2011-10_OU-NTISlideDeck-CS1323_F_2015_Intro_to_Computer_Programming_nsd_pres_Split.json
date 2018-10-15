@@ -1,0 +1,152 @@
+{
+  "MimeType": "application/vnd.nextthought.ntislidedeck",
+  "Videos": [
+    {
+      "MimeType": "application/vnd.nextthought.ntislidevideo",
+      "video-ntiid": "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_04.01.03_Split",
+      "title": "Split",
+      "creator": "Deborah Trytten",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Split",
+      "thumbnail": "//www.kaltura.com/p/1500101/thumbnail/entry_id/1_8xn364f2/width/640/",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Split_video",
+      "class": "ntislidevideo"
+    }
+  ],
+  "creator": "Deborah Trytten",
+  "title": "Perfect Size and Oversize Arrays",
+  "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Split",
+  "Slides": [
+    {
+      "MimeType": "application/vnd.nextthought.slide",
+      "slidevideoid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Split_video",
+      "slidetitle": "Split",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Split",
+      "slidevideostart": "0.0",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlide-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Split_slide_1",
+      "slideimage": "resources/CS1323_F_2015_Intro_to_Computer_Programming/62f4fa21526f1cf1d31bf58940e1bef9c3ad0425/fd35e23767020999111e1f49239199b4c5eff23e.png",
+      "slidevideoend": "6.0",
+      "slidenumber": "1",
+      "class": "slide"
+    },
+    {
+      "MimeType": "application/vnd.nextthought.slide",
+      "slidevideoid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Split_video",
+      "slidetitle": "Example: split",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Split",
+      "slidevideostart": "6.0",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlide-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Split_slide_2",
+      "slideimage": "resources/CS1323_F_2015_Intro_to_Computer_Programming/7897b91e238e26ced13b454cb981eab0596826b6/fd35e23767020999111e1f49239199b4c5eff23e.png",
+      "slidevideoend": "61.0",
+      "slidenumber": "2",
+      "class": "slide"
+    },
+    {
+      "MimeType": "application/vnd.nextthought.slide",
+      "slidevideoid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Split_video",
+      "slidetitle": "Strategy #1: Perfect Size Array",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Split",
+      "slidevideostart": "61.0",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlide-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Split_slide_3",
+      "slideimage": "resources/CS1323_F_2015_Intro_to_Computer_Programming/06a257e9d8199568eef70d30192a784dbebdf70c/fd35e23767020999111e1f49239199b4c5eff23e.png",
+      "slidevideoend": "124.0",
+      "slidenumber": "3",
+      "class": "slide"
+    },
+    {
+      "MimeType": "application/vnd.nextthought.slide",
+      "slidevideoid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Split_video",
+      "slidetitle": "Algorithm",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Split",
+      "slidevideostart": "124.0",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlide-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Split_slide_4",
+      "slideimage": "resources/CS1323_F_2015_Intro_to_Computer_Programming/928839889a0954df050c2264f7004d2501497f8f/fd35e23767020999111e1f49239199b4c5eff23e.png",
+      "slidevideoend": "158.0",
+      "slidenumber": "4",
+      "class": "slide"
+    },
+    {
+      "MimeType": "application/vnd.nextthought.slide",
+      "slidevideoid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Split_video",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Split",
+      "slidevideostart": "158.0",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlide-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Split_slide_5",
+      "slideimage": "resources/CS1323_F_2015_Intro_to_Computer_Programming/25e901257febe502a572b85b9272a893ef1af162/fd35e23767020999111e1f49239199b4c5eff23e.png",
+      "slidevideoend": "235.0",
+      "slidenumber": "5",
+      "class": "slide"
+    },
+    {
+      "MimeType": "application/vnd.nextthought.slide",
+      "slidevideoid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Split_video",
+      "slidetitle": "Strategy #2: Oversize Array",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Split",
+      "slidevideostart": "235.0",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlide-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Split_slide_6",
+      "slideimage": "resources/CS1323_F_2015_Intro_to_Computer_Programming/a6c8a78637e98bfacbe11186704d778150d2fdcf/fd35e23767020999111e1f49239199b4c5eff23e.png",
+      "slidevideoend": "311.0",
+      "slidenumber": "6",
+      "class": "slide"
+    },
+    {
+      "MimeType": "application/vnd.nextthought.slide",
+      "slidevideoid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Split_video",
+      "slidetitle": "Oversize Array",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Split",
+      "slidevideostart": "311.0",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlide-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Split_slide_7",
+      "slideimage": "resources/CS1323_F_2015_Intro_to_Computer_Programming/a71c4f9f161cb915702972a7180a31f19584ed1d/fd35e23767020999111e1f49239199b4c5eff23e.png",
+      "slidevideoend": "349.0",
+      "slidenumber": "7",
+      "class": "slide"
+    },
+    {
+      "MimeType": "application/vnd.nextthought.slide",
+      "slidevideoid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Split_video",
+      "slidetitle": "Signature for split",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Split",
+      "slidevideostart": "349.0",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlide-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Split_slide_8",
+      "slideimage": "resources/CS1323_F_2015_Intro_to_Computer_Programming/38263d3b35281e588d55447a561c2793f4cd1020/fd35e23767020999111e1f49239199b4c5eff23e.png",
+      "slidevideoend": "425.0",
+      "slidenumber": "8",
+      "class": "slide"
+    },
+    {
+      "MimeType": "application/vnd.nextthought.slide",
+      "slidevideoid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Split_video",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Split",
+      "slidevideostart": "425.0",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlide-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Split_slide_9",
+      "slideimage": "resources/CS1323_F_2015_Intro_to_Computer_Programming/218fa031f785cfc1d22985c8693d9209e3e26ac4/fd35e23767020999111e1f49239199b4c5eff23e.png",
+      "slidevideoend": "472.0",
+      "slidenumber": "9",
+      "class": "slide"
+    },
+    {
+      "MimeType": "application/vnd.nextthought.slide",
+      "slidevideoid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Split_video",
+      "slidetitle": "Comparison",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Split",
+      "slidevideostart": "472.0",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlide-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Split_slide_10",
+      "slideimage": "resources/CS1323_F_2015_Intro_to_Computer_Programming/12a142fba7c526055f442a8e820ac6033cd32565/fd35e23767020999111e1f49239199b4c5eff23e.png",
+      "slidevideoend": "505.0",
+      "slidenumber": "10",
+      "class": "slide"
+    },
+    {
+      "MimeType": "application/vnd.nextthought.slide",
+      "slidevideoid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Split_video",
+      "slidetitle": "Keep Programming!",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Split",
+      "slidevideostart": "505.0",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlide-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Split_slide_11",
+      "slideimage": "resources/CS1323_F_2015_Intro_to_Computer_Programming/0c45c16c1c816e643f6f74bdb75160aaa9b85382/fd35e23767020999111e1f49239199b4c5eff23e.png",
+      "slidevideoend": "515.0",
+      "slidenumber": "11",
+      "class": "slide"
+    }
+  ],
+  "ntiid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Split",
+  "class": "ntislidedeck"
+}

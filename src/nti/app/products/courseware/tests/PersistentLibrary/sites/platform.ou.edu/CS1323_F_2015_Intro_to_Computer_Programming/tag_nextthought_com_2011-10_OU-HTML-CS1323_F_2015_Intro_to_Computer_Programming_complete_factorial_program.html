@@ -1,0 +1,31 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html lang="en"><head> <meta content="2015-12-11T16:56:47" http-equiv="last-modified" /> <meta content="1378" name="NTIRelativeScrollHeight" /> <meta content="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.complete_factorial_program" name="NTIID" /> <meta content="NextThought" name="generator" /> <meta content="text/html; charset=ascii" http-equiv="content-type" /> <title>Complete Factorial Program</title> <link href="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.boolean_expression" rel="next" title="Boolean Expression" /> <link href="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.starting_the_program" rel="prev" title="Starting the Program" /> <link href="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.reading:Chortle_CH17" rel="up" title="Nesting Loops and Ifs" /> <link href="styles/styles.css" rel="stylesheet" /> <link href="styles/content.css" rel="stylesheet" /> </head> <body id="NTIContent"> <div class="page-contents"><div data-ntiid="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.complete_factorial_program" id="a0000000455" ntiid="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.complete_factorial_program"> <div class="chapter title">Complete Factorial Program</div> <p class="placeholder"></p> <a name="c8f2a00bb1980186c27ee5e5143863ae"></a> <div class="sidebar" data-ntiid="tag:nextthought.com,2011-10:OU-HTML:NTISidebar-CS1323_F_2015_Intro_to_Computer_Programming.sidebar.answer.136" ntiid="tag:nextthought.com,2011-10:OU-HTML:NTISidebar-CS1323_F_2015_Intro_to_Computer_Programming.sidebar.answer.136"> <div class="sidebar-title">Answer</div> The complete program is given below. </div><a name="46f1bacc265793c5cfb8433ddf9f07b2"></a> <p class="par" id="46f1bacc265793c5cfb8433ddf9f07b2">This program is suitable for copying into a program editor, compiling and running in the usual way. Animal brains, such as those in humans, learn best when they see things happen. Run the program. See things happen. </p> <a name="3b1415a1401236bc131cd72a10f2902e"></a> <pre>import  java.util.Scanner;
+
+// User enters integer N.  
+// The program calculates N factorial.
+//
+class Factorial
+{
+  public static void main (String[] args ) 
+  {
+    Scanner scan = new Scanner( System.in );
+    long N, fact = 1; 
+
+    System.out.print( "Enter N: " );
+    N = scan.nextLong();
+
+    if ( N &gt;= 0 )
+    {
+      while ( N &gt; 1 )    
+      {
+        fact = fact * N;
+        N    = N - 1;
+      }
+      System.out.println( "factorial is " + fact );
+    }
+    else
+    {
+      System.out.println("N must be zero or greater");
+    }
+  }
+}
+</pre><a name="05875df4fcabccd85b684da708711bf0"></a> <p class="par" id="05875df4fcabccd85b684da708711bf0">Here are several runs of the program. It is amazing how quickly factorial becomes enormous. </p> <a name="9d03a6513e9db45a5d8c78e0de056c55"></a> <p class="par" id="9d03a6513e9db45a5d8c78e0de056c55"><span itemprop="nti-data-markupdisabled"> <img crossorigin="anonymous" data-nti-image-full="resources/CS1323_F_2015_Intro_to_Computer_Programming/34013064d76416b91865c7d8fe73ff1dcae4017d/fd35e23767020999111e1f49239199b4c5eff23e.gif" data-nti-image-half="resources/CS1323_F_2015_Intro_to_Computer_Programming/34013064d76416b91865c7d8fe73ff1dcae4017d/2cff8dc544afd32305107ce559484cb4ce1730df.gif" data-nti-image-quarter="resources/CS1323_F_2015_Intro_to_Computer_Programming/34013064d76416b91865c7d8fe73ff1dcae4017d/06aefff9765154841fac3704b0e59674fae7a005.gif" data-nti-image-size="actual" id="9d03a6513e9db45a5d8c78e0de056c55.317" src="resources/CS1323_F_2015_Intro_to_Computer_Programming/34013064d76416b91865c7d8fe73ff1dcae4017d/fd35e23767020999111e1f49239199b4c5eff23e.gif" style="width:668px; height:204px" /> </span> </p> <a name="5a620ef390200672d57098e8ae106464"></a> <p class="par" id="5a620ef390200672d57098e8ae106464"><b class="bfseries">Warning!</b> Factorial becomes so big, so fast, that 20<b class="bfseries">!</b> is as large as this program can calculate. However, it <span class="underline">will</span> give you an answer for <b class="bfseries"><tt class="ttfamily">N</tt></b> larger than 20. But the answer will be wrong. This is because when a result requires more bits than a variable has, the variable ends up with garbage. This behavior is called <b class="bfseries">overflow</b> and is a frequent problem with computers. </p> <a name="7b2e113eb260cf9a98f19cdb939b4b84"></a> <div class="sidebar" data-ntiid="tag:nextthought.com,2011-10:OU-HTML:NTISidebar-CS1323_F_2015_Intro_to_Computer_Programming.sidebar.question.142" ntiid="tag:nextthought.com,2011-10:OU-HTML:NTISidebar-CS1323_F_2015_Intro_to_Computer_Programming.sidebar.question.142"> <div class="sidebar-title">Question</div> We don&#8217;t want the user to see the incorrect result that is calculated when <b class="bfseries"><tt class="ttfamily">N</tt></b> is larger than 20. How can the program be modified to do this? </div> </div></div> </body></html>

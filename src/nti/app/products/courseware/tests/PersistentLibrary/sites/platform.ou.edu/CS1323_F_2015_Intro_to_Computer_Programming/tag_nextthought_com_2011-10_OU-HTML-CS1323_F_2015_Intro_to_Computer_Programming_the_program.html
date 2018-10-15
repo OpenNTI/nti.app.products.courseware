@@ -1,0 +1,25 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html lang="en"><head> <meta content="2015-12-11T16:56:47" http-equiv="last-modified" /> <meta content="1175" name="NTIRelativeScrollHeight" /> <meta content="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.the_program" name="NTIID" /> <meta content="NextThought" name="generator" /> <meta content="text/html; charset=ascii" http-equiv="content-type" /> <title>The Program</title> <link href="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.more_than_one_statement_per_branch" rel="next" title="More than one Statement per Branch" /> <link href="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.number_tester" rel="prev" title="Number Tester" /> <link href="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.reading:Chortle_CH12" rel="up" title="Decision Making" /> <link href="styles/styles.css" rel="stylesheet" /> <link href="styles/content.css" rel="stylesheet" /> </head> <body id="NTIContent"> <div class="page-contents"><div data-ntiid="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.the_program" id="a0000000399" ntiid="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.the_program"> <div class="chapter title">The Program</div> <p class="placeholder"></p> <a name="14bca26a40e81db1fdf11ccc877d50ac"></a> <div class="sidebar" data-ntiid="tag:nextthought.com,2011-10:OU-HTML:NTISidebar-CS1323_F_2015_Intro_to_Computer_Programming.sidebar.answer.84" ntiid="tag:nextthought.com,2011-10:OU-HTML:NTISidebar-CS1323_F_2015_Intro_to_Computer_Programming.sidebar.answer.84"> <div class="sidebar-title">Answer</div> <pre>Enter an integer:
+12
+The number 12 is zero or positive
+Good-bye for now
+</pre> The false branch is executed because the answer to the question <b class="bfseries"><tt class="ttfamily">num &lt; 0</tt></b> was false. </div><a name="380cf82162894db4586fcfea12629f04"></a> <p class="par" id="380cf82162894db4586fcfea12629f04">Here is the number tester implemented as a program: </p> <a name="425f20489f780bb3896a6dad7e618323"></a> <pre>import java.util.Scanner;
+
+class NumberTester
+{
+  public static void main (String[] args) 
+  {
+    Scanner scan = new Scanner( System.in );
+    int num;
+
+    System.out.println("Enter an integer:");
+    num = scan.nextInt();
+    
+    if ( num &lt; 0 )                
+      System.out.println("The number " + num + " is negative"); 
+    else
+      System.out.println("The number " + num + " is zero or positive"); 
+    
+    System.out.println("Good-bye for now"); 
+  }
+}
+</pre><a name="1da52155162aa6ad117d7c1c6bd53a40"></a> <p class="par" id="1da52155162aa6ad117d7c1c6bd53a40">The words <b class="bfseries"><tt class="ttfamily">if</tt></b> and <b class="bfseries"><tt class="ttfamily">else</tt></b> are markers that divide the decision into two sections. The <b class="bfseries"><tt class="ttfamily">else</tt></b> divides the true branch from the false branch. The <b class="bfseries"><tt class="ttfamily">if</tt></b> is followed by a question enclosed in parentheses. The expression <b class="bfseries"><tt class="ttfamily">num &lt; 0</tt></b> asks if the value in <b class="bfseries"><tt class="ttfamily">num</tt></b> is less than zero. </p> <a name="46cb6644a48fafc628c2ce7c27673524"></a> <ul class="itemize"> <li><a name="3c2bfad8e537168da1a8ea035da205dc"></a> <p class="par" id="3c2bfad8e537168da1a8ea035da205dc">The if statment always asks a question (often about a variable). </p> </li> <li><a name="b9200c99819113521a0c0fcf0be300f7"></a> <p class="par" id="b9200c99819113521a0c0fcf0be300f7">If the answer is true only the true branch is executed. </p> </li> <li><a name="6aa209ef36171064b26b16c8c0ad7863"></a> <p class="par" id="6aa209ef36171064b26b16c8c0ad7863">If the answer is false only the false branch is executed. </p> </li> <li><a name="d40c940c03b26986590acc57360fa7d2"></a> <p class="par" id="d40c940c03b26986590acc57360fa7d2">No matter which branch is chosen, execution continues with the statement after the false branch. </p> </li> </ul><a name="fa902f511eeabf050c2f02715384fb2f"></a> <p class="par" id="fa902f511eeabf050c2f02715384fb2f">Notice that a two-way decision is like picking which of two roads to take to the same destination. The fork in the road is the <b class="bfseries"><tt class="ttfamily">if</tt></b> statement, and the two roads come together just after the false branch. </p> <a name="6c94226a329251b4f046154c0565b066"></a> <div class="sidebar" data-ntiid="tag:nextthought.com,2011-10:OU-HTML:NTISidebar-CS1323_F_2015_Intro_to_Computer_Programming.sidebar.question.88" ntiid="tag:nextthought.com,2011-10:OU-HTML:NTISidebar-CS1323_F_2015_Intro_to_Computer_Programming.sidebar.question.88"> <div class="sidebar-title">Question</div> The user runs the program and enters <b class="bfseries"><tt class="ttfamily">-5</tt></b>. What will the program print? </div> </div></div> </body></html>

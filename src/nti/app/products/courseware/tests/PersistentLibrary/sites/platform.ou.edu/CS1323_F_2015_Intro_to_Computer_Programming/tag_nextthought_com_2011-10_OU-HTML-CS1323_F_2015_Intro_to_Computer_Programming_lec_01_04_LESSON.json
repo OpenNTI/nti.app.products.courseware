@@ -1,0 +1,50 @@
+{
+    "MimeType": "application/vnd.nextthought.ntilessonoverview",
+    "Items": [
+        {
+            "MimeType": "application/vnd.nextthought.nticourseoverviewgroup",
+            "NTIID": "tag:nextthought.com,2011-10:OU-NTICourseOverviewGroup-CS1323_F_2015_Intro_to_Computer_Programming.lec:01.04_LESSON.0",
+            "Items": [
+                {
+                    "MimeType": "application/vnd.nextthought.ntivideo",
+                    "NTIID": "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_janux_overview",
+                    "visibility": "everyone",
+                    "poster": "//www.kaltura.com/p/1500101/thumbnail/entry_id/0_xx00ip3m/width/1280/",
+                    "label": "Janux Overview"
+                },
+                {
+                    "MimeType": "application/vnd.nextthought.ntivideo",
+                    "NTIID": "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_janux_assignments",
+                    "visibility": "everyone",
+                    "poster": "//www.kaltura.com/p/1500101/thumbnail/entry_id/0_wf5e6i9t/width/1280/",
+                    "label": "Janux Self Checks"
+                },
+                {
+                    "MimeType": "application/vnd.nextthought.ntivideo",
+                    "NTIID": "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_janux_reading_features",
+                    "visibility": "everyone",
+                    "poster": "//www.kaltura.com/p/1500101/thumbnail/entry_id/0_9y5vgub9/width/1280/",
+                    "label": "Janux Readings"
+                },
+                {
+                    "MimeType": "application/vnd.nextthought.ntivideo",
+                    "NTIID": "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_janux_videos",
+                    "visibility": "everyone",
+                    "poster": "//www.kaltura.com/p/1500101/thumbnail/entry_id/0_hv7kyyl9/width/1280/",
+                    "label": "Janux Video Functionality"
+                },
+                {
+                    "MimeType": "application/vnd.nextthought.ntivideo",
+                    "NTIID": "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_janux_social_feeds",
+                    "visibility": "everyone",
+                    "poster": "//www.kaltura.com/p/1500101/thumbnail/entry_id/0_aixq58xi/width/1280/",
+                    "label": "Janux Social Feeds"
+                }
+            ],
+            "accentColor": "7b8cdf",
+            "title": "Videos"
+        }
+    ],
+    "title": "How to Work with Janux",
+    "NTIID": "tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.lec:01.04_LESSON"
+}

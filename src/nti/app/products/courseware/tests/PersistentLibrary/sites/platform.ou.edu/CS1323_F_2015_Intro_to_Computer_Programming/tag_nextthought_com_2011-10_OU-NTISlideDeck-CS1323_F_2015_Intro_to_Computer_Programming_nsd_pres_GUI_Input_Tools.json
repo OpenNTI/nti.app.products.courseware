@@ -1,0 +1,178 @@
+{
+  "MimeType": "application/vnd.nextthought.ntislidedeck",
+  "Videos": [
+    {
+      "MimeType": "application/vnd.nextthought.ntislidevideo",
+      "video-ntiid": "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_03.01.04_GUI_Input_Tools",
+      "title": "Graphical User Interface Utilities",
+      "creator": "Deborah Trytten",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:GUI_Input_Tools",
+      "thumbnail": "//www.kaltura.com/p/1500101/thumbnail/entry_id/0_uywe9cj0/width/640/",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:GUI_Input_Tools_video",
+      "class": "ntislidevideo"
+    }
+  ],
+  "creator": "Deborah Trytten",
+  "title": "GUI Input Tools",
+  "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:GUI_Input_Tools",
+  "Slides": [
+    {
+      "MimeType": "application/vnd.nextthought.slide",
+      "slidevideoid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:GUI_Input_Tools_video",
+      "slidetitle": "Class Methods",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:GUI_Input_Tools",
+      "slidevideostart": "0.0",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlide-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:GUI_Input_Tools_slide_1",
+      "slideimage": "resources/CS1323_F_2015_Intro_to_Computer_Programming/38731959da6e5793f9ba91d2e4726f2278990a56/fd35e23767020999111e1f49239199b4c5eff23e.png",
+      "slidevideoend": "5.0",
+      "slidenumber": "1",
+      "class": "slide"
+    },
+    {
+      "MimeType": "application/vnd.nextthought.slide",
+      "slidevideoid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:GUI_Input_Tools_video",
+      "slidetitle": "Problem Statement",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:GUI_Input_Tools",
+      "slidevideostart": "5.0",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlide-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:GUI_Input_Tools_slide_2",
+      "slideimage": "resources/CS1323_F_2015_Intro_to_Computer_Programming/c5dd38835bc08686a1e443bf186ab8a334f13165/fd35e23767020999111e1f49239199b4c5eff23e.png",
+      "slidevideoend": "18.0",
+      "slidenumber": "2",
+      "class": "slide"
+    },
+    {
+      "MimeType": "application/vnd.nextthought.slide",
+      "slidevideoid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:GUI_Input_Tools_video",
+      "slidetitle": "Design Test Data",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:GUI_Input_Tools",
+      "slidevideostart": "18.0",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlide-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:GUI_Input_Tools_slide_3",
+      "slideimage": "resources/CS1323_F_2015_Intro_to_Computer_Programming/aced28d9d7f3b0889490a9bce5ea5dd677575419/fd35e23767020999111e1f49239199b4c5eff23e.png",
+      "slidevideoend": "39.0",
+      "slidenumber": "3",
+      "class": "slide"
+    },
+    {
+      "MimeType": "application/vnd.nextthought.slide",
+      "slidevideoid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:GUI_Input_Tools_video",
+      "slidetitle": "Design Methods",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:GUI_Input_Tools",
+      "slidevideostart": "39.0",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlide-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:GUI_Input_Tools_slide_4",
+      "slideimage": "resources/CS1323_F_2015_Intro_to_Computer_Programming/59f81a4659bc45714d27b9c246281c84d967aa3f/fd35e23767020999111e1f49239199b4c5eff23e.png",
+      "slidevideoend": "96.0",
+      "slidenumber": "4",
+      "class": "slide"
+    },
+    {
+      "MimeType": "application/vnd.nextthought.slide",
+      "slidevideoid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:GUI_Input_Tools_video",
+      "slidetitle": "JOptionPane",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:GUI_Input_Tools",
+      "slidevideostart": "96.0",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlide-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:GUI_Input_Tools_slide_5",
+      "slideimage": "resources/CS1323_F_2015_Intro_to_Computer_Programming/d41dbba2e0fd758e7185de802b9ff90e6f02deae/fd35e23767020999111e1f49239199b4c5eff23e.png",
+      "slidevideoend": "274.0",
+      "slidenumber": "5",
+      "class": "slide"
+    },
+    {
+      "MimeType": "application/vnd.nextthought.slide",
+      "slidevideoid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:GUI_Input_Tools_video",
+      "slidetitle": "String to int",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:GUI_Input_Tools",
+      "slidevideostart": "274.0",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlide-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:GUI_Input_Tools_slide_6",
+      "slideimage": "resources/CS1323_F_2015_Intro_to_Computer_Programming/4917e77e99ef8405f5385647a723c8775e390392/fd35e23767020999111e1f49239199b4c5eff23e.png",
+      "slidevideoend": "1109.0",
+      "slidenumber": "6",
+      "class": "slide"
+    },
+    {
+      "MimeType": "application/vnd.nextthought.slide",
+      "slidevideoid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:GUI_Input_Tools_video",
+      "slidetitle": "Test From Another Class",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:GUI_Input_Tools",
+      "slidevideostart": "1109.0",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlide-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:GUI_Input_Tools_slide_7",
+      "slideimage": "resources/CS1323_F_2015_Intro_to_Computer_Programming/4e8091cba52413f7483dff0e04d0f04e4a73a6d3/fd35e23767020999111e1f49239199b4c5eff23e.png",
+      "slidevideoend": "1268.0",
+      "slidenumber": "7",
+      "class": "slide"
+    },
+    {
+      "MimeType": "application/vnd.nextthought.slide",
+      "slidevideoid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:GUI_Input_Tools_video",
+      "slidetitle": "Add Javadoc",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:GUI_Input_Tools",
+      "slidevideostart": "1268.0",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlide-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:GUI_Input_Tools_slide_8",
+      "slideimage": "resources/CS1323_F_2015_Intro_to_Computer_Programming/b94b1ab6275e4c71f21ca1208503d14da6f90733/fd35e23767020999111e1f49239199b4c5eff23e.png",
+      "slidevideoend": "1287.0",
+      "slidenumber": "8",
+      "class": "slide"
+    },
+    {
+      "MimeType": "application/vnd.nextthought.slide",
+      "slidevideoid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:GUI_Input_Tools_video",
+      "slidetitle": "Javadoc Method Details",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:GUI_Input_Tools",
+      "slidevideostart": "1287.0",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlide-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:GUI_Input_Tools_slide_9",
+      "slideimage": "resources/CS1323_F_2015_Intro_to_Computer_Programming/7353693f01fd3dd7dc8efece6409e378f0ac534c/fd35e23767020999111e1f49239199b4c5eff23e.png",
+      "slidevideoend": "1635.0",
+      "slidenumber": "9",
+      "class": "slide"
+    },
+    {
+      "MimeType": "application/vnd.nextthought.slide",
+      "slidevideoid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:GUI_Input_Tools_video",
+      "slidetitle": "Javadoc Classes",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:GUI_Input_Tools",
+      "slidevideostart": "1635.0",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlide-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:GUI_Input_Tools_slide_10",
+      "slideimage": "resources/CS1323_F_2015_Intro_to_Computer_Programming/e22688d5fac009128fc94605547b7cf6e76a6b70/fd35e23767020999111e1f49239199b4c5eff23e.png",
+      "slidevideoend": "1715.0",
+      "slidenumber": "10",
+      "class": "slide"
+    },
+    {
+      "MimeType": "application/vnd.nextthought.slide",
+      "slidevideoid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:GUI_Input_Tools_video",
+      "slidetitle": "Create Javadoc",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:GUI_Input_Tools",
+      "slidevideostart": "1715.0",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlide-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:GUI_Input_Tools_slide_11",
+      "slideimage": "resources/CS1323_F_2015_Intro_to_Computer_Programming/b2bcea6e672c2e432ff3fa8a595e4abbe5451029/fd35e23767020999111e1f49239199b4c5eff23e.png",
+      "slidevideoend": "1801.0",
+      "slidenumber": "11",
+      "class": "slide"
+    },
+    {
+      "MimeType": "application/vnd.nextthought.slide",
+      "slidevideoid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:GUI_Input_Tools_video",
+      "slidetitle": "Eclipse Windows and Frames",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:GUI_Input_Tools",
+      "slidevideostart": "1801.0",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlide-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:GUI_Input_Tools_slide_12",
+      "slideimage": "resources/CS1323_F_2015_Intro_to_Computer_Programming/3766388c6d726f150c6e9dd9e1d5d311becef40e/fd35e23767020999111e1f49239199b4c5eff23e.png",
+      "slidevideoend": "1922.0",
+      "slidenumber": "12",
+      "class": "slide"
+    },
+    {
+      "MimeType": "application/vnd.nextthought.slide",
+      "slidevideoid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:GUI_Input_Tools_video",
+      "slidetitle": "Keep Programming!",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:GUI_Input_Tools",
+      "slidevideostart": "1922.0",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlide-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:GUI_Input_Tools_slide_13",
+      "slideimage": "resources/CS1323_F_2015_Intro_to_Computer_Programming/c83c61a668eb053e5b207c69673ade2084b4ada4/fd35e23767020999111e1f49239199b4c5eff23e.png",
+      "slidevideoend": "1928.0",
+      "slidenumber": "13",
+      "class": "slide"
+    }
+  ],
+  "ntiid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:GUI_Input_Tools",
+  "class": "ntislidedeck"
+}

@@ -1,0 +1,536 @@
+WEBVTT
+Kind: captions
+Language: en
+
+00:00:00.610 --> 00:00:04.850
+&gt;&gt;Dr. Deborah Trytten: Let's enhance our understanding
+of conditional structures and relational operators
+
+00:00:04.850 --> 00:00:11.499
+by looking at a vending machine example. Here's
+the problem statement. Simulate a machine
+
+00:00:11.499 --> 00:00:18.499
+that sells granola bars. Each granola bar
+costs $1.25. If the user deposits exactly
+
+00:00:18.500 --> 00:00:25.240
+$1.25, the machine should vend the bar. If
+the user deposits more than $1.25, the machine
+
+00:00:25.240 --> 00:00:30.460
+should make change, and if the user deposits
+less than $1.25, the machine should request
+
+00:00:30.460 --> 00:00:33.320
+more money.
+
+00:00:33.320 --> 00:00:38.829
+To get started we would open Eclipse, create
+a project, create a class, and create a main
+
+00:00:38.829 --> 00:00:44.140
+program. I also like to copy in the problem
+statement as a comment. Now I've done these
+
+00:00:44.140 --> 00:00:50.920
+things in advance to move along our study
+this morning. Let's choose some data. Well,
+
+00:00:50.920 --> 00:00:57.399
+certainly we want to see what happens with
+$1.25. So that's going to be final double
+
+00:00:57.399 --> 00:01:04.399
+cost of bar equals 1.25. Now for our money,
+we're going to have double money deposited.
+
+00:01:07.490 --> 00:01:14.490
+Let's add those to the main program. Here's
+the main program in Eclipse. Final double
+
+00:01:18.380 --> 00:01:25.380
+cost of bar equals 1.25. Now the reason I
+put final in front of it is that this is a
+
+00:01:27.159 --> 00:01:31.810
+constant. That is a value that's not going
+to change while the program's being run, and
+
+00:01:31.810 --> 00:01:38.810
+we'll have double money. So we've now declared
+two variables. Notice that Eclipse is putting
+
+00:01:39.860 --> 00:01:45.310
+up little yellow flags. You don't have to
+pay attention to the yellow flags in Eclipse.
+
+00:01:45.310 --> 00:01:49.040
+In this case what it's warning you about is
+the fact that we haven't used these variables
+
+00:01:49.040 --> 00:01:54.290
+in the program. In general you don't want
+to leave unused variables lying around, and
+
+00:01:54.290 --> 00:01:59.200
+sometimes when there's an unused variable,
+it means that you forgot to finish the computation
+
+00:01:59.200 --> 00:02:06.130
+so that's why Eclipse flags it. Now the next
+thing we need to do is to get our input. We've
+
+00:02:06.130 --> 00:02:13.130
+done that before, so we know how to do it.
+We'll use a scanner object. So we will import
+
+00:02:14.130 --> 00:02:21.130
+Java dot util dot scanner, and we'll construct
+the scanner in the main program. So scanner
+
+00:02:26.510 --> 00:02:33.510
+keyboard equals new scanner system dot in,
+and then we'll prompt the user, of course
+
+00:02:50.870 --> 00:02:53.330
+telling them how much a bar costs.
+
+00:02:53.330 --> 00:02:57.750
+Now you'll notice that there's a problem with
+what I've just done there. Because the cost
+
+00:02:57.750 --> 00:03:04.300
+of a bar is a constant, by putting it in in
+the text if we change the constant, our prompt
+
+00:03:04.300 --> 00:03:11.300
+won't match. So let's do that better. So we'll
+enter dollar sign in double quotes because
+
+00:03:20.810 --> 00:03:27.599
+that's a string. Then we'll concatenate on
+the cost of the bar and then for a bar. Notice
+
+00:03:27.599 --> 00:03:32.459
+now when we change our constant, our prompt
+to the user will change automatically. Now
+
+00:03:32.459 --> 00:03:36.739
+this is a great time to run the program or
+we could put in one more line. So we'll say
+
+00:03:36.739 --> 00:03:43.739
+money equals keyboard dot next double, and
+now we really do need to run the program to
+
+00:03:50.430 --> 00:03:57.430
+make sure everything's working. Enter $1.25
+for a bar, and it stopped there. So it did
+
+00:04:07.900 --> 00:04:11.940
+the right thing. Now another thing you see
+is that that prompt may not be the nicest
+
+00:04:11.940 --> 00:04:18.940
+prompt around, so let's fix it a little bit.
+Each bar costs $1.25. Please enter your money.
+
+00:04:32.960 --> 00:04:39.960
+Let's see if that looks a little bit better.
+1.25, okay so our program is running just
+
+00:04:52.189 --> 00:04:58.300
+fine now. The next thing we need to do is
+to identify our control structure. You'll
+
+00:04:58.300 --> 00:05:04.199
+notice that the problem statement contains
+the word if. That's a hint. That means that
+
+00:05:04.199 --> 00:05:08.449
+it's likely there's going to be a conditional
+statement involved. That's something to look
+
+00:05:08.449 --> 00:05:12.580
+for in problem statements to help you figure
+out which control structure is useful in your
+
+00:05:12.580 --> 00:05:19.580
+code. So let's write the code, including the
+output. Here we are in Eclipse again. We've
+
+00:05:20.029 --> 00:05:27.029
+just entered the money from the user. I added
+a comment there.
+
+00:05:43.649 --> 00:05:49.020
+So calculate whether user needs change or
+to enter more money. This is again setting
+
+00:05:49.020 --> 00:05:53.529
+up what's going to to be in the next segment
+of code. The computer doesn't execute comments.
+
+00:05:53.529 --> 00:06:00.529
+They're just for keeping the code organized.
+So if money is less than cost of bar, well,
+
+00:06:06.179 --> 00:06:13.179
+in that case they haven't put in enough money,
+so we'll do system out print line please insert
+
+00:06:19.529 --> 00:06:26.529
+and we'll have cost of bar minus money. Okay,
+now you'll see that Eclipse is unhappy at
+
+00:06:27.949 --> 00:06:34.949
+this point. The reason it's unhappy is because
+of precedents. So the plus here on the left
+
+00:06:34.969 --> 00:06:40.349
+is going to be done before the minus on the
+right. Well, when the plus is done here you're
+
+00:06:40.349 --> 00:06:47.349
+adding a string to double. Well, it turns
+out that actually turns into string concatenation.
+
+00:06:47.800 --> 00:06:52.050
+The problem is that string concatenation doesn't
+work with a minus sign, and by the way it's
+
+00:06:52.050 --> 00:06:57.179
+not what we want anyways. So what we need
+to do is to take better control of the precedents
+
+00:06:57.179 --> 00:07:02.199
+here. We wanted that minus sign to be done
+first, so the way we tell Java to do things
+
+00:07:02.199 --> 00:07:09.199
+first is by inserting some parentheses. And
+notice now Eclipse is happy.
+
+00:07:14.209 --> 00:07:21.209
+Now if money equals cost of bar, and remember
+equals is not a single equal sign. That's
+
+00:07:23.759 --> 00:07:30.759
+an assignment statement. It's two equal signs
+together. This is when we want to vend. So
+
+00:07:41.149 --> 00:07:48.149
+we'll tell them to enjoy their candy, and
+last we'll say system out print line your
+
+00:07:54.069 --> 00:08:01.069
+change is and we're going to have money minus
+cost of bar. Now you'll notice Eclipse is
+
+00:08:07.110 --> 00:08:12.059
+unhappy again, and it's actually the same
+problem we encountered earlier. So it'll have
+
+00:08:12.059 --> 00:08:19.059
+the same fix we encountered earlier, that's
+to insert some parentheses. Now you'll notice
+
+00:08:20.179 --> 00:08:26.580
+here that I didn't say else if money is greater
+than cost of bar. I actually don't have to
+
+00:08:26.580 --> 00:08:31.949
+because if money isn't less than cost of bar
+and isn't equal to the cost of bar, then it's
+
+00:08:31.949 --> 00:08:34.360
+greater than.
+
+00:08:34.360 --> 00:08:41.360
+So let's run the program and see if it works.
+So first let's try 1.25. That looks good,
+
+00:08:50.620 --> 00:08:57.620
+it says enjoy your candy. Then we'll run it
+again, this time with 1.50. Your change is
+
+00:08:58.290 --> 00:09:05.290
+25 cents. That looks good. Let's give it a
+dollar. Please insert 25 cents. Now it would
+
+00:09:08.360 --> 00:09:14.079
+be very tempting to stop the program at this
+point and think that everything's just perfect.
+
+00:09:14.079 --> 00:09:21.079
+But let's take a look at what happens with
+$1.30. Ew, that's ugly and unfortunately it's
+
+00:09:24.399 --> 00:09:29.899
+ugly in a way we don't know how to fix just
+yet. It is actually the correct answer. The
+
+00:09:29.899 --> 00:09:36.410
+.05 is right there. What's happened down here
+is that 1.30 can't evenly be represented as
+
+00:09:36.410 --> 00:09:40.600
+a binary number. Now that's not something
+I expect you to know, and this isn't a problem
+
+00:09:40.600 --> 00:09:44.459
+you could have anticipated. So we've got a
+little issue here that we're going to have
+
+00:09:44.459 --> 00:09:51.459
+to work at. So we've tested our program successfully.
+Remember all three of these tests work just
+
+00:09:51.879 --> 00:09:57.360
+beautifully, but let's take a look at what
+happens now if we change the cost of the candy
+
+00:09:57.360 --> 00:10:04.360
+to $1.30. We suspect this may be some problems.
+First off because otherwise why would I bring
+
+00:10:07.490 --> 00:10:14.490
+it up? But also because 1.30 didn't work out
+so nicely in our previous example.
+
+00:10:22.129 --> 00:10:27.819
+First off, notice that it doesn't look pretty.
+So each bar cost 1.3? Again we don't know
+
+00:10:27.819 --> 00:10:34.819
+how to fix that just yet, but we will. Okay,
+so it recognized that. Let's try 1.40. We
+
+00:10:40.110 --> 00:10:47.110
+should be getting 10 cents back notice our
+change is .0999999999 something. Well, that
+
+00:10:47.230 --> 00:10:54.230
+is 10 cents. It just needs to be rounded a
+little bit, kind of ugly for now. And let's
+
+00:10:54.279 --> 00:11:01.279
+see what happens with $1.20. Okay 10 cents,
+.0009, so notice sometimes things are a little
+
+00:11:02.680 --> 00:11:08.180
+bigger and sometimes things are a little smaller.
+Also if we continued doing this, eventually
+
+00:11:08.180 --> 00:11:13.759
+that equality comparison would fail. Unfortunately,
+that's a hard thing to plan in advance, but
+
+00:11:13.759 --> 00:11:17.949
+in general when you're doing a comparison
+of doubles because of these little rounding
+
+00:11:17.949 --> 00:11:22.870
+problems that we're seeing showing up in the
+output, you should never use equality. That
+
+00:11:22.870 --> 00:11:27.220
+means we need to reconsider the design of
+our program a little bit.
+
+00:11:27.220 --> 00:11:33.079
+What happened originally was that we accidentally
+picked test values that were easy to represent
+
+00:11:33.079 --> 00:11:38.410
+perfectly in binary. That's unfortunate because
+it led us to a solution that wasn't a good
+
+00:11:38.410 --> 00:11:44.350
+solution, and we've got these equality comparisons
+between floating point that are very dangerous
+
+00:11:44.350 --> 00:11:49.660
+because Java is only storing a fixed number
+of digits. So to fix this problem what we're
+
+00:11:49.660 --> 00:11:53.800
+going to do is put our money in pennies. Now
+this is going to require us to do a little
+
+00:11:53.800 --> 00:12:00.800
+bit of work. Instead of our cost of bar being
+a double, it should be an integer, and it
+
+00:12:02.610 --> 00:12:09.610
+should be 130. Our money now will become an
+integer too. The problem is when we're talking
+
+00:12:09.620 --> 00:12:14.649
+to the user, we still need to communicate
+in dollars because asking users to put things
+
+00:12:14.649 --> 00:12:18.560
+in pennies is just weird. They're not going
+to like it.
+
+00:12:18.560 --> 00:12:24.410
+So each bar costs and then we have the cost
+of bar and ask them to enter their money.
+
+00:12:24.410 --> 00:12:30.480
+So we've got the double here, and what we're
+going to do is multiply it by 100. Now I'm
+
+00:12:30.480 --> 00:12:35.629
+going to put 100.0 there to recognize that
+this is double multiplication that's going
+
+00:12:35.629 --> 00:12:42.629
+on. Now you might think that this would be
+the best way to proceed at this point, that
+
+00:12:48.290 --> 00:12:53.560
+is to truncate to an integer. But remember
+sometimes our numbers were a little bit under
+
+00:12:53.560 --> 00:12:57.649
+and sometimes our numbers were a little bit
+over, and so that really isn't a good way
+
+00:12:57.649 --> 00:13:04.649
+to do it. What we want to do here is really
+to round. So to do that, you add 0.5 as a
+
+00:13:07.389 --> 00:13:12.490
+double and then you truncate. So that way
+if it was a little bit under, it gets pushed
+
+00:13:12.490 --> 00:13:17.550
+over to the next integer, and when you truncate
+it works. If it was a little over, it gets
+
+00:13:17.550 --> 00:13:23.480
+pushed up but not so much that it hits the
+next integer, and that works too.
+
+00:13:23.480 --> 00:13:28.249
+Let's think through our logic again. If money
+is less than the cost of bar, that should
+
+00:13:28.249 --> 00:13:33.499
+work the same. The only difference here is
+we need to divide by 100 or we need to do
+
+00:13:33.499 --> 00:13:40.499
+something to change our pennies back into
+dollars. So let's divide by 100. So we've
+
+00:13:45.189 --> 00:13:51.920
+got two integers and when we're dividing by
+100, remember that that is integer division.
+
+00:13:51.920 --> 00:13:55.620
+So we need to really think carefully about
+that. I have a feeling that's not going to
+
+00:13:55.620 --> 00:14:01.610
+work very well. If it's equal, enjoy your
+candy is still going to be right, and here
+
+00:14:01.610 --> 00:14:06.910
+in the other case we're also going to want
+to divide by 100. Well, let's run the program
+
+00:14:06.910 --> 00:14:13.910
+and actually see what the problem is. Also,
+that code is looking a little crowded, so
+
+00:14:15.079 --> 00:14:20.439
+I'm going to move the else statement down.
+These cascading else statements are allowed
+
+00:14:20.439 --> 00:14:25.509
+to be indented this way even though it doesn't
+perfectly represent the structure of the program,
+
+00:14:25.509 --> 00:14:29.029
+because otherwise the code tends to slide
+off the right side of the screen and get hard
+
+00:14:29.029 --> 00:14:30.649
+to read.
+
+00:14:30.649 --> 00:14:34.740
+I've sort of hinted that we have a problem
+with this program. Let me run it for you so
+
+00:14:34.740 --> 00:14:41.740
+you can see what the problem is. This is a
+common problem to show up in programming.
+
+00:14:42.579 --> 00:14:49.579
+Okay, for one thing we forgot to handle the
+130 when we were printing it out in the prompt.
+
+00:14:55.249 --> 00:15:00.279
+So 130 said enjoy your candy, so that looks
+good. So we can see we've got one problem
+
+00:15:00.279 --> 00:15:07.279
+to fix. We're going to have to go cost of
+bar divided by 100. Now we've done the same
+
+00:15:08.220 --> 00:15:15.220
+division by 100 several times. Let's see if
+it's going to work. Whoops, each bar costs
+
+00:15:22.269 --> 00:15:28.540
+one dollar. Uh oh, we've got a problem. We
+don't even need to finish running this program.
+
+00:15:28.540 --> 00:15:34.389
+To stop a program that's running, you hit
+this little red terminate button. Let's think
+
+00:15:34.389 --> 00:15:40.480
+for a minute about what went wrong. The cost
+of the bar was 130, which is an integer and
+
+00:15:40.480 --> 00:15:45.559
+when we divide by 100, we get one. Remember
+that when you divide two integers you get
+
+00:15:45.559 --> 00:15:52.160
+an integer, and that it truncates. So we don't
+get 1.3, we get 1. What we really wanted to
+
+00:15:52.160 --> 00:15:59.160
+divide by was 100.0. Now like I say, we made
+that mistake in three places, so we have to
+
+00:16:01.829 --> 00:16:08.829
+remember to fix it in three places. So let's
+see what that looks like now. Each bar costs
+
+00:16:14.819 --> 00:16:19.790
+$1.3. So that's not pretty, but we don't know
+how to fix that one yet. Please enter our
+
+00:16:19.790 --> 00:16:26.790
+money. It says enjoy your candy, so that looks
+good. Let's run it again. Here's 140 being
+
+00:16:29.759 --> 00:16:36.759
+put in. Your change is 10 cents, that's correct.
+And how about 120? Please insert 10 cents.
+
+00:16:40.100 --> 00:16:46.499
+So it looks like our program is working right
+now. So putting our money in pennies was the
+
+00:16:46.499 --> 00:16:50.309
+key to making this program work correctly.
+Happy programming!
+

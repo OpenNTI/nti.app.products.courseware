@@ -1,0 +1,1117 @@
+WEBVTT
+Kind: captions
+Language: en
+
+00:00:01.000 --> 00:00:06.670
+&gt;&gt;Let's continue our study of arrays of objects
+by predicting the weather. Here's our problem
+
+00:00:06.670 --> 00:00:11.480
+statement: write a program that uses last
+year's temperature data to predict tomorrow's
+
+00:00:11.480 --> 00:00:18.220
+temperature. So let's talk a little bit about
+the difference between heuristics and algorithms.
+
+00:00:18.220 --> 00:00:23.980
+Heuristics are rules of thumb. They can be
+useful, but they don't always work, so you
+
+00:00:23.980 --> 00:00:28.800
+want to make sure that you know whether you're
+using a heuristic or not. Now algorithms are
+
+00:00:28.800 --> 00:00:33.630
+different. Algorithms are a very specific
+computer science word. What they mean are
+
+00:00:33.630 --> 00:00:38.829
+sequences of instructions that solve problems.
+So if it doesn't work, if it doesn't solve
+
+00:00:38.829 --> 00:00:43.129
+the problem, it's not an algorithm. Now weather
+prediction is not a problem we're going to
+
+00:00:43.129 --> 00:00:47.200
+be solving in this class, so you can guess
+that we're working with a heuristic here,
+
+00:00:47.200 --> 00:00:49.700
+and in fact we are.
+
+00:00:49.700 --> 00:00:53.899
+So here's my weather prediction heuristic:
+to predict tomorrow's temperature, find the
+
+00:00:53.899 --> 00:00:59.010
+average mean temperature for the week centered
+on the same day last year. Now if you don't
+
+00:00:59.010 --> 00:01:04.530
+like my heuristic, you can develop your own.
+So the first thing we need to do is to get
+
+00:01:04.530 --> 00:01:10.250
+weather data. Now there is lots of weather
+data available on the Internet. I got mine
+
+00:01:10.250 --> 00:01:16.619
+from wunderground.com--not claiming that that's
+the best source necessarily. So I gave them
+
+00:01:16.619 --> 00:01:22.630
+a location, then I scrolled down to find weather
+history and almanac, I created a custom report
+
+00:01:22.630 --> 00:01:29.630
+for Norman, Oklahoma, because that's where
+I am on January 1, 2013 to December 31, 2013.
+
+00:01:30.310 --> 00:01:37.310
+And I saved it as a CSV file. Let me show
+you the process. First we go to wunderground.com
+
+00:01:44.439 --> 00:01:51.439
+and give them our location: Norman, Oklahoma.
+Now we scroll down 
+to find the weather history and almanac. So
+
+00:02:02.860 --> 00:02:09.860
+then we look at our weather history for Norman,
+Oklahoma, and we ask for a custom report.
+
+00:02:13.970 --> 00:02:20.970
+So we'll go from January 1, 2013, to December
+31, 2013. Now this is going to create a giant
+
+00:02:40.730 --> 00:02:47.170
+table, and so we scroll down to the bottom
+and see that it will allow us to save it as
+
+00:02:47.170 --> 00:02:54.170
+a comma delimited file. That's another name
+for a comma separated values file. Now it
+
+00:02:55.730 --> 00:03:02.730
+doesn't actually save a file here. What it
+does is brings it up as a webpage, so we select
+
+00:03:05.190 --> 00:03:12.190
+all, and then copy it, and then we paste it
+into Eclipse as a file. Now it might be useful
+
+00:03:13.550 --> 00:03:19.730
+to also paste it into Excel and to create
+a comma separated values file there. Excel
+
+00:03:19.730 --> 00:03:25.580
+actually can read those files, and it makes
+the computation a little bit easier.
+
+00:03:25.580 --> 00:03:30.110
+So let's talk about comma separated values
+files. They're a simple and general way to
+
+00:03:30.110 --> 00:03:35.250
+store data as text. As I said, Microsoft Excel
+can read them, which is a nice thing to be
+
+00:03:35.250 --> 00:03:40.959
+able to do. Now there is a format requirement.
+It has to be a uniform rectangular structure.
+
+00:03:40.959 --> 00:03:45.879
+So you have lines of data that are made up
+of fields, and the values in the fields are
+
+00:03:45.879 --> 00:03:51.390
+separated by commas. Now this means that the
+field values can't contain commas, so that's
+
+00:03:51.390 --> 00:03:56.049
+a problem if you want to store text because
+commas are legal text. The other thing is
+
+00:03:56.049 --> 00:04:00.280
+you've got to know the meaning of the data
+to be useful. Now our website gave us the
+
+00:04:00.280 --> 00:04:04.480
+meaning of the data, and we'll look at it
+more closely in a few minutes so we'll know
+
+00:04:04.480 --> 00:04:11.159
+how to use the data. How are we going to read
+this CSV file? Well, the string class has
+
+00:04:11.159 --> 00:04:15.310
+a really cool method that we haven't used.
+Now the reason we haven't used it is it uses
+
+00:04:15.310 --> 00:04:20.329
+an array of objects, and we didn't have that
+knowledge until just now. So the method is
+
+00:04:20.329 --> 00:04:25.300
+called split and it uses something called
+a regular expression. Now those are beyond
+
+00:04:25.300 --> 00:04:29.610
+the scope of this class, but it turns out
+that's the same thing that makes the scanner
+
+00:04:29.610 --> 00:04:35.690
+class work. They're really, really cool, but
+we're not going to study them. To separate
+
+00:04:35.690 --> 00:04:40.860
+a string by commas, the regular expression
+you need to use is just a string containing
+
+00:04:40.860 --> 00:04:45.410
+a comma. Now I know that isn't very satisfying,
+but that's what we're going to go with for
+
+00:04:45.410 --> 00:04:50.880
+now.
+Now the next problem we have is a very challenging
+
+00:04:50.880 --> 00:04:56.800
+problem involving testing, and that's that
+our program is going to find the day automatically.
+
+00:04:56.800 --> 00:05:00.960
+So if we use our previous strategy, we're
+going to have to wait and run it over a period
+
+00:05:00.960 --> 00:05:07.960
+of weeks or months or, in fact, almost a year.
+Right now it's January 6, and so in order
+
+00:05:08.130 --> 00:05:13.449
+to test these end of year conditions, we would
+have to wait a year. Obviously we can't wait
+
+00:05:13.449 --> 00:05:18.690
+a year to test a program, so we've got to
+think of something else. Now in our previous
+
+00:05:18.690 --> 00:05:23.800
+programs we always tested without making any
+changes to the program, and that is the gold
+
+00:05:23.800 --> 00:05:30.020
+standard, but we just can't do that in this
+case. Anytime we make changes we're not testing
+
+00:05:30.020 --> 00:05:35.870
+the final program and that is very dangerous.
+So what we want to do is to make the absolute
+
+00:05:35.870 --> 00:05:42.570
+minimum number of changes possible. Here's
+how we pull it off. We create a constant that
+
+00:05:42.570 --> 00:05:47.970
+says whether the program's being tested or
+not. So this would be a final, Boolean, and
+
+00:05:47.970 --> 00:05:53.580
+we'd set testing for example now for true
+because we're going to test the program first.
+
+00:05:53.580 --> 00:05:57.000
+Then we create a method that reads in the
+day from the keyboard if the program's being
+
+00:05:57.000 --> 00:06:04.000
+tested. So we'll call that something like
+public static int get day number, and when
+
+00:06:05.360 --> 00:06:09.639
+we're finished testing, we set testing to
+false and then we check to make sure it's
+
+00:06:09.639 --> 00:06:14.910
+working for today. So there's the strategy.
+It's not perfect, but it is how professionals
+
+00:06:14.910 --> 00:06:16.639
+solve this problem.
+
+00:06:16.639 --> 00:06:20.930
+The next thing you need to do is create our
+test data. Now we're going to need to test
+
+00:06:20.930 --> 00:06:25.240
+the program today, and we're going to have
+to worry about these boundary conditions.
+
+00:06:25.240 --> 00:06:29.919
+What are we going to do on January first?
+Well, on January 1 we're only going to have
+
+00:06:29.919 --> 00:06:36.740
+four days of data: January 1, 2, 3, and 4.
+And that should work just fine. The same thing
+
+00:06:36.740 --> 00:06:43.229
+happens with December 28 to 31. So these are
+definitely places we want to test the data.
+
+00:06:43.229 --> 00:06:47.680
+Now we can use Excel to read the data and
+perform the calculations and then document
+
+00:06:47.680 --> 00:06:52.080
+the test data in the file. I've actually done
+that process for you, and we'll review it
+
+00:06:52.080 --> 00:06:57.460
+when we get to Eclipse. One thing we might
+want to think about is what are we going to
+
+00:06:57.460 --> 00:07:03.419
+do about leap year? Well, this could be something
+that you make a big fuss about, but the truth
+
+00:07:03.419 --> 00:07:07.539
+is having one extra day in the year really
+isn't going to change things very much. You'll
+
+00:07:07.539 --> 00:07:11.389
+see that the temperature data tends to be
+very, very consistent from one day to the
+
+00:07:11.389 --> 00:07:16.300
+next, so I'm actually going to just ignore
+leap year. Now there aren't many times that
+
+00:07:16.300 --> 00:07:21.669
+computer scientists ignore these boundary
+cases, but guess what? This is one of them.
+
+00:07:21.669 --> 00:07:25.949
+We're going to need to read the file. The
+parameter for that will have to be the constructed
+
+00:07:25.949 --> 00:07:31.919
+array, and then we're going to have to read
+the file name. We'll get a constant for that.
+
+00:07:31.919 --> 00:07:36.039
+And of course the return type will be void
+because the parameter of the array will be
+
+00:07:36.039 --> 00:07:40.990
+returning the data. We're also going to need
+a method to calculate the temperature. So
+
+00:07:40.990 --> 00:07:45.300
+the array with the data will have to be a
+parameter, and of course we'll need to know
+
+00:07:45.300 --> 00:07:50.629
+what index it is, and it's going to return
+a double with the average temperature.
+
+00:07:50.629 --> 00:07:57.560
+So let's go and take a look at Eclipse. The
+first thing I want to show you is the CSV
+
+00:07:57.560 --> 00:08:04.560
+data. Notice that here we have a date and
+then we have the maximum temperature in Fahrenheit
+
+00:08:05.449 --> 00:08:09.879
+and the mean temperature in Fahrenheit. This
+mean temperature in Fahrenheit is the one
+
+00:08:09.879 --> 00:08:16.110
+that we want, so we can see this will be zero,
+one, two. The second element of that string
+
+00:08:16.110 --> 00:08:21.669
+array that split gives us. Now here's the
+test data that I created. Now to do this I
+
+00:08:21.669 --> 00:08:27.069
+took the data in weather dot CSV and I entered
+into Excel and used formulas. This isn't a
+
+00:08:27.069 --> 00:08:32.180
+class on using Excel, so if you're not familiar
+with Excel, you can do this by hand. But here
+
+00:08:32.180 --> 00:08:37.909
+are the values that we had. So now we have
+some good test data to run our program with.
+
+00:08:37.909 --> 00:08:42.110
+So let's go and write a little bit of our
+program. You'll notice that I imported some
+
+00:08:42.110 --> 00:08:49.110
+classes, including some we haven't talked
+about just yet. Here's our main program. Here's
+
+00:08:49.360 --> 00:08:53.630
+a method that lets us get the day number.
+So this is the one that we're going to use
+
+00:08:53.630 --> 00:08:59.790
+just in testing. Now let's create our constant
+for testing. Right at the start you'll notice
+
+00:08:59.790 --> 00:09:05.260
+I have a couple of other constants here. I
+have the file name called weather dot CSV,
+
+00:09:05.260 --> 00:09:11.149
+and I have days in year, which I've sent to
+365. Now I'm ignoring leap years here, and
+
+00:09:11.149 --> 00:09:14.560
+we might want to think about whether that's
+going to cause us problems later. So we'll
+
+00:09:14.560 --> 00:09:21.560
+have public static final Boolean testing equals
+true. And notice that I've given some indication
+
+00:09:37.850 --> 00:09:42.570
+of what we're using that for.
+
+00:09:42.570 --> 00:09:49.570
+In our main program we're going to say if
+testing. Now a lot of beginning programmers
+
+00:09:53.410 --> 00:09:58.269
+like to write things like this as testing
+equals equals true, but that really isn't
+
+00:09:58.269 --> 00:10:02.529
+necessary because if you think about it, if
+the variable testing is true, and apparently
+
+00:10:02.529 --> 00:10:09.529
+I've--ah, there it goes. So eclipse is happy
+now. If testing is true then testing equals
+
+00:10:11.839 --> 00:10:17.680
+equals true is true, and if testing is false
+testing equals equals true is false. So in
+
+00:10:17.680 --> 00:10:23.600
+other words testing equals equals true is
+exactly the same as just testing, so I prefer
+
+00:10:23.600 --> 00:10:28.010
+to write it this way. To tell you the truth,
+writing things like testing equals equals
+
+00:10:28.010 --> 00:10:32.320
+true make you look like a beginning programmer.
+Now there's nothing wrong with that, but if
+
+00:10:32.320 --> 00:10:37.300
+you're trying to look like a professional,
+this is one of the ways to upgrade your code.
+
+00:10:37.300 --> 00:10:44.300
+So we'll call get days number, and we're going
+to need 
+a variable day number to store it in. If testing
+
+00:10:58.140 --> 00:11:03.649
+is false, then we've got a little bit more
+complicated question because we've got to
+
+00:11:03.649 --> 00:11:07.490
+figure out how to tell what day of the year
+it is, and this is something we haven't done
+
+00:11:07.490 --> 00:11:14.490
+before. So let's talk about how to get a day
+number. There's a class in Java called Gregorian
+
+00:11:14.930 --> 00:11:21.459
+calendar. The default constructor uses the
+current time, the current time zone, and the
+
+00:11:21.459 --> 00:11:26.180
+locale. Now the locale includes things like
+language, and the data for these are picked
+
+00:11:26.180 --> 00:11:31.170
+up automatically from the computer settings.
+So if you've never bothered to set your computer's
+
+00:11:31.170 --> 00:11:36.450
+time, you're going to get some funky data
+from this class. The get method in this class
+
+00:11:36.450 --> 00:11:41.180
+takes the name of the data you want and returns
+the day. So in this case we're going to want
+
+00:11:41.180 --> 00:11:47.500
+to get Gregorian calendar dot day of year.
+Now I would take you to the API to show you
+
+00:11:47.500 --> 00:11:53.100
+this, but the API is not particularly helpful
+in this case. The reason it isn't is because
+
+00:11:53.100 --> 00:11:57.839
+it uses a programming concept that we haven't
+encountered yet heavily, and so that's going
+
+00:11:57.839 --> 00:12:04.480
+to make it hard to read. So I guess you're
+going to have to take my word for it.
+
+00:12:04.480 --> 00:12:11.480
+So we'll do Gregorian calendar 
+today equals new Gregorian calendar. So this
+is the default time, locale, and time zone.
+
+00:12:32.040 --> 00:12:39.040
+Then we'll do day number equals today dot
+get Gregorian calendar dot day of year. Now
+
+00:12:50.320 --> 00:12:55.610
+there's one slightly funky thing about this,
+and that is as it happens, day of the year
+
+00:12:55.610 --> 00:13:01.110
+is unit indexed. These are the crazy things
+that Java does that don't really make any
+
+00:13:01.110 --> 00:13:08.110
+sense. Now the only way you know things like
+this is to read the documentation carefully,
+
+00:13:09.290 --> 00:13:13.959
+and like I say, the documentation wasn't very
+helpful for beginners in this case. So what
+
+00:13:13.959 --> 00:13:20.959
+we're going to do is do day number equals
+day number minus one, and now we're zero indexed.
+
+00:13:26.720 --> 00:13:31.470
+Now we really might want to think about what
+we're doing here too. So for example, do we
+
+00:13:31.470 --> 00:13:38.470
+want December 31 to be Day 365? If so, we'd
+better say it and then adjust this.
+
+00:13:46.230 --> 00:13:53.230
+Okay, now let's go down and make sure we've
+communicated that correctly. And let's actually
+
+00:14:05.230 --> 00:14:12.230
+put an example in 
+so we make sure we're communicating clearly
+with our user. Okay, so now we've got our
+
+00:14:24.510 --> 00:14:31.510
+day number. The next thing we need to do is
+to read our data from a file. So we've got
+
+00:14:32.209 --> 00:14:37.639
+our mean temperature array. Now the reason
+I made it an int--you may not have noticed
+
+00:14:37.639 --> 00:14:42.290
+this when we were looking at the data--is
+that ints are what were stored here, and so
+
+00:14:42.290 --> 00:14:49.290
+that's why we have an integer array. So we
+have to open the file. We've done this several
+
+00:14:55.899 --> 00:15:02.899
+times, so we create a scanner with a new file
+and remember I had that constant filename.
+
+00:15:21.459 --> 00:15:28.459
+So we're going to--let's call it index--create
+an index. It'll start at zero, and while index
+
+00:15:35.720 --> 00:15:42.720
+is less than days in year, you do mean temperature
+of index equals file dot next—oh, wait a
+
+00:15:58.230 --> 00:16:05.230
+minute. We can't use next int here. We've
+got to get the string that's the whole file,
+
+00:16:08.779 --> 00:16:15.779
+so we're going to call it string line equals
+file dot next line. Then remember we split
+
+00:16:20.519 --> 00:16:27.519
+the string apart into a string array, so I'll
+call that fields equals line dot split, and
+
+00:16:32.790 --> 00:16:39.480
+remember this is where we use our little comma
+separated value thing. So that's a regular
+
+00:16:39.480 --> 00:16:45.509
+expression we just used even though we don't
+really know what that means. So once we've
+
+00:16:45.509 --> 00:16:52.509
+split this, then we know that our mean temperature
+is going to be fields of two. Remember of
+
+00:16:52.800 --> 00:16:58.910
+two because it was the third element on the
+line. Now the problem is that that is a string
+
+00:16:58.910 --> 00:17:04.030
+because it came from a string array, and so
+we have to change that into an integer. We
+
+00:17:04.030 --> 00:17:11.030
+know how to do that. Integer dot parse int
+fields of two. And of course we need to increment
+
+00:17:18.980 --> 00:17:25.980
+our index. Okay, so we should now have our
+file ready to read in data.
+
+00:17:32.179 --> 00:17:36.559
+We haven't run our program yet and it's about
+time that we do that, so let's run and see
+
+00:17:36.559 --> 00:17:43.559
+what happens. Enter the day number, and we
+can see that we've got some ugly input so
+
+00:17:50.049 --> 00:17:57.049
+we need to fix that. So let's just try day
+number one, doesn't really matter what day.
+
+00:17:57.470 --> 00:18:02.160
+We need to think about the fact that we probably
+never called our get temperature from file
+
+00:18:02.160 --> 00:18:09.160
+program. We didn't test that part, so let's
+go and put that in the main program. Now this
+
+00:18:14.270 --> 00:18:21.270
+returns an integer array, which I'm going
+to call mean temperature. Oops, and that is
+
+00:18:34.570 --> 00:18:41.570
+not how that worked. Remember get temperature
+from file 
+took a parameter of the mean temperature,
+
+00:18:50.100 --> 00:18:54.970
+but we've got a problem because we haven't
+constructed the array. We didn't construct
+
+00:18:54.970 --> 00:19:00.870
+it in the main method, and we haven't constructed
+it in the other method. And that's clearly
+
+00:19:00.870 --> 00:19:06.000
+a mistake as we always had to construct arrays.
+Now if you're wondering where splits array
+
+00:19:06.000 --> 00:19:11.090
+got constructed, it got constructed in the
+split method itself, and we could've done
+
+00:19:11.090 --> 00:19:15.630
+that here, but we haven't really learned that
+kind of programming just yet. So we're going
+
+00:19:15.630 --> 00:19:22.630
+to do 
+
+00:19:30.030 --> 00:19:35.419
+our array construction right here. So here
+we reconstruct the mean temperature array,
+
+00:19:35.419 --> 00:19:41.760
+and then we read it in. Okay, so now that
+we're calling our method, we might see what's
+
+00:19:41.760 --> 00:19:48.760
+going on. You've probably guessed that I'm
+heading for a problem here. So the day number
+
+00:19:54.350 --> 00:19:59.640
+will be one, and we crash and burn.
+
+00:19:59.640 --> 00:20:05.159
+Let's remember how to read these kind of errors.
+So we see a number format exception. So it
+
+00:20:05.159 --> 00:20:11.140
+took mean temperature f, and it's trying to
+change it into an integer. Notice we have
+
+00:20:11.140 --> 00:20:15.870
+integer dot parse int down here, and we can
+see that this is in the get temperature from
+
+00:20:15.870 --> 00:20:22.870
+file method on line 75. So it's told us very
+explicitly where our problem was. Notice that
+
+00:20:23.260 --> 00:20:28.659
+I do not explore anything that's in the Java
+API. Those classes are working correctly.
+
+00:20:28.659 --> 00:20:33.809
+We don't have to worry about them. I go to
+the topmost one that has the error message
+
+00:20:33.809 --> 00:20:40.010
+in it. So let's think about what happened.
+Well, if you'll recall, our file had headers
+
+00:20:40.010 --> 00:20:45.030
+in it, and since it has headers, that means
+that when we read the first line we don't
+
+00:20:45.030 --> 00:20:52.030
+get numeric data. So what we need to do is
+to read in the header. So here we go. So this
+
+00:20:55.159 --> 00:21:02.159
+will be file dot next line. Notice that I
+didn't save it anywhere. Now I'm putting that
+
+00:21:08.030 --> 00:21:12.320
+in as a comment that I skipped over the header,
+so when something looks at this they recognize
+
+00:21:12.320 --> 00:21:18.740
+that that was a strategic choice and not just
+an oversight or an off by one bug.
+
+00:21:18.740 --> 00:21:25.740
+Okay, let's try our program again. Whoops,
+and I forgot to fix our input. Well, we'll
+
+00:21:32.900 --> 00:21:39.900
+do that in a minute. Okay, so now we have
+things being read in correctly. Incidentally,
+
+00:21:40.010 --> 00:21:45.000
+this input isn't quite so important because
+of the fact that it's just for testing. So
+
+00:21:45.000 --> 00:21:49.390
+that means our customers are never going to
+see this. Now the next thing we need to do
+
+00:21:49.390 --> 00:21:55.020
+is to get average in the same week. Instead
+of returning zero, what we're going to do
+
+00:21:55.020 --> 00:22:02.020
+here is we're going to do int index equals
+day index minus three because remember we're
+
+00:22:06.720 --> 00:22:13.720
+going back three days to start. And now we're
+going to loop just seven times because we
+
+00:22:17.760 --> 00:22:24.760
+want to get a week's worth of data. So we'll
+say while count is less than seven, and let's
+
+00:22:29.190 --> 00:22:36.190
+document what that seven is. Well, we're going
+to need to store a sum, so we'll say sum equals
+
+00:22:48.280 --> 00:22:55.280
+sum plus mean temperature of index. And then
+of course we'll increase our index, and increase
+
+00:23:12.000 --> 00:23:19.000
+our count. And of course do a little bit of
+clean up on our code to keep everything looking
+
+00:23:22.450 --> 00:23:23.900
+pretty.
+
+00:23:23.900 --> 00:23:29.610
+We need to think a little bit about this.
+Of course, we're going to have to return the
+
+00:23:29.610 --> 00:23:36.610
+sum divided by seven. Now I know you're getting
+too wily as a programmer to make that mistake,
+
+00:23:38.289 --> 00:23:44.820
+so remember sum is an int, and if we divide
+by another int we get an integer which truncates.
+
+00:23:44.820 --> 00:23:50.490
+So what we really want to divide by 7.0 because
+this method is supposed to return a double,
+
+00:23:50.490 --> 00:23:57.230
+not an int. Okay, so what could possibly be
+wrong with this method? Well, we can run it
+
+00:23:57.230 --> 00:24:04.230
+and see, but first we need to call it in the
+main program. I predict tomorrow's temperature
+
+00:24:18.690 --> 00:24:25.690
+will be plus so get average same week of mean
+temperature and day number.
+
+00:24:51.799 --> 00:24:58.799
+Okay, let's run the program. Enter the day
+number, so we'll get one, and immediately
+
+00:25:12.179 --> 00:25:17.460
+we get an array index out of bonds exception.
+Well, we probably should've anticipated that
+
+00:25:17.460 --> 00:25:21.210
+because we really thought about it when we
+were writing the test data. So we need to
+
+00:25:21.210 --> 00:25:27.580
+go back and rework that method a little bit
+so that it handles days correctly. So the
+
+00:25:27.580 --> 00:25:34.580
+question is: what happens here if the index
+is out of bounds? So let's put an if statement
+
+00:25:34.890 --> 00:25:41.890
+in there. If index is less than zero or index
+is greater than days in year minus one, now
+
+00:25:53.539 --> 00:25:57.400
+we might want to think about whether we want
+to use parentheses there or not. Certainly
+
+00:25:57.400 --> 00:26:01.730
+parentheses are not going to do any harm.
+I'm not sure they do any good here because
+
+00:26:01.730 --> 00:26:06.220
+the precedence is actually correct. But let's
+put them in any ways to make the code a little
+
+00:26:06.220 --> 00:26:13.220
+bit easier to read. So what do we do if our
+index is out of bounds? Well, what we don't
+
+00:26:18.210 --> 00:26:23.650
+do is just try to add things on. We might
+think about whether this is the way we want
+
+00:26:23.650 --> 00:26:29.260
+to write the logic, so this is the logic for
+out of bounds. When we're out of bounds, all
+
+00:26:29.260 --> 00:26:34.720
+we do is going to be incrementing the index
+by one. We might think whether it's better
+
+00:26:34.720 --> 00:26:39.080
+to write the logic for inbounds. Now we know
+how to do that because we know DeMorgan's
+
+00:26:39.080 --> 00:26:46.080
+rules. So if index is greater than or equal
+to zero, and index is less than days in year,
+
+00:26:51.100 --> 00:26:58.100
+then we have a sum we can use. And of course
+we'll need to indent this now, and we'll have
+
+00:26:59.289 --> 00:27:02.159
+a count.
+
+00:27:02.159 --> 00:27:08.860
+Now we want to increment the index no matter
+what happens to avoid infinite loops, so let's
+
+00:27:08.860 --> 00:27:15.860
+cut that line from there and our if statement
+and increment our index outside of the if
+
+00:27:20.190 --> 00:27:27.190
+statement. Now we also need to fix this because
+now we're only going to count when we actually
+
+00:27:27.630 --> 00:27:33.779
+have recorded a correct value, but we've still
+got that problem with integer division because
+
+00:27:33.779 --> 00:27:40.779
+count is an int and sum is an int, so here's
+another quick fix for that. We'll cast count
+
+00:27:40.899 --> 00:27:46.029
+to double. Now you have to be careful with
+casting to make sure you do in the right place
+
+00:27:46.029 --> 00:27:50.320
+because you want to make sure that the cast
+gets done before the division. By putting
+
+00:27:50.320 --> 00:27:55.980
+it next to count, there's just no other way
+that could possibly happen. So there we go.
+
+00:27:55.980 --> 00:28:02.980
+Now let's see if our program is working a
+little better. So for the day of the year
+
+00:28:07.289 --> 00:28:14.289
+with one, well, 34.714. So let's go to our
+test data, and see if that's correct. Uh oh,
+
+00:28:16.260 --> 00:28:23.260
+for January 1 we were supposed to have 32.667.
+Hmm, got to think that one through. So the
+
+00:28:25.770 --> 00:28:30.740
+first thing we might want to think about is
+day index minus three. Was that the correct
+
+00:28:30.740 --> 00:28:36.600
+number? So if we started, for example, at
+day index of zero, this would go to negative
+
+00:28:36.600 --> 00:28:43.600
+three, negative two, negative one. That seems
+right. We also might want to look and see
+
+00:28:44.429 --> 00:28:51.429
+if we took the correct index, and it looks
+like we did take the correct index. And we've
+
+00:28:51.549 --> 00:28:58.140
+incremented count correctly and incremented
+the index correctly, so that's sort of strange.
+
+00:28:58.140 --> 00:29:05.140
+We may need to use some of our better debugging
+techniques to work on this problem. Let's
+
+00:29:07.289 --> 00:29:12.799
+think through our indices first because remember
+reading code is always a good place to start.
+
+00:29:12.799 --> 00:29:19.799
+So if we had get days number returning one,
+this day number should have been zero, and
+
+00:29:21.580 --> 00:29:28.580
+so that looks correct too. We skipped over
+the header. That was correct. You know one
+
+00:29:33.570 --> 00:29:40.460
+thing we might look at was whether the value
+is the same as another value. For example,
+
+00:29:40.460 --> 00:29:47.460
+34.714 is the January 4th total. Hmm, now
+that suggests that maybe we've made another
+
+00:29:50.240 --> 00:29:57.240
+mistake. The question of course is whether
+the mistake was in our interpretation of the
+
+00:29:57.860 --> 00:30:03.840
+data. For example, did we create the correct
+data or not? So let's go and check the data
+
+00:30:03.840 --> 00:30:10.840
+first. Our temperatures--remember I'm reading
+the third field here--were 30, 35, 33 and
+
+00:30:12.409 --> 00:30:19.409
+32. Those are the four that should've been
+averaged. So we've got 30 times 4, that's
+
+00:30:21.390 --> 00:30:28.390
+120, 125, 128, 130, and then we're dividing
+by 4. So when we divide 130 by 4, we get to
+
+00:30:32.760 --> 00:30:39.760
+the point where we need a calculator. 130
+divide by four is 32.5. Let's check our test
+
+00:30:54.679 --> 00:31:01.679
+data. It says 32.667. Hmm, so let's think
+again. 30, 35, so you add those two together,
+
+00:31:03.720 --> 00:31:10.720
+you get 65, 98, 130. So we see we've found
+an error in the test data. That happens sometimes.
+
+00:31:18.240 --> 00:31:23.230
+Probably my finger just slipped when I was
+creating a formula in Excel, but that still
+
+00:31:23.230 --> 00:31:28.419
+doesn't make our program right. So let's go
+back and look at the computation again. Let's
+
+00:31:28.419 --> 00:31:33.340
+look at this get average same week method.
+Now the count starts at zero, and while the
+
+00:31:33.340 --> 00:31:39.679
+count is less than seven, then we add to the
+sum. Well, if you think about it, since count
+
+00:31:39.679 --> 00:31:45.360
+only gets incremented then, what that means
+is we've got the wrong test on the loop because
+
+00:31:45.360 --> 00:31:50.549
+we've averaged seven days whether there were
+seven days are not. Now how I figured this
+
+00:31:50.549 --> 00:31:57.549
+out was because of the coincidence of having
+34.714 being the data. Because we could see
+
+00:31:57.890 --> 00:32:02.019
+that that data was there, we could see that
+what the problem was that we had shifted the
+
+00:32:02.019 --> 00:32:08.059
+data off a little bit. So now we have to figure
+out how to fix this. So we might want to think
+
+00:32:08.059 --> 00:32:13.669
+about whether we want to count here based
+on count or whether we want to count based
+
+00:32:13.669 --> 00:32:20.669
+on index. So we have to do something different
+here. So let's say while index is less than
+
+00:32:27.539 --> 00:32:34.539
+day index plus three. Now let's think this
+through carefully this time because we don't
+
+00:32:34.549 --> 00:32:39.039
+want to be off by one here. When it's equal
+to day index plus three, do we want to go
+
+00:32:39.039 --> 00:32:45.190
+through the loop or not? Well, that's three
+days after, and yes we want to go to the loop.
+
+00:32:45.190 --> 00:32:50.580
+So that should be less than or equal to, not
+just less than. So let's run our program again
+
+00:32:50.580 --> 00:32:57.580
+now that we've found not one but two mistakes
+and see how things look. So here's the day
+
+00:33:01.190 --> 00:33:08.190
+number, 32.5. 32.5, that's looking good.
+
+00:33:11.669 --> 00:33:18.669
+So let's run our other values now and see
+if they work. So this will be day two, and
+
+00:33:20.149 --> 00:33:27.149
+we get 34.0 and we run again. Day three will
+be 34.5, that's looking good. So apparently
+
+00:33:33.190 --> 00:33:40.190
+whatever I did wrong in that test data formula
+I only did wrong once, 34.714, looking good.
+
+00:33:43.760 --> 00:33:50.760
+Now we want to test for today. Now this is
+the sixth day. 37.857, that looks good. Now
+
+00:33:58.419 --> 00:34:03.320
+for this December dates we need to think about
+what days they are, so let's actually add
+
+00:34:03.320 --> 00:34:10.320
+to our test data. This is day 365, so this
+must be day 364, day 363, day 362. Okay, so
+
+00:34:25.570 --> 00:34:32.570
+now we have the day numbers. So 362 will be
+36.5. That looks good. 363, 37. 364, 36.75.
+
+00:35:00.990 --> 00:35:07.990
+Apparently I did some rounding in the data,
+and 365 will be 34.333. Now that one looks
+
+00:35:11.400 --> 00:35:18.400
+a little suspicious too, so let's go and check
+our data one more time. So that's just the
+
+00:35:23.190 --> 00:35:30.190
+last four days of the year, which would be
+46 plus 31 plus 26 plus 37...46 plus 31 plus
+
+00:35:39.780 --> 00:35:46.780
+26 plus 37, and then we divide by 4 and we
+get 35. So that's kind of strange. Well, let's
+
+00:36:00.579 --> 00:36:06.410
+think about what's going on in this loop.
+Do we have another off by one bug? For example,
+
+00:36:06.410 --> 00:36:11.869
+do we really want index less than less than
+days in year minus one or index less than
+
+00:36:11.869 --> 00:36:18.869
+days in year? Well, if you think about it,
+when index is less than days in year, it's
+
+00:36:19.170 --> 00:36:24.210
+less than or equal to days in year minus one,
+which is the last element of our array. So
+
+00:36:24.210 --> 00:36:28.460
+we've made a lot of mistakes in this calculation.
+Let's run it again and see if things are looking
+
+00:36:28.460 --> 00:36:35.460
+better. So let's start at day 362. 36.57,
+so notice those little errors that we were
+
+00:36:49.990 --> 00:36:56.300
+ignoring were actually bugs in the program
+that we almost missed. Now since programs
+
+00:36:56.300 --> 00:37:02.130
+like this are just for fun and games, it's
+not so bad, but they still should be right.
+
+00:37:02.130 --> 00:37:09.130
+Remember that's a matter of professionalism,
+and notice things are now working absolutely
+
+00:37:09.250 --> 00:37:16.250
+perfectly. So you've now used a computer to
+predict weather, so keep programming!
+

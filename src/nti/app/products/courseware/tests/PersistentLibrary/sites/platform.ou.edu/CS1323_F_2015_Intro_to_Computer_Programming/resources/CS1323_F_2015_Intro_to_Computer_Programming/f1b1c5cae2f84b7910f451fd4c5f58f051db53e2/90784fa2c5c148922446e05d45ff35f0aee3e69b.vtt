@@ -1,0 +1,324 @@
+WEBVTT
+Kind: captions
+Language: en
+
+00:00:01.530 --> 00:00:04.970
+&gt;&gt;If you've reached this point in the class
+doing the readings and successfully doing
+
+00:00:04.970 --> 00:00:10.849
+the exercises, congratulations. You may now
+call yourself a computer programmer. Welcome
+
+00:00:10.849 --> 00:00:17.080
+to a very elite club. Up to this point we've
+worked on relatively small programs. We usually
+
+00:00:17.080 --> 00:00:21.670
+measure the length of programs by the number
+of lines of code they contain. Lines with
+
+00:00:21.670 --> 00:00:26.500
+only comments and blank lines don't usually
+count. Some people count lines with single
+
+00:00:26.500 --> 00:00:31.550
+curly braces and others don't. Lines of codes
+is one of the ways that employers keep track
+
+00:00:31.550 --> 00:00:35.859
+of how much work a programmer has done. The
+biggest program that you've probably written
+
+00:00:35.859 --> 00:00:41.749
+as a part of this class was around 2-to-300
+lines long. That's a substantial intellectual
+
+00:00:41.749 --> 00:00:46.749
+achievement. The programs that commercial
+Software Engineers write can have millions
+
+00:00:46.749 --> 00:00:52.539
+or even billions of lines of code. The next
+big challenge that you'll encounter in programming
+
+00:00:52.539 --> 00:00:57.989
+is learning how to organize programs to better
+be able to manage the complexity of larger
+
+00:00:57.989 --> 00:01:03.210
+programs. To do this effectively, you need
+to be able to control more complicated relationships
+
+00:01:03.210 --> 00:01:10.200
+between classes. So far we've seen two relationships
+between classes. One class can use another
+
+00:01:10.200 --> 00:01:15.259
+class. For example, most of our classes use
+the String class, because their twoString
+
+00:01:15.259 --> 00:01:21.229
+method returns a String. Another relationship
+between classes is called aggregation. This
+
+00:01:21.229 --> 00:01:26.759
+happens when one class has instance data from
+another class. For example, a class that stores
+
+00:01:26.759 --> 00:01:31.969
+addresses or aggregates String objects. If
+you look back at your code you'll see that
+
+00:01:31.969 --> 00:01:37.969
+these are the only relationships between classes
+that we've used so far. An example of a more
+
+00:01:37.969 --> 00:01:43.649
+complicated relationship is inheritance. Inheritance
+is used when you need to create a class that's
+
+00:01:43.649 --> 00:01:49.299
+similar to an existing class, but has some
+special properties or actions. For example
+
+00:01:49.299 --> 00:01:54.579
+when we program Graphical User Interfaces,
+there's a class called AbstractButton that
+
+00:01:54.579 --> 00:01:59.710
+has all of the functions you'd expect. When
+it's pressed or released some action happens.
+
+00:01:59.710 --> 00:02:05.090
+There are lots of Java classes that inherit
+from AbstractButton, like JButton, JMenuButton,
+
+00:02:05.090 --> 00:02:10.229
+and JToggleButton. JButton is is a plain,
+regular button like the buttons that let you
+
+00:02:10.229 --> 00:02:16.720
+de-bug or run programs in Eclipse. A JMenuItem
+is also an AbstractButton. That one may not
+
+00:02:16.720 --> 00:02:22.750
+be as obvious, but if you think about it,
+you select a menu item and some action happens--
+
+00:02:22.750 --> 00:02:28.220
+and that's button-like. JToggleButton is used
+to allow users to select a button that works
+
+00:02:28.220 --> 00:02:34.349
+like a light switch. An example of a JToggleButton
+is the PButton in Eclipse that either shows
+
+00:02:34.349 --> 00:02:40.060
+or conceals the whitespace characters. The
+action that happens with JToggleButton includes
+
+00:02:40.060 --> 00:02:45.349
+keeping the button down or up until it's hit
+again. So each of these buttons has some special
+
+00:02:45.349 --> 00:02:51.200
+action that's related to the general idea
+of being...button-like, but they do something
+
+00:02:51.200 --> 00:02:56.890
+special. Inheritance plays a very important
+part in object-oriented programming, and is
+
+00:02:56.890 --> 00:03:01.290
+one of the relationships between classes that
+you need to master if you're going to continue
+
+00:03:01.290 --> 00:03:06.620
+programming in Java. One of the sad facts
+of programming is that commercial Software
+
+00:03:06.620 --> 00:03:11.890
+Engineers produce only about six lines of
+code per day of programming that's actually
+
+00:03:11.890 --> 00:03:16.500
+delivered to customers in the product. That
+probably sounds impossible to believe, but
+
+00:03:16.500 --> 00:03:21.830
+it is true. Of course Software Engineers write
+many, many more lines of code than this, but
+
+00:03:21.830 --> 00:03:26.689
+those lines don't make it into the final product.
+We know that the difference in productivity
+
+00:03:26.689 --> 00:03:31.079
+between the most productive and the least
+productive Software Engineers is more than
+
+00:03:31.079 --> 00:03:37.909
+a factor of ten. Some people think it may
+even be a factor of fifty. That's a huge difference.
+
+00:03:37.909 --> 00:03:42.060
+If you want to be one of the more productive
+programmers, you'll need to continue to learn
+
+00:03:42.060 --> 00:03:47.400
+about Java or some other programming language,
+and continue to practice programming. There
+
+00:03:47.400 --> 00:03:54.069
+are lots of ways to do this. Of course you
+can take more classes, like CS 2334 Programming
+
+00:03:54.069 --> 00:03:58.980
+Structures and Abstractions at the University
+of Oklahoma. This is a second-semester Java
+
+00:03:58.980 --> 00:04:04.760
+class that covers more complicated relationships
+between classes like inheritance, shows how
+
+00:04:04.760 --> 00:04:10.049
+to manage user and program errors better using
+Exception handling, and helps you use the
+
+00:04:10.049 --> 00:04:16.640
+Java API more effectively, amongst other things.
+You can also read books about Java. The challenge
+
+00:04:16.640 --> 00:04:22.240
+you'll run into right now is that you're probably
+somewhere between a beginner and an expert.
+
+00:04:22.240 --> 00:04:26.190
+There are lots of books for beginners and
+there are lots of books for experts, but there's
+
+00:04:26.190 --> 00:04:32.060
+less in the middle. Some books for beginners
+are so big, sometimes eight or nine pounds,
+
+00:04:32.060 --> 00:04:36.180
+because they try to give beginners enough
+information to bridge that gap, and those
+
+00:04:36.180 --> 00:04:41.690
+books can be a good place to start. As you
+move towards being a more advanced programmer,
+
+00:04:41.690 --> 00:04:47.289
+a book you might enjoy is "Java Puzzlers"
+by Bloch and Gafter. Joshua Bloch has also
+
+00:04:47.289 --> 00:04:51.789
+written several books on how to program well
+in Java, and some of the pitfalls that Java
+
+00:04:51.789 --> 00:04:56.900
+programmers encounter. One of my favorites
+is called "Effective Java"-- it's considered
+
+00:04:56.900 --> 00:05:02.680
+required reading by anyone who programs professionally
+in Java. O'Reilly is a publisher with some
+
+00:05:02.680 --> 00:05:08.530
+outstanding books on many computational topics,
+including Java. I like their nutshell series
+
+00:05:08.530 --> 00:05:13.710
+of books, particularly "Java In A Nutshell."
+I have more than a dozen O'Reilly books within
+
+00:05:13.710 --> 00:05:18.979
+arm's reach right now. Another way to learn
+about programming is by visiting programming
+
+00:05:18.979 --> 00:05:23.759
+websites. Be careful which ones you choose,
+because there's a lot of really bad code and
+
+00:05:23.759 --> 00:05:29.350
+even worse advice out there. One of the better
+websites is the Oracle website on Java [http://java.sun.com].
+
+00:05:29.350 --> 00:05:33.310
+They have lots of great learning materials,
+although they're usually pretty advanced for
+
+00:05:33.310 --> 00:05:38.160
+beginning programmers. Although it can be
+frustrating to read materials for more advanced
+
+00:05:38.160 --> 00:05:44.360
+programmers at first, it does get easier with
+practice. Another way to grow as a programmer
+
+00:05:44.360 --> 00:05:48.800
+is to pick a pet project. This is one of my
+favorite ways to learn to program in a new
+
+00:05:48.800 --> 00:05:54.460
+language. As you encounter new challenges
+you use books and websites as resources to
+
+00:05:54.460 --> 00:05:59.169
+learn the parts of language that you need
+at that moment. Many of the big international
+
+00:05:59.169 --> 00:06:04.270
+companies that employ our graduates have told
+me they won't consider hiring anyone who hasn't
+
+00:06:04.270 --> 00:06:10.259
+done some programming project just for the
+love of programming. Choosing a personal project
+
+00:06:10.259 --> 00:06:15.870
+can be tough. Many students want to program
+games, but unless the game is modest it can
+
+00:06:15.870 --> 00:06:20.889
+be so overwhelming that it never gets started,
+let alone finished. It's probably better to
+
+00:06:20.889 --> 00:06:26.330
+write a program to play Tic-Tac-Toe or Tetris
+rather than to try to program your own personal
+
+00:06:26.330 --> 00:06:31.300
+World of Warcraft. You'll have more fun if
+you find some friends to program your project
+
+00:06:31.300 --> 00:06:36.259
+with you. You'll also be more likely to stay
+committed to the project and get it finished.
+
+00:06:36.259 --> 00:06:41.479
+A finished personal project, even if it's
+small in scope, will make a much bigger impression
+
+00:06:41.479 --> 00:06:47.220
+on a future employer than an unfinished, massive
+code that doesn't run. And just because you're
+
+00:06:47.220 --> 00:06:51.889
+programming for yourself doesn't mean that
+design and documentation aren't important.
+
+00:06:51.889 --> 00:06:58.020
+No future employer ever wants to see undocumented
+code. So we will part company, at least for
+
+00:06:58.020 --> 00:07:02.419
+now. I hope that you've discovered the love
+of programming in this class, and that you
+
+00:07:02.419 --> 00:07:07.839
+have as much joy building amazing software
+as I've had. Good luck, and happy programming.
+

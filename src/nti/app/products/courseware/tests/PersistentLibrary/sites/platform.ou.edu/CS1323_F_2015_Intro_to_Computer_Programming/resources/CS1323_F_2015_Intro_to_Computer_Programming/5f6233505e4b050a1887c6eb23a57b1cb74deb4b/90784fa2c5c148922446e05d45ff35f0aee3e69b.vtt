@@ -1,0 +1,393 @@
+WEBVTT
+Kind: captions
+Language: en
+
+00:00:01.100 --> 00:00:06.970
+&gt;&gt;Let's continue our study of methods and
+references by tracing parameter passing. What
+
+00:00:06.970 --> 00:00:13.080
+we're going to do here is an analysis of code.
+Really memory diagrams are the best tool for
+
+00:00:13.080 --> 00:00:18.790
+analyzing errors in code. This is especially
+true if the errors are in memory allocation
+
+00:00:18.790 --> 00:00:24.090
+or in parameter passing. So we're going to
+reexamine some previously written code with
+
+00:00:24.090 --> 00:00:30.210
+a memory diagram and then take a look at another
+option and see if we can actually see what's
+
+00:00:30.210 --> 00:00:32.300
+going wrong.
+
+00:00:32.300 --> 00:00:37.100
+So here's the method we did, this is split
+with an oversize array. We wrote this code
+
+00:00:37.100 --> 00:00:42.510
+just a while back. So we've got our split
+method, we're using a scanner to divide a
+
+00:00:42.510 --> 00:00:48.239
+String up based on white space. We've got
+an integer index and we step through it one
+
+00:00:48.239 --> 00:00:55.139
+position at a time. Keeping track of the number
+of Strings, and storing them in the String
+
+00:00:55.139 --> 00:01:00.979
+array called result. Remember result has to
+be allocated before the method starts. And
+
+00:01:00.979 --> 00:01:04.970
+then at the end we return the index-- that
+is, the number of elements that are actually
+
+00:01:04.970 --> 00:01:06.939
+live.
+
+00:01:06.939 --> 00:01:11.189
+Now in order to analyze the code we're going
+to need to call it. So here's a main program
+
+00:01:11.189 --> 00:01:18.130
+that does just that. We have a final int size
+equals five. Notice that's a constant, so
+
+00:01:18.130 --> 00:01:24.200
+it's in all caps. Then we have String input.
+We have our sample String input that we were
+
+00:01:24.200 --> 00:01:29.890
+going to use. Then we have a String array
+for the results and that's allocated to the
+
+00:01:29.890 --> 00:01:36.670
+size. So this is an oversized array in this
+case. Then we call the split method. Now split
+
+00:01:36.670 --> 00:01:41.340
+method is going to return size, notice in
+small letters instead of capital letters.
+
+00:01:41.340 --> 00:01:45.719
+And it's going to take the input and it's
+also going to take the array. The only thing
+
+00:01:45.719 --> 00:01:49.859
+that's done after that is the for loop that
+prints out the data. That can be a useful
+
+00:01:49.859 --> 00:01:52.009
+thing to have for debugging.
+
+00:01:52.009 --> 00:01:58.020
+So let's trace this now and see what happens.
+In our main stack frame we've got our constant
+
+00:01:58.020 --> 00:02:05.020
+five and we've got our input, which is a String
+with abc, def, ghi in it. Then we have our
+
+00:02:07.890 --> 00:02:13.750
+array. Now when it's allocated we allocate
+remember the positions on the heap and then
+
+00:02:13.750 --> 00:02:18.970
+we call our method. Now the integer side doesn't
+have anything in it until we return from the
+
+00:02:18.970 --> 00:02:25.580
+method. So while it's there in memory we're
+not actually going to use it.
+
+00:02:25.580 --> 00:02:29.660
+Here's what happens when we call the method.
+Now the main stack frame isn't going to be
+
+00:02:29.660 --> 00:02:35.540
+changed. In fact, the main stack frame isn't
+even active while this is being done. What
+
+00:02:35.540 --> 00:02:40.420
+is active is the split stack frame, because
+that's the method that's being worked on right
+
+00:02:40.420 --> 00:02:46.790
+now. So you'll notice we have places for source
+and result. Those are the parameter names,
+
+00:02:46.790 --> 00:02:52.010
+and also a place for index. Index is a local
+variable in the method. Now I'm ignoring the
+
+00:02:52.010 --> 00:02:56.710
+scanner here because we really don't understand
+how a scanner works. Hope that's okay with
+
+00:02:56.710 --> 00:03:03.490
+you. So right now result and input are pointing
+to the String and the array that were previously
+
+00:03:03.490 --> 00:03:06.450
+allocated on the last slide.
+
+00:03:06.450 --> 00:03:11.680
+Now we need to pass our parameters. Result
+in the split stack frame gets the value of
+
+00:03:11.680 --> 00:03:18.680
+result in the main stack frame, and source
+gets the value of input. So now the String
+
+00:03:18.900 --> 00:03:25.010
+abc def ghi has two different things pointing
+to it. It has the input in the main stack
+
+00:03:25.010 --> 00:03:31.580
+frame and the source in the split stack frame.
+Similarly that five-element array is referenced
+
+00:03:31.580 --> 00:03:37.040
+both in the main stack frame and the split
+stack frame. Now we're going to step through
+
+00:03:37.040 --> 00:03:44.040
+our loop. So first the index is zero. Now
+input has next is still true because our scanner
+
+00:03:44.070 --> 00:03:49.350
+still has data in it and we're certainly still
+less than result dot length, which is five.
+
+00:03:49.350 --> 00:03:56.350
+So we put the first String, which is abc,
+into the array and we update the index to
+
+00:03:57.020 --> 00:04:02.110
+one. Similarly we'll put the second String
+in and the second trip through the for loop
+
+00:04:02.110 --> 00:04:06.860
+and the third String in the third trip through
+the for loop. The index value will end up
+
+00:04:06.860 --> 00:04:13.220
+as three because three there is going to be
+the value when input dot has next fails. And
+
+00:04:13.220 --> 00:04:15.410
+now we return index.
+
+00:04:15.410 --> 00:04:20.500
+Now at this point the value in index is three.
+It's very important for us to notice what's
+
+00:04:20.500 --> 00:04:26.150
+going to happen. Split stack frame is going
+to disappear when this method is over, and
+
+00:04:26.150 --> 00:04:31.660
+anything that's pointed to by only data in
+the split stack frame is going to disappear
+
+00:04:31.660 --> 00:04:37.590
+too. Now because result and input point to
+the String and to the array, those things
+
+00:04:37.590 --> 00:04:41.310
+are going to be capped. Now we return to the
+main method.
+
+00:04:41.310 --> 00:04:45.460
+Now the only thing that's going to be changed
+here is the three that's returned by the split
+
+00:04:45.460 --> 00:04:51.320
+method is going to be put into size. Then
+we would print things out-- I'm not going
+
+00:04:51.320 --> 00:04:57.260
+to show the print out in this case. So what
+you can see here is the result ends up having
+
+00:04:57.260 --> 00:05:04.260
+three Strings in it: abc, def, ghi, each one
+pointed to a reference. It's oversized because
+
+00:05:05.530 --> 00:05:10.190
+notice out here we have two elements in the
+array that haven't been used and the variable
+
+00:05:10.190 --> 00:05:15.900
+size contains three. Everything's working
+beautifully here.
+
+00:05:15.900 --> 00:05:20.310
+Now let's change the code. Now the reason
+I picked this particular change is it's one
+
+00:05:20.310 --> 00:05:25.440
+that I've seen many students make. It's a
+very difficult problem to debug. So let's
+
+00:05:25.440 --> 00:05:30.180
+take a look and see what happens. What we're
+going to do is allocate the result array in
+
+00:05:30.180 --> 00:05:35.590
+the split method instead of in the main. Now
+another common mistake I see is allocating
+
+00:05:35.590 --> 00:05:41.110
+the array both in main and split. That's kind
+of bad because at that point it can be very
+
+00:05:41.110 --> 00:05:46.790
+confusing to know which array is which. Now
+we're not going to be able to change the signature
+
+00:05:46.790 --> 00:05:52.160
+of the method. The reason is the returning
+size is absolutely necessary. So the method
+
+00:05:52.160 --> 00:05:58.230
+is going to have to return an int. So we can't
+change the signature, so let's see what happens
+
+00:05:58.230 --> 00:06:04.419
+now. So here's our call method. Notice I've
+changed this method a little bit. Here when
+
+00:06:04.419 --> 00:06:10.150
+we declare the reference result we're not
+constructing the array. So result now is a
+
+00:06:10.150 --> 00:06:17.050
+null reference. You see this in the code by
+the slash across result. Everything else is
+
+00:06:17.050 --> 00:06:20.270
+exactly the same.
+
+00:06:20.270 --> 00:06:25.200
+Now let's take a look at what happens inside
+the split method. Notice the change here is
+
+00:06:25.200 --> 00:06:31.250
+that we've added a constructor for result.
+So we're passing in this null reference result
+
+00:06:31.250 --> 00:06:37.300
+and then we're constructing a String. So there's
+the null reference that gets passed in for
+
+00:06:37.300 --> 00:06:44.300
+result, and source gets input from the main
+program. Now our scanner input is created
+
+00:06:45.639 --> 00:06:52.360
+from source, same as before. And now we construct
+our result array. So there is our five-element
+
+00:06:52.360 --> 00:06:53.419
+array.
+
+00:06:53.419 --> 00:06:58.389
+Now at this point the size is zero-- we don't
+have any elements actually in the array. So
+
+00:06:58.389 --> 00:07:04.610
+we're now going to step through one at a time
+adding Strings in just as we did before, they'll
+
+00:07:04.610 --> 00:07:10.850
+be added in one at a time and this will result.
+Now we're getting ready to return index. Well
+
+00:07:10.850 --> 00:07:16.560
+index is three, which is the correct value.
+And so everything is going to be right. Except
+
+00:07:16.560 --> 00:07:22.060
+let's take a closer look. Notice that the
+five-element array is pointed to only by result
+
+00:07:22.060 --> 00:07:28.010
+in the split stack frame. When the split method
+ends the split stack frame goes array, and
+
+00:07:28.010 --> 00:07:35.010
+so that five-element array and those three
+Strings it points to, the abc, def, ghi? All
+
+00:07:35.010 --> 00:07:39.210
+of those are going to go away too. So the
+only thing that's going to be alive on the
+
+00:07:39.210 --> 00:07:46.210
+heap is the one String with abc, def, ghi,
+that's obviously a very serious problem.
+
+00:07:47.360 --> 00:07:52.500
+The other way to analyze this by looking at
+it, take a look at the main stack frame here.
+
+00:07:52.500 --> 00:07:57.810
+There are two things that need to be set.
+Result really needs to get the value of the
+
+00:07:57.810 --> 00:08:03.680
+String, the reference to it, and it can't.
+Size on the other hand needs to get three,
+
+00:08:03.680 --> 00:08:10.680
+which it can because we have an integer return
+type. So really we've got a problem here.
+
+00:08:11.110 --> 00:08:16.540
+So when we go back to the main method three
+gets put in size and that's all that remains
+
+00:08:16.540 --> 00:08:22.930
+on the heap. Notice our result array is null,
+just as it was when we started. We haven't
+
+00:08:22.930 --> 00:08:29.930
+done anything. Very disappointing result.
+So here are the parameter passing rules. Arrays
+
+00:08:31.419 --> 00:08:36.800
+that are allocated in a method like split
+have to be returned to be used in the calling
+
+00:08:36.800 --> 00:08:43.800
+method like main. Alterations that are made
+to a parameter in a method like split are
+
+00:08:43.909 --> 00:08:50.540
+seen by the calling method, which is main
+again, as long as the array is not reconstructed.
+
+00:08:50.540 --> 00:08:55.970
+So this construction is the big issue. Now
+these same rules apply for objects, and that's
+
+00:08:55.970 --> 00:09:01.990
+not really an accident. Because arrays are
+stored by reference just like objects are,
+
+00:09:01.990 --> 00:09:06.040
+these things work the same way. And if you
+can understand that you're going to have a
+
+00:09:06.040 --> 00:09:11.610
+much easier time to understand parameter passing
+in Java. Keep programming!
+

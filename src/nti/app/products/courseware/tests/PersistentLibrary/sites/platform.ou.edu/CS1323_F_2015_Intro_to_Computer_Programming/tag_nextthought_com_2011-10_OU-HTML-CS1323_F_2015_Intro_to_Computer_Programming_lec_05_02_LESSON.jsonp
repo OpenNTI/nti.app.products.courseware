@@ -1,0 +1,156 @@
+jsonpReceiveContent({
+    "content": {
+        "MimeType": "application/vnd.nextthought.ntilessonoverview",
+        "Items": [
+            {
+                "MimeType": "application/vnd.nextthought.nticourseoverviewgroup",
+                "NTIID": "tag:nextthought.com,2011-10:OU-NTICourseOverviewGroup-CS1323_F_2015_Intro_to_Computer_Programming.lec:05.02_LESSON.0",
+                "Items": [
+                    {
+                        "MimeType": "application/vnd.nextthought.ntivideo",
+                        "NTIID": "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_05.01.02_Pseudo_ArrayList_Classes_as_Contract",
+                        "visibility": "everyone",
+                        "poster": "//www.kaltura.com/p/1500101/thumbnail/entry_id/0_iwi479do/width/1280/",
+                        "label": "Pseudo ArrayList"
+                    },
+                    {
+                        "MimeType": "application/vnd.nextthought.ntivideo",
+                        "NTIID": "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_05.01.02_Frogger_1",
+                        "visibility": "everyone",
+                        "poster": "//www.kaltura.com/p/1500101/thumbnail/entry_id/1_hehq3unj/width/1280/",
+                        "label": "Frogger Iteration 1"
+                    }
+                ],
+                "accentColor": "81c8dc",
+                "title": "Videos"
+            },
+            {
+                "MimeType": "application/vnd.nextthought.nticourseoverviewgroup",
+                "NTIID": "tag:nextthought.com,2011-10:OU-NTICourseOverviewGroup-CS1323_F_2015_Intro_to_Computer_Programming.lec:05.02_LESSON.1",
+                "Items": [
+                    {
+                        "MimeType": "application/vnd.nextthought.assessment.assignment",
+                        "ContainerId": "tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.turingscraft:_classes_as_state_(13_points)",
+                        "title": "Turingscraft: Classes as State (13 points)",
+                        "label": "Turingscraft: Classes as State (13 points)",
+                        "NTIID": "tag:nextthought.com,2011-10:OU-NAQ-CS1323_F_2015_Intro_to_Computer_Programming.naq.asg.assignment:Turingscraft_Classes_as_State_010",
+                        "Target-NTIID": "tag:nextthought.com,2011-10:OU-NAQ-CS1323_F_2015_Intro_to_Computer_Programming.naq.asg.assignment:Turingscraft_Classes_as_State_010"
+                    },
+                    {
+                        "MimeType": "application/vnd.nextthought.assessment.assignment",
+                        "ContainerId": "tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.turingscraft:_classes_as_state_(13_points).1",
+                        "title": "Turingscraft: Classes as State (13 points)",
+                        "label": "Turingscraft: Classes as State (13 points)",
+                        "NTIID": "tag:nextthought.com,2011-10:OU-NAQ-CS1323_F_2015_Intro_to_Computer_Programming.naq.asg.assignment:Turingscraft_Classes_as_State_001",
+                        "Target-NTIID": "tag:nextthought.com,2011-10:OU-NAQ-CS1323_F_2015_Intro_to_Computer_Programming.naq.asg.assignment:Turingscraft_Classes_as_State_001"
+                    },
+                    {
+                        "MimeType": "application/vnd.nextthought.assessment.assignment",
+                        "ContainerId": "tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.turingscraft:_classes_as_state_(13_points).2",
+                        "title": "Turingscraft: Classes as State (13 points)",
+                        "label": "Turingscraft: Classes as State (13 points)",
+                        "NTIID": "tag:nextthought.com,2011-10:OU-NAQ-CS1323_F_2015_Intro_to_Computer_Programming.naq.asg.assignment:Turingscraft_Classes_as_State_995",
+                        "Target-NTIID": "tag:nextthought.com,2011-10:OU-NAQ-CS1323_F_2015_Intro_to_Computer_Programming.naq.asg.assignment:Turingscraft_Classes_as_State_995"
+                    },
+                    {
+                        "MimeType": "application/vnd.nextthought.assessment.assignment",
+                        "ContainerId": "tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.zybook:_classes_as_a_contract:_state_and_behavior",
+                        "title": "Zybook: Classes as a Contract: State and Behavior",
+                        "label": "Zybook: Classes as a Contract: State and Behavior",
+                        "NTIID": "tag:nextthought.com,2011-10:OU-NAQ-CS1323_F_2015_Intro_to_Computer_Programming.naq.asg.assignment:Zybook_Classes_as_a_Contract",
+                        "Target-NTIID": "tag:nextthought.com,2011-10:OU-NAQ-CS1323_F_2015_Intro_to_Computer_Programming.naq.asg.assignment:Zybook_Classes_as_a_Contract"
+                    }
+                ],
+                "accentColor": "a5c959",
+                "title": "Assignments"
+            },
+            {
+                "MimeType": "application/vnd.nextthought.nticourseoverviewgroup",
+                "NTIID": "tag:nextthought.com,2011-10:OU-NTICourseOverviewGroup-CS1323_F_2015_Intro_to_Computer_Programming.lec:05.02_LESSON.2",
+                "Items": [
+                    {
+                        "MimeType": "application/vnd.nextthought.relatedworkref",
+                        "targetMimeType": "application/vnd.nextthought.externallink",
+                        "creator": "zyBooks for University of Oklahoma CS 1323",
+                        "section": "additional",
+                        "visibility": "everyone",
+                        "label": "Programming in Java",
+                        "NTIID": "tag:nextthought.com,2011-10:OU-RelatedWorkRef-CS1323_F_2015_Intro_to_Computer_Programming.relatedworkref.relwk:05.01.02_zyante",
+                        "href": "https://zybooks.zyante.com/#/zybook/OUCS1323Fall2015/chapter/19/section/1",
+                        "target-NTIID": "tag:nextthought.com,2011-10:NTI-UUID-f29b131813460ebc1843a1ae71bdefd3",
+                        "icon": "resources/CS1323_F_2015_Intro_to_Computer_Programming/671375790efa45b2948b77f2a9c4e91f27173a56/fd35e23767020999111e1f49239199b4c5eff23e.png",
+                        "desc": "This section covers classes as a contract."
+                    }
+                ],
+                "accentColor": "f9824e",
+                "title": "Required Resources"
+            },
+            {
+                "MimeType": "application/vnd.nextthought.nticourseoverviewgroup",
+                "NTIID": "tag:nextthought.com,2011-10:OU-NTICourseOverviewGroup-CS1323_F_2015_Intro_to_Computer_Programming.lec:05.02_LESSON.3",
+                "Items": [
+                    {
+                        "MimeType": "application/vnd.nextthought.relatedworkref",
+                        "targetMimeType": "application/vnd.nextthought.externallink",
+                        "creator": "Bradley Kjell",
+                        "section": "required",
+                        "visibility": "everyone",
+                        "label": "Chortle",
+                        "NTIID": "tag:nextthought.com,2011-10:OU-RelatedWorkRef-CS1323_F_2015_Intro_to_Computer_Programming.relatedworkref.relwk:chortle.15",
+                        "href": "http://chortle.ccsu.edu/CS151/cs151java.html",
+                        "target-NTIID": "tag:nextthought.com,2011-10:NTI-UUID-ebc45eae3454de7ddc5deabddb38c3e0",
+                        "icon": "resources/CS1323_F_2015_Intro_to_Computer_Programming/b06a4bdb19666c7afc685f0365fd59a988b154c2/fd35e23767020999111e1f49239199b4c5eff23e.png",
+                        "desc": "An introduction to how objects are designed and created."
+                    },
+                    {
+                        "MimeType": "application/vnd.nextthought.relatedworkref",
+                        "targetMimeType": "application/vnd.nextthought.externallink",
+                        "creator": "Deborah Trytten",
+                        "section": "additional",
+                        "visibility": "everyone",
+                        "label": "Example from the Video",
+                        "NTIID": "tag:nextthought.com,2011-10:OU-RelatedWorkRef-CS1323_F_2015_Intro_to_Computer_Programming.relatedworkref.relwk:05.01.02_code_sample",
+                        "href": "resources/Lesson_5.1.2_Code.zip",
+                        "target-NTIID": "tag:nextthought.com,2011-10:NTI-UUID-a240eb3530da880ac1a02e006d0a1bc0",
+                        "icon": "resources/CS1323_F_2015_Intro_to_Computer_Programming/b9c4a1a1dc3d30c895df3b30c553fa40f972a2f5/fd35e23767020999111e1f49239199b4c5eff23e.png",
+                        "desc": "Java code developed in the video from this lesson."
+                    },
+                    {
+                        "MimeType": "application/vnd.nextthought.relatedworkref",
+                        "targetMimeType": "application/vnd.nextthought.externallink",
+                        "creator": "Deborah Trytten",
+                        "section": "additional",
+                        "visibility": "everyone",
+                        "label": "Pseudo ArrayList",
+                        "NTIID": "tag:nextthought.com,2011-10:OU-RelatedWorkRef-CS1323_F_2015_Intro_to_Computer_Programming.relatedworkref.relwk:05.01.02_pseudo_arraylist_classes_as_contract",
+                        "href": "resources/Pseudo_ArrayList_Classes_as_Contract.pptx",
+                        "target-NTIID": "tag:nextthought.com,2011-10:NTI-UUID-169c7acc2ef32935174fd4b19eb34a10",
+                        "icon": "resources/CS1323_F_2015_Intro_to_Computer_Programming/17f860f9921d29d578e2791d3ff00dcf689071c3/fd35e23767020999111e1f49239199b4c5eff23e.png",
+                        "desc": "Lecture presentation"
+                    },
+                    {
+                        "MimeType": "application/vnd.nextthought.relatedworkref",
+                        "targetMimeType": "application/vnd.nextthought.externallink",
+                        "creator": "Deborah Trytten",
+                        "section": "additional",
+                        "visibility": "everyone",
+                        "label": "Frogger: Iteration 1",
+                        "NTIID": "tag:nextthought.com,2011-10:OU-RelatedWorkRef-CS1323_F_2015_Intro_to_Computer_Programming.relatedworkref.relwk:05.01.02_frogger_1",
+                        "href": "resources/Frogger_Iteration_1.pptx",
+                        "target-NTIID": "tag:nextthought.com,2011-10:NTI-UUID-1cb0719542b4d913479eb4d4eb48e768",
+                        "icon": "resources/CS1323_F_2015_Intro_to_Computer_Programming/17f860f9921d29d578e2791d3ff00dcf689071c3/fd35e23767020999111e1f49239199b4c5eff23e.png",
+                        "desc": "Lecture presentation"
+                    }
+                ],
+                "accentColor": "ce78e0",
+                "title": "Additional Resources"
+            }
+        ],
+        "title": "Classes as a Contract: State and Behavior",
+        "NTIID": "tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.lec:05.02_LESSON"
+    },
+    "ntiid": "tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.lec:05.02_LESSON",
+    "version": "1",
+    "Content-Type": "application/json",
+    "Content-Encoding": "json"
+});

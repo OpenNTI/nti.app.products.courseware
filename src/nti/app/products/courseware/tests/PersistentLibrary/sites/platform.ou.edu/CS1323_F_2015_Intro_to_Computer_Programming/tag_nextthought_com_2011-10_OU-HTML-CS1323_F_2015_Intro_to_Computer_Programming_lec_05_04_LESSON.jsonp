@@ -1,0 +1,132 @@
+jsonpReceiveContent({
+    "content": {
+        "MimeType": "application/vnd.nextthought.ntilessonoverview",
+        "Items": [
+            {
+                "MimeType": "application/vnd.nextthought.nticourseoverviewgroup",
+                "NTIID": "tag:nextthought.com,2011-10:OU-NTICourseOverviewGroup-CS1323_F_2015_Intro_to_Computer_Programming.lec:05.04_LESSON.0",
+                "Items": [
+                    {
+                        "MimeType": "application/vnd.nextthought.ntivideo",
+                        "NTIID": "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_05.01.04_Two_Patterns_Aggregation",
+                        "visibility": "everyone",
+                        "poster": "//www.kaltura.com/p/1500101/thumbnail/entry_id/0_8bf3j59o/width/1280/",
+                        "label": "Two Patterns"
+                    },
+                    {
+                        "MimeType": "application/vnd.nextthought.ntivideo",
+                        "NTIID": "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_05.01.04_Charity_Donations",
+                        "visibility": "everyone",
+                        "poster": "//www.kaltura.com/p/1500101/thumbnail/entry_id/1_stapn8iy/width/1280/",
+                        "label": "Charity Donations"
+                    }
+                ],
+                "accentColor": "81c8dc",
+                "title": "Videos"
+            },
+            {
+                "MimeType": "application/vnd.nextthought.nticourseoverviewgroup",
+                "NTIID": "tag:nextthought.com,2011-10:OU-NTICourseOverviewGroup-CS1323_F_2015_Intro_to_Computer_Programming.lec:05.04_LESSON.1",
+                "Items": [
+                    {
+                        "MimeType": "application/vnd.nextthought.assessment.assignment",
+                        "ContainerId": "tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.zybook:_aggregation",
+                        "title": "Zybook: Aggregation",
+                        "label": "Zybook: Aggregation",
+                        "NTIID": "tag:nextthought.com,2011-10:OU-NAQ-CS1323_F_2015_Intro_to_Computer_Programming.naq.asg.assignment:Zybook_Aggregation",
+                        "Target-NTIID": "tag:nextthought.com,2011-10:OU-NAQ-CS1323_F_2015_Intro_to_Computer_Programming.naq.asg.assignment:Zybook_Aggregation"
+                    }
+                ],
+                "accentColor": "a5c959",
+                "title": "Assignments"
+            },
+            {
+                "MimeType": "application/vnd.nextthought.nticourseoverviewgroup",
+                "NTIID": "tag:nextthought.com,2011-10:OU-NTICourseOverviewGroup-CS1323_F_2015_Intro_to_Computer_Programming.lec:05.04_LESSON.2",
+                "Items": [
+                    {
+                        "MimeType": "application/vnd.nextthought.relatedworkref",
+                        "targetMimeType": "application/vnd.nextthought.externallink",
+                        "creator": "zyBooks for University of Oklahoma CS 1323",
+                        "section": "required",
+                        "visibility": "everyone",
+                        "label": "Programming in Java",
+                        "NTIID": "tag:nextthought.com,2011-10:OU-RelatedWorkRef-CS1323_F_2015_Intro_to_Computer_Programming.relatedworkref.relwk:zyante_aggregation",
+                        "href": "https://zybooks.zyante.com/#/zybook/OUCS1323Fall2015/chapter/21/section/1",
+                        "target-NTIID": "tag:nextthought.com,2011-10:NTI-UUID-4f4273dd2db8fe71f2df80463945d801",
+                        "icon": "resources/CS1323_F_2015_Intro_to_Computer_Programming/671375790efa45b2948b77f2a9c4e91f27173a56/fd35e23767020999111e1f49239199b4c5eff23e.png",
+                        "desc": "This section covers aggregation."
+                    }
+                ],
+                "accentColor": "f9824e",
+                "title": "Required Resources"
+            },
+            {
+                "MimeType": "application/vnd.nextthought.nticourseoverviewgroup",
+                "NTIID": "tag:nextthought.com,2011-10:OU-NTICourseOverviewGroup-CS1323_F_2015_Intro_to_Computer_Programming.lec:05.04_LESSON.3",
+                "Items": [
+                    {
+                        "MimeType": "application/vnd.nextthought.relatedworkref",
+                        "targetMimeType": "application/vnd.nextthought.externallink",
+                        "creator": "Bradley Kjell",
+                        "section": "required",
+                        "visibility": "everyone",
+                        "label": "Chortle",
+                        "NTIID": "tag:nextthought.com,2011-10:OU-RelatedWorkRef-CS1323_F_2015_Intro_to_Computer_Programming.relatedworkref.relwk:chortle.17",
+                        "href": "http://chortle.ccsu.edu/CS151/cs151java.html",
+                        "target-NTIID": "tag:nextthought.com,2011-10:NTI-UUID-ebc45eae3454de7ddc5deabddb38c3e0",
+                        "icon": "resources/CS1323_F_2015_Intro_to_Computer_Programming/b06a4bdb19666c7afc685f0365fd59a988b154c2/fd35e23767020999111e1f49239199b4c5eff23e.png",
+                        "desc": "Explanation of how objects can contain and use objects."
+                    },
+                    {
+                        "MimeType": "application/vnd.nextthought.relatedworkref",
+                        "targetMimeType": "application/vnd.nextthought.externallink",
+                        "creator": "Deborah Trytten",
+                        "section": "additional",
+                        "visibility": "everyone",
+                        "label": "Example from the Video",
+                        "NTIID": "tag:nextthought.com,2011-10:OU-RelatedWorkRef-CS1323_F_2015_Intro_to_Computer_Programming.relatedworkref.relwk:05.01.04_code_sample",
+                        "href": "resources/Lesson_5.1.4_Code.zip",
+                        "target-NTIID": "tag:nextthought.com,2011-10:NTI-UUID-e0fca77e8e51bd884dfbe45466f3f6aa",
+                        "icon": "resources/CS1323_F_2015_Intro_to_Computer_Programming/b9c4a1a1dc3d30c895df3b30c553fa40f972a2f5/fd35e23767020999111e1f49239199b4c5eff23e.png",
+                        "desc": "Java code developed in the video from this lesson."
+                    },
+                    {
+                        "MimeType": "application/vnd.nextthought.relatedworkref",
+                        "targetMimeType": "application/vnd.nextthought.externallink",
+                        "creator": "Deborah Trytten",
+                        "section": "additional",
+                        "visibility": "everyone",
+                        "label": "Two Patterns",
+                        "NTIID": "tag:nextthought.com,2011-10:OU-RelatedWorkRef-CS1323_F_2015_Intro_to_Computer_Programming.relatedworkref.relwk:05.01.04_two_patterns_aggregation",
+                        "href": "resources/Two_Patterns_Aggregation.pptx",
+                        "target-NTIID": "tag:nextthought.com,2011-10:NTI-UUID-671bed893a6659021098a0e08dad0e07",
+                        "icon": "resources/CS1323_F_2015_Intro_to_Computer_Programming/17f860f9921d29d578e2791d3ff00dcf689071c3/fd35e23767020999111e1f49239199b4c5eff23e.png",
+                        "desc": "Lecture presentation"
+                    },
+                    {
+                        "MimeType": "application/vnd.nextthought.relatedworkref",
+                        "targetMimeType": "application/vnd.nextthought.externallink",
+                        "creator": "Deborah Trytten",
+                        "section": "additional",
+                        "visibility": "everyone",
+                        "label": "Charity Donations",
+                        "NTIID": "tag:nextthought.com,2011-10:OU-RelatedWorkRef-CS1323_F_2015_Intro_to_Computer_Programming.relatedworkref.relwk:05.01.04_charity_donations",
+                        "href": "resources/Charity_Donations.pptx",
+                        "target-NTIID": "tag:nextthought.com,2011-10:NTI-UUID-74840762b12c5bd237eb65699a086c25",
+                        "icon": "resources/CS1323_F_2015_Intro_to_Computer_Programming/17f860f9921d29d578e2791d3ff00dcf689071c3/fd35e23767020999111e1f49239199b4c5eff23e.png",
+                        "desc": "Lecture presentation"
+                    }
+                ],
+                "accentColor": "ce78e0",
+                "title": "Additional Resources"
+            }
+        ],
+        "title": "Aggregation",
+        "NTIID": "tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.lec:05.04_LESSON"
+    },
+    "ntiid": "tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.lec:05.04_LESSON",
+    "version": "1",
+    "Content-Type": "application/json",
+    "Content-Encoding": "json"
+});

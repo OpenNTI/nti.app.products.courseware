@@ -1,0 +1,154 @@
+{
+  "MimeType": "application/vnd.nextthought.ntislidedeck",
+  "Videos": [
+    {
+      "MimeType": "application/vnd.nextthought.ntislidevideo",
+      "video-ntiid": "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_02.02.04_Memory_Diagrams_Passing_By_Value",
+      "title": "Parameter Passing",
+      "creator": "Deborah Trytten",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Memory_Diagrams_Passing_By_Value",
+      "thumbnail": "//www.kaltura.com/p/1500101/thumbnail/entry_id/1_qcsms4kp/width/640/",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Memory_Diagrams_Passing_By_Value_video",
+      "class": "ntislidevideo"
+    }
+  ],
+  "creator": "Deborah Trytten",
+  "title": "Methods",
+  "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Memory_Diagrams_Passing_By_Value",
+  "Slides": [
+    {
+      "MimeType": "application/vnd.nextthought.slide",
+      "slidevideoid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Memory_Diagrams_Passing_By_Value_video",
+      "slidetitle": "Memory Diagrams: Passing By Value (Primitive Data)",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Memory_Diagrams_Passing_By_Value",
+      "slidevideostart": "0.0",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlide-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Memory_Diagrams_Passing_By_Value_slide_1",
+      "slideimage": "resources/CS1323_F_2015_Intro_to_Computer_Programming/0705d754d8bbbf06d616302cbd98ef16310fed97/fd35e23767020999111e1f49239199b4c5eff23e.png",
+      "slidevideoend": "7.0",
+      "slidenumber": "1",
+      "class": "slide"
+    },
+    {
+      "MimeType": "application/vnd.nextthought.slide",
+      "slidevideoid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Memory_Diagrams_Passing_By_Value_video",
+      "slidetitle": "Arguments",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Memory_Diagrams_Passing_By_Value",
+      "slidevideostart": "7.0",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlide-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Memory_Diagrams_Passing_By_Value_slide_2",
+      "slideimage": "resources/CS1323_F_2015_Intro_to_Computer_Programming/5273ce4e8c1e6c38e480b903b10d95d728b28989/fd35e23767020999111e1f49239199b4c5eff23e.png",
+      "slidevideoend": "45.0",
+      "slidenumber": "2",
+      "class": "slide"
+    },
+    {
+      "MimeType": "application/vnd.nextthought.slide",
+      "slidevideoid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Memory_Diagrams_Passing_By_Value_video",
+      "slidetitle": "Parameters",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Memory_Diagrams_Passing_By_Value",
+      "slidevideostart": "45.0",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlide-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Memory_Diagrams_Passing_By_Value_slide_3",
+      "slideimage": "resources/CS1323_F_2015_Intro_to_Computer_Programming/287fc4af36f1c33c875bfeb4828ff6d01bb0a16c/fd35e23767020999111e1f49239199b4c5eff23e.png",
+      "slidevideoend": "95.0",
+      "slidenumber": "3",
+      "class": "slide"
+    },
+    {
+      "MimeType": "application/vnd.nextthought.slide",
+      "slidevideoid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Memory_Diagrams_Passing_By_Value_video",
+      "slidetitle": "Do Parameters Change Arguments?",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Memory_Diagrams_Passing_By_Value",
+      "slidevideostart": "95.0",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlide-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Memory_Diagrams_Passing_By_Value_slide_4",
+      "slideimage": "resources/CS1323_F_2015_Intro_to_Computer_Programming/09afbc552206b7b037185cfe294c56b44435c930/fd35e23767020999111e1f49239199b4c5eff23e.png",
+      "slidevideoend": "150.0",
+      "slidenumber": "4",
+      "class": "slide"
+    },
+    {
+      "MimeType": "application/vnd.nextthought.slide",
+      "slidevideoid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Memory_Diagrams_Passing_By_Value_video",
+      "slidetitle": "Memory Diagrams",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Memory_Diagrams_Passing_By_Value",
+      "slidevideostart": "150.0",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlide-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Memory_Diagrams_Passing_By_Value_slide_5",
+      "slideimage": "resources/CS1323_F_2015_Intro_to_Computer_Programming/bf64d8b5ec5dfb50f8ae996481914dd4374a3d9b/fd35e23767020999111e1f49239199b4c5eff23e.png",
+      "slidevideoend": "185.0",
+      "slidenumber": "5",
+      "class": "slide"
+    },
+    {
+      "MimeType": "application/vnd.nextthought.slide",
+      "slidevideoid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Memory_Diagrams_Passing_By_Value_video",
+      "slidetitle": "Primitive Data Types",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Memory_Diagrams_Passing_By_Value",
+      "slidevideostart": "185.0",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlide-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Memory_Diagrams_Passing_By_Value_slide_6",
+      "slideimage": "resources/CS1323_F_2015_Intro_to_Computer_Programming/3eec21696fbd29870198f084040db709e04e3258/fd35e23767020999111e1f49239199b4c5eff23e.png",
+      "slidevideoend": "217.0",
+      "slidenumber": "6",
+      "class": "slide"
+    },
+    {
+      "MimeType": "application/vnd.nextthought.slide",
+      "slidevideoid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Memory_Diagrams_Passing_By_Value_video",
+      "slidetitle": "Trace Code",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Memory_Diagrams_Passing_By_Value",
+      "slidevideostart": "217.0",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlide-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Memory_Diagrams_Passing_By_Value_slide_7",
+      "slideimage": "resources/CS1323_F_2015_Intro_to_Computer_Programming/0cd006072f908272d6dc1587b10afef83aefa6f1/fd35e23767020999111e1f49239199b4c5eff23e.png",
+      "slidevideoend": "327.0",
+      "slidenumber": "7",
+      "class": "slide"
+    },
+    {
+      "MimeType": "application/vnd.nextthought.slide",
+      "slidevideoid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Memory_Diagrams_Passing_By_Value_video",
+      "slidetitle": "Instructions for Tracing Code",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Memory_Diagrams_Passing_By_Value",
+      "slidevideostart": "327.0",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlide-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Memory_Diagrams_Passing_By_Value_slide_8",
+      "slideimage": "resources/CS1323_F_2015_Intro_to_Computer_Programming/f7e9a41fdb79d9fb6a4a5ea91f43091bf470d2fb/fd35e23767020999111e1f49239199b4c5eff23e.png",
+      "slidevideoend": "382.0",
+      "slidenumber": "8",
+      "class": "slide"
+    },
+    {
+      "MimeType": "application/vnd.nextthought.slide",
+      "slidevideoid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Memory_Diagrams_Passing_By_Value_video",
+      "slidetitle": "Trace Code",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Memory_Diagrams_Passing_By_Value",
+      "slidevideostart": "382.0",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlide-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Memory_Diagrams_Passing_By_Value_slide_9",
+      "slideimage": "resources/CS1323_F_2015_Intro_to_Computer_Programming/70d61a9b193e711e4cd44103303478f7eafa69ea/fd35e23767020999111e1f49239199b4c5eff23e.png",
+      "slidevideoend": "482.0",
+      "slidenumber": "9",
+      "class": "slide"
+    },
+    {
+      "MimeType": "application/vnd.nextthought.slide",
+      "slidevideoid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Memory_Diagrams_Passing_By_Value_video",
+      "slidetitle": "What Does It Mean?",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Memory_Diagrams_Passing_By_Value",
+      "slidevideostart": "482.0",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlide-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Memory_Diagrams_Passing_By_Value_slide_10",
+      "slideimage": "resources/CS1323_F_2015_Intro_to_Computer_Programming/eb3b3cd4f2c424a456f8ecb6a8f9bc202207dd04/fd35e23767020999111e1f49239199b4c5eff23e.png",
+      "slidevideoend": "543.0",
+      "slidenumber": "10",
+      "class": "slide"
+    },
+    {
+      "MimeType": "application/vnd.nextthought.slide",
+      "slidevideoid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Memory_Diagrams_Passing_By_Value_video",
+      "slidetitle": "Keep Programming!",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Memory_Diagrams_Passing_By_Value",
+      "slidevideostart": "543.0",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlide-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Memory_Diagrams_Passing_By_Value_slide_11",
+      "slideimage": "resources/CS1323_F_2015_Intro_to_Computer_Programming/fdc6760aa4aa716b70337ab9f2c39835167bfebf/fd35e23767020999111e1f49239199b4c5eff23e.png",
+      "slidevideoend": "550.0",
+      "slidenumber": "11",
+      "class": "slide"
+    }
+  ],
+  "ntiid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Memory_Diagrams_Passing_By_Value",
+  "class": "ntislidedeck"
+}

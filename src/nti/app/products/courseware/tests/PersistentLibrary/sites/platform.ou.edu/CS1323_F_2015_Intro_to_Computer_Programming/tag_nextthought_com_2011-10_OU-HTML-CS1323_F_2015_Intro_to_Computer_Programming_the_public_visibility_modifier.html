@@ -1,0 +1,19 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html lang="en"><head> <meta content="2015-12-11T16:56:47" http-equiv="last-modified" /> <meta content="906" name="NTIRelativeScrollHeight" /> <meta content="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.the_public_visibility_modifier" name="NTIID" /> <meta content="NextThought" name="generator" /> <meta content="text/html; charset=ascii" http-equiv="content-type" /> <title>The public Visibility Modifier</title> <link href="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.tostring()_method" rel="next" title="toString() Method" /> <link href="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.compiler_complaints" rel="prev" title="Compiler Complaints" /> <link href="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.reading:Chortle_CH33" rel="up" title="Encapsulation" /> <link href="styles/styles.css" rel="stylesheet" /> <link href="styles/content.css" rel="stylesheet" /> </head> <body id="NTIContent"> <div class="page-contents"><div data-ntiid="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.the_public_visibility_modifier" id="a0000000539" ntiid="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.the_public_visibility_modifier"> <div class="chapter title">The <b class="bfseries"><tt class="ttfamily">public</tt></b> Visibility Modifier</div> <p class="placeholder"></p> <a name="27d5e22e3c9853c9d67ff06fc8ab3bd7"></a> <div class="sidebar" data-ntiid="tag:nextthought.com,2011-10:OU-HTML:NTISidebar-CS1323_F_2015_Intro_to_Computer_Programming.sidebar.answer.210" ntiid="tag:nextthought.com,2011-10:OU-HTML:NTISidebar-CS1323_F_2015_Intro_to_Computer_Programming.sidebar.answer.210"> <div class="sidebar-title">Answer</div> Yes. Java is used for Web programming because of its convenient security features. </div><a name="5ac93232867490212603d53b2bb8f7bb"></a> <p class="par" id="5ac93232867490212603d53b2bb8f7bb">The <b class="bfseries"><tt class="ttfamily">private</tt></b> visibility modifier keeps outsiders from looking in. However, the access methods are intended for outsiders, and must be visible to outsiders in order to be useful. The <b class="bfseries"><tt class="ttfamily">public</tt></b> access modifier explicitly says that a method or variable of an object can be accessed by code outside of the object. </p> <a name="f7778b1058afe581e5ff23757dd00d5b"></a> <p class="par" id="f7778b1058afe581e5ff23757dd00d5b">The <b class="bfseries"><tt class="ttfamily">public</tt></b> visibility modifier is usually used for all access methods and constructors in a class definition. Most variables are made <b class="bfseries"><tt class="ttfamily">private</tt></b>. Here is a skeleton of the <b class="bfseries"><tt class="ttfamily">CheckingAccount</tt></b> class: </p> <a name="68124266a39297eb34249f2cfcdfbd2d"></a> <pre>class CheckingAccount
+{
+  private String accountNumber;
+  private String accountHolder;
+  private int    balance;
+  private int    useCount = 0;
+
+  ________ CheckingAccount( String accNumber, String holder, int start ) { . . . . }
+
+  ________ void incrementUse() { . . . . }
+
+  ________ int getBalance() { . . . . }
+
+  ________ void  processDeposit( int amount ) { . . . . }
+
+  ________ void processCheck( int amount ) { . . . . }
+
+}
+</pre><a name="ca781e5839ff08e943f16d06a9353daf"></a> <div class="sidebar" data-ntiid="tag:nextthought.com,2011-10:OU-HTML:NTISidebar-CS1323_F_2015_Intro_to_Computer_Programming.sidebar.question.222" ntiid="tag:nextthought.com,2011-10:OU-HTML:NTISidebar-CS1323_F_2015_Intro_to_Computer_Programming.sidebar.question.222"> <div class="sidebar-title">Question</div> Indicate a visibility modifier for the constructor and for each of the methods. </div> </div></div> </body></html>

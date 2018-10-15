@@ -1,0 +1,188 @@
+{
+  "MimeType": "application/vnd.nextthought.ntislidedeck",
+  "Videos": [
+    {
+      "MimeType": "application/vnd.nextthought.ntislidevideo",
+      "video-ntiid": "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_05.01.02_Pseudo_ArrayList_Classes_as_Contract",
+      "title": "Pseudo ArrayList",
+      "creator": "Deborah Trytten",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Pseudo_ArrayList_Classes_as_Contract",
+      "thumbnail": "//www.kaltura.com/p/1500101/thumbnail/entry_id/0_iwi479do/width/640/",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Pseudo_ArrayList_Classes_as_Contract_video",
+      "class": "ntislidevideo"
+    }
+  ],
+  "creator": "Deborah Trytten",
+  "title": "Classes as Contract",
+  "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Pseudo_ArrayList_Classes_as_Contract",
+  "Slides": [
+    {
+      "MimeType": "application/vnd.nextthought.slide",
+      "slidevideoid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Pseudo_ArrayList_Classes_as_Contract_video",
+      "slidetitle": "Pseudo ArrayList",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Pseudo_ArrayList_Classes_as_Contract",
+      "slidevideostart": "0.0",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlide-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Pseudo_ArrayList_Classes_as_Contract_slide_1",
+      "slideimage": "resources/CS1323_F_2015_Intro_to_Computer_Programming/0dab877b9df200a167dc0c68d2f0f4d323683eae/fd35e23767020999111e1f49239199b4c5eff23e.png",
+      "slidevideoend": "5.0",
+      "slidenumber": "1",
+      "class": "slide"
+    },
+    {
+      "MimeType": "application/vnd.nextthought.slide",
+      "slidevideoid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Pseudo_ArrayList_Classes_as_Contract_video",
+      "slidetitle": "Creating New Classes",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Pseudo_ArrayList_Classes_as_Contract",
+      "slidevideostart": "5.0",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlide-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Pseudo_ArrayList_Classes_as_Contract_slide_2",
+      "slideimage": "resources/CS1323_F_2015_Intro_to_Computer_Programming/58232658b8ff29eddfbeb4750b2770d7033efeb5/fd35e23767020999111e1f49239199b4c5eff23e.png",
+      "slidevideoend": "53.0",
+      "slidenumber": "2",
+      "class": "slide"
+    },
+    {
+      "MimeType": "application/vnd.nextthought.slide",
+      "slidevideoid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Pseudo_ArrayList_Classes_as_Contract_video",
+      "slidetitle": "Properties of StringArrayList",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Pseudo_ArrayList_Classes_as_Contract",
+      "slidevideostart": "53.0",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlide-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Pseudo_ArrayList_Classes_as_Contract_slide_3",
+      "slideimage": "resources/CS1323_F_2015_Intro_to_Computer_Programming/ad6764b88d26a85317c55d75d51976f7f55adebc/fd35e23767020999111e1f49239199b4c5eff23e.png",
+      "slidevideoend": "128.0",
+      "slidenumber": "3",
+      "class": "slide"
+    },
+    {
+      "MimeType": "application/vnd.nextthought.slide",
+      "slidevideoid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Pseudo_ArrayList_Classes_as_Contract_video",
+      "slidetitle": "Data Fields",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Pseudo_ArrayList_Classes_as_Contract",
+      "slidevideostart": "128.0",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlide-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Pseudo_ArrayList_Classes_as_Contract_slide_4",
+      "slideimage": "resources/CS1323_F_2015_Intro_to_Computer_Programming/3e3fb59a3ba5fc543fab00e6dec332890526853f/fd35e23767020999111e1f49239199b4c5eff23e.png",
+      "slidevideoend": "183.0",
+      "slidenumber": "4",
+      "class": "slide"
+    },
+    {
+      "MimeType": "application/vnd.nextthought.slide",
+      "slidevideoid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Pseudo_ArrayList_Classes_as_Contract_video",
+      "slidetitle": "Instance Data",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Pseudo_ArrayList_Classes_as_Contract",
+      "slidevideostart": "183.0",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlide-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Pseudo_ArrayList_Classes_as_Contract_slide_5",
+      "slideimage": "resources/CS1323_F_2015_Intro_to_Computer_Programming/baca072083de1276a9692a76e2f974bf97c03ed2/fd35e23767020999111e1f49239199b4c5eff23e.png",
+      "slidevideoend": "217.0",
+      "slidenumber": "5",
+      "class": "slide"
+    },
+    {
+      "MimeType": "application/vnd.nextthought.slide",
+      "slidevideoid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Pseudo_ArrayList_Classes_as_Contract_video",
+      "slidetitle": "Class Data",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Pseudo_ArrayList_Classes_as_Contract",
+      "slidevideostart": "217.0",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlide-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Pseudo_ArrayList_Classes_as_Contract_slide_6",
+      "slideimage": "resources/CS1323_F_2015_Intro_to_Computer_Programming/3a86931eaac05045a3ed7be8bb18048bedb3a20f/fd35e23767020999111e1f49239199b4c5eff23e.png",
+      "slidevideoend": "238.0",
+      "slidenumber": "6",
+      "class": "slide"
+    },
+    {
+      "MimeType": "application/vnd.nextthought.slide",
+      "slidevideoid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Pseudo_ArrayList_Classes_as_Contract_video",
+      "slidetitle": "UML",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Pseudo_ArrayList_Classes_as_Contract",
+      "slidevideostart": "238.0",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlide-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Pseudo_ArrayList_Classes_as_Contract_slide_7",
+      "slideimage": "resources/CS1323_F_2015_Intro_to_Computer_Programming/1e7d71823369785e8a1dc3edd8537b28b158a59e/fd35e23767020999111e1f49239199b4c5eff23e.png",
+      "slidevideoend": "261.0",
+      "slidenumber": "7",
+      "class": "slide"
+    },
+    {
+      "MimeType": "application/vnd.nextthought.slide",
+      "slidevideoid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Pseudo_ArrayList_Classes_as_Contract_video",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Pseudo_ArrayList_Classes_as_Contract",
+      "slidevideostart": "261.0",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlide-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Pseudo_ArrayList_Classes_as_Contract_slide_8",
+      "slideimage": "resources/CS1323_F_2015_Intro_to_Computer_Programming/48bf4c567a5a664cedf1924c49c0996988fcc2ae/fd35e23767020999111e1f49239199b4c5eff23e.png",
+      "slidevideoend": "292.0",
+      "slidenumber": "8",
+      "class": "slide"
+    },
+    {
+      "MimeType": "application/vnd.nextthought.slide",
+      "slidevideoid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Pseudo_ArrayList_Classes_as_Contract_video",
+      "slidetitle": "Constructors",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Pseudo_ArrayList_Classes_as_Contract",
+      "slidevideostart": "292.0",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlide-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Pseudo_ArrayList_Classes_as_Contract_slide_9",
+      "slideimage": "resources/CS1323_F_2015_Intro_to_Computer_Programming/d30998d5bfcef15bbe96d296926d51410f4d3ecf/fd35e23767020999111e1f49239199b4c5eff23e.png",
+      "slidevideoend": "356.0",
+      "slidenumber": "9",
+      "class": "slide"
+    },
+    {
+      "MimeType": "application/vnd.nextthought.slide",
+      "slidevideoid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Pseudo_ArrayList_Classes_as_Contract_video",
+      "slidetitle": "UML",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Pseudo_ArrayList_Classes_as_Contract",
+      "slidevideostart": "356.0",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlide-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Pseudo_ArrayList_Classes_as_Contract_slide_10",
+      "slideimage": "resources/CS1323_F_2015_Intro_to_Computer_Programming/ce712fe79716d0e968d79ecb1aad6b4395ab714c/fd35e23767020999111e1f49239199b4c5eff23e.png",
+      "slidevideoend": "383.0",
+      "slidenumber": "10",
+      "class": "slide"
+    },
+    {
+      "MimeType": "application/vnd.nextthought.slide",
+      "slidevideoid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Pseudo_ArrayList_Classes_as_Contract_video",
+      "slidetitle": "Cascading Constructors",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Pseudo_ArrayList_Classes_as_Contract",
+      "slidevideostart": "383.0",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlide-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Pseudo_ArrayList_Classes_as_Contract_slide_11",
+      "slideimage": "resources/CS1323_F_2015_Intro_to_Computer_Programming/0c6f98bc79ba6ef4dde7cd3639f665cb7ad266e2/fd35e23767020999111e1f49239199b4c5eff23e.png",
+      "slidevideoend": "438.0",
+      "slidenumber": "11",
+      "class": "slide"
+    },
+    {
+      "MimeType": "application/vnd.nextthought.slide",
+      "slidevideoid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Pseudo_ArrayList_Classes_as_Contract_video",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Pseudo_ArrayList_Classes_as_Contract",
+      "slidevideostart": "438.0",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlide-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Pseudo_ArrayList_Classes_as_Contract_slide_12",
+      "slideimage": "resources/CS1323_F_2015_Intro_to_Computer_Programming/fa124b4c739c0e9afc101ae3f16765c7540ecf32/fd35e23767020999111e1f49239199b4c5eff23e.png",
+      "slidevideoend": "476.0",
+      "slidenumber": "12",
+      "class": "slide"
+    },
+    {
+      "MimeType": "application/vnd.nextthought.slide",
+      "slidevideoid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Pseudo_ArrayList_Classes_as_Contract_video",
+      "slidetitle": "General Rules",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Pseudo_ArrayList_Classes_as_Contract",
+      "slidevideostart": "476.0",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlide-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Pseudo_ArrayList_Classes_as_Contract_slide_13",
+      "slideimage": "resources/CS1323_F_2015_Intro_to_Computer_Programming/9d7209a78515370863153bb55e5e55a9709eec93/fd35e23767020999111e1f49239199b4c5eff23e.png",
+      "slidevideoend": "506.0",
+      "slidenumber": "13",
+      "class": "slide"
+    },
+    {
+      "MimeType": "application/vnd.nextthought.slide",
+      "slidevideoid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Pseudo_ArrayList_Classes_as_Contract_video",
+      "slidetitle": "Keep Programming!",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Pseudo_ArrayList_Classes_as_Contract",
+      "slidevideostart": "506.0",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlide-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Pseudo_ArrayList_Classes_as_Contract_slide_14",
+      "slideimage": "resources/CS1323_F_2015_Intro_to_Computer_Programming/95afe50b4f1108b804fb20455d0727b0d4377240/fd35e23767020999111e1f49239199b4c5eff23e.png",
+      "slidevideoend": "517.0",
+      "slidenumber": "14",
+      "class": "slide"
+    }
+  ],
+  "ntiid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Pseudo_ArrayList_Classes_as_Contract",
+  "class": "ntislidedeck"
+}

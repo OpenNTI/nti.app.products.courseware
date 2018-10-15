@@ -1,0 +1,24 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html lang="en"><head> <meta content="2015-12-11T16:56:47" http-equiv="last-modified" /> <meta content="807" name="NTIRelativeScrollHeight" /> <meta content="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.completed_constructor" name="NTIID" /> <meta content="NextThought" name="generator" /> <meta content="text/html; charset=ascii" http-equiv="content-type" /> <title>Completed Constructor</title> <link href="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.steps_in_program_execution" rel="next" title="Steps in Program Execution" /> <link href="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.coding_a_constructor" rel="prev" title="Coding a Constructor" /> <link href="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.reading:Chortle_CH30_2" rel="up" title="Defining Your Own Classes" /> <link href="styles/styles.css" rel="stylesheet" /> <link href="styles/content.css" rel="stylesheet" /> </head> <body id="NTIContent"> <div class="page-contents"><div data-ntiid="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.completed_constructor" id="a0000000500" ntiid="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.completed_constructor"> <div class="chapter title">Completed Constructor</div> <p class="placeholder"></p> <a name="b50a9026b08cf36f2cee4f1213c53072"></a> <div class="sidebar" data-ntiid="tag:nextthought.com,2011-10:OU-HTML:NTISidebar-CS1323_F_2015_Intro_to_Computer_Programming.sidebar.answer.175" ntiid="tag:nextthought.com,2011-10:OU-HTML:NTISidebar-CS1323_F_2015_Intro_to_Computer_Programming.sidebar.answer.175"> <div class="sidebar-title">Answer</div> A complete program is below. </div><a name="927199b70395478c4f774051ba4b4b59"></a> <p class="par" id="927199b70395478c4f774051ba4b4b59">Here is a complete program. The constructor in the definition of <b class="bfseries"><tt class="ttfamily">HelloObject</tt></b> has a parameter named <b class="bfseries"><tt class="ttfamily">st</tt></b>. This parameter is used to pass data into the constructor. The constructor itself does nothing but copy it to the variable <b class="bfseries"><tt class="ttfamily">greeting</tt></b> of the object. </p> <a name="71155123754e494e5351ace97b9cde29"></a> <pre>class HelloObject
+{
+  String greeting;
+
+  HelloObject( String st )
+  {
+    greeting = st;
+  }
+
+  void speak()
+  {
+    System.out.println( greeting );
+  }
+}
+
+class HelloTester
+{
+  public static void main ( String[] args )
+  {
+    HelloObject anObject = new HelloObject("A Greeting!");
+    anObject.speak();
+  }
+}
+</pre><a name="6ffd20d11d3d815c8586af12e3aadfd3"></a> <div class="sidebar" data-ntiid="tag:nextthought.com,2011-10:OU-HTML:NTISidebar-CS1323_F_2015_Intro_to_Computer_Programming.sidebar.question.184" ntiid="tag:nextthought.com,2011-10:OU-HTML:NTISidebar-CS1323_F_2015_Intro_to_Computer_Programming.sidebar.question.184"> <div class="sidebar-title">Question</div> What will this program print on the monitor when it is run? </div> </div></div> </body></html>

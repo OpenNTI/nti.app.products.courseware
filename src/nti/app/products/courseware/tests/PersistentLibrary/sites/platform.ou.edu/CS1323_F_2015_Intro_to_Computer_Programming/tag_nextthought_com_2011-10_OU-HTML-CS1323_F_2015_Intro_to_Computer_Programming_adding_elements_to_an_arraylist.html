@@ -1,0 +1,34 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html lang="en"><head> <meta content="2015-12-11T16:56:47" http-equiv="last-modified" /> <meta content="1553" name="NTIRelativeScrollHeight" /> <meta content="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.adding_elements_to_an_arraylist" name="NTIID" /> <meta content="NextThought" name="generator" /> <meta content="text/html; charset=ascii" http-equiv="content-type" /> <title>Adding Elements to an ArrayList</title> <link href="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.setting_arraylist_elements" rel="next" title="Setting ArrayList Elements" /> <link href="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.capacity_and_size" rel="prev" title="Capacity and Size" /> <link href="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.reading:Chortle_CH54" rel="up" title="ArrayList class" /> <link href="styles/styles.css" rel="stylesheet" /> <link href="styles/content.css" rel="stylesheet" /> </head> <body id="NTIContent"> <div class="page-contents"><div data-ntiid="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.adding_elements_to_an_arraylist" id="a0000000606" ntiid="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.adding_elements_to_an_arraylist"> <div class="chapter title">Adding Elements to an <b class="bfseries"><tt class="ttfamily">ArrayList</tt></b></div> <p class="placeholder"></p> <a name="9d68c3dc41c03f0272b994c0c03ebcbf"></a> <div class="sidebar" data-ntiid="tag:nextthought.com,2011-10:OU-HTML:NTISidebar-CS1323_F_2015_Intro_to_Computer_Programming.sidebar.answer.267" ntiid="tag:nextthought.com,2011-10:OU-HTML:NTISidebar-CS1323_F_2015_Intro_to_Computer_Programming.sidebar.answer.267"> <div class="sidebar-title">Answer</div> It is more efficient to increase capacity by a large amount a few times rather than to increase capacity by one every time a new element is added. </div><a name="fee10b385e08339f659e9ec4a7817158"></a> <p class="par" id="fee10b385e08339f659e9ec4a7817158"><b class="bfseries"><tt class="ttfamily">ArrayList</tt></b> implements the <b class="bfseries"><tt class="ttfamily">List&lt;E&gt;</tt></b> Interface. To add an element to the end of an <b class="bfseries"><tt class="ttfamily">ArrayList</tt></b> use: </p> <a name="776742d92a43c74f372c26c2411afef6"></a> <pre>boolean add( E elt ) ;   // Add a reference to an object elt to the end of the ArrayList,
+                         // increasing size by one.  The capacity will increase if needed.
+                         // Always returns true.
+</pre><a name="2fe2403b4e286a28043b246f067d245d"></a> <p class="par" id="2fe2403b4e286a28043b246f067d245d">To access the element at a particular index use: </p> <a name="957d60f50629f3004fd220e3a7eb1228"></a> <pre>E get( int index )
+</pre><a name="7684d370575ea3cddf17c232316eacfc"></a> <p class="par" id="7684d370575ea3cddf17c232316eacfc">This method returns a reference to an object in the list, which is of type E. Here is our example program, where the type in the list is <b class="bfseries"><tt class="ttfamily">String</tt></b>. </p> <a name="2a84f8467f8048546efe72581e10234d"></a> <pre>import java.util.* ;
+
+class ArrayListEgTwo
+{
+
+  public static void main ( String[] args)
+  {
+    // Create an ArrayList that holds references to String
+    ArrayList&lt;String&gt; names = new ArrayList&lt;String&gt;();
+
+    // Capacity starts at 10, but size starts at 0
+    System.out.println("initial size: " + names.size() );
+
+    // Add three String references
+    names.add("Amy");
+    names.add("Bob");
+    names.add("Cindy");
+    System.out.println("new size: " + names.size() );
+       
+    // Access and print out the Objects
+    for ( int j=0; j&lt;names.size(); j++ )
+      System.out.println("element " + j + ": " + names.get(j) );
+  }
+}
+</pre><a name="49a71fa19603836da3e5b240f60d365e.493"></a> <p class="par" id="49a71fa19603836da3e5b240f60d365e.493"><span itemprop="nti-data-markupdisabled"> <img crossorigin="anonymous" data-nti-image-full="resources/CS1323_F_2015_Intro_to_Computer_Programming/00a65a3c17f38b95d6342ae7ab7e51c466ef3643/fd35e23767020999111e1f49239199b4c5eff23e.gif" data-nti-image-half="resources/CS1323_F_2015_Intro_to_Computer_Programming/00a65a3c17f38b95d6342ae7ab7e51c466ef3643/2cff8dc544afd32305107ce559484cb4ce1730df.gif" data-nti-image-quarter="resources/CS1323_F_2015_Intro_to_Computer_Programming/00a65a3c17f38b95d6342ae7ab7e51c466ef3643/06aefff9765154841fac3704b0e59674fae7a005.gif" data-nti-image-size="actual" id="49a71fa19603836da3e5b240f60d365e.494" src="resources/CS1323_F_2015_Intro_to_Computer_Programming/00a65a3c17f38b95d6342ae7ab7e51c466ef3643/fd35e23767020999111e1f49239199b4c5eff23e.gif" style="width:169px; height:275px" /> </span> </p> <a name="9c7c04a9256e7043bed2ac1d84c65eb5"></a> <p class="par" id="9c7c04a9256e7043bed2ac1d84c65eb5">This program creates an <b class="bfseries"><tt class="ttfamily">ArrayList</tt></b> of references to <b class="bfseries"><tt class="ttfamily">String</tt></b> objects. The <b class="bfseries"><tt class="ttfamily">for</tt></b> statement uses <b class="bfseries"><tt class="ttfamily">size()</tt></b> for the upper bound of the loop. This works because there are never any empty cells between the elements of the list. </p> <a name="01f735b982b3e6aa10d256d8ec9c0958"></a> <div class="sidebar" data-ntiid="tag:nextthought.com,2011-10:OU-HTML:NTISidebar-CS1323_F_2015_Intro_to_Computer_Programming.sidebar.question.280" ntiid="tag:nextthought.com,2011-10:OU-HTML:NTISidebar-CS1323_F_2015_Intro_to_Computer_Programming.sidebar.question.280"> <div class="sidebar-title">Question</div> <a name="d91e2185125b5333e3ffa36fafd9d78e"></a> <p class="par" id="d91e2185125b5333e3ffa36fafd9d78e"> What does the program print out? </p> <a name="8477a6097eaabc1cdcfe5dcfc468c48c"></a> <pre>size:
+new size:
+element 0: 
+element 1: 
+element 2: 
+</pre> </div> </div></div> </body></html>

@@ -1,0 +1,381 @@
+WEBVTT
+Kind: captions
+Language: en
+
+00:00:00.870 --> 00:00:05.000
+&gt;&gt;As your programs get longer, they tend to
+get harder to debug, so it's time to show
+
+00:00:05.000 --> 00:00:09.830
+you more professional tools for debugging.
+Since we're using Eclipse as our integrated
+
+00:00:09.830 --> 00:00:15.589
+development environment, IDE, I'll show you
+the tools that are available in Eclipse. However,
+
+00:00:15.589 --> 00:00:21.310
+every IDE has tools like these. When most
+students start to debug, they put system out
+
+00:00:21.310 --> 00:00:25.560
+print line statements in their code to see
+what's happening on a given line of code at
+
+00:00:25.560 --> 00:00:30.780
+a particular time. There are lots of problems
+with debugging programs this way. One is that
+
+00:00:30.780 --> 00:00:35.670
+it's slow. You have to put in the statement,
+run the program, remember to take it out.
+
+00:00:35.670 --> 00:00:39.649
+And if you make a mistake and take out an
+extra line of code when you remove the system
+
+00:00:39.649 --> 00:00:44.690
+out print line, then your program is broken
+again and you have to go back to debugging.
+
+00:00:44.690 --> 00:00:48.949
+To make matters worse, you probably think
+that the part of the program you've just debugged
+
+00:00:48.949 --> 00:00:54.149
+isn't going to be the problem, and so you
+look elsewhere. If you leave all those system
+
+00:00:54.149 --> 00:00:59.190
+out print line debugging statements in your
+code, even if you comment them out, your code
+
+00:00:59.190 --> 00:01:05.390
+will be long and messy. So system out print
+line for debugging is a really bad idea.
+
+00:01:05.390 --> 00:01:09.460
+But there's another reason to learn to use
+debugging tools. When a professional programmer
+
+00:01:09.460 --> 00:01:13.430
+looks at a code that's littered with system
+out print line statements, they'll think you
+
+00:01:13.430 --> 00:01:17.960
+don't know how to use your IDE effectively.
+For example, if you were interviewing for
+
+00:01:17.960 --> 00:01:22.180
+an internship and this showed up in your code
+sample, the company might think you weren't
+
+00:01:22.180 --> 00:01:27.400
+skilled enough to hire. If you want people,
+particularly employers, to treat you like
+
+00:01:27.400 --> 00:01:32.380
+a professional, you need to act like one.
+Learn to use your tools well. Remember, professionals
+
+00:01:32.380 --> 00:01:38.100
+get paid better. This advice applies to a
+lot of fields in addition to programming.
+
+00:01:38.100 --> 00:01:42.750
+When you debug code using an IDE, the compiler
+has to change how it stores the information
+
+00:01:42.750 --> 00:01:48.100
+in the code. We call this entering debugging
+mode. It's done in Eclipse by entering the
+
+00:01:48.100 --> 00:01:53.570
+debug perspective. The first time you do it
+you have to select it from the Windows menu.
+
+00:01:53.570 --> 00:01:57.630
+Once you've used it, Eclipse will remember
+and keep a debug icon for you on the upper
+
+00:01:57.630 --> 00:02:02.300
+right-hand corner of the window. The two features
+that Eclipse has that are most useful for
+
+00:02:02.300 --> 00:02:08.099
+debugging are called breakpoints and variables.
+Breakpoints let you choose when your program
+
+00:02:08.099 --> 00:02:13.189
+should stop, and variables let you see what
+each variable contains at the time the breakpoint
+
+00:02:13.189 --> 00:02:18.180
+stopped the program. To set a breakpoint,
+you click on the area to the left of the code
+
+00:02:18.180 --> 00:02:23.049
+in the center-left panel of the screen. You'll
+see the breakpoint listed under the breakpoints
+
+00:02:23.049 --> 00:02:29.700
+tab at the upper-right of the screen. To run
+your code in debug mode, you choose the bug
+
+00:02:29.700 --> 00:02:34.209
+icon to the left of the green circle with
+the white triangle that's used to run your
+
+00:02:34.209 --> 00:02:38.569
+program without debugging. If you choose the
+run button, like what we've been doing all
+
+00:02:38.569 --> 00:02:43.709
+along, the program will ignore your breakpoints
+and run as usual. This is handy when you're
+
+00:02:43.709 --> 00:02:48.810
+debugging because you can flip back and forth
+between programming and debugging easily.
+
+00:02:48.810 --> 00:02:52.840
+When your program encounters a breakpoint,
+it will stop running and let you see all of
+
+00:02:52.840 --> 00:02:58.079
+the variables that are in scope. These are
+shown in the variables tab next to the breakpoints
+
+00:02:58.079 --> 00:03:02.969
+tab. You can click and scroll around to see
+exactly what's stored in your variables at
+
+00:03:02.969 --> 00:03:09.969
+that point in time. When you're finished looking
+around, you can exit the program with the
+
+00:03:10.829 --> 00:03:17.040
+red button or let it finish by clicking the
+green arrow to the left of the red button.
+
+00:03:17.040 --> 00:03:21.040
+After you've figured out what's in your data,
+sometimes you want to continue to execute
+
+00:03:21.040 --> 00:03:26.239
+your program one step at a time. This can
+be done by setting multiple breakpoints. The
+
+00:03:26.239 --> 00:03:32.569
+computer will stop every time it hits a breakpoint,
+no matter how many you place. To remove breakpoints,
+
+00:03:32.569 --> 00:03:39.569
+you click on them. Once you finish debugging,
+you can return to your regular Java perspective
+
+00:03:42.079 --> 00:03:49.040
+by clicking the J button near the upper right.
+
+00:03:49.040 --> 00:03:54.029
+IDE tools are great for debugging routine
+mistakes, but sometimes programmers make mistakes
+
+00:03:54.029 --> 00:03:58.870
+that are hard to debug. For example, you can
+make some really bad mistakes with object
+
+00:03:58.870 --> 00:04:05.109
+references and object construction that are
+tough to find. Let me give you an example.
+
+00:04:05.109 --> 00:04:10.769
+Array List of String Builder list equals new
+Array List string builder. String Builder
+
+00:04:10.769 --> 00:04:17.769
+contents equals new String Builder—two double
+quotes together. Int count equals zero while
+
+00:04:18.379 --> 00:04:25.379
+count is less than five. List dot add of contents
+count equals count plus one. So what happens
+
+00:04:27.229 --> 00:04:34.229
+when we do this? List dot get of zero dot
+append Hi! in double quotes. If we print out
+
+00:04:35.919 --> 00:04:42.160
+the list, we'll see five copies of Hi! That
+is probably not what you were expecting. Or,
+
+00:04:42.160 --> 00:04:47.080
+if it is, you're doing really, really well
+programming. Congratulations. The problem
+
+00:04:47.080 --> 00:04:51.879
+here, if you haven't already figured it out,
+is that we've put the same string builder
+
+00:04:51.879 --> 00:04:57.620
+object reference into five different locations
+in the Array List list. This is very, very
+
+00:04:57.620 --> 00:05:02.360
+unlikely to be what we wanted to do. The debugger
+won't be able to help you figure this out
+
+00:05:02.360 --> 00:05:06.800
+much because it will show the five string
+builder objects that are empty, and that's
+
+00:05:06.800 --> 00:05:13.280
+just what you would expect. To make matters
+worse, this would work perfectly fine if we
+
+00:05:13.280 --> 00:05:17.800
+had used string instead of String Builder.
+Since string objects are immutable, the fact
+
+00:05:17.800 --> 00:05:24.030
+that they're reused multiple times would be
+immaterial. This is a hard debugging problem.
+
+00:05:24.030 --> 00:05:29.620
+We need a more nuanced tool to help us analyze
+these situations. When I was a young programmer,
+
+00:05:29.620 --> 00:05:34.750
+I learned to use memory diagrams to help me
+understand how programs really worked. This
+
+00:05:34.750 --> 00:05:38.860
+is how I solve challenging debugging problems
+even now.
+
+00:05:38.860 --> 00:05:43.949
+Let's look at what happened in the loop above.
+The problem is now clear. When we changed
+
+00:05:43.949 --> 00:05:49.379
+the first string builder object, we changed
+all of them. Of course, we still have to figure
+
+00:05:49.379 --> 00:05:54.539
+out how to fix this problem. What we really
+want to do is have five string builder objects
+
+00:05:54.539 --> 00:06:00.180
+instead of one. We do this by putting the
+string builder constructor in a loop. I'm
+
+00:06:00.180 --> 00:06:05.810
+going to do this by getting rid of the contents
+reference and creating anonymous string builder
+
+00:06:05.810 --> 00:06:11.060
+objects in the add method. If this makes you
+uneasy, you could do this in more steps. Array
+
+00:06:11.060 --> 00:06:17.169
+List String Builder of list equals new Array
+List String Builder. Int count equals zero.
+
+00:06:17.169 --> 00:06:23.370
+While count less than five. List dot add new
+String Builder—double quotes right next
+
+00:06:23.370 --> 00:06:30.370
+to each other. Count equals count plus one.
+List dot get zero dot append Hi! in double
+
+00:06:31.919 --> 00:06:37.689
+quotes. Notice now the String Builder constructor
+will be called five times, and we'll get five
+
+00:06:37.689 --> 00:06:42.979
+different objects. When we change the first
+one—remember it's the one at index zero—we
+
+00:06:42.979 --> 00:06:45.879
+won't change the other four.
+
+00:06:45.879 --> 00:06:50.560
+These tools will make is possible for you
+to debug your programs more successfully.
+
+00:06:50.560 --> 00:06:54.919
+So now that we know how to fix programs, we
+might consider what makes a program good or
+
+00:06:54.919 --> 00:07:00.139
+bad. This question turns out to be a lot harder
+than you might think because it's highly dependent
+
+00:07:00.139 --> 00:07:05.819
+on context. When I was learning to program,
+computers were rare and expensive. My college
+
+00:07:05.819 --> 00:07:10.800
+only let me run my program two times a day.
+What my professor thought was the most important
+
+00:07:10.800 --> 00:07:16.400
+thing was having programs run fast and use
+little memory, and in that context, he was
+
+00:07:16.400 --> 00:07:21.240
+right. That was really important given the
+resource constraints. Now that computers are
+
+00:07:21.240 --> 00:07:27.039
+so much faster and memory is so much bigger,
+those may not be the most important things.
+
+00:07:27.039 --> 00:07:32.370
+What tends to be important now is often how
+easy the software is to fix and improve, called
+
+00:07:32.370 --> 00:07:37.469
+maintainability. That's why I nag you about
+including comments, using meaningful variable
+
+00:07:37.469 --> 00:07:43.439
+names, writing things in simple and powerful
+ways, and keeping your code neatly organized.
+
+00:07:43.439 --> 00:07:47.659
+But that isn't always true. If you're writing
+a program that predicts weather, speed is
+
+00:07:47.659 --> 00:07:53.699
+really important. No one needs to know whether
+it's going to rain today, tomorrow morning.
+
+00:07:53.699 --> 00:07:58.710
+This is a fairly common pattern in engineering,
+and programming is part of engineering. If
+
+00:07:58.710 --> 00:08:02.860
+I ask a hundred students which car is best,
+I'd probably get at least fifty different
+
+00:08:02.860 --> 00:08:07.800
+answers. One student might like the one that
+drove fastest. Another student might like
+
+00:08:07.800 --> 00:08:12.830
+the one that was the most safe. And a third
+might like the one that used the least gasoline.
+
+00:08:12.830 --> 00:08:17.550
+There is no single car that's best. So when
+you use the word "best" with an engineer,
+
+00:08:17.550 --> 00:08:23.520
+they'll almost always ask you, "In what sense?"
+Because things in engineering, just like programming,
+
+00:08:23.520 --> 00:08:24.020
+tend to be tradeoffs.
+

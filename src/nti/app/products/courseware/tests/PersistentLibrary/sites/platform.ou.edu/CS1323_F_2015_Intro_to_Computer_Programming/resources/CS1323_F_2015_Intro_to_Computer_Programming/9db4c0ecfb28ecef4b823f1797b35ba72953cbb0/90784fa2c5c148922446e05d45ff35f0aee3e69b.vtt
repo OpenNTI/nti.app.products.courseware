@@ -1,0 +1,1425 @@
+WEBVTT
+Kind: captions
+Language: en
+
+00:00:00.650 --> 00:00:04.620
+&gt;&gt;Now that we know about bigger bytes, let's
+write a program that uses more complicated
+
+00:00:04.620 --> 00:00:10.969
+data in operations. Let's write a cheat for
+Words With Acquaintances. Here's the problem
+
+00:00:10.969 --> 00:00:15.709
+statement: Words With Acquaintances is a word
+game where players draw letters and have to
+
+00:00:15.709 --> 00:00:20.529
+use their letters in combination with letters
+on the board to spell words. Players can draw
+
+00:00:20.529 --> 00:00:24.699
+wildcards that can be used to replace any
+single character. So we're going to write
+
+00:00:24.699 --> 00:00:29.240
+a program that's going to take a dictionary
+of words and use it to cheat by systematically
+
+00:00:29.240 --> 00:00:34.340
+finding all words that contain your letters.
+Now obviously I don't condone cheating, but
+
+00:00:34.340 --> 00:00:39.240
+things like this can be lots of fun to write.
+So the first thing we want to do is to create
+
+00:00:39.240 --> 00:00:44.170
+some test data. We could have very complicated
+test data, but I've found in these cases it's
+
+00:00:44.170 --> 00:00:51.170
+better to keep it simple. So for example,
+aaaaa, bbbbb, ccccc, and so on. Now at the
+
+00:00:52.360 --> 00:00:58.750
+end I did put in abcde. And the reason I did
+that is to help detect some more of the subtle
+
+00:00:58.750 --> 00:01:03.390
+errors that can come up when we're doing these
+programs. We should be able to find all the
+
+00:01:03.390 --> 00:01:08.610
+individual words in the dictionary when there
+are no wildcards. With one wildcard we should
+
+00:01:08.610 --> 00:01:15.610
+be able to find all of those but also find
+aaaa, bbbb, cccc, dddd, abcde, bcde, cdeb,
+
+00:01:20.750 --> 00:01:26.700
+and things like that. So we'll have lots of
+possibilities to check at the end.
+
+00:01:26.700 --> 00:01:30.770
+The first method that we're going to write
+is read dictionary from file. This method
+
+00:01:30.770 --> 00:01:34.979
+should look familiar because we just wrote
+a similar method. So I actually wrote this
+
+00:01:34.979 --> 00:01:40.090
+method in advance so that we don't have to
+rewrite exactly the same code again. The algorithm
+
+00:01:40.090 --> 00:01:44.920
+is the same as it was last time. We read the
+file one line at a time and insert each word
+
+00:01:44.920 --> 00:01:51.920
+into the dictionary. Let's go and take a look
+at that method. So here's our read dictionary
+
+00:01:52.470 --> 00:01:58.049
+from file method. It's virtually identical
+to the one we've previously written. We construct
+
+00:01:58.049 --> 00:02:03.850
+a new array list. We construct a file. Remembering
+that we also have to throw a file not found
+
+00:02:03.850 --> 00:02:10.049
+exception when we do that. We step through
+the file one line at a time, adding each element
+
+00:02:10.049 --> 00:02:15.150
+to the dictionary, and when we get to the
+end we return the dictionary. Now we expect
+
+00:02:15.150 --> 00:02:18.730
+this code is going to work well because it's
+identical to code that we just wrote that
+
+00:02:18.730 --> 00:02:25.730
+works perfectly. Up in the program we created
+dictionary dot text and an array list to store
+
+00:02:26.040 --> 00:02:30.919
+the dictionary we create in read dictionary
+from file. Let's go and take a look at the
+
+00:02:30.919 --> 00:02:37.409
+dictionary dot text. Notice it has the test
+data that we created on the last slide.
+
+00:02:37.409 --> 00:02:41.689
+Our next method will be find all matches.
+Now this one's going to be a little bit more
+
+00:02:41.689 --> 00:02:46.590
+interesting to write because it's a harder
+method. So we're going to need a string builder.
+
+00:02:46.590 --> 00:02:51.400
+That's going to tell us what letters you have.
+We're going to need some wildcards. How many
+
+00:02:51.400 --> 00:02:56.760
+wildcards do you have: zero, one, or two?
+And of course we need the dictionary. So let's
+
+00:02:56.760 --> 00:03:03.760
+start the body of that method. I'll grab the
+signature from the PowerPoint 
+and pull it into Eclipse. It doesn't matter
+
+00:03:12.650 --> 00:03:19.650
+what order we put methods in. 
+Now you may be wondering why I used a string
+builder instead of using a string. Well, the
+
+00:03:28.290 --> 00:03:35.269
+reason is that as we go through this code,
+we're going to have to find letters only once.
+
+00:03:35.269 --> 00:03:40.870
+So for example, if we have only one letter
+on the board that's an S, and we have a word
+
+00:03:40.870 --> 00:03:46.299
+that has two S's in it, that second S has
+to be a wildcard. So as we find letters, we're
+
+00:03:46.299 --> 00:03:51.090
+going to have to remove them that's what string
+builders do. Remember that string objects
+
+00:03:51.090 --> 00:03:58.090
+can't be changed, so definitely this needs
+to be a string builder. Now Eclipse is doing
+
+00:04:01.639 --> 00:04:05.949
+something strange with the spacing, and that
+makes me think that maybe there's something
+
+00:04:05.949 --> 00:04:11.709
+here that isn't quite right, so right now
+I'm looking for all my curly braces and punctuation
+
+00:04:11.709 --> 00:04:17.459
+to see if anything is out of whack. It looks
+correct, so maybe Eclipse is just unhappy
+
+00:04:17.459 --> 00:04:24.459
+that we don't have a return type. We can fix
+that. So we just construct our object and
+
+00:04:34.520 --> 00:04:41.270
+return it at the end. Those curly braces are
+still bugging me, so I'm going to fix them
+
+00:04:41.270 --> 00:04:48.270
+manually. Let's also call our method so we
+don't have the disappointment of not seeing
+
+00:04:49.210 --> 00:04:56.210
+our program work.
+
+00:04:58.860 --> 00:05:05.860
+So we'll need letters, wildcards, and the
+dictionary. So these will be the letters that
+
+00:05:12.490 --> 00:05:19.490
+we pick. I'm just putting in some fake data
+for now. Eventually we'll want to write a
+
+00:05:20.669 --> 00:05:27.669
+user interface for this so people can actually
+play with it. We're going to need to save
+
+00:05:29.680 --> 00:05:36.680
+our array list 
+that comes out of find all matches to a variable
+called chosen words, and let's see what Eclipse
+
+00:05:48.349 --> 00:05:55.349
+is unhappy about. Ah, so what it's complaining
+about is that I thoughtlessly put a string
+
+00:05:56.530 --> 00:06:02.860
+here when in fact we needed a string builder.
+So let's make this a string builder. Remember
+
+00:06:02.860 --> 00:06:09.860
+string builders don't have that easy construction
+syntax that strings have, so we have to actually
+
+00:06:11.969 --> 00:06:18.330
+build them using new just like we do most
+objects other than strings. And the last thing
+
+00:06:18.330 --> 00:06:25.330
+we can do is actually print it out. I'm going
+to show you a little trick that we can use
+
+00:06:26.050 --> 00:06:33.050
+with print lines. We can just print up chosen
+words as one whole method. Now we don't control
+
+00:06:34.969 --> 00:06:39.050
+the formatting there so much, but it will
+give us a quick test to see that our program
+
+00:06:39.050 --> 00:06:42.590
+is working.
+
+00:06:42.590 --> 00:06:47.270
+Now let's talk a little bit about the algorithm.
+We're going to try to match the words in the
+
+00:06:47.270 --> 00:06:52.300
+dictionary one at a time. If the number of
+characters that match is less than or equal
+
+00:06:52.300 --> 00:06:56.689
+to the number of wildcards, that means that
+we have a word that could work with the letters
+
+00:06:56.689 --> 00:07:02.379
+that you have. Then the letters in the string
+builder have to be removed one at a time as
+
+00:07:02.379 --> 00:07:07.009
+we find the characters. Now there are really
+two different methods that are fitting together
+
+00:07:07.009 --> 00:07:11.759
+in here. There's finding the match globally,
+and then there's finding the match within
+
+00:07:11.759 --> 00:07:16.740
+the words. These need to be separate methods
+because otherwise the find all matches method
+
+00:07:16.740 --> 00:07:21.469
+will get too long and complicated. So we definitely
+want to break those things out right at the
+
+00:07:21.469 --> 00:07:27.740
+start. So the third method that we're going
+to have will be called count matches, and
+
+00:07:27.740 --> 00:07:31.810
+it will take the string that's a word, so
+that would be the word from the dictionary,
+
+00:07:31.810 --> 00:07:36.039
+and the letters that you have. The algorithm
+for this one is stepping through the word
+
+00:07:36.039 --> 00:07:41.199
+one letter at a time. If the current letter
+of the word is in letters, we remove it from
+
+00:07:41.199 --> 00:07:45.080
+letters, and then we keep track of the number
+of letters that have been removed because
+
+00:07:45.080 --> 00:07:48.610
+that tells how many we were able to use from
+the string.
+
+00:07:48.610 --> 00:07:55.610
+So let's create a stub for that method in
+the program too. Grabbing the signature from
+
+00:07:56.969 --> 00:08:03.969
+the PowerPoint. Of course, as always our method
+is public and static. Here's count matches
+
+00:08:24.270 --> 00:08:31.270
+and our string builder for letters, and of
+course to complete the stub I put in return
+
+00:08:38.410 --> 00:08:43.730
+zero, just so that we get something back from
+the method. Now it doesn't really matter which
+
+00:08:43.730 --> 00:08:48.350
+method we write first. We won't be able to
+test the code very efficiently until we have
+
+00:08:48.350 --> 00:08:52.580
+both methods available. So we might start
+with the one that we think is easiest, we
+
+00:08:52.580 --> 00:08:56.000
+might start with the one we think is hardest,
+or we might just start with the one where
+
+00:08:56.000 --> 00:09:01.940
+the cursor is, which is what I'm going to
+do now. We're stepping through the word one
+
+00:09:01.940 --> 00:09:08.940
+character at a time, so we need an index,
+and it's going to start at the zeroeth character
+
+00:09:09.560 --> 00:09:16.560
+while the index is less than word dot length.
+Remember we always want to increment the index
+
+00:09:21.460 --> 00:09:28.460
+at the end of the loop, so let's get that
+in there right now. If word dot char at of
+
+00:09:36.250 --> 00:09:43.250
+the index is in letters, so we have to have
+a way of figuring out where it is in letters.
+
+00:09:44.280 --> 00:09:47.840
+Now this is a problem because we haven't used
+the string builder class as much, so you might
+
+00:09:47.840 --> 00:09:52.960
+not know the methods as well. So what we want
+to do is go to the API, and take a look and
+
+00:09:52.960 --> 00:09:59.960
+see which method we should be using. We have
+the API up, looking for the string builder
+
+00:10:00.230 --> 00:10:07.230
+class. Learning to use the API is one of the
+most important things you can do as a programmer
+
+00:10:09.030 --> 00:10:15.430
+because it has so much information about what's
+available. The challenge to using the API
+
+00:10:15.430 --> 00:10:19.910
+is the fact that it isn't really written for
+beginning programmers. It's written for experienced
+
+00:10:19.910 --> 00:10:24.330
+programmers, so what you have to do is read
+as much as you can and just skip over the
+
+00:10:24.330 --> 00:10:28.710
+parts that don't make sense. That may feel
+like you're cheating, but you're not. You're
+
+00:10:28.710 --> 00:10:33.310
+just accessing the part that you can actually
+use now. And later on as your expertise in
+
+00:10:33.310 --> 00:10:38.620
+programming grows, you'll be able to understand
+more and more of the API.
+
+00:10:38.620 --> 00:10:43.140
+So what we're looking for is something that
+can tell us whether a character is in a word
+
+00:10:43.140 --> 00:10:49.540
+or not. Append doesn't sound very promising,
+so I'm scrolling down past all of the append
+
+00:10:49.540 --> 00:10:55.430
+methods that are there. Capacity doesn't,
+char at, while that's a very useful method
+
+00:10:55.430 --> 00:10:59.690
+isn't really what we need. So we're looking
+for something that looks like it might do
+
+00:10:59.690 --> 00:11:06.180
+some kind of search. Now you might look under
+S for search, you could look under C for contains,
+
+00:11:06.180 --> 00:11:11.730
+or you can just step through the methods one
+at a time and see what works. So when we get
+
+00:11:11.730 --> 00:11:18.730
+down here, we will eventually find a method
+called index of. Returns the index within
+
+00:11:19.320 --> 00:11:25.450
+this string of the first occurrence of the
+specified substring. Well, those are a lot
+
+00:11:25.450 --> 00:11:30.580
+of words, but this is actually the method
+we want because what it will do is it will
+
+00:11:30.580 --> 00:11:36.830
+tell us whether this string is inside of the
+other string. So we'll take the character
+
+00:11:36.830 --> 00:11:42.890
+that we have, we'll change it into a string,
+and then we'll see if that character occurs
+
+00:11:42.890 --> 00:11:47.850
+in the other string. Notice that when it doesn't
+find the substring, it returns a negative
+
+00:11:47.850 --> 00:11:52.490
+one. Now that's going to be something we're
+going to want to look for in our code. We
+
+00:11:52.490 --> 00:11:57.260
+also might take a look just a minute before
+we go back and see if there's another version
+
+00:11:57.260 --> 00:12:03.950
+of index of that might be more useful. There
+are two versions here. One of them has a string
+
+00:12:03.950 --> 00:12:09.520
+parameter, the other has a string and a from
+index, so that one isn't going to be as useful,
+
+00:12:09.520 --> 00:12:12.110
+so we do have the right version of this.
+
+00:12:12.110 --> 00:12:19.110
+So let's go back to our code. We need to do
+a little bit of work here. We're going to
+
+00:12:20.560 --> 00:12:26.960
+have to create a string, which I'm just going
+to call char because that's—whoops, whoops,
+
+00:12:26.960 --> 00:12:32.080
+whoops, and I can't do that. Notice how Eclipse
+reminded me that I was cheating. The reason
+
+00:12:32.080 --> 00:12:36.660
+I can't call a string char is char is a reserved
+word. Remember that's what single characters
+
+00:12:36.660 --> 00:12:43.000
+are called. So we have to find a different
+name for it. I don't want to call it letter
+
+00:12:43.000 --> 00:12:47.260
+because we have a string builder that's called
+letters, and having a variable called letter
+
+00:12:47.260 --> 00:12:53.070
+and a variable called letters in the same
+code is not a great idea. So let's call it
+
+00:12:53.070 --> 00:13:00.070
+my char. So this'll be word dot char at index.
+Now we've got a type mismatch here because
+
+00:13:10.300 --> 00:13:15.000
+we didn't construct the string. We're not
+allowed to just take a character and change
+
+00:13:15.000 --> 00:13:21.030
+it into a string. Now it's complaining about
+that too. It turns out there actually isn't
+
+00:13:21.030 --> 00:13:27.050
+a constructor in the string class that takes
+just a single character. So let's find an
+
+00:13:27.050 --> 00:13:34.050
+even more clever way to work around that.
+One of the easiest ways to change something
+
+00:13:39.510 --> 00:13:44.930
+to a string is to concatenate it to the empty
+string. It's a trick you definitely want to
+
+00:13:44.930 --> 00:13:51.930
+remember. So now what we want to see is if
+letters dot index of--that's the method we
+
+00:13:55.910 --> 00:14:02.910
+looked up in the API--my char is not equal
+to negative one because when it's not equal
+
+00:14:07.130 --> 00:14:12.350
+to negative one, that means we actually found
+the letter in the letters group. In other
+
+00:14:12.350 --> 00:14:17.050
+words, the letter in that word actually is
+one of the letters that we have in our list
+
+00:14:17.050 --> 00:14:24.050
+that we're trying to use. So when we find
+it, what we want to do is to remove it.
+
+00:14:26.050 --> 00:14:29.980
+Once again, we may not know the name for the
+delete method in the string builder class,
+
+00:14:29.980 --> 00:14:35.440
+so let's go and look it up. I've sort of spoiled
+some of the suspense by telling you that the
+
+00:14:35.440 --> 00:14:42.440
+name is delete. So you can see we've got a
+couple of different methods. Here's a delete
+
+00:14:43.990 --> 00:14:49.120
+method that removes the substring, and here's
+one that just removes a single character.
+
+00:14:49.120 --> 00:14:56.120
+This delete char at is the one we would like
+to use, so we'll do letters dot delete char
+
+00:14:59.920 --> 00:15:06.920
+at and the index—well, it will be the index
+of my char. Notice that because we want to
+
+00:15:09.120 --> 00:15:13.610
+reuse it here we may want to create a variable
+for it, so let's revise our code a little
+
+00:15:13.610 --> 00:15:20.610
+bit. So we'll save our index, which I'll call
+chosen index, and then use it here. So we're
+
+00:15:36.130 --> 00:15:43.130
+deleting the character at chosen index. Okay,
+so let's think about anything else we might
+
+00:15:52.320 --> 00:15:57.050
+want to do. This removes the character, but
+we haven't kept track of how many matches
+
+00:15:57.050 --> 00:16:04.050
+we have, so that's definitely something we
+want to do. So let's say int matches a zero,
+
+00:16:06.190 --> 00:16:13.190
+and any time we're deleting a letter from
+here that means 
+that we found another match, so we're going
+
+00:16:16.720 --> 00:16:19.420
+to want to increment match.
+
+00:16:19.420 --> 00:16:23.170
+The other thing I notice is that I cheated
+a little bit down here. I used an operator
+
+00:16:23.170 --> 00:16:29.640
+that you don't know. Plus plus index means
+index equals index plus one. Let me fix that
+
+00:16:29.640 --> 00:16:36.640
+so the code looks familiar to you. Okay, now
+we could use a few more comments in this code,
+
+00:16:45.760 --> 00:16:52.760
+so let's put some in. So we're going to step
+through the word one character at a time.
+
+00:17:01.410 --> 00:17:08.410
+Find if the word is, I'm sorry, if the character
+is in the word, and instead of returning zero,
+
+00:17:14.060 --> 00:17:21.060
+we're going to return matches. So there we
+go. Now we really can't test this method by
+
+00:17:25.339 --> 00:17:29.760
+itself without writing a whole bunch of extra
+code, so let's just write the method that's
+
+00:17:29.760 --> 00:17:36.760
+going to call it. So that's the find all matches
+method that's here. We have a stub in for
+
+00:17:40.100 --> 00:17:44.800
+it, so we've got an array list that's keeping
+track of any words that match, and we're returning
+
+00:17:44.800 --> 00:17:49.850
+that array list. It does look like we got
+one too many tabs in there or maybe two too
+
+00:17:49.850 --> 00:17:56.850
+many tabs, so let's fix that and beautify
+our code. Our algorithm was stepping through
+
+00:17:57.980 --> 00:18:04.980
+the dictionary one word at a time, so we'll
+have, say, dictionary--whoops, int dictionary
+
+00:18:06.610 --> 00:18:13.610
+index. So that will start at zero because
+all array lists are zero indexed. While dictionary
+
+00:18:19.210 --> 00:18:26.210
+index is less than dictionary dot size. Move
+over our curly braces to the right position,
+
+00:18:35.750 --> 00:18:42.750
+and dictionary index equals dictionary index
+plus one, so that's our increment at the end
+
+00:18:43.000 --> 00:18:45.250
+of the loop.
+
+00:18:45.250 --> 00:18:52.250
+So what we want to do is to figure out if
+our string builder letters and with that many
+
+00:18:53.370 --> 00:18:59.190
+wildcards actually has that word in the dictionary.
+So let's go and take a look at the signature
+
+00:18:59.190 --> 00:19:06.190
+of the method that we just wrote, so we can
+copy it down here. So it's called count matches.
+
+00:19:08.290 --> 00:19:15.290
+The word is first and letters are second.
+The string builder is second. So the string
+
+00:19:19.310 --> 00:19:26.310
+will be dictionary dot get dictionary index,
+and letters will come from the parameter.
+
+00:19:37.610 --> 00:19:44.610
+So we'll create an int called matches, and
+that will store that value. You may be wondering
+
+00:19:46.230 --> 00:19:51.420
+why it's okay for me to create another variable
+called matches when I had one in the other
+
+00:19:51.420 --> 00:19:56.050
+method. It turns out it doesn't matter how
+many different variables you have of the same
+
+00:19:56.050 --> 00:20:01.070
+name, and in fact that's essential to programming.
+So as long as they're in different scopes,
+
+00:20:01.070 --> 00:20:07.130
+as long as they're in different methods, everything
+will be okay. So we've got our matches here.
+
+00:20:07.130 --> 00:20:14.130
+Now if the matches plus the wildcards are
+greater than or equal to dictionary dot get
+
+00:20:22.690 --> 00:20:29.690
+of dictionary index--so that's the word that's
+in the dictionary--dot length, well, that's
+
+00:20:31.710 --> 00:20:38.710
+when this is one of the possible solutions.
+So when that's true, what we want to do--and
+
+00:20:40.900 --> 00:20:44.410
+you can see that our code is getting a little
+bit long on the lines here, so we may want
+
+00:20:44.410 --> 00:20:51.000
+to make some adjustments to that later--is
+we want to add it to the result array. So
+
+00:20:51.000 --> 00:20:58.000
+we'll do result dot add dictionary dot get
+dictionary index dot length. So that way we
+
+00:21:04.570 --> 00:21:07.870
+know that's one of the words that's going
+to count.
+
+00:21:07.870 --> 00:21:14.870
+Let's see what Eclipse is unhappy about. The
+method add is not applicable. Oh, okay, so
+
+00:21:15.050 --> 00:21:22.050
+what happened here is that I put in an extra
+dot length for some reason. There we go. Let's
+
+00:21:23.690 --> 00:21:29.670
+check our parentheses now. There's one before
+dictionary dot get and one before dictionary
+
+00:21:29.670 --> 00:21:34.550
+index and three at the end, so I actually
+do have one too many indices hanging around,
+
+00:21:34.550 --> 00:21:39.290
+so that looks better. Now when I look at that
+code, one of the things I see is that we've
+
+00:21:39.290 --> 00:21:44.300
+called dictionary dot get of dictionary index
+three different times in just a few lines
+
+00:21:44.300 --> 00:21:49.040
+of code. In fact, that's actually what's making
+the lines so long, so let's clean that up
+
+00:21:49.040 --> 00:21:56.040
+by creating a variable for it. So we have
+a string, which I'm just going to call word
+
+00:21:58.190 --> 00:22:05.190
+equals dictionary dot get of dictionary index.
+Then here we can use word, and here we can
+
+00:22:14.650 --> 00:22:21.650
+use word, and here we can use word. So notice
+not only did this solve the problem with our
+
+00:22:22.360 --> 00:22:29.360
+lines of code—whoops, well, you don't want
+the dictionary in front of it of course. Not
+
+00:22:30.680 --> 00:22:34.940
+only did this solve the problem with our lines
+of code getting too long and awkward, but
+
+00:22:34.940 --> 00:22:39.770
+it actually makes the code considerably easier
+to read. It even makes it a tiny bit more
+
+00:22:39.770 --> 00:22:45.080
+efficient because referencing a single string
+is a little bit faster than going back and
+
+00:22:45.080 --> 00:22:49.210
+re-referencing the dictionary every time.
+It's just a little bit, and it doesn't really
+
+00:22:49.210 --> 00:22:53.820
+make that much difference in a program like
+this that you're really just using for fun,
+
+00:22:53.820 --> 00:22:57.559
+but still it makes the code a tiny bit better.
+
+00:22:57.559 --> 00:23:02.040
+So let's take a look at our code again and
+make sure it's doing the right things. So
+
+00:23:02.040 --> 00:23:07.180
+we're stepping through the dictionary one
+line at a time. We get a word from the dictionary.
+
+00:23:07.180 --> 00:23:12.360
+We count how many times it matches. If the
+number of matches plus the wildcard is greater
+
+00:23:12.360 --> 00:23:17.580
+than or equal to the word length, that means
+it's one of the words that could be used in
+
+00:23:17.580 --> 00:23:23.070
+Words With Acquaintances. And then we go on
+to the next word. So that looks good. Let's
+
+00:23:23.070 --> 00:23:30.070
+check and see what we're returning. We're
+returning result, and let's go back to our
+
+00:23:31.460 --> 00:23:38.010
+main program and make sure we've got everything
+called correctly. Notice one of our lines
+
+00:23:38.010 --> 00:23:44.610
+of code got a little long here, so we're going
+to fix it. So at this point, we're not actually
+
+00:23:44.610 --> 00:23:49.890
+getting input from the user. We can always
+put that in at the end let's run the program
+
+00:23:49.890 --> 00:23:55.910
+once and see if we know what we're going to
+get. Now remember aaaaa is in the dictionary,
+
+00:23:55.910 --> 00:24:02.400
+and so it should match by itself. So the chosen
+word that we should see at the end is aaaaa.
+
+00:24:02.400 --> 00:24:09.400
+Let's run the program and see if that works.
+Well, look at that. It did, that's wonderful.
+
+00:24:14.990 --> 00:24:19.450
+Let's try some of the other ones. Now at this
+point we've got a tough choice to make. We
+
+00:24:19.450 --> 00:24:24.570
+can spend the time to write a decent user
+interface or we can just sort of patch one
+
+00:24:24.570 --> 00:24:31.570
+together. In the interest of time, let's patch
+one together. So we're going to have a scanner.
+
+00:24:34.240 --> 00:24:38.140
+Now this is a different scanner than the one
+that's later on in this program that's reading
+
+00:24:38.140 --> 00:24:45.140
+from a file. This is the one that's attached
+to the keyboard, so I'm calling it keyboard.
+
+00:24:52.250 --> 00:24:59.250
+So what we're going to put in here is a prompt
+enter the characters you have, and then instead
+
+00:25:05.970 --> 00:25:12.970
+of doing this, we'll do keyboard dot next
+line. One thing we might want to warn the
+
+00:25:13.610 --> 00:25:19.010
+user about is the fact that they can't enter
+spaces between their letters. That's something
+
+00:25:19.010 --> 00:25:25.690
+that is not obvious to them, so you do need
+to tell them. Without spaces--if you don't
+
+00:25:25.690 --> 00:25:28.730
+tell the user things like that, they think
+your software doesn't work, and then they
+
+00:25:28.730 --> 00:25:33.440
+get mad, and so that's not a good thing. Besides,
+you want them to use your software, so you
+
+00:25:33.440 --> 00:25:40.240
+need to make it easy for them. Now we're also
+going to need to read our number of wildcards,
+
+00:25:40.240 --> 00:25:47.240
+so we'll prompt for that. And now instead
+of just declaring zero, we'll read it from
+
+00:25:58.240 --> 00:26:05.240
+the command line. So that will be keyboard
+dot next int. Now if we were going to put
+
+00:26:09.850 --> 00:26:14.740
+this in a loop, which is probably what we're
+going to do next, we might want to think about
+
+00:26:14.740 --> 00:26:20.100
+what's happening with those end of line characters.
+So here in wildcards we're reading an int
+
+00:26:20.100 --> 00:26:24.320
+and the next thing that's going to be read
+in is going to be a next line. Remember that's
+
+00:26:24.320 --> 00:26:28.750
+the case where we have to read in that next
+line separately. So even though we don't have
+
+00:26:28.750 --> 00:26:33.770
+our loop here first, let's think about it
+and be considerate and put that in now because
+
+00:26:33.770 --> 00:26:40.770
+we'll be glad we did it later. So this is
+getting rid of the end of line character.
+
+00:26:45.740 --> 00:26:50.170
+This is part of a strategy that I use when
+I'm programming that's called anti-bugging.
+
+00:26:50.170 --> 00:26:54.929
+So you can spend a lot of time debugging your
+software, that is, finding problems in it,
+
+00:26:54.929 --> 00:26:59.300
+or you could spend your time building software
+right in the first place. I'm a big fan of
+
+00:26:59.300 --> 00:27:02.059
+building software right in the first place.
+
+00:27:02.059 --> 00:27:09.059
+Okay, so now we're ready to run our program
+again. So of course the first thing we want
+
+00:27:09.990 --> 00:27:16.700
+to check is the data we checked before because
+that makes sure that the input that we just
+
+00:27:16.700 --> 00:27:23.700
+wrote is working. So here's our b's with no
+wildcards. Oooh, that was found. This is getting
+
+00:27:28.290 --> 00:27:35.290
+exciting! Let's do ccccc with no wildcards,
+and it really feels good, right. Isn't it
+
+00:27:38.660 --> 00:27:45.660
+great? Well, hang in there. Let's do abcde
+with no wildcards. Okay, this is where having
+
+00:27:48.770 --> 00:27:55.740
+your test data done in advance is very important.
+Our program just failed, and if you did not
+
+00:27:55.740 --> 00:27:59.790
+have your test data in advance and if you
+didn't have good test data, you might not
+
+00:27:59.790 --> 00:28:06.790
+have noticed it. For example, if you had only
+written one test example like aaaaa, or bbbbb,
+
+00:28:07.440 --> 00:28:12.870
+you would think your program's working correctly
+even though it failed in this case. So this
+
+00:28:12.870 --> 00:28:18.299
+is a time to really pay attention to the fact
+that running a program once really doesn't
+
+00:28:18.299 --> 00:28:23.130
+demonstrate anything. This is especially important
+if you're turning in programs for grading
+
+00:28:23.130 --> 00:28:27.820
+and of course critical if you're a professional
+that's creating programs. So what the heck
+
+00:28:27.820 --> 00:28:34.020
+happened to our program? This is not a simple
+problem by the way, and these are the problems
+
+00:28:34.020 --> 00:28:38.760
+that students typically come up with when
+they're creating programs.
+
+00:28:38.760 --> 00:28:43.570
+So let's talk a little bit about how we can
+solve this problem. One strategy you'll notice
+
+00:28:43.570 --> 00:28:49.220
+that I'm not using at this point is just going
+in and randomly changing code around. Instead
+
+00:28:49.220 --> 00:28:54.990
+I'm stopping, I'm thinking, I'm trying to
+find what the right answer is instead of just
+
+00:28:54.990 --> 00:28:58.940
+going and saying, "Well maybe it's this, maybe
+it's this, maybe it's this, maybe it's this."
+
+00:28:58.940 --> 00:29:02.700
+You're going to find that strategy, while
+it seem more time-consuming, is actually much
+
+00:29:02.700 --> 00:29:08.920
+more effective. We have our tests, and we
+have to figure out how we're going to fix
+
+00:29:08.920 --> 00:29:14.390
+it. Well, the first thing we have to do is
+find the problem, and I'm actually going to
+
+00:29:14.390 --> 00:29:21.390
+use the debugger to help you find the problem
+here. So to do that, we go to debug mode and
+
+00:29:22.160 --> 00:29:28.370
+we need to set a breakpoint in our code. So
+we have to think about where things could
+
+00:29:28.370 --> 00:29:34.130
+be going wrong. Our main program is pretty
+harmless here, so it is probably not the place
+
+00:29:34.130 --> 00:29:41.130
+where things are breaking. Let's get a little
+bit more space for our program then we're
+
+00:29:42.390 --> 00:29:49.390
+given by default in Eclipse. Our count matches
+seem to be working okay. It was finding the
+
+00:29:49.490 --> 00:29:56.490
+other data, so that probably isn't the problem
+either. The place where I am most suspicious
+
+00:29:59.429 --> 00:30:05.080
+is in the find all matches. This is a good
+place to stop. Now the question is where do
+
+00:30:05.080 --> 00:30:11.220
+we want to stop the code? Well, the first
+line of code, the line that's on 67, that
+
+00:30:11.220 --> 00:30:15.710
+isn't a very good place to stop because we
+know the words are being found correctly in
+
+00:30:15.710 --> 00:30:22.710
+the dictionary. And we probably don't want
+to stop in the count matches, so somewhere
+
+00:30:22.950 --> 00:30:29.929
+right around here is about the right place.
+So I'm going to pick line 70. Incidentally,
+
+00:30:29.929 --> 00:30:34.559
+it wasn't letting me pick 69 because 69 is
+a blank line, and it can't stop on blank lines
+
+00:30:34.559 --> 00:30:39.350
+because it doesn't process them. So what this
+will do is give us a possibility of looking
+
+00:30:39.350 --> 00:30:45.530
+at matches and wildcards and see what happens.
+Now to run a program in debug mode, remember
+
+00:30:45.530 --> 00:30:51.000
+pick the little bug icon. If you hit the green
+run icon instead of the bug icon, you're not
+
+00:30:51.000 --> 00:30:56.670
+in debug mode, and then you won't see your
+breakpoints, and you won't be able to debug.
+
+00:30:56.670 --> 00:31:03.670
+Here we go. Now I'm going to move this down
+a little bit. The one that caused trouble
+
+00:31:06.429 --> 00:31:13.429
+was abcde with no wildcards. So here we are
+at our first break point. Notice we can see
+
+00:31:16.880 --> 00:31:23.880
+letters. Let me give you a little more space
+here so you can see what it's doing. So this
+
+00:31:32.720 --> 00:31:39.720
+is sort of interesting. Notice that the value
+for letters is bcde by the time we get there.
+
+00:31:40.150 --> 00:31:45.190
+Well, wait a minute. What happened? Where
+did the a go?
+
+00:31:45.190 --> 00:31:49.530
+Now it's time to go back and look at the code
+very carefully. Now you can do this in debug
+
+00:31:49.530 --> 00:31:54.150
+mode if you want but because you have so few
+lines of code, it gets a little hard to read
+
+00:31:54.150 --> 00:32:00.049
+there. So let's go back to the regular Java
+mode. We have an idea now that letters is
+
+00:32:00.049 --> 00:32:04.860
+getting messed up in the program, so let's
+go back and look at the code involving letters
+
+00:32:04.860 --> 00:32:11.860
+and see what's happening. Letters is passed
+in--oh yes, and we should stop our program
+
+00:32:14.100 --> 00:32:20.480
+from running too, since we're not actively
+debugging it anymore. So let's start at the
+
+00:32:20.480 --> 00:32:27.080
+beginning. Where did letters come from? Well,
+letters came for the main program. Remember
+
+00:32:27.080 --> 00:32:32.700
+we created a new string builder here from
+the keyboard input. That looks good, no problem
+
+00:32:32.700 --> 00:32:39.700
+with that. We passed it to find all matches,
+and inside of find all matches, we passed
+
+00:32:45.950 --> 00:32:51.660
+it to count matches. So notice that our thought
+that count matches was okay really wasn't
+
+00:32:51.660 --> 00:32:56.460
+correct. It turns out that count matches may
+be the source of our problem because letters
+
+00:32:56.460 --> 00:33:01.870
+is what's getting wrong. So let's think about
+what happens with letters in count matches.
+
+00:33:01.870 --> 00:33:06.559
+Well, we start out with all of our letters
+in there, and what we're doing as we step
+
+00:33:06.559 --> 00:33:12.450
+through is removing letters one at a time.
+So notice that on line 51, that's where we're
+
+00:33:12.450 --> 00:33:19.450
+deleting letters. Well, think about what happens
+when we find aaaaa in the dictionary. The
+
+00:33:20.220 --> 00:33:25.530
+first a is found and it gets deleted from
+letters, and so at that point letters has
+
+00:33:25.530 --> 00:33:32.360
+bcde in it, just exactly what we saw. Oh my
+goodness, we have a parameter passing problem.
+
+00:33:32.360 --> 00:33:38.940
+What happened is we passed in the string builder
+letters just once, and then we pulled out
+
+00:33:38.940 --> 00:33:43.740
+letters from many words, and we didn't reconstruct
+it. So we're going to have to think about
+
+00:33:43.740 --> 00:33:49.280
+the possibilities for here of how to fix it.
+In other words, we can't take one string builder
+
+00:33:49.280 --> 00:33:54.059
+and share it through all three methods because
+what's happening is partial results from one
+
+00:33:54.059 --> 00:33:59.040
+method are impacting the other method. That's
+a big problem.
+
+00:33:59.040 --> 00:34:04.929
+We have to think of a strategy, and once again
+you want to think about as many possibilities
+
+00:34:04.929 --> 00:34:10.739
+as you can first. Don't just dive into doing
+something because it sounds good. One thing
+
+00:34:10.739 --> 00:34:15.909
+we could do is pass letters as a string instead
+of a string builder initially. Remember that
+
+00:34:15.909 --> 00:34:20.759
+strings can't be changed, and then the string
+builder could be constructed down in the count
+
+00:34:20.759 --> 00:34:26.119
+method. That would work. The other thing we
+could do is we could just create a new string
+
+00:34:26.119 --> 00:34:30.609
+builder object in the count matches method,
+and that would work too. So both of these
+
+00:34:30.609 --> 00:34:36.919
+solutions are good. I personally like the
+first solution a little bit better, that is,
+
+00:34:36.919 --> 00:34:41.989
+reading in letters as a string and only building
+the string builder down in the count matches
+
+00:34:41.989 --> 00:34:47.210
+method. The reason is that string builders,
+because they can be changed, tend to cause
+
+00:34:47.210 --> 00:34:52.589
+a little bit more problem, so it also keeps
+the interface a little bit cleaner. Most programmers
+
+00:34:52.589 --> 00:34:57.289
+are more comfortable with strings than string
+builders, so let's do that one. But remember
+
+00:34:57.289 --> 00:35:01.880
+both of these would work, so there's more
+than one good solution. So we're going to
+
+00:35:01.880 --> 00:35:08.880
+have to go all the way up to the main program
+and change it one at a time. So instead of
+
+00:35:09.400 --> 00:35:16.069
+a string builder, what we really needed was
+a string. Now at that point we don't have
+
+00:35:16.069 --> 00:35:23.069
+to use a constructor, so we'll remove that
+constructor and just read keyboard next line.
+
+00:35:26.589 --> 00:35:31.539
+Now the nice thing about this is that Eclipse
+will actually help you find all of the little
+
+00:35:31.539 --> 00:35:36.319
+pieces that don't match up right now. One
+at a time it will put little red lines under
+
+00:35:36.319 --> 00:35:41.220
+them, so if we go and fix those it should
+be fine. So here we're sending in letters,
+
+00:35:41.220 --> 00:35:47.309
+which is now a string, but find all matches
+was expecting a string builder. So here's
+
+00:35:47.309 --> 00:35:54.309
+find all matches, and we're now going to give
+it a string instead of a string builder. Let's
+
+00:35:56.680 --> 00:36:01.529
+see if there's anything else that needed to
+be changed. Well, notice count matches now
+
+00:36:01.529 --> 00:36:08.529
+isn't working for the exact same reason. So
+let's go up to count matches 
+and make letters a string instead of a string
+
+00:36:17.509 --> 00:36:18.349
+builder.
+
+00:36:18.349 --> 00:36:23.069
+Now inside the logic of count matches, we
+need that string builder, so let's create
+
+00:36:23.069 --> 00:36:30.069
+it here. So I'm going to call it SB letters,
+SB for string builder. It's not the greatest
+
+00:36:31.440 --> 00:36:38.440
+variable name ever, but it'll do. So there
+we've got our new SB letters, and now we need
+
+00:36:44.059 --> 00:36:49.999
+to think very carefully about how this is
+going to work. So that string is the same.
+
+00:36:49.999 --> 00:36:56.999
+Chosen index is the same. Now instead of letters
+here, we're going to need SB letters, that
+
+00:36:59.450 --> 00:37:05.799
+is, our new string builder. Now the delete
+char at message should be—whoops, maybe
+
+00:37:05.799 --> 00:37:12.799
+I gave it a little different name, so let's
+go take a look—ah, SB letter. Let's call
+
+00:37:12.910 --> 00:37:19.910
+it letters to be more consistent. Okay, so
+now everything looks better.
+
+00:37:20.950 --> 00:37:25.489
+Of course the final acid test is whether our
+program works correctly now. We know the test
+
+00:37:25.489 --> 00:37:32.489
+data that failed, so let's run that data first.
+So abcde with zero wildcards. Oh no, look
+
+00:37:36.249 --> 00:37:43.249
+at that. Reading these error message, messages
+can be hard work. What you don't want to do
+
+00:37:45.759 --> 00:37:50.440
+is go and click on things like this. What
+this is saying is that we had a string out
+
+00:37:50.440 --> 00:37:55.019
+of bounds exception that occurred. In other
+words, we tried to access a character in a
+
+00:37:55.019 --> 00:37:59.989
+string that wasn't there. We're not allowed
+to do that. If you click on this though right
+
+00:37:59.989 --> 00:38:04.700
+there, what it will do is take you to the
+string index out of bounds exception class.
+
+00:38:04.700 --> 00:38:08.569
+Well, let me tell you something. The error
+is not in that class. That's part of the standard
+
+00:38:08.569 --> 00:38:15.039
+Java API. The error is virtually certainly
+in the code we wrote, so what you look for
+
+00:38:15.039 --> 00:38:20.390
+is the method that's in the code you wrote,
+which is not abstract string builder, which
+
+00:38:20.390 --> 00:38:27.390
+is not string builder, but right here in Words
+With Acquaintances line 53. So that's interesting.
+
+00:38:32.450 --> 00:38:39.450
+That letter we just changed is the one that's
+causing the problem. So let's think about
+
+00:38:39.640 --> 00:38:44.039
+what could be happening here. Well, we're
+stepping through the word one character at
+
+00:38:44.039 --> 00:38:51.039
+a time. We find the character in the word
+index. We find the index of it, and that's
+
+00:38:51.269 --> 00:38:58.269
+our chosen index. Then we say if it's not
+negative one, delete chars at the chosen index.
+
+00:38:58.640 --> 00:39:05.640
+Well, what could possibly be going wrong with
+this? So this is really perplexing. When you
+
+00:39:05.809 --> 00:39:12.789
+look through it, you'll see that we created
+a string builder called SB letters, but when
+
+00:39:12.789 --> 00:39:17.690
+we were finding chosen index we use letters
+instead of SB letters. So notice that our
+
+00:39:17.690 --> 00:39:23.329
+fix caused another problem. This is actually
+incredibly common in computer science. In
+
+00:39:23.329 --> 00:39:28.249
+fact, when you fix a bug in commercial code,
+the probability of creating a new bug turns
+
+00:39:28.249 --> 00:39:33.609
+out to be 50%. This is one of the reasons
+that programs don't tend to be perfect is
+
+00:39:33.609 --> 00:39:39.529
+because fixing bugs tends to cause more bugs,
+and that's exactly what we did here. What
+
+00:39:39.529 --> 00:39:45.869
+we did was we changed letters to SB letters
+in many places, but we missed one. The reason
+
+00:39:45.869 --> 00:39:51.089
+we missed it is that it's actually legal to
+use index of both on a string builder and
+
+00:39:51.089 --> 00:39:55.970
+on a string, and so Eclipse wasn't able to
+help us out with that. So we needed to be
+
+00:39:55.970 --> 00:40:02.970
+reading code a little bit more carefully.
+So here is SB letters instead of letters.
+
+00:40:04.519 --> 00:40:11.519
+Let's run our program again and see if it's
+behaving better—abcde with no wildcards
+
+00:40:13.390 --> 00:40:19.009
+and yay, it's found. Good enough. Now we do
+still need to rerun all of our original test
+
+00:40:19.009 --> 00:40:24.559
+data because remember we don't know that that
+data works. We also haven't tried anything
+
+00:40:24.559 --> 00:40:31.559
+that has any wildcards in it. That one works
+too: five a's with a zero, so let's try one
+
+00:40:32.660 --> 00:40:39.660
+with some wildcards. Let's do abc with two
+wildcards, and it found abcde. We would have
+
+00:40:42.529 --> 00:40:46.710
+to keep testing to make sure that our program
+is really correct, but the results are looking
+
+00:40:46.710 --> 00:40:50.170
+promising right now, so I'll let you do the
+rest of the testing on your own.
+

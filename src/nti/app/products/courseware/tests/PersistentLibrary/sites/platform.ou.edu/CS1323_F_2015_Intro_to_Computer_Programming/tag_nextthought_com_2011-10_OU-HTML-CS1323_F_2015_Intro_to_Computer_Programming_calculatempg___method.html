@@ -1,0 +1,41 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html lang="en"><head> <meta content="2015-12-11T16:56:47" http-equiv="last-modified" /> <meta content="1199" name="NTIRelativeScrollHeight" /> <meta content="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.calculatempg()_method" name="NTIID" /> <meta content="NextThought" name="generator" /> <meta content="text/html; charset=ascii" http-equiv="content-type" /> <title>calculateMPG() Method</title> <link href="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.complete_fleet" rel="next" title="Complete Fleet" /> <link href="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.picture_of_a_fleet" rel="prev" title="Picture of a Fleet" /> <link href="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.reading:Chortle_CH35" rel="up" title="Objects that Contain Objects" /> <link href="styles/styles.css" rel="stylesheet" /> <link href="styles/content.css" rel="stylesheet" /> </head> <body id="NTIContent"> <div class="page-contents"><div data-ntiid="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.calculatempg()_method" id="a0000000556" ntiid="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.calculatempg()_method"> <div class="chapter title"><b class="bfseries"><tt class="ttfamily">calculateMPG()</tt></b> Method</div> <p class="placeholder"></p> <a name="6651b05feeafa14bc1018a2a9be3041d"></a> <div class="sidebar" data-ntiid="tag:nextthought.com,2011-10:OU-HTML:NTISidebar-CS1323_F_2015_Intro_to_Computer_Programming.sidebar.answer.222" ntiid="tag:nextthought.com,2011-10:OU-HTML:NTISidebar-CS1323_F_2015_Intro_to_Computer_Programming.sidebar.answer.222"> <div class="sidebar-title">Answer</div> You could calculate the MPG of each car in the fleet and then average those numbers. </div><a name="623647aa9af1ac587a88ed78887e7dff"></a> <p class="par" id="623647aa9af1ac587a88ed78887e7dff">For us, there are two cars in the fleet, so the average MPG of the fleet will be the sum of the MPGs for each car, that sum divided by two. Here is the class, with more details: </p> <a name="1d0ff7f09813a8dae7211578aa8f7e8c"></a> <pre>class Fleet
+{
+  // data
+  Car town;
+  Car suv;
+
+  // constructor
+  Fleet( int start1, int end1, double gal1,
+         int start2, int end2, double gal2 )
+  {
+    town = new Car( start1, end1, gal1) ;
+    suv  = new Car( start2, end2, gal2) ;
+  }
+
+  // method
+  double calculateMPG()
+  {
+    double sumMPG;
+
+    sumMPG = town._______ + suv._______ ;
+
+    return sumMPG/2.0;
+  }
+}
+
+class Car
+{
+  . . . .
+  double calculateMPG() . . . .
+
+}
+
+class FleetTester
+{
+  public static void main ( String[] args)
+  {
+    Fleet myCars = new Fleet( 1000, 1234, 10, 777, 999, 20 );
+    System.out.println("Fleet average MPG= " + myCars.calculateMPG() );
+  }
+}
+</pre><a name="6004b2b5309bfc35eb77bfbcc499f6b5"></a> <p class="par" id="6004b2b5309bfc35eb77bfbcc499f6b5">It is perfectly OK for both <b class="bfseries"><tt class="ttfamily">Car</tt></b> and <b class="bfseries"><tt class="ttfamily">Fleet</tt></b> to have a <b class="bfseries"><tt class="ttfamily">calculateMPG()</tt></b> method. Notice that when <b class="bfseries"><tt class="ttfamily">main()</tt></b> uses <b class="bfseries"><tt class="ttfamily">calculateMPG()</tt></b> it is clear which one to use: the one that is part of the object referenced by <b class="bfseries"><tt class="ttfamily">myCars</tt></b> (a <b class="bfseries"><tt class="ttfamily">Fleet</tt></b> object). </p> <a name="057475cb772fa977d15a97db70e0eb1c"></a> <div class="sidebar" data-ntiid="tag:nextthought.com,2011-10:OU-HTML:NTISidebar-CS1323_F_2015_Intro_to_Computer_Programming.sidebar.question.234" ntiid="tag:nextthought.com,2011-10:OU-HTML:NTISidebar-CS1323_F_2015_Intro_to_Computer_Programming.sidebar.question.234"> <div class="sidebar-title">Question</div> Fill in the blanks for the <b class="bfseries"><tt class="ttfamily">calculateMPG()</tt></b> method of <b class="bfseries"><tt class="ttfamily">Fleet</tt></b>. </div> </div></div> </body></html>

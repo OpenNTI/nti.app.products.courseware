@@ -1,0 +1,35 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html lang="en"><head> <meta content="2015-12-11T16:56:47" http-equiv="last-modified" /> <meta content="995" name="NTIRelativeScrollHeight" /> <meta content="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.expanded_program" name="NTIID" /> <meta content="NextThought" name="generator" /> <meta content="text/html; charset=ascii" http-equiv="content-type" /> <title>Expanded Program</title> <link href="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.this" rel="next" title="this" /> <link href="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.picture_of_the_running_program" rel="prev" title="Picture of the Running Program" /> <link href="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.reading:Chortle_CH30_2" rel="up" title="Defining Your Own Classes" /> <link href="styles/styles.css" rel="stylesheet" /> <link href="styles/content.css" rel="stylesheet" /> </head> <body id="NTIContent"> <div class="page-contents"><div data-ntiid="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.expanded_program" id="a0000000504" ntiid="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.expanded_program"> <div class="chapter title">Expanded Program</div> <p class="placeholder"></p> <a name="7a17add04d81c99026f69a94b9d3abc0"></a> <div class="sidebar" data-ntiid="tag:nextthought.com,2011-10:OU-HTML:NTISidebar-CS1323_F_2015_Intro_to_Computer_Programming.sidebar.answer.178" ntiid="tag:nextthought.com,2011-10:OU-HTML:NTISidebar-CS1323_F_2015_Intro_to_Computer_Programming.sidebar.answer.178"> <div class="sidebar-title">Answer</div> Of course. The class definition for <b class="bfseries"><tt class="ttfamily">HelloObject</tt></b> works like a cookie cutter. We can cut out as many cookies as we want. </div><a name="a58b516f27a5a2c4292bbde089ec0f9d"></a> <p class="par" id="a58b516f27a5a2c4292bbde089ec0f9d">Here is an expanded program that creates several <b class="bfseries"><tt class="ttfamily">HelloObjects</tt></b> (and several <b class="bfseries"><tt class="ttfamily">String</tt></b> objects.) </p> <a name="b69aa50007e4fd42a5ad6d24a1627e7a"></a> <pre>class HelloObject
+{
+  String greeting;
+
+  HelloObject( String st )
+  {
+    greeting = st;
+  }
+
+  void speak()
+  {
+    System.out.println( greeting );
+  }
+}
+
+class HelloTester
+{
+  public static void main ( String[] args )
+  {
+    HelloObject object1 = new HelloObject("Mercury");
+    HelloObject object2 = new HelloObject("Venus");
+    HelloObject object3 = new HelloObject("Earth");
+    HelloObject object4 = new HelloObject("Mars");
+
+    object1.speak();
+    object2.speak();
+    object3.speak();
+    object4.speak();
+  }
+}
+</pre><a name="1110b1e3528453ae81aaf7567e638dbc"></a> <p class="par" id="1110b1e3528453ae81aaf7567e638dbc">The program writes this to the monitor: </p> <a name="8b48db2add669ce9f2704d186e61474f"></a> <pre>Mercury
+Venus
+Earth
+Mars}
+</pre><a name="1d4688fd95c54ce0a731fdd68cac3d33"></a> <div class="sidebar" data-ntiid="tag:nextthought.com,2011-10:OU-HTML:NTISidebar-CS1323_F_2015_Intro_to_Computer_Programming.sidebar.question.187" ntiid="tag:nextthought.com,2011-10:OU-HTML:NTISidebar-CS1323_F_2015_Intro_to_Computer_Programming.sidebar.question.187"> <div class="sidebar-title">Question</div> What names may be used for parameters? </div> </div></div> </body></html>

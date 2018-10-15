@@ -1,0 +1,31 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html lang="en"><head> <meta content="2015-12-11T16:56:47" http-equiv="last-modified" /> <meta content="919" name="NTIRelativeScrollHeight" /> <meta content="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.running_the_program" name="NTIID" /> <meta content="NextThought" name="generator" /> <meta content="text/html; charset=ascii" http-equiv="content-type" /> <title>Running the Program</title> <link href="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.picture_of_the_program" rel="next" title="Picture of the Program" /> <link href="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.testing_class" rel="prev" title="Testing Class" /> <link href="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.reading:Chortle_CH30_2" rel="up" title="Defining Your Own Classes" /> <link href="styles/styles.css" rel="stylesheet" /> <link href="styles/content.css" rel="stylesheet" /> </head> <body id="NTIContent"> <div class="page-contents"><div data-ntiid="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.running_the_program" id="a0000000491" ntiid="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.running_the_program"> <div class="chapter title">Running the Program</div> <p class="placeholder"></p> <a name="fd56dee5f6b295397cb3d4f2daf45233"></a> <div class="sidebar" data-ntiid="tag:nextthought.com,2011-10:OU-HTML:NTISidebar-CS1323_F_2015_Intro_to_Computer_Programming.sidebar.answer.166" ntiid="tag:nextthought.com,2011-10:OU-HTML:NTISidebar-CS1323_F_2015_Intro_to_Computer_Programming.sidebar.answer.166"> <div class="sidebar-title">Answer</div> In the file of bytecodes, <b class="bfseries"><tt class="ttfamily">HelloObject.class</tt></b>. </div><a name="4b5fd3e11119d13df0f33ec2727523fb"></a> <p class="par" id="4b5fd3e11119d13df0f33ec2727523fb">Here is how the program runs. It is actually the bytecodes that are executed. However it is convenient to discuss how the program works in terms of its statements, starting at <b class="bfseries"><tt class="ttfamily">main()</tt></b>. </p> <a name="335207d834c77d78da4e2d20029c861a"></a> <pre>
+class HelloObject                                 // 2a.  The class definition is
+{                                                 //      used to make the object
+
+  void speak()                                    // 2b.  A speak() method
+  {                                               //      is included in the object.
+
+
+    System.out.println("Hello from an object!");  // 3a.  The speak() method
+                                                  //      of the object prints a
+                                                  //      message on the screen.
+
+                                                  // 3b.  The method returns to the
+                                                  //      caller.
+  }
+}
+
+class HelloTester
+{
+  public static void main ( String[] args )       // 1.  Main starts running.
+  {
+    HelloObject anObject = new HelloObject();     // 2.  A HelloObject 
+                                                  //     is created using its
+                                                  //     default constructor.
+
+    anObject.speak();                             // 3.  The object's speak() 
+                                                  //     method is called.
+
+  }                                               // 4.  The entire program is finished.
+}
+</pre><a name="278996d8e6619a8ad6643f2cef010f41"></a> <div class="sidebar" data-ntiid="tag:nextthought.com,2011-10:OU-HTML:NTISidebar-CS1323_F_2015_Intro_to_Computer_Programming.sidebar.question.175" ntiid="tag:nextthought.com,2011-10:OU-HTML:NTISidebar-CS1323_F_2015_Intro_to_Computer_Programming.sidebar.question.175"> <div class="sidebar-title">Question</div> Could you activate the <b class="bfseries"><tt class="ttfamily">speak()</tt></b> method without creating an object? </div> </div></div> </body></html>

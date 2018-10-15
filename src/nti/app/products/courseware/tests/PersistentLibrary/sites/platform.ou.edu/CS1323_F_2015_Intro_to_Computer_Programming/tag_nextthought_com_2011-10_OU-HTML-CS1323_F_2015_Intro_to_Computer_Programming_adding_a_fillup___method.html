@@ -1,0 +1,33 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html lang="en"><head> <meta content="2015-12-11T16:56:47" http-equiv="last-modified" /> <meta content="1222" name="NTIRelativeScrollHeight" /> <meta content="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.adding_a_fillup()_method" name="NTIID" /> <meta content="NextThought" name="generator" /> <meta content="text/html; charset=ascii" http-equiv="content-type" /> <title>Adding a fillUp() Method</title> <link href="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.completed_method" rel="next" title="Completed Method" /> <link href="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.better_encapsulated_program" rel="prev" title="Better Encapsulated Program" /> <link href="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.reading:Chortle_CH35" rel="up" title="Objects that Contain Objects" /> <link href="styles/styles.css" rel="stylesheet" /> <link href="styles/content.css" rel="stylesheet" /> </head> <body id="NTIContent"> <div class="page-contents"><div data-ntiid="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.adding_a_fillup()_method" id="a0000000559" ntiid="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.adding_a_fillup()_method"> <div class="chapter title">Adding a <b class="bfseries"><tt class="ttfamily">fillUp()</tt></b> Method</div> <p class="placeholder"></p> <a name="34bef24bfcbb441fc970fe86c4e6b3c2"></a> <div class="sidebar" data-ntiid="tag:nextthought.com,2011-10:OU-HTML:NTISidebar-CS1323_F_2015_Intro_to_Computer_Programming.sidebar.answer.225" ntiid="tag:nextthought.com,2011-10:OU-HTML:NTISidebar-CS1323_F_2015_Intro_to_Computer_Programming.sidebar.answer.225"> <div class="sidebar-title">Answer</div> No. As is currently stands, the instance variables of all objects cannot be accessed from outside the objects, and there are no access methods to change them. </div><a name="e800adec06ad536f358260f0a9fcfc1e"></a> <p class="par" id="e800adec06ad536f358260f0a9fcfc1e">It would be nice to make the program more useful by writing a method for <b class="bfseries"><tt class="ttfamily">Car</tt></b> that acts like a visit to the filling station. The new method does this: </p> <a name="0f8366db6347be796b09418ca5dc8a02"></a> <ul class="itemize"> <li><a name="eefd2670ac051611aad40c653d00e254"></a> <p class="par" id="eefd2670ac051611aad40c653d00e254">void fillUp( int newOdo, double fillUpGals ) </p> <a name="e14363f41a40438a46b1f733b37e466f"></a> <ul class="itemize"> <li><a name="20768263f57d87145eb9eaf5d03e282b"></a> <p class="par" id="20768263f57d87145eb9eaf5d03e282b">Change the state of a Car by using the odometer reading and the number of gallons of the most recent fillup. </p> </li> </ul></li> </ul><a name="cd58b7215a95bdb38ab7207433c85dba"></a> <p class="par" id="cd58b7215a95bdb38ab7207433c85dba">The state of a <b class="bfseries"><tt class="ttfamily">Car</tt></b> object changes when its instance variables are changed. The number of gallons of the new fillup will replace the old value, and the odometer readings will have to be adjusted. Here is class <b class="bfseries"><tt class="ttfamily">Car</tt></b> with some more blanks: </p> <a name="0320a399fe799f7ceb0a7adf896b2a35"></a> <pre>class Car
+{
+  // data
+  private int startMiles;   // Stating odometer reading
+  private int endMiles;     // Ending odometer reading
+  private double gallons;   // Gallons of gas used between the readings
+
+  // constructor
+  Car(  int first, int last, double gals  )
+  {
+    startMiles = first ;
+    endMiles   = last ;
+    gallons    = gals ;
+  }
+
+  // methods
+  double calculateMPG()
+  {
+    return (endMiles - startMiles)/gallons ;
+  }
+
+  void fillUp(int newOdo, double fillUpGals )
+  {
+
+   ________  = ________ ;
+
+   ________  = ________ ;
+
+   ________  = ________ ;
+
+  }
+}
+</pre><a name="c18d61107010079b310a410de990567c"></a> <div class="sidebar" data-ntiid="tag:nextthought.com,2011-10:OU-HTML:NTISidebar-CS1323_F_2015_Intro_to_Computer_Programming.sidebar.question.237" ntiid="tag:nextthought.com,2011-10:OU-HTML:NTISidebar-CS1323_F_2015_Intro_to_Computer_Programming.sidebar.question.237"> <div class="sidebar-title">Question</div> Fill in the blanks for the new method. This may take a little bit of thought. <a class="ntiglossaryentry" href="#a0000000560" name="ma0000000560">Hint</a> </div> </div></div> <div class="glossary" id="glossary"> <ol> <li id="a0000000560"> <span>The previous ending odometer reading will be the new starting reading.</span> <a href="#ma0000000560">&#8617;</a> </li> </ol> </div> </body></html>

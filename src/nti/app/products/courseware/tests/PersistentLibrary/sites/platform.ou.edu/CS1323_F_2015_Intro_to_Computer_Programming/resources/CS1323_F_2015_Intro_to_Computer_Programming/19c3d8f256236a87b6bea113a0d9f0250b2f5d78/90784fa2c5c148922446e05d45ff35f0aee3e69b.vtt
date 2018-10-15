@@ -1,0 +1,757 @@
+WEBVTT
+Kind: captions
+Language: en
+
+00:00:01.569 --> 00:00:06.630
+&gt;&gt;Deborah Trytten: Now let's install software
+on a Macintosh computer. Setup can be the
+
+00:00:06.630 --> 00:00:12.539
+trickiest part of this class. Don't give up
+hope. We'll help you through it. For the outline,
+
+00:00:12.539 --> 00:00:16.840
+first you need to understand your computer
+setup. Then you need to pick the right version
+
+00:00:16.840 --> 00:00:22.160
+of the software. Then you need to install
+Java, if it's necessary. The truth is that
+
+00:00:22.160 --> 00:00:27.419
+Apple handles this behind-the-scenes very
+nicely so it's rarely necessary. The next
+
+00:00:27.419 --> 00:00:33.330
+thing you need to do is install Eclipse, then
+install the documentation if that is necessary,
+
+00:00:33.330 --> 00:00:37.030
+and lastly check the installation to make
+sure that all the bells and whistles are working
+
+00:00:37.030 --> 00:00:44.030
+for the class. Now this demo was done with
+a Mac running OS X 10.8, which is called Mountain
+
+00:00:44.030 --> 00:00:47.949
+Lion. If you're running a different version
+of the operating system, it may look a little
+
+00:00:47.949 --> 00:00:53.280
+different, but the essential steps are the
+same. Unfortunately, Apple, Google, and Mozilla
+
+00:00:53.280 --> 00:00:58.739
+are making changes to their browsers constantly.
+This means that daily updates can and sometimes
+
+00:00:58.739 --> 00:01:04.150
+do break things. The challenge here is you
+need to do daily updates in order to keep
+
+00:01:04.150 --> 00:01:09.590
+your system secure, so don't be discouraged
+by that. Just get online at Janux, and we'll
+
+00:01:09.590 --> 00:01:15.369
+help you fix things when they break. Now,
+computer hardware actually matters a little
+
+00:01:15.369 --> 00:01:20.729
+bit when you're getting things set up. Some
+older computers are 32 bit. Almost all newer
+
+00:01:20.729 --> 00:01:26.960
+computers are 64 bit. To check whether your
+computer is 32 or 64 bit, we'll go to the
+
+00:01:26.960 --> 00:01:33.960
+Apple Menu, and About This Mac, and More Info.
+Let's do that now. Here's the Apple Menu,
+
+00:01:36.130 --> 00:01:43.130
+About This Mac, More Info. This tells me that
+my processor is a 2.6 GHz Intel Core i7. Now
+
+00:01:48.909 --> 00:01:54.070
+on this page right here, it has a listing
+of processor architectures. The thing is there're
+
+00:01:54.070 --> 00:02:00.680
+only two that are 32 bit. One is Intel Core
+Solo, and another is Intel Core Duo. Since
+
+00:02:00.680 --> 00:02:05.369
+I didn't have any of those processors, you
+know that I have a 64 bit system. It's very
+
+00:02:05.369 --> 00:02:12.210
+likely that you have a 64 bit system too,
+unless your computer is quite old. The next
+
+00:02:12.210 --> 00:02:17.390
+thing you need to do is to check whether your
+browser is 32 or 64 bit. So to do this, you
+
+00:02:17.390 --> 00:02:22.470
+go to Apple, About This Mac, More Info--the
+same thing we did before, but then you go
+
+00:02:22.470 --> 00:02:29.470
+to System Report Applications in Safari. If
+it says 64 bit with Intel in parentheses and
+
+00:02:29.480 --> 00:02:36.480
+yes, that means it's running in 64 bit. Otherwise,
+it's running in 32. So let's go do that now.
+
+00:02:37.260 --> 00:02:44.260
+Here's the Apple Menu, About This Mac, More
+Info, System Report, Applications is way down
+
+00:02:51.720 --> 00:02:58.570
+here. It's actually off the screen on my system,
+and then you have to scroll through all the
+
+00:02:58.570 --> 00:03:05.570
+Applications. So let's look for Firefox. Here's
+Firefox, and notice at the bottom right down
+
+00:03:06.890 --> 00:03:13.890
+here, it says 64 bit Intel yes. So my Firefox
+is running in 64 bit. If we wanted to look
+
+00:03:14.850 --> 00:03:21.850
+at Safari, for example, we would just scroll
+down until we find Safari. Right there is
+
+00:03:24.090 --> 00:03:31.090
+Safari, select it, and we can see it's also
+running in 64 bit. So Safari can be in either
+
+00:03:32.810 --> 00:03:39.810
+32 bit or 64 bit, and Firefox can be in either
+32 bit or 64 bit. If you have a 64 bit system,
+
+00:03:40.340 --> 00:03:45.200
+there's no reason not to run these in 64 bit.
+Chrome, on the other hand, is still only in
+
+00:03:45.200 --> 00:03:52.200
+32 bit, and so that will tend to cause trouble
+with Java. Now, you can run 32 bit software
+
+00:03:52.590 --> 00:03:59.200
+on 64 bit computers, but you can't run 64
+bit software on 32 bit computers. Basically,
+
+00:03:59.200 --> 00:04:04.040
+the software tools for this class need to
+match, so everything needs to be in 32 bit
+
+00:04:04.040 --> 00:04:11.040
+or everything needs to be in 64 bit. So you
+have to strategically choose your configurations.
+
+00:04:11.270 --> 00:04:15.790
+The first thing you might want to try is to
+make sure that Java is installed on your computers.
+
+00:04:15.790 --> 00:04:20.040
+This is done by default on Macintoshes, so
+unless somebody's meddled with the setup of
+
+00:04:20.040 --> 00:04:25.290
+your computer, it's very likely that you still
+have Java. Here's a test page that you can
+
+00:04:25.290 --> 00:04:32.290
+use. So you verify your Java version. Right
+now it's detecting Java on the computer. I'm
+
+00:04:36.780 --> 00:04:43.780
+going to allow it to run, and it says, "Congratulations,
+you have the recommended Java installed."
+
+00:04:47.060 --> 00:04:51.380
+If it shows some version of Java installed,
+even if it's not the most recent one, you're
+
+00:04:51.380 --> 00:04:55.480
+good to go. Most of the things we're doing
+in this class are very elementary, so the
+
+00:04:55.480 --> 00:05:02.480
+latest version of Java is not necessary. If
+you have a 32 bit computer, everything needs
+
+00:05:03.480 --> 00:05:08.630
+to be in 32 bit, so you'll need to install
+Eclipse in 32 bit, and your browser will already
+
+00:05:08.630 --> 00:05:15.440
+be in 32 bit, so that should be straightforward.
+If you have a 64 bit computer, you should
+
+00:05:15.440 --> 00:05:22.440
+install Eclipse in 64 bit, and use Safari
+or Firefox at 64 bit mode.
+
+00:05:23.490 --> 00:05:27.900
+Eclipse is our integrated development environment.
+What that means is it's the place where we're
+
+00:05:27.900 --> 00:05:32.250
+going to be programming in Java. So we're
+going to need to install Eclipse. We'll go
+
+00:05:32.250 --> 00:05:39.250
+to eclipse.org and choose Download Eclipse.
+So Download Eclipse is here, over on the side,
+
+00:05:42.960 --> 00:05:49.770
+the yellow button. I prefer to use the Eclipse
+standard version, so this would be right here:
+
+00:05:49.770 --> 00:05:55.600
+Mac OS X 64 bit. Now I downloaded it this
+morning before we started so that I wouldn't
+
+00:05:55.600 --> 00:06:02.600
+have to make you wait while I download it
+again. Once it's saved to downloads, you select
+
+00:06:03.639 --> 00:06:08.950
+from downloads to install it. You double-click
+to decompress it, and it will put the purple
+
+00:06:08.950 --> 00:06:14.180
+icon on the dock by dragging. It is handy
+to have the Eclipse icon on the dock when
+
+00:06:14.180 --> 00:06:19.920
+you're programming a lot, and then we can
+drag the decompressed Eclipse folder to Applications.
+
+00:06:19.920 --> 00:06:26.920
+Let me show you what that looks like. Here's
+my Downloads file. Right here is the file
+
+00:06:27.639 --> 00:06:34.639
+I downloaded, so I'm going to double-click.
+So what that's doing is decompressing the
+
+00:06:36.530 --> 00:06:42.400
+file in the Downloads Folder. You can see
+it's highlighted here, it's Eclipse, so we're
+
+00:06:42.400 --> 00:06:49.400
+going to open that up. We're going to drag
+this purple icon, the one right there, onto
+
+00:06:49.430 --> 00:06:56.430
+the menu bar, I'm sorry, the dock. So there
+that goes. And we're going to drag this whole
+
+00:07:00.830 --> 00:07:07.830
+Eclipse folder over to Applications. I of
+course had an older version of Eclipse there,
+
+00:07:13.270 --> 00:07:18.180
+which you won't have if you haven't been programming
+in Eclipse. The next thing we want to do is
+
+00:07:18.180 --> 00:07:24.810
+access the Java API. This has descriptions
+of resources that Java has for us to use.
+
+00:07:24.810 --> 00:07:28.330
+We won't use it a lot at the beginning of
+the semester, but as the semester goes on,
+
+00:07:28.330 --> 00:07:32.800
+we'll use it more and more. If you have good
+Internet access, there's no reason for you
+
+00:07:32.800 --> 00:07:38.450
+to download this, although you can download
+it if your Internet access is spotty. So let's
+
+00:07:38.450 --> 00:07:45.450
+take a look at what it should look like. So
+right here is the API. All of these things
+
+00:07:45.980 --> 00:07:50.810
+over here, all of these classes, and all of
+these packages are tools that Java has for
+
+00:07:50.810 --> 00:07:55.460
+us to use. Now, we're not going to use all
+those this semester, so don't get worried,
+
+00:07:55.460 --> 00:08:00.139
+but it is helpful to have all the standard
+ones available. So if you can access this
+
+00:08:00.139 --> 00:08:03.810
+easily, you don't need to download it.
+
+00:08:03.810 --> 00:08:07.919
+The next thing we need to do is check our
+installation and make sure it's good. So we're
+
+00:08:07.919 --> 00:08:12.800
+going to start Eclipse from the dock, create
+a workspace in a good location--we'll talk
+
+00:08:12.800 --> 00:08:19.800
+about what that is when we're doing it, get
+rid of the welcome screen, and create a project.
+
+00:08:20.650 --> 00:08:27.650
+So here's Eclipse. Of course, it's warning
+me that I want to open it. We know we downloaded
+
+00:08:28.230 --> 00:08:35.230
+it from the Internet, so we know it's okay.
+So, Eclipse has suggested users Deborah Trytten
+
+00:08:37.300 --> 00:08:41.990
+documents workspace is a good place for my
+workspace. That actually isn't where I like
+
+00:08:41.990 --> 00:08:48.990
+to keep my workspace. I like my workspace
+to be on the desktop, so I'm going to browse
+
+00:08:50.670 --> 00:08:57.670
+and choose the desktop 
+and create this folder if it wasn't already
+there. Of course it's already there because
+
+00:09:04.150 --> 00:09:09.390
+I have lots of Java projects hanging around.
+But to make a new folder, you would choose
+
+00:09:09.390 --> 00:09:15.820
+here and make sure you choose a name that
+you understand like Eclipse Workspace for
+
+00:09:15.820 --> 00:09:19.900
+1323. Don't be afraid of making your file
+names long. It will actually make your life
+
+00:09:19.900 --> 00:09:26.900
+easier in the long run. You'll probably only
+have to choose a workspace once the semester,
+
+00:09:30.930 --> 00:09:36.360
+although you're welcome to change workspaces
+any time you want. I like to keep everything
+
+00:09:36.360 --> 00:09:41.890
+together so I can go back and cut and paste.
+So, when you first log into Eclipse, what
+
+00:09:41.890 --> 00:09:46.210
+you're going to see is a welcome screen, and
+you need to get rid of that welcome screen,
+
+00:09:46.210 --> 00:09:53.210
+so you'll see something that looks like this.
+The first thing we'll do is create a new project,
+
+00:09:53.480 --> 00:10:00.480
+it's a Java project. So every program should
+get its own project name. It's okay to have
+
+00:10:04.990 --> 00:10:11.990
+spaces in the project names. Now, it highlights
+the one that it creates over here, and when
+
+00:10:17.700 --> 00:10:22.960
+you're looking at it, it will create a directory
+called source. Source is where our files go,
+
+00:10:22.960 --> 00:10:28.310
+and so that's where we want to place them,
+so we'll select that directory. So now that
+
+00:10:28.310 --> 00:10:35.120
+we've created our project, let's start a program.
+Now, the first thing you need to do is to
+
+00:10:35.120 --> 00:10:40.940
+create a class. We'll do that from the File
+Menu, File, New Class, and I'm going to call
+
+00:10:40.940 --> 00:10:46.490
+it Computer Science is Grand. You'll notice
+that the words are smashed together and every
+
+00:10:46.490 --> 00:10:52.120
+word starts with one capital letter. That's
+that camel case thing that we'll talk about,
+
+00:10:52.120 --> 00:10:58.830
+and that makes it easier to read. Spaces are
+not allowed in class names. Neither is punctuation.
+
+00:10:58.830 --> 00:11:03.290
+The other thing we want to do is check the
+box to get public static void main. Now, this
+
+00:11:03.290 --> 00:11:08.290
+is our magical incantation that gets our programs
+to run. This is where we put the instructions
+
+00:11:08.290 --> 00:11:15.290
+in the program. So here we are in Eclipse.
+We'll do File New and then Class. So here's
+
+00:11:27.420 --> 00:11:34.420
+Computer Science is Grand, and I want a main
+program to be created, so that's right there.
+
+00:11:43.710 --> 00:11:47.520
+The next thing I'm going to do is beautify
+the code a little bit. I'm going to move some
+
+00:11:47.520 --> 00:11:52.339
+curly braces around. I'm going to edit some
+stuff and remove a little bit of the things
+
+00:11:52.339 --> 00:11:57.310
+that Eclipse puts in by default that I don't
+happen to like. Now, it may look like I'm
+
+00:11:57.310 --> 00:12:01.839
+wasting your time here by beautifying code,
+but keeping your code neat and organized is
+
+00:12:01.839 --> 00:12:07.149
+actually quite important. It's what makes
+it possible to read the program successfully
+
+00:12:07.149 --> 00:12:13.390
+and easily. It's something I strongly recommend
+you learn to do too. So here are my usual
+
+00:12:13.390 --> 00:12:19.980
+beautifications. Eclipse puts the curly braces
+in a little different place than I like them.
+
+00:12:19.980 --> 00:12:24.529
+I like to have the curly braces so that they
+line up on the left. That way I can see if
+
+00:12:24.529 --> 00:12:30.089
+they're correct a little more easily. So I
+do that both for the class here, and for the
+
+00:12:30.089 --> 00:12:37.029
+main program here. Now this particular comment
+is something that's not useful for us, and
+
+00:12:37.029 --> 00:12:42.740
+so we remove that too, and that gives us a
+little nicer place to start the code. Notice
+
+00:12:42.740 --> 00:12:47.970
+that nothing is underlined in red right now.
+That means that Eclipse is happy. Eclipse
+
+00:12:47.970 --> 00:12:52.100
+goes along with you and checks what you're
+doing as you work, and so if you don't see
+
+00:12:52.100 --> 00:12:57.330
+little red x's and bars hanging around, that's
+an indication that everything's going okay.
+
+00:12:57.330 --> 00:13:02.450
+Now, if you do see x's and bars, don't panic.
+It just takes some practice getting used to
+
+00:13:02.450 --> 00:13:08.070
+where all the punctuation goes. Now, the next
+thing we're going to do is add some output,
+
+00:13:08.070 --> 00:13:12.610
+so we're going to go to the webpage for the
+Association of Computing Machinery and pick
+
+00:13:12.610 --> 00:13:17.580
+our favorite reason to major in computer science.
+The Association for Computing Machinery is
+
+00:13:17.580 --> 00:13:22.180
+the professional organization that's home
+for people like me who are professional computer
+
+00:13:22.180 --> 00:13:27.930
+scientists. It has some wonderful resources
+there. If you're interested in computer science
+
+00:13:27.930 --> 00:13:33.740
+as a career, I recommend that you join the
+ACM as a student member as soon as possible.
+
+00:13:33.740 --> 00:13:38.110
+Membership is very reasonable, and this is
+part of what it means to be a professional,
+
+00:13:38.110 --> 00:13:42.190
+so I recommend that you avail yourself of
+those opportunities. So let's go and look
+
+00:13:42.190 --> 00:13:49.190
+and see what they have to say about computing
+careers. The top 10 reasons to major in computing:
+
+00:13:50.200 --> 00:13:54.790
+computing is part of everything we do. Well,
+you can't argue with that one. Expertise in
+
+00:13:54.790 --> 00:14:01.120
+computing makes you solve complex and challenging
+problems. That's true too. Computing enables
+
+00:14:01.120 --> 00:14:05.790
+you to make a positive difference in the world.
+To me, that's the most important part of computing,
+
+00:14:05.790 --> 00:14:11.810
+so that's the one I'm going to pick, but you
+may want to go and read the rest of them.
+
+00:14:11.810 --> 00:14:16.570
+Now we want to add one line of code to the
+main program, so we'll do system out print
+
+00:14:16.570 --> 00:14:23.570
+line computing enables you to make a positive
+difference in the world. System out print
+
+00:14:26.070 --> 00:14:33.070
+line computing makes it possible to make a
+positive difference in the world. Now you
+
+00:14:38.890 --> 00:14:43.810
+probably noticed as I was typing that Eclipse
+is putting up all sorts of little red x's
+
+00:14:43.810 --> 00:14:50.810
+and red lines. That's typical of what Eclipse
+is going to do. Don't worry about that. Wait
+
+00:14:51.790 --> 00:14:58.660
+till the end of lines to make corrections.
+If instead of typing this, you cut and paste
+
+00:14:58.660 --> 00:15:03.959
+it from the PowerPoint, that's fine. The thing
+is PowerPoint uses a little bit different
+
+00:15:03.959 --> 00:15:08.300
+quotes, and so that's going to mess up the
+quotes. You're going to have to go and type
+
+00:15:08.300 --> 00:15:12.420
+them in again from the keyboard using the
+double quote key that's usually just a little
+
+00:15:12.420 --> 00:15:17.880
+bit to the left of the return or enter key
+on your keyboard. So that will fix that problem
+
+00:15:17.880 --> 00:15:24.880
+if you happen to get it. To run your program,
+you can choose run, run from the menu, and
+
+00:15:25.240 --> 00:15:32.240
+you should see your chosen slogan in the console
+window. And there we go.
+
+00:15:43.170 --> 00:15:47.459
+If that didn't work, there's probably just
+some small error in the program. Compare it
+
+00:15:47.459 --> 00:15:53.810
+very carefully to my program one character
+at a time and try to find the differences.
+
+00:15:53.810 --> 00:15:58.769
+Things to look for: capital letters instead
+of small letters, using commas instead of
+
+00:15:58.769 --> 00:16:04.480
+periods or other punctuation, these are the
+kind of things that cause trouble in programming.
+
+00:16:04.480 --> 00:16:08.910
+So let's see what would happen, for example,
+if we put a small s on system instead of a
+
+00:16:08.910 --> 00:16:15.910
+capital S. 
+Notice right now that Eclipse is unhappy.
+You can tell it's unhappy because of the little
+
+00:16:20.459 --> 00:16:27.120
+red x, and it says system cannot be resolved.
+Now, that's not a very helpful message, even
+
+00:16:27.120 --> 00:16:31.209
+though it is pointing to the correct place
+in code where we made the mistake. What that
+
+00:16:31.209 --> 00:16:37.010
+means is I can't find the word system, so
+the fact that the word system is entered is
+
+00:16:37.010 --> 00:16:41.990
+actually a hint that that's what's wrong.
+But the communication isn't very good, and
+
+00:16:41.990 --> 00:16:47.800
+it takes some practice and experience to get
+used to the way Eclipse talks about code.
+
+00:16:47.800 --> 00:16:52.170
+Notice when I change it back to system, it
+disappears. If you don't tend to be a very
+
+00:16:52.170 --> 00:16:56.350
+precise person, you're going to need to get
+used to working at a much greater degree of
+
+00:16:56.350 --> 00:17:03.350
+precision to be successful in programming.
+Don't worry. You can get used to it.
+
+00:17:03.519 --> 00:17:07.439
+Now if that doesn't work, you can always get
+help on the Janux social media if you need
+
+00:17:07.439 --> 00:17:13.669
+it. There are lots of people who will be able
+to help you there, including me. The next
+
+00:17:13.669 --> 00:17:19.799
+thing we're going to do is check JavaBat.
+This is at http://codingbat.com. You're going
+
+00:17:19.799 --> 00:17:23.949
+to need to create an account, particularly
+if you're in the four credit class, and share
+
+00:17:23.949 --> 00:17:29.489
+your results with me at dtrytten@ou.edu. Please
+don't do this if you're in the open class.
+
+00:17:29.489 --> 00:17:33.970
+There's no way for me to go back and look
+at work you've previously done, so instead
+
+00:17:33.970 --> 00:17:38.999
+post on Janux. Let's go and take a look at
+what this should look like if everything's
+
+00:17:38.999 --> 00:17:45.999
+correctly installed. Here's CodingBat, and
+here's a method called sum double. If you
+
+00:17:50.389 --> 00:17:54.960
+got this far, it means that your coding is
+successful, but let's actually work an example
+
+00:17:54.960 --> 00:18:01.710
+and see how it works. Let's enter this code
+between the curly braces if a equals equals
+
+00:18:01.710 --> 00:18:08.710
+b in parentheses return 4 asterisk a semicolon.
+Then on the next line return a plus b semicolon.
+
+00:18:11.929 --> 00:18:16.149
+Now don't worry about what any of this means.
+Right now it has no meaning, but we'll know
+
+00:18:16.149 --> 00:18:23.149
+what it means in about two weeks. And then
+you hit go. So here's CodingBat if a equals
+
+00:18:24.950 --> 00:18:31.950
+equals b in parentheses we return 4 times
+a otherwise return a plus b. And we hit the
+
+00:18:39.629 --> 00:18:46.179
+go button. Because we have this green check
+here and all of these green things here, that
+
+00:18:46.179 --> 00:18:51.950
+means we implemented it successfully. The
+next thing to check are Problets, so we're
+
+00:18:51.950 --> 00:18:58.950
+going to go to http://problets.org. If you
+pick topics, and let's do this first one from
+
+00:19:05.299 --> 00:19:12.299
+Java. We are willing to accept the risk and
+run this application. If you see this page,
+
+00:19:14.299 --> 00:19:18.799
+it mean your Java is correctly installed and
+you'll be able to do Problets successfully
+
+00:19:18.799 --> 00:19:25.720
+too. Now, if the Problets don't work, it's
+probably a security problem, so try another
+
+00:19:25.720 --> 00:19:30.539
+browser. Remember the browser has to be from
+the same category, so for example, if you're
+
+00:19:30.539 --> 00:19:36.739
+on a 64 bit system, don't try Chrome because
+Chrome is 32 bit and you installed a 64 bit
+
+00:19:36.739 --> 00:19:41.440
+Java. Students who are taking this class for
+credit will need to create an account and
+
+00:19:41.440 --> 00:19:45.700
+sign in from the link from this semester's
+class that's given on the course management
+
+00:19:45.700 --> 00:19:50.559
+system. Please do use your full legal name
+and student number and not just your email.
+
+00:19:50.559 --> 00:19:57.460
+I really don't know who sillyStudent@hotmail.org
+is. During this semester we may have some
+
+00:19:57.460 --> 00:20:04.179
+problems with security issues. Browsers periodically
+disable Java during security attacks. Then
+
+00:20:04.179 --> 00:20:09.169
+you'll have to enable Java to run Problets
+again. Turingscraft will work because Java's
+
+00:20:09.169 --> 00:20:14.049
+run on their servers, and Eclipse is going
+to work because it's running on your computer.
+
+00:20:14.049 --> 00:20:18.779
+JavaBat will also work because it's working
+on their systems, but these problems do come
+
+00:20:18.779 --> 00:20:24.210
+up during the semester and we'll post on Janux
+when they do. Enjoy programming!
+

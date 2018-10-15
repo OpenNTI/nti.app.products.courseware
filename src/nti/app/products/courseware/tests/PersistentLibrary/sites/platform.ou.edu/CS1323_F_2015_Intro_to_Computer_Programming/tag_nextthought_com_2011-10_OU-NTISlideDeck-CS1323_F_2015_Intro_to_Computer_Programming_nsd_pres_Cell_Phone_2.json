@@ -1,0 +1,106 @@
+{
+  "MimeType": "application/vnd.nextthought.ntislidedeck",
+  "Videos": [
+    {
+      "MimeType": "application/vnd.nextthought.ntislidevideo",
+      "video-ntiid": "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_02.01.03_Cell_Phone",
+      "title": "Choosing a Cell Phone Contract: Iteration 2",
+      "creator": "Deborah Trytten",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Cell_Phone_2",
+      "thumbnail": "//www.kaltura.com/p/1500101/thumbnail/entry_id/0_6acfov89/width/640/",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Cell_Phone_2_video",
+      "class": "ntislidevideo"
+    }
+  ],
+  "creator": "Deborah Trytten",
+  "title": "Choose Cell Phone Contract: Second Iteration",
+  "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Cell_Phone_2",
+  "Slides": [
+    {
+      "MimeType": "application/vnd.nextthought.slide",
+      "slidevideoid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Cell_Phone_2_video",
+      "slidetitle": "Changing Primitive Data",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Cell_Phone_2",
+      "slidevideostart": "0.0",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlide-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Cell_Phone_2_slide_1",
+      "slideimage": "resources/CS1323_F_2015_Intro_to_Computer_Programming/54527109ae062c1d20f9f5877297dacc3903265e/fd35e23767020999111e1f49239199b4c5eff23e.png",
+      "slidevideoend": "7.0",
+      "slidenumber": "1",
+      "class": "slide"
+    },
+    {
+      "MimeType": "application/vnd.nextthought.slide",
+      "slidevideoid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Cell_Phone_2_video",
+      "slidetitle": "Problem Statement",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Cell_Phone_2",
+      "slidevideostart": "7.0",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlide-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Cell_Phone_2_slide_2",
+      "slideimage": "resources/CS1323_F_2015_Intro_to_Computer_Programming/a4309bd19611940b512386155341c76048631936/fd35e23767020999111e1f49239199b4c5eff23e.png",
+      "slidevideoend": "19.0",
+      "slidenumber": "2",
+      "class": "slide"
+    },
+    {
+      "MimeType": "application/vnd.nextthought.slide",
+      "slidevideoid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Cell_Phone_2_video",
+      "slidetitle": "Select Operations",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Cell_Phone_2",
+      "slidevideostart": "19.0",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlide-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Cell_Phone_2_slide_3",
+      "slideimage": "resources/CS1323_F_2015_Intro_to_Computer_Programming/19208272290de43a2834ce43b887f7182afda6a2/fd35e23767020999111e1f49239199b4c5eff23e.png",
+      "slidevideoend": "34.0",
+      "slidenumber": "3",
+      "class": "slide"
+    },
+    {
+      "MimeType": "application/vnd.nextthought.slide",
+      "slidevideoid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Cell_Phone_2_video",
+      "slidetitle": "Create Calculations",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Cell_Phone_2",
+      "slidevideostart": "34.0",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlide-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Cell_Phone_2_slide_4",
+      "slideimage": "resources/CS1323_F_2015_Intro_to_Computer_Programming/79bdbdd9408e3a7a69004ec5307547efe364be8f/fd35e23767020999111e1f49239199b4c5eff23e.png",
+      "slidevideoend": "114.0",
+      "slidenumber": "4",
+      "class": "slide"
+    },
+    {
+      "MimeType": "application/vnd.nextthought.slide",
+      "slidevideoid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Cell_Phone_2_video",
+      "slidetitle": "Perform Calculations",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Cell_Phone_2",
+      "slidevideostart": "114.0",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlide-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Cell_Phone_2_slide_5",
+      "slideimage": "resources/CS1323_F_2015_Intro_to_Computer_Programming/ea2a23914e443f907d28309cd3f36dd4aa32bc6c/fd35e23767020999111e1f49239199b4c5eff23e.png",
+      "slidevideoend": "166.0",
+      "slidenumber": "5",
+      "class": "slide"
+    },
+    {
+      "MimeType": "application/vnd.nextthought.slide",
+      "slidevideoid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Cell_Phone_2_video",
+      "slidetitle": "Add in Additional Minutes",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Cell_Phone_2",
+      "slidevideostart": "166.0",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlide-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Cell_Phone_2_slide_6",
+      "slideimage": "resources/CS1323_F_2015_Intro_to_Computer_Programming/5e904002e3cac9f7c550dc02901258c8aeb05831/fd35e23767020999111e1f49239199b4c5eff23e.png",
+      "slidevideoend": "262.0",
+      "slidenumber": "6",
+      "class": "slide"
+    },
+    {
+      "MimeType": "application/vnd.nextthought.slide",
+      "slidevideoid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Cell_Phone_2_video",
+      "slidetitle": "Food for Thought",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Cell_Phone_2",
+      "slidevideostart": "262.0",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlide-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Cell_Phone_2_slide_7",
+      "slideimage": "resources/CS1323_F_2015_Intro_to_Computer_Programming/9d6f0d7f8680ba77f40e5a1b2482bc0a09ecf572/fd35e23767020999111e1f49239199b4c5eff23e.png",
+      "slidevideoend": "335.0",
+      "slidenumber": "7",
+      "class": "slide"
+    }
+  ],
+  "ntiid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Cell_Phone_2",
+  "class": "ntislidedeck"
+}

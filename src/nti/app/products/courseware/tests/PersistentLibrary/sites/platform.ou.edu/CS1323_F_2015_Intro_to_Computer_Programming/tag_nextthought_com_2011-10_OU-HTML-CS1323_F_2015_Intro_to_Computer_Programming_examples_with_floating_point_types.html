@@ -1,0 +1,31 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html lang="en"><head> <meta content="2015-12-11T16:56:47" http-equiv="last-modified" /> <meta content="1163" name="NTIRelativeScrollHeight" /> <meta content="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.examples_with_floating_point_types" name="NTIID" /> <meta content="NextThought" name="generator" /> <meta content="text/html; charset=ascii" http-equiv="content-type" /> <title>Examples with Floating Point Types</title> <link href="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.can_a_method_change_a_primitive_type_" rel="next" title="Can a Method Change a Primitive Type?" /> <link href="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.method_using_a_double_parameter" rel="prev" title="Method using a double Parameter" /> <link href="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.reading:Chortle_CH28_2" rel="up" title="Parameters Must be the Correct Type" /> <link href="styles/styles.css" rel="stylesheet" /> <link href="styles/content.css" rel="stylesheet" /> </head> <body id="NTIContent"> <div class="page-contents"><div data-ntiid="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.examples_with_floating_point_types" id="a0000000478" ntiid="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.examples_with_floating_point_types"> <div class="chapter title">Examples with Floating Point Types</div> <p class="placeholder"></p> <a name="dfdaa78116d7464a5b4ab578fdcdc72d"></a> <div class="sidebar" data-ntiid="tag:nextthought.com,2011-10:OU-HTML:NTISidebar-CS1323_F_2015_Intro_to_Computer_Programming.sidebar.answer.156" ntiid="tag:nextthought.com,2011-10:OU-HTML:NTISidebar-CS1323_F_2015_Intro_to_Computer_Programming.sidebar.answer.156"> <div class="sidebar-title">Answer</div> Yes &#8211; so no conversion is required. </div><a name="2099577205a10ab10799230fbdc212a6"></a> <p class="par" id="2099577205a10ab10799230fbdc212a6">Here is a program where the supplied parameter type does not match the required type: </p> <a name="46e129f9836a3a3c511d0ec7d877ec8f"></a> <pre>class CosEg2
+{
+
+  public static void main ( String arg[] )
+  {
+    int z = 0;
+
+    System.out.println( "cos is:" + Math.cos( z ) );
+  }
+}
+</pre><a name="be79261bfcde1df07ebfe6e96f63d282"></a> <p class="par" id="be79261bfcde1df07ebfe6e96f63d282">In this case, the 32 bit value in <b class="bfseries"><tt class="ttfamily">x</tt></b> can be converted to the required 64 bit value without loss of information, so the compiler does it automatically. Here is another case: </p> <a name="d836b8c22e8acffcc0a705a2252d0c67"></a> <pre>class CosEg3
+{
+
+  public static void main ( String arg[] )
+  {
+    long w = 0;
+
+    System.out.println( "cos is:" + Math.cos( w ) );
+  }
+}
+</pre><a name="f75287f27a7cc9af1e63504ffe7aa2c7"></a> <p class="par" id="f75287f27a7cc9af1e63504ffe7aa2c7">Data of type <b class="bfseries"><tt class="ttfamily">long</tt></b> can be converted to type <b class="bfseries"><tt class="ttfamily">double</tt></b>, but some precision may be lost. In this case, also, the compiler does the conversion automatically. (In this particular case, no precision is lost because 0 can be represented accurately in both types. But in general, there may be loss of precision in converting from <b class="bfseries"><tt class="ttfamily">long</tt></b> to <b class="bfseries"><tt class="ttfamily">double</tt></b>.) </p> <a name="0cef50c490f3ec8d4eefb781f349dc5b"></a> <div class="sidebar" data-ntiid="tag:nextthought.com,2011-10:OU-HTML:NTISidebar-CS1323_F_2015_Intro_to_Computer_Programming.sidebar.question.164" ntiid="tag:nextthought.com,2011-10:OU-HTML:NTISidebar-CS1323_F_2015_Intro_to_Computer_Programming.sidebar.question.164"> <div class="sidebar-title">Question</div> <a name="b70c5222f04a64fe6425f5510d6260da"></a> <p class="par" id="b70c5222f04a64fe6425f5510d6260da"> (Thought question:) Do you think that the following will work: </p> <a name="870e5ac542c10716d1f15229c86352c4"></a> <pre>class cosEg4
+{
+
+  public static void main ( String arg[] )
+  {
+    long w = 0;
+
+    System.out.println( "cos is:" + Math.cos( (double)w ) );
+  }
+}
+</pre> </div> </div></div> </body></html>

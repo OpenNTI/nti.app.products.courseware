@@ -1,0 +1,27 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html lang="en"><head> <meta content="2015-12-11T16:56:47" http-equiv="last-modified" /> <meta content="943" name="NTIRelativeScrollHeight" /> <meta content="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.car_rental_problem" name="NTIID" /> <meta content="NextThought" name="generator" /> <meta content="text/html; charset=ascii" http-equiv="content-type" /> <title>Car Rental Problem</title> <link href="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.more_renters" rel="next" title="More Renters" /> <link href="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.cookie_program" rel="prev" title="Cookie Program" /> <link href="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.reading:Chortle_CH14" rel="up" title="Boolean Expressions" /> <link href="styles/styles.css" rel="stylesheet" /> <link href="styles/content.css" rel="stylesheet" /> </head> <body id="NTIContent"> <div class="page-contents"><div data-ntiid="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.car_rental_problem" id="a0000000415" ntiid="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.car_rental_problem"> <div class="chapter title">Car Rental Problem</div> <p class="placeholder"></p> <a name="061b6d78e7ceee800f9a62163cc7446f"></a> <div class="sidebar" data-ntiid="tag:nextthought.com,2011-10:OU-HTML:NTISidebar-CS1323_F_2015_Intro_to_Computer_Programming.sidebar.answer.99" ntiid="tag:nextthought.com,2011-10:OU-HTML:NTISidebar-CS1323_F_2015_Intro_to_Computer_Programming.sidebar.answer.99"> <div class="sidebar-title">Answer</div> Yes. It is always good to test programs with values that are right at the limit. </div><a name="33af2cdc19fc93270d61f3a8aa3155d5"></a> <p class="par" id="33af2cdc19fc93270d61f3a8aa3155d5">A car rental agency wants a program to determine who can rent a car. The rules are: </p> <a name="73767cf57c6299020119857dc4595c07"></a> <ul class="itemize"> <li><a name="da9eaf632ed1b55521093a718196cd98"></a> <p class="par" id="da9eaf632ed1b55521093a718196cd98">A renter must be 21 years old or older. </p> </li> <li><a name="3244ec537cd718f5dea224026036293a"></a> <p class="par" id="3244ec537cd718f5dea224026036293a">A renter must have a credit card with $10,000 or more of credit. </p> </li> </ul><a name="3c5cd9f72f1f5f1c6eee2e768399e96a"></a> <p class="par" id="3c5cd9f72f1f5f1c6eee2e768399e96a">The program looks something like the cookie program: </p> <a name="bb0e8f9f272d37494702086243f4ca82"></a> <pre>// Rental Car Checker
+//
+import java.util.Scanner;
+class RenterChecker
+{
+  public static void main (String[] args) 
+  { 
+    // Declare a Scanner and two integer variables
+    Scanner scan = new Scanner( System.in ); 
+    int age, credit; 
+
+    // get the age of the renter
+    System.out.println("How old are you?");
+    age = scan.nextInt() ; 
+
+    // get the credit line
+    System.out.println("How much credit do you have?");
+    credit = scan.nextInt() ; 
+
+    // check that both qualifications are met
+    if ( _______________ &amp;&amp; _______________ )
+      System.out.println("Enough to rent this car!" );
+    else
+      System.out.println("Have you considered a bicycle?" );
+  }
+}
+</pre><a name="7fe45979b8b440e957aec03f4786370e"></a> <div class="sidebar" data-ntiid="tag:nextthought.com,2011-10:OU-HTML:NTISidebar-CS1323_F_2015_Intro_to_Computer_Programming.sidebar.question.104" ntiid="tag:nextthought.com,2011-10:OU-HTML:NTISidebar-CS1323_F_2015_Intro_to_Computer_Programming.sidebar.question.104"> <div class="sidebar-title">Question</div> Complete the program by filling in the blanks. </div> </div></div> </body></html>

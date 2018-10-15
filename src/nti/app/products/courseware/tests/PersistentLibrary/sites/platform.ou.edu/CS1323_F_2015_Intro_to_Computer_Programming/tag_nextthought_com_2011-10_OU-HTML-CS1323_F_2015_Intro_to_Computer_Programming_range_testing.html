@@ -1,0 +1,30 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html lang="en"><head> <meta content="2015-12-11T16:56:47" http-equiv="last-modified" /> <meta content="1064" name="NTIRelativeScrollHeight" /> <meta content="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.range_testing" name="NTIID" /> <meta content="NextThought" name="generator" /> <meta content="text/html; charset=ascii" http-equiv="content-type" /> <title>Range Testing</title> <link href="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.a_run_of_the_program" rel="next" title="A Run of the Program" /> <link href="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.more_renters" rel="prev" title="More Renters" /> <link href="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.reading:Chortle_CH14" rel="up" title="Boolean Expressions" /> <link href="styles/styles.css" rel="stylesheet" /> <link href="styles/content.css" rel="stylesheet" /> </head> <body id="NTIContent"> <div class="page-contents"><div data-ntiid="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.range_testing" id="a0000000417" ntiid="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.range_testing"> <div class="chapter title">Range Testing</div> <p class="placeholder"></p> <a name="892322a33b1913812447d13ac0eb73d5"></a> <div class="sidebar" data-ntiid="tag:nextthought.com,2011-10:OU-HTML:NTISidebar-CS1323_F_2015_Intro_to_Computer_Programming.sidebar.answer.101" ntiid="tag:nextthought.com,2011-10:OU-HTML:NTISidebar-CS1323_F_2015_Intro_to_Computer_Programming.sidebar.answer.101"> <div class="sidebar-title">Answer</div> <a name="d83bb75452a3cb02c2bdb1814006a33c"></a> <p class="par" id="d83bb75452a3cb02c2bdb1814006a33c"> A 30 year old with $10000 credit could rent a car. </p> <a name="09ac10b4d4e98e903474ee47f97a1ab0"></a> <pre>age &gt;= 21 &amp;&amp; credit &gt;= 10000
+---------    ---------------
+  true            true
+    ----------------
+          true
+</pre> </div><a name="dcd4b7d5434f3545c3095c3cc877856a"></a> <p class="par" id="dcd4b7d5434f3545c3095c3cc877856a">A welter weight boxer must weight between 136 and 147 pounds. A boxer&#8217;s weight is tested before each fight to be sure that he is within his weight category. Here is a program that checks if a welter weight boxer&#8217;s weight is within range: </p> <a name="f841005f543eae353dfb92706051fc8b"></a> <pre>// Ringside Weigh-in
+//
+// Boxer must weigh between 136 and 147 pounds
+//
+import java.util.Scanner;
+
+class Ringside
+{
+  public static void main (String[] args)  
+  { 
+    Scanner scan = new Scanner( System.in );
+    int weight; 
+
+    // get the weight
+    System.out.print("How heavy is the boxer? ");
+    weight = scan.nextInt();
+
+    // check that the weight is within range
+    if ( ______________________________ )
+      System.out.println("In range!" );
+    else
+      System.out.println("Out of range." );
+  }
+}
+</pre><a name="6fcdb084c95001286c9e6d630f813380"></a> <div class="sidebar" data-ntiid="tag:nextthought.com,2011-10:OU-HTML:NTISidebar-CS1323_F_2015_Intro_to_Computer_Programming.sidebar.question.106" ntiid="tag:nextthought.com,2011-10:OU-HTML:NTISidebar-CS1323_F_2015_Intro_to_Computer_Programming.sidebar.question.106"> <div class="sidebar-title">Question</div> <a name="edab1bee0c4a60b91ef5112d57ec73c4"></a> <p class="par" id="edab1bee0c4a60b91ef5112d57ec73c4"> Fill the blank so that weight is tested in two ways: </p> <a name="c4370020739676d52a12834f0d748234"></a> <ul class="itemize"> <li><a name="a1d6cc42ca94d6d19484f95855925bfb"></a> <p class="par" id="a1d6cc42ca94d6d19484f95855925bfb"><b class="bfseries"><tt class="ttfamily">weight</tt></b> must be equal or greater than 136 </p> </li> <li><a name="c8d4002131e22deb11495a6664bb149c"></a> <p class="par" id="c8d4002131e22deb11495a6664bb149c"><b class="bfseries"><tt class="ttfamily">weight</tt></b> must be less than or equal to 147 </p> </li> </ul> </div> </div></div> </body></html>

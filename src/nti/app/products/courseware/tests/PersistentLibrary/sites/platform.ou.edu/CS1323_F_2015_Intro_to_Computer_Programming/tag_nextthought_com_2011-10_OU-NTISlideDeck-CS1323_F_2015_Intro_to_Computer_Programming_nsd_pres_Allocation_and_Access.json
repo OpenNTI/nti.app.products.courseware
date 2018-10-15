@@ -1,0 +1,118 @@
+{
+  "MimeType": "application/vnd.nextthought.ntislidedeck",
+  "Videos": [
+    {
+      "MimeType": "application/vnd.nextthought.ntislidevideo",
+      "video-ntiid": "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_04.01.02_Allocation_and_Access",
+      "title": "Allocation and Access",
+      "creator": "Deborah Trytten",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Allocation_and_Access",
+      "thumbnail": "//www.kaltura.com/p/1500101/thumbnail/entry_id/1_uublrejp/width/640/",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Allocation_and_Access_video",
+      "class": "ntislidevideo"
+    }
+  ],
+  "creator": "Deborah Trytten",
+  "title": "Arrays of Primitive Data",
+  "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Allocation_and_Access",
+  "Slides": [
+    {
+      "MimeType": "application/vnd.nextthought.slide",
+      "slidevideoid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Allocation_and_Access_video",
+      "slidetitle": "Allocation and Access",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Allocation_and_Access",
+      "slidevideostart": "0.0",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlide-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Allocation_and_Access_slide_1",
+      "slideimage": "resources/CS1323_F_2015_Intro_to_Computer_Programming/438521e323ae24b4288c437f3ac34af2b0a5d199/fd35e23767020999111e1f49239199b4c5eff23e.png",
+      "slidevideoend": "7.0",
+      "slidenumber": "1",
+      "class": "slide"
+    },
+    {
+      "MimeType": "application/vnd.nextthought.slide",
+      "slidevideoid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Allocation_and_Access_video",
+      "slidetitle": "Arrays",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Allocation_and_Access",
+      "slidevideostart": "7.0",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlide-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Allocation_and_Access_slide_2",
+      "slideimage": "resources/CS1323_F_2015_Intro_to_Computer_Programming/2c31994ed26a47bcd53b6df095679d731f0e22f2/fd35e23767020999111e1f49239199b4c5eff23e.png",
+      "slidevideoend": "95.0",
+      "slidenumber": "2",
+      "class": "slide"
+    },
+    {
+      "MimeType": "application/vnd.nextthought.slide",
+      "slidevideoid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Allocation_and_Access_video",
+      "slidetitle": "Array Allocation",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Allocation_and_Access",
+      "slidevideostart": "95.0",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlide-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Allocation_and_Access_slide_3",
+      "slideimage": "resources/CS1323_F_2015_Intro_to_Computer_Programming/2ff3a0683a0b8efa5495646433b142e3a82fa900/fd35e23767020999111e1f49239199b4c5eff23e.png",
+      "slidevideoend": "141.0",
+      "slidenumber": "3",
+      "class": "slide"
+    },
+    {
+      "MimeType": "application/vnd.nextthought.slide",
+      "slidevideoid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Allocation_and_Access_video",
+      "slidetitle": "Indexing Arrays",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Allocation_and_Access",
+      "slidevideostart": "141.0",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlide-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Allocation_and_Access_slide_4",
+      "slideimage": "resources/CS1323_F_2015_Intro_to_Computer_Programming/f609930ba842dba1c8543044e9b0085d31cf454d/fd35e23767020999111e1f49239199b4c5eff23e.png",
+      "slidevideoend": "231.0",
+      "slidenumber": "4",
+      "class": "slide"
+    },
+    {
+      "MimeType": "application/vnd.nextthought.slide",
+      "slidevideoid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Allocation_and_Access_video",
+      "slidetitle": "Length",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Allocation_and_Access",
+      "slidevideostart": "231.0",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlide-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Allocation_and_Access_slide_5",
+      "slideimage": "resources/CS1323_F_2015_Intro_to_Computer_Programming/894c32118942b96e4730a277ece2a4a59120f370/fd35e23767020999111e1f49239199b4c5eff23e.png",
+      "slidevideoend": "315.0",
+      "slidenumber": "5",
+      "class": "slide"
+    },
+    {
+      "MimeType": "application/vnd.nextthought.slide",
+      "slidevideoid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Allocation_and_Access_video",
+      "slidetitle": "Typical Loop Options",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Allocation_and_Access",
+      "slidevideostart": "315.0",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlide-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Allocation_and_Access_slide_6",
+      "slideimage": "resources/CS1323_F_2015_Intro_to_Computer_Programming/4c67e6599236a950936581da28c8f384d65da8cd/fd35e23767020999111e1f49239199b4c5eff23e.png",
+      "slidevideoend": "427.0",
+      "slidenumber": "6",
+      "class": "slide"
+    },
+    {
+      "MimeType": "application/vnd.nextthought.slide",
+      "slidevideoid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Allocation_and_Access_video",
+      "slidetitle": "Arrays vs. ArrayList",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Allocation_and_Access",
+      "slidevideostart": "427.0",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlide-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Allocation_and_Access_slide_7",
+      "slideimage": "resources/CS1323_F_2015_Intro_to_Computer_Programming/397be0daaf2ab810b2d3a817665906be6198937e/fd35e23767020999111e1f49239199b4c5eff23e.png",
+      "slidevideoend": "505.0",
+      "slidenumber": "7",
+      "class": "slide"
+    },
+    {
+      "MimeType": "application/vnd.nextthought.slide",
+      "slidevideoid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Allocation_and_Access_video",
+      "slidetitle": "Keep Programming!",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Allocation_and_Access",
+      "slidevideostart": "505.0",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlide-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Allocation_and_Access_slide_8",
+      "slideimage": "resources/CS1323_F_2015_Intro_to_Computer_Programming/ca1ca93da9799f94ce83affd86a94ecbe103782b/fd35e23767020999111e1f49239199b4c5eff23e.png",
+      "slidevideoend": "516.0",
+      "slidenumber": "8",
+      "class": "slide"
+    }
+  ],
+  "ntiid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Allocation_and_Access",
+  "class": "ntislidedeck"
+}

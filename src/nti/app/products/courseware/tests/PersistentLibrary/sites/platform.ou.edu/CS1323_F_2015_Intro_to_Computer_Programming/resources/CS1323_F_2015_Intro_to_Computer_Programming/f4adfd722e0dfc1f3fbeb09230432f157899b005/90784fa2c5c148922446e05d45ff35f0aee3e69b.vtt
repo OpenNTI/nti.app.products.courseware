@@ -1,0 +1,332 @@
+WEBVTT
+Kind: captions
+Language: en
+
+00:00:00.859 --> 00:00:07.430
+&gt;&gt;Let's talk about differences between StringBuilders
+and Strings. In Java there are actually three
+
+00:00:07.430 --> 00:00:13.230
+String-like classes. When I say String-like,
+what I mean is that sequences of characters
+
+00:00:13.230 --> 00:00:19.430
+are stored. Now when a computer scientist
+says sequence what they mean is order is important.
+
+00:00:19.430 --> 00:00:25.040
+So for example, ABC is different than CBA.
+And that is certainly true in the case of
+
+00:00:25.040 --> 00:00:27.890
+sequences of characters.
+
+00:00:27.890 --> 00:00:33.110
+The first class is called the String class
+and you've seen this one quite a bit. Now
+
+00:00:33.110 --> 00:00:38.220
+it has a special syntax to it and that can
+be both good or bad. So, I've talked a little
+
+00:00:38.220 --> 00:00:44.130
+bit about the fact that when you have a String
+name equals double quote ABC double quote,
+
+00:00:44.130 --> 00:00:48.780
+that that's actually calling a constructor
+in building a new object. This is something
+
+00:00:48.780 --> 00:00:54.020
+that's sort of curious in Java. The way I
+look at it is this: If you think about human
+
+00:00:54.020 --> 00:01:00.200
+language, you'll find that the most commonly
+used things become irregular. So for example
+
+00:01:00.200 --> 00:01:06.430
+if you've ever spoken a foreign language you'll
+find that it's very common for the verbs 'to
+
+00:01:06.430 --> 00:01:13.430
+be', 'to make', 'to do' to be highly irregular,
+even weird at times. Well, guess what? That
+
+00:01:13.540 --> 00:01:18.049
+happens in synthetic language too. It's really
+quite amazing.
+
+00:01:18.049 --> 00:01:24.549
+Now the String object has a very unusual property.
+It's called immutable. What that means is
+
+00:01:24.549 --> 00:01:30.380
+once you create a String object you absolutely
+positively cannot change it no matter what.
+
+00:01:30.380 --> 00:01:35.780
+And that is kind of strange and has some important
+consequences that we'll discuss today. Now
+
+00:01:35.780 --> 00:01:40.600
+the StringBuilder is very similar to the String,
+but the difference is it's mutable-- that
+
+00:01:40.600 --> 00:01:47.100
+is the characters can be changed in it. There
+is a third String-like class, it's called
+
+00:01:47.100 --> 00:01:53.140
+StringBuffer. Now this one has a unique property
+called synchronization. Synchronization is
+
+00:01:53.140 --> 00:01:57.829
+a very advanced topic in programming and one
+we're not going to approach this semester,
+
+00:01:57.829 --> 00:02:01.810
+so we're not going to use the StringBuffer
+class at all.
+
+00:02:01.810 --> 00:02:07.140
+When you got o access String properties, you
+can do it like this. First you build the String
+
+00:02:07.140 --> 00:02:14.140
+object so we could say String name equals
+new String double quote Sadie. Name dot length,
+
+00:02:15.280 --> 00:02:20.700
+return the number of characters in the String.
+Now length is unit indexed. When I say unit
+
+00:02:20.700 --> 00:02:26.010
+indexed I mean we start counting at one. So
+Sadie has five letters in it and that's what
+
+00:02:26.010 --> 00:02:32.110
+will be returned. You also can find out what
+the individual letters are by asking for them
+
+00:02:32.110 --> 00:02:39.010
+by number. So name dot char at zero returns
+a capital S. Now you'll notice that the letters
+
+00:02:39.010 --> 00:02:44.239
+themselves are zero indexed. So the first
+letter is zero, the second one is one, the
+
+00:02:44.239 --> 00:02:49.060
+third one is two. That's going to seem a little
+weird at first, and it is certainly the source
+
+00:02:49.060 --> 00:02:54.629
+of a lot of mistakes for beginners-- but you
+will get used to it soon.
+
+00:02:54.629 --> 00:02:59.239
+Here's the pattern for calling methods that
+are in the String class. We have the reference
+
+00:02:59.239 --> 00:03:05.160
+to the object and then a period, then the
+method names, and then any arguments. Now
+
+00:03:05.160 --> 00:03:09.060
+remember there may be arguments there may
+not. It just depends on which method you're
+
+00:03:09.060 --> 00:03:13.849
+calling. So for example the length method
+doesn't have any arguments, but the charAt
+
+00:03:13.849 --> 00:03:20.370
+method does have one. One integer argument
+I might add. All of the methods that are available
+
+00:03:20.370 --> 00:03:25.000
+in the String class are documented in the
+API.
+
+00:03:25.000 --> 00:03:30.620
+To lower case is an example of a method that's
+in the String class. What this class does
+
+00:03:30.620 --> 00:03:36.709
+is it changes any upper case letters that
+happen to be in the String to lower case.
+
+00:03:36.709 --> 00:03:41.830
+Now wait, you should be thinking, "Just a
+minute ago you told me that Strings were immutable."
+
+00:03:41.830 --> 00:03:47.300
+And Strings are immutable, but what it really
+does is it creates a new String object with
+
+00:03:47.300 --> 00:03:51.940
+all lower case characters. So it takes the
+one's that were upper case and it changes
+
+00:03:51.940 --> 00:03:57.239
+them to lower case. And then it returns the
+reference, which remember we can store or
+
+00:03:57.239 --> 00:03:59.690
+not store as we prefer.
+
+00:03:59.690 --> 00:04:04.720
+Now let's take a look at what this means in
+a memory diagram. So if we say String name
+
+00:04:04.720 --> 00:04:10.819
+is new String Sadie. This is what we have.
+This is String object and memory. Notice the
+
+00:04:10.819 --> 00:04:17.009
+reference name points to the object that's
+stored on the heap. Then we say name equals
+
+00:04:17.009 --> 00:04:24.009
+name dot to lower case. Now name dot to lower
+case creates a new object. Notice it's Sadie
+
+00:04:25.210 --> 00:04:31.389
+with a little S. It's not changing the original
+object because the original object is unchangeable.
+
+00:04:31.389 --> 00:04:37.020
+Then, because we stored the reference that
+was returned by name.dot to lower case and
+
+00:04:37.020 --> 00:04:44.020
+name itself, the reference gets replaced.
+So notice right over here on the left hand
+
+00:04:45.550 --> 00:04:51.659
+side we're pointing to the new object that's
+in lower case and the reference to the original
+
+00:04:51.659 --> 00:04:57.059
+object has been lost. So at this point, this
+object, the one with Sadie with a capital
+
+00:04:57.059 --> 00:05:02.860
+S, that one is going to disappear when it
+gets garbage collected.
+
+00:05:02.860 --> 00:05:07.129
+Now the other thing to notice here is what
+we're dealing with is a hidden constructor.
+
+00:05:07.129 --> 00:05:13.180
+That is, the to lower case method is constructing
+a new String object inside the method itself
+
+00:05:13.180 --> 00:05:18.419
+and it's returning it. So these hidden constructors
+can cause a lot of grief in Java. We need
+
+00:05:18.419 --> 00:05:25.419
+to look for them very carefully. Now let's
+talk about a StringBuilder. StringBuilder
+
+00:05:25.469 --> 00:05:30.009
+is also a sequence of a characters, but this
+time it's mutable. That means we can make
+
+00:05:30.009 --> 00:05:36.449
+changes to the object without reconstructing
+it. The access is very similar to a String,
+
+00:05:36.449 --> 00:05:41.419
+and in fact some of the most useful methods
+are identical. So if we could say StringBuilder
+
+00:05:41.419 --> 00:05:47.930
+name equals new StringBuilder and then Abby
+in double quotes. Now StringBuilders are not
+
+00:05:47.930 --> 00:05:53.249
+that common a class, and so they don't have
+any shortcut operators like the String class
+
+00:05:53.249 --> 00:06:00.249
+does. So all we have is the regular constructor.
+If we call name dot length now on our StringBuilder
+
+00:06:01.580 --> 00:06:07.309
+object, it's going to return four because
+Abby has four characters. If we call name
+
+00:06:07.309 --> 00:06:13.869
+dot charAt zero, this returns a capital A
+because the zero of character of the String
+
+00:06:13.869 --> 00:06:20.869
+that the reference name refers to is a capital
+A. Remember, charAt uses zero indexing.
+
+00:06:21.449 --> 00:06:28.449
+Now, for mutating if we start with a StringBuilder
+name equals new StringBuilder Sadie, this
+
+00:06:29.599 --> 00:06:35.069
+is what we have. Remember the StringBuilder
+is different than the String. So if we call
+
+00:06:35.069 --> 00:06:42.069
+name dot reverse what happens is this: The
+characters inside the original object get
+
+00:06:43.129 --> 00:06:50.129
+changed. So instead of having Sadie we have
+eidaS, or something like that, Sadie reversed.
+
+00:06:50.679 --> 00:06:55.779
+Notice we did not have to assign it for this
+to happen, so this is a very different mechanism
+
+00:06:55.779 --> 00:07:00.309
+then what we've seen in the String class.
+And all of this has to do whether the objects
+
+00:07:00.309 --> 00:07:03.439
+are mutable or immutable.
+
+00:07:03.439 --> 00:07:07.959
+Now what this means is inside every program
+we have some really tough software engineering
+
+00:07:07.959 --> 00:07:13.779
+decisions. Strings are more efficiently represented
+than StringBuilders. Now the reason is the
+
+00:07:13.779 --> 00:07:20.499
+StringBuilder needs to have some excess capacity.
+So if you make changes it can respond to them.
+
+00:07:20.499 --> 00:07:26.270
+Excess capacity is wasted if changes aren't
+needed. Now, if no changes are needed or if
+
+00:07:26.270 --> 00:07:31.929
+very minimal changes are needed, you're probably
+better off using the String. If changes are
+
+00:07:31.929 --> 00:07:36.169
+definitely going to be needed than you need
+to use the StringBuilder. So this becomes
+
+00:07:36.169 --> 00:07:41.939
+an important decision you make with every
+program you write. String, StringBuilder,
+
+00:07:41.939 --> 00:07:47.559
+and it all depends on whether you think the
+objects are going to change or not. So keep
+
+00:07:47.559 --> 00:07:47.809
+programming.
+

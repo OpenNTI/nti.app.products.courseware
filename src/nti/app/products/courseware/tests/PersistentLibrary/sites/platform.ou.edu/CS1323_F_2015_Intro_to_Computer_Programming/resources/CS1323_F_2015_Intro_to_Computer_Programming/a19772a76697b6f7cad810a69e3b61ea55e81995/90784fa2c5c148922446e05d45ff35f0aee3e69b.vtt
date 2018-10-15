@@ -1,0 +1,641 @@
+WEBVTT
+Kind: captions
+Language: en
+
+00:00:00.950 --> 00:00:07.620
+&gt;&gt;Let's continue our study of aggregation
+by examining two common patterns for aggregation.
+
+00:00:07.620 --> 00:00:12.410
+Well first off, what does aggregation mean?
+Well it means that one class has a data field
+
+00:00:12.410 --> 00:00:18.950
+from another class. So an example of aggregation
+is that our String ArrayList that we created
+
+00:00:18.950 --> 00:00:25.950
+in our last few presentations aggregates String
+class. This is how we show it in UML. There's
+
+00:00:26.380 --> 00:00:31.970
+an open diamond and a line between the two.
+The diamond goes on the side of the class
+
+00:00:31.970 --> 00:00:35.730
+that has the data element in it.
+
+00:00:35.730 --> 00:00:40.070
+Now for our first type of aggregation, the
+type I just showed you, the relationship is
+
+00:00:40.070 --> 00:00:47.070
+aggregation because we have many String objects
+that are stored in a single String ArrayList.
+
+00:00:47.390 --> 00:00:52.180
+Now ArrayList and arrays are very typical
+of the types of classes that will involve
+
+00:00:52.180 --> 00:00:57.130
+this kind of aggregation relationship, because
+you have many elements of the same type that
+
+00:00:57.130 --> 00:01:02.559
+are combined into a single unit. Virtually
+every significant program you're going to
+
+00:01:02.559 --> 00:01:08.420
+write has this form of aggregation. We've
+done many, many examples already, but I'll
+
+00:01:08.420 --> 00:01:11.859
+do a little bit more on an example later.
+
+00:01:11.859 --> 00:01:16.369
+Our second pattern for aggregation is something
+that's a little bit newer. It's data fields
+
+00:01:16.369 --> 00:01:22.429
+of different types being combined into an
+object. So let's think for example, of writing
+
+00:01:22.429 --> 00:01:26.329
+a menu for a restaurant. So we're going to
+need to have food items and they're going
+
+00:01:26.329 --> 00:01:33.329
+to go on a menu. Now a food item needs a name,
+a price, a description, and the common allergens
+
+00:01:33.969 --> 00:01:40.529
+in this food. Now, there actually is a whole
+literature on what allergens have to be identified,
+
+00:01:40.529 --> 00:01:44.679
+and these are the kind of things you have
+to do research on when you're writing programs.
+
+00:01:44.679 --> 00:01:48.599
+When you're a computer scientist, it's not
+enough to know just how to program and how
+
+00:01:48.599 --> 00:01:53.560
+to design software--you have to know how to
+get knowledge out of the world and out it
+
+00:01:53.560 --> 00:01:57.520
+into your programs, because if you don't do
+it in this case, people's lives could be at
+
+00:01:57.520 --> 00:02:00.389
+risk from allergies.
+
+00:02:00.389 --> 00:02:04.849
+So let's take a look at what our data should
+look like. Name would be a String, price would
+
+00:02:04.849 --> 00:02:09.879
+be a double of course, the description would
+be a String. The allergens I'm doing in kind
+
+00:02:09.879 --> 00:02:15.290
+of an interesting way. I'm making an array
+of Booleans for allergens. Now what I'm doing
+
+00:02:15.290 --> 00:02:22.030
+with wheat, milk, and nut, is that I'm making
+those indices into the array. So for example
+
+00:02:22.030 --> 00:02:27.340
+if wheat was assigned the value of zero allergens
+of zero would tell you whether you had or
+
+00:02:27.340 --> 00:02:33.310
+did not have a wheat allergy. Notice also
+I have a constant for the number of allergens.
+
+00:02:33.310 --> 00:02:37.180
+Now the reason I made that a constant is that
+I know I'm going to have to put more allergens
+
+00:02:37.180 --> 00:02:43.069
+in later, because I haven't included all the
+common categories yet. Wheat, milk, and nuts,
+
+00:02:43.069 --> 00:02:48.329
+notice are static. That is their class data.
+The reason is because they're constants. Now
+
+00:02:48.329 --> 00:02:53.750
+UML doesn't have a formal symbol for constants,
+but what it does have is a code convention
+
+00:02:53.750 --> 00:02:58.599
+that you can use, or at least I use the code
+convention from Java of making them in all
+
+00:02:58.599 --> 00:03:02.810
+caps. That's kind of a wink to people who
+are reading the design that these things are
+
+00:03:02.810 --> 00:03:06.819
+probably constants.
+
+00:03:06.819 --> 00:03:12.650
+This type of aggregation is very rarely shown
+in UML for a couple of reasons. Aggregation
+
+00:03:12.650 --> 00:03:17.790
+has to be a relationship between classes.
+It can't be a relationship between a class
+
+00:03:17.790 --> 00:03:23.180
+and a primitive data type. So for example,
+the relationship between the class food item
+
+00:03:23.180 --> 00:03:27.989
+and the Boolean really can't be documented
+this way. The other thing is that knowing
+
+00:03:27.989 --> 00:03:34.010
+that a class aggregates a String is really
+not useful information. Strings are everywhere
+
+00:03:34.010 --> 00:03:39.969
+in Java programs. There are very few classes
+that don't aggregate a String one way or another.
+
+00:03:39.969 --> 00:03:44.140
+And so we don't tend to put those details
+in UML. Remember, this is one of the cool
+
+00:03:44.140 --> 00:03:48.900
+things about UML--is you're allowed to pick
+and choose what's important and useful to
+
+00:03:48.900 --> 00:03:53.689
+have documented. Of course that also puts
+some pressure on it, because it means you
+
+00:03:53.689 --> 00:04:00.689
+have to make conscious, reasoned choices instead
+of just being able to rely on automatic behavior.
+
+00:04:01.689 --> 00:04:06.019
+Let's talk a little bit about our implementation
+plan for this class. We certainly need to
+
+00:04:06.019 --> 00:04:11.989
+write constructors, and we want to remember
+to cascade them. Then we'll write some accessors.
+
+00:04:11.989 --> 00:04:17.170
+Now accessors are usually just a single return
+statement. Everybody usually loves writing
+
+00:04:17.170 --> 00:04:22.070
+accessors. Then we're going to write some
+mutators. Now for the time being, most of
+
+00:04:22.070 --> 00:04:26.570
+our mutators are going to be just a single
+line, but that isn't really how mutators work
+
+00:04:26.570 --> 00:04:32.450
+in general. We don't have a lot of good strategies
+for handling errors at this point, and so
+
+00:04:32.450 --> 00:04:36.530
+we've kind of been ignoring the fact that
+all these mistakes can happen. Once we have
+
+00:04:36.530 --> 00:04:42.760
+better strategies for handling errors, which,
+by the way, unfortunately will be next semester,
+
+00:04:42.760 --> 00:04:47.500
+then you can put more data into your mutators.
+And really check and make sure the data is
+
+00:04:47.500 --> 00:04:52.760
+legal before you store your object. That's
+a very important responsibility in enforcing
+
+00:04:52.760 --> 00:04:55.760
+the contract.
+
+00:04:55.760 --> 00:04:59.810
+So for constructors, there are going to be
+two of them that we'll write. One will take
+
+00:04:59.810 --> 00:05:05.390
+the name, the price, and the description,
+and just assume there are no allergens. And
+
+00:05:05.390 --> 00:05:10.370
+the other one will set all of the fields.
+So we have name, price, description, and then
+
+00:05:10.370 --> 00:05:15.770
+wheat, nuts, and milk for the three allergies
+that could occur. Now remember that when we
+
+00:05:15.770 --> 00:05:21.660
+write cascaded constructors, we write the
+one with the most parameters first, and then
+
+00:05:21.660 --> 00:05:26.430
+once we've written that one we call it for
+the other one. The constructor on top is the
+
+00:05:26.430 --> 00:05:31.580
+constructor for the most parameters--so that's
+the one we do first. Name, price, and description
+
+00:05:31.580 --> 00:05:36.050
+are just set in a very straightforward way.
+Let's look a little bit about how allergens
+
+00:05:36.050 --> 00:05:41.460
+are set. First you have to construct the array
+for the allergens, new Boolean of number of
+
+00:05:41.460 --> 00:05:47.060
+allergens. That's where that other constant
+gets used. Then we'll say allergens of wheat
+
+00:05:47.060 --> 00:05:53.380
+is wheat, allergens of milk is milk, and allergens
+of nut is nut. So wheat, milk, and nut are
+
+00:05:53.380 --> 00:05:57.850
+going to have values like zero, one, two.
+Now it doesn't really matter which one has
+
+00:05:57.850 --> 00:06:02.480
+which value, but it is important that they're
+not the same and that the values are zero,
+
+00:06:02.480 --> 00:06:08.370
+one, and two. To create the other constructor,
+the one that has only three parameters, notice
+
+00:06:08.370 --> 00:06:15.370
+we've passed those three parameters in and
+then passed in faults for the other parameters.
+
+00:06:16.660 --> 00:06:21.990
+Now to finish the implementation we're going
+to need to create accessors. Now in this particular
+
+00:06:21.990 --> 00:06:26.740
+example all of our fields would need accessor
+methods. That isn't always true, but it's
+
+00:06:26.740 --> 00:06:32.330
+a pretty common pattern. So for example an
+accessor would be something like hasWheat,
+
+00:06:32.330 --> 00:06:39.310
+which returns a Boolean. We're also going
+to need to create mutators. Now most of this
+
+00:06:39.310 --> 00:06:46.180
+data is not going to need a mutator. So things
+like names and ingredients and descriptions,
+
+00:06:46.180 --> 00:06:50.530
+these very rarely change on a menu. I can
+think of restaurants that have had the same
+
+00:06:50.530 --> 00:06:55.310
+descriptions on the same menu since I was
+a little kid. So we really don't need to create
+
+00:06:55.310 --> 00:07:02.300
+mutators for that. What we do need to create
+mutators for, however, is prices. [laugh]
+
+00:07:02.300 --> 00:07:06.210
+Because prices do change and believe me, there's
+nothing on a menu from when I was a little
+
+00:07:06.210 --> 00:07:12.930
+kid that has the same price. Remember that
+if you don't create a mutator for a particular
+
+00:07:12.930 --> 00:07:17.560
+field, you're going to force somebody to construct
+a new object. You don't want to do that all
+
+00:07:17.560 --> 00:07:21.890
+the time, but on the other hand if changes
+aren't made very often, that's actually a
+
+00:07:21.890 --> 00:07:28.890
+better strategy than putting in a whole bunch
+of mutators that never get used. So, now we
+
+00:07:28.930 --> 00:07:34.390
+need to design our methods. So for getName
+for our String we'll have getPrice, which
+
+00:07:34.390 --> 00:07:39.930
+will return a double, getDescription which
+will return a String, and setPrice, notice
+
+00:07:39.930 --> 00:07:46.370
+that's the mutator. Also notice how the signature
+is different on the mutator. First off, it
+
+00:07:46.370 --> 00:07:52.390
+starts with set instead of get. Set is something
+that cues you in that there's a mutator involved,
+
+00:07:52.390 --> 00:07:57.470
+and there's a parameter price. With accessors
+you typically don't have parameters and you
+
+00:07:57.470 --> 00:08:03.950
+always have a non-void return type. With mutators,
+you tend to have a void return type. Then
+
+00:08:03.950 --> 00:08:09.550
+we'll have methods like hasWheat which returns
+a Boolean and hasCommonAllergens which returns
+
+00:08:09.550 --> 00:08:15.330
+a Boolean. What hasCommonAllergens is going
+to do is look through all of the possible
+
+00:08:15.330 --> 00:08:21.460
+allergens and see if there's a possible allergy
+problem or not. So that's kind of a nice method
+
+00:08:21.460 --> 00:08:24.410
+to have.
+
+00:08:24.410 --> 00:08:30.870
+So let's implement a couple of accessors.
+So public Boolean hasWheat, all it does is
+
+00:08:30.870 --> 00:08:36.070
+return allergens of wheat. Notice that the
+person who's using the food item class would
+
+00:08:36.070 --> 00:08:42.250
+have no idea about this Boolean array trick
+we're using. That's kind of cool. Now let's
+
+00:08:42.250 --> 00:08:47.020
+take a look at how hasAllergens can be written.
+Now I've written this with a for each loop,
+
+00:08:47.020 --> 00:08:52.560
+and I did that for a particularly good reason.
+And the reason is--we know that we don't have
+
+00:08:52.560 --> 00:08:56.780
+all the allergens in that array. We're going
+to increase the number of allergens and add
+
+00:08:56.780 --> 00:09:03.130
+other ones in. If I do it with a for each
+loop instead of doing an indexed loop, what
+
+00:09:03.130 --> 00:09:07.940
+we can do here is not change this code at
+all. So I'm sort of looking to the future
+
+00:09:07.940 --> 00:09:12.530
+of this code, seeing what might need to be
+done, and trying to write the code in a way
+
+00:09:12.530 --> 00:09:15.950
+that it won't be changed. If you can learn
+to do things like that you're going to be
+
+00:09:15.950 --> 00:09:18.500
+a much better software engineer.
+
+00:09:18.500 --> 00:09:24.090
+So, what happens in this method is you're
+stepping through all the possible allergens.
+
+00:09:24.090 --> 00:09:29.130
+If you find an allergen that's true you return
+true, because if any allergen is true, there
+
+00:09:29.130 --> 00:09:34.610
+is an allergen in it. And otherwise if you
+get to the loop and you haven't returned anything,
+
+00:09:34.610 --> 00:09:40.370
+then you return false. So notice also this
+is very concise code. You know most computer
+
+00:09:40.370 --> 00:09:44.970
+scientists are kind of mathematicians, so
+we have a tendency to really like concise
+
+00:09:44.970 --> 00:09:46.400
+things.
+
+00:09:46.400 --> 00:09:51.620
+For implementing the mutator it's going to
+be pretty simple. Public void set price, double
+
+00:09:51.620 --> 00:09:58.620
+price. So all you do is say this.price equals
+price. Now the next thing we need to do is
+
+00:09:58.770 --> 00:10:05.770
+design a menu. So what a menu will be mostly
+is just an ArrayList of food items. So this
+
+00:10:06.120 --> 00:10:13.060
+is that first form of aggregation again. This
+is what it would look like in UML. Our menu
+
+00:10:13.060 --> 00:10:20.060
+is aggregating food items. Implementing the
+menu is going to be relatively simple, because
+
+00:10:20.230 --> 00:10:24.770
+we can just use the methods that are available
+in the ArrayList. So the ArrayList is going
+
+00:10:24.770 --> 00:10:30.460
+to do the really hard work for us, and all
+we have to do is choose the arguments correctly.
+
+00:10:30.460 --> 00:10:34.400
+So you can kind of get into the groove of
+programming this and it can be very quick
+
+00:10:34.400 --> 00:10:39.560
+and efficient. So here's a partial design
+for the class.
+
+00:10:39.560 --> 00:10:44.860
+We have private data, which is the menu, which
+is an ArrayList of food items. And then we
+
+00:10:44.860 --> 00:10:51.180
+have some useful methods, like adding a food
+item to the menu, removing a food item with
+
+00:10:51.180 --> 00:10:58.180
+the given name from the menu, reordering items
+on the menu, updating prices, and then find
+
+00:10:58.370 --> 00:11:02.370
+without allergens, which is going to return
+an array of all the food items that don't
+
+00:11:02.370 --> 00:11:09.370
+have any allergens. And then findWithoutWheat,
+that would return a food item array with all
+
+00:11:09.490 --> 00:11:13.770
+of the items that don't have any wheat in
+them. Those are questions that people with
+
+00:11:13.770 --> 00:11:19.940
+allergies tend to ask at restaurants, and
+so that's a useful method to have around.
+
+00:11:19.940 --> 00:11:26.940
+So now let's implement the addToMenu method.
+Public void, addToMenu, food item, item into
+
+00:11:27.050 --> 00:11:34.050
+position. Now all we have to do here is add
+to the menu, the position and the item. So
+
+00:11:34.520 --> 00:11:38.820
+we're using an ArrayList method to do the
+hard work for us. Notice we're not having
+
+00:11:38.820 --> 00:11:43.630
+to worry about how the ArrayList was implemented
+or any of that stuff, we're just using the
+
+00:11:43.630 --> 00:11:49.240
+exterior part of the class. So this is pretty
+quick and easy. You've probably heard me say
+
+00:11:49.240 --> 00:11:53.740
+that it's not a good idea to have just one
+line in a method, but this is an exception.
+
+00:11:53.740 --> 00:11:58.940
+Because here, what's happening is the ArrayList
+is doing the hard work for us. So there's
+
+00:11:58.940 --> 00:12:03.310
+really a good piece of work for us being done,
+it's just that all we had to do was call it
+
+00:12:03.310 --> 00:12:06.730
+from the ArrayList.
+
+00:12:06.730 --> 00:12:12.870
+Now let's talk about one like findWithoutWheat.
+Now this returns an array. Since it returns
+
+00:12:12.870 --> 00:12:18.660
+an array we know the sixe can't be returned,
+so this has to be a perfect sized array. This
+
+00:12:18.660 --> 00:12:23.779
+means we have to use our usual strategy for
+dealing with perfect sized arrays. Count the
+
+00:12:23.779 --> 00:12:29.000
+number of items that don't have wheat, construct
+the array to the perfect size, and then put
+
+00:12:29.000 --> 00:12:35.600
+the items without wheat into the array. Here's
+the code for findWithoutWheat. Public food
+
+00:12:35.600 --> 00:12:40.710
+item array, findWithoutWheat. Now remember
+our strategy. We need to figure out how many
+
+00:12:40.710 --> 00:12:46.670
+elements don't have wheat in the menu ArrayList,
+then construct the array and then move the
+
+00:12:46.670 --> 00:12:52.140
+items in. The way I counted how many elements
+didn't have wheat was I started a counter
+
+00:12:52.140 --> 00:12:58.710
+at zero, and then I used a for each loop to
+step through the menu one food item at a time.
+
+00:12:58.710 --> 00:13:04.480
+If that particular food item has wheat, then
+I increment count. Once you get to the end
+
+00:13:04.480 --> 00:13:10.080
+of that for loop, then I constructed the array.
+So we have a food item array, result is new
+
+00:13:10.080 --> 00:13:16.380
+food item of count. So now we know that our
+array is constructed to the perfect size.
+
+00:13:16.380 --> 00:13:22.220
+Now we have to go back through our menu again
+and actually take the food items that don't
+
+00:13:22.220 --> 00:13:28.320
+have wheat in them and put them into the array.
+So for food item f menu, so we're stepping
+
+00:13:28.320 --> 00:13:35.220
+through our menu one food item at a time.
+If F has wheat, we put result of count to
+
+00:13:35.220 --> 00:13:40.190
+F and increment count. And of course when
+we get to the end of the method, we return
+
+00:13:40.190 --> 00:13:43.020
+result.
+
+00:13:43.020 --> 00:13:48.310
+Let's make some observations about this code.
+Classes that feature an ArrayList to aggregate
+
+00:13:48.310 --> 00:13:53.870
+another class are very common. Methods in
+these classes are often going to use the ArrayList
+
+00:13:53.870 --> 00:13:59.480
+operations to perform tasks. So we're letting
+the ArrayList do the hard work, and all we're
+
+00:13:59.480 --> 00:14:04.880
+doing is sort of borrowing its stuff. We also
+are going to have classes is the group together
+
+00:14:04.880 --> 00:14:10.630
+fields of different types, and they have a
+very simple pattern. Now writing these classes
+
+00:14:10.630 --> 00:14:17.160
+is so simple you can almost do it mechanically.
+These two types of classes frequently work
+
+00:14:17.160 --> 00:14:22.500
+together, just like they did with our menu
+and food item classes. So this is a common
+
+00:14:22.500 --> 00:14:26.290
+pattern for software to take. Keep programming!
+

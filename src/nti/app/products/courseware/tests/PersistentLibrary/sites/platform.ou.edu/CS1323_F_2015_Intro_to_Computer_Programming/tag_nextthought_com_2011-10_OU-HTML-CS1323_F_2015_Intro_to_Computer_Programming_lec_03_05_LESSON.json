@@ -1,0 +1,146 @@
+{
+    "MimeType": "application/vnd.nextthought.ntilessonoverview",
+    "Items": [
+        {
+            "MimeType": "application/vnd.nextthought.nticourseoverviewgroup",
+            "NTIID": "tag:nextthought.com,2011-10:OU-NTICourseOverviewGroup-CS1323_F_2015_Intro_to_Computer_Programming.lec:03.05_LESSON.0",
+            "Items": [
+                {
+                    "MimeType": "application/vnd.nextthought.ntivideo",
+                    "NTIID": "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_04.02.03_For_Loops",
+                    "visibility": "everyone",
+                    "poster": "//www.kaltura.com/p/1500101/thumbnail/entry_id/0_ms297gt7/width/1280/",
+                    "label": "Reading Files Using For Loops"
+                }
+            ],
+            "accentColor": "81c8dc",
+            "title": "Videos"
+        },
+        {
+            "MimeType": "application/vnd.nextthought.nticourseoverviewgroup",
+            "NTIID": "tag:nextthought.com,2011-10:OU-NTICourseOverviewGroup-CS1323_F_2015_Intro_to_Computer_Programming.lec:03.05_LESSON.1",
+            "Items": [
+                {
+                    "MimeType": "application/vnd.nextthought.assessment.assignment",
+                    "ContainerId": "tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.turingscraft:_for_loops_(12_points)",
+                    "title": "Turingscraft: For Loops (12 points)",
+                    "label": "Turingscraft: For Loops (12 points)",
+                    "NTIID": "tag:nextthought.com,2011-10:OU-NAQ-CS1323_F_2015_Intro_to_Computer_Programming.naq.asg.assignment:Turingscraft_For_Loops_010",
+                    "Target-NTIID": "tag:nextthought.com,2011-10:OU-NAQ-CS1323_F_2015_Intro_to_Computer_Programming.naq.asg.assignment:Turingscraft_For_Loops_010"
+                },
+                {
+                    "MimeType": "application/vnd.nextthought.assessment.assignment",
+                    "ContainerId": "tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.turingscraft:_for_loops_(12_points).1",
+                    "title": "Turingscraft: For Loops (12 points)",
+                    "label": "Turingscraft: For Loops (12 points)",
+                    "NTIID": "tag:nextthought.com,2011-10:OU-NAQ-CS1323_F_2015_Intro_to_Computer_Programming.naq.asg.assignment:Turingscraft_For_Loops_001",
+                    "Target-NTIID": "tag:nextthought.com,2011-10:OU-NAQ-CS1323_F_2015_Intro_to_Computer_Programming.naq.asg.assignment:Turingscraft_For_Loops_001"
+                },
+                {
+                    "MimeType": "application/vnd.nextthought.assessment.assignment",
+                    "ContainerId": "tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.turingscraft:_for_loops_(12_points).2",
+                    "title": "Turingscraft: For Loops (12 points)",
+                    "label": "Turingscraft: For Loops (12 points)",
+                    "NTIID": "tag:nextthought.com,2011-10:OU-NAQ-CS1323_F_2015_Intro_to_Computer_Programming.naq.asg.assignment:Turingscraft_For_Loops_995",
+                    "Target-NTIID": "tag:nextthought.com,2011-10:OU-NAQ-CS1323_F_2015_Intro_to_Computer_Programming.naq.asg.assignment:Turingscraft_For_Loops_995"
+                },
+                {
+                    "MimeType": "application/vnd.nextthought.assessment.assignment",
+                    "ContainerId": "tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.problets:_for_loops_(10_points)",
+                    "title": "Problets: For Loops (10 points)",
+                    "label": "Problets: For Loops (10 points)",
+                    "NTIID": "tag:nextthought.com,2011-10:OU-NAQ-CS1323_F_2015_Intro_to_Computer_Programming.naq.asg.assignment:Problets_For_Loops_010",
+                    "Target-NTIID": "tag:nextthought.com,2011-10:OU-NAQ-CS1323_F_2015_Intro_to_Computer_Programming.naq.asg.assignment:Problets_For_Loops_010"
+                },
+                {
+                    "MimeType": "application/vnd.nextthought.assessment.assignment",
+                    "ContainerId": "tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.problets:_for_loops_(10_points).1",
+                    "title": "Problets: For Loops (10 points)",
+                    "label": "Problets: For Loops (10 points)",
+                    "NTIID": "tag:nextthought.com,2011-10:OU-NAQ-CS1323_F_2015_Intro_to_Computer_Programming.naq.asg.assignment:Problets_For_Loops_995",
+                    "Target-NTIID": "tag:nextthought.com,2011-10:OU-NAQ-CS1323_F_2015_Intro_to_Computer_Programming.naq.asg.assignment:Problets_For_Loops_995"
+                },
+                {
+                    "MimeType": "application/vnd.nextthought.assessment.assignment",
+                    "ContainerId": "tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.zybook:_for_loops_(12_point)",
+                    "title": "Zybook: For Loops (12 point)",
+                    "label": "Zybook: For Loops (12 point)",
+                    "NTIID": "tag:nextthought.com,2011-10:OU-NAQ-CS1323_F_2015_Intro_to_Computer_Programming.naq.asg.assignment:Zybook_For_Loops",
+                    "Target-NTIID": "tag:nextthought.com,2011-10:OU-NAQ-CS1323_F_2015_Intro_to_Computer_Programming.naq.asg.assignment:Zybook_For_Loops"
+                }
+            ],
+            "accentColor": "a5c959",
+            "title": "Assignments"
+        },
+        {
+            "MimeType": "application/vnd.nextthought.nticourseoverviewgroup",
+            "NTIID": "tag:nextthought.com,2011-10:OU-NTICourseOverviewGroup-CS1323_F_2015_Intro_to_Computer_Programming.lec:03.05_LESSON.2",
+            "Items": [
+                {
+                    "MimeType": "application/vnd.nextthought.relatedworkref",
+                    "targetMimeType": "application/vnd.nextthought.externallink",
+                    "creator": "zyBooks for University of Oklahoma CS 1323",
+                    "section": "additional",
+                    "visibility": "everyone",
+                    "label": "Programming in Java",
+                    "NTIID": "tag:nextthought.com,2011-10:OU-RelatedWorkRef-CS1323_F_2015_Intro_to_Computer_Programming.relatedworkref.relwk:04.02.03_zyante",
+                    "href": "https://zybooks.zyante.com/#/zybook/OUCS1323Fall2015/chapter/8/section/1",
+                    "target-NTIID": "tag:nextthought.com,2011-10:NTI-UUID-d84ebb5b1884e9462cb1f23c49ed0d10",
+                    "icon": "resources/CS1323_F_2015_Intro_to_Computer_Programming/671375790efa45b2948b77f2a9c4e91f27173a56/fd35e23767020999111e1f49239199b4c5eff23e.png",
+                    "desc": "This section covers for loops."
+                }
+            ],
+            "accentColor": "f9824e",
+            "title": "Required Resources"
+        },
+        {
+            "MimeType": "application/vnd.nextthought.nticourseoverviewgroup",
+            "NTIID": "tag:nextthought.com,2011-10:OU-NTICourseOverviewGroup-CS1323_F_2015_Intro_to_Computer_Programming.lec:03.05_LESSON.3",
+            "Items": [
+                {
+                    "MimeType": "application/vnd.nextthought.relatedworkref",
+                    "targetMimeType": "application/vnd.nextthought.content",
+                    "creator": "Bradley Kjell",
+                    "section": "required",
+                    "visibility": "everyone",
+                    "label": "Chortle",
+                    "NTIID": "tag:nextthought.com,2011-10:OU-RelatedWorkRef-CS1323_F_2015_Intro_to_Computer_Programming.relatedworkref.relwk:chortle.7",
+                    "href": "tag:nextthought.com,2011-10:OU-HTML-CS1323_S_2015_Intro_to_Computer_Programming.reading:Chortle_CH41",
+                    "target-NTIID": "tag:nextthought.com,2011-10:OU-HTML-CS1323_S_2015_Intro_to_Computer_Programming.reading:Chortle_CH41",
+                    "icon": "resources/CS1323_F_2015_Intro_to_Computer_Programming/b06a4bdb19666c7afc685f0365fd59a988b154c2/fd35e23767020999111e1f49239199b4c5eff23e.png",
+                    "desc": ""
+                },
+                {
+                    "MimeType": "application/vnd.nextthought.relatedworkref",
+                    "targetMimeType": "application/vnd.nextthought.externallink",
+                    "creator": "Deborah Trytten",
+                    "section": "additional",
+                    "visibility": "everyone",
+                    "label": "Example from the Video",
+                    "NTIID": "tag:nextthought.com,2011-10:OU-RelatedWorkRef-CS1323_F_2015_Intro_to_Computer_Programming.relatedworkref.relwk:04.02.03_code_sample",
+                    "href": "resources/Lesson_4.2.3_Code.zip",
+                    "target-NTIID": "tag:nextthought.com,2011-10:NTI-UUID-784b174be7b089d9bab8b74ef8ecdc6b",
+                    "icon": "resources/CS1323_F_2015_Intro_to_Computer_Programming/b9c4a1a1dc3d30c895df3b30c553fa40f972a2f5/fd35e23767020999111e1f49239199b4c5eff23e.png",
+                    "desc": "Java code developed in the video from this lesson."
+                },
+                {
+                    "MimeType": "application/vnd.nextthought.relatedworkref",
+                    "targetMimeType": "application/vnd.nextthought.externallink",
+                    "creator": "Deborah Trytten",
+                    "section": "additional",
+                    "visibility": "everyone",
+                    "label": "Reading Files Using For Loops",
+                    "NTIID": "tag:nextthought.com,2011-10:OU-RelatedWorkRef-CS1323_F_2015_Intro_to_Computer_Programming.relatedworkref.relwk:04.02.03_for_loops",
+                    "href": "resources/Reading_Files_For_Loops.pptx",
+                    "target-NTIID": "tag:nextthought.com,2011-10:NTI-UUID-5b84c448681cb36e0fb89b1d9adb9a0e",
+                    "icon": "resources/CS1323_F_2015_Intro_to_Computer_Programming/17f860f9921d29d578e2791d3ff00dcf689071c3/fd35e23767020999111e1f49239199b4c5eff23e.png",
+                    "desc": "Lecture presentation"
+                }
+            ],
+            "accentColor": "ce78e0",
+            "title": "Additional Resources"
+        }
+    ],
+    "title": "For Loops",
+    "NTIID": "tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.lec:03.05_LESSON"
+}

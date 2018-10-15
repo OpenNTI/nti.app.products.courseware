@@ -1,0 +1,25 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html lang="en"><head> <meta content="2015-12-11T16:56:47" http-equiv="last-modified" /> <meta content="1002" name="NTIRelativeScrollHeight" /> <meta content="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.many_line_comments" name="NTIID" /> <meta content="NextThought" name="generator" /> <meta content="text/html; charset=ascii" http-equiv="content-type" /> <title>Many-line Comments</title> <link href="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.commenting_out_code" rel="next" title="Commenting Out Code" /> <link href="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.many_comments" rel="prev" title="Many Comments" /> <link href="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.reading:Chortle_CH6" rel="up" title="Small Java Programs" /> <link href="styles/styles.css" rel="stylesheet" /> <link href="styles/content.css" rel="stylesheet" /> </head> <body id="NTIContent"> <div class="page-contents"><div data-ntiid="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.many_line_comments" id="a0000000381" ntiid="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.many_line_comments"> <div class="chapter title">Many-line Comments</div> <p class="placeholder"></p> <a name="b8c9b8da2f008e73fb1519e9006b3260.211"></a> <div class="sidebar" data-ntiid="tag:nextthought.com,2011-10:OU-HTML:NTISidebar-CS1323_F_2015_Intro_to_Computer_Programming.sidebar.answer.69" ntiid="tag:nextthought.com,2011-10:OU-HTML:NTISidebar-CS1323_F_2015_Intro_to_Computer_Programming.sidebar.answer.69"> <div class="sidebar-title">Answer</div> Yes. </div><a name="f2e8af6dfc66933bcbe8837cc229218f"></a> <pre>/* Program 1
+Write out three lines of a poem.
+The poem describes a single moment in time,
+using 17 syllables.
+*/
+
+class Haiku
+{
+  public static void main ( String[] args )
+  {
+    System.out.println("On a withered branch" );
+    System.out.println("A crow has just alighted:");
+    System.out.println("Nightfall in autumn."); 
+  }
+}
+</pre><a name="f22272df1f2ae87f0e36503422f52d00"></a> <p class="par" id="f22272df1f2ae87f0e36503422f52d00">Often you want to write a comment that spans several lines, as above. </p> <a name="1d5bfd966375823e8d59c599b1c186e0"></a> <p class="par" id="1d5bfd966375823e8d59c599b1c186e0">With this style of comment, everything between the two characters <b class="bfseries"><tt class="ttfamily">/*</tt></b> and the two chracters <b class="bfseries"><tt class="ttfamily">*/</tt></b> are ignored by the compiler. </p> <a name="6a417c690b8740f2da52d57f8db604b6"></a> <p class="par" id="6a417c690b8740f2da52d57f8db604b6">The <b class="bfseries"><tt class="ttfamily">/</tt></b> and the <b class="bfseries"><tt class="ttfamily">*</tt></b> must not have any character between them. There can be many lines of comments between the <b class="bfseries"><tt class="ttfamily">/*</tt></b> pair and the <b class="bfseries"><tt class="ttfamily">*/</tt></b> pair. </p> <a name="1ce9a864b6f8596fc7d82fd0e118cc44"></a> <p class="par" id="1ce9a864b6f8596fc7d82fd0e118cc44">The <b class="bfseries"><tt class="ttfamily">/*</tt></b> and the <b class="bfseries"><tt class="ttfamily">*/</tt></b> can start and stop anywhere on a line. Everything between the pair is a comment ignored by the compiler. </p> <a name="24ddb47d064135515b7e9a69be9d6ee0"></a> <div class="sidebar" data-ntiid="tag:nextthought.com,2011-10:OU-HTML:NTISidebar-CS1323_F_2015_Intro_to_Computer_Programming.sidebar.question.71" ntiid="tag:nextthought.com,2011-10:OU-HTML:NTISidebar-CS1323_F_2015_Intro_to_Computer_Programming.sidebar.question.71"> <div class="sidebar-title">Question</div> <a name="5fe5b908e31d2c7218cc8b5bbcd11723.212"></a> <p class="par" id="5fe5b908e31d2c7218cc8b5bbcd11723.212"> Is the following correct? </p> <a name="06b8dc4564b3b7a4b614de1c2f542268"></a> <pre>class Haiku
+{
+  public static void main ( String[] args )
+  {
+    System.out.println /* print a line containing the following string */ ("On a withered branch" );
+    System.out.println("A crow has just alighted:");
+    System.out.println("Nightfall in autumn."); 
+  }
+}
+</pre> </div> </div></div> </body></html>

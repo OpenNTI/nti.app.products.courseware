@@ -1,0 +1,367 @@
+WEBVTT
+Kind: captions
+Language: en
+
+00:00:00.799 --> 00:00:06.550
+&gt;&gt;Let's continue our study of classes as a
+contract by looking at a pseudo ArrayList.
+
+00:00:06.550 --> 00:00:11.220
+One way to learn about how to design and implement
+classes is to examine how classes in the API
+
+00:00:11.220 --> 00:00:16.890
+were created. Now you actually could do this
+by reading the code in the API; it is available
+
+00:00:16.890 --> 00:00:22.150
+online at the Oracle website. But there is
+a problem with that -- it's commercial code,
+
+00:00:22.150 --> 00:00:26.489
+which means that it's written in a much more
+sophisticated and complicated way then what
+
+00:00:26.489 --> 00:00:31.499
+we're accustomed to. So it's not as helpful
+as you might think. Instead, what we're going
+
+00:00:31.499 --> 00:00:36.690
+to do is redesign and work through parts of
+this class to show you the process for creating
+
+00:00:36.690 --> 00:00:41.690
+good classes. So I'm going to consider an
+ArrayLists of String, only I'm not going to
+
+00:00:41.690 --> 00:00:46.250
+use the generic. We really haven't programmed
+with generics yet, and so it makes sense to
+
+00:00:46.250 --> 00:00:52.219
+do it without it. The class name I'll use
+is StringArrayList. I know it's not very original,
+
+00:00:52.219 --> 00:00:57.850
+but it'll work. So the properties of the String
+ArrayList are going to come from the String
+
+00:00:57.850 --> 00:01:03.170
+ArrayList. The first property is homogeneity.
+This means that all of the items need to be
+
+00:01:03.170 --> 00:01:08.580
+Strings. Then we need random access. Now this
+is a property that we haven't talked about
+
+00:01:08.580 --> 00:01:15.580
+much. What it means is we can reach any element
+in the ArrayList in one operation. Now we
+
+00:01:16.470 --> 00:01:21.360
+know how that works, because we saw it before.
+When know when you have an array, if you add
+
+00:01:21.360 --> 00:01:26.160
+the index through the address of the first
+element that that will jump you to that position
+
+00:01:26.160 --> 00:01:31.700
+in the array. So when people say "random access,"
+what they mean is the array should be the
+
+00:01:31.700 --> 00:01:36.420
+underlining data structure. Now you probably
+guessed that from the name of the class, and
+
+00:01:36.420 --> 00:01:39.780
+you probably also guessed it because array
+is the only data structure we have at this
+
+00:01:39.780 --> 00:01:44.840
+point. But there are other data structures
+and you'll see them in the next semester.
+
+00:01:44.840 --> 00:01:49.240
+Of course we're also going to zero index things.
+This isn't critical, but it is consistent
+
+00:01:49.240 --> 00:01:54.290
+with how things are done in Java and so it's
+the right way to do them. And of course there
+
+00:01:54.290 --> 00:01:59.450
+should be no gaps. All of the elements should
+be in adjacent indices. Now this is one of
+
+00:01:59.450 --> 00:02:04.910
+the ways in which ArrayList is different than
+arrays. Arrays could have gaps in them -- but
+
+00:02:04.910 --> 00:02:10.479
+we can't with ArrayList and we want to maintain
+that property. So let's talk about what the
+
+00:02:10.479 --> 00:02:15.590
+data fields should be. We know that all of
+our properties get stored in data, and that
+
+00:02:15.590 --> 00:02:21.170
+they're enforced by the methods. So for our
+data we want an array of Strings. So I'm going
+
+00:02:21.170 --> 00:02:27.480
+to call that String array data, very clever
+I know. We also need to know what the capacity
+
+00:02:27.480 --> 00:02:33.090
+of the array is going to be. Now this will
+be stored as data dot length in that field,
+
+00:02:33.090 --> 00:02:37.810
+but also we need to have a default capacity.
+So if the user doesn't tell us what size to
+
+00:02:37.810 --> 00:02:43.370
+make our String ArrayList, this will be the
+capacity that we use. And we need to have
+
+00:02:43.370 --> 00:02:48.490
+a size that's an int. So the size is the one
+that changes up and down as you add and remove
+
+00:02:48.490 --> 00:02:54.540
+elements and capacity is the size of the array
+overall. We're not going to do the extensible
+
+00:02:54.540 --> 00:02:59.910
+part of the ArrayList because that's more
+complicated and advanced programming. If you
+
+00:02:59.910 --> 00:03:06.459
+continue programming you'll see that next
+semester. We know for instance data that each
+
+00:03:06.459 --> 00:03:13.440
+object has to have its own copy of each instance
+data field. So for example data, in its associated
+
+00:03:13.440 --> 00:03:18.980
+field data.length that tells us how many elements
+are in the array, definitely have to be instance
+
+00:03:18.980 --> 00:03:23.870
+data, because if we have two different String
+ArrayLists they would each need to have their
+
+00:03:23.870 --> 00:03:30.260
+underlining array separate. Size also needs
+to be instance data because each one of those
+
+00:03:30.260 --> 00:03:34.730
+ArrayLists could have a different size at
+any given time so that means they need their
+
+00:03:34.730 --> 00:03:41.480
+own copy -- classic instance data. Now we
+do have some class data in this class and
+
+00:03:41.480 --> 00:03:47.130
+it's the default capacity. So all of the objects
+in this class are going to share a single
+
+00:03:47.130 --> 00:03:53.340
+default capacity. It should be a constant,
+and it should be class data. The class data
+
+00:03:53.340 --> 00:04:00.020
+is what makes it shared. Remember the key
+word for this is static. So this is what our
+
+00:04:00.020 --> 00:04:05.489
+UML looks like at this point. String ArrayList
+is the name of the class, and the data that
+
+00:04:05.489 --> 00:04:11.610
+we have stored is a String array called data,
+an integer called size. We can that those
+
+00:04:11.610 --> 00:04:16.660
+are instance data because they are not underlined.
+And then a default capacity which of type
+
+00:04:16.660 --> 00:04:23.620
+int, and that's class data because it is underlined.
+This is what the code would look like that
+
+00:04:23.620 --> 00:04:29.349
+implements the class at this point. Public
+class String ArrayList, String square bracket
+
+00:04:29.349 --> 00:04:36.349
+data, int size, final static int default capacity
+equals 10. Now 10 is what I picked up from
+
+00:04:37.090 --> 00:04:41.909
+the ArrayList class -- you might want to have
+a different default capacity. What's important
+
+00:04:41.909 --> 00:04:48.139
+though is that it be static so that all of
+the objects in the class share just one field,
+
+00:04:48.139 --> 00:04:54.650
+and that it be final so nobody can change
+it inside the class. The next thing we need
+
+00:04:54.650 --> 00:04:59.979
+to implement are constructors. Constructors
+are instructions on how to initialize instance
+
+00:04:59.979 --> 00:05:05.249
+data. Now we've actually been using constructors
+for quite a while, but our new adventure is
+
+00:05:05.249 --> 00:05:10.439
+writing our own constructors. The name of
+the constructor always matches the name of
+
+00:05:10.439 --> 00:05:16.409
+the class, and there's no return type. And
+that turns out to be a really easy mistake
+
+00:05:16.409 --> 00:05:22.099
+to make is to put a return type on a constructor.
+Unfortunately, Eclipse cannot identify it
+
+00:05:22.099 --> 00:05:27.740
+as a syntax error because it isn't a syntax
+error. Eclipse will put a little yellow warning
+
+00:05:27.740 --> 00:05:34.159
+flag up; so don't ignore those if you see
+them. Typically classes have many constructors
+
+00:05:34.159 --> 00:05:39.210
+and in fact, as a general rule having a lot
+of constructors is a good thing. So don't
+
+00:05:39.210 --> 00:05:45.389
+try to pair it down to any kind of minimum.
+Now in standard UML you don't show constructors,
+
+00:05:45.389 --> 00:05:50.839
+but frankly, I do, because I found that if
+I don't show constructors in the UML my students
+
+00:05:50.839 --> 00:05:57.689
+sometimes forget to implement them and then
+things go really, really, badly in their programs.
+
+00:05:57.689 --> 00:06:03.270
+So here's what the UML looks like at this
+point. The top two boxes are the same before,
+
+00:06:03.270 --> 00:06:08.919
+and now we have two constructors. We have
+one that's just a default constructor that
+
+00:06:08.919 --> 00:06:14.749
+doesn't have any parameters, so that one will
+construct an array with the default capacity.
+
+00:06:14.749 --> 00:06:21.379
+And then we have one that has a capacity parameter.
+Once again remember, instance data not underlined,
+
+00:06:21.379 --> 00:06:26.529
+class data is underlined. There's a trick
+for writing multiple constructors that's really
+
+00:06:26.529 --> 00:06:31.460
+cool. What you do is you write the constructor
+with the most parameters first, and then you
+
+00:06:31.460 --> 00:06:36.169
+call this constructor to implement the others.
+There's some special syntax for this that
+
+00:06:36.169 --> 00:06:43.139
+uses "this," and then the arguments go there.
+I'll show you an example. The thing that's
+
+00:06:43.139 --> 00:06:49.069
+good about this is the strategy reduces bugs
+and constructors. Let's say for example you
+
+00:06:49.069 --> 00:06:53.189
+have to change the instance data in the class.
+You hope you aren't going to have to make
+
+00:06:53.189 --> 00:06:57.689
+these kinds of data, but sometimes you have
+to. It can be really hard to forget to go
+
+00:06:57.689 --> 00:07:03.159
+through and change every single one of the
+constructors by hand. So by writing the most
+
+00:07:03.159 --> 00:07:08.490
+general constructor first and then having
+all of the other constructors called that,
+
+00:07:08.490 --> 00:07:12.939
+it means you only have to make the change
+in one place and all of the other constructors
+
+00:07:12.939 --> 00:07:19.879
+get adjusted correctly -- really a great thing.
+Let me show you how it works. So you'll notice
+
+00:07:19.879 --> 00:07:24.300
+I've implemented the constructors here. The
+first constructor is the one that's the most
+
+00:07:24.300 --> 00:07:31.300
+general. So it takes the incapacities of parameter,
+it constructs the data array to that capacity
+
+00:07:32.619 --> 00:07:38.669
+and sets the size to be zero. Now, take a
+look at how the second one was written. This
+
+00:07:38.669 --> 00:07:44.279
+is the one that uses the default capacity.
+So what you do is you call "this," which in
+
+00:07:44.279 --> 00:07:51.279
+this particular instance means call the constructor
+with a single integer argument from the default
+
+00:07:51.729 --> 00:07:58.729
+capacity -- very easy to do. So, let's look
+at some general rules for this. Non-constant
+
+00:08:01.349 --> 00:08:06.789
+data fields are almost always instance data.
+Not always, there are some exceptions, but
+
+00:08:06.789 --> 00:08:11.749
+if you start with this rule you'll be right
+most of the time. Constants are always going
+
+00:08:11.749 --> 00:08:17.580
+to be class data, because there's no reason
+to create multiple copies of a constant. And
+
+00:08:17.580 --> 00:08:23.089
+we need to make sure that every instance data
+field is properly initialized by every single
+
+00:08:23.089 --> 00:08:29.080
+constructor, and one really great way to do
+this is using cascading constructors. So keep
+
+00:08:29.080 --> 00:08:29.330
+programming!
+

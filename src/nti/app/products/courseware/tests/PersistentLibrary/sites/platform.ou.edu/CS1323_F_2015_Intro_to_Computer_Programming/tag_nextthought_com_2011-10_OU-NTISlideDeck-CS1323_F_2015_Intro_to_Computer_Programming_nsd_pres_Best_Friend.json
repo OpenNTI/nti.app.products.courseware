@@ -1,0 +1,142 @@
+{
+  "MimeType": "application/vnd.nextthought.ntislidedeck",
+  "Videos": [
+    {
+      "MimeType": "application/vnd.nextthought.ntislidevideo",
+      "video-ntiid": "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_03.02.05_Best_Friend",
+      "title": "Who\u2019s Your Best Friend?",
+      "creator": "Deborah Trytten",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Best_Friend",
+      "thumbnail": "//www.kaltura.com/p/1500101/thumbnail/entry_id/0_pjufjnul/width/640/",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Best_Friend_video",
+      "class": "ntislidevideo"
+    }
+  ],
+  "creator": "Deborah Trytten",
+  "title": "More Control Structures",
+  "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Best_Friend",
+  "Slides": [
+    {
+      "MimeType": "application/vnd.nextthought.slide",
+      "slidevideoid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Best_Friend_video",
+      "slidetitle": "Who\u2019s Your Best Friend?",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Best_Friend",
+      "slidevideostart": "0.0",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlide-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Best_Friend_slide_1",
+      "slideimage": "resources/CS1323_F_2015_Intro_to_Computer_Programming/44ab2ef2c2d8c080372e9e3f078ff5633aa91c94/fd35e23767020999111e1f49239199b4c5eff23e.png",
+      "slidevideoend": "9.0",
+      "slidenumber": "1",
+      "class": "slide"
+    },
+    {
+      "MimeType": "application/vnd.nextthought.slide",
+      "slidevideoid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Best_Friend_video",
+      "slidetitle": "Problem Statement",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Best_Friend",
+      "slidevideostart": "9.0",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlide-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Best_Friend_slide_2",
+      "slideimage": "resources/CS1323_F_2015_Intro_to_Computer_Programming/7c315c8440432c07fca70f9187d2183c8b3cad9e/fd35e23767020999111e1f49239199b4c5eff23e.png",
+      "slidevideoend": "18.0",
+      "slidenumber": "2",
+      "class": "slide"
+    },
+    {
+      "MimeType": "application/vnd.nextthought.slide",
+      "slidevideoid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Best_Friend_video",
+      "slidetitle": "Create Test Data",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Best_Friend",
+      "slidevideostart": "18.0",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlide-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Best_Friend_slide_3",
+      "slideimage": "resources/CS1323_F_2015_Intro_to_Computer_Programming/131da8d9239e9332266df52ea2df140649b2beba/fd35e23767020999111e1f49239199b4c5eff23e.png",
+      "slidevideoend": "79.0",
+      "slidenumber": "3",
+      "class": "slide"
+    },
+    {
+      "MimeType": "application/vnd.nextthought.slide",
+      "slidevideoid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Best_Friend_video",
+      "slidetitle": "Design Methods",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Best_Friend",
+      "slidevideostart": "79.0",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlide-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Best_Friend_slide_4",
+      "slideimage": "resources/CS1323_F_2015_Intro_to_Computer_Programming/f279efeebeb6b0a9c9ccd6a5704b1585f7e34b2e/fd35e23767020999111e1f49239199b4c5eff23e.png",
+      "slidevideoend": "133.0",
+      "slidenumber": "4",
+      "class": "slide"
+    },
+    {
+      "MimeType": "application/vnd.nextthought.slide",
+      "slidevideoid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Best_Friend_video",
+      "slidetitle": "Read From a File?",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Best_Friend",
+      "slidevideostart": "133.0",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlide-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Best_Friend_slide_5",
+      "slideimage": "resources/CS1323_F_2015_Intro_to_Computer_Programming/3c96105b035b9c6095c03a31583605116b622c95/fd35e23767020999111e1f49239199b4c5eff23e.png",
+      "slidevideoend": "279.0",
+      "slidenumber": "5",
+      "class": "slide"
+    },
+    {
+      "MimeType": "application/vnd.nextthought.slide",
+      "slidevideoid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Best_Friend_video",
+      "slidetitle": "File Problems",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Best_Friend",
+      "slidevideostart": "279.0",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlide-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Best_Friend_slide_6",
+      "slideimage": "resources/CS1323_F_2015_Intro_to_Computer_Programming/b7aaf3185ab68b1f2bc394021223cc4fa631169c/fd35e23767020999111e1f49239199b4c5eff23e.png",
+      "slidevideoend": "1089.0",
+      "slidenumber": "6",
+      "class": "slide"
+    },
+    {
+      "MimeType": "application/vnd.nextthought.slide",
+      "slidevideoid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Best_Friend_video",
+      "slidetitle": "Finding the Most Common",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Best_Friend",
+      "slidevideostart": "1089.0",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlide-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Best_Friend_slide_8",
+      "slideimage": "resources/CS1323_F_2015_Intro_to_Computer_Programming/0f747854590825d7307df87b9e13eb11f3295aa5/fd35e23767020999111e1f49239199b4c5eff23e.png",
+      "slidevideoend": "1123.0",
+      "slidenumber": "7",
+      "class": "slide"
+    },
+    {
+      "MimeType": "application/vnd.nextthought.slide",
+      "slidevideoid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Best_Friend_video",
+      "slidetitle": "Finding the Best Friend",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Best_Friend",
+      "slidevideostart": "1123.0",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlide-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Best_Friend_slide_9",
+      "slideimage": "resources/CS1323_F_2015_Intro_to_Computer_Programming/58692deb5bd5b6051178d89eb690329f03924506/fd35e23767020999111e1f49239199b4c5eff23e.png",
+      "slidevideoend": "1175.0",
+      "slidenumber": "8",
+      "class": "slide"
+    },
+    {
+      "MimeType": "application/vnd.nextthought.slide",
+      "slidevideoid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Best_Friend_video",
+      "slidetitle": "Logic",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Best_Friend",
+      "slidevideostart": "1175.0",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlide-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Best_Friend_slide_10",
+      "slideimage": "resources/CS1323_F_2015_Intro_to_Computer_Programming/569d5f1905404c1d5c54b1e9c93527350fa02336/fd35e23767020999111e1f49239199b4c5eff23e.png",
+      "slidevideoend": "1883.0",
+      "slidenumber": "9",
+      "class": "slide"
+    },
+    {
+      "MimeType": "application/vnd.nextthought.slide",
+      "slidevideoid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Best_Friend_video",
+      "slidetitle": "Check Test Data",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Best_Friend",
+      "slidevideostart": "1883.0",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlide-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Best_Friend_slide_12",
+      "slideimage": "resources/CS1323_F_2015_Intro_to_Computer_Programming/7bdcf3e555a3f53b4253b2f0c3fdc51f57e10f32/fd35e23767020999111e1f49239199b4c5eff23e.png",
+      "slidevideoend": "1909.0",
+      "slidenumber": "10",
+      "class": "slide"
+    }
+  ],
+  "ntiid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Best_Friend",
+  "class": "ntislidedeck"
+}

@@ -1,0 +1,1217 @@
+WEBVTT
+Kind: captions
+Language: en
+
+00:00:01.030 --> 00:00:04.170
+&gt;&gt;Dr. Deborah Trytten: Let's continue our
+study of classes with generics by doing a
+
+00:00:04.170 --> 00:00:10.309
+list maker program. Here's the problem statement:
+write a program that keeps track of a shopping
+
+00:00:10.309 --> 00:00:16.690
+list. Retrieve data from file when the program
+starts. Repeatedly add, remove, and show items
+
+00:00:16.690 --> 00:00:22.050
+and then store data in a file when the program
+stops. Notice that by storing and retrieving
+
+00:00:22.050 --> 00:00:27.400
+data, what we're doing is making the program
+persistent that is making it available at
+
+00:00:27.400 --> 00:00:33.070
+all times. Now the inspiration for this project
+actually came from a program that I use on
+
+00:00:33.070 --> 00:00:37.410
+my cell phone called Cozi. It's a little fancier
+because it allows you to share items with
+
+00:00:37.410 --> 00:00:44.410
+other people, but the idea is very much the
+same. So let's design our test data. Well
+
+00:00:44.510 --> 00:00:48.499
+our plan would be to perform additions and
+deletions checking the list after each one
+
+00:00:48.499 --> 00:00:54.249
+in general. So for example, we might add four
+items one at a time like bread, milk, dog
+
+00:00:54.249 --> 00:00:59.440
+bones, and diet soda—the basic essentials
+of my life and then delete all items one at
+
+00:00:59.440 --> 00:01:03.989
+a time. Then we could alternate adding and
+deleting and of course eventually exit the
+
+00:01:03.989 --> 00:01:09.630
+program and we'll want to check the file working
+too.
+
+00:01:09.630 --> 00:01:13.770
+Now there are a lot of decisions to make in
+this program. Because it is a relatively large
+
+00:01:13.770 --> 00:01:18.369
+program I've had to do some of the work before
+we get started, so I've created the structure
+
+00:01:18.369 --> 00:01:23.479
+for the methods. I've put in the parameters.
+I even Javadoced them so we have that available
+
+00:01:23.479 --> 00:01:28.930
+to work from, but let's talk through the decisions
+that I made one at a time. First off how do
+
+00:01:28.930 --> 00:01:33.100
+you store data? Well that's one we're going
+to have to consider. Which methods do you
+
+00:01:33.100 --> 00:01:38.969
+use? Now, one thing I can tell you about the
+methods, whenever there's a bullet list of
+
+00:01:38.969 --> 00:01:43.109
+"the software should do this and this and
+this," that's a really good place to start
+
+00:01:43.109 --> 00:01:47.840
+with the methods. And so that's really a great
+thing to look at and we had that bulleted
+
+00:01:47.840 --> 00:01:52.469
+list this time so that's going to help us
+a lot. Now the other thing we need to consider
+
+00:01:52.469 --> 00:01:58.420
+is the order of implementation and this is
+where strategy becomes really important. So
+
+00:01:58.420 --> 00:02:03.460
+for example, I like to do the menu control
+first because that way as I'm putting in more
+
+00:02:03.460 --> 00:02:07.640
+and more features I can test how the program
+is working. That works out really well for
+
+00:02:07.640 --> 00:02:12.659
+me. The next thing I always do is add because
+until you can add things into the list you're
+
+00:02:12.659 --> 00:02:17.069
+not going to be able to see that there's anything
+there and so that's an important method to
+
+00:02:17.069 --> 00:02:23.459
+do very early on. The minute I have add working
+or I think I have add working then I do show.
+
+00:02:23.459 --> 00:02:27.670
+Now the reason I do show next is it makes
+it possible to look at the contents of the
+
+00:02:27.670 --> 00:02:32.849
+list, so that way I can see if things are
+working correctly. After that delete and then
+
+00:02:32.849 --> 00:02:37.370
+read and write. Now I'm not saying that this
+is the only order you could possibly have
+
+00:02:37.370 --> 00:02:42.060
+implemented these things in. In fact you can
+implement them in any order but you always
+
+00:02:42.060 --> 00:02:47.379
+want to test as soon as possible and the soonest
+way to test is by being able to add and show
+
+00:02:47.379 --> 00:02:52.420
+things first. So I'm a little more agnostic
+on the other things but add and show, those
+
+00:02:52.420 --> 00:02:57.159
+are high priority. So let's talk about how
+we're going to store things. Now I'm sure
+
+00:02:57.159 --> 00:03:01.830
+you guessed that we're going to use an array
+list of strings. I'm going to call it my list.
+
+00:03:01.830 --> 00:03:07.080
+The reason that's the right data structure
+is it's the only one we have right now. So
+
+00:03:07.080 --> 00:03:12.510
+that's fairly obvious. The thing to remember
+is that it's zero indexed and you might want
+
+00:03:12.510 --> 00:03:17.349
+to think "Well, couldn't we just make the
+user interactions zero indexed?" Well, not
+
+00:03:17.349 --> 00:03:22.200
+really. Users do not like software that starts
+counting at zero although computer scientists
+
+00:03:22.200 --> 00:03:26.970
+would be amused by it. But we don't just write
+software usually for other people, there aren't
+
+00:03:26.970 --> 00:03:31.939
+enough computer scientists to pay our salaries,
+so we're definitely going to have to deal
+
+00:03:31.939 --> 00:03:36.970
+with unit indexing when we're talking with
+the user and then zero indexing when we're
+
+00:03:36.970 --> 00:03:39.549
+in the method.
+
+00:03:39.549 --> 00:03:45.769
+So, the first thing we should talk about in
+terms of our class data is that we have a
+
+00:03:45.769 --> 00:03:51.299
+menu-driven program so we're going to need
+to create some class data constants. Now we
+
+00:03:51.299 --> 00:03:56.200
+haven't done these before. Where they go is
+inside the class declaration but outside of
+
+00:03:56.200 --> 00:04:01.450
+any method. I like to put them at the top
+of the class above the main method and what
+
+00:04:01.450 --> 00:04:06.170
+I'm going to call them are add, delete, show,
+exit, and filename. So notice what I have
+
+00:04:06.170 --> 00:04:10.120
+are the options that are going to be in the
+menu and then file name which is the place
+
+00:04:10.120 --> 00:04:15.030
+our default file is going to be stored. Now
+the reason they're in all caps is that they're
+
+00:04:15.030 --> 00:04:18.930
+constants. These are things that are not going
+to change. So let's go and take a look at
+
+00:04:18.930 --> 00:04:25.389
+this. Okay, so you'll see I have Javadoced
+our program and here is our class, which I'm
+
+00:04:25.389 --> 00:04:30.090
+calling list maker. Notice that I didn't call
+it grocery list maker even though that's what
+
+00:04:30.090 --> 00:04:35.960
+I was kind of thinking of because there's
+no reason to make it specific. Lists are lists.
+
+00:04:35.960 --> 00:04:42.960
+So here are our constants--final and static.
+Static. That means they're with the class
+
+00:04:43.639 --> 00:04:50.639
+not with the instance. Why would that be true?
+Well think about it. These are final. That
+
+00:04:50.650 --> 00:04:55.270
+is they're never going to be changed. Does
+every object need to have its own copy of
+
+00:04:55.270 --> 00:05:01.490
+something? No no no--one copy for the whole
+class'll be just fine. Now I sure wish that
+
+00:05:01.490 --> 00:05:06.560
+Java had used a different keyword for class,
+data, then static because static sounds like
+
+00:05:06.560 --> 00:05:10.630
+the wrong thing. In fact, final and static
+sound like they might be kind of the same
+
+00:05:10.630 --> 00:05:16.120
+thing. Final means that it's a constant, static
+means that it's class data.
+
+00:05:16.120 --> 00:05:20.850
+For the time being all of the class data we're
+going to use is going to be final and in fact
+
+00:05:20.850 --> 00:05:26.090
+that's going to be true for quite awhile so
+get used to it. So here's the filename. Now
+
+00:05:26.090 --> 00:05:29.460
+remember this one is going to go in my my
+current default directory which'll be the
+
+00:05:29.460 --> 00:05:34.250
+project directory. That's okay for our purposes
+but we might want to reconsider that if we
+
+00:05:34.250 --> 00:05:41.250
+were actually selling the software. Then I
+created add, delete, show, and exit. Here's
+
+00:05:41.479 --> 00:05:48.479
+the main program I have so far. Here is my
+data structure myList created. Now notice
+
+00:05:49.729 --> 00:05:54.789
+I didn't construct this object yet. Since
+I haven't constructed that object, I don't
+
+00:05:54.789 --> 00:05:59.699
+actually have an array list at this point.
+We'll have to fix that before we can use it.
+
+00:05:59.699 --> 00:06:05.849
+Then I created a scanner and what we have
+here is the menu system working. So I've got
+
+00:06:05.849 --> 00:06:11.860
+select from menu. All this does is prints
+out the menu and lets the user enter a choice.
+
+00:06:11.860 --> 00:06:18.860
+You can look at it online if you'd like. Then
+we have if the choice is add, we're going
+
+00:06:18.949 --> 00:06:23.300
+to do one thing. If the choice is delete,
+we're going to do something else and if the
+
+00:06:23.300 --> 00:06:27.680
+choice is show, we're going to do a third
+thing. So those are just placeholders where
+
+00:06:27.680 --> 00:06:31.259
+maybe our methods are going to go.
+
+00:06:31.259 --> 00:06:35.720
+Here's deleting item from the list. Now I've
+done the user interaction here because that
+
+00:06:35.720 --> 00:06:40.490
+stuff takes a lot of time so you've got to
+decide which item number gets deleted and
+
+00:06:40.490 --> 00:06:45.270
+that's what we're going to use. And add item
+to the list, that's similar only you need
+
+00:06:45.270 --> 00:06:50.020
+to know both the item name and where it's
+going to be put in the list. So I've done
+
+00:06:50.020 --> 00:06:54.270
+that IO for us too. Show list is empty so
+we're going to have to do all the work on
+
+00:06:54.270 --> 00:07:00.379
+that one and read list from file and write
+list to file are both empty too. Here's the
+
+00:07:00.379 --> 00:07:05.910
+select from menu command. We have an integer
+result. We show some system out print line
+
+00:07:05.910 --> 00:07:12.139
+statements. Notice that I used my constants
+here in the method. If you don't do that and
+
+00:07:12.139 --> 00:07:16.910
+somebody changes the constants, things can
+break and not work well. So this is a nice
+
+00:07:16.910 --> 00:07:22.160
+way to make sure things stay in line. So then
+we get the result. I think this space would
+
+00:07:22.160 --> 00:07:28.020
+make that more readable and we read input
+next line. Remember that's to get rid of that
+
+00:07:28.020 --> 00:07:33.419
+extra new line character that comes after
+an integer and we return that result.
+
+00:07:33.419 --> 00:07:37.129
+Now we could do some error checking or things
+like that and we'll be better prepared to
+
+00:07:37.129 --> 00:07:41.050
+do that later on. For right now we're just
+going to trust our user is doing the right
+
+00:07:41.050 --> 00:07:48.050
+thing. So the menu selection was select from
+menu. It took the scanner keyboard the reason
+
+00:07:48.349 --> 00:07:52.949
+it needs the keyboard parameter is because
+it needs to be able to get input from the
+
+00:07:52.949 --> 00:07:59.050
+user. Notice that I have one scanner object
+that's being shared everywhere in this program.
+
+00:07:59.050 --> 00:08:04.190
+Do not create new scanner objects inside every
+method. That isn't the right way to do it.
+
+00:08:04.190 --> 00:08:08.300
+You have only one keyboard. This program is
+running on one computer, it should have one
+
+00:08:08.300 --> 00:08:12.680
+scanner.
+
+00:08:12.680 --> 00:08:18.580
+Now we should do add item to the list. So
+here's the signature, add item to the list,
+
+00:08:18.580 --> 00:08:23.940
+it certainly needs the list and a scanner
+for the keyboard because it has to take input
+
+00:08:23.940 --> 00:08:28.460
+from the user. So it's going to get the item
+location on the list from the user. You've
+
+00:08:28.460 --> 00:08:32.190
+seen that I've already implemented that code
+and then we're going to have to think about
+
+00:08:32.190 --> 00:08:37.770
+how to actually make this work. Now, there
+is another alternative we could use. We could've
+
+00:08:37.770 --> 00:08:42.460
+done the input in the main program. The problem
+with that is our add method would then only
+
+00:08:42.460 --> 00:08:47.320
+be one line long. Remember in general we don't
+like one line methods. We'd rather have our
+
+00:08:47.320 --> 00:08:53.970
+methods be a little more meaty, so that's
+why I made that choice. So here's our add
+
+00:08:53.970 --> 00:08:59.150
+item to the list method. Now we should read
+it a little bit more carefully. So we have
+
+00:08:59.150 --> 00:09:05.560
+enter the item name, which notice is just
+getting a string from the keyboard and then
+
+00:09:05.560 --> 00:09:12.560
+after which item, enter zero if the list is
+empty and we read in next int. So if they
+
+00:09:12.650 --> 00:09:17.160
+say after item zero, that would be when the
+list is empty, which is the case we're most
+
+00:09:17.160 --> 00:09:21.480
+worried about first because if the first edition
+doesn't work it doesn't matter whether the
+
+00:09:21.480 --> 00:09:28.480
+other ones do or not. So, we definitely want
+to check the zero case first. Now in that
+
+00:09:29.470 --> 00:09:36.130
+case, we would do and add an index zero. Well
+we better go to that array list class and
+
+00:09:36.130 --> 00:09:40.090
+make sure we know exactly how those methods
+work.
+
+00:09:40.090 --> 00:09:47.090
+I'm doing a find for array list and since
+we're wanting to insert things we might look
+
+00:09:54.500 --> 00:10:00.280
+at insert or we might look at add. So we see
+there are two different add methods. One takes
+
+00:10:00.280 --> 00:10:04.910
+an index and an element and the other just
+takes an element and appends it to the end
+
+00:10:04.910 --> 00:10:09.790
+of the list. So we definitely want the one
+that has some control where it inserts the
+
+00:10:09.790 --> 00:10:14.310
+specified element. Now this is a good time
+to read all the documentation not just the
+
+00:10:14.310 --> 00:10:21.310
+first sentence. So inserts the specified element
+at the specified position in the list, shifts
+
+00:10:22.180 --> 00:10:27.380
+the element currently at the position if there
+is any, and any subsequent elements to the
+
+00:10:27.380 --> 00:10:32.060
+right that is it adds one to their indices.
+Well that's wonderful that's exactly what
+
+00:10:32.060 --> 00:10:37.360
+we would like it to do. So remember the index
+comes first and the element comes second.
+
+00:10:37.360 --> 00:10:44.050
+Now don't let that &lt;E&gt; thing bother you. Remember
+that these generics are using a variable E
+
+00:10:44.050 --> 00:10:48.760
+to stand for the type of data that's stored
+which in this case is string. So just think
+
+00:10:48.760 --> 00:10:55.410
+of string sitting there and everything'll
+be okay.
+
+00:10:55.410 --> 00:11:02.410
+So we're going to take my list and we're going
+to add at the index our element which we called
+
+00:11:05.650 --> 00:11:12.260
+name. We can run the program at this point
+and in fact, we probably should run the program
+
+00:11:12.260 --> 00:11:19.260
+at this point. So the only thing that's going
+to work is add a new item. Well that was kind
+
+00:11:25.720 --> 00:11:32.720
+of weird. So I asked to add a new item and
+it says just please choose an action. Well
+
+00:11:32.860 --> 00:11:38.760
+we better go and see what's happening there.
+I bet I know what we didn't do. We forgot
+
+00:11:38.760 --> 00:11:45.760
+to call add item to list. So up here we need
+to call our method. Add item to list, it's
+
+00:11:49.490 --> 00:11:56.490
+going to take my list and it's going to take
+the keyboard. Okay now Eclipse isn't happy
+
+00:12:00.920 --> 00:12:07.480
+right now. Let's see why. The local variable
+my list may not have been initialized. Well
+
+00:12:07.480 --> 00:12:12.640
+this time Eclipse is onto something. Remember
+that I declared the reference for my list
+
+00:12:12.640 --> 00:12:19.640
+but I didn't construct it. So let's construct
+my list.
+
+00:12:27.700 --> 00:12:34.700
+Okay now Eclipse is happy and maybe we stand
+a better chance of having our method run properly.
+
+00:12:38.370 --> 00:12:45.340
+So we're going to add a new item. Enter the
+item name. We're getting milk first I think,
+
+00:12:45.340 --> 00:12:50.260
+after which item, enter zero if the list is
+empty. Now wouldn't it be great to be able
+
+00:12:50.260 --> 00:12:54.580
+to show right now? But unfortunately we can't
+so all we can really do is quit the program.
+
+00:12:54.580 --> 00:12:59.170
+I guess we could have inserted some more items
+but until we know the first item is working,
+
+00:12:59.170 --> 00:13:06.170
+there is no reason to do a lot of testing.
+The next thing we need to do very very urgently
+
+00:13:06.980 --> 00:13:11.700
+is show the list. Now we know the control
+for this is going to have to be a while loop
+
+00:13:11.700 --> 00:13:18.410
+with an index counter and we need to remember
+that zero indexing is going to apply. So let's
+
+00:13:18.410 --> 00:13:25.410
+not make the same mistake we made last time.
+Let's call the method show list, before we
+
+00:13:29.100 --> 00:13:36.100
+even implement it. So this is a counter control
+loop. Count is zero while count is less than
+
+00:13:41.360 --> 00:13:48.360
+my list.size. Now we might want to pause for
+a minute and make sure we haven't just created
+
+00:13:48.930 --> 00:13:54.450
+an off by one bug. Remember that when you
+start counting at zero and stop counting with
+
+00:13:54.450 --> 00:13:59.820
+less than size, that is correct on an array
+list. So we do not have an off by one bug
+
+00:13:59.820 --> 00:14:06.820
+here. So we'll do system out print line. Now
+we probably want to show the numbers because
+
+00:14:07.010 --> 00:14:14.010
+we're asking user to use the numbers, so we're
+going to have to do count plus one and remember
+
+00:14:14.160 --> 00:14:18.990
+that needs to be in parentheses because that
+plus is an integer addition plus it's not
+
+00:14:18.990 --> 00:14:25.990
+a string concatenation plus. So there's the
+period after it. So that'll make it look a
+
+00:14:26.620 --> 00:14:33.620
+little bit prettier and a space and then plus.
+We need to get the element from the list so
+
+00:14:34.750 --> 00:14:41.750
+that'll be my list.get(count). So that's all
+there is in a show method really very, very
+
+00:14:42.070 --> 00:14:47.420
+simple code. So now we can actually see if
+our list is actually working or not. Let's
+
+00:14:47.420 --> 00:14:54.420
+run the program.
+
+00:14:54.890 --> 00:15:01.890
+So we add an item to the list, milk at index
+zero and then we show the list. Uh oh! That's
+
+00:15:08.510 --> 00:15:13.670
+a problem. Well if you look at our list you'll
+see I've made one of my classic mistakes.
+
+00:15:13.670 --> 00:15:20.670
+I forgot to increment the counter in show.
+Easy to fix. So now we add an item to the
+
+00:15:30.730 --> 00:15:37.730
+list after item zero and we show the list,
+which is looking much better. Now we can add
+
+00:15:41.260 --> 00:15:48.260
+another item to the list. After which item?
+Well let's add it after item one. Now we should
+
+00:15:49.330 --> 00:15:56.200
+see milk and then bread. Milk and then bread.
+That's looking good. Add another item to the
+
+00:15:56.200 --> 00:16:03.200
+list so I think dog bones were next. After
+which item? Let's add after item one so this
+
+00:16:04.630 --> 00:16:11.630
+should be between milk and bread now. So when
+we show the list milk, dog bones, bread--looking
+
+00:16:11.930 --> 00:16:18.930
+good. Let's keep going. Let's add diet soda.
+After which item? This time let's add after
+
+00:16:21.440 --> 00:16:26.750
+item three so this should be at the end of
+the list now when we show and we'll see diet
+
+00:16:26.750 --> 00:16:32.290
+soda is there so this is all looking very
+nice. We can even exit the program smoothly
+
+00:16:32.290 --> 00:16:36.280
+because we implemented that.
+
+00:16:36.280 --> 00:16:40.460
+The next thing we need to do is to delete
+an item from the list. So the signature of
+
+00:16:40.460 --> 00:16:47.460
+this void deleteItemFromList(ArrayList&lt;String&gt;list,
+Scanner keyboard). So we need the list which
+
+00:16:48.080 --> 00:16:52.690
+is the array list and we also need the keyboard
+because we're going to have to interact with
+
+00:16:52.690 --> 00:16:57.110
+the user. So we're going to ask the user for
+input which you probably remember I've already
+
+00:16:57.110 --> 00:17:01.450
+implemented and then we're going to remove
+the requested item. Now we really need to
+
+00:17:01.450 --> 00:17:06.510
+think about the zero indexing here, so that
+we get the right item out of the list. Remember
+
+00:17:06.510 --> 00:17:12.780
+the user is thinking in unit indexing and
+the program's internal logic is zero indexed.
+
+00:17:12.780 --> 00:17:17.300
+It can get a little confusing at times but
+if you slow down and think carefully you usually
+
+00:17:17.300 --> 00:17:18.819
+can get it right.
+
+00:17:18.819 --> 00:17:25.819
+First, we want to call our method here, that
+way we don't forget that. So we're asking
+
+00:17:32.370 --> 00:17:39.370
+for which item number and let's actually put
+in a comment here. Remember this was unit
+
+00:17:40.010 --> 00:17:47.010
+indexed because that's how users think. Very
+important to know that. We're going to do
+
+00:17:50.890 --> 00:17:57.360
+myList. , hmm we better go and look at the
+name of the method. So we're in the array
+
+00:17:57.360 --> 00:18:02.990
+list class. Let's go back to the method table
+and see what we have. Now notice there isn't
+
+00:18:02.990 --> 00:18:08.540
+a method called delete so it must have a different
+name. So you kind of have to scan through
+
+00:18:08.540 --> 00:18:13.050
+and look for one that looks promising if you
+don't know what it is automatically. Notice
+
+00:18:13.050 --> 00:18:19.290
+here is remove--that sounds good. Now there
+are a couple different variations here. So
+
+00:18:19.290 --> 00:18:23.940
+there's remove one with an index, there's
+remove one with an object. Remember object
+
+00:18:23.940 --> 00:18:27.550
+just means something that isn't a primitive
+data type so like that would be a string in
+
+00:18:27.550 --> 00:18:31.760
+this case. We don't want to do that because
+we're not trying to remove things by name,
+
+00:18:31.760 --> 00:18:38.760
+we're trying to remove them by position. So
+this is the method we want. Let's read the
+
+00:18:38.980 --> 00:18:44.200
+details. Removes the element at the specified
+position in the list and shifts any subsequent
+
+00:18:44.200 --> 00:18:49.860
+elements to the left. Well that's great, that's
+exactly what we want to have happen. Now what
+
+00:18:49.860 --> 00:18:55.360
+it doesn't say here is it doesn't say that
+it's zero index. They assume that you know
+
+00:18:55.360 --> 00:19:00.380
+things like that when you're programming and
+beginners don't always know that and don't
+
+00:19:00.380 --> 00:19:05.220
+feel badly if you don't know it I didn't know
+it when I start programming either. Remember
+
+00:19:05.220 --> 00:19:10.080
+that the API is for professionals and sometimes
+it doesn't tell you everything you really
+
+00:19:10.080 --> 00:19:17.080
+need. So we're going to do myList.remove,
+if we say remove at index we've got a problem.
+
+00:19:20.260 --> 00:19:27.260
+Because, for example, if they want the first
+item to be removed that would be index zero.
+
+00:19:28.030 --> 00:19:35.030
+So if they say one, we want zero. Hmm that
+suggests that index minus one is probably
+
+00:19:36.140 --> 00:19:43.140
+the right place. Let's try it and see if it
+works.
+
+00:19:43.250 --> 00:19:50.250
+So I'm going to quickly add - oops I suspect
+that isn't - there we go. So we're going to
+
+00:20:00.100 --> 00:20:07.100
+add milk after item one. Then we're going
+to add dog bones after item two, and we're
+
+00:20:09.260 --> 00:20:16.260
+going to add diet soda maybe after item two.
+Now's a good time to look and make sure it
+
+00:20:16.900 --> 00:20:23.160
+looks like everything's still working. So
+now let's delete bread. So delete an item,
+
+00:20:23.160 --> 00:20:28.180
+the one we want to delete is one, and then
+we went to show the list. Oh that's looking
+
+00:20:28.180 --> 00:20:34.170
+good. Now that was one of the boundary cases
+right, deleting at the start? We definitely
+
+00:20:34.170 --> 00:20:41.170
+want to try deleting at the end too. We're
+going to delete item number three and then
+
+00:20:41.540 --> 00:20:47.690
+show the list and we have milk and diet soda.
+That looks good. Now we haven't tested anything
+
+00:20:47.690 --> 00:20:52.870
+in the middle. In order to do that we're going
+to have to add some more things in. So let's
+
+00:20:52.870 --> 00:20:59.870
+add dog bones back after item one and now
+we can delete in the middle so we're going
+
+00:21:01.500 --> 00:21:08.180
+to delete item number two and show and we
+have milk and diet soda. So this is all looking
+
+00:21:08.180 --> 00:21:12.780
+very good.
+
+00:21:12.780 --> 00:21:17.480
+Now the next thing we have to do is handle
+reading from the file. Notice that I have
+
+00:21:17.480 --> 00:21:23.170
+the read list from file returning the array
+list of strings, so you can see it's the responsibility
+
+00:21:23.170 --> 00:21:28.250
+of this method to actually construct the array
+list. Now we have our array list constructed
+
+00:21:28.250 --> 00:21:32.370
+somewhere else and we're going to have to
+change it to make this work properly. But
+
+00:21:32.370 --> 00:21:37.150
+there is a problem and that's the first time
+the program opens there's no list in the file
+
+00:21:37.150 --> 00:21:41.850
+initially. There are a couple of different
+solutions you can use for this. One is to
+
+00:21:41.850 --> 00:21:47.530
+create an empty file and that works just fine.
+The other thing and I really think this is
+
+00:21:47.530 --> 00:21:54.120
+a more robust solution is to create an empty
+list if the file isn't there for any reason.
+
+00:21:54.120 --> 00:21:58.870
+Because these files get stored on user cell
+phones and things like that, sometimes files
+
+00:21:58.870 --> 00:22:04.800
+get deleted. The user will be furious if their
+data is lost. Make no mistake about that.
+
+00:22:04.800 --> 00:22:10.040
+But at least your software will still open
+and that is important, although losing people's
+
+00:22:10.040 --> 00:22:14.460
+data is a bad thing of course. The other thing
+to watch out for is we have to remember to
+
+00:22:14.460 --> 00:22:19.300
+close files. This is particularly important
+in this program because first we're reading
+
+00:22:19.300 --> 00:22:24.310
+from the file and then we're going to write
+to the same file. When the file is open you
+
+00:22:24.310 --> 00:22:29.130
+can't both read and write to it at least not
+with these kind of files. You have to read,
+
+00:22:29.130 --> 00:22:35.380
+close the file and then open the file again,
+and then write to it. So the closing the file
+
+00:22:35.380 --> 00:22:39.850
+is absolutely critical.
+
+00:22:39.850 --> 00:22:44.500
+So here's read list from file. Now the first
+thing I'm going to do before I do anything
+
+00:22:44.500 --> 00:22:51.500
+here is remove the constructor. So let's remember
+what the parameter names were. There were
+
+00:23:06.090 --> 00:23:13.090
+no parameters, which makes sense. So there
+we go, so now our method is being called.
+
+00:23:18.730 --> 00:23:25.730
+Now remember our filename is a constant that
+we can use and so we definitely want to handle
+
+00:23:30.470 --> 00:23:35.500
+that. The other thing to notice here is that
+I'm already throwing the file not found exceptions
+
+00:23:35.500 --> 00:23:42.500
+that we would have to add in otherwise. We
+have a file and what we're going to do is
+
+00:23:43.559 --> 00:23:50.559
+try to open our file name. Okay, now this
+may not open. So we're going to need to go
+
+00:23:54.140 --> 00:24:01.140
+to the file class and see what we can do to
+tell if this was successful or not.
+
+00:24:11.530 --> 00:24:15.520
+So here we're looking for file notice a lot
+of files have - I'm sorry a lot of classes
+
+00:24:15.520 --> 00:24:22.520
+have file in their name. Right there is our
+target. These are very complicated classes.
+
+00:24:23.470 --> 00:24:28.970
+Look at how long the preamble is there. So
+we're going to just try to do as little work
+
+00:24:28.970 --> 00:24:34.740
+as possible and find something that looks
+like it would work. If you take a look at
+
+00:24:34.740 --> 00:24:41.320
+this little method right here, exists, this
+tests whether the file or directory denoted
+
+00:24:41.320 --> 00:24:47.140
+by this abstract pathname exists. Well, that's
+exactly what we want because if we try to
+
+00:24:47.140 --> 00:24:52.230
+open the file and the file doesn't exist that's
+when we know it's the first time running the
+
+00:24:52.230 --> 00:24:58.620
+program or something horrible has happened
+and we need to create a new empty array list.
+
+00:24:58.620 --> 00:25:05.620
+Here we go. If not file.exists well, in that
+case we want to return a new array list. Now
+
+00:25:13.620 --> 00:25:20.620
+the way that I like to do this is to create
+a new empty array list here. We're going to
+
+00:25:21.480 --> 00:25:28.480
+need it one way or another. If the file doesn't
+exist what we do is we return result, that
+
+00:25:36.260 --> 00:25:39.250
+is the empty list.
+
+00:25:39.250 --> 00:25:43.830
+Now I could put the rest of the method in
+an else but it isn't really necessary because
+
+00:25:43.830 --> 00:25:48.590
+in this case if the file doesn't exist we're
+done, we need to get out of there. So the
+
+00:25:48.590 --> 00:25:55.590
+only thing we need to do in this case is file.close.
+Close is how we close the file--absolutely
+
+00:25:56.309 --> 00:26:03.309
+necessary. Let's see what Java's unhappy about.
+Ah yes--jumped the gun on that one. So here's
+
+00:26:09.490 --> 00:26:16.490
+the case if the file does open. We need a
+scanner, which I'll call scan file new scanner
+
+00:26:17.559 --> 00:26:24.559
+of file while scan file dot has next line.
+We've done this reading before so we can do
+
+00:26:29.920 --> 00:26:36.920
+it quickly. So we have a string next line
+and that's going to be scan file dot next
+
+00:26:39.450 --> 00:26:46.450
+line and then we want to put that into the
+array. So that is result.add(next line). Now
+
+00:26:53.170 --> 00:26:56.480
+this time we don't have a counter in the loop
+so I'm not going to forget it and create another
+
+00:26:56.480 --> 00:27:03.480
+infinite loop and then when we get to the
+end we do scanFile.close so it's the scanner
+
+00:27:04.290 --> 00:27:10.870
+that needs to be closed and return the result.
+The order there is important. Remember once
+
+00:27:10.870 --> 00:27:16.290
+the result is returned there's nothing else
+left and this is just a typo that Eclipse
+
+00:27:16.290 --> 00:27:21.809
+has noticed.
+
+00:27:21.809 --> 00:27:28.809
+So we're now ready to run it and see if things
+are working. So the program started--that's
+
+00:27:33.179 --> 00:27:40.179
+a good sign. Let's add a new item. Everything's
+looking good. The last thing we need to do
+
+00:27:53.490 --> 00:27:58.860
+is write to the file. Now we haven't done
+much file writing so far. The signature of
+
+00:27:58.860 --> 00:28:04.080
+the method will be void write list to file
+and of course we'll need our array list of
+
+00:28:04.080 --> 00:28:08.320
+strings. Now the class we're going to use
+for this is the print writer class. So we're
+
+00:28:08.320 --> 00:28:12.920
+going to construct it from a file. We're going
+to need to find the method in the API to write
+
+00:28:12.920 --> 00:28:18.870
+the data and of course as always you need
+to remember to close things. Here's the API.
+
+00:28:18.870 --> 00:28:25.870
+Let's find the print writer. Now this time
+there's only one class like that. So we can
+
+00:28:30.179 --> 00:28:35.480
+see that we construct it from a file-that
+makes sense. So print writer does for writing
+
+00:28:35.480 --> 00:28:42.480
+files what scanner does for reading them.
+Now we've got some choices called append--that's
+
+00:28:45.730 --> 00:28:52.300
+kind of nice. And then we've got print and
+that's kind of nice and we've got print and
+
+00:28:52.300 --> 00:28:57.620
+we've got print line. Well that's really nice
+because if you look at that print line command
+
+00:28:57.620 --> 00:29:04.620
+that's exactly what we've been using in our
+system out print lines. Prints a string, terminates
+
+00:29:05.420 --> 00:29:10.630
+the line, that looks perfect. Notice the fact
+that they've taken a lot of thought in how
+
+00:29:10.630 --> 00:29:16.630
+to put these things together, really makes
+it easier to program. So let's write the list
+
+00:29:16.630 --> 00:29:23.630
+to the file now. So we have file equals new
+file and using our little default filename
+
+00:29:29.990 --> 00:29:36.990
+that we created earlier then we'll have a
+print writer, which I'm going to call printer
+
+00:29:38.700 --> 00:29:45.700
+is new print writer of file. Now this needs
+to-whoops- and it should be print writer not
+
+00:29:47.940 --> 00:29:54.120
+printer writer. This needs to throw a file
+not found exception which means the main program
+
+00:29:54.120 --> 00:29:59.370
+will need to throw a file not found exception.
+I've already done that for you.
+
+00:29:59.370 --> 00:30:03.190
+So now we need to step through the list one
+item at a time. That's going to be another
+
+00:30:03.190 --> 00:30:10.190
+one of those counter controlled lists because
+we're stepping through by the index. So we'll
+
+00:30:10.630 --> 00:30:17.630
+have while index is less than list dot size
+printer dot print line list dot get index
+
+00:30:28.850 --> 00:30:35.850
+and index equals index plus one and we'll
+do printer dot close. So this prints all the
+
+00:30:40.470 --> 00:30:46.830
+items on the list one at a time to a file
+and then closes the printer when we're done.
+
+00:30:46.830 --> 00:30:53.830
+Okay so now we're at the moment of truth to
+see if our program will finally run correctly.
+
+00:30:57.070 --> 00:31:04.070
+So we're going to add things in: bread, milk,
+dog bones, maybe one more item, diet soda.
+
+00:31:24.270 --> 00:31:30.620
+Now let's show the list make sure we know
+what's in it: bread, dog bones, milk, diet
+
+00:31:30.620 --> 00:31:37.620
+soda and the last thing we want to do is exit
+the program. Now our file should be written
+
+00:31:38.740 --> 00:31:44.600
+at this point. Little scary isn't it? Let's
+open the program again and see if it knows
+
+00:31:44.600 --> 00:31:51.030
+where our list is. So I'm running the whole
+program again and now I want to see the list.
+
+00:31:51.030 --> 00:31:57.490
+Uh oh, it didn't get our list. Well we need
+to do some debugging.
+
+00:31:57.490 --> 00:32:04.490
+So the first thing we should probably be suspicious
+of is did we even call write list to file?
+
+00:32:05.860 --> 00:32:12.860
+So here we go back to our main program and
+what you'll see is we did not call it. Okay,
+
+00:32:20.429 --> 00:32:27.429
+well that was disappointing. Here we go running
+again. So I'm adding bread, adding milk, adding
+
+00:32:38.340 --> 00:32:45.340
+dog bones, adding diet soda, showing the list,
+exiting the program. Now we run it again.
+
+00:33:01.660 --> 00:33:07.380
+First thing we want to do is see our items
+and there they are. Now of course we want
+
+00:33:07.380 --> 00:33:11.440
+to test more and more to make sure everything's
+perfect, but it looks like we're headed in
+
+00:33:11.440 --> 00:33:16.600
+the right direction. Let's take a look at
+our main program. So the main program starts
+
+00:33:16.600 --> 00:33:23.600
+on line 25 and it ends on line 51. So we have
+a 25 line main program. That is a very nice
+
+00:33:23.920 --> 00:33:29.130
+length for a main program and so we definitely
+don't want to meddle with that. What's more
+
+00:33:29.130 --> 00:33:34.360
+we have everything Javadoced so we actually
+can see the Javadoc for the program if we
+
+00:33:34.360 --> 00:33:41.360
+want to. Or we could go here and generate
+our Javadoc and here's our documentation showing
+
+00:33:58.010 --> 00:34:05.010
+up. So if we look at listmaker.html there
+we go, all that beautiful documentation that
+
+00:34:06.850 --> 00:34:13.850
+I created for you to enjoy. So we finished
+writing to the file and our program is finished.
+
+00:34:16.260 --> 00:34:17.179
+So keep programming!
+

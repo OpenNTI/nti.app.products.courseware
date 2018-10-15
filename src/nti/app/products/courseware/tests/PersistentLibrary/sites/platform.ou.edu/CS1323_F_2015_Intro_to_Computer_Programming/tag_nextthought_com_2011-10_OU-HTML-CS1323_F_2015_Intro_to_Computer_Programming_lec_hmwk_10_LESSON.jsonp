@@ -1,0 +1,65 @@
+jsonpReceiveContent({
+    "content": {
+        "MimeType": "application/vnd.nextthought.ntilessonoverview",
+        "Items": [
+            {
+                "MimeType": "application/vnd.nextthought.nticourseoverviewgroup",
+                "NTIID": "tag:nextthought.com,2011-10:OU-NTICourseOverviewGroup-CS1323_F_2015_Intro_to_Computer_Programming.lec:hmwk_10_LESSON.0",
+                "Items": [
+                    {
+                        "MimeType": "application/vnd.nextthought.discussion",
+                        "title": "Homework 3 Help",
+                        "label": "",
+                        "NTIID": "",
+                        "id": "nti-course-bundle://Discussions/Homework_3_Help.json",
+                        "icon": "resources/CS1323_F_2015_Intro_to_Computer_Programming/2944092b443253ad83b3a283506b230b9d539f40/fd35e23767020999111e1f49239199b4c5eff23e.png"
+                    }
+                ],
+                "accentColor": "f5d420",
+                "title": "Discussions"
+            },
+            {
+                "MimeType": "application/vnd.nextthought.nticourseoverviewgroup",
+                "NTIID": "tag:nextthought.com,2011-10:OU-NTICourseOverviewGroup-CS1323_F_2015_Intro_to_Computer_Programming.lec:hmwk_10_LESSON.1",
+                "Items": [
+                    {
+                        "MimeType": "application/vnd.nextthought.naquestionset",
+                        "question-count": "1",
+                        "Target-NTIID": "tag:nextthought.com,2011-10:OU-NAQ-CS1323_F_2015_Intro_to_Computer_Programming.naq.set.qset:HW3",
+                        "NTIID": "tag:nextthought.com,2011-10:OU-NAQ-CS1323_F_2015_Intro_to_Computer_Programming.naq.set.qset:HW3",
+                        "label": "Homework 3 (50 points)"
+                    }
+                ],
+                "accentColor": "81c8dc",
+                "title": "Assignments"
+            },
+            {
+                "MimeType": "application/vnd.nextthought.nticourseoverviewgroup",
+                "NTIID": "tag:nextthought.com,2011-10:OU-NTICourseOverviewGroup-CS1323_F_2015_Intro_to_Computer_Programming.lec:hmwk_10_LESSON.2",
+                "Items": [
+                    {
+                        "MimeType": "application/vnd.nextthought.relatedworkref",
+                        "targetMimeType": "application/vnd.nextthought.externallink",
+                        "creator": "Deborah Trytten",
+                        "section": "additional",
+                        "visibility": "everyone",
+                        "label": "Homework 3 Solution",
+                        "NTIID": "tag:nextthought.com,2011-10:OU-RelatedWorkRef-CS1323_F_2015_Intro_to_Computer_Programming.relatedworkref.relwk:homework_3_solution",
+                        "href": "resources/Homework_3_Solution.docx",
+                        "target-NTIID": "tag:nextthought.com,2011-10:NTI-UUID-bbaf53a6906b4cb22fcc7cf907249c89",
+                        "icon": "resources/CS1323_F_2015_Intro_to_Computer_Programming/583b61b2202851bd80245dfddda3c5d88cadb0a1/fd35e23767020999111e1f49239199b4c5eff23e.png",
+                        "desc": "The solution to Homework 3."
+                    }
+                ],
+                "accentColor": "ce78e0",
+                "title": "Additional Resources"
+            }
+        ],
+        "title": "Homework 3",
+        "NTIID": "tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.lec:hmwk_10_LESSON"
+    },
+    "ntiid": "tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.lec:hmwk_10_LESSON",
+    "version": "1",
+    "Content-Type": "application/json",
+    "Content-Encoding": "json"
+});

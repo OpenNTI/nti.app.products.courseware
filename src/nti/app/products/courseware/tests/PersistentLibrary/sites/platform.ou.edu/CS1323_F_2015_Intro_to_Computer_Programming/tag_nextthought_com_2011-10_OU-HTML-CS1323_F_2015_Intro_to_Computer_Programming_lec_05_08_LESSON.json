@@ -1,0 +1,142 @@
+{
+    "MimeType": "application/vnd.nextthought.ntilessonoverview",
+    "Items": [
+        {
+            "MimeType": "application/vnd.nextthought.nticourseoverviewgroup",
+            "NTIID": "tag:nextthought.com,2011-10:OU-NTICourseOverviewGroup-CS1323_F_2015_Intro_to_Computer_Programming.lec:05.08_LESSON.0",
+            "Items": [
+                {
+                    "MimeType": "application/vnd.nextthought.ntivideo",
+                    "NTIID": "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_05.02.04_Set_Tutor",
+                    "visibility": "everyone",
+                    "poster": "//www.kaltura.com/p/1500101/thumbnail/entry_id/0_vanjhief/width/1280/",
+                    "label": "Set Tutor"
+                }
+            ],
+            "accentColor": "81c8dc",
+            "title": "Videos"
+        },
+        {
+            "MimeType": "application/vnd.nextthought.nticourseoverviewgroup",
+            "NTIID": "tag:nextthought.com,2011-10:OU-NTICourseOverviewGroup-CS1323_F_2015_Intro_to_Computer_Programming.lec:05.08_LESSON.1",
+            "Items": [
+                {
+                    "MimeType": "application/vnd.nextthought.relatedworkref",
+                    "targetMimeType": "application/vnd.nextthought.externallink",
+                    "creator": "Deborah Trytten",
+                    "section": "required",
+                    "visibility": "everyone",
+                    "label": "Spring 2015 Final Exam Section 010",
+                    "NTIID": "tag:nextthought.com,2011-10:OU-RelatedWorkRef-CS1323_F_2015_Intro_to_Computer_Programming.relatedworkref.relwk:final_exam_sample_010",
+                    "href": "resources/Final_Exam_CS1323_Spring2015_Section010.docx",
+                    "target-NTIID": "tag:nextthought.com,2011-10:NTI-UUID-e2bab727cfb55837a310f513bfc59361",
+                    "icon": "resources/CS1323_F_2015_Intro_to_Computer_Programming/583b61b2202851bd80245dfddda3c5d88cadb0a1/fd35e23767020999111e1f49239199b4c5eff23e.png",
+                    "desc": "A examination that tests the topics covered in the course."
+                },
+                {
+                    "MimeType": "application/vnd.nextthought.relatedworkref",
+                    "targetMimeType": "application/vnd.nextthought.externallink",
+                    "creator": "Deborah Trytten",
+                    "section": "required",
+                    "visibility": "everyone",
+                    "label": "Spring 2015 Final Exam Solution Section 010",
+                    "NTIID": "tag:nextthought.com,2011-10:OU-RelatedWorkRef-CS1323_F_2015_Intro_to_Computer_Programming.relatedworkref.relwk:final_exam_sample_solution_010",
+                    "href": "resources/Solution_Final_Exam_CS1323_Spring2015_Section010.docx",
+                    "target-NTIID": "tag:nextthought.com,2011-10:NTI-UUID-746175b6ee57a63c0dbc91283ab8658a",
+                    "icon": "resources/CS1323_F_2015_Intro_to_Computer_Programming/583b61b2202851bd80245dfddda3c5d88cadb0a1/fd35e23767020999111e1f49239199b4c5eff23e.png",
+                    "desc": "Solution to examination that tests the topics covered in the course."
+                },
+                {
+                    "MimeType": "application/vnd.nextthought.relatedworkref",
+                    "targetMimeType": "application/vnd.nextthought.externallink",
+                    "creator": "Deborah Trytten",
+                    "section": "required",
+                    "visibility": "everyone",
+                    "label": "Spring 2015 Final Exam Section 001",
+                    "NTIID": "tag:nextthought.com,2011-10:OU-RelatedWorkRef-CS1323_F_2015_Intro_to_Computer_Programming.relatedworkref.relwk:final_exam_sample",
+                    "href": "resources/Final_Exam_CS1323_Spring2015_Section001.docx",
+                    "target-NTIID": "tag:nextthought.com,2011-10:NTI-UUID-f28ecadd1132123e2b7ddc0623ef3106",
+                    "icon": "resources/CS1323_F_2015_Intro_to_Computer_Programming/583b61b2202851bd80245dfddda3c5d88cadb0a1/fd35e23767020999111e1f49239199b4c5eff23e.png",
+                    "desc": "A examination that tests the topics covered in the course."
+                },
+                {
+                    "MimeType": "application/vnd.nextthought.relatedworkref",
+                    "targetMimeType": "application/vnd.nextthought.externallink",
+                    "creator": "Deborah Trytten",
+                    "section": "required",
+                    "visibility": "everyone",
+                    "label": "Spring 2015 Final Exam Solution Section 001",
+                    "NTIID": "tag:nextthought.com,2011-10:OU-RelatedWorkRef-CS1323_F_2015_Intro_to_Computer_Programming.relatedworkref.relwk:final_exam_sample_solution",
+                    "href": "resources/Solution_Final_Exam_CS1323_Spring2015_Section001.docx",
+                    "target-NTIID": "tag:nextthought.com,2011-10:NTI-UUID-ef201e25656031d28f330b2ea2777452",
+                    "icon": "resources/CS1323_F_2015_Intro_to_Computer_Programming/583b61b2202851bd80245dfddda3c5d88cadb0a1/fd35e23767020999111e1f49239199b4c5eff23e.png",
+                    "desc": "Solution to examination that tests the topics covered in the course."
+                }
+            ],
+            "accentColor": "f9824e",
+            "title": "Required Resources"
+        },
+        {
+            "MimeType": "application/vnd.nextthought.nticourseoverviewgroup",
+            "NTIID": "tag:nextthought.com,2011-10:OU-NTICourseOverviewGroup-CS1323_F_2015_Intro_to_Computer_Programming.lec:05.08_LESSON.2",
+            "Items": [
+                {
+                    "MimeType": "application/vnd.nextthought.relatedworkref",
+                    "targetMimeType": "application/vnd.nextthought.externallink",
+                    "creator": "Deborah Trytten",
+                    "section": "required",
+                    "visibility": "everyone",
+                    "label": "Sample Final Exam",
+                    "NTIID": "tag:nextthought.com,2011-10:OU-RelatedWorkRef-CS1323_F_2015_Intro_to_Computer_Programming.relatedworkref.relwk:06.01.01_sample",
+                    "href": "resources/Sample_Final_Exam_CS_1323_Spring_2014.docx",
+                    "target-NTIID": "tag:nextthought.com,2011-10:NTI-UUID-f46b7a4d68d2c09c749fedfe82f9efe3",
+                    "icon": "resources/CS1323_F_2015_Intro_to_Computer_Programming/583b61b2202851bd80245dfddda3c5d88cadb0a1/fd35e23767020999111e1f49239199b4c5eff23e.png",
+                    "desc": "A examination that tests the topics covered in the course."
+                },
+                {
+                    "MimeType": "application/vnd.nextthought.relatedworkref",
+                    "targetMimeType": "application/vnd.nextthought.externallink",
+                    "creator": "Deborah Trytten",
+                    "section": "additional",
+                    "visibility": "everyone",
+                    "label": "Sample Final Exam Solutions",
+                    "NTIID": "tag:nextthought.com,2011-10:OU-RelatedWorkRef-CS1323_F_2015_Intro_to_Computer_Programming.relatedworkref.relwk:06.01.01_sample_solutions",
+                    "href": "resources/Solution_Sample_Final_Exam_CS_1323_Spring_2014.docx",
+                    "target-NTIID": "tag:nextthought.com,2011-10:NTI-UUID-30b67e2cda203425e4be28adf5c5e0de",
+                    "icon": "resources/CS1323_F_2015_Intro_to_Computer_Programming/583b61b2202851bd80245dfddda3c5d88cadb0a1/fd35e23767020999111e1f49239199b4c5eff23e.png",
+                    "desc": "The solution to an examination that tests the topics covered in the course."
+                },
+                {
+                    "MimeType": "application/vnd.nextthought.relatedworkref",
+                    "targetMimeType": "application/vnd.nextthought.externallink",
+                    "creator": "Deborah Trytten",
+                    "section": "additional",
+                    "visibility": "everyone",
+                    "label": "Example from the Video",
+                    "NTIID": "tag:nextthought.com,2011-10:OU-RelatedWorkRef-CS1323_F_2015_Intro_to_Computer_Programming.relatedworkref.relwk:05.02.04_code_sample",
+                    "href": "resources/Lesson_5.2.4_Code.zip",
+                    "target-NTIID": "tag:nextthought.com,2011-10:NTI-UUID-5fbe524c40901517ff2acaee5b2aadde",
+                    "icon": "resources/CS1323_F_2015_Intro_to_Computer_Programming/b9c4a1a1dc3d30c895df3b30c553fa40f972a2f5/fd35e23767020999111e1f49239199b4c5eff23e.png",
+                    "desc": "Java code developed in the video from this lesson."
+                },
+                {
+                    "MimeType": "application/vnd.nextthought.relatedworkref",
+                    "targetMimeType": "application/vnd.nextthought.externallink",
+                    "creator": "Deborah Trytten",
+                    "section": "additional",
+                    "visibility": "everyone",
+                    "label": "Set Tutor",
+                    "NTIID": "tag:nextthought.com,2011-10:OU-RelatedWorkRef-CS1323_F_2015_Intro_to_Computer_Programming.relatedworkref.relwk:05.02.04_set_tutor",
+                    "href": "resources/Set_Tutor.pptx",
+                    "target-NTIID": "tag:nextthought.com,2011-10:NTI-UUID-dd0f5e00400b7167a5ff3667b9423964",
+                    "icon": "resources/CS1323_F_2015_Intro_to_Computer_Programming/17f860f9921d29d578e2791d3ff00dcf689071c3/fd35e23767020999111e1f49239199b4c5eff23e.png",
+                    "desc": "Lecture presentation"
+                }
+            ],
+            "accentColor": "ce78e0",
+            "title": "Additional Resources"
+        }
+    ],
+    "title": "Review for Final Examination",
+    "NTIID": "tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.lec:05.08_LESSON"
+}

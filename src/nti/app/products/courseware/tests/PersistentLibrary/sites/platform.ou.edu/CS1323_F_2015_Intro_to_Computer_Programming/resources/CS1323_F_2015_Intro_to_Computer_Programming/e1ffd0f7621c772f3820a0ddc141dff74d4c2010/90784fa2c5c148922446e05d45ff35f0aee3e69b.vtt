@@ -1,0 +1,668 @@
+WEBVTT
+Kind: captions
+Language: en
+
+00:00:01.160 --> 00:00:04.200
+&gt;&gt;Dr. Deborah Trytten: Let's continue our
+study of methods by improving the craps game
+
+00:00:04.200 --> 00:00:10.120
+we wrote earlier. Here's the problem statement:
+we're going to improve the program to play
+
+00:00:10.120 --> 00:00:15.990
+a modified version of craps. The user's going
+to role two six-sided die. They lose if the
+
+00:00:15.990 --> 00:00:21.449
+sum of the digits is 7 or 11 (that's called
+craps). They win if the sum of the digits
+
+00:00:21.449 --> 00:00:28.449
+is 2, 3, or 12, and they roll again at the
+sum of the digits is 4, 5, 6, 8, 9, or 10.
+
+00:00:30.740 --> 00:00:36.540
+Now there are a couple shortcomings of our
+previous code. One is repeated code. Now you
+
+00:00:36.540 --> 00:00:41.620
+may not remember repeating code, but if you
+think about it, we did a bunch of copy and
+
+00:00:41.620 --> 00:00:46.960
+pasting. And when you do copy and paste, that's
+a warning that you could use a method. So
+
+00:00:46.960 --> 00:00:51.140
+our first method will be for rolling the die.
+Let's think about what the signature should
+
+00:00:51.140 --> 00:00:57.230
+look like. First off the method name should
+be roll die. Notice that we can't say roll
+
+00:00:57.230 --> 00:01:01.789
+dice. Dice is actually plural. That means
+there are two or more of them, and we can't
+
+00:01:01.789 --> 00:01:06.740
+return two things from a method, so we can't
+roll dice. We can only roll one die.
+
+00:01:06.740 --> 00:01:13.740
+As far as the parameters, well, there are
+no parameters. And the return type will be
+
+00:01:14.430 --> 00:01:21.020
+an int. Now clearly this is going to be a
+one-line method, and you might wonder whether
+
+00:01:21.020 --> 00:01:27.150
+a one-line method actually improves anything.
+Well, it does. For one thing it does information
+
+00:01:27.150 --> 00:01:32.490
+hiding, so it conceals the details of how
+the random number is generated from people
+
+00:01:32.490 --> 00:01:36.390
+who use the method. And that's a good thing
+because it leaves their concentration free
+
+00:01:36.390 --> 00:01:41.450
+to think about other things. The other thing
+that's improved by having a one-line method
+
+00:01:41.450 --> 00:01:46.140
+is consistency. So let's say, for example,
+there was a mistake in our code, which by
+
+00:01:46.140 --> 00:01:52.710
+the way there isn't. At that point we could
+find that mistake in one copy of the code
+
+00:01:52.710 --> 00:01:57.250
+and forget that we need to change it in the
+other copy of the code. This happens especially
+
+00:01:57.250 --> 00:02:01.390
+if you're maintaining somebody else's code
+when you didn't know that it was copied in
+
+00:02:01.390 --> 00:02:06.280
+the first place. But even when you're the
+one who copied it, it's easy to forget. So
+
+00:02:06.280 --> 00:02:10.640
+that's a place where you do get an improvement
+even though the code doesn't get shorter.
+
+00:02:10.640 --> 00:02:15.240
+So better and shorter aren't always the same
+thing with programming.
+
+00:02:15.240 --> 00:02:22.240
+Let's go to Eclipse. This is the calculation
+that we're going to conceal, so I'm going
+
+00:02:23.800 --> 00:02:30.800
+to copy that. I'm going to go down below the
+method and create a new method public static
+
+00:02:34.160 --> 00:02:41.160
+int roll die, and paste in the code. Now we
+don't actually need to save this to a local
+
+00:02:43.580 --> 00:02:50.580
+variable, so I'll just put a return statement
+there. Now we're going to call the code up
+
+00:02:52.000 --> 00:02:59.000
+here by doing roll die. It had no parameters,
+so it doesn't need any arguments. And we'll
+
+00:03:04.670 --> 00:03:11.670
+do the same thing here. Of course we want
+to run our code immediately to make sure it's
+
+00:03:12.510 --> 00:03:19.510
+correct. So we've gotten 1s, 3s, 2, 4, 5,
+6. Hey, we got them all in our first try.
+
+00:03:24.540 --> 00:03:29.120
+That's neat. So we don't have to do a lot
+of work. Now the next thing we need to do
+
+00:03:29.120 --> 00:03:35.400
+is improve this method. A method that returns
+random choices between 1 and 6 inclusive may
+
+00:03:35.400 --> 00:03:39.750
+not be used too often, unless of course you're
+writing a whole bunch of programs that use
+
+00:03:39.750 --> 00:03:44.709
+dice. But on the other hand, suppose we have
+a method that returned random choices between
+
+00:03:44.709 --> 00:03:51.030
+start and end. That method might be used a
+lot more. So to make that method, we're going
+
+00:03:51.030 --> 00:03:57.030
+to add parameters. They'll be called int start
+and int end of course. Now we're going to
+
+00:03:57.030 --> 00:04:01.920
+need to repeat our boundary analysis to make
+sure we're doing the right thing. So again,
+
+00:04:01.920 --> 00:04:07.250
+math.random goes between zero and one, but
+one is exclusive, so the largest number is
+
+00:04:07.250 --> 00:04:14.250
+.99999. If we multiply by end minus start,
+which seems like a natural thing because it's
+
+00:04:14.260 --> 00:04:20.000
+sort of the distance between end and start,
+we'll get zero when we multiply by zero, but
+
+00:04:20.000 --> 00:04:27.000
+we'll get end minus start minus 1 plus .99999—oh,
+that looks like we're headed for trouble.
+
+00:04:27.570 --> 00:04:33.440
+When we cast that to an int, the zero will
+work fine but the other number, the .99999,
+
+00:04:33.440 --> 00:04:39.290
+will give us end minus start minus 1. If we
+add start to that, the zero ends up in the
+
+00:04:39.290 --> 00:04:45.340
+right place, but what we end up with at the
+other end is end minus 1. Now you might think
+
+00:04:45.340 --> 00:04:50.050
+we should add start plus one at the end, but
+if we do that, notice we'll mess up our start
+
+00:04:50.050 --> 00:04:55.230
+position then, although it will fix the end
+position. So where the trouble started was
+
+00:04:55.230 --> 00:05:00.520
+actually in that second step when we multiplied
+by end minus start. So that's where we need
+
+00:05:00.520 --> 00:05:07.400
+to fix it. So we take the same random numbers
+and now multiply by end minus start plus 1.
+
+00:05:07.400 --> 00:05:13.100
+When you have end minus start plus 1, that
+goes to end minus start plus .99999. This
+
+00:05:13.100 --> 00:05:20.100
+is when you're multiplying by .99999. Now
+when we cast it to an int, we'll get zero
+
+00:05:20.310 --> 00:05:25.419
+to end minus start. And when we add start,
+we'll go from start to end. So this looks
+
+00:05:25.419 --> 00:05:27.810
+like a good solution.
+
+00:05:27.810 --> 00:05:34.360
+Let's go and write our method. So we're back
+in Eclipse and we're going to go down to our
+
+00:05:34.360 --> 00:05:37.400
+method. Now we're going to need to change
+the name of our method because our method
+
+00:05:37.400 --> 00:05:44.400
+is now more general than it was. So let's
+say generate random in range and go between
+
+00:05:48.050 --> 00:05:55.050
+int start and int end. So now what we're going
+to return math.random times end minus start
+
+00:06:02.790 --> 00:06:09.790
+plus 1. Now I'm going to a show that as 1.0
+because this multiplication between math.random
+
+00:06:09.919 --> 00:06:15.850
+and end minus start plus 1m we want that to
+be a double. It will be of course naturally
+
+00:06:15.850 --> 00:06:19.949
+but this makes it more clear that that was
+our intention to have it a double—that it
+
+00:06:19.949 --> 00:06:24.830
+wasn't just a happy accident.
+
+00:06:24.830 --> 00:06:31.830
+So now we're going to go back to our program
+and generate random in range from 1 to 6m
+
+00:06:40.720 --> 00:06:47.720
+and generate random in range from 1 to 6.
+And of course we want to check and make sure
+
+00:06:50.190 --> 00:06:57.190
+our program is working again. So we've got
+2, 3, and 4. That's kind of nice, but we haven't
+
+00:07:00.430 --> 00:07:07.430
+seen 1, 5, or 6. There're 5s and 1s. No 6s
+yet. Ah, there's a 6. Good, we've gotten all
+
+00:07:12.900 --> 00:07:17.340
+of our values. That's really with random numbers
+as close as we can get to knowing that things
+
+00:07:17.340 --> 00:07:23.259
+are working, and notice we haven't gotten
+any illegal values, so that's good too. So
+
+00:07:23.259 --> 00:07:28.050
+we've done our first test, and that's to try
+it on the dice program that we adapted, but
+
+00:07:28.050 --> 00:07:32.350
+we might want to try some different ranges
+inside the program. We could do it with one
+
+00:07:32.350 --> 00:07:37.880
+die only or we could do with both. We could,
+for example, generate numbers between 1 and
+
+00:07:37.880 --> 00:07:43.210
+5, and 2 and 4, and 3 and 4, and 3 and 3.
+And we might want to think about that last
+
+00:07:43.210 --> 00:07:47.810
+one about whether that should even work or
+not. Well, between 3 and 3 we would always
+
+00:07:47.810 --> 00:07:53.520
+get 3s out. I guess that makes sense, so why
+not see if our method works there? So let's
+
+00:07:53.520 --> 00:08:00.520
+go and do some more testing. So first we're
+going to generate between 1 and 5, and 1 and
+
+00:08:02.979 --> 00:08:09.979
+5--running the program again I see 2, 3, 4.
+There's a 5 and there's a 1. So we are very
+
+00:08:15.350 --> 00:08:22.350
+lucky our first time we got it all. Now let's
+go between 2 and 5. So I see 3, 4, 5. Let's
+
+00:08:31.560 --> 00:08:37.949
+see if we've got a 2 anywhere, ah, and there
+are 2s. Good work. So now we were going to
+
+00:08:37.949 --> 00:08:44.949
+look at 3 and 4. See what values we got there.
+So we're expecting to just see 3s and 4s,
+
+00:08:53.110 --> 00:08:59.550
+and we have a 3 and a 4. Now we were wondering
+about this 3 and 3. Seems like maybe it should
+
+00:08:59.550 --> 00:09:06.550
+work. Well, we're getting lots and lots of
+3s out, which I guess is what that should
+
+00:09:08.389 --> 00:09:14.429
+do. So that looks good. Let's stop that from
+running, and let's think about some ideas
+
+00:09:14.429 --> 00:09:17.240
+we could have for a second method.
+
+00:09:17.240 --> 00:09:21.740
+The logic part of this has gotten fairly long
+and complicated. Now part of the reason for
+
+00:09:21.740 --> 00:09:26.740
+that is we don't have very sophisticated logic
+operators yet, and so that will improve a
+
+00:09:26.740 --> 00:09:31.339
+little bit on its own, but it is the kind
+of detail that could be shuffled off to a
+
+00:09:31.339 --> 00:09:36.910
+method and hidden from the main program. So
+let's create a method that returns one of
+
+00:09:36.910 --> 00:09:43.360
+three things. It could return lost, it could
+return one, and it could return play again.
+
+00:09:43.360 --> 00:09:48.339
+Now notice that I've put those names in all
+caps. That's one of the ways you can see that
+
+00:09:48.339 --> 00:09:53.269
+I'm thinking about those as constants. Notice
+we couldn't have it be a Boolean because with
+
+00:09:53.269 --> 00:09:59.059
+a Boolean we can't get three choices. We can
+only get two. So we're going to need some
+
+00:09:59.059 --> 00:10:00.610
+integers.
+
+00:10:00.610 --> 00:10:06.679
+The method signature will look like this int
+determine craps result, and it will take int
+
+00:10:06.679 --> 00:10:13.679
+role as a parameter. Let's go down and create
+the signature for the method first. Public
+
+00:10:17.009 --> 00:10:24.009
+static int determine craps result from a roll,
+so there's our signature. We could put return
+
+00:10:31.550 --> 00:10:38.230
+zero in there if the complaint from Eclipse
+bothers you, but instead let's just go and
+
+00:10:38.230 --> 00:10:45.230
+grab our code that we want to encapsulate...
+and copy it in. 
+Now we're going to have to modify this code
+
+00:11:02.569 --> 00:11:09.420
+a little bit because we're no longer returning
+from the program. So at this point we may
+
+00:11:09.420 --> 00:11:13.989
+not want to do our system out print lines
+here. We may want to do those in the main
+
+00:11:13.989 --> 00:11:20.989
+program. I think that makes a lot more sense.
+So here we should return when. Now let's go
+
+00:11:22.759 --> 00:11:29.759
+and create those constants so that we don't
+have any problems using them. Final int when
+
+00:11:33.610 --> 00:11:40.610
+equals 1. Final int lose equals 0, and final
+int play again equals 2. Now we're going to
+
+00:11:47.339 --> 00:11:54.339
+have to pass those to the program too, so
+we'll do int win int lose int play again.
+
+00:12:01.809 --> 00:12:08.809
+So here we're returning when. Here we'll return
+when. Notice these are not in caps now because
+
+00:12:10.829 --> 00:12:16.610
+these are the parameters we're using. And
+we weren't going to put the system out print
+
+00:12:16.610 --> 00:12:21.319
+lines here.
+
+00:12:21.319 --> 00:12:28.319
+So we'll return play again—whoops, play
+again looks like that. This one we probably
+
+00:12:41.179 --> 00:12:48.179
+want to copy so we can paste, and I know just
+a few minutes ago I said that when you're
+
+00:12:48.509 --> 00:12:53.459
+copying and pasting you're probably doing
+something wrong, you're doing something that
+
+00:12:53.459 --> 00:13:00.459
+could be in a method, and that's true. Now
+this one we're going to return lose. Here
+
+00:13:07.670 --> 00:13:14.670
+we're returning roll again or play again.
+Here we're returning play again. There's play
+
+00:13:22.119 --> 00:13:29.119
+again. Here we'll return lose. And as I recall,
+12 actually wins not loses. Now I see one
+
+00:13:49.989 --> 00:13:54.689
+other thing that I could do in this code.
+Notice that the value of this role is not
+
+00:13:54.689 --> 00:14:00.379
+between 2 and 12, this method isn't going
+to return anything. That's not good, but it's
+
+00:14:00.379 --> 00:14:05.379
+particularly not good because we don't expect
+that case to occur. When you have a case that
+
+00:14:05.379 --> 00:14:10.639
+you don't expect to occur, I like to actually
+put a little else statement in there to catch
+
+00:14:10.639 --> 00:14:17.639
+it in case it does recur. So I'll do system
+out print line this is an unexpected case.
+
+00:14:20.559 --> 00:14:26.069
+Now we still had to return something from
+this casen so let's return lose on the theory
+
+00:14:26.069 --> 00:14:30.379
+that people will notice more if they lose
+when they should do something else than anything
+
+00:14:30.379 --> 00:14:34.970
+else. It's important that you give people
+feedback that a case you didn't expect to
+
+00:14:34.970 --> 00:14:41.970
+occur is actually occurring. Now let's check
+our parameters again. Roll is first, then
+
+00:14:42.139 --> 00:14:49.139
+win, lose, play again. So here we're going
+to do determine craps result roll, win, lose
+
+00:14:59.040 --> 00:15:06.040
+play again. Now we're going to have to store
+that value somewhere, so we're going to need
+
+00:15:07.999 --> 00:15:14.619
+another variable for that. And if you think
+about it now three things can happen: winning,
+
+00:15:14.619 --> 00:15:21.619
+losing, playing again. Well, what does that
+mean about our while statement? Now we can
+
+00:15:22.720 --> 00:15:29.720
+see what it should be. While result is not
+equal to play—whoops, while result is equal
+
+00:15:36.660 --> 00:15:42.410
+to play again. Now to do that we're going
+to have to move the declaration above because
+
+00:15:42.410 --> 00:15:48.029
+remember when something's declared inside
+the while loop, you can't use it in the condition
+
+00:15:48.029 --> 00:15:55.029
+of the while loop. And we need to initialize
+it correctly, so we get into the loop the
+
+00:15:57.179 --> 00:15:59.029
+first time.
+
+00:15:59.029 --> 00:16:04.049
+So that's cleaned up that funny little infinite
+loop thing that we had to put in earlier.
+
+00:16:04.049 --> 00:16:08.369
+So notice we're getting a better structured
+program. Also notice that our main program
+
+00:16:08.369 --> 00:16:13.749
+is in a good target range for length. Remember
+between 10 and 20 lines of code is about right
+
+00:16:13.749 --> 00:16:15.619
+for a main program.
+
+00:16:15.619 --> 00:16:20.980
+So let's think what happens here. We get our
+result back. The last thing we need to do
+
+00:16:20.980 --> 00:16:27.980
+is to give the user some feedback, so if result
+is win system out print line you won. Else
+
+00:16:40.169 --> 00:16:47.169
+if result equals lose system out print line
+you lost, else--now we could do this one of
+
+00:16:58.389 --> 00:17:05.020
+two ways. We could say else if result equals
+play again system out print line play again,
+
+00:17:05.020 --> 00:17:09.810
+and then have another else that we don't expect
+to be executed, either one of these are just
+
+00:17:09.810 --> 00:17:16.810
+fine. Let's do the shorter one, system out
+print line play again. So there we go. Let's
+
+00:17:24.410 --> 00:17:31.410
+put in some more comments to make sure people
+understand our code. Report the result of
+
+00:17:31.740 --> 00:17:38.740
+the turn to the user. The logic for craps
+is in the determine craps result method. So
+
+00:17:47.120 --> 00:17:52.870
+notice we have a comment, a few lines of code,
+a whitespace, a comment, a few lines of code,
+
+00:17:52.870 --> 00:17:57.820
+a whitespace. That's a good healthy pattern
+for software for making your code easy to
+
+00:17:57.820 --> 00:17:58.230
+read.
+
+00:17:58.230 --> 00:18:05.230
+Well, we certainly need to run this program
+and make sure it's working. Oh, look what
+
+00:18:10.480 --> 00:18:15.080
+we forgot to take out--we're just getting
+3s. That program's going to run for a really
+
+00:18:15.080 --> 00:18:22.080
+long time. So remember this was supposed to
+go between 1 and 6, and 1 and 6. That is a
+
+00:18:27.230 --> 00:18:31.470
+risk with using your code by the way to do
+random testing is that you can leave some
+
+00:18:31.470 --> 00:18:35.690
+garbage in your code. As you see it's not
+very hard to fix as long as you remember to
+
+00:18:35.690 --> 00:18:42.690
+test adequately at the end. So 5 and 6--that's
+an 11. You're supposed to lose with an 11,
+
+00:18:46.720 --> 00:18:53.720
+so that looks good. 3 and 1, 5 and 2, so we
+still need to see a 4 rolled. With a 4 you're
+
+00:18:54.670 --> 00:19:01.010
+supposed to play again. With a 7 you're supposed
+to lose. So those are looking good. 6 and
+
+00:19:01.010 --> 00:19:08.010
+6--that's a win. Remember that was the hard
+one to find the first time. 2 and 3--that's
+
+00:19:08.450 --> 00:19:12.050
+a 5, play again. 1 and 1 is a 2, which you
+won.
+
+00:19:12.050 --> 00:19:17.250
+I don't know about you, but I'm wishing that
+we had that little table we had before to
+
+00:19:17.250 --> 00:19:24.250
+make sure that we were catching all of our
+test data. So there's a 7 and a loss. There's
+
+00:19:24.860 --> 00:19:31.860
+a 2 and a win. 2 and 3 is 5, 4 and 1—excuse
+me, 3 and 1 is 4, which is a play again. 3
+
+00:19:34.770 --> 00:19:41.230
+and 2 well, without our little table we can't
+be really sure that we got them all, but it
+
+00:19:41.230 --> 00:19:45.670
+does feel like things are working correctly.
+So notice our main program now is a much more
+
+00:19:45.670 --> 00:19:52.670
+manageable length. We have a couple of methods,
+one which is probably not going to be reused
+
+00:19:54.260 --> 00:19:58.850
+much, it's just good for craps. But we also
+have created this generate random and range
+
+00:19:58.850 --> 00:20:02.730
+that we could reuse in a lot of other programs.
+So notice we're getting a little bit more
+
+00:20:02.730 --> 00:20:08.260
+value for our software engineering. I do see
+one thing we could improve in the documentation,
+
+00:20:08.260 --> 00:20:14.150
+and that's to make sure that people know that
+start and end are inclusive. So let's say
+
+00:20:14.150 --> 00:20:21.150
+we generate a random number between start
+and end, both inclusive. Those are good things
+
+00:20:24.700 --> 00:20:28.810
+to document so you don't have to figure out
+which way it was the next time you look back
+
+00:20:28.810 --> 00:20:32.630
+at the program. So keep programming!
+

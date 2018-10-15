@@ -1,0 +1,459 @@
+WEBVTT
+Kind: captions
+Language: en
+
+00:00:01.220 --> 00:00:05.220
+&gt;&gt;When we start designing our own classes,
+we need to be sure that we're creating logical
+
+00:00:05.220 --> 00:00:11.020
+combinations of operations. The Java API is
+a great source of inspiration for an aspiring
+
+00:00:11.020 --> 00:00:16.289
+Java designer. Let's take a closer look at
+some classes that we've been using for months,
+
+00:00:16.289 --> 00:00:21.980
+with an eye on designing our own class as
+well. The String class is a particularly interesting
+
+00:00:21.980 --> 00:00:26.679
+class in Java. You've probably been thinking
+to yourself that String objects are just arrays
+
+00:00:26.679 --> 00:00:32.860
+of characters, and that's correct—sort of.
+But the String class has a secret you probably
+
+00:00:32.860 --> 00:00:37.430
+haven't guessed, unless you've experimented
+with String objects. You certainly know that
+
+00:00:37.430 --> 00:00:43.420
+two String objects that contain the same characters
+will be equivalent using the .equals method.
+
+00:00:43.420 --> 00:00:50.420
+So if we have String name1 = Abby, and String
+name2 = Abby, system.out.print.line name1.equals
+
+00:00:50.870 --> 00:00:56.390
+name2. What you may not know however, is that
+these two String references are actually addressing
+
+00:00:56.390 --> 00:01:02.160
+the same object. There's really only one String
+literal that contains Abby, and both of these
+
+00:01:02.160 --> 00:01:09.160
+String references are pointing to it. If we
+do system.out.print.line name1==name2, we're
+
+00:01:09.260 --> 00:01:15.320
+comparing name1 and name2 using the equals
+equals operator, and we'll get true. But it's
+
+00:01:15.320 --> 00:01:20.440
+even more complicated than that. What will
+happen if we construct the Strings using a
+
+00:01:20.440 --> 00:01:27.440
+String constructer that takes a String literal?
+So we do String name1 = newStringAbby, and
+
+00:01:28.330 --> 00:01:35.220
+String name2 = newStringAbby. This should
+work the same way, but it doesn't. These two
+
+00:01:35.220 --> 00:01:40.740
+Strings are .equals to each other, just like
+the other String literals. They are not, however,
+
+00:01:40.740 --> 00:01:46.290
+equals equals to each other, even though they
+were constructed from the same String literal.
+
+00:01:46.290 --> 00:01:53.290
+If you look at the Java API for a constructor
+in the Java class, this is coyly suggested.
+
+00:01:53.320 --> 00:01:58.020
+We know the String class as well as we know
+any class from the Java API. We've used it
+
+00:01:58.020 --> 00:02:03.330
+all over the place for a full semester, and
+yet it has a secret. Let me tell you what's
+
+00:02:03.330 --> 00:02:08.470
+going on in the String class. Now the real
+details are beyond the scope of this class,
+
+00:02:08.470 --> 00:02:13.690
+so I'm lying to you a little bit, but you'll
+get the main idea. The String class is keeping
+
+00:02:13.690 --> 00:02:19.099
+track of an array of String literals. Suppose
+we've used the literals "Mary" "Mary" "Quite"
+
+00:02:19.099 --> 00:02:24.590
+"Contrary" in a program. The literal table
+will then contain these Strings. If we use
+
+00:02:24.590 --> 00:02:29.490
+"Quite" again, the array will be searched
+to find if "Quite" has been used. If it has,
+
+00:02:29.490 --> 00:02:34.060
+then the reference to "Quite" in the table
+is returned. If it hadn't been used it would
+
+00:02:34.060 --> 00:02:39.120
+be added to the table. Java even lets you
+decide that you'd like to do this with String
+
+00:02:39.120 --> 00:02:44.930
+objects you create, using the Intern method.
+If the String is in the table, the reference
+
+00:02:44.930 --> 00:02:49.050
+will be returned. If it's not in the table,
+it will be added to the proper place in the
+
+00:02:49.050 --> 00:02:54.400
+table and then it's reference will be returned.
+Now this is an advanced programming technique,
+
+00:02:54.400 --> 00:03:00.680
+so you may not want to use it just yet. Sometimes
+trying to be efficient too soon can cause
+
+00:03:00.680 --> 00:03:05.900
+problems. People have some pretty strange
+beliefs about efficiency, and sometimes things
+
+00:03:05.900 --> 00:03:10.550
+they do to try to be efficient make the program
+less efficient. There's a saying in video
+
+00:03:10.550 --> 00:03:16.330
+game development for example, that premature
+optimization is the root of all evil. It's
+
+00:03:16.330 --> 00:03:22.420
+a bit of an exaggeration. However, professional
+video game programmers generally believe it's
+
+00:03:22.420 --> 00:03:27.300
+better to find bottlenecks in the code and
+improving the real bottlenecks rather than
+
+00:03:27.300 --> 00:03:32.360
+trying to guess where they might be in the
+future. You may be wondering why I'm finally
+
+00:03:32.360 --> 00:03:38.629
+spilling the beans on the String class after
+months of secrecy. It's to make a point. The
+
+00:03:38.629 --> 00:03:44.560
+String class, one of the most carefully constructed
+and heavily used classes in Java, is so successful
+
+00:03:44.560 --> 00:03:49.379
+at concealing its inner workings that you
+had used the class for months before you discovered
+
+00:03:49.379 --> 00:03:55.909
+its secret. This is a particularly poignant
+example of what's called encapsulation. A
+
+00:03:55.909 --> 00:04:00.780
+detail of the String class was successful
+hidden inside the class. People who use this
+
+00:04:00.780 --> 00:04:06.989
+class had no idea how it was working. Now
+we've seen other examples of encapsulation.
+
+00:04:06.989 --> 00:04:12.659
+For example we studied ArrayList objects before
+we studied arrays. So we had no idea how the
+
+00:04:12.659 --> 00:04:16.930
+ArrayList was keeping track of the things
+that were added, deleted, replaced and shifted
+
+00:04:16.930 --> 00:04:22.150
+around. We drew pictures of what we imagined
+it to be—not surprisingly some of these
+
+00:04:22.150 --> 00:04:27.750
+pictures looked a lot like what we know recognize
+as arrays. These are outstanding examples
+
+00:04:27.750 --> 00:04:34.750
+of successful encapsulation. Let me give you
+another example of encapsulation. How, exactly,
+
+00:04:35.110 --> 00:04:40.930
+does data get written to a hard drive? We've
+done it with a scanner class, but this class
+
+00:04:40.930 --> 00:04:46.310
+uses regular expressions, yet another really
+amazingly neat part of computer science that
+
+00:04:46.310 --> 00:04:52.639
+we can't really talk about just yet. But even
+beyond that, hard drives rotate around. Writing
+
+00:04:52.639 --> 00:04:57.020
+to them involves getting to the right track,
+waiting for it to cycle around to be under
+
+00:04:57.020 --> 00:05:02.280
+the read head, and the time to let the disk
+rotate so we can read the data. We haven't
+
+00:05:02.280 --> 00:05:06.520
+talked about any of these things, even though
+we've been writing data out to hard drives
+
+00:05:06.520 --> 00:05:12.880
+for months. What's more, some of your computers
+probably have solid-state drives. So the details
+
+00:05:12.880 --> 00:05:17.639
+of writing to those drives are completely
+different. But we didn't use a different Java
+
+00:05:17.639 --> 00:05:23.970
+class to write when our computer had a solid-state
+drive instead of a disk drive, because writing
+
+00:05:23.970 --> 00:05:30.790
+to the hard disk is well encapsulated. Encapsulation
+has a long history in computer science. One
+
+00:05:30.790 --> 00:05:35.979
+of the most influential early books on software
+engineering, "The Mythical Man-Month: Essays
+
+00:05:35.979 --> 00:05:41.070
+on Software Engineering" by Frederick Brooks.
+Now you can tell it's old because it uses
+
+00:05:41.070 --> 00:05:46.850
+man-month instead of person-month, even has
+a chapter on encapsulation, even though it's
+
+00:05:46.850 --> 00:05:51.590
+the only chapter in the book that's generally
+agreed to be wrong now. Brooks argued that
+
+00:05:51.590 --> 00:05:57.050
+there must be someone, somewhere on a project
+that knows all the details. We now recognize
+
+00:05:57.050 --> 00:06:02.430
+that this isn't possible given the large scope
+of today's software products. Encapsulation
+
+00:06:02.430 --> 00:06:08.270
+is necessary because the number of details
+in a program is so large. So when we design
+
+00:06:08.270 --> 00:06:13.919
+our own classes we want to remember that the
+details need to be encapsulated. We really
+
+00:06:13.919 --> 00:06:18.479
+already have done this in one of our examples.
+Remember when we stored the phone number in
+
+00:06:18.479 --> 00:06:24.460
+the Contact class as an integer, even though
+the constructor accepted a String? The storage
+
+00:06:24.460 --> 00:06:29.850
+of the phone number was encapsulated. Another
+design principle we need to consider is that
+
+00:06:29.850 --> 00:06:35.419
+we need to provide people using our classes
+with complete sets of operations. Let's consider
+
+00:06:35.419 --> 00:06:41.130
+a class like ArrayList. The reason that we
+were able to use that class for so many things
+
+00:06:41.130 --> 00:06:46.539
+is that it offers us a complete set of operations.
+We can insert items at the end or in the middle
+
+00:06:46.539 --> 00:06:52.300
+of an ArrayList using add and addAll, we can
+delete items using remove, removeRange and
+
+00:06:52.300 --> 00:06:58.729
+clear. We can access individual items using
+get, we can modify individual items using
+
+00:06:58.729 --> 00:07:05.520
+set, we can search the ArrayList using contains,
+indexOf, and lastIndexOf. We were even given
+
+00:07:05.520 --> 00:07:10.569
+some methods that control the resizing of
+the array that's hidden inside the class.
+
+00:07:10.569 --> 00:07:14.840
+If the group of methods was missing something
+we needed, we would have to write our own
+
+00:07:14.840 --> 00:07:20.840
+class instead of reusing ArrayList. As a general
+rule, classes need to have a way for people
+
+00:07:20.840 --> 00:07:27.490
+using the class to get data that is not encapsulated
+out of the object. In our Contact class we
+
+00:07:27.490 --> 00:07:32.080
+didn't have a method that returned the phone
+number and stored it as an integer, but we
+
+00:07:32.080 --> 00:07:37.680
+did have a method to return the phone number
+as a String. That counts! When you're designing
+
+00:07:37.680 --> 00:07:42.449
+classes, you need to consider whether someone
+using the class needs to be able to access
+
+00:07:42.449 --> 00:07:47.780
+every data element or not. It's okay to have
+some secrets, just like the Intern table in
+
+00:07:47.780 --> 00:07:53.199
+the String class, but it has to be possible
+to use the class fully without knowing the
+
+00:07:53.199 --> 00:07:58.410
+secrets. Notice that our ignorance about interning
+String literals did not slow us down a bit
+
+00:07:58.410 --> 00:08:05.020
+in using String objects. Mutators are methods
+that change objects. Some classes have mutators
+
+00:08:05.020 --> 00:08:11.080
+and others do not. When a class does not have
+any mutators it's called immutable. Some of
+
+00:08:11.080 --> 00:08:17.139
+our favorite classes are immutable: Integer,
+Double, Character and String are all immutable.
+
+00:08:17.139 --> 00:08:23.020
+The StringBuilder class, however, is mutable.
+Notice that it has methods like append, delete,
+
+00:08:23.020 --> 00:08:29.030
+insert and replace. Determining whether a
+class in the Java API is mutable or immutable
+
+00:08:29.030 --> 00:08:34.119
+can require some detective work. Both the
+String and StringBuilder classes are pretty
+
+00:08:34.119 --> 00:08:40.339
+up front about this matter. The first sentence
+in the Java API tells it like it is. Remember
+
+00:08:40.339 --> 00:08:45.739
+this is nice when you Java doc your own classes.
+So when should a class be mutable and when
+
+00:08:45.739 --> 00:08:51.709
+should it be immutable? That can be a tough
+judgment call. If your objects are constantly
+
+00:08:51.709 --> 00:08:57.600
+changing, they certainly need to be mutable.
+But if the object changes only occasionally,
+
+00:08:57.600 --> 00:09:02.949
+remember that reconstruction is always possible.
+As an example, most people keep their names
+
+00:09:02.949 --> 00:09:08.670
+consistent over long periods of time. Yes,
+some people do change their name, particularly
+
+00:09:08.670 --> 00:09:13.509
+when they marry, but that's really a rare
+event. If you're not sure that a class needs
+
+00:09:13.509 --> 00:09:18.999
+to be mutable, it's usually best to make it
+immutable initially. If you need to add mutator
+
+00:09:18.999 --> 00:09:24.149
+methods later to make the class mutable, you
+can do that easily without breaking any existing
+
+00:09:24.149 --> 00:09:29.959
+code. But once you've put mutators in a class
+it is very difficult to backtrack and make
+
+00:09:29.959 --> 00:09:35.420
+the class immutable, because lots of code
+typically will have to be changed. If you
+
+00:09:35.420 --> 00:09:40.429
+can't make perfect decisions, and no one can,
+at least make decisions that can be fixed
+
+00:09:40.429 --> 00:09:45.199
+if they turn out to be an error. You may have
+noticed that in just a few months we've gone
+
+00:09:45.199 --> 00:09:49.869
+from worrying about to get single lines of
+code to work to getting groups of code to
+
+00:09:49.869 --> 00:09:55.449
+work like methods, and now classes and groups
+of classes. As you continue as a programmer
+
+00:09:55.449 --> 00:09:59.999
+and eventually become a Software Engineer,
+the process of arranging larger and larger
+
+00:09:59.999 --> 00:10:06.619
+groups of classes, called a package, and system
+components like databases will continue. Just
+
+00:10:06.619 --> 00:10:12.119
+as you learn to write letters, then words,
+then sentences, then essays in English classes,
+
+00:10:12.119 --> 00:10:17.699
+each level of increased complexity brings
+its own unique challenges. The general challenge
+
+00:10:17.699 --> 00:10:23.100
+of software engineering will always be finding
+ways to do more and more complicated things
+
+00:10:23.100 --> 00:10:28.499
+that people in our society want to do with
+computers as elegantly, reliably, correctly
+
+00:10:28.499 --> 00:10:29.999
+and securely as possible.
+

@@ -1,0 +1,37 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html lang="en"><head> <meta content="2015-12-11T16:56:47" http-equiv="last-modified" /> <meta content="1297" name="NTIRelativeScrollHeight" /> <meta content="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.cookie_program" name="NTIID" /> <meta content="NextThought" name="generator" /> <meta content="text/html; charset=ascii" http-equiv="content-type" /> <title>Cookie Program</title> <link href="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.car_rental_problem" rel="next" title="Car Rental Problem" /> <link href="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.and_operator" rel="prev" title="AND Operator" /> <link href="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.reading:Chortle_CH14" rel="up" title="Boolean Expressions" /> <link href="styles/styles.css" rel="stylesheet" /> <link href="styles/content.css" rel="stylesheet" /> </head> <body id="NTIContent"> <div class="page-contents"><div data-ntiid="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.cookie_program" id="a0000000414" ntiid="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.cookie_program"> <div class="chapter title">Cookie Program</div> <p class="placeholder"></p> <a name="a275174da6fdb10054b25e64faabef8e"></a> <div class="sidebar" data-ntiid="tag:nextthought.com,2011-10:OU-HTML:NTISidebar-CS1323_F_2015_Intro_to_Computer_Programming.sidebar.answer.98" ntiid="tag:nextthought.com,2011-10:OU-HTML:NTISidebar-CS1323_F_2015_Intro_to_Computer_Programming.sidebar.answer.98"> <div class="sidebar-title">Answer</div> <a name="48676de2ea35a08d8a6bd3a4174fc905"></a> <p class="par" id="48676de2ea35a08d8a6bd3a4174fc905"> The whole expression will be <i class="itshape">false</i>, because <b class="bfseries"><tt class="ttfamily">&amp;&amp;</tt></b> combines two <i class="itshape">falses</i> into <i class="itshape">false</i>. </p> <a name="a6b58ed7098509730005acbe8185fda7"></a> <pre>flour &gt;= 4 &amp;&amp; sugar &gt;= 2
+ ---------     --------
+   false   &amp;&amp;    false
+      ---------------
+          false 
+</pre> </div><a name="af30182906889550f911d24ffd145547"></a> <p class="par" id="af30182906889550f911d24ffd145547">In fact, as soon as the first <i class="itshape">false</i> is detected, you know that the entire expression must be <i class="itshape">false</i>, because <i class="itshape">false</i> AND anything is <i class="itshape">false</i>. </p> <a name="215a6b24cdd237d98225755e85044a32"></a> <pre>flour &gt;= 4 &amp;&amp; sugar &gt;= 2
+ ---------    ------------
+   false   &amp;&amp;  does not matter
+      ---------------
+          false 
+</pre><a name="6949c4bd1fc2934dc4712f7b3aae05ca"></a> <p class="par" id="6949c4bd1fc2934dc4712f7b3aae05ca">As an optimization, Java only evaluates an expression as far as needed to determine the value of the entire expression. When program runs, as soon as <b class="bfseries"><tt class="ttfamily">flour &gt;= 4</tt></b> is found to be <i class="itshape">false</i>, the entire expression is known to be <i class="itshape">false</i>, and the <i class="itshape">false</i> branch of the <i class="itshape">if</i> statement is taken. This type of optimization is called <b class="bfseries">short-circuit evaluation</b>. (See the chapter on this topic.) </p> <a name="a1dbc965755345cfec49b8211bbb3ddb"></a> <p class="par" id="a1dbc965755345cfec49b8211bbb3ddb">Here is a full Java version of the cookie program. </p> <a name="741ec776f5546ad7c3465979ad1de36a"></a> <pre>// Cookie Ingredients Checker
+//
+import java.util.Scanner;
+class CookieChecker
+{
+  public static void main (String[] args) 
+  { 
+    // Declare a Scanner and two integer variables
+    Scanner scan = new Scanner( System.in );
+    int sugar, flour; 
+
+    // get the number of cups of flour
+    System.out.println("How much flour do you have?");
+    flour = scan.nextInt(); 
+
+    // get the number of cups of sugar
+    System.out.println("How much sugar do you have?");
+    sugar = scan.nextInt(); 
+
+    // check that there are enough of both ingredients
+    if ( flour &gt;= 4 &amp;&amp; sugar &gt;= 2 )
+      System.out.println("Enough for cookies!" );
+    else
+      System.out.println("sorry...." );
+  }
+}
+</pre><a name="8e8d7a96b6a151c04f91f949abde3154"></a> <p class="par" id="8e8d7a96b6a151c04f91f949abde3154">Try the program with various values of flour and sugar to check that you understand how AND works. </p> <a name="dab3b0b354979baba3814c1babed1f2e"></a> <div class="sidebar" data-ntiid="tag:nextthought.com,2011-10:OU-HTML:NTISidebar-CS1323_F_2015_Intro_to_Computer_Programming.sidebar.question.103" ntiid="tag:nextthought.com,2011-10:OU-HTML:NTISidebar-CS1323_F_2015_Intro_to_Computer_Programming.sidebar.question.103"> <div class="sidebar-title">Question</div> Try the program with <b class="bfseries">exactly</b> enough flour and sugar. Can you bake cookies? </div> </div></div> </body></html>

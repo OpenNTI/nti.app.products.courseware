@@ -1,0 +1,608 @@
+WEBVTT
+Kind: captions
+Language: en
+
+00:00:01.140 --> 00:00:05.560
+&gt;&gt;Now that we have classes and arrays, we
+can start to do more advanced designs. We've
+
+00:00:05.560 --> 00:00:11.270
+been using UML to simplify the design process.
+One of the big advantages of a tool like UML
+
+00:00:11.270 --> 00:00:15.360
+is that is makes it possible to think through
+what classes will look like and how they will
+
+00:00:15.360 --> 00:00:21.289
+relate to each other without actually programming
+them first. Changing designs before implementation
+
+00:00:21.289 --> 00:00:27.749
+is much easier than changing code after implementation.
+Once a class is programmed it's very tempting
+
+00:00:27.749 --> 00:00:33.149
+to keep it, even when it's imperfect, rather
+than throw it out and start over. In fact,
+
+00:00:33.149 --> 00:00:39.760
+this happens in Java 2. Check out the documentation
+for the Date class in the Java.util package.
+
+00:00:39.760 --> 00:00:46.239
+You'll see four constructors and seventeen
+methods marked in big, bold letters as deprecated.
+
+00:00:46.239 --> 00:00:50.280
+Deprecation is a threat from the people that
+make Java that future versions of Java may
+
+00:00:50.280 --> 00:00:55.219
+not contain these methods and that you shouldn't
+use them, even though the methods are currently
+
+00:00:55.219 --> 00:01:00.960
+in Java and can be used. Now I don't take
+this particular threat very seriously, because
+
+00:01:00.960 --> 00:01:06.350
+these methods have been deprecated since Java
+version 1.1. This version of Java came out
+
+00:01:06.350 --> 00:01:12.570
+in 1997, now too long after some of you were
+born. So what happened to the Date class?
+
+00:01:12.570 --> 00:01:17.799
+Well the original Date class had three main
+goals: It kept track of a particular millisecond
+
+00:01:17.799 --> 00:01:23.399
+of time, it allowed that particular millisecond
+of time to be interpreted as days, months
+
+00:01:23.399 --> 00:01:28.630
+and years, and it interpreted and formatted
+dates as Strings. That's too much work for
+
+00:01:28.630 --> 00:01:34.790
+one class, but there's a deeper problem. Java
+was designed to be used in software around
+
+00:01:34.790 --> 00:01:39.799
+the world. Just as different countries use
+different languages, calendars are also not
+
+00:01:39.799 --> 00:01:45.700
+completely standardized. By mixing together
+the millisecond in time and the Western, Gregorian
+
+00:01:45.770 --> 00:01:50.750
+calendar interpretation of time as dates,
+the Java language was made unable to work
+
+00:01:50.750 --> 00:01:55.369
+with other kinds of calendars - and that wasn't
+going to cut it for a computer language whose
+
+00:01:55.369 --> 00:02:01.789
+founder correctly had international ambitions.
+Being international means giving every language,
+
+00:02:01.789 --> 00:02:07.420
+every culture and every calendar the ability
+to be expressed. Java had not been out very
+
+00:02:07.420 --> 00:02:12.310
+long when this design error was discovered.
+New classes were created to break up this
+
+00:02:12.310 --> 00:02:18.970
+work into separate classes, date still stores
+a millisecond of time, Gregorian calendar
+
+00:02:18.970 --> 00:02:24.379
+interprets that millisecond of time in years,
+days, months and so on, and other classes
+
+00:02:24.379 --> 00:02:30.260
+interpret the date in other calendar systems,
+including Hebrew, Islamic and Japanese Imperial
+
+00:02:30.260 --> 00:02:35.800
+calendars. The work of interpreting and formatting
+dates as Strings is done by DateFormat. The
+
+00:02:35.800 --> 00:02:40.550
+valuable lesson here is that more than 15
+years after the initial design mistake was
+
+00:02:40.550 --> 00:02:46.940
+made in the Date class, it still infects Java
+programs. Why don't the owners of Java just
+
+00:02:46.940 --> 00:02:51.550
+remove the methods and be done with it? Well,
+that would break every program that had used
+
+00:02:51.550 --> 00:02:57.170
+the functions that are now in Gregorian calendar
+and DateFormat. While every decent Java programmer
+
+00:02:57.170 --> 00:03:01.590
+knows how to fix this problem, the number
+of lines of code that would require maintenance
+
+00:03:01.590 --> 00:03:07.860
+is staggering, so the methods remain in Java.
+The lesson I want you to take from this is
+
+00:03:07.860 --> 00:03:13.549
+that design mistakes can last a very long
+time, so it pays to design carefully and thoughtfully.
+
+00:03:13.549 --> 00:03:20.069
+So, how do you design a larger program? Let's
+work though an example. Suppose we want to
+
+00:03:20.069 --> 00:03:25.500
+write Twitter. Wow, that sounds ambitious!
+Let's get a start and see how complicated
+
+00:03:25.500 --> 00:03:31.110
+it is. We may have to leave out some features.
+I start by identifying the classes that I'll
+
+00:03:31.110 --> 00:03:36.540
+use. Remember that classes are generally nouns.
+When I look at the Twitter interface I see
+
+00:03:36.540 --> 00:03:42.689
+people first. That's one class that we will
+certainly need. I also see tweets. This is
+
+00:03:42.689 --> 00:03:48.890
+a noun, and hence it's likely to be another
+class. Our design now contains two classes.
+
+00:03:48.890 --> 00:03:53.099
+One of the great things about UML is that
+you don't have to show every detail and every
+
+00:03:53.099 --> 00:03:59.769
+diagram. It's okay just to use class names,
+or class names and some data, or to show everything.
+
+00:03:59.769 --> 00:04:05.930
+This is wonderful for design. Other nouns
+that are visible are followers and following.
+
+00:04:05.930 --> 00:04:11.030
+Both followers and following are Arrays of
+People. Before we go too far forward, we should
+
+00:04:11.030 --> 00:04:15.879
+consider whether followers and following should
+be Arrays of People inside the People class,
+
+00:04:15.879 --> 00:04:20.920
+or whether they should be a separate class
+with a reference inside the People class.
+
+00:04:20.920 --> 00:04:27.270
+These two alternatives are shown in the design.
+Are there other alternatives? Well absolutely!
+
+00:04:27.270 --> 00:04:32.410
+For example our followers and following classes
+are looking awfully similar. Maybe they should
+
+00:04:32.410 --> 00:04:38.540
+just be one class that represents some group
+of People objects. Consider this design: we've
+
+00:04:38.540 --> 00:04:43.630
+recognized the similarity between followers
+and following by making both of these objects
+
+00:04:43.630 --> 00:04:49.870
+of class Group. We now have three designs,
+and we could certainly come up with more.
+
+00:04:49.870 --> 00:04:54.460
+So here's one secret to being a good Software
+Designer -- consider lots of alternatives.
+
+00:04:54.460 --> 00:04:59.840
+I have a friend who's a professor of architecture,
+so while I'm teaching students how to design
+
+00:04:59.840 --> 00:05:04.600
+and build software, he's teaching students
+how to design and build buildings and spaces.
+
+00:05:04.600 --> 00:05:09.250
+There are similarities, believe it or not.
+He pointed out to me that architects have
+
+00:05:09.250 --> 00:05:14.460
+come to understand that when you describe
+a design project to an architect, the first
+
+00:05:14.460 --> 00:05:20.030
+four designs they do are pretty mundane. Designs
+five to seven tend to be where the really
+
+00:05:20.030 --> 00:05:25.500
+creative and interesting solutions are. After
+seven designs the new designs tend to just
+
+00:05:25.500 --> 00:05:30.940
+be re-combinations of old designs, and you
+don't get much new creativity. One of the
+
+00:05:30.940 --> 00:05:36.120
+biggest mistakes that new programmers make
+is to implement code too soon, instead of
+
+00:05:36.120 --> 00:05:41.180
+working on more creative and better designs.
+Now you may be thinking that you need to get
+
+00:05:41.180 --> 00:05:45.200
+coding, you know, since your project is due?
+And that's true, particularly if you put the
+
+00:05:45.200 --> 00:05:49.880
+project off until the last minute, but a good
+design will make coding so much easier that
+
+00:05:49.880 --> 00:05:55.900
+it's worth waiting for. You may be wondering
+which of our three designs is best? The truth
+
+00:05:55.900 --> 00:06:01.000
+is, we don't know just yet. Putting everything
+in one class certainly looks simple. There's
+
+00:06:01.000 --> 00:06:05.120
+nothing wrong with simplicity, but because
+we've been working with just one class for
+
+00:06:05.120 --> 00:06:10.480
+so long it sometimes seems comfortable, and
+there is something wrong with letting one
+
+00:06:10.480 --> 00:06:15.860
+class do all the work if the program is non-trivial.
+When classes get too large they're harder
+
+00:06:15.860 --> 00:06:22.130
+to understand, write and maintain. By the
+way, Twitter is non-trivial. All the data
+
+00:06:22.130 --> 00:06:28.810
+in followers and following appears to be identical.
+Are the whole classes really the same? Well,
+
+00:06:28.810 --> 00:06:32.640
+when you have followers you send all your
+tweets to them, and when you're following
+
+00:06:32.640 --> 00:06:37.870
+someone all of their tweets get sent to you.
+These are very different things. So the only
+
+00:06:37.870 --> 00:06:41.790
+design that I would rule out immediately is
+the one where followers and following were
+
+00:06:41.790 --> 00:06:47.010
+both abstracted intro Group. These classes
+may have similar data, but they don't have
+
+00:06:47.010 --> 00:06:52.040
+the same function. So it looks like our second
+design is the best design for now, but we
+
+00:06:52.040 --> 00:06:56.240
+don't want to throw away these other designs
+just yet. We can work on the second design
+
+00:06:56.240 --> 00:07:01.030
+and return to the other design if we run into
+problems. Let's think a little more about
+
+00:07:01.030 --> 00:07:07.060
+the Person class. People have names, a Twitter
+address that begins with an @ sign, descriptors,
+
+00:07:07.060 --> 00:07:13.430
+a location and a URL. We can see the data
+fields very well in the user interface. We
+
+00:07:13.430 --> 00:07:19.370
+translate these fields directly to UML. Immediately
+there are some tough questions. Should the
+
+00:07:19.370 --> 00:07:23.950
+descriptors be a single String or an Array
+of Strings? Should the location contain a
+
+00:07:23.950 --> 00:07:29.990
+city and a state, or should it just be a generic
+String? It is so easy to just slap String
+
+00:07:29.990 --> 00:07:36.270
+in there and move on, but resist that temptation.
+Slow down, think it through carefully. When
+
+00:07:36.270 --> 00:07:40.870
+I'm designing I leave three question marks
+in places where I need to carefully consider
+
+00:07:40.870 --> 00:07:46.180
+decisions rather than just making quick choices.
+If I think I know the correct choice but I'm
+
+00:07:46.180 --> 00:07:51.240
+not really sure, I put in the choice and I
+follow it by a single question mark. Of course
+
+00:07:51.240 --> 00:07:56.110
+this is my system and you may find other ways
+to design. The critical matter is not to make
+
+00:07:56.110 --> 00:08:01.670
+decisions without thinking them through carefully.
+So let's think about the descriptor. Why does
+
+00:08:01.670 --> 00:08:06.930
+Twitter have these descriptors? Is it possible
+to search by them? Now I actually don't know
+
+00:08:06.930 --> 00:08:11.500
+the answer to this question on Twitter, so
+I'm going to think about what would be better
+
+00:08:11.500 --> 00:08:16.490
+no matter what Twitter chose to do. What's
+the benefit of using an ArrayList of Strings
+
+00:08:16.490 --> 00:08:23.310
+or a single String? Well, suppose I was looking
+for another quilter to follow. Is it easier
+
+00:08:23.310 --> 00:08:29.120
+or faster to search an ArrayList of Strings
+or to use contains with a single String? Well
+
+00:08:29.120 --> 00:08:33.940
+we learned something about contains list earlier
+in the chapter that may help us out. If we
+
+00:08:33.940 --> 00:08:39.650
+interned our String objects, comparing two
+Strings would just be comparing references—that
+
+00:08:39.650 --> 00:08:45.320
+is a very cheap operation. I know I told you
+that was advanced programming just a few days
+
+00:08:45.320 --> 00:08:50.090
+ago, but we've learned a lot since then. Of
+course we still have to decide if we want
+
+00:08:50.090 --> 00:08:55.510
+an Array or an ArrayList of Strings. The critical
+matter here is whether we can fix the size
+
+00:08:55.510 --> 00:09:01.450
+of the Array. If we can we should use an Array,
+if we can't an ArrayList of Strings may be
+
+00:09:01.450 --> 00:09:08.040
+a better choice. Well in pretty much all online
+software like this, particularly free things,
+
+00:09:08.040 --> 00:09:13.510
+size limitations are well accepted. We can
+give our people a fixed number of descriptors,
+
+00:09:13.510 --> 00:09:17.930
+we'll just be sure to use a constant so we
+can fix this later if our choice is wrong.
+
+00:09:17.930 --> 00:09:23.770
+I put four descriptors in my profile, so let's
+allow ten. It'll be hard to fit more than
+
+00:09:23.770 --> 00:09:29.240
+that on the screen anyways. This design decision
+is shown in UML be removing the question marks
+
+00:09:29.240 --> 00:09:34.000
+from the descriptor and putting in a String
+Array, and then adding a static constant that
+
+00:09:34.000 --> 00:09:40.090
+I call Descriptor Size. Remember that in UML
+static numbers are constants, that it's in
+
+00:09:40.090 --> 00:09:45.930
+all caps tells you that it's a constant too.
+Now let's think about the location. Twitter
+
+00:09:45.930 --> 00:09:51.960
+is used by people all over the world. While
+city is a fairly universal term, not all countries
+
+00:09:51.960 --> 00:09:56.840
+have states, and we certainly don't want to
+assume that everyone is from the U. S. -- so
+
+00:09:56.840 --> 00:10:01.400
+it may be best to leave the location as a
+single String and let each person decide how
+
+00:10:01.400 --> 00:10:07.410
+they wish to represent their location. For
+example, I didn't put U.S.A in my profile,
+
+00:10:07.410 --> 00:10:12.200
+although in retrospect it might've been smarter
+to do so. I created my Twitter account to
+
+00:10:12.200 --> 00:10:17.890
+tweet assignment reminders to my students.
+All my students are in Oklahoma, in the U.S.A,
+
+00:10:17.890 --> 00:10:24.530
+or at least they used to be. Now let's flesh
+out a tweet. Tweets contain text and can contain
+
+00:10:24.530 --> 00:10:30.190
+other person's IDs and hashtags. Twitter shows
+my most recent tweets on the interface, so
+
+00:10:30.190 --> 00:10:34.750
+it's clear that the Person class is going
+to need to hold an Array or an ArrayList of
+
+00:10:34.750 --> 00:10:39.170
+tweets. We might consider whether the tweet
+class should contain a reference to the person
+
+00:10:39.170 --> 00:10:44.190
+who generated the tweet. Since the person
+who tweeted is displayed when the tweet appears
+
+00:10:44.190 --> 00:10:50.430
+on other people's home pages, the tweet needs
+to have this field. Here's a preliminary design.
+
+00:10:50.430 --> 00:10:55.630
+There are still some question marks in the
+design: do I want an Array or an ArrayList
+
+00:10:55.630 --> 00:11:00.440
+for the connections in each tweet? It seems
+reasonable to limit the number of connections
+
+00:11:00.440 --> 00:11:06.050
+that can be made in a single tweet. After
+all, tweets are limited to 140 characters,
+
+00:11:06.050 --> 00:11:10.650
+so limiting the connections is reasonable.
+Let's limit it to five connections and stick
+
+00:11:10.650 --> 00:11:16.960
+with the Array. Hashtags should also be an
+Array—but an Array of what? Is this a separate
+
+00:11:16.960 --> 00:11:22.790
+class or just another String? Since Twitter
+keeps track of which hashtags are most popular,
+
+00:11:22.790 --> 00:11:29.410
+called trending, hashtags are not just another
+String. We've found another class. Now obviously
+
+00:11:29.410 --> 00:11:34.140
+this design is getting much larger than the
+previous designs that we've done. If we want
+
+00:11:34.140 --> 00:11:38.840
+to keep going, we may end up with fifteen
+or twenty classes in our design. That would
+
+00:11:38.840 --> 00:11:43.880
+be overwhelming, so now is the time to do
+one of the hardest and most important things
+
+00:11:43.880 --> 00:11:49.790
+any programmer can do -- we're going to control
+the scope of our project. We were overly ambitious
+
+00:11:49.790 --> 00:11:55.110
+when we set out to implement all of Twitter,
+so let's cut back on our design. Let's not
+
+00:11:55.110 --> 00:12:00.620
+worry about hashtags and connections for now.
+Let's ignore followers and following, and
+
+00:12:00.620 --> 00:12:06.440
+let's just let person objects tweet to themselves.
+We haven't handled multiple person objects
+
+00:12:06.440 --> 00:12:10.740
+just yet, and we should. Since we don't want
+to fix the number of people that can use our
+
+00:12:10.740 --> 00:12:16.040
+twitter we'll want to create a class that
+keeps track of all the people using Twitter.
+
+00:12:16.040 --> 00:12:21.279
+This class's data would contain an ArrayList
+of Person, and I've called it Accounts. Our
+
+00:12:21.279 --> 00:12:26.750
+simplified design is shown. This is now well
+within the range of what you should be able
+
+00:12:26.750 --> 00:12:32.630
+to program. We have the design for the classes
+and data, but we haven't chosen the methods.
+
+00:12:32.630 --> 00:12:36.880
+Just as we considered every class and data
+element, we would need to work with the methods
+
+00:12:36.880 --> 00:12:43.880
+with a fine-tooth comb: one method, one parameter,
+one operation at a time. I'll leave that part
+
+00:12:44.060 --> 00:12:48.529
+of the adventure for you to work on on your
+own. You may want to compare your design to
+
+00:12:48.529 --> 00:12:52.630
+a friend's design and see how they are the
+same and different. Pick the best parts of
+
+00:12:52.630 --> 00:12:57.520
+both designs before you start to implement
+either one, and do not increase the scope
+
+00:12:57.520 --> 00:13:03.610
+of this project until you have a simple version
+working perfectly. Just like it took months
+
+00:13:03.610 --> 00:13:08.600
+to build up programming skills, it'll take
+time to build up design skills, and just like
+
+00:13:08.600 --> 00:13:14.180
+programming there's no substitute for practice.
+No professional programmer creates programs
+
+00:13:14.180 --> 00:13:19.800
+without designing them first, and most professionals
+do design reviews where they ask another programmer
+
+00:13:19.800 --> 00:13:25.900
+to look at their design and suggest changes
+before they implement any code. It takes discipline,
+
+00:13:25.900 --> 00:13:31.490
+but it's worth it. I consider design to be
+the most fun element of programming, since
+
+00:13:31.490 --> 00:13:34.069
+it's one of the most creative and challenging
+elements.
+

@@ -1,0 +1,195 @@
+WEBVTT
+Kind: captions
+Language: en
+
+00:00:00.610 --> 00:00:04.130
+In order to store data in a computer, we have
+to know the different kinds of data that are
+
+00:00:04.130 --> 00:00:08.380
+out there. You've probably heard that everything
+that's stored in a computer is just zeros
+
+00:00:08.380 --> 00:00:13.110
+and ones, and that's true, but it would be
+hard to program that way. So we group the
+
+00:00:13.110 --> 00:00:17.990
+zeros and ones together into groups that we
+can understand, and that makes it easier to
+
+00:00:17.990 --> 00:00:22.030
+program. The first category of data we're
+going to use are integral numbers. We call
+
+00:00:22.030 --> 00:00:27.910
+those int in programming. So these are counting
+numbers like 1, 2, and 3. You can recognize
+
+00:00:27.910 --> 00:00:33.180
+them because they don't have any decimal point.
+We'll also use numbers with decimal points.
+
+00:00:33.180 --> 00:00:39.130
+Those are called double in programming. Int
+versus double is very important. So in mathematics
+
+00:00:39.130 --> 00:00:43.360
+2 and 2.0 are the same thing. In computer
+science they're not. They're from different
+
+00:00:43.360 --> 00:00:48.290
+categories. So you have to pay attention to
+that. There are two different ways to store
+
+00:00:48.290 --> 00:00:53.270
+words. One is called char, and the other is
+called string. A char is a single character,
+
+00:00:53.270 --> 00:00:59.290
+and a string is a group of characters together.
+To store data you have to decide what category
+
+00:00:59.290 --> 00:01:01.710
+to use and give it a name so you can find
+it.
+
+00:01:01.710 --> 00:01:07.990
+So we could say, for example, int textMessagesReceived.
+The reason I picked int is because text messages
+
+00:01:07.990 --> 00:01:14.990
+are integral, that is, you receive 1 or 2
+or 3. You don't receive 2.3 text messages.
+
+00:01:15.040 --> 00:01:20.210
+The variable name textMessagesReceived is
+in what we call camel case because the top
+
+00:01:20.210 --> 00:01:25.390
+of it looks like the humps on a camel. The
+trick to camel case is that you put the words
+
+00:01:25.390 --> 00:01:31.640
+together without spaces and you make the first
+letter of subsequent words start with a capital
+
+00:01:31.640 --> 00:01:36.390
+letter. That way you can read the words a
+little bit more easily. Now what this does
+
+00:01:36.390 --> 00:01:41.689
+is sets aside one location in memory and gives
+it a special name. Only one thing can be stored
+
+00:01:41.689 --> 00:01:46.170
+at this location at any time, so if you store
+something else there, you lose the thing that
+
+00:01:46.170 --> 00:01:51.619
+was stored there initially. That can be frustrating
+in programming sometimes.
+
+00:01:51.619 --> 00:01:56.090
+To put data in the computer, we use an assignment
+statement. With assignment statements, the
+
+00:01:56.090 --> 00:01:59.840
+left-hand side and the right-hand side are
+different. On the left-hand side there's a
+
+00:01:59.840 --> 00:02:05.619
+location. On the right-hand side there's a
+value. So if, for example, we said int textMessagesReceived
+
+00:02:05.619 --> 00:02:11.620
+= 4; we would take the value 4 and store it
+in the text messages received location. Now
+
+00:02:11.620 --> 00:02:16.200
+this looks like math, but it isn't. And this
+is a place where computer science and math
+
+00:02:16.200 --> 00:02:22.510
+are really different. We could create another
+location by saying int phoneCalls = 5;. If
+
+00:02:22.510 --> 00:02:27.480
+we wanted to take the value in phone calls
+and put it in text messages, we would say
+
+00:02:27.480 --> 00:02:33.400
+int textMessagesReceived = phoneCalls;. This
+takes the value 5 and stores it in the location
+
+00:02:33.400 --> 00:02:39.700
+textMessagesReceived. The data that was there
+previously is lost, and we can't get it back.
+
+00:02:39.700 --> 00:02:45.099
+Once we have data stored in memory, we can
+manipulate it by performing mathematical operations.
+
+00:02:45.099 --> 00:02:49.500
+When you do this, you have to pay attention
+to int and double because they really matter.
+
+00:02:49.500 --> 00:02:54.410
+The common arithmetic operations are very
+similar. Plus and minus, for example, mean
+
+00:02:54.410 --> 00:03:00.530
+addition and subtraction. Asterisk means multiplication,
+so that's a little bit different. The other
+
+00:03:00.530 --> 00:03:04.790
+thing that's different is you always have
+to use asterisk. So you've probably seen in
+
+00:03:04.790 --> 00:03:10.879
+your algebra classes things like 3 times X,
+which you write 3X, but you can't do that
+
+00:03:10.879 --> 00:03:16.950
+in programming. You have to say 3*X. This
+is an example of the computer being very literal.
+
+00:03:16.950 --> 00:03:22.760
+There is a twist on this however. The data
+type matters. When you add together two integral
+
+00:03:22.760 --> 00:03:27.680
+values, you get an integral value. When you
+add together two doubles, you get a double.
+
+00:03:27.680 --> 00:03:31.300
+You actually knew that from your arithmetic
+because you know if you add two things that
+
+00:03:31.300 --> 00:03:36.510
+have fractional parts that you're probably
+going to get something with a fractional part.
+
+00:03:36.510 --> 00:03:41.760
+You can add an int to a double too. What happens
+is the int gets promoted to a double, and
+
+00:03:41.760 --> 00:03:45.379
+then it's added as if they were two doubles,
+so you end up with something that has a decimal
+
+00:03:45.379 --> 00:03:50.269
+point in it. There are other things that we
+can do in programming too. We can interact
+
+00:03:50.269 --> 00:03:55.629
+with users. We can read in data from the keyboard.
+We can write out data to the screen, and when
+
+00:03:55.629 --> 00:04:00.000
+we put this all together, we'll be able to
+write simple programs. Start reading and doing
+
+00:04:00.000 --> 00:04:02.020
+interactive exercises to learn more.
+

@@ -1,0 +1,23 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html lang="en"><head> <meta content="2015-12-11T16:56:47" http-equiv="last-modified" /> <meta content="913" name="NTIRelativeScrollHeight" /> <meta content="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.reading:Chortle_CH9C_2" name="NTIID" /> <meta content="NextThought" name="generator" /> <meta content="text/html; charset=ascii" http-equiv="content-type" /> <title>Running a Method</title> <link href="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.dot_notation" rel="next" title="Dot Notation" /> <link href="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.blocker.6" rel="prev" title="Blocker" /> <link href="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.introduction_to_computer_programming" rel="up" title="Introduction to Computer Programming" /> <link href="styles/styles.css" rel="stylesheet" /> <link href="styles/content.css" rel="stylesheet" /> </head> <body id="NTIContent"> <div class="page-contents"><div data-ntiid="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.reading:Chortle_CH9C_2" id="reading:Chortle_CH9C_2" ntiid="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.reading:Chortle_CH9C_2"> <div class="chapter title">Running a Method</div> <p class="placeholder"></p> <p class="par"> <a name="reading:Chortle_CH9C_2"></a> </p> <a name="a81c128cac7c78187143a584721147e1"></a> <p class="par" id="a81c128cac7c78187143a584721147e1">Here is the example program, now with additional statements: </p> <a name="7e68a04d0deadb34bbb252310728a67e"></a> <pre>class StringDemo2
+{
+  public static void main ( String[] args )
+  {
+    String str;
+    int    len;
+
+    str = new String( "Elementary, my dear Watson!" );
+
+    len = str.length();    // call the length() method of the object
+
+    System.out.println("The length is: " + len );
+
+  }
+}
+</pre><a name="37a4ae87d81937c2bc719136bf677219.193"></a> <p class="par" id="37a4ae87d81937c2bc719136bf677219.193">The expression </p> <a name="276fd8095636a9e898ccfd0618ef5724"></a> <blockquote class="quote"> <tt class="ttfamily">str.length();</tt> </blockquote><a name="f22d27aed47b9a955451a689dbe0c586"></a> <p class="par" id="f22d27aed47b9a955451a689dbe0c586">runs the <b class="bfseries"><tt class="ttfamily">length()</tt></b> method of the object referred to by <b class="bfseries"><tt class="ttfamily">str</tt></b>. This method counts the number of characters in the data of the object. In our object, it counts the number of characters in "Elementary, my dear Watson!" which is 27. That value is then assigned to the <b class="bfseries"><tt class="ttfamily">int</tt></b> variable <b class="bfseries"><tt class="ttfamily">len</tt></b>. Space characters and punctuation characters are included in the length of a string. </p> <a name="7097e600e2f69308b88b32fcdbd09b8d"></a> <p class="par" id="7097e600e2f69308b88b32fcdbd09b8d"><b class="bfseries">Calling a method</b> means asking a method to run. This program <i class="itshape">called</i> the <b class="bfseries"><tt class="ttfamily">length()</tt></b> method. (Sometimes the phrase <b class="bfseries">invoking a method</b> is used to mean the same thing.) </p> <a name="e081952eea85a5fc3a7bc2cbb2fd8b3e"></a> <div class="sidebar" data-ntiid="tag:nextthought.com,2011-10:OU-HTML:NTISidebar-CS1323_F_2015_Intro_to_Computer_Programming.sidebar.question.53" ntiid="tag:nextthought.com,2011-10:OU-HTML:NTISidebar-CS1323_F_2015_Intro_to_Computer_Programming.sidebar.question.53"> <div class="sidebar-title">Question</div> <a name="875ffb53b8d50efbb7a3b34dce465203"></a> <p class="par" id="875ffb53b8d50efbb7a3b34dce465203"> Complete the last line of of the analogy: </p> <a name="c23db14029e2d7bed0b5b67c2f89f241"></a> <pre>object        you
+
+reference     your cell phone number
+
+variable      piece of paper with your cell phone number written on it
+
+method call   ???
+</pre> </div> </div></div> </body></html>

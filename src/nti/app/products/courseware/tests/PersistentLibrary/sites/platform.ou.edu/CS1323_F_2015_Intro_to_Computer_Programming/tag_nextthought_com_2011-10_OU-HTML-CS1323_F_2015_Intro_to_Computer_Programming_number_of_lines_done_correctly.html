@@ -1,0 +1,30 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html lang="en"><head> <meta content="2015-12-11T16:56:47" http-equiv="last-modified" /> <meta content="1024" name="NTIRelativeScrollHeight" /> <meta content="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.number_of_lines_done_correctly" name="NTIID" /> <meta content="NextThought" name="generator" /> <meta content="text/html; charset=ascii" http-equiv="content-type" /> <title>Number of Lines Done Correctly</title> <link href="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.printing_a_row_of_stars" rel="next" title="Printing a Row of Stars" /> <link href="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.counting_loop_for_lines" rel="prev" title="Counting Loop for Lines" /> <link href="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.reading:Chortle_CH17" rel="up" title="Nesting Loops and Ifs" /> <link href="styles/styles.css" rel="stylesheet" /> <link href="styles/content.css" rel="stylesheet" /> </head> <body id="NTIContent"> <div class="page-contents"><div data-ntiid="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.number_of_lines_done_correctly" id="a0000000464" ntiid="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.number_of_lines_done_correctly"> <div class="chapter title">Number of Lines Done Correctly</div> <p class="placeholder"></p> <a name="9b5f44c0e4c0bc95c1a00c76e6e6721e"></a> <div class="sidebar" data-ntiid="tag:nextthought.com,2011-10:OU-HTML:NTISidebar-CS1323_F_2015_Intro_to_Computer_Programming.sidebar.answer.145" ntiid="tag:nextthought.com,2011-10:OU-HTML:NTISidebar-CS1323_F_2015_Intro_to_Computer_Programming.sidebar.answer.145"> <div class="sidebar-title">Answer</div> The program, with a correct outer loop, is below. </div><a name="28fd8c0ea097c18cfb92ee6ba4c69e1d"></a> <p class="par" id="28fd8c0ea097c18cfb92ee6ba4c69e1d">If ( <i class="itshape">more stuff goes here</i> ) somehow printed a row of <b class="bfseries"><tt class="ttfamily">numStars</tt></b> stars, the program would be finished. </p> <a name="2ee5b8c88617893350d3978231fefa06"></a> <pre>import java.util.Scanner;
+//
+class StarBlock
+{
+  public static void main (String[] args ) 
+  {
+    Scanner scan = new Scanner( System.in );
+    int numRows;      // the number of Rows
+    int numStars;     // the number of stars per row
+    int row;          // current row number
+
+    // collect input data from user
+    System.out.print( "How many Rows? " );
+    numRows = scan.nextInt() ;
+
+    System.out.print( "How many Stars per Row? " );
+    numStars = scan.nextInt() ;
+
+    row  =  1;
+    while ( row &lt;= numRows )    
+    {
+
+      ( more stuff goes here )
+
+      System.out.println();
+      row = row + 1;
+    }
+  }
+}
+</pre><a name="13be20ce38e3d85302b569d33e3a2d01"></a> <p class="par" id="13be20ce38e3d85302b569d33e3a2d01">Now you must perform one of the most important tasks in computer programming: ignoring the big problem and looking at a little problem. </p> <a name="c47a9aa3a92fea44dcd7b18064719848"></a> <div class="sidebar" data-ntiid="tag:nextthought.com,2011-10:OU-HTML:NTISidebar-CS1323_F_2015_Intro_to_Computer_Programming.sidebar.question.151" ntiid="tag:nextthought.com,2011-10:OU-HTML:NTISidebar-CS1323_F_2015_Intro_to_Computer_Programming.sidebar.question.151"> <div class="sidebar-title">Question</div> Clear you mind of all thoughts about the big program. Just think about the little problem. How would you print a row of <b class="bfseries"><tt class="ttfamily">numStars</tt></b> stars, one star at a time? </div> </div></div> </body></html>

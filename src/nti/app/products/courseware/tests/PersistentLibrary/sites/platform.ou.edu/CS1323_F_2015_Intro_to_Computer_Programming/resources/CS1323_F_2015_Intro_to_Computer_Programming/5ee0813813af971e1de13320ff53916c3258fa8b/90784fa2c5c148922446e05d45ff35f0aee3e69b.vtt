@@ -1,0 +1,1812 @@
+WEBVTT
+Kind: captions
+Language: en
+
+00:00:00.640 --> 00:00:04.240
+&gt;&gt;Let's continue our study of creating new
+classes by considering something that's near
+
+00:00:04.240 --> 00:00:10.660
+and dear to my heart, and that's Greyhound
+adoption. So here's the problem statement.
+
+00:00:10.660 --> 00:00:14.830
+Let's write a program that will improve the
+way that racing Greyhound rescue groups list
+
+00:00:14.830 --> 00:00:19.849
+their adoptable dogs. This would allow people
+to search for dogs and refine their search
+
+00:00:19.849 --> 00:00:25.939
+by considering gender, age, whether the dog
+is good with kids, cats, and small dogs. These
+
+00:00:25.939 --> 00:00:31.249
+are issues that come up particularly with
+Greyhounds. So let's design some test data.
+
+00:00:31.249 --> 00:00:35.250
+Well, we know we're going to need to save
+and retrieve data on the dogs from a file
+
+00:00:35.250 --> 00:00:41.019
+and we're going to need to be able to search
+on each category individually. We're also
+
+00:00:41.019 --> 00:00:46.059
+going to need to be able to refine our search
+and still have multiple outputs. What this
+
+00:00:46.059 --> 00:00:49.960
+means is that we're going to need to have
+a lot of data. Now there's a little trick
+
+00:00:49.960 --> 00:00:56.359
+to this and that's to use the name to summarize
+the other data elements. This makes it possible
+
+00:00:56.359 --> 00:01:03.219
+to tell if your program's working correctly.
+So let me show you what I mean in the Greyhounds.txt
+
+00:01:03.219 --> 00:01:09.680
+file. So here's here's some sample test data.
+Notice that as I've done in many of these
+
+00:01:09.680 --> 00:01:16.390
+things, I put the number eight in first because
+we have eight data elements. Here is an entry
+
+00:01:16.390 --> 00:01:23.390
+for a single dog, so here I'm using the name
+95 FYYY. What that says is the dog was born
+
+00:01:24.670 --> 00:01:31.670
+in 1995 is female and is safe with kids and
+cats and small dogs. So now when we list the
+
+00:01:32.810 --> 00:01:38.439
+names out we'll be able to see if the categories
+are correct. This is a clever trick for debugging
+
+00:01:38.439 --> 00:01:43.659
+programs. Now I don't really have enough data
+in here for real debugging of this program,
+
+00:01:43.659 --> 00:01:48.119
+probably this would be hundreds of items if
+you wanted to be accurate. Of course if you
+
+00:01:48.119 --> 00:01:51.740
+were working with a real rescue group they
+would have lots and lots of data that you
+
+00:01:51.740 --> 00:01:58.609
+could use and using their data would be wise.
+Since our programs are getting larger we now
+
+00:01:58.609 --> 00:02:04.759
+have more design possibilities to consider.
+One possibility is what's called top down,
+
+00:02:04.759 --> 00:02:09.619
+that means you start with the biggest classes
+first and then move to the smaller classes.
+
+00:02:09.619 --> 00:02:15.370
+So in this case we would start with the Greyhound
+rescue group first and then move to the individual
+
+00:02:15.370 --> 00:02:20.180
+Greyhounds. Another possibility is what's
+called the bottom up, and that's where you
+
+00:02:20.180 --> 00:02:25.849
+start with the smallest classes and then move
+to larger ones. Now my experience has been
+
+00:02:25.849 --> 00:02:29.790
+that beginning programmers have an easier
+time with bottom up design than they do with
+
+00:02:29.790 --> 00:02:34.870
+top down and so that's the way that I'm going
+to work, but remember that both are feasible
+
+00:02:34.870 --> 00:02:39.739
+strategies and if you're more comfortable
+working a different way, that's okay too.
+
+00:02:39.739 --> 00:02:44.430
+What isn't okay is programming without doing
+design first. You always want to think about
+
+00:02:44.430 --> 00:02:49.040
+how you're going to assemble your program
+particularly as the programs get larger, rather
+
+00:02:49.040 --> 00:02:54.569
+than just sitting at the keyboard and hacking
+away at it. In order to teach you how to design
+
+00:02:54.569 --> 00:02:59.989
+better, I want to introduce you to a cool
+tool. It's called umlet. It's an Eclipse plugin
+
+00:02:59.989 --> 00:03:06.110
+that does simple UML designs. It's not the
+kind of tool a professional would use, a professional
+
+00:03:06.110 --> 00:03:11.830
+would use a more full-featured tool. In fact,
+many of the professional tools actually keep
+
+00:03:11.830 --> 00:03:16.980
+the design in sync with the code and can write
+some of the code for you. Not that the logic
+
+00:03:16.980 --> 00:03:20.989
+of the code, you still have to write that,
+but it can write the method signatures and
+
+00:03:20.989 --> 00:03:25.870
+things like that. The problem with those tools
+is they tend to be expensive sometimes as
+
+00:03:25.870 --> 00:03:31.790
+much as $5,000 or $10,000 a seat so we obviously
+don't use those in the classroom. But umlet
+
+00:03:31.790 --> 00:03:36.560
+actually does and nice job and it's a nice
+simple tool to use. So that's what we're going
+
+00:03:36.560 --> 00:03:42.730
+to do. Now if you go to download this yourself
+their website is absolutely riddled with advertisements
+
+00:03:42.730 --> 00:03:47.680
+so download very carefully. A lot of those
+buttons that say download on the page actually
+
+00:03:47.680 --> 00:03:52.920
+are downloading their advertiser software
+not the umlet software. So read very, very
+
+00:03:52.920 --> 00:03:57.450
+carefully. It is there it's just kind of hidden.
+What you're going to need to do is copy the
+
+00:03:57.450 --> 00:04:02.680
+jar file that you downloaded into the Eclipse
+plug-in directory. Now we haven't been in
+
+00:04:02.680 --> 00:04:07.939
+that directory in a while. The TA's and I
+can help you if you have trouble with that.
+
+00:04:07.939 --> 00:04:13.629
+The first thing we'll do is create a new diagram.
+So we go to the file menu, choose new, and
+
+00:04:13.629 --> 00:04:20.130
+then other and other again, and it will show
+an umlet diagram, so let's do that. Now in
+
+00:04:20.130 --> 00:04:27.130
+Eclipse we do file new other and then other.
+This normally wouldn't be open, umlet diagram.
+
+00:04:32.610 --> 00:04:39.610
+Now I'm going to give it a name. I'm going
+to call it design.uxf, uxf is the extension
+
+00:04:42.000 --> 00:04:49.000
+for umlet diagrams in Eclipse and right there
+we have it. Now what you're seeing here this
+
+00:04:49.190 --> 00:04:56.190
+is the instructions on how to use umlet right
+here, and then when we scroll down...we have
+
+00:05:04.040 --> 00:05:08.580
+this little area down here. So it looks kind
+of congested right now, but it's actually
+
+00:05:08.580 --> 00:05:14.790
+pretty simple to use. So for example to put
+a class in the diagram I just double-click
+
+00:05:14.790 --> 00:05:21.170
+on it. The things that I enter here are going
+to appear in this part of the diagram. So
+
+00:05:21.170 --> 00:05:26.880
+I'll show you how that works in a minute.
+To use umlet, you select the class diagrams
+
+00:05:26.880 --> 00:05:32.060
+in the upper right area, then you edit the
+area on the lower right to design the class.
+
+00:05:32.060 --> 00:05:37.320
+Umlet actually shows you examples that help
+you remember the syntax. The syntax is a little
+
+00:05:37.320 --> 00:05:42.510
+crazy but it starts make sense after awhile.
+Now the diagrams will appear in the upper
+
+00:05:42.510 --> 00:05:48.610
+left area, and the relationships get dragged
+from the upper right area to the diagram.
+
+00:05:48.610 --> 00:05:53.490
+There are two relationships that we've used
+before. One is aggregation, that's the arrow
+
+00:05:53.490 --> 00:05:58.760
+with the open diamond. And the other is uses,
+which is the dotted line with the V-shaped
+
+00:05:58.760 --> 00:06:03.090
+arrowhead. So those will be the only two we
+use. There are lots of other relationships
+
+00:06:03.090 --> 00:06:08.100
+that can occur between classes and those are
+what those other arrows are for. As you continue
+
+00:06:08.100 --> 00:06:14.130
+programming you'll learn how to use those
+things. The class name is entered first, minus
+
+00:06:14.130 --> 00:06:21.130
+minus draws the separations. Underscores before-and-after
+create underlines for class data and method.
+
+00:06:22.440 --> 00:06:29.440
+Plus means public, just like it does in UML,
+minus means private just like it does in UML
+
+00:06:29.710 --> 00:06:35.510
+and instance data and methods are not underlined.
+So you don't put the underscores before and
+
+00:06:35.510 --> 00:06:40.650
+after those, and of course parameters and
+return types are entered in text. So we'll
+
+00:06:40.650 --> 00:06:45.990
+do an example in a minute once we have a class
+to design. So the first thing we need to do
+
+00:06:45.990 --> 00:06:50.620
+is to think about our data a little bit. There's
+some complications to this data, because we're
+
+00:06:50.620 --> 00:06:56.220
+getting closer to real examples things tend
+to get a little bit more complex, so first
+
+00:06:56.220 --> 00:07:00.930
+let's think about age. Now you could store
+the age of the dog, but the problem is that
+
+00:07:00.930 --> 00:07:05.630
+some dogs remain in foster care for a long
+time. They actually celebrate a birthday in
+
+00:07:05.630 --> 00:07:11.030
+foster care sometime, so a better strategy
+is to store the birthdate because then you
+
+00:07:11.030 --> 00:07:16.380
+can compare the birthdate to the year, and
+that will give you the age of the dog. That
+
+00:07:16.380 --> 00:07:22.000
+way you don't have to try to update your database
+of dogs when things are changing. So that's
+
+00:07:22.000 --> 00:07:27.550
+a really good idea. The other thing is that
+you actually do know in the case of Greyhounds
+
+00:07:27.550 --> 00:07:32.880
+what their birthdate actually is, it's tattooed
+inside their ear. It's different for other
+
+00:07:32.880 --> 00:07:37.580
+dogs 'cause most dogs aren't but with Greyhounds
+because racing involves betting money, they
+
+00:07:37.580 --> 00:07:41.690
+have to make sure that dogs aren't switched
+out, so they tattoo them when they're little
+
+00:07:41.690 --> 00:07:47.430
+puppies. It's one of the ways you can tell
+a racing Greyhound from any other Greyhound.
+
+00:07:47.430 --> 00:07:51.840
+Now the gender is also known and that data
+is pretty straightforward. We could put it
+
+00:07:51.840 --> 00:07:56.580
+in a Boolean because they are either male
+or female and that's two choices, but we're
+
+00:07:56.580 --> 00:08:01.460
+just going to use a string for that. And then
+there are three other descriptors that we
+
+00:08:01.460 --> 00:08:05.600
+have to worry about: and that's whether they're
+good with kids, whether they're good with
+
+00:08:05.600 --> 00:08:10.220
+cats, and good with small dogs. These are
+things that most Greyhounds are but some Greyhounds
+
+00:08:10.220 --> 00:08:15.170
+aren't. For example my racing Greyhound is
+not good with cats, so she couldn't go to
+
+00:08:15.170 --> 00:08:21.580
+a home that has cats. Absolutely not. Luckily
+I don't have cats so everything's okay. Now
+
+00:08:21.580 --> 00:08:25.460
+there's a problem with making these things
+Boolean and that's the fact that they can
+
+00:08:25.460 --> 00:08:30.700
+be unknown, so for example when a dog comes
+right off the track, they may have no idea
+
+00:08:30.700 --> 00:08:35.560
+if it's good with kids or cats or small dogs
+and there may be a period of time before the
+
+00:08:35.560 --> 00:08:42.210
+adoption agency is able to discover that information.
+So we actually need three categories, not
+
+00:08:42.210 --> 00:08:47.590
+two. And there is no primitive data type in
+Java that holds three categories, so let's
+
+00:08:47.590 --> 00:08:52.140
+think about how we could make one. What we
+need is something that's called an enumerated
+
+00:08:52.140 --> 00:08:58.520
+type. So we need a choice for yes, we need
+a choice for no, and we need a choice for
+
+00:08:58.520 --> 00:09:03.510
+unknown. Now this is a new Java trick that
+you probably haven't seen before, but it's
+
+00:09:03.510 --> 00:09:08.050
+kind of cool. We could make these integer
+constants and that would be one way to do
+
+00:09:08.050 --> 00:09:12.770
+it, but since there is this neat Java thing
+and we're getting towards the end of the semester
+
+00:09:12.770 --> 00:09:18.700
+I really want you to see it. So it's a Java
+shortcut is called enumerated type. If you've
+
+00:09:18.700 --> 00:09:23.500
+been paying attention in Eclipse, you probably
+realize that Eclipse has some support for
+
+00:09:23.500 --> 00:09:28.940
+this. Even though we don't how to use it now,
+we can learn. So what it basically does is
+
+00:09:28.940 --> 00:09:34.620
+creates constants for you and sets them to
+integer values. You can use the integers just
+
+00:09:34.620 --> 00:09:41.240
+the way you normally would. You can do equality
+comparisons with equals equals, and they have
+
+00:09:41.240 --> 00:09:45.680
+lots of other cool features in Java. Now I'm
+not going to show some of the really cool
+
+00:09:45.680 --> 00:09:50.390
+stuff, but if you're interested in continuing
+your study of Java lookup enumerated type
+
+00:09:50.390 --> 00:09:55.590
+in Java online and you'll find lots of really
+interesting things they can do. Here's the
+
+00:09:55.590 --> 00:10:02.590
+design: we need a variable with three constants
+for yes, no, and unknown, so this is essentially
+
+00:10:02.750 --> 00:10:07.080
+what we need. Now I'm showing this diagram
+in UNL and that's what we're going to try
+
+00:10:07.080 --> 00:10:14.080
+to re-create inside of umlet. So I called
+the name of the class YNU for yes, no, unknown.
+
+00:10:15.580 --> 00:10:19.180
+It's not the class name that I'm the proudest
+of that I've ever written, but it'll do for
+
+00:10:19.180 --> 00:10:24.780
+now. And we need three constants. Now notice
+those constants are underlined. The reason
+
+00:10:24.780 --> 00:10:30.080
+they're underlined is they're class data.
+Now there is no way in UML to say that something
+
+00:10:30.080 --> 00:10:35.990
+is a constant so the underlining and the all
+caps is a way of communicating to other people
+
+00:10:35.990 --> 00:10:41.860
+that you anticipated being a constant, but
+it's really a code convention. It's not necessarily
+
+00:10:41.860 --> 00:10:47.590
+a design matter. Nonetheless we'd like to
+do it that way. Let's go take a look and draw
+
+00:10:47.590 --> 00:10:54.590
+this diagram in Eclipse. So instead of simple
+class we're going to call it YNU notice that's
+
+00:10:57.470 --> 00:11:02.230
+put the class name centered at the top just
+like it's supposed to in UML. Next we need
+
+00:11:02.230 --> 00:11:07.970
+to draw a line. Remember we do that by putting
+two minus signs there. One thing that's neat
+
+00:11:07.970 --> 00:11:13.870
+here is notice that even if I resize this
+the line goes with it. So actually it's kind
+
+00:11:13.870 --> 00:11:18.940
+of a nice little user interface. Now we're
+going to need our data, because it's class
+
+00:11:18.940 --> 00:11:25.940
+data remember it starts with an underscore.
+So we had yes and another underscore. Now
+
+00:11:26.050 --> 00:11:30.750
+I didn't put in modifier there so we need
+to think about that. Should this be public?
+
+00:11:30.750 --> 00:11:35.370
+Should it be private? Well we're creating
+this to use in another class, so that means
+
+00:11:35.370 --> 00:11:42.370
+it should be public and public starts with
+a plus. Now we'll do the same thing for no...and
+
+00:11:48.650 --> 00:11:55.650
+the same thing for unknown. So there we have
+it. Now this doesn't have any methods, and
+
+00:11:57.650 --> 00:12:01.779
+remember in UML when you don't have any methods
+you don't have to have that third section
+
+00:12:01.779 --> 00:12:06.440
+below it. So this is the only thing that's
+going to be in our class and right there it
+
+00:12:06.440 --> 00:12:10.880
+is. Notice it's actually a lot easier than
+working with a word processor and trying to
+
+00:12:10.880 --> 00:12:15.540
+do a design that way. This is one of the reasons
+that I've now integrated umlet into all of
+
+00:12:15.540 --> 00:12:22.540
+my classes. So the last thing we want to do
+is to actually implement the class. Now you're
+
+00:12:22.560 --> 00:12:28.570
+going to be amazed at how easy this is, the
+implementation is actually only one line.
+
+00:12:28.570 --> 00:12:34.020
+So here we are in Eclipse and notice keeping
+the design as part of the Eclipse package
+
+00:12:34.020 --> 00:12:38.510
+also means that other people who might read
+your code will have access to it. It's much
+
+00:12:38.510 --> 00:12:42.830
+easier to read designs than it is to read
+code. Maybe not at first but as you become
+
+00:12:42.830 --> 00:12:47.590
+a more experienced programmer, and so this
+is a nice way of communicating to other people
+
+00:12:47.590 --> 00:12:54.590
+how your program is put together. So we're
+going to do file new, now if you look down
+
+00:12:56.260 --> 00:13:01.730
+you'll see we have enum here and that's what
+we're doing. So we'll create a new enumerated
+
+00:13:01.730 --> 00:13:08.730
+type and we called it YNU, and then we'll
+finish. So Java has done almost all the work
+
+00:13:12.440 --> 00:13:19.440
+for us. The only thing we have to do is to
+put in yes, no, and unknown and a semicolon,
+
+00:13:26.170 --> 00:13:31.930
+and everything's done. Easiest class we've
+ever written. Everything is public automatically
+
+00:13:31.930 --> 00:13:37.460
+because that's what makes sense in an enumerated
+type. Now the other thing we could do was
+
+00:13:37.460 --> 00:13:42.290
+we could do some documentation particularly
+'cause our class name isn't very good here.
+
+00:13:42.290 --> 00:13:49.290
+This is a good time to put in some Javadocs
+so let's do that. So it's an enumerated type
+
+00:13:51.380 --> 00:13:58.380
+that keeps track of data that is almost Boolean
+but could be unknown. And for some reason,
+
+00:14:03.089 --> 00:14:10.089
+Eclipse always likes to mess up my name, so
+let's fix that...and of course this is version
+
+00:14:19.300 --> 00:14:25.500
+1.0. This is very likely to be the only version
+that ever exists of this class, because the
+
+00:14:25.500 --> 00:14:32.500
+class is so simple it's a little hard to know
+what would need to change. Now it's time to
+
+00:14:32.589 --> 00:14:37.560
+think about the Greyhound class. This class
+is a composition of the basic data about an
+
+00:14:37.560 --> 00:14:43.320
+individual dog. This is what it would look
+like: the name of the class is Greyhound we've
+
+00:14:43.320 --> 00:14:48.870
+got the name, we've got the birth year, and
+we've got cat safe, kid safe, and small dog
+
+00:14:48.870 --> 00:14:54.029
+safe that are all of type YNU, so notice we
+have a relationship between the Greyhound
+
+00:14:54.029 --> 00:15:00.600
+class and the YNU class. The YNU class is
+used in the Greyhound class. Now this is actually
+
+00:15:00.600 --> 00:15:06.060
+not an aggregation relationship because the
+YNU class is sort of like a primitive data
+
+00:15:06.060 --> 00:15:12.279
+type. It's a very, very simple class. It's
+not like part and parcel or a whole element
+
+00:15:12.279 --> 00:15:18.950
+of it and so that's not an aggregation relationship,
+that's a uses relationship. Now we're going
+
+00:15:18.950 --> 00:15:23.790
+to need some accessors too, so those will
+be things that look like get name string.
+
+00:15:23.790 --> 00:15:27.810
+I didn't put those in the PowerPoint because
+you run out of space in PowerPoint, but we
+
+00:15:27.810 --> 00:15:33.260
+will put them in our design. We might want
+to think about whether we need mutators or
+
+00:15:33.260 --> 00:15:39.190
+not. Remember the purpose of the program we're
+just trying to let people search these dogs.
+
+00:15:39.190 --> 00:15:43.960
+We're adding new dogs or deleting dogs or
+things like that. Presumably that's being
+
+00:15:43.960 --> 00:15:48.589
+done by some other piece of software or in
+some other method. So since we don't need
+
+00:15:48.589 --> 00:15:52.450
+them we're not going to put them in. This
+means that our Greyhound class will be an
+
+00:15:52.450 --> 00:15:56.990
+immutable class. Now that could be good, that
+could be bad just depending on how things
+
+00:15:56.990 --> 00:16:02.260
+work out. Maybe later on we'll have to add
+mutators in, but it's a good place to start
+
+00:16:02.260 --> 00:16:07.899
+to not put mutators there. When you don't
+have mutators, you know the data you construct
+
+00:16:07.899 --> 00:16:12.800
+remains pure and remains safe and so that's
+a good thing. So let's go and create our design
+
+00:16:12.800 --> 00:16:19.800
+first and then go and take a look inside the
+class. So returning to our design, we're going
+
+00:16:19.870 --> 00:16:26.870
+to add another class. Now unfortunately it
+always sets it right on top of that one. But
+
+00:16:29.430 --> 00:16:36.430
+hey, it's free software! You going to complain?
+So this class is called Greyhound, and remember
+
+00:16:36.460 --> 00:16:43.350
+we used two minus signs to get the separation
+between the class name and the data. Our data
+
+00:16:43.350 --> 00:16:50.350
+elements were a name that's a string. Now
+this box is a little bit small for our class
+
+00:16:50.870 --> 00:16:57.870
+at this point, so let's drag it and make it
+bigger. Then we're going to have a year of
+
+00:17:01.510 --> 00:17:06.360
+birth. If we were writing this as commercial
+software would probably put a day of birth
+
+00:17:06.360 --> 00:17:10.800
+so we could calculate the age more correctly,
+but this keeps our software a little simpler
+
+00:17:10.800 --> 00:17:17.800
+so let's do that. Next we have three fields,
+one for being kid safe and this is of type
+
+00:17:19.540 --> 00:17:26.540
+YNU, for yes no and unknown. We also have
+cat safe, YNU and of course small dog safe.
+
+00:17:32.890 --> 00:17:36.809
+So now we have a relationship between our
+two classes that we need to record in the
+
+00:17:36.809 --> 00:17:42.520
+UML diagram. It's a uses relationship not
+an aggregation one, and so we need to pick
+
+00:17:42.520 --> 00:17:49.520
+the right kind of arrow. If we scroll over
+here we'll see a lot of our options, so we're
+
+00:17:49.730 --> 00:17:56.120
+looking for a dotted arrow with the V-head.
+So that's this arrow right here. Notice that
+
+00:17:56.120 --> 00:18:01.490
+this one has a different kind of head. It
+has a triangle head. That arrow means something
+
+00:18:01.490 --> 00:18:06.040
+different. It's very important to get the
+right symbols in these places, and you'll
+
+00:18:06.040 --> 00:18:10.980
+learn the difference between them as you become
+a more experienced programmer. So we now take
+
+00:18:10.980 --> 00:18:17.980
+this and drag it over here. There we go. Now,
+the head of the arrow belongs at the YNU class
+
+00:18:24.490 --> 00:18:31.490
+and the tail of the arrow belongs at the Greyhound
+class. And we might make it flat to make it
+
+00:18:31.490 --> 00:18:36.630
+prettier. So right there we have it. Now,
+we can put some other things on this arrow
+
+00:18:36.630 --> 00:18:41.940
+but there's really nothing else needed so
+let's just leave it as it is. Now we go back
+
+00:18:41.940 --> 00:18:46.090
+to our Greyhound class. We've got our data
+summarized and the next thing we need are
+
+00:18:46.090 --> 00:18:52.380
+our accessors. So we need another separator,
+two minus signs, and then we're going to need
+
+00:18:52.380 --> 00:18:59.320
+an accessor for each one of these fields.
+So by convention we call the accessors gets
+
+00:18:59.320 --> 00:19:06.320
+and then whatever the data field is so for
+example get name will return a string. Now
+
+00:19:06.730 --> 00:19:12.820
+we do have a different case here with year
+of birth because we went to do things by age,
+
+00:19:12.820 --> 00:19:17.160
+so we're storing it by year of birth for our
+convenience but the person who's using this
+
+00:19:17.160 --> 00:19:22.390
+class is probably only interested in the age.
+So we're going to create an accessor called
+
+00:19:22.390 --> 00:19:29.390
+get age...and that of course will return an
+int. Here are other assessors: get kids safe,
+
+00:19:37.010 --> 00:19:44.010
+that's going to return a YNU, we'll have get
+cat safe, and that's also going to return
+
+00:19:46.870 --> 00:19:53.870
+a YNU, and get small dog safe and that will
+return a YNU. By convention we don't usually
+
+00:19:57.110 --> 00:20:03.130
+put constructors in UML, but it's not a bad
+idea to do it even though it's not sort of
+
+00:20:03.130 --> 00:20:07.840
+part of the official UML rulebook, my experience
+has been that when I put the constructors
+
+00:20:07.840 --> 00:20:12.960
+in UML my students do a better job of remembering
+that they need to have a constructor. So let's
+
+00:20:12.960 --> 00:20:19.179
+put them there. So this will be Greyhound,
+of course constructors are almost always going
+
+00:20:19.179 --> 00:20:25.270
+to be public. I can think and maybe only two
+exceptions to that in many years of programming
+
+00:20:25.270 --> 00:20:32.270
+so we're going to need a name that's a string.
+We're going to need a year of birth, that's
+
+00:20:34.030 --> 00:20:41.030
+an int. We're going to need an indication
+of whether the dog is kid safe, so that's
+
+00:20:44.160 --> 00:20:51.160
+a YNU, cat safe is another YNU, and small
+dog safe. When we look at this on the screen
+
+00:20:58.770 --> 00:21:05.330
+it's going to have gotten long and ugly, so
+notice now to have gotten all of it we would
+
+00:21:05.330 --> 00:21:10.920
+have to go over more than the screen. I'm
+going to just stop there because our screen
+
+00:21:10.920 --> 00:21:17.920
+real estate is in pretty short supply. Let's
+get our YNU class out of the way, so I'm moving
+
+00:21:18.679 --> 00:21:24.520
+it under those other diagrams. We might think
+about whether there is another constructor
+
+00:21:24.520 --> 00:21:29.520
+that we would like to have. Now for my experiences
+with Greyhound rescue I know that there's
+
+00:21:29.520 --> 00:21:34.340
+another constructor we need, and that's one
+that just has a name and a year of birth.
+
+00:21:34.340 --> 00:21:38.809
+The reason that's important is that almost
+always when a new dog arrives they know nothing
+
+00:21:38.809 --> 00:21:42.940
+about it. They have no idea what it's like,
+and so you want them to be able to include
+
+00:21:42.940 --> 00:21:47.860
+those dogs too, since for a lot of people
+kid safe and cat safe and small dogs safe
+
+00:21:47.860 --> 00:21:52.830
+don't matter. A lot of Greyhound rescue people
+only have Greyhounds, and so those things
+
+00:21:52.830 --> 00:21:59.140
+are irrelevant. So let's create a second constructor.
+As always, the name of a constructor is the
+
+00:21:59.140 --> 00:22:06.140
+name of the class and this will have a name
+and a year of birth, and that's an int in
+
+00:22:06.299 --> 00:22:13.299
+only those two fields. So there's a great
+second constructor. Now, if we were going
+
+00:22:14.799 --> 00:22:19.590
+to put mutators we could put them in next
+but we decided not to do mutators. Let's go
+
+00:22:19.590 --> 00:22:26.590
+and take a look at our Greyhound class. So
+you'll notice that I imported the Gregorian
+
+00:22:28.530 --> 00:22:33.380
+calendar class, that's because we're going
+to have to do a calculation of a birthdate
+
+00:22:33.380 --> 00:22:39.870
+and here's our data. Now this is all private
+data and instance data. The reason it's instance
+
+00:22:39.870 --> 00:22:44.750
+data is because these values are different
+for every single individual dog. That's what
+
+00:22:44.750 --> 00:22:51.750
+instance data is. There's our constructor,
+which is now spelled correctly, and of course
+
+00:22:56.540 --> 00:23:02.260
+it's Javadoced so let's actually implement
+this constructor next. We need to make sure
+
+00:23:02.260 --> 00:23:08.059
+that every single field is correctly initialized.
+That is the critical responsibility of every
+
+00:23:08.059 --> 00:23:14.230
+constructor. The name will be name. Now if
+you look at that line of code you know something
+
+00:23:14.230 --> 00:23:19.370
+has to be wrong with it. It doesn't make sense
+to say, take the value in name and store it
+
+00:23:19.370 --> 00:23:24.630
+in the location name. Doesn't make sense at
+all. The thing is the name that I have on
+
+00:23:24.630 --> 00:23:29.850
+the right-hand side I really mean the parameter,
+and the name on the left-hand side I mean
+
+00:23:29.850 --> 00:23:34.570
+the instance data. Now there are a couple
+of different ways we could fix this. We could
+
+00:23:34.570 --> 00:23:38.920
+change the parameter so they didn't have the
+same name as the instance data, but there's
+
+00:23:38.920 --> 00:23:45.820
+another quick fix available and that's to
+specifically say that it's instance data.
+
+00:23:45.820 --> 00:23:52.820
+So you do that by putting this and a period
+in front of it. So let's do that for all of
+
+00:23:53.630 --> 00:24:00.630
+our data. [typing] Notice we're dealing with
+the YNU data exactly the same way we would
+
+00:24:08.059 --> 00:24:15.059
+with any other data, we're just copying the
+values over. Okay, so now Eclipse is happy.
+
+00:24:26.850 --> 00:24:30.950
+Let's make sure our second constructor is
+there. Oh! It looks like I haven't implemented
+
+00:24:30.950 --> 00:24:37.950
+that one yet, so the easiest way to implement
+the second constructor is by copying the first
+
+00:24:38.179 --> 00:24:45.179
+constructor. So there's a Java trick for that.
+What we do is this we say the name is name
+
+00:24:46.840 --> 00:24:53.840
+and here we mean the parameter name and then
+the birth year and the sex. Our other constructor
+
+00:24:54.179 --> 00:24:59.280
+has three more parameters, and so we need
+to put in what those three arguments are.
+
+00:24:59.280 --> 00:25:06.280
+Well they're unknown, so the way we say that
+it is YNU.unknown, YNU.unknown and YNU.unknown.
+
+00:25:17.870 --> 00:25:22.390
+The reason we have to have YNU in front of
+it is that without that Java wouldn't know
+
+00:25:22.390 --> 00:25:28.270
+where to go and look for the constants, so
+that's a necessary part. And of course as
+
+00:25:28.270 --> 00:25:33.900
+always end with a semicolon. Now this is a
+really nice way to write constructors, because
+
+00:25:33.900 --> 00:25:38.350
+it means there's one constructor that's doing
+the heavy lifting and all the other constructors
+
+00:25:38.350 --> 00:25:44.080
+rely on it. So for example, if we wanted to
+do some error checking later on for example
+
+00:25:44.080 --> 00:25:48.150
+maybe to check that the sex that they're putting
+in is either male or female, always a good
+
+00:25:48.150 --> 00:25:53.110
+idea to check those things [laughs] then we
+would only have to change the one constructor
+
+00:25:53.110 --> 00:25:57.530
+and all the other constructors would be updated
+automatically. So that's a nice way to do
+
+00:25:57.530 --> 00:26:03.929
+things. So we've implemented the constructors.
+I left two other methods to be implemented
+
+00:26:03.929 --> 00:26:08.220
+just so you get the flavor of implementing
+a class. One will be get name and the other
+
+00:26:08.220 --> 00:26:15.220
+will be get age. Here's the get name method.
+I've left it as a stub right now so it's return
+
+00:26:19.010 --> 00:26:25.640
+null so what we need to do is return the dog's
+name and that's just written return name very
+
+00:26:25.640 --> 00:26:32.150
+simple code to write. People always like writing
+accessors. Now the get age is a little bit
+
+00:26:32.150 --> 00:26:37.010
+more complicated because we're going to have
+to deal with what today's date is and the
+
+00:26:37.010 --> 00:26:41.230
+date of birth for the dog. Now we did this
+back in the semester, but you may not remember
+
+00:26:41.230 --> 00:26:47.720
+all the details. Basically we created a Gregorian
+calendar object called today. The default
+
+00:26:47.720 --> 00:26:54.370
+constructor creates a date for today and then
+we use the get method to get the year. So
+
+00:26:54.370 --> 00:27:01.040
+here we go. We have a Gregorian calendar object,
+which I'm calling today, and constructing
+
+00:27:01.040 --> 00:27:08.040
+it as a new Gregorian calendar. Then we have
+our year will be today.get and it's Gregorian
+
+00:27:16.120 --> 00:27:23.120
+calendar.year. You're in all caps 'cause it's
+a constant, and then what we're going to return
+
+00:27:25.429 --> 00:27:32.429
+is this year minus the birth year. You might
+ask yourself isn't that a little inexact?
+
+00:27:32.440 --> 00:27:39.440
+Well yes it is, so for example if the dog
+is born on January 1st of 2013 this would
+
+00:27:39.590 --> 00:27:46.590
+say that on December 31st of 2014 the dog
+is only one year old but you know, it's fine.
+
+00:27:47.840 --> 00:27:52.750
+We could do a more refined version later considering
+the month and the days and things like that,
+
+00:27:52.750 --> 00:27:57.370
+but let's move on to some other more important
+programming problems. So you'll notice we
+
+00:27:57.370 --> 00:28:01.610
+still have a little red X at the top of the
+class that's 'cause this file hasn't been
+
+00:28:01.610 --> 00:28:08.610
+saved. Uh oh! Eclipse is still unhappy, so
+let's see what happened here. Well it's complaining
+
+00:28:11.410 --> 00:28:18.410
+about YNU.unknown so let's take a look and
+see what's wrong with that class. Well we've
+
+00:28:21.429 --> 00:28:28.429
+got YNU.unknown, ahh but here's the problem.
+Notice YNU hasn't been saved yet. You can
+
+00:28:28.890 --> 00:28:33.090
+see that from the little asterisk in front
+of the class name. Things like this are going
+
+00:28:33.090 --> 00:28:37.620
+to start mattering at this point, and so we
+need to pay attention to them. That's why
+
+00:28:37.620 --> 00:28:42.900
+the Greyhound class is having trouble finding
+unknown is the file hasn't been saved since
+
+00:28:42.900 --> 00:28:49.900
+unknown was added to it. So let's save the
+file and then go back to our Greyhound class,
+
+00:28:53.970 --> 00:29:00.970
+and notice now no little red X. Everybody's
+happy. Now the next thing we need to consider
+
+00:29:02.720 --> 00:29:08.419
+is the next larger class. So this is going
+to be the whole Greyhound rescue organization.
+
+00:29:08.419 --> 00:29:12.410
+So the data for that is going to be a list
+of Greyhounds. Well you're probably guessing
+
+00:29:12.410 --> 00:29:16.559
+already that we could have an array or we
+could have an ArrayList, because we don't
+
+00:29:16.559 --> 00:29:20.160
+know the number of Greyhounds that are going
+to be there at any one time, it makes more
+
+00:29:20.160 --> 00:29:25.520
+sense to have an ArrayList here. The other
+thing we're going to need is a default filename.
+
+00:29:25.520 --> 00:29:30.220
+Now we've used that trick many times so it
+won't surprise you a bit. We're going to need
+
+00:29:30.220 --> 00:29:34.640
+to have to have the search methods for each
+of the five fields, so that's going to look
+
+00:29:34.640 --> 00:29:39.690
+like something like getDogsByAge. If you think
+about it, what you're going to need to be
+
+00:29:39.690 --> 00:29:46.059
+able to do that are parameters would be the
+minimum age and the maximum age. So give people
+
+00:29:46.059 --> 00:29:51.760
+a range they might consider, and the return
+type will be an ArrayList of Greyhounds. So
+
+00:29:51.760 --> 00:29:55.760
+we have an ArrayList of Greyhounds that's
+saved as the instance data in the Greyhound
+
+00:29:55.760 --> 00:30:00.730
+rescue, so this software actually could be
+used by multiple different Greyhound rescue
+
+00:30:00.730 --> 00:30:05.039
+organizations. It's always nice to do things
+that way 'cause it makes your software more
+
+00:30:05.039 --> 00:30:12.039
+marketable. So let's go and write the UML.
+So I'm headed back to Eclipse and to my design,
+
+00:30:19.150 --> 00:30:25.419
+so let's move to some new space well we better
+create our class first. This is much easier
+
+00:30:25.419 --> 00:30:32.419
+to do on a larger screen. So here's our simple
+class, we're going to drag this down and then
+
+00:30:35.710 --> 00:30:42.710
+move down, give ourselves some space. It's
+probably wise to leave a little bit more space
+
+00:30:43.020 --> 00:30:47.710
+between this new class and our Greyhound class,
+because we know that our Greyhound class has
+
+00:30:47.710 --> 00:30:54.710
+a relationship with this class. We'll talk
+about what that relationship is in a minute.
+
+00:30:55.190 --> 00:31:02.190
+We're going to have GreyhoundRescue that's
+the name of the class, draw our little line
+
+00:31:03.130 --> 00:31:09.510
+and we're going to have a variable which I'll
+call adoptable dogs, and it's going to be
+
+00:31:09.510 --> 00:31:16.510
+an ArrayList of Greyhound. We're also going
+to have a filename name. Now you might think
+
+00:31:17.159 --> 00:31:22.299
+about it should the filename be class data
+or instance data? Well the filename is a constant
+
+00:31:22.299 --> 00:31:26.990
+because it's a default filename so that should
+be class data, so that one's going to start
+
+00:31:26.990 --> 00:31:33.990
+with an underscore. I'm putting it in all
+caps to indicate that it's a constant and
+
+00:31:37.789 --> 00:31:44.789
+let's call it Greyhounds.txt. Now I'm kind
+of cheating with UML a little bit here because
+
+00:31:44.909 --> 00:31:49.590
+you're not actually allowed to put the values
+of constant in there, and following the rules
+
+00:31:49.590 --> 00:31:54.840
+is important but so is clear communication
+so I'm erring on the side of clear communication
+
+00:31:54.840 --> 00:32:01.840
+and cheating a little bit with UML. That's
+our instance data. Now if we think about it
+
+00:32:02.700 --> 00:32:09.700
+we're going to need a constructor. Remember
+constructors don't have return types, so don't
+
+00:32:12.330 --> 00:32:19.330
+put a return type in the UML. We're also going
+to need to read the data from a file. Now
+
+00:32:21.590 --> 00:32:27.980
+we could pass in a string filename if we want.
+We could use the default filename, probably
+
+00:32:27.980 --> 00:32:34.980
+an easier choice. Now in this case we're are
+not going to return an ArrayList of Greyhounds
+
+00:32:35.130 --> 00:32:39.880
+because when we're reading the data from a
+file we're using it to initialize the adoptable
+
+00:32:39.880 --> 00:32:45.350
+dogs. That's instance data for the class,
+so we'd want to have a void return type. In
+
+00:32:45.350 --> 00:32:49.909
+other words we're putting the data in this
+particular object not returning it to somebody
+
+00:32:49.909 --> 00:32:56.240
+else. And of course we're going to probably
+want to write the data to a file eventually.
+
+00:32:56.240 --> 00:32:59.929
+Now we might think about whether this method
+is really necessary right now because we're
+
+00:32:59.929 --> 00:33:04.370
+not changing the data. So since we're not
+changing the data, we know we're not because
+
+00:33:04.370 --> 00:33:09.690
+we don't have any mutator methods hanging
+around, this method actually could wait. I'll
+
+00:33:09.690 --> 00:33:13.940
+leave it in the UML 'cause it's something
+that will need to be done eventually. Now
+
+00:33:13.940 --> 00:33:20.940
+let's write a search method. So we're going
+to do getDogsByAge and we'll have the minimum
+
+00:33:23.350 --> 00:33:30.350
+age which should be an integer and the maximum
+age also an integer, and this is going to
+
+00:33:32.870 --> 00:33:39.870
+return an ArrayList of Greyhound objects so
+basically it's going to look through all of
+
+00:33:41.620 --> 00:33:48.620
+the dogs that are in our list of adoptable
+dogs and find the ones that meet the criteria.
+
+00:33:49.940 --> 00:33:53.270
+Now there are going to be a lot of different
+methods like that. In fact, there will be
+
+00:33:53.270 --> 00:33:58.130
+five of them, one for each of the five fields.
+I'm not going to put those in the UML right
+
+00:33:58.130 --> 00:34:02.740
+now just to save us a little bit of time.
+Let's think a minute about the relationship
+
+00:34:02.740 --> 00:34:07.919
+between the Greyhound rescue class and the
+Greyhound class. Is that a uses relationship
+
+00:34:07.919 --> 00:34:13.779
+or is that an aggregation relationship? Well
+this is different than the YNU class. The
+
+00:34:13.779 --> 00:34:19.749
+YNU class remember, was very much like a primitive
+data type sort of like a Boolean on steroids,
+
+00:34:19.749 --> 00:34:25.029
+but this is a deeper relationship. The parts
+within the Greyhound rescue class of the data
+
+00:34:25.029 --> 00:34:29.849
+are actually Greyhound objects. This is an
+example of aggregation, so we're going to
+
+00:34:29.849 --> 00:34:36.849
+need to use our symbol for aggregation. So
+we're going to over here and look down at
+
+00:34:37.159 --> 00:34:44.159
+the various type of arrows that are available...and
+right there is our arrow that means aggregation.
+
+00:34:48.319 --> 00:34:54.549
+So we'll bring this one out here. Now in this
+case the diamond goes towards the class that
+
+00:34:54.549 --> 00:35:01.549
+contains the objects, and the flat end goes
+towards the other class. So there we go. That's
+
+00:35:01.779 --> 00:35:06.589
+showing the correct relationship between our
+classes. Notice we're communicating some very
+
+00:35:06.589 --> 00:35:12.869
+powerful and profound things about the software
+very simply in the diagrams. It makes it so
+
+00:35:12.869 --> 00:35:17.640
+much easier to implement the classes when
+you have these designs available, so even
+
+00:35:17.640 --> 00:35:21.599
+though it's kind of hard to write the designs
+at first this is a skill that's very much
+
+00:35:21.599 --> 00:35:28.599
+worth developing. Okay so let's go to the
+implementation now. The first thing we'll
+
+00:35:29.200 --> 00:35:34.410
+do is the constructor, then I'm going to do
+an instance method called search by age. The
+
+00:35:34.410 --> 00:35:38.640
+other search methods are virtually identical,
+they just have a little different test in
+
+00:35:38.640 --> 00:35:44.869
+the middle so I'm not going to show all of
+those in the interest of saving us some time.
+
+00:35:44.869 --> 00:35:51.329
+So now we're in the Greyhound rescue class.
+So let's take a look around, of course I've
+
+00:35:51.329 --> 00:35:58.099
+Javadoced it for you. Here is our instance
+data right here, so notice we've got a private
+
+00:35:58.099 --> 00:36:05.099
+ArrayList of adoptable dogs and we've got
+our constant that's the filename for Greyhounds.txt.
+
+00:36:05.549 --> 00:36:10.839
+Here's our constructor. The goal of the constructor
+is to make sure that every single instance
+
+00:36:10.839 --> 00:36:17.839
+data is valid, so we need to create an ArrayList.
+So here we go. Adoptable dogs equals new ArrayList
+
+00:36:24.829 --> 00:36:31.829
+of Greyhound and open and close parentheses.
+Now there is no other instance data. Remember
+
+00:36:32.170 --> 00:36:36.920
+the ArrayList keeps track of a lot of things
+like the size itself, so we don't have to
+
+00:36:36.920 --> 00:36:43.920
+put those things in our class. That's one
+of the advantages of using it. Here's the
+
+00:36:44.430 --> 00:36:48.309
+read from file method. We've written a lot
+of those methods so I'm not going to review
+
+00:36:48.309 --> 00:36:54.910
+that one very carefully. There's write to
+file, here is our getDogsByAge. We need to
+
+00:36:54.910 --> 00:37:01.910
+think through how we're going to do this.
+We're going to step through the list of available
+
+00:37:02.380 --> 00:37:09.380
+dogs one at a time, figure out if this dog
+is in the desired age range, and if so, add
+
+00:37:18.809 --> 00:37:25.809
+it to the return list. So there were have
+some guidelines for how we're going to do
+
+00:37:27.410 --> 00:37:34.410
+it. We see we're going to return an ArrayList
+of Greyhound, so we need construct that. So
+
+00:37:35.849 --> 00:37:42.849
+here's ArrayList of Greyhound...and I'll call
+it result and of course we need to call its
+
+00:37:43.880 --> 00:37:50.029
+constructor. If you forget to call the constructor
+you'll get null pointer exceptions, remember?
+
+00:37:50.029 --> 00:37:55.630
+So null pointer exception is almost always
+a mistaken in forgetting construction. And
+
+00:37:55.630 --> 00:38:02.630
+we know at the end we're going to return that
+list...so that'll get the compiler off our
+
+00:38:03.759 --> 00:38:08.359
+back and get rid of some of those annoying
+little red X's. Now we're stepping through
+
+00:38:08.359 --> 00:38:15.359
+the list of available dogs one at a time,
+that's a for loop. So let's create an index
+
+00:38:18.019 --> 00:38:25.019
+which starts zero and it's going to stop at
+adoptable dogs.size and be incremented by
+
+00:38:26.219 --> 00:38:33.219
+one every time. Now those two steps have to
+be done for every dog. So they're going to
+
+00:38:36.519 --> 00:38:41.609
+be inside the list, so I've indented them
+a little bit. So now we need to figure out
+
+00:38:41.609 --> 00:38:46.569
+if the dog is in the desired age range. There
+are a couple of different ways to do this.
+
+00:38:46.569 --> 00:38:51.749
+You can pack it all into one statement, but
+the syntax gets very confusing so what I'm
+
+00:38:51.749 --> 00:38:56.479
+going to show you is a method that I found
+to be much more foolproof for beginners. We're
+
+00:38:56.479 --> 00:39:01.529
+going to make sure we understand the type
+of every single data element one at a time.
+
+00:39:01.529 --> 00:39:08.529
+So first we're going to have a Greyhound object,
+which I'll call this hound so that's going
+
+00:39:09.469 --> 00:39:16.469
+to equal adoptable dogs.get of index so that
+reminds us that when we get something out
+
+00:39:17.969 --> 00:39:23.390
+of an ArrayList of Greyhounds, it is a Greyhound.
+Once you know it's a Greyhound you know what
+
+00:39:23.390 --> 00:39:27.890
+kind of methods are available. They're the
+ones in the Greyhound class. This avoids a
+
+00:39:27.890 --> 00:39:34.890
+lot of confusion. So now we'll do age is this
+hound.get age. We know that that's okay, because
+
+00:39:41.950 --> 00:39:46.960
+we know that Greyhound objects have an age.
+Now apparently I've forgotten the name of
+
+00:39:46.960 --> 00:39:52.380
+our method so let's go to the Greyhound class
+and take a look at what the method is actually
+
+00:39:52.380 --> 00:39:57.630
+called. We could also do this in the package
+explorer if we wanted. So the method is called
+
+00:39:57.630 --> 00:40:04.029
+get age. Hmmm, I wonder what it didn't like.
+Let's go and take another look at our code.
+
+00:40:04.029 --> 00:40:10.099
+Oh well that's what it didn't like, notice
+I forgot a word. I put this here instead of
+
+00:40:10.099 --> 00:40:16.400
+this hound well this is a type Greyhound rescue
+and it doesn't have a get age method so in
+
+00:40:16.400 --> 00:40:21.859
+this case Eclipse was exactly right. Now this
+also suggests that maybe I didn't choose that
+
+00:40:21.859 --> 00:40:28.749
+variable name too well, so let's fix that.
+Let's just call this hound instead of this
+
+00:40:28.749 --> 00:40:35.319
+hound, that will avoid that problem in the
+future. It's also shorter and it makes the
+
+00:40:35.319 --> 00:40:42.319
+code better so those are good things. So now
+we need to do our test. Well if the age is
+
+00:40:45.150 --> 00:40:52.150
+greater than or equal to the minimum age and
+the age is less than or equal to the maximum
+
+00:40:55.109 --> 00:41:02.109
+age than what we want to do is add this hound
+to our result list so that will be result.add
+
+00:41:06.390 --> 00:41:13.390
+of hound. Now one thing we want to think through,
+you know whenever we have a greater than or
+
+00:41:15.029 --> 00:41:19.359
+equal to or a less than equal to, we think
+about whether that equality is the right thing
+
+00:41:19.359 --> 00:41:24.789
+or not. Well, as a rescue person you want
+to give people the maximum number of choices
+
+00:41:24.789 --> 00:41:30.519
+they possibly have so including the equals
+sign there includes the dogs that are on the
+
+00:41:30.519 --> 00:41:35.410
+edges of their age range, so that's probably
+the right thing to do. Notice we're breaking
+
+00:41:35.410 --> 00:41:41.029
+one of our Java idioms. Usually when you have
+a minimum and a maximum, the minimum is included
+
+00:41:41.029 --> 00:41:45.430
+and the maximum isn't. But in this case as
+long as we document it properly we're going
+
+00:41:45.430 --> 00:41:50.529
+to be okay. Remember we're interacting with
+users and they don't think in terms of weird
+
+00:41:50.529 --> 00:41:56.329
+Java idioms. Another thing as a rescue person
+is sometimes people are reluctant to adopt
+
+00:41:56.329 --> 00:42:00.489
+older dogs, so you certainly don't want to
+be excluding them from the search, because
+
+00:42:00.489 --> 00:42:04.920
+they are some of the harder dogs to adopt
+anyways. So compassion indicates there should
+
+00:42:04.920 --> 00:42:09.999
+be a less than or equal to and a greater than
+or equal to there, in addition to common sense
+
+00:42:09.999 --> 00:42:16.999
+and correct programming. Now the rescue interface
+is some more interesting code. It's going
+
+00:42:19.380 --> 00:42:25.959
+to use the Greyhound rescue class. Notice
+use, not aggregate. Here's what we're going
+
+00:42:25.959 --> 00:42:32.690
+to do, we're going to loop until we quit choose
+either a new search or a refine search. Now
+
+00:42:32.690 --> 00:42:37.410
+that's interesting. That's something we haven't
+done before. We're going to choose the field
+
+00:42:37.410 --> 00:42:42.709
+to be searched. We're going to get the data
+for the fields that need data, then we're
+
+00:42:42.709 --> 00:42:47.839
+going to perform the proper search and we're
+going to report the results to the user. Now
+
+00:42:47.839 --> 00:42:52.849
+everything here is something you've done before
+except for this refined search, so let's talk
+
+00:42:52.849 --> 00:42:59.049
+about that one a little bit. Here's how you
+refine a search. The original search will
+
+00:42:59.049 --> 00:43:05.459
+save it's results to a local variable in the
+rescue interface class. So that will be an
+
+00:43:05.459 --> 00:43:11.130
+ArrayList of Greyhounds. Notice this ArrayList
+is different than the list of adoptable dogs
+
+00:43:11.130 --> 00:43:16.849
+that's available in the Greyhound rescue object.
+This one is just some temporary results, in
+
+00:43:16.849 --> 00:43:22.539
+other words to put it in more mathematical
+terms, it's a subset of the list. If the search
+
+00:43:22.539 --> 00:43:28.369
+is later refined this list needs to be searched
+instead of the list in the Greyhound rescue
+
+00:43:28.369 --> 00:43:29.670
+object. So at that point, we don't want to
+be using the instance data in the Greyhound
+
+00:43:29.670 --> 00:43:33.390
+rescue object. So at that point we don't want
+to be using the instance data in the Greyhound
+
+00:43:33.390 --> 00:43:40.059
+rescue object. We need to use the local variable.
+Well if you're not using the instance data
+
+00:43:40.059 --> 00:43:45.900
+in the Greyhound rescue object, guess what?
+That's a static method. So if you've wondered
+
+00:43:45.900 --> 00:43:49.829
+what the difference is between instance data
+and class data, well you're going to see a
+
+00:43:49.829 --> 00:43:56.019
+perfect example here of how this works. We're
+not using the data in the class and that means
+
+00:43:56.019 --> 00:44:00.519
+we're going to need five additional static
+methods to make this refine the search work.
+
+00:44:00.519 --> 00:44:04.329
+Now obviously I'm not going to implement all
+of these for you right now, but I do want
+
+00:44:04.329 --> 00:44:08.920
+to implement one. So let's go to the Greyhound
+rescue class and take a look at what one of
+
+00:44:08.920 --> 00:44:15.609
+these static methods will look like. So here's
+our Greyhound rescue class. Now this is the
+
+00:44:15.609 --> 00:44:22.609
+instance method that we just finished writing.
+Right below it... I left a stub for a static
+
+00:44:26.079 --> 00:44:33.079
+method. So first off let's look at how the
+signature is different. Notice now we have
+
+00:44:33.930 --> 00:44:39.249
+an ArrayList of Greyhounds that's passed into
+a parameter. That's necessary because we're
+
+00:44:39.249 --> 00:44:43.660
+not using the adoptable dog list anymore.
+We're using the subset that came from the
+
+00:44:43.660 --> 00:44:50.130
+prior search. Since we're not using adoptable
+dog that means we put static here, so when
+
+00:44:50.130 --> 00:44:56.779
+we call this now we'll call it by Greyhound
+rescue.get dogs by age instead of calling
+
+00:44:56.779 --> 00:45:02.369
+it from the object. I'm going to cut and paste
+the previous method because it's very similar,
+
+00:45:02.369 --> 00:45:09.369
+and we'll just make the minor changes that
+are necessary. Here's the first method. Now
+
+00:45:16.849 --> 00:45:23.849
+we scroll down. We can remove our stub, and
+paste. So let's step through the code one
+
+00:45:29.680 --> 00:45:34.999
+piece at a time. You'll notice that Eclipse
+is actually helping us out. Notice how adoptable
+
+00:45:34.999 --> 00:45:40.190
+dogs is now underlined. The reason that's
+underlined is that adoptable dogs is instance
+
+00:45:40.190 --> 00:45:44.969
+data. We're in a static method, that is a
+class method. We don't have any access to
+
+00:45:44.969 --> 00:45:50.920
+our instance data and so that's not legal
+there. So actually this is telling us a good
+
+00:45:50.920 --> 00:45:56.499
+map of what we need to do. We're still going
+to need a result array, so line 109 won't
+
+00:45:56.499 --> 00:46:01.339
+be changed. We're still going to need to step
+through a list of dogs, but it's a different
+
+00:46:01.339 --> 00:46:07.440
+list now. Now we need to use hounds, the one
+that's coming from the parameter not the instance
+
+00:46:07.440 --> 00:46:13.910
+data, because in a class method you don't
+have access to the instance data. So there
+
+00:46:13.910 --> 00:46:20.910
+we go. Again, instead of using adoptable dogs
+here, we'll use hounds. Now notice Eclipse
+
+00:46:24.239 --> 00:46:28.489
+is happy at this point but it probably still
+pays dividends to go through and read the
+
+00:46:28.489 --> 00:46:34.400
+code carefully. So we get the age. We see
+if the age is bigger than the minimum age
+
+00:46:34.400 --> 00:46:39.690
+and less than or equal to the maximum age.
+If so, we add it to our result and at the
+
+00:46:39.690 --> 00:46:45.869
+end we return our result. So this is the difference
+between an instance and class method. A very
+
+00:46:45.869 --> 00:46:51.640
+valuable lesson to learn. Now you probably
+notice that in this presentation that I've
+
+00:46:51.640 --> 00:46:55.640
+done a lot less implementing of code, although
+I did implement quite a bit of code before
+
+00:46:55.640 --> 00:47:02.079
+it started. Instead we focused our efforts
+on design. The design work is really the important
+
+00:47:02.079 --> 00:47:07.559
+part of the work. As you go in on the implementation
+tends to get easier and easier, and the design
+
+00:47:07.559 --> 00:47:13.489
+work tends to get more challenging. As the
+designs become more elegant though, the implementation
+
+00:47:13.489 --> 00:47:17.779
+generally becomes more simple. So when you
+have a class that you're having a difficult
+
+00:47:17.779 --> 00:47:22.329
+time implementing, often it's because the
+design is wrong more than that the code is
+
+00:47:22.329 --> 00:47:28.890
+wrong. So just as with methods small classes
+certainly better than large classes, and again
+
+00:47:28.890 --> 00:47:34.429
+making classes too large is a mistake that
+beginners tend to make. So keep programming!
+

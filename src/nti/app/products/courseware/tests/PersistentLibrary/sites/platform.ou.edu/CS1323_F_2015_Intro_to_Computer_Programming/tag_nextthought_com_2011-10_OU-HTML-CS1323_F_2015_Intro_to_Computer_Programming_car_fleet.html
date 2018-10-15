@@ -1,0 +1,24 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html lang="en"><head> <meta content="2015-12-11T16:56:47" http-equiv="last-modified" /> <meta content="1136" name="NTIRelativeScrollHeight" /> <meta content="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.car_fleet" name="NTIID" /> <meta content="NextThought" name="generator" /> <meta content="text/html; charset=ascii" http-equiv="content-type" /> <title>Car Fleet</title> <link href="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.instance_variables_for_fleet" rel="next" title="Instance Variables for Fleet" /> <link href="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.holding_the_state_of_an_object" rel="prev" title="Holding the State of an Object" /> <link href="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.reading:Chortle_CH35" rel="up" title="Objects that Contain Objects" /> <link href="styles/styles.css" rel="stylesheet" /> <link href="styles/content.css" rel="stylesheet" /> </head> <body id="NTIContent"> <div class="page-contents"><div data-ntiid="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.car_fleet" id="a0000000551" ntiid="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.car_fleet"> <div class="chapter title">Car Fleet</div> <p class="placeholder"></p> <a name="21febb5dc37d05c57f458da1cbc75d27"></a> <div class="sidebar" data-ntiid="tag:nextthought.com,2011-10:OU-HTML:NTISidebar-CS1323_F_2015_Intro_to_Computer_Programming.sidebar.answer.217" ntiid="tag:nextthought.com,2011-10:OU-HTML:NTISidebar-CS1323_F_2015_Intro_to_Computer_Programming.sidebar.answer.217"> <div class="sidebar-title">Answer</div> Yes. A fleet of cars consists of several cars. </div><a name="57d256f4f28a2700e31e989eff485a8b"></a> <p class="par" id="57d256f4f28a2700e31e989eff485a8b">Consider a fleet consisting of two cars: a town car and a sports utility vehicle. Think of the fleet as a single object composed of two objects. Remember that an object has (i) identity, (ii) state, and (iii) behavior. Is this true for a fleet of cars? </p> <a name="5502a7327d05892b8c8f683b8852cf8f"></a> <ol class="enumerate" start="1"> <li value="1"><a name="fce8a57c77e675e3e499a48edac9a59d"></a> <p class="par" id="fce8a57c77e675e3e499a48edac9a59d"><b class="bfseries">Identity</b>: Yes &#8212; my fleet is different from your fleet. </p> </li> <li value="2"><a name="feace3fbc808e1200b6f098d7776fd97"></a> <p class="par" id="feace3fbc808e1200b6f098d7776fd97"><b class="bfseries">State</b>: Yes &#8212; the odometer readings of each car is part of the state of the fleet. </p> </li> <li value="3"><a name="599eda02fa46c324e5de72a7bbe1c224"></a> <p class="par" id="599eda02fa46c324e5de72a7bbe1c224"><b class="bfseries">Behavior</b>: Yes &#8212; the fleet can have a method to compute average MPG for the fleet (and can have other methods if we care to write them.) </p> </li> </ol><a name="be83efa0018c8c74ae83b32477674a2d"></a> <p class="par" id="be83efa0018c8c74ae83b32477674a2d">Here is a skeleton of the <b class="bfseries"><tt class="ttfamily">Fleet</tt></b> class, along with the definition of <b class="bfseries"><tt class="ttfamily">Car</tt></b> and a testing class: </p> <a name="74ebdfddc86daa29957c9a0821d09944"></a> <pre>class Fleet
+{
+  // data
+  Car town;         // the town car of the fleet
+  Car suv;          // the sports utility vehicle of the fleet
+
+  // constructor
+
+  // method
+
+}
+
+class Car           // unchanged from above
+{
+  . . . 
+}
+
+class FleetTester
+{
+  Fleet myCars;
+
+  . . .  
+}
+</pre><a name="00663b45cbd2fab4c3262ca1adff4da5"></a> <p class="par" id="00663b45cbd2fab4c3262ca1adff4da5">The definition of class <b class="bfseries"><tt class="ttfamily">Car</tt></b> is the same as above. It does not change, even though <b class="bfseries"><tt class="ttfamily">Car</tt></b> objects are now used as part of a larger object. The (not yet finished) definition of <b class="bfseries"><tt class="ttfamily">Fleet</tt></b> says that a fleet consists of two cars. </p> <a name="ea11f95625de67fd1a17c6a3e3938fcf"></a> <div class="sidebar" data-ntiid="tag:nextthought.com,2011-10:OU-HTML:NTISidebar-CS1323_F_2015_Intro_to_Computer_Programming.sidebar.question.229" ntiid="tag:nextthought.com,2011-10:OU-HTML:NTISidebar-CS1323_F_2015_Intro_to_Computer_Programming.sidebar.question.229"> <div class="sidebar-title">Question</div> Does the definition of class <b class="bfseries"><tt class="ttfamily">Fleet</tt></b> include the definition of class <b class="bfseries"><tt class="ttfamily">Car</tt></b>? </div> </div></div> </body></html>

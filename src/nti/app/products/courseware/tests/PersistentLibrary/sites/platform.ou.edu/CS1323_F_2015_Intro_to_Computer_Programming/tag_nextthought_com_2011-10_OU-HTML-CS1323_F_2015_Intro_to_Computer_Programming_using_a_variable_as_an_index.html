@@ -1,0 +1,22 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html lang="en"><head> <meta content="2015-12-11T16:56:47" http-equiv="last-modified" /> <meta content="801" name="NTIRelativeScrollHeight" /> <meta content="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.using_a_variable_as_an_index" name="NTIID" /> <meta content="NextThought" name="generator" /> <meta content="text/html; charset=ascii" http-equiv="content-type" /> <title>Using a Variable as an Index</title> <link href="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.using_an_expression_as_an_index" rel="next" title="Using an Expression as an Index" /> <link href="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.array_initialization" rel="prev" title="Array Initialization" /> <link href="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.reading:Chortle_CH46" rel="up" title="Arrays" /> <link href="styles/styles.css" rel="stylesheet" /> <link href="styles/content.css" rel="stylesheet" /> </head> <body id="NTIContent"> <div class="page-contents"><div data-ntiid="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.using_a_variable_as_an_index" id="a0000000585" ntiid="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.using_a_variable_as_an_index"> <div class="chapter title">Using a Variable as an Index</div> <p class="placeholder"></p> <a name="c18643643babe6b90ea601a144f21610"></a> <div class="sidebar" data-ntiid="tag:nextthought.com,2011-10:OU-HTML:NTISidebar-CS1323_F_2015_Intro_to_Computer_Programming.sidebar.answer.248" ntiid="tag:nextthought.com,2011-10:OU-HTML:NTISidebar-CS1323_F_2015_Intro_to_Computer_Programming.sidebar.answer.248"> <div class="sidebar-title">Answer</div> <a name="1014d191dc7c96a2625697b6a43417a8"></a> <pre>	
+stuff[0] has 23
+stuff[1] has 38
+stuff[2] has 14
+stuff[3] has 0
+stuff[4] has 0
+</pre> </div><a name="5643c92b77e3c352daa4aa97dc4ff753"></a> <p class="par" id="5643c92b77e3c352daa4aa97dc4ff753">The index of an array is always an integer type. It can be a literal, or an expression that evaluates to an integer. For example, the following are legal: </p> <a name="c974db3b439c13b1fce20f1d2998e497"></a> <pre>int values[] = new int[7];
+int index;
+
+values[ 6 ] = 42;           // literal
+
+index  = 0;
+values[ index ] = 71;       // put 71 into cell 0
+
+index  = 5;
+values[ index ] = 23;       // put 23 into cell 5
+
+index  = 3;
+values[ 2+2 ] = values[ index-3 ];  // same as values[ 4 ] = values[ 0 ];
+</pre><a name="1b7a33618bee5ccd19160966ba718203"></a> <div class="sidebar" data-ntiid="tag:nextthought.com,2011-10:OU-HTML:NTISidebar-CS1323_F_2015_Intro_to_Computer_Programming.sidebar.question.261" ntiid="tag:nextthought.com,2011-10:OU-HTML:NTISidebar-CS1323_F_2015_Intro_to_Computer_Programming.sidebar.question.261"> <div class="sidebar-title">Question</div> <a name="d8d02bfad8e4af1cf1301bb7ff746540"></a> <p class="par" id="d8d02bfad8e4af1cf1301bb7ff746540"> Given the above declarations, is the following legal? </p> <a name="04c6000d8b8776a483b8d641459d5fef"></a> <pre>index = 4;
+values[ index+2 ] = values[ index-1 ];
+</pre> </div> </div></div> </body></html>

@@ -1,0 +1,1530 @@
+WEBVTT
+Kind: captions
+Language: en
+
+00:00:00.900 --> 00:00:03.980
+&gt;&gt;Dr. Deborah Trytten: Let's continue our
+study of logical operators by improving our
+
+00:00:03.980 --> 00:00:10.740
+GUI utilities. Here's the problem statement:
+let's improve our GUI utilities to do range
+
+00:00:10.740 --> 00:00:15.309
+checking of input data. Range checking is
+important because it is something that can
+
+00:00:15.309 --> 00:00:20.589
+be done generally from many different cases
+and then reused. By integrating this feature
+
+00:00:20.589 --> 00:00:25.480
+into our GUI utilities, we end up with a much
+more useful and therefore much more likely
+
+00:00:25.480 --> 00:00:33.300
+to be used class. First, let's design the
+methods. Now we're going to recall our original
+
+00:00:33.300 --> 00:00:41.000
+method signature. It looked like this int
+get int dialogue string prompt. There are
+
+00:00:41.000 --> 00:00:45.960
+at least two design possibilities for this.
+One possibility is doing something called
+
+00:00:45.960 --> 00:00:51.800
+overloading this method. That means using
+the same method name but using different parameters.
+
+00:00:51.800 --> 00:00:56.180
+If you've been paying attention in the API,
+you've undoubtedly seen lots of overloaded
+
+00:00:56.180 --> 00:01:01.710
+methods. Now the other thing we could do is
+change the method name, maybe to something
+
+00:01:01.710 --> 00:01:08.300
+that would indicate that a range is involved.
+Now we could do both. We could have bunches
+
+00:01:08.300 --> 00:01:13.430
+of method signatures here, but there's a problem
+with doing that. And that is when people look
+
+00:01:13.430 --> 00:01:19.270
+at a great, big, huge class with lots of methods,
+they feel overwhelmed, and then they're less
+
+00:01:19.270 --> 00:01:23.790
+likely to read the details and learn how to
+use the methods. So this is where design is
+
+00:01:23.790 --> 00:01:29.670
+a very difficult balancing act where you want
+to have a lot of possibilities available but
+
+00:01:29.670 --> 00:01:36.630
+not overwhelm the person who's using the class.
+It's really tricky to get this right. One
+
+00:01:36.630 --> 00:01:41.260
+of the ways that I answer design questions
+like this is to look at the API. The API has
+
+00:01:41.260 --> 00:01:46.780
+been discussed and re-discussed and designed
+and redesigned by hundreds of the most elegant
+
+00:01:46.780 --> 00:01:51.430
+Java programmers in the world. These are people
+who really know what they're talking about,
+
+00:01:51.430 --> 00:01:56.140
+so looking at the choices they've made in
+design is a good way to inspire our design
+
+00:01:56.140 --> 00:02:02.390
+decisions. It's also really interesting. So
+let's look at what method overloading would
+
+00:02:02.390 --> 00:02:07.540
+look like. Now an example where this was done
+is in the random class, so there's a method
+
+00:02:07.540 --> 00:02:12.980
+called next int that returns a randomly generated
+integer. So that could be anything in the
+
+00:02:12.980 --> 00:02:17.920
+possible range of integers: negative numbers,
+positive numbers, zero. And then there's also
+
+00:02:17.920 --> 00:02:23.599
+a method called next int with a parameter
+int n, and what it does is returns a randomly
+
+00:02:23.599 --> 00:02:30.310
+generated integer from zero, which is inclusive,
+to n, which is exclusive. So notice this is
+
+00:02:30.310 --> 00:02:36.659
+an overloaded method because we have the same
+method names in different parameters.
+
+00:02:36.659 --> 00:02:41.689
+So this is what the design would look like
+in that case. We'd have int get int dialogue
+
+00:02:41.689 --> 00:02:46.409
+with the string prompt and an int limit, which
+would return a value between zero, which would
+
+00:02:46.409 --> 00:02:52.359
+be inclusive, and limit, which would be exclusive.
+We could also have another method called get
+
+00:02:52.359 --> 00:02:57.980
+int dialogue with parameters string prompt
+int low and int high. This would return a
+
+00:02:57.980 --> 00:03:03.279
+value between low inclusive and high, which
+would be exclusive. Now you might think, "Hey,
+
+00:03:03.279 --> 00:03:08.659
+wait a minute. Why don't we make high inclusive?"
+Well, that would be okay. The only problem
+
+00:03:08.659 --> 00:03:14.049
+here is that if you look at the API, you'll
+see that the high values in all of these ranges
+
+00:03:14.049 --> 00:03:19.639
+are almost always exclusive. For example,
+it was in the random class. So if you do it
+
+00:03:19.639 --> 00:03:24.840
+differently than that, you risk confusing
+your users and probably annoying them too.
+
+00:03:24.840 --> 00:03:29.939
+So while you may not be completely comfortable
+with this low range being inclusive and high
+
+00:03:29.939 --> 00:03:34.540
+range being exclusive just yet, eventually
+you're going to get so comfortable with that
+
+00:03:34.540 --> 00:03:39.419
+if you continue programming that it's not
+going to seem logical to do it any other way.
+
+00:03:39.419 --> 00:03:45.769
+So I'm following the model of the API here.
+Now let's take a look at what the other possibility
+
+00:03:45.769 --> 00:03:50.969
+might look like. An example for this is in
+the array list class where you have a remove
+
+00:03:50.969 --> 00:03:57.189
+method that takes an int index as a parameter,
+and you have remove range, which takes two
+
+00:03:57.189 --> 00:04:03.290
+indices int from index and int to index. And
+notice from index is inclusive and to index
+
+00:04:03.290 --> 00:04:06.699
+is exclusive.
+
+00:04:06.699 --> 00:04:12.659
+Now a possible design would look something
+like this int get int dialogue in range. So
+
+00:04:12.659 --> 00:04:16.850
+then you'd have a string prompt, an int low,
+and an int high, and low would be inclusive,
+
+00:04:16.850 --> 00:04:21.840
+and high would be exclusive. So that's the
+design, and of course we could have a third
+
+00:04:21.840 --> 00:04:28.370
+method like this too. So let's choose our
+design. The first thing we need to consider
+
+00:04:28.370 --> 00:04:34.110
+is which class is really a better model for
+our utility methods. So with array list we
+
+00:04:34.110 --> 00:04:40.139
+were looking at something that had integers
+that were used as indices, whereas in random
+
+00:04:40.139 --> 00:04:45.930
+we were generating random data. I think random
+is probably a better model, and so that's
+
+00:04:45.930 --> 00:04:52.639
+one argument in favor of overloading the methods.
+Now the other thing we want to think about
+
+00:04:52.639 --> 00:04:57.270
+is which design would be easiest to remember
+and use. People like things that are easy
+
+00:04:57.270 --> 00:05:02.080
+to remember. If they have to go and do a whole
+bunch of reading to be able to use your methods,
+
+00:05:02.080 --> 00:05:06.060
+they'll probably just write their own. In
+fact, this is one of the fundamental shortcomings
+
+00:05:06.060 --> 00:05:12.180
+of many computer programmers is they forget
+to reuse other people's things. Now part of
+
+00:05:12.180 --> 00:05:15.139
+that is good because you should be proud of
+the code you write, and you should think the
+
+00:05:15.139 --> 00:05:20.580
+code you write is absolutely fantastic. But
+on the other hand, failing to reuse other
+
+00:05:20.580 --> 00:05:26.590
+people's work is bad because it means that
+you're doing a lot of work you don't have
+
+00:05:26.590 --> 00:05:32.080
+to do. And this can be carried to great extremes
+in some programmers who won't use anything
+
+00:05:32.080 --> 00:05:39.200
+anybody wrote--very inconsistent with efficient
+programming. So let's think about it. Are
+
+00:05:39.220 --> 00:05:44.810
+more methods better? Well, how did you feel
+when we first looked at the JOptionPane documentation
+
+00:05:44.810 --> 00:05:50.560
+initially? Or maybe the collections documentation?
+Didn't it feel overwhelming? Didn't it feel
+
+00:05:50.560 --> 00:05:54.810
+like there had to be an easier way to do this?
+Probably that's how you felt. I know that's
+
+00:05:54.810 --> 00:06:00.189
+how I felt when I looked at it the first time,
+so we want to keep things sort of lean and
+
+00:06:00.189 --> 00:06:05.479
+mean, and I really think that the overloaded
+method way of doing things is the better choice
+
+00:06:05.479 --> 00:06:09.129
+here by this criterion too.
+
+00:06:09.129 --> 00:06:12.560
+Now another thing you might want to think
+about is which design would be easiest to
+
+00:06:12.560 --> 00:06:17.430
+implement, and it's okay to use that as a
+factor to some degree. However, when you're
+
+00:06:17.430 --> 00:06:22.909
+writing a library, your primary concern needs
+to be with the people using the library, not
+
+00:06:22.909 --> 00:06:27.949
+necessarily with your inconvenience. So this
+is something I would tend to give low weight
+
+00:06:27.949 --> 00:06:32.370
+unless you're pressed for time. There's a
+saying in computer science that there's never
+
+00:06:32.370 --> 00:06:38.509
+time to do it right, but there's always time
+to do it over. It's of course quite sarcastic.
+
+00:06:38.509 --> 00:06:42.639
+Really don't always consider which is the
+easiest to implement, and frankly I don't
+
+00:06:42.639 --> 00:06:46.949
+think there's any difference in the difficulty
+to implement these two in this particular
+
+00:06:46.949 --> 00:06:51.990
+instance. So when you're comparing designs,
+there's never just one criterion. There's
+
+00:06:51.990 --> 00:06:56.300
+never just one way of looking at it. You have
+to look at lots of different factors and weigh
+
+00:06:56.300 --> 00:07:01.699
+them appropriately. This is where experience
+plays a big role. If you were working at a
+
+00:07:01.699 --> 00:07:06.169
+company, you would have coworkers you could
+talk to to make these kind of design decisions.
+
+00:07:06.169 --> 00:07:10.620
+And in fact talking with other people about
+design is really a good practice and one I
+
+00:07:10.620 --> 00:07:12.629
+encourage you to use.
+
+00:07:12.629 --> 00:07:17.909
+Okay, so now that we've got our design, let's
+think about what our test data should look
+
+00:07:17.909 --> 00:07:22.610
+like. Because we're going to rewrite our method
+with zero parameters--although I guess I haven't
+
+00:07:22.610 --> 00:07:30.000
+told you that yet--we would accept -5, 0,
+and 5. For our method with a parameter of
+
+00:07:30.000 --> 00:07:35.680
+6, we would accept 0 and 5--so notice I'm
+checking the boundaries again--and reenter
+
+00:07:35.680 --> 00:07:45.000
+-5, 6, and 10. For method with parameters
+-3 and 8, we would accept -3, 2 and 7, and
+
+00:07:45.000 --> 00:07:52.020
+we would need to reenter -5, 8, and 12. So
+again, checking all the boundaries. Of course
+
+00:07:52.020 --> 00:07:57.460
+we also want to try multiple reentry on each
+method to make sure that that's working every
+
+00:07:57.460 --> 00:07:59.639
+time.
+
+00:07:59.639 --> 00:08:05.159
+So let's implement the design. Now we're going
+to have three very similar methods. I've already
+
+00:08:05.159 --> 00:08:09.560
+created the Javadoc and the method signatures
+just to save us a little bit of time because
+
+00:08:09.560 --> 00:08:15.360
+watching that stuff being typed in is kind
+of painful. So what we're going to do is implement
+
+00:08:15.360 --> 00:08:19.930
+the most general case notice that's one of
+the new methods so that's the one that has
+
+00:08:19.930 --> 00:08:26.039
+int high and int low. Then we're going to
+rewrite the overloaded methods as special
+
+00:08:26.039 --> 00:08:32.090
+cases of this. This will give these methods
+one-line implementations. Now why would this
+
+00:08:32.090 --> 00:08:37.460
+be better than copy and paste because copy
+and paste could accomplish this too? Well,
+
+00:08:37.460 --> 00:08:41.760
+the reason it's better is let's say we make
+a mistake when we're writing the most general
+
+00:08:41.760 --> 00:08:47.940
+case. Maybe there's some super subtle little
+case that slips by. If we write the other
+
+00:08:47.940 --> 00:08:53.070
+overloaded methods by calling the original
+one, when we fix that original one, we will
+
+00:08:53.070 --> 00:08:57.880
+fix those other two methods too. Otherwise
+we have to remember that those three were
+
+00:08:57.880 --> 00:09:02.890
+copy and pasted. In general when you're using
+copy and paste in a program, you're making
+
+00:09:02.890 --> 00:09:07.370
+a design mistake, and so we really want to
+watch that at this point now that we're getting
+
+00:09:07.370 --> 00:09:10.730
+a big enough toolkit to do these things properly.
+
+00:09:10.730 --> 00:09:19.100
+Okay, so here we are in Eclipse. Okay, so
+here's our new class. Now I've rewritten all
+
+00:09:19.100 --> 00:09:25.220
+the Javadoc here so that you don't have to
+do that. Here's the get int dialogue method
+
+00:09:25.220 --> 00:09:30.920
+with the new parameter high. Notice it's a
+stub at this point. Here's get int dialogue
+
+00:09:30.920 --> 00:09:36.080
+with the two parameters low and high. I've
+left our original method body in there. And
+
+00:09:36.080 --> 00:09:40.330
+here's our original get int dialogue. Now
+notice I got rid of the method body there
+
+00:09:40.330 --> 00:09:46.250
+and I just have a stub at this point. So those
+are the three methods we're going to write.
+
+00:09:46.250 --> 00:09:53.250
+We actually can write this method right now.
+Because we're going to do it in terms of our
+
+00:09:54.370 --> 00:10:05.000
+other method, we erase our stub and write
+get int dialogue. Now we're going to go between
+
+00:10:05.000 --> 00:10:10.680
+low and high. So since this one accepts any
+possible value, we want to go between the
+
+00:10:10.680 --> 00:10:15.560
+lowest possible integer and the highest possible
+integer. Now we're going to need to look at
+
+00:10:15.560 --> 00:10:19.960
+the API to make sure we know what the names
+of those are. If you think about it for a
+
+00:10:19.960 --> 00:10:26.470
+minute, the class that this should be in is
+certainly the integer class because who else
+
+00:10:26.470 --> 00:10:36.300
+would know about integers? So here's our integer
+class. Of course, as always, having to do
+
+00:10:36.300 --> 00:10:43.330
+our little search for it. Now we're going
+to look at the field summary. What the field
+
+00:10:44.380 --> 00:10:48.870
+summary means is class data, so these are
+the class constants, just like we created
+
+00:10:48.870 --> 00:10:55.150
+some class constants earlier. So you see right
+away that we have max value and min value.
+
+00:10:55.150 --> 00:10:59.910
+Those are our maximum and minimum integers
+and those are the constants we want to use.
+
+00:10:59.910 --> 00:11:05.130
+They're in the integer class, so we'll call
+them integer period max underscore value and
+
+00:11:05.130 --> 00:11:14.300
+integer period min underscore value. The prompt
+we'll carry through from the original parameter.
+
+00:11:14.300 --> 00:11:23.800
+Our low value, which notice was on the left,
+will be integer dot min value and our high-value
+
+00:11:23.800 --> 00:11:39.200
+will be integer dot max value. So there we
+go. Of course we need to return this as Eclipse
+
+00:11:39.200 --> 00:11:48.400
+is reminding us. So we have a one-line method.
+Now in this case it's kind of cool.
+
+00:11:48.400 --> 00:11:54.370
+Now let's write our other one. Here instead
+of returning zero, we're going to return get
+
+00:11:54.370 --> 00:12:06.000
+int dialogue of prompt between zero and high.
+So once again a nice little one-line method.
+
+00:12:06.000 --> 00:12:10.000
+Now we could test these at this point, but
+let's wait until we've fixed this get int
+
+00:12:10.000 --> 00:12:17.000
+dialogue method. Okay, so let's think about
+what the loop should look like. We're going
+
+00:12:17.040 --> 00:12:22.080
+to have a while loop that says while the data
+is out of range, and inside that loop we want
+
+00:12:22.080 --> 00:12:27.200
+to pop up the dialogue and allow the user
+to reenter dialog. Now this way of looking
+
+00:12:27.200 --> 00:12:33.740
+at code is called pseudo code, pseudo as in
+sort of because it's not real Java code. In
+
+00:12:33.740 --> 00:12:39.170
+fact, it's not real code from any language
+other than English, and even then it's not
+
+00:12:39.170 --> 00:12:44.580
+real English. But what this is is a way of
+looking at the structure of the code without
+
+00:12:44.580 --> 00:12:49.880
+getting too involved in the nitty-gritty details
+of the language. This is a really good way
+
+00:12:49.880 --> 00:12:56.900
+to think through code before you get too attached
+to details. We haven't done this much, but
+
+00:12:56.900 --> 00:13:02.680
+I'll do it more and more as our programs get
+more interesting. So writing data in range
+
+00:13:02.680 --> 00:13:07.330
+is pretty simple in terms of logic. Data is
+going to have to be greater than or equal
+
+00:13:07.330 --> 00:13:13.390
+to low, and the data is going to have to be
+less than high. What that means is that both
+
+00:13:13.390 --> 00:13:18.230
+of those conditions would be true because
+we're using an and statement. Data out of
+
+00:13:18.230 --> 00:13:23.220
+range is actually a little different. This
+is the correct logic statement here. Data
+
+00:13:23.220 --> 00:13:29.190
+less than low or data greater than or equal
+to high. Now for some people that's going
+
+00:13:29.190 --> 00:13:33.570
+to be perfectly apparent right from the first
+minute, but it can be subtle for some other
+
+00:13:33.570 --> 00:13:38.740
+people to understand, so I'm going to spend
+the next few minutes talking about why this
+
+00:13:38.740 --> 00:13:42.450
+is what data out of range looks like.
+
+00:13:42.450 --> 00:13:46.680
+Let's look at the rationale for this. First
+let's think of this on a number line. Remember
+
+00:13:46.680 --> 00:13:50.160
+those things that you used back in algebra
+that the teacher told you were useful? Well,
+
+00:13:50.160 --> 00:13:55.720
+guess what? They're useful. Now a solid circle
+means that the point is included and an open
+
+00:13:55.720 --> 00:14:03.300
+circle means the point is excluded. So this
+is what our range looks like on the line.
+
+00:14:03.300 --> 00:14:09.510
+So to be inside the range, we're going to
+be between low and high, low is included and
+
+00:14:09.510 --> 00:14:17.600
+high is excluded. So we're greater than or
+equal to low and less than high. And notice
+
+00:14:17.600 --> 00:14:21.870
+that we need to use an and operator there.
+The reason we use an and is that both of those
+
+00:14:21.870 --> 00:14:28.160
+conditions have to be true in order to be
+included. If we used an or operator, if we
+
+00:14:28.160 --> 00:14:33.990
+said greater than or equal to low or less
+than high we would get the whole number line,
+
+00:14:33.990 --> 00:14:39.490
+definitely not what we want. So let's take
+a look and see what it means to not be in
+
+00:14:39.490 --> 00:14:46.260
+range. Well, here is what the outside range
+looks like. Now notice low is not included
+
+00:14:46.260 --> 00:14:52.170
+in the outside range because it's in the inside
+range, and high is included in the outside
+
+00:14:52.170 --> 00:14:57.730
+range because it was not included on the inside
+range. That means we use a less than operator
+
+00:14:57.730 --> 00:15:03.510
+for the low value and a greater than or equal
+to operator for the high value. Now let's
+
+00:15:03.510 --> 00:15:09.420
+think through that or. The reason it has to
+be or is there are no values that are both
+
+00:15:09.420 --> 00:15:14.350
+less than low and greater than or equal to
+high. So if we used an and here, which is
+
+00:15:14.350 --> 00:15:18.480
+the mistake that most people make when they
+do this the first time, what would happen
+
+00:15:18.480 --> 00:15:24.350
+is you would get nothing. Your loop would
+never run. So that is definitely not going
+
+00:15:24.350 --> 00:15:30.030
+to work. This has to be one or the other.
+In this case there's nothing that's both,
+
+00:15:30.030 --> 00:15:36.570
+so that's the rationale for the outside range
+being data less than low or data greater than
+
+00:15:36.570 --> 00:15:43.230
+or equal to high. Now this is actually part
+of a much more general thing called DeMorgan's
+
+00:15:43.230 --> 00:15:49.040
+Laws. It's kind of a weird distributive type
+law for logic, if you studied distributive
+
+00:15:49.040 --> 00:15:55.160
+laws back in algebra. So let's p and q be
+logic expressions. So they would be things
+
+00:15:55.160 --> 00:16:01.690
+like a is less than or equal to low or b is
+greater than high. Things like that. Here's
+
+00:16:01.690 --> 00:16:10.700
+what DeMorgan's Laws are. If you take the
+not of p and q, you get not p or not q. So
+
+00:16:10.700 --> 00:16:17.700
+the thing to notice here is both p and q get
+negated and and flips to be or. That and flipping
+
+00:16:17.730 --> 00:16:24.800
+to be or is what it makes it a weird distributive
+law. Now if we use not p or q then we get
+
+00:16:24.800 --> 00:16:33.000
+not p and not q, so the not sort of gets distributed
+to the p's and q's and the or gets flipped
+
+00:16:33.000 --> 00:16:39.640
+to be an and. Now the rationale for DeMorgan's
+Laws is exactly what I gave you in that previous
+
+00:16:39.640 --> 00:16:46.290
+slide. This is just the more general format
+of it. Now the thing we need to think about
+
+00:16:46.290 --> 00:16:50.850
+is what does not a less than b mean? Well,
+if you think about it for a minute, it means
+
+00:16:50.850 --> 00:16:56.250
+a is greater than or equal to b. So when you
+negate a less than, you get a greater than
+
+00:16:56.250 --> 00:17:00.910
+or equal to. And similarly if you negate a
+greater than, you get a less than or equal
+
+00:17:00.910 --> 00:17:10.700
+to. And those flip both ways. This was an
+example of DeMorgan's Laws.
+
+00:17:10.700 --> 00:17:15.730
+Now how do you use DeMorgan's Laws? Well,
+in this particular case, it was much easier
+
+00:17:15.730 --> 00:17:21.500
+to write the code for being in range than
+the code for being outside of range. In general
+
+00:17:21.500 --> 00:17:26.079
+I would say that most people have an easier
+time with and's than or's. I think because
+
+00:17:26.079 --> 00:17:31.030
+or has different meanings in English than
+it has in mathematics. So writing the out
+
+00:17:31.030 --> 00:17:36.970
+of range was trickier, so what you do is write
+the in range first and then use DeMorgan's
+
+00:17:36.970 --> 00:17:42.910
+Laws to create the correct out of range expression.
+Now sometimes it's the other way around. Sometimes
+
+00:17:42.910 --> 00:17:48.380
+it's easier to write out of range and then
+flip it for being in range, so just pay attention
+
+00:17:48.380 --> 00:17:55.130
+and consider different possibilities. So if
+you remember DeMorgan's Laws, you can write
+
+00:17:55.130 --> 00:17:59.150
+it the easy way and reverse it if you have
+to. It's a much less stressful way of getting
+
+00:17:59.150 --> 00:18:02.400
+these things right the first time.
+
+00:18:02.400 --> 00:18:11.200
+Let's go to our code now and rewrite this
+our most general method. We're going to need
+
+00:18:11.200 --> 00:18:20.300
+to put our int result, and if we think about
+it here, we probably want to make it an illegal
+
+00:18:20.300 --> 00:18:26.740
+value. Now that could be tricky because we
+want to get into the loop the first time.
+
+00:18:26.740 --> 00:18:31.390
+Now remember because we've called it from
+the other cases, integer dot min value and
+
+00:18:31.390 --> 00:18:36.020
+integer dot max value may in fact be legal
+values, so this is going to be a little bit
+
+00:18:36.020 --> 00:18:41.900
+tricky to get into loop the first time. So
+let's put a question mark there, write the
+
+00:18:41.900 --> 00:18:50.800
+while loop, and see what we can do. So we
+want to repeat things while the result is
+
+00:18:50.800 --> 00:19:00.100
+less than low or the result is greater than
+or equal to high. And I'll make a comment
+
+00:19:00.100 --> 00:19:18.100
+here: DeMorgan's from result less than or
+equal to low and result less than high, and
+
+00:19:18.100 --> 00:19:47.900
+remember to put the not in front of it. Okay,
+now these should be indented, so we highlight
+
+00:19:47.900 --> 00:19:57.500
+those and click on the tab key, and that's
+what does the indent. Our result string would
+
+00:19:57.500 --> 00:20:03.050
+be JOptionPane then int result. Now we've
+had to declare that outside the method, and
+
+00:20:03.050 --> 00:20:07.059
+the reason we've had to declare it outside
+is because we used it in the test for the
+
+00:20:07.059 --> 00:20:13.670
+while loop. So this makes sense except for
+one little thing, and that's that we don't
+
+00:20:13.670 --> 00:20:18.420
+always want to return result here. We want
+to look and see if it's legal before we return
+
+00:20:18.420 --> 00:20:22.570
+it. So we've still got some problems with
+this code that are going to make it a little
+
+00:20:22.570 --> 00:20:36.500
+bit more challenging to solve. So here we
+go. So let's think about how we could do this.
+
+00:20:36.500 --> 00:20:41.600
+Because we have the test for whether the result
+is legal up at the top of the while loop,
+
+00:20:41.600 --> 00:20:48.320
+let's move the return result outside of it.
+If we get there, we've passed that test, so
+
+00:20:48.320 --> 00:20:54.710
+this is a nicer way to do it. We're also keeping
+the code very short and clean, which is good.
+
+00:20:54.710 --> 00:20:59.030
+Now the one thing we haven't done here is
+we haven't told the user if they put in something
+
+00:20:59.030 --> 00:21:04.309
+that's out of range, and that's usually something
+that's a pretty good idea to do. And of course
+
+00:21:04.309 --> 00:21:08.000
+we've still got our initialization headache
+that Eclipse is reminding us about with that
+
+00:21:08.000 --> 00:21:13.390
+big red X that we have to deal with. How are
+we going to do that?
+
+00:21:13.390 --> 00:21:48.900
+Well, one thing we could do is to move our
+first attempt 
+up here. This is a little bit like a priming
+
+00:21:48.900 --> 00:22:08.300
+loop. So now if we get inside that loop, it
+means that our value was incorrect. So if
+
+00:22:08.300 --> 00:22:14.070
+they enter the correct value the first time,
+we're just going to go through below. Now
+
+00:22:14.070 --> 00:22:17.860
+we have to remove the string declaration here
+because we've already declared result string
+
+00:22:17.860 --> 00:22:25.200
+above. That looks pretty good. Let's think
+it through a little bit. Here now we're giving
+
+00:22:25.200 --> 00:22:32.800
+them a chance to enter the first time, parsing
+it as an integer, checking to see if it's
+
+00:22:32.800 --> 00:22:40.100
+legal. If it is in fact legal, then we return
+result. If it's not legal, then we show them
+
+00:22:40.100 --> 00:22:46.190
+the prompt again and do the conversion and
+check to see if it's legal. Now the only thing
+
+00:22:46.190 --> 00:22:51.130
+I don't like about this code is we're not
+giving the user any special feedback on the
+
+00:22:51.130 --> 00:22:56.340
+fact that their value wasn't legal. You have
+to be a little bit careful about that because
+
+00:22:56.340 --> 00:23:01.370
+whatever we put in here is going to go into
+everybody's program. So we could use, for
+
+00:23:01.370 --> 00:23:06.490
+example, a JOptionPane show message dialog,
+and say you have an illegal value, and then
+
+00:23:06.490 --> 00:23:12.250
+give you a chance to reenter. But having two
+dialogs pop up in a row can be really annoying
+
+00:23:12.250 --> 00:23:18.170
+to users, so this is sort of a delicate matter.
+Another way to solve the problem might be
+
+00:23:18.170 --> 00:23:22.670
+to have two different prompts: one prompt
+for the first time, and then a prompt for
+
+00:23:22.670 --> 00:23:26.800
+the second time. So that would change the
+signature of the method. Lots of different
+
+00:23:26.800 --> 00:23:33.300
+possibilities that you have to consider, but
+for right now I'm going to leave it like this.
+
+00:23:33.300 --> 00:23:59.000
+Of course we want to run our program once.
+Enter a Boolean. Remember the test program
+
+00:23:59.000 --> 00:24:06.300
+that we ran enter an integer. Now in this
+case we're just calling the one that has any
+
+00:24:06.300 --> 00:24:22.700
+legal value, so whatever integer we want.
+Enter a double and enter a string. Okay, so
+
+00:24:22.700 --> 00:24:27.740
+it looks like we didn't break anything, although
+we haven't tested things very rigorously.
+
+00:24:27.740 --> 00:24:31.910
+The other thing we might want to do is consider
+our testing strategy. We'll do that a little
+
+00:24:31.910 --> 00:24:38.090
+bit later. Now the next thing we need to do
+is revise the other methods that are in this
+
+00:24:38.090 --> 00:24:42.740
+class. So we've paid a lot of attention to
+the integer method, but we've ignored the
+
+00:24:42.740 --> 00:24:46.500
+string, Boolean, and double methods. Well,
+I have some good news here. The string and
+
+00:24:46.500 --> 00:24:51.740
+Boolean methods have no illegal entries. Booleans
+don't really have an a range, and it's hard
+
+00:24:51.740 --> 00:24:56.770
+to say what could or couldn't be a string,
+so there are no legal entries that make sense
+
+00:24:56.770 --> 00:25:02.640
+there. But the double method certainly should
+be revised in parallel. Just as in the previous
+
+00:25:02.640 --> 00:25:07.200
+case, I've created the Javadoc and created
+the signatures. And by the way, I made exactly
+
+00:25:07.200 --> 00:25:11.290
+the same decision with the double that I made
+with int, that is, I overloaded the three
+
+00:25:11.290 --> 00:25:13.750
+methods.
+
+00:25:13.750 --> 00:25:23.900
+So here we go to implement the double. So
+here's the get double dialogue with high and
+
+00:25:23.900 --> 00:25:28.150
+low. Now the one thing we might want to do
+here is just copy and paste what we did in
+
+00:25:28.150 --> 00:25:32.630
+the integer class. Now I'm a little leery
+to do it at this point because we haven't
+
+00:25:32.630 --> 00:25:36.960
+tested this very well, and that means that
+if we make a mistake we're going to get it
+
+00:25:36.960 --> 00:25:48.000
+in both classes. Eeee, I guess I'll do it
+anyways, but we really need to remember that
+
+00:25:48.000 --> 00:25:58.900
+we've done this so that we can do the testing
+properly. So there's the replacement. The
+
+00:25:58.900 --> 00:26:04.350
+only thing will need to be changed is result
+will need to be a double, and of course then
+
+00:26:04.350 --> 00:26:19.100
+we'll use double parse double. Still low and
+high, those are the same, result string, and
+
+00:26:19.100 --> 00:26:31.000
+this'll be double parse double again. If you're
+wondering why Eclipse was not complaining
+
+00:26:31.000 --> 00:26:36.100
+about having integer parse integer there,
+remember that integers can be promoted to
+
+00:26:36.100 --> 00:26:41.040
+doubles, so this is a case where you have
+read the code carefully and remember it.
+
+00:26:41.040 --> 00:26:49.800
+Now let's go and do our two other cases. Now
+this one is interesting with high. We can
+
+00:26:49.800 --> 00:27:01.500
+return get double dialogue prompt zero high,
+so that one worked very much like the integer
+
+00:27:01.500 --> 00:27:11.700
+case. This one on the other hand, this was
+our original method. That one's going to be
+
+00:27:11.700 --> 00:27:16.620
+a little bit more challenging. Now the double
+class doesn't have a min value and a the max
+
+00:27:16.620 --> 00:27:21.200
+value like the integer class has, so we're
+going to need to go and take a look and see
+
+00:27:21.200 --> 00:27:38.900
+what is available. Here's the double class,
+and here's our field summary. Now at this
+
+00:27:38.900 --> 00:27:43.700
+point we can really understand what this field
+summary is. These are the constants that are
+
+00:27:43.700 --> 00:27:49.640
+available in the double class, so all of these
+things are final and static. Now they don't
+
+00:27:49.640 --> 00:27:54.220
+say that they're final in so many words, but
+they kind of do because they have the caps
+
+00:27:54.220 --> 00:27:59.870
+and underscore as convention that Java uses
+to communicate that something's a constant.
+
+00:27:59.870 --> 00:28:05.490
+So we need to take a look, and we do see there's
+a max value and a min value, but you need
+
+00:28:05.490 --> 00:28:10.160
+to read these things carefully to see what
+they really mean because the max value here
+
+00:28:10.160 --> 00:28:15.820
+is holding the largest positive finite value
+of type double. Okay, so that's similar to
+
+00:28:15.820 --> 00:28:22.570
+integer dot max value. Min value on the other
+hand is a constant holding the smallest positive
+
+00:28:22.570 --> 00:28:28.520
+nonzero value of type double. That is not
+what we want because we want to get all of
+
+00:28:28.520 --> 00:28:34.840
+the possible doubles, so that would miss all
+of the negative doubles if we use that value.
+
+00:28:34.840 --> 00:28:39.900
+This is why you have to read the documentation
+every time. Of course eventually you'll remember
+
+00:28:39.900 --> 00:28:45.130
+it, but for right now you need to read and
+check that things work the way you'd expect.
+
+00:28:45.130 --> 00:28:49.559
+So let's take a look and see if there's something
+that makes more sense. Well, look at this
+
+00:28:49.559 --> 00:28:55.200
+negative infinity and positive infinity. Those
+look promising. So any of our double values
+
+00:28:55.200 --> 00:29:00.200
+should be between negative infinity and positive
+infinity. Okay, we know how to write that
+
+00:29:00.200 --> 00:29:21.800
+code now. So we're going to return get double
+dialogue of prompt double dot negative infinity
+
+00:29:21.800 --> 00:29:29.900
+and double dot positive infinity.
+
+00:29:29.900 --> 00:29:39.300
+Okay, Eclipse is happy, and we're probably
+happy too. Of course we want to run it, but
+
+00:29:39.300 --> 00:29:45.860
+from our last program that wasn't very satisfying.
+It's not really an easy way to test the program
+
+00:29:45.860 --> 00:29:49.390
+because we have the Booleans in there, and
+the strings, and the ints, and we're going
+
+00:29:49.390 --> 00:29:56.040
+to lose track of what's going on if we test
+that way. So let's write a test harness. So
+
+00:29:56.040 --> 00:30:01.920
+what we want to do is to create a test program
+that we can strategically use to run, and
+
+00:30:01.920 --> 00:30:06.460
+the good news is we're going to get another
+chance to use DeMorgan's Laws. So I've taken
+
+00:30:06.460 --> 00:30:13.460
+our test strategy and I've put it in here.
+So we can see that we want to run with 0 parameters,
+
+00:30:13.460 --> 00:30:19.640
+with the parameter 6, for parameters -3 to
+8. So we have these three different possibilities,
+
+00:30:19.640 --> 00:30:24.370
+and we want to try multiple reentry on each
+method. So those are the things we want to
+
+00:30:24.370 --> 00:30:33.600
+be able to do. And this is our old test program
+that we had. Now we haven't changed our Boolean
+
+00:30:33.600 --> 00:30:38.080
+method or our string method, so we probably
+don't want to test those too much, but we
+
+00:30:38.080 --> 00:30:42.700
+should test them occasionally. Bad things
+happen to code when you have it open so never
+
+00:30:42.700 --> 00:30:50.700
+trust code to not have been accidentally changed.
+It's just too easy to make a mistake. So let's
+
+00:30:50.700 --> 00:30:56.010
+rewrite this, so now it's not just a matter
+of of calling get int dialogue, we have three
+
+00:30:56.010 --> 00:30:59.530
+different versions.
+
+00:30:59.530 --> 00:31:14.700
+So let's write a menu. Now I'm putting this
+in a separate method to keep our main program
+
+00:31:14.700 --> 00:31:18.559
+nice and clean. You could write it in the
+main method if you want, but I like short
+
+00:31:18.559 --> 00:31:30.400
+main methods. So public static int call menu.
+Now we haven't done much design for this code,
+
+00:31:30.400 --> 00:31:35.110
+so we don't want to jump too far forward before
+thinking about what it should look like. So
+
+00:31:35.110 --> 00:31:40.530
+do we want to have, for example, three choices
+for int, three choices for double, a choice
+
+00:31:40.530 --> 00:31:47.000
+for string and Boolean? That would be—what,
+eight choices? That's probably not too many
+
+00:31:47.000 --> 00:32:27.800
+to have on a menu, so let's do that. Hmm,
+as I'm doing this, I'm thinking about whether
+
+00:32:27.800 --> 00:32:33.390
+this is the right thing to do. One of the
+problems we have is that we're going to have
+
+00:32:33.390 --> 00:32:39.100
+to make choices up here based on what answer
+comes back from here. Now we could put in
+
+00:32:39.100 --> 00:32:42.290
+a bunch of constants, which is something we've
+done before, and that's a pretty good way
+
+00:32:42.290 --> 00:32:48.500
+to do this. Or maybe we should be choosing
+just integer double string Boolean here and
+
+00:32:48.500 --> 00:32:54.040
+then allowing within the integer choice to
+have three different possibilities. Maybe
+
+00:32:54.040 --> 00:33:02.400
+we could even find a way to to tag a particular
+value so that we knew that it meant not to
+
+00:33:02.400 --> 00:33:04.400
+use one of the arguments.
+
+00:33:04.400 --> 00:33:08.160
+So we haven't given much thought to this code,
+and that's making the code a little bit harder
+
+00:33:08.160 --> 00:33:13.500
+to write. So let's start to do a little bit
+of thinking about which way we want to do
+
+00:33:13.500 --> 00:33:19.480
+things. So if we continue down this path,
+we're going to have we decided eight choices
+
+00:33:19.480 --> 00:33:25.049
+here in call menu, and then we'll have eight
+choices up here. Now four of them are there
+
+00:33:25.049 --> 00:33:32.600
+already, so I guess that's not too bad. Okay,
+maybe our original decision was all right.
+
+00:33:32.600 --> 00:33:38.200
+Never jump ahead with programming if you're
+thinking that you're not doing the right thing.
+
+00:33:38.200 --> 00:33:42.059
+Always stop and think about the design, and
+in fact, we would've been wise to consider
+
+00:33:42.059 --> 00:34:32.400
+this design more carefully before starting
+implementation. Yeah, rather than rewriting
+
+00:34:32.400 --> 00:34:42.000
+all that again, I'm going to copy and paste.
+Remember copy and paste is usually a sign
+
+00:34:42.000 --> 00:35:46.300
+that you're doing something wrong, even though
+we all do it occasionally. Okay, so there
+
+00:35:46.300 --> 00:35:53.069
+are our possibilities. Now we're going to
+need to read in data from the user. Clearly
+
+00:35:53.069 --> 00:36:20.800
+the main method is going to need to know about
+the scanner, and we'll need to import it.
+
+00:36:20.800 --> 00:36:34.400
+And we're going to need to pass the scanner
+to the call method.
+
+00:36:34.400 --> 00:36:38.930
+Now some very strange things are happening
+in Eclipse right now. You may not have noticed
+
+00:36:38.930 --> 00:36:43.519
+it, but some of our code is in blue, and some
+of our code is in black, and it's not at all
+
+00:36:43.519 --> 00:36:52.200
+consistent. It looks like we had a funny little
+double quote in there, and that may be causing
+
+00:36:52.200 --> 00:36:57.210
+those problems. I don't know exactly how that
+weird double quote got in there, but those
+
+00:36:57.210 --> 00:37:01.799
+things happen, and you definitely want to
+pay attention to them. When the colors don't
+
+00:37:01.799 --> 00:37:05.859
+look consistant in something like that, it
+can be that there's something very, very subtle
+
+00:37:05.859 --> 00:37:27.100
+that's wrong. So we'll now read a new value,
+so it'll be keyboard dot next it. Now that's
+
+00:37:27.100 --> 00:37:31.779
+a perfectly good menu, and notice that Eclipse's
+now got the colors all right so it looks like
+
+00:37:31.779 --> 00:37:40.100
+everything is okay there. I'm not Javadocing
+this one because this is really just for our
+
+00:37:40.100 --> 00:37:46.359
+own personal use. So the next thing we need
+to consider, once we've got this choice, is
+
+00:37:46.359 --> 00:37:56.400
+we're definitely going to want to repeat this.
+So while--now in this case, we want to repeat
+
+00:37:56.400 --> 00:38:09.700
+while the choice is in a legal range. Choice
+is greater than or equal to 1, and choice
+
+00:38:09.700 --> 00:38:19.500
+is less than or equal to 8. Now to do that
+of course we'll have to declare choice before
+
+00:38:19.500 --> 00:38:25.519
+the loop, and we can set it to whatever value
+we want because we're going to reset it here
+
+00:38:25.519 --> 00:38:41.800
+immediately. All of these are going to need
+to be indented, so let's do that now. If choice
+
+00:38:41.800 --> 00:39:01.400
+equals 1--well, that was an integer with zero
+parameters. That's this one. Now in this case
+
+00:39:01.400 --> 00:39:06.789
+I'm actually not going to put curly braces
+around the bodies of my if statements, mostly
+
+00:39:06.789 --> 00:39:11.059
+just to keep the code a little bit shorter.
+If I were doing this commercially, I probably
+
+00:39:11.059 --> 00:39:22.200
+would put them there, but we have to keep
+things on the screen here. So choice two remember
+
+00:39:22.200 --> 00:39:28.390
+was the integer with one parameter, and notice
+with that one we're definitely going to want
+
+00:39:28.390 --> 00:39:52.800
+to have the curly braces. So we'll have some
+parameters here, and of course we're going
+
+00:39:52.800 --> 00:40:03.400
+to need some double parameters too. Guess
+we should declare our double parameters to
+
+00:40:03.400 --> 00:40:21.700
+be of type double, and let's change the variable
+names here to use parallel construction. So
+
+00:40:21.700 --> 00:40:26.249
+since our double parameters were double parameter
+one and double parameter two, I changed our
+
+00:40:26.249 --> 00:40:58.000
+int parameters to be int parameter one and
+int parameter two. So here we'll do 
+
+00:40:58.000 --> 00:41:22.000
+system out print line enter the parameter,
+parameter one equals input dot next int--that
+
+00:41:22.000 --> 00:41:38.900
+should've been int parameter one. And here
+we'll have get an integer and parameter, int
+
+00:41:38.900 --> 00:42:15.300
+parameter else if choice equals 3. It's going
+to be similar to this, so we'll enter the
+
+00:42:15.300 --> 00:42:40.000
+first parameter 
+and then the second parameter. So then that's
+int parameter two. We're going to add that
+
+00:42:40.000 --> 00:42:52.300
+in to the method call.
+
+00:42:52.300 --> 00:42:56.450
+Now it turns out that our testing is going
+to be very similar. By the way, since that's
+
+00:42:56.450 --> 00:43:04.400
+all of our integer cases, let's erase this.
+Since we kept our construction parallel, we
+
+00:43:04.400 --> 00:43:10.640
+can now do the very similar thing for doubles.
+We'll just have to copy this and make a few
+
+00:43:10.640 --> 00:43:37.500
+editorial changes. Okay, so this will be now
+else if choice is 4, and this will be get
+
+00:43:37.500 --> 00:43:56.000
+double dialogue. Else if choice is 5 enter
+the parameter, and this will be double parameter
+
+00:43:56.000 --> 00:44:19.700
+one input dot next double. And this will be
+double parameter one. Here's choice 6: double
+
+00:44:19.700 --> 00:44:41.700
+parameter one input dot next double, double
+parameter two, input dot next double, get
+
+00:44:41.700 --> 00:44:59.100
+double dialogue, enter a double, double parameter
+one, double parameter two. I notice up here
+
+00:44:59.100 --> 00:45:05.319
+that I forgot to change this to double dialogue.
+Eclipse had spotted that. That little red
+
+00:45:05.319 --> 00:45:17.300
+X is what called my attention to it. So we've
+now dealt with this case. I notice I had a
+
+00:45:17.300 --> 00:45:22.950
+little extra blank line there. Unfortunately
+that was also the case higher, so let's remove
+
+00:45:22.950 --> 00:45:29.390
+that. The other thing that I see when I'm
+looking at this code is that it looks kind
+
+00:45:29.390 --> 00:45:34.599
+of weird to not have the curly braces surrounding
+all of them. So even though I thought initially
+
+00:45:34.599 --> 00:45:57.200
+I didn't want them there, I've changed my
+mind. Ah yes, what Eclipse is unhappy about
+
+00:45:57.200 --> 00:46:06.300
+here is we declared choice before the method,
+and of course you can't declare twice. Okay,
+
+00:46:06.300 --> 00:46:23.400
+two more cases and we're done. Else if choice
+equals--this must be 7 now. So let's remember
+
+00:46:23.400 --> 00:46:50.200
+what choice 7 was. That was the Boolean choice,
+so that's this one. Else if choice equals
+
+00:46:50.200 --> 00:47:00.800
+8. Now right about now you might be thinking
+that there must be a better way to do this,
+
+00:47:00.800 --> 00:47:06.160
+and you're absolutely right. There is. There's
+a tool that's called J unit that makes it
+
+00:47:06.160 --> 00:47:12.999
+possible to do this very smoothly. The reason
+we can't use that tool now is it uses programming
+
+00:47:12.999 --> 00:47:19.910
+techniques that are beyond the range of our
+abilities at this point. But that is something
+
+00:47:19.910 --> 00:47:25.329
+that you'll probably learn about in your second
+Java class. Okay, so we've done a whole lot
+
+00:47:25.329 --> 00:47:30.200
+of work for testing this program, and that's
+pretty typical. Let's get our plan for our
+
+00:47:30.200 --> 00:47:36.059
+test data up and now start running the program.
+Of course we may also have to bug our test
+
+00:47:36.059 --> 00:47:56.000
+GUI utilities. Okay, so so first let's try
+an integer with no parameters. And so remember
+
+00:47:56.000 --> 00:48:18.600
+our plan was to test -5, which came out correctly,
+and then 0, and then 5, and we can go on testing
+
+00:48:18.600 --> 00:48:22.259
+and testing. I'm going to go to the integer
+version with two parameters because we know
+
+00:48:22.259 --> 00:48:32.300
+that's our boss. Whoops, didn't mean to run
+that again, not that it did any harm. So the
+
+00:48:32.300 --> 00:48:40.200
+first parameter we were going to run was -3.
+The second parameter was 8, and then we were
+
+00:48:40.200 --> 00:48:50.400
+going to test -3, and it came back as -3.
+And if we continue testing this is all going
+
+00:48:50.400 --> 00:48:55.279
+to turn out just fine. I'm going to stop the
+testing here because it's so time consuming,
+
+00:48:55.279 --> 00:49:02.600
+but remember that's a very important part
+of writing the program too. Oh, and by the
+
+00:49:02.600 --> 00:49:09.000
+way, I lied when I said we were going to use
+DeMorgan's Laws again. Too bad. Keep programming!
+

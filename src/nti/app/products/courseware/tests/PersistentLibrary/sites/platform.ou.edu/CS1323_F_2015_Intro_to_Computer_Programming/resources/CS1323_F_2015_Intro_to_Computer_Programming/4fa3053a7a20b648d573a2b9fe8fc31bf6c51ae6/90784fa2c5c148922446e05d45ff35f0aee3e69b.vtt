@@ -1,0 +1,1214 @@
+WEBVTT
+Kind: captions
+Language: en
+
+00:00:00.870 --> 00:00:04.210
+&gt;&gt;Dr. Deborah Trytten: Let's continue our
+study of common Java idioms by looking at
+
+00:00:04.210 --> 00:00:09.849
+the Collections class. Here's the problem
+statement: Learn to use the Collections class
+
+00:00:09.849 --> 00:00:16.340
+to perform useful operations on ArrayLists.
+Now the Collections Class is an interesting
+
+00:00:16.340 --> 00:00:22.360
+class. It's a group of useful methods that
+can be performed on ArrayList objects. Unfortunately
+
+00:00:22.360 --> 00:00:26.310
+it also works for different types of objects,
+and so we're going to have to be a little
+
+00:00:26.310 --> 00:00:32.279
+bit careful. Now examples of the kind of things
+that are available in collections are sort,
+
+00:00:32.279 --> 00:00:37.920
+minimum, maximum, fill, shuffle, rotate, index
+of subList, reverseOrder, replaceAll, swap,
+
+00:00:37.920 --> 00:00:44.339
+there's all kinds of great stuff available.
+Another warning is that there is a class called
+
+00:00:44.339 --> 00:00:49.350
+Collection and there's a class called Collections
+with an "s" on it. That Collections class
+
+00:00:49.350 --> 00:00:55.039
+is the one we're looking at. Very easy mistake
+to make when you're programming. Now there
+
+00:00:55.039 --> 00:01:00.460
+is lots of strange syntax in the Collections
+class. If you continue studying Java someday
+
+00:01:00.460 --> 00:01:05.250
+this will all make sense to you but for right
+now just ignore it, and think through what
+
+00:01:05.250 --> 00:01:10.000
+makes sense because actually all these classes
+are very logical if you just think about them
+
+00:01:10.000 --> 00:01:16.360
+the right way using the Java idioms. All the
+methods in this class are class methods so
+
+00:01:16.360 --> 00:01:21.000
+that's a little bit like the math class where
+all the methods are class methods.
+
+00:01:21.000 --> 00:01:26.040
+Another way of thinking about this is the
+Collections Class is a utility class. It doesn't
+
+00:01:26.040 --> 00:01:31.500
+have any data of its own. It's simply putting
+together a group of useful stuff under one
+
+00:01:31.500 --> 00:01:38.500
+title. Here's some of the rules for reading
+the API: The "T" between angle bars parameter
+
+00:01:41.100 --> 00:01:45.890
+means any object type. Now the ones we're
+going to use at this point are string, integer,
+
+00:01:45.890 --> 00:01:51.740
+and double. The same ones we've been using
+all along. ArrayList can be used for any parameter
+
+00:01:51.740 --> 00:01:57.320
+or return value that has either a list with
+the angle bars or a collection with the angle
+
+00:01:57.320 --> 00:02:02.670
+bars. That just has to do with the fact that
+array lists have order, which is what lists
+
+00:02:02.670 --> 00:02:09.469
+need and our general Collections. Don't worry
+about what it means too much. Now you're going
+
+00:02:09.469 --> 00:02:14.569
+to ignore anything that uses another class
+like set or map or enumeration. We don't know
+
+00:02:14.569 --> 00:02:19.659
+about those classes yet and an ArrayList does
+not fit in with those so we'll just ignore
+
+00:02:19.659 --> 00:02:21.849
+those methods.
+
+00:02:21.849 --> 00:02:26.840
+So let's work on one. Let's create an ArrayList
+that contains the values from 1 to 10 and
+
+00:02:26.840 --> 00:02:32.769
+print with a single instruction with no loops
+allowed. Now this relies on one of our Java
+
+00:02:32.769 --> 00:02:37.319
+idioms that we're already familiar with and
+that's that the system out print method calls
+
+00:02:37.319 --> 00:02:44.319
+toString on any object that it encounters.
+Now all object classes have a to string and
+
+00:02:45.730 --> 00:02:50.709
+most of them work pretty well, although not
+all do. Subtleties like this are things you'll
+
+00:02:50.709 --> 00:02:57.709
+understand in your next Java class more than
+this one. So here we are in eclipse. I've
+
+00:02:57.810 --> 00:03:03.239
+set up the code so that we'll have seven different
+experiments and the main program just calls
+
+00:03:03.239 --> 00:03:07.319
+them one after another. We may turn those
+on and off as we wish.
+
+00:03:07.319 --> 00:03:14.319
+So here's experiment one. We're going to create
+our ArrayList of integer objects and of course
+
+00:03:18.670 --> 00:03:25.120
+construct it. Now in this particular case,
+we know how to construct it. We know what
+
+00:03:25.120 --> 00:03:30.180
+the size should be. When you know the size,
+which is not something you always know, you
+
+00:03:30.180 --> 00:03:37.180
+always put it in this parameter because it
+makes the class more efficient. So for int
+
+00:03:37.639 --> 00:03:44.639
+"I" is zero "I" less than 10 plus plus "I"...Whoops,
+I cheated! I used my favorite loop instead
+
+00:03:47.810 --> 00:03:54.810
+of the loop we currently know. Sorry about
+that. So what we're going to do is mylist
+
+00:04:00.989 --> 00:04:07.989
+dot add count plus one remember plus one 'cause
+count started at zero and then of course increment
+
+00:04:09.680 --> 00:04:16.680
+count [pause] and let's see what happens when
+we do just printing the list right like that
+
+00:04:25.710 --> 00:04:30.020
+in one statement.
+So what's going to happen is my list dot to
+
+00:04:30.020 --> 00:04:33.770
+string is going to be called and then it's
+going to step through the list so there's
+
+00:04:33.770 --> 00:04:38.500
+a hidden loop inside of this. I want to call
+your attention to one other thing that I did
+
+00:04:38.500 --> 00:04:44.039
+here. Notice that I'm adding an int instead
+of an integer. That may seem a little bit
+
+00:04:44.039 --> 00:04:48.800
+weird, but Java does something behind the
+scenes called auto boxing where it takes integers
+
+00:04:48.800 --> 00:04:53.229
+and automatically creates in objects. Now
+I'm a little bit worried about leaving that
+
+00:04:53.229 --> 00:04:56.870
+in there because I'm not sure that's it's
+going to make sense to you, so I'm going to
+
+00:04:56.870 --> 00:05:03.870
+actually (even though this is legal code)
+I'm going to put a little bit more formal
+
+00:05:04.680 --> 00:05:11.680
+code in there so we're actually constructing
+those integer objects. Okay, so let's run
+
+00:05:11.990 --> 00:05:16.699
+experiment one and see what happens.
+
+00:05:16.699 --> 00:05:23.699
+[pause] So there we go. So you can see what
+the toString method in the ArrayList does
+
+00:05:25.060 --> 00:05:30.770
+is it uses the square brackets and comma separation
+to tell you what's in the list. Perfectly
+
+00:05:30.770 --> 00:05:36.229
+fine for what we're doing. Now I'm going to
+comment out experiment one because we'll do
+
+00:05:36.229 --> 00:05:42.220
+another experiment in a few minutes. Here's
+example two. Let's write a method that creates
+
+00:05:42.220 --> 00:05:47.240
+an ArrayList containing a number from 1 to
+100 in random order. This is little harder
+
+00:05:47.240 --> 00:05:52.259
+than you might think because if you just randomly
+pick numbers from 1 to 100 you're going to
+
+00:05:52.259 --> 00:05:56.569
+get repeats of some numbers and other numbers
+will be missing, so that isn't what we want
+
+00:05:56.569 --> 00:06:01.330
+to do. Instead we want to use some of the
+cool things that were available in the Collections
+
+00:06:01.330 --> 00:06:06.580
+Class. So what we're going to do is start
+with the elements in sorted order and then
+
+00:06:06.580 --> 00:06:11.750
+shuffle them. So that's one of the neat methods
+that was available. Let's go to the Collections
+
+00:06:11.750 --> 00:06:16.539
+class then take a look that method. Here we
+are in the Collections Class and we're looking
+
+00:06:16.539 --> 00:06:23.539
+for the shuffle method. They're of course
+in alphabetical order. So notice we know we
+
+00:06:25.419 --> 00:06:30.259
+can use this one because of the parameter.
+Remember anything that had a list is okay
+
+00:06:30.259 --> 00:06:36.240
+for an ArrayList. So this randomly permutes
+the specified list using a default source
+
+00:06:36.240 --> 00:06:40.689
+of randomness. All permutations occur with
+approximately equal likelihood.
+
+00:06:40.689 --> 00:06:47.610
+Whew, lots of hard words! What it basically
+means is -- it's going to shuffle things around.
+
+00:06:47.610 --> 00:06:52.389
+So really the shuffle name is much more useful
+in the first method there. And then they use
+
+00:06:52.389 --> 00:06:58.830
+lots of little details, so it says the implementation
+traverses backwards from the last element
+
+00:06:58.830 --> 00:07:03.020
+to the second repeatedly swapping a random
+selected element into the current position,
+
+00:07:03.020 --> 00:07:09.259
+so they're giving you details about how this
+works. Which are nice to use, but what we
+
+00:07:09.259 --> 00:07:15.400
+need is really just the name of the method
+and what the parameters are. So here we go.
+
+00:07:15.400 --> 00:07:22.400
+I put a constant in here a size of 10 that
+we didn't use in our first experiment that
+
+00:07:23.159 --> 00:07:30.159
+probably we should increase to 100 now and
+use. Let's copy our code for creating the
+
+00:07:31.699 --> 00:07:38.699
+ArrayList (no reason to reinvent the wheel)
+only instead of 10 we'll use size 
+and we will shuffle our code. So remember,
+
+00:07:53.389 --> 00:08:00.389
+we have to give the class name and then we're
+certainly going to want to look at it and
+
+00:08:03.080 --> 00:08:09.219
+we know how to do that easily now.
+
+00:08:09.219 --> 00:08:16.219
+So there we go. Now in terms of checking whether
+this worked correctly or not we've got a problem.
+
+00:08:26.259 --> 00:08:30.740
+The problem is 100 is too big. We can't see
+all the values on the screen and it's not
+
+00:08:30.740 --> 00:08:35.039
+easy to check that each value is occurring
+only once so while we think we've done the
+
+00:08:35.039 --> 00:08:38.950
+right thing and while everything's looking
+promising, we're not sure. This is where that
+
+00:08:38.950 --> 00:08:45.950
+constant really pays off. If we pull it down
+to 10 instead of 100 we now should be able
+
+00:08:46.779 --> 00:08:51.959
+to go through and check and make sure that
+our shuffle is working correctly. [pause]
+
+00:08:51.959 --> 00:08:58.959
+1, 2, 3, 4, 5, 6, 7, 8, 9, 10. Whew, there
+we go! The next one we want to try is linear
+
+00:09:10.200 --> 00:09:16.440
+search. That is stepping through the elements
+one at a time and seeing if we can find them.
+
+00:09:16.440 --> 00:09:20.750
+We need to think a little bit about what Java
+idiom makes search work. So if we're looking
+
+00:09:20.750 --> 00:09:26.790
+for something what do we have to do? Now you
+might think equals equals. At first glance
+
+00:09:26.790 --> 00:09:30.350
+but the problem with that is that works the
+primitive data types, it doesn't work very
+
+00:09:30.350 --> 00:09:36.500
+well with objects. Because we need to do deep
+comparisons not shallow comparisons. Now this
+
+00:09:36.500 --> 00:09:40.310
+is something that you've probably read about
+in chortle, but let's actually review it a
+
+00:09:40.310 --> 00:09:41.350
+little bit.
+
+00:09:41.350 --> 00:09:45.779
+Suppose we have a string "s" and we create
+a new string Abby (one of my dog names if
+
+00:09:45.779 --> 00:09:50.260
+you're wondering why you keep hearing about
+Abby), then we have a string "t" which gets
+
+00:09:50.260 --> 00:09:55.310
+the reference for "s" and we have a string
+"q" which is another new string which contains
+
+00:09:55.310 --> 00:10:01.519
+Abby. Let's take a look at what this looks
+like in the computer memory. So our string
+
+00:10:01.519 --> 00:10:07.850
+"s" is over here and here's the first string
+that was created; "t" has the same reference,
+
+00:10:07.850 --> 00:10:14.850
+so it's playing to the same object that "s"
+is, "q" has a new object. If we do an equals
+
+00:10:15.810 --> 00:10:20.769
+equals comparison, a shallow equals, then
+"s" and "t" are going to be equal to each
+
+00:10:20.769 --> 00:10:26.810
+other because shallow comparisons only compare
+the references. They don't actually go down
+
+00:10:26.810 --> 00:10:31.790
+and look at the objects. That's why they're
+shallow instead of deep. The deep ones notice
+
+00:10:31.790 --> 00:10:37.639
+would have to go and follow those arrows another
+layer down. So if we compare "q" and "s" using
+
+00:10:37.639 --> 00:10:43.560
+a shallow comparison using equals equals that
+means that those will not be equal to each
+
+00:10:43.560 --> 00:10:49.490
+other even though the objects contain the
+same characters. So this is where shallow
+
+00:10:49.490 --> 00:10:54.670
+comparisons are done. They're done on the
+references, not on the objects.
+
+00:10:54.670 --> 00:10:59.610
+Now let's consider a deep equals. "s" and
+"t" certainly will also be the same with a
+
+00:10:59.610 --> 00:11:04.810
+deep equals. This is the dot equals method
+in the string class. The reason is because
+
+00:11:04.810 --> 00:11:09.540
+they're pointing to the same object so those
+objects (since they have the same reference)
+
+00:11:09.540 --> 00:11:14.620
+automatically have the same characters. But
+"q" and "s" are also going to be equals to
+
+00:11:14.620 --> 00:11:19.790
+each other using a deep comparison. And of
+course, "q" and "t" will be equal to each
+
+00:11:19.790 --> 00:11:24.990
+others too. So this is where deep comparisons
+are done. That's why we call them shallow
+
+00:11:24.990 --> 00:11:31.990
+and deep because shallow occurs up with the
+references and deep occurs down with the objects.
+
+00:11:32.260 --> 00:11:36.910
+We have an algorithmic oddity and that's that
+Collections doesn't support linear search
+
+00:11:36.910 --> 00:11:43.910
+directly. Let's go take a look at that. So
+we might expect a method called something
+
+00:11:44.339 --> 00:11:50.839
+like maybe "contains" to be in here. "Contains"
+or "search" are both names that we've seen
+
+00:11:50.839 --> 00:11:55.660
+in other classes and so we might think that
+they would use the same names here. When we
+
+00:11:55.660 --> 00:12:00.680
+look we don't see anything called "contains".
+Remember they're in alphabetical order, and
+
+00:12:00.680 --> 00:12:05.720
+we don't see anything called "search" and
+we don't see anything called "index of" which
+
+00:12:05.720 --> 00:12:11.610
+is another one of the search methods that
+might be available. So we've got a problem.
+
+00:12:11.610 --> 00:12:16.699
+There's no "search", there's no "contains",
+and there's no "index of". There is, however,
+
+00:12:16.699 --> 00:12:19.259
+"index of sublist".
+
+00:12:19.259 --> 00:12:22.449
+Now there's a problem with this, and that's
+that this isn't the signature that we were
+
+00:12:22.449 --> 00:12:28.480
+hoping for. This is looking for a sublist
+target inside of source. So target might have
+
+00:12:28.480 --> 00:12:33.230
+several elements on the list, and it would
+see if source has a sublist that is a group
+
+00:12:33.230 --> 00:12:40.230
+of elements in the same order. Hmm, not really
+quite what we wanted. If we take a look above
+
+00:12:40.310 --> 00:12:46.240
+it we see another possibility. We have a method
+that's called frequency. Now this returns
+
+00:12:46.240 --> 00:12:52.949
+the number of elements in a specified collection
+equal to the specified object. Well, that's
+
+00:12:52.949 --> 00:12:58.570
+sort of interesting, because if you think
+about it what would happen if the frequency
+
+00:12:58.570 --> 00:13:03.600
+was zero? Well that would mean the object
+wasn't in the collection and if the frequency
+
+00:13:03.600 --> 00:13:09.110
+is bigger than one, or one or bigger (Sorry,
+big difference on those two, remember that's
+
+00:13:09.110 --> 00:13:16.110
+a boundary condition) that would mean that
+the object was there. Hmm, interesting. So
+
+00:13:17.680 --> 00:13:22.860
+we really don't have the methods that we want,
+but we have something we can use. Now one
+
+00:13:22.860 --> 00:13:28.180
+of the tricks to using classes like Collections
+is to be clever about how to reuse these methods
+
+00:13:28.180 --> 00:13:32.910
+in various interesting ways, although by the
+way if I had written this class it would certainly
+
+00:13:32.910 --> 00:13:37.889
+have a contains method. So with frequency
+and index of sublist, we're going to have
+
+00:13:37.889 --> 00:13:42.050
+to be a little tricky to make it work. And
+we might want to think about what would be
+
+00:13:42.050 --> 00:13:46.889
+the difference? Well with frequency we're
+going to find out whether the object is there
+
+00:13:46.889 --> 00:13:52.639
+or not, but we're not going to find out where
+it is. On the other hand with index of sublist,
+
+00:13:52.639 --> 00:13:56.930
+we're going to find out where it is. So we're
+getting a little bit more information at index
+
+00:13:56.930 --> 00:14:02.790
+of sublist. Now when you're looking at the
+API we didn't read it very carefully and so
+
+00:14:02.790 --> 00:14:08.470
+we might want to think of what index of sublist
+will return if the object isn't found. Well
+
+00:14:08.470 --> 00:14:13.949
+in most cases just like in the ArrayList case
+what it's going to return is -1. So we have
+
+00:14:13.949 --> 00:14:18.300
+a couple of different possibilities we can
+work with.
+
+00:14:18.300 --> 00:14:24.500
+So here's Example #3: Find out whether the
+number 5 is in our shuffled array using our
+
+00:14:24.500 --> 00:14:31.500
+sneaky workarounds. So, we want to do this
+first. Now one thing you might've considered
+
+00:14:39.329 --> 00:14:45.569
+here is that we might have been wise to create
+a parameter for Experiment 2 and to pass that
+
+00:14:45.569 --> 00:14:50.860
+data back either using a return value or using
+a parameter, and in fact I agree with that.
+
+00:14:50.860 --> 00:14:54.920
+But remember right now we're just playing
+with code, and so whatever we can do to make
+
+00:14:54.920 --> 00:15:01.920
+it easy is probably a good thing. So let's
+use frequency first. [pause] Okay now I'm
+
+00:15:07.769 --> 00:15:14.769
+going to put some comments in here. So, if
+collections dot frequency of my list and value
+
+00:15:33.029 --> 00:15:40.029
+is zero system out print line 5 is not in
+the list...else system out print line 5 is
+
+00:15:55.300 --> 00:16:02.300
+in the list 
+and of course we should spell "print line"
+correctly. Okay now we probably want to turn
+
+00:16:09.540 --> 00:16:16.540
+off Experiment 2 so we can just run Experiment
+3 by itself. Five is in the list! So that
+
+00:16:25.279 --> 00:16:31.560
+worked great, but it didn't tell us where
+5 is in the list. So that's a shortcoming
+
+00:16:31.560 --> 00:16:38.560
+of this. Let's go and do it the other way.
+If collections dot index of sublist for my
+
+00:16:50.910 --> 00:16:57.910
+list now remember you've got another list
+there that we're going to have to find so
+
+00:16:57.959 --> 00:17:04.959
+that is -1. Then we'll do system out print
+line 5 is not in the list. Else [pause] you
+
+00:17:21.209 --> 00:17:28.209
+probably want to check and make sure the index
+is correct. Now that means we're going to
+
+00:17:31.360 --> 00:17:38.360
+have to rewrite this code a little bit so
+let's call it differently.
+
+00:17:42.500 --> 00:17:49.500
+Of course we've still got that parameter we've
+got to worry about and now we can just check
+
+00:17:53.809 --> 00:18:00.809
+to see if index is -1. Okay, so what we needed
+was a list. So we're going to have to create
+
+00:18:08.530 --> 00:18:15.530
+an ArrayList of integer equals new ArrayList
+of integer, and in this case we know we're
+
+00:18:18.679 --> 00:18:25.679
+only going to need one element. Whoops, forgot
+to give it a name. We're going to call it
+
+00:18:27.210 --> 00:18:34.210
+"Target". So we're going to do target dot
+add our value (and notice that's an integer
+
+00:18:34.309 --> 00:18:41.309
+object, so that's good) and so we're going
+to look for a one-element list target. Okay,
+
+00:18:42.809 --> 00:18:49.809
+let's run the program. Five is in the list
+at index 5. Hmm, well that's kind of coincidental.
+
+00:18:57.900 --> 00:19:02.270
+Are we sure that we've got our list shuffled?
+It was shuffled here and we haven't done anything
+
+00:19:02.270 --> 00:19:07.110
+that should've changed that. Now that could
+have been correct but I think what we want
+
+00:19:07.110 --> 00:19:11.320
+to do to check this a little bit more carefully
+is to actually print out our list at this
+
+00:19:11.320 --> 00:19:18.320
+point. That way we can check our code better.
+Five is in the list, and 5 is in the list
+
+00:19:31.470 --> 00:19:38.470
+at index 4. Let's see if that's correct 0,
+1, 2, 3, 4 and of course because the shuffling
+
+00:19:39.370 --> 00:19:45.240
+is random, we should get it in different places.
+So here 5 is the list and 5 is in the list
+
+00:19:45.240 --> 00:19:49.210
+at index zero so that looks like it's working
+correctly.
+
+00:19:49.210 --> 00:19:54.289
+Now the next thing we want to think about
+is sorting. So, sorting is is very interesting
+
+00:19:54.289 --> 00:19:58.640
+topic in computer science and we're going
+to study it in a few weeks. Let's think about
+
+00:19:58.640 --> 00:20:05.029
+how we would sort 3, 1, 4, 2, 5. You can undoubtedly
+do this in your head very fast, and you can
+
+00:20:05.029 --> 00:20:08.830
+see that it's 1, 2, 3, 4, 5 just like that
+[snaps fingers] but we need to think a little
+
+00:20:08.830 --> 00:20:13.230
+bit more strategically about it and a little
+more slowly about how this is actually going
+
+00:20:13.230 --> 00:20:18.309
+to work. So how do we know that one comes
+first? Well one way to think about it is we
+
+00:20:18.309 --> 00:20:23.380
+step through all of these elements, and pick
+out the one that's the smallest. So how are
+
+00:20:23.380 --> 00:20:28.340
+we going to figure out which one is the smallest?
+What method do we have to use? Now this can't
+
+00:20:28.340 --> 00:20:33.429
+use the equals method, because equals will
+just tell us if it's the same or not. We need
+
+00:20:33.429 --> 00:20:38.870
+more information. We need to know whether
+the value is bigger or smaller. So with primitive
+
+00:20:38.870 --> 00:20:43.330
+data we would use less than, but less than
+isn't available for objects at least not in
+
+00:20:43.330 --> 00:20:49.880
+Java. So objects use methods not operators,
+so we need to find a meaningful method in
+
+00:20:49.880 --> 00:20:56.880
+the string class. So let's go to the string
+class.
+
+00:20:58.950 --> 00:21:05.950
+Okay, so here are our string class methods.
+Now what we see is we have methods like "compare
+
+00:21:10.470 --> 00:21:17.470
+to" and it says it, "Compares two strings
+lexicographically". Whew, big word! [laughs]
+
+00:21:17.630 --> 00:21:22.260
+Then we have "Compared to ignore case." Hmm,
+that could be interesting too. Let's read
+
+00:21:22.260 --> 00:21:29.260
+a little bit more about these methods. Compares
+Two Strings Lexicographically: "The comparison
+
+00:21:29.480 --> 00:21:35.159
+is based on the unicode value of each character
+in the strings. The character sequence represented
+
+00:21:35.159 --> 00:21:40.490
+by the string object is compared lexicographically
+to the character sequence represented by the
+
+00:21:40.490 --> 00:21:47.150
+argument. The result is negative if this string
+object precedes the argument string. The result
+
+00:21:47.150 --> 00:21:52.539
+is positive if this string object follows
+the argument string and the result is zero
+
+00:21:52.539 --> 00:21:58.400
+if the strings are equal. So compare to return
+zero exactly when equal method would return
+
+00:21:58.400 --> 00:22:05.010
+true." Here's the definition of Lexicographic
+Ordering: "If two strings are different, then
+
+00:22:05.010 --> 00:22:09.990
+they either have different characters of the
+same index, it's a valid index for both strings
+
+00:22:09.990 --> 00:22:14.340
+or their lengths are different or both. If
+they have different characters at more than
+
+00:22:14.340 --> 00:22:20.640
+one position, let 'k' be the smallest index."
+Okay so what are they trying to describe here?
+
+00:22:20.640 --> 00:22:24.450
+Well what they're saying is that they start
+at the left and step through the characters
+
+00:22:24.450 --> 00:22:30.230
+one at a time. If the characters are not the
+same the one that's the smaller character
+
+00:22:30.230 --> 00:22:36.429
+and this is an ASCII character, that's the
+one that's going to be the smaller string.
+
+00:22:36.429 --> 00:22:41.120
+Now if they get to the end of one of the strings,
+that string is going to be the smaller string.
+
+00:22:41.120 --> 00:22:45.330
+And if they get to the end of both strings
+at the same time with all the characters being
+
+00:22:45.330 --> 00:22:52.120
+equal, well that's the equal's case. So, lot
+of words, but in this case the description
+
+00:22:52.120 --> 00:22:58.270
+here is actually completely useful and correct
+and makes sense. The API isn't always like
+
+00:22:58.270 --> 00:23:03.659
+that as you know. It's compared to an instance
+method or class method. You could get that
+
+00:23:03.659 --> 00:23:08.289
+from the API by looking to see whether it
+has static in front of it, but you also could
+
+00:23:08.289 --> 00:23:14.010
+think about it. When we were reading through
+that deception it talked about this object
+
+00:23:14.010 --> 00:23:19.400
+and remember it had only one parameter. So
+this has to be an instance method, because
+
+00:23:19.400 --> 00:23:24.029
+the other string is going to have to be passed
+in as an object. Now if that reasoning doesn't
+
+00:23:24.029 --> 00:23:28.779
+make sense just yet keep thinking about it
+- eventually it will. So it's going to return
+
+00:23:28.779 --> 00:23:34.450
+a negative number, zero, or a positive number.
+And those mean whether the strings are less
+
+00:23:34.450 --> 00:23:40.450
+than, zero, or positive. It's available in
+the string class and it's available in many,
+
+00:23:40.450 --> 00:23:45.169
+many other classes where order make sense.
+So for example double, integer, character,
+
+00:23:45.169 --> 00:23:49.679
+and Boolean, all of these classes have a "compared
+to" method.
+
+00:23:49.679 --> 00:23:55.289
+Let's think about things like Point or Paper
+or Rectangle2D.Double. Does it make sense
+
+00:23:55.289 --> 00:24:00.899
+for the point class to have comparisons? What
+would it mean for a point to be less than
+
+00:24:00.899 --> 00:24:07.899
+another point? Huh, I can't think of anything
+that makes sense. So let's go and take a look
+
+00:24:08.909 --> 00:24:15.909
+in the API. Here's our point class, and when
+we look at our methods (which is a mercifully
+
+00:24:23.000 --> 00:24:28.450
+short number of methods) you'll notice there
+is no "compare to" method. So in this particular
+
+00:24:28.450 --> 00:24:34.909
+case you can't make a comparison with points.
+That means we couldn't sort an array of points,
+
+00:24:34.909 --> 00:24:40.789
+and that's fine because it doesn't make sense
+to sort an array of points. The same thing
+
+00:24:40.789 --> 00:24:46.929
+is true about Paper and Rectangle2D.Double.
+Sorting doesn't make sense here. Comparison
+
+00:24:46.929 --> 00:24:52.809
+doesn't make sense, and so since those don't
+make sense there is no "compared to" operation.
+
+00:24:52.809 --> 00:24:59.809
+So, let's sort the ArrayList we previously
+shuffled. Want to comment out our previous
+
+00:25:03.179 --> 00:25:10.179
+experiment. Go to Experiment 4. Our setup
+will be the same, so we'll just copy that
+
+00:25:11.020 --> 00:25:18.020
+in. [pause] And here's how we sort - collections
+dot sort my list and system out print line
+
+00:25:39.659 --> 00:25:46.659
+my list. Well, very nicely sorted. Worked
+very easily. So notice sorting in the Collections
+
+00:25:54.669 --> 00:26:00.539
+Class is a one-line command. Very hand thing.
+Although someday we may get curious and try
+
+00:26:00.539 --> 00:26:04.740
+to figure out what's going on inside that
+command.
+
+00:26:04.740 --> 00:26:09.730
+Now what happens if we try to sort an array
+of point objects? This is always a good thing
+
+00:26:09.730 --> 00:26:16.710
+to know is what happens if you do something
+that you don't expect is really going to work.
+
+00:26:16.710 --> 00:26:23.710
+Well first let's comment out Experiment 4
+and go to Experiment 5. Now the setup's going
+
+00:26:24.200 --> 00:26:31.200
+to be kind of similar, we're going to have
+to change it a little bit. Okay so instead
+
+00:26:35.570 --> 00:26:42.570
+of an ArrayList of integer we're going to
+have an ArrayList of points. And instead of
+
+00:26:47.899 --> 00:26:54.899
+adding an integer we're going to add a point.
+Now you may not remember the point constructor,
+
+00:26:57.419 --> 00:27:04.270
+but it takes two parameters just like an x
+and y-coordinate, then we shuffle, then we
+
+00:27:04.270 --> 00:27:10.299
+sort. Oh, wait a minute! What happened here?
+Notice that Eclipse is not happy. So let's
+
+00:27:10.299 --> 00:27:16.960
+take a look and see what the error message
+is. "Bound mismatch. The generic method sort
+
+00:27:16.960 --> 00:27:23.010
+of type Collections is not applicable for
+the argument ArrayList of point. The inferred
+
+00:27:23.010 --> 00:27:28.710
+type point is not a valid substitute for the
+bounded parameter. "t" extends comparable
+
+00:27:28.710 --> 00:27:35.710
+super "t" angle bar, angle bar." Ew, that's
+ugly! So what we got was a crazy, ugly, unhelpful
+
+00:27:40.039 --> 00:27:45.279
+error message. But, we were expecting an error
+to occur. We really didn't think this was
+
+00:27:45.279 --> 00:27:50.320
+going to work, because it doesn't make sense
+to sort points. So while Java is not giving
+
+00:27:50.320 --> 00:27:54.600
+us anything very useful here, it is telling
+us that this is not going to work and we're
+
+00:27:54.600 --> 00:27:59.159
+not going to be able to do it.
+
+00:27:59.159 --> 00:28:03.730
+Now the next thing we should do is reconsider
+searching. The search method in Collections
+
+00:28:03.730 --> 00:28:08.549
+is called "binary search" and this is really
+a cool trick. We're also going to look at
+
+00:28:08.549 --> 00:28:13.320
+the details of this later, but for now let's
+just give you a little big picture understanding
+
+00:28:13.320 --> 00:28:19.559
+of what's going on. Here's the general idea.
+Look up things like you would in a phone book.
+
+00:28:19.559 --> 00:28:22.929
+When you pick up a phone book to look up a
+friend's address, of course I realize probably
+
+00:28:22.929 --> 00:28:27.380
+you guys do a search on the Internet now instead
+of picking up a phone book, but play along
+
+00:28:27.380 --> 00:28:31.690
+with me. I know you've all seen a phone book.
+You don't start at the first page and read
+
+00:28:31.690 --> 00:28:36.179
+the first name and then the second name and
+then the third name. That would be crazy!
+
+00:28:36.179 --> 00:28:40.380
+The names are in order. So what you do is
+you sort of jump to the part of the book where
+
+00:28:40.380 --> 00:28:45.110
+you think the name might be and then see if
+it's bigger or smaller. If it's bigger you
+
+00:28:45.110 --> 00:28:48.860
+go to the later half the book, and if it's
+smaller you go to the earlier half of the
+
+00:28:48.860 --> 00:28:54.440
+book. And then you repeat that process. So
+you start at the middle, which basically gets
+
+00:28:54.440 --> 00:29:01.260
+rid of half of the remaining possibilities
+at each step. It's really cool! It is crazy
+
+00:29:01.260 --> 00:29:06.460
+fast, but the thing is it only works on sorted
+data. So if your data isn't sorted, binary
+
+00:29:06.460 --> 00:29:12.110
+search is impossible. Now the Collections
+Class does not check that your data is sorted.
+
+00:29:12.110 --> 00:29:18.010
+So this is something you have to remember
+when you're using binary search. And of course
+
+00:29:18.010 --> 00:29:23.340
+this is going to use comparison because, notice
+we were saying if the data is bigger or smaller.
+
+00:29:23.340 --> 00:29:28.019
+Well bigger or smaller, that means less than
+or greater than and "compare to" is the method
+
+00:29:28.019 --> 00:29:30.269
+that fills in for those.
+
+00:29:30.269 --> 00:29:36.690
+So here's Example 6: Let's use binary search
+to find out if 5 is in our ArrayList. Now
+
+00:29:36.690 --> 00:29:43.370
+remember we know this didn't work, so we're
+going to have to comment it out. So I'm going
+
+00:29:43.370 --> 00:29:50.370
+back to Experiment 4, of course commenting
+out Experiment 5 to grab our set up. [pause]
+
+00:30:08.640 --> 00:30:15.640
+[typing] So first we call shuffle, then we
+call sort, and now we're going to do our search.
+
+00:30:19.350 --> 00:30:26.350
+Well you know we did some work on that earlier
+too. So let's grab that. Whoops, that's not
+
+00:30:34.000 --> 00:30:39.919
+the right part. We wanted to just create the
+integer value 5. Now that probably would have
+
+00:30:39.919 --> 00:30:46.919
+been quicker to type than to try to copy...but
+hey. So now we're going to do collections
+
+00:30:54.649 --> 00:31:01.649
+dot binary search for value. So let's see
+what Eclipse isn't happy about. Oh, I see
+
+00:31:21.510 --> 00:31:28.510
+what the problem is. I forgot to give it the
+list. My list for value, there we go. Without
+
+00:31:29.970 --> 00:31:34.139
+the list it doesn't really stand a chance.
+Now we really haven't talked about what binary
+
+00:31:34.139 --> 00:31:41.139
+search returns so we may get a little surprise
+here, but surprises are okay. So we have our
+
+00:31:47.019 --> 00:31:54.019
+shuffle data then we sort it, we were looking
+for 5 and it returns 4--0, 1, 2, 3, 4. Looking
+
+00:31:56.600 --> 00:32:02.159
+good! Now what would happen if we try something
+that isn't in there? So let's do a search
+
+00:32:02.159 --> 00:32:09.159
+for -3. It returns a -1. So it gives us a
+hint that it's not in there (a negative index
+
+00:32:15.220 --> 00:32:22.220
+being a good hint). So that makes sense. Now,
+let's see what happens if we don't sort. [pause]
+
+00:32:31.019 --> 00:32:38.019
+Okay. So what it says is it didn't find 5.
+Now it's particularly poignant in this case
+
+00:32:39.610 --> 00:32:44.750
+because 5 is in the first position. But notice
+that it just went ahead and ran the binary
+
+00:32:44.750 --> 00:32:49.250
+search where it was starting at the middle
+and trying to find the spot based on that,
+
+00:32:49.250 --> 00:32:54.210
+and because the 10 was in the middle it got
+redirected to the wrong side. And once it's
+
+00:32:54.210 --> 00:32:58.840
+redirected it can't find its way around. The
+other thing to notice is that the method didn't
+
+00:32:58.840 --> 00:33:04.210
+fail and the compilation didn't fail so this
+is a very important responsibility of the
+
+00:33:04.210 --> 00:33:11.210
+programmer is to make sure that things are
+sorted before you try to do binary search.
+
+00:33:12.029 --> 00:33:17.649
+We found the smallest and biggest elements
+amongst primitive data and we used less than
+
+00:33:17.649 --> 00:33:24.649
+and that suggests that "compare to" is something
+that's going to be necessary here to. So,
+
+00:33:24.700 --> 00:33:31.700
+let's find the smallest and largest elements
+in our ArrayList. We see we're on our last
+
+00:33:33.710 --> 00:33:40.710
+experiment here. So let's grab our setup again.
+In this case I don't think we want to sort
+
+00:33:45.100 --> 00:33:52.100
+things. [pause] So, system out print line
+the minimum is plus collections dot min of
+
+00:34:08.600 --> 00:34:15.600
+my list and system out print line the maximum
+is plus collections dot max of my list. So
+
+00:34:26.560 --> 00:34:30.430
+here we go. Now we expect that minimum is
+going to be 1 and the maximum is going to
+
+00:34:30.430 --> 00:34:37.430
+be 10, at least that's what we put into the
+list. Minimum is 1 maximum is 10. Things are
+
+00:34:40.140 --> 00:34:45.380
+looking good. Let's look at the big picture
+of what we've done. We've used experimentation
+
+00:34:45.380 --> 00:34:50.720
+to explore a useful and interesting part of
+the Java API. Now it was a little scary particularly
+
+00:34:50.720 --> 00:34:55.640
+reading the collection stuff is scary. We've
+used it in situations where we know the answers
+
+00:34:55.640 --> 00:35:00.900
+to assure that things are working the way
+that we expect. And in fact this kind of experimentation
+
+00:35:00.900 --> 00:35:05.430
+is what I typically do when I find a new class
+that I think I want to use for something.
+
+00:35:05.430 --> 00:35:10.280
+I do it in a separate program. I don't document
+the program carefully or even really design
+
+00:35:10.280 --> 00:35:15.430
+it carefully I just learn what the ins and
+outs of the class are. It's really a lot of
+
+00:35:15.430 --> 00:35:18.150
+fun. So keep programming!
+

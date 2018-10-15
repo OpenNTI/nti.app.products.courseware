@@ -1,0 +1,1129 @@
+WEBVTT
+Kind: captions
+Language: en
+
+00:00:00.690 --> 00:00:04.120
+&gt;&gt;Dr. Deborah Trytten: Let's continue our
+study of loops by choosing a cell phone contract
+
+00:00:04.120 --> 00:00:11.120
+again. This is our fifth iteration of this
+problem. Here's the problem statement: suppose
+
+00:00:11.259 --> 00:00:18.010
+you want to compare the cost of several cell
+phone plans with ATV Telecommunications. Each
+
+00:00:18.010 --> 00:00:23.340
+plan has the same basic design: a flat charge
+gives a fixed quota of minutes a month, and
+
+00:00:23.340 --> 00:00:28.050
+additional minutes are charged individually
+above that quota. Let's write a program that
+
+00:00:28.050 --> 00:00:30.960
+compares five plans.
+
+00:00:30.960 --> 00:00:35.559
+Now we could start by copying and pasting
+our previous code five times, and in fact,
+
+00:00:35.559 --> 00:00:39.659
+that's the way a lot of people would try this
+at first. But the problem with that is the
+
+00:00:39.659 --> 00:00:44.780
+code gets extremely long and complicated,
+and if we find a subtle problem in one part,
+
+00:00:44.780 --> 00:00:51.050
+we're going to have to remember to change
+that problem four more times. People are notoriously
+
+00:00:51.050 --> 00:00:56.829
+horrible at doing this, so instead we should
+look for a better control structure. In this
+
+00:00:56.829 --> 00:01:01.670
+case the loop is a good control structure.
+We need to allow the user to enter the plan
+
+00:01:01.670 --> 00:01:08.190
+costs, and we need to pick the cheapest cost.
+So let's modify our code to use a loop. Now
+
+00:01:08.190 --> 00:01:11.860
+this is going to be a counting loop and eventually
+we're going to have to run some predetermined
+
+00:01:11.860 --> 00:01:18.540
+tests, but we can work on those tests in a
+minute. Here's our code in Eclipse. I've taken
+
+00:01:18.540 --> 00:01:23.880
+our previous program, and I've pulled out
+only one of the examples.
+
+00:01:23.880 --> 00:01:28.770
+So let's read through the code and make sure
+we know what we need to change. We're creating
+
+00:01:28.770 --> 00:01:33.230
+a scanner here for the keyboard to read in
+input. That's not something we're going to
+
+00:01:33.230 --> 00:01:38.970
+need to change, and that doesn't need to be
+in the loop. Now as far as the plan minutes
+
+00:01:38.970 --> 00:01:43.120
+and the monthly cost in pennies and the additional
+minutes, those are things we're going to have
+
+00:01:43.120 --> 00:01:48.930
+to read from the keyboard. So we'll erase
+the constants that we had stored there from
+
+00:01:48.930 --> 00:01:55.930
+our previous example. Similarly, our plan
+name will be a variable that will be read
+
+00:02:01.310 --> 00:02:07.750
+from the user. So getting the input from the
+user of the number of minutes they talk, we
+
+00:02:07.750 --> 00:02:12.590
+need to consider whether that should be done
+inside the loop or outside of the loop. Well,
+
+00:02:12.590 --> 00:02:16.410
+if you think about it, because you want to
+make an honest comparison, you want this number
+
+00:02:16.410 --> 00:02:23.410
+to be the same every single time, and so that
+definitely needs to be outside of the loop.
+
+00:02:23.580 --> 00:02:28.420
+Here, on the other hand, is what needs to
+be inside the loop. Now notice we've got a
+
+00:02:28.420 --> 00:02:33.370
+bunch of red x's around. The reason is we've
+removed the initialization, so let's make
+
+00:02:33.370 --> 00:02:40.370
+a little comment. Read in variables from command
+line here, so we know we need to do that part.
+
+00:02:45.870 --> 00:02:50.640
+Now at this point because we're going to put
+this in a loop, we're not referring just to
+
+00:02:50.640 --> 00:02:57.640
+the Super Saver plan, so I'm going to change
+the names of the variables here. I'm removing
+
+00:02:58.920 --> 00:03:05.920
+Super Saver from them consistently. Now you
+might think, "Well, you really don't have
+
+00:03:14.910 --> 00:03:19.430
+to do that." And that's true, you really don't
+have to do that because the variable name
+
+00:03:19.430 --> 00:03:23.540
+is the same, and the computer doesn't care
+what the variable name is. But we always want
+
+00:03:23.540 --> 00:03:29.540
+to work towards keeping the code neat and
+organized. This is where our loop should occur.
+
+00:03:29.540 --> 00:03:36.540
+I'm going to start a counter, which will be
+started at one, and then while count is less
+
+00:03:37.670 --> 00:03:44.670
+than or equal to five because we're repeating
+this five times. Everything from here, line
+
+00:03:46.319 --> 00:03:53.319
+38, down to there is the body of the loop.
+If I highlight it and hit the tab key once,
+
+00:03:55.190 --> 00:04:02.190
+it will indent it all one position. As the
+logic starts getting more complicated, I add
+
+00:04:03.300 --> 00:04:10.300
+in a lot more comments so that I know where
+I am. So for example, I could put end if talk
+
+00:04:10.959 --> 00:04:17.959
+minutes here else I could say and else from
+if talk minutes.
+
+00:04:22.340 --> 00:04:26.380
+Now it may look like I'm being a little silly
+with all these comments hanging around, but
+
+00:04:26.380 --> 00:04:29.639
+believe me when we have to go back and read
+this code, you're going to be very glad to
+
+00:04:29.639 --> 00:04:34.710
+have them. The other reason that I like to
+put the comments at the end of the curly braces
+
+00:04:34.710 --> 00:04:40.740
+is it reminds me what I was thinking that
+curly brace ended. Sometimes these curly braces
+
+00:04:40.740 --> 00:04:45.199
+get out of sync while you're working on a
+program, and if you know what you intended
+
+00:04:45.199 --> 00:04:50.080
+to end it with, that helps you sort it out.
+In other words, this is one of the strategies
+
+00:04:50.080 --> 00:04:55.330
+where I'm taking a minute now to save hours
+later, anti-bugging.
+
+00:04:55.330 --> 00:05:02.330
+The next thing we need to do is read in our
+variables from the command line. So system
+
+00:05:02.370 --> 00:05:09.370
+out print line enter the monthly cost, and
+then we'll see monthly cost in pennies equals
+
+00:05:21.220 --> 00:05:28.220
+keyboard dot next double and then times 100.
+Now remember keyboard next double because
+
+00:05:32.240 --> 00:05:37.020
+we're reading in the monthly cost in dollars
+and need to change it to pennies, we're going
+
+00:05:37.020 --> 00:05:41.760
+to have to multiply by 100, but we're also
+going to have to round in order to get this
+
+00:05:41.760 --> 00:05:48.760
+correct. So we'll take the double. We'll multiply
+it by 100. We'll add 0.5 and truncate it to
+
+00:05:53.030 --> 00:06:00.030
+an integer. You've seen this strategy many
+times before. Now we'll do system out print
+
+00:06:08.020 --> 00:06:15.020
+line enter the plan minutes. Now this is an
+int, so we'll do plan minutes equals keyboard
+
+00:06:24.970 --> 00:06:31.970
+dot next int and then we'll say system out
+print line enter the additional minute cost.
+
+00:06:48.060 --> 00:06:55.060
+So we'll say additional minutes pennies is
+keyboard dot next double 
+times 100 plus 0.5--that's rounding again--and
+
+00:07:09.889 --> 00:07:15.280
+then we're going to truncate this to an int.
+Now I see one place where this code could
+
+00:07:15.280 --> 00:07:21.770
+be improved a little bit. Let's multiply by
+100.0 because next double is a double, this
+
+00:07:21.770 --> 00:07:26.350
+is going to be a double multiplication, and
+it just makes the communication a little bit
+
+00:07:26.350 --> 00:07:32.289
+clearer to show that that's a double clearly,
+and that that's what our intention was.
+
+00:07:32.289 --> 00:07:36.900
+Another thing I'd like you to notice at this
+point is that our choice to call things like
+
+00:07:36.900 --> 00:07:42.509
+additional minutes in pennies and monthly
+cost in pennies has just paid us a big dividend
+
+00:07:42.509 --> 00:07:49.479
+because what's happened is that when we have
+a choice of entering data in dollars and pennies,
+
+00:07:49.479 --> 00:07:55.039
+we didn't forget to change our dollars into
+pennies and back. So these are where being
+
+00:07:55.039 --> 00:08:00.860
+careful with code really pays off. We do have
+quite a few lines of code here right in a
+
+00:08:00.860 --> 00:08:07.860
+row between line 38 and line 44. We could
+divide that up into three segments of code
+
+00:08:08.360 --> 00:08:13.250
+by adding a blank line, and that does make
+the code a little bit more readable. Now before
+
+00:08:13.250 --> 00:08:17.900
+we run things, we definitely want to step
+through our code one iteration at a time and
+
+00:08:17.900 --> 00:08:24.900
+make sure that we're doing the right things.
+So here's the total cost in pennies talk minutes
+
+00:08:25.949 --> 00:08:31.000
+greater than plan minutes. We take the monthly
+cost, and we add on the additional minutes.
+
+00:08:31.000 --> 00:08:35.789
+That looks like it's still the same. Otherwise
+if your plan minutes are smaller than your
+
+00:08:35.789 --> 00:08:39.990
+talk minutes, then you just get the monthly
+cost.
+
+00:08:39.990 --> 00:08:43.830
+Now notice that Eclipse is telling us that
+we've forgotten to enter the plan name, and
+
+00:08:43.830 --> 00:08:50.830
+we did forget that. Let's enter that system
+out print line enter your plan name, and we'll
+
+00:08:58.080 --> 00:09:04.110
+have plan name equals--now we need to think
+carefully about this. Is a plan name going
+
+00:09:04.110 --> 00:09:10.670
+to be one word or multiple words? It could
+be multiple words like Super Saver and Big
+
+00:09:10.670 --> 00:09:16.820
+Talker were, so let's use next line. This
+also gets around the problem of having numbers
+
+00:09:16.820 --> 00:09:23.820
+entered after strings where we have to read
+the new line separately. Now I carelessly
+
+00:09:24.190 --> 00:09:31.190
+put that line above our header comment, so
+I'll move the header comment up, get rid of
+
+00:09:33.890 --> 00:09:39.470
+that extra line to keep things beautiful,
+and we now see that Eclipse is happy. The
+
+00:09:39.470 --> 00:09:44.890
+other thing we can see when we look at this
+is that we didn't handle our rounding case
+
+00:09:44.890 --> 00:09:50.810
+here. That's all right. We can leave it as
+it is right now. At this point we have in
+
+00:09:50.810 --> 00:09:55.350
+the program is an infinite loop because notice
+we started the counter at one, we check to
+
+00:09:55.350 --> 00:10:02.089
+see if it's less than five, but we never incremented
+it. Since count isn't involved in any of these
+
+00:10:02.089 --> 00:10:06.620
+calculations, it doesn't matter where we increment
+it, but by convention you usually do it at
+
+00:10:06.620 --> 00:10:13.120
+the bottom of the loop. So let's go down here
+and increment. So we're going to keep track
+
+00:10:13.120 --> 00:10:20.040
+of the count, and that will be count equals
+count plus 1.
+
+00:10:20.040 --> 00:10:25.750
+So now we don't have an infinite loop, but
+we also don't have a comparison of the costs.
+
+00:10:25.750 --> 00:10:31.370
+So this is a little bit tricky. We might want
+to run the program once before we get started
+
+00:10:31.370 --> 00:10:36.220
+just to make sure that our input is working
+correctly. It's always good to get input problems
+
+00:10:36.220 --> 00:10:43.220
+out of the way first. So let's run our program.
+Enter the number of minutes you want to talk.
+
+00:10:44.029 --> 00:10:51.029
+Well, maybe I want to talk 500 minutes. Enter
+your plan name--uh oh, did you see something
+
+00:10:51.950 --> 00:10:56.660
+go wrong there? Notice that the plan name
+skipped immediately beyond before I'd had
+
+00:10:56.660 --> 00:11:02.149
+a chance to do data entry. Well, guess what,
+that's that integer versus string problem
+
+00:11:02.149 --> 00:11:06.580
+that we've had trouble with before. So when
+we enter the number of minutes that we want
+
+00:11:06.580 --> 00:11:13.580
+to talk each month, we need to read in the
+new line after that. So let's go up here and
+
+00:11:13.610 --> 00:11:20.610
+fix that problem. So read in the new line
+at the end of the integer. We also need to
+
+00:11:26.830 --> 00:11:31.970
+remember to fix it in the if statement here.
+Otherwise, we'll just have this problem again
+
+00:11:31.970 --> 00:11:38.970
+when we hit this if statement. So we're reading
+in the new line at the end of the integer
+
+00:11:41.670 --> 00:11:47.370
+again. So this is why it's good to solve these
+problems and run the program, even though
+
+00:11:47.370 --> 00:11:54.370
+we haven't finished the code just yet. So
+if we're going to talk 500 minutes, now it's
+
+00:12:02.279 --> 00:12:09.279
+letting me enter my plan name, so Super Saver.
+The monthly cost, it was 19.99. Enter the
+
+00:12:10.290 --> 00:12:16.990
+plan minutes, 100 minutes. Enter the additional
+minute cost five cents. Total cost for the
+
+00:12:16.990 --> 00:12:23.990
+Super Saver is 39.99. That sounds about right,
+but notice what happened here again. We went
+
+00:12:24.130 --> 00:12:29.610
+past enter your plan name, so this is that
+same new line mistake over and over. It's
+
+00:12:29.610 --> 00:12:36.610
+a very easy mistake to make. The way to fix
+it is after we read in our additional minute
+
+00:12:36.800 --> 00:12:43.800
+cost, we need to read in keyboard dot next
+line to get rid of that new line character.
+
+00:12:46.910 --> 00:12:51.110
+We could do this in several places. For example,
+we could do this with monthly costs and plan
+
+00:12:51.110 --> 00:12:56.570
+minutes too, and in fact I encourage you to
+do that. The cleaner you keep your I/O, the
+
+00:12:56.570 --> 00:13:00.680
+fewer problems you'll have with input that
+isn't working.
+
+00:13:00.680 --> 00:13:07.680
+Okay, so let's run again. So we're talking
+500 minutes. We've got a Super Saver going
+
+00:13:19.550 --> 00:13:26.550
+on. It's at 19.99 for 100 minutes, 5 cents
+for an additional minute. And now it's asking
+
+00:13:28.370 --> 00:13:35.370
+for our plan name again. So we can see at
+this point that our input is working. Now
+
+00:13:35.440 --> 00:13:39.750
+what we haven't checked with that is that
+our loop is repeating five times. That's something
+
+00:13:39.750 --> 00:13:45.320
+we might want to check later, and in fact
+we'll need to check later. What we need to
+
+00:13:45.320 --> 00:13:51.529
+do next is to figure out how to keep track
+of the least expensive plan. So we've got
+
+00:13:51.529 --> 00:13:55.300
+a couple of things we're going to have to
+store. We're going to have to store the cost
+
+00:13:55.300 --> 00:13:59.779
+of the least expensive plan, and we're also
+going to have to store the name of the least
+
+00:13:59.779 --> 00:14:05.300
+expensive plan. The reason we need to do that
+is so we can show it to the user at the end.
+
+00:14:05.300 --> 00:14:12.300
+So before the loop, we'll have smallest cost
+plan, and now we need to think about how to
+
+00:14:13.600 --> 00:14:20.600
+initialize that. There are lots of different
+possibilities that you could use. One possibility
+
+00:14:20.720 --> 00:14:25.860
+is to set it to a gigantic number, and then
+it will be brought down with the first one.
+
+00:14:25.860 --> 00:14:30.050
+We could also set it to the cost of the first
+plan, but then we'd have to do it little bit
+
+00:14:30.050 --> 00:14:34.550
+later in the code. So what we might want to
+do is to think of what the largest number
+
+00:14:34.550 --> 00:14:39.490
+is. That gets to be a little hard. One thing
+we could guess is that nobody's going to pay
+
+00:14:39.490 --> 00:14:44.490
+more than $1 million for cell phone coverage
+in a month. That's probably going to be okay
+
+00:14:44.490 --> 00:14:51.490
+for people. So that would be an arbitrary
+big number. Those things can cause trouble
+
+00:15:00.880 --> 00:15:04.769
+sometimes. There are other solutions to this
+problem, but this is one way to work with
+
+00:15:04.769 --> 00:15:11.769
+it, and let's call cheapest plan name. And
+that one I'm going to set to the empty string.
+
+00:15:18.959 --> 00:15:24.600
+So there is a string there. It's just the
+cheapest one. We go through all this entering
+
+00:15:24.600 --> 00:15:28.339
+the data and then calculating the total cost.
+
+00:15:28.339 --> 00:15:35.339
+What we need to do now is to figure out if
+total cost in pennies is less than the name
+
+00:15:42.720 --> 00:15:49.720
+of our variable up there, which was smallest
+plan cost. Well, if it is in fact lowest,
+
+00:15:57.620 --> 00:16:04.620
+then the smallest plan cost has to equal total
+cost in pennies. And of course, we need to
+
+00:16:11.470 --> 00:16:18.170
+change that to a capital C, so that it matches
+the variable name. And we had cheapest plan
+
+00:16:18.170 --> 00:16:25.170
+name, so the cheapest plan name is going to
+equal plan name, the one we read in.
+
+00:16:35.389 --> 00:16:41.860
+You'll notice that we've got some problems
+in Eclipse. It says smallest plan cost cannot
+
+00:16:41.860 --> 00:16:47.230
+be resolved to a variable. So let's go and
+take a look at what we did. Well, the name
+
+00:16:47.230 --> 00:16:54.230
+of our variable was actually smallest cost
+plan, not smallest plan cost. So we have to
+
+00:17:02.699 --> 00:17:08.399
+change the variable name that's actually there,
+and of course we'll have to do the same thing
+
+00:17:08.399 --> 00:17:15.399
+here. Now when we get out of the while loop,
+that's when we need to tell the user which
+
+00:17:22.149 --> 00:17:29.149
+one was the cheapest. So system out print
+line the cheapest plan was, and then cheapest
+
+00:17:34.440 --> 00:17:41.440
+plan name 
+and system out print line. People are always
+going to want to know the cheapest cost. So
+
+00:17:50.440 --> 00:17:57.440
+we definitely want to print that out. So we're
+going to have smallest cost plan. Now one
+
+00:18:02.100 --> 00:18:07.169
+thing we did poorly with this is we did not
+point out that this is in pennies, which means
+
+00:18:07.169 --> 00:18:12.159
+at this point we might forget to divide by
+100. Luckily I remembered it, so we can divide
+
+00:18:12.159 --> 00:18:19.159
+by 100, so we get it back in dollars, and
+remember 100.0 to make it a double. But I
+
+00:18:19.580 --> 00:18:26.580
+think it's better to fix that. So we will
+add the word pennies onto all of the variable
+
+00:18:28.799 --> 00:18:35.799
+names, including the declaration at the top.
+That way we know what unit we're working in,
+
+00:18:45.039 --> 00:18:48.659
+and of course we then have to modify the output
+at the bottom.
+
+00:18:48.659 --> 00:18:55.129
+Okay, so we're ready to run our program, but
+we've got a problem now because we need some
+
+00:18:55.129 --> 00:19:02.129
+test data. In order to run our program intelligently,
+we better create some test data. We need to
+
+00:19:02.309 --> 00:19:07.440
+create data where we know our result is correct,
+so we want to create fake data with a known
+
+00:19:07.440 --> 00:19:12.450
+answer. So if you look at what I've done in
+the table, basically the monthly cost is going
+
+00:19:12.450 --> 00:19:18.059
+up five dollars a month for each plan. You're
+only getting one more minute, and the additional
+
+00:19:18.059 --> 00:19:23.070
+cost per minutes is going up, so this means
+that plan number one is going to be our cheapest
+
+00:19:23.070 --> 00:19:28.169
+cost. That way it's easy without having to
+do a whole bunch of math, not that I'm opposed
+
+00:19:28.169 --> 00:19:32.789
+doing math, to figure out which the lowest
+cost plan should be.
+
+00:19:32.789 --> 00:19:37.869
+So let's go and now run our data. Now I've
+actually taken this data and I've put it in
+
+00:19:37.869 --> 00:19:43.519
+as a separate file called test data. This
+is a good thing to do to keep track of what
+
+00:19:43.519 --> 00:19:49.200
+your test data was. In fact, we could actually
+improve our documentation here by pointing
+
+00:19:49.200 --> 00:19:56.200
+out that plan one is the cheapest. Okay, so
+here we go getting ready to run our program.
+
+00:20:01.570 --> 00:20:08.570
+So I'm going to talk 500 minutes. The plan
+name will be plan one. Enter the monthly cost
+
+00:20:16.749 --> 00:20:23.749
+9.99, the plan minutes 100, the additional
+minute cost 0.5, 29.99--that sounds reasonable.
+
+00:20:30.580 --> 00:20:37.580
+Enter your plan number: plan two, monthly
+cost 14.99, plan minutes 101, additional minute
+
+00:20:40.450 --> 00:20:47.450
+cost seven cents, total cost for plan two--notice
+it's going up, so that's good. Now we're at
+
+00:20:48.649 --> 00:20:55.649
+plan three: the monthly cost 19.99, plan minutes
+was 102, additional minutes are ten cents--notice
+
+00:21:00.639 --> 00:21:07.639
+the cost is going up, that's good. Plan four:
+enter the monthly cost 24.99, enter the plan
+
+00:21:10.470 --> 00:21:17.470
+minutes 103, additional minutes will be fifteen
+cents, cost is going up further. Plan name
+
+00:21:20.009 --> 00:21:27.009
+plan five, monthly cost 29.99, 104 minutes,
+and additional minutes cost twenty cents.
+
+00:21:29.759 --> 00:21:34.759
+The cheapest plan was plan one, and the cheapest
+cost was 29.99. Well, that's wonderful. That
+
+00:21:34.759 --> 00:21:39.479
+means our program is working at this point.
+
+00:21:39.479 --> 00:21:44.909
+Now running it once like that did show that
+our loop repeated five times like it was supposed
+
+00:21:44.909 --> 00:21:50.179
+to, but it hasn't really checked all the cases
+very carefully. If I were going to deliver
+
+00:21:50.179 --> 00:21:55.489
+this code commercially, I would repeat the
+test putting plan one in the second, third,
+
+00:21:55.489 --> 00:22:00.619
+fourth, and most importantly, the fifth position
+to make sure that data in any position can
+
+00:22:00.619 --> 00:22:07.619
+be the cheapest plan. And we of course could
+run the program more times. Now we do have
+
+00:22:09.159 --> 00:22:13.940
+a remaining shortcoming with this program,
+and that's that requiring exactly five plans
+
+00:22:13.940 --> 00:22:19.639
+is weird. Let the user tell you when they're
+through. Now the way we do this in a program
+
+00:22:19.639 --> 00:22:25.259
+is using a sentinel, so that has to be data
+that's legal to input but doesn't make sense
+
+00:22:25.259 --> 00:22:31.090
+as data. So in this case -1 is a good choice
+because no cell phone company is charging
+
+00:22:31.090 --> 00:22:36.029
+negative money for a cell phone plan. The
+programming technique you need to use to make
+
+00:22:36.029 --> 00:22:41.340
+this work is called a priming read. So what
+you do is you read the data before the loop,
+
+00:22:41.340 --> 00:22:45.749
+and then you read it again at the end of the
+loop. So the data is read before the while
+
+00:22:45.749 --> 00:22:50.399
+loop starts, and then read again at the end
+of the while loop in preparation for the next
+
+00:22:50.399 --> 00:22:52.309
+trip through.
+
+00:22:52.309 --> 00:22:59.109
+Let's go back to the code. We're still going
+to have a while loop, but it's going to have
+
+00:22:59.109 --> 00:23:05.820
+the data done a little bit differently. The
+first thing we're going to need to do is take
+
+00:23:05.820 --> 00:23:12.820
+all of our data here, copy it, and move it
+before the loop. We're going to get rid of
+
+00:23:30.460 --> 00:23:35.059
+our counter because there's no other reason
+to have it other than just to repeat the loop
+
+00:23:35.059 --> 00:23:42.059
+five times. And now we're going to take our
+data input, and put it at the bottom of the
+
+00:23:44.019 --> 00:23:51.019
+loop. We're also going to get rid of our increment
+down here. Now we have to think about how
+
+00:24:02.200 --> 00:24:07.909
+to put our sentinel in. Now it would be nice
+for the user to be able to enter -1 right
+
+00:24:07.909 --> 00:24:13.429
+here. In this case they're entering it with
+the plan name, so we might want to choose
+
+00:24:13.429 --> 00:24:20.429
+a different sentinel than -1. For example,
+we could say or and to get the results. Then
+
+00:24:28.349 --> 00:24:35.349
+we're going to have to put a conditional here
+if plan name dot equals to end, which I forgot
+
+00:24:40.239 --> 00:24:47.239
+to put the double quotes around, even though
+I knew it was a string. So only if the user
+
+00:24:51.629 --> 00:24:58.629
+doesn't 
+enter end do we want to do that. Now I actually
+have the logic reversed at this point because
+
+00:25:03.749 --> 00:25:09.639
+when they're not entering end is when we want
+to get the rest of it.
+
+00:25:09.639 --> 00:25:16.639
+Now this is an interesting problem about what
+to do with a loop, so we could say while plan
+
+00:25:20.989 --> 00:25:27.989
+name dot equals end. This should be not equals,
+so put an exclamation point in front of it.
+
+00:25:32.869 --> 00:25:39.219
+So if it's not equal to end, then we go into
+the loop, and we'll have to put the same test
+
+00:25:39.219 --> 00:25:46.219
+down here. So enter the plan name and if not
+plan name dot equals the string end. All of
+
+00:26:03.389 --> 00:26:10.389
+this stuff then will be indented, so remember
+you highlight it first and then indent. Now
+
+00:26:16.309 --> 00:26:23.309
+we need to go back and put in some comments
+here. If not plan name equals end. So let's
+
+00:26:29.619 --> 00:26:36.619
+see, we've got one, two, three left parentheses
+and only two right, so that's made Eclipse
+
+00:26:39.239 --> 00:26:46.239
+happy now.
+
+00:26:47.629 --> 00:26:54.629
+Let's see if we made that mistake up at the
+top: if not plan name equals end. Now that's
+
+00:26:56.580 --> 00:27:01.330
+interesting. That one only has two left parentheses
+and two right, so we might want to go and
+
+00:27:01.330 --> 00:27:08.330
+take another look at that one at the bottom
+and see if we did something wrong. Ah, we
+
+00:27:08.359 --> 00:27:13.119
+put in an extra set of parentheses that isn't
+necessary. Now those parentheses aren't necessarily
+
+00:27:13.119 --> 00:27:20.119
+harmful, but it's prettier without them, so
+let's not have them. There's the end of our
+
+00:27:22.330 --> 00:27:29.330
+while loop. Now we can run our same test data
+over. The difference here will be that we're
+
+00:27:29.749 --> 00:27:34.969
+going to stop after maybe one data is entered,
+two data are entered, three data are entered
+
+00:27:34.969 --> 00:27:40.539
+to make sure that the priming reads are working
+correctly. Now I'm going to pull up the test
+
+00:27:40.539 --> 00:27:44.719
+data again because it was awfully convenient
+to have that available to look at while we
+
+00:27:44.719 --> 00:27:51.719
+were programming. Here we go. Enter the number
+of minutes you talk a month, 500. Enter a
+
+00:27:58.649 --> 00:28:05.649
+plan name, so I'm going to say plan one. Enter
+the monthly cost. That's going to be 9.99.
+
+00:28:06.909 --> 00:28:12.839
+Enter the plan minutes, which is 100 minutes.
+Enter the cost of additional minutes, which
+
+00:28:12.839 --> 00:28:19.299
+is five. Now one thing you'll notice is I
+forgot to tell the user to enter end here.
+
+00:28:19.299 --> 00:28:26.299
+That's a mistake that we're going to need
+to fix, but let's first see. Enter the monthly
+
+00:28:26.529 --> 00:28:33.529
+cost. So it looks like that isn't working
+correctly anyways. It went and read it again.
+
+00:28:34.589 --> 00:28:38.529
+So we've got another problem to fix in addition
+to the problem with our prompt.
+
+00:28:38.529 --> 00:28:45.529
+There's no reason to go any further testing
+when that's wrong. So here's the prompt that
+
+00:28:47.299 --> 00:28:54.299
+needed to be fixed. Enter your plan name,
+which was four, and to exit the program. Okay,
+
+00:29:01.649 --> 00:29:08.649
+so now we need to think about why we didn't
+see the plan name not being equal to end.
+
+00:29:09.210 --> 00:29:15.549
+Well, I did enter end in all caps, so that
+isn't the problem, but on the other hand we
+
+00:29:15.549 --> 00:29:22.549
+could make this program better by doing equals
+ignore case. And in fact, let's do that in
+
+00:29:24.739 --> 00:29:31.739
+the top. Now what equals ignore case means
+is that the computer is going to do what you
+
+00:29:34.820 --> 00:29:39.679
+probably want to do, and that's not pay attention
+to whether the user entered end in capital
+
+00:29:39.679 --> 00:29:46.679
+letters or not. Since we use that same equal
+statement three times, we're going to have
+
+00:29:52.489 --> 00:29:59.119
+to remember to change it three times. So if
+the plan name is not equal ignore case to
+
+00:29:59.119 --> 00:30:06.119
+end, then you go ahead and read the rest of
+the data.
+
+00:30:07.039 --> 00:30:14.039
+Well, let's see if we fix the prompt and see
+if making it ignore case makes things better
+
+00:30:16.029 --> 00:30:23.029
+too. Let's run our program again. Enter the
+number of minutes you talk, which was 500,
+
+00:30:28.379 --> 00:30:34.159
+19.99—whoops, that's a funny plan name.
+But that's okay. It could be anyone. So the
+
+00:30:34.159 --> 00:30:41.099
+monthly cost will be 19.99. The plan minutes
+would be 100, 5 cents for each additional
+
+00:30:41.099 --> 00:30:46.690
+minute. Now that's interesting. It looks like
+enter our plan name didn't get fixed, so we
+
+00:30:46.690 --> 00:30:53.690
+need to think about why that might have happened.
+So enter your plan name. Enter the monthly
+
+00:30:54.639 --> 00:31:01.639
+cost, and that isn't fixed either. So clearly
+something is still going wrong.
+
+00:31:01.749 --> 00:31:06.830
+Let's go back and look at our code again and
+see what might've happened. So here's enter
+
+00:31:06.830 --> 00:31:13.830
+the plan name or end to exit the program.
+There's what the problem is. Look what we
+
+00:31:40.739 --> 00:31:45.580
+did wrong--we forgot to remove the input statements
+we had previously when we copied and pasted
+
+00:31:45.580 --> 00:31:52.580
+them. Let's remove those, which also tends
+to make our code better. Now at this point
+
+00:31:53.849 --> 00:31:59.190
+Eclipse is freaking out, so let's see what
+it's unhappy about. It says the local variable
+
+00:31:59.190 --> 00:32:05.209
+plan minutes may not have been initialized.
+In fact, it has been initialized because we
+
+00:32:05.209 --> 00:32:09.549
+know the logic of this program means that
+if we didn't put an end, that we're entering
+
+00:32:09.549 --> 00:32:14.289
+that data again. But the problem is Eclipse
+doesn't know that, and so we're going to have
+
+00:32:14.289 --> 00:32:19.789
+to do something that's logically unnecessary
+just to keep Eclipse happy. What we're going
+
+00:32:19.789 --> 00:32:26.789
+to do is go back to where we declared variables
+and just put in fake data. So we'll put in
+
+00:32:26.849 --> 00:32:33.849
+zeros here. Now we know this is silly, but
+unfortunately this is what's necessary to
+
+00:32:42.019 --> 00:32:49.019
+keep Eclipse happy. And we should probably
+do the same with the plan name. Now because
+
+00:32:51.789 --> 00:32:56.700
+it's a string, we can't put in zero, so what
+I'll put in instead is something called the
+
+00:32:56.700 --> 00:33:03.700
+empty string. That is a string with no characters
+in it. And once again it looks like Eclipse
+
+00:33:04.559 --> 00:33:11.559
+is happy, and so now we're ready to read our
+program. Notice that our program is getting
+
+00:33:11.669 --> 00:33:16.299
+long, and that's one of the reasons that we're
+having problems with things like leaving extra
+
+00:33:16.299 --> 00:33:18.419
+code lying around.
+
+00:33:18.419 --> 00:33:25.419
+So here we go running the program. So I'm
+going to talk 500 minutes. This is my Super
+
+00:33:32.309 --> 00:33:39.309
+Saver plan, monthly cost 19.99 for 100 minutes
+with 5 cents per minute. Additional cost is
+
+00:33:41.209 --> 00:33:47.609
+39.99. That looks good, so now let's see if
+we end the program correctly. Now first I
+
+00:33:47.609 --> 00:33:54.609
+picked end in all caps. The cheapest plan
+is the Super Saver at 39.99. That looks good.
+
+00:33:55.999 --> 00:34:00.359
+Let's run two cases now. I'm going to bring
+my test data back up so I can look at that
+
+00:34:00.359 --> 00:34:07.359
+while I'm running it. So we're going to talk
+500 minutes. This time it'll be plan one 9.99
+
+00:34:16.409 --> 00:34:23.409
+for 100 minutes, 5 cents for each additional
+minute. Now we're going to enter plan two
+
+00:34:25.460 --> 00:34:32.460
+monthly cost 14.99, plan minutes was 101,
+additional minutes were .07. Notice the cost
+
+00:34:35.579 --> 00:34:41.029
+for plan two was going up, so now we're going
+to end the program. Now this time let's put
+
+00:34:41.029 --> 00:34:48.029
+a little end and a little d there to see if
+our ignore case is working or not. The cheapest
+
+00:34:48.169 --> 00:34:54.579
+plan was plan one at 21.99, and we could go
+on checking to see if three, four, and five
+
+00:34:54.579 --> 00:34:58.950
+plans would be tested. The other thing to
+remember is it might be a good idea to do
+
+00:34:58.950 --> 00:35:02.859
+them in the opposite order to make sure we're
+not just returning the first plan and that
+
+00:35:02.859 --> 00:35:09.859
+in fact we're returning the cheapest one.
+You can test a lot on code. So we've modified
+
+00:35:10.470 --> 00:35:15.490
+our code to use a sentinel control loop. We
+ran our predetermined test and it did look
+
+00:35:15.490 --> 00:35:22.200
+like our code was working. So we could reconsider
+our test data and stop after one, two, and
+
+00:35:22.200 --> 00:35:29.200
+three and still rotate test data. Now some
+special cases we want to think about. What
+
+00:35:29.309 --> 00:35:33.490
+if the first one's the cheapest? Well, that's
+actually one we've already tested. What if
+
+00:35:33.490 --> 00:35:38.109
+the last plan was the cheapest? That's definitely
+one you want to test with a loop because if
+
+00:35:38.109 --> 00:35:43.130
+a loop gets off by one, that's where that
+problem will show up. What if there's only
+
+00:35:43.130 --> 00:35:49.220
+one plan? We tested that one. What if there
+are no plans? That's a funny one to test in
+
+00:35:49.220 --> 00:35:54.480
+this case because if there are no plans, our
+logic isn't going to work very well. So in
+
+00:35:54.480 --> 00:36:00.660
+this case it probably doesn't make sense to
+look for that test. Remember keep programming!
+

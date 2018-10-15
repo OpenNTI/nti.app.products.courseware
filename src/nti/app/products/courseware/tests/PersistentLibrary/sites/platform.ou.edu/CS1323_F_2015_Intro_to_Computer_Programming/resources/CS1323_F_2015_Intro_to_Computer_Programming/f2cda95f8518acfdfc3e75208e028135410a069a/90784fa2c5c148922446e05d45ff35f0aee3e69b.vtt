@@ -1,0 +1,363 @@
+WEBVTT
+Kind: captions
+Language: en
+
+00:00:00.859 --> 00:00:06.790
+&gt;&gt;Let's continue our study of sorting algorithms
+by examining insertion sort. Now here's the
+
+00:00:06.790 --> 00:00:12.459
+algorithm for insertion sort. It's very similar
+to sorting cards as they're dealt. So one
+
+00:00:12.459 --> 00:00:16.800
+at a time, what you do is you put the next
+card in sequence with respect to the previously
+
+00:00:16.800 --> 00:00:22.660
+sorted cards. So we're inserting the next
+card into a sorted order, that's where the
+
+00:00:22.660 --> 00:00:27.090
+name of the algorithm comes from. And as I
+mentioned before, it's very important that
+
+00:00:27.090 --> 00:00:31.750
+you know not only the steps to the algorithm,
+but you match the name to those particular
+
+00:00:31.750 --> 00:00:36.690
+steps because that's how we talk about them
+in computer science. It's also how I ask about
+
+00:00:36.690 --> 00:00:42.650
+them on tests and so that's important. The
+challenge to this is the sequencing is tricky
+
+00:00:42.650 --> 00:00:47.060
+to do efficiently. So if you tried to do this
+sort of by the seat of your pants you probably
+
+00:00:47.060 --> 00:00:51.880
+wouldn't come up with a good algorithm. So
+you've got to use the algorithm that I'm presenting
+
+00:00:51.880 --> 00:00:56.489
+here. That is, if you do something else on
+an examination it will be marked as wrong.
+
+00:00:56.489 --> 00:00:58.309
+This is really important.
+
+00:00:58.309 --> 00:01:03.750
+So, let's take a look at how this works in
+practice. Now just as in selection sort when
+
+00:01:03.750 --> 00:01:08.710
+we were dividing data into things that had
+been previously sorted and things that haven't,
+
+00:01:08.710 --> 00:01:12.850
+we're doing the same thing with insertion
+sort. So for example when your first card
+
+00:01:12.850 --> 00:01:18.750
+is dealt in the hand, which in this case would
+be a five, that means we know exactly where
+
+00:01:18.750 --> 00:01:23.049
+it is. It's in the right place and it's already
+sorted with respect to itself. Because how
+
+00:01:23.049 --> 00:01:27.890
+could it not be? So the first thing we do
+is we take the second item, which is three
+
+00:01:27.890 --> 00:01:34.240
+and we put it in a temporary location. I'm
+showing this over to the side. Now we compare
+
+00:01:34.240 --> 00:01:39.670
+that temporary location to the value that's
+in the first position. We can see that five
+
+00:01:39.670 --> 00:01:44.000
+is bigger or three is smaller, whichever way
+you want to think about it, so we move the
+
+00:01:44.000 --> 00:01:49.750
+five over. Now notice at this point we do
+have five twice in the array. The three is
+
+00:01:49.750 --> 00:01:54.159
+stored to the side so we're going to be able
+to move it back. Because we've hit the end
+
+00:01:54.159 --> 00:01:59.729
+of the array, we can see that three has to
+go in first. So now three and five are sorted
+
+00:01:59.729 --> 00:02:04.710
+with respect to each other and we're ready
+to start out second iteration.
+
+00:02:04.710 --> 00:02:09.300
+So here's the second iteration. Now one is
+the value that we're trying to put in with
+
+00:02:09.300 --> 00:02:15.160
+respect to the others, and so one gets moved
+to the temporary location. Now one is smaller
+
+00:02:15.160 --> 00:02:21.560
+than five, so five gets moved over into ones
+position. One is also smaller than three.
+
+00:02:21.560 --> 00:02:26.840
+So three gets moved over, and then at the
+end we move the value from temp into the first
+
+00:02:26.840 --> 00:02:33.840
+position. Let's look at the third iteration
+now. Four gets moved into temp, five is bigger
+
+00:02:35.590 --> 00:02:40.670
+than four so it gets moved over, but four
+is bigger than three so three does not get
+
+00:02:40.670 --> 00:02:46.430
+moved over. Instead, four gets moved into
+the position that five was at first. And so
+
+00:02:46.430 --> 00:02:50.849
+there we have four values sorted.
+
+00:02:50.849 --> 00:02:56.950
+Here's the fourth iteration. The two gets
+moved into the temporary position. Two is
+
+00:02:56.950 --> 00:03:01.849
+bigger than five, so five gets moved over.
+Two is bigger than four, so four gets moved
+
+00:03:01.849 --> 00:03:07.129
+over. Two is bigger than three, so three gets
+moved over. Now two is bigger than one so
+
+00:03:07.129 --> 00:03:13.340
+one does not get moved over. Instead, two
+gets moved into the position where three is.
+
+00:03:13.340 --> 00:03:15.670
+So let's take a look at the last iteration.
+
+00:03:15.670 --> 00:03:20.750
+Now we can see that six is bigger than five,
+but remember that's us looking ahead. We can't
+
+00:03:20.750 --> 00:03:26.640
+do that; we have to be very systematic. So
+six gets moved to a temporary location. Now
+
+00:03:26.640 --> 00:03:32.080
+six is bigger than five, so five doesn't get
+moved over and instead we recognize that six
+
+00:03:32.080 --> 00:03:36.730
+is there-- that it belongs in its current
+position. So we've got an interesting boundary
+
+00:03:36.730 --> 00:03:42.739
+condition we had to deal with in this particular
+case. So, let me show you a different way
+
+00:03:42.739 --> 00:03:47.120
+to look at these four iterations. This is
+a little bit more abbreviated and this is
+
+00:03:47.120 --> 00:03:52.500
+how I usually do it on a test. So we have
+different numbers here so you'll see a second
+
+00:03:52.500 --> 00:03:58.349
+example. You can see we start with one. Well,
+one is smaller than three. So although we
+
+00:03:58.349 --> 00:04:03.790
+move three over into temp, we don't have to
+move it back. Then we go to the iteration
+
+00:04:03.790 --> 00:04:09.989
+with nine. Nine gets moved over to temp but
+it doesn't get moved back. Now with four,
+
+00:04:09.989 --> 00:04:15.000
+four gets moved over to temp. Nine is bigger
+than four so it gets moved over, and then
+
+00:04:15.000 --> 00:04:20.249
+four gets moved in. So it's the same layer
+of expressing these just without all the arrows
+
+00:04:20.249 --> 00:04:24.430
+involved, and with a way that's a little bit
+easier to work on a test.
+
+00:04:24.430 --> 00:04:30.830
+Our next iteration is putting two in the correct
+position. So two gets moved over to temp.
+
+00:04:30.830 --> 00:04:35.119
+Now nine, four, and three are all going to
+move over one position because two is smaller
+
+00:04:35.119 --> 00:04:41.400
+than those values, and then two gets moved
+back into position. Here are the last two
+
+00:04:41.400 --> 00:04:48.259
+iterations. Six gets moved over to temp. Six
+is smaller than nine, so it gets moved over.
+
+00:04:48.259 --> 00:04:55.259
+Five gets moved over to temp. Nine is bigger
+than five and six is bigger than five so they
+
+00:04:55.580 --> 00:05:00.490
+get moved over. And lastly, five gets moved
+into position. When you look at this, this
+
+00:05:00.490 --> 00:05:05.419
+gets all the data sorted. You may want to
+try a few examples the first way with the
+
+00:05:05.419 --> 00:05:10.139
+arrows to make sure you really understand
+what's happening in the algorithm before you
+
+00:05:10.139 --> 00:05:14.559
+do it this way. You do need to know how to
+trace the algorithm this way because this
+
+00:05:14.559 --> 00:05:18.960
+is usually the way I usually ask it on examinations.
+
+00:05:18.960 --> 00:05:24.129
+So now let's design our loops. The outer loop
+we noticed starts at index one, not at index
+
+00:05:24.129 --> 00:05:30.419
+zero and progresses to the end of the array--
+another perfect case for a for loop. The inner
+
+00:05:30.419 --> 00:05:34.770
+loop starts at the index of the outer loop
+and moves to the beginning of the array, not
+
+00:05:34.770 --> 00:05:39.819
+to the end of the array. Now notice the inner
+loop stops when the temp variable is larger
+
+00:05:39.819 --> 00:05:45.789
+than the data, or it can stop when we reach
+the first array index. With all these different
+
+00:05:45.789 --> 00:05:50.240
+conditions it's probably easier to use a while
+loop than a for loop, although it can be done
+
+00:05:50.240 --> 00:05:55.139
+successfully either way. I'm going to show
+it with a while loop.
+
+00:05:55.139 --> 00:05:59.949
+So here's the code. Notice our outer loop
+started at position one and went to eh end
+
+00:05:59.949 --> 00:06:06.259
+of the array. Now what I'm doing here is moving
+the data to temp. So temp gets the value of
+
+00:06:06.259 --> 00:06:12.159
+data of start, and our index gets the value
+of start. Now while the index is greater than
+
+00:06:12.159 --> 00:06:17.219
+zero, so that's making sure we don't step
+off the beginning part of the array, and temp
+
+00:06:17.219 --> 00:06:22.719
+is smaller than the data at the index, we
+move the data over. So that's the step that
+
+00:06:22.719 --> 00:06:28.129
+we're seeing most of the time. Then we subtract
+one from the index. When we get to the end
+
+00:06:28.129 --> 00:06:33.990
+of the loop, we move the temp value into data
+of index. So notice this code is not very
+
+00:06:33.990 --> 00:06:40.319
+long, it's actually pretty short. Its just
+a little bit trickier to write is all. So
+
+00:06:40.319 --> 00:06:44.020
+you might be wondering now why we should study
+sorting algorithms at all.
+
+00:06:44.020 --> 00:06:48.309
+I told you before how interesting the story
+of sorting is, but let's think about what
+
+00:06:48.309 --> 00:06:52.949
+we're really learning here. Well first off,
+this is one of our first exposures to why
+
+00:06:52.949 --> 00:06:58.889
+algorithms matter. We have seen it in another
+place with linear search versus binary search,
+
+00:06:58.889 --> 00:07:04.249
+but this is reinforcing the idea that how
+you do things as very important. Since algorithms
+
+00:07:04.249 --> 00:07:08.589
+are essential to computer science, this really
+gives you a taste of what my discipline is
+
+00:07:08.589 --> 00:07:14.669
+like. Once more sorting algorithms are the
+foundation for many other algorithms. So you'll
+
+00:07:14.669 --> 00:07:18.779
+often here people say: "Hey we could do something
+like selection sort or we could do something
+
+00:07:18.779 --> 00:07:23.349
+like insertions sort." If you don't know what
+those algorithms are you can't really participate
+
+00:07:23.349 --> 00:07:28.539
+or understand that discussion. It's also a
+really good place to practice theoretical
+
+00:07:28.539 --> 00:07:33.749
+tools. Now we don't have these theoretical
+tools yet, but you do see the need for them.
+
+00:07:33.749 --> 00:07:37.179
+Because the minute you have two different
+ways to do things, you have to think about
+
+00:07:37.179 --> 00:07:43.939
+which way is the better way. Now special circumstances
+may impact general rules. For example-- partially
+
+00:07:43.939 --> 00:07:49.539
+sorted data. I worked out a partially sorted
+data example in much greater detail for you
+
+00:07:49.539 --> 00:07:52.849
+to enjoy on Janux. So keep programming!
+

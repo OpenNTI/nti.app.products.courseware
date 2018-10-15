@@ -1,0 +1,118 @@
+{
+  "MimeType": "application/vnd.nextthought.ntislidedeck",
+  "Videos": [
+    {
+      "MimeType": "application/vnd.nextthought.ntislidevideo",
+      "video-ntiid": "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_02.01.03_Changing_Primitive_Data",
+      "title": "Assignment Statements",
+      "creator": "Deborah Trytten",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Changing_Primitive_Data",
+      "thumbnail": "//www.kaltura.com/p/1500101/thumbnail/entry_id/0_u0xcvd28/width/640/",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Changing_Primitive_Data_video",
+      "class": "ntislidevideo"
+    }
+  ],
+  "creator": "Deborah Trytten",
+  "title": "Changing Primitive Data",
+  "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Changing_Primitive_Data",
+  "Slides": [
+    {
+      "MimeType": "application/vnd.nextthought.slide",
+      "slidevideoid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Changing_Primitive_Data_video",
+      "slidetitle": "Assignment Statements",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Changing_Primitive_Data",
+      "slidevideostart": "0.0",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlide-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Changing_Primitive_Data_slide_1",
+      "slideimage": "resources/CS1323_F_2015_Intro_to_Computer_Programming/e325af90747d54b3b659606b2c8c6e8986c6f95a/fd35e23767020999111e1f49239199b4c5eff23e.png",
+      "slidevideoend": "4.0",
+      "slidenumber": "1",
+      "class": "slide"
+    },
+    {
+      "MimeType": "application/vnd.nextthought.slide",
+      "slidevideoid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Changing_Primitive_Data_video",
+      "slidetitle": "Mathematices and Programming",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Changing_Primitive_Data",
+      "slidevideostart": "4.0",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlide-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Changing_Primitive_Data_slide_2",
+      "slideimage": "resources/CS1323_F_2015_Intro_to_Computer_Programming/b922f6f5361c8a53b845a0f0524bbb8902aa42a5/fd35e23767020999111e1f49239199b4c5eff23e.png",
+      "slidevideoend": "39.0",
+      "slidenumber": "2",
+      "class": "slide"
+    },
+    {
+      "MimeType": "application/vnd.nextthought.slide",
+      "slidevideoid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Changing_Primitive_Data_video",
+      "slidetitle": "Recall: Equality in Mathematics",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Changing_Primitive_Data",
+      "slidevideostart": "39.0",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlide-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Changing_Primitive_Data_slide_3",
+      "slideimage": "resources/CS1323_F_2015_Intro_to_Computer_Programming/5334bd0481bafb8498d4d099dac4a7a35276281a/fd35e23767020999111e1f49239199b4c5eff23e.png",
+      "slidevideoend": "82.0",
+      "slidenumber": "3",
+      "class": "slide"
+    },
+    {
+      "MimeType": "application/vnd.nextthought.slide",
+      "slidevideoid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Changing_Primitive_Data_video",
+      "slidetitle": "Assignment Statement",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Changing_Primitive_Data",
+      "slidevideostart": "82.0",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlide-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Changing_Primitive_Data_slide_4",
+      "slideimage": "resources/CS1323_F_2015_Intro_to_Computer_Programming/8b0896f3affc5f220e3aa2ee5a27a5dc7ef1876f/fd35e23767020999111e1f49239199b4c5eff23e.png",
+      "slidevideoend": "135.0",
+      "slidenumber": "4",
+      "class": "slide"
+    },
+    {
+      "MimeType": "application/vnd.nextthought.slide",
+      "slidevideoid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Changing_Primitive_Data_video",
+      "slidetitle": "Asymmetry",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Changing_Primitive_Data",
+      "slidevideostart": "135.0",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlide-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Changing_Primitive_Data_slide_5",
+      "slideimage": "resources/CS1323_F_2015_Intro_to_Computer_Programming/70b78da6c6bd274aeb26b3b62d31a941205d51bf/fd35e23767020999111e1f49239199b4c5eff23e.png",
+      "slidevideoend": "196.0",
+      "slidenumber": "5",
+      "class": "slide"
+    },
+    {
+      "MimeType": "application/vnd.nextthought.slide",
+      "slidevideoid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Changing_Primitive_Data_video",
+      "slidetitle": "Example: Asymmetry",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Changing_Primitive_Data",
+      "slidevideostart": "196.0",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlide-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Changing_Primitive_Data_slide_6",
+      "slideimage": "resources/CS1323_F_2015_Intro_to_Computer_Programming/94c5b90463e439fd991108856d603787c358672a/fd35e23767020999111e1f49239199b4c5eff23e.png",
+      "slidevideoend": "295.0",
+      "slidenumber": "6",
+      "class": "slide"
+    },
+    {
+      "MimeType": "application/vnd.nextthought.slide",
+      "slidevideoid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Changing_Primitive_Data_video",
+      "slidetitle": "Technique: Praphrasing Code",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Changing_Primitive_Data",
+      "slidevideostart": "295.0",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlide-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Changing_Primitive_Data_slide_7",
+      "slideimage": "resources/CS1323_F_2015_Intro_to_Computer_Programming/34c2ab2a833b3354e7b958517e7a3626ad394a24/fd35e23767020999111e1f49239199b4c5eff23e.png",
+      "slidevideoend": "334.0",
+      "slidenumber": "7",
+      "class": "slide"
+    },
+    {
+      "MimeType": "application/vnd.nextthought.slide",
+      "slidevideoid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Changing_Primitive_Data_video",
+      "slidetitle": "Keep Programming!",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Changing_Primitive_Data",
+      "slidevideostart": "334.0",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlide-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Changing_Primitive_Data_slide_8",
+      "slideimage": "resources/CS1323_F_2015_Intro_to_Computer_Programming/0d666f4d9c06bde960cd46005a0b13c7bdbfbf53/fd35e23767020999111e1f49239199b4c5eff23e.png",
+      "slidevideoend": "340.0",
+      "slidenumber": "8",
+      "class": "slide"
+    }
+  ],
+  "ntiid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Changing_Primitive_Data",
+  "class": "ntislidedeck"
+}

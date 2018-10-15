@@ -1,0 +1,178 @@
+{
+  "MimeType": "application/vnd.nextthought.ntislidedeck",
+  "Videos": [
+    {
+      "MimeType": "application/vnd.nextthought.ntislidevideo",
+      "video-ntiid": "tag:nextthought.com,2011-10:OU-NTIVideo-CS1323_F_2015_Intro_to_Computer_Programming.ntivideo.video_04.01.03_Predicting_Weather",
+      "title": "Predicting Weather",
+      "creator": "Deborah Trytten",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Predicting_Weather",
+      "thumbnail": "//www.kaltura.com/p/1500101/thumbnail/entry_id/0_rc1hwlgu/width/640/",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Predicting_Weather_video",
+      "class": "ntislidevideo"
+    }
+  ],
+  "creator": "Deborah Trytten",
+  "title": "Arrays of Objects",
+  "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Predicting_Weather",
+  "Slides": [
+    {
+      "MimeType": "application/vnd.nextthought.slide",
+      "slidevideoid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Predicting_Weather_video",
+      "slidetitle": "Predicting Weather",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Predicting_Weather",
+      "slidevideostart": "0.0",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlide-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Predicting_Weather_slide_1",
+      "slideimage": "resources/CS1323_F_2015_Intro_to_Computer_Programming/2f2900b9f59abc9ed805d66be4e0bcc370030d04/fd35e23767020999111e1f49239199b4c5eff23e.png",
+      "slidevideoend": "5.0",
+      "slidenumber": "1",
+      "class": "slide"
+    },
+    {
+      "MimeType": "application/vnd.nextthought.slide",
+      "slidevideoid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Predicting_Weather_video",
+      "slidetitle": "Problem Statement",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Predicting_Weather",
+      "slidevideostart": "5.0",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlide-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Predicting_Weather_slide_2",
+      "slideimage": "resources/CS1323_F_2015_Intro_to_Computer_Programming/118747018269a1725e522c071ae3b0b8335fdad3/fd35e23767020999111e1f49239199b4c5eff23e.png",
+      "slidevideoend": "13.0",
+      "slidenumber": "2",
+      "class": "slide"
+    },
+    {
+      "MimeType": "application/vnd.nextthought.slide",
+      "slidevideoid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Predicting_Weather_video",
+      "slidetitle": "Heuristics and Algorithms",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Predicting_Weather",
+      "slidevideostart": "13.0",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlide-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Predicting_Weather_slide_3",
+      "slideimage": "resources/CS1323_F_2015_Intro_to_Computer_Programming/63e4cd58d002195edce6e729db7ae2e21368060b/fd35e23767020999111e1f49239199b4c5eff23e.png",
+      "slidevideoend": "49.0",
+      "slidenumber": "3",
+      "class": "slide"
+    },
+    {
+      "MimeType": "application/vnd.nextthought.slide",
+      "slidevideoid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Predicting_Weather_video",
+      "slidetitle": "My Weather Prediction Heuristic",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Predicting_Weather",
+      "slidevideostart": "49.0",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlide-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Predicting_Weather_slide_4",
+      "slideimage": "resources/CS1323_F_2015_Intro_to_Computer_Programming/a6dd5cd90f1e57be4c7b9dc03b6c797847490085/fd35e23767020999111e1f49239199b4c5eff23e.png",
+      "slidevideoend": "62.0",
+      "slidenumber": "4",
+      "class": "slide"
+    },
+    {
+      "MimeType": "application/vnd.nextthought.slide",
+      "slidevideoid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Predicting_Weather_video",
+      "slidetitle": "Get Weather Data",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Predicting_Weather",
+      "slidevideostart": "62.0",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlide-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Predicting_Weather_slide_5",
+      "slideimage": "resources/CS1323_F_2015_Intro_to_Computer_Programming/6ecfccb5d43598e54a6fd66f40ea2323117abf8c/fd35e23767020999111e1f49239199b4c5eff23e.png",
+      "slidevideoend": "205.0",
+      "slidenumber": "5",
+      "class": "slide"
+    },
+    {
+      "MimeType": "application/vnd.nextthought.slide",
+      "slidevideoid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Predicting_Weather_video",
+      "slidetitle": "Comma Separated Values",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Predicting_Weather",
+      "slidevideostart": "205.0",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlide-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Predicting_Weather_slide_6",
+      "slideimage": "resources/CS1323_F_2015_Intro_to_Computer_Programming/c0af19d3b1ef09289cfe34ed9d18bec0b0800169/fd35e23767020999111e1f49239199b4c5eff23e.png",
+      "slidevideoend": "246.0",
+      "slidenumber": "6",
+      "class": "slide"
+    },
+    {
+      "MimeType": "application/vnd.nextthought.slide",
+      "slidevideoid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Predicting_Weather_video",
+      "slidetitle": "Reading CSV",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Predicting_Weather",
+      "slidevideostart": "246.0",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlide-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Predicting_Weather_slide_7",
+      "slideimage": "resources/CS1323_F_2015_Intro_to_Computer_Programming/02996f36da11cf6833a1d0041b2a552ebb8fb79a/fd35e23767020999111e1f49239199b4c5eff23e.png",
+      "slidevideoend": "288.0",
+      "slidenumber": "7",
+      "class": "slide"
+    },
+    {
+      "MimeType": "application/vnd.nextthought.slide",
+      "slidevideoid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Predicting_Weather_video",
+      "slidetitle": "Testing Problem",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Predicting_Weather",
+      "slidevideostart": "288.0",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlide-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Predicting_Weather_slide_8",
+      "slideimage": "resources/CS1323_F_2015_Intro_to_Computer_Programming/5a2c330eb859374233bbc546f95435058fdf639e/fd35e23767020999111e1f49239199b4c5eff23e.png",
+      "slidevideoend": "339.0",
+      "slidenumber": "8",
+      "class": "slide"
+    },
+    {
+      "MimeType": "application/vnd.nextthought.slide",
+      "slidevideoid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Predicting_Weather_video",
+      "slidetitle": "Testing Concept",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Predicting_Weather",
+      "slidevideostart": "339.0",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlide-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Predicting_Weather_slide_9",
+      "slideimage": "resources/CS1323_F_2015_Intro_to_Computer_Programming/c6c5b1fd77ea27cb45c5d008d8ea5ccd628ecd53/fd35e23767020999111e1f49239199b4c5eff23e.png",
+      "slidevideoend": "377.0",
+      "slidenumber": "9",
+      "class": "slide"
+    },
+    {
+      "MimeType": "application/vnd.nextthought.slide",
+      "slidevideoid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Predicting_Weather_video",
+      "slidetitle": "Create Test Data",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Predicting_Weather",
+      "slidevideostart": "377.0",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlide-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Predicting_Weather_slide_10",
+      "slideimage": "resources/CS1323_F_2015_Intro_to_Computer_Programming/54d833c726d95be1fc6e19e272985c3fa74cc06e/fd35e23767020999111e1f49239199b4c5eff23e.png",
+      "slidevideoend": "441.0",
+      "slidenumber": "10",
+      "class": "slide"
+    },
+    {
+      "MimeType": "application/vnd.nextthought.slide",
+      "slidevideoid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Predicting_Weather_video",
+      "slidetitle": "Create Methods",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Predicting_Weather",
+      "slidevideostart": "441.0",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlide-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Predicting_Weather_slide_11",
+      "slideimage": "resources/CS1323_F_2015_Intro_to_Computer_Programming/76d4f83c3392515415abf42f23cfc6a0671085bc/fd35e23767020999111e1f49239199b4c5eff23e.png",
+      "slidevideoend": "670.0",
+      "slidenumber": "11",
+      "class": "slide"
+    },
+    {
+      "MimeType": "application/vnd.nextthought.slide",
+      "slidevideoid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Predicting_Weather_video",
+      "slidetitle": "Day Numbers",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Predicting_Weather",
+      "slidevideostart": "670.0",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlide-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Predicting_Weather_slide_12",
+      "slideimage": "resources/CS1323_F_2015_Intro_to_Computer_Programming/6b1135c1a666e0eb8343426a8a73a86ad8ef981d/fd35e23767020999111e1f49239199b4c5eff23e.png",
+      "slidevideoend": "2236.0",
+      "slidenumber": "12",
+      "class": "slide"
+    },
+    {
+      "MimeType": "application/vnd.nextthought.slide",
+      "slidevideoid": "tag:nextthought.com,2011-10:OU-NTISlideVideo-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Predicting_Weather_video",
+      "slidetitle": "Keep Programming!",
+      "slidedeckid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Predicting_Weather",
+      "slidevideostart": "2236.0",
+      "ntiid": "tag:nextthought.com,2011-10:OU-NTISlide-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Predicting_Weather_slide_13",
+      "slideimage": "resources/CS1323_F_2015_Intro_to_Computer_Programming/8018186a7bb24b3ae6785df07449dc80a20385e2/fd35e23767020999111e1f49239199b4c5eff23e.png",
+      "slidevideoend": "2245.0",
+      "slidenumber": "13",
+      "class": "slide"
+    }
+  ],
+  "ntiid": "tag:nextthought.com,2011-10:OU-NTISlideDeck-CS1323_F_2015_Intro_to_Computer_Programming.nsd.pres:Predicting_Weather",
+  "class": "ntislidedeck"
+}

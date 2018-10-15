@@ -1,0 +1,435 @@
+WEBVTT
+Kind: captions
+Language: en
+
+00:00:00.940 --> 00:00:06.220
+&gt;&gt;Let's take a look at reading files using
+for loops. First let's talk about the mechanics
+
+00:00:06.220 --> 00:00:13.220
+of a for loop, because that can be kind of
+confusing. For, initializer, semicolon, Boolean
+
+00:00:13.789 --> 00:00:19.500
+test, semicolon, increment. Then you have
+the body of the loop. Now the body of the
+
+00:00:19.500 --> 00:00:24.350
+loop will be enclosed in curly braces if there's
+more than one statement, or could be a single
+
+00:00:24.350 --> 00:00:28.710
+statement without curly braces. Those rules
+probably sound familiar because they're the
+
+00:00:28.710 --> 00:00:34.359
+same rules for while loops and for conditional
+statements. Now here's where for loops get
+
+00:00:34.359 --> 00:00:40.039
+a little tricky. The initializer and the test
+are done before the loop body. This is similar
+
+00:00:40.039 --> 00:00:46.219
+to a while loop, but at the end of the loop
+body the increment is done and then the test
+
+00:00:46.219 --> 00:00:51.739
+is done. Now the order of these operations
+is very important. Let me show you a picture
+
+00:00:51.739 --> 00:00:58.739
+to help you understand how this works. Here's
+a code fragment that adds 1+2+3+4+5. Int sum
+
+00:01:01.440 --> 00:01:08.440
+of zero, here's our for loop, int count equals
+1, count less than or equal to 5, ++ count,
+
+00:01:09.070 --> 00:01:13.510
+and the body of the loop is just a single
+statement: sum + equals count, which remember
+
+00:01:13.510 --> 00:01:17.810
+means the same as sum equals sum + count.
+
+00:01:17.810 --> 00:01:24.360
+Here's how the for loop gets executed. Sum
+gets set to zero, then count is created and
+
+00:01:24.360 --> 00:01:30.220
+set to 1. We check count less than or equal
+to 5 which is true, because 1 is less than
+
+00:01:30.220 --> 00:01:37.220
+or equal to 5. Now we go and do the loop body.
+So we add the 1 in count to the zero in sum,
+
+00:01:38.520 --> 00:01:44.420
+and sum now has the value of 1. Then we go
+do the increment: count gets incremented to
+
+00:01:44.420 --> 00:01:50.610
+two, and then we check to see that count is
+less than or equal to 5, which it is. So at
+
+00:01:50.610 --> 00:01:57.250
+that point we go and do the loop body again.
+Sum now gets two added to 1, so it goes up
+
+00:01:57.250 --> 00:02:04.210
+to 3. Count gets incremented to 3, and then
+we check to see is count less than or equal
+
+00:02:04.210 --> 00:02:11.180
+to 5? Well 3 is less than or equal to 5, so
+we go and do the body again. So sum now has
+
+00:02:11.180 --> 00:02:18.180
+3 added to 3 which is 6, then we increment
+count to 4, and 4 is less than or equal to
+
+00:02:18.730 --> 00:02:25.730
+5. That's true. So we go and do the body again.
+So now we add 4 to 6 and get ten, increment
+
+00:02:26.590 --> 00:02:32.830
+count to 5, check to see if count is less
+than or equal to 5, which it is because 5
+
+00:02:32.830 --> 00:02:39.830
+is less than or equal to 5. So we add 5 to
+ten in the body of the loop, which gives us
+
+00:02:40.950 --> 00:02:47.120
+fifteen. Increment count to 6, and then check
+to see if count is less than or equal to 5.
+
+00:02:47.120 --> 00:02:52.930
+Well 6 is not less than or equal to 5, and
+so we're done. So you can see the loop when
+
+00:02:52.930 --> 00:02:58.459
+you see the triangles at the side -- how you're
+going around and around and around again.
+
+00:02:58.459 --> 00:03:03.500
+Also notice that the initialization is only
+done once.
+
+00:03:03.500 --> 00:03:09.030
+Now let's talk a little bit about files. Files
+are used to store data. So for example every
+
+00:03:09.030 --> 00:03:14.830
+word processor has it's own file. Now the
+format of the file has to be known, and these
+
+00:03:14.830 --> 00:03:21.590
+formats can be incredibly complicated. Data
+in files is stored sequentially, and so you
+
+00:03:21.590 --> 00:03:26.280
+read in the first data element first, then
+the second and so on. The thing that's tricky
+
+00:03:26.280 --> 00:03:30.830
+here is you can't go backwards in a file,
+although you can start over if you really
+
+00:03:30.830 --> 00:03:37.010
+have to-- but you don't want to do that very
+often. Files are also a finite size, so that's
+
+00:03:37.010 --> 00:03:41.250
+something very different than keyboard input
+that we've been using so far that could be
+
+00:03:41.250 --> 00:03:46.739
+entered as many times as you want. Finding
+out how much data is in a file can be a problem,
+
+00:03:46.739 --> 00:03:53.739
+and so we have a trick that we use. What we
+do is we store the size of the file at the
+
+00:03:54.129 --> 00:03:59.450
+start of the file. Now this is usually stored
+as an int -- this trick is very, very widely
+
+00:03:59.450 --> 00:04:01.930
+used in programming.
+
+00:04:01.930 --> 00:04:08.930
+So to create a file in Eclipse you'll do file,
+new, file, and then save the file with a .txt
+
+00:04:09.629 --> 00:04:15.069
+extension. That .txt means that characters
+are being stored. There's a different format,
+
+00:04:15.069 --> 00:04:21.630
+.dat when data is being stored, but .txt is
+what we're going to use exclusively this semester.
+
+00:04:21.630 --> 00:04:27.280
+It's very important to get the correct extension
+on files so people know how to interpret the
+
+00:04:27.280 --> 00:04:33.070
+files. This is another way of determining
+the formatting. So here's what the body of
+
+00:04:33.070 --> 00:04:37.970
+the file will look like. Now remember that
+first 5 is the size, the others are the data
+
+00:04:37.970 --> 00:04:43.680
+in the file. So 5 tells us that there are
+5 data elements, and then the data elements
+
+00:04:43.680 --> 00:04:50.680
+are 3, 1, 7, 9 and 3. Now let's talk a little
+bit about the Scanner class. The Scanner class
+
+00:04:52.350 --> 00:04:57.630
+in addition to reading keyboard input is also
+used to read files, but it uses a different
+
+00:04:57.630 --> 00:05:04.630
+constructor. The other thing is we have to
+import Java.io.file in addition to importing
+
+00:05:04.710 --> 00:05:11.710
+Java.util.scanner. So here's what this looks
+like. Scanner input equals new scanner, new
+
+00:05:13.090 --> 00:05:19.110
+file of and then the filename with a .txt
+extension. Now there are some nuances here
+
+00:05:19.110 --> 00:05:23.970
+that we don't really know very well and that's
+okay, just remember the scanner needs to have
+
+00:05:23.970 --> 00:05:27.340
+the file constructed first.
+
+00:05:27.340 --> 00:05:31.770
+Now the file class is going to look in the
+project directory, not the source directory
+
+00:05:31.770 --> 00:05:38.520
+where your Java files are being stored. This
+is something that's specific to Eclipse. Now
+
+00:05:38.520 --> 00:05:44.790
+there is one little...detail that we have
+to attend to. It's called a file not found
+
+00:05:44.790 --> 00:05:50.900
+exception. It turns out that Java is absolutely
+crazy about worrying that files aren't going
+
+00:05:50.900 --> 00:05:57.110
+to be found, so it forces you to inform the
+world that somehow you're opening a file and
+
+00:05:57.110 --> 00:06:03.970
+that that may not be successful. This is done
+with something called a file not found exception.
+
+00:06:03.970 --> 00:06:10.970
+So in order to use this you're going to have
+to import java.io.filenotfoundexception. Now,
+
+00:06:12.320 --> 00:06:18.199
+you're going to have to go after the public
+static void main, String square bracket args,
+
+00:06:18.199 --> 00:06:24.300
+and say throws file not found exception. If
+the file was opened in another method, that
+
+00:06:24.300 --> 00:06:29.210
+method and all of the methods that call it
+also have to throw this exception. So this
+
+00:06:29.210 --> 00:06:34.020
+is going to get scattered all over your code.
+The good news here is that Eclipse can really
+
+00:06:34.020 --> 00:06:38.380
+help you find where all these things are,
+and will help you get those exceptions in
+
+00:06:38.380 --> 00:06:42.530
+the right place. Let's read a file.
+
+00:06:42.530 --> 00:06:47.400
+Let's write a program that averages the integer
+values in a file using a for loop and that
+
+00:06:47.400 --> 00:06:53.820
+counts up to the file size. Now the file format
+is going to be size and the value is one to
+
+00:06:53.820 --> 00:07:00.620
+align, so let's go to Eclipse. So here's a
+project that I created, I'm calling it ReadFile.
+
+00:07:00.620 --> 00:07:07.620
+Here's our main method. Now we know we're
+going to have to do some import statements,
+
+00:07:08.240 --> 00:07:15.240
+so we'll import the scanner, the file class,
+and the file not found exception.
+
+00:07:23.449 --> 00:07:30.449
+Now in our main program, we're going to have
+to create a scanner to read the file. Now
+
+00:07:36.430 --> 00:07:43.180
+I called my file data.txt. Let me show you
+what the contents are here.
+
+00:07:43.180 --> 00:07:49.020
+So it's 5 3 1 7 9 3—these are the same ones
+that were in the PowerPoint. You'll notice
+
+00:07:49.020 --> 00:07:55.250
+when I did this that Eclipse underlined it,
+and notice what it says is, "Unhandled exception
+
+00:07:55.250 --> 00:08:00.900
+type file not found exception." That is Eclipse
+telling you that when you open a file, you
+
+00:08:00.900 --> 00:08:07.900
+have to throw file not found exception. And
+notice Eclipse is happy again.
+
+00:08:13.210 --> 00:08:20.210
+So the first thing we have to do now is read
+in the size from the file. So we'll have int
+
+00:08:21.340 --> 00:08:28.340
+size equals file.nextint. So that's going
+to read in our next integer. Now we have time
+
+00:08:29.150 --> 00:08:36.150
+for our for loop. For int count equals zero,
+count is less than size plus plus count. So
+
+00:08:41.229 --> 00:08:46.270
+here I'm stepping count up one element at
+a time until it hits size. Now notice I started
+
+00:08:46.270 --> 00:08:51.670
+counting at zero and stopped at less than
+size-- that pattern is very common in for
+
+00:08:51.670 --> 00:08:58.670
+loops. Now because we're trying to find the
+averages, we're going to need a sum. And we'll
+
+00:09:02.980 --> 00:09:09.980
+say sum equals sum plus file.next int. Now
+the increment in count is done here in the
+
+00:09:16.180 --> 00:09:20.279
+increment of the for loop so we don't have
+to remember to put it in the body. One of
+
+00:09:20.279 --> 00:09:25.330
+the reasons that I really like for loops is
+the fact that you don't have to remember to
+
+00:09:25.330 --> 00:09:30.100
+put the increment in the body. You will have
+it in the top line and it's much easier to
+
+00:09:30.100 --> 00:09:35.740
+remember to do it there. So that's creating
+our running sum, and now we need to print
+
+00:09:35.740 --> 00:09:41.580
+out our average.
+
+00:09:41.580 --> 00:09:48.149
+So we'll do sum divided by count. Now it's
+really important to notice that when I stopped
+
+00:09:48.149 --> 00:09:54.050
+count using less than size, the value of count
+at the end is size, and so we're not going
+
+00:09:54.050 --> 00:09:59.570
+to be off by one. Notice that Eclipse is unhappy
+about something now, and this is something
+
+00:09:59.570 --> 00:10:04.769
+that's a little bit tricky. It's complaining
+about the fact that it doesn't have count.
+
+00:10:04.769 --> 00:10:11.380
+The reason is because I declared count here
+in the for loop, count doesn't live outside
+
+00:10:11.380 --> 00:10:18.310
+of it. So in order to use it outside, we're
+going to have to declare it outside. And then
+
+00:10:18.310 --> 00:10:24.470
+of course we don't declare it in the initialization
+of the for loop. So now notice that Eclipse
+
+00:10:24.470 --> 00:10:29.620
+is happy, but we do have a question about
+whether it should be happy or not. Because
+
+00:10:29.620 --> 00:10:34.339
+notice sum is an int and count is an int,
+and we know that integer division does bad
+
+00:10:34.339 --> 00:10:39.480
+things-- in particular it truncates. So we
+better change one of these to a double with
+
+00:10:39.480 --> 00:10:45.490
+a cast. Now I personally like to do the denominator
+because you have fewer parentheses involved
+
+00:10:45.490 --> 00:10:50.500
+and because the precedent seems clearer, but
+I don't care which way you do it.
+
+00:10:50.500 --> 00:10:55.290
+Now before we run our program we should probably
+check and see what the answer should be. So
+
+00:10:55.290 --> 00:11:02.290
+we've got 5 values. 3 plus 1 is 4, plus 7
+is 11, plus 9 is 20, plus 3 is 23. So 23 divided
+
+00:11:05.810 --> 00:11:12.810
+by 5, that should be 4.75. Let's hope that's
+what our program gives. Oh! 4.6 of course,
+
+00:11:18.350 --> 00:11:21.230
+because we're dividing by 5 instead of by
+4.
+
+00:11:21.230 --> 00:11:26.769
+Well I guess your answers are only as good
+as your math is—but that is the right value.
+
+00:11:26.769 --> 00:11:32.860
+So we now know how to open files in Java and
+read them. So we've now successfully written
+
+00:11:32.860 --> 00:11:37.170
+our file reading program using a for loop.
+So keep programming!
+

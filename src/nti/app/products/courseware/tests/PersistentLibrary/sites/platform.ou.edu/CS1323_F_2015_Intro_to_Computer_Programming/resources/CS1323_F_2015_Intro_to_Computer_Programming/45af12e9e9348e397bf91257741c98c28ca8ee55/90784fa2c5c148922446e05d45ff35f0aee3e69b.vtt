@@ -1,0 +1,333 @@
+WEBVTT
+Kind: captions
+Language: en
+
+00:00:01.069 --> 00:00:06.639
+&gt;&gt;Let's talk about how to use Turing's Craft
+in this class. Turing's Craft is a commercial
+
+00:00:06.639 --> 00:00:13.079
+website. It has interactive exercises to practice
+programming. It checks the correctness of
+
+00:00:13.079 --> 00:00:18.060
+your answer by testing multiple cases. Now
+this turns out to be really important because
+
+00:00:18.060 --> 00:00:24.050
+it doesn't check to see that you did the problem
+the way they expected you to do the problem.
+
+00:00:24.050 --> 00:00:28.480
+Instead it actually checks and sees whether
+your answer is correct or not. This makes
+
+00:00:28.480 --> 00:00:32.200
+a world of difference in doing programming.
+
+00:00:32.200 --> 00:00:36.800
+The other thing it does is it offers feedback
+and help. Now remember that an automated site
+
+00:00:36.800 --> 00:00:41.530
+like this is not going to be able to provide
+the same quality of help that a person would
+
+00:00:41.530 --> 00:00:47.300
+be able to provide, it's just not that intelligent.
+But it is a good place to start and often
+
+00:00:47.300 --> 00:00:53.670
+it can get you unstuck if you're having difficulty.
+The advantages of Turing's Craft are that
+
+00:00:53.670 --> 00:00:59.840
+you only need to enter a few lines of code.
+Sometimes even just a character or two. So
+
+00:00:59.840 --> 00:01:04.059
+this is different then some of the other sites
+we'll use where we have to enter whole methods
+
+00:01:04.059 --> 00:01:09.070
+or big chunks of code. So this is a big advantage
+of Turing's Craft and one of the reasons that
+
+00:01:09.070 --> 00:01:15.040
+it's worth paying money for it. It also gives
+you instantaneous feedback and that helps
+
+00:01:15.040 --> 00:01:17.979
+because it's a lot easier to learn in that
+way.
+
+00:01:17.979 --> 00:01:22.700
+You can work problems as many times as desired.
+In fact, you'll probably need to work some
+
+00:01:22.700 --> 00:01:27.659
+problems many times. I can tell how many times
+you've worked a problem, but I don't take
+
+00:01:27.659 --> 00:01:34.520
+it into grading consideration at all so don't
+worry about it. Just relax - do your best.
+
+00:01:34.520 --> 00:01:40.159
+I can also see your latest submission. However,
+I can't see all of your submissions. So if
+
+00:01:40.159 --> 00:01:43.610
+you're going to ask me for help make sure
+you leave the one that you think is the best
+
+00:01:43.610 --> 00:01:49.290
+solution behind so that I can take a look
+at it if you email it to me. I only look at
+
+00:01:49.290 --> 00:01:54.450
+solutions in general if you ask me for help.
+I don't just go pawing around the site randomly
+
+00:01:54.450 --> 00:01:58.310
+looking at what people have been doing.
+
+00:01:58.310 --> 00:02:04.770
+To sign up we're going to go to Turingscraft.com.
+Click register, choose student, enter our
+
+00:02:04.770 --> 00:02:11.630
+access code, and choose a university. Here
+we are at the Turing's Craft website. I've
+
+00:02:11.630 --> 00:02:17.270
+cut the access code from the PowerPoint presentation
+so I'll be able to paste it in when we get
+
+00:02:17.270 --> 00:02:24.270
+there. You may want to do the same. So we're
+going to register and you want to check that
+
+00:02:25.200 --> 00:02:29.530
+you're a student in a course that uses code
+lab. It's very important that you get that
+
+00:02:29.530 --> 00:02:34.580
+button checked correctly, because if you don't
+I won't be able to see your solutions and
+
+00:02:34.580 --> 00:02:39.080
+I won't be able to see what work you've done.
+That means you won't get credit for it. So
+
+00:02:39.080 --> 00:02:46.080
+now click continue. Here's where we enter
+our section access code. We're going to choose
+
+00:02:48.980 --> 00:02:55.980
+the university, this is the University of
+Oklahoma, and continue. And from here on you
+
+00:02:56.170 --> 00:03:00.920
+enter personally identifiable information.
+I'm not going to step you through this because
+
+00:03:00.920 --> 00:03:06.030
+I know you all can do this on your own. When
+you get to this point you can either pay using
+
+00:03:06.030 --> 00:03:11.430
+a credit card or a personal check. If you're
+using a personal check you enter your check
+
+00:03:11.430 --> 00:03:16.360
+number, you mail the check to Turing's Craft,
+they'll trust you for a couple of weeks. Now
+
+00:03:16.360 --> 00:03:20.900
+if your check doesn't arrive sooner or later
+they will eventually cut off your access,
+
+00:03:20.900 --> 00:03:24.290
+so please make sure you do send them a check
+when you're supposed to.
+
+00:03:24.290 --> 00:03:30.290
+To preform the exercises you're going to log
+in at Turingscraft.com. Not register. Load
+
+00:03:30.290 --> 00:03:37.290
+the course. And we're going to select an exercise
+to work on. So here we go. We're back at the
+
+00:03:43.270 --> 00:03:49.520
+Turing's Craft website. Now this time I'm
+going to login. They use the email address
+
+00:03:49.520 --> 00:03:56.520
+you gave them. This is me of course. And you'll
+enter a password that you picked during the
+
+00:03:58.620 --> 00:04:04.120
+registration process and then I'll load this
+course. Now you'll notice that I've got quite
+
+00:04:04.120 --> 00:04:08.790
+a few courses here. That's because I've been
+using this software for a long time. You'll
+
+00:04:08.790 --> 00:04:15.790
+only have one. The warm-up exercises are over
+here. Let's go and take a look at this one.
+
+00:04:16.870 --> 00:04:23.070
+Now, this one has unusually long instructions
+and that's very a-typical for a Turing's Craft
+
+00:04:23.070 --> 00:04:27.120
+exercise. Mostly what they're trying to do
+is to give you enough information so you can
+
+00:04:27.120 --> 00:04:32.290
+do the exercise successfully. So, they're
+asking you to write an arithmetic expression
+
+00:04:32.290 --> 00:04:36.900
+that calculates the average of eighteen and
+forty-six. And then they point out a bunch
+
+00:04:36.900 --> 00:04:41.780
+of things that you probably know form algebra.
+That is the average of two numbers is their
+
+00:04:41.780 --> 00:04:48.780
+sum divided by two, they use a slash for division
+and the parenthesis are used to hold different
+
+00:04:48.780 --> 00:04:51.190
+parts of arithmetic together.
+
+00:04:51.190 --> 00:04:55.970
+Now in this particular problem they actually
+even tell you what the right solution is.
+
+00:04:55.970 --> 00:05:01.820
+That is, open parenthesis eighteen plus forty-six
+close parenthesis divide by two. And then
+
+00:05:01.820 --> 00:05:08.820
+they ask you to try it. So let's move down
+and try it. Here's the expression and we're
+
+00:05:12.190 --> 00:05:19.190
+going to click submit. And you see that it
+takes us to the result tab and it says the
+
+00:05:19.440 --> 00:05:24.370
+code lab analysis says that it's correct,
+and then it gives us a little encouraging
+
+00:05:24.370 --> 00:05:29.960
+message. It also puts your submission there.
+Now let's go back and see what happens if
+
+00:05:29.960 --> 00:05:36.960
+we don't do it right. Let's say we divide
+by three instead of dividing by two. Well
+
+00:05:38.610 --> 00:05:44.120
+when we submit now we get this red flag. It
+says you don't seem to have entered the correct
+
+00:05:44.120 --> 00:05:51.120
+expression. Correct solutions that use three
+tend to use minus. Now that might not make
+
+00:05:51.130 --> 00:05:56.520
+sense or seem very helpful, but what they're
+trying to say is: "Well, we really were expecting
+
+00:05:56.520 --> 00:06:02.160
+two. The only way to get to two from three
+is to subtract one." And it says you're using
+
+00:06:02.160 --> 00:06:09.160
+an incorrect number somewhere in your solution.
+So they give you some hints.
+
+00:06:11.410 --> 00:06:16.220
+That's really all there is to using Turing's
+Craft. Now the next thing we need to do is
+
+00:06:16.220 --> 00:06:21.960
+to understand some symbols on the website.
+A clear box means you haven't attempted the
+
+00:06:21.960 --> 00:06:28.300
+problem. A green box, you may have noticed,
+appears when the problem is completed successfully.
+
+00:06:28.300 --> 00:06:33.760
+A yellow box means the problem is completed
+successfully but it was after the deadline.
+
+00:06:33.760 --> 00:06:39.100
+I don't accept work that's after the deadline,
+so you want to avoid those yellow boxes. A
+
+00:06:39.100 --> 00:06:44.490
+red box means your answer is incorrect and
+still needs additional work. Every now and
+
+00:06:44.490 --> 00:06:49.580
+then, and by that I mean I maybe see it once
+a year, you're going to see a black box. What
+
+00:06:49.580 --> 00:06:54.810
+that means is that the problem is out of service.
+Like all software, these problems sometimes
+
+00:06:54.810 --> 00:06:59.740
+break and when they do they take the problem
+out of service until they can repair it. Don't
+
+00:06:59.740 --> 00:07:06.740
+worry; I won't take off any points on those
+questions. As far as grading Turing's Craft,
+
+00:07:07.639 --> 00:07:12.919
+the section names correspond to the names
+in Janux for the daily sections and each section
+
+00:07:12.919 --> 00:07:18.280
+has a due date. I do change them during the
+semester sometimes, and if I change the due
+
+00:07:18.280 --> 00:07:23.940
+date Turing's Craft recalculates whether your
+work was late or not. Generally they're due
+
+00:07:23.940 --> 00:07:28.870
+two days after the material is assigned. The
+exception is things that are assigned on Friday
+
+00:07:28.870 --> 00:07:35.090
+are actually due on Monday, so I give you
+an extra day there. And each problem is worth
+
+00:07:35.090 --> 00:07:40.200
+one point. Now that's actually a pretty good
+deal, because Turing's Craft has a lot of
+
+00:07:40.200 --> 00:07:44.590
+problems at the beginning of the semester
+when things are easier. Later in the semester
+
+00:07:44.590 --> 00:07:50.110
+the problems do get harder but of course later
+in the semester we also have fewer assignments
+
+00:07:50.110 --> 00:07:57.009
+and more assignments that are not in Turing's
+Craft. So it all works out okay. So keep programming.
+

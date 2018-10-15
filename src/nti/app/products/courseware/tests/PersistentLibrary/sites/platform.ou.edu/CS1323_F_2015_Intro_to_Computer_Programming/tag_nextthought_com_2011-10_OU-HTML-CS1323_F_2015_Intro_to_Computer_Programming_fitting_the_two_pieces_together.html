@@ -1,0 +1,40 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html lang="en"><head> <meta content="2015-12-11T16:56:47" http-equiv="last-modified" /> <meta content="1325" name="NTIRelativeScrollHeight" /> <meta content="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.fitting_the_two_pieces_together" name="NTIID" /> <meta content="NextThought" name="generator" /> <meta content="text/html; charset=ascii" http-equiv="content-type" /> <title>Fitting the Two Pieces Together</title> <link href="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.blocker.13" rel="next" title="Blocker" /> <link href="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.printing_a_row_of_stars" rel="prev" title="Printing a Row of Stars" /> <link href="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.reading:Chortle_CH17" rel="up" title="Nesting Loops and Ifs" /> <link href="styles/styles.css" rel="stylesheet" /> <link href="styles/content.css" rel="stylesheet" /> </head> <body id="NTIContent"> <div class="page-contents"><div data-ntiid="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.fitting_the_two_pieces_together" id="a0000000466" ntiid="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.fitting_the_two_pieces_together"> <div class="chapter title">Fitting the Two Pieces Together</div> <p class="placeholder"></p> <a name="a752ac80de9f67f5d2e6ae42e96e2aeb"></a> <div class="sidebar" data-ntiid="tag:nextthought.com,2011-10:OU-HTML:NTISidebar-CS1323_F_2015_Intro_to_Computer_Programming.sidebar.answer.147" ntiid="tag:nextthought.com,2011-10:OU-HTML:NTISidebar-CS1323_F_2015_Intro_to_Computer_Programming.sidebar.answer.147"> <div class="sidebar-title">Answer</div> <a name="70a209d2ddba67c60c69e84aae122fd2"></a> <p class="par" id="70a209d2ddba67c60c69e84aae122fd2"> The following loop will print <b class="bfseries"><tt class="ttfamily">numStars</tt></b> stars all one one line. </p> <a name="e9ff432c7f71804407af57d0200e735c"></a> <pre>int star = 1;
+while ( star &lt;= numStars  )
+{
+  System.out.print("*");
+  star = star + 1;
+}
+</pre> </div><a name="998108bdff104afe191a869fa1b1da76"></a> <p class="par" id="998108bdff104afe191a869fa1b1da76">Now you have two pieces: (1) the part that loops for the required number of lines and, (2) the part that prints the required number of stars per line. Here is the complete program with the two parts fitted together: </p> <a name="0fb3d75d4450de7aeaaf154f71936f7c"></a> <pre>import java.util.Scanner;
+//
+class StarBlock
+{
+  public static void main (String[] args ) 
+  {
+    Scanner scan = new Scanner( System.in );
+    int numRows;      // the number of Rows
+    int numStars;     // the number of stars per row
+    int row;          // current row number
+
+    // collect input data from user
+    System.out.print( "How many Rows? " );
+    numRows = scan.nextInt() ;
+
+    System.out.print( "How many Stars per Row? " );
+    numStars = scan.nextInt() ;
+
+    row  =  1;
+    while ( row &lt;= numRows )    
+    {
+      int star = 1;
+      while ( star &lt;= numStars )
+      {
+        System.out.print("*");
+        star = star + 1;
+      }
+      System.out.println();         // need to do this to end each line
+
+      row = row + 1;
+    }
+  }
+}
+</pre><a name="52872e56e474e3c69b0757e924459782"></a> <p class="par" id="52872e56e474e3c69b0757e924459782">Notice how one <b class="bfseries"><tt class="ttfamily">while</tt></b> loop is in the body of the other loop. This is an example of <b class="bfseries">nested loops</b>. The loop that is in the body of the other is called the <b class="bfseries">inner loop</b>. The other is called the <b class="bfseries">outer loop</b>. </p> <a name="131bcde389240a9779ebdf7990c2040b"></a> <div class="sidebar" data-ntiid="tag:nextthought.com,2011-10:OU-HTML:NTISidebar-CS1323_F_2015_Intro_to_Computer_Programming.sidebar.question.153" ntiid="tag:nextthought.com,2011-10:OU-HTML:NTISidebar-CS1323_F_2015_Intro_to_Computer_Programming.sidebar.question.153"> <div class="sidebar-title">Question</div> What would the program do if the user asked for a negative number of stars per line? </div><a name="d312d2a324369e88e912dd47e9c383ec"></a> <p class="par" id="d312d2a324369e88e912dd47e9c383ec"> </p> <a name="9547e49522e2d50b17ee446fcfae39cc"></a> <p class="par" id="9547e49522e2d50b17ee446fcfae39cc">For more information or to read these chapters in full, go to <a href="http://chortle.ccsu.edu/java5/Notes/chap17/ch17_1.html">Chortle Chapter 17</a>, <a href="http://chortle.ccsu.edu/java5/Notes/chap49B/ch49B_14.html">Chortle Chapter 49B</a>, and <a href="http://chortle.ccsu.edu/java5/Notes/chap53B/ch53B_17.html">Chortle Chapter 53B</a>. </p> </div></div> </body></html>

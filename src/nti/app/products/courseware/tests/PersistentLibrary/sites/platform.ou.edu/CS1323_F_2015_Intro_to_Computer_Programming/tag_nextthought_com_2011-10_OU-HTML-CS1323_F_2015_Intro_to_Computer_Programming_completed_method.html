@@ -1,0 +1,33 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html lang="en"><head> <meta content="2015-12-11T16:56:47" http-equiv="last-modified" /> <meta content="990" name="NTIRelativeScrollHeight" /> <meta content="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.completed_method" name="NTIID" /> <meta content="NextThought" name="generator" /> <meta content="text/html; charset=ascii" http-equiv="content-type" /> <title>Completed Method</title> <link href="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.fleets_fillup()_method" rel="next" title="Fleet&#8217;s fillUp() Method" /> <link href="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.adding_a_fillup()_method" rel="prev" title="Adding a fillUp() Method" /> <link href="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.reading:Chortle_CH35" rel="up" title="Objects that Contain Objects" /> <link href="styles/styles.css" rel="stylesheet" /> <link href="styles/content.css" rel="stylesheet" /> </head> <body id="NTIContent"> <div class="page-contents"><div data-ntiid="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.completed_method" id="a0000000561" ntiid="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.completed_method"> <div class="chapter title">Completed Method</div> <p class="placeholder"></p> <a name="9c1b8bf1ddef7ed81422ee84f1d04597"></a> <div class="sidebar" data-ntiid="tag:nextthought.com,2011-10:OU-HTML:NTISidebar-CS1323_F_2015_Intro_to_Computer_Programming.sidebar.answer.226" ntiid="tag:nextthought.com,2011-10:OU-HTML:NTISidebar-CS1323_F_2015_Intro_to_Computer_Programming.sidebar.answer.226"> <div class="sidebar-title">Answer</div> The new model car is below. </div><a name="5a2086d1a26edba350a9b3ddbdb59bde"></a> <p class="par" id="5a2086d1a26edba350a9b3ddbdb59bde">Notice how the oldest odometer reading is forgotten as the newest one is recorded. After the change, <b class="bfseries"><tt class="ttfamily">(endMiles - startMiles)</tt></b> will be the number of miles traveled between the previous fillup and this one. </p> <a name="30054fd7417f97632ad686c7a44f3aa6"></a> <pre>class Car
+{
+  // data
+  private int startMiles;   // Stating odometer reading
+  private int endMiles;     // Ending odometer reading
+  private double gallons;   // Gallons of gas used between the readings
+
+  // constructor
+  Car(  int first, int last, double gals  )
+  {
+    startMiles = first ;
+    endMiles   = last ;
+    gallons    = gals ;
+  }
+
+  // methods
+  double calculateMPG()
+  {
+    return (endMiles - startMiles)/gallons ;
+  }
+
+  void fillUp(int newOdo, double fillUpGals )
+  {
+
+    startMiles = endMiles;
+
+    endMiles   = newOdo;
+
+    gallons    = fillUpGals;
+
+  }
+}
+</pre><a name="e82140ada34ee3ce6e9a849d130460b1"></a> <p class="par" id="e82140ada34ee3ce6e9a849d130460b1">Now let us consider what a <b class="bfseries"><tt class="ttfamily">fillup</tt></b> method for an entire Fleet will look like. </p> <a name="07248cb090df56498f58e6803a4bb0fd"></a> <div class="sidebar" data-ntiid="tag:nextthought.com,2011-10:OU-HTML:NTISidebar-CS1323_F_2015_Intro_to_Computer_Programming.sidebar.question.238" ntiid="tag:nextthought.com,2011-10:OU-HTML:NTISidebar-CS1323_F_2015_Intro_to_Computer_Programming.sidebar.question.238"> <div class="sidebar-title">Question</div> (Design decision: ) What <span class="underline">four</span> parameters will the Fleet&#8217;s <b class="bfseries"><tt class="ttfamily">fillUp</tt></b> method have? </div> </div></div> </body></html>

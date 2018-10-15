@@ -1,0 +1,208 @@
+WEBVTT
+Kind: captions
+Language: en
+
+00:00:00.969 --> 00:00:06.759
+&gt;&gt;Deborah Trytten: Let me show you how to
+use Javabat. Well first off what is Javabat?
+
+00:00:06.759 --> 00:00:12.200
+Well it's a free interactive tutor that's
+available through a website. The limitation
+
+00:00:12.200 --> 00:00:16.340
+of it is that it requires an implementation
+of a whole method. This means we can't do
+
+00:00:16.340 --> 00:00:22.140
+anything with it until we have methods. So
+it's not quite as nice as Turing's Craft.
+
+00:00:22.140 --> 00:00:27.550
+The other thing is that all it does for feedback
+is show you a testing table to help you debug
+
+00:00:27.550 --> 00:00:33.980
+results. It doesn't offer any other helpful
+suggestions. So it's a little bit more limited.
+
+00:00:33.980 --> 00:00:39.040
+So the first thing you need to do is set up
+a Javabat account. So you go to codingbat.com
+
+00:00:39.040 --> 00:00:45.220
+and create an account. Please do not use Mozilla,
+because that one does not work as well as
+
+00:00:45.220 --> 00:00:51.050
+the other way of logging in does. Make sure
+you use your email and that you use your real
+
+00:00:51.050 --> 00:00:55.400
+full name, even if you don't like your name.
+
+00:00:55.400 --> 00:01:01.079
+Let me show you how to create an account.
+You go to create account; you put your email
+
+00:01:01.079 --> 00:01:08.079
+here, a password there, and confirm the password
+in this field and then your name there. Again,
+
+00:01:08.570 --> 00:01:15.470
+remember, please use your real full name,
+and then you'll create the account down there.
+
+00:01:15.470 --> 00:01:22.470
+Now I'm going to log in as me. And there we
+go. The next thing you need to do is to share
+
+00:01:28.610 --> 00:01:32.810
+your work. To allow me to see your progress
+you need to give me permission to look at
+
+00:01:32.810 --> 00:01:39.810
+your work. This is done under prefs with the
+teacher share. Please use my email: dtrutten@ou.edu.
+
+00:01:41.130 --> 00:01:45.299
+If you don't do this you wont get credit because
+I won't be able to see what you've done. So
+
+00:01:45.299 --> 00:01:52.299
+here we are at the codingbat website. In order
+to share you go to prefs. Here's the name,
+
+00:01:52.710 --> 00:01:57.950
+which notice you can change. There's the password,
+which can be changed, but this is how you
+
+00:01:57.950 --> 00:02:04.950
+share. So you'll put my email in there and
+then you'll type share. Now I already have
+
+00:02:05.520 --> 00:02:11.420
+access to the account of course since I've
+done this demo before. But once those are
+
+00:02:11.420 --> 00:02:14.690
+done you go back to the codingbat home.
+
+00:02:14.690 --> 00:02:19.860
+The next thing we need to do is to work a
+problem. Now to work problems in codingbat
+
+00:02:19.860 --> 00:02:25.470
+you edit between the curly braces. For example
+we'll look at the sumDouble. Now I'm going
+
+00:02:25.470 --> 00:02:31.420
+put in a wrong answer so that you see how
+this all works. Here's the sumDouble method.
+
+00:02:31.420 --> 00:02:36.860
+So let's read it first: given two int values,
+return their sum unless the two values are
+
+00:02:36.860 --> 00:02:43.510
+the same-- then return double their sum. Well
+let's say we just did that first part. We
+
+00:02:43.510 --> 00:02:50.280
+just returned the sum. When you type go it
+actually runs it's method and checks it. So
+
+00:02:50.280 --> 00:02:54.860
+notice it's showing you what results were
+expected, and then it shows you whether your
+
+00:02:54.860 --> 00:03:01.239
+answer was correct or not. So for example
+it tried one two, and it was expecting to
+
+00:03:01.239 --> 00:03:06.390
+see a three, and it did see a three. Here's
+another one and that's what the little green
+
+00:03:06.390 --> 00:03:11.489
+box means by the way. When it summed three
+and two it expected to see a five and it did
+
+00:03:11.489 --> 00:03:17.480
+see a five so that was okay. But when we passed
+in two two it expected to see eight and only
+
+00:03:17.480 --> 00:03:23.569
+saw four. And so notice they've marked that
+as wrong and put a little red box there.
+
+00:03:23.569 --> 00:03:28.150
+So there we go! The other thing is notice
+they have a little encouraging feedback that
+
+00:03:28.150 --> 00:03:35.150
+we're correct for more than half the tests.
+So let's go and actually fix this. If A equals
+
+00:03:41.050 --> 00:03:48.050
+equals B, return four times A. and otherwise
+we'll return AB. So when we type go now...
+
+00:03:52.269 --> 00:03:57.269
+there it goes and it shows that all the tests
+cases are correct. Now the other thing that
+
+00:03:57.269 --> 00:04:03.959
+we can do that's kind of fun is look at the
+progress graph for this problem. Now mine's
+
+00:04:03.959 --> 00:04:08.670
+going to look a little bit weird because you
+know I use this for demos for lots of students.
+
+00:04:08.670 --> 00:04:12.980
+So what it's showing you is what happened
+when you worked the problem. So here we were
+
+00:04:12.980 --> 00:04:19.980
+today at 12:11 we got that many, at 12:16
+we the same thing again, and then here we
+
+00:04:21.489 --> 00:04:23.720
+have all the right answers.
+
+00:04:23.720 --> 00:04:28.630
+It's really fun when you've hard on a problem,
+maybe had to submit it five or ten times to
+
+00:04:28.630 --> 00:04:33.000
+see how much progress you made as you go along.
+So I encourage you to look at your progress
+
+00:04:33.000 --> 00:04:38.840
+graph. Grading in Javabat is done based on
+the number of problems that are assigned.
+
+00:04:38.840 --> 00:04:44.650
+The problem names and URLs are stored in Janux.
+You can work additional problems if you want,
+
+00:04:44.650 --> 00:04:48.470
+and in fact if you feel like you need more
+practice I encourage you to do that, but I
+
+00:04:48.470 --> 00:04:53.720
+don't give any extra credit for it. Javabat
+exercises are worth two points, where Turing's
+
+00:04:53.720 --> 00:04:59.860
+Craft exercises are worth one. The reason
+is that Javabat exercises tend to be tricky,
+
+00:04:59.860 --> 00:05:05.130
+where as Turing's Craft tend to be more straightforward.
+As always with these exercises you can do
+
+00:05:05.130 --> 00:05:09.470
+them as many times as desired. So keep programming!
+

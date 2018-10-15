@@ -1,0 +1,34 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html lang="en"><head> <meta content="2015-12-11T16:56:47" http-equiv="last-modified" /> <meta content="1205" name="NTIRelativeScrollHeight" /> <meta content="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.gravity_program_skeleton" name="NTIID" /> <meta content="NextThought" name="generator" /> <meta content="text/html; charset=ascii" http-equiv="content-type" /> <title>Gravity Program Skeleton</title> <link href="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.filling_in_the_formula" rel="next" title="Filling in the Formula" /> <link href="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.falling_bricks" rel="prev" title="Falling Bricks" /> <link href="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.reading:Chortle_CH17" rel="up" title="Nesting Loops and Ifs" /> <link href="styles/styles.css" rel="stylesheet" /> <link href="styles/content.css" rel="stylesheet" /> </head> <body id="NTIContent"> <div class="page-contents"><div data-ntiid="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.gravity_program_skeleton" id="a0000000459" ntiid="tag:nextthought.com,2011-10:OU-HTML-CS1323_F_2015_Intro_to_Computer_Programming.gravity_program_skeleton"> <div class="chapter title">Gravity Program Skeleton</div> <p class="placeholder"></p> <a name="6df2e1726803d6a4be6b79a5c191bdaa"></a> <div class="sidebar" data-ntiid="tag:nextthought.com,2011-10:OU-HTML:NTISidebar-CS1323_F_2015_Intro_to_Computer_Programming.sidebar.answer.140" ntiid="tag:nextthought.com,2011-10:OU-HTML:NTISidebar-CS1323_F_2015_Intro_to_Computer_Programming.sidebar.answer.140"> <div class="sidebar-title">Answer</div> <a name="f57ab2cbaff3bf3fe3dc1b811069503c"></a> <ul class="itemize"> <li><a name="3b34920563d20506f7b69b2dcf0b9608"></a> <p class="par" id="3b34920563d20506f7b69b2dcf0b9608">What kind of loop will be used? </p> <a name="022413f0c76da335d5e41d7b18675cec"></a> <ul class="itemize"> <li><a name="c2d49ce689daaa836d6df70533a5a8d9"></a> <p class="par" id="c2d49ce689daaa836d6df70533a5a8d9">A counting loop, since <b class="bfseries"><tt class="ttfamily">t</tt></b> will increase until it hits a limit. </p> </li> </ul></li> <li><a name="e5fe67558b905eed404b2ab2d6c81637.318"></a> <p class="par" id="e5fe67558b905eed404b2ab2d6c81637.318">What is the loop control variable? </p> <a name="59555f1ea7e25aebfdba587f99d04856"></a> <ul class="itemize"> <li><a name="7d7955a1d22c49c5838147c40fbdf9c4"></a> <p class="par" id="7d7955a1d22c49c5838147c40fbdf9c4">Time, <b class="bfseries"><tt class="ttfamily">t</tt></b>, since it is increased, second by second. </p> </li> </ul></li> <li><a name="fd7e59215b2cdeb6e686abe796e91a71.319"></a> <p class="par" id="fd7e59215b2cdeb6e686abe796e91a71.319">What does the loop body do? </p> <a name="570090e3278e7ce8d2076cd9f7f8044a"></a> <ul class="itemize"> <li><a name="20b2d67af40e448ffdecbddc568d892e"></a> <p class="par" id="20b2d67af40e448ffdecbddc568d892e">It calculates distance, and increases <b class="bfseries"><tt class="ttfamily">t</tt></b>. </p> </li> </ul></li> </ul> </div><a name="173141e6ce98149d7817229c80f9f9bb"></a> <p class="par" id="173141e6ce98149d7817229c80f9f9bb">The program looks like this: </p> <a name="76a77aa0402c1180d4431086a6ea1fcf"></a> <pre>import java.util.Scanner;
+
+// User picks ending value for time, t.
+// The program calculates and prints 
+// the distance the brick has fallen for each t.
+//
+class FallingBrick
+{
+  public static void main (String[] args ) 
+  {
+    final  double G = 9.80665;  // constant of gravitational acceleration
+    int    t, limit;            // time in seconds; ending value of time
+    double distance;            // the distance the brick has fallen
+    Scanner scan = new Scanner( System.in );
+
+    System.out.print( "Enter limit value: " );
+    limit = scan.nextInt();
+
+    // Print a table heading
+    System.out.println( "seconds\tDistance"  );  // '\t' is tab
+    System.out.println( "-------\t--------"  ); 
+
+    t = ___________ ;
+    
+    while ( ___________ )    
+    {
+      (more statements will go here later.)
+
+      t = ___________
+    }
+
+  }
+}
+</pre><a name="5d690bc1ce865f62e22e15edb472b15a"></a> <div class="sidebar" data-ntiid="tag:nextthought.com,2011-10:OU-HTML:NTISidebar-CS1323_F_2015_Intro_to_Computer_Programming.sidebar.question.146" ntiid="tag:nextthought.com,2011-10:OU-HTML:NTISidebar-CS1323_F_2015_Intro_to_Computer_Programming.sidebar.question.146"> <div class="sidebar-title">Question</div> First get the loop correct. Three things must be coordinated: Time starts at zero, is increased by one second each time, and when <b class="bfseries"><tt class="ttfamily">time</tt></b> equals <b class="bfseries"><tt class="ttfamily">limit</tt></b> the last value is printed out. </div> </div></div> </body></html>
