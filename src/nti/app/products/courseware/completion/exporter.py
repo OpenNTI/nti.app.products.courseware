@@ -14,6 +14,9 @@ from nti.app.products.courseware.completion import COMPLETION_POLICY_FILE_NAME
 from nti.app.products.courseware.completion import DEFAULT_REQUIRED_ITEMS_FILE_NAME
 from nti.app.products.courseware.completion import COMPLETABLE_ITEM_REQUIRED_FILE_NAME
 
+from nti.assessment.interfaces import IQEvaluation
+from nti.assessment.interfaces import IQEditableEvaluation
+
 from nti.contenttypes.completion.interfaces import ICompletableItemContainer
 from nti.contenttypes.completion.interfaces import ICompletableItemDefaultRequiredPolicy
 from nti.contenttypes.completion.interfaces import ICompletionContextCompletionPolicyContainer
@@ -46,7 +49,10 @@ class CourseCompletionExporter(BaseSectionExporter):
         result = ntiid
         obj = find_object_with_ntiid(ntiid)
         if      obj is not None \
-            and not IContentBackedPresentationAsset.providedBy(obj):
+            and not IContentBackedPresentationAsset.providedBy(obj) \
+            and (not IQEvaluation.providedBy(obj) or IQEditableEvaluation.providedBy(obj)):
+            # We don't want to hash content-backed question set that could be shared in different courses.
+            # This should be consistent with the lesson exporter.
             result = self.hash_ntiid(ntiid, salt)
         return result
 
