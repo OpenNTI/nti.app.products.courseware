@@ -12,73 +12,100 @@ from __future__ import absolute_import
 
 from zope import interface
 
-from nti.contenttypes.courses.interfaces import ICourseInstance
+from zope.schema import Dict
+from zope.schema import List
 
+from nti.schema.field import HTTPURL
+from nti.schema.field import Int
 from nti.schema.field import Object
 from nti.schema.field import DecodingValidTextLine as TextLine
 
 
-class IBaseElementHandler(interface.Interface):
+class IIMSResource(interface.Interface):
+    pass
+
+
+class IIMSAssociatedContent(interface.Interface):
+
+    type = TextLine(title=u'Object Type',
+                    description=u'The IMS characteristic object type.',
+                    required=True,
+                    default='associatedcontent/imscc_xmlv1p2/learning-application-resource',
+                    readonly=True)
+
+
+class IIMSLearningApplicationObject(interface.Interface):
+
+    associated_content = List(title=u'Associated Content',
+                              description=u'The associated content objects.',
+                              required=False,
+                              value_type=Object(IIMSAssociatedContent,
+                                                title=u'Associated Content Object',
+                                                required=True))
+
+
+class IIMSWebContentUnit(IIMSResource):
     """
-    Adapter to handle an asset within a common cartridge
+    One unit of web content. May be referenced to compose a Learning Application Object as associated content
     """
 
-    def iter_items():
+    identifier = Int(title=u'Identifier',
+                     description=u'The identifier for this web content object within'
+                                 u' the common cartridge',
+                     required=True)
+
+    dependencies = Dict(key_type=TextLine(),
+                        value_type=List(value_type=Object(IIMSResource)))  # TODO doc
+
+    def export():
         """
-        returns an iterable of minidom elements for the manifest items
-        """
-
-    def iter_resources():
-        """
-        returns an iterable of minidom elements for the manifest resources
-        """
-
-    def write_to(archive):
-        """
-        Write the necesary files to the archive
+        Exports this content unit into its Common Cartridge format and returns an open file descriptor.
+        The caller of this function is responsible for closing the file and any clean up
         """
 
 
-class ICommonCartridge(interface.Interface):
-    course = Object(ICourseInstance, title=u"The course")
+class IIMSWebLink(IIMSResource):
 
-    archive = TextLine(
-        title=u"A valid directory location for the archive data"
-    )
+    title = TextLine(title=u'Title',
+                     description=u'The title of this web link.',
+                     required=True)
+
+    url = HTTPURL(title=u'Web Link URL',
+                  description=u'The URL which this web link represents.',
+                  required=True)
+
+    target = TextLine(title=u'The url target',
+                      description=u'Any valid value for the HTML <a> tag target attribute.',
+                      required=True,
+                      default=u'_self')
+
+    windowFeatures = TextLine(title=u'Javascript window features',
+                              description=u'An optional string that can be used as the default parameter'
+                                          u' for the standard javascript window open function.',
+                              required=False)
 
 
-class IManifest(interface.Interface):
+class IIMSManifest(interface.Interface):
     """
-    Represent a cartrige manifest file
+    Manifest file for a Common Cartridge
     """
-    cartridge = Object(ICommonCartridge, title=u"The cartridge")
 
-    course = Object(ICourseInstance, title=u"The course", required=False)
+    # TODO add fields
 
-    def mark_resource(iden):
-        """
-        mark a resource in this manifest
-        """
 
-    def has_resource(iden):
-        """
-        check if the resource w/ the specified iden is in this manifest
-        """
-    __contains__ = has_resource
-    
+class IIMSCommonCartridge(interface.Interface):
 
-class IElementHandler(IBaseElementHandler):
-    """
-    Adapter to handle an asset within a common cartridge
-    """
-    manifest = Object(IManifest, title=u"The manifest")
+    manifest = Object(IIMSManifest,
+                      title=u'IMS manifest',
+                      required=True)
 
-    def mark_processed():
-        """
-        Mark the adapted context as processed
-        """
+    cartridge_web_content = Dict(key_type=TextLine(),
+                                 value_type=List(value_type=Object(IIMSWebContentUnit)),
+                                 title=u'IMS Cartridge Web Content',
+                                 description=u'IMS Web Content that is globally accessible from other resources.'
+                                             u'Objects exported in this field will be imported as global resources'
+                                             u'in the destination LMS. The key value in this dict represents the'
+                                             u'directory name this content will be in upon export.',
+                                 required=True)
 
-    def is_processed():
-        """
-        Returns if the adapted context has been processed
-        """
+    learning_application_objects = List(value_type=Object(IIMSLearningApplicationObject))  #TODO doc

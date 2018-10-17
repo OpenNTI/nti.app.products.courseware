@@ -8,48 +8,16 @@
 	<include package="zope.component" />
 
 	<!-- Adapters -->
-	<!-- Default -->
-	<adapter factory=".mixins.NullElementHandler"
-			 for="*"
-			 provides=".interfaces.IElementHandler" />
+	<adapter factory=".media.IMSWebContentVideo"
+			 provides=".interfaces.IIMSWebContentUnit"
+			 for="nti.contenttypes.presentation.interfaces.INTIVideo" />
 
-	<!-- Discussions -->
-	<adapter factory=".discussion.TopicHandler"
-			 for="nti.dataserver.contenttypes.forums.interfaces.ITopic"
-			 provides=".interfaces.IElementHandler" />
+	<adapter factory=".media.IMSWebContentTranscript"
+			 provides=".interfaces.IIMSWebContentUnit"
+			 for="nti.contenttypes.presentation.interfaces.INTITranscript" />
 
-	<adapter factory=".discussion.DiscussionRefHandler"
-			 for="nti.contenttypes.presentation.interfaces.INTIDiscussionRef"
-			 provides=".interfaces.IElementHandler" />
-
-	<!-- Assets -->
-	<adapter factory=".media.TranscriptHandler"
-			 for="nti.contenttypes.presentation.interfaces.INTITranscript"
-			 provides=".interfaces.IElementHandler" />
-
-	<adapter factory=".media.VideoHandler"
-			 for="nti.contenttypes.presentation.interfaces.INTIVideo"
-			 provides=".interfaces.IElementHandler" />
-
-	<adapter factory=".media.VideoRefHandler"
-			 for="nti.contenttypes.presentation.interfaces.INTIVideoRef"
-			 provides=".interfaces.IElementHandler" />
-
-	<adapter factory=".relatedwork.RelatedWorkHandler"
-			 for="nti.contenttypes.presentation.interfaces.INTIRelatedWorkRef"
-			 provides=".interfaces.IElementHandler" />
-
-	<!-- Evaluations -->
-	<adapter factory=".question.FreeResponsePartHandler"
-			 for="nti.assessment.interfaces.IQNonGradableFreeResponsePart"
-			 provides=".interfaces.IElementHandler" />
-
-	<adapter factory=".question.NonGradableMultipleChoicePartHandler"
-			 for="nti.assessment.interfaces.IQNonGradableMultipleChoicePart"
-			 provides=".interfaces.IElementHandler" />
-
-	<adapter factory=".question.MultipleChoicePartHandler"
-			 for="nti.assessment.interfaces.IQMultipleChoicePart"
-			 provides=".interfaces.IElementHandler" />
+	<adapter factory=".cartridge.IMSCommonCartridge"
+			 provides=".interfaces.IIMSCommonCartridge"
+			 for="nti.contenttypes.courses.interfaces.ICourseInstance" />
 
 </configure>
