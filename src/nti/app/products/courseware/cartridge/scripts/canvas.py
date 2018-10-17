@@ -52,13 +52,13 @@ def _validate_course_entry(ntiid):
         exit(1)
 
 
-def _validate_canvas_token(token, course_id):
-    url = canvas_url + '/api/v1/courses/%s?access_token=%s' % (course_id, token)
+def _validate_canvas_token(token):
+    url = canvas_url + '/api/v1/courses?access_token=%s' % token
     req = requests.get(url)
     if req.status_code == 200:
-        print "Canvas access verified for course '%s'" % req.json()['name']
+        print "Canvas access verified"
         return True
-    print "Failed to verify access to course id '%s'" % course_id
+    print "Failed to verify access to canvas API"
     return False
 
 
@@ -86,6 +86,17 @@ def get_common_cartridge():
     imscc.seek(0) # important
     return imscc
 
+
+def create_canvas_course():
+    link = canvas_url + '/api/v1/accounts/2/courses'
+    req = requests.post(link,
+                        json={'course': {'name': course_title}, 'enroll_me': True},
+                        headers={'Authorization': 'Bearer %s' % access_token})
+    if req.status_code != 200:
+        print 'An error occurred while creating the course through Canvas API\n%s' % req.text
+        exit(1)
+    global course_id
+    course_id = req.json()['id']
 
 def do_content_migration():
     link = canvas_url + '/api/v1/courses/%s/content_migrations' % course_id
@@ -139,8 +150,7 @@ while(True):
 # Get the canvas access token
 while(True):
     access_token = raw_input("Input your canvas access token: ")
-    course_id = raw_input("Input your canvas course id: ")
-    if _validate_canvas_token(access_token, course_id):
+    if _validate_canvas_token(access_token):
         break
 
 verify = raw_input("Are you sure you want to migrate '%s' to Canvas? (Y/N): " % course_title)
@@ -152,6 +162,9 @@ print "Downloading course export..."
 common_cartridge = get_common_cartridge()
 print "Download complete."
 print "Beginning canvas migration..."
+print "Creating canvas course via API..."
+create_canvas_course()
+print "Migrating content..."
 do_content_migration()
 
 
