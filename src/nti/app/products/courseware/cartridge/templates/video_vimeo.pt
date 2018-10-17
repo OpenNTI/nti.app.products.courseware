@@ -1,0 +1,15 @@
+<html>
+	<body style="width: 640px; height: 480px;" tal:attributes="style context/style">
+		<iframe src="https://player.vimeo.com/video/229047987?embedparameter=value"
+        		width="640"
+        		height="480"
+        		frameborder="0"
+        		allowfullscreen
+        		tal:attributes="src context/src;
+        						width context/width;
+        						height context/height;">
+		</iframe>
+		<track tal:condition="context/transcript"
+			   tal:attributes="src context/transcript" />
+	</body>
+</html>
