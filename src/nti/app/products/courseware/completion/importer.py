@@ -29,6 +29,8 @@ from nti.contenttypes.courses.importer import BaseSectionImporter
 from nti.contenttypes.courses.interfaces import ICourseInstance
 from nti.contenttypes.courses.interfaces import ICourseCompletionSectionImporter
 
+from nti.contenttypes.courses.utils import get_course_subinstances
+
 from nti.externalization.internalization import update_from_external_object
 
 logger = __import__('logging').getLogger(__name__)
@@ -62,3 +64,6 @@ class CourseCompletionImporter(BaseSectionImporter):
                         new_path = os.path.join(course.root.absolute_path,
                                                 key)
                         transfer_to_native_file(source, new_path)
+
+        for sub_instance in get_course_subinstances(course):
+            self.process(sub_instance, filer, writeout=writeout)
