@@ -681,6 +681,9 @@
 			 provides="nti.contenttypes.courses.interfaces.ICourseTabPreferences"
 			 for="nti.contenttypes.courses.interfaces.ICourseSubInstance" />
 
+	<!-- Calendar -->
+	<include package=".calendar" />
+
 	<!-- Completion -->
 	<include package=".completion" />
 
