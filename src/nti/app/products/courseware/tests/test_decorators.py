@@ -194,6 +194,7 @@ class TestDecorators(ApplicationLayerTest):
             return entry.json_body['CourseNTIID']
 
         course_ntiid = _course_ntiid(admin_env)
+        child_course_ntiid = None
         with mock_dataserver.mock_db_trans(self.ds, site_name='platform.ou.edu'):
             # pylint: disable=too-many-function-args
             srm = IPrincipalRoleManager(getSite(), None)
@@ -225,24 +226,30 @@ class TestDecorators(ApplicationLayerTest):
             finally:
                 restoreInteraction()
 
+            child_course_ntiid = course.SubInstances['01'].ntiid
+
         # Only nextthought admin could access the edit link.
         course_href = '/dataserver2/NTIIDs/' + course_ntiid
-        result = self.testapp.get(course_href, extra_environ=admin_env)
-        rels = [x['rel'] for x in result.json_body['Links']]
-        assert_that(rels, has_item('GetCourseTabPreferences'))
-        assert_that(rels, has_item('UpdateCourseTabPreferences'))
+        result = self.testapp.get(course_href, extra_environ=admin_env).json_body
+        self.require_link_href_with_rel(result, 'GetCourseTabPreferences')
+        self.require_link_href_with_rel(result, 'UpdateCourseTabPreferences')
 
-        result = self.testapp.get(course_href, extra_environ=instructor_env)
-        rels = [x['rel'] for x in result.json_body['Links']]
-        assert_that(rels, has_item('GetCourseTabPreferences'))
-        assert_that(rels, is_not(has_item('UpdateCourseTabPreferences')))
+        result = self.testapp.get(course_href, extra_environ=instructor_env).json_body
+        self.require_link_href_with_rel(result, 'GetCourseTabPreferences')
+        self.forbid_link_with_rel(result, 'UpdateCourseTabPreferences')
 
-        result = self.testapp.get(course_href, extra_environ=student_env)
-        rels = [x['rel'] for x in result.json_body['Links']]
-        assert_that(rels, has_item('GetCourseTabPreferences'))
-        assert_that(rels, is_not(has_item('UpdateCourseTabPreferences')))
+        result = self.testapp.get(course_href, extra_environ=student_env).json_body
+        self.require_link_href_with_rel(result, 'GetCourseTabPreferences')
+        self.forbid_link_with_rel(result, 'UpdateCourseTabPreferences')
 
-        result = self.testapp.get(course_href, extra_environ=site_admin_evn)
-        rels = [x['rel'] for x in result.json_body['Links']]
-        assert_that(rels, has_item('GetCourseTabPreferences'))
-        assert_that(rels, is_not(has_item('UpdateCourseTabPreferences')))
+        result = self.testapp.get(course_href, extra_environ=site_admin_evn).json_body
+        self.require_link_href_with_rel(result, 'GetCourseTabPreferences')
+        self.forbid_link_with_rel(result, 'UpdateCourseTabPreferences')
+
+        # child course
+        assert_that(child_course_ntiid, not_none())
+        child_course_href = '/dataserver2/NTIIDs/' + child_course_ntiid
+
+        result = self.testapp.get(child_course_href, extra_environ=admin_env).json_body
+        self.require_link_href_with_rel(result, 'GetCourseTabPreferences')
+        self.forbid_link_with_rel(result, 'UpdateCourseTabPreferences')

@@ -352,7 +352,8 @@ class _CourseTabPreferencesLinkDecorator(AbstractAuthenticatedRequestAwareDecora
                                           'GetCourseTabPreferences',
                                           'GET'))
 
-        if self._can_edit(context):
+        # Don't expose the update link for child course
+        if not ICourseSubInstance.providedBy(context) and self._can_edit(context):
             _links.append(self._make_link(context,
                                           'UpdateCourseTabPreferences',
                                           'PUT'))
