@@ -419,35 +419,36 @@ class SendCourseInvitationsView(AbstractAuthenticatedView,
         result = CaseInsensitiveDict(result)
         return result
 
-    def get_course_invitation(self, values):
+    def get_course_and_scope(self, values):
+        """
+        Get the course and scope for the given params. We attempt to use
+        any course invitations as a basis for this. Otherwise, we fall
+        back to defaulting to our current course and ES_PUBLIC scope.
+        """
         invitation = None
         code = values.get('code') or values.get('invitation')
-        # XXX: We could generate a course invitation here.
         if not code:
+            # Default to course invitation, if it exists.
             invitations = get_course_invitations(self.context)
             if invitations:
                 invitation = invitations[0]  # pick first
-            else:
+        else:
+            # Raise if they give us a code and we cannot find it.
+            invitation = get_course_invitation(self.context, code)
+            if invitation is None:
                 raise_json_error(
                     self.request,
                     hexc.HTTPUnprocessableEntity,
                     {
-                        'message': _(u'Must provide a invitation code.'),
-                        'code': 'MissingInvitationCodeError',
+                        'message': _(u'Invalid invitation code.'),
+                        'code': 'InvalidInvitationCodeError',
                     },
                     None)
-        if invitation is None:
-            invitation = get_course_invitation(self.context, code)
-        if invitation is None:
-            raise_json_error(
-                self.request,
-                hexc.HTTPUnprocessableEntity,
-                {
-                    'message': _(u'Invalid invitation code.'),
-                    'code': 'InvalidInvitationCodeError',
-                },
-                None)
-        return invitation
+        course = getattr(invitation, 'Course', self.context)
+        scope = values.get('scope')
+        if scope is None:
+            scope = getattr(invitation, 'Scope', ES_PUBLIC)
+        return course, scope
 
     def get_direct_users(self, values, warnings=()):
         usernames = values.get('username') or values.get('usernames')
@@ -553,7 +554,7 @@ class SendCourseInvitationsView(AbstractAuthenticatedView,
 
         warnings = []
         invalid_emails = []
-        invitation = self.get_course_invitation(values)
+        course, scope = self.get_course_and_scope(values)
         user_invitations = self.get_user_course_invitations(values,
                                                             warnings,
                                                             invalid_emails)
@@ -621,8 +622,8 @@ class SendCourseInvitationsView(AbstractAuthenticatedView,
         entry_ntiid = ICourseCatalogEntry(self._course).ntiid
         logger.info('Sending emails to %s users (%s)', len(all_users), entry_ntiid)
         sent = self.send_invitations(all_users,
-                                     invitation.Course,
-                                     invitation.Scope,
+                                     course,
+                                     scope,
                                      message=message)
         result = LocatedExternalDict()
         result[CLASS] = 'CourseInvitationsSent'

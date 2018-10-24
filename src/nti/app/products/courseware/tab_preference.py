@@ -52,7 +52,7 @@ class SectioninstanceCourseTabPreferences(Contained):
 
     def reset(self):
         self.section_prefs.reset()
-        
+
     def clear(self):
         self.section_prefs.clear()
 

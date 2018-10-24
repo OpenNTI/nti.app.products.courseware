@@ -24,8 +24,6 @@ from nti.app.products.courseware import VIEW_CREATE_COURSE_INVITATION
 
 from nti.app.products.courseware.invitations.interfaces import ICourseInvitation
 
-from nti.app.products.courseware.utils import has_course_invitations
-
 from nti.app.renderers.decorators import AbstractAuthenticatedRequestAwareDecorator
 
 from nti.appserver.pyramid_authorization import has_permission
@@ -77,8 +75,7 @@ class _CourseInvitationsLinkDecorator(AbstractAuthenticatedRequestAwareDecorator
         if     is_course_instructor(context, self.remoteUser) \
             or is_admin_or_site_admin(self.remoteUser):
             rels.add(VIEW_COURSE_ACCESS_TOKENS)
-            if has_course_invitations(context):
-                rels.add(SEND_COURSE_INVITATIONS)
+            rels.add(SEND_COURSE_INVITATIONS)
             rels.add(CHECK_COURSE_INVITATIONS_CSV)
         elif not rels and not is_enrolled(context, self.remoteUser):
             # If not enrolled in course, user can only accept invites
@@ -90,8 +87,6 @@ class _CourseInvitationsLinkDecorator(AbstractAuthenticatedRequestAwareDecorator
             link.__name__ = ''
             link.__parent__ = context
             _links.append(link)
-
-            has_course_invitations(context)
 
 
 @component.adapter(ICourseInvitation)
