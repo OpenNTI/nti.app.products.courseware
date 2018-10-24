@@ -57,7 +57,6 @@ class TestExternalization(ApplicationLayerTest):
                                            'start_time': not_none(),
                                            'end_time': not_none(),
                                            'icon': '/abc/efg',
-                                           'NTIID': not_none(),
                                            'Last Modified': not_none(),
                                            'MimeType': 'application/vnd.nextthought.courseware.coursecalendarevent'}))
 
@@ -68,7 +67,6 @@ class TestExternalization(ApplicationLayerTest):
                                             'start_time': not_none(),
                                             'end_time': not_none(),
                                             'icon': '/abc/efg',
-                                            'ntiid': not_none(),
                                             'lastModified': not_none()}))
 
     def testCalendar(self):

@@ -77,7 +77,7 @@ class TestCourseCalendarViews(ApplicationLayerTest):
 
         # read calendar
         calendar_url = self.course_url + "/CourseCalendar"
-        result = self.testapp.get(calendar_url, status=200, extra_environ=admin_env).json_body
+        result = self.testapp.get(calendar_url + '/@@contents', status=200, extra_environ=admin_env).json_body
         assert_that(result, has_entries({'Items': has_length(0)}))
 
         result = self.testapp.get(calendar_url, params={'raw': True}, status=200, extra_environ=admin_env).json_body
@@ -119,7 +119,7 @@ class TestCourseCalendarViews(ApplicationLayerTest):
                                       "end_time": "2018-09-20T12:00:00Z",
                                       "Last Modified": not_none(),
                                       "NTIID": not_none()}))
-        event_ntiid = res['NTIID']
+        event_id = res['ID']
         event_oid = res['OID']
         event_url = '/dataserver2/Objects/%s' % event_oid
 
@@ -129,7 +129,7 @@ class TestCourseCalendarViews(ApplicationLayerTest):
             calendar = ICourseCalendar(course)
             assert_that(calendar.__parent__, same_instance(course))
             assert_that(calendar, has_length(1))
-            event = calendar.retrieve_event(event_ntiid)
+            event = calendar.retrieve_event(event_id)
             assert_that(event.__parent__, same_instance(calendar))
             assert_that(event, has_properties({'title': 'go to school',
                                                'description': 'let us go',
@@ -139,13 +139,13 @@ class TestCourseCalendarViews(ApplicationLayerTest):
                                                'end_time': not_none()}))
 
         event_oid2 = self.testapp.post_json(calendar_url, params=params, status=201, extra_environ=site_admin_env).json_body['OID']
-        event_oid3 = self.testapp.post_json(calendar_url, params=params, status=201, extra_environ=site_admin_env).json_body['OID']
+        event_oid3 = self.testapp.post_json(calendar_url, params=params, status=201, extra_environ=editor_env).json_body['OID']
         self.testapp.post_json(calendar_url, params=params, status=403, extra_environ=student_env)
 
         # read calendar event
         res = self.testapp.get(event_url, status=200, extra_environ=admin_env).json_body
         assert_that(res, has_entries({"MimeType": "application/vnd.nextthought.courseware.coursecalendarevent",
-                                      "NTIID": event_ntiid}))
+                                      "NTIID": event_oid}))
 
         self.testapp.get(event_url, status=200, extra_environ=site_admin_env)
         self.testapp.get(event_url, status=200, extra_environ=editor_env)
@@ -155,7 +155,7 @@ class TestCourseCalendarViews(ApplicationLayerTest):
         params = {'title': 'okay'}
         res = self.testapp.put_json(event_url, params=params, status=200, extra_environ=admin_env).json_body
         assert_that(res, has_entries({"MimeType": "application/vnd.nextthought.courseware.coursecalendarevent",
-                                      "NTIID": event_ntiid,
+                                      "NTIID": event_oid,
                                       "title": "okay"}))
 
         self.testapp.put_json(event_url, params=params, status=200, extra_environ=site_admin_env)
@@ -163,7 +163,7 @@ class TestCourseCalendarViews(ApplicationLayerTest):
         self.testapp.put_json(event_url, params=params, status=403, extra_environ=student_env)
 
         # fetch non-empty calendar
-        result = self.testapp.get(calendar_url, status=200, extra_environ=admin_env).json_body
+        result = self.testapp.get(calendar_url + '/@@contents', status=200, extra_environ=admin_env).json_body
         assert_that(result, has_entries({'Items': has_length(3)}))
 
         # delete calendar event: admin/site-admin
@@ -173,7 +173,7 @@ class TestCourseCalendarViews(ApplicationLayerTest):
         self.testapp.delete('/dataserver2/Objects/%s' % event_oid3, status=204, extra_environ=site_admin_env)
 
         # verify deleted event
-        result = self.testapp.get(calendar_url, status=200, extra_environ=admin_env).json_body
+        result = self.testapp.get(calendar_url + '/@@contents', status=200, extra_environ=admin_env).json_body
         assert_that(result, has_entries({'Items': has_length(0)}))
         with mock_dataserver.mock_db_trans(self.ds):
             assert_that(calendar, has_length(0))

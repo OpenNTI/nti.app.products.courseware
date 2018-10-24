@@ -18,6 +18,10 @@ from nti.app.products.courseware.calendar.interfaces import ICourseCalendarEvent
 from nti.contenttypes.calendar.model import Calendar
 from nti.contenttypes.calendar.model import CalendarEvent
 
+from nti.dataserver.authorization_acl import acl_from_aces
+
+from nti.property.property import LazyOnClass
+
 logger = __import__('logging').getLogger(__name__)
 
 
@@ -33,3 +37,8 @@ class CourseCalendarEvent(CalendarEvent):
 
     __external_class_name__ = "CourseCalendarEvent"
     mimeType = mime_type = "application/vnd.nextthought.courseware.coursecalendarevent"
+
+    @LazyOnClass
+    def __acl__(self):
+        # If we don't have this, it would derive one from ICreated, rather than its parent.
+        return acl_from_aces([])

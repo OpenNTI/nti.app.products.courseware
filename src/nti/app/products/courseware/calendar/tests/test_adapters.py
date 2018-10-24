@@ -60,10 +60,10 @@ class TestAdapters(ApplicationLayerTest):
         calendar.store_event(event)
 
         assert_that(calendar, has_length(1))
-        assert_that(event.ntiid, is_in(calendar))
+        assert_that(event.id, is_in(calendar))
         assert_that(list(calendar), has_length(1))
 
-        assert_that(calendar.retrieve_event(event.ntiid), same_instance(event))
+        assert_that(calendar.retrieve_event(event.id), same_instance(event))
         assert_that(event.__parent__, same_instance(calendar))
 
         calendar.remove_event(event)
