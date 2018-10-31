@@ -6,7 +6,9 @@ from __future__ import absolute_import
 from __future__ import division
 
 import tempfile
+import time
 
+from nti.app.products.courseware.cartridge.cartridge import build_manifest
 from nti.app.products.courseware.cartridge.interfaces import IIMSCommonCartridge
 from nti.app.products.courseware.tests import PersistentInstructedCourseApplicationTestLayer
 from nti.app.testing.application_webtest import ApplicationLayerTest
@@ -31,10 +33,11 @@ class TestResources(ApplicationLayerTest):
     @WithSharedApplicationMockDS(testapp=True, users=True)
     def test_resources(self):
         with mock_dataserver.mock_db_trans(self.ds, site_name='platform.ou.edu'):
-            from IPython.terminal.debugger import set_trace;
-            set_trace()
             entry = find_object_with_ntiid(self.course_ntiid)
             course = ICourseInstance(entry)
             cartridge = IIMSCommonCartridge(course)
             cartridge_content = cartridge.cartridge_web_content
-            vids = [content.file for content in cartridge_content['videos']]
+            from IPython.terminal.debugger import set_trace;set_trace()
+
+            manifest = build_manifest(cartridge)
+            vids = [content.export() for content in cartridge_content['videos']]

@@ -20,4 +20,20 @@
 			 provides=".interfaces.IIMSCommonCartridge"
 			 for="nti.contenttypes.courses.interfaces.ICourseInstance" />
 
+    <adapter factory=".relatedwork.related_work_to_web_link_factory"
+         provides=".interfaces.IIMSWebLink"
+         for="nti.contenttypes.presentation.interfaces.INTIRelatedWorkRef" />
+
+	<adapter factory=".relatedwork.related_work_to_web_content_factory"
+			 provides=".interfaces.IIMSWebContentUnit"
+			 for="nti.contenttypes.presentation.interfaces.INTIRelatedWorkRef" />
+
+	<adapter factory=".relatedwork.related_work_to_learning_application_object_factory"
+			 provides=".interfaces.IIMSLearningApplicationObject"
+			 for="nti.contenttypes.presentation.interfaces.INTIRelatedWorkRef" />
+
+    <utility factory=".cartridge.IMSManifestResources"
+             provides=".interfaces.IIMSManifestResources" />
+
+
 </configure>
