@@ -19,8 +19,6 @@ from zope.intid.interfaces import IIntIds
 
 from zope.cachedescriptors.property import Lazy
 
-from nti.app.products.courseware.cartridge.interfaces import IElementHandler
-
 from nti.base._compat import text_
 
 from nti.contentfragments.interfaces import IPlainTextContentFragment
@@ -44,7 +42,6 @@ def resolve_modelcontent_body(data):
     return result
 
 
-@interface.implementer(IElementHandler)
 class AbstractElementHandler(object):
 
     def __init__(self, context, manifest=None):

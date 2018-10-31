@@ -21,11 +21,25 @@ from nti.schema.field import Object
 from nti.schema.field import DecodingValidTextLine as TextLine
 
 
+class ICanvasWikiContent(interface.Interface):
+    """
+    Marker interface for content that should be processed as a Canvas Wiki page
+    """
+
+
 class IIMSResource(interface.Interface):
-    pass
+
+    type = TextLine(title=u'Object Type',
+                    description=u'The IMS characteristic object type.',
+                    required=True)
+
+    def export(path):
+        """
+        Exports this resource into its Common Cartridge format and writes it into the supplied archive.
+        """
 
 
-class IIMSAssociatedContent(interface.Interface):
+class IIMSAssociatedContent(IIMSResource):
 
     type = TextLine(title=u'Object Type',
                     description=u'The IMS characteristic object type.',
@@ -44,9 +58,16 @@ class IIMSLearningApplicationObject(interface.Interface):
                                                 required=True))
 
 
+class IIMSCommonCartridgeExtension(interface.Interface):
+    """
+    A subscription interface for common cartridge extensions
+    """
+
+
 class IIMSWebContentUnit(IIMSResource):
     """
     One unit of web content. May be referenced to compose a Learning Application Object as associated content
+    Web Content units are responsible for exporting their dependencies
     """
 
     identifier = Int(title=u'Identifier',
@@ -57,11 +78,11 @@ class IIMSWebContentUnit(IIMSResource):
     dependencies = Dict(key_type=TextLine(),
                         value_type=List(value_type=Object(IIMSResource)))  # TODO doc
 
-    def export():
-        """
-        Exports this content unit into its Common Cartridge format and returns an open file descriptor.
-        The caller of this function is responsible for closing the file and any clean up
-        """
+    type = TextLine(title=u'Object Type',
+                    description=u'The IMS characteristic object type.',
+                    required=True,
+                    default='webcontent',
+                    readonly=True)
 
 
 class IIMSWebLink(IIMSResource):
@@ -100,7 +121,7 @@ class IIMSCommonCartridge(interface.Interface):
                       required=True)
 
     cartridge_web_content = Dict(key_type=TextLine(),
-                                 value_type=List(value_type=Object(IIMSWebContentUnit)),
+                                 value_type=Dict(key_type=TextLine(), value_type=Object(IIMSWebContentUnit)),
                                  title=u'IMS Cartridge Web Content',
                                  description=u'IMS Web Content that is globally accessible from other resources.'
                                              u'Objects exported in this field will be imported as global resources'
@@ -109,3 +130,7 @@ class IIMSCommonCartridge(interface.Interface):
                                  required=True)
 
     learning_application_objects = List(value_type=Object(IIMSLearningApplicationObject))  #TODO doc
+
+
+class IIMSManifestResources(interface.Interface):
+    pass
