@@ -162,7 +162,7 @@ class DiscussionRefHandler(AbstractElementHandler):
             "delayed_post_at": createdTime,
             "position": self.position
         }
-        return execute(renderer, {"context":context})
+        return execute(renderer, {"context": context})
 
     def write_to(self, archive):
         content = self.topicMeta()

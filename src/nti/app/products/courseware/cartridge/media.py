@@ -13,12 +13,14 @@ import time
 
 import six
 
+from collections import defaultdict
+
 from zope import component
 from zope import interface
 
 from zope.cachedescriptors.property import Lazy
 
-from nti.app.products.courseware.cartridge.interfaces import IIMSWebContentUnit
+from nti.app.products.courseware.cartridge.interfaces import IIMSWebContentUnit, ICanvasWikiContent
 
 from nti.app.products.courseware.cartridge.renderer import execute
 from nti.app.products.courseware.cartridge.renderer import get_renderer
@@ -45,9 +47,7 @@ class IMSWebContentTranscript(AbstractIMSWebContent):
 
     extension = '.vtt'
 
-    def export(self):
-        from IPython.terminal.debugger import set_trace;set_trace()
-
+    def export(self, path):
         package = find_interface(self.context, IContentPackage, strict=False)
         if package is None:
             logger.warning("Could not find content package for %s", self.context)
@@ -57,12 +57,11 @@ class IMSWebContentTranscript(AbstractIMSWebContent):
                 logger.warning("Unsupported bucket Boto?")
                 return None  # TODO how do we want to handle this
             else:
-                path = os.path.join(root.absolute_path,
-                                    self.context.src)
-        try:
-            return open(path, 'r')
-        except IOError:
-            logger.warn(u'Unable to locate transcript %s on disk with path %s' % (self.context, path))
+                source_path = os.path.join(root.absolute_path,
+                                           self.context.src)
+                fname = os.path.basename(source_path)
+                target_path = os.path.join(path, fname)
+                self.copy_resource(source_path, target_path)
 
     @Lazy
     def filename(self):
@@ -77,6 +76,11 @@ class IMSWebContentVideo(AbstractIMSWebContent):
     """
 
     extension = '.html'
+    _dependencies = defaultdict(list)
+
+    def __init__(self, asset):
+        super(IMSWebContentVideo, self).__init__(asset)
+        interface.alsoProvides(self, ICanvasWikiContent)
 
     def _process_transcript(self, transcripts):
         if transcripts:
@@ -100,6 +104,7 @@ class IMSWebContentVideo(AbstractIMSWebContent):
             'transcript': None,
         }
         if self.dependencies:
+            context['transcript'] = 'transcripts/' + self.dependencies.get('transcripts')[0].filename
             context['transcript'] = 'transcripts/' + self.dependencies.get('transcripts')[0].filename
         return execute(renderer, {"context": context})
 
@@ -145,9 +150,7 @@ class IMSWebContentVideo(AbstractIMSWebContent):
             context['transcript'] = 'transcripts/' + self.dependencies.get('transcripts')[0].filename
         return execute(renderer, {"context": context})
 
-
-    def export(self):
-        #TODO vimeo
+    def export(self, dirname):
         if self.source.service == YOUTUBE_VIDEO_SERVICE:
             html = self.youtube()
         elif self.source.service == KALTURA_VIDEO_SERVICE:
@@ -156,12 +159,10 @@ class IMSWebContentVideo(AbstractIMSWebContent):
             html = self.vimeo()
         else:
             raise NotImplementedError
-        cc_file = open('%s%s' % (self.identifier, self.extension), 'w')
-        cc_file.write(html)
-        cc_file.seek(0)
-        return cc_file
+        path = os.path.join(dirname, self.filename)
+        self.write_resource(path, html)
 
-    @property
+    @Lazy
     def dependencies(self):
         transcript_content = self._process_transcript(self.context.transcripts)
         if transcript_content:
@@ -177,3 +178,18 @@ class IMSWebContentVideo(AbstractIMSWebContent):
     def source_id(self):
         source_id = next(iter(self.source.source))
         return source_id
+
+    @Lazy
+    def filename(self):
+        # TODO this is going to cause problems...
+        filename = '%s%s' % (self.context.title, self.extension)
+        if self.dependencies:
+            return '%s/%s' % (self.context.title, filename)
+        return filename
+
+    @Lazy
+    def dirname(self):
+        # TODO may want to use intid to avoid collisions
+        if self.dependencies:
+            return self.context.title
+        return None
