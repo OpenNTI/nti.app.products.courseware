@@ -6,10 +6,14 @@ from __future__ import print_function
 from __future__ import absolute_import
 
 # pylint: disable=protected-access,too-many-public-methods
+import unittest
 
 from hamcrest import none, is_, has_length
 from hamcrest import is_not
 from hamcrest import assert_that
+
+from nti.app.products.courseware.cartridge.tests import CommonCartridgeLayerTest
+from nti.dataserver.tests.mock_dataserver import WithMockDSTrans
 
 does_not = is_not
 
@@ -26,8 +30,6 @@ from nti.testing.matchers import verifiably_provides
 
 from nti.app.products.courseware.cartridge.interfaces import IIMSWebContentUnit
 
-from nti.app.testing.application_webtest import ApplicationLayerTest
-
 from nti.contenttypes.presentation.interfaces import KALTURA_VIDEO_SERVICE
 from nti.contenttypes.presentation.interfaces import VIMEO_VIDEO_SERVICE
 from nti.contenttypes.presentation.interfaces import YOUTUBE_VIDEO_SERVICE
@@ -39,10 +41,8 @@ from nti.contenttypes.presentation.media import NTIVideo
 from nti.contenttypes.presentation.media import NTITranscript
 from nti.contenttypes.presentation.media import NTIVideoSource
 
-from nti.dataserver.tests import mock_dataserver
 
-
-class TestVideo(ApplicationLayerTest):
+class TestVideo(CommonCartridgeLayerTest):
 
     @Lazy
     def intids(self):
@@ -71,78 +71,67 @@ class TestVideo(ApplicationLayerTest):
         assert_that(transcripts[0], validly_provides(IIMSWebContentUnit))
         assert_that(transcripts[0], verifiably_provides(IIMSWebContentUnit))
 
-    @mock_dataserver.WithMockDSTrans
+    @WithMockDSTrans
     def test_youtube_video(self):
-        with mock_dataserver.mock_db_trans(self.ds) as connection:
-            video = NTIVideo()
-            connection.add(video)
-            # source
-            source = NTIVideoSource()
-            source.height = source.width = 300
-            source.service = YOUTUBE_VIDEO_SERVICE
-            source.source = [u"oYG7iX3eRbM"]
-            source.type = [YOUTUBE_VIDEO_SERVICE_TYPE]
-            video.sources = [source]
+        video = NTIVideo()
+        # source
+        source = NTIVideoSource()
+        source.height = source.width = 300
+        source.service = YOUTUBE_VIDEO_SERVICE
+        source.source = [u"oYG7iX3eRbM"]
+        source.type = [YOUTUBE_VIDEO_SERVICE_TYPE]
+        video.sources = [source]
 
-            # transcript
-            transcript = NTITranscript()
-            transcript.src = u'resources/transcript.vtt'
-            video.transcripts = [transcript]
+        # transcript
+        transcript = NTITranscript()
+        transcript.src = u'resources/transcript.vtt'
+        video.transcripts = [transcript]
 
-            self.intids.register(video)
-            self.intids.register(transcript)
+        self.intids.register(video)
+        self.intids.register(transcript)
 
-            self._test_video(video)
+        self._test_video(video)
 
-            transaction.doom()
-
-    @mock_dataserver.WithMockDSTrans
+    @WithMockDSTrans
     def test_vimeo_video(self):
-        with mock_dataserver.mock_db_trans(self.ds) as connection:
-            video = NTIVideo()
-            connection.add(video)
-            # source
-            source = NTIVideoSource()
-            source.height = source.width = 300
-            source.service = VIMEO_VIDEO_SERVICE
-            source.source = [u"123123"]
-            source.type = [VIMEO_VIDEO_SERVICE_TYPE]
-            video.sources = [source]
+        video = NTIVideo()
+        # source
+        source = NTIVideoSource()
+        source.height = source.width = 300
+        source.service = VIMEO_VIDEO_SERVICE
+        source.source = [u"123123"]
+        source.type = [VIMEO_VIDEO_SERVICE_TYPE]
+        video.sources = [source]
 
-            # transcript
-            transcript = NTITranscript()
-            transcript.src = u'resources/transcript.vtt'
-            video.transcripts = [transcript]
+        # transcript
+        transcript = NTITranscript()
+        transcript.src = u'resources/transcript.vtt'
+        video.transcripts = [transcript]
 
-            self.intids.register(video)
-            self.intids.register(transcript)
+        self.intids.register(video)
+        self.intids.register(transcript)
 
-            self._test_video(video)
+        self._test_video(video)
 
-            transaction.doom()
-
-    @mock_dataserver.WithMockDSTrans
+    @WithMockDSTrans
     def test_kaltura_video(self):
         # pylint: disable=too-many-function-args
-        with mock_dataserver.mock_db_trans(self.ds) as connection:
-            video = NTIVideo()
-            connection.add(video)
-            # source
-            source = NTIVideoSource()
-            source.height = source.width = 300
-            source.service = KALTURA_VIDEO_SERVICE
-            source.source = [u"1500101:0_hwfe5zjr"]
-            source.type = [KALTURA_VIDEO_SERVICE_TYPE]
-            video.sources = [source]
+        video = NTIVideo()
+        # source
+        source = NTIVideoSource()
+        source.height = source.width = 300
+        source.service = KALTURA_VIDEO_SERVICE
+        source.source = [u"1500101:0_hwfe5zjr"]
+        source.type = [KALTURA_VIDEO_SERVICE_TYPE]
+        video.sources = [source]
 
-            # transcript
-            transcript = NTITranscript()
-            transcript.src = u'resources/transcript.vtt'
-            video.transcripts = [transcript]
+        # transcript
+        transcript = NTITranscript()
+        transcript.src = u'resources/transcript.vtt'
+        video.transcripts = [transcript]
 
-            self.intids.register(video)
-            self.intids.register(transcript)
+        self.intids.register(video)
+        self.intids.register(transcript)
 
-            self._test_video(video)
+        self._test_video(video)
 
-            transaction.doom()

@@ -14,8 +14,6 @@ does_not = is_not
 
 import unittest
 
-from nti.app.products.courseware.cartridge.generate import walk
-
 from nti.app.products.courseware.tests import PersistentInstructedCourseApplicationTestLayer
 
 from nti.app.testing.application_webtest import ApplicationLayerTest
@@ -41,6 +39,6 @@ class TestGenerate(ApplicationLayerTest):
     @WithSharedApplicationMockDS(testapp=True, users=True)
     def test_walk(self):
         with mock_dataserver.mock_db_trans(self.ds, site_name='platform.ou.edu'):
+
             entry = find_object_with_ntiid(self.course_ntiid)
             course = ICourseInstance(entry)
-            assert_that(tuple(walk(course)), has_length(132))
