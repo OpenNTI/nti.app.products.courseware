@@ -16,12 +16,13 @@ from zope import component
 from zope import interface
 
 from zope.cachedescriptors.property import Lazy
+from zope.intid import IIntIds
 
 from nti.app.contenttypes.presentation.decorators.assets import CONTENT_MIME_TYPE
 
 from nti.app.products.courseware.cartridge.exceptions import CommonCartridgeExportException
 
-from nti.app.products.courseware.cartridge.interfaces import IIMSWebContentUnit
+from nti.app.products.courseware.cartridge.interfaces import IIMSWebContentUnit, ICartridgeWebContent
 from nti.app.products.courseware.cartridge.interfaces import IIMSWebLink
 from nti.app.products.courseware.cartridge.interfaces import IIMSLearningApplicationObject
 
@@ -37,6 +38,7 @@ from nti.traversal.traversal import find_interface
 logger = __import__('logging').getLogger(__name__)
 
 
+@interface.implementer(IIMSWebContentUnit, ICartridgeWebContent)
 class IMSWebContentResource(AbstractIMSWebContent):
     """
     pdf, ppt, docx, etc
@@ -77,16 +79,16 @@ def _related_work_factory(related_work, resource_type=None):
     a Native Reading Web Content unit if it is a content unit, or
     a Resource Web Content unit if it is a local resource (pdf, etc)
     """
-    # Web Links => IMS Web Links
-    if related_work.type == 'application/vnd.nextthought.externallink' and\
+    # Web Links => IMS Web Links TODO
+    if False and related_work.type == 'application/vnd.nextthought.externallink' and\
             bool(urllib_parse.urlparse(related_work.href).scheme) and resource_type == 'IMS Web Link':
         return IMSWebLink(related_work)
     # Resource links => IMS Web Content
     elif related_work.type == 'application/vnd.nextthought.externallink' and\
             related_work.href.startswith('resources/') and resource_type == 'IMS Web Content':
         return IMSWebContentResource(related_work)
-    # Native readings => IMS Learning Application Objects
-    elif related_work.type == CONTENT_MIME_TYPE and resource_type == 'IMS Learning Application Object':
+    # Native readings => IMS Learning Application Objects TODO
+    elif False and related_work.type == CONTENT_MIME_TYPE and resource_type == 'IMS Learning Application Object':
         return IMSWebContentNativeReading(related_work)
     else:
         return None
@@ -115,3 +117,11 @@ class IMSWebLink(object):
 
     def __init__(self, asset):
         self.context = asset
+
+    @Lazy
+    def intids(self):
+        return component.getUtility(IIntIds)
+
+    @Lazy
+    def identifier(self):
+        return self.intids.register(self)

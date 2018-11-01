@@ -1,5 +1,9 @@
 <html tal:attributes="style context/style">
-	<body style="height: 480px; width: 600px;" tal:attributes="style context/style">
+	<head>
+        <title tal:content="context/title"></title>
+        <meta name="identifier" tal:attributes="content context/identifier" />
+    </head>
+    <body style="height: 480px; width: 600px;" tal:attributes="style context/style">
     		<iframe src="https://www.kaltura.com/p/1500101/sp/150010100/embedIframeJs/uiconf_id/15491291/partner_id/1500101?iframeembed=true&playerId=abcdnextthought&entry_id=0_3ebf5hgo"
         		width="300"
         		height="300"
