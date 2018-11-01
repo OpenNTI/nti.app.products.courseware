@@ -106,6 +106,12 @@ class IIMSWebLink(IIMSResource):
                               required=False)
 
 
+class ICartridgeWebContent(interface.Interface):
+    """
+    Marker interface for cartridge web content
+    """
+
+
 class IIMSManifest(interface.Interface):
     """
     Manifest file for a Common Cartridge

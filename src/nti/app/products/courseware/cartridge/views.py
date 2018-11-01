@@ -14,12 +14,13 @@ from lxml import etree
 from pyramid.view import view_config
 from zope import component
 from zope.component import subscribers
+from zope.intid import IIntIds
 
 from nti.app.base.abstract_views import AbstractAuthenticatedView
-from nti.app.products.courseware.cartridge.cartridge import build_manifest_items
+from nti.app.products.courseware.cartridge.cartridge import build_manifest_items, build_cartridge_content
 
 from nti.app.products.courseware.cartridge.interfaces import IIMSCommonCartridge, IIMSManifestResources, \
-    IIMSCommonCartridgeExtension
+    IIMSCommonCartridgeExtension, ICartridgeWebContent, ICanvasWikiContent
 from nti.app.products.courseware.cartridge.renderer import get_renderer, execute
 
 from nti.contenttypes.courses.interfaces import ICourseInstance
@@ -43,19 +44,37 @@ class CommonCartridgeExportView(AbstractAuthenticatedView):
         cartridge = IIMSCommonCartridge(self.context)
         tree = component.getUtility(IIMSManifestResources)
         xm_tee = tree()
-        content = cartridge.cartridge_web_content
+        intids = component.getUtility(IIntIds)
+        from IPython.terminal.debugger import set_trace;set_trace()
+
+        # Process everything in the course
         xml = build_manifest_items(cartridge)
+        build_cartridge_content(cartridge)
+        # At this point every item in the course should have been appropriately marked
+        # We just need to actually export the files, handle extensions, and update the resources section of the manifest
         archive = tempfile.mkdtemp()
         for extension in subscribers((cartridge,), IIMSCommonCartridgeExtension):
             extension.extend(archive)
-        for (directory, items) in content.items():
-            for item in items.values():
-                resource_dir = '/web_resources/%s' % directory
-                item.export(archive + resource_dir)
-                if item.dependencies:
-                    for (dep_directory, deps) in item.dependencies.items():
-                        for dep in deps:
-                            dep.export(archive + resource_dir + '/' + item.dirname + '/' + dep_directory)
+        for (identifier, cc_resource) in cartridge.resources.items():
+                if cc_resource is not None:
+                    prepath = ''
+                    if ICartridgeWebContent.providedBy(cc_resource):
+                        prepath = 'web_resources'
+                    elif ICanvasWikiContent.providedBy(cc_resource):
+                        prepath = 'wiki_content'
+                    target = os.path.join(archive, prepath)
+                    cc_resource.export(target)
+                    href = prepath + '/' + cc_resource.filename
+                    item = etree.SubElement(xm_tee, u'resource',
+                                            identifier=unicode(cc_resource.identifier),
+                                            type=cc_resource.type,
+                                            href=href)
+                    etree.SubElement(item, u'file', href=href)
+                # TODO rework dependencies
+                # if cc_resource.dependencies:
+                #     for (dep_directory, deps) in cc_resource.dependencies.items():
+                #         for dep in deps:
+                #             dep.export(archive + resource_dir + '/' + item.dirname + '/' + dep_directory)
         from IPython.terminal.debugger import set_trace;set_trace()
         renderer = get_renderer("manifest", ".pt", package='nti.app.products.courseware.cartridge')
         context = {
@@ -66,7 +85,7 @@ class CommonCartridgeExportView(AbstractAuthenticatedView):
         with open(archive + '/imsmanifest.xml', 'w') as fd:
             fd.write(manifest)
         zipped = shutil.make_archive('common_cartridge', 'zip', archive)
-        filename = self.context.title + '.imscc'
+        filename = self.context.title + '.zip'  # TODO make imscc when done
         self.request.response.content_encoding = 'identity'
         self.request.response.content_type = 'application/zip; charset=UTF-8'
         self.request.response.content_disposition = 'attachment; filename="%s"' % filename
