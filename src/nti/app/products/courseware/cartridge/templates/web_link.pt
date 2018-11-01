@@ -1,14 +1,5 @@
-<resource identifier="ib65f69" type="webcontent" href="wiki_content/using-the-gradebook.html"
-	tal:attributes="identifier context/ident;
-					type context/type;
-					href context/href | nothing">
-	<file tal:condition="exists:context/filehref" href="context/filehref"/>
-	<file tal:condition="exists:context/filehrefs" tal:repeat="filehref context/filehrefs"
-		tal:attributes="filehref"/>
-
-	<wl:webLink tal:condition="exists:context/webLink">
-		<wl:title tal:content="context/webLink/title">Open2.net</wl:title>
-		<wl:url href="http://www.open2.net" tal:attributes="href context/webLink/href" />
-	</wl:webLink>
-
-</resource>
+<?xml version="1.0" encoding="UTF-8"?>
+<webLink xmlns="http://www.imsglobal.org/xsd/imsccv1p1/imswl_v1p1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.imsglobal.org/xsd/imsccv1p1/imswl_v1p1 http://www.imsglobal.org/profile/cc/ccv1p1/ccv1p1_imswl_v1p1.xsd">
+  <title tal:content="context/title">Showcase Examples</title>
+  <url tal:attributes="href context/href" href="http://online.ucf.edu/teach-online/professional-development/idl6543/recordings"/>
+</webLink>

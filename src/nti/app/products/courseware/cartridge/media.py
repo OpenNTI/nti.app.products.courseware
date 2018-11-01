@@ -20,7 +20,7 @@ from zope import interface
 
 from zope.cachedescriptors.property import Lazy
 
-from nti.app.products.courseware.cartridge.interfaces import IIMSWebContentUnit, ICanvasWikiContent
+from nti.app.products.courseware.cartridge.interfaces import IIMSWebContentUnit, ICanvasWikiContent, IIMSResource
 
 from nti.app.products.courseware.cartridge.renderer import execute
 from nti.app.products.courseware.cartridge.renderer import get_renderer
@@ -81,7 +81,7 @@ class IMSWebContentVideo(AbstractIMSWebContent):
     def _process_transcript(self, transcripts):
         if transcripts:
             for transcript in transcripts:
-                content = IIMSWebContentUnit(transcript)
+                content = IIMSResource(transcript)
                 return content
         return None
 
