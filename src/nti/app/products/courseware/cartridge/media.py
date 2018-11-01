@@ -68,7 +68,7 @@ class IMSWebContentTranscript(AbstractIMSWebContent):
         return os.path.basename(self.context.src)
 
 
-@interface.implementer(IIMSWebContentUnit)
+@interface.implementer(IIMSWebContentUnit, ICanvasWikiContent)  # Mark as wiki content for export
 @component.adapter(INTIVideo)
 class IMSWebContentVideo(AbstractIMSWebContent):
     """
@@ -77,10 +77,6 @@ class IMSWebContentVideo(AbstractIMSWebContent):
 
     extension = '.html'
     _dependencies = defaultdict(list)
-
-    def __init__(self, asset):
-        super(IMSWebContentVideo, self).__init__(asset)
-        interface.alsoProvides(self, ICanvasWikiContent)
 
     def _process_transcript(self, transcripts):
         if transcripts:
@@ -102,6 +98,8 @@ class IMSWebContentVideo(AbstractIMSWebContent):
             'width': self.source.width,
             'height': self.source.height,
             'transcript': None,
+            'identifier': self.identifier,
+            'title': self.context.title
         }
         if self.dependencies:
             context['transcript'] = 'transcripts/' + self.dependencies.get('transcripts')[0].filename
@@ -126,7 +124,9 @@ class IMSWebContentVideo(AbstractIMSWebContent):
             'width': self.source.width,
             'height': self.source.height,
             'transcript': None,
-            'src': src_href
+            'src': src_href,
+            'identifier': self.identifier,
+            'title': self.context.title
         }
         if self.dependencies:
             context['transcript'] = 'transcripts/' + self.dependencies.get('transcripts')[0].filename
@@ -145,6 +145,8 @@ class IMSWebContentVideo(AbstractIMSWebContent):
             'width': self.source.width,
             'height': self.source.height,
             'transcript': None,
+            'identifier': self.identifier,
+            'title': self.context.title
         }
         if self.dependencies:
             context['transcript'] = 'transcripts/' + self.dependencies.get('transcripts')[0].filename

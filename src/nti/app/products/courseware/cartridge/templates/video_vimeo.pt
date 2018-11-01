@@ -1,4 +1,8 @@
 <html>
+	<head>
+        <title tal:content="context/title"></title>
+        <meta name="identifier" tal:attributes="content context/identifier" />
+    </head>
 	<body style="width: 640px; height: 480px;" tal:attributes="style context/style">
 		<iframe src="https://player.vimeo.com/video/229047987?embedparameter=value"
         		width="640"
