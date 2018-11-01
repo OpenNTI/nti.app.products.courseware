@@ -17,9 +17,11 @@ from zope import interface
 from zope.cachedescriptors.property import Lazy
 
 from zope.component import subscribers
+from zope.interface.interfaces import ComponentLookupError
 
 from zope.intid import IIntIds
 
+from nti.app.products.courseware.cartridge.exceptions import CommonCartridgeExportException
 from nti.app.products.courseware.cartridge.interfaces import IIMSCommonCartridge
 from nti.app.products.courseware.cartridge.interfaces import IIMSCommonCartridgeExtension
 from nti.app.products.courseware.cartridge.interfaces import IIMSManifestResources
@@ -77,31 +79,6 @@ class CartridgeWebContent(object):
     def intids(self):
         return component.getUtility(IIntIds)
 
-    def __init__(self, course):
-        assets = get_all_package_assets(course)
-        resources = component.getUtility(IIMSManifestResources)()
-        self.content = defaultdict(dict)
-        for (unused_intid, asset) in assets:
-            iface = find_most_derived_interface(asset, IPresentationAsset)
-            # This should always resolve as the keys are used to query these assets
-            key = CC_PRESENTATION_ASSET_IFACES[iface]
-            unit = IIMSWebContentUnit(asset, None)
-            if unit is not None:
-                identifier_ref = self.intids.register(asset)
-                self.content[key][identifier_ref] = unit
-                path = '%s/%s/' % (CARTRIDGE_WEB_CONTENT_FOLDER, key)
-                href = path + unit.filename
-                resource = etree.SubElement(resources, u'resource', identifier=unicode(unit.identifier), type=unit.type, href=href)
-                etree.SubElement(resource, u'file', href=href)
-                for (key, deps) in unit.dependencies.items():
-                    for dep in deps:
-                        etree.SubElement(resource, u'dependency', identifierref=unicode(dep.identifier))
-                        href = os.path.join(path, unit.dirname, key, dep.filename)
-                        d_res = etree.SubElement(resources, u'resource', identifier=unicode(dep.identifier), type=unit.type, href=href)
-                        etree.SubElement(d_res, u'file', href=href)
-                # Register this unit, we will use this intid as the 'identifierref'
-                self.intids.register(unit)
-
     def __getitem__(self, item):
         return self.content.__getitem__(item)
 
@@ -141,9 +118,11 @@ class CartridgeWebContent(object):
 @interface.implementer(IIMSCommonCartridge)
 class IMSCommonCartridge(object):
 
+    resources = dict()
+    errors = []
+
     def __init__(self, course):
         self.course = course
-        self.cartridge_web_content = CartridgeWebContent(course)
 
     @Lazy
     def intids(self):
@@ -198,32 +177,38 @@ class IMSCommonCartridge(object):
 
 def build_manifest_items(cartridge):
     course_tree = cartridge.course_tree
-    cwc = cartridge.cartridge_web_content
+    resources = cartridge.resources
+    errors = cartridge.errors
     # Create the root
     items = etree.Element(u'item', identifier=u'LearningModules')
     intids = component.getUtility(IIntIds)
-    resources = component.getUtility(IIMSManifestResources)
 
+    # TODO handle non published items
     # Recurse through the tree
     def _recur_items(tree, xml_node):
         if not tree.children:
             return
         for node in tree.children:
             obj = node.obj
-            # make sure we have a concrete asset
-            obj = IConcreteAsset(obj, obj)
-            identifier = intids.register(obj)  # This creates an id if none exists, or returns the existing one
-            content_unit = cwc.find(identifier)
-            identifier_ref = intids.queryId(content_unit)
-            properties = {'identifier': unicode(identifier)}
-            # Check if we have already processed this item
-            if identifier_ref:
-                properties['identifierref'] = unicode(identifier_ref)
-            # Check if this is an asset that needs processed
-            elif not identifier_ref and IPresentationAsset.providedBy(obj):
-                resource = IIMSResource(obj, None)
-                if resource is None:
-                    logger.log(u'Unsupported asset type: %s' % obj)
+
+            # convert to common cartridge item if some type of asset
+            if IGroupOverViewable.providedBy(obj):
+                try:
+                    # make sure we have a concrete asset
+                    obj = IConcreteAsset(obj, obj)
+                    # creates an id if none exists, or returns the existing one
+                    identifier = intids.register(obj)
+                    properties = {'identifier': unicode(identifier)}
+                    resource = IIMSWebContentUnit(obj)  # TODO update zcml to IIMSResource
+                    resources[identifier] = resource  # Map this object to it's common cartridge resource
+                    properties['identifierref'] = unicode(resource.identifier)
+                except TypeError:  # Likely incrementally faster as we expect these to resolve normally
+                    logger.warning(u'Unable to export %s to common cartridge' % obj.__class__)
+                    errors.append(CommonCartridgeExportException(u'Unsupported asset type: %s' % obj.__class__))
+            else:
+                identifier = intids.register(obj)
+                properties = {'identifier': unicode(identifier)}
+            # Add this item entry
             item = etree.SubElement(xml_node, u'item', **properties)
             title = etree.SubElement(item, u'title')
             title.text = getattr(obj, 'title', '') or getattr(obj, 'label', '')
@@ -231,6 +216,18 @@ def build_manifest_items(cartridge):
 
     _recur_items(course_tree, items)
     return etree.tostring(items, pretty_print=True)
+
+
+def build_cartridge_content(cartridge):
+    assets = get_all_package_assets(cartridge.course)
+    resources = cartridge.resources
+    intids = component.getUtility(IIntIds)
+    for (unused_intid, asset) in assets:
+        nti_intid = intids.register(asset)
+        if nti_intid not in resources:
+            unit = IIMSWebContentUnit(asset, None)
+            if unit is not None:  # TODO fix
+                resources[nti_intid] = unit
 
 
 @interface.implementer(IIMSManifestResources)
