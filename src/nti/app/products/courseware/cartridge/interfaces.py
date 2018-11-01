@@ -87,23 +87,11 @@ class IIMSWebContentUnit(IIMSResource):
 
 class IIMSWebLink(IIMSResource):
 
-    title = TextLine(title=u'Title',
-                     description=u'The title of this web link.',
-                     required=True)
-
-    url = HTTPURL(title=u'Web Link URL',
-                  description=u'The URL which this web link represents.',
-                  required=True)
-
-    target = TextLine(title=u'The url target',
-                      description=u'Any valid value for the HTML <a> tag target attribute.',
-                      required=True,
-                      default=u'_self')
-
-    windowFeatures = TextLine(title=u'Javascript window features',
-                              description=u'An optional string that can be used as the default parameter'
-                                          u' for the standard javascript window open function.',
-                              required=False)
+    type = TextLine(title=u'Object Type',
+                    description=u'The IMS characteristic object type.',
+                    required=True,
+                    default='imswl_xmlv1p1',
+                    readonly=True)
 
 
 class ICartridgeWebContent(interface.Interface):

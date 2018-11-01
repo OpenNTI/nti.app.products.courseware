@@ -17,6 +17,7 @@ from zope import interface
 
 from zope.cachedescriptors.property import Lazy
 from zope.intid import IIntIds
+from zope.schema.fieldproperty import createFieldProperties
 
 from nti.app.contenttypes.presentation.decorators.assets import CONTENT_MIME_TYPE
 
@@ -25,6 +26,7 @@ from nti.app.products.courseware.cartridge.exceptions import CommonCartridgeExpo
 from nti.app.products.courseware.cartridge.interfaces import IIMSWebContentUnit, ICartridgeWebContent
 from nti.app.products.courseware.cartridge.interfaces import IIMSWebLink
 from nti.app.products.courseware.cartridge.interfaces import IIMSLearningApplicationObject
+from nti.app.products.courseware.cartridge.renderer import get_renderer, execute
 
 from nti.app.products.courseware.cartridge.web_content import AbstractIMSWebContent
 
@@ -73,50 +75,47 @@ class IMSWebContentNativeReading(AbstractIMSWebContent):
         pass
 
 
-def _related_work_factory(related_work, resource_type=None):
+def related_work_factory(related_work):
     """
     Parses a related work into an IMS web link if it is an external link,
     a Native Reading Web Content unit if it is a content unit, or
     a Resource Web Content unit if it is a local resource (pdf, etc)
     """
-    # Web Links => IMS Web Links TODO
-    if False and related_work.type == 'application/vnd.nextthought.externallink' and\
-            bool(urllib_parse.urlparse(related_work.href).scheme) and resource_type == 'IMS Web Link':
+    # Web Links => IMS Web Links
+    if related_work.type == 'application/vnd.nextthought.externallink' and\
+            bool(urllib_parse.urlparse(related_work.href).scheme):
         return IMSWebLink(related_work)
     # Resource links => IMS Web Content
     elif related_work.type == 'application/vnd.nextthought.externallink' and\
-            related_work.href.startswith('resources/') and resource_type == 'IMS Web Content':
+            related_work.href.startswith('resources/'):
         return IMSWebContentResource(related_work)
     # Native readings => IMS Learning Application Objects TODO
-    elif False and related_work.type == CONTENT_MIME_TYPE and resource_type == 'IMS Learning Application Object':
+    elif False and related_work.type == CONTENT_MIME_TYPE:
         return IMSWebContentNativeReading(related_work)
     else:
         return None
 
 
-@interface.implementer(IIMSWebContentUnit)
-@component.adapter(INTIRelatedWorkRef)
-def related_work_to_web_content_factory(related_work):
-    return _related_work_factory(related_work, resource_type='IMS Web Content')
-
-
-@interface.implementer(IIMSWebLink)
-@component.adapter(INTIRelatedWorkRef)
-def related_work_to_web_link_factory(related_work):
-    return _related_work_factory(related_work, resource_type='IMS Web Link')
-
-
-@interface.implementer(IIMSLearningApplicationObject)
-@component.adapter(INTIRelatedWorkRef)
-def related_work_to_learning_application_object_factory(related_work):
-    return _related_work_factory(related_work, resource_type='IMS Learning Application Object')
+def related_work_resource_factory(related_work):
+    # Resource links => IMS Web Content
+    if related_work.type == 'application/vnd.nextthought.externallink' and related_work.href.startswith('resources/'):
+        return IMSWebContentResource(related_work)
+    return None
 
 
 @interface.implementer(IIMSWebLink)
 class IMSWebLink(object):
 
-    def __init__(self, asset):
-        self.context = asset
+    createFieldProperties(IIMSWebLink)
+
+    extension = '.xml'
+
+    def __init__(self, context):
+        self.context = context
+
+    @Lazy
+    def filename(self):
+        return unicode(self.identifier) + self.extension
 
     @Lazy
     def intids(self):
@@ -125,3 +124,24 @@ class IMSWebLink(object):
     @Lazy
     def identifier(self):
         return self.intids.register(self)
+
+    def create_dirname(self, path):
+        dirname = os.path.dirname(path)
+        if not os.path.exists(dirname):
+            os.makedirs(dirname)
+
+    def write_resource(self, path, resource):
+        self.create_dirname(path)
+        with open(path, 'w') as fd:
+            fd.write(resource)
+        return True
+
+    def export(self, archive):
+        renderer = get_renderer("web_link", ".pt")
+        context = {
+            'href': self.context.href,
+            'title': self.context.label
+        }
+        xml = execute(renderer, {"context": context})
+        path = os.path.join(archive, self.filename)
+        self.write_resource(path, xml)
