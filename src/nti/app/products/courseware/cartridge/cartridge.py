@@ -199,10 +199,10 @@ def build_manifest_items(cartridge):
                     # creates an id if none exists, or returns the existing one
                     identifier = intids.register(obj)
                     properties = {'identifier': unicode(identifier)}
-                    resource = IIMSWebContentUnit(obj)  # TODO update zcml to IIMSResource
+                    resource = IIMSResource(obj)  # TODO update zcml to IIMSResource
                     resources[identifier] = resource  # Map this object to it's common cartridge resource
                     properties['identifierref'] = unicode(resource.identifier)
-                except TypeError:  # Likely incrementally faster as we expect these to resolve normally
+                except TypeError:  # Likely incrementally faster than if/else as we expect these to resolve normally
                     logger.warning(u'Unable to export %s to common cartridge' % obj.__class__)
                     errors.append(CommonCartridgeExportException(u'Unsupported asset type: %s' % obj.__class__))
             else:
