@@ -5,14 +5,13 @@ from __future__ import print_function
 from __future__ import absolute_import
 from __future__ import division
 
-from hamcrest import assert_that, contains, has_entries
+from hamcrest import assert_that, contains
 from hamcrest import is_
 
 from lxml import etree
-from zope.intid.interfaces import IIntIds
-from zope import component
 
 from nti.app.products.courseware.cartridge.cartridge import build_manifest_items
+
 from nti.app.products.courseware.cartridge.interfaces import IIMSCommonCartridge
 
 from nti.app.products.courseware.cartridge.tests import CommonCartridgeLayerTest
