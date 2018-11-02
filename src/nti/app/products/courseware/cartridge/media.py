@@ -20,7 +20,9 @@ from zope import interface
 
 from zope.cachedescriptors.property import Lazy
 
-from nti.app.products.courseware.cartridge.interfaces import IIMSWebContentUnit, ICanvasWikiContent, IIMSResource
+from nti.app.products.courseware.cartridge.interfaces import ICanvasWikiContent
+from nti.app.products.courseware.cartridge.interfaces import IIMSResource
+from nti.app.products.courseware.cartridge.interfaces import IIMSWebContentUnit
 
 from nti.app.products.courseware.cartridge.renderer import execute
 from nti.app.products.courseware.cartridge.renderer import get_renderer
@@ -103,7 +105,6 @@ class IMSWebContentVideo(AbstractIMSWebContent):
         }
         if self.dependencies:
             context['transcript'] = 'transcripts/' + self.dependencies.get('transcripts')[0].filename
-            context['transcript'] = 'transcripts/' + self.dependencies.get('transcripts')[0].filename
         return execute(renderer, {"context": context})
 
     def kaltura(self, uiconf_id="15491291"):
@@ -111,7 +112,6 @@ class IMSWebContentVideo(AbstractIMSWebContent):
         Return a string that represent a kaltura video file
         resource in a cartridge
         """
-        # TODO Update template to iframe instead of script
         current = int(time.time())
         partner_id, entry_id = self.source_id.split(':')
         player_id = 'nti_%s' % current

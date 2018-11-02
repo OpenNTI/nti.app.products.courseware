@@ -28,8 +28,4 @@
              provides=".interfaces.IIMSWebContentUnit"
              for="nti.contenttypes.presentation.interfaces.INTIRelatedWorkRef" />
 
-    <utility factory=".cartridge.IMSManifestResources"
-             provides=".interfaces.IIMSManifestResources" />
-
-
 </configure>

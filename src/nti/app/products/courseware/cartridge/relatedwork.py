@@ -16,24 +16,26 @@ from zope import component
 from zope import interface
 
 from zope.cachedescriptors.property import Lazy
+
 from zope.intid import IIntIds
+
 from zope.schema.fieldproperty import createFieldProperties
 
 from nti.app.contenttypes.presentation.decorators.assets import CONTENT_MIME_TYPE
 
 from nti.app.products.courseware.cartridge.exceptions import CommonCartridgeExportException
 
-from nti.app.products.courseware.cartridge.interfaces import IIMSWebContentUnit, ICartridgeWebContent
+from nti.app.products.courseware.cartridge.interfaces import ICartridgeWebContent
+from nti.app.products.courseware.cartridge.interfaces import IIMSWebContentUnit
 from nti.app.products.courseware.cartridge.interfaces import IIMSWebLink
-from nti.app.products.courseware.cartridge.interfaces import IIMSLearningApplicationObject
-from nti.app.products.courseware.cartridge.renderer import get_renderer, execute
+
+from nti.app.products.courseware.cartridge.renderer import execute
+from nti.app.products.courseware.cartridge.renderer import get_renderer
 
 from nti.app.products.courseware.cartridge.web_content import AbstractIMSWebContent
 
 from nti.contentlibrary.interfaces import IContentPackage
 from nti.contentlibrary.interfaces import IFilesystemBucket
-
-from nti.contenttypes.presentation.interfaces import INTIRelatedWorkRef
 
 from nti.traversal.traversal import find_interface
 
