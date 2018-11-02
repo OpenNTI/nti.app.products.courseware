@@ -15,10 +15,13 @@ from zope import interface
 from zope.schema import Dict
 from zope.schema import List
 
-from nti.schema.field import HTTPURL
 from nti.schema.field import Int
 from nti.schema.field import Object
 from nti.schema.field import DecodingValidTextLine as TextLine
+
+from nti.app.products.courseware.cartridge.exceptions import CommonCartridgeExportException
+
+from nti.common.datastructures import ObjectHierarchyTree
 
 
 class ICanvasWikiContent(interface.Interface):
@@ -37,25 +40,6 @@ class IIMSResource(interface.Interface):
         """
         Exports this resource into its Common Cartridge format and writes it into the supplied archive.
         """
-
-
-class IIMSAssociatedContent(IIMSResource):
-
-    type = TextLine(title=u'Object Type',
-                    description=u'The IMS characteristic object type.',
-                    required=True,
-                    default='associatedcontent/imscc_xmlv1p2/learning-application-resource',
-                    readonly=True)
-
-
-class IIMSLearningApplicationObject(interface.Interface):
-
-    associated_content = List(title=u'Associated Content',
-                              description=u'The associated content objects.',
-                              required=False,
-                              value_type=Object(IIMSAssociatedContent,
-                                                title=u'Associated Content Object',
-                                                required=True))
 
 
 class IIMSCommonCartridgeExtension(interface.Interface):
@@ -87,6 +71,11 @@ class IIMSWebContentUnit(IIMSResource):
 
 class IIMSWebLink(IIMSResource):
 
+    identifier = Int(title=u'Identifier',
+                     description=u'The identifier for this web content object within'
+                                 u' the common cartridge',
+                     required=True)
+
     type = TextLine(title=u'Object Type',
                     description=u'The IMS characteristic object type.',
                     required=True,
@@ -100,30 +89,15 @@ class ICartridgeWebContent(interface.Interface):
     """
 
 
-class IIMSManifest(interface.Interface):
-    """
-    Manifest file for a Common Cartridge
-    """
-
-    # TODO add fields
-
-
 class IIMSCommonCartridge(interface.Interface):
+    # TODO doc
 
-    manifest = Object(IIMSManifest,
-                      title=u'IMS manifest',
-                      required=True)
+    # errors = List()
 
-    cartridge_web_content = Dict(key_type=TextLine(),
-                                 value_type=Dict(key_type=TextLine(), value_type=Object(IIMSWebContentUnit)),
-                                 title=u'IMS Cartridge Web Content',
-                                 description=u'IMS Web Content that is globally accessible from other resources.'
-                                             u'Objects exported in this field will be imported as global resources'
-                                             u'in the destination LMS. The key value in this dict represents the'
-                                             u'directory name this content will be in upon export.',
-                                 required=True)
+    resources = Dict(key_type=Int(),
+                     value_type=Object(IIMSResource))
 
-    learning_application_objects = List(value_type=Object(IIMSLearningApplicationObject))  #TODO doc
+    # course_tree = Object()
 
 
 class IIMSManifestResources(interface.Interface):
