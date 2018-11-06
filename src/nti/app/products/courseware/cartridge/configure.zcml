@@ -16,6 +16,10 @@
 			 provides=".interfaces.IIMSResource"
 			 for="nti.contenttypes.presentation.interfaces.INTITranscript" />
 
+    <adapter factory=".discussion.IMSDiscussionTopic"
+             provides=".interfaces.IIMSResource"
+             for="nti.contenttypes.presentation.interfaces.INTIDiscussionRef" />
+
 	<adapter factory=".cartridge.IMSCommonCartridge"
 			 provides=".interfaces.IIMSCommonCartridge"
 			 for="nti.contenttypes.courses.interfaces.ICourseInstance" />
@@ -27,5 +31,9 @@
     <adapter factory=".relatedwork.related_work_resource_factory"
              provides=".interfaces.IIMSWebContentUnit"
              for="nti.contenttypes.presentation.interfaces.INTIRelatedWorkRef" />
+
+    <adapter factory=".discussion.IMSAssociatedContentFileBlob"
+             provides=".interfaces.IIMSResource"
+             for="nti.contentfile.interfaces.IContentBlobFile" />
 
 </configure>
