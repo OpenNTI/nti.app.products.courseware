@@ -29,10 +29,9 @@ class AbstractIMSWebContent(object):
 
     createFieldProperties(IIMSWebContentUnit)
 
-    dependencies = defaultdict(list)
-
     def __init__(self, context):
         self.context = context
+        self.dependencies = defaultdict(list)
 
     def create_dirname(self, path):
         dirname = os.path.dirname(path)

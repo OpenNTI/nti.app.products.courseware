@@ -29,6 +29,7 @@ from nti.app.products.courseware.cartridge.renderer import execute
 from nti.app.products.courseware.cartridge.renderer import get_renderer
 
 from nti.contenttypes.courses.interfaces import ICourseInstance
+from nti.contenttypes.presentation.interfaces import INTIDiscussionRef
 
 from nti.dataserver import authorization as nauth
 
@@ -59,7 +60,9 @@ class CommonCartridgeExportView(AbstractAuthenticatedView):
                         prepath = 'wiki_content'
                     target = os.path.join(archive, prepath)
                     cc_resource.export(target)
-                    href = prepath + '/' + cc_resource.filename
+                    if getattr(cc_resource, 'dirname', None):
+                        prepath = os.path.join(prepath, cc_resource.dirname)
+                    href = os.path.join(prepath, cc_resource.filename)
                     item = etree.SubElement(tree, u'resource',
                                             identifier=unicode(cc_resource.identifier),
                                             type=cc_resource.type,
@@ -68,34 +71,38 @@ class CommonCartridgeExportView(AbstractAuthenticatedView):
                     if getattr(cc_resource, 'dependencies', None):
                         for (dep_directory, deps) in cc_resource.dependencies.items():
                             for dep in deps:
-                                dep_href = prepath + '/' + cc_resource.dirname + '/' + dep_directory + '/' + dep.filename
+                                dep_href = os.path.join(prepath, dep_directory, dep.filename)
                                 etree.SubElement(item, u'dependency', identifierref=unicode(dep.identifier))
                                 dep_xml = etree.SubElement(tree, u'resource', identifier=unicode(dep.identifier),
                                                            type=dep.type,
                                                            href=dep_href)
                                 etree.SubElement(dep_xml, u'file', href=dep_href)
-                                dep_path = os.path.join(href, cc_resource.dirname, dep_directory)
+                                dep_path = os.path.join(target, cc_resource.dirname, dep_directory)
                                 dep.export(dep_path)
         return archive
 
     def __call__(self):
-        cartridge = IIMSCommonCartridge(self.context)
-        # Process everything in the course
-        xml = build_manifest_items(cartridge)
-        build_cartridge_content(cartridge)
-        archive = self._export_to_filesystem(cartridge)
-        renderer = get_renderer("manifest", ".pt", package='nti.app.products.courseware.cartridge')
-        context = {
-            'items': xml,
-            'resources': ''.join(etree.tostring(child, pretty_print=True) for child in cartridge.manifest_resources.iterchildren())
-        }
-        manifest = execute(renderer, {'context': context})
-        with open(archive + '/imsmanifest.xml', 'w') as fd:
-            fd.write(manifest)
-        zipped = shutil.make_archive('common_cartridge', 'zip', archive)
-        filename = self.context.title + '.zip'  # TODO make imscc when done
-        self.request.response.content_encoding = 'identity'
-        self.request.response.content_type = 'application/zip; charset=UTF-8'
-        self.request.response.content_disposition = 'attachment; filename="%s"' % filename
-        self.request.response.body_file = open(zipped, "rb")
+        try:
+            cartridge = IIMSCommonCartridge(self.context)
+            # Process everything in the course
+            xml = build_manifest_items(cartridge)
+            build_cartridge_content(cartridge)
+            archive = self._export_to_filesystem(cartridge)
+            renderer = get_renderer("manifest", ".pt", package='nti.app.products.courseware.cartridge')
+            context = {
+                'items': xml,
+                'resources': ''.join(etree.tostring(child, pretty_print=True) for child in cartridge.manifest_resources.iterchildren())
+            }
+            manifest = execute(renderer, {'context': context})
+            with open(archive + '/imsmanifest.xml', 'w') as fd:
+                fd.write(manifest)
+            zipped = shutil.make_archive('common_cartridge', 'zip', archive)
+            filename = self.context.title + '.zip'  # TODO make imscc when done
+            self.request.response.content_encoding = 'identity'
+            self.request.response.content_type = 'application/zip; charset=UTF-8'
+            self.request.response.content_disposition = 'attachment; filename="%s"' % filename
+            self.request.response.body_file = open(zipped, "rb")
+        finally:
+            self.request.environ['nti.commit_veto'] = 'abort'
         return self.request.response
+

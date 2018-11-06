@@ -32,6 +32,11 @@ class ICanvasWikiContent(interface.Interface):
 
 class IIMSResource(interface.Interface):
 
+    identifier = Int(title=u'Identifier',
+                     description=u'The identifier for this web content object within'
+                                 u' the common cartridge',
+                     required=True)
+
     type = TextLine(title=u'Object Type',
                     description=u'The IMS characteristic object type.',
                     required=True)
@@ -54,10 +59,7 @@ class IIMSWebContentUnit(IIMSResource):
     Web Content units are responsible for exporting their dependencies
     """
 
-    identifier = Int(title=u'Identifier',
-                     description=u'The identifier for this web content object within'
-                                 u' the common cartridge',
-                     required=True)
+
 
     dependencies = Dict(key_type=TextLine(),
                         value_type=List(value_type=Object(IIMSResource)))  # TODO doc
@@ -71,15 +73,31 @@ class IIMSWebContentUnit(IIMSResource):
 
 class IIMSWebLink(IIMSResource):
 
-    identifier = Int(title=u'Identifier',
-                     description=u'The identifier for this web content object within'
-                                 u' the common cartridge',
-                     required=True)
-
     type = TextLine(title=u'Object Type',
                     description=u'The IMS characteristic object type.',
                     required=True,
                     default='imswl_xmlv1p1',
+                    readonly=True)
+
+
+class IIMSDiscussionTopic(IIMSResource):
+
+    dependencies = Dict(key_type=TextLine(),
+                        value_type=List(value_type=Object(IIMSResource)))  # TODO doc
+
+    type = TextLine(title=u'Object Type',
+                    description=u'The IMS characteristic object type.',
+                    required=True,
+                    default='imsdt_xmlv1p1',
+                    readonly=True)
+
+
+class IIMSAssociatedContent(IIMSResource):
+
+    type = TextLine(title=u'Object Type',
+                    description=u'The IMS characteristic object type.',
+                    required=True,
+                    default='associatedcontent/imscc_xmlv1p2/learning-application-resource',
                     readonly=True)
 
 
