@@ -22,6 +22,8 @@ from nti.contenttypes.completion.completion import CompletedItem
 from nti.contenttypes.completion.interfaces import IProgress
 from nti.contenttypes.completion.interfaces import ICompletableItemCompletionPolicy
 
+from nti.contenttypes.completion.policies import AbstractCompletableItemCompletionPolicy
+
 from nti.contenttypes.completion.progress import Progress
 
 from nti.contenttypes.completion.utils import update_completion
@@ -32,12 +34,15 @@ from nti.coremetadata.interfaces import IUser
 
 from nti.dataserver.users import User
 
+from nti.externalization.persistence import NoPickle
+
 logger = __import__('logging').getLogger(__name__)
 
 
+@NoPickle
 @component.adapter(IWebinarAsset, ICourseInstance)
 @interface.implementer(ICompletableItemCompletionPolicy)
-class WebinarAssetCompletionPolicy(object):
+class WebinarAssetCompletionPolicy(AbstractCompletableItemCompletionPolicy):
 
     def __init__(self, asset, course):
         self.asset = asset
