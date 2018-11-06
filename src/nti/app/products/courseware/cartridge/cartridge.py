@@ -152,6 +152,7 @@ def build_manifest_items(cartridge):
     return etree.tostring(items, pretty_print=True)
 
 
+# TODO Concrete?
 def build_cartridge_content(cartridge):
     assets = get_all_package_assets(cartridge.course)
     resources = cartridge.resources
