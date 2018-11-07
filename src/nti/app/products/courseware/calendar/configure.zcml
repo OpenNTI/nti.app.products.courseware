@@ -19,6 +19,11 @@
              provides=".interfaces.ICourseCalendar"
              for="nti.contenttypes.courses.interfaces.ICourseInstance" />
 
+    <!-- decorators -->
+    <subscriber factory=".decorators._CourseCalendarLinkDecorator"
+                for="nti.contenttypes.courses.interfaces.ICourseInstance pyramid.interfaces.IRequest"
+                provides="nti.externalization.interfaces.IExternalObjectDecorator" />
+
     <ext:registerAutoPackageIO
         root_interfaces=".interfaces.ICourseCalendar
                          .interfaces.ICourseCalendarEvent"
