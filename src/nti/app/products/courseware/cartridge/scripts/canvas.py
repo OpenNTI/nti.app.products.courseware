@@ -128,6 +128,7 @@ def do_content_migration():
     print "Successfully uploaded course export!"
     print "Your import is now being processed by canvas. This can take some time. You can check on the status of " \
           "your import at %s/courses/%s/content_migrations" % (canvas_url, course_id)
+    common_cartridge.close()
     exit(0)
 
 
@@ -175,5 +176,3 @@ print "Creating canvas course via API..."
 create_canvas_course()
 print "Migrating content..."
 do_content_migration()
-
-
