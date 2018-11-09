@@ -9,6 +9,7 @@ from __future__ import print_function
 from __future__ import absolute_import
 
 import os
+import shutil
 
 from six.moves import urllib_parse
 
@@ -20,6 +21,8 @@ from zope.cachedescriptors.property import Lazy
 from zope.intid import IIntIds
 
 from zope.schema.fieldproperty import createFieldProperties
+
+from nti.app.contentfolder.utils import get_file_from_cf_io_url
 
 from nti.app.contenttypes.presentation.decorators.assets import CONTENT_MIME_TYPE
 
@@ -56,9 +59,15 @@ class IMSWebContentResource(AbstractIMSWebContent):
         package = find_interface(self.context, IContentPackage, strict=False)
         root = getattr(package, 'root', None)
         if not IFilesystemBucket.providedBy(root):
-            logger.warning("Unsupported bucket Boto?")
-            raise CommonCartridgeExportException(u"Unable to locate file on disk for %s. Is this resource "
-                                                 u"stored on Boto?" % self.context.label)
+            if self.context.href.startswith('/dataserver2/cf.io/'):
+                resource = get_file_from_cf_io_url(self.context.href)
+                filename = os.path.basename(self.context.href)
+                target_path = os.path.join(path, filename)
+                self.copy_file_resource(resource, target_path)
+            else:
+                logger.warning("Unsupported bucket Boto?")
+                # raise CommonCartridgeExportException(u"Unable to locate file on disk for %s. Is this resource "
+                #                                     u"stored on Boto?" % self.context.label)
         elif self.context.href and root:
             source_path = os.path.join(root.absolute_path, self.context.href)
             filename = os.path.basename(source_path)
@@ -87,15 +96,13 @@ def related_work_factory(related_work):
     if related_work.type == 'application/vnd.nextthought.externallink' and\
             bool(urllib_parse.urlparse(related_work.href).scheme):
         return IMSWebLink(related_work)
-    # Resource links => IMS Web Content
-    elif related_work.type == 'application/vnd.nextthought.externallink' and\
-            related_work.href.startswith('resources/'):
-        return IMSWebContentResource(related_work)
     # Native readings => IMS Learning Application Objects TODO
-    elif False and related_work.type == CONTENT_MIME_TYPE:
-        return IMSWebContentNativeReading(related_work)
-    else:
+    elif related_work.type == CONTENT_MIME_TYPE:
         return None
+        # return IMSWebContentNativeReading(related_work)
+    # Resource links => IMS Web Content
+    else:
+        return IMSWebContentResource(related_work)
 
 
 def related_work_resource_factory(related_work):
@@ -135,7 +142,7 @@ class IMSWebLink(object):
     def write_resource(self, path, resource):
         self.create_dirname(path)
         with open(path, 'w') as fd:
-            fd.write(resource)
+            fd.write(resource.encode('utf-8'))
         return True
 
     def export(self, archive):

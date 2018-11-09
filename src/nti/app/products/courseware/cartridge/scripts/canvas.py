@@ -7,22 +7,31 @@ import tempfile
 import urllib2
 import requests
 import time
+import ssl
 
 
 def _check_url(url):
     # Check valid url
     try:
-        urllib2.urlopen(nti_url)
-        print "Connection to %s successful!" % nti_url
+        if '.dev' in url:
+            # From Stack Overflow to disable certificate verfication
+            ctx = ssl.create_default_context()
+            ctx.check_hostname = False
+            ctx.verify_mode = ssl.CERT_NONE
+            # add /app because base url is broken locally
+            urllib2.urlopen(url+'/app/', context=ctx)
+        else:
+            urllib2.urlopen(url)
+        print "Connection to %s successful!" % url
         return True
     except Exception:
-        print "URL %s is invalid" % nti_url
+        print "URL %s is invalid" % url
         return False
 
 
 def _validate_credentials(username, password):
     dataserver2 = nti_url + '/dataserver2/users/' + username
-    req = requests.get(dataserver2, auth=(username, password))
+    req = requests.get(dataserver2, auth=(username, password), verify=False)
     if req.status_code != 200:
         print "Your credentials are invalid"
         return False
@@ -31,8 +40,9 @@ def _validate_credentials(username, password):
 
 
 def _validate_course_entry(ntiid):
-    course_href = nti_url + '/dataserver2/Objects/' + ntiid
-    req = requests.get(course_href, auth=(nti_username, nti_password))
+    global course_href
+    course_href= nti_url + '/dataserver2/Objects/' + ntiid
+    req = requests.get(course_href, auth=(nti_username, nti_password), verify=False)
     status_code = req.status_code
     if status_code == 401 or status_code == 403:
         print "Your credentials are invalid to access this course"
@@ -62,11 +72,10 @@ def _validate_canvas_token(token):
     return False
 
 
-def get_common_cartridge():
-    # TODO update to our course cc export link
-    link = "https://topkit.org/wp-content/uploads/2016/09/dev-topkit-sample-course-bauer-s-67-export.imscc"
+def get_common_cartridge(url=None):
+    link = url if url else course_href + '/@@common_cartridge'
     imscc = tempfile.NamedTemporaryFile()
-    req = requests.get(link, stream=True)
+    req = requests.get(link, stream=True, verify=False, auth=(nti_username, nti_password))
     size = int(req.headers['Content-Length'])
     imported = 0
     increments = 1
@@ -113,7 +122,7 @@ def do_content_migration():
     upload = requests.post(file_upload_url,
                            data=migration_json['pre_attachment']['upload_params'],
                            files={'file': common_cartridge})
-    if upload.status_code != 200:
+    if upload.status_code != 200 and upload.status_code != 201:
         print "An error occurred while uploading the course\n%s" % upload.text
         exit(1)
     print "Successfully uploaded course export!"

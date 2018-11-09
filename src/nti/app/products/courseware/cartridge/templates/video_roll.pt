@@ -1,0 +1,17 @@
+<html>
+	<head>
+        <title tal:content="context/title"></title>
+        <meta name="identifier" tal:attributes="content context/identifier" />
+        <base target="_parent">
+    </head>
+	<body>
+        <div tal:repeat="video context/videos">
+            <h2 tal:content="video/context/title"></h2>
+            <iframe style="overflow: hidden" tal:attributes="src python:'$IMS-CC-FILEBASE$/videos/' + video.filename;
+                                    width python: video.width+20;
+                                    height python:video.height+20;"
+                    scrolling="no"></iframe>
+            <hr>
+        </div>
+	</body>
+</html>

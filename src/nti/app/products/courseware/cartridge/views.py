@@ -68,16 +68,17 @@ class CommonCartridgeExportView(AbstractAuthenticatedView):
                                             type=cc_resource.type,
                                             href=href)
                     etree.SubElement(item, u'file', href=href)
+                    # TODO need to recur on deps here
                     if getattr(cc_resource, 'dependencies', None):
                         for (dep_directory, deps) in cc_resource.dependencies.items():
                             for dep in deps:
-                                dep_href = os.path.join(prepath, dep_directory, dep.filename)
+                                dep_href = os.path.join('web_resources', dep_directory, dep.filename)
                                 etree.SubElement(item, u'dependency', identifierref=unicode(dep.identifier))
                                 dep_xml = etree.SubElement(tree, u'resource', identifier=unicode(dep.identifier),
                                                            type=dep.type,
                                                            href=dep_href)
                                 etree.SubElement(dep_xml, u'file', href=dep_href)
-                                dep_path = os.path.join(target, cc_resource.dirname, dep_directory)
+                                dep_path = os.path.join(archive, 'web_resources', dep_directory)
                                 dep.export(dep_path)
         return archive
 
@@ -97,7 +98,7 @@ class CommonCartridgeExportView(AbstractAuthenticatedView):
             with open(archive + '/imsmanifest.xml', 'w') as fd:
                 fd.write(manifest)
             zipped = shutil.make_archive('common_cartridge', 'zip', archive)
-            filename = self.context.title + '.zip'  # TODO make imscc when done
+            filename = self.context.title + '.imscc'  # TODO make imscc when done
             self.request.response.content_encoding = 'identity'
             self.request.response.content_type = 'application/zip; charset=UTF-8'
             self.request.response.content_disposition = 'attachment; filename="%s"' % filename
