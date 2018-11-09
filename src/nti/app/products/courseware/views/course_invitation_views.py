@@ -619,10 +619,10 @@ class SendCourseInvitationsView(AbstractAuthenticatedView,
 
         # send invites
         message = values.get('message')
-        entry_ntiid = ICourseCatalogEntry(self._course).ntiid
+        entry_ntiid = ICourseCatalogEntry(course).ntiid
         logger.info('Sending emails to %s users (%s)', len(all_users), entry_ntiid)
         sent = self.send_invitations(all_users,
-                                     course,
+                                     entry_ntiid,
                                      scope,
                                      message=message)
         result = LocatedExternalDict()
