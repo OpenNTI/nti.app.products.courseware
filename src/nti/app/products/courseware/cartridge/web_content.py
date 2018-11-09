@@ -38,6 +38,12 @@ class AbstractIMSWebContent(object):
         if not os.path.exists(dirname):
             os.makedirs(dirname)
 
+    def copy_file_resource(self, src_object, target_path):
+        self.create_dirname(target_path)
+        with open(target_path, 'w') as dest:
+            shutil.copyfileobj(src_object, dest)
+            return True
+
     def copy_resource(self, source_path, target_path):
         if os.path.exists(source_path):
             self.create_dirname(target_path)
@@ -47,7 +53,7 @@ class AbstractIMSWebContent(object):
     def write_resource(self, path, resource):
         self.create_dirname(path)
         with open(path, 'w') as fd:
-            fd.write(resource)
+            fd.write(resource.encode('utf-8'))
         return True
 
     @Lazy
