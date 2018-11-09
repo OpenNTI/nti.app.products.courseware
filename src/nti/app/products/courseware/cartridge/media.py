@@ -32,7 +32,8 @@ from nti.app.products.courseware.cartridge.web_content import AbstractIMSWebCont
 from nti.contentlibrary.interfaces import IContentPackage
 from nti.contentlibrary.interfaces import IFilesystemBucket
 
-from nti.contenttypes.presentation.interfaces import KALTURA_VIDEO_SERVICE
+from nti.contenttypes.presentation.interfaces import KALTURA_VIDEO_SERVICE, INTIVideoRoll, IConcreteAsset, \
+    INTILessonOverview
 from nti.contenttypes.presentation.interfaces import VIMEO_VIDEO_SERVICE
 from nti.contenttypes.presentation.interfaces import YOUTUBE_VIDEO_SERVICE
 from nti.contenttypes.presentation.interfaces import INTIVideo
@@ -70,6 +71,45 @@ class IMSWebContentTranscript(AbstractIMSWebContent):
         return os.path.basename(self.context.src)
 
 
+@interface.implementer(IIMSWebContentUnit, ICanvasWikiContent)
+@component.adapter(INTIVideoRoll)
+class IMSWebContentVideoRoll(AbstractIMSWebContent):
+
+    extension = '.html'
+
+    def _process_videos(self, videos):
+        if videos:
+            for video in videos:
+                concrete_video = IConcreteAsset(video)
+                self.dependencies['videos'].append(IIMSResource(concrete_video))
+        return self.dependencies
+
+    @Lazy
+    def filename(self):
+        return unicode(self.identifier) + self.extension
+
+    @Lazy
+    def dirname(self):
+        return unicode(self.identifier)
+
+    def export(self, dirname):
+        self._process_videos(self.context.Items)
+        renderer = get_renderer("video_roll", ".pt")
+        title = self.context.title
+        if not title:
+            lesson = self.context.__parent__.__parent__  # Overview Group => Lesson
+            assert INTILessonOverview.providedBy(lesson)  # If this invariant changes in the future, blow up
+            title = u'Videos (%s)' % lesson.title
+        context = {
+            'identifier': self.identifier,
+            'title': title,
+            'videos': self.dependencies['videos']
+        }
+        html = execute(renderer, {"context": context})
+        target = os.path.join(dirname, self.dirname, self.filename)
+        self.write_resource(target, html)
+
+
 @interface.implementer(IIMSWebContentUnit, ICanvasWikiContent)  # Mark as wiki content for export
 @component.adapter(INTIVideo)
 class IMSWebContentVideo(AbstractIMSWebContent):
@@ -97,8 +137,8 @@ class IMSWebContentVideo(AbstractIMSWebContent):
         context = {
             'style': 'height: %spx; width: %spx' % (self.source.height, self.source.width),
             'src': src_href,
-            'width': self.source.width,
-            'height': self.source.height,
+            'width': self.width,
+            'height': self.height,
             'transcript': None,
             'identifier': self.identifier,
             'title': self.context.title
@@ -107,7 +147,7 @@ class IMSWebContentVideo(AbstractIMSWebContent):
             context['transcript'] = 'transcripts/' + self.dependencies.get('transcripts')[0].filename
         return execute(renderer, {"context": context})
 
-    def kaltura(self, uiconf_id="15491291"):
+    def kaltura(self, uiconf_id="30404512"):  # UIConf sets how the iframe looks. This is OU's id
         """
         Return a string that represent a kaltura video file
         resource in a cartridge
@@ -121,8 +161,8 @@ class IMSWebContentVideo(AbstractIMSWebContent):
         renderer = get_renderer("video_kaltura", ".pt")
         context = {
             'style': 'height: %spx; width: %spx' % (self.source.height, self.source.width),
-            'width': self.source.width,
-            'height': self.source.height,
+            'width': self.width,
+            'height': self.height,
             'transcript': None,
             'src': src_href,
             'identifier': self.identifier,
@@ -142,8 +182,8 @@ class IMSWebContentVideo(AbstractIMSWebContent):
         context = {
             'style': 'height: %spx; width: %spx' % (self.source.height, self.source.width),
             'src': src_href,
-            'width': self.source.width,
-            'height': self.source.height,
+            'width': self.width,
+            'height': self.height,
             'transcript': None,
             'identifier': self.identifier,
             'title': self.context.title
@@ -177,21 +217,22 @@ class IMSWebContentVideo(AbstractIMSWebContent):
         return source_type
 
     @Lazy
+    def width(self):
+        return self.source.width
+
+    @Lazy
+    def height(self):
+        return self.source.height
+
+    @Lazy
     def source_id(self):
         source_id = next(iter(self.source.source))
         return source_id
 
     @Lazy
     def filename(self):
-        # TODO this is going to cause problems...
-        filename = '%s%s' % (self.context.title, self.extension)
-        if self.dependencies:
-            return '%s/%s' % (self.context.title, filename)
-        return filename
+        return unicode(self.identifier) + self.extension
 
     @Lazy
     def dirname(self):
-        # TODO may want to use intid to avoid collisions
-        if self.dependencies:
-            return self.context.title
-        return None
+        return unicode(self.identifier)

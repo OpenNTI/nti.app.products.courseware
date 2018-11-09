@@ -36,4 +36,8 @@
              provides=".interfaces.IIMSResource"
              for="nti.contentfile.interfaces.IContentBlobFile" />
 
+    <adapter factory=".media.IMSWebContentVideoRoll"
+             provides=".interfaces.IIMSResource"
+             for="nti.contenttypes.presentation.interfaces.INTIVideoRoll" />
+
 </configure>
