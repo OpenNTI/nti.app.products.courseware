@@ -12,6 +12,8 @@ from hamcrest import has_length
 from hamcrest import assert_that
 does_not = is_not
 
+import unittest
+
 from nti.app.products.courseware.cartridge.generate import walk
 
 from nti.app.products.courseware.tests import PersistentInstructedCourseApplicationTestLayer
@@ -35,6 +37,7 @@ class TestGenerate(ApplicationLayerTest):
 
     course_ntiid = 'tag:nextthought.com,2011-10:NTI-CourseInfo-Fall2015_CS_1323'
 
+    @unittest.SkipTest
     @WithSharedApplicationMockDS(testapp=True, users=True)
     def test_walk(self):
         with mock_dataserver.mock_db_trans(self.ds, site_name='platform.ou.edu'):
