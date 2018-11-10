@@ -619,7 +619,10 @@ class SendCourseInvitationsView(AbstractAuthenticatedView,
 
         # send invites
         message = values.get('message')
-        entry_ntiid = ICourseCatalogEntry(course).ntiid
+        if isinstance(course, six.string_types):
+            entry_ntiid = course
+        else:
+            entry_ntiid = ICourseCatalogEntry(course).ntiid
         logger.info('Sending emails to %s users (%s)', len(all_users), entry_ntiid)
         sent = self.send_invitations(all_users,
                                      entry_ntiid,
