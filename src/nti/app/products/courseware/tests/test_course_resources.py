@@ -74,6 +74,9 @@ class TestCourseResoures(ApplicationLayerTest):
         course_ntiid = self.course_oid()
         href = '/dataserver2/Objects/%s/resources' % course_ntiid
 
+        self.testapp.post_json(href + '/@@mkdir', {})
+        self.testapp.post_json(href + '/@@mkdir', {})
+
         data = {'name': 'CLC3403'}
         res = self.testapp.post_json(href + '/@@mkdir',
                                      data,
