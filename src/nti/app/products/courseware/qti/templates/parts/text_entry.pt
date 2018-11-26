@@ -1,4 +1,5 @@
-<item ident="i4677ffd989842a95d395e177843a7869" title="Text">
+<item ident="i4677ffd989842a95d395e177843a7869" title="Text"
+      tal:attributes="ident context/item_identifier; title context/title">
         <itemmetadata>
           <qtimetadata>
             <qtimetadatafield>
@@ -11,13 +12,13 @@
             </qtimetadatafield>
             <qtimetadatafield>
               <fieldlabel>assessment_question_identifierref</fieldlabel>
-              <fieldentry>if47b767d37e06559ff801f2d253307ba</fieldentry>
+              <fieldentry tal:content="context/assignment_identifier_ref">if47b767d37e06559ff801f2d253307ba</fieldentry>
             </qtimetadatafield>
           </qtimetadata>
         </itemmetadata>
         <presentation>
           <material>
-            <mattext texttype="text/html">&lt;div&gt;&lt;p&gt;This is a text only question.&lt;/p&gt;&lt;/div&gt;</mattext>
+            <mattext texttype="text/html" tal:content="structure context/mattext">&lt;div&gt;&lt;p&gt;This is a text only question.&lt;/p&gt;&lt;/div&gt;</mattext>
           </material>
         </presentation>
       </item>

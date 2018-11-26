@@ -24,13 +24,15 @@ from nti.app.products.courseware.cartridge.renderer import execute
 from nti.app.products.courseware.cartridge.renderer import get_renderer
 
 from nti.app.products.courseware.qti.interfaces import IQTIAssessment
-from nti.app.products.courseware.qti.interfaces import IQTIItemContent
+from nti.app.products.courseware.qti.interfaces import IQTIItem
 
 from nti.assessment.interfaces import IQAssessment
 from nti.assessment.interfaces import IQEditableEvaluation
 from nti.assessment.interfaces import IQuestionSet
+from nti.common import random
 
 from nti.contentlibrary.interfaces import IPersistentFilesystemContentUnit
+from nti.ntiids.ntiids import find_object_with_ntiid
 
 __docformat__ = "restructuredtext en"
 
@@ -52,8 +54,20 @@ class QTIAssessment(object):
 
     def __init__(self, context):
         self.context = context
-        self.section = None
         self.dependencies = {}
+        self.items = []
+        if not self.is_content_backed:
+            # Parse the questions
+            for question in self.questions:
+                for part in question.parts:
+                    qti_item = IQTIItem(part)
+                    qi_export = qti_item.to_xml()
+                    self.items.append(qi_export)
+                    self.dependencies.update(qti_item.dependencies)
+            # set the content
+            self.content = context.contnet
+        else:
+            self.content = self._parse_content()
 
     @Lazy
     def identifier(self):
@@ -110,10 +124,10 @@ class QTIAssessment(object):
         for pg in page_contents:  # Most likely len(page_contents) == 1
             for tag in pg.recursiveChildGenerator():
                 # Check for resource refs and add to dependencies
-                if hasattr(tag, 'name')  and\
-                   tag.name == 'a'       and\
-                   hasattr(tag, 'attrs') and\
-                   'href' in tag.attrs:
+                if hasattr(tag, 'name') and \
+                        tag.name == 'a' and \
+                        hasattr(tag, 'attrs') and \
+                        'href' in tag.attrs:
                     href = tag.attrs['href']
                     if self._is_internal_resource(href):
                         path_to = os.path.join(self.content_file.bucket.absolute_path, href)
@@ -129,21 +143,58 @@ class QTIAssessment(object):
                         src = os.path.join('dependencies', src)
                         self.dependencies[path_to] = src
                         tag.attrs['src'] = os.path.join('$IMS-CC-FILEBASE$', src)
-                # Extract question objects
-                if hasattr(tag, 'name') and tag.name == 'object':
-                    if hasattr(tag, 'attrs') and tag.attrs.get('type') == 'application/vnd.nextthought.naquestion':
-                        to_be_extracted.append(tag)
+                # Extract marker anchor tags
+                if hasattr(tag, 'name') and \
+                        tag.name == 'a' and \
+                        hasattr(tag, 'attrs') and \
+                        'name' in tag.attrs and \
+                        len(tag.attrs) == 1:
+                    to_be_extracted.append(tag)
             new_content.append(pg)
+
+        for tag in to_be_extracted:
+            tag.extract()
+
+        to_be_extracted = []
+        # Strip objects and handle interlaced text
+        question_objects = new_content.find_all('object',
+                                                {'type': 'application/vnd.nextthought.naquestion'})
+        for i, question_object in enumerate(question_objects):
+            ntiid = question_object.attrs['data']
+            question = find_object_with_ntiid(ntiid)
+            assert question in self.questions  # sanity check
+            for part in question.parts:
+                qti_item = IQTIItem(part)
+                self.items.append(qti_item.to_xml())
+                self.dependencies.update(qti_item.dependencies)
+            nested_text = ''
+            try:
+                next_question_object = question_objects[i + 1]
+                for sibling in question_object.next_siblings:
+                    if sibling == next_question_object:
+                        break
+                    # Skip empty tags
+                    if sibling.name is None and sibling.strip() == '':
+                        continue
+                    nested_text += ' ' + repr(sibling)
+                    to_be_extracted.append(sibling)
+            except IndexError:
+                pass
+            # Ok, there was text in between this object and the next. Create a text entry
+            if nested_text != '':
+                item_identifier = random.generate_random_string()  # Shouldn't need this identifier
+                assignment_identifier_ref = random.generate_random_string()  # same as above
+                renderer = get_renderer('templates/parts/text_entry', '.pt')
+                context = {'item_identifier': item_identifier,
+                           'title': 'Text',
+                           'assignment_identifier_ref': assignment_identifier_ref,
+                           'mattext': nested_text}
+                self.items.append(execute(renderer, {'context': context}))
+            question_object.extract()
+
         for tag in to_be_extracted:
             tag.extract()
         return new_content.prettify()
-
-    @Lazy
-    def content(self):
-        if self.is_content_backed:
-            return self._parse_content()
-        else:
-            return self.context.content
 
     @Lazy
     def questions(self):
@@ -158,22 +209,11 @@ class QTIAssessment(object):
             # Should never happen TODO handle
             return None
 
-    def get_items(self):
-        items = []
-        for question in self.questions:
-            for part in question:
-                qti_item = IQTIItemContent(part)
-                qi_export = qti_item.to_xml(self.section)
-                items.append(qi_export)
-                self.dependencies.update(qti_item.dependencies)
-        return items
-
     def export(self):
-        items = self.get_items()
         renderer = get_renderer('qti_assessment', '.pt')
         context = {'ident': self.identifier,
                    'title': self.context.title,
-                   'items': items}
+                   'items': self.items}
         return execute(renderer, {'context': context})
 
 
