@@ -64,10 +64,6 @@
              provides=".interfaces.IQTIItem"
              for="nti.assessment.interfaces.IQNonGradableFillInTheBlankWithWordBankPart" />
 
-    <adapter factory=".parts.QTITextQuestion"
-             provides=".interfaces.IQTIItem"
-             for="nti.assessment.interfaces.IQuestion" />
-
     <!-- Metadata -->
     <adapter factory=".models.CanvasAssessmentMeta"
              provides=".interfaces.ICanvasMeta"

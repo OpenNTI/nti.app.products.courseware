@@ -37,11 +37,8 @@ class AbstractQTIQuestion(object):
 
     def __init__(self, part):
         self.context = part
-        self._dependencies = defaultdict(list)
+        self.dependencies = {}  # TODO refactor to defaultdict
 
-    @property
-    def dependencies(self):
-        return self._dependencies['dependencies']
     @Lazy
     def question(self):
         return self.context.question
@@ -340,8 +337,4 @@ class QTIFillInMultipleBlanks(AbstractQTIQuestion):
 
 
 class QTIMultipleDropdowns(AbstractQTIQuestion):
-    pass
-
-
-class QTITextQuestion(AbstractQTIQuestion):
     pass
