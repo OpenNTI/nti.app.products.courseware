@@ -109,7 +109,7 @@ class AbstractQTIQuestion(object):
                     src = os.path.join('dependencies', src)
                     self.dependencies[path_to] = src
                     tag.attrs['src'] = os.path.join('$IMS-CC-FILEBASE$', src)
-        return content
+        return content_soup.prettify()
 
 
 class QTIMultipleChoice(AbstractQTIQuestion):
