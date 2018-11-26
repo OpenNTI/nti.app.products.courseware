@@ -1,0 +1,49 @@
+<item ident="ident" title="Multiple Choice"
+	  tal:attributes="ident context/item_identifier; title context/title">
+    <itemmetadata>
+		<qtimetadata>
+            <qtimetadatafield>
+              <fieldlabel>question_type</fieldlabel>
+              <fieldentry>multiple_choice_question</fieldentry>
+            </qtimetadatafield>
+            <qtimetadatafield>
+              <fieldlabel>points_possible</fieldlabel>
+              <fieldentry>1.0</fieldentry>
+            </qtimetadatafield>
+            <qtimetadatafield>
+              <fieldlabel>assessment_question_identifierref</fieldlabel>
+              <fieldentry tal:content="context/assignment_identifier_ref">ie9c2ca5e595155c75a2d9144f1914dc1</fieldentry>
+            </qtimetadatafield>
+        </qtimetadata>
+	</itemmetadata>
+	<presentation>
+		<material>
+			<mattext texttype="text/html" tal:content="structure context/mattext">&lt;html&gt;/html&gt;</mattext>
+		</material>
+        <response_lid ident="response1" rcardinality="Single">
+			<render_choice>
+				<response_label ident="74604"
+								tal:repeat="item context/labels"
+								tal:attributes="ident item/ident">
+					<material>
+						<mattext texttype="text/html" tal:content="structure python:item.mattext">&lt;html&gt;/html&gt;</mattext>
+					</material>
+				</response_label>
+			</render_choice>
+		</response_lid>
+	</presentation>
+	<resprocessing>
+		<outcomes>
+			<decvar maxvalue="100" minvalue="0" varname="SCORE" vartype="Decimal"/>
+		</outcomes>
+		<respcondition continue="No">
+			<conditionvar>
+				<varequal respident="response1"
+						  tal:condition="exists:context/respident"
+						  tal:content="context/respident">74604</varequal>
+				<other tal:condition="not:exists:context/respident" />
+			</conditionvar>
+			<setvar action="Set" varname="SCORE">100</setvar>
+		</respcondition>
+	</resprocessing>
+</item>

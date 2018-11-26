@@ -18,19 +18,11 @@ class IQTIAssessment(interface.Interface):
     """
 
 
-class IQTIItem(IQTIAssessment):
+class IQTIItem(interface.Interface):
     """
     One unit of QTI Assessment
     """
 
 
-class IQTIChoice(IQTIItem):
-    """
-    A QTI item that is some form of multiple choice
-    """
-
-
-class IQTICompositeItem(IQTIAssessment):
-    """
-    A QTI Assessment composed of n number QTI Items
-    """
+class ICanvasMeta(interface.Interface):
+    pass
