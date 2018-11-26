@@ -1,0 +1,52 @@
+<item ident="i9f76a79f97e58f2030d18da8569d5510" title="Multiple Answers"
+      tal:attributes="ident context/item_identifier; title context/title">
+        <itemmetadata>
+          <qtimetadata>
+            <qtimetadatafield>
+              <fieldlabel>question_type</fieldlabel>
+              <fieldentry>multiple_answers_question</fieldentry>
+            </qtimetadatafield>
+            <qtimetadatafield>
+              <fieldlabel>points_possible</fieldlabel>
+              <fieldentry>1.0</fieldentry>
+            </qtimetadatafield>
+            <qtimetadatafield>
+              <fieldlabel>assessment_question_identifierref</fieldlabel>
+              <fieldentry tal:content="context/assignment_identifier_ref">iac148128440abca3fc259e3f9c418009</fieldentry>
+            </qtimetadatafield>
+          </qtimetadata>
+        </itemmetadata>
+        <presentation>
+          <material>
+            <mattext texttype="text/html" tal:content="structure context/mattext">&lt;div&gt;&lt;p&gt;This is a multiple answer question.&lt;/p&gt;&lt;/div&gt;</mattext>
+          </material>
+          <response_lid ident="response1" rcardinality="Multiple">
+            <render_choice>
+              <response_label tal:repeat="choice context/choices"
+                              tal:attributes="ident choice/ident" ident="1254">
+                <material>
+                  <mattext texttype="text/html" tal:content="structure choice/mattext">Answer0</mattext>
+                </material>
+              </response_label>
+            </render_choice>
+          </response_lid>
+        </presentation>
+        <resprocessing>
+          <outcomes>
+            <decvar maxvalue="100" minvalue="0" varname="SCORE" vartype="Decimal"/>
+          </outcomes>
+          <respcondition continue="No">
+            <conditionvar>
+              <and tal:condition="exists:context/answers">
+                <varequal respident="response1" tal:repeat="answer context/answers/true"
+                                                tal:content="answer">1254</varequal>
+                <not tal:repeat="answer context/answers/false">
+                  <varequal respident="response1" tal:content="answer">5443</varequal>
+                </not>
+              </and>
+              <other tal:condition="not:exists:context/answers" />
+            </conditionvar>
+            <setvar action="Set" varname="SCORE">100</setvar>
+          </respcondition>
+        </resprocessing>
+      </item>

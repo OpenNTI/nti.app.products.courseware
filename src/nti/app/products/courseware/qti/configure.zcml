@@ -7,4 +7,70 @@
 	<include package="zope.component" file="meta.zcml" />
 	<include package="zope.component" />
 
+    <adapter factory=".models.QTIAssessment"
+             provides=".interfaces.IQTIAssessment"
+             for="nti.assessment.interfaces.IQAssessment" />
+
+    <adapter factory=".models.QTIAssessment"
+             provides=".interfaces.IQTIAssessment"
+             for="nti.assessment.interfaces.IQuestionSet" />
+
+    <!-- Question Parts -->
+    <adapter factory=".parts.QTIMultipleChoice"
+             provides=".interfaces.IQTIItem"
+             for="nti.assessment.interfaces.IQNonGradableMultipleChoicePart" />
+
+    <adapter factory=".parts.QTIMultipleAnswers"
+             provides=".interfaces.IQTIItem"
+             for="nti.assessment.interfaces.IQNonGradableMultipleChoiceMultipleAnswerPart" />
+
+    <adapter factory=".parts.QTIMath"
+             provides=".interfaces.IQTIItem"
+             for="nti.assessment.interfaces.IQNonGradableMathPart" />
+
+    <adapter factory=".parts.QTIFillInTheBlank"
+             provides=".interfaces.IQTIItem"
+             for="nti.assessment.interfaces.IQNonGradableFreeResponsePart" />
+
+    <adapter factory=".parts.QTIMatching"
+             provides=".interfaces.IQTIItem"
+             for="nti.assessment.interfaces.IQNonGradableMatchingPart" />
+
+    <adapter factory=".parts.QTIMatching"
+             provides=".interfaces.IQTIItem"
+             for="nti.assessment.interfaces.IQNonGradableConnectingPart" />
+
+    <adapter factory=".parts.QTIMatching"
+             provides=".interfaces.IQTIItem"
+             for="nti.assessment.interfaces.IQNonGradableOrderingPart" />
+
+    <adapter factory=".parts.QTIFileUpload"
+             provides=".interfaces.IQTIItem"
+             for="nti.assessment.interfaces.IQNonGradableFilePart" />
+
+    <adapter factory=".parts.QTIEssay"
+             provides=".interfaces.IQTIItem"
+             for="nti.assessment.interfaces.IQNonGradableModeledContentPart" />
+
+    <adapter factory=".parts.QTIFillInMultipleBlanks"
+             provides=".interfaces.IQTIItem"
+             for="nti.assessment.interfaces.IQNonGradableFillInTheBlankPart" />
+
+    <adapter factory=".parts.QTIFillInMultipleBlanks"
+             provides=".interfaces.IQTIItem"
+             for="nti.assessment.interfaces.IQNonGradableFillInTheBlankShortAnswerPart" />
+
+    <adapter factory=".parts.QTIMultipleDropdowns"
+             provides=".interfaces.IQTIItem"
+             for="nti.assessment.interfaces.IQNonGradableFillInTheBlankWithWordBankPart" />
+
+    <adapter factory=".parts.QTITextQuestion"
+             provides=".interfaces.IQTIItem"
+             for="nti.assessment.interfaces.IQuestion" />
+
+    <!-- Metadata -->
+    <adapter factory=".models.CanvasAssessmentMeta"
+             provides=".interfaces.ICanvasMeta"
+             for=".interfaces.IQTIAssessment" />
+
 </configure>

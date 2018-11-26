@@ -1,0 +1,103 @@
+<item ident="i1251b1cadc100efe855b236d89261e9d" title="Formula Question">
+        <itemmetadata>
+          <qtimetadata>
+            <qtimetadatafield>
+              <fieldlabel>question_type</fieldlabel>
+              <fieldentry>calculated_question</fieldentry>
+            </qtimetadatafield>
+            <qtimetadatafield>
+              <fieldlabel>points_possible</fieldlabel>
+              <fieldentry>1.0</fieldentry>
+            </qtimetadatafield>
+            <qtimetadatafield>
+              <fieldlabel>assessment_question_identifierref</fieldlabel>
+              <fieldentry>i6fa30d2a651364276522f6ad776ca563</fieldentry>
+            </qtimetadatafield>
+          </qtimetadata>
+        </itemmetadata>
+        <presentation>
+          <material>
+            <mattext texttype="text/html">&lt;div&gt;&lt;p&gt;What is 5 plus [y]?&lt;/p&gt;&lt;/div&gt;</mattext>
+          </material>
+          <response_str ident="response1" rcardinality="Single">
+            <render_fib fibtype="Decimal">
+              <response_label ident="answer1"/>
+            </render_fib>
+          </response_str>
+        </presentation>
+        <resprocessing>
+          <outcomes>
+            <decvar maxvalue="100" minvalue="0" varname="SCORE" vartype="Decimal"/>
+          </outcomes>
+          <respcondition title="correct">
+            <conditionvar>
+              <other/>
+            </conditionvar>
+            <setvar varname="SCORE" action="Set">100</setvar>
+          </respcondition>
+          <respcondition title="incorrect">
+            <conditionvar>
+              <not>
+                <other/>
+              </not>
+            </conditionvar>
+            <setvar varname="SCORE" action="Set">0</setvar>
+          </respcondition>
+        </resprocessing>
+        <itemproc_extension>
+          <calculated>
+            <answer_tolerance>0</answer_tolerance>
+            <formulas decimal_places="0">
+              <formula>y+5</formula>
+            </formulas>
+            <vars>
+              <var name="y" scale="0">
+                <min>1.0</min>
+                <max>10.0</max>
+              </var>
+            </vars>
+            <var_sets>
+              <var_set ident="8417">
+                <var name="y">8</var>
+                <answer>13.0</answer>
+              </var_set>
+              <var_set ident="2311">
+                <var name="y">3</var>
+                <answer>8.0</answer>
+              </var_set>
+              <var_set ident="4396">
+                <var name="y">1</var>
+                <answer>6.0</answer>
+              </var_set>
+              <var_set ident="618">
+                <var name="y">9</var>
+                <answer>14.0</answer>
+              </var_set>
+              <var_set ident="6375">
+                <var name="y">7</var>
+                <answer>12.0</answer>
+              </var_set>
+              <var_set ident="9482">
+                <var name="y">8</var>
+                <answer>13.0</answer>
+              </var_set>
+              <var_set ident="954">
+                <var name="y">3</var>
+                <answer>8.0</answer>
+              </var_set>
+              <var_set ident="687">
+                <var name="y">1</var>
+                <answer>6.0</answer>
+              </var_set>
+              <var_set ident="8860">
+                <var name="y">8</var>
+                <answer>13.0</answer>
+              </var_set>
+              <var_set ident="1035">
+                <var name="y">6</var>
+                <answer>11.0</answer>
+              </var_set>
+            </var_sets>
+          </calculated>
+        </itemproc_extension>
+      </item>

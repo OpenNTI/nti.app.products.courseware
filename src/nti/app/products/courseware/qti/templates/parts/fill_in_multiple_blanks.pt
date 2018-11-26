@@ -1,0 +1,48 @@
+<item ident="if3594ef9d6784ec18ac564ec51adb989" title="Fill In Multiple Blanks"
+      tal:attributes="ident context/item_identifier;
+                      title context/title">
+        <itemmetadata>
+          <qtimetadata>
+            <qtimetadatafield>
+              <fieldlabel>question_type</fieldlabel>
+              <fieldentry>fill_in_multiple_blanks_question</fieldentry>
+            </qtimetadatafield>
+            <qtimetadatafield>
+              <fieldlabel>points_possible</fieldlabel>
+              <fieldentry>1.0</fieldentry>
+            </qtimetadatafield>
+            <qtimetadatafield>
+              <fieldlabel tal:content="context/assignment_identifier_ref">assessment_question_identifierref</fieldlabel>
+              <fieldentry>i4f60f24849145a58ee2765a0a1de39da</fieldentry>
+            </qtimetadatafield>
+          </qtimetadata>
+        </itemmetadata>
+        <presentation>
+          <material>
+            <mattext texttype="text/html" tal:content="structure context/mattext">&lt;div&gt;&lt;p&gt;This is a [blank1] in multiple [blank2] question.&lt;/p&gt;&lt;/div&gt;</mattext>
+          </material>
+          <response_lid tal:repeat="answer context/answers" tal:attributes="ident answer/blank_ident" ident="response_blank1">
+            <material>
+              <mattext tal:content="answer/mattext">blank1</mattext>
+            </material>
+            <render_choice>
+              <response_label ident="305" tal:attributes="ident answer/answer_ident">
+                <material>
+                  <mattext texttype="text/html" tal:content="answer/answer">fill</mattext>
+                </material>
+              </response_label>
+            </render_choice>
+          </response_lid>
+        </presentation>
+        <resprocessing>
+          <outcomes>
+            <decvar maxvalue="100" minvalue="0" varname="SCORE" vartype="Decimal"/>
+          </outcomes>
+          <respcondition tal:repeat="answer context/answers">
+            <conditionvar>
+              <varequal tal:attributes="respident answer/blank_ident" tal:content="answer/answer_ident" respident="response_blank1">305</varequal>
+            </conditionvar>
+            <setvar varname="SCORE" action="Add" tal:content="answer/value">50.00</setvar>
+          </respcondition>
+        </resprocessing>
+</item>
