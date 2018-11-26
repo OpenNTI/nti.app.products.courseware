@@ -123,26 +123,6 @@ class QTIAssessment(object):
         to_be_extracted = []  # Because we recurse the structure we need to delay extraction until we are finished
         for pg in page_contents:  # Most likely len(page_contents) == 1
             for tag in pg.recursiveChildGenerator():
-                # Check for resource refs and add to dependencies
-                if hasattr(tag, 'name') and \
-                        tag.name == 'a' and \
-                        hasattr(tag, 'attrs') and \
-                        'href' in tag.attrs:
-                    href = tag.attrs['href']
-                    if self._is_internal_resource(href):
-                        path_to = os.path.join(self.content_file.bucket.absolute_path, href)
-                        href = os.path.join('dependencies', href)
-                        self.dependencies[path_to] = href
-                        tag.attrs['href'] = os.path.join('$IMS-CC-FILEBASE$', href)
-                # Grab images
-                if hasattr(tag, 'name') and tag.name == 'img' and \
-                        hasattr(tag, 'attrs') and 'src' in tag.attrs:
-                    src = tag.attrs['src']
-                    if self._is_internal_resource(src):
-                        path_to = os.path.join(self.content_file.bucket.absolute_path, src)
-                        src = os.path.join('dependencies', src)
-                        self.dependencies[path_to] = src
-                        tag.attrs['src'] = os.path.join('$IMS-CC-FILEBASE$', src)
                 # Extract marker anchor tags
                 if hasattr(tag, 'name') and \
                         tag.name == 'a' and \
@@ -154,8 +134,8 @@ class QTIAssessment(object):
 
         for tag in to_be_extracted:
             tag.extract()
-
         to_be_extracted = []
+
         # Strip objects and handle interlaced text
         question_objects = new_content.find_all('object',
                                                 {'type': 'application/vnd.nextthought.naquestion'})
@@ -194,6 +174,30 @@ class QTIAssessment(object):
 
         for tag in to_be_extracted:
             tag.extract()
+
+        # Ok, now that everything is clean, parse what will be the description for images and other linked resources
+        # Check for resource refs and add to dependencies
+        for tag in new_content.recursiveChildGenerator():
+            if hasattr(tag, 'name') and \
+                    tag.name == 'a' and \
+                    hasattr(tag, 'attrs') and \
+                    'href' in tag.attrs:
+                href = tag.attrs['href']
+                if self._is_internal_resource(href):
+                    path_to = os.path.join(self.content_file.bucket.absolute_path, href)
+                    href = os.path.join('dependencies', href)
+                    self.dependencies[path_to] = href
+                    tag.attrs['href'] = os.path.join('$IMS-CC-FILEBASE$', href)
+            # Grab images
+            if hasattr(tag, 'name') and tag.name == 'img' and \
+                    hasattr(tag, 'attrs') and 'src' in tag.attrs:
+                src = tag.attrs['src']
+                if self._is_internal_resource(src):
+                    path_to = os.path.join(self.content_file.bucket.absolute_path, src)
+                    src = os.path.join('dependencies', src)
+                    self.dependencies[path_to] = src
+                    tag.attrs['src'] = os.path.join('$IMS-CC-FILEBASE$', src)
+
         return new_content.prettify()
 
     @Lazy
