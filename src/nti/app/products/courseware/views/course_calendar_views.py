@@ -12,12 +12,15 @@ logger = __import__('logging').getLogger(__name__)
 
 from pyramid.view import view_config
 
+from zope.cachedescriptors.property import Lazy
 
 from nti.app.contenttypes.calendar.views import CalendarEventCreationView
 from nti.app.contenttypes.calendar.views import CalendarEventDeletionView
 
 from nti.app.products.courseware.calendar.interfaces import ICourseCalendar
 from nti.app.products.courseware.calendar.interfaces import ICourseCalendarEvent
+
+from nti.app.products.courseware.resources.utils import get_course_filer
 
 from nti.dataserver import authorization as nauth
 
@@ -28,7 +31,10 @@ from nti.dataserver import authorization as nauth
              context=ICourseCalendar,
              permission=nauth.ACT_UPDATE)
 class CourseCalendarEventCreationView(CalendarEventCreationView):
-    pass
+
+    @Lazy
+    def filer(self):
+        return get_course_filer(self.context.__parent__, self.remoteUser)
 
 
 @view_config(route_name='objects.generic.traversal',
