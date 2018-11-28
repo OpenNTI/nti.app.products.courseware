@@ -8,6 +8,8 @@ from __future__ import division
 from __future__ import print_function
 from __future__ import absolute_import
 
+import itertools
+
 from pyramid.interfaces import IRequest
 
 from ZODB.interfaces import IConnection
@@ -28,6 +30,7 @@ from nti.contenttypes.calendar.interfaces import ICalendarEventProvider
 from nti.contenttypes.courses.interfaces import ICourseInstance
 
 from nti.contenttypes.courses.utils import get_enrollments
+from nti.contenttypes.courses.utils import get_instructed_courses
 
 from nti.dataserver.interfaces import IUser
 
@@ -70,7 +73,8 @@ class CourseCalendarEventProvider(object):
 
     def iter_events(self):
         res = []
-        for enrollment in get_enrollments(self.user) or ():
+        for enrollment in itertools.chain(get_enrollments(self.user),
+                                          get_instructed_courses(self.user)) or ():
             course = ICourseInstance(enrollment, None)
             calendar = ICourseCalendar(course, None)
             if calendar is not None:
