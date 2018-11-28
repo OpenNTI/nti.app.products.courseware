@@ -10,12 +10,11 @@ from __future__ import absolute_import
 from hamcrest import is_
 from hamcrest import not_none
 from hamcrest import has_length
+from hamcrest import has_entry
 from hamcrest import has_entries
-from hamcrest import has_properties
 from hamcrest import assert_that
+from hamcrest import has_properties
 from hamcrest import same_instance
-
-from zope import component
 
 from zope.component.hooks import getSite
 
@@ -85,7 +84,9 @@ class TestCourseCalendarViews(ApplicationLayerTest):
                                          'description': None,
                                          'MimeType': 'application/vnd.nextthought.courseware.coursecalendar'}))
 
-        self.testapp.get(calendar_url, status=200, extra_environ=site_admin_env)
+        res = self.testapp.get(calendar_url, status=200, extra_environ=site_admin_env)
+        res = res.json_body
+        assert_that(res, has_entry('CatalogEntry', not_none()))
         self.testapp.get(calendar_url, status=200, extra_environ=editor_env)
         self.testapp.get(calendar_url, status=200, extra_environ=student_env)
 

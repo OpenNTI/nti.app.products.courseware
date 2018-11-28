@@ -9,13 +9,6 @@ from __future__ import absolute_import
 
 import fudge
 
-from hamcrest import is_
-from hamcrest import has_length
-from hamcrest import assert_that
-
-from zope import component
-from zope import interface
-
 from nti.app.products.courseware.calendar.decorators import _CourseCalendarLinkDecorator
 from nti.app.products.courseware.calendar.decorators import _CourseCalendarEventCreationLinkDecorator
 
@@ -47,8 +40,7 @@ class TestDecorators(ApplicationLayerTest):
         course = ContentCourseInstance()
         mock_dataserver.current_transaction.add(course)
         external = self._decorate(_CourseCalendarLinkDecorator, course)
-        links = [x.rel for x in external['Links'] if x.rel == 'CourseCalendar']
-        assert_that(links, has_length(1))
+        self.require_link_href_with_rel(external, 'CourseCalendar')
 
     @WithMockDSTrans
     @fudge.patch('nti.app.products.courseware.calendar.decorators.has_permission')
@@ -57,5 +49,4 @@ class TestDecorators(ApplicationLayerTest):
         course = ContentCourseInstance()
         mock_dataserver.current_transaction.add(course)
         external = self._decorate(_CourseCalendarEventCreationLinkDecorator, ICourseCalendar(course))
-        links = [x.rel for x in external['Links'] if x.rel == 'create_calendar_event']
-        assert_that(links, has_length(1))
+        self.require_link_href_with_rel(external, 'create_calendar_event')

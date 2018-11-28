@@ -34,7 +34,6 @@ from nti.app.products.courseware.calendar.interfaces import ICourseCalendar
 
 from nti.app.products.courseware.calendar.adapters import CourseCalendarEventProvider
 
-from nti.app.products.courseware.calendar.model import CourseCalendar
 from nti.app.products.courseware.calendar.model import CourseCalendarEvent
 
 from nti.app.products.courseware.tests import PersistentInstructedCourseApplicationTestLayer
@@ -69,7 +68,7 @@ class TestAdapters(ApplicationLayerTest):
 
         assert_that(calendar, validly_provides(ICourseCalendar))
         assert_that(calendar, verifiably_provides(ICourseCalendar))
-        
+
         event = CourseCalendarEvent(title=u'gogo')
         calendar.store_event(event)
 

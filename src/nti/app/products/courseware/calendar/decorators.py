@@ -21,12 +21,16 @@ from nti.appserver._util import link_belongs_to_user as link_belongs_to_context
 from nti.appserver.pyramid_authorization import has_permission
 
 from nti.contenttypes.courses.interfaces import ICourseInstance
+from nti.contenttypes.courses.interfaces import ICourseCatalogEntry
 
 from nti.dataserver.authorization import ACT_READ
 from nti.dataserver.authorization import ACT_UPDATE
 
-from nti.externalization.interfaces import IExternalObjectDecorator
 from nti.externalization.interfaces import StandardExternalFields
+from nti.externalization.interfaces import IExternalObjectDecorator
+from nti.externalization.interfaces import IExternalMappingDecorator
+
+from nti.externalization.singleton import Singleton
 
 from nti.links.links import Link
 
@@ -46,6 +50,15 @@ class _CourseCalendarLinkDecorator(AbstractAuthenticatedRequestAwareDecorator):
                          rel='CourseCalendar')
             link_belongs_to_context(_link, context)
             _links.append(_link)
+
+
+@component.adapter(ICourseCalendar)
+@interface.implementer(IExternalMappingDecorator)
+class _CourseCalendarDecorator(Singleton):
+
+    def decorateExternalMapping(self, context, result):
+        course = ICourseInstance(context, None)
+        result['CatalogEntry'] = ICourseCatalogEntry(course, None)
 
 
 @component.adapter(ICourseCalendar)
