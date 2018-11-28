@@ -25,6 +25,10 @@
                 for="nti.contenttypes.courses.interfaces.ICourseInstance pyramid.interfaces.IRequest"
                 provides="nti.externalization.interfaces.IExternalObjectDecorator" />
 
+    <subscriber factory=".decorators._CourseCalendarEventCreationLinkDecorator"
+                for="nti.app.products.courseware.calendar.interfaces.ICourseCalendar pyramid.interfaces.IRequest"
+                provides="nti.externalization.interfaces.IExternalObjectDecorator" />
+
     <subscriber factory=".adapters.CourseCalendarEventProvider"
                 provides="nti.contenttypes.calendar.interfaces.ICalendarEventProvider"
                 for="nti.dataserver.interfaces.IUser" />
