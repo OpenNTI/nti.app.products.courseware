@@ -23,6 +23,7 @@ from nti.appserver.pyramid_authorization import has_permission
 from nti.contenttypes.courses.interfaces import ICourseInstance
 
 from nti.dataserver.authorization import ACT_READ
+from nti.dataserver.authorization import ACT_UPDATE
 
 from nti.externalization.interfaces import IExternalObjectDecorator
 from nti.externalization.interfaces import StandardExternalFields
@@ -45,3 +46,19 @@ class _CourseCalendarLinkDecorator(AbstractAuthenticatedRequestAwareDecorator):
                          rel='CourseCalendar')
             link_belongs_to_context(_link, context)
             _links.append(_link)
+
+
+@component.adapter(ICourseCalendar)
+@interface.implementer(IExternalObjectDecorator)
+class _CourseCalendarEventCreationLinkDecorator(AbstractAuthenticatedRequestAwareDecorator):
+
+    def _predicate(self, context, external):
+        return has_permission(ACT_UPDATE, context, self.request)
+
+    def _do_decorate_external(self, context, external):
+        _links = external.setdefault(StandardExternalFields.LINKS, [])
+        _link = Link(context,
+                     rel='create_calendar_event',
+                     method='POST')
+        link_belongs_to_context(_link, context)
+        _links.append(_link)
