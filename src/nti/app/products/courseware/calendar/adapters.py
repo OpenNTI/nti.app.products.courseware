@@ -34,6 +34,8 @@ from nti.contenttypes.courses.utils import get_instructed_courses
 
 from nti.dataserver.interfaces import IUser
 
+from nti.traversal.traversal import find_interface
+
 logger = __import__('logging').getLogger(__name__)
 
 
@@ -80,3 +82,10 @@ class CourseCalendarEventProvider(object):
             if calendar is not None:
                 res.extend([x for x in calendar.values()])
         return res
+
+
+@component.adapter(ICourseCalendar)
+@interface.implementer(ICourseInstance)
+def calendar_to_course(calendar):
+    return find_interface(calendar, ICourseInstance, strict=False)
+
