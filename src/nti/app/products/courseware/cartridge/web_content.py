@@ -7,6 +7,7 @@ from __future__ import division
 
 import os
 import shutil
+
 from collections import defaultdict
 
 from zope import component
@@ -15,11 +16,15 @@ from zope import interface
 from zope.cachedescriptors.property import Lazy
 
 from zope.intid import IIntIds
+
 from zope.schema.fieldproperty import createFieldProperties
 
 from nti.app.products.courseware.cartridge.exceptions import CommonCartridgeExportException
+
 from nti.app.products.courseware.cartridge.interfaces import IIMSWebContentUnit
+
 from nti.contentlibrary.interfaces import IContentPackage
+
 from nti.traversal.traversal import find_interface
 
 __docformat__ = "restructuredtext en"

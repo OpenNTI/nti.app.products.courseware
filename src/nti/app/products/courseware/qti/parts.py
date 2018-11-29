@@ -5,14 +5,13 @@ from __future__ import print_function
 from __future__ import absolute_import
 from __future__ import division
 
-import os
-
 from collections import defaultdict
 from collections import namedtuple
 
 from bs4 import BeautifulSoup
 
-from zope import component, interface
+from zope import component
+from zope import interface
 
 from zope.cachedescriptors.property import Lazy
 
@@ -22,6 +21,7 @@ from nti.app.products.courseware.cartridge.renderer import execute
 from nti.app.products.courseware.cartridge.renderer import get_renderer
 
 from nti.app.products.courseware.qti.interfaces import IQTIItem
+
 from nti.app.products.courseware.qti.utils import update_external_resources
 
 from nti.common._compat import text_
