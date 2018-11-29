@@ -26,6 +26,7 @@ from nti.app.products.courseware.calendar.interfaces import ICourseCalendarEvent
 
 from nti.app.products.courseware.calendar.model import CourseCalendar
 
+from nti.contenttypes.calendar.interfaces import ICalendarProvider
 from nti.contenttypes.calendar.interfaces import ICalendarEventProvider
 
 from nti.contenttypes.courses.interfaces import ICourseInstance
@@ -66,6 +67,24 @@ def _CourseCalendarFactory(course, create=True):
 @component.adapter(ICourseInstance, IRequest)
 def _CourseCalendarPathAdapter(context, unused_request):
     return _CourseCalendarFactory(context)
+
+
+@component.adapter(IUser)
+@interface.implementer(ICalendarProvider)
+class CourseCalendarProvider(object):
+
+    def __init__(self, user):
+        self.user = user
+
+    def iter_calendars(self):
+        res = []
+        for enrollment in itertools.chain(get_enrollments(self.user),
+                                          get_instructed_courses(self.user)) or ():
+            course = ICourseInstance(enrollment, None)
+            calendar = ICourseCalendar(course, None)
+            if calendar is not None:
+                res.append(calendar)
+        return res
 
 
 @component.adapter(IUser)

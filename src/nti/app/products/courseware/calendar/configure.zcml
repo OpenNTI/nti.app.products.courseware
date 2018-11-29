@@ -42,6 +42,10 @@
                      pyramid.interfaces.IRequest"
                 provides="nti.externalization.interfaces.IExternalObjectDecorator" />
 
+    <subscriber factory=".adapters.CourseCalendarProvider"
+                provides="nti.contenttypes.calendar.interfaces.ICalendarProvider"
+                for="nti.dataserver.interfaces.IUser" />
+
     <subscriber factory=".adapters.CourseCalendarEventProvider"
                 provides="nti.contenttypes.calendar.interfaces.ICalendarEventProvider"
                 for="nti.dataserver.interfaces.IUser" />
