@@ -5,8 +5,6 @@ from __future__ import print_function
 from __future__ import absolute_import
 from __future__ import division
 
-import os
-
 from bs4 import BeautifulSoup
 
 from collections import defaultdict
@@ -37,12 +35,14 @@ from nti.app.assessment.common.utils import get_available_for_submission_ending
 
 from nti.app.products.courseware.cartridge.renderer import execute
 from nti.app.products.courseware.cartridge.renderer import get_renderer
+
 from nti.app.products.courseware.cartridge.web_content import IMSWebContent
 
 from nti.app.products.courseware.qti.interfaces import ICanvasQuizMeta
 from nti.app.products.courseware.qti.interfaces import ICanvasAssignmentSettings
 from nti.app.products.courseware.qti.interfaces import IQTIAssessment
 from nti.app.products.courseware.qti.interfaces import IQTIItem
+
 from nti.app.products.courseware.qti.utils import update_external_resources
 
 from nti.assessment.interfaces import IQAssessment
