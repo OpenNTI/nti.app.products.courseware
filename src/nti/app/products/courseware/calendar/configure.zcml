@@ -19,6 +19,10 @@
     <adapter factory=".adapters.calendarevent_to_course" />
     <adapter factory=".adapters.calendarevent_to_calendar" />
 
+    <adapter factory=".adapters._course_calendar_event_to_ntiid"
+             provides="nti.contenttypes.calendar.interfaces.ICalendarContextNTIIDAdapter"
+             for=".interfaces.ICourseCalendarEvent" />
+
     <adapter factory=".adapters._CourseCalendarFactory"
              provides=".interfaces.ICourseCalendar"
              for="nti.contenttypes.courses.interfaces.ICourseInstance" />

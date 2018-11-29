@@ -27,8 +27,10 @@ from nti.app.products.courseware.calendar.interfaces import ICourseCalendarEvent
 from nti.app.products.courseware.calendar.model import CourseCalendar
 
 from nti.contenttypes.calendar.interfaces import ICalendarEventProvider
+from nti.contenttypes.calendar.interfaces import ICalendarContextNTIIDAdapter
 
 from nti.contenttypes.courses.interfaces import ICourseInstance
+from nti.contenttypes.courses.interfaces import ICourseCatalogEntry
 
 from nti.contenttypes.courses.utils import get_enrollments
 from nti.contenttypes.courses.utils import get_instructed_courses
@@ -102,3 +104,23 @@ def calendarevent_to_course(event):
 def calendarevent_to_calendar(event):
     return find_interface(event, ICourseCalendar, strict=False)
 
+
+# calendar event catalog
+
+class _NTIID(object):
+
+    __slots__ = (b'contextNTIID',)
+
+    def __init__(self, ntiid, default=None):
+        self.contextNTIID = ntiid
+
+    def __reduce__(self):
+        raise TypeError()
+
+
+@interface.implementer(ICalendarContextNTIIDAdapter)
+@component.adapter(ICourseCalendarEvent)
+def _course_calendar_event_to_ntiid(context):
+    course = ICourseInstance(context, None)
+    entry = ICourseCatalogEntry(course, None)
+    return _NTIID(entry.ntiid) if entry is not None else None
