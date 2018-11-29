@@ -40,4 +40,8 @@
              provides=".interfaces.IIMSResource"
              for="nti.contenttypes.presentation.interfaces.INTIVideoRoll" />
 
+    <adapter factory=".assessments.adapt_to_common_cartridge_assessment"
+             provides=".interfaces.ICommonCartridgeAssessment"
+             for="nti.assessment.interfaces.IQAssessment" />
+
 </configure>

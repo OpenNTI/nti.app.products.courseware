@@ -101,6 +101,12 @@ class IIMSAssociatedContent(IIMSResource):
                     readonly=True)
 
 
+class ICommonCartridgeAssessment(IIMSResource):
+    """
+    This may be a QTI assignment or a Canvas specific implementation of assignments.
+    """
+
+
 class ICartridgeWebContent(interface.Interface):
     """
     Marker interface for cartridge web content
