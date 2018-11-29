@@ -12,8 +12,6 @@ from collections import namedtuple
 
 from bs4 import BeautifulSoup
 
-from six.moves import urllib_parse
-
 from zope import component, interface
 
 from zope.cachedescriptors.property import Lazy
@@ -24,6 +22,7 @@ from nti.app.products.courseware.cartridge.renderer import execute
 from nti.app.products.courseware.cartridge.renderer import get_renderer
 
 from nti.app.products.courseware.qti.interfaces import IQTIItem
+from nti.app.products.courseware.qti.utils import update_external_resources
 
 from nti.common._compat import text_
 
@@ -37,7 +36,7 @@ class AbstractQTIQuestion(object):
 
     def __init__(self, part):
         self.context = part
-        self.dependencies = {}  # TODO refactor to defaultdict
+        self.dependencies = []
 
     @Lazy
     def question(self):
@@ -65,9 +64,6 @@ class AbstractQTIQuestion(object):
                             'assignment_identifier_ref': self.assignment_identifier_ref}
         return template_context
 
-    def _is_internal_resource(self, href):
-        return not bool(urllib_parse.urlparse(href).scheme)
-
     @Lazy
     def content(self):
         """
@@ -86,30 +82,13 @@ class AbstractQTIQuestion(object):
             for tag in content_soup.recursiveChildGenerator():
                 if hasattr(tag, 'name') and tag.name == 'a':
                     content = self.context.content
-                    content_soup = BeautifulSoup(content, features='html.parser')
                     break
         elif len(content_soup.find_all()) == 0:
             # If its empty also use the part content
             content = self.context.content
-            content_soup = BeautifulSoup(content, features='html.parser')
-        for tag in content_soup.recursiveChildGenerator():
-            if hasattr(tag, 'name') and tag.name == 'a' and\
-               hasattr(tag, 'attrs') and 'href' in tag.attrs:
-                href = tag.attrs['href']
-                if self._is_internal_resource(href):
-                    path_to = os.path.join(self.question.__parent__.key.bucket.absolute_path, href)
-                    href = os.path.join('dependencies', href)
-                    self.dependencies[path_to] = href
-                    tag.attrs['href'] = os.path.join('$IMS-CC-FILEBASE$', href)
-            if hasattr(tag, 'name') and tag.name == 'img' and \
-               hasattr(tag, 'attrs') and 'src' in tag.attrs:
-                src = tag.attrs['src']
-                if self._is_internal_resource(src):
-                    path_to = os.path.join(self.question.__parent__.key.bucket.absolute_path, src)
-                    src = os.path.join('dependencies', src)
-                    self.dependencies[path_to] = src
-                    tag.attrs['src'] = os.path.join('$IMS-CC-FILEBASE$', src)
-        return content_soup.prettify()
+        result, dependencies = update_external_resources(content)
+        self.dependencies.extend(dependencies)
+        return result
 
 
 class QTIMultipleChoice(AbstractQTIQuestion):
@@ -119,9 +98,12 @@ class QTIMultipleChoice(AbstractQTIQuestion):
 
     @property
     def labels(self):
-        return [
-            self.Label(text_(unicode(i)), x) for i, x in enumerate(self.context.choices)
-        ]
+        labels = []
+        for i, x in enumerate(self.context.choices):
+            content, dependencies = update_external_resources(x)
+            self.dependencies.extend(dependencies)
+            labels.append(self.Label(text_(unicode(i)), content))
+        return labels
 
     @property
     def respident(self):
@@ -148,10 +130,12 @@ class QTIMultipleAnswers(AbstractQTIQuestion):
 
     @property
     def choices(self):
-        # TODO may need sanitized
-        return [
-            self.Choice(text_(unicode(i)), x) for i, x in enumerate(self.context.choices)
-        ]
+        choices = []
+        for i, x in enumerate(self.context.choices):
+            content, dependencies = update_external_resources(x)
+            self.dependencies.extend(dependencies)
+            choices.append(self.Choice(text_(unicode(i)), content))
+        return choices
 
     @property
     def answers(self):
@@ -208,22 +192,27 @@ class QTIFillInTheBlank(AbstractQTIQuestion):
 
 class QTIMatching(AbstractQTIQuestion):
 
-    # TODO this is specific to an NTI ordering question, need to work out the other cases
+    # TODO this is specific to an NTI ordering question, need to work out the other cases (connecting, matching)
 
     title = u'Matching'
     Label = namedtuple('Label', ['ident', 'mattext'])
 
     @property
     def labels(self):
-        return [
-            self.Label(u'label_' + unicode(i), x) for i, x in enumerate(self.context.labels)
-        ]
+        labels = []
+        for i, x in enumerate(self.context.choices):
+            content, dependencies = update_external_resources(x)
+            self.dependencies.extend(dependencies)
+            labels.append(self.Label(u'label_' + unicode(i), content))
+        return labels
 
     @property
     def values(self):
         values = []
         for i, value in enumerate(self.context.values):
-            soup = BeautifulSoup(value)
+            content, dependencies = update_external_resources(value)
+            self.dependencies.extend(dependencies)
+            soup = BeautifulSoup(content)
             paragraphs = soup.find_all('p')
             content = '\n'.join([paragraph.text for paragraph in paragraphs])
             values.append(self.Label(u'value_' + unicode(i), content))
@@ -294,13 +283,17 @@ class QTIFillInMultipleBlanks(AbstractQTIQuestion):
         self.blanks = []
 
     @property
-    def content(self):  # TODO need to get the dependencies out of these
+    def content(self):
         """
         This is canvas specific, replace all input fields with canvas's style of blank
         """
         # we want to use html.parser here so <html> and <body> tags aren't inserted
-        question_content = BeautifulSoup(self.question.content, features='html.parser')
-        entry_content = BeautifulSoup(self.context.content, features='html.parser')
+        question_content, dependencies = update_external_resources(self.question.content)
+        self.dependencies.extend(dependencies)
+        entry_content, dependencies = update_external_resources(self.context.content)
+        self.dependencies.extend(dependencies)
+        question_content = BeautifulSoup(question_content, features='html.parser')
+        entry_content = BeautifulSoup(entry_content, features='html.parser')
         for blank in entry_content.find_all('input'):
             name = blank.attrs.get('name')
             blank.replace_with('[%s]' % name)
@@ -316,7 +309,7 @@ class QTIFillInMultipleBlanks(AbstractQTIQuestion):
         value = 100.0/num_sols
         answers = []
         if not sols:
-            raise KeyError  # TODO we need a solution for these to template correctly
+            raise KeyError  # TODO we need a question solution for these to template correctly
         for blank in self.blanks:
             key = 'response_%s' % blank
             reg_ex = sol.value[blank]

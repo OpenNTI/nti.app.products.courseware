@@ -29,7 +29,6 @@ from nti.app.products.courseware.cartridge.renderer import execute
 from nti.app.products.courseware.cartridge.renderer import get_renderer
 
 from nti.contenttypes.courses.interfaces import ICourseInstance
-from nti.contenttypes.presentation.interfaces import INTIDiscussionRef
 
 from nti.dataserver import authorization as nauth
 
@@ -98,7 +97,7 @@ class CommonCartridgeExportView(AbstractAuthenticatedView):
             with open(archive + '/imsmanifest.xml', 'w') as fd:
                 fd.write(manifest)
             zipped = shutil.make_archive('common_cartridge', 'zip', archive)
-            filename = self.context.title + '.imscc'  # TODO make imscc when done
+            filename = self.context.title + '.imscc'
             self.request.response.content_encoding = 'identity'
             self.request.response.content_type = 'application/zip; charset=UTF-8'
             self.request.response.content_disposition = 'attachment; filename="%s"' % filename

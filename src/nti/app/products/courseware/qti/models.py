@@ -9,6 +9,10 @@ import os
 
 from bs4 import BeautifulSoup
 
+from collections import defaultdict
+
+from datetime import timedelta
+
 from pynliner import Pynliner  # TODO add this to buildout deps
 
 from six.moves import urllib_parse
@@ -20,18 +24,38 @@ from zope.cachedescriptors.property import Lazy
 
 from zope.intid import IIntIds
 
+from zope.schema.fieldproperty import createFieldProperties
+
+from nti.app.assessment.common.evaluations import get_max_time_allowed
+
+from nti.app.assessment.common.policy import get_policy_max_submissions
+from nti.app.assessment.common.policy import get_policy_submission_priority
+from nti.app.assessment.common.policy import get_submission_buffer_policy
+
+from nti.app.assessment.common.utils import get_available_for_submission_beginning
+from nti.app.assessment.common.utils import get_available_for_submission_ending
+
 from nti.app.products.courseware.cartridge.renderer import execute
 from nti.app.products.courseware.cartridge.renderer import get_renderer
+from nti.app.products.courseware.cartridge.web_content import IMSWebContent
 
+from nti.app.products.courseware.qti.interfaces import ICanvasQuizMeta
+from nti.app.products.courseware.qti.interfaces import ICanvasAssignmentSettings
 from nti.app.products.courseware.qti.interfaces import IQTIAssessment
 from nti.app.products.courseware.qti.interfaces import IQTIItem
+from nti.app.products.courseware.qti.utils import update_external_resources
 
 from nti.assessment.interfaces import IQAssessment
 from nti.assessment.interfaces import IQEditableEvaluation
+from nti.assessment.interfaces import IQTimedAssignment
 from nti.assessment.interfaces import IQuestionSet
+
 from nti.common import random
 
 from nti.contentlibrary.interfaces import IPersistentFilesystemContentUnit
+
+from nti.externalization import to_external_object
+
 from nti.ntiids.ntiids import find_object_with_ntiid
 
 __docformat__ = "restructuredtext en"
@@ -39,23 +63,22 @@ __docformat__ = "restructuredtext en"
 logger = __import__('logging').getLogger(__name__)
 
 
-# TODO ideally, on content backed questions we would parse the questions out of the html
-# rather than the object. The reasoning behind this is that it would allow us
-# to create Canvas text entries for interlaced text content. For now, we are
-# using the object questions as it is an implementation that works for both
-# content backed and ui created questions, and interlaced text does not have
-# an identifying div wrapping it making it difficult to determine a consistent heuristic
-# for ripping it out. As such, all interlaced text will be preserved, but will be
-# displayed in the assignment body. Because we are leaving all other tags in besides
-# object tags, there is a possibility that a future import implementation could
-# bring NTI qti exports back in properly
 @interface.implementer(IQTIAssessment)
 class QTIAssessment(object):
 
-    def __init__(self, context):
+    def handle_dependencies(self, deps):
+        """
+        Convert a list of hrefs into IMSWebContent to maintain a standard format
+        """
+        for dep in deps:
+            web_content = IMSWebContent(self.context, dep)
+            self.dependencies['dependencies'].append(web_content)
+
+    def __init__(self, context, course):
         self.context = context
-        self.dependencies = {}
+        self.dependencies = defaultdict(list)
         self.items = []
+        self.course = course
         if not self.is_content_backed:
             # Parse the questions
             for question in self.questions:
@@ -63,9 +86,9 @@ class QTIAssessment(object):
                     qti_item = IQTIItem(part)
                     qi_export = qti_item.to_xml()
                     self.items.append(qi_export)
-                    self.dependencies.update(qti_item.dependencies)
+                    self.handle_dependencies(qti_item.dependencies)
             # set the content
-            self.content = context.contnet
+            self.content = context.content
         else:
             self.content = self._parse_content()
 
@@ -74,8 +97,8 @@ class QTIAssessment(object):
         intids = component.getUtility(IIntIds)
         intid = intids.register(self)
         # Start at A
-        identifier = ''.join([chr(65 + int(i)) for i in str(intid)])
-        return identifier
+        identifier = u''.join([chr(65 + int(i)) for i in str(intid)])
+        return unicode(identifier)
 
     @Lazy
     def context_parent(self):
@@ -95,7 +118,7 @@ class QTIAssessment(object):
         if self.is_content_backed:
             return self.context_parent.key
 
-    def content_soup(self, styled=False):
+    def content_soup(self, styled=True):
         if self.is_content_backed:
             text = self.content_file.read_contents_as_text()
             if styled:
@@ -146,7 +169,7 @@ class QTIAssessment(object):
             for part in question.parts:
                 qti_item = IQTIItem(part)
                 self.items.append(qti_item.to_xml())
-                self.dependencies.update(qti_item.dependencies)
+                self.handle_dependencies(qti_item.dependencies)
             nested_text = ''
             try:
                 next_question_object = question_objects[i + 1]
@@ -177,28 +200,9 @@ class QTIAssessment(object):
 
         # Ok, now that everything is clean, parse what will be the description for images and other linked resources
         # Check for resource refs and add to dependencies
-        for tag in new_content.recursiveChildGenerator():
-            if hasattr(tag, 'name') and \
-                    tag.name == 'a' and \
-                    hasattr(tag, 'attrs') and \
-                    'href' in tag.attrs:
-                href = tag.attrs['href']
-                if self._is_internal_resource(href):
-                    path_to = os.path.join(self.content_file.bucket.absolute_path, href)
-                    href = os.path.join('dependencies', href)
-                    self.dependencies[path_to] = href
-                    tag.attrs['href'] = os.path.join('$IMS-CC-FILEBASE$', href)
-            # Grab images
-            if hasattr(tag, 'name') and tag.name == 'img' and \
-                    hasattr(tag, 'attrs') and 'src' in tag.attrs:
-                src = tag.attrs['src']
-                if self._is_internal_resource(src):
-                    path_to = os.path.join(self.content_file.bucket.absolute_path, src)
-                    src = os.path.join('dependencies', src)
-                    self.dependencies[path_to] = src
-                    tag.attrs['src'] = os.path.join('$IMS-CC-FILEBASE$', src)
-
-        return new_content.prettify()
+        new_content, dependencies = update_external_resources(new_content.prettify(), 'dependencies')
+        self.handle_dependencies(dependencies)
+        return new_content
 
     @Lazy
     def questions(self):
@@ -221,14 +225,79 @@ class QTIAssessment(object):
         return execute(renderer, {'context': context})
 
 
-class CanvasAssessmentMeta(object):
+@interface.implementer(ICanvasAssignmentSettings)
+class CanvasAssignmentSettings(object):
 
-    def __init__(self, assessment):
-        self.assessment = assessment
+    createFieldProperties(ICanvasAssignmentSettings)
+
+    @Lazy
+    def identifier(self):
+        intids = component.getUtility(IIntIds)
+        intid = intids.register(self)
+        # Start at A
+        identifier = ''.join([chr(65 + int(i)) for i in str(intid)])
+        return identifier
+
+    @Lazy
+    def ext(self):
+        ext = to_external_object(self)
+        ext.pop('Class')
+        ext.pop('MimeType')
+        ext.pop('identifier')
+        return ext
+
+    def __init__(self, qti_assessment):
+        self.title = qti_assessment.title
+        self.quiz_identifierref = qti_assessment.identifier
+
+    def to_xml(self):
+        renderer = get_renderer('assignment_settings', '.pt')
+        context = {'fields': self.ext,
+                   'identifier': self.identifier}
+        return execute(renderer, {'context': context})
+
+
+@interface.implementer(ICanvasQuizMeta)
+class CanvasQuizMeta(object):
+
+    nti_to_canvas_submission_map = {'highest_grade': 'keep_highest',
+                                    'most_recent': 'keep_latest'}
+
+    createFieldProperties(ICanvasQuizMeta)
+
+    def __init__(self, qti_assessment, course):
+        assessment = qti_assessment.context
+        self.identifier = qti_assessment.identifier
+        self.title = qti_assessment.title
+        self.description = qti_assessment.content
+        if IQTimedAssignment.providedBy(assessment):
+            self.time_limit = get_max_time_allowed(assessment, course)
+        self.allowed_attempts = get_policy_max_submissions(assessment, course)
+        self.unlock_at = get_available_for_submission_beginning(assessment, context=course)
+        self.due_at = get_available_for_submission_ending(assessment, context=course) or self.due_at
+        submission_buffer = get_submission_buffer_policy(assessment, course) or 0
+        self.lock_at = self.due_at + timedelta(seconds=submission_buffer) if self.due_at else self.lock_at
+        submission_priority = get_policy_submission_priority(assessment, course)
+        self.scoring_policy = self.nti_to_canvas_submission_map.get(submission_priority) or self.scoring_policy
+        if IQAssessment.providedBy(assessment):
+            self.quiz_type = u'assignment'
+            self.assignment = CanvasAssignmentSettings(qti_assessment).to_xml()
+        elif IQuestionSet.providedBy(assessment):
+            self.quiz_type = u'practice_quiz'
+
+    @Lazy
+    def ext(self):
+        ext = to_external_object(self)
+        ext.pop('Class')
+        ext.pop('MimeType')
+        ext.pop('identifier')
+        ext.pop('description')
+        return ext
 
     def meta(self):
         renderer = get_renderer('assessment_meta', '.pt')
-        context = {'title': self.assessment.title,
-                   'description': self.assessment.content,
-                   'quiz_id': self.assessment.identifier}
+        context = {'fields': self.ext,
+                   'quiz_id': self.identifier,
+                   'description': self.description,
+                   'assignment': getattr(self, 'assignment', None)}
         return execute(renderer, {'context': context})
