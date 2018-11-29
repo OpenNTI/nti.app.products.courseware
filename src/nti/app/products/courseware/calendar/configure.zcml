@@ -16,6 +16,8 @@
 
     <!-- Adapters -->
     <adapter factory=".adapters.calendar_to_course" />
+    <adapter factory=".adapters.calendarevent_to_course" />
+    <adapter factory=".adapters.calendarevent_to_calendar" />
 
     <adapter factory=".adapters._CourseCalendarFactory"
              provides=".interfaces.ICourseCalendar"
@@ -29,6 +31,10 @@
 
     <subscriber factory=".decorators._CourseCalendarDecorator"
                 for="nti.app.products.courseware.calendar.interfaces.ICourseCalendar"
+                provides="nti.externalization.interfaces.IExternalMappingDecorator" />
+
+    <subscriber factory=".decorators._CourseCalendarEventDecorator"
+                for="nti.app.products.courseware.calendar.interfaces.ICourseCalendarEvent"
                 provides="nti.externalization.interfaces.IExternalMappingDecorator" />
 
     <subscriber factory=".decorators._CourseCalendarEventCreationLinkDecorator"
