@@ -7,16 +7,23 @@ from __future__ import division
 
 from zope import interface
 
-from nti.schema.field import ValidTextLine as TextLine, Number, DateTime, Int
-from nti.schema.field import ValidText
-from zope.schema import Bool, Choice
+from nti.schema.field import DateTime
+from nti.schema.field import Int
+from nti.schema.field import Number
+from nti.schema.field import ValidTextLine as TextLine
+from nti.schema.field import ValidText as Text
+
+from zope.schema import Bool
+from zope.schema import Choice
+
+from nti.app.products.courseware.cartridge.interfaces import IIMSAssociatedContent
 
 __docformat__ = "restructuredtext en"
 
 logger = __import__('logging').getLogger(__name__)
 
 
-class IQTIAssessment(interface.Interface):
+class IQTIAssessment(IIMSAssociatedContent):
     """
     A QTI Assessment
     """
@@ -29,14 +36,13 @@ class IQTIItem(interface.Interface):
 
 
 class ICanvasQuizMeta(interface.Interface):
-
     title = TextLine(title=u'Quiz Title',
                      description=u'This will be the quiz title.',
                      required=True)
 
-    description = ValidText(title=u'Quiz Description',
-                            description=u'This will be the quiz description body.',
-                            required=False)
+    description = Text(title=u'Quiz Description',
+                       description=u'This will be the quiz description body.',
+                       required=False)
 
     points_possible = Number(title=u'Points Possible',
                              description=u'The number of points possible for this quiz.',
@@ -185,7 +191,6 @@ class ICanvasQuizMeta(interface.Interface):
 
 # Graded quizzes are assignments nested in quiz metadata
 class ICanvasAssignmentSettings(interface.Interface):
-
     title = TextLine(title=u'Assignment Title',
                      description=u'The title for this assignment in the Assignments tab.',
                      required=True)

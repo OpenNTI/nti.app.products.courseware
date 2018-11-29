@@ -231,7 +231,7 @@ class QTIMatching(AbstractQTIQuestion):
                 answers.append({'value': q_value})
         else:
             if len(sols) > 1:
-                logger.info(u'More than one solution')  # TODO handle
+                logger.info(u'More than one solution')
             for (label, value) in sols[0].value.items():
                 answer = {'question': self.labels[int(label)].ident,
                           'solution': self.values[value].ident,
@@ -309,7 +309,8 @@ class QTIFillInMultipleBlanks(AbstractQTIQuestion):
         value = 100.0/num_sols
         answers = []
         if not sols:
-            raise KeyError  # TODO we need a question solution for these to template correctly
+            # These types of questions must have a solution
+            raise KeyError
         for blank in self.blanks:
             key = 'response_%s' % blank
             reg_ex = sol.value[blank]
@@ -329,5 +330,9 @@ class QTIFillInMultipleBlanks(AbstractQTIQuestion):
         return execute(renderer, {'context': context})
 
 
+# There is not an NTI equivalent to Multiple Dropdowns,
+# but we could map Fill in the Blank Word Bank questions
+# in this. We expect there we a limited use case for this currently
+# so we will opt to do these by hand.
 class QTIMultipleDropdowns(AbstractQTIQuestion):
     pass
