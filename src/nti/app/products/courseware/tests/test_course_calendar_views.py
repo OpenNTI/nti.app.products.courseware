@@ -173,6 +173,12 @@ class TestCourseCalendarViews(ApplicationLayerTest):
         result = self.testapp.get(calendar_url + '/@@contents', status=200, extra_environ=admin_env).json_body
         assert_that(result, has_entries({'Items': has_length(3)}))
 
+        # Calendar collection
+        student_calendars_href = '/dataserver2/users/test_student/Calendars'
+        calendars = self.testapp.get(student_calendars_href, extra_environ=student_env)
+        calendars = calendars.json_body
+        assert_that(calendars['Items'], has_length(1))
+
         # delete calendar event: admin/site-admin
         self.testapp.delete(event_url, status=403, extra_environ=student_env)
         self.testapp.delete(event_url, status=204, extra_environ=admin_env)
