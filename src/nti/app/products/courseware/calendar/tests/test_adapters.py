@@ -43,6 +43,7 @@ from nti.contenttypes.calendar.model import CalendarEvent
 from nti.contenttypes.courses.courses import CourseInstance
 
 from nti.contenttypes.courses.interfaces import ICourseInstance
+from nti.contenttypes.courses.interfaces import ICourseCatalogEntry
 from nti.contenttypes.courses.interfaces import ICourseEnrollmentManager
 
 from nti.dataserver.tests import mock_dataserver
@@ -128,3 +129,9 @@ class TestCourseCalendarEventProvider(ApplicationLayerTest):
             ICourseCalendar(course2).store_event(CourseCalendarEvent(title=u'c_three'))
 
             assert_that([x.title for x in provider.iter_events()], contains_inanyorder('c_one', 'c_two', 'c_three'))
+            assert_that([x.title for x in provider.iter_events(context_ntiids=None)], contains_inanyorder('c_one', 'c_two', 'c_three'))
+            assert_that([x.title for x in provider.iter_events(context_ntiids=[entry.ntiid, entry2.ntiid])], contains_inanyorder('c_one', 'c_two', 'c_three'))
+            assert_that([x.title for x in provider.iter_events(context_ntiids=[entry.ntiid])], contains_inanyorder('c_one', 'c_two'))
+            assert_that([x.title for x in provider.iter_events(context_ntiids=[entry2.ntiid])], contains_inanyorder('c_three'))
+            assert_that([x.title for x in provider.iter_events(context_ntiids=[])], has_length(0))
+            assert_that([x.title for x in provider.iter_events(context_ntiids=[ICourseCatalogEntry(course2.SubInstances['001']).ntiid])], has_length(0))

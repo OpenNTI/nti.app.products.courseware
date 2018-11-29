@@ -15,6 +15,7 @@ from hamcrest import has_entries
 from hamcrest import assert_that
 from hamcrest import has_properties
 from hamcrest import same_instance
+from hamcrest import contains_inanyorder
 
 from zope.component.hooks import getSite
 
@@ -23,6 +24,8 @@ from zope.annotation.interfaces import IAnnotations
 from zope.securitypolicy.interfaces import IPrincipalRoleManager
 
 from nti.ntiids.ntiids import find_object_with_ntiid
+
+from nti.app.products.courseware.calendar.model import CourseCalendarEvent
 
 from nti.app.products.courseware.tests import PersistentInstructedCourseApplicationTestLayer
 
@@ -52,6 +55,8 @@ class TestCourseCalendarViews(ApplicationLayerTest):
     course_ntiid = 'tag:nextthought.com,2011-10:NTI-CourseInfo-Fall2013_CLC3403_LawAndJustice'
 
     course_url = '/dataserver2/++etc++hostsites/platform.ou.edu/++etc++site/Courses/Fall2013/CLC3403_LawAndJustice'
+
+    course_ntiid2 = 'tag:nextthought.com,2011-10:NTI-CourseInfo-Fall2015_CS_1323'
 
     @WithSharedApplicationMockDS(testapp=True, users=(u'test_student', u'admin001@nextthought.com', u'site_user001', u'editor_user001'))
     def test_course_calendar_views(self):
@@ -179,3 +184,45 @@ class TestCourseCalendarViews(ApplicationLayerTest):
         assert_that(result, has_entries({'Items': has_length(0)}))
         with mock_dataserver.mock_db_trans(self.ds):
             assert_that(calendar, has_length(0))
+
+    @WithSharedApplicationMockDS(testapp=True, users=(u'owner001',))
+    def testUserCompositeCalendarView(self):
+        owner_env = self._make_extra_environ(username=u'owner001')
+        url = '/dataserver2/users/owner001/Calendars/@@events'
+
+        result = self.testapp.get(url, status=200, extra_environ=owner_env).json_body
+        assert_that(result, has_entries({'Total': 0, 'Items': has_length(0)}))
+
+        with mock_dataserver.mock_db_trans(self.ds, site_name='platform.ou.edu'):
+            user = User.get_user('owner001')
+            for course_ntiid, titles in ((self.course_ntiid,(u'c_one', u'c_two')),
+                                         (self.course_ntiid2,(u'c_three',))):
+                entry = find_object_with_ntiid(course_ntiid)
+                course = ICourseInstance(entry)
+
+                enrollment_manager = ICourseEnrollmentManager(course)
+                enrollment_manager.enroll(user)
+
+                calendar = ICourseCalendar(course)
+                for title in titles:
+                    calendar.store_event(CourseCalendarEvent(title=title))
+
+        result = self.testapp.get(url, status=200, extra_environ=owner_env).json_body
+        assert_that(result, has_entries({'Total': 3, 'Items': has_length(3)}))
+        assert_that([x['title'] for x in result['Items']], contains_inanyorder(u'c_one', u'c_two', u'c_three'))
+
+        result = self.testapp.get(url, params={'context_ntiid': self.course_ntiid}, status=200, extra_environ=owner_env).json_body
+        assert_that(result, has_entries({'Total': 2, 'Items': has_length(2)}))
+        assert_that([x['title'] for x in result['Items']], contains_inanyorder(u'c_one', u'c_two'))
+
+        result = self.testapp.get(url, params={'context_ntiid': self.course_ntiid2}, status=200, extra_environ=owner_env).json_body
+        assert_that(result, has_entries({'Total': 1, 'Items': has_length(1)}))
+        assert_that([x['title'] for x in result['Items']], contains_inanyorder(u'c_three'))
+
+        # empty string should be ignore.
+        result = self.testapp.get(url, params={'context_ntiid': ''}, status=200, extra_environ=owner_env).json_body
+        assert_that(result, has_entries({'Total': 3, 'Items': has_length(3)}))
+        assert_that([x['title'] for x in result['Items']], contains_inanyorder(u'c_one', u'c_two', u'c_three'))
+
+        result = self.testapp.get(url, params={'context_ntiid': 'abc'}, status=200, extra_environ=owner_env).json_body
+        assert_that(result, has_entries({'Total': 0, 'Items': has_length(0)}))

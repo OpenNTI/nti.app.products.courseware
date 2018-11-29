@@ -9,6 +9,9 @@ from __future__ import absolute_import
 
 import fudge
 
+from hamcrest import assert_that
+from hamcrest import is_
+
 from nti.app.products.courseware.calendar.decorators import _CourseCalendarLinkDecorator
 from nti.app.products.courseware.calendar.decorators import _CourseCalendarEventCreationLinkDecorator
 
@@ -40,7 +43,7 @@ class TestDecorators(ApplicationLayerTest):
         course = ContentCourseInstance()
         mock_dataserver.current_transaction.add(course)
         external = self._decorate(_CourseCalendarLinkDecorator, course)
-        self.require_link_href_with_rel(external, 'CourseCalendar')
+        assert_that('CourseCalendar' in [x.rel for x in external['Links']], is_(True))
 
     @WithMockDSTrans
     @fudge.patch('nti.app.products.courseware.calendar.decorators.has_permission')
@@ -49,4 +52,4 @@ class TestDecorators(ApplicationLayerTest):
         course = ContentCourseInstance()
         mock_dataserver.current_transaction.add(course)
         external = self._decorate(_CourseCalendarEventCreationLinkDecorator, ICourseCalendar(course))
-        self.require_link_href_with_rel(external, 'create_calendar_event')
+        assert_that('create_calendar_event' in [x.rel for x in external['Links']], is_(True))

@@ -29,6 +29,7 @@ from nti.app.products.courseware.calendar.model import CourseCalendar
 from nti.contenttypes.calendar.interfaces import ICalendarEventProvider
 
 from nti.contenttypes.courses.interfaces import ICourseInstance
+from nti.contenttypes.courses.interfaces import ICourseCatalogEntry
 
 from nti.contenttypes.courses.utils import get_enrollments
 from nti.contenttypes.courses.utils import get_instructed_courses
@@ -74,14 +75,22 @@ class CourseCalendarEventProvider(object):
     def __init__(self, user):
         self.user = user
 
-    def iter_events(self):
+    def iter_events(self, **kwargs):
         res = []
-        for enrollment in itertools.chain(get_enrollments(self.user),
-                                          get_instructed_courses(self.user)) or ():
-            course = ICourseInstance(enrollment, None)
+        for course in self._courses(self.user, kwargs.get('context_ntiids')):
             calendar = ICourseCalendar(course, None)
             if calendar is not None:
                 res.extend([x for x in calendar.values()])
+        return res
+
+    def _courses(self, user, entry_ntiids=None):
+        res = []
+        for enrollment in itertools.chain(get_enrollments(user),
+                                          get_instructed_courses(user)) or ():
+            course = ICourseInstance(enrollment, None)
+            entry = ICourseCatalogEntry(course, None)
+            if entry is not None and (entry_ntiids is None or entry.ntiid in entry_ntiids):
+                res.append(course)
         return res
 
 
