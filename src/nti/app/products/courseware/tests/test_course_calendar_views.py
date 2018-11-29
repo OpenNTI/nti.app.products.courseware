@@ -119,6 +119,7 @@ class TestCourseCalendarViews(ApplicationLayerTest):
                                       "start_time": "2018-09-20T09:00:00Z",
                                       "end_time": "2018-09-20T12:00:00Z",
                                       "Last Modified": not_none(),
+                                      'CatalogEntryNTIID': u'tag:nextthought.com,2011-10:NTI-CourseInfo-Fall2013_CLC3403_LawAndJustice',
                                       "NTIID": not_none()}))
         event_id = res['ID']
         event_oid = res['OID']

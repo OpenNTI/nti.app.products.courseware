@@ -13,6 +13,7 @@ from zope import component
 from zope import interface
 
 from nti.app.products.courseware.calendar.interfaces import ICourseCalendar
+from nti.app.products.courseware.calendar.interfaces import ICourseCalendarEvent
 
 from nti.app.renderers.decorators import AbstractAuthenticatedRequestAwareDecorator
 
@@ -59,6 +60,16 @@ class _CourseCalendarDecorator(Singleton):
     def decorateExternalMapping(self, context, result):
         course = ICourseInstance(context, None)
         result['CatalogEntry'] = ICourseCatalogEntry(course, None)
+
+
+@component.adapter(ICourseCalendarEvent)
+@interface.implementer(IExternalMappingDecorator)
+class _CourseCalendarEventDecorator(Singleton):
+
+    def decorateExternalMapping(self, context, result):
+        course = ICourseInstance(context, None)
+        entry = ICourseCatalogEntry(course, None)
+        result['CatalogEntryNTIID'] = result['ContainerId'] = getattr(entry, 'ntiid', None)
 
 
 @component.adapter(ICourseCalendar)

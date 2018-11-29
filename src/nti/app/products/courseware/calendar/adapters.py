@@ -22,6 +22,7 @@ from zope.annotation.interfaces import IAnnotations
 from zope.traversing.interfaces import IPathAdapter
 
 from nti.app.products.courseware.calendar.interfaces import ICourseCalendar
+from nti.app.products.courseware.calendar.interfaces import ICourseCalendarEvent
 
 from nti.app.products.courseware.calendar.model import CourseCalendar
 
@@ -62,7 +63,7 @@ def _CourseCalendarFactory(course, create=True):
 
 @interface.implementer(IPathAdapter)
 @component.adapter(ICourseInstance, IRequest)
-def _CourseCalendarPathAdapter(context, request):
+def _CourseCalendarPathAdapter(context, unused_request):
     return _CourseCalendarFactory(context)
 
 
@@ -88,4 +89,16 @@ class CourseCalendarEventProvider(object):
 @interface.implementer(ICourseInstance)
 def calendar_to_course(calendar):
     return find_interface(calendar, ICourseInstance, strict=False)
+
+
+@component.adapter(ICourseCalendarEvent)
+@interface.implementer(ICourseInstance)
+def calendarevent_to_course(event):
+    return find_interface(event, ICourseInstance, strict=False)
+
+
+@component.adapter(ICourseCalendarEvent)
+@interface.implementer(ICourseCalendar)
+def calendarevent_to_calendar(event):
+    return find_interface(event, ICourseCalendar, strict=False)
 
