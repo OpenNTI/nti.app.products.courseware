@@ -17,7 +17,10 @@ from zope.cachedescriptors.property import Lazy
 from zope.intid import IIntIds
 from zope.schema.fieldproperty import createFieldProperties
 
+from nti.app.products.courseware.cartridge.exceptions import CommonCartridgeExportException
 from nti.app.products.courseware.cartridge.interfaces import IIMSWebContentUnit
+from nti.contentlibrary.interfaces import IContentPackage
+from nti.traversal.traversal import find_interface
 
 __docformat__ = "restructuredtext en"
 
@@ -63,10 +66,39 @@ class AbstractIMSWebContent(object):
 
     @Lazy
     def identifier(self):
-        # Use register here as some of these aren't already intid'd
-        # The usage of this should not persist so the intid will disappear after the export ends
-        return self.intids.register(self)
+        intids = component.getUtility(IIntIds)
+        intid = intids.register(self)
+        # Start at A
+        identifier = u''.join([chr(65 + int(i)) for i in str(intid)])
+        return unicode(identifier)
     __name__ = identifier
 
     def export(self, dirname):
         raise NotImplementedError
+
+
+@interface.implementer(IIMSWebContentUnit)
+class IMSWebContent(AbstractIMSWebContent):
+    """
+    Wrapper class for rendered content files that are not associated with an object
+    """
+
+    def __init__(self, context, path_to):
+        super(IMSWebContent, self).__init__(context)
+        self.path_to = path_to
+
+    @Lazy
+    def content_package(self):
+        package = find_interface(self.context, IContentPackage, strict=False)
+        if not package:
+            raise CommonCartridgeExportException(u'Unable to locate a content package for %s' % self.context)
+        return package
+
+    @Lazy
+    def content_directory(self):
+        return self.content_package.dirname
+
+    def export(self, dirname):
+        source_path = os.path.join(self.content_directory, self.path_to)
+        target_path = os.path.join(dirname, self.path_to)
+        self.copy_resource(source_path, target_path)

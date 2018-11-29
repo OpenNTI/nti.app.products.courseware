@@ -52,8 +52,12 @@ class IMSWebContentResource(AbstractIMSWebContent):
     """
 
     @Lazy
+    def href(self):
+        return self.context.href
+
+    @Lazy
     def filename(self):
-        return os.path.basename(self.context.href)
+        return os.path.basename(self.href)
 
     def export(self, path):
         package = find_interface(self.context, IContentPackage, strict=False)
