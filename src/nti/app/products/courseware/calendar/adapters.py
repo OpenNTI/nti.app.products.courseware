@@ -95,21 +95,28 @@ class CourseCalendarEventProvider(object):
     def __init__(self, user):
         self.user = user
 
-    def iter_events(self, context_ntiids=None, **kwargs):
+    def iter_events(self, context_ntiids=None, excluded_context_ntiids=None, **kwargs):
         res = []
-        for course in self._courses(self.user, context_ntiids):
+        for course in self._courses(self.user, context_ntiids, excluded_context_ntiids):
             calendar = ICourseCalendar(course, None)
             if calendar is not None:
                 res.extend([x for x in calendar.values()])
         return res
 
-    def _courses(self, user, entry_ntiids=None):
+    def _courses(self, user, entry_ntiids=None, excluded_entry_ntiids=None):
+        """
+        Gather the courses we want to gather events for. Include any courses
+        that are in the inclusive `entry_ntiids` param and exclude any in the
+        `excluded_entry_ntiids` param.
+        """
         res = []
         for enrollment in itertools.chain(get_enrollments(user),
                                           get_instructed_courses(user)) or ():
             course = ICourseInstance(enrollment, None)
             entry = ICourseCatalogEntry(course, None)
-            if entry is not None and (entry_ntiids is None or entry.ntiid in entry_ntiids):
+            if      entry is not None \
+                and (not entry_ntiids or entry.ntiid in entry_ntiids) \
+                and (not excluded_entry_ntiids or entry.ntiid not in excluded_entry_ntiids):
                 res.append(course)
         return res
 
