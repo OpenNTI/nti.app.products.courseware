@@ -58,11 +58,15 @@ class TestCourseCalendarViews(ApplicationLayerTest):
 
     course_ntiid2 = 'tag:nextthought.com,2011-10:NTI-CourseInfo-Fall2015_CS_1323'
 
-    @WithSharedApplicationMockDS(testapp=True, users=(u'test_student', u'admin001@nextthought.com', u'site_user001', u'editor_user001'))
+    @WithSharedApplicationMockDS(testapp=True, users=(u'test_student',
+                                                      u'admin001@nextthought.com',
+                                                      u'site_user001',
+                                                      u'editor_user001'))
     def test_course_calendar_views(self):
         admin_env = self._make_extra_environ('admin001@nextthought.com')
         site_admin_env = self._make_extra_environ('site_user001')
         editor_env = self._make_extra_environ('editor_user001')
+        instructor_env = self._make_extra_environ('harp4162')
         student_env = self._make_extra_environ('test_student')
         with mock_dataserver.mock_db_trans(self.ds, site_name='platform.ou.edu'):
             # pylint: disable=too-many-function-args
@@ -175,9 +179,38 @@ class TestCourseCalendarViews(ApplicationLayerTest):
 
         # Calendar collection
         student_calendars_href = '/dataserver2/users/test_student/Calendars'
-        calendars = self.testapp.get(student_calendars_href, extra_environ=student_env)
+        calendars = self.testapp.get(student_calendars_href,
+                                     extra_environ=student_env)
         calendars = calendars.json_body
+        self.require_link_href_with_rel(calendars, 'events')
         assert_that(calendars['Items'], has_length(1))
+        assert_that(calendars['Items'][0],
+                    has_entry('CatalogEntry',
+                              has_entry('NTIID',
+                                        u'tag:nextthought.com,2011-10:NTI-CourseInfo-Fall2013_CLC3403_LawAndJustice')))
+
+        instructor_calendars_href = '/dataserver2/users/harp4162/Calendars'
+        calendars = self.testapp.get(instructor_calendars_href,
+                                     extra_environ=instructor_env)
+        calendars = calendars.json_body
+        self.require_link_href_with_rel(calendars, 'events')
+        assert_that(calendars['Items'], has_length(1))
+        assert_that(calendars['Items'][0],
+                    has_entry('CatalogEntry',
+                              has_entry('NTIID',
+                                        u'tag:nextthought.com,2011-10:NTI-CourseInfo-Fall2013_CLC3403_LawAndJustice')))
+
+        # Editors have no calendars
+        editor_calendars_href = '/dataserver2/users/editor_user001/Calendars'
+        calendars = self.testapp.get(editor_calendars_href,
+                                     extra_environ=editor_env)
+        calendars = calendars.json_body
+        assert_that(calendars['Items'], has_length(0))
+
+        # Cannot fetch another user's calendars
+        self.testapp.get(instructor_calendars_href,
+                         extra_environ=student_env,
+                         status=403)
 
         # delete calendar event: admin/site-admin
         self.testapp.delete(event_url, status=403, extra_environ=student_env)
