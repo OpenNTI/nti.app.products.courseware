@@ -94,9 +94,9 @@ class CourseCalendarEventProvider(object):
     def __init__(self, user):
         self.user = user
 
-    def iter_events(self, **kwargs):
+    def iter_events(self, context_ntiids=None, **kwargs):
         res = []
-        for course in self._courses(self.user, kwargs.get('context_ntiids')):
+        for course in self._courses(self.user, context_ntiids):
             calendar = ICourseCalendar(course, None)
             if calendar is not None:
                 res.extend([x for x in calendar.values()])
