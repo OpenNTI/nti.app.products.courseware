@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<topicMeta identifier="i42bfb68c51c7c3a72c1fa132d8613eaa" xmlns="http://canvas.instructure.com/xsd/cccv1p0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://canvas.instructure.com/xsd/cccv1p0 http://canvas.instructure.com/xsd/cccv1p0.xsd"
+           tal:attributes="identifier context/identifier">
+  <topic_id tal:content="context/discussion_identifier">i45f927e81657f719963b4d5182ce7b87</topic_id>
+  <title tal:content="context/title">Graded Discussion</title>
+  <type>topic</type>
+  <discussion_type>side_comment</discussion_type>
+  <workflow_state>unpublished</workflow_state>
+  <assignment tal:attributes="identifier context/assignment_identifier" identifier="i69c7fc2422595cc5b50ccce5d8c5428c">
+    <title tal:content="context/title">Graded Discussion</title>
+    <assignment_group_identifierref>ia2ab80ff48700ca63e961581c2c49c36</assignment_group_identifierref>
+    <workflow_state>unpublished</workflow_state>
+    <points_possible>100</points_possible>
+    <grading_type>points</grading_type>
+    <submission_types>discussion_topic</submission_types>
+  </assignment>
+</topicMeta>
