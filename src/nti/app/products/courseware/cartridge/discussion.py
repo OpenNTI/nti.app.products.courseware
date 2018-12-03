@@ -41,6 +41,8 @@ from nti.app.products.courseware.cartridge.mixins import resolve_modelcontent_bo
 
 from nti.app.products.courseware.cartridge.renderer import execute
 from nti.app.products.courseware.cartridge.renderer import get_renderer
+from nti.app.products.courseware.cartridge.web_content import AbstractIMSWebContent
+from nti.common import random
 
 from nti.contentfile.interfaces import IContentBlobFile
 
@@ -126,8 +128,6 @@ class IMSDiscussionTopic(object):
     def __init__(self, context):
         self.context = context
         self.dependencies = defaultdict(list)
-        if self.topic is None:
-            raise TypeError  # This handles junk discussions
 
     # TODO we are losing <br> tags for some reason
     def _to_html(self, content):
@@ -175,9 +175,10 @@ class IMSDiscussionTopic(object):
             # Ok, we have a course discussion. We need to resolve from the package
             user = get_remote_user()
             course_discussion, topic = resolve_discussion_course_bundle(user, self.context) or (None, None)
-        # if topic is None:
-        #     # If we still don't have it we need to error
-        #     raise CommonCartridgeExportException(u'Unable to locate topic for discussion: %s' % self.context.title)
+        if topic is None:  # TODO
+            # If we still don't have it we need to error
+            raise KeyError
+            #raise CommonCartridgeExportException(u'Unable to locate topic for discussion: %s' % self.context.title)
         return topic
 
     @Lazy
@@ -198,11 +199,14 @@ class IMSDiscussionTopic(object):
     def filename(self):
         return '%s.xml' % unicode(self.identifier)
 
+    @Lazy
+    def title(self):
+        return getattr(self.topic, 'title', 'Untitled Discussion')
+
     def export(self, archive):
-        # TODO this properly imports; however, we could further extend canvas compatibility by adding a topic meta file
         renderer = get_renderer("discussion_topic", ".pt")
         context = {
-            'title': getattr(self.topic, 'title', 'Untitled Discussion')
+            'title': self.title
         }
         content = self._to_html(self.topic.headline.body)
         # TODO do we need to sanitize?
@@ -219,109 +223,40 @@ class IMSDiscussionTopic(object):
             fd.write(body.encode('utf-8'))
 
 
-@component.adapter(INTIDiscussionRef)
-class DiscussionRefHandler(AbstractElementHandler):
+# TODO could live in app products ou
+@interface.implementer(IIMSAssociatedContent)
+class CanvasTopicMeta(AbstractIMSWebContent):
+
+    createFieldProperties(IIMSAssociatedContent)
+
+    def __init__(self, cc_discussion):
+        self.cc_discussion = cc_discussion
+        # TODO I don't think this identifier is useful in our context
+        self.assignment_identifier = random.generate_random_string(10)
 
     @Lazy
-    def topic(self):
-        return find_object_with_ntiid(self.context.target)
+    def identifier(self):
+        intids = component.getUtility(IIntIds)
+        intid = intids.register(self)
+        # Start at A
+        identifier = u''.join([chr(65 + int(i)) for i in str(intid)])
+        return unicode(identifier)
 
     @Lazy
-    def topic_id(self):
-        # pylint: disable=no-member
-        return self.intids.queryId(self.topic)
-
-    # manifest items
-
-    def iter_items(self):
-        DOMimpl = minidom.getDOMImplementation()
-        xmldoc = DOMimpl.createDocument(None, "item", None)
-        doc_root = xmldoc.documentElement
-        doc_root.setAttributeNS(None, "identifier", "%s" % self.identifier)
-        doc_root.setAttributeNS(None, "identifierref", "%s" % self.topic_id)
-        self.addTextNode(xmldoc, doc_root, "title", self.context.title or '')
-        return (doc_root,)
-
-    # manifest resources
-
-    def resource_topic_node(self):
-        DOMimpl = minidom.getDOMImplementation()
-        xmldoc = DOMimpl.createDocument(None, "resource", None)
-        doc_root = xmldoc.documentElement
-        doc_root.setAttributeNS(None, "type", "imsdt_xmlv1p1")
-        doc_root.setAttributeNS(None, "identifier", "%s" % self.topic_id)
-        # file
-        node = xmldoc.createElement("file")
-        node.setAttributeNS(None, "href", "%s.xml" % self.topic_id)
-        doc_root.appendChild(node)
-        # dependency
-        node = xmldoc.createElement("dependency")
-        node.setAttributeNS(None, "identifierref", "%s" % self.identifier)
-        doc_root.appendChild(node)
-        return doc_root
-
-    def resource_reference_node(self):
-        DOMimpl = minidom.getDOMImplementation()
-        xmldoc = DOMimpl.createDocument(None, "resource", None)
-        doc_root = xmldoc.documentElement
-        doc_root.setAttributeNS(None, "identifier", "%s" % self.doc_id)
-        doc_root.setAttributeNS(None, "href", "%s.xml" % self.doc_id)
-        doc_root.setAttributeNS(None, "type",
-                                "associatedcontent/imscc_xmlv1p1/learning-application-resource")
-        node = xmldoc.createElement("file")
-        node.setAttributeNS(None, "href", "%s.xml" % self.doc_id)
-        doc_root.appendChild(node)
-        return doc_root
-
-    def iter_resources(self):
-        return (self.resource_topic_node(),
-                self.resource_reference_node())
-
-    # cartridge
+    def discussion_identifier(self):
+        return self.cc_discussion.identifier
 
     @Lazy
-    def createdTime(self):
-        return getattr(self.topic, 'createdTime', 0)
+    def filename(self):
+        return u'topic_meta.xml'
 
-    @Lazy
-    def position(self):
-        forum = find_interface(self.topic, IForum, strict=False)
-        if forum is not None:
-            count = 0
-            for t in forum.values():
-                if t == self.topic:
-                    return count
-                count += 1
-        return 0
-
-    def topicMeta(self):
-        """
-        Return the content for the topicMeta file
-        """
-        # pylint: disable=no-member
-        createdTime = IDateTime(self.createdTime)
-        createdTime = to_external_object(createdTime)
-        renderer = get_renderer("discussion_topic_meta", ".pt")
-        context = {
-            'identifier': self.doc_id,
-            'title': self.to_plain_text(self.context.title or ''),
-            'topic_id': self.intids.queryId(self.topic),
-            'type': 'announcement',
-            "allow_rating": 'false',
-            "module_locked": 'active',
-            "sort_by_rating": 'false',
-            "workflow_state": 'active',
-            "has_group_category": 'false',
-            "only_graders_can_rate": 'false',
-            "discussion_type": 'side_comment',
-            'posted_at': createdTime,
-            "delayed_post_at": createdTime,
-            "position": self.position
-        }
-        return execute(renderer, {"context": context})
-
-    def write_to(self, archive):
-        content = self.topicMeta()
-        name = "%s.xml" % self.identifier
-        with open(os.path.join(archive, name), "w") as fp:
-            fp.write(content)
+    def export(self, archive):
+        path_to = os.path.join(archive, self.filename)
+        renderer = get_renderer('templates/canvas/topic_meta', '.pt')
+        context = {'identifier': self.identifier,
+                   'discussion_identifier': self.discussion_identifier,
+                   'title': self.cc_discussion.title,
+                   'assignment_identifier': self.assignment_identifier}
+        xml = execute(renderer, {'context': context})
+        self.write_resource(path_to, xml)
+        return True
