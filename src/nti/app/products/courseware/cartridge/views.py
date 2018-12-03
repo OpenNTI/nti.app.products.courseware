@@ -20,7 +20,7 @@ from nti.app.base.abstract_views import AbstractAuthenticatedView
 from nti.app.products.courseware.cartridge.cartridge import build_cartridge_content
 from nti.app.products.courseware.cartridge.cartridge import build_manifest_items
 
-from nti.app.products.courseware.cartridge.interfaces import ICanvasWikiContent
+from nti.app.products.courseware.cartridge.interfaces import ICanvasWikiContent, IIMSAssociatedContent
 from nti.app.products.courseware.cartridge.interfaces import ICartridgeWebContent
 from nti.app.products.courseware.cartridge.interfaces import IIMSCommonCartridge
 from nti.app.products.courseware.cartridge.interfaces import IIMSCommonCartridgeExtension
@@ -48,6 +48,8 @@ class CommonCartridgeExportView(AbstractAuthenticatedView):
     def _export_to_filesystem(self, cartridge):
         tree = cartridge.manifest_resources
         archive = tempfile.mkdtemp()
+        non_cc = os.path.join(archive, unicode('non_cc_assessments'))
+        os.makedirs(non_cc)
         for extension in subscribers((cartridge,), IIMSCommonCartridgeExtension):
             extension.extend(archive)
         for (identifier, cc_resource) in cartridge.resources.items():
@@ -71,13 +73,19 @@ class CommonCartridgeExportView(AbstractAuthenticatedView):
                     if getattr(cc_resource, 'dependencies', None):
                         for (dep_directory, deps) in cc_resource.dependencies.items():
                             for dep in deps:
-                                dep_href = os.path.join('web_resources', dep_directory, dep.filename)
+                                if not IIMSAssociatedContent.providedBy(dep):
+                                    dep_href = os.path.join('web_resources', dep_directory, dep.filename)
+                                else:
+                                    dep_href = os.path.join(dep_directory, dep.filename)
                                 etree.SubElement(item, u'dependency', identifierref=unicode(dep.identifier))
                                 dep_xml = etree.SubElement(tree, u'resource', identifier=unicode(dep.identifier),
                                                            type=dep.type,
                                                            href=dep_href)
                                 etree.SubElement(dep_xml, u'file', href=dep_href)
-                                dep_path = os.path.join(archive, 'web_resources', dep_directory)
+                                if not IIMSAssociatedContent.providedBy(dep):
+                                    dep_path = os.path.join(archive, 'web_resources', dep_directory)
+                                else:
+                                    dep_path = os.path.join(archive, dep_directory)
                                 dep.export(dep_path)
         return archive
 
@@ -97,7 +105,7 @@ class CommonCartridgeExportView(AbstractAuthenticatedView):
             with open(archive + '/imsmanifest.xml', 'w') as fd:
                 fd.write(manifest)
             zipped = shutil.make_archive('common_cartridge', 'zip', archive)
-            filename = self.context.title + '.imscc'
+            filename = self.context.title + '.zip'
             self.request.response.content_encoding = 'identity'
             self.request.response.content_type = 'application/zip; charset=UTF-8'
             self.request.response.content_disposition = 'attachment; filename="%s"' % filename

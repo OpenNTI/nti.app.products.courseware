@@ -12,8 +12,8 @@
               <fieldentry>1.0</fieldentry>
             </qtimetadatafield>
             <qtimetadatafield>
-              <fieldlabel tal:content="context/assignment_identifier_ref">assessment_question_identifierref</fieldlabel>
-              <fieldentry>i4f60f24849145a58ee2765a0a1de39da</fieldentry>
+              <fieldlabel>assessment_question_identifierref</fieldlabel>
+              <fieldentry tal:content="context/assignment_identifier_ref">i4f60f24849145a58ee2765a0a1de39da</fieldentry>
             </qtimetadatafield>
           </qtimetadata>
         </itemmetadata>

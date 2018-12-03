@@ -55,6 +55,7 @@ def _validate_course_entry(ntiid):
         json = req.json()
         # Legacy compat
         course_title = json.get('ContentPackageBundle', {}).get('DCTitle', None) or json.get('title')
+        course_title += ' (Keegan Demo)'
         print "Access to course '%s' verified." % course_title
         return True
     else:
