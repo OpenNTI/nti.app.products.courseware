@@ -164,6 +164,11 @@ class TestCalendar(ApplicationLayerTest):
                 'times': [
                     {
                         'MimeType': 'application/vnd.nextthought.webinarsession',
+                        'startTime': '2018-09-12T00:00:00Z',
+                        'endTime': '2018-09-11T00:00:00Z'
+                    },
+                    {
+                        'MimeType': 'application/vnd.nextthought.webinarsession',
                         'startTime': '2018-09-10T00:00:00Z',
                         'endTime': '2018-09-10T01:00:00Z'
                     },
@@ -171,7 +176,7 @@ class TestCalendar(ApplicationLayerTest):
                         'MimeType': 'application/vnd.nextthought.webinarsession',
                         'startTime': '2018-09-11T00:00:00Z',
                         'endTime': '2018-09-11T02:00:00Z'
-                    },
+                    }
                 ],
                 'subject': u'Sample',
                 'description': u'For testing',

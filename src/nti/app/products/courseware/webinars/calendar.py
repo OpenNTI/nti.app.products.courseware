@@ -48,6 +48,8 @@ from nti.schema.fieldproperty import createDirectFieldProperties
 
 from nti.site.site import get_component_hierarchy_names
 
+logger = __import__('logging').getLogger(__name__)
+
 
 class IWebinarCalendarEvent(ICourseCalendarDynamicEvent):
 
@@ -83,6 +85,14 @@ class WebinarCalendarDynamicEventProvider(object):
         res = []
         for webinar in self._webinars(self.user, self.course):
             for time_session in webinar.times or ():
+                if time_session.endTime < time_session.startTime:
+                    # CalendarEvent requires endTime can not before startTime.
+                    logger.warning("Ignoring the invalid webinar session (subject=%s, webinarKey=%s): endTime (%s) shouldn't before startTime(%s).",
+                                    webinar.subject,
+                                    webinar.webinarKey,
+                                    time_session.endTime,
+                                    time_session.startTime)
+                    continue
                 event = WebinarCalendarEvent(title=webinar.subject or webinar.description or u'Webinar',
                                              description=webinar.description,
                                              start_time=time_session.startTime,
