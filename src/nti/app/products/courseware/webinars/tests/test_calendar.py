@@ -30,6 +30,8 @@ from nti.app.products.courseware.tests import PersistentInstructedCourseApplicat
 from nti.app.products.courseware.webinars.calendar import WebinarCalendarEvent
 from nti.app.products.courseware.webinars.calendar import WebinarCalendarDynamicEventProvider
 
+from nti.app.products.courseware.webinars.interfaces import ICourseWebinarContainer
+
 from nti.app.testing.decorators import WithSharedApplicationMockDS
 
 from nti.contenttypes.courses.interfaces import ICourseInstance
@@ -180,7 +182,8 @@ class TestCalendar(ApplicationLayerTest):
                 'webinarID': u'123456'
             }
         }
-        self.testapp.post_json(href, params=params, status=201, extra_environ=admin_env)
+        res = self.testapp.post_json(href, params=params, status=201, extra_environ=admin_env).json_body
+        asset_ntiid= res['NTIID']
 
         with mock_dataserver.mock_db_trans(self.ds, site_name='platform.ou.edu'):
             user = User.get_user(u'test001')
@@ -199,3 +202,13 @@ class TestCalendar(ApplicationLayerTest):
             assert_that(events[1].description, is_('For testing'))
             assert_that(events[1].start_time.strftime('%Y-%m-%d %H:%M:%S'), is_('2018-09-11 00:00:00'))
             assert_that(events[1].end_time.strftime('%Y-%m-%d %H:%M:%S'), is_('2018-09-11 02:00:00'))
+
+        href = '/dataserver2/Objects/%s/contents/ntiid/%s?index=0' % (group_oid, asset_ntiid)
+        self.testapp.delete(href, status=200, extra_environ=admin_env)
+        with mock_dataserver.mock_db_trans(self.ds, site_name='platform.ou.edu'):
+            provider = WebinarCalendarDynamicEventProvider(user, course)
+            events = provider.iter_events()
+            assert_that(events, has_length(0))
+
+            # Currently the original webinar is still in the course container.
+            assert_that(ICourseWebinarContainer(course), has_length(1))
