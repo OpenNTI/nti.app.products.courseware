@@ -111,6 +111,15 @@ class ICommonCartridgeAssessment(IIMSResource):
                     readonly=True)
 
 
+class IIMSAssignment(ICommonCartridgeAssessment):
+
+    type = TextLine(title=u'Object Type',
+                    description=u'The IMS characteristic object type.',
+                    required=True,
+                    default=u'assignment_xmlv1p0',
+                    readonly=True)
+
+
 class ICartridgeWebContent(interface.Interface):
     """
     Marker interface for cartridge web content
