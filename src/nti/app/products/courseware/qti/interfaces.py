@@ -28,6 +28,12 @@ class IQTIAssessment(IIMSAssociatedContent):
     A QTI Assessment
     """
 
+    type = TextLine(title=u'Object Type',
+                    description=u'The IMS characteristic object type.',
+                    required=True,
+                    default=u'imsqti_xmlv1p2',
+                    readonly=False)  # This type changes for Common Cartridge
+
 
 class IQTIItem(interface.Interface):
     """
@@ -35,7 +41,7 @@ class IQTIItem(interface.Interface):
     """
 
 
-class ICanvasQuizMeta(interface.Interface):
+class ICanvasQuizMeta(IIMSAssociatedContent):
     title = TextLine(title=u'Quiz Title',
                      description=u'This will be the quiz title.',
                      required=True)

@@ -129,7 +129,8 @@ def build_manifest_items(cartridge):
                     # make sure we have a concrete asset
                     obj = IConcreteAsset(obj, obj)
                     # creates an id if none exists, or returns the existing one
-                    identifier = intids.register(obj)
+                    intid = intids.register(obj)
+                    identifier = ''.join([chr(65 + int(i)) for i in str(intid)])
                     properties = {'identifier': unicode(identifier)}
                     resource = IIMSResource(obj)
                     resources[identifier] = resource  # Map this object to it's common cartridge resource
@@ -140,7 +141,8 @@ def build_manifest_items(cartridge):
                     _recur_items(node, xml_node)
                     continue
             else:
-                identifier = intids.register(obj)
+                intid = intids.register(obj)
+                identifier = ''.join([chr(65 + int(i)) for i in str(intid)])
                 properties = {'identifier': unicode(identifier)}
             # Add this item entry
             item = etree.SubElement(xml_node, u'item', **properties)
@@ -158,8 +160,9 @@ def build_cartridge_content(cartridge):
     resources = cartridge.resources
     intids = component.getUtility(IIntIds)
     for (unused_intid, asset) in assets:
-        nti_intid = intids.register(asset)
-        if nti_intid not in resources:
+        intid = intids.register(asset)
+        identifier = ''.join([chr(65 + int(i)) for i in str(intid)])
+        if identifier not in resources:
             unit = IIMSWebContentUnit(asset, None)
             if unit is not None:  # TODO fix
-                resources[nti_intid] = unit
+                resources[identifier] = unit

@@ -5,9 +5,11 @@ from __future__ import print_function
 from __future__ import absolute_import
 from __future__ import division
 
+import copy
+import os
+
 from bs4 import BeautifulSoup
 
-from collections import defaultdict
 
 from datetime import timedelta
 
@@ -36,7 +38,7 @@ from nti.app.assessment.common.utils import get_available_for_submission_ending
 from nti.app.products.courseware.cartridge.renderer import execute
 from nti.app.products.courseware.cartridge.renderer import get_renderer
 
-from nti.app.products.courseware.cartridge.web_content import IMSWebContent
+from nti.app.products.courseware.cartridge.web_content import IMSWebContent, AbstractIMSWebContent
 
 from nti.app.products.courseware.qti.interfaces import ICanvasQuizMeta
 from nti.app.products.courseware.qti.interfaces import ICanvasAssignmentSettings
@@ -45,7 +47,7 @@ from nti.app.products.courseware.qti.interfaces import IQTIItem
 
 from nti.app.products.courseware.qti.utils import update_external_resources
 
-from nti.assessment.interfaces import IQAssessment
+from nti.assessment.interfaces import IQAssignment
 from nti.assessment.interfaces import IQEditableEvaluation
 from nti.assessment.interfaces import IQTimedAssignment
 from nti.assessment.interfaces import IQuestionSet
@@ -64,7 +66,9 @@ logger = __import__('logging').getLogger(__name__)
 
 
 @interface.implementer(IQTIAssessment)
-class QTIAssessment(object):
+class QTIAssessment(AbstractIMSWebContent):
+
+    createFieldProperties(IQTIAssessment)
 
     def handle_dependencies(self, deps):
         """
@@ -74,9 +78,8 @@ class QTIAssessment(object):
             web_content = IMSWebContent(self.context, dep)
             self.dependencies['dependencies'].append(web_content)
 
-    def __init__(self, context, course):
-        self.context = context
-        self.dependencies = defaultdict(list)
+    def __init__(self, context, course, adapted_to=True):
+        super(QTIAssessment, self).__init__(context)
         self.items = []
         self.course = course
         if not self.is_content_backed:
@@ -91,6 +94,12 @@ class QTIAssessment(object):
             self.content = context.content
         else:
             self.content = self._parse_content()
+        if adapted_to:
+            self.dependencies[self.identifier].append(CanvasQuizMeta(self, course))
+            copy_self = QTIAssessment(context, course, adapted_to=False)
+            copy_self.filename = copy_self.identifier + '.xml.qti'
+            copy_self.qti_identifier = self.identifier
+            self.dependencies['non_cc_assessments'].append(copy_self)
 
     @Lazy
     def identifier(self):
@@ -99,6 +108,7 @@ class QTIAssessment(object):
         # Start at A
         identifier = u''.join([chr(65 + int(i)) for i in str(intid)])
         return unicode(identifier)
+    qti_identifier = identifier
 
     @Lazy
     def context_parent(self):
@@ -142,7 +152,7 @@ class QTIAssessment(object):
         build dependencies on any internal resources
         """
         page_contents = self.content_soup().find_all('div', {'class': 'page-contents'})
-        new_content = BeautifulSoup()
+        new_content = BeautifulSoup(features='html.parser')
         to_be_extracted = []  # Because we recurse the structure we need to delay extraction until we are finished
         for pg in page_contents:  # Most likely len(page_contents) == 1
             for tag in pg.recursiveChildGenerator():
@@ -161,7 +171,8 @@ class QTIAssessment(object):
 
         # Strip objects and handle interlaced text
         question_objects = new_content.find_all('object',
-                                                {'type': 'application/vnd.nextthought.naquestion'})
+                                                {'type': ('application/vnd.nextthought.naquestion',
+                                                          'application/vnd.nextthought.naquestionfillintheblankwordbank')})
         for i, question_object in enumerate(question_objects):
             ntiid = question_object.attrs['data']
             question = find_object_with_ntiid(ntiid)
@@ -178,6 +189,9 @@ class QTIAssessment(object):
                         break
                     # Skip empty tags
                     if sibling.name is None and sibling.strip() == '':
+                        continue
+                    # Skip spacer paragraphs
+                    if sibling.name == 'p' and sibling.attrs['class'] == ['par', 'continued']:
                         continue
                     nested_text += ' ' + repr(sibling)
                     to_be_extracted.append(sibling)
@@ -208,7 +222,7 @@ class QTIAssessment(object):
     def questions(self):
         if IQuestionSet.providedBy(self.context):
             return self.context.questions
-        elif IQAssessment.providedBy(self.context):
+        elif IQAssignment.providedBy(self.context):
             # Get q sets from assignment parts
             question_sets = (part.question_set for part in self.context.parts)
             # Coalesce the questions
@@ -217,12 +231,29 @@ class QTIAssessment(object):
             # Should never happen TODO handle
             return None
 
-    def export(self):
+    def qti_xml(self):
         renderer = get_renderer('qti_assessment', '.pt')
-        context = {'ident': self.identifier,
+        context = {'ident': self.qti_identifier,
                    'title': self.context.title,
                    'items': self.items}
         return execute(renderer, {'context': context})
+
+    @Lazy
+    def dirname(self):
+        return unicode(self.identifier)
+
+    @Lazy
+    def filename(self):
+        return 'assessment_qti.xml'
+
+    def export(self, archive):
+        content = self.qti_xml()
+        target_path = os.path.join(archive, self.dirname, self.filename)
+        dirname = os.path.dirname(target_path)
+        if not os.path.exists(dirname):
+            os.makedirs(dirname)
+        with open(target_path, "w") as fd:
+            fd.write(content.encode('utf-8'))
 
 
 @interface.implementer(ICanvasAssignmentSettings)
@@ -248,7 +279,7 @@ class CanvasAssignmentSettings(object):
 
     def __init__(self, qti_assessment):
         self.title = qti_assessment.title
-        self.quiz_identifierref = qti_assessment.identifier
+        self.quiz_identifierref = qti_assessment.qti_identifier
 
     def to_xml(self):
         renderer = get_renderer('assignment_settings', '.pt')
@@ -267,21 +298,20 @@ class CanvasQuizMeta(object):
 
     def __init__(self, qti_assessment, course):
         assessment = qti_assessment.context
-        self.identifier = qti_assessment.identifier
         self.title = qti_assessment.title
         self.description = qti_assessment.content
-        if IQTimedAssignment.providedBy(assessment):
-            self.time_limit = get_max_time_allowed(assessment, course)
-        self.allowed_attempts = get_policy_max_submissions(assessment, course)
-        self.unlock_at = get_available_for_submission_beginning(assessment, context=course)
-        self.due_at = get_available_for_submission_ending(assessment, context=course) or self.due_at
-        submission_buffer = get_submission_buffer_policy(assessment, course) or 0
-        self.lock_at = self.due_at + timedelta(seconds=submission_buffer) if self.due_at else self.lock_at
-        submission_priority = get_policy_submission_priority(assessment, course)
-        self.scoring_policy = self.nti_to_canvas_submission_map.get(submission_priority) or self.scoring_policy
-        if IQAssessment.providedBy(assessment):
+        if IQAssignment.providedBy(assessment):
             self.quiz_type = u'assignment'
             self.assignment = CanvasAssignmentSettings(qti_assessment).to_xml()
+            if IQTimedAssignment.providedBy(assessment):
+                self.time_limit = get_max_time_allowed(assessment, course)
+            self.allowed_attempts = get_policy_max_submissions(assessment, course)
+            self.unlock_at = get_available_for_submission_beginning(assessment, context=course)
+            self.due_at = get_available_for_submission_ending(assessment, context=course) or self.due_at
+            submission_buffer = get_submission_buffer_policy(assessment, course) or 0
+            self.lock_at = self.due_at + timedelta(seconds=submission_buffer) if self.due_at else self.lock_at
+            submission_priority = get_policy_submission_priority(assessment, course)
+            self.scoring_policy = self.nti_to_canvas_submission_map.get(submission_priority) or self.scoring_policy
         elif IQuestionSet.providedBy(assessment):
             self.quiz_type = u'practice_quiz'
 
@@ -292,6 +322,7 @@ class CanvasQuizMeta(object):
         ext.pop('MimeType')
         ext.pop('identifier')
         ext.pop('description')
+        ext.pop('type')
         return ext
 
     def meta(self):
@@ -301,3 +332,20 @@ class CanvasQuizMeta(object):
                    'description': self.description,
                    'assignment': getattr(self, 'assignment', None)}
         return execute(renderer, {'context': context})
+
+    @Lazy
+    def identifier(self):
+        intids = component.getUtility(IIntIds)
+        intid = intids.register(self)
+        # Start at A
+        identifier = ''.join([chr(65 + int(i)) for i in str(intid)])
+        return identifier
+
+    @Lazy
+    def filename(self):
+        return 'assessment_meta.xml'
+
+    def export(self, archive):
+        target_path = os.path.join(archive, 'assessment_meta.xml')
+        with open(target_path, "w") as fd:
+            fd.write(self.meta().encode('utf-8'))

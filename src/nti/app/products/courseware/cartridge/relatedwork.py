@@ -77,7 +77,8 @@ class IMSWebContentResource(AbstractIMSWebContent):
             target_path = os.path.join(path, filename)
             self.copy_resource(source_path, target_path)
         else:
-            raise CommonCartridgeExportException(u"Unable to locate a content package for %s" % self.context.label)
+            logger.warning(u"Unable to locate a content package for %s" % self.context.label)
+            # raise CommonCartridgeExportException(u"Unable to locate a content package for %s" % self.context.label)
 
 
 class IMSWebContentNativeReading(AbstractIMSWebContent):
@@ -109,10 +110,16 @@ def related_work_factory(related_work):
 
 
 def related_work_resource_factory(related_work):
+    if related_work.type == 'application/vnd.nextthought.externallink' and\
+            bool(urllib_parse.urlparse(related_work.href).scheme):
+        return None
+    # Native readings => IMS Learning Application Objects
+    elif related_work.type == CONTENT_MIME_TYPE:
+        return None
+        # return IMSWebContentNativeReading(related_work)
     # Resource links => IMS Web Content
-    if related_work.type == 'application/vnd.nextthought.externallink' and related_work.href.startswith('resources/'):
+    else:
         return IMSWebContentResource(related_work)
-    return None
 
 
 @interface.implementer(IIMSWebLink)
@@ -135,7 +142,11 @@ class IMSWebLink(object):
 
     @Lazy
     def identifier(self):
-        return self.intids.register(self)
+        intids = component.getUtility(IIntIds)
+        intid = intids.register(self)
+        # Start at A
+        identifier = u''.join([chr(65 + int(i)) for i in str(intid)])
+        return unicode(identifier)
 
     def create_dirname(self, path):
         dirname = os.path.dirname(path)

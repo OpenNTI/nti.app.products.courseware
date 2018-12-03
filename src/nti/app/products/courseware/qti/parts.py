@@ -200,7 +200,7 @@ class QTIMatching(AbstractQTIQuestion):
     @property
     def labels(self):
         labels = []
-        for i, x in enumerate(self.context.choices):
+        for i, x in enumerate(self.context.labels):
             content, dependencies = update_external_resources(x)
             self.dependencies.extend(dependencies)
             labels.append(self.Label(u'label_' + unicode(i), content))
@@ -212,7 +212,7 @@ class QTIMatching(AbstractQTIQuestion):
         for i, value in enumerate(self.context.values):
             content, dependencies = update_external_resources(value)
             self.dependencies.extend(dependencies)
-            soup = BeautifulSoup(content)
+            soup = BeautifulSoup(content, features='html.parser')
             paragraphs = soup.find_all('p')
             content = '\n'.join([paragraph.text for paragraph in paragraphs])
             values.append(self.Label(u'value_' + unicode(i), content))
@@ -282,7 +282,7 @@ class QTIFillInMultipleBlanks(AbstractQTIQuestion):
         super(QTIFillInMultipleBlanks, self).__init__(context)
         self.blanks = []
 
-    @property
+    @Lazy
     def content(self):
         """
         This is canvas specific, replace all input fields with canvas's style of blank
@@ -301,7 +301,7 @@ class QTIFillInMultipleBlanks(AbstractQTIQuestion):
         question_content.append(entry_content)
         return question_content.prettify('utf-8')
 
-    @property
+    @Lazy
     def answers(self):
         sols = self.context.solutions
         sol = sols[0]
@@ -330,9 +330,69 @@ class QTIFillInMultipleBlanks(AbstractQTIQuestion):
         return execute(renderer, {'context': context})
 
 
-# There is not an NTI equivalent to Multiple Dropdowns,
-# but we could map Fill in the Blank Word Bank questions
-# in this. We expect there we a limited use case for this currently
-# so we will opt to do these by hand.
 class QTIMultipleDropdowns(AbstractQTIQuestion):
-    pass
+
+    title = u'Multiple Dropdowns'
+
+    def __init__(self, context):
+        super(QTIMultipleDropdowns, self).__init__(context)
+        self.blanks = []
+
+    @Lazy
+    def content(self):
+        """
+        This is canvas specific, replace all input fields with canvas's style of blank
+        """
+        # we want to use html.parser here so <html> and <body> tags aren't inserted
+        question_content, dependencies = update_external_resources(self.question.content)
+        self.dependencies.extend(dependencies)
+        entry_content, dependencies = update_external_resources(self.context.input)
+        self.dependencies.extend(dependencies)
+        question_content = BeautifulSoup(question_content, features='html.parser')
+        entry_content = BeautifulSoup(entry_content, features='html.parser')
+        for blank in entry_content.find_all('input'):
+            name = blank.attrs.get('name')
+            blank.replace_with('[%s]' % name)
+            self.blanks.append(name)
+        question_content.append(entry_content)
+        return question_content.prettify()
+
+    @Lazy
+    def dropdowns(self):
+        word_bank = self.context.wordbank
+        words = word_bank.entries
+        dropdowns = []
+        for i, blank in enumerate(self.blanks):
+            key = 'response_%s' % blank
+            entries = [{'entry_ident': '%s_%s' % (unicode(i), word.wid), 'mattext': word.content} for word in words]
+            dropdowns.append({'mattext': blank,
+                              'dropdown_ident': key,
+                              'entries': entries})
+        return dropdowns
+
+    @Lazy
+    def answers(self):
+        sols = self.context.solutions
+        sol = sols[0]
+        num_sols = len(sol.value) or 1  # Handle div by zero
+        value = 100.0/num_sols
+        answers = []
+        if not sols:
+            # TODO
+            raise KeyError
+        for i, blank in enumerate(self.blanks):
+            key = 'response_%s' % blank
+            entry_ident = '%s_%s' % (unicode(i), sol.value[blank][0])
+            answers.append({'dropdown_ident': key,
+                            'entry_ident': entry_ident,
+                            'value': value})
+        return answers
+
+    def to_xml(self, package=None):
+        renderer = get_renderer('templates/parts/multiple_dropdowns', '.pt', package)
+        context = self.base_template_context
+        context['mattext'] = self.content
+        context['title'] = self.title
+        context['dropdowns'] = self.dropdowns
+        context['answers'] = self.answers
+        return execute(renderer, {'context': context})

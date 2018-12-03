@@ -218,11 +218,11 @@ class IMSWebContentVideo(AbstractIMSWebContent):
 
     @Lazy
     def width(self):
-        return self.source.width
+        return self.source.width or 640
 
     @Lazy
     def height(self):
-        return self.source.height
+        return self.source.height or 385
 
     @Lazy
     def source_id(self):
