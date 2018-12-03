@@ -47,8 +47,9 @@ class _CourseCalendarLinkDecorator(AbstractAuthenticatedRequestAwareDecorator):
         _links = external.setdefault(StandardExternalFields.LINKS, [])
         calendar = ICourseCalendar(context, None)
         if calendar is not None:
-            _link = Link(calendar,
-                         rel='CourseCalendar')
+            _link = Link(context,
+                         rel='CourseCalendar',
+                         elements=('CourseCalendar',))
             link_belongs_to_context(_link, context)
             _links.append(_link)
 
