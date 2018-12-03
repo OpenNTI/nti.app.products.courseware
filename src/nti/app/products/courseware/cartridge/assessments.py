@@ -11,7 +11,8 @@ from bs4 import BeautifulSoup
 
 from pyramid.threadlocal import get_current_request
 
-from zope import component, interface
+from zope import component
+from zope import interface
 
 from zope.cachedescriptors.property import Lazy
 
@@ -19,10 +20,16 @@ from zope.intid import IIntIds
 
 from zope.schema.fieldproperty import createFieldProperties
 
+from nti.app.products.courseware.cartridge.discussion import CanvasTopicMeta
 from nti.app.products.courseware.cartridge.exceptions import CommonCartridgeExportException
-from nti.app.products.courseware.cartridge.interfaces import IIMSAssignment
-from nti.app.products.courseware.cartridge.renderer import get_renderer, execute
-from nti.app.products.courseware.cartridge.web_content import IMSWebContent, AbstractIMSWebContent
+
+from nti.app.products.courseware.cartridge.interfaces import IIMSAssignment, IIMSResource
+
+from nti.app.products.courseware.cartridge.renderer import execute
+from nti.app.products.courseware.cartridge.renderer import get_renderer
+
+from nti.app.products.courseware.cartridge.web_content import AbstractIMSWebContent
+from nti.app.products.courseware.cartridge.web_content import IMSWebContent
 
 from nti.app.products.courseware.qti.interfaces import IQTIAssessment
 
@@ -30,8 +37,9 @@ from nti.app.products.courseware.qti.utils import update_external_resources
 
 from nti.assessment import IQuestionSet
 
-from nti.assessment.interfaces import IQAssignment
+from nti.assessment.interfaces import IQAssignment, IQDiscussionAssignment
 from nti.assessment.interfaces import IQNonGradableFilePart
+from nti.contenttypes.courses.discussions.utils import get_topic_key
 
 from nti.contenttypes.courses.interfaces import ICourseInstance
 
@@ -56,7 +64,7 @@ def _is_only_file_part(assessment):
     return _is_only_file_part_questions(question_set.questions)
 
 
-# TODO discussion assignments muddy this
+# TODO this is likely going to explode when battle tested
 def adapt_to_common_cartridge_assessment(assessment):
     course = get_current_request().context
     if not ICourseInstance.providedBy(course):
@@ -67,6 +75,23 @@ def adapt_to_common_cartridge_assessment(assessment):
         return CanvasAssignment(assessment)
     elif IQuestionSet.providedBy(assessment) and _is_only_file_part_questions(assessment.questions):
         return CanvasAssignment(assessment)
+    elif IQDiscussionAssignment.providedBy(assessment):
+        # These are the same as a regular discussion we just patch in
+        # some metadata to identify it as an assignment
+        # TODO This should likely be generalized to be site specific instead of hard patching it in
+        discussion = find_object_with_ntiid(assessment.discussion_ntiid)
+        topic_key = get_topic_key(discussion)
+        topic = None
+        for val in course.Discussions.values():
+            if topic_key in val:
+                topic = val[topic_key]
+                break
+        if topic is None:
+            raise CommonCartridgeExportException()
+        resource = IIMSResource(discussion)
+        resource.topic = topic  # TODO messy messy messy
+        resource.dependencies[resource.identifier].append(CanvasTopicMeta(resource))
+        return resource
     else:
         qti = component.queryMultiAdapter((assessment, course), IQTIAssessment)
         qti.type = u'imsqti_xmlv1p2/imscc_xmlv1p1/assessment'  # Different in common cartridge
