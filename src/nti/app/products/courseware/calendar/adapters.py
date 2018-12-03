@@ -23,6 +23,7 @@ from zope.traversing.interfaces import IPathAdapter
 
 from nti.app.products.courseware.calendar.interfaces import ICourseCalendar
 from nti.app.products.courseware.calendar.interfaces import ICourseCalendarEvent
+from nti.app.products.courseware.calendar.interfaces import ICourseCalendarDynamicEventProvider
 
 from nti.app.products.courseware.calendar.model import CourseCalendar
 
@@ -101,6 +102,13 @@ class CourseCalendarEventProvider(object):
             calendar = ICourseCalendar(course, None)
             if calendar is not None:
                 res.extend([x for x in calendar.values()])
+
+            # add course dynamic events.
+            providers = component.subscribers((self.user, course),
+                                              ICourseCalendarDynamicEventProvider)
+            for x in providers or ():
+                res.extend(x.iter_events())
+
         return res
 
     def _courses(self, user, entry_ntiids=None, excluded_entry_ntiids=None):

@@ -8,12 +8,16 @@ from __future__ import division
 from __future__ import print_function
 from __future__ import absolute_import
 
+from zope import interface
+
 from zope.container.constraints import contains
 
 from zope.location.interfaces import IContained
 
 from nti.contenttypes.calendar.interfaces import ICalendar
 from nti.contenttypes.calendar.interfaces import ICalendarEvent
+
+from nti.zope_catalog.interfaces import INoAutoIndexEver
 
 
 class ICourseCalendarEvent(ICalendarEvent):
@@ -29,3 +33,20 @@ class ICourseCalendar(ICalendar, IContained):
     contains(ICourseCalendarEvent)
     __setitem__.__doc__ = None
 
+
+class ICourseCalendarDynamicEvent(ICourseCalendarEvent, INoAutoIndexEver):
+    """
+    A calendar event that should be produced dynamically, and not persistent.
+    """
+
+
+class ICourseCalendarDynamicEventProvider(interface.Interface):
+    """
+    An intended subscriber provider of possible :class:`ICourseCalendarDynamicEvent` objects
+    for a :class:`IUser` and :class:`ICourseInstance`.
+    """
+
+    def iter_events():
+        """
+        A generator of :class:`ICourseCalendarDynamicEvent` objects.
+        """

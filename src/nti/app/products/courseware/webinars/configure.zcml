@@ -69,4 +69,15 @@
 	<!-- Traversal-ish stuff -->
 	<utility factory=".ntiids._WebinarAssetResolver" name="NTIWebinarAsset" />
 
+
+	<!-- calendar -->
+	<subscriber factory=".calendar.WebinarCalendarDynamicEventProvider"
+				provides="nti.app.products.courseware.calendar.interfaces.ICourseCalendarDynamicEventProvider"
+				for="nti.dataserver.interfaces.IUser
+					 nti.contenttypes.courses.interfaces.ICourseInstance" />
+
+	<adapter factory=".calendar.WebinarCalendarEventIO"
+			 for=".calendar.IWebinarCalendarEvent"
+			 provides="nti.externalization.interfaces.IInternalObjectExternalizer"/>
+
 </configure>
