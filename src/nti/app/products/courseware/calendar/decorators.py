@@ -69,7 +69,7 @@ class _CourseCalendarEventDecorator(Singleton):
     def decorateExternalMapping(self, context, result):
         course = ICourseInstance(context, None)
         entry = ICourseCatalogEntry(course, None)
-        result['CatalogEntryNTIID'] = result['ContainerId'] = getattr(entry, 'ntiid', None)
+        result['CatalogEntryNTIID'] = getattr(entry, 'ntiid', None)
 
 
 @component.adapter(ICourseCalendar)
