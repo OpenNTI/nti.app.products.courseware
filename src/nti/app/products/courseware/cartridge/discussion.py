@@ -84,7 +84,7 @@ class TopicHandler(NullElementHandler):
         content = self.topic()
         name = "%s.xml" % self.identifier
         with open(os.path.join(archive, name), "w") as fp:
-            fp.write(content)
+            fp.write(content.encode('utf-8'))
 
 
 @component.adapter(IContentBlobFile)
@@ -99,7 +99,10 @@ class IMSAssociatedContentFileBlob(object):
     @Lazy
     def identifier(self):
         intids = component.getUtility(IIntIds)
-        return intids.register(self)
+        intid = intids.register(self)
+        # Start at A
+        identifier = u''.join([chr(65 + int(i)) for i in str(intid)])
+        return unicode(identifier)
 
     @Lazy
     def filename(self):
@@ -123,6 +126,8 @@ class IMSDiscussionTopic(object):
     def __init__(self, context):
         self.context = context
         self.dependencies = defaultdict(list)
+        if self.topic is None:
+            raise TypeError  # This handles junk discussions
 
     # TODO we are losing <br> tags for some reason
     def _to_html(self, content):
@@ -165,19 +170,23 @@ class IMSDiscussionTopic(object):
     def topic(self):
         # Hopefully we can just grab this straight from the target
         topic = find_object_with_ntiid(self.context.target)
+        # TODO hadnle unresolvable
         if topic is None:
             # Ok, we have a course discussion. We need to resolve from the package
             user = get_remote_user()
-            course_discussion, topic = resolve_discussion_course_bundle(user, self.context)
-        if topic is None:
-            # If we still don't have it we need to error
-            raise CommonCartridgeExportException(u'Unable to locate topic for discussion: %s' % self.context.title)
+            course_discussion, topic = resolve_discussion_course_bundle(user, self.context) or (None, None)
+        # if topic is None:
+        #     # If we still don't have it we need to error
+        #     raise CommonCartridgeExportException(u'Unable to locate topic for discussion: %s' % self.context.title)
         return topic
 
     @Lazy
     def identifier(self):
         intids = component.getUtility(IIntIds)
-        return intids.register(self)
+        intid = intids.register(self)
+        # Start at A
+        identifier = u''.join([chr(65 + int(i)) for i in str(intid)])
+        return unicode(identifier)
 
     @property
     def dirname(self):
@@ -193,7 +202,7 @@ class IMSDiscussionTopic(object):
         # TODO this properly imports; however, we could further extend canvas compatibility by adding a topic meta file
         renderer = get_renderer("discussion_topic", ".pt")
         context = {
-            'title': self.topic.title or ''
+            'title': getattr(self.topic, 'title', 'Untitled Discussion')
         }
         content = self._to_html(self.topic.headline.body)
         # TODO do we need to sanitize?
@@ -207,7 +216,7 @@ class IMSDiscussionTopic(object):
         else:
             target_path = os.path.join(archive, self.filename)
         with open(target_path, "w") as fd:
-            fd.write(body)
+            fd.write(body.encode('utf-8'))
 
 
 @component.adapter(INTIDiscussionRef)

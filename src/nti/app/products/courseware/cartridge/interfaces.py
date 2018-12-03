@@ -59,15 +59,13 @@ class IIMSWebContentUnit(IIMSResource):
     Web Content units are responsible for exporting their dependencies
     """
 
-
-
     dependencies = Dict(key_type=TextLine(),
                         value_type=List(value_type=Object(IIMSResource)))  # TODO doc
 
     type = TextLine(title=u'Object Type',
                     description=u'The IMS characteristic object type.',
                     required=True,
-                    default='webcontent',
+                    default=u'webcontent',
                     readonly=True)
 
 
@@ -76,7 +74,7 @@ class IIMSWebLink(IIMSResource):
     type = TextLine(title=u'Object Type',
                     description=u'The IMS characteristic object type.',
                     required=True,
-                    default='imswl_xmlv1p1',
+                    default=u'imswl_xmlv1p1',
                     readonly=True)
 
 
@@ -88,7 +86,7 @@ class IIMSDiscussionTopic(IIMSResource):
     type = TextLine(title=u'Object Type',
                     description=u'The IMS characteristic object type.',
                     required=True,
-                    default='imsdt_xmlv1p1',
+                    default=u'imsdt_xmlv1p1',
                     readonly=True)
 
 
@@ -97,7 +95,7 @@ class IIMSAssociatedContent(IIMSResource):
     type = TextLine(title=u'Object Type',
                     description=u'The IMS characteristic object type.',
                     required=True,
-                    default='associatedcontent/imscc_xmlv1p2/learning-application-resource',
+                    default=u'associatedcontent/imscc_xmlv1p2/learning-application-resource',
                     readonly=True)
 
 
@@ -105,6 +103,12 @@ class ICommonCartridgeAssessment(IIMSResource):
     """
     This may be a QTI assignment or a Canvas specific implementation of assignments.
     """
+
+    type = TextLine(title=u'Object Type',
+                    description=u'The IMS characteristic object type.',
+                    required=True,
+                    default=u'imsqti_xmlv1p2/imscc_xmlv1p1/assessment',
+                    readonly=True)
 
 
 class ICartridgeWebContent(interface.Interface):
