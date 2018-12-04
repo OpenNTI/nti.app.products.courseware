@@ -15,6 +15,8 @@ from six.moves.urllib_parse import urljoin
 from zope import component
 from zope import interface
 
+from zope.cachedescriptors.property import Lazy
+
 from zope.location.interfaces import ILocation
 
 from pyramid.threadlocal import get_current_request
@@ -106,12 +108,17 @@ from nti.contenttypes.presentation.interfaces import INTIQuestionSetRef
 from nti.coremetadata.interfaces import ILastSeenProvider
 
 from nti.dataserver.authorization import ACT_READ
+from nti.dataserver.authorization import ACT_DELETE
 from nti.dataserver.authorization import ACT_CONTENT_EDIT
+
+from nti.dataserver.authorization import is_admin
+from nti.dataserver.authorization import is_site_admin
 
 from nti.dataserver.contenttypes.forums.interfaces import ITopic
 
 from nti.dataserver.interfaces import IUser
 from nti.dataserver.interfaces import IEntityContainer
+from nti.dataserver.interfaces import ISiteAdminUtility
 from nti.dataserver.interfaces import ILinkExternalHrefOnly
 
 from nti.externalization.externalization import to_external_object
@@ -285,6 +292,48 @@ class _RosterMailLinkDecorator(AbstractAuthenticatedRequestAwareDecorator):
         _links = result.setdefault(LINKS, [])
         link = Link(context, rel=VIEW_COURSE_MAIL,
                     elements=(VIEW_COURSE_MAIL,))
+        interface.alsoProvides(link, ILocation)
+        link.__name__ = ''
+        link.__parent__ = context
+        _links.append(link)
+
+
+@component.adapter(ICourseInstanceEnrollment)
+@interface.implementer(IExternalMappingDecorator)
+class _EnrollmentDroplLinkDecorator(AbstractAuthenticatedRequestAwareDecorator):
+    """
+    Decorate the enrollment with a drop rel.
+    """
+
+    @Lazy
+    def _is_admin(self):
+        return is_admin(self.remoteUser)
+
+    @Lazy
+    def _is_site_admin(self):
+        return is_site_admin(self.remoteUser)
+
+    def _can_admin_user(self, user):
+        # Verify a site admin is administering a user in their site.
+        result = True
+        if self._is_site_admin:
+            admin_utility = component.getUtility(ISiteAdminUtility)
+            result = admin_utility.can_administer_user(self.remoteUser, user)
+        return result
+
+    def _check_access(self, context, user):
+        # 403 if not admin or site admin or self
+        return (   self._is_admin \
+                or has_permission(ACT_DELETE, context)) \
+            and self._can_admin_user(user)
+
+    def _predicate(self, context, unused_result):
+        user = IUser(context, None)
+        return self._is_authenticated and self._check_access(context, user)
+
+    def _do_decorate_external(self, context, result):
+        _links = result.setdefault(LINKS, [])
+        link = Link(context, rel='CourseDrop', method='DELETE')
         interface.alsoProvides(link, ILocation)
         link.__name__ = ''
         link.__parent__ = context

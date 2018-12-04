@@ -67,6 +67,7 @@ from nti.app.products.courseware.views import VIEW_COURSE_CATALOG_FAMILIES
 from nti.appserver.dataserver_pyramid_views import GenericGetView
 
 from nti.appserver.pyramid_authorization import can_create
+from nti.appserver.pyramid_authorization import has_permission
 
 from nti.appserver.workspaces import VIEW_CATALOG_POPULAR
 from nti.appserver.workspaces import VIEW_CATALOG_FEATURED
@@ -76,6 +77,7 @@ from nti.appserver.workspaces.interfaces import IContainerCollection
 
 from nti.base._compat import text_
 
+from nti.common.string import is_true
 from nti.common.string import is_false
 
 from nti.contenttypes.courses.interfaces import ES_PUBLIC
@@ -98,10 +100,13 @@ from nti.contenttypes.courses.utils import is_course_instructor_or_editor
 
 from nti.dataserver import authorization as nauth
 
+from nti.dataserver.authorization import is_admin
+from nti.dataserver.authorization import is_site_admin
 from nti.dataserver.authorization import is_admin_or_content_admin
 from nti.dataserver.authorization import is_admin_or_content_admin_or_site_admin
 
 from nti.dataserver.interfaces import IUser
+from nti.dataserver.interfaces import ISiteAdminUtility
 from nti.dataserver.interfaces import IDataserverFolder
 
 from nti.datastructures.datastructures import LastModifiedCopyingUserList
@@ -521,7 +526,6 @@ class FavoriteAdministeredCoursesView(_AbstractSortingAndFilteringCoursesView):
 @view_config(route_name='objects.generic.traversal',
              context=ICourseInstanceEnrollment,
              request_method='DELETE',
-             permission=nauth.ACT_DELETE,
              renderer='rest')
 class drop_course_view(AbstractAuthenticatedView):
     """
@@ -530,11 +534,66 @@ class drop_course_view(AbstractAuthenticatedView):
 
     For this to work, it requires that the IEnrolledCoursesCollection
     is not itself traverseable to children.
+
+    NT and site admins can also delete the enrollment record.
     """
+
+    @Lazy
+    def _is_admin(self):
+        return is_admin(self.remoteUser)
+
+    @Lazy
+    def _is_site_admin(self):
+        return is_site_admin(self.remoteUser)
+
+    def _can_admin_user(self, user):
+        # Verify a site admin is administering a user in their site.
+        result = True
+        if self._is_site_admin:
+            admin_utility = component.getUtility(ISiteAdminUtility)
+            result = admin_utility.can_administer_user(self.remoteUser, user)
+        return result
+
+    def _check_access(self, user):
+        # 403 if not admin or site admin or self
+        return (   self._is_admin \
+                or has_permission(nauth.ACT_DELETE, self.context)) \
+            and self._can_admin_user(user)
+
+    @Lazy
+    def _params(self):
+        values = self.request.params
+        result = CaseInsensitiveDict(values)
+        return result
+
+    @Lazy
+    def override_completion(self):
+        """
+        Unenroll the user even if they have completed the course.
+        """
+        result = self._params.get('override_completion', False)
+        return is_true(result)
 
     def __call__(self):
         course = self.request.context.CourseInstance
-        if has_completed_course(self.remoteUser, course):
+        user = IUser(self.context, None)
+        if user is None:
+            raise_json_error(self.request,
+                             hexc.HTTPUnprocessableEntity,
+                             {
+                                 'message': _(u"Cannot find user for enrollment."),
+                                 'code': 'MissingEnrollmentUserError',
+                             },
+                             None)
+        if not self._check_access(user):
+            raise_json_error(self.request,
+                             hexc.HTTPForbidden,
+                             {
+                                 'message': _(u"Cannot drop the user."),
+                                 'code': 'DropEnrollmentAccessError'
+                             },
+                             None)
+        if not self.override_completion and has_completed_course(user, course):
             raise_json_error(self.request,
                              hexc.HTTPForbidden,
                              {
@@ -544,9 +603,9 @@ class drop_course_view(AbstractAuthenticatedView):
                              None)
         catalog_entry = ICourseCatalogEntry(course)
         enrollments = get_enrollments(course, self.request)
-        enrollments.drop(self.remoteUser)
-        logger.info("User %s has dropped from course %s",
-                    self.remoteUser, catalog_entry.ntiid)
+        enrollments.drop(user)
+        logger.info("User %s has dropped from course %s (%s)",
+                    user, catalog_entry.ntiid, self.remoteUser)
         return hexc.HTTPNoContent()
 
 

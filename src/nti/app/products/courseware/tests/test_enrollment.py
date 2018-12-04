@@ -169,6 +169,46 @@ class TestEnrollment(ApplicationLayerTest):
             assert_that(last_mod, does_not(prev_last_mod))
 
     @WithSharedApplicationMockDS(testapp=True, users=True)
+    def test_admin_enrollment_management(self):
+        """
+        Validate admins can drop a user from a course.
+        """
+        with mock_dataserver.mock_db_trans(self.ds):
+            self._create_user(u'marco')
+            self._create_user(u'alana')
+
+        enrollments_href = '/dataserver2/users/marco/UserEnrollments'
+
+        instructor_environ = self._make_extra_environ(username='harp4162')
+        enrolled_environ = self._make_extra_environ(username='marco')
+        other_environ = self._make_extra_environ(username='alana')
+
+        self.testapp.post_json('/dataserver2/users/marco/Courses/EnrolledCourses',
+                               self.course_ntiid,
+                               extra_environ=enrolled_environ)
+
+        def get_record(environ):
+            res = self.testapp.get(enrollments_href, extra_environ=environ)
+            res = res.json_body
+            assert_that(res['Items'], has_length(1))
+            return res['Items'][0]
+
+        record = get_record(None)
+        self.require_link_href_with_rel(record, 'CourseDrop')
+        record = get_record(enrolled_environ)
+        self.require_link_href_with_rel(record, 'CourseDrop')
+        record = get_record(instructor_environ)
+        self.forbid_link_with_rel(record, 'CourseDrop')
+
+        record_href = '/dataserver2/users/marco/Courses/EnrolledCourses/%s' % self.course_ntiid
+
+        for invalid_environ in (instructor_environ, other_environ):
+            self.testapp.delete(record_href, extra_environ=invalid_environ, status=403)
+
+        # NT admins can
+        self.testapp.delete(record_href)
+
+    @WithSharedApplicationMockDS(testapp=True, users=True)
     def test_access_provider(self):
         with mock_dataserver.mock_db_trans(self.ds):
             self._create_user(u'marco')
