@@ -324,6 +324,7 @@ class _EnrollmentDroplLinkDecorator(AbstractAuthenticatedRequestAwareDecorator):
     def _check_access(self, context, user):
         # 403 if not admin or site admin or self
         return (   self._is_admin \
+                or self._is_site_admin \
                 or has_permission(ACT_DELETE, context)) \
             and self._can_admin_user(user)
 
@@ -1133,7 +1134,7 @@ class _CourseCatalogCollectionDecorator(AbstractAuthenticatedRequestAwareDecorat
 @interface.implementer(IExternalObjectDecorator)
 class _UserEnrollmentsDecorator(AbstractAuthenticatedRequestAwareDecorator):
     """
-    Decorate the :class:``IUser``.
+    Decorate the :class:``IUser`` with a rel to fetch a user's enrollments.
     """
 
     def _predicate(self, context, unused_result):
@@ -1144,6 +1145,47 @@ class _UserEnrollmentsDecorator(AbstractAuthenticatedRequestAwareDecorator):
         link = Link(context,
                     rel=VIEW_USER_ENROLLMENTS,
                     elements=('@@%s' % VIEW_USER_ENROLLMENTS,))
+        _links.append(link)
+
+
+@component.adapter(IUser)
+@interface.implementer(IExternalObjectDecorator)
+class _UserEnrollmentsEnrollLinkDecorator(AbstractAuthenticatedRequestAwareDecorator):
+    """
+    Decorate the user with a rel to enroll the user in a course, for admins
+    and site admins only.
+    """
+
+    @Lazy
+    def _is_admin(self):
+        return is_admin(self.remoteUser)
+
+    @Lazy
+    def _is_site_admin(self):
+        return is_site_admin(self.remoteUser)
+
+    def _can_admin_user(self, user):
+        # Verify a site admin is administering a user in their site.
+        result = True
+        if self._is_site_admin:
+            admin_utility = component.getUtility(ISiteAdminUtility)
+            result = admin_utility.can_administer_user(self.remoteUser, user)
+        return result
+
+    def _check_access(self, context):
+        # 403 if not admin or site admin or self
+        return  (self._is_admin or self._is_site_admin) \
+            and self._can_admin_user(context)
+
+    def _predicate(self, context, unused_result):
+        return self._is_authenticated and self._check_access(context)
+
+    def _do_decorate_external(self, context, result):
+        _links = result.setdefault(LINKS, [])
+        link = Link(context,
+                    rel='EnrollUser',
+                    elements=('@@%s' % VIEW_USER_ENROLLMENTS,),
+                    method='POST')
         _links.append(link)
 
 

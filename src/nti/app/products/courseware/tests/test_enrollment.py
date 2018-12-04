@@ -1,8 +1,9 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from __future__ import print_function, absolute_import, division
-__docformat__ = "restructuredtext en"
+from __future__ import division
+from __future__ import print_function
+from __future__ import absolute_import
 
 # disable: accessing protected members, too many methods
 # pylint: disable=W0212,R0904
@@ -18,6 +19,8 @@ from hamcrest import assert_that
 from hamcrest import has_entries
 from hamcrest import has_property
 does_not = is_not
+
+import fudge
 
 from nose.tools import assert_raises
 
@@ -169,10 +172,15 @@ class TestEnrollment(ApplicationLayerTest):
             assert_that(last_mod, does_not(prev_last_mod))
 
     @WithSharedApplicationMockDS(testapp=True, users=True)
-    def test_admin_enrollment_management(self):
+    @fudge.patch('nti.appserver.usersearch_views._make_visibility_test')
+    def test_admin_enrollment_management(self, mock_visibility):
         """
         Validate admins can drop a user from a course.
         """
+        def is_visible(unused_x, unused_y=True):
+            return True
+        mock_visibility.is_callable().returns(is_visible)
+
         with mock_dataserver.mock_db_trans(self.ds):
             self._create_user(u'marco')
             self._create_user(u'alana')
@@ -183,9 +191,20 @@ class TestEnrollment(ApplicationLayerTest):
         enrolled_environ = self._make_extra_environ(username='marco')
         other_environ = self._make_extra_environ(username='alana')
 
-        self.testapp.post_json('/dataserver2/users/marco/Courses/EnrolledCourses',
-                               self.course_ntiid,
-                               extra_environ=enrolled_environ)
+        # Validate enrollment
+        # Users cannot see rel nor can enroll (at this endpoint)
+        for environ in (instructor_environ, enrolled_environ, other_environ):
+            res = self.testapp.get('/dataserver2/ResolveUser/marco', extra_environ=environ)
+            res = res.json_body[ITEMS][0]
+            self.forbid_link_with_rel(res, 'EnrollUser')
+            self.testapp.post_json(enrollments_href, {'ntiid': self.course_ntiid},
+                                   extra_environ=environ, status=403)
+
+        # NT user can
+        res = self.testapp.get('/dataserver2/ResolveUser/marco')
+        res = res.json_body[ITEMS][0]
+        self.require_link_href_with_rel(res, 'EnrollUser')
+        self.testapp.post_json(enrollments_href, {'ntiid': self.course_ntiid})
 
         def get_record(environ):
             res = self.testapp.get(enrollments_href, extra_environ=environ)
