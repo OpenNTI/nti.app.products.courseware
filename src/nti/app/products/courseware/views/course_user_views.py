@@ -16,11 +16,17 @@ from pyramid import httpexceptions as hexc
 from pyramid.view import view_config
 from pyramid.view import view_defaults
 
+from requests.structures import CaseInsensitiveDict
+
 from zope.cachedescriptors.property import Lazy
+
+from zope.security.management import endInteraction
+from zope.security.management import restoreInteraction
 
 from nti.app.base.abstract_views import AbstractAuthenticatedView
 
 from nti.app.externalization.view_mixins import BatchingUtilsMixin
+from nti.app.externalization.view_mixins import ModeledContentUploadRequestUtilsMixin
 
 from nti.app.products.courseware import MessageFactory as _
 
@@ -28,19 +34,35 @@ from nti.app.products.courseware import VIEW_CLASSMATES
 from nti.app.products.courseware import VIEW_USER_ENROLLMENTS
 from nti.app.products.courseware import VIEW_COURSE_CLASSMATES
 
+from nti.app.products.courseware.interfaces import ICoursesWorkspace
 from nti.app.products.courseware.interfaces import ICourseInstanceEnrollment
 from nti.app.products.courseware.interfaces import IClassmatesSuggestedContactsProvider
 
+from nti.app.products.courseware.views._utils import _parse_course
+
 from nti.app.products.courseware.views import raise_error
 
+from nti.app.products.courseware.views.catalog_views import do_course_enrollment
+
+from nti.appserver.workspaces.interfaces import IUserService
+
+from nti.common.string import is_true
+
+from nti.contenttypes.courses.interfaces import ES_PUBLIC
+from nti.contenttypes.courses.interfaces import ENROLLMENT_SCOPE_VOCABULARY
+
 from nti.contenttypes.courses.interfaces import ICourseInstance
+from nti.contenttypes.courses.interfaces import ICourseCatalogEntry
 
 from nti.contenttypes.courses.utils import get_enrollment_record
 from nti.contenttypes.courses.utils import get_instructed_courses
+from nti.contenttypes.courses.utils import drop_any_other_enrollments
+from nti.contenttypes.courses.utils import is_instructor_in_hierarchy
 from nti.contenttypes.courses.utils import get_context_enrollment_records
 
 from nti.dataserver import authorization as nauth
 
+from nti.dataserver.authorization import is_admin
 from nti.dataserver.authorization import is_site_admin
 from nti.dataserver.authorization import is_admin_or_site_admin
 
@@ -134,7 +156,7 @@ class ClassmatesView(BaseClassmatesView):
 class UserEnrollmentsView(AbstractAuthenticatedView,
                           BatchingUtilsMixin):
     """
-    A view that returns the user enrollment records. This view is
+    A view that returns the user enrollment records.
     """
 
     _DEFAULT_BATCH_START = 0
@@ -176,4 +198,84 @@ class UserEnrollmentsView(AbstractAuthenticatedView,
         records = sorted(records, key=lambda x:x.createdTime, reverse=True)
         result[TOTAL] = len(records)
         self._batch_items_iterable(result, records, selector=ICourseInstanceEnrollment)
+        return result
+
+
+@view_config(route_name='objects.generic.traversal',
+             renderer='rest',
+             context=IUser,
+             name=VIEW_USER_ENROLLMENTS,
+             request_method='POST')
+class UserCreateEnrollmentView(AbstractAuthenticatedView,
+                               ModeledContentUploadRequestUtilsMixin):
+    """
+    A view that allows a user to be enrolled in a course.
+
+    `ntiid`: course/entry ntiid
+    """
+
+    @Lazy
+    def _is_admin(self):
+        return is_admin(self.remoteUser)
+
+    @Lazy
+    def _is_site_admin(self):
+        return is_site_admin(self.remoteUser)
+
+    def _can_admin_user(self):
+        # Verify a site admin is administering a user in their site.
+        result = True
+        if self._is_site_admin:
+            admin_utility = component.getUtility(ISiteAdminUtility)
+            result = admin_utility.can_administer_user(self.remoteUser, self.context)
+        return result
+
+    def _predicate(self):
+        # 403 if not admin or instructor or self
+        return  (self._is_admin or self._is_site_admin) \
+            and self._can_admin_user()
+
+    def readInput(self, value=None):
+        if self.request.body:
+            values = super(UserCreateEnrollmentView, self).readInput(value)
+        else:
+            values = self.request.params
+        result = CaseInsensitiveDict(values)
+        return result
+
+    def __call__(self):
+        if not self._predicate():
+            raise_error(
+                {'message': _(u"Cannot modify user enrollments."),
+                 'code': 'CannotAccessUserEnrollmentsError',},
+                factory=hexc.HTTPForbidden)
+        values = self.readInput()
+        context = _parse_course(values)
+        user = self.context
+        scope = values.get('scope', ES_PUBLIC)
+        if not scope or scope not in ENROLLMENT_SCOPE_VOCABULARY.by_token:
+            raise_error({'message': _(u"Invalid scope.")})
+        if is_instructor_in_hierarchy(context, user):
+            msg = _(u'User is an instructor in course hierarchy')
+            raise_error({'message': _(msg)})
+        interaction = is_true(values.get('email') or values.get('interaction'))
+        # Make sure we don't have any interaction.
+        # XXX: why?
+        if not interaction:
+            endInteraction()
+        try:
+            drop_any_other_enrollments(context, user)
+            service = IUserService(user)
+            workspace = ICoursesWorkspace(service)
+            parent = workspace['EnrolledCourses']
+            entry = ICourseCatalogEntry(context, None)
+            logger.info("Enrolling %s in %s (%s)",
+                        user, getattr(entry, 'ntiid', None), self.remoteUser)
+            result = do_course_enrollment(context, user, scope,
+                                          parent=parent,
+                                          safe=True,
+                                          request=self.request)
+        finally:
+            if not interaction:
+                restoreInteraction()
         return result
