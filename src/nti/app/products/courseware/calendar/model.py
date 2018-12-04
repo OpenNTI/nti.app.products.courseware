@@ -12,6 +12,8 @@ from zope import interface
 
 from zope.container.contained import Contained
 
+from zope.cachedescriptors.property import readproperty
+
 from nti.app.products.courseware.calendar.interfaces import ICourseCalendar
 from nti.app.products.courseware.calendar.interfaces import ICourseCalendarEvent
 
@@ -30,6 +32,10 @@ class CourseCalendar(Calendar, Contained):
 
     __external_class_name__ = "CourseCalendar"
     mimeType = mime_type = "application/vnd.nextthought.courseware.coursecalendar"
+
+    @readproperty
+    def title(self):
+        return getattr(self.__parent__, 'title', None) or u''
 
 
 @interface.implementer(ICourseCalendarEvent)

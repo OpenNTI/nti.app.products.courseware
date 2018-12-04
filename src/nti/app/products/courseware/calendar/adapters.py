@@ -73,23 +73,33 @@ def _CourseCalendarPathAdapter(context, unused_request):
     return _CourseCalendarFactory(context)
 
 
-def _get_courses_for_user(user):
-    res = []
+def _get_courses_for_user(user, entry_ntiids=None, excluded_entry_ntiids=None):
+    courses = []
+
     if is_admin_or_site_admin(user):
         for catalog in component.subscribers((user,), IPrincipalAdministrativeRoleCatalog):
             queried = catalog.iter_administrations()
-            res.extend([ICourseInstance(x) for x in queried])
+            courses.extend([ICourseInstance(x) for x in queried])
     else:
         for instructed_course in get_instructed_courses(user) or ():
             course = ICourseInstance(instructed_course, None)
             if course is not None:
-                res.append(course)
+                courses.append(course)
+
         for enrollment in get_enrollments(user) or ():
             course = ICourseInstance(enrollment, None)
             entry = ICourseCatalogEntry(course, None)
             is_preview_course = entry is not None and entry.Preview
             if course is not None and not is_preview_course:
-                res.append(course)
+                courses.append(course)
+
+    res = []
+    for course in courses:
+        entry = ICourseCatalogEntry(course, None)
+        if      entry is not None \
+            and (not entry_ntiids or entry.ntiid in entry_ntiids) \
+            and (not excluded_entry_ntiids or entry.ntiid not in excluded_entry_ntiids):
+            res.append(course)
     return res
 
 
@@ -100,13 +110,16 @@ class CourseCalendarProvider(object):
     def __init__(self, user):
         self.user = user
 
-    def iter_calendars(self):
+    def iter_calendars(self, context_ntiids=None, excluded_context_ntiids=None):
         res = []
-        for course in _get_courses_for_user(self.user):
+        for course in self._courses(self.user, context_ntiids, excluded_context_ntiids):
             calendar = ICourseCalendar(course, None)
             if calendar is not None:
                 res.append(calendar)
         return res
+
+    def _courses(self, user, entry_ntiids=None, excluded_entry_ntiids=None):
+        return _get_courses_for_user(user, entry_ntiids, excluded_entry_ntiids)
 
 
 @component.adapter(IUser)
@@ -137,14 +150,7 @@ class CourseCalendarEventProvider(object):
         that are in the inclusive `entry_ntiids` param and exclude any in the
         `excluded_entry_ntiids` param.
         """
-        res = []
-        for course in _get_courses_for_user(user):
-            entry = ICourseCatalogEntry(course, None)
-            if      entry is not None \
-                and (not entry_ntiids or entry.ntiid in entry_ntiids) \
-                and (not excluded_entry_ntiids or entry.ntiid not in excluded_entry_ntiids):
-                res.append(course)
-        return res
+        return _get_courses_for_user(user, entry_ntiids, excluded_entry_ntiids)
 
 
 @component.adapter(IUser)
