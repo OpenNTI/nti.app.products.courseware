@@ -8,8 +8,6 @@ from __future__ import division
 from __future__ import print_function
 from __future__ import absolute_import
 
-import itertools
-
 from pyramid.interfaces import IRequest
 
 from ZODB.interfaces import IConnection
@@ -82,12 +80,18 @@ def _get_courses_for_user(user):
             queried = catalog.iter_administrations()
             res.extend([ICourseInstance(x) for x in queried])
     else:
-        for enrollment in itertools.chain(get_enrollments(user),
-                                          get_instructed_courses(user)) or ():
-            course = ICourseInstance(enrollment, None)
+        for instructed_course in get_instructed_courses(user) or ():
+            course = ICourseInstance(instructed_course, None)
             if course is not None:
                 res.append(course)
+        for enrollment in get_enrollments(user) or ():
+            course = ICourseInstance(enrollment, None)
+            entry = ICourseCatalogEntry(course, None)
+            is_preview_course = entry is not None and entry.Preview
+            if course is not None and not is_preview_course:
+                res.append(course)
     return res
+
 
 @component.adapter(IUser)
 @interface.implementer(ICalendarProvider)
