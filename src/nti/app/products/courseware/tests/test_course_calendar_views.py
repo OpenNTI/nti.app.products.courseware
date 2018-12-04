@@ -247,51 +247,52 @@ class TestCourseCalendarViews(ApplicationLayerTest):
                     calendar.store_event(CourseCalendarEvent(title=title))
 
         result = self.testapp.get(url, status=200, extra_environ=owner_env).json_body
-        assert_that(result, has_entries({'Total': 3, 'Items': has_length(3)}))
-        assert_that([x['title'] for x in result['Items']], contains_inanyorder(u'c_one', u'c_two', u'c_three'))
+        result = [x for x in result['Items'] if x['Class'] == 'CourseCalendarEvent']
+        assert_that([x['title'] for x in result], contains_inanyorder(u'c_one', u'c_two', u'c_three'))
 
         result = self.testapp.get(url, params={'context_ntiids': self.course_ntiid}, status=200, extra_environ=owner_env).json_body
-        assert_that(result, has_entries({'Total': 2, 'Items': has_length(2)}))
-        assert_that([x['title'] for x in result['Items']], contains_inanyorder(u'c_one', u'c_two'))
+        result = [x for x in result['Items'] if x['Class'] == 'CourseCalendarEvent']
+        assert_that([x['title'] for x in result], contains_inanyorder(u'c_one', u'c_two'))
 
         result = self.testapp.get(url, params={'context_ntiids': self.course_ntiid2}, status=200, extra_environ=owner_env).json_body
-        assert_that(result, has_entries({'Total': 1, 'Items': has_length(1)}))
-        assert_that([x['title'] for x in result['Items']], contains_inanyorder(u'c_three'))
+        result = [x for x in result['Items'] if x['Class'] == 'CourseCalendarEvent']
+        assert_that([x['title'] for x in result], contains_inanyorder(u'c_three'))
 
         # empty string should be ignore.
         result = self.testapp.get(url, params={'context_ntiids': ''}, status=200, extra_environ=owner_env).json_body
-        assert_that(result, has_entries({'Total': 3, 'Items': has_length(3)}))
-        assert_that([x['title'] for x in result['Items']], contains_inanyorder(u'c_one', u'c_two', u'c_three'))
+        result = [x for x in result['Items'] if x['Class'] == 'CourseCalendarEvent']
+        assert_that([x['title'] for x in result], contains_inanyorder(u'c_one', u'c_two', u'c_three'))
 
         result = self.testapp.get(url, params={'context_ntiids': 'abc'}, status=200, extra_environ=owner_env).json_body
-        assert_that(result, has_entries({'Total': 0, 'Items': has_length(0)}))
+        result = [x for x in result['Items'] if x['Class'] == 'CourseCalendarEvent']
+        assert_that(result, has_length(0))
 
         result = self.testapp.get(url,
                                   params={'context_ntiids': [self.course_ntiid2, self.course_ntiid]},
                                   extra_environ=owner_env)
         result = result.json_body
-        assert_that(result, has_entries({'Total': 3, 'Items': has_length(3)}))
-        assert_that([x['title'] for x in result['Items']], contains_inanyorder(u'c_one', u'c_two', u'c_three'))
+        result = [x for x in result['Items'] if x['Class'] == 'CourseCalendarEvent']
+        assert_that([x['title'] for x in result], contains_inanyorder(u'c_one', u'c_two', u'c_three'))
 
         # Excluded
         result = self.testapp.get(url, params={'excluded_context_ntiids': ''}, extra_environ=owner_env)
         result = result.json_body
-        assert_that(result, has_entries({'Total': 3, 'Items': has_length(3)}))
-        assert_that([x['title'] for x in result['Items']], contains_inanyorder(u'c_one', u'c_two', u'c_three'))
+        result = [x for x in result['Items'] if x['Class'] == 'CourseCalendarEvent']
+        assert_that([x['title'] for x in result], contains_inanyorder(u'c_one', u'c_two', u'c_three'))
 
         result = self.testapp.get(url, params={'excluded_context_ntiids': self.course_ntiid}, extra_environ=owner_env)
         result = result.json_body
-        assert_that(result, has_entries({'Total': 1, 'Items': has_length(1)}))
-        assert_that([x['title'] for x in result['Items']], contains_inanyorder(u'c_three'))
+        result = [x for x in result['Items'] if x['Class'] == 'CourseCalendarEvent']
+        assert_that([x['title'] for x in result], contains_inanyorder(u'c_three'))
 
         result = self.testapp.get(url, params={'excluded_context_ntiids': self.course_ntiid2}, extra_environ=owner_env)
         result = result.json_body
-        assert_that(result, has_entries({'Total': 2, 'Items': has_length(2)}))
-        assert_that([x['title'] for x in result['Items']], contains_inanyorder(u'c_one', u'c_two'))
+        result = [x for x in result['Items'] if x['Class'] == 'CourseCalendarEvent']
+        assert_that([x['title'] for x in result], contains_inanyorder(u'c_one', u'c_two'))
 
         result = self.testapp.get(url,
                                   params={'excluded_context_ntiids': [self.course_ntiid2, self.course_ntiid]},
                                   extra_environ=owner_env)
         result = result.json_body
-        assert_that(result, has_entries({'Total': 0, 'Items': has_length(0)}))
-        assert_that([x['title'] for x in result['Items']], has_length(0))
+        result = [x for x in result['Items'] if x['Class'] == 'CourseCalendarEvent']
+        assert_that(result, has_length(0))

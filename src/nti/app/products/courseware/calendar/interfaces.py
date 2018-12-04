@@ -16,6 +16,8 @@ from zope.location.interfaces import IContained
 
 from nti.contenttypes.calendar.interfaces import ICalendar
 from nti.contenttypes.calendar.interfaces import ICalendarEvent
+from nti.contenttypes.calendar.interfaces import ICalendarDynamicEvent
+from nti.contenttypes.calendar.interfaces import ICalendarDynamicEventProvider
 
 from nti.zope_catalog.interfaces import INoAutoIndexEver
 
@@ -34,19 +36,14 @@ class ICourseCalendar(ICalendar, IContained):
     __setitem__.__doc__ = None
 
 
-class ICourseCalendarDynamicEvent(ICourseCalendarEvent, INoAutoIndexEver):
+class ICourseCalendarDynamicEvent(ICourseCalendarEvent, ICalendarDynamicEvent, INoAutoIndexEver):
     """
     A calendar event that should be produced dynamically, and not persistent.
     """
 
 
-class ICourseCalendarDynamicEventProvider(interface.Interface):
+class ICourseCalendarDynamicEventProvider(ICalendarDynamicEventProvider):
     """
     An intended subscriber provider of possible :class:`ICourseCalendarDynamicEvent` objects
     for a :class:`IUser` and :class:`ICourseInstance`.
     """
-
-    def iter_events():
-        """
-        A generator of :class:`ICourseCalendarDynamicEvent` objects.
-        """
