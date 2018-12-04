@@ -12,6 +12,24 @@ import urllib2
 
 from bs4 import BeautifulSoup
 
+# These map to the tab id in Canvas. We use the id to make
+# an HTTP request for enabling/disabling the visibility to students
+# The order in the tuple will be the order in canvas
+DEFAULT_TABS = ('home',
+                'announcements',
+                'syllabus',
+                'modules',
+                'grades',
+                'people')
+DISABLE_TABS = ('discussions',
+                'pages',
+                'quizzes',
+                'conferences',
+                'collaborations',
+                'files',
+                'assignments',
+                'outcomes')
+
 
 def _check_url(url):
     # Check valid url
@@ -43,9 +61,9 @@ def _validate_credentials(username, password):
 
 
 def _validate_course_entry(ntiid):
-    global course_href
-    course_href= nti_url + '/dataserver2/Objects/' + ntiid
-    req = requests.get(course_href, auth=(nti_username, nti_password), verify=False)
+    global catalog_href
+    catalog_href = nti_url + '/dataserver2/Objects/' + ntiid
+    req = requests.get(catalog_href, auth=(nti_username, nti_password), verify=False)
     status_code = req.status_code
     if status_code == 401 or status_code == 403:
         print "Your credentials are invalid to access this course"
@@ -56,8 +74,13 @@ def _validate_course_entry(ntiid):
     elif status_code == 200:
         global course_title
         json = req.json()
-        # Legacy compat
-        course_title = json.get('ContentPackageBundle', {}).get('DCTitle', None) or json.get('title')
+        from IPython.terminal.debugger import set_trace;set_trace()
+
+        course_title = json.get('DCTitle')
+        global course_instructors
+        course_instructors = [name['Name'] for name in json.get('Instructors')]
+        global course_href
+        course_href = nti_url + '/dataserver2/Objects/%s' % json.get('CourseNTIID')
         print "Access to course '%s' verified." % course_title
         return True
     else:
@@ -147,12 +170,11 @@ def create_home_page():
         a.attrs['href'] = href % course_id
         a.replace_with(a)
     soup.find(True, {'id': 'course_name'}).string = course_title
-    ins_url = nti_url + '/dataserver2/Objects/%s/@@Instructors' % catalog_ntiid
-    ins_req = requests.get(ins_url,
-                           auth=(nti_username, nti_password),
-                           verify=False)
-    instructors = ins_req.json()['Items']
-    soup.find(True, {'id': 'professor_name'}).string = '<br>'.join(instructors)
+    tag = soup.find(True, {'id': 'professor_name'})
+    for i, instructor in enumerate(course_instructors):
+        tag.append(soup.new_string(instructor))
+        if i != len(course_instructors) - 1:
+            tag.append(soup.new_tag('br'))
     url = canvas_url + '/api/v1/courses/%s/front_page' % course_id
     requests.put(url,
                  json={'wiki_page':
@@ -176,6 +198,22 @@ def create_canvas_course():
         exit(1)
     global course_id
     course_id = req.json()['id']
+
+
+def update_course_settings():
+    url = canvas_url + '/api/v1/courses/%s/tabs/' % course_id
+    for tab in DISABLE_TABS:
+        requests.put(url + tab,
+                     json={'hidden': True},
+                     headers={'Authorization': 'Bearer %s' % access_token},
+                     verify=False)
+    for i, tab in enumerate(DEFAULT_TABS):
+        requests.put(url + tab,
+                     json={'hidden': False,
+                           'position': i + 1,
+                           'visibility': 'public'},
+                     headers={'Authorization': 'Bearer %s' % access_token},
+                     verify=False)
 
 
 def do_content_migration():
@@ -247,4 +285,7 @@ print "Migrating content..."
 do_content_migration()
 print "Creating Home Page..."
 create_home_page()
+print "Updating course settings..."
+update_course_settings()
+print "Migration Complete"
 exit(0)
