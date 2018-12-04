@@ -54,6 +54,10 @@
                 provides="nti.contenttypes.calendar.interfaces.ICalendarEventProvider"
                 for="nti.dataserver.interfaces.IUser" />
 
+    <subscriber factory=".adapters.CourseCalendarDynamicEventProvider"
+                provides="nti.contenttypes.calendar.interfaces.ICalendarDynamicEventProvider"
+                for="nti.dataserver.interfaces.IUser" />
+
     <ext:registerAutoPackageIO
         root_interfaces=".interfaces.ICourseCalendar
                          .interfaces.ICourseCalendarEvent"

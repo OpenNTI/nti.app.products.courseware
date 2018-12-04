@@ -29,13 +29,17 @@ from nti.app.products.courseware.calendar.model import CourseCalendar
 
 from nti.contenttypes.calendar.interfaces import ICalendarProvider
 from nti.contenttypes.calendar.interfaces import ICalendarEventProvider
+from nti.contenttypes.calendar.interfaces import ICalendarDynamicEventProvider
 from nti.contenttypes.calendar.interfaces import ICalendarContextNTIIDAdapter
 
 from nti.contenttypes.courses.interfaces import ICourseInstance
 from nti.contenttypes.courses.interfaces import ICourseCatalogEntry
+from nti.contenttypes.courses.interfaces import IPrincipalAdministrativeRoleCatalog
 
 from nti.contenttypes.courses.utils import get_enrollments
 from nti.contenttypes.courses.utils import get_instructed_courses
+
+from nti.dataserver.authorization import is_admin_or_site_admin
 
 from nti.dataserver.interfaces import IUser
 
@@ -71,6 +75,20 @@ def _CourseCalendarPathAdapter(context, unused_request):
     return _CourseCalendarFactory(context)
 
 
+def _get_courses_for_user(user):
+    res = []
+    if is_admin_or_site_admin(user):
+        for catalog in component.subscribers((user,), IPrincipalAdministrativeRoleCatalog):
+            queried = catalog.iter_administrations()
+            res.extend([ICourseInstance(x) for x in queried])
+    else:
+        for enrollment in itertools.chain(get_enrollments(user),
+                                          get_instructed_courses(user)) or ():
+            course = ICourseInstance(enrollment, None)
+            if course is not None:
+                res.append(course)
+    return res
+
 @component.adapter(IUser)
 @interface.implementer(ICalendarProvider)
 class CourseCalendarProvider(object):
@@ -80,9 +98,7 @@ class CourseCalendarProvider(object):
 
     def iter_calendars(self):
         res = []
-        for enrollment in itertools.chain(get_enrollments(self.user),
-                                          get_instructed_courses(self.user)) or ():
-            course = ICourseInstance(enrollment, None)
+        for course in _get_courses_for_user(self.user):
             calendar = ICourseCalendar(course, None)
             if calendar is not None:
                 res.append(calendar)
@@ -118,14 +134,30 @@ class CourseCalendarEventProvider(object):
         `excluded_entry_ntiids` param.
         """
         res = []
-        for enrollment in itertools.chain(get_enrollments(user),
-                                          get_instructed_courses(user)) or ():
-            course = ICourseInstance(enrollment, None)
+        for course in _get_courses_for_user(user):
             entry = ICourseCatalogEntry(course, None)
             if      entry is not None \
                 and (not entry_ntiids or entry.ntiid in entry_ntiids) \
                 and (not excluded_entry_ntiids or entry.ntiid not in excluded_entry_ntiids):
                 res.append(course)
+        return res
+
+
+@component.adapter(IUser)
+@interface.implementer(ICalendarDynamicEventProvider)
+class CourseCalendarDynamicEventProvider(object):
+
+    def __init__(self, user):
+        self.user = user
+
+    def iter_events(self):
+        res = []
+        for course in _get_courses_for_user(self.user):
+            providers = component.subscribers((self.user, course),
+                                              ICourseCalendarDynamicEventProvider)
+
+            for x in providers or ():
+                res.extend(x.iter_events())
         return res
 
 

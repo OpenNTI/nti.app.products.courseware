@@ -17,6 +17,7 @@ from hamcrest import calling
 from hamcrest import has_length
 from hamcrest import assert_that
 from hamcrest import same_instance
+from hamcrest import has_items
 from hamcrest import contains_inanyorder
 
 from zope.annotation.interfaces import IAnnotations
@@ -128,10 +129,10 @@ class TestCourseCalendarEventProvider(ApplicationLayerTest):
             enrollment_manager2.enroll(user)
             ICourseCalendar(course2).store_event(CourseCalendarEvent(title=u'c_three'))
 
-            assert_that([x.title for x in provider.iter_events()], contains_inanyorder('c_one', 'c_two', 'c_three'))
-            assert_that([x.title for x in provider.iter_events(context_ntiids=None)], contains_inanyorder('c_one', 'c_two', 'c_three'))
-            assert_that([x.title for x in provider.iter_events(context_ntiids=[entry.ntiid, entry2.ntiid])], contains_inanyorder('c_one', 'c_two', 'c_three'))
-            assert_that([x.title for x in provider.iter_events(context_ntiids=[entry.ntiid])], contains_inanyorder('c_one', 'c_two'))
-            assert_that([x.title for x in provider.iter_events(context_ntiids=[entry2.ntiid])], contains_inanyorder('c_three'))
-            assert_that([x.title for x in provider.iter_events(context_ntiids=[])], contains_inanyorder('c_one', 'c_two', 'c_three'))
+            assert_that([x.title for x in provider.iter_events()], has_items('c_one', 'c_two', 'c_three'))
+            assert_that([x.title for x in provider.iter_events(context_ntiids=None)], has_items('c_one', 'c_two', 'c_three'))
+            assert_that([x.title for x in provider.iter_events(context_ntiids=[entry.ntiid, entry2.ntiid])], has_items('c_one', 'c_two', 'c_three'))
+            assert_that([x.title for x in provider.iter_events(context_ntiids=[entry.ntiid])], has_items('c_one', 'c_two'))
+            assert_that([x.title for x in provider.iter_events(context_ntiids=[entry2.ntiid])], has_items('c_three'))
+            assert_that([x.title for x in provider.iter_events(context_ntiids=[])], has_items('c_one', 'c_two', 'c_three'))
             assert_that([x.title for x in provider.iter_events(context_ntiids=[ICourseCatalogEntry(course2.SubInstances['001']).ntiid])], has_length(0))
