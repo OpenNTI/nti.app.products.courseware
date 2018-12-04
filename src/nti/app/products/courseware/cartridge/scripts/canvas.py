@@ -2,12 +2,15 @@
 # -*- coding: utf-8 -*-
 
 import getpass
+import os
+import requests
+import ssl
 import sys
 import tempfile
-import urllib2
-import requests
 import time
-import ssl
+import urllib2
+
+from bs4 import BeautifulSoup
 
 
 def _check_url(url):
@@ -55,7 +58,6 @@ def _validate_course_entry(ntiid):
         json = req.json()
         # Legacy compat
         course_title = json.get('ContentPackageBundle', {}).get('DCTitle', None) or json.get('title')
-        course_title += ' (Keegan Demo)'
         print "Access to course '%s' verified." % course_title
         return True
     else:
@@ -97,6 +99,73 @@ def get_common_cartridge(url=None):
     return imscc
 
 
+def upload_file(filepath):
+    url = canvas_url + '/api/v1/courses/%s/files' % course_id
+    filename = os.path.basename(filepath)
+    filesize = os.stat(filepath).st_size
+    req = requests.post(url,
+                        json={'name': filename,
+                              'size': filesize},
+                        headers={'Authorization': 'Bearer %s' % access_token})
+    if req.status_code != 200:
+        print 'An error occurred while creating the course through Canvas API\n%s' % req.text
+        exit(1)
+    upload_json = req.json()
+    file_upload_url = upload_json['upload_url']
+    print "Uploading %s to canvas..." % filename
+    file_upload = open(filepath, 'r')
+    upload = requests.post(file_upload_url,
+                           data=upload_json['upload_params'],
+                           files={'file': file_upload})
+    file_upload.close()
+    get_url = upload.headers['Location']
+    location = requests.get(get_url,
+                            headers={'Authorization': 'Bearer %s' % access_token})
+    return location.json()['id']
+
+
+def create_home_page():
+    html = open('home_page.html', 'r')
+    soup = BeautifulSoup(html, features='html.parser')
+    banner_id = upload_file('generic_banner.jpg')
+    for banner_img in soup.find_all('img', {'class': 'banner_img'}):
+        src = banner_img.attrs['src']
+        banner_img.attrs['src'] = src % (course_id, banner_id)
+        banner_img.replace_with(banner_img)
+    modules_id = upload_file('icon_assess.png')
+    for module_img in soup.find_all('img', {'class': 'module_img'}):
+        src = module_img.attrs['src']
+        module_img.attrs['src'] = src % (course_id, modules_id)
+        module_img.replace_with(module_img)
+    syllabus_id = upload_file('icon_syllabus.png')
+    for syllabus_img in soup.find_all('img', {'class': 'syllabus_img'}):
+        src = syllabus_img.attrs['src']
+        syllabus_img.attrs['src'] = src % (course_id, syllabus_id)
+        syllabus_img.replace_with(syllabus_img)
+    for a in soup.find_all('a', {'class': ['modules_href', 'syllabus_href']}):
+        href = a.attrs['href']
+        a.attrs['href'] = href % course_id
+        a.replace_with(a)
+    soup.find(True, {'id': 'course_name'}).string = course_title
+    ins_url = nti_url + '/dataserver2/Objects/%s/@@Instructors' % catalog_ntiid
+    ins_req = requests.get(ins_url,
+                           auth=(nti_username, nti_password),
+                           verify=False)
+    instructors = ins_req.json()['Items']
+    soup.find(True, {'id': 'professor_name'}).string = '<br>'.join(instructors)
+    url = canvas_url + '/api/v1/courses/%s/front_page' % course_id
+    requests.put(url,
+                 json={'wiki_page':
+                           {'title': course_title,
+                            'body': soup.prettify(),
+                            'editing_roles': 'teachers'}},
+                 headers={'Authorization': 'Bearer %s' % access_token})
+    url = canvas_url + '/api/v1/courses/%s' % course_id
+    requests.put(url,
+                 json={'course': {'default_view': 'wiki'}},
+                 headers={'Authorization': 'Bearer %s' % access_token})
+
+
 def create_canvas_course():
     link = canvas_url + '/api/v1/accounts/2/courses'
     req = requests.post(link,
@@ -107,6 +176,7 @@ def create_canvas_course():
         exit(1)
     global course_id
     course_id = req.json()['id']
+
 
 def do_content_migration():
     link = canvas_url + '/api/v1/courses/%s/content_migrations' % course_id
@@ -130,8 +200,6 @@ def do_content_migration():
     print "Your import is now being processed by canvas. This can take some time. You can check on the status of " \
           "your import at %s/courses/%s/content_migrations" % (canvas_url, course_id)
     common_cartridge.close()
-    exit(0)
-
 
 # Get the NTI url
 while(True):
@@ -177,3 +245,6 @@ print "Creating canvas course via API..."
 create_canvas_course()
 print "Migrating content..."
 do_content_migration()
+print "Creating Home Page..."
+create_home_page()
+exit(0)
