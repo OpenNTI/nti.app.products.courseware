@@ -75,6 +75,8 @@ def _validate_course_entry(ntiid):
         global course_title
         json = req.json()
         course_title = json.get('DCTitle')
+        global course_code
+        course_code = json.get('ProviderDisplayName')
         global course_instructors
         course_instructors = [name['Name'] for name in json.get('Instructors')]
         global course_href
@@ -189,7 +191,9 @@ def create_home_page():
 def create_canvas_course():
     link = canvas_url + '/api/v1/accounts/2/courses'
     req = requests.post(link,
-                        json={'course': {'name': course_title}, 'enroll_me': True},
+                        json={'course': {'name': course_title,
+                                         'course_code': course_code},
+                              'enroll_me': True},
                         headers={'Authorization': 'Bearer %s' % access_token})
     if req.status_code != 200:
         print 'An error occurred while creating the course through Canvas API\n%s' % req.text
@@ -279,11 +283,11 @@ print "Download complete."
 print "Beginning canvas migration..."
 print "Creating canvas course via API..."
 create_canvas_course()
-print "Migrating content..."
-do_content_migration()
 print "Creating Home Page..."
 create_home_page()
 print "Updating course settings..."
 update_course_settings()
+print "Migrating content..."
+do_content_migration()
 print "Migration Complete"
 exit(0)
