@@ -74,8 +74,6 @@ def _validate_course_entry(ntiid):
     elif status_code == 200:
         global course_title
         json = req.json()
-        from IPython.terminal.debugger import set_trace;set_trace()
-
         course_title = json.get('DCTitle')
         global course_instructors
         course_instructors = [name['Name'] for name in json.get('Instructors')]
