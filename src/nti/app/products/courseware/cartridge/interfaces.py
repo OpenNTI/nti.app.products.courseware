@@ -12,73 +12,130 @@ from __future__ import absolute_import
 
 from zope import interface
 
-from nti.contenttypes.courses.interfaces import ICourseInstance
+from zope.schema import Dict
+from zope.schema import List
 
+from nti.schema.field import Int
 from nti.schema.field import Object
 from nti.schema.field import DecodingValidTextLine as TextLine
 
+from nti.app.products.courseware.cartridge.exceptions import CommonCartridgeExportException
 
-class IBaseElementHandler(interface.Interface):
+from nti.common.datastructures import ObjectHierarchyTree
+
+
+class ICanvasWikiContent(interface.Interface):
     """
-    Adapter to handle an asset within a common cartridge
+    Marker interface for content that should be processed as a Canvas Wiki page
     """
 
-    def iter_items():
+
+class IIMSResource(interface.Interface):
+
+    identifier = Int(title=u'Identifier',
+                     description=u'The identifier for this web content object within'
+                                 u' the common cartridge',
+                     required=True)
+
+    type = TextLine(title=u'Object Type',
+                    description=u'The IMS characteristic object type.',
+                    required=True)
+
+    def export(path):
         """
-        returns an iterable of minidom elements for the manifest items
-        """
-
-    def iter_resources():
-        """
-        returns an iterable of minidom elements for the manifest resources
-        """
-
-    def write_to(archive):
-        """
-        Write the necesary files to the archive
+        Exports this resource into its Common Cartridge format and writes it into the supplied archive.
         """
 
 
-class ICommonCartridge(interface.Interface):
-    course = Object(ICourseInstance, title=u"The course")
-
-    archive = TextLine(
-        title=u"A valid directory location for the archive data"
-    )
-
-
-class IManifest(interface.Interface):
+class IIMSCommonCartridgeExtension(interface.Interface):
     """
-    Represent a cartrige manifest file
+    A subscription interface for common cartridge extensions
     """
-    cartridge = Object(ICommonCartridge, title=u"The cartridge")
 
-    course = Object(ICourseInstance, title=u"The course", required=False)
 
-    def mark_resource(iden):
-        """
-        mark a resource in this manifest
-        """
-
-    def has_resource(iden):
-        """
-        check if the resource w/ the specified iden is in this manifest
-        """
-    __contains__ = has_resource
-    
-
-class IElementHandler(IBaseElementHandler):
+class IIMSWebContentUnit(IIMSResource):
     """
-    Adapter to handle an asset within a common cartridge
+    One unit of web content. May be referenced to compose a Learning Application Object as associated content
+    Web Content units are responsible for exporting their dependencies
     """
-    manifest = Object(IManifest, title=u"The manifest")
 
-    def mark_processed():
-        """
-        Mark the adapted context as processed
-        """
+    dependencies = Dict(key_type=TextLine(),
+                        value_type=List(value_type=Object(IIMSResource)))  # TODO doc
 
-    def is_processed():
-        """
-        Returns if the adapted context has been processed
-        """
+    type = TextLine(title=u'Object Type',
+                    description=u'The IMS characteristic object type.',
+                    required=True,
+                    default=u'webcontent',
+                    readonly=True)
+
+
+class IIMSWebLink(IIMSResource):
+
+    type = TextLine(title=u'Object Type',
+                    description=u'The IMS characteristic object type.',
+                    required=True,
+                    default=u'imswl_xmlv1p1',
+                    readonly=True)
+
+
+class IIMSDiscussionTopic(IIMSResource):
+
+    dependencies = Dict(key_type=TextLine(),
+                        value_type=List(value_type=Object(IIMSResource)))  # TODO doc
+
+    type = TextLine(title=u'Object Type',
+                    description=u'The IMS characteristic object type.',
+                    required=True,
+                    default=u'imsdt_xmlv1p1',
+                    readonly=True)
+
+
+class IIMSAssociatedContent(IIMSResource):
+
+    type = TextLine(title=u'Object Type',
+                    description=u'The IMS characteristic object type.',
+                    required=True,
+                    default=u'associatedcontent/imscc_xmlv1p2/learning-application-resource',
+                    readonly=True)
+
+
+class ICommonCartridgeAssessment(IIMSResource):
+    """
+    This may be a QTI assignment or a Canvas specific implementation of assignments.
+    """
+
+    type = TextLine(title=u'Object Type',
+                    description=u'The IMS characteristic object type.',
+                    required=True,
+                    default=u'imsqti_xmlv1p2/imscc_xmlv1p1/assessment',
+                    readonly=True)
+
+
+class IIMSAssignment(ICommonCartridgeAssessment):
+
+    type = TextLine(title=u'Object Type',
+                    description=u'The IMS characteristic object type.',
+                    required=True,
+                    default=u'assignment_xmlv1p0',
+                    readonly=True)
+
+
+class ICartridgeWebContent(interface.Interface):
+    """
+    Marker interface for cartridge web content
+    """
+
+
+class IIMSCommonCartridge(interface.Interface):
+    # TODO doc
+
+    # errors = List()
+
+    resources = Dict(key_type=Int(),
+                     value_type=Object(IIMSResource))
+
+    # course_tree = Object()
+
+
+class IIMSManifestResources(interface.Interface):
+    pass

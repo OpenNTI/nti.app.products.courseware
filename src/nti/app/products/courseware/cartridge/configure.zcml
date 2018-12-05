@@ -8,48 +8,48 @@
 	<include package="zope.component" />
 
 	<!-- Adapters -->
-	<!-- Default -->
-	<adapter factory=".mixins.NullElementHandler"
-			 for="*"
-			 provides=".interfaces.IElementHandler" />
+	<adapter factory=".media.IMSWebContentVideo"
+			 provides=".interfaces.IIMSResource"
+			 for="nti.contenttypes.presentation.interfaces.INTIVideo" />
 
-	<!-- Discussions -->
-	<adapter factory=".discussion.TopicHandler"
-			 for="nti.dataserver.contenttypes.forums.interfaces.ITopic"
-			 provides=".interfaces.IElementHandler" />
+	<adapter factory=".media.IMSWebContentTranscript"
+			 provides=".interfaces.IIMSResource"
+			 for="nti.contenttypes.presentation.interfaces.INTITranscript" />
 
-	<adapter factory=".discussion.DiscussionRefHandler"
-			 for="nti.contenttypes.presentation.interfaces.INTIDiscussionRef"
-			 provides=".interfaces.IElementHandler" />
+    <adapter factory=".discussion.IMSDiscussionTopic"
+             provides=".interfaces.IIMSResource"
+             for="nti.contenttypes.courses.discussions.interfaces.ICourseDiscussion" />
 
-	<!-- Assets -->
-	<adapter factory=".media.TranscriptHandler"
-			 for="nti.contenttypes.presentation.interfaces.INTITranscript"
-			 provides=".interfaces.IElementHandler" />
+    <adapter factory=".discussion.IMSDiscussionTopic"
+             provides=".interfaces.IIMSResource"
+             for="nti.contenttypes.presentation.interfaces.INTIDiscussionRef" />
 
-	<adapter factory=".media.VideoHandler"
-			 for="nti.contenttypes.presentation.interfaces.INTIVideo"
-			 provides=".interfaces.IElementHandler" />
+	<adapter factory=".cartridge.IMSCommonCartridge"
+			 provides=".interfaces.IIMSCommonCartridge"
+			 for="nti.contenttypes.courses.interfaces.ICourseInstance" />
 
-	<adapter factory=".media.VideoRefHandler"
-			 for="nti.contenttypes.presentation.interfaces.INTIVideoRef"
-			 provides=".interfaces.IElementHandler" />
+    <adapter factory=".relatedwork.related_work_factory"
+         provides=".interfaces.IIMSResource"
+         for="nti.contenttypes.presentation.interfaces.INTIRelatedWorkRef" />
 
-	<adapter factory=".relatedwork.RelatedWorkHandler"
-			 for="nti.contenttypes.presentation.interfaces.INTIRelatedWorkRef"
-			 provides=".interfaces.IElementHandler" />
+    <adapter factory=".relatedwork.related_work_resource_factory"
+             provides=".interfaces.IIMSWebContentUnit"
+             for="nti.contenttypes.presentation.interfaces.INTIRelatedWorkRef" />
 
-	<!-- Evaluations -->
-	<adapter factory=".question.FreeResponsePartHandler"
-			 for="nti.assessment.interfaces.IQNonGradableFreeResponsePart"
-			 provides=".interfaces.IElementHandler" />
+    <adapter factory=".discussion.IMSAssociatedContentFileBlob"
+             provides=".interfaces.IIMSResource"
+             for="nti.contentfile.interfaces.IContentBlobFile" />
 
-	<adapter factory=".question.NonGradableMultipleChoicePartHandler"
-			 for="nti.assessment.interfaces.IQNonGradableMultipleChoicePart"
-			 provides=".interfaces.IElementHandler" />
+    <adapter factory=".media.IMSWebContentVideoRoll"
+             provides=".interfaces.IIMSResource"
+             for="nti.contenttypes.presentation.interfaces.INTIVideoRoll" />
 
-	<adapter factory=".question.MultipleChoicePartHandler"
-			 for="nti.assessment.interfaces.IQMultipleChoicePart"
-			 provides=".interfaces.IElementHandler" />
+    <adapter factory=".assessments.adapt_to_common_cartridge_assessment"
+             provides=".interfaces.ICommonCartridgeAssessment"
+             for="nti.assessment.interfaces.IQAssessment" />
+
+    <adapter factory=".assessments.adapt_to_common_cartridge_assessment"
+         provides=".interfaces.ICommonCartridgeAssessment"
+         for="nti.contenttypes.presentation.interfaces.INTIAssessmentRef" />
 
 </configure>

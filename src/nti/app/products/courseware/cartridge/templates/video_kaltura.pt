@@ -1,14 +1,19 @@
-<html>
-	<body style="padding: 20px" tal:attributes="style context/style">
-		<script src="https://cdnapisec.kaltura.com"
-				tal:define="partner_id context/partner_id;
-							uiconf_id context/uiconf_id;
-							entry_id context/entry_id;
-							width context/width;
-							height context/height;
-							playerId context/playerId;
-							cache_st context/cache_st"
-				tal:attributes="src string:https://cdnapisec.kaltura.com/p/${partner_id}/sp/${partner_id}00/embedIframeJs/uiconf_id/${uiconf_id}/partner_id/${partner_id}?autoembed=true&entry_id=${entry_id}&width=${width}&height=${height}&playerId=${playerId}&cache_st=${cache_st}" />
+<html tal:attributes="style context/style">
+	<head>
+        <title tal:content="context/title"></title>
+        <meta name="identifier" tal:attributes="content context/identifier" />
+    </head>
+    <body style="height: 480px; width: 600px;" tal:attributes="style context/style">
+    		<iframe src="https://www.kaltura.com/p/1500101/sp/150010100/embedIframeJs/uiconf_id/15491291/partner_id/1500101?iframeembed=true&playerId=abcdnextthought&entry_id=0_3ebf5hgo"
+        		width="300"
+        		height="300"
+                frameborder="0"
+                allow="autoplay; encrypted-media"
+                allowfullscreen
+        		tal:attributes="src context/src;
+        						width context/width;
+        						height context/height;">
+		</iframe>
 		<track tal:condition="context/transcript"
 			   tal:attributes="src context/transcript" />
 	</body>

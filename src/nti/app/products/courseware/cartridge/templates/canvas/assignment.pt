@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<assignment identifier="ia57385f92f17f47f20554839ea2c4a34" xmlns="http://www.imsglobal.org/xsd/imscc_extensions/assignment" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.imsglobal.org/xsd/imscc_extensions/assignment http://www.imsglobal.org/profile/cc/cc_extensions/cc_extresource_assignmentv1p0_v1p0.xsd"
+            tal:attributes="identifier context/identifier">
+  <title tal:content="context/title">unpublished assignment</title>
+  <text texttype="text/html" tal:content="structure context/content"></text>
+  <gradable>false</gradable>
+  <submission_formats>
+    <format type="html"/>
+    <format type="url"/>
+    <format type="file"/>
+  </submission_formats>
+  <extensions>
+    <assignment identifier="ia57385f92f17f47f20554839ea2c4a34_canvas" xmlns="http://canvas.instructure.com/xsd/cccv1p0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://canvas.instructure.com/xsd/cccv1p0 http://canvas.instructure.com/xsd/cccv1p0.xsd"
+                tal:attributes="identifier context/assignment_identifier">
+      <title tal:content="context/title">unpublished assignment</title>
+      <workflow_state>unpublished</workflow_state>
+      <grading_type tal:content="context/grading_type">points</grading_type>
+      <submission_types>online_text_entry,online_url,online_upload</submission_types>
+      <points_possible>100</points_possible>
+    </assignment>
+  </extensions>
+</assignment>

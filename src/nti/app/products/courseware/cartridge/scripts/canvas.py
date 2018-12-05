@@ -2,27 +2,57 @@
 # -*- coding: utf-8 -*-
 
 import getpass
+import os
+import requests
+import ssl
 import sys
 import tempfile
-import urllib2
-import requests
 import time
+import urllib2
+
+from bs4 import BeautifulSoup
+
+# These map to the tab id in Canvas. We use the id to make
+# an HTTP request for enabling/disabling the visibility to students
+# The order in the tuple will be the order in canvas
+DEFAULT_TABS = ('home',
+                'announcements',
+                'syllabus',
+                'modules',
+                'grades',
+                'people')
+DISABLE_TABS = ('discussions',
+                'pages',
+                'quizzes',
+                'conferences',
+                'collaborations',
+                'files',
+                'assignments',
+                'outcomes')
 
 
 def _check_url(url):
     # Check valid url
     try:
-        urllib2.urlopen(nti_url)
-        print "Connection to %s successful!" % nti_url
+        if '.dev' in url:
+            # From Stack Overflow to disable certificate verfication
+            ctx = ssl.create_default_context()
+            ctx.check_hostname = False
+            ctx.verify_mode = ssl.CERT_NONE
+            # add /app because base url is broken locally
+            urllib2.urlopen(url+'/app/', context=ctx)
+        else:
+            urllib2.urlopen(url)
+        print "Connection to %s successful!" % url
         return True
     except Exception:
-        print "URL %s is invalid" % nti_url
+        print "URL %s is invalid" % url
         return False
 
 
 def _validate_credentials(username, password):
     dataserver2 = nti_url + '/dataserver2/users/' + username
-    req = requests.get(dataserver2, auth=(username, password))
+    req = requests.get(dataserver2, auth=(username, password), verify=False)
     if req.status_code != 200:
         print "Your credentials are invalid"
         return False
@@ -31,8 +61,9 @@ def _validate_credentials(username, password):
 
 
 def _validate_course_entry(ntiid):
-    course_href = nti_url + '/dataserver2/Objects/' + ntiid
-    req = requests.get(course_href, auth=(nti_username, nti_password))
+    global catalog_href
+    catalog_href = nti_url + '/dataserver2/Objects/' + ntiid
+    req = requests.get(catalog_href, auth=(nti_username, nti_password), verify=False)
     status_code = req.status_code
     if status_code == 401 or status_code == 403:
         print "Your credentials are invalid to access this course"
@@ -43,8 +74,11 @@ def _validate_course_entry(ntiid):
     elif status_code == 200:
         global course_title
         json = req.json()
-        # Legacy compat
-        course_title = json.get('ContentPackageBundle', {}).get('DCTitle', None) or json.get('title')
+        course_title = json.get('DCTitle')
+        global course_instructors
+        course_instructors = [name['Name'] for name in json.get('Instructors')]
+        global course_href
+        course_href = nti_url + '/dataserver2/Objects/%s' % json.get('CourseNTIID')
         print "Access to course '%s' verified." % course_title
         return True
     else:
@@ -62,11 +96,10 @@ def _validate_canvas_token(token):
     return False
 
 
-def get_common_cartridge():
-    # TODO update to our course cc export link
-    link = "https://topkit.org/wp-content/uploads/2016/09/dev-topkit-sample-course-bauer-s-67-export.imscc"
+def get_common_cartridge(url=None):
+    link = url if url else course_href + '/@@common_cartridge'
     imscc = tempfile.NamedTemporaryFile()
-    req = requests.get(link, stream=True)
+    req = requests.get(link, stream=True, verify=False, auth=(nti_username, nti_password))
     size = int(req.headers['Content-Length'])
     imported = 0
     increments = 1
@@ -87,6 +120,72 @@ def get_common_cartridge():
     return imscc
 
 
+def upload_file(filepath):
+    url = canvas_url + '/api/v1/courses/%s/files' % course_id
+    filename = os.path.basename(filepath)
+    filesize = os.stat(filepath).st_size
+    req = requests.post(url,
+                        json={'name': filename,
+                              'size': filesize},
+                        headers={'Authorization': 'Bearer %s' % access_token})
+    if req.status_code != 200:
+        print 'An error occurred while creating the course through Canvas API\n%s' % req.text
+        exit(1)
+    upload_json = req.json()
+    file_upload_url = upload_json['upload_url']
+    print "Uploading %s to canvas..." % filename
+    file_upload = open(filepath, 'r')
+    upload = requests.post(file_upload_url,
+                           data=upload_json['upload_params'],
+                           files={'file': file_upload})
+    file_upload.close()
+    get_url = upload.headers['Location']
+    location = requests.get(get_url,
+                            headers={'Authorization': 'Bearer %s' % access_token})
+    return location.json()['id']
+
+
+def create_home_page():
+    html = open('home_page.html', 'r')
+    soup = BeautifulSoup(html, features='html.parser')
+    banner_id = upload_file('generic_banner.jpg')
+    for banner_img in soup.find_all('img', {'class': 'banner_img'}):
+        src = banner_img.attrs['src']
+        banner_img.attrs['src'] = src % (course_id, banner_id)
+        banner_img.replace_with(banner_img)
+    modules_id = upload_file('icon_assess.png')
+    for module_img in soup.find_all('img', {'class': 'module_img'}):
+        src = module_img.attrs['src']
+        module_img.attrs['src'] = src % (course_id, modules_id)
+        module_img.replace_with(module_img)
+    syllabus_id = upload_file('icon_syllabus.png')
+    for syllabus_img in soup.find_all('img', {'class': 'syllabus_img'}):
+        src = syllabus_img.attrs['src']
+        syllabus_img.attrs['src'] = src % (course_id, syllabus_id)
+        syllabus_img.replace_with(syllabus_img)
+    for a in soup.find_all('a', {'class': ['modules_href', 'syllabus_href']}):
+        href = a.attrs['href']
+        a.attrs['href'] = href % course_id
+        a.replace_with(a)
+    soup.find(True, {'id': 'course_name'}).string = course_title
+    tag = soup.find(True, {'id': 'professor_name'})
+    for i, instructor in enumerate(course_instructors):
+        tag.append(soup.new_string(instructor))
+        if i != len(course_instructors) - 1:
+            tag.append(soup.new_tag('br'))
+    url = canvas_url + '/api/v1/courses/%s/front_page' % course_id
+    requests.put(url,
+                 json={'wiki_page':
+                           {'title': course_title,
+                            'body': soup.prettify(),
+                            'editing_roles': 'teachers'}},
+                 headers={'Authorization': 'Bearer %s' % access_token})
+    url = canvas_url + '/api/v1/courses/%s' % course_id
+    requests.put(url,
+                 json={'course': {'default_view': 'wiki'}},
+                 headers={'Authorization': 'Bearer %s' % access_token})
+
+
 def create_canvas_course():
     link = canvas_url + '/api/v1/accounts/2/courses'
     req = requests.post(link,
@@ -97,6 +196,23 @@ def create_canvas_course():
         exit(1)
     global course_id
     course_id = req.json()['id']
+
+
+def update_course_settings():
+    url = canvas_url + '/api/v1/courses/%s/tabs/' % course_id
+    for tab in DISABLE_TABS:
+        requests.put(url + tab,
+                     json={'hidden': True},
+                     headers={'Authorization': 'Bearer %s' % access_token},
+                     verify=False)
+    for i, tab in enumerate(DEFAULT_TABS):
+        requests.put(url + tab,
+                     json={'hidden': False,
+                           'position': i + 1,
+                           'visibility': 'public'},
+                     headers={'Authorization': 'Bearer %s' % access_token},
+                     verify=False)
+
 
 def do_content_migration():
     link = canvas_url + '/api/v1/courses/%s/content_migrations' % course_id
@@ -113,14 +229,13 @@ def do_content_migration():
     upload = requests.post(file_upload_url,
                            data=migration_json['pre_attachment']['upload_params'],
                            files={'file': common_cartridge})
-    if upload.status_code != 200:
+    if upload.status_code != 200 and upload.status_code != 201:
         print "An error occurred while uploading the course\n%s" % upload.text
         exit(1)
     print "Successfully uploaded course export!"
     print "Your import is now being processed by canvas. This can take some time. You can check on the status of " \
           "your import at %s/courses/%s/content_migrations" % (canvas_url, course_id)
-    exit(0)
-
+    common_cartridge.close()
 
 # Get the NTI url
 while(True):
@@ -166,5 +281,9 @@ print "Creating canvas course via API..."
 create_canvas_course()
 print "Migrating content..."
 do_content_migration()
-
-
+print "Creating Home Page..."
+create_home_page()
+print "Updating course settings..."
+update_course_settings()
+print "Migration Complete"
+exit(0)

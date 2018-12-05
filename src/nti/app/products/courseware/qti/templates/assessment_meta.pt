@@ -1,0 +1,6 @@
+<quiz identifier="i4fd13909c84502b72291e1e79dc7bb42" xmlns="http://canvas.instructure.com/xsd/cccv1p0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://canvas.instructure.com/xsd/cccv1p0 https://canvas.instructure.com/xsd/cccv1p0.xsd"
+      tal:attributes="identifier context/quiz_id">
+    <replaced tal:repeat="(key,val) context/fields/items" tal:content="structure python:'<%s>%s</%s>' % (key, val if val else '', key)" tal:omit-tag=""></replaced>
+    <description tal:content="context/description"></description>
+    <replaced tal:replace="structure context/assignment" tal:condition="exists:context/assignment"></replaced>
+</quiz>

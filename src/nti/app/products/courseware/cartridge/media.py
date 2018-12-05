@@ -10,233 +10,229 @@ from __future__ import absolute_import
 
 import os
 import time
-import shutil
-
-from xml.dom import minidom
 
 import six
 
+from collections import defaultdict
+
 from zope import component
+from zope import interface
 
 from zope.cachedescriptors.property import Lazy
 
-from nti.app.products.courseware.cartridge.interfaces import IElementHandler
-
-from nti.app.products.courseware.cartridge.mixins import NullElementHandler
-from nti.app.products.courseware.cartridge.mixins import AbstractElementHandler
+from nti.app.products.courseware.cartridge.interfaces import ICanvasWikiContent
+from nti.app.products.courseware.cartridge.interfaces import IIMSResource
+from nti.app.products.courseware.cartridge.interfaces import IIMSWebContentUnit
 
 from nti.app.products.courseware.cartridge.renderer import execute
 from nti.app.products.courseware.cartridge.renderer import get_renderer
 
+from nti.app.products.courseware.cartridge.web_content import AbstractIMSWebContent
+
 from nti.contentlibrary.interfaces import IContentPackage
 from nti.contentlibrary.interfaces import IFilesystemBucket
 
-from nti.contenttypes.presentation.interfaces import KALTURA_VIDEO_SERVICE
+from nti.contenttypes.presentation.interfaces import KALTURA_VIDEO_SERVICE, INTIVideoRoll, IConcreteAsset, \
+    INTILessonOverview
+from nti.contenttypes.presentation.interfaces import VIMEO_VIDEO_SERVICE
 from nti.contenttypes.presentation.interfaces import YOUTUBE_VIDEO_SERVICE
-
 from nti.contenttypes.presentation.interfaces import INTIVideo
-from nti.contenttypes.presentation.interfaces import INTIVideoRef
 from nti.contenttypes.presentation.interfaces import INTITranscript
-
-from nti.ntiids.ntiids import find_object_with_ntiid
 
 from nti.traversal.traversal import find_interface
 
 logger = __import__('logging').getLogger(__name__)
 
-# transcripts
 
-
+@interface.implementer(IIMSWebContentUnit)
 @component.adapter(INTITranscript)
-class TranscriptHandler(AbstractElementHandler):
+class IMSWebContentTranscript(AbstractIMSWebContent):
 
-    def iter_items(self):
-        return ()
+    extension = '.vtt'
 
-    def resource_node(self):
-        transcript = self.context
-        if not isinstance(transcript.src, six.string_types):
-            # ATM we don't support authored transcripts
-            doc_root = None
-        else:
-            DOMimpl = minidom.getDOMImplementation()
-            xmldoc = DOMimpl.createDocument(None, "resource", None)
-            doc_root = xmldoc.documentElement
-            doc_root.setAttribute("type", "webcontent")
-            doc_root.setAttribute("identifier", "%s" % self.identifier)
-            doc_root.setAttribute("href", "%s" % transcript.src)
-            # file
-            node = xmldoc.createElement("file")
-            node.setAttributeNS(None, "href", "%s" % transcript.src)
-            doc_root.appendChild(node)
-        return doc_root
-
-    def iter_resources(self):
-        node = self.resource_node()
-        return (node,) if node is not None else ()
-
-    # cartridge
-
-    @property
-    def track(self):
-        """
-        Return the source for the transcript file
-        """
-        transcript = self.context
-        if isinstance(transcript.src, six.string_types):
-            # The source is the relative location in the
-            # content package; it should be saved in the
-            # same relative location in the cartridge
-            return transcript.src
-
-    def write_to(self, archive):
-        transcript = self.context
-        # find content package and copy the transcript file
-        package = find_interface(transcript, IContentPackage, strict=False)
+    def export(self, path):
+        package = find_interface(self.context, IContentPackage, strict=False)
         if package is None:
-            logger.warning("Could not find content package for %s", transcript)
-        elif isinstance(transcript.src, six.string_types):
+            logger.warning("Could not find content package for %s", self.context)
+        elif isinstance(self.context.src, six.string_types):
             root = package.root
             if not IFilesystemBucket.providedBy(root):
                 logger.warning("Unsupported bucket Boto?")
+                return None  # TODO how do we want to handle this
             else:
                 source_path = os.path.join(root.absolute_path,
-                                           transcript.src)
-                target_path = os.path.join(archive,
-                                           transcript.src)
-                dirname = os.path.dirname(target_path)
-                if os.path.exists(dirname):
-                    os.makedirs(dirname)
-                shutil.copy(source_path, target_path)
-
-
-# video
-
-def youtube_element(video):
-    """
-    Return a string that represent a youtube video file 
-    resource in a cartrige
-    """
-    source = next(iter(video.sources))  # required
-    source_id = next(iter(source.source))  # required
-    src_href = "https://www.youtube.com/embed/%s?rel=0" % source_id
-    renderer = get_renderer("video_youtube", ".pt")
-    context = {
-        'style': 'padding: 20px',
-        'src': src_href,
-        'width': source.width,
-        'height': source.height,
-        "frameborder": '0',
-        "allow": 'autoplay; encrypted-media',
-        'transcript': None,
-    }
-    # track
-    if video.transcripts:
-        for transcript in video.transcripts:
-            handler = IElementHandler(transcript, None)
-            track = getattr(handler, "track", None)
-            if track:
-                context['transcript'] = track
-                break
-    return execute(renderer, {"context": context})
-
-
-def kaltura_element(video, uiconf_id="15491291"):
-    """
-    Return a string that represent a kaltura video file 
-    resource in a cartrige
-    """
-    current = int(time.time())
-    source = next(iter(video.sources))  # required
-    source_id = next(iter(source.source))  # required
-    entry_id, partner_id = source_id.split(':')
-    renderer = get_renderer("video_kaltura", ".pt")
-    context = {
-        'style': 'padding: 20px',
-        'entry_id': entry_id,
-        'uiconf_id': uiconf_id,
-        'partner_id': partner_id,
-        'width': source.width,
-        'height': source.height,
-        'transcript': None,
-        'cache_st': current,
-        'playerId': 'kaltura_player_%s' % current
-    }
-    # track
-    if video.transcripts:
-        for transcript in video.transcripts:
-            handler = IElementHandler(transcript, None)
-            track = getattr(handler, "track", None)
-            if track:
-                context['transcript'] = track
-                break
-    return execute(renderer, {"context": context})
-
-
-@component.adapter(INTIVideo)
-class VideoHandler(AbstractElementHandler):
-
-    def iter_items(self):
-        return ()
-
-    def resource_node(self):
-        DOMimpl = minidom.getDOMImplementation()
-        xmldoc = DOMimpl.createDocument(None, "resource", None)
-        doc_root = xmldoc.documentElement
-        doc_root.setAttribute("type", "webcontent")
-        doc_root.setAttribute("identifier", "%s" % self.identifier)
-        doc_root.setAttribute("href", "content/%s.html" % self.identifier)
-        # file
-        node = xmldoc.createElement("file")
-        node.setAttributeNS(None, "href", "content/%s.html" % self.identifier)
-        doc_root.appendChild(node)
-        return doc_root
-
-    def iter_resources(self):
-        return (self.resource_node(),)
-
-    # cartridge
-
-    def youtube(self, video):
-        return youtube_element(video)
-
-    def kaltura(self, video):
-        return kaltura_element(video)
-
-    def video_element(self):
-        """
-        Return a minidom for the video file
-        """
-        result = None
-        video = self.context
-        if video.sources:
-            source = next(iter(video.sources))  # pick first
-            if source.service == YOUTUBE_VIDEO_SERVICE:
-                result = self.youtube(video)
-            elif source.service == KALTURA_VIDEO_SERVICE:
-                result = self.kaltura(video)
-            else:
-                logger.warning("Unsupported Video Service %s",
-                               video.ntiid)
-        return result
-
-    def write_to(self, archive):
-        video = self.video_element()
-        if video is not None:
-            # write the html file under the content
-            # directory
-            path = os.path.join(archive, "content",
-                                "%s.html" % self.identifier)
-            dirname = os.path.dirname(path)
-            if not os.path.exists(dirname):
-                os.makedirs(dirname)
-            with open(os.path.join(path), "w") as fp:
-                fp.write(video)
-
-
-@component.adapter(INTIVideoRef)
-class VideoRefHandler(NullElementHandler):
+                                           self.context.src)
+                fname = os.path.basename(source_path)
+                target_path = os.path.join(path, fname)
+                self.copy_resource(source_path, target_path)
 
     @Lazy
-    def video(self):
-        return find_object_with_ntiid(self.context.target)
+    def filename(self):
+        return os.path.basename(self.context.src)
+
+
+@interface.implementer(IIMSWebContentUnit, ICanvasWikiContent)
+@component.adapter(INTIVideoRoll)
+class IMSWebContentVideoRoll(AbstractIMSWebContent):
+
+    extension = '.html'
+
+    def _process_videos(self, videos):
+        if videos:
+            for video in videos:
+                concrete_video = IConcreteAsset(video)
+                self.dependencies['videos'].append(IIMSResource(concrete_video))
+        return self.dependencies
+
+    @Lazy
+    def filename(self):
+        return unicode(self.identifier) + self.extension
+
+    @Lazy
+    def dirname(self):
+        return unicode(self.identifier)
+
+    def export(self, dirname):
+        self._process_videos(self.context.Items)
+        renderer = get_renderer("video_roll", ".pt")
+        title = self.context.title
+        if not title:
+            lesson = self.context.__parent__.__parent__  # Overview Group => Lesson
+            assert INTILessonOverview.providedBy(lesson)  # If this invariant changes in the future, blow up
+            title = u'Videos (%s)' % lesson.title
+        context = {
+            'identifier': self.identifier,
+            'title': title,
+            'videos': self.dependencies['videos']
+        }
+        html = execute(renderer, {"context": context})
+        target = os.path.join(dirname, self.dirname, self.filename)
+        self.write_resource(target, html)
+
+
+@interface.implementer(IIMSWebContentUnit, ICanvasWikiContent)  # Mark as wiki content for export
+@component.adapter(INTIVideo)
+class IMSWebContentVideo(AbstractIMSWebContent):
+    """
+    Video urls MUST be 'https' urls to be compatible in canvas
+    """
+
+    extension = '.html'
+    _dependencies = defaultdict(list)
+
+    def _process_transcript(self, transcripts):
+        if transcripts:
+            for transcript in transcripts:
+                content = IIMSResource(transcript)
+                return content
+        return None
+
+    def youtube(self):
+        """
+        Return a string that represent a youtube video file
+        resource in a cartridge
+        """
+        src_href = "https://www.youtube.com/embed/%s?rel=0" % self.source_id
+        renderer = get_renderer("video_youtube", ".pt")
+        context = {
+            'style': 'height: %spx; width: %spx' % (self.source.height, self.source.width),
+            'src': src_href,
+            'width': self.width,
+            'height': self.height,
+            'transcript': None,
+            'identifier': self.identifier,
+            'title': self.context.title
+        }
+        if self.dependencies:
+            context['transcript'] = 'transcripts/' + self.dependencies.get('transcripts')[0].filename
+        return execute(renderer, {"context": context})
+
+    def kaltura(self, uiconf_id="30404512"):  # UIConf sets how the iframe looks. This is OU's id
+        """
+        Return a string that represent a kaltura video file
+        resource in a cartridge
+        """
+        current = int(time.time())
+        partner_id, entry_id = self.source_id.split(':')
+        player_id = 'nti_%s' % current
+        src_href = 'https://www.kaltura.com/p/%s/sp/%s00/embedIframeJs/uiconf_id/%s/partner_id/%s' \
+                   '?iframeembed=true&playerId=%s&entry_id=%s' \
+                   % (partner_id, partner_id, uiconf_id, partner_id, player_id, entry_id)
+        renderer = get_renderer("video_kaltura", ".pt")
+        context = {
+            'style': 'height: %spx; width: %spx' % (self.source.height, self.source.width),
+            'width': self.width,
+            'height': self.height,
+            'transcript': None,
+            'src': src_href,
+            'identifier': self.identifier,
+            'title': self.context.title
+        }
+        if self.dependencies:
+            context['transcript'] = 'transcripts/' + self.dependencies.get('transcripts')[0].filename
+        return execute(renderer, {"context": context})
+
+    def vimeo(self):
+        """
+        Return a string that represents a vimeo video file
+        resource in a cartridge
+        """
+        src_href = "https://player.vimeo.com/video/%s?embedparameter=value" % self.source_id
+        renderer = get_renderer("video_vimeo", ".pt")
+        context = {
+            'style': 'height: %spx; width: %spx' % (self.source.height, self.source.width),
+            'src': src_href,
+            'width': self.width,
+            'height': self.height,
+            'transcript': None,
+            'identifier': self.identifier,
+            'title': self.context.title
+        }
+        if self.dependencies:
+            context['transcript'] = 'transcripts/' + self.dependencies.get('transcripts')[0].filename
+        return execute(renderer, {"context": context})
+
+    def export(self, dirname):
+        if self.source.service == YOUTUBE_VIDEO_SERVICE:
+            html = self.youtube()
+        elif self.source.service == KALTURA_VIDEO_SERVICE:
+            html = self.kaltura()
+        elif self.source.service == VIMEO_VIDEO_SERVICE:
+            html = self.vimeo()
+        else:
+            raise NotImplementedError
+        path = os.path.join(dirname, self.filename)
+        self.write_resource(path, html)
+
+    @Lazy
+    def dependencies(self):
+        transcript_content = self._process_transcript(self.context.transcripts)
+        if transcript_content:
+            self._dependencies['transcripts'] = [transcript_content]
+        return self._dependencies
+
+    @Lazy
+    def source(self):
+        source_type = next(iter(self.context.sources))
+        return source_type
+
+    @Lazy
+    def width(self):
+        return self.source.width or 640
+
+    @Lazy
+    def height(self):
+        return self.source.height or 385
+
+    @Lazy
+    def source_id(self):
+        source_id = next(iter(self.source.source))
+        return source_id
+
+    @Lazy
+    def filename(self):
+        return unicode(self.identifier) + self.extension
+
+    @Lazy
+    def dirname(self):
+        return unicode(self.identifier)

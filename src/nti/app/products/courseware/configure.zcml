@@ -715,6 +715,9 @@
 	<!-- Cartridge -->
 	<include package=".cartridge" />
 
+    <!-- QTI -->
+    <include package=".qti" />
+
 	<!-- Recordables -->
 	<utility factory=".recordables.CourseCatalogRecordables" name="courses" />
 

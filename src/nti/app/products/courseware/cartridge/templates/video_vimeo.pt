@@ -1,15 +1,14 @@
-<html tal:attributes="style context/style">
+<html>
 	<head>
         <title tal:content="context/title"></title>
         <meta name="identifier" tal:attributes="content context/identifier" />
     </head>
-	<body style="padding: 20px" tal:attributes="style context/style">
-		<iframe src="https://www.youtube.com/embed/000?rel=0"
-        		width="300"
-        		height="300"
-                frameborder="0"
-                allow="autoplay; encrypted-media"
-                allowfullscreen
+	<body style="width: 640px; height: 480px;" tal:attributes="style context/style">
+		<iframe src="https://player.vimeo.com/video/229047987?embedparameter=value"
+        		width="640"
+        		height="480"
+        		frameborder="0"
+        		allowfullscreen
         		tal:attributes="src context/src;
         						width context/width;
         						height context/height;">

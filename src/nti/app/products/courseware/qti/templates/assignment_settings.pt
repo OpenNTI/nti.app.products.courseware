@@ -1,0 +1,4 @@
+<assignment identifier="ic0c6f0737127ca0aa883e3e091af2203" xmlns="http://canvas.instructure.com/xsd/cccv1p0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://canvas.instructure.com/xsd/cccv1p0 http://canvas.instructure.com/xsd/cccv1p0.xsd"
+            tal:attributes="identifier context/identifier">
+  <replaced tal:repeat="(key,val) context/fields/items" tal:attributes="replaced key" tal:content="structure python:'<%s>%s</%s>' % (key, val if val else '', key)" tal:omit-tag=""></replaced>
+</assignment>
