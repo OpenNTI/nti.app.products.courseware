@@ -100,6 +100,10 @@ class IMSWebContent(AbstractIMSWebContent):
         return package
 
     @Lazy
+    def filename(self):
+        return os.path.basename(self.path_to)
+
+    @Lazy
     def content_directory(self):
         return self.content_package.dirname
 
