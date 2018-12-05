@@ -11,7 +11,7 @@ from __future__ import absolute_import
 import os
 
 from bs4 import BeautifulSoup
-from pynliner import Pynliner
+from premailer import transform
 from six.moves import urllib_parse
 
 from zope import component
@@ -104,13 +104,7 @@ class IMSWebContentNativeReading(AbstractIMSWebContent):
         text = self.rendered_package.read_contents()
         if styled:
             # This inlines external style sheets
-            content = Pynliner()
-            content.root_url = self.rendered_package_path
-            assert getattr(content, '_get_url', None)  # If this private method gets refactored, let us know
-            # By default, this tries to retrieve via request, we will override
-            content._get_url = lambda url: open(url).read().decode()
-            content.from_string(text)
-            text = content.run()
+            text = transform(text)
         return BeautifulSoup(text, features='html5lib')
 
     @Lazy
