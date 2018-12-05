@@ -11,8 +11,7 @@ from bs4 import BeautifulSoup
 
 
 from datetime import timedelta
-
-from pynliner import Pynliner  # TODO add this to buildout deps
+from premailer import transform
 
 from six.moves import urllib_parse
 
@@ -133,13 +132,7 @@ class QTIAssessment(AbstractIMSWebContent):
             text = self.content_file.read_contents_as_text()
             if styled:
                 # This inlines external style sheets
-                content = Pynliner()
-                content.root_url = self.content_file.absolute_path
-                assert getattr(content, '_get_url', None)  # If this private method gets refactored, let us know
-                # By default, this tries to retrieve via request, we will override
-                content._get_url = lambda url: open(url).read().decode()
-                content.from_string(text)
-                text = content.run()
+                text = transform(text)
             return BeautifulSoup(text, features='lxml')
 
     def _is_internal_resource(self, href):
