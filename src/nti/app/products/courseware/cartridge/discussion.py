@@ -152,9 +152,9 @@ class IMSDiscussionTopic(object):
             elif IContentBlobFile.providedBy(part):
                 # Attachment
                 dependency = IIMSResource(part)
-                self.dependencies['files'].append(dependency)
+                self.dependencies['dependencies'].append(dependency)
                 anchor = content_html.new_tag('a')
-                anchor.attrs['href'] = 'files/%s' % dependency.filename
+                anchor.attrs['href'] = '$IMS-CC-FILEBASE$/dependencies/%s' % dependency.filename
                 anchor.string = dependency.filename
                 content_html.body.append(anchor)
             elif isinstance(part, six.string_types):
