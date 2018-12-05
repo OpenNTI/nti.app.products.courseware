@@ -89,7 +89,7 @@ class TestCourseCalendarViews(ApplicationLayerTest):
         assert_that(result, has_entries({'Items': has_length(0)}))
 
         result = self.testapp.get(calendar_url, params={'raw': True}, status=200, extra_environ=admin_env).json_body
-        assert_that(result, has_entries({'title': '',
+        assert_that(result, has_entries({'title': 'Law and Justice',
                                          'description': None,
                                          'MimeType': 'application/vnd.nextthought.courseware.coursecalendar'}))
 
