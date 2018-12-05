@@ -11,7 +11,7 @@ from __future__ import absolute_import
 import os
 
 from bs4 import BeautifulSoup
-from premailer import transform
+from premailer import transform, Premailer
 from six.moves import urllib_parse
 
 from zope import component
@@ -104,7 +104,10 @@ class IMSWebContentNativeReading(AbstractIMSWebContent):
         text = self.rendered_package.read_contents()
         if styled:
             # This inlines external style sheets
-            text = transform(text)
+            premailer = Premailer(text,
+                                  base_url=self.rendered_package_path,
+                                  disable_link_rewrites=True)
+            text = premailer.transform()
         return BeautifulSoup(text, features='html5lib')
 
     @Lazy

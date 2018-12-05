@@ -11,7 +11,7 @@ from bs4 import BeautifulSoup
 
 
 from datetime import timedelta
-from premailer import transform
+from premailer import Premailer
 
 from six.moves import urllib_parse
 
@@ -131,8 +131,12 @@ class QTIAssessment(AbstractIMSWebContent):
         if self.is_content_backed:
             text = self.content_file.read_contents_as_text()
             if styled:
+                base_url = self.content_file.absolute_path
                 # This inlines external style sheets
-                text = transform(text)
+                premailer = Premailer(text,
+                                      base_url=base_url,
+                                      disable_link_rewrites=True)
+                text = premailer.transform()
             return BeautifulSoup(text, features='lxml')
 
     def _is_internal_resource(self, href):
