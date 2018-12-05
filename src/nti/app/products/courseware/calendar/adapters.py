@@ -141,7 +141,6 @@ class CourseCalendarEventProvider(object):
                                               ICourseCalendarDynamicEventProvider)
             for x in providers or ():
                 res.extend(x.iter_events())
-
         return res
 
     def _courses(self, user, entry_ntiids=None, excluded_entry_ntiids=None):

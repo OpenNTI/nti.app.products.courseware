@@ -8,25 +8,20 @@ from __future__ import division
 from __future__ import print_function
 from __future__ import absolute_import
 
-import datetime
-
 from nti.schema.field import Object
 
 from zope import component
 from zope import interface
 
-from zope.component.hooks import getSite
-
 from zope.intid.interfaces import IIntIds
 
-from nti.zope_catalog.interfaces import INoAutoIndexEver
-
 from nti.app.products.courseware.calendar.model import CourseCalendarEvent
+
+from nti.app.products.courseware.calendar.interfaces import ICourseCalendar
 from nti.app.products.courseware.calendar.interfaces import ICourseCalendarDynamicEvent
 from nti.app.products.courseware.calendar.interfaces import ICourseCalendarDynamicEventProvider
 
 from nti.app.products.courseware.webinars.interfaces import IWebinarAsset
-from nti.app.products.courseware.webinars.interfaces import ICourseWebinarContainer
 
 from nti.app.products.webinar.interfaces import IWebinar
 
@@ -39,8 +34,6 @@ from nti.contenttypes.courses.utils import get_parent_course
 from nti.contenttypes.courses.interfaces import ICourseInstance
 
 from nti.dataserver.interfaces import IUser
-
-from nti.externalization.persistence import NoPickle
 
 from nti.externalization.datastructures import InterfaceObjectIO
 
@@ -83,6 +76,7 @@ class WebinarCalendarDynamicEventProvider(object):
 
     def iter_events(self):
         res = []
+        calendar = ICourseCalendar(self.course, None)
         for webinar in self._webinars(self.user, self.course):
             for time_session in webinar.times or ():
                 if time_session.endTime < time_session.startTime:
@@ -98,6 +92,7 @@ class WebinarCalendarDynamicEventProvider(object):
                                              start_time=time_session.startTime,
                                              end_time=time_session.endTime,
                                              webinar=webinar)
+                event.__parent__ = calendar
                 res.append(event)
         return res
 
