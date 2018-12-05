@@ -1,0 +1,8 @@
+<html>
+	<head>
+        <title tal:content="context/title"></title>
+        <meta name="identifier" tal:attributes="content context/identifier" />
+    </head>
+    <body tal:replace="structure context/body">
+	</body>
+</html>

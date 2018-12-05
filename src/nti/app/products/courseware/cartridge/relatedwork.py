@@ -10,6 +10,8 @@ from __future__ import absolute_import
 
 import os
 
+from bs4 import BeautifulSoup
+from pynliner import Pynliner
 from six.moves import urllib_parse
 
 from zope import component
@@ -27,17 +29,19 @@ from nti.app.contenttypes.presentation.decorators.assets import CONTENT_MIME_TYP
 
 from nti.app.products.courseware.cartridge.exceptions import CommonCartridgeExportException
 
-from nti.app.products.courseware.cartridge.interfaces import ICartridgeWebContent
+from nti.app.products.courseware.cartridge.interfaces import ICartridgeWebContent, ICanvasWikiContent
 from nti.app.products.courseware.cartridge.interfaces import IIMSWebContentUnit
 from nti.app.products.courseware.cartridge.interfaces import IIMSWebLink
 
 from nti.app.products.courseware.cartridge.renderer import execute
 from nti.app.products.courseware.cartridge.renderer import get_renderer
 
-from nti.app.products.courseware.cartridge.web_content import AbstractIMSWebContent
+from nti.app.products.courseware.cartridge.web_content import AbstractIMSWebContent, IMSWebContent
+from nti.app.products.courseware.qti.utils import update_external_resources
 
 from nti.contentlibrary.interfaces import IContentPackage
 from nti.contentlibrary.interfaces import IFilesystemBucket
+from nti.ntiids.ntiids import find_object_with_ntiid
 
 from nti.traversal.traversal import find_interface
 
@@ -81,13 +85,59 @@ class IMSWebContentResource(AbstractIMSWebContent):
             # raise CommonCartridgeExportException(u"Unable to locate a content package for %s" % self.context.label)
 
 
+@interface.implementer(IIMSWebContentUnit, ICanvasWikiContent)
 class IMSWebContentNativeReading(AbstractIMSWebContent):
     """
     A content package that is rendered into web content
     """
 
+    @Lazy
+    def rendered_package(self):
+        # TODO logging
+        return find_object_with_ntiid(self.context.target)
+
+    @Lazy
+    def rendered_package_path(self):
+        return self.rendered_package.key.absolute_path
+
+    def content_soup(self, styled=True):
+        text = self.rendered_package.read_contents()
+        if styled:
+            # This inlines external style sheets
+            content = Pynliner()
+            content.root_url = self.rendered_package_path
+            assert getattr(content, '_get_url', None)  # If this private method gets refactored, let us know
+            # By default, this tries to retrieve via request, we will override
+            content._get_url = lambda url: open(url).read().decode()
+            content.from_string(text)
+            text = content.run()
+        return BeautifulSoup(text, features='html5lib')
+
+    @Lazy
+    def title(self):
+        # TODO when to use title vs label, fallback etc....
+        return self.context.label
+
+    @Lazy
+    def filename(self):
+        return self.identifier + '.html'
+
+    @Lazy
+    def content(self):
+        html = self.content_soup().find('body').prettify()
+        html, dependencies = update_external_resources(html)
+        self.dependencies['dependencies'].extend([IMSWebContent(self.context, dep) for dep in dependencies])
+        return html
+
     def export(self, archive):
-        pass
+        renderer = get_renderer('native_reading', '.pt')
+        context = {'identifier': self.identifier,
+                   'title': self.title,
+                   'body': self.content}
+        html = execute(renderer, {'context': context})
+        path_to = os.path.join(archive, self.filename)
+        self.write_resource(path_to, html)
+        return True
 
 
 def related_work_factory(related_work):
@@ -102,21 +152,22 @@ def related_work_factory(related_work):
         return IMSWebLink(related_work)
     # Native readings => IMS Learning Application Objects TODO
     elif related_work.type == CONTENT_MIME_TYPE:
-        return None
-        # return IMSWebContentNativeReading(related_work)
+        return IMSWebContentNativeReading(related_work)
     # Resource links => IMS Web Content
     else:
         return IMSWebContentResource(related_work)
 
 
 def related_work_resource_factory(related_work):
+    # This factory is used when we parse all of the catalog for related work refs
+    # We only want to return concrete resources in that case, not links or native readings
+    # If you enable native readings here you will get legacy course structure files
     if related_work.type == 'application/vnd.nextthought.externallink' and\
             bool(urllib_parse.urlparse(related_work.href).scheme):
         return None
     # Native readings => IMS Learning Application Objects
     elif related_work.type == CONTENT_MIME_TYPE:
         return None
-        # return IMSWebContentNativeReading(related_work)
     # Resource links => IMS Web Content
     else:
         return IMSWebContentResource(related_work)

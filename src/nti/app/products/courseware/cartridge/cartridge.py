@@ -126,6 +126,7 @@ def build_manifest_items(cartridge):
             # convert to common cartridge item if some type of asset
             if IGroupOverViewable.providedBy(obj):
                 try:
+
                     # make sure we have a concrete asset
                     obj = IConcreteAsset(obj, obj)
                     # creates an id if none exists, or returns the existing one

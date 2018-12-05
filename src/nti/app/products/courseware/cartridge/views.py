@@ -105,7 +105,7 @@ class CommonCartridgeExportView(AbstractAuthenticatedView):
             with open(archive + '/imsmanifest.xml', 'w') as fd:
                 fd.write(manifest)
             zipped = shutil.make_archive('common_cartridge', 'zip', archive)
-            filename = self.context.title + '.zip'
+            filename = self.context.title + '.imscc'
             self.request.response.content_encoding = 'identity'
             self.request.response.content_type = 'application/zip; charset=UTF-8'
             self.request.response.content_disposition = 'attachment; filename="%s"' % filename
