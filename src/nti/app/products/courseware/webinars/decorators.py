@@ -10,8 +10,14 @@ from __future__ import division
 from __future__ import print_function
 from __future__ import absolute_import
 
+from pyramid.interfaces import IRequest
+
 from zope import component
 from zope import interface
+
+from zope.location.interfaces import ILocation
+
+from nti.app.products.courseware.webinars.calendar import IWebinarCalendarEvent
 
 from nti.app.renderers.decorators import AbstractAuthenticatedRequestAwareDecorator
 
@@ -47,3 +53,24 @@ class _CourseInstanceIntegrationsDecorator(AbstractAuthenticatedRequestAwareDeco
         _links.append(Link(context,
                            rel='Integrations',
                            elements=('Integrations',)))
+
+
+@component.adapter(IWebinarCalendarEvent, IRequest)
+class _WebinarEventDecorator(AbstractAuthenticatedRequestAwareDecorator):
+
+    # pylint: disable=arguments-differ
+    def _do_decorate_external(self, event, result):
+        course = ICourseInstance(event, None)
+        if course is None:
+            return
+
+        result['WebinarTitle'] = event.webinar.title
+        result['WebinarTimes'] = event.webinar.times
+
+        _links = result.setdefault(LINKS, [])
+        link = Link(event.webinar,
+                    rel='Webinar')
+        interface.alsoProvides(link, ILocation)
+        link.__name__ = ''
+        link.__parent__ = course
+        _links.append(link)

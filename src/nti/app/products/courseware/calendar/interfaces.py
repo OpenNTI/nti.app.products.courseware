@@ -8,8 +8,6 @@ from __future__ import division
 from __future__ import print_function
 from __future__ import absolute_import
 
-from zope import interface
-
 from zope.container.constraints import contains
 
 from zope.location.interfaces import IContained

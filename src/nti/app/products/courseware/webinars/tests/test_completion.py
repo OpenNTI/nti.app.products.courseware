@@ -8,14 +8,11 @@ from __future__ import absolute_import
 # pylint: disable=protected-access,too-many-public-methods
 
 from hamcrest import none
-from hamcrest import is_
 from hamcrest import is_not
 from hamcrest import has_entries
 from hamcrest import assert_that
 
 from zope import component
-
-from nti.app.products.courseware.tests import CourseLayerTest
 
 from nti.app.testing.application_webtest import ApplicationLayerTest
 

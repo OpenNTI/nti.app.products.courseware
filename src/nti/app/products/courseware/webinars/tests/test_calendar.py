@@ -10,15 +10,11 @@ from __future__ import absolute_import
 import datetime
 import fudge
 
-from hamcrest import none
 from hamcrest import is_
-from hamcrest import is_not
 from hamcrest import not_none
 from hamcrest import has_entries
 from hamcrest import assert_that
 from hamcrest import has_length
-
-from zope import component
 
 from nti.app.testing.application_webtest import ApplicationLayerTest
 
@@ -35,15 +31,10 @@ from nti.app.products.courseware.webinars.interfaces import ICourseWebinarContai
 from nti.app.testing.decorators import WithSharedApplicationMockDS
 
 from nti.contenttypes.courses.interfaces import ICourseInstance
-from nti.contenttypes.courses.interfaces import ICourseCatalogEntry
 from nti.contenttypes.courses.interfaces import ICourseEnrollmentManager
 
 from nti.contenttypes.presentation.interfaces import INTILessonOverview
-from nti.contenttypes.presentation.group import NTICourseOverViewGroup
-
 from nti.dataserver.tests import mock_dataserver
-
-from nti.dataserver.tests.mock_dataserver import WithMockDSTrans
 
 from nti.externalization import internalization
 
@@ -92,7 +83,7 @@ class TestCalendar(ApplicationLayerTest):
                                                'start_time': not_none(),
                                                'Class': 'WebinarCalendarEvent',
                                                'MimeType': 'application/vnd.nextthought.webinar.webinarcalendarevent'}))
-            assert_that(external['webinar'], has_entries({'subject': u''}))
+            assert_that(external['WebinarTitle'], is_('reading'))
 
             # Should not be created externally.
             factory = internalization.find_factory_for(external)
