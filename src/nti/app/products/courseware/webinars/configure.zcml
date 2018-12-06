@@ -39,7 +39,7 @@
 
     <subscriber factory=".decorators._WebinarEventDecorator"
                 for="nti.app.products.courseware.webinars.calendar.IWebinarCalendarEvent
-                     pyramid.interfaces.IRequest""
+                     pyramid.interfaces.IRequest"
                 provides="nti.externalization.interfaces.IExternalMappingDecorator" />
 
 	<!-- Completion -->
