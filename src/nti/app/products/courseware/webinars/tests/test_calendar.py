@@ -83,7 +83,6 @@ class TestCalendar(ApplicationLayerTest):
                                                'start_time': not_none(),
                                                'Class': 'WebinarCalendarEvent',
                                                'MimeType': 'application/vnd.nextthought.webinar.webinarcalendarevent'}))
-            assert_that(external['WebinarTitle'], is_('reading'))
 
             # Should not be created externally.
             factory = internalization.find_factory_for(external)
