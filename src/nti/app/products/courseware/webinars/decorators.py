@@ -64,7 +64,7 @@ class _WebinarEventDecorator(AbstractAuthenticatedRequestAwareDecorator):
         if course is None:
             return
 
-        result['WebinarTitle'] = event.webinar.title
+        result['WebinarTitle'] = event.webinar.subject
         result['WebinarTimes'] = event.webinar.times
 
         _links = result.setdefault(LINKS, [])
