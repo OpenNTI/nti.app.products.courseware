@@ -72,7 +72,7 @@ class TestCourseCalendarViews(ApplicationLayerTest):
             # pylint: disable=too-many-function-args
             entry = find_object_with_ntiid(self.course_ntiid)
             course = ICourseInstance(entry)
-            assert_that('CourseCalendar' in IAnnotations(course), is_(False))
+            assert_that('CourseCalendar' in IAnnotations(course), is_(True))
 
             srm = IPrincipalRoleManager(getSite(), None)
             srm.assignRoleToPrincipal(ROLE_SITE_ADMIN.id, 'site_user001')
