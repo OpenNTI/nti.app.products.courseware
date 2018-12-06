@@ -42,6 +42,11 @@
                      pyramid.interfaces.IRequest"
                 provides="nti.externalization.interfaces.IExternalMappingDecorator" />
 
+    <subscriber factory=".decorators._WebinarEventLinkDecorator"
+                for="nti.app.products.courseware.webinars.calendar.IWebinarCalendarEvent
+                     pyramid.interfaces.IRequest"
+                provides="nti.externalization.interfaces.IExternalMappingDecorator" />
+
 	<!-- Completion -->
 	<adapter factory=".completion.webinar_asset_progress"
 			 for="nti.coremetadata.interfaces.IUser

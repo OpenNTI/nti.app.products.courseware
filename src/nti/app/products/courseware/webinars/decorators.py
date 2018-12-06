@@ -19,6 +19,8 @@ from zope.location.interfaces import ILocation
 
 from nti.app.products.courseware.webinars.calendar import IWebinarCalendarEvent
 
+from nti.app.products.webinar.decorators import WebinarDecorator
+
 from nti.app.renderers.decorators import AbstractAuthenticatedRequestAwareDecorator
 
 from nti.appserver.pyramid_authorization import has_permission
@@ -74,3 +76,11 @@ class _WebinarEventDecorator(AbstractAuthenticatedRequestAwareDecorator):
         link.__name__ = ''
         link.__parent__ = course
         _links.append(link)
+
+
+@component.adapter(IWebinarCalendarEvent)
+@interface.implementer(IExternalMappingDecorator)
+class _WebinarEventLinkDecorator(WebinarDecorator):
+
+    def _get_webinar(self, context):
+        return context.webinar
