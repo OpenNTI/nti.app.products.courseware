@@ -58,6 +58,10 @@
                 provides="nti.contenttypes.calendar.interfaces.ICalendarDynamicEventProvider"
                 for="nti.dataserver.interfaces.IUser" />
 
+    <!-- Subscribers -->
+    <subscriber handler=".subscribers._on_course_added"  />
+    <subscriber handler=".subscribers._on_course_removed" />
+
     <ext:registerAutoPackageIO
         root_interfaces=".interfaces.ICourseCalendar
                          .interfaces.ICourseCalendarEvent"
