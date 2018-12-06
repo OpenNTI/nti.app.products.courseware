@@ -8,8 +8,6 @@ from __future__ import division
 from __future__ import print_function
 from __future__ import absolute_import
 
-from nti.schema.field import Object
-
 from zope import component
 from zope import interface
 
@@ -37,6 +35,8 @@ from nti.dataserver.interfaces import IUser
 
 from nti.externalization.datastructures import InterfaceObjectIO
 
+from nti.schema.field import Object
+
 from nti.schema.fieldproperty import createDirectFieldProperties
 
 from nti.site.site import get_component_hierarchy_names
@@ -47,6 +47,8 @@ logger = __import__('logging').getLogger(__name__)
 class IWebinarCalendarEvent(ICourseCalendarDynamicEvent):
 
     webinar = Object(IWebinar, required=True)
+
+    webinar.setTaggedValue('_ext_excluded_out', True)
 
 
 @interface.implementer(IWebinarCalendarEvent)
@@ -96,7 +98,7 @@ class WebinarCalendarDynamicEventProvider(object):
                 res.append(event)
         return res
 
-    def _webinars(self, user, course):
+    def _webinars(self, unused_user, course):
         catalog = get_library_catalog()
         intids = component.getUtility(IIntIds)
         sites = get_component_hierarchy_names()
