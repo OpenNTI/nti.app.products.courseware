@@ -37,7 +37,7 @@ from nti.contenttypes.courses.interfaces import IPrincipalAdministrativeRoleCata
 from nti.contenttypes.courses.utils import get_enrollments
 from nti.contenttypes.courses.utils import get_instructed_courses
 
-from nti.dataserver.authorization import is_admin_or_site_admin
+from nti.dataserver.authorization import is_admin_or_content_admin_or_site_admin
 
 from nti.dataserver.interfaces import IUser
 
@@ -76,7 +76,7 @@ def _CourseCalendarPathAdapter(context, unused_request):
 def _get_courses_for_user(user, entry_ntiids=None, excluded_entry_ntiids=None):
     courses = []
 
-    if is_admin_or_site_admin(user):
+    if is_admin_or_content_admin_or_site_admin(user):
         for catalog in component.subscribers((user,), IPrincipalAdministrativeRoleCatalog):
             queried = catalog.iter_administrations()
             courses.extend([ICourseInstance(x) for x in queried])
