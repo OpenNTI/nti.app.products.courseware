@@ -15,11 +15,13 @@ from zope import component
 from zope import interface
 
 from zope.cachedescriptors.property import Lazy
+from zope.interface.interfaces import ComponentLookupError
 
 from zope.intid import IIntIds
 
 from zope.schema.fieldproperty import createFieldProperties
 
+from nti.app.assessment.common.policy import get_policy_excluded
 from nti.app.products.courseware.cartridge.discussion import CanvasTopicMeta
 from nti.app.products.courseware.cartridge.exceptions import CommonCartridgeExportException
 
@@ -64,13 +66,13 @@ def _is_only_file_part(assessment):
     return _is_only_file_part_questions(question_set.questions)
 
 
-# TODO this is likely going to explode when battle tested
+# TODO this may going to explode when battle tested
 def adapt_to_common_cartridge_assessment(assessment):
     course = get_current_request().context
     if not ICourseInstance.providedBy(course):
         raise CommonCartridgeExportException(u'Request context does not provide a course instance')
-    if IAssetRef.providedBy(assessment):
-        assessment = find_object_with_ntiid(assessment.target)
+    if get_policy_excluded(assessment, course):
+        raise CommonCartridgeExportException(u'Section course assessment %s skipped' % assessment.title)
     if IQAssignment.providedBy(assessment) and _is_only_file_part(assessment):
         return CanvasAssignment(assessment)
     elif IQuestionSet.providedBy(assessment) and _is_only_file_part_questions(assessment.questions):
@@ -78,8 +80,10 @@ def adapt_to_common_cartridge_assessment(assessment):
     elif IQDiscussionAssignment.providedBy(assessment):
         # These are the same as a regular discussion we just patch in
         # some metadata to identify it as an assignment
-        # TODO This should likely be generalized to be site specific instead of hard patching it in
+        # TODO This should be generalized to be site specific instead of hard patching it in
         discussion = find_object_with_ntiid(assessment.discussion_ntiid)
+        if discussion is None:
+            raise CommonCartridgeExportException(u'Unable to resolve a discussion for discussion assignment %s' % assessment)
         topic_key = get_topic_key(discussion)
         topic = None
         for val in course.Discussions.values():
@@ -87,7 +91,7 @@ def adapt_to_common_cartridge_assessment(assessment):
                 topic = val[topic_key]
                 break
         if topic is None:
-            raise CommonCartridgeExportException()
+            raise CommonCartridgeExportException(u'Unable to resolve a topic for discussion %s' % discussion)
         resource = IIMSResource(discussion)
         resource.topic = topic  # TODO messy messy messy
         resource.dependencies[resource.identifier].append(CanvasTopicMeta(resource))
@@ -102,6 +106,11 @@ def adapt_to_common_cartridge_assessment(assessment):
 class CanvasAssignment(AbstractIMSWebContent):
 
     createFieldProperties(IIMSAssignment)
+
+    def __init__(self, context):
+        super(CanvasAssignment, self).__init__(context)
+        if getattr(context, 'content', False) == False:
+            raise ComponentLookupError
 
     @Lazy
     def identifier(self):
@@ -135,7 +144,7 @@ class CanvasAssignment(AbstractIMSWebContent):
         soup = BeautifulSoup(self.context.content, features='html.parser')
         question_soup = BeautifulSoup(self.question.content, features='html.parser')
         soup.append(question_soup)
-        content, dependencies = update_external_resources(soup.prettify())
+        content, dependencies = update_external_resources(soup.decode())
         self.dependencies['dependencies'].extend([IMSWebContent(self.context, dep) for dep in dependencies])
         return content
 

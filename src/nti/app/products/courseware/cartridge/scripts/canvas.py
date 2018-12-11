@@ -78,7 +78,7 @@ def _validate_course_entry(ntiid):
         global course_code
         course_code = json.get('ProviderDisplayName')
         global course_instructors
-        course_instructors = [name['Name'] for name in json.get('Instructors')]
+        course_instructors = [name['Name'] for name in json.get('Instructors', [])]
         global course_href
         course_href = nti_url + '/dataserver2/Objects/%s' % json.get('CourseNTIID')
         print "Access to course '%s' verified." % course_title

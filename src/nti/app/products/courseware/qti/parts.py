@@ -17,12 +17,13 @@ from zope.cachedescriptors.property import Lazy
 
 from zope.intid import IIntIds
 
+from nti.app.products.courseware.cartridge.exceptions import CommonCartridgeExportException
 from nti.app.products.courseware.cartridge.renderer import execute
 from nti.app.products.courseware.cartridge.renderer import get_renderer
 
 from nti.app.products.courseware.qti.interfaces import IQTIItem
 
-from nti.app.products.courseware.qti.utils import update_external_resources
+from nti.app.products.courseware.qti.utils import update_external_resources, mathjax_parser
 
 from nti.common._compat import text_
 
@@ -88,6 +89,7 @@ class AbstractQTIQuestion(object):
             content = self.context.content
         result, dependencies = update_external_resources(content)
         self.dependencies.extend(dependencies)
+        result = mathjax_parser(result)
         return result
 
 
@@ -102,6 +104,7 @@ class QTIMultipleChoice(AbstractQTIQuestion):
         for i, x in enumerate(self.context.choices):
             content, dependencies = update_external_resources(x)
             self.dependencies.extend(dependencies)
+            content = mathjax_parser(content)
             labels.append(self.Label(text_(unicode(i)), content))
         return labels
 
@@ -118,7 +121,7 @@ class QTIMultipleChoice(AbstractQTIQuestion):
         context['mattext'] = self.content
         context['title'] = self.title
         context['labels'] = self.labels
-        if self.respident:
+        if self.respident is not None:
             context['respident'] = self.respident
         return execute(renderer, {'context': context})
 
@@ -134,6 +137,7 @@ class QTIMultipleAnswers(AbstractQTIQuestion):
         for i, x in enumerate(self.context.choices):
             content, dependencies = update_external_resources(x)
             self.dependencies.extend(dependencies)
+            content = mathjax_parser(content)
             choices.append(self.Choice(text_(unicode(i)), content))
         return choices
 
@@ -157,7 +161,7 @@ class QTIMultipleAnswers(AbstractQTIQuestion):
         context['mattext'] = self.content
         context['title'] = self.title
         context['choices'] = self.choices
-        if self.answers:
+        if self.answers is not None:
             context['answers'] = self.answers
         return execute(renderer, {'context': context})
 
@@ -185,7 +189,7 @@ class QTIFillInTheBlank(AbstractQTIQuestion):
         context = self.base_template_context
         context['mattext'] = self.content
         context['title'] = self.title
-        if self.answers:
+        if self.answers is not None:
             context['answers'] = self.answers
         return execute(renderer, {'context': context})
 
@@ -212,6 +216,7 @@ class QTIMatching(AbstractQTIQuestion):
         for i, value in enumerate(self.context.values):
             content, dependencies = update_external_resources(value)
             self.dependencies.extend(dependencies)
+            content = mathjax_parser(content)
             soup = BeautifulSoup(content, features='html.parser')
             paragraphs = soup.find_all('p')
             content = '\n'.join([paragraph.text for paragraph in paragraphs])
@@ -290,8 +295,10 @@ class QTIFillInMultipleBlanks(AbstractQTIQuestion):
         # we want to use html.parser here so <html> and <body> tags aren't inserted
         question_content, dependencies = update_external_resources(self.question.content)
         self.dependencies.extend(dependencies)
+        question_content = mathjax_parser(question_content)
         entry_content, dependencies = update_external_resources(self.context.content)
         self.dependencies.extend(dependencies)
+        entry_content = mathjax_parser(entry_content)
         question_content = BeautifulSoup(question_content, features='html.parser')
         entry_content = BeautifulSoup(entry_content, features='html.parser')
         for blank in entry_content.find_all('input'):
@@ -299,7 +306,7 @@ class QTIFillInMultipleBlanks(AbstractQTIQuestion):
             blank.replace_with('[%s]' % name)
             self.blanks.append(name)
         question_content.append(entry_content)
-        return question_content.prettify('utf-8')
+        return question_content.decode()
 
     @Lazy
     def answers(self):
@@ -346,20 +353,25 @@ class QTIMultipleDropdowns(AbstractQTIQuestion):
         # we want to use html.parser here so <html> and <body> tags aren't inserted
         question_content, dependencies = update_external_resources(self.question.content)
         self.dependencies.extend(dependencies)
+        question_content = mathjax_parser(question_content)
         entry_content, dependencies = update_external_resources(self.context.input)
         self.dependencies.extend(dependencies)
+        entry_content = mathjax_parser(entry_content)
         question_content = BeautifulSoup(question_content, features='html.parser')
         entry_content = BeautifulSoup(entry_content, features='html.parser')
         for blank in entry_content.find_all('input'):
             name = blank.attrs.get('name')
             blank.replace_with('[%s]' % name)
             self.blanks.append(name)
+        question_content.append(question_content.new_tag('br'))
         question_content.append(entry_content)
-        return question_content.prettify()
+        return question_content.decode()
 
     @Lazy
     def dropdowns(self):
-        word_bank = self.context.wordbank
+        word_bank = getattr(self.context, 'wordbank', None) or getattr(self.question, 'wordbank', None)
+        if word_bank is None:
+            raise CommonCartridgeExportException(u'Unable to find wordbank for question %s' % self.question)
         words = word_bank.entries
         dropdowns = []
         for i, blank in enumerate(self.blanks):

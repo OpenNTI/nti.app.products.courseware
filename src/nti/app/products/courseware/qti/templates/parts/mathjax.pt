@@ -1,0 +1,7 @@
+<html lang="en">
+ <head>
+  <meta content="text/html; charset=utf-8" http-equiv="content-type"/>
+ </head>
+ <body tal:content="structure context/content">
+ </body>
+</html>

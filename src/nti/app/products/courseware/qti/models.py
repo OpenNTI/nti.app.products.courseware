@@ -7,6 +7,9 @@ from __future__ import division
 
 import os
 
+import htmlmin
+import six
+
 from bs4 import BeautifulSoup
 
 
@@ -19,6 +22,7 @@ from zope import component
 from zope import interface
 
 from zope.cachedescriptors.property import Lazy
+from zope.interface.interfaces import ComponentLookupError
 
 from zope.intid import IIntIds
 
@@ -44,7 +48,7 @@ from nti.app.products.courseware.qti.interfaces import ICanvasAssignmentSettings
 from nti.app.products.courseware.qti.interfaces import IQTIAssessment
 from nti.app.products.courseware.qti.interfaces import IQTIItem
 
-from nti.app.products.courseware.qti.utils import update_external_resources
+from nti.app.products.courseware.qti.utils import update_external_resources, mathjax_parser
 
 from nti.assessment.interfaces import IQAssignment
 from nti.assessment.interfaces import IQEditableEvaluation
@@ -74,14 +78,21 @@ class QTIAssessment(AbstractIMSWebContent):
         Convert a list of hrefs into IMSWebContent to maintain a standard format
         """
         for dep in deps:
-            web_content = IMSWebContent(self.context, dep)
-            self.dependencies['dependencies'].append(web_content)
+            # Hard refs
+            if isinstance(dep, six.text_type):
+                web_content = IMSWebContent(self.context, dep)
+                self.dependencies['dependencies'].append(web_content)
+            # MathJax / other  # TODO this could be better but we are running out of time
+            else:
+                self.dependencies['mathjax'].append(dep)
 
     def __init__(self, context, course, adapted_to=True):
         super(QTIAssessment, self).__init__(context)
         self.items = []
         self.course = course
-        if not self.is_content_backed:
+        if not self.is_content_backed and adapted_to:
+            if getattr(context, 'content', False) == False:  # XXX empty string is ok
+                raise ComponentLookupError
             # Parse the questions
             for question in self.questions:
                 for part in question.parts:
@@ -90,14 +101,19 @@ class QTIAssessment(AbstractIMSWebContent):
                     self.items.append(qi_export)
                     self.handle_dependencies(qti_item.dependencies)
             # set the content
+
             self.content = context.content
-        else:
+        elif adapted_to:
+            if self.content_file is None:
+                raise ComponentLookupError
             self.content = self._parse_content()
         if adapted_to:
             self.dependencies[self.identifier].append(CanvasQuizMeta(self, course))
             copy_self = QTIAssessment(context, course, adapted_to=False)
             copy_self.filename = copy_self.identifier + '.xml.qti'
+            copy_self.dirname = None
             copy_self.qti_identifier = self.identifier
+            copy_self.items = self.items
             self.dependencies['non_cc_assessments'].append(copy_self)
 
     @Lazy
@@ -127,7 +143,7 @@ class QTIAssessment(AbstractIMSWebContent):
         if self.is_content_backed:
             return self.context_parent.key
 
-    def content_soup(self, styled=True):
+    def content_soup(self, styled=False):
         if self.is_content_backed:
             text = self.content_file.read_contents_as_text()
             if styled:
@@ -137,7 +153,8 @@ class QTIAssessment(AbstractIMSWebContent):
                                       base_url=base_url,
                                       disable_link_rewrites=True)
                 text = premailer.transform()
-            return BeautifulSoup(text, features='lxml')
+            text = mathjax_parser(text)
+            return BeautifulSoup(text, features='html5lib')
 
     def _is_internal_resource(self, href):
         return not bool(urllib_parse.urlparse(href).scheme)
@@ -211,8 +228,9 @@ class QTIAssessment(AbstractIMSWebContent):
 
         # Ok, now that everything is clean, parse what will be the description for images and other linked resources
         # Check for resource refs and add to dependencies
-        new_content, dependencies = update_external_resources(new_content.prettify(), 'dependencies')
+        new_content, dependencies = update_external_resources(new_content.decode(), 'dependencies')
         self.handle_dependencies(dependencies)
+        new_content = mathjax_parser(new_content)
         return new_content
 
     @Lazy
@@ -245,7 +263,10 @@ class QTIAssessment(AbstractIMSWebContent):
 
     def export(self, archive):
         content = self.qti_xml()
-        target_path = os.path.join(archive, self.dirname, self.filename)
+        if self.dirname is not None:
+            target_path = os.path.join(archive, self.dirname, self.filename)
+        else:
+            target_path = os.path.join(archive, self.filename)
         dirname = os.path.dirname(target_path)
         if not os.path.exists(dirname):
             os.makedirs(dirname)

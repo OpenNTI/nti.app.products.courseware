@@ -19,6 +19,7 @@ from zope import component
 from zope import interface
 
 from zope.cachedescriptors.property import Lazy
+from zope.intid import IIntIds
 
 from nti.app.products.courseware.cartridge.interfaces import ICanvasWikiContent
 from nti.app.products.courseware.cartridge.interfaces import IIMSResource
@@ -50,6 +51,15 @@ class IMSWebContentTranscript(AbstractIMSWebContent):
 
     extension = '.vtt'
 
+    @Lazy
+    def identifier(self):
+        intids = component.getUtility(IIntIds)
+        intid = intids.register(self)
+        # Start at A
+        identifier = u''.join([chr(65 + int(i)) for i in str(intid)])
+        return unicode(identifier)
+    __name__ = identifier
+
     def export(self, path):
         package = find_interface(self.context, IContentPackage, strict=False)
         if package is None:
@@ -76,6 +86,15 @@ class IMSWebContentTranscript(AbstractIMSWebContent):
 class IMSWebContentVideoRoll(AbstractIMSWebContent):
 
     extension = '.html'
+
+    @Lazy
+    def identifier(self):
+        intids = component.getUtility(IIntIds)
+        intid = intids.register(self)
+        # Start at A
+        identifier = u''.join([chr(65 + int(i)) for i in str(intid)])
+        return unicode(identifier)
+    __name__ = identifier
 
     def _process_videos(self, videos):
         if videos:
@@ -120,6 +139,15 @@ class IMSWebContentVideo(AbstractIMSWebContent):
     extension = '.html'
     _dependencies = defaultdict(list)
 
+    @Lazy
+    def identifier(self):
+        intids = component.getUtility(IIntIds)
+        intid = intids.register(self)
+        # Start at A
+        identifier = u''.join([chr(65 + int(i)) for i in str(intid)])
+        return unicode(identifier)
+    __name__ = identifier
+
     def _process_transcript(self, transcripts):
         if transcripts:
             for transcript in transcripts:
@@ -147,7 +175,7 @@ class IMSWebContentVideo(AbstractIMSWebContent):
             context['transcript'] = 'transcripts/' + self.dependencies.get('transcripts')[0].filename
         return execute(renderer, {"context": context})
 
-    def kaltura(self, uiconf_id="30404512"):  # UIConf sets how the iframe looks. This is OU's id
+    def kaltura(self, uiconf_id="22104902"):  # UIConf sets how the iframe looks. This is OU's id
         """
         Return a string that represent a kaltura video file
         resource in a cartridge

@@ -11,6 +11,9 @@ from bs4 import BeautifulSoup
 
 from six.moves import urllib_parse
 
+from nti.app.products.courseware.cartridge.renderer import get_renderer, execute
+from nti.app.products.courseware.cartridge.web_content import MathJAXWebContent
+
 __docformat__ = "restructuredtext en"
 
 logger = __import__('logging').getLogger(__name__)
@@ -38,4 +41,16 @@ def update_external_resources(html, path_prefix='dependencies'):
                 deps.append(src)
                 src = os.path.join(path_prefix, src)
                 tag.attrs['src'] = os.path.join('$IMS-CC-FILEBASE$', src)
-    return soup.prettify(), deps
+    return soup.decode(), deps
+
+
+def mathjax_parser(html):
+    soup = BeautifulSoup(html, features='html.parser')
+    mathjax = soup.find_all('span', class_='mathjax math tex2jax_process')
+    for mj in mathjax:
+        nobr = mj.find_all('nobr')
+        for tag in nobr:
+            # nobr isn't supported in canvas. We replace it with a valid css property
+            tag.name = 'span'
+            tag.attrs = {'style': 'white-space: nowrap; font-size: 14px;'}
+    return soup.decode()

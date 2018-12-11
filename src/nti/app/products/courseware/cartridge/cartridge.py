@@ -5,19 +5,28 @@ from __future__ import print_function
 from __future__ import absolute_import
 from __future__ import division
 
+import os
+
 from lxml import etree
 
 from zope import component
 from zope import interface
 
 from zope.cachedescriptors.property import Lazy
+from zope.component import queryMultiAdapter
+from zope.interface.interfaces import ComponentLookupError
 
 from zope.intid import IIntIds
 
+from nti.app.assessment.common.evaluations import get_course_evaluations
+from nti.app.products.courseware import cartridge
 from nti.app.products.courseware.cartridge.exceptions import CommonCartridgeExportException
-from nti.app.products.courseware.cartridge.interfaces import IIMSCommonCartridge
+from nti.app.products.courseware.cartridge.interfaces import IIMSCommonCartridge, IIMSUnsortedContent, \
+    ICommonCartridgeAssessment
 from nti.app.products.courseware.cartridge.interfaces import IIMSResource
 from nti.app.products.courseware.cartridge.interfaces import IIMSWebContentUnit
+from nti.assessment.interfaces import DISCUSSION_ASSIGNMENT_MIME_TYPE, ASSIGNMENT_MIME_TYPE, QUESTION_SET_MIME_TYPE, \
+    TIMED_ASSIGNMENT_MIME_TYPE
 
 from nti.common.datastructures import ObjectHierarchyTree
 
@@ -30,10 +39,11 @@ from nti.contenttypes.courses.interfaces import ICourseInstance
 
 from nti.site.site import get_component_hierarchy_names
 
-from nti.contenttypes.presentation.interfaces import IConcreteAsset
+from nti.contenttypes.presentation.interfaces import IConcreteAsset, INTIAssessmentRef
 from nti.contenttypes.presentation.interfaces import IGroupOverViewable
 from nti.contenttypes.presentation.interfaces import INTILessonOverview
 from nti.contenttypes.presentation.interfaces import INTIRelatedWorkRef
+from nti.ntiids.ntiids import find_object_with_ntiid
 
 __docformat__ = "restructuredtext en"
 
@@ -61,12 +71,20 @@ def get_all_package_assets(course):
 @interface.implementer(IIMSCommonCartridge)
 class IMSCommonCartridge(object):
 
-    resources = dict()
-    errors = []
-
     def __init__(self, course):
         self.course = course
         self.manifest_resources = etree.Element(u'resources')
+        self.resources = dict()
+        self.errors = []
+
+    def export_errors(self, dirname):
+        with open(os.path.join(dirname, 'web_resources', 'nti_export_errors.txt'), 'w') as export_errors:
+            export_errors.writelines([e.message for e in self.errors])
+        item = etree.SubElement(self.manifest_resources, u'resource',
+                                identifier=u'NTI_EXPORT_ERRORS',
+                                type='webcontent',
+                                href='web_resources/nti_export_errors.txt')
+        etree.SubElement(item, u'file', href='web_resources/nti_export_errors.txt')
 
     @Lazy
     def intids(self):
@@ -128,17 +146,28 @@ def build_manifest_items(cartridge):
                 try:
 
                     # make sure we have a concrete asset
-                    obj = IConcreteAsset(obj, obj)
+                    asset = IConcreteAsset(obj, obj)
+                    # resolve assessments
+                    if INTIAssessmentRef.providedBy(asset):  # TODO this is going to break unexpectedly...
+                        asset = find_object_with_ntiid(obj.target)
+
                     # creates an id if none exists, or returns the existing one
-                    intid = intids.register(obj)
+                    intid = intids.register(asset)
                     identifier = ''.join([chr(65 + int(i)) for i in str(intid)])
                     properties = {'identifier': unicode(identifier)}
-                    resource = IIMSResource(obj)
-                    resources[identifier] = resource  # Map this object to it's common cartridge resource
+                    if identifier not in resources:
+                        resource = IIMSResource(asset, None)
+                        if resource is None:
+                            logger.warning(u'Unable to export %s to common cartridge' % obj.__class__)
+                            errors.append(CommonCartridgeExportException(u'Unsupported asset type: %s' % obj.__class__))
+                            _recur_items(node, xml_node)
+                            continue
+                        resources[identifier] = resource  # Map this object to it's common cartridge resource
+                    else:
+                        resource = resources[identifier]
                     properties['identifierref'] = unicode(resource.identifier)
-                except TypeError:  # Likely incrementally faster than if/else as we expect these to resolve normally
-                    logger.warning(u'Unable to export %s to common cartridge' % obj.__class__)
-                    errors.append(CommonCartridgeExportException(u'Unsupported asset type: %s' % obj.__class__))
+                except CommonCartridgeExportException as e:  # Likely incrementally faster than if/else as we expect these to resolve normally
+                    errors.append(e)
                     _recur_items(node, xml_node)
                     continue
             else:
@@ -152,7 +181,7 @@ def build_manifest_items(cartridge):
             _recur_items(node, item)
 
     _recur_items(course_tree, items)
-    return etree.tostring(items, pretty_print=True)
+    return etree.tounicode(items, pretty_print=True)
 
 
 # TODO Concrete?
@@ -164,6 +193,28 @@ def build_cartridge_content(cartridge):
         intid = intids.register(asset)
         identifier = ''.join([chr(65 + int(i)) for i in str(intid)])
         if identifier not in resources:
-            unit = IIMSWebContentUnit(asset, None)
-            if unit is not None:  # TODO fix
-                resources[identifier] = unit
+            try:
+                unit = IIMSWebContentUnit(asset, None)
+                if unit is not None:  # TODO fix
+                    resources[identifier] = unit
+            except CommonCartridgeExportException as e:
+                cartridge.errors.append(e)
+
+    # Assignments not in course structure
+    assessments = get_course_evaluations(cartridge.course,
+                                         mimetypes=(QUESTION_SET_MIME_TYPE,
+                                                    ASSIGNMENT_MIME_TYPE,
+                                                    TIMED_ASSIGNMENT_MIME_TYPE,
+                                                    DISCUSSION_ASSIGNMENT_MIME_TYPE))
+    for assessment in assessments:
+        intid = intids.register(assessment)
+        identifier = ''.join([chr(65 + int(i)) for i in str(intid)])
+        if identifier not in resources:
+            try:
+                logger.info(u'Added unsorted assignment %s' % assessment.title)
+                unit = ICommonCartridgeAssessment(assessment, None)
+                if unit is not None:
+                    interface.alsoProvides(IIMSUnsortedContent)
+                    resources[identifier] = unit
+            except CommonCartridgeExportException as e:
+                cartridge.errors.append(e)

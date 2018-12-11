@@ -9,7 +9,6 @@ from __future__ import print_function
 from __future__ import absolute_import
 
 # pylint: disable=inherit-non-class,expression-not-assigned
-
 from zope import interface
 
 from zope.schema import Dict
@@ -32,7 +31,7 @@ class ICanvasWikiContent(interface.Interface):
 
 class IIMSResource(interface.Interface):
 
-    identifier = Int(title=u'Identifier',
+    identifier = TextLine(title=u'Identifier',
                      description=u'The identifier for this web content object within'
                                  u' the common cartridge',
                      required=True)
@@ -109,6 +108,10 @@ class ICommonCartridgeAssessment(IIMSResource):
                     required=True,
                     default=u'imsqti_xmlv1p2/imscc_xmlv1p1/assessment',
                     readonly=True)
+
+
+class IIMSUnsortedContent(interface.Interface):
+    pass
 
 
 class IIMSAssignment(ICommonCartridgeAssessment):

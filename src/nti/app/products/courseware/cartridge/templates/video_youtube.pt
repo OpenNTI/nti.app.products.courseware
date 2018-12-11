@@ -2,6 +2,7 @@
 	<head>
         <title tal:content="context/title"></title>
         <meta name="identifier" tal:attributes="content context/identifier" />
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     </head>
 	<body style="padding: 20px" tal:attributes="style context/style">
 		<iframe src="https://www.youtube.com/embed/000?rel=0"

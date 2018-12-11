@@ -19,6 +19,7 @@ from nti.app.base.abstract_views import AbstractAuthenticatedView
 
 from nti.app.products.courseware.cartridge.cartridge import build_cartridge_content
 from nti.app.products.courseware.cartridge.cartridge import build_manifest_items
+from nti.app.products.courseware.cartridge.exceptions import CommonCartridgeExportException
 
 from nti.app.products.courseware.cartridge.interfaces import ICanvasWikiContent, IIMSAssociatedContent
 from nti.app.products.courseware.cartridge.interfaces import ICartridgeWebContent
@@ -60,7 +61,11 @@ class CommonCartridgeExportView(AbstractAuthenticatedView):
                     elif ICanvasWikiContent.providedBy(cc_resource):
                         prepath = 'wiki_content'
                     target = os.path.join(archive, prepath)
-                    cc_resource.export(target)
+                    try:
+                        cc_resource.export(target)
+                    except CommonCartridgeExportException as e:
+                        logger.warn(e.message)
+                        cartridge.errors.append(e)
                     if getattr(cc_resource, 'dirname', None):
                         prepath = os.path.join(prepath, cc_resource.dirname)
                     href = os.path.join(prepath, cc_resource.filename)
@@ -86,7 +91,11 @@ class CommonCartridgeExportView(AbstractAuthenticatedView):
                                     dep_path = os.path.join(archive, 'web_resources', dep_directory)
                                 else:
                                     dep_path = os.path.join(archive, dep_directory)
-                                dep.export(dep_path)
+                                try:
+                                    dep.export(dep_path)
+                                except CommonCartridgeExportException as e:
+                                    logger.warn(e.message)
+                                    cartridge.errors.append(e)
         return archive
 
     def __call__(self):
@@ -96,14 +105,15 @@ class CommonCartridgeExportView(AbstractAuthenticatedView):
             xml = build_manifest_items(cartridge)
             build_cartridge_content(cartridge)
             archive = self._export_to_filesystem(cartridge)
+            cartridge.export_errors(archive)
             renderer = get_renderer("manifest", ".pt", package='nti.app.products.courseware.cartridge')
             context = {
                 'items': xml,
-                'resources': ''.join(etree.tostring(child, pretty_print=True) for child in cartridge.manifest_resources.iterchildren())
+                'resources': ''.join(etree.tounicode(child, pretty_print=True) for child in cartridge.manifest_resources.iterchildren())
             }
             manifest = execute(renderer, {'context': context})
             with open(archive + '/imsmanifest.xml', 'w') as fd:
-                fd.write(manifest)
+                fd.write(manifest.encode('utf-8'))
             zipped = shutil.make_archive('common_cartridge', 'zip', archive)
             filename = self.context.title + '.imscc'
             self.request.response.content_encoding = 'identity'

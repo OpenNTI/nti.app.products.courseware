@@ -159,12 +159,12 @@ class IMSDiscussionTopic(object):
                 content_html.body.append(anchor)
             elif isinstance(part, six.string_types):
                 # Just html, lets append it in to the tree
-                for element in BeautifulSoup(part, features='lxml').body:  # passing the feature mutes BS warning
+                for element in BeautifulSoup(part, features='html5lib').body:  # passing the feature mutes BS warning
                     content_html.body.append(element)
             else:
                 # Don't know / unsupported. Log and move on
                 continue
-        return content_html.prettify()
+        return content_html.decode()
 
     @Lazy
     def topic(self):
@@ -177,8 +177,7 @@ class IMSDiscussionTopic(object):
             course_discussion, topic = resolve_discussion_course_bundle(user, self.context) or (None, None)
         if topic is None:  # TODO
             # If we still don't have it we need to error
-            raise KeyError
-            #raise CommonCartridgeExportException(u'Unable to locate topic for discussion: %s' % self.context.title)
+            raise CommonCartridgeExportException(u'Unable to locate topic for discussion: %s' % self.context.title)
         return topic
 
     @Lazy

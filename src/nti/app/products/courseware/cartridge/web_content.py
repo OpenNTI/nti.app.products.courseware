@@ -21,7 +21,7 @@ from zope.schema.fieldproperty import createFieldProperties
 
 from nti.app.products.courseware.cartridge.exceptions import CommonCartridgeExportException
 
-from nti.app.products.courseware.cartridge.interfaces import IIMSWebContentUnit
+from nti.app.products.courseware.cartridge.interfaces import IIMSWebContentUnit, IIMSAssociatedContent
 
 from nti.contentlibrary.interfaces import IContentPackage
 
@@ -32,14 +32,7 @@ __docformat__ = "restructuredtext en"
 logger = __import__('logging').getLogger(__name__)
 
 
-@interface.implementer(IIMSWebContentUnit)
-class AbstractIMSWebContent(object):
-
-    createFieldProperties(IIMSWebContentUnit)
-
-    def __init__(self, context):
-        self.context = context
-        self.dependencies = defaultdict(list)
+class WebContentMixin(object):
 
     def create_dirname(self, path):
         dirname = os.path.dirname(path)
@@ -78,6 +71,16 @@ class AbstractIMSWebContent(object):
         return unicode(identifier)
     __name__ = identifier
 
+
+@interface.implementer(IIMSWebContentUnit)
+class AbstractIMSWebContent(WebContentMixin):
+
+    createFieldProperties(IIMSWebContentUnit)
+
+    def __init__(self, context):
+        self.context = context
+        self.dependencies = defaultdict(list)
+
     def export(self, dirname):
         raise NotImplementedError
 
@@ -91,6 +94,15 @@ class IMSWebContent(AbstractIMSWebContent):
     def __init__(self, context, path_to):
         super(IMSWebContent, self).__init__(context)
         self.path_to = path_to
+
+    @Lazy
+    def identifier(self):
+        intids = component.getUtility(IIntIds)
+        intid = intids.register(self)
+        # Start at A
+        identifier = u''.join([chr(65 + int(i)) for i in str(intid)])
+        return unicode(identifier)
+    __name__ = identifier
 
     @Lazy
     def content_package(self):
@@ -111,3 +123,30 @@ class IMSWebContent(AbstractIMSWebContent):
         source_path = os.path.join(self.content_directory, self.path_to)
         target_path = os.path.join(dirname, self.path_to)
         self.copy_resource(source_path, target_path)
+
+
+@interface.implementer(IIMSWebContentUnit)
+class MathJAXWebContent(WebContentMixin):
+
+    createFieldProperties(IIMSWebContentUnit)
+
+    def __init__(self, content):
+        self.content = content
+
+    @Lazy
+    def identifier(self):
+        intids = component.getUtility(IIntIds)
+        intid = intids.register(self)
+        # Start at A
+        identifier = u''.join([chr(65 + int(i)) for i in str(intid)])
+        return unicode(identifier)
+    __name__ = identifier
+
+    @Lazy
+    def filename(self):
+        return self.identifier + '.html'
+
+    def export(self, dirname):
+        target_path = os.path.join(dirname, self.filename)
+        self.write_resource(target_path, self.content)
+        return True

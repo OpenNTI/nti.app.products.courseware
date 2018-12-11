@@ -38,6 +38,7 @@ from nti.app.products.courseware.cartridge.renderer import get_renderer
 
 from nti.app.products.courseware.cartridge.web_content import AbstractIMSWebContent, IMSWebContent
 from nti.app.products.courseware.qti.utils import update_external_resources
+from nti.common import random
 
 from nti.contentlibrary.interfaces import IContentPackage
 from nti.contentlibrary.interfaces import IFilesystemBucket
@@ -55,12 +56,25 @@ class IMSWebContentResource(AbstractIMSWebContent):
     """
 
     @Lazy
+    def identifier(self):
+        intids = component.getUtility(IIntIds)
+        intid = intids.register(self)
+        # Start at A
+        identifier = u''.join([chr(65 + int(i)) for i in str(intid)])
+        return unicode(identifier)
+    __name__ = identifier
+
+    @Lazy
     def href(self):
         return self.context.href
 
     @Lazy
     def filename(self):
-        return os.path.basename(self.href)
+        # We add a hash in front here because these may be in mulitple content pacakges
+        # When this happens we get into a situation where multiple ids point to the same file
+        # because it's name is the same. Rather than adding the entire id we do random so the name is
+        # still easy to read
+        return random.generate_random_string(4) + '_' + os.path.basename(self.href)
 
     def export(self, path):
         package = find_interface(self.context, IContentPackage, strict=False)
@@ -68,21 +82,19 @@ class IMSWebContentResource(AbstractIMSWebContent):
         if not IFilesystemBucket.providedBy(root):
             if self.context.href.startswith('/dataserver2/cf.io/'):
                 resource = get_file_from_cf_io_url(self.context.href)
-                filename = os.path.basename(self.context.href)
-                target_path = os.path.join(path, filename)
+                target_path = os.path.join(path, self.filename)
                 self.copy_file_resource(resource, target_path)
             else:
                 logger.warning("Unsupported bucket Boto?")
-                # raise CommonCartridgeExportException(u"Unable to locate file on disk for %s. Is this resource "
-                #                                     u"stored on Boto?" % self.context.label)
+                raise CommonCartridgeExportException(u"Unable to locate file on disk for %s. Is this resource "
+                                                    u"stored on Boto?" % self.context.label)
         elif self.context.href and root:
             source_path = os.path.join(root.absolute_path, self.context.href)
-            filename = os.path.basename(source_path)
-            target_path = os.path.join(path, filename)
+            target_path = os.path.join(path, self.filename)
             self.copy_resource(source_path, target_path)
         else:
             logger.warning(u"Unable to locate a content package for %s" % self.context.label)
-            # raise CommonCartridgeExportException(u"Unable to locate a content package for %s" % self.context.label)
+            raise CommonCartridgeExportException(u"Unable to locate a content package for %s" % self.context.label)
 
 
 @interface.implementer(IIMSWebContentUnit, ICanvasWikiContent)
@@ -116,12 +128,21 @@ class IMSWebContentNativeReading(AbstractIMSWebContent):
         return self.context.label
 
     @Lazy
+    def identifier(self):
+        intids = component.getUtility(IIntIds)
+        intid = intids.register(self)
+        # Start at A
+        identifier = u''.join([chr(65 + int(i)) for i in str(intid)])
+        return unicode(identifier)
+    __name__ = identifier
+
+    @Lazy
     def filename(self):
         return self.identifier + '.html'
 
     @Lazy
     def content(self):
-        html = self.content_soup().find('body').prettify()
+        html = self.content_soup().find('body').decode()
         html, dependencies = update_external_resources(html)
         self.dependencies['dependencies'].extend([IMSWebContent(self.context, dep) for dep in dependencies])
         return html
