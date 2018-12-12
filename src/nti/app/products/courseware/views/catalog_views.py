@@ -556,9 +556,9 @@ class drop_course_view(AbstractAuthenticatedView):
 
     def _check_access(self, user):
         # 403 if not admin or site admin or self
-        return (   self._is_admin \
-                or has_permission(nauth.ACT_DELETE, self.context)) \
-            and self._can_admin_user(user)
+        return     self._is_admin \
+                or has_permission(nauth.ACT_DELETE, self.context) \
+                or self._can_admin_user(user)
 
     @Lazy
     def _params(self):
