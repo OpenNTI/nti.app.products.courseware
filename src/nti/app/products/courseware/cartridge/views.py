@@ -66,6 +66,7 @@ class CommonCartridgeExportView(AbstractAuthenticatedView):
                     except CommonCartridgeExportException as e:
                         logger.warn(e.message)
                         cartridge.errors.append(e)
+                        continue
                     if getattr(cc_resource, 'dirname', None):
                         prepath = os.path.join(prepath, cc_resource.dirname)
                     href = os.path.join(prepath, cc_resource.filename)

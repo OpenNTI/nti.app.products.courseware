@@ -5,16 +5,9 @@
         <meta name="identifier" tal:attributes="content context/identifier" />
     </head>
     <body style="height: 480px; width: 600px;" tal:attributes="style context/style">
-    		<iframe src="https://www.kaltura.com/p/1500101/sp/150010100/embedIframeJs/uiconf_id/15491291/partner_id/1500101?iframeembed=true&playerId=abcdnextthought&entry_id=0_3ebf5hgo"
-        		width="300"
-        		height="300"
-                frameborder="0"
-                allow="autoplay; encrypted-media"
-                allowfullscreen
-        		tal:attributes="src context/src;
-        						width context/width;
-        						height context/height;">
-		</iframe>
+    		<video width="640" height="385" controls tal:attributes="width context/width; height context/height">
+	            <source src="https://cdnapisec.kaltura.com/p/1500101/sp/0/playManifest/entryId/0_jyztuqmb/format/url/protocol/https/flavorParamId/0/video.mp4" tal:attributes="src context/src" type="video/mp4">
+            </video>
 		<track tal:condition="context/transcript"
 			   tal:attributes="src context/transcript" />
 	</body>

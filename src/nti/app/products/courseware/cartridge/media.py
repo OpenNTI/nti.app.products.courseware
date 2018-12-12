@@ -175,17 +175,13 @@ class IMSWebContentVideo(AbstractIMSWebContent):
             context['transcript'] = 'transcripts/' + self.dependencies.get('transcripts')[0].filename
         return execute(renderer, {"context": context})
 
-    def kaltura(self, uiconf_id="22104902"):  # UIConf sets how the iframe looks. This is OU's id
+    def kaltura(self, uiconf_id="15491291"):  # UIConf sets how the iframe looks. This is OU's id
         """
         Return a string that represent a kaltura video file
         resource in a cartridge
         """
-        current = int(time.time())
         partner_id, entry_id = self.source_id.split(':')
-        player_id = 'nti_%s' % current
-        src_href = 'https://www.kaltura.com/p/%s/sp/%s00/embedIframeJs/uiconf_id/%s/partner_id/%s' \
-                   '?iframeembed=true&playerId=%s&entry_id=%s' \
-                   % (partner_id, partner_id, uiconf_id, partner_id, player_id, entry_id)
+        src_href = 'https://cdnapisec.kaltura.com/p/%s/sp/0/playManifest/entryId/%s/format/url/protocol/https/flavorParamId/0/video.mp4' % (partner_id, entry_id)
         renderer = get_renderer("video_kaltura", ".pt")
         context = {
             'style': 'height: %spx; width: %spx' % (self.source.height, self.source.width),

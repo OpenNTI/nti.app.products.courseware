@@ -25,7 +25,8 @@ from zope.schema.fieldproperty import createFieldProperties
 
 from nti.app.contentfolder.utils import get_file_from_cf_io_url
 
-from nti.app.contenttypes.presentation.decorators.assets import CONTENT_MIME_TYPE
+from nti.app.contenttypes.presentation.decorators.assets import CONTENT_MIME_TYPE, _path_exists_in_package, \
+    _get_item_content_package
 
 from nti.app.products.courseware.cartridge.exceptions import CommonCartridgeExportException
 
@@ -40,8 +41,10 @@ from nti.app.products.courseware.cartridge.web_content import AbstractIMSWebCont
 from nti.app.products.courseware.qti.utils import update_external_resources
 from nti.common import random
 
-from nti.contentlibrary.interfaces import IContentPackage
+from nti.contentlibrary.interfaces import IContentPackage, IContentPackageLibrary
 from nti.contentlibrary.interfaces import IFilesystemBucket
+from nti.contentlibrary_rendering.interfaces import IContentPackageRenderMetadata
+from nti.externalization import to_external_object
 from nti.ntiids.ntiids import find_object_with_ntiid
 
 from nti.traversal.traversal import find_interface
@@ -78,6 +81,14 @@ class IMSWebContentResource(AbstractIMSWebContent):
 
     def export(self, path):
         package = find_interface(self.context, IContentPackage, strict=False)
+        if package is None:
+            for name in ('href', 'icon'):
+                value = getattr(self.context, name, None)
+                if value and not value.startswith('/') and '://' not in value:
+                    if package is None \
+                            or not _path_exists_in_package(value, package):
+                        # We make sure each url is in the correct package.
+                        package = _get_item_content_package(self.context, value)
         root = getattr(package, 'root', None)
         if not IFilesystemBucket.providedBy(root):
             if self.context.href.startswith('/dataserver2/cf.io/'):
@@ -105,8 +116,12 @@ class IMSWebContentNativeReading(AbstractIMSWebContent):
 
     @Lazy
     def rendered_package(self):
-        # TODO logging
-        return find_object_with_ntiid(self.context.target)
+        rendered_package = find_object_with_ntiid(self.context.target)
+        metadata = IContentPackageRenderMetadata(rendered_package, None)
+        if metadata is not None:
+            if not metadata.mostRecentRenderJob().is_success():
+                raise CommonCartridgeExportException(u'Related work ref %s failed to render.' % self.title)
+        return rendered_package
 
     @Lazy
     def rendered_package_path(self):

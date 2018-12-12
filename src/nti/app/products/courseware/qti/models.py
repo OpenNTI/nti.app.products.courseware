@@ -215,11 +215,14 @@ class QTIAssessment(AbstractIMSWebContent):
             if nested_text != '':
                 item_identifier = random.generate_random_string()  # Shouldn't need this identifier
                 assignment_identifier_ref = random.generate_random_string()  # same as above
+                mattext, dependencies = update_external_resources(nested_text, 'dependencies')
+                mattext = mathjax_parser(mattext)
+                self.handle_dependencies(dependencies)
                 renderer = get_renderer('templates/parts/text_entry', '.pt')
                 context = {'item_identifier': item_identifier,
                            'title': 'Text',
                            'assignment_identifier_ref': assignment_identifier_ref,
-                           'mattext': nested_text}
+                           'mattext': mattext}
                 self.items.append(execute(renderer, {'context': context}))
             question_object.extract()
 
@@ -302,6 +305,7 @@ class CanvasAssignmentSettings(object):
     def to_xml(self):
         renderer = get_renderer('assignment_settings', '.pt')
         context = {'fields': self.ext,
+                   'title': self.title,
                    'identifier': self.identifier}
         return execute(renderer, {'context': context})
 
@@ -347,6 +351,7 @@ class CanvasQuizMeta(object):
         renderer = get_renderer('assessment_meta', '.pt')
         context = {'fields': self.ext,
                    'quiz_id': self.identifier,
+                   'title': self.title,
                    'description': self.description,
                    'assignment': getattr(self, 'assignment', None)}
         return execute(renderer, {'context': context})

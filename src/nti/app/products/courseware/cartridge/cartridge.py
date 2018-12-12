@@ -17,8 +17,9 @@ from zope.component import queryMultiAdapter
 from zope.interface.interfaces import ComponentLookupError
 
 from zope.intid import IIntIds
+from zope.proxy import getProxiedObject
 
-from nti.app.assessment.common.evaluations import get_course_evaluations
+from nti.app.assessment.common.evaluations import get_course_evaluations, get_course_assignments
 from nti.app.products.courseware import cartridge
 from nti.app.products.courseware.cartridge.exceptions import CommonCartridgeExportException
 from nti.app.products.courseware.cartridge.interfaces import IIMSCommonCartridge, IIMSUnsortedContent, \
@@ -26,7 +27,7 @@ from nti.app.products.courseware.cartridge.interfaces import IIMSCommonCartridge
 from nti.app.products.courseware.cartridge.interfaces import IIMSResource
 from nti.app.products.courseware.cartridge.interfaces import IIMSWebContentUnit
 from nti.assessment.interfaces import DISCUSSION_ASSIGNMENT_MIME_TYPE, ASSIGNMENT_MIME_TYPE, QUESTION_SET_MIME_TYPE, \
-    TIMED_ASSIGNMENT_MIME_TYPE
+    TIMED_ASSIGNMENT_MIME_TYPE, IQuestionSet
 
 from nti.common.datastructures import ObjectHierarchyTree
 
@@ -79,9 +80,9 @@ class IMSCommonCartridge(object):
 
     def export_errors(self, dirname):
         with open(os.path.join(dirname, 'web_resources', 'nti_export_errors.txt'), 'w') as export_errors:
-            export_errors.writelines([e.message for e in self.errors])
+            export_errors.write('\n'.join([e.message for e in self.errors]))
         item = etree.SubElement(self.manifest_resources, u'resource',
-                                identifier=u'NTI_EXPORT_ERRORS',
+                                identifier=u'NTIEXPORTERRORS',
                                 type='webcontent',
                                 href='web_resources/nti_export_errors.txt')
         etree.SubElement(item, u'file', href='web_resources/nti_export_errors.txt')
@@ -201,19 +202,18 @@ def build_cartridge_content(cartridge):
                 cartridge.errors.append(e)
 
     # Assignments not in course structure
-    assessments = get_course_evaluations(cartridge.course,
-                                         mimetypes=(QUESTION_SET_MIME_TYPE,
-                                                    ASSIGNMENT_MIME_TYPE,
-                                                    TIMED_ASSIGNMENT_MIME_TYPE,
-                                                    DISCUSSION_ASSIGNMENT_MIME_TYPE))
+    assessments = get_course_assignments(cartridge.course,
+                                         sort=False,
+                                         parent_course=True)
     for assessment in assessments:
+        assessment = getProxiedObject(assessment)
         intid = intids.register(assessment)
         identifier = ''.join([chr(65 + int(i)) for i in str(intid)])
         if identifier not in resources:
             try:
-                logger.info(u'Added unsorted assignment %s' % assessment.title)
                 unit = ICommonCartridgeAssessment(assessment, None)
                 if unit is not None:
+                    logger.info(u'Added unsorted assignment %s' % assessment.title)
                     interface.alsoProvides(IIMSUnsortedContent)
                     resources[identifier] = unit
             except CommonCartridgeExportException as e:

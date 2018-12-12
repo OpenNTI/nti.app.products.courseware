@@ -1,7 +1,5 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-
-import getpass
 import os
 import requests
 import ssl
@@ -10,6 +8,7 @@ import tempfile
 import time
 import urllib2
 
+from argparse import ArgumentParser
 from bs4 import BeautifulSoup
 
 # These map to the tab id in Canvas. We use the id to make
@@ -29,6 +28,9 @@ DISABLE_TABS = ('discussions',
                 'files',
                 'assignments',
                 'outcomes')
+
+course_id = '147346'
+UA_STRING = 'NextThought Canvas Migrator Utility'
 
 
 def _check_url(url):
@@ -51,7 +53,7 @@ def _check_url(url):
 
 
 def _validate_credentials(username, password):
-    dataserver2 = nti_url + '/dataserver2/users/' + username
+    dataserver2 = source + '/dataserver2/users/' + username
     req = requests.get(dataserver2, auth=(username, password), verify=False)
     if req.status_code != 200:
         print "Your credentials are invalid"
@@ -62,8 +64,8 @@ def _validate_credentials(username, password):
 
 def _validate_course_entry(ntiid):
     global catalog_href
-    catalog_href = nti_url + '/dataserver2/Objects/' + ntiid
-    req = requests.get(catalog_href, auth=(nti_username, nti_password), verify=False)
+    catalog_href = source + '/dataserver2/Objects/' + ntiid
+    req = requests.get(catalog_href, auth=(username, password), verify=False)
     status_code = req.status_code
     if status_code == 401 or status_code == 403:
         print "Your credentials are invalid to access this course"
@@ -80,7 +82,7 @@ def _validate_course_entry(ntiid):
         global course_instructors
         course_instructors = [name['Name'] for name in json.get('Instructors', [])]
         global course_href
-        course_href = nti_url + '/dataserver2/Objects/%s' % json.get('CourseNTIID')
+        course_href = source + '/dataserver2/Objects/%s' % json.get('CourseNTIID')
         print "Access to course '%s' verified." % course_title
         return True
     else:
@@ -89,7 +91,7 @@ def _validate_course_entry(ntiid):
 
 
 def _validate_canvas_token(token):
-    url = canvas_url + '/api/v1/courses?access_token=%s' % token
+    url = dest + '/api/v1/courses?access_token=%s' % token
     req = requests.get(url)
     if req.status_code == 200:
         print "Canvas access verified"
@@ -101,7 +103,7 @@ def _validate_canvas_token(token):
 def get_common_cartridge(url=None):
     link = url if url else course_href + '/@@common_cartridge'
     imscc = tempfile.NamedTemporaryFile()
-    req = requests.get(link, stream=True, verify=False, auth=(nti_username, nti_password))
+    req = requests.get(link, stream=True, verify=False, auth=(username, password))
     size = int(req.headers['Content-Length'])
     imported = 0
     increments = 1
@@ -123,7 +125,7 @@ def get_common_cartridge(url=None):
 
 
 def upload_file(filepath):
-    url = canvas_url + '/api/v1/courses/%s/files' % course_id
+    url = dest + '/api/v1/courses/%s/files' % course_id
     filename = os.path.basename(filepath)
     filesize = os.stat(filepath).st_size
     req = requests.post(url,
@@ -175,21 +177,21 @@ def create_home_page():
         tag.append(soup.new_string(instructor))
         if i != len(course_instructors) - 1:
             tag.append(soup.new_tag('br'))
-    url = canvas_url + '/api/v1/courses/%s/front_page' % course_id
+    url = dest + '/api/v1/courses/%s/front_page' % course_id
     requests.put(url,
                  json={'wiki_page':
                            {'title': course_title,
                             'body': soup.prettify(),
                             'editing_roles': 'teachers'}},
                  headers={'Authorization': 'Bearer %s' % access_token})
-    url = canvas_url + '/api/v1/courses/%s' % course_id
+    url = dest + '/api/v1/courses/%s' % course_id
     requests.put(url,
                  json={'course': {'default_view': 'wiki'}},
                  headers={'Authorization': 'Bearer %s' % access_token})
 
 
 def create_canvas_course():
-    link = canvas_url + '/api/v1/accounts/2/courses'
+    link = dest + '/api/v1/accounts/2/courses'
     req = requests.post(link,
                         json={'course': {'name': course_title,
                                          'course_code': course_code},
@@ -203,7 +205,7 @@ def create_canvas_course():
 
 
 def update_course_settings():
-    url = canvas_url + '/api/v1/courses/%s/tabs/' % course_id
+    url = dest + '/api/v1/courses/%s/tabs/' % course_id
     for tab in DISABLE_TABS:
         requests.put(url + tab,
                      json={'hidden': True},
@@ -219,7 +221,7 @@ def update_course_settings():
 
 
 def do_content_migration():
-    link = canvas_url + '/api/v1/courses/%s/content_migrations' % course_id
+    link = dest + '/api/v1/courses/%s/content_migrations' % course_id
     params = {'migration_type': 'common_cartridge_importer',
               'pre_attachment': {'name': 'nti_common_cartridge.imscc'}}
     # Tell canvas we want to do a migration to get a upload destination
@@ -228,6 +230,7 @@ def do_content_migration():
         print "An error occurred while requesting this migration\n'%s'" % req.text
         exit(1)
     migration_json = req.json()
+    progress_url = migration_json['progress_url']
     file_upload_url = migration_json['pre_attachment']['upload_url']
     print "Beginning upload to canvas at %s" % file_upload_url
     upload = requests.post(file_upload_url,
@@ -238,56 +241,117 @@ def do_content_migration():
         exit(1)
     print "Successfully uploaded course export!"
     print "Your import is now being processed by canvas. This can take some time. You can check on the status of " \
-          "your import at %s/courses/%s/content_migrations" % (canvas_url, course_id)
+          "your import at %s/courses/%s/content_migrations" % (dest, course_id)
+    print "Beginning verification..."
+    while(True):
+        check = requests.get(progress_url, headers={'Authorization': 'Bearer %s' % access_token})
+        if check.json()['workflow_state'] == 'completed':
+            print "Import Completed."
+            break
+        print "Waiting on import to complete..."
+        time.sleep(5)
     common_cartridge.close()
 
-# Get the NTI url
-while(True):
-    nti_url = raw_input("Input a NextThought URL (https://janux.ou.edu, etc): ")
-    if _check_url(nti_url):
-        break
 
-# Get the Canvas url
-while(True):
-    canvas_url = raw_input("Input a Canvas URL (https://canvas.ou.edu, etc): ")
-    if _check_url(canvas_url):
-        break
+def _verify_node(json, modules, errors):
+    if json['Class'] == 'CourseOutline':
+        return
+    elif json['Class'] == 'CourseOutlineNode':
+        # Check for this in the modules
+        module = next((d for d in modules if json['title'] in d.values()), None)
+        if module is None:
+            errors.append(json['title'] + ' is missing.')
+        return module
+    elif json['Class'] == 'LessonOverview':
+        return
 
-# Get NTI Credentials
-while(True):
-    nti_username = raw_input("Input your NextThought username: ")
-    nti_password = getpass.getpass("Input your NextThought password: ")
-    if _validate_credentials(nti_username, nti_password):
-        break
 
-# Get the Catalog Entry NTIID
-while(True):
-    catalog_ntiid = raw_input("Input a course catalog entry ntiid: ")
-    if _validate_course_entry(catalog_ntiid):
-        break
 
-# Get the canvas access token
-while(True):
-    access_token = raw_input("Input your canvas access token: ")
-    if _validate_canvas_token(access_token):
-        break
+def verify_export():
+    url = course_href + '/@@CourseSkeleton'
+    course_skeleton = requests.get(url, auth=(username, password), verify=False)
 
-verify = raw_input("Are you sure you want to migrate '%s' to Canvas? (Y/N): " % course_title)
-if verify != 'Y':
+    base_url = source + '/dataserver2/Objects/'
+    errors = []
+    modules_url = dest + '/api/v1/courses/%s/modules' % course_id
+    modules = requests.get(modules_url, headers={'Authorization': 'Bearer %s' % access_token})
+    modules_json = modules.json()
+    def _recur_course(skeleton):
+            for k, v in skeleton.items():
+                from IPython.terminal.debugger import set_trace;set_trace()
+
+                node_url = base_url + k
+                node = requests.get(node_url, auth=(username, password), verify=False)
+                _verify_node(node.json(), modules_json, errors)
+                for obj in v:
+                    if isinstance(obj, dict):
+                        _recur_course(obj)
+                    else:
+                        for ntiid in skeleton:
+                            node_url = base_url + ntiid
+                            node = requests.get(node_url, auth=(username, password), verify=False)
+                            _verify_node(node.json(), modules_json, errors)
+    _recur_course(course_skeleton.json())
+
+
+
+def _parse_args():
+    arg_parser = ArgumentParser(description=UA_STRING)
+    arg_parser.add_argument('-n', '--ntiid', dest='ntiid',
+                            help="Catalog Entry NTIID of the course to copy.")
+    arg_parser.add_argument('-s', '--source-server', dest='source',
+                            help="Source server (https://janux.ou.edu, etc).")
+    arg_parser.add_argument('-d', '--dest-server', dest='dest',
+                            help="Destination server (https://canvas.ou.edu, etc).")
+    arg_parser.add_argument('-u', '--username', dest='username',
+                            help="User to authenticate with the server.")
+    arg_parser.add_argument('-p', '--password', dest='password',
+                            help="User to authenticate password")
+    arg_parser.add_argument('-k' '--key', dest='access_token',
+                            help="Canvas Developer Key.")
+
+    return arg_parser.parse_args()
+
+
+def migrate(ntiid,
+            username,
+            password,
+            source,
+            dest,
+            access_token):
+    print "Checking urls..."
+    _check_url(source)
+    _check_url(dest)
+    print "Validating credentials..."
+    _validate_credentials(username, password)
+    print "Validating catalog ntiid..."
+    _validate_course_entry(ntiid)
+    print "Validating canvas token..."
+    _validate_canvas_token(access_token)
+    print "Beginning course migration..."
+    print "Downloading course export..."
+    global common_cartridge
+    common_cartridge = get_common_cartridge()
+    print "Download complete."
+    print "Beginning canvas migration..."
+    print "Creating canvas course via API..."
+    create_canvas_course()
+    print "Creating Home Page..."
+    create_home_page()
+    print "Updating course settings..."
+    update_course_settings()
+    print "Migrating content..."
+    do_content_migration()
+    # verify_export()
+    print "Migration Complete"
     exit(0)
+    
 
-print "Beginning course migration..."
-print "Downloading course export..."
-common_cartridge = get_common_cartridge()
-print "Download complete."
-print "Beginning canvas migration..."
-print "Creating canvas course via API..."
-create_canvas_course()
-print "Creating Home Page..."
-create_home_page()
-print "Updating course settings..."
-update_course_settings()
-print "Migrating content..."
-do_content_migration()
-print "Migration Complete"
-exit(0)
+def main():
+    args = _parse_args()
+    globals().update(args.__dict__)
+    migrate(**args.__dict__)
+
+
+if __name__ == '__main__':
+    main()

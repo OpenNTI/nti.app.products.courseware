@@ -7,9 +7,13 @@ from __future__ import division
 
 import os
 
+import six
 from bs4 import BeautifulSoup
+from premailer import Premailer
 
 from pyramid.threadlocal import get_current_request
+
+from six.moves import urllib_parse
 
 from zope import component
 from zope import interface
@@ -25,7 +29,7 @@ from nti.app.assessment.common.policy import get_policy_excluded
 from nti.app.products.courseware.cartridge.discussion import CanvasTopicMeta
 from nti.app.products.courseware.cartridge.exceptions import CommonCartridgeExportException
 
-from nti.app.products.courseware.cartridge.interfaces import IIMSAssignment, IIMSResource
+from nti.app.products.courseware.cartridge.interfaces import IIMSAssignment, IIMSResource, ICommonCartridgeAssessment
 
 from nti.app.products.courseware.cartridge.renderer import execute
 from nti.app.products.courseware.cartridge.renderer import get_renderer
@@ -35,17 +39,16 @@ from nti.app.products.courseware.cartridge.web_content import IMSWebContent
 
 from nti.app.products.courseware.qti.interfaces import IQTIAssessment
 
-from nti.app.products.courseware.qti.utils import update_external_resources
+from nti.app.products.courseware.qti.utils import update_external_resources, mathjax_parser
 
-from nti.assessment import IQuestionSet
+from nti.assessment import IQuestionSet, IQuestionBank
 
-from nti.assessment.interfaces import IQAssignment, IQDiscussionAssignment
+from nti.assessment.interfaces import IQAssignment, IQDiscussionAssignment, IQEditableEvaluation
 from nti.assessment.interfaces import IQNonGradableFilePart
+from nti.contentlibrary.interfaces import IPersistentFilesystemContentUnit
 from nti.contenttypes.courses.discussions.utils import get_topic_key
 
 from nti.contenttypes.courses.interfaces import ICourseInstance
-
-from nti.contenttypes.presentation import IAssetRef
 
 from nti.ntiids.ntiids import find_object_with_ntiid
 
@@ -66,7 +69,7 @@ def _is_only_file_part(assessment):
     return _is_only_file_part_questions(question_set.questions)
 
 
-# TODO this may going to explode when battle tested
+@interface.implementer(ICommonCartridgeAssessment)
 def adapt_to_common_cartridge_assessment(assessment):
     course = get_current_request().context
     if not ICourseInstance.providedBy(course):
@@ -107,10 +110,32 @@ class CanvasAssignment(AbstractIMSWebContent):
 
     createFieldProperties(IIMSAssignment)
 
+    def handle_dependencies(self, deps):
+        """
+        Convert a list of hrefs into IMSWebContent to maintain a standard format
+        """
+        for dep in deps:
+            # Hard refs
+            if isinstance(dep, six.text_type):
+                web_content = IMSWebContent(self.context, dep)
+                self.dependencies['dependencies'].append(web_content)
+            # MathJax / other  # TODO this could be better but we are running out of time
+            else:
+                self.dependencies['mathjax'].append(dep)
+
     def __init__(self, context):
         super(CanvasAssignment, self).__init__(context)
         if getattr(context, 'content', False) == False:
             raise ComponentLookupError
+        if not self.is_content_backed:
+            content = context.content + '\n' + self.question.content
+        else:
+            content = self._parse_content()
+        # Ok, now that everything is clean, parse what will be the description for images and other linked resources
+        # Check for resource refs and add to dependencies
+        new_content, dependencies = update_external_resources(content, 'dependencies')
+        self.handle_dependencies(dependencies)
+        self.content = mathjax_parser(new_content)
 
     @Lazy
     def identifier(self):
@@ -131,6 +156,71 @@ class CanvasAssignment(AbstractIMSWebContent):
     @Lazy
     def title(self):
         return self.context.title
+
+    @Lazy
+    def context_parent(self):
+        return self.context.__parent__
+
+    @Lazy
+    def is_content_backed(self):
+        return not IQEditableEvaluation.providedBy(self.context_parent) \
+               and IPersistentFilesystemContentUnit.providedBy(self.context_parent)
+
+    @Lazy
+    def content_file(self):
+        if self.is_content_backed:
+            return self.context_parent.key
+
+    def content_soup(self, styled=False):
+        if self.is_content_backed:
+            text = self.content_file.read_contents_as_text()
+            if styled:
+                base_url = self.content_file.absolute_path
+                # This inlines external style sheets
+                premailer = Premailer(text,
+                                      base_url=base_url,
+                                      disable_link_rewrites=True)
+                text = premailer.transform()
+            text = mathjax_parser(text)
+            return BeautifulSoup(text, features='html5lib')
+
+    def _is_internal_resource(self, href):
+        return not bool(urllib_parse.urlparse(href).scheme)
+
+    def _parse_content(self):
+        """
+        Attempt to take a content backed assignment page contents and strip it down for external usage.
+        Specifically, object references. We will also attempt to
+        build dependencies on any internal resources
+        """
+        page_contents = self.content_soup().find_all('div', {'class': 'page-contents'})
+        new_content = BeautifulSoup(features='html.parser')
+        to_be_extracted = []  # Because we recurse the structure we need to delay extraction until we are finished
+        for pg in page_contents:  # Most likely len(page_contents) == 1
+            for tag in pg.recursiveChildGenerator():
+                # Extract marker anchor tags
+                if hasattr(tag, 'name') and \
+                        tag.name == 'a' and \
+                        hasattr(tag, 'attrs') and \
+                        'name' in tag.attrs and \
+                        len(tag.attrs) == 1:
+                    to_be_extracted.append(tag)
+            new_content.append(pg)
+
+        for tag in to_be_extracted:
+            tag.extract()
+        to_be_extracted = []
+
+        # Strip objects and handle interlaced text
+        question_objects = new_content.find_all('object',
+                                                {'type': ('application/vnd.nextthought.naquestion',
+                                                          'application/vnd.nextthought.naquestionfillintheblankwordbank')})
+        for question_object in question_objects:
+            question_object.extract()
+
+        for tag in to_be_extracted:
+            tag.extract()
+        return new_content.encode('UTF-8')
 
     @Lazy
     def question(self):

@@ -19,6 +19,7 @@ from zope.intid import IIntIds
 
 from zope.schema.fieldproperty import createFieldProperties
 
+from nti.app.contenttypes.presentation.decorators.assets import _path_exists_in_package, _get_item_content_package
 from nti.app.products.courseware.cartridge.exceptions import CommonCartridgeExportException
 
 from nti.app.products.courseware.cartridge.interfaces import IIMSWebContentUnit, IIMSAssociatedContent
@@ -107,6 +108,15 @@ class IMSWebContent(AbstractIMSWebContent):
     @Lazy
     def content_package(self):
         package = find_interface(self.context, IContentPackage, strict=False)
+        if package is None:
+            # ok lets try the hammer...
+            for name in ('href', 'icon'):
+                value = getattr(self.context, name, None)
+                if value and not value.startswith('/') and '://' not in value:
+                    if     package is None \
+                        or not _path_exists_in_package(value, package):
+                        # We make sure each url is in the correct package.
+                        package = _get_item_content_package(self.context, value)
         if not package:
             raise CommonCartridgeExportException(u'Unable to locate a content package for %s' % self.context)
         return package

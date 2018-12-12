@@ -18,10 +18,6 @@
              provides=".interfaces.IQTIAssessment"
              for="nti.assessment.interfaces.IQAssessment nti.contenttypes.courses.interfaces.ICourseInstance" />
 
-    <adapter factory=".models.QTIAssessment"
-             provides=".interfaces.IQTIAssessment"
-             for="nti.assessment.interfaces.IQuestionSet" />
-
     <!-- Question Parts -->
     <adapter factory=".parts.QTIMultipleChoice"
              provides=".interfaces.IQTIItem"
