@@ -278,8 +278,6 @@ def verify_export():
     modules_json = modules.json()
     def _recur_course(skeleton):
             for k, v in skeleton.items():
-                from IPython.terminal.debugger import set_trace;set_trace()
-
                 node_url = base_url + k
                 node = requests.get(node_url, auth=(username, password), verify=False)
                 _verify_node(node.json(), modules_json, errors)
