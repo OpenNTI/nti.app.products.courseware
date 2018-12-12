@@ -29,7 +29,12 @@ from zope.schema.fieldproperty import createFieldProperties
 
 from nti.app.assessment.common.evaluations import get_max_time_allowed
 
-from nti.app.assessment.common.policy import get_policy_max_submissions
+try:
+    from nti.app.assessment.common.policy import get_policy_max_submissions
+except ImportError:
+    def get_policy_max_submissions(assignment, course):
+        return 1
+
 from nti.app.assessment.common.policy import get_policy_submission_priority
 from nti.app.assessment.common.policy import get_submission_buffer_policy
 
