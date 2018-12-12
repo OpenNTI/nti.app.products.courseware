@@ -7,7 +7,6 @@ from __future__ import division
 
 import os
 
-import htmlmin
 import six
 
 from bs4 import BeautifulSoup
