@@ -40,7 +40,7 @@ from nti.contenttypes.courses.interfaces import ICourseInstance
 
 from nti.site.site import get_component_hierarchy_names
 
-from nti.contenttypes.presentation.interfaces import IConcreteAsset, INTIAssessmentRef
+from nti.contenttypes.presentation.interfaces import IConcreteAsset, INTIAssessmentRef, INTIMediaRoll
 from nti.contenttypes.presentation.interfaces import IGroupOverViewable
 from nti.contenttypes.presentation.interfaces import INTILessonOverview
 from nti.contenttypes.presentation.interfaces import INTIRelatedWorkRef
@@ -145,13 +145,15 @@ def build_manifest_items(cartridge):
             # convert to common cartridge item if some type of asset
             if IGroupOverViewable.providedBy(obj):
                 try:
-
                     # make sure we have a concrete asset
                     asset = IConcreteAsset(obj, obj)
                     # resolve assessments
-                    if INTIAssessmentRef.providedBy(asset):  # TODO this is going to break unexpectedly...
+                    if INTIAssessmentRef.providedBy(asset):
                         asset = find_object_with_ntiid(obj.target)
-
+                    if INTIMediaRoll.providedBy(obj):
+                        # Exclude empty video rolls
+                        if not bool(obj.Items):
+                            continue
                     # creates an id if none exists, or returns the existing one
                     intid = intids.register(asset)
                     identifier = ''.join([chr(65 + int(i)) for i in str(intid)])

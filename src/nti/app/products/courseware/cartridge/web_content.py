@@ -25,6 +25,7 @@ from nti.app.products.courseware.cartridge.exceptions import CommonCartridgeExpo
 from nti.app.products.courseware.cartridge.interfaces import IIMSWebContentUnit, IIMSAssociatedContent
 
 from nti.contentlibrary.interfaces import IContentPackage
+from nti.ntiids.ntiids import find_object_with_ntiid
 
 from nti.traversal.traversal import find_interface
 
@@ -108,6 +109,9 @@ class IMSWebContent(AbstractIMSWebContent):
     @Lazy
     def content_package(self):
         package = find_interface(self.context, IContentPackage, strict=False)
+        if package is None and getattr(self.context, 'target', False):
+            target = find_object_with_ntiid(self.context.target)
+            package = find_interface(target, IContentPackage, strict=False)
         if package is None:
             # ok lets try the hammer...
             for name in ('href', 'icon'):

@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 import copy
 import csv
+import os
 import subprocess
 
 from argparse import ArgumentParser
@@ -25,12 +26,13 @@ def _parse_args():
                             help="User to authenticate password")
     arg_parser.add_argument('-k' '--key', dest='access_token',
                             help="Canvas Developer Key.")
+    arg_parser.add_argument('-o', '--output', dest='output',
+                            help='The output destination file')
 
     return arg_parser.parse_args()
 
 
 def main():
-    # XXX: This is OSX specific
     args = _parse_args()
 
     sub_args = '-s %s -d %s -u %s -p %s -k %s' % (args.source,
@@ -38,13 +40,28 @@ def main():
                                                   args.username,
                                                   args.password,
                                                   args.access_token)
-    # TODO finish
+    FNULL = open(os.devnull, 'w')
+    processes = []
     with open(args.csv, 'rb') as csvfile:
         reader = csv.reader(csvfile)
         for row in reader:
-            migrate_args = copy.copy(args.__dict__)
-            migrate_args['ntiid'] = row[0]
-            subprocess.call(['python', args.migrator, ])
+            new_args = sub_args + ' -n %s' % row[0]
+            call_list = ['python', args.migrator]
+            call_list.extend(new_args.split(' '))
+            f = os.tmpfile()
+            p = subprocess.Popen(call_list, stdout=f, stderr=FNULL)
+            processes.append((p, f))
+    num = 1
+    with open(args.output, 'w') as result:
+        for p, f in processes:
+            p.wait()
+            print "Process %s of %s completed" % (num, len(processes))
+            num += 1
+            f.seek(0)
+            result.write(f.read())
+            result.write('\n\n')
+            f.close()
+    FNULL.close()
 
 
 if __name__ == '__main__':

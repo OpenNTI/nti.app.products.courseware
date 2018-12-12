@@ -81,6 +81,9 @@ class IMSWebContentResource(AbstractIMSWebContent):
 
     def export(self, path):
         package = find_interface(self.context, IContentPackage, strict=False)
+        if package is None and getattr(self.context, 'target', False):
+            target = find_object_with_ntiid(self.context.target)
+            package = find_interface(target, IContentPackage, strict=False)
         if package is None:
             for name in ('href', 'icon'):
                 value = getattr(self.context, name, None)

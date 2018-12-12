@@ -83,7 +83,10 @@ def _validate_course_entry(ntiid):
         course_instructors = [name['Name'] for name in json.get('Instructors', [])]
         global course_href
         course_href = source + '/dataserver2/Objects/%s' % json.get('CourseNTIID')
-        print "Access to course '%s' verified." % course_title
+        if not verbose:
+            enablePrint()
+            print "Access to course '%s' verified." % course_title
+            blockPrint()
         return True
     else:
         print "Unable to access course (status code: %s)" % status_code
@@ -239,17 +242,23 @@ def do_content_migration():
     if upload.status_code != 200 and upload.status_code != 201:
         print "An error occurred while uploading the course\n%s" % upload.text
         exit(1)
-    print "Successfully uploaded course export!"
-    print "Your import is now being processed by canvas. This can take some time. You can check on the status of " \
-          "your import at %s/courses/%s/content_migrations" % (dest, course_id)
+    if not verbose:
+        enablePrint()
+        print "Successfully uploaded course export!"
+        print "Your import is now being processed by canvas. This can take some time. You can check on the status of " \
+              "your import at %s/courses/%s/content_migrations" % (dest, course_id)
+        blockPrint()
     print "Beginning verification..."
     while(True):
         check = requests.get(progress_url, headers={'Authorization': 'Bearer %s' % access_token})
         if check.json()['workflow_state'] == 'completed':
             print "Import Completed."
             break
+        if check.json()['workflow_state'] == 'failed':
+            print "Import Failed"
+            break
         print "Waiting on import to complete..."
-        time.sleep(5)
+        time.sleep(10)
     common_cartridge.close()
 
 
@@ -292,6 +301,14 @@ def verify_export():
     _recur_course(course_skeleton.json())
 
 
+# Disable
+def blockPrint():
+    sys.stdout = open(os.devnull, 'w')
+
+# Restore
+def enablePrint():
+    sys.stdout = sys.__stdout__
+
 
 def _parse_args():
     arg_parser = ArgumentParser(description=UA_STRING)
@@ -307,6 +324,9 @@ def _parse_args():
                             help="User to authenticate password")
     arg_parser.add_argument('-k' '--key', dest='access_token',
                             help="Canvas Developer Key.")
+    arg_parser.add_argument('-v', '--verbose', dest='verbose',
+                            help='Additional information as script runs',
+                            default=False)
 
     return arg_parser.parse_args()
 
@@ -316,7 +336,10 @@ def migrate(ntiid,
             password,
             source,
             dest,
-            access_token):
+            access_token,
+            verbose):
+    if not verbose:
+        blockPrint()
     print "Checking urls..."
     _check_url(source)
     _check_url(dest)

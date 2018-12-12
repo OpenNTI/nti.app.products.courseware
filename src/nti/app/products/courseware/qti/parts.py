@@ -237,7 +237,7 @@ class QTIMatching(AbstractQTIQuestion):
         else:
             if len(sols) > 1:
                 logger.info(u'More than one solution')
-            for (label, value) in sols[0].value.items():
+            for (label, value) in sorted(sols[0].value.items()):
                 answer = {'question': self.labels[int(label)].ident,
                           'solution': self.values[value].ident,
                           'value': q_value}
