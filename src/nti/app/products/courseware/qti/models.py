@@ -34,8 +34,12 @@ try:
 except ImportError:
     def get_policy_max_submissions(assignment, course):
         return 1
+try:
+    from nti.app.assessment.common.policy import get_policy_submission_priority
+except ImportError:
+    def get_policy_submission_priority(assessment, course):
+        return 'highest_grade'
 
-from nti.app.assessment.common.policy import get_policy_submission_priority
 from nti.app.assessment.common.policy import get_submission_buffer_policy
 
 from nti.app.assessment.common.utils import get_available_for_submission_beginning
