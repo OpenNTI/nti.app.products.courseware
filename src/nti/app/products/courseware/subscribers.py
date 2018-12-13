@@ -225,7 +225,10 @@ send_enrollment_confirmation = _send_enrollment_confirmation
 def _enrollment_added(record, event):
     # We only want to do this when the user initiated the event,
     # not when it was done via automatic workflow.
-    if queryInteraction() is None:
+    remote_user = get_remote_user()
+    user = IUser(record, None)
+    # Admins may enroll on behalf of students
+    if queryInteraction() is None or remote_user != user:
         # no interaction, no email
         return
 
