@@ -168,7 +168,7 @@ class UserCourseEnrollView(AbstractCourseEnrollView):
                              },
                              None)
         interaction = is_true(values.get('email') or values.get('interaction'))
-        # Make sure we don't have any interaction.
+        # Make sure we don't have any interaction (enrollment emails etc).
         if not interaction:
             endInteraction()
         try:
@@ -201,17 +201,12 @@ class UserCourseDropView(AbstractCourseEnrollView):
     def __call__(self):
         values = self.readInput()
         context, user = self.parseCommon(values)
-        # Make sure we don't have any interaction.
-        endInteraction()
-        try:
-            course_instance = ICourseInstance(context)
-            enrollments = get_enrollments(course_instance, self.request)
-            if enrollments.drop(user):
-                entry = ICourseCatalogEntry(context, None)
-                logger.info("%s drop from %s", user,
-                            getattr(entry, 'ntiid', None))
-        finally:
-            restoreInteraction()
+        course_instance = ICourseInstance(context)
+        enrollments = get_enrollments(course_instance, self.request)
+        if enrollments.drop(user):
+            entry = ICourseCatalogEntry(context, None)
+            logger.info("%s drop from %s", user,
+                        getattr(entry, 'ntiid', None))
         return hexc.HTTPNoContent()
 
 
@@ -228,23 +223,18 @@ class DropAllCourseEnrollmentsView(AbstractCourseEnrollView):
         values = self.readInput()
         result = LocatedExternalDict()
         context = _parse_course(values)
-        # Make sure we don't have any interaction.
-        endInteraction()
-        try:
-            course_instance = ICourseInstance(context)
-            manager = ICourseEnrollmentManager(course_instance)
-            # pylint: disable=too-many-function-args
-            dropped_records = manager.drop_all()
-            items = result[ITEMS] = []
-            for record in dropped_records:
-                principal = IPrincipal(record.Principal, None)
-                username = principal.id if principal is not None else 'deleted'
-                items.append({'Username': username, 'Scope': record.Scope})
-            entry = ICourseCatalogEntry(context, None)
-            logger.info("Dropped %d enrollment records of %s",
-                        len(dropped_records), getattr(entry, 'ntiid', None))
-        finally:
-            restoreInteraction()
+        course_instance = ICourseInstance(context)
+        manager = ICourseEnrollmentManager(course_instance)
+        # pylint: disable=too-many-function-args
+        dropped_records = manager.drop_all()
+        items = result[ITEMS] = []
+        for record in dropped_records:
+            principal = IPrincipal(record.Principal, None)
+            username = principal.id if principal is not None else 'deleted'
+            items.append({'Username': username, 'Scope': record.Scope})
+        entry = ICourseCatalogEntry(context, None)
+        logger.info("Dropped %d enrollment records of %s",
+                    len(dropped_records), getattr(entry, 'ntiid', None))
         return result
 
 

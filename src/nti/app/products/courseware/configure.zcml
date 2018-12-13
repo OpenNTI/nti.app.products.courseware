@@ -78,6 +78,9 @@
 	<i18n:registerTranslations directory="locales" />
 
 	<!-- Events -->
+	<!-- deny open enrollment -->
+    <subscriber handler=".subscribers.check_open_enrollment_record_added" />
+
 	<subscriber handler=".legacy_catalog._content_package_registered" />
 
 	<subscriber handler=".subscribers._on_content_bundle_updated" />
