@@ -352,7 +352,9 @@ def _update_enroll_last_modified(record):
     # update last seen
     if queryInteraction() is not None:
         request = get_current_request()
-        notify(UserLastSeenEvent(user, timestamp, request))
+        remote_user = get_remote_user(request)
+        if remote_user == user:
+            notify(UserLastSeenEvent(user, timestamp, request))
 
 
 @component.adapter(ICourseInstanceEnrollmentRecord, IAfterIdAddedEvent)
