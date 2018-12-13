@@ -80,7 +80,7 @@ class IMSCommonCartridge(object):
 
     def export_errors(self, dirname):
         with open(os.path.join(dirname, 'web_resources', 'nti_export_errors.txt'), 'w') as export_errors:
-            export_errors.write('\n'.join([e.message for e in self.errors]))
+            export_errors.write('\n'.join([e.message for e in self.errors]).encode('utf-8'))
         item = etree.SubElement(self.manifest_resources, u'resource',
                                 identifier=u'NTIEXPORTERRORS',
                                 type='webcontent',
