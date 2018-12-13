@@ -548,7 +548,7 @@ class drop_course_view(AbstractAuthenticatedView):
 
     def _can_admin_user(self, user):
         # Verify a site admin is administering a user in their site.
-        result = True
+        result = False
         if self._is_site_admin:
             admin_utility = component.getUtility(ISiteAdminUtility)
             result = admin_utility.can_administer_user(self.remoteUser, user)
@@ -556,8 +556,11 @@ class drop_course_view(AbstractAuthenticatedView):
 
     def _check_access(self, user):
         # 403 if not admin or site admin or self
+        # We used to check DELETE perms (instructors have DELETE perm
+        # through course). An open question is whether instructors should
+        # be able to drop users.
         return     self._is_admin \
-                or has_permission(nauth.ACT_DELETE, self.context) \
+                or self.remoteUser == user \
                 or self._can_admin_user(user)
 
     @Lazy

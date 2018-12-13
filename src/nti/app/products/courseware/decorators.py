@@ -321,16 +321,16 @@ class _EnrollmentDroplLinkDecorator(AbstractAuthenticatedRequestAwareDecorator):
             result = admin_utility.can_administer_user(self.remoteUser, user)
         return result
 
-    def _check_access(self, context, user):
+    def _check_access(self, user):
         # 403 if not admin or site admin or self
         return (   self._is_admin \
-                or self._is_site_admin \
-                or has_permission(ACT_DELETE, context)) \
+                or self.remoteUser == user \
+                or self._is_site_admin ) \
             and self._can_admin_user(user)
 
     def _predicate(self, context, unused_result):
         user = IUser(context, None)
-        return self._is_authenticated and self._check_access(context, user)
+        return self._is_authenticated and self._check_access(user)
 
     def _do_decorate_external(self, context, result):
         _links = result.setdefault(LINKS, [])
