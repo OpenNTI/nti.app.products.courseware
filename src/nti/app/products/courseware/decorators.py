@@ -1134,26 +1134,9 @@ class _CourseCatalogCollectionDecorator(AbstractAuthenticatedRequestAwareDecorat
 @interface.implementer(IExternalObjectDecorator)
 class _UserEnrollmentsDecorator(AbstractAuthenticatedRequestAwareDecorator):
     """
-    Decorate the :class:``IUser`` with a rel to fetch a user's enrollments.
-    """
-
-    def _predicate(self, context, unused_result):
-        return get_context_enrollment_records(context, self.remoteUser)
-
-    def _do_decorate_external(self, context, result):
-        _links = result.setdefault(LINKS, [])
-        link = Link(context,
-                    rel=VIEW_USER_ENROLLMENTS,
-                    elements=('@@%s' % VIEW_USER_ENROLLMENTS,))
-        _links.append(link)
-
-
-@component.adapter(IUser)
-@interface.implementer(IExternalObjectDecorator)
-class _UserEnrollmentsEnrollLinkDecorator(AbstractAuthenticatedRequestAwareDecorator):
-    """
     Decorate the user with a rel to enroll the user in a course, for admins
-    and site admins only.
+    and site admins only. We also want to ensure we decorate the GET view of
+    this for admins and the user themselves.
     """
 
     @Lazy
@@ -1174,7 +1157,9 @@ class _UserEnrollmentsEnrollLinkDecorator(AbstractAuthenticatedRequestAwareDecor
 
     def _check_access(self, context):
         # 403 if not admin or site admin or self
-        return  (self._is_admin or self._is_site_admin) \
+        return  (   self._is_admin \
+                 or self._is_site_admin \
+                 or self.remoteUser == context) \
             and self._can_admin_user(context)
 
     def _predicate(self, context, unused_result):
@@ -1182,10 +1167,16 @@ class _UserEnrollmentsEnrollLinkDecorator(AbstractAuthenticatedRequestAwareDecor
 
     def _do_decorate_external(self, context, result):
         _links = result.setdefault(LINKS, [])
+        if self.remoteUser != context:
+            # Admin
+            link = Link(context,
+                        rel='EnrollUser',
+                        elements=('@@%s' % VIEW_USER_ENROLLMENTS,),
+                        method='POST')
+            _links.append(link)
         link = Link(context,
-                    rel='EnrollUser',
-                    elements=('@@%s' % VIEW_USER_ENROLLMENTS,),
-                    method='POST')
+                    rel=VIEW_USER_ENROLLMENTS,
+                    elements=('@@%s' % VIEW_USER_ENROLLMENTS,))
         _links.append(link)
 
 

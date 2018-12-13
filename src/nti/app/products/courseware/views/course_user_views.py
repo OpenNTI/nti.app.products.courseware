@@ -182,18 +182,13 @@ class UserEnrollmentsView(AbstractAuthenticatedView,
             and self._can_admin_user()
 
     def __call__(self):
-        records = get_context_enrollment_records(self.context, self.remoteUser)
+        records = get_context_enrollment_records(self.context, self.remoteUser) or ()
         if     not self._predicate() \
             or (not records and not self._is_admin):
             raise_error(
                 {'message': _(u"Cannot view user enrollments."),
                  'code': 'CannotAccessUserEnrollmentsError',},
                 factory=hexc.HTTPForbidden)
-        if not records:
-            raise_error(
-                {'message': _(u"User enrollments not found."),
-                 'code': 'UserEnrollmentsNotFound',},
-                factory=hexc.HTTPNotFound)
         result = LocatedExternalDict()
         records = sorted(records, key=lambda x:x.createdTime, reverse=True)
         result[TOTAL] = len(records)

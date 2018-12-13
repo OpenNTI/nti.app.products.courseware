@@ -329,11 +329,6 @@
                 for="nti.dataserver.interfaces.IUser
                      pyramid.interfaces.IRequest"  />
 
-    <subscriber factory=".decorators._UserEnrollmentsEnrollLinkDecorator"
-                provides="nti.externalization.interfaces.IExternalObjectDecorator"
-                for="nti.dataserver.interfaces.IUser
-                     pyramid.interfaces.IRequest"  />
-
 	<!-- And an adapter for security purposes -->
 	<adapter factory=".legacy_principalrole.LegacyCourseInstancePrincipalRoleMap" />
 
