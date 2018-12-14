@@ -23,6 +23,7 @@ from zope.intid import IIntIds
 
 from zope.schema.fieldproperty import createFieldProperties
 
+from nti.app.contentfolder.resources import is_internal_file_link, get_file_from_external_link
 from nti.app.contentfolder.utils import get_file_from_cf_io_url
 
 from nti.app.contenttypes.presentation.decorators.assets import CONTENT_MIME_TYPE, _path_exists_in_package, \
@@ -80,34 +81,32 @@ class IMSWebContentResource(AbstractIMSWebContent):
         return random.generate_random_string(4) + '_' + os.path.basename(self.href)
 
     def export(self, path):
-        package = find_interface(self.context, IContentPackage, strict=False)
-        if package is None and getattr(self.context, 'target', False):
-            target = find_object_with_ntiid(self.context.target)
-            package = find_interface(target, IContentPackage, strict=False)
-        if package is None:
-            for name in ('href', 'icon'):
-                value = getattr(self.context, name, None)
-                if value and not value.startswith('/') and '://' not in value:
-                    if package is None \
-                            or not _path_exists_in_package(value, package):
-                        # We make sure each url is in the correct package.
-                        package = _get_item_content_package(self.context, value)
-        root = getattr(package, 'root', None)
-        if not IFilesystemBucket.providedBy(root) and not self.context.href.startswith('/dataserver2/cf.io/'):
-            logger.warning("Unsupported bucket Boto?")
-            raise CommonCartridgeExportException(u"Unable to locate file on disk for %s. Is this resource "
-                                                u"stored on Boto?" % self.context.label)
-        if self.context.href.startswith('/dataserver2/cf.io/'):
-            resource = get_file_from_cf_io_url(self.context.href)
+        if is_internal_file_link(self.context.href):
+            resource = get_file_from_external_link(self.context.href)
+            resource.seek(0)
             target_path = os.path.join(path, self.filename)
             self.copy_file_resource(resource, target_path)
-        elif self.context.href and root:
-            source_path = os.path.join(root.absolute_path, self.context.href)
-            target_path = os.path.join(path, self.filename)
-            self.copy_resource(source_path, target_path)
         else:
-            logger.warning(u"Unable to locate a content package for %s" % self.context.label)
-            raise CommonCartridgeExportException(u"Unable to locate a content package for %s" % self.context.label)
+            package = find_interface(self.context, IContentPackage, strict=False)
+            if package is None and getattr(self.context, 'target', False):
+                target = find_object_with_ntiid(self.context.target)
+                package = find_interface(target, IContentPackage, strict=False)
+            if package is None:
+                for name in ('href', 'icon'):
+                    value = getattr(self.context, name, None)
+                    if value and not value.startswith('/') and '://' not in value:
+                        if package is None \
+                                or not _path_exists_in_package(value, package):
+                            # We make sure each url is in the correct package.
+                            package = _get_item_content_package(self.context, value)
+            root = getattr(package, 'root', None)
+            if root is not None:
+                source_path = os.path.join(root.absolute_path, self.context.href)
+                target_path = os.path.join(path, self.filename)
+                self.copy_resource(source_path, target_path)
+            else:
+                logger.warning(u"Unable to locate a content package for %s" % self.context.label)
+                raise CommonCartridgeExportException(u"Unable to locate a content package for %s" % self.context.label)
 
 
 @interface.implementer(IIMSWebContentUnit, ICanvasWikiContent)
