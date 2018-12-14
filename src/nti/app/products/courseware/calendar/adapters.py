@@ -129,7 +129,7 @@ class CourseCalendarEventProvider(object):
     def __init__(self, user):
         self.user = user
 
-    def iter_events(self, context_ntiids=None, excluded_context_ntiids=None, **kwargs):
+    def iter_events(self, context_ntiids=None, excluded_context_ntiids=None, exclude_dynamic=False, **kwargs):
         res = []
         for course in self._courses(self.user, context_ntiids, excluded_context_ntiids):
             calendar = ICourseCalendar(course, None)
@@ -137,10 +137,11 @@ class CourseCalendarEventProvider(object):
                 res.extend([x for x in calendar.values()])
 
             # add course dynamic events.
-            providers = component.subscribers((self.user, course),
-                                              ICourseCalendarDynamicEventProvider)
-            for x in providers or ():
-                res.extend(x.iter_events())
+            if not exclude_dynamic:
+                providers = component.subscribers((self.user, course),
+                                               ICourseCalendarDynamicEventProvider)
+                for x in providers or ():
+                    res.extend(x.iter_events())
         return res
 
     def _courses(self, user, entry_ntiids=None, excluded_entry_ntiids=None):
