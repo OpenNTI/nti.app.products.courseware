@@ -10,7 +10,7 @@ from __future__ import absolute_import
 
 import os
 
-from bs4 import BeautifulSoup
+from bs4 import BeautifulSoup, NavigableString
 from premailer import transform, Premailer
 from six.moves import urllib_parse
 
@@ -131,18 +131,33 @@ class IMSWebContentNativeReading(AbstractIMSWebContent):
         return self.rendered_package.key.absolute_path
 
     def content_soup(self, styled=True):
-        text = self.rendered_package.read_contents()
-        if styled:
-            # This inlines external style sheets
-            premailer = Premailer(text,
-                                  base_url=self.rendered_package_path,
-                                  disable_link_rewrites=True)
-            text = premailer.transform()
-        return BeautifulSoup(text, features='html5lib')
+
+        def _recur_unit(unit):
+            if not len(unit.children) or unit.key == unit.children[0].key:
+                text = unit.read_contents()
+                if styled:
+                    # This inlines external style sheets
+                    premailer = Premailer(text,
+                                          base_url=self.rendered_package_path,
+                                          disable_link_rewrites=True)
+                    text = premailer.transform()
+                soup = BeautifulSoup(text, features='html5lib')
+                return soup
+            soup = BeautifulSoup('', features='html5lib')
+            for child in unit.children:
+                child_soup = _recur_unit(child)
+                bodies = child_soup.find_all('body')
+                for body in bodies:
+                    text = ''.join(x.encode('utf-8') for x in body.findChildren(recursive=False))
+                    div = '<div>%s</div>' % text
+                    div = BeautifulSoup(div, features='html.parser')
+                    soup.body.append(div)
+            return soup
+
+        return _recur_unit(self.rendered_package)
 
     @Lazy
     def title(self):
-        # TODO when to use title vs label, fallback etc....
         return self.context.label
 
     @Lazy

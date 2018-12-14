@@ -189,19 +189,21 @@ def build_manifest_items(cartridge):
 
 # TODO Concrete?
 def build_cartridge_content(cartridge):
-    assets = get_all_package_assets(cartridge.course)
     resources = cartridge.resources
     intids = component.getUtility(IIntIds)
-    for (unused_intid, asset) in assets:
-        intid = intids.register(asset)
-        identifier = ''.join([chr(65 + int(i)) for i in str(intid)])
-        if identifier not in resources:
-            try:
-                unit = IIMSWebContentUnit(asset, None)
-                if unit is not None:  # TODO fix
-                    resources[identifier] = unit
-            except CommonCartridgeExportException as e:
-                cartridge.errors.append(e)
+
+    # XXX: Content packages are mangled causing unrelated course files to be exported down this path
+    # assets = get_all_package_assets(cartridge.course)
+    # for (unused_intid, asset) in assets:
+    #     intid = intids.register(asset)
+    #     identifier = ''.join([chr(65 + int(i)) for i in str(intid)])
+    #     if identifier not in resources:
+    #         try:
+    #             unit = IIMSWebContentUnit(asset, None)
+    #             if unit is not None:  # TODO fix
+    #                 resources[identifier] = unit
+    #         except CommonCartridgeExportException as e:
+    #             cartridge.errors.append(e)
 
     # Assignments not in course structure
     assessments = get_course_assignments(cartridge.course,

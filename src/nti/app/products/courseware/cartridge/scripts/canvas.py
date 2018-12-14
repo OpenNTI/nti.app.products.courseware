@@ -196,7 +196,7 @@ def create_home_page():
 def create_canvas_course():
     link = dest + '/api/v1/accounts/2/courses'
     req = requests.post(link,
-                        json={'course': {'name': course_title,
+                        json={'course': {'name': course_title + ' QA',
                                          'course_code': course_code},
                               'enroll_me': True},
                         headers={'Authorization': 'Bearer %s' % access_token})

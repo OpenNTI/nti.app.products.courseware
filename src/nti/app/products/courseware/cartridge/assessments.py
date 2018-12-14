@@ -96,6 +96,9 @@ def adapt_to_common_cartridge_assessment(assessment):
         if topic is None:
             raise CommonCartridgeExportException(u'Unable to resolve a topic for discussion %s' % discussion)
         resource = IIMSResource(discussion)
+        assessment_content, dependencies = update_external_resources(assessment.content)
+        resource.extra_content = assessment_content
+        resource.dependencies['dependencies'].extend(dependencies)
         resource.topic = topic  # TODO messy messy messy
         resource.dependencies[resource.identifier].append(CanvasTopicMeta(resource))
         return resource

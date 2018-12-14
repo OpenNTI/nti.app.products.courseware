@@ -12,7 +12,7 @@ import os
 
 import six
 
-from bs4 import BeautifulSoup
+from bs4 import BeautifulSoup, NavigableString
 
 from collections import defaultdict
 
@@ -128,6 +128,7 @@ class IMSDiscussionTopic(object):
     def __init__(self, context):
         self.context = context
         self.dependencies = defaultdict(list)
+        self.extra_content = ''
 
     # TODO we are losing <br> tags for some reason
     def _to_html(self, content):
@@ -159,8 +160,9 @@ class IMSDiscussionTopic(object):
                 content_html.body.append(anchor)
             elif isinstance(part, six.string_types):
                 # Just html, lets append it in to the tree
-                for element in BeautifulSoup(part, features='html5lib').body:  # passing the feature mutes BS warning
-                    content_html.body.append(element)
+                new_tag = '<div>%s</div>' % part
+                new_tag = BeautifulSoup(new_tag, features='html.parser')
+                content_html.body.append(new_tag)
             else:
                 # Don't know / unsupported. Log and move on
                 continue
@@ -170,12 +172,11 @@ class IMSDiscussionTopic(object):
     def topic(self):
         # Hopefully we can just grab this straight from the target
         topic = find_object_with_ntiid(self.context.target)
-        # TODO hadnle unresolvable
         if topic is None:
             # Ok, we have a course discussion. We need to resolve from the package
             user = get_remote_user()
             course_discussion, topic = resolve_discussion_course_bundle(user, self.context) or (None, None)
-        if topic is None:  # TODO
+        if topic is None:
             # If we still don't have it we need to error
             raise CommonCartridgeExportException(u'Unable to locate topic for discussion: %s' % self.context.title)
         return topic
@@ -208,7 +209,12 @@ class IMSDiscussionTopic(object):
             'title': self.title
         }
         content = self._to_html(self.topic.headline.body)
-        # TODO do we need to sanitize?
+        if self.extra_content:
+            content = BeautifulSoup(content, 'html5lib')
+            div = '<div>%s</div>' % self.extra_content
+            extra_content = BeautifulSoup(div, features='html.parser')
+            content.body.insert(0, extra_content)
+            content = content.decode()
         context['text'] = content
         body = execute(renderer, {"context": context})
         if self.dirname:
