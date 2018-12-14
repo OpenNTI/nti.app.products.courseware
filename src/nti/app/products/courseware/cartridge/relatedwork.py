@@ -93,15 +93,14 @@ class IMSWebContentResource(AbstractIMSWebContent):
                         # We make sure each url is in the correct package.
                         package = _get_item_content_package(self.context, value)
         root = getattr(package, 'root', None)
-        if not IFilesystemBucket.providedBy(root):
-            if self.context.href.startswith('/dataserver2/cf.io/'):
-                resource = get_file_from_cf_io_url(self.context.href)
-                target_path = os.path.join(path, self.filename)
-                self.copy_file_resource(resource, target_path)
-            else:
-                logger.warning("Unsupported bucket Boto?")
-                raise CommonCartridgeExportException(u"Unable to locate file on disk for %s. Is this resource "
-                                                    u"stored on Boto?" % self.context.label)
+        if not IFilesystemBucket.providedBy(root) and not self.context.href.startswith('/dataserver2/cf.io/'):
+            logger.warning("Unsupported bucket Boto?")
+            raise CommonCartridgeExportException(u"Unable to locate file on disk for %s. Is this resource "
+                                                u"stored on Boto?" % self.context.label)
+        if self.context.href.startswith('/dataserver2/cf.io/'):
+            resource = get_file_from_cf_io_url(self.context.href)
+            target_path = os.path.join(path, self.filename)
+            self.copy_file_resource(resource, target_path)
         elif self.context.href and root:
             source_path = os.path.join(root.absolute_path, self.context.href)
             target_path = os.path.join(path, self.filename)
