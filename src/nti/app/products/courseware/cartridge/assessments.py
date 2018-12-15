@@ -254,9 +254,10 @@ class CanvasAssignment(AbstractIMSWebContent):
         return self.identifier + '.xml'
 
     def export(self, dirname):
+        content = '<![CDATA[%s]]>' % self.content
         context = {'identifier': self.identifier,
                    'title': self.title,
-                   'content': self.content,
+                   'content': content,
                    'assignment_identifier': self.assignment_identifier,
                    'grading_type': self.grading_type}
         renderer = get_renderer('templates/canvas/assignment', '.pt')

@@ -90,6 +90,7 @@ class AbstractQTIQuestion(object):
         result, dependencies = update_external_resources(content)
         self.dependencies.extend(dependencies)
         result = mathjax_parser(result)
+        result = '<![CDATA[%s]]>' % result
         return result
 
 
@@ -306,7 +307,8 @@ class QTIFillInMultipleBlanks(AbstractQTIQuestion):
             blank.replace_with('[%s]' % name)
             self.blanks.append(name)
         question_content.append(entry_content)
-        return question_content.decode()
+        result = '<![CDATA[%s]]>' % question_content.decode()
+        return result
 
     @Lazy
     def answers(self):
@@ -365,7 +367,8 @@ class QTIMultipleDropdowns(AbstractQTIQuestion):
             self.blanks.append(name)
         question_content.append(question_content.new_tag('br'))
         question_content.append(entry_content)
-        return question_content.decode()
+        result = '<![CDATA[%s]]>' % question_content.decode()
+        return result
 
     @Lazy
     def dropdowns(self):

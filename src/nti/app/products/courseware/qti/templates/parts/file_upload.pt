@@ -18,7 +18,7 @@
         </itemmetadata>
         <presentation>
           <material>
-            <mattext texttype="text/html" tal:content="structure context/mattext">&lt;div&gt;&lt;p&gt;This is a file upload question.&lt;/p&gt;&lt;/div&gt;</mattext>
+            <mattext texttype="text/html" tal:content="structure context/mattext"></mattext>
           </material>
         </presentation>
       </item>

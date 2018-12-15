@@ -215,7 +215,7 @@ class IMSDiscussionTopic(object):
             extra_content = BeautifulSoup(div, features='html.parser')
             content.body.insert(0, extra_content)
             content = content.decode()
-        context['text'] = content
+        context['text'] = '<![CDATA[%s]]>' % content
         body = execute(renderer, {"context": context})
         if self.dirname:
             target_path = os.path.join(archive, self.dirname, self.filename)

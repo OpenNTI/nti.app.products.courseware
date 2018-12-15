@@ -357,10 +357,11 @@ class CanvasQuizMeta(object):
 
     def meta(self):
         renderer = get_renderer('assessment_meta', '.pt')
+        description = '<![CDATA[%s]]>' % self.description
         context = {'fields': self.ext,
                    'quiz_id': self.identifier,
                    'title': self.title,
-                   'description': self.description,
+                   'description': description,
                    'assignment': getattr(self, 'assignment', None)}
         return execute(renderer, {'context': context})
 

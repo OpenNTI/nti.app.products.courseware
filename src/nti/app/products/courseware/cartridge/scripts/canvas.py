@@ -196,7 +196,7 @@ def create_home_page():
 def create_canvas_course():
     link = dest + '/api/v1/accounts/2/courses'
     req = requests.post(link,
-                        json={'course': {'name': course_title + ' QA 2.1',
+                        json={'course': {'name': course_title + ' html',
                                          'course_code': course_code},
                               'enroll_me': True},
                         headers={'Authorization': 'Bearer %s' % access_token})
@@ -252,9 +252,18 @@ def do_content_migration():
     while(True):
         check = requests.get(progress_url, headers={'Authorization': 'Bearer %s' % access_token})
         if check.json()['workflow_state'] == 'completed':
-            print "Import Completed."
+            enablePrint()
+            print "Import Success."
+            url = '%s/api/v1/courses/%s/content_migrations/%s' % (dest, course_id, check.json()['context_id'])
+            result = requests.get(url, headers={'Authorization': 'Bearer %s' % access_token})
+            if result.json()['migration_issues_count'] > 0:
+                issues = requests.get(result.json()['migration_issues_url'], headers={'Authorization': 'Bearer %s' % access_token})
+                for issue in issues.json():
+                    print '%s' % issue['description']
+                    print '%s%s\n' % (dest, issue['fix_issue_html_url'])
             break
         if check.json()['workflow_state'] == 'failed':
+            enablePrint()
             print "Import Failed"
             break
         print "Waiting on import to complete..."

@@ -10,6 +10,7 @@ from argparse import ArgumentParser
 UA_STRING = 'NextThought Bulk Migration Utility'
 
 
+
 def _parse_args():
     arg_parser = ArgumentParser(description=UA_STRING)
     arg_parser.add_argument('-m', '--migrator', dest='migrator',

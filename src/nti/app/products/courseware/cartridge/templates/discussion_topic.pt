@@ -3,5 +3,5 @@
 		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
 		xsi:schemaLocation="http://www.imsglobal.org/xsd/imsccv1p1/imsdt_v1p1  http://www.imsglobal.org/profile/cc/ccv1p1/ccv1p1_imsdt_v1p1.xsd">
 	<title tal:content="context/title">title</title>
-	<text texttype="text/html" tal:content="context/text">Hello Everyone</text>
+	<text texttype="text/html" tal:content="structure context/text">Hello Everyone</text>
 </topic>

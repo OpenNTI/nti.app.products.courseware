@@ -3,6 +3,6 @@
       tal:attributes="identifier context/quiz_id">
     <title tal:content="context/title"></title>
     <replaced tal:repeat="(key,val) context/fields/items" tal:content="structure python:'<%s>%s</%s>' % (key, val if val else '', key)" tal:omit-tag=""></replaced>
-    <description tal:content="context/description"></description>
+    <description tal:content="structure context/description"></description>
     <replaced tal:replace="structure context/assignment" tal:condition="exists:context/assignment"></replaced>
 </quiz>
