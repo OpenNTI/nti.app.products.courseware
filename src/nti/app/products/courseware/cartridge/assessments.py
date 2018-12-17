@@ -41,7 +41,7 @@ from nti.app.products.courseware.qti.interfaces import IQTIAssessment
 
 from nti.app.products.courseware.qti.utils import update_external_resources, mathjax_parser
 
-from nti.assessment import IQuestionSet, IQuestionBank
+from nti.assessment import IQuestionSet
 
 from nti.assessment.interfaces import IQAssignment, IQDiscussionAssignment, IQEditableEvaluation
 from nti.assessment.interfaces import IQNonGradableFilePart
@@ -49,6 +49,7 @@ from nti.contentlibrary.interfaces import IPersistentFilesystemContentUnit
 from nti.contenttypes.courses.discussions.utils import get_topic_key
 
 from nti.contenttypes.courses.interfaces import ICourseInstance
+from nti.dataserver.contenttypes.forums.interfaces import ICommunityHeadlineTopic
 
 from nti.ntiids.ntiids import find_object_with_ntiid
 

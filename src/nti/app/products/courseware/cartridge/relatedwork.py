@@ -120,7 +120,8 @@ class IMSWebContentNativeReading(AbstractIMSWebContent):
         rendered_package = find_object_with_ntiid(self.context.target)
         metadata = IContentPackageRenderMetadata(rendered_package, None)
         if metadata is not None:
-            if not metadata.mostRecentRenderJob().is_success():
+            metadata_job = metadata.mostRecentRenderJob()
+            if not metadata_job or not metadata_job.is_success():
                 raise CommonCartridgeExportException(u'Related work ref %s failed to render.' % self.title)
         return rendered_package
 

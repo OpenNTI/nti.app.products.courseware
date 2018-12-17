@@ -22,6 +22,10 @@
 
     <adapter factory=".discussion.IMSDiscussionTopic"
              provides=".interfaces.IIMSResource"
+             for="nti.dataserver.contenttypes.forums.interfaces.ICourseDiscussion" />
+
+    <adapter factory=".discussion.IMSDiscussionTopic"
+             provides=".interfaces.IIMSResource"
              for="nti.contenttypes.presentation.interfaces.INTIDiscussionRef" />
 
 	<adapter factory=".cartridge.IMSCommonCartridge"
