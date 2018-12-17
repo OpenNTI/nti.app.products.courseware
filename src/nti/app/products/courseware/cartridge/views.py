@@ -19,10 +19,12 @@ from nti.app.base.abstract_views import AbstractAuthenticatedView
 
 from nti.app.products.courseware.cartridge.cartridge import build_cartridge_content
 from nti.app.products.courseware.cartridge.cartridge import build_manifest_items
+
 from nti.app.products.courseware.cartridge.exceptions import CommonCartridgeExportException
 
-from nti.app.products.courseware.cartridge.interfaces import ICanvasWikiContent, IIMSAssociatedContent
+from nti.app.products.courseware.cartridge.interfaces import ICanvasWikiContent
 from nti.app.products.courseware.cartridge.interfaces import ICartridgeWebContent
+from nti.app.products.courseware.cartridge.interfaces import IIMSAssociatedContent
 from nti.app.products.courseware.cartridge.interfaces import IIMSCommonCartridge
 from nti.app.products.courseware.cartridge.interfaces import IIMSCommonCartridgeExtension
 

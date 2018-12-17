@@ -10,8 +10,10 @@ from __future__ import absolute_import
 
 import os
 
-from bs4 import BeautifulSoup, NavigableString
-from premailer import transform, Premailer
+from bs4 import BeautifulSoup
+
+from premailer import Premailer
+
 from six.moves import urllib_parse
 
 from zope import component
@@ -23,29 +25,35 @@ from zope.intid import IIntIds
 
 from zope.schema.fieldproperty import createFieldProperties
 
-from nti.app.contentfolder.resources import is_internal_file_link, get_file_from_external_link
-from nti.app.contentfolder.utils import get_file_from_cf_io_url
+from nti.app.contentfolder.resources import get_file_from_external_link
+from nti.app.contentfolder.resources import is_internal_file_link
 
-from nti.app.contenttypes.presentation.decorators.assets import CONTENT_MIME_TYPE, _path_exists_in_package, \
-    _get_item_content_package
+# TODO private method access
+from nti.app.contenttypes.presentation.decorators.assets import _get_item_content_package
+from nti.app.contenttypes.presentation.decorators.assets import _path_exists_in_package
+from nti.app.contenttypes.presentation.decorators.assets import CONTENT_MIME_TYPE
 
 from nti.app.products.courseware.cartridge.exceptions import CommonCartridgeExportException
 
-from nti.app.products.courseware.cartridge.interfaces import ICartridgeWebContent, ICanvasWikiContent
+from nti.app.products.courseware.cartridge.interfaces import ICanvasWikiContent
+from nti.app.products.courseware.cartridge.interfaces import ICartridgeWebContent
 from nti.app.products.courseware.cartridge.interfaces import IIMSWebContentUnit
 from nti.app.products.courseware.cartridge.interfaces import IIMSWebLink
 
 from nti.app.products.courseware.cartridge.renderer import execute
 from nti.app.products.courseware.cartridge.renderer import get_renderer
 
-from nti.app.products.courseware.cartridge.web_content import AbstractIMSWebContent, IMSWebContent
+from nti.app.products.courseware.cartridge.web_content import AbstractIMSWebContent
+from nti.app.products.courseware.cartridge.web_content import IMSWebContent
+
 from nti.app.products.courseware.qti.utils import update_external_resources
+
 from nti.common import random
 
-from nti.contentlibrary.interfaces import IContentPackage, IContentPackageLibrary
-from nti.contentlibrary.interfaces import IFilesystemBucket
+from nti.contentlibrary.interfaces import IContentPackage
+
 from nti.contentlibrary_rendering.interfaces import IContentPackageRenderMetadata
-from nti.externalization import to_external_object
+
 from nti.ntiids.ntiids import find_object_with_ntiid
 
 from nti.traversal.traversal import find_interface

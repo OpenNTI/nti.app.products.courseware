@@ -8,7 +8,9 @@ from __future__ import division
 import os
 
 import six
+
 from bs4 import BeautifulSoup
+
 from premailer import Premailer
 
 from pyramid.threadlocal import get_current_request
@@ -19,6 +21,7 @@ from zope import component
 from zope import interface
 
 from zope.cachedescriptors.property import Lazy
+
 from zope.interface.interfaces import ComponentLookupError
 
 from zope.intid import IIntIds
@@ -26,10 +29,14 @@ from zope.intid import IIntIds
 from zope.schema.fieldproperty import createFieldProperties
 
 from nti.app.assessment.common.policy import get_policy_excluded
+
 from nti.app.products.courseware.cartridge.discussion import CanvasTopicMeta
+
 from nti.app.products.courseware.cartridge.exceptions import CommonCartridgeExportException
 
-from nti.app.products.courseware.cartridge.interfaces import IIMSAssignment, IIMSResource, ICommonCartridgeAssessment
+from nti.app.products.courseware.cartridge.interfaces import ICommonCartridgeAssessment
+from nti.app.products.courseware.cartridge.interfaces import IIMSAssignment
+from nti.app.products.courseware.cartridge.interfaces import IIMSResource
 
 from nti.app.products.courseware.cartridge.renderer import execute
 from nti.app.products.courseware.cartridge.renderer import get_renderer
@@ -39,17 +46,21 @@ from nti.app.products.courseware.cartridge.web_content import IMSWebContent
 
 from nti.app.products.courseware.qti.interfaces import IQTIAssessment
 
-from nti.app.products.courseware.qti.utils import update_external_resources, mathjax_parser
+from nti.app.products.courseware.qti.utils import mathjax_parser
+from nti.app.products.courseware.qti.utils import update_external_resources
 
 from nti.assessment import IQuestionSet
 
-from nti.assessment.interfaces import IQAssignment, IQDiscussionAssignment, IQEditableEvaluation
+from nti.assessment.interfaces import IQAssignment
+from nti.assessment.interfaces import IQDiscussionAssignment
+from nti.assessment.interfaces import IQEditableEvaluation
 from nti.assessment.interfaces import IQNonGradableFilePart
+
 from nti.contentlibrary.interfaces import IPersistentFilesystemContentUnit
+
 from nti.contenttypes.courses.discussions.utils import get_topic_key
 
 from nti.contenttypes.courses.interfaces import ICourseInstance
-from nti.dataserver.contenttypes.forums.interfaces import ICommunityHeadlineTopic
 
 from nti.ntiids.ntiids import find_object_with_ntiid
 

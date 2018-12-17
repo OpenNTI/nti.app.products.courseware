@@ -19,12 +19,15 @@ from zope.intid import IIntIds
 
 from zope.schema.fieldproperty import createFieldProperties
 
-from nti.app.contenttypes.presentation.decorators.assets import _path_exists_in_package, _get_item_content_package
+from nti.app.contenttypes.presentation.decorators.assets import _get_item_content_package
+from nti.app.contenttypes.presentation.decorators.assets import _path_exists_in_package
+
 from nti.app.products.courseware.cartridge.exceptions import CommonCartridgeExportException
 
-from nti.app.products.courseware.cartridge.interfaces import IIMSWebContentUnit, IIMSAssociatedContent
+from nti.app.products.courseware.cartridge.interfaces import IIMSWebContentUnit
 
 from nti.contentlibrary.interfaces import IContentPackage
+
 from nti.ntiids.ntiids import find_object_with_ntiid
 
 from nti.traversal.traversal import find_interface

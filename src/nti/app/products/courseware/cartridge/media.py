@@ -9,7 +9,6 @@ from __future__ import print_function
 from __future__ import absolute_import
 
 import os
-import time
 
 import six
 
@@ -19,6 +18,7 @@ from zope import component
 from zope import interface
 
 from zope.cachedescriptors.property import Lazy
+
 from zope.intid import IIntIds
 
 from nti.app.products.courseware.cartridge.interfaces import ICanvasWikiContent
@@ -33,12 +33,14 @@ from nti.app.products.courseware.cartridge.web_content import AbstractIMSWebCont
 from nti.contentlibrary.interfaces import IContentPackage
 from nti.contentlibrary.interfaces import IFilesystemBucket
 
-from nti.contenttypes.presentation.interfaces import KALTURA_VIDEO_SERVICE, INTIVideoRoll, IConcreteAsset, \
-    INTILessonOverview
+from nti.contenttypes.presentation.interfaces import KALTURA_VIDEO_SERVICE
 from nti.contenttypes.presentation.interfaces import VIMEO_VIDEO_SERVICE
 from nti.contenttypes.presentation.interfaces import YOUTUBE_VIDEO_SERVICE
-from nti.contenttypes.presentation.interfaces import INTIVideo
+from nti.contenttypes.presentation.interfaces import IConcreteAsset
+from nti.contenttypes.presentation.interfaces import INTILessonOverview
 from nti.contenttypes.presentation.interfaces import INTITranscript
+from nti.contenttypes.presentation.interfaces import INTIVideo
+from nti.contenttypes.presentation.interfaces import INTIVideoRoll
 
 from nti.traversal.traversal import find_interface
 

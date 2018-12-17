@@ -18,10 +18,6 @@ from nti.schema.field import Int
 from nti.schema.field import Object
 from nti.schema.field import DecodingValidTextLine as TextLine
 
-from nti.app.products.courseware.cartridge.exceptions import CommonCartridgeExportException
-
-from nti.common.datastructures import ObjectHierarchyTree
-
 
 class ICanvasWikiContent(interface.Interface):
     """

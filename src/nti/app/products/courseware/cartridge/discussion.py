@@ -12,18 +12,14 @@ import os
 
 import six
 
-from bs4 import BeautifulSoup, NavigableString
+from bs4 import BeautifulSoup
 
 from collections import defaultdict
-
-from xml.dom import minidom
 
 from zope import component
 from zope import interface
 
 from zope.cachedescriptors.property import Lazy
-
-from zope.interface.common.idatetime import IDateTime
 
 from zope.intid import IIntIds
 
@@ -33,15 +29,15 @@ from nti.app.authentication import get_remote_user
 
 from nti.app.products.courseware.cartridge.exceptions import CommonCartridgeExportException
 
-from nti.app.products.courseware.cartridge.interfaces import IIMSDiscussionTopic, IIMSResource, IIMSAssociatedContent
-
-from nti.app.products.courseware.cartridge.mixins import NullElementHandler
-from nti.app.products.courseware.cartridge.mixins import AbstractElementHandler
-from nti.app.products.courseware.cartridge.mixins import resolve_modelcontent_body
+from nti.app.products.courseware.cartridge.interfaces import IIMSAssociatedContent
+from nti.app.products.courseware.cartridge.interfaces import IIMSDiscussionTopic
+from nti.app.products.courseware.cartridge.interfaces import IIMSResource
 
 from nti.app.products.courseware.cartridge.renderer import execute
 from nti.app.products.courseware.cartridge.renderer import get_renderer
+
 from nti.app.products.courseware.cartridge.web_content import AbstractIMSWebContent
+
 from nti.common import random
 
 from nti.contentfile.interfaces import IContentBlobFile
@@ -53,40 +49,11 @@ from nti.contenttypes.presentation.interfaces import INTIDiscussionRef
 from nti.coremetadata.interfaces import ICanvas
 from nti.coremetadata.interfaces import IEmbeddedVideo
 
-from nti.dataserver.contenttypes.forums.interfaces import IForum
 from nti.dataserver.contenttypes.forums.interfaces import ITopic
-
-from nti.externalization.externalization.externalizer import to_external_object
 
 from nti.ntiids.ntiids import find_object_with_ntiid
 
-from nti.traversal.traversal import find_interface
-
 logger = __import__('logging').getLogger(__name__)
-
-
-@component.adapter(ITopic)
-class TopicHandler(NullElementHandler):
-
-    def topic(self):
-        """
-        Return the content for the topic file
-        """
-        topic = self.context
-        renderer = get_renderer("discussion_topic", ".pt")
-        context = {
-            'title': self.to_plain_text(topic.title or ''),
-        }
-        # write content
-        content = resolve_modelcontent_body(topic.headline.body)
-        context['text'] = self.safe_xml_text(content)
-        return execute(renderer, {"context":context})
-
-    def write_to(self, archive):  # pylint: disable=signature-differs
-        content = self.topic()
-        name = "%s.xml" % self.identifier
-        with open(os.path.join(archive, name), "w") as fp:
-            fp.write(content.encode('utf-8'))
 
 
 @component.adapter(IContentBlobFile)
@@ -236,7 +203,7 @@ class CanvasTopicMeta(AbstractIMSWebContent):
 
     def __init__(self, cc_discussion):
         self.cc_discussion = cc_discussion
-        # TODO I don't think this identifier is useful in our context
+        # XXX I don't think this identifier is useful in our context
         self.assignment_identifier = random.generate_random_string(10)
 
     @Lazy

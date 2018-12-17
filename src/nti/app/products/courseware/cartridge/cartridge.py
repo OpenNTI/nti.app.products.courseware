@@ -13,21 +13,18 @@ from zope import component
 from zope import interface
 
 from zope.cachedescriptors.property import Lazy
-from zope.component import queryMultiAdapter
-from zope.interface.interfaces import ComponentLookupError
 
 from zope.intid import IIntIds
 from zope.proxy import getProxiedObject
 
-from nti.app.assessment.common.evaluations import get_course_evaluations, get_course_assignments
-from nti.app.products.courseware import cartridge
+from nti.app.assessment.common.evaluations import get_course_assignments
+
 from nti.app.products.courseware.cartridge.exceptions import CommonCartridgeExportException
-from nti.app.products.courseware.cartridge.interfaces import IIMSCommonCartridge, IIMSUnsortedContent, \
-    ICommonCartridgeAssessment
+
+from nti.app.products.courseware.cartridge.interfaces import ICommonCartridgeAssessment
+from nti.app.products.courseware.cartridge.interfaces import IIMSCommonCartridge
+from nti.app.products.courseware.cartridge.interfaces import IIMSUnsortedContent
 from nti.app.products.courseware.cartridge.interfaces import IIMSResource
-from nti.app.products.courseware.cartridge.interfaces import IIMSWebContentUnit
-from nti.assessment.interfaces import DISCUSSION_ASSIGNMENT_MIME_TYPE, ASSIGNMENT_MIME_TYPE, QUESTION_SET_MIME_TYPE, \
-    TIMED_ASSIGNMENT_MIME_TYPE, IQuestionSet
 
 from nti.common.datastructures import ObjectHierarchyTree
 
@@ -40,10 +37,13 @@ from nti.contenttypes.courses.interfaces import ICourseInstance
 
 from nti.site.site import get_component_hierarchy_names
 
-from nti.contenttypes.presentation.interfaces import IConcreteAsset, INTIAssessmentRef, INTIMediaRoll
+from nti.contenttypes.presentation.interfaces import IConcreteAsset
 from nti.contenttypes.presentation.interfaces import IGroupOverViewable
+from nti.contenttypes.presentation.interfaces import INTIAssessmentRef
 from nti.contenttypes.presentation.interfaces import INTILessonOverview
+from nti.contenttypes.presentation.interfaces import INTIMediaRoll
 from nti.contenttypes.presentation.interfaces import INTIRelatedWorkRef
+
 from nti.ntiids.ntiids import find_object_with_ntiid
 
 __docformat__ = "restructuredtext en"
