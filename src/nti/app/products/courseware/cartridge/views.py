@@ -77,7 +77,7 @@ class CommonCartridgeExportView(AbstractAuthenticatedView):
                                             type=cc_resource.type,
                                             href=href)
                     etree.SubElement(item, u'file', href=href)
-                    # TODO need to recur on deps here
+                    # TODO need to recur on deps here (One reason video transcripts dont appear)
                     if getattr(cc_resource, 'dependencies', None):
                         for (dep_directory, deps) in cc_resource.dependencies.items():
                             for dep in deps:
