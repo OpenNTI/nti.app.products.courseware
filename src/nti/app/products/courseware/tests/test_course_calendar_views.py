@@ -318,6 +318,13 @@ class TestCourseCalendarViews(ApplicationLayerTest):
         result = [x for x in result['Items'] if x['Class'] == 'CourseCalendarEvent']
         assert_that(result, has_length(3))
 
+        # strip duplicated ntiids.
+        result = self.testapp.post_json(url,
+                                        params={'context_ntiids': [self.course_ntiid, self.course_ntiid]},
+                                        extra_environ=owner_env).json_body
+        result = [x for x in result['Items'] if x['Class'] == 'CourseCalendarEvent']
+        assert_that([x['title'] for x in result], contains_inanyorder(u'c_one', u'c_two'))
+
         # exclude dynamic events
         url = '/dataserver2/users/owner001/Calendars/@@events?exclude_dynamic_events=true'
         result = self.testapp.post_json(url,
