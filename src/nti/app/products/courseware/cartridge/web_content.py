@@ -134,10 +134,10 @@ class IMSWebContent(AbstractIMSWebContent):
 
     @Lazy
     def content_directory(self):
-        dirname = getattr(self.content_package, 'dirname', None)
-        if dirname is None:
+        root = getattr(self.content_package, 'root', None)
+        if root is None:
             raise CommonCartridgeExportException(u'Corrupt content package %s' % self.content_package)
-        return self.content_package.dirname
+        return root.absolute_path
 
     def export(self, dirname):
         source_path = os.path.join(self.content_directory, self.path_to)
