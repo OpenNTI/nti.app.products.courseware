@@ -9,6 +9,7 @@ import time
 import urllib2
 
 from argparse import ArgumentParser
+
 from bs4 import BeautifulSoup
 
 # These map to the tab id in Canvas. We use the id to make
