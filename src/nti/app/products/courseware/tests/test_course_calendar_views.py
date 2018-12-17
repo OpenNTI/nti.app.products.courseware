@@ -13,6 +13,7 @@ from hamcrest import has_length
 from hamcrest import has_entry
 from hamcrest import has_entries
 from hamcrest import assert_that
+from hamcrest import greater_than
 from hamcrest import has_properties
 from hamcrest import same_instance
 from hamcrest import contains_inanyorder
@@ -274,6 +275,16 @@ class TestCourseCalendarViews(ApplicationLayerTest):
         result = [x for x in result['Items'] if x['Class'] == 'CourseCalendarEvent']
         assert_that([x['title'] for x in result], contains_inanyorder(u'c_one', u'c_two', u'c_three'))
 
+        result = self.testapp.get(url,
+                                  params={'context_ntiids': [self.course_ntiid2, self.course_ntiid], 'exclude_dynamic_events': 'true'},
+                                  extra_environ=owner_env).json_body
+        assert_that(result['Items'], has_length(3))
+
+        result = self.testapp.get(url,
+                                  params={'context_ntiids': [self.course_ntiid2, self.course_ntiid]},
+                                  extra_environ=owner_env).json_body
+        assert_that(len(result['Items']), greater_than(3))
+
         # Excluded
         result = self.testapp.get(url, params={'excluded_context_ntiids': ''}, extra_environ=owner_env)
         result = result.json_body
@@ -296,3 +307,50 @@ class TestCourseCalendarViews(ApplicationLayerTest):
         result = result.json_body
         result = [x for x in result['Items'] if x['Class'] == 'CourseCalendarEvent']
         assert_that(result, has_length(0))
+
+
+        # dooming post view
+        # context ntiids.
+        result = self.testapp.post_json(url,
+                                        params={'context_ntiids': [self.course_ntiid2, self.course_ntiid]},
+                                        extra_environ=owner_env).json_body
+        assert_that(len(result['Items']), greater_than(3))
+        result = [x for x in result['Items'] if x['Class'] == 'CourseCalendarEvent']
+        assert_that(result, has_length(3))
+
+        # strip duplicated ntiids.
+        result = self.testapp.post_json(url,
+                                        params={'context_ntiids': [self.course_ntiid, self.course_ntiid]},
+                                        extra_environ=owner_env).json_body
+        result = [x for x in result['Items'] if x['Class'] == 'CourseCalendarEvent']
+        assert_that([x['title'] for x in result], contains_inanyorder(u'c_one', u'c_two'))
+
+        # exclude dynamic events
+        url = '/dataserver2/users/owner001/Calendars/@@events?exclude_dynamic_events=true'
+        result = self.testapp.post_json(url,
+                                        params={'context_ntiids': [self.course_ntiid2, self.course_ntiid]},
+                                        extra_environ=owner_env).json_body
+        assert_that(result['Items'], has_length(3))
+
+        # excluded ntiids
+        result = self.testapp.post_json(url,
+                                        params={'excluded_context_ntiids': [self.course_ntiid2]},
+                                        extra_environ=owner_env).json_body
+        result = [x for x in result['Items'] if x['Class'] == 'CourseCalendarEvent']
+        assert_that([x['title'] for x in result], contains_inanyorder(u'c_one', u'c_two'))
+
+        # context_ntiids or excluded_context_ntiids it not list or None.
+        result = self.testapp.post_json(url, params={'context_ntiids': None}, extra_environ=owner_env).json_body
+        assert_that(result['Items'], has_length(3))
+
+        result = self.testapp.post_json(url, params={'context_ntiids': []}, extra_environ=owner_env).json_body
+        assert_that(result['Items'], has_length(3))
+
+        result = self.testapp.post_json(url, params={'excluded_context_ntiids': None}, extra_environ=owner_env).json_body
+        assert_that(result['Items'], has_length(3))
+
+        result = self.testapp.post_json(url, params={'context_ntiids': ''}, status=422, extra_environ=owner_env).json_body
+        assert_that(result['message'], is_('context_ntiids should be an array of ntiids or empty.'))
+
+        result = self.testapp.post_json(url, params={'excluded_context_ntiids': 'a'}, status=422, extra_environ=owner_env).json_body
+        assert_that(result['message'], is_('excluded_context_ntiids should be an array of ntiids or empty.'))
