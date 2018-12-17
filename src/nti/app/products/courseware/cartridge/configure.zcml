@@ -22,7 +22,7 @@
 
     <adapter factory=".discussion.IMSDiscussionTopic"
              provides=".interfaces.IIMSResource"
-             for="nti.dataserver.contenttypes.forums.interfaces.ICourseDiscussion" />
+             for="nti.dataserver.contenttypes.forums.interfaces.ICommunityHeadlineTopic" />
 
     <adapter factory=".discussion.IMSDiscussionTopic"
              provides=".interfaces.IIMSResource"
