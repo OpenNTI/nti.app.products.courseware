@@ -22,9 +22,10 @@ from nti.app.products.courseware.cartridge.renderer import execute
 from nti.app.products.courseware.cartridge.renderer import get_renderer
 
 from nti.app.products.courseware.qti.interfaces import IQTIAssessment
+
 from nti.app.products.courseware.qti.models import CanvasQuizMeta
+
 from nti.assessment.interfaces import IQAssessment
-from nti.contentlibrary.interfaces import IContentPackage
 
 from nti.contenttypes.courses.interfaces import ICourseInstance
 
@@ -34,7 +35,6 @@ from nti.contenttypes.presentation.interfaces import INTIQuestionSetRef
 from nti.dataserver import authorization as nauth
 
 from nti.ntiids.ntiids import find_object_with_ntiid
-from nti.traversal.traversal import find_interface
 
 __docformat__ = "restructuredtext en"
 

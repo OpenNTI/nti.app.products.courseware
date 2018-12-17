@@ -11,8 +11,8 @@ import six
 
 from bs4 import BeautifulSoup
 
-
 from datetime import timedelta
+
 from premailer import Premailer
 
 from six.moves import urllib_parse
@@ -21,6 +21,7 @@ from zope import component
 from zope import interface
 
 from zope.cachedescriptors.property import Lazy
+
 from zope.interface.interfaces import ComponentLookupError
 
 from zope.intid import IIntIds
@@ -29,6 +30,7 @@ from zope.schema.fieldproperty import createFieldProperties
 
 from nti.app.assessment.common.evaluations import get_max_time_allowed
 
+# XXX: BWC
 try:
     from nti.app.assessment.common.policy import get_policy_max_submissions
 except ImportError:
@@ -56,7 +58,8 @@ from nti.app.products.courseware.qti.interfaces import ICanvasAssignmentSettings
 from nti.app.products.courseware.qti.interfaces import IQTIAssessment
 from nti.app.products.courseware.qti.interfaces import IQTIItem
 
-from nti.app.products.courseware.qti.utils import update_external_resources, mathjax_parser
+from nti.app.products.courseware.qti.utils import mathjax_parser
+from nti.app.products.courseware.qti.utils import update_external_resources
 
 from nti.assessment.interfaces import IQAssignment
 from nti.assessment.interfaces import IQEditableEvaluation

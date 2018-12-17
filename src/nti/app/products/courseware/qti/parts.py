@@ -18,12 +18,14 @@ from zope.cachedescriptors.property import Lazy
 from zope.intid import IIntIds
 
 from nti.app.products.courseware.cartridge.exceptions import CommonCartridgeExportException
+
 from nti.app.products.courseware.cartridge.renderer import execute
 from nti.app.products.courseware.cartridge.renderer import get_renderer
 
 from nti.app.products.courseware.qti.interfaces import IQTIItem
 
-from nti.app.products.courseware.qti.utils import update_external_resources, mathjax_parser
+from nti.app.products.courseware.qti.utils import mathjax_parser
+from nti.app.products.courseware.qti.utils import update_external_resources
 
 from nti.common._compat import text_
 

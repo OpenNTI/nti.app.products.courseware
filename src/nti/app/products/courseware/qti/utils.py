@@ -11,9 +11,6 @@ from bs4 import BeautifulSoup
 
 from six.moves import urllib_parse
 
-from nti.app.products.courseware.cartridge.renderer import get_renderer, execute
-from nti.app.products.courseware.cartridge.web_content import MathJAXWebContent
-
 __docformat__ = "restructuredtext en"
 
 logger = __import__('logging').getLogger(__name__)
