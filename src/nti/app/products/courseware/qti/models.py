@@ -84,19 +84,6 @@ class QTIAssessment(AbstractIMSWebContent):
 
     createFieldProperties(IQTIAssessment)
 
-    def handle_dependencies(self, deps):
-        """
-        Convert a list of hrefs into IMSWebContent to maintain a standard format
-        """
-        for dep in deps:
-            # Hard refs
-            if isinstance(dep, six.text_type):
-                web_content = IMSWebContent(self.context, dep)
-                self.dependencies['dependencies'].append(web_content)
-            # MathJax / other  # TODO this could be better but we are running out of time
-            else:
-                self.dependencies['mathjax'].append(dep)
-
     def __init__(self, context, course, adapted_to=True):
         super(QTIAssessment, self).__init__(context)
         self.items = []
@@ -228,7 +215,7 @@ class QTIAssessment(AbstractIMSWebContent):
                 assignment_identifier_ref = random.generate_random_string()  # same as above
                 mattext, dependencies = update_external_resources(nested_text, 'dependencies')
                 mattext = mathjax_parser(mattext)
-                self.handle_dependencies(dependencies)
+                self.dependencies['dependencies'].extend(dependencies)
                 renderer = get_renderer('templates/parts/text_entry', '.pt')
                 context = {'item_identifier': item_identifier,
                            'title': 'Text',
@@ -242,8 +229,8 @@ class QTIAssessment(AbstractIMSWebContent):
 
         # Ok, now that everything is clean, parse what will be the description for images and other linked resources
         # Check for resource refs and add to dependencies
-        new_content, dependencies = update_external_resources(new_content.decode(), 'dependencies')
-        self.handle_dependencies(dependencies)
+        new_content, dependencies = update_external_resources(self.context, new_content.decode())
+        self.dependencies['dependencies'].extend(dependencies)
         new_content = mathjax_parser(new_content)
         return new_content
 

@@ -185,8 +185,8 @@ class IMSWebContentNativeReading(AbstractIMSWebContent):
     @Lazy
     def content(self):
         html = self.content_soup().find('body').decode()
-        html, dependencies = update_external_resources(html)
-        self.dependencies['dependencies'].extend([IMSWebContent(self.context, dep) for dep in dependencies])
+        html, dependencies = update_external_resources(self.context, html)
+        self.dependencies['dependencies'].extend(dependencies)
         return html
 
     def export(self, archive):

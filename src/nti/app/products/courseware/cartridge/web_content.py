@@ -10,6 +10,10 @@ import shutil
 
 from collections import defaultdict
 
+import requests
+from requests import HTTPError
+from six.moves import urllib_parse
+
 from zope import component
 from zope import interface
 
@@ -25,6 +29,7 @@ from nti.app.contenttypes.presentation.decorators.assets import _path_exists_in_
 from nti.app.products.courseware.cartridge.exceptions import CommonCartridgeExportException
 
 from nti.app.products.courseware.cartridge.interfaces import IIMSWebContentUnit
+from nti.common import random
 
 from nti.contentlibrary.interfaces import IContentPackage
 
@@ -61,6 +66,17 @@ class WebContentMixin(object):
         with open(path, 'w') as fd:
             fd.write(resource.encode('utf-8'))
         return True
+
+    def external_resource(self, target_path, url):
+        response = requests.get(url, stream=True)
+        try:
+            response.raise_for_status()
+        except HTTPError:
+            raise CommonCartridgeExportException(u'Unable to export resource with response: %s' % response)
+        self.create_dirname(target_path)
+        with open(target_path, 'w') as fd:
+            for block in response.iter_content(1024):
+                fd.write(block)
 
     @Lazy
     def intids(self):
@@ -145,13 +161,12 @@ class IMSWebContent(AbstractIMSWebContent):
         self.copy_resource(source_path, target_path)
 
 
-@interface.implementer(IIMSWebContentUnit)
-class MathJAXWebContent(WebContentMixin):
+class S3WebContent(WebContentMixin):
 
     createFieldProperties(IIMSWebContentUnit)
 
-    def __init__(self, content):
-        self.content = content
+    def __init__(self, s3_url):
+        self.s3_url = s3_url
 
     @Lazy
     def identifier(self):
@@ -163,10 +178,18 @@ class MathJAXWebContent(WebContentMixin):
     __name__ = identifier
 
     @Lazy
+    def href(self):
+        return urllib_parse.urlparse(self.s3_url).path
+
+    @Lazy
     def filename(self):
-        return self.identifier + '.html'
+        # We add a hash in front here because these may be in mulitple content pacakges
+        # When this happens we get into a situation where multiple ids point to the same file
+        # because it's name is the same. Rather than adding the entire id we do random so the name is
+        # still easy to read
+        return random.generate_random_string(4) + '_' + os.path.basename(self.href)
 
     def export(self, dirname):
-        target_path = os.path.join(dirname, self.filename)
-        self.write_resource(target_path, self.content)
+        target_path = os.path.join(dirname, self.href)
+        self.external_resource(target_path, self.s3_url)
         return True

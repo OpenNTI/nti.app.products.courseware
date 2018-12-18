@@ -108,7 +108,7 @@ def adapt_to_common_cartridge_assessment(assessment):
         if topic is None:
             raise CommonCartridgeExportException(u'Unable to resolve a topic for discussion %s' % discussion)
         resource = IIMSResource(discussion)
-        assessment_content, dependencies = update_external_resources(assessment.content)
+        assessment_content, dependencies = update_external_resources(discussion, assessment.content)
         resource.extra_content = assessment_content
         resource.dependencies['dependencies'].extend(dependencies)
         resource.topic = topic  # TODO messy messy messy
@@ -148,8 +148,8 @@ class CanvasAssignment(AbstractIMSWebContent):
             content = self._parse_content()
         # Ok, now that everything is clean, parse what will be the description for images and other linked resources
         # Check for resource refs and add to dependencies
-        new_content, dependencies = update_external_resources(content, 'dependencies')
-        self.handle_dependencies(dependencies)
+        new_content, dependencies = update_external_resources(self.context, content)
+        self.dependencies['dependencies'].extend(dependencies)
         self.content = mathjax_parser(new_content)
 
     @Lazy
@@ -249,8 +249,8 @@ class CanvasAssignment(AbstractIMSWebContent):
         soup = BeautifulSoup(self.context.content, features='html.parser')
         question_soup = BeautifulSoup(self.question.content, features='html.parser')
         soup.append(question_soup)
-        content, dependencies = update_external_resources(soup.decode())
-        self.dependencies['dependencies'].extend([IMSWebContent(self.context, dep) for dep in dependencies])
+        content, dependencies = update_external_resources(self.context, soup.decode())
+        self.dependencies['dependencies'].extend(dependencies)
         return content
 
     @Lazy

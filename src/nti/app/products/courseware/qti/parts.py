@@ -89,7 +89,7 @@ class AbstractQTIQuestion(object):
         elif len(content_soup.find_all()) == 0:
             # If its empty also use the part content
             content = self.context.content
-        result, dependencies = update_external_resources(content)
+        result, dependencies = update_external_resources(self.context, content)
         self.dependencies.extend(dependencies)
         result = mathjax_parser(result)
         result = '<![CDATA[%s]]>' % result
@@ -105,7 +105,7 @@ class QTIMultipleChoice(AbstractQTIQuestion):
     def labels(self):
         labels = []
         for i, x in enumerate(self.context.choices):
-            content, dependencies = update_external_resources(x)
+            content, dependencies = update_external_resources(self.context, x)
             self.dependencies.extend(dependencies)
             content = mathjax_parser(content)
             labels.append(self.Label(text_(unicode(i)), content))
@@ -138,7 +138,7 @@ class QTIMultipleAnswers(AbstractQTIQuestion):
     def choices(self):
         choices = []
         for i, x in enumerate(self.context.choices):
-            content, dependencies = update_external_resources(x)
+            content, dependencies = update_external_resources(self.context, x)
             self.dependencies.extend(dependencies)
             content = mathjax_parser(content)
             choices.append(self.Choice(text_(unicode(i)), content))
@@ -208,7 +208,7 @@ class QTIMatching(AbstractQTIQuestion):
     def labels(self):
         labels = []
         for i, x in enumerate(self.context.labels):
-            content, dependencies = update_external_resources(x)
+            content, dependencies = update_external_resources(self.context, x)
             self.dependencies.extend(dependencies)
             labels.append(self.Label(u'label_' + unicode(i), content))
         return labels
@@ -217,7 +217,7 @@ class QTIMatching(AbstractQTIQuestion):
     def values(self):
         values = []
         for i, value in enumerate(self.context.values):
-            content, dependencies = update_external_resources(value)
+            content, dependencies = update_external_resources(self.context, value)
             self.dependencies.extend(dependencies)
             content = mathjax_parser(content)
             soup = BeautifulSoup(content, features='html.parser')
@@ -296,10 +296,10 @@ class QTIFillInMultipleBlanks(AbstractQTIQuestion):
         This is canvas specific, replace all input fields with canvas's style of blank
         """
         # we want to use html.parser here so <html> and <body> tags aren't inserted
-        question_content, dependencies = update_external_resources(self.question.content)
+        question_content, dependencies = update_external_resources(self.context, self.question.content)
         self.dependencies.extend(dependencies)
         question_content = mathjax_parser(question_content)
-        entry_content, dependencies = update_external_resources(self.context.content)
+        entry_content, dependencies = update_external_resources(self.context, self.context.content)
         self.dependencies.extend(dependencies)
         entry_content = mathjax_parser(entry_content)
         question_content = BeautifulSoup(question_content, features='html.parser')
@@ -355,10 +355,10 @@ class QTIMultipleDropdowns(AbstractQTIQuestion):
         This is canvas specific, replace all input fields with canvas's style of blank
         """
         # we want to use html.parser here so <html> and <body> tags aren't inserted
-        question_content, dependencies = update_external_resources(self.question.content)
+        question_content, dependencies = update_external_resources(self.context, self.question.content)
         self.dependencies.extend(dependencies)
         question_content = mathjax_parser(question_content)
-        entry_content, dependencies = update_external_resources(self.context.input)
+        entry_content, dependencies = update_external_resources(self.context, self.context.input)
         self.dependencies.extend(dependencies)
         entry_content = mathjax_parser(entry_content)
         question_content = BeautifulSoup(question_content, features='html.parser')

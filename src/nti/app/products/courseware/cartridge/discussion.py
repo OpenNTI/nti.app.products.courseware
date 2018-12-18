@@ -32,11 +32,15 @@ from nti.app.products.courseware.cartridge.exceptions import CommonCartridgeExpo
 from nti.app.products.courseware.cartridge.interfaces import IIMSAssociatedContent
 from nti.app.products.courseware.cartridge.interfaces import IIMSDiscussionTopic
 from nti.app.products.courseware.cartridge.interfaces import IIMSResource
+from nti.app.products.courseware.cartridge.interfaces import IIMSWebContentUnit
 
 from nti.app.products.courseware.cartridge.renderer import execute
 from nti.app.products.courseware.cartridge.renderer import get_renderer
 
 from nti.app.products.courseware.cartridge.web_content import AbstractIMSWebContent
+
+from nti.app.products.courseware.qti.utils import mathjax_parser
+from nti.app.products.courseware.qti.utils import update_external_resources
 
 from nti.common import random
 
@@ -49,18 +53,16 @@ from nti.contenttypes.presentation.interfaces import INTIDiscussionRef
 from nti.coremetadata.interfaces import ICanvas
 from nti.coremetadata.interfaces import IEmbeddedVideo
 
-from nti.dataserver.contenttypes.forums.interfaces import ITopic
-
 from nti.ntiids.ntiids import find_object_with_ntiid
 
 logger = __import__('logging').getLogger(__name__)
 
 
 @component.adapter(IContentBlobFile)
-@interface.implementer(IIMSAssociatedContent)
+@interface.implementer(IIMSWebContentUnit)
 class IMSAssociatedContentFileBlob(object):
 
-    createFieldProperties(IIMSAssociatedContent)
+    createFieldProperties(IIMSWebContentUnit)
 
     def __init__(self, context):
         self.context = context
@@ -127,6 +129,9 @@ class IMSDiscussionTopic(object):
                 content_html.body.append(anchor)
             elif isinstance(part, six.string_types):
                 # Just html, lets append it in to the tree
+                part, deps = update_external_resources(self.context, part)
+                part = mathjax_parser(part)
+                self.dependencies['dependencies'].extend(deps)
                 new_tag = '<div>%s</div>' % part
                 new_tag = BeautifulSoup(new_tag, features='html.parser')
                 content_html.body.append(new_tag)
