@@ -108,7 +108,6 @@ from nti.contenttypes.presentation.interfaces import INTIQuestionSetRef
 from nti.coremetadata.interfaces import ILastSeenProvider
 
 from nti.dataserver.authorization import ACT_READ
-from nti.dataserver.authorization import ACT_DELETE
 from nti.dataserver.authorization import ACT_CONTENT_EDIT
 
 from nti.dataserver.authorization import is_admin
@@ -1156,10 +1155,12 @@ class _UserEnrollmentsDecorator(AbstractAuthenticatedRequestAwareDecorator):
         return result
 
     def _check_access(self, context):
-        # 403 if not admin or site admin or self
+        # 403 if not admin or site admin or self or have enrollment records
+        # (instructor access)
         return  (   self._is_admin \
                  or self._is_site_admin \
-                 or self.remoteUser == context) \
+                 or self.remoteUser == context \
+                 or get_context_enrollment_records(context, self.remoteUser)) \
             and self._can_admin_user(context)
 
     def _predicate(self, context, unused_result):
