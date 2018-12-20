@@ -147,6 +147,8 @@ class IMSWebContent(AbstractIMSWebContent):
 
     @Lazy
     def filename(self):
+        if self.path_to.startswith('/'):
+            return self.path_to[1:]
         return self.path_to
 
     @Lazy
