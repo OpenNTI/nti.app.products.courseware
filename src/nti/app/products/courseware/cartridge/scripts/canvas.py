@@ -1,6 +1,9 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 import os
+import subprocess
+import zipfile
+
 import requests
 import ssl
 import sys
@@ -9,7 +12,7 @@ import time
 import urllib2
 
 from argparse import ArgumentParser
-
+import unicodecsv as csv
 from bs4 import BeautifulSoup
 
 # These map to the tab id in Canvas. We use the id to make
@@ -104,6 +107,35 @@ def _validate_canvas_token(token):
     return False
 
 
+def get_kaltura_iframes(video_file):
+    fd = open(video_file, 'r')
+    soup = BeautifulSoup(fd, 'html5lib')
+    iframe = soup.find('iframe')
+    fd.close()
+    return [soup.find('title').text, iframe.prettify('utf-8')]
+
+
+def post_process_cartridge(imscc):
+    directory = tempfile.mkdtemp()
+    with zipfile.ZipFile(imscc, 'r') as zipref:
+        zipref.extractall(directory)
+    p = subprocess.Popen(['grep -l -r cdnapisec *'], stdout=subprocess.PIPE, shell=True,
+                         cwd=directory)
+    out, err = p.communicate()
+    iframes = []
+    for filename in out.split('\n')[:-1]:
+        path = os.path.join(directory, filename)
+        iframes.append(get_kaltura_iframes(path))
+    iframe_csv = tempfile.NamedTemporaryFile()
+    iframe_csv.name = 'kaltura_iframes.csv'
+    writer = csv.writer(iframe_csv)
+    writer.writerows(iframes)
+    iframe_csv.flush()
+    iframe_csv.seek(0)
+    upload_file(iframe_csv.name, iframe_csv)
+    imscc.seek(0)
+
+
 def get_common_cartridge(url=None):
     link = url if url else course_href + '/@@common_cartridge'
     imscc = tempfile.NamedTemporaryFile()
@@ -128,13 +160,18 @@ def get_common_cartridge(url=None):
     return imscc
 
 
-def upload_file(filepath):
+def upload_file(filepath, filedescriptor=None):
     url = dest + '/api/v1/courses/%s/files' % course_id
     filename = os.path.basename(filepath)
-    filesize = os.stat(filepath).st_size
+    if filedescriptor is not None:
+        filesize = len(filedescriptor.read())
+        filedescriptor.seek(0)
+    else:
+        filesize = os.stat(filepath).st_size
     req = requests.post(url,
                         json={'name': filename,
-                              'size': filesize},
+                              'size': filesize,
+                              'parent_folder_path': 'miscellaneous'},
                         headers={'Authorization': 'Bearer %s' % access_token})
     if req.status_code != 200:
         print 'An error occurred while creating the course through Canvas API\n%s' % req.text
@@ -142,11 +179,14 @@ def upload_file(filepath):
     upload_json = req.json()
     file_upload_url = upload_json['upload_url']
     print "Uploading %s to canvas..." % filename
-    file_upload = open(filepath, 'r')
+    file_upload = open(filepath, 'r') if filedescriptor is None else filedescriptor
     upload = requests.post(file_upload_url,
                            data=upload_json['upload_params'],
                            files={'file': file_upload})
-    file_upload.close()
+    try:
+        file_upload.close()
+    except OSError:
+        pass
     get_url = upload.headers['Location']
     location = requests.get(get_url,
                             headers={'Authorization': 'Bearer %s' % access_token})
@@ -197,7 +237,7 @@ def create_home_page():
 def create_canvas_course():
     link = dest + '/api/v1/accounts/2/courses'
     req = requests.post(link,
-                        json={'course': {'name': course_title + ' QA',
+                        json={'course': {'name': course_title + ' with CSV',
                                          'course_code': course_code},
                               'enroll_me': True},
                         headers={'Authorization': 'Bearer %s' % access_token})
@@ -361,12 +401,14 @@ def migrate(ntiid,
     _validate_canvas_token(access_token)
     print "Beginning course migration..."
     print "Downloading course export..."
+    create_canvas_course()
+
     global common_cartridge
     common_cartridge = get_common_cartridge()
+    post_process_cartridge(common_cartridge)
     print "Download complete."
     print "Beginning canvas migration..."
     print "Creating canvas course via API..."
-    create_canvas_course()
     print "Creating Home Page..."
     create_home_page()
     print "Updating course settings..."

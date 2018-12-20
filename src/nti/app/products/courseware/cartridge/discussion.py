@@ -129,7 +129,7 @@ class IMSDiscussionTopic(object):
                 content_html.body.append(anchor)
             elif isinstance(part, six.string_types):
                 # Just html, lets append it in to the tree
-                part, deps = update_external_resources(self.context, part)
+                part, deps = update_external_resources(self.topic, part)
                 part = mathjax_parser(part)
                 self.dependencies['dependencies'].extend(deps)
                 new_tag = '<div>%s</div>' % part

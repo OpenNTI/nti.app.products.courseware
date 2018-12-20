@@ -47,6 +47,10 @@ from nti.traversal.traversal import find_interface
 logger = __import__('logging').getLogger(__name__)
 
 
+UICONF_ID_MAP = {'1500101': '30404512',
+                '1459281': '15084112'}
+
+
 @interface.implementer(IIMSWebContentUnit)
 @component.adapter(INTITranscript)
 class IMSWebContentTranscript(AbstractIMSWebContent):
@@ -177,13 +181,18 @@ class IMSWebContentVideo(AbstractIMSWebContent):
             context['transcript'] = 'transcripts/' + self.dependencies.get('transcripts')[0].filename
         return execute(renderer, {"context": context})
 
-    def kaltura(self, uiconf_id="15491291"):  # UIConf sets how the iframe looks. This is OU's id
+    def kaltura(self, default_uiconf_id="15491291"):
         """
         Return a string that represent a kaltura video file
         resource in a cartridge
         """
         partner_id, entry_id = self.source_id.split(':')
-        src_href = 'https://cdnapisec.kaltura.com/p/%s/sp/0/playManifest/entryId/%s/format/url/protocol/https/flavorParamId/0/video.mp4' % (partner_id, entry_id)
+        uiconf_id = UICONF_ID_MAP.get(partner_id, default_uiconf_id)
+        src_href = 'https://cdnapisec.kaltura.com/p/%s/sp/%s00/embedIframeJs/uiconf_id/%s/partner_id/%s?iframeembed=true&playerId=nti_1544225341&entry_id=%s' % (partner_id,
+                                                                                                                                                                 partner_id,
+                                                                                                                                                                 uiconf_id,
+                                                                                                                                                                 partner_id,
+                                                                                                                                                                 entry_id)
         renderer = get_renderer("video_kaltura", ".pt")
         context = {
             'style': 'height: %spx; width: %spx' % (self.source.height, self.source.width),
@@ -194,6 +203,8 @@ class IMSWebContentVideo(AbstractIMSWebContent):
             'identifier': self.identifier,
             'title': self.context.title
         }
+        if UICONF_ID_MAP.get(partner_id, None) is None:
+            context['missing_uiconf'] = True
         if self.dependencies:
             context['transcript'] = 'transcripts/' + self.dependencies.get('transcripts')[0].filename
         return execute(renderer, {"context": context})

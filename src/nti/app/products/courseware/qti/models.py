@@ -7,8 +7,6 @@ from __future__ import division
 
 import os
 
-import six
-
 from bs4 import BeautifulSoup
 
 from datetime import timedelta
@@ -51,7 +49,6 @@ from nti.app.products.courseware.cartridge.renderer import execute
 from nti.app.products.courseware.cartridge.renderer import get_renderer
 
 from nti.app.products.courseware.cartridge.web_content import AbstractIMSWebContent
-from nti.app.products.courseware.cartridge.web_content import IMSWebContent
 
 from nti.app.products.courseware.qti.interfaces import ICanvasQuizMeta
 from nti.app.products.courseware.qti.interfaces import ICanvasAssignmentSettings
@@ -97,7 +94,7 @@ class QTIAssessment(AbstractIMSWebContent):
                     qti_item = IQTIItem(part)
                     qi_export = qti_item.to_xml()
                     self.items.append(qi_export)
-                    self.handle_dependencies(qti_item.dependencies)
+                    self.dependencies['dependencies'].extend(qti_item.dependencies)
             # set the content
 
             self.content = context.content
@@ -192,7 +189,7 @@ class QTIAssessment(AbstractIMSWebContent):
             for part in question.parts:
                 qti_item = IQTIItem(part)
                 self.items.append(qti_item.to_xml())
-                self.handle_dependencies(qti_item.dependencies)
+                self.dependencies['dependencies'].extend(qti_item.dependencies)
             nested_text = ''
             try:
                 next_question_object = question_objects[i + 1]

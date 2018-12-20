@@ -7,8 +7,6 @@ from __future__ import division
 
 import os
 
-import six
-
 from bs4 import BeautifulSoup
 
 from premailer import Premailer
@@ -42,7 +40,6 @@ from nti.app.products.courseware.cartridge.renderer import execute
 from nti.app.products.courseware.cartridge.renderer import get_renderer
 
 from nti.app.products.courseware.cartridge.web_content import AbstractIMSWebContent
-from nti.app.products.courseware.cartridge.web_content import IMSWebContent
 
 from nti.app.products.courseware.qti.interfaces import IQTIAssessment
 
@@ -124,19 +121,6 @@ def adapt_to_common_cartridge_assessment(assessment):
 class CanvasAssignment(AbstractIMSWebContent):
 
     createFieldProperties(IIMSAssignment)
-
-    def handle_dependencies(self, deps):
-        """
-        Convert a list of hrefs into IMSWebContent to maintain a standard format
-        """
-        for dep in deps:
-            # Hard refs
-            if isinstance(dep, six.text_type):
-                web_content = IMSWebContent(self.context, dep)
-                self.dependencies['dependencies'].append(web_content)
-            # MathJax / other  # TODO this could be better but we are running out of time
-            else:
-                self.dependencies['mathjax'].append(dep)
 
     def __init__(self, context):
         super(CanvasAssignment, self).__init__(context)

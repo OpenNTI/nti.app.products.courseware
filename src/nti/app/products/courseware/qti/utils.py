@@ -11,7 +11,10 @@ from bs4 import BeautifulSoup
 
 from six.moves import urllib_parse
 
-from nti.app.products.courseware.cartridge.web_content import IMSWebContent, S3WebContent
+from nti.app.products.courseware.cartridge.web_content import IMSWebContent
+from nti.app.products.courseware.cartridge.web_content import S3WebContent
+
+from nti.common import random
 
 __docformat__ = "restructuredtext en"
 
@@ -36,27 +39,37 @@ def update_external_resources(context, html, path_prefix='dependencies'):
             href = tag.attrs['href']
             if is_internal_resource(href):
                 deps.append(IMSWebContent(context, href))
+                if href.startswith('/'):
+                    href = href[1:]
                 href = os.path.join(path_prefix, href)
                 tag.attrs['href'] = os.path.join('$IMS-CC-FILEBASE$', href)
             elif href.startswith('#'):
                 to_be_extracted.append(tag)
             elif is_s3(href):
-                deps.append(S3WebContent(href))
-                path = urllib_parse.urlparse(href).path
-                path = os.path.join(path_prefix, path)
-                tag.attrs['href'] = os.path.join('IMS-CC-FILEBASE$', path)
+                file_hash = random.generate_random_string(4)
+                deps.append(S3WebContent(href, file_hash))
+                path = urllib_parse.urlparse(href).path[1:]
+                filename = os.path.basename(path)
+                filename = '%s_%s' % (file_hash, filename)
+                path = os.path.join(path_prefix, filename)
+                tag.attrs['href'] = os.path.join('$IMS-CC-FILEBASE$', path)
         if hasattr(tag, 'name') and tag.name == 'img' and \
                 hasattr(tag, 'attrs') and 'src' in tag.attrs:
             src = tag.attrs['src']
             if is_internal_resource(src):
                 deps.append(IMSWebContent(context, src))
+                if src.startswith('/'):
+                    src = src[1:]
                 src = os.path.join(path_prefix, src)
                 tag.attrs['src'] = os.path.join('$IMS-CC-FILEBASE$', src)
             elif is_s3(src):
-                deps.append(S3WebContent(src))
-                path = urllib_parse.urlparse(src).path
-                path = os.path.join(path_prefix, path)
-                tag.attrs['src'] = os.path.join('IMS-CC-FILEBASE$', path)
+                file_hash = random.generate_random_string(4)
+                deps.append(S3WebContent(src, file_hash))
+                path = urllib_parse.urlparse(src).path[1:]
+                filename = os.path.basename(path)
+                filename = '%s_%s' % (file_hash, filename)
+                path = os.path.join(path_prefix, filename)
+                tag.attrs['src'] = os.path.join('$IMS-CC-FILEBASE$', path)
     for tag in to_be_extracted:
         tag.extract()
     return soup.decode(), deps

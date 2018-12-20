@@ -132,7 +132,7 @@ class IMSWebContentNativeReading(AbstractIMSWebContent):
             if not metadata_job or not metadata_job.is_success():
                 raise CommonCartridgeExportException(u'Related work ref %s failed to render.' % self.title)
         if rendered_package is None:
-            raise CommonCartridgeExportException(u'Related work ref %s failed to render.' % self.title)
+            raise CommonCartridgeExportException(u'Unable to find content package for related work ref %s.' % self.title)
         return rendered_package
 
     @Lazy
