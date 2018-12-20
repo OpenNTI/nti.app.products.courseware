@@ -25,6 +25,10 @@ class ICanvasWikiContent(interface.Interface):
     """
 
 
+class IIMSDoNotMarkAsDependency(interface.Interface):
+    pass
+
+
 class IIMSResource(interface.Interface):
 
     identifier = TextLine(title=u'Identifier',

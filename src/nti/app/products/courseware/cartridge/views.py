@@ -22,7 +22,7 @@ from nti.app.products.courseware.cartridge.cartridge import build_manifest_items
 
 from nti.app.products.courseware.cartridge.exceptions import CommonCartridgeExportException
 
-from nti.app.products.courseware.cartridge.interfaces import ICanvasWikiContent
+from nti.app.products.courseware.cartridge.interfaces import ICanvasWikiContent, IIMSDoNotMarkAsDependency
 from nti.app.products.courseware.cartridge.interfaces import ICartridgeWebContent
 from nti.app.products.courseware.cartridge.interfaces import IIMSAssociatedContent
 from nti.app.products.courseware.cartridge.interfaces import IIMSCommonCartridge
@@ -85,11 +85,6 @@ class CommonCartridgeExportView(AbstractAuthenticatedView):
                                     dep_href = os.path.join('web_resources', dep_directory, dep.filename)
                                 else:
                                     dep_href = os.path.join(dep_directory, dep.filename)
-                                etree.SubElement(item, u'dependency', identifierref=unicode(dep.identifier))
-                                dep_xml = etree.SubElement(tree, u'resource', identifier=unicode(dep.identifier),
-                                                           type=dep.type,
-                                                           href=dep_href)
-                                etree.SubElement(dep_xml, u'file', href=dep_href)
                                 if not IIMSAssociatedContent.providedBy(dep):
                                     dep_path = os.path.join(archive, 'web_resources', dep_directory)
                                 else:
@@ -99,6 +94,14 @@ class CommonCartridgeExportView(AbstractAuthenticatedView):
                                 except CommonCartridgeExportException as e:
                                     logger.warn(e.message)
                                     cartridge.errors.append(e)
+                                    continue
+                                if not IIMSDoNotMarkAsDependency.providedBy(dep):
+                                    etree.SubElement(item, u'dependency', identifierref=unicode(dep.identifier))
+                                dep_xml = etree.SubElement(tree, u'resource', identifier=unicode(dep.identifier),
+                                                           type=dep.type,
+                                                           href=dep_href)
+                                etree.SubElement(dep_xml, u'file', href=dep_href)
+
         return archive
 
     def __call__(self):

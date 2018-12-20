@@ -29,7 +29,7 @@ from nti.app.authentication import get_remote_user
 
 from nti.app.products.courseware.cartridge.exceptions import CommonCartridgeExportException
 
-from nti.app.products.courseware.cartridge.interfaces import IIMSAssociatedContent
+from nti.app.products.courseware.cartridge.interfaces import IIMSAssociatedContent, IIMSDoNotMarkAsDependency
 from nti.app.products.courseware.cartridge.interfaces import IIMSDiscussionTopic
 from nti.app.products.courseware.cartridge.interfaces import IIMSResource
 from nti.app.products.courseware.cartridge.interfaces import IIMSWebContentUnit
@@ -59,10 +59,10 @@ logger = __import__('logging').getLogger(__name__)
 
 
 @component.adapter(IContentBlobFile)
-@interface.implementer(IIMSWebContentUnit)
+@interface.implementer(IIMSAssociatedContent)
 class IMSAssociatedContentFileBlob(object):
 
-    createFieldProperties(IIMSWebContentUnit)
+    createFieldProperties(IIMSAssociatedContent)
 
     def __init__(self, context):
         self.context = context
@@ -130,6 +130,8 @@ class IMSDiscussionTopic(object):
             elif isinstance(part, six.string_types):
                 # Just html, lets append it in to the tree
                 part, deps = update_external_resources(self.topic, part)
+                for dep in deps:
+                    interface.alsoProvides(dep, IIMSDoNotMarkAsDependency)
                 part = mathjax_parser(part)
                 self.dependencies['dependencies'].extend(deps)
                 new_tag = '<div>%s</div>' % part
