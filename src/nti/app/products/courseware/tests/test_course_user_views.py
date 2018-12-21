@@ -170,16 +170,15 @@ class TestCourseUserViews(ApplicationLayerTest):
 		student_ext = self.testapp.get(student_href,
 									   extra_environ=instructor_environ)
 		student_ext = student_ext.json_body[ITEMS][0]
-		self.require_link_href_with_rel(student_ext, VIEW_USER_ENROLLMENTS)
+		self.forbid_link_with_rel(student_ext, VIEW_USER_ENROLLMENTS)
 
 		student_ext = self.testapp.get(student_href,
 									   extra_environ=other_environ)
 		student_ext = student_ext.json_body[ITEMS][0]
-		self.require_link_href_with_rel(student_ext, VIEW_USER_ENROLLMENTS)
+		self.forbid_link_with_rel(student_ext, VIEW_USER_ENROLLMENTS)
 
 		user_enrollments_href = '/dataserver2/users/student_user/UserEnrollments'
-		self.testapp.get(user_enrollments_href,
-						 status=404)
+		self.testapp.get(user_enrollments_href)
 		self.testapp.get(user_enrollments_href,
 						extra_environ=instructor_environ,
 						status=403)
