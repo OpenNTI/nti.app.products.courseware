@@ -62,6 +62,38 @@
     <subscriber handler=".subscribers._on_course_added"  />
     <subscriber handler=".subscribers._on_course_removed" />
 
+    <!-- Course calendar events email notifications -->
+    <subscriber handler=".subscribers._on_course_calendar_event_added"
+                for=".interfaces.ICourseCalendarEvent
+                     zope.lifecycleevent.IObjectAddedEvent"/>
+
+    <subscriber handler=".subscribers._on_course_calendar_event_modified"
+                for=".interfaces.ICourseCalendarEvent
+                     zope.lifecycleevent.IObjectModifiedEvent"/>
+
+    <!-- Course calendar events notables -->
+    <subscriber handler=".subscribers._course_calendar_event_created_event"
+                for=".interfaces.ICourseCalendarEvent
+                     zope.lifecycleevent.IObjectAddedEvent"/>
+
+    <subscriber handler=".subscribers._course_calendar_event_created_event"
+                for=".interfaces.ICourseCalendarEvent
+                     zope.lifecycleevent.IObjectModifiedEvent"/>
+
+    <subscriber handler=".subscribers._remove_course_calendar_event"
+                for=".interfaces.ICourseCalendarEvent
+                     zope.lifecycleevent.IObjectRemovedEvent"/>
+
+    <!-- Notifications -->
+    <adapter factory=".notification.CourseCalendarEventNotifier"
+             provides="nti.contenttypes.calendar.interfaces.ICalendarEventNotifier"
+             for=".interfaces.ICourseCalendarEvent" />
+
+    <adapter factory=".notification.CourseCalendarEventNotificationValidator"
+             provides="nti.contenttypes.calendar.interfaces.ICalendarEventNotificationValidator"
+             for=".interfaces.ICourseCalendarEvent" />
+
+
     <ext:registerAutoPackageIO
         root_interfaces=".interfaces.ICourseCalendar
                          .interfaces.ICourseCalendarEvent"
