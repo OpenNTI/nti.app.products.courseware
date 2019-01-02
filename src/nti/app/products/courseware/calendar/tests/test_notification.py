@@ -57,10 +57,14 @@ class TestNotification(ApplicationLayerTest):
         connection.add(course)
         calendar = ICourseCalendar(course)
         calendar.store_event(event)
+        notifier = ICalendarEventNotifier(event)
+        notifier._remaining = 25
         assert_that(notifier._recipients(), has_length(0))
 
         user = User.create_user(username=u'test001')
         enrollment_manager = ICourseEnrollmentManager(course)
         enrollment_manager.enroll(user)
+        notifier = ICalendarEventNotifier(event)
+        notifier._remaining = 25
         assert_that(notifier._recipients(), has_length(1))
         assert_that(notifier._recipients(), contains(user))

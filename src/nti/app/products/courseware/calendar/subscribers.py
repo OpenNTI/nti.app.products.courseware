@@ -97,7 +97,9 @@ def _enrolled_principals(calendar_event):
 
 
 def _do_store_event_created(calendar_event):
-    calendar = ICourseCalendar(calendar_event)
+    calendar = ICourseCalendar(calendar_event, None)
+    if calendar is None:
+        return
     storage = _get_calendar_change_storage(calendar)
     if calendar_event.ntiid in storage:
         # should we also update the sharedWith here?

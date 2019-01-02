@@ -11,6 +11,8 @@ from __future__ import absolute_import
 from zope import component
 from zope import interface
 
+from zope.cachedescriptors.property import Lazy
+
 from nti.app.products.courseware.calendar.interfaces import ICourseCalendarEvent
 
 from nti.contenttypes.courses.interfaces import ICourseInstance
@@ -32,12 +34,21 @@ from nti.app.contenttypes.calendar.notification import CalendarEventNotifier
 @interface.implementer(ICalendarEventNotifier)
 class CourseCalendarEventNotifier(CalendarEventNotifier):
 
+    def _subject(self):
+        return 'Upcoming course calendar event'
+
+    @Lazy
+    def course(self):
+        return ICourseInstance(self.context, None)
+
+    def _calendar_context(self):
+        return getattr(self.course, 'title', u'Course')
+
     def _recipients(self):
-        course = ICourseInstance(self.context, None)
-        if course is None:
+        if self.course is None:
             return ()
 
-        enrollments = ICourseEnrollments(course, None)
+        enrollments = ICourseEnrollments(self.course, None)
         if enrollments is None:
             return ()
 
