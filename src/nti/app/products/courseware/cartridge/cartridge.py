@@ -19,7 +19,8 @@ from zope.proxy import getProxiedObject
 
 from nti.app.assessment.common.evaluations import get_course_assignments
 
-from nti.app.products.courseware.cartridge.exceptions import CommonCartridgeExportException
+from nti.app.products.courseware.cartridge.exceptions import CommonCartridgeExportException, \
+    CommonCartridgeExportExceptionBundle
 
 from nti.app.products.courseware.cartridge.interfaces import ICommonCartridgeAssessment
 from nti.app.products.courseware.cartridge.interfaces import IIMSCommonCartridge
@@ -80,7 +81,15 @@ class IMSCommonCartridge(object):
 
     def export_errors(self, dirname):
         with open(os.path.join(dirname, 'web_resources', 'nti_export_errors.txt'), 'w') as export_errors:
-            export_errors.write('\n\n'.join([e.message for e in self.errors]).encode('utf-8'))
+            for e in self.errors:
+                if isinstance(e, CommonCartridgeExportExceptionBundle):
+                    for bundle_e in e.errors:
+                        export_errors.write(bundle_e.message.encode('utf-8'))
+                        export_errors.write('\n\n')
+                else:
+                    export_errors.write(e.message.encode('utf-8'))
+                    export_errors.write('\n\n')
+
         item = etree.SubElement(self.manifest_resources, u'resource',
                                 identifier=u'NTIEXPORTERRORS',
                                 type='webcontent',

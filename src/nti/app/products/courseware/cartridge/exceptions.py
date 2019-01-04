@@ -17,3 +17,15 @@ class CommonCartridgeExportException(Exception):
     by the Common Cartridge and logged appropriately in the export documentation if needed. The formatting
     of this exception message should be intended for external viewing
     """
+
+
+class CommonCartridgeExportExceptionBundle(CommonCartridgeExportException):
+    """
+    N number of Common Cartridge Exceptions. This can be used within one unit to finish processing while
+    still documenting multiple errors
+    """
+
+    message = u'Common Cartridge Exception Bundle'
+
+    def __init__(self, errors):
+        self.errors = errors

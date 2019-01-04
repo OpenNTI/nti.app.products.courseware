@@ -33,9 +33,10 @@ from nti.app.contenttypes.presentation.decorators.assets import _get_item_conten
 from nti.app.contenttypes.presentation.decorators.assets import _path_exists_in_package
 from nti.app.contenttypes.presentation.decorators.assets import CONTENT_MIME_TYPE
 
-from nti.app.products.courseware.cartridge.exceptions import CommonCartridgeExportException
+from nti.app.products.courseware.cartridge.exceptions import CommonCartridgeExportException, \
+    CommonCartridgeExportExceptionBundle
 
-from nti.app.products.courseware.cartridge.interfaces import ICanvasWikiContent
+from nti.app.products.courseware.cartridge.interfaces import ICanvasWikiContent, IIMSResource
 from nti.app.products.courseware.cartridge.interfaces import ICartridgeWebContent
 from nti.app.products.courseware.cartridge.interfaces import IIMSWebContentUnit
 from nti.app.products.courseware.cartridge.interfaces import IIMSWebLink
@@ -43,10 +44,10 @@ from nti.app.products.courseware.cartridge.interfaces import IIMSWebLink
 from nti.app.products.courseware.cartridge.renderer import execute
 from nti.app.products.courseware.cartridge.renderer import get_renderer
 
-from nti.app.products.courseware.cartridge.web_content import AbstractIMSWebContent
+from nti.app.products.courseware.cartridge.web_content import AbstractIMSWebContent, S3WebContent
 from nti.app.products.courseware.cartridge.web_content import IMSWebContent
 
-from nti.app.products.courseware.qti.utils import update_external_resources
+from nti.app.products.courseware.qti.utils import update_external_resources, is_internal_resource, is_s3
 
 from nti.common import random
 
@@ -54,7 +55,7 @@ from nti.contentlibrary.interfaces import IContentPackage
 
 from nti.contentlibrary_rendering.interfaces import IContentPackageRenderMetadata
 
-from nti.ntiids.ntiids import find_object_with_ntiid
+from nti.ntiids.ntiids import find_object_with_ntiid, is_valid_ntiid_string
 
 from nti.traversal.traversal import find_interface
 
@@ -115,6 +116,169 @@ class IMSWebContentResource(AbstractIMSWebContent):
             else:
                 logger.warning(u"Unable to locate a content package for %s" % self.context.label)
                 raise CommonCartridgeExportException(u"Unable to locate a content package for %s" % self.context.label)
+
+
+def get_param_value(bs_param):
+    return bs_param.attrs.get('value')
+
+
+class EmbedWidget(object):
+
+    def source(self, bs_iframe, bs_param):
+        source = get_param_value(bs_param)
+        bs_iframe.attrs['src'] = source
+
+    def width(self, bs_iframe, bs_param):
+        width = get_param_value(bs_param) or '100%'
+        bs_iframe.attrs['width'] = width
+
+    def height(self, bs_iframe, bs_param):
+        height = get_param_value(bs_param) or '300'
+        bs_iframe.attrs['height'] = height
+
+    def __call__(self, bs_obj):
+        soup_factory = BeautifulSoup('', 'html.parser')  # There should be a better way to do this
+        iframe = soup_factory.new_tag('iframe')
+        params = bs_obj.find_all('param')
+        for param in params:
+            name = param.attrs['name']
+            foo = getattr(self, name, None)
+            if foo is not None:
+                foo(iframe, param)
+        bs_obj.replace_with(iframe)
+        return []
+
+
+def image_collection(bs_obj):
+    pass
+
+
+def nti_card(bs_obj):
+    deps = []
+    soup_factory = BeautifulSoup('', 'html.parser')  # There should be a better way to do this
+    ntiid = bs_obj.find('param', {'name': 'ntiid'})
+    ntiid = get_param_value(ntiid)
+    card = find_object_with_ntiid(ntiid)
+    if card is None:
+        raise CommonCartridgeExportException(u'Unable to resolve NTICard NTIID %s' % ntiid)
+    content_package = card.__parent__
+    href = bs_obj.find('param', {'name': 'href'})
+    href = get_param_value(href)
+    if is_valid_ntiid_string(href):
+        raise CommonCartridgeExportException(u'NTI Card with ntiid href %s' % href)
+    elif is_internal_resource(href):
+        from IPython.terminal.debugger import set_trace;set_trace()
+
+        deps.append(IMSWebContent(content_package, href))
+        if href.startswith('/'):
+            href = href[1:]
+        href = os.path.join('$IMS-CC-FILEBASE$', 'dependencies', href)
+    elif is_s3(href):
+        file_hash = random.generate_random_string(4)
+        deps.append(S3WebContent(href, file_hash))
+        path = urllib_parse.urlparse(href).path[1:]
+        filename = os.path.basename(path)
+        filename = '%s_%s' % (file_hash, filename)
+        href = os.path.join('$IMS-CC-FILEBASE$', 'dependencies', filename)
+
+    description = bs_obj.find('span', {'class': 'description'})
+    description = description.string
+    title = bs_obj.find('param', {'name': 'title'})
+    title = get_param_value(title)
+    creator = bs_obj.find('param', {'name': 'creator'})
+    creator = get_param_value(creator)
+
+    anchor = soup_factory.new_tag('a')
+    anchor.attrs['href'] = href
+    anchor.attrs['style'] = 'text-decoration: none;'
+
+    div = soup_factory.new_tag('div')
+    div.attrs['style'] = 'background: #fafdff; border: 1px solid #e3f2fc; height: 102px; width: 100%'
+    anchor.append(div)
+
+    inner_div = soup_factory.new_tag('div')
+    inner_div.attrs['style'] = 'padding: 10px 45px 10px 0;margin-left: 15px;'
+    div.append(inner_div)
+
+    title_div = soup_factory.new_tag('div')
+    title_div.string = title
+    title_div.attrs['style'] = 'overflow:  hidden; text-overflow: ellipsis; margin-bottom: 5px; color: #494949; font: normal 600 15px/20px "Open Sans", sans-serif;'
+    inner_div.append(title_div)
+
+    byline_div = soup_factory.new_tag('div')
+    byline_div.string = 'By %s' % creator
+    byline_div.attrs['style'] = 'font: normal 600 10px/10px "Open Sans", sans-serif; text-transform: uppercase; color: #3fb3f6; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;'
+    inner_div.append(byline_div)
+
+    desc_div = soup_factory.new_tag('div')
+    desc_div.string = description
+    desc_div.attrs['style'] = 'overflow: hidden; text-overflow: ellipsis; color: #494949; font: normal normal 12px/1rem "Open Sans", sans-serif; margin-top: 5px; max-height: 2rem;'
+    inner_div.append(desc_div)
+
+    bs_obj.replace_with(anchor)
+    return deps
+
+
+def nti_video_roll(bs_obj):
+    # We will need recursive dependencies for this
+    raise CommonCartridgeExportException(u'NTI Video Roll')
+    # ntiid = bs_obj.attrs['data-ntiid']
+    # video_roll = find_object_with_ntiid(ntiid)
+    # if video_roll is None:
+    #     raise CommonCartridgeExportException(u'Unable to resolve NTI Video Roll %s' % ntiid)
+    # return [IIMSWebContentUnit(video_roll)]
+
+
+def nti_video(bs_obj):
+    soup_factory = BeautifulSoup('', 'html.parser')
+    iframe = soup_factory.new_tag('iframe')
+    ntiid = bs_obj.attrs['data-ntiid']
+    video = find_object_with_ntiid(ntiid)
+    if video is None:
+        raise CommonCartridgeExportException(u'Unable to resolve NTI Video %s' % ntiid)
+    ims_video = IIMSResource(video)
+    iframe.attrs['src'] = os.path.join('$IMS-CC-FILEBASE$', 'dependencies', ims_video.filename)
+    iframe.attrs['width'] = ims_video.width + 20
+    iframe.attrs['height'] = ims_video.height + 20
+    bs_obj.replace_with(iframe)
+    return [ims_video]
+
+
+def nti_timeline(bs_obj):
+    raise CommonCartridgeExportException(u'NTI Timeline %s' % bs_obj)
+
+
+# Maps mime_types to an export callable
+# XXX: If you use a class here, you must be careful not to be stateful, as
+# the same instance will be used to handle these
+SUPPORTED_RENDERED_EXPORTS = {
+    'application/vnd.nextthought.content.embeded.widget': EmbedWidget(),
+    'application/vnd.nextthought.image-collection': image_collection,
+    'application/vnd.nextthought.nticard': nti_card,
+    'application/vnd.nextthought.videoroll': nti_video_roll,
+    'application/vnd.nextthought.ntivideo': nti_video,
+    'application/vnd.nextthought.ntitimeline': nti_timeline,
+    'application/vnd.nextthought.videosource': lambda x: [],  # no-op
+    'application/vnd.nextthought.mediatranscript': lambda x: []  # no-op
+}
+
+
+def external_export_rendered_content(html):
+    errors = []
+    dependencies = []
+    soup = BeautifulSoup(html, features='html.parser')
+    objects = soup.find_all('object')
+    for obj in objects:
+        mimetype = obj.attrs.get('type')
+        foo = SUPPORTED_RENDERED_EXPORTS.get(mimetype)
+        if foo is None:
+            errors.append(CommonCartridgeExportException(u'Unsupported rendered content type: %s' % mimetype))
+            continue
+        try:
+            dependencies.extend(foo(obj))
+        except CommonCartridgeExportException as e:
+            errors.append(e)
+    return soup.decode(), dependencies, errors
 
 
 @interface.implementer(IIMSWebContentUnit, ICanvasWikiContent)
@@ -186,6 +350,12 @@ class IMSWebContentNativeReading(AbstractIMSWebContent):
     def content(self):
         html = self.content_soup().find('body').decode()
         html, dependencies = update_external_resources(self.context, html)
+        self.dependencies['dependencies'].extend(dependencies)
+        # XXX order matters. We could consider adding a class onto elements that have already been parsed to make these
+        # idempotent
+        html, dependencies, errors = external_export_rendered_content(html)
+        if len(errors) > 0:
+            raise CommonCartridgeExportExceptionBundle(errors)
         self.dependencies['dependencies'].extend(dependencies)
         return html
 
