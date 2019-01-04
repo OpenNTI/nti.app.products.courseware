@@ -1148,10 +1148,17 @@ class _UserEnrollmentsDecorator(AbstractAuthenticatedRequestAwareDecorator):
 
     def _can_admin_user(self, user):
         # Verify a site admin is administering a user in their site.
+        # We do not want site admins to view/manage enrollments of
+        # other site admins (they may be enrolled in parent site courses).
+        # Besides, we do not want admins to be rnolled in courses they
+        # administer.
+        # XXX: Does this do what we want wrt parent site admins
+        # managing child site admins?
         result = True
         if self._is_site_admin:
             admin_utility = component.getUtility(ISiteAdminUtility)
-            result = admin_utility.can_administer_user(self.remoteUser, user)
+            result =    not is_site_admin(user) \
+                    and admin_utility.can_administer_user(self.remoteUser, user)
         return result
 
     def _check_access(self, context):
