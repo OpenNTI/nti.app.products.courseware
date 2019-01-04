@@ -20,7 +20,16 @@ from nti.app.products.courseware.calendar.interfaces import ICourseCalendarEvent
 from nti.contenttypes.calendar.model import Calendar
 from nti.contenttypes.calendar.model import CalendarEvent
 
+from nti.contenttypes.courses.interfaces import ICourseInstance
+from nti.contenttypes.courses.interfaces import ICourseEnrollments
+
 from nti.dataserver.authorization_acl import acl_from_aces
+
+from nti.dataserver.interfaces import IUser
+
+from nti.dataserver.sharing import AbstractReadableSharedMixin
+
+from nti.dataserver.users import User
 
 from nti.property.property import LazyOnClass
 
@@ -39,7 +48,7 @@ class CourseCalendar(Calendar, Contained):
 
 
 @interface.implementer(ICourseCalendarEvent)
-class CourseCalendarEvent(CalendarEvent):
+class CourseCalendarEvent(CalendarEvent, AbstractReadableSharedMixin):
 
     __external_class_name__ = "CourseCalendarEvent"
     mimeType = mime_type = "application/vnd.nextthought.courseware.coursecalendarevent"
@@ -48,3 +57,12 @@ class CourseCalendarEvent(CalendarEvent):
     def __acl__(self):
         # If we don't have this, it would derive one from ICreated, rather than its parent.
         return acl_from_aces([])
+
+    @property
+    def sharingTargets(self):
+        course = ICourseInstance(self, None)
+        if course is not None:
+            enrollments = ICourseEnrollments(course)
+            users = [User.get_user(x) for x in enrollments.iter_principals()]
+            return [x for x in users if IUser.providedBy(x)]
+        return ()
