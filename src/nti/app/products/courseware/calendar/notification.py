@@ -25,7 +25,7 @@ from nti.dataserver.users import User
 from nti.contenttypes.calendar.interfaces import ICalendarEventNotifier
 from nti.contenttypes.calendar.interfaces import ICalendarEventNotificationValidator
 
-from nti.contenttypes.calendar.processing import generate_score
+from nti.contenttypes.calendar.processing import generate_executing_time
 
 from nti.app.contenttypes.calendar.notification import CalendarEventNotifier
 
@@ -63,8 +63,8 @@ class CourseCalendarEventNotificationValidator(object):
     def __init__(self, context):
         self.context = context
 
-    def validate(self, original_score=None, *args, **kwargs):
-        curr_score = generate_score(self.context)
-        if curr_score != original_score:
+    def validate(self, original_executing_time=None, *args, **kwargs):
+        executing_time = generate_executing_time(self.context)
+        if executing_time != original_executing_time:
             return False
         return True
