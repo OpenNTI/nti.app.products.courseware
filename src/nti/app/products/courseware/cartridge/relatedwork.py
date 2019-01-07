@@ -167,8 +167,6 @@ def nti_card(bs_obj):
     if is_valid_ntiid_string(href):
         raise CommonCartridgeExportException(u'NTI Card with ntiid href %s' % href)
     elif is_internal_resource(href):
-        from IPython.terminal.debugger import set_trace;set_trace()
-
         deps.append(IMSWebContent(content_package, href))
         if href.startswith('/'):
             href = href[1:]
