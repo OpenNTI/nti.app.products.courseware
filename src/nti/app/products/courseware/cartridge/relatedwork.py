@@ -302,9 +302,8 @@ class IMSWebContentNativeReading(AbstractIMSWebContent):
         return self.rendered_package.key.absolute_path
 
     def content_soup(self, styled=True):
-
         def _recur_unit(unit):
-            if not len(unit.children) or unit.key == unit.children[0].key:
+            if not len(unit.children) or unit.key != unit.children[0].key:
                 text = unit.read_contents()
                 if styled:
                     # This inlines external style sheets
