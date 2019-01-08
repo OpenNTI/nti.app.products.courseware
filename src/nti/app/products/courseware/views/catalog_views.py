@@ -39,6 +39,8 @@ from pyramid.interfaces import IRequest
 from pyramid.view import view_config
 from pyramid.view import view_defaults
 
+from nti.app.authentication import get_remote_user
+
 from nti.app.base.abstract_views import AbstractView
 from nti.app.base.abstract_views import AbstractAuthenticatedView
 
@@ -67,7 +69,6 @@ from nti.app.products.courseware.views import VIEW_COURSE_CATALOG_FAMILIES
 from nti.appserver.dataserver_pyramid_views import GenericGetView
 
 from nti.appserver.pyramid_authorization import can_create
-from nti.appserver.pyramid_authorization import has_permission
 
 from nti.appserver.workspaces import VIEW_CATALOG_POPULAR
 from nti.appserver.workspaces import VIEW_CATALOG_FEATURED
@@ -86,6 +87,7 @@ from nti.contenttypes.courses.interfaces import ICourseCatalog
 from nti.contenttypes.courses.interfaces import ICourseInstance
 from nti.contenttypes.courses.interfaces import ICourseEnrollments
 from nti.contenttypes.courses.interfaces import ICourseCatalogEntry
+from nti.contenttypes.courses.interfaces import IDenyOpenEnrollment
 from nti.contenttypes.courses.interfaces import ICourseEnrollmentManager
 from nti.contenttypes.courses.interfaces import InstructorEnrolledException
 from nti.contenttypes.courses.interfaces import OpenEnrollmentNotAllowedException
@@ -176,6 +178,11 @@ def do_course_enrollment(context, user, scope=ES_PUBLIC, parent=None,
         request.response.status_int = 201
         request.response.location = traversal.resource_path(enrollment)
 
+    # User is not able to enroll here, but admins can enroll them.
+    if      scope == ES_PUBLIC \
+        and IDenyOpenEnrollment.providedBy(course_instance) \
+        and get_remote_user() == user:
+        raise OpenEnrollmentNotAllowedException(_("Open enrollment is not allowed."))
     # Return our enrollment, whether fresh or not
     # This should probably be a multi-adapter
     return enrollment
