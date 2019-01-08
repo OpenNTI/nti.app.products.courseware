@@ -151,6 +151,7 @@ class CompletionCertificateView(AbstractAuthenticatedView,
     def __call__(self):
         # pylint: disable=no-member
         if     self._course_completable_item is None \
+            or not self._course_completable_item.Success \
             or not self.course_policy.offers_completion_certificate:
             raise hexc.HTTPNotFound()
 
