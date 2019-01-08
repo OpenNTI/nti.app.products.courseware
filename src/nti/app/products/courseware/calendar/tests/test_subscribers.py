@@ -47,9 +47,9 @@ from nti.dataserver.users import User
 class TestSubscribers(ApplicationLayerTest):
 
     @WithMockDSTrans
-    @fudge.patch('nti.app.products.courseware.calendar.subscribers._enrolled_principals')
-    def test_calendar_change_storage(self, mock_enrolled_principals):
-        mock_enrolled_principals.is_callable().returns([])
+    @fudge.patch('nti.app.products.courseware.calendar.subscribers._sharing_scopes')
+    def test_calendar_change_storage(self, mock_sharing_scopes):
+        mock_sharing_scopes.is_callable().returns([])
         course = CourseInstance()
         connection = mock_dataserver.current_transaction
         connection.add(course)
@@ -85,8 +85,7 @@ class TestSubscribers(ApplicationLayerTest):
         calendar.store_event(event_2)
         assert_that(storage[event_2.ntiid].creator, same_instance(user))
 
-
-        mock_enrolled_principals.is_callable().returns([u'test002', u'test003'])
+        mock_sharing_scopes.is_callable().returns([u'test002', u'test003'])
         event_3 = CourseCalendarEvent(title=u'fourth')
         calendar.store_event(event_3)
         assert_that(storage[event_3.ntiid].sharedWith, contains_inanyorder(u'test002', u'test003'))

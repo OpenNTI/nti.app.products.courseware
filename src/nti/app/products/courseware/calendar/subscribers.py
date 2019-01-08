@@ -32,6 +32,7 @@ from nti.containers.containers import CaseInsensitiveLastModifiedBTreeContainer
 from nti.contenttypes.calendar.processing import queue_add
 from nti.contenttypes.calendar.processing import queue_modified
 
+from nti.contenttypes.courses.interfaces import ES_PUBLIC
 from nti.contenttypes.courses.interfaces import ICourseInstance
 from nti.contenttypes.courses.interfaces import ICourseEnrollments
 
@@ -89,11 +90,10 @@ def _get_user(user):
     return user if result is None else user
 
 
-def _enrolled_principals(calendar_event):
+def _sharing_scopes(calendar_event):
     course = ICourseInstance(calendar_event)
-    enrollments = ICourseEnrollments(course)
-    users = [User.get_user(x) for x in enrollments.iter_principals()]
-    return [x.username for x in users if IUser.providedBy(x)]
+    scope = course.SharingScopes.get(ES_PUBLIC)
+    return (scope.NTIID, ) if scope is not None else ()
 
 
 def _do_store_event_created(calendar_event):
@@ -102,7 +102,6 @@ def _do_store_event_created(calendar_event):
         return
     storage = _get_calendar_change_storage(calendar)
     if calendar_event.ntiid in storage:
-        # should we also update the sharedWith here?
         change = storage[calendar_event.ntiid]
         change.updateLastMod()
         notify(ObjectModifiedEvent(change))
@@ -119,8 +118,7 @@ def _do_store_event_created(calendar_event):
         change.creator = SYSTEM_USER_NAME
         calendar_event.creator = SYSTEM_USER_NAME
 
-    # what about if a student drop the course?
-    change.sharedWith = _enrolled_principals(calendar_event)
+    change.sharedWith = _sharing_scopes(calendar_event)
     change.__copy_object_acl__ = True
 
     # Now store it, firing events to index, etc. Remember this
