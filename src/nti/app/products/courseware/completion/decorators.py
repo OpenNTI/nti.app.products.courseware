@@ -79,8 +79,10 @@ class _CourseCompletionDecorator(AbstractAuthenticatedRequestAwareDecorator):
                                         rel='Progress'))
             if 'CourseProgress' not in result:
                 result['CourseProgress'] = self.progress
+            completed_item = self.policy.is_complete(self.progress)
             # pylint: disable=no-member
-            if      self.policy.is_complete(self.progress) \
+            if      completed_item is not None \
+                and completed_item.Success \
                 and self.policy.offers_completion_certificate:
                 _links.append(Link(context,
                                    rel=VIEW_CERTIFICATE,

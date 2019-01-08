@@ -85,7 +85,7 @@ class UserCourseCreditTranscript(object):
         if awardable_credits:
             # Course must be completed by user
             completed_item = self._get_course_completed_item()
-            if completed_item:
+            if completed_item and completed_item.Success:
                 for awardable_credit in awardable_credits or ():
                     awarded_credit = self._build_awarded_credit(awardable_credit,
                                                                 completed_item,
