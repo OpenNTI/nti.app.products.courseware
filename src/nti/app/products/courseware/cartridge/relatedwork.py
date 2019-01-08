@@ -302,8 +302,11 @@ class IMSWebContentNativeReading(AbstractIMSWebContent):
         return self.rendered_package.key.absolute_path
 
     def content_soup(self, styled=True):
+        keys = set()
+
         def _recur_unit(unit):
-            if not len(unit.children) or unit.key != unit.children[0].key:
+            key = unit.key.absolute_path
+            if not len(unit.children) and key not in keys:
                 text = unit.read_contents()
                 if styled:
                     # This inlines external style sheets
@@ -312,6 +315,7 @@ class IMSWebContentNativeReading(AbstractIMSWebContent):
                                           disable_link_rewrites=True)
                     text = premailer.transform()
                 soup = BeautifulSoup(text, features='html5lib')
+                keys.add(key)
                 return soup
             soup = BeautifulSoup('', features='html5lib')
             for child in unit.children:
@@ -319,9 +323,10 @@ class IMSWebContentNativeReading(AbstractIMSWebContent):
                 bodies = child_soup.find_all('body')
                 for body in bodies:
                     text = ''.join(x.encode('utf-8') for x in body.findChildren(recursive=False))
-                    div = '<div>%s</div>' % text
-                    div = BeautifulSoup(div, features='html.parser')
-                    soup.body.append(div)
+                    if text:
+                        div = '<div>%s</div>' % text
+                        div = BeautifulSoup(div, features='html.parser')
+                        soup.body.append(div)
             return soup
 
         return _recur_unit(self.rendered_package)
