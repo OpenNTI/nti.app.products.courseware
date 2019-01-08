@@ -67,7 +67,6 @@ from nti.contenttypes.courses.interfaces import IDenyOpenEnrollment
 from nti.contenttypes.courses.interfaces import ICourseEnrollmentManager
 from nti.contenttypes.courses.interfaces import ICourseContentPackageBundle
 from nti.contenttypes.courses.interfaces import ICourseInstanceEnrollmentRecord
-from nti.contenttypes.courses.interfaces import OpenEnrollmentNotAllowedException
 
 from nti.contenttypes.courses.interfaces import CourseBundleWillUpdateEvent
 
@@ -400,20 +399,3 @@ def _on_content_bundle_updated(bundle, event):
     added = event.added_packages
     removed = event.removed_packages
     notify(CourseBundleWillUpdateEvent(course, added, removed))
-
-
-@component.adapter(ICourseInstanceEnrollmentRecord, IObjectAddedEvent)
-def check_open_enrollment_record_added(record, unused_event):
-    """
-    If a user moves between scopes in an enrollment-mapped course,
-    we may need to transfer them to a different section too.
-    """
-    course = record.CourseInstance
-    user = IUser(record, None)
-    remote_user = get_remote_user()
-
-    # User is not able to enroll here, but admins can enroll them.
-    if      record.Scope == ES_PUBLIC \
-        and IDenyOpenEnrollment.providedBy(course) \
-        and remote_user == user:
-        raise OpenEnrollmentNotAllowedException(_("Open enrollment is not allowed."))
