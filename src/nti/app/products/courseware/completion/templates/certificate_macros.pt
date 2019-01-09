@@ -19,7 +19,7 @@
     <registerTTFont faceName="OpenSansBold" fileName="[nti.app.products.courseware]/completion/templates/fonts/OpenSans-Bold.ttf" />
     <registerTTFont faceName="OpenSansLight" fileName="[nti.app.products.courseware]/completion/templates/fonts/OpenSans-Light.ttf" />
   </docinit>
-  
+
   <template pagesize="(1100,850)" leftMargin="72" showBoundary="0">
     <pageTemplate id="landscape">
       <pageGraphics>
@@ -46,7 +46,7 @@
   </stylesheet>
   <story>
     <keepInFrame frame="heading" onOverflow="shrink">
-    <h3 style="header">Certificate of Completion</h3>
+    <h3 style="header"><omitted tal:replace="options/Brand"> Certificate of Completion</h3>
     <h1 style="name" tal:content="options/Name">Huey Sooner</h1>
     <h5 style="date">Awarded on <ommitted tal:replace="options/Date">March 19, 2008</ommitted></h5>
     <h3 style="header"><omitted tal:replace="options/Brand">Janux</omitted> Course</h3>
