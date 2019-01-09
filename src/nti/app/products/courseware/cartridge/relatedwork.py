@@ -47,7 +47,7 @@ from nti.app.products.courseware.cartridge.renderer import get_renderer
 from nti.app.products.courseware.cartridge.web_content import AbstractIMSWebContent, S3WebContent
 from nti.app.products.courseware.cartridge.web_content import IMSWebContent
 
-from nti.app.products.courseware.qti.utils import update_external_resources, is_internal_resource, is_s3
+from nti.app.products.courseware.qti.utils import update_external_resources, is_internal_resource, is_s3, mathjax_parser
 
 from nti.common import random
 
@@ -356,6 +356,7 @@ class IMSWebContentNativeReading(AbstractIMSWebContent):
         # XXX order matters. We could consider adding a class onto elements that have already been parsed to make these
         # idempotent
         html, dependencies, errors = external_export_rendered_content(html)
+        html = mathjax_parser(html)
         if len(errors) > 0:
             raise CommonCartridgeExportExceptionBundle(errors)
         self.dependencies['dependencies'].extend(dependencies)
