@@ -305,8 +305,9 @@ class IMSWebContentNativeReading(AbstractIMSWebContent):
         keys = set()
 
         def _recur_unit(unit):
+            soup = BeautifulSoup('', features='html5lib')
             key = unit.key.absolute_path
-            if not len(unit.children) and key not in keys:
+            if key not in keys:
                 text = unit.read_contents()
                 if styled:
                     # This inlines external style sheets
@@ -316,8 +317,6 @@ class IMSWebContentNativeReading(AbstractIMSWebContent):
                     text = premailer.transform()
                 soup = BeautifulSoup(text, features='html5lib')
                 keys.add(key)
-                return soup
-            soup = BeautifulSoup('', features='html5lib')
             for child in unit.children:
                 child_soup = _recur_unit(child)
                 bodies = child_soup.find_all('body')
