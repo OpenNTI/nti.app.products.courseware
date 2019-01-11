@@ -53,7 +53,6 @@ class QTIAssessmentView(AbstractAuthenticatedView):
 
     @view_config(context=ICourseInstance)
     def export(self, assignment=None, course=None):
-        from IPython.terminal.debugger import set_trace;set_trace()
         course = course if course else self.context
         if assignment is None:
             params = self.request.params
