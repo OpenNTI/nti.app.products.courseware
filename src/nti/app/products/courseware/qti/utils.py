@@ -32,7 +32,7 @@ def is_s3(href):
 def update_external_resources(context, html, path_prefix='dependencies'):
     soup = BeautifulSoup(html, features='html.parser')
     deps = []
-    to_be_extracted = []
+    to_be_replaced = []
     for tag in soup.recursiveChildGenerator():
         if hasattr(tag, 'name') and tag.name == 'a' and \
                 hasattr(tag, 'attrs') and 'href' in tag.attrs:
@@ -44,7 +44,9 @@ def update_external_resources(context, html, path_prefix='dependencies'):
                 href = os.path.join(path_prefix, href)
                 tag.attrs['href'] = os.path.join('$IMS-CC-FILEBASE$', href)
             elif href.startswith('#'):
-                to_be_extracted.append(tag)
+                span = soup.new_tag('span')
+                span.string = tag.text
+                to_be_replaced.append((span, tag))
             elif is_s3(href):
                 file_hash = random.generate_random_string(4)
                 deps.append(S3WebContent(href, file_hash))
@@ -70,8 +72,9 @@ def update_external_resources(context, html, path_prefix='dependencies'):
                 filename = '%s_%s' % (file_hash, filename)
                 path = os.path.join(path_prefix, filename)
                 tag.attrs['src'] = os.path.join('$IMS-CC-FILEBASE$', path)
-    for tag in to_be_extracted:
-        tag.extract()
+    for new, old in to_be_replaced:
+        old.replace_with(new)
+
     return soup.decode(), deps
 
 
