@@ -128,6 +128,7 @@ class IMSDiscussionTopic(object):
                 anchor.string = dependency.filename
                 content_html.body.append(anchor)
             elif isinstance(part, six.string_types):
+                part = "<br />".join(part.split('\n'))
                 # Just html, lets append it in to the tree
                 part, deps = update_external_resources(self.topic, part)
                 for dep in deps:
