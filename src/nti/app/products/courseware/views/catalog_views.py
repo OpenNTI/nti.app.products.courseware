@@ -291,6 +291,9 @@ class _AbstractSortingAndFilteringCoursesView(AbstractAuthenticatedView):
     #: The default minimum number of items we return in our favorites view.
     DEFAULT_RESULT_COUNT = 4
 
+    #: The maximum result set to return
+    MAX_RESULT_SIZE = None
+
     @Lazy
     def requested_count(self):
         params = CaseInsensitiveDict(self.request.params)
@@ -393,7 +396,10 @@ class _AbstractSortingAndFilteringCoursesView(AbstractAuthenticatedView):
 
     def __call__(self):
         result = LocatedExternalDict()
-        result[ITEMS] = items = self._get_items()
+        items = self._get_items()
+        if self.MAX_RESULT_SIZE and len(items) > self.MAX_RESULT_SIZE:
+            items = items[:self.MAX_RESULT_SIZE]
+        result[ITEMS] = items
         result[ITEM_COUNT] = len(items)
         result[TOTAL] = len(self.entries_and_records)
         return result
@@ -528,6 +534,9 @@ class FavoriteAdministeredCoursesView(_AbstractSortingAndFilteringCoursesView):
     """
     A view into the `favorite` administered courses of a user.
     """
+
+    #: Arbitrary limit; we need a better long term solution to limit this result set.
+    MAX_RESULT_SIZE = 300
 
 
 @view_config(route_name='objects.generic.traversal',
