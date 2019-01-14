@@ -32,13 +32,14 @@ from nti.containers.containers import CaseInsensitiveLastModifiedBTreeContainer
 from nti.contenttypes.calendar.processing import queue_add
 from nti.contenttypes.calendar.processing import queue_modified
 
-from nti.contenttypes.courses.interfaces import ES_PUBLIC
 from nti.contenttypes.courses.interfaces import ICourseInstance
 from nti.contenttypes.courses.interfaces import ICourseEnrollments
+from nti.contenttypes.courses.interfaces import ICourseInstanceSharingScope
 
 from nti.dataserver.activitystream_change import Change
 
 from nti.dataserver.interfaces import IUser
+from nti.dataserver.interfaces import TargetedStreamChangeEvent
 
 from nti.dataserver.users import User
 
@@ -58,6 +59,9 @@ def _on_course_removed(course, unused_event=None):
         calendar.clear()
 
 
+# Email notification
+
+
 @component.adapter(ICourseCalendarEvent, IObjectAddedEvent)
 def _on_course_calendar_event_added(calendar_event, unused_event):
     queue_add(calendar_event)
@@ -66,6 +70,9 @@ def _on_course_calendar_event_added(calendar_event, unused_event):
 @component.adapter(ICourseCalendarEvent, IObjectModifiedEvent)
 def _on_course_calendar_event_modified(calendar_event, unused_event):
     queue_modified(calendar_event)
+
+
+# RUGD notable.
 
 
 _CHANGE_KEY = u'nti.app.products.courseware.subscribers.CALENDAR_EVENT_CHANGE_KEY'
@@ -91,9 +98,11 @@ def _get_user(user):
 
 
 def _sharing_scopes(calendar_event):
-    course = ICourseInstance(calendar_event)
-    scope = course.SharingScopes.get(ES_PUBLIC)
-    return (scope.NTIID, ) if scope is not None else ()
+    res = set()
+    for x in calendar_event.sharingTargets or ():
+        if ICourseInstanceSharingScope.providedBy(x):
+            res.add(x.NTIID)
+    return tuple(res)
 
 
 def _do_store_event_created(calendar_event):
@@ -149,3 +158,37 @@ def _remove_course_calendar_event(calendar_event, unused_event=None):
         del storage[calendar_event.ntiid]
     except KeyError:
         pass
+
+
+# live stream
+
+
+def _sharing_targets(calendar_event):
+    res = set()
+    for x in calendar_event.sharingTargets or ():
+        if ICourseInstanceSharingScope.providedBy(x):
+            res = res | set(x.iter_members())
+    return res
+
+
+def _send_change_stream(calendar_event, changeType):
+    # we don't send if the creator is not existing user.
+    if not IUser.providedBy(calendar_event.creator):
+        return
+
+    change = Change(changeType, calendar_event)
+    change.creator = calendar_event.creator
+
+    for target in _sharing_targets(calendar_event):
+        if target != change.creator:
+            notify(TargetedStreamChangeEvent(change, target))
+
+
+@component.adapter(ICourseCalendarEvent, IObjectAddedEvent)
+def _stream_on_course_calendar_event_added(calendar_event, unused_event=None):
+    _send_change_stream(calendar_event, Change.CREATED)
+
+
+@component.adapter(ICourseCalendarEvent, IObjectModifiedEvent)
+def _stream_on_course_calendar_event_modified(calendar_event, unused_event=None):
+    _send_change_stream(calendar_event, Change.MODIFIED)

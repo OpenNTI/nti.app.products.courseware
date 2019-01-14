@@ -29,7 +29,6 @@ from nti.contenttypes.courses.interfaces import ICourseInstance
 
 from nti.dataserver import authorization as nauth
 
-from nti.dataserver.interfaces import IContained
 
 @view_config(route_name='objects.generic.traversal',
              renderer="rest",
@@ -43,11 +42,6 @@ class CourseCalendarEventCreationView(CalendarEventCreationView):
         course = ICourseInstance(self.context, None)
         return get_course_filer(course, self.remoteUser)
 
-    def _transform(self, contentObject):
-        if not IContained.providedBy(contentObject):
-            # Explicitliy provide IContained, such that it could be streamed.
-            interface.alsoProvides(contentObject, IContained)
-        return contentObject
 
 @view_config(route_name='objects.generic.traversal',
              renderer='rest',

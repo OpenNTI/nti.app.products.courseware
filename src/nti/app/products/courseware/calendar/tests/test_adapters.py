@@ -101,11 +101,13 @@ class TestCourseCalendarEventProvider(ApplicationLayerTest):
 
     course_ntiid2 = 'tag:nextthought.com,2011-10:NTI-CourseInfo-Fall2015_CS_1323'
 
-    @WithSharedApplicationMockDS(testapp=True, users=(u'test001', ))
+    @WithSharedApplicationMockDS(testapp=True, users=(u'test001', u'creator001'))
     def testCourseCalendarEventProvider(self):
         with mock_dataserver.mock_db_trans(self.ds, site_name='platform.ou.edu'):
             entry = find_object_with_ntiid(self.course_ntiid)
             course = ICourseInstance(entry)
+
+            creator = User.get_user(u'creator001')
 
             # no enrollment
             user = User.get_user(u'test001')
@@ -117,8 +119,12 @@ class TestCourseCalendarEventProvider(ApplicationLayerTest):
             enrollment_manager.enroll(user)
             assert_that(provider.iter_events(), has_length(0))
 
-            ICourseCalendar(course).store_event(CourseCalendarEvent(title=u'c_one'))
-            ICourseCalendar(course).store_event(CourseCalendarEvent(title=u'c_two'))
+            event = CourseCalendarEvent(title=u'c_one')
+            event.creator = creator
+            ICourseCalendar(course).store_event(event)
+            event = CourseCalendarEvent(title=u'c_two')
+            event.creator = creator
+            ICourseCalendar(course).store_event(event)
             assert_that(provider.iter_events(), has_length(2))
             assert_that([x.title for x in provider.iter_events()], contains_inanyorder('c_one', 'c_two'))
 
@@ -127,7 +133,9 @@ class TestCourseCalendarEventProvider(ApplicationLayerTest):
             course2 = ICourseInstance(entry2)
             enrollment_manager2 = ICourseEnrollmentManager(course2)
             enrollment_manager2.enroll(user)
-            ICourseCalendar(course2).store_event(CourseCalendarEvent(title=u'c_three'))
+            event = CourseCalendarEvent(title=u'c_three')
+            event.creator = creator
+            ICourseCalendar(course2).store_event(event)
 
             assert_that([x.title for x in provider.iter_events()], has_items('c_one', 'c_two', 'c_three'))
             assert_that([x.title for x in provider.iter_events(context_ntiids=None)], has_items('c_one', 'c_two', 'c_three'))

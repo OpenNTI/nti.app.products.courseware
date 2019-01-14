@@ -38,6 +38,8 @@ from nti.contenttypes.courses.interfaces import ICourseCatalogEntry
 from nti.dataserver.tests import mock_dataserver
 from nti.dataserver.tests.mock_dataserver import WithMockDSTrans
 
+from nti.dataserver.users import User
+
 
 class TestIndex(ApplicationLayerTest):
 
@@ -49,6 +51,11 @@ class TestIndex(ApplicationLayerTest):
 
     course_url = '/dataserver2/++etc++hostsites/platform.ou.edu/++etc++site/Courses/Fall2013/CLC3403_LawAndJustice'
 
+    def _new_event(self, title, creator=None):
+        event = CourseCalendarEvent(title=u'work')
+        event.creator = User.get_user(u'admin001@nextthought.com') if creator is None else creator
+        return event
+
     @WithSharedApplicationMockDS(testapp=True, users=(u'admin001@nextthought.com',))
     def test_get_indexed_calendar_events(self):
         admin_env = self._make_extra_environ('admin001@nextthought.com')
@@ -57,9 +64,9 @@ class TestIndex(ApplicationLayerTest):
             course = ICourseInstance(entry)
             calendar = ICalendar(course)
 
-            event_one = calendar.store_event(CourseCalendarEvent(title=u'work'))
-            event_two = calendar.store_event(CourseCalendarEvent(title=u'hobby'))
-            event_three = calendar.store_event(CourseCalendarEvent(title=u'math'))
+            event_one = calendar.store_event(self._new_event(title=u'work'))
+            event_two = calendar.store_event(self._new_event(title=u'hobby'))
+            event_three = calendar.store_event(self._new_event(title=u'math'))
 
             res = get_indexed_calendar_events(contexts=(entry,))
             assert_that(res, contains_inanyorder(event_one, event_two, event_three))
@@ -72,7 +79,7 @@ class TestIndex(ApplicationLayerTest):
 
             child = course.SubInstances['01']
             child_entry = ICourseCatalogEntry(child)
-            event_four = ICalendar(child).store_event(CourseCalendarEvent(title=u'child_title'))
+            event_four = ICalendar(child).store_event(self._new_event(title=u'child_title'))
 
             res = get_indexed_calendar_events(sites='platform.ou.edu')
             assert_that(res, contains_inanyorder(event_one, event_two, event_three, event_four))

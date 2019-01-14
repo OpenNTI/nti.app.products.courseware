@@ -14,14 +14,14 @@ from zope.container.contained import Contained
 
 from zope.cachedescriptors.property import readproperty
 
+from nti.contenttypes.courses.interfaces import ES_PUBLIC
+from nti.contenttypes.courses.interfaces import ICourseInstance
+
 from nti.app.products.courseware.calendar.interfaces import ICourseCalendar
 from nti.app.products.courseware.calendar.interfaces import ICourseCalendarEvent
 
 from nti.contenttypes.calendar.model import Calendar
 from nti.contenttypes.calendar.model import CalendarEvent
-
-from nti.contenttypes.courses.interfaces import ICourseInstance
-from nti.contenttypes.courses.interfaces import ICourseEnrollments
 
 from nti.dataserver.authorization_acl import acl_from_aces
 
@@ -62,7 +62,6 @@ class CourseCalendarEvent(CalendarEvent, AbstractReadableSharedMixin):
     def sharingTargets(self):
         course = ICourseInstance(self, None)
         if course is not None:
-            enrollments = ICourseEnrollments(course)
-            users = [User.get_user(x) for x in enrollments.iter_principals()]
-            return [x for x in users if IUser.providedBy(x)]
+            scope = course.SharingScopes.get(ES_PUBLIC)
+            return (scope, ) if scope is not None else ()
         return ()
