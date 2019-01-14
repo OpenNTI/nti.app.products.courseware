@@ -15,6 +15,7 @@ from nti.app.products.courseware.cartridge.web_content import IMSWebContent
 from nti.app.products.courseware.cartridge.web_content import S3WebContent
 
 from nti.common import random
+from nti.ntiids.ntiids import is_valid_ntiid_string
 
 __docformat__ = "restructuredtext en"
 
@@ -33,6 +34,11 @@ def update_external_resources(context, html, path_prefix='dependencies'):
     soup = BeautifulSoup(html, features='html.parser')
     deps = []
     to_be_replaced = []
+    # This removes 'Join the Discussion' images
+    anchor = soup.find('a', {'class': 'thumb'})
+    href = getattr(anchor, 'attrs', {}).get('href')  # None safe
+    if is_valid_ntiid_string(href):
+        anchor.extract()
     for tag in soup.recursiveChildGenerator():
         if hasattr(tag, 'name') and tag.name == 'a' and \
                 hasattr(tag, 'attrs') and 'href' in tag.attrs:
