@@ -55,6 +55,7 @@ from nti.app.products.courseware.interfaces import ICourseInstanceEnrollment
 from nti.app.products.courseware.interfaces import ICoursesCatalogCollection
 from nti.app.products.courseware.interfaces import IEnrolledCoursesCollection
 from nti.app.products.courseware.interfaces import IAdministeredCoursesCollection
+from nti.app.products.courseware.interfaces import IAdministeredCoursesFavoriteFilter
 
 from nti.app.products.courseware.views import MessageFactory as _
 from nti.app.products.courseware.views import CourseAdminPathAdapter
@@ -535,8 +536,20 @@ class FavoriteAdministeredCoursesView(_AbstractSortingAndFilteringCoursesView):
     A view into the `favorite` administered courses of a user.
     """
 
-    #: Arbitrary limit; we need a better long term solution to limit this result set.
-    MAX_RESULT_SIZE = 300
+    @Lazy
+    def _admin_favorites_filter(self):
+        return component.queryUtility(IAdministeredCoursesFavoriteFilter)
+
+    def _include_filter(self, entry):
+        """
+        Subclasses may use this to filter courses.
+        """
+        favorites_filter = self._admin_favorites_filter
+        result = True
+        if favorites_filter is not None:
+            user = self.context.__parent__.user
+            result = favorites_filter.include_entry(user, entry)
+        return result
 
 
 @view_config(route_name='objects.generic.traversal',
