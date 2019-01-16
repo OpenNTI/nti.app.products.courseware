@@ -223,6 +223,16 @@ class IAdministeredCoursesCollection(ICoursesCollection):
     """
 
 
+class IAdministeredCoursesFavoriteFilter(interface.Interface):
+
+    def include_entry(user, entry):
+        """
+        For the administered courses favorites collection,
+        allow utilities to be defined to restrict which
+        entries are returned.
+        """
+
+
 from nti.contentlibrary.interfaces import ILegacyCourseConflatedContentPackage
 
 
