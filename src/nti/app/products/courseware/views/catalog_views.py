@@ -70,6 +70,7 @@ from nti.app.products.courseware.views import VIEW_COURSE_CATALOG_FAMILIES
 from nti.appserver.dataserver_pyramid_views import GenericGetView
 
 from nti.appserver.pyramid_authorization import can_create
+from nti.appserver.pyramid_authorization import has_permission
 
 from nti.appserver.workspaces import VIEW_CATALOG_POPULAR
 from nti.appserver.workspaces import VIEW_CATALOG_FEATURED
@@ -736,10 +737,12 @@ class UserCourseCatalogFamiliesView(AbstractAuthenticatedView):
         """
         Course is visible if we're an admin (all courses), instructor/editor,
         or enrolled.
+        ACT_CONTENT_EDIT will allow access to site admins.
         """
         return self._is_admin \
             or is_course_instructor_or_editor(course, self.remoteUser) \
-            or is_enrolled(course, self.remoteUser)
+            or is_enrolled(course, self.remoteUser) \
+            or has_permission(nauth.ACT_CONTENT_EDIT, course, self.request)
 
     def _get_entries(self):
         """
