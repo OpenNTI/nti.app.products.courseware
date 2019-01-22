@@ -8,7 +8,7 @@
 	<body>
         <div tal:repeat="video context/videos">
             <h2 tal:content="video/context/title"></h2>
-            <iframe style="overflow: hidden" tal:attributes="src python:'$IMS-CC-FILEBASE$/videos/' + video.filename;
+            <iframe style="overflow: hidden" allow="autoplay *; fullscreen* ; encrypted-media *" allowfullscreen="allowfullscreen" mozallowfullscreen="mozallowfullscreen" webkitallowfullscreen="webkitallowfullscreen" tal:attributes="src python:'$IMS-CC-FILEBASE$/videos/' + video.filename;
                                     width python: video.width+20;
                                     height python:video.height+20;"
                     scrolling="no"></iframe>
