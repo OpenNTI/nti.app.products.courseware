@@ -12,6 +12,8 @@ logger = __import__('logging').getLogger(__name__)
 
 from pyramid.view import view_config
 
+from zope import interface
+
 from zope.cachedescriptors.property import Lazy
 
 from nti.app.contenttypes.calendar.views import CalendarEventCreationView
