@@ -182,6 +182,10 @@ class _CourseInstanceLinkDecorator(Singleton):
                                    rel=rel,
                                    elements=(rel,)))
 
+            _links.append(Link(context,
+                               rel='RosterSummary',
+                               elements=(VIEW_COURSE_ENROLLMENT_ROSTER, 'summary')))
+
         if 'href' not in result:
             link = Link(context)
             interface.alsoProvides(link, ILinkExternalHrefOnly)

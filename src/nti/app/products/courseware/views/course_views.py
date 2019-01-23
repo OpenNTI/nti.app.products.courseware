@@ -487,7 +487,7 @@ class CourseEnrollmentRosterGetView(AbstractAuthenticatedView,
         context = request.context.course
         course = context
         course_ntiid = context.ntiid
-        
+
         result = LocatedExternalDict()
         result.__name__ = request.view_name
         result.__parent__ = course
@@ -521,15 +521,15 @@ class CourseEnrollmentRosterGetView(AbstractAuthenticatedView,
                                       key=_key,
                                       reverse=sort_reverse)
         elif sort_name == 'username':
-            def _key(x): 
+            def _key(x):
                 user = self.user_record(x)
                 return getattr(user, 'username', '')
             enrollments_iter = sorted(enrollments_iter,
                                       key=_key,
                                       reverse=sort_reverse)
-            
+
         elif sort_name == 'lastseentime':
-            def _key(x): 
+            def _key(x):
                 result = None
                 user = self.user_record(x)
                 container = IContextLastSeenContainer(user, None)
