@@ -473,6 +473,7 @@ def _hierarchy_from_obj_and_user(obj, user):
     possible_courses = _get_valid_course_context(container_courses)
     target_ntiid = _get_target_ntiid(obj)
     results = []
+    course_only_results = []
     catalog_entries = set()
     caught_exception = None
     for course in possible_courses:
@@ -485,8 +486,16 @@ def _hierarchy_from_obj_and_user(obj, user):
                 # Catch and see if other courses have an acceptable path.
                 caught_exception = e
             else:
-                nodes = nodes if nodes else (course,)
-                results.append(nodes)
+                if nodes:
+                    # Great, we found a path, finish with first one.
+                    results.append(nodes)
+                    break
+                else:
+                    course_only_results.append((course,))
+
+    if not results and course_only_results:
+        # No actual results, use what we have.
+        results = course_only_results
 
     if not results:
         if caught_exception is not None:
