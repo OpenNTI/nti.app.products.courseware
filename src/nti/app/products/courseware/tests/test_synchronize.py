@@ -22,7 +22,6 @@ from hamcrest import has_entries
 from hamcrest import has_property
 from hamcrest import same_instance
 from hamcrest import has_properties
-from hamcrest import contains_string
 from hamcrest import contains_inanyorder
 
 from nti.testing.matchers import is_empty
@@ -52,6 +51,8 @@ from nti.contentlibrary import filesystem
 from nti.contentlibrary import ContentRemovalException
 
 from nti.contentlibrary.interfaces import IContentPackageLibrary
+
+from nti.dataserver.contenttypes.forums.forum import CommunityForum
 
 from nti.dataserver.interfaces import EVERYONE_GROUP_NAME
 from nti.dataserver.interfaces import AUTHENTICATED_GROUP_NAME
@@ -221,11 +222,6 @@ class TestFunctionalSynchronize(CourseLayerTest):
 					 has_properties('ProviderUniqueID', 'CLC 3403-01',
 									'Title', 'Law and Justice',
 									'creators', ('Steve',)))
-		assert_that(sec1_cat,
-					 has_property('PlatformPresentationResources',
-								  contains(has_property('root',
-														 has_property('absolute_path',
-																	  contains_string('Sections/01'))))))
 
 		assert_that(sec1_cat, has_property('links',
 											 contains(has_property('target', sec1))))
@@ -290,11 +286,7 @@ class TestFunctionalSynchronize(CourseLayerTest):
 															  datetime.datetime(2014, 1, 22, 6, 0)))))
 
 		policies = IQAssignmentPolicies(sec2)
-		assert_that(policies, has_property('_mapping',
-											has_entry(
-												"tag:nextthought.com,2011-10:OU-NAQ-CLC3403_LawAndJustice.naq.asg:QUIZ1_aristotle",
-												is_({'auto_grade': {'total_points': 20}, "maximum_time_allowed": 50}))))
-		assert_that(policies.getPolicyForAssignment("tag:nextthought.com,2011-10:OU-NAQ-CLC3403_LawAndJustice.naq.asg:QUIZ1_aristotle"),
+		assert_that(dict(policies.getPolicyForAssignment("tag:nextthought.com,2011-10:OU-NAQ-CLC3403_LawAndJustice.naq.asg:QUIZ1_aristotle")),
 					 is_({'auto_grade': {'total_points': 20}, u'maximum_time_allowed': 50}))
 
 		sec2_ext = to_external_object(sec2)
@@ -371,8 +363,8 @@ class TestFunctionalSynchronize(CourseLayerTest):
 			outline.lastModified = 0
 			synchronize_catalog_from_root(folder, bucket, force=force)
 
-		outline_node = outline.values()[0]
-		child_node = outline_node.values()[0]
+		outline_node = tuple(outline.values())[0]
+		child_node = tuple(outline_node.values())[0]
 		child_ntiid = child_node.ntiid
 		old_child_title = child_node.title
 		node_ntiid = outline_node.ntiid
@@ -393,8 +385,8 @@ class TestFunctionalSynchronize(CourseLayerTest):
 		# Our parent title change is preserved, and children are updated.
 		outline = gateway.Outline
 		assert_that( outline.lastModified, is_not(is_( 0 )))
-		outline_node = outline.values()[0]
-		child_node = outline_node.values()[0]
+		outline_node = tuple(outline.values())[0]
+		child_node = tuple(outline_node.values())[0]
 
 		assert_that( outline_node.ntiid, is_( node_ntiid ) )
 		assert_that( outline_node.locked, is_( True ) )
@@ -414,7 +406,7 @@ class TestFunctionalSynchronize(CourseLayerTest):
 		#	* The new child will still exist.
 		#	* Unlocked nodes will revert.
 		#	* Transaction records are preserved.
-		unchanged_node = outline_node.values()[1]
+		unchanged_node = tuple(outline_node.values())[1]
 		old_node_title2 = unchanged_node.title
 		unchanged_node.title = 'new child node title 2'
 		unchanged_record = TransactionRecord( principal='user1', tid=unchanged_node.ntiid )
@@ -441,7 +433,7 @@ class TestFunctionalSynchronize(CourseLayerTest):
 
 		outline = gateway.Outline
 		assert_that( outline.lastModified, is_not(is_( 0 )))
-		outline_node = outline.values()[0]
+		outline_node = tuple(outline.values())[0]
 		# New node exists
 		assert_that( outline_node, has_length(3) )
 
@@ -451,12 +443,12 @@ class TestFunctionalSynchronize(CourseLayerTest):
 
 		outline = gateway.Outline
 		assert_that( outline.lastModified, is_not(is_( 0 )))
-		outline_node = outline.values()[0]
+		outline_node = tuple(outline.values())[0]
 		# New node exists
 		assert_that( outline_node, has_length(3) )
 
 		# User node in slot one; user node stays unpublished.
-		child_node = outline_node.values()[0]
+		child_node = tuple(outline_node.values())[0]
 		child_txs = get_transactions( child_node )
 		assert_that( child_node.ntiid, is_( user_node_ntiid ) )
 		assert_that( child_node.locked, is_( True ) )
@@ -466,7 +458,7 @@ class TestFunctionalSynchronize(CourseLayerTest):
 		assert_that( child_txs[0], is_( user_child_node_record ))
 
 		# Changed title in slot two
-		child_node = outline_node.values()[1]
+		child_node = tuple(outline_node.values())[1]
 		child_txs = get_transactions( child_node )
 		assert_that( child_node.ntiid, is_( child_node.ntiid ) )
 		assert_that( child_node.locked, is_( True ) )
@@ -476,7 +468,7 @@ class TestFunctionalSynchronize(CourseLayerTest):
 		assert_that( child_txs[0], is_( child_node_record ))
 
 		# Reverted node in slot three
-		child_node = outline_node.values()[2]
+		child_node = tuple(outline_node.values())[2]
 		child_txs = get_transactions( child_node )
 		assert_that( child_node.ntiid, is_( unchanged_node.ntiid ) )
 		assert_that( child_node.locked, is_( False ) )
@@ -527,7 +519,7 @@ class TestFunctionalSynchronize(CourseLayerTest):
 
 		# Deleted node has unlocked children. A non-removed node
 		# does have locked children.
-		outline.values()[0].values()[0].locked = True
+		tuple(tuple(outline.values())[0].values())[0].locked = True
 		grandchild_node.locked = False
 		outline.append( user_child_node )
 		_resync()
@@ -535,7 +527,7 @@ class TestFunctionalSynchronize(CourseLayerTest):
 
 		# Swap node order
 		original_ntiid_order = tuple( outline.keys() )
-		outline.insert( 0, outline.values()[-1] )
+		outline.insert( 0, tuple(outline.values())[-1] )
 		move_ntiid_order = tuple( outline.keys() )
 		outline.child_order_locked = True
 		_resync()
@@ -547,14 +539,14 @@ class TestFunctionalSynchronize(CourseLayerTest):
 		# Reset and lock an underlying lesson. The lesson survives.
 		# XXX: It may be better to lock the parent node when lessons are edited.
 		_resync( force=True )
-		content_node = outline.values()[0].values()[0]
+		content_node = tuple(tuple(outline.values())[0].values())[0]
 		content_node.LessonOverviewNTIID = lesson_ntiid = 'about-today'
 		locked_lesson = NTILessonOverView()
 		locked_lesson.lock()
 		mock_find_object.is_callable().returns( locked_lesson )
 
 		_resync()
-		content_node = outline.values()[0].values()[0]
+		content_node = tuple(tuple(outline.values())[0].values())[0]
 		assert_that( content_node.LessonOverviewNTIID, is_(lesson_ntiid) )
 
 	def test_default_sharing_scope_use_parent(self):
@@ -728,12 +720,8 @@ class TestFunctionalSynchronize(CourseLayerTest):
 									   ACT_READ))
 
 		# But the CCE for the course is not public
-		assert_that(cat, denies(AUTHENTICATED_GROUP_NAME, ACT_READ))
-		assert_that(cat, denies(AUTHENTICATED_GROUP_NAME, ACT_CREATE))
-
-		# and as joint, just because
-		assert_that(cat, denies([EVERYONE_GROUP_NAME, AUTHENTICATED_GROUP_NAME],
-								ACT_READ))
+		assert_that(cat, denies(EVERYONE_GROUP_NAME, ACT_READ))
+		assert_that(cat, denies(EVERYONE_GROUP_NAME, ACT_CREATE))
 
 	@fudge.patch('nti.app.products.courseware.decorators.IEntityContainer',
 				 'nti.app.renderers.decorators.get_remote_user')
@@ -755,6 +743,8 @@ class TestFunctionalSynchronize(CourseLayerTest):
 		gateway = spring['Gateway']
 		section = gateway.SubInstances['03']
 		gateway_discussions = getattr(gateway, 'Discussions')
+		default_forum = CommunityForum()
+		gateway_discussions['Forum'] = default_forum
 
 		section_discussions = section.Discussions
 		# Setup. Just make sure we have a discussion here.
