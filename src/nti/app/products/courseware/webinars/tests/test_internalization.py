@@ -7,7 +7,7 @@ from __future__ import absolute_import
 
 # pylint: disable=protected-access,too-many-public-methods
 
-from hamcrest import none
+from hamcrest import is_
 from hamcrest import not_none
 from hamcrest import has_entries
 from hamcrest import assert_that
@@ -22,6 +22,8 @@ from nti.app.products.webinar.client_models import Webinar
 from nti.app.products.webinar.client_models import WebinarSession
 
 from nti.app.products.courseware.tests import CourseLayerTest
+
+from nti.contenttypes.courses.courses import ContentCourseInstance
 
 from nti.externalization.externalization import to_external_object
 
@@ -53,21 +55,22 @@ webinar_asset_json = {
 class TestWebinarInternalization(CourseLayerTest):
 
     def test_webinar_asset(self):
+        course = ContentCourseInstance()
         factory = find_factory_for(webinar_asset_json)
         assert_that(factory, not_none())
         webinar_asset = factory()
-        update_from_external_object(
-            webinar_asset, webinar_asset_json, require_updater=True
-        )
+        webinar_asset.__parent__ = course
+        update_from_external_object(webinar_asset, webinar_asset_json)
 
         assert_that(webinar_asset, verifiably_provides(IWebinarAsset))
-        assert_that(webinar_asset.title, none())
-        assert_that(webinar_asset.description, none())
+        assert_that(webinar_asset.title, is_("subject"))
+        assert_that(webinar_asset.description, is_("desc"))
         assert_that(webinar_asset.webinar, not_none())
         webinar = webinar_asset.webinar
+        # Created webinar placed in course container
         assert_that(webinar.__parent__, not_none())
 
         asset_ext = to_external_object(webinar_asset)
         assert_that(asset_ext, has_entries('webinar', not_none(),
-                                           'title', none(),
-                                           'description', none()))
+                                           'title', is_("subject"),
+                                           'description', is_("desc")))
