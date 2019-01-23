@@ -1093,36 +1093,16 @@ class AssignmentLessonsContainerDecorator(_AbstractAssessmentLessonsContainerDec
 
 @interface.implementer(IExternalObjectDecorator)
 @component.adapter(ICoursesCatalogCollection)
-class _PopularCourseCatalogCollectionDecorator(AbstractAuthenticatedRequestAwareDecorator):
-    """
-    Decorate the :class:``ICoursesCatalogCollection``.
-    """
-
-    def _predicate(self, context, unused_result):
-        return len(context)
-
-    def _do_decorate_external(self, context, result):
-        _links = result.setdefault(LINKS, [])
-        link = Link(context,
-                    rel=VIEW_CATALOG_POPULAR,
-                    elements=('@@%s' % VIEW_CATALOG_POPULAR,))
-        _links.append(link)
-
-
-@interface.implementer(IExternalObjectDecorator)
-@component.adapter(ICoursesCatalogCollection)
 class _CourseCatalogCollectionDecorator(AbstractAuthenticatedRequestAwareDecorator):
     """
     Decorate the :class:``ICoursesCatalogCollection``.
     """
 
-    def _predicate(self, context, unused_result):
-        return len(context)
-
     def _do_decorate_external(self, context, result):
         _links = result.setdefault(LINKS, [])
         for rel in (VIEW_CATALOG_FEATURED,
-                    VIEW_COURSE_BY_TAG):
+                    VIEW_COURSE_BY_TAG,
+                    VIEW_CATALOG_POPULAR):
             link = Link(context,
                         rel=rel,
                         elements=('@@%s' % rel,))
