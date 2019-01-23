@@ -63,8 +63,12 @@ class SharedConfiguringTestLayer(ZopeComponentLayer,
                                  ConfiguringLayerMixin,
                                  DSInjectorMixin):
 
-    set_up_packages = ('nti.app.products.courseware',
-                       'nti.dataserver')
+    set_up_packages = ('nti.dataserver',
+                       'nti.invitations',
+                       'nti.contenttypes.completion',
+                       'nti.app.invitations',
+                       'nti.app.products.webinar',
+                       'nti.app.products.courseware')
 
     @classmethod
     def setUp(cls):

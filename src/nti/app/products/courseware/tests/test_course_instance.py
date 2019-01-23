@@ -117,7 +117,6 @@ class TestCourseInstance(CourseLayerTest):
 		provider = acl.CourseInstanceACLProvider(inst)
 
 		inst_acl = provider.__acl__
-		assert_that(inst_acl, has_length(2))
 		assert_that(inst_acl,
 					has_item(has_properties('actor', is_(public),
 											'action', 'Allow',
@@ -129,7 +128,6 @@ class TestCourseInstance(CourseLayerTest):
 		inst_acl = provider.__acl__
 
 		inst_acl = provider.__acl__
-		assert_that(inst_acl, has_length(2))
 		assert_that(inst_acl,
 					has_item(has_properties('actor', is_(public),
 											'action', 'Allow',
@@ -144,7 +142,6 @@ class TestCourseInstance(CourseLayerTest):
 
 		provider = acl.CourseInstanceACLProvider(inst)
 		inst_acl = provider.__acl__
-		assert_that(inst_acl, has_length(3))
 		assert_that(inst_acl,
 					has_item(has_properties('actor', is_(public),
 											'action', 'Allow',

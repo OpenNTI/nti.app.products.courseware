@@ -190,7 +190,8 @@ def _on_course_deleted(course, unused_event):
     Remove the :class:`ICourseInvitation` objects from the invitation container.
     """
     invitations = ICourseInvitations(course)
-    container = component.getUtility(IInvitationsContainer)
-    for invitation in invitations:
-        container.remove(invitation,  False)
+    container = component.queryUtility(IInvitationsContainer)
+    if container is not None:
+        for invitation in invitations:
+            container.remove(invitation,  False)
     invitations.clear()

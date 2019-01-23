@@ -64,6 +64,7 @@ setup(
         'nti.app.products.webinar',
         'nti.base',
         'nti.contentlibrary',
+        'nti.contenttypes.completion',
         'nti.contenttypes.courses',
         'nti.contenttypes.presentation',
         'nti.coremetadata',
