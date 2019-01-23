@@ -42,6 +42,7 @@ from nti.dataserver.authorization import is_admin_or_site_admin
 from nti.dataserver.interfaces import IDataserverFolder
 
 from nti.externalization.interfaces import StandardExternalFields
+from nti.externalization.interfaces import IExternalObjectDecorator
 from nti.externalization.interfaces import IExternalMappingDecorator
 
 from nti.invitations.interfaces import IDisabledInvitation
@@ -55,6 +56,30 @@ from nti.traversal.traversal import find_interface
 LINKS = StandardExternalFields.LINKS
 
 logger = __import__('logging').getLogger(__name__)
+
+
+@component.adapter(ICourseInstance)
+@interface.implementer(IExternalObjectDecorator)
+class CourseInvitationsExcludedLinkDecorator(AbstractAuthenticatedRequestAwareDecorator):
+    """
+    Removes invitation decorators from the course instance
+    """
+
+    def _do_decorate_external(self, unused_context, result):
+        links = []
+        # Handle objects and dicts
+        for link in result.get(LINKS, []):
+            rel = getattr(link, 'rel', None)
+            if rel is None:
+                rel = link.get('rel')
+            if rel not in (VIEW_COURSE_ACCESS_TOKENS,
+                           VIEW_CREATE_COURSE_INVITATION,
+                           SEND_COURSE_INVITATIONS,
+                           CHECK_COURSE_INVITATIONS_CSV,
+                           ACCEPT_COURSE_INVITATIONS):
+                links.append(link)
+        result[LINKS] = links
+
 
 
 @component.adapter(ICourseInstance)
