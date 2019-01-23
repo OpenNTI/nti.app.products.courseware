@@ -316,11 +316,6 @@
                 for="nti.app.products.courseware.interfaces.ICoursesCatalogCollection
                      pyramid.interfaces.IRequest"  />
 
-    <subscriber factory=".decorators._PopularCourseCatalogCollectionDecorator"
-                provides="nti.externalization.interfaces.IExternalObjectDecorator"
-                for="nti.app.products.courseware.interfaces.ICoursesCatalogCollection
-                     pyramid.interfaces.IRequest"  />
-
     <subscriber factory=".decorators._UserEnrollmentsDecorator"
                 provides="nti.externalization.interfaces.IExternalObjectDecorator"
                 for="nti.dataserver.interfaces.IUser
