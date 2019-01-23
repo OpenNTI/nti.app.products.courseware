@@ -73,34 +73,35 @@ def _CourseCalendarPathAdapter(context, unused_request):
     return _CourseCalendarFactory(context)
 
 
-def _get_courses_for_user(user, entry_ntiids=None, excluded_entry_ntiids=None):
-    courses = []
+def _iter_courses_for_user(user, entry_ntiids=None, excluded_entry_ntiids=None):
+
+    def include_course_filter(course):
+        entry = ICourseCatalogEntry(course, None)
+        return  entry is not None \
+            and (not entry_ntiids or entry.ntiid in entry_ntiids) \
+            and (not excluded_entry_ntiids or entry.ntiid not in excluded_entry_ntiids)
 
     if is_admin_or_content_admin_or_site_admin(user):
         for catalog in component.subscribers((user,), IPrincipalAdministrativeRoleCatalog):
             queried = catalog.iter_administrations()
-            courses.extend([ICourseInstance(x) for x in queried])
+            for instance in queried:
+                course = ICourseInstance(instance)
+                if include_course_filter(course):
+                    yield course
     else:
         for instructed_course in get_instructed_courses(user) or ():
             course = ICourseInstance(instructed_course, None)
-            if course is not None:
-                courses.append(course)
+            if course is not None and include_course_filter(course):
+                yield course
 
         for enrollment in get_enrollments(user) or ():
             course = ICourseInstance(enrollment, None)
             entry = ICourseCatalogEntry(course, None)
             is_preview_course = entry is not None and entry.Preview
-            if course is not None and not is_preview_course:
-                courses.append(course)
-
-    res = []
-    for course in courses:
-        entry = ICourseCatalogEntry(course, None)
-        if      entry is not None \
-            and (not entry_ntiids or entry.ntiid in entry_ntiids) \
-            and (not excluded_entry_ntiids or entry.ntiid not in excluded_entry_ntiids):
-            res.append(course)
-    return res
+            if      course is not None \
+                and not is_preview_course \
+                and include_course_filter(course):
+                yield course
 
 
 @component.adapter(IUser)
@@ -119,7 +120,7 @@ class CourseCalendarProvider(object):
         return res
 
     def _courses(self, user, entry_ntiids=None, excluded_entry_ntiids=None):
-        return _get_courses_for_user(user, entry_ntiids, excluded_entry_ntiids)
+        return _iter_courses_for_user(user, entry_ntiids, excluded_entry_ntiids)
 
 
 @component.adapter(IUser)
@@ -139,7 +140,7 @@ class CourseCalendarEventProvider(object):
             # add course dynamic events.
             if not exclude_dynamic:
                 providers = component.subscribers((self.user, course),
-                                               ICourseCalendarDynamicEventProvider)
+                                                  ICourseCalendarDynamicEventProvider)
                 for x in providers or ():
                     res.extend(x.iter_events())
         return res
@@ -150,7 +151,7 @@ class CourseCalendarEventProvider(object):
         that are in the inclusive `entry_ntiids` param and exclude any in the
         `excluded_entry_ntiids` param.
         """
-        return _get_courses_for_user(user, entry_ntiids, excluded_entry_ntiids)
+        return _iter_courses_for_user(user, entry_ntiids, excluded_entry_ntiids)
 
 
 @component.adapter(IUser)
@@ -162,7 +163,7 @@ class CourseCalendarDynamicEventProvider(object):
 
     def iter_events(self):
         res = []
-        for course in _get_courses_for_user(self.user):
+        for course in _iter_courses_for_user(self.user):
             providers = component.subscribers((self.user, course),
                                               ICourseCalendarDynamicEventProvider)
 
