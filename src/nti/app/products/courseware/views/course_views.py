@@ -450,17 +450,21 @@ class CourseEnrollmentRosterGetView(AbstractAuthenticatedView,
         return external
 
     def _build_scope_filter(self, filter_name):
-        filter_legacy_status = None
+        filter_status = None
         if filter_name:
             try:
-                filter_legacy_status = ENROLLMENT_STATUS_FILTER_MAP[filter_name]
+                filter_status = ENROLLMENT_STATUS_FILTER_MAP[filter_name]
             except KeyError:
-                raise hexc.HTTPBadRequest("Unsupported filteroption")
+                try:
+                    filter_status = ENROLLMENT_SCOPE_MAP[filter_name]
+                except KeyError:
+                    raise hexc.HTTPBadRequest("Unsupported filteroption")
 
-        if filter_legacy_status:
+        if filter_status:
             def _filter(x):
                 x = ICourseInstanceEnrollment(x)
-                return x.LegacyEnrollmentStatus == filter_legacy_status
+                return x.LegacyEnrollmentStatus == filter_status \
+                    or x.RealEnrollmentStatus == filter_status
             return _filter
         return lambda x: x
 
