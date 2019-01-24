@@ -13,6 +13,8 @@ from zope import interface
 
 from zope.intid.interfaces import IIntIds
 
+from nti.app.contenttypes.calendar.interfaces import ICalendarEventUIDProvider
+
 from nti.app.products.courseware.calendar.model import CourseCalendarEvent
 
 from nti.app.products.courseware.calendar.interfaces import ICourseCalendar
@@ -34,6 +36,8 @@ from nti.contenttypes.courses.interfaces import ICourseInstance
 from nti.dataserver.interfaces import IUser
 
 from nti.externalization.datastructures import InterfaceObjectIO
+
+from nti.ntiids.oids import to_external_ntiid_oid
 
 from nti.schema.field import Object
 
@@ -62,6 +66,9 @@ class WebinarCalendarEvent(CourseCalendarEvent):
 
     createDirectFieldProperties(IWebinarCalendarEvent)
 
+    # This is used for helping generating global unique id for feed exporting.
+    seqNum = 0
+
 
 class WebinarCalendarEventIO(InterfaceObjectIO):
 
@@ -80,6 +87,7 @@ class WebinarCalendarDynamicEventProvider(object):
         res = []
         calendar = ICourseCalendar(self.course, None)
         for webinar in self._webinars(self.user, self.course):
+            seqNum = 0
             for time_session in webinar.times or ():
                 if time_session.endTime < time_session.startTime:
                     # CalendarEvent requires endTime can not before startTime.
@@ -94,8 +102,10 @@ class WebinarCalendarDynamicEventProvider(object):
                                              start_time=time_session.startTime,
                                              end_time=time_session.endTime,
                                              webinar=webinar)
+                event.seqNum = seqNum
                 event.__parent__ = calendar
                 res.append(event)
+                seqNum = seqNum + 1
         return res
 
     def _webinars(self, unused_user, course):
@@ -120,3 +130,14 @@ class WebinarCalendarDynamicEventProvider(object):
         return {ICourseCatalogEntry(x).ntiid for x in courses}
 
 
+@component.adapter(IWebinarCalendarEvent)
+@interface.implementer(ICalendarEventUIDProvider)
+class WebinarCalendarEventUIDProvider(object):
+
+    def __init__(self, context):
+        self.context = context
+
+    def __call__(self):
+        return u'{ntiid}_{webinarKey}_{seqNum}'.format(ntiid=to_external_ntiid_oid(self.context.webinar),
+                                                       webinarKey=self.context.webinar.webinarKey,
+                                                       seqNum=self.context.seqNum)

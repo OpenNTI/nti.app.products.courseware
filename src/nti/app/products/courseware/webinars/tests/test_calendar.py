@@ -11,12 +11,15 @@ import datetime
 import fudge
 
 from hamcrest import is_
+from hamcrest import ends_with
 from hamcrest import not_none
 from hamcrest import has_entries
 from hamcrest import assert_that
 from hamcrest import has_length
 
 from nti.app.testing.application_webtest import ApplicationLayerTest
+
+from nti.app.contenttypes.calendar.interfaces import ICalendarEventUIDProvider
 
 from nti.app.products.webinar.client_models import Webinar
 from nti.app.products.webinar.client_models import WebinarSession
@@ -197,6 +200,7 @@ class TestCalendar(ApplicationLayerTest):
             assert_that(events[1].description, is_('For testing'))
             assert_that(events[1].start_time.strftime('%Y-%m-%d %H:%M:%S'), is_('2018-09-11 00:00:00'))
             assert_that(events[1].end_time.strftime('%Y-%m-%d %H:%M:%S'), is_('2018-09-11 02:00:00'))
+            assert_that(ICalendarEventUIDProvider(events[1])(), ends_with('_web100_1'))
 
         href = '/dataserver2/Objects/%s/contents/ntiid/%s?index=0' % (group_oid, asset_ntiid)
         self.testapp.delete(href, status=200, extra_environ=admin_env)
