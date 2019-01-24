@@ -107,7 +107,7 @@ def _validate_canvas_token(token):
     return False
 
 
-def get_kaltura_iframes(video_file):
+def get_iframes(video_file):
     fd = open(video_file, 'r')
     soup = BeautifulSoup(fd, 'html5lib')
     iframe = soup.find('iframe')
@@ -119,15 +119,17 @@ def post_process_cartridge(imscc):
     directory = tempfile.mkdtemp()
     with zipfile.ZipFile(imscc, 'r') as zipref:
         zipref.extractall(directory)
-    p = subprocess.Popen(['grep -l -r cdnapisec *'], stdout=subprocess.PIPE, shell=True,
+    p = subprocess.Popen(['grep -l -r -e cdnapisec -e player.vimeo -e youtube.com/embed *'],
+                         stdout=subprocess.PIPE,
+                         shell=True,
                          cwd=directory)
     out, err = p.communicate()
     iframes = []
     for filename in out.split('\n')[:-1]:
         path = os.path.join(directory, filename)
-        iframes.append(get_kaltura_iframes(path))
+        iframes.append(get_iframes(path))
     iframe_csv = tempfile.NamedTemporaryFile()
-    iframe_csv.name = 'kaltura_iframes.csv'
+    iframe_csv.name = 'video_iframes.csv'
     writer = csv.writer(iframe_csv)
     writer.writerows(iframes)
     iframe_csv.flush()
@@ -237,7 +239,7 @@ def create_home_page():
 def create_canvas_course():
     link = dest + '/api/v1/accounts/2/courses'
     req = requests.post(link,
-                        json={'course': {'name': course_title + ' QA',
+                        json={'course': {'name': course_title + ' New Iframes',
                                          'course_code': course_code},
                               'enroll_me': True},
                         headers={'Authorization': 'Bearer %s' % access_token})
