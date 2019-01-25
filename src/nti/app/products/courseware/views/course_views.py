@@ -455,9 +455,9 @@ class CourseEnrollmentRosterGetView(AbstractAuthenticatedView,
             try:
                 filter_status = ENROLLMENT_STATUS_FILTER_MAP[filter_name]
             except KeyError:
-                try:
-                    filter_status = ENROLLMENT_SCOPE_MAP[filter_name]
-                except KeyError:
+                if filter_name in ENROLLMENT_SCOPE_MAP:
+                    filter_status = filter_name
+                else
                     raise hexc.HTTPBadRequest("Unsupported filteroption")
 
         if filter_status:

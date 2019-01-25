@@ -61,7 +61,7 @@ class AbstractEnrollingBase(object):
         # assert_that( res.json_body, has_entry( 'Items', has_length( 0 )) )
 
         res = self.testapp.get(self.all_courses_href)
-        assert_that(res.json_body, 
+        assert_that(res.json_body,
                     has_entry('Items', has_length(greater_than_or_equal_to(self.expected_workspace_length))))
         assert_that(res.json_body['Items'],
                     has_items(
@@ -120,7 +120,7 @@ class AbstractEnrollingBase(object):
                                 'Links', has_item(has_entry('rel', VIEW_COURSE_RECURSIVE_BUCKET)),
                                 'Links', has_item(has_entry('rel', 'Pages'))))
 
-        roster_link = self.require_link_href_with_rel(course_instance, 
+        roster_link = self.require_link_href_with_rel(course_instance,
                                                      'CourseEnrollmentRoster')
         activity_link = self.require_link_href_with_rel(course_instance,
                                                        'CourseActivity')
@@ -143,7 +143,7 @@ class AbstractEnrollingBase(object):
         self.testapp.get(enrollment_href, extra_environ=instructor_env)
         # ...but sometimes at a location within the roster...
         if self.individual_roster_accessible_to_instructor:
-            res = self.testapp.get(roster_link + '/sjohnson@nextthought.com', 
+            res = self.testapp.get(roster_link + '/sjohnson@nextthought.com',
                                    extra_environ=instructor_env)
             assert_that(res.json_body, has_entries('Class', 'CourseInstanceEnrollment',
                                                    'Username', self.extra_environ_default_user.lower(),
@@ -228,7 +228,21 @@ class AbstractEnrollingBase(object):
         assert_that(res.json_body, has_entry('Items', has_length(0)))
 
         res = self.testapp.get(roster_link,
+                               {'filter': 'ForCredit'},
+                               extra_environ=instructor_env)
+        assert_that(res.json_body, has_entry('TotalItemCount', 2))
+        assert_that(res.json_body, has_entry('FilteredTotalItemCount', 0))
+        assert_that(res.json_body, has_entry('Items', has_length(0)))
+
+        res = self.testapp.get(roster_link,
                                {'filter': 'LegacyEnrollmentStatusOpen'},
+                               extra_environ=instructor_env)
+        assert_that(res.json_body, has_entry('TotalItemCount', 2))
+        assert_that(res.json_body, has_entry('FilteredTotalItemCount', 2))
+        assert_that(res.json_body, has_entry('Items', has_length(2)))
+
+        res = self.testapp.get(roster_link,
+                               {'filter': 'Public'},
                                extra_environ=instructor_env)
         assert_that(res.json_body, has_entry('TotalItemCount', 2))
         assert_that(res.json_body, has_entry('FilteredTotalItemCount', 2))
@@ -282,7 +296,7 @@ class AbstractEnrollingBase(object):
         # First, we are enrolled in nothing
         res = self.testapp.get(self.enrolled_courses_href)
         assert_that(res.json_body, has_entry('Items', is_(empty())))
-        assert_that(res.json_body, 
+        assert_that(res.json_body,
                     has_entry('accepts', contains('application/json')))
         # We can POST to EnrolledCourses to add a course, assuming we're allowed
         # Right now, we accept any value that the course catalog can accept;
@@ -302,7 +316,7 @@ class AbstractEnrollingBase(object):
                     has_entries(
                         'Class', 'CourseInstanceEnrollment',
                         'href', unquote(enrollment_href)))
-        assert_that(res.location, 
+        assert_that(res.location,
                     is_('http://localhost' + unquote(enrollment_href)))
 
         course = self.testapp.get(self.require_link_href_with_rel(res.json_body, 'CourseInstance'))
@@ -317,7 +331,7 @@ class AbstractEnrollingBase(object):
                                                           'restricted'),
                                                       'Links', has_item(has_entries('rel', 'CourseCatalogEntry',
                                                                                     'href', unquote(entry_href)))))
-        
+
 
         # We can resolve the record by NTIID/OID
         record_ntiid = res.json_body['NTIID']
@@ -330,9 +344,9 @@ class AbstractEnrollingBase(object):
         # Now it should show up in our workspace
         res = self.testapp.get(self.enrolled_courses_href)
         assert_that(res.json_body, has_entry('Items', has_length(1)))
-        assert_that(res.json_body['Items'][0], 
+        assert_that(res.json_body['Items'][0],
                     has_entry('href', unquote(enrollment_href)))
-        assert_that(res.json_body['Items'][0], 
+        assert_that(res.json_body['Items'][0],
                     has_entry('RealEnrollmentStatus', is_not(none())))
 
         return enrollment_href, instance_href, entry_href
