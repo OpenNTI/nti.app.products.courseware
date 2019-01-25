@@ -206,6 +206,7 @@ class _EntryHrefDecorator(Singleton):
             interface.alsoProvides(link, ILinkExternalHrefOnly)
             result['href'] = link
 
+
 @component.adapter(ICourseCatalogEntry)
 @interface.implementer(IExternalObjectDecorator)
 class _RealPreviewDecorator(Singleton):
@@ -295,6 +296,32 @@ class _RosterMailLinkDecorator(AbstractAuthenticatedRequestAwareDecorator):
         _links = result.setdefault(LINKS, [])
         link = Link(context, rel=VIEW_COURSE_MAIL,
                     elements=(VIEW_COURSE_MAIL,))
+        interface.alsoProvides(link, ILocation)
+        link.__name__ = ''
+        link.__parent__ = context
+        _links.append(link)
+
+
+@component.adapter(ICourseInstance)
+@interface.implementer(IExternalMappingDecorator)
+class CourseManageRosterDecorator(AbstractAuthenticatedRequestAwareDecorator):
+    """
+    Decorate the course with a marker (for now) `ManageRoster` rel for admins
+    and site admins.
+    """
+
+    def _is_site_admin(self, context):
+        return is_site_admin(self.remoteUser) \
+            and has_permission(ACT_CONTENT_EDIT, context, self.request)
+
+    def _predicate(self, context, unused_result):
+        return  self._is_authenticated \
+            and (   is_admin(self.remoteUser) \
+                 or self._is_site_admin(context))
+
+    def _do_decorate_external(self, context, result):
+        _links = result.setdefault(LINKS, [])
+        link = Link(context, rel='ManageRoster')
         interface.alsoProvides(link, ILocation)
         link.__name__ = ''
         link.__parent__ = context
