@@ -457,7 +457,7 @@ class CourseEnrollmentRosterGetView(AbstractAuthenticatedView,
             except KeyError:
                 if filter_name in ENROLLMENT_SCOPE_MAP:
                     filter_status = filter_name
-                else
+                else:
                     raise hexc.HTTPBadRequest("Unsupported filteroption")
 
         if filter_status:
