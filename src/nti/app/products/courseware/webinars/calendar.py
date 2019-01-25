@@ -66,8 +66,10 @@ class WebinarCalendarEvent(CourseCalendarEvent):
 
     createDirectFieldProperties(IWebinarCalendarEvent)
 
-    # This is used for helping generating global unique id for feed exporting.
-    seqNum = 0
+    # Help generating a global unique id for calendar feed exporting, for which
+    # we have to make sure each event has a global unique id (uid), such that importing our feed
+    # into other third-party calendar wouldn't generate duplicated events if an event is imported twice or more.
+    _v_seqNum = 0
 
 
 class WebinarCalendarEventIO(InterfaceObjectIO):
@@ -102,7 +104,7 @@ class WebinarCalendarDynamicEventProvider(object):
                                              start_time=time_session.startTime,
                                              end_time=time_session.endTime,
                                              webinar=webinar)
-                event.seqNum = seqNum
+                event._v_seqNum = seqNum
                 event.__parent__ = calendar
                 res.append(event)
                 seqNum = seqNum + 1
@@ -140,4 +142,4 @@ class WebinarCalendarEventUIDProvider(object):
     def __call__(self):
         return u'{ntiid}_{webinarKey}_{seqNum}'.format(ntiid=to_external_ntiid_oid(self.context.webinar),
                                                        webinarKey=self.context.webinar.webinarKey,
-                                                       seqNum=self.context.seqNum)
+                                                       seqNum=self.context._v_seqNum)
