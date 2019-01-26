@@ -281,21 +281,19 @@ class _AbstractQueryBasedCoursesCollection(Contained):
         container = LastModifiedCopyingUserList()
         for catalog in component.subscribers((parent.user,), self.query_interface):
             queried = getattr(catalog, self.query_attr)()
-            container.extend(queried)
-        # Now that we've got the courses, turn them into enrollment records;
-        # using extend() above or the direct lists return by the iterator
-        # preserves modification dates
-        container[:] = [self.contained_interface(x) for x in container]
-        for enrollment in container:
-            enrollment.__parent__ = self
-            # The adapter (contained_interface) rarely sets these
-            # because it may not have them, so provide them ourself
-            # TODO: Change the calling conventions so we don't have to do this
-            if getattr(enrollment, 'Username', self) is None:
-                enrollment.Username = parent.user.username
-            if getattr(enrollment, '_user', self) is None:
-                enrollment._user = parent.user
-
+            container.updateLastModIfGreater(
+                        getattr(queried, 'lastModified', container.lastModified))
+            for obj in queried:
+                enrollment = self.contained_interface(obj)
+                container.append(enrollment)
+                enrollment.__parent__ = self
+                # The adapter (contained_interface) rarely sets these
+                # because it may not have them, so provide them ourself
+                # TODO: Change the calling conventions so we don't have to do this
+                if getattr(enrollment, 'Username', self) is None:
+                    enrollment.Username = parent.user.username
+                if getattr(enrollment, '_user', self) is None:
+                    enrollment._user = parent.user
         self._apply_user_extra_auth(container)
         return container
 
