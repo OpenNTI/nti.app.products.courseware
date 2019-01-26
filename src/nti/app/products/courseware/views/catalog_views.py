@@ -336,14 +336,15 @@ class _AbstractSortingAndFilteringCoursesView(AbstractAuthenticatedView):
         entry = ICourseCatalogEntry(course, None)
         return entry
 
-    @Lazy
-    def entries_and_records(self):
-        result = list()
+    def iter_entries_and_records(self):
         for record in self.context.container or ():
             entry = self._get_entry_for_record(record)
             if entry is not None:
-                result.append((entry, record))
-        return result
+                yield (entry, record)
+
+    @Lazy
+    def entries_and_records(self):
+        return tuple(self.iter_entries_and_records())
 
     def _include_filter(self, unused_entry):
         """
@@ -354,7 +355,7 @@ class _AbstractSortingAndFilteringCoursesView(AbstractAuthenticatedView):
     @Lazy
     def sorted_entries_and_records(self):
         # Sort secondary key first, ascending alpha
-        result = sorted(self.entries_and_records, key=self._secondary_sort_key)
+        result = sorted(self.iter_entries_and_records(), key=self._secondary_sort_key)
         # Then primary key (date), most recent first
         result = sorted(result,
                         key=self._sort_key,
@@ -403,7 +404,7 @@ class _AbstractSortingAndFilteringCoursesView(AbstractAuthenticatedView):
             items = items[:self.MAX_RESULT_SIZE]
         result[ITEMS] = items
         result[ITEM_COUNT] = len(items)
-        result[TOTAL] = len(self.entries_and_records)
+        result[TOTAL] = len(self.sorted_entries_and_records)
         return result
 
 
@@ -777,7 +778,7 @@ class _AbstractFilteredCourseView(_AbstractSortingAndFilteringCoursesView,
 
     @Lazy
     def filtered_entries(self):
-        return [x for x in self.entries_and_records if self._include_filter(x[0])]
+        return [x for x in self.iter_entries_and_records() if self._include_filter(x[0])]
 
     @Lazy
     def sorted_filtered_entries_and_records(self):
@@ -1027,10 +1028,10 @@ class CourseCollectionView(_AbstractFilteredCourseView,
     def filtered_entries(self):
         # pylint: disable=not-an-iterable
         filter_utility = component.getUtility(ICourseCatalogEntryFilterUtility)
-        entries = (x[0] for x in self.entries_and_records)
-        entries = filter_utility.filter_entries(entries, self.filter_str)
-        entries = set(entries)
-        return [x for x in self.entries_and_records if x[0] in entries]
+        entries = filter_utility.filter_entries(self.iter_entries_and_records(),
+                                                self.filter_str,
+                                                selector=lambda x: x[0])
+        return entries
 
     def _sort_key(self, entry_tuple):
         entry = entry_tuple[0]
