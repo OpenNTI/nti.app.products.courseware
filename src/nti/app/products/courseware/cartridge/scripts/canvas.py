@@ -112,7 +112,7 @@ def get_iframes(video_file):
     soup = BeautifulSoup(fd, 'html5lib')
     iframe = soup.find('iframe')
     fd.close()
-    return [soup.find('title').text, iframe.prettify('utf-8')]
+    return [soup.find('title').text.encode('utf-8'), iframe.prettify('utf-8')]
 
 
 def post_process_cartridge(imscc):

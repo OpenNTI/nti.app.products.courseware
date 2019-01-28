@@ -44,10 +44,12 @@ def update_external_resources(context, html, path_prefix='dependencies'):
                 hasattr(tag, 'attrs') and 'href' in tag.attrs:
             href = tag.attrs['href']
             if is_internal_resource(href):
-                deps.append(IMSWebContent(context, href))
+                file_hash = random.generate_random_string(4)
+                deps.append(IMSWebContent(context, href, file_hash))
                 if href.startswith('/'):
                     href = href[1:]
-                href = os.path.join(path_prefix, href)
+                href, fname = os.path.split(href)
+                href = os.path.join(path_prefix, href, '%s_%s' % (file_hash, fname))
                 tag.attrs['href'] = os.path.join('$IMS-CC-FILEBASE$', href)
             elif href.startswith('#'):
                 span = soup.new_tag('span')
@@ -65,10 +67,12 @@ def update_external_resources(context, html, path_prefix='dependencies'):
                 hasattr(tag, 'attrs') and 'src' in tag.attrs:
             src = tag.attrs['src']
             if is_internal_resource(src):
-                deps.append(IMSWebContent(context, src))
+                file_hash = random.generate_random_string(4)
+                deps.append(IMSWebContent(context, src, file_hash))
                 if src.startswith('/'):
                     src = src[1:]
-                src = os.path.join(path_prefix, src)
+                src, fname = os.path.split(src)
+                src = os.path.join(path_prefix, src, '%s_%s' % (file_hash, fname))
                 tag.attrs['src'] = os.path.join('$IMS-CC-FILEBASE$', src)
             elif is_s3(src):
                 file_hash = random.generate_random_string(4)

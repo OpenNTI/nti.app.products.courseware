@@ -113,9 +113,10 @@ class IMSWebContent(AbstractIMSWebContent):
     Wrapper class for rendered content files that are not associated with an object
     """
 
-    def __init__(self, context, path_to):
+    def __init__(self, context, path_to, file_hash):
         super(IMSWebContent, self).__init__(context)
         self.path_to = path_to
+        self.file_hash = file_hash
 
     @Lazy
     def identifier(self):
@@ -148,8 +149,10 @@ class IMSWebContent(AbstractIMSWebContent):
     @Lazy
     def filename(self):
         if self.path_to.startswith('/'):
-            return self.path_to[1:]
-        return self.path_to
+            path, fname = os.path.split(self.path_to[1:])
+        else:
+            path, fname = os.path.split(self.path_to)
+        return os.path.join(path, '%s_%s' % (self.file_hash, fname))
 
     @Lazy
     def content_directory(self):
@@ -181,7 +184,7 @@ class IMSWebContent(AbstractIMSWebContent):
             self.external_resource(target_path, response)
         else:
             source_path = os.path.join(self.content_directory, self.path_to)
-            target_path = os.path.join(dirname, self.path_to)
+            target_path = os.path.join(dirname, self.filename)
             self.copy_resource(source_path, target_path)
 
 
