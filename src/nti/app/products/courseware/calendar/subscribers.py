@@ -68,8 +68,11 @@ def _on_course_calendar_event_added(calendar_event, unused_event):
 
 
 @component.adapter(ICourseCalendarEvent, IObjectModifiedEvent)
-def _on_course_calendar_event_modified(calendar_event, unused_event):
-    queue_modified(calendar_event)
+def _on_course_calendar_event_modified(calendar_event, modified_event):
+    # Sending email notification only when start_time changes.
+    external = getattr(modified_event, 'external_value', {})
+    if 'start_time' in external:
+        queue_modified(calendar_event)
 
 
 # RUGD notable.
