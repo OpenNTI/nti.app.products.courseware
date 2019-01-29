@@ -321,7 +321,7 @@ class CanvasQuizMeta(object):
             self.quiz_type = u'assignment'
             self.assignment = CanvasAssignmentSettings(qti_assessment).to_xml()
             if IQTimedAssignment.providedBy(assessment):
-                self.time_limit = get_max_time_allowed(assessment, course) / 60  # minutes to seconds
+                self.time_limit = get_max_time_allowed(assessment, course) / 60.0  # minutes to seconds
             self.allowed_attempts = get_policy_max_submissions(assessment, course)
             self.unlock_at = get_available_for_submission_beginning(assessment, context=course)
             self.due_at = get_available_for_submission_ending(assessment, context=course) or self.due_at

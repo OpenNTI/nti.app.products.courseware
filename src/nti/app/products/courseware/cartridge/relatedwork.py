@@ -167,10 +167,13 @@ def nti_card(bs_obj):
     if is_valid_ntiid_string(href):
         raise CommonCartridgeExportException(u'NTI Card with ntiid href %s' % href)
     elif is_internal_resource(href):
-        deps.append(IMSWebContent(content_package, href))
+        file_hash = random.generate_random_string(4)
+        deps.append(IMSWebContent(content_package, href, file_hash))
         if href.startswith('/'):
             href = href[1:]
-        href = os.path.join('$IMS-CC-FILEBASE$', 'dependencies', href)
+        href, fname = os.path.split(href)
+        href = os.path.join('dependencies', href, '%s_%s' % (file_hash, fname))
+        tag.attrs['href'] = os.path.join('$IMS-CC-FILEBASE$', href)
     elif is_s3(href):
         file_hash = random.generate_random_string(4)
         deps.append(S3WebContent(href, file_hash))
