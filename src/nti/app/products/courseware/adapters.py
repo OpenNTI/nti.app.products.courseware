@@ -391,6 +391,21 @@ def _get_valid_course_context(course_contexts):
         else:
             courses.append(course_context)
 
+    if not courses and user is not None:
+        # For video and related work in parent course, their containers only contain parent course,
+        # but we hope that a section course should also be returned for users who enroll in the section course.
+        # TODO: probably need a better way to deal with, for parent course may have lots of section courses?
+        for course in course_contexts:
+            if ICourseSubInstance.providedBy(course):
+                continue
+            for subinstance in get_course_subinstances(course):
+                if _is_user_enrolled(user, subinstance) or has_permission(ACT_CONTENT_EDIT, subinstance, user):
+                    # Find the first enrolled course.
+                    courses.append(subinstance)
+                    break
+            if courses:
+                break
+
     # If we only have catalog entries, we should raise.
     # Otherwise, make sure our courses are returned first.
     if not courses and catalog_entries:
