@@ -13,7 +13,7 @@ from zope import interface
 
 from zope.cachedescriptors.property import Lazy
 
-from nti.app.products.courseware.calendar.interfaces import ICourseCalendarEvent
+from nti.app.products.courseware.calendar.interfaces import ICourseCalendar
 
 from nti.contenttypes.courses.interfaces import ICourseInstance
 
@@ -26,7 +26,7 @@ from nti.traversal.traversal import find_interface
 logger = __import__('logging').getLogger(__name__)
 
 
-@component.adapter(ICourseCalendarEvent)
+@component.adapter(ICourseCalendar)
 @interface.implementer(IACLProvider)
 class CourseCalendarACLProvider(object):
 
