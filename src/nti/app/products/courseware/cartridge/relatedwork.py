@@ -110,7 +110,11 @@ class IMSWebContentResource(AbstractIMSWebContent):
                             package = _get_item_content_package(self.context, value)
             root = getattr(package, 'root', None)
             if root is not None:
-                source_path = os.path.join(root.absolute_path, self.context.href)
+                try:
+                    source_path = os.path.join(root.absolute_path, self.context.href)
+                except:
+                    from IPython.terminal.debugger import set_trace;set_trace()
+
                 target_path = os.path.join(path, self.filename)
                 self.copy_resource(source_path, target_path)
             else:
@@ -150,7 +154,9 @@ class EmbedWidget(object):
 
 
 def image_collection(bs_obj):
-    pass
+    # links are already updated so just unwrap the object tag
+    bs_obj.unwrap()
+    return []
 
 
 def nti_card(bs_obj):

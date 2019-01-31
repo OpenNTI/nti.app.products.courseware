@@ -141,7 +141,7 @@ def post_process_cartridge(imscc):
 def get_common_cartridge(url=None):
     link = url if url else course_href + '/@@common_cartridge'
     imscc = tempfile.NamedTemporaryFile()
-    req = requests.get(link, stream=True, verify=False, auth=(username, password))
+    req = requests.get(link, stream=True, verify=False, auth=(username, password), timeout=10000.0)
     size = int(req.headers['Content-Length'])
     imported = 0
     increments = 1
