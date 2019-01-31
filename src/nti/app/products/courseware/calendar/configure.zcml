@@ -14,6 +14,11 @@
              factory=".adapters._CourseCalendarPathAdapter"
              provides="zope.traversing.interfaces.IPathAdapter"/>
 
+    <!-- ACLs -->
+    <adapter factory=".acl.CourseCalendarACLProvider"
+             for="nti.app.products.courseware.calendar.interfaces.ICourseCalendar"
+             provides="nti.dataserver.interfaces.IACLProvider" />
+
     <!-- Adapters -->
     <adapter factory=".adapters.calendar_to_course" />
     <adapter factory=".adapters.calendarevent_to_course" />
