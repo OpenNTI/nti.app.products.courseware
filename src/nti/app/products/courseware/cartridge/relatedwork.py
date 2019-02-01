@@ -109,16 +109,12 @@ class IMSWebContentResource(AbstractIMSWebContent):
                             # We make sure each url is in the correct package.
                             package = _get_item_content_package(self.context, value)
             root = getattr(package, 'root', None)
-            if root is not None:
-                try:
-                    source_path = os.path.join(root.absolute_path, self.context.href)
-                except:
-                    from IPython.terminal.debugger import set_trace;set_trace()
-
+            if root is not None and self.context.href is not None:
+                source_path = os.path.join(root.absolute_path, self.context.href)
                 target_path = os.path.join(path, self.filename)
                 self.copy_resource(source_path, target_path)
             else:
-                logger.warning(u"Unable to locate a content package for %s" % self.context.label)
+                logger.warning(u"Unable to locate a content package or href for %s" % self.context.label)
                 raise CommonCartridgeExportException(u"Unable to locate a content package for %s" % self.context.label)
 
 
