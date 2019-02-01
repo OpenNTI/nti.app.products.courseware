@@ -41,6 +41,8 @@ from zope.securitypolicy.interfaces import IPrincipalRoleMap
 
 from nti.app.base.abstract_views import AbstractAuthenticatedView
 
+from nti.app.contenttypes.completion.adapters import CompletionContextProgressFactory
+
 from nti.app.externalization.error import raise_json_error
 
 from nti.app.externalization.internalization import read_body_as_external_object
@@ -84,6 +86,7 @@ from nti.contenttypes.courses.interfaces import ENROLLMENT_SCOPE_VOCABULARY
 
 from nti.contenttypes.courses.interfaces import ICourseCatalog
 from nti.contenttypes.courses.interfaces import ICourseInstance
+from nti.contenttypes.courses.interfaces import ICourseEnrollments
 from nti.contenttypes.courses.interfaces import ICourseCatalogEntry
 from nti.contenttypes.courses.interfaces import ICourseEnrollmentManager
 from nti.contenttypes.courses.interfaces import ICourseInstanceEnrollmentRecord
@@ -95,9 +98,13 @@ from nti.contenttypes.courses.utils import get_enrollments as get_index_enrollme
 
 from nti.dataserver import authorization as nauth
 
+from nti.dataserver.authorization import is_admin
+from nti.dataserver.authorization import is_site_admin
+
 from nti.dataserver.interfaces import IUser
 from nti.dataserver.interfaces import IDataserver
 from nti.dataserver.interfaces import IShardLayout
+from nti.dataserver.interfaces import ISiteAdminUtility
 from nti.dataserver.interfaces import IUsernameSubstitutionPolicy
 
 from nti.dataserver.metadata.index import IX_MIMETYPE
@@ -748,3 +755,118 @@ class RemoveGhostCourseEnrollmentsView(AbstractAuthenticatedView):
                 if intids.queryId(obj) is not None:
                     removeIntId(obj)
         return hexc.HTTPNoContent()
+
+
+@view_config(context=IDataserverFolder)
+@view_config(context=CourseAdminPathAdapter)
+@view_defaults(route_name='objects.generic.traversal',
+               renderer='rest',
+               request_method='GET',
+               name='CourseCompletionEnrollmentRecords')
+class AllCourseCompletionView(AbstractAuthenticatedView):
+    """
+    Return a data set of all enrollment records that have completed courses
+    within the specified date range.
+    """
+
+    def _to_datetime(self, stamp):
+        return datetime.utcfromtimestamp(stamp)
+
+    @Lazy
+    def _params(self):
+        return CaseInsensitiveDict(self.request.params)
+
+    def _get_param(self, param_name):
+        # pylint: disable=no-member
+        param_val = self._params.get(param_name)
+        if param_val is None:
+            return None
+        try:
+            result = float(param_val)
+        except ValueError:
+            raise_json_error(self.request,
+                             hexc.HTTPUnprocessableEntity,
+                             {
+                                 'message': _(u'Invalid timestamp boundary.'),
+                             },
+                             None)
+        result = self._to_datetime(result)
+        return result
+
+    @Lazy
+    def not_before(self):
+        return self._get_param("notBefore")
+
+    @Lazy
+    def not_after(self):
+        return self._get_param("notAfter")
+
+    def _iter_catalog_entries(self):
+        return component.getUtility(ICourseCatalog).iterCatalogEntries()
+
+    def _include_record(self, progress):
+        """
+        Return a bool if this progress record falls within our boundaries.
+        """
+        return  progress.Completed \
+            and (   self.not_before is None \
+                 or progress.CompletedDate >= self.not_before) \
+            and (   self.not_after is None \
+                 or progress.CompletedDate < self.not_after)
+
+    @Lazy
+    def _is_admin(self):
+        return is_admin(self.remoteUser)
+
+    @Lazy
+    def _is_site_admin(self):
+        return is_site_admin(self.remoteUser)
+
+    def _can_admin_user(self, user):
+        # Verify a site admin is administering a user in their site.
+        result = True
+        if self._is_site_admin:
+            admin_utility = component.getUtility(ISiteAdminUtility)
+            result = admin_utility.can_administer_user(self.remoteUser, user)
+        return result
+
+    def _check_access(self):
+        if not self._is_admin and not self._is_site_admin:
+            raise hexc.HTTPForbidden()
+
+    def __call__(self):
+        self._check_access()
+        result = LocatedExternalDict()
+        result[ITEMS] = items = dict()
+        required_item_providers = None
+        course_count = 0
+        item_count = 0
+        for catalog_entry in self._iter_catalog_entries():
+            course = ICourseInstance(catalog_entry, None)
+            if course is None:
+                continue
+            course_result_records = []
+            course_enrollments = ICourseEnrollments(course)
+            for record in course_enrollments.iter_enrollments():
+                user = IUser(record.Principal, None)
+                if user is None or not self._can_admin_user(user):
+                    # Deleted user
+                    continue
+
+                progress_factory = CompletionContextProgressFactory(user,
+                                                                    course,
+                                                                    required_item_providers)
+                progress = progress_factory()
+                if required_item_providers is None:
+                    required_item_providers = progress_factory.required_item_providers
+
+                if self._include_record(progress):
+                    course_result_records.append(record)
+
+            if course_result_records:
+                items[catalog_entry.ntiid] = course_result_records
+                course_count += 1
+                item_count += len(course_result_records)
+        result['CourseCount'] = course_count
+        result['EnrollmentRecordCount'] = result[ITEM_COUNT] = item_count
+        return result
