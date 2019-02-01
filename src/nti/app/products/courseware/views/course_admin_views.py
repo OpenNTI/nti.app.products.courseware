@@ -838,13 +838,13 @@ class AllCourseCompletionView(AbstractAuthenticatedView):
         self._check_access()
         result = LocatedExternalDict()
         result[ITEMS] = items = dict()
-        required_item_providers = None
         course_count = 0
         item_count = 0
         for catalog_entry in self._iter_catalog_entries():
             course = ICourseInstance(catalog_entry, None)
             if course is None:
                 continue
+            required_item_providers = None
             course_result_records = []
             course_enrollments = ICourseEnrollments(course)
             for record in course_enrollments.iter_enrollments():
