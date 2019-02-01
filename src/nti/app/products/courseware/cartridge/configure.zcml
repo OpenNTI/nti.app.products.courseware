@@ -56,4 +56,8 @@
          provides=".interfaces.ICommonCartridgeAssessment"
          for="nti.contenttypes.presentation.interfaces.INTIAssessmentRef" />
 
+    <adapter factory=".timeline.IMSWebContentTimelineWrapper"
+             provides=".interfaces.IIMSResource"
+             for="nti.contenttypes.presentation.interfaces.INTITimeline" />
+
 </configure>

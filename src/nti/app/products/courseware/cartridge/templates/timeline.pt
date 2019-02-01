@@ -1,0 +1,25 @@
+<html>
+	<head>
+		<!-- jQuery -->
+		<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+		<!-- BEGIN TimelineJS -->
+		<script type="text/javascript" src="https://cdn.knightlab.com/libs/timeline/latest/js/storyjs-embed.js"></script>
+        <script tal:content="string:var json=`${context/json}`;"></script>
+		<script>
+			var json_object = JSON.parse(json);
+			$(document).ready(function() {
+				createStoryJS({
+					type:		'timeline',
+					width:		'100%',
+					height:		'600',
+					source:		json_object,
+					embed_id:	'my-timeline'
+				});
+			});
+		</script>
+		<!-- END TimelineJS -->
+	</head>
+	<body>
+		<div id="my-timeline"></div>
+	</body>
+</html>

@@ -1,0 +1,12 @@
+<html>
+	<head>
+        <title tal:content="context/title"></title>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+        <meta name="identifier" tal:attributes="content context/identifier" />
+        <base target="_parent">
+    </head>
+	<body>
+            <iframe style="overflow: hidden" allow="autoplay *; fullscreen* ; encrypted-media *" allowfullscreen="allowfullscreen" mozallowfullscreen="mozallowfullscreen" webkitallowfullscreen="webkitallowfullscreen" tal:attributes="src python:'$IMS-CC-FILEBASE$/timelines/' + context['timeline']"
+                    scrolling="no" width="100%" height="600"></iframe>
+	</body>
+</html>
