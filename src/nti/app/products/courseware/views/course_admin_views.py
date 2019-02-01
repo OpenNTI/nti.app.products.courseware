@@ -848,7 +848,7 @@ class AllCourseCompletionView(AbstractAuthenticatedView):
             course_result_records = []
             course_enrollments = ICourseEnrollments(course)
             for record in course_enrollments.iter_enrollments():
-                user = IUser(record.Principal, None)
+                user = IUser(record, None)
                 if user is None or not self._can_admin_user(user):
                     # Deleted user
                     continue
