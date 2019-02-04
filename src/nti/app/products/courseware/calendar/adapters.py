@@ -8,6 +8,8 @@ from __future__ import division
 from __future__ import print_function
 from __future__ import absolute_import
 
+import gevent
+
 from pyramid.interfaces import IRequest
 
 from ZODB.interfaces import IConnection
@@ -143,6 +145,7 @@ class CourseCalendarEventProvider(object):
                                                   ICourseCalendarDynamicEventProvider)
                 for x in providers or ():
                     res.extend(x.iter_events())
+            gevent.sleep(.01)
         return res
 
     def _courses(self, user, entry_ntiids=None, excluded_entry_ntiids=None):
@@ -169,6 +172,7 @@ class CourseCalendarDynamicEventProvider(object):
 
             for x in providers or ():
                 res.extend(x.iter_events())
+            gevent.sleep(.01)
         return res
 
 

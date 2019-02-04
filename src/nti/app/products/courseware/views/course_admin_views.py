@@ -11,6 +11,8 @@ from __future__ import print_function
 from __future__ import absolute_import
 
 import csv
+import gevent
+
 from io import BytesIO
 from datetime import datetime
 
@@ -844,6 +846,7 @@ class AllCourseCompletionView(AbstractAuthenticatedView):
             course = ICourseInstance(catalog_entry, None)
             if course is None:
                 continue
+            gevent.sleep(.01)
             required_item_providers = None
             course_result_records = []
             course_enrollments = ICourseEnrollments(course)
