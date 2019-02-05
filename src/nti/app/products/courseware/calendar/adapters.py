@@ -145,7 +145,7 @@ class CourseCalendarEventProvider(object):
                                                   ICourseCalendarDynamicEventProvider)
                 for x in providers or ():
                     res.extend(x.iter_events())
-            gevent.sleep(.01)
+            gevent.sleep()
         return res
 
     def _courses(self, user, entry_ntiids=None, excluded_entry_ntiids=None):
@@ -172,7 +172,7 @@ class CourseCalendarDynamicEventProvider(object):
 
             for x in providers or ():
                 res.extend(x.iter_events())
-            gevent.sleep(.01)
+            gevent.sleep()
         return res
 
 

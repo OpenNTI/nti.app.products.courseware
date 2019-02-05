@@ -846,7 +846,7 @@ class AllCourseCompletionView(AbstractAuthenticatedView):
             course = ICourseInstance(catalog_entry, None)
             if course is None:
                 continue
-            gevent.sleep(.01)
+            gevent.sleep()
             required_item_providers = None
             course_result_records = []
             course_enrollments = ICourseEnrollments(course)

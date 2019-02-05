@@ -15,6 +15,8 @@ from __future__ import division
 from __future__ import print_function
 from __future__ import absolute_import
 
+import gevent
+
 from datetime import datetime
 from six.moves import urllib_parse
 from collections import defaultdict
@@ -340,6 +342,7 @@ class _AbstractSortingAndFilteringCoursesView(AbstractAuthenticatedView):
         for record in self.context.container or ():
             entry = self._get_entry_for_record(record)
             if entry is not None:
+                gevent.sleep()
                 yield (entry, record)
 
     @Lazy
