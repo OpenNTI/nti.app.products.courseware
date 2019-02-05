@@ -8,12 +8,15 @@ from __future__ import absolute_import
 # disable: accessing protected members, too many methods
 # pylint: disable=W0212,R0904
 
+import fudge
+
 from hamcrest import none
 from hamcrest import is_
 from hamcrest import is_in
 from hamcrest import is_not
 from hamcrest import raises
 from hamcrest import calling
+from hamcrest import contains
 from hamcrest import has_length
 from hamcrest import assert_that
 from hamcrest import same_instance
@@ -34,6 +37,8 @@ from nti.app.testing.decorators import WithSharedApplicationMockDS
 from nti.app.products.courseware.calendar.interfaces import ICourseCalendar
 
 from nti.app.products.courseware.calendar.adapters import CourseCalendarEventProvider
+from nti.app.products.courseware.calendar.adapters import _hierarchy_from_calendar_and_user
+from nti.app.products.courseware.calendar.adapters import _hierarchy_from_calendar_event_and_user
 
 from nti.app.products.courseware.calendar.model import CourseCalendarEvent
 
@@ -91,6 +96,30 @@ class TestAdapters(ApplicationLayerTest):
         # bad calendar event type
         event = CalendarEvent(title=u'abc')
         assert_that(calling(calendar.store_event).with_args(event), raises(InvalidItemType))
+
+    @WithMockDSTrans
+    @fudge.patch('nti.app.products.courseware.calendar.adapters.get_valid_course_context')
+    def test_library_path(self, mock_valid_course_context):
+        user = User.create_user(username=u'test001')
+        course = CourseInstance()
+        connection = mock_dataserver.current_transaction
+        connection.add(course)
+
+        calendar = ICourseCalendar(course, None)
+        mock_valid_course_context.is_callable().with_args(course).returns((course,))
+        res = _hierarchy_from_calendar_and_user(calendar, user)
+        assert_that(res[0], contains(course, calendar))
+
+        event = CourseCalendarEvent(title=u'gogo')
+        mock_valid_course_context.is_callable().with_args(None).returns(())
+        res = _hierarchy_from_calendar_event_and_user(event, user)
+        assert_that(res, has_length(0))
+
+        calendar.store_event(event)
+        mock_valid_course_context.is_callable().with_args(course).returns((course,))
+        res = _hierarchy_from_calendar_event_and_user(event, user)
+        assert_that(res, has_length(1))
+        assert_that(res[0], contains(course, calendar, event))
 
 
 class TestCourseCalendarEventProvider(ApplicationLayerTest):
