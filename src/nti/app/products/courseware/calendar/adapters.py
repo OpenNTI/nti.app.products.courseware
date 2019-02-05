@@ -21,11 +21,15 @@ from zope.annotation.interfaces import IAnnotations
 
 from zope.traversing.interfaces import IPathAdapter
 
+from nti.app.products.courseware.adapters import get_valid_course_context
+
 from nti.app.products.courseware.calendar.interfaces import ICourseCalendar
 from nti.app.products.courseware.calendar.interfaces import ICourseCalendarEvent
 from nti.app.products.courseware.calendar.interfaces import ICourseCalendarDynamicEventProvider
 
 from nti.app.products.courseware.calendar.model import CourseCalendar
+
+from nti.appserver.interfaces import IHierarchicalContextProvider
 
 from nti.contenttypes.calendar.interfaces import ICalendarProvider
 from nti.contenttypes.calendar.interfaces import ICalendarEventProvider
@@ -213,3 +217,20 @@ def _course_calendar_event_to_ntiid(context):
     course = ICourseInstance(context, None)
     entry = ICourseCatalogEntry(course, None)
     return _NTIID(entry.ntiid) if entry is not None else None
+
+
+@component.adapter(ICourseCalendar, IUser)
+@interface.implementer(IHierarchicalContextProvider)
+def _hierarchy_from_calendar_and_user(obj, user):
+    course = ICourseInstance(obj, None)
+    courses = get_valid_course_context(course)
+    return [(courses[0], obj)] if courses else ()
+
+
+@component.adapter(ICourseCalendarEvent, IUser)
+@interface.implementer(IHierarchicalContextProvider)
+def _hierarchy_from_calendar_event_and_user(obj, user):
+    calendar = ICourseCalendar(obj, None)
+    course = ICourseInstance(calendar, None)
+    courses = get_valid_course_context(course)
+    return [(courses[0], calendar, obj)] if courses else ()

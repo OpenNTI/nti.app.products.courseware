@@ -414,6 +414,9 @@ def _get_valid_course_context(course_contexts):
     return courses + catalog_entries
 
 
+get_valid_course_context = _get_valid_course_context
+
+
 @component.adapter(interface.Interface)
 @interface.implementer(IJoinableContextProvider)
 def _catalog_entry_from_container_object(obj):
