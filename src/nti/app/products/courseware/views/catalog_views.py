@@ -1064,15 +1064,18 @@ class CourseCollectionView(_AbstractFilteredCourseView,
 
     def __call__(self):
         new_items = self._get_items()
+        # Make sure we do our batching before we externalize
+        ext_dict = LocatedExternalDict()
+        self._batch_items_iterable(ext_dict, new_items)
         # Toggle our container and externalize for batching.
         new_container = LastModifiedCopyingUserList()
-        new_container.extend(new_items)
+        new_container.extend(ext_dict[ITEMS])
         self.context.container = new_container
         result = to_external_object(self.context)
-        self._batch_items_iterable(result, result[ITEMS])
         result[TOTAL] = len(self.context)
         result['FilteredTotalItemCount'] = len(new_items)
         return result
+
 
 
 @view_config(route_name='objects.generic.traversal',
