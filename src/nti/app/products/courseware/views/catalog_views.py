@@ -1075,6 +1075,16 @@ class CourseCollectionView(_AbstractFilteredCourseView,
         result = to_external_object(self.context)
         result[TOTAL] = container_count
         result['FilteredTotalItemCount'] = len(new_items)
+
+        # Need to manually add our batch rels
+        batch_size, batch_start = self._get_batch_size_start()
+        result['BatchPage'] = batch_start // batch_size + 1
+        prev_batch_start, next_batch_start = self._batch_start_tuple(batch_start,
+                                                                     batch_size,
+                                                                     container_count)
+
+        self._set_batch_links(result, result,
+                              next_batch_start, prev_batch_start)
         return result
 
 
