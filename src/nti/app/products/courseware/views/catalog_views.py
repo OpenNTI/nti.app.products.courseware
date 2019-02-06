@@ -1063,6 +1063,7 @@ class CourseCollectionView(_AbstractFilteredCourseView,
         return result
 
     def __call__(self):
+        container_count = len(self.context)
         new_items = self._get_items()
         # Make sure we do our batching before we externalize
         ext_dict = LocatedExternalDict()
@@ -1072,7 +1073,7 @@ class CourseCollectionView(_AbstractFilteredCourseView,
         new_container.extend(ext_dict[ITEMS])
         self.context.container = new_container
         result = to_external_object(self.context)
-        result[TOTAL] = len(self.context)
+        result[TOTAL] = container_count
         result['FilteredTotalItemCount'] = len(new_items)
         return result
 
