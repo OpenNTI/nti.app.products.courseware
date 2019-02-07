@@ -91,7 +91,7 @@
                 for=".interfaces.ICourseCalendarEvent
                      zope.lifecycleevent.IObjectAddedEvent"/>
 
-    <subscriber handler=".subscribers._course_calendar_event_created_event"
+    <subscriber handler=".subscribers._course_calendar_event_modified_event"
                 for=".interfaces.ICourseCalendarEvent
                      zope.lifecycleevent.IObjectModifiedEvent"/>
 

@@ -75,6 +75,15 @@ def _on_course_calendar_event_modified(calendar_event, modified_event):
         queue_modified(calendar_event)
 
 
+def _should_send_stream_change(calendar_event, modified_event):
+    # Only when start_time or location changes, we would send live notification,
+    # which includes two parts: RUGD notable and stream.
+    external = getattr(modified_event, 'external_value', {})
+    if 'start_time' in external or 'location' in external:
+        return True
+    return False
+
+
 # RUGD notable.
 
 
@@ -112,15 +121,16 @@ def _do_store_event_created(calendar_event):
     calendar = ICourseCalendar(calendar_event, None)
     if calendar is None:
         return
+    now = time.time()
     storage = _get_calendar_change_storage(calendar)
     if calendar_event.ntiid in storage:
         change = storage[calendar_event.ntiid]
+        change.createdTime = now
         change.updateLastMod()
         notify(ObjectModifiedEvent(change))
         return
 
     change = Change(Change.CREATED, calendar_event)
-    now = time.time()
     change.lastModified = now
     change.createdTime = now
     if calendar_event.creator is not None:
@@ -147,10 +157,15 @@ def _do_store_event_created(calendar_event):
     return change
 
 
-@component.adapter(ICourseCalendarEvent, IObjectModifiedEvent)
 @component.adapter(ICourseCalendarEvent, IObjectAddedEvent)
 def _course_calendar_event_created_event(calendar_event, unused_event):
     _do_store_event_created(calendar_event)
+
+
+@component.adapter(ICourseCalendarEvent, IObjectModifiedEvent)
+def _course_calendar_event_modified_event(calendar_event, modified_event):
+    if _should_send_stream_change(calendar_event, modified_event):
+        _do_store_event_created(calendar_event)
 
 
 @component.adapter(ICourseCalendarEvent, IObjectRemovedEvent)
@@ -193,5 +208,6 @@ def _stream_on_course_calendar_event_added(calendar_event, unused_event=None):
 
 
 @component.adapter(ICourseCalendarEvent, IObjectModifiedEvent)
-def _stream_on_course_calendar_event_modified(calendar_event, unused_event=None):
-    _send_change_stream(calendar_event, Change.MODIFIED)
+def _stream_on_course_calendar_event_modified(calendar_event, modified_event):
+    if _should_send_stream_change(calendar_event, modified_event):
+        _send_change_stream(calendar_event, Change.MODIFIED)
