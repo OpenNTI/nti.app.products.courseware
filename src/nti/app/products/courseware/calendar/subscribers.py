@@ -120,15 +120,17 @@ def _sharing_scopes(calendar_event):
 def _do_store_event_created(calendar_event):
     calendar = ICourseCalendar(calendar_event, None)
     if calendar is None:
-        return
+        return None
     now = time.time()
     storage = _get_calendar_change_storage(calendar)
     if calendar_event.ntiid in storage:
         change = storage[calendar_event.ntiid]
+        if change.type != Change.MODIFIED:
+            change.type = Change.MODIFIED
         change.createdTime = now
         change.updateLastMod()
         notify(ObjectModifiedEvent(change))
-        return
+        return change
 
     change = Change(Change.CREATED, calendar_event)
     change.lastModified = now
@@ -159,13 +161,16 @@ def _do_store_event_created(calendar_event):
 
 @component.adapter(ICourseCalendarEvent, IObjectAddedEvent)
 def _course_calendar_event_created_event(calendar_event, unused_event):
-    _do_store_event_created(calendar_event)
-
+    change = _do_store_event_created(calendar_event)
+    if change is not None:
+        _send_change_stream(change)
 
 @component.adapter(ICourseCalendarEvent, IObjectModifiedEvent)
 def _course_calendar_event_modified_event(calendar_event, modified_event):
     if _should_send_stream_change(calendar_event, modified_event):
-        _do_store_event_created(calendar_event)
+        change = _do_store_event_created(calendar_event)
+        if change is not None:
+            _send_change_stream(change)
 
 
 @component.adapter(ICourseCalendarEvent, IObjectRemovedEvent)
@@ -189,25 +194,11 @@ def _sharing_targets(calendar_event):
     return res
 
 
-def _send_change_stream(calendar_event, changeType):
+def _send_change_stream(change):
     # we don't send if the creator is not existing user.
-    if not IUser.providedBy(calendar_event.creator):
+    if not IUser.providedBy(change.creator):
         return
 
-    change = Change(changeType, calendar_event)
-    change.creator = calendar_event.creator
-
-    for target in _sharing_targets(calendar_event):
+    for target in _sharing_targets(change.object):
         if target != change.creator:
             notify(TargetedStreamChangeEvent(change, target))
-
-
-@component.adapter(ICourseCalendarEvent, IObjectAddedEvent)
-def _stream_on_course_calendar_event_added(calendar_event, unused_event=None):
-    _send_change_stream(calendar_event, Change.CREATED)
-
-
-@component.adapter(ICourseCalendarEvent, IObjectModifiedEvent)
-def _stream_on_course_calendar_event_modified(calendar_event, modified_event):
-    if _should_send_stream_change(calendar_event, modified_event):
-        _send_change_stream(calendar_event, Change.MODIFIED)

@@ -99,15 +99,6 @@
                 for=".interfaces.ICourseCalendarEvent
                      zope.lifecycleevent.IObjectRemovedEvent"/>
 
-    <!-- Course calendar events live stream -->
-    <subscriber handler=".subscribers._stream_on_course_calendar_event_added"
-                for=".interfaces.ICourseCalendarEvent
-                     zope.lifecycleevent.IObjectAddedEvent"/>
-
-    <subscriber handler=".subscribers._stream_on_course_calendar_event_modified"
-                for=".interfaces.ICourseCalendarEvent
-                     zope.lifecycleevent.IObjectModifiedEvent"/>
-
     <!-- Notifications -->
     <adapter factory=".notification.CourseCalendarEventNotifier"
              provides="nti.contenttypes.calendar.interfaces.ICalendarEventNotifier"
@@ -117,6 +108,10 @@
              provides="nti.contenttypes.calendar.interfaces.ICalendarEventNotificationValidator"
              for=".interfaces.ICourseCalendarEvent" />
 
+    <!-- Notables -->
+    <subscriber factory=".notables.CourseCalendarEventNotableFilter"
+                provides="nti.dataserver.interfaces.INotableFilter"
+                for=".interfaces.ICourseCalendarEvent" />
 
     <ext:registerAutoPackageIO
         root_interfaces=".interfaces.ICourseCalendar
