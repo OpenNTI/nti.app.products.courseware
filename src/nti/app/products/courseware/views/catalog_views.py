@@ -1073,7 +1073,7 @@ class CourseCollectionView(_AbstractFilteredCourseView,
         new_container.extend(ext_dict[ITEMS])
         self.context.container = new_container
         result = to_external_object(self.context)
-        result[TOTAL] = container_count
+        result[TOTAL] = len(new_items)
         result['FilteredTotalItemCount'] = len(new_items)
 
         # Need to manually add our batch rels
