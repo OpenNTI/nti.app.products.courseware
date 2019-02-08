@@ -1211,7 +1211,7 @@ class CourseCatalogByTagView(AbstractAuthenticatedView, BatchingUtilsMixin):
         if self._tag_drilldown:
             if self._tag_drilldown == self.NO_TAG_NAME:
                 # Special case, fetch all un-tagged entries
-                entries = [x for x in entries if not x.tags]
+                entries = (x for x in entries if not x.tags)
             else:
                 tagged_entries = set(self._get_tagged_entries())
                 entries = set(entries) & tagged_entries

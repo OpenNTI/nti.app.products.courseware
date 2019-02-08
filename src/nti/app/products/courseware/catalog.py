@@ -53,42 +53,36 @@ class AvailableCoursesProvider(object):
     def get_available_entries(self):
         """
         Return a sequence of :class:`ICourseCatalogEntry` objects the user is
-        not enrolled in and that are available to be enrolled in.
+        not enrolled in and that are available to be enrolled in. We also include
+        the entries of the courses the user is enrolled in.
         """
         # To support ACLs limiting the available parts of the catalog, we
         # filter out here. we could do this with a proxy, but it's easier right
         # now just to copy. This is highly dependent on implementation. We also
         # filter out sibling courses when we are already enrolled in one; this
         # is probably inefficient.
-        result = dict()
-        my_enrollments = {}
-        for x in self.catalog.iterCatalogEntries():
-            if has_permission(ACT_READ, x, self.user):
-                # Note that we have to expose these by NTIID, not their
-                # __name__. Because the catalog can be reading from
-                # multiple different sources, the __names__ might overlap
-                course = ICourseInstance(x, None)
-                if course is not None:
-                    enrollments = ICourseEnrollments(course)
-                    if enrollments.get_enrollment_for_principal(self.user) is not None:
-                        my_enrollments[x.ntiid] = course
-                result[x.ntiid] = x
-        courses_to_remove = []
-        for course in my_enrollments.values():
+        enrolled_courses = (x.CourseInstance for x in get_enrollments(self.user))
+        enrolled_entry_ntiid_to_course = {ICourseCatalogEntry(x).ntiid: x for x in enrolled_courses}
+        courses_to_remove = set()
+        for course in enrolled_entry_ntiid_to_course.values():
             if ICourseSubInstance.providedBy(course):
                 # Look for parents and siblings to remove
                 # XXX: Too much knowledge
-                courses_to_remove.extend(course.__parent__.values())
-                courses_to_remove.append(course.__parent__.__parent__)
+                courses_to_remove.update(course.__parent__.values())
+                courses_to_remove.add(course.__parent__.__parent__)
             else:
                 # Look for children to remove
-                courses_to_remove.extend(course.SubInstances.values())
+                courses_to_remove.update(course.SubInstances.values())
 
-        for course in courses_to_remove:
-            ntiid = ICourseCatalogEntry(course).ntiid
-            if ntiid not in my_enrollments:
-                result.pop(ntiid, None)
-        return result.values()
+        result = []
+        for x in self.catalog.iterCatalogEntries():
+            if x.ntiid in enrolled_entry_ntiid_to_course:
+                result.append(x)
+            elif ICourseInstance(x, None) in courses_to_remove:
+                pass
+            elif has_permission(ACT_READ, x, self.user):
+                result.append(x)
+        return result
 
 
 @component.adapter(IUser)
