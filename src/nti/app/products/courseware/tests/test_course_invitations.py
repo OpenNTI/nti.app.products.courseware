@@ -42,7 +42,7 @@ from nti.contenttypes.courses.utils import get_enrollments
 
 from nti.dataserver.users.interfaces import IUserProfile
 
-from nti.externalization.externalization import StandardExternalFields
+from nti.externalization.interfaces import StandardExternalFields
 
 from nti.invitations.interfaces import IInvitationsContainer
 

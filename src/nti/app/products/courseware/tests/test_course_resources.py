@@ -17,7 +17,7 @@ does_not = is_not
 
 from nti.contenttypes.courses.interfaces import ICourseInstance
 
-from nti.externalization.externalization import StandardExternalFields
+from nti.externalization.interfaces import StandardExternalFields
 
 from nti.ntiids.ntiids import find_object_with_ntiid
 

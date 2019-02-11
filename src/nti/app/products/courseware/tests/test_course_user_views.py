@@ -29,7 +29,7 @@ from nti.contenttypes.courses.interfaces import ES_CREDIT_DEGREE
 
 from nti.dataserver.users import User
 
-from nti.externalization.externalization import StandardExternalFields
+from nti.externalization.interfaces import StandardExternalFields
 
 from nti.app.products.courseware.tests import PersistentInstructedCourseApplicationTestLayer
 
