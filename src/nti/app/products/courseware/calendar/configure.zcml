@@ -56,6 +56,10 @@
                 for="nti.app.products.courseware.calendar.interfaces.ICourseCalendarEvent"
                 provides="nti.externalization.interfaces.IExternalMappingDecorator" />
 
+    <subscriber factory=".decorators._CourseCalendarEventLibraryPathLinkDecorator"
+                for="nti.app.products.courseware.calendar.interfaces.ICourseCalendarEvent"
+                provides="nti.externalization.interfaces.IExternalMappingDecorator" />
+
     <subscriber factory=".decorators._CourseCalendarEventCreationLinkDecorator"
                 for="nti.app.products.courseware.calendar.interfaces.ICourseCalendar
                      pyramid.interfaces.IRequest"

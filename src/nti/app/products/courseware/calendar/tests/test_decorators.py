@@ -14,8 +14,11 @@ from hamcrest import is_
 
 from nti.app.products.courseware.calendar.decorators import _CourseCalendarLinkDecorator
 from nti.app.products.courseware.calendar.decorators import _CourseCalendarEventCreationLinkDecorator
+from nti.app.products.courseware.calendar.decorators import _CourseCalendarEventLibraryPathLinkDecorator
 
 from nti.app.products.courseware.calendar.interfaces import ICourseCalendar
+
+from nti.app.products.courseware.calendar.model import CourseCalendarEvent
 
 from nti.app.testing.application_webtest import ApplicationLayerTest
 
@@ -53,3 +56,11 @@ class TestDecorators(ApplicationLayerTest):
         mock_dataserver.current_transaction.add(course)
         external = self._decorate(_CourseCalendarEventCreationLinkDecorator, ICourseCalendar(course))
         assert_that('create_calendar_event' in [x.rel for x in external['Links']], is_(True))
+
+    @WithMockDSTrans
+    def test_course_calendar_event_library_path_link_decorator(self):
+        course = ContentCourseInstance()
+        mock_dataserver.current_transaction.add(course)
+        event = ICourseCalendar(course).store_event(CourseCalendarEvent(title=u'abc'))
+        external = self._decorate(_CourseCalendarEventLibraryPathLinkDecorator, event)
+        assert_that('LibraryPath' in [x.rel for x in external['Links']], is_(True))

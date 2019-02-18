@@ -12,6 +12,8 @@ logger = __import__('logging').getLogger(__name__)
 from zope import component
 from zope import interface
 
+from nti.app.contentlibrary import LIBRARY_PATH_GET_VIEW
+
 from nti.app.products.courseware.calendar.interfaces import ICourseCalendar
 from nti.app.products.courseware.calendar.interfaces import ICourseCalendarEvent
 
@@ -34,6 +36,8 @@ from nti.externalization.interfaces import IExternalMappingDecorator
 from nti.externalization.singleton import Singleton
 
 from nti.links.links import Link
+
+from nti.ntiids.oids import to_external_ntiid_oid
 
 
 @component.adapter(ICourseInstance)
@@ -71,6 +75,23 @@ class _CourseCalendarEventDecorator(Singleton):
         course = ICourseInstance(context, None)
         entry = ICourseCatalogEntry(course, None)
         result['CatalogEntryNTIID'] = getattr(entry, 'ntiid', None)
+
+
+@component.adapter(ICourseCalendarEvent)
+@interface.implementer(IExternalMappingDecorator)
+class _CourseCalendarEventLibraryPathLinkDecorator(Singleton):
+
+    def decorateExternalMapping(self, context, result):
+        external_ntiid = to_external_ntiid_oid(context)
+        if external_ntiid is not None:
+            path = '/dataserver2/%s' % LIBRARY_PATH_GET_VIEW
+            link = Link(path,
+                        rel=LIBRARY_PATH_GET_VIEW,
+                        method='GET',
+                        params={'objectId': external_ntiid})
+            link_belongs_to_context(link, context)
+            links = result.setdefault(StandardExternalFields.LINKS, [])
+            links.append(link)
 
 
 @component.adapter(ICourseCalendar)
