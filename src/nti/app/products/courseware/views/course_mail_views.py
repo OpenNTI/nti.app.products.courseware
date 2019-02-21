@@ -101,6 +101,7 @@ class CourseMailView(AbstractMemberEmailView):
     def _reply_to_scope_usernames(self):
         values = CaseInsensitiveDict(self.request.params)
         scope_name = values.get('replyToScope')
+        result = None
         if not scope_name or scope_name.lower() == 'all':
             result = None
         elif scope_name.lower() == 'forcredit':
