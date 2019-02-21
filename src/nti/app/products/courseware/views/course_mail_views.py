@@ -154,7 +154,7 @@ class CourseMailView(AbstractMemberEmailView):
     def _get_member_names(self):
         values = CaseInsensitiveDict(self.request.params)
         scope_name = values.get('scope')
-
+        result = None
         if not scope_name or scope_name.lower() == 'all':
             result = self._all_students
         elif scope_name.lower() == 'forcredit':
