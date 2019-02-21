@@ -25,6 +25,8 @@ from nti.app.externalization.error import raise_json_error
 
 from nti.app.mail.views import AbstractMemberEmailView
 
+from nti.app.products.courseware import MessageFactory as _
+
 from nti.app.products.courseware.interfaces import ICourseInstanceEnrollment
 
 from nti.app.products.courseware.views import VIEW_COURSE_MAIL
@@ -158,7 +160,7 @@ class CourseMailView(AbstractMemberEmailView):
         result = None
         if not scope_name or scope_name.lower() == 'all':
             result = self._all_students
-        elif scope_name.lower() == 'forcredit':
+        elif scope_name.lower() in ('forcredit', 'for credit'):
             result = self._for_credit_usernames
         elif scope_name.lower() in ('public', 'open'):
             result = self._only_public_usernames

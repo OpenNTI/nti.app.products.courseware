@@ -78,7 +78,8 @@ from nti.common.string import is_true
 
 from nti.contenttypes.courses.administered import get_course_admin_role
 
-from nti.contenttypes.courses.interfaces import ICourseOutline
+from nti.contenttypes.courses.interfaces import ICourseOutline, FOR_CREDIT,\
+    FOR_CREDIT_DEGREE, FOR_CREDIT_NON_DEGREE
 from nti.contenttypes.courses.interfaces import ICourseInstance
 from nti.contenttypes.courses.interfaces import ICourseEnrollments
 from nti.contenttypes.courses.interfaces import ICourseCatalogEntry
@@ -595,8 +596,14 @@ class CourseRosterSummary(AbstractAuthenticatedView):
         result['TotalEnrollments'] = enrollments.count_enrollments()
 
         counts = {}
+        for_credit_count = 0
         for scope in ENROLLMENT_SCOPE_MAP:
-            counts[scope] = enrollments.count_scope_enrollments(scope)
+            # Roll these up for reporting
+            if scope in (FOR_CREDIT, FOR_CREDIT_DEGREE, FOR_CREDIT_NON_DEGREE):
+                for_credit_count += enrollments.count_scope_enrollments(scope)
+            else:
+                counts[scope] = enrollments.count_scope_enrollments(scope)
+        counts[FOR_CREDIT] = for_credit_count
 
         result['TotalEnrollmentsByScope'] = counts
 
