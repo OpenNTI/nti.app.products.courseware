@@ -29,17 +29,15 @@ from nti.coremetadata.interfaces import SYSTEM_USER_NAME
 
 from nti.containers.containers import CaseInsensitiveLastModifiedBTreeContainer
 
-from nti.contenttypes.calendar.processing import queue_add
-from nti.contenttypes.calendar.processing import queue_modified
-
 from nti.contenttypes.courses.interfaces import ICourseInstance
-from nti.contenttypes.courses.interfaces import ICourseEnrollments
 from nti.contenttypes.courses.interfaces import ICourseInstanceSharingScope
 
 from nti.dataserver.activitystream_change import Change
 
 from nti.dataserver.interfaces import IUser
 from nti.dataserver.interfaces import TargetedStreamChangeEvent
+
+from nti.dataserver.job.utils import create_and_queue_scheduled_job
 
 from nti.dataserver.users import User
 
@@ -64,7 +62,7 @@ def _on_course_removed(course, unused_event=None):
 
 @component.adapter(ICourseCalendarEvent, IObjectAddedEvent)
 def _on_course_calendar_event_added(calendar_event, unused_event):
-    queue_add(calendar_event)
+    create_and_queue_scheduled_job(calendar_event)
 
 
 @component.adapter(ICourseCalendarEvent, IObjectModifiedEvent)
@@ -72,7 +70,7 @@ def _on_course_calendar_event_modified(calendar_event, modified_event):
     # Sending email notification only when start_time changes.
     external = getattr(modified_event, 'external_value', {})
     if 'start_time' in external:
-        queue_modified(calendar_event)
+        create_and_queue_scheduled_job(calendar_event)
 
 
 def _should_send_stream_change(calendar_event, modified_event):
