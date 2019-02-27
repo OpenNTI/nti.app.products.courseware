@@ -5,12 +5,16 @@ from __future__ import absolute_import
 from __future__ import division
 
 import os
-import shutil
-from multiprocessing import Process, Queue
-from multiprocessing.pool import ThreadPool
 
 import requests
+
+import shutil
+
 from argparse import ArgumentParser
+
+from multiprocessing import Process
+
+from multiprocessing.pool import ThreadPool
 
 from nti.app.products.courseware.cartridge.scripts.canvas import get_common_cartridge
 
@@ -35,10 +39,10 @@ def _parse_args():
     return arg_parser.parse_args()
 
 
-def _export_to_queue(queue, url, username, password):
+def _export_to_queue(url, username, password, filepath):
     common_cartridge = get_common_cartridge(url=url, username=username, password=password)
-    if common_cartridge is not None:
-        queue.put(common_cartridge)
+    with open(filepath + '.zip', 'w') as fp:
+        shutil.copyfileobj(common_cartridge, fp)
 
 
 def _export(url,
@@ -49,20 +53,16 @@ def _export(url,
             course_last_modified,
             destination):
     course_url = '%s/dataserver2/Objects/%s/@@common_cartridge' % (url, course_ntiid)
-    q = Queue()
-    p = Process(target=_export_to_queue, args=(q, course_url, username, password))
+    filepath = os.path.join(destination, '%s_%s' % (course_title, course_last_modified))
+    p = Process(target=_export_to_queue, args=(course_url, username, password, filepath))
     p.start()
     p.join()
-    fd = q.get()
-    filepath = os.path.join(destination, '%s_%s' % (course_title, course_last_modified))
-    with open(filepath, 'w') as fp:
-        shutil.copyfileobj(fd, fp)
 
 
 def main():
     args = _parse_args()
 
-    tp = ThreadPool(None)  # Defaults to the number of CPU cores
+    tp = ThreadPool(1)  # Defaults to the number of CPU cores
     all_courses_url = '%s/dataserver2/users/%s/Courses/AllCourses' % (args.source,
                                                                       args.username)
     all_courses = requests.get(all_courses_url,
@@ -72,7 +72,7 @@ def main():
     for json_course in json_courses:
         course_ntiid = json_course.get('CourseNTIID')
         course_title = json_course.get('title')
-        course_last_modified = json_course.get('Last Modified')
+        course_last_modified = str(int(json_course.get('Last Modified')))
         if None in (course_ntiid, course_last_modified, course_title):
             continue
         tp.apply_async(_export, (args.source,
@@ -86,6 +86,7 @@ def main():
     tp.close()
     tp.join()
     exit()
+
 
 if __name__ == '__main__':
     main()
