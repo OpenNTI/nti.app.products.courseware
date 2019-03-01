@@ -1219,3 +1219,13 @@ class AdminCatalogEntryDecorator(AbstractAuthenticatedRequestAwareDecorator):
                     method='PUT',
                     elements=(VIEW_ENROLLMENT_OPTIONS,))
         _links.append(link)
+
+
+@component.adapter(ICourseInstance)
+@interface.implementer(IExternalObjectDecorator)
+class _CourseInstanceDecorator(AbstractRequestAwareDecorator):
+
+    def _do_decorate_external(self, context, result):
+        entry = ICourseCatalogEntry(context, None)
+        if entry is not None and 'title' not in result:
+            result['title'] = entry.title
