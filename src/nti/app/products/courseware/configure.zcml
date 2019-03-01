@@ -540,11 +540,6 @@
                 for="nti.contentlibrary.interfaces.IEditableContentUnit
                      pyramid.interfaces.IRequest" />
 
-	<subscriber factory=".decorators._CourseInstanceDecorator"
-				provides="nti.externalization.interfaces.IExternalObjectDecorator"
-				for="nti.contenttypes.courses.interfaces.ICourseInstance
-					 pyramid.interfaces.IRequest" />
-
 	<!--
 		 Get an href here to the real location, since we return these beneath Roster as well.
 		 Notice this is currently a very specific registration.
