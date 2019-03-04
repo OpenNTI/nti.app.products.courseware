@@ -40,10 +40,20 @@ def _parse_args():
 
 
 def _export_to_queue(url, username, password, filepath):
-    common_cartridge = get_common_cartridge(url=url, username=username, password=password)
-    with open(filepath + '.zip', 'w') as fp:
-        shutil.copyfileobj(common_cartridge, fp)
-
+    filepath += '.zip'
+    if os.path.exists(filepath):
+        return
+    try:
+        common_cartridge = get_common_cartridge(url=url, username=username, password=password)
+    except:
+        return
+    if common_cartridge is None:
+        return
+    try:
+        with open(filepath + '.zip', 'w') as fp:
+            shutil.copyfileobj(common_cartridge, fp)
+    except:
+        return
 
 def _export(url,
             username,
@@ -54,15 +64,12 @@ def _export(url,
             destination):
     course_url = '%s/dataserver2/Objects/%s/@@common_cartridge' % (url, course_ntiid)
     filepath = os.path.join(destination, '%s_%s' % (course_title, course_last_modified))
-    p = Process(target=_export_to_queue, args=(course_url, username, password, filepath))
-    p.start()
-    p.join()
+    _export_to_queue(course_url, username, password, filepath)
 
 
 def main():
     args = _parse_args()
 
-    tp = ThreadPool(1)  # Defaults to the number of CPU cores
     all_courses_url = '%s/dataserver2/users/%s/Courses/AllCourses' % (args.source,
                                                                       args.username)
     all_courses = requests.get(all_courses_url,
@@ -75,16 +82,14 @@ def main():
         course_last_modified = str(int(json_course.get('Last Modified')))
         if None in (course_ntiid, course_last_modified, course_title):
             continue
-        tp.apply_async(_export, (args.source,
-                                 args.username,
-                                 args.password,
-                                 course_ntiid,
-                                 course_title,
-                                 course_last_modified,
-                                 args.destination))
+        _export(args.source,
+                args.username,
+                args.password,
+                course_ntiid,
+                course_title,
+                course_last_modified,
+                args.destination)
 
-    tp.close()
-    tp.join()
     exit()
 
 
