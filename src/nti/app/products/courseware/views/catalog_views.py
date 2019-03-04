@@ -521,12 +521,12 @@ class FavoriteEnrolledCoursesView(_AbstractSortingAndFilteringCoursesView):
 
     def _include_filter(self, entry):
         """
-        We only want to return non-completed courses.
+        We only want to return non-completed or failed-completed courses.
         """
         course = ICourseInstance(entry, None)
         result = True
         if course is not None:
-            result = not has_completed_course(self.remoteUser, course)
+            result = not has_completed_course(self.remoteUser, course, success_only=True)
         return result
 
 

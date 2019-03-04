@@ -7,6 +7,8 @@ __docformat__ = "restructuredtext en"
 # disable: accessing protected members, too many methods
 # pylint: disable=W0212,R0904
 
+import fudge
+
 from hamcrest import contains_string
 from hamcrest import is_
 from hamcrest import not_none
@@ -73,7 +75,8 @@ class TestCatalogViews(ApplicationLayerTest):
 
     def _create_and_enroll(self, username, section=None):
         with mock_dataserver.mock_db_trans():
-            self._create_user(username)
+            if not User.get_user(username):
+                self._create_user(username)
 
         with mock_dataserver.mock_db_trans(site_name='platform.ou.edu'):
             user = User.get_user(username)
@@ -224,6 +227,20 @@ class TestCatalogViews(ApplicationLayerTest):
         self.testapp.get(enroll_path,
                          get_params,
                          status=422)
+
+    @WithSharedApplicationMockDS(testapp=True, users=(u'user001',), default_authenticate=False)
+    @fudge.patch("nti.app.products.courseware.views.catalog_views.has_completed_course")
+    def test_favorite_enrolled_course_view(self, mock_has_completed_course):
+        mock_has_completed_course.is_callable().returns(False)
+        self._create_and_enroll('user001')
+
+        favorite_course_path = "/dataserver2/users/user001/Courses/EnrolledCourses/@@Favorites"
+        res = self.testapp.get(favorite_course_path, status=200, extra_environ=self._make_extra_environ(username='user001')).json_body
+        assert_that(res, has_entry('ItemCount', 1))
+
+        mock_has_completed_course.is_callable().returns(True)
+        res = self.testapp.get(favorite_course_path, status=200, extra_environ=self._make_extra_environ(username='user001')).json_body
+        assert_that(res, has_entry('ItemCount', 1))
 
     @WithSharedApplicationMockDS(testapp=True, users=True, default_authenticate=True)
     def test_upcoming_course_view(self):

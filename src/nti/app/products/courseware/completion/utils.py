@@ -16,15 +16,15 @@ from nti.contenttypes.completion.interfaces import ICompletionContextCompletionP
 logger = __import__('logging').getLogger(__name__)
 
 
-def has_completed_course(user, course):
+def has_completed_course(user, course, success_only=False):
     """
-    Answers if the user has completed the given course. Will return False if
-    the course is not completable.
+    Answers if the user has completed the given course (and successfully if success_only is True). Will return False if
+    the course is not completable (or is not successfully completed if success_only is True).
     """
     policy = ICompletionContextCompletionPolicy(course, None)
     result = False
     if policy is not None:
         progress = component.queryMultiAdapter((user, course), IProgress)
-        result = bool(policy.is_complete(progress))
+        result = policy.is_complete(progress)
+        result = bool(result and result.Success) if success_only else bool(result)
     return result
-
