@@ -165,7 +165,7 @@ class _CourseInstanceLinkDecorator(Singleton):
         _links = result.setdefault(LINKS, [])
         entry = ICourseCatalogEntry(context, None)
         if entry:
-            _links.append(Link(entry, rel=VIEW_CATALOG_ENTRY))
+            _links.append(Link(entry, rel=VIEW_CATALOG_ENTRY, title=entry.title))
 
         for rel in (VIEW_USER_COURSE_ACCESS, VIEW_COURSE_CATALOG_FAMILIES):
             link = Link(context, rel=rel, elements=('@@%s' % rel,))
