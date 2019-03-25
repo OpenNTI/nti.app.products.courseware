@@ -8,17 +8,13 @@ from __future__ import absolute_import
 # pylint: disable=protected-access,too-many-public-methods
 
 import datetime
-import unittest
 
 from hamcrest import assert_that
-from hamcrest import contains
 from hamcrest import has_entries
-from hamcrest import has_length
 from hamcrest import has_properties
 from hamcrest import is_
 from hamcrest import not_none
 from hamcrest import same_instance
-from hamcrest import starts_with
 
 from nti.app.testing.application_webtest import ApplicationLayerTest
 
@@ -45,7 +41,7 @@ class TestExternalization(ApplicationLayerTest):
         obj =  CourseCalendarEvent(title=u'reading',
                              description=u'this is',
                              location=u'oklahoma',
-                             end_time=now,
+                             end_time=now + 1,
                              icon=u'/abc/efg')
         assert_that(obj.start_time, is_(obj.created))
 
