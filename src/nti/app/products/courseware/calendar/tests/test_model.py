@@ -16,6 +16,8 @@ from hamcrest import is_
 from hamcrest import not_none
 from hamcrest import same_instance
 
+from datetime import timedelta
+
 from nti.app.testing.application_webtest import ApplicationLayerTest
 
 from nti.app.products.courseware.calendar.model import CourseCalendar
@@ -38,11 +40,12 @@ class TestExternalization(ApplicationLayerTest):
 
     def testCalendarEvent(self):
         now = datetime.datetime.utcnow()
+        end_time = now + timedelta(days=1)
         obj =  CourseCalendarEvent(title=u'reading',
-                             description=u'this is',
-                             location=u'oklahoma',
-                             end_time=now + 1,
-                             icon=u'/abc/efg')
+                                   description=u'this is',
+                                   location=u'oklahoma',
+                                   end_time=end_time,
+                                   icon=u'/abc/efg')
         assert_that(obj.start_time, is_(obj.created))
 
         external = toExternalObject(obj)
