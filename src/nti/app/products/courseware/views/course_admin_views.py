@@ -785,6 +785,7 @@ class AllCourseCompletionView(AbstractAuthenticatedView):
             return None
         try:
             result = float(param_val)
+            result = self._to_datetime(result)
         except ValueError:
             raise_json_error(self.request,
                              hexc.HTTPUnprocessableEntity,
@@ -792,7 +793,6 @@ class AllCourseCompletionView(AbstractAuthenticatedView):
                                  'message': _(u'Invalid timestamp boundary.'),
                              },
                              None)
-        result = self._to_datetime(result)
         return result
 
     @Lazy
