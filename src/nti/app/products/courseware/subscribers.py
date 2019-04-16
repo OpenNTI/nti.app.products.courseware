@@ -211,7 +211,7 @@ def _send_enrollment_confirmation(event, user, profile, email, course):
                 template,
                 subject=translate(_("Welcome to ${title}",
                                     mapping={'title': catalog_entry.Title})),
-                recipients=[profile],
+                recipients=[user],
                 template_args=args,
                 bcc=bcc,
                 request=request,
