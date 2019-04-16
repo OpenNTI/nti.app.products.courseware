@@ -129,6 +129,8 @@ from nti.externalization.interfaces import IExternalMappingDecorator
 
 from nti.externalization.singleton import Singleton
 
+from nti.identifiers.utils import get_external_identifiers
+
 from nti.links.links import Link
 
 from nti.links.externalization import render_link
@@ -363,6 +365,11 @@ class _EnrollmentDroplLinkDecorator(AbstractAuthenticatedRequestAwareDecorator):
         return self._is_authenticated and self._check_access(user)
 
     def _do_decorate_external(self, context, result):
+        user = IUser(context, None)
+        if user is not None:
+            external_ids = get_external_identifiers(user)
+            if external_ids:
+                result['external_user_ids'] = external_ids
         _links = result.setdefault(LINKS, [])
         link = Link(context, rel='CourseDrop', method='DELETE')
         interface.alsoProvides(link, ILocation)
