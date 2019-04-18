@@ -51,6 +51,9 @@
 		    for="nti.contenttypes.courses.interfaces.ICourseCatalogEntry
 			 pyramid.interfaces.IRequest" />
 
+    <subscriber factory=".decorators._UserLinkDecorator"
+                provides="nti.externalization.interfaces.IExternalMappingDecorator" />
+
 	<!-- Default completion policy for new courses -->
 	<subscriber handler="nti.contenttypes.completion.subscribers.completion_context_default_policy"
 				for="nti.contenttypes.courses.interfaces.ICourseInstance

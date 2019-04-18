@@ -31,6 +31,8 @@ from nti.coremetadata.interfaces import IUser
 from nti.externalization.interfaces import IExternalMappingDecorator
 from nti.externalization.interfaces import StandardExternalFields
 
+from nti.externalization.singleton import Singleton
+
 from nti.links.links import Link
 
 LINKS = StandardExternalFields.LINKS
@@ -87,6 +89,18 @@ class _CourseCompletionDecorator(AbstractAuthenticatedRequestAwareDecorator):
                 _links.append(Link(context,
                                    rel=VIEW_CERTIFICATE,
                                    elements=("@@" + VIEW_CERTIFICATE,)))
+
+
+@component.adapter(IUser)
+@interface.implementer(IExternalMappingDecorator)
+class _UserLinkDecorator(Singleton):
+    """
+    Marker rel saying certificates are enabled.
+    """
+
+    def decorateExternalMapping(self, context, result):
+        _links = result.setdefault(LINKS, [])
+        _links.append(Link(context, elements=(VIEW_CERTIFICATE,), rel=VIEW_CERTIFICATE))
 
 
 @component.adapter(ICourseInstance)
