@@ -323,7 +323,8 @@ def _register_course_purchasable_from_catalog_entry(entry, unused_event):
     # with a real database.
     # MAY send IObjectAdded if new
     the_course = _course_instance_for_catalog_entry(entry)
-    interface.alsoProvides(the_course, IDoNotCreateDefaultOutlineCourseInstance)
+    if not IDoNotCreateDefaultOutlineCourseInstance.providedBy(the_course):
+        interface.alsoProvides(the_course, IDoNotCreateDefaultOutlineCourseInstance)
 
     # Defend against content package IDs changing
     if the_course.ContentPackageNTIID != entry.ContentPackageNTIID:
