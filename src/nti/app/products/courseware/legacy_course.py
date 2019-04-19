@@ -323,8 +323,6 @@ def _register_course_purchasable_from_catalog_entry(entry, unused_event):
     # with a real database.
     # MAY send IObjectAdded if new
     the_course = _course_instance_for_catalog_entry(entry)
-    if not IDoNotCreateDefaultOutlineCourseInstance.providedBy(the_course):
-        interface.alsoProvides(the_course, IDoNotCreateDefaultOutlineCourseInstance)
 
     # Defend against content package IDs changing
     if the_course.ContentPackageNTIID != entry.ContentPackageNTIID:
@@ -421,7 +419,8 @@ def _course_instance_for_catalog_entry(entry):
     community_courses = ICourseAdministrativeLevel(community)
     if purch_id not in community_courses:
         ntiid = entry.ContentPackageNTIID
-        community_courses[purch_id] = _LegacyCommunityBasedCourseInstance(ntiid)
+        community_courses[purch_id] = course = _LegacyCommunityBasedCourseInstance(ntiid)
+        interface.alsoProvides(course, IDoNotCreateDefaultOutlineCourseInstance)
 
     result = community_courses[purch_id]
     return result
