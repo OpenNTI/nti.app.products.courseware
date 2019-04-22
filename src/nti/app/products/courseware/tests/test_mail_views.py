@@ -63,7 +63,7 @@ class TestMailViews(ApplicationLayerTest):
 
     default_origin = 'http://janux.ou.edu'
     course_ntiid = u'tag:nextthought.com,2011-10:NTI-CourseInfo-Fall2013_CLC3403_LawAndJustice'
-    
+
     from_address = u'janux@ou.edu'
     no_reply = u'no-reply@nextthought.com'
     external_reply_to = u'jzuech3@gmail.com'
@@ -238,22 +238,22 @@ class TestMailViews(ApplicationLayerTest):
 
         res = self.testapp.get(self.require_link_href_with_rel(role, 'CourseInstance'),
                                extra_environ=instructor_env)
-        
+
         course_instance = res.json_body
         roster_link = self.require_link_href_with_rel(course_instance,
                                                       'CourseEnrollmentRoster')
-        email_link = self.require_link_href_with_rel(course_instance, 
+        email_link = self.require_link_href_with_rel(course_instance,
                                                      VIEW_COURSE_MAIL)
 
         # Mail student
         res = self.testapp.get(roster_link,
                                extra_environ=instructor_env)
         for enroll_record in res.json_body['Items']:
-            roster_link = self.require_link_href_with_rel(enroll_record, 
+            roster_link = self.require_link_href_with_rel(enroll_record,
                                                           VIEW_COURSE_MAIL)
-            self.testapp.post_json(roster_link, mail, 
+            self.testapp.post_json(roster_link, mail,
                                    extra_environ=instructor_env)
-            self.testapp.post_json(roster_link, mail_with_reply, 
+            self.testapp.post_json(roster_link, mail_with_reply,
                                    extra_environ=instructor_env)
             if enroll_record.get('Username') == open_name:
                 open_email_link = roster_link
@@ -290,34 +290,34 @@ class TestMailViews(ApplicationLayerTest):
                                mail, extra_environ=instructor_env)
         messages = self._get_messages(mailer, has_copy=True)
         assert_that(messages, has_length(3))
-        assert_that(messages, 
+        assert_that(messages,
                     has_item(has_entry('To', 'zachary.roux@nextthought.com')))
-        assert_that(messages, 
+        assert_that(messages,
                     is_not(has_item(has_entry('To', 'jzuech3@gmail.com'))))
         # Another instructor in the course should still have a reply-to address
         # even when students don't.
-        assert_that(messages, 
+        assert_that(messages,
                     has_item(has_entries('Reply-To', 'jzuech3@gmail.com', 'To', 'zachary.roux@nextthought.com')))
-        assert_that(messages, 
+        assert_that(messages,
                     is_not(has_item(has_entries('Reply-To', 'jzuech3@gmail.com', 'To', 'open@nextthought.com'))))
-        assert_that(messages, 
+        assert_that(messages,
                     is_not(has_item(has_entries('Reply-To', 'jzuech3@gmail.com', 'To', 'credit@nextthought.com'))))
 
         self.testapp.post_json(email_link + '?include-instructors=True',
                                mail_with_reply, extra_environ=instructor_env)
         messages = self._get_messages(mailer, has_copy=False)
         assert_that(messages, has_length(3))
-        assert_that(messages, 
+        assert_that(messages,
                     has_item(has_entry('To', 'zachary.roux@nextthought.com')))
-        assert_that(messages, 
+        assert_that(messages,
                     is_not(has_item(has_entry('To', 'jzuech3@gmail.com'))))
         # The message to another instructor should also have a reply-to address
         # from the sender
-        assert_that(messages, 
+        assert_that(messages,
                     has_item(has_entries('Reply-To', 'jzuech3@gmail.com', 'To', 'zachary.roux@nextthought.com')))
         assert_that(messages,
                     has_item(has_entries('Reply-To', 'jzuech3@gmail.com', 'To', 'open@nextthought.com')))
-        assert_that(messages, 
+        assert_that(messages,
                     has_item(has_entries('Reply-To', 'jzuech3@gmail.com', 'To', 'credit@nextthought.com')))
 
         # Mail everyone with replyToScope open (also purchased)
@@ -331,7 +331,7 @@ class TestMailViews(ApplicationLayerTest):
         assert_that(credit_msg.get('Reply-To'), is_(self.no_reply))
 
         # Mail just for-credit
-        self.testapp.post_json(email_link + '?scope=forCREDit', 
+        self.testapp.post_json(email_link + '?scope=forCREDit',
                                mail_with_reply, extra_environ=instructor_env)
         messages = self._get_messages(mailer)
         assert_that(messages, has_length(1))
@@ -378,7 +378,7 @@ class TestMailViews(ApplicationLayerTest):
 
         course_href = self.require_link_href_with_rel(role, 'CourseInstance')
         course_instance = self.testapp.get(course_href, extra_environ=instructor_env).json_body
-        
+
         roster_link = self.require_link_href_with_rel(
             course_instance, 'CourseEnrollmentRoster')
         self.require_link_href_with_rel(course_instance, VIEW_COURSE_MAIL)
@@ -387,11 +387,11 @@ class TestMailViews(ApplicationLayerTest):
         res = self.testapp.get(roster_link,
                                extra_environ=instructor_env)
         for enroll_record in res.json_body['Items']:
-            roster_link = self.require_link_href_with_rel(enroll_record, 
+            roster_link = self.require_link_href_with_rel(enroll_record,
                                                           VIEW_COURSE_MAIL)
-            self.testapp.post_json(roster_link, mail, 
+            self.testapp.post_json(roster_link, mail,
                                    extra_environ=instructor_env)
-            self.testapp.post_json(roster_link, mail_with_reply, 
+            self.testapp.post_json(roster_link, mail_with_reply,
                                    extra_environ=instructor_env)
             if enroll_record.get('Username') == open_name:
                 open_email_link = roster_link
@@ -399,7 +399,7 @@ class TestMailViews(ApplicationLayerTest):
         # Test emailing a student with no reply
         mailer = component.getUtility(ITestMailDelivery)
         del mailer.queue[:]
-        self.testapp.post_json(open_email_link + '?include-instructors=True', 
+        self.testapp.post_json(open_email_link + '?include-instructors=True',
                                mail, extra_environ=instructor_env)
 
         to_check = mail.get('Body')
@@ -414,7 +414,8 @@ class TestMailViews(ApplicationLayerTest):
         html = decodestring(msg.html)
         assert_that(html, contains_string(to_check))
         assert_that(msg.get('Reply-To'), is_(self.no_reply))
-        assert_that(msg.get('From'), contains_string(self.from_address))
+        assert_that(msg.get('From'), contains_string('janux+'))
+        assert_that(msg.get('From'), contains_string('@ou.edu'))
         assert_that(msg.get('To'), is_(open_address))
 
         msg = messages[1]
@@ -425,7 +426,8 @@ class TestMailViews(ApplicationLayerTest):
         html = decodestring(msg.html)
         assert_that(html, contains_string(to_check))
         assert_that(msg.get('Reply-To'), is_(self.external_reply_to))
-        assert_that(msg.get('From'), contains_string(self.from_address))
+        assert_that(msg.get('From'), contains_string('janux+'))
+        assert_that(msg.get('From'), contains_string('@ou.edu'))
         assert_that(msg.get('To'), is_('zachary.roux@nextthought.com'))
 
         # Test emailing a student with replies enabled
@@ -446,7 +448,8 @@ class TestMailViews(ApplicationLayerTest):
         html = decodestring(msg.html)
         assert_that(html, contains_string(to_check))
         assert_that(msg.get('Reply-To'), is_(self.external_reply_to))
-        assert_that(msg.get('From'), contains_string(self.from_address))
+        assert_that(msg.get('From'), contains_string('janux+'))
+        assert_that(msg.get('From'), contains_string('@ou.edu'))
         assert_that(msg.get('To'), is_(open_address))
 
         msg = messages[1]
@@ -457,5 +460,6 @@ class TestMailViews(ApplicationLayerTest):
         html = decodestring(msg.html)
         assert_that(html, contains_string(to_check))
         assert_that(msg.get('Reply-To'), is_(self.external_reply_to))
-        assert_that(msg.get('From'), contains_string(self.from_address))
+        assert_that(msg.get('From'), contains_string('janux+'))
+        assert_that(msg.get('From'), contains_string('@ou.edu'))
         assert_that(msg.get('To'), is_('zachary.roux@nextthought.com'))
