@@ -137,7 +137,7 @@ class TestMailViews(ApplicationLayerTest):
         assert_that(html, contains_string(to_check))
         assert_that(msg.get('Reply-To'), is_(self.no_reply))
         assert_that(msg.get('From'), contains_string(u'janux+'))
-        assert_that(msg.get('From'), contains_string(u'@nextthought.com'))
+        assert_that(msg.get('From'), contains_string(u'@ou.edu'))
         assert_that(msg.get('To'), is_(open_address))
 
         # Test encoding
@@ -154,7 +154,7 @@ class TestMailViews(ApplicationLayerTest):
         assert_that(html, contains_string(to_check))
         assert_that(msg.get('Reply-To'), is_(self.no_reply))
         assert_that(msg.get('From'), contains_string(u'janux+'))
-        assert_that(msg.get('From'), contains_string(u'@nextthought.com'))
+        assert_that(msg.get('From'), contains_string(u'@ou.edu'))
         assert_that(msg.get('To'), is_(open_address))
 
         # Test html
@@ -173,7 +173,7 @@ class TestMailViews(ApplicationLayerTest):
         assert_that(html, contains_string('Test <br>'))
         assert_that(msg.get('Reply-To'), is_(self.no_reply))
         assert_that(msg.get('From'), contains_string(u'janux+'))
-        assert_that(msg.get('From'), contains_string(u'@nextthought.com'))
+        assert_that(msg.get('From'), contains_string(u'ou.edu'))
         assert_that(msg.get('To'), is_(open_address))
 
         # Test script w/external reply-to
@@ -197,7 +197,7 @@ class TestMailViews(ApplicationLayerTest):
         # Distinct reply-to and from headers; reply-to is external email addr.
         assert_that(msg.get('Reply-To'), is_(self.external_reply_to))
         assert_that(msg.get('From'), contains_string(u'janux+'))
-        assert_that(msg.get('From'), contains_string(u'@nextthought.com'))
+        assert_that(msg.get('From'), contains_string(u'ou.edu'))
         assert_that(msg.get('To'), is_(open_address))
 
         # Test newlines with default subject.
