@@ -648,7 +648,7 @@ class _LegacyCommunityBasedCourseInstance(CourseInstance):
 
 
 @interface.implementer(ICourseCatalogLegacyContentEntry)
-@component.adapter(_LegacyCommunityBasedCourseInstance)
+@component.adapter(ILegacyCommunityBasedCourseInstance)
 def _legacy_course_instance_to_catalog_entry(instance):
     result = instance.legacy_catalog_entry
     if result is None:
@@ -658,7 +658,7 @@ def _legacy_course_instance_to_catalog_entry(instance):
 
 
 @interface.implementer(IACLProvider)
-@component.adapter(_LegacyCommunityBasedCourseInstance)
+@component.adapter(ILegacyCommunityBasedCourseInstance)
 class _LegacyCourseInstanceACLProvider(object):
 
     def __init__(self, context):
