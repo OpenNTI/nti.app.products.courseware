@@ -168,6 +168,7 @@ class CompletionCertificateView(AbstractAuthenticatedView,
         return {
             u'Brand': self._brand,
             u'Name': self._name,
+            u'ProviderUniqueID': entry.ProviderUniqueID,
             u'Course': entry.title,
             u'Date': self._completion_date_string,
             u'Facilitators': self._facilitators(entry),
