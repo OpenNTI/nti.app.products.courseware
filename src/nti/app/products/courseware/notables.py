@@ -19,9 +19,9 @@ from zope.cachedescriptors.property import CachedProperty
 
 from nti.app.notabledata.interfaces import IUserNotableProvider
 
-from nti.contenttypes.courses.utils import get_instructed_courses
-from nti.contenttypes.courses.utils import get_enrollments
 from nti.contenttypes.courses.utils import get_course_enrollments
+from nti.contenttypes.courses.utils import get_instructed_courses
+from nti.contenttypes.courses.utils import get_non_preview_enrollments
 
 from nti.contenttypes.courses.interfaces import ENROLLMENT_SCOPE_MAP
 
@@ -85,7 +85,7 @@ class TopLevelPriorityNotableFilter(object):
         # Only if shared with my course community.
         shared_with = getattr(obj, 'sharedWith', {})
         if shared_with:
-            enrollments = get_enrollments(user.username)
+            enrollments = get_non_preview_enrollments(user.username)
             for enrollment in enrollments or ():
                 if not ICourseInstanceEnrollmentRecord.providedBy(enrollment):
                     continue
@@ -136,7 +136,7 @@ class _UserPriorityCreatorNotableProvider(object):
     def get_notable_intids(self):
         results = Set()
         catalog = self._catalog
-        enrollments = get_enrollments(self.context.username)
+        enrollments = get_non_preview_enrollments(self.context.username)
         for enrollment in enrollments or ():
             if not ICourseInstanceEnrollmentRecord.providedBy(enrollment):
                 continue

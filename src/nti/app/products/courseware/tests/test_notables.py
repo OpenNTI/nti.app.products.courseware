@@ -10,6 +10,7 @@ __docformat__ = "restructuredtext en"
 from hamcrest import is_
 from hamcrest import is_not
 from hamcrest import contains
+from hamcrest import has_length
 from hamcrest import assert_that
 does_not = is_not
 
@@ -22,6 +23,7 @@ from nti.app.notabledata.interfaces import IUserNotableProvider
 from nti.app.products.courseware.notables import TopLevelPriorityNotableFilter
 
 from nti.contenttypes.courses.interfaces import ICourseCatalog
+from nti.contenttypes.courses.interfaces import ICourseCatalogEntry
 from nti.contenttypes.courses.interfaces import ICourseEnrollmentManager
 
 from nti.dataserver.contenttypes.note import Note
@@ -106,3 +108,15 @@ class TestNotables(ApplicationLayerTest):
                         is_(False))
             assert_that(notable_filter.is_notable(note2, instructor_user),
                         is_(False))
+
+            # Validate preview mode hides notables
+            entry = ICourseCatalogEntry(course)
+            entry.Preview = True
+
+            notable_intids = set()
+            for provider in component.subscribers((user, user),
+                                                  IUserNotableProvider):
+                notable_intids.update(provider.get_notable_intids())
+
+            assert_that(notable_intids, has_length(0))
+            assert_that(notable_filter.is_notable(note1, user), is_(False))
