@@ -340,6 +340,9 @@
 	<subscriber factory=".notables._UserInstructorFeedbackNotableProvider"
 				provides="nti.app.notabledata.interfaces.IUserNotableProvider"/>
 
+	<subscriber factory=".notables._UserCourseSharingScopeNotableSharedWithIDProvider"
+                provides="nti.app.notabledata.interfaces.IUserNotableSharedWithIDProvider"/>
+
 	<!-- Traversal paths -->
 	<adapter factory=".workspaces.CatalogEntryLocationInfo" />
 

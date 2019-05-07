@@ -1,8 +1,9 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from __future__ import print_function, absolute_import, division
-__docformat__ = "restructuredtext en"
+from __future__ import division
+from __future__ import print_function
+from __future__ import absolute_import
 
 # disable: accessing protected members, too many methods
 # pylint: disable=W0212,R0904
@@ -10,6 +11,7 @@ __docformat__ = "restructuredtext en"
 from hamcrest import is_
 from hamcrest import is_not
 from hamcrest import contains
+from hamcrest import has_item
 from hamcrest import has_length
 from hamcrest import assert_that
 does_not = is_not
@@ -19,6 +21,7 @@ from zope import component
 from zope.intid.interfaces import IIntIds
 
 from nti.app.notabledata.interfaces import IUserNotableProvider
+from nti.app.notabledata.interfaces import IUserNotableSharedWithIDProvider
 
 from nti.app.products.courseware.notables import TopLevelPriorityNotableFilter
 
@@ -109,6 +112,13 @@ class TestNotables(ApplicationLayerTest):
             assert_that(notable_filter.is_notable(note2, instructor_user),
                         is_(False))
 
+            # Shared with ntiids
+            shared_with_ids = set()
+            for provider in component.subscribers((user, user),
+                                                  IUserNotableSharedWithIDProvider):
+                shared_with_ids.update(provider.get_shared_with_ids())
+            assert_that(shared_with_ids, has_item(course_scope.NTIID))
+
             # Validate preview mode hides notables
             entry = ICourseCatalogEntry(course)
             entry.Preview = True
@@ -120,3 +130,10 @@ class TestNotables(ApplicationLayerTest):
 
             assert_that(notable_intids, has_length(0))
             assert_that(notable_filter.is_notable(note1, user), is_(False))
+
+            # Shared with ntiids should be empty now that course is in preview
+            shared_with_ids = set()
+            for provider in component.subscribers((user, user),
+                                                  IUserNotableSharedWithIDProvider):
+                shared_with_ids.update(provider.get_shared_with_ids())
+            assert_that(shared_with_ids, does_not(has_item(course_scope.NTIID)))
