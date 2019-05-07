@@ -18,6 +18,7 @@ from BTrees.LFBTree import LFSet as Set
 from zope.cachedescriptors.property import CachedProperty
 
 from nti.app.notabledata.interfaces import IUserNotableProvider
+from nti.app.notabledata.interfaces import IUserNotableSharedWithIDProvider
 
 from nti.contenttypes.courses.utils import get_course_enrollments
 from nti.contenttypes.courses.utils import get_instructed_courses
@@ -27,6 +28,7 @@ from nti.contenttypes.courses.interfaces import ENROLLMENT_SCOPE_MAP
 
 from nti.contenttypes.courses.interfaces import ICourseInstance
 from nti.contenttypes.courses.interfaces import ICourseCatalogEntry
+from nti.contenttypes.courses.interfaces import ICourseInstanceSharingScope
 from nti.contenttypes.courses.interfaces import ICourseInstanceEnrollmentRecord
 
 from nti.dataserver.contenttypes.forums.interfaces import IPersonalBlogComment
@@ -36,6 +38,8 @@ from nti.dataserver.interfaces import INotableFilter
 
 from nti.dataserver.metadata.index import get_metadata_catalog
 from nti.dataserver.metadata.index import isTopLevelContentObjectFilter
+
+from nti.traversal.traversal import find_interface
 
 _FEEDBACK_MIME_TYPE = "application/vnd.nextthought.assessment.userscourseassignmenthistoryitemfeedback"
 
@@ -187,3 +191,25 @@ class _UserInstructorFeedbackNotableProvider(_UserPriorityCreatorNotableProvider
             student_intids = index.apply({'any_of': student_ids})
             results.update(self._get_feedback_intids(student_intids))
         return results
+
+
+@component.adapter(IUser, interface.Interface)
+@interface.implementer(IUserNotableSharedWithIDProvider)
+class _UserCourseSharingScopeNotableSharedWithIDProvider(object):
+    """
+    Return the non-preview course sharing scope ntiids to act as a source
+    of notable data.
+    """
+
+    def __init__(self, user, unused_request):
+        self.context = user
+
+    def get_shared_with_ids(self):
+        result = set()
+        for membership in self.context.dynamic_memberships:
+            if ICourseInstanceSharingScope.providedBy(membership):
+                course = find_interface(membership, ICourseInstance)
+                entry = ICourseCatalogEntry(course, None)
+                if entry is not None and not entry.Preview:
+                    result.add(membership.NTIID)
+        return result
