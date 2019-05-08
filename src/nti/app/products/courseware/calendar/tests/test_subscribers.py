@@ -8,18 +8,11 @@ from __future__ import absolute_import
 # pylint: disable=protected-access,too-many-public-methods
 
 import fudge
-import datetime
-import unittest
 
 from hamcrest import assert_that
-from hamcrest import contains
-from hamcrest import has_entries
 from hamcrest import has_length
-from hamcrest import has_properties
 from hamcrest import is_
-from hamcrest import not_none
 from hamcrest import same_instance
-from hamcrest import starts_with
 from hamcrest import contains_inanyorder
 
 from zope.annotation.interfaces import IAnnotations
@@ -88,11 +81,13 @@ class TestSubscribers(ApplicationLayerTest):
         mock_sharing_scopes.is_callable().returns([u'test002', u'test003'])
         event_3 = CourseCalendarEvent(title=u'fourth')
         calendar.store_event(event_3)
-        assert_that(storage[event_3.ntiid].sharedWith, contains_inanyorder(u'test002', u'test003'))
+        assert_that(storage[event_3.ntiid].sharedWith,
+                    contains_inanyorder(u'test002', u'test003'))
 
         assert_that(storage, has_length(4))
 
         assert_that(calendar.remove_event(event_2), is_(True))
         assert_that(calendar, has_length(3))
         assert_that(storage, has_length(3))
-        assert_that([x.object for x in storage.values()], contains_inanyorder(event, event_1, event_3))
+        assert_that([x.object for x in storage.values()],
+                    contains_inanyorder(event, event_1, event_3))

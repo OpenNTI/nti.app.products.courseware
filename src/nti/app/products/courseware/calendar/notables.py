@@ -10,7 +10,9 @@ from __future__ import absolute_import
 
 from zope import interface
 
-from nti.dataserver.interfaces import IUser
+from nti.contenttypes.courses.interfaces import ICourseInstance
+from nti.contenttypes.courses.interfaces import ICourseCatalogEntry
+
 from nti.dataserver.interfaces import INotableFilter
 
 
@@ -20,5 +22,5 @@ class CourseCalendarEventNotableFilter(object):
     def __init__(self, context):
         self.context = context
 
-    def is_notable(self, obj, user):
+    def is_notable(self, obj, unused_user):
         return True

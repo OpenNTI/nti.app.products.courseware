@@ -33,7 +33,7 @@ from nti.contenttypes.calendar.processing import queue_add
 from nti.contenttypes.calendar.processing import queue_modified
 
 from nti.contenttypes.courses.interfaces import ICourseInstance
-from nti.contenttypes.courses.interfaces import ICourseEnrollments
+from nti.contenttypes.courses.interfaces import ICourseCatalogEntry
 from nti.contenttypes.courses.interfaces import ICourseInstanceSharingScope
 
 from nti.dataserver.activitystream_change import Change
@@ -163,14 +163,14 @@ def _do_store_event_created(calendar_event):
 def _course_calendar_event_created_event(calendar_event, unused_event):
     change = _do_store_event_created(calendar_event)
     if change is not None:
-        _send_change_stream(change)
+        _send_change_stream(change, calendar_event)
 
 @component.adapter(ICourseCalendarEvent, IObjectModifiedEvent)
 def _course_calendar_event_modified_event(calendar_event, modified_event):
     if _should_send_stream_change(calendar_event, modified_event):
         change = _do_store_event_created(calendar_event)
         if change is not None:
-            _send_change_stream(change)
+            _send_change_stream(change, calendar_event)
 
 
 @component.adapter(ICourseCalendarEvent, IObjectRemovedEvent)
@@ -194,9 +194,16 @@ def _sharing_targets(calendar_event):
     return res
 
 
-def _send_change_stream(change):
+def _send_change_stream(change, calendar_event):
     # we don't send if the creator is not existing user.
     if not IUser.providedBy(change.creator):
+        return
+
+    # Do not send stream change event if course is in
+    # preview mode.
+    course = ICourseInstance(calendar_event, None)
+    entry = ICourseCatalogEntry(course, None)
+    if entry is None or entry.Preview:
         return
 
     for target in _sharing_targets(change.object):
