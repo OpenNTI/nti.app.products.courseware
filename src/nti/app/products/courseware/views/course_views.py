@@ -46,6 +46,7 @@ from nti.app.externalization.view_mixins import ModeledContentUploadRequestUtils
 from nti.app.products.courseware.interfaces import ACT_VIEW_ROSTER
 from nti.app.products.courseware.interfaces import ACT_VIEW_ACTIVITY
 
+from nti.app.products.courseware.interfaces import ICourseCollection
 from nti.app.products.courseware.interfaces import ICourseInstanceActivity
 from nti.app.products.courseware.interfaces import ICourseInstanceEnrollment
 from nti.app.products.courseware.interfaces import ICoursePagesContainerResource
@@ -61,6 +62,8 @@ from nti.app.products.courseware.views import VIEW_COURSE_ENROLLMENT_ROSTER
 from nti.app.products.courseware.views import VIEW_COURSE_TAB_PREFERENCES
 
 from nti.app.renderers.caching import AbstractReliableLastModifiedCacheController
+
+from nti.appserver.dataserver_pyramid_views import GenericGetView
 
 from nti.appserver.interfaces import IIntIdUserSearchPolicy
 
@@ -869,3 +872,17 @@ class CourseTabPreferencesUpdateView(UGDPutView):
 
     def _get_object_to_update(self):
         return ICourseTabPreferences(self.context.__parent__)
+
+
+@view_config(route_name='objects.generic.traversal',
+             renderer='rest',
+             context=ICourseInstance,
+             request_method='GET',
+             permission=nauth.ACT_READ)
+class CourseGetView(GenericGetView):
+    """
+    Override the generic get view to ensure we do not adapt to a collection
+    we do not want when GETting a course.
+    """
+
+    COLLECTION_TYPE = ICourseCollection

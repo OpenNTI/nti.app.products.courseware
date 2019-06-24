@@ -137,6 +137,12 @@ class ICoursePagesContainerResource(IContainerResource):
     ntiid = schema.TextLine(title=u"The NTIID of the container")
 
 
+class ICourseCollection(IContainerCollection):
+    """
+    A course collection.
+    """
+
+
 class ICoursesCollection(IContainerCollection):
     """
     A collection of courses.

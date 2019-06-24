@@ -73,7 +73,7 @@ def _course_from_completable_item(item):
             course = component.queryMultiAdapter((item, user),
                                                  ICourseInstance)
     if course is None:
-        # Or we blindly guess on and item that may be shared across
+        # Or we blindly guess on an item that may be shared across
         # multiple courses
         course = ICourseInstance(item, None)
     return course
