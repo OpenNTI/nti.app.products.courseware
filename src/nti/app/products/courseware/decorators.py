@@ -221,10 +221,16 @@ class _RealPreviewDecorator(Singleton):
 @component.adapter(ICourseInstance)
 @component.adapter(ICourseCatalogEntry)
 @interface.implementer(IExternalMappingDecorator)
-class _CourseEnrollmentDecorator(Singleton):
+class _CourseEnrollmentDecorator(AbstractAuthenticatedRequestAwareDecorator):
     """
     Decorates the enrollment stats (XXX That may be really slow.)
     """
+
+    def _predicate(self, context, unused_result):
+        course = ICourseInstance(context)
+        return self._is_authenticated \
+           and (   is_course_instructor(course, self.remoteUser) \
+                or has_permission(ACT_CONTENT_EDIT, course, self.request))
 
     def decorateExternalMapping(self, context, result):
         course = ICourseInstance(context)
