@@ -541,6 +541,8 @@ class FavoriteAdministeredCoursesView(_AbstractSortingAndFilteringCoursesView):
     A view into the `favorite` administered courses of a user.
     """
 
+    MAX_RESULT_SIZE = 28
+
     @Lazy
     def _admin_favorites_filter(self):
         return component.queryUtility(IAdministeredCoursesFavoriteFilter)
