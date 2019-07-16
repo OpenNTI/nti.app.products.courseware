@@ -462,7 +462,8 @@
 
     <subscriber factory=".decorators._CourseEnrollmentDecorator"
                 provides="nti.externalization.interfaces.IExternalMappingDecorator"
-                for="nti.contenttypes.courses.interfaces.ICourseCatalogEntry" />
+                for="nti.contenttypes.courses.interfaces.ICourseCatalogEntry
+                     pyramid.interfaces.IRequest" />
 
 	<subscriber factory=".decorators._CourseInstancePreviewExcludingDecorator"
 				provides="nti.externalization.interfaces.IExternalObjectDecorator"
