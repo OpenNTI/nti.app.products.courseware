@@ -140,7 +140,6 @@ class ClassmatesSuggestedContactsProvider(SuggestedContactsProvider):
                     suggestion.provider = self
                     suggestion.Scope = record.Scope
                     result.append(suggestion)
-        result = self.ranking.sort(result)
         return result
 
     def suggestions(self, user, source_user=None):

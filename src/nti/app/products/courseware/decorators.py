@@ -223,7 +223,7 @@ class _RealPreviewDecorator(Singleton):
 @interface.implementer(IExternalMappingDecorator)
 class _CourseEnrollmentDecorator(AbstractAuthenticatedRequestAwareDecorator):
     """
-    Decorates the enrollment stats (XXX That may be really slow.)
+    Decorates the enrollment stats.
     """
 
     def _predicate(self, context, unused_result):
