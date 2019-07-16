@@ -232,7 +232,7 @@ class _CourseEnrollmentDecorator(AbstractAuthenticatedRequestAwareDecorator):
            and (   is_course_instructor(course, self.remoteUser) \
                 or has_permission(ACT_CONTENT_EDIT, course, self.request))
 
-    def decorateExternalMapping(self, context, result):
+    def _do_decorate_external(self, context, result):
         course = ICourseInstance(context)
         enrollments = ICourseEnrollments(course)
         result['TotalEnrolledCount'] = enrollments.count_enrollments()
