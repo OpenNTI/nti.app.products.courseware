@@ -323,7 +323,6 @@ class AbstractEnrollingBase(object):
         assert_that(course.json_body, has_entries('Class', self.expected_instance_class,
                                                       'href', unquote(
                                                           instance_href),
-                                                      'TotalEnrolledCount', 1,
                                                       'Outline', has_entry('Class', 'CourseOutline'),
                                                       'LegacyScopes', has_key(
                                                           'public'),
