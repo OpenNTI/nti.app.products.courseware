@@ -11,6 +11,7 @@ from __future__ import absolute_import
 import os
 
 from zope import component
+from zope import interface
 
 from zope.lifecycleevent import IObjectAddedEvent
 from zope.lifecycleevent import IObjectModifiedEvent
@@ -33,6 +34,13 @@ from nti.contenttypes.courses.interfaces import ICourseRoleUpdatedEvent
 from nti.contenttypes.courses.interfaces import ICourseRolesSynchronized
 from nti.contenttypes.courses.interfaces import ICatalogEntrySynchronized
 from nti.contenttypes.courses.interfaces import ICourseVendorInfoSynchronized
+from nti.contenttypes.courses.interfaces import ICourseContentLibraryProvider
+
+from nti.coremetadata.interfaces import IUser
+
+from nti.dataserver.contenttypes.forums.topic import Topic
+from nti.dataserver.contenttypes.forums.topic import HeadlineTopic
+from nti.dataserver.contenttypes.forums.topic import CommunityHeadlineTopic
 
 logger = __import__('logging').getLogger(__name__)
 
@@ -84,3 +92,25 @@ def _course_vendor_info_synchronized(course, unused_event):
 @component.adapter(ICourseRoleUpdatedEvent)
 def _course_role_updated(event):
     _update_course_forums(event.course)
+
+
+@component.adapter(IUser, ICourseInstance)
+@interface.implementer(ICourseContentLibraryProvider)
+class _CourseContentLibraryProvider(object):
+    """
+    Return the mimetypes of objects of course content that could be
+    added to this course by this user.
+    """
+
+    def __init__(self, user, course):
+        self.user = user
+        self.course = course
+
+    def get_item_mime_types(self):
+        """
+        Returns the collection of mimetypes that may be available (either
+        they exist or can exist) in this course.
+        """
+        return (Topic.mime_type,
+                HeadlineTopic.mime_type,
+                CommunityHeadlineTopic.mime_type)
