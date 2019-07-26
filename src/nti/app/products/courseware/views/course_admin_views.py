@@ -887,7 +887,7 @@ class AllCourseCompletionView(AbstractAuthenticatedView):
         completed_items_iter = self.iter_completed_items(min_time, max_time)
         for completed_item in completed_items_iter:
             course = ICompletionContext(completed_item, None)
-            if not ICourseInstance.providedBy(completed_item):
+            if not ICourseInstance.providedBy(course):
                 continue
             user = IUser(completed_item.Principal)
             entry = ICourseCatalogEntry(course)
