@@ -70,6 +70,12 @@ from nti.appserver.workspaces.interfaces import IUserService
 
 from nti.common.string import is_true
 
+from nti.contenttypes.completion.index import IX_COMPLETIONTIME
+from nti.contenttypes.completion.index import get_completed_item_catalog
+
+from nti.contenttypes.completion.interfaces import ICompletedItem
+from nti.contenttypes.completion.interfaces import ICompletionContext
+
 from nti.contenttypes.courses import get_enrollment_catalog
 
 from nti.contenttypes.courses.administered import CourseInstanceAdministrativeRole
@@ -88,12 +94,12 @@ from nti.contenttypes.courses.interfaces import ENROLLMENT_SCOPE_VOCABULARY
 
 from nti.contenttypes.courses.interfaces import ICourseCatalog
 from nti.contenttypes.courses.interfaces import ICourseInstance
-from nti.contenttypes.courses.interfaces import ICourseEnrollments
 from nti.contenttypes.courses.interfaces import ICourseCatalogEntry
 from nti.contenttypes.courses.interfaces import ICourseEnrollmentManager
 from nti.contenttypes.courses.interfaces import ICourseInstanceEnrollmentRecord
 
 from nti.contenttypes.courses.utils import unenroll
+from nti.contenttypes.courses.utils import get_enrollment_record
 from nti.contenttypes.courses.utils import drop_any_other_enrollments
 from nti.contenttypes.courses.utils import is_instructor_in_hierarchy
 from nti.contenttypes.courses.utils import get_enrollments as get_index_enrollments
@@ -785,7 +791,7 @@ class AllCourseCompletionView(AbstractAuthenticatedView):
             return None
         try:
             result = float(param_val)
-            result = self._to_datetime(result)
+            self._to_datetime(result)
         except ValueError:
             raise_json_error(self.request,
                              hexc.HTTPUnprocessableEntity,
@@ -796,12 +802,20 @@ class AllCourseCompletionView(AbstractAuthenticatedView):
         return result
 
     @Lazy
-    def not_before(self):
+    def not_before_timestamp(self):
         return self._get_param("notBefore")
 
     @Lazy
-    def not_after(self):
+    def not_after_timestamp(self):
         return self._get_param("notAfter")
+
+    @Lazy
+    def not_before(self):
+        return self._to_datetime(self.not_before_timestamp)
+
+    @Lazy
+    def not_after(self):
+        return self._to_datetime(self.not_after_timestamp)
 
     def _iter_catalog_entries(self):
         return component.getUtility(ICourseCatalog).iterCatalogEntries()
@@ -836,40 +850,67 @@ class AllCourseCompletionView(AbstractAuthenticatedView):
         if not self._is_admin and not self._is_site_admin:
             raise hexc.HTTPForbidden()
 
+    def iter_completed_items(self, min_time, max_time):
+        """
+        Iterate over completed items for a time range.
+        """
+        query = {}
+        sites = get_component_hierarchy_names()
+        catalog = get_completed_item_catalog()
+
+        if sites:
+            if isinstance(sites, six.string_types):
+                sites = sites.split(',')
+            query[IX_SITE] = {'any_of': sites}
+
+        if min_time is not None or max_time is not None:
+            query[IX_COMPLETIONTIME] = {'between': (min_time, max_time)}
+
+        intids = component.getUtility(IIntIds)
+        for doc_id in catalog.apply(query) or ():
+            obj = intids.queryObject(doc_id)
+            if ICompletedItem.providedBy(obj):
+                yield obj
+
     def __call__(self):
         self._check_access()
         result = LocatedExternalDict()
-        result[ITEMS] = items = dict()
-        course_count = 0
+        result[ITEMS] = course_result_records = dict()
         item_count = 0
-        for catalog_entry in self._iter_catalog_entries():
-            course = ICourseInstance(catalog_entry, None)
-            if course is None:
+        required_item_providers_dict = dict()
+        seen_users_courses = set()
+        # FIXME: Do we need a buffer here to account for index time normalization....?
+        # 5 minutes
+        timestamp_buffer = 300
+        min_time = self.not_before_timestamp - timestamp_buffer if self.not_before_timestamp else self.not_before_timestamp
+        max_time = self.not_after_timestamp + timestamp_buffer if self.not_after_timestamp else self.not_after_timestamp
+        completed_items_iter = self.iter_completed_items(min_time, max_time)
+        for completed_item in completed_items_iter:
+            course = ICompletionContext(completed_item, None)
+            if not ICourseInstance.providedBy(completed_item):
+                continue
+            user = IUser(completed_item.Principal)
+            entry = ICourseCatalogEntry(course)
+            entry_ntiid = entry.ntiid
+            key = (user.username, entry_ntiid)
+            if key in seen_users_courses:
                 continue
             gevent.sleep()
-            required_item_providers = None
-            course_result_records = []
-            course_enrollments = ICourseEnrollments(course)
-            for record in course_enrollments.iter_enrollments():
-                user = IUser(record, None)
-                if user is None or not self._can_admin_user(user):
-                    # Deleted user
-                    continue
+            seen_users_courses.add(key)
+            required_item_providers_for_course = required_item_providers_dict.get(entry_ntiid)
+            progress_factory = CompletionContextProgressFactory(user,
+                                                                course,
+                                                                required_item_providers_for_course)
+            progress = progress_factory()
+            if required_item_providers_for_course is None:
+                required_item_providers_dict[entry_ntiid] = progress_factory.required_item_providers
 
-                progress_factory = CompletionContextProgressFactory(user,
-                                                                    course,
-                                                                    required_item_providers)
-                progress = progress_factory()
-                if required_item_providers is None:
-                    required_item_providers = progress_factory.required_item_providers
+            if self._include_record(progress):
+                course_records = course_result_records.setdefault(entry_ntiid, [])
+                item_count += 1
+                record = get_enrollment_record(entry, user)
+                course_records.append(record)
 
-                if self._include_record(progress):
-                    course_result_records.append(record)
-
-            if course_result_records:
-                items[catalog_entry.ntiid] = course_result_records
-                course_count += 1
-                item_count += len(course_result_records)
-        result['CourseCount'] = course_count
+        result['CourseCount'] = len(course_result_records)
         result['EnrollmentRecordCount'] = result[ITEM_COUNT] = item_count
         return result
