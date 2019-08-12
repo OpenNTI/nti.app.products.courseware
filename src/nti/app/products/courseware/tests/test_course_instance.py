@@ -15,7 +15,6 @@ from hamcrest import has_key
 from hamcrest import has_item
 from hamcrest import not_none
 from hamcrest import has_entry
-from hamcrest import has_length
 from hamcrest import assert_that
 from hamcrest import has_entries
 from hamcrest import has_property
