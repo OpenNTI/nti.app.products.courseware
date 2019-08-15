@@ -387,7 +387,7 @@ class AllCourseActivityGetView(CourseDashboardRecursiveStreamView):
         course = self.context
         user = self.remoteUser
         if      not is_course_instructor(course, user) \
-            and not has_permission(nauth.CONTENT_EDIT, course, self.request) \
+            and not has_permission(nauth.ACT_CONTENT_EDIT, course, self.request) \
             and not is_enrolled(course, user):
             raise HTTPForbidden()
 
