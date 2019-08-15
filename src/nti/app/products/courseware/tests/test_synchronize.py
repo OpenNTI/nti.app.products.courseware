@@ -743,8 +743,6 @@ class TestFunctionalSynchronize(CourseLayerTest):
 		gateway = spring['Gateway']
 		section = gateway.SubInstances['03']
 		gateway_discussions = getattr(gateway, 'Discussions')
-		default_forum = CommunityForum()
-		gateway_discussions['Forum'] = default_forum
 
 		section_discussions = section.Discussions
 		# Setup. Just make sure we have a discussion here.

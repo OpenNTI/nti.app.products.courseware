@@ -20,6 +20,7 @@ from zope.cachedescriptors.property import CachedProperty
 
 from zope.intid.interfaces import IIntIds
 
+from pyramid.httpexceptions import HTTPForbidden
 from pyramid.httpexceptions import HTTPBadRequest
 
 from pyramid.view import view_config
@@ -34,21 +35,30 @@ from nti.app.products.courseware.stream_ranking import _DEFAULT_TIME_FIELD
 from nti.app.products.courseware.stream_ranking import StreamConfidenceRanker
 
 from nti.app.products.courseware.views import VIEW_COURSE_RECURSIVE
+from nti.app.products.courseware.views import VIEW_ALL_COURSE_ACTIVITY
 from nti.app.products.courseware.views import VIEW_COURSE_RECURSIVE_BUCKET
 
 from nti.app.products.courseware.views._utils import _get_containers_in_course
 
 from nti.appserver.pyramid_authorization import is_readable
+from nti.appserver.pyramid_authorization import has_permission
 
 from nti.contenttypes.courses.interfaces import ICourseInstance
 from nti.contenttypes.courses.interfaces import ICourseSubInstance
+
+from nti.contenttypes.courses.utils import is_enrolled
+from nti.contenttypes.courses.utils import is_course_editor
+from nti.contenttypes.courses.utils import is_course_instructor
+from nti.contenttypes.courses.utils import get_enrollment_record
 
 from nti.dataserver import authorization as nauth
 
 from nti.dataserver.interfaces import IUser
 
 from nti.dataserver.metadata.index import IX_TOPICS
+from nti.dataserver.metadata.index import IX_SHAREDWITH
 from nti.dataserver.metadata.index import TP_TOP_LEVEL_CONTENT
+from nti.dataserver.metadata.index import TP_USER_GENERATED_DATA
 from nti.dataserver.metadata.index import TP_DELETED_PLACEHOLDER
 
 from nti.dataserver.metadata.index import get_metadata_catalog
@@ -81,7 +91,7 @@ logger = __import__('logging').getLogger(__name__)
              permission=nauth.ACT_READ,
              renderer='rest',
              name=VIEW_COURSE_RECURSIVE)
-class CourseDashboardRecursiveStreamView(AbstractAuthenticatedView, 
+class CourseDashboardRecursiveStreamView(AbstractAuthenticatedView,
                                          BatchingUtilsMixin):
     """
     Stream the relevant course instance objects to the user. This includes
@@ -257,9 +267,9 @@ class CourseDashboardRecursiveStreamView(AbstractAuthenticatedView,
         )
 
         # Find collisions
-        shared_note_intids = catalog.family.IF.intersection(top_level_shared_intids, 
+        shared_note_intids = catalog.family.IF.intersection(top_level_shared_intids,
                                                             intids_of_notes)
-        results = catalog.family.IF.intersection(shared_note_intids, 
+        results = catalog.family.IF.intersection(shared_note_intids,
                                                  course_container_intids)
         return results
 
@@ -297,10 +307,10 @@ class CourseDashboardRecursiveStreamView(AbstractAuthenticatedView,
         results = self._do_get_intids()
 
         catalog = self._catalog
-        time_range_intids = self._intids_in_time_range(self.batch_after, 
+        time_range_intids = self._intids_in_time_range(self.batch_after,
                                                        self.batch_before)
         if time_range_intids is not None:
-            results = catalog.family.IF.intersection(time_range_intids, 
+            results = catalog.family.IF.intersection(time_range_intids,
                                                      results)
         return results
 
@@ -330,7 +340,11 @@ class CourseDashboardRecursiveStreamView(AbstractAuthenticatedView,
         # Rank
         return self._rank_results(items)
 
+    def check_access(self):
+        pass
+
     def __call__(self):
+        self.check_access()
         result = LocatedExternalDict()
 
         intermediate_results = self._get_intids()
@@ -344,6 +358,82 @@ class CourseDashboardRecursiveStreamView(AbstractAuthenticatedView,
 
         result['TotalItemCount'] = len(result[ITEMS])
         result[CLASS] = 'CourseRecursiveStream'
+        return result
+
+
+@view_config(route_name='objects.generic.traversal',
+             renderer='rest',
+             request_method='GET',
+             context=ICourseInstance,
+             name=VIEW_ALL_COURSE_ACTIVITY,
+             permission=nauth.ACT_READ)
+class AllCourseActivityGetView(CourseDashboardRecursiveStreamView):
+    """
+    This is the activity dashboard, offering up topics and UGD this user
+    has access to.
+
+    For performance, we return only the UGD explicitly shared to this user's
+    enrollment scope or an implied scope.
+
+    For instructors and site admins, we return all UGD for any scopes in
+    the course.
+
+    For editors, they just see the topics.
+
+    XXX: can we shortcut the parent _security_check?
+    """
+
+    def check_access(self):
+        course = self.context
+        user = self.remoteUser
+        if      not is_course_instructor(course, user) \
+            and not has_permission(nauth.CONTENT_EDIT, course, self.request) \
+            and not is_enrolled(course, user):
+            raise HTTPForbidden()
+
+    def _rank_results(self, results):
+        """
+        Implement our sorting
+        """
+        return results
+
+    def __get_ugd_intids(self, scope_ntiids):
+        catalog = get_metadata_catalog()
+        # Get UGD intids
+        ugd_ids = catalog[IX_TOPICS][TP_USER_GENERATED_DATA].getExtent()
+        sw_ids = catalog[IX_SHAREDWITH].apply({'any_of': scope_ntiids})
+        result_set = ugd_ids.intersection(sw_ids) if sw_ids else None
+        return result_set
+
+    def get_scope_ntiids_for_user(self, user):
+        course = self.context
+        if is_course_editor(course, user):
+            # Editors get none; check this first since they have EDIT perm.
+            result = []
+        elif     is_course_instructor(course, user) \
+            or has_permission(nauth.ACT_CONTENT_EDIT, course, self.request):
+            # SiteAdmins and instructors get all
+            result = [x.NTIID for x in course.SharingScopes.values()]
+        else:
+            record = get_enrollment_record(course, user)
+            implied_scopes = course.SharingScopes.getAllScopesImpliedbyScope(record.Scope)
+            result = [x.NTIID for x in implied_scopes]
+        return result
+
+    def _get_intids(self):
+        """
+        Get all topic and UGD intids.
+        """
+        topic_intids, unused_topics = self._get_topics(self.context)
+        ugd_intids = None
+        scope_ntiids = self.get_scope_ntiids_for_user(self.remoteUser)
+        if scope_ntiids:
+            ugd_intids = self.__get_ugd_intids(scope_ntiids)
+        result = []
+        if ugd_intids:
+            result.extend(ugd_intids)
+        if topic_intids:
+            result.extend(topic_intids)
         return result
 
 
@@ -515,7 +605,7 @@ class CourseDashboardBucketingStreamView(CourseDashboardRecursiveStreamView):
             time_range_func = self._get_time_range_func()
             start_ts, end_ts = time_range_func()
             bucket_time_range_intids = self._intids_in_time_range(start_ts, end_ts)
-            bucket_intids = catalog.family.IF.intersection(bucket_time_range_intids, 
+            bucket_intids = catalog.family.IF.intersection(bucket_time_range_intids,
                                                            course_intids)
 
             if bucket_intids:
@@ -523,7 +613,7 @@ class CourseDashboardBucketingStreamView(CourseDashboardRecursiveStreamView):
                 course_intids = catalog.family.IF.difference(course_intids,
                                                              bucket_intids)
 
-                bucket_dict = self._do_batching(bucket_intids, 
+                bucket_dict = self._do_batching(bucket_intids,
                                                 start_ts, end_ts)
                 bucket_items = bucket_dict[ITEMS]
                 if not bucket_items:

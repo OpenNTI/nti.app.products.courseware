@@ -38,6 +38,7 @@ from nti.app.products.courseware import VIEW_USER_COURSE_ACCESS
 from nti.app.products.courseware import VIEW_LESSONS_CONTAINERS
 from nti.app.products.courseware import VIEW_ENROLLMENT_OPTIONS
 from nti.app.products.courseware import VIEW_RECURSIVE_AUDIT_LOG
+from nti.app.products.courseware import VIEW_ALL_COURSE_ACTIVITY
 from nti.app.products.courseware import VIEW_COURSE_LOCKED_OBJECTS
 from nti.app.products.courseware import VIEW_COURSE_TAB_PREFERENCES
 from nti.app.products.courseware import VIEW_COURSE_RECURSIVE_BUCKET
@@ -456,16 +457,17 @@ class _CourseTabPreferencesLinkDecorator(AbstractAuthenticatedRequestAwareDecora
 @interface.implementer(IExternalMappingDecorator)
 class _CourseInstancePagesLinkDecorator(PreviewCourseAccessPredicateDecorator):
     """
-    Places a link to the pages view of a course.
+    Places a link to the pages and activity views of a course.
     """
 
     def _do_decorate_external(self, context, result):
         _links = result.setdefault(LINKS, [])
-        link = Link(context, rel='Pages', elements=('Pages',))
-        interface.alsoProvides(link, ILocation)
-        link.__name__ = ''
-        link.__parent__ = context
-        _links.append(link)
+        for rel in ('Pages', VIEW_ALL_COURSE_ACTIVITY):
+            link = Link(context, rel=rel, elements=(rel,))
+            interface.alsoProvides(link, ILocation)
+            link.__name__ = ''
+            link.__parent__ = context
+            _links.append(link)
 
 
 @component.adapter(ICourseOutline)

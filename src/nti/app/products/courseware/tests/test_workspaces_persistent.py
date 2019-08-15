@@ -315,7 +315,7 @@ class TestPersistentWorkspaces(AbstractEnrollingBase, ApplicationLayerTest):
         res = self.testapp.get(course_href, extra_environ=admin_environ)
         course_ext = res.json_body
         discussions = course_ext.get('Discussions')
-        self.forbid_link_with_rel(discussions, 'edit')
+        self.require_link_href_with_rel(discussions, 'edit')
         self.require_link_href_with_rel(discussions, 'add')
 
         discussion_contents_rel = self.require_link_href_with_rel(discussions, 'contents')
@@ -324,7 +324,7 @@ class TestPersistentWorkspaces(AbstractEnrollingBase, ApplicationLayerTest):
         discussion_contents = discussion_contents.json_body
 
         forum = discussion_contents['Items'][0]
-        self.forbid_link_with_rel(forum, 'edit')
+        self.require_link_href_with_rel(forum, 'edit')
         self.require_link_href_with_rel(forum, 'add')
 
     @WithSharedApplicationMockDS(users=('arbitrary@nextthought.com',), testapp=True)

@@ -33,7 +33,6 @@ VIEW_UPCOMING_COURSES = "Upcoming"
 VIEW_COURSE_FAVORITES = 'Favorites'
 VIEW_LESSONS_CONTAINERS = 'Lessons'
 VIEW_COURSE_CLASSMATES = 'Classmates'
-VIEW_COURSE_ACTIVITY = 'CourseActivity'
 VIEW_USER_ENROLLMENTS = 'UserEnrollments'
 VIEW_ENROLLMENT_OPTIONS = 'EnrollmentOptions'
 VIEW_CATALOG_ENTRY = 'CourseCatalogEntry'
@@ -60,3 +59,9 @@ VIEW_UPDATE_WEBINAR_PROGRESS = 'UpdateWebinarProgress'
 VIEW_ALL_SITE_UPDATE_WEBINAR_PROGRESS = 'UpdateAllSiteWebinarProgress'
 
 VIEW_COURSE_TAB_PREFERENCES = 'CourseTabPreferences'
+
+#: Use in assessments activity for instructors
+VIEW_COURSE_ACTIVITY = 'CourseActivity'
+
+#: The course activity tab
+VIEW_ALL_COURSE_ACTIVITY = 'AllCourseActivity'
