@@ -47,6 +47,7 @@ from nti.app.products.courseware import VIEW_COURSE_DISCUSSIONS
 from nti.app.products.courseware import VIEW_LESSONS_CONTAINERS
 from nti.app.products.courseware import VIEW_USER_COURSE_ACCESS
 from nti.app.products.courseware import VIEW_ENABLE_INVITATION
+from nti.app.products.courseware import VIEW_ALL_COURSE_ACTIVITY
 from nti.app.products.courseware import ACCEPT_COURSE_INVITATION
 from nti.app.products.courseware import ACCEPT_COURSE_INVITATIONS
 from nti.app.products.courseware import VIEW_COURSE_ACCESS_TOKENS
