@@ -31,6 +31,8 @@ from nti.app.base.abstract_views import AbstractAuthenticatedView
 
 from nti.app.externalization.view_mixins import BatchingUtilsMixin
 
+from nti.app.forums.views.read_views import ForumContentsGetView
+
 from nti.app.products.courseware.stream_ranking import _DEFAULT_TIME_FIELD
 from nti.app.products.courseware.stream_ranking import StreamConfidenceRanker
 
@@ -77,12 +79,6 @@ LINKS = StandardExternalFields.LINKS
 MIMETYPE = StandardExternalFields.MIMETYPE
 
 logger = __import__('logging').getLogger(__name__)
-
-# TODO:
-# - mimetype filter
-# - sorting params
-# - caching (memcache?)
-# - last modified/etag support
 
 
 @view_config(route_name='objects.generic.traversal',
@@ -367,7 +363,7 @@ class CourseDashboardRecursiveStreamView(AbstractAuthenticatedView,
              context=ICourseInstance,
              name=VIEW_ALL_COURSE_ACTIVITY,
              permission=nauth.ACT_READ)
-class AllCourseActivityGetView(CourseDashboardRecursiveStreamView):
+class AllCourseActivityGetView(ForumContentsGetView):
     """
     This is the activity dashboard, offering up topics and UGD this user
     has access to.
@@ -380,8 +376,24 @@ class AllCourseActivityGetView(CourseDashboardRecursiveStreamView):
 
     For editors, they just see the topics.
 
-    XXX: can we shortcut the parent _security_check?
+    XXX: can we shortcut the parent `needs_security`? We should not need it.
+    It's safer but we should be good here.
     """
+
+    _DEFAULT_BATCH_SIZE = 30
+    _DEFAULT_BATCH_START = 0
+
+    @property
+    def _family(self):
+        return family64
+
+    @CachedProperty
+    def _catalog(self):
+        return get_metadata_catalog()
+
+    @CachedProperty
+    def _intids(self):
+        return component.getUtility(IIntIds)
 
     def check_access(self):
         course = self.context
@@ -396,6 +408,19 @@ class AllCourseActivityGetView(CourseDashboardRecursiveStreamView):
         Implement our sorting
         """
         return results
+
+    def _get_topics_intids(self, course):
+        """
+        Return a tuple of topic intids
+        """
+        topic_intids = self._family.IF.LFSet()
+        intids = self._intids
+
+        for forum in course.Discussions.values():
+            for topic in forum.values():
+                if self._is_readable(topic):
+                    topic_intids.add(intids.getId(topic))
+        return topic_intids
 
     def __get_ugd_intids(self, scope_ntiids):
         catalog = get_metadata_catalog()
@@ -424,7 +449,7 @@ class AllCourseActivityGetView(CourseDashboardRecursiveStreamView):
         """
         Get all topic and UGD intids.
         """
-        topic_intids, unused_topics = self._get_topics(self.context)
+        topic_intids = self._get_topics_intids(self.context)
         ugd_intids = None
         scope_ntiids = self.get_scope_ntiids_for_user(self.remoteUser)
         if scope_ntiids:
@@ -435,6 +460,14 @@ class AllCourseActivityGetView(CourseDashboardRecursiveStreamView):
         if topic_intids:
             result.extend(topic_intids)
         return result
+
+    def getObjectsForId(self, *unused_args):
+        result_intids = self._get_intids()
+        return ([self._intids.queryObject(x) for x in result_intids],)
+
+    def __call__(self):
+        self.check_access()
+        return super(AllCourseActivityGetView, self).__call__()
 
 
 @view_config(route_name='objects.generic.traversal',
