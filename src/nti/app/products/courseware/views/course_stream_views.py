@@ -424,10 +424,11 @@ class AllCourseActivityGetView(ForumContentsGetView):
 
     def __get_ugd_intids(self, scope_ntiids):
         catalog = get_metadata_catalog()
+        intersection = catalog.family.IF.intersection
         # Get UGD intids
         intids_of_notes = catalog['mimeType'].apply({'any_of': ('application/vnd.nextthought.note',)})
         sw_ids = catalog[IX_SHAREDWITH].apply({'any_of': scope_ntiids})
-        result_set = intids_of_notes.intersection(sw_ids) if sw_ids else None
+        result_set = intersection(intids_of_notes, sw_ids)
         return result_set
 
     def get_scope_ntiids_for_user(self, user):
