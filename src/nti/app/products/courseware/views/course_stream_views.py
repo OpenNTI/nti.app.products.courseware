@@ -72,6 +72,7 @@ from nti.externalization.interfaces import StandardExternalFields
 from nti.links.links import Link
 
 from nti.zope_catalog.catalog import isBroken
+from nti.dataserver.authorization import is_admin_or_site_admin
 
 CLASS = StandardExternalFields.CLASS
 ITEMS = StandardExternalFields.ITEMS
@@ -433,13 +434,13 @@ class AllCourseActivityGetView(ForumContentsGetView):
 
     def get_scope_ntiids_for_user(self, user):
         course = self.context
-        if is_course_editor(course, user):
-            # Editors get none; check this first since they have EDIT perm.
-            result = []
-        elif     is_course_instructor(course, user) \
-            or has_permission(nauth.ACT_CONTENT_EDIT, course, self.request):
-            # SiteAdmins and instructors get all
+        if     is_admin_or_site_admin(user) \
+            or is_course_instructor(course, user):
+            # Admins, SiteAdmins and instrutors get all
             result = [x.NTIID for x in course.SharingScopes.values()]
+        elif is_course_editor(course, user):
+            # Editors get none
+            result = []
         else:
             record = get_enrollment_record(course, user)
             implied_scopes = course.SharingScopes.getAllScopesImpliedbyScope(record.Scope)
