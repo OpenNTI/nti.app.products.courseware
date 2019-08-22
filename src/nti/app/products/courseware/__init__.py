@@ -65,3 +65,6 @@ VIEW_COURSE_ACTIVITY = 'CourseActivity'
 
 #: The course activity tab
 VIEW_ALL_COURSE_ACTIVITY = 'AllCourseActivity'
+
+#: The activity of the parent course
+VIEW_PARENT_ALL_COURSE_ACTIVITY = 'ParentAllCourseActivity'
