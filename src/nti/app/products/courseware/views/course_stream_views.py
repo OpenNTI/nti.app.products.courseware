@@ -427,8 +427,10 @@ class AllCourseActivityGetView(ForumContentsGetView):
     def __get_ugd_intids(self, scope_ntiids):
         catalog = get_metadata_catalog()
         intersection = catalog.family.IF.intersection
-        # Get UGD intids
+        # Get top-level note intids
+        toplevel_intids_extent = catalog[IX_TOPICS][TP_TOP_LEVEL_CONTENT].getExtent()
         intids_of_notes = catalog['mimeType'].apply({'any_of': ('application/vnd.nextthought.note',)})
+        intids_of_notes = toplevel_intids_extent.intersection(intids_of_notes)
         sw_ids = catalog[IX_SHAREDWITH].apply({'any_of': scope_ntiids})
         result_set = intersection(intids_of_notes, sw_ids)
         return result_set
