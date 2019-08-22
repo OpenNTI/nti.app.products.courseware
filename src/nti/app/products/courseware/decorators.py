@@ -44,6 +44,7 @@ from nti.app.products.courseware import VIEW_COURSE_TAB_PREFERENCES
 from nti.app.products.courseware import VIEW_COURSE_RECURSIVE_BUCKET
 from nti.app.products.courseware import VIEW_COURSE_CATALOG_FAMILIES
 from nti.app.products.courseware import VIEW_COURSE_ENROLLMENT_ROSTER
+from nti.app.products.courseware import VIEW_PARENT_ALL_COURSE_ACTIVITY
 
 from nti.app.products.courseware.interfaces import ACT_VIEW_ACTIVITY
 
@@ -464,6 +465,14 @@ class _CourseInstancePagesLinkDecorator(PreviewCourseAccessPredicateDecorator):
         _links = result.setdefault(LINKS, [])
         for rel in ('Pages', VIEW_ALL_COURSE_ACTIVITY):
             link = Link(context, rel=rel, elements=(rel,))
+            interface.alsoProvides(link, ILocation)
+            link.__name__ = ''
+            link.__parent__ = context
+            _links.append(link)
+        if ICourseSubInstance.providedBy(context):
+            link = Link(context,
+                        rel=VIEW_PARENT_ALL_COURSE_ACTIVITY,
+                        elements=(VIEW_PARENT_ALL_COURSE_ACTIVITY,))
             interface.alsoProvides(link, ILocation)
             link.__name__ = ''
             link.__parent__ = context

@@ -39,6 +39,7 @@ from nti.app.products.courseware.stream_ranking import StreamConfidenceRanker
 from nti.app.products.courseware.views import VIEW_COURSE_RECURSIVE
 from nti.app.products.courseware.views import VIEW_ALL_COURSE_ACTIVITY
 from nti.app.products.courseware.views import VIEW_COURSE_RECURSIVE_BUCKET
+from nti.app.products.courseware.views import VIEW_PARENT_ALL_COURSE_ACTIVITY
 
 from nti.app.products.courseware.views._utils import _get_containers_in_course
 
@@ -50,17 +51,18 @@ from nti.contenttypes.courses.interfaces import ICourseSubInstance
 
 from nti.contenttypes.courses.utils import is_enrolled
 from nti.contenttypes.courses.utils import is_course_editor
+from nti.contenttypes.courses.utils import get_parent_course
 from nti.contenttypes.courses.utils import is_course_instructor
-from nti.contenttypes.courses.utils import get_enrollment_record
 
 from nti.dataserver import authorization as nauth
+
+from nti.dataserver.authorization import is_admin_or_site_admin
 
 from nti.dataserver.interfaces import IUser
 
 from nti.dataserver.metadata.index import IX_TOPICS
 from nti.dataserver.metadata.index import IX_SHAREDWITH
 from nti.dataserver.metadata.index import TP_TOP_LEVEL_CONTENT
-from nti.dataserver.metadata.index import TP_USER_GENERATED_DATA
 from nti.dataserver.metadata.index import TP_DELETED_PLACEHOLDER
 
 from nti.dataserver.metadata.index import get_metadata_catalog
@@ -72,7 +74,6 @@ from nti.externalization.interfaces import StandardExternalFields
 from nti.links.links import Link
 
 from nti.zope_catalog.catalog import isBroken
-from nti.dataserver.authorization import is_admin_or_site_admin
 
 CLASS = StandardExternalFields.CLASS
 ITEMS = StandardExternalFields.ITEMS
@@ -369,8 +370,8 @@ class AllCourseActivityGetView(ForumContentsGetView):
     This is the activity dashboard, offering up topics and UGD this user
     has access to.
 
-    For performance, we return only the UGD explicitly shared to this user's
-    enrollment scope or an implied scope.
+    For performance, we return only the UGD explicitly shared to scopes
+    this (enrolled) user is a member of.
 
     For instructors and site admins, we return all UGD for any scopes in
     the course.
@@ -426,14 +427,15 @@ class AllCourseActivityGetView(ForumContentsGetView):
     def __get_ugd_intids(self, scope_ntiids):
         catalog = get_metadata_catalog()
         intersection = catalog.family.IF.intersection
-        # Get UGD intids
+        # Get top-level note intids
+        toplevel_intids_extent = catalog[IX_TOPICS][TP_TOP_LEVEL_CONTENT].getExtent()
         intids_of_notes = catalog['mimeType'].apply({'any_of': ('application/vnd.nextthought.note',)})
+        intids_of_notes = toplevel_intids_extent.intersection(intids_of_notes)
         sw_ids = catalog[IX_SHAREDWITH].apply({'any_of': scope_ntiids})
         result_set = intersection(intids_of_notes, sw_ids)
         return result_set
 
-    def get_scope_ntiids_for_user(self, user):
-        course = self.context
+    def get_scope_ntiids_for_user(self, user, course):
         if     is_admin_or_site_admin(user) \
             or is_course_instructor(course, user):
             # Admins, SiteAdmins and instrutors get all
@@ -442,18 +444,29 @@ class AllCourseActivityGetView(ForumContentsGetView):
             # Editors get none
             result = []
         else:
-            record = get_enrollment_record(course, user)
-            implied_scopes = course.SharingScopes.getAllScopesImpliedbyScope(record.Scope)
-            result = [x.NTIID for x in implied_scopes]
+            # Enrolled student, gather all scopes the user is in
+            # When gathering data for subinstance or parent course, this
+            # ensures we only get the scopes we are in (not all scopes
+            # that are implied, which will also gather parent course scopes,
+            # which we do not want).
+            result = [x.NTIID for x in course.SharingScopes.values()
+                      if user in x]
         return result
+
+    def _get_course_data_context(self):
+        """
+        The course data we are interested in.
+        """
+        return self.context
 
     def _get_intids(self):
         """
         Get all topic and UGD intids.
         """
-        topic_intids = self._get_topics_intids(self.context)
+        course = self._get_course_data_context()
+        topic_intids = self._get_topics_intids(course)
         ugd_intids = None
-        scope_ntiids = self.get_scope_ntiids_for_user(self.remoteUser)
+        scope_ntiids = self.get_scope_ntiids_for_user(self.remoteUser, course)
         if scope_ntiids:
             ugd_intids = self.__get_ugd_intids(scope_ntiids)
         result = []
@@ -470,6 +483,21 @@ class AllCourseActivityGetView(ForumContentsGetView):
     def __call__(self):
         self.check_access()
         return super(AllCourseActivityGetView, self).__call__()
+
+
+@view_config(route_name='objects.generic.traversal',
+             renderer='rest',
+             request_method='GET',
+             context=ICourseSubInstance,
+             name=VIEW_PARENT_ALL_COURSE_ACTIVITY,
+             permission=nauth.ACT_READ)
+class ParentAllCourseActivityGetView(AllCourseActivityGetView):
+    """
+    A specialized view to get the activity of the parent course.
+    """
+
+    def _get_course_data_context(self):
+        return get_parent_course(self.context)
 
 
 @view_config(route_name='objects.generic.traversal',
