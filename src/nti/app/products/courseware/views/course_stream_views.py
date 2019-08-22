@@ -53,6 +53,7 @@ from nti.contenttypes.courses.utils import is_enrolled
 from nti.contenttypes.courses.utils import is_course_editor
 from nti.contenttypes.courses.utils import get_parent_course
 from nti.contenttypes.courses.utils import is_course_instructor
+from nti.contenttypes.courses.utils import get_enrollment_record
 
 from nti.dataserver import authorization as nauth
 
@@ -444,13 +445,17 @@ class AllCourseActivityGetView(ForumContentsGetView):
             # Editors get none
             result = []
         else:
-            # Enrolled student, gather all scopes the user is in
-            # When gathering data for subinstance or parent course, this
-            # ensures we only get the scopes we are in (not all scopes
-            # that are implied, which will also gather parent course scopes,
-            # which we do not want).
-            result = [x.NTIID for x in course.SharingScopes.values()
-                      if user in x]
+            record = get_enrollment_record(course, user)
+            if record is not None:
+                implied_scopes = course.SharingScopes.getAllScopesImpliedbyScope(record.Scope)
+                result = [x.NTIID for x in implied_scopes]
+            else:
+                # Enrolled student in section course, gather all scopes the
+                # user is implied in. When gathering data for user enrolled
+                # in a subinstance, this will only get those scopes in the
+                # parent course they are in.
+                result = [x.NTIID for x in course.SharingScopes.values()
+                          if user in x]
         return result
 
     def _get_course_data_context(self):
