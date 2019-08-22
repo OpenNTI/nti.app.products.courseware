@@ -26,6 +26,8 @@ from nti.app.assessment.common.evaluations import get_course_from_evaluation
 
 from nti.app.assessment.utils import get_course_from_request
 
+from nti.app.products.courseware import MessageFactory as _
+
 from nti.app.products.courseware import VIEW_CONTENTS
 from nti.app.products.courseware import VIEW_COURSE_MAIL
 from nti.app.products.courseware import VIEW_CATALOG_ENTRY
@@ -151,6 +153,8 @@ LINKS = StandardExternalFields.LINKS
 MIMETYPE = StandardExternalFields.MIMETYPE
 
 COURSE_CONTEXT_ANNOT_KEY = 'nti.app.products.course.context_key'
+
+ALL_ACTIVITY_TITLE = 'All Activity'
 
 logger = __import__('logging').getLogger(__name__)
 
@@ -463,16 +467,19 @@ class _CourseInstancePagesLinkDecorator(PreviewCourseAccessPredicateDecorator):
 
     def _do_decorate_external(self, context, result):
         _links = result.setdefault(LINKS, [])
-        for rel in ('Pages', VIEW_ALL_COURSE_ACTIVITY):
-            link = Link(context, rel=rel, elements=(rel,))
-            interface.alsoProvides(link, ILocation)
-            link.__name__ = ''
-            link.__parent__ = context
-            _links.append(link)
+        pages_link = Link(context, rel='Pages', elements=('Pages',))
+        activity_link = Link(context,
+                             rel=VIEW_ALL_COURSE_ACTIVITY,
+                             elements=(VIEW_ALL_COURSE_ACTIVITY,),
+                             title=_(ALL_ACTIVITY_TITLE))
+        links = [pages_link, activity_link]
         if ICourseSubInstance.providedBy(context):
-            link = Link(context,
-                        rel=VIEW_PARENT_ALL_COURSE_ACTIVITY,
-                        elements=(VIEW_PARENT_ALL_COURSE_ACTIVITY,))
+            p_link = Link(context,
+                          rel=VIEW_PARENT_ALL_COURSE_ACTIVITY,
+                          elements=(VIEW_PARENT_ALL_COURSE_ACTIVITY,),
+                          title=_(ALL_ACTIVITY_TITLE))
+            links.append(p_link)
+        for link in links:
             interface.alsoProvides(link, ILocation)
             link.__name__ = ''
             link.__parent__ = context
