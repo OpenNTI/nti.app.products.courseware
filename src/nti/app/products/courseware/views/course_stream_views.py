@@ -370,8 +370,8 @@ class AllCourseActivityGetView(ForumContentsGetView):
     This is the activity dashboard, offering up topics and UGD this user
     has access to.
 
-    For performance, we return only the UGD explicitly shared to this user's
-    enrollment scope or an implied scope.
+    For performance, we return only the UGD explicitly shared to scopes
+    this (enrolled) user is a member of.
 
     For instructors and site admins, we return all UGD for any scopes in
     the course.
@@ -492,9 +492,6 @@ class AllCourseActivityGetView(ForumContentsGetView):
 class ParentAllCourseActivityGetView(AllCourseActivityGetView):
     """
     A specialized view to get the activity of the parent course.
-
-    Section course students will get no result from `get_scope_ntiids_for_user`
-    and thus, no UGD of the parent course.
     """
 
     def _get_course_data_context(self):
