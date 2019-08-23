@@ -378,10 +378,13 @@ class AllCourseActivityGetView(ForumContentsGetView):
     the course.
 
     For editors, they just see the topics.
-
-    XXX: can we shortcut the parent `needs_security`? We should not need it.
-    It's safer but we should be good here.
     """
+
+    #: We can skip security here. We want NT admins (acl) and
+    #: site admins (zope) to be able to view these UGD objects
+    #: under a user. It may make more sense to open these up in
+    #: permissions so these users can always see these objects.
+    _skip_security = True
 
     _DEFAULT_BATCH_SIZE = 30
     _DEFAULT_BATCH_START = 0
