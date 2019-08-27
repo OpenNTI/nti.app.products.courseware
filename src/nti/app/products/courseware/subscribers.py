@@ -30,7 +30,9 @@ from zope.event import notify
 from zope.i18n import translate
 
 from zope.lifecycleevent.interfaces import IObjectAddedEvent
+from zope.lifecycleevent.interfaces import IObjectCreatedEvent
 from zope.lifecycleevent.interfaces import IObjectModifiedEvent
+from zope.lifecycleevent.interfaces import IObjectRemovedEvent
 
 from zope.publisher.interfaces.browser import IBrowserRequest
 
@@ -38,6 +40,8 @@ from zope.security.interfaces import IPrincipal
 from zope.security.management import endInteraction
 from zope.security.management import queryInteraction
 from zope.security.management import restoreInteraction
+
+from zope.site.interfaces import INewLocalSite
 
 from zope.traversing.interfaces import IBeforeTraverseEvent
 
@@ -47,8 +51,11 @@ from nti.app.products.courseware import MessageFactory as _
 
 from nti.app.products.courseware import USER_ENROLLMENT_LAST_MODIFIED_KEY
 
+from nti.app.products.courseware.interfaces import ICourseSharingScopeUtility
 from nti.app.products.courseware.interfaces import ICourseEnrollmentEmailBCCProvider
 from nti.app.products.courseware.interfaces import ICourseEnrollmentEmailArgsProvider
+
+from nti.app.products.courseware.sharing_scopes import CourseSharingScopeUtility
 
 from nti.app.products.courseware.utils import get_enrollment_courses
 from nti.app.products.courseware.utils import get_enrollment_for_scope
@@ -60,7 +67,6 @@ from nti.contentlibrary.interfaces import IContentBundleUpdatedEvent
 
 from nti.contenttypes.courses.interfaces import ES_PUBLIC
 
-from nti.contenttypes.courses.interfaces import ICourseCatalog
 from nti.contenttypes.courses.interfaces import ICourseInstance
 from nti.contenttypes.courses.interfaces import ICourseEnrollments
 from nti.contenttypes.courses.interfaces import ICourseOutlineNode
@@ -94,6 +100,10 @@ from nti.externalization.externalization import to_external_object
 from nti.mailer.interfaces import ITemplatedMailer
 
 from nti.ntiids.ntiids import find_object_with_ntiid
+
+from nti.site.interfaces import IHostPolicySiteManager
+
+from nti.site.localutility import install_utility
 
 from nti.traversal.traversal import find_interface
 
@@ -418,11 +428,34 @@ class SiteAdminSharingScopeGroups(object):
 
     def __init__(self, context):
         if is_site_admin(context):
-            self.groups = result = []
-            catalog = component.queryUtility(ICourseCatalog)
-            for entry in catalog.iterCatalogEntries():
-                course = ICourseInstance(entry, None)
-                if course is not None:
-                    result.extend(course.SharingScopes.values())
+            # Gather the scope NTIIDs of all sharing scopes *only* for this site
+            sharing_scope_utility = component.queryUtility(ICourseSharingScopeUtility)
+            self.groups = sharing_scope_utility.iter_ntiids()
         else:
             self.groups = ()
+
+
+@component.adapter(IHostPolicySiteManager, INewLocalSite)
+def on_site_created(site_manager, unused_event):
+    logger.info('Installed sharing scope utility (%s)',
+                site_manager.__parent__.__name__)
+    install_utility(CourseSharingScopeUtility(),
+                    '++etc++CourseSharingScopeUtility',
+                    ICourseSharingScopeUtility,
+                    component.getSiteManager())
+
+
+@component.adapter(ICourseInstance, IObjectCreatedEvent)
+def _course_sharing_scopes_updated(course, unused_event=None):
+    sharing_scope_utility = component.queryUtility(ICourseSharingScopeUtility)
+    if sharing_scope_utility is not None:
+        for scope in course.SharingScopes.values():
+            sharing_scope_utility.add_scope(scope)
+
+
+@component.adapter(ICourseInstance, IObjectRemovedEvent)
+def on_course_instance_removed(course, unused_event=None):
+    sharing_scope_utility = component.queryUtility(ICourseSharingScopeUtility)
+    if sharing_scope_utility is not None:
+        for scope in course.SharingScopes.values():
+            sharing_scope_utility.remove_scope(scope)

@@ -93,6 +93,10 @@
 	<subscriber handler=".subscribers.outline_node_traversal_context_subscriber" />
 	<subscriber handler=".subscribers.catalog_entry_traversal_context_subscriber" />
 
+	<subscriber handler=".subscribers.on_site_created" />
+	<subscriber handler=".subscribers.on_course_instance_removed" />
+	<subscriber handler=".subscribers._course_sharing_scopes_updated" />
+
 	<!-- Auto-gen course purchasables from content -->
 	<!-- This must be a global subscriber as that's where
 	the library is -->
