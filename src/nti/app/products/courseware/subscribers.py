@@ -32,6 +32,7 @@ from zope.i18n import translate
 from zope.lifecycleevent.interfaces import IObjectAddedEvent
 from zope.lifecycleevent.interfaces import IObjectCreatedEvent
 from zope.lifecycleevent.interfaces import IObjectModifiedEvent
+from zope.lifecycleevent.interfaces import IObjectRemovedEvent
 
 from zope.publisher.interfaces.browser import IBrowserRequest
 
@@ -450,3 +451,11 @@ def _course_sharing_scopes_updated(course, unused_event=None):
     if sharing_scope_utility is not None:
         for scope in course.SharingScopes.values():
             sharing_scope_utility.add_scope(scope)
+
+
+@component.adapter(ICourseInstance, IObjectRemovedEvent)
+def on_course_instance_removed(course, unused_event=None):
+    sharing_scope_utility = component.queryUtility(ICourseSharingScopeUtility)
+    if sharing_scope_utility is not None:
+        for scope in course.SharingScopes.values():
+            sharing_scope_utility.remove_scope(scope)
