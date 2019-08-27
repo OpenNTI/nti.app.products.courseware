@@ -524,6 +524,36 @@ class ICourseTabConfigurationUtility(interface.Interface):
         Return True if the given user has access to the course tab configuration.
         """
 
+
+class ICourseSharingScopeUtility(interface.Interface):
+    """
+    A utility that enables quick lookup of all sharing scopes
+    contained within a site.
+    """
+
+    def iter_scopes(scope_name=None, parent_scopes=False):
+        """
+        Iterate over the sharing scopes within this utility, optionally
+        filtering by scope name.
+        If `parent_scopes` is False, we do not query the parent site
+        utility.
+        """
+
+    def iter_ntiids():
+        """
+        Iterate over the scope NTIIDs.
+        """
+
+    def add_scope(scope):
+        """
+        Add a scope to the utility.
+        """
+
+    def remove_scope(scope):
+        """
+        Remove a scope from the utility.
+        """
+
 # deprecations
 
 
