@@ -44,6 +44,16 @@
 				for="nti.contenttypes.courses.interfaces.ICourseCatalogEntry
 					 pyramid.interfaces.IRequest" />
 
+    <subscriber factory="nti.appserver.pyramid_renderers_edit_link_decorator.EditLinkRemoverDecorator"
+                provides="nti.externalization.interfaces.IExternalObjectDecorator"
+                for="nti.contenttypes.courses.interfaces.ICourseInstanceForCreditScopedForum
+                     pyramid.interfaces.IRequest"/>
+
+    <subscriber factory="nti.appserver.pyramid_renderers_edit_link_decorator.EditLinkRemoverDecorator"
+                provides="nti.externalization.interfaces.IExternalObjectDecorator"
+                for="nti.contenttypes.courses.interfaces.ICourseInstancePublicScopedForum
+                     pyramid.interfaces.IRequest"/>
+
 	<!-- Exporter -->
 	<utility factory=".exporter.CourseDiscussionsExporter"
 			 provides="nti.contenttypes.courses.discussions.interfaces.ICourseDiscussionsSectionExporter"
