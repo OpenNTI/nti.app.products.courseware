@@ -409,6 +409,13 @@ class AllCourseActivityGetView(ForumContentsGetView):
         """
         return results
 
+    def _validate_search_object_type(self, obj):
+        """
+        We want notes and topics to go through the search term filtering.
+        """
+        return super(AllCourseActivityGetView, self)._validate_search_object_type(obj) \
+            or INote.providedBy(obj)
+
     def _get_topics_intids(self, course):
         """
         Return a tuple of topic intids
