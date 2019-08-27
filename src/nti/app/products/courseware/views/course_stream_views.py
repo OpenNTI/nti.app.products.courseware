@@ -60,6 +60,7 @@ from nti.dataserver import authorization as nauth
 from nti.dataserver.authorization import is_admin_or_site_admin
 
 from nti.dataserver.interfaces import IUser
+from nti.dataserver.interfaces import INote
 
 from nti.dataserver.metadata.index import IX_TOPICS
 from nti.dataserver.metadata.index import IX_SHAREDWITH
