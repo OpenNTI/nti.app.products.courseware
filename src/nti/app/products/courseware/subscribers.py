@@ -19,6 +19,7 @@ from zc.intid.interfaces import IAfterIdAddedEvent
 from zc.intid.interfaces import IBeforeIdRemovedEvent
 
 from zope import component
+from zope import interface
 
 from zope.annotation.interfaces import IAnnotations
 
@@ -58,6 +59,8 @@ from nti.appserver.policies.interfaces import ISitePolicyUserEventListener
 from nti.contentlibrary.interfaces import IContentBundleUpdatedEvent
 
 from nti.contenttypes.courses.interfaces import ES_PUBLIC
+
+from nti.contenttypes.courses.interfaces import ICourseCatalog
 from nti.contenttypes.courses.interfaces import ICourseInstance
 from nti.contenttypes.courses.interfaces import ICourseEnrollments
 from nti.contenttypes.courses.interfaces import ICourseOutlineNode
@@ -75,8 +78,11 @@ from nti.contenttypes.courses.utils import get_course_hierarchy
 
 from nti.coremetadata.interfaces import UserLastSeenEvent
 
+from nti.dataserver.authorization import is_site_admin
+
 from nti.dataserver.interfaces import IUser
 from nti.dataserver.interfaces import ICommunity
+from nti.dataserver.interfaces import IGroupMember
 
 from nti.dataserver.users.interfaces import IUserProfile
 from nti.dataserver.users.interfaces import IEmailAddressable
@@ -399,3 +405,24 @@ def _on_content_bundle_updated(bundle, event):
     added = event.added_packages
     removed = event.removed_packages
     notify(CourseBundleWillUpdateEvent(course, added, removed))
+
+
+@component.adapter(IUser)
+@interface.implementer(IGroupMember)
+class SiteAdminSharingScopeGroups(object):
+    """
+    If the user is a site admin, we want to grant access to all sharing scopes.
+    This should give the site admins access to any notes (UGD) shared to the
+    course scopes.
+    """
+
+    def __init__(self, context):
+        if is_site_admin(context):
+            self.groups = result = []
+            catalog = component.queryUtility(ICourseCatalog)
+            for entry in catalog.iterCatalogEntries():
+                course = ICourseInstance(entry, None)
+                if course is not None:
+                    result.extend(course.SharingScopes.values())
+        else:
+            self.groups = ()
