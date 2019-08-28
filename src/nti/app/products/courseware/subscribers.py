@@ -442,7 +442,7 @@ def on_site_created(site_manager, unused_event):
     install_utility(CourseSharingScopeUtility(),
                     '++etc++CourseSharingScopeUtility',
                     ICourseSharingScopeUtility,
-                    component.getSiteManager())
+                    site_manager)
 
 
 @component.adapter(ICourseInstance, IObjectCreatedEvent)
