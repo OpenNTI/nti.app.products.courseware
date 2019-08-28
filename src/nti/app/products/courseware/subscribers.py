@@ -32,7 +32,6 @@ from zope.i18n import translate
 from zope.lifecycleevent.interfaces import IObjectAddedEvent
 from zope.lifecycleevent.interfaces import IObjectCreatedEvent
 from zope.lifecycleevent.interfaces import IObjectModifiedEvent
-from zope.lifecycleevent.interfaces import IObjectRemovedEvent
 
 from zope.publisher.interfaces.browser import IBrowserRequest
 
@@ -61,12 +60,16 @@ from nti.app.products.courseware.utils import get_enrollment_courses
 from nti.app.products.courseware.utils import get_enrollment_for_scope
 from nti.app.products.courseware.utils import get_enrollment_communities
 
+from nti.app.site.interfaces import ISiteAdminAddedEvent
+from nti.app.site.interfaces import ISiteAdminRemovedEvent
+
+from nti.app.site.utils import get_site_admins
+
 from nti.appserver.policies.interfaces import ISitePolicyUserEventListener
 
 from nti.contentlibrary.interfaces import IContentBundleUpdatedEvent
 
-from nti.contenttypes.courses.interfaces import ES_PUBLIC,\
-    ICourseInstanceSharingScope
+from nti.contenttypes.courses.interfaces import ES_PUBLIC
 
 from nti.contenttypes.courses.interfaces import ICourseInstance
 from nti.contenttypes.courses.interfaces import ICourseEnrollments
@@ -76,6 +79,7 @@ from nti.contenttypes.courses.interfaces import ICourseCatalogEntry
 from nti.contenttypes.courses.interfaces import IDenyOpenEnrollment
 from nti.contenttypes.courses.interfaces import ICourseEnrollmentManager
 from nti.contenttypes.courses.interfaces import ICourseContentPackageBundle
+from nti.contenttypes.courses.interfaces import ICourseInstanceSharingScope
 from nti.contenttypes.courses.interfaces import ICourseInstanceEnrollmentRecord
 
 from nti.contenttypes.courses.interfaces import CourseBundleWillUpdateEvent
@@ -107,8 +111,6 @@ from nti.site.interfaces import IHostPolicySiteManager
 from nti.site.localutility import install_utility
 
 from nti.traversal.traversal import find_interface
-from nti.app.site.utils import get_site_admins
-from nti.app.site.interfaces import ISiteAdminAddedEvent, ISiteAdminRemovedEvent
 
 logger = __import__('logging').getLogger(__name__)
 
