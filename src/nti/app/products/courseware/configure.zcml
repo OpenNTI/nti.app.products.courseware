@@ -94,7 +94,9 @@
 	<subscriber handler=".subscribers.catalog_entry_traversal_context_subscriber" />
 
 	<subscriber handler=".subscribers.on_site_created" />
-	<subscriber handler=".subscribers.on_course_instance_removed" />
+	<subscriber handler=".subscribers.on_site_admin_added" />
+    <subscriber handler=".subscribers.on_site_admin_removed" />
+	<subscriber handler=".subscribers.on_course_scope_removed" />
 	<subscriber handler=".subscribers._course_sharing_scopes_updated" />
 
 	<!-- Auto-gen course purchasables from content -->
