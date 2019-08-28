@@ -65,7 +65,8 @@ from nti.appserver.policies.interfaces import ISitePolicyUserEventListener
 
 from nti.contentlibrary.interfaces import IContentBundleUpdatedEvent
 
-from nti.contenttypes.courses.interfaces import ES_PUBLIC
+from nti.contenttypes.courses.interfaces import ES_PUBLIC,\
+    ICourseInstanceSharingScope
 
 from nti.contenttypes.courses.interfaces import ICourseInstance
 from nti.contenttypes.courses.interfaces import ICourseEnrollments
@@ -106,6 +107,8 @@ from nti.site.interfaces import IHostPolicySiteManager
 from nti.site.localutility import install_utility
 
 from nti.traversal.traversal import find_interface
+from nti.app.site.utils import get_site_admins
+from nti.app.site.interfaces import ISiteAdminAddedEvent, ISiteAdminRemovedEvent
 
 logger = __import__('logging').getLogger(__name__)
 
@@ -447,15 +450,52 @@ def on_site_created(site_manager, unused_event):
 
 @component.adapter(ICourseInstance, IObjectCreatedEvent)
 def _course_sharing_scopes_updated(course, unused_event=None):
+    """
+    When a new course is created, ensure all site admins are following
+    all course scopes; this ensures they have access to shared notes.
+    """
     sharing_scope_utility = component.queryUtility(ICourseSharingScopeUtility)
     if sharing_scope_utility is not None:
+        site_admins = get_site_admins()
         for scope in course.SharingScopes.values():
             sharing_scope_utility.add_scope(scope)
+            for site_admin in site_admins:
+                site_admin.follow(scope)
 
 
-@component.adapter(ICourseInstance, IObjectRemovedEvent)
-def on_course_instance_removed(course, unused_event=None):
+@component.adapter(ICourseInstanceSharingScope, IBeforeIdRemovedEvent)
+def on_course_scope_removed(scope, unused_event=None):
+    """
+    When a course scope is removed, remove site admins from following it.
+    """
     sharing_scope_utility = component.queryUtility(ICourseSharingScopeUtility)
     if sharing_scope_utility is not None:
-        for scope in course.SharingScopes.values():
-            sharing_scope_utility.remove_scope(scope)
+        sharing_scope_utility.remove_scope(scope)
+    site_admins = get_site_admins()
+    for site_admin in site_admins:
+        site_admin.stop_following(scope)
+
+
+@component.adapter(IUser, ISiteAdminAddedEvent)
+def on_site_admin_added(site_admin, unused_event=None):
+    """
+    For new site admins, make sure they follow all course sharing scopes.
+    """
+    sharing_scope_utility = component.queryUtility(ICourseSharingScopeUtility)
+    if sharing_scope_utility is not None:
+        for scope in sharing_scope_utility.iter_scopes(parent_scopes=True):
+            site_admin.follow(scope)
+
+
+@component.adapter(IUser, ISiteAdminRemovedEvent)
+def on_site_admin_removed(site_admin, unused_event=None):
+    """
+    For former site admins, make sure they no longer follow all course sharing
+    scopes. This should only apply if they are *not* a member of the scope;
+    they could be members as an instructor or enrolled user.
+    """
+    sharing_scope_utility = component.queryUtility(ICourseSharingScopeUtility)
+    if sharing_scope_utility is not None:
+        for scope in sharing_scope_utility.iter_scopes(parent_scopes=True):
+            if site_admin not in scope:
+                site_admin.stop_following(scope)

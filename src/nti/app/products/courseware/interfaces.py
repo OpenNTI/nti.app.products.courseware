@@ -531,7 +531,7 @@ class ICourseSharingScopeUtility(interface.Interface):
     contained within a site.
     """
 
-    def iter_scopes(scope_name=None, parent_scopes=False):
+    def iter_scopes(scope_name=None, parent_scopes=True):
         """
         Iterate over the sharing scopes within this utility, optionally
         filtering by scope name.
@@ -539,7 +539,7 @@ class ICourseSharingScopeUtility(interface.Interface):
         utility.
         """
 
-    def iter_ntiids():
+    def iter_ntiids(parent_ntiids=True):
         """
         Iterate over the scope NTIIDs.
         """
