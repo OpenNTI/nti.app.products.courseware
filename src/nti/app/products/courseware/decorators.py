@@ -99,6 +99,7 @@ from nti.contenttypes.courses.sharing import get_default_sharing_scope
 
 from nti.contenttypes.courses.utils import is_enrolled
 from nti.contenttypes.courses.utils import has_enrollments
+from nti.contenttypes.courses.utils import is_course_editor
 from nti.contenttypes.courses.utils import get_catalog_entry
 from nti.contenttypes.courses.utils import is_course_instructor
 from nti.contenttypes.courses.utils import get_enrollment_record
@@ -1063,7 +1064,8 @@ class _CourseInstancePreviewExcludingDecorator(PreviewCourseAccessPredicateDecor
 @interface.implementer(IExternalObjectDecorator)
 class TopicAddRemoverLinkDecorator(LinkRemoverDecorator):
     """
-    Remove add link if not instructor but has course content edit perms
+    Remove add link if not instructor but has course content edit perms.
+    Ensure site admins have access but course editors do not.
     """
 
     links_to_remove = ('add',)
@@ -1073,7 +1075,8 @@ class TopicAddRemoverLinkDecorator(LinkRemoverDecorator):
         return self._is_authenticated \
            and course is not None \
            and not is_course_instructor(course, self.remoteUser) \
-           and has_permission(ACT_CONTENT_EDIT, course, self.request)
+           and is_course_editor(course, self.remoteUser) \
+           and not is_site_admin(self.remoteUser)
 
 
 class _AbstractLessonsContainerDecorator(AbstractAuthenticatedRequestAwareDecorator):
