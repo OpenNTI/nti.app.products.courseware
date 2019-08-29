@@ -432,12 +432,13 @@ class SiteAdminSharingScopeGroups(object):
     """
 
     def __init__(self, context):
+        self.groups = ()
         if is_site_admin(context):
             # Gather the scope NTIIDs of all sharing scopes *only* for this site
             sharing_scope_utility = component.queryUtility(ICourseSharingScopeUtility)
-            self.groups = sharing_scope_utility.iter_ntiids()
-        else:
-            self.groups = ()
+            if sharing_scope_utility is not None:
+                self.groups = sharing_scope_utility.iter_ntiids()
+
 
 
 @component.adapter(IHostPolicySiteManager, INewLocalSite)
