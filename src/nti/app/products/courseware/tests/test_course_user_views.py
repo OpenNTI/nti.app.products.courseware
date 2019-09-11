@@ -81,14 +81,12 @@ class TestCourseUserViews(ApplicationLayerTest):
 				course_href = self.require_link_href_with_rel(res.json_body, 'CourseInstance')
 
 		for captain in captains:
-			with mock_dataserver.mock_db_trans(self.ds):
-				data = {'username':captain, 'ntiid': self.course_ntiid, 'scope':ES_CREDIT}
-				self.testapp.post_json(enroll_url, data)
+			data = {'username':captain, 'ntiid': self.course_ntiid, 'scope':ES_CREDIT}
+			self.testapp.post_json(enroll_url, data)
 
 		for captain in degree_captains:
-			with mock_dataserver.mock_db_trans(self.ds):
-				data = {'username':captain, 'ntiid': self.course_ntiid, 'scope':ES_CREDIT_DEGREE}
-				self.testapp.post_json(enroll_url, data)
+			data = {'username':captain, 'ntiid': self.course_ntiid, 'scope':ES_CREDIT_DEGREE}
+			self.testapp.post_json(enroll_url, data)
 
 		provider = component.queryUtility(IClassmatesSuggestedContactsProvider)
 		assert_that(provider, is_not(none()))
