@@ -26,6 +26,8 @@ from nti.app.products.courseware import VIEW_CERTIFICATE
 
 from nti.app.products.courseware.interfaces import ICourseInstanceEnrollment
 
+from nti.appserver.interfaces import IDisplayableTimeProvider
+
 from nti.appserver.policies.interfaces import ISitePolicyUserEventListener
 
 from nti.appserver.policies.site_policies import guess_site_display_name
@@ -126,6 +128,9 @@ class CompletionCertificateView(AbstractAuthenticatedView,
     def _completion_date_string(self):
         # pylint: disable=no-member
         completed = self._course_completable_item.CompletedDate
+        tz_util = component.queryMultiAdapter((self.remoteUser, self.request),
+                                              IDisplayableTimeProvider)
+        completed = tz_util.adjust_date(completed)
         return completed.strftime('%B %d, %Y')
 
     def _facilitators(self, entry):
