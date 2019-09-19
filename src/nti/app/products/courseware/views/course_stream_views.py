@@ -492,7 +492,10 @@ class AllCourseActivityGetView(ForumContentsGetView):
 
     def __call__(self):
         self.check_access()
-        return super(AllCourseActivityGetView, self).__call__()
+        result = super(AllCourseActivityGetView, self).__call__()
+        result.lastModified = None
+        result['Last Modified'] = None
+        return result
 
 
 @view_config(route_name='objects.generic.traversal',
