@@ -11,6 +11,8 @@
 	  metal:define-macro="certificate">
 
 <image metal:define-macro="certificate-branding-graphic" file="[nti.app.products.courseware]/completion/templates/assets/sidebar-graphic.png" x="40" y="0" height="850" width="260"/>
+<!-- Hidden by default -->
+<image metal:define-macro="top-right-branding-graphic" file="[nti.app.products.courseware]/completion/templates/assets/sidebar-graphic.png" x="0" y="0" height="0" width="0"/>
 
 
   <docinit>
@@ -23,7 +25,8 @@
   <template pagesize="(1100,850)" leftMargin="72" showBoundary="0">
     <pageTemplate id="landscape">
       <pageGraphics>
-	<image metal:use-macro="macro:certificate-branding-graphic" file="[nti.app.products.courseware]/completion/templates/assets/sidebar-graphic.png" x="40" y="0" height="850" width="260"/>
+	      <image metal:use-macro="macro:certificate-branding-graphic" file="[nti.app.products.courseware]/completion/templates/assets/sidebar-graphic.png" x="40" y="0" height="850" width="260"/>
+	      <image metal:use-macro="macro:top-right-branding-graphic" file="[nti.app.products.courseware]/completion/templates/assets/sidebar-graphic.png" x="0" y="0" height="0" width="0"/>
       </pageGraphics>
       <frame id="heading" x1="331" y1="360" width="740" height="390"/>
       <frame id="instructor-0" x1="331" y1="260" width="340" height="100"/>
