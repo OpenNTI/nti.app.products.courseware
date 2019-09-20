@@ -86,7 +86,8 @@ class AbstractMixin(object):
 								extra_environ=admin_env)
 
 		res_ntiids = __traceback_info__ = res.json_body
-		assert_that(res.json_body, contains(*self.body_matcher))
+		if self.body_matcher:
+			assert_that(res.json_body, contains(*self.body_matcher))
 
 		for i in self.body_matcher:
 			if not isinstance(i, basestring):
