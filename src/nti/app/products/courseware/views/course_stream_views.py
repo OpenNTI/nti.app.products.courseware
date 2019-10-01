@@ -493,8 +493,6 @@ class AllCourseActivityGetView(ForumContentsGetView):
     def __call__(self):
         self.check_access()
         result = super(AllCourseActivityGetView, self).__call__()
-        result.lastModified = None
-        result['Last Modified'] = None
         return result
 
 
