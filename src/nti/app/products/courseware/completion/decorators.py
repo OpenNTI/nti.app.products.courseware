@@ -20,6 +20,8 @@ from nti.app.products.courseware.interfaces import ICourseInstanceEnrollment
 
 from nti.app.renderers.decorators import AbstractAuthenticatedRequestAwareDecorator
 
+from nti.appserver.pyramid_authorization import has_permission
+
 from nti.contenttypes.completion.interfaces import IProgress
 from nti.contenttypes.completion.interfaces import ICompletionContextCompletionPolicy
 
@@ -27,6 +29,8 @@ from nti.contenttypes.courses.interfaces import ICourseCatalogEntry
 from nti.contenttypes.courses.interfaces import ICourseInstance
 
 from nti.coremetadata.interfaces import IUser
+
+from nti.dataserver.authorization import ACT_READ
 
 from nti.externalization.interfaces import IExternalMappingDecorator
 from nti.externalization.interfaces import StandardExternalFields
@@ -93,13 +97,16 @@ class _CourseCompletionDecorator(AbstractAuthenticatedRequestAwareDecorator):
 
 @component.adapter(IUser)
 @interface.implementer(IExternalMappingDecorator)
-class _UserLinkDecorator(Singleton):
+class _UserLinkDecorator(AbstractAuthenticatedRequestAwareDecorator):
     """
     Marker rel saying certificates are enabled.
     """
 
-    def decorateExternalMapping(self, context, result):
-        _links = result.setdefault(LINKS, [])
+    def _predicate(self, context, unused_result):
+        return has_permission(ACT_READ, context)
+
+    def _do_decorate_external(self, context, mapping):
+        _links = mapping.setdefault(LINKS, [])
         _links.append(Link(context, elements=(VIEW_CERTIFICATE,), rel=VIEW_CERTIFICATE))
 
 
