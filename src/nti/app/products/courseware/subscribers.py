@@ -63,7 +63,7 @@ from nti.app.products.courseware.utils import get_enrollment_communities
 from nti.app.site.interfaces import ISiteAdminAddedEvent
 from nti.app.site.interfaces import ISiteAdminRemovedEvent
 
-from nti.app.site.utils import get_site_admins
+from nti.app.users.utils import get_site_admins
 
 from nti.appserver.policies.interfaces import ISitePolicyUserEventListener
 

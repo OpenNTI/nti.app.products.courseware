@@ -20,7 +20,7 @@ from nti.dataserver.interfaces import IOIDResolver
 
 from nti.site.hostpolicy import get_all_host_sites
 
-from nti.app.site.utils import get_site_admins
+from nti.app.users.utils import get_site_admins
 
 generation = 22
 
