@@ -60,6 +60,7 @@ setup(
     install_requires=[
         'setuptools',
         'BTrees',
+        'beautifulsoup4',
         'isodate',
         'nti.app.products.webinar',
         'nti.app.invitations',
