@@ -62,6 +62,7 @@ setup(
         'BTrees',
         'isodate',
         'nti.app.products.webinar',
+        'nti.app.invitations',
         'nti.base',
         'nti.contentlibrary',
         'nti.contenttypes.completion',
