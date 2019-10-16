@@ -18,9 +18,7 @@
 		<p>
 			Thank you for signing up for
 		&ldquo;<span tal:content="options/course/Title | default">my
-		course</span>,&rdquo; an open version of a popular course in the
-		<span tal:content="options/course/ProviderDepartmentTitle | default">Department
-			of Classics and Letters</span>.
+		course</span>,&rdquo;.
 		</p>
 
 		<p>
