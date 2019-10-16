@@ -1,7 +1,6 @@
 Dear ${informal_username},
 
-Thank you for signing up for "${course.Title}," an open version of a
-popular course in the ${course.ProviderDepartmentTitle}.
+Thank you for signing up for "${course.Title}".
 
 You are about to embark on a one-of-a-kind learning experience through
 ${brand}. More importantly, you are joining a true learning community
