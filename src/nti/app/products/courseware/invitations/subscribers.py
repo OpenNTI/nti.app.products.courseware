@@ -30,7 +30,7 @@ from nti.app.products.courseware import ACCEPT_COURSE_INVITATIONS
 from nti.app.products.courseware.invitations.interfaces import ICourseInvitation
 from nti.app.products.courseware.invitations.interfaces import ICourseInvitations
 
-from nti.appserver.brand.interfaces import ISiteBrand
+from nti.appserver.brand.utils import get_site_brand_name
 
 from nti.appserver.policies.interfaces import ISitePolicyUserEventListener
 
@@ -112,10 +112,9 @@ def send_invitation_email(invitation,
     template = 'course_invitation_email'
     template, package = get_template_and_package(entry, template)
 
-    brand = component.queryUtility(ISiteBrand)
     policy = component.getUtility(ISitePolicyUserEventListener)
     support_email = getattr(policy, 'SUPPORT_EMAIL', 'support@nextthought.com')
-    brand_name = getattr(brand, 'brand_name', 'NextThought')
+    brand = get_site_brand_name()
     brand_tag = 'Presented by NextThought'
     if brand.lower() != 'nextthought':
         brand_tag = 'Presented by %s and NextThought' % brand
@@ -139,7 +138,7 @@ def send_invitation_email(invitation,
         'invitation_code': invitation.code,
         'invitation_message': message,
         'redemption_link': redemption_link,
-        'brand': brand_name,
+        'brand': brand,
         'brand_tag': brand_tag,
         'today': isodate.date_isoformat(datetime.datetime.now())
     }

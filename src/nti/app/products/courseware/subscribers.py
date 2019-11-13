@@ -65,7 +65,7 @@ from nti.app.site.interfaces import ISiteAdminRemovedEvent
 
 from nti.app.users.utils import get_site_admins
 
-from nti.appserver.brand.interfaces import ISiteBrand
+from nti.appserver.brand.utils import get_site_brand_name
 
 from nti.appserver.policies.interfaces import ISitePolicyUserEventListener
 
@@ -164,7 +164,6 @@ def _send_enrollment_confirmation(event, user, profile, email, course):
                        user)
         return
 
-    brand = component.queryUtility(ISiteBrand)
     policy = component.getUtility(ISitePolicyUserEventListener)
 
     assert getattr(IEmailAddressable(profile, None), 'email', None) == email
@@ -194,7 +193,7 @@ def _send_enrollment_confirmation(event, user, profile, email, course):
 
     for_credit_url = getattr(policy, 'FOR_CREDIT_URL', '')
     site_alias = getattr(policy, 'COM_ALIAS', '')
-    brand_name = getattr(brand, 'brand_name', '')
+    brand_name = get_site_brand_name()
 
     args = {'profile': profile,
             'context': event,

@@ -26,9 +26,9 @@ from nti.app.products.courseware import VIEW_CERTIFICATE
 
 from nti.app.products.courseware.interfaces import ICourseInstanceEnrollment
 
-from nti.appserver.interfaces import IDisplayableTimeProvider
+from nti.appserver.brand.utils import get_site_brand_name
 
-from nti.appserver.brand.interfaces import ISiteBrand
+from nti.appserver.interfaces import IDisplayableTimeProvider
 
 from nti.appserver.policies.site_policies import guess_site_display_name
 
@@ -104,8 +104,7 @@ class CompletionCertificateView(AbstractAuthenticatedView,
 
     @Lazy
     def _brand(self):
-        brand = component.queryUtility(ISiteBrand)
-        display_name = getattr(brand, 'brand_name', '')
+        display_name = get_site_brand_name()
         if display_name:
             display_name = display_name.strip()
         else:
