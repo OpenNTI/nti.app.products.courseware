@@ -12,18 +12,11 @@ import datetime
 import fudge
 
 from hamcrest import is_
-from hamcrest import none
 from hamcrest import is_not
-from hamcrest import has_length
 from hamcrest import assert_that
-from hamcrest import greater_than
 does_not = is_not
 
-from zope import component
-
 from nti.contenttypes.completion.completion import CompletedItem
-
-from nti.contenttypes.completion.interfaces import ICompletionContextCompletionPolicy
 
 from nti.contenttypes.completion.subscribers import completion_context_default_policy
 
@@ -36,6 +29,7 @@ from nti.app.products.courseware.completion.utils import has_completed_course
 from nti.app.testing.application_webtest import ApplicationLayerTest
 
 from nti.dataserver.tests import mock_dataserver
+
 from nti.dataserver.tests.mock_dataserver import WithMockDSTrans
 
 from nti.dataserver.users import User

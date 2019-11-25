@@ -12,8 +12,6 @@ from zope.lifecycleevent.interfaces import IObjectRemovedEvent
 
 from zope import component
 
-from zope.event import notify
-
 from nti.contenttypes.completion.subscribers import completion_context_deleted_event
 
 from nti.contenttypes.completion.interfaces import IProgress
@@ -23,7 +21,6 @@ from nti.contenttypes.completion.interfaces import ICompletionContextCompletionP
 
 from nti.contenttypes.courses.interfaces import ICourseInstance
 from nti.contenttypes.courses.interfaces import ICourseCatalogEntry
-from nti.contenttypes.courses.interfaces import CourseCompletedEvent
 
 logger = __import__('logging').getLogger(__name__)
 
@@ -67,4 +64,4 @@ def _course_progress_updated(course, event):
             completed_item = policy.is_complete(progress)
             if     not completed_item \
                 or not completed_item.Success:
-                notify(CourseCompletedEvent(course, user))
+                notify()
