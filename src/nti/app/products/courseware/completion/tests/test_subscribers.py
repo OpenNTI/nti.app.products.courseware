@@ -9,32 +9,25 @@ from __future__ import absolute_import
 
 import datetime
 
-import fudge
-
 from hamcrest import is_
-from hamcrest import none
 from hamcrest import is_not
-from hamcrest import has_length
+from hamcrest import not_none
 from hamcrest import assert_that
-from hamcrest import greater_than
 does_not = is_not
 
 from zope import component
+from zope import interface
 
 from zope.event import notify
 
 from nti.contenttypes.completion.completion import CompletedItem
 
 from nti.contenttypes.completion.interfaces import UserProgressUpdatedEvent
-from nti.contenttypes.completion.interfaces import ICompletableItemContainer
-from nti.contenttypes.completion.interfaces import IUserProgressUpdatedEvent
-from nti.contenttypes.completion.interfaces import ICompletionContextCompletionPolicy
-from nti.contenttypes.completion.interfaces import ICompletableItemDefaultRequiredPolicy
+from nti.contenttypes.completion.interfaces import IRequiredCompletableItemProvider
+from nti.contenttypes.completion.interfaces import IPrincipalCompletedItemContainer
 from nti.contenttypes.completion.interfaces import ICompletionContextCompletionPolicyContainer
 
 from nti.contenttypes.completion.policies import CompletableItemAggregateCompletionPolicy
-
-from nti.contenttypes.completion.subscribers import completion_context_default_policy
 
 from nti.contenttypes.completion.tests.test_models import MockCompletableItem
 
@@ -42,10 +35,7 @@ from nti.contenttypes.courses.courses import ContentCourseInstance
 
 from nti.contenttypes.courses.interfaces import ICourseInstance
 from nti.contenttypes.courses.interfaces import ICourseCatalogEntry
-from nti.contenttypes.courses.interfaces import CourseCompletedEvent
 from nti.contenttypes.courses.interfaces import ICourseCompletedEvent
-
-from nti.app.products.courseware.completion.utils import has_completed_course
 
 from nti.app.testing.application_webtest import ApplicationLayerTest
 
@@ -56,10 +46,21 @@ from nti.dataserver.tests.mock_dataserver import WithMockDSTrans
 from nti.dataserver.users import User
 
 
+@component.adapter(ICourseInstance)
+@interface.implementer(IRequiredCompletableItemProvider)
+class _MockRequiredItemProvider(object):
+
+    def __init__(self, course):
+        self.course = course
+
+    def iter_items(self, unused_user):
+        return (MockCompletableItem(u'tag:nextthought.com,2011-10:Test001'),)
+
+
 class TestSubscribers(ApplicationLayerTest):
 
-    def _completed_item(self, user, success):
-        return CompletedItem(Item=MockCompletableItem(u'tag:nextthought.com,2011-10:Test001'),
+    def _completed_item(self, user, item, success):
+        return CompletedItem(Item=item,
                              Principal=user,
                              CompletedDate=datetime.datetime.utcnow(),
                              Success=success)
@@ -71,11 +72,19 @@ class TestSubscribers(ApplicationLayerTest):
 
     @WithMockDSTrans
     def test_completion_event(self):
+        """
+        Validate we fire a CourseCompletedEvent on certain conditions.
+        """
         # Setup
         course = ContentCourseInstance()
         connection = mock_dataserver.current_transaction
         connection.add(course)
+        entry = ICourseCatalogEntry(course, None)
+        assert_that(entry, not_none())
+        entry.ntiid = u'tag:nextthought.com,2011-10:TestCourseCompletionSubscriber001'
+        assert_that(entry.ntiid, not_none())
         user = User.create_user(username=u'user001')
+        item = MockCompletableItem(u'tag:nextthought.com,2011-10:Test001')
 
         self.subscriber_hit = False
         # Install subscriber
@@ -87,6 +96,7 @@ class TestSubscribers(ApplicationLayerTest):
             assert_that(event.context, is_(course))
         sm = component.getGlobalSiteManager()
         sm.registerHandler(course_completion_listener)
+        sm.registerSubscriptionAdapter(_MockRequiredItemProvider)
 
         # No policy
         self._send_update(user, course)
@@ -97,5 +107,31 @@ class TestSubscribers(ApplicationLayerTest):
         policy.percentage = 1.0
         policy_container = ICompletionContextCompletionPolicyContainer(course)
         policy_container.context_policy = policy
+        self._send_update(user, course)
+        assert_that(self.subscriber_hit, is_(False))
+
+        # Completed course, but unsuccessful
+        principal_container = component.queryMultiAdapter((user, course),
+                                                          IPrincipalCompletedItemContainer)
+        completed_item = self._completed_item(user, item, False)
+        principal_container.add_completed_item(completed_item)
+        self._send_update(user, course)
+        assert_that(self.subscriber_hit, is_(False))
+
+        # Now successful
+        completed_item.Success = True
+        self._send_update(user, course)
+        assert_that(self.subscriber_hit, is_(True))
+        self.subscriber_hit = False
+
+        # Course completed item
+        course_completed_item = self._completed_item(user, entry, False)
+        principal_container.add_completed_item(course_completed_item)
+        self._send_update(user, course)
+        assert_that(self.subscriber_hit, is_(True))
+        self.subscriber_hit = False
+
+        # Course successfully complete does not fire a new event
+        course_completed_item.Success = True
         self._send_update(user, course)
         assert_that(self.subscriber_hit, is_(False))
