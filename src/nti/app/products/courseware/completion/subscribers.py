@@ -11,6 +11,7 @@ from __future__ import absolute_import
 from zope.lifecycleevent.interfaces import IObjectRemovedEvent
 
 from zope import component
+from zope import interface
 
 from zope.event import notify
 
@@ -18,11 +19,11 @@ from nti.contenttypes.completion.subscribers import completion_context_deleted_e
 
 from nti.contenttypes.completion.interfaces import IProgress
 from nti.contenttypes.completion.interfaces import IUserProgressUpdatedEvent
+from nti.contenttypes.completion.interfaces import ICompletionContextCompletedItem
 from nti.contenttypes.completion.interfaces import IPrincipalCompletedItemContainer
 from nti.contenttypes.completion.interfaces import ICompletionContextCompletionPolicy
 
 from nti.contenttypes.courses.interfaces import ICourseInstance
-from nti.contenttypes.courses.interfaces import ICourseCatalogEntry
 from nti.contenttypes.courses.interfaces import CourseCompletedEvent
 
 logger = __import__('logging').getLogger(__name__)
@@ -40,15 +41,21 @@ def _course_progress_updated(course, event):
     The user has successfully completed a required item. If the user course
     progress moves from a state of incomplete to (successfully) complete,
     broadcast an appropriate event.
+
+    Since we are storing course completion persistently, this means this
+    event will only be fired once, upon the first successful completion.
+
+    This object is not used when querying course completion state. To do
+    that correctly, we'd have to determine how to handle shifting
+    requirements.
     """
     user = event.user
-    entry = ICourseCatalogEntry(course)
     principal_container = component.queryMultiAdapter((user, course),
                                                       IPrincipalCompletedItemContainer)
     # If this has already been completed successfully, take no action.
     if     principal_container \
-       and entry.ntiid in principal_container \
-       and principal_container[entry.ntiid].Success:
+       and principal_container.ContextCompletedItem is not None\
+       and principal_container.ContextCompletedItem.Success:
         return
 
     policy = ICompletionContextCompletionPolicy(course, None)
@@ -59,12 +66,9 @@ def _course_progress_updated(course, event):
                                            IProgress)
     if      progress.CompletedItem \
         and progress.CompletedItem.Success:
-        # Ok, the course is currently complete; check the -1 case.
-        # XXX: If we stored completion in our container, we could use that
-        # to check the previous state instead.
-        if progress.AbsoluteProgress:
-            progress.AbsoluteProgress -= 1
-            completed_item = policy.is_complete(progress)
-            if     not completed_item \
-                or not completed_item.Success:
-                notify(CourseCompletedEvent(course, user))
+        # Newly successful completion, store and notify
+        course_completed_item = progress.CompletedItem
+        interface.alsoProvides(course_completed_item, ICompletionContextCompletedItem)
+        course_completed_item.__parent__ = principal_container
+        principal_container.ContextCompletedItem = course_completed_item
+        notify(CourseCompletedEvent(course, user))

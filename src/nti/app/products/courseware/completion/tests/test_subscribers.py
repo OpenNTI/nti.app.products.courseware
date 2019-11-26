@@ -110,7 +110,7 @@ class TestSubscribers(ApplicationLayerTest):
         self._send_update(user, course)
         assert_that(self.subscriber_hit, is_(False))
 
-        # Completed course, but unsuccessful
+        # Course completed item, unsuccessful
         principal_container = component.queryMultiAdapter((user, course),
                                                           IPrincipalCompletedItemContainer)
         completed_item = self._completed_item(user, item, False)
@@ -124,14 +124,12 @@ class TestSubscribers(ApplicationLayerTest):
         assert_that(self.subscriber_hit, is_(True))
         self.subscriber_hit = False
 
-        # Course completed item
-        course_completed_item = self._completed_item(user, entry, False)
-        principal_container.add_completed_item(course_completed_item)
-        self._send_update(user, course)
-        assert_that(self.subscriber_hit, is_(True))
-        self.subscriber_hit = False
-
-        # Course successfully complete does not fire a new event
-        course_completed_item.Success = True
+        # Another event does not fire
         self._send_update(user, course)
         assert_that(self.subscriber_hit, is_(False))
+
+        # Completed course, but unsuccessful will fire a new event
+        assert_that(principal_container.ContextCompletedItem, not_none())
+        principal_container.ContextCompletedItem.Success = False
+        self._send_update(user, course)
+        assert_that(self.subscriber_hit, is_(True))
