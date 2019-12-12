@@ -32,12 +32,12 @@
              provides=".interfaces.ICourseCalendar"
              for="nti.contenttypes.courses.interfaces.ICourseInstance" />
 
-    <subscriber factory=".adapters._hierarchy_from_calendar_and_user"
+    <subscriber factory=".adapters.UserCourseCalendarHierarchyPathProvider"
                 provides="nti.appserver.interfaces.IHierarchicalContextProvider"
                 for="nti.app.products.courseware.calendar.interfaces.ICourseCalendar
                      nti.dataserver.interfaces.IUser"/>
 
-    <subscriber factory=".adapters._hierarchy_from_calendar_event_and_user"
+    <subscriber factory=".adapters.UserCourseCalendarEventHierarchyPathProvider"
                 provides="nti.appserver.interfaces.IHierarchicalContextProvider"
                 for="nti.app.products.courseware.calendar.interfaces.ICourseCalendarEvent
                      nti.dataserver.interfaces.IUser"/>

@@ -221,16 +221,28 @@ def _course_calendar_event_to_ntiid(context):
 
 @component.adapter(ICourseCalendar, IUser)
 @interface.implementer(IHierarchicalContextProvider)
-def _hierarchy_from_calendar_and_user(obj, user):
-    course = ICourseInstance(obj, None)
-    courses = get_valid_course_context(course)
-    return [(courses[0], obj)] if courses else ()
+class UserCourseCalendarHierarchyPathProvider(object):
+
+    def __init__(self, obj, user):
+        self.obj = obj
+        self.user = user
+
+    def get_context_paths(self, context=None):
+        course = ICourseInstance(self.obj, None)
+        courses = get_valid_course_context(course)
+        return [(courses[0], self.obj)] if courses else ()
 
 
 @component.adapter(ICourseCalendarEvent, IUser)
 @interface.implementer(IHierarchicalContextProvider)
-def _hierarchy_from_calendar_event_and_user(obj, user):
-    calendar = ICourseCalendar(obj, None)
-    course = ICourseInstance(calendar, None)
-    courses = get_valid_course_context(course)
-    return [(courses[0], calendar, obj)] if courses else ()
+class UserCourseCalendarEventHierarchyPathProvider(object):
+
+    def __init__(self, obj, user):
+        self.obj = obj
+        self.user = user
+
+    def get_context_paths(self, context=None):
+        calendar = ICourseCalendar(self.obj, None)
+        course = ICourseInstance(calendar, None)
+        courses = get_valid_course_context(course)
+        return [(courses[0], calendar, self.obj)] if courses else ()

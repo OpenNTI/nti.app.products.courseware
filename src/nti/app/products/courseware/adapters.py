@@ -103,6 +103,7 @@ from nti.contenttypes.presentation.interfaces import IItemAssetContainer
 from nti.contenttypes.presentation.interfaces import INTIRelatedWorkRefPointer
 
 from nti.coremetadata.interfaces import ILastSeenProvider
+from nti.coremetadata.interfaces import IContainerContext
 from nti.coremetadata.interfaces import IContextLastSeenContainer
 
 from nti.dataserver.authorization import ACT_CONTENT_EDIT
@@ -444,16 +445,22 @@ def _get_target_ntiid(obj):
 
 @interface.implementer(IHierarchicalContextProvider)
 @component.adapter(ICourseInstance, interface.Interface)
-def _hierarchy_from_obj_and_course(course, obj):
-    target_ntiid = _get_target_ntiid(obj)
-    # Typically, we get a user enrolled course here, but validate.
-    context_courses = _get_valid_course_context(course)
-    results = []
-    if context_courses:
-        course = context_courses[0]
-        results = OutlinePathFactory(course, target_ntiid)()
-        results = (results,) if results else results
-    return results
+class CourseHierarchyPathProvider(object):
+
+    def __init__(self, course, obj):
+        self.obj = obj
+        self.course = course
+
+    def get_context_paths(self, context=None):
+        target_ntiid = _get_target_ntiid(self.obj)
+        # Typically, we get a user enrolled course here, but validate.
+        context_courses = _get_valid_course_context(self.course)
+        results = []
+        if context_courses:
+            course = context_courses[0]
+            results = OutlinePathFactory(course, target_ntiid)()
+            results = (results,) if results else results
+        return results
 
 
 def _get_courses_from_container(obj, user=None):
@@ -482,51 +489,75 @@ def _get_courses_from_container(obj, user=None):
     return results
 
 
+def get_container_context(obj):
+    """
+    Attempt to get the root context from the object itself.
+    """
+    result = None
+    container_context = IContainerContext(obj, None)
+    if container_context:
+        context_id = container_context.context_id
+        container = find_object_with_ntiid(context_id)
+        if ICourseInstance.providedBy(container):
+            result = container
+    return result
+
+
 @component.adapter(IHighlight, IUser)
 @component.adapter(IContentUnit, IUser)
 @component.adapter(IPresentationAsset, IUser)
 @interface.implementer(IHierarchicalContextProvider)
-def _hierarchy_from_obj_and_user(obj, user):
-    container_courses = _get_courses_from_container(obj, user)
-    possible_courses = _get_valid_course_context(container_courses)
-    target_ntiid = _get_target_ntiid(obj)
-    results = []
-    course_only_results = []
-    catalog_entries = set()
-    caught_exception = None
-    for course in possible_courses:
-        if ICourseCatalogEntry.providedBy(course):
-            catalog_entries.add(course)
+class UserCourseHierarchyPathProvider(object):
+
+    def __init__(self, obj, user):
+        self.obj = obj
+        self.user = user
+
+    def get_context_paths(self, context=None):
+        course = context
+        if ICourseInstance.providedBy(course):
+            container_courses = (course,)
         else:
-            try:
-                nodes = OutlinePathFactory(course, target_ntiid)()
-            except ForbiddenContextException as e:
-                # Catch and see if other courses have an acceptable path.
-                caught_exception = e
+            container_courses = _get_courses_from_container(self.obj, self.user)
+        possible_courses = _get_valid_course_context(container_courses)
+        target_ntiid = _get_target_ntiid(self.obj)
+        results = []
+        course_only_results = []
+        catalog_entries = set()
+        caught_exception = None
+        for course in possible_courses:
+            if ICourseCatalogEntry.providedBy(course):
+                catalog_entries.add(course)
             else:
-                if nodes:
-                    # Great, we found a path, finish with first one.
-                    results.append(nodes)
-                    break
+                try:
+                    nodes = OutlinePathFactory(course, target_ntiid)()
+                except ForbiddenContextException as e:
+                    # Catch and see if other courses have an acceptable path.
+                    caught_exception = e
                 else:
-                    course_only_results.append((course,))
+                    if nodes:
+                        # Great, we found a path, finish with first one.
+                        results.append(nodes)
+                        break
+                    else:
+                        course_only_results.append((course,))
 
-    if not results and course_only_results:
-        # No actual results, use what we have.
-        results = course_only_results
+        if not results and course_only_results:
+            # No actual results, use what we have.
+            results = course_only_results
 
-    if not results:
-        if caught_exception is not None:
-            # No path found and this exception indicates the path goes through
-            # an unpublished object.
-            # pylint: disable=raising-bad-type
-            raise caught_exception
+        if not results:
+            if caught_exception is not None:
+                # No path found and this exception indicates the path goes through
+                # an unpublished object.
+                # pylint: disable=raising-bad-type
+                raise caught_exception
 
-        # This means are content only exists in catalog entries
-        # our user cannot currently reach.
-        if catalog_entries:
-            raise ForbiddenContextException(catalog_entries)
-    return results
+            # This means are content only exists in catalog entries
+            # our user cannot currently reach.
+            if catalog_entries:
+                raise ForbiddenContextException(catalog_entries)
+        return results
 
 
 def _get_preferred_course(found_course):

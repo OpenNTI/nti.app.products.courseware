@@ -811,11 +811,13 @@ class AllCourseCompletionView(AbstractAuthenticatedView):
 
     @Lazy
     def not_before(self):
-        return self._to_datetime(self.not_before_timestamp)
+        if self.not_before_timestamp is not None:
+            return self._to_datetime(self.not_before_timestamp)
 
     @Lazy
     def not_after(self):
-        return self._to_datetime(self.not_after_timestamp)
+        if self.not_after_timestamp is not None:
+            return self._to_datetime(self.not_after_timestamp)
 
     def _iter_catalog_entries(self):
         return component.getUtility(ICourseCatalog).iterCatalogEntries()
