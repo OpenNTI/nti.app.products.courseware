@@ -151,19 +151,19 @@
                 for="nti.coremetadata.interfaces.IUser" />
 
 	<!-- Hierarchy for UGD -->
-	<adapter factory=".adapters._hierarchy_from_obj_and_course" />
+	<adapter factory=".adapters.CourseHierarchyPathProvider" />
 
-	<subscriber factory=".adapters._hierarchy_from_obj_and_user"
+	<subscriber factory=".adapters.UserCourseHierarchyPathProvider"
 				provides="nti.appserver.interfaces.IHierarchicalContextProvider"
 				for="nti.dataserver.interfaces.IHighlight
 					 nti.dataserver.interfaces.IUser"/>
 
-	<subscriber factory=".adapters._hierarchy_from_obj_and_user"
+	<subscriber factory=".adapters.UserCourseHierarchyPathProvider"
 				provides="nti.appserver.interfaces.IHierarchicalContextProvider"
 				for="nti.contentlibrary.interfaces.IContentUnit
 					 nti.dataserver.interfaces.IUser"/>
 
-	<subscriber factory=".adapters._hierarchy_from_obj_and_user"
+	<subscriber factory=".adapters.UserCourseHierarchyPathProvider"
 				provides="nti.appserver.interfaces.IHierarchicalContextProvider"
 				for="nti.contenttypes.presentation.interfaces.IPresentationAsset
 					 nti.dataserver.interfaces.IUser"/>
