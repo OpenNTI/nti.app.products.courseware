@@ -15,13 +15,12 @@ from zope.cachedescriptors.property import Lazy
 
 from nti.app.products.courseware.calendar.interfaces import ICourseCalendar
 
-from nti.contenttypes.courses.interfaces import ICourseInstance
+from nti.appserver.pyramid_authorization import get_cache_acl
+from nti.appserver.pyramid_authorization import get_request_acl_cache
 
 from nti.dataserver.interfaces import ACE_DENY_ALL
 
 from nti.dataserver.interfaces import IACLProvider
-
-from nti.traversal.traversal import find_interface
 
 logger = __import__('logging').getLogger(__name__)
 
@@ -42,7 +41,9 @@ class CourseCalendarACLProvider(object):
     def __acl__(self):
         result = []
         if self.__parent__ is not None:
-            result.extend(IACLProvider(self.__parent__).__acl__)
+            acl_cache = get_request_acl_cache()
+            acl = get_cache_acl(self.__parent__, acl_cache)
+            result.extend(acl)
 
         result.append(ACE_DENY_ALL)
         return result
