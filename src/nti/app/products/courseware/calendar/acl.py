@@ -43,7 +43,10 @@ class CourseCalendarACLProvider(object):
         if self.__parent__ is not None:
             acl_cache = get_request_acl_cache()
             acl = get_cache_acl(self.__parent__, acl_cache)
-            result.extend(acl)
+            try:
+                result.extend(acl.__acl__)
+            except AttributeError:
+                pass
 
         result.append(ACE_DENY_ALL)
         return result
