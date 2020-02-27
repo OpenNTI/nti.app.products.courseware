@@ -15,6 +15,7 @@ from datetime import datetime
 from datetime import timedelta
 
 from zope import component
+from zope import interface
 
 from zope.cachedescriptors.property import CachedProperty
 
@@ -59,8 +60,12 @@ from nti.dataserver import authorization as nauth
 
 from nti.dataserver.authorization import is_admin_or_site_admin
 
+from nti.dataserver.contenttypes.forums.interfaces import IDefaultForum
+
 from nti.dataserver.interfaces import IUser
 from nti.dataserver.interfaces import INote
+from nti.dataserver.interfaces import IPinned
+from nti.dataserver.interfaces import IOnlyDefaultForumTopicsCanBePinnedRequest
 
 from nti.dataserver.metadata.index import IX_TOPICS
 from nti.dataserver.metadata.index import IX_SHAREDWITH
@@ -486,12 +491,34 @@ class AllCourseActivityGetView(ForumContentsGetView):
             result.extend(topic_intids)
         return result
 
+    def _get_default_forum_topics(self):
+        forums = [x for x in self.context.Discussions.values() if IDefaultForum.providedBy(x)]
+        if not forums:
+            return ()
+        # Should only be one
+        forum = forums[0]
+        return set(forum.values())
+
+    def bubble_pinned_items(self, items):
+        """
+        Override the UGD implmentation to ensure only default forum pinned items
+        appear at the top of our result set.
+        """
+        default_forum_topics = self._get_default_forum_topics()
+        def sort_key(obj):
+            # Return True if pinned and in our set
+            return IPinned.providedBy(obj) and obj in default_forum_topics
+
+        result = sorted(items, key=lambda x: not sort_key(x[1]))
+        return result
+
     def getObjectsForId(self, *unused_args):
         result_intids = self._get_intids()
         return ([self._intids.queryObject(x) for x in result_intids],)
 
     def __call__(self):
         self.check_access()
+        interface.alsoProvides(self.request, IOnlyDefaultForumTopicsCanBePinnedRequest)
         result = super(AllCourseActivityGetView, self).__call__()
         return result
 
