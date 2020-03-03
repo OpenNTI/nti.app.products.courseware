@@ -17,6 +17,7 @@ from datetime import timedelta
 from zope import component
 from zope import interface
 
+from zope.cachedescriptors.property import Lazy
 from zope.cachedescriptors.property import CachedProperty
 
 from zope.intid.interfaces import IIntIds
@@ -491,7 +492,8 @@ class AllCourseActivityGetView(ForumContentsGetView):
             result.extend(topic_intids)
         return result
 
-    def _get_default_forum_topics(self):
+    @Lazy
+    def _default_forum_topics(self):
         forums = [x for x in self.context.Discussions.values() if IDefaultForum.providedBy(x)]
         if not forums:
             return ()
@@ -499,18 +501,11 @@ class AllCourseActivityGetView(ForumContentsGetView):
         forum = forums[0]
         return set(forum.values())
 
-    def bubble_pinned_items(self, items):
-        """
-        Override the UGD implmentation to ensure only default forum pinned items
-        appear at the top of our result set.
-        """
-        default_forum_topics = self._get_default_forum_topics()
-        def sort_key(obj):
-            # Return True if pinned and in our set
-            return IPinned.providedBy(obj) and obj in default_forum_topics
+    def _is_pinned(self, obj):
+        return IPinned.providedBy(obj) and obj in self._default_forum_topics
 
-        result = sorted(items, key=lambda x: not sort_key(x[1]))
-        return result
+    def _is_not_pinned(self, obj):
+        return not self._is_pinned(obj)
 
     def getObjectsForId(self, *unused_args):
         result_intids = self._get_intids()
