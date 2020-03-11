@@ -6,6 +6,7 @@
 	<head>
         <meta http-equiv="content-type" content="text/html; charset=utf-8" />
         <title>Notifications</title>
+		<link href="https://fonts.googleapis.com/css?family=Open+Sans:400,600" rel="stylesheet">
         <style>
             @media screen and (max-width: 600px){
                 #wrapper{
@@ -33,19 +34,29 @@
                     border-collapse: collapse;
                 }
             }
+            .header {
+                adding-left: 0px;
+                padding-right: 0px;
+            }
+            #green-bar {
+                padding-right: 0px;
+                padding-left: 0px;
+                margin-left: 0px;
+                margin-right: 0px;
+            }
+            #logo-bar {
+                margin-top: 47px;
+                margin-bottom: 20px;
+                padding-left: 60px;
+                padding-right: 60px
+            }
         </style>
     </head>
     <!-- For speed when sending large amounts of emails interactively, all styles are inlined below -->
-	<body style="color:#757474; font-family:Helvetica, Arial, sans-serif; font-size:14pt;
-	             line-height:20pt; margin-right:0">
-		<div metal:use-macro="macro:header">
-        <div id="green-bar"></div>
-        <div id="logo-bar">
-            <img src="http://d2ixlfeu83tci.cloudfront.net/images/email_logo.png" width="100%" height="25"
-            alt="NextThought Logo" />
-        </div>
-        </div>
-
+	<body style="padding-top: 20px;padding-bottom: 20px; background-color: #F9F9F9; color: #494949; font-family: 'Open Sans', sans-serif, Helvetica, Arial; font-size: 16px; line-height: 24px;">
+<div style="max-width: 730px; margin: 0 auto; background-color: #FFFFFF; padding-bottom: 50px;">
+	<div metal:use-macro="macro:header"></div>
+	<div style="padding-left: 60px;padding-right: 60px;">
 		<table style="border-collapse:collapse; width:100%">
 			<tr style="border-bottom:solid #e2e5e7 1px; color:#6d7d87; display:block; font-size:12px;
 			           font-weight:bold; line-height:18px; padding-bottom:0; padding-top:11px;
@@ -113,6 +124,7 @@
 				tal:content="options/support_email"
 				style="color:#3fb3f6; text-decoration:none">support@nextthought.com</a>.
 		</p>
-
+	</div>
+</div>
 	</body>
 </html>
