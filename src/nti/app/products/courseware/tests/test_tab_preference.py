@@ -79,6 +79,8 @@ class TestTabPreference(ApplicationLayerTest):
         assert_that(child_prefs2, has_properties({'names': has_length(0),
                                                   'order': has_length(0)}))
 
+        connection.add(parent_prefs._order)
+        connection.add(parent_prefs._names)
         parent_prefs.clear()
         assert_that(parent_prefs, has_properties({'names': has_length(0),
                                                   'order': has_length(0)}))
