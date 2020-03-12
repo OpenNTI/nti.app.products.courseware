@@ -8,16 +8,12 @@ from __future__ import absolute_import
 # disable: accessing protected members, too many methods
 # pylint: disable=W0212,R0904
 
-from hamcrest import is_
-from hamcrest import is_not
 from hamcrest import contains
-from hamcrest import assert_that
 from hamcrest import has_length
-from hamcrest import has_items
+from hamcrest import assert_that
 from hamcrest import has_entries
 from hamcrest import has_properties
 
-from zope import interface
 
 from nti.app.products.courseware.tests import PersistentInstructedCourseApplicationTestLayer
 
@@ -79,8 +75,6 @@ class TestTabPreference(ApplicationLayerTest):
         assert_that(child_prefs2, has_properties({'names': has_length(0),
                                                   'order': has_length(0)}))
 
-        connection.add(parent_prefs._order)
-        connection.add(parent_prefs._names)
         parent_prefs.clear()
         assert_that(parent_prefs, has_properties({'names': has_length(0),
                                                   'order': has_length(0)}))
