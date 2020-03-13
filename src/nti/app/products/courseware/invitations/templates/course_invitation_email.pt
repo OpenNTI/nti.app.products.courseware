@@ -8,60 +8,33 @@
         <title>Notifications</title>
 		<link href="https://fonts.googleapis.com/css?family=Open+Sans:400,600" rel="stylesheet">
         <style>
-            @media screen and (max-width: 600px){
-                #wrapper{
-                        width:440px !important;
-                        margin-left:auto !important;
-                        margin-right:auto;
-                }
-                #wrapper-top{
-                        width:440px !important;
-                        margin-left:auto !important;
-                        margin-right:auto;
-                }
-                body{
-                    margin-left: 0px;
-                }
-                th,td {
-                 padding: 0px;
-                }
-                img.frame{
-                    width:300px;
-                }
-                #banner{width:100% !important;
-                }
-                table, th, td {
-                    border-collapse: collapse;
-                }
-            }
-            .header {
-                adding-left: 0px;
-                padding-right: 0px;
-            }
-            #green-bar {
-                padding-right: 0px;
-                padding-left: 0px;
-                margin-left: 0px;
-                margin-right: 0px;
-            }
-            #logo-bar {
-                margin-top: 47px;
-                margin-bottom: 20px;
-                padding-left: 60px;
-                padding-right: 60px
-            }
+			.header {
+				width: 100%;
+			}
+			#logo-bar {
+				width: calc(100% - 10px);
+				max-width: 610px;
+				padding: 0 5px;
+				margin: 47px auto 20px;
+			}
+			.footer {
+				width: calc(100% - 10px);
+				max-width: 610px;
+				padding: 0 5px;
+				margin: 0 auto;
+			}
         </style>
     </head>
     <!-- For speed when sending large amounts of emails interactively, all styles are inlined below -->
 	<body style="padding-top: 20px;padding-bottom: 20px; background-color: #F9F9F9; color: #494949; font-family: 'Open Sans', sans-serif, Helvetica, Arial; font-size: 16px; line-height: 24px;">
-<div style="max-width: 730px; margin: 0 auto; background-color: #FFFFFF; padding-bottom: 50px;">
+<div class="container" style="width:100%;max-width: 730px; margin: 0 auto; background-color: #FFFFFF; padding-bottom: 50px;">
 	<div metal:use-macro="macro:header"></div>
-	<div style="padding-left: 60px;padding-right: 60px;">
+	<div class="main" style="width:calc(100% - 10px);max-width: 610px;margin: 0 auto;padding: 0 5px;">
 		<table style="border-collapse:collapse; width:100%">
 			<tr style="border-bottom:solid #e2e5e7 1px; color:#6d7d87; display:block; font-size:12px;
 			           font-weight:bold; line-height:18px; padding-bottom:0; padding-top:11px;
 			           vertical-align:top; width:100%">
-				<td class="header" style="border-collapse:collapse; padding:15px">TO:</td>
+				<td style="border-collapse:collapse; padding:15px">TO:</td>
 				<td tal:condition="options/receiver_name | nothing" tal:content="options/receiver_name"
 				    style="border-collapse:collapse; padding:15px">
 					Ichigo Kurozaki
@@ -70,7 +43,7 @@
 			<tr style="border-bottom:solid #e2e5e7 1px; color:#6d7d87; display:block; font-size:12px;
                        font-weight:bold; line-height:18px; padding-bottom:0; padding-top:11px;
                        vertical-align:top; width:100%">
-				<td class="header" style="border-collapse:collapse; padding:15px">FROM:</td>
+				<td style="border-collapse:collapse; padding:15px">FROM:</td>
 				<!-- If there is not a TO address, let them fill in the FROM address manually. -->
 				<td tal:condition="options/receiver_name | nothing" tal:content="options/sender_name"
 				    style="border-collapse:collapse; padding:15px">Aizen Sosuke</td>
@@ -79,7 +52,7 @@
 			<tr style="border-bottom:solid #e2e5e7 1px; color:#6d7d87; display:block; font-size:12px;
                        font-weight:bold; line-height:18px; padding-bottom:0; padding-top:11px;
                        vertical-align:top; width:100%">
-				<td class="header" style="border-collapse:collapse; padding:15px">INVITATION:</td>
+				<td style="border-collapse:collapse; padding:15px">INVITATION:</td>
 				<td class="course" style="border-collapse:collapse; padding:15px">
 				    <span class="course-name" style="color:#525e65; font-size:16px" tal:content="options/course_title">
 					Course Name</span><br><span tal:content="options/brand_tag">Bleach
@@ -118,13 +91,9 @@
 			<tal:block>
 				<strong style="color:#3fb3f6; font-weight:bold">Access Key: <span tal:content="options/invitation_code">UZ6njBPSWtx</span></strong><br>
 			</tal:block>
-			If you feel this email was sent in error, you may email
-			<a href="mailto:support@nextthought.com"
-				tal:attributes="href string:mailto:${options/support_email|default}"
-				tal:content="options/support_email"
-				style="color:#3fb3f6; text-decoration:none">support@nextthought.com</a>.
 		</p>
 	</div>
+	<div metal:use-macro="macro:footer"></div>
 </div>
 	</body>
 </html>

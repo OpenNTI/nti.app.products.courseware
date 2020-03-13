@@ -91,21 +91,8 @@
 		<div id="logo-bar nti">
 			<img src="http://d2ixlfeu83tci.cloudfront.net/images/email_logo.png" width="177" height="25" alt="NextThought Logo" />
 		</div>
-
-		<hr style="margin-top:18px; border:1px solid rgba(0,0,0,0.07); border-bottom:0;"/>
-
-		<div style="margin-top: 18px;font-size: 12px;line-height: 17px;">
-			<span i18n:translate="">
-				If you feel this email was sent in error, or this account was created
-				without your consent, you may email us at
-				<a i18n:name="support_email"
-				href="mailto:support@nextthought.com"
-				tal:content="options/support_email|default"
-				tal:attributes="href string:mailto:${options/support_email|default}"
-				style="text-decoration:underline;color: #494949;">support@nextthought.com</a>
-			</span>
-		</div>
 	</div>
+	<div metal:use-macro="macro:footer"></div>
 </div>
 	</body>
 </html>
