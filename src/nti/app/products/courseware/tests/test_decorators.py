@@ -11,20 +11,14 @@ from hamcrest import is_
 from hamcrest import none
 from hamcrest import is_not
 from hamcrest import not_none
-from hamcrest import has_item
 from hamcrest import has_entry
 from hamcrest import assert_that
+from nti.dataserver.authorization_utils import zope_interaction
 does_not = is_not
 
 import fudge
 
 from zope.component.hooks import getSite
-
-from zope.security.interfaces import IParticipation
-
-from zope.security.management import endInteraction
-from zope.security.management import newInteraction
-from zope.security.management import restoreInteraction
 
 from zope.securitypolicy.interfaces import IPrincipalRoleManager
 
@@ -216,15 +210,11 @@ class TestDecorators(ApplicationLayerTest):
             assert_that(has_permission(ACT_CONTENT_EDIT, course, 'admin001@nextthought.com'),
                         is_(True))
 
-            endInteraction()
-            try:
-                newInteraction(IParticipation(User.get_user('site_username')))
+            with zope_interaction('site_username'):
                 assert_that(has_permission(ACT_READ, course, 'site_username'),
                             is_(True))
                 assert_that(has_permission(ACT_CONTENT_EDIT,
                                            course, 'site_username'), is_(True))
-            finally:
-                restoreInteraction()
 
             child_course_ntiid = course.SubInstances['01'].ntiid
 
