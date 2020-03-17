@@ -10,9 +10,9 @@
 		</style>
 	</head>
 	<body>
-		<div metal:use-macro="macro:header">
-		</div>
-
+<div class="container">
+	<div metal:use-macro="macro:header"></div>
+	<div class="main">
 		<p>Dear <span tal:content="options/informal_username" class="realname tterm">John</span>,</p>
 
 		<p>
@@ -91,15 +91,8 @@
 		<div id="logo-bar nti">
 			<img src="http://d2ixlfeu83tci.cloudfront.net/images/email_logo.png" width="177" height="25" alt="NextThought Logo" />
 		</div>
-
-		<p class="footer" style="font-size: smaller">
-			If you feel this email was sent in error, or this account was created
-			without your consent, you may email
-			<a href="mailto:support@nextthought.com"
-				tal:attributes="href string:mailto:${options/support_email|default}"
-				tal:content="options/support_email">support@nextthought.com</a>.
-		</p>
-
-
+	</div>
+	<div metal:use-macro="macro:footer"></div>
+</div>
 	</body>
 </html>
