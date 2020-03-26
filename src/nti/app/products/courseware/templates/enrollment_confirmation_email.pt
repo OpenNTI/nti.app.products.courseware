@@ -18,7 +18,7 @@
 		<p>
 			Thank you for signing up for
 		&ldquo;<span tal:content="options/course/Title | default">my
-		course</span>,&rdquo;.
+		course</span>&rdquo;.
 		</p>
 
 		<p>
