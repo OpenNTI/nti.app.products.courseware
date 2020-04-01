@@ -252,15 +252,6 @@ class OutlinePathFactory(object):
             or item.is_published() \
             or has_permission(nauth.ACT_CONTENT_EDIT, item, self.request)
 
-    def _validate_path_visibility(self, path):
-        """
-        Validate all of our path objects are accessible (published) by
-        our user. Otherwise we'll return a 403.
-        """
-        for item in path or ():
-            if not self._is_visible(item):
-                raise ForbiddenContextException()
-
     def _lesson_overview_contains_target(self, outline_content_node, lesson_overview):
         def _do_check(check_contained=True):
             for overview_group in lesson_overview.items or ():
@@ -270,7 +261,6 @@ class OutlinePathFactory(object):
                         # Return our course, leaf outline node, and overview.
                         results = [self.course_context, outline_content_node]
                         results.extend(endpoints)
-                        self._validate_path_visibility((outline_content_node, lesson_overview, endpoints))
                         return results
 
         results = None
@@ -305,6 +295,9 @@ class OutlinePathFactory(object):
                 # Navigate through lesson first.
                 lesson_ntiid = outline_content_node.LessonOverviewNTIID
                 lesson_overview = INTILessonOverview(outline_content_node, None)
+                if     not self._is_visible(outline_content_node) \
+                    or not self._is_visible(lesson_overview):
+                    continue
                 if lesson_overview is not None:
                     if lesson_ntiid == self.target_ntiid:
                         results = (self.course_context,
