@@ -16,6 +16,8 @@ import six
 
 from zope import component
 
+from zope.interface import providedBy
+
 from zope.intid.interfaces import IIntIds
 
 from nti.app.base.abstract_views import AbstractAuthenticatedView
@@ -192,6 +194,7 @@ class AllWebinarUpdateView(AbstractAuthenticatedView):
         webinar_ext = key_to_webinar_dict.get(webinar.webinarKey)
 
         if webinar_ext:
+            __traceback_info__ = providedBy(webinar), type(providedBy(webinar)), webinar_ext
             update_from_external_object(webinar, webinar_ext)
             result = True
         else:
