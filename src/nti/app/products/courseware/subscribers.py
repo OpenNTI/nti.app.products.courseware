@@ -13,6 +13,8 @@ import time
 import isodate
 import datetime
 
+from perfmetrics import statsd_client
+
 from pyramid.threadlocal import get_current_request
 
 from zc.intid.interfaces import IAfterIdAddedEvent
@@ -23,6 +25,8 @@ from zope import interface
 
 from zope.annotation.interfaces import IAnnotations
 
+from zope.component.hooks import getSite
+
 from zope.dottedname import resolve as dottedname
 
 from zope.event import notify
@@ -32,6 +36,7 @@ from zope.i18n import translate
 from zope.lifecycleevent.interfaces import IObjectAddedEvent
 from zope.lifecycleevent.interfaces import IObjectCreatedEvent
 from zope.lifecycleevent.interfaces import IObjectModifiedEvent
+from zope.lifecycleevent.interfaces import IObjectRemovedEvent
 
 from zope.publisher.interfaces.browser import IBrowserRequest
 
@@ -64,6 +69,7 @@ from nti.app.site.interfaces import ISiteAdminAddedEvent
 from nti.app.site.interfaces import ISiteAdminRemovedEvent
 
 from nti.app.users.utils import get_site_admins
+from nti.app.users.utils import get_user_creation_site
 
 from nti.appserver.brand.utils import get_site_brand_name
 
@@ -73,6 +79,7 @@ from nti.contentlibrary.interfaces import IContentBundleUpdatedEvent
 
 from nti.contenttypes.courses.interfaces import ES_PUBLIC
 
+from nti.contenttypes.courses.interfaces import ICourseCatalog
 from nti.contenttypes.courses.interfaces import ICourseInstance
 from nti.contenttypes.courses.interfaces import ICourseEnrollments
 from nti.contenttypes.courses.interfaces import ICourseOutlineNode
@@ -83,11 +90,14 @@ from nti.contenttypes.courses.interfaces import ICourseEnrollmentManager
 from nti.contenttypes.courses.interfaces import ICourseContentPackageBundle
 from nti.contenttypes.courses.interfaces import ICourseInstanceSharingScope
 from nti.contenttypes.courses.interfaces import ICourseInstanceEnrollmentRecord
+from nti.contenttypes.courses.interfaces import ICourseInstructorAddedEvent
+from nti.contenttypes.courses.interfaces import ICourseInstructorRemovedEvent
 
 from nti.contenttypes.courses.interfaces import CourseBundleWillUpdateEvent
 
 from nti.contenttypes.courses.utils import get_parent_course
 from nti.contenttypes.courses.utils import get_course_hierarchy
+from nti.contenttypes.courses.utils import get_instructors
 
 from nti.coremetadata.interfaces import UserLastSeenEvent
 
@@ -96,6 +106,8 @@ from nti.dataserver.authorization import is_site_admin
 from nti.dataserver.interfaces import IUser
 from nti.dataserver.interfaces import ICommunity
 from nti.dataserver.interfaces import IGroupMember
+
+from nti.dataserver.users import User
 
 from nti.dataserver.users.interfaces import IUserProfile
 from nti.dataserver.users.interfaces import IEmailAddressable
@@ -505,3 +517,149 @@ def on_site_admin_removed(site_admin, unused_event=None):
         for scope in sharing_scope_utility.iter_scopes(parent_scopes=True):
             if site_admin not in scope:
                 site_admin.stop_following(scope)
+
+
+def _update_course_stats(client, courses, child_courses):
+    buffer = []
+    site_name = getSite().__name__
+    for stat_name, count in (('courses', courses),
+                             ('child_courses', child_courses),
+                             ('total_courses', courses + child_courses)):
+        client.gauge('nti.sites.%s.%s' % (site_name, stat_name),
+                     count,
+                     buf=buffer)
+
+    if buffer:
+        client.sendbuf(buffer)
+
+
+@component.adapter(ICourseInstance, IObjectAddedEvent)
+def _update_course_stats_on_course_added(unused_course, unused_event=None):
+    client = statsd_client()
+    if client is None:
+        return
+
+    courses = 0
+    child_courses = 0
+    catalog = component.getUtility(ICourseCatalog)
+
+    for level in catalog.values():
+        for x in level.values():
+            courses += 1
+            child_courses += len(x.SubInstances)
+
+    _update_course_stats(client, courses, child_courses)
+
+
+@component.adapter(ICourseInstance, IObjectRemovedEvent)
+def _update_course_stats_on_course_removed(course, unused_event=None):
+    client = statsd_client()
+    if client is None:
+        return
+
+    courses = 0
+    child_courses = 0
+    instructors = set()
+    catalog = component.getUtility(ICourseCatalog)
+
+    for level in catalog.values():
+        for x in level.values():
+            if x == course:
+                continue
+
+            courses += 1
+            _maybe_update_instructors(x, instructors)
+
+            for subcourse in x.SubInstances.values():
+                if subcourse == course:
+                    continue
+
+                child_courses += 1
+                _maybe_update_instructors(subcourse, instructors)
+
+    _update_course_stats(client, courses, child_courses)
+
+    # when course removed, make sure update instructor stats
+    _update_site_admin_and_instructors_stats(client, instructors=instructors)
+
+
+def _maybe_update_instructors(course, instructors):
+    for principal in course.instructors or ():
+        user = User.get_user(getattr(principal, 'id', str(principal)))
+        if user is not None and user not in instructors:
+            instructors.add(user)
+
+
+def _update_site_admin_and_instructors_stats(client=None, site=None, instructors=None):
+    client = statsd_client() if client is None else client
+    if client is None:
+        return
+
+    site = getSite() if site is None else site
+    site_admins = get_site_admins(site=site)
+    site_admins = [x for x in site_admins if get_user_creation_site(x) == site]
+    instructors = get_instructors(site=site.__name__,) if instructors is None else instructors
+    total = set(site_admins).union(instructors)
+
+    buffer = []
+    site_name = getSite().__name__
+    for stat_name, count in (('site_admins', len(site_admins)),
+                             ('instructors', len(instructors)),
+                             ('site_admins_and_instructors', len(total))):
+        client.gauge('nti.sites.%s.%s' % (site_name, stat_name),
+                     count,
+                     buf=buffer)
+
+    if buffer:
+        client.sendbuf(buffer)
+
+
+@component.adapter(IUser, ISiteAdminAddedEvent)
+def _update_stats_on_site_admin_added(site_admin, unused_event=None):
+    _update_site_admin_and_instructors_stats()
+
+
+@component.adapter(IUser, ISiteAdminRemovedEvent)
+def _update_stats_on_site_admin_removed(site_admin, unused_event=None):
+    _update_site_admin_and_instructors_stats()
+
+
+@component.adapter(IUser, ICourseInstructorAddedEvent)
+def _update_stats_on_course_instructor_added(user, event):
+    client = statsd_client()
+    if client is None:
+        return
+
+    site = getSite()
+    instructors = get_instructors(site=site.__name__)
+    if user not in instructors:
+        instructors.add(user)
+
+    _update_site_admin_and_instructors_stats(client,
+                                             site=site,
+                                             instructors=instructors)
+
+
+@component.adapter(IUser, ICourseInstructorRemovedEvent)
+def _update_stats_on_course_instructor_removed(user, event):
+    client = statsd_client()
+    if client is None:
+        return
+
+    site = getSite()
+
+    entry_ntiid = ICourseCatalogEntry(event.course).ntiid
+
+    # This may happen before catalog re-index.
+    removing_instructors = get_instructors(site,
+                                           username=user.username,
+                                           entry_ntiid=entry_ntiid)
+
+    instructors = get_instructors(site=site.__name__)
+    for x in removing_instructors:
+        if x in instructors:
+            instructors.remove(x)
+
+    _update_site_admin_and_instructors_stats(client,
+                                             site=site,
+                                             instructors=instructors)

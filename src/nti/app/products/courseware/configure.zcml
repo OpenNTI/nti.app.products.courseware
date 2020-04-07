@@ -98,6 +98,12 @@
     <subscriber handler=".subscribers.on_site_admin_removed" />
 	<subscriber handler=".subscribers.on_course_scope_removed" />
 	<subscriber handler=".subscribers._course_sharing_scopes_updated" />
+	<subscriber handler=".subscribers._update_course_stats_on_course_added" />
+	<subscriber handler=".subscribers._update_course_stats_on_course_removed" />
+	<subscriber handler=".subscribers._update_stats_on_site_admin_added" />
+	<subscriber handler=".subscribers._update_stats_on_site_admin_removed" />
+	<subscriber handler=".subscribers._update_stats_on_course_instructor_added" />
+	<subscriber handler=".subscribers._update_stats_on_course_instructor_removed" />
 
 	<!-- Auto-gen course purchasables from content -->
 	<!-- This must be a global subscriber as that's where
