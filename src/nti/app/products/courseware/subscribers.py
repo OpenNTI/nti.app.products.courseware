@@ -97,7 +97,6 @@ from nti.contenttypes.courses.interfaces import CourseBundleWillUpdateEvent
 
 from nti.contenttypes.courses.utils import get_parent_course
 from nti.contenttypes.courses.utils import get_course_hierarchy
-from nti.contenttypes.courses.utils import get_instructors
 
 from nti.coremetadata.interfaces import UserLastSeenEvent
 
@@ -519,6 +518,25 @@ def on_site_admin_removed(site_admin, unused_event=None):
                 site_admin.stop_following(scope)
 
 
+# stats
+
+def _get_parent_courses():
+    result = set()
+    catalog = component.getUtility(ICourseCatalog)
+    for level in catalog.values():
+        for course in level.values():
+            result.add(course)
+    return result
+
+
+def _get_child_courses(courses):
+    result = set()
+    for course in courses or ():
+        for x in course.SubInstances.values():
+            result.add(x)
+    return result
+
+
 def _update_course_stats(client, courses, child_courses):
     buffer = []
     site_name = getSite().__name__
@@ -539,16 +557,9 @@ def _update_course_stats_on_course_added(unused_course, unused_event=None):
     if client is None:
         return
 
-    courses = 0
-    child_courses = 0
-    catalog = component.getUtility(ICourseCatalog)
-
-    for level in catalog.values():
-        for x in level.values():
-            courses += 1
-            child_courses += len(x.SubInstances)
-
-    _update_course_stats(client, courses, child_courses)
+    courses = _get_parent_courses()
+    child_courses = _get_child_courses(courses)
+    _update_course_stats(client, len(courses), len(child_courses))
 
 
 @component.adapter(ICourseInstance, IObjectRemovedEvent)
@@ -557,52 +568,66 @@ def _update_course_stats_on_course_removed(course, unused_event=None):
     if client is None:
         return
 
-    courses = 0
-    child_courses = 0
-    instructors = set()
-    catalog = component.getUtility(ICourseCatalog)
+    courses = _get_parent_courses()
+    if course in courses:
+        courses.remove(course)
 
-    for level in catalog.values():
-        for x in level.values():
-            if x == course:
-                continue
+    child_courses = _get_child_courses(courses)
+    if course in child_courses:
+        child_courses.remove(course)
 
-            courses += 1
-            _maybe_update_instructors(x, instructors)
+    _update_course_stats(client, len(courses), len(child_courses))
 
-            for subcourse in x.SubInstances.values():
-                if subcourse == course:
-                    continue
-
-                child_courses += 1
-                _maybe_update_instructors(subcourse, instructors)
-
-    _update_course_stats(client, courses, child_courses)
+    instructors = _get_instructors(courses, child_courses)
 
     # when course removed, make sure update instructor stats
     _update_site_admin_and_instructors_stats(client, instructors=instructors)
 
 
-def _maybe_update_instructors(course, instructors):
+def _accumulate_instructors(course, instructors):
     for principal in course.instructors or ():
         user = User.get_user(getattr(principal, 'id', str(principal)))
         if user is not None and user not in instructors:
             instructors.add(user)
 
 
-def _update_site_admin_and_instructors_stats(client=None, site=None, instructors=None):
+def _get_instructors(courses=None, child_courses=None):
+    result = set()
+
+    if courses is None:
+        courses = _get_parent_courses()
+
+    if child_courses is None:
+        child_courses = _get_child_courses(courses)
+
+    for course in courses:
+        _accumulate_instructors(course, result)
+
+    for course in child_courses:
+        _accumulate_instructors(course, result)
+
+    return result
+
+
+def _get_site_admins(site=None):
+    site = getSite() if site is None else site
+    result = get_site_admins(site=site)
+    result = [x for x in result if get_user_creation_site(x) == site]
+    return result
+
+
+def _update_site_admin_and_instructors_stats(client=None, instructors=None):
     client = statsd_client() if client is None else client
     if client is None:
         return
 
-    site = getSite() if site is None else site
-    site_admins = get_site_admins(site=site)
-    site_admins = [x for x in site_admins if get_user_creation_site(x) == site]
-    instructors = get_instructors(site=site.__name__,) if instructors is None else instructors
+    site = getSite()
+    site_admins = _get_site_admins(site=site)
+    instructors = _get_instructors() if instructors is None else instructors
     total = set(site_admins).union(instructors)
 
     buffer = []
-    site_name = getSite().__name__
+    site_name = site.__name__
     for stat_name, count in (('site_admins', len(site_admins)),
                              ('instructors', len(instructors)),
                              ('site_admins_and_instructors', len(total))):
@@ -626,40 +651,9 @@ def _update_stats_on_site_admin_removed(site_admin, unused_event=None):
 
 @component.adapter(IUser, ICourseInstructorAddedEvent)
 def _update_stats_on_course_instructor_added(user, event):
-    client = statsd_client()
-    if client is None:
-        return
-
-    site = getSite()
-    instructors = get_instructors(site=site.__name__)
-    if user not in instructors:
-        instructors.add(user)
-
-    _update_site_admin_and_instructors_stats(client,
-                                             site=site,
-                                             instructors=instructors)
+    _update_site_admin_and_instructors_stats()
 
 
 @component.adapter(IUser, ICourseInstructorRemovedEvent)
 def _update_stats_on_course_instructor_removed(user, event):
-    client = statsd_client()
-    if client is None:
-        return
-
-    site = getSite()
-
-    entry_ntiid = ICourseCatalogEntry(event.course).ntiid
-
-    # This may happen before catalog re-index.
-    removing_instructors = get_instructors(site,
-                                           username=user.username,
-                                           entry_ntiid=entry_ntiid)
-
-    instructors = get_instructors(site=site.__name__)
-    for x in removing_instructors:
-        if x in instructors:
-            instructors.remove(x)
-
-    _update_site_admin_and_instructors_stats(client,
-                                             site=site,
-                                             instructors=instructors)
+    _update_site_admin_and_instructors_stats()
