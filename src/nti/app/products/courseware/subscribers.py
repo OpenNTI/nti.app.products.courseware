@@ -596,6 +596,12 @@ def _get_site_admins(site=None):
 
 
 def _update_site_admin_and_role_stats(client=None, instructors=None, editors=None, removingUser=None):
+    """
+    Currently when we add a user as editor from the UI, it will send two requests,
+    one is adding the user as editors, the other is removing the same user from instructors,
+    both requests happen almost concurrently at server, as a result, the second request can not see
+    the editors change from the first request and get a wrong editor counter.
+    """
     client = statsd_client() if client is None else client
     if client is None:
         return
