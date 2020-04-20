@@ -94,13 +94,14 @@ from nti.contenttypes.courses.interfaces import ICourseInstructorAddedEvent
 from nti.contenttypes.courses.interfaces import ICourseInstructorRemovedEvent
 from nti.contenttypes.courses.interfaces import ICourseEditorAddedEvent
 from nti.contenttypes.courses.interfaces import ICourseEditorRemovedEvent
+from nti.contenttypes.courses.interfaces import ICourseRolesSynchronized
 
 from nti.contenttypes.courses.interfaces import CourseBundleWillUpdateEvent
 
 from nti.contenttypes.courses.utils import get_editors
 from nti.contenttypes.courses.utils import get_instructors
-from nti.contenttypes.courses.utils import get_instructed_courses
-from nti.contenttypes.courses.utils import get_editable_courses
+from nti.contenttypes.courses.utils import get_course_instructors
+from nti.contenttypes.courses.utils import get_course_editors
 from nti.contenttypes.courses.utils import get_parent_course
 from nti.contenttypes.courses.utils import get_course_hierarchy
 
@@ -585,7 +586,7 @@ def _update_course_stats_on_course_removed(course, unused_event=None):
     _update_course_stats(client, len(courses), len(child_courses))
 
     # when course removed, make sure update instructors/editors.
-    _update_site_admin_and_role_stats(client)
+    _update_site_admin_and_role_stats(client, excludedCourse=course)
 
 
 def _get_site_admins(site=None):
@@ -595,7 +596,7 @@ def _get_site_admins(site=None):
     return result
 
 
-def _update_site_admin_and_role_stats(client=None, instructors=None, editors=None, removingUser=None):
+def _update_site_admin_and_role_stats(client=None, instructors=None, editors=None, removingUser=None, excludedCourse=None):
     """
     Currently when we add a user as editor from the UI, it will send two requests,
     one is adding the user as editors, the other is removing the same user from instructors,
@@ -608,8 +609,8 @@ def _update_site_admin_and_role_stats(client=None, instructors=None, editors=Non
 
     site = getSite()
     site_admins = set(_get_site_admins(site=site))
-    instructors = get_instructors(site.__name__) if instructors is None else instructors
-    editors = get_editors(site.__name__) if editors is None else editors
+    instructors = get_instructors(site.__name__, excludedCourse=excludedCourse) if instructors is None else instructors
+    editors = get_editors(site.__name__, excludedCourse=excludedCourse) if editors is None else editors
     total = site_admins.union(instructors).union(editors)
 
     if removingUser is not None:
@@ -641,6 +642,24 @@ def _update_stats_on_site_admin_removed(site_admin, unused_event=None):
     _update_site_admin_and_role_stats()
 
 
+def _get_instructors(site, course):
+    instructors = get_instructors(site=site, excludedCourse=course)
+    for x in get_course_instructors(course) or ():
+        user = User.get_user(getattr(x, 'id', x))
+        if user is not None and user not in instructors:
+            instructors.add(user)
+    return instructors
+
+
+def _get_editors(site, course):
+    editors = get_editors(site=site, excludedCourse=course)
+    for x in get_course_editors(course) or ():
+            user = User.get_user(getattr(x, 'id', x))
+            if user is not None and user not in editors:
+                editors.add(user)
+    return editors
+
+
 @component.adapter(IUser, ICourseInstructorAddedEvent)
 def _update_stats_on_course_instructor_added(user, event):
     client = statsd_client()
@@ -660,15 +679,8 @@ def _update_stats_on_course_instructor_removed(user, event):
     if client is None:
         return
 
-    # If this user is also an instructor in other courses.
-    # we don't want to recompute.
-    courses = get_instructed_courses(user, sites=getSite().__name__)
-    if len(courses) > 1 or (len(courses) == 1 and event.course not in courses):
-        return
-
-    instructors = get_instructors(site=getSite().__name__)
-    if user in instructors:
-        instructors.remove(user)
+    instructors = _get_instructors(site=getSite().__name__,
+                                   course=event.course)
 
     _update_site_admin_and_role_stats(client=client,
                                       instructors=instructors)
@@ -693,17 +705,27 @@ def _update_stats_on_course_editor_removed(user, event):
     if client is None:
         return
 
-    # If this user is also an editor in other courses.
-    # we don't want to recompute.
-    courses = get_editable_courses(user, sites=getSite().__name__)
-    if len(courses) > 1 or (len(courses) == 1 and event.course not in courses):
-        return
-
-    editors = get_editors(site=getSite().__name__)
-    if user in editors:
-        editors.remove(user)
+    editors = _get_editors(site=getSite().__name__,
+                           course=event.course)
 
     _update_site_admin_and_role_stats(client=client,
+                                      editors=editors)
+
+
+@component.adapter(ICourseInstance, ICourseRolesSynchronized)
+def _update_stats_on_course_roles_synced(course, unused_event):
+    client = statsd_client()
+    if client is None:
+        return
+
+    instructors = _get_instructors(site=getSite().__name__,
+                                   course=course)
+
+    editors = _get_editors(site=getSite().__name__,
+                           course=course)
+
+    _update_site_admin_and_role_stats(client=client,
+                                      instructors=instructors,
                                       editors=editors)
 
 

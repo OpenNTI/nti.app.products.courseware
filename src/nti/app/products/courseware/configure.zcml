@@ -104,9 +104,9 @@
 	<subscriber handler=".subscribers._update_stats_on_site_admin_removed" />
 	<subscriber handler=".subscribers._update_stats_on_course_instructor_added" />
 	<subscriber handler=".subscribers._update_stats_on_course_instructor_removed" />
-	<subscriber handler=".subscribers._update_stats_on_site_admin_removed" />
 	<subscriber handler=".subscribers._update_stats_on_course_editor_added" />
 	<subscriber handler=".subscribers._update_stats_on_course_editor_removed" />
+	<subscriber handler=".subscribers._update_stats_on_course_roles_synced" />
 	<subscriber handler=".subscribers._update_stats_on_user_removed" />
 
 	<!-- Auto-gen course purchasables from content -->
