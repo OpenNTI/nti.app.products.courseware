@@ -643,6 +643,9 @@ def _update_stats_on_site_admin_removed(site_admin, unused_event=None):
 
 
 def _get_instructors(site, course):
+    """
+    Get all instructors when instructors or editors change in a given course.
+    """
     instructors = get_instructors(site=site, excludedCourse=course)
     for x in get_course_instructors(course) or ():
         user = User.get_user(getattr(x, 'id', x))
@@ -652,11 +655,14 @@ def _get_instructors(site, course):
 
 
 def _get_editors(site, course):
+    """
+    Get all editors when instructors or editors change in a given course.
+    """
     editors = get_editors(site=site, excludedCourse=course)
     for x in get_course_editors(course) or ():
-            user = User.get_user(getattr(x, 'id', x))
-            if user is not None and user not in editors:
-                editors.add(user)
+        user = User.get_user(getattr(x, 'id', x))
+        if user is not None and user not in editors:
+            editors.add(user)
     return editors
 
 
