@@ -35,6 +35,7 @@ from nti.app.products.courseware.webinars.interfaces import IWebinarAsset
 from nti.app.products.courseware.webinars.interfaces import ICourseWebinarContainer
 
 from nti.app.products.webinar.interfaces import IWebinarClient
+from nti.app.products.webinar.interfaces import WebinarClientError
 
 from nti.app.products.webinar.progress import should_update_progress
 from nti.app.products.webinar.progress import update_webinar_progress
@@ -88,7 +89,11 @@ class AllCourseWebinarProgressView(AbstractAuthenticatedView):
             return updated
         if should_update_progress(webinar):
             course = ICourseInstance(asset)
-            updated = update_webinar_progress(webinar)
+            try:
+                updated = update_webinar_progress(webinar)
+            except WebinarClientError as e:
+                logger.info("Error updating webinar asset progress (%s) (%s) (%s)",
+                            asset, webinar, e)
             if updated:
                 logger.info('Updating webinar progress (%s)', webinar)
                 update_webinar_completion(asset, webinar, course)
@@ -182,7 +187,12 @@ class AllWebinarUpdateView(AbstractAuthenticatedView):
             key_to_webinar_dict = webinar_ext_cache[webinar.organizerKey]
         except KeyError:
             # pylint: disable=too-many-function-args
-            upcoming_webinars = client.get_upcoming_webinars(True)
+            try:
+                upcoming_webinars = client.get_upcoming_webinars(raw=True)
+            except WebinarClientError as e:
+                logger.info("Error updating webinars (%s) (%s)",
+                            webinar, e)
+                upcoming_webinars = None
             if upcoming_webinars:
                 key_to_webinar_dict = {
                     six.text_type(x['webinarKey']):x for x in upcoming_webinars

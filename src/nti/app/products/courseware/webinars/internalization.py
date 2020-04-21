@@ -16,6 +16,8 @@ from zope import interface
 from nti.app.products.courseware.webinars.interfaces import IWebinarAsset
 
 from nti.app.products.webinar.interfaces import IWebinarClient
+from nti.app.products.webinar.interfaces import WebinarClientError
+
 from nti.app.products.webinar.interfaces import IGoToWebinarAuthorizedIntegration
 
 from nti.externalization.datastructures import InterfaceObjectIO
@@ -37,7 +39,10 @@ class WebinarAssetUpdater(InterfaceObjectIO):
             # actual webinar object; if so, we must resolve it.
             webinar_integration = component.getUtility(IGoToWebinarAuthorizedIntegration)
             client = IWebinarClient(webinar_integration)
-            webinar = client.get_webinar(webinar_data)
+            try:
+                webinar = client.get_webinar(webinar_data)
+            except WebinarClientError:
+                webinar = None
             if webinar is None:
                 # We'll fail validation if none
                 logger.warning('Could not resolve webinar with key (%s)',
