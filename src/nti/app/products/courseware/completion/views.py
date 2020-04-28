@@ -26,6 +26,8 @@ from nti.app.products.courseware import VIEW_CERTIFICATE
 
 from nti.app.products.courseware.interfaces import ICourseInstanceEnrollment
 
+from nti.appserver.brand.interfaces import ISiteBrand
+
 from nti.appserver.brand.utils import get_site_brand_name
 
 from nti.appserver.interfaces import IDisplayableTimeProvider
@@ -103,13 +105,37 @@ class CompletionCertificateView(AbstractAuthenticatedView,
         return name
 
     @Lazy
-    def _brand(self):
+    def _brand_name(self):
         display_name = get_site_brand_name()
         if display_name:
             display_name = display_name.strip()
         else:
             display_name = guess_site_display_name(self.request)
         return display_name
+
+    @Lazy
+    def _brand(self):
+        return component.queryUtility(ISiteBrand)
+
+    @Lazy
+    def _brand_assets(self):
+        return getattr(self._brand, 'assets', None)
+
+    @Lazy
+    def _brand_color(self):
+        return getattr(self._brand, 'brand_color', None)
+
+    @Lazy
+    def _cert_brand_color(self):
+        return getattr(self._brand, 'certificate_brand_color', None)
+
+    @Lazy
+    def _certificate_label(self):
+        return getattr(self._brand, 'certificate_label', None)
+
+    def _brand_asset(self, name):
+        asset = getattr(self._brand_assets, name, None)
+        return getattr(asset, 'source', None)
 
     @Lazy
     def _course_completable_item(self):
@@ -170,11 +196,17 @@ class CompletionCertificateView(AbstractAuthenticatedView,
                                                  ICreditTranscript)
 
         return {
-            u'Brand': self._brand,
+            u'Brand': self._brand_name,
             u'Name': self._name,
             u'ProviderUniqueID': entry.ProviderUniqueID,
             u'Course': entry.title,
             u'Date': self._completion_date_string,
             u'Facilitators': self._facilitators(entry),
-            u'Credit': self._awarded_credit(transcript)
+            u'Credit': self._awarded_credit(transcript),
+            u'CertificateLabel': self._certificate_label,
+            u'CertificateSideBarImage':
+                self._brand_asset('certificate_sidebar_image'),
+            u'BrandLogo':
+                self._brand_asset('certificate_logo') or self._brand_asset('logo'),
+            u'BrandColor': self._cert_brand_color or self._brand_color,
         }

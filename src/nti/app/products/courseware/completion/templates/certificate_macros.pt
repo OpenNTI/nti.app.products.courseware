@@ -8,9 +8,13 @@
 	  xmlns:tal="http://xml.zope.org/namespaces/tal"
 	  xmlns:metal="http://xml.zope.org/namespaces/metal"
 	  tal:attributes="title view/Title"
-	  metal:define-macro="certificate">
+	  metal:define-macro="certificate"
+              tal:define="branding_graphic python: options['CertificateSideBarImage'];
+                          brand_color python: options['BrandColor'];
+                          brand_logo python: options['BrandLogo'];
+                          display_branding_graphic python: branding_graphic or not (brand_color and brand_logo)">
 
-<image metal:define-macro="certificate-branding-graphic" file="[nti.app.products.courseware]/completion/templates/assets/sidebar-graphic.png" x="28.8" y="0" height="612" width="187.2"/>
+<image metal:define-macro="certificate-branding-graphic" file="[nti.app.products.courseware]/completion/templates/assets/sidebar-graphic.png" x="28.8" y="0" height="612" width="187.2"  tal:attributes="file python: options.get('CertificateSideBarImage') or default"/>
 <!-- Hidden by default -->
 <image metal:define-macro="top-right-branding-graphic" file="[nti.app.products.courseware]/completion/templates/assets/sidebar-graphic.png" x="0" y="0" height="0" width="0"/>
 
@@ -25,9 +29,16 @@
   <template pagesize="(792,612)" leftMargin="51.8" showBoundary="0">
     <pageTemplate id="landscape">
       <pageGraphics>
-	      <image metal:use-macro="macro:certificate-branding-graphic" file="[nti.app.products.courseware]/completion/templates/assets/sidebar-graphic.png" x="28.8" y="0" height="612" width="187.2"/>
+          <tal:block tal:condition="not:display_branding_graphic">
+            <fill tal:attributes="color options/BrandColor"/>
+            <rect x="28.8" y="0" height="612" width="187.2" fill="yes" stroke="no"/>
+          </tal:block>
+          <tal:block tal:condition="display_branding_graphic">
+            <image metal:use-macro="macro:certificate-branding-graphic" file="[nti.app.products.courseware]/completion/templates/assets/sidebar-graphic.png" x="28.8" y="0" height="612" width="187.2"/>
+          </tal:block>
           <image metal:use-macro="macro:top-right-branding-graphic" file="[nti.app.products.courseware]/completion/templates/assets/sidebar-graphic.png" x="0" y="0" height="0" width="0"/>
       </pageGraphics>
+      <frame id="logo" x1="28.8" y1="0" width="187.2" height="612" />
       <frame id="heading" x1="238.3" y1="259.2" width="532.8" height="280.8"/>
       <frame id="instructor-0" x1="238.3" y1="187.2" width="244.8" height="72"/>
       <frame id="instructor-1" x1="493.9" y1="187.2" width="244.8" height="72"/>
@@ -39,6 +50,10 @@
   </template>
 
   <stylesheet>
+	<blockTableStyle id="simple">
+		<blockAlignment value="center"/>
+		<blockValign value="middle"/>
+	</blockTableStyle>
     <paraStyle name="header" fontName="OpenSansSemiBold" fontSize="13" leftIndent="18" rightIndent="18" spaceBefore="73" leading="17.3" textColor="#494949"/>
     <paraStyle name="name" fontName="OpenSansLight" fontSize="40.3" leftIndent="18" rightIndent="18" spaceBefore="7.2" leading="54.7" textColor="#494949" />
     <paraStyle name="course" fontName="OpenSans" fontSize="23" leftIndent="18" rightIndent="18" spaceBefore="7.2" leading="31" textColor="#494949" />
@@ -48,8 +63,21 @@
     <paraStyle name="facilitator-title" fontName="OpenSans" fontSize="8.6" leftIndent="18" rightIndent="18" spaceBefore="7.2" leading="12.2" textColor="#757474" />
   </stylesheet>
   <story>
+    <keepInFrame frame="logo" onOverflow="shrink" tal:condition="not:display_branding_graphic">
+      <blockTable rowHeights="612" colWidths="187.2" style="simple">
+        <tr>
+          <td>
+            <img src="" tal:attributes="src options/BrandLogo"/>
+          </td>
+        </tr>
+      </blockTable>
+    </keepInFrame>
+
     <keepInFrame frame="heading" onOverflow="shrink">
-    <h3 style="header"><omitted tal:replace="options/Brand"> Certificate of Completion</h3>
+      <h3 style="header">
+        <omitted tal:replace="options/Brand"/>
+        <div tal:omit-tag="" tal:content="python:options.get('CertificateLabel') or default">Certificate of Completion</div>
+      </h3>
     <h1 style="name" tal:content="options/Name">Huey Sooner</h1>
     <h5 style="date">Awarded on <ommitted tal:replace="options/Date">March 19, 2008</ommitted></h5>
     <h3 style="header"><omitted tal:replace="options/Brand">Janux</omitted> Course</h3>
