@@ -14,7 +14,7 @@
                           brand_logo python: options['BrandLogo'];
                           display_branding_graphic python: branding_graphic or not (brand_color and brand_logo)">
 
-<image metal:define-macro="certificate-branding-graphic" file="[nti.app.products.courseware]/completion/templates/assets/sidebar-graphic.png" x="28.8" y="0" height="612" width="187.2"  tal:attributes="file python: options.get('CertificateSideBarImage') or default"/>
+<image metal:define-macro="certificate-branding-graphic" file="[nti.app.products.courseware]/completion/templates/assets/sidebar-graphic.png" x="29" y="0" height="612" width="187"  tal:attributes="file python: options.get('CertificateSideBarImage') or default"/>
 <!-- Hidden by default -->
 <image metal:define-macro="top-right-branding-graphic" file="[nti.app.products.courseware]/completion/templates/assets/sidebar-graphic.png" x="0" y="0" height="0" width="0"/>
 
@@ -26,26 +26,26 @@
     <registerTTFont faceName="OpenSansLight" fileName="[nti.app.products.courseware]/completion/templates/fonts/NotoSansNextThought-Light.ttf" />
   </docinit>
 
-  <template pagesize="(792,612)" leftMargin="51.8" showBoundary="0">
+  <template pagesize="(792,612)" leftMargin="52" showBoundary="0">
     <pageTemplate id="landscape">
       <pageGraphics>
           <tal:block tal:condition="not:display_branding_graphic">
             <fill tal:attributes="color options/BrandColor"/>
-            <rect x="28.8" y="0" height="612" width="187.2" fill="yes" stroke="no"/>
+            <rect x="29" y="0" height="612" width="187" fill="yes" stroke="no"/>
           </tal:block>
           <tal:block tal:condition="display_branding_graphic">
-            <image metal:use-macro="macro:certificate-branding-graphic" file="[nti.app.products.courseware]/completion/templates/assets/sidebar-graphic.png" x="28.8" y="0" height="612" width="187.2"/>
+            <image metal:use-macro="macro:certificate-branding-graphic" file="[nti.app.products.courseware]/completion/templates/assets/sidebar-graphic.png" x="29" y="0" height="612" width="187"/>
           </tal:block>
           <image metal:use-macro="macro:top-right-branding-graphic" file="[nti.app.products.courseware]/completion/templates/assets/sidebar-graphic.png" x="0" y="0" height="0" width="0"/>
       </pageGraphics>
-      <frame id="logo" x1="28.8" y1="0" width="187.2" height="612" />
-      <frame id="heading" x1="238.3" y1="259.2" width="532.8" height="280.8"/>
-      <frame id="instructor-0" x1="238.3" y1="187.2" width="244.8" height="72"/>
-      <frame id="instructor-1" x1="493.9" y1="187.2" width="244.8" height="72"/>
-      <frame id="instructor-2" x1="238.3" y1="115.2" width="244.8" height="72"/>
-      <frame id="instructor-3" x1="493.9" y1="115.2" width="244.8" height="72"/>
-      <frame id="instructor-4" x1="238.3" y1="43.2" width="244.8" height="72"/>
-      <frame id="instructor-5" x1="493.9" y1="43.2" width="244.8" height="72"/>
+      <frame id="logo" x1="29" y1="0" width="187" height="612" />
+      <frame id="heading" x1="238" y1="259" width="533" height="281"/>
+      <frame id="instructor-0" x1="238" y1="187" width="245" height="72"/>
+      <frame id="instructor-1" x1="494" y1="187" width="245" height="72"/>
+      <frame id="instructor-2" x1="238" y1="115" width="245" height="72"/>
+      <frame id="instructor-3" x1="494" y1="115" width="245" height="72"/>
+      <frame id="instructor-4" x1="238" y1="43" width="245" height="72"/>
+      <frame id="instructor-5" x1="494" y1="43" width="245" height="72"/>
     </pageTemplate>
   </template>
 
@@ -54,17 +54,17 @@
 		<blockAlignment value="center"/>
 		<blockValign value="middle"/>
 	</blockTableStyle>
-    <paraStyle name="header" fontName="OpenSansSemiBold" fontSize="13" leftIndent="18" rightIndent="18" spaceBefore="73" leading="17.3" textColor="#494949"/>
-    <paraStyle name="name" fontName="OpenSansLight" fontSize="40.3" leftIndent="18" rightIndent="18" spaceBefore="7.2" leading="54.7" textColor="#494949" />
-    <paraStyle name="course" fontName="OpenSans" fontSize="23" leftIndent="18" rightIndent="18" spaceBefore="7.2" leading="31" textColor="#494949" />
-    <paraStyle name="date" fontName="OpenSans" fontSize="13" leftIndent="18" rightIndent="18" spaceBefore="7.2" leading="17.3" textColor="#b8b8b8" />
-    <paraStyle name="credit" fontName="OpenSansSemiBold" fontSize="10.1" leftIndent="18" rightIndent="18" spaceBefore="7.2" leading="13.7" textColor="#494949" />
-    <paraStyle name="facilitator-name" fontName="OpenSansSemiBold" fontSize="10.1" leftIndent="18" rightIndent="18" spaceBefore="7.2" leading="13.7" textColor="#494949" />
-    <paraStyle name="facilitator-title" fontName="OpenSans" fontSize="8.6" leftIndent="18" rightIndent="18" spaceBefore="7.2" leading="12.2" textColor="#757474" />
+    <paraStyle name="header" fontName="OpenSansSemiBold" fontSize="13" leftIndent="18" rightIndent="18" spaceBefore="73" leading="17" textColor="#494949"/>
+    <paraStyle name="name" fontName="OpenSansLight" fontSize="40" leftIndent="18" rightIndent="18" spaceBefore="7" leading="55" textColor="#494949" />
+    <paraStyle name="course" fontName="OpenSans" fontSize="23" leftIndent="18" rightIndent="18" spaceBefore="7" leading="31" textColor="#494949" />
+    <paraStyle name="date" fontName="OpenSans" fontSize="13" leftIndent="18" rightIndent="18" spaceBefore="7" leading="17" textColor="#b8b8b8" />
+    <paraStyle name="credit" fontName="OpenSansSemiBold" fontSize="10" leftIndent="18" rightIndent="18" spaceBefore="7" leading="14" textColor="#494949" />
+    <paraStyle name="facilitator-name" fontName="OpenSansSemiBold" fontSize="10" leftIndent="18" rightIndent="18" spaceBefore="7" leading="14" textColor="#494949" />
+    <paraStyle name="facilitator-title" fontName="OpenSans" fontSize="9" leftIndent="18" rightIndent="18" spaceBefore="7" leading="12" textColor="#757474" />
   </stylesheet>
   <story>
     <keepInFrame frame="logo" onOverflow="shrink" tal:condition="not:display_branding_graphic">
-      <blockTable rowHeights="612" colWidths="187.2" style="simple">
+      <blockTable rowHeights="612" colWidths="187" style="simple">
         <tr>
           <td>
             <img src="" tal:attributes="src options/BrandLogo"/>
