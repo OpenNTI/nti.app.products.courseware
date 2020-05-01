@@ -21,7 +21,7 @@
 
   <docinit>
     <registerTTFont faceName="OpenSans" fileName="[nti.app.products.courseware]/completion/templates/fonts/NotoSansNextThought-Regular.ttf" />
-    <registerTTFont faceName="OpenSansSemiBold" fileName="[nti.app.products.courseware]/completion/templates/fonts/NotoSansNextThought-Semibold.ttf" />
+    <registerTTFont faceName="OpenSansSemiBold" fileName="[nti.app.products.courseware]/completion/templates/fonts/NotoSansNextThought-SemiBold.ttf" />
     <registerTTFont faceName="OpenSansBold" fileName="[nti.app.products.courseware]/completion/templates/fonts/NotoSansNextThought-Bold.ttf" />
     <registerTTFont faceName="OpenSansLight" fileName="[nti.app.products.courseware]/completion/templates/fonts/NotoSansNextThought-Light.ttf" />
   </docinit>
