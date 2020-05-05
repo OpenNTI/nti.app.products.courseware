@@ -8,6 +8,8 @@ from __future__ import division
 from __future__ import print_function
 from __future__ import absolute_import
 
+import transaction
+
 from pyramid import httpexceptions as hexc
 
 from pyramid.view import view_config
@@ -23,6 +25,8 @@ from zope.cachedescriptors.property import Lazy
 from nti.app.base.abstract_views import AbstractAuthenticatedView
 
 from nti.app.products.courseware import VIEW_CERTIFICATE
+
+from nti.app.products.courseware.completion.utils import SVGConverter
 
 from nti.app.products.courseware.interfaces import ICourseInstanceEnrollment
 
@@ -178,6 +182,25 @@ class CompletionCertificateView(AbstractAuthenticatedView,
             }
         return [_for_display(credit) for credit in transcript.iter_awarded_credits()]
 
+    def add_after_commit_cleanup(self, converter):
+
+        def after_commit_or_abort(_success=False):
+            converter.cleanup()
+
+        transaction.get().addAfterAbortHook(after_commit_or_abort)
+        transaction.get().addAfterCommitHook(after_commit_or_abort)
+
+    @Lazy
+    def converter(self):
+        converter = SVGConverter()
+        self.add_after_commit_cleanup(converter)
+        return converter
+
+    def convert(self, input_file, width, height):
+        if input_file.endswith(".svg"):
+            return self.converter.convert(input_file, width, height)
+        return input_file
+
     def __call__(self):
         # pylint: disable=no-member
         if     self._course_completable_item is None \
@@ -209,4 +232,5 @@ class CompletionCertificateView(AbstractAuthenticatedView,
             u'BrandLogo':
                 self._brand_asset('certificate_logo') or self._brand_asset('logo'),
             u'BrandColor': self._cert_brand_color or self._brand_color,
+            u'Converter': self.convert,
         }
