@@ -10,6 +10,8 @@ from __future__ import absolute_import
 
 import transaction
 
+from PIL import Image
+
 from pyramid import httpexceptions as hexc
 
 from pyramid.view import view_config
@@ -201,6 +203,17 @@ class CompletionCertificateView(AbstractAuthenticatedView,
             return self.converter.convert(input_file, width, height)
         return input_file
 
+    def constrain_size(self, input_file, max_width, max_height):
+        with Image.open(input_file) as image:
+            if image.width > max_width or image.height > max_height:
+                x_scale = max_width / image.width
+                y_scale = max_height / image.height
+                scale = min(x_scale, y_scale)
+                width, height = image.width * scale, image.height * scale
+                return self.converter.convert(input_file, width, height)
+
+        return input_file
+
     def __call__(self):
         # pylint: disable=no-member
         if     self._course_completable_item is None \
@@ -233,4 +246,5 @@ class CompletionCertificateView(AbstractAuthenticatedView,
                 self._brand_asset('certificate_logo') or self._brand_asset('logo'),
             u'BrandColor': self._cert_brand_color or self._brand_color,
             u'Converter': self.convert,
+            u'ConstrainSize': self.constrain_size,
         }

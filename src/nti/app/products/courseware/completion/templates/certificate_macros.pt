@@ -70,8 +70,8 @@
     <keepInFrame frame="logo" onOverflow="shrink" tal:condition="not:display_branding_graphic">
       <blockTable rowHeights="612" colWidths="187" style="simple">
         <tr>
-          <td>
-            <img src="" tal:attributes="src python: options['Converter'](brand_logo, width=187.0, height=612.0)"/>
+          <td tal:define="rasterized python: options['Converter'](brand_logo, width=187.0, height=612.0)">
+            <img src="" tal:attributes="src python: options['ConstrainSize'](rasterized, max_width=187, max_height=612)"/>
           </td>
         </tr>
       </blockTable>
