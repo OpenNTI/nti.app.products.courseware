@@ -14,7 +14,11 @@
                           brand_logo python: options['BrandLogo'];
                           display_branding_graphic python: branding_graphic or not (brand_color and brand_logo)">
 
-<image metal:define-macro="certificate-branding-graphic" file="[nti.app.products.courseware]/completion/templates/assets/sidebar-graphic.png" x="29" y="0" height="612" width="187"  tal:attributes="file python: options.get('CertificateSideBarImage') or default"/>
+<image metal:define-macro="certificate-branding-graphic"
+       file="[nti.app.products.courseware]/completion/templates/assets/sidebar-graphic.png"
+       tal:attributes="file python: branding_graphic and options['Converter'](branding_graphic, width=187.0, height=612.0) or default"
+       x="29" y="0" height="612" width="187"/>
+
 <!-- Hidden by default -->
 <image metal:define-macro="top-right-branding-graphic" file="[nti.app.products.courseware]/completion/templates/assets/sidebar-graphic.png" x="0" y="0" height="0" width="0"/>
 
@@ -67,7 +71,7 @@
       <blockTable rowHeights="612" colWidths="187" style="simple">
         <tr>
           <td>
-            <img src="" tal:attributes="src options/BrandLogo"/>
+            <img src="" tal:attributes="src python: options['Converter'](brand_logo, width=187.0, height=612.0)"/>
           </td>
         </tr>
       </blockTable>
