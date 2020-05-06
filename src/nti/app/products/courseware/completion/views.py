@@ -10,8 +10,6 @@ from __future__ import absolute_import
 
 import transaction
 
-from PIL import Image
-
 from pyramid import httpexceptions as hexc
 
 from pyramid.view import view_config
@@ -28,7 +26,7 @@ from nti.app.base.abstract_views import AbstractAuthenticatedView
 
 from nti.app.products.courseware import VIEW_CERTIFICATE
 
-from nti.app.products.courseware.completion.utils import SVGConverter
+from nti.app.products.courseware.completion.utils import ImageUtils
 
 from nti.app.products.courseware.interfaces import ICourseInstanceEnrollment
 
@@ -184,35 +182,27 @@ class CompletionCertificateView(AbstractAuthenticatedView,
             }
         return [_for_display(credit) for credit in transcript.iter_awarded_credits()]
 
-    def add_after_commit_cleanup(self, converter):
+    def add_after_commit_cleanup(self, img_utils):
 
         def after_commit_or_abort(_success=False):
-            converter.cleanup()
+            img_utils.cleanup()
 
         transaction.get().addAfterAbortHook(after_commit_or_abort)
         transaction.get().addAfterCommitHook(after_commit_or_abort)
 
     @Lazy
-    def converter(self):
-        converter = SVGConverter()
-        self.add_after_commit_cleanup(converter)
-        return converter
+    def img_utils(self):
+        img_utils = ImageUtils()
+        self.add_after_commit_cleanup(img_utils)
+        return img_utils
 
     def convert(self, input_file, width, height):
         if input_file.endswith(".svg"):
-            return self.converter.convert(input_file, width, height)
+            return self.img_utils.convert(input_file, width, height)
         return input_file
 
     def constrain_size(self, input_file, max_width, max_height):
-        with Image.open(input_file) as image:
-            if image.width > max_width or image.height > max_height:
-                x_scale = max_width / image.width
-                y_scale = max_height / image.height
-                scale = min(x_scale, y_scale)
-                width, height = image.width * scale, image.height * scale
-                return self.converter.convert(input_file, width, height)
-
-        return input_file
+        return self.img_utils.constrain_size(input_file, max_width, max_height)
 
     def __call__(self):
         # pylint: disable=no-member
