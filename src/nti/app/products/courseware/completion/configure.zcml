@@ -51,6 +51,11 @@
 		    for="nti.contenttypes.courses.interfaces.ICourseCatalogEntry
 			 pyramid.interfaces.IRequest" />
 
+	<subscriber factory=".decorators._SiteBrandEditDecorator"
+		    provides="nti.externalization.interfaces.IExternalMappingDecorator"
+		    for="nti.appserver.brand.interfaces.ISiteBrand
+			 pyramid.interfaces.IRequest" />
+
     <subscriber factory=".decorators._UserLinkDecorator"
                 provides="nti.externalization.interfaces.IExternalMappingDecorator"
                 for="nti.dataserver.interfaces.IUser

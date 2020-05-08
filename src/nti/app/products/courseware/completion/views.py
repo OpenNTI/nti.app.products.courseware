@@ -8,7 +8,11 @@ from __future__ import division
 from __future__ import print_function
 from __future__ import absolute_import
 
+import os
+import shutil
+import tempfile
 import transaction
+from datetime import datetime
 
 from pyramid import httpexceptions as hexc
 
@@ -25,10 +29,13 @@ from zope.cachedescriptors.property import Lazy
 from nti.app.base.abstract_views import AbstractAuthenticatedView
 
 from nti.app.products.courseware import VIEW_CERTIFICATE
+from nti.app.products.courseware import VIEW_CERTIFICATE_PREVIEW
 
 from nti.app.products.courseware.completion.utils import ImageUtils
 
 from nti.app.products.courseware.interfaces import ICourseInstanceEnrollment
+
+from nti.app.site.views.brand_views import SiteBrandUpdateBase
 
 from nti.appserver.brand.interfaces import ISiteBrand
 
@@ -38,10 +45,14 @@ from nti.appserver.interfaces import IDisplayableTimeProvider
 
 from nti.appserver.policies.site_policies import guess_site_display_name
 
+from nti.appserver.ugd_edit_views import UGDPutView
+
 from nti.common.string import is_true
 
 from nti.contenttypes.completion.interfaces import IProgress
 from nti.contenttypes.completion.interfaces import ICompletionContextCompletionPolicy
+
+from nti.contenttypes.courses.catalog import CourseCatalogInstructorInfo
 
 from nti.contenttypes.courses.interfaces import ICourseCatalogEntry
 
@@ -76,37 +87,9 @@ class EnrollmentProgressViewMixin(object):
         return component.queryMultiAdapter((self.user, self.course), IProgress)
 
 
-@view_config(route_name='objects.generic.traversal',
-             renderer="templates/completion_certificate.rml",
-             request_method='GET',
-             context=ICourseInstanceEnrollment,
-             name=VIEW_CERTIFICATE,
-             permission=nauth.ACT_READ)
-class CompletionCertificateView(AbstractAuthenticatedView,
-                                EnrollmentProgressViewMixin):
+class CompletionViewMixin(object):
 
     Title = u'Completion Certificate'
-
-    @Lazy
-    def course(self):
-        # pylint: disable=no-member
-        return self.context.CourseInstance
-
-    @Lazy
-    def user(self):
-        # pylint: disable=no-member
-        username = self.context.Username
-        return User.get_user(username)
-
-    @Lazy
-    def _name(self):
-        # A certificate is fairly formal so try and use realname first
-        name = IFriendlyNamed(self.user).realname
-        if not name:
-            # Otherwise just fallback to whatever is our display name generator
-            name = component.getMultiAdapter((self.user, self.request),
-                                             IDisplayNameGenerator)()
-        return name
 
     @Lazy
     def _brand_name(self):
@@ -140,6 +123,85 @@ class CompletionCertificateView(AbstractAuthenticatedView,
     def _brand_asset(self, name):
         asset = getattr(self._brand_assets, name, None)
         return getattr(asset, 'source', None)
+
+    def add_image_utils_cleanup(self, img_utils):
+
+        def after_commit_or_abort(_success=False):
+            img_utils.cleanup()
+
+        transaction.get().addAfterAbortHook(after_commit_or_abort)
+        transaction.get().addAfterCommitHook(after_commit_or_abort)
+
+    @Lazy
+    def img_utils(self):
+        img_utils = ImageUtils()
+        self.add_image_utils_cleanup(img_utils)
+        return img_utils
+
+    def convert(self, input_file, width, height):
+        if input_file.endswith(".svg"):
+            return self.img_utils.convert(input_file, width, height)
+        return input_file
+
+    def constrain_size(self, input_file, max_width, max_height):
+        return self.img_utils.constrain_size(input_file, max_width, max_height)
+
+    def certificate_dict(self,
+                         student_name,
+                         provider_unique_id,
+                         course_title,
+                         completion_date_string,
+                         facilitators=None,
+                         credit=None):
+        return {
+            u'Brand': self._brand_name,
+            u'Name': student_name,
+            u'ProviderUniqueID': provider_unique_id,
+            u'Course': course_title,
+            u'Date': completion_date_string,
+            u'Facilitators': facilitators or {},
+            u'Credit': credit or (),
+            u'CertificateLabel': self._certificate_label,
+            u'CertificateSideBarImage':
+                self._brand_asset('certificate_sidebar_image'),
+            u'BrandLogo':
+                self._brand_asset('certificate_logo') or self._brand_asset('logo'),
+            u'BrandColor': self._cert_brand_color or self._brand_color,
+            u'Converter': self.convert,
+            u'ConstrainSize': self.constrain_size,
+        }
+
+
+@view_config(route_name='objects.generic.traversal',
+             renderer="templates/completion_certificate.rml",
+             request_method='GET',
+             context=ICourseInstanceEnrollment,
+             name=VIEW_CERTIFICATE,
+             permission=nauth.ACT_READ)
+class CompletionCertificateView(AbstractAuthenticatedView,
+                                CompletionViewMixin,
+                                EnrollmentProgressViewMixin):
+
+    @Lazy
+    def course(self):
+        # pylint: disable=no-member
+        return self.context.CourseInstance
+
+    @Lazy
+    def user(self):
+        # pylint: disable=no-member
+        username = self.context.Username
+        return User.get_user(username)
+
+    @Lazy
+    def _name(self):
+        # A certificate is fairly formal so try and use realname first
+        name = IFriendlyNamed(self.user).realname
+        if not name:
+            # Otherwise just fallback to whatever is our display name generator
+            name = component.getMultiAdapter((self.user, self.request),
+                                             IDisplayNameGenerator)()
+        return name
 
     @Lazy
     def _course_completable_item(self):
@@ -182,28 +244,6 @@ class CompletionCertificateView(AbstractAuthenticatedView,
             }
         return [_for_display(credit) for credit in transcript.iter_awarded_credits()]
 
-    def add_after_commit_cleanup(self, img_utils):
-
-        def after_commit_or_abort(_success=False):
-            img_utils.cleanup()
-
-        transaction.get().addAfterAbortHook(after_commit_or_abort)
-        transaction.get().addAfterCommitHook(after_commit_or_abort)
-
-    @Lazy
-    def img_utils(self):
-        img_utils = ImageUtils()
-        self.add_after_commit_cleanup(img_utils)
-        return img_utils
-
-    def convert(self, input_file, width, height):
-        if input_file.endswith(".svg"):
-            return self.img_utils.convert(input_file, width, height)
-        return input_file
-
-    def constrain_size(self, input_file, max_width, max_height):
-        return self.img_utils.constrain_size(input_file, max_width, max_height)
-
     def __call__(self):
         # pylint: disable=no-member
         if     self._course_completable_item is None \
@@ -221,20 +261,113 @@ class CompletionCertificateView(AbstractAuthenticatedView,
         transcript = component.queryMultiAdapter((self.user, self.course),
                                                  ICreditTranscript)
 
-        return {
-            u'Brand': self._brand_name,
-            u'Name': self._name,
-            u'ProviderUniqueID': entry.ProviderUniqueID,
-            u'Course': entry.title,
-            u'Date': self._completion_date_string,
-            u'Facilitators': self._facilitators(entry),
-            u'Credit': self._awarded_credit(transcript),
-            u'CertificateLabel': self._certificate_label,
-            u'CertificateSideBarImage':
-                self._brand_asset('certificate_sidebar_image'),
-            u'BrandLogo':
-                self._brand_asset('certificate_logo') or self._brand_asset('logo'),
-            u'BrandColor': self._cert_brand_color or self._brand_color,
-            u'Converter': self.convert,
-            u'ConstrainSize': self.constrain_size,
-        }
+        return self.certificate_dict(
+            student_name=self._name,
+            provider_unique_id=entry.ProviderUniqueID,
+            course_title=entry.title,
+            completion_date_string=self._completion_date_string,
+            facilitators=self._facilitators(entry),
+            credit=self._awarded_credit(transcript))
+
+
+@view_config(route_name='objects.generic.traversal',
+             renderer="templates/completion_certificate.rml",
+             request_method='PUT',
+             context=ISiteBrand,
+             name=VIEW_CERTIFICATE_PREVIEW,
+             permission=nauth.ACT_CONTENT_EDIT)
+class CompletionCertificatePreview(CompletionViewMixin, SiteBrandUpdateBase):
+    """
+    This is effectively mixing the SiteBrand update view with the
+    completion certificate view, so the user can see the effect of site
+    brand updates on the certificate prior to persisting them.
+    """
+    def __init__(self, request):
+        super(CompletionCertificatePreview, self).__init__(request)
+        self._temp_sources = {}
+
+    @property
+    def _completion_date_string(self):
+        completed = datetime.now()
+        tz_util = component.queryMultiAdapter((self.remoteUser, self.request),
+                                              IDisplayableTimeProvider)
+        completed = tz_util.adjust_date(completed)
+        return completed.strftime('%B %d, %Y')
+
+    def add_post_transaction_cleanup(self, folder):
+
+        def after_commit_or_abort(_success=False):
+            shutil.rmtree(folder, ignore_errors=True)
+
+        transaction.get().addAfterAbortHook(after_commit_or_abort)
+        transaction.get().addAfterCommitHook(after_commit_or_abort)
+
+    @Lazy
+    def temp_folder(self):
+        location_dir = tempfile.mkdtemp(prefix="completion_cert_preview")
+        self.add_post_transaction_cleanup(location_dir)
+        return location_dir
+
+    def update_assets(self):
+        """
+        Store our temporary assets
+        """
+        if self._asset_url_dict or self._source_dict:
+            # Ok, we have something
+            location_dir = self.temp_folder
+
+            # Handle external/url-based sources and removals
+            for attr_name, asset_url in self._asset_url_dict.items():
+                if not asset_url:
+                    # Nulling out
+                    self._temp_sources[attr_name] = None
+                else:
+                    self._temp_sources[attr_name] = asset_url
+
+            # Handle local sources
+            for attr_name, asset_file in self._source_dict.items():
+                if attr_name not in self.ASSET_MULTIPART_KEYS:
+                    continue
+
+                try:
+                    # Multipart upload
+                    original_filename = asset_file.name
+                except AttributeError:
+                    # Source path
+                    original_filename = os.path.split(asset_file)[-1]
+                ext = os.path.splitext(original_filename)[1]
+                filename = u'%s%s' % (attr_name, ext)
+                path = os.path.join(location_dir, filename)
+                self._copy_source_data(attr_name, asset_file, path, ext)
+                self._temp_sources[attr_name] = path
+
+    def _brand_asset(self, name):
+        # If key exists in temp sources, use it (could be nulled out)
+        if name in self._temp_sources:
+            return self._temp_sources[name]
+
+        return super(CompletionCertificatePreview, self)._brand_asset(name)
+
+    def __call__(self):
+        # Copy source attrs, import to do this before update
+        if self._source_site_brand is not None:
+            self._copy_source_brand_attrs(self._source_site_brand)
+        UGDPutView.__call__(self)
+
+        # Now update assets
+        self.update_assets()
+
+        # Essentially a preflight, so abandon changes
+        transaction.doom()
+
+        return self.certificate_dict(
+            student_name=u"Sample Student",
+            provider_unique_id=u"SMPL-1001",
+            course_title=u"Sample Course",
+            completion_date_string=self._completion_date_string,
+            facilitators=[CourseCatalogInstructorInfo(
+                Name=u"Sample Instructor",
+                JobTitle=u"Instructor",
+            )],
+            credit=None)
+
