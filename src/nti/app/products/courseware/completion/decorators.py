@@ -9,16 +9,23 @@ Decorators for providing access to the various course pieces.
 from zope import component
 from zope import interface
 
+from pyramid.interfaces import IRequest
+
 from zope.cachedescriptors.property import Lazy
 
 from nti.app.contenttypes.completion.views import progress_link
 from nti.app.contenttypes.completion.views import completed_items_link
 
 from nti.app.products.courseware import VIEW_CERTIFICATE
+from nti.app.products.courseware import VIEW_CERTIFICATE_PREVIEW
 
 from nti.app.products.courseware.interfaces import ICourseInstanceEnrollment
 
 from nti.app.renderers.decorators import AbstractAuthenticatedRequestAwareDecorator
+
+from nti.app.site.decorators import SiteBrandAuthDecorator
+
+from nti.appserver.brand.interfaces import ISiteBrand
 
 from nti.appserver.pyramid_authorization import has_permission
 
@@ -34,8 +41,7 @@ from nti.dataserver.authorization import ACT_READ
 
 from nti.externalization.interfaces import IExternalMappingDecorator
 from nti.externalization.interfaces import StandardExternalFields
-
-from nti.externalization.singleton import Singleton
+from nti.externalization.interfaces import IExternalObjectDecorator
 
 from nti.links.links import Link
 
@@ -139,3 +145,20 @@ class _CatalogCertificateDecorator(_CourseCompletionDecorator):
         if     'AwardsCertificate' not in result \
            and getattr(self.policy, 'offers_completion_certificate', False):
             result['AwardsCertificate'] = True
+
+
+@component.adapter(ISiteBrand, IRequest)
+@interface.implementer(IExternalObjectDecorator)
+class _SiteBrandEditDecorator(SiteBrandAuthDecorator):
+
+    def _do_decorate_external(self, unused_context, result_map):
+        edit_context = self._current_site_sitebrand()
+        links = result_map.setdefault("Links", [])
+        # Can only edit (and thus preview them in the completion
+        # certificate) with a fs location
+        if self._can_edit_sitebrand() is not None:
+            link = Link(edit_context,
+                        elements=("@@" + VIEW_CERTIFICATE_PREVIEW,),
+                        rel='preview',
+                        method='PUT')
+            links.append(link)

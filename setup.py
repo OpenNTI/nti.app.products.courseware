@@ -64,6 +64,7 @@ setup(
         'isodate',
         'nti.app.products.webinar',
         'nti.app.invitations',
+        'nti.app.site',
         'nti.base',
         'nti.contentlibrary',
         'nti.contenttypes.completion',
