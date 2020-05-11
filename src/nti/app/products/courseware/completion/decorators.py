@@ -159,6 +159,6 @@ class _SiteBrandEditDecorator(SiteBrandAuthDecorator):
         if self._can_edit_sitebrand() is not None:
             link = Link(edit_context,
                         elements=("@@" + VIEW_CERTIFICATE_PREVIEW,),
-                        rel='preview',
+                        rel='certificate_preview',
                         method='PUT')
             links.append(link)
