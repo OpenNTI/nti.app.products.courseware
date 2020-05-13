@@ -96,6 +96,13 @@
             layer="zope.interface.Interface" />
 
 	<z3c:macro
+            template="templates/certificate_macros.pt"
+            name="brand-logo"
+            for="zope.interface.Interface"
+            view="zope.interface.Interface"
+            layer="zope.interface.Interface" />
+
+	<z3c:macro
 			template="templates/certificate_macros.pt"
 			name="certificate"
 			for="zope.interface.Interface"

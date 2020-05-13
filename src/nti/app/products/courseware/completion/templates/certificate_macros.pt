@@ -11,8 +11,7 @@
 	  metal:define-macro="certificate"
               tal:define="branding_graphic python: options['CertificateSideBarImage'];
                           brand_color python: options['BrandColor'];
-                          brand_logo python: options['BrandLogo'];
-                          display_branding_graphic python: branding_graphic or not (brand_color and brand_logo)">
+                          brand_logo python: options['BrandLogo']">
 
 <image metal:define-macro="certificate-branding-graphic"
        file="[nti.app.products.courseware]/completion/templates/assets/sidebar-graphic.png"
@@ -22,6 +21,20 @@
 <!-- Hidden by default -->
 <image metal:define-macro="top-right-branding-graphic" file="[nti.app.products.courseware]/completion/templates/assets/sidebar-graphic.png" x="0" y="0" height="0" width="0"/>
 
+<blockTable metal:define-macro="brand-logo" rowHeights="612" colWidths="187" style="simple">
+  <tr>
+    <tal:block tal:condition="brand_logo">
+      <td tal:define="rasterized python: options['Converter'](brand_logo, width=187.0, height=612.0)">
+        <img src="" tal:attributes="src python: options['ConstrainSize'](rasterized, max_width=187, max_height=612)"/>
+      </td>
+    </tal:block>
+    <tal:block tal:condition="not:brand_logo">
+      <td>
+        <img src="[nti.app.products.courseware]/completion/templates/assets/nt-asterisk-white.png"/>
+      </td>
+    </tal:block>
+  </tr>
+</blockTable>
 
   <docinit>
     <registerTTFont faceName="OpenSans" fileName="[nti.app.products.courseware]/completion/templates/fonts/NotoSansNextThought-Regular.ttf" />
@@ -33,11 +46,11 @@
   <template pagesize="(792,612)" leftMargin="52" showBoundary="0">
     <pageTemplate id="landscape">
       <pageGraphics>
-          <tal:block tal:condition="not:display_branding_graphic">
-            <fill tal:attributes="color options/BrandColor"/>
+          <tal:block>
+            <fill tal:attributes="color python: brand_color or '#3fb34f'"/>
             <rect x="29" y="0" height="612" width="187" fill="yes" stroke="no"/>
           </tal:block>
-          <tal:block tal:condition="display_branding_graphic">
+          <tal:block tal:condition="branding_graphic">
             <image metal:use-macro="macro:certificate-branding-graphic" file="[nti.app.products.courseware]/completion/templates/assets/sidebar-graphic.png" x="29" y="0" height="612" width="187"/>
           </tal:block>
           <image metal:use-macro="macro:top-right-branding-graphic" file="[nti.app.products.courseware]/completion/templates/assets/sidebar-graphic.png" x="0" y="0" height="0" width="0"/>
@@ -67,14 +80,8 @@
     <paraStyle name="facilitator-title" fontName="OpenSans" fontSize="9" leftIndent="18" rightIndent="18" spaceBefore="7" leading="12" textColor="#757474" />
   </stylesheet>
   <story>
-    <keepInFrame frame="logo" onOverflow="shrink" tal:condition="not:display_branding_graphic">
-      <blockTable rowHeights="612" colWidths="187" style="simple">
-        <tr>
-          <td tal:define="rasterized python: options['Converter'](brand_logo, width=187.0, height=612.0)">
-            <img src="" tal:attributes="src python: options['ConstrainSize'](rasterized, max_width=187, max_height=612)"/>
-          </td>
-        </tr>
-      </blockTable>
+    <keepInFrame frame="logo" onOverflow="shrink">
+      <blockTable metal:use-macro="macro:brand-logo" rowHeights="612" colWidths="187" style="simple" />
     </keepInFrame>
 
     <keepInFrame frame="heading" onOverflow="shrink">
