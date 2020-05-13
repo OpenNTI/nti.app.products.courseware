@@ -15,6 +15,7 @@
 
 <image metal:define-macro="certificate-branding-graphic"
        file="[nti.app.products.courseware]/completion/templates/assets/sidebar-graphic.png"
+       tal:condition="branding_graphic"
        tal:attributes="file python: branding_graphic and options['Converter'](branding_graphic, width=187.0, height=612.0) or default"
        x="29" y="0" height="612" width="187"/>
 
@@ -46,13 +47,9 @@
   <template pagesize="(792,612)" leftMargin="52" showBoundary="0">
     <pageTemplate id="landscape">
       <pageGraphics>
-          <tal:block>
-            <fill tal:attributes="color python: brand_color or '#3fb34f'"/>
-            <rect x="29" y="0" height="612" width="187" fill="yes" stroke="no"/>
-          </tal:block>
-          <tal:block tal:condition="branding_graphic">
-            <image metal:use-macro="macro:certificate-branding-graphic" file="[nti.app.products.courseware]/completion/templates/assets/sidebar-graphic.png" x="29" y="0" height="612" width="187"/>
-          </tal:block>
+          <fill tal:attributes="color python: brand_color or '#3fb34f'"/>
+          <rect x="29" y="0" height="612" width="187" fill="yes" stroke="no"/>
+          <image metal:use-macro="macro:certificate-branding-graphic" file="[nti.app.products.courseware]/completion/templates/assets/sidebar-graphic.png" x="29" y="0" height="612" width="187"/>
           <image metal:use-macro="macro:top-right-branding-graphic" file="[nti.app.products.courseware]/completion/templates/assets/sidebar-graphic.png" x="0" y="0" height="0" width="0"/>
       </pageGraphics>
       <frame id="logo" x1="29" y1="0" width="187" height="612" />
