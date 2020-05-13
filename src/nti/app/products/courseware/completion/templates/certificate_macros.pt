@@ -21,7 +21,7 @@
 <!-- Hidden by default -->
 <image metal:define-macro="top-right-branding-graphic" file="[nti.app.products.courseware]/completion/templates/assets/sidebar-graphic.png" x="0" y="0" height="0" width="0"/>
 
-<blockTable metal:define-macro="brand-logo" rowHeights="612" colWidths="187" style="simple">
+<blockTable metal:define-macro="brand-logo" tal:condition="not:options/SuppressLogo" rowHeights="612" colWidths="187" style="simple">
   <tr>
     <tal:block tal:condition="brand_logo">
       <td tal:define="rasterized python: options['Converter'](brand_logo, width=187.0, height=612.0)">

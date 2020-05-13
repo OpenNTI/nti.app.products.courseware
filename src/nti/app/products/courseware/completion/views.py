@@ -120,6 +120,10 @@ class CompletionViewMixin(object):
     def _certificate_label(self):
         return getattr(self._brand, 'certificate_label', None)
 
+    @Lazy
+    def _suppress_logo(self):
+        return getattr(self._brand, 'suppress_certificate_logo', False)
+
     def _brand_asset(self, name):
         asset = getattr(self._brand_assets, name, None)
         return getattr(asset, 'source', None)
@@ -169,6 +173,7 @@ class CompletionViewMixin(object):
             u'BrandColor': self._cert_brand_color or self._brand_color,
             u'Converter': self.convert,
             u'ConstrainSize': self.constrain_size,
+            u'SuppressLogo': self._suppress_logo,
         }
 
 
