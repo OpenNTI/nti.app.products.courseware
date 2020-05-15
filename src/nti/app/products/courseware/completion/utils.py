@@ -87,11 +87,11 @@ class ImageUtils(object):
         if '_output_folder' in self.__dict__:
             shutil.rmtree(self._output_folder, ignore_errors=True)
 
-    def constrain_size(self, input_file, max_width, max_height):
+    def constrain_size(self, input_file, max_width, max_height, format=None):
         with Image.open(input_file) as image:
             image.thumbnail((max_width, max_height))
             outfile_name = self._output_filename(input_file)
-            image.save(outfile_name)
+            image.save(outfile_name, format=format)
 
         return outfile_name
 

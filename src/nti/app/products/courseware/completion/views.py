@@ -11,6 +11,9 @@ from __future__ import absolute_import
 import os
 import shutil
 import tempfile
+import urllib
+from mimetypes import guess_extension
+
 import transaction
 from datetime import datetime
 
@@ -148,7 +151,20 @@ class CompletionViewMixin(object):
         return input_file
 
     def constrain_size(self, input_file, max_width, max_height):
-        return self.img_utils.constrain_size(input_file, max_width, max_height)
+        if os.path.isfile(input_file):
+            return self.img_utils.constrain_size(input_file, max_width, max_height)
+
+        # To ensure we properly handle the conversion of any url-based
+        # images, we'll need to retrieve them
+        local_file, m = urllib.urlretrieve(input_file)
+        try:
+            ext = guess_extension(m.type)
+            return self.img_utils.constrain_size(local_file,
+                                                 max_width,
+                                                 max_height,
+                                                 format=ext[1:])
+        finally:
+            os.remove(local_file)
 
     def certificate_dict(self,
                          student_name,

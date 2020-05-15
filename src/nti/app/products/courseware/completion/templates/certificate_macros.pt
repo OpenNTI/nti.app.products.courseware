@@ -22,20 +22,25 @@
 <!-- Hidden by default -->
 <image metal:define-macro="top-right-branding-graphic" file="[nti.app.products.courseware]/completion/templates/assets/sidebar-graphic.png" x="0" y="0" height="0" width="0"/>
 
-<blockTable metal:define-macro="brand-logo" tal:condition="not:options/SuppressLogo" rowHeights="612" colWidths="187" style="simple">
-  <tr>
-    <tal:block tal:condition="brand_logo">
-      <td tal:define="rasterized python: options['Converter'](brand_logo, width=187.0, height=612.0)">
-        <img src="" tal:attributes="src python: options['ConstrainSize'](rasterized, max_width=187, max_height=612)"/>
-      </td>
-    </tal:block>
-    <tal:block tal:condition="not:brand_logo">
-      <td>
-        <img src="[nti.app.products.courseware]/completion/templates/assets/nt-asterisk-white.png"/>
-      </td>
-    </tal:block>
-  </tr>
-</blockTable>
+<!-- Prevent processing during template construction
+     using the outer tal:block below, since the inner
+     blockTable is only used for defining the macro -->
+<tal:block tal:condition="nothing">
+  <blockTable metal:define-macro="brand-logo" tal:condition="not:options/SuppressLogo" rowHeights="612" colWidths="187" style="simple">
+    <tr>
+      <tal:block tal:condition="brand_logo">
+        <td tal:define="rasterized python: options['Converter'](brand_logo, width=187.0, height=612.0)">
+          <img src="" tal:attributes="src python: options['ConstrainSize'](rasterized, max_width=187, max_height=612)"/>
+        </td>
+      </tal:block>
+      <tal:block tal:condition="not:brand_logo">
+        <td>
+          <img src="[nti.app.products.courseware]/completion/templates/assets/nt-asterisk-white.png"/>
+        </td>
+      </tal:block>
+    </tr>
+  </blockTable>
+</tal:block>
 
   <docinit>
     <registerTTFont faceName="OpenSans" fileName="[nti.app.products.courseware]/completion/templates/fonts/NotoSansNextThought-Regular.ttf" />
