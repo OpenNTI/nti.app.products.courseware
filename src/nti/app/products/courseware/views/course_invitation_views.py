@@ -168,6 +168,7 @@ class CourseInvitationsView(AbstractAuthenticatedView):
 class UserAcceptCourseInvitationView(AcceptInvitationByCodeView):
 
     def handle_possible_validation_error(self, request, e):
+        logger.info("Error accepting course invitation (%s)", e)
         if isinstance(e, AlreadyEnrolledException):
             raise_json_error(
                 self.request,
