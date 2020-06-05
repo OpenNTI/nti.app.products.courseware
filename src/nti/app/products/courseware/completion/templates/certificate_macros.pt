@@ -40,6 +40,10 @@
       </tal:block>
     </tr>
   </blockTable>
+  <tal:block metal:define-macro="sidebar-fill">
+    <fill tal:attributes="color python: brand_color or '#3fb34f'"/>
+    <rect x="29" y="0" height="612" width="187" fill="yes" stroke="no"/>
+  </tal:block>
 </tal:block>
 
   <docinit>
@@ -52,8 +56,7 @@
   <template pagesize="(792,612)" leftMargin="52" showBoundary="0">
     <pageTemplate id="landscape">
       <pageGraphics>
-          <fill tal:attributes="color python: brand_color or '#3fb34f'"/>
-          <rect x="29" y="0" height="612" width="187" fill="yes" stroke="no"/>
+          <tal:block metal:use-macro="macro:sidebar-fill" />
           <image metal:use-macro="macro:certificate-branding-graphic" file="[nti.app.products.courseware]/completion/templates/assets/sidebar-graphic.png" x="29" y="0" height="612" width="187"/>
           <image metal:use-macro="macro:top-right-branding-graphic" file="[nti.app.products.courseware]/completion/templates/assets/sidebar-graphic.png" x="0" y="0" height="0" width="0"/>
       </pageGraphics>
