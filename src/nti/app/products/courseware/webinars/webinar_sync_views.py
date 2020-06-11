@@ -10,6 +10,8 @@ from __future__ import absolute_import
 
 import time
 
+from pyramid import httpexceptions as hexc
+
 from pyramid.view import view_config
 
 import six
@@ -179,8 +181,8 @@ class AllWebinarUpdateView(AbstractAuthenticatedView):
         result = False
         client = IWebinarClient(webinar, None)
         if client is None:
-            logger.info("Cannot update webinar (%s) since we cannot obtain a client (unauthorized)",
-                        webinar)
+            logger.info("[%s] Cannot update webinar (%s) since we cannot obtain a client (unauthorized)",
+                        getSite().__name__, webinar)
             return result
 
         try:
@@ -189,9 +191,10 @@ class AllWebinarUpdateView(AbstractAuthenticatedView):
             # pylint: disable=too-many-function-args
             try:
                 upcoming_webinars = client.get_upcoming_webinars(raw=True)
-            except WebinarClientError as e:
-                logger.info("Error updating webinars (%s) (%s)",
-                            webinar, e)
+            except (hexc.HTTPClientError, WebinarClientError) as e:
+                # Http error during token auth
+                logger.info("[%s] Error updating webinars (%s) (%s)",
+                            getSite().__name__, webinar, e)
                 upcoming_webinars = None
             if upcoming_webinars:
                 key_to_webinar_dict = {
@@ -209,7 +212,8 @@ class AllWebinarUpdateView(AbstractAuthenticatedView):
             result = True
         else:
             # This is probably a webinar that has already past
-            logger.debug('Webinar not found while updating (%s)', webinar)
+            logger.debug('[%s] Webinar not found while updating (%s)',
+                         getSite().__name__, webinar)
         return result
 
     def process_course(self, course, webinar_ext_cache):
