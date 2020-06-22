@@ -81,6 +81,7 @@ from nti.common.string import is_true
 
 from nti.contenttypes.courses.administered import get_course_admin_role
 
+from nti.contenttypes.courses.interfaces import IDeletedCourse
 from nti.contenttypes.courses.interfaces import ICourseOutline
 from nti.contenttypes.courses.interfaces import ICourseInstance
 from nti.contenttypes.courses.interfaces import ICourseEnrollments
@@ -805,7 +806,7 @@ class CourseEnrollmentOptionsGetView(AbstractAuthenticatedView):
                name=VIEW_USER_COURSE_ACCESS,
                request_method='GET',
                permission=nauth.ACT_READ)
-class UserCourseAccessView(AbstractAuthenticatedView):
+class UserCoursePreferredAccessView(AbstractAuthenticatedView):
     """
     A view that returns the preferred user access to the course context. This
     may be an administrative role or an enrollment record. We should mimic what
@@ -833,7 +834,7 @@ class UserCourseAccessView(AbstractAuthenticatedView):
                 logger.warning('User enrolled but no enrollment record (%s) (%s)',
                                self.remoteUser,
                                ICourseCatalogEntry(self._course).ntiid)
-        if result is None:
+        if result is None or IDeletedCourse.providedBy(result):
             msg = _('User does not have access to this course.')
             raise hexc.HTTPForbidden(msg)
         return result

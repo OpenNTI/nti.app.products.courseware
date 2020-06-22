@@ -52,6 +52,7 @@ from nti.contenttypes.courses.interfaces import ES_CREDIT_DEGREE
 from nti.contenttypes.courses.interfaces import ES_CREDIT_NONDEGREE
 
 from nti.contenttypes.courses.interfaces import ICourseCatalog
+from nti.contenttypes.courses.interfaces import IDeletedCourse
 from nti.contenttypes.courses.interfaces import ICourseInstance
 from nti.contenttypes.courses.interfaces import ICourseEnrollments
 from nti.contenttypes.courses.interfaces import ICourseCatalogEntry
@@ -285,6 +286,9 @@ class _AbstractQueryBasedCoursesCollection(Contained):
                         getattr(queried, 'lastModified', container.lastModified))
             for obj in queried:
                 enrollment = self.contained_interface(obj)
+                course = ICourseInstance(enrollment)
+                if IDeletedCourse.providedBy(course):
+                    continue
                 container.append(enrollment)
                 enrollment.__parent__ = self
                 # The adapter (contained_interface) rarely sets these
