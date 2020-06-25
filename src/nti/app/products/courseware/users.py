@@ -16,6 +16,8 @@ from nti.app.products.courseware.interfaces import ISuggestedContactsProvider
 
 from nti.app.products.courseware.utils import ZERO_DATETIME
 
+from nti.app.site.interfaces import ISiteAdminSeatUserProvider
+
 from nti.contenttypes.courses.interfaces import ES_CREDIT
 from nti.contenttypes.courses.interfaces import ES_PUBLIC
 from nti.contenttypes.courses.interfaces import ES_PURCHASED
@@ -29,6 +31,7 @@ from nti.contenttypes.courses.interfaces import ICourseCatalogEntry
 
 from nti.contenttypes.courses.utils import get_enrollments
 from nti.contenttypes.courses.utils import get_enrollment_record
+from nti.contenttypes.courses.utils import get_instructors_and_editors
 
 from nti.dataserver.interfaces import IUser
 
@@ -149,3 +152,13 @@ class ClassmatesSuggestedContactsProvider(SuggestedContactsProvider):
             result.extend(suggestions)
         result = self.ranking.sort(result)
         return result
+
+
+@interface.implementer(ISiteAdminSeatUserProvider)
+class _CourseAdminSeatUserProvider(object):
+    """
+    Return a unique set of course instructors and editors.
+    """
+
+    def iter_users(self):
+        return get_instructors_and_editors()
