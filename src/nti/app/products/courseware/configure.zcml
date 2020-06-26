@@ -677,6 +677,10 @@
 	<utility factory=".users.ClassmatesSuggestedContactsProvider"
 			 provides=".interfaces.IClassmatesSuggestedContactsProvider" />
 
+    <!-- Site admin limits -->
+    <utility factory=".users._CourseAdminSeatUserProvider"
+             name="course_admins" />
+
 	<!-- Filters -->
 	<subscriber	factory=".filters._CoursesContentObjectFilter"
 				provides="nti.dataserver.interfaces.ICreatableObjectFilter"
