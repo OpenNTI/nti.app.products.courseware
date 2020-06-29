@@ -10,6 +10,8 @@ from __future__ import absolute_import
 
 from zope import interface
 
+from zope.component.hooks import getSite
+
 from zope.security.interfaces import IPrincipal
 
 from nti.app.products.courseware.interfaces import ISuggestedContactsProvider
@@ -161,4 +163,4 @@ class _CourseAdminSeatUserProvider(object):
     """
 
     def iter_users(self):
-        return get_instructors_and_editors()
+        return get_instructors_and_editors(getSite())
