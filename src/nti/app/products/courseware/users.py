@@ -20,6 +20,8 @@ from nti.app.products.courseware.utils import ZERO_DATETIME
 
 from nti.app.site.interfaces import ISiteAdminSeatUserProvider
 
+from nti.app.users.utils import get_user_creation_site
+
 from nti.contenttypes.courses.interfaces import ES_CREDIT
 from nti.contenttypes.courses.interfaces import ES_PUBLIC
 from nti.contenttypes.courses.interfaces import ES_PURCHASED
@@ -159,8 +161,13 @@ class ClassmatesSuggestedContactsProvider(SuggestedContactsProvider):
 @interface.implementer(ISiteAdminSeatUserProvider)
 class _CourseAdminSeatUserProvider(object):
     """
-    Return a unique set of course instructors and editors.
+    Return a unique set of course instructors and editors,
+    limited to courses and users in the current site.
     """
 
     def iter_users(self):
-        return get_instructors_and_editors(getSite())
+        site = getSite()
+        course_admins = get_instructors_and_editors(getSite())
+        for course_admin in course_admins:
+            if site == get_user_creation_site(course_admin):
+                yield course_admin
