@@ -1048,6 +1048,29 @@ class _SharedScopesForumDecorator(AbstractAuthenticatedRequestAwareDecorator):
                 result['DefaultSharedToNTIIDs'] = [scope.NTIID]
 
 
+@interface.implementer(IExternalObjectDecorator)
+@component.adapter(ITopic, interface.Interface)
+class _SharedScopesTopicDecorator(AbstractAuthenticatedRequestAwareDecorator):
+    """
+    Puts the type of forum into the discussion.
+    """
+
+    def _do_decorate_external(self, context, result):
+        forum = context.__parent__
+        if ICourseInstanceScopedForum.providedBy(forum):
+            scope_name = getattr(context, 'SharingScopeName', None)
+            if not scope_name:
+                # Ok, is it on the tagged value?
+                provided_by = interface.providedBy(forum)
+                scope_name = provided_by.get('SharingScopeName').queryTaggedValue('value')
+            if not scope_name:
+                return
+            course = find_interface(context, ICourseInstance, strict=False)
+            scope = course.SharingScopes.get(scope_name)
+            if scope is not None:
+                result['ContainerDefaultSharedToNTIIDs'] = [scope.NTIID]
+
+
 @component.adapter(ICourseInstance)
 @interface.implementer(IExternalObjectDecorator)
 class _CourseInstancePreviewExcludingDecorator(PreviewCourseAccessPredicateDecorator):

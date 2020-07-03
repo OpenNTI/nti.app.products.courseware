@@ -432,6 +432,9 @@
 	<subscriber factory=".decorators._SharedScopesForumDecorator"
 				provides="nti.externalization.interfaces.IExternalObjectDecorator" />
 
+    <subscriber factory=".decorators._SharedScopesTopicDecorator"
+                provides="nti.externalization.interfaces.IExternalObjectDecorator" />
+
 	<subscriber factory=".decorators._CourseInstanceLinkDecorator"
 				provides="nti.externalization.interfaces.IExternalMappingDecorator" />
 
