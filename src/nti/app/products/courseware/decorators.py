@@ -1043,9 +1043,10 @@ class _SharedScopesForumDecorator(AbstractAuthenticatedRequestAwareDecorator):
                 'SharingScopeName=' + scope_name)
             result['SharingScopeName'] = scope_name
             course = find_interface(context, ICourseInstance, strict=False)
-            scope = course.SharingScopes.get(scope_name)
-            if scope is not None:
-                result['DefaultSharedToNTIIDs'] = [scope.NTIID]
+            if course is not None:
+                scope = course.SharingScopes.get(scope_name)
+                if scope is not None:
+                    result['DefaultSharedToNTIIDs'] = [scope.NTIID]
 
 
 @interface.implementer(IExternalObjectDecorator)
