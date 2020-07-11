@@ -343,11 +343,6 @@ class CourseEnrollmentRosterPathAdapter(Contained):
         raise KeyError(username)
 
 
-ENROLLMENT_STATUS_FILTER_MAP = {
-    'LegacyEnrollmentStatusForCredit' : 'ForCredit',
-    'LegacyEnrollmentStatusOpen': 'Open'
-}
-
 @view_config(route_name='objects.generic.traversal',
              renderer='rest',
              request_method='GET',
@@ -456,19 +451,15 @@ class CourseEnrollmentRosterGetView(AbstractAuthenticatedView,
     def _build_scope_filter(self, filter_name):
         filter_status = None
         if filter_name:
-            try:
-                filter_status = ENROLLMENT_STATUS_FILTER_MAP[filter_name]
-            except KeyError:
-                if filter_name in ENROLLMENT_SCOPE_MAP:
-                    filter_status = filter_name
-                else:
-                    raise hexc.HTTPBadRequest("Unsupported filteroption")
+            if filter_name in ENROLLMENT_SCOPE_MAP:
+                filter_status = filter_name
+            else:
+                raise hexc.HTTPBadRequest("Unsupported filteroption")
 
         if filter_status:
             def _filter(x):
                 x = ICourseInstanceEnrollment(x)
-                return x.LegacyEnrollmentStatus == filter_status \
-                    or x.RealEnrollmentStatus == filter_status
+                return x.RealEnrollmentStatus == filter_status
             return _filter
         return lambda x: x
 

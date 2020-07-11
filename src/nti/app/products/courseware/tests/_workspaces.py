@@ -221,11 +221,9 @@ class AbstractEnrollingBase(object):
 
         # Filter
         res = self.testapp.get(roster_link,
-                               {'filter': 'LegacyEnrollmentStatusForCredit'},
+                               {'filter': 'Open'},
+                               status=400,
                                extra_environ=instructor_env)
-        assert_that(res.json_body, has_entry('TotalItemCount', 2))
-        assert_that(res.json_body, has_entry('FilteredTotalItemCount', 0))
-        assert_that(res.json_body, has_entry('Items', has_length(0)))
 
         res = self.testapp.get(roster_link,
                                {'filter': 'ForCredit'},
@@ -233,13 +231,6 @@ class AbstractEnrollingBase(object):
         assert_that(res.json_body, has_entry('TotalItemCount', 2))
         assert_that(res.json_body, has_entry('FilteredTotalItemCount', 0))
         assert_that(res.json_body, has_entry('Items', has_length(0)))
-
-        res = self.testapp.get(roster_link,
-                               {'filter': 'LegacyEnrollmentStatusOpen'},
-                               extra_environ=instructor_env)
-        assert_that(res.json_body, has_entry('TotalItemCount', 2))
-        assert_that(res.json_body, has_entry('FilteredTotalItemCount', 2))
-        assert_that(res.json_body, has_entry('Items', has_length(2)))
 
         res = self.testapp.get(roster_link,
                                {'filter': 'Public'},
