@@ -51,7 +51,10 @@ from nti.app.testing.decorators import WithSharedApplicationMockDS
 from nti.appserver.workspaces import VIEW_CATALOG_POPULAR
 from nti.appserver.workspaces import VIEW_CATALOG_FEATURED
 
+from nti.contenttypes.courses.index import get_courses_catalog
+
 from nti.contenttypes.courses.interfaces import ICourseCatalog
+from nti.contenttypes.courses.interfaces import ICourseInstance
 from nti.contenttypes.courses.interfaces import ICourseEnrollmentManager
 
 from nti.dataserver.authorization import ROLE_CONTENT_ADMIN
@@ -61,6 +64,8 @@ from nti.dataserver.tests import mock_dataserver
 from nti.dataserver.users.users import User
 
 from nti.externalization.interfaces import StandardExternalFields
+
+from nti.ntiids.ntiids import find_object_with_ntiid
 
 ITEMS = StandardExternalFields.ITEMS
 TOTAL = StandardExternalFields.TOTAL
@@ -283,7 +288,6 @@ class TestPersistentWorkspaces(AbstractEnrollingBase, ApplicationLayerTest):
 
         course = res['Items'][0]
         assert_that(course, has_entry('CourseInstance', is_not(None)))
-
 
 
     @WithSharedApplicationMockDS(users=('content_admin',), testapp=True)
@@ -590,6 +594,20 @@ class TestPersistentWorkspaces(AbstractEnrollingBase, ApplicationLayerTest):
         by_tag_res = by_tag_res.json_body
         assert_that(by_tag_res[ITEMS], has_length(1))
         assert_that(by_tag_res['Name'], is_('.nti_other'))
+
+        # Removing a tag ensures it does not come back
+        with mock_dataserver.mock_db_trans(site_name='platform.ou.edu'):
+            # Make sure we index the course to validate a bug fix
+            entry = find_object_with_ntiid(child2_ntiid)
+            course = ICourseInstance(entry)
+            catalog = get_courses_catalog()
+            catalog.index_doc(course._ds_intid, course)
+
+        entry = self.testapp.put_json(child_entry_href, {"tags": ()})
+        href = '%s/%s' % (by_tag_href, 'some%2Fheirachry')
+        by_tag_res = self.testapp.get(href, extra_environ={'RAW_URI': str(href)})
+        by_tag_res = by_tag_res.json_body
+        assert_that(by_tag_res[ITEMS], has_length(0))
 
     @WithSharedApplicationMockDS(users=True, testapp=True)
     @fudge.patch('nti.app.products.courseware.views.catalog_views.PopularCoursesView._include_filter')
