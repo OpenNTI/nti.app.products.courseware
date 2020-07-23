@@ -21,6 +21,7 @@ from nti.appserver.workspaces.interfaces import IFeaturedCatalogCollectionProvid
 from nti.appserver.workspaces.interfaces import IPurchasedCatalogCollectionProvider
 
 from nti.contenttypes.courses.interfaces import ICourseCatalog
+from nti.contenttypes.courses.interfaces import IDeletedCourse
 from nti.contenttypes.courses.interfaces import ICourseInstance
 from nti.contenttypes.courses.interfaces import ICourseSubInstance
 from nti.contenttypes.courses.interfaces import ICourseCatalogEntry
@@ -78,6 +79,10 @@ class AvailableCoursesProvider(object):
             if x.ntiid in enrolled_entry_ntiid_to_course:
                 result.append(x)
             elif ICourseInstance(x, None) in courses_to_remove:
+                pass
+            elif IDeletedCourse.providedBy(ICourseInstance(x, None)):
+                # XXX: Make this an ACL toggle also? Would have to affect
+                # zope security too.
                 pass
             elif has_permission(ACT_READ, x, self.user):
                 result.append(x)
