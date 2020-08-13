@@ -1237,6 +1237,8 @@ class _UserEnrollmentsDecorator(AbstractAuthenticatedRequestAwareDecorator):
     def _check_access(self, context):
         # 403 if not admin or site admin or self or have enrollment records
         # (instructor access)
+        # The can_admin only applies to site_admins; it defaults to True
+        # otherwise.
         return  (   self._is_admin \
                  or self._is_site_admin \
                  or self.remoteUser == context \

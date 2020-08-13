@@ -7,7 +7,6 @@
 from __future__ import division
 from __future__ import print_function
 from __future__ import absolute_import
-__docformat__ = "restructuredtext en"
 
 from zope import component
 
@@ -55,7 +54,7 @@ from nti.contenttypes.courses.interfaces import ICourseInstance
 from nti.contenttypes.courses.interfaces import ICourseCatalogEntry
 
 from nti.contenttypes.courses.utils import get_enrollment_record
-from nti.contenttypes.courses.utils import get_instructed_courses
+from nti.contenttypes.courses.utils import has_instructed_courses
 from nti.contenttypes.courses.utils import drop_any_other_enrollments
 from nti.contenttypes.courses.utils import is_instructor_in_hierarchy
 from nti.contenttypes.courses.utils import get_context_enrollment_records
@@ -178,7 +177,7 @@ class UserEnrollmentsView(AbstractAuthenticatedView,
         # 403 if not admin or instructor or self
         return (   self._is_admin \
                 or self.remoteUser == self.context \
-                or get_instructed_courses(self.remoteUser)) \
+                or has_instructed_courses(self.remoteUser)) \
             and self._can_admin_user()
 
     def __call__(self):
