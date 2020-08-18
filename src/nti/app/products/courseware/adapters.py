@@ -55,6 +55,7 @@ from nti.appserver.interfaces import ITopLevelContainerContextProvider
 from nti.appserver.interfaces import ITrustedTopLevelContainerContextProvider
 
 from nti.appserver.pyramid_authorization import is_readable
+from nti.appserver.pyramid_authorization import has_permission
 
 from nti.assessment.interfaces import IQEvaluation
 
@@ -107,8 +108,6 @@ from nti.coremetadata.interfaces import IContainerContext
 from nti.coremetadata.interfaces import IContextLastSeenContainer
 
 from nti.dataserver.authorization import ACT_CONTENT_EDIT
-
-from nti.dataserver.authorization_acl import has_permission
 
 from nti.dataserver.contenttypes.forums.interfaces import IPost
 from nti.dataserver.contenttypes.forums.interfaces import ITopic
@@ -383,7 +382,7 @@ def _get_valid_course_context(course_contexts):
             if _is_catalog_entry_visible(course_context):
                 catalog_entries.append(course_context)
         elif    not _is_user_enrolled(user, course_context) \
-            and not has_permission(ACT_CONTENT_EDIT, course_context, user):
+            and not has_permission(ACT_CONTENT_EDIT, course_context):
             # Not enrolled and not an editor, get catalog entry.
             catalog_entry = ICourseCatalogEntry(course_context, None)
             # We only want to add publicly available entries.
@@ -400,7 +399,8 @@ def _get_valid_course_context(course_contexts):
             if ICourseSubInstance.providedBy(course):
                 continue
             for subinstance in get_course_subinstances(course):
-                if _is_user_enrolled(user, subinstance) or has_permission(ACT_CONTENT_EDIT, subinstance, user):
+                if     _is_user_enrolled(user, subinstance) \
+                    or has_permission(ACT_CONTENT_EDIT, subinstance):
                     # Find the first enrolled course.
                     courses.append(subinstance)
                     break
