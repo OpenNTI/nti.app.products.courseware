@@ -1067,6 +1067,9 @@ class _SharedScopesTopicDecorator(AbstractAuthenticatedRequestAwareDecorator):
             if not scope_name:
                 return
             course = find_interface(context, ICourseInstance, strict=False)
+            if course is None:
+                # This may be a community in the old legacy case; skip those.
+                return
             scope = course.SharingScopes.get(scope_name)
             if scope is not None:
                 result['ContainerDefaultSharedToNTIIDs'] = [scope.NTIID]

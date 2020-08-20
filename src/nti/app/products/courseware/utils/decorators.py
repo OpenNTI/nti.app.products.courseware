@@ -10,14 +10,14 @@ from __future__ import absolute_import
 
 from nti.app.renderers.decorators import AbstractAuthenticatedRequestAwareDecorator
 
+from nti.appserver.pyramid_authorization import has_permission
+
 from nti.contenttypes.courses.interfaces import ICourseInstance
 from nti.contenttypes.courses.interfaces import ICourseCatalogEntry
 
 from nti.contenttypes.courses.utils import is_course_instructor_or_editor
 
 from nti.dataserver.authorization import ACT_CONTENT_EDIT
-
-from nti.dataserver.authorization_acl import has_permission
 
 from nti.traversal.traversal import find_interface
 
@@ -50,7 +50,7 @@ class PreviewCourseAccessPredicateDecorator(AbstractAuthenticatedRequestAwareDec
     @property
     def instructor_or_editor(self):
         result = is_course_instructor_or_editor(self.course, self.remoteUser) \
-              or has_permission(ACT_CONTENT_EDIT, self.course, self.remoteUser)
+              or has_permission(ACT_CONTENT_EDIT, self.course)
         return result
 
     def _predicate(self, unused_context, unused_result):
