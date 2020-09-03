@@ -276,11 +276,11 @@
 	</class>
 
 	<!-- Enrollment -->
-    <adapter factory=".adapters._CourseAccessProvider"
+    <adapter factory=".adapters._course_access_factory"
              for="nti.contenttypes.courses.interfaces.ICourseInstance"
              provides="nti.dataserver.interfaces.IAccessProvider" />
 
-    <adapter factory=".adapters._CourseAccessProvider"
+    <adapter factory=".adapters._course_access_factory"
              for="nti.contenttypes.courses.interfaces.ICourseCatalogEntry"
              provides="nti.dataserver.interfaces.IAccessProvider" />
 

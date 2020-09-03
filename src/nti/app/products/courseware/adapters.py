@@ -72,7 +72,9 @@ from nti.contenttypes.courses.index import IX_USERNAME
 from nti.contenttypes.courses.interfaces import ES_PUBLIC
 from nti.contenttypes.courses.interfaces import ENROLLMENT_SCOPE_NAMES
 
+from nti.contenttypes.courses.interfaces import IDeletedCourse
 from nti.contenttypes.courses.interfaces import ICourseInstance
+from nti.contenttypes.courses.interfaces import ICourseEnrollments
 from nti.contenttypes.courses.interfaces import ICourseOutlineNode
 from nti.contenttypes.courses.interfaces import ICourseSubInstance
 from nti.contenttypes.courses.interfaces import ICourseCatalogEntry
@@ -80,7 +82,6 @@ from nti.contenttypes.courses.interfaces import ICourseOutlineNodes
 from nti.contenttypes.courses.interfaces import IContentCourseInstance
 from nti.contenttypes.courses.interfaces import INonPublicCourseInstance
 from nti.contenttypes.courses.interfaces import ICourseEnrollmentManager
-from nti.contenttypes.courses.interfaces import ICourseEnrollments
 from nti.contenttypes.courses.interfaces import ICourseInstanceEnrollmentRecord
 
 from nti.contenttypes.courses.utils import is_enrolled
@@ -798,6 +799,16 @@ class _CourseAccessProvider(object):
         logger.info("User dropped course (%s) (%s)",
                     entity.username, self.entry_ntiid)
         return result
+
+
+@component.adapter(ICourseInstance)
+@component.adapter(ICourseCatalogEntry)
+@interface.implementer(IAccessProvider)
+def _course_access_factory(course_or_entry):
+    course = ICourseInstance(course_or_entry, None)
+    if      course is not None \
+        and not IDeletedCourse.providedBy(course):
+        return _CourseAccessProvider(course)
 
 
 @component.adapter(ICourseInstance)

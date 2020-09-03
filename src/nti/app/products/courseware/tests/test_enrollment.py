@@ -29,6 +29,7 @@ from nti.testing.matchers import verifiably_provides
 from nti.testing.time import time_monotonically_increases
 
 from zope import component
+from zope import interface
 
 from nti.app.products.courseware import VIEW_ENROLLMENT_OPTIONS
 
@@ -40,6 +41,7 @@ from nti.contenttypes.courses.interfaces import ES_CREDIT
 from nti.contenttypes.courses.interfaces import ES_PUBLIC
 from nti.contenttypes.courses.interfaces import ES_PURCHASED
 
+from nti.contenttypes.courses.interfaces import IDeletedCourse
 from nti.contenttypes.courses.interfaces import ICourseCatalog
 from nti.contenttypes.courses.interfaces import ICourseInstance
 from nti.contenttypes.courses.interfaces import ICourseEnrollments
@@ -281,6 +283,18 @@ class TestEnrollment(ApplicationLayerTest):
                 access_provider.grant_access(entity)
             assert_that(exc.exception,
                         verifiably_provides(IGrantAccessException))
+
+        with mock_dataserver.mock_db_trans(self.ds, site_name='platform.ou.edu'):
+            # Cannot enroll in deletd courses
+            entity = User.get_user(u'harp4162')
+            entry = find_object_with_ntiid(self.course_ntiid)
+            course = ICourseInstance(entry)
+            interface.alsoProvides(course, IDeletedCourse)
+            try:
+                access_provider = IAccessProvider(course, None)
+                assert_that(access_provider, none())
+            finally:
+                interface.noLongerProvides(course, IDeletedCourse)
 
 
     @WithSharedApplicationMockDS(testapp=True, users=True)
