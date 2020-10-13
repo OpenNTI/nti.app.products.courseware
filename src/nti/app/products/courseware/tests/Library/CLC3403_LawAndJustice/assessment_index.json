@@ -311,6 +311,7 @@
 									"Class": "Survey",
 									"MimeType": "application/vnd.nextthought.nasurvey",
 									"NTIID": "tag:nextthought.com,2011-10:OU-NAQ-CLC3403_LawAndJustice.naq.set.survey:KNOWING_aristotle",
+									"title": "Untitled Survey",
 									"questions": [
 										{
 											"Class": "Poll",
