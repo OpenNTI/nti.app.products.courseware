@@ -18,6 +18,9 @@ from nti.app.contenttypes.completion.views import completed_items_link
 
 from nti.app.products.courseware import VIEW_CERTIFICATE
 from nti.app.products.courseware import VIEW_CERTIFICATE_PREVIEW
+from nti.app.products.courseware import VIEW_ACKNOWLEDGE_COMPLETION
+
+from nti.app.products.courseware.completion.interfaces import ICourseCompletedNotification
 
 from nti.app.products.courseware.interfaces import ICourseInstanceEnrollment
 
@@ -81,6 +84,10 @@ class _CourseCompletionDecorator(AbstractAuthenticatedRequestAwareDecorator):
         return component.queryMultiAdapter((self.user, self.course),
                                            IProgress)
 
+    def has_acknowledged_completion(self):
+        completion_notification = ICourseCompletedNotification(self.context, None)
+        return completion_notification is not None and completion_notification.IsAcknowledged
+
     def _do_decorate_external(self, context, result):
         _links = result.setdefault(LINKS, [])
         # Provide a link to the user's completed items
@@ -94,11 +101,19 @@ class _CourseCompletionDecorator(AbstractAuthenticatedRequestAwareDecorator):
             completed_item = self.policy.is_complete(self.progress)
             # pylint: disable=no-member
             if      completed_item is not None \
-                and completed_item.Success \
-                and self.policy.offers_completion_certificate:
-                _links.append(Link(context,
-                                   rel=VIEW_CERTIFICATE,
-                                   elements=("@@" + VIEW_CERTIFICATE,)))
+                and completed_item.Success:
+
+                if not self.has_acknowledged_completion():
+                    # Link for acknowledging completion
+                    _links.append(Link(context,
+                                       method='POST',
+                                       rel=VIEW_ACKNOWLEDGE_COMPLETION,
+                                       elements=("@@" + VIEW_ACKNOWLEDGE_COMPLETION,)))
+
+                if self.policy.offers_completion_certificate:
+                    _links.append(Link(context,
+                                       rel=VIEW_CERTIFICATE,
+                                       elements=("@@" + VIEW_CERTIFICATE,)))
 
 
 @component.adapter(IUser)

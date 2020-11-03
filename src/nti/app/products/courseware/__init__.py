@@ -52,6 +52,8 @@ VIEW_RECURSIVE_TX_HISTORY = 'RecursiveTransactionHistory'
 VIEW_COURSE_RECURSIVE_BUCKET = 'CourseRecursiveStreamByBucket'
 VIEW_CERTIFICATE = 'Certificate'
 VIEW_CERTIFICATE_PREVIEW = 'CertificatePreview'
+VIEW_ACKNOWLEDGE_COMPLETION = 'AcknowledgeCompletion'
+VIEW_RESET_COMPLETION_ACK = 'ResetCompletionAcknowledgement'
 
 VIEW_UPDATE_WEBINARS = 'UpdateWebinars'
 VIEW_ALL_SITE_UPDATE_WEBINARS = 'UpdateAllSiteWebinars'

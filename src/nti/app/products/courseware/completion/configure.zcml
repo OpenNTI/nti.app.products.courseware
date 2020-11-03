@@ -35,6 +35,10 @@
 			 provides="nti.app.contenttypes.completion.interfaces.ICompletionContextCohort"
 			 for="nti.contenttypes.courses.interfaces.ICourseInstance" />
 
+	<adapter factory=".adapters._course_completion_notification"
+			 provides="nti.app.products.courseware.completion.interfaces.ICourseCompletedNotification"
+			 for="nti.app.products.courseware.interfaces.ICourseInstanceEnrollment" />
+
 	<!-- Decorate course progress on enrollment record -->
 	<subscriber factory=".decorators._CourseCompletionDecorator"
 				provides="nti.externalization.interfaces.IExternalMappingDecorator"

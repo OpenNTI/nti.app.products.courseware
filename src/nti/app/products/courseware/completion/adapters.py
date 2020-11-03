@@ -8,10 +8,16 @@ from __future__ import division
 from __future__ import print_function
 from __future__ import absolute_import
 
+from datetime import datetime
+
 from pyramid.threadlocal import get_current_request
+
+import time
 
 from zope import component
 from zope import interface
+
+from zope.annotation import IAnnotations
 
 from zope.cachedescriptors.property import Lazy
 
@@ -22,8 +28,16 @@ from nti.app.authentication import get_remote_user
 from nti.app.contenttypes.completion.interfaces import ICompletionContextCohort
 from nti.app.contenttypes.completion.interfaces import ICompletionContextACLProvider
 
+from nti.app.products.courseware.completion import COMPLETION_ACKNOWLEDGED_TIME_KEY
+
+from nti.app.products.courseware.completion.interfaces import ICourseCompletedNotification
+
+from nti.app.products.courseware.interfaces import ICourseInstanceEnrollment
+
 from nti.contenttypes.completion.authorization import ACT_VIEW_PROGRESS
 from nti.contenttypes.completion.authorization import ACT_LIST_PROGRESS
+
+from nti.contenttypes.completion.interfaces import IProgress
 
 from nti.contenttypes.courses.interfaces import ES_PUBLIC
 
@@ -53,6 +67,8 @@ from nti.dataserver.interfaces import IPrincipal
 from nti.dataserver.users.users import User
 
 from nti.externalization.persistence import NoPickle
+
+from nti.schema.fieldproperty import createDirectFieldProperties
 
 logger = __import__('logging').getLogger(__name__)
 
@@ -311,3 +327,67 @@ def section_to_default_required_policy(course):
     parent_policy = ICompletableItemDefaultRequiredPolicy(parent_course)
     return SubinstanceCompletableItemDefaultRequiredPolicy(section_policy,
                                                            parent_policy)
+
+
+def course_progress(enrollment):
+    return component.queryMultiAdapter((IUser(enrollment, None),
+                                        ICourseInstance(enrollment, None)),
+                                       IProgress)
+
+
+def is_course_completed(enrollment):
+    progress = course_progress(enrollment)
+    return (progress.CompletedItem
+            and progress.CompletedItem.Success)
+
+
+@component.adapter(ICourseInstanceEnrollment)
+@interface.implementer(ICourseCompletedNotification)
+def _course_completion_notification(course_instance_enrollment):
+    if not is_course_completed(course_instance_enrollment):
+        return None
+
+    return _CourseCompletedNotification(course_instance_enrollment)
+
+
+@component.adapter(ICourseInstanceEnrollment)
+@interface.implementer(ICourseCompletedNotification)
+class _CourseCompletedNotification(object):
+
+    createDirectFieldProperties(ICourseCompletedNotification)
+
+    def __init__(self, course_instance_enrollment):
+        self.enrollment = course_instance_enrollment
+
+    @Lazy
+    def enrollment_annotations(self):
+        return IAnnotations(self.enrollment)
+
+    def _get_ack_time(self):
+        return self.enrollment_annotations.get(COMPLETION_ACKNOWLEDGED_TIME_KEY)
+
+    def _set_ack_time(self, value):
+        self.enrollment_annotations[COMPLETION_ACKNOWLEDGED_TIME_KEY] = value
+
+    def _del_ack_time(self):
+        del self.enrollment_annotations[COMPLETION_ACKNOWLEDGED_TIME_KEY]
+
+    _ack_time = property(_get_ack_time, _set_ack_time, _del_ack_time)
+
+    def _to_datetime(self, t_stamp):
+        return datetime.utcfromtimestamp(t_stamp)
+
+    @property
+    def AcknowledgedDate(self):
+        ack_time = self._ack_time
+        return self._to_datetime(ack_time) if ack_time is not None else None
+
+    @property
+    def IsAcknowledged(self):
+        return self._ack_time is not None
+
+    def acknowledge(self):
+        self._ack_time = time.time()
+
+    def reset_acknowledgement(self):
+        del self._ack_time

@@ -33,6 +33,10 @@ from nti.app.base.abstract_views import AbstractAuthenticatedView
 
 from nti.app.products.courseware import VIEW_CERTIFICATE
 from nti.app.products.courseware import VIEW_CERTIFICATE_PREVIEW
+from nti.app.products.courseware import VIEW_ACKNOWLEDGE_COMPLETION
+from nti.app.products.courseware import VIEW_RESET_COMPLETION_ACK
+
+from nti.app.products.courseware.completion.interfaces import ICourseCompletedNotification
 
 from nti.app.products.courseware.completion.utils import ImageUtils
 
@@ -392,3 +396,38 @@ class CompletionCertificatePreview(CompletionViewMixin, SiteBrandUpdateBase):
             )],
             credit=None)
 
+
+@view_config(route_name='objects.generic.traversal',
+             request_method='POST',
+             context=ICourseInstanceEnrollment,
+             name=VIEW_ACKNOWLEDGE_COMPLETION,
+             permission=nauth.ACT_READ)
+class AcknowledgeCompletionView(AbstractAuthenticatedView,
+                                EnrollmentProgressViewMixin):
+
+    def __call__(self):
+        notification = ICourseCompletedNotification(self.context, None)
+        if notification is None or notification.IsAcknowledged:
+            raise hexc.HTTPNotFound()
+
+        notification.acknowledge()
+
+        return hexc.HTTPNoContent()
+
+
+@view_config(route_name='objects.generic.traversal',
+             request_method='POST',
+             context=ICourseInstanceEnrollment,
+             name=VIEW_RESET_COMPLETION_ACK,
+             permission=nauth.ACT_UPDATE)
+class ResetCompletionAckView(AbstractAuthenticatedView,
+                             EnrollmentProgressViewMixin):
+
+    def __call__(self):
+        notification = ICourseCompletedNotification(self.context, None)
+        if notification is None or not notification.IsAcknowledged:
+            raise hexc.HTTPNotFound()
+
+        notification.reset_acknowledgement()
+
+        return hexc.HTTPNoContent()
