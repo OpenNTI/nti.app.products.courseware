@@ -13,6 +13,8 @@ from __future__ import absolute_import
 from zope import component
 from zope import interface
 
+from zope.annotation import IAnnotations
+
 from zope.cachedescriptors.property import Lazy
 
 from zope.container.contained import Contained
@@ -391,6 +393,11 @@ class DefaultCourseInstanceEnrollment(CourseInstanceEnrollment):
     def RealEnrollmentStatus(self):
         # CS: For display use the real scope
         return self._record.Scope
+
+    def __conform__(self, iface):
+        if IAnnotations.isOrExtends(iface):
+            return IAnnotations(self._record)
+        return super(DefaultCourseInstanceEnrollment, self).__conform__(iface)
 
 
 def enrollment_from_record(unused_course, record):
