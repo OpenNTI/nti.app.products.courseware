@@ -34,7 +34,6 @@ from nti.app.base.abstract_views import AbstractAuthenticatedView
 from nti.app.products.courseware import VIEW_CERTIFICATE
 from nti.app.products.courseware import VIEW_CERTIFICATE_PREVIEW
 from nti.app.products.courseware import VIEW_ACKNOWLEDGE_COMPLETION
-from nti.app.products.courseware import VIEW_RESET_COMPLETION_ACK
 
 from nti.app.products.courseware.completion.interfaces import ICourseCompletedNotification
 
@@ -416,12 +415,12 @@ class AcknowledgeCompletionView(AbstractAuthenticatedView,
 
 
 @view_config(route_name='objects.generic.traversal',
-             request_method='POST',
+             request_method='DELETE',
              context=ICourseInstanceEnrollment,
-             name=VIEW_RESET_COMPLETION_ACK,
+             name=VIEW_ACKNOWLEDGE_COMPLETION,
              permission=nauth.ACT_UPDATE)
-class ResetCompletionAckView(AbstractAuthenticatedView,
-                             EnrollmentProgressViewMixin):
+class DeleteCompletionAckView(AbstractAuthenticatedView,
+                              EnrollmentProgressViewMixin):
 
     def __call__(self):
         notification = ICourseCompletedNotification(self.context, None)

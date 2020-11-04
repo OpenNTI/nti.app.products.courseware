@@ -395,6 +395,8 @@ class DefaultCourseInstanceEnrollment(CourseInstanceEnrollment):
         return self._record.Scope
 
     def __conform__(self, iface):
+        # Since this object is not persistent and only wraps the persistent
+        # record, proxy the conform request to the underlying record
         if IAnnotations.isOrExtends(iface):
             return IAnnotations(self._record)
         return super(DefaultCourseInstanceEnrollment, self).__conform__(iface)
