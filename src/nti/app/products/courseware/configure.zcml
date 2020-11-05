@@ -426,6 +426,11 @@
 				for="nti.app.products.courseware.interfaces.ICourseInstanceEnrollment
 					 pyramid.interfaces.IRequest" />
 
+	<subscriber factory=".decorators._EnrollmentRecordLessonStatsLinkDecorator"
+                provides="nti.externalization.interfaces.IExternalMappingDecorator"
+                for="nti.app.products.courseware.interfaces.ICourseInstanceEnrollment
+                     pyramid.interfaces.IRequest" />
+
 	<subscriber factory=".decorators._LegacyCCEFieldDecorator"
 				provides="nti.externalization.interfaces.IExternalObjectDecorator" />
 

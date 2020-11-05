@@ -53,6 +53,7 @@ VIEW_COURSE_RECURSIVE_BUCKET = 'CourseRecursiveStreamByBucket'
 VIEW_CERTIFICATE = 'Certificate'
 VIEW_CERTIFICATE_PREVIEW = 'CertificatePreview'
 VIEW_ACKNOWLEDGE_COMPLETION = 'AcknowledgeCompletion'
+VIEW_LESSON_COMPLETION_STATS = 'UserLessonCompletionStatsByOutlineNode'
 
 VIEW_UPDATE_WEBINARS = 'UpdateWebinars'
 VIEW_ALL_SITE_UPDATE_WEBINARS = 'UpdateAllSiteWebinars'

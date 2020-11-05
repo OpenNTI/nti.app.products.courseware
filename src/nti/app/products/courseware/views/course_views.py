@@ -43,6 +43,8 @@ from nti.app.base.abstract_views import AbstractAuthenticatedView
 from nti.app.externalization.view_mixins import BatchingUtilsMixin
 from nti.app.externalization.view_mixins import ModeledContentUploadRequestUtilsMixin
 
+from nti.app.products.courseware import VIEW_LESSON_COMPLETION_STATS
+
 from nti.app.products.courseware.interfaces import ACT_VIEW_ROSTER
 from nti.app.products.courseware.interfaces import ACT_VIEW_ACTIVITY
 
@@ -77,7 +79,13 @@ from nti.appserver.ugd_edit_views import UGDPutView
 from nti.appserver.ugd_query_views import Operator
 from nti.appserver.ugd_query_views import _combine_predicate
 
+from nti.assessment.interfaces import IQAssignment
+
 from nti.common.string import is_true
+
+from nti.contenttypes.completion.interfaces import ICompletableItem
+from nti.contenttypes.completion.interfaces import ICompletedItemProvider
+from nti.contenttypes.completion.interfaces import IRequiredCompletableItemProvider
 
 from nti.contenttypes.courses.administered import get_course_admin_role
 
@@ -87,17 +95,21 @@ from nti.contenttypes.courses.interfaces import ICourseInstance
 from nti.contenttypes.courses.interfaces import ICourseEnrollments
 from nti.contenttypes.courses.interfaces import ICourseCatalogEntry
 from nti.contenttypes.courses.interfaces import ICourseTabPreferences
+from nti.contenttypes.courses.interfaces import ICourseOutlineContentNode
 from nti.contenttypes.courses.interfaces import ENROLLMENT_SCOPE_MAP
 
 from nti.contenttypes.courses.utils import is_enrolled
+from nti.contenttypes.courses.utils import is_course_instructor
 from nti.contenttypes.courses.utils import is_course_instructor_or_editor
 
+from nti.contenttypes.presentation.interfaces import IConcreteAsset
 from nti.contenttypes.presentation.interfaces import INTILessonOverview
 
 from nti.coremetadata.interfaces import IContextLastSeenContainer
 
 from nti.dataserver import authorization as nauth
 
+from nti.dataserver.authorization import is_admin_or_site_admin
 from nti.dataserver.authorization import is_admin_or_content_admin
 
 from nti.dataserver.interfaces import IUser
@@ -113,11 +125,14 @@ from nti.externalization.externalization import decorate_external_mapping
 
 from nti.links.links import Link
 
+from nti.ntiids.ntiids import find_object_with_ntiid
+
 from nti.ntiids.oids import to_external_ntiid_oid as toExternalOID
 
 from nti.property.property import alias
 
 from nti.publishing.interfaces import IPublishable
+from nti.publishing.interfaces import ICalendarPublishable
 
 from nti.zodb.containers import bit64_int_to_time
 from nti.zodb.containers import time_to_64bit_int
@@ -878,3 +893,181 @@ class CourseGetView(GenericGetView):
     """
 
     COLLECTION_TYPE = ICourseCollection
+
+
+class _CompletionStats(object):
+
+    def __init__(self):
+        self.incomplete = 0
+        self.unsuccessful = 0
+        self.successful = 0
+
+    def incr_incomplete(self):
+        self.incomplete += 1
+
+    def incr_successful(self):
+        self.successful += 1
+
+    def incr_unsuccessful(self):
+        self.unsuccessful += 1
+
+
+@view_config(route_name='objects.generic.traversal',
+             request_method='GET',
+             context=ICourseInstanceEnrollment,
+             renderer='rest',
+             name=VIEW_LESSON_COMPLETION_STATS)
+class UserCourseLessonCompletionStatsView(AbstractAuthenticatedView):
+    """
+    A view to get completion stats (incomplete, completed_successfully, and
+    completed_unsuccussfully) on each lesson for this contextual user.
+    """
+
+    @Lazy
+    def _user(self):
+        return IUser(self.context)
+
+    @Lazy
+    def _course(self):
+        return ICourseInstance(self.context)
+
+    @Lazy
+    def required_item_providers(self):
+        result = component.subscribers((self._course,),
+                                       IRequiredCompletableItemProvider)
+        return result
+
+    @Lazy
+    def completable_items(self):
+        """
+        A map of ntiid to required completable items.
+        """
+        result = {}
+        # pylint: disable=not-an-iterable
+        for completable_provider in self.required_item_providers:
+            for item in completable_provider.iter_items(self._user):
+                result[item.ntiid] = item
+        return result
+
+    @Lazy
+    def user_completed_items(self):
+        """
+        A map of ntiid to all user completed items.
+        """
+        result = {}
+        for completed_provider in component.subscribers((self._user, self._course),
+                                                        ICompletedItemProvider):
+            for item in completed_provider.completed_items():
+                result[item.item_ntiid] = item
+        return result
+
+    def _is_scheduled(self, obj):
+        return  ICalendarPublishable.providedBy(obj) \
+            and (obj.publishBeginning or obj.publishEnding)
+
+    def _is_available(self, obj):
+        return not IPublishable.providedBy(obj) \
+            or obj.is_published(principal=self._user) \
+            or self._is_scheduled(obj)
+
+    def _process_item(self, ntiid, stats):
+        if ntiid in self.completable_items:
+            if ntiid not in self.user_completed_items:
+                stats.incr_incomplete()
+            else:
+                completed_item = self.user_completed_items[ntiid]
+                if completed_item.Success:
+                    stats.incr_successful()
+                else:
+                    stats.incr_unsuccessful()
+
+    def _process_asset(self, asset, stats):
+        # We could check if these items are visible etc, but
+        # the RequiredItemProviders should handle all of that for us.
+        # So we simply need to care if the item (or its target) is
+        # required and/or is it completed.
+        item = IConcreteAsset(asset, asset)
+        target_ntiid = getattr(item, 'target', '')
+        target = find_object_with_ntiid(target_ntiid)
+        if ICompletableItem.providedBy(target):
+            self._process_item(target_ntiid, stats)
+        elif ICompletableItem.providedBy(item):
+            item_ntiid = getattr(item, 'ntiid', None)
+            self._process_item(item_ntiid, stats)
+
+    def _get_lesson_stats(self, lesson):
+        stats = _CompletionStats()
+        for group in lesson or ():
+            for item in group or ():
+                self._process_asset(item, stats)
+                children = getattr(item, 'Items', None)
+                for child in children or ():
+                    self._process_asset(child, stats)
+        return stats
+
+    def _build_outline_stats(self):
+        """
+        Returns:
+
+        [{<node_ntiid>: [{'LessonNTIID': node.LessonOverviewNTIID,
+                         'IncompleteCount': incomplete,
+                         'UnsuccessfulCount': unsuccessful,
+                         'SuccessfulCount': successful]},
+                         ...},
+        ...]
+        """
+        result = []
+        def _recur(node, node_list):
+            if ICourseOutlineContentNode.providedBy(node):
+                lesson = find_object_with_ntiid(node.LessonOverviewNTIID)
+                if      lesson is not None \
+                    and self._is_available(lesson):
+                    stats = self._get_lesson_stats(lesson)
+                    node_list.append({'LessonNTIID': node.LessonOverviewNTIID,
+                                      'IncompleteCount': stats.incomplete,
+                                      'UnsuccessfulCount': stats.unsuccessful,
+                                      'SuccessfulCount': stats.successful})
+            child_node_list = []
+            for child_node in node.values():
+                _recur(child_node, child_node_list)
+            if child_node_list:
+                try:
+                    node_list.append({node.ntiid: child_node_list})
+                except AttributeError:
+                    # CourseOutline
+                    node_list.extend(child_node_list)
+        _recur(self._course.Outline, result)
+        return result
+
+    def _build_assignment_stats(self):
+        stats = _CompletionStats()
+        for ntiid, item in self.completable_items.items():
+            if not IQAssignment.providedBy(item):
+                continue
+            self._process_item(ntiid, stats)
+        return stats
+
+    def _check_access(self):
+        if      not self.remoteUser == self._user \
+            and not is_course_instructor(self.remoteUser, self._course) \
+            and not is_admin_or_site_admin(self.remoteUser):
+            raise hexc.HTTPForbidden()
+
+    def __call__(self):
+        """
+        We want to gather stats for outline nodes and ideally, assignments not
+        in the course outline.
+
+        The required-item provider and completed item provider should we be all
+        we need.
+
+        We'll skip lessons that are unpublished.
+        """
+        self._check_access()
+        result = LocatedExternalDict()
+        stats = self._build_assignment_stats()
+        result['Assignments'] = {'IncompleteCount': stats.incomplete,
+                                 'UnsuccessfulCount': stats.unsuccessful,
+                                 'SuccessfulCount': stats.successful}
+        result['Outline'] = self._build_outline_stats()
+        return result
