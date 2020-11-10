@@ -12,6 +12,8 @@ from __future__ import absolute_import
 
 from six.moves.urllib_parse import urljoin
 
+from zc.displayname.interfaces import IDisplayNameGenerator
+
 from zope import component
 from zope import interface
 
@@ -1075,6 +1077,7 @@ class _SharedScopesForumDecorator(AbstractAuthenticatedRequestAwareDecorator):
                 scope = course.SharingScopes.get(scope_name)
                 if scope is not None:
                     result['DefaultSharedToNTIIDs'] = [scope.NTIID]
+                    result['DefaultSharedToDisplayNames'] = [IDisplayNameGenerator(scope)()]
 
 
 @interface.implementer(IExternalObjectDecorator)
@@ -1101,6 +1104,7 @@ class _SharedScopesTopicDecorator(AbstractAuthenticatedRequestAwareDecorator):
             scope = course.SharingScopes.get(scope_name)
             if scope is not None:
                 result['ContainerDefaultSharedToNTIIDs'] = [scope.NTIID]
+                result['ContainerDefaultSharedToDisplayNames'] = [IDisplayNameGenerator(scope)()]
 
 
 @component.adapter(ICourseInstance)
