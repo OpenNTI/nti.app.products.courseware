@@ -85,6 +85,7 @@ from nti.common.string import is_true
 
 from nti.contenttypes.completion.interfaces import ICompletableItem
 from nti.contenttypes.completion.interfaces import ICompletedItemProvider
+from nti.contenttypes.completion.interfaces import ICompletableItemProvider
 
 from nti.contenttypes.completion.utils import is_item_required
 
@@ -935,7 +936,7 @@ class UserCourseLessonCompletionStatsView(AbstractAuthenticatedView):
     @Lazy
     def completable_item_providers(self):
         result = component.subscribers((self._course,),
-                                       ICompletedItemProvider)
+                                       ICompletableItemProvider)
         return result
 
     @Lazy
@@ -985,6 +986,7 @@ class UserCourseLessonCompletionStatsView(AbstractAuthenticatedView):
                 stats = required_stats
             else:
                 stats = unrequired_stats
+
             if ntiid not in self.user_completed_items:
                 stats.incr_incomplete()
             else:
