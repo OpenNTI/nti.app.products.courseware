@@ -1005,7 +1005,8 @@ class UserCourseLessonCompletionStatsView(AbstractAuthenticatedView):
         target_ntiid = getattr(item, 'target', '')
         target = find_object_with_ntiid(target_ntiid)
         if ICompletableItem.providedBy(target):
-            self._process_item(target_ntiid, required_stats, unrequired_stats)
+            item_ntiid = getattr(target, 'ntiid', None)
+            self._process_item(item_ntiid, required_stats, unrequired_stats)
         elif ICompletableItem.providedBy(item):
             item_ntiid = getattr(item, 'ntiid', None)
             self._process_item(item_ntiid, required_stats, unrequired_stats)
