@@ -85,7 +85,8 @@ from nti.common.string import is_true
 
 from nti.contenttypes.completion.interfaces import ICompletableItem
 from nti.contenttypes.completion.interfaces import ICompletedItemProvider
-from nti.contenttypes.completion.interfaces import IRequiredCompletableItemProvider
+
+from nti.contenttypes.completion.utils import is_item_required
 
 from nti.contenttypes.courses.administered import get_course_admin_role
 
@@ -932,22 +933,30 @@ class UserCourseLessonCompletionStatsView(AbstractAuthenticatedView):
         return ICourseInstance(self.context)
 
     @Lazy
-    def required_item_providers(self):
+    def completable_item_providers(self):
         result = component.subscribers((self._course,),
-                                       IRequiredCompletableItemProvider)
+                                       ICompletedItemProvider)
         return result
 
     @Lazy
     def completable_items(self):
         """
-        A map of ntiid to required completable items.
+        A map of ntiid to completable items.
         """
         result = {}
         # pylint: disable=not-an-iterable
-        for completable_provider in self.required_item_providers:
+        for completable_provider in self.completable_item_providers:
             for item in completable_provider.iter_items(self._user):
                 result[item.ntiid] = item
         return result
+
+    @Lazy
+    def required_items(self):
+        """
+        A map of ntiid to required completable items.
+        """
+        return {x:y for x,y in self.completable_items.items()
+                if is_item_required(y, self._course)}
 
     @Lazy
     def user_completed_items(self):
@@ -970,8 +979,12 @@ class UserCourseLessonCompletionStatsView(AbstractAuthenticatedView):
             or obj.is_published(principal=self._user) \
             or self._is_scheduled(obj)
 
-    def _process_item(self, ntiid, stats):
+    def _process_item(self, ntiid, required_stats, unrequired_stats):
         if ntiid in self.completable_items:
+            if ntiid in self.required_items:
+                stats = required_stats
+            else:
+                stats = unrequired_stats
             if ntiid not in self.user_completed_items:
                 stats.incr_incomplete()
             else:
@@ -981,7 +994,7 @@ class UserCourseLessonCompletionStatsView(AbstractAuthenticatedView):
                 else:
                     stats.incr_unsuccessful()
 
-    def _process_asset(self, asset, stats):
+    def _process_asset(self, asset, required_stats, unrequired_stats):
         # We could check if these items are visible etc, but
         # the RequiredItemProviders should handle all of that for us.
         # So we simply need to care if the item (or its target) is
@@ -990,20 +1003,21 @@ class UserCourseLessonCompletionStatsView(AbstractAuthenticatedView):
         target_ntiid = getattr(item, 'target', '')
         target = find_object_with_ntiid(target_ntiid)
         if ICompletableItem.providedBy(target):
-            self._process_item(target_ntiid, stats)
+            self._process_item(target_ntiid, required_stats, unrequired_stats)
         elif ICompletableItem.providedBy(item):
             item_ntiid = getattr(item, 'ntiid', None)
-            self._process_item(item_ntiid, stats)
+            self._process_item(item_ntiid, required_stats, unrequired_stats)
 
     def _get_lesson_stats(self, lesson):
-        stats = _CompletionStats()
+        required_stats = _CompletionStats()
+        unrequired_stats = _CompletionStats()
         for group in lesson or ():
             for item in group or ():
-                self._process_asset(item, stats)
+                self._process_asset(item, required_stats, unrequired_stats)
                 children = getattr(item, 'Items', None)
                 for child in children or ():
-                    self._process_asset(child, stats)
-        return stats
+                    self._process_asset(child, required_stats, unrequired_stats)
+        return required_stats, unrequired_stats
 
     def _build_outline_stats(self):
         """
@@ -1012,7 +1026,10 @@ class UserCourseLessonCompletionStatsView(AbstractAuthenticatedView):
         [{<node_ntiid>: [{'LessonNTIID': node.LessonOverviewNTIID,
                          'IncompleteCount': incomplete,
                          'UnsuccessfulCount': unsuccessful,
-                         'SuccessfulCount': successful]},
+                         'SuccessfulCount': successful,
+                         'UnrequiredIncompleteCount': u_incomplete,
+                         'UnrequiredUnsuccessfulCount': u_unsuccessful,
+                         'UnrequiredSuccessfulCount': u_successful},
                          ...},
         ...]
         """
@@ -1022,11 +1039,14 @@ class UserCourseLessonCompletionStatsView(AbstractAuthenticatedView):
                 lesson = find_object_with_ntiid(node.LessonOverviewNTIID)
                 if      lesson is not None \
                     and self._is_available(lesson):
-                    stats = self._get_lesson_stats(lesson)
+                    required_stats, unrequired_stats = self._get_lesson_stats(lesson)
                     node_list.append({'LessonNTIID': node.LessonOverviewNTIID,
-                                      'IncompleteCount': stats.incomplete,
-                                      'UnsuccessfulCount': stats.unsuccessful,
-                                      'SuccessfulCount': stats.successful})
+                                      'IncompleteCount': required_stats.incomplete,
+                                      'UnsuccessfulCount': required_stats.unsuccessful,
+                                      'SuccessfulCount': required_stats.successful,
+                                      'UnrequiredIncompleteCount': unrequired_stats.incomplete,
+                                      'UnrequiredUnsuccessfulCount': unrequired_stats.unsuccessful,
+                                      'UnrequiredSuccessfulCount': unrequired_stats.successful})
             child_node_list = []
             for child_node in node.values():
                 _recur(child_node, child_node_list)
@@ -1040,12 +1060,13 @@ class UserCourseLessonCompletionStatsView(AbstractAuthenticatedView):
         return result
 
     def _build_assignment_stats(self):
-        stats = _CompletionStats()
+        required_stats = _CompletionStats()
+        unrequired_stats = _CompletionStats()
         for ntiid, item in self.completable_items.items():
             if not IQAssignment.providedBy(item):
                 continue
-            self._process_item(ntiid, stats)
-        return stats
+            self._process_item(ntiid, required_stats, unrequired_stats)
+        return required_stats, unrequired_stats
 
     def _check_access(self):
         if      not self.remoteUser == self._user \
@@ -1065,9 +1086,12 @@ class UserCourseLessonCompletionStatsView(AbstractAuthenticatedView):
         """
         self._check_access()
         result = LocatedExternalDict()
-        stats = self._build_assignment_stats()
-        result['Assignments'] = {'IncompleteCount': stats.incomplete,
-                                 'UnsuccessfulCount': stats.unsuccessful,
-                                 'SuccessfulCount': stats.successful}
+        required_stats, unrequired_stats = self._build_assignment_stats()
+        result['Assignments'] = {'IncompleteCount': required_stats.incomplete,
+                                 'UnsuccessfulCount': required_stats.unsuccessful,
+                                 'SuccessfulCount': required_stats.successful,
+                                 'UnrequiredIncompleteCount': unrequired_stats.incomplete,
+                                 'UnrequiredUnsuccessfulCount': unrequired_stats.unsuccessful,
+                                 'UnrequiredSuccessfulCount': unrequired_stats.successful}
         result['Outline'] = self._build_outline_stats()
         return result
