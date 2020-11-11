@@ -12,13 +12,22 @@ import datetime
 from hamcrest import is_
 from hamcrest import is_not
 from hamcrest import not_none
+from hamcrest import has_length
 from hamcrest import assert_that
+from hamcrest import has_property
+from hamcrest import contains_string
 does_not = is_not
+
+from quopri import decodestring
 
 from zope import component
 from zope import interface
 
 from zope.event import notify
+
+from nti.app.products.courseware.completion.subscribers import send_course_completed_email
+
+from nti.app.testing.testing import ITestMailDelivery
 
 from nti.contenttypes.completion.completion import CompletedItem
 
@@ -35,7 +44,9 @@ from nti.contenttypes.courses.courses import ContentCourseInstance
 
 from nti.contenttypes.courses.interfaces import ICourseInstance
 from nti.contenttypes.courses.interfaces import ICourseCatalogEntry
+from nti.contenttypes.courses.interfaces import CourseCompletedEvent
 from nti.contenttypes.courses.interfaces import ICourseCompletedEvent
+from nti.contenttypes.courses.interfaces import ICourseEnrollmentManager
 
 from nti.app.testing.application_webtest import ApplicationLayerTest
 
@@ -44,6 +55,8 @@ from nti.dataserver.tests import mock_dataserver
 from nti.dataserver.tests.mock_dataserver import WithMockDSTrans
 
 from nti.dataserver.users import User
+
+from nti.dataserver.users.interfaces import IUserProfile
 
 
 @component.adapter(ICourseInstance)
@@ -133,3 +146,55 @@ class TestSubscribers(ApplicationLayerTest):
         principal_container.ContextCompletedItem.Success = False
         self._send_update(user, course)
         assert_that(self.subscriber_hit, is_(True))
+
+
+    @WithMockDSTrans
+    def test_completion_email(self):
+        """
+        Validate we fire a CourseCompletedEvent on certain conditions.
+        """
+        # Setup
+        course = ContentCourseInstance()
+        connection = mock_dataserver.current_transaction
+        connection.add(course)
+        entry = ICourseCatalogEntry(course, None)
+        assert_that(entry, not_none())
+        entry.ntiid = u'tag:nextthought.com,2011-10:TestCourseCompletionSubscriber001'
+        assert_that(entry.ntiid, not_none())
+        user = User.create_user(username=u'user001_completion_email')
+        IUserProfile(user).email = u'ichigo@bleach.org'
+        enrollment_manager = ICourseEnrollmentManager(course)
+        enrollment_manager.enroll(user)
+
+        sm = component.getGlobalSiteManager()
+        sm.registerHandler(send_course_completed_email)
+
+        mailer = component.getUtility(ITestMailDelivery)
+        def _get_mail_msg():
+            assert_that(mailer.queue, has_length(1))
+            msg = mailer.queue[0]
+            assert_that(msg, has_property('body'))
+            body = decodestring(msg.body)
+            del mailer.queue[:]
+            return body
+
+        notify(CourseCompletedEvent(course, user))
+        msg = _get_mail_msg()
+        assert_that(msg, contains_string("You have completed"))
+        assert_that(msg, does_not(contains_string("You may view your certificate")))
+
+        # Policy with no cert
+        policy = CompletableItemAggregateCompletionPolicy()
+        policy.percentage = 1.0
+        policy_container = ICompletionContextCompletionPolicyContainer(course)
+        policy_container.context_policy = policy
+        notify(CourseCompletedEvent(course, user))
+        msg = _get_mail_msg()
+        assert_that(msg, contains_string("You have completed"))
+        assert_that(msg, does_not(contains_string("You may view your certificate")))
+
+        policy.offers_completion_certificate = True
+        notify(CourseCompletedEvent(course, user))
+        msg = _get_mail_msg()
+        assert_that(msg, contains_string("You have completed"))
+        assert_that(msg, contains_string("You may view your certificate"))
