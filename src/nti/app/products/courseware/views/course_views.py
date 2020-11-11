@@ -1070,7 +1070,7 @@ class UserCourseLessonCompletionStatsView(AbstractAuthenticatedView):
 
     def _check_access(self):
         if      not self.remoteUser == self._user \
-            and not is_course_instructor(self.remoteUser, self._course) \
+            and not is_course_instructor(self._course, self.remoteUser) \
             and not is_admin_or_site_admin(self.remoteUser):
             raise hexc.HTTPForbidden()
 
