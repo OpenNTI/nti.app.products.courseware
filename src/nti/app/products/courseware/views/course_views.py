@@ -86,6 +86,7 @@ from nti.common.string import is_true
 from nti.contenttypes.completion.interfaces import ICompletableItem
 from nti.contenttypes.completion.interfaces import ICompletedItemProvider
 from nti.contenttypes.completion.interfaces import ICompletableItemProvider
+from nti.contenttypes.completion.interfaces import ICompletionContextCompletionPolicy
 
 from nti.contenttypes.completion.utils import is_item_required
 
@@ -956,6 +957,9 @@ class UserCourseLessonCompletionStatsView(AbstractAuthenticatedView):
         """
         A map of ntiid to required completable items.
         """
+        # For this view, if a course is not completable, no items are required.
+        if not ICompletionContextCompletionPolicy(self._course, None):
+            return {}
         return {x:y for x,y in self.completable_items.items()
                 if is_item_required(y, self._course)}
 
