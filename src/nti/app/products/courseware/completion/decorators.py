@@ -84,9 +84,10 @@ class _CourseCompletionDecorator(AbstractAuthenticatedRequestAwareDecorator):
         return component.queryMultiAdapter((self.user, self.course),
                                            IProgress)
 
-    def has_acknowledged_completion(self):
+    def completion_needs_acknowledged(self):
         completion_notification = ICourseCompletedNotification(self.context, None)
-        return completion_notification is not None and completion_notification.IsAcknowledged
+        return (completion_notification is not None
+                and not completion_notification.IsAcknowledged)
 
     def _do_decorate_external(self, context, result):
         _links = result.setdefault(LINKS, [])
@@ -103,12 +104,12 @@ class _CourseCompletionDecorator(AbstractAuthenticatedRequestAwareDecorator):
             if      completed_item is not None \
                 and completed_item.Success:
 
-#                 if not self.has_acknowledged_completion():
-#                     # Link for acknowledging completion
-#                     _links.append(Link(context,
-#                                        method='POST',
-#                                        rel=VIEW_ACKNOWLEDGE_COMPLETION,
-#                                        elements=("@@" + VIEW_ACKNOWLEDGE_COMPLETION,)))
+                if self.completion_needs_acknowledged():
+                    # Link for acknowledging completion
+                    _links.append(Link(context,
+                                       method='POST',
+                                       rel=VIEW_ACKNOWLEDGE_COMPLETION,
+                                       elements=("@@" + VIEW_ACKNOWLEDGE_COMPLETION,)))
 
                 if self.policy.offers_completion_certificate:
                     _links.append(Link(context,
