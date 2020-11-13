@@ -103,12 +103,12 @@ class _CourseCompletionDecorator(AbstractAuthenticatedRequestAwareDecorator):
             if      completed_item is not None \
                 and completed_item.Success:
 
-                if not self.has_acknowledged_completion():
-                    # Link for acknowledging completion
-                    _links.append(Link(context,
-                                       method='POST',
-                                       rel=VIEW_ACKNOWLEDGE_COMPLETION,
-                                       elements=("@@" + VIEW_ACKNOWLEDGE_COMPLETION,)))
+#                 if not self.has_acknowledged_completion():
+#                     # Link for acknowledging completion
+#                     _links.append(Link(context,
+#                                        method='POST',
+#                                        rel=VIEW_ACKNOWLEDGE_COMPLETION,
+#                                        elements=("@@" + VIEW_ACKNOWLEDGE_COMPLETION,)))
 
                 if self.policy.offers_completion_certificate:
                     _links.append(Link(context,
