@@ -93,9 +93,9 @@ class AllCourseWebinarProgressView(AbstractAuthenticatedView):
             course = ICourseInstance(asset)
             try:
                 updated = update_webinar_progress(webinar)
-            except WebinarClientError as e:
-                logger.info("Error updating webinar asset progress (%s) (%s) (%s)",
-                            asset, webinar, e)
+            except (hexc.HTTPClientError, WebinarClientError) as e:
+                logger.info("[%s] Error updating webinar asset progress (%s) (%s) (%s)",
+                            getSite().__name__, asset, webinar, e)
             if updated:
                 logger.info('Updating webinar progress (%s)', webinar)
                 update_webinar_completion(asset, webinar, course)
