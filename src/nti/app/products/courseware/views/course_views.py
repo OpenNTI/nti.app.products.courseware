@@ -1066,6 +1066,9 @@ class UserCourseLessonCompletionStatsView(AbstractAuthenticatedView):
                                       'IncompleteNTIIDs': required_stats.incomplete_ntiids,
                                       'SuccessfulItems': required_stats.successful_items,
                                       'UnSuccessfulItems': required_stats.unsuccessful_items,
+                                      'UnrequiredIncompleteNTIIDs': unrequired_stats.incomplete_ntiids,
+                                      'UnrequiredSuccessfulItems': unrequired_stats.successful_items,
+                                      'UnrequiredUnSuccessfulItems': unrequired_stats.unsuccessful_items,
                                       'UnrequiredIncompleteCount': unrequired_stats.incomplete,
                                       'UnrequiredUnsuccessfulCount': unrequired_stats.unsuccessful,
                                       'UnrequiredSuccessfulCount': unrequired_stats.successful})
@@ -1115,6 +1118,9 @@ class UserCourseLessonCompletionStatsView(AbstractAuthenticatedView):
                                  'IncompleteNTIIDs': required_stats.incomplete_ntiids,
                                  'SuccessfulItems': required_stats.successful_items,
                                  'UnSuccessfulItems': required_stats.unsuccessful_items,
+                                 'UnrequiredIncompleteNTIIDs': unrequired_stats.incomplete_ntiids,
+                                 'UnrequiredSuccessfulItems': unrequired_stats.successful_items,
+                                 'UnrequiredUnSuccessfulItems': unrequired_stats.unsuccessful_items,
                                  'UnrequiredIncompleteCount': unrequired_stats.incomplete,
                                  'UnrequiredUnsuccessfulCount': unrequired_stats.unsuccessful,
                                  'UnrequiredSuccessfulCount': unrequired_stats.successful}
