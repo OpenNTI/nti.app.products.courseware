@@ -901,18 +901,30 @@ class CourseGetView(GenericGetView):
 class _CompletionStats(object):
 
     def __init__(self):
-        self.incomplete = 0
-        self.unsuccessful = 0
-        self.successful = 0
+        self.incomplete_ntiids = []
+        self.unsuccessful_items = []
+        self.successful_items = []
 
-    def incr_incomplete(self):
-        self.incomplete += 1
+    def add_incomplete_ntiid(self, ntiid):
+        self.incomplete_ntiids.append(ntiid)
 
-    def incr_successful(self):
-        self.successful += 1
+    def add_successful_item(self, item):
+        self.successful_items.append(item)
 
-    def incr_unsuccessful(self):
-        self.unsuccessful += 1
+    def add_unsuccessful_item(self, item):
+        self.unsuccessful_items.append(item)
+
+    @property
+    def incomplete(self):
+        return len(self.incomplete_ntiids)
+
+    @property
+    def successful(self):
+        return len(self.successful_items)
+
+    @property
+    def unsuccessful(self):
+        return len(self.unsuccessful_items)
 
 
 @view_config(route_name='objects.generic.traversal',
@@ -992,13 +1004,13 @@ class UserCourseLessonCompletionStatsView(AbstractAuthenticatedView):
                 stats = unrequired_stats
 
             if ntiid not in self.user_completed_items:
-                stats.incr_incomplete()
+                stats.add_incomplete_ntiid(ntiid)
             else:
                 completed_item = self.user_completed_items[ntiid]
                 if completed_item.Success:
-                    stats.incr_successful()
+                    stats.add_successful_item(completed_item)
                 else:
-                    stats.incr_unsuccessful()
+                    stats.add_unsuccessful_item(completed_item)
 
     def _process_asset(self, asset, required_stats, unrequired_stats):
         # We could check if these items are visible etc, but
@@ -1051,6 +1063,9 @@ class UserCourseLessonCompletionStatsView(AbstractAuthenticatedView):
                                       'IncompleteCount': required_stats.incomplete,
                                       'UnsuccessfulCount': required_stats.unsuccessful,
                                       'SuccessfulCount': required_stats.successful,
+                                      'IncompleteNTIIDs': required_stats.incomplete_ntiids,
+                                      'SuccessfulItems': required_stats.successful_items,
+                                      'UnSuccessfulItems': required_stats.unsuccessful_items,
                                       'UnrequiredIncompleteCount': unrequired_stats.incomplete,
                                       'UnrequiredUnsuccessfulCount': unrequired_stats.unsuccessful,
                                       'UnrequiredSuccessfulCount': unrequired_stats.successful})
@@ -1097,6 +1112,9 @@ class UserCourseLessonCompletionStatsView(AbstractAuthenticatedView):
         result['Assignments'] = {'IncompleteCount': required_stats.incomplete,
                                  'UnsuccessfulCount': required_stats.unsuccessful,
                                  'SuccessfulCount': required_stats.successful,
+                                 'IncompleteNTIIDs': required_stats.incomplete_ntiids,
+                                 'SuccessfulItems': required_stats.successful_items,
+                                 'UnSuccessfulItems': required_stats.unsuccessful_items,
                                  'UnrequiredIncompleteCount': unrequired_stats.incomplete,
                                  'UnrequiredUnsuccessfulCount': unrequired_stats.unsuccessful,
                                  'UnrequiredSuccessfulCount': unrequired_stats.successful}
