@@ -114,6 +114,7 @@ from nti.contenttypes.presentation.interfaces import INTIAssignmentRef
 from nti.contenttypes.presentation.interfaces import INTIQuestionSetRef
 
 from nti.coremetadata.interfaces import ILastSeenProvider
+from nti.coremetadata.interfaces import IDeactivatedEntity
 
 from nti.dataserver.authorization import ACT_READ
 from nti.dataserver.authorization import ACT_CONTENT_EDIT
@@ -307,8 +308,10 @@ class _RosterMailLinkDecorator(AbstractAuthenticatedRequestAwareDecorator):
         if not self._is_authenticated:
             return False
         course = ICourseInstance(context, None)
+        user = IUser(context, None)
         return course is not None \
-           and IUser(context, None) is not None \
+           and user is not None \
+           and not IDeactivatedEntity.providedBy(user) \
            and is_course_instructor(course, self.remoteUser)
 
     def _do_decorate_external(self, context, result):
