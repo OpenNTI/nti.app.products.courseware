@@ -2,7 +2,6 @@
 # -*- coding: utf-8 -*-
 
 from __future__ import print_function, absolute_import, division
-__docformat__ = "restructuredtext en"
 
 # disable: accessing protected members, too many methods
 # pylint: disable=W0212,R0904
@@ -23,6 +22,7 @@ does_not = is_not
 from quopri import decodestring
 
 from zope import component
+from zope import interface
 
 from nti.app.mail.interfaces import Email
 
@@ -33,6 +33,8 @@ from nti.contenttypes.courses.interfaces import ES_CREDIT_DEGREE
 
 from nti.contenttypes.courses.interfaces import ICourseInstance
 from nti.contenttypes.courses.interfaces import ICourseEnrollmentManager
+
+from nti.coremetadata.interfaces import IDeactivatedUser
 
 from nti.dataserver.users.interfaces import IUserProfile
 
@@ -252,6 +254,7 @@ class TestMailViews(ApplicationLayerTest):
         # Mail student
         res = self.testapp.get(roster_link,
                                extra_environ=instructor_env)
+        open_user_enroll_href = None
         for enroll_record in res.json_body['Items']:
             roster_link = self.require_link_href_with_rel(enroll_record,
                                                           VIEW_COURSE_MAIL)
@@ -261,6 +264,8 @@ class TestMailViews(ApplicationLayerTest):
                                    extra_environ=instructor_env)
             if enroll_record.get('Username') == open_name:
                 open_email_link = roster_link
+                open_user_enroll_href = enroll_record.get('href')
+        assert_that(open_user_enroll_href, not_none())
 
         # Mail everyone in course
         mailer = component.getUtility(ITestMailDelivery)
@@ -270,6 +275,25 @@ class TestMailViews(ApplicationLayerTest):
         assert_that(messages, has_length(2))
         assert_that(messages[0].get('Reply-To'), is_(self.no_reply))
         assert_that(messages[1].get('Reply-To'), is_(self.no_reply))
+
+        # Deactivate user
+        with mock_dataserver.mock_db_trans(self.ds):
+            open_user = User.get_user(open_name)
+            interface.alsoProvides(open_user, IDeactivatedUser)
+        open_user_enroll_rec = self.testapp.get(open_user_enroll_href,
+                                                extra_environ=instructor_env)
+        open_user_enroll_rec = open_user_enroll_rec.json_body
+        self.forbid_link_with_rel(open_user_enroll_rec,
+                                  VIEW_COURSE_MAIL)
+
+        # Mail everyone in course
+        del mailer.queue[:]
+        self.testapp.post_json(email_link, mail, extra_environ=instructor_env)
+        messages = self._get_messages(mailer, has_copy=True)
+        assert_that(messages, has_length(1))
+        with mock_dataserver.mock_db_trans(self.ds):
+            open_user = User.get_user(open_name)
+            interface.noLongerProvides(open_user, IDeactivatedUser)
 
         # Mail everyone with reply
         self.testapp.post_json(email_link, mail_with_reply,
