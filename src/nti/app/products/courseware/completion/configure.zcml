@@ -80,6 +80,7 @@
 	<!-- Subscribers -->
 	<subscriber handler=".subscribers._on_course_deleted" />
 	<subscriber handler=".subscribers._course_progress_updated" />
+	<subscriber handler=".subscribers.send_course_completed_email" />
 
 	<!-- Importer -->
 	<!-- Completion objects should be imported after assets/assignments/etc -->
