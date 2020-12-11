@@ -302,7 +302,7 @@
                                                             Now go celebrate by taking a victory lap (or nap)! Stay excellent!
                                                         </td>
                                                     </tr>
-                                                    <tr>
+                                                    <tr tal:condition="options/cert_link">
                                                         <td class="content pt-0"
                                                             style="font-family: Open Sans, -apple-system, BlinkMacSystemFont, Roboto, Helvetica Neue, Helvetica, Arial, sans-serif; padding: 0 48px 40px;">
                                                             <table class="list" cellspacing="0" cellpadding="0"
@@ -314,12 +314,13 @@
                                                                              class=" va-bottom mr-sm va-middle" width="16" height="16" alt="file"
                                                                              style="line-height: 100%; outline: none; text-decoration: none; vertical-align: bottom; font-size: 0; margin-right: 8px; border: 0 none;" />
                                                                         </a>
+                                                                        ${course_title} Certificate
                                                                     </td>
                                                                 </tr>
                                                             </table>
                                                         </td>
                                                     </tr>
-                                                    <tr>
+                                                    <tr tal:condition="options/cert_link">
                                                         <td class="content pt-0" style="font-family: Open Sans, -apple-system, BlinkMacSystemFont, Roboto, Helvetica Neue, Helvetica, Arial, sans-serif; padding: 0 48px 40px;">
                                                             <table cellspacing="0" cellpadding="0" style="font-family: Open Sans, -apple-system, BlinkMacSystemFont, Roboto, Helvetica Neue, Helvetica, Arial, sans-serif; border-collapse: collapse; width: 100%;">
                                                                 <tr>
