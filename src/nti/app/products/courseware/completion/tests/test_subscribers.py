@@ -166,22 +166,23 @@ class TestSubscribers(ApplicationLayerTest):
         enrollment_manager = ICourseEnrollmentManager(course)
         enrollment_manager.enroll(user)
 
-        sm = component.getGlobalSiteManager()
-        sm.registerHandler(send_course_completed_email)
-
         mailer = component.getUtility(ITestMailDelivery)
         def _get_mail_msg():
             assert_that(mailer.queue, has_length(1))
             msg = mailer.queue[0]
             assert_that(msg, has_property('body'))
             body = decodestring(msg.body)
+            # FIXME remove
+#             html = decodestring(msg.html)
+#             with open('/Users/jzuech/bleh_email_output.html', 'w+') as f:
+#                 f.write(html)
             del mailer.queue[:]
             return body
 
         notify(CourseCompletedEvent(course, user))
         msg = _get_mail_msg()
-        assert_that(msg, contains_string("You have completed"))
-        assert_that(msg, does_not(contains_string("You may view your certificate")))
+        assert_that(msg, contains_string("Great job completing"))
+        assert_that(msg, does_not(contains_string("Feel free to download")))
 
         # Policy with no cert
         policy = CompletableItemAggregateCompletionPolicy()
@@ -190,11 +191,11 @@ class TestSubscribers(ApplicationLayerTest):
         policy_container.context_policy = policy
         notify(CourseCompletedEvent(course, user))
         msg = _get_mail_msg()
-        assert_that(msg, contains_string("You have completed"))
-        assert_that(msg, does_not(contains_string("You may view your certificate")))
+        assert_that(msg, contains_string("Great job completing"))
+        assert_that(msg, does_not(contains_string("Feel free to download")))
 
         policy.offers_completion_certificate = True
         notify(CourseCompletedEvent(course, user))
         msg = _get_mail_msg()
-        assert_that(msg, contains_string("You have completed"))
-        assert_that(msg, contains_string("You may view your certificate"))
+        assert_that(msg, contains_string("Great job completing"))
+        assert_that(msg, contains_string("Feel free to download"))

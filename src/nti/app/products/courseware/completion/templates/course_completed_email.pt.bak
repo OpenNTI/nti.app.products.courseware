@@ -1,0 +1,38 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+	 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	  xmlns:metal="http://xml.zope.org/namespaces/metal"
+	  xmlns:tal="http://xml.zope.org/namespaces/tal">
+	<head>
+		<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+		<title>Welcome To NextThought</title>
+		<style metal:use-macro="macro:style">
+		</style>
+	</head>
+	<body>
+<div class="container">
+	<div metal:use-macro="macro:header"></div>
+	<div class="main">
+		<p>Congratulations <span tal:content="options/informal_username" class="realname tterm">John</span>!</p>
+
+		<p>
+			You have completed
+		&ldquo;<span tal:content="options/course_title | default">my
+		course</span>&rdquo; by <a href="https://nextthought.com"
+                tal:attributes="href request/application_url"
+                tal:content="options/brand_name">Nextthought</a>.
+		</p>
+
+		<p tal:condition="options/cert_link">
+		      You may view your certificate <a href="https://nextthought.com"
+                tal:attributes="href options/cert_link">here</a>.
+		</p>
+
+		<div id="logo-bar nti">
+			<img src="http://d2ixlfeu83tci.cloudfront.net/images/email_logo.png" width="177" height="25" alt="NextThought Logo" />
+		</div>
+	</div>
+	<div metal:use-macro="macro:footer"></div>
+</div>
+	</body>
+</html>
