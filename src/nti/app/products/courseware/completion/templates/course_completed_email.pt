@@ -278,7 +278,7 @@
                                                                 <tr>
                                                                     <td valign="middle" align="center"
                                                                         style="font-family: Open Sans, -apple-system, BlinkMacSystemFont, Roboto, Helvetica Neue, Helvetica, Arial, sans-serif;">
-                                                                        <img src="./assets/icons-green-download.png" class=" va-middle" width="40" height="40" alt="download" style="line-height: 100%; border: 0 none; outline: none; text-decoration: none; vertical-align: middle; font-size: 0; display: block; width: 40px; height: 40px;" />
+                                                                        <img src="https://s3.amazonaws.com/content.nextthought.com/images/coursecompletion/Certificate.svg" class=" va-middle" width="40" height="40" alt="download" style="line-height: 100%; border: 0 none; outline: none; text-decoration: none; vertical-align: middle; font-size: 0; display: block; width: 40px; height: 40px;" />
                                                                     </td>
                                                                 </tr>
                                                             </table>
@@ -310,7 +310,7 @@
                                                                 <tr class="list-item">
                                                                     <td class="lh-1" style="font-family: Open Sans, -apple-system, BlinkMacSystemFont, Roboto, Helvetica Neue, Helvetica, Arial, sans-serif; padding-top: 0; padding-bottom: 8px; line-height: 100%;">
                                                                         <a href="www.nextthought.com" title="certificate" tal:attributes="href options/cert_link">
-                                                                        <img src="./assets/icons-gray-file.png"
+                                                                        <img src="https://s3.amazonaws.com/content.nextthought.com/images/coursecompletion/document.svg"
                                                                              class=" va-bottom mr-sm va-middle" width="16" height="16" alt="file"
                                                                              style="line-height: 100%; outline: none; text-decoration: none; vertical-align: bottom; font-size: 0; margin-right: 8px; border: 0 none;" />
                                                                         </a>
