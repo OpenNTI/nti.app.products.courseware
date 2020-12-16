@@ -997,20 +997,19 @@ class UserCourseLessonCompletionStatsView(AbstractAuthenticatedView):
             or self._is_scheduled(obj)
 
     def _process_item(self, ntiid, required_stats, unrequired_stats):
-        if ntiid in self.completable_items:
-            if ntiid in self.required_items:
+        stats = unrequired_stats
+        if      ntiid in self.completable_items \
+            and ntiid in self.required_items:
                 stats = required_stats
-            else:
-                stats = unrequired_stats
 
-            if ntiid not in self.user_completed_items:
-                stats.add_incomplete_ntiid(ntiid)
+        if ntiid not in self.user_completed_items:
+            stats.add_incomplete_ntiid(ntiid)
+        else:
+            completed_item = self.user_completed_items[ntiid]
+            if completed_item.Success:
+                stats.add_successful_item(completed_item)
             else:
-                completed_item = self.user_completed_items[ntiid]
-                if completed_item.Success:
-                    stats.add_successful_item(completed_item)
-                else:
-                    stats.add_unsuccessful_item(completed_item)
+                stats.add_unsuccessful_item(completed_item)
 
     def _process_asset(self, asset, required_stats, unrequired_stats):
         # We could check if these items are visible etc, but
@@ -1023,7 +1022,8 @@ class UserCourseLessonCompletionStatsView(AbstractAuthenticatedView):
         if ICompletableItem.providedBy(target):
             item_ntiid = getattr(target, 'ntiid', None)
             self._process_item(item_ntiid, required_stats, unrequired_stats)
-        elif ICompletableItem.providedBy(item):
+        else:
+            # Want to handle even non ICompletableItem objects here
             item_ntiid = getattr(item, 'ntiid', None)
             self._process_item(item_ntiid, required_stats, unrequired_stats)
 
