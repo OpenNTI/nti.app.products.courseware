@@ -314,7 +314,7 @@
                                                                              class=" va-bottom mr-sm va-middle" width="16" height="16" alt="file"
                                                                              style="line-height: 100%; outline: none; text-decoration: none; vertical-align: bottom; font-size: 0; margin-right: 8px; border: 0 none;" />
                                                                         </a>
-                                                                        ${course_title} Certificate
+                                                                        ${options/course_title} Certificate
                                                                     </td>
                                                                 </tr>
                                                             </table>
