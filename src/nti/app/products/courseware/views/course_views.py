@@ -996,7 +996,18 @@ class UserCourseLessonCompletionStatsView(AbstractAuthenticatedView):
             or obj.is_published(principal=self._user) \
             or self._is_scheduled(obj)
 
-    def _process_item(self, ntiid, required_stats, unrequired_stats):
+    def _process_item(self, item, ntiid, required_stats, unrequired_stats):
+        """
+        If completable and not in our completable items, those items are
+        not visible to our user.
+
+        If not completable and not in our completable items (e.g. discussion
+        refs), those *may* be visible to our user and we assume so for now.
+
+        """
+        if      ICompletableItem.providedBy(item) \
+            and not ntiid in self.completable_items:
+            return
         stats = unrequired_stats
         if      ntiid in self.completable_items \
             and ntiid in self.required_items:
@@ -1021,11 +1032,11 @@ class UserCourseLessonCompletionStatsView(AbstractAuthenticatedView):
         target = find_object_with_ntiid(target_ntiid)
         if ICompletableItem.providedBy(target):
             item_ntiid = getattr(target, 'ntiid', None)
-            self._process_item(item_ntiid, required_stats, unrequired_stats)
+            self._process_item(target, item_ntiid, required_stats, unrequired_stats)
         else:
             # Want to handle even non ICompletableItem objects here
             item_ntiid = getattr(item, 'ntiid', None)
-            self._process_item(item_ntiid, required_stats, unrequired_stats)
+            self._process_item(item, item_ntiid, required_stats, unrequired_stats)
 
     def _get_lesson_stats(self, lesson):
         required_stats = _CompletionStats()
@@ -1090,7 +1101,7 @@ class UserCourseLessonCompletionStatsView(AbstractAuthenticatedView):
         for ntiid, item in self.completable_items.items():
             if not IQAssignment.providedBy(item):
                 continue
-            self._process_item(ntiid, required_stats, unrequired_stats)
+            self._process_item(item, ntiid, required_stats, unrequired_stats)
         return required_stats, unrequired_stats
 
     def _check_access(self):
