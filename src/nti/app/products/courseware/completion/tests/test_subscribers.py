@@ -111,42 +111,45 @@ class TestSubscribers(ApplicationLayerTest):
         sm.registerHandler(course_completion_listener)
         sm.registerSubscriptionAdapter(_MockRequiredItemProvider)
 
-        # No policy
-        self._send_update(user, course)
-        assert_that(self.subscriber_hit, is_(False))
+        try:
+            # No policy
+            self._send_update(user, course)
+            assert_that(self.subscriber_hit, is_(False))
 
-        # Policy with no progress
-        policy = CompletableItemAggregateCompletionPolicy()
-        policy.percentage = 1.0
-        policy_container = ICompletionContextCompletionPolicyContainer(course)
-        policy_container.context_policy = policy
-        self._send_update(user, course)
-        assert_that(self.subscriber_hit, is_(False))
+            # Policy with no progress
+            policy = CompletableItemAggregateCompletionPolicy()
+            policy.percentage = 1.0
+            policy_container = ICompletionContextCompletionPolicyContainer(course)
+            policy_container.context_policy = policy
+            self._send_update(user, course)
+            assert_that(self.subscriber_hit, is_(False))
 
-        # Course completed item, unsuccessful
-        principal_container = component.queryMultiAdapter((user, course),
-                                                          IPrincipalCompletedItemContainer)
-        completed_item = self._completed_item(user, item, False)
-        principal_container.add_completed_item(completed_item)
-        self._send_update(user, course)
-        assert_that(self.subscriber_hit, is_(False))
+            # Course completed item, unsuccessful
+            principal_container = component.queryMultiAdapter((user, course),
+                                                              IPrincipalCompletedItemContainer)
+            completed_item = self._completed_item(user, item, False)
+            principal_container.add_completed_item(completed_item)
+            self._send_update(user, course)
+            assert_that(self.subscriber_hit, is_(False))
 
-        # Now successful
-        completed_item.Success = True
-        self._send_update(user, course)
-        assert_that(self.subscriber_hit, is_(True))
-        self.subscriber_hit = False
+            # Now successful
+            completed_item.Success = True
+            self._send_update(user, course)
+            assert_that(self.subscriber_hit, is_(True))
+            self.subscriber_hit = False
 
-        # Another event does not fire
-        self._send_update(user, course)
-        assert_that(self.subscriber_hit, is_(False))
+            # Another event does not fire
+            self._send_update(user, course)
+            assert_that(self.subscriber_hit, is_(False))
 
-        # Completed course, but unsuccessful will fire a new event
-        assert_that(principal_container.ContextCompletedItem, not_none())
-        principal_container.ContextCompletedItem.Success = False
-        self._send_update(user, course)
-        assert_that(self.subscriber_hit, is_(True))
-
+            # Completed course, but unsuccessful will fire a new event
+            assert_that(principal_container.ContextCompletedItem, not_none())
+            principal_container.ContextCompletedItem.Success = False
+            self._send_update(user, course)
+            assert_that(self.subscriber_hit, is_(True))
+        finally:
+            sm.unregisterHandler(course_completion_listener)
+            sm.unregisterSubscriptionAdapter(_MockRequiredItemProvider)
 
     @WithMockDSTrans
     def test_completion_email(self):
