@@ -49,6 +49,8 @@ from nti.contenttypes.courses.interfaces import ICourseCatalogEntry
 from nti.contenttypes.courses.interfaces import CourseCompletedEvent
 from nti.contenttypes.courses.interfaces import ICourseCompletedEvent
 
+from nti.contenttypes.courses.utils import is_enrolled
+
 from nti.dataserver.users.interfaces import IUserProfile
 
 from nti.links.externalization import render_link
@@ -81,7 +83,12 @@ def _course_progress_updated(course, event):
     This object is not used when querying course completion state. To do
     that correctly, we'd have to determine how to handle shifting
     requirements.
+
+    Admins have their progress/item-completion status tracked, but they
+    cannot complete the course.
     """
+    if not is_enrolled(course, event.user):
+        return
     user = event.user
     principal_container = component.queryMultiAdapter((user, course),
                                                       IPrincipalCompletedItemContainer)
