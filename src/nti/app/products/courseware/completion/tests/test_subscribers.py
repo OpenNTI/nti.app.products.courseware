@@ -132,7 +132,21 @@ class TestSubscribers(ApplicationLayerTest):
             self._send_update(user, course)
             assert_that(self.subscriber_hit, is_(False))
 
-            # Now successful
+            # Now successful but not enrolled
+            completed_item.Success = True
+            self._send_update(user, course)
+            assert_that(self.subscriber_hit, is_(False))
+            self.subscriber_hit = False
+
+            # Enrolled but unsuccessful
+            enrollment_manager = ICourseEnrollmentManager(course)
+            enrollment_manager.enroll(user)
+            completed_item.Success = False
+            self._send_update(user, course)
+            assert_that(self.subscriber_hit, is_(False))
+            self.subscriber_hit = False
+
+            # Now enrolled and successful
             completed_item.Success = True
             self._send_update(user, course)
             assert_that(self.subscriber_hit, is_(True))
@@ -175,10 +189,6 @@ class TestSubscribers(ApplicationLayerTest):
             msg = mailer.queue[0]
             assert_that(msg, has_property('body'))
             body = decodestring(msg.body)
-            # FIXME remove
-#             html = decodestring(msg.html)
-#             with open('/Users/jzuech/bleh_email_output.html', 'w+') as f:
-#                 f.write(html)
             del mailer.queue[:]
             return body
 
