@@ -88,6 +88,7 @@ from nti.common.string import is_false
 from nti.contenttypes.courses.interfaces import ES_PUBLIC
 
 from nti.contenttypes.courses.interfaces import ICourseCatalog
+from nti.contenttypes.courses.interfaces import IDeletedCourse
 from nti.contenttypes.courses.interfaces import ICourseInstance
 from nti.contenttypes.courses.interfaces import ICourseEnrollments
 from nti.contenttypes.courses.interfaces import ICourseCatalogEntry
@@ -246,6 +247,15 @@ class enroll_course_view(AbstractAuthenticatedView,
 
         if not can_create(catalog_entry, request=self.request):
             raise hexc.HTTPForbidden()
+
+        if IDeletedCourse.providedBy(ICourseInstance(catalog_entry)):
+            raise_json_error(self.request,
+                             hexc.HTTPUnprocessableEntity,
+                             {
+                                 'message': _('Course is no longer available.'),
+                                 'code': 'CourseNotAvailableError',
+                             },
+                             None)
 
         try:
             enrollment = do_course_enrollment(catalog_entry,
