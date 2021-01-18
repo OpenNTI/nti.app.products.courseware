@@ -37,9 +37,9 @@ class CourseAcclaimBadgeContainer(CaseInsensitiveCheckingLastModifiedBTreeContai
 
     def get_or_create_badge(self, badge):
         if badge.__name__ not in self:
-            self[badge.__name__] = badge
+            self[badge.template_id] = badge
             badge.__parent__ = self
-        return self[badge.__name__]
+        return self[badge.template_id]
 
 
 def course_to_badge_container(course, create=True):
