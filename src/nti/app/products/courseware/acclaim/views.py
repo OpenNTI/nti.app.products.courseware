@@ -12,9 +12,12 @@ from nti.app.products.courseware.acclaim.interfaces import ICourseAcclaimBadgeCo
 
 from nti.app.externalization.view_mixins import ModeledContentUploadRequestUtilsMixin
 
+from nti.dataserver.authorization import ACT_READ
 from nti.dataserver.authorization import ACT_CONTENT_EDIT
 
 from nti.externalization.interfaces import StandardExternalFields
+
+from nti.externalization.externalization import to_external_object
 
 ITEMS = StandardExternalFields.ITEMS
 TOTAL = StandardExternalFields.TOTAL
@@ -39,4 +42,20 @@ class CourseAcclaimBadgesInsertView(AbstractAuthenticatedView,
     def _do_call(self):
         acclaim_badge = self.readCreateUpdateContentObject(self.remoteUser)
         result = self.context.get_or_create_badge(acclaim_badge)
+        return result
+
+
+@view_config(route_name='objects.generic.traversal',
+             context=ICourseAcclaimBadgeContainer,
+             permission=ACT_READ,
+             renderer='rest')
+class CourseAcclaimBadgesView(AbstractAuthenticatedView):
+
+    def __call__(self):
+        # XXX: Filter out invalid (org) badges? Probably only display those
+        # for admins
+        result = to_external_object(self.context)
+        badges = sorted(self.context.values(), key=lambda x: x.name)
+        result[ITEMS] = badges
+        result[TOTAL] = len(badges)
         return result
