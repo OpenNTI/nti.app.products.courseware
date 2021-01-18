@@ -17,16 +17,11 @@ from zope import interface
 
 from zope.location.interfaces import ILocation
 
-from nti.app.products.courseware.webinars.calendar import IWebinarCalendarEvent
-
-from nti.app.products.webinar.decorators import WebinarDecorator
-
 from nti.app.renderers.decorators import AbstractAuthenticatedRequestAwareDecorator
 
 from nti.contenttypes.courses.interfaces import ICourseInstance
 
 from nti.externalization.interfaces import StandardExternalFields
-from nti.externalization.interfaces import IExternalMappingDecorator
 
 from nti.links.links import Link
 
@@ -35,30 +30,16 @@ LINKS = StandardExternalFields.LINKS
 logger = __import__('logging').getLogger(__name__)
 
 
-@component.adapter(IWebinarCalendarEvent, IRequest)
-class _WebinarEventDecorator(AbstractAuthenticatedRequestAwareDecorator):
+@component.adapter(ICourseInstance, IRequest)
+class _CourseAcclaimBadgesDecorator(AbstractAuthenticatedRequestAwareDecorator):
 
     # pylint: disable=arguments-differ
-    def _do_decorate_external(self, event, result):
-        course = ICourseInstance(event, None)
-        if course is None:
-            return
-
-        result['WebinarTitle'] = event.webinar.subject
-        result['WebinarTimes'] = event.webinar.times
-
+    def _do_decorate_external(self, course, result):
         _links = result.setdefault(LINKS, [])
-        link = Link(event.webinar,
-                    rel='Webinar')
+        link = Link(course,
+                    rel='badges',
+                    elements=('badges',))
         interface.alsoProvides(link, ILocation)
         link.__name__ = ''
         link.__parent__ = course
         _links.append(link)
-
-
-@component.adapter(IWebinarCalendarEvent)
-@interface.implementer(IExternalMappingDecorator)
-class _WebinarEventLinkDecorator(WebinarDecorator):
-
-    def _get_webinar(self, context):
-        return context.webinar
