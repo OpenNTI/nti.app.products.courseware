@@ -29,6 +29,10 @@ from zope.annotation.interfaces import IAnnotations
 
 from zope.cachedescriptors.property import Lazy
 
+from zope.traversing.interfaces import IPathAdapter
+
+from nti.app.products.integration.workspaces import IntegrationCollection
+
 from nti.app.authentication import get_remote_user
 
 from nti.app.externalization.error import raise_json_error
@@ -864,3 +868,16 @@ def _course_enrollment_record_last_seen_time(record):
     user = User.get_user(record.Principal)
     course = record.CourseInstance
     return component.queryMultiAdapter((user, course), ILastSeenProvider)
+
+
+@interface.implementer(IPathAdapter)
+@component.adapter(ICourseInstance, IRequest)
+def course_integration_collection(course, request):
+    """
+    Set the :class:`IIntegrationCollection` lineage as our course so
+    that we can permission integration objects based on course permission.
+    """
+    if has_permission(ACT_CONTENT_EDIT, course, request):
+        collection = IntegrationCollection(course)
+        collection.__parent__ = course
+        return collection

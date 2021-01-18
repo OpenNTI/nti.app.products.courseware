@@ -308,6 +308,18 @@
 	<subscriber factory=".decorators._AnnouncementsDecorator"
 				provides="nti.externalization.interfaces.IExternalObjectDecorator" />
 
+    <!-- Integrations -->
+    <subscriber factory=".decorators._CourseInstanceIntegrationsDecorator"
+                provides="nti.externalization.interfaces.IExternalMappingDecorator"
+                for="nti.contenttypes.courses.interfaces.ICourseInstance
+                     pyramid.interfaces.IRequest" />
+
+    <adapter name="Integrations"
+             for="nti.contenttypes.courses.interfaces.ICourseInstance
+                  pyramid.interfaces.IRequest"
+             factory=".adapters.course_integration_collection"
+             provides="zope.traversing.interfaces.IPathAdapter" />
+
 	<!-- Workspaces -->
 	<subscriber factory=".workspaces.CoursesWorkspace"
 				provides=".interfaces.ICoursesWorkspace" />
@@ -715,6 +727,9 @@
 			 provides="nti.contenttypes.courses.interfaces.ICourseTabPreferences"
 			 for="nti.contenttypes.courses.interfaces.ICourseSubInstance" />
 
+    <!-- Acclaim Badges -->
+    <include package=".acclaim" />
+
 	<!-- Calendar -->
 	<include package=".calendar" />
 
@@ -733,7 +748,7 @@
 	<!-- Views -->
 	<include package=".views" />
 
-	<!-- Completion -->
+	<!-- Webinars -->
 	<include package=".webinars" />
 
 	<!-- Cartridge -->

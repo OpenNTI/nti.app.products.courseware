@@ -64,6 +64,7 @@ setup(
         'isodate',
         'nti.app.assessment',
         'nti.app.contenttypes.presentation',
+        'nti.app.products.acclaim',
         'nti.app.products.webinar',
         'nti.app.invitations',
         'nti.app.site',

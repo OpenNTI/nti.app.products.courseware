@@ -1321,3 +1321,21 @@ class AdminCatalogEntryDecorator(AbstractAuthenticatedRequestAwareDecorator):
                     method='PUT',
                     elements=(VIEW_ENROLLMENT_OPTIONS,))
         _links.append(link)
+
+
+@component.adapter(ICourseInstance)
+@interface.implementer(IExternalMappingDecorator)
+class _CourseInstanceIntegrationsDecorator(AbstractAuthenticatedRequestAwareDecorator):
+    """
+    Return a link to the integration collections off of our
+    course instance.
+    """
+
+    def _predicate(self, context, unused_result):
+        return has_permission(ACT_CONTENT_EDIT, context, self.request)
+
+    def _do_decorate_external(self, context, result):
+        _links = result.setdefault(LINKS, [])
+        _links.append(Link(context,
+                           rel='Integrations',
+                           elements=('Integrations',)))

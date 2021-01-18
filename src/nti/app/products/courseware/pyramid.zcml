@@ -8,6 +8,7 @@
 
 	<include package=".views" file="pyramid.zcml" />
 
+    <include package=".acclaim" file="pyramid.zcml" />
 	<include package=".cartridge" file="pyramid.zcml" />
 	<include package=".completion" file="pyramid.zcml"/>
     <include package=".qti" file="pyramid.zcml" />
