@@ -171,7 +171,7 @@ class PurchasedCatalogCoursesProvider(object):
         result = [ICourseCatalogEntry(x.CourseInstance) for x in result]
         if filter_string:
             filter_utility = component.getUtility(ICourseCatalogEntryFilterUtility)
-            result = filter_utility.filter_entries(result, filter_string)
+            result = filter_utility.filter_entries(result, (filter_string,))
         return result
 
 
