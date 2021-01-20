@@ -438,6 +438,10 @@ class TestPersistentWorkspaces(AbstractEnrollingBase, ApplicationLayerTest):
             assert_that(item['IsAdmin'], is_(False))
             assert_that(item['IsEnrolled'], is_(False))
 
+        # Possible provider unique IDs
+        # [u'CS 1323-010', u'CS 1323-001', u'CS 1323-995', u'CS 1323',
+        #  u'ENGR 1510-901', u'CLC 3403', u'CLC 3403-01', u'CLC 3403-Restricted']
+
         # Filter the collection
         courses_filter_href = '%s?filter=%s' % (courses_href, 'nothing')
         available_courses = self.testapp.get(courses_filter_href).json_body
@@ -446,6 +450,23 @@ class TestPersistentWorkspaces(AbstractEnrollingBase, ApplicationLayerTest):
         courses_filter_href = '%s?filter=%s' % (courses_href, 'clc')
         available_courses = self.testapp.get(courses_filter_href).json_body
         assert_that(available_courses[ITEMS], has_length(3))
+
+        # Multiple filters
+        courses_filter_href = '%s?filter=%s' % (courses_href, 'clc,ENGR 1510')
+        available_courses = self.testapp.get(courses_filter_href).json_body
+        assert_that(available_courses[ITEMS], has_length(4))
+
+        courses_filter_href = '%s?filter=%s&filterOperator=intersection' % (courses_href, 'clc,ENGR 1510')
+        available_courses = self.testapp.get(courses_filter_href).json_body
+        assert_that(available_courses[ITEMS], has_length(0))
+
+        courses_filter_href = '%s?filter=%s&filterOperator=intersection' % (courses_href, 'ENGR 1510')
+        available_courses = self.testapp.get(courses_filter_href).json_body
+        assert_that(available_courses[ITEMS], has_length(1))
+
+        courses_filter_href = '%s?filter=%s' % (courses_href, 'clc,ENGR 1510,1323')
+        available_courses = self.testapp.get(courses_filter_href).json_body
+        assert_that(available_courses[ITEMS], has_length(8))
 
         # Paging
         courses_paging_href = '%s?filter=%s&batchStart=%s&batchSize=%s' % (courses_href, 'clc', 0, 1)

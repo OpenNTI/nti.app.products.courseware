@@ -1009,7 +1009,11 @@ class CourseCollectionView(_AbstractFilteredCourseView,
     By default, we return sorted by the catalog entry title and start date.
 
     params:
-        filter - (optional) include a catalog entry containing this str
+        filter - (optional) include a catalog entry containing this str;
+            comma separate multiple filters
+
+        filterOperator - (optional) either union or intersection if multiple filters
+            are supplied
 
     """
 
@@ -1035,9 +1039,24 @@ class CourseCollectionView(_AbstractFilteredCourseView,
 
     @Lazy
     def filter_str(self):
+        """
+        Returns a set of filter strings.
+        """
         # pylint: disable=no-member
         result = self._params.get('filter')
-        return result and result.lower()
+        if result:
+            result = result.split(',')
+            result = [x.lower() for x in result]
+        return result
+
+    @Lazy
+    def filter_operator(self):
+        param = self.request.params.get('filterOperator',  'union')
+        if param.lower() == 'union':
+            result = set.union
+        else:
+            result = set.intersection
+        return result
 
     @Lazy
     def filtered_entries(self):
@@ -1045,7 +1064,8 @@ class CourseCollectionView(_AbstractFilteredCourseView,
         filter_utility = component.getUtility(ICourseCatalogEntryFilterUtility)
         entries = filter_utility.filter_entries(self.iter_entries_and_records(),
                                                 self.filter_str,
-                                                selector=lambda x: x[0])
+                                                selector=lambda x: x[0],
+                                                operator=self.filter_operator)
         return entries
 
     def _sort_key(self, entry_tuple):
