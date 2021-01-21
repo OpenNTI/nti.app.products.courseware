@@ -1074,6 +1074,9 @@ class CourseCollectionView(_AbstractFilteredCourseView,
                         reverse=sort_reverse)
         return result
 
+    def _externalize_result(self, result):
+        return to_external_object(result)
+
     def __call__(self):
         container_count = len(self.context)
         new_items = self._get_items()
@@ -1084,7 +1087,7 @@ class CourseCollectionView(_AbstractFilteredCourseView,
         new_container = LastModifiedCopyingUserList()
         new_container.extend(ext_dict[ITEMS])
         self.context.container = new_container
-        result = to_external_object(self.context)
+        result = self._externalize_result(self.context)
         result[TOTAL] = container_count
         result['FilteredTotalItemCount'] = len(new_items)
 
