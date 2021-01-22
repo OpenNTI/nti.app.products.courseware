@@ -17,10 +17,16 @@ from zope import interface
 
 from zope.location.interfaces import ILocation
 
+from nti.app.products.courseware.acclaim.interfaces import ICourseAcclaimBadge
+
 from nti.app.renderers.decorators import AbstractAuthenticatedRequestAwareDecorator
+
+from nti.appserver.pyramid_authorization import has_permission
 
 from nti.contenttypes.courses.interfaces import ICourseInstance
 from nti.contenttypes.courses.interfaces import ICourseCatalogEntry
+
+from nti.dataserver.authorization import ACT_DELETE
 
 from nti.externalization.interfaces import StandardExternalFields
 
@@ -44,4 +50,24 @@ class _CourseAcclaimBadgesDecorator(AbstractAuthenticatedRequestAwareDecorator):
         interface.alsoProvides(link, ILocation)
         link.__name__ = ''
         link.__parent__ = course
+        _links.append(link)
+
+
+@component.adapter(ICourseAcclaimBadge, IRequest)
+class _CourseAcclaimBadgeDecorator(AbstractAuthenticatedRequestAwareDecorator):
+    """
+    Expose awarded badges for this user and any who can READ this user, which
+    is typically everyone.
+    """
+
+    def _predicate(self, context, unused_result):
+        return  self._is_authenticated \
+            and has_permission(ACT_DELETE, context)
+
+    # pylint: disable=arguments-differ
+    def _do_decorate_external(self, context, result):
+        _links = result.setdefault(LINKS, [])
+        link = Link(context,
+                    method='DELETE',
+                    rel='delete')
         _links.append(link)

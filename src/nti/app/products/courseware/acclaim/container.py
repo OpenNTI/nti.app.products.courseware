@@ -14,6 +14,7 @@ from zope import interface
 
 from zope.annotation import IAnnotations
 
+from nti.app.products.courseware.acclaim.interfaces import ICourseAcclaimBadge
 from nti.app.products.courseware.acclaim.interfaces import ICourseAcclaimBadgeContainer
 
 from nti.containers.containers import CaseInsensitiveCheckingLastModifiedBTreeContainer
@@ -36,6 +37,7 @@ class CourseAcclaimBadgeContainer(CaseInsensitiveCheckingLastModifiedBTreeContai
     __name__ = "badges"
 
     def get_or_create_badge(self, badge):
+        interface.alsoProvides(badge, ICourseAcclaimBadge)
         if badge.__name__ not in self:
             self[badge.template_id] = badge
             badge.__parent__ = self

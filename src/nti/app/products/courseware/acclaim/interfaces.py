@@ -10,6 +10,8 @@ from __future__ import absolute_import
 
 # pylint: disable=inherit-non-class,expression-not-assigned
 
+from zope import interface
+
 from zope.container.constraints import contains
 
 from zope.container.interfaces import IContainer
@@ -27,3 +29,10 @@ class ICourseAcclaimBadgeContainer(IContainer):
         """
         Normalize the given :class:`IAcclaimBadge` in our container.
         """
+
+
+class ICourseAcclaimBadge(interface.Interface):
+    """
+    A marker interface for badges stored in a course.
+    """
+ICourseAcclaimBadge.setTaggedValue('_ext_is_marker_interface', True)
