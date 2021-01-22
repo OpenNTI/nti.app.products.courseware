@@ -20,6 +20,7 @@ from zope.location.interfaces import ILocation
 from nti.app.renderers.decorators import AbstractAuthenticatedRequestAwareDecorator
 
 from nti.contenttypes.courses.interfaces import ICourseInstance
+from nti.contenttypes.courses.interfaces import ICourseCatalogEntry
 
 from nti.externalization.interfaces import StandardExternalFields
 
@@ -31,6 +32,7 @@ logger = __import__('logging').getLogger(__name__)
 
 
 @component.adapter(ICourseInstance, IRequest)
+@component.adapter(ICourseCatalogEntry, IRequest)
 class _CourseAcclaimBadgesDecorator(AbstractAuthenticatedRequestAwareDecorator):
 
     # pylint: disable=arguments-differ

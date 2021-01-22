@@ -26,6 +26,11 @@
                      pyramid.interfaces.IRequest"
                 provides="nti.externalization.interfaces.IExternalMappingDecorator" />
 
+    <subscriber factory=".decorators._CourseAcclaimBadgesDecorator"
+                for="nti.contenttypes.courses.interfaces.ICourseCatalogEntry
+                     pyramid.interfaces.IRequest"
+                provides="nti.externalization.interfaces.IExternalMappingDecorator" />
+
 	<!-- Externalization -->
 	<include package="nti.externalization" file="meta.zcml" />
 	<include package="nti.externalization" />
