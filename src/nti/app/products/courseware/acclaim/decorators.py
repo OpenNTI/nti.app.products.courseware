@@ -42,7 +42,8 @@ logger = __import__('logging').getLogger(__name__)
 class _CourseAcclaimBadgesDecorator(AbstractAuthenticatedRequestAwareDecorator):
 
     # pylint: disable=arguments-differ
-    def _do_decorate_external(self, course, result):
+    def _do_decorate_external(self, context, result):
+        course = ICourseInstance(context)
         _links = result.setdefault(LINKS, [])
         link = Link(course,
                     rel='badges',
