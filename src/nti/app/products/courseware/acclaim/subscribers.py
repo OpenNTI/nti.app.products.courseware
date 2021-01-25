@@ -16,6 +16,7 @@ from nti.contenttypes.courses.interfaces import ICourseCompletedEvent
 
 from nti.app.products.acclaim.interfaces import IAcclaimClient
 from nti.app.products.acclaim.interfaces import IAcclaimIntegration
+from nti.app.products.acclaim.interfaces import DuplicateAcclaimBadgeAwardedError
 
 from nti.app.products.courseware.acclaim.interfaces import ICourseAcclaimBadgeContainer
 
@@ -43,6 +44,13 @@ def _award_badge_on_course_completion(course, event):
                         badge.organization_id,
                         current_organization_id)
             continue
-        client.award_badge(event.user,
-                           badge.template_id,
-                           evidence_ntiid=entry_ntiid)
+        try:
+            client.award_badge(event.user,
+                               badge.template_id,
+                               evidence_ntiid=entry_ntiid)
+        except DuplicateAcclaimBadgeAwardedError:
+            logger.info("Duplicate acclaim badge awarded error (%s) (%s) (%s)",
+                        badge.template_id,
+                        entry_ntiid,
+                        event.user.username)
+            pass
