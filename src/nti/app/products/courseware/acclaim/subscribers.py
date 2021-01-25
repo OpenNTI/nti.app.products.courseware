@@ -31,7 +31,8 @@ def _award_badge_on_course_completion(course, event):
     integration = component.queryUtility(IAcclaimIntegration)
     if not integration:
         return
-    entry_ntiid = ICourseCatalogEntry(course).ntiid
+    entry = ICourseCatalogEntry(course)
+    entry_ntiid = entry.ntiid
     client = IAcclaimClient(integration)
     current_organization_id = getattr(integration.organization, 'organization_id', None)
     if not current_organization_id:
@@ -47,7 +48,8 @@ def _award_badge_on_course_completion(course, event):
         try:
             client.award_badge(event.user,
                                badge.template_id,
-                               evidence_ntiid=entry_ntiid)
+                               evidence_ntiid=entry_ntiid,
+                               evidence_desc=u"Awarded for %s" % entry.title)
         except DuplicateAcclaimBadgeAwardedError:
             logger.info("Duplicate acclaim badge awarded error (%s) (%s) (%s)",
                         badge.template_id,
