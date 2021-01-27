@@ -49,6 +49,7 @@ def _award_badge_on_course_completion(course, event):
             client.award_badge(event.user,
                                badge.template_id,
                                evidence_ntiid=entry_ntiid,
+                               evidence_title=u'Course completed',
                                evidence_desc=u"Awarded for %s" % entry.title)
         except DuplicateAcclaimBadgeAwardedError:
             logger.info("Duplicate acclaim badge awarded error (%s) (%s) (%s)",
