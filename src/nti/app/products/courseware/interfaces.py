@@ -56,6 +56,7 @@ from nti.schema.field import Dict
 from nti.schema.field import Object
 from nti.schema.field import ValidURI
 from nti.schema.field import ValidTextLine as TextLine
+from nti.app.products.integration.interfaces import IIntegrationCollection
 
 ACT_VIEW_ROSTER = Permission('nti.actions.courseware.view_roster')
 ACT_VIEW_ACTIVITY = Permission('nti.actions.courseware.view_activity')
@@ -553,6 +554,10 @@ class ICourseSharingScopeUtility(interface.Interface):
         """
         Remove a scope from the utility.
         """
+
+
+class ICourseIntegrationCollection(IIntegrationCollection):
+    pass
 
 # deprecations
 

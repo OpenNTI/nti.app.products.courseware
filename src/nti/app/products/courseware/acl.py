@@ -16,7 +16,10 @@ from zope.cachedescriptors.property import Lazy
 from zope.security.interfaces import IPrincipal
 
 from nti.app.products.courseware.interfaces import IEnrolledCoursesCollection
+from nti.app.products.courseware.interfaces import ICourseIntegrationCollection
 from nti.app.products.courseware.interfaces import IAdministeredCoursesCollection
+
+from nti.coremetadata.interfaces import ISupplementalACLProvider
 
 from nti.dataserver.authorization_acl import ace_allowing
 from nti.dataserver.authorization_acl import acl_from_aces
@@ -50,3 +53,22 @@ class EnrolledCoursesCollectionACLProvider(CollectionACLProviderMixin):
 @component.adapter(IAdministeredCoursesCollection)
 class AdministeredCoursesCollectionACLProvider(CollectionACLProviderMixin):
     pass
+
+
+@interface.implementer(IACLProvider)
+@component.adapter(ICourseIntegrationCollection)
+class CourseIntegrationCollectionACLProvider(object):
+
+    def __init__(self, context):
+        self.context = context
+
+    @Lazy
+    def __acl__(self):
+        aces = []
+        for supplemental in component.subscribers((self.context,),
+                                                  ISupplementalACLProvider):
+            for supplemental_ace in supplemental.__acl__ or ():
+                if supplemental_ace is not None:
+                    aces.append(supplemental_ace)
+        acl = acl_from_aces(aces)
+        return acl

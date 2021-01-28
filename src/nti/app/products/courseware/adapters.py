@@ -44,6 +44,7 @@ from nti.app.products.courseware._outline_path import OutlinePathFactory
 from nti.app.products.courseware.enrollment import EnrollmentOptionContainer
 
 from nti.app.products.courseware.interfaces import IEnrollmentOptionContainer
+from nti.app.products.courseware.interfaces import ICourseIntegrationCollection
 from nti.app.products.courseware.interfaces import ILegacyCommunityBasedCourseInstance
 from nti.app.products.courseware.interfaces import ILegacyCourseConflatedContentPackageUsedAsCourse
 
@@ -870,6 +871,14 @@ def _course_enrollment_record_last_seen_time(record):
     return component.queryMultiAdapter((user, course), ILastSeenProvider)
 
 
+@interface.implementer(ICourseIntegrationCollection)
+class CourseIntegrationCollection(IntegrationCollection):
+
+    def __init__(self, course):
+        self.course = course
+        self.__parent__ = course
+
+
 @interface.implementer(IPathAdapter)
 @component.adapter(ICourseInstance, IRequest)
 def course_integration_collection(course, request):
@@ -878,6 +887,6 @@ def course_integration_collection(course, request):
     that we can permission integration objects based on course permission.
     """
     if has_permission(ACT_CONTENT_EDIT, course, request):
-        collection = IntegrationCollection(course)
+        collection = CourseIntegrationCollection(course)
         collection.__parent__ = course
         return collection

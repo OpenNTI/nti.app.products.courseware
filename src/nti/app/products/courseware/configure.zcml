@@ -73,6 +73,7 @@
 	<!-- ACLs -->
 	<adapter factory=".acl.EnrolledCoursesCollectionACLProvider" />
 	<adapter factory=".acl.AdministeredCoursesCollectionACLProvider" />
+	<adapter factory=".acl.CourseIntegrationCollectionACLProvider" />
 
 	<!-- I18N -->
 	<i18n:registerTranslations directory="locales" />
