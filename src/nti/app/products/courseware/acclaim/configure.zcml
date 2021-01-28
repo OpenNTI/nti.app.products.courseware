@@ -45,9 +45,4 @@
 		modules=".container" />
 
 	<subscriber handler=".subscribers._award_badge_on_course_completion" />
-
-	<!-- ACL Providers -->
-    <subscriber factory=".acl.AcclaimBadgesSupplementalACLProvider"
-                for="nti.app.products.courseware.interfaces.ICourseIntegrationCollection"
-                provides="nti.dataserver.interfaces.ISupplementalACLProvider" />
 </configure>
