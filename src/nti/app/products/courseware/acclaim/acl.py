@@ -44,5 +44,6 @@ class AcclaimBadgesSupplementalACLProvider(object):
         result = []
         for editor in get_course_editors(self.course):
             editor = IPrincipal(editor)
-            ace_allowing(editor, ACT_ACCLAIM, type(self))
+            ace = ace_allowing(editor, ACT_ACCLAIM, type(self))
+            result.append(ace)
         return acl_from_aces(result)
