@@ -117,7 +117,7 @@ def send_invitation_email(invitation,
     brand = get_site_brand_name()
     brand_tag = 'Presented by NextThought'
     if brand.lower() != 'nextthought':
-        brand_tag = 'Presented by %s and NextThought' % brand
+        brand_tag = 'Presented by %s' % brand
 
     names = IFriendlyNamed(sender)
     informal_username = names.alias or names.realname or sender.username
