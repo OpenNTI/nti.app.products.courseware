@@ -1221,12 +1221,7 @@ class CourseCatalogByTagView(AbstractAuthenticatedView, BatchingUtilsMixin):
         return item_tuple[0].lower()
 
     def _bucket_sort_key(self, entry):
-        course = ICourseInstance(entry, None)
-        enrollment_count = None
-        if course is not None:
-            # pylint: disable=too-many-function-args
-            enrollment_count = ICourseEnrollments(course).count_enrollments()
-        return (enrollment_count is not None, enrollment_count)
+        return entry.ProviderUniqueID.lower()
 
     def _get_tagged_entries(self):
         """
@@ -1281,8 +1276,7 @@ class CourseCatalogByTagView(AbstractAuthenticatedView, BatchingUtilsMixin):
         for tag, entries in sorted_entry_tuples:
             tag_dict = dict()
             sorted_entries = sorted(entries,
-                                    key=self._bucket_sort_key,
-                                    reverse=True)
+                                    key=self._bucket_sort_key)
             tag_entry_count = len(sorted_entries)
             if not tag_entry_count:
                 # Skip any empty buckets.
