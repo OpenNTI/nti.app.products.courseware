@@ -55,6 +55,8 @@ from nti.dataserver.tests.mock_dataserver import WithMockDSTrans
 
 from nti.externalization.tests import externalizes
 
+from ZODB.interfaces import IConnection
+
 class TestCourseInstance(CourseLayerTest):
 
 	def test_course_implements(self):
@@ -150,6 +152,7 @@ class TestCourseInstance(CourseLayerTest):
 											'action', 'Allow',
 											'permission', is_([ACT_READ]))))
 
+	@WithMockDSTrans
 	@fudge.patch('nti.app.products.courseware.decorators.IEntityContainer',
 				 'nti.app.renderers.decorators.get_remote_user')
 	def test_course_sharing_scopes_externalizes(self, mock_container, mock_rem_user):
@@ -159,16 +162,17 @@ class TestCourseInstance(CourseLayerTest):
 		mock_rem_user.is_callable()
 
 		inst = courses.CourseInstance()
+		IConnection(self.ds.root).add(inst)
 		getattr(inst, 'Discussions')  # this creates the Public scope
 		getattr(inst, 'SubInstances')
 		ntiid = 'tag:nextthought.com,2011-10:NTI-OID-0x12345'
-		inst.SharingScopes['Public'].to_external_ntiid_oid = lambda: ntiid
+		inst.SharingScopes['Public']._v_ntiid = ntiid
 
 		subinst = courses.ContentCourseSubInstance()
 		inst.SubInstances['sec1'] = subinst
 		getattr(subinst, 'Discussions')
 		ntiid2 = ntiid + '2'
-		subinst.SharingScopes['Public'].to_external_ntiid_oid = lambda: ntiid2
+		subinst.SharingScopes['Public']._v_ntiid = ntiid2
 
 		result = {}
 		_SharingScopesAndDiscussionDecorator(subinst, None)._do_decorate_external(subinst, result)
