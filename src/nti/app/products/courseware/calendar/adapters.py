@@ -121,10 +121,10 @@ def _iter_admin_courses_for_user(user, entry_ntiids=None, excluded_entry_ntiids=
                 yield course
 
 
-def _iter_all_courses_for_user(user, **kwargs):
-    for course in _iter_admin_courses_for_user(user, **kwargs):
+def _iter_all_courses_for_user(user, *args, **kwargs):
+    for course in _iter_admin_courses_for_user(user, *args, **kwargs):
         yield course
-    for course in _iter_enrolled_courses_for_user(user, **kwargs):
+    for course in _iter_enrolled_courses_for_user(user, *args, **kwargs):
         yield course
 
 
