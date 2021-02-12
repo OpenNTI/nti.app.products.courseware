@@ -115,9 +115,7 @@ def send_invitation_email(invitation,
     policy = component.getUtility(ISitePolicyUserEventListener)
     support_email = getattr(policy, 'SUPPORT_EMAIL', 'support@nextthought.com')
     brand = get_site_brand_name()
-    brand_tag = 'Presented by NextThought'
-    if brand.lower() != 'nextthought':
-        brand_tag = 'Presented by %s' % brand
+    brand_tag = 'Presented by %s' % brand
 
     names = IFriendlyNamed(sender)
     informal_username = names.alias or names.realname or sender.username
