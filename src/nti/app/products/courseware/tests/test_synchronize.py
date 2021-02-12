@@ -104,7 +104,10 @@ from nti.dataserver.tests.test_authorization_acl import denies
 from nti.dataserver.tests.test_authorization_acl import permits
 
 from nti.dataserver.tests.mock_dataserver import WithMockDS
+from nti.dataserver.tests.mock_dataserver import WithMockDSTrans
 from nti.dataserver.tests.mock_dataserver import mock_db_trans
+
+from ZODB.interfaces import IConnection
 
 resource_filename = getattr(pkg_resources, 'resource_filename')
 
@@ -137,9 +140,11 @@ class TestFunctionalSynchronize(CourseLayerTest):
 	def tearDown(self):
 		component.getGlobalSiteManager().unregisterUtility(self.library, IContentPackageLibrary)
 
+	@WithMockDSTrans
 	def test_synchronize_with_sub_instances(self):
 		bucket = self.bucket
 		folder = self.folder
+		IConnection(self.ds.root).add(folder)
 
 		synchronize_catalog_from_root(folder, bucket)
 
@@ -148,10 +153,8 @@ class TestFunctionalSynchronize(CourseLayerTest):
 		gateway = spring['Gateway']
 
 		# Define our scope ntiids
-		public_ntiid = 'tag:nextthought.com,2011-10:NTI-OID-0x12345-public'
-		restricted_ntiid = 'tag:nextthought.com,2011-10:NTI-OID-0x12345-restricted'
-		gateway.SharingScopes['Public'].to_external_ntiid_oid = lambda: public_ntiid
-		gateway.SharingScopes['ForCredit'].to_external_ntiid_oid = lambda: restricted_ntiid
+		public_ntiid = gateway.SharingScopes['Public'].NTIID
+		restricted_ntiid = gateway.SharingScopes['ForCredit'].NTIID
 
 		assert_that(gateway, verifiably_provides(IEnrollmentMappedCourseInstance))
 		assert_that(gateway, externalizes())
@@ -189,10 +192,8 @@ class TestFunctionalSynchronize(CourseLayerTest):
 					is_(same_instance(legacy_catalog._CourseInstanceCatalogLegacyEntry)))
 
 		sec1 = gateway.SubInstances['01']
-		sec_public_ntiid = 'tag:nextthought.com,2011-10:NTI-OID-0x12345-public-sec'
-		sec_restricted_ntiid = 'tag:nextthought.com,2011-10:NTI-OID-0x12345-restricted-sec'
-		sec1.SharingScopes['Public'].to_external_ntiid_oid = lambda: sec_public_ntiid
-		sec1.SharingScopes['ForCredit'].to_external_ntiid_oid = lambda: sec_restricted_ntiid
+		sec_public_ntiid = sec1.SharingScopes['Public'].NTIID
+		sec_restricted_ntiid = sec1.SharingScopes['ForCredit'].NTIID
 
 		assert_that(ICourseInstanceVendorInfo(sec1),
 					 has_entry('OU', has_entry('key2', 72)))
@@ -549,6 +550,7 @@ class TestFunctionalSynchronize(CourseLayerTest):
 		content_node = tuple(tuple(outline.values())[0].values())[0]
 		assert_that( content_node.LessonOverviewNTIID, is_(lesson_ntiid) )
 
+	@WithMockDSTrans
 	def test_default_sharing_scope_use_parent(self):
 		"""
 		Verify if the 'UseParentDefaultSharingScope' is set in the section, the
@@ -556,6 +558,7 @@ class TestFunctionalSynchronize(CourseLayerTest):
 		"""
 		bucket = self.bucket
 		folder = self.folder
+		IConnection(self.ds.root).add(folder)
 		synchronize_catalog_from_root(folder, bucket)
 
 		spring = folder['Spring2014']
@@ -565,15 +568,11 @@ class TestFunctionalSynchronize(CourseLayerTest):
 		sec = gateway.SubInstances['02']
 
 		# Define our scope ntiids
-		public_ntiid = 'tag:nextthought.com,2011-10:NTI-OID-0x12345-public'
-		restricted_ntiid = 'tag:nextthought.com,2011-10:NTI-OID-0x12345-restricted'
-		gateway.SharingScopes['Public'].to_external_ntiid_oid = lambda: public_ntiid
-		gateway.SharingScopes['ForCredit'].to_external_ntiid_oid = lambda: restricted_ntiid
+		public_ntiid = gateway.SharingScopes['Public'].NTIID
+		restricted_ntiid = gateway.SharingScopes['ForCredit'].NTIID
 
-		sec_public_ntiid = 'tag:nextthought.com,2011-10:NTI-OID-0x12345-public-sec'
-		sec_restricted_ntiid = 'tag:nextthought.com,2011-10:NTI-OID-0x12345-restricted-sec'
-		sec.SharingScopes['Public'].to_external_ntiid_oid = lambda: sec_public_ntiid
-		sec.SharingScopes['ForCredit'].to_external_ntiid_oid = lambda: sec_restricted_ntiid
+		sec_public_ntiid = sec.SharingScopes['Public'].NTIID
+		sec_restricted_ntiid = sec.SharingScopes['ForCredit'].NTIID
 
 		gateway_ext = to_external_object(gateway)
 		sec2_ext = to_external_object(sec)
@@ -606,6 +605,7 @@ class TestFunctionalSynchronize(CourseLayerTest):
 										   has_entry('alias', 'From Vendor Info')),
 						'DefaultSharingScopeNTIID', gateway.SharingScopes['Public'].NTIID)))
 
+	@WithMockDSTrans
 	@fudge.patch('nti.app.products.courseware.decorators.IEntityContainer',
 				 'nti.app.renderers.decorators.get_remote_user')
 	def test_default_sharing_scope_do_not_use_parent(self, mock_container, mock_rem_user):
@@ -622,6 +622,7 @@ class TestFunctionalSynchronize(CourseLayerTest):
 
 		bucket = self.bucket
 		folder = self.folder
+		IConnection(self.ds.root).add(folder)
 		synchronize_catalog_from_root(folder, bucket)
 
 		spring = folder['Spring2014']
@@ -631,15 +632,11 @@ class TestFunctionalSynchronize(CourseLayerTest):
 		sec = gateway.SubInstances['03']
 
 		# Define our scope ntiids
-		public_ntiid = 'tag:nextthought.com,2011-10:NTI-OID-0x12345-public'
-		restricted_ntiid = 'tag:nextthought.com,2011-10:NTI-OID-0x12345-restricted'
-		gateway.SharingScopes['Public'].to_external_ntiid_oid = lambda: public_ntiid
-		gateway.SharingScopes['ForCredit'].to_external_ntiid_oid = lambda: restricted_ntiid
+		public_ntiid = gateway.SharingScopes['Public'].NTIID
+		restricted_ntiid = gateway.SharingScopes['ForCredit'].NTIID
 
-		sec_public_ntiid = 'tag:nextthought.com,2011-10:NTI-OID-0x12345-public-sec'
-		sec_restricted_ntiid = 'tag:nextthought.com,2011-10:NTI-OID-0x12345-restricted-sec'
-		sec.SharingScopes['Public'].to_external_ntiid_oid = lambda: sec_public_ntiid
-		sec.SharingScopes['ForCredit'].to_external_ntiid_oid = lambda: sec_restricted_ntiid
+		sec_public_ntiid = sec.SharingScopes['Public'].NTIID
+		sec_restricted_ntiid = sec.SharingScopes['ForCredit'].NTIID
 
 		gateway_ext = to_external_object(gateway)
 		sec_ext = to_external_object(sec)
@@ -695,9 +692,11 @@ class TestFunctionalSynchronize(CourseLayerTest):
 		assert_that(list(folder.iterCatalogEntries()),
 					 is_empty())
 
+	@WithMockDSTrans
 	def test_non_public_parent_course_doesnt_hide_child_section(self):
 		bucket = self.bucket
 		folder = self.folder
+		IConnection(self.ds.root).add(folder)
 
 		synchronize_catalog_from_root(folder, bucket)
 
