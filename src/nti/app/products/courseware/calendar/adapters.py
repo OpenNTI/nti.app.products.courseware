@@ -26,6 +26,7 @@ from nti.app.products.courseware.adapters import get_valid_course_context
 from nti.app.products.courseware.calendar.interfaces import ICourseCalendar
 from nti.app.products.courseware.calendar.interfaces import ICourseCalendarEvent
 from nti.app.products.courseware.calendar.interfaces import ICourseCalendarDynamicEventProvider
+from nti.app.products.courseware.calendar.interfaces import IEnrolledCourseCalendarDynamicEventProvider
 
 from nti.app.products.courseware.calendar.model import CourseCalendar
 
@@ -79,35 +80,52 @@ def _CourseCalendarPathAdapter(context, unused_request):
     return _CourseCalendarFactory(context)
 
 
-def _iter_courses_for_user(user, entry_ntiids=None, excluded_entry_ntiids=None):
 
-    def include_course_filter(course):
+def include_course_filter(course, entry_ntiids=None, excluded_entry_ntiids=None):
+    entry = ICourseCatalogEntry(course, None)
+    return  entry is not None \
+        and (not entry_ntiids or entry.ntiid in entry_ntiids) \
+        and (not excluded_entry_ntiids or entry.ntiid not in excluded_entry_ntiids)
+
+
+def _iter_enrolled_courses_for_user(user, entry_ntiids=None, excluded_entry_ntiids=None):
+    for enrollment in get_enrollments(user) or ():
+        course = ICourseInstance(enrollment, None)
         entry = ICourseCatalogEntry(course, None)
-        return  entry is not None \
-            and (not entry_ntiids or entry.ntiid in entry_ntiids) \
-            and (not excluded_entry_ntiids or entry.ntiid not in excluded_entry_ntiids)
+        is_preview_course = entry is not None and entry.Preview
+        if      course is not None \
+            and not is_preview_course \
+            and include_course_filter(course,
+                                      entry_ntiids=entry_ntiids,
+                                      excluded_entry_ntiids=excluded_entry_ntiids):
+            yield course
 
+
+def _iter_admin_courses_for_user(user, entry_ntiids=None, excluded_entry_ntiids=None):
     if is_admin_or_content_admin_or_site_admin(user):
         for catalog in component.subscribers((user,), IPrincipalAdministrativeRoleCatalog):
             queried = catalog.iter_administrations()
             for instance in queried:
                 course = ICourseInstance(instance)
-                if include_course_filter(course):
+                if include_course_filter(course,
+                                         entry_ntiids=entry_ntiids,
+                                         excluded_entry_ntiids=excluded_entry_ntiids):
                     yield course
     else:
         for instructed_course in get_instructed_courses(user) or ():
             course = ICourseInstance(instructed_course, None)
-            if course is not None and include_course_filter(course):
+            if      course is not None \
+                and include_course_filter(course,
+                                          entry_ntiids=entry_ntiids,
+                                          excluded_entry_ntiids=excluded_entry_ntiids):
                 yield course
 
-        for enrollment in get_enrollments(user) or ():
-            course = ICourseInstance(enrollment, None)
-            entry = ICourseCatalogEntry(course, None)
-            is_preview_course = entry is not None and entry.Preview
-            if      course is not None \
-                and not is_preview_course \
-                and include_course_filter(course):
-                yield course
+
+def _iter_all_courses_for_user(user, **kwargs):
+    for course in _iter_admin_courses_for_user(user, **kwargs):
+        yield course
+    for course in _iter_enrolled_courses_for_user(user, **kwargs):
+        yield course
 
 
 @component.adapter(IUser)
@@ -126,29 +144,35 @@ class CourseCalendarProvider(object):
         return res
 
     def _courses(self, user, entry_ntiids=None, excluded_entry_ntiids=None):
-        return _iter_courses_for_user(user, entry_ntiids, excluded_entry_ntiids)
+        return _iter_all_courses_for_user(user, entry_ntiids, excluded_entry_ntiids)
 
 
 @component.adapter(IUser)
 @interface.implementer(ICalendarEventProvider)
-class CourseCalendarEventProvider(object):
+class AdminCourseCalendarEventProvider(object):
+    """
+    A calendar event provider that for a user's administered courses, fetches all
+    persistent and dynamic events.
+    """
 
     def __init__(self, user):
         self.user = user
 
+    def _get_events(self, course, accum, exclude_dynamic=False):
+        calendar = ICourseCalendar(course, None)
+        if calendar is not None:
+            accum.extend([x for x in calendar.values()])
+        # add course dynamic events.
+        if not exclude_dynamic:
+            providers = component.subscribers((self.user, course),
+                                              ICourseCalendarDynamicEventProvider)
+            for x in providers or ():
+                accum.extend(x.iter_events())
+
     def iter_events(self, context_ntiids=None, excluded_context_ntiids=None, exclude_dynamic=False, **kwargs):
         res = []
         for course in self._courses(self.user, context_ntiids, excluded_context_ntiids):
-            calendar = ICourseCalendar(course, None)
-            if calendar is not None:
-                res.extend([x for x in calendar.values()])
-
-            # add course dynamic events.
-            if not exclude_dynamic:
-                providers = component.subscribers((self.user, course),
-                                                  ICourseCalendarDynamicEventProvider)
-                for x in providers or ():
-                    res.extend(x.iter_events())
+            self._get_events(course, res, exclude_dynamic)
             gevent.sleep()
         return res
 
@@ -158,9 +182,39 @@ class CourseCalendarEventProvider(object):
         that are in the inclusive `entry_ntiids` param and exclude any in the
         `excluded_entry_ntiids` param.
         """
-        return _iter_courses_for_user(user, entry_ntiids, excluded_entry_ntiids)
+        return _iter_admin_courses_for_user(user, entry_ntiids, excluded_entry_ntiids)
 
 
+@component.adapter(IUser)
+@interface.implementer(ICalendarEventProvider)
+class EnrolledCourseCalendarEventProvider(AdminCourseCalendarEventProvider):
+    """
+    A calendar event provider that for a user's enrolled courses, fetches all
+    parent class events (persistent and dynamic), as well as the dynamic
+    enrolled course events (e.g. assignments).
+    """
+
+    def _get_events(self, course, accum, exclude_dynamic=False):
+        super(EnrolledCourseCalendarEventProvider, self)._get_events(course,
+                                                                     accum,
+                                                                     exclude_dynamic)
+        # add course dynamic events.
+        if not exclude_dynamic:
+            providers = component.subscribers((self.user, course),
+                                              IEnrolledCourseCalendarDynamicEventProvider)
+            for x in providers or ():
+                accum.extend(x.iter_events())
+
+    def _courses(self, user, entry_ntiids=None, excluded_entry_ntiids=None):
+        """
+        Gather the courses we want to gather events for. Include any courses
+        that are in the inclusive `entry_ntiids` param and exclude any in the
+        `excluded_entry_ntiids` param.
+        """
+        return _iter_enrolled_courses_for_user(user, entry_ntiids, excluded_entry_ntiids)
+
+
+# FIXME Is this used or needed? I dont think so.
 @component.adapter(IUser)
 @interface.implementer(ICalendarDynamicEventProvider)
 class CourseCalendarDynamicEventProvider(object):
@@ -170,7 +224,7 @@ class CourseCalendarDynamicEventProvider(object):
 
     def iter_events(self):
         res = []
-        for course in _iter_courses_for_user(self.user):
+        for course in _iter_all_courses_for_user(self.user):
             providers = component.subscribers((self.user, course),
                                               ICourseCalendarDynamicEventProvider)
 

@@ -45,3 +45,10 @@ class ICourseCalendarDynamicEventProvider(ICalendarDynamicEventProvider):
     An intended subscriber provider of possible :class:`ICourseCalendarDynamicEvent` objects
     for a :class:`IUser` and :class:`ICourseInstance`.
     """
+
+
+class IEnrolledCourseCalendarDynamicEventProvider(ICalendarDynamicEventProvider):
+    """
+    An intended subscriber provider of possible :class:`ICourseCalendarDynamicEvent` objects
+    for enrolled :class:`IUser` and :class:`ICourseInstance` objects.
+    """

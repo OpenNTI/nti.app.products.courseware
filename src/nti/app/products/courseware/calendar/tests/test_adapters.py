@@ -36,7 +36,8 @@ from nti.app.testing.decorators import WithSharedApplicationMockDS
 
 from nti.app.products.courseware.calendar.interfaces import ICourseCalendar
 
-from nti.app.products.courseware.calendar.adapters import CourseCalendarEventProvider
+from nti.app.products.courseware.calendar.adapters import AdminCourseCalendarEventProvider
+from nti.app.products.courseware.calendar.adapters import EnrolledCourseCalendarEventProvider
 from nti.app.products.courseware.calendar.adapters import UserCourseCalendarHierarchyPathProvider
 from nti.app.products.courseware.calendar.adapters import UserCourseCalendarEventHierarchyPathProvider
 
@@ -143,13 +144,16 @@ class TestCourseCalendarEventProvider(ApplicationLayerTest):
 
             # no enrollment
             user = User.get_user(u'test001')
-            provider = CourseCalendarEventProvider(user)
+            provider = AdminCourseCalendarEventProvider(user)
             assert_that(provider.iter_events(), has_length(0))
+            enrolled_provider = EnrolledCourseCalendarEventProvider(user)
+            assert_that(enrolled_provider.iter_events(), has_length(0))
 
             # course has no events.
             enrollment_manager = ICourseEnrollmentManager(course)
             enrollment_manager.enroll(user)
             assert_that(provider.iter_events(), has_length(0))
+            assert_that(enrolled_provider.iter_events(), has_length(0))
 
             event = CourseCalendarEvent(title=u'c_one')
             event.creator = creator
@@ -157,8 +161,10 @@ class TestCourseCalendarEventProvider(ApplicationLayerTest):
             event = CourseCalendarEvent(title=u'c_two')
             event.creator = creator
             ICourseCalendar(course).store_event(event)
-            assert_that(provider.iter_events(), has_length(2))
-            assert_that([x.title for x in provider.iter_events()], contains_inanyorder('c_one', 'c_two'))
+            assert_that(provider.iter_events(), has_length(0))
+            assert_that(enrolled_provider.iter_events(), has_length(2))
+            assert_that([x.title for x in enrolled_provider.iter_events()],
+                        contains_inanyorder('c_one', 'c_two'))
 
             # enroll another course.
             entry2 = find_object_with_ntiid(self.course_ntiid2)
@@ -169,10 +175,17 @@ class TestCourseCalendarEventProvider(ApplicationLayerTest):
             event.creator = creator
             ICourseCalendar(course2).store_event(event)
 
-            assert_that([x.title for x in provider.iter_events()], has_items('c_one', 'c_two', 'c_three'))
-            assert_that([x.title for x in provider.iter_events(context_ntiids=None)], has_items('c_one', 'c_two', 'c_three'))
-            assert_that([x.title for x in provider.iter_events(context_ntiids=[entry.ntiid, entry2.ntiid])], has_items('c_one', 'c_two', 'c_three'))
-            assert_that([x.title for x in provider.iter_events(context_ntiids=[entry.ntiid])], has_items('c_one', 'c_two'))
-            assert_that([x.title for x in provider.iter_events(context_ntiids=[entry2.ntiid])], has_items('c_three'))
-            assert_that([x.title for x in provider.iter_events(context_ntiids=[])], has_items('c_one', 'c_two', 'c_three'))
-            assert_that([x.title for x in provider.iter_events(context_ntiids=[ICourseCatalogEntry(course2.SubInstances['001']).ntiid])], has_length(0))
+            assert_that([x.title for x in enrolled_provider.iter_events()],
+                        has_items('c_one', 'c_two', 'c_three'))
+            assert_that([x.title for x in enrolled_provider.iter_events(context_ntiids=None)],
+                        has_items('c_one', 'c_two', 'c_three'))
+            assert_that([x.title for x in enrolled_provider.iter_events(context_ntiids=[entry.ntiid, entry2.ntiid])],
+                        has_items('c_one', 'c_two', 'c_three'))
+            assert_that([x.title for x in enrolled_provider.iter_events(context_ntiids=[entry.ntiid])],
+                        has_items('c_one', 'c_two'))
+            assert_that([x.title for x in enrolled_provider.iter_events(context_ntiids=[entry2.ntiid])],
+                        has_items('c_three'))
+            assert_that([x.title for x in enrolled_provider.iter_events(context_ntiids=[])],
+                        has_items('c_one', 'c_two', 'c_three'))
+            assert_that([x.title for x in enrolled_provider.iter_events(context_ntiids=[ICourseCatalogEntry(course2.SubInstances['001']).ntiid])],
+                        has_length(0))
