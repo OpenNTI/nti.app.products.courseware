@@ -32,7 +32,8 @@ from nti.app.products.courseware.calendar.model import CourseCalendar
 
 from nti.appserver.interfaces import IHierarchicalContextProvider
 
-from nti.contenttypes.calendar.interfaces import ICalendarProvider
+from nti.contenttypes.calendar.interfaces import ICalendarProvider,\
+    IAdminCalendarProvider
 from nti.contenttypes.calendar.interfaces import ICalendarEventProvider
 from nti.contenttypes.calendar.interfaces import ICalendarDynamicEventProvider
 from nti.contenttypes.calendar.interfaces import ICalendarContextNTIIDAdapter
@@ -44,11 +45,13 @@ from nti.contenttypes.courses.interfaces import IPrincipalAdministrativeRoleCata
 from nti.contenttypes.courses.utils import get_enrollments
 from nti.contenttypes.courses.utils import get_instructed_courses
 
-from nti.dataserver.authorization import is_admin_or_content_admin_or_site_admin
+from nti.dataserver.authorization import is_admin_or_content_admin_or_site_admin,\
+    ACT_UPDATE
 
 from nti.dataserver.interfaces import IUser
 
 from nti.traversal.traversal import find_interface
+from nti.appserver.pyramid_authorization import has_permission
 
 logger = __import__('logging').getLogger(__name__)
 
@@ -78,7 +81,6 @@ def _CourseCalendarFactory(course, create=True):
 @component.adapter(ICourseInstance, IRequest)
 def _CourseCalendarPathAdapter(context, unused_request):
     return _CourseCalendarFactory(context)
-
 
 
 def include_course_filter(course, entry_ntiids=None, excluded_entry_ntiids=None):
@@ -135,16 +137,28 @@ class CourseCalendarProvider(object):
     def __init__(self, user):
         self.user = user
 
+    def _include_calendar(self, calendar):
+        return True
+
     def iter_calendars(self, context_ntiids=None, excluded_context_ntiids=None):
-        res = []
         for course in self._courses(self.user, context_ntiids, excluded_context_ntiids):
             calendar = ICourseCalendar(course, None)
-            if calendar is not None:
-                res.append(calendar)
-        return res
+            if calendar is not None and self._include_calendar(calendar):
+                yield calendar
 
     def _courses(self, user, entry_ntiids=None, excluded_entry_ntiids=None):
         return _iter_all_courses_for_user(user, entry_ntiids, excluded_entry_ntiids)
+
+
+@component.adapter(IUser)
+@interface.implementer(IAdminCalendarProvider)
+class CourseAdminCalendarProvider(CourseCalendarProvider):
+    """
+    Return the course calenders this user can update.
+    """
+
+    def _include_calendar(self, calendar):
+        return has_permission(ACT_UPDATE, calendar)
 
 
 @component.adapter(IUser)

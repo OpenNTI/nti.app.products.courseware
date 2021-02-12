@@ -69,6 +69,10 @@
                 provides="nti.contenttypes.calendar.interfaces.ICalendarProvider"
                 for="nti.dataserver.interfaces.IUser" />
 
+    <subscriber factory=".adapters.CourseAdminCalendarProvider"
+                provides="nti.contenttypes.calendar.interfaces.IAdminCalendarProvider"
+                for="nti.dataserver.interfaces.IUser" />
+
     <subscriber factory=".adapters.AdminCourseCalendarEventProvider"
                 provides="nti.contenttypes.calendar.interfaces.ICalendarEventProvider"
                 for="nti.dataserver.interfaces.IUser" />
