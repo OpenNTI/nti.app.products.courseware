@@ -104,11 +104,15 @@ def _iter_enrolled_courses_for_user(user, entry_ntiids=None, excluded_entry_ntii
 
 
 def _iter_admin_courses_for_user(user, entry_ntiids=None, excluded_entry_ntiids=None):
+    # Some admins also are instructors for the same courses
+    seen = set()
     if is_admin_or_content_admin_or_site_admin(user):
         for catalog in component.subscribers((user,), IPrincipalAdministrativeRoleCatalog):
             queried = catalog.iter_administrations()
             for instance in queried:
                 course = ICourseInstance(instance)
+                # This provider should not give us dupes
+                seen.add(ICourseCatalogEntry(course).ntiid)
                 if include_course_filter(course,
                                          entry_ntiids=entry_ntiids,
                                          excluded_entry_ntiids=excluded_entry_ntiids):
@@ -117,6 +121,7 @@ def _iter_admin_courses_for_user(user, entry_ntiids=None, excluded_entry_ntiids=
         for instructed_course in get_instructed_courses(user) or ():
             course = ICourseInstance(instructed_course, None)
             if      course is not None \
+                and ICourseCatalogEntry(course).ntiid not in seen \
                 and include_course_filter(course,
                                           entry_ntiids=entry_ntiids,
                                           excluded_entry_ntiids=excluded_entry_ntiids):
