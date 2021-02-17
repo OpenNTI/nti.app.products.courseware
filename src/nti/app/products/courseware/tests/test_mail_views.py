@@ -5,7 +5,9 @@ from __future__ import print_function, absolute_import, division
 
 # disable: accessing protected members, too many methods
 # pylint: disable=W0212,R0904
+import contextlib
 
+import fudge
 from hamcrest import is_
 from hamcrest import none
 from hamcrest import is_not
@@ -17,6 +19,7 @@ from hamcrest import has_length
 from hamcrest import assert_that
 from hamcrest import has_property
 from hamcrest import contains_string
+
 does_not = is_not
 
 from quopri import decodestring
@@ -27,6 +30,8 @@ from zope import interface
 from nti.app.mail.interfaces import Email
 
 from nti.app.products.courseware import VIEW_COURSE_MAIL
+
+from nti.appserver.policies.interfaces import ISitePolicyUserEventListener
 
 from nti.contenttypes.courses.interfaces import ES_PURCHASED
 from nti.contenttypes.courses.interfaces import ES_CREDIT_DEGREE
@@ -66,8 +71,6 @@ class TestMailViews(ApplicationLayerTest):
     default_origin = 'http://janux.ou.edu'
     course_ntiid = u'tag:nextthought.com,2011-10:NTI-CourseInfo-Fall2013_CLC3403_LawAndJustice'
 
-    from_address = u'janux@ou.edu'
-    no_reply = u'no-reply@nextthought.com'
     external_reply_to = u'jzuech3@gmail.com'
 
     def _do_enroll(self):
@@ -117,11 +120,12 @@ class TestMailViews(ApplicationLayerTest):
         del mailer.queue[:]
         return results
 
-    def _test_mail_payload(self, mail, reply_to_mail, instructor_env, link):
+    def _test_mail_payload(self, mail, reply_to_mail, expected_sender, instructor_env, link):
         """
         Validate address and body properties of emails sent to an individual
         open student.
         """
+        expected_local_part = expected_sender.split(u"@", 1)[0]
         # Test basic text
         mailer = component.getUtility(ITestMailDelivery)
         del mailer.queue[:]
@@ -137,8 +141,8 @@ class TestMailViews(ApplicationLayerTest):
         assert_that(msg, has_property('html'))
         html = decodestring(msg.html)
         assert_that(html, contains_string(to_check))
-        assert_that(msg.get('Reply-To'), is_(self.no_reply))
-        assert_that(msg.get('From'), contains_string(u'janux+'))
+        assert_that(msg.get('Reply-To'), is_(expected_sender))
+        assert_that(msg.get('From'), contains_string(expected_local_part + '+'))
         assert_that(msg.get('From'), contains_string(u'@ou.edu'))
         assert_that(msg.get('To'), is_(open_address))
 
@@ -154,8 +158,8 @@ class TestMailViews(ApplicationLayerTest):
         assert_that(body, contains_string(to_check))
         html = decodestring(msg.html)
         assert_that(html, contains_string(to_check))
-        assert_that(msg.get('Reply-To'), is_(self.no_reply))
-        assert_that(msg.get('From'), contains_string(u'janux+'))
+        assert_that(msg.get('Reply-To'), is_(expected_sender))
+        assert_that(msg.get('From'), contains_string(expected_local_part + '+'))
         assert_that(msg.get('From'), contains_string(u'@ou.edu'))
         assert_that(msg.get('To'), is_(open_address))
 
@@ -173,8 +177,8 @@ class TestMailViews(ApplicationLayerTest):
         html = decodestring(msg.html)
         assert_that(html, contains_string(to_check))
         assert_that(html, contains_string('Test <br>'))
-        assert_that(msg.get('Reply-To'), is_(self.no_reply))
-        assert_that(msg.get('From'), contains_string(u'janux+'))
+        assert_that(msg.get('Reply-To'), is_(expected_sender))
+        assert_that(msg.get('From'), contains_string(expected_local_part + '+'))
         assert_that(msg.get('From'), contains_string(u'ou.edu'))
         assert_that(msg.get('To'), is_(open_address))
 
@@ -198,7 +202,7 @@ class TestMailViews(ApplicationLayerTest):
 
         # Distinct reply-to and from headers; reply-to is external email addr.
         assert_that(msg.get('Reply-To'), is_(self.external_reply_to))
-        assert_that(msg.get('From'), contains_string(u'janux+'))
+        assert_that(msg.get('From'), contains_string(expected_local_part + '+'))
         assert_that(msg.get('From'), contains_string(u'ou.edu'))
         assert_that(msg.get('To'), is_(open_address))
 
@@ -221,6 +225,167 @@ class TestMailViews(ApplicationLayerTest):
                                  testapp=True,
                                  default_authenticate=True)
     def test_roster_email(self):
+        expected_addr = u"modified_sender@ou.edu"
+        with modified_sender_email_for_site(self.ds,
+                                            "janux.ou.edu",
+                                            expected_addr):
+
+            mail = self._create_mail_message()
+
+            # Test mail without subject, with a reply address, and no copy.
+            mail_with_reply = dict(mail)
+            mail_with_reply['NoReply'] = False
+            mail_with_reply['Subject'] = None
+            mail_with_reply['Copy'] = False
+    
+            self._do_enroll()
+            instructor_env = self._make_extra_environ('harp4162')
+            res = self.testapp.get('/dataserver2/users/harp4162/Courses/AdministeredCourses',
+                                   extra_environ=instructor_env)
+    
+            role = res.json_body['Items'][0]
+    
+            res = self.testapp.get(self.require_link_href_with_rel(role, 'CourseInstance'),
+                                   extra_environ=instructor_env)
+    
+            course_instance = res.json_body
+            roster_link = self.require_link_href_with_rel(course_instance,
+                                                          'CourseEnrollmentRoster')
+            email_link = self.require_link_href_with_rel(course_instance,
+                                                         VIEW_COURSE_MAIL)
+    
+            # Mail student
+            res = self.testapp.get(roster_link,
+                                   extra_environ=instructor_env)
+            open_user_enroll_href = None
+            for enroll_record in res.json_body['Items']:
+                roster_link = self.require_link_href_with_rel(enroll_record,
+                                                              VIEW_COURSE_MAIL)
+                self.testapp.post_json(roster_link, mail,
+                                       extra_environ=instructor_env)
+                self.testapp.post_json(roster_link, mail_with_reply,
+                                       extra_environ=instructor_env)
+                if enroll_record.get('Username') == open_name:
+                    open_email_link = roster_link
+                    open_user_enroll_href = enroll_record.get('href')
+            assert_that(open_user_enroll_href, not_none())
+    
+            # Mail everyone in course
+            mailer = component.getUtility(ITestMailDelivery)
+            del mailer.queue[:]
+            self.testapp.post_json(email_link, mail, extra_environ=instructor_env)
+            messages = self._get_messages(mailer, has_copy=True)
+            assert_that(messages, has_length(2))
+            assert_that(messages[0].get('Reply-To'), is_(expected_addr))
+            assert_that(messages[1].get('Reply-To'), is_(expected_addr))
+    
+            # Deactivate user
+            with mock_dataserver.mock_db_trans(self.ds):
+                open_user = User.get_user(open_name)
+                interface.alsoProvides(open_user, IDeactivatedUser)
+            open_user_enroll_rec = self.testapp.get(open_user_enroll_href,
+                                                    extra_environ=instructor_env)
+            open_user_enroll_rec = open_user_enroll_rec.json_body
+            self.forbid_link_with_rel(open_user_enroll_rec,
+                                      VIEW_COURSE_MAIL)
+    
+            # Mail everyone in course
+            del mailer.queue[:]
+            self.testapp.post_json(email_link, mail, extra_environ=instructor_env)
+            messages = self._get_messages(mailer, has_copy=True)
+            assert_that(messages, has_length(1))
+            with mock_dataserver.mock_db_trans(self.ds):
+                open_user = User.get_user(open_name)
+                interface.noLongerProvides(open_user, IDeactivatedUser)
+    
+            # Mail everyone with reply
+            self.testapp.post_json(email_link, mail_with_reply,
+                                   extra_environ=instructor_env)
+            messages = self._get_messages(mailer)
+            assert_that(messages, has_length(2))
+            assert_that(messages[0].get('Reply-To'), is_(self.external_reply_to))
+            assert_that(messages[1].get('Reply-To'), is_(self.external_reply_to))
+    
+            # Mail everyone with replyToScope ForCredit
+            self.testapp.post_json(email_link + '?replyToScope=ForCredit',
+                                   mail_with_reply, extra_environ=instructor_env)
+            messages = self._get_messages(mailer)
+            assert_that(messages, has_length(2))
+            open_msg = messages[0] if messages[0].get('To') == open_address else messages[1]
+            credit_msg = messages[0] if messages[0].get('To') == credit_address else messages[1]
+            assert_that(open_msg.get('Reply-To'), is_(expected_addr))
+            assert_that(credit_msg.get('Reply-To'), is_(self.external_reply_to))
+    
+            # Test mailing an instructor along with the students in the course
+            self.testapp.post_json(email_link + '?include-instructors=True',
+                                   mail, extra_environ=instructor_env)
+            messages = self._get_messages(mailer, has_copy=True)
+            assert_that(messages, has_length(3))
+            assert_that(messages,
+                        has_item(has_entry('To', 'zachary.roux@nextthought.com')))
+            assert_that(messages,
+                        is_not(has_item(has_entry('To', 'jzuech3@gmail.com'))))
+            # Another instructor in the course should still have a reply-to address
+            # even when students don't.
+            assert_that(messages,
+                        has_item(has_entries('Reply-To', 'jzuech3@gmail.com', 'To', 'zachary.roux@nextthought.com')))
+            assert_that(messages,
+                        is_not(has_item(has_entries('Reply-To', 'jzuech3@gmail.com', 'To', 'open@nextthought.com'))))
+            assert_that(messages,
+                        is_not(has_item(has_entries('Reply-To', 'jzuech3@gmail.com', 'To', 'credit@nextthought.com'))))
+    
+            self.testapp.post_json(email_link + '?include-instructors=True',
+                                   mail_with_reply, extra_environ=instructor_env)
+            messages = self._get_messages(mailer, has_copy=False)
+            assert_that(messages, has_length(3))
+            assert_that(messages,
+                        has_item(has_entry('To', 'zachary.roux@nextthought.com')))
+            assert_that(messages,
+                        is_not(has_item(has_entry('To', 'jzuech3@gmail.com'))))
+            # The message to another instructor should also have a reply-to address
+            # from the sender
+            assert_that(messages,
+                        has_item(has_entries('Reply-To', 'jzuech3@gmail.com', 'To', 'zachary.roux@nextthought.com')))
+            assert_that(messages,
+                        has_item(has_entries('Reply-To', 'jzuech3@gmail.com', 'To', 'open@nextthought.com')))
+            assert_that(messages,
+                        has_item(has_entries('Reply-To', 'jzuech3@gmail.com', 'To', 'credit@nextthought.com')))
+    
+            # Mail everyone with replyToScope open (also purchased)
+            self.testapp.post_json(email_link + '?replyToScope=opEN',
+                                   mail_with_reply, extra_environ=instructor_env)
+            messages = self._get_messages(mailer)
+            assert_that(messages, has_length(2))
+            open_msg = messages[0] if messages[0].get('To') == open_address else messages[1]
+            credit_msg = messages[0] if messages[0].get('To') == credit_address else messages[1]
+            assert_that(open_msg.get('Reply-To'), is_(self.external_reply_to))
+            assert_that(credit_msg.get('Reply-To'), is_(expected_addr))
+    
+            # Mail just for-credit
+            self.testapp.post_json(email_link + '?scope=forCREDit',
+                                   mail_with_reply, extra_environ=instructor_env)
+            messages = self._get_messages(mailer)
+            assert_that(messages, has_length(1))
+            assert_that(messages[0].get('To'), is_(credit_address))
+    
+            # Mail just public
+            self.testapp.post_json(email_link + '?scope=public',
+                                   mail_with_reply, extra_environ=instructor_env)
+            messages = self._get_messages(mailer)
+            assert_that(messages, has_length(1))
+            assert_that(messages[0].get('To'), is_(open_address))
+    
+            # 403s/404s
+            self.testapp.post_json(email_link, mail, status=403)
+            self.testapp.get(roster_link + '/not_enrolled/Mail',
+                             status=404,
+                             extra_environ=instructor_env)
+    
+            self._test_mail_payload(mail, mail_with_reply,
+                                    expected_addr, instructor_env,
+                                    open_email_link)
+
+    def _create_mail_message(self):
         body = 'This is the email text body.'
         subject = 'Email Subject'
         mail = {'MimeType': Email.mime_type,
@@ -228,266 +393,177 @@ class TestMailViews(ApplicationLayerTest):
                 'Subject': subject,
                 'NoReply': True,
                 'Copy': True}
-
-        # Test mail without subject, with a reply address, and no copy.
-        mail_with_reply = dict(mail)
-        mail_with_reply['NoReply'] = False
-        mail_with_reply['Subject'] = None
-        mail_with_reply['Copy'] = False
-
-        self._do_enroll()
-        instructor_env = self._make_extra_environ('harp4162')
-        res = self.testapp.get('/dataserver2/users/harp4162/Courses/AdministeredCourses',
-                               extra_environ=instructor_env)
-
-        role = res.json_body['Items'][0]
-
-        res = self.testapp.get(self.require_link_href_with_rel(role, 'CourseInstance'),
-                               extra_environ=instructor_env)
-
-        course_instance = res.json_body
-        roster_link = self.require_link_href_with_rel(course_instance,
-                                                      'CourseEnrollmentRoster')
-        email_link = self.require_link_href_with_rel(course_instance,
-                                                     VIEW_COURSE_MAIL)
-
-        # Mail student
-        res = self.testapp.get(roster_link,
-                               extra_environ=instructor_env)
-        open_user_enroll_href = None
-        for enroll_record in res.json_body['Items']:
-            roster_link = self.require_link_href_with_rel(enroll_record,
-                                                          VIEW_COURSE_MAIL)
-            self.testapp.post_json(roster_link, mail,
-                                   extra_environ=instructor_env)
-            self.testapp.post_json(roster_link, mail_with_reply,
-                                   extra_environ=instructor_env)
-            if enroll_record.get('Username') == open_name:
-                open_email_link = roster_link
-                open_user_enroll_href = enroll_record.get('href')
-        assert_that(open_user_enroll_href, not_none())
-
-        # Mail everyone in course
-        mailer = component.getUtility(ITestMailDelivery)
-        del mailer.queue[:]
-        self.testapp.post_json(email_link, mail, extra_environ=instructor_env)
-        messages = self._get_messages(mailer, has_copy=True)
-        assert_that(messages, has_length(2))
-        assert_that(messages[0].get('Reply-To'), is_(self.no_reply))
-        assert_that(messages[1].get('Reply-To'), is_(self.no_reply))
-
-        # Deactivate user
-        with mock_dataserver.mock_db_trans(self.ds):
-            open_user = User.get_user(open_name)
-            interface.alsoProvides(open_user, IDeactivatedUser)
-        open_user_enroll_rec = self.testapp.get(open_user_enroll_href,
-                                                extra_environ=instructor_env)
-        open_user_enroll_rec = open_user_enroll_rec.json_body
-        self.forbid_link_with_rel(open_user_enroll_rec,
-                                  VIEW_COURSE_MAIL)
-
-        # Mail everyone in course
-        del mailer.queue[:]
-        self.testapp.post_json(email_link, mail, extra_environ=instructor_env)
-        messages = self._get_messages(mailer, has_copy=True)
-        assert_that(messages, has_length(1))
-        with mock_dataserver.mock_db_trans(self.ds):
-            open_user = User.get_user(open_name)
-            interface.noLongerProvides(open_user, IDeactivatedUser)
-
-        # Mail everyone with reply
-        self.testapp.post_json(email_link, mail_with_reply,
-                               extra_environ=instructor_env)
-        messages = self._get_messages(mailer)
-        assert_that(messages, has_length(2))
-        assert_that(messages[0].get('Reply-To'), is_(self.external_reply_to))
-        assert_that(messages[1].get('Reply-To'), is_(self.external_reply_to))
-
-        # Mail everyone with replyToScope ForCredit
-        self.testapp.post_json(email_link + '?replyToScope=ForCredit',
-                               mail_with_reply, extra_environ=instructor_env)
-        messages = self._get_messages(mailer)
-        assert_that(messages, has_length(2))
-        open_msg = messages[0] if messages[0].get('To') == open_address else messages[1]
-        credit_msg = messages[0] if messages[0].get('To') == credit_address else messages[1]
-        assert_that(open_msg.get('Reply-To'), is_(self.no_reply))
-        assert_that(credit_msg.get('Reply-To'), is_(self.external_reply_to))
-
-        # Test mailing an instructor along with the students in the course
-        self.testapp.post_json(email_link + '?include-instructors=True',
-                               mail, extra_environ=instructor_env)
-        messages = self._get_messages(mailer, has_copy=True)
-        assert_that(messages, has_length(3))
-        assert_that(messages,
-                    has_item(has_entry('To', 'zachary.roux@nextthought.com')))
-        assert_that(messages,
-                    is_not(has_item(has_entry('To', 'jzuech3@gmail.com'))))
-        # Another instructor in the course should still have a reply-to address
-        # even when students don't.
-        assert_that(messages,
-                    has_item(has_entries('Reply-To', 'jzuech3@gmail.com', 'To', 'zachary.roux@nextthought.com')))
-        assert_that(messages,
-                    is_not(has_item(has_entries('Reply-To', 'jzuech3@gmail.com', 'To', 'open@nextthought.com'))))
-        assert_that(messages,
-                    is_not(has_item(has_entries('Reply-To', 'jzuech3@gmail.com', 'To', 'credit@nextthought.com'))))
-
-        self.testapp.post_json(email_link + '?include-instructors=True',
-                               mail_with_reply, extra_environ=instructor_env)
-        messages = self._get_messages(mailer, has_copy=False)
-        assert_that(messages, has_length(3))
-        assert_that(messages,
-                    has_item(has_entry('To', 'zachary.roux@nextthought.com')))
-        assert_that(messages,
-                    is_not(has_item(has_entry('To', 'jzuech3@gmail.com'))))
-        # The message to another instructor should also have a reply-to address
-        # from the sender
-        assert_that(messages,
-                    has_item(has_entries('Reply-To', 'jzuech3@gmail.com', 'To', 'zachary.roux@nextthought.com')))
-        assert_that(messages,
-                    has_item(has_entries('Reply-To', 'jzuech3@gmail.com', 'To', 'open@nextthought.com')))
-        assert_that(messages,
-                    has_item(has_entries('Reply-To', 'jzuech3@gmail.com', 'To', 'credit@nextthought.com')))
-
-        # Mail everyone with replyToScope open (also purchased)
-        self.testapp.post_json(email_link + '?replyToScope=opEN',
-                               mail_with_reply, extra_environ=instructor_env)
-        messages = self._get_messages(mailer)
-        assert_that(messages, has_length(2))
-        open_msg = messages[0] if messages[0].get('To') == open_address else messages[1]
-        credit_msg = messages[0] if messages[0].get('To') == credit_address else messages[1]
-        assert_that(open_msg.get('Reply-To'), is_(self.external_reply_to))
-        assert_that(credit_msg.get('Reply-To'), is_(self.no_reply))
-
-        # Mail just for-credit
-        self.testapp.post_json(email_link + '?scope=forCREDit',
-                               mail_with_reply, extra_environ=instructor_env)
-        messages = self._get_messages(mailer)
-        assert_that(messages, has_length(1))
-        assert_that(messages[0].get('To'), is_(credit_address))
-
-        # Mail just public
-        self.testapp.post_json(email_link + '?scope=public',
-                               mail_with_reply, extra_environ=instructor_env)
-        messages = self._get_messages(mailer)
-        assert_that(messages, has_length(1))
-        assert_that(messages[0].get('To'), is_(open_address))
-
-        # 403s/404s
-        self.testapp.post_json(email_link, mail, status=403)
-        self.testapp.get(roster_link + '/not_enrolled/Mail',
-                         status=404,
-                         extra_environ=instructor_env)
-
-        self._test_mail_payload(mail, mail_with_reply,
-                                instructor_env, open_email_link)
+        return mail
 
     @WithSharedApplicationMockDS(users=(open_name, credit_name),
                                  testapp=True,
                                  default_authenticate=True)
     def test_emailing_student_with_instructor_copies(self):
-        body = 'This is the email text body.'
-        subject = 'Email Subject'
-        mail = {'MimeType': Email.mime_type,
-                'Body': body,
-                'Subject': subject,
-                'NoReply': True,
-                'Copy': True}
+        expected_local, expected_domain = u"modified_sender", u"ou.edu"
+        expected_addr = "%s@%s" % (expected_local, expected_domain)
+        with modified_sender_email_for_site(self.ds,
+                                            "janux.ou.edu",
+                                            expected_addr):
 
-        # Test mail with a reply address
-        mail_with_reply = dict(mail)
-        mail_with_reply['NoReply'] = False
+            mail = self._create_mail_message()
 
+            # Test mail with a reply address
+            mail_with_reply = dict(mail)
+            mail_with_reply['NoReply'] = False
+
+            self._do_enroll()
+            instructor_env = self._make_extra_environ('harp4162')
+            res = self.testapp.get('/dataserver2/users/harp4162/Courses/AdministeredCourses',
+                                   extra_environ=instructor_env)
+
+            role = res.json_body['Items'][0]
+
+            course_href = self.require_link_href_with_rel(role, 'CourseInstance')
+            course_instance = self.testapp.get(course_href, extra_environ=instructor_env).json_body
+
+            roster_link = self.require_link_href_with_rel(
+                course_instance, 'CourseEnrollmentRoster')
+            self.require_link_href_with_rel(course_instance, VIEW_COURSE_MAIL)
+
+            # Mail an open student
+            res = self.testapp.get(roster_link,
+                                   extra_environ=instructor_env)
+            for enroll_record in res.json_body['Items']:
+                roster_link = self.require_link_href_with_rel(enroll_record,
+                                                              VIEW_COURSE_MAIL)
+                self.testapp.post_json(roster_link, mail,
+                                       extra_environ=instructor_env)
+                self.testapp.post_json(roster_link, mail_with_reply,
+                                       extra_environ=instructor_env)
+                if enroll_record.get('Username') == open_name:
+                    open_email_link = roster_link
+
+            # Test emailing a student with no reply
+            mailer = component.getUtility(ITestMailDelivery)
+            del mailer.queue[:]
+            self.testapp.post_json(open_email_link + '?include-instructors=True',
+                                   mail, extra_environ=instructor_env)
+
+            to_check = mail.get('Body')
+            messages = self._get_messages(mailer, has_copy=True)
+            assert_that(messages, has_length(2))
+
+            msg = messages[0]
+            assert_that(msg, has_property('body'))
+            body = decodestring(msg.body)
+            assert_that(body, contains_string(to_check))
+            assert_that(msg, has_property('html'))
+            html = decodestring(msg.html)
+            assert_that(html, contains_string(to_check))
+            assert_that(msg.get('Reply-To'), is_(expected_addr))
+            assert_that(msg.get('From'), contains_string(expected_local + '+'))
+            assert_that(msg.get('From'), contains_string('@ou.edu'))
+            assert_that(msg.get('To'), is_(open_address))
+
+            msg = messages[1]
+            assert_that(msg, has_property('body'))
+            body = decodestring(msg.body)
+            assert_that(body, contains_string(to_check))
+            assert_that(msg, has_property('html'))
+            html = decodestring(msg.html)
+            assert_that(html, contains_string(to_check))
+            assert_that(msg.get('Reply-To'), is_(self.external_reply_to))
+            assert_that(msg.get('From'), contains_string(expected_local + '+'))
+            assert_that(msg.get('From'), contains_string('@ou.edu'))
+            assert_that(msg.get('To'), is_('zachary.roux@nextthought.com'))
+
+            # Test emailing a student with replies enabled
+            mailer = component.getUtility(ITestMailDelivery)
+            del mailer.queue[:]
+            self.testapp.post_json(open_email_link + '?include-instructors=True',
+                                   mail_with_reply, extra_environ=instructor_env)
+
+            to_check = mail.get('Body')
+            messages = self._get_messages(mailer, has_copy=True)
+            assert_that(messages, has_length(2))
+
+            msg = messages[0]
+            assert_that(msg, has_property('body'))
+            body = decodestring(msg.body)
+            assert_that(body, contains_string(to_check))
+            assert_that(msg, has_property('html'))
+            html = decodestring(msg.html)
+            assert_that(html, contains_string(to_check))
+            assert_that(msg.get('Reply-To'), is_(self.external_reply_to))
+            assert_that(msg.get('From'), contains_string(expected_local + '+'))
+            assert_that(msg.get('From'), contains_string('@ou.edu'))
+            assert_that(msg.get('To'), is_(open_address))
+
+            msg = messages[1]
+            assert_that(msg, has_property('body'))
+            body = decodestring(msg.body)
+            assert_that(body, contains_string(to_check))
+            assert_that(msg, has_property('html'))
+            html = decodestring(msg.html)
+            assert_that(html, contains_string(to_check))
+            assert_that(msg.get('Reply-To'), is_(self.external_reply_to))
+            assert_that(msg.get('From'), contains_string(expected_local + '+'))
+            assert_that(msg.get('From'), contains_string('@ou.edu'))
+            assert_that(msg.get('To'), is_('zachary.roux@nextthought.com'))
+
+    def _test_roster_email_default_sender_fallback(self, expected_addr):
+        mail = self._create_mail_message()
         self._do_enroll()
         instructor_env = self._make_extra_environ('harp4162')
         res = self.testapp.get('/dataserver2/users/harp4162/Courses/AdministeredCourses',
                                extra_environ=instructor_env)
-
         role = res.json_body['Items'][0]
-
-        course_href = self.require_link_href_with_rel(role, 'CourseInstance')
-        course_instance = self.testapp.get(course_href, extra_environ=instructor_env).json_body
-
-        roster_link = self.require_link_href_with_rel(
-            course_instance, 'CourseEnrollmentRoster')
-        self.require_link_href_with_rel(course_instance, VIEW_COURSE_MAIL)
-
-        # Mail an open student
-        res = self.testapp.get(roster_link,
+        res = self.testapp.get(self.require_link_href_with_rel(role, 'CourseInstance'),
                                extra_environ=instructor_env)
-        for enroll_record in res.json_body['Items']:
-            roster_link = self.require_link_href_with_rel(enroll_record,
-                                                          VIEW_COURSE_MAIL)
-            self.testapp.post_json(roster_link, mail,
-                                   extra_environ=instructor_env)
-            self.testapp.post_json(roster_link, mail_with_reply,
-                                   extra_environ=instructor_env)
-            if enroll_record.get('Username') == open_name:
-                open_email_link = roster_link
-
-        # Test emailing a student with no reply
+        course_instance = res.json_body
+        email_link = self.require_link_href_with_rel(course_instance,
+                                                     VIEW_COURSE_MAIL)
+        # Mail everyone in course
         mailer = component.getUtility(ITestMailDelivery)
         del mailer.queue[:]
-        self.testapp.post_json(open_email_link + '?include-instructors=True',
-                               mail, extra_environ=instructor_env)
-
-        to_check = mail.get('Body')
+        self.testapp.post_json(email_link, mail, extra_environ=instructor_env)
         messages = self._get_messages(mailer, has_copy=True)
         assert_that(messages, has_length(2))
+        assert_that(messages[0].get('Reply-To'), is_(expected_addr))
+        assert_that(messages[1].get('Reply-To'), is_(expected_addr))
 
-        msg = messages[0]
-        assert_that(msg, has_property('body'))
-        body = decodestring(msg.body)
-        assert_that(body, contains_string(to_check))
-        assert_that(msg, has_property('html'))
-        html = decodestring(msg.html)
-        assert_that(html, contains_string(to_check))
-        assert_that(msg.get('Reply-To'), is_(self.no_reply))
-        assert_that(msg.get('From'), contains_string('janux+'))
-        assert_that(msg.get('From'), contains_string('@ou.edu'))
-        assert_that(msg.get('To'), is_(open_address))
+    @WithSharedApplicationMockDS(users=(open_name, credit_name),
+                                 testapp=True,
+                                 default_authenticate=True)
+    def test_roster_email_no_policy_default_sender(self):
+        expected_addr = 'no-reply@nextthought.com'
+        with modified_sender_email_for_site(self.ds,
+                                            "janux.ou.edu",
+                                            None):
 
-        msg = messages[1]
-        assert_that(msg, has_property('body'))
-        body = decodestring(msg.body)
-        assert_that(body, contains_string(to_check))
-        assert_that(msg, has_property('html'))
-        html = decodestring(msg.html)
-        assert_that(html, contains_string(to_check))
-        assert_that(msg.get('Reply-To'), is_(self.external_reply_to))
-        assert_that(msg.get('From'), contains_string('janux+'))
-        assert_that(msg.get('From'), contains_string('@ou.edu'))
-        assert_that(msg.get('To'), is_('zachary.roux@nextthought.com'))
+            self._test_roster_email_default_sender_fallback(expected_addr)
 
-        # Test emailing a student with replies enabled
-        mailer = component.getUtility(ITestMailDelivery)
-        del mailer.queue[:]
-        self.testapp.post_json(open_email_link + '?include-instructors=True',
-                               mail_with_reply, extra_environ=instructor_env)
+    @WithSharedApplicationMockDS(users=(open_name, credit_name),
+                                 testapp=True,
+                                 default_authenticate=True)
+    @fudge.patch('nti.app.mail.views.AbstractMemberEmailView._mailer_policy')
+    def test_roster_email_no_policy(self, mailer_policy):
+        mailer_policy.is_callable().returns(None)
 
-        to_check = mail.get('Body')
-        messages = self._get_messages(mailer, has_copy=True)
-        assert_that(messages, has_length(2))
+        expected_addr = 'no-reply@nextthought.com'
+        with modified_sender_email_for_site(self.ds,
+                                            "janux.ou.edu",
+                                            'unused@nextthought.com'):
 
-        msg = messages[0]
-        assert_that(msg, has_property('body'))
-        body = decodestring(msg.body)
-        assert_that(body, contains_string(to_check))
-        assert_that(msg, has_property('html'))
-        html = decodestring(msg.html)
-        assert_that(html, contains_string(to_check))
-        assert_that(msg.get('Reply-To'), is_(self.external_reply_to))
-        assert_that(msg.get('From'), contains_string('janux+'))
-        assert_that(msg.get('From'), contains_string('@ou.edu'))
-        assert_that(msg.get('To'), is_(open_address))
+            self._test_roster_email_default_sender_fallback(expected_addr)
 
-        msg = messages[1]
-        assert_that(msg, has_property('body'))
-        body = decodestring(msg.body)
-        assert_that(body, contains_string(to_check))
-        assert_that(msg, has_property('html'))
-        html = decodestring(msg.html)
-        assert_that(html, contains_string(to_check))
-        assert_that(msg.get('Reply-To'), is_(self.external_reply_to))
-        assert_that(msg.get('From'), contains_string('janux+'))
-        assert_that(msg.get('From'), contains_string('@ou.edu'))
-        assert_that(msg.get('To'), is_('zachary.roux@nextthought.com'))
+
+@contextlib.contextmanager
+def modified_sender_email_for_site(ds, site_name, new_email):
+    with mock_dataserver.mock_db_trans(ds, site_name=site_name):
+        policy = component.queryUtility(ISitePolicyUserEventListener)
+        original_sender = getattr(policy, 'DEFAULT_EMAIL_SENDER', '')
+        policy.DEFAULT_EMAIL_SENDER = new_email
+    try:
+        yield
+    finally:
+        with mock_dataserver.mock_db_trans(ds, site_name=site_name):
+            policy = component.queryUtility(ISitePolicyUserEventListener)
+            policy.DEFAULT_EMAIL_SENDER = original_sender
+
+
