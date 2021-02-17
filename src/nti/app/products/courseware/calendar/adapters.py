@@ -30,28 +30,26 @@ from nti.app.products.courseware.calendar.interfaces import IEnrolledCourseCalen
 
 from nti.app.products.courseware.calendar.model import CourseCalendar
 
+from nti.appserver.pyramid_authorization import has_permission
+
 from nti.appserver.interfaces import IHierarchicalContextProvider
 
-from nti.contenttypes.calendar.interfaces import ICalendarProvider,\
-    IAdminCalendarProvider
+from nti.contenttypes.calendar.interfaces import ICalendarProvider
 from nti.contenttypes.calendar.interfaces import ICalendarEventProvider
+from nti.contenttypes.calendar.interfaces import IAdminCalendarProvider
 from nti.contenttypes.calendar.interfaces import ICalendarDynamicEventProvider
 from nti.contenttypes.calendar.interfaces import ICalendarContextNTIIDAdapter
 
 from nti.contenttypes.courses.interfaces import ICourseInstance
 from nti.contenttypes.courses.interfaces import ICourseCatalogEntry
-from nti.contenttypes.courses.interfaces import IPrincipalAdministrativeRoleCatalog
-
 from nti.contenttypes.courses.utils import get_enrollments
 from nti.contenttypes.courses.utils import get_instructed_courses
 
-from nti.dataserver.authorization import is_admin_or_content_admin_or_site_admin,\
-    ACT_UPDATE
+from nti.dataserver.authorization import ACT_UPDATE
 
 from nti.dataserver.interfaces import IUser
 
 from nti.traversal.traversal import find_interface
-from nti.appserver.pyramid_authorization import has_permission
 
 logger = __import__('logging').getLogger(__name__)
 
@@ -104,28 +102,13 @@ def _iter_enrolled_courses_for_user(user, entry_ntiids=None, excluded_entry_ntii
 
 
 def _iter_admin_courses_for_user(user, entry_ntiids=None, excluded_entry_ntiids=None):
-    # Some admins also are instructors for the same courses
-    seen = set()
-    if is_admin_or_content_admin_or_site_admin(user):
-        for catalog in component.subscribers((user,), IPrincipalAdministrativeRoleCatalog):
-            queried = catalog.iter_administrations()
-            for instance in queried:
-                course = ICourseInstance(instance)
-                # This provider should not give us dupes
-                seen.add(ICourseCatalogEntry(course).ntiid)
-                if include_course_filter(course,
-                                         entry_ntiids=entry_ntiids,
-                                         excluded_entry_ntiids=excluded_entry_ntiids):
-                    yield course
-    else:
-        for instructed_course in get_instructed_courses(user) or ():
-            course = ICourseInstance(instructed_course, None)
-            if      course is not None \
-                and ICourseCatalogEntry(course).ntiid not in seen \
-                and include_course_filter(course,
-                                          entry_ntiids=entry_ntiids,
-                                          excluded_entry_ntiids=excluded_entry_ntiids):
-                yield course
+    for instructed_course in get_instructed_courses(user) or ():
+        course = ICourseInstance(instructed_course, None)
+        if      course is not None \
+            and include_course_filter(course,
+                                      entry_ntiids=entry_ntiids,
+                                      excluded_entry_ntiids=excluded_entry_ntiids):
+            yield course
 
 
 def _iter_all_courses_for_user(user, *args, **kwargs):
