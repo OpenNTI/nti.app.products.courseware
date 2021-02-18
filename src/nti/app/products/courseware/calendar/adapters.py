@@ -42,6 +42,8 @@ from nti.contenttypes.calendar.interfaces import ICalendarContextNTIIDAdapter
 
 from nti.contenttypes.courses.interfaces import ICourseInstance
 from nti.contenttypes.courses.interfaces import ICourseCatalogEntry
+from nti.contenttypes.courses.interfaces import ICourseCatalogEntryFilterUtility
+
 from nti.contenttypes.courses.utils import get_enrollments
 from nti.contenttypes.courses.utils import get_instructed_courses
 
@@ -81,14 +83,25 @@ def _CourseCalendarPathAdapter(context, unused_request):
     return _CourseCalendarFactory(context)
 
 
-def include_course_filter(course, entry_ntiids=None, excluded_entry_ntiids=None):
+def _get_include_filter_lambda(filter_str):
+    filter_utility = component.getUtility(ICourseCatalogEntryFilterUtility)
+    def check_entry_filter(entry):
+        return filter_utility.include_entry(entry, filter_str)
+    return check_entry_filter
+
+
+def include_course_filter(course, entry_ntiids=None, excluded_entry_ntiids=None, include_filter_lambda=None):
     entry = ICourseCatalogEntry(course, None)
     return  entry is not None \
         and (not entry_ntiids or entry.ntiid in entry_ntiids) \
-        and (not excluded_entry_ntiids or entry.ntiid not in excluded_entry_ntiids)
+        and (not excluded_entry_ntiids or entry.ntiid not in excluded_entry_ntiids) \
+        and (not include_filter_lambda or include_filter_lambda(entry))
 
 
-def _iter_enrolled_courses_for_user(user, entry_ntiids=None, excluded_entry_ntiids=None):
+def _iter_enrolled_courses_for_user(user, entry_ntiids=None, excluded_entry_ntiids=None, include_filter=None):
+    include_filter_lambda = None
+    if include_filter:
+        include_filter_lambda = _get_include_filter_lambda(include_filter)
     for enrollment in get_enrollments(user) or ():
         course = ICourseInstance(enrollment, None)
         entry = ICourseCatalogEntry(course, None)
@@ -97,17 +110,22 @@ def _iter_enrolled_courses_for_user(user, entry_ntiids=None, excluded_entry_ntii
             and not is_preview_course \
             and include_course_filter(course,
                                       entry_ntiids=entry_ntiids,
-                                      excluded_entry_ntiids=excluded_entry_ntiids):
+                                      excluded_entry_ntiids=excluded_entry_ntiids,
+                                      include_filter_lambda=include_filter_lambda):
             yield course
 
 
-def _iter_admin_courses_for_user(user, entry_ntiids=None, excluded_entry_ntiids=None):
+def _iter_admin_courses_for_user(user, entry_ntiids=None, excluded_entry_ntiids=None, include_filter=None):
+    include_filter_lambda = None
+    if include_filter:
+        include_filter_lambda = _get_include_filter_lambda(include_filter)
     for instructed_course in get_instructed_courses(user) or ():
         course = ICourseInstance(instructed_course, None)
         if      course is not None \
             and include_course_filter(course,
                                       entry_ntiids=entry_ntiids,
-                                      excluded_entry_ntiids=excluded_entry_ntiids):
+                                      excluded_entry_ntiids=excluded_entry_ntiids,
+                                      include_filter_lambda=include_filter_lambda):
             yield course
 
 
@@ -128,14 +146,14 @@ class CourseCalendarProvider(object):
     def _include_calendar(self, calendar):
         return True
 
-    def iter_calendars(self, context_ntiids=None, excluded_context_ntiids=None):
-        for course in self._courses(self.user, context_ntiids, excluded_context_ntiids):
+    def iter_calendars(self, context_ntiids=None, excluded_context_ntiids=None, include_filter=None):
+        for course in self._courses(self.user, context_ntiids, excluded_context_ntiids, include_filter):
             calendar = ICourseCalendar(course, None)
             if calendar is not None and self._include_calendar(calendar):
                 yield calendar
 
-    def _courses(self, user, entry_ntiids=None, excluded_entry_ntiids=None):
-        return _iter_all_courses_for_user(user, entry_ntiids, excluded_entry_ntiids)
+    def _courses(self, user, entry_ntiids=None, excluded_entry_ntiids=None, include_filter=None):
+        return _iter_all_courses_for_user(user, entry_ntiids, excluded_entry_ntiids, include_filter)
 
 
 @component.adapter(IUser)
