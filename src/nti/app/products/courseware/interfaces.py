@@ -149,6 +149,11 @@ class ICoursesCollection(IContainerCollection):
     A collection of courses.
     """
 
+    def course_intids():
+        """
+        Return a set of course intids in this colleciton.
+        """
+
 
 class IEnrolledCoursesCollection(ICoursesCollection):
     """
@@ -582,7 +587,6 @@ zope.deferredimport.deprecatedFrom(
     "Moved to nti.contenttypes.courses",
     "nti.contenttypes.courses.interfaces",
     "ICourseCatalogEntry",
-    "IUserAdministeredCourses",
     "ICourseCatalogInstructorInfo",
     "ICourseInstanceAvailableEvent",
     "CourseInstanceAvailableEventg",

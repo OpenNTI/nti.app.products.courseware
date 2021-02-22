@@ -10,6 +10,8 @@ from __future__ import division
 from __future__ import print_function
 from __future__ import absolute_import
 
+import itertools
+
 from zope import component
 from zope import interface
 
@@ -49,7 +51,10 @@ from nti.app.products.courseware.interfaces import IAllCoursesCollectionAcceptsP
 from nti.appserver.workspaces.interfaces import IUserService
 from nti.appserver.workspaces.interfaces import ICatalogWorkspace
 
-from nti.contenttypes.courses.interfaces import ES_CREDIT
+from nti.contenttypes.courses.index import get_courses_catalog
+
+from nti.contenttypes.courses.interfaces import ES_CREDIT,\
+    IPrincipalAdministrativeRoleCatalog
 from nti.contenttypes.courses.interfaces import ES_CREDIT_DEGREE
 from nti.contenttypes.courses.interfaces import ES_CREDIT_NONDEGREE
 
@@ -61,7 +66,6 @@ from nti.contenttypes.courses.interfaces import ICourseCatalogEntry
 from nti.contenttypes.courses.interfaces import IPrincipalEnrollments
 from nti.contenttypes.courses.interfaces import ICourseInstanceEnrollmentRecord
 from nti.contenttypes.courses.interfaces import ICourseInstanceAdministrativeRole
-from nti.contenttypes.courses.interfaces import IPrincipalAdministrativeRoleCatalog
 
 from nti.contenttypes.courses.utils import AbstractInstanceWrapper as _AbstractInstanceWrapper
 
@@ -264,20 +268,21 @@ class _AbstractQueryBasedCoursesCollection(Contained):
         result.append(link)
         return result
 
-    def _apply_user_extra_auth(self, enrollments):
+    def _apply_user_extra_auth(self, obj):
+        """
+        Extend the acl on the object with course instructor perms.
+        """
         parent = self.__parent__
         if not self.user_extra_auth:
-            return enrollments
-        else:
-            for enrollment in enrollments or ():
-                course = ICourseInstance(enrollment)
-                enrollment._user = parent.user
-                enrollment.__acl__ = acl_from_aces(ace_allowing(parent.user,
-                                                                self.user_extra_auth,
-                                                                type(self)))
-                enrollment.__acl__.extend((ace_allowing(i, ACT_READ, type(self))
-                                           for i in course.instructors))
-        return enrollments
+            return obj
+        course = ICourseInstance(obj)
+        obj._user = parent.user
+        obj.__acl__ = acl_from_aces(ace_allowing(parent.user,
+                                                self.user_extra_auth,
+                                                type(self)))
+        obj.__acl__.extend((ace_allowing(i, ACT_READ, type(self))
+                            for i in course.instructors))
+        return obj
 
     def _build_container(self):
         parent = self.__parent__
@@ -300,7 +305,7 @@ class _AbstractQueryBasedCoursesCollection(Contained):
                     enrollment.Username = parent.user.username
                 if getattr(enrollment, '_user', self) is None:
                     enrollment._user = parent.user
-        self._apply_user_extra_auth(container)
+                self._apply_user_extra_auth(enrollment)
         return container
 
     @Lazy
@@ -454,7 +459,6 @@ class AdministeredCoursesCollection(_AbstractQueryBasedCoursesCollection):
     name = alias('__name__', __name__)
 
     query_attr = 'iter_administrations'
-    query_interface = IPrincipalAdministrativeRoleCatalog
     contained_interface = ICourseInstanceAdministrativeRole
 
     @property
@@ -471,6 +475,66 @@ class AdministeredCoursesCollection(_AbstractQueryBasedCoursesCollection):
                         elements=('@@%s' % rel,))
             result.append(link)
         return result
+
+    @Lazy
+    def _admin_catalogs(self):
+        return tuple(component.subscribers((self.__parent__.user,),
+                                           IPrincipalAdministrativeRoleCatalog))
+
+    @Lazy
+    def course_intids(self):
+        results = []
+        for admin_catalog in self._admin_catalogs:
+            results.append(admin_catalog.get_course_intids())
+        if len(results) == 1:
+            # Currently only have one provider
+            return results[0]
+        courses_catalog = get_courses_catalog()
+        return courses_catalog.family.IF.multiunion(results)
+
+    def _build_container(self):
+        parent = self.__parent__
+        container = LastModifiedCopyingUserList()
+        queried_administrations = []
+        for admin_catalog in self._admin_catalogs:
+            queried = admin_catalog.iter_administrations()
+            queried_administrations.append(queried)
+            container.updateLastModIfGreater(
+                    getattr(queried, 'lastModified', container.lastModified))
+        for obj in itertools.chain(*queried_administrations):
+            admin_role = ICourseInstanceAdministrativeRole(obj)
+            course = ICourseInstance(admin_role)
+            if IDeletedCourse.providedBy(course):
+                continue
+            container.append(admin_role)
+            admin_role.__parent__ = self
+            # The adapter (contained_interface) rarely sets these
+            # because it may not have them, so provide them ourself
+            # TODO: Change the calling conventions so we don't have to do this
+            if getattr(admin_role, 'Username', self) is None:
+                admin_role.Username = parent.user.username
+            if getattr(admin_role, '_user', self) is None:
+                admin_role._user = parent.user
+        return container
+
+    @Lazy
+    def container(self):
+        result = self._build_container()
+        return result
+
+    def __getitem__(self, key):
+        for o in self.container:
+            if o.__name__ == key or ICourseCatalogEntry(o).__name__ == key:
+                return o
+
+        # No actual match. Legacy ProviderUniqueID?
+        for o in self.container:
+            entry = ICourseCatalogEntry(o, None)
+            if getattr(entry, 'ProviderUniqueID', None) == key:
+                logger.warning("Using legacy provider ID to match %s to %s",
+                               key, o)
+                return o
+        raise KeyError(key)
 
 
 @component.adapter(ICourseCatalogLegacyContentEntry)
