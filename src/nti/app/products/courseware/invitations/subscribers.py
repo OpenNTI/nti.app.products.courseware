@@ -91,6 +91,10 @@ def get_template_and_package(entry, base_template, default_package=None):
     return template, package
 
 
+def _site_policy():
+    return component.getUtility(ISitePolicyUserEventListener)
+
+
 def send_invitation_email(invitation,
                           sender,
                           receiver_name,
@@ -109,10 +113,11 @@ def send_invitation_email(invitation,
         return False
 
     entry = ICourseCatalogEntry(course)
-    template = 'course_invitation_email'
+    policy = _site_policy()
+    template = (getattr(policy, 'COURSE_INVITATION_EMAIL_TEMPLATE_BASE_NAME', None)
+                or 'course_invitation_email')
     template, package = get_template_and_package(entry, template)
 
-    policy = component.getUtility(ISitePolicyUserEventListener)
     support_email = getattr(policy, 'SUPPORT_EMAIL', 'support@nextthought.com')
     brand = get_site_brand_name()
     brand_tag = 'Presented by %s' % brand
@@ -143,10 +148,13 @@ def send_invitation_email(invitation,
 
     try:
         mailer = component.getUtility(ITemplatedMailer)
+        subject = (getattr(policy, 'COURSE_INVITATION_EMAIL_SUBJECT', None)
+                   or u"You're invited to ${course_name}")
+        subject = translate(_(subject,
+                              mapping={'course_name': entry.Title}))
         mailer.queue_simple_html_text_email(
             template,
-            subject=translate(_(u"You're invited to ${title}",
-                                mapping={'title': entry.Title})),
+            subject=subject,
             recipients=[receiver_email],
             template_args=args,
             request=request,
