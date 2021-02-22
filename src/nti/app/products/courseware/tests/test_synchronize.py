@@ -680,10 +680,8 @@ class TestFunctionalSynchronize(CourseLayerTest):
 
 		synchronize_catalog_from_root(folder, bucket)
 
-
 		assert_that(list(folder.iterCatalogEntries()),
 					 has_length(4))
-
 
 		# Now delete the course
 		del folder['Spring2014']['Gateway']

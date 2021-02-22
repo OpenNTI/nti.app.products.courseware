@@ -105,7 +105,6 @@ class _EnrolledCourseSectionTopicNTIIDResolver(object):
         return result
 
     def _solve_for_iface(self, ntiid, iface, provider_name, user, catalog_entry_matches=None):
-
         def _catalog_entry_matches(catalog_entry, provider_name):
             return self._escape_entry_provider(catalog_entry) == provider_name
 

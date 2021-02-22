@@ -7,8 +7,6 @@ from __future__ import absolute_import
 
 # pylint: disable=protected-access,too-many-public-methods
 
-import fudge
-
 from datetime import datetime
 
 from hamcrest import assert_that

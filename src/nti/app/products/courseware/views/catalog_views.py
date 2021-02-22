@@ -30,6 +30,10 @@ from zope.authentication.interfaces import IUnauthenticatedPrincipal
 
 from zope.cachedescriptors.property import Lazy
 
+from zope.catalog.catalog import ResultSet
+
+from zope.intid.interfaces import IIntIds
+
 from zope.security.management import getInteraction
 
 from zope.traversing.interfaces import IPathAdapter
@@ -50,6 +54,8 @@ from nti.app.externalization.error import raise_json_error
 
 from nti.app.externalization.view_mixins import BatchingUtilsMixin
 from nti.app.externalization.view_mixins import ModeledContentUploadRequestUtilsMixin
+
+from nti.app.products.courseware.completion.utils import has_completed_course
 
 from nti.app.products.courseware.interfaces import ICoursesWorkspace
 from nti.app.products.courseware.interfaces import ICoursesCollection
@@ -85,6 +91,15 @@ from nti.base._compat import text_
 from nti.common.string import is_true
 from nti.common.string import is_false
 
+from nti.contenttypes.courses.administered import get_course_admin_role
+
+from nti.contenttypes.courses.index import IX_ENTRY_START_DATE
+from nti.contenttypes.courses.index import IX_ENTRY_END_DATE
+from nti.contenttypes.courses.index import IX_ENTRY_TITLE_SORT
+from nti.contenttypes.courses.index import IX_ENTRY_PUID_SORT
+
+from nti.contenttypes.courses.index import get_courses_catalog
+
 from nti.contenttypes.courses.interfaces import ES_PUBLIC
 
 from nti.contenttypes.courses.interfaces import ICourseCatalog
@@ -103,6 +118,7 @@ from nti.contenttypes.courses.utils import is_enrolled
 from nti.contenttypes.courses.utils import filter_hidden_tags
 from nti.contenttypes.courses.utils import get_courses_for_tag
 from nti.contenttypes.courses.utils import get_course_hierarchy
+from nti.contenttypes.courses.utils import course_intids_to_entry_intids
 from nti.contenttypes.courses.utils import is_course_instructor_or_editor
 
 from nti.dataserver import authorization as nauth
@@ -125,7 +141,6 @@ from nti.externalization.interfaces import StandardExternalFields
 from nti.externalization.interfaces import StandardInternalFields
 
 from nti.traversal import traversal
-from nti.app.products.courseware.completion.utils import has_completed_course
 
 ITEMS = StandardExternalFields.ITEMS
 NTIID = StandardExternalFields.NTIID
@@ -1050,13 +1065,9 @@ class CourseCollectionView(_AbstractFilteredCourseView,
         return result
 
     @Lazy
-    def filter_operator(self):
-        param = self.request.params.get('filterOperator',  'union')
-        if param.lower() == 'union':
-            result = set.union
-        else:
-            result = set.intersection
-        return result
+    def filter_union(self):
+        param = self.request.params.get('filterOperator', 'union')
+        return param.lower() == 'union'
 
     @Lazy
     def filtered_entries(self):
@@ -1065,7 +1076,7 @@ class CourseCollectionView(_AbstractFilteredCourseView,
         entries = filter_utility.filter_entries(self.iter_entries_and_records(),
                                                 self.filter_str,
                                                 selector=lambda x: x[0],
-                                                operator=self.filter_operator)
+                                                union=self.filter_union)
         return entries
 
     def _sort_key(self, entry_tuple):
@@ -1106,7 +1117,7 @@ class CourseCollectionView(_AbstractFilteredCourseView,
         self.context.container = new_container
         result = to_external_object(self.context)
         result[TOTAL] = container_count
-        result['FilteredTotalItemCount'] = len(new_items)
+        result['FilteredTotalItemCount'] = len(new_container)
 
         # Need to manually add our batch rels
         batch_size, batch_start = self._get_batch_size_start()
@@ -1144,6 +1155,85 @@ class EnrolledCourseCollectionView(CourseCollectionView):
         course = record.CourseInstance
         entry = ICourseCatalogEntry(course, None)
         return entry
+
+
+@view_config(route_name='objects.generic.traversal',
+             context=IAdministeredCoursesCollection,
+             request_method='GET',
+             permission=nauth.ACT_READ)
+class AdministeredCoursesCollectionView(CourseCollectionView):
+    """
+    Access to the user's :class:`IAdministeredCoursesCollection`. This collection
+    may have access to all courses in the site (e.g. thousands).
+
+    Because of this, we we need to operate on the intid level such that we only
+    reify the objects we need for this user.
+    """
+
+    SORT_KEY_TO_INDEX = {'title': IX_ENTRY_TITLE_SORT,
+                         'provideruniqueid': IX_ENTRY_PUID_SORT,
+                         'startdate': IX_ENTRY_START_DATE,
+                         'enddate': IX_ENTRY_END_DATE}
+
+    DEFAULT_SORT_KEY = 'provideruniqueid'
+
+    _ALLOWED_SORTING = SORT_KEY_TO_INDEX
+
+    def _get_items(self):
+        """
+        Get the courses relevant in the collection
+        """
+        # Get our entry intids first
+        courses_catalog = get_courses_catalog()
+        course_intids = self.context.course_intids
+        user_entry_ids = course_intids_to_entry_intids(course_intids)
+        if self.filter_str:
+            filter_utility = component.getUtility(ICourseCatalogEntryFilterUtility)
+            filtered_entry_ids = filter_utility.get_entry_intids_for_filters(self.filter_str,
+                                                                             union=self.filter_union)
+            user_entry_ids = courses_catalog.family.IF.intersection(user_entry_ids,
+                                                                    filtered_entry_ids)
+        sortOn = self.sortOn or self.DEFAULT_SORT_KEY
+        idx_sort_key = self.SORT_KEY_TO_INDEX.get(sortOn)
+        sort_reverse = self.sortOrder == 'descending'
+        sorted_ids = courses_catalog[idx_sort_key].sort(user_entry_ids,
+                                                        reverse=sort_reverse)
+        intids = component.getUtility(IIntIds)
+        return ResultSet(sorted_ids, intids), len(user_entry_ids)
+
+    def _role_selector(self, entry):
+        """
+        Turns our catalog entry into an administrative role.
+        """
+        course = ICourseInstance(entry)
+        return get_course_admin_role(course, self.context.__parent__.user)
+
+    def __call__(self):
+        # XXX: Worth trying to fit this in parent __call__ logic?
+        container_count = len(self.context)
+        sorted_rs, filtered_count = self._get_items()
+        # Make sure we do our batching before we externalize (??)
+        ext_dict = LocatedExternalDict()
+        self._batch_items_iterable(ext_dict, sorted_rs, selector=self._role_selector)
+        # Toggle our container and externalize for batching.
+        new_container = LastModifiedCopyingUserList()
+        new_container.extend(ext_dict[ITEMS])
+        self.context.container = new_container
+        result = to_external_object(self.context)
+        result[TOTAL] = container_count
+        result['FilteredTotalItemCount'] = filtered_count
+
+        # Need to manually add our batch rels
+        batch_size, batch_start = self._get_batch_size_start()
+        if batch_size is not None and batch_start is not None:
+            result['BatchPage'] = batch_start // batch_size + 1
+            prev_batch_start, next_batch_start = self._batch_start_tuple(batch_start,
+                                                                         batch_size,
+                                                                         len(sorted_rs))
+
+            self._set_batch_links(result, result,
+                                  next_batch_start, prev_batch_start)
+        return result
 
 
 @view_config(route_name='objects.generic.traversal',
