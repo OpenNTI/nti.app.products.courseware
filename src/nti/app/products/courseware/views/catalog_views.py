@@ -16,6 +16,7 @@ from __future__ import print_function
 from __future__ import absolute_import
 
 import gevent
+import itertools
 
 from datetime import datetime
 from six.moves import urllib_parse
@@ -581,6 +582,56 @@ class FavoriteAdministeredCoursesView(_AbstractSortingAndFilteringCoursesView):
         if favorites_filter is not None:
             user = self.context.__parent__.user
             result = favorites_filter.include_entry(user, entry)
+        return result
+
+    def _get_items(self):
+        """
+        Get our result set items, which will include the `current`
+        courses backfilled with the most recent.
+
+        The result set will be sorted by PUID - start date or not.
+
+        XXX: backfill by puid?
+        """
+        intids = component.getUtility(IIntIds)
+        courses_catalog = get_courses_catalog()
+        course_intids = self.context.course_intids
+        user_entry_ids = course_intids_to_entry_intids(course_intids)
+        filter_utility = component.getUtility(ICourseCatalogEntryFilterUtility)
+        current_intids = filter_utility.get_current_entry_intids(user_entry_ids)
+        sorted_current_ids = courses_catalog[IX_ENTRY_PUID_SORT].sort(current_intids)
+
+        if len(current_intids) < self.minimum_count:
+            # XXX: We will gather up to max on this path
+            # If less than minimum, add our sorted_puids to the mix
+            sorted_puids = courses_catalog[IX_ENTRY_PUID_SORT].sort(user_entry_ids)
+            # Make sure we do not have duplicates
+            sorted_puids = (x for x in sorted_puids if x not in current_intids)
+            iter_intids = itertools.chain(sorted_current_ids, sorted_puids)
+        else:
+            # Otherwise this is enough
+            iter_intids = sorted_current_ids
+
+        result = []
+        entry_rs = ResultSet(iter_intids, intids)
+        user = self.context.__parent__.user
+        # Collect until we reach max or run out of items
+        for entry in entry_rs:
+            if len(result) == self.MAX_RESULT_SIZE:
+                break
+            if self._include_filter(entry):
+                course = ICourseInstance(entry)
+                admin_role = get_course_admin_role(course, user)
+                result.append(admin_role)
+        return result
+
+    def __call__(self):
+        # XXX: Work here with parent class
+        result = LocatedExternalDict()
+        items = self._get_items()
+        result[ITEMS] = items
+        result[ITEM_COUNT] = len(items)
+        result[TOTAL] = len(self.context)
         return result
 
 
