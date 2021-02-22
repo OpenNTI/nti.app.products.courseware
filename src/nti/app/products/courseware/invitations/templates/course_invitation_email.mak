@@ -1,3 +1,5 @@
+DEFAULT TEMPLATE
+
 TO: ${receiver_name}
 FROM: ${sender_name}
 

@@ -7,6 +7,9 @@ from __future__ import absolute_import
 
 # disable: accessing protected members, too many methods
 # pylint: disable=W0212,R0904
+import contextlib
+
+import fudge
 
 from hamcrest import is_
 from hamcrest import is_not
@@ -18,6 +21,8 @@ from hamcrest import has_length
 from hamcrest import assert_that
 from hamcrest import contains_string
 from hamcrest import contains_inanyorder
+from nti.appserver.policies.interfaces import ISitePolicyUserEventListener
+
 does_not = is_not
 
 from quopri import decodestring
@@ -65,6 +70,23 @@ CLASS = StandardExternalFields.CLASS
 NTIID = StandardExternalFields.NTIID
 CREATED_TIME = StandardExternalFields.CREATED_TIME
 LAST_MODIFIED = StandardExternalFields.LAST_MODIFIED
+
+
+@contextlib.contextmanager
+def modified_site_policy(ds, site_name, **kwargs):
+    with mock_dataserver.mock_db_trans(ds, site_name=site_name):
+        policy = component.queryUtility(ISitePolicyUserEventListener)
+        original_values = {key: getattr(policy, key) for key in kwargs
+                           if hasattr(policy, key)}
+        for key, value in kwargs.items():
+            setattr(policy, key, value)
+    try:
+        yield
+    finally:
+        with mock_dataserver.mock_db_trans(ds, site_name=site_name):
+            policy = component.queryUtility(ISitePolicyUserEventListener)
+            for key, value in original_values.items():
+                setattr(policy, key, value)
 
 
 class TestInvitations(ApplicationLayerTest):
@@ -364,3 +386,83 @@ class TestInvitations(ApplicationLayerTest):
         res = self.testapp.post(cvs_url,
                                 upload_files=[('input', 'source.csv', source)],
                                 status=200)
+
+
+    def _get_decoded_body(self, message, content_type):
+        text_parts = [part for part in message.get_payload()
+                      if part['Content-Type'].startswith(content_type)]
+        assert_that(text_parts, has_length(1))
+
+        decoded_body = text_parts[0].get_payload(decode=True)
+
+        return decoded_body
+
+    @WithSharedApplicationMockDS(testapp=True, users=True)
+    def test_send_invitation_overridden_template(self):
+        new_template_location = b'nti.app.products.courseware.tests:templates/course_invitation_email'
+        new_subject = u'Overridden subject'
+        with modified_site_policy(
+                self.ds, 'platform.ou.edu',
+                COURSE_INVITATION_EMAIL_TEMPLATE_BASE_NAME=new_template_location,
+                COURSE_INVITATION_EMAIL_SUBJECT=new_subject):
+
+            with mock_dataserver.mock_db_trans(self.ds):
+                user = self._create_user(u'ichigo')
+                IUserProfile(user).email = u'ichigo@bleach.org'
+
+            with mock_dataserver.mock_db_trans(self.ds, site_name='platform.ou.edu'):
+                entry = self.catalog_entry()
+                course = ICourseInstance(entry)
+                course_ntiid = to_external_ntiid_oid(course)
+
+            mailer = component.getUtility(ITestMailDelivery)
+            del mailer.queue[:]
+
+            environ = self._make_extra_environ(username='harp4162')
+            environ['HTTP_ORIGIN'] = 'http://platform.ou.edu'
+            data = {'username': 'ichigo', 'code': "CI-CLC-3403"}
+            url = '/dataserver2/Objects/%s/SendCourseInvitations' % course_ntiid
+            self.testapp.post_json(url, data,
+                                   extra_environ=environ, status=200)
+
+            mailer = component.getUtility(ITestMailDelivery)
+            assert_that(mailer.queue, has_length(1))
+
+            # Check overridden subject
+            assert_that(mailer.queue[0].subject, is_(new_subject))
+
+            # Text and html parts
+            assert_that(mailer.queue[0].get_payload(), has_length(2))
+
+            text_body = self._get_decoded_body(mailer.queue[0], "text/plain")
+            assert_that(text_body, contains_string("OVERRIDDEN TEXT TEMPLATE"))
+
+            html_body = self._get_decoded_body(mailer.queue[0], "text/html")
+            assert_that(html_body, contains_string("OVERRIDDEN HTML TEMPLATE"))
+
+    @WithSharedApplicationMockDS(testapp=True, users=True)
+    @fudge.patch('nti.app.products.courseware.invitations.subscribers._site_policy')
+    def test_send_invitation_no_policy(self, get_site_policy):
+        get_site_policy.is_callable().returns(None)
+
+        with mock_dataserver.mock_db_trans(self.ds):
+            user = self._create_user(u'ichigo')
+            IUserProfile(user).email = u'ichigo@bleach.org'
+
+        with mock_dataserver.mock_db_trans(self.ds, site_name='platform.ou.edu'):
+            entry = self.catalog_entry()
+            course = ICourseInstance(entry)
+            course_ntiid = to_external_ntiid_oid(course)
+
+        mailer = component.getUtility(ITestMailDelivery)
+        del mailer.queue[:]
+
+        environ = self._make_extra_environ(username='harp4162')
+        environ['HTTP_ORIGIN'] = 'http://platform.ou.edu'
+        data = {'username': 'ichigo', 'code': "CI-CLC-3403"}
+        url = '/dataserver2/Objects/%s/SendCourseInvitations' % course_ntiid
+        self.testapp.post_json(url, data,
+                               extra_environ=environ, status=200)
+
+        mailer = component.getUtility(ITestMailDelivery)
+        assert_that(mailer.queue, has_length(1))

@@ -1,0 +1,27 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+		xmlns:metal="http://xml.zope.org/namespaces/metal"
+		xmlns:tal="http://xml.zope.org/namespaces/tal">
+    <!-- For speed when sending large amounts of emails interactively, all styles are inlined below -->
+	<body>
+<div class="container" style="width:100%;max-width: 730px; margin: 0 auto; background-color: #FFFFFF; padding-bottom: 50px;">
+	<div metal:use-macro="macro:header"></div>
+	<div class="main" style="width:calc(100% - 10px);max-width: 610px;margin: 0 auto;padding: 0 5px;">
+		<table>
+			<tr>
+				<td><div>OVERRIDDEN HTML TEMPLATE</div></td>
+			</tr>
+			<tr>
+				<td style="border-collapse:collapse; padding:15px">TO:</td>
+				<td tal:condition="options/receiver_name | nothing" tal:content="options/receiver_name"
+				    style="border-collapse:collapse; padding:15px">
+					Ichigo Kurozaki
+				</td>
+			</tr>
+		</table>
+	</div>
+	<div metal:use-macro="macro:footer"></div>
+</div>
+	</body>
+</html>
