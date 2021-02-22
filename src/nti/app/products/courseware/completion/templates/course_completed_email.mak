@@ -11,7 +11,7 @@ like through this email. We’ll keep it safe for you!
 ${cert_link}
 % endif
 
-Celebrate by doing some cartwheels, or taking a nap. Keep up the good work!
+Keep up the good work!
 
 If you feel this email was sent in error, or this account was created
 without your consent, you may email ${support_email}.

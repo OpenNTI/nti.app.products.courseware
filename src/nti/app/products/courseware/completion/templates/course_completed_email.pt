@@ -291,8 +291,7 @@
                                                             Hey there! Great job completing ${options/course_title}. Because of all your
                                                             hard work, here is a certificate that celebrates your achievements. Use the download
                                                             link to save the document, or you can access it whenever you’d like through this
-                                                            email. We’ll keep it safe for you! Celebrate by doing some cartwheels, or taking
-                                                            a nap. Keep up the good work!
+                                                            email. We’ll keep it safe for you. Keep up the good work!
                                                         </td>
                                                         <td class="content"
                                                             tal:condition="not:options/cert_link"
