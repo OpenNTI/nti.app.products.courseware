@@ -490,6 +490,9 @@ class FavoriteAdministeredCoursesView(_AbstractSortingAndFilteringCoursesView):
         if favorites_filter is not None:
             user = self.context.__parent__.user
             result = favorites_filter.include_entry(user, entry)
+        if result:
+            course = ICourseInstance(entry)
+            result = not IDeletedCourse.providedBy(course)
         return result
 
     def _get_items(self):
@@ -1074,7 +1077,6 @@ class CourseCollectionView(_AbstractFilteredCourseView,
         return result
 
 
-
 @view_config(route_name='objects.generic.traversal',
              context=IEnrolledCoursesCollection,
              request_method='GET',
@@ -1153,7 +1155,10 @@ class AdministeredCoursesCollectionView(CourseCollectionView):
         Turns our catalog entry into an administrative role.
         """
         course = ICourseInstance(entry)
-        return get_course_admin_role(course, self.context.__parent__.user)
+        # This will effectively filter out partially deleted courses while
+        # building the batch.
+        if not IDeletedCourse.providedBy(course):
+            return get_course_admin_role(course, self.context.__parent__.user)
 
     def __call__(self):
         # XXX: Worth trying to fit this in parent __call__ logic?
