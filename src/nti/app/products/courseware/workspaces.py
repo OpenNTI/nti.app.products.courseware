@@ -516,6 +516,7 @@ class AdministeredCoursesCollection(_AbstractQueryBasedCoursesCollection):
         return result
 
     def __getitem__(self, key):
+        # FIXME: this can change/improve
         for o in self.container:
             if o.__name__ == key or ICourseCatalogEntry(o).__name__ == key:
                 return o
