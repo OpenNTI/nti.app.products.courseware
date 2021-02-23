@@ -32,10 +32,6 @@ from nti.app.products.courseware import VIEW_CURRENT_COURSES
 from nti.app.products.courseware import VIEW_COURSE_FAVORITES
 from nti.app.products.courseware import VIEW_UPCOMING_COURSES
 from nti.app.products.courseware import VIEW_ARCHIVED_COURSES
-from nti.app.products.courseware import VIEW_ENROLLED_WINDOWED
-from nti.app.products.courseware import VIEW_ALL_COURSES_WINDOWED
-from nti.app.products.courseware import VIEW_ALL_ENTRIES_WINDOWED
-from nti.app.products.courseware import VIEW_ADMINISTERED_WINDOWED
 
 from nti.app.products.courseware.interfaces import ICoursesWorkspace
 from nti.app.products.courseware.interfaces import IAllCoursesCollection
@@ -215,9 +211,7 @@ class AllCoursesCollection(Contained):
     @property
     def links(self):
         result = []
-        rels = [VIEW_ALL_COURSES_WINDOWED,
-                VIEW_ALL_ENTRIES_WINDOWED,
-                VIEW_CURRENT_COURSES,
+        rels = [VIEW_CURRENT_COURSES,
                 VIEW_ARCHIVED_COURSES,
                 VIEW_UPCOMING_COURSES]
         for rel in rels:
@@ -437,7 +431,7 @@ class EnrolledCoursesCollection(_AbstractQueryBasedCoursesCollection):
     @property
     def links(self):
         result = []
-        rels = [VIEW_ENROLLED_WINDOWED, VIEW_CURRENT_COURSES, VIEW_ARCHIVED_COURSES,
+        rels = [VIEW_CURRENT_COURSES, VIEW_ARCHIVED_COURSES,
                 VIEW_UPCOMING_COURSES, VIEW_COURSE_FAVORITES]
         for rel in rels:
             link = Link(self,
@@ -464,8 +458,7 @@ class AdministeredCoursesCollection(_AbstractQueryBasedCoursesCollection):
     @property
     def links(self):
         result = []
-        rels = [VIEW_ADMINISTERED_WINDOWED,
-                VIEW_CURRENT_COURSES,
+        rels = [VIEW_CURRENT_COURSES,
                 VIEW_ARCHIVED_COURSES,
                 VIEW_UPCOMING_COURSES,
                 VIEW_COURSE_FAVORITES]

@@ -32,10 +32,6 @@ from zope.securitypolicy.principalrole import principalRoleManager
 
 from nti.app.products.courseware import VIEW_COURSE_BY_TAG
 from nti.app.products.courseware import VIEW_COURSE_FAVORITES
-from nti.app.products.courseware import VIEW_ENROLLED_WINDOWED
-from nti.app.products.courseware import VIEW_ALL_COURSES_WINDOWED
-from nti.app.products.courseware import VIEW_ALL_ENTRIES_WINDOWED
-from nti.app.products.courseware import VIEW_ADMINISTERED_WINDOWED
 
 from nti.app.products.courseware.interfaces import IAllCoursesCollection
 from nti.app.products.courseware.interfaces import IAllCoursesCollectionAcceptsProvider
@@ -740,30 +736,6 @@ class TestPersistentWorkspaces(AbstractEnrollingBase, ApplicationLayerTest):
         purchased_res = purchased_res.json_body
         purchased_items = purchased_res[ITEMS]
         assert_that(purchased_items, has_length(0))
-
-    @WithSharedApplicationMockDS(users=True, testapp=True)
-    def test_windowed_links(self):
-        administered_path = '/dataserver2/users/sjohnson@nextthought.com/Courses/AdministeredCourses'
-        enrolled_path = '/dataserver2/users/sjohnson@nextthought.com/Courses/EnrolledCourses'
-        all_path = '/dataserver2/users/sjohnson@nextthought.com/Courses/AllCourses'
-        res = self.testapp.get(administered_path)
-
-        col = res.json_body["Collection"]
-
-        self.require_link_href_with_rel(col, VIEW_ADMINISTERED_WINDOWED)
-
-        res = self.testapp.get(enrolled_path)
-
-        col = res.json_body["Collection"]
-
-        self.require_link_href_with_rel(col, VIEW_ENROLLED_WINDOWED)
-
-        res = self.testapp.get(all_path)
-
-        col = res.json_body["Collection"]
-
-        self.require_link_href_with_rel(col, VIEW_ALL_COURSES_WINDOWED)
-        self.require_link_href_with_rel(col, VIEW_ALL_ENTRIES_WINDOWED)
 
     @WithSharedApplicationMockDS(users=True, testapp=True)
     def test_all_courses_collection_accepts(self):

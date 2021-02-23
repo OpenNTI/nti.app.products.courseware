@@ -437,98 +437,6 @@ class _AbstractSortingAndFilteringCoursesView(AbstractAuthenticatedView):
         return result
 
 
-class _AbstractWindowedCoursesView(_AbstractSortingAndFilteringCoursesView):
-    """
-    Base for fetching courses in a more paged style. Request gives back courses
-    that are between the notBefore and notAfter GET params. If neither of these
-    params are given return the entire collection.
-    """
-
-    def _to_datetime(self, stamp):
-        return datetime.utcfromtimestamp(stamp)
-
-    @Lazy
-    def _params(self):
-        return CaseInsensitiveDict(self.request.params)
-
-    def _get_param(self, param_name):
-        # pylint: disable=no-member
-        param_val = self._params.get(param_name)
-        if param_val is None:
-            return None
-        try:
-            result = float(param_val)
-        except ValueError:
-            raise_json_error(self.request,
-                             hexc.HTTPUnprocessableEntity,
-                             {
-                                 'message': _(u'Invalid timestamp boundary.'),
-                             },
-                             None)
-        result = self._to_datetime(result)
-        return result
-
-    @Lazy
-    def not_before(self):
-        return self._get_param("notBefore")
-
-    @Lazy
-    def not_after(self):
-        return self._get_param("notAfter")
-
-    def _is_not_before(self, course):
-        return self.not_before is None or self.not_before < course.StartDate
-
-    def _is_not_after(self, course):
-        return self.not_after is None or self.not_after > course.StartDate
-
-    def get_paged_records(self, entry_record_tuples):
-        """
-        Gather all records that fall within our window, defined by the user
-        given timestamp boundaries.
-        """
-        records = []
-        if self.not_before is None and self.not_after is None:
-            # Return everything if no filter.
-            return [x[1] for x in entry_record_tuples]
-        # We are iterating from most recent to oldest.
-        for entry, record in entry_record_tuples or ():
-            if not self._is_not_before(entry):
-                break
-            if self._is_not_after(entry):
-                records.append(record)
-        return records
-
-    def _get_items(self):
-        records = self.get_paged_records(self.sorted_entries_and_records)
-        return records
-
-
-@view_config(route_name='objects.generic.traversal',
-             context=IAdministeredCoursesCollection,
-             request_method='GET',
-             permission=nauth.ACT_READ,
-             name="WindowedAdministered",
-             renderer='rest')
-class WindowedFavoriteAdministeredCoursesView(_AbstractWindowedCoursesView):
-    """
-    Paged Administered Courses View
-    """
-
-
-@view_config(route_name='objects.generic.traversal',
-             context=IEnrolledCoursesCollection,
-             request_method='GET',
-             permission=nauth.ACT_READ,
-             name="WindowedEnrolled",
-             renderer='rest')
-class WindowedFavoriteEnrolledCoursesView(_AbstractWindowedCoursesView):
-    """
-    Paged enrolled courses view. If we're paging, we'll want to sort
-    by entry start date, not the record enrollment date.
-    """
-
-
 @view_config(route_name='objects.generic.traversal',
              context=IEnrolledCoursesCollection,
              request_method='GET',
@@ -741,23 +649,6 @@ class AllCatalogEntriesView(AbstractAuthenticatedView):
         return result
 
 
-@view_config(name="WindowedAllCourses")
-@view_config(name="WindowedAllCatalogEntries")
-@view_defaults(route_name='objects.generic.traversal',
-               context=IContainerCollection,
-               request_method='GET',
-               permission=nauth.ACT_READ,
-               renderer='rest')
-class WindowedAllCatalogEntriesView(_AbstractWindowedCoursesView):
-    """
-    Paged AllCourses view
-    """
-
-    def _get_entry_for_record(self, record):
-        entry = ICourseCatalogEntry(record, None)
-        return entry
-
-
 @view_config(name='AnonymouslyButNotPubliclyAvailableCourseInstances')
 @view_config(name='_AnonymouslyButNotPubliclyAvailableCourseInstances')
 @view_defaults(name='_AnonymouslyButNotPubliclyAvailableCourseInstances',
@@ -774,7 +665,7 @@ class AnonymouslyAvailableCourses(AbstractView):
         """
         # we should always have an interaction here at this point right?
         # if we don't something went really wrong and we probably want to blow
-        # up aggresively.
+        # up aggressively.
         principal = getInteraction().participations[0].principal
         return IUnauthenticatedPrincipal.providedBy(principal)
 
@@ -1230,6 +1121,10 @@ class AdministeredCoursesCollectionView(CourseCollectionView):
 
     _ALLOWED_SORTING = SORT_KEY_TO_INDEX
 
+    def filter_intids(self, entry_intids):
+        # No-op - subclasses may change
+        return entry_intids
+
     def _get_items(self):
         """
         Get the courses relevant in the collection
@@ -1244,6 +1139,7 @@ class AdministeredCoursesCollectionView(CourseCollectionView):
                                                                              union=self.filter_union)
             user_entry_ids = courses_catalog.family.IF.intersection(user_entry_ids,
                                                                     filtered_entry_ids)
+        user_entry_ids = self.filter_intids(user_entry_ids)
         sortOn = self.sortOn or self.DEFAULT_SORT_KEY
         idx_sort_key = self.SORT_KEY_TO_INDEX.get(sortOn)
         sort_reverse = self.sortOrder == 'descending'
@@ -1285,6 +1181,58 @@ class AdministeredCoursesCollectionView(CourseCollectionView):
             self._set_batch_links(result, result,
                                   next_batch_start, prev_batch_start)
         return result
+
+
+@view_config(route_name='objects.generic.traversal',
+             request_method='GET',
+             permission=nauth.ACT_READ,
+             name=VIEW_UPCOMING_COURSES,
+             context=IAdministeredCoursesCollection)
+class AdministeredUpcomingCoursesView(AdministeredCoursesCollectionView):
+    """
+    Fetch all upcoming courses in the collection
+    """
+
+    def filter_intids(self, entry_intids):
+        filter_utility = component.getUtility(ICourseCatalogEntryFilterUtility)
+        now = datetime.utcnow()
+        upcoming_intids = filter_utility.get_entry_intids_by_dates(start_not_before=now)
+        catalog = get_courses_catalog()
+        return catalog.family.IF.intersection(entry_intids, upcoming_intids)
+
+
+@view_config(route_name='objects.generic.traversal',
+             context=IAdministeredCoursesCollection,
+             request_method='GET',
+             permission=nauth.ACT_READ,
+             name=VIEW_ARCHIVED_COURSES)
+class AdministeredArchivedCoursesView(AdministeredCoursesCollectionView):
+    """
+    Fetch all archived courses in the collection
+    """
+
+    def filter_intids(self, entry_intids):
+        filter_utility = component.getUtility(ICourseCatalogEntryFilterUtility)
+        now = datetime.utcnow()
+        archived_intids = filter_utility.get_entry_intids_by_dates(end_not_after=now)
+        catalog = get_courses_catalog()
+        return catalog.family.IF.intersection(entry_intids, archived_intids)
+
+
+@view_config(route_name='objects.generic.traversal',
+             context=IAdministeredCoursesCollection,
+             request_method='GET',
+             permission=nauth.ACT_READ,
+             name=VIEW_CURRENT_COURSES)
+class AdministeredCurrentCoursesView(AdministeredCoursesCollectionView):
+    """
+    Fetch all current courses in the collection. This will include courses
+    without dates (e.g. always current).
+    """
+
+    def filter_intids(self, entry_intids):
+        filter_utility = component.getUtility(ICourseCatalogEntryFilterUtility)
+        return filter_utility.get_current_entry_intids(entry_intids)
 
 
 @view_config(route_name='objects.generic.traversal',
