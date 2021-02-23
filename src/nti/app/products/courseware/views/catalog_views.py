@@ -1280,7 +1280,7 @@ class AdministeredCoursesCollectionView(CourseCollectionView):
             result['BatchPage'] = batch_start // batch_size + 1
             prev_batch_start, next_batch_start = self._batch_start_tuple(batch_start,
                                                                          batch_size,
-                                                                         len(sorted_rs))
+                                                                         filtered_count)
 
             self._set_batch_links(result, result,
                                   next_batch_start, prev_batch_start)
