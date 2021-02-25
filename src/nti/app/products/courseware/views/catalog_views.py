@@ -1249,8 +1249,6 @@ class CourseCatalogByTagView(AbstractAuthenticatedView, BatchingUtilsMixin):
     """
     A view to return an :class:`ICoursesCollection` grouped by tag.
 
-    The entries within a bucket are sorted by enrollment count (desc).
-
     The tag buckets are sorted by tag name, with hidden tags last.
 
     This view also supports a subpath drilldown into a specific tag
