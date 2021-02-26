@@ -117,14 +117,15 @@ from nti.contenttypes.courses.interfaces import ICourseCatalogEntryFilterUtility
 
 from nti.contenttypes.courses.utils import is_enrolled
 from nti.contenttypes.courses.utils import filter_hidden_tags
-from nti.contenttypes.courses.utils import get_courses_for_tag
+from nti.contenttypes.courses.utils import get_entry_intids_for_tag
+from nti.contenttypes.courses.utils import get_non_tagged_entry_intids
 from nti.contenttypes.courses.utils import get_course_hierarchy
 from nti.contenttypes.courses.utils import course_intids_to_entry_intids
 from nti.contenttypes.courses.utils import is_course_instructor_or_editor
 
 from nti.dataserver import authorization as nauth
 
-from nti.dataserver.authorization import is_admin
+from nti.dataserver.authorization import is_admin, is_admin_or_site_admin
 from nti.dataserver.authorization import is_site_admin
 from nti.dataserver.authorization import is_admin_or_content_admin
 from nti.dataserver.authorization import is_admin_or_content_admin_or_site_admin
@@ -1241,22 +1242,21 @@ class AdministeredCurrentCoursesView(AdministeredCoursesCollectionView):
 
 
 @view_config(route_name='objects.generic.traversal',
-             context=ICoursesCollection,
+             context=ICoursesCatalogCollection,
              request_method='GET',
              name=VIEW_COURSE_BY_TAG,
              permission=nauth.ACT_READ)
 class CourseCatalogByTagView(AbstractAuthenticatedView, BatchingUtilsMixin):
     """
-    A view to return an :class:`ICoursesCollection` grouped by tag.
-
-    The tag buckets are sorted by tag name, with hidden tags last.
+    A view to return an :class:`ICoursesCollection` grouped by tag. The
+    tag buckets are sorted by tag name, with hidden tags last.
+    XXX: this is inefficient and should not be used.
 
     This view also supports a subpath drilldown into a specific tag
     (e.g. `@@ByTag/tag_name`). `hidden_tags` is an unused param. `bucketSize`,
     if given, will still be respected. The tag drilldown supports paging.
 
     params:
-
         bucketSize - (default None) the number of entries per tag to return.
             If we do not find this many entries in a bucket, the bucket will
             return empty.
@@ -1308,6 +1308,13 @@ class CourseCatalogByTagView(AbstractAuthenticatedView, BatchingUtilsMixin):
         return  not is_false(result) \
             and is_admin_or_content_admin_or_site_admin(self.remoteUser)
 
+    @Lazy
+    def _entry_intids(self):
+        """
+        The LFSet of entry_intids of our context collection.
+        """
+        return self.context.entry_intids()
+
     def _tag_sort_key(self, item_tuple):
         # Sort by tag name
         return item_tuple[0].lower()
@@ -1315,26 +1322,38 @@ class CourseCatalogByTagView(AbstractAuthenticatedView, BatchingUtilsMixin):
     def _bucket_sort_key(self, entry):
         return entry.ProviderUniqueID.lower()
 
-    def _get_tagged_entries(self):
+    def _get_tagged_entry_intids(self):
         """
-        Return the set of tagged entries for the given tag.
+        Return the set of tagged entry intids for the given tag.
         """
-        tagged_courses = get_courses_for_tag(self._tag_drilldown)
-        tagged_entries = {ICourseCatalogEntry(x, None)
-                          for x in tagged_courses}
-        tagged_entries.discard(None)
-        return tagged_entries
+        return get_entry_intids_for_tag(self._tag_drilldown)
+
+    def _get_non_tagged_entry_intids(self):
+        """
+        Return the set of non-tagged entry intids.
+        """
+        exclude_non_public = not is_admin_or_site_admin(self.remoteUser)
+        return get_non_tagged_entry_intids(exclude_non_public=exclude_non_public)
+
+    def _get_entry_intids(self):
+        """
+        Returns a sorted set of entry intids.
+        """
+        if self._tag_drilldown == self.NO_TAG_NAME:
+            # Special case, fetch all un-tagged entries
+            entry_intids = self._get_non_tagged_entry_intids()
+        else:
+            entry_intids = self._get_tagged_entry_intids()
+        # Now available for us
+        intids = component.getUtility(IIntIds)
+        entry_intids = intids.family.IF.intersection(entry_intids,
+                                                     self._entry_intids)
+        courses_catalog = get_courses_catalog()
+        result_intids = courses_catalog[IX_ENTRY_PUID_SORT].sort(entry_intids)
+        return ResultSet(result_intids, intids), len(entry_intids)
 
     def _get_entries(self):
-        entries = self.context.container or ()
-        if self._tag_drilldown:
-            if self._tag_drilldown == self.NO_TAG_NAME:
-                # Special case, fetch all un-tagged entries
-                entries = (x for x in entries if not x.tags)
-            else:
-                tagged_entries = set(self._get_tagged_entries())
-                entries = set(entries) & tagged_entries
-        return entries
+        return self.context.container or ()
 
     @Lazy
     def _tag_buckets(self):
@@ -1342,20 +1361,16 @@ class CourseCatalogByTagView(AbstractAuthenticatedView, BatchingUtilsMixin):
         Build buckets of tag_name -> entries.
         """
         result = defaultdict(list)
-        entries = self._get_entries()
-        if self._tag_drilldown:
-            # If a specific tag is requested, this is easy.
-            result[self._tag_drilldown] = entries
-        else:
-            for entry in self._get_entries():
-                entry_tags = entry.tags
-                if not self._include_hidden_tags:
-                    entry_tags = filter_hidden_tags(entry_tags)
-                if entry_tags:
-                    for entry_tag in entry_tags:
-                        result[entry_tag].append(entry)
-                else:
-                    result[self.NO_TAG_NAME].append(entry)
+        # XXX: This path is inefficient and should not be used.
+        for entry in self._get_entries():
+            entry_tags = entry.tags
+            if not self._include_hidden_tags:
+                entry_tags = filter_hidden_tags(entry_tags)
+            if entry_tags:
+                for entry_tag in entry_tags:
+                    result[entry_tag].append(entry)
+            else:
+                result[self.NO_TAG_NAME].append(entry)
         return result
 
     @Lazy
@@ -1391,18 +1406,14 @@ class CourseCatalogByTagView(AbstractAuthenticatedView, BatchingUtilsMixin):
 
     def __call__(self):
         result = LocatedExternalDict()
-        buckets = self._sorted_tag_buckets
-        if self._tag_drilldown and buckets:
-            # Get our first dict if we have info.
-            # pylint: disable=unsubscriptable-object
-            result.update(buckets[0])
-            self._batch_items_iterable(result, result[ITEMS])
-        elif self._tag_drilldown:
-            # Empty requested bucket
+        if self._tag_drilldown:
+            entry_intids, course_count = self._get_entry_intids()
             result['Name'] = self._tag_drilldown
-            result[ITEMS] = ()
-            result[ITEM_COUNT] = result[TOTAL] = 0
+            result[ITEMS] = entry_intids
+            result[TOTAL] = course_count
+            self._batch_items_iterable(result, result[ITEMS])
         else:
+            buckets = self._sorted_tag_buckets
             result[ITEMS] = buckets
             result[TOTAL] = len(buckets)
         return result

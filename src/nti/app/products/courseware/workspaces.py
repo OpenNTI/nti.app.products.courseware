@@ -200,6 +200,9 @@ class AllCoursesCollection(Contained):
             result[entry.ntiid] = entry
         return result
 
+    def entry_intids(self):
+        return IAvailableCoursesProvider(self.__parent__.user).entry_intids()
+
     @Lazy
     def container(self):
         container = self.available_entries
