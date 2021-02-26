@@ -968,7 +968,7 @@ class FeaturedCoursesView(_AbstractFilteredCourseView):
         return_count = self._get_return_count(item_count)
         result[ITEMS] = items
         result[ITEM_COUNT] = return_count
-        result[TOTAL] = len(item_count)
+        result[TOTAL] = item_count
         self._batch_items_iterable(result, items,
                                    batch_size=return_count,
                                    batch_start=0)
