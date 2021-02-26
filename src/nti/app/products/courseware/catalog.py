@@ -15,10 +15,14 @@ from zope import component
 
 from zope.cachedescriptors.property import Lazy
 
+from zope.intid.interfaces import IIntIds
+
 from nti.app.products.courseware.interfaces import IAvailableCoursesProvider
 
 from nti.appserver.workspaces.interfaces import IFeaturedCatalogCollectionProvider
 from nti.appserver.workspaces.interfaces import IPurchasedCatalogCollectionProvider
+
+from nti.contenttypes.courses.index import get_courses_catalog
 
 from nti.contenttypes.courses.interfaces import ICourseCatalog
 from nti.contenttypes.courses.interfaces import IDeletedCourse
@@ -28,8 +32,11 @@ from nti.contenttypes.courses.interfaces import ICourseCatalogEntry
 from nti.contenttypes.courses.interfaces import ICourseCatalogEntryFilterUtility
 
 from nti.contenttypes.courses.utils import get_enrollments
+from nti.contenttypes.courses.utils import get_all_site_entry_intids
 
 from nti.dataserver.authorization import ACT_READ
+
+from nti.dataserver.authorization import is_admin_or_site_admin
 
 from nti.dataserver.authorization_acl import has_permission
 
@@ -50,21 +57,20 @@ class AvailableCoursesProvider(object):
     def catalog(self):
         return component.getUtility(ICourseCatalog)
 
-    def get_available_entries(self):
-        """
-        Return a sequence of :class:`ICourseCatalogEntry` objects the user is
-        not enrolled in and that are available to be enrolled in. We also include
-        the entries of the courses the user is enrolled in.
-        """
-        # To support ACLs limiting the available parts of the catalog, we
-        # filter out here. we could do this with a proxy, but it's easier right
-        # now just to copy. This is highly dependent on implementation. We also
-        # filter out sibling courses when we are already enrolled in one; this
-        # is probably inefficient.
+    @Lazy
+    def enrolled_entry_ntiid_to_course(self):
         enrolled_courses = (x.CourseInstance for x in get_enrollments(self.user))
-        enrolled_entry_ntiid_to_course = {ICourseCatalogEntry(x).ntiid: x for x in enrolled_courses}
+        result = {ICourseCatalogEntry(x).ntiid: x for x in enrolled_courses}
+        return result
+
+    @Lazy
+    def _courses_to_exclude(self):
+        """
+        Filter out sibling courses when we are already enrolled in one; this
+        is probably inefficient.
+        """
         courses_to_remove = set()
-        for course in enrolled_entry_ntiid_to_course.values():
+        for course in self.enrolled_entry_ntiid_to_course.values():
             if ICourseSubInstance.providedBy(course):
                 # Look for parents and siblings to remove
                 # XXX: Too much knowledge
@@ -73,10 +79,21 @@ class AvailableCoursesProvider(object):
             else:
                 # Look for children to remove
                 courses_to_remove.update(course.SubInstances.values())
+        return courses_to_remove
 
+    def get_available_entries(self):
+        """
+        Return a sequence of :class:`ICourseCatalogEntry` objects the user is
+        not enrolled in and that are available to be enrolled in. We also include
+        the entries of the courses the user is enrolled in.
+        """
+        # To support ACLs limiting the available parts of the catalog, we
+        # filter out here. we could do this with a proxy, but it's easier right
+        # now just to copy. This is highly dependent on implementation.
+        courses_to_remove = self._courses_to_exclude
         result = []
         for x in self.catalog.iterCatalogEntries():
-            if x.ntiid in enrolled_entry_ntiid_to_course:
+            if x.ntiid in self.enrolled_entry_ntiid_to_course:
                 result.append(x)
             elif ICourseInstance(x, None) in courses_to_remove:
                 pass
@@ -87,6 +104,16 @@ class AvailableCoursesProvider(object):
             elif has_permission(ACT_READ, x, self.user):
                 result.append(x)
         return result
+
+    def entry_intids(self):
+        exclude_non_public = not is_admin_or_site_admin(self.user)
+        entry_intids = get_all_site_entry_intids(exclude_non_public=exclude_non_public,
+                                                 exclude_deleted=True)
+        entries_to_exclude = [ICourseCatalogEntry(x) for x in self._courses_to_exclude]
+        intids = component.getUtility(IIntIds)
+        excluded_intids = intids.family.IF.LFSet(intids.getId(x) for x in entries_to_exclude)
+        catalog = get_courses_catalog()
+        return catalog.family.IF.difference(entry_intids, excluded_intids)
 
 
 @component.adapter(IUser)
