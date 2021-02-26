@@ -117,16 +117,17 @@ from nti.contenttypes.courses.interfaces import ICourseCatalogEntryFilterUtility
 
 from nti.contenttypes.courses.utils import is_enrolled
 from nti.contenttypes.courses.utils import filter_hidden_tags
+from nti.contenttypes.courses.utils import get_course_hierarchy
 from nti.contenttypes.courses.utils import get_entry_intids_for_tag
 from nti.contenttypes.courses.utils import get_non_tagged_entry_intids
-from nti.contenttypes.courses.utils import get_course_hierarchy
 from nti.contenttypes.courses.utils import course_intids_to_entry_intids
 from nti.contenttypes.courses.utils import is_course_instructor_or_editor
 
 from nti.dataserver import authorization as nauth
 
-from nti.dataserver.authorization import is_admin, is_admin_or_site_admin
+from nti.dataserver.authorization import is_admin
 from nti.dataserver.authorization import is_site_admin
+from nti.dataserver.authorization import is_admin_or_site_admin
 from nti.dataserver.authorization import is_admin_or_content_admin
 from nti.dataserver.authorization import is_admin_or_content_admin_or_site_admin
 
@@ -914,15 +915,12 @@ class FeaturedCoursesView(_AbstractFilteredCourseView):
     def minimum_featured_count(self):
         return self.requested_count or self.MINIMUM_RESULT_COUNT
 
-    def _include_filter(self, entry):
-        return self._is_entry_upcoming(entry)
-
     def should_return_featured_entries(self):
         """
         We only return if our collection is twice the size of the requested
         featured item count (defaulting to 3).
         """
-        return len(self.context.container) >= 2 * self.minimum_featured_count
+        return len(self._entry_intids) >= 2 * self.minimum_featured_count
 
     def _raise_not_found(self):
         raise_json_error(self.request,
@@ -933,26 +931,47 @@ class FeaturedCoursesView(_AbstractFilteredCourseView):
                          },
                          None)
 
+    @Lazy
+    def _entry_intids(self):
+        return self.context.entry_intids()
+
     def _get_items(self):
-        result = super(FeaturedCoursesView, self)._get_items()
+        courses_catalog = get_courses_catalog()
+        user_entry_intids = self._entry_intids
+        now = datetime.utcnow()
+        # Get all entries starting after now
+        filter_utility = component.getUtility(ICourseCatalogEntryFilterUtility)
+        future_entry_intids = filter_utility.get_entry_intids_by_dates(start_not_before=now)
+        future_user_entry_ids = courses_catalog.family.IF.intersection(user_entry_intids,
+                                                                       future_entry_intids)
+        if not future_user_entry_ids:
+            self._raise_not_found()
+        sorted_ids = courses_catalog[IX_ENTRY_START_DATE].sort(future_user_entry_ids)
+        intids = component.getUtility(IIntIds)
+        return ResultSet(sorted_ids, intids), len(future_user_entry_ids)
+
+    def _get_return_count(self, item_count):
         return_count = self.requested_count
         unused_batch_size, batch_start = self._get_batch_size_start()
         if not return_count and not batch_start:
             # If not a requested count and not a batch, bound between 1 and 3.
-            item_count = len(self.context.container)
             half_item_count = item_count // 2
             return_count = min(half_item_count, self.DEFAULT_RESULT_COUNT)
             return_count = max(return_count, self.MINIMUM_RESULT_COUNT)
-        if not result:
-            self._raise_not_found()
-        if return_count:
-            result = result[:return_count]
-        return result
+        return return_count
 
     def __call__(self):
         if not self.should_return_featured_entries():
             self._raise_not_found()
-        result = super(FeaturedCoursesView, self).__call__()
+        result = LocatedExternalDict()
+        items, item_count = self._get_items()
+        return_count = self._get_return_count(item_count)
+        result[ITEMS] = items
+        result[ITEM_COUNT] = return_count
+        result[TOTAL] = len(item_count)
+        self._batch_items_iterable(result, items,
+                                   batch_size=return_count,
+                                   batch_start=0)
         return result
 
 
@@ -1250,7 +1269,11 @@ class CourseCatalogByTagView(AbstractAuthenticatedView, BatchingUtilsMixin):
     """
     A view to return an :class:`ICoursesCollection` grouped by tag. The
     tag buckets are sorted by tag name, with hidden tags last.
-    XXX: this is inefficient and should not be used.
+
+    XXX: this is inefficient and should not be used, particularly in sites
+    with a large number of courses since we iterate through the catalog.
+
+    Note: This API has been exposed externally to clients and should not be altered.
 
     This view also supports a subpath drilldown into a specific tag
     (e.g. `@@ByTag/tag_name`). `hidden_tags` is an unused param. `bucketSize`,
