@@ -976,7 +976,6 @@ class FeaturedCoursesView(_AbstractFilteredCourseView):
 
 
 @view_config(context=ICoursesCollection)
-@view_config(context=ICoursesCatalogCollection)
 @view_defaults(route_name='objects.generic.traversal',
                request_method='GET',
                permission=nauth.ACT_READ)
@@ -1121,13 +1120,9 @@ class EnrolledCourseCollectionView(CourseCollectionView):
         return entry
 
 
-@view_config(route_name='objects.generic.traversal',
-             context=IAdministeredCoursesCollection,
-             request_method='GET',
-             permission=nauth.ACT_READ)
-class AdministeredCoursesCollectionView(CourseCollectionView):
+class AbstractIndexedCoursesCollectionView(CourseCollectionView):
     """
-    Access to the user's :class:`IAdministeredCoursesCollection`. This collection
+    Access to the user's collection of courses. This collection
     may have access to all courses in the site (e.g. thousands).
 
     Because of this, we we need to operate on the intid level such that we only
@@ -1143,6 +1138,20 @@ class AdministeredCoursesCollectionView(CourseCollectionView):
 
     _ALLOWED_SORTING = SORT_KEY_TO_INDEX
 
+    @Lazy
+    def _entry_intids(self):
+        """
+        The user intids.
+        """
+        raise NotImplementedError()
+
+    def _batch_selector(self, entry):
+        """
+        Passed to the batch iterables. We can convert our entry object or
+        filter it here (by returning None).
+        """
+        return entry
+
     def filter_intids(self, entry_intids):
         # No-op - subclasses may change
         return entry_intids
@@ -1153,8 +1162,7 @@ class AdministeredCoursesCollectionView(CourseCollectionView):
         """
         # Get our entry intids first
         courses_catalog = get_courses_catalog()
-        course_intids = self.context.course_intids
-        user_entry_ids = course_intids_to_entry_intids(course_intids)
+        user_entry_ids = self._entry_intids
         if self.filter_str:
             filter_utility = component.getUtility(ICourseCatalogEntryFilterUtility)
             filtered_entry_ids = filter_utility.get_entry_intids_for_filters(self.filter_str,
@@ -1170,23 +1178,14 @@ class AdministeredCoursesCollectionView(CourseCollectionView):
         intids = component.getUtility(IIntIds)
         return ResultSet(sorted_ids, intids), len(user_entry_ids)
 
-    def _role_selector(self, entry):
-        """
-        Turns our catalog entry into an administrative role.
-        """
-        course = ICourseInstance(entry)
-        # This will effectively filter out partially deleted courses while
-        # building the batch.
-        if not IDeletedCourse.providedBy(course):
-            return get_course_admin_role(course, self.context.__parent__.user)
-
     def __call__(self):
         # XXX: Worth trying to fit this in parent __call__ logic?
         container_count = len(self.context)
         sorted_rs, filtered_count = self._get_items()
         # Make sure we do our batching before we externalize (??)
         ext_dict = LocatedExternalDict()
-        self._batch_items_iterable(ext_dict, sorted_rs, selector=self._role_selector)
+        self._batch_items_iterable(ext_dict, sorted_rs,
+                                   selector=self._batch_selector)
         # Toggle our container and externalize for batching.
         new_container = LastModifiedCopyingUserList()
         new_container.extend(ext_dict[ITEMS])
@@ -1206,6 +1205,41 @@ class AdministeredCoursesCollectionView(CourseCollectionView):
             self._set_batch_links(result, result,
                                   next_batch_start, prev_batch_start)
         return result
+
+
+@view_config(route_name='objects.generic.traversal',
+             context=IAdministeredCoursesCollection,
+             request_method='GET',
+             permission=nauth.ACT_READ)
+class AdministeredCoursesCollectionView(AbstractIndexedCoursesCollectionView):
+
+    @Lazy
+    def _entry_intids(self):
+        course_intids = self.context.course_intids
+        user_entry_ids = course_intids_to_entry_intids(course_intids)
+        return user_entry_ids
+
+    def _batch_selector(self, entry):
+        """
+        Turns our catalog entry into an administrative role.
+        """
+        course = ICourseInstance(entry)
+        # This will effectively filter out partially deleted courses while
+        # building the batch.
+        if not IDeletedCourse.providedBy(course):
+            return get_course_admin_role(course, self.context.__parent__.user)
+        return None
+
+
+@view_config(route_name='objects.generic.traversal',
+             context=ICoursesCatalogCollection,
+             request_method='GET',
+             permission=nauth.ACT_READ)
+class CoursesCatalogCollectionView(AbstractIndexedCoursesCollectionView):
+
+    @Lazy
+    def _entry_intids(self):
+        return self.context.entry_intids()
 
 
 @view_config(route_name='objects.generic.traversal',
