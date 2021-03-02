@@ -15,6 +15,8 @@ from __future__ import division
 from __future__ import print_function
 from __future__ import absolute_import
 
+import BTrees
+
 import gevent
 import itertools
 
@@ -503,8 +505,6 @@ class FavoriteAdministeredCoursesView(_AbstractSortingAndFilteringCoursesView):
         courses backfilled with the most recent.
 
         The result set will be sorted by PUID - start date or not.
-
-        XXX: backfill by puid?
         """
         intids = component.getUtility(IIntIds)
         courses_catalog = get_courses_catalog()
@@ -1173,8 +1173,23 @@ class AbstractIndexedCoursesCollectionView(CourseCollectionView):
         sortOn = self.sortOn or self.DEFAULT_SORT_KEY
         idx_sort_key = self.SORT_KEY_TO_INDEX.get(sortOn)
         sort_reverse = self.sortOrder == 'descending'
-        sorted_ids = courses_catalog[idx_sort_key].sort(user_entry_ids,
-                                                        reverse=sort_reverse)
+        sort_idx = courses_catalog[idx_sort_key]
+        sorted_ids = sort_idx.sort(user_entry_ids, reverse=sort_reverse)
+        # For our two, possibly empty, attributes (start/end date),
+        # we want to backfill with the remaining entry_ids (sorted by PUID???).
+        # `sorted_ids` is now a generator.
+        # Similarly to previous in-memory implementations, we'll want to return `None`
+        # values last in descending order and vice versa.
+        if sortOn in ('startdate', 'enddate'):
+            sort_idx_intids = BTrees.family64.IF.Set(sort_idx.ids())
+            non_date_intids = courses_catalog.family.IF.difference(user_entry_ids, sort_idx_intids)
+            sorted_non_date_intids = courses_catalog[IX_ENTRY_PUID_SORT].sort(non_date_intids,
+                                                                              reverse=sort_reverse)
+            if sort_reverse:
+                # Descending - non-dates last
+                sorted_ids = itertools.chain(sorted_ids, sorted_non_date_intids)
+            else:
+                sorted_ids = itertools.chain(sorted_non_date_intids, sorted_ids)
         intids = component.getUtility(IIntIds)
         return ResultSet(sorted_ids, intids), len(user_entry_ids)
 
