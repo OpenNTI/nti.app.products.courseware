@@ -201,7 +201,12 @@ class AllCoursesCollection(Contained):
         return result
 
     def entry_intids(self):
-        return IAvailableCoursesProvider(self.__parent__.user).entry_intids()
+        try:
+            return self._v_entry_intids
+        except AttributeError:
+            result = IAvailableCoursesProvider(self.__parent__.user).entry_intids()
+            self._v_entry_intids = result
+            return result
 
     @Lazy
     def container(self):
@@ -235,8 +240,9 @@ class AllCoursesCollection(Contained):
             return self.container
         raise KeyError(key)
 
+
     def __len__(self):
-        return 1
+        return len(self.entry_intids())
 
 
 class _AbstractQueryBasedCoursesCollection(Contained):
@@ -594,9 +600,6 @@ class CourseCatalogCollection(AllCoursesCollection):
     @Lazy
     def catalog(self):
         return component.queryUtility(ICourseCatalog)
-
-    def __len__(self):
-        return len(self.container)
 
 
 @component.adapter(ICatalogWorkspace)
