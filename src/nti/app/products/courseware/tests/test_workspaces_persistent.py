@@ -429,7 +429,7 @@ class TestPersistentWorkspaces(AbstractEnrollingBase, ApplicationLayerTest):
         available_courses = self.testapp.get(courses_href)
         available_courses = available_courses.json_body
         assert_that(available_courses['Title'], is_('Courses'))
-        assert_that(available_courses[ITEMS], has_length(8))
+        assert_that(available_courses[ITEMS], has_length(7))
         for item in available_courses[ITEMS]:
             assert_that(item['IsAdmin'], is_(False))
             assert_that(item['IsEnrolled'], is_(False))
@@ -462,7 +462,7 @@ class TestPersistentWorkspaces(AbstractEnrollingBase, ApplicationLayerTest):
 
         courses_filter_href = '%s?filter=%s' % (courses_href, 'clc,ENGR 1510,1323')
         available_courses = self.testapp.get(courses_filter_href).json_body
-        assert_that(available_courses[ITEMS], has_length(8))
+        assert_that(available_courses[ITEMS], has_length(7))
 
         # Paging
         courses_paging_href = '%s?filter=%s&batchStart=%s&batchSize=%s' % (courses_href, 'clc', 0, 1)
@@ -479,12 +479,6 @@ class TestPersistentWorkspaces(AbstractEnrollingBase, ApplicationLayerTest):
         popular_res = self.testapp.get(popular_href)
         popular_res = popular_res.json_body
         assert_that(popular_res[ITEMS], has_length(3))
-        popular_res = self.testapp.get(popular_href, params={'count': 1})
-        popular_res = popular_res.json_body
-        assert_that(popular_res[ITEMS], has_length(1))
-
-        # More than half the collection 404s
-        self.testapp.get(popular_href, params={'count': 5}, status=404)
 
         popular_res = self.testapp.get(popular_href,
                                        params={'batchStart': 0,
@@ -626,22 +620,6 @@ class TestPersistentWorkspaces(AbstractEnrollingBase, ApplicationLayerTest):
         by_tag_res = self.testapp.get(href, extra_environ={'RAW_URI': str(href)})
         by_tag_res = by_tag_res.json_body
         assert_that(by_tag_res[ITEMS], has_length(0))
-
-    @WithSharedApplicationMockDS(users=True, testapp=True)
-    @fudge.patch('nti.app.products.courseware.views.catalog_views.PopularCoursesView._include_filter')
-    def test_catalog_courses_collection_popular_with_no_results(self, mock_include_filter):
-        """
-        Test the courses catalog collection. Mocking that no courses are
-        available.
-        """
-        mock_include_filter.is_callable().returns(False)
-        courses_collection = self._get_catalog_collection()
-
-        # Now fetch popular
-        popular_href = self.require_link_href_with_rel(courses_collection,
-                                                       VIEW_CATALOG_POPULAR)
-        self.testapp.get(popular_href, status=404)
-        self.testapp.get(popular_href, params={'count': 1}, status=404)
 
     @WithSharedApplicationMockDS(users=True, testapp=True)
     @fudge.patch('nti.app.products.courseware.views.catalog_views.FeaturedCoursesView._include_filter')

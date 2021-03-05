@@ -19,6 +19,7 @@ import BTrees
 
 import gevent
 import itertools
+import operator
 
 from datetime import datetime
 from six.moves import urllib_parse
@@ -96,12 +97,14 @@ from nti.common.string import is_false
 
 from nti.contenttypes.courses.administered import get_course_admin_role
 
+from nti.contenttypes.courses.index import IX_ENTRY
 from nti.contenttypes.courses.index import IX_ENTRY_START_DATE
 from nti.contenttypes.courses.index import IX_ENTRY_END_DATE
 from nti.contenttypes.courses.index import IX_ENTRY_TITLE_SORT
 from nti.contenttypes.courses.index import IX_ENTRY_PUID_SORT
 
 from nti.contenttypes.courses.index import get_courses_catalog
+from nti.contenttypes.courses.index import get_enrollment_catalog
 
 from nti.contenttypes.courses.interfaces import ES_PUBLIC
 
@@ -122,6 +125,7 @@ from nti.contenttypes.courses.utils import filter_hidden_tags
 from nti.contenttypes.courses.utils import get_course_hierarchy
 from nti.contenttypes.courses.utils import get_entry_intids_for_tag
 from nti.contenttypes.courses.utils import get_non_tagged_entry_intids
+from nti.contenttypes.courses.utils import entry_intids_to_course_intids
 from nti.contenttypes.courses.utils import course_intids_to_entry_intids
 from nti.contenttypes.courses.utils import is_course_instructor_or_editor
 
@@ -836,32 +840,9 @@ class PopularCoursesView(_AbstractFilteredCourseView):
     or upcoming, sorted by enrollment count.
     """
 
-    DEFAULT_RESULT_COUNT = 3
-    MAXIMUM_RESULT_COUNT = 5
-
     @Lazy
-    def minimum_popular_count(self):
-        return self.requested_count or self.DEFAULT_RESULT_COUNT
-
-    def _include_filter(self, entry):
-        return self._is_entry_current(entry) \
-            or self._is_entry_upcoming(entry)
-
-    def _sort_key(self, entry_tuple):
-        entry = entry_tuple[0]
-        course = ICourseInstance(entry, None)
-        enrollment_count = None
-        if course is not None:
-            # pylint: disable=too-many-function-args
-            enrollment_count = ICourseEnrollments(course).count_enrollments()
-        return (enrollment_count is not None, enrollment_count)
-
-    def should_return_popular_entries(self):
-        """
-        We only return if our collection is twice the size of the requested
-        popular item count (defaulting to 3).
-        """
-        return len(self.context.container) >= 2 * self.minimum_popular_count
+    def _entry_intids(self):
+        return self.context.entry_intids()
 
     def _raise_not_found(self):
         raise_json_error(self.request,
@@ -873,26 +854,46 @@ class PopularCoursesView(_AbstractFilteredCourseView):
                          None)
 
     def _get_items(self):
-        result = super(PopularCoursesView, self)._get_items()
-        return_count = self.requested_count
-        unused_batch_size, batch_start = self._get_batch_size_start()
-        if not return_count and not batch_start:
-            # If not a requested count or batching, bound between 3 and 5
-            # by default.
-            item_count = len(self.context.container)
-            half_item_count = item_count // 2
-            return_count = min(half_item_count, self.MAXIMUM_RESULT_COUNT)
-            return_count = max(return_count, self.DEFAULT_RESULT_COUNT)
-        if not result:
+        courses_catalog = get_courses_catalog()
+        user_entry_intids = self._entry_intids
+        now = datetime.utcnow()
+        # Get all current/upcoming entry intids
+        filter_utility = component.getUtility(ICourseCatalogEntryFilterUtility)
+        current_entry_intids = filter_utility.get_current_entry_intids(user_entry_intids)
+        future_entry_intids = filter_utility.get_entry_intids_by_dates(start_not_before=now)
+        future_user_entry_ids = courses_catalog.family.IF.intersection(user_entry_intids,
+                                                                       future_entry_intids)
+        current_upcoming_entry_intids = courses_catalog.family.IF.union(current_entry_intids,
+                                                                        future_user_entry_ids)
+        if not current_upcoming_entry_intids:
             self._raise_not_found()
-        if return_count:
-            result = result[:return_count]
-        return result
+        # Now get our course intids
+        course_intids = entry_intids_to_course_intids(current_upcoming_entry_intids)
+        # Get the ntiids for our courses and get enrollment counts
+        entry_ntiid_idx = courses_catalog[IX_ENTRY]
+        enrollment_catalog = get_enrollment_catalog()
+        enrollment_idx = enrollment_catalog[IX_ENTRY]
+        course_intid_to_enrollment_count = dict()
+        for course_intid in course_intids:
+            # course_intid -> entry_ntiid
+            entry_ntiid = entry_ntiid_idx.documents_to_values.get(course_intid)
+            # Reverse of enrollments to entry_ntiid (gives set of document intids).
+            enrollments = enrollment_idx.values_to_documents.get(entry_ntiid)
+            course_intid_to_enrollment_count[course_intid] = len(enrollments)
+        # Now sort our result set
+        sorted_intids = sorted(course_intid_to_enrollment_count.items(),
+                               key=operator.itemgetter(1),
+                               reverse=True)
+        sorted_intids = (x[0] for x in sorted_intids)
+        intids = component.getUtility(IIntIds)
+        return ResultSet(sorted_intids, intids), len(current_upcoming_entry_intids)
 
     def __call__(self):
-        if not self.should_return_popular_entries():
-            self._raise_not_found()
-        result = super(PopularCoursesView, self).__call__()
+        result = LocatedExternalDict()
+        items, item_count = self._get_items()
+        result[ITEMS] = items
+        result[TOTAL] = item_count
+        self._batch_items_iterable(result, items)
         return result
 
 
