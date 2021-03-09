@@ -97,14 +97,15 @@ from nti.common.string import is_false
 
 from nti.contenttypes.courses.administered import get_course_admin_role
 
-from nti.contenttypes.courses.index import IX_ENTRY
+from nti.contenttypes.courses.index import get_enrollment_meta_catalog
+
+from nti.contenttypes.courses.index import IX_ENROLLMENT_COUNT
 from nti.contenttypes.courses.index import IX_ENTRY_START_DATE
 from nti.contenttypes.courses.index import IX_ENTRY_END_DATE
 from nti.contenttypes.courses.index import IX_ENTRY_TITLE_SORT
 from nti.contenttypes.courses.index import IX_ENTRY_PUID_SORT
 
 from nti.contenttypes.courses.index import get_courses_catalog
-from nti.contenttypes.courses.index import get_enrollment_catalog
 
 from nti.contenttypes.courses.interfaces import ES_PUBLIC
 
@@ -853,6 +854,9 @@ class PopularCoursesView(_AbstractFilteredCourseView):
                          },
                          None)
 
+    def _batch_selector(self, course):
+        return ICourseCatalogEntry(course, None)
+
     def _get_items(self):
         courses_catalog = get_courses_catalog()
         user_entry_intids = self._entry_intids
@@ -869,31 +873,24 @@ class PopularCoursesView(_AbstractFilteredCourseView):
             self._raise_not_found()
         # Now get our course intids
         course_intids = entry_intids_to_course_intids(current_upcoming_entry_intids)
-        # Get the ntiids for our courses and get enrollment counts
-        entry_ntiid_idx = courses_catalog[IX_ENTRY]
-        enrollment_catalog = get_enrollment_catalog()
-        enrollment_idx = enrollment_catalog[IX_ENTRY]
-        course_intid_to_enrollment_count = dict()
-        for course_intid in course_intids:
-            # course_intid -> entry_ntiid
-            entry_ntiid = entry_ntiid_idx.documents_to_values.get(course_intid)
-            # Reverse of enrollments to entry_ntiid (gives set of document intids).
-            enrollments = enrollment_idx.values_to_documents.get(entry_ntiid)
-            course_intid_to_enrollment_count[course_intid] = len(enrollments)
-        # Now sort our result set
-        sorted_intids = sorted(course_intid_to_enrollment_count.items(),
-                               key=operator.itemgetter(1),
-                               reverse=True)
-        sorted_intids = (x[0] for x in sorted_intids)
+
+        # Now sort with our index
+        enrollment_meta_catalog = get_enrollment_meta_catalog()
+        count_idx = enrollment_meta_catalog[IX_ENROLLMENT_COUNT]
+        sorted_course_intids = count_idx.sort(course_intids, reverse=True)
+        count_idx_intids = BTrees.family64.IF.Set(count_idx.ids())
+        empty_enrollment_intids = courses_catalog.family.IF.difference(course_intids,
+                                                                       count_idx_intids)
+        result_intids = itertools.chain(sorted_course_intids, empty_enrollment_intids)
         intids = component.getUtility(IIntIds)
-        return ResultSet(sorted_intids, intids), len(current_upcoming_entry_intids)
+        return ResultSet(result_intids, intids), len(current_upcoming_entry_intids)
 
     def __call__(self):
         result = LocatedExternalDict()
         items, item_count = self._get_items()
-        result[ITEMS] = items
         result[TOTAL] = item_count
-        self._batch_items_iterable(result, items)
+        self._batch_items_iterable(result, items,
+                                   selector=self._batch_selector)
         return result
 
 
