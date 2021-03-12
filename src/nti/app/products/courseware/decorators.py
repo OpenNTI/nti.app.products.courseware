@@ -60,9 +60,7 @@ from nti.app.products.courseware.interfaces import ICourseInstanceEnrollment
 from nti.app.products.courseware.interfaces import ICourseTabConfigurationUtility
 
 from nti.app.products.courseware.utils import get_enrollment_options
-from nti.app.products.courseware.utils import get_evaluation_lessons
 from nti.app.products.courseware.utils import get_vendor_thank_you_page
-from nti.app.products.courseware.utils import get_content_related_work_refs
 from nti.app.products.courseware.utils import PreviewCourseAccessPredicateDecorator
 
 from nti.app.renderers.decorators import AbstractRequestAwareDecorator
@@ -1148,11 +1146,8 @@ class TopicAddRemoverLinkDecorator(LinkRemoverDecorator):
 class _AbstractLessonsContainerDecorator(AbstractAuthenticatedRequestAwareDecorator):
     """
     Add a lessons link to fetch all lessons containing our given
-    assessment context and add a `LessonContainerCount`.
+    assessment context.
     """
-
-    def _get_lessons(self, context):
-        raise NotImplementedError()
 
     def _predicate(self, context, unused_result):
         return self._is_authenticated \
@@ -1165,8 +1160,6 @@ class _AbstractLessonsContainerDecorator(AbstractAuthenticatedRequestAwareDecora
         return link
 
     def _do_decorate_external(self, context, result):
-        lessons = self._get_lessons(context)
-        result['LessonContainerCount'] = len(lessons or ())
         link = self._get_link(context)
         _links = result.setdefault(LINKS, [])
         _links.append(link)
@@ -1176,9 +1169,7 @@ class _AbstractLessonsContainerDecorator(AbstractAuthenticatedRequestAwareDecora
 @component.adapter(IEditableContentUnit)
 @interface.implementer(IExternalObjectDecorator)
 class _ContentUnitLessonsContainerDecorator(_AbstractLessonsContainerDecorator):
-
-    def _get_lessons(self, context):
-        return get_content_related_work_refs(context)
+    pass
 
 
 class _AbstractAssessmentLessonsContainerDecorator(_AbstractLessonsContainerDecorator):
@@ -1196,9 +1187,6 @@ class _AbstractAssessmentLessonsContainerDecorator(_AbstractLessonsContainerDeco
     def _predicate(self, context, result):
         return not is_global_evaluation(context) \
             and super(_AbstractAssessmentLessonsContainerDecorator, self)._predicate(context, result)
-
-    def _get_lessons(self, context):
-        return get_evaluation_lessons(context, self.provided)
 
     def _get_link(self, context):
         course = self._get_course(context)
