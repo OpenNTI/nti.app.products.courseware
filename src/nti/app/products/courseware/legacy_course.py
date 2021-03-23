@@ -27,7 +27,7 @@ from zope.annotation.factory import factory as an_factory
 from zope.cachedescriptors.property import Lazy
 from zope.cachedescriptors.property import CachedProperty
 
-from zope.component.interfaces import IComponents
+from zope.interface.interfaces import IComponents
 
 from zope.event import notify
 

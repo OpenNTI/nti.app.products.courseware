@@ -17,7 +17,7 @@ import tempfile
 from zope import component
 from zope import interface
 
-from zope.component.interfaces import IComponents
+from zope.interface.interfaces import IComponents
 
 import ZODB
 

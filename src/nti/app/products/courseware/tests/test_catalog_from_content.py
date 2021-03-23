@@ -69,7 +69,7 @@ class TestApplicationCatalogFromContent(ApplicationLayerTest):
         assert_that(lib.pathToNTIID("tag:nextthought.com,2011-10:OU-HTML-CLC3403_LawAndJustice.clc_3403_law_and_justice"),
                     is_not(none()))
 
-        from zope.component.interfaces import IComponents
+        from zope.interface.interfaces import IComponents
         components = component.getUtility(IComponents, name='platform.ou.edu')
         catalog = components.getUtility(ICourseCatalog)
 
@@ -108,7 +108,7 @@ class TestApplicationCatalogFromContent(ApplicationLayerTest):
                             'StartDate', '2014-01-13T06:00:00Z',
                             'NTIID', 'tag:nextthought.com,2011-10:OU-HTML-ENGR1510_Intro_to_Water.course_info',
                             'LegacyPurchasableIcon', '/IntroWater/images/ENGR1510_promo.png',
-                            'PlatformPresentationResources', 
+                            'PlatformPresentationResources',
                                  has_item(
                                     has_entries('Class', 'DisplayablePlatformPresentationResources',
                                                 'PlatformName', 'iPad',
@@ -119,9 +119,9 @@ class TestApplicationCatalogFromContent(ApplicationLayerTest):
         with mock_dataserver.mock_db_trans(self.ds, site_name='platform.ou.edu'):
             for package in lib.contentPackages:
                 inst = ICourseInstance(package)
-                assert_that(inst, 
+                assert_that(inst,
                             validly_provides(ILegacyCommunityBasedCourseInstance))
-                assert_that(inst, 
+                assert_that(inst,
                             externalizes(has_entries('Class', 'LegacyCommunityBasedCourseInstance',
                                                      'MimeType', 'application/vnd.nextthought.courses.legacycommunitybasedcourseinstance',
                                                      'LegacyScopes', has_entries('restricted', not_none(),
@@ -131,7 +131,7 @@ class TestApplicationCatalogFromContent(ApplicationLayerTest):
                 community = inst.legacy_community
                 adapted_course = ICourseInstance(community)
                 assert_that(adapted_course, not_none())
-                assert_that(adapted_course, 
+                assert_that(adapted_course,
                             has_property('legacy_community', community))
 
                 acl = ACL(inst, None)
@@ -148,11 +148,11 @@ class TestApplicationCatalogFromContent(ApplicationLayerTest):
                     lesson_1 = unit_1["tag:nextthought.com,2011-10:OU-NTICourseOutlineNode-CLC3403_LawAndJustice.course_info.0.0"]
                     assert_that(lesson_1.AvailableBeginning, is_(not_none()))
                     assert_that(lesson_1.AvailableEnding, is_(not_none()))
-                    assert_that(lesson_1, 
+                    assert_that(lesson_1,
                                 has_property('title', '1. Defining Law and Justice'))
-                    assert_that(lesson_1, 
+                    assert_that(lesson_1,
                                 has_property('AvailableEnding', has_property('tzinfo', none())))
-                    assert_that(lesson_1, 
+                    assert_that(lesson_1,
                                 externalizes(has_entries('AvailableEnding', '2013-08-22T04:59:59Z',
                                                          'title', '1. Defining Law and Justice',
                                                          'description', '')))
