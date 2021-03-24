@@ -14,6 +14,11 @@
 			 factory=".CourseAdminPathAdapter"
 			 provides="zope.traversing.interfaces.IPathAdapter" />
 
+	<adapter name="ContentPackageBundle"
+             for="nti.contenttypes.courses.interfaces.ICourseInstance pyramid.interfaces.IRequest"
+             factory=".CourseContentPackageBundlePathAdapter"
+             provides="zope.traversing.interfaces.IPathAdapter"/>
+
     <adapter name="EnrollmentOptions"
              for="nti.contenttypes.courses.interfaces.ICourseInstance
                   pyramid.interfaces.IRequest"

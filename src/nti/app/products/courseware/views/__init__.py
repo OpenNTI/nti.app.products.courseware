@@ -8,8 +8,11 @@ from __future__ import division
 from __future__ import print_function
 from __future__ import absolute_import
 
+from pyramid.interfaces import IRequest
+
 from six.moves.urllib_parse import unquote
 
+from zope import component
 from zope import interface
 
 from zope.cachedescriptors.property import Lazy
@@ -106,3 +109,9 @@ def raise_error(data, tb=None,
                 request=None):
     request = request or get_current_request()
     raise_json_error(request, factory, data, tb)
+
+
+@interface.implementer(IPathAdapter)
+@component.adapter(ICourseInstance, IRequest)
+def CourseContentPackageBundlePathAdapter(context, unused_request):
+    return context.ContentPackageBundle

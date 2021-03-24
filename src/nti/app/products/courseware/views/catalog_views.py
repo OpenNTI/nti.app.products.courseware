@@ -19,7 +19,6 @@ import BTrees
 
 import gevent
 import itertools
-import operator
 
 from datetime import datetime
 from six.moves import urllib_parse
