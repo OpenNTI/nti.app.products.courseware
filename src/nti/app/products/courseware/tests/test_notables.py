@@ -16,9 +16,16 @@ from hamcrest import has_length
 from hamcrest import assert_that
 does_not = is_not
 
+from nti.testing.matchers import is_true
+from nti.testing.matchers import is_false
+
 from zope import component
 
+from zope.component.hooks import getSite
+
 from zope.intid.interfaces import IIntIds
+
+from zope.securitypolicy.interfaces import IPrincipalRoleManager
 
 from nti.app.notabledata.interfaces import IUserNotableProvider
 from nti.app.notabledata.interfaces import IUserNotableSharedWithIDProvider
@@ -28,6 +35,11 @@ from nti.app.products.courseware.notables import TopLevelPriorityNotableFilter
 from nti.contenttypes.courses.interfaces import ICourseCatalog
 from nti.contenttypes.courses.interfaces import ICourseCatalogEntry
 from nti.contenttypes.courses.interfaces import ICourseEnrollmentManager
+
+from nti.dataserver.authorization import ACT_READ
+from nti.dataserver.authorization import ROLE_SITE_ADMIN
+
+from nti.dataserver.authorization_acl import has_permission
 
 from nti.dataserver.contenttypes.note import Note
 
@@ -53,11 +65,16 @@ class TestNotables(ApplicationLayerTest):
         # Enroll in our course, create two notes: one visible to my class
         # and one only through my community.  Only the one visible to my
         # course is notable.
+        site_admin_username = u'site_admin_notableuser001'
         with mock_dataserver.mock_db_trans():
             self._create_user(u'sjohnson@nti.com')
+            self._create_user(site_admin_username)
 
         with mock_dataserver.mock_db_trans(site_name='platform.ou.edu'):
             user = User.get_user(u'sjohnson@nti.com')
+
+            srm = IPrincipalRoleManager(getSite(), None)
+            srm.assignRoleToPrincipal(ROLE_SITE_ADMIN.id, site_admin_username)
 
             cat = component.getUtility(ICourseCatalog)
 
@@ -92,6 +109,12 @@ class TestNotables(ApplicationLayerTest):
             instructor_user.addContainedObject(note2)
             intids = component.getUtility(IIntIds)
             notable_intid = intids.getId(note1)
+
+            # Site admin can see note shared with course sharing scope
+            note1_read = has_permission(ACT_READ, note1, site_admin_username)
+            note2_read = has_permission(ACT_READ, note2, site_admin_username)
+            assert_that(note1_read, is_true())
+            assert_that(note2_read, is_false())
 
             notable_intids = set()
             # Intid provider

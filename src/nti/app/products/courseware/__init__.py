@@ -67,3 +67,6 @@ VIEW_ALL_COURSE_ACTIVITY = 'AllCourseActivity'
 
 #: The activity of the parent course
 VIEW_PARENT_ALL_COURSE_ACTIVITY = 'ParentAllCourseActivity'
+
+#:
+SITE_ADMIN_SHARING_SCOPES_PRINCIPAL_STR = 'AllCourseInstanceSharingScopes'

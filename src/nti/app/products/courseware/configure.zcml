@@ -593,6 +593,10 @@
              factory=".subscribers.SiteAdminSharingScopeGroups"
              provides="nti.dataserver.interfaces.IGroupMember" />
 
+    <subscriber factory=".subscribers.CourseSharedScopeSupplmentalACLProvider"
+                provides="nti.dataserver.interfaces.ISupplementalACLProvider"
+                for="nti.coremetadata.interfaces.IShareableModeledContent" />
+
 	<!-- NTIID support -->
 	<utility factory=".ntiids._EnrolledCourseRootForumNTIIDResolver" />
 	<utility factory=".ntiids._EnrolledCourseRootTopicNTIIDResolver" />
