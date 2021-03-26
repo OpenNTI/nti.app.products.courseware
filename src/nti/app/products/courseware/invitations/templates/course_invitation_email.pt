@@ -30,7 +30,6 @@
 <div class="container" style="width:100%;max-width: 730px; margin: 0 auto; background-color: #FFFFFF; padding-bottom: 50px;">
 	<div metal:use-macro="macro:header"></div>
 	<div class="main" style="width:calc(100% - 10px);max-width: 610px;margin: 0 auto;padding: 0 5px;">
-		<div>DEFAULT TEMPLATE</div><br/>
 		<table style="border-collapse:collapse; width:100%">
 			<tr style="border-bottom:solid #e2e5e7 1px; color:#6d7d87; display:block; font-size:12px;
 			           font-weight:bold; line-height:18px; padding-bottom:0; padding-top:11px;
