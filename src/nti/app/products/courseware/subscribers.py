@@ -19,11 +19,8 @@ from zc.intid.interfaces import IAfterIdAddedEvent
 from zc.intid.interfaces import IBeforeIdRemovedEvent
 
 from zope import component
-from zope import interface
 
 from zope.annotation.interfaces import IAnnotations
-
-from zope.component.hooks import getSite
 
 from zope.dottedname import resolve as dottedname
 
@@ -51,7 +48,6 @@ from nti.app.authentication import get_remote_user
 from nti.app.products.courseware import MessageFactory as _
 
 from nti.app.products.courseware import USER_ENROLLMENT_LAST_MODIFIED_KEY
-from nti.app.products.courseware import SITE_ADMIN_SHARING_SCOPES_PRINCIPAL_STR
 
 from nti.app.products.courseware.interfaces import ICourseSharingScopeUtility
 from nti.app.products.courseware.interfaces import ICourseEnrollmentEmailBCCProvider
@@ -94,11 +90,8 @@ from nti.contenttypes.courses.utils import get_course_hierarchy
 
 from nti.coremetadata.interfaces import UserLastSeenEvent
 
-from nti.dataserver.authorization import is_site_admin
-
 from nti.dataserver.interfaces import IUser
 from nti.dataserver.interfaces import ICommunity
-from nti.dataserver.interfaces import IGroupMember
 
 from nti.dataserver.users.interfaces import IUserProfile
 from nti.dataserver.users.interfaces import IEmailAddressable

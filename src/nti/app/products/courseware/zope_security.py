@@ -42,11 +42,8 @@ class ShareableModeledContentSiteAdminPermissionMap(object):
         self.context = context
 
     def getPrincipalsForPermission(self, perm):
-        result = []
-        if perm in self.SITE_ADMIN_PERM_IDS:
-            for principal_id in self._effectiveAdminsForUser:
-                result.append((principal_id, Allow))
-        return result
+        # This is a no-op
+        return []
 
     def _is_principal_allowed(self, principal_id):
         """
@@ -82,5 +79,5 @@ class ShareableModeledContentSiteAdminPermissionMap(object):
         return default
 
     def getPrincipalsAndPermissions(self):
-        # What should we try to do here, if anything?
+        # This is a no-op
         return []
