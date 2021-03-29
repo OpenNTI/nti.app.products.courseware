@@ -23,6 +23,8 @@ from zope import interface
 
 from zope.annotation.interfaces import IAnnotations
 
+from zope.component.hooks import getSite
+
 from zope.dottedname import resolve as dottedname
 
 from zope.event import notify
@@ -49,6 +51,7 @@ from nti.app.authentication import get_remote_user
 from nti.app.products.courseware import MessageFactory as _
 
 from nti.app.products.courseware import USER_ENROLLMENT_LAST_MODIFIED_KEY
+from nti.app.products.courseware import SITE_ADMIN_SHARING_SCOPES_PRINCIPAL_STR
 
 from nti.app.products.courseware.interfaces import ICourseSharingScopeUtility
 from nti.app.products.courseware.interfaces import ICourseEnrollmentEmailBCCProvider
@@ -423,25 +426,6 @@ def _on_content_bundle_updated(bundle, event):
     added = event.added_packages
     removed = event.removed_packages
     notify(CourseBundleWillUpdateEvent(course, added, removed))
-
-
-@component.adapter(IUser)
-@interface.implementer(IGroupMember)
-class SiteAdminSharingScopeGroups(object):
-    """
-    If the user is a site admin, we want to grant access to all sharing scopes.
-    This should give the site admins access to any notes (UGD) shared to the
-    course scopes.
-    """
-
-    def __init__(self, context):
-        self.groups = ()
-        if is_site_admin(context):
-            # Gather the scope NTIIDs of all sharing scopes *only* for this site
-            sharing_scope_utility = component.queryUtility(ICourseSharingScopeUtility)
-            if sharing_scope_utility is not None:
-                self.groups = sharing_scope_utility.iter_ntiids()
-
 
 
 @component.adapter(IHostPolicySiteManager, INewLocalSite)
