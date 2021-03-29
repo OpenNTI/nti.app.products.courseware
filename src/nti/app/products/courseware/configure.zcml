@@ -593,9 +593,18 @@
              factory=".subscribers.SiteAdminSharingScopeGroups"
              provides="nti.dataserver.interfaces.IGroupMember" />
 
-    <subscriber factory=".subscribers.CourseSharedScopeSupplmentalACLProvider"
-                provides="nti.dataserver.interfaces.ISupplementalACLProvider"
-                for="nti.coremetadata.interfaces.IShareableModeledContent" />
+    <!-- Provide appropriate permissions for our site admins to receive user events -->
+    <adapter factory=".zope_security.ShareableModeledContentSiteAdminPermissionMap"
+             provides="zope.securitypolicy.interfaces.IPrincipalPermissionMap"
+             for="nti.dataserver.interfaces.INote" />
+
+    <adapter factory=".zope_security.ShareableModeledContentSiteAdminPermissionMap"
+             provides="zope.securitypolicy.interfaces.IPrincipalPermissionMap"
+             for="nti.dataserver.contenttypes.forums.interfaces.IPost" />
+
+    <adapter factory=".zope_security.ShareableModeledContentSiteAdminPermissionMap"
+             provides="zope.securitypolicy.interfaces.IPrincipalPermissionMap"
+             for="nti.dataserver.contenttypes.forums.interfaces.IGeneralHeadlineTopic" />
 
 	<!-- NTIID support -->
 	<utility factory=".ntiids._EnrolledCourseRootForumNTIIDResolver" />

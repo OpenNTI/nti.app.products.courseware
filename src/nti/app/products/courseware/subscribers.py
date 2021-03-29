@@ -23,8 +23,6 @@ from zope import interface
 
 from zope.annotation.interfaces import IAnnotations
 
-from zope.cachedescriptors.property import Lazy
-
 from zope.component.hooks import getSite
 
 from zope.dottedname import resolve as dottedname
@@ -76,8 +74,6 @@ from nti.appserver.policies.interfaces import ISitePolicyUserEventListener
 
 from nti.contentlibrary.interfaces import IContentBundleUpdatedEvent
 
-from nti.contenttypes.courses.common import get_course_site_name
-
 from nti.contenttypes.courses.interfaces import ES_PUBLIC
 
 from nti.contenttypes.courses.interfaces import ICourseInstance
@@ -97,15 +93,8 @@ from nti.contenttypes.courses.utils import get_parent_course
 from nti.contenttypes.courses.utils import get_course_hierarchy
 
 from nti.coremetadata.interfaces import UserLastSeenEvent
-from nti.coremetadata.interfaces import ISupplementalACLProvider
-from nti.coremetadata.interfaces import IShareableModeledContent
-
-from nti.dataserver.authorization import ACT_READ
 
 from nti.dataserver.authorization import is_site_admin
-
-from nti.dataserver.authorization_acl import ace_allowing
-from nti.dataserver.authorization_acl import acl_from_aces
 
 from nti.dataserver.interfaces import IUser
 from nti.dataserver.interfaces import ICommunity
@@ -120,7 +109,7 @@ from nti.externalization.externalization import to_external_object
 
 from nti.mailer.interfaces import ITemplatedMailer
 
-from nti.ntiids.ntiids import find_object_with_ntiid, is_valid_ntiid_string
+from nti.ntiids.ntiids import find_object_with_ntiid
 
 from nti.site.interfaces import IHostPolicySiteManager
 
@@ -458,38 +447,6 @@ class SiteAdminSharingScopeGroups(object):
         if is_site_admin(context):
             prin_str = _get_site_admin_all_sharing_scope_principal()
             self.groups = (IPrincipal(prin_str),)
-
-
-@component.adapter(IShareableModeledContent)
-@interface.implementer(ISupplementalACLProvider)
-class CourseSharedScopeSupplmentalACLProvider(object):
-    """
-    If this context is shared with *any* :class:`ICourseInstanceSharingScope`,
-    we add the site all course instance sharing scope principal to the ACL.
-
-    Note, this approach will make sure the site admin has dynamic READ access
-    to the UGD, but we currently are not doing anything to ensure this UGD
-    is visible to site admins in any other context (search, etc).
-    """
-
-    def __init__(self, context):
-        self.context = context
-
-    @Lazy
-    def __acl__(self):
-        # We expect this list to be sparce and this lookup to be small.
-        for sharing_target in self.context.sharingTargetNames or ():
-            if is_valid_ntiid_string(sharing_target):
-                shared_with_obj = find_object_with_ntiid(sharing_target)
-                if ICourseInstanceSharingScope.providedBy(shared_with_obj):
-                    # We found a scope; this must be a scope from a single course
-                    # and a single site.
-                    course = find_interface(shared_with_obj, ICourseInstance, strict=False)
-                    if get_course_site_name(course) == getSite().__name__:
-                        prin_str = _get_site_admin_all_sharing_scope_principal()
-                        prin = IPrincipal(prin_str)
-                        return acl_from_aces(ace_allowing(prin, ACT_READ, self))
-        return None
 
 
 @component.adapter(IHostPolicySiteManager, INewLocalSite)

@@ -41,6 +41,8 @@ from nti.dataserver.authorization import ROLE_SITE_ADMIN
 
 from nti.dataserver.authorization_acl import has_permission
 
+from nti.dataserver.authorization_utils import zope_interaction
+
 from nti.dataserver.contenttypes.note import Note
 
 from nti.dataserver.users.users import User
@@ -61,21 +63,64 @@ class TestNotables(ApplicationLayerTest):
     layer = PersistentInstructedCourseApplicationTestLayer
 
     @WithSharedApplicationMockDS(users=True, testapp=True)
-    def test_priority_user_notables(self):
-        # Enroll in our course, create two notes: one visible to my class
-        # and one only through my community.  Only the one visible to my
-        # course is notable.
+    def test_shared_with_site_admins(self):
+        """
+        Notes shared to a course sharing scope are visible to a site admin.
+        """
         site_admin_username = u'site_admin_notableuser001'
         with mock_dataserver.mock_db_trans():
             self._create_user(u'sjohnson@nti.com')
             self._create_user(site_admin_username)
 
         with mock_dataserver.mock_db_trans(site_name='platform.ou.edu'):
-            user = User.get_user(u'sjohnson@nti.com')
-
             srm = IPrincipalRoleManager(getSite(), None)
             srm.assignRoleToPrincipal(ROLE_SITE_ADMIN.id, site_admin_username)
 
+            cat = component.getUtility(ICourseCatalog)
+
+            parent_course = cat['Fall2013']['CLC3403_LawAndJustice']
+            course = parent_course.SubInstances['02-Restricted']
+            course.instructors = parent_course.instructors
+            instructor_user = parent_course.instructors[0].username
+            instructor_user = User.get_user(instructor_user)
+
+            course_scope = course.SharingScopes['ForCreditDegree']
+            username = u'new_shared_community'
+            new_community = Community.create_community(username=username)
+            # Create a note visible to my community and my course
+            note1 = Note()
+            note1.body = (u'test222',)
+            note1.creator = instructor_user
+            note1.containerId = u'tag:nti:foo'
+            note1.addSharingTarget(course_scope)
+            note1.addSharingTarget(new_community)
+            instructor_user.addContainedObject(note1)
+
+            # Create a note visible to my community
+            note2 = Note()
+            note2.body = (u'test222',)
+            note2.creator = instructor_user
+            note2.containerId = u'tag:nti:foo'
+            note2.addSharingTarget(new_community)
+            instructor_user.addContainedObject(note2)
+
+            # Site admin can see note shared with course sharing scope
+            with zope_interaction(site_admin_username):
+                note1_read = has_permission(ACT_READ, note1, site_admin_username)
+                note2_read = has_permission(ACT_READ, note2, site_admin_username)
+                assert_that(note1_read, is_true())
+                assert_that(note2_read, is_false())
+
+    @WithSharedApplicationMockDS(users=True, testapp=True)
+    def test_priority_user_notables(self):
+        # Enroll in our course, create two notes: one visible to my class
+        # and one only through my community.  Only the one visible to my
+        # course is notable.
+        with mock_dataserver.mock_db_trans():
+            self._create_user(u'sjohnson@nti.com')
+
+        with mock_dataserver.mock_db_trans(site_name='platform.ou.edu'):
+            user = User.get_user(u'sjohnson@nti.com')
             cat = component.getUtility(ICourseCatalog)
 
             parent_course = cat['Fall2013']['CLC3403_LawAndJustice']
@@ -109,12 +154,6 @@ class TestNotables(ApplicationLayerTest):
             instructor_user.addContainedObject(note2)
             intids = component.getUtility(IIntIds)
             notable_intid = intids.getId(note1)
-
-            # Site admin can see note shared with course sharing scope
-            note1_read = has_permission(ACT_READ, note1, site_admin_username)
-            note2_read = has_permission(ACT_READ, note2, site_admin_username)
-            assert_that(note1_read, is_true())
-            assert_that(note2_read, is_false())
 
             notable_intids = set()
             # Intid provider
