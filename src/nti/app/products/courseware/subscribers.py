@@ -428,27 +428,6 @@ def _on_content_bundle_updated(bundle, event):
     notify(CourseBundleWillUpdateEvent(course, added, removed))
 
 
-def _get_site_admin_all_sharing_scope_principal():
-    site_name = getSite().__name__
-    return '%s_%s' % (site_name, SITE_ADMIN_SHARING_SCOPES_PRINCIPAL_STR)
-
-
-@component.adapter(IUser)
-@interface.implementer(IGroupMember)
-class SiteAdminSharingScopeGroups(object):
-    """
-    If the user is a site admin, we want to grant access to all sharing scopes.
-    This should give the site admins access to any notes (UGD) shared to the
-    course scopes. We do this by create returning a special principal id.
-    """
-
-    def __init__(self, context):
-        self.groups = ()
-        if is_site_admin(context):
-            prin_str = _get_site_admin_all_sharing_scope_principal()
-            self.groups = (IPrincipal(prin_str),)
-
-
 @component.adapter(IHostPolicySiteManager, INewLocalSite)
 def on_site_created(site_manager, unused_event):
     logger.info('Installed sharing scope utility (%s)',
