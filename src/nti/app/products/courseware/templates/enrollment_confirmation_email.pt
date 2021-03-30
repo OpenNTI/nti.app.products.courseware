@@ -88,9 +88,6 @@
 			<br />
 		</p>
 
-		<div id="logo-bar nti">
-			<img src="http://d2ixlfeu83tci.cloudfront.net/images/email_logo.png" width="177" height="25" alt="NextThought Logo" />
-		</div>
 	</div>
 	<div metal:use-macro="macro:footer"></div>
 </div>
