@@ -70,6 +70,7 @@ from nti.appserver.workspaces.interfaces import IUserService
 
 from nti.common.string import is_true
 
+from nti.contenttypes.completion.interfaces import ICompletedItem
 from nti.contenttypes.completion.interfaces import ICompletionContext
 
 from nti.contenttypes.completion.utils import get_indexed_completed_items_intids
