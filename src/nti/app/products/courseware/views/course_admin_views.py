@@ -70,11 +70,9 @@ from nti.appserver.workspaces.interfaces import IUserService
 
 from nti.common.string import is_true
 
-from nti.contenttypes.completion.index import IX_COMPLETIONTIME
-from nti.contenttypes.completion.index import get_completed_item_catalog
-
-from nti.contenttypes.completion.interfaces import ICompletedItem
 from nti.contenttypes.completion.interfaces import ICompletionContext
+
+from nti.contenttypes.completion.utils import get_indexed_completed_items_intids
 
 from nti.contenttypes.courses import get_enrollment_catalog
 
@@ -116,6 +114,7 @@ from nti.dataserver.interfaces import ISiteAdminUtility
 from nti.dataserver.interfaces import IUsernameSubstitutionPolicy
 
 from nti.dataserver.metadata.index import IX_MIMETYPE
+
 from nti.dataserver.metadata.index import get_metadata_catalog
 
 from nti.dataserver.users.interfaces import IUserProfile
@@ -856,20 +855,9 @@ class AllCourseCompletionView(AbstractAuthenticatedView):
         """
         Iterate over completed items for a time range.
         """
-        query = {}
-        sites = get_component_hierarchy_names()
-        catalog = get_completed_item_catalog()
-
-        if sites:
-            if isinstance(sites, six.string_types):
-                sites = sites.split(',')
-            query[IX_SITE] = {'any_of': sites}
-
-        if min_time is not None or max_time is not None:
-            query[IX_COMPLETIONTIME] = {'between': (min_time, max_time)}
-
+        rs = get_indexed_completed_items_intids(min_time=min_time, max_time=max_time)
         intids = component.getUtility(IIntIds)
-        for doc_id in catalog.apply(query) or ():
+        for doc_id in rs or ():
             obj = intids.queryObject(doc_id)
             if ICompletedItem.providedBy(obj):
                 yield obj
