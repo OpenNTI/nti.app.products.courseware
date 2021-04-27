@@ -1123,7 +1123,6 @@ class EnrolledCourseCollectionView(CourseCollectionView):
                         'createdtime': lambda x: x[1].createdTime,
                         'enrolled': lambda x: ICourseEnrollments(x[1].CourseInstance).count_enrollments()}
 
-
     def _sort_key(self, entry_tuple):
         enrollment = entry_tuple[1]
         return enrollment.createdTime
@@ -1151,11 +1150,13 @@ class AbstractIndexedCoursesCollectionView(CourseCollectionView):
                 'provideruniqueid': self._puid_sort,
                 'startdate': self._start_date_sort,
                 'enddate': self._end_date_sort,
-                'createdTime': self._created_time_sort}
+                'createdtime': self._created_time_sort}
 
     @Lazy
     def _allowed_sorting_keys(self):
         return self.sort_key_to_func
+
+    _ALLOWED_SORTING = _allowed_sorting_keys
 
     @Lazy
     def sort_reverse(self):
