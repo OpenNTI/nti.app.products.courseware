@@ -143,6 +143,10 @@ from nti.dataserver.interfaces import IDataserverFolder
 
 from nti.datastructures.datastructures import LastModifiedCopyingUserList
 
+from nti.dataserver.metadata.index import IX_CREATEDTIME
+
+from nti.dataserver.metadata.index import get_metadata_catalog
+
 from nti.externalization.externalization import to_external_object
 
 from nti.externalization.interfaces import LocatedExternalDict
@@ -1002,6 +1006,7 @@ class CourseCollectionView(_AbstractFilteredCourseView,
     _ALLOWED_SORTING = {'title': lambda x: x[0].title and x[0].title.lower(),
                         'startdate': lambda x: (x[0].StartDate is not None, x[0].StartDate),
                         'enddate': lambda x: (x[0].EndDate is not None, x[0].EndDate),
+                        'provideruniqueid': lambda x: x[0].ProviderUniqueID.lower(),
                         'enrolled': lambda x: ICourseEnrollments(x[1].CourseInstance).count_enrollments()}
 
     def _include_filter(self, unused_entry):  # pylint: disable=arguments-differ
@@ -1016,7 +1021,7 @@ class CourseCollectionView(_AbstractFilteredCourseView,
     @Lazy
     def filter_str(self):
         """
-        Returns a set of filter strings.
+        Returns a set of filter strings, used for searching.
         """
         # pylint: disable=no-member
         result = self._params.get('filter')
@@ -1103,9 +1108,21 @@ class EnrolledCourseCollectionView(CourseCollectionView):
     paging and filtering.
 
     Sorted by the enrollment record time desc.
+
+    TODO: clean up this hierarchy
+    - Move filtering to generic course collection view instead of specifci endpoints
+    - Use enrollment record intids to use index based sorting
     """
 
     DESC_SORT_ORDER = True
+
+    _ALLOWED_SORTING = {'title': lambda x: x[0].title and x[0].title.lower(),
+                        'startdate': lambda x: (x[0].StartDate is not None, x[0].StartDate),
+                        'enddate': lambda x: (x[0].EndDate is not None, x[0].EndDate),
+                        'provideruniqueid': lambda x: x[0].ProviderUniqueID.lower(),
+                        'createdtime': lambda x: x[1].createdTime,
+                        'enrolled': lambda x: ICourseEnrollments(x[1].CourseInstance).count_enrollments()}
+
 
     def _sort_key(self, entry_tuple):
         enrollment = entry_tuple[1]
@@ -1126,14 +1143,51 @@ class AbstractIndexedCoursesCollectionView(CourseCollectionView):
     reify the objects we need for this user.
     """
 
-    SORT_KEY_TO_INDEX = {'title': IX_ENTRY_TITLE_SORT,
-                         'provideruniqueid': IX_ENTRY_PUID_SORT,
-                         'startdate': IX_ENTRY_START_DATE,
-                         'enddate': IX_ENTRY_END_DATE}
-
     DEFAULT_SORT_KEY = 'provideruniqueid'
 
-    _ALLOWED_SORTING = SORT_KEY_TO_INDEX
+    @Lazy
+    def sort_key_to_func(self):
+        return {'title': self._title_sort,
+                'provideruniqueid': self._puid_sort,
+                'startdate': self._start_date_sort,
+                'enddate': self._end_date_sort,
+                'createdTime': self._created_time_sort}
+
+    @Lazy
+    def _allowed_sorting_keys(self):
+        return self.sort_key_to_func
+
+    @Lazy
+    def sort_reverse(self):
+        return self.sortOrder == 'descending'
+
+    def _do_sort(self, idx, result_intids):
+        return idx.sort(result_intids, reverse=self.sort_reverse)
+
+    def _entry_intids_idx_sort(self, idx_key, result_intids):
+        course_catalog = get_courses_catalog()
+        idx = course_catalog[idx_key]
+        return self._do_sort(idx, result_intids)
+
+    def _title_sort(self, entry_intids):
+        return self._entry_intids_idx_sort(IX_ENTRY_TITLE_SORT, entry_intids)
+
+    def _puid_sort(self, entry_intids):
+        return self._entry_intids_idx_sort(IX_ENTRY_PUID_SORT, entry_intids)
+
+    def _start_date_sort(self, entry_intids):
+        return self._entry_intids_idx_sort(IX_ENTRY_START_DATE, entry_intids)
+
+    def _end_date_sort(self, entry_intids):
+        return self._entry_intids_idx_sort(IX_ENTRY_END_DATE, entry_intids)
+
+    def _created_time_sort(self, entry_intids):
+        # This is only indexed on course intids - entries do not have valid
+        # times (should fix this).
+        course_intids = entry_intids_to_course_intids(entry_intids)
+        catalog = get_metadata_catalog()
+        idx = catalog[IX_CREATEDTIME]
+        return self._do_sort(idx, course_intids)
 
     @Lazy
     def _entry_intids(self):
@@ -1168,21 +1222,23 @@ class AbstractIndexedCoursesCollectionView(CourseCollectionView):
                                                                     filtered_entry_ids)
         user_entry_ids = self.filter_intids(user_entry_ids)
         sortOn = self.sortOn or self.DEFAULT_SORT_KEY
-        idx_sort_key = self.SORT_KEY_TO_INDEX.get(sortOn)
-        sort_reverse = self.sortOrder == 'descending'
-        sort_idx = courses_catalog[idx_sort_key]
-        sorted_ids = sort_idx.sort(user_entry_ids, reverse=sort_reverse)
+        sort_func = self.sort_key_to_func.get(sortOn)
+        if sort_func is None:
+            raise hexc.HTTPUnprocessableEntity("Invalid sort")
+        sorted_ids = sort_func(user_entry_ids)
         # For our two, possibly empty, attributes (start/end date),
         # we want to backfill with the remaining entry_ids (sorted by PUID???).
         # `sorted_ids` is now a generator.
         # Similarly to previous in-memory implementations, we'll want to return `None`
         # values last in descending order and vice versa.
         if sortOn in ('startdate', 'enddate'):
+            sort_idx_key = IX_ENTRY_START_DATE if sortOn == 'startdate' else IX_ENTRY_END_DATE
+            sort_idx = courses_catalog[sort_idx_key]
             sort_idx_intids = BTrees.family64.IF.Set(sort_idx.ids())
             non_date_intids = courses_catalog.family.IF.difference(user_entry_ids, sort_idx_intids)
             sorted_non_date_intids = courses_catalog[IX_ENTRY_PUID_SORT].sort(non_date_intids,
-                                                                              reverse=sort_reverse)
-            if sort_reverse:
+                                                                              reverse=self.sort_reverse)
+            if self.sort_reverse:
                 # Descending - non-dates last
                 sorted_ids = itertools.chain(sorted_ids, sorted_non_date_intids)
             else:
