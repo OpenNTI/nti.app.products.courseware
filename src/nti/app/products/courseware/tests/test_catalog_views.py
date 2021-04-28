@@ -2,7 +2,6 @@
 # -*- coding: utf-8 -*-
 
 from __future__ import print_function, absolute_import, division
-__docformat__ = "restructuredtext en"
 
 # disable: accessing protected members, too many methods
 # pylint: disable=W0212,R0904
@@ -11,16 +10,15 @@ import fudge
 
 from hamcrest import contains_string
 from hamcrest import is_
+from hamcrest import contains
 from hamcrest import not_none
 from hamcrest import has_entry
 from hamcrest import has_length
 from hamcrest import assert_that
 
-import time
-
-from datetime import datetime
-
 from zope import component
+
+from zope.event import notify
 
 from nti.app.products.courseware.views import VIEW_CURRENT_COURSES
 from nti.app.products.courseware.views import VIEW_ARCHIVED_COURSES
@@ -33,8 +31,11 @@ from nti.app.testing.application_webtest import ApplicationLayerTest
 
 from nti.app.testing.decorators import WithSharedApplicationMockDS
 
+from nti.contenttypes.courses.interfaces import ICourseInstance
 from nti.contenttypes.courses.interfaces import ICourseCatalog
 from nti.contenttypes.courses.interfaces import ICourseEnrollmentManager
+
+from nti.coremetadata.interfaces import UserProcessedContextsEvent
 
 from nti.dataserver.tests import mock_dataserver
 
@@ -222,7 +223,41 @@ class TestCatalogViews(ApplicationLayerTest):
         res = [x['CatalogEntry']['EndDate'] for x in res.json_body['Items']]
         assert_that((res[0], res[6]), is_(('2015-12-20T05:00:00Z', '2032-10-12T06:00:00Z')))
 
-        # Enrolled
-        res = self.testapp.get(administered_course_path, status=200, params={'sortOn': 'enrolled', 'sortOrder': 'descending'})
-        res = [x['CatalogEntry']['TotalEnrolledCount'] for x in res.json_body['Items']]
-        assert_that((res[0], res[6]), is_((0, 0)))
+        # PUID
+        res = self.testapp.get(administered_course_path, params={'sortOn': 'providerUniqueID', 'sortOrder': 'descending'})
+        res = [x['CatalogEntry']['ProviderUniqueID'] for x in res.json_body['Items']]
+        assert_that(res, contains(u'CS 1323-995', u'CS 1323-010', u'CS 1323-001',
+                                  u'CS 1323', u'CLC 3403-Restricted', u'CLC 3403-01', u'CLC 3403'))
+
+        # Last seen time - sorted by PUID without any data
+        res = self.testapp.get(administered_course_path, params={'sortOn': 'lastSeenTime', 'sortOrder': 'descending'})
+        res = [x['CatalogEntry']['ProviderUniqueID'] for x in res.json_body['Items']]
+        assert_that(res, contains(u'CS 1323-995', u'CS 1323-010', u'CS 1323-001',
+                                  u'CS 1323', u'CLC 3403-Restricted', u'CLC 3403-01', u'CLC 3403'))
+
+        # Update last seen
+        with mock_dataserver.mock_db_trans(site_name='platform.ou.edu'):
+            cat = component.getUtility(ICourseCatalog)
+            puid_to_course = {x.ProviderUniqueID: ICourseInstance(x) for x in cat.iterCatalogEntries()}
+            user = self._get_user()
+            clc_course = puid_to_course.get('CLC 3403')
+            notify(UserProcessedContextsEvent(user, (clc_course.ntiid,), 1))
+            clc_sub_one = puid_to_course.get('CLC 3403-01')
+            notify(UserProcessedContextsEvent(user, (clc_sub_one.ntiid,), 2))
+            cs_01_section = puid_to_course.get('CS 1323-001')
+            notify(UserProcessedContextsEvent(user, (cs_01_section.ntiid,), 3))
+
+        res = self.testapp.get(administered_course_path, params={'sortOn': 'lastSeenTime', 'sortOrder': 'descending'})
+        res = [x['CatalogEntry']['ProviderUniqueID'] for x in res.json_body['Items']]
+        assert_that(res, contains(u'CS 1323-001', u'CLC 3403-01', u'CLC 3403',
+                                  u'CS 1323-995', u'CS 1323-010', u'CS 1323', u'CLC 3403-Restricted'))
+
+        res = self.testapp.get(administered_course_path, params={'sortOn': 'lastSeenTime'})
+        res = [x['CatalogEntry']['ProviderUniqueID'] for x in res.json_body['Items']]
+        assert_that(res, contains(u'CLC 3403', u'CLC 3403-01', u'CS 1323-001', u'CLC 3403-Restricted',
+                                  u'CS 1323',  u'CS 1323-010',  u'CS 1323-995' ))
+
+        # Created time
+        res = self.testapp.get(administered_course_path, params={'sortOn': 'createdTime',
+                                                                 'sortOrder': 'descending'})
+        assert_that(res.json_body['Items'], has_length(7))
