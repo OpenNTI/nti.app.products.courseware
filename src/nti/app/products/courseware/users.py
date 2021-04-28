@@ -101,6 +101,8 @@ class ClassmatesSuggestedContactRankingPolicy(SuggestedContactRankingPolicy):
 @interface.implementer(ISuggestedContactsProvider)
 class ClassmatesSuggestedContactsProvider(SuggestedContactsProvider):
 
+    MAX_RESULT_COUNT = 10
+
     def __init__(self, *args, **kwargs):
         super(ClassmatesSuggestedContactsProvider, self).__init__(*args, **kwargs)
         self.ranking = ClassmatesSuggestedContactRankingPolicy()
@@ -122,10 +124,10 @@ class ClassmatesSuggestedContactsProvider(SuggestedContactsProvider):
             results = user_courses.intersection(source_courses)
         return results
 
-    def suggestions_by_course(self, user, context):
+    def _iter_suggestions_by_course(self, user, context):
         record = get_enrollment_record(context, user)
         if record is None:
-            return ()
+            return
 
         implies = set([record.Scope])
         for term in ENROLLMENT_SCOPE_VOCABULARY:
@@ -133,7 +135,6 @@ class ClassmatesSuggestedContactsProvider(SuggestedContactsProvider):
                 implies.update(term.implies)
                 break
 
-        result = []
         course = ICourseInstance(context)
         entry = ICourseCatalogEntry(context, None)  # seen in alpha
 
@@ -146,14 +147,23 @@ class ClassmatesSuggestedContactsProvider(SuggestedContactsProvider):
                     suggestion.entry = entry
                     suggestion.provider = self
                     suggestion.Scope = record.Scope
-                    result.append(suggestion)
+                    yield suggestion
+
+    def suggestions_by_course(self, user, context):
+        # XXX: Should we limit this?
+        return tuple(self._iter_suggestions_by_course(user, context))
+
+    def _get_suggestions(self, user, source_user=None):
+        result = []
+        for course in self.iter_courses(user, source_user):
+            for suggestion in self._iter_suggestions_by_course(user, course):
+                result.append(suggestion)
+                if len(result) >= self.MAX_RESULT_COUNT:
+                    return result
         return result
 
     def suggestions(self, user, source_user=None):
-        result = []
-        for course in self.iter_courses(user, source_user):
-            suggestions = self.suggestions_by_course(user, course)
-            result.extend(suggestions)
+        result = self._get_suggestions(user, source_user)
         result = self.ranking.sort(result)
         return result
 

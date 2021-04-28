@@ -131,6 +131,12 @@ class TestCourseUserViews(ApplicationLayerTest):
 			suggestions = provider.suggestions(ichigo, source_user=source_user)
 			assert_that(suggestions, has_length(3))
 
+			old_max = provider.MAX_RESULT_COUNT
+			provider.MAX_RESULT_COUNT = 1
+			suggestions = provider.suggestions(ichigo, source_user=source_user)
+			assert_that(suggestions, has_length(1))
+			provider.MAX_RESULT_COUNT = old_max
+
 		user_classmates_url = '/dataserver2/users/ichigo/Classmates'
 		environ = self._make_extra_environ(username='ichigo')
 		environ[b'HTTP_ORIGIN'] = b'http://platform.ou.edu'
