@@ -154,6 +154,8 @@ from nti.externalization.interfaces import StandardExternalFields
 from nti.externalization.interfaces import StandardInternalFields
 
 from nti.traversal import traversal
+from nti.coremetadata.interfaces import IContextLastSeenContainer
+from nti.ntiids.ntiids import find_object_with_ntiid
 
 ITEMS = StandardExternalFields.ITEMS
 NTIID = StandardExternalFields.NTIID
@@ -1003,11 +1005,21 @@ class CourseCollectionView(_AbstractFilteredCourseView,
 
     DESC_SORT_ORDER = False
 
-    _ALLOWED_SORTING = {'title': lambda x: x[0].title and x[0].title.lower(),
-                        'startdate': lambda x: (x[0].StartDate is not None, x[0].StartDate),
-                        'enddate': lambda x: (x[0].EndDate is not None, x[0].EndDate),
-                        'provideruniqueid': lambda x: x[0].ProviderUniqueID.lower(),
-                        'enrolled': lambda x: ICourseEnrollments(x[1].CourseInstance).count_enrollments()}
+    @Lazy
+    def sort_key_to_func(self):
+        return  {'title': lambda x: x[0].title and x[0].title.lower(),
+                 'startdate': lambda x: (x[0].StartDate is not None, x[0].StartDate),
+                 'enddate': lambda x: (x[0].EndDate is not None, x[0].EndDate),
+                 'provideruniqueid': lambda x: x[0].ProviderUniqueID.lower(),
+                 'createdtime': lambda x: x[1].createdTime,
+                 'lastseentime': self._sort_record_by_last_seen,
+                 'enrolled': lambda x: ICourseEnrollments(x[1].CourseInstance).count_enrollments()}
+
+    @Lazy
+    def _allowed_sorting_keys(self):
+        return self.sort_key_to_func
+
+    _ALLOWED_SORTING = _allowed_sorting_keys
 
     def _include_filter(self, unused_entry):  # pylint: disable=arguments-differ
         pass
@@ -1045,6 +1057,20 @@ class CourseCollectionView(_AbstractFilteredCourseView,
                                                 union=self.filter_union)
         return entries
 
+    @Lazy
+    def last_seen_container(self):
+        return IContextLastSeenContainer(self.remoteUser)
+
+    def _sort_record_by_last_seen(self, record):
+        course = record[1].CourseInstance
+        puid = record[0].ProviderUniqueID.lower()
+        last_seen = self.last_seen_container.get(course.ntiid)
+        last_seen_timestamp = getattr(last_seen, 'timestamp', None)
+        if self.sort_reverse:
+            return (last_seen_timestamp, puid)
+        else:
+            return (last_seen_timestamp is None, last_seen_timestamp, puid)
+
     def _sort_key(self, entry_tuple):
         entry = entry_tuple[0]
         title = entry.title and entry.title.lower()
@@ -1062,13 +1088,15 @@ class CourseCollectionView(_AbstractFilteredCourseView,
         return self._params.get('sortOrder', 'ascending')
 
     @Lazy
-    def sorted_filtered_entries_and_records(self):
-        sort_key = self._ALLOWED_SORTING.get(self.sortOn) if self.sortOn else self._sort_key
-        sort_reverse = self.sortOrder == 'descending' if self.sortOn else self.DESC_SORT_ORDER
+    def sort_reverse(self):
+        return self.sortOrder == 'descending'
 
+    @Lazy
+    def sorted_filtered_entries_and_records(self):
+        sort_key = self.sort_key_to_func.get(self.sortOn) if self.sortOn else self._sort_key
         result = sorted(self.filtered_entries,
                         key=sort_key,
-                        reverse=sort_reverse)
+                        reverse=self.sort_reverse)
         return result
 
     def __call__(self):
@@ -1116,13 +1144,6 @@ class EnrolledCourseCollectionView(CourseCollectionView):
 
     DESC_SORT_ORDER = True
 
-    _ALLOWED_SORTING = {'title': lambda x: x[0].title and x[0].title.lower(),
-                        'startdate': lambda x: (x[0].StartDate is not None, x[0].StartDate),
-                        'enddate': lambda x: (x[0].EndDate is not None, x[0].EndDate),
-                        'provideruniqueid': lambda x: x[0].ProviderUniqueID.lower(),
-                        'createdtime': lambda x: x[1].createdTime,
-                        'enrolled': lambda x: ICourseEnrollments(x[1].CourseInstance).count_enrollments()}
-
     def _sort_key(self, entry_tuple):
         enrollment = entry_tuple[1]
         return enrollment.createdTime
@@ -1150,17 +1171,8 @@ class AbstractIndexedCoursesCollectionView(CourseCollectionView):
                 'provideruniqueid': self._puid_sort,
                 'startdate': self._start_date_sort,
                 'enddate': self._end_date_sort,
+                'lastseentime': self._last_seen_sort,
                 'createdtime': self._created_time_sort}
-
-    @Lazy
-    def _allowed_sorting_keys(self):
-        return self.sort_key_to_func
-
-    _ALLOWED_SORTING = _allowed_sorting_keys
-
-    @Lazy
-    def sort_reverse(self):
-        return self.sortOrder == 'descending'
 
     def _do_sort(self, idx, result_intids):
         return idx.sort(result_intids, reverse=self.sort_reverse)
@@ -1189,6 +1201,39 @@ class AbstractIndexedCoursesCollectionView(CourseCollectionView):
         catalog = get_metadata_catalog()
         idx = catalog[IX_CREATEDTIME]
         return self._do_sort(idx, course_intids)
+
+    @Lazy
+    def sorted_courses_by_lastseen(self):
+        """
+        This is a bit expansive. Reify all objects in this container
+        looking for courses and then sort them. This should only be
+        called if needed.
+        """
+        result = []
+        for val in self.last_seen_container.values():
+            # Currently, we store these by course OIDs.
+            obj = find_object_with_ntiid(val.ntiid)
+            if ICourseInstance.providedBy(obj):
+                result.append((obj, val))
+        result = sorted(result, key=lambda x: x[1].timestamp, reverse=self.sort_reverse)
+        result = [x[0] for x in result]
+        return result
+
+    def _last_seen_sort(self, user_entry_intids):
+        """
+        Gather the ordered entry intids by last seen time, backfilling
+        with those unopened courses.
+        """
+        intids = component.getUtility(IIntIds)
+        entries = (ICourseCatalogEntry(x) for x in self.sorted_courses_by_lastseen)
+        entry_intids = (intids.queryId(x) for x in entries)
+        valid_entry_intids = [x for x in entry_intids if x in user_entry_intids]
+        unopened_intids = set(user_entry_intids) - set(valid_entry_intids)
+        courses_catalog = get_courses_catalog()
+        sorted_unopened_intids = courses_catalog[IX_ENTRY_PUID_SORT].sort(unopened_intids,
+                                                                          reverse=self.sort_reverse)
+        sorted_ids = itertools.chain(valid_entry_intids, sorted_unopened_intids)
+        return sorted_ids
 
     @Lazy
     def _entry_intids(self):
@@ -1239,11 +1284,7 @@ class AbstractIndexedCoursesCollectionView(CourseCollectionView):
             non_date_intids = courses_catalog.family.IF.difference(user_entry_ids, sort_idx_intids)
             sorted_non_date_intids = courses_catalog[IX_ENTRY_PUID_SORT].sort(non_date_intids,
                                                                               reverse=self.sort_reverse)
-            if self.sort_reverse:
-                # Descending - non-dates last
-                sorted_ids = itertools.chain(sorted_ids, sorted_non_date_intids)
-            else:
-                sorted_ids = itertools.chain(sorted_non_date_intids, sorted_ids)
+            sorted_ids = itertools.chain(sorted_ids, sorted_non_date_intids)
         intids = component.getUtility(IIntIds)
         return ResultSet(sorted_ids, intids), len(user_entry_ids)
 
