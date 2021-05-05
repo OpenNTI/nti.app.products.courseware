@@ -1076,7 +1076,7 @@ class CourseCollectionView(_AbstractFilteredCourseView,
                                                 self.filter_str,
                                                 selector=lambda x: x[0],
                                                 union=self.filter_union)
-        entries = [x for x in entries if self._include_filter(x)]
+        entries = [x for x in entries if self._include_filter(x[0])]
         return entries
 
     @Lazy
