@@ -389,11 +389,35 @@ class _AbstractSortingAndFilteringCoursesView(AbstractAuthenticatedView):
     def entries_and_records(self):
         return tuple(self.iter_entries_and_records())
 
-    def _include_filter(self, unused_entry):
+    @Lazy
+    def set_filter_to_func(self):
+        return  {'incomplete': self._incomplete_filter,
+                 'completed': self._completed_filter}
+
+    def _completed_filter(self, entry):
+        return has_completed_course(self.remoteUser, ICourseInstance(entry), success_only=True)
+
+    def _incomplete_filter(self, entry):
+        return not self._completed_filter(entry)
+
+    @Lazy
+    def filter_callables(self):
         """
-        Subclasses may use this to filter courses.
+        Given by `course_filter`, returns a sequence of filter callables
+        defined by a fixed criteria.
         """
-        return True
+        # pylint: disable=no-member
+        result = self._params.get('course_filter')
+        if result:
+            result = result.split(',')
+            result = (x.lower() for x in result)
+            result = [self.set_filter_to_func.get(x) for x in result]
+        return result or ()
+
+    def _include_filter(self, entry):
+        # all callables must return True for a entry to return True
+        # `all(())` returns True
+        return all(filter_func(entry) for filter_func in self.filter_callables)
 
     @Lazy
     def sorted_entries_and_records(self):
@@ -1021,9 +1045,6 @@ class CourseCollectionView(_AbstractFilteredCourseView,
 
     _ALLOWED_SORTING = _allowed_sorting_keys
 
-    def _include_filter(self, unused_entry):  # pylint: disable=arguments-differ
-        pass
-
     @Lazy
     def _params(self):
         values = self.request.params
@@ -1328,6 +1349,12 @@ class AdministeredCoursesCollectionView(AbstractIndexedCoursesCollectionView):
         course_intids = self.context.course_intids
         user_entry_ids = course_intids_to_entry_intids(course_intids)
         return user_entry_ids
+
+    def _completed_filter(self, unused_record):
+        return True
+
+    def _incomplete_filter(self, unused_record):
+        return True
 
     def _batch_selector(self, entry):
         """
