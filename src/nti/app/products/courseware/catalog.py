@@ -43,15 +43,14 @@ from nti.dataserver.authorization_acl import has_permission
 from nti.dataserver.interfaces import IUser
 
 
-@component.adapter(IUser)
 @interface.implementer(IAvailableCoursesProvider)
 class AvailableCoursesProvider(object):
     """
-    A utility to fetch available courses for a user.
+    A utility to fetch available courses for a principal.
     """
 
-    def __init__(self, user):
-        self.user = user
+    def __init__(self, principal):
+        self.principal = principal
 
     @property
     def catalog(self):
@@ -59,7 +58,7 @@ class AvailableCoursesProvider(object):
 
     @Lazy
     def enrolled_entry_ntiid_to_course(self):
-        enrolled_courses = (x.CourseInstance for x in get_enrollments(self.user))
+        enrolled_courses = (x.CourseInstance for x in get_enrollments(self.principal))
         result = {ICourseCatalogEntry(x).ntiid: x for x in enrolled_courses}
         return result
 
@@ -83,9 +82,9 @@ class AvailableCoursesProvider(object):
 
     def get_available_entries(self):
         """
-        Return a sequence of :class:`ICourseCatalogEntry` objects the user is
+        Return a sequence of :class:`ICourseCatalogEntry` objects the principal is
         not enrolled in and that are available to be enrolled in. We also include
-        the entries of the courses the user is enrolled in.
+        the entries of the courses the principal is enrolled in.
         """
         # To support ACLs limiting the available parts of the catalog, we
         # filter out here. we could do this with a proxy, but it's easier right
@@ -101,12 +100,12 @@ class AvailableCoursesProvider(object):
                 # XXX: Make this an ACL toggle also? Would have to affect
                 # zope security too.
                 pass
-            elif has_permission(ACT_READ, x, self.user):
+            elif has_permission(ACT_READ, x, self.principal):
                 result.append(x)
         return result
 
     def entry_intids(self):
-        exclude_non_public = not is_admin_or_site_admin(self.user)
+        exclude_non_public = not is_admin_or_site_admin(self.principal)
         entry_intids = get_all_site_entry_intids(exclude_non_public=exclude_non_public,
                                                  exclude_deleted=True)
         entries_to_exclude = [ICourseCatalogEntry(x) for x in self._courses_to_exclude]
@@ -114,6 +113,10 @@ class AvailableCoursesProvider(object):
         excluded_intids = intids.family.IF.LFSet(intids.getId(x) for x in entries_to_exclude)
         catalog = get_courses_catalog()
         return catalog.family.IF.difference(entry_intids, excluded_intids)
+
+
+def prin_available_courses_provider(principal):
+    return AvailableCoursesProvider(principal)
 
 
 @component.adapter(IUser)
