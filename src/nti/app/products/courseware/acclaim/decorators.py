@@ -17,6 +17,8 @@ from zope import interface
 
 from zope.location.interfaces import ILocation
 
+from nti.app.products.acclaim.interfaces import IAcclaimIntegration
+
 from nti.app.products.courseware.acclaim.interfaces import ICourseAcclaimBadge
 
 from nti.app.renderers.decorators import AbstractAuthenticatedRequestAwareDecorator
@@ -41,6 +43,10 @@ logger = __import__('logging').getLogger(__name__)
 @component.adapter(ICourseCatalogEntry, IRequest)
 class _CourseAcclaimBadgesDecorator(AbstractAuthenticatedRequestAwareDecorator):
 
+    def _predicate(self, context, unused_result):
+        return self._is_authenticated \
+            and component.queryUtility(IAcclaimIntegration)
+    
     # pylint: disable=arguments-differ
     def _do_decorate_external(self, context, result):
         course = ICourseInstance(context)
