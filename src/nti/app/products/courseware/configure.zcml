@@ -38,14 +38,6 @@
         id="nti.actions.courseware.view_activity"
         title="View activity" />
 
-    <permission
-        id="nti.actions.courseware.record_event_attendance"
-        title="Record Event Attendance" />
-
-    <permission
-        id="nti.actions.courseware.view_event_attendance"
-        title="View Event Attendance" />
-
     <!--
         The instructors/TA of a course (locally added to this role
         for the course) can view rosters, activity, ...
@@ -77,30 +69,6 @@
     <grant
         permission="zope.View"
         role="nti.roles.course_instructor" />
-
-	<grant
-			permission="nti.actions.courseware.record_event_attendance"
-			role="nti.roles.course_instructor" />
-
-	<grant
-			permission="nti.actions.courseware.record_event_attendance"
-			role="nti.roles.course_ta" />
-
-	<grant
-			permission="nti.actions.courseware.record_event_attendance"
-			role="role:nti.dataserver.site-admin" />
-
-	<grant
-			permission="nti.actions.courseware.view_event_attendance"
-			role="nti.roles.course_instructor" />
-
-	<grant
-			permission="nti.actions.courseware.view_event_attendance"
-			role="nti.roles.course_ta" />
-
-	<grant
-			permission="nti.actions.courseware.view_event_attendance"
-			role="role:nti.dataserver.site-admin" />
 
 	<!-- ACLs -->
 	<adapter factory=".acl.EnrolledCoursesCollectionACLProvider" />
