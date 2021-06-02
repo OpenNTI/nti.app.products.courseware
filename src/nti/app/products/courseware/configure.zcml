@@ -715,12 +715,12 @@
 				for="nti.dataserver.interfaces.IUser" />
 
     <!-- Catalog -->
-	<adapter factory=".catalog.prin_available_courses_provider"
+	<adapter factory=".catalog.AvailableCoursesProvider"
 			 for="nti.dataserver.interfaces.IUser"
 			 provides=".interfaces.IAvailableCoursesProvider" />
 
-    <adapter factory=".catalog.prin_available_courses_provider"
-             for="zope.security.interfaces.IPrincipal"
+    <adapter factory=".catalog.UnauthenticatedAvailableCoursesProvider"
+             for="zope.authentication.interfaces.IUnauthenticatedPrincipal"
              provides=".interfaces.IAvailableCoursesProvider" />
 
 	<subscriber factory=".catalog.FeaturedCatalogCoursesProvider"

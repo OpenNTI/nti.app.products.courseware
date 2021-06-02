@@ -1375,7 +1375,7 @@ class AdministeredCoursesCollectionView(AbstractIndexedCoursesCollectionView):
 @view_config(route_name='objects.generic.traversal',
              context=ICoursesCatalogCollection,
              request_method='GET',
-             permission=nauth.ACT_READ)
+             renderer='rest')
 class CoursesCatalogCollectionView(AbstractIndexedCoursesCollectionView):
 
     @Lazy

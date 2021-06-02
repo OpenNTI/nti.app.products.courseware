@@ -49,8 +49,7 @@ from nti.appserver.workspaces.interfaces import ICatalogWorkspace
 
 from nti.contenttypes.courses.index import get_courses_catalog
 
-from nti.contenttypes.courses.interfaces import ES_CREDIT,\
-    IPrincipalAdministrativeRoleCatalog
+from nti.contenttypes.courses.interfaces import ES_CREDIT
 from nti.contenttypes.courses.interfaces import ES_CREDIT_DEGREE
 from nti.contenttypes.courses.interfaces import ES_CREDIT_NONDEGREE
 
@@ -60,6 +59,7 @@ from nti.contenttypes.courses.interfaces import ICourseInstance
 from nti.contenttypes.courses.interfaces import ICourseEnrollments
 from nti.contenttypes.courses.interfaces import ICourseCatalogEntry
 from nti.contenttypes.courses.interfaces import IPrincipalEnrollments
+from nti.contenttypes.courses.interfaces import IPrincipalAdministrativeRoleCatalog
 from nti.contenttypes.courses.interfaces import ICourseInstanceEnrollmentRecord
 from nti.contenttypes.courses.interfaces import ICourseInstanceAdministrativeRole
 

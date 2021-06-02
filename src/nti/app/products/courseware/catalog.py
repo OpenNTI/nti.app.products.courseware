@@ -115,8 +115,17 @@ class AvailableCoursesProvider(object):
         return catalog.family.IF.difference(entry_intids, excluded_intids)
 
 
-def prin_available_courses_provider(principal):
-    return AvailableCoursesProvider(principal)
+class UnauthenticatedAvailableCoursesProvider(AvailableCoursesProvider):
+    """
+    For unauthenticated principals, ensure they get the available courses only
+    if the catalog folder is setup for anonymous access.
+    """
+
+    def entry_intids(self):
+        folder = component.getUtility(ICourseCatalog)
+        if not folder.anonymously_accessible:
+            return ()
+        return super(UnauthenticatedAvailableCoursesProvider, self).entry_intids()
 
 
 @component.adapter(IUser)
