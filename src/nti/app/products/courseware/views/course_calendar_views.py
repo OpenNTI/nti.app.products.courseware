@@ -353,9 +353,7 @@ class CalendarEventAttendanceView(AbstractAuthenticatedView,
                                                  sort_descending)
 
         def to_external(summary):
-            ext_obj = to_external_object(summary.attendance)
-            ext_obj['User'] = to_external_object(summary.user, name='summary')
-            return ext_obj
+            return summary.attendance
 
         self._batch_items_iterable(result_dict,
                                    result_set,
