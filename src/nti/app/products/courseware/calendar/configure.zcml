@@ -23,6 +23,9 @@
     <adapter factory=".adapters.calendar_to_course" />
     <adapter factory=".adapters.calendarevent_to_course" />
     <adapter factory=".adapters.calendarevent_to_calendar" />
+    <adapter factory=".adapters.attendance_container_to_course" />
+    <adapter factory=".adapters.attendance_container_to_event" />
+    <adapter factory=".adapters.attendance_to_container" />
 
     <adapter factory=".adapters._course_calendar_event_to_ntiid"
              provides="nti.contenttypes.calendar.interfaces.ICalendarContextNTIIDAdapter"

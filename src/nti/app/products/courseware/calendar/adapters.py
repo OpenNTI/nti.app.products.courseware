@@ -34,11 +34,14 @@ from nti.appserver.pyramid_authorization import has_permission
 
 from nti.appserver.interfaces import IHierarchicalContextProvider
 
-from nti.contenttypes.calendar.interfaces import ICalendarProvider
-from nti.contenttypes.calendar.interfaces import ICalendarEventProvider
 from nti.contenttypes.calendar.interfaces import IAdminCalendarProvider
-from nti.contenttypes.calendar.interfaces import ICalendarDynamicEventProvider
 from nti.contenttypes.calendar.interfaces import ICalendarContextNTIIDAdapter
+from nti.contenttypes.calendar.interfaces import ICalendarDynamicEventProvider
+from nti.contenttypes.calendar.interfaces import ICalendarEvent
+from nti.contenttypes.calendar.interfaces import ICalendarEventAttendanceContainer
+from nti.contenttypes.calendar.interfaces import ICalendarEventProvider
+from nti.contenttypes.calendar.interfaces import ICalendarProvider
+from nti.contenttypes.calendar.interfaces import IUserCalendarEventAttendance
 
 from nti.contenttypes.courses.interfaces import ICourseInstance
 from nti.contenttypes.courses.interfaces import ICourseCatalogEntry
@@ -270,6 +273,24 @@ def calendarevent_to_course(event):
 @interface.implementer(ICourseCalendar)
 def calendarevent_to_calendar(event):
     return find_interface(event, ICourseCalendar, strict=False)
+
+
+@component.adapter(ICalendarEventAttendanceContainer)
+@interface.implementer(ICourseInstance)
+def attendance_container_to_course(container):
+    return find_interface(container, ICourseInstance, strict=False)
+
+
+@component.adapter(ICalendarEventAttendanceContainer)
+@interface.implementer(ICalendarEvent)
+def attendance_container_to_event(container):
+    return find_interface(container, ICalendarEvent, strict=False)
+
+
+@component.adapter(IUserCalendarEventAttendance)
+@interface.implementer(ICalendarEventAttendanceContainer)
+def attendance_to_container(container):
+    return find_interface(container, ICalendarEventAttendanceContainer, strict=False)
 
 
 # calendar event catalog

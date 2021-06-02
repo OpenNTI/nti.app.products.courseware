@@ -60,6 +60,8 @@ from nti.app.products.integration.interfaces import IIntegrationCollection
 
 ACT_VIEW_ROSTER = Permission('nti.actions.courseware.view_roster')
 ACT_VIEW_ACTIVITY = Permission('nti.actions.courseware.view_activity')
+ACT_RECORD_EVENT_ATTENDANCE = Permission('nti.actions.courseware.record_event_attendance')
+ACT_VIEW_EVENT_ATTENDANCE = Permission('nti.actions.courseware.view_event_attendance')
 
 
 class ICourseCatalogLegacyContentEntry(ILegacyCourseCatalogEntry):
