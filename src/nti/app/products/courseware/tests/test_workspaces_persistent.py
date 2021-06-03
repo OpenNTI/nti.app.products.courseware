@@ -44,6 +44,8 @@ from nti.app.testing.application_webtest import ApplicationLayerTest
 
 from nti.app.testing.decorators import WithSharedApplicationMockDS
 
+from nti.app.testing.webtest import TestApp
+
 from nti.appserver.workspaces import VIEW_CATALOG_POPULAR
 from nti.appserver.workspaces import VIEW_CATALOG_FEATURED
 
@@ -656,6 +658,40 @@ class TestPersistentWorkspaces(AbstractEnrollingBase, ApplicationLayerTest):
         featured_res = featured_res.json_body
         featured_items = featured_res[ITEMS]
         assert_that(featured_items, has_length(1))
+
+    @WithSharedApplicationMockDS
+    def test_unauthenticated_course_catalog(self):
+        env = {'HTTP_ORIGIN': b'http://janux.ou.edu'}
+        testapp = TestApp(self.app)
+        service_doc = testapp.get('/dataserver2/service').json_body
+        workspaces = service_doc['Items']
+        catalog_ws = next(x for x in workspaces if x['Title'] == 'Catalog')
+        assert_that(catalog_ws, not_none())
+        catalog_collections = catalog_ws['Items']
+        assert_that(catalog_collections, has_length(2))
+        courses_collection = next(
+            x for x in catalog_collections if x['Title'] == 'Courses'
+        )
+        assert_that(courses_collection, not_none())
+        coll_rs = testapp.get(courses_collection['href'], extra_environ=env)
+        coll_rs = coll_rs.json_body
+        assert_that(coll_rs, has_entries('Items', has_length(0),
+                                         'Total', 0))
+
+        # Make accessible
+        with mock_dataserver.mock_db_trans(site_name='janux.ou.edu'):
+            catalog = component.getUtility(ICourseCatalog)
+            catalog.anonymously_accessible = True
+        try:
+            coll_rs = testapp.get(courses_collection['href'], extra_environ=env)
+            coll_rs = coll_rs.json_body
+            assert_that(coll_rs, has_entries('Items', has_length(2),
+                                             'Total', 2))
+        finally:
+            with mock_dataserver.mock_db_trans(site_name='janux.ou.edu'):
+                catalog = component.getUtility(ICourseCatalog)
+                catalog.anonymously_accessible = False
+
 
     @WithSharedApplicationMockDS(users=('test_student',), testapp=True)
     def test_catalog_collection_purchased_with_results(self):
