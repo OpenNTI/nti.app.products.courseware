@@ -465,7 +465,6 @@ class TestCalendarEventAttendanceViews(ApplicationLayerTest):
             res = record_attendance(user_env,
                                     'test_student',
                                     registration_time=registration_time_str).json_body
-            from IPython.terminal.debugger import set_trace; set_trace()
             assert_that(res['registrationTime'], not_none())
             assert_that(res['registrationTime'], is_(registration_time_str))
 
