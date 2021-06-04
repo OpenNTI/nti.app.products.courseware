@@ -17,6 +17,8 @@ from zope import interface
 
 from zope.annotation import IAnnotations
 
+from zope.authentication.interfaces import IUnauthenticatedPrincipal
+
 from zope.cachedescriptors.property import Lazy
 
 from zope.container.contained import Contained
@@ -612,7 +614,11 @@ def _catalog_course_collection(workspace):
     """
     Adapt to the :class:`ICoursesCatalogCollection`.
     """
-    return ICoursesCatalogCollection(workspace, None)
+    unauth_prin = component.getUtility(IUnauthenticatedPrincipal)
+    course_folder = component.getUtility(ICourseCatalog)
+    if     workspace.principal != unauth_prin \
+        or course_folder.anonymously_accessible:
+        return ICoursesCatalogCollection(workspace, None)
 
 
 @component.adapter(ICatalogWorkspace)

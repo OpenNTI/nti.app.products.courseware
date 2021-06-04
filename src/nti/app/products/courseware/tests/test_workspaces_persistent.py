@@ -9,6 +9,7 @@ from __future__ import absolute_import
 # pylint: disable=W0212,R0904
 
 from hamcrest import is_
+from hamcrest import none
 from hamcrest import is_not
 from hamcrest import contains
 from hamcrest import has_item
@@ -663,26 +664,26 @@ class TestPersistentWorkspaces(AbstractEnrollingBase, ApplicationLayerTest):
     def test_unauthenticated_course_catalog(self):
         env = {'HTTP_ORIGIN': b'http://janux.ou.edu'}
         testapp = TestApp(self.app)
-        service_doc = testapp.get('/dataserver2/service').json_body
-        workspaces = service_doc['Items']
-        catalog_ws = next(x for x in workspaces if x['Title'] == 'Catalog')
-        assert_that(catalog_ws, not_none())
-        catalog_collections = catalog_ws['Items']
-        assert_that(catalog_collections, has_length(2))
-        courses_collection = next(
-            x for x in catalog_collections if x['Title'] == 'Courses'
-        )
-        assert_that(courses_collection, not_none())
-        coll_rs = testapp.get(courses_collection['href'], extra_environ=env)
-        coll_rs = coll_rs.json_body
-        assert_that(coll_rs, has_entries('Items', has_length(0),
-                                         'Total', 0))
+        def _get_course_coll():
+            service_doc = testapp.get('/dataserver2/service', extra_environ=env).json_body
+            workspaces = service_doc['Items']
+            catalog_ws = next(x for x in workspaces if x['Title'] == 'Catalog')
+            assert_that(catalog_ws, not_none())
+            catalog_collections = catalog_ws['Items']
+            # No courses collection if not configured
+            course_coll = [x for x in catalog_collections if x['Title'] == 'Courses']
+            return course_coll[0] if course_coll else None
+        courses_collection = _get_course_coll()
+        assert_that(courses_collection, none())
+        testapp.get('/dataserver2/Catalog/Courses', extra_environ=env, status=404)
 
         # Make accessible
         with mock_dataserver.mock_db_trans(site_name='janux.ou.edu'):
             catalog = component.getUtility(ICourseCatalog)
             catalog.anonymously_accessible = True
         try:
+            courses_collection = _get_course_coll()
+            assert_that(courses_collection, not_none())
             coll_rs = testapp.get(courses_collection['href'], extra_environ=env)
             coll_rs = coll_rs.json_body
             assert_that(coll_rs, has_entries('Items', has_length(2),
