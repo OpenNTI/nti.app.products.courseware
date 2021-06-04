@@ -108,6 +108,7 @@ class UserCourseWorkspace(Contained):
         self.catalog = catalog
         self.context = user_service
         self.user = user_service.user
+        self.principal = user_service.principal
 
     @Lazy
     def collections(self):
