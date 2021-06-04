@@ -379,6 +379,7 @@ class TestCalendarEventAttendanceViews(ApplicationLayerTest):
     course_ntiid2 = 'tag:nextthought.com,2011-10:NTI-CourseInfo-Fall2015_CS_1323'
 
     @WithSharedApplicationMockDS(testapp=True, users=(u'test_student',
+                                                      u'test_student2',
                                                       u'admin001@nextthought.com',
                                                       u'site_user001',
                                                       u'editor_user001'))
@@ -446,8 +447,8 @@ class TestCalendarEventAttendanceViews(ApplicationLayerTest):
         assert_that(res.json_body['code'], is_('UserNotFound'))
 
         # User isn't enrolled
-        res = record_attendance(instructor_env, 'site_user001', status=422)
-        assert_that(res.json_body['code'], is_('UserNotEnrolled'))
+        res = record_attendance(instructor_env, 'test_student2', status=422)
+        assert_that(res.json_body['code'], is_('InvalidAttendee'))
 
         # Recording attendance for the same student is a conflict
         record_attendance(instructor_env, 'test_student', status=409)
