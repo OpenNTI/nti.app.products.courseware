@@ -52,8 +52,6 @@ from nti.dataserver.users import User
 
 from nti.dataserver.users.interfaces import IFriendlyNamed
 
-from nti.externalization.datetime import datetime_from_string
-
 from nti.externalization.externalization.standard_fields import datetime_to_string
 
 
@@ -419,10 +417,14 @@ class TestCalendarEventAttendanceViews(ApplicationLayerTest):
 
         attendance_url = self.require_link_href_with_rel(res, 'record-attendance')
 
-        def record_attendance(env, username, **kwargs):
+        def record_attendance(env, username, registration_time=None, **kwargs):
             kwargs['extra_environ'] = env
-            record_attendance_url = "%s?username=%s" % (attendance_url, username)
-            return self.testapp.post_json(record_attendance_url, **kwargs)
+            post_attendance_url = "%s?username=%s" % (attendance_url, username)
+            input = {
+                'Username': username,
+                'registrationTime': registration_time,
+            }
+            return self.testapp.post_json(attendance_url, input, **kwargs)
 
         # Only admins and instructors can record
         record_attendance(student_env, 'test_student', status=403)
@@ -457,7 +459,15 @@ class TestCalendarEventAttendanceViews(ApplicationLayerTest):
         # Admins and site admins can also record, edit and delete
         def check_edit(user_env):
             # Record
-            res = record_attendance(user_env, 'test_student').json_body
+            registration_time = (datetime.utcnow().replace(microsecond=0)
+                                 + timedelta(seconds=1))
+            registration_time_str = datetime_to_string(registration_time)
+            res = record_attendance(user_env,
+                                    'test_student',
+                                    registration_time=registration_time_str).json_body
+            from IPython.terminal.debugger import set_trace; set_trace()
+            assert_that(res['registrationTime'], not_none())
+            assert_that(res['registrationTime'], is_(registration_time_str))
 
             edit_url = self.require_link_href_with_rel(res, 'edit')
             delete_url = self.require_link_href_with_rel(res, 'delete')
@@ -466,16 +476,14 @@ class TestCalendarEventAttendanceViews(ApplicationLayerTest):
             # Edit
             new_time = (datetime.utcnow().replace(microsecond=0)
                         + timedelta(seconds=1))
-            assert_that(datetime_from_string(res['registrationTime']), not_none())
-            assert_that(datetime_from_string(res['registrationTime']), not_(new_time))
             new_time_str = datetime_to_string(new_time)
             updated_attendance = {'registrationTime': new_time_str}
 
             res = self.testapp.put_json(edit_url, updated_attendance, extra_environ=user_env).json_body
-            assert_that(datetime_from_string(res['registrationTime']), is_(new_time))
+            assert_that(res['registrationTime'], is_(new_time_str))
 
             res = self.testapp.get(attendance_href, extra_environ=user_env).json_body
-            assert_that(datetime_from_string(res['registrationTime']), is_(new_time))
+            assert_that(res['registrationTime'], is_(new_time_str))
 
             #   verify links available when fetched directly
             self.require_link_href_with_rel(res, 'edit')
@@ -547,10 +555,14 @@ class TestCalendarEventAttendanceViews(ApplicationLayerTest):
         list_attendance_url = self.require_link_href_with_rel(res, 'list-attendance')
         record_attendance_url = self.require_link_href_with_rel(res, 'record-attendance')
 
-        def record_attendance(env, username, **kwargs):
+        def record_attendance(env, username, registration_time=None, **kwargs):
             kwargs['extra_environ'] = env
             post_attendance_url = "%s?username=%s" % (record_attendance_url, username)
-            return self.testapp.post_json(post_attendance_url, **kwargs)
+            input = {
+                'Username': username,
+                'registrationTime': registration_time,
+            }
+            return self.testapp.post_json(record_attendance_url, input, **kwargs)
 
         record_attendance(admin_env, 'test_student1')
         record_attendance(instructor_env, 'test_student2')
