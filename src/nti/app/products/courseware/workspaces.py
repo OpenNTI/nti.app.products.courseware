@@ -17,6 +17,8 @@ from zope import interface
 
 from zope.annotation import IAnnotations
 
+from zope.authentication.interfaces import IUnauthenticatedPrincipal
+
 from zope.cachedescriptors.property import Lazy
 
 from zope.container.contained import Contained
@@ -49,8 +51,7 @@ from nti.appserver.workspaces.interfaces import ICatalogWorkspace
 
 from nti.contenttypes.courses.index import get_courses_catalog
 
-from nti.contenttypes.courses.interfaces import ES_CREDIT,\
-    IPrincipalAdministrativeRoleCatalog
+from nti.contenttypes.courses.interfaces import ES_CREDIT
 from nti.contenttypes.courses.interfaces import ES_CREDIT_DEGREE
 from nti.contenttypes.courses.interfaces import ES_CREDIT_NONDEGREE
 
@@ -60,6 +61,7 @@ from nti.contenttypes.courses.interfaces import ICourseInstance
 from nti.contenttypes.courses.interfaces import ICourseEnrollments
 from nti.contenttypes.courses.interfaces import ICourseCatalogEntry
 from nti.contenttypes.courses.interfaces import IPrincipalEnrollments
+from nti.contenttypes.courses.interfaces import IPrincipalAdministrativeRoleCatalog
 from nti.contenttypes.courses.interfaces import ICourseInstanceEnrollmentRecord
 from nti.contenttypes.courses.interfaces import ICourseInstanceAdministrativeRole
 
@@ -189,12 +191,16 @@ class AllCoursesCollection(Contained):
         return self.__parent__.catalog
 
     @Lazy
+    def _principal(self):
+        return self.__parent__.principal
+
+    @Lazy
     def available_entries(self):
         """
         Return a dict of course catalog entries the user is not enrolled
         in and that are available to be enrolled in.
         """
-        course_provider = IAvailableCoursesProvider(self.__parent__.user)
+        course_provider = IAvailableCoursesProvider(self._principal)
         result = self._IteratingDict()
         for entry in course_provider.get_available_entries():
             result[entry.ntiid] = entry
@@ -204,7 +210,7 @@ class AllCoursesCollection(Contained):
         try:
             return self._v_entry_intids
         except AttributeError:
-            result = IAvailableCoursesProvider(self.__parent__.user).entry_intids()
+            result = IAvailableCoursesProvider(self._principal).entry_intids()
             self._v_entry_intids = result
             return result
 
@@ -608,7 +614,11 @@ def _catalog_course_collection(workspace):
     """
     Adapt to the :class:`ICoursesCatalogCollection`.
     """
-    return ICoursesCatalogCollection(workspace, None)
+    unauth_prin = component.getUtility(IUnauthenticatedPrincipal)
+    course_folder = component.getUtility(ICourseCatalog)
+    if     workspace.principal != unauth_prin \
+        or course_folder.anonymously_accessible:
+        return ICoursesCatalogCollection(workspace, None)
 
 
 @component.adapter(ICatalogWorkspace)

@@ -129,6 +129,8 @@ from nti.contenttypes.courses.utils import entry_intids_to_course_intids
 from nti.contenttypes.courses.utils import course_intids_to_entry_intids
 from nti.contenttypes.courses.utils import is_course_instructor_or_editor
 
+from nti.coremetadata.interfaces import IContextLastSeenContainer
+
 from nti.dataserver import authorization as nauth
 
 from nti.dataserver.authorization import is_admin
@@ -153,9 +155,9 @@ from nti.externalization.interfaces import LocatedExternalDict
 from nti.externalization.interfaces import StandardExternalFields
 from nti.externalization.interfaces import StandardInternalFields
 
-from nti.traversal import traversal
-from nti.coremetadata.interfaces import IContextLastSeenContainer
 from nti.ntiids.ntiids import find_object_with_ntiid
+
+from nti.traversal import traversal
 
 ITEMS = StandardExternalFields.ITEMS
 NTIID = StandardExternalFields.NTIID
@@ -1375,6 +1377,7 @@ class AdministeredCoursesCollectionView(AbstractIndexedCoursesCollectionView):
 @view_config(route_name='objects.generic.traversal',
              context=ICoursesCatalogCollection,
              request_method='GET',
+             renderer='rest',
              permission=nauth.ACT_READ)
 class CoursesCatalogCollectionView(AbstractIndexedCoursesCollectionView):
 
