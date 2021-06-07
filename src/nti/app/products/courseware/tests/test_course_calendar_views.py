@@ -11,7 +11,6 @@ from datetime import timedelta
 
 from hamcrest import contains
 from hamcrest import is_
-from hamcrest import not_
 from hamcrest import not_none
 from hamcrest import has_length
 from hamcrest import has_entry
@@ -22,6 +21,8 @@ from hamcrest import has_properties
 from hamcrest import same_instance
 from hamcrest import contains_inanyorder
 
+from six.moves.urllib_parse import quote
+
 from zope.component.hooks import getSite
 
 from zope.annotation.interfaces import IAnnotations
@@ -29,6 +30,8 @@ from zope.annotation.interfaces import IAnnotations
 from zope.securitypolicy.interfaces import IPrincipalRoleManager
 
 from nti.ntiids.ntiids import find_object_with_ntiid
+
+from nti.app.products.courseware.calendar.interfaces import ICourseCalendar
 
 from nti.app.products.courseware.calendar.model import CourseCalendarEvent
 
@@ -38,8 +41,6 @@ from nti.app.testing.application_webtest import ApplicationLayerTest
 
 from nti.app.testing.decorators import WithSharedApplicationMockDS
 
-from nti.app.products.courseware.calendar.interfaces import ICourseCalendar
-
 from nti.contenttypes.courses.interfaces import ICourseInstance
 from nti.contenttypes.courses.interfaces import ICourseEnrollmentManager
 from nti.contenttypes.courses.interfaces import RID_CONTENT_EDITOR
@@ -48,6 +49,7 @@ from nti.dataserver.authorization import ROLE_SITE_ADMIN
 
 from nti.dataserver.tests import mock_dataserver
 
+from nti.dataserver.users import Community
 from nti.dataserver.users import User
 
 from nti.dataserver.users.interfaces import IFriendlyNamed
@@ -376,9 +378,7 @@ class TestCalendarEventAttendanceViews(ApplicationLayerTest):
 
     course_ntiid2 = 'tag:nextthought.com,2011-10:NTI-CourseInfo-Fall2015_CS_1323'
 
-    @WithSharedApplicationMockDS(testapp=True, users=(u'test_student',
-                                                      u'test_student2',
-                                                      u'admin001@nextthought.com',
+    @WithSharedApplicationMockDS(testapp=True, users=(u'admin001@nextthought.com',
                                                       u'site_user001',
                                                       u'editor_user001'))
     def test_record_calendar_event_attendance(self):
@@ -396,11 +396,34 @@ class TestCalendarEventAttendanceViews(ApplicationLayerTest):
             srm = IPrincipalRoleManager(getSite(), None)
             srm.assignRoleToPrincipal(ROLE_SITE_ADMIN.id, 'site_user001')
 
-            enroll_mgr = ICourseEnrollmentManager(course)
-            enroll_mgr.enroll(User.get_user('test_student'))
-
             course_srm = IPrincipalRoleManager(course)
             course_srm.assignRoleToPrincipal(RID_CONTENT_EDITOR, 'editor_user001')
+
+            test_student = User.create_user(username='test_student',
+                                            password='temp001',
+                                            external_value={
+                                                'realname': u'Uno Student',
+                                                'email': u'test@student.edu',
+                                            })
+
+            # Communities shouldn't come back when searching for users
+            # to add to an event, set one up w/ a similar name to test_student
+            community = Community.create_community(username='comm1',
+                                                   external_value={
+                                                       'realname': u'Uno Community',
+                                                   })
+            User.get_user('harp4162').record_dynamic_membership(community)
+
+            User.create_user(username='test_student2',
+                             external_value={
+                                 'realname': u'Two Student',
+                                 'email': u'two@student.edu',
+                             })
+
+            enroll_mgr = ICourseEnrollmentManager(course)
+            enroll_mgr.enroll(test_student)
+
+        student_env = self._make_extra_environ('test_student')
 
         # add calendar event: admin/site-admin, should we allow editor etc?
         calendar_url = self.course_url + "/CourseCalendar"
@@ -416,10 +439,17 @@ class TestCalendarEventAttendanceViews(ApplicationLayerTest):
         res = self.testapp.post_json(calendar_url, params=params, status=201, extra_environ=admin_env).json_body
 
         attendance_url = self.require_link_href_with_rel(res, 'record-attendance')
+        base_search_url = self.require_link_href_with_rel(res, 'search-possible-attendees')
+
+        search_url = "%s/%s" % (base_search_url, quote('Uno'))
+        res = self.testapp.get(search_url, extra_environ=instructor_env).json_body
+
+        # Should get one match, communities shouldn't be returned, just users
+        assert_that(res['Items'], has_length(1))
+        assert_that(res['Items'][0], has_entries(Username="test_student"))
 
         def record_attendance(env, username, registration_time=None, **kwargs):
             kwargs['extra_environ'] = env
-            post_attendance_url = "%s?username=%s" % (attendance_url, username)
             input = {
                 'Username': username,
                 'registrationTime': registration_time,
