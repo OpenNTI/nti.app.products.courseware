@@ -87,6 +87,7 @@ from nti.contenttypes.courses.interfaces import ES_CREDIT
 from nti.contenttypes.courses.interfaces import ES_PURCHASED
 from nti.contenttypes.courses.interfaces import ENROLLMENT_SCOPE_VOCABULARY
 
+from nti.contenttypes.courses.interfaces import ICourseCatalog
 from nti.contenttypes.courses.interfaces import ICourseOutline
 from nti.contenttypes.courses.interfaces import ICourseInstance
 from nti.contenttypes.courses.interfaces import ICourseSubInstance
@@ -115,6 +116,7 @@ from nti.coremetadata.interfaces import ILastSeenProvider
 from nti.coremetadata.interfaces import IDeactivatedEntity
 
 from nti.dataserver.authorization import ACT_READ
+from nti.dataserver.authorization import ACT_UPDATE
 from nti.dataserver.authorization import ACT_CONTENT_EDIT
 
 from nti.dataserver.authorization import is_admin
@@ -1226,6 +1228,20 @@ class _CourseCatalogCollectionDecorator(AbstractAuthenticatedRequestAwareDecorat
                         rel=rel,
                         elements=('@@%s' % rel,))
             _links.append(link)
+
+
+@interface.implementer(IExternalObjectDecorator)
+@component.adapter(ICoursesCatalogCollection)
+class _CourseCatalogCollectionAdminDecorator(AbstractAuthenticatedRequestAwareDecorator):
+    """
+    Decorate the :class:``ICoursesCatalogCollection``.
+    """
+    def _predicate(self, unused_context, unused_result):
+        course_catalog = component.getUtility(ICourseCatalog)
+        return has_permission(ACT_UPDATE, course_catalog)
+
+    def _do_decorate_external(self, unused_context, result):
+        result['CourseCatalog'] = component.getUtility(ICourseCatalog)
 
 
 @component.adapter(IUser)
