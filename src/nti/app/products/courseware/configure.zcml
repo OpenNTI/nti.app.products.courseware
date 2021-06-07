@@ -372,10 +372,20 @@
                 for="nti.app.products.courseware.interfaces.ICoursesCatalogCollection
                      pyramid.interfaces.IRequest"  />
 
+    <subscriber factory=".decorators._CourseCatalogCollectionAdminDecorator"
+                provides="nti.externalization.interfaces.IExternalObjectDecorator"
+                for="nti.app.products.courseware.interfaces.ICoursesCatalogCollection
+                     pyramid.interfaces.IRequest"  />
+
     <subscriber factory=".decorators._UserEnrollmentsDecorator"
                 provides="nti.externalization.interfaces.IExternalObjectDecorator"
                 for="nti.dataserver.interfaces.IUser
                      pyramid.interfaces.IRequest"  />
+
+    <subscriber factory="nti.appserver.pyramid_renderers_edit_link_decorator.EditLinkDecorator"
+                provides="nti.externalization.interfaces.IExternalMappingDecorator"
+                for="nti.contenttypes.courses.interfaces.ICourseCatalog
+                     pyramid.interfaces.IRequest" />
 
 	<!-- And an adapter for security purposes -->
 	<adapter factory=".legacy_principalrole.LegacyCourseInstancePrincipalRoleMap" />

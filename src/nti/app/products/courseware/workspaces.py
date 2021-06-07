@@ -46,6 +46,8 @@ from nti.app.products.courseware.interfaces import ILegacyCourseInstanceEnrollme
 from nti.app.products.courseware.interfaces import ICourseCatalogLegacyContentEntry
 from nti.app.products.courseware.interfaces import IAllCoursesCollectionAcceptsProvider
 
+from nti.appserver.pyramid_authorization import has_permission
+
 from nti.appserver.workspaces.interfaces import IUserService
 from nti.appserver.workspaces.interfaces import ICatalogWorkspace
 
@@ -69,6 +71,7 @@ from nti.contenttypes.courses.utils import AbstractInstanceWrapper as _AbstractI
 
 from nti.dataserver.authorization import ACT_READ
 from nti.dataserver.authorization import ACT_DELETE
+from nti.dataserver.authorization import ACT_CONTENT_EDIT
 
 from nti.dataserver.authorization_acl import ace_allowing
 from nti.dataserver.authorization_acl import acl_from_aces

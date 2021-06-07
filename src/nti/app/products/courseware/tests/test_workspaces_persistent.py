@@ -428,6 +428,12 @@ class TestPersistentWorkspaces(AbstractEnrollingBase, ApplicationLayerTest):
         """
         courses_collection = self._get_catalog_collection()
         courses_href = courses_collection['href']
+
+        # Admin sees catalog
+        catalog = courses_collection.get('CourseCatalog')
+        assert_that(catalog, has_entries(u'anonymously_accessible', False))
+        self.require_link_href_with_rel(catalog, 'edit')
+
         assert_that(courses_href, not_none())
         available_courses = self.testapp.get(courses_href)
         available_courses = available_courses.json_body
@@ -688,6 +694,7 @@ class TestPersistentWorkspaces(AbstractEnrollingBase, ApplicationLayerTest):
             coll_rs = coll_rs.json_body
             assert_that(coll_rs, has_entries('Items', has_length(2),
                                              'Total', 2))
+            self.forbid_link_with_rel(coll_rs, 'edit')
         finally:
             with mock_dataserver.mock_db_trans(site_name='janux.ou.edu'):
                 catalog = component.getUtility(ICourseCatalog)
