@@ -116,6 +116,7 @@ from nti.coremetadata.interfaces import ILastSeenProvider
 from nti.coremetadata.interfaces import IDeactivatedEntity
 
 from nti.dataserver.authorization import ACT_READ
+from nti.dataserver.authorization import ACT_UPDATE
 from nti.dataserver.authorization import ACT_CONTENT_EDIT
 
 from nti.dataserver.authorization import is_admin
@@ -1237,7 +1238,7 @@ class _CourseCatalogCollectionAdminDecorator(AbstractAuthenticatedRequestAwareDe
     """
     def _predicate(self, unused_context, unused_result):
         course_catalog = component.getUtility(ICourseCatalog)
-        return has_permission(ACT_CONTENT_EDIT, course_catalog)
+        return has_permission(ACT_UPDATE, course_catalog)
 
     def _do_decorate_external(self, unused_context, result):
         result['CourseCatalog'] = component.getUtility(ICourseCatalog)
