@@ -40,6 +40,15 @@
              for=".interfaces.ICourseAcclaimBadge"
              provides="nti.dataserver.interfaces.IACLProvider" />
 
+    <!-- Importer -->
+    <utility factory=".importer.AcclaimBadgeImporter"
+             provides="nti.contenttypes.courses.interfaces.ICourseCompletionSectionImporter"
+             name="041:Acclaim_Badges" />
+
+    <utility factory=".exporter.AcclaimBadgeExporter"
+             provides="nti.contenttypes.courses.interfaces.ICourseCompletionSectionExporter"
+             name="041:Acclaim_Badges" />
+
 	<!-- Externalization -->
 	<include package="nti.externalization" file="meta.zcml" />
 	<include package="nti.externalization" />

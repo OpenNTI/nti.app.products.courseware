@@ -20,7 +20,7 @@ class SharedConfiguringTestLayer(ZopeComponentLayer,
                                  GCLayerMixin,
                                  ConfiguringLayerMixin):
 
-    set_up_packages = ('nti.app.products.webinar',)
+    set_up_packages = ('nti.app.products.acclaim',)
 
     @classmethod
     def setUp(cls):
