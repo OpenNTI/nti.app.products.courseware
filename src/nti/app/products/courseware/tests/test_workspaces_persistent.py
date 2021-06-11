@@ -682,6 +682,7 @@ class TestPersistentWorkspaces(AbstractEnrollingBase, ApplicationLayerTest):
         courses_collection = _get_course_coll()
         assert_that(courses_collection, none())
         testapp.get('/dataserver2/Catalog/Courses', extra_environ=env, status=404)
+        testapp.get('/dataserver2/Catalog/Courses/@@ByTag', extra_environ=env, status=404)
 
         # Make accessible
         with mock_dataserver.mock_db_trans(site_name='janux.ou.edu'):
@@ -689,12 +690,17 @@ class TestPersistentWorkspaces(AbstractEnrollingBase, ApplicationLayerTest):
             catalog.anonymously_accessible = True
         try:
             courses_collection = _get_course_coll()
+            by_tag_href = self.require_link_href_with_rel(courses_collection,
+                                                          VIEW_COURSE_BY_TAG)
+            self.require_link_href_with_rel(courses_collection,
+                                            VIEW_CATALOG_FEATURED)
             assert_that(courses_collection, not_none())
             coll_rs = testapp.get(courses_collection['href'], extra_environ=env)
             coll_rs = coll_rs.json_body
             assert_that(coll_rs, has_entries('Items', has_length(2),
                                              'Total', 2))
             self.forbid_link_with_rel(coll_rs, 'edit')
+            testapp.get(by_tag_href, extra_environ=env)
         finally:
             with mock_dataserver.mock_db_trans(site_name='janux.ou.edu'):
                 catalog = component.getUtility(ICourseCatalog)

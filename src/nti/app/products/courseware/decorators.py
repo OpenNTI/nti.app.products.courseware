@@ -1214,12 +1214,12 @@ class AssignmentLessonsContainerDecorator(_AbstractAssessmentLessonsContainerDec
 
 @interface.implementer(IExternalObjectDecorator)
 @component.adapter(ICoursesCatalogCollection)
-class _CourseCatalogCollectionDecorator(AbstractAuthenticatedRequestAwareDecorator):
+class _CourseCatalogCollectionDecorator(Singleton):
     """
     Decorate the :class:``ICoursesCatalogCollection``.
     """
 
-    def _do_decorate_external(self, context, result):
+    def decorateExternalObject(self, context, result):
         _links = result.setdefault(LINKS, [])
         for rel in (VIEW_CATALOG_FEATURED,
                     VIEW_COURSE_BY_TAG,
