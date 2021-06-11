@@ -19,6 +19,8 @@ from zope.intid.interfaces import IIntIds
 
 from nti.app.products.courseware.interfaces import IAvailableCoursesProvider
 
+from nti.appserver.pyramid_authorization import has_permission
+
 from nti.appserver.workspaces.interfaces import IFeaturedCatalogCollectionProvider
 from nti.appserver.workspaces.interfaces import IPurchasedCatalogCollectionProvider
 
@@ -37,8 +39,6 @@ from nti.contenttypes.courses.utils import get_all_site_entry_intids
 from nti.dataserver.authorization import ACT_READ
 
 from nti.dataserver.authorization import is_admin_or_site_admin
-
-from nti.dataserver.authorization_acl import has_permission
 
 from nti.dataserver.interfaces import IUser
 
@@ -100,7 +100,7 @@ class AvailableCoursesProvider(object):
                 # XXX: Make this an ACL toggle also? Would have to affect
                 # zope security too.
                 pass
-            elif has_permission(ACT_READ, x, self.principal):
+            elif has_permission(ACT_READ, x):
                 result.append(x)
         return result
 
