@@ -67,6 +67,7 @@ from nti.contenttypes.courses.interfaces import IPrincipalAdministrativeRoleCata
 from nti.contenttypes.courses.interfaces import ICourseInstanceEnrollmentRecord
 from nti.contenttypes.courses.interfaces import ICourseInstanceAdministrativeRole
 
+from nti.contenttypes.courses.utils import is_catalog_anonymously_accessible
 from nti.contenttypes.courses.utils import AbstractInstanceWrapper as _AbstractInstanceWrapper
 
 from nti.dataserver.authorization import ACT_READ
@@ -619,9 +620,8 @@ def _catalog_course_collection(workspace):
     Adapt to the :class:`ICoursesCatalogCollection`.
     """
     unauth_prin = component.getUtility(IUnauthenticatedPrincipal)
-    course_folder = component.getUtility(ICourseCatalog)
     if     workspace.principal != unauth_prin \
-        or course_folder.anonymously_accessible:
+        or is_catalog_anonymously_accessible():
         return ICoursesCatalogCollection(workspace, None)
 
 

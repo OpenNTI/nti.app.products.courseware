@@ -35,6 +35,7 @@ from nti.contenttypes.courses.interfaces import ICourseCatalogEntryFilterUtility
 
 from nti.contenttypes.courses.utils import get_enrollments
 from nti.contenttypes.courses.utils import get_all_site_entry_intids
+from nti.contenttypes.courses.utils import is_catalog_anonymously_accessible
 
 from nti.dataserver.authorization import ACT_READ
 
@@ -122,8 +123,7 @@ class UnauthenticatedAvailableCoursesProvider(AvailableCoursesProvider):
     """
 
     def entry_intids(self):
-        folder = component.getUtility(ICourseCatalog)
-        if not folder.anonymously_accessible:
+        if not is_catalog_anonymously_accessible():
             return ()
         return super(UnauthenticatedAvailableCoursesProvider, self).entry_intids()
 

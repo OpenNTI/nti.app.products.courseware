@@ -684,8 +684,8 @@ class TestPersistentWorkspaces(AbstractEnrollingBase, ApplicationLayerTest):
         testapp.get('/dataserver2/Catalog/Courses', extra_environ=env, status=404)
         testapp.get('/dataserver2/Catalog/Courses/@@ByTag', extra_environ=env, status=404)
 
-        # Make accessible
-        with mock_dataserver.mock_db_trans(site_name='janux.ou.edu'):
+        # Make accessible - can do so just in parent site
+        with mock_dataserver.mock_db_trans(site_name='platform.ou.edu'):
             catalog = component.getUtility(ICourseCatalog)
             catalog.anonymously_accessible = True
         try:
@@ -701,6 +701,8 @@ class TestPersistentWorkspaces(AbstractEnrollingBase, ApplicationLayerTest):
                                              'Total', 2))
             self.forbid_link_with_rel(coll_rs, 'edit')
             testapp.get(by_tag_href, extra_environ=env)
+            entry_get_href = coll_rs['Items'][0]['href']
+            testapp.get(entry_get_href, extra_environ=env)
         finally:
             with mock_dataserver.mock_db_trans(site_name='janux.ou.edu'):
                 catalog = component.getUtility(ICourseCatalog)
