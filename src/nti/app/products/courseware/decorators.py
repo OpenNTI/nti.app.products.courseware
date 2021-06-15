@@ -671,16 +671,22 @@ class _CourseCatalogEntryDecorator(AbstractAuthenticatedRequestAwareDecorator):
             is_admin = self._is_admin(context)
         result['IsEnrolled'] = record is not None
         result['IsAdmin'] = is_admin
-
-        options = get_enrollment_options(context)
-        if options:
-            result[u'EnrollmentOptions'] = to_external_object(options)
-
+        
         _links = result.setdefault(LINKS, [])
         link = Link(context,
                     rel=VIEW_USER_COURSE_ACCESS,
                     elements=('@@%s' % VIEW_USER_COURSE_ACCESS,))
         _links.append(link)
+
+
+@component.adapter(ICourseCatalogEntry)
+@interface.implementer(IExternalObjectDecorator)
+class _CourseCatalogEntryEnrollmentOptionsDecorator(Singleton):
+
+    def decorateExternalObject(self, context, result):
+        options = get_enrollment_options(context)
+        if options:
+            result[u'EnrollmentOptions'] = to_external_object(options)
 
 
 @interface.implementer(IExternalMappingDecorator)

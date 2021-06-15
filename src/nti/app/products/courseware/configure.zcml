@@ -589,6 +589,11 @@
 				for="nti.contenttypes.courses.interfaces.ICourseCatalogEntry
 					 pyramid.interfaces.IRequest" />
 
+    <subscriber factory=".decorators._CourseCatalogEntryEnrollmentOptionsDecorator"
+                provides="nti.externalization.interfaces.IExternalObjectDecorator"
+                for="nti.contenttypes.courses.interfaces.ICourseCatalogEntry
+                     pyramid.interfaces.IRequest" />
+
 	<subscriber factory=".decorators._CatalogFamilyDecorator"
 				provides="nti.externalization.interfaces.IExternalMappingDecorator"
 				for="nti.contenttypes.courses.interfaces.ICourseCatalogEntry
