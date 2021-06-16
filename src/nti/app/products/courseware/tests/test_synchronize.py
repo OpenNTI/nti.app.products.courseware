@@ -602,7 +602,7 @@ class TestFunctionalSynchronize(CourseLayerTest):
 
 	@WithMockDSTrans
 	@fudge.patch('nti.app.products.courseware.decorators.IEntityContainer',
-				 'nti.app.renderers.decorators.get_remote_user')
+				 'nti.app.renderers.decorators.AbstractAuthenticatedRequestAwareDecorator.remoteUser')
 	def test_default_sharing_scope_do_not_use_parent(self, mock_container, mock_rem_user):
 		"""
 		Verify if the 'UseParentDefaultSharingScope' is set to False, the
@@ -716,7 +716,7 @@ class TestFunctionalSynchronize(CourseLayerTest):
 		assert_that(cat, denies(EVERYONE_GROUP_NAME, ACT_CREATE))
 
 	@fudge.patch('nti.app.products.courseware.decorators.IEntityContainer',
-				 'nti.app.renderers.decorators.get_remote_user')
+				 'nti.app.renderers.decorators.AbstractAuthenticatedRequestAwareDecorator.remoteUser')
 	def test_course_announcements_externalizes(self, mock_container, mock_rem_user):
 		"""
 		Verify course announcements are externalized on the course.
