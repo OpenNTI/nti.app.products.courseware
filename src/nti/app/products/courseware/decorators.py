@@ -28,6 +28,8 @@ from nti.app.assessment.common.evaluations import get_course_from_evaluation
 
 from nti.app.assessment.utils import get_course_from_request
 
+from nti.app.authentication import get_remote_user
+
 from nti.app.products.courseware import MessageFactory as _
 
 from nti.app.products.courseware import VIEW_CONTENTS
@@ -614,18 +616,18 @@ class _CourseCatalogEntryLegacyDecorator(Singleton):
 
 @component.adapter(IOpenEnrollmentOption)
 @interface.implementer(IExternalObjectDecorator)
-class _OpenEnrollmentOptionLinkDecorator(AbstractAuthenticatedRequestAwareDecorator):
-
-    def _predicate(self, unused_context, unused_result):
-        return self._is_authenticated
+class _OpenEnrollmentOptionLinkDecorator(AbstractRequestAwareDecorator):
 
     @classmethod
-    def _get_enrollment_record(cls, context, remoteUser):
-        entry = get_catalog_entry(context.CatalogEntryNTIID)
-        return get_enrollment_record(entry, remoteUser)
+    def _get_enrollment_record(cls, context):
+        remote_user = get_remote_user()
+        if remote_user is not None:
+            entry = get_catalog_entry(context.CatalogEntryNTIID)
+            return get_enrollment_record(entry, remote_user)
+        return None
 
     def _do_decorate_external(self, context, result):
-        record = self._get_enrollment_record(context, self.remoteUser)
+        record = self._get_enrollment_record(context)
         result['IsAvailable'] = context.Enabled and record is None
         result['IsEnrolled'] = bool(record is not None
                                     and record.Scope == ES_PUBLIC)
@@ -636,7 +638,7 @@ class _OpenEnrollmentOptionLinkDecorator(AbstractAuthenticatedRequestAwareDecora
 class _ExternalEnrollmentOptionLinkDecorator(_OpenEnrollmentOptionLinkDecorator):
 
     def _do_decorate_external(self, context, result):
-        record = self._get_enrollment_record(context, self.remoteUser)
+        record = self._get_enrollment_record(context)
         result['IsAvailable'] = record is None
         result['IsEnrolled'] = bool(record is not None
                                     and record.Scope == ES_PURCHASED)
@@ -671,7 +673,7 @@ class _CourseCatalogEntryDecorator(AbstractAuthenticatedRequestAwareDecorator):
             is_admin = self._is_admin(context)
         result['IsEnrolled'] = record is not None
         result['IsAdmin'] = is_admin
-        
+
         _links = result.setdefault(LINKS, [])
         link = Link(context,
                     rel=VIEW_USER_COURSE_ACCESS,
