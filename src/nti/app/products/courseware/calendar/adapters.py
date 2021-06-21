@@ -289,8 +289,14 @@ def attendance_container_to_event(container):
 
 @component.adapter(IUserCalendarEventAttendance)
 @interface.implementer(ICalendarEventAttendanceContainer)
-def attendance_to_container(container):
-    return find_interface(container, ICalendarEventAttendanceContainer, strict=False)
+def attendance_to_container(attendance):
+    return find_interface(attendance, ICalendarEventAttendanceContainer, strict=False)
+
+
+@component.adapter(IUserCalendarEventAttendance)
+@interface.implementer(ICalendarEvent)
+def attendance_to_event(attendance):
+    return find_interface(attendance, ICalendarEvent, strict=False)
 
 
 # calendar event catalog

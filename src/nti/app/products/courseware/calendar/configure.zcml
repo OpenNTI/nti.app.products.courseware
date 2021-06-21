@@ -26,6 +26,7 @@
     <adapter factory=".adapters.attendance_container_to_course" />
     <adapter factory=".adapters.attendance_container_to_event" />
     <adapter factory=".adapters.attendance_to_container" />
+    <adapter factory=".adapters.attendance_to_event" />
 
     <adapter factory=".adapters._course_calendar_event_to_ntiid"
              provides="nti.contenttypes.calendar.interfaces.ICalendarContextNTIIDAdapter"
@@ -44,6 +45,21 @@
                 provides="nti.appserver.interfaces.IHierarchicalContextProvider"
                 for="nti.app.products.courseware.calendar.interfaces.ICourseCalendarEvent
                      nti.dataserver.interfaces.IUser"/>
+
+    <!-- completion -->
+    <adapter factory=".completion._event_progress"
+             for="nti.coremetadata.interfaces.IUser
+                  nti.contenttypes.calendar.interfaces.ICalendarEvent
+                  nti.contenttypes.courses.interfaces.ICourseInstance"
+             provides="nti.contenttypes.completion.interfaces.IProgress" />
+
+    <adapter factory=".completion.CalendarEventCompletionPolicy"
+             for="nti.contenttypes.calendar.interfaces.ICalendarEvent
+                  nti.contenttypes.courses.interfaces.ICourseInstance"
+             provides="nti.contenttypes.completion.interfaces.ICompletableItemCompletionPolicy" />
+
+    <subscriber handler=".completion.on_attendance_recorded" />
+    <subscriber handler=".completion.on_attendance_removed" />
 
     <!-- decorators -->
     <subscriber factory=".decorators._CourseCalendarLinkDecorator"
