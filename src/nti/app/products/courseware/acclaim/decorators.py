@@ -22,6 +22,7 @@ from nti.app.products.acclaim.interfaces import IAcclaimIntegration
 from nti.app.products.courseware.acclaim.interfaces import ICourseAcclaimBadge
 
 from nti.app.renderers.decorators import AbstractAuthenticatedRequestAwareDecorator
+from nti.app.renderers.decorators import AbstractRequestAwareDecorator
 
 from nti.appserver.pyramid_authorization import has_permission
 
@@ -41,11 +42,13 @@ logger = __import__('logging').getLogger(__name__)
 
 @component.adapter(ICourseInstance, IRequest)
 @component.adapter(ICourseCatalogEntry, IRequest)
-class _CourseAcclaimBadgesDecorator(AbstractAuthenticatedRequestAwareDecorator):
+class _CourseAcclaimBadgesDecorator(AbstractRequestAwareDecorator):
 
     def _predicate(self, context, unused_result):
-        return self._is_authenticated \
-            and component.queryUtility(IAcclaimIntegration)
+        # decorate if the integration is enabled, including for the
+        # anonymous user, so that badges that will be awarded on course
+        # completion are shown in the anonymous catalog
+        return component.queryUtility(IAcclaimIntegration)
     
     # pylint: disable=arguments-differ
     def _do_decorate_external(self, context, result):

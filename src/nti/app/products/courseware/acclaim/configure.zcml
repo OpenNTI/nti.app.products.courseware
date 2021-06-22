@@ -40,6 +40,10 @@
              for=".interfaces.ICourseAcclaimBadge"
              provides="nti.dataserver.interfaces.IACLProvider" />
 
+    <adapter factory=".acl.CourseAcclaimBadgeContainerACLProvider"
+             for=".interfaces.ICourseAcclaimBadgeContainer"
+             provides="nti.dataserver.interfaces.IACLProvider" />
+
     <!-- Importer -->
     <utility factory=".importer.AcclaimBadgeImporter"
              provides="nti.contenttypes.courses.interfaces.ICourseCompletionSectionImporter"
