@@ -297,8 +297,7 @@
                                                             tal:condition="not:options/cert_link"
                                                             style="font-family: Open Sans, -apple-system, BlinkMacSystemFont, Roboto, Helvetica Neue, Helvetica, Arial, sans-serif; padding: 40px 48px;">
                                                             Hey there! Great job completing ${options/course_title}.
-                                                            Celebrate by doing some cartwheels, or taking
-                                                            a nap. Keep up the good work!
+                                                            Keep up the good work!
                                                         </td>
                                                     </tr>
                                                     <tr tal:condition="options/cert_link">
