@@ -91,6 +91,10 @@
 			role="role:nti.dataserver.site-admin" />
 
 	<grant
+			permission="nti.actions.courseware.record_event_attendance"
+			role="role:nti.admin" />
+
+	<grant
 			permission="nti.actions.courseware.view_event_attendance"
 			role="nti.roles.course_instructor" />
 
@@ -101,6 +105,10 @@
 	<grant
 			permission="nti.actions.courseware.view_event_attendance"
 			role="role:nti.dataserver.site-admin" />
+
+	<grant
+			permission="nti.actions.courseware.view_event_attendance"
+			role="role:nti.admin" />
 
 	<!-- ACLs -->
 	<adapter factory=".acl.EnrolledCoursesCollectionACLProvider" />
