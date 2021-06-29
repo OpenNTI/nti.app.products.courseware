@@ -28,6 +28,10 @@
     <adapter factory=".adapters.attendance_to_container" />
     <adapter factory=".adapters.attendance_to_event" />
 
+    <adapter factory=".attendance.CourseCalendarEventAttendanceManager"
+             for="nti.app.products.courseware.calendar.interfaces.ICourseCalendarEvent"
+             provides="nti.app.contenttypes.calendar.interfaces.ICalendarEventAttendanceManager" />
+
     <adapter factory=".adapters._course_calendar_event_to_ntiid"
              provides="nti.contenttypes.calendar.interfaces.ICalendarContextNTIIDAdapter"
              for=".interfaces.ICourseCalendarEvent" />
