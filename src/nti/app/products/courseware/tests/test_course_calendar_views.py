@@ -27,6 +27,8 @@ from zope.component.hooks import getSite
 
 from zope.annotation.interfaces import IAnnotations
 
+from zope.lifecycleevent import modified
+
 from zope.securitypolicy.interfaces import IPrincipalRoleManager
 
 from nti.ntiids.ntiids import find_object_with_ntiid
@@ -386,7 +388,6 @@ class TestCalendarEventAttendanceViews(ApplicationLayerTest):
         site_admin_env = self._make_extra_environ('site_user001')
         editor_env = self._make_extra_environ('editor_user001')
         instructor_env = self._make_extra_environ('harp4162')
-        student_env = self._make_extra_environ('test_student')
         with mock_dataserver.mock_db_trans(self.ds, site_name='platform.ou.edu'):
             # pylint: disable=too-many-function-args
             entry = find_object_with_ntiid(self.course_ntiid)
@@ -412,7 +413,10 @@ class TestCalendarEventAttendanceViews(ApplicationLayerTest):
                                                    external_value={
                                                        'realname': u'Uno Community',
                                                    })
-            User.get_user('harp4162').record_dynamic_membership(community)
+            instructor = User.get_user('harp4162')
+            IFriendlyNamed(instructor).realname = u'Poppy Instructor'
+            instructor.record_dynamic_membership(community)
+            modified(instructor)
 
             User.create_user(username='test_student2',
                              external_value={
@@ -447,6 +451,16 @@ class TestCalendarEventAttendanceViews(ApplicationLayerTest):
         # Should get one match, communities shouldn't be returned, just users
         assert_that(res['Items'], has_length(1))
         assert_that(res['Items'][0], has_entries(Username="test_student"))
+
+        # Non-enrolled students should not be returned from search
+        search_url = "%s/%s" % (base_search_url, quote('Poppy'))
+        res = self.testapp.get(search_url, extra_environ=instructor_env).json_body
+        assert_that(res['Items'], has_length(0))
+
+        # Instructor should not be returned from search
+        search_url = "%s/%s" % (base_search_url, quote('Two'))
+        res = self.testapp.get(search_url, extra_environ=instructor_env).json_body
+        assert_that(res['Items'], has_length(0))
 
         def record_attendance(env, username, registration_time=None, **kwargs):
             kwargs['extra_environ'] = env
@@ -648,3 +662,27 @@ class TestCalendarEventAttendanceViews(ApplicationLayerTest):
         assert_order({'search': 'student3'},
                      ('test_student3',))
 
+        # Paging
+        #   First page
+        res = self.testapp.get(list_attendance_url,
+                               params={'batchSize': '2'},
+                               extra_environ=instructor_env).json_body
+        assert_that(res['Total'], is_(3))
+        self.require_link_href_with_rel(res, 'batch-next')
+        self.forbid_link_with_rel(res, 'batch-prev')
+
+        #   Middle page
+        res = self.testapp.get(list_attendance_url,
+                               params={'batchStart': '1', 'batchSize': '1'},
+                               extra_environ=instructor_env).json_body
+        assert_that(res['Total'], is_(3))
+        self.require_link_href_with_rel(res, 'batch-next')
+        self.require_link_href_with_rel(res, 'batch-prev')
+
+        #   Last page
+        res = self.testapp.get(list_attendance_url,
+                               params={'batchStart': '1', 'batchSize': '2'},
+                               extra_environ=instructor_env).json_body
+        assert_that(res['Total'], is_(3))
+        self.forbid_link_with_rel(res, 'batch-next')
+        self.require_link_href_with_rel(res, 'batch-prev')
