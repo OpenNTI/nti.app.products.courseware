@@ -11,7 +11,9 @@ from datetime import datetime
 from hamcrest import has_length
 from hamcrest import has_properties
 from hamcrest import is_
+from hamcrest import less_than
 from hamcrest import none
+from hamcrest import not_
 from hamcrest import is_not
 from hamcrest import has_entries
 from hamcrest import assert_that
@@ -54,6 +56,8 @@ from nti.dataserver.tests import mock_dataserver
 from nti.dataserver.tests.mock_dataserver import WithMockDSTrans
 
 from nti.dataserver.users import User
+
+from nti.externalization.datetime import datetime_from_string
 
 from nti.externalization.externalization import to_external_object
 
@@ -193,9 +197,11 @@ class TestCompletion(ApplicationLayerTest):
         # Record attendance for student
         data = dict(Username='test_student1')
         kwargs = dict(extra_environ=instructor_env)
+        now = datetime.utcnow().replace(microsecond=0)
         attendance = self.testapp.post_json(record_attendance_url, data, **kwargs).json_body
 
-        self._check_completion(username, is_completed=required)
+        self._check_completion(username, is_completed=required,
+                               completed_time=not_(less_than(now)))
 
         # Remove attendance for student
         kwargs = dict(extra_environ=instructor_env)
@@ -217,12 +223,15 @@ class TestCompletion(ApplicationLayerTest):
         }
         self.testapp.post_json(contents_link, data, status=201)
 
-    def _check_completion(self, username, is_completed):
+    def _check_completion(self, username, is_completed, completed_time=None):
         res = self.testapp.get('/dataserver2/users/%s/Courses/EnrolledCourses/%s'
                                % (username, self.course_ntiid),
                                extra_environ=self._make_extra_environ(username)).json_body
         assert_that(res, has_entries(CourseProgress=is_not(none())))
         assert_that(res['CourseProgress'], has_entries(Completed=is_completed))
+        if is_completed and completed_time:
+            completed_date = datetime_from_string(res['CourseProgress']['CompletedDate'])
+            assert_that(completed_date, completed_time)
 
     def _create_event(self, **kwargs):
         calendar_url = self.course_url + "/CourseCalendar"
