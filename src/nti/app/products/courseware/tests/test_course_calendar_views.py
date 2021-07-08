@@ -450,7 +450,9 @@ class TestCalendarEventAttendanceViews(ApplicationLayerTest):
 
         # Should get one match, communities shouldn't be returned, just users
         assert_that(res['Items'], has_length(1))
-        assert_that(res['Items'][0], has_entries(Username="test_student"))
+        assert_that(res['Items'][0],
+                    has_entries(User=has_entries(Username="test_student")))
+        self.forbid_link_with_rel(res['Items'][0], 'attendance')
 
         # Non-enrolled students should not be returned from search
         search_url = "%s/%s" % (base_search_url, quote('Poppy'))
@@ -487,6 +489,15 @@ class TestCalendarEventAttendanceViews(ApplicationLayerTest):
         # Verify addition
         res = self.testapp.get(attendance_url, extra_environ=instructor_env).json_body
         assert_that(res['ItemCount'], is_(1))
+
+        # Search metadata indicates user has attendance
+        search_url = "%s/%s" % (base_search_url, quote('Uno'))
+        res = self.testapp.get(search_url, extra_environ=instructor_env).json_body
+
+        assert_that(res['Items'], has_length(1))
+        assert_that(res['Items'][0],
+                    has_entries(User=has_entries(Username="test_student")))
+        self.require_link_href_with_rel(res['Items'][0], 'attendance')
 
         # No user
         res = record_attendance(instructor_env, 'not_a_user', status=422)
