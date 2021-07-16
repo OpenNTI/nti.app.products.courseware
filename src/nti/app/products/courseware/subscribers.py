@@ -71,6 +71,8 @@ from nti.appserver.policies.interfaces import ISitePolicyUserEventListener
 from nti.contentlibrary.interfaces import IContentBundleUpdatedEvent
 
 from nti.contenttypes.courses.interfaces import ES_PUBLIC
+from nti.contenttypes.courses.interfaces import ES_PURCHASED
+    
 
 from nti.contenttypes.courses.interfaces import ICourseInstance
 from nti.contenttypes.courses.interfaces import ICourseEnrollments
@@ -81,6 +83,7 @@ from nti.contenttypes.courses.interfaces import IDenyOpenEnrollment
 from nti.contenttypes.courses.interfaces import ICourseEnrollmentManager
 from nti.contenttypes.courses.interfaces import ICourseContentPackageBundle
 from nti.contenttypes.courses.interfaces import ICourseInstanceSharingScope
+from nti.contenttypes.courses.interfaces import CourseSeatLimitReachedException
 from nti.contenttypes.courses.interfaces import ICourseInstanceEnrollmentRecord
 
 from nti.contenttypes.courses.interfaces import CourseBundleWillUpdateEvent
@@ -264,6 +267,48 @@ def _enrollment_added(record, event):
     # Exactly one course at a time
     course = record.CourseInstance
     _send_enrollment_confirmation(event, creator, profile, email, course)
+    
+    
+@component.adapter(ICourseInstanceEnrollmentRecord, IObjectAddedEvent)
+def _validate_seat_limit(record, unused_event):
+    """
+    Validate this enrollment is valid due to course seat limits.
+    
+    Admin enrollments and purchase enrollments are *not* validated against
+    this constraint (purchases are validated pre-flight). 
+    """
+    course = record.CourseInstance
+    entry = ICourseCatalogEntry(course)
+    seat_limit = entry.seat_limit
+    
+    # First check if we are limited at all
+    if      seat_limit is not None \
+        and not seat_limit.can_user_enroll():
+        remote_user = get_remote_user()
+        user = IUser(record, None)
+        
+        if queryInteraction() is None or remote_user != user:
+            # Admins or feeds may enroll users without restriction
+            logger.info("Course seat limit exceeded (%s/%s) but exception due to admin enrollment (%s) (%s)",
+                        seat_limit.used_seats,
+                        seat_limit.max_seats,
+                        user,
+                        remote_user)
+            return
+
+        # Purchases are only validated preflight
+        if record.Scope == ES_PURCHASED:
+            logger.info("Course seat limit exceeded (%s/%s) but exception due to purchase (%s)",
+                        seat_limit.used_seats,
+                        seat_limit.max_seats,
+                        user)
+            return
+        
+        logger.info("Course seat limit exceeded (%s/%s) (%s)",
+                     seat_limit.used_seats,
+                     seat_limit.max_seats,
+                     user)
+        raise CourseSeatLimitReachedException()
 
 
 @component.adapter(ICourseInstanceEnrollmentRecord, IObjectAddedEvent)

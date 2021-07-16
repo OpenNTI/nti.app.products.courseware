@@ -18,6 +18,7 @@ from hamcrest import has_length
 from hamcrest import assert_that
 from hamcrest import has_entries
 from hamcrest import has_property
+from nti.contenttypes.courses.courses import CourseSeatLimit
 does_not = is_not
 
 import fudge
@@ -86,6 +87,13 @@ class TestEnrollmentOptions(ApplicationLayerTest):
 
     @WithSharedApplicationMockDS(testapp=True, users=True)
     def test_get_enrollment_options(self):
+        """
+        Validate enrollment options with enrollment and seat limits.
+        """
+        with mock_dataserver.mock_db_trans(self.ds):
+            self._create_user(u'bunkmoreland')
+        other_username = 'bunkmoreland'
+        user_env = self._make_extra_environ(user=other_username)
 
         with mock_dataserver.mock_db_trans(self.ds, site_name='platform.ou.edu'):
             entry = self.catalog_entry()
@@ -97,34 +105,74 @@ class TestEnrollmentOptions(ApplicationLayerTest):
         self.testapp.post_json(self.enrolled_courses_href,
                                self.course_ntiid,
                                status=201)
+        def _get_course_open(username=u'sjohnson@nextthought.com', env=None):
+            all_courses_href = '/dataserver2/users/%s/Courses/AllCourses' % username
+            res = self.testapp.get(all_courses_href, extra_environ=env)
+            courses = res.json_body['Items']
+            course_res = [x for x in courses if x['NTIID'] == self.course_ntiid][0]
+            open_option = course_res['EnrollmentOptions']['Items'].get(u'OpenEnrollment')
+            assert_that(open_option, not_none())
+            return open_option
+        open_option = _get_course_open()
+        assert_that(open_option, has_entries(
+                                'IsEnrolled', True,
+                                'IsAvailable', False,
+                                'IsSeatAvailable', True,
+                                'MimeType', 'application/vnd.nextthought.courseware.openenrollmentoption'))
+        
+        open_option = _get_course_open(other_username, user_env)
+        assert_that(open_option, has_entries(
+                                'IsEnrolled', False,
+                                'IsAvailable', True,
+                                'IsSeatAvailable', True,
+                                'MimeType', 'application/vnd.nextthought.courseware.openenrollmentoption'))
+        
+        with mock_dataserver.mock_db_trans(self.ds, site_name='platform.ou.edu'):
+            entry = self.catalog_entry()
+            entry.seat_limit = seat_limit = CourseSeatLimit(max_seats=1)
+            seat_limit.__parent__ = entry
+            assert_that(seat_limit.used_seats, is_(1))
+            assert_that(seat_limit.can_user_enroll(), is_(False))
+            
+        open_option = _get_course_open(other_username, user_env)
+        assert_that(open_option, has_entries(
+                                'IsEnrolled', False,
+                                'IsAvailable', True,
+                                'IsSeatAvailable', False,
+                                'MimeType', 'application/vnd.nextthought.courseware.openenrollmentoption'))
+        
+        # Cannot enroll
+        user_enroll_href = '/dataserver2/users/%s/Courses/EnrolledCourses' % other_username
+        res = self.testapp.post_json(user_enroll_href,
+                                     self.course_ntiid,
+                                     extra_environ=user_env,
+                                     status=422)
+        assert_that(res.json_body['code'], is_(u'CourseSeatLimitReachedException'))
+        
+        # Cannot redeem invite code
+        code = "CI-CLC-3403"
+        user_env['HTTP_X_REQUESTED_WITH'] = 'XMLHttpRequest'
+        accept_url = '/dataserver2/users/%s/accept-course-invitations?code=%s' % (other_username, code)
+        res = self.testapp.get(accept_url, extra_environ=user_env, status=422)
+        assert_that(res.json_body['code'], is_(u'CourseSeatLimitReachedException'))
+        
+        # Admi *can* enroll over limit
+        user_enrollments_href = '/dataserver2/users/%s/UserEnrollments' % other_username
+        data = {'ntiid': self.course_ntiid,
+                'scope': ES_PUBLIC}
+        self.testapp.post_json(user_enrollments_href, data)
+        
+        open_option = _get_course_open(other_username, user_env)
+        assert_that(open_option, has_entries(
+                                'IsEnrolled', True,
+                                'IsAvailable', False,
+                                'IsSeatAvailable', False,
+                                'MimeType', 'application/vnd.nextthought.courseware.openenrollmentoption'))
 
-        res = self.testapp.get(self.all_courses_href)
-        assert_that
-        (
-            res.json_body['Items'],
-            has_item
-            (
-                has_entry
-                (
-                    'EnrollmentOptions',
-                    has_entry
-                    (
-                        'Items',
-                        has_entry
-                        (
-                            'OpenEnrollment',
-                            has_entries
-                            (
-                                'IsEnrolled', is_(True),
-                                'IsAvailable', is_(True),
-                                'MimeType', 'application/vnd.nextthought.courseware.openenrollmentoption'
-                            )
-                        )
-                    )
-                )
-            )
-        )
-
+        with mock_dataserver.mock_db_trans(self.ds, site_name='platform.ou.edu'):
+            entry = self.catalog_entry()
+            assert_that(entry.seat_limit.max_seats, is_(1))
+            assert_that(entry.seat_limit.used_seats, is_(2))
 
 class TestEnrollment(ApplicationLayerTest):
 
