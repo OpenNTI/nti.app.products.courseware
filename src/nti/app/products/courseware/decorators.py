@@ -55,6 +55,7 @@ from nti.app.products.courseware import VIEW_PARENT_ALL_COURSE_ACTIVITY
 
 from nti.app.products.courseware.interfaces import ACT_VIEW_ACTIVITY
 
+from nti.app.products.courseware.interfaces import IEnrollmentOption
 from nti.app.products.courseware.interfaces import IOpenEnrollmentOption
 from nti.app.products.courseware.interfaces import IExternalEnrollmentOption
 from nti.app.products.courseware.interfaces import ICoursesCatalogCollection
@@ -150,6 +151,7 @@ from nti.links.externalization import render_link
 from nti.mimetype.mimetype import nti_mimetype_from_object
 
 from nti.ntiids.ntiids import make_specific_safe
+from nti.ntiids.ntiids import find_object_with_ntiid
 
 from nti.ntiids.oids import to_external_ntiid_oid
 
@@ -680,6 +682,18 @@ class _CourseCatalogEntryDecorator(AbstractAuthenticatedRequestAwareDecorator):
                     elements=('@@%s' % VIEW_USER_COURSE_ACCESS,))
         _links.append(link)
 
+
+@component.adapter(IEnrollmentOption)
+@interface.implementer(IExternalMappingDecorator)
+class _SeatLimitEnrollmentOptionDecorator(Singleton):
+
+    def decorateExternalMapping(self, original, external):
+        entry = find_object_with_ntiid(original.CatalogEntryNTIID)
+        entry = ICourseCatalogEntry(entry, None)
+        if entry is not None:
+            external['IsSeatAvailable'] =  entry.seat_limit is None \
+                                        or entry.seat_limit.can_user_enroll()
+            
 
 @component.adapter(ICourseCatalogEntry)
 @interface.implementer(IExternalObjectDecorator)

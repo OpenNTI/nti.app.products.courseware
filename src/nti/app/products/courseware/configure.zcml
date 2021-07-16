@@ -123,6 +123,7 @@
 
 	<subscriber handler=".subscribers._on_content_bundle_updated" />
 
+    <subscriber handler=".subscribers._validate_seat_limit" />
 	<subscriber handler=".subscribers._auto_enroll_on_enrollment_added" />
 	<subscriber handler=".subscribers._auto_enroll_on_enrollment_modified" />
 	<subscriber handler=".subscribers._join_communities_on_enrollment_added" />
@@ -601,6 +602,10 @@
                 provides="nti.externalization.interfaces.IExternalObjectDecorator"
                 for="nti.contenttypes.courses.interfaces.ICourseCatalogEntry
                      pyramid.interfaces.IRequest" />
+                     
+    <subscriber factory=".decorators._SeatLimitEnrollmentOptionDecorator"
+                provides="nti.externalization.interfaces.IExternalMappingDecorator"
+                for="nti.app.products.courseware.interfaces.IEnrollmentOption" />
 
 	<subscriber factory=".decorators._CatalogFamilyDecorator"
 				provides="nti.externalization.interfaces.IExternalMappingDecorator"
