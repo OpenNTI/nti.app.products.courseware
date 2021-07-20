@@ -11,13 +11,14 @@ from __future__ import absolute_import
 from zope import component
 from zope import interface
 
+from nti.app.contenttypes.credit.credit import AwardedCredit
+
 from nti.contenttypes.completion.interfaces import IProgress
 from nti.contenttypes.completion.interfaces import ICompletionContextCompletionPolicy
 
-from nti.contenttypes.courses.credit import CourseAwardedCredit
-
 from nti.contenttypes.courses.interfaces import ICourseInstance
 from nti.contenttypes.courses.interfaces import ICourseCatalogEntry
+from nti.contenttypes.courses.interfaces import ICourseAwardedCredit
 
 from nti.contenttypes.courses.utils import get_enrollments
 
@@ -26,6 +27,8 @@ from nti.contenttypes.credit.interfaces import ICreditTranscript
 from nti.coremetadata.interfaces import IUser
 
 from nti.dataserver.interfaces import IEntityContainer
+
+from nti.externalization.representation import WithRepr
 
 logger = __import__('logging').getLogger(__name__)
 
@@ -115,3 +118,9 @@ class AllCourseCreditTranscript(object):
             result.extend(course_transcript.iter_awarded_credits())
         return result
 
+
+@WithRepr
+@interface.implementer(ICourseAwardedCredit)
+class CourseAwardedCredit(AwardedCredit):
+
+    mimeType = mime_type = "application/vnd.nextthought.credit.courseawardedcredit"
