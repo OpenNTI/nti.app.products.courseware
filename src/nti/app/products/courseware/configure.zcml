@@ -604,7 +604,7 @@
                      pyramid.interfaces.IRequest" />
                      
     <subscriber factory=".decorators._SeatLimitEnrollmentOptionDecorator"
-                provides="nti.externalization.interfaces.IExternalMappingDecorator"
+                provides="nti.externalization.interfaces.IExternalObjectDecorator"
                 for="nti.app.products.courseware.interfaces.IEnrollmentOption" />
 
 	<subscriber factory=".decorators._CatalogFamilyDecorator"

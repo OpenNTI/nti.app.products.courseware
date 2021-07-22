@@ -16,8 +16,6 @@ from pyramid.threadlocal import get_current_request
 
 from nti.app.authentication import get_remote_user
 
-from nti.appserver.interfaces import ForbiddenContextException
-
 from nti.appserver.pyramid_authorization import has_permission
 
 from nti.contentlibrary.interfaces import IContentUnit

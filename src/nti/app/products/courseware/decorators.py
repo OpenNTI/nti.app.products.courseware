@@ -156,6 +156,7 @@ from nti.ntiids.ntiids import find_object_with_ntiid
 from nti.ntiids.oids import to_external_ntiid_oid
 
 from nti.traversal.traversal import find_interface
+from nti.app.products.courseware_store.interfaces import IStoreEnrollmentOption
 
 CLASS = StandardExternalFields.CLASS
 ITEMS = StandardExternalFields.ITEMS
@@ -684,14 +685,14 @@ class _CourseCatalogEntryDecorator(AbstractAuthenticatedRequestAwareDecorator):
 
 
 @component.adapter(IEnrollmentOption)
-@interface.implementer(IExternalMappingDecorator)
+@interface.implementer(IExternalObjectDecorator)
 class _SeatLimitEnrollmentOptionDecorator(Singleton):
 
-    def decorateExternalMapping(self, original, external):
-        entry = find_object_with_ntiid(original.CatalogEntryNTIID)
+    def decorateExternalObject(self, context, result):
+        entry = find_object_with_ntiid(context.CatalogEntryNTIID)
         entry = ICourseCatalogEntry(entry, None)
         if entry is not None:
-            external['IsSeatAvailable'] =  entry.seat_limit is None \
+            result['IsSeatAvailable'] =    entry.seat_limit is None \
                                         or entry.seat_limit.can_user_enroll()
             
 
