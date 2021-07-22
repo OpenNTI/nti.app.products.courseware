@@ -283,7 +283,7 @@ def _validate_seat_limit(record, unused_event):
     
     # First check if we are limited at all
     if      seat_limit is not None \
-        and not seat_limit.can_user_enroll():
+        and not seat_limit.is_enrollment_valid():
         remote_user = get_remote_user()
         user = IUser(record, None)
         
