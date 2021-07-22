@@ -345,5 +345,12 @@ class UserCourseCalendarEventHierarchyPathProvider(object):
     def get_context_paths(self, context=None):
         calendar = ICourseCalendar(self.obj, None)
         course = ICourseInstance(calendar, None)
-        courses = get_valid_course_context(course)
-        return [(courses[0], calendar, self.obj)] if courses else ()
+        result = None
+        if course is not None:
+            provider = component.queryMultiAdapter((course, self.obj),
+                                                   IHierarchicalContextProvider)
+            result = provider.get_context_paths()
+        if not result:
+            result = courses = get_valid_course_context(course)
+            result = [(courses[0], calendar, self.obj)] if courses else ()
+        return result
