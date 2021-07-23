@@ -13,6 +13,8 @@ import time
 import isodate
 import datetime
 
+from perfmetrics import statsd_client
+
 from pyramid.threadlocal import get_current_request
 
 from zc.intid.interfaces import IAfterIdAddedEvent
@@ -21,6 +23,8 @@ from zc.intid.interfaces import IBeforeIdRemovedEvent
 from zope import component
 
 from zope.annotation.interfaces import IAnnotations
+
+from zope.component.hooks import getSite
 
 from zope.dottedname import resolve as dottedname
 
@@ -31,6 +35,7 @@ from zope.i18n import translate
 from zope.lifecycleevent.interfaces import IObjectAddedEvent
 from zope.lifecycleevent.interfaces import IObjectCreatedEvent
 from zope.lifecycleevent.interfaces import IObjectModifiedEvent
+from zope.lifecycleevent.interfaces import IObjectRemovedEvent
 
 from zope.publisher.interfaces.browser import IBrowserRequest
 
@@ -63,6 +68,7 @@ from nti.app.site.interfaces import ISiteAdminAddedEvent
 from nti.app.site.interfaces import ISiteAdminRemovedEvent
 
 from nti.app.users.utils import get_site_admins
+from nti.app.users.utils import get_user_creation_site
 
 from nti.appserver.brand.utils import get_site_brand_name
 
@@ -74,6 +80,7 @@ from nti.contenttypes.courses.interfaces import ES_PUBLIC
 from nti.contenttypes.courses.interfaces import ES_PURCHASED
     
 
+from nti.contenttypes.courses.interfaces import ICourseCatalog
 from nti.contenttypes.courses.interfaces import ICourseInstance
 from nti.contenttypes.courses.interfaces import ICourseEnrollments
 from nti.contenttypes.courses.interfaces import ICourseOutlineNode
@@ -85,9 +92,18 @@ from nti.contenttypes.courses.interfaces import ICourseContentPackageBundle
 from nti.contenttypes.courses.interfaces import ICourseInstanceSharingScope
 from nti.contenttypes.courses.interfaces import CourseSeatLimitReachedException
 from nti.contenttypes.courses.interfaces import ICourseInstanceEnrollmentRecord
+from nti.contenttypes.courses.interfaces import ICourseInstructorAddedEvent
+from nti.contenttypes.courses.interfaces import ICourseInstructorRemovedEvent
+from nti.contenttypes.courses.interfaces import ICourseEditorAddedEvent
+from nti.contenttypes.courses.interfaces import ICourseEditorRemovedEvent
+from nti.contenttypes.courses.interfaces import ICourseRolesSynchronized
 
 from nti.contenttypes.courses.interfaces import CourseBundleWillUpdateEvent
 
+from nti.contenttypes.courses.utils import get_editors
+from nti.contenttypes.courses.utils import get_instructors
+from nti.contenttypes.courses.utils import get_course_instructors
+from nti.contenttypes.courses.utils import get_course_editors
 from nti.contenttypes.courses.utils import get_parent_course
 from nti.contenttypes.courses.utils import get_course_hierarchy
 
@@ -95,6 +111,8 @@ from nti.coremetadata.interfaces import UserLastSeenEvent
 
 from nti.dataserver.interfaces import IUser
 from nti.dataserver.interfaces import ICommunity
+
+from nti.dataserver.users import User
 
 from nti.dataserver.users.interfaces import IUserProfile
 from nti.dataserver.users.interfaces import IEmailAddressable
@@ -527,3 +545,218 @@ def on_site_admin_removed(site_admin, unused_event=None):
         for scope in sharing_scope_utility.iter_scopes(parent_scopes=True):
             if site_admin not in scope:
                 site_admin.stop_following(scope)
+
+
+# stats
+
+def _get_parent_courses():
+    result = set()
+    catalog = component.getUtility(ICourseCatalog)
+    for level in catalog.values():
+        for course in level.values():
+            result.add(course)
+    return result
+
+
+def _get_child_courses(courses):
+    result = set()
+    for course in courses or ():
+        for x in course.SubInstances.values():
+            result.add(x)
+    return result
+
+
+def _update_course_stats(client, courses, child_courses):
+    buffer = []
+    site_name = getSite().__name__
+    for stat_name, count in (('courses', courses),
+                             ('child_courses', child_courses),
+                             ('total_courses', courses + child_courses)):
+        client.gauge('nti.sites.%s.%s' % (site_name, stat_name),
+                     count,
+                     buf=buffer)
+
+    if buffer:
+        client.sendbuf(buffer)
+
+
+@component.adapter(ICourseInstance, IObjectAddedEvent)
+def _update_course_stats_on_course_added(unused_course, unused_event=None):
+    client = statsd_client()
+    if client is None:
+        return
+
+    courses = _get_parent_courses()
+    child_courses = _get_child_courses(courses)
+    _update_course_stats(client, len(courses), len(child_courses))
+
+
+@component.adapter(ICourseInstance, IObjectRemovedEvent)
+def _update_course_stats_on_course_removed(course, unused_event=None):
+    client = statsd_client()
+    if client is None:
+        return
+
+    courses = _get_parent_courses()
+    if course in courses:
+        courses.remove(course)
+
+    child_courses = _get_child_courses(courses)
+    if course in child_courses:
+        child_courses.remove(course)
+
+    _update_course_stats(client, len(courses), len(child_courses))
+
+    # when course removed, make sure update instructors/editors.
+    _update_site_admin_and_role_stats(client, excludedCourse=course)
+
+
+def _get_site_admins(site=None):
+    site = getSite() if site is None else site
+    result = get_site_admins(site=site)
+    result = [x for x in result if get_user_creation_site(x) == site]
+    return result
+
+
+def _update_site_admin_and_role_stats(client=None, instructors=None, editors=None, removingUser=None, excludedCourse=None):
+    """
+    Currently when we add a user as editor from the UI, it will send two requests,
+    one is adding the user as editors, the other is removing the same user from instructors,
+    both requests happen almost concurrently at server, as a result, the second request can not see
+    the editors change from the first request and get a wrong editor counter.
+    """
+    client = statsd_client() if client is None else client
+    if client is None:
+        return
+
+    site = getSite()
+    site_admins = set(_get_site_admins(site=site))
+    instructors = get_instructors(site.__name__, excludedCourse=excludedCourse) if instructors is None else instructors
+    editors = get_editors(site.__name__, excludedCourse=excludedCourse) if editors is None else editors
+    total = site_admins.union(instructors).union(editors)
+
+    if removingUser is not None:
+        for x in (site_admins, instructors, editors):
+            if removingUser in x:
+                x.remove(removingUser)
+
+    buffer = []
+    site_name = site.__name__
+    for stat_name, count in (('site_admins', len(site_admins)),
+                             ('instructors', len(instructors)),
+                             ('editors', len(editors)),
+                             ('site_admins_and_instructors_and_editors', len(total))):
+        client.gauge('nti.sites.%s.%s' % (site_name, stat_name),
+                     count,
+                     buf=buffer)
+
+    if buffer:
+        client.sendbuf(buffer)
+
+
+@component.adapter(IUser, ISiteAdminAddedEvent)
+def _update_stats_on_site_admin_added(site_admin, unused_event=None):
+    _update_site_admin_and_role_stats()
+
+
+@component.adapter(IUser, ISiteAdminRemovedEvent)
+def _update_stats_on_site_admin_removed(site_admin, unused_event=None):
+    _update_site_admin_and_role_stats()
+
+
+def _get_instructors(site, course):
+    """
+    Get all instructors when instructors or editors change in a given course.
+    """
+    instructors = get_instructors(site=site, excludedCourse=course)
+    for x in get_course_instructors(course) or ():
+        user = User.get_user(getattr(x, 'id', x))
+        if user is not None and user not in instructors:
+            instructors.add(user)
+    return instructors
+
+
+def _get_editors(site, course):
+    """
+    Get all editors when instructors or editors change in a given course.
+    """
+    editors = get_editors(site=site, excludedCourse=course)
+    for x in get_course_editors(course) or ():
+        user = User.get_user(getattr(x, 'id', x))
+        if user is not None and user not in editors:
+            editors.add(user)
+    return editors
+
+
+@component.adapter(IUser, ICourseInstructorAddedEvent)
+def _update_stats_on_course_instructor_added(user, event):
+    client = statsd_client()
+    if client is None:
+        return
+
+    instructors = get_instructors(site=getSite().__name__)
+    if user not in instructors:
+        instructors.add(user)
+    _update_site_admin_and_role_stats(client=client,
+                                      instructors=instructors)
+
+
+@component.adapter(IUser, ICourseInstructorRemovedEvent)
+def _update_stats_on_course_instructor_removed(user, event):
+    client = statsd_client()
+    if client is None:
+        return
+
+    instructors = _get_instructors(site=getSite().__name__,
+                                   course=event.course)
+
+    _update_site_admin_and_role_stats(client=client,
+                                      instructors=instructors)
+
+
+@component.adapter(IUser, ICourseEditorAddedEvent)
+def _update_stats_on_course_editor_added(user, event):
+    client = statsd_client()
+    if client is None:
+        return
+
+    editors = get_editors(site=getSite().__name__)
+    if user not in editors:
+        editors.add(user)
+    _update_site_admin_and_role_stats(client=client,
+                                      editors=editors)
+
+
+@component.adapter(IUser, ICourseEditorRemovedEvent)
+def _update_stats_on_course_editor_removed(user, event):
+    client = statsd_client()
+    if client is None:
+        return
+
+    editors = _get_editors(site=getSite().__name__,
+                           course=event.course)
+
+    _update_site_admin_and_role_stats(client=client,
+                                      editors=editors)
+
+
+@component.adapter(ICourseInstance, ICourseRolesSynchronized)
+def _update_stats_on_course_roles_synced(course, unused_event):
+    client = statsd_client()
+    if client is None:
+        return
+
+    instructors = _get_instructors(site=getSite().__name__,
+                                   course=course)
+
+    editors = _get_editors(site=getSite().__name__,
+                           course=course)
+
+    _update_site_admin_and_role_stats(client=client,
+                                      instructors=instructors,
+                                      editors=editors)
+
+
+@component.adapter(IUser, IObjectRemovedEvent)
+def _update_stats_on_user_removed(user, unused_event=None):
+    _update_site_admin_and_role_stats(removingUser=user)
