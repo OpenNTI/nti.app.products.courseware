@@ -88,7 +88,8 @@ from nti.contenttypes.courses.interfaces import ICourseInstanceEnrollmentRecord
 
 from nti.contenttypes.courses.interfaces import CourseBundleWillUpdateEvent
 
-from nti.contenttypes.courses.utils import get_parent_course
+from nti.contenttypes.courses.utils import get_parent_course,\
+    is_enrollment_valid
 from nti.contenttypes.courses.utils import get_course_hierarchy
 
 from nti.coremetadata.interfaces import UserLastSeenEvent
@@ -282,8 +283,7 @@ def _validate_seat_limit(record, unused_event):
     seat_limit = entry.seat_limit
     
     # First check if we are limited at all
-    if      seat_limit is not None \
-        and not seat_limit.is_enrollment_valid():
+    if not is_enrollment_valid(seat_limit, entry):
         remote_user = get_remote_user()
         user = IUser(record, None)
         

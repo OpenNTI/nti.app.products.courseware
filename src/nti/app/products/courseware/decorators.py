@@ -102,7 +102,7 @@ from nti.contenttypes.courses.interfaces import ICourseInstanceScopedForum
 
 from nti.contenttypes.courses.sharing import get_default_sharing_scope
 
-from nti.contenttypes.courses.utils import is_enrolled
+from nti.contenttypes.courses.utils import is_enrolled, can_user_enroll
 from nti.contenttypes.courses.utils import has_enrollments
 from nti.contenttypes.courses.utils import is_course_editor
 from nti.contenttypes.courses.utils import get_catalog_entry
@@ -692,8 +692,7 @@ class _SeatLimitEnrollmentOptionDecorator(Singleton):
         entry = find_object_with_ntiid(context.CatalogEntryNTIID)
         entry = ICourseCatalogEntry(entry, None)
         if entry is not None:
-            result['IsSeatAvailable'] =    entry.seat_limit is None \
-                                        or entry.seat_limit.can_user_enroll()
+            result['IsSeatAvailable'] = can_user_enroll(entry.seat_limit, entry)
             
 
 @component.adapter(ICourseCatalogEntry)

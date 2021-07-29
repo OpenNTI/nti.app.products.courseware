@@ -19,6 +19,7 @@ from hamcrest import assert_that
 from hamcrest import has_entries
 from hamcrest import has_property
 from nti.contenttypes.courses.courses import CourseSeatLimit
+from nti.contenttypes.courses.utils import can_user_enroll
 does_not = is_not
 
 import fudge
@@ -132,7 +133,7 @@ class TestEnrollmentOptions(ApplicationLayerTest):
             entry.seat_limit = seat_limit = CourseSeatLimit(max_seats=1)
             seat_limit.__parent__ = entry
             assert_that(seat_limit.used_seats, is_(1))
-            assert_that(seat_limit.can_user_enroll(), is_(False))
+            assert_that(can_user_enroll(seat_limit, entry), is_(False))
             
         open_option = _get_course_open(other_username, user_env)
         assert_that(open_option, has_entries(
