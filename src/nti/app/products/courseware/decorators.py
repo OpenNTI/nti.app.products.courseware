@@ -85,7 +85,7 @@ from nti.contentlibrary.interfaces import IEditableContentUnit
 
 from nti.contenttypes.courses.common import get_course_packages
 
-from nti.contenttypes.courses.interfaces import ES_PUBLIC
+from nti.contenttypes.courses.interfaces import ES_PUBLIC, ICourseSeatLimit
 from nti.contenttypes.courses.interfaces import ES_CREDIT
 from nti.contenttypes.courses.interfaces import ES_PURCHASED
 from nti.contenttypes.courses.interfaces import ENROLLMENT_SCOPE_VOCABULARY
@@ -156,7 +156,6 @@ from nti.ntiids.ntiids import find_object_with_ntiid
 from nti.ntiids.oids import to_external_ntiid_oid
 
 from nti.traversal.traversal import find_interface
-from nti.app.products.courseware_store.interfaces import IStoreEnrollmentOption
 
 CLASS = StandardExternalFields.CLASS
 ITEMS = StandardExternalFields.ITEMS
@@ -682,6 +681,14 @@ class _CourseCatalogEntryDecorator(AbstractAuthenticatedRequestAwareDecorator):
                     rel=VIEW_USER_COURSE_ACCESS,
                     elements=('@@%s' % VIEW_USER_COURSE_ACCESS,))
         _links.append(link)
+        # Update this with our course or subinstance values
+        if context.seat_limit:
+            seat_limit_ext = result.get('seat_limit', {})
+            if ICourseSeatLimit.providedBy(seat_limit_ext):
+                result['seat_limit'] = to_external_object(context.seat_limit)
+            course = ICourseInstance(context)
+            enrollment_count = ICourseEnrollments(course).count_enrollments()
+            result['seat_limit']['used_seats'] = enrollment_count
 
 
 @component.adapter(IEnrollmentOption)
