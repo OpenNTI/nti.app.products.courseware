@@ -683,9 +683,7 @@ class _CourseCatalogEntryDecorator(AbstractAuthenticatedRequestAwareDecorator):
         _links.append(link)
         # Update this with our course or subinstance values
         if context.seat_limit:
-            seat_limit_ext = result.get('seat_limit', {})
-            if ICourseSeatLimit.providedBy(seat_limit_ext):
-                result['seat_limit'] = to_external_object(context.seat_limit)
+            result['seat_limit'] = to_external_object(context.seat_limit)
             course = ICourseInstance(context)
             enrollment_count = ICourseEnrollments(course).count_enrollments()
             result['seat_limit']['used_seats'] = enrollment_count
