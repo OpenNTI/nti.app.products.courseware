@@ -10,7 +10,9 @@ from datetime import datetime
 from datetime import timedelta
 
 from hamcrest import contains
+from hamcrest import has_key
 from hamcrest import is_
+from hamcrest import not_
 from hamcrest import not_none
 from hamcrest import has_length
 from hamcrest import has_entry
@@ -57,6 +59,8 @@ from nti.dataserver.users import User
 from nti.dataserver.users.interfaces import IFriendlyNamed
 
 from nti.externalization.externalization.standard_fields import datetime_to_string
+
+from nti.mailer.interfaces import IEmailAddressable
 
 
 class TestCourseCalendarViews(ApplicationLayerTest):
@@ -583,6 +587,8 @@ class TestCalendarEventAttendanceViews(ApplicationLayerTest):
             IFriendlyNamed(student2).alias = u'andy'
             IFriendlyNamed(student3).alias = u'chad'
 
+            IEmailAddressable(student1).email = u'bob@student.org'
+
             IFriendlyNamed(student1).realname = u'c clarence'
             IFriendlyNamed(student2).realname = u'andrew brown'
             IFriendlyNamed(student3).realname = u'b adams'
@@ -623,11 +629,16 @@ class TestCalendarEventAttendanceViews(ApplicationLayerTest):
         record_attendance(admin_env2, 'test_student3')
 
         # Only instructors and admins can see attendance
+        # Also externalization is as expected
         self.testapp.get(list_attendance_url, status=403, extra_environ=student_env)
         self.testapp.get(list_attendance_url, status=403, extra_environ=editor_env)
-        self.testapp.get(list_attendance_url, extra_environ=instructor_env)
-        self.testapp.get(list_attendance_url, extra_environ=site_admin_env)
-        self.testapp.get(list_attendance_url, extra_environ=admin_env)
+        res = self.testapp.get(list_attendance_url, extra_environ=instructor_env).json_body
+        assert_that(res['Items'][0]['User'], not_(has_key('email')))
+
+        res = self.testapp.get(list_attendance_url, extra_environ=site_admin_env).json_body
+        assert_that(res['Items'][0]['User']['email'], is_(u'bob@student.org'))
+        res = self.testapp.get(list_attendance_url, extra_environ=admin_env).json_body
+        assert_that(res['Items'][0]['User']['email'], is_(u'bob@student.org'))
 
         def assert_order(params, expected):
             res = self.testapp.get(list_attendance_url,
