@@ -283,14 +283,13 @@ def _validate_seat_limit(record, unused_event):
     seat_limit = entry.seat_limit
     
     # First check if we are limited at all
-    if not is_enrollment_valid(seat_limit, entry):
+    if not is_enrollment_valid(seat_limit):
         remote_user = get_remote_user()
         user = IUser(record, None)
         
         if queryInteraction() is None or remote_user != user:
             # Admins or feeds may enroll users without restriction
-            logger.info("Course seat limit exceeded (%s/%s) but exception due to admin enrollment (%s) (%s)",
-                        seat_limit.used_seats,
+            logger.info("Course seat limit exceeded (%s) but exception due to admin enrollment (%s) (%s)",
                         seat_limit.max_seats,
                         user,
                         remote_user)
@@ -298,14 +297,12 @@ def _validate_seat_limit(record, unused_event):
 
         # Purchases are only validated preflight
         if record.Scope == ES_PURCHASED:
-            logger.info("Course seat limit exceeded (%s/%s) but exception due to purchase (%s)",
-                        seat_limit.used_seats,
+            logger.info("Course seat limit exceeded (%s) but exception due to purchase (%s)",
                         seat_limit.max_seats,
                         user)
             return
         
-        logger.info("Course seat limit exceeded (%s/%s) (%s)",
-                     seat_limit.used_seats,
+        logger.info("Course seat limit exceeded (%s) (%s)",
                      seat_limit.max_seats,
                      user)
         raise CourseSeatLimitReachedException()

@@ -697,7 +697,7 @@ class _SeatLimitEnrollmentOptionDecorator(Singleton):
         entry = find_object_with_ntiid(context.CatalogEntryNTIID)
         entry = ICourseCatalogEntry(entry, None)
         if entry is not None:
-            result['IsSeatAvailable'] = can_user_enroll(entry.seat_limit, entry)
+            result['IsSeatAvailable'] = can_user_enroll(entry.seat_limit)
             
 
 @component.adapter(ICourseCatalogEntry)

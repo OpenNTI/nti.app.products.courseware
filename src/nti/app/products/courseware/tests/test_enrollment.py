@@ -132,8 +132,7 @@ class TestEnrollmentOptions(ApplicationLayerTest):
             entry = self.catalog_entry()
             entry.seat_limit = seat_limit = CourseSeatLimit(max_seats=1)
             seat_limit.__parent__ = entry
-            assert_that(seat_limit.used_seats, is_(1))
-            assert_that(can_user_enroll(seat_limit, entry), is_(False))
+            assert_that(can_user_enroll(seat_limit), is_(False))
             
         open_option = _get_course_open(other_username, user_env)
         assert_that(open_option, has_entries(
