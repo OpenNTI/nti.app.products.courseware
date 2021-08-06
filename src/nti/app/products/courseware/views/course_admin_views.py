@@ -154,6 +154,30 @@ class AbstractCourseEnrollView(AbstractAuthenticatedView,
         return (context, user)
 
 
+class AbstractUserCourseEnrollView(AbstractCourseEnrollView):
+
+    def _do_course_enrollment(self, context, user, scope, interaction):
+        # Make sure we don't have any interaction (enrollment emails etc).
+        if not interaction:
+            endInteraction()
+        try:
+            drop_any_other_enrollments(context, user)
+            service = IUserService(user)
+            workspace = ICoursesWorkspace(service)
+            parent = workspace['EnrolledCourses']
+            entry = ICourseCatalogEntry(context, None)
+            logger.info("Enrolling %s in %s",
+                        user, getattr(entry, 'ntiid', None))
+            result = do_course_enrollment(context, user, scope,
+                                          parent=parent,
+                                          safe=True,
+                                          request=self.request)
+        finally:
+            if not interaction:
+                restoreInteraction()
+        return result
+
+
 @view_config(name='UserCourseEnroll')
 @view_config(name='user_course_enroll')
 @view_defaults(route_name='objects.generic.traversal',
@@ -161,7 +185,7 @@ class AbstractCourseEnrollView(AbstractAuthenticatedView,
                request_method='POST',
                context=CourseAdminPathAdapter,
                permission=nauth.ACT_NTI_ADMIN)
-class UserCourseEnrollView(AbstractCourseEnrollView):
+class UserCourseEnrollView(AbstractUserCourseEnrollView):
 
     def __call__(self):
         values = self.readInput()
@@ -183,24 +207,9 @@ class UserCourseEnrollView(AbstractCourseEnrollView):
                              },
                              None)
         interaction = is_true(values.get('email') or values.get('interaction'))
-        # Make sure we don't have any interaction (enrollment emails etc).
-        if not interaction:
-            endInteraction()
-        try:
-            drop_any_other_enrollments(context, user)
-            service = IUserService(user)
-            workspace = ICoursesWorkspace(service)
-            parent = workspace['EnrolledCourses']
-            entry = ICourseCatalogEntry(context, None)
-            logger.info("Enrolling %s in %s",
-                        user, getattr(entry, 'ntiid', None))
-            result = do_course_enrollment(context, user, scope,
-                                          parent=parent,
-                                          safe=True,
-                                          request=self.request)
-        finally:
-            if not interaction:
-                restoreInteraction()
+
+        result = self._do_course_enrollment(context, user, scope, interaction)
+
         return result
 
 
