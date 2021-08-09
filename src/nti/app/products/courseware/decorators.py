@@ -689,6 +689,18 @@ class _CourseCatalogEntryDecorator(AbstractAuthenticatedRequestAwareDecorator):
             result['seat_limit']['used_seats'] = enrollment_count
 
 
+@component.adapter(ICourseSeatLimit)
+@interface.implementer(IExternalObjectDecorator)
+class _CourseSeatLimitDecorator(Singleton):
+
+    def decorateExternalObject(self, context, result):
+        # Update this with our course or subinstance values
+        course = find_interface(context, ICourseInstance, strict=False)
+        if course is not None:
+            enrollment_count = ICourseEnrollments(course).count_enrollments()
+            result['used_seats'] = enrollment_count
+            
+
 @component.adapter(IEnrollmentOption)
 @interface.implementer(IExternalObjectDecorator)
 class _SeatLimitEnrollmentOptionDecorator(Singleton):

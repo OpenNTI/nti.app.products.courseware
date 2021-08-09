@@ -603,6 +603,10 @@
                 for="nti.contenttypes.courses.interfaces.ICourseCatalogEntry
                      pyramid.interfaces.IRequest" />
                      
+    <subscriber factory=".decorators._CourseSeatLimitDecorator"
+                provides="nti.externalization.interfaces.IExternalObjectDecorator"
+                for="nti.contenttypes.courses.interfaces.ICourseSeatLimit" />  
+                     
     <subscriber factory=".decorators._SeatLimitEnrollmentOptionDecorator"
                 provides="nti.externalization.interfaces.IExternalObjectDecorator"
                 for="nti.app.products.courseware.interfaces.IEnrollmentOption" />
