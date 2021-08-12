@@ -8,6 +8,7 @@ from zope import interface
 
 from nti.schema.field import Bool
 from nti.schema.field import ValidDatetime
+from nti.schema.field import ValidTextLine
 
 
 class ICourseCompletedNotification(interface.Interface):
@@ -34,3 +35,10 @@ class ICourseCompletedNotification(interface.Interface):
         """
         Remove completion acknowledgement for the associated user and course.
         """
+
+
+class ICertificateRenderer(interface.Interface):
+
+    macro_name = ValidTextLine(title=u'The cert macro name',
+                               required=True,
+                               default=u'certificate')

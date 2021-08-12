@@ -25,8 +25,6 @@ from zope import interface
 
 from zope.event import notify
 
-from nti.app.products.courseware.completion.subscribers import send_course_completed_email
-
 from nti.app.testing.testing import ITestMailDelivery
 
 from nti.contenttypes.completion.completion import CompletedItem

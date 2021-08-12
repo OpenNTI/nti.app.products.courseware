@@ -5,6 +5,7 @@
 		xmlns:zcml="http://namespaces.zope.org/zcml"
 		xmlns:z3c="http://namespaces.zope.org/z3c"
 		xmlns:cap="http://nextthought.com/ntp/capabilities"
+		xmlns:cert="http://nextthought.com/ntp/certificate"
 		i18n_domain="zope">
 
 	<include package="zope.component" file="meta.zcml" />
@@ -13,6 +14,8 @@
 	<include package="zope.security" />
 
 	<include package="z3c.macro" file="meta.zcml" />
+	
+	<include package="." file="meta.zcml" />
 
     <adapter factory=".adapters.section_to_container"
              provides="nti.contenttypes.completion.interfaces.ICompletableItemContainer"
@@ -87,7 +90,7 @@
 	<utility factory=".importer.CourseCompletionImporter"
 			 provides="nti.contenttypes.courses.interfaces.ICourseCompletionSectionImporter"
 			 name="040:Course_Completion" />
-
+			 
 	<z3c:macro
 			template="templates/certificate_macros.pt"
 			name="sidebar-fill"
@@ -122,6 +125,8 @@
 			for="zope.interface.Interface"
 			view="zope.interface.Interface"
 			layer="zope.interface.Interface" />
+
+    <cert:registerCertificateRenderer name="default" macro_name="certificate" />
 
 	<!-- Utilities -->
 	<utility factory=".completables.CourseCatalogCompletables" name="courses" />

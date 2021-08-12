@@ -35,7 +35,8 @@ from nti.app.products.courseware import VIEW_CERTIFICATE
 from nti.app.products.courseware import VIEW_CERTIFICATE_PREVIEW
 from nti.app.products.courseware import VIEW_ACKNOWLEDGE_COMPLETION
 
-from nti.app.products.courseware.completion.interfaces import ICourseCompletedNotification
+from nti.app.products.courseware.completion.interfaces import ICourseCompletedNotification,\
+    ICertificateRenderer
 
 from nti.app.products.courseware.completion.utils import ImageUtils
 
@@ -96,6 +97,26 @@ class EnrollmentProgressViewMixin(object):
 class CompletionViewMixin(object):
 
     Title = u'Completion Certificate'
+    
+    @Lazy
+    def _certificate_renderer_name(self):
+        """
+        The named utility of the ICertificateRenderer to use.
+        """
+        raise NotImplementedError()
+
+    @Lazy
+    def _certificate_renderer(self):
+        """
+        The ICertificateRenderer
+        """
+        result = None
+        if self._certificate_renderer_name:
+            result = component.queryUtility(ICertificateRenderer, 
+                                            name=self._certificate_renderer_name)
+        if result is None:
+            result = component.getUtility(ICertificateRenderer, name='default')
+        return result
 
     @Lazy
     def _brand_name(self):
@@ -193,6 +214,7 @@ class CompletionViewMixin(object):
             u'Converter': self.convert,
             u'ConstrainSize': self.constrain_size,
             u'SuppressLogo': self._suppress_logo,
+            u'certificate_macro_name': self._certificate_renderer.macro_name
         }
 
 
@@ -205,6 +227,14 @@ class CompletionViewMixin(object):
 class CompletionCertificateView(AbstractAuthenticatedView,
                                 CompletionViewMixin,
                                 EnrollmentProgressViewMixin):
+
+    @Lazy
+    def _certificate_renderer_name(self):
+        """
+        The named utility of the ICertificateRenderer to use. Drive this off
+        of the course completion policy.
+        """
+        return self.course_policy.certificate_renderer_name
 
     @Lazy
     def course(self):
@@ -306,9 +336,19 @@ class CompletionCertificatePreview(CompletionViewMixin, SiteBrandUpdateBase):
     completion certificate view, so the user can see the effect of site
     brand updates on the certificate prior to persisting them.
     """
+    
     def __init__(self, request):
         super(CompletionCertificatePreview, self).__init__(request)
         self._temp_sources = {}
+
+    @Lazy
+    def _certificate_renderer_name(self):
+        """
+        The named utility of the ICertificateRenderer to use. Use the given 
+        query param or 'default'.
+        """
+        result = self.request.params.get('certificate_renderer_name', 'default')
+        return result
 
     @property
     def _completion_date_string(self):

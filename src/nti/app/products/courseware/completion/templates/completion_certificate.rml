@@ -2,6 +2,6 @@
 <!DOCTYPE document SYSTEM "rml.dtd">
 <document xmlns:tal="http://xml.zope.org/namespaces/tal"
 	  xmlns:metal="http://xml.zope.org/namespaces/metal"
-	  metal:use-macro="macro:certificate">
+	  metal:use-macro="macro:${options/certificate_macro_name}">
 
 </document>
