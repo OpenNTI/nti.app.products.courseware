@@ -5,6 +5,7 @@
 		xmlns:zcml="http://namespaces.zope.org/zcml"
 		xmlns:z3c="http://namespaces.zope.org/z3c"
 		xmlns:cap="http://nextthought.com/ntp/capabilities"
+		xmlns:completion="http://nextthought.com/ntp/completion"
 		i18n_domain="zope">
 
 	<include package="zope.component" file="meta.zcml" />
@@ -56,6 +57,11 @@
 		    provides="nti.externalization.interfaces.IExternalMappingDecorator"
 		    for="nti.contenttypes.courses.interfaces.ICourseCatalogEntry
 			 pyramid.interfaces.IRequest" />
+			 
+	<subscriber factory=".decorators._CatalogEntryDecorator"
+            provides="nti.externalization.interfaces.IExternalMappingDecorator"
+            for="nti.contenttypes.courses.interfaces.ICourseCatalogEntry
+             pyramid.interfaces.IRequest" />
 
 	<subscriber factory=".decorators._SiteBrandEditDecorator"
 		    provides="nti.externalization.interfaces.IExternalMappingDecorator"
@@ -87,7 +93,7 @@
 	<utility factory=".importer.CourseCompletionImporter"
 			 provides="nti.contenttypes.courses.interfaces.ICourseCompletionSectionImporter"
 			 name="040:Course_Completion" />
-
+			 
 	<z3c:macro
 			template="templates/certificate_macros.pt"
 			name="sidebar-fill"
@@ -122,6 +128,8 @@
 			for="zope.interface.Interface"
 			view="zope.interface.Interface"
 			layer="zope.interface.Interface" />
+
+    <completion:registerCertificateRenderer name="default" macro_name="certificate" />
 
 	<!-- Utilities -->
 	<utility factory=".completables.CourseCatalogCompletables" name="courses" />

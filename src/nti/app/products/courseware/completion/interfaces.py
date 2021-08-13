@@ -8,6 +8,7 @@ from zope import interface
 
 from nti.schema.field import Bool
 from nti.schema.field import ValidDatetime
+from nti.schema.field import ValidTextLine
 
 
 class ICourseCompletedNotification(interface.Interface):
