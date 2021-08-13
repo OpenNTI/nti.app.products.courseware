@@ -28,9 +28,13 @@ from nti.app.renderers.decorators import AbstractAuthenticatedRequestAwareDecora
 
 from nti.app.site.decorators import SiteBrandAuthDecorator
 
+from nti.app.vocabularyregistry import VOCABULARIES
+
 from nti.appserver.brand.interfaces import ISiteBrand
 
 from nti.appserver.pyramid_authorization import has_permission
+
+from nti.contenttypes.completion import CERTIFICATE_RENDERER_VOCAB_NAME
 
 from nti.contenttypes.completion.interfaces import IProgress
 from nti.contenttypes.completion.interfaces import ICompletionContextCompletionPolicy
@@ -41,12 +45,14 @@ from nti.contenttypes.courses.interfaces import ICourseInstance
 from nti.coremetadata.interfaces import IUser
 
 from nti.dataserver.authorization import ACT_READ
+from nti.dataserver.authorization import ACT_CONTENT_EDIT
 
 from nti.externalization.interfaces import IExternalMappingDecorator
 from nti.externalization.interfaces import StandardExternalFields
 from nti.externalization.interfaces import IExternalObjectDecorator
 
 from nti.links.links import Link
+
 
 LINKS = StandardExternalFields.LINKS
 
@@ -161,6 +167,24 @@ class _CatalogCertificateDecorator(_CourseCompletionDecorator):
         if     'AwardsCertificate' not in result \
            and getattr(self.policy, 'offers_completion_certificate', False):
             result['AwardsCertificate'] = True
+
+
+@component.adapter(ICourseCatalogEntry)
+@interface.implementer(IExternalMappingDecorator)
+class _CatalogEntryDecorator(AbstractAuthenticatedRequestAwareDecorator):
+    """
+    Decorate cert renderer vocab rel.
+    """
+
+    def _predicate(self, context, unused_result):
+        return has_permission(ACT_CONTENT_EDIT, context, self.request)
+
+    def _do_decorate_external(self, unused_context, result):
+        sm = component.getSiteManager()
+        _links = result.setdefault(LINKS, [])
+        _links.append(Link(sm,
+                           rel='CertificateRenderers',
+                           elements=(VOCABULARIES, CERTIFICATE_RENDERER_VOCAB_NAME)))
 
 
 @component.adapter(ISiteBrand, IRequest)

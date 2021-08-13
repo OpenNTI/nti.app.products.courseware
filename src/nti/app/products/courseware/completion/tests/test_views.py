@@ -14,6 +14,7 @@ from hamcrest import is_not
 from hamcrest import raises
 from hamcrest import calling
 from hamcrest import not_none
+from hamcrest import has_entry
 from hamcrest import has_length
 from hamcrest import assert_that
 from hamcrest import has_property
@@ -89,17 +90,14 @@ class TestViews(ApplicationLayerTest):
     default_origin = 'http://janux.ou.edu'
     
     course_ntiid = 'tag:nextthought.com,2011-10:NTI-CourseInfo-Fall2013_CLC3403_LawAndJustice'
+    entry_href = '/dataserver2/%2B%2Betc%2B%2Bhostsites/platform.ou.edu/%2B%2Betc%2B%2Bsite/Courses/Fall2013/CLC3403_LawAndJustice/CourseCatalogEntry'
+
 
     def _completed_item(self, success):
         return CompletedItem(Item=MockCompletableItem(u'tag:nextthought.com,2011-10:Test001'),
                              Principal=MockPrincipal(),
                              CompletedDate=datetime.datetime.utcnow(),
                              Success=success)
-
-    # _user_completed_item = None
-    # class _MockCompletionPolicy(CompletableItemAggregateCompletionPolicy):
-    #     def is_complete(self, unused_progress):
-    #         return self._user_completed_item
 
     @WithSharedApplicationMockDS(testapp=True, users=True)
     @fudge.patch('nti.contenttypes.completion.policies.CompletableItemAggregateCompletionPolicy.is_complete')
@@ -172,6 +170,16 @@ class TestViews(ApplicationLayerTest):
             assert_that(calling(setattr).with_args(policy, 'certificate_renderer_name', 'cert_render_that_dne'),
                     raises(ConstraintNotSatisfied))
             policy.__dict__['certificate_renderer_name'] = 'cert_render_that_dne'
+            
+            
+        entry_res = self.testapp.get(self.entry_href).json_body
+        vocab_href = self.require_link_href_with_rel(entry_res, 'CertificateRenderers')
+        vocab_res = self.testapp.get(vocab_href)
+        vocab_res = vocab_res.json_body
+        terms = vocab_res['terms']
+        assert_that(terms, has_length(1))
+        assert_that(terms[0], has_entry('value', 'default'))
+        
         course_completed_item = self._completed_item(success=True)
         mock_is_complete.is_callable().returns(course_completed_item)
         self.testapp.get(cert_href, extra_environ=user_env)

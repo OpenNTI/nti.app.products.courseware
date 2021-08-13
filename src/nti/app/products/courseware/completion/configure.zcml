@@ -57,6 +57,11 @@
 		    provides="nti.externalization.interfaces.IExternalMappingDecorator"
 		    for="nti.contenttypes.courses.interfaces.ICourseCatalogEntry
 			 pyramid.interfaces.IRequest" />
+			 
+	<subscriber factory=".decorators._CatalogEntryDecorator"
+            provides="nti.externalization.interfaces.IExternalMappingDecorator"
+            for="nti.contenttypes.courses.interfaces.ICourseCatalogEntry
+             pyramid.interfaces.IRequest" />
 
 	<subscriber factory=".decorators._SiteBrandEditDecorator"
 		    provides="nti.externalization.interfaces.IExternalMappingDecorator"
