@@ -35,8 +35,7 @@ from nti.app.products.courseware import VIEW_CERTIFICATE
 from nti.app.products.courseware import VIEW_CERTIFICATE_PREVIEW
 from nti.app.products.courseware import VIEW_ACKNOWLEDGE_COMPLETION
 
-from nti.app.products.courseware.completion.interfaces import ICourseCompletedNotification,\
-    ICertificateRenderer
+from nti.app.products.courseware.completion.interfaces import ICourseCompletedNotification
 
 from nti.app.products.courseware.completion.utils import ImageUtils
 
@@ -57,6 +56,7 @@ from nti.appserver.ugd_edit_views import UGDPutView
 from nti.common.string import is_true
 
 from nti.contenttypes.completion.interfaces import IProgress
+from nti.contenttypes.completion.interfaces import ICertificateRenderer
 from nti.contenttypes.completion.interfaces import ICompletionContextCompletionPolicy
 
 from nti.contenttypes.courses.catalog import CourseCatalogInstructorInfo

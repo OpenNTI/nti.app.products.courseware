@@ -11,30 +11,31 @@ import datetime
 
 from hamcrest import is_
 from hamcrest import is_not
+from hamcrest import raises
+from hamcrest import calling
 from hamcrest import not_none
 from hamcrest import has_length
 from hamcrest import assert_that
 from hamcrest import has_property
 from hamcrest import contains_string
-from nti.app.products.courseware.tests import PersistentInstructedCourseApplicationTestLayer
-from nti.ntiids.ntiids import find_object_with_ntiid
-from nti.app.products.courseware import VIEW_CERTIFICATE
 does_not = is_not
 
 import fudge
 
 from persistent import Persistent
 
-from quopri import decodestring
-
 from zope import component
 from zope import interface
 
 from zope.event import notify
 
+from zope.schema.interfaces import ConstraintNotSatisfied
+
 from zope.security.interfaces import IPrincipal
 
-from nti.app.testing.testing import ITestMailDelivery
+from nti.app.products.courseware import VIEW_CERTIFICATE
+
+from nti.app.products.courseware.tests import PersistentInstructedCourseApplicationTestLayer
 
 from nti.contenttypes.completion.completion import CompletedItem
 
@@ -45,12 +46,6 @@ from nti.contenttypes.completion.policies import CompletableItemAggregateComplet
 
 from nti.contenttypes.completion.tests.test_models import MockCompletableItem
 
-from nti.contenttypes.courses.courses import ContentCourseInstance
-
-from nti.contenttypes.courses.interfaces import ICourseInstance
-from nti.contenttypes.courses.interfaces import ICourseCatalogEntry
-from nti.contenttypes.courses.interfaces import CourseCompletedEvent
-from nti.contenttypes.courses.interfaces import ICourseCompletedEvent
 from nti.contenttypes.courses.interfaces import ICourseEnrollmentManager
 
 from nti.app.testing.application_webtest import ApplicationLayerTest
@@ -59,11 +54,9 @@ from nti.app.testing.decorators import WithSharedApplicationMockDS
 
 from nti.dataserver.tests import mock_dataserver
 
-from nti.dataserver.tests.mock_dataserver import WithMockDSTrans
-
 from nti.dataserver.users import User
 
-from nti.dataserver.users.interfaces import IUserProfile
+from nti.ntiids.ntiids import find_object_with_ntiid
 
 
 @interface.implementer(IPrincipal)
@@ -163,7 +156,7 @@ class TestViews(ApplicationLayerTest):
         mock_is_complete.is_callable().returns(course_completed_item)
         enr_res = get_enr()
         cert_href = self.require_link_href_with_rel(enr_res, VIEW_CERTIFICATE)
-        self.testapp.get(cert_href, extra_environ=user_env)
+        #self.testapp.get(cert_href, extra_environ=user_env)
         
         # Unsuccessful
         course_completed_item = self._completed_item(success=False)
@@ -176,7 +169,9 @@ class TestViews(ApplicationLayerTest):
             entry = find_object_with_ntiid(self.course_ntiid)
             course = entry.__parent__
             policy = ICompletionContextCompletionPolicy(course)
-            policy.certificate_renderer_name = u'cert_render_that_dne'
+            assert_that(calling(setattr).with_args(policy, 'certificate_renderer_name', 'cert_render_that_dne'),
+                    raises(ConstraintNotSatisfied))
+            policy.__dict__['certificate_renderer_name'] = 'cert_render_that_dne'
         course_completed_item = self._completed_item(success=True)
         mock_is_complete.is_callable().returns(course_completed_item)
         self.testapp.get(cert_href, extra_environ=user_env)
