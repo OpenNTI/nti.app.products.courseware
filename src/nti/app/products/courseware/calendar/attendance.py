@@ -8,6 +8,8 @@ from __future__ import print_function
 from zope import component
 from zope import interface
 
+from zope.annotation import factory as an_factory
+
 from zope.cachedescriptors.property import Lazy
 
 from nti.app.contenttypes.calendar.attendance import DefaultEventAttendanceManager
@@ -15,6 +17,9 @@ from nti.app.contenttypes.calendar.attendance import DefaultEventAttendanceManag
 from nti.app.contenttypes.calendar.interfaces import ICalendarEventAttendanceManager
 
 from nti.app.products.courseware.calendar.interfaces import ICourseCalendarEvent
+from nti.app.products.courseware.calendar.interfaces import ICourseCalendarEventAttendanceContainer
+
+from nti.contenttypes.calendar.attendance import CalendarEventAttendanceContainer
 
 from nti.contenttypes.courses.interfaces import ICourseEnrollments
 from nti.contenttypes.courses.interfaces import ICourseInstance
@@ -33,3 +38,13 @@ class CourseCalendarEventAttendanceManager(DefaultEventAttendanceManager):
             return lambda user: enrollments.is_principal_enrolled(user)
 
         return lambda user: False
+
+
+@component.adapter(ICourseCalendarEvent)
+@interface.implementer(ICourseCalendarEventAttendanceContainer)
+class CourseCalendarEventAttendanceContainer(CalendarEventAttendanceContainer):
+    pass
+
+
+CourseCalendarEventAttendanceContainerFactory = \
+    an_factory(CourseCalendarEventAttendanceContainer, u'EventAttendance')
