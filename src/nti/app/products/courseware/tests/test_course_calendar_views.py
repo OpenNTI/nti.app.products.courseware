@@ -6,6 +6,8 @@ from __future__ import print_function
 from __future__ import absolute_import
 
 # pylint: disable=protected-access,too-many-public-methods,arguments-differ
+import cgi
+
 from datetime import datetime
 from datetime import timedelta
 
@@ -554,6 +556,17 @@ class TestCalendarEventAttendanceViews(ApplicationLayerTest):
         check_edit(site_admin_env)
         check_edit(instructor_env)
 
+    def _make_record_attendance(self, record_attendance_url):
+        def record_attendance(env, username, registration_time=None, **kwargs):
+            kwargs['extra_environ'] = env
+            input = {
+                'Username': username,
+                'registrationTime': registration_time,
+            }
+            return self.testapp.post_json(record_attendance_url, input, **kwargs)
+
+        return record_attendance
+
     @WithSharedApplicationMockDS(testapp=True, users=(u'test_student1',
                                                       u'test_student2',
                                                       u'test_student3',
@@ -615,14 +628,7 @@ class TestCalendarEventAttendanceViews(ApplicationLayerTest):
         list_attendance_url = self.require_link_href_with_rel(res, 'list-attendance')
         record_attendance_url = self.require_link_href_with_rel(res, 'record-attendance')
 
-        def record_attendance(env, username, registration_time=None, **kwargs):
-            kwargs['extra_environ'] = env
-            post_attendance_url = "%s?username=%s" % (record_attendance_url, username)
-            input = {
-                'Username': username,
-                'registrationTime': registration_time,
-            }
-            return self.testapp.post_json(record_attendance_url, input, **kwargs)
+        record_attendance = self._make_record_attendance(record_attendance_url)
 
         record_attendance(admin_env, 'test_student1')
         record_attendance(instructor_env, 'test_student2')
@@ -708,3 +714,86 @@ class TestCalendarEventAttendanceViews(ApplicationLayerTest):
         assert_that(res['Total'], is_(3))
         self.forbid_link_with_rel(res, 'batch-next')
         self.require_link_href_with_rel(res, 'batch-prev')
+
+    @WithSharedApplicationMockDS(users=True, testapp=True, default_authenticate=True)
+    def test_attendence_csv_export(self):
+        instructor_env = self._make_extra_environ('harp4162')
+
+        start_time = datetime.utcnow().replace(microsecond=0)
+        start_time_str = datetime_to_string(start_time)
+        end_time = start_time + timedelta(hours=1)
+        end_time_str = datetime_to_string(end_time)
+        calendar_url = self.course_url + "/CourseCalendar"
+        params = {
+            "MimeType": "application/vnd.nextthought.courseware.coursecalendarevent",
+            "title": "go to school",
+            "description": "let us go",
+            "icon": "/home/go",
+            "location": "oklahoma",
+            "start_time": start_time_str,
+            "end_time": end_time_str
+        }
+        res = self.testapp.post_json(calendar_url, params=params, status=201, extra_environ=instructor_env).json_body
+
+        export_attendance_url = self.require_link_href_with_rel(res, 'export-attendance')
+        record_attendance_url = self.require_link_href_with_rel(res, 'record-attendance')
+
+        record_attendance = self._make_record_attendance(record_attendance_url)
+
+        admin_env = self._make_extra_environ()
+
+        with mock_dataserver.mock_db_trans(self.ds, site_name='platform.ou.edu'):
+            test_student_1 = self._create_user('test_student1',
+                                               external_value={
+                                                   'realname': u'Uno Student',
+                                                   'email': u'uno@student.org'
+                                               })
+            test_student_2 = self._create_user('test_student2',
+                                               external_value={
+                                                   'realname': u'Dos Student',
+                                                   'email': u'dos@student.org'
+                                               })
+            entry = find_object_with_ntiid(self.course_ntiid)
+            course = ICourseInstance(entry)
+            enroll_mgr = ICourseEnrollmentManager(course)
+            enroll_mgr.enroll(test_student_1)
+            enroll_mgr.enroll(test_student_2)
+
+        res = self.testapp.get(export_attendance_url)
+        filename = cgi.parse_header(res.headers['Content-Disposition'])[1]['filename']
+        assert_that(filename, is_('CLC_3403_go_to_school_event_attendance.csv'))
+        assert_that(res.body,
+                    is_('Course Name,Course ID,'
+                        'Event Name,Event Description,Event Location,'
+                        'Event Start Time,Event End Time,Username,Real Name'
+                        ',Registration Time\r\n'))
+
+        now = datetime.utcnow().replace(microsecond=0)
+        registration_time_1 = datetime_to_string(now)
+        record_attendance(admin_env, 'test_student1', registration_time_1)
+
+        registration_time_2 = datetime_to_string(now + timedelta(seconds=1))
+        record_attendance(admin_env, 'test_student2', registration_time_2)
+
+        res = self.testapp.get(export_attendance_url)
+        assert_that(res.body,
+                    is_('Course Name,Course ID,'
+                        'Event Name,Event Description,Event Location,'
+                        'Event Start Time,Event End Time,Username,Real Name'
+                        ',Registration Time\r\n'
+                        + ('Law and Justice,CLC 3403,go to school,let us go,oklahoma,%s,%s,test_student1,Uno Student,%s\r\n'
+                           % (start_time_str, end_time_str, registration_time_1))
+                        + ('Law and Justice,CLC 3403,go to school,let us go,oklahoma,%s,%s,test_student2,Dos Student,%s\r\n'
+                           % (start_time_str, end_time_str, registration_time_2))))
+
+        with mock_dataserver.mock_db_trans(self.ds):
+            User.delete_user('test_student1')
+
+        res = self.testapp.get(export_attendance_url)
+        assert_that(res.body,
+                    is_('Course Name,Course ID,'
+                        'Event Name,Event Description,Event Location,'
+                        'Event Start Time,Event End Time,Username,Real Name'
+                        ',Registration Time\r\n'
+                        + ('Law and Justice,CLC 3403,go to school,let us go,oklahoma,%s,%s,test_student2,Dos Student,%s\r\n'
+                           % (start_time_str, end_time_str, registration_time_2))))

@@ -27,7 +27,6 @@
     <adapter factory=".adapters.attendance_container_to_event" />
     <adapter factory=".adapters.attendance_to_container" />
     <adapter factory=".adapters.attendance_to_event" />
-
     <adapter factory=".attendance.CourseCalendarEventAttendanceManager"
              for="nti.app.products.courseware.calendar.interfaces.ICourseCalendarEvent"
              provides="nti.app.contenttypes.calendar.interfaces.ICalendarEventAttendanceManager" />
@@ -49,6 +48,10 @@
                 provides="nti.appserver.interfaces.IHierarchicalContextProvider"
                 for="nti.app.products.courseware.calendar.interfaces.ICourseCalendarEvent
                      nti.dataserver.interfaces.IUser"/>
+
+    <adapter factory=".attendance.CourseCalendarEventAttendanceContainerFactory"
+             for=".interfaces.ICourseCalendarEvent"
+             provides=".interfaces.ICourseCalendarEventAttendanceContainer" />
 
     <!-- completion -->
     <adapter factory=".completion._event_progress"

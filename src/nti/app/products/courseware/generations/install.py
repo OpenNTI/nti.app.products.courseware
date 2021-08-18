@@ -14,7 +14,7 @@ from zope.generations.generations import SchemaManager as BaseSchemaManager
 
 from zope.generations.interfaces import IInstallableSchemaManager
 
-generation = 22
+generation = 23
 
 logger = __import__('logging').getLogger(__name__)
 

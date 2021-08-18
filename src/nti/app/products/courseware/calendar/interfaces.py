@@ -13,9 +13,10 @@ from zope.container.constraints import contains
 from zope.location.interfaces import IContained
 
 from nti.contenttypes.calendar.interfaces import ICalendar
-from nti.contenttypes.calendar.interfaces import ICalendarEvent
 from nti.contenttypes.calendar.interfaces import ICalendarDynamicEvent
 from nti.contenttypes.calendar.interfaces import ICalendarDynamicEventProvider
+from nti.contenttypes.calendar.interfaces import ICalendarEvent
+from nti.contenttypes.calendar.interfaces import ICalendarEventAttendanceContainer
 
 from nti.zope_catalog.interfaces import INoAutoIndexEver
 
@@ -51,4 +52,10 @@ class IEnrolledCourseCalendarDynamicEventProvider(ICalendarDynamicEventProvider)
     """
     An intended subscriber provider of possible :class:`ICourseCalendarDynamicEvent` objects
     for enrolled :class:`IUser` and :class:`ICourseInstance` objects.
+    """
+
+
+class ICourseCalendarEventAttendanceContainer(ICalendarEventAttendanceContainer):
+    """
+    An attendance storage container for :class:`ICourseCalendarEvent` objects.
     """

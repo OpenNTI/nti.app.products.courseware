@@ -8,59 +8,33 @@ from __future__ import division
 from __future__ import print_function
 from __future__ import absolute_import
 
-import nameparser
-
-from datetime import datetime
-
-from pyramid import httpexceptions as hexc
-
 from pyramid.view import view_config
-
-from requests.structures import CaseInsensitiveDict
 
 from zope.cachedescriptors.property import Lazy
 
-from nti.app.base.abstract_views import AbstractAuthenticatedView
+from nti.app.contenttypes.calendar import EXPORT_ATTENDANCE_VIEW
 
+from nti.app.contenttypes.calendar.authorization import ACT_VIEW_EVENT_ATTENDANCE
+
+from nti.app.contenttypes.calendar.views import ExportAttendanceCSVView
 from nti.app.contenttypes.calendar.views import CalendarEventCreationView
 from nti.app.contenttypes.calendar.views import CalendarEventDeletionView
 from nti.app.contenttypes.calendar.views import CalendarEventUpdateView
 
-from nti.app.externalization.error import raise_json_error
-
-from nti.app.externalization.view_mixins import BatchingUtilsMixin
-
-from nti.app.products.courseware.interfaces import ACT_RECORD_EVENT_ATTENDANCE
-from nti.app.products.courseware.interfaces import ACT_VIEW_EVENT_ATTENDANCE
-
-from nti.app.products.courseware import MessageFactory as _
-
 from nti.app.products.courseware.calendar.interfaces import ICourseCalendar
 from nti.app.products.courseware.calendar.interfaces import ICourseCalendarEvent
+from nti.app.products.courseware.calendar.interfaces import ICourseCalendarEventAttendanceContainer
 
 from nti.app.products.courseware.resources.utils import get_course_filer
 
-from nti.appserver.ugd_edit_views import UGDPutView
-
-from nti.contenttypes.calendar.interfaces import ICalendarEvent
-from nti.contenttypes.calendar.interfaces import ICalendarEventAttendanceContainer
-from nti.contenttypes.calendar.interfaces import IUserCalendarEventAttendance
-from nti.contenttypes.calendar.attendance import UserCalendarEventAttendance
-
+from nti.contenttypes.courses.interfaces import ICourseCatalogEntry
 from nti.contenttypes.courses.interfaces import ICourseInstance
 
-from nti.contenttypes.courses.utils import is_enrolled
-
-from nti.externalization import to_external_object
-
-from nti.externalization.interfaces import LocatedExternalDict
 from nti.externalization.interfaces import StandardExternalFields
 
 from nti.dataserver import authorization as nauth
 
-from nti.dataserver.users import User
-
-from nti.dataserver.users.interfaces import IFriendlyNamed
+from nti.namedfile.file import safe_filename
 
 logger = __import__('logging').getLogger(__name__)
 
@@ -68,6 +42,7 @@ CLASS = StandardExternalFields.CLASS
 ITEMS = StandardExternalFields.ITEMS
 MIMETYPE = StandardExternalFields.MIMETYPE
 TOTAL = StandardExternalFields.TOTAL
+
 
 @view_config(route_name='objects.generic.traversal',
              renderer="rest",
@@ -102,3 +77,45 @@ class CourseCalendarEventUpdateView(CalendarEventUpdateView):
              permission=nauth.ACT_UPDATE)
 class CourseCalendarEventDeletionView(CalendarEventDeletionView):
     pass
+
+
+@view_config(route_name='objects.generic.traversal',
+             request_method='GET',
+             renderer='rest',
+             context=ICourseCalendarEventAttendanceContainer,
+             permission=ACT_VIEW_EVENT_ATTENDANCE,
+             name=EXPORT_ATTENDANCE_VIEW)
+class CourseCalendarEventExportAttendanceCSVView(ExportAttendanceCSVView):
+
+    @Lazy
+    def course(self):
+        return ICourseInstance(self.context)
+
+    @Lazy
+    def course_catalog_entry(self):
+        return ICourseCatalogEntry(self.course)
+
+    def _attendance_record_dict(self, attendance_record):
+        result = {
+            'Course Name': self.course_catalog_entry.title,
+            'Course ID': self.course_catalog_entry.ProviderUniqueID,
+        }
+
+        super_result = super(CourseCalendarEventExportAttendanceCSVView, self) \
+            ._attendance_record_dict(attendance_record)
+        result.update(super_result)
+
+        return result
+
+    def _filename(self):
+        filename = "%(puid)s_%(event_name)s_event_attendance.csv" % {
+            'puid': self.course_catalog_entry.ProviderUniqueID,
+            'event_name': self.event.title,
+        }
+        return safe_filename(filename)
+
+    def _fieldnames(self):
+        fieldnames = ['Course Name', 'Course ID']
+        super_fields = super(CourseCalendarEventExportAttendanceCSVView, self)._fieldnames()
+        fieldnames.extend(super_fields)
+        return fieldnames
