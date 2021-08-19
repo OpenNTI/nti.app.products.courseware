@@ -1122,7 +1122,7 @@ class CourseCollectionView(_AbstractFilteredCourseView,
                         key=sort_key,
                         reverse=self.sort_reverse)
         return result
-
+    
     def _externalize_result(self, result):
         return to_external_object(result)
 
@@ -1179,6 +1179,20 @@ class EnrolledCourseCollectionView(CourseCollectionView):
         course = record.CourseInstance
         entry = ICourseCatalogEntry(course, None)
         return entry
+    
+    @Lazy
+    def sorted_filtered_entries_and_records(self):
+        """
+        By default, sort completed courses to end.
+        """
+        # Sort secondary key first, ascending alpha
+        result = sorted(self.filtered_entries, key=lambda x: self._completed_filter(x[0]))
+        # Then do actual sort
+        sort_key = self.sort_key_to_func.get(self.sortOn) if self.sortOn else self._sort_key
+        result = sorted(result,
+                        key=sort_key,
+                        reverse=self.sort_reverse)
+        return result
 
 
 class AbstractIndexedCoursesCollectionView(CourseCollectionView):
