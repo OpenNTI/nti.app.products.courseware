@@ -37,6 +37,7 @@ logger = __import__('logging').getLogger(__name__)
 
 
 def _process_calendar(calendar):
+    processed = 0
     for event in calendar.values():
         annotations = IAnnotations(event)
 
@@ -52,6 +53,15 @@ def _process_calendar(calendar):
         attendance_container.__class__ = CourseCalendarEventAttendanceContainer
         attendance_container._p_changed = True
 
+        annotations['EventAttendance'] = attendance_container
+
+        for name, attendance in attendance_container.items():
+            attendance.__parent__ = attendance_container
+
+        processed += 1
+
+    return processed
+
 
 def _process_site(current, intids, seen):
     with current_site(current):
@@ -66,7 +76,10 @@ def _process_site(current, intids, seen):
             seen.add(doc_id)
 
             calendar = ICourseCalendar(course)
-            _process_calendar(calendar)
+            processed = _process_calendar(calendar)
+            if processed:
+                logger.info('Processed %d attendance containers for course %s',
+                            processed, entry.ProviderUniqueID)
 
 
 @interface.implementer(IDataserver)
