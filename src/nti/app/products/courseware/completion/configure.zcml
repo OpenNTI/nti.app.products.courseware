@@ -14,6 +14,8 @@
 	<include package="zope.security" />
 
 	<include package="z3c.macro" file="meta.zcml" />
+	
+	<include package="nti.contenttypes.completion" file="meta.zcml" />
 
     <adapter factory=".adapters.section_to_container"
              provides="nti.contenttypes.completion.interfaces.ICompletableItemContainer"
