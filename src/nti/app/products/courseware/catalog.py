@@ -111,7 +111,11 @@ class AvailableCoursesProvider(object):
                                                  exclude_deleted=True)
         entries_to_exclude = [ICourseCatalogEntry(x) for x in self._courses_to_exclude]
         intids = component.getUtility(IIntIds)
-        excluded_intids = intids.family.IF.LFSet(intids.getId(x) for x in entries_to_exclude)
+        # Case where entry did not have intid in prod (error case) - not sure 
+        # what we do here, but it wouldn't come back anyway since it is not in 
+        # the above set.
+        excluded_intids = (intids.queryId(x) for x in entries_to_exclude)
+        excluded_intids = intids.family.IF.LFSet(x for x in excluded_intids if x is not None)
         catalog = get_courses_catalog()
         return catalog.family.IF.difference(entry_intids, excluded_intids)
 
