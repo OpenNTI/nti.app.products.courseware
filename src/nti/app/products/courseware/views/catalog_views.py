@@ -1165,7 +1165,7 @@ class EnrolledCourseCollectionView(CourseCollectionView):
     Sorted by the enrollment record time desc.
 
     TODO: clean up this hierarchy
-    - Move filtering to generic course collection view instead of specifci endpoints
+    - Move filtering to generic course collection view instead of specific endpoints
     - Use enrollment record intids to use index based sorting
     """
 
@@ -1185,13 +1185,13 @@ class EnrolledCourseCollectionView(CourseCollectionView):
         """
         By default, sort completed courses to end.
         """
-        # Sort secondary key first, ascending alpha
-        result = sorted(self.filtered_entries, key=lambda x: self._completed_filter(x[0]))
-        # Then do actual sort
+        # Do actual sort
         sort_key = self.sort_key_to_func.get(self.sortOn) if self.sortOn else self._sort_key
-        result = sorted(result,
+        result = sorted(self.filtered_entries,
                         key=sort_key,
                         reverse=self.sort_reverse)
+        # Then sort completed to end
+        result = sorted(result, key=lambda x: self._completed_filter(x[0]))
         return result
 
 
