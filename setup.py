@@ -63,6 +63,7 @@ setup(
         'beautifulsoup4',
         'isodate',
         'nti.app.assessment',
+        'nti.app.contenttypes.credit',
         'nti.app.contenttypes.presentation',
         'nti.app.products.acclaim',
         'nti.app.products.webinar',
