@@ -85,7 +85,7 @@ from nti.contentlibrary.interfaces import IEditableContentUnit
 
 from nti.contenttypes.courses.common import get_course_packages
 
-from nti.contenttypes.courses.interfaces import ES_PUBLIC, ICourseSeatLimit
+from nti.contenttypes.courses.interfaces import ES_PUBLIC
 from nti.contenttypes.courses.interfaces import ES_CREDIT
 from nti.contenttypes.courses.interfaces import ES_PURCHASED
 from nti.contenttypes.courses.interfaces import ENROLLMENT_SCOPE_VOCABULARY
@@ -93,6 +93,7 @@ from nti.contenttypes.courses.interfaces import ENROLLMENT_SCOPE_VOCABULARY
 from nti.contenttypes.courses.interfaces import ICourseCatalog
 from nti.contenttypes.courses.interfaces import ICourseOutline
 from nti.contenttypes.courses.interfaces import ICourseInstance
+from nti.contenttypes.courses.interfaces import ICourseSeatLimit
 from nti.contenttypes.courses.interfaces import ICourseSubInstance
 from nti.contenttypes.courses.interfaces import ICourseEnrollments
 from nti.contenttypes.courses.interfaces import ICourseCatalogEntry

@@ -17,6 +17,7 @@ from nti.app.contenttypes.completion.views import progress_link
 from nti.app.contenttypes.completion.views import completed_items_link
 
 from nti.app.products.courseware import VIEW_CERTIFICATE
+from nti.app.products.courseware import VIEW_USER_COURSE_ACCESS
 from nti.app.products.courseware import VIEW_CERTIFICATE_PREVIEW
 from nti.app.products.courseware import VIEW_ACKNOWLEDGE_COMPLETION
 
@@ -37,6 +38,7 @@ from nti.appserver.pyramid_authorization import has_permission
 from nti.contenttypes.completion import CERTIFICATE_RENDERER_VOCAB_NAME
 
 from nti.contenttypes.completion.interfaces import IProgress
+from nti.contenttypes.completion.interfaces import ICompletedItem
 from nti.contenttypes.completion.interfaces import ICompletionContextCompletionPolicy
 
 from nti.contenttypes.courses.interfaces import ICourseCatalogEntry
@@ -51,8 +53,11 @@ from nti.externalization.interfaces import IExternalMappingDecorator
 from nti.externalization.interfaces import StandardExternalFields
 from nti.externalization.interfaces import IExternalObjectDecorator
 
+from nti.externalization.singleton import Singleton
+
 from nti.links.links import Link
 
+from nti.traversal.traversal import find_interface
 
 LINKS = StandardExternalFields.LINKS
 
@@ -202,3 +207,20 @@ class _SiteBrandEditDecorator(SiteBrandAuthDecorator):
                         rel='certificate_preview',
                         method='PUT')
             links.append(link)
+
+
+@component.adapter(ICompletedItem)
+@interface.implementer(IExternalMappingDecorator)
+class _CompletedItemAccessDecorator(Singleton):
+    """
+    If a completed item has a course, decorate how to get to that course.
+    """
+
+    def decorateExternalMapping(self, context, result):
+        course = find_interface(context, ICourseInstance, strict=False)
+        if course is not None:
+            _links = result.setdefault(LINKS, [])
+            link = Link(course, 
+                        rel=VIEW_USER_COURSE_ACCESS, 
+                        elements=('@@%s' % VIEW_USER_COURSE_ACCESS,))
+            _links.append(link)
