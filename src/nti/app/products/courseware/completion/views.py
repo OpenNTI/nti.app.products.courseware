@@ -292,7 +292,7 @@ class CompletionCertificateView(AbstractAuthenticatedView,
             return ()
         def _for_display(awarded_credit):
             return {
-                u'Amount': u'%.2f' % awarded_credit.amount,
+                u'Amount': u'%.*f' % (awarded_credit.credit_definition.credit_precision, awarded_credit.amount),
                 u'Type': awarded_credit.credit_definition.credit_type,
                 u'Units': awarded_credit.credit_definition.credit_units.capitalize()
             }
