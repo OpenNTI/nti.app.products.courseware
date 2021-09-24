@@ -196,9 +196,11 @@ class CompletionViewMixin(object):
                          course_title,
                          completion_date_string,
                          facilitators=None,
-                         credit=None):
+                         credit=None,
+                         description=None):
         return {
             u'Brand': self._brand_name,
+            u'description': description,
             u'Name': student_name,
             u'ProviderUniqueID': provider_unique_id,
             u'Course': course_title,
@@ -321,7 +323,8 @@ class CompletionCertificateView(AbstractAuthenticatedView,
             course_title=entry.title,
             completion_date_string=self._completion_date_string,
             facilitators=self._facilitators(entry),
-            credit=self._awarded_credit(transcript))
+            credit=self._awarded_credit(transcript),
+            description=entry.description)
 
 
 @view_config(route_name='objects.generic.traversal',
