@@ -55,6 +55,8 @@ from nti.appserver.ugd_edit_views import UGDPutView
 
 from nti.common.string import is_true
 
+from nti.contentfragments.interfaces import IPlainTextContentFragment
+
 from nti.contenttypes.completion.interfaces import IProgress
 from nti.contenttypes.completion.interfaces import ICertificateRenderer
 from nti.contenttypes.completion.interfaces import ICompletionContextCompletionPolicy
@@ -317,6 +319,10 @@ class CompletionCertificateView(AbstractAuthenticatedView,
         transcript = component.queryMultiAdapter((self.user, self.course),
                                                  ICreditTranscript)
 
+        desc = entry.description
+        if not desc and entry.RichDescription:
+            desc = IPlainTextContentFragment(entry.RichDescription)
+
         return self.certificate_dict(
             student_name=self._name,
             provider_unique_id=entry.ProviderUniqueID,
@@ -324,7 +330,7 @@ class CompletionCertificateView(AbstractAuthenticatedView,
             completion_date_string=self._completion_date_string,
             facilitators=self._facilitators(entry),
             credit=self._awarded_credit(transcript),
-            description=entry.description or entry.RichDescription)
+            description=desc)
 
 
 @view_config(route_name='objects.generic.traversal',
