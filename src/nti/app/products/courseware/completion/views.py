@@ -324,7 +324,7 @@ class CompletionCertificateView(AbstractAuthenticatedView,
             completion_date_string=self._completion_date_string,
             facilitators=self._facilitators(entry),
             credit=self._awarded_credit(transcript),
-            description=entry.description)
+            description=entry.description or entry.RichDescription)
 
 
 @view_config(route_name='objects.generic.traversal',
