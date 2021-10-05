@@ -8,6 +8,12 @@ from __future__ import division
 from __future__ import print_function
 from __future__ import absolute_import
 
+from html5lib import HTMLParser
+from html5lib import treewalkers
+from html5lib import treebuilders
+from html5lib.filters import base
+
+import lxml
 import os
 import shutil
 import tempfile
@@ -56,6 +62,11 @@ from nti.appserver.ugd_edit_views import UGDPutView
 from nti.common.string import is_true
 
 from nti.contentfragments.interfaces import IPlainTextContentFragment
+
+# XXX using private classes
+from nti.contentfragments.html import _SanitizerFilter
+from nti.contentfragments.html import _Serializer
+
 
 from nti.contenttypes.completion.interfaces import IProgress
 from nti.contenttypes.completion.interfaces import ICertificateRenderer
@@ -207,7 +218,7 @@ class CompletionViewMixin(object):
             u'ProviderUniqueID': provider_unique_id,
             u'Course': course_title,
             u'Date': completion_date_string,
-            u'Facilitators': facilitators or {},
+            u'Facilitators': facilitators or (),
             u'Credit': credit or (),
             u'CertificateLabel': self._certificate_label,
             u'CertificateSideBarImage':
@@ -221,6 +232,63 @@ class CompletionViewMixin(object):
             u'certificate_macro_name': self._certificate_renderer.macro_name
         }
 
+
+class ParaRewritingFilter(base.Filter):
+
+    def __init__(self, source, paraStyle=None):
+        super(ParaRewritingFilter, self).__init__(source)
+        self.paraStyle = paraStyle
+    
+    def __iter__(self):
+        for token in base.Filter.__iter__(self):
+            if token["type"] in ("StartTag", "EndTag") and token["name"] == "p":
+                token["name"] = "para"
+                if token["type"] == "StartTag" and self.paraStyle:
+                    token["data"][(None, u"style")] = self.paraStyle
+            yield token
+
+def _html_as_rml_fragments(html, paraStyle=None):
+    """
+    Given an html snippet such as the catalog's RichDescription
+    turn it into suitable rml markup.
+
+    TODO: This probably makes sense to move to adapters/interfaces
+          in nti.contentfragments. In that case we need to move application
+          of the paraStyle as that seems very specific to this particular usage
+          of the resulting rml
+    """
+
+    # TODO Much of this is duplicated from nti.contentfragments.html._to_sanitized_doc
+    
+    # Sanitize the html first, leaving only tags supported by rml.
+    # right now that is b/i/u/p but I think ul/ol/li also translates easily.
+    # We also strip all attributes from elements. TODO should we map some set of attributes
+    # to their rml counterparts?
+    parser = HTMLParser(tree=treebuilders.getTreeBuilder("lxml"),
+                   namespaceHTMLElements=False)
+    doc = parser.parseFragment(html)
+    walker = treewalkers.getTreeWalker("lxml")
+    stream = walker(doc)
+
+    # This filter does the sanitization to the small set of tags we trust
+    stream = _SanitizerFilter(stream)
+    stream.allowed_elements = frozenset([ ('http://www.w3.org/1999/xhtml', x) \
+                                          for x in 'bpui' ])
+
+    # This filter translates p=>para and applies para style.
+    stream = ParaRewritingFilter(stream, paraStyle=paraStyle)
+
+    # We want to produce parseable XML so that it's easy to deal with
+    # outside a browser; this
+    # We do not strip whitespace here. In most cases, we want to preserve
+    # user added whitespace.
+    s = _Serializer(strip_whitespace=False)
+
+    # By not passing the 'encoding' arg, we get a unicode string
+    output_generator = s.serialize(stream)
+    sanitized = u''.join(output_generator)
+
+    return sanitized
 
 @view_config(route_name='objects.generic.traversal',
              renderer="templates/completion_certificate.rml",
@@ -321,7 +389,7 @@ class CompletionCertificateView(AbstractAuthenticatedView,
 
         desc = entry.description
         if not desc and entry.RichDescription:
-            desc = IPlainTextContentFragment(entry.RichDescription)
+            desc = _html_as_rml_fragments(entry.RichDescription, paraStyle="desc")
 
         return self.certificate_dict(
             student_name=self._name,
