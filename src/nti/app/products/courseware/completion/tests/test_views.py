@@ -9,6 +9,8 @@ from __future__ import absolute_import
 
 import datetime
 
+import unittest
+
 from hamcrest import is_
 from hamcrest import is_not
 from hamcrest import raises
@@ -37,6 +39,7 @@ from zope.security.interfaces import IPrincipal
 from nti.app.products.courseware import VIEW_CERTIFICATE
 
 from nti.app.products.courseware.tests import PersistentInstructedCourseApplicationTestLayer
+from nti.app.products.courseware.tests import SharedConfiguringTestLayer
 
 from nti.contenttypes.completion.completion import CompletedItem
 
@@ -58,6 +61,8 @@ from nti.dataserver.tests import mock_dataserver
 from nti.dataserver.users import User
 
 from nti.ntiids.ntiids import find_object_with_ntiid
+
+from nti.app.products.courseware.completion.views import _html_as_rml_fragments
 
 
 @interface.implementer(IPrincipal)
@@ -184,3 +189,31 @@ class TestViews(ApplicationLayerTest):
         mock_is_complete.is_callable().returns(course_completed_item)
         self.testapp.get(cert_href, extra_environ=user_env)
 
+class TestRichDescriptionToRML(unittest.TestCase):
+
+    # We need this layer to ultimately configure nti.contentfragments to deal with the fact
+    # that there is a but in nti.contentfragments.html._SanitizerFilter when there is no
+    # IHyperlinkFormatter registered
+    layer = SharedConfiguringTestLayer
+
+    def test_basic_rich_text(self):
+        html_fragment = '<p>This is the step challenge.</p><p>It is very <b>good</b>.</p><p>\\ufeff</p><p><b>How <i>can</i> I <u>help</u> you.</b></p>'
+
+        rml = _html_as_rml_fragments(html_fragment, paraStyle='desc')
+
+        assert_that(rml, is_('<para style="desc">This is the step challenge.</para><para style="desc">It is very <b>good</b>.</para><para style="desc">\\ufeff</para><para style="desc"><b>How <i>can</i> I <u>help</u> you.</b></para>'))
+
+    def test_html_body_converts(self):
+        html_fragment = '<html><body><p>This is the step challenge.</p></body></html>'
+        rml = _html_as_rml_fragments(html_fragment)
+        assert_that(rml, is_('<para>This is the step challenge.</para>'))
+
+    def test_plaintext_passes_through(self):
+        html_fragment = 'This is the step challenge.'
+        rml = _html_as_rml_fragments(html_fragment)
+        assert_that(rml, is_('This is the step challenge.'))
+
+    def test_strip_unsupported_tags(self):
+        html_fragment = '<script>alert();</script><p>look <img/>at this</p>'
+        rml = _html_as_rml_fragments(html_fragment)
+        assert_that(rml, is_('<para>look at this</para>'))
