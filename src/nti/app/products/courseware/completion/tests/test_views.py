@@ -203,6 +203,11 @@ class TestRichDescriptionToRML(unittest.TestCase):
 
         assert_that(rml, is_('<para style="desc">This is the step challenge.</para><para style="desc">It is very <b>good</b>.</para><para style="desc">\\ufeff</para><para style="desc"><b>How <i>can</i> I <u>help</u> you.</b></para>'))
 
+    def test_html_body_converts(self):
+        html_fragment = '<html><body><p>This is the step challenge.</p></body></html>'
+        rml = _html_as_rml_fragments(html_fragment)
+        assert_that(rml, is_('<para>This is the step challenge.</para>'))
+
     def test_strip_unsupported_tags(self):
         html_fragment = '<script>alert();</script><p>look <img/>at this</p>'
         rml = _html_as_rml_fragments(html_fragment)
