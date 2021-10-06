@@ -208,6 +208,11 @@ class TestRichDescriptionToRML(unittest.TestCase):
         rml = _html_as_rml_fragments(html_fragment)
         assert_that(rml, is_('<para>This is the step challenge.</para>'))
 
+    def test_plaintext_passes_through(self):
+        html_fragment = 'This is the step challenge.'
+        rml = _html_as_rml_fragments(html_fragment)
+        assert_that(rml, is_('This is the step challenge.'))
+
     def test_strip_unsupported_tags(self):
         html_fragment = '<script>alert();</script><p>look <img/>at this</p>'
         rml = _html_as_rml_fragments(html_fragment)
