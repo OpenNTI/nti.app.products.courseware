@@ -203,17 +203,19 @@ class CompletionViewMixin(object):
         finally:
             os.remove(local_file)
 
+    @Lazy
+    def course_description(self):
+        return None
+
     def certificate_dict(self,
                          student_name,
                          provider_unique_id,
                          course_title,
                          completion_date_string,
                          facilitators=None,
-                         credit=None,
-                         description=None):
+                         credit=None):
         return {
             u'Brand': self._brand_name,
-            u'description': description,
             u'Name': student_name,
             u'ProviderUniqueID': provider_unique_id,
             u'Course': course_title,
@@ -370,6 +372,14 @@ class CompletionCertificateView(AbstractAuthenticatedView,
             }
         return [_for_display(credit) for credit in transcript.iter_awarded_credits()]
 
+    @Lazy
+    def course_description(self):
+        entry =  ICourseCatalogEntry(self.course)
+        desc = entry.description
+        if not desc and entry.RichDescription:
+            desc = _html_as_rml_fragments(entry.RichDescription, paraStyle="desc")
+        return desc
+
     def __call__(self):
         # pylint: disable=no-member
         if     self._course_completable_item is None \
@@ -387,9 +397,6 @@ class CompletionCertificateView(AbstractAuthenticatedView,
         transcript = component.queryMultiAdapter((self.user, self.course),
                                                  ICreditTranscript)
 
-        desc = entry.description
-        if not desc and entry.RichDescription:
-            desc = _html_as_rml_fragments(entry.RichDescription, paraStyle="desc")
 
         return self.certificate_dict(
             student_name=self._name,
@@ -397,8 +404,7 @@ class CompletionCertificateView(AbstractAuthenticatedView,
             course_title=entry.title,
             completion_date_string=self._completion_date_string,
             facilitators=self._facilitators(entry),
-            credit=self._awarded_credit(transcript),
-            description=desc)
+            credit=self._awarded_credit(transcript))
 
 
 @view_config(route_name='objects.generic.traversal',
