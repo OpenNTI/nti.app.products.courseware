@@ -55,6 +55,8 @@ from nti.dataserver.interfaces import IGrantAccessException
 
 from nti.dataserver.users.users import User
 
+from nti.externalization import to_external_object
+
 from nti.ntiids.ntiids import find_object_with_ntiid
 
 from nti.app.products.courseware.tests import PersistentInstructedCourseApplicationTestLayer
@@ -172,7 +174,8 @@ class TestEnrollmentOptions(ApplicationLayerTest):
         with mock_dataserver.mock_db_trans(self.ds, site_name='platform.ou.edu'):
             entry = self.catalog_entry()
             assert_that(entry.seat_limit.max_seats, is_(1))
-            assert_that(entry.seat_limit.used_seats, is_(2))
+            entry_ext = to_external_object(entry)
+            assert_that(entry_ext['seat_limit']['used_seats'], is_(2))
 
 class TestEnrollment(ApplicationLayerTest):
 
