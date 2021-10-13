@@ -368,7 +368,7 @@ class CompletionCertificateView(AbstractAuthenticatedView,
             return {
                 u'Amount': u'%.*f' % (awarded_credit.credit_definition.credit_precision, awarded_credit.amount),
                 u'Type': awarded_credit.credit_definition.credit_type,
-                u'Units': awarded_credit.credit_definition.credit_units.capitalize()
+                u'Units': awarded_credit.credit_definition.credit_units
             }
         return [_for_display(credit) for credit in transcript.iter_awarded_credits()]
 
