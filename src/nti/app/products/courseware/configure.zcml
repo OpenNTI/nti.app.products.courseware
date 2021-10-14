@@ -821,6 +821,9 @@
 	<!-- Resources -->
 	<include package=".resources" />
 
+	<!-- Segments -->
+	<include package=".segments" />
+
 	<!-- Views -->
 	<include package=".views" />
 

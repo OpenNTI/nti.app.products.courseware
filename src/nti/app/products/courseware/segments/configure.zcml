@@ -1,0 +1,17 @@
+<!-- -*- mode: nxml -*- -->
+<configure xmlns="http://namespaces.zope.org/zope"
+           xmlns:zcml="http://namespaces.zope.org/zcml"
+           xmlns:ext="http://nextthought.com/ntp/ext">
+
+    <include package="zope.component" file="meta.zcml"/>
+    <include package="zope.component"/>
+
+    <!-- Externalization -->
+    <include package="nti.externalization" file="meta.zcml"/>
+    <include package="nti.externalization"/>
+
+    <ext:registerAutoPackageIO
+            root_interfaces=".interfaces.ICourseMembershipFilterSet"
+            modules=".model"/>
+
+</configure>
