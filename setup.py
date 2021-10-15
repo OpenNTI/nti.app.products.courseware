@@ -84,6 +84,7 @@ setup(
         'nti.property',
         'nti.publishing',
         'nti.recorder',
+        'nti.segments',
         'nti.schema',
         'nti.traversal',
         'nti.wref',
