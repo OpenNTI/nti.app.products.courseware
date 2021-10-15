@@ -5,6 +5,7 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 
+from nti.contenttypes.courses.interfaces import ICourseInstance
 from zope import interface
 
 from zope.cachedescriptors.property import Lazy
@@ -60,7 +61,14 @@ class CourseMembershipFilterSet(SchemaConfigured,
     @property
     def enrolled_intids(self):
         course = find_object_with_ntiid(self.course_ntiid)
-        catalog_entry = ICourseCatalogEntry(course, None)
+        course = ICourseInstance(course, None)
+
+        result = self.enrollment_catalog.family.IF.Set()
+        if course is None:
+            return result
+
+        scopes = course.SharingScopes.keys()
+        catalog_entry = ICourseCatalogEntry(course)
 
         # TODO: Do we want to be more restrictive than this?  E.g. only
         #  operate on the current site, or the site the "parent" segment is
@@ -71,10 +79,9 @@ class CourseMembershipFilterSet(SchemaConfigured,
         query = {
             IX_SITE: {'any_of': site_names},
             IX_COURSE: {'any_of': (catalog_entry.ntiid,)},
-            IX_SCOPE: {'any_of': ENROLLMENT_SCOPE_NAMES}
+            IX_SCOPE: {'any_of': scopes}
         }
 
-        result = self.enrollment_catalog.family.IF.Set()
         for intid in self.enrollment_catalog.apply(query):
             usernames = self.enrollment_catalog[IX_STUDENT].documents_to_values.get(intid)
             for username in usernames or ():
