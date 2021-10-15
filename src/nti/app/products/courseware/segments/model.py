@@ -67,6 +67,8 @@ class CourseMembershipFilterSet(SchemaConfigured,
         if course is None:
             return result
 
+        # In case it hasn't been initialized already
+        course.SharingScopes.initScopes()
         scopes = course.SharingScopes.keys()
         catalog_entry = ICourseCatalogEntry(course)
 
