@@ -30,11 +30,15 @@ from persistent import Persistent
 from zope import component
 from zope import interface
 
+from zope.component.hooks import getSite
+
 from zope.event import notify
 
 from zope.schema.interfaces import ConstraintNotSatisfied
 
 from zope.security.interfaces import IPrincipal
+
+from zope.securitypolicy.interfaces import IPrincipalRoleManager
 
 from nti.app.products.courseware import VIEW_CERTIFICATE
 
@@ -55,6 +59,10 @@ from nti.contenttypes.courses.interfaces import ICourseEnrollmentManager
 from nti.app.testing.application_webtest import ApplicationLayerTest
 
 from nti.app.testing.decorators import WithSharedApplicationMockDS
+
+from nti.app.users.utils import set_user_creation_site
+
+from nti.dataserver.authorization import ROLE_SITE_ADMIN
 
 from nti.dataserver.tests import mock_dataserver
 
@@ -112,15 +120,22 @@ class TestViews(ApplicationLayerTest):
         # Setup
         with mock_dataserver.mock_db_trans(self.ds):
             self._create_user('user001_cert')
+            self._create_user('siteadmin_cert')
         
         with mock_dataserver.mock_db_trans(self.ds, site_name='platform.ou.edu'):
             entry = find_object_with_ntiid(self.course_ntiid)
             course = entry.__parent__
             user = User.get_user('user001_cert')
+            set_user_creation_site(user)
             enrollment_manager = ICourseEnrollmentManager(course)
             enrollment_manager.enroll(user)
+            
+            set_user_creation_site(User.get_user('siteadmin_cert'))
+            srm = IPrincipalRoleManager(getSite(), None)
+            srm.assignRoleToPrincipal(ROLE_SITE_ADMIN.id, 'siteadmin_cert')
         
         user_env = self._make_extra_environ('user001_cert')
+        admin_env = self._make_extra_environ('siteadmin_cert')
         def get_enr():
             res = self.testapp.get('/dataserver2/users/user001_cert/Courses/EnrolledCourses',
                                    extra_environ=user_env)
@@ -188,6 +203,9 @@ class TestViews(ApplicationLayerTest):
         course_completed_item = self._completed_item(success=True)
         mock_is_complete.is_callable().returns(course_completed_item)
         self.testapp.get(cert_href, extra_environ=user_env)
+        # Admins can view too
+        self.testapp.get(cert_href, extra_environ=admin_env)
+        self.testapp.get(cert_href)
 
 class TestRichDescriptionToRML(unittest.TestCase):
 

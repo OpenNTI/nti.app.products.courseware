@@ -663,6 +663,14 @@
     <adapter factory=".zope_security.ShareableModeledContentSiteAdminPermissionMap"
              provides="zope.securitypolicy.interfaces.IPrincipalPermissionMap"
              for="nti.dataserver.contenttypes.forums.interfaces.IGeneralHeadlineTopic" />
+             
+    <adapter factory=".zope_security.CourseInstanceEnrollmentPrincipalPermissionMap"
+             provides="zope.securitypolicy.interfaces.IPrincipalPermissionMap"
+             for="nti.app.products.courseware.interfaces.ICourseInstanceEnrollment" />
+             
+    <adapter factory=".zope_security.CourseInstanceEnrollmentRolePermissionMap"
+             provides="zope.securitypolicy.interfaces.IRolePermissionMap"
+             for="nti.app.products.courseware.interfaces.ICourseInstanceEnrollment" />
 
 	<!-- NTIID support -->
 	<utility factory=".ntiids._EnrolledCourseRootForumNTIIDResolver" />
