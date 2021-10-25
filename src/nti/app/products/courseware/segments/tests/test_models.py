@@ -5,6 +5,9 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 
+import sys
+
+from contextlib import contextmanager
 from unittest import TestCase
 
 import fudge
@@ -198,6 +201,18 @@ class TestApplyCourseMembershipFilterSet(SegmentManagementTest):
         res = self.testapp.get(not_enrolled_members_url).json_body
         assert_that(res['Items'], has_length(3))
 
+        # Ensure proper handling of courses no longer available
+        with patched('nti.app.products.courseware.segments.model.find_object_with_ntiid') \
+                as find_object_with_ntiid:
+
+            find_object_with_ntiid.is_callable().returns(None)
+
+            res = self.testapp.get(enrolled_members_url).json_body
+            assert_that(res['Items'], has_length(0))
+
+            res = self.testapp.get(not_enrolled_members_url).json_body
+            assert_that(res['Items'], has_length(4))
+
     @WithSharedApplicationMockDS(users=('enrolled_user',
                                         'unenrolled_user'),
                                  testapp=True,
@@ -293,3 +308,19 @@ class TestApplyCourseMembershipFilterSet(SegmentManagementTest):
                 user = self._get_user(username)
                 set_user_creation_site(user, getSite())
                 modified(user)
+
+
+@contextmanager
+def patched(path):
+    obj, attr = path.rsplit('.', 1)
+    fake = fudge.Fake(attr)
+    inner_context_manager = fudge.patched_context(obj, attr, fake)
+    inner_context_manager.__enter__()
+    try:
+        yield fake
+    except Exception as e:
+        etype, val, tb = sys.exc_info()
+        inner_context_manager.__exit__(etype, val, tb)
+        raise e
+    else:
+        inner_context_manager.__exit__(None, None, None)

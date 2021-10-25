@@ -58,11 +58,17 @@ class CourseMembershipFilterSet(SchemaConfigured,
 
     @property
     def enrolled_intids(self):
+        result = self.enrollment_catalog.family.IF.Set()
+
         scopes = entry_ntiids = None
         if self.course_ntiid:
             course = find_object_with_ntiid(self.course_ntiid)
             course = ICourseInstance(course, None)
-            catalog_entry = ICourseCatalogEntry(course)
+            catalog_entry = ICourseCatalogEntry(course, None)
+
+            if catalog_entry is None:
+                return result
+
             entry_ntiids = (catalog_entry.ntiid,)
 
             # In case it hasn't been initialized already
@@ -84,7 +90,6 @@ class CourseMembershipFilterSet(SchemaConfigured,
         if scopes is not None:
             query[IX_SCOPE] = {'any_of': scopes}
 
-        result = self.enrollment_catalog.family.IF.Set()
         for intid in self.enrollment_catalog.apply(query):
             usernames = self.enrollment_catalog[IX_STUDENT].documents_to_values.get(intid)
             for username in usernames or ():
