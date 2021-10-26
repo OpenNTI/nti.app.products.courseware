@@ -212,6 +212,7 @@ class CompletionViewMixin(object):
                          provider_unique_id,
                          course_title,
                          completion_date_string,
+                         filename='certificate.pdf',
                          facilitators=None,
                          credit=None):
         return {
@@ -231,7 +232,8 @@ class CompletionViewMixin(object):
             u'Converter': self.convert,
             u'ConstrainSize': self.constrain_size,
             u'SuppressLogo': self._suppress_logo,
-            u'certificate_macro_name': self._certificate_renderer.macro_name
+            u'certificate_macro_name': self._certificate_renderer.macro_name,
+            u'Filename': filename
         }
 
 
@@ -403,6 +405,7 @@ class CompletionCertificateView(AbstractAuthenticatedView,
             provider_unique_id=entry.ProviderUniqueID,
             course_title=entry.title,
             completion_date_string=self._completion_date_string,
+            filename=self._filename(entry),
             facilitators=self._facilitators(entry),
             credit=self._awarded_credit(transcript))
 
