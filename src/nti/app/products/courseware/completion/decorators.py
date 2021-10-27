@@ -13,6 +13,10 @@ from pyramid.interfaces import IRequest
 
 from zope.cachedescriptors.property import Lazy
 
+from zc.displayname.interfaces import IDisplayNameGenerator
+
+from slugify import slugify
+
 from nti.app.contenttypes.completion.views import progress_link
 from nti.app.contenttypes.completion.views import completed_items_link
 
@@ -48,6 +52,8 @@ from nti.coremetadata.interfaces import IUser
 
 from nti.dataserver.authorization import ACT_READ
 from nti.dataserver.authorization import ACT_CONTENT_EDIT
+
+from nti.dataserver.users.interfaces import IFriendlyNamed
 
 from nti.externalization.interfaces import IExternalMappingDecorator
 from nti.externalization.interfaces import StandardExternalFields
@@ -123,9 +129,19 @@ class _CourseCompletionDecorator(AbstractAuthenticatedRequestAwareDecorator):
                                        elements=("@@" + VIEW_ACKNOWLEDGE_COMPLETION,)))
 
                 if self.policy.offers_completion_certificate:
+                    entry = ICourseCatalogEntry(self.course)
+                    realname = IFriendlyNamed(self.user).realname
+                    if not realname:
+                        # Otherwise just fallback to whatever is our display name generator
+                        realname = component.getMultiAdapter((self.user, self.request),
+                                             IDisplayNameGenerator)()
+                    filename = '%s %s %s' % ("Completion", realname, entry.title)
+                    slugged = slugify(filename, seperator='_', lowercase=True)
+                    cert_filename = '%s.%s' % (slugged, "pdf")
                     _links.append(Link(context,
                                        rel=VIEW_CERTIFICATE,
-                                       elements=("@@" + VIEW_CERTIFICATE,)))
+                                       elements=("@@" + VIEW_CERTIFICATE, cert_filename)))
+                    from IPython.terminal.debugger import set_trace;set_trace()
 
 
 @component.adapter(IUser)
