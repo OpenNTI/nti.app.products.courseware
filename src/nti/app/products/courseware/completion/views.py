@@ -84,7 +84,29 @@ from nti.dataserver.users.interfaces import IFriendlyNamed
 
 from nti.dataserver.users.users import User
 
+from nti.namedfile.file import safe_filename
+
 logger = __import__('logging').getLogger(__name__)
+
+
+
+def _certificate_user_name(self):
+    # A certificate is fairly formal so try and use realname first
+    name = IFriendlyNamed(self.user).realname
+    if not name:
+        # Otherwise just fallback to whatever is our display name generator
+        name = component.getMultiAdapter((self.user, self.request),
+                                         IDisplayNameGenerator)()
+    return name
+
+def _certificate_course_name(self):
+    entry = ICourseCatalogEntry(self.course)
+    return entry.title
+
+def certificate_filename(self, affix='Completion', ext='pdf'):
+    filename = '%s %s %s' % (affix, _certificate_user_name(self), _certificate_course_name(self))
+    slugged = safe_filename(filename)
+    return '%s.%s' % (slugged, ext)
 
 
 class EnrollmentProgressViewMixin(object):
@@ -212,7 +234,6 @@ class CompletionViewMixin(object):
                          provider_unique_id,
                          course_title,
                          completion_date_string,
-                         filename='certificate.pdf',
                          facilitators=None,
                          credit=None):
         return {
@@ -221,7 +242,6 @@ class CompletionViewMixin(object):
             u'ProviderUniqueID': provider_unique_id,
             u'Course': course_title,
             u'Date': completion_date_string,
-            u'Filename': filename,
             u'Facilitators': facilitators or (),
             u'Credit': credit or (),
             u'CertificateLabel': self._certificate_label,
@@ -325,13 +345,7 @@ class CompletionCertificateView(AbstractAuthenticatedView,
 
     @Lazy
     def _name(self):
-        # A certificate is fairly formal so try and use realname first
-        name = IFriendlyNamed(self.user).realname
-        if not name:
-            # Otherwise just fallback to whatever is our display name generator
-            name = component.getMultiAdapter((self.user, self.request),
-                                             IDisplayNameGenerator)()
-        return name
+        return _certificate_user_name(self)
 
     @Lazy
     def _course_completable_item(self):
@@ -340,10 +354,8 @@ class CompletionCertificateView(AbstractAuthenticatedView,
         # pylint: disable=no-member
         return self.course_policy.is_complete(self.progress)
 
-    def _filename(self, entry, affix='Completion', ext='pdf'):
-        filename = '%s %s %s' % (affix, self._name, entry.title)
-        slugged = slugify(filename, seperator='_', lowercase=True)
-        return '%s.%s' % (slugged, ext)
+    def _filename(self, affix='Completion', ext='pdf'):
+        return certificate_filename(self, affix, ext)
 
     @property
     def _completion_date_string(self):
@@ -383,7 +395,6 @@ class CompletionCertificateView(AbstractAuthenticatedView,
         return desc
 
     def __call__(self):
-        from IPython.terminal.debugger import set_trace;set_trace()
         # pylint: disable=no-member
         if     self._course_completable_item is None \
             or not self._course_completable_item.Success \
@@ -392,12 +403,10 @@ class CompletionCertificateView(AbstractAuthenticatedView,
 
         entry = ICourseCatalogEntry(self.course)
 
-        cert_filename = self.request.subpath or self._filename(entry)
-
         download = is_true(self.request.params.get('download', False))
         if download:
             response = self.request.response
-            response.content_disposition = 'attachment; filename="%s"' % cert_filename
+            response.content_disposition = 'attachment; filename="%s"' % self._filename(self)
 
         transcript = component.queryMultiAdapter((self.user, self.course),
                                                  ICreditTranscript)
@@ -408,7 +417,6 @@ class CompletionCertificateView(AbstractAuthenticatedView,
             provider_unique_id=entry.ProviderUniqueID,
             course_title=entry.title,
             completion_date_string=self._completion_date_string,
-            filename=cert_filename,
             facilitators=self._facilitators(entry),
             credit=self._awarded_credit(transcript))
 

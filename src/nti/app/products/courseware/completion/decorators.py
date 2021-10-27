@@ -27,6 +27,8 @@ from nti.app.products.courseware import VIEW_ACKNOWLEDGE_COMPLETION
 
 from nti.app.products.courseware.completion.interfaces import ICourseCompletedNotification
 
+from nti.app.products.courseware.completion.views import certificate_filename
+
 from nti.app.products.courseware.interfaces import ICourseInstanceEnrollment
 
 from nti.app.renderers.decorators import AbstractAuthenticatedRequestAwareDecorator
@@ -129,19 +131,10 @@ class _CourseCompletionDecorator(AbstractAuthenticatedRequestAwareDecorator):
                                        elements=("@@" + VIEW_ACKNOWLEDGE_COMPLETION,)))
 
                 if self.policy.offers_completion_certificate:
-                    entry = ICourseCatalogEntry(self.course)
-                    realname = IFriendlyNamed(self.user).realname
-                    if not realname:
-                        # Otherwise just fallback to whatever is our display name generator
-                        realname = component.getMultiAdapter((self.user, self.request),
-                                             IDisplayNameGenerator)()
-                    filename = '%s %s %s' % ("Completion", realname, entry.title)
-                    slugged = slugify(filename, seperator='_', lowercase=True)
-                    cert_filename = '%s.%s' % (slugged, "pdf")
+                    cert_filename = certificate_filename(self)
                     _links.append(Link(context,
                                        rel=VIEW_CERTIFICATE,
                                        elements=("@@" + VIEW_CERTIFICATE, cert_filename)))
-                    from IPython.terminal.debugger import set_trace;set_trace()
 
 
 @component.adapter(IUser)
