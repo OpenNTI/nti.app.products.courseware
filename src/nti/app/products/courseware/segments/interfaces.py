@@ -32,7 +32,7 @@ class ICourseMembershipFilterSet(IUserFilterSet):
 
     course_ntiid = ValidNTIID(title=u'Course NTIID',
                               description=u'NTIID of the course in which to check membership.',
-                              required=True)
+                              required=False)
 
     operator = ValidChoice(title=u'Operator',
                            description=u'Whether to check for enrolled or not enrolled users.',
