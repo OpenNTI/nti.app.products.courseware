@@ -116,7 +116,6 @@ class TestViews(ApplicationLayerTest):
     @fudge.patch('nti.contenttypes.completion.policies.CompletableItemAggregateCompletionPolicy.is_complete')
     def test_certificate(self, mock_is_complete):
         mock_is_complete.is_callable().returns(None)
-        
         # Setup
         with mock_dataserver.mock_db_trans(self.ds):
             self._create_user('user001_cert')

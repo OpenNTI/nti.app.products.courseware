@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8" standalone="no"?>
 <!DOCTYPE document SYSTEM "rml.dtd">
-<document filename="certificate.pdf"
+<document filename="options/filename"
 	  invariant="1"
 	  compression="1"
 	  creator="NextThought"

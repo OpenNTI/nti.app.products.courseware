@@ -84,7 +84,29 @@ from nti.dataserver.users.interfaces import IFriendlyNamed
 
 from nti.dataserver.users.users import User
 
+from nti.namedfile.file import safe_filename
+
 logger = __import__('logging').getLogger(__name__)
+
+
+
+def _certificate_user_name(self):
+    # A certificate is fairly formal so try and use realname first
+    name = IFriendlyNamed(self.user).realname
+    if not name:
+        # Otherwise just fallback to whatever is our display name generator
+        name = component.getMultiAdapter((self.user, self.request),
+                                         IDisplayNameGenerator)()
+    return name
+
+def _certificate_course_name(self):
+    entry = ICourseCatalogEntry(self.course)
+    return entry.title
+
+def certificate_filename(self, suffix='Certificate', ext='pdf'):
+    filename = '%s %s %s' % (_certificate_user_name(self), _certificate_course_name(self), suffix)
+    slugged = safe_filename(filename)
+    return '%s.%s' % (slugged, ext)
 
 
 class EnrollmentProgressViewMixin(object):
@@ -323,13 +345,7 @@ class CompletionCertificateView(AbstractAuthenticatedView,
 
     @Lazy
     def _name(self):
-        # A certificate is fairly formal so try and use realname first
-        name = IFriendlyNamed(self.user).realname
-        if not name:
-            # Otherwise just fallback to whatever is our display name generator
-            name = component.getMultiAdapter((self.user, self.request),
-                                             IDisplayNameGenerator)()
-        return name
+        return _certificate_user_name(self)
 
     @Lazy
     def _course_completable_item(self):
@@ -338,10 +354,8 @@ class CompletionCertificateView(AbstractAuthenticatedView,
         # pylint: disable=no-member
         return self.course_policy.is_complete(self.progress)
 
-    def _filename(self, entry, suffix='completion', ext='pdf'):
-        filename = '%s %s %s' % (self.user, entry.ProviderUniqueID, suffix)
-        slugged = slugify(filename, seperator='_', lowercase=True)
-        return '%s.%s' % (slugged, ext)
+    def _filename(self, suffix='Certificate', ext='pdf'):
+        return certificate_filename(self, suffix, ext)
 
     @property
     def _completion_date_string(self):
@@ -392,7 +406,7 @@ class CompletionCertificateView(AbstractAuthenticatedView,
         download = is_true(self.request.params.get('download', False))
         if download:
             response = self.request.response
-            response.content_disposition = 'attachment; filename="%s"' % self._filename(entry)
+            response.content_disposition = 'attachment; filename="%s"' % self._filename(self)
 
         transcript = component.queryMultiAdapter((self.user, self.course),
                                                  ICreditTranscript)

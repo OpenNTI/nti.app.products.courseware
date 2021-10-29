@@ -13,6 +13,10 @@ from pyramid.interfaces import IRequest
 
 from zope.cachedescriptors.property import Lazy
 
+from zc.displayname.interfaces import IDisplayNameGenerator
+
+from slugify import slugify
+
 from nti.app.contenttypes.completion.views import progress_link
 from nti.app.contenttypes.completion.views import completed_items_link
 
@@ -22,6 +26,8 @@ from nti.app.products.courseware import VIEW_CERTIFICATE_PREVIEW
 from nti.app.products.courseware import VIEW_ACKNOWLEDGE_COMPLETION
 
 from nti.app.products.courseware.completion.interfaces import ICourseCompletedNotification
+
+from nti.app.products.courseware.completion.views import certificate_filename
 
 from nti.app.products.courseware.interfaces import ICourseInstanceEnrollment
 
@@ -48,6 +54,8 @@ from nti.coremetadata.interfaces import IUser
 
 from nti.dataserver.authorization import ACT_READ
 from nti.dataserver.authorization import ACT_CONTENT_EDIT
+
+from nti.dataserver.users.interfaces import IFriendlyNamed
 
 from nti.externalization.interfaces import IExternalMappingDecorator
 from nti.externalization.interfaces import StandardExternalFields
@@ -123,9 +131,10 @@ class _CourseCompletionDecorator(AbstractAuthenticatedRequestAwareDecorator):
                                        elements=("@@" + VIEW_ACKNOWLEDGE_COMPLETION,)))
 
                 if self.policy.offers_completion_certificate:
+                    cert_filename = certificate_filename(self)
                     _links.append(Link(context,
                                        rel=VIEW_CERTIFICATE,
-                                       elements=("@@" + VIEW_CERTIFICATE,)))
+                                       elements=("@@" + VIEW_CERTIFICATE, cert_filename)))
 
 
 @component.adapter(IUser)
