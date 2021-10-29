@@ -354,8 +354,8 @@ class CompletionCertificateView(AbstractAuthenticatedView,
         # pylint: disable=no-member
         return self.course_policy.is_complete(self.progress)
 
-    def _filename(self, affix='Completion', ext='pdf'):
-        return certificate_filename(self, affix, ext)
+    def _filename(self, suffix='Certificate', ext='pdf'):
+        return certificate_filename(self, suffix, ext)
 
     @property
     def _completion_date_string(self):
