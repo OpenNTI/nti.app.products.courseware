@@ -103,8 +103,8 @@ def _certificate_course_name(self):
     entry = ICourseCatalogEntry(self.course)
     return entry.title
 
-def certificate_filename(self, affix='Completion', ext='pdf'):
-    filename = '%s %s %s' % (affix, _certificate_user_name(self), _certificate_course_name(self))
+def certificate_filename(self, suffix='Certificate', ext='pdf'):
+    filename = '%s %s %s' % (_certificate_user_name(self), _certificate_course_name(self), suffix)
     slugged = safe_filename(filename)
     return '%s.%s' % (slugged, ext)
 
