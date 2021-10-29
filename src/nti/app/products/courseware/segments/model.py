@@ -50,11 +50,11 @@ class CourseMembershipFilterSet(SchemaConfigured,
     def __init__(self, **kwargs):
         SchemaConfigured.__init__(self, **kwargs)
 
-    @Lazy
+    @property
     def enrollment_catalog(self):
         return get_enrollment_catalog()
 
-    @Lazy
+    @property
     def entity_catalog(self):
         return get_entity_catalog()
 
