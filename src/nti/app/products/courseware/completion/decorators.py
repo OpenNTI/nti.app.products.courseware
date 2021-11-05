@@ -19,6 +19,7 @@ from slugify import slugify
 
 from nti.app.contenttypes.completion.views import progress_link
 from nti.app.contenttypes.completion.views import completed_items_link
+from nti.app.contenttypes.completion.views import awarded_completed_items_link
 
 from nti.app.products.courseware import VIEW_CERTIFICATE
 from nti.app.products.courseware import VIEW_USER_COURSE_ACCESS
@@ -112,6 +113,7 @@ class _CourseCompletionDecorator(AbstractAuthenticatedRequestAwareDecorator):
         _links = result.setdefault(LINKS, [])
         # Provide a link to the user's completed items
         _links.append(completed_items_link(self.course, self.user))
+        _links.append(awarded_completed_items_link(self.course, self.user))
         if self.has_policy():
             _links.append(progress_link(self.course,
                                         user=self.user,
