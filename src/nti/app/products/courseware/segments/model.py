@@ -5,13 +5,23 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 
+import BTrees
+import operator
+
+from zope import component
 from zope import interface
 
 from zope.cachedescriptors.property import Lazy
 
 from zope.container.contained import Contained
 
+from zope.intid.interfaces import IIntIds
+
+from nti.contenttypes.completion.interfaces import IProgress
+
 from nti.app.products.courseware.segments.interfaces import ENROLLED_IN
+    
+from nti.app.products.courseware.segments.interfaces import ICourseProgressFilterSet
 from nti.app.products.courseware.segments.interfaces import ICourseMembershipFilterSet
 
 from nti.contenttypes.courses import get_enrollment_catalog
@@ -20,11 +30,14 @@ from nti.contenttypes.courses.index import IX_SCOPE
 from nti.contenttypes.courses.index import IX_STUDENT
 
 from nti.contenttypes.courses.interfaces import ICourseInstance
+from nti.contenttypes.courses.interfaces import ICourseEnrollments
 from nti.contenttypes.courses.interfaces import ICourseCatalogEntry
 
 from nti.contenttypes.courses.utils import get_enrollments_query
 
 from nti.coremetadata.interfaces import IX_USERNAME
+
+from nti.coremetadata.interfaces import IUser
 
 from nti.dataserver.users import get_entity_catalog
 
@@ -104,3 +117,54 @@ class CourseMembershipFilterSet(SchemaConfigured,
         if self.operator == ENROLLED_IN:
             return initial_set.intersection(intids)
         return initial_set.difference(intids)
+
+
+
+@interface.implementer(ICourseProgressFilterSet)
+class CourseProgressFilterSet(SchemaConfigured,
+                              Contained):
+
+    createDirectFieldProperties(ICourseProgressFilterSet)
+
+    mimeType = mime_type = "application/vnd.nextthought.courseware.segments.courseprogressfilterset"
+
+    def __init__(self, **kwargs):
+        SchemaConfigured.__init__(self, **kwargs)
+
+    @Lazy
+    def course(self):
+        course = find_object_with_ntiid(self.course_ntiid)
+        course = ICourseInstance(course, None)
+        return course
+    
+    @Lazy
+    def op(self):
+        return getattr(operator, self.operator)
+    
+    def _get_progress(self, user):
+        progress = component.queryMultiAdapter((user, self.course),
+                                               IProgress)
+        return progress
+    
+    def _iter_users(self):
+        if self.course is None:
+            return
+        enrollments = ICourseEnrollments(self.course)
+        for record in enrollments.iter_enrollments():
+            user = IUser(record, None)
+            if user is not None:
+                progress = self._get_progress(user)
+                if self.op(progress.PercentageProgress, self.percentage):
+                    yield user
+    
+    def _get_intids(self):
+        intids = component.getUtility(IIntIds)
+        result = BTrees.family64.IF.Set()
+        for user in self._iter_users():
+            user_intid = intids.getId(user)
+            result.add(user_intid)
+        return result
+    
+    def apply(self, initial_set):
+        intids = self._get_intids()
+        return initial_set.intersection(intids)

@@ -11,12 +11,14 @@ from contextlib import contextmanager
 from unittest import TestCase
 
 import fudge
+
+from hamcrest import is_
 from hamcrest import all_of
+from hamcrest import contains
 from hamcrest import assert_that
 from hamcrest import has_entries
 from hamcrest import has_length
 from hamcrest import has_properties
-from hamcrest import is_
 from hamcrest import not_none
 from nti.contenttypes.courses.sharing import CourseInstanceSharingScopes
 
@@ -34,6 +36,7 @@ from nti.app.products.courseware.segments.interfaces import NOT_ENROLLED_IN
 
 from nti.app.products.courseware.segments.tests import SharedConfiguringTestLayer
 
+from nti.app.products.courseware.segments.model import CourseProgressFilterSet
 from nti.app.products.courseware.segments.model import CourseMembershipFilterSet
 
 from nti.app.products.courseware.tests import PersistentInstructedCourseApplicationTestLayer
@@ -44,7 +47,10 @@ from nti.app.testing.decorators import WithSharedApplicationMockDS
 
 from nti.app.users.utils import set_user_creation_site
 
+from nti.contenttypes.completion.progress import CompletionContextProgress
+
 from nti.contenttypes.courses.interfaces import ENROLLMENT_SCOPE_VOCABULARY
+
 from nti.contenttypes.courses.interfaces import ICourseCatalog
 from nti.contenttypes.courses.interfaces import ICourseCatalogEntry
 from nti.contenttypes.courses.interfaces import ICourseEnrollmentManager
@@ -308,6 +314,156 @@ class TestApplyCourseMembershipFilterSet(SegmentManagementTest):
                 user = self._get_user(username)
                 set_user_creation_site(user, getSite())
                 modified(user)
+
+
+class TestCourseProgressFilterSet(SegmentManagementTest):
+
+    layer = PersistentInstructedCourseApplicationTestLayer
+
+    default_origin = 'http://platform.ou.edu'
+
+    def _create_and_enroll(self, username, section=None, scope=None):
+        with mock_dataserver.mock_db_trans():
+            if not User.get_user(username):
+                self._create_user(username)
+
+        with mock_dataserver.mock_db_trans(site_name='platform.ou.edu'):
+            user = User.get_user(username)
+            set_user_creation_site(user, getSite())
+            modified(user)
+
+            cat = component.getUtility(ICourseCatalog)
+            course = cat['Fall2015']['CS 1323']
+            if section:
+                course = course.SubInstances[section]
+            manager = ICourseEnrollmentManager(course)
+            scope = scope or 'ForCreditDegree'
+            manager.enroll(user, scope=scope)
+
+    def get_entry_ntiid(self, section=None):
+        with mock_dataserver.mock_db_trans(site_name='platform.ou.edu'):
+            cat = component.getUtility(ICourseCatalog)
+            course = cat['Fall2015']['CS 1323']
+            if section:
+                course = course.SubInstances[section]
+
+            return ICourseCatalogEntry(course).ntiid
+
+    def init_users(self, *users):
+        with mock_dataserver.mock_db_trans(site_name='platform.ou.edu'):
+            for username in users:
+                user = self._get_user(username)
+                set_user_creation_site(user, getSite())
+                modified(user)
+                
+    def _create_progress_segment(self,
+                                 title,
+                                 percentage,
+                                 operator,
+                                 entry_ntiid):
+        filter_set = CourseProgressFilterSet(course_ntiid=entry_ntiid,
+                                             operator=operator,
+                                             percentage=percentage)
+        filter_set = to_external_object(filter_set)
+        segment = self._create_segment(title,
+                                       simple_filter_set=filter_set).json_body
+        return self.require_link_href_with_rel(segment, 'members')
+
+    @WithSharedApplicationMockDS(users=('user_progress1',
+                                        'user_progress2',
+                                        'user_progress3'),
+                                 testapp=True,
+                                 default_authenticate=True)
+    @fudge.patch('nti.app.contenttypes.completion.adapters.CompletionContextProgressFactory.__call__')
+    def test_progress_filter(self, mock_progress):
+        # Need a non-zero required item set here
+        empty_progress = CompletionContextProgress(AbsoluteProgress=0,
+                                                   MaxPossibleProgress=10,
+                                                   HasProgress=False)
+        fifty_progress = CompletionContextProgress(AbsoluteProgress=5,
+                                                   MaxPossibleProgress=10,
+                                                   HasProgress=True)
+        hundred_progress = CompletionContextProgress(AbsoluteProgress=10,
+                                                     MaxPossibleProgress=10,
+                                                     HasProgress=False)
+        fake_progress = mock_progress.is_callable()
+        fake_progress.returns(empty_progress)
+        
+        def with_progress():
+            fake_progress.next_call().returns(fifty_progress)
+            fake_progress.next_call().returns(hundred_progress)
+            fake_progress.next_call().returns(empty_progress)
+        
+        user_progress1 = u'user_progress1'
+        user_progress2 = u'user_progress2'
+        user_progress3 = u'user_progress3'
+        
+        def _get_usernames(url):
+            res = self.testapp.get(url).json_body
+            result = []
+            for item_ext in res['Items']:
+                result.append(item_ext['Username'])
+            return result
+        
+        # Empty
+        entry_ntiid = self.get_entry_ntiid()
+        zero_ge_url = self._create_progress_segment('zero_ge_progress', 0, 
+                                                    'ge', entry_ntiid)
+        
+        zero_eq_url = self._create_progress_segment('zero_eq_progress', 0, 
+                                                    'eq', entry_ntiid)
+        
+        fifty_gt_url = self._create_progress_segment('fifty_lt_progress', .5, 
+                                                     'gt', entry_ntiid)
+        
+        one_lt_url = self._create_progress_segment('one_lt_progress', 1, 
+                                                   'lt', entry_ntiid)
+
+        for url in (zero_ge_url, zero_eq_url, fifty_gt_url, one_lt_url):
+            usernames = _get_usernames(url)
+            assert_that(usernames, has_length(0))
+        
+        # Enroll
+        self.init_users(user_progress1, user_progress2, user_progress3)
+        
+        # Enroll some of the users
+        self._create_and_enroll(user_progress1)
+        self._create_and_enroll(user_progress2)
+        self._create_and_enroll(user_progress3)
+        
+        for url in (fifty_gt_url,):
+            usernames = _get_usernames(url)
+            assert_that(usernames, has_length(0))
+            
+        for url in (zero_ge_url, zero_eq_url, one_lt_url):
+            usernames = _get_usernames(url)
+            assert_that(usernames, has_length(3))
+            assert_that(usernames, contains('user_progress1', 'user_progress2', 'user_progress3'))
+        
+        # With progress
+        with_progress()
+        usernames = _get_usernames(zero_eq_url)
+        assert_that(usernames, contains('user_progress1'))
+        
+        with_progress()
+        usernames = _get_usernames(zero_ge_url)
+        assert_that(usernames, contains('user_progress1', 'user_progress2', 'user_progress3'))
+        
+        with_progress()
+        usernames = _get_usernames(fifty_gt_url)
+        assert_that(usernames, contains('user_progress3'))
+        
+        with_progress()
+        usernames = _get_usernames(one_lt_url)
+        assert_that(usernames, contains('user_progress1', 'user_progress2'))
+        
+        # Ensure proper handling of courses no longer available
+        with patched('nti.app.products.courseware.segments.model.find_object_with_ntiid') \
+                as find_object_with_ntiid:
+
+            find_object_with_ntiid.is_callable().returns(None)
+            res = self.testapp.get(zero_ge_url).json_body
+            assert_that(res['Items'], has_length(0))
 
 
 @contextmanager

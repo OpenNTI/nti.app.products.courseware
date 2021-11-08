@@ -11,7 +11,8 @@
     <include package="nti.externalization"/>
 
     <ext:registerAutoPackageIO
-            root_interfaces=".interfaces.ICourseMembershipFilterSet"
+            root_interfaces=".interfaces.ICourseProgressFilterSet
+                             .interfaces.ICourseMembershipFilterSet"
             modules=".model"/>
 
 </configure>
