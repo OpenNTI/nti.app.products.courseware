@@ -50,8 +50,8 @@ class ICourseMembershipFilterSet(IUserFilterSet):
 
 class ICourseProgressFilterSet(IUserFilterSet):
     """
-    A filter set describing users enrolled, or not enrolled, in the given
-    course.
+    A filter set describing users that have made some criteria of progress in 
+    a course.
     """
 
     course_ntiid = ValidNTIID(title=u'Course NTIID',
@@ -69,4 +69,3 @@ class ICourseProgressFilterSet(IUserFilterSet):
                         min=0.0,
                         max=1.0,
                         default=1.0)
-    

@@ -19,8 +19,10 @@ from zope.intid.interfaces import IIntIds
 
 from nti.contenttypes.completion.interfaces import IProgress
 
+from nti.app.products.courseware.segments.interfaces import COMPLETE
 from nti.app.products.courseware.segments.interfaces import ENROLLED_IN
     
+from nti.app.products.courseware.segments.interfaces import ICourseCompletionFilterSet
 from nti.app.products.courseware.segments.interfaces import ICourseProgressFilterSet
 from nti.app.products.courseware.segments.interfaces import ICourseMembershipFilterSet
 
@@ -146,6 +148,9 @@ class CourseProgressFilterSet(SchemaConfigured,
                                                IProgress)
         return progress
     
+    def _check(self, progress):
+        return self.op(progress.PercentageProgress, self.percentage)
+    
     def _iter_users(self):
         if self.course is None:
             return
@@ -154,7 +159,7 @@ class CourseProgressFilterSet(SchemaConfigured,
             user = IUser(record, None)
             if user is not None:
                 progress = self._get_progress(user)
-                if self.op(progress.PercentageProgress, self.percentage):
+                if self._check(progress):
                     yield user
     
     def _get_intids(self):
@@ -168,3 +173,4 @@ class CourseProgressFilterSet(SchemaConfigured,
     def apply(self, initial_set):
         intids = self._get_intids()
         return initial_set.intersection(intids)
+

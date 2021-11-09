@@ -20,7 +20,6 @@ from hamcrest import has_entries
 from hamcrest import has_length
 from hamcrest import has_properties
 from hamcrest import not_none
-from nti.contenttypes.courses.sharing import CourseInstanceSharingScopes
 
 from zope import component
 
@@ -54,6 +53,8 @@ from nti.contenttypes.courses.interfaces import ENROLLMENT_SCOPE_VOCABULARY
 from nti.contenttypes.courses.interfaces import ICourseCatalog
 from nti.contenttypes.courses.interfaces import ICourseCatalogEntry
 from nti.contenttypes.courses.interfaces import ICourseEnrollmentManager
+
+from nti.contenttypes.courses.sharing import CourseInstanceSharingScopes
 
 from nti.dataserver.tests import mock_dataserver
 
@@ -374,9 +375,8 @@ class TestCourseProgressFilterSet(SegmentManagementTest):
                                         'user_progress3'),
                                  testapp=True,
                                  default_authenticate=True)
-    @fudge.patch('nti.app.contenttypes.completion.adapters.CompletionContextProgressFactory.__call__')
+    @fudge.patch('nti.app.products.courseware.segments.model.CourseProgressFilterSet._get_progress')
     def test_progress_filter(self, mock_progress):
-        # Need a non-zero required item set here
         empty_progress = CompletionContextProgress(AbsoluteProgress=0,
                                                    MaxPossibleProgress=10,
                                                    HasProgress=False)
@@ -388,11 +388,8 @@ class TestCourseProgressFilterSet(SegmentManagementTest):
                                                      HasProgress=False)
         fake_progress = mock_progress.is_callable()
         fake_progress.returns(empty_progress)
-        
-        def with_progress():
-            fake_progress.next_call().returns(fifty_progress)
-            fake_progress.next_call().returns(hundred_progress)
-            fake_progress.next_call().returns(empty_progress)
+        fake_progress.next_call().returns(empty_progress)
+        fake_progress.next_call().returns(empty_progress)
         
         user_progress1 = u'user_progress1'
         user_progress2 = u'user_progress2'
@@ -400,6 +397,7 @@ class TestCourseProgressFilterSet(SegmentManagementTest):
         
         def _get_usernames(url):
             res = self.testapp.get(url).json_body
+            fudge.clear_calls()
             result = []
             for item_ext in res['Items']:
                 result.append(item_ext['Username'])
@@ -441,19 +439,18 @@ class TestCourseProgressFilterSet(SegmentManagementTest):
             assert_that(usernames, contains('user_progress1', 'user_progress2', 'user_progress3'))
         
         # With progress
-        with_progress()
+        fake_progress = mock_progress.is_callable().returns(empty_progress)
+        fake_progress.next_call().returns(fifty_progress)
+        fake_progress.next_call().returns(hundred_progress)
         usernames = _get_usernames(zero_eq_url)
         assert_that(usernames, contains('user_progress1'))
         
-        with_progress()
         usernames = _get_usernames(zero_ge_url)
         assert_that(usernames, contains('user_progress1', 'user_progress2', 'user_progress3'))
         
-        with_progress()
         usernames = _get_usernames(fifty_gt_url)
         assert_that(usernames, contains('user_progress3'))
         
-        with_progress()
         usernames = _get_usernames(one_lt_url)
         assert_that(usernames, contains('user_progress1', 'user_progress2'))
         
