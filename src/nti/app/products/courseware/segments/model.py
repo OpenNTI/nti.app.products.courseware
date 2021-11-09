@@ -19,10 +19,8 @@ from zope.intid.interfaces import IIntIds
 
 from nti.contenttypes.completion.interfaces import IProgress
 
-from nti.app.products.courseware.segments.interfaces import COMPLETE
 from nti.app.products.courseware.segments.interfaces import ENROLLED_IN
     
-from nti.app.products.courseware.segments.interfaces import ICourseCompletionFilterSet
 from nti.app.products.courseware.segments.interfaces import ICourseProgressFilterSet
 from nti.app.products.courseware.segments.interfaces import ICourseMembershipFilterSet
 
@@ -162,15 +160,15 @@ class CourseProgressFilterSet(SchemaConfigured,
                 if self._check(progress):
                     yield user
     
-    def _get_intids(self):
+    def _get_intids(self, set_factory):
         intids = component.getUtility(IIntIds)
-        result = BTrees.family64.IF.Set()
+        result = set_factory()
         for user in self._iter_users():
             user_intid = intids.getId(user)
             result.add(user_intid)
         return result
     
     def apply(self, initial_set):
-        intids = self._get_intids()
+        set_factory = initial_set.family.IF.Set
+        intids = self._get_intids(set_factory)
         return initial_set.intersection(intids)
-
