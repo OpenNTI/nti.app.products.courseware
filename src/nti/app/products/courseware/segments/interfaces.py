@@ -31,6 +31,14 @@ OPERATORS_VOCABULARY = vocabulary.SimpleVocabulary(
     tuple(vocabulary.SimpleTerm(x) for x in OPERATORS)
 )
 
+COMPLETE = 'complete'
+INCOMPLETE = 'incomplete'
+COMPLETION = (COMPLETE, INCOMPLETE)
+
+COMPLETE_VOCABULARY = vocabulary.SimpleVocabulary(
+    tuple(vocabulary.SimpleTerm(x) for x in COMPLETION)
+)
+
 
 class ICourseMembershipFilterSet(IUserFilterSet):
     """
@@ -69,3 +77,20 @@ class ICourseProgressFilterSet(IUserFilterSet):
                         min=0.0,
                         max=1.0,
                         default=1.0)
+    
+    
+class ICourseCompletionFilterSet(IUserFilterSet):
+    """
+    A filter set describing users that have successfully completed (or not 
+    successfully completed) a course.
+    """
+
+    course_ntiid = ValidNTIID(title=u'Course NTIID',
+                              description=u'NTIID of the course in which to check completion.',
+                              required=True)
+    
+    operator = ValidChoice(title=u'Operator',
+                           description=u'Either complete or incomplete',
+                           vocabulary=COMPLETE_VOCABULARY,
+                           required=True)
+    

@@ -21,6 +21,8 @@ from hamcrest import has_length
 from hamcrest import has_properties
 from hamcrest import not_none
 
+from datetime import datetime
+
 from zope import component
 
 from zope.component.hooks import getSite
@@ -30,11 +32,13 @@ from zope.lifecycleevent import modified
 from zope.schema.vocabulary import SimpleVocabulary
 
 from nti.app.products.courseware.segments.interfaces import ENROLLED_IN
-from nti.app.products.courseware.segments.interfaces import ICourseMembershipFilterSet
 from nti.app.products.courseware.segments.interfaces import NOT_ENROLLED_IN
+
+from nti.app.products.courseware.segments.interfaces import ICourseMembershipFilterSet
 
 from nti.app.products.courseware.segments.tests import SharedConfiguringTestLayer
 
+from nti.app.products.courseware.segments.model import CourseCompletionFilterSet
 from nti.app.products.courseware.segments.model import CourseProgressFilterSet
 from nti.app.products.courseware.segments.model import CourseMembershipFilterSet
 
@@ -46,7 +50,11 @@ from nti.app.testing.decorators import WithSharedApplicationMockDS
 
 from nti.app.users.utils import set_user_creation_site
 
+from nti.contenttypes.completion.completion import CompletedItem
+
 from nti.contenttypes.completion.progress import CompletionContextProgress
+
+from nti.contenttypes.completion.tests.test_models import MockCompletableItem
 
 from nti.contenttypes.courses.interfaces import ENROLLMENT_SCOPE_VOCABULARY
 
@@ -55,6 +63,8 @@ from nti.contenttypes.courses.interfaces import ICourseCatalogEntry
 from nti.contenttypes.courses.interfaces import ICourseEnrollmentManager
 
 from nti.contenttypes.courses.sharing import CourseInstanceSharingScopes
+
+from nti.contenttypes.courses.tests import MockPrincipal
 
 from nti.dataserver.tests import mock_dataserver
 
@@ -460,6 +470,88 @@ class TestCourseProgressFilterSet(SegmentManagementTest):
 
             find_object_with_ntiid.is_callable().returns(None)
             res = self.testapp.get(zero_ge_url).json_body
+            assert_that(res['Items'], has_length(0))
+
+    def _create_completion_segment(self,
+                                   title,
+                                   operator,
+                                   entry_ntiid):
+        filter_set = CourseCompletionFilterSet(course_ntiid=entry_ntiid,
+                                               operator=operator)
+        filter_set = to_external_object(filter_set)
+        segment = self._create_segment(title,
+                                       simple_filter_set=filter_set).json_body
+        return self.require_link_href_with_rel(segment, 'members')
+
+    @WithSharedApplicationMockDS(users=('user_completion1',
+                                        'user_completion2',
+                                        'user_completion3'),
+                                 testapp=True,
+                                 default_authenticate=True)
+    @fudge.patch('nti.app.products.courseware.segments.model.CourseCompletionFilterSet._get_progress')
+    def test_completion_filter(self, mock_progress):
+        failed_completed_item = CompletedItem(Item=MockCompletableItem('ntiid'),
+                                              Principal=MockPrincipal(),
+                                              Success=False,
+                                              CompletedDate=datetime.utcnow())
+        success_completed_item = CompletedItem(Item=MockCompletableItem('ntiid'),
+                                               Principal=MockPrincipal(),
+                                               Success=True,
+                                               CompletedDate=datetime.utcnow())
+        empty_progress = CompletionContextProgress(AbsoluteProgress=0,
+                                                   MaxPossibleProgress=10,
+                                                   HasProgress=False)
+        failed_progress = CompletionContextProgress(AbsoluteProgress=5,
+                                                    MaxPossibleProgress=10,
+                                                    HasProgress=True,
+                                                    CompletedItem=failed_completed_item)
+        success_progress = CompletionContextProgress(AbsoluteProgress=10,
+                                                     MaxPossibleProgress=10,
+                                                     HasProgress=False,
+                                                     CompletedItem=success_completed_item)
+        fake_progress = mock_progress.is_callable()
+        fake_progress.returns(empty_progress)
+        fake_progress.next_call().returns(failed_progress)
+        fake_progress.next_call().returns(success_progress)
+        
+        user_progress1 = u'user_completion1'
+        user_progress2 = u'user_completion2'
+        user_progress3 = u'user_completion3'
+        
+        def _get_usernames(url):
+            res = self.testapp.get(url).json_body
+            fudge.clear_calls()
+            result = []
+            for item_ext in res['Items']:
+                result.append(item_ext['Username'])
+            return result
+        
+        # Enroll
+        self.init_users(user_progress1, user_progress2, user_progress3)
+        self._create_and_enroll(user_progress1)
+        self._create_and_enroll(user_progress2)
+        self._create_and_enroll(user_progress3)
+        
+        # Empty
+        entry_ntiid = self.get_entry_ntiid()
+        complete_url = self._create_completion_segment('complete_filter',
+                                                       'complete', entry_ntiid)
+        
+        incomplete_url = self._create_completion_segment('incomplete_filter',
+                                                         'incomplete', entry_ntiid)
+
+        usernames = _get_usernames(complete_url)
+        assert_that(usernames, contains('user_completion3'))
+        
+        usernames = _get_usernames(incomplete_url)
+        assert_that(usernames, contains('user_completion1', 'user_completion2'))
+        
+        # Ensure proper handling of courses no longer available
+        with patched('nti.app.products.courseware.segments.model.find_object_with_ntiid') \
+                as find_object_with_ntiid:
+
+            find_object_with_ntiid.is_callable().returns(None)
+            res = self.testapp.get(complete_url).json_body
             assert_that(res['Items'], has_length(0))
 
 

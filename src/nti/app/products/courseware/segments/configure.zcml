@@ -12,6 +12,7 @@
 
     <ext:registerAutoPackageIO
             root_interfaces=".interfaces.ICourseProgressFilterSet
+                             .interfaces.ICourseCompletionFilterSet
                              .interfaces.ICourseMembershipFilterSet"
             modules=".model"/>
 
