@@ -2,20 +2,68 @@
 Course Archive Format
 =====================
 
+This document describes the NextThought Course Archive (course
+archive, or more simply archive) format. An archive is a zip* file
+containing the structure and assets of the course. The archive format
+is designed to be a full representation of course content. It can be
+used to backup course content or as a custom intermediate format to
+move course content to another system.
+
+Course archives can be extracted from the NextThought LMS using the
+"Export Course" functionality.
+
+.. note:: Link to help site on how to do this.
+
+The archive contains a number of structured files in ``json`` and,
+``xml`` format (identified by the file extension and contents) as well
+as user provided assets (images, documents, pdfs, etc.).
+
+Common Object Properties
+========================
+
+Class - A type identifier for the object
+
+MimeType - An RFC-6838 MIME type identifying the type of object
+
+Creator - The creator of the object identified by their unique
+Username.
+
+CreatedTime - The created time of the object represented as the time
+in seconds since the epoch as a floating point number.
+
+Last Modified - The most recent modification time of the object represented as the time
+in seconds since the epoch as a floating point number.
+
+NTIID - A globally unique identifier for the object.
+
+OID - An internal unique identifier for the object.
+
 acclaim_badges.json
 ===================
 
-A list of completion badges associated with the course
+A list of AcclaimBadge objects that are awarded to learners upon
+successful completion of the course.
+
+Objects with a ``Class`` property of ``AcclaimBadge`` and a
+``MimeType`` of ``application/vnd.nextthought.acclaim.badge`` have
+the following interface.
+
+.. autointerface:: nti.app.products.acclaim.interfaces.IAcclaimBadge
+    :noindex:
+    :no-show-inheritance:
 
 assessment_index.json
 =====================
 
-.. note: How does this differ from the evaluation index.
+.. note:: How does this differ from the evaluation index.
 
 assests (folder)
 ================
 
 A folder of uploaded course assets
+
+.. note:: Can we link in the help site that describes the assets. This
+   is what you get when you upload an image in the course.
 
 
 assignment_policies.json
@@ -33,10 +81,14 @@ Documents (folder)
 
 Additional documents uploaded to the course
 
+.. note:: I don't have any clue why some docuemnts are here and others are in assets.
+
 Images (folder)
 ===============
 
 Additional images uploaded to the course
+
+.. note:: I don't have any clue why some images are here and others are in assets.
 
 Lessons (folder)
 ================
@@ -46,7 +98,7 @@ A folder of lesson definitions included in the course
 bundle_dc_metadata.xml
 ======================
 
-Dublin core metadata for the course
+`https://dublincore.org <Dublin Core metadata>_` for the course.
 
 bundle_meta_info.json
 =====================
@@ -56,7 +108,17 @@ Additional external content referenced by the course.
 completable_item_default_required.json
 ======================================
 
-A list of content types that this course requires by default.
+A list of content types, specified by ``MimeType`` that this course
+requires by default.
+
+.. note:: Link in the help.nextthought.com docs where this is
+          configured in the platform.
+
+.. autointerface:: nti.contenttypes.completion.interfaces.ICompletableItemDefaultRequiredPolicy
+   :no-members:
+   :members: mime_types
+	     
+
 
 completable_item_required.json
 ==============================
@@ -96,28 +158,87 @@ Any overriden tab names for the course that have been customized via the UI
 dc_metadata.xml
 ===============
 
-Dublin core metadata for the course
+`https://dublincore.org <Dublin Core metadata>_` for the course.
 
 ims_configured_tools.json
 =========================
 
 List of configured LTI tools in the course.
 
+.. autointerface:: nti.ims.lti.interfaces.IConfiguredTool
+
+.. autointerface:: nti.ims.lti.interfaces.IToolConfig
+
 
 meta_info.json
 ==============
 
-Metadata about this course export.
+A ``json`` file containing metadata about the export archive. The json
+object has the following fields.
+
+.. list-table:: Fields
+   :header-rows: 1
+
+   * - Field Name
+     - Type
+     - Description
+   * - CreatedTime
+     - String
+     - The creation time of this archive in ISO-8601 format.
+   * - Creator
+     - String
+     - The Username of the user that created the export.
+   * - ExportHash
+     - String
+     - An opaque, unique identifier for this archive
+   * - MimeType
+     - String
+     - The MimeType of the object this archive
+       represents. e.g. ``application/vnd.nextthought.courses.courseinstance``
+
+For example:
+       
+.. code:: json
+   
+   {
+	"CreatedTime": "2021-12-22T17:06:26Z",
+	"Creator": "admin1",
+	"ExportHash": "49115848444338989_1640192784.88",
+	"MimeType": "application/vnd.nextthought.courses.courseinstance"
+   }
 
 presentation-assests
 ====================
 
 The presentation assets for the course. This includes cover, thumbnail, background, etc.
 
+.. note:: Andrew, can you fill this in
+
 role_info.json
 ==============
 
-A list or course roles and the users assigned to them.
+A ``json`` file providing a mapping of course roles and the users
+assigned to them.
+
+.. note:: Provide the mapping of how these show in the UI to what ends
+          up in the role map.
+
+.. code:: json
+
+   {
+	"nti.roles.course_content_editor": {
+		"allow": [
+			"editor1",
+			"instructor1"
+		]
+	},
+	"nti.roles.course_instructor": {
+		"allow": [
+			"instructor1",
+			"grader1"
+		]
+	}
+   }
 
 
 user_assets.json
@@ -125,7 +246,21 @@ user_assets.json
 
 A list of additional assets in the course. Typically videos.
 
+.. autointerface:: nti.contenttypes.presentation.interfaces.INTIVideo
+
+
+.. autointerface:: nti.contenttypes.presentation.interfaces.INTIVideoSource
+
+		   
+.. autointerface:: nti.contenttypes.presentation.interfaces.INTITranscript
+      
+
+.. note:: Need to include documentation of the supported services, types, and sources
+
+.. note:: Document inline transcript content format
+
+		   
 vendor_info.json
 ================
 
-Additional vendor related information for the course, if applicable.
+Additional vendor related information for the course, if applicable. This file is only applicable in certain legacy courses.
