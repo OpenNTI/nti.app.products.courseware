@@ -117,7 +117,7 @@ requires by default.
 .. autointerface:: nti.contenttypes.completion.interfaces.ICompletableItemDefaultRequiredPolicy
    :no-members:
    :members: mime_types
-	     
+
 
 
 completable_item_required.json
@@ -197,9 +197,9 @@ object has the following fields.
        represents. e.g. ``application/vnd.nextthought.courses.courseinstance``
 
 For example:
-       
+
 .. code:: json
-   
+
    {
 	"CreatedTime": "2021-12-22T17:06:26Z",
 	"Creator": "admin1",
@@ -212,7 +212,27 @@ presentation-assests
 
 The presentation assets for the course. This includes cover, thumbnail, background, etc.
 
-.. note:: Andrew, can you fill this in
+.. list-table:: Presentation Assets
+	:header-rows: 1
+
+	* - File Name
+	  - Size
+	  - Description
+	* - contentpackage-thumb-60x60.png
+	  - 120px X 120px
+	  - Used in list presentation of courses
+	* - contentpackage-landing-232x170.png
+	  - 464px X 240px
+      - Used in card presentation of coursses
+    * - background.png
+      - 3000px X 2000px
+      - Used as the background image when on a course, has a guassian blur to handle
+    * - course-promo-large-16x9.png
+      - Unknown
+      - Unknown
+    * - client_image_source.png
+      - any
+      - The source image used to generate the other images
 
 role_info.json
 ==============
@@ -248,18 +268,67 @@ A list of additional assets in the course. Typically videos.
 
 .. autointerface:: nti.contenttypes.presentation.interfaces.INTIVideo
 
+.. list-table:: Video Fields
+    :header-rows: 1
+
+    * - Field
+      - Type
+      - Description
+    * - title
+      - string
+      - Name of the video
+    * - sources
+      - VideoSource[]
+      - List of possible sources for the video (typically only one)
+    * - transcripts
+      - Transcript[]
+      - List of transcripts attached to the video
 
 .. autointerface:: nti.contenttypes.presentation.interfaces.INTIVideoSource
 
-		   
+.. list-table:: Video Source Fields
+    :header-rows: 1
+
+    * - Field
+      - Type
+      - Description
+    * - service
+      - string
+      - the service hosting the video one of 'kaltura', 'vimeo', 'wistia', 'youtube'
+    * - source
+      - string
+      - the service specific id
+
+To generate the video src combine the source with the service's base URL
+Youtube = "https://www.youtube.com/{source}"
+Wistia = "https://fast.wistia.com/embed/iframe/{source}"
+Vimeo = "https://www.vimeo.com/{source}"
+Kaltura = "kaltura://{source}"
+
+
 .. autointerface:: nti.contenttypes.presentation.interfaces.INTITranscript
-      
+
+.. list-table:: Transcript
+    :header-rows: 1
+
+    * - Field
+      - Type
+      - Description
+    * - lang
+      - string
+      - The language of the transcript
+    * - purpose
+      - string
+      - The purpose of the transcript (one of 'captions', 'normal')
+    * - src (srcjsonp)
+      - string
+      - the URL of the .vtt file
 
 .. note:: Need to include documentation of the supported services, types, and sources
 
 .. note:: Document inline transcript content format
 
-		   
+
 vendor_info.json
 ================
 
