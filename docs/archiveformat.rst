@@ -300,10 +300,31 @@ A list of additional assets in the course. Typically videos.
       - the service specific id
 
 To generate the video src combine the source with the service's base URL
-Youtube = "https://www.youtube.com/{source}"
-Wistia = "https://fast.wistia.com/embed/iframe/{source}"
-Vimeo = "https://www.vimeo.com/{source}"
-Kaltura = "kaltura://{source}"
+
+.. note:: Youtube
+	:service: "youtube"
+	:base URL: "https://www.youtube.com/{source}"
+
+	For Example:
+	:source: "aqz-KE-bpKQ"
+	:video src: https://www.youtube.com/aqz-KE-bpKQ
+
+.. note:: Vimeo
+	:service: "vimeo"
+	:base URL: "https://www.vimeo.com/{source}"
+
+	For Example:
+	:source: "798022"
+	:video src: https://www.vimeo.com/798022
+
+.. note:: Wistia
+	:service: "wistia"
+	:base URL: "https://fast.wistia.com/embed/iframe/{source}"
+
+	For Example:
+	:source: s3lqfi0zn7
+	:base URL: https://fast.wistia.com/embed/iframe/s3lqfi0zn7
+
 
 
 .. autointerface:: nti.contenttypes.presentation.interfaces.INTITranscript
@@ -322,7 +343,7 @@ Kaltura = "kaltura://{source}"
       - The purpose of the transcript (one of 'captions', 'normal')
     * - src (srcjsonp)
       - string
-      - the URL of the .vtt file
+      - the URL of the .vtt file (`specification<https://www.w3.org/TR/webvtt1/>`_)
 
 .. note:: Need to include documentation of the supported services, types, and sources
 
