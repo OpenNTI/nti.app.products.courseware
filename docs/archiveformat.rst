@@ -210,7 +210,7 @@ For example:
 presentation-assests
 ====================
 
-The presentation assets for the course. This includes cover, thumbnail, background, etc.
+The presentation assets for the course. This includes cover, thumbnail, background, etc. Anything outside the `webapp` folder should be ignored.
 
 .. list-table:: Presentation Assets
 	:header-rows: 1
@@ -227,12 +227,18 @@ The presentation assets for the course. This includes cover, thumbnail, backgrou
     * - background.png
       - 3000px X 2000px
       - Used as the background image when on a course, has a guassian blur to handle
-    * - course-promo-large-16x9.png
-      - Unknown
-      - Unknown
     * - client_image_source.png
       - any
       - The source image used to generate the other images
+    * - course-promo-large-16x9.png
+      - deprecated
+      - deprecated
+	* - course-cover-232x170.png
+	  - deprecated
+	  - deprecated
+	* - contentpackage-cover-256x156
+	  - deprecated
+	  - deprecated
 
 role_info.json
 ==============
