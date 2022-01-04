@@ -215,30 +215,30 @@ The presentation assets for the course. This includes cover, thumbnail, backgrou
 .. list-table:: Presentation Assets
 	:header-rows: 1
 
-	* - File Name
-	  - Size
-	  - Description
-	* - contentpackage-thumb-60x60.png
-	  - 120px X 120px
-	  - Used in list presentation of courses
-	* - contentpackage-landing-232x170.png
-	  - 464px X 240px
-      - Used in card presentation of coursses
-    * - background.png
-      - 3000px X 2000px
-      - Used as the background image when on a course, has a guassian blur to handle
-    * - client_image_source.png
-      - any
-      - The source image used to generate the other images
-    * - course-promo-large-16x9.png
-      - deprecated
-      - deprecated
-	* - course-cover-232x170.png
-	  - deprecated
-	  - deprecated
-	* - contentpackage-cover-256x156
-	  - deprecated
-	  - deprecated
+   * - File Name
+     - Size
+     - Description
+   * - contentpackage-thumb-60x60.png
+     - 120px X 120px
+     - Used in list presentation of courses
+   * - contentpackage-landing-232x170.png
+     - 464px X 240px
+     - Used in card presentation of coursses
+   * - background.png
+     - 3000px X 2000px
+     - Used as the background image when on a course, has a guassian blur to handle
+   * - client_image_source.png
+     - any
+     - The source image used to generate the other images
+   * - course-promo-large-16x9.png
+     - deprecated
+     - deprecated
+   * - course-cover-232x170.png
+     - deprecated
+     - deprecated
+   * - contentpackage-cover-256x156
+     - deprecated
+     - deprecated
 
 role_info.json
 ==============
