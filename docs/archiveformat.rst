@@ -213,7 +213,7 @@ presentation-assests
 The presentation assets for the course. This includes cover, thumbnail, background, etc. Anything outside the `webapp` folder should be ignored.
 
 .. list-table:: Presentation Assets
-	:header-rows: 1
+   :header-rows: 1
 
    * - File Name
      - Size
