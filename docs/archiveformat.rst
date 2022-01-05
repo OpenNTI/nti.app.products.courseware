@@ -93,7 +93,72 @@ Additional images uploaded to the course
 Lessons (folder)
 ================
 
-A folder of lesson definitions included in the course
+Contains a ``json`` file for each lesson, describing the overview of the lesson.
+The ``json`` files are referenced in ``course_outline.xml`` and ``course_outline.json``, to build the full course structure.
+
+The lesson overview has the following hierarchy:
+
+::
+
+	Lesson Overview
+	└── Overview Group(s)
+		└── Lesson Asset(s)
+
+Lesson Overview
+---------------
+
+The lesson's ``json`` file will contain exactly one lesson overview object.
+
+.. list-table:: Fields
+	:header-rows: 1
+
+	* - Name
+	  - Type
+	  - Description
+	* - MimeType
+	  - string
+	  - "application/vnd.nextthought.ntilessonoverview"
+	* - title
+	  - string
+	  - The name of the lesson (should match the name of the outline node)
+	* - Items
+	  - array
+	  - An array of the overview groups in this lesson
+	* - isPublished
+	  - boolean
+	  - If the contents of the lesson are available to learners.
+	* - publishBeginning
+	  - date
+	  - When the contents of the lesson should become available to learners.
+	* - publishEnding
+	  - date
+	  - When the contents of the lesson should become unavailable to learners.
+
+Overview Group
+--------------
+
+The lesson overview's Items will be a zero or more overview groups.
+
+.. list-table:: Fields
+	:header-rows: 1
+
+	* - Name
+	  - Type
+	  - Description
+	* - MimeType
+	  - string
+	  - "application/vnd.nextthought.nticourseoverviewgroup"
+	* - title
+	  - string
+	  - The name of the overview groups
+	* - accentColor
+	  - string
+	  - A color (in `https://en.wikipedia.org/wiki/Web_colors#Hex_triplet <hex format>_`)assigned to the group to help create visual contrast.
+
+Lesson Asset
+------------
+
+The assets in a lesson
 
 bundle_dc_metadata.xml
 ======================
