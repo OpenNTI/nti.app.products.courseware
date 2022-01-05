@@ -38,6 +38,49 @@ NTIID - A globally unique identifier for the object.
 
 OID - An internal unique identifier for the object.
 
+Publication
+-----------
+
+Certain object's track publication state. While publication semantics
+may vary based on the type of object, publication state is most
+commonly used to control the visibilty of the object. Objects
+supporting publication provide the following attributes.
+
+
+.. list-table:: Fields
+   :header-rows: 1
+
+   * - Field Name
+     - Type
+     - Description
+   * - isPublished
+     - Boolean
+     - Whether or not the object is published.
+   * - publishLastModified
+     - Timestamp
+     - The timestamp at which this object updated its publication state.
+
+Additionally some objects may have publication state driven by
+calendar dates. For example this object is published at a particular
+date and time. These objects supporting calendar based publication
+provide the following *additional* attributes.
+
+.. list-table:: Fields
+   :header-rows: 1
+
+   * - Field Name
+     - Type
+     - Description
+   * - publishBeginning
+     - DateTime
+     - When present, this specifies the time instant at which this
+       object is to be available.
+   * - publishEnding
+     - DateTime
+     - When present, this specifies the last instance at which this
+       object is to be available.
+
+
 acclaim_badges.json
 ===================
 
@@ -208,12 +251,67 @@ Catalog information for the course.
 course_outline.json
 ===================
 
-A json representation of the course structure (units and lessons)
+A json representation of the course outline, lesson structure, of the
+course. The course outline is a tree structure of course outline nodes
+representing the nodes in a course. Outline nodes containing other
+nodes are sometimes referred to as ``Units``. Leaf nodes in the tree,
+``CourseOutlineContentNode`` objects point to lesson content instead
+of other nodes.
+
+.. list-table:: Fields
+   :header-rows: 1
+
+   * - Field Name
+     - Type
+     - Description
+   * - AvailableBeginning
+     -
+     -
+   * - AvailableEnding
+     -
+     -
+   * - title
+     -
+     -
+   * - Items
+     -
+     -
+
+
+Additionally ``CourseOutlineContentNode`` objects add a ``src`` field
+that references the ``LessonOverview`` json file from the ``Lessons`` folder.
+
+.. list-table:: Fields
+   :header-rows: 1
+
+   * - Field Name
+     - Type
+     - Description
+   * - src
+     -
+     -
+
+
+.. note:: In practice the CourseOutline is typically 2 levels, the
+          first level maps to ``Units`` and the second level maps to
+          ``Lessons``. Some legacy courses may have ``CourseOutlineNode``
+          objects that nest more than 2 levels.
+
+Course Outline Node Publication
+-------------------------------
+
+The publication properties on course outline nodes drive the
+visibility of those outline nodes to learners. Only published
+outline nodes are visible in the Course's lesson structure for learners. All nodes are visible to instructors and editors when in editing mode.
 
 course_outline.xml
 ==================
 
-An xml representation of the course structure (units and lessons)
+.. warning:: This file is deprecated and replaced by `course_outline.json`_.
+
+An xml representation of the course structure (units and
+lessons). This is a legacy format. In general we recommend using the
+`course_outline.json`_ representation as it is more verbose.
 
 course_tab_preferences.json
 ===========================
