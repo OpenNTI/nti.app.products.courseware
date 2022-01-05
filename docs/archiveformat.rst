@@ -297,6 +297,9 @@ A list of additional assets in the course. Typically videos.
     * - Field
       - Type
       - Description
+	* - MimeType
+	  - string
+	  - "application/vnd.nextthought.ntivideo"
     * - title
       - string
       - Name of the video
