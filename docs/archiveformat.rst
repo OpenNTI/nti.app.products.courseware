@@ -153,7 +153,24 @@ An xml representation of the course structure (units and lessons)
 course_tab_preferences.json
 ===========================
 
-Any overriden tab names for the course that have been customized via the UI
+A ``json`` file containing overrides to the course's tab names.
+There is only a ``names`` key which maps the tab name to the display name.
+
+.. note:: Enterprise site may have global overrides not accounted for here
+
+.. list-table:: Tabs
+	:header-rows: 1
+
+	* - Name
+	  - Default display
+	* - lessons
+	  - Lessons
+	* - assignments
+	  - Assignments
+	* - discussions
+	  - Community
+	* - info
+	  - Course info
 
 dc_metadata.xml
 ===============
@@ -308,32 +325,32 @@ A list of additional assets in the course. Typically videos.
 To generate the video src combine the source with the service's base URL
 
 .. note:: Youtube
-	  
+
 	:service: "youtube"
 	:base URL: "https://www.youtube.com/{source}"
 
 	For Example:
-	
+
 	:source: "aqz-KE-bpKQ"
 	:video src: https://www.youtube.com/aqz-KE-bpKQ
 
 .. note:: Vimeo
-	  
+
 	:service: "vimeo"
 	:base URL: "https://www.vimeo.com/{source}"
 
 	For Example:
-	
+
 	:source: "798022"
 	:video src: https://www.vimeo.com/798022
 
 .. note:: Wistia
-	  
+
 	:service: "wistia"
 	:base URL: "https://fast.wistia.com/embed/iframe/{source}"
 
 	For Example:
-	
+
 	:source: s3lqfi0zn7
 	:base URL: https://fast.wistia.com/embed/iframe/s3lqfi0zn7
 
