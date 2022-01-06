@@ -95,7 +95,7 @@ the following interface.
 .. autointerface:: nti.app.products.acclaim.interfaces.IAcclaimBadge
     :noindex:
     :no-show-inheritance:
-	
+
 ..warning: Needs more detail, including listing the attributes kept for each badge (eg, name, organization_id, state, visibility)
 
 assessment_index.json
@@ -209,7 +209,67 @@ The lesson overview's Items will be a zero or more overview groups.
 Lesson Asset
 ------------
 
-The assets in a lesson
+The overview group's Items will be zero or more lesson assets.
+
+Lesson assets are broken into two categories references and assets.
+References point to other assets in the course.
+
+Assessment Reference
+````````````````````
+
+:MimeType: "application/vnd.nextthought.questionsetref"
+:Target-NTIID: Points to a QuestionSet in the ``evaluation_index.json``
+
+Assignment Reference
+````````````````````
+
+:MimeType: "application/vnd.nextthought.assignmentref"
+:Target-NTIID: Points to an Assignment in the ``evaluation_index.json``
+
+
+Discussion Reference
+````````````````````
+
+:MimeType: "application/vnd.nextthought.discussionref"
+:Target-NTIID: Points to a Discussion in one of the ``json`` files in the ``Discussions`` folder.
+
+Related Work Reference
+``````````````````````
+
+Point to either a reading in the course, an uploaded document, or an external URL.
+
+Readings can be found in ``content_packages.json``
+Documents can be round in the ``Documents`` folder
+
+:MimeType: "application/vnd.nextthought.relatedworkref"
+:targetMimeType: Tells type of content the ref points to. Either "application/vnd.nextthought.content", "application/vnd.nextthought.externallink", or the MimeType of the document it points to.
+:href: Either the external URL, or internal NTIID pointing to the resource.
+
+SCORM Content Reference
+```````````````````````
+
+:MimeType: "application/vnd.nextthought.scormcontentref"
+:Target-NTIID: Points to a folder in the ``ScormContent`` folder.
+
+Survey Reference
+````````````````
+
+:MimeType: "application/vnd.nextthought.surveyref"
+:Target-NTIID: Points to a Survey in the ``evaluation_index.json``
+
+LTI Tool Asset
+``````````````
+
+Video Asset
+```````````
+
+Webinar Asset
+`````````````
+
+
+
+
+
 
 bundle_dc_metadata.xml
 ======================
@@ -348,7 +408,7 @@ There is only a ``names`` key which maps the tab name to the display name.
 	  - Community
 	* - info
 	  - Course info
-	  
+
 ..warning: Should we also mention the ``order`` list that (I presume) sets the order in which the tabs are listed?
 
 dc_metadata.xml
