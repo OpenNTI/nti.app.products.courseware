@@ -2,11 +2,11 @@
 Course Archive Format
 =====================
 
-This document describes the NextThought Course Archive (course
-archive, or more simply archive) format. An archive is a zip* file
+This document describes the NextThought Course Archive ("course
+archives", or more simply, "archive") format. An archive is a zip* file
 containing the structure and assets of the course. The archive format
 is designed to be a full representation of course content. It can be
-used to backup course content or as a custom intermediate format to
+used to back up course content or as a custom intermediate format to
 move course content to another system.
 
 Course archives can be extracted from the NextThought LMS using the
@@ -16,7 +16,7 @@ Course archives can be extracted from the NextThought LMS using the
 
 The archive contains a number of structured files in ``json`` and,
 ``xml`` format (identified by the file extension and contents) as well
-as user provided assets (images, documents, pdfs, etc.).
+as folders containing user-provided assets (where those assets are images, documents, pdfs, etc.).
 
 Common Object Properties
 ========================
@@ -28,15 +28,15 @@ MimeType - An RFC-6838 MIME type identifying the type of object
 Creator - The creator of the object identified by their unique
 Username.
 
-CreatedTime - The created time of the object represented as the time
-in seconds since the epoch as a floating point number.
+CreatedTime - The time the object was created, represented as the time
+in seconds since the epoch (a floating point number)
 
-Last Modified - The most recent modification time of the object represented as the time
-in seconds since the epoch as a floating point number.
+Last Modified - The most recent modification time of the object, represented as the time
+in seconds since the epoch (a floating point number)
 
-NTIID - A globally unique identifier for the object.
+NTIID - A global, unique identifier for the object
 
-OID - An internal unique identifier for the object.
+OID - An internal, unique identifier for the object
 
 Publication
 -----------
@@ -85,7 +85,7 @@ acclaim_badges.json
 ===================
 
 A list of AcclaimBadge objects that are awarded to learners upon
-successful completion of the course.
+successful completion of the course
 
 Objects with a ``Class`` property of ``AcclaimBadge`` and a
 ``MimeType`` of ``application/vnd.nextthought.acclaim.badge`` have
@@ -94,16 +94,18 @@ the following interface.
 .. autointerface:: nti.app.products.acclaim.interfaces.IAcclaimBadge
     :noindex:
     :no-show-inheritance:
+	
+..warning: Needs more detail, including listing the attributes kept for each badge (eg, name, organization_id, state, visibility)
 
 assessment_index.json
 =====================
 
-.. note:: How does this differ from the evaluation index.
+.. note:: How does this differ from the evaluation index. (SMH: I have yet to find a course with one of these files, so once we do, can update this section.)
 
 assests (folder)
 ================
 
-A folder of uploaded course assets
+A folder of uploaded course assets that are used within lessons and readings
 
 .. note:: Can we link in the help site that describes the assets. This
    is what you get when you upload an image in the course.
@@ -112,26 +114,31 @@ A folder of uploaded course assets
 assignment_policies.json
 ========================
 
-Assignment policy overrides in place for this course. These values are merged on top of assignment objects to provide course specific policies.
+Assignment policy overrides in place for this course
+These values are merged on top of assignment objects to provide course-specific policies.
+
+..warning: Needs more detail, especially in clarifying meaning of the second line. Might be helpful to include an example translation from a block of json file representing one assignment to its meaning for the course.
 
 evaluation_index.json
 =====================
 
-An index of all assignment, survey, question sets, questions, and polls in the course.
+An index of all assignments, surveys, question sets, questions, and polls in the course
+
+..warning: Needs more detail, including listing the attributes kept in that index for each assignment, poll, etc. (the Class, CreatedTime, Creator, etc.)
 
 Documents (folder)
 ==================
 
 Additional documents uploaded to the course
 
-.. note:: I don't have any clue why some docuemnts are here and others are in assets.
+.. note:: I don't have any clue why some documents are here and others are in assets. (SMH: the definition above has been modified according to my theory of why these are divided; I believe it turns on whether a file is within, or itself, a lesson.)
 
 Images (folder)
 ===============
 
 Additional images uploaded to the course
 
-.. note:: I don't have any clue why some images are here and others are in assets.
+.. note:: I don't have any clue why some images are here and others are in assets. (SMH: again, this definition now reflects my theory.)
 
 Lessons (folder)
 ================
@@ -231,22 +238,28 @@ requires by default.
 completable_item_required.json
 ==============================
 
-A list of required/optional overrides for content in the course.
+A list of required/optional overrides for content in the course
+
+..warning: Needs more detail; not sure what the contents of this document indicate. Perhaps we should add an example for the user and a translation?
 
 completion_policies.json
 ========================
 
-The aggregate completion policy for the course.
+The aggregate completion policy for the course
 
 content_packages.json
 =====================
 
-A list of ContentPackage objects referenced in the course. Contents are gzip, base 64, ReSTructured text.
+A list of ContentPackage objects referenced in the course. Contents are gzip, base 64, ReSTructured text files.
+
+..warning: Needs more detail
 
 course_info.json
 ================
 
-Catalog information for the course.
+Catalog information for the course
+
+..warning: Needs more detail.
 
 course_outline.json
 ===================
@@ -316,7 +329,7 @@ lessons). This is a legacy format. In general we recommend using the
 course_tab_preferences.json
 ===========================
 
-A ``json`` file containing overrides to the course's tab names.
+A ``json`` file containing overrides to the course's default tab names (as displayed on the Course page)
 There is only a ``names`` key which maps the tab name to the display name.
 
 .. note:: Enterprise site may have global overrides not accounted for here
@@ -334,27 +347,32 @@ There is only a ``names`` key which maps the tab name to the display name.
 	  - Community
 	* - info
 	  - Course info
+	  
+..warning: Should we also mention the ``order`` list that (I presume) sets the order in which the tabs are listed?
 
 dc_metadata.xml
 ===============
 
 `https://dublincore.org <Dublin Core metadata>_` for the course.
 
+..warning: Needs more detail; see the above warning for the bundle_dc_metadata.xml file.
+
 ims_configured_tools.json
 =========================
 
-List of configured LTI tools in the course.
+List of configured LTI tools in the course
 
 .. autointerface:: nti.ims.lti.interfaces.IConfiguredTool
 
 .. autointerface:: nti.ims.lti.interfaces.IToolConfig
 
+..warning: Needs more detail
 
 meta_info.json
 ==============
 
-A ``json`` file containing metadata about the export archive. The json
-object has the following fields.
+A ``json`` file containing metadata about the export archive.
+The json object has the following fields::
 
 .. list-table:: Fields
    :header-rows: 1
@@ -364,10 +382,10 @@ object has the following fields.
      - Description
    * - CreatedTime
      - String
-     - The creation time of this archive in ISO-8601 format.
+     - The creation time of this archive in ISO-8601 format
    * - Creator
      - String
-     - The Username of the user that created the export.
+     - The Username of the user that created the export
    * - ExportHash
      - String
      - An opaque, unique identifier for this archive
@@ -387,10 +405,10 @@ For example:
 	"MimeType": "application/vnd.nextthought.courses.courseinstance"
    }
 
-presentation-assests
-====================
+presentation-assests (folder)
+=============================
 
-The presentation assets for the course. This includes cover, thumbnail, background, etc. Anything outside the `webapp` folder should be ignored.
+The presentation assets for the course. This includes cover, thumbnail, background, etc. Anything outside the `webapp` folder (which is found within presentation-assets) should be ignored.
 
 .. list-table:: Presentation Assets
    :header-rows: 1
@@ -411,14 +429,16 @@ The presentation assets for the course. This includes cover, thumbnail, backgrou
      - any
      - The source image used to generate the other images
    * - course-promo-large-16x9.png
-     - deprecated
-     - deprecated
+     - Deprecated
+     - Deprecated
    * - course-cover-232x170.png
-     - deprecated
-     - deprecated
+     - Deprecated
+     - Deprecated
    * - contentpackage-cover-256x156
-     - deprecated
-     - deprecated
+     - Deprecated
+     - Deprecated
+
+..warning: I'm not sure what it implies, but I found these allegedly deprecated images within the webapp folder.
 
 role_info.json
 ==============
@@ -450,7 +470,7 @@ assigned to them.
 user_assets.json
 ================
 
-A list of additional assets in the course. Typically videos.
+A list of additional assets in the course, typically videos
 
 .. autointerface:: nti.contenttypes.presentation.interfaces.INTIVideo
 
@@ -483,12 +503,12 @@ A list of additional assets in the course. Typically videos.
       - Description
     * - service
       - string
-      - the service hosting the video one of 'kaltura', 'vimeo', 'wistia', 'youtube'
+      - The service hosting the video; either 'kaltura,' 'vimeo,' 'wistia,' or 'youtube'
     * - source
       - string
-      - the service specific id
+      - The service-specific ID
 
-To generate the video src combine the source with the service's base URL
+To generate the video src, combine the source with the service's base URL
 
 .. note:: Youtube
 
@@ -535,7 +555,7 @@ To generate the video src combine the source with the service's base URL
       - The language of the transcript
     * - purpose
       - string
-      - The purpose of the transcript (one of 'captions', 'normal')
+      - The purpose of the transcript (either 'captions' or 'normal')
     * - src (srcjsonp)
       - string
       - the URL of the .vtt file (`specification<https://www.w3.org/TR/webvtt1/>`_)
@@ -548,4 +568,7 @@ To generate the video src combine the source with the service's base URL
 vendor_info.json
 ================
 
-Additional vendor related information for the course, if applicable. This file is only applicable in certain legacy courses.
+Additional vendor-related information for the course, if applicable (only applicable in certain legacy courses)
+..warning: Needs more detail
+
+..warning: Need to add an entry for ScormContent folder, which appears in some exports.
