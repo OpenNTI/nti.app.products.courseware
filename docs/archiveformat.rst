@@ -569,6 +569,44 @@ vendor_info.json
 ================
 
 Additional vendor-related information for the course, if applicable (only applicable in certain legacy courses)
-..warning: Needs more detail
 
-..warning: Need to add an entry for ScormContent folder, which appears in some exports.
+.. warning:: Needs more detail
+
+ScormContent (folder)
+=====================
+
+The SCORM content files uploaded as part of this course. The folder
+contains a unique folder for each SCORM package in the course
+containing metadata about the package and the original SCORM content package itself.
+
+::
+
+	ScormContent
+	└── tag_nextthought.com_2011-10_NTI-ScormContentInfo-1BC4CCEA431F1E6166205A94AC39402C174C67AF4E1CBEEB692E501C5D17F8AF_0087
+		└── scorm_content.json
+		└── myscorm_package.zip
+
+The metadata for this scorm package is found in the
+``scorm_content.json`` file and has the following structure.
+
+.. list-table:: scorm_content.json
+    :header-rows: 1
+
+    * - Field
+      - Type
+      - Description
+    * - NTIID
+      - string
+      - The unique identifier for this scorm package.
+    * - ScormArchiveFilename
+      - string
+      - The filename of the SCORM content file.
+
+For example:
+
+.. code:: json
+	  
+	  {
+	  "NTIID": "tag:nextthought.com,2011-10:NTI-ScormContentInfo-1BC4CCEA431F1E6166205A94AC39402C174C67AF4E1CBEEB692E501C5D17F8AF_0087",
+	  "ScormArchiveFilename": "myscorm_package.zip"
+	  }
