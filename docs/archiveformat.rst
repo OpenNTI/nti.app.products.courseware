@@ -65,6 +65,7 @@ calendar dates. For example this object is published at a particular
 date and time. These objects supporting calendar based publication
 provide the following *additional* attributes.
 
+
 .. list-table:: Fields
    :header-rows: 1
 
@@ -366,13 +367,12 @@ List of configured LTI tools in the course
 
 .. autointerface:: nti.ims.lti.interfaces.IToolConfig
 
-..warning: Needs more detail
 
 meta_info.json
 ==============
 
 A ``json`` file containing metadata about the export archive.
-The json object has the following fields::
+The json object has the following fields:
 
 .. list-table:: Fields
    :header-rows: 1
@@ -438,8 +438,6 @@ The presentation assets for the course. This includes cover, thumbnail, backgrou
      - Deprecated
      - Deprecated
 
-..warning: I'm not sure what it implies, but I found these allegedly deprecated images within the webapp folder.
-
 role_info.json
 ==============
 
@@ -480,9 +478,9 @@ A list of additional assets in the course, typically videos
     * - Field
       - Type
       - Description
-	* - MimeType
-	  - string
-	  - "application/vnd.nextthought.ntivideo"
+    * - MimeType
+      - string
+      - "application/vnd.nextthought.ntivideo"
     * - title
       - string
       - Name of the video
@@ -558,7 +556,7 @@ To generate the video src, combine the source with the service's base URL
       - The purpose of the transcript (either 'captions' or 'normal')
     * - src (srcjsonp)
       - string
-      - the URL of the .vtt file (`specification<https://www.w3.org/TR/webvtt1/>`_)
+      - the URL of the .vtt file (`specification <https://www.w3.org/TR/webvtt1/>`_)
 
 .. note:: Need to include documentation of the supported services, types, and sources
 
