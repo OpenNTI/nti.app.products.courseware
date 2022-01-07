@@ -117,9 +117,109 @@ These values are merged on top of assignment objects to provide course-specific 
 evaluation_index.json
 =====================
 
-An index of all assignments, surveys, question sets, questions, and polls in the course
+Lists all the evaluation items in the course. The ``Items`` array contains zero or more of the following:
 
-..warning: Needs more detail, including listing the attributes kept in that index for each assignment, poll, etc. (the Class, CreatedTime, Creator, etc.)
+Question
+--------
+
+.. list-table:: Fields
+	:header-rows: 1
+
+	* - Name
+	  - Type
+	  - Description
+	* - MimeType
+	  - string
+	  - "application/vnd.nextthought.naquestion", "application/vnd.nextthought.question"
+	* - content
+	  - string
+	  - The prompt for the question (May contain HTML).
+	* - parts
+	  - array
+	  - the list of inputs,limited to 1 input per question.
+
+
+Poll
+----
+
+Have the same fields as questions. Polls aggregate the response of every learner, rather than test one learner.
+
+
+.. list-table:: Fields
+	:header-rows: 1
+
+	* - Name
+	  - Type
+	  - Description
+	* - MimeType
+	  - string
+	  - "application/vnd.nextthought.napoll"
+
+Question Set
+------------
+
+A collection of questions, used for learners to self test their own knowledge.
+
+.. list-table:: Fields
+	:header-rows: 1
+
+	* - Name
+	  - Type
+	  - Description
+	* - MimeType
+	  - string
+	  - "application/vnd.nextthought.questionset"
+	* - questions
+	  - array
+	  - the list of questions in the question set
+
+Survey
+------
+
+A collection of polls, used to aggregate results from all learners.
+Has the same fields as a question set plus:
+
+.. list-table:: Fields
+	:header-rows: 1
+
+	* - Name
+	  - Type
+	  - Description
+	* - MimeType
+	  - string
+	  - "application/vnd.nextthought.nasurvey"
+	* - title
+	  - string
+	  - The name of the survey
+	* - description
+	  - string
+	  - Summary of the purpose of the survey
+	* - contents
+	  - string
+	  - An optional RST string providing rich content to the survey, with ``napollref`` directives indicating the location of the polls found in the ``questions``property.
+
+
+Assignment
+----------
+
+A wrapper around a question set, provides a score contributing to the learner's course grade.
+
+.. list-table:: Fields
+	:header-rows: 1
+
+	* - Name
+	  - Type
+	  - Description
+	* - MimeType
+	  - string
+	  - "application/vnd.nextthought.assessment.assignment"
+	* - total_points
+	  - number
+	  - how many points the assignment is worth
+	* - parts
+	  - array
+	  - a list of assignment parts containing the question sets
+
 
 Documents (folder)
 ==================
@@ -809,7 +909,7 @@ The metadata for this scorm package is found in the
 For example:
 
 .. code:: json
-	  
+
 	  {
 	  "NTIID": "tag:nextthought.com,2011-10:NTI-ScormContentInfo-1BC4CCEA431F1E6166205A94AC39402C174C67AF4E1CBEEB692E501C5D17F8AF_0087",
 	  "ScormArchiveFilename": "myscorm_package.zip"
