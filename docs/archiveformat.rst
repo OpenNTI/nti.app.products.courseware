@@ -97,10 +97,10 @@ assessment_index.json
 
 This file is deprecated in favor of :ref:`evaluation_index.json`.
 
-assests (folder)
-================
+assets (folder)
+==============
 
-A folder of uploaded course assets that are used within lessons and readings
+A folder of user-uploaded assets that are used within lessons and readings. This folder is exposed to course admins, and may contain subdirectories or unused assets.
 
 .. note:: Can we link in the help site that describes the assets. This
    is what you get when you upload an image in the course.
@@ -224,16 +224,12 @@ A wrapper around a question set, provides a score contributing to the learner's 
 Documents (folder)
 ==================
 
-Additional documents uploaded to the course
-
-.. note:: I don't have any clue why some documents are here and others are in assets. (SMH: the definition above has been modified according to my theory of why these are divided; I believe it turns on whether a file is within, or itself, a lesson.)
+The default folder for storing user-uploaded documents used as lesson content. This folder is exposed to course admins. It may contain other documents, and some documents may have been moved to other directories. 
 
 Images (folder)
 ===============
 
-Additional images uploaded to the course
-
-.. note:: I don't have any clue why some images are here and others are in assets. (SMH: again, this definition now reflects my theory.)
+The default folder for storing user-uploaded images used as cover images for lesson content. This folder is exposed to the user. It may contain other documents, and some images may have been moved to other directories. 
 
 Lessons (folder)
 ================
