@@ -294,7 +294,7 @@ requires by default.
    :no-members:
    :members: mime_types
 
-
+.. warning:: Need to add table of possible mimetype values and their display names in the UI
 
 completable_item_required.json
 ==============================
@@ -318,9 +318,132 @@ A list of ContentPackage objects referenced in the course. Contents are gzip, ba
 course_info.json
 ================
 
-Catalog information for the course
+Metadata and presentation information used to represent this course in
+the course catalog.
 
-..warning: Needs more detail.
+.. list-table:: Fields
+	:header-rows: 1
+
+	* - Name
+	  - Type
+	  - Description
+	* - additionalProperties
+	  - Deprecated
+	  - Deprecated
+	* - awardableCredits
+	  - CourseAwardableCredit[]
+	  - Credit that will be awarded to a user's transcript on successful completion.
+	* - credit
+	  - Deprecated
+	  - Deprecated
+	* - description
+	  - String
+	  - An optional plain text description of the course.
+	* - duration
+	  - Deprecated
+	  - Deprecated
+	* - endDate
+	  - String
+	  - The anticipated datetime this course will end in ISO-8601 timestamp format.
+	* - id
+	  - String
+	  - The course identifier given to this course.
+	* - instructors
+	  - Instructor[]
+	  - The published instructors for this course.
+	* - isPreview
+	  - Bool
+	  - When true, this course is not avaialble to learners.
+	* - is_anonymously_but_not_publicly_accessible
+	  - Deprecated
+	  - Deprecated
+	* - is_non_public
+	  - Bool
+	  - When true, the course is not listed in the catalog for enrollment.
+	* - prerequisites
+	  - Deprecated
+	  - Deprecated
+	* - richDescription
+	  - String
+	  - An optional rich text (html) description of the course.
+	* - schedule
+	  - Deprecated
+	  - Deprecated
+	* - school
+	  - Deprecated
+	  - Deprecated
+	* - startDate
+	  - String
+	  - The anticipated datetime this course will begin in ISO-8601 timestamp format.
+	* - tags
+	  - String[]
+	  - A list of tags associated with this course.
+	* - title
+	  - String
+	  - The title for this course.
+	* - video
+	  - URL
+	  - The embed url of this course's promotional video.
+
+CourseAwardableCredit
+---------------------
+
+``CourseAwardableCredit`` defines the type and amount of credit a user
+will be awarded upon succesfull completion of the course.
+
+.. list-table:: Interesting Fields
+	:header-rows: 1
+
+	* - Name
+	  - Type
+	  - Description
+	* - amount
+	  - Number
+	  - The amount of credit to be awarded.
+	* - credit_definition
+	  - CreditDefinition
+	  - The type of credit to be awarded including type, units, and precision.
+
+Instructor
+----------
+
+The ``instructors`` field defines the set of instructors that show up
+when viewing course information in the catalog. These instructors are
+distinct from users actually granted elevated permissions in the
+course (see role_info.json).
+
+.. list-table:: Fields
+	:header-rows: 1
+
+	* - Name
+	  - Type
+	  - Description
+	* - biography
+	  - Deprecated
+	  - Deprecated
+	* - email
+	  - String
+	  - The public email for the instructor.
+	* - jobTitle
+	  - String
+	  - The instructors job title. For example: Chief Training Officer
+	* - name
+	  - String
+	  - The display name for this instructor.
+	* - suffix
+	  - String
+	  - The isntructors suffix. For example: PhD.
+	* - title
+	  - Deprecated
+	  - Deprecated
+	* - userid
+	  - Deprecated
+	  - Deprecated
+	* - username
+	  - String
+	  - The optional NextThought username for the user this
+            instructor item is associated with.
+
 
 course_outline.json
 ===================
@@ -371,12 +494,15 @@ that references the ``LessonOverview`` json file from the ``Lessons`` folder.
           ``Lessons``. Some legacy courses may have ``CourseOutlineNode``
           objects that nest more than 2 levels.
 
+.. warning:: This section is incomplete
+
 Course Outline Node Publication
 -------------------------------
 
 The publication properties on course outline nodes drive the
-visibility of those outline nodes to learners. Only published
-outline nodes are visible in the Course's lesson structure for learners. All nodes are visible to instructors and editors when in editing mode.
+visibility of those outline nodes to learners. Only published outline
+nodes are visible in the Course's lesson structure for learners. All
+nodes are visible to instructors and editors when in editing mode.
 
 course_outline.xml
 ==================
@@ -409,14 +535,15 @@ There is only a ``names`` key which maps the tab name to the display name.
 	* - info
 	  - Course info
 
-..warning: Should we also mention the ``order`` list that (I presume) sets the order in which the tabs are listed?
+.. warning:: Should we also mention the ``order`` list that (I
+             presume) sets the order in which the tabs are listed?
 
 dc_metadata.xml
 ===============
 
 `https://dublincore.org <Dublin Core metadata>_` for the course.
 
-..warning: Needs more detail; see the above warning for the bundle_dc_metadata.xml file.
+.. warning:: Needs more detail; see the above warning for the bundle_dc_metadata.xml file.
 
 ims_configured_tools.json
 =========================
@@ -451,8 +578,7 @@ The json object has the following fields:
      - An opaque, unique identifier for this archive
    * - MimeType
      - String
-     - The MimeType of the object this archive
-       represents. e.g. ``application/vnd.nextthought.courses.courseinstance``
+     - ``application/vnd.nextthought.courses.courseinstance``
 
 For example:
 
@@ -626,9 +752,8 @@ To generate the video src, combine the source with the service's base URL
 vendor_info.json
 ================
 
-Additional vendor-related information for the course, if applicable (only applicable in certain legacy courses)
-
-.. warning:: Needs more detail
+Additional custom vendor information specific to the NextThought
+Platform. This data structure is deprecated.
 
 ScormContent (folder)
 =====================
