@@ -85,23 +85,17 @@ provide the following *additional* attributes.
 acclaim_badges.json
 ===================
 
-A list of AcclaimBadge objects that are awarded to learners upon
-successful completion of the course
+A list of ``AcclaimBadge`` objects that are awarded to learners upon
+successful completion of the course. These objects model
+``BadgeTemplates`` linked via the Credly/Acclaim integration.
 
-Objects with a ``Class`` property of ``AcclaimBadge`` and a
-``MimeType`` of ``application/vnd.nextthought.acclaim.badge`` have
-the following interface.
-
-.. autointerface:: nti.app.products.acclaim.interfaces.IAcclaimBadge
-    :noindex:
-    :no-show-inheritance:
-
-..warning: Needs more detail, including listing the attributes kept for each badge (eg, name, organization_id, state, visibility)
+See `credly documentation
+<https://www.credly.com/docs/badge_templates>`_ for more information.
 
 assessment_index.json
 =====================
 
-.. note:: How does this differ from the evaluation index. (SMH: I have yet to find a course with one of these files, so once we do, can update this section.)
+This file is deprecated in favor of :ref:`evaluation_index.json`.
 
 assests (folder)
 ================
@@ -118,7 +112,7 @@ assignment_policies.json
 Assignment policy overrides in place for this course
 These values are merged on top of assignment objects to provide course-specific policies.
 
-..warning: Needs more detail, especially in clarifying meaning of the second line. Might be helpful to include an example translation from a block of json file representing one assignment to its meaning for the course.
+.. warning:: Needs more detail, especially in clarifying meaning of the second line. Might be helpful to include an example translation from a block of json file representing one assignment to its meaning for the course.
 
 evaluation_index.json
 =====================
@@ -204,7 +198,9 @@ The lesson overview's Items will be a zero or more overview groups.
 	  - The name of the overview groups
 	* - accentColor
 	  - string
-	  - A color (in `https://en.wikipedia.org/wiki/Web_colors#Hex_triplet <hex format>_`)assigned to the group to help create visual contrast.
+	  - A color (in `hex format
+            <https://en.wikipedia.org/wiki/Web_colors#Hex_triplet>`_)assigned
+            to the group to help create visual contrast.
 
 Lesson Asset
 ------------
@@ -290,23 +286,48 @@ requires by default.
 .. note:: Link in the help.nextthought.com docs where this is
           configured in the platform.
 
-.. autointerface:: nti.contenttypes.completion.interfaces.ICompletableItemDefaultRequiredPolicy
-   :no-members:
-   :members: mime_types
-
-.. warning:: Need to add table of possible mimetype values and their display names in the UI
 
 completable_item_required.json
 ==============================
 
-A list of required/optional overrides for content in the course
+A list of required/optional overrides for content in the
+course. 
 
-..warning: Needs more detail; not sure what the contents of this document indicate. Perhaps we should add an example for the user and a translation?
+.. list-table:: Interesting Fields
+	:header-rows: 1
+
+	* - Name
+	  - Type
+	  - Description
+	* - optional
+	  - String[]
+	  - List of NTIIDs for course objects that are explicitly marked as optional.
+	* - required
+	  - String[]
+	  - List of NTIIDs for course objects that are explicitly marked as required.
+
 
 completion_policies.json
 ========================
 
-The aggregate completion policy for the course
+The aggregate completion policy for the course. The ``context_policy``
+field is an ``AggregateCompletionPolicy`` modeling the aggregate completion requirement for
+the course as well as whether or not a certificate is awarded on completion.
+
+.. list-table:: AggregateCompletionPolicy
+	:header-rows: 1
+
+	* - Name
+	  - Type
+	  - Description
+	* - percentage
+	  - Number
+	  - The percentage of required items a learner must
+            *succesfully* complete to complete the course.
+	* - offers_completion_certificate
+	  - Bool
+	  - If true, when successfully completed learners are awarded
+            a certificate.
 
 content_packages.json
 =====================
