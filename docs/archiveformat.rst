@@ -10,9 +10,7 @@ used to back up course content or as a custom intermediate format to
 move course content to another system.
 
 Course archives can be extracted from the NextThought LMS using the
-"Export Course" functionality.
-
-.. note:: Link to help site on how to do this.
+`"Export Course" <https://help.nextthought.com/hc/en-us/articles/4415136825108>`_ functionality.
 
 The archive contains a number of structured files in ``json`` and,
 ``xml`` format (identified by the file extension and contents) as well
@@ -102,10 +100,6 @@ assets (folder)
 
 A folder of user-uploaded assets that are used within lessons and readings. This folder is exposed to course admins, and may contain subdirectories or unused assets.
 
-.. note:: Can we link in the help site that describes the assets. This
-   is what you get when you upload an image in the course.
-
-
 assignment_policies.json
 ========================
 
@@ -114,6 +108,8 @@ These values are merged on top of assignment objects to provide course-specific 
 
 .. warning:: Needs more detail, especially in clarifying meaning of the second line. Might be helpful to include an example translation from a block of json file representing one assignment to its meaning for the course.
 
+.. _evaluation_index.json:
+	     
 evaluation_index.json
 =====================
 
@@ -219,7 +215,6 @@ A wrapper around a question set, provides a score contributing to the learner's 
 	* - parts
 	  - array
 	  - a list of assignment parts containing the question sets
-
 
 Documents (folder)
 ==================
