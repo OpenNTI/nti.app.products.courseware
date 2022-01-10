@@ -96,7 +96,7 @@ assessment_index.json
 This file is deprecated in favor of :ref:`evaluation_index.json`.
 
 assets (folder)
-==============
+===============
 
 A folder of user-uploaded assets that are used within lessons and readings. This folder is exposed to course admins, and may contain subdirectories or unused assets.
 
@@ -768,8 +768,6 @@ user_assets.json
 
 A list of additional assets in the course, typically videos
 
-.. autointerface:: nti.contenttypes.presentation.interfaces.INTIVideo
-
 .. list-table:: Video Fields
     :header-rows: 1
 
@@ -788,8 +786,6 @@ A list of additional assets in the course, typically videos
     * - transcripts
       - Transcript[]
       - List of transcripts attached to the video
-
-.. autointerface:: nti.contenttypes.presentation.interfaces.INTIVideoSource
 
 .. list-table:: Video Source Fields
     :header-rows: 1
@@ -836,9 +832,6 @@ To generate the video src, combine the source with the service's base URL
 	:source: s3lqfi0zn7
 	:base URL: https://fast.wistia.com/embed/iframe/s3lqfi0zn7
 
-
-
-.. autointerface:: nti.contenttypes.presentation.interfaces.INTITranscript
 
 .. list-table:: Transcript
     :header-rows: 1
