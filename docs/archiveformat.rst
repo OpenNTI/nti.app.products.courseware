@@ -417,12 +417,27 @@ Survey Reference
 LTI Tool Asset
 ``````````````
 
+:MimeType: "application/vnd.nextthought.ims.consumer.configuredtool"
+:title: Name of the tool
+:description: Summary of the tool
+:launch_url: the URL to launch the LTI tool
+
 Video Asset
 ```````````
+
+A :ref:`Video Object`
 
 Webinar Asset
 `````````````
 
+A reference to a `Goto Webinar <https://www.goto.com/webinar>`_ webinar.
+
+:MimeType: "application/vnd.nextthought.webinar"
+:description: summary of the webinar
+:Links: an array of link object, one will have a rel of ``JoinWebinar`` that href will launch the webinar
+:webinarID: the id of the webinar
+:webinarKey: the GotoWebinar key
+:organizerKey: the GotoWebinar account
 
 
 
@@ -940,6 +955,8 @@ user_assets.json
 ================
 
 A list of additional assets in the course, typically videos
+
+.. _Video Object:
 
 .. list-table:: Video Fields
     :header-rows: 1
