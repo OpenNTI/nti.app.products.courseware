@@ -1064,14 +1064,14 @@ To generate the video src, combine the source with the service's base URL
     * - purpose
       - string
       - The purpose of the transcript (either 'captions' or 'normal')
-    * - src (srcjsonp)
+	* - filename
+	  - string
+	  - the name of the .vtt tile
+    * - contents
       - string
-      - the URL of the .vtt file (`specification <https://www.w3.org/TR/webvtt1/>`_)
+      - base64 encoded gzip of the .vtt file (`specification <https://www.w3.org/TR/webvtt1/>`_)
 
-.. note:: Need to include documentation of the supported services, types, and sources
-
-.. note:: Document inline transcript content format
-
+To decode the contents, base 64 decode it and unzip the contents. `Online tools <https://codebeautify.org/gzip-decompress-online>`_ exist to help with that process.
 
 vendor_info.json
 ================
