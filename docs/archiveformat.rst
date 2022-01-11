@@ -3,7 +3,7 @@ Course Archive Format
 =====================
 
 This document describes the NextThought Course Archive ("course
-archives", or more simply, "archive") format. An archive is a zip* file
+archives", or more simply, "archive") format. An archive is a ``ZIP`` file
 containing the structure and assets of the course. The archive format
 is designed to be a full representation of course content. It can be
 used to back up course content or as a custom intermediate format to
@@ -19,22 +19,27 @@ as folders containing user-provided assets (where those assets are images, docum
 Common Object Properties
 ========================
 
-Class - A type identifier for the object
+Many of the ``json`` and ``xml`` documents in the archive represent
+*objects* or collections of *objects*. The objects have a set of
+common properties useful for identifying the type of object, as well
+as other metadata about the object. Common properties include:
 
-MimeType - An RFC-6838 MIME type identifying the type of object
+``Class`` - A type identifier for the object
 
-Creator - The creator of the object identified by their unique
+``MimeType`` - An RFC-6838 MIME type identifying the type of object
+
+``Creator`` - The creator of the object identified by their unique
 Username.
 
-CreatedTime - The time the object was created, represented as the time
+``CreatedTime`` - The time the object was created, represented as the time
 in seconds since the epoch (a floating point number)
 
-Last Modified - The most recent modification time of the object, represented as the time
+``Last Modified`` - The most recent modification time of the object, represented as the time
 in seconds since the epoch (a floating point number)
 
-NTIID - A global, unique identifier for the object
+``NTIID`` - A global, unique identifier for the object
 
-OID - An internal, unique identifier for the object
+``OID`` - An internal, unique identifier for the object
 
 Publication
 -----------
@@ -103,10 +108,70 @@ A folder of user-uploaded assets that are used within lessons and readings. This
 assignment_policies.json
 ========================
 
-Assignment policy overrides in place for this course
-These values are merged on top of assignment objects to provide course-specific policies.
+Assignment policy information that controls how the included
+evaluations (see :ref:`evaulation_index.json`) behave in the
+system. In general values here are *merged on top* of the corresponding
+values on the assignment to override behaviour the assignment related settings.
 
-.. warning:: Needs more detail, especially in clarifying meaning of the second line. Might be helpful to include an example translation from a block of json file representing one assignment to its meaning for the course.
+.. list-table:: Fields
+   :header-rows: 1
+
+   * - Name
+     - Type
+     - Description
+   * - auto_grade
+     - Dict
+     - See below
+   * - available_for_submission_beginning
+     - String
+     - The ISO-8601 datetime string controlling when submissions begin being accepted for the assignment.
+   * - available_for_submission_ending
+     - String
+     - The ISO-8601 datetime string controlling when submissions are no longer accepted for the assignment.
+   * - completion_passing_percent
+     - Number [0, 1]
+     - The percentage of questions the learner must get correct for
+       the assignment to be considered completed successfully
+       e.g. passed. For example a value of ``0.80`` would result in
+       successful completion if a learner gets at least 8 of 10
+       questions correct.
+   * - disclosure
+     - 'never', 'always', 'termination', 'submission'
+     - Only applicable to polls and surveys, controls when users
+       should be able to see the results associated with the
+       pull/survey.
+   * - locked
+     - Bool
+     - Deprecated
+   * - max_submissions
+     - Number
+     - The maximum number of submission attempts this assignment
+       allows. Assignments with a ``max_submissions > 2`` is said to be a
+       `multiattempt assignment <https://help.nextthought.com/hc/en-us/articles/360049442252-Assignment-Advanced-Settings>`_.
+   * - maximum_time_allowed
+     - Number
+     - The number of seconds a learner has to complete the assignment
+       after starting it. A `maximum_time_allowed > 0` is indicative of a timed assignment.
+   * - submission_buffer
+     - Number
+     - The number of seconds of grace period beyond
+       ``available_for_submission_ending`` that submissions will still
+       be allowed. See `Late Submissions
+       <https://help.nextthought.com/hc/en-us/articles/360049442252-Assignment-Advanced-Settings>_`
+     
+.. list-table:: auto_grade Fields
+   :header-rows: 1
+
+   * - Name
+     - Type
+     - Description
+   * - disable
+     - Bool
+     - Is auto grading disabled
+   * - total_points
+     - Number
+     - The total number of points this assignment is worth.
+ 
 
 .. _evaluation_index.json:
 	     
@@ -361,22 +426,20 @@ Webinar Asset
 bundle_dc_metadata.xml
 ======================
 
-`https://dublincore.org <Dublin Core metadata>_` for the course.
+Incomplete `Dublin Core metadata <https://dublincore.org>`_ for the
+course. See :ref:`course_info.json` for more complete catalog information.
 
 bundle_meta_info.json
 =====================
 
-Additional external content referenced by the course.
+Additional external content referenced by the course. This is only
+applicable to a subset of legacy enterprise courses.
 
 completable_item_default_required.json
 ======================================
 
 A list of content types, specified by ``MimeType`` that this course
-requires by default.
-
-.. note:: Link in the help.nextthought.com docs where this is
-          configured in the platform.
-
+requires completion of by default.
 
 completable_item_required.json
 ==============================
@@ -488,6 +551,8 @@ Sidebar
 
 
 
+
+.. _course_info.json:
 
 course_info.json
 ================
@@ -715,9 +780,9 @@ There is only a ``names`` key which maps the tab name to the display name.
 dc_metadata.xml
 ===============
 
-`https://dublincore.org <Dublin Core metadata>_` for the course.
-
-.. warning:: Needs more detail; see the above warning for the bundle_dc_metadata.xml file.
+Incomplete `Dublin Core metadata <https://dublincore.org>`_ for the
+course. See :ref:`course_info.json` for more complete catalog
+information.
 
 ims_configured_tools.json
 =========================
