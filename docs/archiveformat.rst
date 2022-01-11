@@ -777,9 +777,6 @@ There is only a ``names`` key which maps the tab name to the display name.
 	* - info
 	  - Course info
 
-.. warning:: Should we also mention the ``order`` list that (I
-             presume) sets the order in which the tabs are listed?
-
 dc_metadata.xml
 ===============
 
