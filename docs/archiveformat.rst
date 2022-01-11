@@ -113,6 +113,9 @@ evaluations (see :ref:`evaulation_index.json`) behave in the
 system. In general values here are *merged on top* of the corresponding
 values on the assignment to override behaviour the assignment related settings.
 
+This structure provides a mapping from evaluation NTIID to a
+dictionary of settings with the following possible keys.
+
 .. list-table:: Fields
    :header-rows: 1
 
