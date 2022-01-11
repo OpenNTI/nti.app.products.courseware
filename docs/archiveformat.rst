@@ -795,12 +795,50 @@ information.
 ims_configured_tools.json
 =========================
 
-List of configured LTI tools in the course
+A mapping of configured LTI tools in the course keyed by NTIID. Each
+LTI tools is represented by ``ConfguredTool`` which itself contains a ``PersistentToolConfig``
 
-.. autointerface:: nti.ims.lti.interfaces.IConfiguredTool
+.. list-table:: ConfiguredTool
+      :header-rows: 1
 
-.. autointerface:: nti.ims.lti.interfaces.IToolConfig
+      * - Field Name
+	- Type
+	- Description
+      * - config
+	- PersistentToolConfig
+	- See below.
+      * - config_xml
+	- String
+	- The xml representation of the LTI configuration
+      * - consumer_key
+	- String
+	- The consumer key associated with this LTI tool
+      * - deleted
+	- Bool
+	- Was this tool deleted. Deleted tools don't show in the UI.
+      * - secret
+	- String
+	- The consumer secret associated with this LTI tool
 
+
+.. list-table:: PersistentToolConfig
+      :header-rows: 1
+
+      * - Field Name
+	- Type
+	- Description
+      * - title
+	- String
+	- A displayable title of the tool
+      * - description
+	- String
+	- A plain text description of the tool
+      * - launch_url
+	- URL
+	- A fully qualified url that can be used to launch the tool
+      * - secure_launch_url
+	- URL
+	- A fully qualified https url that can be used to launch the tool
 
 meta_info.json
 ==============
@@ -1073,3 +1111,6 @@ For example:
      - Child nodes of this node..  LocalWords:  ScormContentInfo
      - Child nodes of this node..  LocalWords:  CBEEB scorm myscorm
      - Child nodes of this node..  LocalWords:  ScormArchiveFilename
+     - Child nodes of this node..  LocalWords:  ConfiguredTool config
+     - Child nodes of this node..  LocalWords:  PersistentToolConfig
+     - Child nodes of this node..  LocalWords:  https
