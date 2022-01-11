@@ -509,14 +509,14 @@ A list of all the ContentPackages in the course. ContentPackages contain one and
 	  - string
 	  - A base 64 encoded, gzipped, ReSTructured text
 
-To decode the content, base 64 decode it and unzip the contents. `Online tools <https://codebeautify.org/gzip-decompress-online>_` exist to help with that process.
+To decode the content, base 64 decode it and unzip the contents. `Online tools <https://codebeautify.org/gzip-decompress-online>`_ exist to help with that process.
 
 RST Primer
 ----------
 
-`RST <https://docutils.sourceforge.io/rst.html>_` is a markup format that adds additional semantic information.
+`RST <https://docutils.sourceforge.io/rst.html>`_ is a markup format that adds additional semantic information.
 
-One powerful feature of RST, is the ability to add `custom directives. <https://docutils.sourceforge.io/docs/ref/rst/directives.html>_`
+One powerful feature of RST, is the ability to add `custom directives. <https://docutils.sourceforge.io/docs/ref/rst/directives.html>`_
 The reading content utilizes custom directives for NextThought specific content blocks.
 
 Code Block
