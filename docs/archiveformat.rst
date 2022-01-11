@@ -423,9 +423,71 @@ the course as well as whether or not a certificate is awarded on completion.
 content_packages.json
 =====================
 
-A list of ContentPackage objects referenced in the course. Contents are gzip, base 64, ReSTructured text files.
+A list of all the ContentPackages in the course. ContentPackages contain one and only one reading.
 
-..warning: Needs more detail
+.. list-table:: Fields
+	:header-rows: 1
+
+	* - Name
+	  - Type
+	  - Description
+	* - MimeType
+	  - string
+	  - "application/vnd.nextthought.renderablecontentpackage"
+	* - title
+	  - string
+	  - the name of the content package
+	* - content
+	  - string
+	  - A base 64 encoded, gzipped, ReSTructured text
+
+To decode the content, base 64 decode it and unzip the contents. `Online tools <https://codebeautify.org/gzip-decompress-online>_` exist to help with that process.
+
+RST Primer
+----------
+
+`RST <https://docutils.sourceforge.io/rst.html>_` is a markup format that adds additional semantic information.
+
+One powerful feature of RST, is the ability to add `custom directives. <https://docutils.sourceforge.io/docs/ref/rst/directives.html>_`
+The reading content utilizes custom directives for NextThought specific content blocks.
+
+Code Block
+``````````
+
+:Directive Name: ``code-block``
+:Arguments: the language
+:Body: code block
+
+Photo
+`````
+
+:Directive Name: ``course-figure``
+:Arguments: the URL for the image, points to a file in the ``assets`` folder
+
+Video
+`````
+
+:Directive Name: ``ntivideoref``
+:Arguments: NTIID of the video, in the ``user_assets.json`` file
+
+Iframe
+```````
+
+:Directive Name: ``nti:embedwidget``
+:Arguments: src of the iframe
+:Options:
+	:width: how wide the iframe should be
+	:height: how tall the iframe should be
+	:...others: other options are passed as attributes to the iframe tag
+
+Sidebar
+```````
+
+:Directive Name: ``sidebar``
+:Body: the contents of the sidebar
+
+
+
 
 course_info.json
 ================
