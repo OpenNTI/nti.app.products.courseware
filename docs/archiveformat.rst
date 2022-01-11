@@ -258,6 +258,9 @@ Has the same fields as a question set plus:
 	* - description
 	  - string
 	  - Summary of the purpose of the survey
+	* - disclosure
+	  - string
+	  - [policy]_ field
 	* - contents
 	  - string
 	  - An optional RST string providing rich content to the survey, with ``napollref`` directives indicating the location of the polls found in the ``questions``property.
@@ -283,16 +286,38 @@ A wrapper around a question set, provides a score contributing to the learner's 
 	* - parts
 	  - array
 	  - a list of assignment parts containing the question sets
+	* - available_for_submission_beginning
+	  - string
+	  - [policy]_ field
+	* - available_for_submission_ending
+	  - string
+	  - [policy]_ field
+	* - completion_passing_percent
+	  - Number [0, 1]
+	  - [policy]_ field
+	* - max_submissions
+	  - Number
+	  - [policy]_ field
+	* - maximum_time_allowed
+	  - Number
+	  - [policy]_ field
+	* - submission_buffer
+	  - Number
+	  - [policy]_ field
+
+
+
+.. [policy] See :ref:`assignment_policies.json` for more information
 
 Documents (folder)
 ==================
 
-The default folder for storing user-uploaded documents used as lesson content. This folder is exposed to course admins. It may contain other documents, and some documents may have been moved to other directories. 
+The default folder for storing user-uploaded documents used as lesson content. This folder is exposed to course admins. It may contain other documents, and some documents may have been moved to other directories.
 
 Images (folder)
 ===============
 
-The default folder for storing user-uploaded images used as cover images for lesson content. This folder is exposed to the user. It may contain other documents, and some images may have been moved to other directories. 
+The default folder for storing user-uploaded images used as cover images for lesson content. This folder is exposed to the user. It may contain other documents, and some images may have been moved to other directories.
 
 .. _lessons:
 
@@ -465,7 +490,7 @@ completable_item_required.json
 ==============================
 
 A list of required/optional overrides for content in the
-course. 
+course.
 
 .. list-table:: Interesting Fields
 	:header-rows: 1
