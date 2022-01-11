@@ -105,6 +105,8 @@ assets (folder)
 
 A folder of user-uploaded assets that are used within lessons and readings. This folder is exposed to course admins, and may contain sub-directories or unused assets.
 
+.. _assignment_policies.json:
+
 assignment_policies.json
 ========================
 
