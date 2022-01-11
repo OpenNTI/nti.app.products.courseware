@@ -13,13 +13,13 @@ Course archives can be extracted from the NextThought LMS using the
 `"Export Course" <https://help.nextthought.com/hc/en-us/articles/4415136825108>`_ functionality.
 
 The archive contains a number of structured files in ``json`` and,
-``xml`` format (identified by the file extension and contents) as well
-as folders containing user-provided assets (where those assets are images, documents, pdfs, etc.).
+``XML`` format (identified by the file extension and contents) as well
+as folders containing user-provided assets (where those assets are images, documents, PDFs, etc.).
 
 Common Object Properties
 ========================
 
-Many of the ``json`` and ``xml`` documents in the archive represent
+Many of the ``json`` and ``XML`` documents in the archive represent
 *objects* or collections of *objects*. The objects have a set of
 common properties useful for identifying the type of object, as well
 as other metadata about the object. Common properties include:
@@ -46,7 +46,7 @@ Publication
 
 Certain object's track publication state. While publication semantics
 may vary based on the type of object, publication state is most
-commonly used to control the visibilty of the object. Objects
+commonly used to control the visibility of the object. Objects
 supporting publication provide the following attributes.
 
 
@@ -103,15 +103,15 @@ This file is deprecated in favor of :ref:`evaluation_index.json`.
 assets (folder)
 ===============
 
-A folder of user-uploaded assets that are used within lessons and readings. This folder is exposed to course admins, and may contain subdirectories or unused assets.
+A folder of user-uploaded assets that are used within lessons and readings. This folder is exposed to course admins, and may contain sub-directories or unused assets.
 
 assignment_policies.json
 ========================
 
 Assignment policy information that controls how the included
-evaluations (see :ref:`evaulation_index.json`) behave in the
+evaluations (see :ref:`evaluation_index.json`) behave in the
 system. In general values here are *merged on top* of the corresponding
-values on the assignment to override behaviour the assignment related settings.
+values on the assignment to override behavior the assignment related settings.
 
 This structure provides a mapping from evaluation NTIID to a
 dictionary of settings with the following possible keys.
@@ -482,7 +482,7 @@ the course as well as whether or not a certificate is awarded on completion.
 	* - percentage
 	  - Number
 	  - The percentage of required items a learner must
-            *succesfully* complete to complete the course.
+            *successfully* complete to complete the course.
 	* - offers_completion_certificate
 	  - Bool
 	  - If true, when successfully completed learners are awarded
@@ -633,7 +633,7 @@ CourseAwardableCredit
 ---------------------
 
 ``CourseAwardableCredit`` defines the type and amount of credit a user
-will be awarded upon succesfull completion of the course.
+will be awarded upon successful completion of the course.
 
 .. list-table:: Interesting Fields
 	:header-rows: 1
@@ -708,14 +708,14 @@ of other nodes.
    * - AvailableBeginning
      - String
      - An ISO-8601 datetime string for the start of when the contents
-       of this lesson are anticipated to be coverered. This is purely
-       a display contstruct. See :ref:`outlinenodepublication` for
+       of this lesson are anticipated to be covered. This is purely
+       a display construct. See :ref:`outlinenodepublication` for
        details on node visibility
    * - AvailableEnding
      - String
      - An ISO-8601 datetime string for the end of when the contents
-       of this lesson are anticipated to be coverered. This is purely
-       a display contstruct. See :ref:`outlinenodepublication` for
+       of this lesson are anticipated to be covered. This is purely
+       a display construct. See :ref:`outlinenodepublication` for
        details on node visibility
    * - title
      - String
@@ -838,7 +838,7 @@ For example:
 	"MimeType": "application/vnd.nextthought.courses.courseinstance"
    }
 
-presentation-assests (folder)
+presentation-assets (folder)
 =============================
 
 The presentation assets for the course. This includes cover, thumbnail, background, etc. Anything outside the `webapp` folder (which is found within presentation-assets) should be ignored.
@@ -854,10 +854,10 @@ The presentation assets for the course. This includes cover, thumbnail, backgrou
      - Used in list presentation of courses
    * - contentpackage-landing-232x170.png
      - 464px X 240px
-     - Used in card presentation of coursses
+     - Used in card presentation of courses
    * - background.png
      - 3000px X 2000px
-     - Used as the background image when on a course, has a guassian blur to handle
+     - Used as the background image when on a course, has a Gaussian blur to handle
    * - client_image_source.png
      - any
      - The source image used to generate the other images
@@ -1023,7 +1023,7 @@ The metadata for this scorm package is found in the
       - The unique identifier for this scorm package.
     * - ScormArchiveFilename
       - string
-      - The filename of the SCORM content file.
+      - The filename of the SCORM original content file.
 
 For example:
 
@@ -1033,3 +1033,43 @@ For example:
 	  "NTIID": "tag:nextthought.com,2011-10:NTI-ScormContentInfo-1BC4CCEA431F1E6166205A94AC39402C174C67AF4E1CBEEB692E501C5D17F8AF_0087",
 	  "ScormArchiveFilename": "myscorm_package.zip"
 	  }
+     - Child nodes of this node
+..  LocalWords:  PDFs MimeType CreatedTime NTIID OID isPublished Bool
+     - Child nodes of this node..  LocalWords:  publishLastModified
+     - Child nodes of this node..  LocalWords:  publishBeginning RST
+     - Child nodes of this node..  LocalWords:  DateTime datetime xml
+     - Child nodes of this node..  LocalWords:  publishEnding href px
+     - Child nodes of this node..  LocalWords:  multiattempt SCORM UI
+     - Child nodes of this node..  LocalWords:  napollref accentColor
+     - Child nodes of this node..  LocalWords:  QuestionSet LTI nti
+     - Child nodes of this node..  LocalWords:  targetMimeType NTIIDs
+     - Child nodes of this node..  LocalWords:  ScormContent gzipped
+     - Child nodes of this node..  LocalWords:  completable Iframe KE
+     - Child nodes of this node..  LocalWords:  AggregateCompletionPolicy
+     - Child nodes of this node..  LocalWords:  ContentPackages src
+     - Child nodes of this node..  LocalWords:  ReSTructured iframe
+     - Child nodes of this node..  LocalWords:  ntivideoref endDate
+     - Child nodes of this node..  LocalWords:  embedwidget isPreview
+     - Child nodes of this node..  LocalWords:  additionalProperties
+     - Child nodes of this node..  LocalWords:  awardableCredits html
+     - Child nodes of this node..  LocalWords:  CourseAwardableCredit
+     - Child nodes of this node..  LocalWords:  avaialble startDate
+     - Child nodes of this node..  LocalWords:  richDescription url
+     - Child nodes of this node..  LocalWords:  CreditDefinition ims
+     - Child nodes of this node..  LocalWords:  jobTitle isntructors
+     - Child nodes of this node..  LocalWords:  userid LessonOverview
+     - Child nodes of this node..  LocalWords:  CourseOutlineContentNode
+     - Child nodes of this node..  LocalWords:  AvailableBeginning zn
+     - Child nodes of this node..  LocalWords:  outlinenodepublication
+     - Child nodes of this node..  LocalWords:  AvailableEnding png
+     - Child nodes of this node..  LocalWords:  CourseOutlineNode aqz
+     - Child nodes of this node..  LocalWords:  CourseOutline webapp
+     - Child nodes of this node..  LocalWords:  autointerface kaltura
+     - Child nodes of this node..  LocalWords:  ExportHash vimeo bpKQ
+     - Child nodes of this node..  LocalWords:  contentpackage wistia
+     - Child nodes of this node..  LocalWords:  VideoSource youtube
+     - Child nodes of this node..  LocalWords:  lqfi lang srcjsonp
+     - Child nodes of this node..  LocalWords:  vtt nextthought CCEA
+     - Child nodes of this node..  LocalWords:  ScormContentInfo
+     - Child nodes of this node..  LocalWords:  CBEEB scorm myscorm
+     - Child nodes of this node..  LocalWords:  ScormArchiveFilename
