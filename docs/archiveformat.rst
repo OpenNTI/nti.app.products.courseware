@@ -1071,7 +1071,7 @@ For example:
 	  "NTIID": "tag:nextthought.com,2011-10:NTI-ScormContentInfo-1BC4CCEA431F1E6166205A94AC39402C174C67AF4E1CBEEB692E501C5D17F8AF_0087",
 	  "ScormArchiveFilename": "myscorm_package.zip"
 	  }
-     - Child nodes of this node
+
 ..  LocalWords:  PDFs MimeType CreatedTime NTIID OID isPublished Bool
      - Child nodes of this node..  LocalWords:  publishLastModified
      - Child nodes of this node..  LocalWords:  publishBeginning RST
