@@ -160,7 +160,7 @@ dictionary of settings with the following possible keys.
      - The number of seconds of grace period beyond
        ``available_for_submission_ending`` that submissions will still
        be allowed. See `Late Submissions
-       <https://help.nextthought.com/hc/en-us/articles/360049442252-Assignment-Advanced-Settings>_`
+       <https://help.nextthought.com/hc/en-us/articles/360049442252-Assignment-Advanced-Settings>`_
      
 .. list-table:: auto_grade Fields
    :header-rows: 1
