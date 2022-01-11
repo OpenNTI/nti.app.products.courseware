@@ -294,6 +294,8 @@ Images (folder)
 
 The default folder for storing user-uploaded images used as cover images for lesson content. This folder is exposed to the user. It may contain other documents, and some images may have been moved to other directories. 
 
+.. _lessons:
+
 Lessons (folder)
 ================
 
@@ -704,17 +706,23 @@ of other nodes.
      - Type
      - Description
    * - AvailableBeginning
-     -
-     -
+     - String
+     - An ISO-8601 datetime string for the start of when the contents
+       of this lesson are anticipated to be coverered. This is purely
+       a display contstruct. See :ref:`outlinenodepublication` for
+       details on node visibility
    * - AvailableEnding
-     -
-     -
+     - String
+     - An ISO-8601 datetime string for the end of when the contents
+       of this lesson are anticipated to be coverered. This is purely
+       a display contstruct. See :ref:`outlinenodepublication` for
+       details on node visibility
    * - title
-     -
-     -
+     - String
+     - The display name for the lesson/unit in the outline
    * - Items
-     -
-     -
+     - CourseOutlineNode[]
+     - Child nodes of this nod
 
 
 Additionally ``CourseOutlineContentNode`` objects add a ``src`` field
@@ -727,8 +735,8 @@ that references the ``LessonOverview`` json file from the ``Lessons`` folder.
      - Type
      - Description
    * - src
-     -
-     -
+     - String
+     - The filename of the lesson definition file found in the :ref:`lessons`.
 
 
 .. note:: In practice the CourseOutline is typically 2 levels, the
@@ -736,7 +744,7 @@ that references the ``LessonOverview`` json file from the ``Lessons`` folder.
           ``Lessons``. Some legacy courses may have ``CourseOutlineNode``
           objects that nest more than 2 levels.
 
-.. warning:: This section is incomplete
+.. _outlinenodepublication:
 
 Course Outline Node Publication
 -------------------------------
