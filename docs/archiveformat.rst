@@ -957,9 +957,6 @@ role_info.json
 A ``json`` file providing a mapping of course roles and the users
 assigned to them.
 
-.. note:: Provide the mapping of how these show in the UI to what ends
-          up in the role map.
-
 .. code:: json
 
    {
@@ -977,6 +974,11 @@ assigned to them.
 	}
    }
 
+UI Labels:
+
+:Instructor: Has access to edit content and assign grades. Appears in both ``nti.roles.course_content_editor`` and ``nti.roles.course_instructor``.
+:Editor: Has access to edit the content. Appears only in ``nti.roles.course_content_editor``.
+:Assistant: Has access to assign grades. Appears only in ``nti.roles.course_instructor``.
 
 user_assets.json
 ================
