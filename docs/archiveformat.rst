@@ -423,7 +423,7 @@ Related Work Reference
 Point to either a reading in the course, an uploaded document, or an external URL.
 
 Readings can be found in ``content_packages.json``
-Documents can be round in the ``Documents`` folder
+Documents can be found in the ``Documents`` folder
 
 :MimeType: "application/vnd.nextthought.relatedworkref"
 :targetMimeType: Tells type of content the ref points to. Either "application/vnd.nextthought.content", "application/vnd.nextthought.externallink", or the MimeType of the document it points to.
@@ -457,7 +457,7 @@ A :ref:`Video Object`
 Webinar Asset
 `````````````
 
-A reference to a `Goto Webinar <https://www.goto.com/webinar>`_ webinar.
+A reference to a `GotoWebinar <https://www.goto.com/webinar>`_ webinar.
 
 :MimeType: "application/vnd.nextthought.webinar"
 :description: summary of the webinar
@@ -764,7 +764,7 @@ of other nodes.
      - The display name for the lesson/unit in the outline
    * - Items
      - CourseOutlineNode[]
-     - Child nodes of this nod
+     - Child nodes of this node
 
 
 Additionally ``CourseOutlineContentNode`` objects add a ``src`` field
@@ -838,7 +838,7 @@ ims_configured_tools.json
 =========================
 
 A mapping of configured LTI tools in the course keyed by NTIID. Each
-LTI tools is represented by ``ConfguredTool`` which itself contains a ``PersistentToolConfig``
+LTI tool is represented by ``ConfguredTool`` which itself contains a ``PersistentToolConfig``
 
 .. list-table:: ConfiguredTool
       :header-rows: 1
