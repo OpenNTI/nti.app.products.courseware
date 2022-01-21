@@ -19,8 +19,10 @@ from zope.intid.interfaces import IIntIds
 
 from nti.contenttypes.completion.interfaces import IProgress
 
+from nti.app.products.courseware.segments.interfaces import COMPLETE
 from nti.app.products.courseware.segments.interfaces import ENROLLED_IN
     
+from nti.app.products.courseware.segments.interfaces import ICourseCompletionFilterSet
 from nti.app.products.courseware.segments.interfaces import ICourseProgressFilterSet
 from nti.app.products.courseware.segments.interfaces import ICourseMembershipFilterSet
 
@@ -120,13 +122,8 @@ class CourseMembershipFilterSet(SchemaConfigured,
 
 
 
-@interface.implementer(ICourseProgressFilterSet)
-class CourseProgressFilterSet(SchemaConfigured,
-                              Contained):
-
-    createDirectFieldProperties(ICourseProgressFilterSet)
-
-    mimeType = mime_type = "application/vnd.nextthought.courseware.segments.courseprogressfilterset"
+class AbstractCourseProgressFilterSet(SchemaConfigured,
+                                      Contained):
 
     def __init__(self, **kwargs):
         SchemaConfigured.__init__(self, **kwargs)
@@ -145,9 +142,6 @@ class CourseProgressFilterSet(SchemaConfigured,
         progress = component.queryMultiAdapter((user, self.course),
                                                IProgress)
         return progress
-    
-    def _check(self, progress):
-        return self.op(progress.PercentageProgress, self.percentage)
     
     def _iter_users(self):
         if self.course is None:
@@ -168,7 +162,42 @@ class CourseProgressFilterSet(SchemaConfigured,
             result.add(user_intid)
         return result
     
+    def _check(self, progress):
+        raise NotImplementedError()
+    
+    def apply(self, initial_set):
+        raise NotImplementedError()
+
+
+@interface.implementer(ICourseProgressFilterSet)
+class CourseProgressFilterSet(AbstractCourseProgressFilterSet):
+
+    createDirectFieldProperties(ICourseProgressFilterSet)
+
+    mimeType = mime_type = "application/vnd.nextthought.courseware.segments.courseprogressfilterset"
+    
+    def _check(self, progress):
+        return self.op(progress.PercentageProgress, self.percentage)
+    
     def apply(self, initial_set):
         set_factory = initial_set.family.IF.Set
         intids = self._get_intids(set_factory)
         return initial_set.intersection(intids)
+
+
+@interface.implementer(ICourseCompletionFilterSet)
+class CourseCompletionFilterSet(AbstractCourseProgressFilterSet):
+
+    createDirectFieldProperties(ICourseCompletionFilterSet)
+
+    mimeType = mime_type = "application/vnd.nextthought.courseware.segments.coursecompletionfilterset"
+    
+    def _check(self, progress):
+        return progress.CompletedItem and progress.CompletedItem.Success
+    
+    def apply(self, initial_set):
+        set_factory = initial_set.family.IF.Set
+        intids = self._get_intids(set_factory)
+        if self.operator == COMPLETE:
+            return initial_set.intersection(intids)
+        return initial_set.difference(intids)
